@@ -14,15 +14,23 @@
 # What
 
 * Learning Outcomes
+
 - How to plan and execute ML research
+
 - Explain the theoretical foundations behind statistical learning approaches
+
 - Understand Bayesian vs. frequentist perspectives
+
 - Knowledge Representation in AI and ML
+
 - Bayesian ML (theory and practice)
+
 - Causal inference
+
 - Learn tools (PyMC, etc)
 
 * Syllabus
+
 - [Syllabus](https://docs.google.com/document/d/1YXCrqh6KGg3xm4-Lr4QGdBnjeWEfkqz67FHNHB_rdAk)
   - Techniques: Practical machine learning
   - Knowledge representation
@@ -71,9 +79,11 @@
 // include:msml610/lectures_source/Class_Mechanics.aux.md "AI Policy"
 
 * Books of the Class
+
 ::: columns
 :::: {.column width=80%}
-- @Goal@: slides are self-sufficient
+
+- @Goal@: Slides are self-sufficient
   - PDF lectures, commentary, book
 
 - @Books to go deepear@
@@ -86,8 +96,8 @@
     - Russell et al.: _"Artificial Intelligence: A Modern Approach"_ (4th ed, 2020)
   - **Hardcore**
     - Hastie et al.: _"The Elements of Statistical Learning"_ (2nd ed, 2009)
-    - Koller et al.: _"Probabilistic Graphical Models: Principles and
-      Techniques"_ (2009)
+    - Koller et al.: _"Probabilistic Graphical Models: Principles and Techniques"_
+      (2009)
     - Murphy: Machine Learning: _"A Probabilistic Perspective"_ (2012)
     - Sutton et al.: _"Reinforcement Learning: An Introduction"_ (2nd ed, 2018)
 

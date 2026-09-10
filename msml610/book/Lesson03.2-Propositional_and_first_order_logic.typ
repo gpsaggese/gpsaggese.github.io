@@ -1,4 +1,4 @@
-// git_hash=6d1a91e8-s18 timestamp=20260907_130741
+// git_hash=9b64c438-xu0 timestamp=20260909_100210
 // Import AIMA style formatting and macros.
 #import "/helpers_root/dev_scripts_helpers/typst/aima_style.typ": (
   aima-style, algorithm, chapter, glossary, styled-table, wrap-content,
@@ -17,8 +17,19 @@
 // Apply the AIMA document template (page/text/heading set + show rules).
 #show: aima-style
 
-// TODO(ai_gp): Add mandatory `= Roadmap` section right after #chapter(...) before first content section (typst.rules.md:## Mandatory Sections)
 #chapter("L03.2: Propositional and First Order Logic")
+
+= Roadmap
+
+This chapter explores two foundational logical systems for knowledge representation:
+#emph[propositional logic] and #emph[first-order logic]. Propositional logic provides
+a clean, tractable framework for reasoning about fixed facts, using syntax and
+semantics grounded in truth tables and #emph[model checking]. First-order logic
+extends this with variables, predicates, and quantifiers, dramatically increasing
+expressiveness at the cost of computational complexity. Both systems form the
+theoretical backbone for automated reasoning, #emph[constraint satisfaction], and
+knowledge-based AI systems. This chapter walks through their formal definitions,
+inference procedures, and practical applications.
 
 // From: msml610/lectures_source/Lesson03.2-Propositional_and_first_order_logic.smd:13 '# Propositional logic'
 // Slide: Propositional logic
@@ -93,9 +104,9 @@ The #strong[logical connectives] that glue sentences together are:
 
 Regardless of whether a sentence is atomic or complex, it evaluates to exactly one of
 two values: true or false. There is no middle ground, no "partially true." This
-strict bivalence is what makes propositional logic tractable: every well-formed
-sentence, no matter how deeply nested, ultimately reduces to a single truth value
-once the truth values of its atomic components are fixed.
+strict #emph[bivalence] is what makes propositional logic tractable: every
+well-formed sentence, no matter how deeply nested, ultimately reduces to a single
+truth value once the truth values of its atomic components are fixed.
 
 // From: msml610/lectures_source/Lesson03.2-Propositional_and_first_order_logic.smd:76 '* Propositional Logic: Weather Example'
 // Slide: Propositional Logic: Weather Example
@@ -235,8 +246,8 @@ that exactly five of the eight models satisfy $X$.
     ),
     bold-first-col: false,
   ),
-  // TODO(ai_gp): Replace vague caption "Table of A, B, C, X" with a descriptive one-line clause explaining what the table shows, not just listing column names (typst.rules.md:## Figures: Required Elements)
-  caption: [Table of A, B, C, X],
+  caption: [Truth table for the formula X = A and B or C, showing all $2^3 = 8$
+    models with their truth values.],
   kind: "table",
   supplement: [Table.],
   placement: auto,
@@ -272,37 +283,40 @@ explanatory content whatsoever.
 // Slide: Model Checking is Sound and Complete
 #wrap-content(
   [
-// rendered_images:begin
-//             ```graphviz[width=100%]
-//             digraph ModelChecking {
-//               graph [rankdir=TB, bgcolor="transparent", nodesep=0.25, ranksep=0.35,
-//                      fontname="Helvetica"];
-//               node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11,
-//                     fontcolor="#26215C", color="#7F77DD", penwidth=1.2];
-//               edge [color="#888888", penwidth=1.2];
-//     
-//               enumerate [label="Enumerate all\nmodels", fillcolor="#A0D6D1"];
-//               filter [label="Keep models\nwhere KB true", fillcolor="#A6E7F4"];
-//               check [label="Check alpha true\nin all of them", fillcolor="#A6C8F4"];
-//     
-//               enumerate -> filter -> check;
-//             }
-//             ```
-//             label=fig:modelcheckingissoundandcomplete
-//             caption=The three-stage model-checking pipeline for testing whether KB entails a query.
-// rendered_images:end
-// render_images:begin
-#figure(
-  image(
-    "Lesson03.2-Propositional_and_first_order_logic.typ.figs/Lesson03.2-Propositional_and_first_order_logic.1.png",
-    width: 100%,
-  ),
-  caption: [The three-stage model-checking pipeline for testing whether KB entails a query.],
-  kind: "figure",
-  supplement: [Fig.],
-  placement: auto,
-) <fig:modelcheckingissoundandcomplete>
-// render_images:end
+    // rendered_images:begin
+    //             ```graphviz
+    //             digraph ModelChecking {
+    //               graph [rankdir=TB, bgcolor="transparent", nodesep=0.25, ranksep=0.35,
+    //                      fontname="Helvetica"];
+    //               node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11,
+    //                     fontcolor="#26215C", color="#7F77DD", penwidth=1.2];
+    //               edge [color="#888888", penwidth=1.2];
+    //
+    //               enumerate [label="Enumerate all\nmodels", fillcolor="#A0D6D1"];
+    //               filter [label="Keep models\nwhere KB true", fillcolor="#A6E7F4"];
+    //               check [label="Check alpha true\nin all of them", fillcolor="#A6C8F4"];
+    //
+    //               enumerate -> filter -> check;
+    //             }
+    //             ```
+    //             label=fig:modelcheckingissoundandcomplete
+    //             caption=The three-stage model-checking pipeline for testing whether KB entails a query.
+    // width=100%
+    // placement=auto
+    // rendered_images:end
+    // render_images:begin
+    #figure(
+      image(
+        "Lesson03.2-Propositional_and_first_order_logic.typ.figs/Lesson03.2-Propositional_and_first_order_logic.1.png",
+        width: 100%,
+      ),
+      caption: [The three-stage model-checking pipeline for testing whether KB
+        entails a query.],
+      kind: "figure",
+      supplement: [Fig.],
+      placement: auto,
+    ) <fig:modelcheckingissoundandcomplete>
+    // render_images:end
   ],
   align: right,
   column-gutter: 1em,
@@ -361,9 +375,9 @@ toolkit:
   $(not p or r)$, infer $(q or r)$.
 
 Resolution deserves special attention. Introduced by Robinson in 1965, it is the
-single rule on which most automated theorem provers are built, because every other
-rule in this list can be derived as a special case of resolution when statements are
-first converted to clausal form.
+single rule on which most #emph[automated theorem provers] are built, because every
+other rule in this list can be derived as a special case of resolution when
+statements are first converted to clausal form.
 
 #figure(
   styled-table(
@@ -541,37 +555,40 @@ another, it suffices to check whether their material implication is valid.
 
 #wrap-content(
   [
-// rendered_images:begin
-//         ```graphviz[width=100%]
-//         digraph DeductionBridge {
-//           graph [rankdir=TB, bgcolor="transparent", nodesep=0.3, ranksep=0.4,
-//                  fontname="Helvetica"];
-//           node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11,
-//                 fontcolor="#26215C", color="#7F77DD", penwidth=1.2];
-//           edge [color="#888888", penwidth=1.4, fontname="Helvetica", fontsize=10,
-//                 fontcolor="#45296B"];
-//     
-//           entailment [label="Entailment\n(semantic)", fillcolor="#A6C8F4"];
-//           implication [label="Implication\n(syntactic)", fillcolor="#A0D6D1"];
-//     
-//           entailment -> implication [dir=both, label="Deduction\nTheorem"];
-//         }
-//         ```
-//         label=fig:deductiontheorem
-//         caption=The deduction theorem bridging semantic entailment and syntactic implication.
-// rendered_images:end
-// render_images:begin
-#figure(
-  image(
-    "Lesson03.2-Propositional_and_first_order_logic.typ.figs/Lesson03.2-Propositional_and_first_order_logic.2.png",
-    width: 100%,
-  ),
-  caption: [The deduction theorem bridging semantic entailment and syntactic implication.],
-  kind: "figure",
-  supplement: [Fig.],
-  placement: auto,
-) <fig:deductiontheorem>
-// render_images:end
+    // rendered_images:begin
+    //         ```graphviz
+    //         digraph DeductionBridge {
+    //           graph [rankdir=TB, bgcolor="transparent", nodesep=0.3, ranksep=0.4,
+    //                  fontname="Helvetica"];
+    //           node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11,
+    //                 fontcolor="#26215C", color="#7F77DD", penwidth=1.2];
+    //           edge [color="#888888", penwidth=1.4, fontname="Helvetica", fontsize=10,
+    //                 fontcolor="#45296B"];
+    //
+    //           entailment [label="Entailment\n(semantic)", fillcolor="#A6C8F4"];
+    //           implication [label="Implication\n(syntactic)", fillcolor="#A0D6D1"];
+    //
+    //           entailment -> implication [dir=both, label="Deduction\nTheorem"];
+    //         }
+    //         ```
+    //         label=fig:deductiontheorem
+    //         caption=The deduction theorem bridging semantic entailment and syntactic implication.
+    // width=100%
+    // placement=auto
+    // rendered_images:end
+    // render_images:begin
+    #figure(
+      image(
+        "Lesson03.2-Propositional_and_first_order_logic.typ.figs/Lesson03.2-Propositional_and_first_order_logic.2.png",
+        width: 100%,
+      ),
+      caption: [The deduction theorem bridging semantic entailment and syntactic
+        implication.],
+      kind: "figure",
+      supplement: [Fig.],
+      placement: auto,
+    ) <fig:deductiontheorem>
+    // render_images:end
   ],
   align: right,
   column-gutter: 1em,
@@ -604,43 +621,46 @@ known algorithm solves every instance in polynomial time.
 
 #wrap-content(
   [
-// rendered_images:begin
-//         ```graphviz[width=100%]
-//         digraph Satisfiability {
-//           graph [bgcolor="transparent", fontname="Helvetica"];
-//           node [fontname="Helvetica", fontsize=10, fontcolor="#26215C"];
-//     
-//           subgraph cluster_all {
-//             label="All sentences";
-//             style="rounded,filled"; color="#F4A6A6"; fillcolor="#FBEAEA";
-//             labelloc=b; fontsize=11; fontcolor="#7A2E2E";
-//     
-//             subgraph cluster_sat {
-//               label="Satisfiable";
-//               style="rounded,filled"; color="#A0D6D1"; fillcolor="#E7F6F5";
-//               labelloc=b; fontsize=11; fontcolor="#1F5A55";
-//     
-//               valid [label="Valid\n(tautologies)", shape=box,
-//                      style="rounded,filled", fillcolor="#A6C8F4", penwidth=0];
-//             }
-//           }
-//         }
-//         ```
-//         label=fig:satisfiability
-//         caption=Nested regions of all sentences, satisfiable sentences, and valid tautologies.
-// rendered_images:end
-// render_images:begin
-#figure(
-  image(
-    "Lesson03.2-Propositional_and_first_order_logic.typ.figs/Lesson03.2-Propositional_and_first_order_logic.3.png",
-    width: 100%,
-  ),
-  caption: [Nested regions of all sentences, satisfiable sentences, and valid tautologies.],
-  kind: "figure",
-  supplement: [Fig.],
-  placement: auto,
-) <fig:satisfiability>
-// render_images:end
+    // rendered_images:begin
+    //         ```graphviz
+    //         digraph Satisfiability {
+    //           graph [bgcolor="transparent", fontname="Helvetica"];
+    //           node [fontname="Helvetica", fontsize=10, fontcolor="#26215C"];
+    //
+    //           subgraph cluster_all {
+    //             label="All sentences";
+    //             style="rounded,filled"; color="#F4A6A6"; fillcolor="#FBEAEA";
+    //             labelloc=b; fontsize=11; fontcolor="#7A2E2E";
+    //
+    //             subgraph cluster_sat {
+    //               label="Satisfiable";
+    //               style="rounded,filled"; color="#A0D6D1"; fillcolor="#E7F6F5";
+    //               labelloc=b; fontsize=11; fontcolor="#1F5A55";
+    //
+    //               valid [label="Valid\n(tautologies)", shape=box,
+    //                      style="rounded,filled", fillcolor="#A6C8F4", penwidth=0];
+    //             }
+    //           }
+    //         }
+    //         ```
+    //         label=fig:satisfiability
+    //         caption=Nested regions of all sentences, satisfiable sentences, and valid tautologies.
+    // width=100%
+    // placement=auto
+    // rendered_images:end
+    // render_images:begin
+    #figure(
+      image(
+        "Lesson03.2-Propositional_and_first_order_logic.typ.figs/Lesson03.2-Propositional_and_first_order_logic.3.png",
+        width: 100%,
+      ),
+      caption: [Nested regions of all sentences, satisfiable sentences, and valid
+        tautologies.],
+      kind: "figure",
+      supplement: [Fig.],
+      placement: auto,
+    ) <fig:satisfiability>
+    // render_images:end
   ],
   align: right,
   column-gutter: 1em,
@@ -669,11 +689,12 @@ attempt to construct one collapses into contradiction.
 
 The method translates that equivalence into a step-by-step argument:
 
-// TODO(ai_gp): Replace this numbered list with #algorithm("Proof by Contradiction", [...]) macro (typst.rules.md:# Algorithms and Pseudocode)
-1. Assume the premises α.
-2. Assume that the target conclusion β is false.
-3. Derive a contradiction from these two assumptions taken together.
-4. Conclude that β must be true whenever α is.
+#algorithm("Proof by Contradiction", (
+  [Assume the premises α.],
+  [Assume that the target conclusion β is false.],
+  [Derive a contradiction from these two assumptions taken together.],
+  [Conclude that β must be true whenever α is.],
+))
 
 The power of this technique is that searching for a contradiction is often easier
 than constructing a direct derivation, because negating the conclusion gives the
@@ -953,26 +974,48 @@ facts from which an inference engine can derive new conclusions. The real payoff
 bird, the system automatically concludes $"CanFly"("Tweety")$ without that conclusion
 ever being stated explicitly.
 
-// TODO(ai_gp): Use #grid(...)[prose][table] pairing instead of bare #figure for this table (typst.rules.md:## Every Visual Pairs with Its Text)
-#figure(
-  styled-table(
-    headers: ("Category", "Example"),
-    rows: (
-      ("General rules", [$forall x ("Bird"(x) arrow.r.double "CanFly"(x))$]),
-      ("Specific facts", [$"Bird"("Tweety")$]),
-      ("Relations", [$"Loves"("Romeo", "Juliet")$, $"GreaterThan"(3, 2)$]),
-      ("Functions", [$"FatherOf"("John")$]),
-    ),
-  ),
-  caption: [Representative FOL expressions by category.],
-  kind: "table",
-  supplement: [Table.],
-  placement: auto,
-) <tab:folcategories>
+#grid(
+  columns: (1fr, 50%),
+  column-gutter: 1em,
+)[
+  Interpreted this way, first-order logic offers several representational strengths.
+  It can express general rules such as
+  $forall x ("Bird"(x) arrow.r.double "CanFly"(x))$, stating that every bird can fly,
+  alongside specific facts like $"Bird"("Tweety")$ that ground those rules in
+  particular individuals.
 
-@tab:folcategories summarizes these four categories, illustrating how a single
-formalism covers universal generalizations, ground facts, relational statements, and
-functional terms.
+  Beyond simple properties, FOL captures complex #strong[relations] through
+  multi-argument predicates: $"Loves"("Romeo", "Juliet")$ and $"GreaterThan"(3, 2)$
+  each link two objects in a named relationship that propositional logic could not
+  express without enumerating every possible pair. #strong[Functions] add another
+  layer by constructing new objects from existing ones: $"FatherOf"("John")$ refers
+  to a specific individual (John's father) without requiring a separate constant for
+  that person.
+
+  Together, these building blocks assemble into a #strong[knowledge base] of axioms
+  and facts from which an inference engine can derive new conclusions. The real
+  payoff is #emph[reasoning]: given the rule that all birds fly and the fact that
+  Tweety is a bird, the system automatically concludes $"CanFly"("Tweety")$ without
+  that conclusion ever being stated explicitly. @tab:folcategories summarizes these
+  four categories, illustrating how a single formalism covers universal
+  generalizations, ground facts, relational statements, and functional terms.
+][
+  #figure(
+    styled-table(
+      headers: ("Category", "Example"),
+      rows: (
+        ("General rules", [$forall x ("Bird"(x) arrow.r.double "CanFly"(x))$]),
+        ("Specific facts", [$"Bird"("Tweety")$]),
+        ("Relations", [$"Loves"("Romeo", "Juliet")$, $"GreaterThan"(3, 2)$]),
+        ("Functions", [$"FatherOf"("John")$]),
+      ),
+    ),
+    caption: [Representative FOL expressions by category.],
+    kind: "table",
+    supplement: [Table.],
+    placement: auto,
+  ) <tab:folcategories>
+]
 
 // From: msml610/lectures_source/Lesson03.2-Propositional_and_first_order_logic.smd:653 '* First-Order Logic: Inference'
 // Slide: First-Order Logic: Inference
@@ -1030,7 +1073,29 @@ that can always tell you "no, this does not follow" in finite time. Practical FO
 provers therefore combine completeness guarantees with heuristic search strategies to
 keep proof search tractable for the cases that arise in practice.
 
-// TODO(ai_gp): Add mandatory `= Summary` section before `= References` (typst.rules.md:## Mandatory Sections)
+= Summary
+
+Propositional logic and first-order logic form the theoretical backbone of automated
+reasoning. Propositional logic provides a clean, decidable framework for reasoning
+about fixed facts through truth-functional semantics and complete inference
+procedures like model checking and resolution. Its strength is #emph[tractability];
+its weakness is #emph[expressiveness]: it cannot quantify over objects or express
+relations compactly.
+
+First-order logic overcomes these limitations by introducing variables, predicates,
+and quantifiers, allowing statements that range over collections of objects and
+express complex relational structures. This dramatic increase in expressiveness comes
+at a cost: reasoning becomes #emph[semi-decidable] rather than decidable, and proof
+search strategies become essential to keep inference tractable. Despite these
+challenges, FOL serves as the foundation for logic programming languages, automated
+theorem provers, and knowledge representation systems across AI.
+
+Both logics rest on the same core principles: clear syntax-semantics separation, the
+notion of entailment as truth preservation across models, and the ideal of
+#emph[sound and complete inference]. These principles, developed rigorously over
+decades, continue to guide the design of modern AI reasoning systems, even as richer
+and more practical formalisms build upon them.
+
 // From: msml610/lectures_source/Lesson03.2-Propositional_and_first_order_logic.smd:679 '* References'
 // Slide: References
 = References

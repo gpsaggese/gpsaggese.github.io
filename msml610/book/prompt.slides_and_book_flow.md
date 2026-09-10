@@ -39,7 +39,7 @@ SMD_FILE=msml610/lectures_source/Lesson03.3*.smd
   ```
   > gen_book_chapter.py -i $SMD_FILE --mode typst_aima --llm_backend hllm_cli_exec --model openrouter/anthropic/claude-opus-4.6 --no_incremental
   ```
-  which generates a file $TYP_FILE in msml610/book/<FILE>.typ
+  which generates a file $TYP_FILE in msml610/lectures_pdf/...typ
 
 - Humanize
   ```

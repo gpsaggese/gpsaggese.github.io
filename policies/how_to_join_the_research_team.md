@@ -38,7 +38,6 @@
   - [Tutorial links](/tutorials)
   - [Blog examples](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/website/docs/blog/posts)
 
-
 ## Complete the Form to be Added
 
 - Complete the [form](https://forms.gle/Rrt76FpkZ2L9fUFTA) so we can add you to

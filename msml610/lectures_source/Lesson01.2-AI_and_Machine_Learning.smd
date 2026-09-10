@@ -8,7 +8,7 @@
 
 // ![](msml610/lectures_source/figures/book_covers/Book_cover_AIMA.jpg){ height=20% }
 
-# What Is Intelligence? What is AI?
+# What Is Intelligence? What Is AI?
 
 * ML, AI, and Intelligence
 
@@ -36,6 +36,7 @@
 :::: {.column width=80%}
 
 // TODO(ai_gp): Add a pic of the darthmouth meeting
+
 - @Definition@: The term _"Artificial Intelligence"_ was coined in 1956
   `#cite("mccarthy1955dartmouth")`{=typst}
 
@@ -47,18 +48,18 @@
 - @Characteristics@
   - Applies to any human activity and task
   - Impact exceeds any past historical event
-  - Generates hundreds of billions of dollars annually in market revenue,
-    with trillions in global economic impact projected by 2030
+  - Generates hundreds of billions of dollars annually in market revenue, with
+    trillions in global economic impact projected by 2030
     `#cite("bughin2018aifrontier")`{=typst}
-  - Has many unresolved problems, unlike disciplines with settled core
-    theories (e.g., arithmetic, Newtonian mechanics within its domain)
+  - Has many unresolved problems, unlike disciplines with settled core theories
+    (e.g., arithmetic, Newtonian mechanics within its domain)
 
 ::::
 :::: {.column width=20%}
 
 ![](msml610/lectures_source/figures/L01.2.Richard_Feynman.jpg)
-
 \footnotesize _Richard Feynman (1965)_
+
 ::::
 :::
 
@@ -67,7 +68,8 @@
 ::: columns
 :::: {.column width=65%}
 
-- @Definition@: AI is characterized along **two key axes** `#cite("russell2020aima")`{=typst}
+- @Definition@: AI is characterized along **two key axes**
+  `#cite("russell2020aima")`{=typst}
   - Thinking vs. Acting
   - Human vs. Rational (ideal performance)
 
@@ -79,8 +81,7 @@
 
 - @Question@: Which definition best captures what AI should aim for?
 
-- @Key idea@: Building machines that **act rationally** is the ultimate goal
-  of AI
+- @Key idea@: Building machines that **act rationally** is the ultimate goal of AI
 
 ::::
 :::: {.column width=30%}
@@ -101,8 +102,8 @@
 
 * 1. AI as Thinking Humanly
 
-- @Problem@: To build machines that think like humans, first **determine how
-  humans think**
+- @Problem@: To build machines that think like humans, first **determine how humans
+  think**
 
 - @Pros@
   - Express precise theory of the human mind as a computer program
@@ -124,8 +125,8 @@
 
 - @Techniques@: **Automatic theorem proving**
   - Programs solve problems in logical notation
-  - Runs indefinitely if no solution exists, since first-order validity is
-    only semi-decidable
+  - Runs indefinitely if no solution exists, since first-order validity is only
+    semi-decidable
 
 ::::
 :::: {.column width=30%}
@@ -170,8 +171,8 @@ digraph laws_of_thought {
 
 - @Challenges@
   1. **Formalizing informal knowledge is difficult**
-     - _Example_: _"A handshake occurs when two people extend, grip, shake
-       hands, then release."_
+     - _Example_: _"A handshake occurs when two people extend, grip, shake hands,
+       then release."_
        $$
        \begin{aligned}
          & \exists \; x, y, h_x, h_y \\
@@ -198,8 +199,8 @@ digraph laws_of_thought {
 - @Goal@: AI designs **agents that can act like humans**
 
 - @Techniques@: **Turing test** `#cite("turing1950computing")`{=typst}
-  - _"A computer passes the Turing test if a human cannot tell whether the
-    answers to questions came from a person or a computer"_
+  - _"A computer passes the Turing test if a human cannot tell whether the answers to
+    questions came from a person or a computer"_
 
 ::: columns
 :::: {.column width=75%}
@@ -209,8 +210,7 @@ digraph laws_of_thought {
   2. Knowledge representation to store information
   3. Automated reasoning to use knowledge and answer questions
   4. Machine learning to detect patterns
-  5. Computer vision and speech recognition to perceive and understand
-     speech
+  5. Computer vision and speech recognition to perceive and understand speech
   6. Robotics to manipulate objects and move
 
 ::::
@@ -228,15 +228,15 @@ digraph laws_of_thought {
 
 - @Pros@
   - Operational definition of intelligence
-  - Sidesteps philosophical vagueness (e.g., what is consciousness? can a
-    machine think?)
+  - Sidesteps philosophical vagueness (e.g., what is consciousness? can a machine
+    think?)
 
 ::::
 :::: {.column width=50%}
 
 - @Cons@
-  - Intelligence defined by **anthropomorphic** criteria in human terms
-    (multiple forms of non-human intelligence exist)
+  - Intelligence defined by **anthropomorphic** criteria in human terms (multiple
+    forms of non-human intelligence exist)
   - Passing means **fooling humans** into thinking it is human
 
 ::::
@@ -248,8 +248,8 @@ digraph laws_of_thought {
 
 * 4. AI as Acting Rationally
 
-- @Definition@: **Rational agents** are agents that do the _"right thing"_
-  given what they know
+- @Definition@: **Rational agents** are agents that do the _"right thing"_ given what
+  they know
 
 - @Characteristics@: Agents that **act rationally** should
   1. Operate autonomously
@@ -302,8 +302,8 @@ digraph laws_of_thought {
   - _"Did you act rationally?"_
   - Probably
 
-- @Example@: You cross the street without checking for oncoming traffic and a
-  car knocks you over
+- @Example@: You cross the street without checking for oncoming traffic and a car
+  knocks you over
   - _"Did you act rationally?"_
   - It depends (probably not, since checking first was low-cost)
 
@@ -326,12 +326,11 @@ digraph laws_of_thought {
 - @Limitations@
   - **Omniscience vs no-regrets**
     - Best is based on available information, not perfect knowledge
-  - Sometimes **no provably correct action** exists, yet an action must be
-    taken
+  - Sometimes **no provably correct action** exists, yet an action must be taken
   - Even **with perfect information** rationality may not be feasible due to:
     - Cost of acquiring all data (e.g., in medicine)
-    - Computational demands (e.g., traversing a search tree with more
-      branches than atoms in the observable universe, $\sim 10^{80}$)
+    - Computational demands (e.g., traversing a search tree with more branches than
+      atoms in the observable universe, $\sim 10^{80}$)
     - Real-time demands (e.g., decide within 1 micro-sec in HFT)
 
 - @Solution@: **"Satisficing"**: Achieve _good enough_ instead of _perfect_
@@ -349,14 +348,16 @@ digraph laws_of_thought {
 
 - @Definition@
   - _"Machine learning is the field of study that gives computers the ability to
-    learn without being explicitly programmed"_ (Samuel, 1959) `#cite("samuel1959checkers")`{=typst}
+    learn without being explicitly programmed"_ (Samuel, 1959)
+    `#cite("samuel1959checkers")`{=typst}
   - Machine learning builds machines to do _useful things_ without being _explicitly
     programmed_
-    - E.g., a computer learns checkers by playing against itself, memorizing
-      winning positions
+    - E.g., a computer learns checkers by playing against itself, memorizing winning
+      positions
   - More formally: _"A computer program is said to learn from experience $E$ with
     respect to some task $T$ and some performance measure $P$, if $P(T)$ improves
-    with experience $E$"_ (Mitchell, 1997) `#cite("mitchell1997machinelearning")`{=typst}
+    with experience $E$"_ (Mitchell, 1997)
+    `#cite("mitchell1997machinelearning")`{=typst}
 
 - @Applications@: Common ML examples include
   - Computer vision
@@ -367,8 +368,8 @@ digraph laws_of_thought {
 :::: {.column width=20%}
 
 ![](msml610/lectures_source/figures/L01.2.Tom_Mitchell.jpg)
-
 \footnotesize _Tom Mitchell (2025)_
+
 ::::
 :::
 
@@ -394,8 +395,8 @@ digraph laws_of_thought {
      learning?
   3. Can progress happen without data?
 
-- @Remark@: _Without data, no progress is possible_: data availability is
-  the assumption that is truly essential
+- @Remark@: _Without data, no progress is possible_: Data availability is the
+  assumption that is truly essential
 
 * AI vs ML vs Deep Learning
 
@@ -408,18 +409,18 @@ digraph laws_of_thought {
   - **ML (Machine Learning)**: Machines capable of performing tasks without being
     explicitly programmed
   - _AI models that are not ML_ is possible
-    - E.g., handcrafted rule-based systems (e.g., IBM Deep Blue playing chess)
-      have no learning from data, but are still an AI system
+    - E.g., handcrafted rule-based systems (e.g., IBM Deep Blue playing chess) have
+      no learning from data, but are still an AI system
 
 - @Definition@
   - **DL (Deep Learning)**: ML using a particular type of models, i.e., neural
     network with many layers
   - **LLM (Large Language Models)**: Neural networks trained on massive _text_
-    datasets to predict text, often further tuned with reinforcement learning
-    from human feedback (RLHF) `#cite("ouyang2022instructgpt")`{=typst}
+    datasets to predict text, often further tuned with reinforcement learning from
+    human feedback (RLHF) `#cite("ouyang2022instructgpt")`{=typst}
   - _DL models that are not LLMs_ are possible
-    - E.g., a convolutional neural network for vision or speech is a deep
-      learning system but not an LLM
+    - E.g., a convolutional neural network for vision or speech is a deep learning
+      system but not an LLM
 
 ::::
 :::: {.column width=30%}
@@ -495,15 +496,15 @@ digraph laws_of_thought {
 
 * Key Takeaways
 
-- @Key idea@: AI should focus on **agents acting rationally**, not on
-  mimicking human thought or behavior
+- @Key idea@: AI should focus on **agents acting rationally**, not on mimicking human
+  thought or behavior
 
 - @Definition@
   - **AI**: Machines programmed to reason, learn, and act rationally
   - **ML**: A subset of AI that performs tasks without being explicitly programmed
   - **DL**: A subset of ML using multi-layer neural networks
-  - **LLM**: A subset of DL trained on massive text datasets to predict
-    text, often further tuned with RLHF
+  - **LLM**: A subset of DL trained on massive text datasets to predict text, often
+    further tuned with RLHF
 
 - @Remark@: Current ML/DL systems, despite their power, still fall short of human
   intelligence on fragility, transfer learning, data efficiency, and common-sense

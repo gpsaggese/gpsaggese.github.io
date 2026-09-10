@@ -9,11 +9,11 @@
 ## Simple Is Better
 
 * Occam's Razor
+
 - @Fact@: **Simple is better**
-  - _"The simplest model that fits the data is also the most plausible"_
-    (Occam)
-  - _"An explanation of the data should be as simple as possible, but not
-    simpler"_ (Einstein?)
+  - _"The simplest model that fits the data is also the most plausible"_ (Occam)
+  - _"An explanation of the data should be as simple as possible, but not simpler"_
+    (Einstein?)
   - You need to trim the model to the bare minimum necessary to explain the data
 
 - @Question@: What does **simple** and **better** mean?
@@ -24,10 +24,11 @@
   - Less likely to fit a given data by coincidence
   - An event is more significant if it is unlikely (formalized in terms entropy)
 
-* What is a "simple model"?
+* What Is a "simple model"?
+
 - @Definition@: An object is **simple** when it is one of few possible objects
 
-- @Examples@:
+- @Examples@
   - Polynomial of order 2 is simpler than order 17
     - More polynomials of order 17 than order 2, though both are infinite sets
   - For SVM (Support Vector Machine) separating hyperplane appears wiggly
@@ -38,12 +39,10 @@
     - E.g., polynomial order, MDL (describe hypothesis in bits), Kolmogorov
       complexity
   - Complexity of a hypothesis set $\calH$
-    - E.g., VC dimension of the model
-      `#cite("abumostafa2012learning")`{=typst}
+    - E.g., VC dimension of the model `#cite("abumostafa2012learning")`{=typst}
   - Complexity of both $h$ and $\calH$ are related by counting:
-    - If you need $l$ bits to specify $h$, then $h$ is one of $2^l$ elements of
-      set $\calH$
-
+    - If you need $l$ bits to specify $h$, then $h$ is one of $2^l$ elements of set
+      $\calH$
 \begingroup \footnotesize
 ```{=typst}
 #styled-table(
@@ -57,10 +56,11 @@
 \endgroup
 
 * Model Soundness
+
 - @Model should tell a story@
   - You cannot blindly accept results of modeling
-  - Ask: _"What criticisms would you give if the model was presented for the
-    first time?"_
+  - Ask: _"What criticisms would you give if the model was presented for the first
+    time?"_
 
 - Compare model to a @benchmark@ by computing performance to a model that outputs:
   - Always 0 or 1
@@ -71,25 +71,24 @@
 - @Fact@: A **perfect fit can mean nothing**, e.g.,
   - Get 2 data points on a plane
     - Fit data with a linear relationship
-  - The perfect fit means nothing since: there is always a line between 2 points
+  - The perfect fit means nothing since: There is always a line between 2 points
     - The model (line) is too complex for data set (only 2 points)
   - Data cannot falsify hypothesis
 
 * Sampling Bias (1/2)
+
 - @Definition@: **Sampling bias** occurs when data is not representative of the
   intended population
   - Biased sampling leads to biased outcomes
     - The model views the world through training data
-  - Formalized by Hoeffding's hypothesis in ML theory: training and testing
-    distributions are the same
-    `#cite("abumostafa2012learning")`{=typst}
+  - Formalized by Hoeffding's hypothesis in ML theory: Training and testing
+    distributions are the same `#cite("abumostafa2012learning")`{=typst}
 
 - @Causes of Sampling Bias@
   - _Non-random sampling_: Favors certain outcomes or groups
   - _Undercoverage_: Inadequate representation of some population members
   - _Survivorship bias_: Includes only successful subjects
   - _Self-selection bias_: Participants choose to participate, introducing bias
-
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#EEEDFE', 'primaryBorderColor': '#7F77DD', 'primaryTextColor': '#26215C', 'lineColor': '#888888', 'fontFamily': 'Helvetica'}}}%%
 mindmap
@@ -110,6 +109,7 @@ mindmap
   - Leads to incorrect or unfair decisions
 
 * Sampling Bias (2/2)
+
 - @Examples@
   - Training facial recognition on lighter-skinned faces reduces accuracy on
     darker-skinned faces
@@ -123,14 +123,13 @@ mindmap
   - If data points have zero probability ($\Pr = 0$), no remedies possible
 
 * Data Snooping (1/2)
+
 - @Definition@: **Data snooping** occurs when test set information improperly
-  influences model-building
-  `#cite("hastie2009statlearn")`{=typst}
+  influences model-building `#cite("hastie2009statlearn")`{=typst}
 
 - @Causes of Data Snooping@
   - _Train-test contamination_: Test data leaks into training
-    - E.g., Using test data during feature engineering, model selection, or
-      tuning
+    - E.g., Using test data during feature engineering, model selection, or tuning
   - _Multiple hypothesis testing_: Trying many models inflates performance
     - E.g., p-hacking but also more subtle phenomena
 
@@ -144,16 +143,16 @@ mindmap
   - Common pitfall in machine learning workflows
 
 * Data Snooping (2/2)
+
 - @Examples@
-  - Choosing features based on the full dataset before splitting gives foresight
-    not present in deployment
+  - Choosing features based on the full dataset before splitting gives foresight not
+    present in deployment
   - E.g., demean the entire data and then split in train / test
 
 - @Preventive Strategies@
   - Keep training, validation, and test sets separate
     - Fit preprocessing steps only on training data, then apply to test data
   - Use cross-validation properly
-
 \begingroup \footnotesize
 ```{=typst}
 #styled-table(
@@ -167,6 +166,7 @@ mindmap
 \endgroup
 
 * "Burning the Test Set"
+
 - @Problem@ `#cite("hastie2009statlearn")`{=typst}
   - Repeated test set use during development leaks into training $\to$ overfitting to
     _test data_
@@ -184,30 +184,30 @@ mindmap
     - Use Bonferroni or False Discovery Rate corrections
   - _Theoretical tools_:
     - VC dimension reflects learning capacity, including repeated trials
-    - Minimum Description Length (MDL) penalizes complex models and repeated
-      fitting
+    - Minimum Description Length (MDL) penalizes complex models and repeated fitting
 
 ## Research Methodology
 
 * How to Achieve Out-Of-Sample Fit
-- @Goal@: Choose an hypothesis $g \in \calH$ approximates the unknown target
-  function $f$ `#cite("abumostafa2012learning")`{=typst}
+
+- @Goal@: Choose an hypothesis $g \in \calH$ approximates the unknown target function
+  $f$ `#cite("abumostafa2012learning")`{=typst}
   - $g \approx f$ means $E_{out}(g) \approx 0$
 
-- @Solution@:
+- @Solution@
   - Build a model that has:
     - Good in-sample performance $E_{in}(g) \approx 0$
     - Good generalization $E_{out}(g) \approx E_{in}(g)$
   - Together good out-of-sample performance $E_{out}(g) \approx 0$
 
 * What If Out-Of-Sample Fit Is Poor?
-- @Problem@: the model performs well in sample ($E_{in} \approx 0$) but poorly out of
-  sample ($E_{out} \gg E_{in}$)
-  `#cite("abumostafa2012learning")`{=typst}
+
+- @Problem@: The model performs well in sample ($E_{in} \approx 0$) but poorly out of
+  sample ($E_{out} \gg E_{in}$) `#cite("abumostafa2012learning")`{=typst}
   - In-sample performance is optimistic
   - Model is overfitted and fails to generalize
 
-- @Solution@:
+- @Solution@
   1. Run diagnostics
      - Gain insight on what works/doesn't to improve performance before long-term
        projects
@@ -222,7 +222,6 @@ mindmap
      - Regularization
        - Decrease regularization $\lambda$ to fix high bias
        - Increase regularization $\lambda$ to fix high variance
-
 \begingroup \footnotesize
 ```{=typst}
 #styled-table(
@@ -239,6 +238,7 @@ mindmap
 \endgroup
 
 * Why Using a Lot of Data?
+
 - @Fact@: **Several studies** show that: `#cite("abumostafa2012learning")`{=typst}
   - Different algorithms/models have remarkably similar performance
   - Increasing training set improves performance
@@ -262,7 +262,8 @@ mindmap
     $$
 
 * What to Do When You Have Lots of Data?
-- You have $m$ = 100M examples in data set: great!
+
+- You have $m$ = 100M examples in data set: Great!
 
 - @Cons@
   - Scalability issue (slow, lots of compute) $\to$ require work on infrastructure
@@ -270,22 +271,26 @@ mindmap
 ::: columns
 :::: {.column width=70%}
 
-- @Algorithm@:
+- @Algorithm@
   1. Plot learning curves (in-sample and out-of-sample performance) for increasing
-     amount of data $m$ = 1k, 10k, 100k, 1M, ...
+     amount of data $m$ = 1k, 10k, 100k, 1M,
   2. Diagnose the current situation
   - If model has _large bias_
     - Training and validation performance are similar at 1M
-    - Next step: use more complex model rather than training on 100M instances
+    - Next step: Use more complex model rather than training on 100M instances
   - If model has _large variance_
-    - Next step: use all 100M instances to train the model
+    - Next step: Use all 100M instances to train the model
+
 ::::
 :::: {.column width=30%}
+
 ![](msml610/lectures_source/figures/L02.6.Learning_curves.png)
+
 ::::
 :::
 
 * Right and Wrong Approach to Research
+
 - @Problem@: It is rarely clear how to prioritize the different possible tasks
 
 - @Bad approach@
@@ -302,17 +307,18 @@ mindmap
      - Compute learning and bias-variance curves
      - Understand issues before fixing (avoid premature optimization)
   4. Understand the problem (debug)
-     - Review misclassified emails manually: what are their types?
+     - Review misclassified emails manually: What are their types?
   5. Sometimes you just need to try approaches to see if they work
 
 * Example: Spam Filter Classification
+
 - You use $N$ = 5 fixed words in an email to distinguish spam / non-spam emails using
   logistic regression
   - Words are `buy`, `now`, `deal`, `discount`, `<your name>`
 
-- @Goal@: **improve classifier performance**
+- @Goal@: **Improve classifier performance**
   1. _Collect more data_
-     - E.g., honeypot project: fake email account to collect spam
+     - E.g., honeypot project: Fake email account to collect spam
   2. _Use better features_
      - E.g., email routing info since spammers use unusual accounts, mask emails as
        legitimate
@@ -323,6 +329,7 @@ mindmap
      - Use stemming software
 
 * Why Do We Do Things?
+
 - @Fact@: **Always, always, always:**
   - Understand the purpose of the task
     - Ask: _"Why are we doing something?"_
@@ -343,6 +350,7 @@ mindmap
     - A: Set target number of new leads or click-through rates
 
 * Summary of the Results, Next Steps
+
 - @Always have a summary of results@
   - High-level list of discoveries / major findings
     - E.g., "smoothing model coefficients helps the model"
@@ -387,21 +395,21 @@ mindmap
 ![](msml610/lectures_source/figures/L02.6.Monalisa_incremental.png){width=90%}
 
 // TODO(ai_gp): Make the font smaller and centered
+
 _Incremental_
-
 \vspace{0.5cm}
-
 ![](msml610/lectures_source/figures/L02.6.Monalisa_iterative.png){width=90%}
 
 // TODO(ai_gp): Make the font smaller and centered
+
 _Iterative_
-
 \vspace{0.5cm}
-
 ![](msml610/lectures_source/figures/L02.6.Skateboard.png){width=90%}
 
 // TODO(ai_gp): Make the font smaller and centered
+
 _Incremental vs Iterative_
+
 ::::
 :::
 

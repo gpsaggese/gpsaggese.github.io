@@ -280,25 +280,17 @@ class Test_insert_provenance_tag(hunitest.TestCase):
         """
         Test edge case: empty text in "md" mode still receives the
         provenance tag.
-
-        This does not use `self.helper()` because the expected output
-        legitimately ends with blank lines, and `hprint.dedent()` (used by
-        `helper()`) always strips trailing blank lines, so it cannot
-        represent this case.
         """
         # Prepare inputs.
         text = ""
         mode = "md"
-        tag = "git_hash=abc1234 timestamp=20250101_000000"
         # Prepare outputs.
-        expected = f"<!-- {tag} -->\n\n"
+        expected = """
+        <!-- {tag} -->
+        """
+        expected += "\n\n"
         # Run test.
-        with mock.patch.object(
-            csgeboch.hgit, "get_generation_tag", return_value=tag
-        ):
-            actual = csgeboch._insert_provenance_tag(text, mode)
-        # Check outputs.
-        self.assertEqual(actual, expected)
+        self.helper(text, mode, expected)
 
 
 # #############################################################################

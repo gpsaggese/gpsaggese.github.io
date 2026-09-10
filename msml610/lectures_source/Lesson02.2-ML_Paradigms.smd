@@ -10,10 +10,10 @@
 
 * Machine Learning Paradigms: A Taxonomy
 
-- @Question@: How do the paradigms differ in _how they access data and
-  feedback_?
+- @Question@: How do the paradigms differ in _how they access data and feedback_?
 
 // TODO(ai_gp): Add a ... since there are more axes to consider
+
 ```graphviz[width=80%]
 digraph LearningParadigms {
   graph [rankdir=LR, splines=curved, bgcolor="transparent",
@@ -61,8 +61,7 @@ digraph LearningParadigms {
     - E.g., K-means clustering for customer segmentation
   - @Reinforcement Learning@
     - Learn through _interaction with an environment_, receiving rewards/punishments
-    - E.g., deep Q-Learning for playing Atari games
-      `#cite("mnih2015dqn")`{=typst}
+    - E.g., deep Q-Learning for playing Atari games `#cite("mnih2015dqn")`{=typst}
   - @Self-Supervised Learning@
     - Generate _pseudo-labels from unlabeled data_ to pre-train models
     - E.g., BERT (Masked Language Modeling) `#cite("devlin2019bert")`{=typst}
@@ -105,7 +104,7 @@ digraph LearningParadigms {
 
 - @Evolutionary Learning@
   - Optimize model structures or parameters, _gradient-free_, via a global search
-    over evolutionary algorithms inspired by natural selection and genetics
+    over evolutionary algorithms inspired by natural selection
   - E.g., genetic algorithms
 
 - @Curriculum Learning@
@@ -116,8 +115,7 @@ digraph LearningParadigms {
 - @Multi-Agent Learning@
   - _Multiple agents_ learn and interact in shared environments, often in
     game-theoretic settings (e.g., competition, collaboration)
-  - E.g., AlphaStar to play StarCraft II
-    `#cite("vinyals2019alphastar")`{=typst}
+  - E.g., AlphaStar to play StarCraft II `#cite("vinyals2019alphastar")`{=typst}
 
 ## The Three Core Paradigms
 
@@ -159,18 +157,19 @@ digraph LearningParadigms {
   - **Density Estimation**: Estimate probability distribution of data
     - E.g., anomaly detection in server logs
   - **Association Rule Learning**: Discover interesting relations between variables
-    - E.g., market basket analysis (e.g., "people who buy X also buy Y")
+    - E.g., market basket analysis (e.g., _"people who buy X also buy Y"_)
 
 - @Algorithms@
   - K-means `#cite("macqueen1967kmeans")`{=typst}, PCA, Autoencoders
 
 * Reinforcement Learning
 
-- @Definition@: RL learns by _interacting with an environment_ to _maximize
-  cumulative reward_ `#cite("suttonbarto2018rlbook")`{=typst}
+- @Definition@: **Reinforcement learning** learns by _interacting with an
+  environment_ to _maximize cumulative reward_
+  `#cite("suttonbarto2018rlbook")`{=typst}
   - Learn policy $\pi(s) \to a$ that maximizes expected reward
-  - Trade-off between exploration (trying new actions) and exploitation (using known
-    good actions)
+  - Trade-off between _exploration_ (trying new actions) and _exploitation_ (using
+    known good actions)
   - Reward signals can be sparse, delayed, or hard to specify outside games and
     simulators, which makes credit assignment hard
   - Often involve physical simulation or real-world interaction
@@ -218,31 +217,32 @@ digraph BayesianFlow {
 
 * Reinforcement Learning: Examples
 
-- @Applications@
-  - **Game playing**: Learn strategies through trial and error
-    - E.g., AlphaGo mastering the game of Go `#cite("silver2016alphago")`{=typst}
-  - **Robotics**: Learn control policies for movement and manipulation
-  - **Autonomous driving**: Learn safe and efficient driving behaviors
-  - **Resource management**: Optimize allocation of limited resources over time
-    - E.g., data center cooling or CPU job scheduling
-  - **Personalized recommendations**: Adapt suggestions based on user interaction
-    - E.g., newsfeed ranking adjusting based on user clicks
-  - **Healthcare**: Optimize treatment plans over time
+- @Game playing@: Learn strategies through trial and error
+  - E.g., AlphaGo mastering the game of Go `#cite("silver2016alphago")`{=typst}
+
+- @Robotics@: Learn control policies for movement and manipulation
+
+- @Autonomous driving@: Learn safe and efficient driving behaviors
+
+- @Resource management@: Optimize allocation of limited resources over time
+  - E.g., data center cooling or CPU job scheduling
+
+- @Personalized recommendations@: Adapt suggestions based on user interaction
+  - E.g., newsfeed ranking adjusting based on user clicks
+
+- @Healthcare@: Optimize treatment plans over time
 
 ## Machine Learning in Practice
 
-* Machine Learning Flow (1/2)
+* Machine Learning Flow
 
-- @Components@: The stages of the ML pipeline, in order
+- A ML pipeline consists of **multiple stages**:
   - _Question_: E.g., "How can we predict house prices?"
   - _Input data_: E.g., historical data of house sales
   - _Features_: E.g., number of bedrooms, location, square footage
   - _Model_: E.g., linear regression, decision trees
   - _Parameters_: E.g., learning rate, number of trees in a random forest
   - _Evaluation_: E.g., accuracy, precision, recall
-
-* Machine Learning Flow (2/2)
-
 ```graphviz
 digraph BayesianFlow {
     rankdir=LR;
@@ -290,8 +290,8 @@ digraph BayesianFlow {
   - Define the problem clearly
   - E.g.,:
     - **Bad**: _"How can we improve sales?"_
-    - **Good**: _"What factors most significantly impact sales of product X in region
-      Y during season Z?"_
+    - **Good**: _"What factors impact sales of product X in region Y during season
+      Z?"_
 
 * Input Data: Fit, Quality, and Scale
 
@@ -300,7 +300,7 @@ digraph BayesianFlow {
   - Training set must $\approx$ test set $\approx$ prod data
 
 - Relationship between data and prediction goal is @not always direct@
-  - E.g., interested in prices but predict supply and demand instead
+  - E.g., interested in prices, but predict supply and demand instead
 
 - Poor-quality data leads to inaccurate predictions
   - _"Garbage in, garbage out"_
@@ -319,8 +319,14 @@ digraph BayesianFlow {
 
 * What Makes a Good Feature
 
-- @Definition@: **Features** provide high-level information about inputs
-  - E.g., use intensity and symmetry for scanned numbers instead of raw bit maps
+- @Definition@: **Features** provide high-level information about inputs, e.g.,
+  - Use intensity and symmetry for scanned numbers instead of raw bit maps
+  - Use square footage, number of bedrooms, and school-district rating to predict
+    price instead of raw photos of the house
+  - Use debt-to-income ratio and number of late payments to predict default instead
+    of the raw transaction log
+
+// TODO(ai_gp): Add an example figure
 
 - @Characteristics@
   1. Retain relevant information
@@ -340,7 +346,10 @@ digraph BayesianFlow {
 ::: columns
 :::: {.column width=50%}
 
-- There are several desirable properties, often in tension with each other
+- There are **several desirable properties**, often in tension with each other
+
+- @Accurate@
+
 - @Simple@
   - Easier to implement and maintain
   - Reduces the risk of overfitting
@@ -391,14 +400,14 @@ digraph ModelTradeoffs {
 ::::
 :::
 
-- @Accurate@
-  - Often accuracy is traded off for remaining characteristics
 - @Interpretable@
   - Allow users to understand and trust the model's decisions
     - E.g., decision trees are great since they produce a "reasoning"
+
 - @Fast@
   - Reduce computational costs to train and test
     - E.g., for real-time applications
+
 - @Scalable@
   - Can handle large datasets efficiently (growing data and user bases)
     - E.g., in the Netflix prize, the algorithm that won wasn't implemented since it
@@ -414,11 +423,11 @@ digraph ModelTradeoffs {
   3. **Combine** solutions to solve initial problem
 
 - @Remark@
-  - Overall pipeline performance $p_{system}$ is **not a weighted sum** of the
+  - Overall pipeline performance $p_{system}$ is _not a weighted sum_ of the
     per-stage performances $p_i$
-  - **Stage errors compound**: A mistake early in the pipeline propagates to every
+  - _Stage errors compound_: A mistake early in the pipeline propagates to every
     later stage
-  - **Ceiling analysis** measures each stage's marginal contribution to system
+  - _Ceiling analysis_ measures each stage's marginal contribution to system
     performance:
     $$
     \Delta p_{system} \approx \alpha_i \cdot \Delta p_i
@@ -434,13 +443,12 @@ digraph ModelTradeoffs {
   - OCR = "Optical Character Recognition"
 
 - @Stages of ML pipeline for OCR@
-  - Text detection: Find text areas in the picture
+  - Text detection: Find areas in the picture containing text
   - Character segmentation: Split text into letter boxes
     - E.g., `h e l l o`
   - Character classification: Classify characters individually
   - Spelling correction: Fix text errors using context
     - E.g., `hell0` corrected to `hello`
-
 ```graphviz
 digraph OCRPipeline {
     bgcolor="transparent";
@@ -481,87 +489,83 @@ digraph OCRPipeline {
 }
 ```
 
-- @Sliding window approach@: The text location and size is unknown
-  - **Text detection**
+* Example of Photo OCR System
+
+- @Problem@: The text location and size is unknown: How to find it?
+
+- @Solution@: We can recursively break a stage / problem into stages / sub-problems
+  - **Sliding window approach** for text detection
     - Train classifier to _recognize letters vs non-letters_ (simpler!)
     - Scan image in two directions with different sizes for text
     - Evaluating the classifier on a window is cheap
     - Create text likelihood map (e.g., heatmap) using classifier probabilities
     - Enclose text areas in boxes
     - Discard boxes not fitting aspect ratio (valid text width > height)
-  - Same approach for **character segmentation** and find characters
+  - Can use the same approach for _character segmentation_ to find characters
 
 * Getting More Data
 
-- The **ideal recipe for ML** is: _"low-bias algorithm + massive amount of data"_
+- The @ideal recipe for ML@ is: _"low-bias algorithm + massive amount of data"_
 
-- @Problem@: How do we know we are using the data effectively?
+- @Problem@: How do we know we are **using the data effectively**?
   - E.g., use _learning curves_ to make sure we are taking advantage of more data
 
 - @Problem@: How to get a **large amount of data**?
   - Always ask yourself: _"how much work is to get 10x more data than we currently
     have?"_
   - Often it is not that difficult:
-    1. **Artificial data**
+    1. _Artificial data_
        - E.g., synthesize / amplify data set
-    2. **Collect and label by hand**
+    2. _Collect and label by hand_
        - E.g., crowd sourcing (e.g., Amazon Mechanical Turk or other services), LLMs
          (risky)
 
 * Getting Mode Data: OCR Pipeline
 
-- @Question@: How can we increase data set size for OCR problem?
-  1. **Synthesize data set**
+- @Question@: How can we increase data set size for **OCR problem**?
+  1. _Synthesize data set_
      - Use font libraries to generate large training sets
      - Paste characters against random backgrounds
      - Apply scaling, distortion, adding noise, etc
-  2. **Amplify a data set**
+  2. _Amplify a data set_
      - Add examples by warping/distorting existing examples
-  3. **Distill other models**
-  4. **Buy or create datasets**
-  5. **Crowdsourcing** / **Gamification**
-
-- For 1. and 2., transformations and noise should be specific to the application
-  domain
-  - E.g., Gaussian noise is not always appropriate
+     - Transformations and noise should be specific to the application domain
+       - E.g., Gaussian noise is not always appropriate
+  3. _Distill other models_
+  4. _Buy or create datasets_
+  5. _Crowdsourcing_ / _gamification_
 
 * Ceiling Analysis for ML Pipeline
 
-- @Fact@: The **most valuable resource is time**
-  - Researchers' time is extremly expensive
-  - E.g.,
-    - You work on optimization for months
-    - Find out that the optimization doesn't make much difference
+- @Fact@: The **most valuable resource is time** and researchers' time is extremly
+  expensive, e.g.,
+  - You work on an optimization for months
+  - Find out that the optimization doesn't make much difference
 
 - @Problem@: On which part of the pipeline should time/resource be spent?
 
 - @Solution@: Ceiling analysis to analyze pipeline performance
-  - Use a single number for system performance
-    - Too many metrics make things difficult
+  - Use a single number for system performance (not too many numbers)
     - E.g., accuracy for OCR
   - For each component, in pipeline order:
     - Mock component with an "oracle" (always give correct output)
     - Leave other components untouched
     - Compute pipeline performance
-  - The component whose oracle gives the largest jump in end-to-end performance is
-    the highest-value target for further work
-  - Measure, don't guess!
-    - "Premature optimizations are the root of all evil"
-      `#cite("knuth1974premature")`{=typst}
+  - Work on the component whose oracle gives the largest jump in end-to-end
+    performance
+    - Measure, don't guess!
+    - _"Premature optimizations are the root of all evil"_ (Knuth, 1974)
 
 * Ceiling Analysis for ML Pipeline: OCT Example
 
-::: columns
-:::: {.column width=30%}
-
-- @Example@: OCR pipeline, baseline accuracy 72%
-  - Text detection is the highest-value target: Perfecting it alone accounts for most
-    of the achievable gain
-
-::::
-:::: {.column width=70%}
+- @Example@: OCR pipeline
+  - The baseline accuracy is 72%
+  - Text detection is the highest-value target
+    - If it was perfect +17% in accuracy
+  - Perfecting it alone accounts for 28% which is most of the achievable gain
 
 // TODO(ai_gp): Make the first column bigger so the text fits better.
+
 ```{=typst}
 #styled-table(
   headers: ("Component made perfect", "Accuracy", "Gain"),
@@ -573,9 +577,6 @@ digraph OCRPipeline {
   ),
 )
 ```
-
-::::
-:::
 
 * References
 

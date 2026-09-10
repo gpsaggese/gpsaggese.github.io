@@ -29,8 +29,8 @@
   $$
   h_{\vw}(\vx) =
   \begin{cases}
-  +1 & \Pr(y=1|\vx; \vw) \ge 0.5 \\
-  -1 & \Pr(y=1|\vx; \vw) < 0.5 \\
+  +1 & \Pr(y=1|\vx\text{;} \vw) \ge 0.5 \\
+  -1 & \Pr(y=1|\vx\text{;} \vw) < 0.5 \\
   \end{cases}
   $$
 

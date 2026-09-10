@@ -269,63 +269,6 @@ digraph RestaurantExample {
 ::::
 :::
 
-* Common Sense Reasoning: Restaurant Example
-
-::: columns
-:::: {.column width=45%}
-
-- **Initial facts**
-  - $Bob$ enters a $Restaurant$
-  - $Bob$ sits at a $Table$
-
-- **Common sense knowledge**
-  - $Customers$ who sit $\implies$ intend to order
-  - $Waiters$ bring $Menu$ before taking order
-  - $Customers$ pay before leaving
-
-- **Reasoning steps**
-  - $Bob$ sat at table $\implies$ intends to eat
-  - Therefore, $Bob$ will get menu and order
-
-- **New information**
-  - $Bob$ asks for directions only
-  - Revise: $Bob$ will NOT order
-
-::::
-:::: {.column width=50%}
-
-```graphviz
-digraph RestaurantExample {
-    rankdir=TB;
-    node [shape=box, style=filled, fontname=Helvetica];
-    edge [fontname=Helvetica, fontsize=10];
-
-    bob_enters [label="Bob enters\nRestaurant", fillcolor="#FFD1A6"];
-    bob_sits [label="Bob sits at\nTable", fillcolor="#FFD1A6"];
-
-    common_sense [label="Common Sense:\nSit at table\n→ intends to eat", fillcolor="#C6A6F4"];
-
-    infer1 [label="Infer: Bob\nintends to eat", fillcolor="#B2E2B2"];
-    menu [label="Server brings\nMenu", fillcolor="#B2E2B2"];
-    order [label="Bob places\nOrder", fillcolor="#B2E2B2"];
-
-    new_info [label="NEW: Bob asks\nfor directions\nonly", fillcolor="#F4A6A6"];
-    revise [label="REVISE:\nNo order!", fillcolor="#A6E7F4"];
-
-    bob_enters -> bob_sits;
-    bob_sits -> common_sense [label="apply"];
-    common_sense -> infer1 [label="conclude"];
-    infer1 -> menu;
-    menu -> order;
-
-    order -> new_info [label="contradicts"];
-    new_info -> revise [label="revise"];
-}
-```
-
-::::
-:::
-
 * Open World vs Closed World Assumptions
 
 \begingroup \small

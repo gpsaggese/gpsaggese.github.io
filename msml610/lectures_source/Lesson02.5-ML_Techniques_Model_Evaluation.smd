@@ -22,8 +22,8 @@
 - @Solution@: Evaluate models **systematically using a single number**
   - Implement _metrics_ (e.g., accuracy, F1 score) for insight
   - Use _cross-validation_ for model validation
-  - _Statistical tests_ to ensure differences are not random
-    - Utilize hypothesis testing for genuine improvements
+  - Use _statistical tests_ to ensure differences are not random
+    - Utilize hypothesis testing
     - Conduct A/B testing in real-world
 
 * In-Sample vs Out-Of-Sample Error Expressions
@@ -73,14 +73,16 @@
 
 - @Lots of data scenario@
   - It's ideal to have lots of data (ideally infinite)
-  - Learn on lots of data $\to$ fit all degrees of freedom of a complex model
-  - Predict on lots of data $\to$ assess precise out-of-sample performance
+  - You can
+    - Learn on lots of data $\to$ fit all degrees of freedom of a complex model
+    - Predict on lots of data $\to$ assess precise out-of-sample performance
+
 - @Scarce data scenario@
   - Often data is _scarce_
     - E.g., facial recognition datasets with limited annotated data
   - Cannot use all data as a training set
   - Hold out data to estimate performance metrics and bounds
-    - Split into train and test sets (see sizing heuristics)
+    - Split into train and test sets (sizing heuristics)
     - Use cross-validation to maximize data usage
   - Other approaches:
     - Augment data artificially, like in image processing
@@ -92,7 +94,7 @@
   - _Distinct_
   - _Representative_ of the problem
     - E.g., each class in all sets represented according to original data
-  - Sized based on data and problem needs
+  - _Sized_ based on data and problem needs
 
 - @Techniques@ to ensure sets have the **same distribution**:
   - _Stratified sampling_
@@ -105,27 +107,29 @@
 
 * Rule of Thumbs for Data Set Splits
 
-- If $n$ is **large** $\to$ use a 60-20-20 split
+- If $n$ is @large@ $\to$ use a 60-20-20 split
   - Training: 60%
   - Validation: 20%
   - Test: 20%
 
-- If $n$ is **medium** $\to$ use a 60-40 split
+- If $n$ is @medium@ $\to$ use a 60-40 split
   - Training: 60%
   - Test: 40%
   - Not possible to learn hyperparameters, so no validation set
 
-- If $n$ is **small** $\to$ use cross-validation and report "small data size"
+- If $n$ is @small@ $\to$ use cross-validation and report "small data size"
   - Use K-fold cross-validation
   - Be cautious of the increased chance of high accuracy by chance
   - Is machine learning even suitable for this problem?
 
+- Of course $n$ "large" / "medium" / "small" is relative
+
 * Training Data
 
-- @Question@: How much data is enough to data?
+- @Question@: How much data is _enough data_?
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=50%}
 
 - @Solution@: More data is generally better, though returns diminish after a certain
   volume
@@ -136,7 +140,7 @@
 - You should use _learning curves_ to track this effect
 
 ::::
-:::: {.column width=40%}
+:::: {.column width=50%}
 
 ![](msml610/lectures_source/figures/L02.5.Learning_Curves_Example.png)
 
@@ -145,7 +149,7 @@
 
 * Using Test Data
 
-- @Question@: Can you use test set for training?
+- @Question@: Can you _ever_ use test set for training?
 
 - @Solution@: Only after the test set has been used for the single, final performance
   estimate, reuse all data (including the test set) for deployment
@@ -153,48 +157,30 @@
   - The reported $E_{test}$ now estimates the **procedure**, not the exact deployed
     model, since the deployed model was retrained on more data
 
-// TODO(ai_gp): Convert it into mermaid
-```tikz
-% Timeline showing test set usage - professional version
-\draw[thick, ->] (0,0) -- (11,0);
-\node[below] at (5.5,-0.5) {Development Pipeline Timeline};
+::: columns
+:::: {.column width=65%}
 
-% Axes and grid
-\draw[thin, gray] (0,0) grid[step=0.5] (11,0);
+// TODO(ai_gp): Make the font bigger
 
-% Phase 1: Training
-\draw[fill=blue!40, draw=blue, thick] (0.5,0.3) rectangle (3,0.9);
-\node[font=\bfseries] at (1.75,0.6) {Training};
-\node[below, font=\small\bfseries] at (1.75,-0.8) {60\% data};
-
-% Phase 2: Validation
-\draw[fill=green!40, draw=green, thick] (3.5,0.3) rectangle (5.5,0.9);
-\node[font=\bfseries] at (4.5,0.6) {Validation};
-\node[below, font=\small\bfseries] at (4.5,-0.8) {20\% data};
-
-% Phase 3: Testing
-\draw[fill=red!40, draw=red, thick] (6,0.3) rectangle (8,0.9);
-\node[font=\bfseries] at (7,0.6) {Testing};
-\node[below, font=\small\bfseries] at (7,-0.8) {20\% data};
-
-% Phase 4: Deployment
-\draw[fill=purple!40, draw=purple, thick] (8.5,0.3) rectangle (10.5,0.9);
-\node[font=\bfseries] at (9.5,0.6) {Deploy (Retrain)};
-\node[below, font=\small\bfseries] at (9.5,-0.8) {100\% data};
-
-% Annotations above phases
-\node[above, font=\small\bfseries] at (1.75,1.3) {Model selection};
-\node[above, font=\small\bfseries] at (7,1.3) {Final evaluation};
-\node[above, font=\small\bfseries] at (9.5,1.3) {Production};
-
-% Arrow showing data reuse
-\draw[dashed, thick, ->] (8,0.15) to (8.5,0.15);
-\node[font=\small\bfseries, gray] at (8.25,-1.1) {Reuse test data};
-
-% Legend
-\node[anchor=west, font=\small\bfseries] at (0.5,-1.8) {Note: Only retrain model with full dataset after test set evaluation is complete};
+```mermaid
+timeline
+  section Training
+    60% data : Training : Model selection
+  section Validation
+    20% data : Validation : Model selection
+  section Testing
+    20% data : Testing : Final evaluation
+  section Deployment
+    100% data : Deploy (Retrain) : Production
 ```
 
+::::
+:::: {.column width=30%}
+
+![](msml610/lectures_source/figures/L02.5.Testing_Data_For_Training.png)
+
+::::
+:::
 
 ## Choosing an Error Measure
 
@@ -210,64 +196,15 @@
   - True/false positives/negatives
   - In medical diagnosis, prioritize minimizing false negatives
 
-- @Characteristics@ of a good error measure:
-  - **Plausible**:
+- @Characteristics@ of a **good error measure**:
+  - _Plausible_:
     - E.g., squared error for Gaussian noise
-  - **Friendly**:
+  - _Friendly_:
     - E.g., measures allowing closed-form solutions simplify calculations
     - Convex optimization-friendly measures ensure algorithms find global minimum
       easily
 
-* Error Measures: Fingerprint Verification Example
-
-- @Example@: In **fingerprint verification**:
-  - Recognizing a valid fingerprint $\to$ no error
-  - Otherwise $\to$ false positive or false negative
-
-- @Remark@: Error weight depends on the application
-
-// TODO(ai_gp): Convert it to typst
-| **Application** | **False Positive** | **False Negative** |
-|------------------|--------------------------|--------------------------|
-| **Supermarket** | ![](assets/emoji/check_mark.png){ width=20px } Minor issue | ![](assets/emoji/warning.png){ width=20px } Costly |
-| | One extra discount | Annoyed customer, delays |
-| **CIA Building** | ![](assets/emoji/skull.png){ width=20px } Critical | ![](assets/emoji/check_mark.png){ width=20px } Acceptable |
-| | Security breach | Triggers further checks |
-
-- For the same problem in two set-ups, the error measure is the _opposite_!
-
-* How to Measure Classifier's Performance?
-
-- @Success/hit/win rate@ (or error/miss rate)
-  - Measures correct predictions proportion
-  $$
-  \text{accuracy} = \frac{\text{TP} + \text{TN}}{\text{TP} + \text{TN} + \text{FP} + \text{FN}}
-  $$
-  - Important for overall accuracy
-  - E.g., 80 correct out of 100 = 80% success rate
-
-- @Log probability/cross-entropy error@
-  - Evaluates classification with probabilities 0 to 1
-  $$
-  \text{cross-entropy} = -\frac{1}{N} \sum_{i=1}^N [y_i \log(p_i) + (1 - y_i) \log(1 - p_i)]
-  $$
-  - Lower cross-entropy loss = better performance
-
-- @Precision/recall/F-score@
-  - Useful for imbalanced data
-  - _Precision_: Correctly predicted positives / total predicted positives
-    $$
-    \text{precision} = \frac{\text{TP}}{\text{TP} + \text{FP}}
-    $$
-    - E.g., 0.75 precision = 75% true positives
-  - _Recall_: Correctly predicted positives / actual positives
-    $$
-    \text{recall} = \frac{\text{TP}}{\text{TP} + \text{FN}}
-    $$
-    - E.g., 0.60 recall = 60% actual positives identified
-  - _F-score_: Weighted harmonic mean of precision and recall (see F-Score section)
-
-### Regression Metrics
+// ### Regression Metrics
 
 * Mean Squared Error (MSE)
 
@@ -329,7 +266,40 @@
 - @Cons@
   - More difficult to evaluate
 
-### Classification Metrics
+* How to Measure Classifier's Performance?
+
+- @Success/hit/win rate@ (or error/miss rate)
+  - Measures correct predictions proportion
+    $$
+  \text{accuracy} = \frac{\text{TP} + \text{TN}}{\text{TP} + \text{TN} + \text{FP} + \text{FN}}
+    $$
+  - Important for overall accuracy
+  - E.g., 80 correct out of 100 = 80% success rate
+
+- @Log probability/cross-entropy error@
+  - Evaluates classification with probabilities 0 to 1
+    $$
+  \text{cross-entropy} = -\frac{1}{N} \sum_{i=1}^N [y_i \log(p_i) + (1 - y_i) \log(1 - p_i)]
+    $$
+  - Lower cross-entropy loss = better performance
+
+* How to Measure Classifier's Performance?
+
+- @Precision/recall/F-score@
+  - Useful for imbalanced data
+  - _Precision_: Correctly predicted positives / total predicted positives
+    $$
+    \text{precision} = \frac{\text{TP}}{\text{TP} + \text{FP}}
+    $$
+    - E.g., 0.75 precision = 75% true positives identified
+  - _Recall_: Correctly predicted positives / actual positives
+    $$
+    \text{recall} = \frac{\text{TP}}{\text{TP} + \text{FN}}
+    $$
+    - E.g., 0.60 recall = 60% actual positives identified
+  - _F-score_: Weighted harmonic mean of precision and recall
+
+// ### Classification Metrics
 
 * Error Metrics for Skewed Classes
 
@@ -346,6 +316,27 @@
   - But only 0.5% of patients have cancer
     - A trivial classifier that always outputs $y = 0$ has a 0.5% error rate!
     - Now a 1% error rate does not look good anymore
+
+* Error Measures: Fingerprint Verification Example
+
+- @Example@: In **fingerprint verification**:
+  - Recognizing a valid fingerprint $\to$ no error
+  - Otherwise $\to$ false positive or false negative
+
+- @Remark@: Error weight depends on the application
+```{=typst}
+#styled-table(
+  headers: ("Application", "False Positive", "False Negative"),
+  rows: (
+    ("Supermarket", "Minor issue\n(One extra discount)", "Costly\n(Annoyed customer, delays)"),
+    ("CIA Building", "Critical\n(Security breach)", "Acceptable\n(Triggers further checks)"),
+  ),
+  col-widths: (2fr, 3.2fr, 3.2fr),
+  bold-first-col: true,
+)
+```
+
+- Same outcome but the error measure is the _opposite_ in two set-ups!
 
 * Confusion Matrix
 
@@ -480,9 +471,31 @@
 
 - @Key idea@: A trivial classifier has precision or recall close to 0
 
+* F-Score
+
+- @Definition@: The **F-score** is defined as the _harmonic mean of precision and
+  recall_:
+  $$
+  \text{F-score}
+  \defeq \frac{2}{\frac{1}{P} + \frac{1}{R}}
+  = 2 \frac{P \cdot R}{P + R}
+  $$
+
+- @Interpretation@
+  - Trivial classifiers: $P = 0$ or $R = 0$ $\implies$ F-score = 0
+  - Perfect classifiers: $P = R = 1$ $\implies$ F-score = 1
+  - For F-score to be large, both $P$ and $R$ must be high
+
+- @Question@: Why not just average precision and recall?
+  - A classifier that always outputs 1 has $R = 1$ and $P \approx 0$ (the positive
+    class is rare)
+  - The _arithmetic mean_ $\frac{P + R}{2} \approx \frac{1}{2}$ looks fine
+  - But this is a trivial classifier: We want a score close to 0 to detect this
+  - The F-score (harmonic mean) correctly gives a value close to 0
+
 * Trading Off Precision and Recall
 
-- @Remark@:
+- @Remark@
   - In theory, you want to increase **both precision and recall**
   - In practice, modify the threshold $\theta$ of a probabilistic classifier to
     **trade off precision and recall**
@@ -506,20 +519,20 @@
 
 - @Definition@: **Precision-recall curves** show _precision vs recall trade-off_ for
   a classifier as its threshold $\theta$ varies
-  - Plot the curve on a precision-recall plane ($x =$ recall, $y =$ precision)
+  - Plot the curve on a precision-recall plane ($x =$ recall, $y =$ 1 - precision)
   - E.g., changing threshold of logistic regression
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=50%}
 
-- @Remark@: on a precision-recall plane
+- @Remark@: On a precision-recall plane
   - **Best classifier** (precision = recall = 1) is in the top-right corner
   - A curve **higher** than another one means a better classifier
-  - The baseline "random classifier" is a horizontal line at the fraction of
-    positive examples, and a curve above it is better than random guessing
+  - The baseline "random classifier" is a horizontal line at the fraction of positive
+    examples, and a curve above it is better than random guessing
 
 ::::
-:::: {.column width=45%}
+:::: {.column width=50%}
 
 ```tikz
 \bfseries
@@ -542,11 +555,11 @@
 
 % Good classifier curve
 \draw[thick, blue, smooth] (0.5,5.8) to (1.5,5.5) to (3,4.8) to (5,3.5) to (7,2.2) to (8,1.6);
-\node[blue] at (5.5,5.5) {\small Good classifier};
+\node[blue] at (3,2.5) {\small Good classifier};
 
 % Excellent classifier curve
 \draw[thick, green, smooth] (0.2,5.9) to (1,5.95) to (2,5.9) to (4,5.5) to (6,4.2) to (7.8,2.8);
-\node[green] at (2,6.5) {\small Excellent classifier};
+\node[green] at (6.5,5.5) {\small Excellent classifier};
 
 % Best point
 \draw[fill=red] (0.3,5.95) circle (0.15);
@@ -565,9 +578,9 @@
   - False positive rate (FPR) = $\frac{\text{FP}}{\text{FP} + \text{TN}}$
 
 - @Algorithm@: Plot the curve on the ROC plane ($x =$ FPR, $y =$ TPR)
-  - The diagonal $y = x$ is the performance of random guessing
-  - A curve above the diagonal is better than random
   - Best classifier (TPR = 1, FPR = 0) is in the top-left corner
+  - A curve above the diagonal is better than random
+  - The diagonal $y = x$ is the performance of random guessing
 
 - @Comparison@
   - ROC curves are insensitive to class imbalance, since TPR and FPR are normalized
@@ -580,11 +593,12 @@
 ::: columns
 :::: {.column width=60%}
 
-- @Definition@: **AUC** is the _area under the precision-recall curve_
+- @Definition@: **AUC** is the _area under the ROC curve_
   - Provides a robust metric by integrating over all thresholds
   - AUC near the positive-class **prevalence** suggests no discriminative power,
     since that is the score of a random classifier
   - AUC closer to 1.0 indicates high performance
+
 ::::
 :::: {.column width=40%}
 
@@ -599,30 +613,8 @@
   - Handles imbalanced datasets effectively
 
 - @Example@
-  - Helps understand a model's ability to distinguish between patients with
-    and without a disease
-
-* F-Score
-
-- @Definition@: The **F-score** is defined as the _harmonic mean of precision and
-  recall_:
-  $$
-  \text{F-score}
-  \defeq \frac{2}{\frac{1}{P} + \frac{1}{R}}
-  = 2 \frac{P \cdot R}{P + R}
-  $$
-
-- @Interpretation@
-  - Trivial classifiers: $P = 0$ or $R = 0$ $\implies$ F-score = 0
-  - Perfect classifiers: $P = R = 1$ $\implies$ F-score = 1
-  - For F-score to be large, both $P$ and $R$ must be high
-
-- @Question@: Why not just average precision and recall?
-  - A classifier that always outputs 1 has $R = 1$ and $P \approx 0$ (the positive
-    class is rare)
-  - The _arithmetic mean_ $\frac{P + R}{2} \approx \frac{1}{2}$ looks fine
-  - But this is a trivial classifier: we want a score close to 0 to detect this
-  - The F-score (harmonic mean) correctly gives a value close to 0
+  - Helps understand a model's ability to distinguish between patients with and
+    without a disease
 
 ## Model Selection
 
@@ -649,6 +641,9 @@
 
 * Model Selection Process
 
+::: columns
+:::: {.column width=50%}
+
 - @Algorithm@
   1. Split data into $D_{train}, D_{val}, D_{test}$
      - Commonly: 60\% training, 20\% validation, 20\% test
@@ -659,67 +654,23 @@
   4. Pick model $g_m$ with minimum $E_{val}^{(m)}$
   5. Use test set $D_{test}$ to estimate fair performance of model $g_m$, i.e.,
      $E_{test} \approx E_{out}$
-  6. Retrain model with entire $D = D_{train} \cup D_{val} \cup D_{test}$ to get final
-     $g_m^{*}$
+  6. Retrain model with entire $D = D_{train} \cup D_{val} \cup D_{test}$ to get
+     final $g_m^{*}$
 
-// TODO(ai_gp): Use graphviz or mermaid
-```tikz
-% Model Selection Process Diagram
-% Horizontal layout showing data splitting and evaluation flow
+::::
+:::: {.column width=50%}
 
-% Data sources
-\node[rectangle, draw, thick, fill=blue!30] at (1,3) {Dataset};
+![](msml610/lectures_source/figures/L02.5.Model_Selection.png)
 
-% Splitting
-\draw[thick, ->] (1,2.7) to (0.5,2.2);
-\draw[thick, ->] (1,2.7) to (1.5,2.2);
-
-% Training data
-\node[rectangle, draw, thick, fill=blue!20] at (0.5,1.5) {$D_{train}$ (60\%)};
-
-% Validation data
-\node[rectangle, draw, thick, fill=green!20] at (1.5,1.5) {$D_{val}$ (20\%)};
-
-% Learning process
-\draw[thick, ->] (0.5,1.2) to (0.5,0.8);
-\node[above, font=\small\bfseries] at (0.7,1.0) {Learn N models};
-
-% Learned models
-\node[rectangle, draw] at (0.5,0.2) {$g_1, ..., g_N$};
-
-% Evaluation on validation
-\draw[thick, ->] (1.2,1.2) to (1.2,0.8);
-\node[above, font=\small\bfseries] at (1.4,1.0) {Evaluate};
-
-% Selection
-\node[rectangle, draw, fill=yellow!20] at (1.2,0.2) {Best: $g_m$};
-
-% Test set
-\node[rectangle, draw, thick, fill=red!20] at (3,1.5) {$D_{test}$ (20\%)};
-
-% Final evaluation
-\draw[thick, ->] (1.7,0.2) to (2.5,0.2);
-\draw[thick, ->] (2.9,1.2) to (2.9,0.5);
-
-% Final performance
-\node[rectangle, draw, fill=red!30, thick] at (3,0.2) {$E_{test}(g_m)$};
-
-% Retraining
-\draw[thick, ->] (1,2.5) to (4.5,2.5);
-\draw[thick, ->] (4.5,2.5) to (4.5,1.2);
-
-% Full data retrain
-\node[rectangle, draw] at (4.5,1.5) {$D_{train+val+test}$};
-\draw[thick, ->] (4.5,1.2) to (4.5,0.5);
-\node[rectangle, draw, fill=purple!30, thick] at (4.5,0.2) {Deploy: $g_m^*$};
-```
+::::
+:::
 
 * Model Selection as Learning
 
 ::: columns
 :::: {.column width=60%}
 
-- @Interpretation@: _"picking the model with smallest $E_{val}$"_ is a **form of
+- @Interpretation@: _"picking the model with smallest $E_{val}$"\_ is a **form of
   learning**:
   - Hypothesis set: $\{g_1, ... , g_N\}$
   - Training set: $D_{val}$
@@ -727,16 +678,16 @@
 
 - @Remark@: After model selection, you need to **assess the true performance** on
   $D_{test}$
-  - _Experimentally_: $E_{val}(g_m)$ is a (optimistically) biased estimate of
+  - _Experimentally_: $E_{val}(g_m)$ is a optimistically biased estimate of
     $E_{out}(g_m)$
     $$
     E_{val}(g_m) < E_{out}(g_m)
     $$
-  - _Theoretically_: the penalty for model complexity with a finite set of hypotheses
+  - _Theoretically_: The penalty for model complexity with a finite set of hypotheses
     is:
-      $$
+    $$
       E_{out}(g_m) \le E_{val}(g_m) + O(\sqrt{\log(N) / K})
-      $$
+    $$
     - Use VC dimension for an infinite number of hypotheses (e.g., choice of
       $\lambda$ for regularization)
 
@@ -806,11 +757,13 @@
     - Creates multiple versions of a decision tree
     - Each tree is trained on a random sample of data
     - Averages predictions to improve accuracy
+
 - @Boosting@
   - Reduces bias by focusing on errors made by previous models
   - Sequentially adds models, each correcting its predecessor
-  - E.g., `adaBoost` increases weights of incorrectly classified data points to
-    learn the next model
+  - E.g., `adaBoost` increases weights of incorrectly classified data points to learn
+    the next model
+
 - @Stacking@
   - Uses a meta-model to combine separate models using weights
   - E.g., a stacking ensemble
@@ -871,8 +824,11 @@
 ::: columns
 :::: {.column width=50%}
 
-- @Definition@: Bagging (from "Bootstrap AGGregation") consists on generating models
-  trained on a randomized subset of the data and then averaged
+- @Definition@: Bagging (from "Bootstrap AGGregation") consists of
+  - Several training datasets are extracted randomly by sampling with replacement
+    from the original dataset (i.e., bootstrap)
+  - Learn multiple models, one for each training set
+  - Combine outputs using various methods (e.g., averaging)
 
 ::::
 :::: {.column width=50%}
@@ -881,13 +837,6 @@
 
 ::::
 :::
-
-- @Algorithm@: Learning procedure
-  - Several training datasets are extracted randomly by sampling with replacement
-    from the original dataset (i.e., bootstrap)
-  - Learn multiple models, one for each training set
-  - Combine outputs using various methods
-  - Result is a better model than a single model
 
 - @Intuition@: Why bagging works?
   - From the bias-variance decomposition view, combining multiple models:
@@ -926,7 +875,8 @@
   - Typically use homogeneous models, i.e., parametrized models from $\calH$
 
 - @Remark@: Strong classifiers can be built from weak classifiers
-  - E.g., a tree is built out of decision stumps (i.e., decision trees with one level)
+  - E.g., a tree is built out of decision stumps (i.e., decision trees with one
+    level)
 
 ::::
 :::: {.column width=50%}
@@ -952,8 +902,8 @@
 
 - @Definition@: **AdaBoost** (from Adaptive Boosting) is an ensemble method, widely
   used for classification
-  - Assumes examples can be weighted in the cost function used to learn
-    (otherwise use resampling)
+  - Assumes examples can be weighted in the cost function used to learn (otherwise
+    use resampling)
 
 ::::
 :::: {.column width=40%}

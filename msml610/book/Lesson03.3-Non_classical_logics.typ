@@ -1,4 +1,4 @@
-// git_hash=b2e32756-ftn timestamp=20260906_192538
+// git_hash=335aa783-pls timestamp=20260909_102544
 // Import AIMA style formatting and macros.
 #import "/helpers_root/dev_scripts_helpers/typst/aima_style.typ": (
   aima-style, algorithm, chapter, glossary, styled-table,
@@ -19,11 +19,23 @@
 
 #chapter("L03.3: Non-classical Logics and Knowledge Representation")
 
-// TODO(ai_gp): Add = Roadmap section right here as first mandatory level-1 section (typst.rules.md:## Mandatory Sections)
+= Roadmap
+
+This chapter explores logical systems that relax the assumptions of classical
+propositional and first-order logic to handle real-world reasoning challenges:
+incomplete information, evolving knowledge, and default assumptions.
+#emph[Non-monotonic and default reasoning] allow conclusions to be retracted when new
+facts arrive, enabling systems to work with incomplete information and common-sense
+knowledge. #emph[Description logics] provide decidable fragments of first-order logic
+tailored for ontologies and knowledge organization. #emph[Knowledge representation
+  standards] like RDF and OWL enable the Semantic Web, allowing machines to
+understand and reason over structured data shared across the internet. Finally,
+#emph[semantic networks and knowledge graphs] ground these formal systems in
+large-scale, practical implementations that power modern AI applications.
+
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:19 '# Non-classical Logics'
 // Slide: Non-classical Logics
-// TODO(ai_gp): Replace with real heading syntax = or == instead of #strong[] (typst.rules.md:## Structural Hierarchy)
-#strong[Non-classical Logics]
+= Non-classical Logics
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:21 '* Motivation'
 // Slide: Motivation
@@ -101,14 +113,14 @@ assumptions about the structure of reality.
 // digraph OntologicalLevels {
 //     rankdir=TB;
 //     node [shape=box, style=filled, fontname=Helvetica];
-// 
+//
 //     root [label="Logical Systems", fillcolor="#C6A6F4"];
-// 
+//
 //     prop [label="Propositional Logic\n(facts: true/false)", fillcolor="#A0D6D1"];
 //     fol [label="First-Order Logic\n(objects & relations)", fillcolor="#A0D6D1"];
 //     hol [label="Higher-Order Logic\n(relations as objects)", fillcolor="#A0D6D1"];
 //     temp [label="Temporal Logic\n(facts at times)", fillcolor="#A0D6D1"];
-// 
+//
 //     root -> prop;
 //     root -> fol;
 //     root -> hol;
@@ -117,6 +129,8 @@ assumptions about the structure of reality.
 // ```
 // label=fig:ontologicalcommitment
 // caption=Diagram relating Logical Systems, Propositional Logic (facts: true/false), First-Order Logic (objects & relations) and Higher-Order Logic (relations as objects)
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -124,8 +138,9 @@ assumptions about the structure of reality.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.1.png",
     width: 70%,
   ),
-  // TODO(ai_gp): Change caption to sentence case: "Diagram relating logical systems, propositional logic..." not Title Case (typst.rules.md:## Figures: Required Elements)
-  caption: [Diagram relating Logical Systems, Propositional Logic (facts: true/false), First-Order Logic (objects & relations) and Higher-Order Logic (relations as objects)],
+  caption: [Diagram relating logical systems, propositional logic (facts:
+    true/false), first-order logic (objects & relations) and higher-order logic
+    (relations as objects)],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -151,9 +166,6 @@ forcing a hard true-or-false judgment.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:101 '* Non-monotonic Logic'
 // Slide: Non-monotonic Logic
-// TODO(ai_gp): Replace with real heading syntax === instead of #strong[] (typst.rules.md:## Structural Hierarchy)
-#strong[Non-monotonic Logic]
-
 #strong[Non-monotonic logic] is a logic in which adding new information can
 invalidate conclusions that were previously derived #cite(
   "mccarthy1980circumscription",
@@ -176,15 +188,15 @@ emerge.
 //     rankdir=TB;
 //     node [shape=box, style=filled, fontname=Helvetica];
 //     edge [fontname=Helvetica];
-// 
+//
 //     kb1 [label="Initial KB:\nBirds typically fly\nTweety is a bird", fillcolor="#FFD1A6"];
 //     conc1 [label="Conclusion:\nTweety can fly", fillcolor="#B2E2B2"];
-// 
+//
 //     newFact [label="New Fact:\nTweety is a penguin\nPenguins cannot fly", fillcolor="#F4A6A6"];
-// 
+//
 //     kb2 [label="Updated KB", fillcolor="#FFD1A6"];
 //     conc2 [label="Revised Conclusion:\nTweety CANNOT fly", fillcolor="#A6E7F4"];
-// 
+//
 //     kb1 -> conc1 [label="reasoning"];
 //     conc1 -> newFact [label="conflict"];
 //     newFact -> kb2 [label="update"];
@@ -193,6 +205,8 @@ emerge.
 // ```
 // label=fig:nonmonotoniclogic
 // caption=Diagram relating Initial KB: Birds typically fly Tweety is a bird, Conclusion: Tweety can fly, New Fact: Tweety is a penguin Penguins cannot fly and Updated KB
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -200,7 +214,9 @@ emerge.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.2.png",
     width: 70%,
   ),
-  caption: [Diagram relating Initial KB: Birds typically fly Tweety is a bird, Conclusion: Tweety can fly, New Fact: Tweety is a penguin Penguins cannot fly and Updated KB],
+  caption: [Diagram relating Initial KB: Birds typically fly Tweety is a bird,
+    Conclusion: Tweety can fly, New Fact: Tweety is a penguin Penguins cannot fly and
+    Updated KB],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -219,9 +235,6 @@ the absence of more specific information.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:152 '* Default Reasoning'
 // Slide: Default Reasoning
-// TODO(ai_gp): Replace with real heading syntax === instead of #strong[] (typst.rules.md:## Structural Hierarchy)
-#strong[Default Reasoning]
-
 #strong[Default reasoning] makes assumptions in the absence of contrary evidence,
 allowing a system to draw conclusions based on what is typical rather than waiting
 for complete information #cite("reiter1980default"). The core idea is
@@ -245,26 +258,22 @@ sensibly in the common case while remaining open to correction.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:171 '* Non-Monotonic Logic: University Example'
 // Slide: Non-Monotonic Logic: University Example
-// TODO(ai_gp): Replace with real heading syntax === instead of #strong[] (typst.rules.md:## Structural Hierarchy)
-#strong[Non-Monotonic Logic: University Example]
-
-The initial facts establish that $"Alice"$ is a $"Student"$ belonging to the
-$"ComputerScience"$ department, and that $"CS101"$ is a $"Course"$ offered by that
-same department. A default rule states that each student in the computer science
-department takes all courses offered by their department. Under this rule, since
-Alice is a computer science student, the system concludes
-$"takesCourse"("Alice", "CS101")$. However, when new information arrives indicating
-that Alice does not meet the prerequisites for $"CS101"$, the earlier default
-conclusion is retracted. The revised reasoning yields
-$not "takesCourse"("Alice", "CS101")$, overriding the previous default with the more
-specific exception. This illustrates a core feature of non-monotonic reasoning:
-adding new facts can invalidate previously drawn conclusions rather than merely
-extending them.
+A university-registration scenario makes this pattern concrete. The initial facts
+establish that $"Alice"$ is a $"Student"$ belonging to the $"ComputerScience"$
+department, and that $"CS101"$ is a $"Course"$ offered by that same department. A
+default rule states that each student in the computer science department takes all
+courses offered by their department. Under this rule, since Alice is a computer
+science student, the system concludes $"takesCourse"("Alice", "CS101")$. However,
+when new information arrives indicating that Alice does not meet the prerequisites
+for $"CS101"$, the earlier default conclusion is retracted. The revised reasoning
+yields $not "takesCourse"("Alice", "CS101")$, overriding the previous default with
+the more specific exception. This illustrates a core feature of non-monotonic
+reasoning: adding new facts can invalidate previously drawn conclusions rather than
+merely extending them.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:193 '* Common Sense Reasoning'
 // Slide: Common Sense Reasoning
-// TODO(ai_gp): Replace with real heading syntax === instead of #strong[] (typst.rules.md:## Structural Hierarchy)
-#strong[Common Sense Reasoning]
+=== Common Sense Reasoning
 
 Much of what humans know about the world is never stated explicitly: if you drop a
 glass, it will likely break; people eat food when hungry. These facts feel too
@@ -301,8 +310,6 @@ surprising facility with common sense tasks, though whether these models truly
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:215 '* Common Sense Reasoning: Restaurant Example'
 // Slide: Common Sense Reasoning: Restaurant Example
-#strong[Common Sense Reasoning: Restaurant Example]
-
 The restaurant scenario illustrates how common sense reasoning works in practice.
 Suppose the initial facts are that Bob enters a restaurant and sits at a table.
 Drawing on everyday knowledge, a reasoning system knows that customers who sit down
@@ -319,31 +326,33 @@ prediction about Bob's behavior.
 //     rankdir=TB;
 //     node [shape=box, style=filled, fontname=Helvetica];
 //     edge [fontname=Helvetica, fontsize=10];
-// 
+//
 //     bob_enters [label="Bob enters\nRestaurant", fillcolor="#FFD1A6"];
 //     bob_sits [label="Bob sits at\nTable", fillcolor="#FFD1A6"];
-// 
+//
 //     common_sense [label="Common Sense:\nSit at table\n→ intends to eat", fillcolor="#C6A6F4"];
-// 
+//
 //     infer1 [label="Infer: Bob\nintends to eat", fillcolor="#B2E2B2"];
 //     menu [label="Server brings\nMenu", fillcolor="#B2E2B2"];
 //     order [label="Bob places\nOrder", fillcolor="#B2E2B2"];
-// 
+//
 //     new_info [label="NEW: Bob asks\nfor directions\nonly", fillcolor="#F4A6A6"];
 //     revise [label="REVISE:\nNo order!", fillcolor="#A6E7F4"];
-// 
+//
 //     bob_enters -> bob_sits;
 //     bob_sits -> common_sense [label="apply"];
 //     common_sense -> infer1 [label="conclude"];
 //     infer1 -> menu;
 //     menu -> order;
-// 
+//
 //     order -> new_info [label="contradicts"];
 //     new_info -> revise [label="revise"];
 // }
 // ```
 // label=fig:commonsensereasoningrestaurantexample
 // caption=Diagram relating Bob enters Restaurant, Bob sits at Table, Common Sense: Sit at table → intends to eat and Infer: Bob intends to eat
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -351,8 +360,8 @@ prediction about Bob's behavior.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.3.png",
     width: 70%,
   ),
-  // TODO(ai_gp): Change caption to sentence case: lowercase "Restaurant", "Table", "Common Sense" (typst.rules.md:## Figures: Required Elements)
-  caption: [Diagram relating Bob enters Restaurant, Bob sits at Table, Common Sense: Sit at table → intends to eat and Infer: Bob intends to eat],
+  caption: [Diagram relating Bob enters restaurant, Bob sits at table, common sense:
+    sit at table → intends to eat and infer: Bob intends to eat],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -371,62 +380,69 @@ specific or more recent evidence.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:272 '* Open World vs Closed World Assumptions'
 // Slide: Open World vs Closed World Assumptions
-#strong[Open World vs Closed World Assumptions]
+A related question in knowledge representation is how a system should treat a fact it
+was never told: should silence be read as denial, or merely as ignorance? These two
+stances, the #strong[closed-world] and #strong[open-world assumptions], give opposite
+answers.
 
-The distinction between these two assumptions becomes concrete with a simple
-enrollment example. Suppose the only recorded fact is "Alice takes CS101." Under the
-#strong[closed-world assumption], silence is denial: because nothing is said about
-Bob, the system concludes "Bob does not take CS101." The absence of a positive
-statement is treated as a negative one. Under the #strong[open-world assumption],
-silence is ignorance: the system acknowledges that Bob's enrollment status is simply
-unknown, and he may or may not be enrolled. Neither answer is assumed until evidence
-arrives. @tab:openworldvsclosedworldassumptions summarizes how the two assumptions
-diverge across several key aspects, including how they treat missing information,
-what unstated facts imply, and where each assumption is most naturally applied.
-
-// TODO(ai_gp): Use #grid(...) to pair this 3-column table with the paragraph prose, or add a comment explaining why full-width bare #figure is needed (typst.rules.md:## Every Visual Pairs with Its Text)
-#figure(
-  styled-table(
-    headers: (
-      "Aspect",
-      "Closed World Assumption (CWA)",
-      "Open World Assumption (OWA)",
+#grid(
+  columns: (1fr, 50%),
+  column-gutter: 1em,
+)[
+  The distinction between these two assumptions becomes concrete with a simple
+  enrollment example. Suppose the only recorded fact is "Alice takes CS101." Under
+  the #emph[closed-world assumption], silence is denial: because nothing is said
+  about Bob, the system concludes "Bob does not take CS101." The absence of a
+  positive statement is treated as a negative one. Under the #emph[open-world
+    assumption], silence is ignorance: the system acknowledges that Bob's enrollment
+  status is simply unknown, and he may or may not be enrolled. Neither answer is
+  assumed until evidence arrives. @tab:openworldvsclosedworldassumptions summarizes
+  how the two assumptions diverge across several key aspects, including how they
+  treat missing information, what unstated facts imply, and where each assumption is
+  most naturally applied.
+][
+  #figure(
+    styled-table(
+      headers: (
+        "Aspect",
+        "Closed World Assumption (CWA)",
+        "Open World Assumption (OWA)",
+      ),
+      rows: (
+        ("Missing info", "False by default", "Unknown (not false)"),
+        (
+          "Example: Bob takes CS101?",
+          "FALSE (not stated → false)",
+          "UNKNOWN (not stated → unknown)",
+        ),
+        (
+          "DB systems",
+          "Relational DB (SQL), logic programs",
+          "Semantic Web (RDF, OWL)",
+        ),
+        ("Best for", "Complete, static knowledge", "Incomplete, evolving data"),
+        (
+          "Query \"Bob takes CS101\"",
+          "Returns false",
+          "Returns no result (unknown)",
+        ),
+      ),
     ),
-    rows: (
-      ("Missing info", "False by default", "Unknown (not false)"),
-      (
-        "Example: Bob takes CS101?",
-        "FALSE (not stated → false)",
-        "UNKNOWN (not stated → unknown)",
-      ),
-      (
-        "DB systems",
-        "Relational DB (SQL), logic programs",
-        "Semantic Web (RDF, OWL)",
-      ),
-      ("Best for", "Complete, static knowledge", "Incomplete, evolving data"),
-      (
-        "Query \"Bob takes CS101\"",
-        "Returns false",
-        "Returns no result (unknown)",
-      ),
-    ),
-  ),
-  // TODO(ai_gp): Change caption to sentence case: "Closed world assumption vs open world assumption" not Title Case (typst.rules.md:## Figures: Required Elements)
-  caption: [Closed World Assumption vs Open World Assumption],
-  kind: "table",
-  supplement: [Table.],
-  placement: auto,
-) <tab:openworldvsclosedworldassumptions>
+    caption: [Closed world assumption vs open world assumption],
+    kind: "table",
+    supplement: [Table.],
+    placement: auto,
+  ) <tab:openworldvsclosedworldassumptions>
+]
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:302 '* Inductive Logic Programming'
 // Slide: Inductive Logic Programming
-#strong[Inductive Logic Programming]
-
-#strong[Inductive logic programming] (ILP) learns logical rules from a combination of
-examples and background knowledge. Rather than fitting numerical parameters, ILP
-systems search through a space of possible logical hypotheses to find rules that
-explain the observed data while remaining consistent with what is already known.
+A different challenge in knowledge representation is not how to treat unstated facts,
+but how to learn new logical rules directly from data. #strong[Inductive logic
+  programming] (ILP) learns logical rules from a combination of examples and
+background knowledge. Rather than fitting numerical parameters, ILP systems search
+through a space of possible logical hypotheses to find rules that explain the
+observed data while remaining consistent with what is already known.
 
 Consider a simple illustration. Suppose the background knowledge states that birds
 have wings, and that penguins are birds. The system is then given positive examples:
@@ -444,16 +460,16 @@ from which the system selects its learned rules.
 //     rankdir=TB;
 //     node [shape=box, style=filled, fontname=Helvetica];
 //     edge [fontname=Helvetica];
-// 
+//
 //     background [label="Background Knowledge:\nBirds have wings\nPenguins are birds", fillcolor="#FFD1A6"];
-// 
+//
 //     pos_ex [label="Positive Examples:\nTweety (bird) flies\nParrot (bird) flies", fillcolor="#B2E2B2"];
 //     neg_ex [label="Negative Examples:\nPenguin cannot fly\nOstrich cannot fly", fillcolor="#F4A6A6"];
-// 
+//
 //     hypothesis [label="Hypothesis Space", fillcolor="#A0D6D1"];
-// 
+//
 //     learned_rule [label="Learned Rules:\nBird(X) ∧ ¬Penguin(X)\n→ CanFly(X)", fillcolor="#A6C8F4"];
-// 
+//
 //     background -> hypothesis;
 //     pos_ex -> hypothesis;
 //     neg_ex -> hypothesis;
@@ -462,6 +478,8 @@ from which the system selects its learned rules.
 // ```
 // label=fig:inductivelogicprogramming
 // caption=Diagram relating Background Knowledge: Birds have wings Penguins are birds, Positive Examples: Tweety (bird) flies Parrot (bird) flies, Negative Examples: Penguin cannot fly Ostrich cannot fly and Hypothesis Space
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -469,8 +487,9 @@ from which the system selects its learned rules.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.4.png",
     width: 70%,
   ),
-  // TODO(ai_gp): Change caption to sentence case: lowercase "Background Knowledge", "Positive Examples", "Negative Examples", "Hypothesis Space" (typst.rules.md:## Figures: Required Elements)
-  caption: [Diagram relating Background Knowledge: Birds have wings Penguins are birds, Positive Examples: Tweety (bird) flies Parrot (bird) flies, Negative Examples: Penguin cannot fly Ostrich cannot fly and Hypothesis Space],
+  caption: [Diagram relating background knowledge: birds have wings, penguins are
+    birds, positive examples: Tweety (bird) flies, parrot (bird) flies, negative
+    examples: penguin cannot fly, ostrich cannot fly and hypothesis space],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -498,7 +517,7 @@ statistical learners dominate.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:353 '# Knowledge Representation Frameworks'
 // Slide: Knowledge Representation Frameworks
-#strong[Knowledge Representation Frameworks]
+= Knowledge Representation Frameworks
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:355 '## Description Logics'
 // Slide: Description Logics
@@ -506,8 +525,6 @@ statistical learners dominate.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:359 '* Description Logic'
 // Slide: Description Logic
-#strong[Description Logic]
-
 #strong[Description logic] represents structured knowledge about a domain #cite(
   "baader2003dlhandbook",
 ). It occupies a carefully chosen middle ground in the expressivity spectrum: more
@@ -540,21 +557,23 @@ precisely why the formalism is so widely adopted.
 //     rankdir=TB;
 //     node [shape=box, style=filled, fontname=Helvetica];
 //     edge [fontname=Helvetica];
-// 
+//
 //     person [label="Class: Person", fillcolor="#C6A6F4"];
 //     pet_owner [label="PetOwner\n(Person with pet)", fillcolor="#A0D6D1"];
 //     gp [label="Instance: GP\n(a PetOwner)", fillcolor="#A6E7F4"];
 //     nuvolo [label="Instance: Nuvolo\n(GP's dog)", fillcolor="#A6E7F4"];
-// 
+//
 //     person -> pet_owner [label="subclass"];
 //     pet_owner -> gp [label="instance"];
 //     gp -> nuvolo [label="ownsPet"];
-// 
+//
 //     syntax_note [label="Syntax:\nPetOwner = Person AND exists ownsPet.Dog", fillcolor="#B2E2B2", shape=note];
 // }
 // ```
 // label=fig:descriptionlogic
 // caption=Diagram relating Class: Person, PetOwner (Person with pet), Instance: GP (a PetOwner) and Instance: Nuvolo (GP's dog)
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -562,8 +581,8 @@ precisely why the formalism is so widely adopted.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.5.png",
     width: 70%,
   ),
-  // TODO(ai_gp): Change caption to sentence case: lowercase "Class", "Person", "PetOwner", "Instance" (typst.rules.md:## Figures: Required Elements)
-  caption: [Diagram relating Class: Person, PetOwner (Person with pet), Instance: GP (a PetOwner) and Instance: Nuvolo (GP's dog)],
+  caption: [Diagram relating class: person, petowner (person with pet), instance: GP
+    (a petowner) and instance: Nuvolo (GP's dog)],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -580,18 +599,17 @@ domain knowledge on the Semantic Web.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:410 '* ALC'
 // Slide: ALC
-#strong[ALC]
-
-#strong[Attributive Concept Language with Complements (ALC)] is a basic but
-expressive description logic that serves as a foundation for knowledge representation
-in ontologies. ALC combines familiar logical operators to describe concepts and their
-relationships: intersection ($inter.sq$, analogous to "and"), union ($union.sq$,
-analogous to "or"), and negation ($not$, analogous to "not"). Beyond these Boolean
-connectives, ALC supports existential quantification ($exists R.C$, meaning "there
-exists a related individual in class $C$") and universal quantification
-($forall R.C$, meaning "all related individuals belong to class $C$"). The underlying
-semantics are set-theoretic: classes correspond to sets of individuals, and
-properties correspond to binary relations over those individuals.
+The family of description logics that ontology languages build on starts with a
+foundational member: #strong[Attributive Concept Language with Complements (ALC)] is
+a basic but expressive description logic that serves as a foundation for knowledge
+representation in ontologies. ALC combines familiar logical operators to describe
+concepts and their relationships: intersection ($inter.sq$, analogous to "and"),
+union ($union.sq$, analogous to "or"), and negation ($not$, analogous to "not").
+Beyond these Boolean connectives, ALC supports existential quantification
+($exists R.C$, meaning "there exists a related individual in class $C$") and
+universal quantification ($forall R.C$, meaning "all related individuals belong to
+class $C$"). The underlying semantics are set-theoretic: classes correspond to sets
+of individuals, and properties correspond to binary relations over those individuals.
 
 To see how these constructs work in practice, consider the statement "all students
 take some course." In ALC this is captured as
@@ -614,8 +632,6 @@ inheriting its core reasoning architecture.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:430 '* SHOIN'
 // Slide: SHOIN
-#strong[SHOIN]
-
 #strong[SHOIN] is a description logic that extends ALC with several expressive
 features #cite("horrocks2003owl"). Where ALC provides the core Boolean connectives
 over concepts and existential and universal role restrictions, SHOIN adds five
@@ -658,27 +674,29 @@ nominals.
 //     rankdir=LR;
 //     node [shape=box, style=filled, fontname=Helvetica, fontsize=9];
 //     edge [fontname=Helvetica, fontsize=8];
-// 
+//
 //     alc [label="ALC\n(base)", fillcolor="#A0D6D1"];
-// 
+//
 //     s_node [label="S:\nTransitive\nProps\n(ancestorOf)", fillcolor="#FFD1A6"];
 //     h_node [label="H:\nRole\nHierarchies\n(hasSon sub-role of hasChild)", fillcolor="#FFD1A6"];
 //     o_node [label="O:\nNominals\n(John:individual)", fillcolor="#FFD1A6"];
 //     i_node [label="I:\nInverse\nRoles\n(isChildOf)", fillcolor="#FFD1A6"];
 //     n_node [label="N:\nCardinality\n(=2 children)", fillcolor="#FFD1A6"];
-// 
+//
 //     alc -> s_node;
 //     s_node -> h_node;
 //     h_node -> o_node;
 //     o_node -> i_node;
 //     i_node -> n_node;
-// 
+//
 //     shoin [label="SHOIN\n(full)", fillcolor="#A6C8F4"];
 //     n_node -> shoin;
 // }
 // ```
 // label=fig:shoin
 // caption=Diagram relating ALC (base), S: Transitive Props (ancestorOf), H: Role Hierarchies (hasSon sub-role of hasChild) and O: Nominals (John:individual)
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -686,8 +704,8 @@ nominals.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.6.png",
     width: 70%,
   ),
-  // TODO(ai_gp): Change caption to sentence case: lowercase "Transitive Props", "Role Hierarchies" (typst.rules.md:## Figures: Required Elements)
-  caption: [Diagram relating ALC (base), S: Transitive Props (ancestorOf), H: Role Hierarchies (hasSon sub-role of hasChild) and O: Nominals (John:individual)],
+  caption: [Diagram relating ALC (base), S: transitive props (ancestorOf), H: role
+    hierarchies (hasSon sub-role of hasChild) and O: nominals (John:individual)],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -696,8 +714,6 @@ nominals.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:485 '* OWL'
 // Slide: OWL
-#strong[OWL]
-
 #strong[Web Ontology Language (OWL)] #cite("mcguinness2004owl") is a semantic web
 language designed for representing complex knowledge with formal semantics that
 machines can reason over. Built on the description logic SHOIN, OWL provides a rich
@@ -712,10 +728,10 @@ description-logic notation this is written as $"Cat" subset.eq "Mammal"$, a
 subsumption axiom asserting that the class Cat is a subclass of Mammal. A reasoner
 can then automatically infer that any individual classified as a Cat must also be a
 Mammal, without that fact being stated explicitly. This kind of automated inference
-powers practical applications ranging from semantic search engines that understand
-query intent rather than just matching keywords, to biomedical data integration
-platforms where ontologies like SNOMED CT and the Gene Ontology let researchers query
-across heterogeneous datasets using shared formal vocabularies.
+powers practical applications ranging from #emph[semantic search] engines that
+understand query intent rather than just matching keywords, to biomedical data
+integration platforms where ontologies like SNOMED CT and the Gene Ontology let
+researchers query across heterogeneous datasets using shared formal vocabularies.
 
 OWL comes in three variants that trade expressiveness for computational tractability,
 as @fig:owl illustrates. #emph[OWL Lite] is the simplest profile, restricted largely
@@ -735,20 +751,20 @@ algorithm guaranteed to answer every reasoning query in finite time.
 //     rankdir=TB;
 //     node [shape=box, style=filled, fontname=Helvetica];
 //     edge [fontname=Helvetica];
-// 
+//
 //     owl [label="Web Ontology\nLanguage (OWL)", fillcolor="#C6A6F4"];
-// 
+//
 //     lite [label="OWL Lite\n(Simpler)\nfor classification", fillcolor="#A0D6D1"];
 //     dl [label="OWL DL\n(Full expressiveness)\nDecidable reasoning", fillcolor="#A6E7F4"];
 //     full [label="OWL Full\n(Maximum)\nUndecidable", fillcolor="#FFD1A6"];
-// 
+//
 //     owl -> lite;
 //     owl -> dl;
 //     owl -> full;
-// 
+//
 //     lite -> dl [style=invis];
 //     dl -> full [style=invis];
-// 
+//
 //     note1 [label="Lite:\nHierarchies only", fillcolor="#B2E2B2", shape=note, fontsize=8];
 //     note2 [label="DL:\nDecidable\n= practical", fillcolor="#B2E2B2", shape=note, fontsize=8];
 //     note3 [label="Full:\nTuring\ncomplete", fillcolor="#F4A6A6", shape=note, fontsize=8];
@@ -756,6 +772,8 @@ algorithm guaranteed to answer every reasoning query in finite time.
 // ```
 // label=fig:owl
 // caption=Diagram relating Web Ontology Language (OWL), OWL Lite (Simpler) for classification, OWL DL (Full expressiveness) Decidable reasoning and OWL Full (Maximum) Undecidable
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -763,8 +781,9 @@ algorithm guaranteed to answer every reasoning query in finite time.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.7.png",
     width: 70%,
   ),
-  // TODO(ai_gp): Change caption to sentence case: lowercase "Web Ontology Language", "Simpler", "Full expressiveness", "Maximum", "Decidable reasoning", "Undecidable" (typst.rules.md:## Figures: Required Elements)
-  caption: [Diagram relating Web Ontology Language (OWL), OWL Lite (Simpler) for classification, OWL DL (Full expressiveness) Decidable reasoning and OWL Full (Maximum) Undecidable],
+  caption: [Diagram relating web ontology language (OWL), OWL Lite (simpler) for
+    classification, OWL DL (full expressiveness) decidable reasoning and OWL Full
+    (maximum) undecidable],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -773,8 +792,6 @@ algorithm guaranteed to answer every reasoning query in finite time.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:537 '* Example of OWL in RDF'
 // Slide: Example of OWL in RDF
-#strong[Example of OWL in RDF]
-
 @fig:exampleofowlinrdf shows a small OWL ontology built from these pieces.
 $"Student"$ is declared a subclass of $"Person"$, and a restriction on the
 $"hasAdvisor"$ object property requires a minimum cardinality of one: every
@@ -787,12 +804,12 @@ constraint that propositional or plain first-order logic cannot express as compa
 // digraph OWL_Example {
 //     rankdir=TD;
 //     node [shape=ellipse, style=filled, fillcolor=lightgray];
-// 
+//
 //     Person [label="Person (Class)"];
 //     Student [label="Student (Class)"];
 //     hasAdvisor [label="hasAdvisor (ObjectProperty)", shape=box, fillcolor=lightblue];
 //     Restriction [label="Restriction: minCardinality 1", shape=diamond, fillcolor=lightyellow];
-// 
+//
 //     Student -> Person [label="subClassOf"];
 //     Student -> Restriction [label="subClassOf"];
 //     Restriction -> hasAdvisor [label="onProperty"];
@@ -800,6 +817,8 @@ constraint that propositional or plain first-order logic cannot express as compa
 // ```
 // label=fig:exampleofowlinrdf
 // caption=Diagram relating Person (Class), Student (Class), hasAdvisor (ObjectProperty) and Restriction: minCardinality 1
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -807,8 +826,8 @@ constraint that propositional or plain first-order logic cannot express as compa
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.8.png",
     width: 70%,
   ),
-  // TODO(ai_gp): Change caption to sentence case: lowercase "Class", "ObjectProperty" (typst.rules.md:## Figures: Required Elements)
-  caption: [Diagram relating Person (Class), Student (Class), hasAdvisor (ObjectProperty) and Restriction: minCardinality 1],
+  caption: [Diagram relating person (class), student (class), hasadvisor
+    (objectproperty) and restriction: mincardinality 1],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -835,47 +854,49 @@ graphical notation is by comparison.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:568 '* RDF (Resource Description Framework)'
 // Slide: RDF (Resource Description Framework)
-#strong[RDF (Resource Description Framework)]
-
 #strong[Resource Description Framework (RDF)] #cite("klyne2004rdf") is a standard
 model for data interchange on the web. It provides a way to represent structured
 information in a machine-readable format, enabling different systems and applications
 to share and combine data without loss of meaning.
 
-The basic building block of RDF is the #strong[triple], a three-part statement that
-links two pieces of information through a named relationship:
+#grid(
+  columns: (1fr, 55%),
+  column-gutter: 1em,
+)[
+  The basic building block of RDF is the #strong[triple], a three-part statement that
+  links two pieces of information through a named relationship:
 
-- #emph[Subject]: the entity being described (e.g., `Nuvolo`)
-- #emph[Predicate]: the property or relationship (e.g., `isA`)
-- #emph[Object]: the value or related entity (e.g., `Dog`)
+  - #emph[Subject]: the entity being described (e.g., `Nuvolo`)
+  - #emph[Predicate]: the property or relationship (e.g., `isA`)
+  - #emph[Object]: the value or related entity (e.g., `Dog`)
 
-// TODO(ai_gp): Use #grid(...) to pair this 3-column table with the surrounding prose, or add a comment explaining why full-width bare #figure is needed (typst.rules.md:## Every Visual Pairs with Its Text)
-#figure(
-  styled-table(
-    headers: (
-      "Subject",
-      "Predicate",
-      "Object",
+  As @tab:rdftriples illustrates, each row captures one atomic fact about an entity.
+  The triple `(Book123, hasAuthor, Author456)` connects a book to its author, while
+  `(Author456, hasName, "F. Scott Fitzgerald")` attaches a human-readable name to
+  that author entity. By chaining triples together this way, RDF builds up a rich
+  description from minimal primitives.
+][
+  #figure(
+    styled-table(
+      headers: (
+        "Subject",
+        "Predicate",
+        "Object",
+      ),
+      rows: (
+        ("Book123", "hasTitle", [_"The Great Gatsby"_]),
+        ("Book123", "hasAuthor", "Author456"),
+        ("Author456", "hasName", [_"F. Scott Fitzgerald"_]),
+        ("Book123", "publishedYear", [_"1925"_]),
+        ("Book123", "belongsToGenre", [_"Fiction"_]),
+      ),
     ),
-    rows: (
-      ("Book123", "hasTitle", [_"The Great Gatsby"_]),
-      ("Book123", "hasAuthor", "Author456"),
-      ("Author456", "hasName", [_"F. Scott Fitzgerald"_]),
-      ("Book123", "publishedYear", [_"1925"_]),
-      ("Book123", "belongsToGenre", [_"Fiction"_]),
-    ),
-  ),
-  caption: [RDF triples describing a book and its author],
-  kind: "table",
-  supplement: [Table.],
-  placement: auto,
-) <tab:rdftriples>
-
-As @tab:rdftriples illustrates, each row captures one atomic fact about an entity.
-The triple `(Book123, hasAuthor, Author456)` connects a book to its author, while
-`(Author456, hasName, "F. Scott Fitzgerald")` attaches a human-readable name to that
-author entity. By chaining triples together this way, RDF builds up a rich
-description from minimal primitives.
+    caption: [RDF triples describing a book and its author],
+    kind: "table",
+    supplement: [Table.],
+    placement: auto,
+  ) <tab:rdftriples>
+]
 
 These statements naturally form directed graphs, where subjects and objects are nodes
 and predicates are the labeled edges connecting them. To ensure global uniqueness and
@@ -892,8 +913,6 @@ relationships within a domain.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:611 '* SPARQL'
 // Slide: SPARQL
-#strong[SPARQL]
-
 #strong[SPARQL] #cite("prudhommeaux2008sparql") is the query language for RDF data.
 It provides a standardized way to retrieve and manipulate information stored in RDF
 format, much as SQL serves relational databases.
@@ -923,12 +942,10 @@ pointing to `ex:Bird`, returning each matching resource as a row in the result s
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:633 '# Knowledge Graphs & The Semantic Web'
 // Slide: Knowledge Graphs & The Semantic Web
-#strong[Knowledge Graphs & The Semantic Web]
+= Knowledge Graphs & The Semantic Web
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:635 '* Semantic Web'
 // Slide: Semantic Web
-#strong[Semantic Web]
-
 The #strong[Semantic Web] extends the ordinary World Wide Web so that machines, not
 just humans, can understand and process its content. Traditional HTML is designed for
 visual presentation: a browser knows how to render headings, links, and paragraphs,
@@ -961,18 +978,18 @@ properties, and OWL sits at the top, enabling expressive ontological reasoning.
 //     rankdir=TB;
 //     node [shape=box, style=filled, fontname=Helvetica];
 //     edge [fontname=Helvetica];
-// 
+//
 //     foundation [label="Foundation:\nURIs and Unicode", fillcolor="#FFD1A6"];
-// 
+//
 //     rdf [label="RDF\n(Data Model)\nTriples: Subject-Predicate-Object", fillcolor="#A0D6D1"];
 //     rdfs [label="RDFS\n(Schema Layer)\nClasses and Properties", fillcolor="#A0D6D1"];
-// 
+//
 //     owl [label="OWL\n(Ontology Language)\nExpress complex relationships", fillcolor="#A6E7F4"];
-// 
+//
 //     sparql [label="SPARQL\n(Query Language)\nRetrieve and query RDF", fillcolor="#B2E2B2"];
-// 
+//
 //     apps [label="Applications:\nSemantic Search, KGs, AI Reasoning", fillcolor="#A6C8F4"];
-// 
+//
 //     foundation -> rdf;
 //     foundation -> rdfs;
 //     rdf -> owl;
@@ -983,6 +1000,8 @@ properties, and OWL sits at the top, enabling expressive ontological reasoning.
 // ```
 // label=fig:semanticweb
 // caption=Diagram relating Foundation: URIs and Unicode, RDF (Data Model) Triples: Subject-Predicate-Object, RDFS (Schema Layer) Classes and Properties and OWL (Ontology Language) Express complex relationships
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -990,8 +1009,9 @@ properties, and OWL sits at the top, enabling expressive ontological reasoning.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.9.png",
     width: 70%,
   ),
-  // TODO(ai_gp): Change caption to sentence case: lowercase "Foundation", "Data Model", "Schema Layer", "Ontology Language" (typst.rules.md:## Figures: Required Elements)
-  caption: [Diagram relating Foundation: URIs and Unicode, RDF (Data Model) Triples: Subject-Predicate-Object, RDFS (Schema Layer) Classes and Properties and OWL (Ontology Language) Express complex relationships],
+  caption: [Diagram relating foundation: URIs and Unicode, RDF (data model) triples:
+    subject-predicate-object, RDFS (schema layer) classes and properties and OWL
+    (ontology language) express complex relationships],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -1019,8 +1039,6 @@ control continue to shape the ecosystem's evolution.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:693 '* WikiData'
 // Slide: WikiData
-#strong[WikiData]
-
 #strong[Wikidata] is a free, collaborative knowledge base that serves as the
 structured-data backbone for Wikipedia #cite("vrandecic2014wikidata"). Unlike
 Wikipedia's prose articles, Wikidata stores facts in a graph-based data model that
@@ -1050,29 +1068,31 @@ example, showing items linked to values through properties in a directed graph.
 //     rankdir=LR;
 //     node [shape=box, style=filled, fontname=Helvetica];
 //     edge [fontname=Helvetica];
-// 
+//
 //     q42 [label="Item: Q42\n(Douglas Adams)", fillcolor="#FFD1A6"];
 //     p31 [label="Property: P31\n(instance of)", fillcolor="#A0D6D1"];
 //     q5 [label="Value: Q5\n(Human)", fillcolor="#A6E7F4"];
-// 
+//
 //     p106 [label="Property: P106\n(occupation)", fillcolor="#A0D6D1"];
 //     q36180 [label="Value: Q36180\n(Sci-fi writer)", fillcolor="#A6E7F4"];
-// 
+//
 //     ref [label="Reference:\nSupporting citation", fillcolor="#B2E2B2", shape=note];
 //     qual [label="Qualifier:\nYear = 1952", fillcolor="#B2E2B2", shape=note];
-// 
+//
 //     q42 -> p31 [label="statement"];
 //     p31 -> q5 [label="value"];
-// 
+//
 //     q42 -> p106 [label="statement"];
 //     p106 -> q36180 [label="value"];
-// 
+//
 //     p31 -> ref [label=""];
 //     p106 -> qual [label=""];
 // }
 // ```
 // label=fig:wikidata
 // caption=Diagram relating Item: Q42 (Douglas Adams), Property: P31 (instance of), Value: Q5 (Human) and Property: P106 (occupation)
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -1080,8 +1100,8 @@ example, showing items linked to values through properties in a directed graph.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.10.png",
     width: 70%,
   ),
-  // TODO(ai_gp): Change caption to sentence case: lowercase "Item", "Property", "Value" (typst.rules.md:## Figures: Required Elements)
-  caption: [Diagram relating Item: Q42 (Douglas Adams), Property: P31 (instance of), Value: Q5 (Human) and Property: P106 (occupation)],
+  caption: [Diagram relating item: Q42 (Douglas Adams), property: P31 (instance of),
+    value: Q5 (human) and property: P106 (occupation)],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -1097,8 +1117,6 @@ ontological links upstream from `Q5`.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:747 '* DBPedia'
 // Slide: DBPedia
-#strong[DBPedia]
-
 #strong[DBpedia] extracts structured content from Wikipedia to create a large-scale,
 multilingual knowledge graph #cite("lehmann2015dbpedia"). Rather than treating
 encyclopedia articles as flat text, DBpedia parses infoboxes, categories, and other
@@ -1132,8 +1150,7 @@ to Wikipedia's content.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:772 '* Semantic Networks'
 // Slide: Semantic Networks
-#strong[Semantic Networks]
-
+Wikidata and DBpedia are both instances of a broader, older formalism.
 #strong[Semantic networks] represent knowledge as graphs of concepts and relations.
 In this formalism, nodes stand for entities or concepts, while edges encode the
 semantic relations between them: typical edge labels include "is-a," "part-of," and
@@ -1156,26 +1173,28 @@ hierarchical structure that makes inheritance-based inference straightforward.
 //     rankdir=TB;
 //     node [shape=ellipse, style=filled, fontname=Helvetica];
 //     edge [fontname=Helvetica];
-// 
+//
 //     animal [label="Animal", fillcolor="#C6A6F4"];
 //     dog [label="Dog", fillcolor="#A0D6D1"];
 //     cat [label="Cat", fillcolor="#A0D6D1"];
 //     mammal [label="Mammal", fillcolor="#A0D6D1"];
 //     fido [label="Fido\n(instance)", fillcolor="#A6E7F4"];
-// 
+//
 //     animal -> mammal [label="is-a"];
 //     animal -> dog [label="is-a"];
 //     animal -> cat [label="is-a"];
 //     dog -> fido [label="instance"];
-// 
+//
 //     hasLeg [label="has 4 legs", fillcolor="#FFD1A6"];
 //     dog -> hasLeg [label="has-property"];
-// 
+//
 //     mammal_box [label="Mammals\nhave fur", fillcolor="#B2E2B2", shape=note];
 // }
 // ```
 // label=fig:semanticnetworks
 // caption=Diagram relating Animal, Dog, Cat and Mammal
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -1183,8 +1202,7 @@ hierarchical structure that makes inheritance-based inference straightforward.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.11.png",
     width: 70%,
   ),
-  // TODO(ai_gp): Change caption to sentence case: "Diagram relating animal, dog, cat and mammal" not Title Case (typst.rules.md:## Figures: Required Elements)
-  caption: [Diagram relating Animal, Dog, Cat and Mammal],
+  caption: [Diagram relating animal, dog, cat and mammal],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -1193,8 +1211,6 @@ hierarchical structure that makes inheritance-based inference straightforward.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:823 '* WordNet'
 // Slide: WordNet
-#strong[WordNet]
-
 #strong[WordNet] #cite("miller1995wordnet") is a large lexical database of English
 words that models semantic relationships between them. Unlike resources built
 automatically from corpora, WordNet was manually curated by linguists, which gives it
@@ -1222,17 +1238,16 @@ The edges connecting synsets encode several types of semantic relations:
 ) <fig:wordnet>
 
 These structured relationships make WordNet useful across a range of NLP tasks. In
-word sense disambiguation, the synset structure helps determine which meaning of a
-polysemous word is intended in a given context. Semantic similarity measures can be
-computed by traversing the graph and measuring path length or shared ancestors
+#emph[word sense disambiguation], the synset structure helps determine which meaning
+of a polysemous word is intended in a given context. Semantic similarity measures can
+be computed by traversing the graph and measuring path length or shared ancestors
 between synsets. WordNet also serves as a backbone for information retrieval and
 question answering systems, where understanding that a query about "automobiles"
 should also match documents about "cars" directly improves recall.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:855 '* ConceptNet'
 // Slide: ConceptNet
-#strong[ConceptNet]
-
+The second of WordNet's two sibling examples takes a different focus.
 #strong[ConceptNet] #cite("speer2017conceptnet") is a large knowledge graph that
 connects words and phrases through labeled semantic relationships, serving as a
 structured repository of commonsense knowledge. Rather than encoding narrow,
@@ -1282,8 +1297,6 @@ similarity rather than relying solely on keyword overlap.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:888 '* Knowledge Graphs'
 // Slide: Knowledge Graphs
-#strong[Knowledge Graphs]
-
 #strong[Knowledge graphs] represent entities and their relationships as graph
 structures #cite("hogan2021knowledgegraphs"). In a knowledge graph, #emph[nodes]
 correspond to entities (people, places, concepts) and #emph[edges] encode the
@@ -1293,9 +1306,10 @@ structured knowledge that machines can traverse and reason over.
 
 Knowledge graphs support expressive information retrieval through query languages
 like SPARQL, which lets users pose complex questions that span multiple hops across
-the graph. Beyond simple lookup, they enable reasoning through path traversal
-(following chains of edges to discover implicit connections) and schema inference
-(deriving new facts from the types and constraints declared in the graph's ontology).
+the graph. Beyond simple lookup, they enable reasoning through #strong[path
+  traversal] (following chains of edges to discover implicit connections) and
+#strong[schema inference] (deriving new facts from the types and constraints declared
+in the graph's ontology).
 
 These capabilities make knowledge graphs a foundational component in several
 practical systems:
@@ -1314,8 +1328,6 @@ Semantic Scholar use them to link papers, authors, and concepts.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:906 '* Knowledge Graph: University Example'
 // Slide: Knowledge Graph: University Example
-#strong[Knowledge Graph: University Example]
-
 @fig:knowledgegraphuniversityexample puts these ideas together in a university
 setting. At the class level, $"Student"$ and $"Professor"$ both connect to
 $"Department"$ through $"belongsToDepartment"$, and $"Department"$ connects to
@@ -1330,13 +1342,13 @@ responsible for every course a given student takes.
 // digraph UniversityOntology {
 //     rankdir=LR;
 //     node [shape=ellipse, style=filled, fontname=Helvetica];
-// 
+//
 //     // Classes (purple color)
 //     Student [fillcolor="#f9f", fontcolor=black];
 //     Professor [fillcolor="#f9f", fontcolor=black];
 //     Course [fillcolor="#f9f", fontcolor=black];
 //     Department [fillcolor="#f9f", fontcolor=black];
-// 
+//
 //     // Individuals (blue color)
 //     Alice [fillcolor="#9ff", fontcolor=black];
 //     Bob [fillcolor="#9ff", fontcolor=black];
@@ -1346,14 +1358,14 @@ responsible for every course a given student takes.
 //     MATH201 [fillcolor="#9ff", fontcolor=black];
 //     ComputerScience [fillcolor="#9ff", fontcolor=black];
 //     Mathematics [fillcolor="#9ff", fontcolor=black];
-// 
+//
 //     // Class-level relationships
 //     Student -> Course [label="takesCourse"];
 //     Professor -> Course [label="teachesCourse"];
 //     Student -> Department [label="belongsToDepartment"];
 //     Professor -> Department [label="belongsToDepartment"];
 //     Department -> Course [label="offersCourse"];
-// 
+//
 //     // Individual-level relationships
 //     Alice -> CS101 [label="takesCourse"];
 //     Bob -> MATH201 [label="takesCourse"];
@@ -1369,6 +1381,8 @@ responsible for every course a given student takes.
 // ```
 // label=fig:knowledgegraphuniversityexample
 // caption=Diagram relating takesCourse, teachesCourse, belongsToDepartment and offersCourse
+// width=70%
+// placement=auto
 // rendered_images:end
 // render_images:begin
 #figure(
@@ -1376,7 +1390,8 @@ responsible for every course a given student takes.
     "Lesson03.3-Non_classical_logics.typ.figs/Lesson03.3-Non_classical_logics.12.png",
     width: 70%,
   ),
-  caption: [Diagram relating takesCourse, teachesCourse, belongsToDepartment and offersCourse],
+  caption: [Diagram relating takesCourse, teachesCourse, belongsToDepartment and
+    offersCourse],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -1385,7 +1400,7 @@ responsible for every course a given student takes.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:949 '* References'
 // Slide: References
-#strong[References]
+= References
 
 #set text(size: 0.75em)
 #references("/msml610/lectures_source/refs.bib")
