@@ -82,7 +82,7 @@
   3. `claude> /slides.add_references $SMD_FILE`: add references to papers and books
   4. `claude> /slides.lint $SMD_FILE`: apply the formatting conventions incrementally
   5. `claude> /slides.fix_formatting $SMD_FILE`: fix tags, bold, LaTeX, punctuation,
-    unicode
+     unicode
 - After each step, confirm the file still renders, and fix any problem before moving
   to the next step:
 
@@ -144,6 +144,7 @@
 // TODO(ai_gp): Improve
 ```
   > LID=02.5; render_book_chapter.py -i msml610/$LID --daemon
+```
 
 - Compile and check the PDF, fix any compile problem, and rerun:
 
@@ -206,26 +207,6 @@
   - Single pattern: `"01*"`
   - Colon-separated union: `"01*:02*:03.1"`
   - Inclusive range: `"01.1-03.2"`
-
-### 7. Publish the Generated Links
-
-- Regenerate the class links page for every course, `msml610` included:
-
-  ```bash
-  > website/update_class_links.sh
-  ```
-
-  - Writes `website/docs/class_links/msml610.links.html`, linking each lecture's
-    slide PDF, commentary, and recap
-- Regenerate a single course's page directly when only that one changed:
-
-  ```bash
-  > publish_class_links.py \
-    --dir msml610 \
-    --out_file website/docs/class_links/msml610.links.html \
-    --do_not_fail_on_warnings \
-    --use_master
-  ```
 
 ## Full Checklist Template
 

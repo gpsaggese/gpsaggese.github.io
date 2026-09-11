@@ -539,26 +539,48 @@ digraph KBStructure {
     - But learning is still fallible
       - E.g., `smell = burning` because maybe somebody is cooking on a grill
 
-* Models and Possible Worlds
+* Possible Worlds and Models
 
-- @Example@: Consider a world where there is _rain_ and _wet ground_
-  - In each possible world/model, values are assigned to all relevant variables
+- @Definition@: A world is characterized by a set of variables $x_1, ..., x_n$
+  - E.g., consider a world where there is _rain_ and _wet ground_
+  - The world can be in different states (4 possible states of the world)
     - World 1: $(Rain = T, WetGround = T)$
     - World 2: $(Rain = T, WetGround = F)$
     - World 3: $(Rain = F, WetGround = T)$
     - World 4: $(Rain = F, WetGround = F)$
+
+- @Definition@: A model $m$ is a state of the world and fixes all the variables
+  $x_1, ..., x_n$
   - Model $m$ is a mathematical abstraction of "possible world"
     - E.g., $m$ is $(Rain = F, WetGround = T)$
 
-- @Example@: Consider worlds with _"men and women sitting at a table"_
-  - Model represents all possible worlds as _"there are ($x$ men, $y$ women)"_
-  - Sentence $x + y = 4$ is true in certain worlds and false in others
-    - E.g., in worlds with $x = 2$ men and $y = 2$ women, $x + y = 4$ is true
+- @Definition@: A sentence about the world, is a logical statement built from
+  variables
+  - It evaluates True or False in given model
+
+- @Definition@: A KB is a set of sentences that represent our understanding of the
+  world
+
+* Possible Worlds and Models: Example
+
+- Worlds don't have to be discrete, but can be continuous
+
+- Consider the world with _"men and women sitting at a table"_
+  - There are $x$ men and $y$ women
+  - The arrangement around the table doesn't matter
+
+- Model represents all the possible worlds as _"there are ($x$ men, $y$ women)"_
+  - $x = 0, y = 0$: nobody is at the table
+  - $x = 5, y = 0$: a party of 5 men
+  - $x = 1, y = 1$: a date
+  - $x = 0, y = 1$: a woman at a conference
+
+- Sentence $x + y = 4$ is true in certain worlds and false in others
+  - E.g., in worlds with $x = 2$ men and $y = 2$ women, $x + y = 4$ is true
 
 * Satisfaction
 
 - @Recap@: A model $m$ fixes all the variables $x_1, ..., x_n$ used in sentences
-  - E.g., $(Rain = T, WetGround = T)$
 
 - @Definition@: If a sentence $\alpha$ is true in model $m$, we say _"the model $m$
   **satisfies** the sentence $\alpha$"_
@@ -567,18 +589,10 @@ digraph KBStructure {
     and sentences are evaluated as true or false
 
 - @Definition@: $M(\alpha)$ is the set of all the models in which $\alpha$ is true
+  - E.g., $\alpha: Rain = T \implies 
+    M(\alpha) = \{(Rain = T, WetGround = T), (Rain = T, WetGround = F)\}$
 
-::: columns
-:::: {.column width=50%}
-
-- @Example@
-  - $\alpha: Rain = T$
-  - $M(Rain = T) = \{(Rain = T, WetGround = T), (Rain = T, WetGround = F)\}$
-
-::::
-:::: {.column width=50%}
-
-```graphviz
+```graphviz[width=70%]
 digraph Satisfaction {
   bgcolor="transparent";
   pad="0.15";
@@ -612,156 +626,9 @@ digraph Satisfaction {
 }
 ```
 
-::::
-:::
+// * Tutorial
 
-## Entailment and Inference
-
-* Logical Entailment
-
-- @Definition@: **Logical entailment** between sentences is the fact that a sentence
-  follows logically from another sentence in a KB
-  - $\alpha \models \beta$ "$\alpha$ entails $\beta$" iff in every model in which
-    $\alpha$ is true, $\beta$ is also true
-  - Equivalent to $M(\alpha) \subseteq M(\beta)$
-
-- @Example@: In the "rain and wet ground" world
-  - $KB = \{Rain, Rain \implies WetGround\}$ entails $WetGround$
-  - In every model where $Rain$ is true and $Rain \implies WetGround$ is true,
-    $WetGround$ is also true
-  - There is no model that satisfies $KB$ but violates $WetGround$
-
-- @Example@: In the "sitting table" world
-  - $\alpha$: "$x = 0$", $\beta$: "$x \cdot y = 0$"
-  - $\alpha$ entails $\beta$ since in any model in which $x = 0$ is true, also
-    $x \cdot y = 0$ is true, regardless of the value of $y$
-
-- @Intuition@
-  - Entailment is not related to a proof, it just "preserves truth" across all models
-  - Entailment is a constraint on consistent belief
-  - _"If you believe your KB, you must believe the entailed sentences"_
-
-* Entailment, Implication, and Inference
-
-- Entailment, implication, and inference are related but distinct
-  - _Implication_ is a relationship between two statements inside the logic
-  - _Logical entailment_ is truth necessarily following from known facts
-  - _Inference_ is the reasoning process used to derive new truths
-
-- @Definition@: **Implication** ($A \implies B$) is the statement _"if $A$ is true,
-  then $B$ is true"_
-  - Does not guarantee $A$ or $B$ is true by itself
-  - Implication is true unless $A$ is true and $B$ is false
-  - E.g., $A$: _"it is raining"_, $B$: _"the ground is wet"_
-    - $A \implies B$ can be true even if it's not raining
-
-- @Definition@: **Logical entailment** ($KB \models \alpha$) means $\alpha$ is always
-  true in any world where $KB$ is true
-  - E.g., $Rain$ entails $WetGround$ iff in every model where $Rain$ is true,
-    $WetGround$ is also true
-    - $Rain = T, WetGround = F \to$ violation, so $Rain$ does not entail $WetGround$
-      in general
-
-- @Definition@: **Inference** is what an agent (person or computer) figures out by
-  reasoning from what it knows
-  - Starts with some truths, then reasons its way to new truths
-
-- @Intuition@
-  - Implication is "a statement inside the logic"
-  - Entailment is "meta-level truth-following across all models"
-  - Inference is "the reasoning process that (ideally) tracks entailment"
-
-* Inference Engines
-
-::: columns
-:::: {.column width=48%}
-
-- @Definition@: An **inference engine** is the mechanism that applies logical rules
-  to a KB to derive conclusions or answer queries
-
-- **Forward chaining**
-  - Starts with known facts and applies inference rules to extract more data
-  - E.g., given $A \implies B$ and $A$, infer $B$
-
-```graphviz
-digraph ForwardChaining {
-  bgcolor="transparent";
-  pad="0.15";
-  rankdir=TB;
-  splines=spline;
-  nodesep=0.5;
-  ranksep=0.4;
-
-  node [shape=box, style="rounded,filled", penwidth=1.5,
-        fontname="Helvetica", fontsize=10, margin="0.16,0.1", height=0.42];
-  edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.65,
-        fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
-
-  Facts [label="Known Facts: A", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
-  Rule  [label="Rule: A → B", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
-  Concl [label="Conclusion: B", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
-
-  Facts -> Rule [label="matches"];
-  Rule -> Concl [label="derives"];
-}
-```
-
-- **Backward chaining**
-  - Begins with a goal and works backward to find supporting facts
-  - E.g., to prove $B$, check if $A \implies B$ and then prove $A$
-
-```graphviz
-digraph BackwardChaining {
-  bgcolor="transparent";
-  pad="0.15";
-  rankdir=TB;
-  splines=spline;
-  nodesep=0.5;
-  ranksep=0.4;
-
-  node [shape=box, style="rounded,filled", penwidth=1.5,
-        fontname="Helvetica", fontsize=10, margin="0.16,0.1", height=0.42];
-  edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.65,
-        fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
-
-  Goal  [label="Goal: B", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
-  Rule  [label="Rule: A → B", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
-  Facts [label="Supporting Facts: A", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
-
-  Goal -> Rule [label="matches"];
-  Rule -> Facts [label="prove"];
-}
-```
-
-- **Resolution**
-  - A complete inference rule for propositional and first-order logic
-  - Useful in automated theorem proving
-
-```graphviz
-digraph Resolution {
-  bgcolor="transparent";
-  pad="0.15";
-  rankdir=TB;
-  splines=spline;
-  nodesep=0.5;
-  ranksep=0.4;
-
-  node [shape=box, style="rounded,filled", penwidth=1.5,
-        fontname="Helvetica", fontsize=10, margin="0.16,0.1", height=0.42];
-  edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.65,
-        fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
-
-  Clauses [label="Clauses & Negation", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
-  Process [label="Resolve & Refute", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
-  Result  [label="Contradiction Found", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
-
-  Clauses -> Process [label="apply"];
-  Process -> Result [label="derives"];
-}
-```
-
-::::
-:::
+// - [Possible Worlds, Models, and Satisfaction](https://colab.research.google.com/github/gpsaggese/gpsaggese.github.io/blob/gp/msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference.ipynb#scrollTo=c040e224)
 
 * Model Checking
 
@@ -818,6 +685,154 @@ digraph ModelChecking {
 ::::
 :::
 
+* Tutorial
+
+- [Entailment as Model Inclusion, by Model Checking](https://colab.research.google.com/github/gpsaggese/gpsaggese.github.io/blob/gp/msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference.ipynb#scrollTo=d5583feb)
+
+## Entailment vs Inference
+
+* Logical Entailment
+
+- @Definition@: **Logical entailment** between sentences is the fact that a sentence
+  _follows logically from another sentence_ in a KB
+  - $\alpha \models \beta$ "$\alpha$ entails $\beta$" iff in every model in which
+    $\alpha$ is true, $\beta$ is also true
+  - Equivalent to $M(\alpha) \subseteq M(\beta)$
+
+- @Example@: In the "rain and wet ground" world
+  - $KB = \{Rain, Rain \implies WetGround\}$ entails $WetGround$
+  - In every model where $Rain$ is true and $Rain \implies WetGround$ is true,
+    $WetGround$ is also true
+  - There is no model that satisfies $KB$ but violates $WetGround$
+
+- @Example@: In the "sitting table" world
+  - $\alpha$: "$x = 0$", $\beta$: "$x \cdot y = 0$"
+  - $\alpha$ entails $\beta$ since in any model in which $x = 0$ is true, also
+    $x \cdot y = 0$ is true, regardless of the value of $y$
+
+- @Intuition@
+  - Entailment is not related to a proof, it just "preserves truth" across all models
+  - Entailment is a constraint on consistent belief
+  - _"If you believe your KB, you must believe the entailed sentences"_
+
+* Tutorial
+
+- [Entailment on a Non-Boolean World](https://colab.research.google.com/github/gpsaggese/gpsaggese.github.io/blob/gp/msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference.ipynb#scrollTo=ffa645ba)
+
+* Implication and Inference
+
+- @Definition@: **Implication** $A \implies B$ is the statement _"if $A$ is true,
+  then $B$ is true"_
+  - Does not guarantee $A$ or $B$ is true by itself
+  - Implication is true unless $A$ is true and $B$ is false
+  - E.g., $A$: _"it is raining"_, $B$: _"the ground is wet"_
+    - $A \implies B$ can be true even if it's not raining
+
+- @Definition@: **Inference** is what an agent (person or computer) figures out by
+  reasoning from what it knows
+  - Starts with some truths, then reasons its way to new truths
+
+- @Definition@: **Logical entailment** $KB \models \alpha$ means $\alpha$ is always
+  true in any world where $KB$ is true
+  - E.g., $Rain$ entails $WetGround$ iff in every model where $Rain$ is true,
+    $WetGround$ is also true
+    - $Rain = T, WetGround = F \to$ violation, so $Rain$ does not entail $WetGround$
+      in general
+
+* Entailment, Implication, and Inference
+
+- Entailment, implication, and inference are **related but distinct**
+  - _Implication_ is a relationship between two statements _inside the logic_
+  - _Inference_ is the reasoning process used to _derive new truths_
+  - _Logical entailment_ is _truth_ necessarily following from known facts
+
+- @Intuition@
+  - Implication is "a statement inside the logic"
+  - Inference is "the reasoning process that (ideally) tracks entailment"
+  - Entailment is "meta-level truth-following across all models"
+
+* Tutorial
+
+- [Implication, Entailment, and Inference: Three Views](https://colab.research.google.com/github/gpsaggese/gpsaggese.github.io/blob/gp/msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference.ipynb#scrollTo=4d643cf9)
+
+* Inference Engines
+
+// TODO(ai_gp): Make this fit in one slide
+
+- @Definition@: An **inference engine** is the mechanism that applies logical rules
+  to a KB to derive conclusions or answer queries
+
+::: columns
+:::: {.column width=60%}
+
+- **Forward chaining**
+  - Starts with known facts and applies inference rules to extract more data
+  - E.g., given $A \implies B$ and $A$, infer $B$
+
+::::
+:::: {.column width=40%}
+
+```graphviz[width=60%]
+digraph ForwardChaining {
+  bgcolor="transparent";
+  pad="0.15";
+  rankdir=TB;
+  splines=spline;
+  nodesep=0.5;
+  ranksep=0.4;
+
+  node [shape=box, style="rounded,filled", penwidth=1.5,
+        fontname="Helvetica", fontsize=10, margin="0.16,0.1", height=0.42];
+  edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.65,
+        fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
+
+  Facts [label="Known Facts: A", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+  Rule  [label="Rule: A → B", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
+  Concl [label="Conclusion: B", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+
+  Facts -> Rule [label="  Matches"];
+  Rule -> Concl [label="  Derives"];
+}
+```
+
+::::
+:::
+
+::: columns
+:::: {.column width=60%}
+
+- **Backward chaining**
+  - Begins with a goal and works backward to find supporting facts
+  - E.g., to prove $B$, check if $A \implies B$ and then prove $A$
+
+::::
+:::: {.column width=40%}
+
+```graphviz[width=60%]
+digraph BackwardChaining {
+  bgcolor="transparent";
+  pad="0.15";
+  rankdir=TB;
+  splines=spline;
+  nodesep=0.5;
+  ranksep=0.4;
+
+  node [shape=box, style="rounded,filled", penwidth=1.5,
+        fontname="Helvetica", fontsize=10, margin="0.16,0.1", height=0.42];
+  edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.65,
+        fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
+
+  Goal  [label="Goal: B", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+  Rule  [label="Rule: A → B", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
+  Facts [label="Supporting Facts: A", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+
+  Goal -> Rule [label="matches"];
+  Rule -> Facts [label="prove"];
+}
+```
+::::
+:::
+
 * Soundness and Completeness
 
 - @Definition@:
@@ -839,6 +854,10 @@ digraph ModelChecking {
     true, so it never asserts a false entailment
   - _Complete_: Enumerating all (finitely many) models is guaranteed to find every
     entailed $\alpha$
+
+* Tutorial
+
+- [Soundness and Completeness by Breaking a Reasoner](https://colab.research.google.com/github/gpsaggese/gpsaggese.github.io/blob/gp/msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference.ipynb#scrollTo=2ab6186f)
 
 * Representation Mirrors the World
 
