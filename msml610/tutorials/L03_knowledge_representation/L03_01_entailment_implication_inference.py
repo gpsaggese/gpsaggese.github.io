@@ -33,8 +33,24 @@
 # ## Imports
 
 # %%
-# %load_ext autoreload
-# %autoreload 2
+import os
+import sys
+
+# Detected once, reused below and in the next cell: autoreload watches this
+# repo's own files for live edits, which Colab/Binder don't have until the
+# next cell clones/locates them, so skip it there.
+ON_COLAB = "google.colab" in sys.modules
+ON_BINDER = "BINDER_LAUNCH_HOST" in os.environ
+
+if not (ON_COLAB or ON_BINDER):
+    # `get_ipython()` is `None` when the paired .py runs as a plain script
+    # (outside a notebook kernel); skip the magics rather than crash.
+    from IPython.core.getipython import get_ipython
+
+    ip = get_ipython()
+    if ip is not None:
+        ip.run_line_magic("load_ext", "autoreload")
+        ip.run_line_magic("autoreload", "2")
 
 import logging
 
@@ -46,13 +62,11 @@ import seaborn as sns
 # so `helpers` (source, not pip-installed) and the paired `_utils.py` file
 # are missing unless we fetch them. Docker gets both for free (helpers_root
 # on PYTHONPATH, cwd = this notebook's dir); this cell reproduces that.
-# Plain Python (`os.system`, not `!`/`get_ipython()`), so the paired .py
+# Plain Python (`subprocess`, not `!`/`get_ipython()`), so the paired .py
 # script still runs standalone outside a notebook.
-import os
 import subprocess
-import sys
 
-if "google.colab" in sys.modules:
+if ON_COLAB:
     # Colab starts empty: clone the repo, then point Python at it.
     REPO_DIR = "gpsaggese.github.io"
     BRANCH = "gp"
@@ -77,7 +91,7 @@ if "google.colab" in sys.modules:
     subprocess.run(
         ["pip", "install", "-q", "-r", "requirements.txt"], check=True
     )
-elif os.environ.get("BINDER_LAUNCH_HOST"):
+elif ON_BINDER:
     # Binder already clones the repo and builds requirements.txt into the
     # image; cwd is already this notebook's dir, only PYTHONPATH is missing.
     git_root = subprocess.run(
