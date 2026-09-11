@@ -5,5 +5,5 @@
   ```
 - Update `research/Noesis/architecture.md` following the instructions in
   `helpers_root/.claude/skills/readme.write_architecture/SKILL.md`
-- Follow the coding and unit test conventions in `.claude/instr.md`
+- Follow the coding and unit test conventions in `.claude/task_instructions.md`
 - Do not implement any code

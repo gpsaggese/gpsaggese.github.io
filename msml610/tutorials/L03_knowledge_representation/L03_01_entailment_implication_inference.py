@@ -59,7 +59,6 @@ utils.init_loggers(_LOG)
 #   the $(Rain, WetGround)$ world
 # - Introduce $M(\alpha)$, the set of models where a sentence $\alpha$ is
 #   true
-#
 # - _Model table_: all 4 rows of the truth table over `Rain` and `WetGround`
 # - _Comments_: chosen $\alpha$, its truth value in each named model, $|M(\alpha)|$
 
@@ -88,13 +87,10 @@ utils.cell1_1_models_and_satisfaction()
 #   $KB = \{Rain, Rain \implies WetGround\}$ entails $WetGround$
 # - Run the model-checking algorithm explicitly: enumerate every model, find
 #   $M(KB)$, check $\alpha$ in each of those rows
-#
-# _Model table_: the same 4-row table, with $M(KB)$ shaded blue and
-# $M(\alpha)$ outlined in dashed orange
-# _Inclusion counts_: bar chart of $|M(KB)|$, the overlap with $M(\alpha)$,
-# and the counterexample rows
-# _Comments_: which `KB` sentences are toggled on, the query $\alpha$, and
-# the entailment verdict
+# - _Model table_: the same 4-row table, with $M(KB)$ shaded blue and
+#   $M(\alpha)$ outlined in dashed orange
+# - _Comments_: which `KB` sentences are toggled on, the query $\alpha$,
+#   and the entailment verdict
 
 # %%
 # Toggle KB sentences and alpha, and read off the entailment verdict.
@@ -118,12 +114,11 @@ utils.cell2_1_entailment_model_checking()
 #   variables, by checking the lecture's "sitting table" example:
 #   $\alpha$: "$x = 0$" entails $\beta$: "$x \cdot y = 0$", for any $y$
 # - Reinforce that a model here is a pair $(x, y)$, not a truth assignment
-#
-# _Model grid_: every integer pair $(x, y)$ in a small range as a scatter
-# grid, points where $\alpha$ holds shaded blue and points where $\beta$
-# holds outlined in dashed orange
-# _Comments_: the current range, $|M(\alpha)|$, $|M(\beta)|$, and the
-# entailment verdict
+# - _Model grid_: every integer pair $(x, y)$ in a small range as a
+#   scatter grid, points where $\alpha$ holds shaded blue and points
+#   where $\beta$ holds outlined in dashed orange
+# - _Comments_: the current range, $|M(\alpha)|$, $|M(\beta)|$, and the
+#   entailment verdict
 
 # %%
 # Check alpha |= beta over integer pairs instead of truth assignments.
@@ -149,13 +144,13 @@ utils.cell2_2_nonboolean_world()
 #   implication inside a single sentence, entailment across all models, and
 #   inference as a procedure that tries to track it
 #
-# _Implication view_: the truth table of $Rain \implies WetGround$ alone,
-# with its one false row highlighted
-# _Entailment view_: the same shaded model table from Cell 2.1, for
-# $KB = \{Rain, Rain \implies WetGround\} \models WetGround$
-# _Inference view_: a step-by-step modus ponens trace, run forward from the
-# facts or backward from the goal
-# _Comments_: which view is active and its one-line definition
+# - _Implication view_: the truth table of $Rain \implies WetGround$
+#   alone, with its one false row highlighted
+# - _Entailment view_: the same shaded model table from Cell 2.1, for
+#   $KB = \{Rain, Rain \implies WetGround\} \models WetGround$
+# - _Inference view_: a step-by-step modus ponens trace, run forward from
+#   the facts or backward from the goal
+# - _Comments_: which view is active and its one-line definition
 
 # %%
 # Toggle between the four views of the same rain and wet-ground example.
@@ -187,10 +182,10 @@ utils.cell3_1_three_views()
 #   Sprinkler \implies WetGround\}$, and running three reasoners against the
 #   model-checking ground truth
 #
-# _Verdict table_: one row per query, comparing each reasoner's answer to
-# the model-checking verdict, colored correct, false positive, or false
-# negative
-# _Comments_: which reasoner is active, and its failure counts
+# - _Verdict table_: one row per query, comparing each reasoner's answer
+#   to the model-checking verdict, colored correct, false positive, or
+#   false negative
+# - _Comments_: which reasoner is active, and its failure counts
 
 # %%
 # Run a correct, an unsound, and an incomplete reasoner on the same KB.

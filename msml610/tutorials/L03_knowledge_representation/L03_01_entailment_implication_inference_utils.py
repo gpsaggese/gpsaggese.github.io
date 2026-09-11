@@ -284,42 +284,6 @@ def draw_model_table(
     ax.grid(False)
 
 
-def draw_count_bars(
-    ax: matplotlib.axes.Axes,
-    labels: Sequence[str],
-    counts: Sequence[int],
-    colors: Sequence[str],
-    *,
-    title: str,
-    ylabel: str,
-) -> None:
-    """
-    Draw a small bar chart of model or verdict counts, annotated with values.
-
-    :param ax: axes to draw on
-    :param labels: bar labels
-    :param counts: bar heights
-    :param colors: bar colors
-    :param title: panel title
-    :param ylabel: y-axis label
-    """
-    bars = ax.bar(list(labels), list(counts), color=list(colors))
-    for bar, count in zip(bars, counts):
-        ax.text(
-            bar.get_x() + bar.get_width() / 2.0,
-            bar.get_height(),
-            str(count),
-            ha="center",
-            va="bottom",
-            fontsize=10,
-            fontweight="bold",
-        )
-    ax.set_title(title, fontsize=13, fontweight="bold")
-    ax.set_ylabel(ylabel, fontsize=11)
-    ax.set_ylim(0, max(list(counts) + [1]) * 1.25)
-    ax.tick_params(axis="x", labelsize=8, rotation=15)
-
-
 def draw_text_panel(
     ax: matplotlib.axes.Axes,
     lines: Sequence[Tuple[str, str, str]],
@@ -409,7 +373,7 @@ def cell1_1_models_and_satisfaction(
             label = alpha_dropdown.value
             alpha = alpha_options[label]
             alpha_mask = satisfying_mask([alpha], var_order, bits)
-            _, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=figsize)
+            _, (ax1, ax2) = plt.subplots(1, 2, figsize=figsize)
             # Panel 1: the 4 named models, with M(alpha) shaded.
             draw_model_table(
                 ax1,
@@ -420,16 +384,7 @@ def cell1_1_models_and_satisfaction(
                 row_names=row_names,
                 title="M(alpha) over the 4 models",
             )
-            # Panel 2: how many of the 4 models satisfy alpha.
-            draw_count_bars(
-                ax2,
-                ["M(alpha)", "not M(alpha)"],
-                [int(alpha_mask.sum()), int((~alpha_mask).sum())],
-                [_COLOR_PRIMARY, "#d9d9d9"],
-                title="Model count",
-                ylabel="number of models",
-            )
-            # Panel 3: comments naming each model and whether alpha holds.
+            # Panel 2: comments naming each model and whether alpha holds.
             per_model = "\n  ".join(
                 "%s = (Rain=%s, WetGround=%s): alpha is %s"
                 % (
@@ -454,7 +409,7 @@ def cell1_1_models_and_satisfaction(
                     per_model,
                 )
             )
-            comment_panel(ax3, text)
+            comment_panel(ax2, text)
             plt.tight_layout()
             plt.show()
 
@@ -530,7 +485,7 @@ def cell2_1_entailment_model_checking(
             alpha_mask = satisfying_mask([alpha], var_order, bits)
             verdict = entailment_verdict(kb_mask, alpha_mask)
             counterexample_mask = kb_mask & ~alpha_mask
-            _, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=figsize)
+            _, (ax1, ax2) = plt.subplots(1, 2, figsize=figsize)
             draw_model_table(
                 ax1,
                 bits,
@@ -541,18 +496,6 @@ def cell2_1_entailment_model_checking(
                 secondary_name=label,
                 row_names=row_names,
                 title="M(KB) against M(alpha)",
-            )
-            draw_count_bars(
-                ax2,
-                ["M(KB)", "M(KB) and M(alpha)", "counterexamples"],
-                [
-                    int(kb_mask.sum()),
-                    int((kb_mask & alpha_mask).sum()),
-                    int(counterexample_mask.sum()),
-                ],
-                [_COLOR_PRIMARY, "#74c476", "#de2d26"],
-                title="Model inclusion",
-                ylabel="number of models",
             )
             kb_text = (
                 "\n  ".join(format_sentence(s) for s in kb_sentences)
@@ -584,15 +527,15 @@ def cell2_1_entailment_model_checking(
                     verdict,
                 )
             )
-            comment_panel(ax3, text)
+            comment_panel(ax2, text)
             plt.tight_layout()
             plt.show()
 
     param_info = make_param_info(
         {
-            "Rain / Rain => WetGround": "toggle each sentence in or out of "
-            "the <code>KB</code>; dropping the rule leaves <code>KB</code> "
-            "unable to entail <code>WetGround</code>",
+            'KB: "Rain", "Rain => WetGround"': "toggle each sentence in or "
+            "out of the <code>KB</code>; dropping the rule leaves "
+            "<code>KB</code> unable to entail <code>WetGround</code>",
             "alpha": "the query sentence checked against <code>M(KB)</code>",
         }
     )
