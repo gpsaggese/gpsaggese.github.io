@@ -627,10 +627,6 @@ digraph Satisfaction {
 }
 ```
 
-// * Tutorial
-
-// - [Possible Worlds, Models, and Satisfaction](https://colab.research.google.com/github/gpsaggese/gpsaggese.github.io/blob/gp/msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference.ipynb#scrollTo=c040e224)
-
 * Model Checking
 
 - @Recap@: $M(KB)$ represents all the models / possible worlds in which our $KB$ is
@@ -686,10 +682,6 @@ digraph ModelChecking {
 ::::
 :::
 
-// * Tutorial
-
-// - [Entailment as Model Inclusion, by Model Checking](https://colab.research.google.com/github/gpsaggese/gpsaggese.github.io/blob/gp/msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference.ipynb#scrollTo=d5583feb)
-
 ## Entailment vs Inference
 
 * Logical Entailment
@@ -715,10 +707,6 @@ digraph ModelChecking {
   - Entailment is not related to a proof, it just "preserves truth" across all models
   - Entailment is a constraint on consistent belief
   - _"If you believe your KB, you must believe the entailed sentences"_
-
-// * Tutorial
-
-// - [Entailment on a Non-Boolean World](https://colab.research.google.com/github/gpsaggese/gpsaggese.github.io/blob/gp/msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference.ipynb#scrollTo=ffa645ba)
 
 * Implication and Inference
 
@@ -751,10 +739,6 @@ digraph ModelChecking {
   - Implication is "a statement inside the logic"
   - Inference is "the reasoning process that (ideally) tracks entailment"
   - Entailment is "meta-level truth-following across all models"
-
-// * Tutorial
-
-// - [Implication, Entailment, and Inference: Three Views](https://colab.research.google.com/github/gpsaggese/gpsaggese.github.io/blob/gp/msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference.ipynb#scrollTo=4d643cf9)
 
 * Inference Engines
 

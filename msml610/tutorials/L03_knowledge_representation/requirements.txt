@@ -2,6 +2,7 @@ ipywidgets
 matplotlib
 networkx
 numpy
+owlready2
 pandas
 scikit-learn
 seaborn

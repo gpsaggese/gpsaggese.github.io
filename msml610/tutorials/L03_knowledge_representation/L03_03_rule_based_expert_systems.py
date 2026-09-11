@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.5
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -40,13 +40,6 @@
 
 import logging
 
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-# Set plotting style.
-sns.set_style("whitegrid")
-plt.rcParams["figure.figsize"] = (12, 6)
-
 # %%
 import helpers.hnotebook as hnotebook
 
@@ -56,6 +49,25 @@ import L03_03_rule_based_expert_systems_utils as utils
 hnotebook.config_notebook()
 _LOG = logging.getLogger(__name__)
 utils.init_loggers(_LOG)
+
+# %%
+# Explain Winston's animal identification rules
+#
+# Patrick Winston's classic animal-identification rule base is a canonical
+# example in AI education (Winston, 1977). It uses observable features of
+# animals to derive increasingly specific classifications through a chain of
+# inference rules. The rules demonstrate both forward chaining (data-driven)
+# and how to organize knowledge hierarchically.
+#
+# Observable features (what an agent can perceive directly):
+print("Observable features (percepts):")
+print(f"  {', '.join(utils.OBSERVABLE_FEATURES)}")
+print()
+# Derived facts (what the rules conclude):
+print("Derived facts (classes and species):")
+print(f"  Classes: mammal, bird, carnivore, ungulate")
+print(f"  Species: {', '.join(utils.SPECIES)}")
+print()
 
 # %% [markdown]
 # ## The Rule Base
@@ -85,7 +97,6 @@ utils.show_rule_base()
 # - Contrast a simple reflex agent (percept only) with a rule-based agent
 #   (percept plus working memory)
 # - Introduce Winston's animal-identification rules as the running example
-#
 # _Agent diagrams_: the reflex pipeline (percept $\to$ action) and the
 # rule-based pipeline (percept $\to$ working memory $\to$ match $\to$ fire
 # $\to$ act), with the active agent highlighted
@@ -125,7 +136,6 @@ utils.cell1_1_reflex_vs_rule_based()
 # **Goal**:
 # - Animate forward (data-driven) chaining over Winston's rules, one fired
 #   rule per frame
-#
 # _Working memory timeline_: the facts held after each fired rule, one column
 # per step, starting from the initial percepts
 # _Rule dependency graph_: the premise $\to$ rule $\to$ conclusion graph, with
@@ -162,7 +172,6 @@ utils.cell2_1_forward_chaining()
 # **Goal**:
 # - Run goal-driven backward chaining on a goal such as `cheetah` and contrast
 #   which rules it explores against forward chaining on the same facts
-#
 # _AND-OR tree_: the tree rooted at the goal, where a fact node is an OR node
 # (any rule below it suffices) and a rule node is an AND node (every premise
 # below it is required); green is proved, red is failed
@@ -203,7 +212,6 @@ utils.cell2_2_backward_chaining()
 # - The rule base here adds a leopard rule that conflicts with the cheetah
 #   rule: each blocks the other with a negative premise, so exactly one of the
 #   two can ever fire
-#
 # _Conflict set_: all rules whose premises currently match, with the
 # strategy-selected rule highlighted in orange
 # _Final fact set_: the facts derived per strategy, run to completion, each
@@ -244,7 +252,6 @@ utils.cell2_3_conflict_resolution()
 # - Answer MYCIN's two explanation questions for any conclusion, then extend
 #   crisp rules with certainty factors and compare the resulting diagnosis
 #   ranking
-#
 # _Explanation trace_: the rules and facts behind the chosen conclusion, with
 # the conclusion itself in purple
 # _Diagnosis ranking_: the candidate diagnoses ranked by propagated certainty
@@ -295,7 +302,6 @@ utils.cell3_1_explanation_and_certainty()
 #   flies, then a new fact retracts that conclusion
 # - The default rule is `bird` $\land$ `~abnormal` $\to$ `flies`, where
 #   `~abnormal` holds as long as nothing marks the bird as abnormal
-#
 # _Before panel_: working memory in the initial scenario, where only
 # "Tweety is a bird" is known
 # _After panel_: working memory once the new fact is asserted, with the
@@ -331,7 +337,6 @@ utils.cell4_1_non_monotonic()
 # **Goal**:
 # - Query a fact that is simply absent from working memory under the closed
 #   world assumption and under the open world assumption, side by side
-#
 # _CWA panel_: the fact base, with the answer each fact gets when "not told"
 # is read as "false"
 # _OWA panel_: the same fact base, with the answer each fact gets when
@@ -373,7 +378,6 @@ utils.cell4_2_cwa_vs_owa()
 # - Noise is applied to the percepts rather than to the labels, since that is
 #   what a real sensor gets wrong, and it is what breaks the conjunctions the
 #   rules rely on
-#
 # _Comparison table_: accuracy, latency, auditability, and abstention rate for
 # the rule engine vs the decision tree
 # _Decision tree diagram_: the top of the trained tree, for visual comparison

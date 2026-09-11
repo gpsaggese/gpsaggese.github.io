@@ -136,8 +136,14 @@
 - On Colab, a rerun in the same session `git pull`s instead of re-cloning, so
   a later push is picked up, but already-imported modules stay cached:
   **Runtime -> Restart session**, then **Run all**, to actually see the update
-- See `msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference.py`
-  for a worked example
+- Worked examples:
+// TODO(ai_gp): Update these links
+  - `msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference.py`
+    for the Binder-only variant (`if ON_BINDER:`), used when a notebook does
+    not need to run on Colab
+  - `msml610/tutorials/L03_knowledge_representation/examples/L03_01_entailment_implication_inference_colab.py`
+    for the Colab-only variant (`if ON_COLAB:`), a standalone copy kept in an
+    `examples/` dir specifically for a Colab link
 
 ### Option 1: Google Colab (Recommended)
 
@@ -166,7 +172,7 @@
     ```
 
   - E.g.,
-    `https://colab.research.google.com/github/gpsaggese/gpsaggese.github.io/blob/gp/msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference.ipynb#scrollTo=c0eccc4a`
+    `https://colab.research.google.com/github/gpsaggese/gpsaggese.github.io/blob/gp/msml610/tutorials/L03_knowledge_representation/examples/L03_01_entailment_implication_inference_colab.ipynb#scrollTo=c1a95a7b`
 
 ### Option 2: Binder
 

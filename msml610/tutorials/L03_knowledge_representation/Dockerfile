@@ -9,9 +9,12 @@ FROM python:3.12-slim
 # Avoid interactive prompts during apt operations.
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install CA certificates (needed for HTTPS) and git.
+# Install CA certificates (needed for HTTPS), git, and a JRE. The JRE is
+# required by the HermiT description-logic reasoner that `owlready2` ships as
+# a jar and invokes through `sync_reasoner()`.
 RUN apt-get update && apt-get install -y \
     ca-certificates \
+    default-jre-headless \
     git \
     && rm -rf /var/lib/apt/lists/*
 

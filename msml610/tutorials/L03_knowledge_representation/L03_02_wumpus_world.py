@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.5
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -161,7 +161,7 @@ utils.cell1_1_world_and_kb()
 # %% [markdown]
 # ## Cell 2.1: Models and the Breeze Axiom
 #
-# # TODO(ai_gp): Explain what we are trying to achieve and why
+# We need to understand what entailment means formally. Part 1 built a `KB` from percepts; this part makes precise what the agent can conclude from it. A sentence α is entailed by the `KB` exactly when every model (every possible world) consistent with the `KB` also makes α true. This part introduces models concretely, so that entailment can later be checked directly as $M(KB) \subseteq M(\alpha)$.
 #
 # **Goal**:
 # - Introduce a model as one full true/false assignment to every pit variable
@@ -213,9 +213,13 @@ utils.cell2_2_entailment()
 # **Examples**
 # - No pit at (1,1): entailed
 # - Pit at (1,1): contradicted
-# - No pit at (2,2) is not entailed
+# - No pit at (2,2) is not entailed: there are models where (2,2) has a pit
+#   and models where it does not, so the KB leaves it undetermined
+# - Pit at (1,3): contradicted, since no model consistent with the KB has a
+#   pit there
 #
-# # TODO(ai_gp): Complete this
+# Each verdict (entailed, contradicted, undetermined) follows from model
+# inclusion alone, never from guessing or from how the query is phrased.
 
 # %% [markdown]
 # **Key observations**:
@@ -250,42 +254,19 @@ utils.cell2_3_three_views()
 #   models, inference is a procedure a computer actually runs
 # - A correct inference procedure produces exactly the conclusions entailment
 #   predicts, no more and no fewer
-# - Cell 3.1 shows what happens when a procedure gets this correspondence
-#   wrong
+# - A reasoner that gets this correspondence wrong is either unsound (proves
+#   too much) or incomplete (proves too little)
 
 # %% [markdown]
 # # Part 3: Soundness, Completeness, and Scaling
 
-# %% [markdown]
-# # TODO(ai_gp): Remove this cell and code
-#
-# ## Cell 3.1: Soundness and Completeness by Breaking Them
-#
-# **Goal**:
-# - Make soundness (no false positives) and completeness (no false
-#   negatives) concrete by running two broken reasoners against the Cell 2.2
-#   ground truth
-# - _Verdict table_: conclusions from each reasoner, marked against the true
-#   entailed set
-# - _Failure modes_: count of false positives (unsound) and false negatives
-#   (incomplete)
-# - _Comments_: which reasoner is active, and its failure counts
-
 # %%
-# TODO(ai_gp): Remove this cell and code
-# Run a correct, an unsound, and an incomplete reasoner on the same queries.
-utils.cell3_1_soundness_completeness()
-
-# %% [markdown]
-# **Key observations**:
-# - The unsound reasoner reports facts that are not actually entailed: false
-#   positives
-# - The incomplete reasoner misses facts that are entailed: false negatives
-# - Soundness and completeness are independent properties: a reasoner can
-#   fail either one without failing the other
-
-# %%
-# TODO(ai_gp): Explain what a SAT solver is and why it's faster than model checking
+# SAT solver: a decision procedure for Boolean satisfiability. Instead of
+# enumerating all 2^n assignments like model checking, it uses unit
+# propagation and backtracking search to find a satisfying assignment (or
+# prove none exists), pruning large parts of the search space at each step.
+# KB |= alpha holds iff KB AND NOT(alpha) is unsatisfiable, so a SAT solver
+# answers the same entailment query without ever building M(KB) explicitly.
 
 # %% [markdown]
 # ## Cell 3.2: Model Checking Doesn't Scale
@@ -299,9 +280,8 @@ utils.cell3_1_soundness_completeness()
 #   each method
 
 # %%
-# TODO(ai_gp): Remove grid_size and keep it at 6
 # Compare brute-force model checking against a SAT solver as the grid grows.
-utils.cell3_2_scaling()
+utils.cell3_2_scaling(fixed_grid_size=6)
 
 # %% [markdown]
 # **Key observations**:

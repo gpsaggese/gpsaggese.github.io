@@ -1533,340 +1533,6 @@ def cell2_3_three_views(
 
 
 # #############################################################################
-# Cell 3.1: Soundness and completeness by breaking them
-# #############################################################################
-
-
-def _clause_literals(sentence: sympy.Basic) -> Optional[frozenset]:
-    """
-    Return the literal set of a sentence that is a single clause.
-
-    :param sentence: sentence to inspect
-    :return: frozen set of literals, or `None` if the sentence is not one
-        clause, e.g., `P_1_1 | P_2_2` -> `frozenset({P_1_1, P_2_2})`
-    """
-    cnf = slboolal.to_cnf(sentence, simplify=False)
-    conjuncts = list(slboolal.conjuncts(cnf))
-    literals = None
-    if len(conjuncts) == 1:
-        literals = frozenset(slboolal.disjuncts(conjuncts[0]))
-    return literals
-
-
-def _subsumes(
-    derived_literals: Sequence[frozenset],
-    target: Optional[frozenset],
-) -> bool:
-    """
-    Check whether any derived clause subsumes `target`.
-
-    A clause subsumes another when its literals are a subset of theirs, since
-    then the shorter clause already implies the longer one.
-
-    :param derived_literals: literal sets of the derived clauses
-    :param target: literal set to settle, or `None` when it is not one clause
-    :return: True when some derived clause subsumes the target
-    """
-    found = False
-    if target is not None:
-        found = any(literals <= target for literals in derived_literals)
-    return found
-
-
-def verdict_from_derived(
-    derived: Sequence[sympy.Basic],
-    alpha: sympy.Basic,
-) -> str:
-    """
-    Report what a rule-based reasoner can say about `alpha`.
-
-    A reasoner only knows what it actually derived, so a derived clause settles
-    `alpha` only when it subsumes `alpha`, that is when its literals are a
-    subset of the literals of `alpha`.
-
-    :param derived: sentences the reasoner derived
-    :param alpha: query sentence, which must be a single clause
-    :return: one of `entailed`, `contradicted`, `unknown`
-    """
-    alpha_literals = _clause_literals(alpha)
-    hdbg.dassert_is_not(alpha_literals, None, "Query must be a single clause")
-    negated_literals = _clause_literals(sympy.Not(alpha))
-    # Sentences that are not a single clause are beyond what these reasoners
-    # can use, so they are dropped.
-    derived_literals = [
-        literals
-        for literals in (_clause_literals(d) for d in derived)
-        if literals is not None
-    ]
-    verdict = "unknown"
-    if _subsumes(derived_literals, alpha_literals):
-        verdict = "entailed"
-    elif _subsumes(derived_literals, negated_literals):
-        verdict = "contradicted"
-    return verdict
-
-
-def derived_by_modus_ponens() -> List[sympy.Basic]:
-    """
-    Derive everything forward chaining with modus ponens alone can reach.
-
-    The reasoner eliminates the biconditional and detaches its consequent, but
-    it has no resolution rule, so it cannot combine the resulting disjunction
-    with the fact that the start cell is safe.
-
-    :return: derived sentences
-    """
-    world = WumpusWorld()
-    told, _ = breeze_example_sentences()
-    safe_start = told[2]
-    neighbor_pits = [pit_symbol(n) for n in world.neighbors(_BREEZE_CELL)]
-    derived = [safe_start, sympy.Or(*neighbor_pits)]
-    return derived
-
-
-def derived_by_affirming_consequent() -> List[sympy.Basic]:
-    """
-    Derive everything a reasoner that affirms the consequent reaches.
-
-    The reasoner reads the biconditional as the one-way implication
-    "a pit nearby causes a breeze", then commits the classic fallacy: a breeze
-    was felt, so it affirms the consequent and declares every neighbor that is
-    not already known safe to hold a pit.
-
-    :return: derived sentences
-    """
-    world = WumpusWorld()
-    told, _ = breeze_example_sentences()
-    safe_start = told[2]
-    derived = [safe_start]
-    for cell in world.neighbors(_BREEZE_CELL):
-        if cell != world.start:
-            derived.append(pit_symbol(cell))
-    return derived
-
-
-def reasoner_verdicts(name: str) -> Tuple[Dict[str, str], List[sympy.Basic]]:
-    """
-    Run one of the three reasoners over every candidate query.
-
-    :param name: reasoner name shown in the dropdown
-    :return: tuple of
-        - map from query label to the verdict the reasoner reports
-        - the sentences the reasoner worked from
-    """
-    queries = entailment_queries()
-    if name == "correct (model checking)":
-        _, derived = breeze_example_sentences()
-        verdicts = true_entailment_verdicts()
-    elif name == "unsound (affirms consequent)":
-        derived = derived_by_affirming_consequent()
-        verdicts = {
-            label: verdict_from_derived(derived, alpha)
-            for label, alpha in queries.items()
-        }
-    elif name == "incomplete (modus ponens only)":
-        derived = derived_by_modus_ponens()
-        verdicts = {
-            label: verdict_from_derived(derived, alpha)
-            for label, alpha in queries.items()
-        }
-    else:
-        raise ValueError(f"Unknown reasoner: {name}")
-    return verdicts, derived
-
-
-def _classify_verdict(true_verdict: str, reported: str) -> str:
-    """
-    Compare a reported verdict against the entailment ground truth.
-
-    :param true_verdict: verdict from model checking
-    :param reported: verdict the reasoner reported
-    :return: one of `correct`, `false positive`, `false negative`
-    """
-    if reported == true_verdict:
-        kind = "correct"
-    elif reported == "unknown":
-        # The reasoner failed to derive an entailed conclusion.
-        kind = "false negative"
-    else:
-        # The reasoner asserted something entailment does not support.
-        kind = "false positive"
-    return kind
-
-
-def _draw_verdict_table(
-    ax: matplotlib.axes.Axes,
-    true_verdicts: Dict[str, str],
-    reported: Dict[str, str],
-    *,
-    title: str,
-) -> None:
-    """
-    Draw one row per query, comparing the reasoner against the ground truth.
-
-    :param ax: axes to draw on
-    :param true_verdicts: verdicts from model checking
-    :param reported: verdicts the reasoner reported
-    :param title: panel title
-    """
-    kind_to_color = {
-        "correct": _COLOR_CORRECT,
-        "false positive": _COLOR_FALSE_POSITIVE,
-        "false negative": _COLOR_FALSE_NEGATIVE,
-    }
-    labels = list(true_verdicts.keys())
-    n_rows = len(labels)
-    ax.axis("off")
-    ax.set_xlim(0, 3.0)
-    ax.set_ylim(0, n_rows + 1)
-    ax.set_title(title, fontsize=13, fontweight="bold")
-    # Header row sits above the query rows.
-    for col, header in enumerate(["query alpha", "entailment", "reasoner"]):
-        ax.text(
-            col + 0.05,
-            n_rows + 0.5,
-            header,
-            ha="left",
-            va="center",
-            fontsize=9,
-            fontweight="bold",
-        )
-    for index, label in enumerate(labels):
-        y = n_rows - 1 - index
-        kind = _classify_verdict(true_verdicts[label], reported[label])
-        ax.add_patch(
-            mpatches.Rectangle(
-                (0, y),
-                3.0,
-                1.0,
-                facecolor=kind_to_color[kind],
-                edgecolor="white",
-                linewidth=1.5,
-            )
-        )
-        ax.text(0.05, y + 0.5, label, ha="left", va="center", fontsize=8)
-        ax.text(
-            1.05,
-            y + 0.5,
-            true_verdicts[label],
-            ha="left",
-            va="center",
-            fontsize=8,
-        )
-        ax.text(
-            2.05,
-            y + 0.5,
-            reported[label],
-            ha="left",
-            va="center",
-            fontsize=8,
-            fontweight="bold",
-        )
-    ax.set_xlabel(
-        "green: matches entailment, red: false positive, orange: false negative",
-        fontsize=9,
-    )
-
-
-def cell3_1_soundness_completeness(
-    *,
-    figsize: Optional[Tuple[float, float]] = None,
-) -> None:
-    """
-    Run a correct, an unsound, and an incomplete reasoner on the same queries.
-
-    Interactive controls (ipywidgets):
-    - `reasoner`: which reasoner answers the queries
-
-    :param figsize: optional figure size
-    """
-    if figsize is None:
-        figsize = (17, 5)
-    reasoner_dropdown = ipywidgets.Dropdown(
-        options=[
-            "correct (model checking)",
-            "unsound (affirms consequent)",
-            "incomplete (modus ponens only)",
-        ],
-        value="correct (model checking)",
-        description="reasoner:",
-        style={"description_width": "initial"},
-        layout=ipywidgets.Layout(width="420px"),
-    )
-    output = ipywidgets.Output()
-
-    def update_plot(change: Optional[Any] = None) -> None:
-        _ = change
-        with output:
-            clear_output(wait=True)
-            name = reasoner_dropdown.value
-            truth = true_entailment_verdicts()
-            reported, derived = reasoner_verdicts(name)
-            kinds = [
-                _classify_verdict(truth[label], reported[label])
-                for label in truth
-            ]
-            n_false_positive = kinds.count("false positive")
-            n_false_negative = kinds.count("false negative")
-            _, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=figsize)
-            # Panel 1: the verdicts, marked against the entailment reference.
-            _draw_verdict_table(
-                ax1, truth, reported, title="Reported verdicts vs entailment"
-            )
-            # Panel 2: the two failure modes, counted.
-            draw_count_bars(
-                ax2,
-                ["correct", "false positive", "false negative"],
-                [kinds.count("correct"), n_false_positive, n_false_negative],
-                [_COLOR_CORRECT, _COLOR_FALSE_POSITIVE, _COLOR_FALSE_NEGATIVE],
-                title="Failure modes",
-                ylabel="number of queries",
-            )
-            # Panel 3: comments on the reasoner and its failure counts.
-            text = (
-                "Parameters:\n"
-                "  reasoner: %s\n\n"
-                "Counts over %d queries:\n"
-                "  correct: %d\n"
-                "  false positives (unsound): %d\n"
-                "  false negatives (incomplete): %d\n\n"
-                "Sound: %s\n"
-                "Complete: %s\n\n"
-                "Sentences the reasoner works from:\n"
-                "  %s"
-                % (
-                    name,
-                    len(truth),
-                    kinds.count("correct"),
-                    n_false_positive,
-                    n_false_negative,
-                    "yes" if n_false_positive == 0 else "no",
-                    "yes" if n_false_negative == 0 else "no",
-                    "\n  ".join(format_sentence(s) for s in derived),
-                )
-            )
-            comment_panel(ax3, text)
-            plt.tight_layout()
-            plt.show()
-
-    param_info = make_param_info(
-        {
-            "reasoner": "which procedure answers the queries: the "
-            "<code>correct</code> one enumerates models, the "
-            "<code>unsound</code> one affirms the consequent, and the "
-            "<code>incomplete</code> one has modus ponens but no resolution",
-        }
-    )
-    reasoner_dropdown.observe(update_plot, names="value")
-    update_plot()
-    controls = ipywidgets.VBox(
-        [reasoner_dropdown], layout=ipywidgets.Layout(padding="0px 8px 0px 0px")
-    )
-    top_row = ipywidgets.HBox([controls, param_info])
-    display(ipywidgets.VBox([top_row, output]))
-
-
-# #############################################################################
 # Cell 3.2: Model checking does not scale
 # #############################################################################
 
@@ -2002,26 +1668,35 @@ def model_checking_reference(
 def cell3_2_scaling(
     *,
     figsize: Optional[Tuple[float, float]] = None,
+    fixed_grid_size: Optional[int] = None,
 ) -> None:
     """
     Compare brute-force model checking against a SAT solver as the grid grows.
 
     Interactive controls (ipywidgets):
-    - `grid_size`: the largest grid included in the runtime curve
+    - `grid_size`: the largest grid included in the runtime curve (if not fixed)
 
     :param figsize: optional figure size
+    :param fixed_grid_size: if provided, use this grid size and disable the slider
     """
     if figsize is None:
         figsize = (15, 5)
-    size_slider, size_box = htutori.build_widget_control(
-        name="grid_size",
-        description="largest grid side included in the curve",
-        min_val=2,
-        max_val=6,
-        step=1,
-        initial_value=4,
-        is_float=False,
-    )
+
+    # If fixed_grid_size is provided, use it; otherwise create a slider
+    if fixed_grid_size is not None:
+        size_slider = None
+        size_box = None
+    else:
+        size_slider, size_box = htutori.build_widget_control(
+            name="grid_size",
+            description="largest grid side included in the curve",
+            min_val=2,
+            max_val=6,
+            step=1,
+            initial_value=4,
+            is_float=False,
+        )
+
     output = ipywidgets.Output()
     # Timings are reused across slider moves, so each size is measured once.
     cache: Dict[int, Dict[str, float]] = {}
@@ -2030,7 +1705,13 @@ def cell3_2_scaling(
         _ = change
         with output:
             clear_output(wait=True)
-            sizes = list(range(2, size_slider.value + 1))
+            # Use fixed value if provided, otherwise use slider value
+            if fixed_grid_size is not None:
+                max_size = fixed_grid_size
+            else:
+                assert size_slider is not None  # type checker guard
+                max_size = size_slider.value
+            sizes = list(range(2, max_size + 1))
             for size in sizes:
                 if size not in cache:
                     cache[size] = measure_scaling(size)
@@ -2118,20 +1799,28 @@ def cell3_2_scaling(
             plt.tight_layout()
             plt.show()
 
-    param_info = make_param_info(
-        {
-            "grid_size": "the largest grid side included in the curve; the "
-            "number of pit variables is <code>size^2</code>, so the model "
-            "count grows as <code>2^(size^2)</code>",
-        }
-    )
-    size_slider.observe(update_plot, names="value")
-    update_plot()
-    controls = ipywidgets.VBox(
-        [size_box], layout=ipywidgets.Layout(padding="0px 8px 0px 0px")
-    )
-    top_row = ipywidgets.HBox([controls, param_info])
-    display(ipywidgets.VBox([top_row, output]))
+    # Only show controls if grid_size is not fixed
+    if fixed_grid_size is not None:
+        # Fixed grid size: just run the plot without controls
+        update_plot()
+        display(output)
+    else:
+        # Variable grid size: show slider controls
+        assert size_slider is not None and size_box is not None  # type checker guard
+        param_info = make_param_info(
+            {
+                "grid_size": "the largest grid side included in the curve; the "
+                "number of pit variables is <code>size^2</code>, so the model "
+                "count grows as <code>2^(size^2)</code>",
+            }
+        )
+        size_slider.observe(update_plot, names="value")
+        update_plot()
+        controls = ipywidgets.VBox(
+            [size_box], layout=ipywidgets.Layout(padding="0px 8px 0px 0px")
+        )
+        top_row = ipywidgets.HBox([controls, param_info])
+        display(ipywidgets.VBox([top_row, output]))
 
 
 # #############################################################################

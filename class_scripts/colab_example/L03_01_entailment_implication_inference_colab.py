@@ -14,12 +14,13 @@
 # ---
 
 # %% [markdown]
-# # Entailment, Implication, and Inference: the Rain and Wet Ground World
+# # Entailment, Implication, and Inference: the Rain and Wet Ground World (Colab copy)
 #
-# - [Open in Binder](https://mybinder.org/v2/gh/gpsaggese/gpsaggese.github.io/gp?filepath=msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference.ipynb)
-# - For Google Colab, use the standalone copy in
-#   [`examples/L03_01_entailment_implication_inference_colab.ipynb`](https://colab.research.google.com/github/gpsaggese/gpsaggese.github.io/blob/gp/msml610/tutorials/L03_knowledge_representation/examples/L03_01_entailment_implication_inference_colab.ipynb)
+# - [Open in Google Colab](https://colab.research.google.com/github/gpsaggese/gpsaggese.github.io/blob/gp/msml610/tutorials/L03_knowledge_representation/examples/L03_01_entailment_implication_inference_colab.ipynb)
 #
+# - This is a standalone, Colab-ready copy of
+#   [`L03_01_entailment_implication_inference.ipynb`](https://github.com/gpsaggese/gpsaggese.github.io/blob/gp/msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference.ipynb):
+#   same content, same paired `_utils.py`, only the setup cell below differs
 # - This notebook stays on the lecture's own smallest examples, rain and wet
 #   ground, and $x = 0$ implies $x \cdot y = 0$, to make the model-theoretic
 #   definitions concrete without a larger running project
@@ -33,35 +34,43 @@
 # ## Imports
 
 # %%
-# Binder builds its image straight from this GitHub repo, so it already
-# has the whole repo on disk, just not always on `sys.path`. Docker gets
-# `helpers` and the paired `_utils.py` file for free (helpers_root on
-# PYTHONPATH, cwd = this notebook's dir); `colab_setup` reproduces that
-# for Binder too, shared by every tutorial notebook so this cell stays the
-# same everywhere except the `setup()` argument. Plain Python
-# (`subprocess`, not `!`/`get_ipython()`), so the paired .py script still
-# runs standalone outside a notebook.
+# Colab hosts none of the repo, only this one notebook file, so `helpers`
+# (source, not pip-installed) and the paired `_utils.py` file are missing
+# unless we fetch them. Docker gets both for free (helpers_root on
+# PYTHONPATH, cwd = the notebook's dir); `colab_setup` reproduces that,
+# shared by every tutorial notebook so this cell stays the same everywhere
+# except the `setup()` argument. Plain Python (`subprocess`, not
+# `!`/`get_ipython()`), so the paired .py script still runs standalone
+# outside a notebook.
 #
-# This notebook does not run on Google Colab: Colab starts with none of
-# the repo on disk, so `class_scripts.colab_setup` itself is not
-# importable there. Use the standalone copy in `examples/` for Colab.
+# The `setup()` argument below points at the canonical notebook's own dir
+# (not this `examples/` dir): that is where `_utils.py` and
+# `requirements.txt` actually live, and `colab_setup.setup()` `chdir`s
+# there before the import below runs.
 import os
 import sys
 
-ON_BINDER = "BINDER_LAUNCH_HOST" in os.environ
+ON_COLAB = "google.colab" in sys.modules
 
-if ON_BINDER:
+if ON_COLAB:
     import subprocess
 
-    # `colab_setup` lives inside the repo; Binder already has it on disk,
-    # just not always on `sys.path`.
-    repo_root = subprocess.run(
-        ["git", "rev-parse", "--show-toplevel"],
-        capture_output=True,
-        text=True,
-        check=True,
-    ).stdout.strip()
-    # Docker gets this for free via PYTHONPATH; Binder needs it.
+    # `colab_setup` lives inside the repo, so on Colab it isn't importable
+    # until the repo is cloned.
+    if not os.path.exists("gpsaggese.github.io"):
+        subprocess.run(
+            [
+                "git",
+                "clone",
+                "--depth",
+                "1",
+                "--branch",
+                "gp",
+                "https://github.com/gpsaggese/gpsaggese.github.io.git",
+            ],
+            check=True,
+        )
+    repo_root = os.path.abspath("gpsaggese.github.io")
     sys.path.insert(0, repo_root)
 
 import class_scripts.colab_setup as colab_setup
