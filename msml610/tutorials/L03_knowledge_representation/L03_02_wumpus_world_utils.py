@@ -12,7 +12,7 @@ make the model-theoretic definition of entailment concrete:
 
 Import as:
 
-import msml610.tutorials.L03_knowledge_representation.L03_01_wumpus_world_utils as mtlkrl0wwu
+import msml610.tutorials.L03_knowledge_representation.L03_02_wumpus_world_utils as mtlkrl0wwu
 """
 
 import logging

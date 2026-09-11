@@ -46,7 +46,7 @@ plt.rcParams["figure.figsize"] = (12, 6)
 # %%
 import helpers.hnotebook as hnotebook
 
-import L03_01_wumpus_world_utils as utils
+import L03_02_wumpus_world_utils as utils
 
 # Initialize notebook configuration and logging.
 hnotebook.config_notebook()

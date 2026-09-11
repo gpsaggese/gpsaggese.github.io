@@ -1,7 +1,9 @@
 ipywidgets
 matplotlib
+networkx
 numpy
 pandas
+scikit-learn
 seaborn
 
 sympy==1.14.0
