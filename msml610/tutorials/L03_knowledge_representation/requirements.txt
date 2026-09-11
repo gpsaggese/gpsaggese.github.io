@@ -1,0 +1,7 @@
+ipywidgets
+matplotlib
+numpy
+pandas
+seaborn
+
+sympy==1.14.0
