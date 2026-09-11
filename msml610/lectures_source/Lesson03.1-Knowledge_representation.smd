@@ -578,9 +578,10 @@ digraph KBStructure {
 - Sentence $x + y = 4$ is true in certain worlds and false in others
   - E.g., in worlds with $x = 2$ men and $y = 2$ women, $x + y = 4$ is true
 
-* Satisfaction
+* Satisfaction of a Sentence
 
-- @Recap@: A model $m$ fixes all the variables $x_1, ..., x_n$ used in sentences
+- @Recap@: A model $m$ fixes all the world variables $x_1, ..., x_n$ used in
+  sentences
 
 - @Definition@: If a sentence $\alpha$ is true in model $m$, we say _"the model $m$
   **satisfies** the sentence $\alpha$"_
@@ -685,9 +686,9 @@ digraph ModelChecking {
 ::::
 :::
 
-* Tutorial
+// * Tutorial
 
-- [Entailment as Model Inclusion, by Model Checking](https://colab.research.google.com/github/gpsaggese/gpsaggese.github.io/blob/gp/msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference.ipynb#scrollTo=d5583feb)
+// - [Entailment as Model Inclusion, by Model Checking](https://colab.research.google.com/github/gpsaggese/gpsaggese.github.io/blob/gp/msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference.ipynb#scrollTo=d5583feb)
 
 ## Entailment vs Inference
 
@@ -715,9 +716,9 @@ digraph ModelChecking {
   - Entailment is a constraint on consistent belief
   - _"If you believe your KB, you must believe the entailed sentences"_
 
-* Tutorial
+// * Tutorial
 
-- [Entailment on a Non-Boolean World](https://colab.research.google.com/github/gpsaggese/gpsaggese.github.io/blob/gp/msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference.ipynb#scrollTo=ffa645ba)
+// - [Entailment on a Non-Boolean World](https://colab.research.google.com/github/gpsaggese/gpsaggese.github.io/blob/gp/msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference.ipynb#scrollTo=ffa645ba)
 
 * Implication and Inference
 
@@ -751,9 +752,9 @@ digraph ModelChecking {
   - Inference is "the reasoning process that (ideally) tracks entailment"
   - Entailment is "meta-level truth-following across all models"
 
-* Tutorial
+// * Tutorial
 
-- [Implication, Entailment, and Inference: Three Views](https://colab.research.google.com/github/gpsaggese/gpsaggese.github.io/blob/gp/msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference.ipynb#scrollTo=4d643cf9)
+// - [Implication, Entailment, and Inference: Three Views](https://colab.research.google.com/github/gpsaggese/gpsaggese.github.io/blob/gp/msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference.ipynb#scrollTo=4d643cf9)
 
 * Inference Engines
 
@@ -855,9 +856,9 @@ digraph BackwardChaining {
   - _Complete_: Enumerating all (finitely many) models is guaranteed to find every
     entailed $\alpha$
 
-* Tutorial
+// * Tutorial
 
-- [Soundness and Completeness by Breaking a Reasoner](https://colab.research.google.com/github/gpsaggese/gpsaggese.github.io/blob/gp/msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference.ipynb#scrollTo=2ab6186f)
+// - [Soundness and Completeness by Breaking a Reasoner](https://colab.research.google.com/github/gpsaggese/gpsaggese.github.io/blob/gp/msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference.ipynb#scrollTo=2ab6186f)
 
 * Representation Mirrors the World
 
