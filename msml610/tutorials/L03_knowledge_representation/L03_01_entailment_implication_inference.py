@@ -16,8 +16,8 @@
 # %% [markdown]
 # # Entailment, Implication, and Inference: the Rain and Wet Ground World
 #
-# [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/gpsaggese/gpsaggese.github.io/blob/gp/msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference.ipynb)
-# [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/gpsaggese/gpsaggese.github.io/gp?filepath=msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference.ipynb)
+# - [Open in Google Colab](https://colab.research.google.com/github/gpsaggese/gpsaggese.github.io/blob/gp/msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference.ipynb)
+# - [Open in Binder](https://mybinder.org/v2/gh/gpsaggese/gpsaggese.github.io/gp?filepath=msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference.ipynb)
 #
 # - This notebook stays on the lecture's own smallest examples, rain and wet
 #   ground, and $x = 0$ implies $x \cdot y = 0$, to make the model-theoretic
@@ -27,52 +27,32 @@
 #   - Entailment as model inclusion, verified by model checking
 #   - The same definition applied to a non-Boolean world
 #   - Implication vs entailment vs inference, three views of one example
-#   - Soundness and completeness, seen by deliberately breaking a reasoner
 
 # %% [markdown]
 # ## Imports
 
 # %%
+# Neither Colab nor Binder hosts the whole repo, only this one notebook
+# file, so `helpers` (source, not pip-installed) and the paired
+# `_utils.py` file are missing unless we fetch them. Docker gets both for
+# free (helpers_root on PYTHONPATH, cwd = this notebook's dir);
+# `colab_setup` reproduces that, shared by every tutorial notebook so this
+# cell stays the same everywhere except the `setup()` argument. Plain
+# Python (`subprocess`, not `!`/`get_ipython()`), so the paired .py script
+# still runs standalone outside a notebook.
 import os
 import sys
 
-# Detected once, reused below and in the next cell: autoreload watches this
-# repo's own files for live edits, which Colab/Binder don't have until the
-# next cell clones/locates them, so skip it there.
 ON_COLAB = "google.colab" in sys.modules
 ON_BINDER = "BINDER_LAUNCH_HOST" in os.environ
 
-if not (ON_COLAB or ON_BINDER):
-    # `get_ipython()` is `None` when the paired .py runs as a plain script
-    # (outside a notebook kernel); skip the magics rather than crash.
-    from IPython.core.getipython import get_ipython
+if ON_COLAB or ON_BINDER:
+    import subprocess
 
-    ip = get_ipython()
-    if ip is not None:
-        ip.run_line_magic("load_ext", "autoreload")
-        ip.run_line_magic("autoreload", "2")
-
-import logging
-
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-# %%
-# Neither Colab nor Binder hosts the whole repo, only this one notebook file,
-# so `helpers` (source, not pip-installed) and the paired `_utils.py` file
-# are missing unless we fetch them. Docker gets both for free (helpers_root
-# on PYTHONPATH, cwd = this notebook's dir); this cell reproduces that.
-# Plain Python (`subprocess`, not `!`/`get_ipython()`), so the paired .py
-# script still runs standalone outside a notebook.
-import subprocess
-
-if ON_COLAB:
-    # Colab starts empty: clone the repo, then point Python at it.
-    REPO_DIR = "gpsaggese.github.io"
-    BRANCH = "gp"
-    NB_DIR = "msml610/tutorials/L03_knowledge_representation"
-
-    if not os.path.exists(REPO_DIR):
+    # `colab_setup` lives inside the repo, so on Colab it isn't importable
+    # until the repo is cloned; Binder and local runs already have it,
+    # just not always on `sys.path`.
+    if ON_COLAB and not os.path.exists("gpsaggese.github.io"):
         subprocess.run(
             [
                 "git",
@@ -80,27 +60,33 @@ if ON_COLAB:
                 "--depth",
                 "1",
                 "--branch",
-                BRANCH,
-                f"https://github.com/gpsaggese/{REPO_DIR}.git",
+                "gp",
+                "https://github.com/gpsaggese/gpsaggese.github.io.git",
             ],
             check=True,
         )
-    sys.path.insert(0, os.path.abspath(f"{REPO_DIR}/helpers_root"))
-    sys.path.insert(0, os.path.abspath(f"{REPO_DIR}/{NB_DIR}"))
-    os.chdir(f"{REPO_DIR}/{NB_DIR}")
-    subprocess.run(
-        ["pip", "install", "-q", "-r", "requirements.txt"], check=True
+    repo_root = (
+        os.path.abspath("gpsaggese.github.io")
+        if ON_COLAB
+        else subprocess.run(
+            ["git", "rev-parse", "--show-toplevel"],
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout.strip()
     )
-elif ON_BINDER:
-    # Binder already clones the repo and builds requirements.txt into the
-    # image; cwd is already this notebook's dir, only PYTHONPATH is missing.
-    git_root = subprocess.run(
-        ["git", "rev-parse", "--show-toplevel"],
-        capture_output=True,
-        text=True,
-        check=True,
-    ).stdout.strip()
-    sys.path.insert(0, os.path.join(git_root, "helpers_root"))
+    # Docker gets this for free via PYTHONPATH; Colab/Binder need it.
+    sys.path.insert(0, repo_root)
+
+import class_scripts.colab_setup as colab_setup
+
+colab_setup.setup("msml610/tutorials/L03_knowledge_representation")
+colab_setup.maybe_enable_autoreload()
+
+import logging
+
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # %%
 import helpers.hnotebook as hnotebook
@@ -204,9 +190,10 @@ utils.cell2_2_nonboolean_world()
 # ## Cell 3.1: Implication, Entailment, and Inference: Three Views
 #
 # **Goal**:
-# - Separate three ideas the lecture distinguishes on one running example:
-#   implication inside a single sentence, entailment across all models, and
-#   inference as a procedure that tries to track it
+# - Separate three ideas the lecture distinguishes on one running example
+#   - Implication inside a single sentence
+#   - Entailment across all models
+#   - Inference as a procedure that tries to track it
 # - _Implication view_: the truth table of $Rain \implies WetGround$
 #   alone, with its one false row highlighted
 # - _Entailment view_: the same shaded model table from Cell 2.1, for
@@ -233,41 +220,6 @@ utils.cell3_1_three_views()
 #   entailment it tracks
 
 # %% [markdown]
-# # Part 4: Soundness and Completeness
-
-# %% [markdown]
-# ## Cell 4.1: Soundness and Completeness by Breaking a Reasoner
-#
-# **Goal**:
-# - Make soundness (no false positives) and completeness (no false
-#   negatives) concrete by extending the `KB` by one hop,
-#   $KB = \{Rain, Rain \implies Puddle, Puddle \implies WetGround,
-#   Sprinkler \implies WetGround\}$, and running three reasoners against the
-#   model-checking ground truth
-# - _Verdict table_: one row per query, comparing each reasoner's answer
-#   to the model-checking verdict, colored correct, false positive, or
-#   false negative
-# - _Comments_: which reasoner is active, and its failure counts
-
-# %%
-# Run a correct, an unsound, and an incomplete reasoner on the same KB.
-utils.cell4_1_soundness_completeness()
-
-# %% [markdown]
-# **Key observations**:
-# - Model checking is both sound and complete here: the model space is
-#   finite, so enumerating it settles every query correctly
-# - The unsound reasoner sees `WetGround` and the rule
-#   `Sprinkler => WetGround`, and wrongly affirms `Sprinkler`: a false
-#   positive, since `Sprinkler` is genuinely undetermined by the `KB`
-# - The incomplete reasoner applies modus ponens once, deriving `Puddle`
-#   from `Rain` but never re-applying it to derive `WetGround`: a false
-#   negative on a query model checking confirms is entailed
-# - Soundness and completeness are independent failures: one reasoner
-#   asserts too much, the other too little, and fixing one does not fix the
-#   other
-
-# %% [markdown]
 # # Summary: The Mental Model
 #
 # - A model is one full assignment to every variable; $M(\alpha)$ is the set
@@ -279,8 +231,3 @@ utils.cell4_1_soundness_completeness()
 # - Implication is syntax inside one sentence, entailment is semantics
 #   across all models, and inference is the algorithm, forward or backward,
 #   that tries to track entailment
-# - A sound reasoner never asserts more than entailment supports (no false
-#   positives), a complete reasoner never misses what entailment supports
-#   (no false negatives), and the two failures are independent
-# - Model checking is sound and complete whenever the model space is finite,
-#   because it implements the definition of entailment directly

@@ -20,6 +20,7 @@
 | `helpers_root/dev_scripts_helpers/notebooks/extract_notebook_images.py` | Extract screenshots from marked notebook cells           |
 | `helpers_root/dev_scripts_helpers/notebooks/add_toc_to_notebook.py` | Add a clickable table of contents inside the notebook itself |
 | `claude> /slides.add_tutorial_links $SMD_FILE`               | Link each slide section to its matching notebook cell           |
+| `class_scripts/colab_setup.py`                               | Shared setup so a tutorial notebook's `helpers`/`_utils.py` imports work on Colab/Binder |
 
 ## Flow 1: Static HTML with Per-Cell Anchors (for slide -> cell links)
 
@@ -71,13 +72,80 @@
 
 - Use this when a reader should be able to edit and run the code, not just read it
 
+### Make the Notebook's Own Imports Work on Colab/Binder
+
+- Colab and Binder only ever see the single notebook file, not the whole repo,
+  so `import helpers.hnotebook` and the notebook's own paired `_utils.py`
+  import fail there (`ModuleNotFoundError: No module named 'helpers'`) unless
+  the notebook fetches them itself first
+- `helpers_root` is also a **git submodule**
+  (`git@github.com:causify-ai/helpers.git`): a plain `git clone`/`git pull` of
+  the repo leaves it on disk but empty, and its pinned URL is SSH, which needs
+  a key neither Colab nor Binder has
+- `class_scripts/colab_setup.py` is the shared, stdlib-only fix for all of
+  this (repo clone on Colab, submodule fetch over HTTPS, `sys.path`/cwd
+  wiring, `requirements.txt` install, autoreload gating), reusable by any
+  `msml610`/`data605` tutorial notebook: only the `setup()` argument
+  changes per notebook, everything else is copy-paste
+- Add this as the **first code cell** of the notebook, before any
+  `helpers`/`*_utils` import and before `%load_ext autoreload`:
+
+  ```python
+  import os
+  import sys
+
+  ON_COLAB = "google.colab" in sys.modules
+  ON_BINDER = "BINDER_LAUNCH_HOST" in os.environ
+
+  if ON_COLAB or ON_BINDER:
+      import subprocess
+
+      # `colab_setup` lives inside the repo, so on Colab it isn't
+      # importable until the repo is cloned; Binder and local runs
+      # already have it, just not always on `sys.path`.
+      if ON_COLAB and not os.path.exists("gpsaggese.github.io"):
+          subprocess.run(
+              [
+                  "git", "clone", "--depth", "1", "--branch", "gp",
+                  "https://github.com/gpsaggese/gpsaggese.github.io.git",
+              ],
+              check=True,
+          )
+      repo_root = (
+          os.path.abspath("gpsaggese.github.io")
+          if ON_COLAB
+          else subprocess.run(
+              ["git", "rev-parse", "--show-toplevel"],
+              capture_output=True, text=True, check=True,
+          ).stdout.strip()
+      )
+      # Docker gets this for free via PYTHONPATH; Colab/Binder need it.
+      sys.path.insert(0, repo_root)
+
+  import class_scripts.colab_setup as colab_setup
+
+  colab_setup.setup("msml610/tutorials/<LNN_topic>")
+  colab_setup.maybe_enable_autoreload()
+  ```
+
+- `colab_setup.maybe_enable_autoreload()` replaces a bare `%load_ext
+  autoreload` / `%autoreload 2`: it skips them on Colab/Binder (nothing to
+  watch until `setup()` has run) and outside a notebook kernel (the paired
+  `.py` run as a plain script, where `get_ipython()` is `None` and a bare
+  `%`-magic would be a syntax error)
+- On Colab, a rerun in the same session `git pull`s instead of re-cloning, so
+  a later push is picked up, but already-imported modules stay cached:
+  **Runtime -> Restart session**, then **Run all**, to actually see the update
+- See `msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference.py`
+  for a worked example
+
 ### Option 1: Google Colab (Recommended)
 
 - Push the notebook to GitHub, e.g., the `gp` branch of this repo
-- Add a badge to the notebook's first cell:
+- Add a link to the notebook's first cell:
 
   ```markdown
-  [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/gpsaggese/gpsaggese.github.io/blob/gp/<path>.ipynb)
+  [Open in Google Colab](https://colab.research.google.com/github/gpsaggese/gpsaggese.github.io/blob/gp/<path>.ipynb)
   ```
 
 - URL format: `https://colab.research.google.com/github/<user>/<repo>/blob/<branch>/<path>.ipynb`
@@ -102,12 +170,12 @@
 
 ### Option 2: Binder
 
-- No badge edit needed on the notebook itself
+- No link edit needed on the notebook itself
 - Go to `https://mybinder.org`, enter the repo URL, branch, and notebook path,
-  get a shareable link, or embed a badge:
+  get a shareable link, or embed a link:
 
   ```markdown
-  [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/gpsaggese/gpsaggese.github.io/gp?filepath=<path>.ipynb)
+  [Open in Binder](https://mybinder.org/v2/gh/gpsaggese/gpsaggese.github.io/gp?filepath=<path>.ipynb)
   ```
 
 - Builds the full environment from the tutorial's `requirements.txt`, so it

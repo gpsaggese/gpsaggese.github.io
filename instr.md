@@ -1,88 +1,107 @@
-In http://localhost:8888/lab/tree/git_root/msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference.ipynb
+In http://localhost:8888/lab/tree/git_root/msml610/tutorials/L03_knowledge_representation
 
-1) Always use bullet points in markdown
+1) Add a cell explaining the wumpus world problem in markdown
+Explain the breeze axiom 
 
-Do not do this
+2) Explain what is the correct strategy to win
 
-_Model table_: the same 4-row table, with $M(KB)$ shaded blue and
-$M(\alpha)$ outlined in dashed orange
-_Inclusion counts_: bar chart of $|M(KB)|$, the overlap with $M(\alpha)$,
-and the counterexample rows
-_Comments_: which `KB` sentences are toggled on, the query $\alpha$, and
-the entailment verdict
+3) Shows agent knows only what's told, not hidden truth.
 
-but
+- TELL percept button calls kb.tell_percept(cell), which adds 3 sentences to KB:
+  a. Not(P_cell) — agent stood here and survived, so no pit.
+  b. Breeze axiom for cell (biconditional linking breeze to neighbor pits).
+  c. Observed breeze literal (true/false) from world.percept(cell).
 
-- _Model table_: the same 4-row table, with $M(KB)$ shaded blue and $M(\alpha)$ outlined in dashed orange
-- _Inclusion counts_: bar chart of $|M(KB)|$, the overlap with $M(\alpha)$, and the counterexample rows
-- _Comments_: which `KB` sentences are toggled on, the query $\alpha$, and the entailment verdict
+4) In cell2_1_models_and_axiom 
 
-
-2) In cell1_1_models_and_satisfaction, remove model count
-
-3) In cell2_1_entailment_model_checking, remove model inclusion
-
-4) Add a KB to clarify that 
-Rain
-Rain => WetGround
-
-are the knowledge base
-
-5) Replace
-
-Rain / Rain => WetGround
-
-with 
-
-KB: "Rain", "Rain => WetGround"
+- remove model count
+- remove log2(models)
 
 ## Plan
-- Target files (edit the jupytext-paired `.py`, then sync to `.ipynb`):
-  - `msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference.py`
-  - `msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference_utils.py`
-- [x] Item 1: bullet-list all non-bulleted `_Label_: ...` description blocks
-  in the `.py` markdown cells (each has this pattern; fixing all, not just
-  the cited example, since the rule says "Always")
-  - [x] Cell 2.1 block (the one quoted in `instr.md`) — also drop the
-    `_Inclusion counts_` bullet here since item 3 removes that panel
-  - [x] Cell 2.2 block
-  - [x] Cell 3.1 block
-  - [x] Cell 4.1 block
-- [x] Item 2: in `cell1_1_models_and_satisfaction` (utils), remove the
-  "Model count" bar-chart panel; go from 3 subplots to 2, keep model table
-  + comments panels
-- [x] Item 3: in `cell2_1_entailment_model_checking` (utils), remove the
-  "Model inclusion" bar-chart panel; go from 3 subplots to 2, keep model
-  table + comments panels
-  - [x] `draw_count_bars` becomes unused after items 2 and 3 — removed the
-    now-dead helper function too
-- [x] Items 4-5 (same edit): in `cell2_1_entailment_model_checking`'s
-  `param_info`, replace the key `"Rain / Rain => WetGround"` with
-  `'KB: "Rain", "Rain => WetGround"'` so the info panel reads the two
-  toggles as the `KB`
-- [x] Run `jupytext --sync` to regenerate the `.ipynb` from the edited `.py`
-  - reverted the incidental `jupytext_version` header bump (local jupytext
-    is older than the one that last wrote the file)
-- [x] Check line lengths stay within the repo's 81-column limit
-- [x] `git add` the two edited files (no commit)
+
+- Confirmed with user:
+  - Cell 2.1 becomes fully static: `n` fixed at 3, no widget
+  - "Remove model count" = remove the bar chart panel only; keep the
+    numeric counts in the Comments text panel
+  - Tasks 1 and 2 become two separate new markdown cells
+
+- [x] Task 1: add a new markdown cell in `L03_02_wumpus_world.py` (paired
+      with the `.ipynb`), placed right after `# Part 1: ...` and before
+      `## Cell 1.1`, explaining the wumpus world problem
+  - [x] Hidden 4x4 grid, agent starts at `(1, 1)`, pits and the wumpus kill
+        the agent, gold is the goal, percepts are breeze / stench / glitter
+  - [x] Explain the breeze axiom informally: a breeze is felt in a cell if
+        and only if at least one neighboring cell holds a pit
+- [x] Task 2: add a second new markdown cell (right after the Task 1 cell,
+      still before `## Cell 1.1`) explaining the correct strategy to win
+  - [x] Only move into cells the `KB` proves safe, use `TELL`/`ASK` to grow
+        certainty, grab the gold once found, return to the start cell
+- [x] Task 3: fix the "Key observations" markdown cell after `## Cell 1.1`
+      (currently says "every TELL adds one sentence", which is inaccurate)
+      to correctly describe that `TELL percept` adds up to three sentences
+      to the `KB`
+  - [x] `Not(P_cell)`: the agent stood in the cell and survived, so no pit
+  - [x] The breeze axiom for the cell, linking the breeze percept to
+        neighboring pits
+  - [x] The observed breeze literal (true/false) from `world.percept(cell)`
+  - [x] Keep the point that the agent only knows what has been `TELL`-ed,
+        never the hidden truth
+- [x] Task 4: in `cell2_1_models_and_axiom` (`L03_02_wumpus_world_utils.py`)
+  - [x] Remove the `log2(models)` slider control, fixing the number of
+        enumerated pit variables to 3 (the breeze axiom's own variables),
+        making the cell a static (non-interactive) display
+  - [x] Remove the "Model count" bar chart panel (`draw_count_bars` call),
+        changing the layout from 1x3 to 1x2 subplots (model table +
+        comments); keep the numeric counts in the Comments text panel
+  - [x] Update the Cell 2.1 markdown (Goal bullets, Key observations) and
+        the function docstring to match the simplified, non-interactive
+        cell
+- [x] Apply matching edits to the paired notebook `L03_02_wumpus_world.ipynb`
+      (via jupytext sync)
+- [x] Run the notebook top to bottom to confirm it executes without error
 
 ## Result
+
 - Done:
-  - Bulleted the 4 non-bulleted `_Label_: ...` description blocks (cells
-    2.1, 2.2, 3.1, 4.1) in the paired `.py` markdown cells
-  - Removed the "Model count" panel from `cell1_1_models_and_satisfaction`
-    and the "Model inclusion" panel from `cell2_1_entailment_model_checking`
-    (3-panel layouts → 2-panel; model table + comments panel only)
-  - Removed the now-unused `draw_count_bars` helper (no remaining callers)
-  - Relabeled the `param_info` key from `"Rain / Rain => WetGround"` to
-    `'KB: "Rain", "Rain => WetGround"'` in `cell2_1_entailment_model_checking`
-  - Synced `.ipynb` from the edited `.py` via `jupytext --sync`
-  - Staged the two edited `.py`/`_utils.py` files with `git add`
-- Not done:
-  - Did not touch the pre-existing uncommitted diff in the `.ipynb`
-    (stale widget execution output on the Cell 2.2 code cell) — it predates
-    this task and is unrelated to the 5 items
-  - Did not re-run the notebook to refresh outputs — out of scope for a
-    source/text edit task
-  - Left `docker_build.version.log`, `msml610/tutorials/docker_build.log`,
-    and the `tmp.*` files untracked, per the "no temp files" rule
+  - Added two new markdown cells before `## Cell 1.1` in
+    `L03_02_wumpus_world.py`/`.ipynb`: "The Wumpus World Problem" (grid,
+    percepts, informal breeze axiom) and "The Correct Strategy to Win"
+    (KB-proved safety, no guessing, grab gold, return to start)
+  - Fixed the Cell 1.1 "Key observations" markdown, which incorrectly said
+    "every TELL adds one sentence"; it now lists the 3 sentences
+    `TELL percept` adds (`Not(P_cell)`, the breeze axiom, the observed
+    breeze literal) and restates that the agent never sees the hidden truth
+  - Simplified `cell2_1_models_and_axiom` in `L03_02_wumpus_world_utils.py`:
+    removed the `log2(models)` slider (n fixed at 3, the breeze axiom's own
+    variable count) and the "Model count" bar chart; layout is now 1x2
+    (model table + comments), comments still report the model counts as
+    text
+  - Updated Cell 2.1's Goal/Key-observations markdown to match the
+    simplified, non-interactive cell
+  - Synced the `.ipynb` from the `.py` via `jupytext --sync`, then ran the
+    whole notebook inside Docker
+    (`docker_cmd.sh "python .../L03_02_wumpus_world.py"`): executed
+    top to bottom with no errors
+  - Ran `ruff check` on both changed Python files: no new lint issues
+    (pre-existing `E402` notebook-import warnings only)
+- Not done / flagged:
+  - The `.ipynb`'s stored cell outputs (images) were not regenerated; only
+    the source cells were synced from the `.py`. Re-run the notebook in
+    Jupyter Lab to refresh the displayed plots, especially Cell 2.1's now
+    2-panel output
+  - `jupytext --sync` also touched
+    `L03_03_rule_based_expert_systems.py`/`.ipynb` (only a
+    `jupytext_version` metadata bump, `1.19.0` -> `1.19.5`, no content
+    change) even though this task never opened that notebook; likely the
+    live Jupyter Lab server (see the URL at the top of this file)
+    autosaved it during this session. Flagging rather than reverting,
+    since it may be a legitimate autosave from your open tab
+  - The `helpers_root` submodule now shows as modified too (staged edit to
+    `.claude/skills/notebook.rules.md`, plus untracked
+    `dev_scripts_helpers/coding_tools/notify.py.log` and
+    `helpers/hselect_input_output.py.log`), none of which this task
+    touched. It was clean at the start of this session, so something else
+    (the live Jupyter Lab server, or another process) changed it
+    concurrently. Flagging, not reverting
+  - No files were staged (`git add`): all edits were to already-tracked
+    files, not new ones, per the "Add Files to the Repo" rule

@@ -1085,6 +1085,9 @@ def cell1_1_world_and_kb(
 _BREEZE_CELL = (1, 2)
 # Pit variables spanning the model table, the three axiom variables first.
 _MODEL_TABLE_CELLS = [(1, 1), (2, 2), (1, 3), (2, 1), (3, 1), (1, 4)]
+# Number of pit variables in the breeze axiom for `_BREEZE_CELL`: exactly its
+# three neighbors.
+_AXIOM_N_VARS = 3
 # Number of pit variables used by the entailment and reasoner cells, small
 # enough that every row of the truth table stays individually readable.
 _ENTAILMENT_N_VARS = 4
@@ -1136,89 +1139,46 @@ def cell2_1_models_and_axiom(
     """
     Enumerate every model of the breeze axiom and shade the ones satisfying it.
 
-    Interactive controls (ipywidgets):
-    - `log2(models)`: the number of pit variables `n`, on a logarithmic slider
-      because the number of models is $2^n$
+    The table is fixed to the axiom's own 3 pit variables, the neighbors of
+    `_BREEZE_CELL`, so every model is directly checkable by hand.
 
     :param figsize: optional figure size
     """
     if figsize is None:
-        figsize = (16, 6)
-    # The slider moves the exponent, so the displayed value is the model count.
-    n_slider, n_box = htutori.build_log_widget_control(
-        name="log2(models)",
-        description="n (pit variables enumerated)",
-        min_exp=3,
-        max_exp=len(_MODEL_TABLE_CELLS),
-        initial_exp=3,
-        base=2,
+        figsize = (12, 6)
+    n_vars = _AXIOM_N_VARS
+    var_order = model_table_var_order(n_vars)
+    told, grounded = breeze_example_sentences()
+    bits = enumerate_assignments(n_vars)
+    kb_mask = satisfying_mask(grounded, var_order, bits)
+    n_shaded = int(kb_mask.sum())
+    _, (ax1, ax2) = plt.subplots(1, 2, figsize=figsize)
+    # Panel 1: every candidate world, with the models of the KB shaded.
+    draw_model_table(
+        ax1,
+        bits,
+        [str(var) for var in var_order],
+        kb_mask,
+        title="Model table over %d pit variables" % n_vars,
     )
-    output = ipywidgets.Output()
-
-    def update_plot(change: Optional[Any] = None) -> None:
-        _ = change
-        with output:
-            clear_output(wait=True)
-            n_vars = n_slider.value
-            var_order = model_table_var_order(n_vars)
-            told, grounded = breeze_example_sentences()
-            bits = enumerate_assignments(n_vars)
-            kb_mask = satisfying_mask(grounded, var_order, bits)
-            n_shaded = int(kb_mask.sum())
-            _, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=figsize)
-            # Panel 1: every candidate world, with the models of the KB shaded.
-            draw_model_table(
-                ax1,
-                bits,
-                [str(var) for var in var_order],
-                kb_mask,
-                title="Model table over %d pit variables" % n_vars,
-            )
-            # Panel 2: how much of the table survives the KB.
-            draw_count_bars(
-                ax2,
-                ["satisfies KB", "violates KB"],
-                [n_shaded, bits.shape[0] - n_shaded],
-                ["#3182bd", "#d9d9d9"],
-                title="Model count",
-                ylabel="number of models",
-            )
-            # Panel 3: comments on the current enumeration.
-            text = (
-                "Parameters:\n"
-                "  n (pit variables): %d\n\n"
-                "Model counts:\n"
-                "  candidate models 2^n: %d\n"
-                "  models of KB (shaded): %d\n"
-                "  ruled out: %d\n\n"
-                "KB sentences:\n"
-                "  %s"
-                % (
-                    n_vars,
-                    bits.shape[0],
-                    n_shaded,
-                    bits.shape[0] - n_shaded,
-                    "\n  ".join(format_sentence(s) for s in told),
-                )
-            )
-            comment_panel(ax3, text)
-            plt.tight_layout()
-            plt.show()
-
-    param_info = make_param_info(
-        {
-            "log2(models)": "the number of pit variables <code>n</code> that "
-            "the table enumerates; the row count is <code>2^n</code>, so the "
-            "slider moves the exponent rather than the count",
-        }
+    # Panel 2: comments on the current enumeration.
+    text = (
+        "Model counts:\n"
+        "  candidate models 2^n: %d\n"
+        "  models of KB (shaded): %d\n"
+        "  ruled out: %d\n\n"
+        "KB sentences:\n"
+        "  %s"
+        % (
+            bits.shape[0],
+            n_shaded,
+            bits.shape[0] - n_shaded,
+            "\n  ".join(format_sentence(s) for s in told),
+        )
     )
-    n_slider.observe(update_plot, names="value")
-    update_plot()
-    controls = ipywidgets.VBox(
-        [n_box], layout=ipywidgets.Layout(padding="0px 8px 0px 0px")
-    )
-    top_row = ipywidgets.HBox([controls, param_info])
-    display(ipywidgets.VBox([top_row, output]))
+    comment_panel(ax2, text)
+    plt.tight_layout()
+    plt.show()
 
 
 # #############################################################################
