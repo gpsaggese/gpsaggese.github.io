@@ -13,17 +13,18 @@
 
 - @Goal@: Build up from **why** knowledge must be represented explicitly to **how**
   it is organized, reasoned over, and reused
-  - **Foundations**: What knowledge representation is, and the core design tradeoffs
-  - **Languages**: Natural language, programming languages, propositional and
+  - @Foundations@: What knowledge representation is, and its tradeoffs
+  - @Languages@: Natural language, programming languages, propositional and
     first-order logic
-  - **Semantics**: Knowledge bases, grounding, models, and satisfaction
-  - **Reasoning**: Entailment, inference, soundness and completeness
-  - **Agents**: Reflex, rule-based, and knowledge-based agents
-  - **Ontologies**: Components, examples, and reasoning tasks
+  - @Semantics@: Knowledge bases, grounding, models, and satisfaction
+  - @Reasoning@: Entailment, inference, soundness and completeness
+  - @Agents@: Reflex, rule-based, and knowledge-based agents
+  - @Ontologies@: Components, examples, and reasoning tasks
 
 ::::
 :::: {.column width=45%}
 
+// TODO(ai_gp): Use a color scheme similar to the slides from red to purple.
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#EEEDFE', 'primaryBorderColor': '#7F77DD', 'primaryTextColor': '#26215C', 'lineColor': '#888888', 'fontFamily': 'Helvetica'}}}%%
 mindmap
@@ -44,9 +45,9 @@ mindmap
 * Defining Knowledge Representation
 
 - @Definition@: **Knowledge Representation (KR)** is the study of how to _formally
-  encode information_ so that machines can reason with it
+  encode information_ so that machines can _reason_ with it
   - E.g., rules, logic, ontologies, semantic networks
-  - KR defines:
+  - Knowledge representation defines:
     - _Structure_: How knowledge is organized
     - _Semantics_: What it means
 
@@ -54,7 +55,7 @@ mindmap
   - Draw conclusions
   - Perform planning
   - Answer queries
-  -
+  - ...
 
 * Why Knowledge Representation Matters
 
@@ -64,14 +65,15 @@ mindmap
 - @Motivation@: Why knowledge representation is essential to AI?
   1. @Learning alone is not enough@: Machines need to _reason_ about the world
      - Example: A medical AI can _predict_ diseases
-     - But to _explain_ a diagnosis to a doctor or patience, it needs structured
-       knowledge
+     - But it needs structured knowledge to _explain_ a diagnosis to a doctor or
+       patience
   2. @Bridges perception and reasoning@
      - Sensors provide _perception_ (i.e., raw data)
      - KR turns raw data into _actionable knowledge_ through _reasoning_
   3. @Enables explainability@
      - Users can understand _why_ a system made a decision
-     - Critical for high-stakes domains (e.g., healthcare, law, autonomous systems)
+     - Critical for high-stakes domains
+       - E.g., healthcare, law, autonomous systems
   4. @Enables planning and abstract reasoning@
      - Robots plan actions using abstract symbolic knowledge
      - Conversational agents can reason about intent and context
@@ -121,6 +123,7 @@ digraph WhyKR {
 ::::
 :::: {.column width=30%}
 
+// TODO(ai_gp): In tikz use \sffamily for sensserif fonts
 ```tikz
 \begin{axis}[
   width=12cm,
@@ -205,16 +208,11 @@ digraph WhyKR {
 
 * Conceptual Spaces
 
-- @Definition@: **Conceptual spaces** are frameworks for representing knowledge using
-  geometric structures
-  - Each "dimension" represents an interpretable feature
-  - Similarity between objects is modeled by spatial distance
-  - A **concept** is a region in a multidimensional space
-
-- @Pros@
-  - Natural modeling of similarity and vagueness
-  - Better than symbolic systems, in which discrete symbols carry no similarity
-    structure (e.g., `Car` vs `Bicycle`)
+- @Definition@: **Conceptual spaces** represent knowledge using _geometric
+  structures_
+  - Each _dimension_ represents an interpretable feature
+  - A _concept_ is a region in a multidimensional space
+  - _Similarity_ between objects is modeled by spatial distance
 
 ::: columns
 :::: {.column width=65%}
@@ -233,6 +231,11 @@ digraph WhyKR {
 ::::
 :::
 
+- @Pros@
+  - Natural modeling of similarity and vagueness
+  - Better than symbolic systems, in which discrete symbols carry no similarity
+    structure (e.g., `Car` vs `Bicycle`)
+
 ## Languages for Representing Knowledge
 
 * Natural Languages
@@ -248,17 +251,14 @@ digraph WhyKR {
 
 - @Definition@: The **Sapir-Whorf hypothesis** claims: _"the language you speak
   shapes how you perceive, think about, and experience the world"_
-  - The strong version (language determines what you can think) is rejected; a weak
-    influence is supported by evidence
+  - The strong version is rejected; a weak influence is supported by evidence
+  - Newspeak from Orwell's 1984: you can't think concepts you don't have words for
 
 - @Example@
   - Even through arbitrary grammatical features (e.g., gender of nouns)
   - Some languages lack words for certain concepts (e.g., direction)
-  - Some languages have more fine-grained vocabulary for a concept
-    - E.g., Russian distinguishes dark blue and light blue as two basic colors, not
-      shades of one
-  - Newspeak from 1984 (Orwell): you can't think certain concepts since you don't
-    have words for it
+  - Some languages have more fine-grained vocabulary for concepts (e.g., snow for
+    people in Artic, Russian has to colors for dark and light blue)
 
 * Procedural vs Declarative Approaches
 
@@ -274,22 +274,23 @@ digraph WhyKR {
     path
 
 - @Remark@: Many successful AI systems use a _hybrid approach_
-  - Declarative knowledge can be compiled into procedural code
+  - Compile declarative knowledge into procedural code
   - E.g., a planner generates procedures from declarative goals (e.g., SQL)
 
-* Limits of Programming Languages
+* Programming Languages
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=50%}
 
 - @Definition@: A **programming language** (e.g., C++, Python) is a _formal
-  procedural_ language
+  procedural_ description
   - _Data structures_ represent facts
   - _Code_ updates data structures in a domain-specific way
 
 ::::
-:::: {.column width=38%}
+:::: {.column width=50%}
 
+// TODO(ai_gp): Use bold for the first line
 ```graphviz
 digraph ProgVsDeclarative {
   bgcolor="transparent";
@@ -351,6 +352,8 @@ digraph ProgVsDeclarative {
        information or quantify uncertainty
      - E.g., _"A white knight is in `b1` or in `f6`"_
 
+* Declarative Languages
+
 - @Definition@: In a **declarative language**, knowledge and inference are separate
   1. _Knowledge_ represents the domain-specific problem
      - The meaning of a sentence is a function of the meaning of its parts
@@ -409,7 +412,7 @@ digraph ProgVsDeclarative {
 * Syntax and Semantics of a KB
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=55%}
 
 - @Definition@: **Knowledge base (KB)** is a set of:
   - _Sentences_ $\alpha$ expressing assertions (observed, assumed or derived) about
@@ -419,8 +422,9 @@ digraph ProgVsDeclarative {
     - E.g., _"If it rains, the ground gets wet"_
 
 ::::
-:::: {.column width=38%}
+:::: {.column width=45%}
 
+// TODO(ai_gp): Make the first line bold
 ```graphviz
 digraph KBStructure {
   bgcolor="transparent";
@@ -460,31 +464,40 @@ digraph KBStructure {
   - **Semantics**: Meaning of sentences with respect to each possible world
     - E.g., $x + y = 4$ is true in world $(x=2, y=2)$, false in $(x=1, y=1)$
 
+* Syntax and Semantics of a KB
+
 - @Definition@: **Axiom** is a sentence taken as given (not derived from others)
 
 - @Definition@: **Inference** is the process of deriving new sentences from old ones
-  - Should follow logical reasoning rules
 
 - @Definition@: **Truth values** representations
-  - _Classical logic_: Each sentence is true or false
+  - _Classical logic_: Each sentence is true or false (no uncertainty)
   - _Fuzzy logic_: Allows different degrees of truth
     - E.g., $Truth(\alpha) = 0.5$
+    - The uncertainty is in the meaning of the words, not in your knowledge
+    - E.g., "The room is hot" can have Truth = 0.7 if temperature is 85 since
+      hot doesn't have an exact cut off
   - _Probabilistic logic_: Sentences have probability of being true
     - E.g., $\Pr(\alpha) = 0.3$
+    - There is a 40% chance that $\alpha$ = "It will rain tomorrow"
+    - The probability reflects lack of knowledge, not fuzziness in what rain means
+    - It collapses to true or false once known
 
 * Grounding
 
 ::: columns
 :::: {.column width=50%}
 
-- @Definition@: **Grounding** connects abstract symbols to real-world entities or
-  observations
+- @Definition@: **Grounding** connects abstract _symbols_ to _real-world entities or
+  observations_
   - E.g., link the symbol `Apple` in the KB to the fruit "apple"
   - It is the bridge between representation in a KB and the world
 
 ::::
 :::: {.column width=50%}
 
+// TODO(ai_gp): Make bold the first part and add parenthesis for second line, use the
+// official style in graphviz.rules.md
 // include:msml610/lectures_source/Lesson01.1.aux.md "L03.1_Grounding"
 
 ::::
@@ -523,8 +536,8 @@ digraph KBStructure {
 
   - Assume that "learning" (going from particular cases to general cases) is
     typically correct
-    - Learning is still fallible
-    - E.g., `smell = burning` because maybe somebody is cooking on a grill
+    - But learning is still fallible
+      - E.g., `smell = burning` because maybe somebody is cooking on a grill
 
 * Models and Possible Worlds
 
@@ -540,7 +553,7 @@ digraph KBStructure {
 - @Example@: Consider worlds with _"men and women sitting at a table"_
   - Model represents all possible worlds as _"there are ($x$ men, $y$ women)"_
   - Sentence $x + y = 4$ is true in certain worlds and false in others
-  - E.g., in worlds with $x = 2$ men and $y = 2$ women, $x + y = 4$ is true
+    - E.g., in worlds with $x = 2$ men and $y = 2$ women, $x + y = 4$ is true
 
 * Satisfaction
 
