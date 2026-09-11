@@ -456,7 +456,7 @@ class Test_generate_slides_pdf(hunitest.TestCase):
                        '--output '
                        '$GIT_ROOT/class_scripts/test/outcomes/Test_generate_slides_pdf.test1/tmp.scratch/msml610/lectures/Lesson01.1-Intro.pdf '
                        '--type slides --toc_type navigation --skip_action open_pdf '
-                       '--debug_on_error',),
+                       '--debug_on_error -v INFO',),
               'function': 'hsystem.system',
               'kwargs': {'suppress_output': False}}]
             """)
@@ -487,7 +487,7 @@ class Test_generate_slides_pdf(hunitest.TestCase):
                        '--output '
                        '$GIT_ROOT/class_scripts/test/outcomes/Test_generate_slides_pdf.test2/tmp.scratch/msml610/lectures/Lesson01.1-Intro.pdf '
                        '--type slides --toc_type navigation --skip_action open_pdf '
-                       '--debug_on_error --filter_by_slides 1:5',),
+                       '--debug_on_error -v INFO --filter_by_slides 1:5',),
               'function': 'hsystem.system',
               'kwargs': {'suppress_output': False}}]
             """)
@@ -544,7 +544,8 @@ class Test_release_slides_pdf(hunitest.TestCase):
         self.assertEqual(len(sys_calls), 1)
         cmd_str = sys_calls[0]["args"][0]
         self.assertEqual(
-            cmd_str, "gen_slides.py -i msml610/08.1 --action release"
+            cmd_str,
+            "gen_slides.py -i msml610/08.1 --action release -v INFO",
         )
 
     def test2(self) -> None:
@@ -567,7 +568,7 @@ class Test_release_slides_pdf(hunitest.TestCase):
         cmd_str = sys_calls[0]["args"][0]
         self.assertEqual(
             cmd_str,
-            "gen_slides.py -i data605/01.1 --action release "
+            "gen_slides.py -i data605/01.1 --action release -v INFO "
             '--notes_to_pdf_args="--skip_action open_pdf"',
         )
 
@@ -622,7 +623,7 @@ class Test_generate_toc(hunitest.TestCase):
         expected_str = hprint.dedent("""
             [{'args': ('extract_toc_from_txt.py -i '
                        '$GIT_ROOT/class_scripts/test/outcomes/Test_generate_toc.test2/tmp.scratch/Lesson02.1-Advanced.smd '
-                       '--max_level 5 --warn_on_malformed',),
+                       '--max_level 5 --warn_on_malformed -v INFO',),
               'function': 'hsystem.system_to_string',
               'kwargs': {'suppress_output': True}}]
             """)
@@ -656,7 +657,9 @@ class Test_generate_lecture_commentary(hunitest.TestCase):
         # Check outputs.
         self.assertEqual(len(sys_calls), 1)
         cmd_str = sys_calls[0]["args"][0]
-        self.assertEqual(cmd_str, "gen_lecture_commentary.py data605/01.1")
+        self.assertEqual(
+            cmd_str, "gen_lecture_commentary.py data605/01.1 -v INFO"
+        )
 
     def test2(self) -> None:
         """
@@ -678,7 +681,8 @@ class Test_generate_lecture_commentary(hunitest.TestCase):
         cmd_str = sys_calls[0]["args"][0]
         self.assertEqual(
             cmd_str,
-            "gen_lecture_commentary.py data605/01.1 --no_incremental --open_pdf",
+            "gen_lecture_commentary.py data605/01.1 -v INFO "
+            "--no_incremental --open_pdf",
         )
 
 
@@ -714,7 +718,7 @@ class Test_release_book_chapters_pdf(hunitest.TestCase):
         self.assertEqual(
             cmd_str,
             "render_book_chapter.py -i msml610/03.2 --action release "
-            '--run_typst_args="--skip_action open_pdf"',
+            '--run_typst_args="--skip_action open_pdf" -v INFO',
         )
 
     def test2(self) -> None:
@@ -738,7 +742,7 @@ class Test_release_book_chapters_pdf(hunitest.TestCase):
         self.assertEqual(
             cmd_str,
             "render_book_chapter.py -i data605/01.1 --action release "
-            '--run_typst_args="--skip_action open_pdf" '
+            '--run_typst_args="--skip_action open_pdf" -v INFO '
             "--no_abort_on_warnings",
         )
 
@@ -1047,7 +1051,7 @@ class Test_process_lecture_file_with_generate_toc(hunitest.TestCase):
                        '--output '
                        '$GIT_ROOT/class_scripts/test/outcomes/Test_process_lecture_file_with_generate_toc.test2/tmp.scratch/msml610/lectures/Lesson01.1-Intro.pdf '
                        '--type slides --toc_type navigation --skip_action open_pdf '
-                       '--debug_on_error',),
+                       '--debug_on_error -v INFO',),
               'function': 'hsystem.system',
               'kwargs': {'suppress_output': False}}]
             """)
