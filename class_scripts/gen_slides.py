@@ -206,6 +206,8 @@ def _generate(
         "--debug_on_error",
         "--skip_action=cleanup_before",
         "--skip_action=cleanup_after",
+        "-v",
+        args.log_level,
     ]
     # Add slides engine if specified.
     if args.slides_engine:

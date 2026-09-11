@@ -219,6 +219,8 @@ def _generate(
         run_typst_exec,
         f"--input={typ_file}",
         f"--output={output_file}",
+        "-v",
+        args.log_level,
     ]
     if args.no_abort_on_warnings:
         cmd_parts.append("--no_abort_on_warnings")
