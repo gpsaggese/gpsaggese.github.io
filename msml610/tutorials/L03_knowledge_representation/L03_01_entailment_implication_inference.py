@@ -70,9 +70,9 @@ utils.cell1_1_models_and_satisfaction()
 # **Key observations**:
 # - $M(Rain) = \{m_1, m_2\}$ regardless of `WetGround`: satisfaction depends
 #   only on the variables a sentence mentions
-# - "The model satisfies the sentence" reads backwards at first: the model
-#   (the world) is what varies across rows, the sentence's truth is read off
-#   each fixed row
+# - "The model satisfies the sentence" reads backwards at first
+#   - The model (the world) is what varies across rows
+#   - The sentence's truth is read off each fixed row
 # - $M(Rain \implies WetGround)$ excludes only $m_2$: implication is false in
 #   exactly one of the 4 models
 
@@ -143,7 +143,6 @@ utils.cell2_2_nonboolean_world()
 # - Separate three ideas the lecture distinguishes on one running example:
 #   implication inside a single sentence, entailment across all models, and
 #   inference as a procedure that tries to track it
-#
 # - _Implication view_: the truth table of $Rain \implies WetGround$
 #   alone, with its one false row highlighted
 # - _Entailment view_: the same shaded model table from Cell 2.1, for
@@ -181,7 +180,6 @@ utils.cell3_1_three_views()
 #   $KB = \{Rain, Rain \implies Puddle, Puddle \implies WetGround,
 #   Sprinkler \implies WetGround\}$, and running three reasoners against the
 #   model-checking ground truth
-#
 # - _Verdict table_: one row per query, comparing each reasoner's answer
 #   to the model-checking verdict, colored correct, false positive, or
 #   false negative
