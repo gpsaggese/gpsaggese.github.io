@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.5
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -15,6 +15,9 @@
 
 # %% [markdown]
 # # Entailment, Implication, and Inference: the Rain and Wet Ground World
+#
+# [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/gpsaggese/gpsaggese.github.io/blob/gp/msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference.ipynb)
+# [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/gpsaggese/gpsaggese.github.io/gp?filepath=msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference.ipynb)
 #
 # - This notebook stays on the lecture's own smallest examples, rain and wet
 #   ground, and $x = 0$ implies $x \cdot y = 0$, to make the model-theoretic
@@ -37,6 +40,53 @@ import logging
 
 import matplotlib.pyplot as plt
 import seaborn as sns
+
+# %%
+# Neither Colab nor Binder hosts the whole repo, only this one notebook file,
+# so `helpers` (source, not pip-installed) and the paired `_utils.py` file
+# are missing unless we fetch them. Docker gets both for free (helpers_root
+# on PYTHONPATH, cwd = this notebook's dir); this cell reproduces that.
+# Plain Python (`os.system`, not `!`/`get_ipython()`), so the paired .py
+# script still runs standalone outside a notebook.
+import os
+import subprocess
+import sys
+
+if "google.colab" in sys.modules:
+    # Colab starts empty: clone the repo, then point Python at it.
+    REPO_DIR = "gpsaggese.github.io"
+    BRANCH = "gp"
+    NB_DIR = "msml610/tutorials/L03_knowledge_representation"
+
+    if not os.path.exists(REPO_DIR):
+        subprocess.run(
+            [
+                "git",
+                "clone",
+                "--depth",
+                "1",
+                "--branch",
+                BRANCH,
+                f"https://github.com/gpsaggese/{REPO_DIR}.git",
+            ],
+            check=True,
+        )
+    sys.path.insert(0, os.path.abspath(f"{REPO_DIR}/helpers_root"))
+    sys.path.insert(0, os.path.abspath(f"{REPO_DIR}/{NB_DIR}"))
+    os.chdir(f"{REPO_DIR}/{NB_DIR}")
+    subprocess.run(
+        ["pip", "install", "-q", "-r", "requirements.txt"], check=True
+    )
+elif os.environ.get("BINDER_LAUNCH_HOST"):
+    # Binder already clones the repo and builds requirements.txt into the
+    # image; cwd is already this notebook's dir, only PYTHONPATH is missing.
+    git_root = subprocess.run(
+        ["git", "rev-parse", "--show-toplevel"],
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout.strip()
+    sys.path.insert(0, os.path.join(git_root, "helpers_root"))
 
 # %%
 import helpers.hnotebook as hnotebook
