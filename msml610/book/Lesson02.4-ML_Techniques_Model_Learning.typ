@@ -37,7 +37,7 @@ The goal of optimization in machine learning is to minimize a scalar function
 $J(bold(w))$ of $P$ variables $bold(w)$. A common instance is the #strong[in-sample
   error]
 
-$ E_(i n)(bold(w)) eq.def 1/N sum_(i=1)^N e(h_(bold(w))(bold(x)_i), y_i) $
+$ E_(i n)(bold(w)) eq.delta 1/N sum_(i=1)^N e(h_(bold(w))(bold(x)_i), y_i) $
 
 which averages the pointwise error of a hypothesis $h_(bold(w))$ over $N$ training
 examples $(bold(x)_i, y_i)$.
@@ -398,7 +398,7 @@ well in every direction and gradient descent converges faster and more smoothly.
 Consider the squared error over $N$ training samples, defined as
 
 $
-  E_(i n)(bold(w)) := 1 / N sum_(i=1)^N (h_(bold(w))(bold(x)_i) - y_i)^2
+  E_(i n)(bold(w)) eq.delta 1 / N sum_(i=1)^N (h_(bold(w))(bold(x)_i) - y_i)^2
 $
 
 This measures the average discrepancy between the hypothesis $h_(bold(w))$ and the

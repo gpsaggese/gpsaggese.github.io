@@ -552,7 +552,8 @@ def _main(parser: argparse.ArgumentParser) -> None:
             "notes_to_pdf.py "
             f"--input {input_file} "
             f"--output {tmp_pdf} "
-            "--type slides --toc_type remove_headers"
+            "--type slides --toc_type remove_headers "
+            f"-v {args.log_level}"
         )
         hsystem.system(cmd, print_command=True, dry_run=args.dry_run)
     # Step 2: Extract slide images from the PDF.

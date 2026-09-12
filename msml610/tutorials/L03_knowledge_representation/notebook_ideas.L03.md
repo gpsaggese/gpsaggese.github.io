@@ -1,17 +1,23 @@
-# Notebook Ideas: Knowledge Representation
+# Notebook Ideas: Logic and Knowledge Representation (L03)
 
-- Source material: `msml610/lectures_source/Lesson03.1-Knowledge_representation.smd`
+- Source material:
+  - `msml610/lectures_source/Lesson03.1-Knowledge_representation.smd`
+  - `msml610/lectures_source/Lesson03.2-Propositional_and_first_order_logic.smd`
+  - `msml610/lectures_source/Lesson03.3-Non_classical_logics.smd`
 - Each idea is one interactive Jupyter notebook that teaches the lecture concepts
   through:
   - Visualization
   - Interaction
   - Exploration
 - Coverage of the lecture arc:
-  - Ideas 1: semantics, entailment, inference, knowledge-based agents
-  - Idea 2: rule-based systems and reflex agents
-  - Idea 3: ontologies and description-logic reasoning tasks
-  - Idea 4: knowledge graphs, grounding, and open-world queries
-  - Idea 5: symbolic vs sub-symbolic representation and conceptual spaces
+  - Idea 1: propositional logic, first-order logic, semantics, entailment, inference,
+    and knowledge-based agents (L03.1, L03.2)
+  - Idea 2: rule-based systems, reflex agents, non-monotonic and default reasoning,
+    closed vs open world assumption (L03.1, L03.3)
+  - Idea 3: ontologies and description-logic reasoning tasks (L03.1, L03.3)
+  - Idea 4: knowledge graphs, grounding, RDF, SPARQL, and open-world queries (L03.3)
+  - Idea 5: symbolic vs sub-symbolic representation and conceptual spaces (L03.1,
+    L03.3)
 
 ## 1. Wumpus World: From Percepts to Proofs
 
@@ -20,26 +26,30 @@
 - Students will:
   - Gain intuitive understanding of knowledge bases, models, and entailment by
     building a knowledge-based agent that survives the Wumpus World
-  - Explore the relationship between what a $KB$ means (semantics) and what an
-    algorithm can derive from it (inference)
+  - Explore the relationship between what a `KB` means (semantics) and what an
+    algorithm can derive from it (inference), in both propositional and first-order
+    form
 
 ### Learning Objectives
 
 - Encode percepts as propositional sentences with `TELL` and query them with `ASK`
-- Enumerate all possible worlds and compute $M(KB)$ and $M(\alpha)$
-- Verify entailment as the set inclusion $M(KB) \subseteq M(\alpha)$
+- Enumerate all possible worlds and compute `M(KB)` and `M(alpha)`
+- Verify entailment as the set inclusion `M(KB)` subset of `M(alpha)`
 - Separate implication, entailment, and inference on concrete examples
 - Observe soundness (no false positives) and completeness (no false negatives)
 - Measure how model checking degrades as the number of variables grows
+- Rewrite the propositional breeze/stench rules as first-order sentences with
+  quantifiers, and apply universal and existential instantiation
 
 ### Core Concepts
 
 - Syntax vs semantics of a knowledge representation language
 - Model as a full assignment to all variables, and satisfaction of a sentence
-- Logical entailment $KB \models \alpha$ and its model-theoretic definition
+- Logical entailment `KB |= alpha` and its model-theoretic definition
 - Model checking as a sound and complete brute-force algorithm
 - Forward chaining, backward chaining, and resolution as alternatives
 - Expressiveness vs tractability: atomic, factored, and structured states
+- First-order logic: predicates, quantifiers, universal and existential instantiation
 
 ### Key Packages
 
@@ -51,22 +61,21 @@
 ### Learning Activities
 
 - Build the classic 4x4 Wumpus World grid with pits, a wumpus, and gold
-- Encode the breeze axiom $B_{1,2} \iff (P_{1,1} \lor P_{2,2} \lor P_{1,3})$ for
-  every cell
-- Enumerate all $2^n$ models in a table, and shade the rows that satisfy the $KB$
-- Query _"is cell (2,2) provably safe?"_ and read the answer off the shaded rows
+- Encode the breeze axiom `B(1,2) <=> (P(1,1) or P(2,2) or P(1,3))` for every cell
+- Enumerate all `2^n` models in a table, and shade the rows that satisfy the `KB`
+- Query "is cell (2,2) provably safe?" and read the answer off the shaded rows
 - Explore the three-way distinction with a widget:
   - Implication: a sentence inside the logic
   - Entailment: truth preserved across every shaded row
-  - Inference: the procedure that walks from $KB$ to $\alpha$
+  - Inference: the procedure that walks from `KB` to `alpha`
 - Test a deliberately unsound rule (affirming the consequent) and count the wrong
   conclusions it produces
 - Test an incomplete rule set (modus ponens only, no resolution) and count the
   entailed facts it misses
 - Measure runtime of model checking vs a SAT solver as the grid grows from 2x2 to 6x6
-- Explore the random 3-SAT phase transition near a clause-to-variable ratio of
-  $4.26$, where the hardest instances live
-- Interactive agent loop: step the agent, watch the $KB$ grow, and watch the set of
+- Rewrite the grid rules in first-order logic (e.g., "for every cell adjacent to a
+  pit, breeze holds") and instantiate them for a specific cell
+- Interactive agent loop: step the agent, watch the `KB` grow, and watch the set of
   candidate models shrink
 
 ## 2. MYCIN Redux: A Rule-Based Expert System You Can Debug
@@ -78,6 +87,8 @@
     match-conflict-resolution-act cycle from scratch
   - Explore the relationship between explainability and predictive accuracy by
     comparing a rule engine against a learned classifier on the same data
+  - Explore why classical rule-based conclusions are non-monotonic: new facts can
+    overturn earlier ones
 
 ### Learning Objectives
 
@@ -87,6 +98,8 @@
 - Trace and explain every conclusion back to the rules that fired
 - Extend crisp rules with certainty factors to handle uncertainty
 - Contrast a reflex agent (percept only) with a rule-based agent (working memory)
+- Implement a default rule that a later fact retracts, and contrast the closed world
+  assumption with the open world assumption on the same query
 
 ### Core Concepts
 
@@ -96,6 +109,8 @@
 - Explainability as a first-class property of symbolic systems
 - Declarative vs procedural encoding of the same behavior
 - Rule-based trade-offs: brittleness, maintenance cost, and uncertainty handling
+- Non-monotonic and default reasoning: conclusions retracted by new evidence
+- Closed world assumption vs open world assumption
 
 ### Key Packages
 
@@ -106,7 +121,7 @@
 
 ### Learning Activities
 
-- Re-build a small MYCIN-style diagnostic KB, the 1970s Stanford system that
+- Re-build a small MYCIN-style diagnostic `KB`, the 1970s Stanford system that
   recommended antibiotics for blood infections
 - Encode Winston's classic animal-identification rules:
 
@@ -122,16 +137,20 @@
   explores
 - Measure how many rules each strategy fires on the same query
 - Answer the two MYCIN explanation questions for any conclusion:
-  - _"How did you conclude this?"_
-  - _"Why are you asking me this?"_
+  - "How did you conclude this?"
+  - "Why are you asking me this?"
 - Add certainty factors to rules and propagate them, then compare the ranking of
   candidate diagnoses
 - Interactive conflict resolution: reorder the rules with a slider and observe when
   the derived facts change
 - Train a decision tree on a symptom dataset and compare it to the rule engine on
   accuracy, on latency, and on whether a doctor can audit the reasoning
-- Break the KB by adding a contradictory rule, and watch the engine loop or produce
+- Break the `KB` by adding a contradictory rule, and watch the engine loop or produce
   inconsistent facts
+- Run the classic default-reasoning case: default rule "birds fly" concludes Tweety
+  flies, then a new fact "Tweety is a penguin" retracts the conclusion
+- Query an unasserted fact under CWA (answer: false) and under OWA (answer: unknown),
+  and compare the two answers side by side
 
 ## 3. Ontology Lab: Pizzas, Penguins, and a Reasoner
 
@@ -155,9 +174,9 @@
 
 - OWL and RDF as concrete knowledge representation languages
 - Description logic constructs and the expressiveness vs tractability curve
-- Subsumption: _"is class `A` more general than class `B`?"_
+- Subsumption: "is class `A` more general than class `B`?"
 - Unsatisfiable concepts, e.g., `FlyingPenguin` requires flying and cannot fly
-- The open-world assumption: unknown is not the same as false
+- The open world assumption: unknown is not the same as false
 - Asserted hierarchy vs inferred hierarchy after classification
 
 ### Key Packages
@@ -182,7 +201,7 @@
 - Perform retrieval: list every individual that satisfies `TeachingAssistant`
 - Interactive axiom editor: add or remove one axiom and re-run the reasoner, with
   newly inferred edges highlighted in the hierarchy view
-- Demonstrate the open-world assumption: query for a fact that is simply absent and
+- Demonstrate the open world assumption: query for a fact that is simply absent and
   get "unknown" rather than "false"
 - Measure reasoner runtime as cardinality constraints and property chains are added
 - Export the ontology to Turtle and RDF/XML, then re-open the file in Protege
@@ -210,7 +229,7 @@
 
 - Knowledge graph as a knowledge base built from an ontology
 - RDF triples, IRIs, and the linked-data idea
-- SPARQL as the declarative query language: state _what_, not _how_
+- SPARQL as the declarative query language: state what, not how
 - Transitive and symmetric properties, and inference by graph traversal
 - Grounding: symbols in the graph refer to entities in the world
 - Incomplete and noisy knowledge, and the limits of open-world querying
@@ -231,7 +250,7 @@
   on the queried subgraph
 - Compute an Erdos number from a co-authorship subgraph and compare the two
   small-world structures
-- Query WikiData for _"Nobel laureates in Physics born in Germany"_ and inspect the
+- Query WikiData for "Nobel laureates in Physics born in Germany" and inspect the
   entity and property identifiers that ground each answer
 - Interactive query builder: pick a subject, a property, and a limit with widgets,
   then read the generated SPARQL before it runs
@@ -239,8 +258,8 @@
   against a direct query
 - Merge a DBpedia subgraph and a WikiData subgraph, then find the entities that
   failed to align
-- Measure how answer counts change when one property is missing, to make the
-  open-world assumption concrete
+- Measure how answer counts change when one property is missing, to make the open
+  world assumption concrete
 - Compare a SPARQL query against nearest-neighbor search over graph embeddings on the
   same question
 
@@ -297,7 +316,7 @@
 - Test the convexity criterion: sample points between two members of a concept and
   ask whether the midpoint is still a member
 - Build a color conceptual space in CIELAB and draw English color-name regions, then
-  draw the Russian split between _siniy_ (dark blue) and _goluboy_ (light blue) as
+  draw the Russian split between `siniy` (dark blue) and `goluboy` (light blue) as
   two basic regions
 - Ground symbols in perception using the fact that ImageNet labels are WordNet
   synsets: pick a synset, retrieve its images, and discuss what the mapping assumes

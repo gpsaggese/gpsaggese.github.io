@@ -215,6 +215,7 @@ def generate_lecture_video_script(
     *,
     slides_per_group: int = 3,
     limit_range: Tuple[int, int] = (0, 0),
+    log_level: str = "INFO",
 ) -> None:
     """
     Generate a complete lecture video script from a slides source file.
@@ -230,6 +231,8 @@ def generate_lecture_video_script(
     :param slides_per_group: number of slides to process in each LLM call
     :param limit_range: 0-indexed inclusive `(start, end)` slide range to
         process; `(0, 0)` means process all slides
+    :param log_level: verbosity level (e.g., "DEBUG") forwarded to
+        `llm_cli.py` and `lint_text.py`
     """
     # Step 1: Generate script.
     _LOG.info("Step 1: Generating per-slide-group script")
@@ -242,12 +245,18 @@ def generate_lecture_video_script(
     # Step 2: Generate intro.
     _LOG.info("Step 2: Generating intro")
     intro_file = "tmp.gen_lecture_video_script.intro.txt"
-    cmd = f"llm_cli.py -i {output_file} -p '{INTRO_PROMPT}' -o {intro_file}"
+    cmd = (
+        f"llm_cli.py -i {output_file} -p '{INTRO_PROMPT}' -o {intro_file} "
+        f"-v {log_level}"
+    )
     hsystem.system(cmd)
     # Step 3: Generate outro.
     _LOG.info("Step 3: Generating outro")
     outro_file = "tmp.gen_lecture_video_script.outro.txt"
-    cmd = f"llm_cli.py -i {output_file} -p '{OUTRO_PROMPT}' -o {outro_file}"
+    cmd = (
+        f"llm_cli.py -i {output_file} -p '{OUTRO_PROMPT}' -o {outro_file} "
+        f"-v {log_level}"
+    )
     hsystem.system(cmd)
     # Step 4: Combine intro, script, and outro.
     _LOG.info("Step 4: Combining intro, script, and outro")
@@ -274,7 +283,8 @@ def generate_lecture_video_script(
     _LOG.info("Step 5: Linting the final script")
     cmd = (
         f"lint_text.py -i {output_file} -o {output_file} "
-        f"--use_dockerized_prettier --action beautify --action frame_chapters"
+        f"--use_dockerized_prettier --action beautify --action frame_chapters "
+        f"-v {log_level}"
     )
     hsystem.system(cmd)
     _LOG.info("Lecture script generated: %s", output_file)
@@ -303,6 +313,7 @@ def _main(parser: argparse.ArgumentParser) -> None:
         output_file,
         slides_per_group=args.slides_per_group,
         limit_range=limit_range,
+        log_level=args.log_level,
     )
 
 
