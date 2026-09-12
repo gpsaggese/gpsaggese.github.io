@@ -52,8 +52,9 @@
 
 ## Chapter Templates and Invariants
 
-- Follow `.claude/skills/book.rules.md` for the Chapter Template (Goals, Topics,
-  TODO, Slides, Lesson Materials, Notes) and Roadmap section conventions used
+- Follow `.claude/skills/book_map.rules.md` for the Chapter Template (Goals,
+  Topics, TODO, Slides, Lesson Materials, Notes) and Roadmap section conventions
+  used
   throughout this file
 
 # Roadmap
