@@ -24,9 +24,8 @@
 ::::
 :::: {.column width=45%}
 
-// TODO(ai_gp): Use a color scheme similar to the slides from red to purple.
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#EEEDFE', 'primaryBorderColor': '#7F77DD', 'primaryTextColor': '#26215C', 'lineColor': '#888888', 'fontFamily': 'Helvetica'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#F2A8A8', 'primaryBorderColor': '#B8558A', 'primaryTextColor': '#4A0E4E', 'lineColor': '#888888', 'fontFamily': 'Helvetica'}}}%%
 mindmap
   root((**Knowledge<br/>Representation**))
     (**Foundations**)
@@ -123,7 +122,6 @@ digraph WhyKR {
 ::::
 :::: {.column width=30%}
 
-// TODO(ai_gp): In tikz use \sffamily for sensserif fonts
 ```tikz
 \begin{axis}[
   width=12cm,
@@ -132,13 +130,13 @@ digraph WhyKR {
   xlabel style={
     at={(axis description cs:0.5,-0.05)},
     anchor=north,
-    font=\Huge\bfseries
+    font=\Huge\bfseries\sffamily
   },
   ylabel style={
     at={(axis description cs:-0.02,0.5)},
     anchor=south,
     rotate=90,
-    font=\Huge\bfseries
+    font=\Huge\bfseries\sffamily
   },
   xlabel={\textbf{Expressiveness}},
   ylabel={\textbf{Tractability}},
@@ -156,9 +154,9 @@ digraph WhyKR {
   \addplot[domain=1:9, ultra thick, dashed, blue] {10 / x};
 
   % Points
-  \addplot[only marks, mark=*] coordinates {(2,5)} node[above right, font=\huge\bfseries] {\textbf{Atomic}};
-  \addplot[only marks, mark=*] coordinates {(5,2)} node[above right, font=\huge\bfseries] {\textbf{Factored}};
-  \addplot[only marks, mark=*] coordinates {(8,1.25)} node[below right, font=\huge\bfseries] {\textbf{Structured}};
+  \addplot[only marks, mark=*] coordinates {(2,5)} node[above right, font=\huge\bfseries\sffamily] {\textbf{Atomic}};
+  \addplot[only marks, mark=*] coordinates {(5,2)} node[above right, font=\huge\bfseries\sffamily] {\textbf{Factored}};
+  \addplot[only marks, mark=*] coordinates {(8,1.25)} node[below right, font=\huge\bfseries\sffamily] {\textbf{Structured}};
 \end{axis}
 ```
 
@@ -290,7 +288,6 @@ digraph WhyKR {
 ::::
 :::: {.column width=50%}
 
-// TODO(ai_gp): Use bold for the first line
 ```graphviz
 digraph ProgVsDeclarative {
   bgcolor="transparent";
@@ -306,7 +303,7 @@ digraph ProgVsDeclarative {
         fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
 
   subgraph cluster_prog {
-    label = "Programming Language";
+    label = "<b>Programming Language</b>";
     labelloc = "t";
     fontname = "Helvetica-Bold";
     fontsize = 11.5;
@@ -323,7 +320,7 @@ digraph ProgVsDeclarative {
   }
 
   subgraph cluster_decl {
-    label = "Declarative Language";
+    label = "<b>Declarative Language</b>";
     labelloc = "t";
     fontname = "Helvetica-Bold";
     fontsize = 11.5;
@@ -424,7 +421,6 @@ digraph ProgVsDeclarative {
 ::::
 :::: {.column width=45%}
 
-// TODO(ai_gp): Make the first line bold
 ```graphviz
 digraph KBStructure {
   bgcolor="transparent";
@@ -439,8 +435,8 @@ digraph KBStructure {
   edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.65,
         fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
 
-  Sentences [label="Sentences", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
-  Rules     [label="Rules", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+  Sentences [label="<b>Sentences</b>", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+  Rules     [label="<b>Rules</b>", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
   KB        [label="Knowledge Base", fillcolor="#F4A6A6", color="#C0455B", fontcolor="#6B2A2A"];
   Syntax    [label="Syntax\n(well-formed)", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
   Semantics [label="Semantics\n(meaning per world)", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
@@ -496,9 +492,32 @@ digraph KBStructure {
 ::::
 :::: {.column width=50%}
 
-// TODO(ai_gp): Make bold the first part and add parenthesis for second line, use the
-// official style in graphviz.rules.md
-// include:msml610/lectures_source/Lesson01.1.aux.md "L03.1_Grounding"
+```graphviz
+digraph Grounding {
+  bgcolor="transparent";
+  pad="0.15";
+  rankdir=TB;
+  splines=spline;
+  nodesep=0.4;
+  ranksep=0.5;
+
+  node [shape=box, style="rounded,filled", penwidth=1.6,
+        fontname="Helvetica", fontsize=10.5, margin="0.18,0.1", height=0.42];
+  edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.65,
+        fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
+
+  Reality1    [label="<<b>Reality</b><br/>(observable facts)>", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+  Represent1  [label="<<b>Representation</b><br/>(mental model)>", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
+  Reason      [label="<<b>Reason</b><br/>(logical analysis)>", fillcolor="#B2E2B2", color="#4F9A5C", fontcolor="#1F4E2E"];
+  Represent2  [label="<<b>Representation</b><br/>(conclusion)>", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+  Reality2    [label="<<b>Reality</b><br/>(interpreted truth)>", fillcolor="#F4A6A6", color="#C0455B", fontcolor="#6B2A2A"];
+
+  Reality1 -> Represent1 [label="  Perceives"];
+  Represent1 -> Reason [label="  Informs"];
+  Reason -> Represent2 [label="  Produces"];
+  Represent2 -> Reality2 [label="  Validates"];
+}
+```
 
 ::::
 :::
@@ -682,6 +701,11 @@ digraph ModelChecking {
 ::::
 :::
 
+// Implication is a single sentence's truth value in one model; it says nothing about whether or actually holds
+// Entailment () is a claim about every model at once; it is what forward and backward chaining both try to compute correctly
+// one counterexample model is enough to break it
+// Implication is syntax inside one sentence, entailment is semantics across all models, and inference is the algorithm, forward or backward, that tries to track entailment
+
 ## Entailment vs Inference
 
 * Logical Entailment
@@ -742,77 +766,63 @@ digraph ModelChecking {
 
 * Inference Engines
 
-// TODO(ai_gp): Make this fit in one slide
-
-- @Definition@: An **inference engine** is the mechanism that applies logical rules
-  to a KB to derive conclusions or answer queries
+- @Definition@: An **inference engine** applies logical rules to a KB to derive conclusions or answer queries
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=50%}
 
-- **Forward chaining**
-  - Starts with known facts and applies inference rules to extract more data
-  - E.g., given $A \implies B$ and $A$, infer $B$
+**Forward chaining**
+- Starts with known facts, applies rules to derive more data
+- Given $A \implies B$ and $A$, infer $B$
 
-::::
-:::: {.column width=40%}
-
-```graphviz[width=60%]
+```graphviz[width=80%]
 digraph ForwardChaining {
   bgcolor="transparent";
-  pad="0.15";
+  pad="0.1";
   rankdir=TB;
   splines=spline;
-  nodesep=0.5;
-  ranksep=0.4;
+  nodesep=0.3;
+  ranksep=0.25;
 
-  node [shape=box, style="rounded,filled", penwidth=1.5,
-        fontname="Helvetica", fontsize=10, margin="0.16,0.1", height=0.42];
-  edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.65,
-        fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
+  node [shape=box, style="rounded,filled", penwidth=1.2,
+        fontname="Helvetica", fontsize=9, margin="0.12,0.08", height=0.35];
+  edge [color="#A3B1C0", penwidth=1, arrowhead=vee, arrowsize=0.5,
+        fontname="Helvetica", fontsize=8, fontcolor="#7B8794"];
 
-  Facts [label="Known Facts: A", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+  Facts [label="Facts: A", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
   Rule  [label="Rule: A → B", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
   Concl [label="Conclusion: B", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
 
-  Facts -> Rule [label="  Matches"];
-  Rule -> Concl [label="  Derives"];
+  Facts -> Rule -> Concl;
 }
 ```
 
 ::::
-:::
+:::: {.column width=50%}
 
-::: columns
-:::: {.column width=60%}
+**Backward chaining**
+- Starts with goal, works backward to find supporting facts
+- To prove $B$: find $A \implies B$, then prove $A$
 
-- **Backward chaining**
-  - Begins with a goal and works backward to find supporting facts
-  - E.g., to prove $B$, check if $A \implies B$ and then prove $A$
-
-::::
-:::: {.column width=40%}
-
-```graphviz[width=60%]
+```graphviz[width=80%]
 digraph BackwardChaining {
   bgcolor="transparent";
-  pad="0.15";
+  pad="0.1";
   rankdir=TB;
   splines=spline;
-  nodesep=0.5;
-  ranksep=0.4;
+  nodesep=0.3;
+  ranksep=0.25;
 
-  node [shape=box, style="rounded,filled", penwidth=1.5,
-        fontname="Helvetica", fontsize=10, margin="0.16,0.1", height=0.42];
-  edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.65,
-        fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
+  node [shape=box, style="rounded,filled", penwidth=1.2,
+        fontname="Helvetica", fontsize=9, margin="0.12,0.08", height=0.35];
+  edge [color="#A3B1C0", penwidth=1, arrowhead=vee, arrowsize=0.5,
+        fontname="Helvetica", fontsize=8, fontcolor="#7B8794"];
 
   Goal  [label="Goal: B", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
   Rule  [label="Rule: A → B", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
-  Facts [label="Supporting Facts: A", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+  Facts [label="Facts: A", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
 
-  Goal -> Rule [label="matches"];
-  Rule -> Facts [label="prove"];
+  Goal -> Rule -> Facts;
 }
 ```
 ::::
@@ -821,8 +831,8 @@ digraph BackwardChaining {
 * Soundness and Completeness
 
 - @Definition@:
-  - **Inference** is a syntactic process of deriving new sentences from others, using
-    formal rules of a proof system (e.g., modus ponens, resolution, etc.)
+  - **Inference** is a _syntactic process_ of deriving new sentences from others,
+    using formal rules of a proof system (e.g., modus ponens, resolution, etc.)
     - You know: _"If it rains, the ground gets wet"_
     - You see: _"It is raining"_
     - You infer: _"The ground must be wet"_
@@ -834,126 +844,53 @@ digraph BackwardChaining {
 
 - @Key idea@: The ideal inference algorithm is both _sound and complete_
 
-- @Example@: Model checking is sound and complete when space of models is finite
-  - _Sound_: Every model it finds consistent with $KB \land \alpha$ makes $\alpha$
-    true, so it never asserts a false entailment
+- @Example@: Model checking is _sound_ and _complete_ when space of models is finite
+  - It implement the definition of entailment
+  - _Sound_: Every model it finds is correct, it never asserts a false entailment
   - _Complete_: Enumerating all (finitely many) models is guaranteed to find every
     entailed $\alpha$
-
-// * Tutorial
-
-// - [Soundness and Completeness by Breaking a Reasoner](https://colab.research.google.com/github/gpsaggese/gpsaggese.github.io/blob/gp/msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference.ipynb#scrollTo=2ab6186f)
 
 * Representation Mirrors the World
 
 - A sound and complete inference algorithm yields conclusions guaranteed to be true
   in any world where the premises are true
 
-::: columns
-:::: {.column width=50%}
-
-- In other words, even if inference operates on "syntax" (the internal
+- In other words, even if inference operates on _syntax_ (the internal
   representation):
   - _"Sentences in the representation"_ correspond to _"aspects of the real world"_
   - _"Entailment between sentences in the representation"_ corresponds to
     _"implication between aspects of the real world"_
 
-::::
-:::: {.column width=50%}
-
-```graphviz
-digraph EntailmentSemantics {
-  bgcolor="transparent";
-  pad="0.15";
-  rankdir=TB;
-  splines=spline;
-  nodesep=0.6;
-  ranksep=0.5;
-
-  node [shape=box, style="rounded,filled", penwidth=1.5,
-        fontname="Helvetica", fontsize=10.5, margin="0.18,0.1", height=0.45];
-  edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.65,
-        fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
-
-  subgraph cluster_representation {
-    label = "Representation (Syntax)";
-    labelloc = "t";
-    fontname = "Helvetica-Bold";
-    fontsize = 11;
-    fontcolor = "#3A4A5C";
-    style = "rounded,filled";
-    fillcolor = "#F7F9FB";
-    color = "#C7D0DA";
-    penwidth = 1.0;
-    margin = 12;
-
-    Sent1 [label="Sentence α", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
-    Sent2 [label="Sentence β", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
-    Sent1 -> Sent2 [label="  Entails"];
-  }
-
-  subgraph cluster_world {
-    label = "World (Reality)";
-    labelloc = "t";
-    fontname = "Helvetica-Bold";
-    fontsize = 11;
-    fontcolor = "#3A4A5C";
-    style = "rounded,filled";
-    fillcolor = "#F7F9FB";
-    color = "#C7D0DA";
-    penwidth = 1.0;
-    margin = 12;
-
-    World1 [label="Aspect 1", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
-    World2 [label="Aspect 2", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
-    World1 -> World2 [label="  Follows"];
-  }
-
-  Sent1 -> World1 [label="Semantics", style=dashed];
-  Sent2 -> World2 [label="Semantics", style=dashed];
-
-  {rank=same; Sent1; Sent2}
-  {rank=same; World1; World2}
-}
-```
-
-::::
-:::
-
 // # 7, Logical agents (p. 221)
 
 ## Logical Agents and Rule-Based Systems
 
-* Reflex and Rule-Based Agents
-
-::: columns
-:::: {.column width=58%}
+* Reflex Agents
 
 - @Definition@: A **reflex agent** acts on the current percept alone, using a
   predefined condition-action rule: _"if condition, then action"_
   - E.g., a thermostat: _"if temperature < threshold, turn on the heater"_
   - Ignores percept history: No memory of past states
 
-- @Definition@: A **rule-based system** generalizes reflex agents with an explicit
-  "if-then" rule set and a memory of current facts
+* Rule-Based Agents
+
+::: columns
+:::: {.column width=70%}
+
+- @Definition@: A **rule-based system** generalizes _reflex agents_
   - _Knowledge base_: Stores facts and rules
+  - _Working memory_: Holds current facts being considered
   - _Inference engine_: Applies rules to known facts to infer new facts or take
     actions
-  - _Working memory_: Holds current facts being considered
 
 - @Algorithm@
-  - _Match_: Find rules whose conditions match current facts
-  - _Conflict resolution_: Decide which rule to apply if multiple rules match
-  - _Act_: Apply the chosen rule to modify facts or trigger actions
+  - _Match_: Find rules matching current facts
+  - _Conflict resolution_: Decide which rule to apply
+  - _Act_: Apply the rule to modify facts or trigger actions
   - _Repeat_: Continue until no more rules can be applied
 
-- @Example@
-  - _Rule_: If a patient has a fever and a rash, then suggest measles
-  - _Fact_: Patient has a fever and a rash
-  - _Conclusion_: Suggest measles
-
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ```graphviz
 digraph RuleBasedLoop {
@@ -976,14 +913,19 @@ digraph RuleBasedLoop {
 
   Match -> Conflict;
   Conflict -> Act;
-  Act -> Match [label="  repeat", constraint=false];
+  Act -> Match [label="  Repeat", constraint=false];
   Memory -> Match [style=dashed];
-  Act -> Memory [style=dashed, label="  updates", constraint=false];
+  Act -> Memory [style=dashed, label="  Updates", constraint=false];
 }
 ```
 
 ::::
 :::
+
+- @Example@
+  - _Rule_: If a patient has a fever and a rash, then suggest measles
+  - _Fact_: Patient has a fever and a rash
+  - _Conclusion_: Suggest measles
 
 * Rule-Based Systems: Trade-offs
 
@@ -1000,20 +942,19 @@ digraph RuleBasedLoop {
   - Rule conflicts and maintenance can become challenging
 
 - @Applications@
-  - Simple, fully observable control loops (e.g., thermostats)
+  - Simple, fully observable control loops
   - Expert systems
-    - E.g., medical diagnosis, technical troubleshooting
+    - E.g., medical diagnosis, legal reasoning, technical troubleshooting
   - Business rule engines
   - Game AI
-  - Tools for legal reasoning
 
 * Knowledge-based Agents
 
 ::: columns
-:::: {.column width=58%}
+:::: {.column width=70%}
 
-- @Fact@: Intelligence is achieved by _reasoning_ on an internal representation of
-  knowledge
+- @Fact@: **Intelligence** is achieved by _reasoning_ on an internal representation
+  of knowledge
 
 - @Definition@: A **knowledge-based agent** maintains a knowledge base and operates
   through two operations
@@ -1022,16 +963,8 @@ digraph RuleBasedLoop {
   - Between TELL and ASK, the agent uses _inference_ to derive new facts and deduce
     an action
 
-- @Characteristics@
-  - Accepts tasks as goal descriptions
-  - Updates knowledge using information from sensors
-  - Explains actions based on knowledge
-    - E.g., medical diagnosis system infers diseases, suggests treatments
-    - E.g., chess program uses move database to plan strategy
-  - Handles incomplete or uncertain information through probabilistic reasoning
-
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 
 ```graphviz
 digraph KBAgent {
@@ -1062,12 +995,19 @@ digraph KBAgent {
 ::::
 :::
 
+- @Characteristics@
+  - Accepts tasks as goal descriptions
+  - Updates knowledge using information from sensors
+  - Explains actions based on knowledge
+    - E.g., medical diagnosis system infers diseases and suggests treatments
+  - Handles incomplete or uncertain information through probabilistic reasoning
+
 ## Ontologies
 
 * Ontologies
 
-- @Definition@: An **ontology** is a formal and explicit representation of a domain
-  - Describes the types of things that exist and how they relate to each other
+- @Definition@: An **ontology** is a _formal and explicit representation_ of a domain
+  - Describes the _types of things_ that exist and _how they relate_ to each other
     - _Classes_: Types of things
     - _Individuals_: Specific objects
     - _Properties_: How things are related
@@ -1085,33 +1025,24 @@ digraph KBAgent {
 - @Comparison@: Related but distinct concepts
   - _Schema in a database_: Columns with types (more rigid than ontologies)
   - _Taxonomy_: Simpler hierarchical tree-like classification
-  - _Knowledge base_: A collection of facts and rules, sometimes built from an
-    ontology
+  - _Knowledge base_: A collection of facts and rules
 
 * Components of an Ontology
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=50%}
 
-- @Components@
-  - _Classes / Concepts_: General concepts in a domain
-    - E.g., `Person`, `City`, `Car`
-  - _Individuals / Instances_: Specific, concrete examples of classes
-    - E.g., `GP` (an instance of `Person`), `Rome`, `Ferrari 458`
-  - _Properties / Relations_: Interactions or associations between classes or
-    instances
-    - E.g., `isMortal`, `locatedIn`, `hasAge`
-  - _Attributes / Data values_: Data associated with instances
-    - E.g., (`GP`, `hasAge`, `<your_guess>`)
-  - _Constraints_: Rules that restrict the kinds of values a property can take
-    - E.g., `hasColor` on `Car` must range over {`red`, `yellow`, ...}
-  - _Axioms_: Logical statements that define rules and constraints
-    - E.g., all humans are mortal: $\forall x (Human(x) \implies Mortal(x))$
-  - _Hierarchies_: Parent-child relationships between classes and properties
-    - E.g., `Student` is a subclass of `Person`
+- @Classes / Concepts@: General concepts in a domain
+  - E.g., `Person`, `City`, `Car`
+- @Individuals / Instances@: Specific, concrete examples of classes
+  - E.g., `GP` (an instance of `Person`), `Rome`, `Ferrari 458`
+- @Properties / Relations@: Associations between classes or instances
+  - E.g., `isMortal`, `locatedIn`, `hasAge`
+- @Attributes@: Data associated with instances
+  - E.g., (`GP`, `hasAge`, `<your@guess>`)
 
 ::::
-:::: {.column width=42%}
+:::: {.column width=50%}
 
 ```graphviz
 digraph OntologyComponents {
@@ -1127,12 +1058,12 @@ digraph OntologyComponents {
   edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.6,
         fontname="Helvetica", fontsize=8.5, fontcolor="#7B8794"];
 
-  ParentClass [label="Person (class)", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
-  ChildClass  [label="Student (subclass)", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
-  Individual  [label="GP (individual)", fillcolor="#C6A6F4", color="#8F5FC0", fontcolor="#45296B"];
-  Property    [label="hasAge (property)", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
-  Attribute   [label="42 (attribute value)", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
-  Axiom       [label="Axiom:\nHuman(x) => Mortal(x)", fillcolor="#F4A6A6", color="#C0455B", fontcolor="#6B2A2A"];
+  ParentClass [label="<<b>Person</b> (class)>", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+  ChildClass  [label="<<b>Student</b> (subclass)>", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+  Individual  [label="<<b>GP</b> (individual)>", fillcolor="#C6A6F4", color="#8F5FC0", fontcolor="#45296B"];
+  Property    [label="<<b>hasAge</b> (property)>", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
+  Attribute   [label="<<b>42</b> (attribute value)>", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+  Axiom       [label="<<b>Axiom</b>:<br/>Human(x) => Mortal(x)>", fillcolor="#F4A6A6", color="#C0455B", fontcolor="#6B2A2A"];
 
   ChildClass -> ParentClass [label="  subclass of"];
   Individual -> ParentClass [label="  instance of"];
@@ -1144,6 +1075,15 @@ digraph OntologyComponents {
 
 ::::
 :::
+
+* Components of an Ontology
+
+- @Constraints@: Rules that restrict the kinds of values a property can take
+  - E.g., `hasColor` on `Car` must range over {`red`, `yellow`, ...}
+- @Axioms@: Logical statements that define rules and constraints
+  - E.g., all humans are mortal: $\forall x (Human(x) \implies Mortal(x))$
+- @Hierarchies@: Parent-child relationships between classes and properties
+  - E.g., `Student` is a subclass of `Person`
 
 * Example: University Ontology
 
@@ -1224,105 +1164,106 @@ digraph UniversityOntology {
 
 * Class-Level Reasoning Tasks
 
-- @Definition@: **Subsumption**
+- @Subsumption@
   - _"Is class `A` a subclass of `B`?"_
   - Check whether one concept is more general than another
+    - Important for building taxonomies and ontologies
   - E.g., if `Person` subsumes `Student`, every `Student` is necessarily a `Person`
-  - Important for building taxonomies and ontologies
 
-- @Definition@: **Satisfiability**
-  - _"Can an instance of a concept exist?"_
-  - Test if a concept is logically consistent (i.e., without contradiction)
-  - E.g., the concept `FlyingPenguin` requires flying but is also defined as a
-    penguin (which cannot fly), so it is unsatisfiable
-
-- @Definition@: **Classification**
+- @Classification@
   - _"Organize concepts into a hierarchy"_
   - Automatically organize concepts into a hierarchy by checking subsumption
     relationships
   - E.g., given definitions of `Animal`, `Bird`, and `Penguin`, classification places
     `Penguin` under `Bird`, and `Bird` under `Animal`
 
+- @Satisfiability@
+  - _"Can an instance of a concept exist?"_
+  - Test if a concept is logically consistent (i.e., without contradiction)
+  - E.g., the concept `FlyingPenguin` requires flying but is also defined as a
+    penguin (which cannot fly), so it is unsatisfiable
+
 * Instance-Level Reasoning Tasks
 
-- @Definition@: **Instance Checking**
+- @Instance Checking@
   - _"Is a specific individual an instance of a concept?"_
   - E.g., is `GP` an instance of `Student`?
 
-- @Definition@: **Consistency Checking**
+- @Consistency Checking@
   - _"Is the entire knowledge base free of contradictions?"_
   - E.g., no `Person` is both `Alive` and `Dead` at the same time
 
-- @Definition@: **Realization**
+- @Realization@
   - _"What is the most specific class an instance belongs to?"_
   - E.g., discovering that `GP` is a `Professor` rather than just a `Human`
 
-- @Definition@: **Retrieval**
+- @Retrieval@
   - _"Find all individuals that satisfy a certain condition"_
   - E.g., retrieve all instances classified as `TeachingAssistant`
 
 * Advanced Reasoning Tasks
 
-- @Definition@: **Query Answering**
+- @Query Answering@
   - _"Answer complex queries about the knowledge base"_
   - E.g., find all `Person` that study at the university and are not `Student`
 
-- @Definition@: **Abduction**
+- @Abduction@
   - _"Given an observation, infer the best explanation"_
-  - E.g., seeing a `Person` carrying a backpack and wearing flip-flops in the snow,
-    infer that they are likely a `Student`
+  - E.g., seeing a `Person` with backpack and flip-flops in the snow $\implies$ infer 
+    `Student`
 
-- @Definition@: **Deduction**
+- @Deduction@
   - _"Infer consequences that logically follow from facts and rules"_
-  - E.g., if `John` is a `Student` in `ComputerScience` then he can attend `MSML610`
+  - E.g., if `John` is a `Student` in `CS` then he can attend `MSML610`
 
-- @Definition@: **Belief Revision**
+- @Belief Revision@
   - _"Update the knowledge base when new, possibly conflicting, information arrives"_
-  - E.g., learning that not every student in `ComputerScience` can take `MSML610` and
-    revising a previous rule
+  - E.g., not every student in `CS` can take `MSML610` $\implies$ revise previous
+    rule
 
-- @Definition@: **Temporal Reasoning**
+- @Temporal Reasoning@
   - _"Reason about events over time"_
   - E.g., if `EventA` happens before `EventB`, then `EventB` cannot `Cause` `EventA`
 
-- @Definition@: **Causal Reasoning**
+- @Causal Reasoning@
   - _"Infer causes and effects among entities or events"_
-  - E.g., inferring that (`Storm`, `Cause`, `Flooding`) based on temporal and
-    physical knowledge
+  - E.g., infer (`Storm`, `Cause`, `Flooding`) from observations and physical
+    knowledge
 
-* Protege
+// // TODO(gp): This slide is very specific
+// * Protege
 
-::: columns
-:::: {.column width=55%}
+// ::: columns
+// :::: {.column width=55%}
 
-- **Protege** is a free, open-source platform for building ontologies
-  - Developed at Stanford
+// - **Protege** is a free, open-source platform for building ontologies
+//   - Developed at Stanford
 
-- **Construct and visualize ontologies**
-  - Users can define classes, properties, individuals, and relationships
+// - **Construct and visualize ontologies**
+//   - Users can define classes, properties, individuals, and relationships
 
-- **Enable reasoning** over ontologies using plugins
-  - E.g., checking consistency, inferring new knowledge
+// - **Enable reasoning** over ontologies using plugins
+//   - E.g., checking consistency, inferring new knowledge
 
-::::
-:::: {.column width=40%}
+// ::::
+// :::: {.column width=40%}
 
-![](msml610/lectures_source/figures/L03.Protege_OWL.jpg)
+// ![](msml610/lectures_source/figures/L03.Protege_OWL.jpg)
 
-::::
-:::
+// ::::
+// :::
 
-- **Supports**
-  - Major ontology languages
-    - OWL (Web Ontology Language)
-    - RDF (Resource Description Framework)
-  - Multiple serialization formats
-    - RDF/XML, Turtle, OWL Functional Syntax
+// - **Supports**
+//   - Major ontology languages
+//     - OWL (Web Ontology Language)
+//     - RDF (Resource Description Framework)
+//   - Multiple serialization formats
+//     - RDF/XML, Turtle, OWL Functional Syntax
 
-- **Use cases**
-  - Domain-specific knowledge modeling (e.g., biomedicine, law)
-  - Semantic Web applications
-  - AI systems that require structured knowledge
+// - **Use cases**
+//   - Domain-specific knowledge modeling (e.g., biomedicine, law)
+//   - Semantic Web applications
+//   - AI systems that require structured knowledge
 
 * Summary
 
