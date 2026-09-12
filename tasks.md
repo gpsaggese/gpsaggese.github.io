@@ -1,40 +1,57 @@
-### [x] Document the agentic auto_task engineering flow
+### [ ] Standardize executable CLI interfaces
 
-* Repo: umd_classes
+* Repo:
+- umd_classes
+- helpers
+
+* Execution type: GitHub
 
 * Problem
-- We built an agentic workflow (`auto_task` rules, template, skills) to run AI
-  coding agents end to end (spec -> branch -> PR) with minimal supervision, but
-  it is not documented anywhere outside the skill files themselves
-- We want 3 blog posts that explain the flow: what we have today and what we
-  plan to have once it is done
+- Executables across the repo use inconsistent flags for the same concept (input
+  file and file list), making scripts harder to chain and remember
+
+* Implementation Notes
+- Scope: audit these directories in both repos
+  - umd_classes: `dev_scripts_umd_classes/`
+  - helpers: `helpers_root/dev_scripts_helpers/`, `helpers_root/linters2/`
+- Invoke targets: check tasks in `tasks.py`, `msml610/tasks.py`,
+  `helpers_root/tasks.py`
+- Standard interface: `-i`/`--input` for single file, `-f`/`--files` for list
+- Shared utilities: place in `helpers_root/`, import from both repos
+- Batch strategy: one directory of scripts per PR (max ~3-5 scripts)
 
 * Solution
 
-- [x] PR1: Write `blog_posts/draft.My_agentic_engineering_flow.md`
-  - Find and review all the relevant info in the repo before writing
-  - Describe the available pieces of info in the repo:
-    - `.claude/skills/auto_task.rules.md` (conventions for creating, queuing,
-      executing an `auto_task`)
-    - `.claude/templates/auto_task.template.md` (problem/solution/PR plan format)
-  - Describe the tools and the workflow:
-    - Create a `tasks.md` (e.g., from `msml610/book/prompt.slides_and_book_flow.md`)
-      in the auto_task format
-    - Review it with `/auto_task.criticize tasks.md`
-    - Execute it with `/auto_task.execute_with_stacked_prs tasks.md` or
-      `/auto_task.execute_interactively tasks.md`
-  - Describe the auto_task skills (`mdm skill l auto_task`):
-    `auto_task.create_specs_from_todos`, `auto_task.criticize`,
-    `auto_task.execute_interactively`, `auto_task.execute_with_stacked_prs`
-  - Explain the `/pr.*` skills (`pr.get_ci_to_pass`, `pr.get_local_tests_to_pass`,
-    `pr.get_to_commit_state`)
-  - Cover both current state (what is implemented and used today) and planned
-    state (what is still missing / on the roadmap)
+- [x] Audit and document the standard interface
 
-- [x] PR2: Finish `blog_posts/draft.how_to.A_queue_of_AI_coding_agents.md`
-  - This is the canonical version; `blog_posts/draft.A_queue_of_AI_coding_agents.md`
-    is an older duplicate and is not touched by this task
-  - Complete the draft describing the async queue-of-agents workflow
+  **Plan:**
+  1. Scan all executables in `dev_scripts_umd_classes/`, `helpers_root/dev_scripts_helpers/`,
+     `helpers_root/linters2/` for argparse flags using grep/ast parsing
+  2. Audit invoke targets in `tasks.py`, `msml610/tasks.py`, `helpers_root/tasks.py` for
+     parameter inconsistency
+  3. Create `audit_results.md` with raw findings: script name, current flags, deviation type
+  4. Document standard: `-i`/`--input` (single), `-f`/`--files` (list), add to `plan.md`
+  5. Create `plan.md` with standardization strategy (e.g., shared utility in `helpers_root/`,
+     batch-by-directory rollout)
 
-- [x] PR3: Finish `blog_posts/draft.how_to.Stacked_PRs_for_agentic_developent.md`
-  - Complete the draft describing the stacked-PR workflow for agentic development
+- [-] Fix deviating scripts
+
+  **Plan:**
+  1. Create shared utility function in `helpers_root/helpers/hparser.py` for standardized arg handling ✓
+  2. Update Batch 1: `dev_scripts_umd_classes/lesson_parser.py` (--input_file → -i/--input)
+  3. Test locally and in CI
+  4. Update remaining batches (2-8) per PR strategy
+
+  **Progress:**
+  - [x] Added `add_input_file_arg()`, `add_files_list_arg()`, `add_input_dir_arg()` to hparser.py
+  - [x] Tested new functions locally (all pass)
+  - [x] Fix Batch 1 script: lesson_parser.py (--input_file → -i/--input)
+  - [ ] Fix remaining batches (2-8)
+    - Batch 2: coding_tools/ (5 scripts)
+    - Batch 3: documentation/ (4 scripts)
+    - Batch 4: github/ (5 scripts)
+    - Batch 5: notebooks/ (3 scripts)
+    - Batch 6: llms/ (1 script)
+    - Batch 7: input_dir normalization (5+ scripts)
+    - Batch 8: invoke tasks (if needed)
+
