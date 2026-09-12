@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.0
+#       jupytext_version: 1.19.5
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -43,6 +43,16 @@
 # %autoreload 2
 
 import logging
+
+# %%
+# !pip install -q python-sat sympy z3-solver
+
+import pysat
+print("pysat version: ", pysat.__version__)
+import sympy
+print("sympy version: ", sympy.__version__)
+import z3
+print("z3 version: ", z3.get_version_string())
 
 # %%
 import helpers.hnotebook as hnotebook

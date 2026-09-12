@@ -42,7 +42,7 @@
 import logging
 
 # %%
-# !sympy==1.14.0
+# !pip install -q networkx owlready2
 
 # %%
 import helpers.hnotebook as hnotebook
