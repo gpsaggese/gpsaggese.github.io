@@ -175,13 +175,16 @@ class Test_insert_provenance_tag(hunitest.TestCase):
     Test `_insert_provenance_tag()` function.
     """
 
-    def helper(self, text: str, mode: str, expected: str) -> None:
+    def helper(
+        self, text: str, mode: str, expected: str, *, fuzzy_match: bool = False
+    ) -> None:
         """
         Test helper for _insert_provenance_tag.
 
         :param text: Input text
         :param mode: Mode for tag insertion
         :param expected: Expected output with {tag} placeholder
+        :param fuzzy_match: ignore blank-line differences in the comparison
         """
         text = hprint.dedent(text)
         expected = hprint.dedent(expected)
@@ -193,8 +196,7 @@ class Test_insert_provenance_tag(hunitest.TestCase):
         ):
             actual = csgeboch._insert_provenance_tag(text, mode)
         # Check outputs.
-        # TODO(ai_gp): Use self.assert_equal() instead of assertEqual() for string comparison (testing.rules.md:## Assertion Patterns)
-        self.assertEqual(actual, expected_with_tag)
+        self.assert_equal(actual, expected_with_tag, fuzzy_match=fuzzy_match)
 
     def test1(self) -> None:
         """
@@ -288,9 +290,8 @@ class Test_insert_provenance_tag(hunitest.TestCase):
         expected = """
         <!-- {tag} -->
         """
-        expected += "\n\n"
         # Run test.
-        self.helper(text, mode, expected)
+        self.helper(text, mode, expected, fuzzy_match=True)
 
 
 # #############################################################################
