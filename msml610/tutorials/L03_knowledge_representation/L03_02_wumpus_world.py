@@ -115,6 +115,8 @@ utils.init_loggers(_LOG)
 #   introduced
 # - Show that a knowledge-based agent knows only what it has been `TELL`-ed,
 #   not the hidden truth of the world
+#
+# **Explanation of Widget**
 # - _Hidden world_: 4x4 grid with pits, the wumpus, and gold shown as icons on
 #   one panel
 # - _KB view_: the agent's current `KB` (told percepts only) on the adjacent
@@ -179,6 +181,7 @@ utils.cell1_1_world_and_kb()
 #     2. B_1_2: a breeze was observed at (1, 2)
 #     3. Not(P_1_1): agent started at (1, 1), survived, no pit
 #
+# **Explanation of Widget**
 # - _Model table_: all $2^3$ rows of a truth table over the axiom's own pit
 #   variables, with rows satisfying the `KB` shaded
 # - _Comments_: number of candidate models, number shaded, and the `KB`
@@ -204,6 +207,8 @@ utils.cell2_1_models_and_axiom()
 #
 # **Goal**:
 # - Answer questions (e.g., "is cell $(2,2)$ provably safe?") by model checking directly
+#
+# **Explanation of Widget**
 # - _Model table_: same table as Cell 2.1, now with a second shading color for
 #   $M(\alpha)$, so overlap and gaps between the two sets are visible
 # - _Inclusion counts_: bar chart of $M(KB)$, the overlap, and the
@@ -243,6 +248,8 @@ utils.cell2_2_entailment()
 #   - a sentence's internal structure
 #   - a semantic guarantee across models
 #   - a computational procedure
+#
+# **Explanation of Widget**
 # - _Implication view_: the biconditional sentence itself, with its logical
 #   connectives highlighted
 # - _Entailment view_: the same shaded model table from Cell 2.2
@@ -280,6 +287,8 @@ utils.cell2_3_three_views()
 # **Goal**:
 # - Measure how brute-force model checking degrades as the grid grows, and
 #   compare it against a SAT solver on the same `KB`
+#
+# **Explanation of Widget**
 # - _Runtime curve_: log-scale runtime vs grid size (2x2 to 6x6) for model
 #   checking and for a SAT solver on the same query
 # - _Comments_: current grid size, number of variables, measured runtime for
@@ -307,6 +316,8 @@ utils.cell3_2_scaling(fixed_grid_size=6)
 # **Goal**:
 # - Rewrite the propositional breeze axiom as a single first-order sentence
 #   with a universal quantifier, and instantiate it for a specific cell
+#
+# **Explanation of Widget**
 # - _First-order rule_: the sentence
 #   $\forall x, y \; Breeze(x,y) \Leftrightarrow \exists x', y' \; Adjacent(x,y,x',y') \land Pit(x',y')$
 # - _Grounded instance_: the grid with the chosen cell's ground literals
@@ -332,6 +343,8 @@ utils.cell4_1_first_order()
 # **Goal**:
 # - Tie every prior cell together in a stepping agent that `TELL`s new
 #   percepts and re-`ASK`s safety at each step
+#
+# **Explanation of Widget**
 # - _Agent grid_: current agent position and every percept told so far
 # - _Candidate model count_: line plot of $|M(KB)|$ after each step, always
 #   non-increasing

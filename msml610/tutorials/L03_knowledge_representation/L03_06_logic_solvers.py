@@ -79,15 +79,18 @@ utils.init_loggers(_LOG)
 #   symbols and connectives, while `z3` also handles quantifiers,
 #   predicates, and functions
 
+# %% [markdown]
+# # Part 1: Propositional Logic With `sympy`
+
+# %%
+# TODO(ai_gp): Explain how sympy builds sentences using weather_symbols and adding pointers to the code using the hintrospection stuff.
+
 # %%
 # Show the weather sentences every propositional cell reuses.
 for label, sentence in utils.weather_sentences().items():
     print("%-26s -> %s" % (label, utils.format_sentence(sentence)))
 # Outcome: 8 sentences covering every connective of the lecture, from a
 # plain conjunction to a biconditional.
-
-# %% [markdown]
-# # Part 1: Propositional Logic With `sympy`
 
 # %% [markdown]
 # ## Cell 1.1: Sentences as Symbols, Parsed and Evaluated
@@ -98,6 +101,8 @@ for label, sentence in utils.weather_sentences().items():
 #   complex sentences from them
 # - Read the truth table of a chosen sentence as one row per model $m$, the
 #   object semantics is defined over
+#
+# **Explanation of Widget**
 # - _Truth table_: `sympy`-generated table for the current sentence, one row
 #   per model, with the row matching the toggled model outlined
 # - _Parse tree_: the sentence's tree, connectives at internal nodes and
@@ -105,6 +110,9 @@ for label, sentence in utils.weather_sentences().items():
 #   toggled model
 # - _Comments_: current sentence, number of atoms, number of models, truth
 #   value at the toggled model
+
+# %%
+# TODO(ai_gp): Add an option to cell1_1_sentences_and_truth_tables to use all the variables instead of only the ones that are of use given the sentence 
 
 # %%
 # Parse a weather sentence and evaluate it in every model.
@@ -136,6 +144,8 @@ utils.cell1_1_sentences_and_truth_tables()
 #   algebra alone
 # - Convert a sentence to conjunctive normal form and to disjunctive normal
 #   form, and watch the clause count change
+#
+# **Explanation of Widget**
 # - _Equivalence check_: the two sides of the law, their model counts, and
 #   the verdict from testing $\lnot(\alpha \iff \beta)$
 # - _Size of each form_: bar chart of the connectives in the input against
@@ -172,6 +182,8 @@ utils.cell1_2_equivalences_and_normal_forms()
 #   per symbol, negative for a negated literal
 # - Read the resulting DIMACS file, the exchange format every SAT solver
 #   competition since the 1990s has used
+#
+# **Explanation of Widget**
 # - _Symbol map and clauses_: each symbol with its DIMACS id, then the CNF
 #   sentence as one row per clause of signed integers
 # - _DIMACS file_: the same clauses as written to disk, header line included
@@ -204,6 +216,8 @@ utils.cell2_1_cnf_to_dimacs()
 #   model, or `UNSAT`
 # - Compare solve time against enumerating every model, on the pigeonhole
 #   formula, as $n$ grows
+#
+# **Explanation of Widget**
 # - _Solve time_: `Minisat22` against model checking ($O(2^n)$) on the same
 #   instance, measured while the $2^n$ rows still fit and projected past
 #   that, on a log scale
@@ -241,6 +255,8 @@ utils.cell2_2_solver_vs_model_checking()
 #   enumerating models
 # - Locate the phase transition of random 3-SAT, the region where
 #   satisfiability and solver difficulty both change sharply
+#
+# **Explanation of Widget**
 # - _Entailment by refutation_: the `KB`, two queries, the verdict on
 #   $KB \land \lnot \alpha$, and the counterexample model when there is one
 # - _Random 3-SAT phase transition_: fraction of satisfiable instances and
@@ -282,6 +298,8 @@ utils.cell2_3_refutation_and_phase_transition()
 #   for the lecture's own $Loves$ and Aristotle examples
 # - Watch `z3` return a concrete model witnessing $\exists$, instead of a
 #   truth table that cannot even be written once the domain grows
+#
+# **Explanation of Widget**
 # - _Domain and relation from the model_: the objects as nodes, with the
 #   $Loves$ edges or the predicate membership that `z3` chose
 # - _Query and verdict_: the formula being checked, whether the sentence or
@@ -320,6 +338,8 @@ utils.cell3_1_z3_quantifiers()
 #   first-order layer, and route it to the engine that can answer it
 # - See why `sympy` and `PySAT` stop at propositional logic while `z3` alone
 #   checks the quantified version
+#
+# **Explanation of Widget**
 # - _Three engines, one question_: one row per engine, with the layer it
 #   handles, the call it makes, its verdict, and its time
 # - _What each engine reaches_: propositional logic drawn inside first-order

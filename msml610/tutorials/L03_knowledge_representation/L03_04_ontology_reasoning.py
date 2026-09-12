@@ -71,6 +71,8 @@ utils.init_loggers(_LOG)
 #   and one cardinality axiom
 # - Distinguish an ontology from a plain database schema, a taxonomy, and a
 #   knowledge base
+#
+# **Explanation of Widget**
 # - _Class hierarchy_: the classes `Student`, `Professor`, `Course`, and
 #   `Department`, with the object properties `takesCourse`, `teachesCourse`,
 #   and `belongsToDepartment` drawn as dashed purple arrows
@@ -130,6 +132,8 @@ utils.show_pizza_axioms()
 #   one class at a time
 # - Ask the reasoner to classify a `VegetarianPizza` that lists a meat
 #   topping, and read its explanation
+#
+# **Explanation of Widget**
 # - _Class hierarchy_: the classified class tree, with the tested class
 #   highlighted in orange, or in red and struck through when the reasoner
 #   marks it unsatisfiable
@@ -178,6 +182,8 @@ utils.cell2_1_subsumption_and_inconsistency()
 # **Goal**:
 # - Compare the class hierarchy as authored against the hierarchy after
 #   classification, on the same ontology
+#
+# **Explanation of Widget**
 # - _Diff graph_: the hierarchy with the asserted edges in blue and the newly
 #   inferred edges in green, switchable between the two views
 # - _Inferred edge table_: every subclass edge classification added, over all
@@ -219,6 +225,8 @@ utils.cell2_2_asserted_vs_inferred()
 # **Goal**:
 # - Add or remove one axiom, re-run the reasoner, and watch which edges the
 #   hierarchy gains or loses
+#
+# **Explanation of Widget**
 # - _Class hierarchy_: the same diagram as Cell 2.2, redrawn after each edit,
 #   with the inferred edges in green
 # - _Editable axioms_: which of the three editable axioms are currently in the
@@ -265,6 +273,8 @@ utils.cell2_3_axiom_editor()
 # **Goal**:
 # - Define `FlyingPenguin` as `Penguin` and `FlyingThing`, and confirm the
 #   reasoner marks the concept unsatisfiable
+#
+# **Explanation of Widget**
 # - _Class hierarchy_: the bird hierarchy, with `FlyingPenguin` drawn in red
 #   and struck through when it is unsatisfiable
 # - _Explanation panel_: the two conflicting axioms, `Penguin`
@@ -306,6 +316,8 @@ utils.cell3_1_flying_penguin()
 #   a fact that was never asserted
 # - The ontology adds `TeachingAssistant`, defined as a `Student` who teaches
 #   a `Course`, and four individuals nobody typed as one
+#
+# **Explanation of Widget**
 # - _Realization panel_: the class hierarchy with the classes of the selected
 #   individual highlighted, the most specific ones in purple
 # - _Retrieval table_: the individuals the query class retrieves, before and
@@ -351,6 +363,8 @@ utils.cell4_1_realization_and_owa()
 # **Goal**:
 # - Measure how reasoner runtime grows as cardinality constraints and a
 #   property chain are added to the university ontology
+#
+# **Explanation of Widget**
 # - _Runtime curve_: reasoning time against the number of qualified number
 #   restrictions, one curve per property chain setting, with the current
 #   setting marked by a red star

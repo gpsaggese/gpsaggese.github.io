@@ -105,12 +105,14 @@ utils.show_rule_base()
 # - Contrast a simple reflex agent (percept only) with a rule-based agent
 #   (percept plus working memory)
 # - Introduce Winston's animal-identification rules as the running example
-# _Agent diagrams_: the reflex pipeline (percept $\to$ action) and the
-# rule-based pipeline (percept $\to$ working memory $\to$ match $\to$ fire
-# $\to$ act), with the active agent highlighted
-# _Working memory_: current fact table, showing which facts are observed,
-# which are derived, and which rule derived them
-# _Comments_: current agent type, facts currently true, action produced
+#
+# **Explanation of Widget**
+# - _Agent diagrams_: the reflex pipeline (percept $\to$ action) and the
+#   rule-based pipeline (percept $\to$ working memory $\to$ match $\to$ fire
+#   $\to$ act), with the active agent highlighted
+# - _Working memory_: current fact table, showing which facts are observed,
+#   which are derived, and which rule derived them
+# - _Comments_: current agent type, facts currently true, action produced
 #
 # **Parameters**:
 # - `agent`: `reflex` or `rule-based`
@@ -144,11 +146,13 @@ utils.cell1_1_reflex_vs_rule_based()
 # **Goal**:
 # - Animate forward (data-driven) chaining over Winston's rules, one fired
 #   rule per frame
-# _Working memory timeline_: the facts held after each fired rule, one column
-# per step, starting from the initial percepts
-# _Rule dependency graph_: the premise $\to$ rule $\to$ conclusion graph, with
-# the just-fired rule and its edges highlighted in orange
-# _Comments_: step number, rule fired this step, new fact added, conflict set
+#
+# **Explanation of Widget**
+# - _Working memory timeline_: the facts held after each fired rule, one column
+#   per step, starting from the initial percepts
+# - _Rule dependency graph_: the premise $\to$ rule $\to$ conclusion graph, with
+#   the just-fired rule and its edges highlighted in orange
+# - _Comments_: step number, rule fired this step, new fact added, conflict set
 #
 # **Parameters**:
 # - `fire next rule`: run exactly one recognize-act cycle
@@ -180,12 +184,14 @@ utils.cell2_1_forward_chaining()
 # **Goal**:
 # - Run goal-driven backward chaining on a goal such as `cheetah` and contrast
 #   which rules it explores against forward chaining on the same facts
-# _AND-OR tree_: the tree rooted at the goal, where a fact node is an OR node
-# (any rule below it suffices) and a rule node is an AND node (every premise
-# below it is required); green is proved, red is failed
-# _Rules-fired counter_: rules explored by forward vs backward chaining for the
-# same query
-# _Comments_: current goal, facts known, rules explored so far
+#
+# **Explanation of Widget**
+# - _AND-OR tree_: the tree rooted at the goal, where a fact node is an OR node
+#   (any rule below it suffices) and a rule node is an AND node (every premise
+#   below it is required); green is proved, red is failed
+# - _Rules-fired counter_: rules explored by forward vs backward chaining for the
+#   same query
+# - _Comments_: current goal, facts known, rules explored so far
 #
 # **Parameters**:
 # - `goal`: one of `cheetah`, `tiger`, `carnivore`, `mammal`, `zebra`
@@ -220,11 +226,13 @@ utils.cell2_2_backward_chaining()
 # - The rule base here adds a leopard rule that conflicts with the cheetah
 #   rule: each blocks the other with a negative premise, so exactly one of the
 #   two can ever fire
-# _Conflict set_: all rules whose premises currently match, with the
-# strategy-selected rule highlighted in orange
-# _Final fact set_: the facts derived per strategy, run to completion, each
-# bar labelled with the species that strategy reaches
-# _Comments_: current strategy, size of conflict set, rule selected this step
+#
+# **Explanation of Widget**
+# - _Conflict set_: all rules whose premises currently match, with the
+#   strategy-selected rule highlighted in orange
+# - _Final fact set_: the facts derived per strategy, run to completion, each
+#   bar labelled with the species that strategy reaches
+# - _Comments_: current strategy, size of conflict set, rule selected this step
 #
 # **Parameters**:
 # - `strategy`: `specificity`, `recency`, or `priority`
@@ -260,11 +268,13 @@ utils.cell2_3_conflict_resolution()
 # - Answer MYCIN's two explanation questions for any conclusion, then extend
 #   crisp rules with certainty factors and compare the resulting diagnosis
 #   ranking
-# _Explanation trace_: the rules and facts behind the chosen conclusion, with
-# the conclusion itself in purple
-# _Diagnosis ranking_: the candidate diagnoses ranked by propagated certainty
-# factor
-# _Comments_: chosen conclusion, "how" and "why" answers, certainty values
+#
+# **Explanation of Widget**
+# - _Explanation trace_: the rules and facts behind the chosen conclusion, with
+#   the conclusion itself in purple
+# - _Diagnosis ranking_: the candidate diagnoses ranked by propagated certainty
+#   factor
+# - _Comments_: chosen conclusion, "how" and "why" answers, certainty values
 #
 # **Parameters**:
 # - `conclusion`: the fact to explain
@@ -310,11 +320,13 @@ utils.cell3_1_explanation_and_certainty()
 #   flies, then a new fact retracts that conclusion
 # - The default rule is `bird` $\land$ `~abnormal` $\to$ `flies`, where
 #   `~abnormal` holds as long as nothing marks the bird as abnormal
-# _Before panel_: working memory in the initial scenario, where only
-# "Tweety is a bird" is known
-# _After panel_: working memory once the new fact is asserted, with the
-# conclusions that lost their support marked in red as retracted
-# _Comments_: facts currently asserted, whether "Tweety flies" currently holds
+#
+# **Explanation of Widget**
+# - _Before panel_: working memory in the initial scenario, where only
+#   "Tweety is a bird" is known
+# - _After panel_: working memory once the new fact is asserted, with the
+#   conclusions that lost their support marked in red as retracted
+# - _Comments_: facts currently asserted, whether "Tweety flies" currently holds
 #
 # **Parameters**:
 # - `Tweety is a penguin`: assert the new fact and re-derive
@@ -345,11 +357,13 @@ utils.cell4_1_non_monotonic()
 # **Goal**:
 # - Query a fact that is simply absent from working memory under the closed
 #   world assumption and under the open world assumption, side by side
-# _CWA panel_: the fact base, with the answer each fact gets when "not told"
-# is read as "false"
-# _OWA panel_: the same fact base, with the answer each fact gets when
-# "not told" is read as "unknown"
-# _Comments_: fact queried, assumption active, answer produced
+#
+# **Explanation of Widget**
+# - _CWA panel_: the fact base, with the answer each fact gets when "not told"
+#   is read as "false"
+# - _OWA panel_: the same fact base, with the answer each fact gets when
+#   "not told" is read as "unknown"
+# - _Comments_: fact queried, assumption active, answer produced
 #
 # **Parameters**:
 # - `fact`: the fact to query, present or absent
@@ -386,11 +400,13 @@ utils.cell4_2_cwa_vs_owa()
 # - Noise is applied to the percepts rather than to the labels, since that is
 #   what a real sensor gets wrong, and it is what breaks the conjunctions the
 #   rules rely on
-# _Comparison table_: accuracy, latency, auditability, and abstention rate for
-# the rule engine vs the decision tree
-# _Decision tree diagram_: the top of the trained tree, for visual comparison
-# with the rule dependency graph of Cell 2.1
-# _Comments_: dataset size, noise level, current accuracy for each model
+#
+# **Explanation of Widget**
+# - _Comparison table_: accuracy, latency, auditability, and abstention rate for
+#   the rule engine vs the decision tree
+# - _Decision tree diagram_: the top of the trained tree, for visual comparison
+#   with the rule dependency graph of Cell 2.1
+# - _Comments_: dataset size, noise level, current accuracy for each model
 #
 # **Parameters**:
 # - `N`: number of sampled animals, on a $\log_2$ scale
