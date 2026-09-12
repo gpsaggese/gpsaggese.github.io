@@ -31,23 +31,23 @@
   - _SAT solvers_
     - Tools for determining if a propositional logic formula can be satisfied
     - E.g., used in hardware verification and scheduling problems
-  - _Expert systems_
-    - Use logic rules to mimic human decision-making
-    - E.g., medical diagnosis systems
   - _Rule-based agents_
     - Agents that operate based on a set of predefined rules
     - E.g., automated customer service chatbots
+  - _Expert systems_
+    - Use logic rules to mimic human decision-making
+    - E.g., medical diagnosis systems
 
 // ## Syntax of propositional logic
 
 * Proposition Symbol
-- A @proposition symbol@ is an atomic sentence consisting of a single symbol
+- A @proposition symbol@ is an _atomic symbol_
   - E.g., $P$, $Q$, $North$
   - Doesn't have truth value, it is just a symbol for a real-world statement
     (needs grounding for semantics)
   - Stands for a proposition that can be true or false
     - E.g., $K_{E,5}$ = "the Knight is in E5"
-    - $K_{E,5}$ is not composed of any other symbol, it is an atomic symbol
+    - $K_{E,5}$ is not composed of any other symbol: it is an atomic symbol
 - $True$ and $False$ are @built-in symbols@, i.e., proposition symbols with
   inherent truth values
 
@@ -56,11 +56,13 @@
 
 * Sentences
 
-- An @atomic sentence@ is a sentence composed of a single proposition symbol
+- @Sentence@ is a statement about the world using symbols
+
+- An @atomic sentence@ is a sentence composed of a single _proposition symbol_
   - E.g., $P$
 
-- A @complex sentence@ is constructed from simpler sentences
-  using parentheses and logical connectives
+- A @complex sentence@ is _composed of simpler sentences_ using parentheses and
+  logical connectives
   - E.g., $(P \land Q) \lor R$
   - Recursive definition allows building more complex sentences
 
@@ -80,9 +82,7 @@
   - $Sunny$ = _"it's sunny"_
   - $Snow$ = _"it's snowing"_
   - $Cloudy$ = _"it's cloudy"_
-
-- _Atomic sentence_ can be positive or negated
-  - E.g., $Rain$, $\lnot Rain$ = _"it's not raining"_
+  - Can be negated: e.g., $\lnot Rain$ = _"it's not raining"_
 
 - @Conjunction / Disjunction@
   - E.g., $Rain \land Cloudy$ = _"it's raining and it's cloudy"_
@@ -93,7 +93,6 @@
     cloudy"_
 
 - @Implication@ is a sentence containing "premise $\implies$ conclusion"
-  - Aka _"if-then statements"_, _"rules"_
   - E.g., $Rain \implies \lnot Snow$ = _"if it's raining, it's not snowing"_
 
 - @Biconditional@: $(A \implies B) \land (B \implies A)$
@@ -104,7 +103,7 @@
 - @Definition@: **Backus Normal Form** formally represents the grammar of
   propositional logic (Backus, 1959) `#cite("backus1959syntax")`{=typst}
 
-- @Problem@: _Ambiguity_: the same sentence can be parsed in multiple ways
+- @Problem@: the same sentence can be parsed in multiple ways (ambiguity)
   - E.g., $\lnot A \lor B = (\lnot A) \lor B$ or $\lnot (A \lor B)$ ?
 
 ::: columns
@@ -115,53 +114,50 @@
   - So $\lnot A \lor B$ means $(\lnot A) \lor B$
 ::::
 :::: {.column width=60%}
-![](msml610/lectures_source/figures/L03.propositional_logic_BNF.png){ height=40% }
+![Backus Normal Form for Propositional Logic](msml610/lectures_source/figures/L03.propositional_logic_BNF.png){ height=40% }
 ::::
 :::
 
 ## Semantics
 
 * Semantics of Propositional Logic
-- @Definition@: **Semantics** are rules for determining the truth of a sentence
+- @Semantics@ are rules for determining the truth of a sentence
   $\alpha$ with respect to a model $m$
   - Determine if a sentence is true or false, given a possible world
 
-- @Definition@: **Model definition**: In propositional logic, a model $m$ fixes
-  the truth value (true or false) for every atomic sentence
-  - The models are **abstractions** of the real world and have no a-priori
-    connection to a specific world, e.g.,
-    - $P_{1,2}$ is just a symbol and can mean:
-      - _"There is a pit in [1, 2]"_ or
-      - _"I'm in Paris today and tomorrow"_
-    - Need grounding
+- @Model@  $m$ fixes the truth value (true or false) for every atomic sentence
+
+- The models are **abstractions** of the real world and have no a-priori connection
+  to a specific world, e.g.,
+  - $P_{1,2}$ is just a symbol and can mean:
+    - _"There is a pit in [1, 2]"_ or
+    - _"I'm in Paris today and tomorrow"_
+  - Need grounding
 
 * Computing the Truth Value of a Sentence
-- @Algorithm@: the **truth value of a sentence** is derived from the truth of
-  the
-  proposition symbols (recursively from the model $m$)
+- @Algorithm@: the **truth value of a sentence** is derived from the truth of the
+  proposition symbols, recursively from the model $m$
   $$
   m = \{ P_{1,2}=F, P_{2,2}=F, P_{3,1}=T \}
   $$
 
 - All sentences $\alpha$ are constructed from atomic sentences (assigned by
-  model
   $m$) and connectives:
   - $\lnot P$ is true iff $P$ is false in $m$
   - $P \land Q$ is true iff $P$ and $Q$ are both true in $m$
-  - $P \lor Q$ is true iff $P$ or $Q$ are true in $m$
   - $P \implies Q$ is true unless $P$ is true and $Q$ is false in $m$
   - $P \iff Q$ is true iff $P$ and $Q$ are both true or both false in $m$
 
+::: columns
+:::: {.column width=60%}
 - @Definition@: **Truth table** contains truth value of a sentence for each
   possible model $m$
 
-::: columns
-:::: {.column width=50%}
 - E.g., $X = A \land B \lor C$
   - Enumerate every assignment of $A$, $B$, $C$
   - $X$ is true whenever $C$ is true, or $A$ and $B$ are both true
 ::::
-:::: {.column width=45%}
+:::: {.column width=40%}
 ```{=typst}
 #styled-table(
   headers: ("A", "B", "C", "X"),
@@ -184,50 +180,32 @@
 * Interpretation of Implication
 - @Fact@: in a logical implication "$P \implies Q$" there is **no causation**
   between $P$ and $Q$
-  - "$P \implies Q$" says _"If $P$ is true, I claim that $Q$ is true. Otherwise
-    I
-    am making no claim"_
-    - E.g., _"5 is odd implies that Tokyo is the capital of Japan"_ is a true
-      sentence in propositional logic (although very odd)
-  - An implication is true whenever the antecedent is false
-    - E.g., _"5 is even implies pigs fly"_ is true
+
+- "$P \implies Q$" means _"If $P$ is true, I claim that $Q$ is true. Otherwise I am
+  making no claim"_
+  - E.g., _"5 is odd implies that Tokyo is the capital of Japan"_ is a true sentence
+    in propositional logic (although very odd)
+  - An implication is true whenever the antecedent is _always false_
+    - E.g., _"5 is even implies pigs fly"_ is a true statement
+  - An implication is true whenever the consequent is _always true_
+    - E.g., _"If i am a bycicle then the pope is Catholic"_ is a true statement
+
+// TODO(ai_gp): Add a truth table for implication
 
 ## Inference and Proof
 
 * Model Checking is Sound and Complete
-::: columns
-:::: {.column width=55%}
-- @Fact@: **Model checking algorithm**
+- @Algorithm@: **Model checking**
   - Enumerates all the models (truth tables)
   - Checks if $\alpha$ is true for every model where $KB$ is true
-::::
-:::: {.column width=40%}
-```graphviz[width=100%]
-digraph ModelChecking {
-  graph [rankdir=TB, bgcolor="transparent", nodesep=0.25, ranksep=0.35,
-         fontname="Helvetica"];
-  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11,
-        fontcolor="#26215C", color="#7F77DD", penwidth=1.2];
-  edge [color="#888888", penwidth=1.2];
 
-  enumerate [label="Enumerate all\nmodels", fillcolor="#A0D6D1"];
-  filter [label="Keep models\nwhere KB true", fillcolor="#A6E7F4"];
-  check [label="Check alpha true\nin all of them", fillcolor="#A6C8F4"];
-
-  enumerate -> filter -> check;
-}
-```
-::::
-:::
-
-- @Fact@: in propositional logic, the model checking algorithm is:
+- @Fact@: in propositional logic, the _model checking_ algorithm is:
   - **Sound**
-    - "Any inference made by the algorithm is correct"
+    - _"Any inference made by the algorithm is correct"_
     - Implements the definition of entailment
   - **Complete**
-    - "Any true sentence is inferred correctly by the algorithm"
-    - Works for any $KB$ and $\alpha$
-    - Always terminates (finite number of models)
+    - _"Any true sentence is inferred correctly by the algorithm"_
+    - Always terminates since there is a finite number of models
 
 - @Fact@: complexity of model checking with $n$ variables
   - _Time complexity_ is $O(2^n)$ (NP-complete)
@@ -238,38 +216,23 @@ digraph ModelChecking {
 * Inference in Propositional Logic
 - @Definition@: **Inference rules** are rules of reasoning (i.e., deriving
   correct statements from the statements of the knowledge base)
-  - _Modus Ponens_: if $p \implies q$ and $p$, infer $q$
-    - _"If it rains, the ground will be wet"_
-    - _"It rains. Therefore, the ground is wet_"
-  - _Modus Tollens_: if $p \implies q$ and $\lnot q$, infer $\lnot p$
-    - _"If it rains, the ground will be wet. The ground is not wet. Therefore,
-      it
-      did not rain._"
-  - _Syllogism_ (aka transitivity)
+  - **Modus Ponens**: if $p \implies q$ and $p$, infer $q$
+    - _"If it rains, the ground will be wet. It rains. Therefore, the ground is wet"_
+  - **Modus Tollens**: if $p \implies q$ and $\lnot q$, infer $\lnot p$
+    - _"If it rains, the ground will be wet. The ground is not wet. Therefore, it did
+      not rain"_
+  - **Syllogism** (aka transitivity)
     - If $p \implies q$ and $q \implies r$, then $p \implies r$
-  - _Disjunctive Syllogism_
+  - **Disjunctive Syllogism**
     - If $p \lor q$ and $\lnot p$, infer $q$
-  - _Addition_: if $p$, then $p \lor q$
-  - _Simplification_: from $p \land q$, infer $p$ (or $q$)
-  - _Conjunction_: from $p$ and $q$, infer $p \land q$
-  - _Resolution Rule_ (Robinson, 1965) `#cite("robinson1965resolution")`{=typst}
+  - **Addition**: if $p$, then $p \lor q$
+  - **Simplification**: from $p \land q$, infer $p$ or $q$
+  - **Conjunction**: from $p$ and $q$, infer $p \land q$
+  - **Resolution Rule** (Robinson, 1965) `#cite("robinson1965resolution")`{=typst}
     - From $(p \lor q)$ and $(\lnot p \lor r)$, infer $(q \lor r)$
 
-\begingroup \scriptsize
-| **Rule** | **From** | **Infer** |
-|---|---|---|
-| Modus Ponens | $p \implies q$, $p$ | $q$ |
-| Modus Tollens | $p \implies q$, $\lnot q$ | $\lnot p$ |
-| Syllogism | $p \implies q$, $q \implies r$ | $p \implies r$ |
-| Disjunctive Syllogism | $p \lor q$, $\lnot p$ | $q$ |
-| Addition | $p$ | $p \lor q$ |
-| Simplification | $p \land q$ | $p$ (or $q$) |
-| Conjunction | $p$, $q$ | $p \land q$ |
-| Resolution Rule | $(p \lor q)$, $(\lnot p \lor r)$ | $(q \lor r)$ |
-\endgroup
-
 * Propositional Theorem Proving
-- @Algorithm@: **Prove a sentence** $\alpha$ under a knowledge base KB in
+- @Algorithm@: **Prove a sentence** $\alpha$ under a knowledge base $KB$ in
   propositional logic
   - Apply rules of inference to construct a proof of $\alpha$
   - Given a $KB$, a query $\alpha$ has one of the following entailment
@@ -279,15 +242,13 @@ digraph ModelChecking {
     3. Unknown (i.e., $KB$ entails neither $\alpha$ nor $\lnot \alpha$)
 
 - @Comparison@
-  - _Model checking_ involves enumerating all models to show the sentence is
+  - _Model checking_ involves enumerating all models to show the sentence $\alpha$ is
     true/false in all models where KB is true
-  - _Propositional theorem proving_ builds a proof
-  - If the proof is short, theorem proving can be more efficient than model
-    checking
+  - _Propositional theorem proving_ builds a proof of $\alpha$
+  - If the proof is short, theorem proving can be more efficient than model checking
 
 * Logical Equivalence of Sentences
-- **Logical equivalence**: Two sentences $\alpha$ and $\beta$ are logically
-  equivalent
+- @Logical equivalence@: Two sentences $\alpha$ and $\beta$ are logically equivalent
   $\alpha \equiv \beta$
   - Iff they are true in the same set of models:
     $$
@@ -297,17 +258,19 @@ digraph ModelChecking {
     $$
     \alpha \models \beta \land \beta \models \alpha
     $$
+
 - @Example@: $P \lor Q \equiv Q \lor P$
 
 * Logical Equivalences (1/2)
-- **Commutativity** of $\land$ and $\lor$
+- @Commutativity@ of $\land$ and $\lor$
   $$
   (\alpha \land \beta) \equiv (\beta \land \alpha)
   $$
   $$
   (\alpha \lor \beta) \equiv (\beta \lor \alpha)
   $$
-- **Associativity** of $\land$ and $\lor$
+
+- @Associativity@ of $\land$ and $\lor$
   $$
   (\alpha \land \beta) \land \gamma
   \equiv \alpha \land (\beta \land \gamma)
@@ -318,37 +281,43 @@ digraph ModelChecking {
   \equiv \alpha \lor (\beta \lor \gamma)
   \equiv \alpha \lor \beta \lor \gamma
   $$
-- **Distributivity** of $\land$ over $\lor$
+
+- @Distributivity@ of $\land$ over $\lor$
   $$
   \alpha \land (\beta \lor \gamma) \equiv
     (\alpha \land \beta) \lor (\alpha \land \gamma)
   $$
-- **Distributivity (dual)** of $\lor$ over $\land$
+
+- @Distributivity@ of $\lor$ over $\land$
   $$
   \alpha \lor (\beta \land \gamma) \equiv
     (\alpha \lor \beta) \land (\alpha \lor \gamma)
   $$
-- **Double negation** elimination:
+
+- @Double negation@ elimination:
   $$
   \lnot (\lnot \alpha) \equiv \alpha
   $$
 
 * Logical Equivalences (2/2)
 
-- **Contraposition**:
+- @Contraposition@:
   $$
   (\alpha \implies \beta) \equiv (\lnot \beta \implies \lnot \alpha)
   $$
-- **Implication elimination**:
+
+- @Implication elimination@:
   $$
   (\alpha \implies \beta) \equiv (\lnot \alpha \lor \beta)
   $$
-- **Biconditional elimination**:
+
+- @Biconditional elimination@:
   $$
   (\alpha \iff \beta)
   \equiv (\alpha \implies \beta) \land (\beta \implies \alpha)
   $$
-- **De Morgan laws**:
+
+- @De Morgan laws@:
   $$
   \lnot (\alpha \land \beta) \equiv (\lnot \alpha \lor \lnot \beta)
   $$
@@ -356,12 +325,11 @@ digraph ModelChecking {
   \lnot (\alpha \lor \beta) \equiv (\lnot \alpha \land \lnot \beta)
   $$
 
-* Deduction Theorem
-::: columns
-:::: {.column width=60%}
-- @Definition@: A **valid sentence** $\alpha$ that is true for all the models
+* Tautology and Contradiction
+
+- @Definition@: A **tautology** (aks "valid sentence") is a sentence $\alpha$ that is
+  true for all the models
   - E.g., $P \lor \lnot P$
-  - Aka "tautology"
   - Every tautology is equivalent to the sentence $True$
 
 - @Definition@: **Contradiction** is a sentence $\alpha$ that is false for all
@@ -369,11 +337,14 @@ digraph ModelChecking {
   - E.g., $P \land \lnot P$
   - Every contradiction is equivalent to the sentence $False$
 
+* Deduction Theorem
 - @Theorem@: **Deduction theorem**
   - The sentence $\alpha$ entails $\beta$ (written $\alpha \models \beta$) iff
     the
     sentence $\alpha \implies \beta$ is a tautology
 
+::: columns
+:::: {.column width=60%}
 - @Key idea@: The deduction theorem is like a _bridge_ between two different
   but closely related ideas:
   - _Entailment_ $\models$ is a semantic notion
@@ -384,7 +355,9 @@ digraph ModelChecking {
     - $\alpha \implies \beta$ is just another formula inside the logic
 ::::
 :::: {.column width=35%}
-```graphviz[width=100%]
+
+// TODO(ai_gp): Apply graphviz.rules.md
+```graphviz
 digraph DeductionBridge {
   graph [rankdir=TB, bgcolor="transparent", nodesep=0.3, ranksep=0.4,
          fontname="Helvetica"];

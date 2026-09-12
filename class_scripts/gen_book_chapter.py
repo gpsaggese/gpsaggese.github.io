@@ -1258,15 +1258,19 @@ def _lint_typst_file(typst_file: str, *, dry_run: bool) -> None:
     hsystem.system(cmd, print_command=True, dry_run=dry_run)
 
 
-def _lint_with_lint_text(output_file: str, *, dry_run: bool) -> None:
+def _lint_with_lint_text(
+    output_file: str, *, log_level: str, dry_run: bool
+) -> None:
     """
     Lint a Markdown or LaTeX file in place with `lint_text.py`.
 
     :param output_file: path to the file to lint (its type is inferred
         from its extension)
+    :param log_level: verbosity level (e.g., "DEBUG") to forward to
+        `lint_text.py`
     :param dry_run: print the command without executing it
     """
-    cmd = f"lint_text.py -i {output_file} -o {output_file}"
+    cmd = f"lint_text.py -i {output_file} -o {output_file} -v {log_level}"
     hsystem.system(cmd, print_command=True, dry_run=dry_run)
 
 
@@ -1319,6 +1323,7 @@ def _render_book_chapter(
     script_dir: str,
     *,
     no_abort_on_warnings: bool,
+    log_level: str,
     dry_run: bool,
 ) -> None:
     """
@@ -1340,6 +1345,8 @@ def _render_book_chapter(
     :param script_dir: directory of this script (for pandoc header files)
     :param no_abort_on_warnings: don't assert if `typst compile` emits
         warnings (`typst_aima` only, forwarded to `run_typst.py`)
+    :param log_level: verbosity level (e.g., "DEBUG") forwarded to
+        `run_typst.py`
     :param dry_run: print the commands without executing them
     """
     pdf_file = _get_pdf_file(out_dir, basename)
@@ -1355,7 +1362,7 @@ def _render_book_chapter(
         # exist".
         cmd = (
             f"{run_typst_exec} --input {output_file} --output {pdf_file} "
-            "--action render_images --skip_action open_pdf"
+            f"--action render_images --skip_action open_pdf -v {log_level}"
         )
         if no_abort_on_warnings:
             cmd += " --no_abort_on_warnings"
@@ -1373,7 +1380,13 @@ def _render_book_chapter(
 
 
 def _open_book_chapter_pdf(
-    output_file: str, out_dir: str, basename: str, mode: str, *, dry_run: bool
+    output_file: str,
+    out_dir: str,
+    basename: str,
+    mode: str,
+    *,
+    log_level: str,
+    dry_run: bool,
 ) -> None:
     """
     Open the compiled book chapter PDF in Skim.
@@ -1385,6 +1398,8 @@ def _open_book_chapter_pdf(
     :param out_dir: directory holding the compiled PDF
     :param basename: chapter file base name, without extension
     :param mode: generation mode, one of `_MODE_TO_EXTENSION`
+    :param log_level: verbosity level (e.g., "DEBUG") forwarded to
+        `run_typst.py`
     :param dry_run: print the commands without executing them
     """
     if mode == "typst_aima":
@@ -1392,7 +1407,7 @@ def _open_book_chapter_pdf(
         run_typst_exec = hgit.find_file("run_typst.py")
         cmd = (
             f"{run_typst_exec} --input {output_file} --output {pdf_file} "
-            "--only_action open_pdf"
+            f"--only_action open_pdf -v {log_level}"
         )
         hsystem.system(cmd, print_command=True, dry_run=dry_run)
     elif mode == "md":
@@ -1571,7 +1586,11 @@ def _main(parser: argparse.ArgumentParser) -> None:
                 # typst.
                 _lint_typst_file(output_file, dry_run=args.dry_run)
             else:
-                _lint_with_lint_text(output_file, dry_run=args.dry_run)
+                _lint_with_lint_text(
+                    output_file,
+                    log_level=args.log_level,
+                    dry_run=args.dry_run,
+                )
         elif action == "fix_typst_code":
             _LOG.info(
                 "\n%s",
@@ -1589,6 +1608,7 @@ def _main(parser: argparse.ArgumentParser) -> None:
                 args.mode,
                 script_dir,
                 no_abort_on_warnings=args.no_abort_on_warnings,
+                log_level=args.log_level,
                 dry_run=args.dry_run,
             )
         elif action == "open_pdf":
@@ -1598,6 +1618,7 @@ def _main(parser: argparse.ArgumentParser) -> None:
                 out_dir,
                 basename,
                 args.mode,
+                log_level=args.log_level,
                 dry_run=args.dry_run,
             )
         else:

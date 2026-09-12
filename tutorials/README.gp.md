@@ -99,7 +99,7 @@
   helpers_root/.claude/skills/notebook.create_api_intro/SKILL.md
   helpers_root/.claude/skills/notebook.create_outline/SKILL.md
   helpers_root/.claude/skills/notebook.implement_outline/SKILL.md
-  helpers_root/.claude/skills/notebook.outline_ideas/SKILL.md
+  helpers_root/.claude/skills/notebook.brainstorm_outline/SKILL.md
 
   > mdm skill f tutorial
   helpers_root/.claude/skills/blog.write_ml_tutorial/SKILL.md

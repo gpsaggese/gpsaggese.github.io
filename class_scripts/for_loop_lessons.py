@@ -199,6 +199,7 @@ def _generate_slides_pdf(
     limit: Optional[str] = None,
     skip_action: str = "open_pdf",
     cmd_opts: Optional[str] = None,
+    log_level: str = "INFO",
 ) -> None:
     """
     Generate PDF slides from a lecture source file.
@@ -213,6 +214,8 @@ def _generate_slides_pdf(
     :param skip_action: action to skip (default: 'open_pdf')
     :param cmd_opts: extra options string appended verbatim to the invoked
         command
+    :param log_level: verbosity level (e.g., "DEBUG") forwarded to
+        `notes_to_pdf.py`
     """
     # Compute output path.
     dst_name = source_name.replace(".smd", ".pdf")
@@ -230,6 +233,7 @@ def _generate_slides_pdf(
         "--toc_type navigation",
         f"--skip_action {skip_action}",
         "--debug_on_error",
+        f"-v {log_level}",
     ]
     if limit:
         cmd.extend([f"--filter_by_slides {limit}"])
@@ -247,6 +251,7 @@ def _release_slides_pdf(
     source_name: str,
     *,
     cmd_opts: Optional[str] = None,
+    log_level: str = "INFO",
 ) -> None:
     """
     Release the slides PDF for a lecture via `gen_slides.py --action release`.
@@ -260,6 +265,8 @@ def _release_slides_pdf(
     :param source_name: name of source file
     :param cmd_opts: extra options string appended verbatim to the invoked
         command
+    :param log_level: verbosity level (e.g., "DEBUG") forwarded to
+        `gen_slides.py`
     """
     # Extract lesson number from source name (e.g., Lesson01.1-Intro.smd -> 01.1).
     match = re.match(r"Lesson([\d.]+)", source_name)
@@ -269,7 +276,10 @@ def _release_slides_pdf(
     lesson_number = match.group(1)
     # Build command.
     _LOG.info("Releasing PDF for %s (lesson %s)", source_name, lesson_number)
-    cmd_str = f"gen_slides.py -i {class_dir}/{lesson_number} --action release"
+    cmd_str = (
+        f"gen_slides.py -i {class_dir}/{lesson_number} --action release "
+        f"-v {log_level}"
+    )
     if cmd_opts:
         cmd_str += f" {cmd_opts}"
     _LOG.info("Executing: %s", cmd_str)
@@ -282,6 +292,7 @@ def _release_book_chapters_pdf(
     source_name: str,
     *,
     cmd_opts: Optional[str] = None,
+    log_level: str = "INFO",
 ) -> None:
     """
     Compile and release the book chapter PDF for a lecture via
@@ -299,6 +310,8 @@ def _release_book_chapters_pdf(
     :param source_name: name of source file
     :param cmd_opts: extra options string appended verbatim to the invoked
         command
+    :param log_level: verbosity level (e.g., "DEBUG") forwarded to
+        `render_book_chapter.py`
     """
     # Extract lesson number from source name (e.g., Lesson01.1-Intro.smd -> 01.1).
     match = re.match(r"Lesson([\d.]+)", source_name)
@@ -314,7 +327,8 @@ def _release_book_chapters_pdf(
     )
     cmd_str = (
         f"render_book_chapter.py -i {class_dir}/{lesson_number} "
-        '--action release --run_typst_args="--skip_action open_pdf"'
+        '--action release --run_typst_args="--skip_action open_pdf" '
+        f"-v {log_level}"
     )
     if cmd_opts:
         cmd_str += f" {cmd_opts}"
@@ -329,6 +343,7 @@ def _generate_tex(
     *,
     limit: Optional[str] = None,
     cmd_opts: Optional[str] = None,
+    log_level: str = "INFO",
 ) -> None:
     """
     Generate TeX files from a lecture source file.
@@ -342,6 +357,8 @@ def _generate_tex(
     :param limit: optional slide range to process (e.g., '1:3')
     :param cmd_opts: extra options string appended verbatim to the invoked
         command
+    :param log_level: verbosity level (e.g., "DEBUG") forwarded to
+        `notes_to_pdf.py`
     """
     # Compute output path.
     dst_name = source_name.replace(".smd", ".tex")
@@ -359,6 +376,7 @@ def _generate_tex(
         "--no_pdf",
         "--skip_action open_pdf",
         "--debug_on_error",
+        f"-v {log_level}",
     ]
     if limit:
         cmd.extend([f"--filter_by_slides {limit}"])
@@ -377,6 +395,7 @@ def _generate_script(
     *,
     limit: Optional[str] = None,
     cmd_opts: Optional[str] = None,
+    log_level: str = "INFO",
 ) -> None:
     """
     Generate script from a lecture source file.
@@ -392,6 +411,8 @@ def _generate_script(
     :param source_name: name of source file
     :param cmd_opts: unused for this action since script generation is a
         direct Python call rather than a subprocess
+    :param log_level: verbosity level (e.g., "DEBUG") forwarded to the
+        scripts invoked by `generate_lecture_video_script()`
     """
     import class_scripts.gen_lecture_video_script as csglvisc
 
@@ -413,6 +434,7 @@ def _generate_script(
         output_path,
         slides_per_group=3,
         limit_range=limit_range,
+        log_level=log_level,
     )
     # Step 2: Remove 'Transition: ' prefix.
     cmd_str = f"perl -pi -e 's/^Transition: //g' {output_path}"
@@ -428,6 +450,7 @@ def _slide_reduce(
     *,
     limit: Optional[str] = None,
     cmd_opts: Optional[str] = None,
+    log_level: str = "INFO",
 ) -> None:
     """
     Reduce slides by applying LLM transformation.
@@ -438,6 +461,8 @@ def _slide_reduce(
     :param source_name: name of source file
     :param cmd_opts: extra options string appended verbatim to the invoked
         command
+    :param log_level: verbosity level (e.g., "DEBUG") forwarded to
+        `process_slides.py`
     """
     _LOG.info("Reducing slides for %s", source_name)
     cmd = [
@@ -445,6 +470,7 @@ def _slide_reduce(
         f"--in_file {source_path}",
         "--action slide_reduce",
         "--use_llm_transform",
+        f"-v {log_level}",
     ]
     if limit:
         cmd.extend([f"--limit {limit}"])
@@ -461,6 +487,7 @@ def _slide_check(
     *,
     limit: Optional[str] = None,
     cmd_opts: Optional[str] = None,
+    log_level: str = "INFO",
 ) -> None:
     """
     Check slides by applying LLM transformation.
@@ -471,6 +498,8 @@ def _slide_check(
     :param source_name: name of source file
     :param cmd_opts: extra options string appended verbatim to the invoked
         command
+    :param log_level: verbosity level (e.g., "DEBUG") forwarded to
+        `process_slides.py`
     """
     # Compute output path.
     output_path = f"{source_path}.slide_check.txt"
@@ -481,6 +510,7 @@ def _slide_check(
         "--action text_check",
         f"--out_file {output_path}",
         "--use_llm_transform",
+        f"-v {log_level}",
     ]
     if limit:
         cmd.extend([f"--limit {limit}"])
@@ -497,6 +527,7 @@ def _generate_lecture_commentary(
     source_name: str,
     *,
     cmd_opts: Optional[str] = None,
+    log_level: str = "INFO",
 ) -> None:
     """
     Generate book chapter from a lecture source file.
@@ -512,6 +543,8 @@ def _generate_lecture_commentary(
     :param source_name: name of source file
     :param cmd_opts: extra options string appended verbatim to the invoked
         command (e.g., '--no_incremental --open_pdf')
+    :param log_level: verbosity level (e.g., "DEBUG") forwarded to
+        `gen_lecture_commentary.py`
     """
     # Extract lesson number from source name (e.g., Lesson01.1-Intro.smd -> 01.1)
     match = re.match(r"Lesson([\d.]+)", source_name)
@@ -523,7 +556,10 @@ def _generate_lecture_commentary(
     _LOG.info(
         "Generating book chapter for %s (lesson %s)", source_name, lesson_number
     )
-    cmd_str = f"gen_lecture_commentary.py {class_dir}/{lesson_number}"
+    cmd_str = (
+        f"gen_lecture_commentary.py {class_dir}/{lesson_number} "
+        f"-v {log_level}"
+    )
     if cmd_opts:
         cmd_str += f" {cmd_opts}"
     _LOG.info("Executing: %s", cmd_str)
@@ -536,6 +572,7 @@ def _generate_class_quizzes(
     source_name: str,
     *,
     cmd_opts: Optional[str] = None,
+    log_level: str = "INFO",
 ) -> None:
     """
     Generate multiple choice quizzes from a lecture source file.
@@ -550,6 +587,8 @@ def _generate_class_quizzes(
     :param source_name: name of source file
     :param cmd_opts: extra options string appended verbatim to the invoked
         command
+    :param log_level: verbosity level (e.g., "DEBUG") forwarded to
+        `gen_quizzes.py`
     """
     # Extract lesson number from source name (e.g., Lesson01.1-Intro.smd -> 01.1)
     match = re.match(r"Lesson([\d.]+)", source_name)
@@ -562,7 +601,8 @@ def _generate_class_quizzes(
         "Generating class quizzes for %s (lesson %s)", source_name, lesson_number
     )
     cmd_str = (
-        f"gen_quizzes.py --for_class_quizzes -i {class_dir}/{lesson_number}"
+        f"gen_quizzes.py --for_class_quizzes -i {class_dir}/{lesson_number} "
+        f"-v {log_level}"
     )
     if cmd_opts:
         cmd_str += f' --llm_cli_args="{cmd_opts}"'
@@ -576,6 +616,7 @@ def _generate_class_recap(
     source_name: str,
     *,
     cmd_opts: Optional[str] = None,
+    log_level: str = "INFO",
 ) -> None:
     """
     Generate class recap questions from a lecture source file.
@@ -589,6 +630,8 @@ def _generate_class_recap(
     :param source_name: name of source file
     :param cmd_opts: extra options string appended verbatim to the invoked
         command
+    :param log_level: verbosity level (e.g., "DEBUG") forwarded to
+        `gen_quizzes.py`
     """
     # Extract lesson number from source name (e.g., Lesson01.1-Intro.smd -> 01.1)
     match = re.match(r"Lesson([\d.]+)", source_name)
@@ -603,7 +646,10 @@ def _generate_class_recap(
     _LOG.info(
         "Generating class recap for %s (lesson %s)", source_name, lesson_number
     )
-    cmd_str = f"gen_quizzes.py --for_class_recap -i {class_dir}/{lesson_number}"
+    cmd_str = (
+        f"gen_quizzes.py --for_class_recap -i {class_dir}/{lesson_number} "
+        f"-v {log_level}"
+    )
     if cmd_opts:
         cmd_str += f' --llm_cli_args="{cmd_opts}"'
     _LOG.info("Executing: %s", cmd_str)
@@ -613,6 +659,8 @@ def _generate_class_recap(
 def _generate_toc(
     source_path: str,
     source_name: str,
+    *,
+    log_level: str = "INFO",
 ) -> str:
     """
     Extract TOC from a single lecture source file.
@@ -622,6 +670,8 @@ def _generate_toc(
 
     :param source_path: path to source .smd file
     :param source_name: name of source file
+    :param log_level: verbosity level (e.g., "DEBUG") forwarded to
+        `extract_toc_from_txt.py`
     :return: extracted TOC content with lesson header
     """
     _LOG.debug("Extracting TOC from %s", source_name)
@@ -630,6 +680,7 @@ def _generate_toc(
         f"-i {source_path}",
         "--max_level 5",
         "--warn_on_malformed",
+        f"-v {log_level}",
     ]
     cmd_str = " ".join(cmd)
     _LOG.debug("Executing: %s", cmd_str)
@@ -647,6 +698,7 @@ def _process_lecture_file(
     *,
     limit: Optional[str] = None,
     cmd_opts: Optional[str] = None,
+    log_level: str = "INFO",
 ) -> str:
     """
     Process a single lecture file for specified actions.
@@ -658,6 +710,8 @@ def _process_lecture_file(
     :param limit: optional slide range to process
     :param cmd_opts: extra options string passed through verbatim to the
         invoked commands (e.g., 'gen_lecture_commentary.py')
+    :param log_level: verbosity level (e.g., "DEBUG") forwarded to every
+        invoked command, so `-v DEBUG` on this script applies recursively
     :return: TOC content if action is 'generate_toc', else None
     """
     _LOG.info("Processing file: %s", source_path)
@@ -670,14 +724,23 @@ def _process_lecture_file(
                 source_name,
                 limit=limit,
                 cmd_opts=cmd_opts,
+                log_level=log_level,
             )
         elif action == "release_slides_pdf":
             _release_slides_pdf(
-                class_dir, source_path, source_name, cmd_opts=cmd_opts
+                class_dir,
+                source_path,
+                source_name,
+                cmd_opts=cmd_opts,
+                log_level=log_level,
             )
         elif action == "release_book_chapters_pdf":
             _release_book_chapters_pdf(
-                class_dir, source_path, source_name, cmd_opts=cmd_opts
+                class_dir,
+                source_path,
+                source_name,
+                cmd_opts=cmd_opts,
+                log_level=log_level,
             )
         elif action == "generate_tex":
             _generate_tex(
@@ -686,6 +749,7 @@ def _process_lecture_file(
                 source_name,
                 limit=limit,
                 cmd_opts=cmd_opts,
+                log_level=log_level,
             )
         elif action == "generate_script":
             _generate_script(
@@ -694,32 +758,53 @@ def _process_lecture_file(
                 source_name,
                 limit=limit,
                 cmd_opts=cmd_opts,
+                log_level=log_level,
             )
         elif action == "reduce_slide":
             _slide_reduce(
-                source_path, source_name, limit=limit, cmd_opts=cmd_opts
+                source_path,
+                source_name,
+                limit=limit,
+                cmd_opts=cmd_opts,
+                log_level=log_level,
             )
         elif action == "check_slide":
             _slide_check(
-                source_path, source_name, limit=limit, cmd_opts=cmd_opts
+                source_path,
+                source_name,
+                limit=limit,
+                cmd_opts=cmd_opts,
+                log_level=log_level,
             )
         elif action == "improve_slide":
             # TODO: Implement _slide_improve function.
             hdbg.dfatal("improve_slide action not yet implemented")
         elif action == "generate_lecture_commentary":
             _generate_lecture_commentary(
-                class_dir, source_path, source_name, cmd_opts=cmd_opts
+                class_dir,
+                source_path,
+                source_name,
+                cmd_opts=cmd_opts,
+                log_level=log_level,
             )
         elif action == "generate_class_quizzes":
             _generate_class_quizzes(
-                class_dir, source_path, source_name, cmd_opts=cmd_opts
+                class_dir,
+                source_path,
+                source_name,
+                cmd_opts=cmd_opts,
+                log_level=log_level,
             )
         elif action == "generate_class_recap":
             _generate_class_recap(
-                class_dir, source_path, source_name, cmd_opts=cmd_opts
+                class_dir,
+                source_path,
+                source_name,
+                cmd_opts=cmd_opts,
+                log_level=log_level,
             )
         elif action == "generate_toc":
-            res = _generate_toc(source_path, source_name)
+            res = _generate_toc(source_path, source_name, log_level=log_level)
         else:
             hdbg.dfatal("Unknown action:", action)
     return res
@@ -837,6 +922,7 @@ def _main(parser: argparse.ArgumentParser) -> None:
             actions,
             limit=args.limit,
             cmd_opts=args.cmd_opts,
+            log_level=args.log_level,
         )
         if "generate_toc" in actions and result is not None:
             toc_results.append(result)
