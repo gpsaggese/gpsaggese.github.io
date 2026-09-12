@@ -44,6 +44,12 @@ sns.set_style("whitegrid")
 plt.rcParams["figure.figsize"] = (12, 6)
 
 # %%
+# !pip install -q sympy==1.14.0
+
+import sympy
+print("sympy version: ", sympy.__version__)
+
+# %%
 import helpers.hnotebook as hnotebook
 
 import L03_02_wumpus_world_utils as utils

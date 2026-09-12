@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.5
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -42,7 +42,13 @@
 import logging
 
 # %%
-# !pip install -q networkx owlready2
+# !pip install -q networkx==3.6.1 owlready2==0.51
+
+import networkx
+print("networkx version: ", networkx.__version__)
+import owlready2
+import importlib.metadata
+print("owlready2 version: ", importlib.metadata.version("owlready2"))
 
 # %%
 import helpers.hnotebook as hnotebook

@@ -75,6 +75,12 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # %%
+# !pip install -q sympy==1.14.0
+
+import sympy
+print("sympy version: ", sympy.__version__)
+
+# %%
 import helpers.hnotebook as hnotebook
 
 import L03_01_entailment_implication_inference_utils as utils

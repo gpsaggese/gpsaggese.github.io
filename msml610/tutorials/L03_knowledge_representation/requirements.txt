@@ -1,14 +1,6 @@
 ipywidgets
 matplotlib
-networkx
 numpy
-owlready2
 pandas
-scikit-learn
 seaborn
-
-sympy==1.14.0
-
-# SAT and SMT solvers used by `L03_06_logic_solvers.ipynb`.
-python-sat
-z3-solver
+tqdm

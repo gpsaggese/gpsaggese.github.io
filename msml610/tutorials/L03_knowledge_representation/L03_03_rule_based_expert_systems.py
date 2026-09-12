@@ -41,6 +41,14 @@
 import logging
 
 # %%
+# !pip install -q networkx==3.6.1 scikit-learn==1.9.1
+
+import networkx
+print("networkx version: ", networkx.__version__)
+import sklearn
+print("sklearn version: ", sklearn.__version__)
+
+# %%
 import helpers.hnotebook as hnotebook
 
 import L03_03_rule_based_expert_systems_utils as utils

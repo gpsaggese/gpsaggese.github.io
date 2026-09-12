@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.5
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -16,8 +16,7 @@
 # %% [markdown]
 # # Three Engines for Logic: Sympy, PySAT, and Z3
 #
-# - This notebook runs the lecture's own examples through three solvers
-#   instead of one:
+# - This notebook runs the lecture's own examples through three solvers:
 #   - `sympy` for symbolic rewriting
 #   - `PySAT` for propositional satisfiability
 #   - `z3` for first-order, quantified reasoning
@@ -32,8 +31,6 @@
 #   - First-order logic with `z3`: quantifiers, predicates, and witnessing
 #     models
 #   - Routing one entailment question to whichever engine can answer it
-# - Every engine call lives in `L03_06_logic_solvers_utils.py`, so each cell
-#   below stays a single call and the API of each library stays visible
 
 # %% [markdown]
 # ## Imports
@@ -45,8 +42,10 @@
 import logging
 
 # %%
-# !pip install -q python-sat sympy z3-solver
+# !pip install -q networkx==3.6.1 python-sat==1.9.dev15 sympy==1.14.0 z3-solver==5.1.0.0
 
+import networkx
+print("networkx version: ", networkx.__version__)
 import pysat
 print("pysat version: ", pysat.__version__)
 import sympy
