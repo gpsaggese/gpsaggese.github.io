@@ -285,6 +285,97 @@ haven't turned that on here; the Bash-text deny is enough for the threat
 model I actually care about (an agent following its instructions and
 occasionally getting creative), not for an adversarial one.
 
+## Two More Gaps, Found by Actually Running This
+
+Both fixes below came from putting Approach 4 into practice across multiple
+repos, then asking the agent running under it to explain why its own commits
+had gone through.
+
+### Gap: An `Edit` Deny Without a Matching `Write` Deny
+
+The deny rule from the previous section only listed `Edit`:
+
+```json
+{
+    "permissions": {
+        "deny": ["Bash(*git_authorized*)", "Edit(/.claude/git_authorized)"]
+    }
+}
+```
+
+That's a hole the moment the flag file doesn't exist yet: creating a brand
+new file is a `Write` tool call, not an `Edit`. `Edit(/.claude/git_authorized)`
+blocks changing an *existing* file at that path; it says nothing about a
+`Write` call to the same path, which is exactly how the file gets created in
+the first place. Fixed:
+
+```json
+{
+    "permissions": {
+        "deny": [
+            "Bash(*git_authorized*)",
+            "Edit(/.claude/git_authorized)",
+            "Write(/.claude/git_authorized)"
+        ]
+    }
+}
+```
+
+### Gap: One Hook, Registered Globally, With a Hardcoded Repo Path
+
+Approach 4's hook is most useful registered once in `~/.claude/settings.json`
+so it applies to every repo, not re-declared per project. But the `command`
+field there is a literal string, resolved the same way for every session
+regardless of which project is open:
+
+```json
+"command": "/Users/saggese/src/some-repo/.claude/hooks/check_git_auth.sh"
+```
+
+and the script itself resolved its flag file *relative to its own location
+on disk*:
+
+```bash
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+AUTH_FILE="$(cd "$SCRIPT_DIR/.." && pwd)/git_authorized"
+```
+
+Put those two facts together and every project on the machine ends up
+sharing one flag file: whichever repo the script happens to physically live
+in. Authorizing a session in repo A silently authorizes a session in repo B,
+with no "which project am I actually authorizing" feedback anywhere in the
+loop.
+
+The fix is *not* to point `command` at
+`$CLAUDE_PROJECT_DIR/.claude/hooks/check_git_auth.sh` so each project uses
+its own copy of the script. `CLAUDE_PROJECT_DIR` is a real environment
+variable Claude Code sets for every hook invocation (global, project, and
+local settings scopes alike), but PreToolUse hooks **fail open** when the
+`command` can't be found: a missing script is a non-blocking error, and the
+tool call proceeds anyway. Any project that doesn't happen to have that
+script deployed at that exact path would lose the gate entirely instead of
+denying by default - worse than the bug it was meant to fix.
+
+Instead, keep `command` pointed at one fixed, always-reachable script, and
+move the per-project decision *inside* the script, keyed off
+`CLAUDE_PROJECT_DIR`:
+
+```bash
+if [[ -n "${CLAUDE_GIT_AUTH_FILE:-}" ]]; then
+    AUTH_FILE="$CLAUDE_GIT_AUTH_FILE"                        # explicit override
+elif [[ -n "${CLAUDE_PROJECT_DIR:-}" ]]; then
+    AUTH_FILE="$CLAUDE_PROJECT_DIR/.claude/git_authorized"   # per-project
+else
+    AUTH_FILE="$DEFAULT_AUTH_FILE"                           # script-relative fallback
+fi
+```
+
+Now `touch .claude/git_authorized` in one repo authorizes only that repo's
+sessions, the script is still found every single time (no fail-open path),
+and the `Edit`/`Write` deny rule from the gap above just works unchanged,
+since it was already expressed as a project-relative pattern
+(`/.claude/git_authorized`) rather than one repo's absolute path.
+
 ## Comparing the Four
 
 | Approach | Scope | Toggle | Enforcement |

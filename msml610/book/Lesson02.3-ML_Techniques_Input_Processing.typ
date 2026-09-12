@@ -415,7 +415,7 @@ this scheme an age of 32 maps to `Adult`, as shown in @fig:discretization.
 #strong[Feature engineering] is the practice of deriving more informative variables
 from raw inputs, encoding domain knowledge that the original columns do not expose
 directly. Several techniques are common: combining existing variables (for instance,
-computing $"area" = "height" times "width"$ from two separate columns), extracting
+computing $"area" eq.delta "height" times "width"$ from two separate columns), extracting
 components (pulling the year out of a full date), and deriving logical features that
 capture higher-level structure. A date such as `2023-04-15`, for example, can be
 transformed into the pair (`Saturday`, `is_weekend = True`), giving a model access to

@@ -1034,9 +1034,7 @@ digraph TetrisDDN {
 
 ::::
 :::: {.column width=35%}
-![](msml610/lectures_source/figures/L12.Multi_armed_bandits.png)
-
-_3-bandit problem_
+![3-bandit problem](msml610/lectures_source/figures/L12.Multi_armed_bandits.png)
 ::::
 :::
 

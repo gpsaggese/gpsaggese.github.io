@@ -214,6 +214,7 @@ def _main(parser: argparse.ArgumentParser) -> None:
         input_arg,
         output_arg,
         prompt_file_arg,
+        f"-v {args.log_level}",
     ]
     # Add extra options if provided.
     if args.llm_cli_args:
@@ -227,7 +228,10 @@ def _main(parser: argparse.ArgumentParser) -> None:
         _LOG.info("Running lint_text.py on output file: %s", output_file)
         # Prepare linting command.
         lint_action = "prettier"
-        lint_cmd = f"lint_text.py -i {output_file} --action {lint_action}"
+        lint_cmd = (
+            f"lint_text.py -i {output_file} --action {lint_action} "
+            f"-v {args.log_level}"
+        )
         _LOG.info("Executing: %s", lint_cmd)
         hsystem.system(lint_cmd)
 

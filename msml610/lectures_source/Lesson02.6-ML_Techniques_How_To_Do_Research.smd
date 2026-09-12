@@ -32,33 +32,25 @@
   - Polynomial of order 2 is simpler than order 17
     - More polynomials of order 17 than order 2, though both are infinite sets
   - For SVM (Support Vector Machine) separating hyperplane appears wiggly
-    ("complex"?), but defined by few support vectors (simple)
+    ("complex"?), but defined by few support vectors (simple!)
 
 - @Definition@: There are many **measures of complexity**
   - Complexity of a single hypothesis $h$
-    - E.g., polynomial order, MDL (describe hypothesis in bits), Kolmogorov
-      complexity
+    - E.g., polynomial order, MDL (describe hypothesis in bits)
+      `#cite("rissanen1978mdl")`{=typst}, Kolmogorov complexity
   - Complexity of a hypothesis set $\calH$
     - E.g., VC dimension of the model `#cite("abumostafa2012learning")`{=typst}
+      `#cite("vapnikchervonenkis1971uniform")`{=typst}
   - Complexity of both $h$ and $\calH$ are related by counting:
     - If you need $l$ bits to specify $h$, then $h$ is one of $2^l$ elements of set
       $\calH$
-\begingroup \footnotesize
-```{=typst}
-#styled-table(
-  headers: ("Complexity Of", "Measure", "Example"),
-  rows: (
-    ("Single hypothesis $h$", "Description length", "Polynomial order, MDL, Kolmogorov complexity"),
-    ("Hypothesis set $\calH$", "Capacity", "VC dimension"),
-  ),
-)
-```
-\endgroup
 
 * Model Soundness
 
 - @Model should tell a story@
   - You cannot blindly accept results of modeling
+    - _"All models are wrong, but some are useful"_
+      `#cite("box1976science")`{=typst}
   - Ask: _"What criticisms would you give if the model was presented for the first
     time?"_
 
@@ -71,7 +63,7 @@
 - @Fact@: A **perfect fit can mean nothing**, e.g.,
   - Get 2 data points on a plane
     - Fit data with a linear relationship
-  - The perfect fit means nothing since: There is always a line between 2 points
+  - The perfect fit means nothing since there is always a line between 2 points
     - The model (line) is too complex for data set (only 2 points)
   - Data cannot falsify hypothesis
 
@@ -82,26 +74,13 @@
   - Biased sampling leads to biased outcomes
     - The model views the world through training data
   - Formalized by Hoeffding's hypothesis in ML theory: Training and testing
-    distributions are the same `#cite("abumostafa2012learning")`{=typst}
+    distributions needs to be the same `#cite("abumostafa2012learning")`{=typst}
 
 - @Causes of Sampling Bias@
   - _Non-random sampling_: Favors certain outcomes or groups
   - _Undercoverage_: Inadequate representation of some population members
   - _Survivorship bias_: Includes only successful subjects
   - _Self-selection bias_: Participants choose to participate, introducing bias
-```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#EEEDFE', 'primaryBorderColor': '#7F77DD', 'primaryTextColor': '#26215C', 'lineColor': '#888888', 'fontFamily': 'Helvetica'}}}%%
-mindmap
-  root((**Sampling Bias**))
-    (**Non-random sampling**)
-      Favors certain outcomes
-    (**Undercoverage**)
-      Inadequate representation
-    (**Survivorship bias**)
-      Only successful subjects
-    (**Self-selection bias**)
-      Participants opt in
-```
 
 - @Consequences@
   - Systematic errors distort relationships or predictions
@@ -120,12 +99,13 @@ mindmap
   - Compare sample statistics with population statistics
   - Use stratified sampling or resampling to balance data
   - Apply re-weighting or bias correction techniques
-  - If data points have zero probability ($\Pr = 0$), no remedies possible
+    - If data points have zero probability ($\Pr = 0$), no remedies possible
 
 * Data Snooping (1/2)
 
 - @Definition@: **Data snooping** occurs when test set information improperly
-  influences model-building `#cite("hastie2009statlearn")`{=typst}
+  influences model-building `#cite("hastie2009elements")`{=typst}
+  `#cite("kaufman2012leakage")`{=typst}
 
 - @Causes of Data Snooping@
   - _Train-test contamination_: Test data leaks into training
@@ -140,45 +120,35 @@ mindmap
 - @Why It's Dangerous@
   - Misleading results
   - False confidence in model quality
-  - Common pitfall in machine learning workflows
+  - Common pitfall in machine learning workflows ("happy minefield")
 
 * Data Snooping (2/2)
 
 - @Examples@
   - Choosing features based on the full dataset before splitting gives foresight not
     present in deployment
-  - E.g., demean the entire data and then split in train / test
+    - E.g., do not demean the entire data and then split in train / test
 
 - @Preventive Strategies@
   - Keep training, validation, and test sets separate
     - Fit preprocessing steps only on training data, then apply to test data
   - Use cross-validation properly
-\begingroup \footnotesize
-```{=typst}
-#styled-table(
-  headers: ("Source", "Preventive Strategy"),
-  rows: (
-    ("Train-test contamination", "Keep training, validation, and test sets separate"),
-    ("Multiple hypothesis testing", "Use cross-validation properly; fit preprocessing on training data only"),
-  ),
-)
-```
-\endgroup
 
 * "Burning the Test Set"
 
-- @Problem@ `#cite("hastie2009statlearn")`{=typst}
+- @Problem@ `#cite("hastie2009elements")`{=typst}
   - Repeated test set use during development leaks into training $\to$ overfitting to
     _test data_
   - _"If you torture the data long enough, it will confess whatever you want"_
     (Coase, 1982)
 
 - @Consequences@
-  - Test accuracy improves but (unknown) real performance stagnates / degrades
+  - Test accuracy improves but (unknown) real performance degrades
   - You can't trust your own model evaluation process
 
 - @Mitigation@
-  - _One-time use principle_: Evaluate on test set _once_ after all the tuning
+  - _One-time use principle_: Evaluate on test set _exactly once_ after all the
+    tuning
   - _Statistical adjustments_:
     - Adjust p-values for multiple testing
     - Use Bonferroni or False Discovery Rate corrections
@@ -208,10 +178,8 @@ mindmap
   - Model is overfitted and fails to generalize
 
 - @Solution@
-  1. Run diagnostics
-     - Gain insight on what works/doesn't to improve performance before long-term
-       projects
-       - E.g., bias-variance curves, learning curves
+  1. Run diagnostics before long-term projects
+     - E.g., bias-variance curves, learning curves
   2. Address the problem
      - Training data
        - Get more training data to fix high variance
@@ -222,26 +190,14 @@ mindmap
      - Regularization
        - Decrease regularization $\lambda$ to fix high bias
        - Increase regularization $\lambda$ to fix high variance
-\begingroup \footnotesize
-```{=typst}
-#styled-table(
-  headers: ("Lever", "Action", "Effect"),
-  rows: (
-    ("Training data", "Get more data", "Fixes high variance"),
-    ("Features", "Remove features", "Fixes high variance"),
-    ("Features", "Add (derived) features", "Fixes high bias"),
-    ("Regularization", "Decrease $\lambda$", "Fixes high bias"),
-    ("Regularization", "Increase $\lambda$", "Fixes high variance"),
-  ),
-)
-```
-\endgroup
 
 * Why Using a Lot of Data?
 
 - @Fact@: **Several studies** show that: `#cite("abumostafa2012learning")`{=typst}
+  `#cite("banko2001data")`{=typst}
   - Different algorithms/models have remarkably similar performance
-  - Increasing training set improves performance
+  - Increasing size of training set improves performance
+    `#cite("halevy2009unreasonable")`{=typst}
 
 - @Consequence@
   - High capacity model + massive training set = good performance
@@ -275,11 +231,11 @@ mindmap
   1. Plot learning curves (in-sample and out-of-sample performance) for increasing
      amount of data $m$ = 1k, 10k, 100k, 1M,
   2. Diagnose the current situation
-  - If model has _large bias_
-    - Training and validation performance are similar at 1M
-    - Next step: Use more complex model rather than training on 100M instances
-  - If model has _large variance_
-    - Next step: Use all 100M instances to train the model
+     - If model has _large bias_
+       - Training and validation performance are similar at 1M sample
+       - Next step: Use more complex model rather than training on 100M instances
+     - If model has _large variance_
+       - Next step: Use all 100M instances to train the model
 
 ::::
 :::: {.column width=30%}
@@ -288,27 +244,6 @@ mindmap
 
 ::::
 :::
-
-* Right and Wrong Approach to Research
-
-- @Problem@: It is rarely clear how to prioritize the different possible tasks
-
-- @Bad approach@
-  1. Use gut feeling to choose a task
-  2. Complete task
-  3. Re-evaluate performance
-
-- @Good approach@
-  1. Build a simple algorithm (within 1 day!)
-  2. Set up performance evaluation process
-     - Use cross-validation
-     - Single number and bounds to improve
-  3. Set up diagnostic tools
-     - Compute learning and bias-variance curves
-     - Understand issues before fixing (avoid premature optimization)
-  4. Understand the problem (debug)
-     - Review misclassified emails manually: What are their types?
-  5. Sometimes you just need to try approaches to see if they work
 
 * Example: Spam Filter Classification
 
@@ -319,14 +254,39 @@ mindmap
 - @Goal@: **Improve classifier performance**
   1. _Collect more data_
      - E.g., honeypot project: Fake email account to collect spam
-  2. _Use better features_
-     - E.g., email routing info since spammers use unusual accounts, mask emails as
-       legitimate
-  3. _Use better features from message body_
+  2. _Use better features from message body_
      - E.g., more words
+  3. _Use better features_
+     - E.g., email routing info (since spammers use unusual accounts to mask emails
+       as legitimate)
   4. _Detect intentional misspellings_
-     - Spammers use misspelled words (e.g., `w4tch` for `watch`)
+     - E.g., Spammers use misspelled words (e.g., `w4tch` for `watch`)
      - Use stemming software
+
+- @Problem@: Which research direction to take?
+
+* Right and Wrong Approach to Research
+
+- @Problem@: It is rarely clear how to prioritize the different possible research
+  tasks
+
+- @Bad approach@
+  1. Use gut feeling to choose a task
+  2. Complete task
+  3. Re-evaluate performance
+
+- @Good approach@
+  1. Build a simple algorithm (within 1 day!)
+  2. Set up performance evaluation process
+     - Single number and bounds to improve
+     - Use cross-validation
+  3. Set up diagnostic tools
+     - Ceiling analysis of the ML pipeline
+     - Compute learning and bias-variance curves
+  4. Understand / debug issues before fixing (avoid premature optimization)
+     `#cite("knuth1974premature")`{=typst}
+  5. Sometimes you just need to try approaches and see if they work
+     - Research is "search"
 
 * Why Do We Do Things?
 
@@ -338,22 +298,25 @@ mindmap
   - Think about actions with the bigger picture in mind
   - Avoid going through the motions
   - Prioritize tasks by importance and impact
+  - Do things by hand, get familiar with data
+     - E.g., review misclassified emails manually: What are their types?
 
+// TODO(ai_gp): Convert this into a table Question, Answer
 - @Example@
   - Q: _"Why is the feedback being collected with surveys?"_
     - A: To improve product features and customer service
-  - Q: _"What is the desired outcome?"_
+  - Q: _"What is the desired outcome of this project?"_
     - A: To identify areas for improvement and innovation
-  - Q: _"Why is this campaign run?"_
+  - Q: _"Why is this email campaign run?"_
     - A: To increase brand awareness or drive sales
-  - Q: _"What are the specific goals?"_
+  - Q: _"What are the specific goals of the campaign?"_
     - A: Set target number of new leads or click-through rates
 
 * Summary of the Results, Next Steps
 
 - @Always have a summary of results@
   - High-level list of discoveries / major findings
-    - E.g., "smoothing model coefficients helps the model"
+    - E.g., _"smoothing model coefficients helps the model"_
   - Interpret results
     - E.g., _"Increase in sales likely due to new marketing strategy."_
   - Conclusions
@@ -374,44 +337,51 @@ mindmap
 * Incremental vs Iterative
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 
 - @Incremental Development@
   - Each increment adds functional components
   - Require upfront planning to divide features meaningfully
   - Integration of increments can be complex
 
+::::
+:::: {.column width=40%}
+
+![Incremental](msml610/lectures_source/figures/L02.6.Monalisa_incremental.png){width=90%}
+
+::::
+:::
+
+::: columns
+:::: {.column width=60%}
+
 - @Iterative Development@
   - Each increment delivers usable system
-  - Refine and improve product through repeated cycles
+  - Refine product through repeated cycles
   - Get feedback
   - Uncover and adjust for unknown requirements
+
+::::
+:::: {.column width=40%}
+
+![Iterative](msml610/lectures_source/figures/L02.6.Monalisa_iterative.png){width=90%}
+
+::::
+:::
+
+::: columns
+:::: {.column width=60%}
 
 - @Incremental $\gg$ Iterative@
 
 ::::
 :::: {.column width=40%}
 
-![](msml610/lectures_source/figures/L02.6.Monalisa_incremental.png){width=90%}
-
-// TODO(ai_gp): Make the font smaller and centered
-
-_Incremental_
-\vspace{0.5cm}
-![](msml610/lectures_source/figures/L02.6.Monalisa_iterative.png){width=90%}
-
-// TODO(ai_gp): Make the font smaller and centered
-
-_Iterative_
-\vspace{0.5cm}
-![](msml610/lectures_source/figures/L02.6.Skateboard.png){width=90%}
-
-// TODO(ai_gp): Make the font smaller and centered
-
-_Incremental vs Iterative_
+![Incremental vs Iterative](msml610/lectures_source/figures/L02.6.Skateboard.png){width=70%}
 
 ::::
 :::
+
 
 * References
 

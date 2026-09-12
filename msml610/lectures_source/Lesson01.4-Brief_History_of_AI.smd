@@ -205,8 +205,7 @@
 ::::
 :::: {.column width=20%}
 
-![](msml610/lectures_source/figures/L01.4.Alan_Turing.jpg)
-\scriptsize `#text(size: 0.8em)[`{=typst}_Alan Turing, 1951_`]`{=typst}
+![Alan Turing, 1951](msml610/lectures_source/figures/L01.4.Alan_Turing.jpg)
 
 ::::
 :::
@@ -238,8 +237,7 @@
 ::::
 :::: {.column width=20%}
 
-![](msml610/lectures_source/figures/L01.4.Marvin_Minsky.jpg)
-\scriptsize `#text(size: 0.8em)[`{=typst}_Marvin Minsky (2008)_`]`{=typst}
+![Marvin Minsky (2008)](msml610/lectures_source/figures/L01.4.Marvin_Minsky.jpg)
 
 ::::
 :::
@@ -433,11 +431,9 @@ digraph ExpertSystem {
 ::::
 :::: {.column width=30%}
 
-![](msml610/lectures_source/figures/L01.4.Judea_Pearl.jpg)
+![Judea Pearl (2013)](msml610/lectures_source/figures/L01.4.Judea_Pearl.jpg)
 
 // TODO(ai_gp): Update with https://preposterousuniverse.com/podcast/2022/05/09/196-judea-pearl-on-cause-and-effect/
-
-\scriptsize `#text(size: 0.8em)[`{=typst}_Judea Pearl (2013)_`]`{=typst}
 
 ::::
 :::
@@ -460,8 +456,7 @@ digraph ExpertSystem {
 ::::
 :::: {.column width=30%}
 
-![](msml610/lectures_source/figures/L01.4.Richard_Sutton.jpg)
-\scriptsize `#text(size: 0.8em)[`{=typst}_Richard Sutton (2025)_`]`{=typst}
+![Richard Sutton (2025)](msml610/lectures_source/figures/L01.4.Richard_Sutton.jpg)
 
 ::::
 :::
@@ -688,10 +683,8 @@ digraph DLPipeline {
 ::::
 :::: {.column width=20%}
 
-![](msml610/lectures_source/figures/L01.3.Deep_Blue.jpg){width=65%}
-\scriptsize `#text(size: 0.8em)[`{=typst}_Deep Blue, 1997_`]`{=typst}
-![](msml610/lectures_source/figures/L01.3.AlphaGo_Rack.jpg){width=65%}
-\scriptsize `#text(size: 0.8em)[`{=typst}_AlphaGo's TPU rack, 2016_`]`{=typst}
+![Deep Blue, 1997](msml610/lectures_source/figures/L01.3.Deep_Blue.jpg){width=65%}
+![AlphaGo's TPU rack, 2016](msml610/lectures_source/figures/L01.3.AlphaGo_Rack.jpg){width=65%}
 
 ::::
 :::
@@ -1002,8 +995,7 @@ digraph CIRLLoop {
 
 ![](msml610/lectures_source/figures/L01.3.e_acc.png)
 \vspace{0.5cm}
-![](msml610/lectures_source/figures/L01.3.P_doom.png)
-_Mountainhead, 2025_
+![Mountainhead, 2025](msml610/lectures_source/figures/L01.3.P_doom.png)
 
 ::::
 :::

@@ -184,16 +184,16 @@ digraph MissingnessMechanisms {
   - _Standardize_ (z-score): Zero mean, unit variance
 
 - @Techniques@
-  - _Min-max normalization_: $x' = \frac{x - x_{\min}}{x_{\max} - x_{\min}}$
-  - Z-score standardization: $x' = \frac{x - \mu}{\sigma}$
-  - RobustScaler: Center and scale by the median and IQR instead of the mean and
+  - _Min-max normalization_: $x' \triangleq \frac{x - x_{\min}}{x_{\max} - x_{\min}}$
+  - Z-score standardization: $x' \triangleq \frac{x - \mu}{\sigma}$
+  - Robust scaler: Center and scale by the median and IQR instead of the mean and
     range, unaffected by outliers
 
 - @Comparison@
   - Min-max is affected by a single extreme value and does not bound unseen test
     values to [0, 1]
   - Z-score is more robust, but is still pulled by heavy outliers
-  - RobustScaler is more outlier-safe
+  - Robust scaler is more outlier-safe
 
 * Feature Scaling
 
@@ -293,7 +293,7 @@ digraph AgeBinning {
   - Encod domain knowledge the raw columns don't expose directly
 
 - @Techniques@
-  - Combine variables (e.g., $area = height \times width$)
+  - Combine variables (e.g., $area \triangleq height \times width$)
   - Extract parts (e.g., year from a date)
   - Derive logical features
     - E.g., transform `2023-04-15` $\to$ (`Saturday`, `is_weekend = True`)

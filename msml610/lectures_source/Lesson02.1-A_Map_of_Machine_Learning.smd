@@ -209,7 +209,7 @@ digraph MLPipeline {
   - @VC theory@ `#cite("vapnikchervonenkis1971uniform")`{=typst}
     - Measure model _"capacity"_ based on hypothesis space complexity
   - @Bias-variance decomposition@ `#cite("geman1992biasvariance")`{=typst}
-    - Prediction error decomposes as: $Error = Bias^2 + Variance + \sigma^2$
+    - Prediction error decomposes as: $Error \triangleq Bias^2 + Variance + \sigma^2$
       - _Bias_: Error from simplistic model assumptions
       - _Variance_: Error due to sensitivity to training data fluctuations
       - _Irreducible noise_ ($\sigma^2$): Inherent randomness in the data, not

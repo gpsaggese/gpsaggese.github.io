@@ -1,0 +1,64 @@
+<svg viewBox="0 0 680 600" xmlns="http://www.w3.org/2000/svg" role="img">
+  <title>Train and validation split with model evaluation flow</title>
+  <desc>Dataset D of size N is split into a training set D_train of size N minus K and a validation set D_val of size K. D_train produces model g minus. D_val combined with g minus produces the validation error estimate E_val(g minus). D alone produces the final model g.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5"
+      markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke"
+        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+  <style>
+    text { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+    .th { font-size: 14px; font-weight: 500; fill: #1B3A57; }
+    .ts { font-size: 12px; font-weight: 400; fill: #52606D; }
+    .container { fill: #F3F8FC; stroke: #2E6DA4; stroke-width: 1.5; }
+    .node-box { fill: #D6E9F5; stroke: #2E6DA4; stroke-width: 0.5; }
+    .edge { fill: none; stroke: #1B3A57; stroke-width: 1.5; }
+  </style>
+
+  <!-- Containing panel: the full dataset D and its partition into train/val -->
+  <rect class="container" x="60" y="60" width="560" height="400" rx="8"/>
+
+  <!-- Edges (drawn first so boxes sit on top) -->
+  <g>
+    <!-- D branches: right, then down into D_train top -->
+    <path class="edge" d="M180,118 L350,118 L350,196" marker-end="url(#arrow)"/>
+    <!-- D branches: right, then down into D_val top -->
+    <path class="edge" d="M180,118 L525,118 L525,332" marker-end="url(#arrow)"/>
+    <!-- D_train output -> g^- -->
+    <path class="edge" d="M350,252 L350,296" marker-end="url(#arrow)"/>
+    <!-- g^- continues down, then right, merging into the D_val output stem -->
+    <path class="edge" d="M350,320 L350,410 L525,410"/>
+    <!-- D_val output down to the merge point -->
+    <path class="edge" d="M525,388 L525,410"/>
+    <!-- combined stem: D_val output + g^- -> E_val(g^-) -->
+    <path class="edge" d="M525,410 L525,520" marker-end="url(#arrow)"/>
+    <!-- D straight down -> g (trained on the full dataset) -->
+    <path class="edge" d="M135,146 L135,520" marker-end="url(#arrow)"/>
+  </g>
+
+  <!-- Nodes -->
+  <g>
+    <rect class="node-box" x="90" y="90" width="90" height="56" rx="4"/>
+    <text class="th" x="135" y="114" text-anchor="middle">𝒟</text>
+    <text class="ts" x="135" y="132" text-anchor="middle">(N)</text>
+  </g>
+
+  <g>
+    <rect class="node-box" x="270" y="196" width="160" height="56" rx="4"/>
+    <text class="th" x="350" y="220" text-anchor="middle">𝒟<tspan font-size="10" dy="4">train</tspan></text>
+    <text class="ts" x="350" y="238" text-anchor="middle">(N − K)</text>
+  </g>
+
+  <g>
+    <rect class="node-box" x="460" y="332" width="130" height="56" rx="4"/>
+    <text class="th" x="525" y="356" text-anchor="middle">𝒟<tspan font-size="10" dy="4">val</tspan></text>
+    <text class="ts" x="525" y="374" text-anchor="middle">(K)</text>
+  </g>
+
+  <!-- Result labels -->
+  <text class="th" x="350" y="313" text-anchor="middle">g⁻</text>
+  <text class="th" x="135" y="546" text-anchor="middle">g</text>
+  <text class="th" x="525" y="546" text-anchor="middle">E<tspan font-size="10" dy="4">val</tspan><tspan dy="-4">(g⁻)</tspan></text>
+</svg>

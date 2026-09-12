@@ -422,10 +422,7 @@ digraph BusinessCycle {
   - Help identify underlying trends by eliminating seasonal fluctuations
 ::::
 :::: {.column width=50%}
-![](msml610/lectures_source/figures/L10.Antidiabetic_drug_sales_subseasonal_plot.png)
-\begingroup \small
-Sub-seasonal plot
-\endgroup
+![Sub-seasonal plot](msml610/lectures_source/figures/L10.Antidiabetic_drug_sales_subseasonal_plot.png)
 ::::
 :::
 
