@@ -1,7 +1,7 @@
 SMD_FILE=msml610/lectures_source/Lesson03.3*.smd
 
 - Read the conventions for
-  - books: `.claude/skills/book.rules.md`
+  - books: `.claude/skills/book_map.rules.md`
   - slides: `.claude/skills/slides.rules.md`
   - typst code: `.claude/skills/typst.rules.md`
 

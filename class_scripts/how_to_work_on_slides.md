@@ -6,7 +6,7 @@
     `Lesson01.1-Intro.smd`
 - Before editing a `.smd` file, read:
   - `.claude/skills/slides.rules.md`: slide content conventions
-  - `.claude/skills/book.rules.md`: for how a book is organized
+  - `.claude/skills/book_map.rules.md`: for how a book is organized
   - `.claude/skills/typst.rules.md`: book chapter conventions
 
 ## Command Summary

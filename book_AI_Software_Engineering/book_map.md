@@ -49,7 +49,7 @@
 - `book_AI_Software_Engineering/lectures_notes/*.smd`
 
 ## Chapter Templates and Invariants
-- Follow `.claude/skills/book.rules.md` for the Chapter Template (Goals,
+- Follow `.claude/skills/book_map.rules.md` for the Chapter Template (Goals,
   Topics, TODO, Slides, Lesson Materials, Notes) and Roadmap section
   conventions used throughout this file
 
