@@ -19,6 +19,7 @@
 | `helpers_root/dev_scripts_helpers/notebooks/publish_notebook.py` | Convert/publish/open a notebook as HTML (local, S3, or webserver) |
 | `helpers_root/dev_scripts_helpers/notebooks/extract_notebook_images.py` | Extract screenshots from marked notebook cells           |
 | `helpers_root/dev_scripts_helpers/notebooks/add_toc_to_notebook.py` | Add a clickable table of contents inside the notebook itself |
+| `helpers_root/dev_scripts_helpers/notebooks/run_nbconvert.sh` | Execute a notebook top to bottom and convert to HTML inside Docker, with `html_anchorfix` |
 | `claude> /slides.add_tutorial_links $SMD_FILE`               | Link each slide section to its matching notebook cell           |
 | `class_scripts/colab_setup.py`                               | Shared setup so a tutorial notebook's `helpers`/`_utils.py` imports work on Colab/Binder |
 
