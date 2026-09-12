@@ -1,5 +1,5 @@
-// class_scripts/create_book_toc_from_slides.py --input book.Causal_Probabilistic_ML/book_map.md --max_level 2 --in_place
-// Current TOC: book.Causal_Probabilistic_ML/book_toc.md
+// class_scripts/create_book_toc_from_slides.py --input book_Causal_Probabilistic_ML/map.md --max_level 2 --in_place
+// Current TOC: book_Causal_Probabilistic_ML/book_toc.md
 // Official TOC: ~/src/notes1/book.manning.Causal_Probabilistic_Machine_Learning/manning.proposal_v3.toc.md
 
 // Apply '/Users/saggese/src/umd_classes1/helpers_root/.claude/skills/slides.rules.md:117:## Use Bold for Slide Sections' to ...

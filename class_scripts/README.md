@@ -454,7 +454,7 @@ automated LLM-powered transformations
   - Batch processing to separate file
   - In-place insertion
 - Parses lesson files from `### Lessons` sections in markdown files from
-  `book_map.md`
+  `map.md`
 - Creates combined TOC with chapter organization and formatted lesson sections
   - `--max_level` caps the header depth extracted
   - `--max_number` caps the number of chapters (H2 headers) included (0 = all, the
@@ -465,7 +465,7 @@ automated LLM-powered transformations
 - Generate combined TOC to separate file:
 
   ```bash
-  > create_book_toc_from_slides.py --input=book_map.md --output=book_toc.md --max_level=2
+  > create_book_toc_from_slides.py --input=map.md --output=book_toc.md --max_level=2
   Found 8 chapters
   Processing lectures: 100%|████████| 24/24
   Wrote output to 'book_toc.md'
@@ -474,8 +474,8 @@ automated LLM-powered transformations
 - Insert TOC directly into a markdown file (in-place mode):
 
   ```bash
-  > create_book_toc_from_slides.py --input=book.Causal_Probabilistic_ML/book_map.md --in_place --max_level=3
-  Inserted TOC into 'book.Causal_Probabilistic_ML/book_map.md'
+  > create_book_toc_from_slides.py --input=book_Causal_Probabilistic_ML/map.md --in_place --max_level=3
+  Inserted TOC into 'book_Causal_Probabilistic_ML/map.md'
   ```
 
 - Book map format with `### Lessons` section:

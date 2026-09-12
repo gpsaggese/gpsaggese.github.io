@@ -2,7 +2,7 @@
 r"""
 Generate comprehensive table of contents for book from lecture slides.
 
-- Reads a `book_map.md` file which contains chapters and their associated
+- Reads a `map.md` file which contains chapters and their associated
   lesson files
 - Extracts the table of contents from each lesson file
 - Combines them into a single output markdown file.
@@ -34,21 +34,21 @@ _LOG = logging.getLogger(__name__)
 
 
 def _extract_chapters_and_lessons(
-    book_map_file: str,
+    map_file: str,
 ) -> List[Tuple[str, str, List[str]]]:
     """
-    Extract chapters and their associated lesson files from book_map.md.
+    Extract chapters and their associated lesson files from map.md.
 
-    :param book_map_file: Path to the book_map.md file
+    :param map_file: Path to the map.md file
     :return: List of (chapter_title, chapter_header, lesson_files) tuples
         where each tuple contains the chapter title, markdown header line,
         and list of associated lesson file paths
     """
-    _LOG.debug(hprint.to_str("book_map_file"))
-    hdbg.dassert_file_exists(book_map_file)
-    # Read book_map.md file.
+    _LOG.debug(hprint.to_str("map_file"))
+    hdbg.dassert_file_exists(map_file)
+    # Read map.md file.
     # TODO(ai_gp): Use hio.from_file
-    with open(book_map_file, "r") as f:
+    with open(map_file, "r") as f:
         lines = f.readlines()
     # Parse chapters and lessons via state machine:
     # - Track chapter headers (## N: Title) and switch to new chapter
@@ -234,7 +234,7 @@ def _insert_toc_in_file(
 
 
 def _create_book_toc(
-    book_map_file: str,
+    map_file: str,
     output_file: str,
     *,
     max_level: int,
@@ -243,21 +243,21 @@ def _create_book_toc(
     """
     Create combined table of contents for all chapters and lessons.
 
-    Reads book_map.md, extracts chapters and lessons, then extracts the
+    Reads map.md, extracts chapters and lessons, then extracts the
     table of contents from each lesson file and combines them into a single
     output file with proper markdown structure.
 
-    :param book_map_file: Path to the book_map.md file
+    :param map_file: Path to the map.md file
     :param output_file: Path to the output file
     :param max_level: Maximum header level to extract
     :param max_number: Maximum number of chapters (h2 headers) to include
         - Default: 0 (include all chapters)
     """
-    _LOG.debug(hprint.to_str("book_map_file output_file max_level max_number"))
+    _LOG.debug(hprint.to_str("map_file output_file max_level max_number"))
     # Validate input file exists.
-    hdbg.dassert_file_exists(book_map_file)
+    hdbg.dassert_file_exists(map_file)
     # Extract chapters and lessons.
-    chapters = _extract_chapters_and_lessons(book_map_file)
+    chapters = _extract_chapters_and_lessons(map_file)
     _LOG.info("Found '%d' chapters", len(chapters))
     # Validate all lesson files exist before processing.
     for _, _, lessons in chapters:
@@ -315,8 +315,8 @@ def _parse() -> argparse.ArgumentParser:
     parser.add_argument(
         "--input",
         type=str,
-        default="book.From_Data_To_Decisions/book_map.md",
-        help="Path to the book_map.md file",
+        default="book.From_Data_To_Decisions/map.md",
+        help="Path to the map.md file",
     )
     parser.add_argument(
         "--output",
@@ -361,7 +361,7 @@ def _main(parser: argparse.ArgumentParser) -> None:
         _insert_toc_in_file(args.input, max_level=args.max_level)
     else:
         _create_book_toc(
-            book_map_file=args.input,
+            map_file=args.input,
             output_file=args.output,
             max_level=args.max_level,
             max_number=args.max_number,
