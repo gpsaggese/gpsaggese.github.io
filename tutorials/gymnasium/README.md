@@ -343,7 +343,7 @@ Work through the notebooks in this directory:
     ```
 
 - For more on the Docker build system, see the
-  [project template README](/class_project/project_template/README.md)
+  [project template README](/class_project/project_template/docker_scripts.README.md)
 
 ## Summary
 

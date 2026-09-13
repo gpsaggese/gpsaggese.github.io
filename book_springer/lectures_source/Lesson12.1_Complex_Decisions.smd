@@ -1,0 +1,878 @@
+// type=UMD_slides
+// course_title=From Data to Decisions: Building Decision Systems with Probabilistic Causal Reasoning
+// lesson_title=Lesson 12.1: Complex Decisions
+// slides_engine=typst
+
+// References:
+//- msml610/lectures_source/Lesson12.1-Reinforcement_learning.txt
+//- class_cs_refreshers/lectures_source/Lesson95.Refresher_game_theory.txt
+//- msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.txt
+//- msml610/lectures_source/Lesson08.5-Experimentation.txt
+//- msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.txt
+//- msml610/lectures_source/Lesson09.1-Reasoning_over_time.txt
+
+# From Value-Based to Complex Decisions
+
+* Three Assumptions Now Relaxed
+
+- **Goal**: extend the single-agent, value-based toolkit from the previous
+  chapter to the parts of the decision spectrum where one of three
+  assumptions breaks
+  1. _Continuous, high-dimensional actions_: a table or a $Q$-function no
+     longer suffices, motivating direct policy search
+  2. _No live environment_: only logged data is available, motivating
+     learning from a fixed batch instead of interaction
+  3. _Other agents are also acting_: single-agent optimization gives way to
+     game-theoretic reasoning about competing or cooperating policies
+- **Roadmap**: policy-based and actor-critic methods, planning with learned
+  models, hierarchical decomposition, offline learning, and multi-agent
+  algorithms, in that order
+- **Key idea**: each family below still bootstraps from the Bellman
+  equation, the search tree, or the exploration-exploitation tradeoff
+  introduced for the simple case, only the setting around it gets harder
+
+# Policy-Based and Actor-Critic Methods
+
+* Why Value-Based Methods Struggle at Scale
+
+- **Problem**: value-based methods need $\pi(s) = \argmax_a Q(s,a)$, an
+  explicit maximization over actions
+  - Fine for a small discrete action set, intractable once actions are
+    continuous (a robot's joint torques) or combinatorially large
+  - A tiny change in $Q$ near the maximizing action can flip the chosen
+    action entirely, producing jittery, unstable policies
+- **(Naive) Solution**: discretize the continuous action space into bins
+  and run ordinary Q-learning over the bins
+  - Cons: fine discretization needed for precision blows up the action
+    count exponentially with the number of action dimensions
+- **Solution**: parameterize the policy directly, $\pi_\vtheta(a|s)$, and
+  optimize $\vtheta$ without ever maximizing over $a$
+- **Key idea**: policy search trades the value function's implicit arg-max
+  for an explicit, differentiable object that scales to continuous and
+  high-dimensional action spaces
+
+* The Policy Gradient Theorem
+// From: msml610/lectures_source/Lesson12.1-Reinforcement_learning.smd:1674 '* Policy Search in Reinforcement Learning'
+
+- **Definition**: a stochastic policy $\pi_\vtheta(a|s)$ assigns a
+  probability to each action given the state, parameterized by $\vtheta$
+  (a linear model or a deep network)
+
+- **Goal**: maximize the expected return over trajectories $\tau$ sampled
+  by running $\pi_\vtheta$
+  $$
+  J(\vtheta) = \EE_{\tau \sim \pi_\vtheta}\left[ \sum_t \gamma^t r_t \right]
+  $$
+
+- **Theorem** (Policy Gradient): the gradient of $J$ decomposes into a sum
+  of log-probability gradients, weighted by return
+  $$
+  \nabla_\vtheta J(\vtheta)
+    = \EE_{\tau \sim \pi_\vtheta}
+        \left[
+          \sum_t \nabla_\vtheta \log \pi_\vtheta(a_t|s_t) \, G_t
+        \right]
+  $$
+  where $G_t = \sum_{k \geq t} \gamma^{k-t} r_k$ is the return from step $t$
+
+- **Intuition**: push up the log-probability of actions that led to high
+  return, push down the log-probability of actions that led to low return
+
+- **Key idea**: this gradient needs no model of the environment, only
+  samples of trajectories and their returns
+
+* REINFORCE: Monte Carlo Policy Gradient
+// From: msml610/lectures_source/Lesson12.1-Reinforcement_learning.smd:1674 '* Policy Search in Reinforcement Learning'
+
+- **Algorithm (REINFORCE)**
+  1. Roll out a full episode under $\pi_\vtheta$
+  2. Compute the return $G_t$ from each timestep to the episode's end
+  3. Update
+     $$
+     \vtheta \leftarrow \vtheta
+       + \alpha \sum_t \nabla_\vtheta \log \pi_\vtheta(a_t|s_t)\, G_t
+     $$
+
+- **Pros**: an unbiased estimate of the true policy gradient, works for
+  any differentiable policy, discrete or continuous actions
+
+- **Cons**: the estimator has high variance, since $G_t$ depends on every
+  action and reward for the rest of the episode
+  - Requires many episodes for a reliable update
+
+- **Key idea**: the same trajectory can raise or lower a good action's
+  probability wildly across runs, purely from unrelated randomness later
+  in the episode
+
+* Variance Reduction: Baselines and Advantage
+
+- **Problem**: REINFORCE's raw return $G_t$ carries no information about
+  whether $s_t$ was already a good state to be in
+
+- **Solution**: subtract a state-dependent baseline $b(s_t)$ that does not
+  depend on the action taken
+  $$
+  \nabla_\vtheta J(\vtheta)
+    = \EE\left[
+        \sum_t \nabla_\vtheta \log \pi_\vtheta(a_t|s_t) \, (G_t - b(s_t))
+      \right]
+  $$
+  - Subtracting any action-independent $b(s_t)$ leaves the gradient
+    unbiased, since $\EE_a[\nabla_\vtheta \log \pi_\vtheta(a|s)] = 0$
+
+- **Best choice**: $b(s_t) = V(s_t)$, turning the weighting term into the
+  _advantage_
+  $$
+  A(s_t,a_t) = G_t - V(s_t) \approx r_t + \gamma V(s_{t+1}) - V(s_t)
+  $$
+
+- **Intuition**: $A(s,a)$ answers _"was this action better or worse than
+  what I expected from this state anyway?"_, a sharper signal than the
+  raw return
+
+- **Key idea**: variance reduction does not change what the gradient
+  points toward, only how noisy the estimate of it is
+
+* Actor-Critic: Combining Value and Policy
+
+::: columns
+:::: {.column width=55%}
+- **Definition**: an _actor-critic_ method learns two functions together
+  - The _actor_ $\pi_\vtheta(a|s)$: selects actions
+  - The _critic_ $V_\vphi(s)$: estimates state value, supplying the
+    advantage used to train the actor
+- **Algorithm**: at each step, the critic computes a one-step advantage
+  and the actor takes a policy-gradient step using it, no full episode
+  needs to finish first
+- **A2C / A3C**: synchronous vs. asynchronous parallel workers explore
+  different trajectories simultaneously, decorrelating experience without
+  a replay buffer
+::::
+:::: {.column width=40%}
+```graphviz
+digraph ActorCritic {
+    rankdir=LR;
+    splines=spline;
+    nodesep=0.6;
+    ranksep=0.7;
+    node [fontname="Helvetica", fontsize=11, style="rounded,filled",
+          shape=box, penwidth=1.4];
+    edge [fontname="Helvetica", fontsize=10, color="#4A4A4A"];
+
+    Env [label="Environment", fillcolor="#B2E2B2"];
+    Actor [label="Actor\npi_theta(a|s)", fillcolor="#F4A6A6"];
+    Critic [label="Critic\nV_phi(s)", fillcolor="#A0D6D1"];
+
+    Env -> Actor [label="  state s"];
+    Actor -> Env [label="  action a"];
+    Env -> Critic [label="  reward r,\n  state s'"];
+    Critic -> Actor [label="  advantage A"];
+}
+```
+::::
+:::
+
+- **Key idea**: the critic turns the actor's Monte Carlo return into a
+  low-variance, one-step bootstrapped signal, the same bias-variance
+  trade-off TD learning made against Monte Carlo returns
+
+* Trust Region Policy Optimization
+// From: msml610/lectures_source/Lesson12.1-Reinforcement_learning.smd:1674 '* Policy Search in Reinforcement Learning'
+
+- **Problem**: an unconstrained policy-gradient step can move $\vtheta$
+  far enough that the new policy visits a different part of state space,
+  collapsing performance with no way back
+
+- **Solution (TRPO)**: constrain each update to a _trust region_ around
+  the current policy, measured in KL-divergence, not parameter distance
+  $$
+  \max_\vtheta \;
+    \EE\left[ \frac{\pi_\vtheta(a|s)}{\pi_{\vtheta_{old}}(a|s)} A(s,a) \right]
+  \quad \text{s.t.} \quad
+  D_{KL}(\pi_{\vtheta_{old}} \Vert \pi_\vtheta) \leq \delta
+  $$
+
+- **Algorithm**: estimate the gradient and the Fisher information matrix,
+  solve for the step direction via conjugate gradient, then line-search
+  the step size against the constraint
+
+- **Theorem**: subject to the trust-region constraint, each TRPO update is
+  guaranteed not to decrease expected return
+
+- **Key idea**: bounding the policy's change in _distribution_ rather than
+  in raw parameter values is what makes the guarantee hold, a step small
+  in parameter space can still be large in behavior, and vice versa
+
+* Proximal Policy Optimization
+
+- **Problem**: TRPO's conjugate-gradient and line-search machinery is
+  expensive and awkward to combine with large-scale parallel training
+
+- **Solution (PPO)**: approximate the same trust-region effect with a
+  clipped surrogate objective, optimized by ordinary stochastic gradient
+  descent
+  $$
+  L(\vtheta)
+    = \EE\left[
+        \min\big(
+          r_t(\vtheta) A_t, \;
+          \text{clip}(r_t(\vtheta), 1-\varepsilon, 1+\varepsilon) A_t
+        \big)
+      \right]
+  $$
+  where $r_t(\vtheta) = \pi_\vtheta(a_t|s_t) / \pi_{\vtheta_{old}}(a_t|s_t)$
+
+- **Intuition**: the clip caps how much credit a single update can take
+  for a large probability ratio, once $r_t$ leaves
+  $[1-\varepsilon, 1+\varepsilon]$, the gradient of that term vanishes
+
+- **Algorithm**: collect rollouts under the current policy, then run
+  several epochs of minibatch gradient descent on $L(\vtheta)$ before
+  collecting new rollouts
+
+- **Key idea**: PPO keeps TRPO's core idea (do not let the policy move too
+  far in one update) while replacing a constrained second-order
+  optimization with a first-order one, which is why it became the default
+  choice for large-scale policy-gradient training
+
+* Deterministic Policy Gradients for Continuous Control
+
+- **Problem**: a stochastic policy over a continuous action space still
+  needs to integrate over actions to compute $\EE_a[\cdot]$, expensive
+  when the critic is a deep network
+
+- **Solution (DDPG)**: learn a _deterministic_ actor $\mu_\vtheta(s)$ and a
+  critic $Q_\vphi(s,a)$ off-policy from a replay buffer, ascending
+  $$
+  \nabla_\vtheta J
+    = \EE\left[
+        \nabla_a Q_\vphi(s,a) \big|_{a=\mu_\vtheta(s)} \,
+        \nabla_\vtheta \mu_\vtheta(s)
+      \right]
+  $$
+  - Exploration comes from added noise on top of the deterministic action,
+    not from the policy's own randomness
+
+- **Fix (TD3)**: DDPG's critic overestimates $Q$-values; twin critics
+  $Q_{\vphi_1}, Q_{\vphi_2}$ and taking their minimum as the TD target
+  counters the bias, with delayed actor updates for stability
+
+- **Fix (SAC)**: add an entropy bonus to the objective,
+  $J = \EE\left[\sum_t r_t + \alpha \, \mathcal{H}(\pi(\cdot|s_t))\right]$,
+  keeping the policy stochastic and exploration high throughout training
+
+- **Key idea**: DDPG, TD3, and SAC all reuse Q-learning's off-policy,
+  replay-buffer machinery from the previous chapter, only the actor is now
+  a differentiable function instead of an arg-max
+
+* Policy-Based Methods: When to Use Which
+
+```{=typst}
+#styled-table(
+  headers: ("Method", "Action space", "On/off-policy", "Key mechanism"),
+  rows: (
+    ("REINFORCE", "Discrete or continuous", "On-policy", "Monte Carlo return, high variance"),
+    ("A2C / A3C", "Discrete or continuous", "On-policy", "One-step advantage, parallel workers"),
+    ("TRPO", "Continuous", "On-policy", "KL trust region, monotonic improvement"),
+    ("PPO", "Discrete or continuous", "On-policy", "Clipped surrogate objective"),
+    ("DDPG / TD3", "Continuous", "Off-policy", "Deterministic actor, replay buffer"),
+    ("SAC", "Continuous", "Off-policy", "Maximum-entropy stochastic actor"),
+  ),
+  col-widths: (1.1fr, 1.2fr, 1fr, 1.6fr),
+  bold-first-col: true,
+)
+```
+
+- **Key idea**: all six methods answer the same question, how to update a
+  parameterized policy from sampled experience, and differ only in
+  variance-reduction technique, on- versus off-policy data reuse, and
+  whether the action output is a distribution or a point
+
+# Planning with Learned Models and Deep Search
+
+* Dyna-Q: Interleaving Learning and Planning
+// From: msml610/lectures_source/Lesson12.1-Reinforcement_learning.smd:1293 '* Model-Based Reinforcement Learning'
+
+- **Recall**: model-based RL fits a transition model $\hat{\Pr}(s'|s,a)$
+  and reward model $\hat{R}(s,a)$ from experience, then plans against it
+
+- **Problem**: pure model-free Q-learning updates $Q$ only from real
+  transitions, one per real step, wasting whatever the model already
+  captures about the environment's dynamics
+
+- **Algorithm (Dyna-Q)**
+  1. After each real transition $(s,a,r,s')$, apply the ordinary
+     Q-learning update and record $(s,a,r,s')$ in a learned model
+  2. Between real steps, sample $k$ previously visited $(s,a)$ pairs and
+     replay simulated transitions from the model through the same
+     Q-learning update
+
+- **Intuition**: every simulated ("planning") update is free, since it
+  reuses experience already paid for, only the real steps cost
+  environment interaction
+
+- **Key idea**: Dyna-Q is not a new update rule, it is the same
+  Q-learning update applied to both real and imagined transitions, which
+  is what makes it a bridge between model-based and model-free RL rather
+  than a third category
+
+* World Models: Planning Inside a Learned Simulator
+
+- **Problem**: Dyna-Q's tabular model does not scale to high-dimensional
+  observations (images, sensor streams), where transitions are too
+  complex to store or look up directly
+
+- **Solution**: train a compact latent model of the environment's
+  dynamics, then plan or train a policy entirely inside it
+  - An _encoder_ compresses raw observations into a latent state $z_t$
+  - A _dynamics model_ predicts $z_{t+1}$ from $z_t$ and $a_t$, entirely
+    in latent space
+
+- **Algorithm**: alternate between collecting real experience to fit the
+  world model, and training the policy on imagined rollouts generated by
+  the model, never touching the real environment during that phase
+
+- **Pros**: imagined rollouts are cheap, enabling far more policy updates
+  per unit of real interaction than any model-free method
+
+- **Cons**: policy quality is capped by model quality, errors compound
+  over long imagined rollouts exactly as they do for Dyna-Q's tabular
+  case, just harder to detect in a learned latent space
+
+- **Key idea**: world models scale the learn-a-model-then-plan idea from
+  Dyna-Q to raw, high-dimensional inputs by planning in a learned
+  representation instead of the original observation space
+
+* Neural-Guided Tree Search: AlphaGo
+
+::: columns
+:::: {.column width=55%}
+- **Problem**: Go has roughly $250$ legal moves per position, too wide for
+  a hand-built evaluation function or exhaustive rollouts to evaluate
+  reliably
+
+- **Solution (AlphaGo)**: replace the search's evaluation with two learned
+  networks
+  - A _policy network_ $\pi_\vtheta(a|s)$ narrows which moves the search
+    expands
+  - A _value network_ $v_\vphi(s)$ estimates a position's outcome without
+    playing it out to the end
+
+- **Training**: the policy network is pretrained on human games, then
+  refined by self-play; the value network is fit to self-play outcomes
+::::
+:::: {.column width=40%}
+```graphviz
+digraph AlphaGo {
+    rankdir=TB;
+    splines=spline;
+    nodesep=0.5;
+    ranksep=0.6;
+    node [fontname="Helvetica", fontsize=11, style="rounded,filled",
+          shape=box, penwidth=1.4];
+    edge [fontname="Helvetica", fontsize=10, color="#4A4A4A"];
+
+    Pos [label="Position s", fillcolor="#B2E2B2"];
+    Pol [label="Policy net\npi(a|s)", fillcolor="#F4A6A6"];
+    Val [label="Value net\nv(s)", fillcolor="#A0D6D1"];
+    MCTS [label="Tree search", fillcolor="#A6C8F4"];
+
+    Pos -> Pol;
+    Pos -> Val;
+    Pol -> MCTS [label="  narrows"];
+    Val -> MCTS [label="  evaluates"];
+}
+```
+::::
+:::
+
+- **Key idea**: the tree search itself is unchanged, only what guides
+  selection and what replaces a full rollout at a leaf are now learned
+  functions instead of a random policy and a hand-built heuristic
+
+* Self-Play Without Human Data: AlphaZero
+
+- **Problem**: AlphaGo's policy network needs a large corpus of human
+  expert games to pretrain, unavailable or low-quality for many games
+
+- **Solution (AlphaZero)**: start from random weights and generate all
+  training data through self-play against the current network
+  1. Play games using tree search guided by the current
+     $(\pi_\vtheta, v_\vphi)$
+  2. Fit $\vtheta$ so $\pi_\vtheta$ matches the search's visit-count
+     policy, and $v_\vphi$ matches the eventual game outcome
+  3. Replace the old network with the newly trained one and repeat
+
+- **Generality**: the identical algorithm, unchanged except for the game
+  rules given to the simulator, mastered chess, shogi, and Go without any
+  domain-specific tuning
+
+- **Key idea**: self-play turns the network's own improving judgment into
+  an ever-harder training curriculum, each generation of the policy is
+  trained against a slightly stronger version of itself
+
+* Planning Without Known Rules: MuZero
+
+- **Problem**: AlphaZero needs the true game rules (a perfect simulator)
+  to expand the search tree, unavailable for most real-world domains
+  (Atari pixels reveal no explicit transition function)
+
+- **Solution (MuZero)**: learn a _latent dynamics model_ jointly with the
+  policy and value networks, and plan inside that learned latent space
+  instead of the true environment
+  - The model never predicts raw observations, only whatever latent
+    quantities are needed to predict future reward, value, and policy
+
+- **Key idea**: MuZero replaces AlphaZero's one remaining requirement (a
+  known model) with a learned one, so the progression from a tabular
+  model, to a learned latent model, to a learned model inside a search
+  tree converges into a single algorithm
+
+# Hierarchical and Modular Decision-Making
+
+* Why Flat Policies Struggle on Long Horizons
+
+- **Problem**: a single, flat policy must make every low-level decision
+  along a long trajectory, so a reward received hundreds of steps later
+  must assign credit all the way back through every intermediate action
+
+- **Example**: a manufacturing robot choosing which tool to use and then a
+  continuous trajectory for it must learn both decisions from one reward
+  signal at the end of the task
+
+- **Intuition**: most of that credit-assignment problem is redundant, the
+  same low-level motor skill (grasp, rotate, place) is reused across many
+  different high-level tasks
+
+- **Question**: can a decision be decomposed into a small number of
+  reusable, temporally extended choices instead of a sequence of
+  primitive actions?
+
+- **Key idea**: this is the motivation for _temporal abstraction_,
+  replacing a long sequence of one-step decisions with a short sequence of
+  decisions over reusable sub-behaviors
+
+* Options: Definition
+// From: msml610/lectures_source/Lesson09.1-Reasoning_over_time.smd:165 '* Markov Property'
+
+- **Definition**: an _option_ $o = (\mathcal{I}, \pi_o, \beta_o)$ bundles a
+  temporally extended sub-behavior
+  - $\mathcal{I}$: the set of states where the option can be initiated
+  - $\pi_o(a|s)$: the sub-policy followed while the option is active
+  - $\beta_o(s)$: the probability the option terminates in state $s$
+
+- **Effect**: a high-level policy chooses among options instead of
+  primitive actions, and each chosen option runs its own sub-policy for a
+  variable number of steps until it terminates
+
+- **Remark**: this turns the underlying MDP into a _semi-Markov_ decision
+  process at the option level, the "next state depends only on the
+  current one" property now holds between decision points of variable
+  duration, not fixed unit steps
+
+- **Key idea**: options generalize primitive actions strictly, a one-step
+  option that always terminates immediately reduces exactly to the flat
+  MDP from the previous chapter
+
+* Hierarchical Policies in Practice
+
+- **Solution**: a two-level architecture separates the temporal scales
+  1. A _high-level policy_ selects a discrete option (or goal) over a
+     coarse timescale
+  2. A _low-level policy_, one per option, outputs primitive actions
+     conditioned on the selected option, until termination
+
+- **Training**: train the low-level policies first on their own
+  sub-rewards, then train the high-level policy treating each option as a
+  single macro-action; or train both levels jointly end to end
+
+- **Pros**: credit assignment happens separately at each timescale, so the
+  high-level policy only has to solve a short-horizon problem over
+  options, not a long-horizon problem over primitive actions
+
+- **Cons**: choosing what the options should be (manually specified vs.
+  discovered) remains an open design problem
+
+- **Key idea**: hierarchy does not add new learning machinery, value-based
+  or policy-based methods still train each level, it only changes what
+  counts as one decision step
+
+* Knowledge Reuse Across Related Tasks
+
+- **Problem**: a flat policy trained on one task transfers nothing to a
+  related task, since every parameter is tied to that task's specific
+  reward and dynamics
+
+- **Solution**: sub-policies learned for one task's options (grasp,
+  navigate to point, insert part) are typically reusable across any task
+  built from the same low-level skills, only the high-level policy that
+  sequences them needs retraining
+
+- **Example**: a warehouse robot's "navigate to shelf" and "grasp item"
+  options transfer unchanged from a picking task to a restocking task,
+  even though the two tasks have entirely different reward functions
+
+- **Key idea**: hierarchy converts transfer from an open research question
+  at the level of an entire policy into an engineering choice at the level
+  of individual, reusable options
+
+# Offline and Batch Learning
+
+* When Interaction Is Not an Option
+// From: msml610/lectures_source/Lesson12.1-Reinforcement_learning.smd:1978 '* Deconfounding Offline / Off-Policy Data'
+
+- **Problem**: every algorithm so far assumes the agent can act in the
+  environment and observe the consequence, unavailable when acting is
+  costly, unsafe, or irreversible (a medical treatment policy, a lending
+  policy)
+
+- **Setting**: _offline_ (or _batch_) RL trains entirely on a fixed
+  dataset of logged transitions $(s,a,r,s')$ collected by some other,
+  usually unknown, _logging policy_ $\pi_{\text{log}}$, with no further
+  environment access
+
+- **Key idea**: offline RL is not just off-policy learning with a smaller
+  buffer, the agent can never collect more data to correct a wrong
+  belief, so any error the logged data does not cover is permanent
+
+* Off-Policy Evaluation via Inverse Propensity Weighting
+// From: msml610/lectures_source/Lesson08.7-Causal_experiments.smd:572 '* Policy Evaluation and Off-Policy Learning'
+
+- **Goal**: estimate how a new policy $\pi_{\text{new}}$ would perform,
+  using only data logged under $\pi_{\text{old}}$, before ever deploying it
+
+- **Solution (inverse propensity score weighting)**: reweight each logged
+  reward by how much more (or less) likely $\pi_{\text{new}}$ is to have
+  taken that action than $\pi_{\text{old}}$ was
+  $$
+  \hat{V}(\pi_{\text{new}})
+    = \frac{1}{n} \sum_i
+        \frac{\pi_{\text{new}}(a_i | s_i)}{\pi_{\text{old}}(a_i | s_i)} \, r_i
+  $$
+
+- **Intuition**: transitions the new policy would have taken more often
+  count for more, transitions it would avoid count for less, correcting
+  for the mismatch between the two action distributions
+
+- **Limitation**: the estimator's variance explodes wherever
+  $\pi_{\text{old}}(a|s)$ is small but $\pi_{\text{new}}(a|s)$ is not,
+  since that ratio blows up
+
+- **Key idea**: this is the same estimator that bridges A/B testing and
+  offline policy evaluation, an experiment's control arm is exactly a
+  logged dataset under one fixed policy
+
+* Distribution Mismatch: Why Naive Offline RL Fails
+
+- **Problem**: standard Q-learning applied to a fixed dataset, as if it
+  were online replay, learns overoptimistic values for state-action pairs
+  absent from the data
+  $$
+  Q(s,a) \leftarrow Q(s,a)
+    + \alpha\left[r + \gamma \max_{a'} Q(s',a') - Q(s,a)\right]
+  $$
+  - The $\max_{a'}$ term can select an unseen $a'$ whose $Q$-value was
+    never grounded by any real transition
+
+- **Manifestation**: the greedy policy extracted from $Q$ drifts toward
+  actions the logging policy rarely or never took, exactly where the
+  value estimate is least reliable
+
+- **Root cause**: _distribution shift_ between the actions
+  $\pi_{\text{new}}$ would take and the actions $\pi_{\text{log}}$
+  actually took, with no environment left to correct the mistake once
+  deployed
+
+- **Key idea**: offline RL needs to fail safely toward the data it has,
+  not optimistically toward data it wishes it had
+
+* Conservative Q-Learning
+
+- **Solution (CQL)**: fit $Q_\vphi$ with the usual TD loss, plus a penalty
+  that pushes down $Q$-values for actions not seen in the data and pushes
+  up $Q$-values for actions that were
+  $$
+  \min_\vphi \;
+    \alpha \left(
+      \EE_{s,a \sim \mu}[Q_\vphi(s,a)] - \EE_{s,a \sim \mathcal{D}}[Q_\vphi(s,a)]
+    \right)
+    + \mathcal{L}_{\text{TD}}(\vphi)
+  $$
+  where $\mu$ samples broadly over actions and $\mathcal{D}$ is the logged
+  dataset
+
+- **Effect**: $Q_\vphi$ becomes a deliberate _lower bound_ on the true
+  value, pessimistic about anything the data does not support
+
+- **Algorithm**: extract the greedy policy from the conservative
+  $Q_\vphi$; since unseen actions are pushed down, the greedy policy never
+  favors them
+
+- **Key idea**: CQL trades the optimism that drives exploration in online
+  RL for pessimism, the correct instinct once there is no way to go
+  verify an optimistic guess against the real environment
+
+* Deconfounding Offline Data: A Causal View
+// From: msml610/lectures_source/Lesson12.1-Reinforcement_learning.smd:1805 '* Confounding in Sequential Decision Making'
+
+::: columns
+:::: {.column width=55%}
+- **Problem**: a logging policy chosen by a human often depends on factors
+  the offline dataset never recorded (a doctor's private read of patient
+  severity, a driver's fatigue)
+  - This hidden confounder $U$ influences both the logged action and the
+    reward, so $\EE[R|a] \neq \EE[R|do(a)]$
+
+- **Risk**: a policy fit on this data can look good in the offline metric
+  yet perform _worse than random_ once deployed, because it learned the
+  confounder's fingerprint, not the action's true effect
+::::
+:::: {.column width=40%}
+```graphviz
+digraph OfflineConfound {
+    rankdir=TB;
+    splines=spline;
+    nodesep=0.6;
+    ranksep=0.6;
+    node [fontname="Helvetica", fontsize=11, style="rounded,filled",
+          shape=box, penwidth=1.4];
+    edge [fontname="Helvetica", fontsize=10, penwidth=1.4];
+
+    U [label="Confounder U", fillcolor="#E8D9F7", color="#9B7DB1"];
+    A [label="Logged action a", fillcolor="#FFC98A", color="#D98E2B"];
+    R [label="Reward R", fillcolor="#B2E2B2", color="#558B2F"];
+
+    U -> A [color="#D64545", penwidth=2];
+    U -> R [color="#D64545", penwidth=2];
+    A -> R [color="#2E7D32", penwidth=2];
+}
+```
+::::
+:::
+
+- **Solution**: backdoor adjustment recovers the interventional quantity
+  by conditioning on the confounder when it is measured
+  $$
+  \EE[R | do(a), s] = \sum_u \Pr(u|s) \, \EE[R | a, s, u]
+  $$
+
+- **Key idea**: offline RL's distribution-shift problem and causal
+  inference's confounding problem are the same failure viewed from two
+  angles, both are fixed by asking whether the data supports an
+  intervention, not just a correlation
+
+# Multi-Agent and Game-Theoretic Algorithms
+
+* Why Single-Agent Assumptions Break
+// From: msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.smd:137 '* Feedback Loops and Simultaneity'
+
+- **Problem**: every algorithm so far treats the environment as a fixed,
+  possibly stochastic, mechanism reacting only to the agent's own actions
+
+- **Reality**: many decisions are made alongside other decision-makers,
+  each optimizing their own objective and each reacting to what the
+  others do
+  - The environment is no longer stationary, the dynamics now include
+    other agents' evolving policies
+
+- **Remark**: this is the same _feedback loop_ and _simultaneity_ problem
+  that complicates causal inference in time series, two variables (here,
+  two agents' actions) jointly determined and mutually influencing each
+  other, only now both sides are learning
+
+- **Key idea**: a policy trained to best-respond to a fixed opponent can
+  become obsolete the moment that opponent's own policy changes, so
+  single-agent optimality is not even well-defined until the other
+  agents' behavior is specified
+
+* Normal-Form Games and Nash Equilibrium
+// From: book_cs_refreshers/lectures_source/Lesson95.Refresher_game_theory.smd:365 '### Chapter 3: Nash Equilibrium'
+
+- **Definition**: a _normal-form game_ specifies a set of players, each
+  with a strategy set and a payoff function over the joint strategy
+  profile
+  - _Zero-sum_: one player's gain is exactly another's loss
+  - _General-sum_: outcomes can be mutually beneficial or mutually harmful
+
+- **Definition**: a _Nash equilibrium_ is a strategy profile where no
+  player can improve their payoff by unilaterally changing strategy, every
+  player is already best-responding to everyone else
+
+- **Fact** (Nash, 1950): every finite game has at least one Nash
+  equilibrium, possibly requiring randomized (_mixed_) strategies
+
+- **Key idea**: Nash equilibrium is the natural generalization of
+  "optimal policy" to the multi-agent setting, a fixed point where every
+  agent's policy is simultaneously a best response to the rest
+
+* Computing Equilibria Is Hard
+// From: book_cs_refreshers/lectures_source/Lesson95.Refresher_game_theory.smd:1393 '### Chapter 15: Algorithmic Game Theory'
+
+- **Question**: Nash's theorem guarantees an equilibrium exists, but can
+  an algorithm find one efficiently?
+
+- **Fact**: computing a Nash equilibrium is _PPAD-complete_ in general,
+  believed to have no polynomial-time algorithm
+  - Zero-sum games are the exception, solvable in polynomial time via
+    linear programming (minimax)
+
+- **Practical response**: relax exactness to an _$\varepsilon$-Nash
+  equilibrium_, a profile where no player can gain more than
+  $\varepsilon$ by deviating, computable in polynomial time for many game
+  classes
+
+- **Key idea**: the intractability of exact equilibria is why the
+  algorithms below approximate equilibrium behavior through learning and
+  self-play, rather than solving for it directly
+
+* Self-Play and Regret Minimization
+// From: book_cs_refreshers/lectures_source/Lesson95.Refresher_game_theory.smd:1393 '### Chapter 15: Algorithmic Game Theory'
+
+- **Solution 1 (self-play)**: an agent improves by repeatedly playing
+  against copies of itself, each generation training against a slightly
+  stronger opponent
+  - The same mechanism that trains AlphaZero extends directly to
+    two-player competitive settings with no separate multi-agent
+    machinery needed
+
+- **Solution 2 (Counterfactual Regret Minimization)**: for
+  _imperfect-information_ games (hidden state, such as poker's hole
+  cards), track cumulative regret per information set for actions not
+  taken, and update the current strategy proportional to positive regret
+  - Repeated self-play under this rule converges the average strategy to
+    a Nash equilibrium in two-player zero-sum games
+
+- **Fact**: CFR-based self-play solved heads-up poker at a professional
+  level, a game with no known closed-form equilibrium
+
+- **Key idea**: no-regret learning reaches equilibrium-like behavior
+  without ever solving the fixed-point problem explicitly, learning
+  substitutes for computation exactly where computation is intractable
+
+* Centralized Training, Decentralized Execution: QMIX
+
+- **Setting**: $n$ cooperative agents share one team reward, and must act
+  at deployment using only their own local observations, with no
+  communication
+
+- **Problem**: treating the joint action space
+  $\mathcal{A}_1 \times \cdots \times \mathcal{A}_n$ as one giant discrete
+  action set and running ordinary Q-learning over it grows exponentially
+  with the number of agents
+
+- **Solution (QMIX)**: each agent learns its own local $Q_i(s_i,a_i)$ from
+  local observations; a _mixing network_, used only during training,
+  combines the per-agent values into a joint estimate
+  $$
+  Q_{\text{tot}}(\vs, \va)
+    = f_{\text{mix}}\big(Q_1(s_1,a_1), \ldots, Q_n(s_n,a_n)\big)
+  $$
+  constrained to be monotonic in each $Q_i$
+
+- **Intuition**: the monotonicity constraint guarantees that whatever
+  action locally maximizes $Q_i$ also maximizes $Q_{\text{tot}}$, so
+  agents can act greedily on their own $Q_i$ at execution time and still
+  behave consistently with the trained joint policy
+
+- **Key idea**: centralized training with decentralized execution lets the
+  mixing network see everything during learning while agents see only
+  what they will see at deployment
+
+* Learned Communication: CommNet
+
+- **Problem**: QMIX's agents coordinate only through a shared reward
+  signal, useful when coordination requires no exchange of information,
+  insufficient when agents must actively signal intent (which target to
+  cover, which route to take)
+
+- **Solution (CommNet)**: agents exchange continuous messages through a
+  differentiable communication channel, trained end to end alongside their
+  policies
+  - Each agent's next hidden state is a function of its own observation
+    and an aggregate (e.g., average) of messages received from other
+    agents
+
+- **Intuition**: because the channel is differentiable, the gradient of
+  the team reward flows back through the messages themselves, so agents
+  learn _what_ to communicate, not just how to act on fixed messages
+
+- **Key idea**: communication is not a separate module bolted onto
+  independent policies, it is trained jointly with them, exactly like the
+  actor and critic in Actor-Critic are trained jointly rather than
+  separately
+
+* Multi-Agent Policy Gradients
+
+- **Problem**: an independent policy gradient per agent treats every other
+  agent as part of a non-stationary environment, since their policies keep
+  changing during training, which destabilizes the gradient estimate
+
+- **Solution**: extend actor-critic's centralized-critic idea to multiple
+  agents
+  - **MADDPG**: each agent keeps a deterministic actor conditioned only on
+    its own observation, but a centralized critic
+    $Q_i(\vs, a_1, \ldots, a_n)$ conditioned on every agent's action
+    during training
+  - **MAAC**: replaces MADDPG's flat centralized critic with an attention
+    mechanism that learns which other agents' actions matter most to each
+    agent's value
+  - **MAPPO**: applies PPO's clipped surrogate objective with a
+    centralized critic, extending the same trust-region intuition from
+    the single-agent case to the multi-agent one
+
+- **Key idea**: all three keep decentralized actors for execution and add
+  a centralized critic only for training, the same
+  centralized-training, decentralized-execution pattern QMIX uses, applied
+  to continuous, policy-gradient methods instead of discrete $Q$-values
+
+* Causal Transportability Across Environments
+// From: msml610/lectures_source/Lesson12.1-Reinforcement_learning.smd:2055 '* Causal Generalization Across Environments'
+
+- **Question**: does a policy trained in one environment (or against one
+  set of opponents) hold when the environment or the opponents change?
+
+- **Correlational answer**: surface similarity between environments
+  suggests transfer should work, and often fails, features that predicted
+  well in $\mathcal{E}_1$ may not in $\mathcal{E}_2$
+
+- **Causal answer**: transfer depends on which mechanisms are shared, not
+  which distributions look alike
+  $$
+  f_r^{(1)}(a,s,s') = f_r^{(2)}(a,s,s')
+  \quad \text{even if} \quad
+  \Pr^{(1)}(s) \neq \Pr^{(2)}(s)
+  $$
+
+- **Formal criterion**: _transportability_ checks whether the causal graph
+  structure, not the observed distribution, is preserved across
+  environments, answerable before ever deploying in $\mathcal{E}_2$
+
+- **Key idea**: the same causal lens that deconfounded offline data
+  earlier in this chapter also tells us, before deployment, whether a
+  policy trained against one set of agents or environments will hold
+  against another
+
+# Looking Ahead
+
+* From Algorithms to Agents
+
+- **Recap**: this chapter extended the single-agent, value-based toolkit
+  along three fronts, policy-based and actor-critic search for continuous
+  actions, planning with learned models and hierarchical decomposition
+  for long horizons, and offline and multi-agent learning for settings
+  without live, single-agent interaction
+
+- **Remark**: every method still answers the same question decision
+  theory has asked since the first chapter, which action maximizes
+  expected value, only the object being optimized (a policy, a mixing
+  network, an equilibrium strategy) has grown more structured
+
+- **Question**: what happens when the agent making these decisions is no
+  longer a trained policy network but a large language model reasoning in
+  natural language about causes and interventions?
+
+- **Key idea**: the next chapter asks whether the causal and
+  decision-theoretic machinery built so far, do-calculus, structural
+  causal models, expected utility, transfers to agents built on
+  foundation models rather than on the value functions and policies of
+  this chapter

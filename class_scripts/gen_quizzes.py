@@ -17,13 +17,13 @@ This script generates questions from lecture content using `llm_cli.py`.
 # Usage Example
 
 - Generate multiple-choice quizzes for DATA605 lesson 01.1:
-> gen_quizzes.py --for_class_quizzes data605 01.1
+> gen_quizzes.py --for_class_quizzes -i data605/01.1
 
 - Generate discussion/review questions for MSML610 lesson 02.3:
-> gen_quizzes.py --for_class_recap msml610 02.3
+> gen_quizzes.py --for_class_recap -i msml610/02.3
 
 - Generate discussion/review questions for DATA605 lesson 01.2 without auto-formatting the output:
-> gen_quizzes.py --for_class_recap data605 01.2 --no_lint
+> gen_quizzes.py --for_class_recap -i data605/01.2 --no_lint
 
 Import as:
 
@@ -126,14 +126,12 @@ def _parse() -> argparse.ArgumentParser:
         formatter_class=hparser.CustomHelpFormatter,
     )
     parser.add_argument(
-        "dir",
+        "-i",
+        "--input",
+        required=True,
         type=str,
-        help="Course directory (e.g., data605, msml610)",
-    )
-    parser.add_argument(
-        "lesson",
-        type=str,
-        help="Lesson number (e.g., 01.1, 02.3)",
+        help="Lecture specification: 'data605/08.1', 'msml610/08.1', "
+        "or file path 'msml610/lectures_source/Lesson10.2-Name.smd'",
     )
     parser.add_argument(
         "--for_class_quizzes",
@@ -158,9 +156,10 @@ def _parse() -> argparse.ArgumentParser:
         help="Skip running lint_text.py on output file",
     )
     parser.add_argument(
-        "extra_opts",
-        nargs="*",
-        help="Additional options to pass to llm_cli.py",
+        "--llm_cli_args",
+        action="store",
+        default=None,
+        help="Additional options string passed through verbatim to llm_cli.py",
     )
     hparser.add_verbosity_arg(parser)
     return parser
@@ -169,8 +168,9 @@ def _parse() -> argparse.ArgumentParser:
 def _main(parser: argparse.ArgumentParser) -> None:
     args = parser.parse_args()
     hdbg.init_logger(verbosity=args.log_level, use_exec_path=True)
-    # Validate arguments.
-    csccouti.validate_dir_lesson_args(args.dir, args.lesson)
+    # Parse and validate arguments.
+    dir_arg, lesson_arg = csccouti.parse_lesson_spec(args.input)
+    csccouti.validate_dir_lesson_args(dir_arg, lesson_arg)
     # Validate that only one option is specified.
     hdbg.dassert(
         args.for_class_quizzes or args.for_class_recap,
@@ -183,19 +183,19 @@ def _main(parser: argparse.ArgumentParser) -> None:
     # Select the appropriate prompt, output directory, and file extension.
     if args.for_class_quizzes:
         prompt = CLASS_QUIZZES_PROMPT
-        output_dir = f"{args.dir}/lectures_quizzes"
+        output_dir = f"{dir_arg}/lectures_quizzes"
         file_extension = ".quizzes.md"
         _LOG.info("Using CLASS_QUIZZES_PROMPT for multiple choice questions")
     else:
         prompt = CLASS_RECAP_PROMPT
-        output_dir = f"{args.dir}/lectures_recap"
+        output_dir = f"{dir_arg}/lectures_recap"
         file_extension = ".recap.md"
         _LOG.info("Using CLASS_RECAP_PROMPT for discussion/review questions")
     # Get source and destination names.
-    src_name = csccouti.get_source_name(args.dir, args.lesson)
+    src_name = csccouti.get_source_name(dir_arg, lesson_arg)
     dst_name = csccouti.get_output_name(src_name, file_extension)
     # Build paths.
-    input_file = f"{args.dir}/lectures_source/{src_name}"
+    input_file = f"{dir_arg}/lectures_source/{src_name}"
     output_file = f"{output_dir}/{dst_name}"
     # Ensure output directory exists.
     csccouti.ensure_dir_exists(output_dir)
@@ -216,8 +216,8 @@ def _main(parser: argparse.ArgumentParser) -> None:
         prompt_file_arg,
     ]
     # Add extra options if provided.
-    if args.extra_opts:
-        cmd_parts.extend(args.extra_opts)
+    if args.llm_cli_args:
+        cmd_parts.append(args.llm_cli_args)
     cmd = " ".join(cmd_parts)
     _LOG.info("%s", hprint.color_highlight(f"> {cmd}", "green"))
     # Execute the command.

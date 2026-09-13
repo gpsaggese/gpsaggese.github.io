@@ -1,0 +1,62 @@
+// type=UMD_slides
+// course_title=MSML610: Advanced Machine Learning
+// lesson_title=L01.2: AI and Machine Learning
+// slides_engine=typst
+// references=
+// - AIMA (Artificial Intelligence: a Modern Approach), Chap 1
+
+// ![](msml610/lectures_source/figures/book_covers/Book_cover_AIMA.jpg){ height=20% }
+
+# AI and Machine Learning
+
+## What Is AI?
+
+* ML, AI, and Intelligence
+
+- @Definition@: **Machine Learning** is a subset of Artificial Intelligence (AI)
+  - Often confused with _deep learning_, _large-language models_,
+    _predictive analytics_, and other related fields
+
+- @Question@: What is artificial intelligence?
+  - First, understand what **human intelligence** is
+
+- @Question@: What is human intelligence?
+  - We call ourselves _"homo sapiens"_ because intelligence sets us apart from
+    animals
+  - For thousands of years, we tried to understand how we think
+  - One of the _biggest mysteries_
+    - Brain is small matter, yet grasps nature's secrets
+      - E.g., theory of relativity, quantum mechanics, black holes
+    - How can the brain understand, predict, and manipulate a world more complex than
+      itself?
+
+* Artificial Intelligence
+
+::: columns
+:::: {.column width=80%}
+
+- @Definition@: The term _"Artificial Intelligence"_ was coined in 1956
+  `#cite("mccarthy1955dartmouth")`{=typst}
+
+- @Goal@
+  - Understand human intelligence
+  - Create intelligent entities
+  - _"What I cannot create, I do not understand"_ (Feynman, 1988)
+
+- @Characteristics@
+  - Applies to any human activity and task
+  - Impact exceeds any past historical event
+  - Generates hundreds of billions of dollars annually in market revenue,
+    with trillions in global economic impact projected by 2030
+    `#cite("bughin2018aifrontier")`{=typst}
+  - Has many unresolved problems, unlike disciplines with settled core
+    theories (e.g., arithmetic, Newtonian mechanics within its domain)
+
+::::
+:::: {.column width=20%}
+
+![](msml610/lectures_source/figures/L01.2.Richard_Feynman.jpg)
+
+\footnotesize _Richard Feynman (1965)_
+::::
+:::

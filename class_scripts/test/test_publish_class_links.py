@@ -33,7 +33,7 @@ def _create_lesson_source_files(class_dir: str, lesson_names: List[str]) -> None
     """
     for lesson_name in lesson_names:
         file_path = os.path.join(
-            class_dir, "lectures_source", f"{lesson_name}.txt"
+            class_dir, "lectures_source", f"{lesson_name}.smd"
         )
         hio.to_file(file_path, f"Content of {lesson_name}")
 
@@ -79,6 +79,38 @@ def _mock_github_url(*, file_path: str, use_master: bool) -> str:
     :return: fake GitHub URL derived from `file_path`
     """
     return f"https://github.com/example/repo/blob/main/{file_path}"
+
+
+# #############################################################################
+# Test_to_media_github_url
+# #############################################################################
+
+
+class Test_to_media_github_url(hunitest.TestCase):
+    """
+    Test `publish_class_links._to_media_github_url()` function.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that a GitHub blob URL is converted to its LFS-aware
+        `media.githubusercontent.com` equivalent.
+        """
+        # Prepare inputs.
+        github_blob_url = (
+            "https://github.com/gpsaggese/gpsaggese.github.io/blob/master/"
+            "data605/lectures_commentary/Lesson01.1-Intro.book_chapter.html"
+        )
+        # Prepare outputs.
+        expected = (
+            "https://media.githubusercontent.com/media/gpsaggese/"
+            "gpsaggese.github.io/master/data605/lectures_commentary/"
+            "Lesson01.1-Intro.book_chapter.html"
+        )
+        # Run test.
+        actual = cspuclli._to_media_github_url(github_blob_url)
+        # Check outputs.
+        self.assertEqual(actual, expected)
 
 
 # #############################################################################
@@ -449,11 +481,12 @@ class Test_generate_html_page(hunitest.TestCase):
         # Prepare outputs.
         pdf_url = _mock_github_url(file_path=pdf_path, use_master=use_master)
         html_url = _mock_github_url(file_path=html_path, use_master=use_master)
+        media_html_url = cspuclli._to_media_github_url(html_url)
         expected_pdf_href = (
             f'<a href="{pdf_url}">{cspuclli._get_short_label(pdf_label)}</a>'
         )
         expected_html_href = (
-            f'<a href="https://htmlpreview.github.io/?{html_url}">'
+            f'<a href="https://htmlpreview.github.io/?{media_html_url}">'
             f"{cspuclli._get_short_label(html_label)}</a>"
         )
         # Run test.
@@ -528,6 +561,9 @@ class Test_main(hunitest.TestCase):
         expected_commentary_html_url = _mock_github_url(
             file_path=commentary_html_path, use_master=use_master
         )
+        expected_media_commentary_html_url = cspuclli._to_media_github_url(
+            expected_commentary_html_url
+        )
         # Run test.
         with mock.patch(
             "class_scripts.publish_class_links.dshgtogi._get_github_url",
@@ -538,7 +574,7 @@ class Test_main(hunitest.TestCase):
         actual = hio.from_file(out_file)
         self.assertIn(f'href="{expected_pdf_url}"', actual)
         self.assertIn(
-            f'href="https://htmlpreview.github.io/?{expected_commentary_html_url}"',
+            f'href="https://htmlpreview.github.io/?{expected_media_commentary_html_url}"',
             actual,
         )
         self.assertIn(f'href="{expected_recap_url}"', actual)

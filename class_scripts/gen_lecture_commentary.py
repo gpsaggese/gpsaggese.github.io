@@ -34,10 +34,10 @@ This script performs multiple steps:
 # Usage Example
 
 - Generate the lecture commentary PDF for DATA605 lesson 01.1:
-> gen_lecture_commentary.py data605 01.1
+> gen_lecture_commentary.py data605/01.1
 
 - Generate the lecture commentary PDF for MSML610 lesson 02.3:
-> gen_lecture_commentary.py msml610 02.3
+> gen_lecture_commentary.py msml610/02.3
 
 The output looks like:
 https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary
@@ -64,8 +64,7 @@ import argparse
 import glob
 import logging
 import os
-import re
-from typing import List, Optional
+from typing import List
 
 import pdf2image  # type: ignore
 import tqdm
@@ -73,15 +72,12 @@ from PIL import ImageOps
 
 import class_scripts.common_utils as csccouti
 import class_scripts.slides_utils as cscsluti
-import dev_scripts_helpers.documentation.preprocess_notes as dshdprno
 import dev_scripts_helpers.dockerize.lib_prettier as dshdlipr
-import helpers.hcache_simple as hcacsimp
 import helpers.hdbg as hdbg
 import helpers.hgit as hgit
 import helpers.hio as hio
 import helpers.hparser as hparser
 import helpers.hprint as hprint
-import helpers.hretry as hretry
 import helpers.hsystem as hsystem
 
 _LOG = logging.getLogger(__name__)
@@ -226,68 +222,26 @@ def _is_png_dir_populated(png_dir: str, image_type: str) -> bool:
 # #############################################################################
 
 
-# Default system prompt for the LLM.
-# TODO(gp): Consider improving this.
-_DEFAULT_SYSTEM_PROMPT = """
-You are a college professor expert of machine learning and big data.
-
-Given the following slide in markdown format, create a detailed commentary
-that explains the content and context of the slide.
-- Use plain language and do not use fancy words
-- Create bullet points for the discussion following the same structure as the
-  original slide
-- The discussion for each slide should contain around 100-150 words
-- Use bold only for items and use italic sparingly to highlight only important
-  points
-- Focus on explaining the concepts, providing context, and highlighting
-  important points
-
-The output should be in markdown format without a heading.
-"""
-
-
-def _extract_title_from_markdown(input_file: str) -> Optional[str]:
-    r"""
-    Extract title from markdown file.
-
-    First looks for a `lesson_title` metadata directive (e.g.,
-    `// lesson_title=...`) at the top of the file. If not present, falls
-    back to looking for patterns like:
-    \text{\blue{Lesson 2.1: Git}}
-
-    :param input_file: path to input markdown file
-    :return: extracted title or None if not found
-    """
-    hdbg.dassert_file_exists(input_file)
-    content = hio.from_file(input_file)
-    # Check for a `lesson_title` metadata directive at the top of the file.
-    lines = content.split("\n")
-    metadata, _ = dshdprno.extract_slide_metadata(lines)
-    if "lesson_title" in metadata:
-        title = metadata["lesson_title"].strip()
-        _LOG.info("Extracted title from metadata template: %s", title)
-        return title
-    # Pattern to match \text{\blue{...}} or \text{...} or similar LaTeX constructs.
-    pattern = r"\\text\{(?:\\blue\{)?([^}]+)\}?"
-    match = re.search(pattern, content)
-    if match:
-        title = match.group(1)
-        # Clean up the title.
-        title = title.strip()
-        _LOG.info("Extracted title: %s", title)
-        return title
-    _LOG.warning("Could not extract title from markdown file")
-    return None
+# Default system prompt for the LLM, stored in a sibling file so that it can
+# be edited without touching the code.
+_SYSTEM_PROMPT_FILE = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "prompt.generate_lecture_commentary.md",
+)
+_DEFAULT_SYSTEM_PROMPT = hio.from_file(_SYSTEM_PROMPT_FILE)
 
 
 # Backends supported by `_generate_slide_commentary()`.
 # - "hllm": `helpers.hllm.get_completion()`, supports passing the slide's
 #   images as multi-modal context
-# - "hllm_cli": `helpers.hllm_cli.apply_llm()`, text-only (no image support)
-_LLM_BACKENDS = ("hllm", "hllm_cli")
+# - "hllm_cli_lib": `helpers.hllm_cli.apply_llm(backend="library")`,
+#   text-only (no image support)
+# - "hllm_cli_exec": `helpers.hllm_cli.apply_llm(backend="executable")`,
+#   text-only (no image support), shells out to simonw's `llm` CLI
+#   executable
+_LLM_BACKENDS = csccouti.LLM_BACKENDS
 
 
-@hcacsimp.simple_cache(cache_type="json")
 def _generate_slide_commentary(
     slide_content: str,
     system_prompt: str,
@@ -303,8 +257,8 @@ def _generate_slide_commentary(
     :param llm_backend: which LLM backend to use, one of `_LLM_BACKENDS`
         - "hllm": also feeds the slide's images to the LLM as multi-modal
           context
-        - "hllm_cli": text-only, since `hllm_cli.apply_llm()` has no image
-          support
+        - "hllm_cli_lib" / "hllm_cli_exec": text-only, since
+          `hllm_cli.apply_llm()` has no image support
     :return: generated commentary text
     """
     hdbg.dassert_in(llm_backend, _LLM_BACKENDS)
@@ -314,28 +268,15 @@ def _generate_slide_commentary(
         [slide_content]
     )
     user_prompt = processed_slides[0]
-    # Get completion from LLM.
-    if llm_backend == "hllm":
-        import helpers.hllm as hllm
-
-        response = hllm.get_completion(
-            user_prompt=user_prompt,
-            system_prompt=system_prompt,
-            model=model,
-            cache_mode="NORMAL",
-            temperature=0.1,
-            images_as_base64=tuple(images_as_base64),
-        )
-    else:
-        import helpers.hllm_cli as hllmcli
-
-        response, _ = hllmcli.apply_llm(
-            user_prompt,
-            system_prompt=system_prompt,
-            model=model,
-            backend="library",
-        )
-    return str(response)
+    # Get completion from LLM, cached on disk since re-running this script
+    # incrementally should not re-pay for an unchanged slide.
+    return csccouti.call_llm_cached(
+        user_prompt,
+        system_prompt,
+        model,
+        llm_backend,
+        images_as_base64=tuple(images_as_base64),
+    )
 
 
 def _generate_lecture_commentary(
@@ -343,6 +284,7 @@ def _generate_lecture_commentary(
     output_dir: str,
     input_png_dir: str,
     image_type: str,
+    model: str,
     llm_backend: str,
     *,
     output_file: str = "",
@@ -363,6 +305,7 @@ def _generate_lecture_commentary(
     :param add_new_page: if True, add `\newpage` commands before each slide
     :param image_type: image format of the files in `input_png_dir` (e.g.,
         "png", "jpg")
+    :param model: LLM model to use, or "" to use the backend's default
     :param llm_backend: which LLM backend to use to generate commentary, one
         of `_LLM_BACKENDS` (see `_generate_slide_commentary()`)
     """
@@ -372,7 +315,7 @@ def _generate_lecture_commentary(
     hio.create_dir(output_dir, incremental=True)
     # Extract base name from input file.
     input_basename = os.path.basename(input_file)
-    if input_basename.endswith(".txt"):
+    if input_basename.endswith(".smd"):
         base_name = input_basename[:-4]
     elif input_basename.endswith(".md"):
         base_name = input_basename[:-3]
@@ -381,7 +324,7 @@ def _generate_lecture_commentary(
     _LOG.info("Using base name: %s", base_name)
     _LOG.info("Reading slides from: %s", input_file)
     # Extract title from markdown file for YAML preamble.
-    title = _extract_title_from_markdown(input_file)
+    title = csccouti.extract_title_from_markdown(input_file)
     # Extract slides from markdown file.
     slides, titles = cscsluti.extract_slides_from_file(input_file)
     num_slides = len(slides)
@@ -416,13 +359,21 @@ def _generate_lecture_commentary(
         slide_output.append("\\newpage")
         slide_output.append("")
     # Add centered image with specified width and empty alt text.
+    # The `<center>` tag centers the image in the HTML output, but pandoc
+    # drops raw HTML when rendering to PDF/LaTeX, so we also wrap the image
+    # in a raw LaTeX `center` environment (via `{=latex}` raw blocks) to
+    # center it in the PDF output too.
     slide_output.append(
         hprint.dedent(
-            f"""
+            rf"""
             <center>
-
+            ```{{=latex}}
+            \begin{{center}}
+            ```
             ![]({png_files[0]}){{width={image_width}}}
-
+            ```{{=latex}}
+            \end{{center}}
+            ```
             </center>
             """
         )
@@ -452,28 +403,36 @@ def _generate_lecture_commentary(
             hprint.dedent(
                 f"""
                 <center>
-
                 # {full_title}
-
                 </center>
                 """
             )
         )
+        # Add a blank line to separate the title and image `<center>` blocks.
+        slide_output.append("")
         # Add centered image with specified width and empty alt text.
+        # The `<center>` tag centers the image in the HTML output, but
+        # pandoc drops raw HTML when rendering to PDF/LaTeX, so we also
+        # wrap the image in a raw LaTeX `center` environment (via
+        # `{=latex}` raw blocks) to center it in the PDF output too.
         slide_output.append(
             hprint.dedent(
-                f"""
+                rf"""
                 <center>
-
+                ```{{=latex}}
+                \begin{{center}}
+                ```
                 ![]({png_path}){{width={image_width}}}
-
+                ```{{=latex}}
+                \end{{center}}
+                ```
                 </center>
                 """
             )
         )
         # Generate commentary for this slide.
         commentary = _generate_slide_commentary(
-            slide_content, _DEFAULT_SYSTEM_PROMPT, "", llm_backend
+            slide_content, _DEFAULT_SYSTEM_PROMPT, model, llm_backend
         )
         slide_output.append(commentary)
         slide_output.append("")
@@ -503,14 +462,10 @@ def _parse() -> argparse.ArgumentParser:
         formatter_class=hparser.CustomHelpFormatter,
     )
     parser.add_argument(
-        "dir",
+        "input",
         type=str,
-        help="Course directory (e.g., data605, msml610)",
-    )
-    parser.add_argument(
-        "lesson",
-        type=str,
-        help="Lesson number (e.g., 01.1, 02.3)",
+        help="Lecture specification: 'data605/08.1', 'msml610/08.1', "
+        "or file path 'msml610/lectures_source/Lesson10.2-Name.smd'",
     )
     parser.add_argument(
         "--dry_run",
@@ -541,8 +496,16 @@ def _parse() -> argparse.ArgumentParser:
         help=(
             "LLM backend to use for slide commentary generation: 'hllm' "
             "(default) feeds the slide's images to the LLM as multi-modal "
-            "context, 'hllm_cli' is text-only"
+            "context, 'hllm_cli_lib' (library) and 'hllm_cli_exec' "
+            "(simonw's `llm` CLI executable) are text-only"
         ),
+    )
+    parser.add_argument(
+        "--model",
+        type=str,
+        default="",
+        help="LLM model to use (e.g., 'gpt-4o', 'claude-opus-4'); empty "
+        "string (default) uses the --llm_backend's default model",
     )
     parser.add_argument(
         "--open_pdf",
@@ -558,46 +521,20 @@ def _parse() -> argparse.ArgumentParser:
     return parser
 
 
-# Number of times to retry `git add` before giving up.
-_GIT_ADD_NUM_ATTEMPTS = 5
-# Delay between `git add` retries, in seconds.
-_GIT_ADD_RETRY_DELAY_IN_SEC = 2
-
-
-@hretry.sync_retry(
-    num_attempts=_GIT_ADD_NUM_ATTEMPTS,
-    exceptions=(RuntimeError,),
-    retry_delay_in_sec=_GIT_ADD_RETRY_DELAY_IN_SEC,
-)
-def _git_add_with_retry(file_name: str, *, dry_run: bool) -> None:
-    """
-    Run `git add` on `file_name`, retrying on failure.
-
-    This is needed because concurrent Git commands (e.g., another
-    `gen_lecture_commentary.py` process, or an IDE) can hold
-    `.git/index.lock`, causing `git add` to fail with "Unable to create
-    '.git/index.lock': File exists.".
-
-    :param file_name: path of the file to add
-    :param dry_run: print the command without executing it
-    """
-    cmd = f"git add {file_name}"
-    hsystem.system(cmd, print_command=True, dry_run=dry_run)
-
-
 def _main(parser: argparse.ArgumentParser) -> None:
     args = parser.parse_args()
     hdbg.init_logger(verbosity=args.log_level, use_exec_path=True)
-    # Validate arguments.
-    csccouti.validate_dir_lesson_args(args.dir, args.lesson)
+    # Parse and validate arguments.
+    dir_arg, lesson_arg = csccouti.parse_lesson_spec(args.input)
+    csccouti.validate_dir_lesson_args(dir_arg, lesson_arg)
     # Get source name.
-    src_name = csccouti.get_source_name(args.dir, args.lesson)
-    input_file = f"{args.dir}/lectures_source/{src_name}"
+    src_name = csccouti.get_source_name(dir_arg, lesson_arg)
+    input_file = f"{dir_arg}/lectures_source/{src_name}"
     # Precompute the paths of all intermediate/output files, so that we can
     # skip steps whose output already exists (unless --no_incremental).
     dst_name = csccouti.get_output_name(src_name, ".pdf")
     tmp_pdf = f"tmp.{dst_name}"
-    out_dir = f"{args.dir}/lectures_commentary"
+    out_dir = f"{dir_arg}/lectures_commentary"
     basename = os.path.splitext(src_name)[0]
     image_extension = get_image_extension(args.image_type)
     png_dir = f"{out_dir}/{basename}.{image_extension}"
@@ -656,36 +593,21 @@ def _main(parser: argparse.ArgumentParser) -> None:
                 out_dir,
                 png_dir,
                 args.image_type,
+                args.model,
                 args.llm_backend,
                 output_file=book_chapter_md,
             )
     # Step 4: Track the generated markdown file in git.
     _LOG.info("Step 4: Adding book chapter markdown to git")
-    _git_add_with_retry(book_chapter_md, dry_run=args.dry_run)
+    csccouti.git_add_with_retry(book_chapter_md, dry_run=args.dry_run)
     # Step 5: Convert to PDF using pandoc.
     if do_incremental and os.path.exists(pdf_file_name):
         _LOG.warning("Step 5: Skipping, '%s' already exists", pdf_file_name)
     else:
         _LOG.info("Step 5: Converting to PDF using pandoc")
-        # The book chapter markdown uses LaTeX macros (e.g., `\vmu`) defined
-        # in `latex_abbrevs.sty`, so it needs to be included in the header
-        # too, otherwise xelatex fails with "Undefined control sequence".
-        latex_abbrevs_file = os.path.join(
-            hgit.find_file("dev_scripts_helpers"),
-            "documentation",
-            "latex_abbrevs.sty",
+        csccouti.convert_markdown_to_pdf(
+            book_chapter_md, pdf_file_name, script_dir, dry_run=args.dry_run
         )
-        hdbg.dassert_file_exists(latex_abbrevs_file)
-        cmd = (
-            f"pandoc {book_chapter_md} -o {pdf_file_name} "
-            f"--pdf-engine=xelatex "
-            f"-V geometry:margin=1in "
-            f"-V fontsize=11pt "
-            f"--highlight-style=tango "
-            f"--include-in-header={latex_abbrevs_file} "
-            f"--include-in-header={script_dir}/header-style.tex"
-        )
-        hsystem.system(cmd, print_command=True, dry_run=args.dry_run)
     # Step 6: Convert to HTML using pandoc.
     if do_incremental and os.path.exists(html_file_name):
         _LOG.warning("Step 6: Skipping, '%s' already exists", html_file_name)

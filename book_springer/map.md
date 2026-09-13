@@ -11,25 +11,12 @@
   background who build production decision systems
 - Working knowledge of causal basics (DAGs, SCMs, do-calculus) assumed
 
-## Approach of the book
-- Focus on:
-  - The minimal mathematics to understand the problem and the solutions
-  - Intuition
-  - Toy examples
-  - How to make the theory operational
-    - Referring to packages in the Python ecosystem
-  - Jupyter notebooks to back up the intuition with toy and more complex examples
-
-- Provide resources to go one level deep
-  - My classes
-  - References to books and papers
-
 ## Short TOC
 - The sequence of the parts in the books are:
   - Motivation
     - 01, Introduction
     - 02, Why Decisions, Not Predictions
-    - 03, the Cost of Ignoring Causality, Uncertainty and Dynamics
+    - 03, The Cost of Ignoring Causality, Uncertainty and Dynamics
   - Advanced Modeling Theory & Tools
     - 04, Knowledge Representation
     - 05, Probabilistic ML
@@ -52,16 +39,16 @@
 // From ./generate_all_tocs.sh
 
 - `data605/all_tocs.md`
-- `data605/lectures_source/*.txt`
+- `data605/lectures_source/*.smd`
 
 - `msml610/all_tocs.md`
-- `msml610/lectures_source/*.txt`
+- `msml610/lectures_source/*.smd`
 
 - `book.Agentic_AI/all_tocs.md`
-- `book.Agentic_AI/lectures_source/*.txt`
+- `book.Agentic_AI/lectures_source/*.smd`
 
 - `book_springer/all_tocs.md`
-- `book_springer/lectures_source/*.txt`
+- `book_springer/lectures_source/*.smd`
 
 ## Chapter Templates and Invariants
 
@@ -73,88 +60,88 @@
 
 // https://docs.google.com/spreadsheets/d/1dU3crReWWLcSG8jI4jTvA4430-yMkqvdOEXEIbmktPQ/edit?gid=831837256#gid=831837256
 
-| Chap                                        | Slides                                                       | Slides       | Criticize | Tutorial | Book |
-| --------------------------------------------| -------------------------------------------------------------| ------------ | --------- | ---------| -----|
-|                                             |                                                              |              |           |          |      |
-| **Motivation**                              |                                                              |              |           |          |      |
-| 01. Why Decisions, Not Predictions          | Lesson01.01_From_Data_Science_To_Decision_Science.txt        | 50%          |           |          |      |
-| 02. The Cost of Ignoring Causality          | Lesson01.02_Integrating_Causality_And_Probability_in_ML.txt  |              |           |          |      |
-| **Advanced Modeling Theory & Tools**        |                                                              |              |           |          |      |
-| 04. Knowledge Representation                | MSML610 Slides                                               |              |           |          |      |
-| 05. Probalistic ML                          | MSML610 Slides                                               |              |           |          |      |
-| 06. Causal ML                               | MSML610 Slides                                               |              |           |          |      |
-| **Data**                                    |                                                              |              |           |          |      |
-| 07. Building Causal Knowledge               | MSML610 Slides                                               |              |           |          |      |
-| 08. Causal data pipelines                   | MSML610 Slides                                               |              |           |          |      |
-| **Decision-Making Theory & Tools**          |                                                              |              |           |          |      |
-| 09. Decision Theory Foundations             | MSML610 Slides                                               |              |           |          |      |
-| 10. Taxonomy of Decision-Making Problems    | Lesson10.1_Taxonomy_of_Decision_Problems.txt                 |              |           |          |      |
-| 11. Simple Decisions                        | Lesson11.1_Simple_Decisions.txt                              |              |           |          |      |
-| 12. Complex Decisions                       | Lesson12.1_Complex_Decisions.txt                             |              |           |          |      |
-| 13. Agentic Causal Reasoning                | Maybe remove                                                 |              |           |          |      |
-| **Implementation, Deployment, & Governance**|                                                              |              |           |          |      |
-| 14. Building Stakeholder Alignment          |                                                              |              |           |          |      |
-| 15. Deployment, Monitoring, and Adaptation  | Lesson15.1_Deployment_Monitoring_And_Adaptation.txt          |              |           |          |      |
-| 16. Trust, Explainability, Fairness, and Governance |                                                      |              |           |          |      |
+| Chap                                        |  Slides       | Criticize | Tutorial | Book |
+| --------------------------------------------|  ------------ | --------- | ---------| -----|
+|                                             |               |           |          |      |
+| **Motivation**                              |               |           |          |      |
+| 01. Why Decisions, Not Predictions          | 50%          |           |          |      |
+| 02. The Cost of Ignoring Causality          |              |           |          |      |
+| **Advanced Modeling Theory & Tools**        |               |           |          |      |
+| 04. Knowledge Representation                |               |           |          |      |
+| 05. Probalistic ML                          |               |           |          |      |
+| 06. Causal ML                               |               |           |          |      |
+| **Data**                                    |               |           |          |      |
+| 07. Building Causal Knowledge               |               |           |          |      |
+| 08. Causal data pipelines                   |               |           |          |      |
+| **Decision-Making Theory & Tools**          |               |           |          |      |
+| 09. Decision Theory Foundations             |               |           |          |      |
+| 10. Taxonomy of Decision-Making Problems    |               |           |          |      |
+| 11. Simple Decisions                        |               |           |          |      |
+| 12. Complex Decisions                       |               |           |          |      |
+| 13. Agentic Causal Reasoning                |               |           |          |      |
+| **Implementation, Deployment, & Governance**|               |           |          |      |
+| 14. Building Stakeholder Alignment          |               |           |          |      |
+| 15. Deployment, Monitoring, and Adaptation  |               |           |          |      |
+| 16. Trust, Explainability, Fairness, and Governance |       |           |          |      |
 
 | Slides                                                                       | Typst | Slides | Criticize | Tutorial |
 | ---------------------------------------------------------------------------- | ----- | -------| --------- | ---------|
 |                                                                              |       |        |           |          |
-| `msml610/lectures_source/Lesson00-Class.txt`                                 | yes   |        |           |          |
-| `msml610/lectures_source/Lesson01.1-AI_and_Machine_Learning.txt`             |       |        |           |          |
-| `msml610/lectures_source/Lesson01.2-The_Foundations_of_AI.txt`               |       |        |           |          |
-| `msml610/lectures_source/Lesson01.3-Brief_History_of_AI.txt`                 |       |        |           |          |
-| `msml610/lectures_source/Lesson02.1-A_Map_of_Machine_Learning.txt`           |       |        |           |          |
-| `msml610/lectures_source/Lesson02.2-ML_Paradigms.txt`                        |       |        |           |          |
-| `msml610/lectures_source/Lesson02.3-ML_Techniques_Input_Processing.txt`      |       |        |           |          |
-| `msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.txt`        |       |        |           |          |
-| `msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.txt`      |       |        |           |          |
-| `msml610/lectures_source/Lesson02.6-ML_Techniques_How_To_Do_Research.txt`    |       |        |           |          |
-| `msml610/lectures_source/Lesson03.1-Knowledge_representation.txt`            | yes   | 80%    | 50%       |          |
-| `msml610/lectures_source/Lesson03.2-Propositional_and_first_order_logic.txt` | yes   | 80%    | -         |          |
-| `msml610/lectures_source/Lesson03.3-Non_classical_logics.txt`                | yes   | 80%    | -         |          |
-| `msml610/lectures_source/Lesson04.1-Models.txt`                              |       |        |           |          |
-| `msml610/lectures_source/Lesson04.2-Models.txt`                              |       |        |           |          |
-| `msml610/lectures_source/Lesson04.3-Models.txt`                              |       |        |           |          |
-| `msml610/lectures_source/Lesson05.1-Learning_Theory.txt`                     |       |        |           | 70%      |
-| `msml610/lectures_source/Lesson05.2-Overfitting.txt`                         |       |        |           | 70%      |
-| `msml610/lectures_source/Lesson05.3-Learn_Validation.txt`                    |       |        |           | -        |
-| `msml610/lectures_source/Lesson06.1-Bayesian_Networks.txt`                   | yes   | 80%    |           | 70%      |
-| `msml610/lectures_source/Lesson06.2-Using_Bayesian_Networks.txt`             | yes   | 80%    |           | 70%      |
-| `msml610/lectures_source/Lesson07.1-Intro_to_Probabilistic_Programming.txt`  | yes   | 80%    |           | 70%      |
-| `msml610/lectures_source/Lesson07.2-Posterior_Based_Decisions.txt`           |       |        |           | 70%      |
-| `msml610/lectures_source/Lesson07.3-Hierarchical_Models.txt`                 |       |        |           | 70%      |
-| `msml610/lectures_source/Lesson07.4-Generalized_Linear_Models.txt`           |       |        |           | 70%      |
-| `msml610/lectures_source/Lesson07.5-Bayesian_Model_Comparison.txt`           |       |        |           | 70%      |
-| `msml610/lectures_source/Lesson08.1-Causal_AI_intro.txt`                     | yes   | 80%    |           |          |
-| `msml610/lectures_source/Lesson08.2-Causal_AI_concepts.txt`                  | yes   | 80%    |           |          |
-| `msml610/lectures_source/Lesson08.3-Causal_AI_in_business.txt`               | yes   | 80%    |           |          |
-| `msml610/lectures_source/Lesson08.4-Causal_networks.txt`                     | yes   | 80%    |           | 60%      |
-| `msml610/lectures_source/Lesson08.5-Do_calculus.txt`                         | yes   | 70%    |           | 60%      |
-| `msml610/lectures_source/Lesson08.6-Causal_inference.txt`                    | yes   | 70%    |           | 60%      |
-| `msml610/lectures_source/Lesson08.7-Causal_experiments.txt`                  | yes   | 70%    |           | 60%      |
-| `msml610/lectures_source/Lesson08.8.Causal_Linear_Regression.txt`            | yes   | 70%    |           | 60%      |
-| `msml610/lectures_source/Lesson08.9-Effect_heterogeneity_and_Metalearners.txt` | yes   | 70%  |           | 60%      |
-| `msml610/lectures_source/Lesson08.X-Causal_inference.txt`                    
-| `msml610/lectures_source/Lesson09.1-Reasoning_over_time.txt`                 
-| `msml610/lectures_source/Lesson09.2-Hidden_Markov_Models.txt`                
-| `msml610/lectures_source/Lesson09.3-Multi_Armed_Bandits.txt`                 | yes   | 10%    |           | 10%      |
-| `msml610/lectures_source/Lesson09.4-gh_Filter.txt`                           |       | 70%    |           | 60%      |
-| `msml610/lectures_source/Lesson09.5-Kalman_Filter.txt`                       |       | 70%    |           | 60%      |
-| `msml610/lectures_source/Lesson09.6-Dynamic_Bayesian_Networks.txt`           
-| `msml610/lectures_source/Lesson09.7-Advanced_Bandits.txt`                    | yes   | 50%    |           | 0%       |
-| `msml610/lectures_source/Lesson10.1-Timeseries_forecasting.txt`              | ?
-| `msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.txt`    | ?
-| `msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.txt`  | ?
-| `msml610/lectures_source/Lesson11.2-Probabilistic_deep_learning.txt`         | Move 
-| `msml610/lectures_source/Lesson12.1-Reinforcement_learning.txt`              | ?     | 70%    |           | 60%      |
-| `msml610/lectures_source/Lesson12.2-Causal_Discovery.txt`                    | ?     | 70%    |           | 60%      |
-| `msml610/lectures_source/Lesson13.1-Explainability.txt`                      | ?     | 70%    |           | where?   |
+| `msml610/lectures_source/Lesson00-Class.smd`                                 | yes   |        |           |          |
+| `msml610/lectures_source/Lesson01.1-AI_and_Machine_Learning.smd`             |       |        |           |          |
+| `msml610/lectures_source/Lesson01.2-The_Foundations_of_AI.smd`               |       |        |           |          |
+| `msml610/lectures_source/Lesson01.3-Brief_History_of_AI.smd`                 |       |        |           |          |
+| `msml610/lectures_source/Lesson02.1-A_Map_of_Machine_Learning.smd`           |       |        |           |          |
+| `msml610/lectures_source/Lesson02.2-ML_Paradigms.smd`                        |       |        |           |          |
+| `msml610/lectures_source/Lesson02.3-ML_Techniques_Input_Processing.smd`      |       |        |           |          |
+| `msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd`        |       |        |           |          |
+| `msml610/lectures_source/Lesson02.5-ML_Techniques_Model_Evaluation.smd`      |       |        |           |          |
+| `msml610/lectures_source/Lesson02.6-ML_Techniques_How_To_Do_Research.smd`    |       |        |           |          |
+| `msml610/lectures_source/Lesson03.1-Knowledge_representation.smd`            | yes   | 80%    | 50%       |          |
+| `msml610/lectures_source/Lesson03.2-Propositional_and_first_order_logic.smd` | yes   | 80%    | -         |          |
+| `msml610/lectures_source/Lesson03.3-Non_classical_logics.smd`                | yes   | 80%    | -         |          |
+| `msml610/lectures_source/Lesson04.1-Models.smd`                              |       |        |           |          |
+| `msml610/lectures_source/Lesson04.2-Models.smd`                              |       |        |           |          |
+| `msml610/lectures_source/Lesson04.3-Models.smd`                              |       |        |           |          |
+| `msml610/lectures_source/Lesson05.1-Learning_Theory.smd`                     |       |        |           | 70%      |
+| `msml610/lectures_source/Lesson05.2-Overfitting.smd`                         |       |        |           | 70%      |
+| `msml610/lectures_source/Lesson05.3-Learn_Validation.smd`                    |       |        |           | -        |
+| `msml610/lectures_source/Lesson06.1-Bayesian_Networks.smd`                   | yes   | 80%    |           | 70%      |
+| `msml610/lectures_source/Lesson06.2-Using_Bayesian_Networks.smd`             | yes   | 80%    |           | 70%      |
+| `msml610/lectures_source/Lesson07.1-Intro_to_Probabilistic_Programming.smd`  | yes   | 80%    |           | 70%      |
+| `msml610/lectures_source/Lesson07.2-Posterior_Based_Decisions.smd`           |       |        |           | 70%      |
+| `msml610/lectures_source/Lesson07.3-Hierarchical_Models.smd`                 |       |        |           | 70%      |
+| `msml610/lectures_source/Lesson07.4-Generalized_Linear_Models.smd`           |       |        |           | 70%      |
+| `msml610/lectures_source/Lesson07.5-Bayesian_Model_Comparison.smd`           |       |        |           | 70%      |
+| `msml610/lectures_source/Lesson08.1-Causal_AI_intro.smd`                     | yes   | 80%    |           |          |
+| `msml610/lectures_source/Lesson08.2-Causal_AI_concepts.smd`                  | yes   | 80%    |           |          |
+| `msml610/lectures_source/Lesson08.3-Causal_AI_in_business.smd`               | yes   | 80%    |           |          |
+| `msml610/lectures_source/Lesson08.4-Causal_networks.smd`                     | yes   | 80%    |           | 60%      |
+| `msml610/lectures_source/Lesson08.5-Do_calculus.smd`                         | yes   | 70%    |           | 60%      |
+| `msml610/lectures_source/Lesson08.6-Causal_inference_intro.smd`              | yes   | 70%    |           | 60%      |
+| `msml610/lectures_source/Lesson08.7-Causal_experiments.smd`                  | yes   | 70%    |           | 60%      |
+| `msml610/lectures_source/Lesson08.8.Causal_Linear_Regression.smd`            | yes   | 70%    |           | 60%      |
+| `msml610/lectures_source/Lesson08.9-Effect_heterogeneity_and_Metalearners.smd` | yes   | 70%  |           | 60%      |
+| `msml610/lectures_source/Lesson08.X-Causal_inference.smd`                    
+| `msml610/lectures_source/Lesson09.1-Reasoning_over_time.smd`                 
+| `msml610/lectures_source/Lesson09.2-Hidden_Markov_Models.smd`                
+| `msml610/lectures_source/Lesson09.3-Multi_Armed_Bandits.smd`                 | yes   | 10%    |           | 10%      |
+| `msml610/lectures_source/Lesson09.4-gh_Filter.smd`                           |       | 70%    |           | 60%      |
+| `msml610/lectures_source/Lesson09.5-Kalman_Filter.smd`                       |       | 70%    |           | 60%      |
+| `msml610/lectures_source/Lesson09.6-Dynamic_Bayesian_Networks.smd`           
+| `msml610/lectures_source/Lesson09.7-Advanced_Bandits.smd`                    | yes   | 50%    |           | 0%       |
+| `msml610/lectures_source/Lesson10.1-Timeseries_forecasting.smd`              | ?
+| `msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.smd`    | ?
+| `msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.smd`  | ?
+| `msml610/lectures_source/Lesson11.2-Probabilistic_deep_learning.smd`         | Move 
+| `msml610/lectures_source/Lesson12.1-Reinforcement_learning.smd`              | ?     | 70%    |           | 60%      |
+| `msml610/lectures_source/Lesson12.2-Causal_Discovery.smd`                    | ?     | 70%    |           | 60%      |
+| `msml610/lectures_source/Lesson13.1-Explainability.smd`                      | ?     | 70%    |           | where?   |
 
 - [ ] Apply `msml610/lectures_source/prompt.convert_to_typst.md` to all the files
   in `msml610/lectures_source/Lesson*`
 - [ ] `/slides.lint_incrementally`
-- [ ] `/slides.add_bold_and_italic`
+- [ ] `/slides.fix_formatting`
 
 ## `book_springer` Tutorials
 
@@ -198,7 +185,7 @@ msml610/tutorials/L12_reinforcement_learning/L12_02_gridworld_4x3_gymnasium.ipyn
 ```
 
 ## TODOs
-- Incorporate ./notes/math.Probabilistic_programming_for_hackers.DavidsonPilon.2017.txt
+- Incorporate ./notes/math.Probabilistic_programming_for_hackers.DavidsonPilon.2017.smd
 
 # Detailed TOC
 
@@ -235,26 +222,15 @@ msml610/tutorials/L12_reinforcement_learning/L12_02_gridworld_4x3_gymnasium.ipyn
 - Interactive Jupyter notebook tutorials for hands-on approach
 
 ### Slides
-- `book_springer/lectures_source/Lesson01.1_Introduction.txt`
+- `book_springer/lectures_source/Lesson01.1_Introduction.smd`
 
 ### Lesson Materials
-- `book_springer/lectures_source/Lesson01.1_Introduction.txt`
+- `book_springer/lectures_source/Lesson01.1_Introduction.smd`
   - [70%]: Decision Pipeline Framework (data→prediction→causal effect→policy,
     feedback loops, why stages matter), book organization (five-part
     structure, audience/prerequisites, chapter progression), intuition-first
     focus, Jupyter tutorials
-- `book_springer/lectures_source/Lesson02.1_From_Data_Science_To_Decision_Science.txt`
-  - [60%]: Why prediction accuracy alone fails business value, data-science-
-    to-decision-science framing, causal vs. predictive questions, decision
-    pipeline diagram, feedback/bias amplification, partial book roadmap
-- `msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.txt`
-  - [45%]: "Why Prediction Is Not Enough," decision-loop-with-causal-models
-    diagram matching the Decision Pipeline Framework and feedback loops
-- `msml610/lectures_source/Lesson08.1-Causal_AI_intro.txt`
-  - [30%]: Why prediction accuracy fails business value, causal reasoning's
-    role in decisions (optimization vs. inference vs. decision theory),
-    feedback loops
-- `msml610/lectures_source/Lesson00-Class.txt`
+- `msml610/lectures_source/Lesson00-Class.smd`
   - [25%]: "Invariants of a Class Lecture" matches intuition-over-math focus,
     realistic-assumptions/numerical-methods emphasis, Jupyter tutorials
 - Not covered
@@ -287,10 +263,10 @@ msml610/tutorials/L12_reinforcement_learning/L12_02_gridworld_4x3_gymnasium.ipyn
   - Roadmap
 
 ### Slides
-- `book_springer/lectures_source/Lesson02.1_From_Data_Science_To_Decision_Science.txt`
+- `book_springer/lectures_source/Lesson02.1_From_Data_Science_To_Decision_Science.smd`
 
 ### Lesson Materials
-- `book_springer/lectures_source/Lesson02.1_From_Data_Science_To_Decision_Science.txt`
+- `book_springer/lectures_source/Lesson02.1_From_Data_Science_To_Decision_Science.smd`
   - [97%]: Chapter's own slide deck — near 1:1 with the topic list: why
     decisions not predictions, cost of ignoring causality (confounding,
     colliders, Simpson's paradox), cost of ignoring uncertainty (point
@@ -298,19 +274,19 @@ msml610/tutorials/L12_reinforcement_learning/L12_02_gridworld_4x3_gymnasium.ipyn
     business objective (Goodhart's law, asymmetric losses, black-box
     scores), cost of ignoring dynamics/feedback (shift, performativity,
     exploration, long-horizon effects), roadmap
-- `msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.txt`
+- `msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.smd`
   - [40%]: Prediction vs. decision pipelines, Simpson's paradox/confounding,
     aleatoric vs. epistemic uncertainty, exploration via VOI/EVPI/EVSI and
     causal bandits; missing structural failure modes, feedback/performativity
-- `msml610/lectures_source/Lesson08.1-Causal_AI_intro.txt`
+- `msml610/lectures_source/Lesson08.1-Causal_AI_intro.smd`
   - [35%]: Prediction vs. decision, correlation vs. causation ladder,
     Simpson's paradox/confounding, concept/covariate/label shift,
     feedback-loop examples in recommenders and criminal justice
-- `msml610/lectures_source/Lesson08.2-Causal_AI_concepts.txt`
+- `msml610/lectures_source/Lesson08.2-Causal_AI_concepts.smd`
   - [20%]: Ladder of causation, data-science-vs-decision-science comparison,
     causal-vs-predictive questions, descriptive/predictive/causal/decision
     roadmap
-- `msml610/lectures_source/Lesson08.4-Causal_networks.txt`
+- `msml610/lectures_source/Lesson08.4-Causal_networks.smd`
   - [15%]: Confounder/collider examples overlapping "When Correlation
     Misleads" and part of "Structural Failure Modes"; no uncertainty,
     objective, or dynamics content
@@ -348,35 +324,35 @@ msml610/tutorials/L12_reinforcement_learning/L12_02_gridworld_4x3_gymnasium.ipyn
 // TODO(ai_gp): Check this
 
 ### Slides 
-- `book_springer/lectures_source/Lesson02.2_Integrating_Causality_And_Probability_in_ML.txt`
-- `book_springer/lectures_source/Lesson02.3_Integrating_Business_Objective_And_Real_World_Dynamics.txt`
+- `book_springer/lectures_source/Lesson02.2_Integrating_Causality_And_Probability_in_ML.smd`
+- `book_springer/lectures_source/Lesson02.3_Integrating_Business_Objective_And_Real_World_Dynamics.smd`
 
 ### Lesson Materials
-- `book_springer/lectures_source/Lesson02.2_Integrating_Causality_And_Probability_in_ML.txt`
+- `book_springer/lectures_source/Lesson02.2_Integrating_Causality_And_Probability_in_ML.smd`
   - [55%]: Causal models and effect identification in full (confounders,
     mediators, colliders, SCMs/DAGs, do-operator, backdoor/front-door, IV,
     potential outcomes) plus probabilistic uncertainty quantification
     (posteriors vs. point estimates, epistemic vs. aleatoric, variational
     inference, calibration/conformal prediction)
-- `book_springer/lectures_source/Lesson02.3_Integrating_Business_Objective_And_Real_World_Dynamics.txt`
+- `book_springer/lectures_source/Lesson02.3_Integrating_Business_Objective_And_Real_World_Dynamics.smd`
   - [50%]: Business objectives and decision rules in full (utility
     functions, expected utility, risk preferences, cost asymmetries,
     multi-objective trade-offs, decision networks) plus most of
     dynamics/feedback (feedback loops, Granger causality,
     exploration-exploitation, Bellman equation); performativity present
     only implicitly, not named
-- `msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.txt`
+- `msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.smd`
   - [40%]: Deeper treatment of utility functions, expected utility, risk
     preferences, multi-criteria trade-offs, decision networks, prior
     elicitation, and aleatoric-vs-epistemic uncertainty with credible
     intervals
-- `msml610/lectures_source/Lesson08.4-Causal_networks.txt`
+- `msml610/lectures_source/Lesson08.4-Causal_networks.smd`
   - [25%]: Causal DAGs, structural causal models, confounder/mediator/
     moderator variable types with worked examples
-- `msml610/lectures_source/Lesson08.5-Do_calculus.txt`
+- `msml610/lectures_source/Lesson08.5-Do_calculus.smd`
   - [20%]: Do-operator, backdoor/front-door adjustment, the three formal
     rules of do-calculus
-- `msml610/lectures_source/Lesson07.1-Intro_to_Probabilistic_Programming.txt`
+- `msml610/lectures_source/Lesson07.1-Intro_to_Probabilistic_Programming.smd`
   - [15%]: Bayes' theorem, priors and conjugate priors, confidence vs.
     credible intervals
 - Not covered
@@ -425,33 +401,27 @@ msml610/tutorials/L12_reinforcement_learning/L12_02_gridworld_4x3_gymnasium.ipyn
 - Add `## Structural Causal Model`
 
 ### Slides
-- `book_springer/lectures_source/Lesson04.1_Knowledge_Representation.txt`
+- `book_springer/lectures_source/Lesson04.1_Knowledge_Representation.smd`
 
 ### Lesson Materials
-- `book_springer/lectures_source/Lesson04.1_Knowledge_Representation.txt`
-  - [95%]: Chapter's own compiled deck — section headers map almost 1:1 to
-    the topic list (representation foundations, formal KR,
-    propositional/FOL, non-monotonic logic, ontologies/RDF/SPARQL/knowledge
-    graphs, Bayesian networks, causal DAGs/SCMs, Markov logic networks,
-    choosing a representation)
-- `msml610/lectures_source/Lesson03.1-Knowledge_representation.txt`
+- `msml610/lectures_source/Lesson03.1-Knowledge_representation.smd`
   - [45%]: Representation foundations, expressiveness/tractability
     trade-offs, propositional/FOL basics, entailment/inference, rule-based
     and knowledge-based agents, grounding, ontologies
-- `msml610/lectures_source/Lesson03.3-Non_classical_logics.txt`
+- `msml610/lectures_source/Lesson03.3-Non_classical_logics.smd`
   - [35%]: Non-monotonic reasoning, default logic, open- vs. closed-world
     assumption, description logics (OWL), RDF/SPARQL, semantic
     networks/knowledge graphs
-- `msml610/lectures_source/Lesson08.4-Causal_networks.txt`
+- `msml610/lectures_source/Lesson08.4-Causal_networks.smd`
   - [20%]: Causal (Bayesian) networks vs. non-causal, causal DAG properties,
     full ladder of causation, structural causal model definition
-- `msml610/lectures_source/Lesson06.1-Bayesian_Networks.txt`
+- `msml610/lectures_source/Lesson06.1-Bayesian_Networks.smd`
   - [20%]: Why logic fails under uncertainty, Bayesian network definition
     and structure (DAG, CPTs, conditional independence)
-- `msml610/lectures_source/Lesson03.2-Propositional_and_first_order_logic.txt`
+- `msml610/lectures_source/Lesson03.2-Propositional_and_first_order_logic.smd`
   - [20%]: In-depth propositional and first-order logic (syntax, semantics,
     inference rules, satisfiability)
-- `msml610/lectures_source/Lesson09.2-Hidden_Markov_Models.txt`
+- `msml610/lectures_source/Lesson09.2-Hidden_Markov_Models.smd`
   - [8%]: Markov logic networks (first-order logic + Markov random fields,
     weighted formulas, joint distribution)
 - Not covered
@@ -494,41 +464,41 @@ msml610/tutorials/L12_reinforcement_learning/L12_02_gridworld_4x3_gymnasium.ipyn
     choosing among models
 
 ### Slides
-- `book_springer/lectures_source/Lesson05.1_Probabilistic_ML.txt`
+- `book_springer/lectures_source/Lesson05.1_Probabilistic_ML.smd`
 
 ### Lesson Materials
-- `msml610/lectures_source/Lesson07.2-Posterior_Based_Decisions.txt`
+- `msml610/lectures_source/Lesson07.2-Posterior_Based_Decisions.smd`
   - [45%]: Savage-Dickey ratio, Region of Practical Equivalence, loss
     functions/expected utility, posterior predictive checks, robust
     inference, effect-size comparison
-- `book_springer/lectures_source/Lesson05.1_Probabilistic_ML.txt`
+- `book_springer/lectures_source/Lesson05.1_Probabilistic_ML.smd`
   - [40%]: Chapter's own outline touching nearly every sub-topic, but each
     bullet is a single line pointing to msml610 sources rather than a
     standalone treatment
-- `msml610/lectures_source/Lesson06.2-Using_Bayesian_Networks.txt`
+- `msml610/lectures_source/Lesson06.2-Using_Bayesian_Networks.smd`
   - [35%]: Bayesian network semantics, exact inference (enumeration,
     variable elimination), Markov blankets, approximate inference
     (rejection/importance sampling, MCMC)
-- `msml610/lectures_source/Lesson07.5-Bayesian_Model_Comparison.txt`
+- `msml610/lectures_source/Lesson07.5-Bayesian_Model_Comparison.smd`
   - [30%]: Occam's razor, overfitting/bias-variance trade-off, information
     criteria, cross-validation, Bayesian model selection/averaging, Bayes
     factors
-- `msml610/lectures_source/Lesson07.1-Intro_to_Probabilistic_Programming.txt`
+- `msml610/lectures_source/Lesson07.1-Intro_to_Probabilistic_Programming.smd`
   - [30%]: Bayesian updating, frequentist vs. Bayesian views, prior choice,
     credible vs. confidence intervals, probabilistic programming (PyMC)
-- `msml610/lectures_source/Lesson06.1-Bayesian_Networks.txt`
+- `msml610/lectures_source/Lesson06.1-Bayesian_Networks.smd`
   - [15%]: Bayesian network definitions/structure, conditional independence,
     CPTs, belief updating
-- `msml610/lectures_source/Lesson07.3-Hierarchical_Models.txt`
+- `msml610/lectures_source/Lesson07.3-Hierarchical_Models.smd`
   - [15%]: Hierarchical/multilevel models, pooled vs. unpooled, hyper-priors,
     shrinkage across groups
-- `msml610/lectures_source/Lesson07.4-Generalized_Linear_Models.txt`
+- `msml610/lectures_source/Lesson07.4-Generalized_Linear_Models.smd`
   - [12%]: Bayesian linear/logistic regression, generalized linear models,
     posterior-based uncertainty over parameters
-- `msml610/lectures_source/Lesson11.2-Probabilistic_deep_learning.txt`
+- `msml610/lectures_source/Lesson11.2-Probabilistic_deep_learning.smd`
   - [10%]: Explicit aleatoric-vs-epistemic uncertainty, variational
     inference, MCMC/HMC for Bayesian neural nets (deep-learning framing)
-- `msml610/lectures_source/Lesson05.2-Overfitting.txt`
+- `msml610/lectures_source/Lesson05.2-Overfitting.smd`
   - [8%]: Classical bias-variance decomposition and overfitting
     (non-Bayesian framing)
 - Not covered
@@ -566,39 +536,39 @@ msml610/tutorials/L12_reinforcement_learning/L12_02_gridworld_4x3_gymnasium.ipyn
     identifiability from observational data
 
 ### Slides
-- `book_springer/lectures_source/Lesson06.1_Causal_ML.txt`
+- `book_springer/lectures_source/Lesson06.1_Causal_ML.smd`
 
 ### Lesson Materials
-- `book_springer/lectures_source/Lesson02.2_Integrating_Causality_And_Probability_in_ML.txt`
+- `book_springer/lectures_source/Lesson02.2_Integrating_Causality_And_Probability_in_ML.smd`
   - [55%]: Ladder of causation, SCMs, confounders/mediators/colliders, DAG
     building, do-operator, backdoor/front-door with worked examples, instrumental
     variables, potential outcomes, treatment effects
-- `msml610/lectures_source/Lesson08.6-Causal_inference_intro.txt`
+- `msml610/lectures_source/Lesson08.6-Causal_inference_intro.smd`
   - [45%]: Potential outcomes, treatment effects, confounding-bias equation,
     Simpson's paradox, formal d-separation, backdoor adjustment, SCM definition,
     chain/fork/collider structures
-- `msml610/lectures_source/Lesson08.5-Do_calculus.txt`
+- `msml610/lectures_source/Lesson08.5-Do_calculus.smd`
   - [40%]: Do-operator, RCTs, backdoor criteria/adjustment, front-door adjustment
     worked example, formal three rules of do-calculus
-- `msml610/lectures_source/Lesson08.4-Causal_networks.txt`
+- `msml610/lectures_source/Lesson08.4-Causal_networks.smd`
   - [30%]: SCM (sprinkler example), causal DAGs, observed/unobserved and
     endogenous/exogenous variables, mediator/moderator/confounder/collider,
     ladder-of-causation worked example
-- `msml610/lectures_source/Lesson08.8.Causal_Linear_Regression.txt`
+- `msml610/lectures_source/Lesson08.8.Causal_Linear_Regression.smd`
   - [25%]: Confounding via regression, FWL theorem, adjustment via controls,
     propensity-score estimation/matching/IPW — best match for
     "propensity-score adjustment in practice"
-- `msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.txt`
+- `msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.smd`
   - [20%]: Instrumental variables (exogenous-variation intuition, complier
     limitation), natural experiments (draft-lottery example), time-varying
     unobserved confounders
-- `msml610/lectures_source/Lesson12.2-Causal_Discovery.txt`
+- `msml610/lectures_source/Lesson12.2-Causal_Discovery.smd`
   - [15%]: Identifiability (Markov equivalence/CPDAG), faithfulness, brief
     sensitivity-analysis bullet in DAG validation
-- `book_springer/lectures_source/Lesson06.1_Causal_ML.txt`
+- `book_springer/lectures_source/Lesson06.1_Causal_ML.smd`
   - [10%]: Chapter's own outline — headers map 1:1 onto all four topics but
     content is source pointers only, no prose or examples
-- `book.Agentic_AI/lectures_source/Lesson15.1-Causal_Reasoning_Agents.txt`
+- `book.Agentic_AI/lectures_source/Lesson15.1-Causal_Reasoning_Agents.smd`
   - [8%]: Brief references to confounders, positivity/no-unmeasured-
     confounding, sensitivity analysis, and causal DAGs inside agent-prompt
     templates; no formal identification methods
@@ -642,31 +612,26 @@ msml610/tutorials/L12_reinforcement_learning/L12_02_gridworld_4x3_gymnasium.ipyn
   - When temporal structure helps identification, and when it misleads it
 
 ### Slides
-- `book_springer/lectures_source/Lesson07.1_Building_Probabilistic_And_Causal_Knowledge.txt`
+- `book_springer/lectures_source/Lesson07.1_Building_Probabilistic_And_Causal_Knowledge.smd`
 
 ### Lesson Materials
-- `book_springer/lectures_source/Lesson07.1_Building_Probabilistic_And_Causal_Knowledge.txt`
-  - [90%]: Chapter's own outline — section headers match all five topics
-    verbatim (elicitation steps, hybrid-team roles, prior elicitation, DAG
-    building, variable types, discovery, temporal structure), but is a thin
-    bullet-point skeleton with source pointers rather than full prose
-- `msml610/lectures_source/Lesson08.4-Causal_networks.txt`
+- `msml610/lectures_source/Lesson08.4-Causal_networks.smd`
   - [55%]: Building causal DAGs (definition, directed/acyclic properties,
     worked examples) and full coverage of variable types (observed/
     unobserved, endogenous/exogenous, mediator, moderator, confounder,
     collider, fork/chain/inverted-fork)
-- `msml610/lectures_source/Lesson12.2-Causal_Discovery.txt`
+- `msml610/lectures_source/Lesson12.2-Causal_Discovery.smd`
   - [24%]: Formal discovery definition, observational vs. interventional
     data, constraint-based/score-based/functional/interventional algorithm
     families, combining discovery with domain knowledge, DAG validation
-- `msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.txt`
+- `msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.smd`
   - [23%]: Why time-series causality differs from cross-sectional, feedback
     loops/simultaneity, non-stationarity, when temporal structure helps vs.
     misleads identification
-- `msml610/lectures_source/Lesson08.3-Causal_AI_in_business.txt`
+- `msml610/lectures_source/Lesson08.3-Causal_AI_in_business.smd`
   - [20%]: Structured elicitation steps (outcomes, interventions, drivers),
     hybrid-team roles, Step 4 (build causal DAG) with a worked example
-- `msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.txt`
+- `msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.smd`
   - [7%]: Eliciting and validating priors (quantile elicitation, pairwise
     judgments, historical calibration, elicitation pitfalls)
 - Not covered
@@ -707,43 +672,39 @@ msml610/tutorials/L12_reinforcement_learning/L12_02_gridworld_4x3_gymnasium.ipyn
   - Robust inference: methods that tolerate imperfect, noisy data
 
 ### Slides
-- `book_springer/lectures_source/Lesson08.1_Causal_Data_Pipelines.txt`
+- `book_springer/lectures_source/Lesson08.1_Causal_Data_Pipelines.smd`
 
 ### Lesson Materials
-- `book_springer/lectures_source/Lesson08.1_Causal_Data_Pipelines.txt`
-  - [90%]: Chapter's own outline — headers map 1:1 onto all five topic
-    groups, but content is stub bullet titles pulled from other lectures,
-    not fully elaborated prose
-- `msml610/lectures_source/Lesson08.6-Causal_inference_intro.txt`
+- `msml610/lectures_source/Lesson08.6-Causal_inference_intro.smd`
   - [35%]: Confounder introduction (confounding-bias equation), surrogate
     confounding/proxy issues, selection-bias mechanisms (collider,
     mediator, survivorship, self-selection), positivity/unconfoundedness
-- `book_springer/lectures_source/Lesson15.1_Deployment_Monitoring_And_Adaptation.txt`
+- `book_springer/lectures_source/Lesson15.1_Deployment_Monitoring_And_Adaptation.smd`
   - [30%]: Why assumptions break in production, taxonomy of assumptions to
     monitor, directly/indirectly testable assumptions, assumption-
     monitoring dashboard — strong match for shift detection
-- `msml610/lectures_source/Lesson08.8.Causal_Linear_Regression.txt`
+- `msml610/lectures_source/Lesson08.8.Causal_Linear_Regression.smd`
   - [25%]: Positivity (definition, IPW validity, positivity-bias
     trade-off), propensity score for selection bias, comparison with
     regression — matches confounder balance and selection-bias pre-flight
     checks
-- `msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.txt`
+- `msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.smd`
   - [20%]: Non-stationarity/trends, time-varying unobserved confounders
     (concept-drift-adjacent), instrumental variables/natural experiments as
     correction strategies
-- `data605/lectures_source/Lesson07.2-Data_Wrangling.txt`
+- `data605/lectures_source/Lesson07.2-Data_Wrangling.smd`
   - [20%]: Single-source missing-data handling, univariate/multivariate/
     time-series outlier detection
-- `msml610/lectures_source/Lesson02.3-ML_Techniques_Input_Processing.txt`
+- `msml610/lectures_source/Lesson02.3-ML_Techniques_Input_Processing.smd`
   - [15%]: Handling outliers and missing data, noise removal — generic ML
     data-cleaning, not causal-framed
-- `msml610/lectures_source/Lesson02.6-ML_Techniques_How_To_Do_Research.txt`
+- `msml610/lectures_source/Lesson02.6-ML_Techniques_How_To_Do_Research.smd`
   - [15%]: Sampling bias (non-random sampling, undercoverage, survivorship,
     self-selection) and mitigation
-- `data605/lectures_source/Lesson02.3-Data_Pipelines.txt`
+- `data605/lectures_source/Lesson02.3-Data_Pipelines.smd`
   - [10%]: General data-engineering content (ingestion, ETL/ELT/EtLT, data
     cleaning) relevant only to generic collection design
-- `msml610/lectures_source/Lesson08.1-Causal_AI_intro.txt`
+- `msml610/lectures_source/Lesson08.1-Causal_AI_intro.smd`
   - [8%]: "Problem 6: Distribution Shift" — concept/covariate/label shift
     defined
 - Not covered
@@ -786,22 +747,22 @@ msml610/tutorials/L12_reinforcement_learning/L12_02_gridworld_4x3_gymnasium.ipyn
 - N/A
 
 ### Lesson Materials
-- `msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.txt`
+- `msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.smd`
   - [95%]: Utility functions, expected utility principle, risk preferences and
     visualizing risk aversion, multi-criteria trade-offs, decision networks,
     Bayesian decision rules, prior elicitation
-- `msml610/lectures_source/Lesson12.1-Reinforcement_learning.txt`
+- `msml610/lectures_source/Lesson12.1-Reinforcement_learning.smd`
   - [75%]: Maximum Expected Utility principle, utility of states/policies,
     Bellman equation: expected-utility framework applied to sequential
     decisions
-- `msml610/lectures_source/Lesson07.1-Intro_to_Probabilistic_Programming.txt`
+- `msml610/lectures_source/Lesson07.1-Intro_to_Probabilistic_Programming.smd`
   - [65%]: Bayes' theorem, priors, Bayesian vs. frequentist updating —
     foundation for subjective expected utility
-- `msml610/lectures_source/Lesson07.2-Posterior_Based_Decisions.txt`
+- `msml610/lectures_source/Lesson07.2-Posterior_Based_Decisions.smd`
   - [55%]: Posterior-based decision rules via loss functions, ROPE,
     Savage-Dickey ratio: decision rules under posterior uncertainty; not
     risk/utility content
-- `msml610/lectures_source/Lesson09.3-Multi_Armed_Bandits.txt`
+- `msml610/lectures_source/Lesson09.3-Multi_Armed_Bandits.smd`
   - [50%]: Sequential decision-making, Bayesian bandits, value-of-information
     framing: peripheral to axiomatic utility core
 - Not covered
@@ -834,28 +795,28 @@ msml610/tutorials/L12_reinforcement_learning/L12_02_gridworld_4x3_gymnasium.ipyn
   - Sensitivity analysis: how much conclusions change with assumptions
 
 ### Slides
-- `book_springer/lectures_source/Lesson10.1_Taxonomy_of_Decision_Problems.txt`
+- `book_springer/lectures_source/Lesson10.1_Taxonomy_of_Decision_Problems.smd`
 - `book_springer/lectures_source/Lesson10.01.algo_info.md`
 - `book_springer/lectures_source/Lesson10.01.algo_to_problem_table.md`
 - `book_springer/lectures_source/Lesson10.01.problem_to_algo_table.md`
 - `book_springer/lectures_source/Lesson10.01.tutorial_plan.md`
 
 ### Lesson Materials
-- `msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.txt`
+- `msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.smd`
   - [95%]: Causal effects to expected value, EVPI/EVSI, Bayesian optimization,
     causal multi-armed bandits, exploration vs. exploitation
-- `msml610/lectures_source/Lesson09.3-Multi_Armed_Bandits.txt`
+- `msml610/lectures_source/Lesson09.3-Multi_Armed_Bandits.smd`
   - [90%]: Thompson sampling, UCB, epsilon-greedy, contextual bandits, regret
     bounds
-- `msml610/lectures_source/Lesson12.1-Reinforcement_learning.txt`
+- `msml610/lectures_source/Lesson12.1-Reinforcement_learning.smd`
   - [80%]: MDPs, value/policy iteration, off-line vs. on-line MDP solving
-- `msml610/lectures_source/Lesson08.5-Experimentation.txt`
+- `msml610/lectures_source/Lesson08.7-Causal_experiments.smd`
   - [75%]: A/B testing design, decision framework for experiment vs. observe,
     hybrid experimental-causal approaches
-- `msml610/lectures_source/Lesson07.2-Posterior_Based_Decisions.txt`
+- `msml610/lectures_source/Lesson07.2-Posterior_Based_Decisions.smd`
   - [65%]: Posterior-based decision rules via loss functions and ROPE: using
     full posterior distribution, not point estimates
-- `msml610/lectures_source/Lesson07.1-Intro_to_Probabilistic_Programming.txt`
+- `msml610/lectures_source/Lesson07.1-Intro_to_Probabilistic_Programming.smd`
   - [45%]: Bayesian updating fundamentals, priors: foundational only
 - _Not covered_
   - [50%]: Minimax/distributional robustness against model misspecification,
@@ -891,21 +852,21 @@ msml610/tutorials/L12_reinforcement_learning/L12_02_gridworld_4x3_gymnasium.ipyn
   - Delayed rewards: learning environment structure from sparse feedback
 
 ### Slides
-- `book_springer/lectures_source/Lesson11.1_Simple_Decisions.txt`
+- `book_springer/lectures_source/Lesson11.1_Simple_Decisions.smd`
 
 ### Lesson Materials
-- `msml610/lectures_source/Lesson12.1-Reinforcement_learning.txt`
+- `msml610/lectures_source/Lesson12.1-Reinforcement_learning.smd`
   - [95%]: MDPs, POMDPs, belief-state transitions, value/Q-learning,
     temporal-difference learning, policy search
-- `msml610/lectures_source/Lesson09.3-Multi_Armed_Bandits.txt`
+- `msml610/lectures_source/Lesson09.3-Multi_Armed_Bandits.smd`
   - [95%]: Epsilon-greedy, UCB, Thompson sampling, contextual bandits, regret
     analysis
-- `msml610/lectures_source/Lesson09.1-Reasoning_over_time.txt`
+- `msml610/lectures_source/Lesson09.1-Reasoning_over_time.smd`
   - [85%]: Sequential inference over hidden state: filtering, prediction,
     smoothing, Viterbi/most-likely-explanation
-- `msml610/lectures_source/Lesson07.1-Intro_to_Probabilistic_Programming.txt`
+- `msml610/lectures_source/Lesson07.1-Intro_to_Probabilistic_Programming.smd`
   - [70%]: Bayesian inference, belief updating, posterior-based reasoning
-- `msml610/lectures_source/Lesson07.2-Posterior_Based_Decisions.txt`
+- `msml610/lectures_source/Lesson07.2-Posterior_Based_Decisions.smd`
   - [55%]: Loss-function-based decision rules under posterior uncertainty
 - Not covered
   - [35%]: Deterministic/stochastic/adversarial planning and search (A\*, MPC,
@@ -940,27 +901,27 @@ msml610/tutorials/L12_reinforcement_learning/L12_02_gridworld_4x3_gymnasium.ipyn
   - Competitive and cooperative learning: MAPPO, MAAC, MADDPG
 
 ### Slides
-- `book_springer/lectures_source/Lesson12.1_Complex_Decisions.txt`
+- `book_springer/lectures_source/Lesson12.1_Complex_Decisions.smd`
 
 ### Lesson Materials
-- `msml610/lectures_source/Lesson12.1-Reinforcement_learning.txt`
+- `msml610/lectures_source/Lesson12.1-Reinforcement_learning.smd`
   - [95%]: Model-based vs. model-free RL, policy search, causal RL, structural
     causal models for MDPs, counterfactual credit assignment, deconfounding
     offline/off-policy data
-- `class_cs_refreshers/lectures_source/Lesson95.Refresher_game_theory.txt`
+- `book_cs_refreshers/lectures_source/Lesson95.Refresher_game_theory.smd`
   - [50%]: Nash equilibrium, zero-sum games and the minimax theorem, cooperative
     game theory, mechanism design, multi-agent RL (conceptual foundations, not
     QMIX/MAPPO/CFR specifics)
-- `msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.txt`
+- `msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.smd`
   - [55%]: Robustness under misspecification (aleatoric/epistemic uncertainty),
     exploration vs. exploitation in a causal-decision frame
-- `msml610/lectures_source/Lesson08.5-Experimentation.txt`
+- `msml610/lectures_source/Lesson08.7-Causal_experiments.smd`
   - [55%]: Policy evaluation and off-policy learning: logged-data learning
     without live interaction
-- `msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.txt`
+- `msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.smd`
   - [35%]: Temporal causal structure, feedback loops/simultaneity, VARs —
     causal-inference methodology, not policy-learning algorithms
-- `msml610/lectures_source/Lesson09.1-Reasoning_over_time.txt`
+- `msml610/lectures_source/Lesson09.1-Reasoning_over_time.smd`
   - [35%]: Markov process/state-transition fundamentals: loosely supports
     temporal abstraction, no hierarchical-RL content
 - Not covered
@@ -998,28 +959,28 @@ msml610/tutorials/L12_reinforcement_learning/L12_02_gridworld_4x3_gymnasium.ipyn
 - N/A
 
 ### Lesson Materials
-- `book.Agentic_AI/lectures_source/Lesson15.1-Causal_Reasoning_Agents.txt`
+- `book.Agentic_AI/lectures_source/Lesson15.1-Causal_Reasoning_Agents.smd`
   - [98%]: LLM causal-reasoning strengths/limits, chain-of-thought
     causal-prompting frameworks, integrating causal DAGs with LLM workflows,
     causal agent architectures, causal MDPs and planning under causal
     uncertainty, transparency/fairness/robustness/safety through causal
     constraints
-- `book.Agentic_AI/lectures_source/Lesson01.05-Reasoning_Memory_and_Planning.txt`
+- `book.Agentic_AI/lectures_source/Lesson05.1-Reasoning_Memory_and_Planning.smd`
   - [60%]: World models for planning: LLM-as-world-model, WebDreamer "simulate
     before you act" (forward-model causal simulation)
-- `book.Agentic_AI/lectures_source/Lesson01.04-LLM_Reasoning.txt`
+- `book.Agentic_AI/lectures_source/Lesson04.1-LLM_Reasoning.smd`
   - [55%]: Chain-of-thought/tree-of-thought variants, self-consistency: general
     reasoning scaffolding, not causal-specific decomposition
-- `book.Agentic_AI/lectures_source/Lesson01.07-Tool_use_and_retrieval.txt`
+- `book.Agentic_AI/lectures_source/Lesson07.1-Tool_use_and_retrieval.smd`
   - [45%]: Tool-use/retrieval architecture, grounding on enterprise knowledge —
     the tool-use half of the topic, no causal-simulation content
-- `book.Agentic_AI/lectures_source/Lesson01.01-What_Is_An_Agentic_AI.txt`
+- `book.Agentic_AI/lectures_source/Lesson01.1-What_Is_An_Agentic_AI.smd`
   - [30%]: Generic perceive-plan-act agent architecture and tool/environment
     taxonomy: background context only
-- `book.Agentic_AI/lectures_source/Lesson01.09_Post_training_and_verifiable_agents.txt`
+- `book.Agentic_AI/lectures_source/Lesson09.1_Post_training_and_verifiable_agents.smd`
   - [25%]: Verification, reward hacking: tangential to trustworthy-agent topic,
     not causal/fairness/performativity specific
-- `book.Agentic_AI/lectures_source/Lesson01.03-History_of_LLM_Agents.txt`
+- `book.Agentic_AI/lectures_source/Lesson03.1-History_of_LLM_Agents.smd`
   - [20%]: ReAct and agent history: background context
 - Not covered
   - [30%]: Online causal-discovery algorithms learning DAGs from live deployment
@@ -1058,22 +1019,22 @@ msml610/tutorials/L12_reinforcement_learning/L12_02_gridworld_4x3_gymnasium.ipyn
 - N/A
 
 ### Lesson Materials
-- `msml610/lectures_source/Lesson08.1-Causal_AI_intro.txt`
+- `msml610/lectures_source/Lesson08.1-Causal_AI_intro.smd`
   - [90%]: Causal AI workflow with hybrid teams, "Roles in Hybrid Teams," Step 4
     (Build Causal DAG), stakeholder alignment in business deployment
-- `msml610/lectures_source/Lesson12.2-Causal_Discovery.txt`
+- `msml610/lectures_source/Lesson12.2-Causal_Discovery.smd`
   - [85%]: Using domain knowledge as constraints, combining discovery with
     expert judgment, validating a discovered DAG
-- `msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.txt`
+- `msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.smd`
   - [88%]: Communicating uncertainty to stakeholders; prior elicitation methods
     and pitfalls (structured elicitation of causal/prior knowledge)
-- `msml610/lectures_source/Lesson08.2-Causal_Networks.txt`
+- `msml610/lectures_source/Lesson08.4-Causal_networks.smd`
   - [75%]: Building a causal DAG, mediator/moderator/confounder types,
     documenting causal assumptions for review
-- `msml610/lectures_source/Lesson07.2-Posterior_Based_Decisions.txt`
+- `msml610/lectures_source/Lesson07.2-Posterior_Based_Decisions.smd`
   - [60%]: Loss-function elicitation, Region of Practical Equivalence: framing
     acceptable error/cost trade-offs for stakeholder sign-off
-- `msml610/lectures_source/Lesson08.4.txt`
+- `msml610/lectures_source/Lesson08.4-Causal_networks.smd`
   - [45%]: Causal DAG structures (chains, forks, colliders, d-separation),
     confounding bias, backdoor adjustment: supports DAG
     visualization/communication only
@@ -1108,29 +1069,29 @@ msml610/tutorials/L12_reinforcement_learning/L12_02_gridworld_4x3_gymnasium.ipyn
   - System reliability, documentation, and management of legacy components
 
 ### Slides
-- `book_springer/lectures_source/Lesson15.1_Deployment_Monitoring_And_Adaptation.txt`
+- `book_springer/lectures_source/Lesson15.1_Deployment_Monitoring_And_Adaptation.smd`
 
 ### Lesson Materials
-- `book_springer/lectures_source/Lesson15.1_Deployment_Monitoring_And_Adaptation.txt`
+- `book_springer/lectures_source/Lesson15.1_Deployment_Monitoring_And_Adaptation.smd`
   - [98%]: Notebook-to-production gap, serving patterns, phased rollout
     (shadow/canary/ramp), guardrail metrics, assumption-monitoring taxonomy
     (directly/indirectly testable/domain-assessed), sensitivity analysis and
     E-values, negative controls, versioning, error budgets, rollback, feedback
     loops, performativity, technical debt
-- `msml610/lectures_source/Lesson08.5-Experimentation.txt`
+- `msml610/lectures_source/Lesson08.7-Causal_experiments.smd`
   - [85%]: A/B test design, power analysis, SRM, novelty/primacy effects,
     multi-armed bandits, experiment-vs-observe decision framework, off-policy
     evaluation
-- `msml610/lectures_source/Lesson12.1-Reinforcement_learning.txt`
+- `msml610/lectures_source/Lesson12.1-Reinforcement_learning.smd`
   - [75%]: Policy iteration, model-based/model-free RL, active/passive RL,
     off-policy deconfounding, causal generalization across environments
-- `msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.txt`
+- `msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.smd`
   - [65%]: Non-stationarity/trend detection, feedback loops and simultaneity,
     time-varying unobserved confounders
-- `msml610/lectures_source/Lesson08.4.txt`
+- `msml610/lectures_source/Lesson08.9-Effect_heterogeneity_and_Metalearners.smd`
   - [65%]: CATE, effect heterogeneity, cumulative-gain curves: basis for
     heterogeneous deployment and stratified rollout targeting
-- `data605/lectures_source/Lesson02.3-Data_Pipelines.txt`
+- `data605/lectures_source/Lesson02.3-Data_Pipelines.smd`
   - [55%]: ETL/ELT paradigms, workflow orchestration, data ingestion —
     production pipeline infrastructure
 - Not covered
@@ -1165,25 +1126,25 @@ msml610/tutorials/L12_reinforcement_learning/L12_02_gridworld_4x3_gymnasium.ipyn
 - N/A
 
 ### Lesson Materials
-- `msml610/lectures_source/Lesson13.1-Explainability.txt`
+- `msml610/lectures_source/Lesson13.1-Explainability.smd`
   - [95%]: Causal vs statistical explainability, SHAP, LIME, counterfactual
     explanations, faithfulness/stability of explanations
-- `book.Agentic_AI/lectures_source/Lesson15.1-Causal_Reasoning_Agents.txt`
+- `book.Agentic_AI/lectures_source/Lesson15.1-Causal_Reasoning_Agents.smd`
   - [90%]: Counterfactual fairness, path-specific effects, causal definitions of
     fairness/discrimination, causal constraints for fair models,
     safety-through-causal-constraints (guardrails, harmful-outcome prevention),
     transparency for trustworthy autonomy, human-in-the-loop override, causal
     monitoring/adaptation
-- `msml610/lectures_source/Lesson08.2-Causal_Networks.txt`
+- `msml610/lectures_source/Lesson08.4-Causal_networks.smd`
   - [85%]: Causal mechanisms, mediation analysis, direct vs indirect effects —
     foundation for path-specific fairness reasoning
-- `msml610/lectures_source/Lesson08.1-Causal_AI_intro.txt`
+- `msml610/lectures_source/Lesson08.1-Causal_AI_intro.smd`
   - [70%]: Interpretability/explainability techniques, causal AI for trustworthy
     and transparent systems
-- `book.Agentic_AI/lectures_source/Lesson01.01-What_Is_An_Agentic_AI.txt`
+- `book.Agentic_AI/lectures_source/Lesson01.1-What_Is_An_Agentic_AI.smd`
   - [55%]: Human-in-the-loop vs full autonomy trade-offs, audit and
     accountability, error-catching before real-world consequences
-- `msml610/lectures_source/Lesson08.4.txt`
+- `msml610/lectures_source/Lesson08.9-Effect_heterogeneity_and_Metalearners.smd`
   - [35%]: Effect heterogeneity (CATE) across subgroups: relevant to detecting
     disparate treatment effects, though it defines no fairness metrics
 - Not covered

@@ -10,7 +10,7 @@ import class_scripts.test.test_gen_slides_validation as cstestgsval
 
 import logging
 
-import class_scripts.gen_slides_test_utils as csgsteut
+import class_scripts.common_utils as csccouti
 import helpers.hunit_test as hunitest
 
 _LOG = logging.getLogger(__name__)
@@ -33,7 +33,7 @@ class Test_gen_slides_batch_validation(hunitest.TestCase):
         # Prepare inputs.
         expected_courses = ["msml610", "data605"]
         # Run test.
-        all_lessons = csgsteut.collect_all_lessons()
+        all_lessons = csccouti.collect_all_lessons()
         # Check outputs.
         for course in expected_courses:
             self.assertIn(course, all_lessons)
@@ -47,7 +47,7 @@ class Test_gen_slides_batch_validation(hunitest.TestCase):
         course_dir = "msml610"
         min_expected_lessons = 35
         # Run test.
-        all_lessons = csgsteut.collect_all_lessons()
+        all_lessons = csccouti.collect_all_lessons()
         lesson_count = len(all_lessons[course_dir])
         # Check outputs.
         self.assertGreaterEqual(
@@ -66,7 +66,7 @@ class Test_gen_slides_batch_validation(hunitest.TestCase):
         course_dir = "data605"
         min_expected_lessons = 35
         # Run test.
-        all_lessons = csgsteut.collect_all_lessons()
+        all_lessons = csccouti.collect_all_lessons()
         lesson_count = len(all_lessons[course_dir])
         # Check outputs.
         self.assertGreaterEqual(
@@ -87,11 +87,13 @@ class Test_gen_slides_batch_validation(hunitest.TestCase):
         valid_lesson_pattern = r"^\d+(\.[0-9A-Za-z]+)?$"
         error_msg_template = "Invalid lesson format '{lesson}' in {course}"
         # Run test.
-        all_lessons = csgsteut.collect_all_lessons()
+        all_lessons = csccouti.collect_all_lessons()
         # Check outputs.
         for course_dir, lessons in all_lessons.items():
             for lesson in lessons:
-                error_msg = error_msg_template.format(lesson=lesson, course=course_dir)
+                error_msg = error_msg_template.format(
+                    lesson=lesson, course=course_dir
+                )
                 self.assertRegex(
                     lesson,
                     valid_lesson_pattern,

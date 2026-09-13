@@ -1,0 +1,873 @@
+// type=UMD_slides
+// course_title=MSML610: Advanced Machine Learning
+// lesson_title=L09.9: Monte Carlo Tree Search
+// slides_engine=typst
+// references=
+// - 2006, Coulom, "Efficient Selectivity and Backup Operators in Monte-Carlo
+//   Tree Search"
+// - 2006, Kocsis & Szepesvari, "Bandit Based Monte-Carlo Planning"
+// - 2007, Coquelin & Munos, "Bandit Algorithms for Tree Search"
+// - 2012, Browne et al., "A Survey of Monte Carlo Tree Search Methods"
+// - 2016, Silver et al., "Mastering the Game of Go with Deep Neural Networks
+//   and Tree Search"
+// - AIMA Chap 5: Adversarial search and games
+
+# Introduction
+
+* Deciding by Simulating
+
+- @Motivation@: Sequential decisions are complex
+  - Many decisions are **sequential**, so the choice made now changes which choices
+    exist later
+  - The set of possible futures grows **multiplicatively** with the horizon
+  - Only the **end** of a future can be scored reliably
+
+- @Problem@:
+  - Enumerating every future is impossible beyond a few steps
+  - Scoring an unfinished future needs domain knowledge that often does not exist
+
+- @Question@: can an agent make good decisions by **sampling** a few complete futures
+  **instead of enumerating** all of them?
+
+* Why Search Trees Explode
+
+- @Definition@: in a search tree
+  - The **branching factor** $b$ is the number of legal actions per state
+  - The **depth** $d$ is the number of steps to a terminal state
+  - The terminal nodes grow as $O(b^d)$
+
+```{=typst}
+#styled-table(
+  headers: ([Domain], [Branching $b$], [Depth $d$], [Tree size]),
+  rows: (
+    ([Tic-tac-toe], [$approx 5$], [$9$], [$10^5$]),
+    ([Chess], [$approx 35$], [$approx 80$], [$10^123$]),
+    ([Go, 19x19 board], [$approx 250$], [$approx 150$], [$10^360$]),
+    ([Robot task planning], [$10^2 - 10^4$], [$10 - 100$], [intractable]),
+  ),
+  col-widths: (1.8fr, 1fr, 1fr, 1fr),
+  bold-first-col: true
+)
+```
+
+- @Remark@:
+  - The growth is in the _exponent_, so faster hardware (even 1000x more compute)
+    buys almost nothing
+  - There are around $10^80$ atoms in the visible universe
+
+* Minimax and Alpha-Beta
+// TODO(ai_gp): Turn this into a recap of game-tree search + problem of evaluation
+// function
+
+- @Remark@: exhaustive game-tree search (**minimax**, **alpha-beta pruning**,
+  and depth-limited search with a heuristic evaluation) is covered in detail
+  in Lesson 09.8
+  - Even alpha-beta's best case, $O(b^{d/2})$, stays exponential in $d$
+  - Depth-limiting past that point still needs a hand-built evaluation
+    function at every cut node
+
+* The Evaluation Function Bottleneck
+// TODO(ai_gp): Move to Lesson09.8
+
+- @Problem@: **evaluation function** of a state is a heuristic estimate of the
+  "quality" of a state
+
+- @Example@
+  - A chess evaluation combines material, mobility, pawn structure, and king safety
+  - These features are local, cheap, and strongly correlated with the outcome
+
+- @Counterexample@: Go has no comparable features
+  - The value of a stone depends on a global configuration that resolves
+    hundreds of moves later
+  - Local patterns do not aggregate into a reliable score
+
+- @Fact@: Before 2006:
+  - Chess programs already beat world champions
+  - The strongest Go programs played at weak amateur level
+
+- @Example@: an A* path-planning heuristic uses Euclidean distance to the goal
+  - Local, cheap, and strongly correlated with the true remaining cost
+
+- @Counterexample@: protein's folding stability depends on a global 3D configuration
+  that only resolves once folding completes
+  - Local sequence patterns do not aggregate into a reliable score
+
+* Flat Monte Carlo
+
+- @Definition@: **flat Monte Carlo** scores each legal action by _simulation_ instead
+  of by _heuristic_
+  - For each action $a$ at the current state $s_0$
+    - Run $N$ random playouts to a terminal state
+    - Estimate $\hat{Q}(s_0, a)$ as the mean terminal outcome
+    - Play $\argmax_a \hat{Q}(s_0, a)$
+
+- @Pros@
+  - Needs only the rules and a random simulator, not an evaluation function
+  - The terminal outcome is exact, so bias enters only through the playout policy
+  - Trivially parallel
+
+- @Intuition@: an unfinished position is scored by _how often_ it ends well, not by
+  what it looks like
+
+* Why Flat Monte Carlo Is Not Enough
+
+- @Cons@
+  - The simulation budget is _spread uniformly_, so most playouts are spent on actions
+    already known to be bad
+  - Nothing observed _inside_ a playout is stored, so the same mistakes are simulated
+    again
+  - After the first move both sides play randomly, so forced replies (i.e. the move a
+    rational opponent is forced to play because every other move loses) stay
+    invisible
+
+- @Example@
+  - You are evaluating a candidate move $a$, and you need to know how the opponent
+    would respond
+  - If a position $a$ has 20 legal replies and only 1 of them punishes $a$, a
+    uniform random policy picks that punishing reply about $1/20$ of the time
+  - The other $19/20$ of playouts pick a harmless reply and $a$ looks like a
+    winning move
+
+- @Example@: a move that wins against random continuations but loses to the
+  single best reply keeps a high sample mean forever
+  - Averaging over random play hides the best game-theoretic move, which cares about
+    the min over replies
+
+- @Key idea@: no amount of additional simulation will solve this problem
+  - You need to "simulate smarter" not "simulate more"
+
+* Monte Carlo Tree Search
+
+- @Definition@: **Monte Carlo Tree Search (MCTS)** grows a search tree
+  incrementally, using the statistics of the simulations already run to decide
+  where the next simulation starts (Coulom, 2006)
+
+- @Components@
+  - _Tree_: a partial, asymmetric subset of the state space held in memory
+  - _Statistics_: a visit count $N(s, a)$ and a mean value $Q(s, a)$ per edge
+  - _Tree policy_: selects actions inside the tree using those statistics
+  - _Default policy_: plays out cheaply beyond the tree to a terminal state
+
+- @Key idea@: simulation results are not only averaged, they reshape the tree
+  - The tree deepens along promising lines and stays shallow elsewhere
+
+// TODO(ai_gp): Example (maybe tic-tac-toe)
+
+# The Four Phases of MCTS
+
+* The MCTS Loop
+
+- @Algorithm@: repeat until the budget (number of simulations, or time) is spent
+  1. **Selection**: from the root, follow the tree policy down to a leaf
+     - Leaf = a node with an untried action (i.e., not yet fully expanded)
+     - Tree policy trades off _exploit_ (best $Q$) vs _explore_ (uncertain $Q$)
+  2. **Expansion**: add one child of that leaf to the tree
+     - Exactly one new node per iteration, so the tree grows incrementally
+  3. **Simulation**: play out to a terminal state with the default policy
+     - Default policy is cheap (e.g., random moves), unlike the tree policy
+     - Produces one outcome $z$; the rollout itself is discarded after use
+  4. **Backpropagation**: update $N$ and $Q$ along the path just traversed
+     - Increment $N(s, a)$ and update the mean $Q(s, a)$ at every edge on the path
+     - Outcome $z$ flows from the leaf back up to the root
+
+```graphviz
+digraph MCTSLoop {
+    bgcolor  = "transparent";
+    pad      = "0.15";
+    rankdir  = LR;
+    splines  = spline;
+    nodesep  = 0.35;
+    ranksep  = 0.55;
+    node [shape=box, style="rounded,filled", penwidth=1.8,
+          fontname="Helvetica", fontsize=13, margin="0.20,0.12",
+          height=0.50];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=12, fontcolor="#7B8794"];
+
+    // ML/RL palette: policy=red, state=green, action=orange, value=purple
+    Select   [label=<<b>1. Selection</b><br/>Tree policy (UCT)>,
+              fillcolor="#FFD4D4", color="#B23A48", fontcolor="#6B1F1F"];
+    Expand   [label=<<b>2. Expansion</b><br/>Add one node>,
+              fillcolor="#A9DDB0", color="#4F9A5C", fontcolor="#1F4E2E"];
+    Simulate [label=<<b>3. Simulation</b><br/>Rollout to end>,
+              fillcolor="#FFC98A", color="#D98E2B", fontcolor="#6B4517"];
+    Backup   [label=<<b>4. Backpropagation</b><br/>Update N and Q>,
+              fillcolor="#E8D9F7", color="#9B7DB1", fontcolor="#4A2E5C"];
+
+    Select   -> Expand   [label="  Leaf reached  "];
+    Expand   -> Simulate [label="  New child  "];
+    Simulate -> Backup   [label="  Outcome z  "];
+    Backup   -> Select   [label="  Budget left  ", constraint=false,
+                          style=dashed];
+}
+```
+
+- @Remark@: only phases 1 and 4 touch the stored tree
+  - Phase 3 is throw-away work, which is why it must be cheap
+
+* One Iteration on a Concrete Tree
+
+- @Example@: one pass of the loop on a tree that already has some visits
+
+```graphviz
+digraph MCTSIterationExample {
+    bgcolor  = "transparent";
+    pad      = "0.15";
+    rankdir  = TB;
+    splines  = spline;
+    nodesep  = 0.45;
+    ranksep  = 0.55;
+    node [shape=box, style="rounded,filled", penwidth=1.6,
+          fontname="Helvetica", fontsize=11, margin="0.16,0.10",
+          height=0.42, fillcolor="#FFFFFF", color="#9AA9B8",
+          fontcolor="#243B53"];
+    edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.7,
+          fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
+
+    // red = selection path (also updated by backprop), green = new node
+    // (expansion), orange = rollout (simulation, discarded after use)
+    Root [label="root\nN: 40 -> 41"];
+    A    [label="A\nN=25"];
+    B    [label="B\nN: 12 -> 13", color="#B23A48", penwidth=2.2];
+    C    [label="C\nN=3"];
+    B1   [label="B1\nN=7"];
+    B2   [label="B2\nN: 5 -> 6", color="#B23A48", penwidth=2.2];
+    New  [label="new child\nN: 0 -> 1", fillcolor="#A9DDB0", color="#4F9A5C",
+          fontcolor="#1F4E2E"];
+    Rollout [label="rollout to terminal\n(discarded)", shape=note,
+             fillcolor="#FFC98A", color="#D98E2B", fontcolor="#6B4517"];
+
+    Root -> A;
+    Root -> B [color="#B23A48", penwidth=2.2, label="  1. Select  ",
+               fontcolor="#B23A48"];
+    Root -> C;
+    B -> B1;
+    B -> B2 [color="#B23A48", penwidth=2.2];
+    B2 -> New [color="#4F9A5C", penwidth=1.8, label="  2. Expand  ",
+               fontcolor="#1F4E2E"];
+    New -> Rollout [color="#D98E2B", penwidth=1.3, style=dotted,
+                    label="  3. Simulate  ", fontcolor="#6B4517"];
+}
+```
+
+- @Remark@: backpropagation (phase 4) increments $N$ at every red node on the
+  path, root, B, and B2, and updates $Q$ the same way
+  - Phase 3 (the rollout) never touches the stored tree, only the path does
+
+* Phase 1: Selection
+
+- @Goal@: walk from the root down to a node that is not yet fully expanded,
+  deciding at each step which child to descend into
+
+- @Problem@: the choice trades off two conflicting goals
+  - **Exploit**: descend into the child with the best current mean $Q(s, a)$
+  - **Explore**: descend into a child whose mean is still poorly estimated
+
+- @Naive Solution@: always take node with the best mean
+  - Cons: a child that was unlucky in its first playouts is never revisited,
+    so the search locks onto the wrong line
+
+- @Solution@: treat the node as a bandit and descend into the child with the
+  highest optimistic index
+
+* UCT: Upper Confidence Bounds for Trees
+
+- @Definition@: **UCT** applies an optimistic bandit index at every node of
+  the tree (Kocsis and Szepesvari, 2006)
+  $$
+  a^*
+    = \argmax_{a \in A(s)}
+        \left[
+          \underbrace{Q(s, a)}_{\text{exploitation}}
+          + c \underbrace{\sqrt{\frac{\ln N(s)}{N(s, a)}}}_{\text{exploration}}
+        \right]
+  $$
+  where
+  - $Q(s, a) \in [0, 1]$ is the mean outcome of playouts through edge
+    $(s, a)$
+  - $N(s)$ is the number of visits to $s$
+  - $N(s, a)$ is the number of visits to the edge $(s, a)$
+  - $c > 0$ is the exploration constant
+
+- @Remark@: a child with $N(s, a) = 0$ has an infinite index, so every action
+  is tried once before any is repeated
+
+- @Intuition@: the bonus shrinks as an edge is sampled and grows for edges the
+  search has been ignoring
+
+* The Exploration Constant
+
+- @Problem@: $c$ controls how wide the search spreads, and no single value
+  works everywhere
+
+- @Properties@
+  - $c \to 0$: greedy descent, deep and narrow tree, may miss the best action
+  - $c$ large: near-uniform descent, the tree stays shallow
+  - Theory suggests $c = \sqrt{2}$ for rewards in $[0, 1]$
+
+- @Limitations@: the theoretical value assumes stationary rewards, which does
+  not hold inside a tree
+  - Tuned values are domain-specific and often well below $\sqrt{2}$
+
+- @Techniques@: reduce the sensitivity to $c$
+  - Normalize $Q$ to the value range observed at each node
+  - Replace the plain bonus with a learned prior over actions
+
+* Phase 2: Expansion
+
+- @Goal@: grow the tree by one node, so memory is spent only where the search
+  actually goes
+
+- @Variants@
+  - _One node per iteration_: the standard choice, cheapest and most common
+  - _Full expansion_: add all children of the leaf at once, viable only for a
+    small branching factor
+  - _Progressive widening_: reveal the $k$-th child only once
+    $N(s) \ge \alpha k^{\beta}$, needed when $b$ is huge or continuous
+
+- @Remark@: expansion is skipped when the leaf is terminal
+  - The exact terminal value is backed up instead of a simulated one
+
+- @Key idea@: the tree stores what is worth remembering, and the rollout
+  throws the rest away
+
+* Phase 3: Simulation
+
+- @Goal@: obtain one cheap sample of the outcome that follows the new node
+
+- @Definition@: the **default policy**, also called the **rollout policy**,
+  plays from the new node to a terminal state and returns the terminal
+  outcome $z$
+  - Nothing visited during the rollout is added to the tree
+
+- @Properties@: what makes a good rollout
+  - _Fast_: the rollout cost multiplies the whole budget
+  - _Unbiased enough_: systematic errors do not average away
+  - _Diverse_: a deterministic rollout collapses the estimate onto one
+    trajectory
+
+- @Remark@: rollout quality and rollout speed trade off directly
+  - A stronger policy gives better samples, but fewer of them
+
+* Rollout Policies
+
+- @Variants@
+  - _Uniform random_: no knowledge at all, surprisingly effective in Go
+  - _Heuristic_: hand-written patterns, capture rules, move filters
+  - _Learned_: a small policy network trained to imitate strong play
+  - _Truncated_: stop after $k$ steps and score the state with a learned value
+    function
+
+- @Counterexample@: a stronger rollout policy can make the search _weaker_
+  - A deterministic strong policy makes every rollout from a node identical,
+    so extra playouts carry no new information
+
+- @Key idea@: rollouts exist to estimate a value, not to play well
+
+* Phase 4: Backpropagation
+
+- @Goal@: push the outcome $z$ back along the path from the new node to the
+  root
+
+- @Algorithm@: for every edge $(s, a)$ on that path
+  $$
+  N(s, a) \leftarrow N(s, a) + 1,
+  \quad
+  Q(s, a) \leftarrow Q(s, a) + \frac{z - Q(s, a)}{N(s, a)}
+  $$
+  - This is the incremental form of the running mean
+
+- @Properties@
+  - Only the visited path is touched, so an update costs $O(d)$ with $d$ the
+    path length
+  - Statistics never expire, so early noisy playouts keep some weight forever
+
+- @Variants@: **max backup** stores the best child value instead of the mean
+  - Sharper near the end of a search, but the variance early on is much higher
+
+* Backpropagation in Two-Player Games
+
+- @Problem@: a single outcome $z$ means opposite things to the two players
+
+- @Solution@: store values from the point of view of the player to move, and
+  flip the sign at each level
+  $$z_{parent} = - z_{child}$$
+  - Equivalent to minimax run on averaged, rather than exact, values
+
+- @Example@: with $z \in \{-1, 0, +1\}$ for loss, draw, and win
+  - A win for Black backs up as $+1$ at Black's nodes and $-1$ at White's
+
+- @Remark@: single-agent planning uses no sign flip, and $z$ is the cumulative
+  reward of the trajectory
+
+* UCT: Worked Example
+
+::: columns
+:::: {.column width=50%}
+- @Example@: at the root $N(s) = 10$, $\ln N(s) = 2.30$, and $c = 1.4$
+
+```{=typst}
+#styled-table(
+  headers: ([Child], [$N(s,a)$], [$Q(s,a)$], [Bonus], [UCT index]),
+  rows: (
+    ([A], [5], [0.60], [0.95], [1.55]),
+    ([B], [3], [0.67], [1.23], [1.90]),
+    ([C], [2], [0.50], [1.50], [$bold(2.00)$]),
+  ),
+  caption: "One selection step at the root",
+  col-widths: (1fr, 1fr, 1fr, 1fr, 1fr),
+  bold-first-col: true
+)
+```
+
+- @Interpretation@: C is selected although it has the _worst_ mean
+  - Its bonus $1.4 \sqrt{2.30 / 2} = 1.50$ outweighs the $0.17$ deficit in
+    mean value
+
+- @Remark@: after a few more visits to C the bonus shrinks and B takes over,
+  unless C's playouts justify the attention
+:::: {.column width=45%}
+
+```graphviz
+digraph UCTChoice {
+    bgcolor  = "transparent";
+    rankdir  = TB;
+    splines  = spline;
+    nodesep  = 0.5;
+    ranksep  = 0.5;
+    pad      = 0.2;
+    node [shape=box, style="rounded,filled", fontname="Helvetica",
+          fontsize=11, penwidth=1.6, margin="0.16,0.10", height=0.42,
+          fillcolor="#FFFFFF", color="#9AA9B8", fontcolor="#243B53"];
+    edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.7,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    Root [label="root\nN=10"];
+    A    [label="A\nUCT=1.55"];
+    B    [label="B\nUCT=1.90"];
+    C    [label="C\nUCT=2.00", fillcolor="#FFD4D4", color="#B23A48",
+          fontcolor="#6B1F1F", penwidth=2.4];
+
+    Root -> A;
+    Root -> B;
+    Root -> C [color="#B23A48", penwidth=2.4, label="  Selected  ",
+               fontcolor="#B23A48"];
+    { rank=same; A; B; C; }
+}
+```
+::::
+:::
+
+* The Tree Grows Asymmetrically
+
+::: columns
+:::: {.column width=45%}
+- @Properties@: after many iterations the tree is far from uniform
+  - The principal variation is deep and narrow
+  - Refuted lines keep one or two visits and are never expanded again
+  - The visit counts at the root become the real output of the search
+
+- @Key idea@: the shape of the tree _is_ the allocation of the budget
+::::
+:::: {.column width=55%}
+
+```graphviz
+digraph MCTSAsym {
+    bgcolor  = "white";
+    rankdir  = TB;
+    splines  = spline;
+    nodesep  = 0.25;
+    ranksep  = 0.40;
+    pad      = 0.30;
+    node [shape=box, style="rounded,filled", fontname="Helvetica",
+          fontsize=11, penwidth=1.2, margin="0.14,0.08", height=0.40,
+          color="#7B8794"];
+    edge [color="#9AA5B1", penwidth=1.1, arrowsize=0.65];
+
+    root [label="root\nN=100", fillcolor="#F4A6A6"];
+    A    [label="A\nN=78",     fillcolor="#B2E2B2"];
+    B    [label="B\nN=15",     fillcolor="#A6C8F4"];
+    C    [label="C\nN=7",      fillcolor="#A6C8F4"];
+    A1   [label="A1\nN=61",    fillcolor="#B2E2B2"];
+    A2   [label="A2\nN=16",    fillcolor="#A6C8F4"];
+    A11  [label="A11\nN=47",   fillcolor="#B2E2B2"];
+    A12  [label="A12\nN=13",   fillcolor="#A6C8F4"];
+    A111 [label="A111\nN=39",  fillcolor="#B2E2B2"];
+
+    root -> A; root -> B; root -> C;
+    A -> A1; A -> A2;
+    A1 -> A11; A1 -> A12;
+    A11 -> A111;
+}
+```
+::::
+:::
+
+* Choosing the Final Action
+
+- @Problem@: the UCT index is a _search_ rule, not a _decision_ rule, so it
+  must not be used to pick the action that is actually played
+
+- @Variants@
+  - _Max child_: highest $Q(s_0, a)$, sensitive to a lucky low-visit child
+  - _Robust child_: highest $N(s_0, a)$, the standard choice
+  - _Max-robust child_: highest in both, and search longer when they disagree
+  - _Secure child_: highest lower confidence bound on the value
+
+- @Intuition@: a high visit count is itself evidence
+  - UCT keeps returning only to a child that survives repeated scrutiny
+
+- @Remark@: reporting the whole visit distribution, not just its $\argmax$,
+  gives a usable policy target for training
+
+* Anytime Behavior and Budget
+
+- @Properties@: MCTS is **anytime**
+  - A legal action is available after the first iteration
+  - Expected quality improves monotonically with more iterations
+  - The budget can be wall-clock time, simulator calls, or memory
+
+- @Pros@: the same code covers a 10 ms decision and a 10 s decision
+  - Alpha-beta needs iterative deepening to imitate this
+
+- @Cons@: the marginal value of a playout falls off quickly
+  - Once the tree commits to a line, extra playouts mostly confirm it
+
+- @Techniques@: MCTS parallelizes at three levels
+  - _Leaf_, _root_, and _tree_ parallelism, with a **virtual loss** that stops
+    parallel threads from piling onto the same child
+
+* Convergence of UCT
+
+- @Theorem@: on a finite-depth tree with bounded rewards, the root value
+  estimated by UCT converges to the minimax value, and the probability of
+  choosing a suboptimal root action decays to zero (Kocsis and Szepesvari,
+  2006)
+
+- @Intuition@: the logarithmic bonus makes every child be revisited infinitely
+  often, so no subtree is abandoned permanently
+
+- @Limitations@: the guarantee is asymptotic and the rate can be terrible
+  - On adversarial tree shapes the playouts needed to find the optimal action
+    can grow doubly exponentially in the depth (Coquelin and Munos, 2007)
+  - The proof assumes per-node reward sequences concentrate, which drifting
+    subtree estimates satisfy only approximately
+
+- @Key idea@: convergence justifies the algorithm, it does not explain its
+  practical strength
+
+# Enhancements and Applications
+
+* Practical Enhancements
+
+- @Problem@: plain UCT wastes playouts because every edge is estimated in
+  isolation
+
+- @Techniques@
+  - _AMAF and RAVE_: share statistics across a move wherever it appears in a
+    playout, then decay the shared estimate as real visits accumulate
+  - _Transposition tables_: merge nodes that reach the same state by different
+    move orders, turning the tree into a graph
+  - _Progressive bias_: add a decaying heuristic term to the UCT index
+  - _Move pruning_: filter dominated actions before expansion
+  - _Tree reuse_: keep the subtree under the played action as the next root
+
+- @Remark@: these are variance-reduction devices
+  - They speed up convergence, they do not change what UCT converges to
+
+* Learned Priors and Values
+
+- @Problem@: random rollouts are a weak value estimator, and a uniform prior
+  over children wastes the early budget
+
+- @Solution@: replace both with learned functions (Silver et al., 2016)
+  - A **policy network** $p(a | s)$ supplies a prior over children
+  - A **value network** $v(s)$ replaces, or is blended with, the rollout
+    outcome
+
+- @Definition@: the **PUCT** rule weights the exploration term by the prior
+  $$
+  a^*
+    = \argmax_{a \in A(s)}
+        \left[
+          Q(s, a)
+          + c \, p(a | s) \frac{\sqrt{N(s)}}{1 + N(s, a)}
+        \right]
+  $$
+
+- @Key idea@: search and learning reinforce each other
+  - Search improves on the raw policy, and the improved visit distribution
+    becomes the training target for the next policy
+
+* MCTS Beyond Board Games
+
+- @Applications@
+  - _Planning and scheduling_: vehicle routing and production planning, where
+    a simulator exists but no closed-form model does
+  - _Sequential design_: program synthesis and molecule construction, scored
+    only at the end
+  - _Real-time control_: model-predictive control over sampled action
+    sequences
+  - _Language model reasoning_: expand partial reasoning chains as tree nodes
+    and score them with a verifier or a reward model
+
+- @Assumptions@: the transfer works when three conditions hold
+  - The decision is sequential and discrete
+  - A cheap simulator is available
+  - A terminal score can be computed or approximated
+
+- @Cons@: outside games the terminal score is usually the hard part
+  - A wrong scoring function is optimized against with full efficiency
+
+# Where MCTS Fits Among Search Paradigms
+
+* A Map of Search Paradigms
+
+::: columns
+:::: {.column width=40%}
+- @Comparison@: three axes separate these families of search algorithms
+  - **Complete vs sampled**: does the method touch every successor?
+  - **Flat vs structured**: are the samples organized into a tree?
+  - **Local vs global**: is a value produced for the current state only, or for
+    all states?
+::::
+:::: {.column width=60%}
+
+```graphviz
+digraph deciding_by_search {
+  graph [rankdir=LR, splines=curved, bgcolor="white",
+         ranksep="1.1 equally", nodesep=0.26, pad=0.4, fontname="Helvetica"];
+  node  [shape=box, style="filled,rounded", fontname="Helvetica", fontsize=15,
+         fontcolor="#26215C", color="#D8D6EE", penwidth=1.2,
+         height=0.52, margin="0.24,0.10"];
+  edge  [arrowhead=none, penwidth=1.6, color="#B9B6D6"];
+
+  root [label="Deciding by search", shape=box, style="filled,rounded",
+        fillcolor="#26215C", fontcolor="white", fontsize=20, penwidth=0,
+        margin="0.34,0.20"];
+
+  // ── Exhaustive · violet ────────────────────────────────────────────────
+  exhaustive [label="Exhaustive", fillcolor="white", color="#7C74D6", penwidth=1.8, fontsize=17];
+  minimax    [label="Minimax",              fillcolor="#EFEDFC", color="#CBC7F0"];
+  alphabeta  [label="Alpha–beta pruning",   fillcolor="#EFEDFC", color="#CBC7F0"];
+  astar      [label="A* search",            fillcolor="#EFEDFC", color="#CBC7F0"];
+
+  // ── Sampling, no tree · blue ───────────────────────────────────────────
+  flat       [label="Sampling, no tree", fillcolor="white", color="#3E86C8", penwidth=1.8, fontsize=17];
+  flatmc     [label="Flat Monte Carlo",  fillcolor="#E8F1FB", color="#BFD8F1"];
+  shooting   [label="Random shooting",   fillcolor="#E8F1FB", color="#BFD8F1"];
+
+  // ── Sampling with a tree · green ───────────────────────────────────────
+  tree       [label="Sampling with a tree", fillcolor="white", color="#2F9678", penwidth=1.8, fontsize=17];
+  mcts       [label="MCTS", fillcolor="#E5F4EE", color="#BCE0D2"];
+  uct        [label="UCT",  fillcolor="#E5F4EE", color="#BCE0D2"];
+  puct       [label="PUCT", fillcolor="#E5F4EE", color="#BCE0D2"];
+
+  // ── Model-based DP · amber ─────────────────────────────────────────────
+  dp         [label="Model-based DP",  fillcolor="white", color="#C07A45", penwidth=1.8, fontsize=17];
+  valueit    [label="Value iteration",  fillcolor="#FBEEE2", color="#EBD3B9"];
+  policyit   [label="Policy iteration", fillcolor="#FBEEE2", color="#EBD3B9"];
+
+  root -> exhaustive [color="#7C74D6", penwidth=2.4];
+  root -> flat       [color="#3E86C8", penwidth=2.4];
+  root -> tree       [color="#2F9678", penwidth=2.4];
+  root -> dp         [color="#C07A45", penwidth=2.4];
+
+  exhaustive -> {minimax alphabeta astar}  [color="#A9A3E6"];
+  flat       -> {flatmc shooting}          [color="#8FB6DE"];
+  tree       -> {mcts uct puct}            [color="#89C0AC"];
+  dp         -> {valueit policyit}         [color="#DCAE86"];
+
+  { rank=same; minimax; alphabeta; astar; flatmc; shooting; mcts; uct; puct; valueit; policyit; }
+}
+```
+
+::::
+:::
+
+* MCTS vs Exhaustive Search
+
+```{=typst}
+#styled-table(
+  headers: ([Aspect], [Alpha-beta], [MCTS]),
+  rows: (
+    ([Node coverage], [Uniform to a fixed depth],
+     [Asymmetric, deeper on promising lines]),
+    ([Nonterminal value], [Hand-built evaluation function],
+     [Mean of simulated outcomes]),
+    ([Backup rule], [Min and max], [Average, or max in variants]),
+    ([Stopping], [Depth-limited, all or nothing], [Anytime, any budget]),
+    ([Domain knowledge], [Required], [Optional]),
+    ([Guarantee], [Exact on a fully searched tree],
+     [Optimal in the limit of infinite playouts]),
+  ),
+  col-widths: (1fr, 1.3fr, 1.3fr),
+  bold-first-col: true
+)
+```
+
+- @Key idea@:
+  - Alpha-beta spends knowledge to avoid search
+  - MCTS spends search to avoid knowledge
+
+* MCTS vs Pure Monte Carlo Simulation
+
+- @Comparison@: both draw random playouts, but they differ in what they keep
+  - _Flat Monte Carlo_: one statistic per root action, playouts independent
+  - _MCTS_: one statistic per visited node, playouts steered by earlier ones
+
+- @Properties@: what the tree buys
+  - _Adaptive allocation_: sampling concentrates on the near-optimal actions
+  - _Opponent modeling_: inside the tree both sides pick strong replies, so
+    refutations surface
+  - _Reuse_: the subtree under the played action seeds the next search
+
+- @Remark@:
+  - _Flat Monte Carlo_ is exactly MCTS with a tree of depth one
+  - _MCTS_ is a strict generalization, not a different family
+
+* MCTS vs Dynamic Programming
+
+- @Comparison@
+  - _Value iteration_: sweeps the whole state space, needs the transition
+    model in closed form, returns a policy for _every_ state
+  - _MCTS_: samples trajectories from the current state, needs only a
+    simulator, returns an action for _one_ state
+
+- @Definition@: MCTS is **decision-time planning**, so the computation happens
+  when the action is needed and is discarded afterwards
+
+- @Pros@: the cost is independent of the size of the state space
+  - It scales with the _budget_, not with $|\mathcal{S}|$
+
+- @Cons@: nothing generalizes across states unless the statistics are stored
+  in a learned function
+
+* Every Node Is a Bandit Problem
+
+- @Intuition@: at a node $s$, picking which child to descend into is a choice
+  among arms
+  - Arm = action $a$
+  - Reward = outcome of the playout that follows
+
+- @Comparison@: a tree node differs from a standalone bandit
+  - _Nonstationary_: a child's mean drifts as its own subtree is refined
+  - _Recursive_: each arm hides another bandit problem below it
+  - _Shared budget_: playouts spent deep in one subtree are unavailable
+    elsewhere
+
+- @Key idea@: run an optimism-based bandit rule at every node, and the tree
+  allocates its budget by itself
+
+* What MCTS Requires
+
+- @Assumptions@
+  1. A **generative model** $s' \sim G(s, a)$ that can be sampled forward
+     - Closed-form transition probabilities are not needed
+  2. Legal actions that can be enumerated at each visited state
+  3. Episodes that terminate, or a horizon where a value can be assigned
+  4. Bounded rewards, usually normalized to $[0, 1]$ or $\{-1, 0, +1\}$
+
+- @Remark@: MCTS needs no evaluation function, no admissible heuristic, no
+  differentiability, and no reward at every step
+
+- @Cons@: simulation cost dominates everything
+  - The budget is measured in simulator calls, so a slow simulator caps the
+    achievable quality
+
+# Limitations and Open Problems
+
+* Traps and Deceptive Values
+
+- @Problem@: averaging backups smooth over a single refuting move
+
+- @Definition@: a **shallow trap** is a state where almost every action looks
+  fine but one specific reply loses immediately
+
+- @Example@: a chess sacrifice line scores well in the mean because only one
+  continuation punishes it
+  - Alpha-beta finds that continuation by exact min and max, UCT dilutes it in
+    the average
+
+- @Consequence@: MCTS is strong where values are smooth and diffuse, as in Go,
+  and weak in sharply tactical domains unless a learned value function
+  supplies the missing precision
+
+- @Remark@: max backups reduce the problem but raise the variance so much that
+  they rarely pay off on their own
+
+* Large and Continuous Action Spaces
+
+- @Problem@: UCT visits every child once before repeating any, so the first
+  $b$ iterations at a node are pure enumeration
+  - With $b = 10^4$ a budget of 1000 playouts never gets past the root
+
+- @Problem@: with continuous actions every sampled action is new, so no child
+  is ever visited twice and no statistic accumulates
+
+- @Techniques@
+  - _Progressive widening_: cap the number of children by a sublinear function
+    of the visit count
+  - _Action abstraction_: search over macro-actions or clusters of actions
+  - _Learned priors_: sample candidate actions from a policy instead of
+    enumerating them
+
+- @Cons@: these restore tractability by giving up completeness
+  - An action that is never sampled is never evaluated
+
+* Stochasticity and Hidden Information
+
+- @Problem@: in a stochastic environment a child mixes the action choice with
+  the chance outcome
+  - The mean over playouts confounds _"this action is good"_ with _"this
+    action got lucky"_
+
+- @Solution@: insert explicit **chance nodes**, or resample the successor at
+  each visit and widen progressively over the sampled successors
+
+- @Problem@: under partial observability the agent does not know which state
+  to search from
+
+- @Techniques@
+  - _Determinization_: sample a full state consistent with the observations,
+    search it, and vote across samples
+  - _Information-set MCTS_: build the tree over information sets, not states
+  - _POMCP_: carry belief particles down the tree
+
+- @Cons@: determinization ignores the value of information, so it never plans
+  to gather evidence
+
+* Open Problems
+
+- @Challenges@
+  - _Nonstationary statistics_: the optimistic bonus assumes stationary
+    rewards, but a child's mean drifts as its subtree deepens
+  - _Model error_: with a learned simulator, search concentrates effort
+    exactly where the model is wrong
+  - _Credit assignment_: one terminal score gives no signal about which step
+    of a long trajectory mattered
+  - _Theory with function approximation_: convergence results do not cover
+    PUCT with learned priors and values
+  - _Cost_: every decision restarts the search, so nothing is amortized across
+    decisions without a learned component
+
+- @Question@: what is the right terminal score when there is no game to win?
+  - This is the open question for reasoning, design, and scientific-discovery
+    applications
+
+* Summary
+
+- @Recap@: the argument in one line
+  - Exhaustive search needs an evaluation function, flat sampling needs none
+    but wastes its budget, and MCTS keeps the sampling while adding a tree
+    that directs it
+
+- @Components@: four phases repeated until the budget runs out
+  - Selection by an optimistic bandit rule, expansion by one node, simulation
+    to a terminal state, and backpropagation of the outcome
+
+- @Key idea@: the visit distribution at the root is the output of the search
+  - Where the search spent its time is the answer, not just the best mean
+
+- @Limitations@: sharp tactics, huge or continuous action sets, hidden
+  information, and any domain where the terminal score is itself uncertain

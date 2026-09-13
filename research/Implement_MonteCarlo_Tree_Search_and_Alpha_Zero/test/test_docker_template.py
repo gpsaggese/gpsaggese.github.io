@@ -1,6 +1,7 @@
 """
 Run the notebooks in research/Implement_MonteCarlo_Tree_Search_and_Alpha_Zero/
-inside Docker using docker_cmd.sh.
+inside Docker using docker_cmd.sh. See `../README.md` for a description of
+every file in that directory.
 
 Import as:
 
@@ -32,9 +33,51 @@ class Test_docker(hdoctest.DockerTestCase):
     @pytest.mark.slow
     def test1(self) -> None:
         """
-        Test that main.ipynb runs without error inside Docker.
+        Test that mcts.03.example.ipynb runs without error inside Docker.
         """
         # Prepare inputs.
-        notebook_name = "main.ipynb"
+        notebook_name = "mcts.03.example.ipynb"
         # Run test.
-        self._helper(notebook_name)
+        self.helper(notebook_name)
+
+    @pytest.mark.slow
+    def test2(self) -> None:
+        """
+        Test that mcts.03.API.ipynb runs without error inside Docker.
+        """
+        # Prepare inputs.
+        notebook_name = "mcts.03.API.ipynb"
+        # Run test.
+        self.helper(notebook_name)
+
+    @pytest.mark.slow
+    def test3(self) -> None:
+        """
+        Test that search_algorithms.02.example.ipynb runs without error
+        inside Docker.
+        """
+        # Prepare inputs.
+        notebook_name = "search_algorithms.02.example.ipynb"
+        # Run test.
+        self.helper(notebook_name)
+
+    @pytest.mark.slow
+    def test4(self) -> None:
+        """
+        Test that game.01.API.ipynb runs without error inside Docker.
+        """
+        # Prepare inputs.
+        notebook_name = "game.01.API.ipynb"
+        # Run test.
+        self.helper(notebook_name)
+
+    @pytest.mark.slow
+    def test5(self) -> None:
+        """
+        Test that search_algorithms.02.API.ipynb runs without error inside
+        Docker.
+        """
+        # Prepare inputs.
+        notebook_name = "search_algorithms.02.API.ipynb"
+        # Run test.
+        self.helper(notebook_name)

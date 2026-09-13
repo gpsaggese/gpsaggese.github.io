@@ -1,3 +1,1 @@
-matplotlib
-numpy
-tqdm
+../../class_project/project_template/requirements.txt

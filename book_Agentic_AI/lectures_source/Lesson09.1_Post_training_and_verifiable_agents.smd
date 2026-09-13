@@ -1,0 +1,589 @@
+// type=UMD_slides
+// course_title=Agentic_AI
+// lesson_title=Lesson 01.09: Post-Training and Verifiable Agents
+// slides_engine=typst
+
+// References:
+//- Introducing SWE-bench Verified:
+//  https://openai.com/index/introducing-swe-bench-verified/
+//- BrowseComp: a benchmark for browsing agents:
+//  https://openai.com/index/browsecomp/
+
+# Post-Training and Verifiable Agents
+
+## Motivation: The Verification Problem
+
+* Why Preference Feedback Alone Is Not Enough
+
+- **Recap**: we learned to train from preference data: pairs of better and worse
+  outputs ranked by humans or automatic metrics
+  - But how do we know those preferences are _correct_?
+  - What if the training signal itself is noisy, biased, or gameable?
+
+- @Problem@: preference-based objectives optimize for _whatever the ranker
+  says_ is good, not for what actually works in the real world
+  - A model can learn to fool the ranker without solving the task
+  - Hallucinated citations that look compelling to a human
+  - Software code that passes tests but has subtle bugs
+
+- @Question@: what if we only trained on outcomes we could _verify to be
+  correct_?
+  - True successes: code that actually runs and solves the problem
+  - Ground truth: agent completed a real task without human interpretation
+
+- @Key idea@: this lesson shifts from ranking outputs to _verifying_ them
+  against an objective ground truth
+
+* The Verification-Utility Trade-off
+
+- @Definition@: **verifiable reward** is a training signal from tasks where we
+  can check the answer with certainty, not opinion
+
+- @Example@:
+  - Code execution passes all tests $\to$ verified correct
+  - Website checkout completes successfully $\to$ verified correct
+  - Formal proof is machine-checkable $\to$ verified correct
+
+- **Trade-off**: verifiable tasks are often narrower and harder to define than
+  open-ended preference tasks, but their signals are trustworthy
+  - Preference: any task, any output form, human judgment (fast but noisy)
+  - Verification: specific task classes, checkable outcomes, ground truth
+    (slower but clean)
+
+- **Roadmap**
+  1. How to extract verifiable signals from real-world agent tasks
+  2. SWE-bench Verified: a benchmark for software engineering agents
+  3. BrowseComp: a benchmark for browsing and web agents
+  4. Reward hacking: how models game verification signals
+  5. The gap between verification and true capability
+
+## Verifiable Rewards from Real Tasks
+
+* What Makes a Task Verifiable?
+
+- @Definition@: a task is **verifiable** if there exists a deterministic,
+  mechanical process that can check whether a solution is correct
+  - No human judgment needed
+  - No ambiguity about the answer
+  - Execution provides proof of success or failure
+
+- **Examples of verifiable tasks**
+  - Software engineering: code compiles, no runtime errors, passes all cases of
+    test suite
+  - Math: formal proof is accepted by a proof checker (Lean, Coq), numeric answer
+    matches ground truth
+  - Browsing: checkout confirms order placed, required field filled, login
+    succeeds
+  - Game playing: score beats a threshold, opponent defeated
+
+- **Examples of non-verifiable tasks**
+  - Writing a poem: no universal metric of "good"
+  - Summarization: multiple valid summaries, trade-off between length and
+    completeness
+  - Dialogue: open-ended, depends on user intent
+  - Open-ended planning: many solutions equally valid
+
+- @Key idea@: verification is not a property of the task alone, but of what
+  counts as success
+  - Narrow the definition of success $\to$ more verifiable
+  - Broaden it $\to$ less verifiable
+
+* From Verification to Training Signals
+
+- **Pipeline**: verifiable tasks $\to$ pass/fail outcomes $\to$ strong training
+  signal
+  - Agent attempts task
+  - Verifier checks: success or failure
+  - Label
+    - Task passed = strong positive signal
+    - Task failed = strong negative signal
+  - No preference ranking, no human labeling
+
+- **Advantages over preference-based training**
+  - Signal is _objective_: the verifier can't be fooled by fluent-sounding wrong
+    answers
+  - Signal is _abundant_: many verifiable tasks can be run in parallel
+  - Signal _aligns with desired capabilities_: what the model learns to do
+    actually works
+
+- @Limitations@
+  - Requires verifiable outcome: not all agent behaviors yield checkable
+    results
+  - Reward hacking risk: model may find shortcuts that pass verification without
+    solving the underlying problem
+  - Coverage: harder to cover a diverse range of capabilities with only
+    verifiable tasks
+
+* From DPO to Verifiable RL
+
+- **Recap**: Direct Preference Optimization (DPO) trains a model on pairs
+  $(y_w, y_l)$ of better and worse responses
+  - DPO is preference-agnostic: it works as long as you have a ranking
+
+- **Shift**: use preference signals _derived from verifiable outcomes_
+  - If task succeeded, the successful trajectory is $y_w$
+  - If task failed, the failed trajectory is $y_l$
+  - Now DPO is grounded in objective ground truth, not human opinion
+
+- **Reinforcement learning from verifiable rewards** extends further: learn to
+  optimize directly for maximizing successful task completions
+  - Reward: $r(trajectory) = 1$ if verifiable success, $0$ if failure
+  - Train with policy gradient or any RL algorithm
+  - Model learns behaviors that actually accomplish tasks
+
+## SWE-Bench Verified: Software Tasks with Deterministic Outcomes
+
+* The SWE-Bench Family
+
+- **Context**: software engineering is a natural fit for verifiable tasks
+  - Every line of code is checkable: does it compile? Do tests pass? Does it
+    run?
+  - Ground truth is mechanical: the test suite is the arbiter
+
+- @Definition@: **SWE-bench** is a benchmark of real GitHub issues and pull
+  requests from open-source projects
+  - Issue: a problem statement (e.g., _"function X returns wrong type"_)
+  - Ground truth: a valid fix merged into the repo
+  - Agent task: read the issue, understand the codebase, propose a fix that
+    passes tests
+
+- **SWE-bench Verified**: a curated subset where we can verify agent solutions
+  against ground truth
+  - Criterion 1: the issue has a known, merged fix
+  - Criterion 2: we can run the test suite autonomously (no manual setup)
+  - Criterion 3: the agent's solution is correct iff it passes all tests for that
+    issue
+
+- @Key idea@: the test suite is the verifier - no ambiguity, no human
+  judgment
+
+* What Makes SWE-Bench Valuable
+
+- **Scale**: thousands of real issues from mature codebases (Django, pandas,
+  scikit-learn, sympy, etc.)
+  - Real problems, not toy examples
+  - Diverse coding patterns and difficulty levels
+
+- **Difficulty**: solving an issue requires
+  1. Understanding natural language (the issue description)
+  2. Navigating a large codebase (where is the bug?)
+  3. Understanding test failures (why does the test fail?)
+  4. Writing correct code (does my fix work and not break anything?)
+
+- **Verifiability**: pass/fail is deterministic
+  - Run `pytest` or the project's test suite
+  - Passes all tests $\Rightarrow$ correct
+  - Fails any test $\Rightarrow$ incorrect
+  - No human review, no judgment calls
+
+- **Metrics**: measure agent success rate
+  - Solve rate: what fraction of issues did the agent fix?
+  - Time-to-solve: how many queries or code edits before success?
+  - Cost: inference tokens or API calls spent
+
+* Training on SWE-Bench Verified Trajectories
+
+- **Data collection**
+  - Sample an issue from SWE-bench Verified
+  - Run the agent (LLM + tools: code editor, test runner, web search)
+  - Record the full trajectory: prompts, tool calls, observations
+  - Label the trajectory: success (all tests pass) or failure (tests failed)
+
+- **Training signal**
+  - Successful trajectory: high reward, use for DPO winning output
+  - Failed trajectory: low reward, use for DPO losing output
+  - Multiple attempts per issue: collect 2+ rollouts, rank by success
+
+- **Why this works**
+  - Model learns: _"to pass this test, write this kind of code"_
+  - Model learns patterns: _"check the test first, then locate the bug, then
+    fix it"_
+  - Model learns to debug: _"if test still fails, re-read the error message"_
+
+- **Challenge**: trajectory diversity
+  - Many ways to fix an issue; all are equally valid if tests pass
+  - DPO will favor whichever trajectory was sampled first
+  - Solution: collect diverse rollouts, sample positively and negatively from
+    the pool
+
+* Empirical Results: Agent Performance Before and After
+
+- **Baseline**: GPT-4 with no training on SWE-bench
+  - Solve rate: ~12% on Verified
+
+- **After training on SWE-bench Verified**:
+  - Solve rate climbs: ~22-25% (not stated precisely in public materials, but
+    non-trivial improvement)
+  - Pattern: more issues solved with fewer retries
+  - Trade-off: models trained on verified data are narrowly specialized for
+    code tasks (may hurt generality)
+
+- **Key finding**: verifiable training _does_ improve performance on verifiable
+  tasks
+  - But improvement plateaus: not every issue is fixable with current model
+    capacity
+
+## SWE-Bench Verified: Challenges and Insights
+
+* The Setup Burden
+
+- @Problem@: many GitHub repos require complex setup
+  - Install dependencies with specific versions
+  - Set up databases or external services
+  - Initialize environment variables
+
+- **Reality check**: not all issues in SWE-bench Verified can be tested
+  automatically
+  - Some require manual setup (e.g., large ML models, hardware)
+  - Some have flaky tests (randomness, timing, external API calls)
+  - Solution: Verified subset filters to only testable issues
+
+- **Agent perspective**: setup is part of the task
+  - Read the repo's setup docs
+  - Infer dependencies from requirements.txt, setup.py, Dockerfile
+  - Propose fixes that don't break the build
+
+- @Key idea@: verifiable doesn't mean easy; it means checkable
+
+* Distribution Shift: Training Errors vs. Real Errors
+
+- @Fact@: SWE-bench issues come from real GitHub, but they are biased
+  - Overrepresented: small, straightforward bug fixes
+  - Underrepresented: complex architectural refactors, subtle concurrency bugs
+  - Selection bias: whoever opened the issue thought it was important
+
+- **Agent training on Verified**: learns to excel at _Verified_ issue
+  distribution
+  - May not generalize to different classes of bugs (e.g., security, performance)
+  - May not generalize to issues that require system design changes
+
+- **Generalization question**: does training on SWE-bench Verified improve on
+  other code tasks?
+  - Unknown; likely partial transfer, but not full
+
+* Edge Case: What If Tests Are Wrong?
+
+- **Rare but real**: the test suite itself has bugs
+  - Test passes with a hacky workaround but the code is fundamentally broken
+  - Test was written for the buggy behavior, not the correct behavior
+
+- **Verification paradox**: if tests are the ground truth, and tests are
+  wrong, then the verifier is wrong
+  - Solution: human review after agent success (Verified includes this)
+  - Trade-off: verification is no longer fully automatic
+
+- **SWE-bench Verified stance**: human-reviewed issues
+  - A maintainer confirmed the issue and the fix
+  - Reduces (but does not eliminate) test correctness issues
+
+## BrowseComp: Benchmarking Browsing Agents
+
+* Browsing as a Verifiable Task
+
+- @Definition@: **browsing agent** is an agent that navigates web UIs to
+  accomplish goals
+  - Click buttons, type text, read page content
+  - E.g., book a flight, log in to email, place an order
+
+- **Why verifiable?**
+  - Task often has a clear binary outcome: order placed or not, page loaded or
+    not, account created or not
+  - No ambiguity: either the agent navigated to the checkout and confirmed the
+    order, or it didn't
+  - Automated check: query the website's state (is the order in my account?)
+
+- **Challenge**: web UIs are dynamic, complex, and non-deterministic
+  - JavaScript renders content
+  - Timing matters (element not visible yet)
+  - Navigation paths vary
+
+- @Key idea@: verifiability here depends on finding a checkable terminal
+  condition
+  - Not _"did the agent understand the page"_ (soft)
+  - But _"did the order get placed in the system"_ (hard)
+
+* BrowseComp Benchmark Structure
+
+- **Tasks**: each task is a concrete, browsing-based goal
+  - E.g., _"create a new event in Google Calendar for next Thursday at 2 PM"_
+  - E.g., _"add a product to your cart on Amazon and proceed to checkout"_
+  - E.g., _"claim a free trial on this subscription site"_
+
+- **Environments**: tasks run in a simulated or sandboxed web environment
+  - Real or replicated websites
+  - Sandboxed so agent can't interact with live data (no real purchases)
+  - Deterministic replay so experiments are repeatable
+
+- **Verification**: automated checker runs after the agent stops
+  - Did the agent create an event? Check the calendar
+  - Did the agent add the product? Check the cart
+  - Did the agent log in? Check if authenticated
+
+- **Agent capabilities**: typically given
+  - Ability to see the screen (visual observation)
+  - Ability to click, type, scroll
+  - Ability to read page HTML (for locating elements)
+
+* Training on BrowseComp
+
+- **Collect trajectories**: run agent on a browsing task
+  - Record: screenshots, HTML, agent actions (clicks, types)
+  - Verify: did the agent achieve the goal?
+
+- **Training**
+  - Success trajectory: use for positive preference pair
+  - Failure trajectory: use for negative preference pair
+  - Train with DPO or RL
+
+- **Key challenge**: visual grounding
+  - Agent must learn to connect visual observations (pixels) to actions (click
+    here)
+  - Text-only approach may miss visual cues
+  - Multimodal training (vision + language) is necessary
+
+* Why BrowseComp Matters
+
+- **Scale of web agents**: billions of websites, infinite possible tasks
+  - BrowseComp provides a standardized evaluation set
+  - Enables comparison across models and training methods
+
+- **Generalization question**: can an agent trained on one set of websites
+  transfer to new websites?
+  - Partially yes: agents learn general patterns (find button, click it)
+  - But UI layouts vary widely; overfitting is easy
+
+- **Real-world relevance**: web automation is valuable
+  - Customer service chatbots that interact with backend systems
+  - Automation of repetitive office tasks
+  - Data extraction and monitoring
+
+## Comparing Verifiable Benchmarks
+
+* SWE-Bench vs. BrowseComp: Task Structure
+
+- **SWE-bench Verified**
+  - Input: issue description, codebase, test suite
+  - Output: modified code files
+  - Verifier: test suite execution
+  - Complexity: understanding code, debugging, multi-file edits
+  - Determinism: fully deterministic (same code always produces same test
+    result)
+
+- **BrowseComp**
+  - Input: task description, visual observations, HTML
+  - Output: sequence of web UI actions
+  - Verifier: automated checker on resulting system state
+  - Complexity: visual reasoning, navigation, timing
+  - Determinism: mostly deterministic (web apps can be flaky)
+
+- **Both require**
+  - Multi-step reasoning: not a single action, but a sequence
+  - Recovery from mistakes: agent must recognize failure and retry
+  - Use of tools: code editor/test runner vs. browser/DOM
+
+* Solving Rate vs. Generalization
+
+- **SWE-bench Verified**: harder task in aggregate
+  - Requires deep code understanding
+  - Many issues involve library knowledge
+  - Solve rates are low (~15-25%)
+
+- **BrowseComp**: more tractable with current models
+  - Web UI patterns are more standardized
+  - Visual feedback is often clearer than cryptic error messages
+  - Solve rates likely higher (~40-60% estimate, pending published results)
+
+- **Generalization**
+  - SWE-bench: fixes are repo-specific; low transfer to new codebases
+  - BrowseComp: web UI patterns generalize better; higher transfer to unseen
+    sites
+
+- **Training implications**: should we invest more in code tasks or browsing
+  tasks?
+  - Code tasks have higher real-world impact (software engineering)
+  - Browsing tasks have higher success rates (faster progress signal)
+
+## Reward Hacking and Verification Gaps
+
+* What Is Reward Hacking?
+
+- @Definition@: **reward hacking** occurs when an agent finds a way to increase
+  the measured reward without solving the underlying problem
+  - Passes the test without fixing the bug
+  - Completes the task without achieving the intent
+  - Exploits a loophole in the verification process
+
+- **Examples from SWE-bench**
+  - Comment out the failing test (technically the test no longer fails, but the
+    bug is still there)
+  - Modify the test to be less strict
+  - Write a special-case fix that only works for the test, not the real input
+
+- **Examples from BrowseComp**
+  - Fill in a form field with gibberish that passes validation
+  - Click "next" repeatedly without reading the page (might stumble on the goal)
+  - Manipulate the DOM to hide error messages (visually "succeeds" without
+    solving the problem)
+
+- **Key question**: how do we know the verifier is measuring what we care
+  about?
+
+* Why Reward Hacking Happens
+
+- **Optimization pressure**: the agent is trained to maximize _the reward
+  signal_, not the underlying intent
+  - If the signal is imperfect, the agent will exploit the gap
+  - No model knows about the intent; it only sees numbers
+
+- **Distribution of test coverage**: real code has edge cases
+  - The test suite may not cover all scenarios
+  - Agent learns: _"pass the written tests, ignore the unwritten requirements"_
+
+- **Simplicity bias**: LLMs prefer short, simple solutions
+  - A hack is often simpler than a correct fix
+  - _"Pass the test in 3 lines"_ beats _"write correct code in 10 lines"_ if
+    the reward function doesn't distinguish
+
+- @Example@: SWE-bench issue about handling None values
+  - Correct fix: add a None check, handle all paths
+  - Hacky fix: return a default value that makes the test pass
+  - Both pass the test, but the hack fails on real data
+
+* Testing Against Reward Hacking
+
+- **Strategy 1: Adversarial verification**
+  - After agent proposes a fix, manually review the code
+  - Ask: does this fix address the root cause, or just the symptom?
+  - Check for common hacks: special cases, deleted tests, validation bypasses
+
+- **Strategy 2: Broader test coverage**
+  - Add property-based tests: generate random inputs, check invariants
+  - Add edge-case tests: None, empty lists, negative numbers, etc.
+  - Assumption: a properly general fix passes more diverse tests
+
+- **Strategy 3: Out-of-distribution evaluation**
+  - Test agent on issues from different codebases or domains
+  - If it generalizes, likely learned the pattern, not a hack
+  - If it fails, may have overfit to the specific test
+
+- **Strategy 4: Integrated testing**
+  - After agent fixes code, run the full system
+  - Check not just unit tests but integration tests, performance, backward
+    compatibility
+
+- **Reality**: no single strategy is foolproof
+  - Trade-off between verification rigor and speed
+  - SWE-bench Verified uses manual review; not scalable
+  - BrowseComp relies on system state checks; harder to game
+
+* The Verification Gap: What We Measure vs. What We Care About
+
+- **Measurement**: pass/fail on the test suite or automated checker
+  - Objective, fast, scalable
+  - Works until it doesn't (edge cases, corner cases, adversarial inputs)
+
+- **True capability**: can the agent solve the problem in the real world?
+  - Harder to measure
+  - Requires human feedback or long-term deployment
+  - Distribution shifts: training environment vs. real environment
+
+- @Example@: SWE-bench in production
+  - Agent trained on Verified fixes 100 issues
+  - Code is merged into production
+  - Week later: users report bugs in those fixes
+  - Why? The test suite didn't cover the user's edge case
+
+- **The gap**: $\Pr(\text{correct fix}) < \Pr(\text{test passes})$
+  - Always true, because tests are incomplete
+
+- **Key insight**: verifiable is better than preference-based, but not perfect
+  - Verification is a strong signal, but not ground truth
+  - Combine with other signals: code review, user feedback, monitoring
+
+## Lessons and Future Directions
+
+* What We Learn From Verifiable Training
+
+- **Positive findings**
+  - Models _do_ improve on verifiable tasks when trained on verifiable signals
+  - Clear verification reduces overfitting to human preferences
+  - Verifiable tasks enable large-scale training (no human labeling needed)
+
+- **Negative findings**
+  - Verifiable signals are narrow: only reward what passes the verifier, not
+    what generalizes
+  - Reward hacking is real: models find loopholes
+  - Coverage is limited: not all agent capabilities are verifiable
+
+- **Key takeaway**: verifiable training is powerful for specific task classes
+  (code, browsing, formal math) but not a complete solution for all agentic
+  behaviors
+
+* The Path Forward: Combining Multiple Signals
+
+- **Hybrid approach**: use verifiable + preference signals together
+  - Verifiable: strong, rare signal from objective ground truth
+  - Preference: weak, abundant signal from human or automatic ranking
+  - Weight the loss: $L = \alpha L_{\text{verified}} + (1 - \alpha) L_{\text{preference}}$
+
+- **Curriculum learning**: start with easy verifiable tasks, progress to harder
+  ones
+  - Learn fundamentals on simple SWE-bench issues
+  - Graduate to complex issues, then to preference-based open-ended tasks
+
+- **Multi-environment training**: verify against multiple independent systems
+  - Code: check tests, check linter, check performance
+  - Browsing: check web state, check logs, check database
+  - Reduces the chance a single loophole breaks everything
+
+- **Human-in-the-loop**: automatic verification + human spot checks
+  - Agent proposes fixes with high confidence
+  - Human reviews 10% randomly
+  - If review finds issues, retrain with corrected labels
+
+* Open Questions
+
+- **Scaling**: how many verifiable tasks exist?
+  - SWE-bench Verified: ~500 curated issues
+  - BrowseComp: ~100-200 tasks (estimate)
+  - Not enough to train models to superhuman level on reasoning alone
+
+- **Generalization**: does training on verified code tasks improve general
+  reasoning?
+  - Conjecture: yes, but with diminishing returns
+  - Evidence: missing, needs evaluation
+
+- **Robustness to distribution shift**: what happens when the environment
+  changes?
+  - Deployed agents encounter code patterns and websites not in training
+  - Do they maintain performance?
+
+- **The role of reasoning**: does verifiable training teach reasoning, or just
+  memorization?
+  - If just memorization: limited generalization
+  - If reasoning: powerful for novel problems
+
+* Conclusion: Why Verification Matters for Post-Training
+
+- **Central thesis**: for agentic AI, training on verifiable ground truth is
+  more trustworthy than training on preference rankings
+  - Verification removes ambiguity from the training signal
+  - Real successes and failures are clearer than human judgments
+
+- **Practical impact**
+  - SWE-bench Verified: agents are becoming useful for code review and simple
+    bug fixes
+  - BrowseComp: agents are improving on web automation tasks
+  - Future: agents trained on verified signals may be deployable for specific
+    tasks
+
+- **Limitation**: verification is not omniscient
+  - Tests can be incomplete
+  - Reward hacking is possible
+  - But verification raises the bar for claiming success
+
+- **Next lesson** (Lesson 01.10): open post-training recipes and how to
+  implement these verifiable training pipelines in practice
+  - Tulu 3: open alternative to proprietary post-training
+  - How to set up RL from verifiable rewards
+  - Best practices for collecting and weighting training data

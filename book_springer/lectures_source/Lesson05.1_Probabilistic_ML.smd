@@ -1,0 +1,900 @@
+// type=UMD_slides
+// course_title=From Data to Decisions: Building Decision Systems with Probabilistic Causal Reasoning
+// lesson_title=Lesson 05.1: Probabilistic ML
+// slides_engine=typst
+
+# Bayesian Inference Foundations
+
+## Reasoning Under Uncertainty
+
+* Why Logic Fails Under Uncertainty
+// From: msml610/lectures_source/Lesson06.1-Bayesian_Networks.smd:69 '## Why Logic Fails Under Uncertainty'
+
+### The Qualification Problem
+
+* Causal and Exhaustive Augmentation
+
+- @Definition@: Causal and exhaustive augmentation of logic-rules
+  - To use propositional logic under uncertainty, need to augment left-side of rules
+    $X \implies Y$ to make it:
+    1. _Causal_: Identify true causal-effect relationships
+    2. _Exhaustive_: Identify all possible conditions $X$ leading to outcome $Y$
+
+- @Limitations@
+  - Every action can have more hidden conditions needed to succeed
+    - E.g., start the engine $\implies$ turn car key $\implies$ starter motor is
+      working $\implies$ battery is charged $\implies$
+  - Preconditions can change depending on situation
+    - E.g., ... $\implies$ battery is charged $\implies$ it's not too cold $\implies$
+
+* Limitations of Logical Qualification
+
+- @Definition@: **Logical qualification problem** is the need to enumerate all
+  preconditions necessary for an action to succeed
+
+- @Limitations@: It is not possible to solve the logical qualification problem for
+  several reasons
+  1. **Laziness**: Too much effort required to create all possible rules
+  2. **Theoretical ignorance**: Science doesn't always have complete theory of domain
+     - E.g., medical science doesn't know all the "rules"
+  3. **Practical ignorance**: Even if you knew all rules, you might not have all
+     necessary info
+     - E.g., not all required medical tests can be performed for particular patient
+
+- @Consequence@: **AI winter (mid-1980s, 1990s)**
+  - Researchers believed that expert systems could achieve AGI
+  - Real world is complex and open-ended
+  - Logical rules can't capture all necessary and sufficient conditions
+
+### Garden World: Demonstrating the Problem
+
+* Failure of Logic AI: Garden World Example
+
+::: columns
+:::: {.column width=65%}
+
+- Consider propositions:
+  - $Rain$ = _"it rains"_
+  - $WetGrass$ = _"the grass is wet"_
+
+- @Question@: Is it true that $Rain \implies WetGrass$?
+  - "$Rain \implies WetGrass$" is not true in general
+  - If it rains but there is a cover over grass, grass will not be wet
+  - If it rains but temperature is high, wet grass might dry quickly
+
+::::
+:::: {.column width=30%}
+
+![](msml610/lectures_source/figures/L06.1.grass_sprinkler.png)
+
+::::
+:::
+
+- @Question@: What about converse "$WetGrass \implies Rain$?
+  - "$WetGrass \implies Rain$" is not true in general
+    - Grass could be wet because of sprinkler system
+    - Grass could be wet because of morning dew
+
+- @Answer@: You also need to consider propositions:
+  - $Cover$ = _"there is a protective cover over the grass"_
+  - $Evaporate$ = _"the water evaporates quickly"_
+  - $Sprinkler$ = _"the sprinkler system is on"_
+  - $Dew$ = _"there is morning dew"_
+
+* Failure of Logic AI: Garden World Example
+
+- Identify all exceptions and dependencies to make $X \implies Y$
+  1. **Causal**: _"If it rains and there is no other source of water, grass will be
+     wet"_
+     - $Rain \land \lnot (Cover \land Evaporate ...) \implies WetGrass$
+  2. **Exhaustive**: _"Grass is wet if it rains or sprinkler is on or morning dew"_
+     - $WetGrass \implies Rain \lor Sprinkler \lor Dew \ldots$
+```graphviz[width=80%]
+digraph BayesianFlow {
+    splines=true;
+    nodesep=1.0;
+    ranksep=0.75;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.7];
+
+    // Nodes
+    Rain       [label="Rain", fillcolor="#A6C8F4"];
+    WetGrass   [label="WetGrass", fillcolor="#B2E2B2"];
+    Cover      [label="Cover", fillcolor="#FFD1A6"];
+    Evaporate  [label="Evaporate", fillcolor="#F4A6A6"];
+    Sprinkler  [label="Sprinkler", fillcolor="#A0D6D1"];
+    Dew        [label="Dew", fillcolor="#A6E7F4"];
+
+    // Force ranks
+    { rank=same; Cover; Evaporate; }
+    { rank=same; Sprinkler; Dew; }
+
+    // Edges
+    Rain -> WetGrass;
+    Rain -> Cover;
+    Rain -> Evaporate;
+    Cover -> WetGrass [label="blocks", style=dashed];
+    Evaporate -> WetGrass [label="blocks", style=dashed];
+    Sprinkler -> WetGrass;
+    Dew -> WetGrass;
+}
+```
+
+* Bayes' Theorem: From Data to Posterior
+// From: msml610/lectures_source/Lesson07.1-Intro_to_Probabilistic_Programming.smd:93 '* Bayes' Theorem: Recap'
+
+- @Definition@: **Bayes' theorem** posits that for model parameters $\theta$ and data
+  $X$
+
+* Frequentist Approach vs Priors
+// From: msml610/lectures_source/Lesson07.1-Intro_to_Probabilistic_Programming.smd:369 '* Frequentist Approach vs Bayesian Priors'
+
+- @Problem@: Detractors of the Bayesian approach complain that:
+  - _"One should let the data speak!"_
+  - The prior doesn't let the data speak for itself
+
+- @Counterpoints@
+  1. _"Data doesn't speak, but murmurs"_
+     - Data doesn't have meaning per-se
+     - Data can make sense only in context of models (e.g., mental models,
+       mathematical models)
+     - A prior is a mathematical model
+  2. Every statistical model has a prior, even if not explicit
+     - Frequentist statistics still makes assumptions (i.e., has a prior), but are
+       hidden
+     - E.g., maximum likelihood estimate (MLE) in frequentist approach corresponds to
+       a uniform prior and choosing the mode of the posterior
+
+## Representing and Updating Belief
+
+* Full Joint Distributions and Conditional Independence
+// From: msml610/lectures_source/Lesson06.1-Bayesian_Networks.smd:290 '* Conditional Independence: Definition'
+
+- @Definition@: Two random variables $X$ and $Y$ are **conditionally independent**
+  given a random variable $Z$ iff knowing $Z$ makes $X$ and $Y$ independent:
+  $$
+  X \perp Y | Z \iff \Pr(X, Y | Z) = \Pr(X | Z) \cdot \Pr(Y | Z)
+  $$
+
+- @Example@
+  - $X$ = _"it is raining today"_
+  - $Y$ = _"a person is carrying an umbrella"_
+  - $Z$ = _"the weather forecast"_
+  - Without knowing $Z$: Relationship between rain $X$ and umbrellas $Y$
+  - Given/knowing $Z$: Once forecast is known, knowing if someone carries umbrella
+    $Y$ gives no info about rain $X$
+  - Thus, $X$ and $Y$ are conditionally independent given $Z$
+
+- @Pros@
+  - Conditional independence more common than absolute independence
+  - Simplify probabilistic models by factorizing joint conditional distribution into
+    product of individual conditional distributions
+
+* Bayesian Framework: Updating Beliefs From Priors
+// From: msml610/lectures_source/Lesson07.1-Intro_to_Probabilistic_Programming.smd:121 '* Bayesian Models'
+
+- @Recap@
+  - **Probability** measures uncertainty about parameters
+  - **Bayes' theorem** updates probabilities with new data, reducing uncertainty
+    (hopefully)
+    $$
+    \Pr(hyp | data) = \frac{\Pr(data | hyp) \Pr(hyp)}{\Pr(data)}
+    $$
+
+- @Algorithm@: **Bayesian modeling workflow**
+  1. Design a model using probabilities based on data and assumptions on data
+     generation
+  2. Apply Bayes' theorem to _condition_ the model on data
+  3. Validate model against data, subject expertise, related models
+  4. Loop and backtracking, e.g.,
+  - Correct coding errors
+  - Improve model
+  - Gather more or different data
+
+* Choosing Priors: Advantages and Practical Guidance
+// From: msml610/lectures_source/Lesson07.1-Intro_to_Probabilistic_Programming.smd:400 '* How to Choose Priors'
+
+- @Variants@
+  - _Weakly-informative priors_ (aka "flat", "vague", "diffuse priors")
+    - Provide minimal information, e.g.,
+      - Coefficient of linear regression centered around 0:
+        $\beta \sim Normal(0, 10)$
+  - _Regularizing priors_
+    - Known information about the parameter, e.g.,
+      - Parameter is positive: $\sigma \sim HalfCauchy(0, 5)$
+      - Parameter close to zero, above/below a number, or in a range
+      - $\beta \sim Laplace(0, 1)$ (lasso prior) encourages sparsity
+      - $\beta \sim Normal(0, 1)$ discourages extreme values
+  - _Informative priors_
+    - Strong priors from previous knowledge (expert opinion, studies), e.g.,
+      - From experimental data: $\beta_1 \sim Normal(2.5, 0.5^2)$
+      - From previous data, about 5% of cases positive: $p \sim Beta(2, 38)$
+  - _Prior elicitation_
+    - Compute least informative distribution given constraints, e.g.,
+      - Estimate distribution using maximum entropy to satisfy constraints
+      - E.g., beta distribution with 90% of mass between 0.1 and 0.7
+
+## Approximate Inference
+
+* Approximate Inference: Sampling, Variational Inference, and MCMC
+// From: msml610/lectures_source/Lesson06.2-Using_Bayesian_Networks.smd:950 '* Monte Carlo Algorithms'
+
+- @Definition@: **Monte Carlo algorithms** are _randomized sampling algorithms_ used
+  to estimate quantities that are difficult to calculate exactly
+  - E.g., samples from the posterior probability of a Bayes network
+
+- @Pros@
+  - The accuracy of the approximation depends on the _number of samples_ generated
+  - You can get arbitrarily close to the true probability distribution with enough
+    samples
+  - Used in many branches of science
+
+- @Cons@
+  - Difficult to understand how the variables interact
+  - _Computationally intensive_
+
+* Probabilistic Programming Languages
+// From: msml610/lectures_source/Lesson07.1-Intro_to_Probabilistic_Programming.smd:552 '* Probabilistic Programming Languages'
+
+- @Procedure@
+  1. Specify models using code
+  2. Numerical models solve inference problems without need of user to understand how
+     - `PyMC3`: Flexible Python library for probabilistic programming
+     - `Theano`: Library to define, optimize, evaluate mathematical expressions using
+       tensors
+     - `ArviZ`: Library to interpret probabilistic model results
+
+- @Pros@
+  - Compute results without analytical closed form
+  - Treat model solving as a black box (e.g., universal inference engines)
+  - Focus on model design, evaluation, interpretation
+
+- @Remark@: Probabilistic programming languages
+  - Have a similar impact as Fortran on scientific computing
+  - Build algorithms but ignore computational details
+
+# Bayesian Generative Models
+
+## Bayesian Networks
+
+* Bayesian Networks: Structure and Semantics
+// From: msml610/lectures_source/Lesson06.2-Using_Bayesian_Networks.smd:15 '* Bayesian Networks: Semantics'
+
+- @Definition@: Two equivalent semantic interpretations of a Bayesian Network:
+  1. **Joint Distribution View**
+     - The network encodes the _joint probability distribution_ over all variables
+     - Computed as the product of local conditional probabilities:
+       $$
+       P(X_1, ..., X_n) = \prod_{i=1}^{n} P(X_i \mid \text{Parents}(X_i))
+       $$
+     - Useful for constructing models and understanding overall behavior
+  2. **Conditional Independence View**
+     - The structure encodes _conditional independency_ between variables
+     - Useful for inference and reasoning
+     - A variable is conditionally independent of its non-descendants given its
+       parents
+
+// ### Representing the full joint distribution (p. 533)
+
+* Constructing a Bayesian Network: Ordering and Markov Blankets
+// From: msml610/lectures_source/Lesson06.2-Using_Bayesian_Networks.smd:314 '* Markov Blanket of a Node'
+
+::: columns
+:::: {.column width=50%}
+
+- @Definition@: The **Markov blanket** of a **\gray{node}** $X$ consists of:
+  1. The **\red{parents}** of $X$
+     - The nodes that influence $X$
+  2. The **\green{children}** of $X$
+     - The nodes that are directly influenced by $X$
+  3. The **\blue{spouses}** of $X$
+     - The nodes that are parents of the children nodes
+     - I.e., "co-parent"
+
+::::
+:::: {.column width=50%}
+
+```graphviz
+digraph CausalModel {
+  // Set overall graph properties
+  bgcolor="transparent";
+  rankdir=TB;
+  node [shape=ellipse, style=filled, fontname="Arial"];
+
+  // Regular nodes
+  U1 [label=<U<SUB>1</SUB>>, fillcolor="#FF9999"];
+  Um [label=<U<SUB>m</SUB>>, fillcolor="#FF9999"];
+  X [label="X", fillcolor="#999999"];
+  Z1j [label=<Z<SUB>1j</SUB>>, fillcolor="#99CCFF"];
+  Znj [label=<Z<SUB>nj</SUB>>, fillcolor="#99CCFF"];
+  Y1 [label=<Y<SUB>1</SUB>>, fillcolor="#99FF99"];
+  Yn [label=<Y<SUB>n</SUB>>, fillcolor="#99FF99"];
+
+  // Dots/ellipses as dummy nodes
+  node [shape=plaintext, style=solid, fontname="Arial", fillcolor=transparent];
+  dummy1 [label="..."];
+  dummy2 [label="..."];
+  dummy3 [label="..."];
+  dummy4 [label="..."];
+  dummy5 [label="..."];
+  dummy6 [label="..."];
+  dummy7 [label="..."];
+  dummy8 [label="..."];
+  dummy9 [label="..."];
+  dummy10 [label="..."];
+  dummy11 [label="..."];
+  dummy12 [label="..."];
+
+  // Restore style for main nodes
+  node [shape=ellipse, style=filled, fontname="Arial"];
+
+  // Define main edges
+  U1 -> X;
+  Um -> X;
+  X -> Y1;
+  X -> Yn;
+  Z1j -> Y1;
+  Znj -> Yn;
+
+  dummy1 -> U1;
+  dummy2 -> Um;
+  dummy5 -> Z1j;
+  dummy6 -> Znj;
+  edge [style=solid];
+
+  // Optional layout helpers
+  U1 -> dummy3;
+  Um -> dummy4;
+  Z1j -> dummy7;
+  Znj -> dummy8;
+  Y1 -> dummy9;
+  Y1 -> dummy10;
+  Yn -> dummy11;
+  Yn -> dummy12;
+}
+```
+
+::::
+:::
+
+* Exact and Approximate Inference in Bayesian Networks
+// From: msml610/lectures_source/Lesson06.2-Using_Bayesian_Networks.smd:900 '* Exact Inference in Bayesian Networks'
+
+// ## 13.3 Exact inference in Bayesian networks (p. 440)
+
+* Exact Inference in Bayesian Networks
+
+- @Problem@: Compute _posterior_ $P(X|\vE=\ve)$ for query variable $X$, given
+  evidence $\ve$, where:
+  - Query variable $X$
+  - Evidence variables $\vE = \{E_1, \dots, E_m\}$
+  - Hidden variables $\vY = \{Y_1, \dots, Y_\ell\}$
+
+- @Solution@
+  - **Inference by Enumeration**
+    - Use the _full joint distribution_ and sum over all hidden variables:
+      $$
+      P(X|e) = \alpha \sum_Y P(X,e,Y)
+      $$
+  - **Variable Elimination**
+    - Improves efficiency by _caching intermediate results_
+    - Eliminates variables systematically to avoid redundant sums
+    - Removes irrelevant variables
+      - Variables that are _not ancestors_ of the query or evidence can be ignored
+
+- @Challenges@
+  - Exact inference is efficient $O(n)$ for trees, but _intractable $O(2^n)$_ in
+    general
+  - It does _not_ work for continuous variables
+  - Basis for approximate methods when exact methods are impractical
+
+* Exact Inference in Bayesian Networks: Example
+
+- @Problem@: You get a call from both John and Mary, what is the probability of the
+  burglary?
+  $$
+  P(Burglary | JohnCalls=True, MaryCalls=True)
+  $$
+
+- @Solution@: A conditional probability can be computed summing terms from the _full
+  joint distribution_
+  $$
+  \Pr(X | \ve) = \alpha \Pr(X, \ve) = \alpha \sum_y \Pr(X, \ve, \vy)
+  $$
+
+- Terms of the joint distribution can be written as _products of conditional
+  probabilities_ from the Bayesian network
+  $$
+  \Pr(b | j, m)
+  = \alpha \Pr(B, j, m)
+  = \alpha \sum_e \sum_a \Pr(B, j, m, e, a)
+  $$
+
+- Then the joint probability is written in terms of _CPTs_ of the Bayesian network
+  $$
+  \Pr(b | j, m)
+  = \alpha \sum_e \sum_a \Pr(b) \Pr(e) \Pr(a | b, e) \Pr(j | a) \Pr(m | a)
+  $$
+
+## Regression Models
+
+* Linear and Logistic Regression: Posterior-Based Uncertainty
+// From: msml610/lectures_source/Lesson07.4-Generalized_Linear_Models.smd:61 '* Linear Model: Bayesian Approach'
+
+- **Bayesian assumptions**:
+  - Data $y$ is Gaussian with mean $\alpha + \beta x$ and standard deviation
+    $$
+    \sigma: y \sim N(\mu=\alpha + \beta x, \sigma)
+    $$
+  - $\alpha, \beta, \sigma$ are independent
+  - Priors:
+    $$
+    \begin{equation*}
+      \begin{cases}
+      \alpha \sim Normal(\mu_\alpha, \sigma_\alpha) \\
+      \beta \sim Normal(\mu_\beta, \sigma_\beta) \\
+      \sigma \sim HalfNormal(0, \sigma_\epsilon) \\
+      \end{cases}
+    \end{equation*}
+    $$
+
+- Use **vague priors** to add problem knowledge:
+  - Center intercept $\alpha$ around $0$
+  - Info on sign of $\beta$ sometimes available
+  - Use Half-Cauchy / exponential distribution for $\sigma$
+  - Use uniform prior if parameter has hard boundaries
+
+// ## Linear model: synthetic example
+
+* Generalized Linear Models: Poisson and Negative Binomial
+// From: msml610/lectures_source/Lesson07.4-Generalized_Linear_Models.smd:241 '* Negative Binomial Distribution'
+
+::: columns
+:::: {.column width=45%}
+
+- **Negative binomial distribution**
+  - Models failures/trials for fixed successes in IID Bernoulli trials
+  - Generalizes geometric distribution, modeling trials to first success
+  - Models overdispersion
+    $$
+    \text{mean } \ll \text{ variance}
+    $$
+
+::::
+:::: {.column width=50%}
+
+![](msml610/lectures_source/figures/L07.4.Neg_binomial_PMF.png)
+
+::::
+:::
+
+- **E.g.,**
+  - _Customer service_: Unsuccessful interactions before success
+  - _Sports_: Games lost before winning fixed number of games
+
+## Hierarchical and Regularized Models
+
+* Hierarchical Models: Pooling Information Across Groups
+// From: msml610/lectures_source/Lesson07.3-Hierarchical_Models.smd:41 '* Unpooled, Pooled, Hierarchical Models'
+
+- **Pooled**
+  - Groups have the same priors
+
+- **Unpooled**
+  - Groups have different priors
+
+- **Hierarchical**
+  - Groups have different priors which come from a common prior
+
+![](msml610/lectures_source/figures/L07.3.Pooled_unpooled_hierarchical_models.png){ width=80% }
+
+// TODO(gp): Convert it into graphviz
+
+// ## 3.2, Hierarchical shifts
+
+* Regularization Via Priors: Shrinkage
+// From: msml610/lectures_source/Lesson07.3-Hierarchical_Models.smd:138 '* Shrinkage'
+
+::: columns
+:::: {.column width=55%}
+
+- **Hierarchical models shrink parameters towards a common mean**
+  - Groups share information through the hyper-prior
+  - Model groups as neither independent nor a single group
+  - Less responsive to extreme values in individual groups
+  - Improve estimation for small groups using data from others
+
+::::
+:::: {.column width=40%}
+
+![](msml610/lectures_source/figures/L07.3.Shrinkage.png)
+
+::::
+:::
+
+- **Amount of shrinkage** depends on data:
+  - Groups with more data influence estimates more
+  - Similar groups reinforce common estimation
+  - Global optimization
+
+- **Result**: Inference is more stable
+
+# Uncertainty in Predictions
+
+## Predictive Distributions and Checks
+
+* Posterior Predictive Distributions
+// From: msml610/lectures_source/Lesson07.2-Posterior_Based_Decisions.smd:243 '* Samples from Posterior Distribution'
+
+- Given **\blue{posterior distribution $\Pr(\theta | y)$}**, generate predictions
+  **\red{$\tilde{y}$}** based on data **\green{$y$}** and estimated parameters
+  **\purple{$\hat{\theta}$}**:
+  $$
+  \Pr(\red{\tilde{y}} | \green{y})
+  = \int_{\purple{\hat{\theta}}} \Pr(\tilde{y} | \theta)
+    \blue{\Pr(\theta | y)} d\theta
+  = \int \text{model} \times \text{posterior}
+  $$
+  - This is called the _"posterior predictive distribution"_ as it predicts _future
+    data_ using the _posterior distribution_
+
+- **\black{Conceptually}**
+  - Sample a value of $\theta$ from the posterior $\Pr(\theta | y)$
+  - Feed the value of $\theta$ to the likelihood $\Pr(\tilde{y} | \theta)$
+  - Obtain $\tilde{y}$
+
+- This process has **\black{two sources of uncertainty}**:
+  - Parameter uncertainty
+    - Captured by the posterior $\Pr(\theta | y)$
+  - Sampling uncertainty
+    - Captured by the likelihood $\Pr(\tilde{y} | \theta)$
+
+* Posterior Predictive Checks: Validating Model Fit
+// From: msml610/lectures_source/Lesson07.2-Posterior_Based_Decisions.smd:267 '* Posterior Predictive Check (PPC)'
+
+- **PPC approach**:
+  - Generate predictions $\tilde{y}$ with observed data $y$ from posterior
+    distribution
+  - Check consistency between predictions and observed data
+
+- **Intuition**: Can the model reproduce observed data?
+  - Always check!
+
+- **Differences** arise from:
+  - Mistakes
+  - Model limitations
+    - E.g., works for average behavior but fails for rare values
+  - Data limitations
+
+* Robust Inference with Student's t-Distribution
+// From: msml610/lectures_source/Lesson07.2-Posterior_Based_Decisions.smd:365 '* Chemical Shift: Use Student's t-dist (1/3)'
+
+::: columns
+:::: {.column width=45%}
+
+$$
+\begin{equation*}
+  \begin{cases}
+  \mu \sim U(l, h) \\
+  \sigma \sim HalfNornal(0, \sigma) \\
+  \nu \sim Exp(\lambda) \\
+  y \sim StudentT(\mu, \sigma, \nu) \\
+  \end{cases}
+\end{equation*}
+$$
+
+::::
+:::: {.column width=50%}
+
+![](msml610/lectures_source/figures/L07.2.Chemical_shift_robust_model.png)
+
+::::
+:::
+
+## Comparing Groups
+
+* Group Comparison and Effect Size
+// From: msml610/lectures_source/Lesson07.2-Posterior_Based_Decisions.smd:481 '* Cohen's d'
+
+- **Cohen's d** is the difference of means relative to pooled standard deviation
+  $$
+  \frac{\mu_2 - \mu_1}{\sqrt{(\sigma_1^2 + \sigma_2^2) / 2}}
+  $$
+  - Normalizes effect by variability for pooled std dev
+  - Variability of each group normalizes mean difference
+  - Similar to a Z-score, number of std dev values differ
+    ![](msml610/lectures_source/figures/L07.2.Cohen_d.png)
+
+- **Bayesian approach**
+  - Compute posterior distribution of means and std $\to$ formula
+  - Compute distribution of Cohen's d $\to$ summary statistics
+
+//* Probability of Superiority
+//- = probability that a data point taken randomly from one group is larger than a
+//  random point from the other group
+// - We can compute the
+// TODO: Finish
+
+* Sample Size Effects on Posterior Uncertainty
+// From: msml610/lectures_source/Lesson07.2-Posterior_Based_Decisions.smd:452 '* Sample Size Effect'
+
+::: columns
+:::: {.column width=60%}
+
+- **Sample size effect** is the impact of the number of observations on statistical
+  results (e.g., p-values, confidence intervals)
+
+- **Small sample effect**
+  - Large mean difference might not be statistically significant (low p-value)
+  - Estimates (e.g., means, proportions, correlations) fluctuate widely due to high
+    sampling variability
+  - Outliers have a disproportionate influence
+  - Inference is unstable: Results may not replicate
+
+- **Large sample**:
+  - Tiny mean difference can be highly significant (small p-value) but meaningless
+
+- E.g., Cohen's d, probability of superiority
+
+::::
+:::: {.column width=40%}
+
+![](msml610/lectures_source/figures/L07.2.Immigrant_Nobel_Prize.png)
+![](msml610/lectures_source/figures/L07.2.Immigrant_Nobel_Prize_density_by_country.png)
+
+::::
+:::
+
+# Bayesian Decision-Making
+
+## From Posteriors to Decisions
+
+* Expected Utility Under Posterior Uncertainty
+// From: msml610/lectures_source/Lesson07.2-Posterior_Based_Decisions.smd:96 '* Loss Function: Motivation'
+
+- For many problems:
+  - **Make decisions based on inference**
+  - **Decision cost is asymmetric**
+    - Cost of a bad decision > or < benefit of a good decision
+    - Vaccines may cause overreaction, but benefits outweigh risks
+
+- Measure for **best decision**:
+  - Benefits of a correct decision
+  - Cost of a mistake
+  - Trade-off between benefits and costs using a loss function
+  - Use loss function for decisions
+
+* Loss Functions: From Stakeholder Preferences to Parameters
+// From: msml610/lectures_source/Lesson07.2-Posterior_Based_Decisions.smd:110 '* Loss Function'
+
+- Aka "cost function"
+  - The inverse is known as "objective", "fitness", "utility function"
+
+- **Loss function** quantifies _"how bad is an estimation mistake?"_
+  - Larger loss indicates worse estimation
+  - Loss is difference between:
+    - The true value $\theta$; and
+    - The estimated value $\hat{\theta}$
+
+| **Loss**       | **Expression**               | **Point estimate**    |
+| -------------- | ---------------------------- | --------------------- | 
+| Quadratic loss | $(\theta - \hat{\theta})^2$  | Mean of posterior     |
+| Absolute loss  | $|\theta - \hat{\theta}|$    | Median of posterior   |
+| 1-0 loss       | $I(\theta \ne \hat{\theta})$ | Mode of posterior     |
+
+- Algorithm to make decisions in Bayesian statistics using loss function
+  - Goal: Pick a single value $\hat{\theta}$
+  - True value $\theta$ is unknown
+  - Estimate $\theta$ using posterior distribution
+  - Find $\hat{\theta}$ minimizing expected loss function
+
+* Savage-Dickey Density Ratio and the Region of Practical Equivalence
+// From: msml610/lectures_source/Lesson07.2-Posterior_Based_Decisions.smd:78 '* Region of Practical Equivalence'
+
+- **Region of Practical Equivalence** (ROPE) = interval where values are "equivalent"
+
+- **Example**
+  - $H_0$: _"coin is fair"_ impractical if $\theta = 0.5$
+  - ROPE: $\theta \in [0.45, 0.55]$ equivalent to $0.5$
+
+- **Hypothesis testing with ROPE and HPI**
+  - Compare ROPE with HPI (Highest-Posterior Interval)
+    - HPI within ROPE $\to$ no effect, reject $H_1$
+    - HPI outside ROPE $\to$ effect present, reject $H_0$
+    - HPI overlaps ROPE $\to$ inconclusive
+
+- **Decide ROPE before analysis based on domain knowledge**
+  - Picking it after analysis is like choosing p-value threshold after seeing p-value
+
+## Communicating and Updating Beliefs
+
+* Sequential Updating: Priors Becoming Posteriors as Evidence Arrives
+// From: msml610/lectures_source/Lesson07.1-Intro_to_Probabilistic_Programming.smd:345 '* Coin Example: Effect of Priors (2/2)'
+
+::: columns
+:::: {.column width=40%}
+
+- **Properties**:
+  - _Outcome_: Bayesian analysis yields a posterior distribution, not a single value
+  - _Spread_: Proportional to uncertainty
+    - Decreases with more data
+    - Decreases faster if data aligned with prior
+    - With enough data, models with different priors converge to same result
+
+::::
+:::: {.column width=55%}
+
+![](msml610/lectures_source/figures/L07.1.Updating_the_prior.png)
+
+::::
+:::
+
+- _Order invariance_: Applying posterior sequentially or at once yields same result
+
+* Communicating Results: Credible Vs. Confidence Intervals
+// From: msml610/lectures_source/Lesson07.1-Intro_to_Probabilistic_Programming.smd:458 '* Confidence Intervals vs Credible Intervals'
+
+- @Remark@: People confuse _frequentist confidence intervals_ with _Bayesian credible
+  intervals_
+
+- @Comparison@
+  - **Frequentist**: In the frequentist framework, there is a true (unknown)
+    parameter value
+    - A _confidence interval_ may or may not contain the true parameter value
+    - Interpretation of a 95% confidence interval
+      - _No_: _"There is a 95% probability that the true value is in this interval"_
+      - _Yes_: _"If repeated many times, 95% of intervals would contain the true
+        value"_
+  - **Bayesian**: In the Bayesian framework, parameters are random variables
+    - Interpretation of a 95% _Bayesian credible interval_
+      - _"There is a 95% probability that the true parameter lies within this
+        interval, given the observed data"_
+      - Bayesian _credible interval_ is intuitive
+
+# Model Comparison and Selection
+
+## Fit Vs. Complexity
+
+* Occam's Razor: Balancing Fit and Complexity
+// From: msml610/lectures_source/Lesson07.5-Bayesian_Model_Comparison.smd:148 '* Occam's Razor'
+
+- _"If you have **equivalent** explanations for the same phenomenon, you should
+  choose the **simpler** one"_
+  - Quality of explanation $\approx$ accuracy
+  - Simpler $\approx$ number of model parameters
+
+- **Complexity vs accuracy**
+  - Increasing model complexity (e.g., number of model parameters) is accompanied by:
+    - Increasing in-sample accuracy
+    - Not necessarily out-of-sample accuracy
+  - The complex model:
+    - Did not "learn" from the data but just "memorize" it
+    - Does a bad job generalizing to predict potentially observable data
+
+- Ideally balance complexity and accuracy in a quantitative way
+
+* Overfitting, Underfitting, and the Bias-Variance Trade-off
+// From: msml610/lectures_source/Lesson07.5-Bayesian_Model_Comparison.smd:179 '* Bias-Variance Trade-Off'
+
+- A model has **high bias** when:
+  - It has low ability to accommodate the data
+  - I.e., underfitting
+  - E.g., a polynomial of degree 0
+
+- A model has **high variance** when:
+  - It has high capacity and it is sensitive to details in the data, capturing noise
+  - I.e., overfitting
+  - E.g., a polynomial of degree 100
+
+- Trade-off between bias and variance
+  - Goal: Balance simplicity and goodness of fit
+  - Aim for a model that "fits the data right," avoiding overfitting or underfitting
+
+## Comparing Models
+
+* Information Criteria: AIC, BIC, and WAIC
+// From: msml610/lectures_source/Lesson07.5-Bayesian_Model_Comparison.smd:267 '* Akaike Information Criterion (AIC)'
+
+- AIC is defined as
+  $$
+  AIC = -2 \sum \log \Pr(y_i | \hat{\theta}_{MLE}) + 2 \text{num}_{params}
+  $$
+  where:
+  - $\hat{\theta}_{MLE}$ is the maximum likelihood estimation of $\theta$
+  - $\text{num}_{params}$ is the number of parameters
+
+- **Interpretation**:
+  - The first term (log likelihood) measures how well the model fits the data
+  - The second term penalizes complex models
+
+- **Cons**:
+  - Discard information about uncertainty of posterior estimation
+  - MLE assumes flat priors (vs informative and weakly informative priors)
+  - Number of parameters is not always a good measure of complexity
+    - E.g., in hierarchical models the effective number of params is smaller
+
+* Cross-Validation: LOO-CV and PSIS-LOO
+// From: msml610/lectures_source/Lesson07.5-Bayesian_Model_Comparison.smd:413 '* PSIS-LOO-CV'
+
+- Compute the Expected Log Pointwise Predictive Density (ELPD) using Leave-One-Out
+  Cross-Validation (LOO-CV):
+  $$
+  ELPD_{LOO-CV} \defeq \sum_i \log \int p(y_i | \theta) p(\theta | y_{-i}) d\theta
+  $$
+
+- **Problem**: Need to train N models, one for every data point
+
+- **Solution**:
+  - Pareto-Smoothed Importance Sampling (PSIS) Leave-One-Out Cross-Validation
+    (LOO-CV) estimates without refitting for every point
+  - **Importance sampling**:
+    - Use full dataset to approximate posterior distribution when one observation is
+      left out
+    - Re-weight posterior samples based on importance
+  - **Pareto-smoothing**:
+    - Stabilize importance weights, reducing extreme weights' impact
+    - E.g., if an observation left out influences the posterior distribution
+    - Provide diagnostics to assess reliability of importance weights
+
+//* Predictive Accuracy with Arviz
+//- If the inference data has the log-likelihood group
+//  ```
+//  pm.sample(idata_kwargs="log_likelihood": True)
+//  ```
+//  metrics such as WAIC and LOO (with / without ELPD) can be automatically
+//  computed
+//
+//// TODO: Add pic
+//
+//- In the first section
+//  - The first row is ELPD
+//  - The second row is the effective number of parameters
+//- In the second section, there is the Pareto k diagnostic
+//  - Since all the values are between 0 and 0.7, the approximation can be trusted
+//
+//* Comparing Predictive Accuracy with Arviz
+//- In general the predictive accuracy metrics should be interpreted in relation
+//  to other models
+
+// TODO: Add pic about `az.compare` and explanation
+
+// ## 5.5, Model averaging
+
+// TODO(gp): Use 
+
+* Model Ensembles and Averaging
+// From: msml610/lectures_source/Lesson07.5-Bayesian_Model_Comparison.smd:496 '* Model Averaging'
+
+- What do you do when you have multiple models explaining the data?
+  1. **Model selection**
+     - Select one model
+     - Simple solution
+  2. **Report all models with their informations**
+     - E.g., standard errors, posterior predictive checks
+     - Express advantages and shortcomings of the models
+  3. **Average all the models**
+     - Build a meta-model using a weighted average of each model
+     - Weight prediction by the difference between information criteria (e.g., WAIC,
+       LOO) of the models
+     - A hierarchical model is a continuous versions of multiple discrete models
+
+* Bayes Factors and Hypothesis Testing
+// From: msml610/lectures_source/Lesson07.5-Bayesian_Model_Comparison.smd:513 '* Bayes Factors'
+
+- **Bayes factors** are ratio of two marginal likelihoods of the data under competing
+  model hypotheses $M_0$ and $M_1$
+  $$
+  BF = \frac{\Pr(y|M_0)}{\Pr(y|M_1)}
+  $$
+  where $BF > 1$ means model 0 explains data better than model 1
+
+| **Bayes factor**   | **Support**  |
+|----------|----------|
+| 1-3         | Anecdotal |
+| 3-10     | Moderate         |
+| 10-30 | Strong |
+| 30-100 | Very strong |
+| >100 | Extreme |
+
+- **Intuition**
+  - Act as a scale weighing evidence for one theory over another

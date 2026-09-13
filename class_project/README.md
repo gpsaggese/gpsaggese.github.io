@@ -169,7 +169,8 @@ Create a new branch in your fork with the following naming convention:
   - Example for DATA605 Spring 2026:
     `~/src/umd_classes1/class_project/DATA605/Spring2026/projects/UmdTask645_DATA605_Spring2026_Redis_cache_to_fetch_user_profiles`
 - **Important**: You should add files only under your project directory!
-- Follow the instructions (carefully!) in class_project/project_template/README.md
+- Follow the instructions (carefully!) in
+  `class_project/project_template/docker_scripts.README.md`
 - Start working on the files
 
 ### Create a Pull Request (PR)

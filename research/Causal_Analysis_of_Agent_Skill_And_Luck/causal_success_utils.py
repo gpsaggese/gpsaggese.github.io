@@ -3,7 +3,7 @@ Causal Success Analysis - Simulation and Inference Utilities.
 
 Import as:
 
-import research.A_Causal_Analysis_of_Success_in_Modern_Society.causal_success_utils as racaosimscsu
+import research.Causal_Analysis_of_Agent_Skill_And_Luck.causal_success_utils as rcaoasalcsu
 """
 
 from typing import List, Optional, Dict, Any

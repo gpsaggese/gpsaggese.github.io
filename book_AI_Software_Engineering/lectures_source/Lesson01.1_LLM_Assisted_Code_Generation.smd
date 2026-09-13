@@ -1,0 +1,542 @@
+// type=UMD_slides
+// course_title=AI Software Engineering
+// lesson_title=Lesson 01.01: LLM-Assisted Code Generation
+// slides_engine=typst
+
+// References:
+// - Alammar et al., "Hands-On Large Language Models: Language Understanding
+//   and Generation":
+//   https://www.oreilly.com/library/view/hands-on-large-language/9781098150952/
+// - Taulli, "AI-Assisted Programming: Better Planning, Coding, Testing, and
+//   Deployment":
+//   https://www.oreilly.com/library/view/ai-assisted-programming/9781098164553/
+// - Ashik et al., "When LLMs Lag Behind: Knowledge Conflicts from Evolving
+//   APIs in Code Generation": https://arxiv.org/abs/2604.09515
+// - Huynh et al., "Large Language Models for Code Generation: A
+//   Comprehensive Survey of Challenges, Techniques, Evaluation, and
+//   Applications": https://arxiv.org/abs/2503.01245
+// - Lee et al., "Hallucination by Code Generation LLMs: Taxonomy,
+//   Benchmarks, Mitigation, and Challenges": https://arxiv.org/abs/2504.20799
+// - Liu et al., "Exploring and Evaluating Hallucinations in LLM-Powered Code
+//   Generation": https://arxiv.org/abs/2404.00971
+// - Tian et al., "CodeHalu: Investigating Code Hallucinations in LLMs via
+//   Execution-based Verification": https://arxiv.org/abs/2405.00253
+// - Lozhkov et al., "StarCoder 2 and The Stack v2: The Next Generation":
+//   https://arxiv.org/abs/2402.19173
+// - Rozière et al., "Code Llama: Open Foundation Models for Code":
+//   https://arxiv.org/abs/2308.12950
+// - Liu et al., "Lost in the Middle: How Language Models Use Long
+//   Contexts": https://arxiv.org/abs/2307.03172
+// - Wei et al., "Chain-of-Thought Prompting Elicits Reasoning in Large
+//   Language Models": https://arxiv.org/abs/2201.11903
+// - Chen et al., "Evaluating Large Language Models Trained on Code":
+//   https://arxiv.org/abs/2107.03374
+// - Austin et al., "Program Synthesis with Large Language Models":
+//   https://arxiv.org/abs/2108.07732
+// - Anthropic, "Prompt engineering overview":
+//   https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview
+// - GitHub Blog, "Inside GitHub: Working with the LLMs behind GitHub
+//   Copilot":
+//   https://github.blog/ai-and-ml/github-copilot/inside-github-working-with-the-llms-behind-github-copilot/
+// - OpenAI, "OpenAI Codex": https://openai.com/index/openai-codex/
+
+# LLM-Assisted Code Generation
+
+## How LLMs Generate Code
+
+* From Autocomplete to Code Generation
+
+- @Motivation@: modern coding assistants draft functions, tests, and entire files
+  from a natural-language prompt
+  - Not by following hardcoded rules, but by repeatedly predicting the next
+    token of code
+- @Question@: how does one mechanism, "predict the next token", produce code
+  that compiles and runs?
+- @Overview@: this lesson covers
+  1. How an LLM generates code, token by token
+  2. How the prompt and context shape what gets generated
+  3. Where code generation breaks down
+
+* Autoregressive Token Prediction
+
+- @Definition@: an **autoregressive language model** generates a sequence by
+  repeatedly predicting the next _token_ conditioned on all previous tokens
+  $$\Pr(x_1, ..., x_n) = \prod_{t=1}^n \Pr(x_t | x_1, ..., x_{t-1})$$
+
+// From book Alammar et al., "Hands-On Large Language Models" (2024)
+- @Remark@: the same autoregressive mechanism that generates natural-language
+  text also generates code, since LLM is trained on code tokenized as text
+  - For code, a _token_ is a sub-word unit of code text (e.g., `def`, `return`,
+    `:`), not a full line or statement
+  - The model never "plans" the whole function at once: it commits to one token,
+    then re-reads everything so far to pick the next one
+
+* One Token at a Time
+
+::: columns
+:::: {.column width=70%}
+- @Algorithm@:
+  1. Feed the prompt tokens into the model
+  2. Model outputs a probability distribution over the next token
+  3. Pick a token (greedy, or sampled)
+  4. Append it, feed the whole sequence back in
+  5. Repeat until a stop token or length limit
+- @Example@: the prompt `def parity(n):` steers the distribution toward
+  `return n % 2 == 0`, one token at a time, because that continuation was
+  common after similar signatures in training
+::::
+:::: {.column width=30%}
+```graphviz
+digraph TokenLoop {
+  rankdir=TB;
+  node [shape=box, style="rounded,filled", fontname="Helvetica",
+        fontsize=11, penwidth=1.5];
+  Prompt [label="Prompt tokens", fillcolor="#FFD1A6"];
+  Model  [label="Model", fillcolor="#A0D6D1"];
+  Dist   [label="Next-token\ndistribution", fillcolor="#A6E7F4"];
+  Tok    [label="Sampled token", fillcolor="#A6C8F4"];
+  Prompt -> Model -> Dist -> Tok;
+  Tok -> Model [label="  append,\l  repeat\l", style=dashed, constraint=false];
+}
+```
+::::
+:::
+
+* Training Data: Public Repos and Documentation
+
+- @Components@: the **training corpus for a code-generation model** includes:
+  - _Public repositories_: source files scraped from open-source hosting
+  - _Documentation_: READMEs, API docs, and tutorial-style text
+  - _Natural-language text_: general text that teaches the model language and
+    reasoning, not just syntax
+
+// From paper Huynh et al., "Large Language Models for Code Generation: A
+// Comprehensive Survey" (2025)
+- @Remark@: code-generation models are typically pretrained or fine-tuned on
+  a mix of code and natural language, not code text alone, since:
+  - A prompt is natural language and
+  - The desired output is code
+
+* Training Data: Filtering and Synthetic Code
+
+// From paper Lozhkov et al., "StarCoder 2 and The Stack v2" (2024)
+- @Example@: **StarCoder 2** trains on a large multi-language corpus (The Stack
+  v2), with license filtering, deduplication, and quality filtering applied
+  before training
+
+// From paper Rozière et al., "Code Llama: Open Foundation Models for Code" (2023)
+- @Example@: **Code Llama** fine-tunes a general language model on a corpus that
+  is roughly 85% code
+  - A code-heavy fine-tuning stage can specialize a general model for code
+
+- @Definition@: **synthetic code** is code generated by a model or
+  programmatically and added back into training data
+  - _Goal_: cover patterns that are rare or absent in scraped repositories
+
+* Case Study: Codex and HumanEval
+
+// From paper Chen et al., "Evaluating Large Language Models Trained on
+// Code" (2021)
+- @Example@: **Codex** is a GPT model fine-tuned on public source code,
+  introduced together with **HumanEval**, a benchmark of hand-written
+  programming problems checked by unit tests
+  - Codex is the model that originally powered GitHub Copilot, establishing
+    next-token prediction as a viable basis for a production coding assistant
+
+- @Fact@:
+  - Codex solved a majority of HumanEval problems under repeated sampling
+  - Despite being trained purely to predict the next token, with no explicit
+    notion of "correctness" during training
+
+* Assembling a Production Prompt
+
+// From internet resource GitHub Blog, "Inside GitHub: Working with the LLMs
+// behind GitHub Copilot"
+- @Problem@:
+  - A raw autoregressive model only continues whatever text it is given
+  - A coding assistant must decide _what text to give it_
+
+- @Solution@:
+  - A **production assistant** builds a prompt around the cursor position from
+    several sources ("context"), not just the current file:
+    - Code before and after the cursor
+    - Recently viewed or edited files in the editor
+    - File path and language, to bias style and imports
+  - The "generation" a user sees is the model completing a prompt that was
+    silently assembled on their behalf
+
+* Pattern Completion, Not Verification
+
+- @Key idea@: code generation is repeated next-token prediction, trained on a
+  mixture of scraped repositories, documentation, and synthetic code
+- Two levers set completion quality
+  - _What_ the model was trained on
+  - _What_ is placed in front of it as a prompt
+
+- @Remark@:
+  - The same mechanism generates:
+    - Correct code it has never seen
+    - Plausible code that is subtly wrong 
+  - Both come from pattern continuation, not verified execution
+
+## Context and Prompting Patterns
+
+* Why Context Shapes Generation Quality
+
+- @Motivation@:
+  - The same model, given a different prompt, produces different code
+  - **Prompting** is the main lever a user has over generation quality
+
+- @Problem@: an under-specified prompt gives the model too many equally
+  plausible continuations to choose from
+
+- @Questions@:
+  1. What goes into a prompt?
+     - E.g., system prompts, few-shot examples, instructions
+  2. How context window size limits and shapes multi-file generation?
+
+* System Prompts, Instructions, and Completions
+
+- @Comparison@:
+  - _Completion_: the model is given a prefix (e.g., a function signature)
+    and continues it directly
+  - _Instruction_: the model is given a natural-language request (e.g., _"add
+    input validation to this function"_) and produces code as a response
+  - _System prompt_: a standing instruction set before the user's request, fixing
+    role, constraints, and conventions for the whole session
+    // From internet resource Anthropic, "Prompt engineering overview"
+    - @Example@: a system prompt stating _"follow this repo's existing style,
+      never invent an API"_ changes every completion generated afterward, without
+      repeating that constraint in each request
+
+* Few-Shot Prompting for Code
+
+- @Definition@: **few-shot prompting** places one or more example
+  `input -> output` pairs in the prompt before the actual task, so the model uses the
+  pattern instead of guessing it from the instruction alone
+
+// From paper Austin et al., "Program Synthesis with Large Language Models" (2021)
+- @Fact@: providing a handful of example `(problem, solution)` pairs
+  measurably improves program-synthesis accuracy over instruction-only
+  prompting (across models, model sizes, etc)
+  - E.g., pasting two existing test functions from a repo before asking for a
+    third steers the model toward that repo's naming and assertion style
+
+- @Intuition@: few-shot examples work because generation is pattern continuation:
+  showing the pattern is often more effective than describing it
+
+* Chain-of-Thought Prompting
+
+// From paper Wei et al., "Chain-of-Thought Prompting Elicits Reasoning in
+// Large Language Models" (2022)
+- @Definition@: **chain-of-thought prompting** asks the model to produce
+  intermediate reasoning steps before the final answer, instead of jumping
+  directly to it
+
+- @Example@:
+  - Instead of _"write a function to merge two sorted lists"_
+  - Prompt for _"first describe the algorithm in steps, then implement it"_
+
+- @Intuition@:
+  - Since generation is autoregressive, reasoning tokens written before the code
+    become part of the context the code is conditioned on
+  - The model reads its own plan while writing the implementation
+
+* Plan-Then-Implement Prompting
+
+// From book Taulli, "AI-Assisted Programming" (2024)
+- @Definition@: **plan-then-implement prompting** decomposes a coding
+  request into an explicit planning stage and a separate implementation
+  stage, rather than one prompt asking for a finished solution directly
+
+- @Steps@:
+  1. Ask for a plan: files to touch, functions to add, edge cases to handle
+  2. Review or edit the plan
+  3. Ask for implementation against the approved plan
+
+- @Comparison@:
+  - _Single-shot_: one prompt, one diff, no intermediate checkpoint
+  - _Plan-then-implement_: a checkpoint between "what to build" and "how
+    it's built", catching a wrong approach before code is written
+
+* Prompting for Multi-File Tasks
+
+- @Problem@: a single prompt-completion cycle produces one coherent continuation,
+  but a real task often touches several files that must stay consistent with each
+  other
+
+- @Solution@: decompose the task into scoped, reviewable steps, each with its own
+  prompt and its own check, rather than one prompt for the whole change
+
+- @Example@: renaming a function used across a codebase decomposes into:
+  - Locate call sites
+  - Apply the rename
+  - Update imports and tests
+  so that each is a separate, independently checkable step
+
+- @Key idea@: iterative refinement across scoped steps trades one large,
+  hard-to-verify generation for several small, easy-to-verify ones
+
+* Context Window: Definition
+
+- @Definition@: a model's **context window** is the maximum number of tokens
+  (prompt plus generated output combined) it can attend to for one request
+
+- @Key idea@: everything the model "knows" about the current task (e.g., the
+  file, the request, prior turns, retrieved snippets) must fit inside this
+  budget, or it is simply not seen
+
+- @Comparison@:
+  - _Small context_: forces aggressive selection of what to include
+  - _Large context_: allows more of the codebase in at once, but does not
+    guarantee the model uses all of it equally well
+
+* Lost in the Middle
+
+// From paper Liu et al., "Lost in the Middle: How Language Models Use Long
+// Contexts" (2023)
+// TODO(gp): Make this horizontal?
+::: columns
+:::: {.column width=70%}
+- @Fact@: retrieval accuracy from a long context is highest when the
+  relevant information is near the _beginning_ or _end_ of the context, and
+  degrades for information placed in the _middle_
+
+- @Problem@: a large codebase does not fit in any context window, so a
+  request touching several files competes for a limited token budget with
+  the rest of the prompt
+  - Including too little: the model has to guess the missing pieces
+  - Including too much: relevant content risks landing in the lost middle
+
+- @Remark@: retrieval strategies that select which files to include, rather
+  than pasting all of them
+::::
+:::: {.column width=30%}
+```graphviz
+digraph LostMiddle {
+  rankdir=LR;
+  node [shape=box, style="rounded,filled", fontname="Helvetica",
+        fontsize=10, penwidth=1.5];
+  Start [label="Start of\ncontext", fillcolor="#B2E2B2"];
+  Mid   [label="Middle of\ncontext", fillcolor="#F4A6A6"];
+  End   [label="End of\ncontext", fillcolor="#B2E2B2"];
+  Start -> Mid -> End [label="  retrieval\l  accuracy\l", style=dashed];
+}
+```
+::::
+:::
+
+* Anatomy of an Effective Code Prompt
+
+// From internet resource Anthropic, "Prompt engineering overview"
+::: columns
+:::: {.column width=55%}
+- @Components@ of a **well-formed code prompt**:
+  - _System prompt_: role, conventions, constraints
+  - _Context_: the specific files or snippets the task needs
+  - _Instruction_: the concrete request, stated unambiguously
+  - _Examples_ (optional): few-shot pairs showing the desired pattern
+
+- @Key idea@:
+  - Each component narrows the space of plausible continuations
+  - A well-formed prompt is how a user supplies the information the model's
+    training data alone cannot provide
+::::
+:::: {.column width=40%}
+```graphviz
+digraph PromptAnatomy {
+  rankdir=TB;
+  node [shape=box, style="rounded,filled", fontname="Helvetica",
+        fontsize=10, penwidth=1.5];
+  Sys [label="System prompt", fillcolor="#A6E7F4"];
+  Ctx [label="Context", fillcolor="#FFD1A6"];
+  Ex  [label="Examples", fillcolor="#A0D6D1"];
+  Ins [label="Instruction", fillcolor="#F4A6A6"];
+  Sys -> Ctx -> Ex -> Ins;
+}
+```
+// TODO(gp): Explain this 
+::::
+:::
+
+## Limits of Code Generation
+
+* Why Code Generation Still Fails
+
+- @Key idea@: prompting provides task-specific information, given a limited
+  context window
+  - E.g., system prompts, few-shot, chain-of-thought, plan-then-implement, scoped
+    multi-file decomposition
+
+- @Remark@: even a well-formed prompt does not guarantee correct code
+
+- @Motivation@: an LLM that predicts plausible next tokens has no built-in
+  notion of _"this API does not exist"_ or _"this codebase changed since
+  training"_
+
+- @Overview@: three structural limits
+  1. Hallucinated APIs and outdated library versions
+  2. Token and context budget limits on large codebases
+  3. Degradation on long files and ambiguous specs
+
+* Types of Hallucination: An Empirical View
+
+// From paper Liu et al., "Exploring and Evaluating Hallucinations in
+// LLM-Powered Code Generation" (2024)
+- @Fact@: an empirical study across mainstream code-generation LLMs categorized
+  hallucination types
+  - Hallucinations happen across essentially every model tested, not just weaker
+    or smaller ones
+
+- @Comparison@: hallucinations range from:
+  - _Syntactic_: code that does not even parse
+  - _Semantic_: code that parses and runs, but does the wrong thing
+  - _Knowledge-based_: code built on a wrong fact about a library or API
+    - E.g., the hardest to catch during a review, since the code looks idiomatic
+      and is internally consistent
+
+// From paper Lee et al., "Hallucination by Code Generation LLMs: Taxonomy,
+// Benchmarks, Mitigation, and Challenges" (2025)
+- @Definition@: a **hallucination** in code generation is output that is
+  plausible but factually or behaviorally wrong, e.g.,
+  - _Invented APIs_: calls to functions or methods that never existed
+  - _Incorrect library behavior_: a real API, but wrong assumed semantics
+  - _Outdated usage_: an API that existed, but under a since-changed
+    signature or a deprecated pattern
+
+* Why Hallucination Happens
+
+- @Intuition@: the model was trained to continue plausible text, not to verify
+  facts against a live environment
+  - A rarely used but plausible-sounding function name can be more probable
+    under the model's training distribution than the real, less common one
+
+- @Key idea@: hallucination is not a bug that better training alone removes,
+  it is a direct consequence of generation without execution or lookup
+
+* Knowledge Conflicts
+
+// From paper Ashik et al., "When LLMs Lag Behind: Knowledge Conflicts from
+// Evolving APIs in Code Generation" (2026)
+- @Definition@: a **knowledge conflict** occurs when the model's memorized,
+  pre-cutoff API pattern disagrees with the current version of the same library
+
+- @Fact@: models default to the memorized, pre-cutoff pattern even when the
+  prompt supplies the current API information directly
+  - Up-to-date context does not automatically override a strongly memorized old
+    pattern
+
+- @Remark@: this is a stronger failure mode than plain hallucination, it
+  persists even when the correct answer is already in the context
+
+* Execution-Based Verification of Hallucination
+
+// From paper Tian et al., "CodeHalu: Investigating Code Hallucinations in
+// LLMs via Execution-based Verification" (2024)
+- @Definition@: an **execution-based benchmark** detects hallucination by
+  running generated code against test inputs and checking outputs, rather
+  than only inspecting the code's text
+
+- @Remark@: this motivates treating test execution, not code inspection, as the
+  ground truth for judging correctness
+
+* Context Budget on Large Codebases
+
+- @Problem@: even the largest available context window is finite, while a
+  real codebase can be orders of magnitude larger
+
+- @Implication@: a request touching a large codebase always operates on a
+  _subset_ of the code, selected by some retrieval or truncation strategy
+
+- @Example@: asking an assistant to "make this change consistent across the
+  whole codebase" in one prompt silently limits "whole codebase" to whatever
+  fit in the context window, not the literal whole codebase
+
+* When Generation Degrades: Long Files
+
+- @Problem@: as a single file grows, more of it competes for the same context
+  budget, and more of it risks landing in the lost middle context window (or
+  outside)
+
+- @Comparison@:
+  - _Short, focused file_: most content stays near the start or end of
+    context, where retrieval is most reliable
+  - _Long, monolithic file_: relevant constraints are more likely to be
+    buried in the middle
+
+* When Generation Degrades: Ambiguous Specs
+
+- @Problem@: an **ambiguous natural-language spec** has multiple plausible
+  continuations, and the model picks one without asking for clarification unless
+  explicitly prompted to, e.g.,
+  - _"add caching to this function"_ is ambiguous over cache key, eviction
+    policy, thread-safety, ...
+  - The model picks _a reasonable default_, not necessarily _the_ one the
+    codebase needs
+
+- @Remark@: writing specs that eliminate this ambiguity replaces the model's
+  freedom to guess with a deliberate, reviewable design choice instead
+
+* Survey View: Where the Field Stands
+
+// From paper Huynh et al., "Large Language Models for Code Generation: A
+// Comprehensive Survey" (2025)
+- @Fact@: a comprehensive survey of code-generation LLMs finds that
+  - Architecture and training-data improvements have steadily raised benchmark
+    scores
+  - Hallucination and context limits remain open challenges across model families
+  - Better models shift where the limits show up (e.g., longer reliable context,
+    fewer invented APIs)
+
+* One Root Cause for Every Limit
+
+```{=typst}
+#styled-table(
+  headers: ("Limit", "Root cause"),
+  rows: (
+    ("Hallucinated APIs", "Pattern completion without lookup"),
+    ("Stale API knowledge", "Training-data cutoff vs. current library"),
+    ("Context budget limits", "Finite context vs. large codebases"),
+    ("Ambiguous specs", "Multiple plausible continuations"),
+  ),
+  col-widths: (1.3fr, 2fr),
+)
+```
+
+::: columns
+:::: {.column width=60%}
+- @Key idea@: every limit in this lesson traces back to the same root
+  - _"An autoregressive model continues plausible patterns, it does not verify
+    facts or execute code on its own"_
+  - LLM needs grounding in codebase, updated documentation, or execution
+
+::::
+:::: {.column width=40%}
+
+```mermaid
+mindmap
+  root((**LLM Code Generation**))
+    (**Generation**)
+      Autoregressive prediction
+      Training data mix
+    (**Prompting**)
+      System prompts
+      Few-shot / chain-of-thought
+      Context window
+    (**Limits**)
+      Hallucinated APIs
+      Knowledge conflicts
+      Context budget
+      Ambiguous specs
+```
+::::
+:::
+
+* Open Questions
+
+- How much of a codebase should a prompt include before more context starts
+  hurting, rather than helping, generation quality?
+- Can a model be made to signal its own uncertainty about an API call, instead of
+  generating a confident but wrong one?
+- Where is the boundary between an ambiguous spec the model should ask about and
+  one it is reasonable to resolve with a default?

@@ -1,6 +1,6 @@
 ---
 title: "GluonTS: Predicting COVID-19 Cases"
-draft: True
+draft: true
 authors:
   - utkrisht nath
   - Harsh Yadav

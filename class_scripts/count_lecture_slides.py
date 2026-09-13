@@ -1,4 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env -S uv run
+
+# /// script
+# dependencies = ["tabulate"]
+# ///
 
 """
 Count slides and text statistics in lecture source files.
@@ -33,7 +37,7 @@ from typing import Any, Dict, List, Tuple
 
 import tabulate
 
-import class_scripts.gen_slides_test_utils as csgsteut
+import class_scripts.common_utils as csccouti
 import helpers.hdbg as hdbg
 import helpers.hparser as hparser
 
@@ -94,7 +98,7 @@ def _collect_stats(directory: str) -> List[Dict[str, Any]]:
     lectures_dir = os.path.join(directory, "lectures_source")
     hdbg.dassert_dir_exists(lectures_dir)
     _LOG.info("Scanning directory: %s", lectures_dir)
-    lesson_files = csgsteut.get_lesson_files(directory)
+    lesson_files = csccouti.get_lesson_files(directory)
     rows = []
     for file_path in lesson_files:
         _LOG.debug("Processing file: %s", file_path)

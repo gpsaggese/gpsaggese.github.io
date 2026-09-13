@@ -55,13 +55,13 @@ class TestLessonRoundTrip(hunitest.TestCase):
 
     def helper_lesson_files_round_trip(self, lesson_dir: str) -> None:
         """
-        Test round-trip parsing of all Lesson*.txt files in `lesson_dir/`.
+        Test round-trip parsing of all Lesson*.smd files in `lesson_dir/`.
 
         Reads each lesson file, parses it, reassembles it, and verifies the
         reassembled content matches the original byte-for-byte.
         """
         # Find all lesson files.
-        lesson_pattern = os.path.join(lesson_dir, "Lesson*.txt")
+        lesson_pattern = os.path.join(lesson_dir, "Lesson*.smd")
         lesson_files = sorted(glob.glob(lesson_pattern))
         hdbg.dassert_ne(
             len(lesson_files),

@@ -31,7 +31,7 @@
      controlled trend, seasonality, holiday, and autoregressive components.
 
 - For more information on the Docker build system refer to the [Project
-  template README](https://github.com/gpsaggese/umd_classes/blob/master/class_project/project_template/README.md)
+  template README](https://github.com/gpsaggese/umd_classes/blob/master/class_project/project_template/docker_scripts.README.md)
 
 ## Changelog
 

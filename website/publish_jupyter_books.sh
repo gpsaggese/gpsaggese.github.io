@@ -26,6 +26,9 @@
 #
 # - Build, copy, and deploy the website to GitHub Pages in one step:
 #   > ./website/publish_jupyter_books.sh --deploy
+#
+# - Force a rebuild even if no source file changed:
+#   > ./website/publish_jupyter_books.sh --force
 # """
 set -euo pipefail
 
@@ -38,17 +41,50 @@ OUT_DIR="$GIT_ROOT/website/docs/jupyter_books"
 ALL_BOOKS=("data605" "msml610" "tutorials")
 BOOKS=("${ALL_BOOKS[@]}")
 DEPLOY=0
+FORCE=0
 
 _print_usage() {
   # """
   # Print the script's command-line usage.
   # """
-  echo "Usage: $0 [--books data605,msml610,tutorials] [--deploy]"
+  echo "Usage: $0 [--books data605,msml610,tutorials] [--deploy] [--force]"
+}
+
+_book_is_up_to_date() {
+  # """
+  # Check whether a book's published output is already up to date, i.e. no
+  # file it references (per its `myst.yml` `file:` entries) or `myst.yml`
+  # itself changed since the last successful publish of this book.
+
+  # :param book: course/book directory name (e.g., "data605")
+  # :return: 0 (true) if up to date, 1 (false) otherwise
+  # """
+  local book="$1"
+  local book_dir="$GIT_ROOT/$book/jupyter_book"
+  local stamp="$book_dir/_build/.publish_stamp"
+  if [[ "$FORCE" -eq 1 || ! -f "$stamp" || ! -d "$OUT_DIR/$book" ]]; then
+    return 1
+  fi
+  # Resolve every `file:` entry in myst.yml relative to $book_dir, plus
+  # myst.yml itself, and check if any is newer than the last publish stamp.
+  local rel_path abs_path
+  while IFS= read -r rel_path; do
+    abs_path="$book_dir/$rel_path"
+    if [[ -e "$abs_path" && "$abs_path" -nt "$stamp" ]]; then
+      return 1
+    fi
+  done < <(grep -E '^\s*-?\s*file:' "$book_dir/myst.yml" | sed -E 's/^[^:]*:[[:space:]]*//')
+  if [[ "$book_dir/myst.yml" -nt "$stamp" ]]; then
+    return 1
+  fi
+  return 0
 }
 
 _build_book() {
   # """
   # Build one jupyter-book and copy its static HTML output into the website.
+  # Skips the (re)build entirely if the output is already up to date, unless
+  # --force was passed.
 
   # :param book: course/book directory name (e.g., "data605")
   # """
@@ -57,6 +93,10 @@ _build_book() {
   if [[ ! -d "$book_dir" ]]; then
     echo "ERROR: no jupyter_book dir at $book_dir" >&2
     exit 1
+  fi
+  if _book_is_up_to_date "$book"; then
+    echo "==> $book jupyter book is up to date, skipping (use --force to rebuild)"
+    return
   fi
   echo "==> Building $book jupyter book"
   (
@@ -83,6 +123,9 @@ _build_book() {
   # the live site.
   echo "==> Dropping raw .ipynb/.md source copies from $OUT_DIR/$book"
   find "$OUT_DIR/$book" -type f \( -iname '*.ipynb' -o -iname '*.md' \) -delete
+  # Mark this book as freshly published so the next run can skip it if
+  # nothing changed (see _book_is_up_to_date).
+  touch "$book_dir/_build/.publish_stamp"
 }
 
 # Parse command-line args.
@@ -94,6 +137,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --deploy)
       DEPLOY=1
+      shift
+      ;;
+    --force)
+      FORCE=1
       shift
       ;;
     -h|--help)

@@ -14,7 +14,7 @@ from unittest import mock
 import helpers.hio as hio
 import helpers.hunit_test as hunitest
 
-import class_scripts.get_lecture_file as clgelifi
+import class_scripts.get_lecture_file as csgelefi
 
 
 # #############################################################################
@@ -29,19 +29,17 @@ class Test_parse(hunitest.TestCase):
 
     def test1(self) -> None:
         """
-        Test parser accepts the positional `dir` and `lesson` arguments.
+        Test parser accepts the positional `input` argument.
         """
         # Prepare inputs.
-        arg_list = ["msml610", "01.1"]
+        arg_list = ["msml610/01.1"]
         # Prepare outputs.
-        expected_dir = "msml610"
-        expected_lesson = "01.1"
+        expected_input = "msml610/01.1"
         # Run test.
-        parser = clgelifi._parse()
+        parser = csgelefi._parse()
         args = parser.parse_args(arg_list)
         # Check outputs.
-        self.assert_equal(args.dir, expected_dir)
-        self.assert_equal(args.lesson, expected_lesson)
+        self.assert_equal(args.input, expected_input)
 
 
 # #############################################################################
@@ -64,18 +62,18 @@ class Test_main(hunitest.TestCase):
         source_dir = os.path.join(scratch_dir, "lectures_source")
         os.makedirs(source_dir, exist_ok=True)
         hio.to_file(
-            os.path.join(source_dir, "Lesson01-Introduction.txt"), "content"
+            os.path.join(source_dir, "Lesson01-Introduction.smd"), "content"
         )
-        arg_list = [scratch_dir, "01"]
+        lecture_file = os.path.join(source_dir, "Lesson01-Introduction.smd")
+        arg_list = [lecture_file]
         # Prepare outputs.
-        lecture_file = os.path.join(source_dir, "Lesson01-Introduction.txt")
         expected_log = f"Lecture file: {lecture_file}"
         # Run test.
         with self.assertLogs(
             "class_scripts.get_lecture_file", level="INFO"
         ) as cm:
             with mock.patch("sys.argv", ["get_lecture_file.py"] + arg_list):
-                clgelifi._main(clgelifi._parse())
+                csgelefi._main(csgelefi._parse())
         # Check outputs.
         # Log records are prefixed with the level and logger name, so only
         # the last (only) record is checked.

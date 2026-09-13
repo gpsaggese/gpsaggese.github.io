@@ -2,7 +2,7 @@
            '$GIT_ROOT/class_scripts/test/outcomes/Test_generate_pdf.test2/tmp.scratch/Lesson01.1-Intro.txt '
            '--output '
            '$GIT_ROOT/class_scripts/test/outcomes/Test_generate_pdf.test2/tmp.scratch/msml610/lectures/Lesson01.1-Intro.pdf '
-           '--type slides --toc_type navigation --skip_action open '
+           '--type slides --toc_type navigation --skip_action open_pdf '
            '--debug_on_error --limit 1:5',),
   'function': 'hsystem.system',
   'kwargs': {'suppress_output': False}}]

@@ -19,7 +19,7 @@ models, SHAP, LIME, permutation importance, and counterfactuals.
      trained on a real dataset
 
 - For Docker build system details see the
-  [project template README](../../class_project/project_template/README.md)
+  [project template README](../../class_project/project_template/docker_scripts.README.md)
 
 ## Introduction
 

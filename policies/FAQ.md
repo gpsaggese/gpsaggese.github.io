@@ -1,21 +1,20 @@
 # FAQs
 
-This document answers common questions about joining and working with GP's
-research group, including benefits, authorship policies, expectations for
-contribution, and what you'll gain from the internship.
+This document answers common questions about joining and working with GP's research
+group
 
 ## What Do You Gain From Working with GP's Research Group?
-- Write blogs, papers, and more that make your resume stand out
-- Work on interesting technical projects that build your resume
+- Write blogs, academic papers, books that will make your resume stand out
+- Work on interesting technical projects that will improve your resume
 - Meet interesting people who will be useful as part of your network
 - Get recommendation letters and advice from GP
-- Get TA or RA positions
-  - Disclaimer: with all the funding cuts, we are rebuilding the internship and
-    funding pipeline to use private funding, so things are not great, but in
-    about 6 months we should be back on track
+- Get TA or RA positions for GP's classes
+- Get internships, part-time, full-time jobs
 - Get exposure to companies
   - GP is a liaison between UMD CS/Engineering and startups, venture capital,
     and large companies
+
+## What is the AI Policy
 
 ## Authorship Policy
 - Ideas and projects go through the following life cycle:

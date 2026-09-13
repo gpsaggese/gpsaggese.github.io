@@ -1,0 +1,915 @@
+// type=UMD_slides
+// course_title=AI Software Engineering
+// lesson_title=Lesson 02.01: AI Pair Programming Workflows
+// slides_engine=typst
+//
+// References:
+// - Laster, "Learning GitHub Copilot: Multiplying Your Coding Productivity
+//   Using AI":
+//   https://www.oreilly.com/library/view/learning-github-copilot/9781098164645/
+// - Williams et al., "Pair Programming Illuminated":
+//   https://dl.acm.org/doi/10.5555/548833
+// - Williams et al., "Strengthening the Case for Pair Programming":
+//   http://sunnyday.mit.edu/16.355/williams.pdf
+// - Peralta et al., "Why Are Agentic Pull Requests Merged or Rejected? An
+//   Empirical Study": https://arxiv.org/abs/2605.22534
+// - Murphy-Hill et al., "Adoption and Impact of Command-Line AI Coding
+//   Agents: A Study of Microsoft's Early 2026 Rollout of Claude Code and
+//   GitHub Copilot CLI": https://arxiv.org/abs/2607.01418
+// - Chen et al., "Understanding How Enterprises Adopt the Model Context
+//   Protocol for LLM-Driven Software Engineering":
+//   https://arxiv.org/abs/2606.09182
+// - Geng et al., "Effective Strategies for Asynchronous Software Engineering
+//   Agents": https://arxiv.org/abs/2603.21489
+// - Agarwal et al., "AI IDEs or Autonomous Agents? Measuring the Impact of
+//   Coding Agents on Software Development": https://arxiv.org/abs/2601.13597
+// - Hou et al., "Model Context Protocol (MCP): Landscape, Security Threats,
+//   and Future Research Directions": https://arxiv.org/abs/2503.23278
+// - Sapkota et al., "Vibe Coding vs. Agentic Coding: Fundamentals and
+//   Practical Implications of Agentic AI": https://arxiv.org/abs/2505.19443
+// - Wang et al., "AI Agentic Programming: A Survey of Techniques,
+//   Challenges, and Opportunities": https://arxiv.org/abs/2508.11126
+// - Nguyen et al., "An Empirical Evaluation of GitHub Copilot's Code
+//   Suggestions": https://sarahnadi.org/assets/pdf/pubs/NguyenMSR22.pdf
+// - Cursor, "Cursor Docs": https://cursor.com/docs
+// - GitHub, "GitHub Copilot Documentation": https://docs.github.com/copilot
+// - Model Context Protocol, "Specification":
+//   https://modelcontextprotocol.io/specification/2025-11-25
+// - Anthropic, "Introducing the Model Context Protocol":
+//   https://www.anthropic.com/news/model-context-protocol
+// - Anthropic, "Where to run Claude Code":
+//   https://code.claude.com/docs/en/platforms
+
+# AI Pair Programming Workflows
+
+## Pair Programming Tool Landscape
+
+* From Code Generation to a Coding Partner
+
+- @Motivation@: A _strong coding model_ is only half of the problem
+  - The other half is _where_ the assistant runs, _what_ it can read, and _what_
+    it is allowed to do
+
+- @Question@: Two engineers use the same underlying model and get very different
+  results: what differs?
+
+- @Overview@: This lesson covers
+  1. The tool landscape and the interaction models behind it
+  2. Where the assistant runs: CLI, Desktop, IDE, Web, Mobile
+  3. Integrations that extend the assistant past the editor
+  4. Working asynchronously, when no human is attached to the session
+
+* Human Pair Programming as the Baseline
+
+// From book Williams et al., "Pair Programming Illuminated" (2002)
+
+- @Definition@: In **pair programming**, two programmers work on one task at one
+  workstation
+  - _Driver_: Writes the code
+  - _Navigator_: Reviews each line, watches for defects, thinks one step ahead
+  - Roles rotate during the session
+
+// From paper Williams et al., "Strengthening the Case for Pair Programming"
+// (2000)
+
+- @Fact@: A controlled study compared pairs against a solo programmer, not
+  against two solo programmers each completing the task independently
+  - Pairs spent roughly 15% more total programmer time than the solo baseline
+  - Delivered in less elapsed time, since two people worked simultaneously
+  - Produced code that passed more of the test cases than solo programmers
+
+- @Key idea@: The benefit comes:
+  - From _continuous review_
+  - From having to say out loud what the code is supposed to do
+  - Not from typing twice
+
+* What Changes with an AI Partner
+
+- @Comparison@: A human navigator versus a model navigator
+  - _Availability_: No scheduling cost, available for every task
+  - _Speed_: Drafts an entire file in seconds, so human review, not typing,
+    becomes the bottleneck
+  - _Memory_: No recollection of last week's design discussion unless it was
+    written into a file in the repository
+  - _Accountability_: Cannot own a decision or be responsible for a defect
+
+- @Key idea@: AI pair programming **inverts the roles**: the model drives, the
+  human navigates
+
+- @Remark@: Human-AI Collaboration Patterns cover how much control to hand over
+  and when (later lesson)
+
+* Three Interaction Models
+
+- @Definition@: An **interaction model** fixes what the assistant can see and
+  what actions it can take on its own
+
+::: columns
+:::: {.column width=45%}
+
+- @Overview@
+  1. _Autocomplete_: Continues code at the cursor
+  2. _Chat_: Answers a scoped request in a side panel
+  3. _Agent_: Pursues a goal by calling tools in a loop
+
+::::
+:::: {.column width=50%}
+
+// TODO(ai_gp): Make it a bidimensional graph and place the boxes there
+```graphviz
+digraph InteractionModels {
+  bgcolor="transparent";
+  pad="0.15";
+  splines=spline;
+  nodesep=0.30;
+  ranksep=0.50;
+  rankdir=LR;
+
+  node [shape=box,
+        style="rounded,filled",
+        fillcolor="#FFFFFF",
+        color="#9AA9B8",
+        penwidth=1.8,
+        fontname="Helvetica",
+        fontcolor="#243B53",
+        fontsize=12,
+        margin="0.22,0.14",
+        height=0.50];
+
+  edge [color="#A3B1C0",
+        penwidth=1.3,
+        arrowhead=vee,
+        arrowsize=0.75,
+        fontname="Helvetica",
+        fontsize=10,
+        fontcolor="#7B8794"];
+
+  // autocomplete : cyan   |   chat : teal   |   agent : orange
+
+  Auto  [label=<<b>Autocomplete</b><br/><font point-size="10" color="#1F4E56">Completes a line</font>>,
+         fillcolor="#C7ECF0", color="#7CC6D0", fontcolor="#1F4E56"];
+  Chat  [label=<<b>Chat</b><br/><font point-size="10" color="#1F4E39">Answers a request</font>>,
+         fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+  Agent [label=<<b>Agent</b><br/><font point-size="10" color="#6B4517">Pursues a goal</font>>,
+         fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+
+  Auto -> Chat -> Agent [label="  more context,\l  more actions\l"];
+}
+```
+
+::::
+:::
+
+- @Key idea@: The three models differ in the _unit of work_ they accept (e.g.,
+  from one line to one task)
+
+* Autocomplete Assistance
+
+- @Definition@: **Autocomplete assistance** completes code inline at the cursor,
+  using the surrounding file as context
+  - Human accepts or rejects changes with a single keystroke
+
+- @Characteristics@
+  - Sub-second latency, since the suggestion appears while typing
+  - Unit of work is a line or a small block
+  - The assistant never executes anything it wrote
+
+// From paper Nguyen et al., "An Empirical Evaluation of GitHub Copilot's
+// Code Suggestions" (2022)
+
+- @Fact@: An early empirical evaluation found that the correctness of
+  suggestions varied substantially across programming languages for the same
+  tool, while the suggested code itself was generally simple to read
+
+- @Cons@: The human supplies all context implicitly, by having the right file
+  open at the right cursor position
+
+* Chat Assistance
+
+- @Definition@: **Chat assistance** answers a natural-language request in a side
+  panel, scoped to a selection, a file, or a pasted snippet
+
+- @Characteristics@
+  - Handles requests autocomplete cannot express
+    - E.g., _"explain this function"_, _"rewrite this loop without recursion"_
+  - The output is text: The human decides what to apply, and applies it
+  - Context is whatever the human selected or pasted
+
+- @Cons@: Transcription overhead
+  - The human moves code into the panel and the answer back out
+  - Nothing in the loop checks whether the answer actually compiles or passes
+    the tests
+
+* Agentic Assistance
+
+::: columns
+:::: {.column width=60%}
+
+- @Definition@: An **agentic assistant** pursues a stated goal by calling
+  _tools_, observing the result, and deciding the next step
+  - Tool examples are "read a file", 'search the repository", "edit a file", "run
+    a command"
+
+- @Characteristics@
+  - Unit of work is a task, not a line
+  - The assistant gathers its own context instead of receiving it
+  - Test output, compiler errors, and grep results re-enter the loop
+
+- @Key idea@: What makes an assistant "agentic" is _feedback from the environment
+  inside the loop_, not how good is the model
+
+::::
+:::: {.column width=35%}
+
+// TODO(ai_gp): Maybe horizontal
+```graphviz
+digraph AgentLoop {
+  bgcolor="transparent";
+  pad="0.15";
+  splines=spline;
+  nodesep=0.30;
+  ranksep=0.50;
+  rankdir=TB;
+
+  node [shape=box,
+        style="rounded,filled",
+        fillcolor="#FFFFFF",
+        color="#9AA9B8",
+        penwidth=1.8,
+        fontname="Helvetica",
+        fontcolor="#243B53",
+        fontsize=12,
+        margin="0.22,0.14",
+        height=0.50];
+
+  edge [color="#3A4A5C",
+        penwidth=1.6,
+        arrowhead=vee,
+        arrowsize=0.85,
+        fontname="Helvetica",
+        fontsize=11,
+        fontcolor="#3A4A5C"];
+
+  // goal : orange   |   planning : teal   |   tool call : rose   |   observation : cyan   |   result : blue
+
+  Goal     [label="Goal", fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+  Plan     [label="Plan next step", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+  CallTool [label="Call a tool\n(read, edit, run, ...)", fillcolor="#F6C6C6", color="#D98C8C", fontcolor="#6B2A2A"];
+  Observe  [label="Observe result", fillcolor="#C7ECF0", color="#7CC6D0", fontcolor="#1F4E56"];
+  Result   [label="Result", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+
+  Goal -> Plan;
+  Plan -> CallTool;
+  CallTool -> Observe;
+  Observe -> Result [label="  Goal met"];
+  Observe -> Plan [label="  Iterate", style=dashed, constraint=false];
+}
+```
+
+::::
+:::
+
+* Autocomplete Vs. Agentic
+
+- The two ends of the interaction-model spectrum are the following:
+
+```{=typst}
+#styled-table(
+  headers: ("Property", "Autocomplete", "Agentic"),
+  rows: (
+    ("Unit of work", "A line or block", "A whole task"),
+    ("Context", "Cursor window, open files", "Gathered via tools"),
+    ("Actions", "Propose text only", "Read, edit, run commands"),
+    ("Latency", "Milliseconds", "Minutes"),
+    ("Verification", "Human eyes, then tests", "Tests inside the loop"),
+    ("Cost of a mistake", "Reject one suggestion",
+     "Review a multi-file diff"),
+  ),
+  col-widths: (1fr, 1.2fr, 1.3fr),
+)
+```
+
+- @Key idea@: Moving right on this table buys larger units of work and pays for
+  them with heavier review
+
+* Vibe Coding Vs. Agentic Coding
+
+// From paper Sapkota et al., "Vibe Coding vs. Agentic Coding" (2025)
+
+- @Definition@: **Vibe coding** is conversational, prompt-and-inspect
+  development where the human stays inside every iteration and keeps structural
+  judgment
+
+- @Definition@: **Agentic coding** delegates a goal to a system that plans,
+  executes, and validates on its own, reporting back at the end
+
+- @Comparison@
+  - _Vibe coding_: Exploration, prototyping, unfamiliar territory
+  - _Agentic coding_: Repeatable tasks with a mechanical success criterion
+
+// From paper Wang et al., "AI Agentic Programming: A Survey" (2025)
+
+- @Remark@: Agent internals (e.g., planning, tool use, memory, and multi-agent
+  orchestration) are covered in detail in following chapters
+
+* Claude Code
+
+// From book_AI_Software_Engineering/lectures_source/claude_code.md/Where to
+// Run Claude Code
+
+- @Definition@: **Claude Code** is a terminal-first agentic assistant
+  - Available on desktop, in IDE (e.g., VS Code and JetBrains), on the Web, and
+    on mobile
+
+- @Characteristics@
+  - Default interaction is agentic (e.g., read, edit, and run commands)
+  - Permission prompts gate actions the user has not pre-authorized
+  - Repository-level instruction files supply standing conventions
+  - Extensible through MCP servers, and scriptable through the Agent SDK
+
+- @Example@: _"run the test suite, fix the failures, and open a pull request"_
+  is one single request
+
+* GitHub Copilot
+
+// From book Laster, "Learning GitHub Copilot" (2025)
+// From internet resource GitHub, "GitHub Copilot Documentation"
+
+- @Definition@: **GitHub Copilot** began as inline autocomplete inside the
+  editor and now spans:
+  - Autocomplete
+  - Chat
+  - Agent modes across IDEs
+  - A command-line interface
+  - The GitHub web interface
+
+- @Characteristics@
+  - The same product exposes all three interaction models, selected per task
+  - Tightly coupled to the code host, so issues and pull requests are natural
+    entry points
+
+- @Key idea@: With a multi-mode tool, the mode chosen for a task matters more
+  than the brand on the tool
+
+* Cursor
+
+// From internet resource Cursor, "Cursor Docs"
+
+- @Definition@: **Cursor** is an AI-first code editor, where completion and an
+  agent mode live in the same window as the diff being reviewed
+
+- @Characteristics@
+  - Editor-centric: The assistant and the review surface are the same program
+  - _Rules_ files carry project conventions into every request
+  - MCP support and a command-line interface extend it past the editor
+
+- @Intuition@: Cursor optimizes the loop _propose $\to$ see the diff $\to$
+  accept_, which is why its natural home is the editor rather than the shell
+
+* The Three Tools Side by Side
+
+```{=typst}
+#styled-table(
+  headers: ("Tool", "Primary surface", "Default interaction", "Extension"),
+  rows: (
+    ("Claude Code", "Terminal", "Agentic", "MCP, Agent SDK"),
+    ("GitHub Copilot", "IDE and code host", "Autocomplete to agent",
+     "MCP, extensions"),
+    ("Cursor", "Custom editor", "Autocomplete plus agent", "MCP, rules"),
+  ),
+  col-widths: (1fr, 1.2fr, 1.3fr, 1.1fr),
+)
+```
+
+- @Remark@: All three
+  - Can use the same class of models
+  - Can converge on similar features
+  - Differ on the "interaction surface" and the workflow that surface encourages
+
+* Evidence From Deployment
+
+// TODO(ai_gp): Add more information
+
+// From paper Agarwal et al., "AI IDEs or Autonomous Agents? Measuring the
+// Impact of Coding Agents on Software Development" (2026)
+
+- @Fact@: An empirical comparison of IDE-embedded assistants against autonomous
+  coding agents finds that the two affect productivity and code quality
+  differently
+  - Numbers measured for one interaction model do not transfer to the other
+// From paper Peralta et al., "Why Are Agentic Pull Requests Merged or
+// Rejected? An Empirical Study" (2026)
+
+- @Fact@: A study of agent-authored pull requests across several tools examines
+  why such pull requests are merged or rejected in real review and CI workflows
+
+## Where to Run the Assistant
+
+* Why the Surface Matters
+
+- @Definition@: A **surface** is the program through which the AI assistant is
+  driven
+  - E.g., a terminal, a desktop app, an IDE, a browser, or a phone
+
+- @Problem@: The surface, not the model, decides three practical things
+  1. What context is available by default, e.g., the open file, the shell
+     history, the repository
+  2. How a proposed change is reviewed, e.g., a rendered diff or a wall of text
+  3. How long a session can live, e.g., until the laptop sleeps, or beyond it
+
+// From book_AI_Software_Engineering/lectures_source/claude_code.md/Where to
+// Run Claude Code
+
+- @Overview@: CLI, Desktop, VS Code, JetBrains, Web, Mobile
+
+* CLI: Terminal and Scripting
+
+// From book_AI_Software_Engineering/lectures_source/claude_code.md/Where to
+// Run Claude Code
+
+- @Characteristics@
+  - Full feature set, since the terminal is the assistant's native home
+  - Composes with everything else in the shell
+    - E.g., pipes, exit codes, scripts
+  - Supports the Agent SDK and third-party model providers
+
+- @Example@: The same assistant invoked from a shell script, a Makefile target,
+  or a CI job, with no human attached to the session
+
+- @Pros@: The only surface that is directly programmable, so it is the one that
+  scales to repeated and automated work
+
+- @Cons@: Review happens as text in a scrollback buffer, not as a rendered,
+  navigable diff
+
+* Desktop and IDE Surfaces
+
+// From book_AI_Software_Engineering/lectures_source/claude_code.md/Where to
+// Run Claude Code
+
+- @Variants@
+  - _Desktop_: Diff viewer and app preview, several sessions side by side
+  - _VS Code_: Inline diffs in the editor and an integrated terminal
+  - _JetBrains_: Diff viewer and sharing of the current selection with the
+    assistant
+
+- @Characteristics@: The change is rendered where the code already lives, so
+  accepting or rejecting it is a local, low-cost decision
+
+- @Key idea@: These surfaces optimize for _reviewing_, keeping the human next
+  to the diff rather than next to the transcript
+
+* Web and Mobile: Long-Running and Remote
+
+// From book_AI_Software_Engineering/lectures_source/claude_code.md/Where to
+// Run Claude Code
+
+- @Variants@
+  - _Web_: Sessions run in a managed environment and keep running after the user
+    disconnects
+  - _Mobile_: Start and monitor tasks away from the computer, through cloud
+    sessions or by controlling a session running locally
+
+- @Characteristics@: The session outlives the laptop, so a task is no longer
+  bounded by one sitting at one desk
+
+- @Key idea@: Once a session can outlive the human's attention, pair programming
+  turns into _delegation plus inspection_
+
+* Surfaces Compared
+
+```{=typst}
+#styled-table(
+  headers: ("Surface", "Best for", "Trade-off"),
+  rows: (
+    ("CLI", "Scripting, automation, repeated tasks",
+     "Text-only review"),
+    ("Desktop", "Visual diff review, parallel sessions",
+     "Tied to one machine"),
+    ("VS Code / JetBrains", "Editing with inline diffs",
+     "Context limited to the project open in the IDE"),
+    ("Web", "Long-running and offline tasks",
+     "Runs outside the local environment"),
+    ("Mobile", "Starting and monitoring work while away",
+     "Small screen makes real review impractical"),
+  ),
+  col-widths: (1.1fr, 1.6fr, 1.5fr),
+)
+```
+
+* Choosing a Surface
+
+::: columns
+:::: {.column width=45%}
+
+- @Steps@: Pick the surface based on the task
+  1. _"Repeatable or scripted?"_ $\to$ CLI
+  2. _"Needs close diff review?"_ $\to$ IDE or Desktop
+  3. _"Longer than one sitting?"_ $\to$ Web
+  4. _"Away from the machine?"_ $\to$ Mobile
+
+::::
+:::: {.column width=50%}
+
+// TODO(ai_gp): Make it look better and make it a template from it
+
+```graphviz
+digraph SurfaceChoice {
+  rankdir=TB;
+  nodesep=0.3;
+  ranksep=0.35;
+  node [shape=box, style="rounded,filled", fontname="Helvetica",
+        fontsize=9, penwidth=1.4];
+  Task   [label="Task", fillcolor="#FFD1A6"];
+  G1     [shape=diamond, label="Scripted?", fillcolor="#A6E7F4"];
+  G2     [shape=diamond, label="Needs diff\nreview?",
+          fillcolor="#A6E7F4"];
+  G3     [shape=diamond, label="Long\nrunning?", fillcolor="#A6E7F4"];
+  Cli    [label="CLI", fillcolor="#B2E2B2"];
+  Ide    [label="IDE / Desktop", fillcolor="#B2E2B2"];
+  Web    [label="Web", fillcolor="#B2E2B2"];
+  Mob    [label="Mobile", fillcolor="#B2E2B2"];
+  Task -> G1;
+  G1 -> Cli [label=" yes"];
+  G1 -> G2  [label=" no"];
+  G2 -> Ide [label=" yes"];
+  G2 -> G3  [label=" no"];
+  G3 -> Web [label=" yes"];
+  G3 -> Mob [label=" no"];
+}
+```
+
+::::
+:::
+
+- A single task can also move across surfaces
+  - E.g., started from a phone, executed on a desktop, reviewed in an IDE
+
+* Evidence: Command-Line Agents at Scale
+
+// TODO(ai_gp): Describe better the results of the paper
+
+// From paper Murphy-Hill et al., "Adoption and Impact of Command-Line AI
+// Coding Agents" (2026)
+
+- @Fact@: A large-scale study of an early enterprise rollout of command-line
+  coding agents reports what drove adoption across thousands of developers, and
+  measures the effect on pull-request throughput
+
+- @Key idea@: The terminal surface is not a niche preference for a few
+  engineers, it is a deployment target that organizations roll out and measure
+
+- @Remark@: Adoption is uneven across teams and tasks, so surface-level averages
+  hide large differences between the workflows underneath
+
+## Extending the Workflow
+
+* Beyond the Editor
+
+- @Motivation@: Most of the work around a change happens outside the editor
+  - E.g., pull requests, CI runs, chat threads, browsers, tickets
+
+- @Problem@: An assistant that only sees the editor forces the human to act as a
+  courier
+  - E.g., copying a CI log into a prompt and a fix back out
+
+- @Definition@: An **integration** connects the assistant to an external system,
+  so that system's state becomes readable context and its actions become
+  available tools
+
+// From book_AI_Software_Engineering/lectures_source/claude_code.md/Connect
+// Your Tools
+
+- @Overview@: CI pipelines, automated pull-request review, chat, the browser,
+  and MCP servers for everything else
+
+* CI Integration
+
+// From book_AI_Software_Engineering/lectures_source/claude_code.md/Connect
+// Your Tools
+
+- @Definition@: A **CI integration** runs the assistant as a pipeline step in the
+  continuous integration workflow (e.g., GitHub Actions or GitLab CI), triggered
+  by a push, a pull request, a comment, or a label
+
+- @Characteristics@
+  - Non-interactive: Nobody is present to answer a permission prompt
+  - Credentials must be scoped in advance to what the job may touch
+  - The only useful output is an artifact: A comment, a commit, or a pull
+    request
+
+- @Remark@: Pipeline design, approval gating, and release automation are covered
+  in detail in next lessons
+
+* Automated Pull-Request Review
+
+// From book_AI_Software_Engineering/lectures_source/claude_code.md/Connect
+// Your Tools
+
+- @Definition@: An **automated review** integration reads the diff of a pull
+  request and posts inline comments before a human reviewer opens it
+
+- @Pros@: A first pass catches the mechanical findings, so human attention goes
+  to design and trade-offs
+
+- @Cons@: False positives are expensive
+  - A reviewer who starts to ignore the bot, loses the value of the true findings
+    too
+
+- @Remark@: What automated review actually catches, and how to combine it with
+  human review, is covered in later chapters
+
+* Chat and Browser Integrations
+
+// From book_AI_Software_Engineering/lectures_source/claude_code.md/Connect
+// Your Tools
+
+- @Variants@
+  - _Chat_: The assistant responds to a mention in a channel, so a task can start
+    in the thread where the problem was reported and the result lands back in the
+    same thread
+  - _Browser_: The assistant drives a real browser to exercise a user flow
+    - E.g., fill a form, check what a page actually renders
+
+- @Intuition@: A browser integration closes the gap between _"the tests pass"_
+  and _"the feature works in the product"_
+
+- @Key idea@: Integrations move the assistant to where the evidence and the
+  conversation already are, instead of moving both to the assistant
+
+* MCP: One Protocol for Many Tools
+
+::: columns
+:::: {.column width=50%}
+
+- @Problem@: $N$ assistants and $M$ tools need $N \times M$ bespoke integrations
+// From internet resource Model Context Protocol, "Specification"
+// From internet resource Anthropic, "Introducing the Model Context Protocol"
+
+- @Definition@: The **Model Context Protocol (MCP)** is an open protocol in
+  which a client (the assistant) connects to servers that expose tools,
+  resources, and prompts through one uniform interface
+
+- @Key idea@: $N + M$ implementations instead of $N \times M$
+
+::::
+:::: {.column width=45%}
+
+```graphviz
+digraph MCP {
+  rankdir=LR;
+  nodesep=0.25;
+  node [shape=box, style="rounded,filled", fontname="Helvetica",
+        fontsize=9, penwidth=1.4];
+  Client [label="Assistant\n(MCP client)", fillcolor="#F4A6A6"];
+  S1 [label="Issue tracker", fillcolor="#A0D6D1"];
+  S2 [label="Database", fillcolor="#A0D6D1"];
+  S3 [label="Docs search", fillcolor="#A0D6D1"];
+  S4 [label="Internal API", fillcolor="#A0D6D1"];
+  Client -> S1 [dir=both];
+  Client -> S2 [dir=both];
+  Client -> S3 [dir=both];
+  Client -> S4 [dir=both];
+}
+```
+
+::::
+:::
+
+* MCP in Practice
+
+// From paper Chen et al., "Understanding How Enterprises Adopt the Model
+// Context Protocol for LLM-Driven Software Engineering" (2026)
+
+- @Fact@: Practitioner interviews on enterprise MCP adoption report that the
+  hard part is organizational, not at the level of implementation
+  - E.g., Finding trustworthy servers, wiring authentication, and governing what
+    each server may do
+
+// From paper Hou et al., "Model Context Protocol (MCP): Landscape, Security
+// Threats, and Future Research Directions" (2025)
+
+- @Challenges@: Every connected server widens both the action space and the
+  attack surface
+  - Over-broad credentials handed to a server that only needed read access
+  - Content returned by a server is untrusted input that reaches the model
+
+- @Key idea@: Connecting an integration means _granting a permission_, so
+  the two decisions should be made together
+
+* The Extended Workflow
+
+```graphviz[width=85%]
+digraph ExtendedWorkflow {
+    bgcolor  = "white";
+    rankdir  = LR;
+    splines  = spline;
+    nodesep  = 0.35;
+    ranksep  = 0.70;
+    pad      = 0.30;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica",
+          fontsize=11, penwidth=1.2, margin="0.20,0.12", height=0.50,
+          color="#7B8794"];
+    edge [color="#9AA5B1", penwidth=1.1, arrowsize=0.75,
+          fontname="Helvetica", fontsize=9, fontcolor="#616E7C"];
+
+    subgraph cluster_surfaces {
+        label = "Surfaces"; labelloc = "t";
+        fontname = "Helvetica-Bold"; fontsize = 11; fontcolor = "#52606D";
+        style = "rounded,filled"; fillcolor = "#F7F9FC"; color = "#CBD2D9";
+        penwidth = 1.0; margin = 14;
+
+        Cli [label="CLI", fillcolor="#FFD1A6"];
+        Ide [label="IDE / Desktop", fillcolor="#FFD1A6"];
+        Mob [label="Web / Mobile", fillcolor="#FFD1A6"];
+    }
+
+    Assistant [label="Assistant\n(agentic loop)", fillcolor="#F4A6A6"];
+
+    subgraph cluster_systems {
+        label = "Connected systems"; labelloc = "t";
+        fontname = "Helvetica-Bold"; fontsize = 11; fontcolor = "#52606D";
+        style = "rounded,filled"; fillcolor = "#F7F9FC"; color = "#CBD2D9";
+        penwidth = 1.0; margin = 14;
+
+        Ci      [label="Code host and CI", fillcolor="#A0D6D1"];
+        Chat    [label="Chat", fillcolor="#A6E7F4"];
+        Browser [label="Browser", fillcolor="#A6E7F4"];
+        Mcp     [label="MCP servers", fillcolor="#C6A6F4"];
+    }
+
+    Cli -> Assistant;
+    Ide -> Assistant;
+    Mob -> Assistant;
+    Assistant -> Ci      [dir=both, label="  PRs, checks"];
+    Assistant -> Chat    [dir=both, label="  requests"];
+    Assistant -> Browser [dir=both, label="  actions"];
+    Assistant -> Mcp     [dir=both, label="  tools"];
+    Ci -> Ide [label="  failures, review comments", style=dashed,
+               penwidth=1.5, color="#B23A48", fontcolor="#B23A48",
+               constraint=false];
+}
+```
+
+## Working Asynchronously
+
+* Synchronous Vs. Asynchronous Assistance
+
+- @Definition@: **Asynchronous assistance** dispatches a task that runs without
+  an attached human session, and whose result is inspected later
+
+- @Comparison@
+  - _Synchronous_: Throughput is bounded by human attention $\to$ one live
+    session at a time
+  - _Asynchronous_: Throughput is bounded by wall-clock time and by review
+    capacity $\to$ several tasks run at once
+
+- @Problem@: Attention does not parallelize, so a workflow where every task
+  needs a live session caps out few tasks per engineer
+
+// From book_AI_Software_Engineering/lectures_notes/
+// Lesson01-AI_workflows_for_coding.txt/Coding while you sleep
+
+- @Key idea@: Asynchronous work turns the engineer into a _dispatcher and
+  reviewer_ of parallel work, instead of a participant in one session
+
+* Dispatch and Remote Control
+
+// From book_AI_Software_Engineering/lectures_source/claude_code.md/Work When
+// You Are Away From Your Terminal
+
+- @Definition@:
+  - **Dispatch** sends a task from a phone to a machine that is already set up,
+    e.g., the desktop where the repository is checked out
+  - **Remote control** drives a session that is already running locally, from a
+    phone or a web browser
+
+- @Comparison@
+  - _Cloud session_: Runs in a managed environment, isolated from the local
+    machine, and needs its own credentials and setup
+  - _Remote-controlled local session_: Runs on the developer's machine, with its
+    real environment, its credentials, and its uncommitted state
+
+- @Remark@: The two differ mainly in _which environment_ the work happens in,
+  which is what determines the effect of a mistake
+
+* Channels and Scheduled Tasks
+
+// From book_AI_Software_Engineering/lectures_source/claude_code.md/Work When
+// You Are Away From Your Terminal
+
+- @Definition@
+  - A **channel** lets a session react to events coming from a chat application
+    or from the team's own servers, making the assistant event-driven instead of
+    prompt-driven
+  - A **scheduled task** runs a session on a fixed schedule, with no trigger from
+    a human at all
+
+- @Examples@: Work that fits a schedule rather than a conversation
+  - Nightly dependency upgrades, one pull request per upgrade, with the test run
+    attached as evidence
+  - A weekly sweep that files an issue for every newly deprecated API in use
+
+- @Key idea@: A scheduled agent turns a recurring chore from something nobody
+  does into something a human only reviews
+
+* Background Sessions and Isolated Workspaces
+
+// From paper Geng et al., "Effective Strategies for Asynchronous Software
+// Engineering Agents" (2026)
+
+- @Problem@: Several background sessions editing one working copy overwrite each
+  other's changes and produce a diff nobody can review
+
+- @Solution@:
+  - Give each session an **isolated workspace**
+    - E.g., a separate git worktree, container, or cloud sandbox
+  - Route work through **centralized delegation** rather than ad-hoc parallel
+    launches
+
+- @Fact@: The paper reports centralized delegation and workspace isolation as
+  effective strategies for asynchronous software-engineering agents
+
+- @Key idea@: Concurrency in asynchronous work is an **environment problem**
+  before it is a model problem
+
+* An Asynchronous Working Day
+
+```graphviz
+digraph AsyncDay {
+    rankdir=LR;
+    nodesep=0.30;
+    ranksep=0.55;
+    node [shape=box, style="rounded,filled", fontname="Helvetica",
+          fontsize=10, penwidth=1.4];
+
+    Morning [label="Morning\ndispatch 3 tasks\nfrom mobile",
+             fillcolor="#FFD1A6"];
+    Run     [label="Background\nisolated workspace\nper task",
+             fillcolor="#A0D6D1"];
+    Ci      [label="CI runs\ntests and checks", fillcolor="#A6E7F4"];
+    Review  [label="Midday\nreview 2 PRs\nin the IDE", fillcolor="#A6C8F4"];
+    Esc     [label="1 task escalates\nneeds a decision", fillcolor="#F4A6A6"];
+    Night   [label="Evening\nschedule nightly\nsweep", fillcolor="#C6A6F4"];
+
+    Morning -> Run -> Ci -> Review -> Night;
+    Ci -> Esc [label="  blocked"];
+    Esc -> Review [style=dashed];
+}
+```
+
+- @Remark@: Nothing here removes review, it moves review off the critical path
+  of writing the code and onto a queue the engineer drains
+
+* Summary
+
+::: columns
+:::: {.column width=50%}
+- **Interaction model** sets the unit of work: A line for autocomplete, a scoped
+  answer for chat, a whole task for an agent with tools
+- **Tools** differ less in the models they use than in the surface they put
+  first, which shapes the workflow around them
+- **Surfaces** trade scriptability (CLI), review quality (IDE and Desktop), and
+  session lifetime (Web and Mobile) against each other
+- **Integrations** connect the assistant to CI, review, chat, and the browser,
+  with MCP as the general mechanism, and each one is also a permission grant
+- **Asynchronous work** adds dispatch, remote control, channels, and schedules,
+  and needs isolated workspaces to run several tasks at once
+::::
+:::: {.column width=45%}
+
+```mermaid
+mindmap
+  root((**AI Pair Programming**))
+    (**Interaction**)
+      Autocomplete
+      Chat
+      Agent with tools
+    (**Surfaces**)
+      CLI
+      Desktop and IDE
+      Web and Mobile
+    (**Integrations**)
+      CI and PR review
+      Chat and browser
+      MCP servers
+    (**Asynchronous**)
+      Dispatch
+      Remote control
+      Scheduled tasks
+      Isolated workspaces
+```
+::::
+:::
+
+* Open Questions
+
+- Which parts of a task genuinely need the editor surface, and which are already
+  better served by a scripted command-line run?
+
+- How should a team decide which MCP servers to connect, given that every server
+  both extends the assistant and widens its attack surface?
+
+- What is the right ratio of dispatched asynchronous tasks to reviewer capacity,
+  before the review queue becomes the new bottleneck?

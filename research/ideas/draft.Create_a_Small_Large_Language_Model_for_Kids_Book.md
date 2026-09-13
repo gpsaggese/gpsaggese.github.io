@@ -25,6 +25,12 @@
   children's collection) filtered by Flesch-Kincaid reading level, to test
   whether real (vs. synthetic) restricted-vocabulary text changes the
   size/coherence tradeoff
+- **LittleLearner / LittleCurriculum** ([littlelearner-ll.github.io](https://littlelearner-ll.github.io))
+  — related prior work: trains 0.6B-5B param models on an 88B-token corpus
+  filtered to K-5 Common Core standards, to get an "interpretable knowledge
+  boundary" for studying acquired vs. elicited capabilities. Different goal
+  (knowledge-boundary study, not model-size minimization) but same
+  curriculum-restricted-domain methodology
 
 ## Key Examples
 - **Model size sweep**: train 1M/10M/50M/125M parameter models on the same
@@ -60,3 +66,6 @@
 ## References
 - Eldan, R., & Li, Y. (2023). _TinyStories: How Small Can Language Models Be
   and Still Speak Coherent English?_
+- LittleLearner project. _LittleCurriculum: an 88B-token K-5 Common Core
+  corpus for studying knowledge acquisition boundaries._
+  https://littlelearner-ll.github.io

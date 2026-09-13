@@ -170,9 +170,9 @@ class Test_expand_lecture_range(hunitest.TestCase):
         """
         # Prepare inputs.
         test_files = [
-            "Lesson01.1-Intro.txt",
-            "Lesson01.2-BigData.txt",
-            "Lesson02.1-Git.txt",
+            "Lesson01.1-Intro.smd",
+            "Lesson01.2-BigData.smd",
+            "Lesson02.1-Git.smd",
         ]
         class_dir = _create_test_structure_with_multiple_files(self, test_files)
         scratch_dir = self.get_scratch_space()
@@ -196,7 +196,7 @@ class Test_expand_lecture_range(hunitest.TestCase):
         Test expanding a range that includes only one lecture file.
         """
         # Prepare inputs.
-        test_files = ["Lesson01.1-Intro.txt"]
+        test_files = ["Lesson01.1-Intro.smd"]
         class_dir = _create_test_structure_with_multiple_files(self, test_files)
         scratch_dir = self.get_scratch_space()
         start_lesson = "01.1"
@@ -219,7 +219,7 @@ class Test_expand_lecture_range(hunitest.TestCase):
         Test that an empty range raises `AssertionError`.
         """
         # Prepare inputs.
-        test_files = ["Lesson01.1-Intro.txt"]
+        test_files = ["Lesson01.1-Intro.smd"]
         class_dir = _create_test_structure_with_multiple_files(self, test_files)
         start_lesson = "99.1"
         end_lesson = "99.9"
@@ -265,9 +265,9 @@ class Test_find_lecture_files(hunitest.TestCase):
         """
         # Prepare inputs.
         test_files = [
-            "Lesson01.1-Intro.txt",
-            "Lesson01.2-BigData.txt",
-            "Lesson02.1-Git.txt",
+            "Lesson01.1-Intro.smd",
+            "Lesson01.2-BigData.smd",
+            "Lesson02.1-Git.smd",
         ]
         class_dir = _create_test_structure_with_multiple_files(self, test_files)
         is_range = True
@@ -282,9 +282,9 @@ class Test_find_lecture_files(hunitest.TestCase):
         """
         # Prepare inputs.
         test_files = [
-            "Lesson01.1-Intro.txt",
-            "Lesson01.2-BigData.txt",
-            "Lesson02.1-Git.txt",
+            "Lesson01.1-Intro.smd",
+            "Lesson01.2-BigData.smd",
+            "Lesson02.1-Git.smd",
         ]
         class_dir = _create_test_structure_with_multiple_files(self, test_files)
         is_range = False
@@ -299,9 +299,9 @@ class Test_find_lecture_files(hunitest.TestCase):
         """
         # Prepare inputs.
         test_files = [
-            "Lesson01.1-Intro.txt",
-            "Lesson01.2-BigData.txt",
-            "Lesson02.1-Git.txt",
+            "Lesson01.1-Intro.smd",
+            "Lesson01.2-BigData.smd",
+            "Lesson02.1-Git.smd",
         ]
         class_dir = _create_test_structure_with_multiple_files(self, test_files)
         is_range = False
@@ -368,8 +368,8 @@ class Test_generate_tex(hunitest.TestCase):
         class_dir, scratch_dir = _create_test_structure(
             self, "data605", "lectures_tex"
         )
-        source_path = os.path.join(scratch_dir, "Lesson01.1-Intro.txt")
-        source_name = "Lesson01.1-Intro.txt"
+        source_path = os.path.join(scratch_dir, "Lesson01.1-Intro.smd")
+        source_name = "Lesson01.1-Intro.smd"
         hio.to_file(source_path, "Test content")
         # Run test.
         self._helper(class_dir, source_path, source_name)
@@ -382,8 +382,8 @@ class Test_generate_tex(hunitest.TestCase):
         class_dir, scratch_dir = _create_test_structure(
             self, "data605", "lectures_tex"
         )
-        source_path = os.path.join(scratch_dir, "Lesson01.1-Intro.txt")
-        source_name = "Lesson01.1-Intro.txt"
+        source_path = os.path.join(scratch_dir, "Lesson01.1-Intro.smd")
+        source_name = "Lesson01.1-Intro.smd"
         hio.to_file(source_path, "Test content")
         limit = "1:3"
         # Run test.
@@ -405,8 +405,8 @@ class Test_generate_tex(hunitest.TestCase):
         class_dir, scratch_dir = _create_test_structure(
             self, "data605", "lectures_tex"
         )
-        source_path = os.path.join(scratch_dir, "Lesson01.1-Intro.txt")
-        source_name = "Lesson01.1-Intro.txt"
+        source_path = os.path.join(scratch_dir, "Lesson01.1-Intro.smd")
+        source_name = "Lesson01.1-Intro.smd"
         hio.to_file(source_path, "Test content")
         cmd_opts = "--no_incremental --open_pdf"
         # Run test.
@@ -438,8 +438,8 @@ class Test_generate_pdf(hunitest.TestCase):
         class_dir, scratch_dir = _create_test_structure(
             self, "msml610", "lectures"
         )
-        source_path = os.path.join(scratch_dir, "Lesson01.1-Intro.txt")
-        source_name = "Lesson01.1-Intro.txt"
+        source_path = os.path.join(scratch_dir, "Lesson01.1-Intro.smd")
+        source_name = "Lesson01.1-Intro.smd"
         hio.to_file(source_path, "Test content")
         # Run test.
         with hunteuti.capture_sys_calls() as sys_calls:
@@ -450,7 +450,7 @@ class Test_generate_pdf(hunitest.TestCase):
         actual_str = pprint.pformat(sys_calls)
         expected_str = hprint.dedent("""
             [{'args': ('notes_to_pdf.py --input '
-                       '$GIT_ROOT/class_scripts/test/outcomes/Test_generate_pdf.test1/tmp.scratch/Lesson01.1-Intro.txt '
+                       '$GIT_ROOT/class_scripts/test/outcomes/Test_generate_pdf.test1/tmp.scratch/Lesson01.1-Intro.smd '
                        '--output '
                        '$GIT_ROOT/class_scripts/test/outcomes/Test_generate_pdf.test1/tmp.scratch/msml610/lectures/Lesson01.1-Intro.pdf '
                        '--type slides --toc_type navigation --skip_action open_pdf '
@@ -468,8 +468,8 @@ class Test_generate_pdf(hunitest.TestCase):
         class_dir, scratch_dir = _create_test_structure(
             self, "msml610", "lectures"
         )
-        source_path = os.path.join(scratch_dir, "Lesson01.1-Intro.txt")
-        source_name = "Lesson01.1-Intro.txt"
+        source_path = os.path.join(scratch_dir, "Lesson01.1-Intro.smd")
+        source_name = "Lesson01.1-Intro.smd"
         hio.to_file(source_path, "Test content")
         limit = "1:5"
         # Run test.
@@ -481,7 +481,7 @@ class Test_generate_pdf(hunitest.TestCase):
         actual_str = pprint.pformat(sys_calls)
         expected_str = hprint.dedent("""
             [{'args': ('notes_to_pdf.py --input '
-                       '$GIT_ROOT/class_scripts/test/outcomes/Test_generate_pdf.test2/tmp.scratch/Lesson01.1-Intro.txt '
+                       '$GIT_ROOT/class_scripts/test/outcomes/Test_generate_pdf.test2/tmp.scratch/Lesson01.1-Intro.smd '
                        '--output '
                        '$GIT_ROOT/class_scripts/test/outcomes/Test_generate_pdf.test2/tmp.scratch/msml610/lectures/Lesson01.1-Intro.pdf '
                        '--type slides --toc_type navigation --skip_action open_pdf '
@@ -500,8 +500,8 @@ class Test_generate_pdf(hunitest.TestCase):
         class_dir, scratch_dir = _create_test_structure(
             self, "msml610", "lectures"
         )
-        source_path = os.path.join(scratch_dir, "Lesson01.1-Intro.txt")
-        source_name = "Lesson01.1-Intro.txt"
+        source_path = os.path.join(scratch_dir, "Lesson01.1-Intro.smd")
+        source_name = "Lesson01.1-Intro.smd"
         hio.to_file(source_path, "Test content")
         cmd_opts = "--no_incremental --open_pdf"
         # Run test.
@@ -531,8 +531,8 @@ class Test_generate_toc(hunitest.TestCase):
         """
         # Prepare inputs.
         scratch_dir = self.get_scratch_space()
-        source_path = os.path.join(scratch_dir, "Lesson01.1-Intro.txt")
-        source_name = "Lesson01.1-Intro.txt"
+        source_path = os.path.join(scratch_dir, "Lesson01.1-Intro.smd")
+        source_name = "Lesson01.1-Intro.smd"
         hio.to_file(source_path, "# Main\n## Section 1\n### Subsection")
         # Mock `system_to_string()` to return TOC content.
         with mock.patch(
@@ -545,7 +545,7 @@ class Test_generate_toc(hunitest.TestCase):
             result = csfolole._generate_toc(source_path, source_name)
         # Check outputs.
         self.assertIsNotNone(result)
-        self.assertIn("# Lesson01.1-Intro.txt", result)
+        self.assertIn("# Lesson01.1-Intro.smd", result)
         self.assertIn("## Section 1", result)
 
     def test2(self) -> None:
@@ -554,8 +554,8 @@ class Test_generate_toc(hunitest.TestCase):
         """
         # Prepare inputs.
         scratch_dir = self.get_scratch_space()
-        source_path = os.path.join(scratch_dir, "Lesson02.1-Advanced.txt")
-        source_name = "Lesson02.1-Advanced.txt"
+        source_path = os.path.join(scratch_dir, "Lesson02.1-Advanced.smd")
+        source_name = "Lesson02.1-Advanced.smd"
         hio.to_file(source_path, "# Title\n## Content")
         # Capture system calls.
         with hunteuti.capture_sys_calls() as sys_calls:
@@ -564,7 +564,7 @@ class Test_generate_toc(hunitest.TestCase):
         actual_str = pprint.pformat(sys_calls)
         expected_str = hprint.dedent("""
             [{'args': ('extract_toc_from_txt.py -i '
-                       '$GIT_ROOT/class_scripts/test/outcomes/Test_generate_toc.test2/tmp.scratch/Lesson02.1-Advanced.txt '
+                       '$GIT_ROOT/class_scripts/test/outcomes/Test_generate_toc.test2/tmp.scratch/Lesson02.1-Advanced.smd '
                        '--max_level 5 --warn_on_malformed',),
               'function': 'hsystem.system_to_string',
               'kwargs': {'suppress_output': True}}]
@@ -589,8 +589,8 @@ class Test_generate_lecture_commentary(hunitest.TestCase):
         """
         # Prepare inputs.
         class_dir = "data605"
-        source_path = "data605/lectures_source/Lesson01.1-Intro.txt"
-        source_name = "Lesson01.1-Intro.txt"
+        source_path = "data605/lectures_source/Lesson01.1-Intro.smd"
+        source_name = "Lesson01.1-Intro.smd"
         # Run test.
         with hunteuti.capture_sys_calls() as sys_calls:
             csfolole._generate_lecture_commentary(
@@ -599,7 +599,7 @@ class Test_generate_lecture_commentary(hunitest.TestCase):
         # Check outputs.
         self.assertEqual(len(sys_calls), 1)
         cmd_str = sys_calls[0]["args"][0]
-        self.assertEqual(cmd_str, "gen_lecture_commentary.py data605 01.1")
+        self.assertEqual(cmd_str, "gen_lecture_commentary.py data605/01.1")
 
     def test2(self) -> None:
         """
@@ -608,8 +608,8 @@ class Test_generate_lecture_commentary(hunitest.TestCase):
         """
         # Prepare inputs.
         class_dir = "data605"
-        source_path = "data605/lectures_source/Lesson01.1-Intro.txt"
-        source_name = "Lesson01.1-Intro.txt"
+        source_path = "data605/lectures_source/Lesson01.1-Intro.smd"
+        source_name = "Lesson01.1-Intro.smd"
         cmd_opts = "--no_incremental --open_pdf"
         # Run test.
         with hunteuti.capture_sys_calls() as sys_calls:
@@ -621,7 +621,7 @@ class Test_generate_lecture_commentary(hunitest.TestCase):
         cmd_str = sys_calls[0]["args"][0]
         self.assertEqual(
             cmd_str,
-            "gen_lecture_commentary.py data605 01.1 --no_incremental --open_pdf",
+            "gen_lecture_commentary.py data605/01.1 --no_incremental --open_pdf",
         )
 
 
@@ -646,8 +646,8 @@ class Test_generate_pdf_e2e(hunitest.TestCase):
         class_dir, scratch_dir = _create_test_structure(
             self, "msml610", "lectures"
         )
-        source_path = os.path.join(scratch_dir, "Lesson01.1-Intro.txt")
-        source_name = "Lesson01.1-Intro.txt"
+        source_path = os.path.join(scratch_dir, "Lesson01.1-Intro.smd")
+        source_name = "Lesson01.1-Intro.smd"
         source_content = """
         # Lesson 01.1: Introduction
 
@@ -666,8 +666,8 @@ class Test_generate_pdf_e2e(hunitest.TestCase):
         class_dir, scratch_dir = _create_test_structure(
             self, "msml610", "lectures"
         )
-        source_path = os.path.join(scratch_dir, "Lesson02.1-Advanced.txt")
-        source_name = "Lesson02.1-Advanced.txt"
+        source_path = os.path.join(scratch_dir, "Lesson02.1-Advanced.smd")
+        source_name = "Lesson02.1-Advanced.smd"
         source_content = """
         # Lesson 02.1: Advanced Topics
 
@@ -705,8 +705,8 @@ class Test_generate_tex_e2e(hunitest.TestCase):
         class_dir, scratch_dir = _create_test_structure(
             self, "data605", "lectures_tex"
         )
-        source_path = os.path.join(scratch_dir, "Lesson03.1-Distributed.txt")
-        source_name = "Lesson03.1-Distributed.txt"
+        source_path = os.path.join(scratch_dir, "Lesson03.1-Distributed.smd")
+        source_name = "Lesson03.1-Distributed.smd"
         source_content = """
         # Lesson 03.1: Distributed Systems
 
@@ -740,8 +740,8 @@ class Test_generate_script_e2e(hunitest.TestCase):
         class_dir, scratch_dir = _create_test_structure(
             self, "data605", "lectures_video_script"
         )
-        source_path = os.path.join(scratch_dir, "Lesson04.1-Scripts.txt")
-        source_name = "Lesson04.1-Scripts.txt"
+        source_path = os.path.join(scratch_dir, "Lesson04.1-Scripts.smd")
+        source_name = "Lesson04.1-Scripts.smd"
         source_content = """
         # Lesson 04.1: Scripts
 
@@ -777,8 +777,8 @@ class Test_process_lecture_file_e2e(hunitest.TestCase):
         class_dir, scratch_dir = _create_test_structure(
             self, "msml610", "lectures"
         )
-        source_path = os.path.join(scratch_dir, "Lesson01.1-Test.txt")
-        source_name = "Lesson01.1-Test.txt"
+        source_path = os.path.join(scratch_dir, "Lesson01.1-Test.smd")
+        source_name = "Lesson01.1-Test.smd"
         source_content = """
         # Lesson 01.1: Test
 
@@ -802,8 +802,8 @@ class Test_process_lecture_file_e2e(hunitest.TestCase):
         class_dir = os.path.join(scratch_dir, "data605")
         os.makedirs(os.path.join(class_dir, "lectures"), exist_ok=True)
         os.makedirs(os.path.join(class_dir, "lectures_tex"), exist_ok=True)
-        source_path = os.path.join(scratch_dir, "Lesson02.1-Multi.txt")
-        source_name = "Lesson02.1-Multi.txt"
+        source_path = os.path.join(scratch_dir, "Lesson02.1-Multi.smd")
+        source_name = "Lesson02.1-Multi.smd"
         source_content = """
         # Lesson 02.1: Multi Action
 
@@ -829,8 +829,8 @@ class Test_process_lecture_file_e2e(hunitest.TestCase):
         class_dir, scratch_dir = _create_test_structure(
             self, "data605", "lectures_video_script"
         )
-        source_path = os.path.join(scratch_dir, "Lesson03.1-Script.txt")
-        source_name = "Lesson03.1-Script.txt"
+        source_path = os.path.join(scratch_dir, "Lesson03.1-Script.smd")
+        source_name = "Lesson03.1-Script.smd"
         source_content = """
         # Lesson 03.1: Script Test
 
@@ -868,8 +868,8 @@ class Test_process_lecture_file_with_generate_toc(hunitest.TestCase):
         # Prepare inputs.
         scratch_dir = self.get_scratch_space()
         class_dir = os.path.join(scratch_dir, "msml610")
-        source_path = os.path.join(scratch_dir, "Lesson01.1-Intro.txt")
-        source_name = "Lesson01.1-Intro.txt"
+        source_path = os.path.join(scratch_dir, "Lesson01.1-Intro.smd")
+        source_name = "Lesson01.1-Intro.smd"
         hio.to_file(source_path, "# Title\n## Section 1")
         actions = ["generate_toc"]
         # Mock system_to_string.
@@ -882,7 +882,7 @@ class Test_process_lecture_file_with_generate_toc(hunitest.TestCase):
             )
         # Check outputs.
         self.assertIsNotNone(result)
-        self.assertIn("# Lesson01.1-Intro.txt", result)
+        self.assertIn("# Lesson01.1-Intro.smd", result)
         self.assertIn("## Section 1", result)
 
     def test2(self) -> None:
@@ -902,8 +902,8 @@ class Test_process_lecture_file_with_generate_toc(hunitest.TestCase):
         class_dir, scratch_dir = _create_test_structure(
             self, "msml610", "lectures"
         )
-        source_path = os.path.join(scratch_dir, "Lesson01.1-Intro.txt")
-        source_name = "Lesson01.1-Intro.txt"
+        source_path = os.path.join(scratch_dir, "Lesson01.1-Intro.smd")
+        source_name = "Lesson01.1-Intro.smd"
         hio.to_file(source_path, "# Title")
         actions = ["generate_pdf"]
         # Capture system calls.
@@ -915,7 +915,7 @@ class Test_process_lecture_file_with_generate_toc(hunitest.TestCase):
         actual_str = pprint.pformat(sys_calls)
         expected_str = hprint.dedent("""
             [{'args': ('notes_to_pdf.py --input '
-                       '$GIT_ROOT/class_scripts/test/outcomes/Test_process_lecture_file_with_generate_toc.test2/tmp.scratch/Lesson01.1-Intro.txt '
+                       '$GIT_ROOT/class_scripts/test/outcomes/Test_process_lecture_file_with_generate_toc.test2/tmp.scratch/Lesson01.1-Intro.smd '
                        '--output '
                        '$GIT_ROOT/class_scripts/test/outcomes/Test_process_lecture_file_with_generate_toc.test2/tmp.scratch/msml610/lectures/Lesson01.1-Intro.pdf '
                        '--type slides --toc_type navigation --skip_action open_pdf '
@@ -934,8 +934,8 @@ class Test_process_lecture_file_with_generate_toc(hunitest.TestCase):
         class_dir, scratch_dir = _create_test_structure(
             self, "msml610", "lectures"
         )
-        source_path = os.path.join(scratch_dir, "Lesson01.1-Intro.txt")
-        source_name = "Lesson01.1-Intro.txt"
+        source_path = os.path.join(scratch_dir, "Lesson01.1-Intro.smd")
+        source_name = "Lesson01.1-Intro.smd"
         hio.to_file(source_path, "# Title")
         actions = ["generate_pdf"]
         cmd_opts = "--no_incremental"

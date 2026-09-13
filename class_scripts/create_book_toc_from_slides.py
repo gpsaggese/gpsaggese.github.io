@@ -47,6 +47,7 @@ def _extract_chapters_and_lessons(
     _LOG.debug(hprint.to_str("book_map_file"))
     hdbg.dassert_file_exists(book_map_file)
     # Read book_map.md file.
+    # TODO(ai_gp): Use hio.from_file
     with open(book_map_file, "r") as f:
         lines = f.readlines()
     # Parse chapters and lessons via state machine:

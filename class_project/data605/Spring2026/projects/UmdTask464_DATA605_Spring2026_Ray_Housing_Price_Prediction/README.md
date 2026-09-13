@@ -227,7 +227,7 @@ The class returns JSON with the predicted value and nothing else.
 - California Housing dataset:
   [`sklearn.datasets.fetch_california_housing`](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.fetch_california_housing.html)
 - Class project template guide:
-  `class_project/project_template/README.md` in this repo
+  `class_project/project_template/docker_scripts.README.md` in this repo
 - Project guidelines:
   `class_project/data605/Spring2026/Class_Project_Guidelines.md`
 

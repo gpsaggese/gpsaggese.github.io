@@ -10,21 +10,13 @@ This file contains utility functions that support the tutorial notebooks.
 
 Import as:
 
-import class_project.project_template.template_utils as utils
+import book_cs_refreshers.tutorials._utils as bcretuut
 """
 
 import logging
 
-from typing import Any, Optional, Tuple
-
-import ipywidgets
-import matplotlib.pyplot as plt
-import numpy as np
-import scipy.stats
-from IPython.display import clear_output, display
 
 import helpers.hnotebook as hnotebo
-import helpers.htutorial as htutori
 
 
 _LOG = logging.getLogger(__name__)
@@ -46,13 +38,13 @@ def init_loggers(notebook_log: logging.Logger) -> None:
 # ) -> None:
 #     """
 #     Create interactive widget to explore Beta and Normal distributions.
-# 
+#
 #     Demonstrates:
 #     - Slider widgets for continuous parameters via build_widget_control()
 #     - Dropdown for selecting distribution type
 #     - Real-time plot updates using observe() callbacks
 #     - Multiple synchronized plots (1x3 layout)
-# 
+#
 #     :param figsize: Optional figure size (width, height). Defaults to
 #         plt.rcParams["figure.figsize"]
 #     """
@@ -69,13 +61,13 @@ def init_loggers(notebook_log: logging.Logger) -> None:
 # ) -> None:
 #     """
 #     Create interactive widget to generate and visualize random samples.
-# 
+#
 #     Demonstrates:
 #     - Multiple linked slider widgets via build_widget_control()
 #     - Logarithmic scale slider for sample count via build_log_widget_control()
 #     - Histogram visualization with theoretical overlay
 #     - Sample statistics display
-# 
+#
 #     :param figsize: Optional figure size (width, height). Defaults to
 #         plt.rcParams["figure.figsize"]
 #     """

@@ -1,0 +1,461 @@
+// type=UMD_slides
+// course_title=Agentic_AI
+// lesson_title=Lesson 01.06: Inference-Time Techniques
+// slides_engine=typst
+
+// References:
+//- Large Language Models as Optimizers:
+//  https://arxiv.org/abs/2309.03409
+//- Teaching Large Language Models to Self-Debug:
+//  https://arxiv.org/abs/2304.05128
+//- Large Language Models Cannot Self-Correct Reasoning Yet:
+//  https://arxiv.org/abs/2310.01798
+//- Scaling LLM Test-Time Compute Optimally can be More Effective than Scaling
+//  Model Parameters:
+//  https://arxiv.org/abs/2408.03314
+
+# Inference-Time Techniques
+
+## Motivation: Beyond a Single Reasoning Chain
+
+* Inference-Time Techniques
+
+- @Motivation@: so far, reasoning has meant spending extra tokens on _one_
+  chain, or sampling several _independent_ chains and voting
+  - Reasoning quality is fixed by the model once training ends
+  - Everything else is at _inference time_: how the model samples, searches,
+    revises, and how much compute a query gets
+
+- @Question@:
+  - Can inference-time compute _optimize_ something other than a single answer?
+  - Can iterative revision ever be made to reliably work?
+  - How should a fixed compute budget be spent across a query?
+
+* Inference-Time Compute So Far
+
+- **Recap**: sampling and search already gave two levers
+  - _Self-consistency_: sample $K$ chains, vote on the final answer
+  - _Tree-/graph-of-thought_: search over partial thoughts with an evaluator
+  - Both spend more compute on the _same_ fixed task, with no revision loop
+
+- @Problem@: these levers stop at generating and selecting among answers
+  - They do not _optimize_ a prompt or program over multiple rounds
+  - They do not use _execution_ feedback to fix a specific mistake
+  - They give no guidance on _how much_ compute a query deserves
+
+* Three New Levers: Optimize, Debug, Allocate
+
+- **Roadmap**:
+  1. _Optimize_: use an LLM itself as an iterative optimizer (OPRO)
+  2. _Debug_: use execution feedback to fix code (Self-Debug)
+  3. _Allocate_: decide how much inference compute a query is worth
+
+- @Key idea@: each successful technique shares one ingredient: the feedback
+  that drives the next iteration is an _objective, external_ measurement, not the
+  model grading its own work
+  - This is the same grounding principle that separates working from failing
+    self-correction
+
+## LLMs as Optimizers
+
+* Optimization Without Gradients
+
+- @Problem@: many objectives worth optimizing have no usable gradient
+  - E.g.,
+    - A prompt's accuracy on a task: not differentiable in the prompt text
+    - A combinatorial tour length
+    - A hyperparameter's downstream accuracy
+  - Classical solution: gradient-free search
+    - E.g., grid search, evolutionary algorithms, Bayesian optimization
+    - General but slow, no notion of "meaning" in the search space
+
+- @Question@ (Yang et al., 2023): can an LLM play the role of the
+  gradient-free optimizer itself, proposing better candidates in natural
+  language instead of via a fixed search rule?
+
+* OPRO: The Core Idea
+
+- @Solution@: _Optimization by PROmpting_ (OPRO) treats the LLM as an
+  optimizer that _reads its own optimization history_ and proposes the next
+  candidate
+  - Candidates and their measured scores from previous rounds are placed
+    back into the prompt
+  - The LLM is asked to propose a _new_ candidate expected to score higher
+
+- @Key idea@: optimization becomes an in-context pattern-completion problem
+  - The model is not told _how_ to improve, only shown _what_ has worked
+    before and by how much
+
+* OPRO: The Meta-Prompt
+
+- @Definition@: the _meta-prompt_ is the input to the optimizer LLM at each
+  round and bundles
+  - The task description in plain language
+  - The _trajectory_ of past candidates $x_i$ with their scores $f(x_i)$
+  - An instruction to produce a new candidate expected to score higher than
+    all those shown
+
+  $$
+  x_{t+1} \sim M_{\text{opt}}\Big(\, \cdot | \text{task}, \{(x_i, f(x_i))\}_{i=1}^{t} \,\Big)
+  $$
+
+- @Key idea@: $f(x_i)$ is measured by actually _running_ candidate $x_i$ on
+  a validation set, never estimated by the model itself
+
+* OPRO Algorithm
+
+- @Input@:
+  - a task description
+  - a scoring function $f$
+  - an initial candidate (or an empty trajectory)
+- @Output@: a candidate maximizing $f$ within a compute budget
+
+- @Algorithm@:
+  1. Evaluate the current candidate(s) with $f$ on a validation set
+  2. Append (`candidate`, `score`) pairs to the trajectory in the meta-prompt
+  3. Ask the optimizer LLM to generate one or more new candidates
+  4. Evaluate the new candidates, keep the trajectory sorted by score
+  5. Repeat until the compute budget is exhausted or scores plateau
+
+* Worked Example: Optimizing a Prompt for GSM8K
+
+- @Problem@: find the instruction that maximizes accuracy on grade-school math
+  problems
+
+- @Solution@ (OPRO trajectory, simplified):
+  - Round 1: _"Solve the problem"_ $\to$ 62% accuracy
+  - Round 2: _"Let's think step by step"_ $\to$ 71% accuracy
+  - Round 3: _"Take a deep breath and work through this step by step"_
+    $\to$ 80% accuracy
+
+- @Interpretation@: the optimizer LLM is
+  - not reasoning about _why_ a phrasing works
+  - pattern-matching what phrasing patterns correlated with higher scores in the
+    trajectory shown so far
+
+* OPRO vs. Gradient-Based Optimization
+
+// TODO(ai_gp): Convert to #styled-table
+| **Gradient descent** | **OPRO** |
+|---|---|
+| Step direction from $\nabla f$ | Step direction from LLM reading a score trajectory |
+| Operates on continuous parameters | Operates on natural-language candidates |
+| Requires a differentiable $f$ | Requires only a scalar score, any $f$ |
+| Fixed update rule | Update rule is whatever the LLM infers from examples |
+
+- @Key idea@: OPRO trades the precision of a gradient for the ability to
+  optimize over _discrete, symbolic_ search spaces (e.g., prompts, code snippets,
+  combinatorial solutions) that gradients cannot reach directly
+
+* OPRO: Results and Generality
+
+- **Findings** (Yang et al., 2023):
+  - OPRO-discovered prompts beat the best human-designed prompts by up to
+    8% on GSM8K and up to 50% on Big-Bench Hard tasks
+  - The same meta-prompt loop, with a different scoring function, also
+    optimizes classical toy problems: linear regression coefficients and
+    traveling-salesman tours
+  - Gains grow with more optimization rounds, then plateau as the trajectory
+    saturates useful patterns
+
+- @Key idea@: the method is _task-agnostic_: only the scoring function $f$
+  changes across such different problems
+
+* OPRO: Why Grounded Scores Matter
+
+- @Remark@: every score $f(x_i)$ in the trajectory comes from actually
+  _running_ candidate $x_i$, not from the optimizer LLM judging its own
+  proposal
+  - The LLM sees numbers it cannot fabricate or rationalize away
+
+- @Key idea@: this is what makes the loop converge instead of drift
+  - Compare with intrinsic self-correction, where the same model both
+    produces and judges the answer, with no outside check
+  - A trajectory of real scores is exactly the missing ingredient that
+    ungrounded self-correction lacks
+
+## Self-Debugging Code
+
+* Generate-Once Code Is Often Wrong
+
+- @Problem@: a single LLM call rarely produces correct code on the first
+  try for nontrivial specifications
+  - Sampling many independent candidates and picking one that passes
+    (best-of-$K$) burns a lot of compute per solved problem
+
+- @Question@ (Chen et al., 2023): instead of discarding a wrong candidate,
+  can a model _look at what went wrong_ and repair the same candidate?
+
+- @Key idea@: code is a domain where "what went wrong" can be an _objective_
+  signal
+  - The program either runs and passes tests, or it does not
+
+* Self-Debug
+
+- @Solution@: _Self-Debug_ teaches a model to debug via few-shot
+  demonstrations
+  - The model is shown demonstrations of code, its execution result, an
+    explanation of what the code does, and a corrected version
+  - Mirrors how a human explains code line by line to catch their own bugs
+    ("rubber duck debugging")
+
+- @Key idea@: explaining the code _out loud_ forces the model to check its
+  own logic against what it claims the code does, surfacing mismatches that
+  silent generation does not
+
+* Two Feedback Channels: Unit Tests vs. Code Explanation
+
+- @Problem@: not every code-generation task ships with unit tests
+
+- @Solution@: Self-Debug supports two feedback channels
+  - _Unit-test feedback_: run the candidate against tests, feed back the
+    pass/fail result and the error trace (e.g., Python)
+  - _Code-explanation feedback_: no tests available (e.g., text-to-SQL); the
+    model explains the query's logic in natural language and checks it
+    against the original question itself
+
+- @Key idea@: even _without_ an executable oracle, forcing an explanation
+  step recovers some of the benefit of grounded feedback
+
+* Self-Debug Algorithm
+
+- @Input@: a natural-language specification, optionally unit tests
+- @Output@: a corrected program within a debugging-round budget
+
+- @Algorithm@:
+  1. Generate an initial candidate program
+  2. Execute it (if tests exist) or generate a natural-language explanation
+     of its logic
+  3. Feed the execution trace and/or explanation back to the model as
+     feedback
+  4. Ask the model to produce a revised candidate conditioned on that
+     feedback
+  5. Repeat until tests pass or the round budget is exhausted
+
+* Worked Example: Debugging a SQL Query
+
+- @Problem@: translate _"List the names of students older than the
+  average age"_ into SQL, with no unit test available
+
+- @Solution@ (Self-Debug, explanation channel):
+  1. Candidate: `SELECT name FROM students WHERE age > AVG(age)`
+  2. Explanation: _"This computes AVG(age) per row, which SQL does not
+     allow directly inside WHERE"_
+  3. Revision: wrap the average in a subquery
+     `SELECT name FROM students WHERE age > (SELECT AVG(age) FROM students)`
+
+- @Interpretation@: the bug was caught by the model _articulating_ what
+  the query does, not by a test result
+
+* Self-Debug: Results Across Benchmarks
+
+```{=typst}
+#styled-table(
+  headers: ("Benchmark", "Task", "Feedback used", "Improvement"),
+  rows: (
+    ("Spider", "Text-to-SQL", "Explanation", "2-3% overall, 9% on hardest queries"),
+    ("TransCoder", "C++-to-Python", "Unit tests", "Up to 12% accuracy"),
+    ("MBPP", "Text-to-Python", "Unit tests", "Up to 12% accuracy"),
+  ),
+)
+```
+
+- @Key idea@:
+  - Gains hold across both feedback channels
+  - Largest on the _hardest_ problems where a single generation attempt is least
+    likely to already be correct
+
+- **Finding**: Self-Debug matches or outperforms baselines that generate more
+  than 10x as many independent candidate programs
+  - A handful of _informed_ revisions beats many _uninformed_ resamples
+
+- @Key idea@: feedback-conditioned revision is a more compute-efficient
+  way to spend an inference budget than best-of-$K$ resampling with no
+  feedback at all
+  - This foreshadows the compute-allocation question closing this lesson
+
+## When Does Iterative Refinement Help?
+
+* Grounded Code, Ungrounded Reasoning
+
+- **Contrast**: two forms of "let the model look at its own output again"
+  - _Self-Debug_: revises code using execution results or a forced explanation,
+    and reliably improves accuracy
+  - _Intrinsic self-correction_ on reasoning: the model reviews its own
+    reasoning with no outside check, and does not reliably improve, at
+    times performing worse
+
+- @Question@: both are "the same model looks again," so what actually
+  explains the opposite outcomes?
+
+* The Common Factor: Grounded vs. Self-Judged Feedback
+
+- @Key idea@: the deciding factor is _where the correction signal comes
+  from_, not whether revision happens at all
+  - _Grounded_ feedback: a fact about the world independent of the model's
+    own judgment
+    - E.g., a test passes or fails, a score is measured on held-out data, a query
+      result is well-formed
+    - OPRO's scores and Self-Debug's test results are both examples of
+      _grounded feedback_
+  - _Self-judged_ feedback: the same model that produced the answer also
+    decides whether it is right, with no independent check
+    - Intrinsic self-correction is _self-judged_
+
+* A Spectrum of Groundedness
+
+- @Definition@: feedback sources for iterative refinement fall on a
+  spectrum
+  1. _Fully grounded_:
+     - Code execution
+     - Unit tests
+     - Formal proof checkers
+     - Game rules
+  2. _Partially grounded_:
+     - Retrieved facts
+     - A learned verifier trained on labeled correctness data (imperfect but
+       independent of the generator)
+  3. _Ungrounded_: the generator re-reads and re-judges its own output with
+     no outside signal
+
+- @Key idea@:
+  - Reliability of iterative refinement decreases moving down this spectrum
+  - This is because the correction signal itself becomes only as trustworthy as
+    the model producing it
+
+// TODO(ai_gp): Convert this into a picture
+
+* Design the Verifier, Not Just the Loop
+
+- @Key idea@: "add a self-correction step" is not, by itself, a design
+  choice that helps
+  - The design choice that matters is _what supplies the feedback_
+
+- **Practical implication**: before adding an iterative-refinement loop to
+  an agent, identify what plays the role of $f$ in OPRO or the unit tests in
+  Self-Debug for that task
+  - If nothing independent of the generator can fill that role, more
+    rounds of "review and revise" will not reliably help
+
+## Compute-Optimal Inference Strategies
+
+* How Much Inference Compute Should an Agent Spend?
+
+- @Problem@: self-consistency, tree search, OPRO rounds, and Self-Debug
+  rounds all spend _more_ inference compute for _better_ answers
+  - None of the previous techniques said how much is enough for a given
+    query
+
+- @Question@ (Snell et al., 2024): for a fixed compute budget, is it
+  better to spend it on a bigger model, or on more inference-time computation
+  with a smaller one?
+
+- @Definition@: a fixed total compute budget can be spent along two axes
+  - _Model size_: a larger model, one forward pass per query
+  - _Test-time compute_: a smaller model, many forward passes (samples,
+    search, revision rounds) per query
+
+- @Key idea@: these two knobs are substitutes only up to a point
+  - Naive strategies (fixed-$K$ best-of-$K$ sampling) spend the same
+    compute on every query regardless of its difficulty
+
+* Compute-Optimal Scaling: The Finding
+
+- @Solution@: _compute-optimal_ test-time scaling allocates a different
+  amount of search per prompt, based on adaptively estimated difficulty,
+  rather than a fixed $K$ for every query
+
+- **Findings** (Snell et al., 2024):
+  - A compute-optimal allocation strategy is more than 4x more efficient
+    than a fixed best-of-$K$ baseline at matched accuracy
+  - In FLOPs-matched comparisons, a smaller model given extra test-time
+    compute can outperform a model with about 14x more parameters, on
+    prompts within the smaller model's reach
+
+* Easy vs. Hard Prompts: Adaptive Allocation
+
+- **Finding** (Snell et al., 2024): the benefit of extra test-time compute
+  is not uniform across difficulty
+  - _Easy_ prompts:
+    - The base model is already usually correct
+    - Extra samples or search add little
+  - _Medium_ prompts
+    - Extra test-time compute (search with a verifier, revision rounds) yields
+      the largest gains
+  - _Very hard_ prompts
+    - The base model rarely produces a usable partial solution
+    - More search finds nothing to refine
+
+- @Key idea@: compute-optimal allocation spends
+  - The _least_ on the easiest and hardest prompts
+  - The _most_ where it can still change the outcome
+
+* Worked Comparison: Best-of-N vs. Compute-Optimal Search
+
+```{=typst}
+#styled-table(
+  headers: ("Strategy", "Compute per query", "Adapts to difficulty?", "Relative efficiency"),
+  rows: (
+    ("Best-of-N (fixed N)", "Constant", "No", "Baseline"),
+    ("Self-consistency (fixed K)", "Constant", "No", "Similar to best-of-N"),
+    ("Compute-optimal search", "Variable", "Yes", "Over 4x baseline"),
+  ),
+)
+```
+
+- @Interpretation@: self-consistency and best-of-$K$ from earlier in this
+  lecture sequence are exactly the _fixed-budget_ strategies this section
+  shows leave efficiency on the table
+
+* Inference-Time Compute vs. Training-Time Compute
+
+- @Key idea@: test-time compute is not a replacement for a better base
+  model, it is a _different approach_ for the same goal
+  - _Training-time compute_ buys a generally stronger prior over all possible
+    queries
+  - _Test-time_ compute buys targeted extra work on this query, and only
+    pays off on prompts the base model is close enough to already solve
+
+- @Limitations@:
+  - Requires a way to estimate difficulty or verify partial progress per prompt
+    (another instance of the grounding problem)
+  - Latency-sensitive settings cannot always afford variable, sometimes large,
+    per-query compute
+
+## Summary
+
+* Inference-Time Techniques: The Full Picture
+
+- **Putting it together**: every technique in this lesson spends more
+  inference compute than a single forward pass, but for different purposes
+  - _Optimize_ (OPRO): iterate on a candidate using its own measured scores
+  - _Debug_ (Self-Debug): iterate on code using execution or explanation
+    feedback
+  - _Allocate_ (compute-optimal scaling): decide, per query, how many of the
+    above rounds are worth paying for
+
+- @Key idea@: all three only work because the feedback closing the loop
+  is grounded in something outside the generator itself
+
+* Summary and Open Questions
+
+- **Key takeaways**:
+  - _OPRO_ turns an LLM into a gradient-free optimizer by feeding back a
+    trajectory of real candidates and real scores, beating human-designed
+    prompts by up to 8% (GSM8K) and 50% (Big-Bench Hard)
+  - _Self-Debug_ fixes code using execution feedback or a forced
+    explanation, matching baselines that sample over 10x more candidates
+  - Iterative refinement is reliable exactly when its feedback is
+    _grounded_, not self-judged: the same divide that separates working
+    Self-Debug from failing intrinsic self-correction
+  - _Compute-optimal_ test-time scaling adapts search effort to per-query
+    difficulty, over 4x more efficient than fixed-budget sampling, and can
+    let a small model match one roughly 14x larger
+
+- **Open questions**:
+  - Where does the grounded score or test suite come from, when no natural
+    oracle exists for a task?
+  - How does an agent estimate a query's difficulty _before_ spending the
+    compute to solve it?
+  - Can retrieval and long-context grounding supply the missing verification
+    signal for open-ended reasoning tasks?

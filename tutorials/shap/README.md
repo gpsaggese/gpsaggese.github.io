@@ -17,7 +17,7 @@ Learn how to explain machine learning model predictions in 60 minutes using SHAP
   1. `01.API.shap.ipynb`: core SHAP API — Explainer, Explanation, and plots
 
 - For Docker build system details see the
-  [project template README](../../class_project/project_template/README.md)
+  [project template README](../../class_project/project_template/docker_scripts.README.md)
 
 ## Introduction
 

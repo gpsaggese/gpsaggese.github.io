@@ -47,10 +47,49 @@ The built site will be in the `site/` directory.
 
 - Or use the convenience scripts:
   ```bash
-  > ./test.sh      # Run local server (including drafts)
-  > ./preview.sh   # Preview GitHub Pages
-  > ./publish.sh   # Deploy to GitHub Pages
+  > ./test.sh              # Run local server against docs/ as-is (fastest)
+  > ./preview_website.sh   # Rebuild Jupyter Books, then run local server
+  > ./publish_website.sh   # Rebuild Jupyter Books, then deploy to GitHub Pages
   ```
+
+### Website Generation Flow
+
+The site has two kinds of content:
+
+1. **Hand-written pages**: `docs/*.md`, `docs/blog/posts/*.md`, etc. MkDocs
+   renders these directly, so editing them and running `mkdocs serve` (or
+   `./test.sh`) is enough to see the change.
+
+2. **Generated content**, copied as static files under `docs/` and then
+   served/deployed by MkDocs like any other file:
+   - **Jupyter Books** (`docs/jupyter_books/<book>/`): built from the
+     `data605`, `msml610`, and `tutorials` course dirs by
+     `./publish_jupyter_books.sh` (MyST `jupyter-book build --html`, output
+     copied in). Rebuilds are incremental: each book is skipped if none of
+     its source notebooks/markdown changed since its last publish (pass
+     `--force` to rebuild anyway, or `--books <name,...>` to limit which
+     books are considered). Not in `mkdocs.yml`'s `nav:`, so these pages are
+     reachable only by direct link.
+   - **Class links** (`docs/class_links/<course>.links.html`): built from
+     `data605`, `msml610`, `book_springer` by `./update_class_links.sh`
+     (wraps `class_scripts/publish_class_links.py`). Also not in `nav:`.
+
+`preview_website.sh` and `publish_website.sh` both call
+`publish_jupyter_books.sh` first so the Jupyter Books are current, then run
+`mkdocs serve --clean --open` / `mkdocs gh-deploy --no-history` respectively.
+`test.sh` skips that step and serves `docs/` as-is — use it when you only
+changed hand-written pages and don't need the (rarely-changing) generated
+content refreshed. `update_class_links.sh` is run manually, on demand, when
+lesson files change.
+
+End-to-end, from a source edit to the live site:
+
+```
+edit docs/*.md ─────────────────────────────┐
+                                              ├─▶ mkdocs serve/gh-deploy
+edit data605|msml610|tutorials notebooks ──▶ publish_jupyter_books.sh ──▶ docs/jupyter_books/*
+edit lesson files ──▶ update_class_links.sh ──▶ docs/class_links/*.html ──┘
+```
 
 ## Blog
 
@@ -134,6 +173,8 @@ website/
 │   ├── blog/
 │   │   ├── index.md              # Blog landing page
 │   │   └── posts/                # Blog posts go here
+│   ├── class_links/               # Generated: see update_class_links.sh
+│   ├── jupyter_books/             # Generated: see publish_jupyter_books.sh
 │   ├── assets/                   # Images, logos, favicon
 │   ├── javascripts/              # Custom JavaScript (MathJax)
 │   ├── stylesheets/              # Custom CSS
@@ -149,8 +190,13 @@ website/
 │   └── main.html                 # SEO meta tags for social sharing
 ├── mkdocs.yml                    # Site and blog configuration
 ├── requirements.txt              # Python dependencies
-├── publish.sh                    # Deployment script
-└── test.sh                       # Local testing script
+├── test.sh                       # Serve docs/ as-is, no regeneration
+├── preview_website.sh            # Rebuild Jupyter Books, then serve locally
+├── publish_website.sh            # Rebuild Jupyter Books, then deploy to GH Pages
+├── publish_jupyter_books.sh      # Build/copy Jupyter Books into docs/jupyter_books/
+├── update_class_links.sh         # Regenerate docs/class_links/*.html
+├── format_blog.sh                # Run prettier over blog post(s)
+└── find_published_blogs.sh       # List non-draft blog posts by date
 ```
 
 ## Configuration

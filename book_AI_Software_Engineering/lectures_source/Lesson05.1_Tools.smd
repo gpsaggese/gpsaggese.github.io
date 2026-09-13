@@ -1,0 +1,1654 @@
+// type=UMD_slides
+// course_title=AI Software Engineering
+// lesson_title=Lesson 05.1: Tools for AI-Assisted Software Development
+// slides_engine=typst
+// References:
+// - Causify, "The Causify AIgentic Development System":
+//   helpers_root/papers/AIgentic_Development_System
+// - Causify, "helpers" development system documentation:
+//   helpers_root/docs
+// - Procida, "Diataxis: A systematic framework for technical
+//   documentation": https://diataxis.fr/
+// - Google, "Engineering Practices: Code Review":
+//   https://google.github.io/eng-practices/review/
+// - Potvin and Levenberg, "Why Google Stores Billions of Lines of Code in a
+//   Single Repository" (CACM, 2016): https://research.google/pubs/pub45424/
+// - Meta, Microsoft, and Uber engineering blogs on monorepo vs. multi-repo
+//   practice at scale
+// - Anthropic, "Claude Code: Remote Control":
+//   https://code.claude.com/docs/en/remote-control
+// - Anthropic, "Claude Code: Security Guidance":
+//   https://code.claude.com/docs/en/security-guidance
+// - Gitleaks, "Gitleaks Action":
+//   https://github.com/gitleaks/gitleaks-action
+// - Semgrep, "Semgrep Documentation": https://semgrep.dev/docs/
+// - Allure, "Allure Report Documentation": https://allurereport.org/docs/
+// - Codecov, "Codecov Documentation": https://docs.codecov.com/
+// - Petazzoni, "Do not use Docker-in-Docker for CI":
+//   https://jpetazzo.github.io/2015/09/03/do-not-use-docker-in-docker-for-ci/
+// TODO(gp): At the end of each part add part of the table from
+// book_AI_Software_Engineering/lectures_source/Lesson05.1_Tools.tools_reference.md
+// TODO(gp): List of skills and rules organized and standardized
+// Examples of a implementation
+
+# Rules, Skills, and Agent Instruction Manifests
+
+* From Model Capability to Repo Infrastructure
+
+- @Key idea@: An **AI-optimized codebase** is an emergent property of designing a
+  codebase for human and agent discoverability, automation, and fast feedback
+  - Most of the same properties that shorten human onboarding and make them
+    effective, often apply to AI agents
+
+- @Overview@: This lesson walks the development lifecycle
+  1. Rules, skills, and instruction manifests
+  2. Requirements and planning
+  3. Pull request creation, splitting, and review
+  4. Documentation as a machine-consumable artifact
+  5. Linting, quality gates, and coverage
+  6. Unit testing and golden files
+  7. Build, release, and CI/CD
+  8. Modularization and repository structure
+  9. Dockerization and dockerized executables
+  10. Production feedback and release monitoring
+// TODO(gp): Look into agent-readiness benchmarks (SWE-bench, METR
+//   time-horizon evals) to measure whether rules/skills/manifests actually
+//   raise agent task success rate
+
+* Why Software Engineering Is Difficult
+
+- @No silver bullet@: Complexity is both essential (the problem itself) vs accidental
+  (tools/workarounds)
+  - Even if accidental complexity can shrink, essential can't _(Brooks, 1986)_
+
+- @Invisibility@: Unlike physical engineering, software has no natural constraints
+  that visibly signal when a design is overbuilt or fragile
+
+- @Combinatorial state explosion@: Every added flag/variable multiplies possible
+  system states beyond what humans can reason about
+
+- @Requirements are moving targets@: Building the system changes what people realize
+  they actually need
+
+- @Conway's Law@: System structure mirrors the organization's communication
+  structure: Human complexity leaks into technical complexity _(Conway, 1968)_
+
+- @Software entropy@: Every patch and extension nudges a system further from anyone's
+  full understanding _(code rot)_
+
+- @Brooks's Law@: Adding people to a late project makes it later, due to rising
+  coordination overhead _(Brooks, 1975)_
+// TODO(gp): Look into tools that manage this complexity: architecture
+//   decision records (ADRs), dependency-cruiser/madge for coupling, radon/
+//   CodeScene for complexity metrics, Team Topologies for org design
+
+* Lessons Learned in 50 Years of Software Engineering
+
+- @Abstraction & information hiding@: Encapsulate detail behind clean interfaces so
+  no one has to hold the whole system in their head _(Parnas, 1972)_
+
+- @Feedback loops beat upfront planning@: Short iterative cycles surface mistakes
+  early, cheaper than planning them away _(Agile Manifesto, 2001)_
+
+- @Simplicity is a discipline@: Systems drift toward complexity unless actively
+  resisted (e.g., YAGNI, refactoring, deliberate debt paydown)
+
+- @Technical debt is a real tradeoff@: Shortcuts accrue "interest", so teams must
+  consciously choose when to pay it down _(Cunningham, 1992)_
+
+- @Design for partial failure@: Distributed systems taught the field to expect
+  failure, not avoid it
+  - Need retries, circuit breakers, graceful degradation
+
+- @Observability is not optional@: You can't manage complexity you can't see
+  - Logging, metrics, and tracing as first-class concerns
+
+- @Shared mental models matter as much as code@: Most fatal complexity comes from
+  mismatched understanding between people, not algorithms
+// TODO(gp): Look into OpenTelemetry for observability, feature flags
+//   (LaunchDarkly) for partial rollout, architecture fitness functions
+//   (ArchUnit) to enforce these lessons automatically
+
+* Consistency and Reproducibility Is Key
+
+- @Fact@: One of the few universally agreed rules of software engineering is that
+  consistency and conventions speed up development
+  - A reader who knows the convention can guess the answer instead of searching for
+    it
+
+- @Definition@
+  - **Reproducibility** means the same code, config, and data produce the same result
+    on any machine, at any time
+  - The complement, **consistency**, means the same kind of problem is solved the
+    same way everywhere in the codebase
+
+- @Problem@: Without either property, a bug that appears on one machine and not
+  another burns hours before the difference is even located
+  - _"Works on my machine"_ describes a symptom, not a diagnosis
+
+- @Example@: Site reliability engineering (SRE) treats consistency as a reliability
+  property, not a style preference
+  - A **runbook** turns a procedure that lives in one engineer's head into exact,
+    ordered steps anyone on call can execute under pressure
+  - A **checklist** for a deploy or a failover catches the step a tired engineer
+    would otherwise skip
+
+- @Key idea@: Rules, skills, and manifests are how a repository encodes consistency
+  and reproducibility for a coding agent, the same way a runbook encodes them for an
+  on-call engineer
+// TODO(gp): Look into reproducibility tools: Nix/Docker for pinned envs, DVC
+//   for data, Backstage golden paths, Rundeck/PagerDuty for runbook
+//   automation
+
+* Why AI Agents Need Explicit Rules
+
+// From helpers_root/CLAUDE.md
+// From helpers_root/.claude/skills/coding.rules.md
+
+- @Problem@: A model completes patterns, so with no stated convention it invents
+  plausible, but inconsistent, code
+  - Writes `dict` where the repo uses `Dict[str, str]` everywhere
+  - Reaches for `os.path` where the repo standardizes on `pathlib.Path`
+  -
+
+- @Naive Solution@: Restate the conventions in the prompt of every session
+  - Cons:
+    - Burns context on every run
+    - Drifts out of sync with the code, since nothing ties prompt to repo
+    - Cannot be reviewed, because it lives in a chat log
+
+- @Solution@: Check the conventions into the repository as versioned files
+  - `.ai/rules.md` maps _file type_ $\to$ _rule file_
+  - `<TOPIC>.rules.md` holds why and when for principles and decision criteria
+
+- @Key idea@: Rules stored in the repo are reviewed, diffed, and versioned like code,
+  so agent behavior changes through a pull request
+// TODO(gp): Look into how ruff/mypy already enforce some conventions
+//   mechanically instead of by prose
+
+* AGENTS.md as a Machine-Readable Instruction Manifest
+
+// From helpers_root/CLAUDE.md
+// From paper "The Causify AIgentic Development System", Part 4
+
+- @Definition@: An **agent instruction manifest** is a structured description of
+  architecture, module boundaries, and canonical commands, written for a program
+  rather than for a newcomer
+
+- @Examples@: The same pattern, different names per tool
+  - `AGENTS.md`: An open, tool-agnostic standard adopted across coding agents
+  - `CLAUDE.md` (Claude Code), `.cursorrules` (Cursor), and GitHub Copilot custom
+    instructions are vendor-specific variants of the same idea
+
+- @Components@: What a manifest declares
+  - _Architecture_: Components and ownership boundaries
+  - _Conventions_: Module naming, import style, test layout
+  - _Canonical commands_: The blessed way to test, lint, and enter a container
+  - _Pointers_: The rule files that govern each file type
+
+- @Pros@
+  - The agent is productive without an interactive onboarding loop
+  - Maintainers evolve agent behavior through code review, not a hidden prompt
+  - Context cost drops, since the manual is retrieved instead of pasted
+
+- @Remark@: This is not documentation in the traditional sense
+  - It is an operating manual whose primary reader is a machine
+// TODO(gp): Look into how ruff/mypy already enforce some conventions
+//   mechanically instead of by prose
+// TODO(ai_gp): Add description of agents.md conventions (there are files)
+
+* Scaling Context Retrieval Beyond a Static Manifest
+
+- @Problem@
+  - `AGENTS.md` and `<TOPIC>.rules.md` work while the manifest fits in context
+  - A codebase with hundreds of rule files and thousands of source files stops
+    fitting in context, no matter how well it is organized
+// TODO(ai_gp): Unclear
+
+- @Gap@: Nothing in this stack retrieves the _right_ rule file or the _right_ prior
+  implementation on demand, so the agent either loads everything or relies on the
+  file paths it happens to already know
+
+- @What it would take@
+  - Semantic or embedding-based search over rules, skills, and code
+  - E.g., _"how do we name test classes"_
+
+- @Key idea@: A manifest is a whiteboard, not a library; past a certain repo size, an
+  agent needs an index, not a longer document
+// TODO(gp): Look into embedding-based code/doc search that would close this
+//   gap: Sourcegraph Cody context, a Context7-style MCP server, LlamaIndex
+//   or txtai for retrieval-augmented rule lookup
+
+* Skill Files: Packaging Repeatable Workflows as Rules
+
+// From helpers_root/.claude/skills/skill.rules.md
+
+- @Problem@
+  - A rule file describes in natural language what "good" looks like
+  - A template is an example of how "good" looks like
+  - A skill says how to carry out a recurring task
+
+- @Definition@: A **skill** is a named, versioned procedure stored at
+  `skills/<TOPIC>.<ACTION>/SKILL.md`
+  - E.g., `testing.write_unit_tests`, `docker.shrink_container`
+
+- @Components@: The sections of a `SKILL.md`
+  - _Frontmatter_: `description` and `model`
+  - _Goal_: One or two sentences
+  - _Workflow_: Numbered, imperative steps
+  - _Conventions_: Pointers to relevant `<TOPIC>.rules.md` (never a restatement)
+  - _Verification_: How to check the work was done
+```{=typst}
+#styled-table(
+  headers: ("Artifact", "Answers", "Example"),
+  rows: (
+    ("Rule file", "Why and when", "coding.rules.md"),
+    ("Skill file", "How, step by step", "coding.rename/SKILL.md"),
+    ("Template", "What to copy", "coding.template.py"),
+  ),
+  caption: "Three artifact types, three questions",
+)
+```
+// TODO(gp): Look into LangChain tools/agents, MCP servers, and prompt/skill
+//   registries (LangGraph, Semantic Kernel plugins) as comparable ways to
+//   package a repeatable workflow for an agent
+
+* Repo_config.yaml: Machine-Readable Repository Contracts
+
+// TODO(gp): Generalize by looking into other machine-readable repo contracts:
+// - Backstage `catalog-info.yaml`
+// - Nx `project.json`
+// - Bazel `BUILD` files
+// - cookiecutter config
+// From helpers_root/docs/tools/dev_system/all.runnable_repo.reference.md
+// From
+// helpers_root/docs/tools/dev_system/all.transition_to_repo_config_yml.how_to_guide.md
+
+- @Problem@: An agent asked to build and push an image must answer _"which image
+  name?"_ and _"which registry?"_
+  - Prose documentation forces search and inference, and both can be wrong
+
+- @Definition@: `repo_config.yaml` is a **machine-readable contract** that encodes
+  the operational identity of a runnable directory
+  ```yaml
+  repo_info:
+    repo_name: csfy
+  docker_info:
+    docker_image_name: csfy
+  container_registry_info:
+    ghcr: ghcr.io/causify-ai
+  runnable_dir_info:
+    use_helpers_as_nested_module: 1
+    venv_tag: helpers
+  ```
+
+- @Remark@: The file replaced an executable `repo_config.py`
+  - Config is now _data_, read through `hrecouti.get_repo_config()` or `hserver`
+  - `IS_SUPER_REPO` was renamed `USE_HELPERS_AS_NESTED_MODULE` for clarity
+
+- @Key idea@: A release task derives the registry and the naming convention from the
+  contract, instead of relying on environment-specific assumptions
+
+# Requirements and Planning
+
+* Automating Requirements Capture
+
+// From helpers_root/.claude/skills/specs.write
+
+- @Problem@: An agent handed a one-line issue title fills the gap between _"what was
+  asked"_ and _"what to build"_ with assumptions
+  - A wrong assumption compounds every commit downstream
+
+- @Definition@: A **specification** is the artifact that separates "what does the
+  user want" from "how is it implemented", written before a branch exists
+
+- @Solution@: The `specs.write` skill drafts a specification from a request, covering
+  scope, interface, edge cases, and out-of-scope items explicitly
+
+- @Constraints@: Keep the spec from drift by:
+  - Stopping for human approval before implementation starts
+  - Referencing the spec file from the pull request, so reviewers check code against
+    a written contract, not against the issue title
+
+- @Key idea@: The earliest and cheapest place to catch a misunderstanding is before
+  the first line of code, not in review
+
+* Architecture Decision Records
+
+- @Problem@: A repository's rules and manifests capture the current convention, but
+  not why an earlier alternative was rejected
+  - An agent explores a settled tradeoff every time it is asked to reconsider one
+
+- @Definition@: An **architecture decision record (ADR)** is a short, dated,
+  versioned file recording one decision:
+  - The context
+  - The options considered
+  - The choice and its consequences
+
+- @Solution@: Decisions need to be stored as structured, queryable artifacts
+  - The reasoning should not live in pull request discussions and chat threads an
+    agent cannot cheaply retrieve
+  - A `docs/adr/NNNN-<slug>.md` convention with a fixed template
+  - A skill that drafts / updates an ADR from a discussion and links it from the
+    affected rule file
+
+- @Key idea@
+  - A rule file says what to do today
+  - An ADR says why today's rule beat other rules
+
+# Code Modularization and Repo Structure
+
+* Single vs Multiple Repo
+
+// From helpers_root/docs/tools/all.integrate_repos.how_to_guide.md
+// From paper "The Causify AIgentic Development System", Part 2
+
+- @Problem@: Teams want the _modularity_ of many repositories and the _environment
+  consistency_ of one, and the classic answer sacrifices one
+```{=typst}
+#styled-table(
+  headers: ("Approach", "Pros", "Cons"),
+  rows: (
+    ("Monorepo",
+     "One commit history, no version skew, shared tooling",
+     "Long CI builds, extra build tools, weak boundaries, hard permissions"),
+    ("Multi-repo",
+     "Independent lifecycles, small checkouts, clear ownership",
+     "Dependency skew across repos, costly change propagation"),
+  ),
+  col-widths: (0.7fr, 1.3fr, 1.5fr),
+)
+```
+
+- @Key idea@: The real question:
+  - Is not _"one repo or many"_
+  - Is _"what is the smallest unit that can be built, tested, and released on its
+    own"_
+// TODO(gp): Look into monorepo tooling (Bazel, Nx, Turborepo, Lerna) and
+//   multi-repo tooling (git submodules/subtrees, Meta's Sapling) for how
+//   other stacks solve the same tradeoff
+
+* Runnable Directories: A Hybrid Architecture
+
+// From helpers_root/docs/tools/dev_system/all.runnable_repo.reference.md
+// From paper "The Causify AIgentic Development System", Parts 2 and 4
+
+::: columns
+:::: {.column width=50%}
+
+- @Definition@: A directory is **runnable** when it carries its container and
+  dependencies, so that it can be deployed as a unit
+
+- @Components@: What a runnable directory contains
+  - `devops`: Build, run, and release the container
+  - `dev_scripts_<name>`: Thin environment and `setenv`
+  - `repo_config.yaml`: The machine-readable contract
+  - Common files symlinked back to `//helpers`
+
+::::
+:::: {.column width=46%}
+
+```graphviz
+digraph RunnableRepo {
+  bgcolor="transparent";
+  pad="0.15";
+  splines=spline;
+  nodesep=0.26;
+  ranksep=0.40;
+  rankdir=TB;
+
+  node [shape=box,
+        style="rounded,filled",
+        fillcolor="#FFFFFF",
+        color="#9AA9B8",
+        penwidth=1.8,
+        fontname="Helvetica",
+        fontcolor="#243B53",
+        fontsize=11,
+        margin="0.18,0.10",
+        height=0.44];
+
+  edge [color="#A3B1C0",
+        penwidth=1.3,
+        arrowhead=vee,
+        arrowsize=0.7,
+        fontname="Helvetica",
+        fontsize=9,
+        fontcolor="#7B8794"];
+
+  // repo : blue | runnable dir : sage green | shared toolchain : violet
+
+  Repo [label="Runnable repo",
+        fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+  Dir1 [label="runnable dir 1\ndevops + tasks.py",
+        fillcolor="#DFEDE0", color="#8FB79A", fontcolor="#2E5A3D"];
+  Dir2 [label="runnable dir 2\ndevops + tasks.py",
+        fillcolor="#DFEDE0", color="#8FB79A", fontcolor="#2E5A3D"];
+  Help [label="//helpers\nsubmodule",
+        fillcolor="#E9E1F7", color="#A88FD9", fontcolor="#45296B"];
+
+  Repo -> Dir1;
+  Repo -> Dir2;
+  Repo -> Help [label="  toolchain", style=dashed];
+  Dir1 -> Help [style=dashed];
+  Dir2 -> Help [style=dashed];
+}
+```
+
+::::
+:::
+
+- @Goals@: Design targets the architecture is aimed at:
+  - Dependencies pinned by a Python package manager (`poetry`, `uv`, Conda), not by
+    hand
+  - Devops builds and releases the container; developers only use it
+  - One image builds for both Intel and Arm, on Linux, macOS, and WSL
+
+- @Key idea@: A runnable directory is a **context boundary**, so the agent's prompt,
+  container, and test scope coincide, which cuts cross-cutting edits and context
+  hallucinations
+// TODO(gp): Look into similar boundary mechanisms: Bazel `BUILD` target
+//   sandboxing, Nx module-boundary lint rules, the Pants build system,
+//   per-package Dev Containers
+
+* Package Structure and Import Conventions
+
+// From helpers_root/docs/tools/all.imports_and_packages.how_to_guide.md
+// From helpers_root/docs/tools/all.import_check.reference.md
+
+- @Goal@: Python packages simplify client imports, hide which file holds the code,
+  group related units, and make import loops preventable
+
+- @Algorithm@: The import rules
+  - Inside a package, import sibling _files_ directly
+  - From outside, import the _package_ (so internals can be reorganized freely)
+
+- @Example@: The rule is machine-checkable
+  - Detect import cycles
+  - Render the dependency graph, including a cycles-only view
+  - Automate abbreviations of the package for visibility and consistency
+    - E.g., `import datapull.XYZ.data.client as itdcl`
+
+- @Key idea@: An explicit dependency order is a boundary an agent respects and
+  continuous integration verifies
+
+* Automating Code Modularization with AI
+
+// From helpers_root/.claude/skills/coding.factor_common_code
+
+- @Problem@: Generated code duplicates helper logic across files, because each
+  generation starts from the local context only
+
+- @Solution@: The `coding.factor_common_code` skill
+  - Detects exact and structurally similar blocks across the given files
+  - Proposes a function interface: Name, parameters, return value
+  - Reports duplicate locations
+  - Applies the refactoring after the proposal is accepted
+
+- @Constraints@: What keeps the refactoring honest
+  - Behavior must not change
+  - Skip trivial extractions of fewer than two or three meaningful lines
+  - Prefer logic with one clear responsibility that will change in one place
+
+- @Key idea@: Deduplication is easy to detect and easy to overdo, so the tool
+  proposes and a human decides
+// TODO(gp): Look into jscpd, PMD CPD, and SonarQube's duplication detector as
+//   language-agnostic alternatives, and Sourcegraph batch changes for
+//   applying the refactor at scale
+
+* Automating Cross-Repo Renames and Reference Updates
+
+// From helpers_root/.claude/skills/git.move
+// From helpers_root/.claude/skills/git.update_references
+// From helpers_root/.claude/skills/coding.rename
+
+- @Problem@
+  - Renaming a function or moving a file means finding every reference across
+    repositories a human would search by hand
+  - Change propagation is costly in multi-repo approach
+
+- @Solution@: Skills to cover one move end to end
+  - `git.move` relocates a file or directory and rewrites references inside its own
+    repository
+  - `git.update_references` finds and updates references to that path in _other_ Git
+    repositories that depend on it
+  - `coding.rename` performs the same propagation for a function or variable name,
+    not just a path
+  - After find-and-replace across text, every reference is a match found by static
+    analysis
+
+- @Key idea@: The propagation cost that makes multi-repo expensive for a human is
+  exactly the mechanical, rule-following work an agent automates cheaply
+// TODO(gp): Look into codemod frameworks that do the same job outside this
+//   stack: jscodeshift, Comby, OpenRewrite, and LSP-based rename (rope,
+//   ts-morph)
+
+# Dockerization and Dockerized Executables
+
+* Thin Environment and Containerized Development
+
+// From helpers_root/docs/tools/thin_environment/all.thin_environment.reference.md
+
+- @Definition@: The **thin environment** approach is a Python virtual environment
+  holding the minimum packages needed to start the development system in Docker
+// TODO(gp): too much detail, point to the documentation
+
+- @Components@: The files under `dev_scripts_<repo>/thin_client/`
+  - `build.py` and `requirements.txt`: Create the environment
+  - `setenv.sh`: Configure a shell, inside or outside the container
+  - `tmux.py`: Build the standard multi-window session
+  - `thin_client_utils.sh` and `thin_client_utils.py`: Shared code
+
+- @Example@: Bootstrap in four commands
+  ```bash
+  > dev_scripts_helpers/thin_client/build.py
+  > source dev_scripts_helpers/thin_client/setenv.sh
+  > i docker_build_local_image --version 1.0.0
+  > i docker_bash --skip-pull
+  ```
+
+- @Pros@: The host keeps only Docker and a handful of packages
+  - The laptop, the server, and the CI runner behave identically
+  - Installing the Git hooks and configuring the environment are a side effect of
+    activating the environment
+
+- @Key idea@: An agent can be dropped into any machine and reach the same environment
+  through the same two commands
+// TODO(gp): Look into the VS Code Dev Containers spec, Nix flakes + direnv,
+//   and Gitpod/GitHub Codespaces as alternative reproducible-dev-env
+//   approaches
+
+* Dockerized Executables
+
+// From helpers_root/docs/tools/docker/all.docker.tutorial.md
+// From paper "The Causify AIgentic Development System", Part 3
+
+- @Problem@: Tools installed on the host drift per platform, and folding every tool
+  into one development image produces a bloated, fragile container
+
+- @Definition@: A **dockerized executable** is a slim purpose-built image plus a thin
+  wrapper script, so that calling it looks like calling a local program
+
+- @Components@: What the wrapper is responsible for
+  - _Repository discovery_: Find the repo root and mount it at `/src`
+  - _Path translation_: Rewrite the paths from host to docker space (e.g.,
+    `docs/file.md` to `/src/docs/file.md`)
+  - _Image lifecycle_: Pull or build when needed, then remove the container
+  - _Permissions_: Run as the caller's `UID:GID` so outputs are owned correctly
+  - _Isolation_: Forward only whitelisted environment variables
+  - _Output_: Stream stdout and stderr, and propagate the exit code
+
+- @Example@: The call site shows nothing about containers
+  ```bash
+  > convert_docx_to_markdown.py -i docs/update.docx -o docs/update.md
+  ```
+
+- @Remark@: The pattern is not tied to one tool
+  - E.g., running non-python packages (e.g., `prettier` for formatting,
+    Mermaid/Graphviz/TikZ diagram rendering, LaTeX)
+  - They are an alternative to `uvx`
+
+- @Cons@
+  - Docker becomes a hard dependency
+  - Images consume disk
+  - The first run pays the price of a Docker pull or build
+// TODO(gp): Look into Homebrew formulae that wrap a container, `act` for
+//   running GitHub Actions locally, and `just`/`entr` as other thin-wrapper
+//   patterns
+
+* Children vs Sibling Containers
+
+// From
+// helpers_root/docs/tools/docker/all.dind_and_sibling_containers.how_to_guide.md
+
+::: columns
+:::: {.column width=50%}
+
+// TODO(ai_gp): Too much details, point to blog and documentation
+
+- @Comparison@: Two ways to launch a container from inside one
+  - _Children containers_ (aka Docker-in-Docker): The outer container runs its own
+    daemon
+    - Cons: Needs `--privileged`, which is often refused
+    - Cons: The build cache is not shared, so images are rebuilt after every restart
+  - _Sibling containers_ : Mount `/var/run/docker.sock` and talk to the host daemon
+    - Pros: No privilege escalation, and the build cache is shared
+    - Cons: Less isolation, and spawned containers can be left hanging
+    - Cons: Mounts must name host-visible paths, so the wrapper translates them
+
+::::
+:::: {.column width=46%}
+
+```graphviz
+digraph Containers {
+  bgcolor="transparent";
+  pad="0.15";
+  splines=spline;
+  nodesep=0.26;
+  ranksep=0.40;
+  rankdir=TB;
+
+  node [shape=box,
+        style="rounded,filled",
+        fillcolor="#FFFFFF",
+        color="#9AA9B8",
+        penwidth=1.8,
+        fontname="Helvetica",
+        fontcolor="#243B53",
+        fontsize=11,
+        margin="0.18,0.10",
+        height=0.44];
+
+  edge [color="#A3B1C0",
+        penwidth=1.3,
+        arrowhead=vee,
+        arrowsize=0.7,
+        fontname="Helvetica",
+        fontsize=9,
+        fontcolor="#7B8794"];
+
+  // host : orange | sibling : sage green | child : rose
+
+  Host [label="Host\ndocker engine",
+        fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+  Dev  [label="dev container",
+        fillcolor="#DFEDE0", color="#8FB79A", fontcolor="#2E5A3D"];
+  Tool [label="tool container\n(sibling)",
+        fillcolor="#DFEDE0", color="#8FB79A", fontcolor="#2E5A3D"];
+  Kid  [label="tool container\n(child, privileged)",
+        fillcolor="#F6E1E8", color="#D98CA8", fontcolor="#6B2A44"];
+
+  Host -> Dev;
+  Host -> Tool [label="  via mounted socket"];
+  Dev -> Tool [style=dashed, label="  requests"];
+  Dev -> Kid [label="  nested daemon"];
+}
+```
+
+::::
+:::
+
+- @Key idea@: The sibling pattern trades isolation for security and cache reuse,
+  which is the right trade for tooling rather than for untrusted code
+// TODO(gp): Look into Podman (daemonless/rootless) as a sibling alternative,
+//   sysbox for safer Docker-in-Docker, and Kaniko/Buildah for daemonless
+//   image builds in CI
+// TODO(gp): Look into dive and docker-slim for image-layer inspection, and
+//   Trivy/Snyk Container for size and vulnerability scanning together
+
+# Automating the Pull Request Lifecycle
+
+* From Manual PRs to Agent-Driven PR Creation
+
+// From helpers_root/docs/work_organization/all.use_github.how_to_guide.md
+
+- @Definition@: The unit of work is a **GitHub issue**, implemented in a branch, and
+  delivered as a pull request whose title matches the branch name
+// TODO(ai_gp): Point to blog / documentation
+//// TODO(ai_gp): Description of how to automate the dev
+//- @Components@: The labels that encode review state
+//  - `PR_for_authors`: Changes are owed by the author
+//  - `PR_for_reviewers`: Ready for team-leader review
+//  - `PR_for_integrators`: Final round, close to merge
+//
+//- @Example@: The same three commands a human runs
+//  ```bash
+//  > i git_branch_create -i 828
+//  > i gh_create_pr
+//  > i gh_watch
+//  ```
+
+- @Key idea@: The workflow was already scripted for humans, so an agent executes the
+  identical path with no special-case automation
+// TODO(gp): Look into `gh` CLI scripting, GitHub Actions bots, and agent PR
+//   platforms (OpenAI Codex Cloud, Devin, Cursor background agents) that
+//   automate this same path
+
+* Splitting Work: Child PRs and Branch Splitting
+
+// From helpers_root/.claude/skills/github.split_branch_in_PRs
+// From helpers_root/.claude/skills/github.create_child_pr
+
+- @Problem@: A long-lived branch mixes refactoring with behavior change, and the
+  reviewer cannot separate _what moved_ from _what changed_
+
+- @Goal@: Decompose a PR into small, cohesive pull requests that minimize review
+  complexity and the risk of breaking tests
+// TODO(ai_gp): Point to doc and blog
+// - @Algorithm@
+//   1. List the touched files with `git diff --name-status origin/master HEAD`
+//   2. Group them so each pull request is internally coupled
+//   3. Prefer whole files per pull request over splitting one file across several
+//   4. Keep a source file and its test file in the same pull request
+//   5. Order the pull requests so low-risk, wide-touch changes merge first
+//   6. Emit `pr<NUM>.files.txt` and an executable `pr<NUM>.pytest.sh` per unit
+//   7. Record the plan in `github_PR_plan.md` and re-lint it
+// - @Example@: Carrying a subset of files into a fresh child branch
+//   ```bash
+//   > i git_branch_next_name
+//   > git_sync_between_branches.sh --src_branch $SRC --dst_branch $DST \
+//       --files "$FILES"
+//   ```
+// TODO(gp): Look into stacked-diff tools that automate this split: Graphite,
+//   git-branchless, Sapling, ghstack
+
+* Remote and Autonomous Agents
+
+// From book_AI_Software_Engineering/resources.md: Managing Code
+
+- @Definition@: In **asynchronous agent work** no human is attached to the session
+  while the agent runs
+
+- @Techniques@
+  - Web and desktop sessions that outlive the terminal
+  - Remote control of a running session from a phone
+  - Scheduled tasks that fire on a cron expression
+  - A GitHub app that dispatches an agent from an issue or a comment
+
+- @Assumptions@
+  - The permission surface is bounded, so destructive actions need approval
+  - Every gate that CI runs can also be run by the agent before it reports
+  - A human should still review and merge the changes
+
+- @Challenges@
+  - The agent cannot ask a clarifying question, so ambiguity is resolved by guessing
+  - The affected code grows with session length
+  - Review load moves in time, not away: The work still arrives on a human desk
+
+- @Key idea@: Asynchronous work changes the human role from _author_ to _reviewer_ /
+  _supervisor_ running a team of AI collaborators
+// TODO(gp): Look into Devin, OpenAI Codex Cloud, Claude Code's GitHub Action
+//   and remote control, Cursor background agents, and Sweep.dev as examples
+//   of this mode
+
+* Governing Agent Permissions and Auditing Actions
+
+- @Problem@: A change from a long-running asynchronous agent can affect a large part
+  of the codebase, so one needs mechanisms to bound the scope
+
+- @What it would take@
+  - A permission manifest per agent run: Which directories, which commands, which
+    external calls are in scope
+  - An audit log of tool calls and decisions, retained even when the session produces
+    no pull request
+  - A budget on cost or token spend per run, so a stuck agent fails loud instead of
+    running unattended
+
+- @Key idea@: A human reviews the diff an agent produces; nothing today lets a human
+  review the _actions_ an agent took to get there
+// TODO(gp): Look into OPA/Rego for a permission manifest, sandboxes
+//   (Firecracker, gVisor) to bound blast radius, and OpenTelemetry traces of
+//   tool calls as the audit log
+
+* Automating PR Review with AI (1/2)
+
+// From helpers_root/docs/tools/all.ai_review.how_to_guide.md
+
+- @Goal@: Turn a review pass into a list of located, actionable comments instead of
+  prose
+
+- @Definition@: A **cfile** is a vim quickfix list of `file:line:message` entries,
+  generated by a tool and navigated by a human
+// TODO(ai_gp): Point to blog / documentation
+//- @Algorithm@
+//  1. Commit first, so the transform lands in its own reviewable commit
+//  2. `invoke git_branch_diff -t base --only-print-files`
+//  3. `ai_review.py -i $FILE -p $PROMPT` to emit the `cfile`
+//  4. `vim -c "cfile cfile"` to walk the comments and discard false positives
+//  5. `inject_todos.py --cfile cfile` to leave `TODO`s for whoever fixes them
+//  6. `apply_todos.py` to let a model apply them, which is the risky step
+//
+//- @Variants@: The prompt selects the lens
+//  - `review_correctness`, `review_architecture`, `review_linter`, `review_llm`
+
+- @Key idea@: The review criteria live in the same style-guide file the linter reads,
+  so tool and reviewer share one source of truth
+// TODO(gp): Look into reviewdog for turning linter output into inline PR
+//   comments, and Danger/danger.js for policy-as-code review rules
+
+* Automating PR Review with AI (2/2)
+
+// From helpers_root/docs/tools/all.code_review_tools.reference.md
+// From helpers_root/docs/code_guidelines/all.code_review.how_to_guide.md
+
+- @Examples@: Hosted review systems
+  - _GitHub Copilot Code Review_: In-platform, minimal setup, shallow analysis
+  - _Graphite_: Pull request workflow and stacked diffs, light on semantics
+  - _CodeRabbit_: Deeper logic and bug analysis, younger integrations
+  - _Snyk Code_: Static analysis aimed at security and anti-patterns
+
+- @Limitations@
+  - Suggestions are best guesses and need human oversight
+  - Project-specific context is exactly what a hosted tool lacks
+  - Pricing is per seat per month, so cost scales linearly with team size
+
+- @Fact@: The human checklist is not automated away
+  - Is the design right, and is the code more complex than it needs to be?
+  - Are the tests well designed, and do comments explain _why_ not _what_?
+  - Is the developer building something they do not need yet?
+
+- @Key idea@: Automate the mechanical pass, and spend the human pass on architecture,
+  specification conformity, and intent
+// TODO(gp): Look into Codacy, DeepSource, Qodo (CodiumAI), Greptile, and the
+//   open-source PR-Agent as further hosted or self-hosted reviewers
+
+* The Agentic Loop: Plan, Patch, Prove, Summarize
+
+// From paper "The Causify AIgentic Development System", Part 4
+
+::: columns
+:::: {.column width=60%}
+
+- @Definition@: The **agentic loop** is the disciplined workflow the infrastructure
+  makes possible
+  - _Plan_: State the intended change and the affected runnable directory
+  - _Patch_: Implement a minimal diff that respects directory boundaries
+  - _Prove_: Run the cheapest gate first, then widen
+  - _Summarize_: Produce a pull-request-ready explanation with evidence
+// - @Example@: The escalation order inside _Prove_
+//   ```bash
+//   > invoke lint --modified
+//   > invoke run_fast_tests
+//   > invoke run_slow_tests
+//   ```
+
+- @Key idea@: The novelty is not that an agent writes code, it is that the change
+  arrives carrying its own evidence
+
+::::
+:::: {.column width=40%}
+
+```graphviz
+digraph AgenticLoop {
+  bgcolor="transparent";
+  pad="0.15";
+  splines=spline;
+  nodesep=0.28;
+  ranksep=0.42;
+  rankdir=TB;
+
+  node [shape=box,
+        style="rounded,filled",
+        fillcolor="#FFFFFF",
+        color="#9AA9B8",
+        penwidth=1.8,
+        fontname="Helvetica",
+        fontcolor="#243B53",
+        fontsize=12,
+        margin="0.20,0.12",
+        height=0.46];
+
+  edge [color="#A3B1C0",
+        penwidth=1.3,
+        arrowhead=vee,
+        arrowsize=0.75,
+        fontname="Helvetica",
+        fontsize=10,
+        fontcolor="#7B8794"];
+
+  // plan : teal | patch : blue | prove : sage green | summary : orange
+
+  Plan  [label="Plan",
+         fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+  Patch [label="Patch",
+         fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+  Prove [label="Prove\n(lint, tests)",
+         fillcolor="#DFEDE0", color="#8FB79A", fontcolor="#2E5A3D"];
+  Sum   [label="Summarize",
+         fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+
+  Plan -> Patch;
+  Patch -> Prove;
+  Prove -> Sum [label="  Gates green"];
+  Prove -> Patch [label="  Gate fails",
+                  style=dashed, penwidth=1.6,
+                  color="#C0455B", fontcolor="#C0455B",
+                  constraint=false];
+}
+```
+
+::::
+:::
+
+// TODO(gp): Look into SWE-agent, Aider's edit-test loop, and ReAct-style
+//   plan/act/observe agents as other implementations of this loop
+
+* Automating Root-Cause Analysis When a Gate Fails
+
+- @Problem@: The agentic loop's dashed edge _"Gate fails $\to$ back to Patch"_ hides
+  the hardest step
+  - Knowing a test failed is not the same as knowing why, and an agent that patches
+    without a cause thrashes
+
+- @Gap@: Nothing in this stack automates the diagnosis itself
+  - No bisection: Which commit in the branch introduced the failure?
+  - No log or stack-trace clustering: Is this failure the same one from three pull
+    requests ago, or new
+
+- @What it would take@
+  - `git bisect` driven by the agent, running the failing test at each step
+  - A skill that groups CI failures by stack-trace similarity, so a recurring flake
+    is recognized instead of re-diagnosed from zero
+// TODO(gp): Look into automated `git bisect` runners, Sentry/Datadog error
+//   clustering by stack-trace fingerprint, and BuildPulse for grouping
+//   recurring CI failures
+
+# Automating Documentation
+
+* Documentation as a Machine-Consumable Artifact
+
+// From helpers_root/docs/documentation_meta/all.diataxis.explanation.md
+// From helpers_root/docs/documentation_meta/all.writing_docs.how_to_guide.md
+
+- @Problem@: An essay-shaped document is expensive for a human to skim and expensive
+  for an AI agent to search
+
+- @Definition@: **Diataxis** splits documentation into four modes, each with one
+  clear job
+```{=typst}
+#styled-table(
+  headers: ("Mode", "Orientation", "Reader question", "Suffix"),
+  rows: (
+    ("Tutorial", "Learning", "Teach me by doing", ".tutorial.md"),
+    ("How-to guide", "Goal", "Help me do this task", ".how_to_guide.md"),
+    ("Reference", "Information", "Tell me the details", ".reference.md"),
+    ("Explanation", "Understanding", "Explain the design", ".explanation.md"),
+  ),
+)
+```
+
+- File name encodes the mode: `docs/{component}/{audience}.{topic}.{diataxis_tag}.md`
+
+- @Techniques@: Conventions that make a document machine-consumable
+  - A summary in bullets for incremental disclosure
+  - Meaningful headers and clear conventions (e.g., one idea per bullet, DRY applied
+    to documentation)
+  - A loop that keeps the content up to date (e.g., ensure the content is in sync
+    with the code, check referred URLs, check markdown links...)
+  - Machine readable and generated diagrams
+
+- @Key idea@: The structure that makes a document skimmable for a human is the same
+  structure that makes it easily searchable and consumable for an AI assistant
+// TODO(ai_gp): Prefer markdown
+// TODO(gp): Look into doc tooling: Docusaurus/MkDocs renderers, Vale/alex for
+//   prose linting, and RAG doc-indexing tools (LlamaIndex, Context7) for
+//   agent retrieval
+
+* Generating and Maintaining READMEs with AI
+
+// From helpers_root/.claude/skills/readme.create
+// From helpers_root/docs/documentation_meta/all.markdown_tools.explanation.md
+
+- @Problem@: A `README` is written once and rots, because nothing fails when it goes
+  stale
+  - Different types of README (e.g., for a dir, an executable, a Python library)
+  - Summary, structure of the directory, description of files
+  - Description of executables, workflows, and architecture when they apply
+
+- @Key idea@: Generation is cheap
+  - Check that the document still matches the code
+  - Check referred URLs
+  - Check relationships with other markdown links
+  - Keep it updated (incrementally when something change + a top to bottom run once
+    in a while)
+// TODO(ai_gp): Systems to keep documentation updated
+// ctx7?
+// TODO(gp): Look into readme-ai, Mintlify writer, and link checkers
+//   (markdown-link-check, lychee) for automated README generation and upkeep
+
+# Automating Code Quality
+
+* Pre-commit Tool
+
+// TODO(gp): Look into the pre-commit framework (pre-commit.com) and how it
+//   compares to this repo's custom `pre-commit.py` hook runner
+
+* Pre-Commit Hooks
+
+// From helpers_root/docs/tools/git/all.git_hooks.reference.md
+// From helpers_root/docs/tools/git/all.git_hooks.how_to_guide.md
+
+::: columns
+:::: {.column width=54%}
+
+- @Definition@: A **git hook** is a script Git runs around an event such as a commit
+
+- @Examples@ of checks
+  - Check commit message conventions
+  - Never commit on the default branch (e.g., `master`) but always use a PR
+  - Name and email for the author are configured
+  - Refuse oversized blobs
+  - Make sure all the source code (e.g., Python) at least parses
+  - No secret in the staged diff
+  - Check leftover merge-conflict markers
+  - Lint was run and passed
+  - Unit tests are present and have coverage of the new code
+
+- @Key idea@: Gates are ordered by cost, so the cheapest check runs first
+
+::::
+:::: {.column width=42%}
+
+```graphviz
+digraph QualityGates {
+  bgcolor="transparent";
+  pad="0.15";
+  splines=spline;
+  nodesep=0.24;
+  ranksep=0.34;
+  rankdir=TB;
+
+  node [shape=box,
+        style="rounded,filled",
+        fillcolor="#FFFFFF",
+        color="#9AA9B8",
+        penwidth=1.8,
+        fontname="Helvetica",
+        fontcolor="#243B53",
+        fontsize=11,
+        margin="0.18,0.10",
+        height=0.42];
+
+  edge [color="#A3B1C0",
+        penwidth=1.3,
+        arrowhead=vee,
+        arrowsize=0.7,
+        fontname="Helvetica",
+        fontsize=9,
+        fontcolor="#7B8794"];
+
+  // local gate : sage green | remote gate : blue | outcome : orange
+
+  Hook  [label="Pre-commit hook\nseconds",
+         fillcolor="#DFEDE0", color="#8FB79A", fontcolor="#2E5A3D"];
+  Lint  [label="Linter\nseconds",
+         fillcolor="#DFEDE0", color="#8FB79A", fontcolor="#2E5A3D"];
+  Fast  [label="Fast tests\n5 s per class",
+         fillcolor="#DFEDE0", color="#8FB79A", fontcolor="#2E5A3D"];
+  Slow  [label="Slow tests\n30 s per class",
+         fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+  CI    [label="CI: lint, tests,\ngitleaks, semgrep",
+         fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+  Merge [label="Merge",
+         fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+
+  Hook -> Lint -> Fast -> Slow -> CI -> Merge;
+}
+```
+
+::::
+:::
+
+// TODO(gp): Look into husky and lefthook as alternative hook managers for
+//   JS/multi-language repos, and Talisman for a hook dedicated to
+//   secret-scanning
+
+* Type Checking as a Quality Gate
+
+// From helpers_root/.claude/skills/coding.fix_pyright
+
+- @Problem@: A linter checks style and a test checks behavior for the paths it
+  exercises
+
+- @Solution@: `coding.fix_pyright` runs static type checking and fixes the reported
+  lints, closing the gap between "style is correct" and "types are correct"
+
+- @Constraints@: What keeps a type-checking pass honest
+  - A fix narrows a type or adds an annotation, it does not silence the check with a
+    blanket `# type: Ignore`
+  - Third-party stubs are missing as often as they are wrong, so a suppression at a
+    boundary is flagged, not hidden
+
+- @Key idea@: Type checking is static analysis for correctness, not style, and
+  belongs in the same escalation ladder as the linter
+// TODO(gp): Look into the mypy daemon (`dmypy`) and pyright watch mode for
+//   fast incremental checks, and typing-coverage reporters to track
+//   annotation completeness over time
+
+* Security Gates: Secrets and Static Analysis
+
+// From helpers_root/docs/build_system/all.gitleaks_workflow.explanation.md
+// From helpers_root/docs/build_system/all.semgrep_workflow.explanation.md
+
+- @Problem@: An autonomous agent that edits configuration files can commit a
+  credential, and deleting the line later does not remove it from history
+
+- @Gitleaks@: Secret scanning at two points
+  - Locally as the `check_gitleaks` pre-commit check
+  - In continuous integration on every pull request, every push to `master`, on a
+    daily schedule, and on manual dispatch
+  - Rules in `.github/gitleaks-rules.toml`, failures posted to a Slack channel
+
+- @Semgrep@: Pattern-based static analysis
+  - Uses the `p/secrets` rule pack, with the same trigger schedule
+  - `.semgrepignore` excludes vendored code, `# nosemgrep` suppresses one line
+  - Reproduce a failure locally with `semgrep --config=p/secrets`
+
+- @Key idea@: Autonomy is acceptable exactly where the failure mode has an automated
+  detector
+// TODO(gp): Look into TruffleHog and detect-secrets as gitleaks alternatives,
+//   and GitHub secret scanning plus CodeQL/Bandit for broader SAST coverage
+
+* Dependency Vulnerability Scanning
+
+// From paper "The Causify AIgentic Development System", Part 3
+
+- @Problem@
+  - Remove packages nobody imports
+  - Check package everybody imports that carries a known CVE
+  - Check package whose license conflicts with the project's
+
+- @Fact@: The production image build already scans for known vulnerabilities,
+  blocking release on a high-severity match, so the CVE question is not fully open
+
+- @Gap@: What the scan does not cover
+  - No software bill of materials (SBOM), so "are we exposed to CVE-X" is still an
+    audit, not a lookup
+  - No license-compliance check
+  - No bot that opens an upgrade pull request on its own; a known CVE blocks release
+    but does not fix itself
+
+- @What it would take@
+  - A generated SBOM per release, kept alongside the scan report
+  - A bot that bumps one dependency at a time, changelog attached, for a human to
+    merge
+// TODO(gp): Look into Dependabot and Renovate for automated upgrade PRs,
+//   Snyk/Trivy/Grype for CVE scanning, and Syft or OSV-Scanner for SBOM
+//   generation
+
+* Code Coverage Tracking and Enforcement
+
+// From helpers_root/docs/tools/all.codecov.how_to_guide.md
+// From helpers_root/docs/tools/all.code_coverage_subprocess.how_to_guide.md
+
+- @Definition@: Coverage is collected per **test suite**, and each suite uploads
+  under its own flag
+  - `fast` and `slow` run daily, `superslow` runs weekly
+// - @Example@: Measuring locally before pushing
+//   ```bash
+//   > invoke run_coverage --suite fast --generate-html-report
+//   > invoke run_coverage_subprocess --target-dir=dev_scripts_helpers/llms
+//   ```
+// - @Techniques@: Covering subprocesses and containers
+//   - `.coveragerc` sets `parallel = True` and `concurrency = multiprocessing`
+//   - `hcoverage.inject()` installs the startup hook, `COVERAGE_PROCESS_START` points
+//     at the config
+//   - `hcoverage.coverage_combine()` merges the per-process data files
+
+- @Fact@: The gate is a delta, not an absolute
+  - The project check fails when coverage drops by 1% or more against the base
+  - `carryforward` reuses the last report for a suite that did not run
+  - The patch check always scores the lines changed by the pull request
+
+- @Limitations@: Coverage measures which lines ran, not whether anything was asserted
+  about them
+// TODO(gp): Look into Coveralls as a Codecov alternative, and mutation
+//   testing (next slide) as the tool that actually answers this limitation
+
+* Mutation Testing: Verifying That Tests Actually Assert
+
+- @Definition@: **Mutation testing** injects a small fault into the source (flip a
+  comparison, drop a line) and reruns the suite
+  - A test suite that still passes did not actually exercise that logic
+
+- @What it would take@
+  - A mutation runner scoped to the lines a pull request changed, since a
+    full-repository mutation run is too slow to gate a merge
+  - A `mutation_score` reported alongside coverage, so "100% covered, 40%
+    mutation-killed" is visible instead of hidden behind one green number
+
+- @Key idea@
+  - Coverage proves a line executed
+  - Mutation testing proves a test would have noticed if that line were wrong
+// TODO(gp): Look into mutmut and cosmic-ray for Python, Stryker Mutator for
+//   JS, and Pitest for Java as the mutation runners that would fill this gap
+
+# Automating Unit Testing
+
+* Testing Philosophy: Tests as Executable Specifications
+
+// From helpers_root/.claude/skills/testing.rules.md
+
+- @Key idea@: A test is a specification a machine can check, which makes it the most
+  important feedback channel an agent can act on without a human
+
+// TODO(ai_gp): Point to the blog
+
+// - @Characteristics@: The four invariants
+//   - _Test one thing_: One class per function or class, one case per method
+//   - _Self-contained_: Never assume execution order, state inputs explicitly
+//   - _Outside-in_: Interface tests survive refactors, implementation tests do not
+//   - _In sync_: Renaming the tested class renames the test class and the file
+
+// - @Example@: Every method uses the same four sections
+//   ```python
+//   def test1(self) -> None:
+//       """
+//       Test extraction from a valid file path.
+//       """
+//       # Prepare inputs.
+//       file_path = "msml610/lectures_source/Lesson10-Name.md"
+//       # Prepare outputs.
+//       expected_dir = "msml610"
+//       # Run test.
+//       actual_dir, _ = _extract_lesson_from_file(file_path)
+//       # Check outputs.
+//       self.assertEqual(actual_dir, expected_dir)
+//   ```
+
+// - @Remark@: Naming is fully determined, so there is nothing to decide
+//   - `parse_limit_range()` $\to$ `Test_parse_limit_range`, `Config` $\to$
+//     `TestConfig`, methods numbered `test1`, `test2` with the intent in the docstring
+
+// TODO(gp): Look into Hypothesis for property-based testing and Pact for
+//   contract testing as complements to these example-based specs
+
+* Writing and Extending Unit Tests with AI
+
+// From helpers_root/.claude/skills/testing.write_unit_tests
+// From helpers_root/.claude/skills/testing.reach_coverage
+
+- @Problem@: Asked for tests with no constraint, a model produces often procudes
+  low quality tests (e.g., too brittle, without asserting behavior, difficult to
+  maintain, lots of repeated code)
+
+- @Algorithm@: Both skills are plan-then-implement, with a human gate in between
+  1. Establish the baseline, e.g., run coverage and list uncovered lines
+  2. Map each uncovered path to a proposed test
+  3. Specify class names, method names, inputs, and expected behavior, with no code
+  4. Stop and wait for approval
+  5. Implement, re-measure, and report the remaining gaps
+
+- @Techniques@: What the plan is told to avoid
+  - Testing assertions, defensive checks, and invalid inputs unless correctness
+    depends on them
+  - Mocking anything internal: Mock third-party providers, cloud infrastructure,
+    databases, and external APIs, and patch at the call site
+
+- @Key idea@: The approval gate is where a human injects intent, before the expensive
+  step, not after
+// TODO(gp): Look into CodiumAI/Qodo Cover, Diffblue Cover, EvoSuite, and
+//   Copilot test generation as AI-driven test writers
+
+* Golden File Testing and Test Reporting
+
+// From paper "The Causify AIgentic Development System", Part 4
+// From helpers_root/docs/build_system/all.pytest_allure.explanation.md
+
+- @Definition@: A **golden file** stores the full expected output of a test in
+  `test/outcomes/<TestClass.test_method>/output/test.txt`
+
+- @Pros@: Why whole-output comparison suits agents
+  - The diff is concrete, so the model can judge whether the change was intended
+  - `pytest --update_outcomes` makes accepting an intentional change one step
+  - Side effects far from the edit show up immediately as unexpected diffs
+  - Capturing the entire output makes an incorrectly passing test unlikely
+
+- @Remark@: The current convention prefers `self.assert_equal()` against an expected
+  string written in the test over `self.check_string()`
+  - The expectation stays visible in the file the reviewer is reading
+  - Both styles share the rule: Compare the whole output, never piece by piece
+
+- @Techniques@: Reporting on top of the raw results
+  - `pytest --alluredir=allure-results` emits result and container files
+  - The Allure command-line tool renders HTML, and stored history enables trends
+  - Trends answer _"did this test just start failing?"_, which a single run cannot
+// TODO(gp): Look into syrupy for pytest snapshot testing, ApprovalTests for
+//   the approval-testing style, and ReportPortal/TestRail as Allure
+//   alternatives
+
+* Testing Notebooks the Same Way as Code
+
+// From paper "The Causify AIgentic Development System", Part 1
+
+- @Problem@: A notebook is code, but "run all cells and eyeball the output" is the
+  usual test, which an agent cannot check unattended
+
+- @Solution@: A wrapper executes the notebook headlessly and applies the same
+  golden-file comparison used for regular tests
+  - `run_notebook.py` drives execution through papermill
+  - The test file follows the same naming convention, e.g `test_analysis_notebook.py`
+  - Expected output is a golden file, not a human glance
+
+- @Example@: Debugging a failure keeps the interactive workflow
+  - `-s --dbg` reruns with output visible instead of captured
+  - `--no_suppress_output` keeps cell output when the intent is to inspect it, not
+    just to compare it
+
+- @Key idea@: A notebook only stays trustworthy if it is tested the same way the rest
+  of the codebase is, not exempted because it renders nicely
+
+* Detecting and Quarantining Flaky Tests
+
+// From helpers_root/.claude/skills/pytest.triage_local_unit_tests
+// From helpers_root/.claude/skills/pytest.triage_github_unit_tests
+
+- @Problem@: The buildmeister policy is "fix it or revert" within one hour, but a
+  test that fails intermittently is neither clearly broken nor clearly fine, and
+  re-running it by hand burns the same hour it is meant to protect
+
+- @Solution@: `pytest.triage_local_unit_tests` and `pytest.triage_github_unit_tests`
+  analyze a failure locally or in CI and classify it before a human is paged
+
+- @Algorithm@
+  1. Re-run the failing test in isolation and repeated, to separate order-dependence
+     from true flakiness
+  2. Compare the failure against the Allure history for the same test class
+  3. Classify: Genuine regression, environment flake, or known-flaky
+  4. Genuine regressions file a build-fail issue; known flakes are quarantined with a
+     tracking issue, not silently skipped
+
+- @Fact@: Two pytest plugins absorb the cheapest flakes automatically
+  - `pytest-timeout` kills a hung test instead of stalling the suite
+  - `pytest-rerunfailures` retries a failure before it is even triaged: Twice for
+    fast tests, once for slow and superslow
+
+- @Key idea@: A flaky test left in the suite trains the team to ignore red, which is
+  a worse outcome than a quarantined test with an open issue
+// TODO(gp): Look into BuildPulse and Datadog Test Optimization for flaky-test
+//   detection dashboards, and pytest-rerunfailures for automatic retry-based
+//   triage
+
+# Automating Build, Release, and CI/CD
+
+* Invoke Workflows: A Centralized Task Registry
+
+// From helpers_root/docs/tools/all.invoke_workflows.how_to_guide.md
+// From paper "The Causify AIgentic Development System", Part 4
+
+- @Definition@: `invoke` provides Makefile-like targets written in Python
+  - Tasks are `@task`-decorated functions in `helpers/lib_tasks_*.py`, exported
+    through `tasks.py`
+
+- @Components@: Namespaces name the topic
+  - `docker_*`, `git_*`, `gh_*`, `run_*`, `lint_*`, `integrate_*`
+
+- @Example@: Discovery is a command, not a document
+  ```bash
+  > invoke --list
+  > invoke --help run_fast_tests
+  > i run_fast_tests --coverage
+  ```
+
+- @Pros@: What a task registry gives an agent
+  - _Discoverability_: Enumerate every operation without prior knowledge
+  - _No ambiguity_: Call a named task instead of synthesizing a Docker command
+  - _Consistency_: The same commands work in every runnable directory
+  - _Encoded practice_: Container choice, pytest options, and timeouts are already
+    correct
+
+- @Remark@: A task runs only where it is imported into `tasks.py`, which makes the
+  runnable directory the unit of execution
+// TODO(gp): Look into Make, Just, Taskfile.dev, and Nx `run-many` as
+//   alternative centralized task registries
+
+* CI/CD Automation and the Buildmeister Role
+
+// From helpers_root/docs/work_organization/all.buildmeister.how_to_guide.md
+// From helpers_root/docs/build_system/all.linter_gh_workflow.explanation.md
+
+- @Problem@: Automation multiplies the changes landing per day, and a red build
+  blocks every one of them
+
+- @Definition@: The **buildmeister** is a rotating role that owns build health
+
+- @Components@: The duties of the rotation
+  - Check the dashboard daily and triage every break notification first
+  - File an issue titled `Build fail - {repo} {test type} ({run number})` with the
+    `FAILED` list, the stack trace, and the link to the run
+  - Push the responsible person, and run a post-mortem on the cause
+
+- @Fact@: The policy is _"fix it or revert"_
+  - The build returns to green within one hour
+  - Disabling a test is the last resort and never a unilateral decision
+
+- @Mechanics@: What makes the rotation itself accountable
+  - A daily status email, so build health has a paper trail, not just a dashboard
+    state
+  - Handover requires the incoming buildmeister to reply and confirm, so the role is
+    never silently unattended
+  - A post-mortem log records repo, test type, run link, root cause, owner, and fix
+    timeline for every break
+
+- @Example@: The linter gate encodes the same idea in code
+  ```bash
+  > invoke git_fetch_master
+  > invoke lint --branch
+  > invoke lint_check_if_it_was_run
+  ```
+
+- @Key idea@: An automated fleet still needs a human owner for the shared signal
+// TODO(gp): Look into build-health dashboards (Datadog CI Visibility, GitHub
+//   required-status-checks) and flaky-test quarantine tools (BuildPulse) that
+//   support this role
+
+* Automating Container Releases
+
+// From
+// helpers_root/docs/tools/dev_system/all.devops_docker_auto_release.explanation.md
+
+- @Goal@: Release a development image on a schedule with no human running the steps
+
+- @Algorithm@: Three phases with one human gate
+  1. _Build and test_: A weekly workflow calls `invoke docker_build_test_dev_image`,
+     which bumps the version, opens an issue and a branch, builds the image, runs
+     tests, updates `changelog.txt`, opens a pull request with reviewers, and pushes
+     `dev-{version}` to GHCR
+  2. _Manual review_: The team validates changelog, version, and lockfile, optionally
+     pulls the candidate image, then merges
+  3. _Automated release_: The merge event plus the `Automated release` label triggers
+     re-tagging and pushing to every target registry
+
+- @Remark@: Review is requested from a team, not a person
+  - `release_team` in `repo_config.yaml` removes the single point of failure
+
+- @Key idea@: The human gate sits between _built and tested_ and _published_, which
+  is the only irreversible step
+// TODO(gp): Look into semantic-release, Release Please, and changesets for
+//   automated versioning and changelog generation applied to container
+//   releases
+
+* Docker Container Release Flow: Dev to Prod
+
+// From helpers_root/docs/tools/dev_system/all.devops_docker.how_to_guide.md
+// From helpers_root/docs/tools/dev_system/all.devops_docker.reference.md
+
+::: columns
+:::: {.column width=50%}
+
+- @Definition@: A **stage** is a step in the release workflow of an image
+  - _local_: A private release candidate for one developer or server
+  - _dev_: Blessed image used by the team and by CI, with the source bind-mounted so
+    code changes need no rebuild
+  - _prod_: Self-contained image with the code copied inside, built from `dev`
+
+- @Components@: The invoke targets
+  - `docker_build_local_image`
+  - `docker_tag_local_image_as_dev`
+  - `docker_push_dev_image`
+  - `docker_build_prod_image`
+  - `docker_release_all`
+  - `docker_rollback_dev_image`
+
+::::
+:::: {.column width=46%}
+
+```graphviz
+digraph ReleaseFlow {
+  bgcolor="transparent";
+  pad="0.15";
+  splines=spline;
+  nodesep=0.26;
+  ranksep=0.40;
+  rankdir=TB;
+
+  node [shape=box,
+        style="rounded,filled",
+        fillcolor="#FFFFFF",
+        color="#9AA9B8",
+        penwidth=1.8,
+        fontname="Helvetica",
+        fontcolor="#243B53",
+        fontsize=11,
+        margin="0.18,0.10",
+        height=0.44];
+
+  edge [color="#A3B1C0",
+        penwidth=1.3,
+        arrowhead=vee,
+        arrowsize=0.7,
+        fontname="Helvetica",
+        fontsize=9,
+        fontcolor="#7B8794"];
+
+  // stage : blue | registry : violet | rollback : rose
+
+  Local [label="local\nrelease candidate",
+         fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+  Dev   [label="dev\nbind-mounted code",
+         fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+  Prod  [label="prod\nself-contained",
+         fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+  Reg   [label="Registries\nECR, GHCR, DockerHub",
+         fillcolor="#E9E1F7", color="#A88FD9", fontcolor="#45296B"];
+
+  Local -> Dev [label="  tag as dev"];
+  Dev -> Prod [label="  copy code in"];
+  Dev -> Reg [label="  push"];
+  Prod -> Reg [label="  push"];
+  Reg -> Dev [label="  rollback",
+              style=dashed, penwidth=1.6,
+              color="#C0455B", fontcolor="#C0455B",
+              constraint=false];
+}
+```
+
+::::
+:::
+
+- @Key idea@: Git versions the code and `changelog.txt` versions the container, so a
+  commit always names the environment that can run it
+// TODO(gp): Look into Skopeo for registry-to-registry image copy, cosign for
+//   image signing, and Syft/Grype for an SBOM plus vulnerability check at
+//   each stage
+
+# Production Feedback and Release Monitoring
+
+* Closing the Loop: Feeding Production Incidents Back to the Agent
+
+- @Problem@: The lifecycle in this lesson ends at "Merge" and "push to registry";
+  nothing routes a production error back to a filed issue, so the feedback loop that
+  catches a mistake before merge does not exist after merge
+
+- @Gap@: An exception in production and a failing assertion in CI are the same
+  signal, "the code did something wrong", but only the second one reaches an agent
+  automatically today
+
+- @What it would take@
+  - An alerting rule that opens a GitHub issue from a production error, with the
+    stack trace, the request that triggered it, and the deployed version attached
+  - The issue routes into the same `PR_for_authors` labeling scheme already used for
+    human-filed work, so an agent picks it up the same way
+
+- @Key idea@: "coding while you sleep" only closes the loop if a failure the agent
+  caused while asleep finds its way back to an agent, not just to an on-call human
+// TODO(gp): Look into Sentry/Rollbar/Datadog error-to-issue integrations and
+//   PagerDuty-to-GitHub bridges as the tools that would close this loop
+
+* Canary Analysis and Automated Rollback
+
+// From paper "The Causify AIgentic Development System", Part 3
+
+- @Problem@: `docker_rollback_dev_image` covers the dev image, and a human decides to
+  run it after noticing something is wrong
+
+- @Definition@: A **canary release** ships a change to a small slice of traffic first
+  and compares its error rate and latency against the unchanged majority before
+  widening the rollout
+
+- @Fact@: The production service already runs blue-green and canary deploys, with an
+  automatic rollback when a health check fails; the gap is narrower than "nothing
+  exists"
+
+- @Gap@: A health check only sees "is the process up", not "did the error rate or
+  latency get worse"
+  - No metric-threshold rollback, only liveness-threshold rollback
+  - The dev-image path (`docker_rollback_dev_image`) stays a manual command, with no
+    equivalent automatic trigger
+
+- @What it would take@
+  - A metric comparison job that runs after each deploy and triggers rollback on a
+    threshold, not just on a failed health check
+  - The same trigger wired to the dev-image rollback path, so a metric regression
+    there recovers as fast as a metric regression in prod
+
+- @Key idea@: Automatic rollback already exists for "is it alive"; the open problem
+  is automatic rollback for "is it correct"
+// TODO(gp): Look into Flagger and Argo Rollouts for canary automation on
+//   Kubernetes, Istio traffic splitting, and Prometheus + Alertmanager for
+//   SLO-triggered rollback
+
+# Summary
+
+* Why This Tooling Matters for AI-Assisted Development
+
+// From paper "The Causify AIgentic Development System", Part 4
+
+- @Key idea@: Nothing in this stack was built for agents, and that is the point
+  - Discoverability, automation, standardization, and immediate feedback happen to be
+    what an agent needs
+
+- @Characteristics@: The properties that make a codebase agent-ready
+  - _Self-documenting workflows_: `invoke --list` replaces tribal knowledge
+  - _Manifests and contracts_: `AGENTS.md` and `repo_config.yaml` answer questions
+    instead of hiding answers in prose
+  - _Context-bounded editing_: The runnable directory limits what must be read
+  - _Guardrails and provenance_: Hooks, linters, and scanners make failures
+    detectable, and evidence makes changes reviewable
+  - _Deterministic verification_: Golden files and categorized tests turn correctness
+    into a diff
+
+- @Fact@: The questions removed are the ones agents answer badly
+  - _"How should I format this?"_, _"Where do tests live?"_, _"How do I run them?"_
+
+- @Remark@: The loop is self-reinforcing, since better infrastructure enables better
+  assistance, which pays for more infrastructure
+// TODO(gp): Look into agent-readiness scoring frameworks and benchmarks
+//   (SWE-bench, METR evals) to quantify how agent-friendly a stack actually is
+
+* Tooling Stack: Summary and Open Questions
+
+// From book_AI_Software_Engineering/resources.md
+```{=typst}
+#styled-table(
+  headers: ("Lifecycle stage", "Artifact the agent uses"),
+  rows: (
+    ("Plan the work", "specs.write, ADRs (gap)"),
+    ("Understand the repo", "AGENTS.md, rules files, repo_config.yaml"),
+    ("Do a task", "Skill files, invoke tasks"),
+    ("Change code", "Runnable directory boundary, linter"),
+    ("Prove the change", "Fast/slow tests, golden files, coverage, mutation (gap)"),
+    ("Deliver", "PR split plan, ai_review.py, CI gates"),
+    ("Release", "Docker stages, changelog.txt, registries"),
+    ("Learn from production", "Incident-to-issue, canary/rollback (gap)"),
+  ),
+  col-widths: (1fr, 1.7fr),
+)
+```
+
+- @Question@: How much autonomy should each gate allow before a human signs off?
+
+- @Question@: When the linter and the model disagree about style, which one is the
+  specification?
+
+- @Question@: Rules files consume context, so how large can they grow before they
+  cost more than they save?
+
+- @Question@: Who owns a regression introduced by an agent-authored pull request that
+  a human approved?
+
+- @Key idea@: The tooling does not make the agent correct, it makes the agent
+  _checkable_, which is the property a team can actually build on
+// TODO(gp): Look into governance/provenance frameworks for AI-authored code:
+//   SLSA build provenance, org audit-trail and policy tooling, and published
+//   responsible-AI-coding guidelines

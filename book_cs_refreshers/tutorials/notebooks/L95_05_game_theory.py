@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.3
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -42,12 +42,13 @@
 import logging
 
 # Third-party libraries.
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 # %%
 import helpers.hmodule as hmodule
-hmodule.install_module_if_not_present("networkx", use_activate=True, use_sudo=False, venv_path="/opt/venv")
+
+hmodule.install_module_if_not_present(
+    "networkx", use_activate=True, use_sudo=False, venv_path="/opt/venv"
+)
 
 # %%
 import helpers.htutorial as htutori

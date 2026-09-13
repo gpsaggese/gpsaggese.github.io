@@ -1,0 +1,586 @@
+// type=UMD_slides
+// course_title=From Data to Decisions: Building Decision Systems with Probabilistic Causal Reasoning
+// lesson_title=Lesson 02.3: Integrating Business Objective and Real-World Dynamics
+// slides_engine=typst
+
+// References:
+//- [B028] Kochenderfer, "Decision Making Under Uncertainty", 2015
+//- [B030] Sutton et al., "Reinforcement Learning: An Introduction", 2018
+//- [P036] Bottou et al., "Counterfactual Reasoning and Learning Systems: The
+//  Example of Computational Advertising", 2013 https://arxiv.org/abs/1209.0467
+//- [P042] Hafner et al., "Mastering Atari, Go, Chess and Shogi by Planning with
+//  a Learned World Model", 2023 https://arxiv.org/abs/2104.06294
+//- [P100] Kahneman & Tversky, "Prospect Theory: An Analysis of Decision under
+//  Risk", 1979 https://doi.org/10.2307/1914185
+
+# From Objectives to Actions
+
+## Recap and Transition
+
+* From Catalog to Calculus: What This Lesson Builds
+
+- @Key idea@: Lesson 1.1 catalogued the costs of ignoring the business
+  objective and of ignoring dynamics; Lesson 2.1 turned causal claims into
+  identified, uncertain effects $\Pr(Y|do(a))$; this lesson turns those
+  effects into decisions
+- Two halves:
+  - _Decision theory_: turning a business objective and an interventional
+    effect into an optimal action
+  - _Dynamic causal ML_: extending that choice to a world that reacts, over
+    many steps, not just one
+- @Key idea@: by the end of this lesson, the pipeline
+  $data \to model \to policy \to action \to feedback$ from Lesson 1.1 is
+  fully instantiated, one arrow at a time
+
+* From KPIs to Causal Objectives
+// From: msml610/lectures_source/Lesson08.1-Causal_AI_intro.smd:220 '* Problem 4: How ML Systems Make Decisions Today'
+
+- @Problem@: a KPI like click-through rate or accuracy is a proxy, not the
+  goal itself, and a decision system needs a target it can actually optimize
+- @Solution@: replace the proxy metric with a utility function $U(y, a)$
+  defined directly over outcomes and actions
+- @Example@: instead of maximizing predicted click-through rate, maximize
+  expected long-term revenue net of the discount cost
+- @Key idea@: turning a KPI into a utility function is what makes the
+  objective explicit enough to optimize, audit, and defend
+
+# Decision Theory: Utility and Rational Choice
+
+## Utility Functions and Expected Utility
+
+* Utility Functions: Encoding What Matters
+// From: msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.smd:252 '* Utility Functions'
+
+- @Definition@: a utility function $U: \mathcal{Y} \to \bbR$ maps each
+  outcome $y$ to a real-valued preference score, higher is better
+- Utilities are:
+  - _Subjective_: different stakeholders can have different $U$
+  - _Cardinal_: differences, not just rank, carry meaning, defined up to
+    positive affine transformations $U \to aU + b$, $a>0$
+- @Example@: a hospital utility scale with full recovery $U=1.0$, recovery
+  with complications $U=0.7$, death $U=0.0$
+  - A 10% reduction in complications is worth 0.03 in expected utility
+- @Key idea@: a utility function turns a vague goal like "good outcomes"
+  into a number a decision rule can maximize
+
+* The Expected Utility Principle
+// From: msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.smd:271 '* Expected Utility Principle'
+// From: book_springer/related_books.md:26 '- [B028] Kochenderfer, "Decision Making Under Uncertainty", 2015'
+
+- @Fact@: a rational agent chooses the action maximizing expected utility
+  under uncertainty
+  $$a^* = \argmax_{a \in \mathcal{A}} \EE_{Y \sim \Pr(Y|a)}[U(Y)]$$
+- @Theorem@ (von Neumann-Morgenstern, 1944): if preferences over lotteries
+  satisfy completeness, transitivity, continuity, and independence, a
+  utility function exists such that the agent acts as if maximizing
+  $$\EE[U(L)] = \sum_i p_i U(x_i)$$
+- @Key idea@: expected utility is not an arbitrary choice of decision
+  rule, it is what any preference consistent with those four axioms reduces
+  to
+
+* Two Treatments: A Worked Utility Computation
+// From: msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.smd:319 '* Expected Utility: Two Treatment Example'
+
+- @Problem@: a doctor chooses between two treatments
+  - Treatment 1: cures with probability 0.9, no side effect
+  - Treatment 2: cures with probability 0.95, mild side effect
+- Utility scale: cure with no side effect $=1.0$, cure with side effect
+  $=0.8$, no cure $=0.0$
+  $$\EE[U|T_1] = 0.9(1.0)+0.1(0.0)=0.90$$
+  $$\EE[U|T_2] = 0.95(0.8)+0.05(0.0)=0.76$$
+- @Key idea@: $T_1$ wins even though $T_2$ cures more often; a higher
+  success rate is not the same as a higher expected utility once side
+  effects are priced in
+
+* Risk Preferences and the Shape of Utility
+// From: msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.smd:442 '* Risk Preferences'
+// From: book_springer/related_papers.md:133 '- [P100] Kahneman & Tversky, "Prospect Theory: An Analysis of Decision under Risk", 1979'
+
+- @Intuition@: the curvature of $U$ encodes attitude toward risk
+```{=typst}
+#styled-table(
+  headers: ("Profile", "U Shape", "Effect"),
+  rows: (
+    ("Risk-neutral", "Linear", "Cares only about the mean"),
+    ("Risk-averse", "Concave", "Penalizes variance"),
+    ("Risk-seeking", "Convex", "Rewards variance"),
+  ),
+  bold-first-col: true,
+)
+```
+- @Definition@: the _certainty equivalent_ is the sure outcome valued as
+  much as a risky prospect; for a risk-averse agent it falls below the
+  mean, and the gap is the _risk premium_
+- @Example@: $U(y) = \log(y)$ is concave; a 50/50 bet between \$100 and
+  \$400 has mean \$250 but a certainty equivalent of \$200, a \$50 risk
+  premium
+- @Key idea@: two decision-makers with the same beliefs can rationally
+  choose different actions if their utility curvature differs
+
+* Cost Matrices and Asymmetric Loss, Formally
+// From: msml610/lectures_source/Lesson07.2-Posterior_Based_Decisions.smd:96 '* Loss Function: Motivation'
+
+- @Recall@: symmetric losses like log-loss or mean squared error misprice
+  asymmetric business errors
+- A utility function fixes this directly, by scoring each outcome-action
+  pair on the scale that matters to the business, not on prediction error
+- @Example@: a fraud utility that penalizes a missed fraud ($U=-50$) far
+  more than a false alarm ($U=-1$) drives a more conservative decision
+  boundary than accuracy alone ever would
+- @Key idea@: a cost matrix is a utility function restricted to a finite
+  set of outcomes and actions; expected utility already contains
+  cost-asymmetric decision-making as a special case
+
+* Multi-Objective Trade-offs and the Pareto Frontier
+// From: msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.smd:475 '* Multi-Criteria Trade-offs'
+
+- @Problem@: real decisions weigh multiple objectives that pull in
+  different directions: efficacy, cost, patient burden
+- @Solution 1@: _scalarization_ collapses objectives into one utility,
+  $U(y) = \sum_k w_k U_k(y_k)$, with weights elicited from stakeholders
+- @Solution 2@: the _Pareto frontier_, the set of non-dominated actions,
+  presents the trade-off visually without committing to weights
+- @Example@: recommending a cancer therapy weighs five-year survival,
+  quality of life, and cost; the Pareto frontier shows every therapy no
+  other therapy beats on all three
+- @Key idea@: scalarization commits to a trade-off up front; a Pareto
+  frontier defers that commitment to the decision-maker
+
+# Decision Theory: Networks and Bayesian Choice
+
+## From Graphs to Optimal Policies
+
+* Decision Networks: Chance, Decision, and Utility Nodes
+// From: msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.smd:526 '* Decision Networks: Motivation'
+
+::: columns
+:::: {.column width=55%}
+- @Definition@: a _decision network_ extends a causal DAG with three node
+  types
+  - _Chance nodes_: random variables, as in a Bayesian network
+  - _Decision nodes_: variables set by the decision-maker
+  - _Utility nodes_: deterministic functions of their parents, yielding
+    utility
+- @Example@: whether to turn on a sprinkler
+  - Chance: rain, whether the grass gets wet
+  - Decision: turn on the sprinkler?
+  - Utility: lawn health minus water cost
+- @Key idea@: a decision network is a compact, graphical specification of
+  a decision problem that can be solved automatically
+::::
+:::: {.column width=40%}
+```graphviz
+digraph DecisionNet {
+    rankdir=LR; nodesep=0.6; ranksep=0.6;
+    node [fontname="Helvetica", fontsize=12, penwidth=1.4];
+    Rain [shape=ellipse, style=filled, fillcolor="#A6C8F4", label="Rain"];
+    Grass [shape=ellipse, style=filled, fillcolor="#A6C8F4", label="Grass Wet?"];
+    Sprinkler [shape=box, style="rounded,filled", fillcolor="#F4A6A6", label="Turn on Sprinkler?"];
+    Util [shape=diamond, style=filled, fillcolor="#B2E2B2", label="Lawn Health - Water Cost"];
+
+    Rain -> Grass; Sprinkler -> Grass; Grass -> Util; Sprinkler -> Util;
+}
+```
+::::
+:::
+
+* Solving a Decision Network
+// From: msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.smd:611 '* Solving an Decision Network'
+
+- @Input@: a decision network with conditional probability tables for
+  chance nodes and a utility table
+- @Output@: an optimal policy $\pi^*$, a function from available
+  information to actions
+- @Steps@:
+  1. Eliminate chance nodes by summing them out
+  2. Eliminate decision nodes by maximizing over their domain
+  3. Process nodes in reverse topological order
+  4. Record the arg-max at each decision node as the optimal policy
+- @Key idea@: the same graphical machinery used for probabilistic
+  inference also supports optimal decision-making, once utility and
+  decision nodes are added
+
+* Bayesian Decision Rules and Admissibility
+// From: msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.smd:703 '* Why Bayes Rules Are Admissible'
+
+- @Definition@: the _risk_ of a decision rule $\delta$ at parameter
+  $\theta$ is its expected loss
+  $$R(\theta,\delta) \defeq \EE_{X \sim P_\theta}[L(\theta,\delta(X))]$$
+- @Definition@: a rule is _admissible_ if no other rule has risk at least
+  as low everywhere, and strictly lower somewhere
+- @Theorem@: a rule minimizing Bayes risk
+  $r(\delta) = \int R(\theta,\delta)\pi(\theta)d\theta$ is admissible
+  - If a dominating rule existed, it would also have lower Bayes risk,
+    contradicting optimality
+- @Key idea@: a decision rule built to minimize risk under a prior cannot
+  be uniformly improved upon, which is what makes the prior more than a
+  subjective add-on
+
+* Prior Elicitation: Where Priors Come From
+// From: msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.smd:797 '* Prior Elicitation: What and Why'
+
+- @Problem@: a causal decision needs a prior over the effect size before
+  data arrives, especially when data is scarce, experiments are unethical,
+  or stakeholders disagree
+- @Methods@:
+  - _Quantile elicitation_: ask experts for the 10th, 50th, and 90th
+    percentiles of the effect, then fit a distribution
+  - _Historical calibration_: compare past expert predictions to actuals
+    and correct for bias
+- @Pitfalls@: anchoring on the first number mentioned, overconfidence, and
+  framing effects that change the elicited answer for the same underlying
+  quantity
+- @Key idea@: a documented, sensitivity-checked elicitation process is
+  what makes a prior defensible rather than arbitrary
+
+* The Value of Information
+// From: msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.smd:876 '* Expected Value of Perfect Information'
+
+- @Problem@: before committing to a costly action, is it worth gathering
+  more data first?
+- @Definition@: the _expected value of perfect information_ is the gap
+  between deciding with perfect knowledge of $\theta$ and deciding under
+  current uncertainty
+  $$EVPI = \EE_\theta\left[\max_a U(a,\theta)\right] - \max_a \EE_\theta[U(a,\theta)]$$
+- Any information source costing more than the EVPI is not worth acquiring,
+  however accurate
+- @Key idea@: the value of information is itself a decision-theoretic
+  quantity, computed the same way as the value of any other action
+
+# Decision-Focused Learning
+
+* Interventions Inside the Decision
+// From: msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.smd:343 '* From Observational to Interventional Expectation'
+
+- @Problem@: plugging the observational $\Pr(Y|a)$ into expected utility
+  yields a biased action ranking whenever confounders are present
+- @Solution@: causal decision theory replaces it with the interventional
+  distribution identified in Lesson 2.1
+  $$a^* = \argmax_{a \in \mathcal{A}} \EE_{Y \sim \Pr(Y|do(a))}[U(Y)]$$
+- @Example@: comparing drugs on observational recovery rates conflates
+  who a doctor chose to treat with what the treatment does; adjusting for
+  the backdoor set before computing expected utility fixes the ranking
+- @Key idea@: decision theory and causal identification are not separate
+  topics; expected utility is only valid once its inputs are interventional
+
+* End-to-End, Decision-Focused Learning
+// From: msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.smd:48 '* Decision Pipeline: What Changes'
+
+- @Problem@: a pipeline that first fits a causal model for accuracy, then
+  bolts on a decision rule, optimizes the wrong thing at the first stage
+- @Solution@: _decision-focused learning_ fits the model to directly
+  maximize downstream decision quality, not intermediate prediction
+  accuracy
+- @Key idea@: the full pipeline now reads
+  $$
+  data \to \text{causal model} \to \Pr(Y|do(a))
+       \to U(y,a) \to a^* = \argmax_a \EE[U(Y)|do(a)]
+  $$
+  - Everything up to this point in the book fills in one arrow at a time
+
+# Dynamics: When the World Reacts
+
+## Feedback in Time
+
+* The Static-World Assumption, Formally
+// From: msml610/lectures_source/Lesson08.1-Causal_AI_intro.smd:274 '* Problem 6: Distribution Shift'
+
+- @Recall@: Lesson 1.1 named the static-world assumption as a cost; the
+  tools built so far still assume the structural equations $f_i$, and the
+  graph itself, stay fixed after the decision is made
+- @Problem@: a sustained policy is not a single $do(a)$, it is $do(a)$
+  repeated over time, and the world can update its own mechanisms in
+  response
+- @Key idea@: the rest of this lesson replaces a single intervention with
+  a sequence of interventions in a world whose structure can shift as those
+  interventions unfold
+
+* Feedback Loops and Simultaneity in Time Series
+// From: msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.smd:137 '* Feedback Loops and Simultaneity'
+
+::: columns
+:::: {.column width=55%}
+- @Problem@: in time series, cause and effect often influence each other,
+  creating _simultaneity_: $Y_t$ and $T_t$ are jointly determined
+  - Ordinary regression coefficients become inconsistent and cannot be read
+    as causal effects
+- @Example@: monetary policy affects inflation, and the central bank sets
+  policy based on inflation, closing the loop each quarter
+- @Solution@: model the variables jointly, e.g., with a structural vector
+  autoregression, and impose timing assumptions to separate the directions
+  of influence
+- @Key idea@: a feedback loop is a qualitatively different problem from
+  confounding, since the treatment and the outcome now cause each other
+::::
+:::: {.column width=40%}
+```graphviz
+digraph Feedback {
+    rankdir=LR; nodesep=0.5; ranksep=0.6;
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11, penwidth=1.4];
+    Tt [label="Policy T_t", fillcolor="#A6E7F4"];
+    Yt [label="Outcome Y_t", fillcolor="#A6C8F4"];
+    Tt1 [label="Policy T_t+1", fillcolor="#A6E7F4"];
+    Yt1 [label="Outcome Y_t+1", fillcolor="#A6C8F4"];
+
+    Tt -> Yt; Yt -> Tt1; Tt1 -> Yt1; Tt -> Tt1; Yt -> Yt1;
+}
+```
+::::
+:::
+
+* Granger Causality: Prediction Is Not Causation
+// From: msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.smd:308 '* Granger Causality: Intuition'
+
+- @Definition@: $X$ _Granger-causes_ $Y$ if past values of $X$ improve the
+  forecast of $Y$ beyond what $Y$'s own past already provides
+- Granger causality is a rung-1 predictive notion, not a rung-2
+  interventional one
+  - $X \to Y$ and $Y \to X$ can both hold, common in economic feedback
+    systems
+  - Forcing $X$ manually is not guaranteed to move $Y$ the way the forecast
+    relationship suggests
+- @Example@: a barometer reading Granger-causes storms in the data, since
+  it predicts them, but manually raising the barometer needle causes no
+  storm; atmospheric pressure drives both
+- @Key idea@: a variable can help predict another without causing it, the
+  correlation-vs-causation gap from Lesson 1.1, now in a time-indexed form
+
+* When Temporal Structure Misleads
+// From: msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.smd:286 '* When Temporal Structure Misleads'
+
+- Time ordering rules out some causal directions, but introduces its own
+  failure modes:
+  - _Spurious regression_: two series that both trend upward look related
+    even when unrelated
+  - _Seasonality_: a holiday bump can mask or mimic a policy effect
+  - _Wrong lag specification_: today's outcome may reflect yesterday's
+    treatment, misattributing the effect if the lag is wrong
+  - _Regime changes_: a model fit before a shock, e.g., a pandemic, may not
+    hold after it
+- @Key idea@: temporal data is informative about causal direction, but
+  applying cross-sectional causal tools to it without accounting for trend,
+  seasonality, and regime shift creates new biases rather than removing old
+  ones
+
+* Measuring Effects Under Non-Stationarity: Interrupted Time Series
+// From: msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.smd:405 '* Interrupted Time Series: Motivation'
+
+- @Problem@: a policy is implemented at one known date for an entire
+  population, so no control group exists
+- @Solution@: fit the pre-intervention trajectory, forecast what would
+  have happened without the intervention, and compare to what actually
+  happened
+  $$
+  Y_t = \beta_0 + \beta_1 t + \beta_2 D_t + \beta_3 (t - t^*) D_t + \varepsilon_t,
+  \quad D_t = I(t \geq t^*)
+  $$
+  - $\beta_2$ is the immediate jump at the intervention; $\beta_3$ is the
+    change in trend after it
+- @Limitations@: relies on extrapolating the pre-period trend, and is
+  vulnerable to co-occurring events near $t^*$
+- @Key idea@: interrupted time series uses the unit as its own control,
+  so time-invariant confounders cancel automatically, at the cost of
+  trusting an extrapolation
+
+* Synthetic Control: A Counterfactual Without a Control Group
+// From: msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.smd:665 '* Synthetic Control: Motivation'
+
+- @Problem@: even a single-unit comparison needs a counterfactual, and no
+  single other unit may resemble the treated one closely enough
+- @Solution@: build a weighted combination of untreated units that
+  matches the treated unit's pre-treatment trajectory, then use that
+  synthetic combination as the counterfactual
+- @Example@: estimating the effect of German reunification on West
+  German GDP by weighting other OECD economies to reproduce West Germany's
+  pre-1990 growth path
+- @Key idea@: synthetic control is only as credible as the pre-treatment
+  fit; a poor fit before the intervention means the post-period gap cannot
+  be trusted as a causal effect
+
+# Sequential Decisions and Exploration
+
+## Exploring Under Uncertainty
+
+* The Exploration-Exploitation Trade-off
+// From: msml610/lectures_source/Lesson09.3-Multi_Armed_Bandits.smd:93 '* The Exploration-Exploitation Tradeoff'
+// From: msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.smd:919 '* Exploration vs Exploitation'
+
+::: columns
+:::: {.column width=55%}
+- @Problem@: a sequential decision-maker must both exploit the best
+  action found so far and explore uncertain actions to learn whether
+  something better exists
+  - Pure exploitation can lock in a suboptimal choice found early
+  - Pure exploration wastes reward on options already known to be poor
+- @Example@: a news site choosing which headline to show is a live
+  instance of the trade-off, repeated at every visitor
+- @Key idea@: the trade-off is unavoidable whenever a decision-maker acts
+  repeatedly and learns from the outcomes of its own past actions
+::::
+:::: {.column width=40%}
+```graphviz
+digraph ExploreExploit {
+    rankdir=TB; nodesep=0.5; ranksep=0.5;
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11, penwidth=1.4];
+    Q [label="Which arm to pull?", fillcolor="#FFE6E6"];
+    Ex [label="Exploitation:\nbest known arm", fillcolor="#A6F4A6"];
+    Pl [label="Exploration:\ntry uncertain arm", fillcolor="#A6C8F4"];
+
+    Q -> Ex; Q -> Pl;
+}
+```
+::::
+:::
+
+* Upper Confidence Bound: Optimism Under Uncertainty
+// From: msml610/lectures_source/Lesson09.3-Multi_Armed_Bandits.smd:528 '* Optimism in the Face of Uncertainty'
+
+- @Idea@: be optimistic about arms you are uncertain of, and let that
+  optimism drive exploration automatically
+- @Algorithm@: pull the arm maximizing an optimism-adjusted estimate
+  $$a_t = \argmax_i \left[\hat\mu_i + \sqrt{\frac{2\log t}{n_i}}\right]$$
+  - Arms pulled less often carry a larger confidence bonus
+  - The bonus shrinks as an arm is explored, converging to its true mean
+- @Key idea@: unlike randomly exploring a fixed fraction of the time,
+  upper confidence bound exploration is directed by uncertainty, and
+  achieves regret that grows logarithmically rather than linearly in time
+
+* Contextual and Non-Stationary Bandits
+// From: msml610/lectures_source/Lesson09.7-Advanced_Bandits.smd:108 '* Contextual Bandits: Formal Definition'
+
+- @Definition@: a _contextual bandit_ chooses an action conditioned on
+  side information $x$, learning a policy $\pi(x) \to a$ rather than one
+  fixed best arm
+  - @Example@: personalizing which article to recommend using a reader's
+    prior clicks and time of day
+- @Problem@: a _non-stationary bandit_ has reward distributions that
+  drift over time, so an arm estimated as best early on may no longer be
+  best later
+  - Sliding-window and discounted estimates down-weight stale observations
+    to track the drift
+- @Key idea@: both extensions relax a standard bandit's two strongest
+  assumptions, that reward depends only on the arm, and that an arm's
+  reward does not change over time
+
+* Causal Bandits: Sharing Information Across Interventions
+// From: msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.smd:936 '* Causal Multi-Armed Bandits'
+// From: msml610/lectures_source/Lesson08.5-Do_calculus.smd:769 '* Do-Calculus: Formal Framework'
+
+- @Definition@: in a _causal bandit_, each arm is an intervention
+  $do(a)$ on a partly known causal graph, rather than an unstructured
+  option
+- @Key idea@: pulling one arm can inform the value of other, untried
+  arms whenever the graph links them, cutting the number of pulls needed
+  to find the best intervention
+- @Example@: in an advertising campaign, channel, audience, and creative
+  interact through a known structure; observing one combination updates
+  beliefs about related combinations, not just the one tried
+- This connects the bandit machinery directly to the identification tools
+  from Lesson 2.1: the graph that identifies a single effect is the same
+  graph that lets exploration generalize across arms
+
+# Causal Reinforcement Learning
+
+## Long-Horizon Decisions
+
+* Utilities Over Time and the Bellman Equation
+// From: msml610/lectures_source/Lesson12.1-Reinforcement_learning.smd:460 '* Bellman Equation'
+// From: book_springer/related_books.md:42 '- [B030/B062] Sutton et al., "Reinforcement Learning: An Introduction", 2018'
+
+- @Definition@: with a discount factor $\gamma \in [0,1)$, the utility of
+  a policy $\pi$ from state $s$ sums discounted future reward
+  $$U^\pi(s) = \EE\left[\sum_{i=0}^\infty \gamma^i R(S_{i+1},\pi(S_i),S_i)\right]$$
+- @Theorem@ (Bellman equation): the utility of a state under the optimal
+  policy equals the best immediate action plus the discounted utility of
+  what follows
+  $$
+  U(s) = \max_{a \in A(s)} \sum_{s'} \Pr(s'|a,s)
+    \left[R(s',a,s) + \gamma U(s')\right]
+  $$
+- @Key idea@: a long-horizon decision is not fundamentally different from
+  the single-step decision in this lesson, it is the same expected-utility
+  maximization applied recursively over time
+
+* Structural Causal Models for Sequential Decisions
+// From: msml610/lectures_source/Lesson12.1-Reinforcement_learning.smd:1875 '* Structural Causal Models for MDPs'
+// From: book_springer/related_papers.md:92 '- [P042] Hafner et al., "Mastering Atari, Go, Chess and Shogi by Planning with a Learned World Model", 2023'
+
+::: columns
+:::: {.column width=55%}
+- @Problem@: a standard Markov decision process describes transitions as
+  $\Pr(s'|a,s)$, hiding whether the relationship is a mechanism or a
+  coincidence of the logged data
+- @Solution@: an SCM for a sequential decision makes the mechanism
+  explicit
+  $$S_{t+1} := f_s(A_t, S_t, U_s), \quad R_{t+1} := f_r(S_{t+1}, A_t, S_t, U_r)$$
+- @Key idea@: a hidden confounder $U$ that affects both the historical
+  action and the reward compounds across time steps, distorting credit
+  assignment across the entire trajectory, not just one transition
+- A policy learned from confounded logged data can perform worse than
+  random once deployed, having learned a correlation that does not survive
+  the agent's own intervention
+::::
+:::: {.column width=40%}
+```graphviz
+digraph SCM_MDP {
+    rankdir=TB; nodesep=0.5; ranksep=0.5;
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11, penwidth=1.4];
+    U [label="Confounder U", fillcolor="#decbe4"];
+    A [label="Action a_t", fillcolor="#FFD1A6"];
+    R [label="Reward R_t", fillcolor="#B2E2B2"];
+
+    U -> A [color="#CC0000"]; U -> R [color="#CC0000"]; A -> R;
+}
+```
+::::
+:::
+
+* Counterfactual Credit Assignment
+// From: msml610/lectures_source/Lesson12.1-Reinforcement_learning.smd:1956 '* Counterfactual Reasoning and Credit Assignment'
+
+- @Problem@: standard credit assignment asks whether an action _preceded_
+  a later reward, not whether it _caused_ that reward
+- @Definition@: the counterfactual individual treatment effect of an
+  action, on the same trajectory, asks what the reward would have been
+  under a different action at that exact step
+  $$\tau_i(a_t) = R(a_t) - R(a'_t) \quad \text{for the same trajectory } i$$
+- @Key idea@: answering this requires the structural mechanisms, not just
+  the observed trajectory, since the alternative action was never actually
+  taken
+- @Example@: a delivery robot that turned left at a junction and later
+  succeeded needs to know whether turning right would also have succeeded,
+  before crediting the left turn
+
+* Deconfounding Off-Policy Evaluation
+// From: msml610/lectures_source/Lesson12.1-Reinforcement_learning.smd:1978 '* Deconfounding Offline / Off-Policy Data'
+// From: msml610/lectures_source/Lesson08.5-Do_calculus.smd:280 '* The Back-Door Adjustment'
+// From: book_springer/related_papers.md:89 '- [P036] Bottou et al., "Counterfactual reasoning and learning systems: The example of computational advertising", 2013'
+
+- @Problem@: offline reinforcement learning trains on logged data from a
+  policy that likely depended on unobserved factors, exactly the setting
+  where confounding is most severe
+  - A new policy fit on this data can exploit correlations that are
+    artifacts of the logging policy, not the environment
+- @Solution@: apply the backdoor adjustment from Lesson 2.1 to the
+  sequential setting
+  $$\EE[R | do(a), s] = \sum_u \Pr(u|s)\,\EE[R|a,s,u]$$
+- @Key idea@: off-policy evaluation is identification, applied one time
+  step at a time; every assumption from Lesson 2.1, positivity and
+  ignorability, applies again here, now per transition
+
+# Roadmap
+
+* Roadmap: The Decision Pipeline, Complete
+
+- Lesson 1.1 catalogued four costs; Lesson 2.1 supplied identification and
+  uncertainty quantification; this lesson supplied decision theory and
+  dynamics
+- The full pipeline promised at the start of Part I is now instantiated
+  end to end
+  $$
+  data \to \text{causal model} \to \Pr(Y|do(a))
+       \to U(y,a) \to a^* \to \text{feedback}
+  $$
+- @Key idea@: every technique in the rest of the book, Gaussian
+  processes, policy learning, causal reinforcement learning, deployment and
+  monitoring, refines one arrow in this pipeline; none of them replace it

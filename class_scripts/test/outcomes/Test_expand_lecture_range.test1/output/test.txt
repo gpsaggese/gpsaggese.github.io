@@ -1,1 +1,1 @@
-[('/data605/lectures_source/Lesson01.1-Intro.txt', 'Lesson01.1-Intro.txt'), ('/data605/lectures_source/Lesson01.2-BigData.txt', 'Lesson01.2-BigData.txt'), ('/data605/lectures_source/Lesson02.1-Git.txt', 'Lesson02.1-Git.txt')]
+[('/data605/lectures_source/Lesson01.1-Intro.smd', 'Lesson01.1-Intro.smd'), ('/data605/lectures_source/Lesson01.2-BigData.smd', 'Lesson01.2-BigData.smd'), ('/data605/lectures_source/Lesson02.1-Git.smd', 'Lesson02.1-Git.smd')]

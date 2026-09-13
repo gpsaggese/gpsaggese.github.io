@@ -21,14 +21,14 @@ import class_scripts.slide_reduce as cscslred
 
 def _create_lecture_source(self) -> str:
     """
-    Create a scratch `lectures_source/LessonXX-Foo.txt` fixture.
+    Create a scratch `lectures_source/LessonXX-Foo.smd` fixture.
 
     :return: path to the scratch (course) directory
     """
     scratch_dir = self.get_scratch_space()
     source_dir = os.path.join(scratch_dir, "lectures_source")
     os.makedirs(source_dir, exist_ok=True)
-    hio.to_file(os.path.join(source_dir, "Lesson01.1-Intro.txt"), "content")
+    hio.to_file(os.path.join(source_dir, "Lesson01.1-Intro.smd"), "content")
     return scratch_dir
 
 
@@ -44,35 +44,42 @@ class Test_parse(hunitest.TestCase):
 
     def test1(self) -> None:
         """
-        Test parser accepts `dir`, `lesson`, with no extra options.
+        Test parser accepts `input`, with no extra options.
         """
         # Prepare inputs.
-        arg_list = ["msml610", "01.1"]
+        arg_list = ["-i", "msml610/01.1"]
         # Prepare outputs.
-        expected_dir = "msml610"
-        expected_lesson = "01.1"
-        expected_extra_opts: list = []
+        expected_input = "msml610/01.1"
+        expected_process_slides_args = None
         # Run test.
         parser = cscslred._parse()
         args = parser.parse_args(arg_list)
         # Check outputs.
-        self.assert_equal(args.dir, expected_dir)
-        self.assert_equal(args.lesson, expected_lesson)
-        self.assert_equal(str(args.extra_opts), str(expected_extra_opts))
+        self.assert_equal(args.input, expected_input)
+        self.assert_equal(
+            str(args.process_slides_args), str(expected_process_slides_args)
+        )
 
     def test2(self) -> None:
         """
-        Test parser accepts extra positional options.
+        Test parser accepts options to pass through to process_slides.py.
         """
         # Prepare inputs.
-        arg_list = ["msml610", "01.1", "extra_arg1", "extra_arg2"]
+        arg_list = [
+            "-i",
+            "msml610/01.1",
+            "--process_slides_args",
+            "extra_arg1 extra_arg2",
+        ]
         # Prepare outputs.
-        expected_extra_opts = ["extra_arg1", "extra_arg2"]
+        expected_process_slides_args = "extra_arg1 extra_arg2"
         # Run test.
         parser = cscslred._parse()
         args = parser.parse_args(arg_list)
         # Check outputs.
-        self.assert_equal(str(args.extra_opts), str(expected_extra_opts))
+        self.assert_equal(
+            str(args.process_slides_args), str(expected_process_slides_args)
+        )
 
 
 # #############################################################################
@@ -94,9 +101,9 @@ class Test_main(hunitest.TestCase):
         # Prepare inputs.
         scratch_dir = _create_lecture_source(self)
         lecture_file = os.path.join(
-            scratch_dir, "lectures_source", "Lesson01.1-Intro.txt"
+            scratch_dir, "lectures_source", "Lesson01.1-Intro.smd"
         )
-        arg_list = [scratch_dir, "01.1"]
+        arg_list = ["-i", lecture_file]
         # Prepare outputs.
         expected_cmd = (
             f"process_slides.py --in_file {lecture_file} "
@@ -122,14 +129,19 @@ class Test_main(hunitest.TestCase):
 
     def test2(self) -> None:
         """
-        Test `extra_opts` are appended to the built command.
+        Test `process_slides_args` is appended to the built command.
         """
         # Prepare inputs.
         scratch_dir = _create_lecture_source(self)
         lecture_file = os.path.join(
-            scratch_dir, "lectures_source", "Lesson01.1-Intro.txt"
+            scratch_dir, "lectures_source", "Lesson01.1-Intro.smd"
         )
-        arg_list = [scratch_dir, "01.1", "extra_arg1", "extra_arg2"]
+        arg_list = [
+            "-i",
+            lecture_file,
+            "--process_slides_args",
+            "extra_arg1 extra_arg2",
+        ]
         # Prepare outputs.
         expected_cmd = (
             f"process_slides.py --in_file {lecture_file} "

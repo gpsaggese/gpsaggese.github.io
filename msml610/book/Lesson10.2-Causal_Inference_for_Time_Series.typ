@@ -1,6 +1,6 @@
 // f69c795f 2026-06-23
 // Import AIMA style formatting and macros
-#import "../../helpers_root/dev_scripts_helpers/typst/aima_style.typ": aima-style, algorithm, chapter, glossary
+#import "../../helpers_root/dev_scripts_helpers/typst/aima_style.typ": aima-style, algorithm, chapter, glossary, wrap-content
 
 // Document metadata
 #set document(

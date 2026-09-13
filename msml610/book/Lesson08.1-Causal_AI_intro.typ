@@ -1,5 +1,5 @@
 // Import AIMA style formatting and macros
-#import "../../helpers_root/dev_scripts_helpers/typst/aima_style.typ": aima-style, algorithm, chapter, glossary
+#import "../../helpers_root/dev_scripts_helpers/typst/aima_style.typ": aima-style, algorithm, chapter, glossary, wrap-content
 
 // Document metadata
 #set document(
@@ -96,12 +96,8 @@ provides no information about direction or mechanism---it simply indicates that
 knowing one variable tells you something about the other.
 
 // rendered_images:begin
-// ```latex
-// \usepackage{tikz}
-// \usetikzlibrary{positioning}
-// 
-// \begin{document}
-// \begin{tikzpicture}[
+// ```tikz
+// \tikzset{
 //     box/.style={
 //         draw=black,
 //         ultra thick,
@@ -111,7 +107,7 @@ knowing one variable tells you something about the other.
 //         align=center,
 //         font=\Large\bfseries
 //     }
-// ]
+// }
 // 
 // % Outermost box: Association.
 // \node[box=4.5cm, fill=blue!15] (association) {};
@@ -124,9 +120,6 @@ knowing one variable tells you something about the other.
 // % Innermost box: Causation.
 // \node[box=1.5cm, fill=red!25] (causation) at ([yshift=-6pt]correlation.center) {};
 // \node[font=\Large\bfseries] at (causation.center) {Causation};
-// 
-// \end{tikzpicture}
-// \end{document}
 // ```
 // rendered_images:end
 // render_images:begin

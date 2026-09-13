@@ -274,6 +274,11 @@ def _parse() -> argparse.ArgumentParser:
         action="store_true",
         help="Continue processing even if LLM transformation fails",
     )
+    parser.add_argument(
+        "--dry_run",
+        action="store_true",
+        help="Print what would be processed without running the action",
+    )
     hseinout.add_limit_range_arg(parser)
     hparser.add_verbosity_arg(parser)
     return parser
@@ -297,6 +302,20 @@ def _main(parser: argparse.ArgumentParser) -> None:
     # Extract slides from the markdown content.
     slides = _extract_slides_from_markdown(txt)
     _LOG.info("Found %d slides to process", len(slides))
+    if args.dry_run:
+        selected = hseinout.apply_limit_range(
+            slides, limit_range, item_name="slides"
+        )
+        _LOG.info(
+            "%s",
+            hprint.color_highlight(
+                f"[dry run] Would apply action '{args.action}' to "
+                f"{len(selected)} slide(s) from {args.in_file} and write "
+                f"to {args.out_file}",
+                "green",
+            ),
+        )
+        return
     # Process slides.
     processed_results = _process_slides(
         slides,

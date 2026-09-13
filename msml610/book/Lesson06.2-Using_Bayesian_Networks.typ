@@ -1,5 +1,5 @@
 // Import AIMA style formatting and macros
-#import "../../helpers_root/dev_scripts_helpers/typst/aima_style.typ": aima-style, chapter, algorithm, glossary
+#import "../../helpers_root/dev_scripts_helpers/typst/aima_style.typ": aima-style, chapter, algorithm, glossary, wrap-content
 
 // Document metadata
 #set document(
@@ -158,36 +158,43 @@ The complexity of a Bayesian network depends critically on the node ordering
 chosen during construction. Different orderings can produce networks with vastly
 different edge counts and conditional probability table sizes.
 
-*Causal ordering* (Burglary, Earthquake, Alarm, JohnCalls, MaryCalls)—minimal
-edges following causal direction:
-
-// rendered_images:begin
-// ```graphviz
-// digraph BayesianNetwork {
-//     splines=true;
-//     nodesep=0.8;
-//     ranksep=0.8;
-// 
-//     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.7];
-// 
-//     Burglary   [label="Burglary", fillcolor="#A6C8F4"];
-//     Alarm      [label="Alarm", fillcolor="#FFD1A6"];
-//     JohnCalls   [label="JohnCalls", fillcolor="#B2E2B2"];
-//     MaryCalls   [label="MaryCalls", fillcolor="#B2E2B2"];
-//     Earthquake [label="Earthquake", fillcolor="#A6C8F4"];
-// 
-//     Burglary -> Alarm;
-//     Earthquake -> Alarm;
-//     Alarm -> JohnCalls;
-//     Alarm -> MaryCalls;
-// }
-// ```
-// rendered_images:end
-// render_images:begin
-#figure(
-  image("Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.1.png"),
-)
-// render_images:end
+#wrap-content(
+  [
+    // rendered_images:begin
+    // ```graphviz
+    // digraph BayesianNetwork {
+    //     splines=true;
+    //     nodesep=0.8;
+    //     ranksep=0.8;
+    //
+    //     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.7];
+    //
+    //     Burglary   [label="Burglary", fillcolor="#A6C8F4"];
+    //     Alarm      [label="Alarm", fillcolor="#FFD1A6"];
+    //     JohnCalls   [label="JohnCalls", fillcolor="#B2E2B2"];
+    //     MaryCalls   [label="MaryCalls", fillcolor="#B2E2B2"];
+    //     Earthquake [label="Earthquake", fillcolor="#A6C8F4"];
+    //
+    //     Burglary -> Alarm;
+    //     Earthquake -> Alarm;
+    //     Alarm -> JohnCalls;
+    //     Alarm -> MaryCalls;
+    // }
+    // ```
+    // rendered_images:end
+    // render_images:begin
+    #figure(
+      image("Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.1.png", width: 100%),
+    )
+    // render_images:end
+  ],
+  align: right,
+  column-gutter: 1em,
+  columns: (1fr, 20%),
+)[
+  *Causal ordering* (Burglary, Earthquake, Alarm, JohnCalls, MaryCalls)—minimal
+  edges following causal direction:
+]
 
 *Poor ordering 1*—requires backward edges, increasing complexity:
 
@@ -270,34 +277,41 @@ more robust dependencies, and are easier to estimate from data or expert
 judgment. The conditional probabilities capture mechanisms: "If burglary occurs,
 what is the alarm probability?"
 
-#strong[Diagnostic models] work in the reverse direction, from symptoms to
-causes (e.g., $"MaryCalls" -> "Alarm"$ or $"Alarm" -> "Burglary"$). These models
-are tenuous and unstable, difficult to estimate reliably. However, they align
-with practical reasoning: given that Mary called, what caused it? To use
-diagnostic models, we apply Bayes' rule to invert the probabilities:
-$Pr("Cause"|"Symptom") = (Pr("Symptom"|"Cause")Pr("Cause"))/(Pr("Symptom"))$
-
-// rendered_images:begin
-// ```graphviz
-// digraph CausalModel {
-//     splines=true;
-//     nodesep=2.0;
-//     ranksep=1.5;
-//     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.7];
-// 
-//     Causes [label="Causes", fillcolor="#B2E2B2"];
-//     Symptoms [label="Symptoms", fillcolor="#F4A6A6"];
-// 
-//     Causes -> Symptoms;
-//     Symptoms -> Causes;
-// }
-// ```
-// rendered_images:end
-// render_images:begin
-#figure(
-  image("Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.4.png"),
-)
-// render_images:end
+#wrap-content(
+  [
+    // rendered_images:begin
+    // ```graphviz
+    // digraph CausalModel {
+    //     splines=true;
+    //     nodesep=2.0;
+    //     ranksep=1.5;
+    //     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.7];
+    //
+    //     Causes [label="Causes", fillcolor="#B2E2B2"];
+    //     Symptoms [label="Symptoms", fillcolor="#F4A6A6"];
+    //
+    //     Causes -> Symptoms;
+    //     Symptoms -> Causes;
+    // }
+    // ```
+    // rendered_images:end
+    // render_images:begin
+    #figure(
+      image("Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.4.png", width: 100%),
+    )
+    // render_images:end
+  ],
+  align: right,
+  column-gutter: 1em,
+  columns: (1fr, 20%),
+)[
+  #strong[Diagnostic models] work in the reverse direction, from symptoms to
+  causes (e.g., $"MaryCalls" -> "Alarm"$ or $"Alarm" -> "Burglary"$). These models
+  are tenuous and unstable, difficult to estimate reliably. However, they align
+  with practical reasoning: given that Mary called, what caused it? To use
+  diagnostic models, we apply Bayes' rule to invert the probabilities:
+  $Pr("Cause"|"Symptom") = (Pr("Symptom"|"Cause")Pr("Cause"))/(Pr("Symptom"))$
+]
 
 Effective Bayesian networks typically use causal structure for specification,
 then invert via Bayes' rule for diagnostic reasoning.
@@ -346,36 +360,43 @@ Descendants can influence ancestors indirectly through a process called
 #strong[explaining away]. When evidence about a descendant becomes available, it
 can change beliefs about an ancestor through competing explanations.
 
-#strong[Example—Garden World:] Suppose you observe wet grass ($"WetGrass"$).
-Without additional information, this evidence increases the probability of
-either the sprinkler being on or rain falling. However, if you later observe
-that the sprinkler was on, this explains the wet grass, and the probability of
-rain decreases—the observed cause "explains away" the alternative. Evidence from
-a descendant thus flows backward, updating ancestors through dependent paths in
-the network.
-
-// rendered_images:begin
-// ```graphviz
-// digraph BayesianFlow {
-//     splines=true;
-//     nodesep=1.0;
-//     ranksep=0.75;
-//     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.7];
-// 
-//     Rain [fillcolor="#A6C8F4", label="Rain"];
-//     WetGrass [fillcolor="#B2E2B2", label="WetGrass"];
-//     Sprinkler [fillcolor="#A6E7F4", label="Sprinkler"];
-// 
-//     Rain -> WetGrass;
-//     Sprinkler -> WetGrass;
-// }
-// ```
-// rendered_images:end
-// render_images:begin
-#figure(
-  image("Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.5.png"),
-)
-// render_images:end
+#wrap-content(
+  [
+    // rendered_images:begin
+    // ```graphviz
+    // digraph BayesianFlow {
+    //     splines=true;
+    //     nodesep=1.0;
+    //     ranksep=0.75;
+    //     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.7];
+    //
+    //     Rain [fillcolor="#A6C8F4", label="Rain"];
+    //     WetGrass [fillcolor="#B2E2B2", label="WetGrass"];
+    //     Sprinkler [fillcolor="#A6E7F4", label="Sprinkler"];
+    //
+    //     Rain -> WetGrass;
+    //     Sprinkler -> WetGrass;
+    // }
+    // ```
+    // rendered_images:end
+    // render_images:begin
+    #figure(
+      image("Lesson06.2-Using_Bayesian_Networks.typ.figs/Lesson06.2-Using_Bayesian_Networks.5.png", width: 100%),
+    )
+    // render_images:end
+  ],
+  align: right,
+  column-gutter: 1em,
+  columns: (1fr, 20%),
+)[
+  #strong[Example—Garden World:] Suppose you observe wet grass ($"WetGrass"$).
+  Without additional information, this evidence increases the probability of
+  either the sprinkler being on or rain falling. However, if you later observe
+  that the sprinkler was on, this explains the wet grass, and the probability of
+  rain decreases—the observed cause "explains away" the alternative. Evidence from
+  a descendant thus flows backward, updating ancestors through dependent paths in
+  the network.
+]
 
 This bidirectional information flow, despite the network's directed structure,
 is a subtle but powerful aspect of Bayesian reasoning.

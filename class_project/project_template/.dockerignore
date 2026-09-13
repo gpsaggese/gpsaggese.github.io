@@ -56,7 +56,7 @@ Dockerfile.*
 .dockerignore
 
 # Documentation
-README.md
+docker_scripts.README.md
 README.admin.md
 docs/
 *.md

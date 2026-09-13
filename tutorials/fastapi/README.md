@@ -22,7 +22,7 @@
   ```
 
 - For more information on the Docker build system refer to [Project template
-  README](/class_project/project_template/README.md)
+  README](/class_project/project_template/docker_scripts.README.md)
 
 - Once the `./docker_jupyter.sh` script is running, work through the following
   notebooks in order

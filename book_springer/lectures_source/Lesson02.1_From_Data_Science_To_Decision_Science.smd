@@ -1,0 +1,775 @@
+// type=UMD_slides
+// course_title=From Data to Decisions: Building Decision Systems with Probabilistic Causal Reasoning
+// lesson_title=Lesson 02.1: From Data Science to Decision Science
+// slides_engine=typst
+
+// gen_slides.py book_springer/02.1 --daemon
+
+# Why Decisions, Not Predictions
+
+* Why Traditional ML Falls Short
+// From: msml610/lectures_source/Lesson08.1-Causal_AI_intro.smd:318 '* Where ML Falls Short'
+
+- @Problem@: **traditional machine learning** optimizes _prediction accuracy_ on a
+  fixed distribution, which ignores four things a decision requires:
+  1. _Causality_: causal mechanisms governing the predicted system, focusing only on
+     correlation
+  2. _Uncertainty_: no quantification of what the model does not know
+  3. _Business objective_: a prediction is not a decision
+  4. _Dynamics_: the world reacts to the actions informed by the prediction
+
+- @Key idea@: each gap turns an _accurate prediction model_ into a _poor model for
+  decision-making_
+
+* From Data Science to Decision Science
+// From: msml610/lectures_source/Lesson08.2-Causal_AI_concepts.smd:129 '* From Data Science to Decision Science'
+
+- @Comparison@: **data science** and **decision science** optimize for different
+  goals
+
+```{=typst}
+#styled-table(
+  headers: ("Dimension", "Data Science", "Decision Science"),
+  rows: (
+    ("Goal", "Predict outcomes", "Choose best actions"),
+    ("Question", "What will happen?", "What should we do?"),
+    ("Method", "Statistical models, ML", "Causal models, decision theory"),
+    ("Output", "Forecast", "Action, uncertainty, expected outcome"),
+    ("Metric", "Accuracy, AUC, RMSE", "Business outcome, ROI"),
+    ("Data", "Observations", "Observations + causal structure"),
+  ),
+  bold-first-col: true,
+)
+```
+
+- @Key idea@: shipping a _prediction_ when the business instead needs a _decision_
+  delivers little or no business value, however accurate the prediction is
+
+* Causal vs Predictive Questions
+// From: msml610/lectures_source/Lesson08.2-Causal_AI_concepts.smd:161 '* Causal Questions vs. Predictive Questions'
+
+- @Comparison@: every business question has a **predictive form** and a **causal
+  form**, and only the latter one says what to do
+```{=typst}
+#styled-table(
+  headers: ("Predictive Question", "Causal Question"),
+  rows: (
+    ("Which customers will churn?", "What action prevents churn?"),
+    ("What will sales be next quarter?", "How would a 10% price cut affect sales?"),
+    ("Which students will fail the exam?", "Does tutoring improve exam scores?"),
+    ("Which transactions are fraudulent?", "What policy change reduces fraud?"),
+  ),
+  bold-first-col: false,
+)
+```
+
+- @Key idea@
+  - _Predictive questions_ can be answered from observational data alone, which is
+    enough for monitoring and alerting, but not for choosing an action
+  - _Causal questions_ require causal models or experiments, and are the only ones
+    that support decisions and policy design
+
+* The Analytics Maturity Ladder
+// From: msml610/lectures_source/Lesson08.2-Causal_AI_concepts.smd:189 '* A Roadmap From Prediction to Decision Intelligence'
+
+- @Comparison@: organizations climb four levels of **analytical sophistication**
+
+```{=typst}
+#styled-table(
+  headers: ("Level", "Question asked", "Tools"),
+  rows: (
+    ("1. Descriptive", "What happened?", "Dashboards, reports"),
+    ("2. Predictive", "What will happen?", "ML, forecasting"),
+    ("3. Causal", "Why? What if we act?", "DAGs, do-calculus"),
+    ("4. Decision", "What should we do?", "Causal models + utility"),
+  ),
+  bold-first-col: true,
+)
+```
+
+- @Problem@: most organizations are stuck at _Level 2_, predicting well but unable to
+  say what to do
+
+- @Key idea@: climbing to _Levels 3_ and _4_ is the jump this book makes, from
+  prediction pipelines to decision pipelines
+
+# The Cost of Ignoring Causality
+
+## When Correlation Misleads
+
+* Correlation Encodes Confounding as Causation
+// From: msml610/lectures_source/Lesson08.1-Causal_AI_intro.smd:345 '* The Cost of Ignoring Causality (1/2)'
+// From: msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.smd:161 '* Confounding: The Root Cause'
+// From: book_springer/related_papers.md:12 '- [P007] Zhang et al., "A Survey on Causal Inference", 2020'
+
+- @Problem@: a purely **predictive model** learns $\Pr(Y | X)$ from historical data
+  and absorbs any _association_ in the data, _spurious or not_
+  [@yao2020survey]
+  - It answers _"what will happen?"_, but not _"what should we do?"_
+  - It assumes the world stays fixed, even though the actions informed by the
+    prediction themselves will change the world
+
+::: columns
+:::: {.column width=55%}
+- @Example@: ice cream sales and drowning deaths are highly correlated
+  - Prediction: _"more ice cream $\to$ more drownings"_ (which is accurate)
+  - Decision built on it: _"ban ice cream to cut drownings"_ (which is disastrous)
+  - Confounder: hot weather drives both
+::::
+:::: {.column width=40%}
+```graphviz
+digraph IceCreamDrowning {
+  bgcolor="transparent";
+  pad="0.15";
+  splines=spline;
+  nodesep=0.30;
+  ranksep=0.50;
+  rankdir=TB;
+
+  node [shape=box,
+        style="rounded,filled",
+        penwidth=1.8,
+        fontname="Helvetica",
+        fontsize=12,
+        margin="0.22,0.14",
+        height=0.50];
+
+  edge [color="#A3B1C0",
+        penwidth=1.3,
+        arrowhead=vee,
+        arrowsize=0.75,
+        fontname="Helvetica",
+        fontsize=10,
+        fontcolor="#7B8794"];
+
+  H [label=<<b>Hot Weather</b><br/><font point-size="10" color="#6B4517">Confounder</font>>,
+     fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+  I [label=<<b>Ice Cream Sales</b><br/><font point-size="10" color="#1F4E79">Observed</font>>,
+     fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+  D [label=<<b>Drownings</b><br/><font point-size="10" color="#6B2A44">Outcome</font>>,
+     fillcolor="#F6E1E8", color="#D98CA8", fontcolor="#6B2A44"];
+
+  { rank=same; I; D; }
+
+  H -> I [label="  drives"];
+  H -> D [label="  drives"];
+  I -> D [style=dashed, penwidth=1.6, color="#C0455B", fontcolor="#C0455B", label="  spurious", constraint=false];
+}
+```
+::::
+:::
+
+- @Key idea@:
+  - The observational and interventional quantities disagree
+    $$\Pr(Y | X) \neq \Pr(Y | do(X))$$
+    [@pearl2009causality]
+  - Acting on $\Pr(Y | X)$ is what makes correlation-based decisions backfire
+
+* Missing Interventions and Counterfactuals
+// From: msml610/lectures_source/Lesson08.1-Causal_AI_intro.smd:113 '* What ML Systems Cannot Tell You'
+
+- @Problem@: a correlation model answers _"what is?"_, never _"what if?"_ or
+  _"why?"_
+  - Two classes of business question stay permanently out of reach
+    [@rubin1974estimating]:
+    - Intervention questions: _"If we cut price 10%, how do units sold and revenue
+      change?"_
+    - Counterfactual questions: _"Would this customer have churned had we offered a
+      discount?"_
+
+- @Example@: a tutoring program correlates with higher exam scores, but:
+  - _"Does tutoring cause the improvement?"_, or
+  - _"Do strong students self-select into it?"_
+  - No amount of additional observational data resolves the question
+
+- @Key idea@: answering these questions requires a causal model, not a more
+  accurate predictor
+
+* Selection Bias and the Missing Counterfactual
+// From:
+
+- @Problem@: historical data records only the decisions actually made, never
+  the alternative
+  - E.g., loan data shows outcomes for approved applicants, but not always data
+    for rejected ones
+  - **Confounding biases** the _relationship_ between variables
+    that were recorded
+  - **Selection bias** comes from which units got recorded at all, a problem baked
+    into the data before any model is fit
+
+- @Example@: a credit model trained only on approved loans learns what
+  predicts repayment among people the bank already trusted
+  - It cannot say who among the rejected applicants would have repaid
+
+- @Key idea@: a model can be accurate on the population it observed and
+  still be blind to the population the business needed to reason about
+
+## Structural Failure Modes
+
+* Interference and Spillovers Across Units
+// From: msml610/lectures_source/Lesson08.7-Causal_experiments.smd:315 '* Cannibalization and Interference'
+
+- @Problem@: standard ML assumes each unit's outcome depends only on its own
+  treatment
+  - Marketplaces, pricing equilibria, and social networks routinely violate
+    this assumption
+
+- @Example@: a discount shown only to group A can cannibalize purchases from
+  group B
+  - The two groups share the same limited supply or the same social network
+  - Group B is no longer a clean counterfactual for group A
+
+- @Key idea@: when one unit's action changes another unit's outcome, the
+  usual estimate of a treatment effect is biased, however accurate the
+  underlying predictor is
+
+* Simpson's Paradox
+// From: msml610/lectures_source/Lesson08.1-Causal_AI_intro.smd:345 '* The Cost of Ignoring Causality (1/2)'
+// From: msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.smd:86 '* Simpson's Paradox'
+// From: book_springer/related_papers.md:3 '- [P005] Pearl, "Simpson's Paradox, Confounding, and Collapsibility", 1999'
+
+- @Definition@: the **Simpson's paradox** is a trend within every subgroup
+  reverses once the subgroups are pooled [@pearl2009causality]
+
+- @Example@: a drug's recovery rate
+```{=typst}
+#styled-table(
+  headers: ("Group", "Recovery w/ drug", "Recovery w/o drug"),
+  rows: (
+    ("Male", "81 / 87 = 93%", "234 / 270 = 87%"),
+    ("Female", "192 / 263 = 73%", "55 / 80 = 69%"),
+    ("Combined", "273 / 350 = 78%", "289 / 350 = 83%"),
+  ),
+  bold-first-col: true,
+)
+```
+
+```graphviz
+digraph SimpsonsParadox {
+  bgcolor="transparent";
+  pad="0.15";
+  splines=spline;
+  nodesep=0.30;
+  ranksep=0.50;
+  rankdir=LR;
+
+  node [shape=box,
+        style="rounded,filled",
+        penwidth=1.8,
+        fontname="Helvetica",
+        fontsize=12,
+        margin="0.22,0.14",
+        height=0.50];
+
+  edge [color="#A3B1C0",
+        penwidth=1.3,
+        arrowhead=vee,
+        arrowsize=0.75,
+        fontname="Helvetica",
+        fontsize=10,
+        fontcolor="#7B8794"];
+
+  G [label=<<b>Gender</b><br/><font point-size="10" color="#6B4517">Confounder</font>>,
+     fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+  T [label=<<b>Drug Choice</b><br/><font point-size="10" color="#1F4E79">Treatment</font>>,
+     fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+  R [label=<<b>Recovery</b><br/><font point-size="10" color="#6B2A44">Outcome</font>>,
+     fillcolor="#F6E1E8", color="#D98CA8", fontcolor="#6B2A44"];
+
+  G -> T [label="  assigns"];
+  G -> R [label="  drives"];
+  T -> R [label="  true effect", penwidth=1.6, color="#1F4E79", fontcolor="#1F4E79"];
+}
+```
+
+- The drug helps _each_ subgroup, yet appears to hurt when the groups are
+  pooled
+  - Gender confounds both treatment assignment and the outcome: females
+    receive the drug far more often (263 of 350) than males (87 of 350), and
+    recover less easily than males regardless of treatment
+  - Pooling stacks a mostly-female drug group against a mostly-male no-drug
+    group, so the harder-to-treat gender dominates the "drug" column and
+    reverses the sign of an effect that helps everyone
+
+- @Key idea@: a model can look correct in aggregate and be wrong, or
+  harmful, for every segment it is applied to
+
+* Berkson's Paradox
+// From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:1147 '* Collider Bias'
+
+- @Definition@: a **collider** is a variable influenced by two or more
+  independent causes
+
+- @Fact@: Conditioning on a collider opens a spurious association between its
+  causes, a mechanism known as Berkson's paradox
+
+- @Example@: statistics skill and flattery both influence who gets promoted
+  - Among everyone, statistics skill and flattery are independent
+  - Among the _promoted_ only, they become negatively associated: bad at
+    statistics implies must be a good flatterer
+
+// TODO(ai_gp): Add another example and explain
+// TODO(gp): Add reference to Pearl's book about how many studies are wrong
+
+- @Key idea@: conditioning on the wrong variable, not just omitting the
+  right one, is enough to manufacture a correlation with no causal meaning
+
+* Discarding Domain Knowledge and Mechanisms
+// From:
+// From: book_springer/related_papers.md:71 '- [P001] Ribeiro et al., "Why Should I Trust You? Explaining the Predictions of Any Classifier", 2016'
+
+- @Problem@: a purely correlation-based pipeline discards known structure,
+  physics, economics, or the causal graph, in favor of whatever pattern the
+  data happens to contain
+  - No principled way to inject constraints or priors
+
+::: columns
+:::: {.column width=55%}
+- @Example@: a wolf-vs-husky classifier with high test accuracy keys on
+  _snow_ in the background, not on the animal [@ribeiro2016why]
+  - Accurate for the wrong reason, and worthless once conditions change
+::::
+:::: {.column width=40%}
+```graphviz
+digraph WolfHusky {
+  bgcolor="transparent";
+  pad="0.15";
+  splines=spline;
+  nodesep=0.30;
+  ranksep=0.50;
+  rankdir=LR;
+
+  node [shape=box,
+        style="rounded,filled",
+        penwidth=1.8,
+        fontname="Helvetica",
+        fontsize=12,
+        margin="0.22,0.14",
+        height=0.50];
+
+  edge [color="#A3B1C0",
+        penwidth=1.3,
+        arrowhead=vee,
+        arrowsize=0.75,
+        fontname="Helvetica",
+        fontsize=10,
+        fontcolor="#7B8794"];
+
+  Species [label=<<b>True Species</b><br/><font point-size="10" color="#2E5A3D">Wolf vs Husky</font>>,
+           fillcolor="#DFEDE0", color="#8FB79A", fontcolor="#2E5A3D"];
+  Snow    [label=<<b>Snow in Background</b><br/><font point-size="10" color="#6B2A44">Spurious feature</font>>,
+           fillcolor="#F6E1E8", color="#D98CA8", fontcolor="#6B2A44"];
+  Pred    [label=<<b>Classifier Prediction</b><br/><font point-size="10" color="#1F4E79">Model output</font>>,
+           fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+
+  Species -> Pred [style=dashed, label="  ignored"];
+  Snow -> Pred [label="  used instead", penwidth=1.6, color="#C0455B", fontcolor="#C0455B"];
+}
+```
+::::
+:::
+
+- @Key idea@: a model that ignores mechanism inherits every artifact of how
+  the training data was collected
+
+# The Cost of Ignoring Uncertainty
+
+* Point Estimates Without Error Bars
+// From: msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.smd:1217 '* Communicating Uncertainty to Stakeholders'
+
+- @Problem@: most business problems are "small data" problems with large
+  uncertainty, yet standard ML pipelines emit a single number as if it were
+  certain
+  - No error bars, no posterior, no sense of how wrong the estimate could be
+
+- @Example@: a demand forecast of _"1,200 units next month"_ hides whether the
+  true range is 1,100-1,300 or 400-3,000
+  - The two ranges call for different inventory decisions
+
+- @Example@: a prediction that the price of a stock will go up 1%, has
+  implies different actions depending on the prediction uncertainty
+  - For 1 +/- 2% at 95% confidence, ignore the prediction
+  - For 1 +/- 0.01% at 95% confidence, buy
+
+- @Key idea@: a decision-maker needs the spread of an estimate at least as
+  much as its center
+
+* Epistemic vs Aleatoric Uncertainty Conflated
+// From: msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.smd:1076 '* Aleatoric vs Epistemic Uncertainty'
+
+- @Problem@: standard models collapse two different kinds of uncertainty
+  into one number
+  - _Aleatoric_ uncertainty is irreducible randomness in the outcome itself
+    - E.g., the outcome of a fair coin flip
+  - _Epistemic_ uncertainty comes from not having seen enough data, or from
+    the wrong model
+    - E.g., a rare disease with only 10 recorded cases
+
+- Without separating them, a model cannot flag what it has never seen: it can
+  exhibit maximal confidence off-distribution, precisely where it should
+  exhibit maximal uncertainty
+
+- @Example@: a fraud model's low predicted risk for a novel transaction
+  pattern may reflect
+  - Genuine low risk (aleatoric) or
+  - Simply that the model has never seen this pattern before (epistemic)
+
+- @Key idea@: only epistemic uncertainty shrinks with more data; treating
+  both as the same number misleads the decision of when to collect more
+
+* No Abstention: Systems That Never Say "I Don't Know"
+// From: msml610/lectures_source/Lesson11.2-Probabilistic_deep_learning.smd:1879 '* Predictive Uncertainty in Classification and Regression'
+
+- @Problem@: a standard classifier or regressor always returns an answer,
+  even when the input falls far outside its training distribution
+  - No abstention or deferral mechanism
+
+- @Example@: a loan-approval model forced to score an applicant profile
+  unlike anything in its training data still returns a confident approval or
+  denial, while it should route uncertain cases to a human
+
+- @Key idea@: a decision system that cannot say _"I don't know"_ cannot be
+  trusted with high-stakes decisions
+
+* Overfitting and the Statistical Significance Traps
+// From: msml610/lectures_source/Lesson08.7-Causal_experiments.smd:270 '* Peeking and the Multiple Comparisons Trap'
+
+- @Problem@: without a prior or assumptions to constrain the fit, nothing
+  bounds overfitting
+
+- Statistical significance traps compound the problem:
+  - _P-hacking_: checking a test repeatedly and stopping the moment $p < 0.05$
+    inflates the true false-positive rate well past the nominal $5\%$
+  - _Multiple comparisons_: testing many metrics at once guarantees a spurious
+    win somewhere
+  - _Burning the test set_: reusing the same held-out data across many rounds
+    of tuning turns it into training data in disguise
+
+- @Key idea@: overfitting is not a single mistake in one run, it accumulates
+  from every repeated look at the same data
+
+# The Cost of Ignoring the Business Objective
+
+## Proxies, Costs, and Trade-offs
+
+* Optimizing the Wrong Objective
+// From:
+// From: book_springer/related_papers.md:131 '- [P096] Goodhart, "Problems of Monetary Management: The U.K. Experience", 1984'
+
+- @Problem@: models chase a proxy metric (e.g., clicks or accuracy) instead of
+  the business goal it stands in for (e.g., revenue, retention, or wellbeing)
+
+- @Definition@: **Goodhart's law** states that once a proxy becomes a target,
+  it stops measuring what you care about [@goodhart1984problems]
+
+- @Example@: a recommender optimized purely for click-through rate learns to
+  surface sensational content, growing clicks while eroding long-term
+  engagement and trust
+
+- @Key idea@: the objective a model is trained on becomes the objective the
+  business actually gets, whether or not that was the intent
+
+* Symmetric Losses for Asymmetric Errors
+// From: msml610/lectures_source/Lesson07.2-Posterior_Based_Decisions.smd:96 '* Loss Function: Motivation'
+
+- @Problem@: standard losses such as log-loss and mean squared error treat
+  every error the same size
+  - Business errors are not symmetric
+
+- @Example@:
+  - the cost of a false negative for stock return prediction should not be
+    symmetric since there is a limit to how many consecutive losses, but not a
+    limit to consecutive wins
+
+- @Example@:
+    - A fraud false negative and a fraud false positive cost differently
+    - A fraud model with 95% accuracy that blocks half of legitimate
+      transactions is a costly decision system, however accurate it is by the
+      standard metric
+
+- @Key idea@: cost asymmetry has to be built into the objective, not bolted
+  in subsequent stages of a decision pipeline, or bolted on after deployment as
+  an afterthought
+
+* Multi-Objective Decisions Under Constraints
+// From: msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.smd:475 '* Multi-Criteria Trade-offs'
+
+- @Problem@: real decisions trade off competing goals under budget,
+  capacity, and legal limits
+  - A single scalar loss cannot express a constrained, multi-stakeholder
+    trade-off
+
+- @Example@: a hospital choosing a cancer therapy weighs five-year survival,
+  quality of life, and cost simultaneously
+  - No single "best" therapy exists independent of how those three are
+    weighed against each other
+
+- @Key idea@: collapsing a multi-objective decision into one loss function
+  hides the trade-off instead of making it explicit
+
+## From Scores to Actionable Decisions
+
+* Black-Box Scores Are Not Recommendations
+// From: msml610/lectures_source/Lesson08.1-Causal_AI_intro.smd:202 '* Problem 3: ML Explainability'
+// From: msml610/lectures_source/Lesson13.1-Explainability.smd:532 '* Counterfactual Explanations'
+// From: book_springer/related_papers.md:71 '- [P001] Ribeiro et al., "Why Should I Trust You? Explaining the Predictions of Any Classifier", 2016'
+
+- @Problem@: a black-box score ranks units but names no lever and gives no
+  _why_ [@ribeiro2016why]
+
+- @Example@:
+  - A churn score does not say which action prevents churn
+  - Instead of _"this customer has churn score 0.8"_, a useful recommendation
+    says _"offering a discount lowers this customer's churn probability by 12
+    points"_
+  - It names the lever, the effect, and the unit it acts on
+
+- @Fact@: credit, hiring, and healthcare increasingly require explanations, not
+  just scores, to justify decisions to regulators and stakeholders
+
+- @Key idea@: a recommendation needs an actionable lever and an explanation,
+  neither of which a bare prediction provides
+
+* The Cost of Solving Sub-Problems Separately
+// From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:326 '* How Are Machine Learning Systems Organized?'
+
+- @Problem@: a decision pipeline is often split into smaller, individually
+  optimized pieces, e.g., a prediction model followed by a separate rule that
+  turns predictions into actions
+
+- @Example@: an inventory system that forecasts demand accurately, then
+  applies a fixed reorder rule, is likely to perform worse than a system trained
+  to minimize inventory cost directly
+
+- @Fact@: End-to-end machine learning has been shown to outperform stitching
+  together separately-optimized parts
+  - This applies also how to decision-making systems
+
+- @Key idea@: optimizing each piece in isolation does not add up to
+  optimizing the decision
+
+# The Cost of Ignoring Dynamics and Feedback
+
+## A World That Reacts
+
+* The Static-World Assumption Breaks
+// From: msml610/lectures_source/Lesson08.1-Causal_AI_intro.smd:274 '* Problem 6: Distribution Shift'
+
+- @Problem@: any decision changes the world, breaking the distribution the
+  model was trained on
+
+- Three ways the world moves out from under a static model:
+  - _Concept shift_: the link $\Pr(Y | X)$ between inputs and outcomes changes
+  - _Covariate shift_: the input distribution $\Pr(X)$ changes while the
+    relationship stays the same
+  - _Label shift_: the outcome distribution $\Pr(Y)$ itself changes
+
+- @Example@: a card-fraud model trained on last year's transactions
+  - _Concept shift_: attackers adopt new tactics, so a transaction pattern
+    that used to be safe now signals fraud, changing $\Pr(Y | X)$
+  - _Covariate shift_: contactless payments become far more common, changing
+    $\Pr(X)$ even though fraud tactics on that channel are unchanged
+  - _Label shift_: a data breach leaks card numbers and the overall fraud
+    rate itself rises, changing $\Pr(Y)$
+  - The model has no way to detect any of the three on its own
+
+- @Example@: a house-price model trained on pre-pandemic listings
+  - Remote work permanently changes what commute distance is worth (concept
+    shift), while a shift to lower interest rates raises average sale prices
+    across the board (label shift)
+
+- @Key idea@: a model that encodes (causal) mechanisms, not just patterns,
+  degrades more gracefully because mechanisms are more stable across
+  distribution shift than surface correlations
+
+* Feedback Loops and Bias Amplification
+// From: msml610/lectures_source/Lesson08.1-Causal_AI_intro.smd:252 '* Problem 5: Feedback Loops'
+// From: book_springer/related_papers.md:73 '- [P003] Taori et al., "Data Feedback Loops: Model-driven Amplification of Dataset Biases", 2020'
+
+- @Problem@: predictions act on the world and reshape the future data the
+  model will be retrained on [@taori2023data]
+
+- @Example@:
+  - A recommender that surfaces sensational content earns more clicks on that
+    content
+  - Future training data contains even more clicks on sensational content
+  - The next model recommends more of it still
+
+- @Example@:
+  - Over-policing a neighborhood produces more arrests there
+  - The arrest data trains a model that flags the neighborhood as higher risk
+  - This new data justifies more policing
+
+- @Key idea@: a feedback loop turns a small initial bias into a growing one,
+  purely from the model training on the outcomes of its own past decisions
+
+* Performativity: When the Prediction Changes the Outcome
+// From:
+// From: book_springer/related_papers.md:75 '- [P099] Liu et al., "Performative Prediction", 2021'
+
+- @Definition@: **performativity** is a prediction that changes the very
+  quantity it predicts [@perdomo2020performative]
+
+- @Example@: a published credit-risk score moves borrower behavior, which
+  moves the true default rate the score was trying to predict
+
+- @Example@: a navigation app that predicts a route as fastest routes many
+  drivers onto it at once, congesting the road until it is no longer the
+  fastest option, invalidating the very prediction that attracted them
+
+- @Key idea@: once a prediction is performative, $\Pr(Y | X)$ is no longer a
+  fixed target to fit, it is a function of which model gets deployed
+
+## Missing Exploration and Long Horizons
+
+* No Exploration: Trapped in the Logged Policy
+// From: msml610/lectures_source/Lesson08.7-Causal_experiments.smd:572 '* Policy Evaluation and Off-Policy Learning'
+
+- @Problem@: an observational-only model never experiments, so it stays
+  trapped inside the support of whatever policy logged the training data
+  [@bottou2013counterfactual]
+  - It cannot learn the effect of an action nobody has ever taken, an
+    overlap, or positivity, violation
+
+- @Example@: a pricing model trained on historical prices that never
+  dropped below \$20 cannot say what happens at \$15, no matter how much
+  historical data it has
+
+- @Key idea@: some business questions cannot be answered by more historical
+  data, only by a deliberate intervention
+
+* Delayed and Long-Horizon Effects
+// From: msml610/lectures_source/Lesson08.7-Causal_experiments.smd:492 '* When A/B Testing Is Not Enough'
+
+- @Problem@: a model optimized for an immediate proxy ignores downstream
+  outcomes and has no way to assign credit to actions over time
+
+- @Example@: a support team optimized for fast ticket closure closes
+  tickets quickly, whether or not the underlying issue is resolved
+  - The true cost, repeat complaints and lost trust, shows up months later,
+    in a different metric
+
+- @Example@: a collections agency optimized to maximize dollars recovered
+  this quarter pushes aggressive repayment plans that borrowers later
+  default on
+  - The extra recovery this quarter is repaid, months later, with a lower
+    lifetime repayment rate and reputational damage
+
+- @Key idea@: short-term proxies and long-term business outcomes can point
+  in opposite directions, and only one of them is what the business actually
+  cares about
+
+* Strategic and Adversarial Response
+// From:
+
+- @Problem@: once a model is deployed, the people it scores learn to
+  optimize against it
+  - Standard ML assumes passive agents; in business, agents are not passive
+
+- @Example@: publishing the features of a credit-scoring model invites
+  credit gaming; publishing a search-ranking algorithm invites
+  keyword-stuffing
+
+- @Example@: a tax-audit model that flags returns above a reported-income
+  threshold causes self-employed filers to bunch their reported income just
+  below that threshold once the rule becomes known
+
+- @Key idea@: a model trained on how agents behaved before deployment can
+  become wrong the moment agents learn how it scores them
+
+# Why This Matters
+
+## Roadmap
+
+* Why AI Projects Fail
+// From: msml610/lectures_source/Lesson08.3-Causal_AI_in_business.smd:24 '* Why AI Projects Fail?'
+
+- @Components@: most AI projects fail not because of failures at the
+  modeling phase, but because they frame the problems incorrectly
+  - _Misalignment_: the model optimizes a proxy, not the business goal
+  - _Black boxes_: outputs cannot be explained, so they are not trusted or
+    adopted
+  - _No lever_: a score is delivered where an action was needed
+  - _No feedback_: performance is never monitored after deployment
+
+- @Key idea@: any accurate model that answers the wrong question is a failed
+  project, however good its metrics look on a dashboard
+
+* The Root Cause of the Four Costs
+
+- The four costs surveyed in this chapter (i.e., ignoring causality,
+  uncertainty, the business objective, and dynamics) share a single root
+  cause
+
+- Each one comes from optimizing prediction accuracy on a fixed distribution
+  instead of decision quality on a distribution the decision itself changes
+
+- This book shows how to solve all the 4 problems using causal and
+  probabilistic approaches to build
+
+- Every technique plugs into one loop
+
+```graphviz
+digraph DecisionLoop {
+  bgcolor="transparent";
+  pad="0.15";
+  splines=spline;
+  nodesep=0.30;
+  ranksep=0.50;
+  rankdir=TB;
+
+  node [shape=box,
+        style="rounded,filled",
+        penwidth=1.8,
+        fontname="Helvetica",
+        fontsize=12,
+        margin="0.22,0.14",
+        height=0.50];
+
+  edge [color="#3A4A5C",
+        penwidth=1.6,
+        arrowhead=vee,
+        arrowsize=0.85,
+        fontname="Helvetica",
+        fontsize=11,
+        fontcolor="#3A4A5C"];
+
+  Data     [label=<<b>Data</b><br/><font point-size="10" color="#6B4517">Observations</font>>,
+            fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+  Model    [label=<<b>Model</b><br/><font point-size="10" color="#1F4E39">Learned mechanism</font>>,
+            fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+  Policy   [label=<<b>Policy</b><br/><font point-size="10" color="#1F4E79">Decision rule</font>>,
+            fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+  Action   [label=<<b>Action</b><br/><font point-size="10" color="#6B2A44">Enacted choice</font>>,
+            fillcolor="#F6E1E8", color="#D98CA8", fontcolor="#6B2A44"];
+  Feedback [label=<<b>Feedback</b><br/><font point-size="10" color="#1F4E56">Observed outcome</font>>,
+            fillcolor="#C7ECF0", color="#7CC6D0", fontcolor="#1F4E56"];
+
+  Data -> Model -> Policy -> Action -> Feedback;
+  Feedback -> Data [label="  retrain / adapt", style=dashed, constraint=false];
+}
+```
+
+* Book Roadmap
+
+- @Components@: the rest of the book builds the pipeline that proposes
+  solutions for the problem highlighted in this chapter
+  - _Part II: Advanced Modeling Theory & Tools_ supplies the machinery:
+    knowledge representation, probabilistic ML (Bayesian inference,
+    uncertainty), and causal ML (SCMs, do-calculus, causal discovery)
+  - _Part III: Data_ turns domain knowledge into causal DAGs and causal
+    data pipelines, and confronts selection bias and distribution shift
+  - _Part IV: Decision-Making Theory & Tools_ turns causal models into
+    actions: decision theory, the taxonomy of decision problems, simple
+    decisions (bandits, RL), complex decisions (policy gradients,
+    multi-agent), and agentic causal reasoning
+  - _Part V: Implementation, Deployment & Governance_ covers stakeholder
+    alignment, deployment/monitoring/adaptation, and trust, explainability,
+    fairness, and governance
+
+* References
+
+```{=typst}
+#set text(size: 0.75em)
+#bibliography("/book_springer/lectures_source/refs.bib", title: none)
+```

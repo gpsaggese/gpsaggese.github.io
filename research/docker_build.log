@@ -1,502 +1,59 @@
-#0 building with "desktop-linux" instance using docker driver
-
-#1 [internal] load build definition from Dockerfile
-#1 transferring dockerfile: 1.31kB done
-#1 WARN: LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 2)
+#1 [resolver] fetching image...docker.io/library/python:3.12-slim
 #1 DONE 0.0s
 
-#2 [internal] load metadata for docker.io/library/ubuntu:24.04
-#2 DONE 0.0s
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 27B 0.0s
+#2 transferring dockerfile: 3.57kB 0.0s done
+#2 DONE 0.1s
 
 #3 [internal] load .dockerignore
-#3 transferring context: 2B done
+#3 transferring context: 1.72kB 0.0s done
 #3 DONE 0.0s
 
-#4 [ 1/16] FROM docker.io/library/ubuntu:24.04
+#4 [internal] load build context
 #4 DONE 0.0s
 
-#5 [internal] load build context
-#5 transferring context: 1.94kB done
+#5 oci-layout://docker.io/library/python:3.12-slim@sha256:229a2c5bfa27522db7815ea81f9bed70af17ccb9de9fc7ad142b1877b5830d36
+#5 resolve docker.io/library/python:3.12-slim@sha256:229a2c5bfa27522db7815ea81f9bed70af17ccb9de9fc7ad142b1877b5830d36 0.0s done
 #5 DONE 0.0s
 
-#6 [ 6/16] RUN python3 -m venv /venv
+#4 [internal] load build context
+#4 transferring context: 1.66kB 0.1s done
+#4 DONE 0.1s
+
+#6 [linux/arm64  4/10] RUN pip install --upgrade pip &&     pip install --no-cache-dir jupyterlab jupyterlab_vim jupytext -r /install/requirements.txt
 #6 CACHED
 
-#7 [ 3/16] RUN apt-get -y upgrade
+#7 [linux/arm64/v8  6/10] COPY etc_sudoers /etc/sudoers
 #7 CACHED
 
-#8 [ 2/16] RUN apt-get -y update
+#8 [linux/arm64/v8  7/10] COPY bashrc /root/.bashrc
 #8 CACHED
 
-#9 [ 4/16] RUN apt install -y --no-install-recommends     sudo     curl     systemctl     gnupg     git     vim
+#9 [linux/arm64/v8  8/10] COPY version.sh /install/
 #9 CACHED
 
-#10 [ 5/16] RUN apt-get update && apt-get install -y --no-install-recommends     build-essential     python3     python3-pip     python3-dev     python3-venv     && rm -rf /var/lib/apt/lists/*
+#10 [linux/arm64  1/10] RUN apt-get update && apt-get install -y     ca-certificates     git     && rm -rf /var/lib/apt/lists/*
 #10 CACHED
 
-#11 [ 7/16] RUN python -m pip install --upgrade pip
+#11 [linux/arm64/v8  3/10] COPY requirements.txt /install/requirements.txt
 #11 CACHED
 
-#12 [ 8/16] RUN pip3 install jupyterlab
+#12 [linux/arm64  2/10] RUN mkdir -p /install
 #12 CACHED
 
-#13 [ 9/16] COPY requirements.txt requirements.txt
-#13 DONE 0.0s
+#13 [linux/arm64/v8  5/10] COPY etc_sudoers /install/
+#13 CACHED
 
-#14 [10/16] RUN pip3 install -r requirements.txt
-#14 0.524 Collecting numpy (from -r requirements.txt (line 1))
-#14 0.619   Downloading numpy-2.4.2-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl.metadata (6.6 kB)
-#14 0.693 Collecting pandas (from -r requirements.txt (line 2))
-#14 0.713   Downloading pandas-3.0.1-cp312-cp312-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl.metadata (79 kB)
-#14 0.841 Collecting scipy (from -r requirements.txt (line 3))
-#14 0.866   Downloading scipy-1.17.1-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl.metadata (62 kB)
-#14 0.975 Collecting matplotlib (from -r requirements.txt (line 5))
-#14 0.996   Downloading matplotlib-3.10.8-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl.metadata (52 kB)
-#14 1.023 Collecting seaborn (from -r requirements.txt (line 6))
-#14 1.038   Downloading seaborn-0.13.2-py3-none-any.whl.metadata (5.4 kB)
-#14 1.100 Collecting scikit-learn (from -r requirements.txt (line 8))
-#14 1.122   Downloading scikit_learn-1.8.0-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl.metadata (11 kB)
-#14 1.167 Collecting statsmodels (from -r requirements.txt (line 9))
-#14 1.189   Downloading statsmodels-0.14.6-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl.metadata (9.5 kB)
-#14 1.233 Collecting econml (from -r requirements.txt (line 10))
-#14 1.253   Downloading econml-0.16.0.tar.gz (1.7 MB)
-#14 1.449      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.7/1.7 MB 8.9 MB/s  0:00:00
-#14 1.522   Installing build dependencies: started
-#14 10.80   Installing build dependencies: finished with status 'done'
-#14 10.80   Getting requirements to build wheel: started
-#14 11.25   Getting requirements to build wheel: finished with status 'done'
-#14 11.25   Preparing metadata (pyproject.toml): started
-#14 11.44   Preparing metadata (pyproject.toml): finished with status 'done'
-#14 11.44 Requirement already satisfied: jupyterlab in ./venv/lib/python3.12/site-packages (from -r requirements.txt (line 12)) (4.5.4)
-#14 11.47 Collecting jupyterlab-vim (from -r requirements.txt (line 13))
-#14 11.49   Downloading jupyterlab_vim-4.1.4-py3-none-any.whl.metadata (8.7 kB)
-#14 11.52 Collecting tqdm (from -r requirements.txt (line 14))
-#14 11.54   Downloading tqdm-4.67.3-py3-none-any.whl.metadata (57 kB)
-#14 11.59 Collecting pymc==5.16.2 (from -r requirements.txt (line 16))
-#14 11.60   Downloading pymc-5.16.2-py3-none-any.whl.metadata (15 kB)
-#14 11.64 Collecting arviz==0.18.0 (from -r requirements.txt (line 17))
-#14 11.67   Downloading arviz-0.18.0-py3-none-any.whl.metadata (8.7 kB)
-#14 11.69 Collecting cachetools>=4.2.1 (from pymc==5.16.2->-r requirements.txt (line 16))
-#14 11.71   Downloading cachetools-7.0.4-py3-none-any.whl.metadata (5.6 kB)
-#14 11.75 Collecting cloudpickle (from pymc==5.16.2->-r requirements.txt (line 16))
-#14 11.77   Downloading cloudpickle-3.1.2-py3-none-any.whl.metadata (7.1 kB)
-#14 11.84 Collecting pytensor<2.26,>=2.25.1 (from pymc==5.16.2->-r requirements.txt (line 16))
-#14 11.86   Downloading pytensor-2.25.5-py2.py3-none-any.whl.metadata (9.9 kB)
-#14 11.89 Collecting rich>=13.7.1 (from pymc==5.16.2->-r requirements.txt (line 16))
-#14 11.91   Downloading rich-14.3.3-py3-none-any.whl.metadata (18 kB)
-#14 11.94 Collecting threadpoolctl<4.0.0,>=3.1.0 (from pymc==5.16.2->-r requirements.txt (line 16))
-#14 11.95   Downloading threadpoolctl-3.6.0-py3-none-any.whl.metadata (13 kB)
-#14 11.96 Requirement already satisfied: typing-extensions>=3.7.4 in ./venv/lib/python3.12/site-packages (from pymc==5.16.2->-r requirements.txt (line 16)) (4.15.0)
-#14 11.96 Requirement already satisfied: setuptools>=60.0.0 in ./venv/lib/python3.12/site-packages (from arviz==0.18.0->-r requirements.txt (line 17)) (82.0.0)
-#14 11.96 Collecting numpy (from -r requirements.txt (line 1))
-#14 11.99   Downloading numpy-1.26.4-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl.metadata (62 kB)
-#14 12.01 Requirement already satisfied: packaging in ./venv/lib/python3.12/site-packages (from arviz==0.18.0->-r requirements.txt (line 17)) (26.0)
-#14 12.03 Collecting dm-tree>=0.1.8 (from arviz==0.18.0->-r requirements.txt (line 17))
-#14 12.05   Downloading dm_tree-0.1.9-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl.metadata (2.4 kB)
-#14 12.09 Collecting xarray>=2022.6.0 (from arviz==0.18.0->-r requirements.txt (line 17))
-#14 12.11   Downloading xarray-2026.2.0-py3-none-any.whl.metadata (12 kB)
-#14 12.16 Collecting h5netcdf>=1.0.2 (from arviz==0.18.0->-r requirements.txt (line 17))
-#14 12.18   Downloading h5netcdf-1.8.1-py3-none-any.whl.metadata (15 kB)
-#14 12.21 Collecting xarray-einstats>=0.3 (from arviz==0.18.0->-r requirements.txt (line 17))
-#14 12.25   Downloading xarray_einstats-0.10.0-py3-none-any.whl.metadata (5.9 kB)
-#14 12.28 Collecting filelock>=3.15 (from pytensor<2.26,>=2.25.1->pymc==5.16.2->-r requirements.txt (line 16))
-#14 12.29   Downloading filelock-3.25.0-py3-none-any.whl.metadata (2.0 kB)
-#14 12.32 Collecting etuples (from pytensor<2.26,>=2.25.1->pymc==5.16.2->-r requirements.txt (line 16))
-#14 12.34   Downloading etuples-0.3.10-py3-none-any.whl.metadata (4.8 kB)
-#14 12.36 Collecting logical-unification (from pytensor<2.26,>=2.25.1->pymc==5.16.2->-r requirements.txt (line 16))
-#14 12.39   Downloading logical_unification-0.4.7-py3-none-any.whl.metadata (15 kB)
-#14 12.43 Collecting miniKanren (from pytensor<2.26,>=2.25.1->pymc==5.16.2->-r requirements.txt (line 16))
-#14 12.45   Downloading minikanren-1.0.5-py3-none-any.whl.metadata (7.6 kB)
-#14 12.53 Collecting cons (from pytensor<2.26,>=2.25.1->pymc==5.16.2->-r requirements.txt (line 16))
-#14 12.57   Downloading cons-0.4.7-py3-none-any.whl.metadata (3.8 kB)
-#14 12.58 Requirement already satisfied: python-dateutil>=2.8.2 in ./venv/lib/python3.12/site-packages (from pandas->-r requirements.txt (line 2)) (2.9.0.post0)
-#14 12.67 Collecting contourpy>=1.0.1 (from matplotlib->-r requirements.txt (line 5))
-#14 12.69   Downloading contourpy-1.3.3-cp312-cp312-manylinux_2_26_aarch64.manylinux_2_28_aarch64.whl.metadata (5.5 kB)
-#14 12.72 Collecting cycler>=0.10 (from matplotlib->-r requirements.txt (line 5))
-#14 12.73   Downloading cycler-0.12.1-py3-none-any.whl.metadata (3.8 kB)
-#14 12.85 Collecting fonttools>=4.22.0 (from matplotlib->-r requirements.txt (line 5))
-#14 12.87   Downloading fonttools-4.61.1-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl.metadata (114 kB)
-#14 12.94 Collecting kiwisolver>=1.3.1 (from matplotlib->-r requirements.txt (line 5))
-#14 12.96   Downloading kiwisolver-1.4.9-cp312-cp312-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl.metadata (6.3 kB)
-#14 13.15 Collecting pillow>=8 (from matplotlib->-r requirements.txt (line 5))
-#14 13.17   Downloading pillow-12.1.1-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl.metadata (8.8 kB)
-#14 13.21 Collecting pyparsing>=3 (from matplotlib->-r requirements.txt (line 5))
-#14 13.23   Downloading pyparsing-3.3.2-py3-none-any.whl.metadata (5.8 kB)
-#14 13.26 Collecting joblib>=1.3.0 (from scikit-learn->-r requirements.txt (line 8))
-#14 13.28   Downloading joblib-1.5.3-py3-none-any.whl.metadata (5.5 kB)
-#14 13.32 Collecting patsy>=0.5.6 (from statsmodels->-r requirements.txt (line 9))
-#14 13.34   Downloading patsy-1.0.2-py2.py3-none-any.whl.metadata (3.6 kB)
-#14 13.35 Collecting scikit-learn (from -r requirements.txt (line 8))
-#14 13.37   Downloading scikit_learn-1.6.1-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl.metadata (18 kB)
-#14 13.40 Collecting sparse (from econml->-r requirements.txt (line 10))
-#14 13.42   Downloading sparse-0.18.0-py2.py3-none-any.whl.metadata (5.3 kB)
-#14 13.46 Collecting shap<0.49.0,>=0.38.1 (from econml->-r requirements.txt (line 10))
-#14 13.49   Downloading shap-0.48.0-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl.metadata (25 kB)
-#14 13.53 Collecting lightgbm (from econml->-r requirements.txt (line 10))
-#14 13.55   Downloading lightgbm-4.6.0-py3-none-manylinux2014_aarch64.whl.metadata (17 kB)
-#14 13.58 Collecting slicer==0.0.8 (from shap<0.49.0,>=0.38.1->econml->-r requirements.txt (line 10))
-#14 13.59   Downloading slicer-0.0.8-py3-none-any.whl.metadata (4.0 kB)
-#14 13.67 Collecting numba>=0.54 (from shap<0.49.0,>=0.38.1->econml->-r requirements.txt (line 10))
-#14 13.68   Downloading numba-0.64.0-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl.metadata (2.9 kB)
-#14 13.69 Requirement already satisfied: async-lru>=1.0.0 in ./venv/lib/python3.12/site-packages (from jupyterlab->-r requirements.txt (line 12)) (2.2.0)
-#14 13.69 Requirement already satisfied: httpx<1,>=0.25.0 in ./venv/lib/python3.12/site-packages (from jupyterlab->-r requirements.txt (line 12)) (0.28.1)
-#14 13.69 Requirement already satisfied: ipykernel!=6.30.0,>=6.5.0 in ./venv/lib/python3.12/site-packages (from jupyterlab->-r requirements.txt (line 12)) (7.2.0)
-#14 13.69 Requirement already satisfied: jinja2>=3.0.3 in ./venv/lib/python3.12/site-packages (from jupyterlab->-r requirements.txt (line 12)) (3.1.6)
-#14 13.69 Requirement already satisfied: jupyter-core in ./venv/lib/python3.12/site-packages (from jupyterlab->-r requirements.txt (line 12)) (5.9.1)
-#14 13.69 Requirement already satisfied: jupyter-lsp>=2.0.0 in ./venv/lib/python3.12/site-packages (from jupyterlab->-r requirements.txt (line 12)) (2.3.0)
-#14 13.69 Requirement already satisfied: jupyter-server<3,>=2.4.0 in ./venv/lib/python3.12/site-packages (from jupyterlab->-r requirements.txt (line 12)) (2.17.0)
-#14 13.69 Requirement already satisfied: jupyterlab-server<3,>=2.28.0 in ./venv/lib/python3.12/site-packages (from jupyterlab->-r requirements.txt (line 12)) (2.28.0)
-#14 13.69 Requirement already satisfied: notebook-shim>=0.2 in ./venv/lib/python3.12/site-packages (from jupyterlab->-r requirements.txt (line 12)) (0.2.4)
-#14 13.69 Requirement already satisfied: tornado>=6.2.0 in ./venv/lib/python3.12/site-packages (from jupyterlab->-r requirements.txt (line 12)) (6.5.4)
-#14 13.69 Requirement already satisfied: traitlets in ./venv/lib/python3.12/site-packages (from jupyterlab->-r requirements.txt (line 12)) (5.14.3)
-#14 13.69 Requirement already satisfied: anyio in ./venv/lib/python3.12/site-packages (from httpx<1,>=0.25.0->jupyterlab->-r requirements.txt (line 12)) (4.12.1)
-#14 13.69 Requirement already satisfied: certifi in ./venv/lib/python3.12/site-packages (from httpx<1,>=0.25.0->jupyterlab->-r requirements.txt (line 12)) (2026.1.4)
-#14 13.69 Requirement already satisfied: httpcore==1.* in ./venv/lib/python3.12/site-packages (from httpx<1,>=0.25.0->jupyterlab->-r requirements.txt (line 12)) (1.0.9)
-#14 13.69 Requirement already satisfied: idna in ./venv/lib/python3.12/site-packages (from httpx<1,>=0.25.0->jupyterlab->-r requirements.txt (line 12)) (3.11)
-#14 13.69 Requirement already satisfied: h11>=0.16 in ./venv/lib/python3.12/site-packages (from httpcore==1.*->httpx<1,>=0.25.0->jupyterlab->-r requirements.txt (line 12)) (0.16.0)
-#14 13.69 Requirement already satisfied: argon2-cffi>=21.1 in ./venv/lib/python3.12/site-packages (from jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (25.1.0)
-#14 13.70 Requirement already satisfied: jupyter-client>=7.4.4 in ./venv/lib/python3.12/site-packages (from jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (8.8.0)
-#14 13.70 Requirement already satisfied: jupyter-events>=0.11.0 in ./venv/lib/python3.12/site-packages (from jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (0.12.0)
-#14 13.70 Requirement already satisfied: jupyter-server-terminals>=0.4.4 in ./venv/lib/python3.12/site-packages (from jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (0.5.4)
-#14 13.70 Requirement already satisfied: nbconvert>=6.4.4 in ./venv/lib/python3.12/site-packages (from jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (7.17.0)
-#14 13.70 Requirement already satisfied: nbformat>=5.3.0 in ./venv/lib/python3.12/site-packages (from jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (5.10.4)
-#14 13.70 Requirement already satisfied: prometheus-client>=0.9 in ./venv/lib/python3.12/site-packages (from jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (0.24.1)
-#14 13.70 Requirement already satisfied: pyzmq>=24 in ./venv/lib/python3.12/site-packages (from jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (27.1.0)
-#14 13.70 Requirement already satisfied: send2trash>=1.8.2 in ./venv/lib/python3.12/site-packages (from jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (2.1.0)
-#14 13.70 Requirement already satisfied: terminado>=0.8.3 in ./venv/lib/python3.12/site-packages (from jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (0.18.1)
-#14 13.70 Requirement already satisfied: websocket-client>=1.7 in ./venv/lib/python3.12/site-packages (from jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (1.9.0)
-#14 13.70 Requirement already satisfied: babel>=2.10 in ./venv/lib/python3.12/site-packages (from jupyterlab-server<3,>=2.28.0->jupyterlab->-r requirements.txt (line 12)) (2.18.0)
-#14 13.70 Requirement already satisfied: json5>=0.9.0 in ./venv/lib/python3.12/site-packages (from jupyterlab-server<3,>=2.28.0->jupyterlab->-r requirements.txt (line 12)) (0.13.0)
-#14 13.70 Requirement already satisfied: jsonschema>=4.18.0 in ./venv/lib/python3.12/site-packages (from jupyterlab-server<3,>=2.28.0->jupyterlab->-r requirements.txt (line 12)) (4.26.0)
-#14 13.70 Requirement already satisfied: requests>=2.31 in ./venv/lib/python3.12/site-packages (from jupyterlab-server<3,>=2.28.0->jupyterlab->-r requirements.txt (line 12)) (2.32.5)
-#14 13.70 Requirement already satisfied: argon2-cffi-bindings in ./venv/lib/python3.12/site-packages (from argon2-cffi>=21.1->jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (25.1.0)
-#14 13.73 Collecting absl-py>=0.6.1 (from dm-tree>=0.1.8->arviz==0.18.0->-r requirements.txt (line 17))
-#14 13.74   Downloading absl_py-2.4.0-py3-none-any.whl.metadata (3.3 kB)
-#14 13.75 Requirement already satisfied: attrs>=18.2.0 in ./venv/lib/python3.12/site-packages (from dm-tree>=0.1.8->arviz==0.18.0->-r requirements.txt (line 17)) (25.4.0)
-#14 13.86 Collecting wrapt>=1.11.2 (from dm-tree>=0.1.8->arviz==0.18.0->-r requirements.txt (line 17))
-#14 13.88   Downloading wrapt-2.1.2-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl.metadata (7.4 kB)
-#14 13.89 Requirement already satisfied: comm>=0.1.1 in ./venv/lib/python3.12/site-packages (from ipykernel!=6.30.0,>=6.5.0->jupyterlab->-r requirements.txt (line 12)) (0.2.3)
-#14 13.89 Requirement already satisfied: debugpy>=1.6.5 in ./venv/lib/python3.12/site-packages (from ipykernel!=6.30.0,>=6.5.0->jupyterlab->-r requirements.txt (line 12)) (1.8.20)
-#14 13.89 Requirement already satisfied: ipython>=7.23.1 in ./venv/lib/python3.12/site-packages (from ipykernel!=6.30.0,>=6.5.0->jupyterlab->-r requirements.txt (line 12)) (9.10.0)
-#14 13.89 Requirement already satisfied: matplotlib-inline>=0.1 in ./venv/lib/python3.12/site-packages (from ipykernel!=6.30.0,>=6.5.0->jupyterlab->-r requirements.txt (line 12)) (0.2.1)
-#14 13.89 Requirement already satisfied: nest-asyncio>=1.4 in ./venv/lib/python3.12/site-packages (from ipykernel!=6.30.0,>=6.5.0->jupyterlab->-r requirements.txt (line 12)) (1.6.0)
-#14 13.89 Requirement already satisfied: psutil>=5.7 in ./venv/lib/python3.12/site-packages (from ipykernel!=6.30.0,>=6.5.0->jupyterlab->-r requirements.txt (line 12)) (7.2.2)
-#14 13.89 Requirement already satisfied: decorator>=4.3.2 in ./venv/lib/python3.12/site-packages (from ipython>=7.23.1->ipykernel!=6.30.0,>=6.5.0->jupyterlab->-r requirements.txt (line 12)) (5.2.1)
-#14 13.89 Requirement already satisfied: ipython-pygments-lexers>=1.0.0 in ./venv/lib/python3.12/site-packages (from ipython>=7.23.1->ipykernel!=6.30.0,>=6.5.0->jupyterlab->-r requirements.txt (line 12)) (1.1.1)
-#14 13.89 Requirement already satisfied: jedi>=0.18.1 in ./venv/lib/python3.12/site-packages (from ipython>=7.23.1->ipykernel!=6.30.0,>=6.5.0->jupyterlab->-r requirements.txt (line 12)) (0.19.2)
-#14 13.89 Requirement already satisfied: pexpect>4.3 in ./venv/lib/python3.12/site-packages (from ipython>=7.23.1->ipykernel!=6.30.0,>=6.5.0->jupyterlab->-r requirements.txt (line 12)) (4.9.0)
-#14 13.89 Requirement already satisfied: prompt_toolkit<3.1.0,>=3.0.41 in ./venv/lib/python3.12/site-packages (from ipython>=7.23.1->ipykernel!=6.30.0,>=6.5.0->jupyterlab->-r requirements.txt (line 12)) (3.0.52)
-#14 13.89 Requirement already satisfied: pygments>=2.11.0 in ./venv/lib/python3.12/site-packages (from ipython>=7.23.1->ipykernel!=6.30.0,>=6.5.0->jupyterlab->-r requirements.txt (line 12)) (2.19.2)
-#14 13.89 Requirement already satisfied: stack_data>=0.6.0 in ./venv/lib/python3.12/site-packages (from ipython>=7.23.1->ipykernel!=6.30.0,>=6.5.0->jupyterlab->-r requirements.txt (line 12)) (0.6.3)
-#14 13.89 Requirement already satisfied: wcwidth in ./venv/lib/python3.12/site-packages (from prompt_toolkit<3.1.0,>=3.0.41->ipython>=7.23.1->ipykernel!=6.30.0,>=6.5.0->jupyterlab->-r requirements.txt (line 12)) (0.6.0)
-#14 13.89 Requirement already satisfied: parso<0.9.0,>=0.8.4 in ./venv/lib/python3.12/site-packages (from jedi>=0.18.1->ipython>=7.23.1->ipykernel!=6.30.0,>=6.5.0->jupyterlab->-r requirements.txt (line 12)) (0.8.6)
-#14 13.90 Requirement already satisfied: MarkupSafe>=2.0 in ./venv/lib/python3.12/site-packages (from jinja2>=3.0.3->jupyterlab->-r requirements.txt (line 12)) (3.0.3)
-#14 13.90 Requirement already satisfied: jsonschema-specifications>=2023.03.6 in ./venv/lib/python3.12/site-packages (from jsonschema>=4.18.0->jupyterlab-server<3,>=2.28.0->jupyterlab->-r requirements.txt (line 12)) (2025.9.1)
-#14 13.90 Requirement already satisfied: referencing>=0.28.4 in ./venv/lib/python3.12/site-packages (from jsonschema>=4.18.0->jupyterlab-server<3,>=2.28.0->jupyterlab->-r requirements.txt (line 12)) (0.37.0)
-#14 13.90 Requirement already satisfied: rpds-py>=0.25.0 in ./venv/lib/python3.12/site-packages (from jsonschema>=4.18.0->jupyterlab-server<3,>=2.28.0->jupyterlab->-r requirements.txt (line 12)) (0.30.0)
-#14 13.90 Requirement already satisfied: platformdirs>=2.5 in ./venv/lib/python3.12/site-packages (from jupyter-core->jupyterlab->-r requirements.txt (line 12)) (4.9.2)
-#14 13.90 Requirement already satisfied: python-json-logger>=2.0.4 in ./venv/lib/python3.12/site-packages (from jupyter-events>=0.11.0->jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (4.0.0)
-#14 13.90 Requirement already satisfied: pyyaml>=5.3 in ./venv/lib/python3.12/site-packages (from jupyter-events>=0.11.0->jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (6.0.3)
-#14 13.90 Requirement already satisfied: rfc3339-validator in ./venv/lib/python3.12/site-packages (from jupyter-events>=0.11.0->jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (0.1.4)
-#14 13.90 Requirement already satisfied: rfc3986-validator>=0.1.1 in ./venv/lib/python3.12/site-packages (from jupyter-events>=0.11.0->jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (0.1.1)
-#14 13.90 Requirement already satisfied: fqdn in ./venv/lib/python3.12/site-packages (from jsonschema[format-nongpl]>=4.18.0->jupyter-events>=0.11.0->jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (1.5.1)
-#14 13.90 Requirement already satisfied: isoduration in ./venv/lib/python3.12/site-packages (from jsonschema[format-nongpl]>=4.18.0->jupyter-events>=0.11.0->jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (20.11.0)
-#14 13.91 Requirement already satisfied: jsonpointer>1.13 in ./venv/lib/python3.12/site-packages (from jsonschema[format-nongpl]>=4.18.0->jupyter-events>=0.11.0->jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (3.0.0)
-#14 13.91 Requirement already satisfied: rfc3987-syntax>=1.1.0 in ./venv/lib/python3.12/site-packages (from jsonschema[format-nongpl]>=4.18.0->jupyter-events>=0.11.0->jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (1.1.0)
-#14 13.91 Requirement already satisfied: uri-template in ./venv/lib/python3.12/site-packages (from jsonschema[format-nongpl]>=4.18.0->jupyter-events>=0.11.0->jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (1.3.0)
-#14 13.91 Requirement already satisfied: webcolors>=24.6.0 in ./venv/lib/python3.12/site-packages (from jsonschema[format-nongpl]>=4.18.0->jupyter-events>=0.11.0->jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (25.10.0)
-#14 13.91 Requirement already satisfied: beautifulsoup4 in ./venv/lib/python3.12/site-packages (from nbconvert>=6.4.4->jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (4.14.3)
-#14 13.91 Requirement already satisfied: bleach!=5.0.0 in ./venv/lib/python3.12/site-packages (from bleach[css]!=5.0.0->nbconvert>=6.4.4->jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (6.3.0)
-#14 13.91 Requirement already satisfied: defusedxml in ./venv/lib/python3.12/site-packages (from nbconvert>=6.4.4->jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (0.7.1)
-#14 13.91 Requirement already satisfied: jupyterlab-pygments in ./venv/lib/python3.12/site-packages (from nbconvert>=6.4.4->jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (0.3.0)
-#14 13.91 Requirement already satisfied: mistune<4,>=2.0.3 in ./venv/lib/python3.12/site-packages (from nbconvert>=6.4.4->jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (3.2.0)
-#14 13.91 Requirement already satisfied: nbclient>=0.5.0 in ./venv/lib/python3.12/site-packages (from nbconvert>=6.4.4->jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (0.10.4)
-#14 13.91 Requirement already satisfied: pandocfilters>=1.4.1 in ./venv/lib/python3.12/site-packages (from nbconvert>=6.4.4->jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (1.5.1)
-#14 13.91 Requirement already satisfied: webencodings in ./venv/lib/python3.12/site-packages (from bleach!=5.0.0->bleach[css]!=5.0.0->nbconvert>=6.4.4->jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (0.5.1)
-#14 13.92 Requirement already satisfied: tinycss2<1.5,>=1.1.0 in ./venv/lib/python3.12/site-packages (from bleach[css]!=5.0.0->nbconvert>=6.4.4->jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (1.4.0)
-#14 13.92 Requirement already satisfied: fastjsonschema>=2.15 in ./venv/lib/python3.12/site-packages (from nbformat>=5.3.0->jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (2.21.2)
-#14 13.96 Collecting llvmlite<0.47,>=0.46.0dev0 (from numba>=0.54->shap<0.49.0,>=0.38.1->econml->-r requirements.txt (line 10))
-#14 13.98   Downloading llvmlite-0.46.0-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl.metadata (5.0 kB)
-#14 13.99 Requirement already satisfied: ptyprocess>=0.5 in ./venv/lib/python3.12/site-packages (from pexpect>4.3->ipython>=7.23.1->ipykernel!=6.30.0,>=6.5.0->jupyterlab->-r requirements.txt (line 12)) (0.7.0)
-#14 14.00 Requirement already satisfied: six>=1.5 in ./venv/lib/python3.12/site-packages (from python-dateutil>=2.8.2->pandas->-r requirements.txt (line 2)) (1.17.0)
-#14 14.00 Requirement already satisfied: charset_normalizer<4,>=2 in ./venv/lib/python3.12/site-packages (from requests>=2.31->jupyterlab-server<3,>=2.28.0->jupyterlab->-r requirements.txt (line 12)) (3.4.4)
-#14 14.00 Requirement already satisfied: urllib3<3,>=1.21.1 in ./venv/lib/python3.12/site-packages (from requests>=2.31->jupyterlab-server<3,>=2.28.0->jupyterlab->-r requirements.txt (line 12)) (2.6.3)
-#14 14.01 Requirement already satisfied: lark>=1.2.2 in ./venv/lib/python3.12/site-packages (from rfc3987-syntax>=1.1.0->jsonschema[format-nongpl]>=4.18.0->jupyter-events>=0.11.0->jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (1.3.1)
-#14 14.04 Collecting markdown-it-py>=2.2.0 (from rich>=13.7.1->pymc==5.16.2->-r requirements.txt (line 16))
-#14 14.06   Downloading markdown_it_py-4.0.0-py3-none-any.whl.metadata (7.3 kB)
-#14 14.09 Collecting mdurl~=0.1 (from markdown-it-py>=2.2.0->rich>=13.7.1->pymc==5.16.2->-r requirements.txt (line 16))
-#14 14.10   Downloading mdurl-0.1.2-py3-none-any.whl.metadata (1.6 kB)
-#14 14.12 Requirement already satisfied: executing>=1.2.0 in ./venv/lib/python3.12/site-packages (from stack_data>=0.6.0->ipython>=7.23.1->ipykernel!=6.30.0,>=6.5.0->jupyterlab->-r requirements.txt (line 12)) (2.2.1)
-#14 14.12 Requirement already satisfied: asttokens>=2.1.0 in ./venv/lib/python3.12/site-packages (from stack_data>=0.6.0->ipython>=7.23.1->ipykernel!=6.30.0,>=6.5.0->jupyterlab->-r requirements.txt (line 12)) (3.0.1)
-#14 14.12 Requirement already satisfied: pure-eval in ./venv/lib/python3.12/site-packages (from stack_data>=0.6.0->ipython>=7.23.1->ipykernel!=6.30.0,>=6.5.0->jupyterlab->-r requirements.txt (line 12)) (0.2.3)
-#14 14.17 INFO: pip is looking at multiple versions of xarray-einstats to determine which version is compatible with other requirements. This could take a while.
-#14 14.17 Collecting xarray-einstats>=0.3 (from arviz==0.18.0->-r requirements.txt (line 17))
-#14 14.18   Downloading xarray_einstats-0.9.1-py3-none-any.whl.metadata (5.9 kB)
-#14 14.19 Requirement already satisfied: cffi>=1.0.1 in ./venv/lib/python3.12/site-packages (from argon2-cffi-bindings->argon2-cffi>=21.1->jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (2.0.0)
-#14 14.19 Requirement already satisfied: pycparser in ./venv/lib/python3.12/site-packages (from cffi>=1.0.1->argon2-cffi-bindings->argon2-cffi>=21.1->jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (3.0)
-#14 14.19 Requirement already satisfied: soupsieve>=1.6.1 in ./venv/lib/python3.12/site-packages (from beautifulsoup4->nbconvert>=6.4.4->jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (2.8.3)
-#14 14.24 Collecting toolz (from logical-unification->pytensor<2.26,>=2.25.1->pymc==5.16.2->-r requirements.txt (line 16))
-#14 14.25   Downloading toolz-1.1.0-py3-none-any.whl.metadata (5.1 kB)
-#14 14.28 Collecting multipledispatch (from logical-unification->pytensor<2.26,>=2.25.1->pymc==5.16.2->-r requirements.txt (line 16))
-#14 14.29   Downloading multipledispatch-1.0.0-py3-none-any.whl.metadata (3.8 kB)
-#14 14.30 Requirement already satisfied: arrow>=0.15.0 in ./venv/lib/python3.12/site-packages (from isoduration->jsonschema[format-nongpl]>=4.18.0->jupyter-events>=0.11.0->jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (1.4.0)
-#14 14.30 Requirement already satisfied: tzdata in ./venv/lib/python3.12/site-packages (from arrow>=0.15.0->isoduration->jsonschema[format-nongpl]>=4.18.0->jupyter-events>=0.11.0->jupyter-server<3,>=2.4.0->jupyterlab->-r requirements.txt (line 12)) (2025.3)
-#14 14.34 Downloading pymc-5.16.2-py3-none-any.whl (489 kB)
-#14 14.41 Downloading arviz-0.18.0-py3-none-any.whl (1.7 MB)
-#14 14.58    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.7/1.7 MB 9.4 MB/s  0:00:00
-#14 14.60 Downloading numpy-1.26.4-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (13.9 MB)
-#14 16.28    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 13.9/13.9 MB 8.2 MB/s  0:00:01
-#14 16.31 Downloading pytensor-2.25.5-py2.py3-none-any.whl (1.2 MB)
-#14 16.45    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 8.8 MB/s  0:00:00
-#14 16.45 Using cached scipy-1.17.1-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl (32.9 MB)
-#14 16.50 Downloading threadpoolctl-3.6.0-py3-none-any.whl (18 kB)
-#14 16.52 Downloading pandas-3.0.1-cp312-cp312-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl (10.4 MB)
-#14 17.54    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.4/10.4 MB 10.1 MB/s  0:00:01
-#14 17.55 Downloading matplotlib-3.10.8-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl (9.6 MB)
-#14 18.49    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9.6/9.6 MB 10.3 MB/s  0:00:00
-#14 18.51 Downloading seaborn-0.13.2-py3-none-any.whl (294 kB)
-#14 18.56 Downloading statsmodels-0.14.6-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (10.1 MB)
-#14 19.62    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.1/10.1 MB 9.7 MB/s  0:00:01
-#14 19.68 Downloading scikit_learn-1.6.1-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (12.3 MB)
-#14 21.23    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.3/12.3 MB 7.8 MB/s  0:00:01
-#14 21.28 Downloading shap-0.48.0-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (1.0 MB)
-#14 21.38    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.0/1.0 MB 11.4 MB/s  0:00:00
-#14 21.40 Downloading slicer-0.0.8-py3-none-any.whl (15 kB)
-#14 21.43 Downloading jupyterlab_vim-4.1.4-py3-none-any.whl (67 kB)
-#14 21.45 Downloading tqdm-4.67.3-py3-none-any.whl (78 kB)
-#14 21.50 Downloading cachetools-7.0.4-py3-none-any.whl (13 kB)
-#14 21.54 Downloading contourpy-1.3.3-cp312-cp312-manylinux_2_26_aarch64.manylinux_2_28_aarch64.whl (332 kB)
-#14 21.59 Downloading cycler-0.12.1-py3-none-any.whl (8.3 kB)
-#14 21.62 Downloading dm_tree-0.1.9-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (147 kB)
-#14 21.66 Downloading absl_py-2.4.0-py3-none-any.whl (135 kB)
-#14 21.70 Downloading filelock-3.25.0-py3-none-any.whl (26 kB)
-#14 21.72 Downloading fonttools-4.61.1-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (5.0 MB)
-#14 22.31    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.0/5.0 MB 8.4 MB/s  0:00:00
-#14 22.34 Downloading h5netcdf-1.8.1-py3-none-any.whl (62 kB)
-#14 22.36 Downloading joblib-1.5.3-py3-none-any.whl (309 kB)
-#14 22.42 Downloading kiwisolver-1.4.9-cp312-cp312-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl (1.3 MB)
-#14 22.56    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 9.4 MB/s  0:00:00
-#14 22.63 Downloading numba-0.64.0-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl (3.5 MB)
-#14 22.97    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.5/3.5 MB 10.2 MB/s  0:00:00
-#14 22.99 Downloading llvmlite-0.46.0-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl (55.1 MB)
-#14 29.42    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 55.1/55.1 MB 8.6 MB/s  0:00:06
-#14 29.43 Downloading patsy-1.0.2-py2.py3-none-any.whl (233 kB)
-#14 29.49 Downloading pillow-12.1.1-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl (6.3 MB)
-#14 30.24    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.3/6.3 MB 8.4 MB/s  0:00:00
-#14 30.26 Downloading pyparsing-3.3.2-py3-none-any.whl (122 kB)
-#14 30.29 Downloading rich-14.3.3-py3-none-any.whl (310 kB)
-#14 30.37 Downloading markdown_it_py-4.0.0-py3-none-any.whl (87 kB)
-#14 30.40 Downloading mdurl-0.1.2-py3-none-any.whl (10.0 kB)
-#14 30.43 Downloading wrapt-2.1.2-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (123 kB)
-#14 30.46 Downloading xarray-2026.2.0-py3-none-any.whl (1.4 MB)
-#14 30.58    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.4/1.4 MB 11.9 MB/s  0:00:00
-#14 30.61 Downloading xarray_einstats-0.9.1-py3-none-any.whl (39 kB)
-#14 30.63 Downloading cloudpickle-3.1.2-py3-none-any.whl (22 kB)
-#14 30.65 Downloading cons-0.4.7-py3-none-any.whl (8.6 kB)
-#14 30.68 Downloading logical_unification-0.4.7-py3-none-any.whl (13 kB)
-#14 30.71 Downloading etuples-0.3.10-py3-none-any.whl (12 kB)
-#14 30.74 Downloading lightgbm-4.6.0-py3-none-manylinux2014_aarch64.whl (3.5 MB)
-#14 31.04    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.5/3.5 MB 11.1 MB/s  0:00:00
-#14 31.06 Downloading minikanren-1.0.5-py3-none-any.whl (24 kB)
-#14 31.08 Downloading multipledispatch-1.0.0-py3-none-any.whl (12 kB)
-#14 31.10 Downloading sparse-0.18.0-py2.py3-none-any.whl (151 kB)
-#14 31.15 Downloading toolz-1.1.0-py3-none-any.whl (58 kB)
-#14 31.29 Building wheels for collected packages: econml
-#14 31.29   Building wheel for econml (pyproject.toml): started
-#14 53.53   Building wheel for econml (pyproject.toml): finished with status 'done'
-#14 53.53   Created wheel for econml: filename=econml-0.16.0-cp312-cp312-linux_aarch64.whl size=4926854 sha256=79640f5f76e4550c55a4790c716992e26cfdb4b52b2b5334ce512b4315ff400d
-#14 53.53   Stored in directory: /root/.cache/pip/wheels/93/d6/1b/029b64a786e9f842008d2d2a1333db8b3bf399cb8e817409c0
-#14 53.53 Successfully built econml
-#14 53.63 Installing collected packages: multipledispatch, wrapt, tqdm, toolz, threadpoolctl, slicer, pyparsing, pillow, numpy, mdurl, llvmlite, kiwisolver, joblib, fonttools, filelock, cycler, cloudpickle, cachetools, absl-py, scipy, patsy, pandas, numba, markdown-it-py, logical-unification, h5netcdf, dm-tree, contourpy, xarray, statsmodels, sparse, scikit-learn, rich, matplotlib, lightgbm, cons, xarray-einstats, shap, seaborn, etuples, miniKanren, econml, arviz, pytensor, pymc, jupyterlab-vim
-#14 67.59 
-#14 67.59 Successfully installed absl-py-2.4.0 arviz-0.18.0 cachetools-7.0.4 cloudpickle-3.1.2 cons-0.4.7 contourpy-1.3.3 cycler-0.12.1 dm-tree-0.1.9 econml-0.16.0 etuples-0.3.10 filelock-3.25.0 fonttools-4.61.1 h5netcdf-1.8.1 joblib-1.5.3 jupyterlab-vim-4.1.4 kiwisolver-1.4.9 lightgbm-4.6.0 llvmlite-0.46.0 logical-unification-0.4.7 markdown-it-py-4.0.0 matplotlib-3.10.8 mdurl-0.1.2 miniKanren-1.0.5 multipledispatch-1.0.0 numba-0.64.0 numpy-1.26.4 pandas-3.0.1 patsy-1.0.2 pillow-12.1.1 pymc-5.16.2 pyparsing-3.3.2 pytensor-2.25.5 rich-14.3.3 scikit-learn-1.6.1 scipy-1.17.1 seaborn-0.13.2 shap-0.48.0 slicer-0.0.8 sparse-0.18.0 statsmodels-0.14.6 threadpoolctl-3.6.0 toolz-1.1.0 tqdm-4.67.3 wrapt-2.1.2 xarray-2026.2.0 xarray-einstats-0.9.1
-#14 DONE 69.4s
+#14 [linux/arm64  9/10] RUN /install/version.sh 2>&1 | tee version.log
+#14 CACHED
 
-#15 [11/16] RUN mkdir /install
-#15 DONE 0.1s
-
-#16 [12/16] ADD etc_sudoers /install/
-#16 DONE 0.1s
-
-#17 [13/16] COPY etc_sudoers /etc/sudoers
-#17 DONE 0.0s
-
-#18 [14/16] COPY bashrc /root/.bashrc
-#18 DONE 0.1s
-
-#19 [15/16] ADD version.sh /install/
-#19 DONE 0.0s
-
-#20 [16/16] RUN /install/version.sh 2>&1 | tee version.log
-#20 0.109 # Python3
-#20 0.110 Python 3.12.3
-#20 0.110 # pip3
-#20 0.193 pip 26.0.1 from /venv/lib/python3.12/site-packages/pip (python 3.12)
-#20 0.207 # jupyter
-#20 1.133 Selected Jupyter core packages...
-#20 1.133 IPython          : 9.10.0
-#20 1.133 ipykernel        : 7.2.0
-#20 1.133 ipywidgets       : not installed
-#20 1.133 jupyter_client   : 8.8.0
-#20 1.133 jupyter_core     : 5.9.1
-#20 1.133 jupyter_server   : 2.17.0
-#20 1.133 jupyterlab       : 4.5.4
-#20 1.133 nbclient         : 0.10.4
-#20 1.133 nbconvert        : 7.17.0
-#20 1.133 nbformat         : 5.10.4
-#20 1.133 notebook         : not installed
-#20 1.133 qtconsole        : not installed
-#20 1.133 traitlets        : 5.14.3
-#20 1.294 # Python packages
-#20 1.434 Package                   Version
-#20 1.434 ------------------------- -----------
-#20 1.434 absl-py                   2.4.0
-#20 1.434 anyio                     4.12.1
-#20 1.434 argon2-cffi               25.1.0
-#20 1.434 argon2-cffi-bindings      25.1.0
-#20 1.434 arrow                     1.4.0
-#20 1.434 arviz                     0.18.0
-#20 1.434 asttokens                 3.0.1
-#20 1.434 async-lru                 2.2.0
-#20 1.434 attrs                     25.4.0
-#20 1.434 babel                     2.18.0
-#20 1.435 beautifulsoup4            4.14.3
-#20 1.435 bleach                    6.3.0
-#20 1.435 cachetools                7.0.4
-#20 1.435 certifi                   2026.1.4
-#20 1.436 cffi                      2.0.0
-#20 1.436 charset-normalizer        3.4.4
-#20 1.436 cloudpickle               3.1.2
-#20 1.436 comm                      0.2.3
-#20 1.436 cons                      0.4.7
-#20 1.436 contourpy                 1.3.3
-#20 1.436 cycler                    0.12.1
-#20 1.436 debugpy                   1.8.20
-#20 1.436 decorator                 5.2.1
-#20 1.436 defusedxml                0.7.1
-#20 1.436 dm-tree                   0.1.9
-#20 1.436 econml                    0.16.0
-#20 1.436 etuples                   0.3.10
-#20 1.436 executing                 2.2.1
-#20 1.436 fastjsonschema            2.21.2
-#20 1.436 filelock                  3.25.0
-#20 1.436 fonttools                 4.61.1
-#20 1.436 fqdn                      1.5.1
-#20 1.436 h11                       0.16.0
-#20 1.436 h5netcdf                  1.8.1
-#20 1.436 httpcore                  1.0.9
-#20 1.436 httpx                     0.28.1
-#20 1.436 idna                      3.11
-#20 1.436 ipykernel                 7.2.0
-#20 1.436 ipython                   9.10.0
-#20 1.436 ipython_pygments_lexers   1.1.1
-#20 1.436 isoduration               20.11.0
-#20 1.436 jedi                      0.19.2
-#20 1.436 Jinja2                    3.1.6
-#20 1.436 joblib                    1.5.3
-#20 1.436 json5                     0.13.0
-#20 1.436 jsonpointer               3.0.0
-#20 1.436 jsonschema                4.26.0
-#20 1.436 jsonschema-specifications 2025.9.1
-#20 1.436 jupyter_client            8.8.0
-#20 1.436 jupyter_core              5.9.1
-#20 1.436 jupyter-events            0.12.0
-#20 1.436 jupyter-lsp               2.3.0
-#20 1.437 jupyter_server            2.17.0
-#20 1.437 jupyter_server_terminals  0.5.4
-#20 1.437 jupyterlab                4.5.4
-#20 1.437 jupyterlab_pygments       0.3.0
-#20 1.437 jupyterlab_server         2.28.0
-#20 1.437 jupyterlab-vim            4.1.4
-#20 1.437 kiwisolver                1.4.9
-#20 1.437 lark                      1.3.1
-#20 1.437 lightgbm                  4.6.0
-#20 1.437 llvmlite                  0.46.0
-#20 1.437 logical-unification       0.4.7
-#20 1.437 markdown-it-py            4.0.0
-#20 1.437 MarkupSafe                3.0.3
-#20 1.437 matplotlib                3.10.8
-#20 1.437 matplotlib-inline         0.2.1
-#20 1.437 mdurl                     0.1.2
-#20 1.438 miniKanren                1.0.5
-#20 1.438 mistune                   3.2.0
-#20 1.438 multipledispatch          1.0.0
-#20 1.438 nbclient                  0.10.4
-#20 1.438 nbconvert                 7.17.0
-#20 1.438 nbformat                  5.10.4
-#20 1.438 nest-asyncio              1.6.0
-#20 1.438 notebook_shim             0.2.4
-#20 1.438 numba                     0.64.0
-#20 1.438 numpy                     1.26.4
-#20 1.438 packaging                 26.0
-#20 1.438 pandas                    3.0.1
-#20 1.438 pandocfilters             1.5.1
-#20 1.438 parso                     0.8.6
-#20 1.438 patsy                     1.0.2
-#20 1.438 pexpect                   4.9.0
-#20 1.438 pillow                    12.1.1
-#20 1.438 pip                       26.0.1
-#20 1.438 platformdirs              4.9.2
-#20 1.438 prometheus_client         0.24.1
-#20 1.438 prompt_toolkit            3.0.52
-#20 1.438 psutil                    7.2.2
-#20 1.438 ptyprocess                0.7.0
-#20 1.438 pure_eval                 0.2.3
-#20 1.439 pycparser                 3.0
-#20 1.439 Pygments                  2.19.2
-#20 1.439 pymc                      5.16.2
-#20 1.439 pyparsing                 3.3.2
-#20 1.439 pytensor                  2.25.5
-#20 1.439 python-dateutil           2.9.0.post0
-#20 1.439 python-json-logger        4.0.0
-#20 1.439 PyYAML                    6.0.3
-#20 1.439 pyzmq                     27.1.0
-#20 1.439 referencing               0.37.0
-#20 1.439 requests                  2.32.5
-#20 1.439 rfc3339-validator         0.1.4
-#20 1.439 rfc3986-validator         0.1.1
-#20 1.439 rfc3987-syntax            1.1.0
-#20 1.439 rich                      14.3.3
-#20 1.439 rpds-py                   0.30.0
-#20 1.439 scikit-learn              1.6.1
-#20 1.439 scipy                     1.17.1
-#20 1.440 seaborn                   0.13.2
-#20 1.440 Send2Trash                2.1.0
-#20 1.440 setuptools                82.0.0
-#20 1.440 shap                      0.48.0
-#20 1.440 six                       1.17.0
-#20 1.440 slicer                    0.0.8
-#20 1.440 soupsieve                 2.8.3
-#20 1.440 sparse                    0.18.0
-#20 1.440 stack-data                0.6.3
-#20 1.440 statsmodels               0.14.6
-#20 1.440 terminado                 0.18.1
-#20 1.440 threadpoolctl             3.6.0
-#20 1.440 tinycss2                  1.4.0
-#20 1.440 toolz                     1.1.0
-#20 1.440 tornado                   6.5.4
-#20 1.440 tqdm                      4.67.3
-#20 1.440 traitlets                 5.14.3
-#20 1.440 typing_extensions         4.15.0
-#20 1.440 tzdata                    2025.3
-#20 1.440 uri-template              1.3.0
-#20 1.440 urllib3                   2.6.3
-#20 1.440 wcwidth                   0.6.0
-#20 1.440 webcolors                 25.10.0
-#20 1.441 webencodings              0.5.1
-#20 1.441 websocket-client          1.9.0
-#20 1.441 wrapt                     2.1.2
-#20 1.441 xarray                    2026.2.0
-#20 1.441 xarray-einstats           0.9.1
-#20 DONE 1.5s
-
-#21 exporting to image
-#21 exporting layers
-#21 exporting layers 1.8s done
-#21 writing image sha256:501bea8ef5c78225683a1616ee55d0d6a7d0246f425d1c3921e3ecd61bea5742
-#21 writing image sha256:501bea8ef5c78225683a1616ee55d0d6a7d0246f425d1c3921e3ecd61bea5742 done
-#21 naming to docker.io/gpsaggese/umd_causal_success_analysis done
-#21 DONE 1.9s
-
- [33m1 warning found (use docker --debug to expand):
-[0m - LegacyKeyValueFormat: "ENV key=value" should be used instead of legacy "ENV key value" format (line 2)
+#15 exporting to oci image format
+#15 exporting layers done
+#15 exporting manifest sha256:730a2f097ea7bcfd39a0c2a1497235b9db301d96264a56fccd9555eddadb0e28 done
+#15 exporting config sha256:f3b8dd932827bfe91ede6437d514d561fa91fe4e6bf3ce3b7adeeb92a64fb0c5 done
+#15 exporting manifest list sha256:2c99fee7dda7fc04adb60c20a4911744435f098c5ded7058492b897dca74c154 done
+#15 sending tarball
+#15 sending tarball 6.9s done
+#15 DONE 7.0s
+gpsaggese/umd_project_template:latest

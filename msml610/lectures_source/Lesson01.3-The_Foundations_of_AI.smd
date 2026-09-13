@@ -1,0 +1,558 @@
+// type=UMD_slides
+// course_title=MSML610: Advanced Machine Learning
+// lesson_title=L01.3: The Foundations of AI
+// slides_engine=typst
+// references=
+// - AIMA (Artificial Intelligence: a Modern Approach), Chap 1
+
+// ![](msml610/lectures_source/figures/book_covers/Book_cover_AIMA.jpg){ height=20% }
+
+# The Foundations of AI
+
+## Overview
+
+* AI Relates to Many Other Disciplines
+
+```mermaid
+mindmap
+  root((AI))
+    Philosophy
+    Mathematics
+    Economics
+    Neuroscience
+    Psychology
+    Computer engineering
+    Control theory
+    Linguistics
+```
+
+## Philosophy
+
+* AI and Philosophy (1/2)
+
+- @Question@: can formal rules be used to draw valid conclusions?
+  - @Comparison@:
+    - _Reasoning_: logic studies rules of proper reasoning
+      - Aristotle (384-322 BCE) formulated laws governing the rational mind
+      - Machines were built for arithmetic operations (e.g., Pascaline,
+        1642)
+    - _Rationalism_: use reasoning to understand the world
+
+- @Question@: how does the mind arise from a physical brain?
+  - @Comparison@:
+    - _Dualism_: nature follows physical laws
+      - Part of the human mind (_"the soul"_) is exempt from physical laws
+    - _Materialism_: the mind is a physical system, following the laws of
+      physics
+      - Where is free will? Free will is the perception of available
+        choices
+
+* AI and Philosophy (2/2)
+
+::: columns
+:::: {.column width=75%}
+
+- @Question@: what does knowledge come from?
+  - @Comparison@:
+    - _Empiricism_: knowledge acquired via senses
+      - E.g., learn that trees are green by looking at them
+    - _Induction_: general rules from associations
+      - E.g., many swans are white, infer all swans are white
+    - _Logical Positivism_: knowledge as logical theories linked to
+      observations
+      - E.g., scientific hypotheses connected to experimental data
+
+::::
+:::: {.column width=20%}
+
+![](msml610/lectures_source/figures/L01.2.black_swans.jpg)
+
+::::
+:::
+
+- @Question@: how does knowledge lead to action?
+  - @Comparison@:
+    - _Consequentialism_: right or wrong determined by an action's expected
+      outcomes
+      - _Utilitarianism_ is the classical form: actions are justified by
+        the goals and outcomes they produce
+      - E.g., a policy is judged by whether it raises overall well-being,
+        not by the rule it follows
+    - _Deontological ethics_: _"right actions"_ based on universal laws,
+      not outcomes
+      - E.g., _"don't kill"_, _"don't lie"_
+
+## Mathematics and Computation
+
+* AI and Mathematics
+
+- @Question@: what are the formal rules to draw valid conclusions?
+  - @Comparison@:
+    - _Formal logic_: logical deduction rules (Boole, 1847)
+      - First-order logic includes objects and relations (Frege, 1879)
+    - _Limits to deduction_: some statements are _"undecidable"_
+      - Incompleteness theorem: in any formal theory, true statements exist
+        that cannot be proved (Godel, 1931) `#cite("godel1931incompleteness")`{=typst}
+
+- @Question@: how do we reason with uncertain information?
+  - @Comparison@:
+    - _Probability_: mathematics of uncertainty
+      - Cardano, Pascal, Bernoulli, Bayes (1500s-1700s)
+    - _Statistics_: combines data with probability
+      - E.g., experiment design, data analysis, hypothesis testing,
+        asymptotics
+
+```{=typst}
+#styled-table(
+  headers: ("Field", "Key Contributors", "Era"),
+  rows: (
+    ("Formal Logic", "Boole, Frege, Godel", "1847 - 1931"),
+    ("Probability & Statistics", "Cardano, Pascal, Bernoulli, Bayes", "1500s - 1700s"),
+  ),
+  bold-first-col: true,
+)
+```
+
+* AI and Computer Science
+
+::: columns
+:::: {.column width=80%}
+
+- @Question@: what can be computed?
+  - @Comparison@:
+    - _Algorithm_: procedure to solve problems
+      - E.g., algorithm for computing GCD (Euclid, 300 BCE)
+    - _Limits to computation_: some functions are non-computable
+      - Turing machine (1936): computes any computable function
+        `#cite("turing1936computable")`{=typst}
+      - E.g., the halting problem, i.e., decide if a program terminates
+    - _Tractability_: complexity classes: polynomial vs exponential
+      complexity
+      - Problem is intractable if solving time grows exponentially with
+        size
+      - P vs NP
+
+::::
+:::: {.column width=20%}
+
+![](msml610/lectures_source/figures/L01.3.Alan_Turing.jpg)
+
+\footnotesize _Alan Turing (1951)_
+::::
+:::
+
+## Economics
+
+* AI and Economics (1/2)
+
+::: columns
+:::: {.column width=68%}
+
+- @Question@: how to decide to maximize payoff given preferences?
+  - @Comparison@:
+    - _Economies_: agents maximize economic well-being (utility)
+      - Studies desires and preferences
+    - _Decision theory_: deciding under uncertainty for preferred outcomes
+      - Probability theory + utility theory
+
+- @Question@: how to decide when payoffs result from a sequence of
+  actions?
+  - @Comparison@:
+    - _Operations research_: rational decisions over a sequence of actions
+      (Bellman, 1957) `#cite("bellman1957dp")`{=typst}
+      - E.g., Markov Decision Processes
+    - _Satisficing_: decisions that are good enough
+      - Closer to human behavior `#cite("simon1956satisficing")`{=typst}
+      - E.g., picking a decent restaurant instead of the perfect one
+
+::::
+:::: {.column width=30%}
+
+```graphviz
+digraph DecisionTheory {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.4;
+    ranksep=0.4;
+    rankdir=TB;
+
+    node [shape=box,
+          style="rounded,filled",
+          penwidth=1.8,
+          fontname="Helvetica",
+          fontsize=12,
+          margin="0.22,0.14",
+          height=0.50];
+
+    edge [color="#A3B1C0",
+          penwidth=1.3,
+          arrowhead=vee,
+          arrowsize=0.75,
+          fontname="Helvetica",
+          fontsize=10,
+          fontcolor="#7B8794"];
+
+    Prob    [label="Probability\nTheory", fillcolor="#A6E7F4", color="#5FB0C4", fontcolor="#1F4E56"];
+    Utility [label="Utility\nTheory", fillcolor="#A6E7F4", color="#5FB0C4", fontcolor="#1F4E56"];
+    Dec     [label="Decision\nTheory", fillcolor="#A6C8F4", color="#5A85C4", fontcolor="#1F3E6B"];
+
+    { rank=same; Prob; Utility; }
+    Prob -> Dec;
+    Utility -> Dec;
+}
+```
+
+::::
+:::
+
+* AI and Economics (2/2)
+
+- @Question@: how do multiple agents with different goals act?
+  - @Comparison@:
+    - _Large economies_: many agents with no mutual impact
+      - Ignore other agents' actions
+      - E.g., national economy where individual actions don't affect the
+        market
+    - _Small economies_: one player's actions influence others' utility
+      - E.g., local market where one seller's pricing affects competitors
+    - _Game theory_: small economies resemble a _"game"_ (von Neumann and
+      Morgenstern, 1944) `#cite("vonneumann1944gametheory")`{=typst}
+      - Rational agents might need randomized strategies
+      - E.g., rock-paper-scissors where randomization prevents
+        predictability
+
+```{=typst}
+#styled-table(
+  headers: ("Aspect", "Large Economies", "Small Economies", "Game Theory"),
+  rows: (
+    ("Mutual impact", "None, agents ignored", "One agent affects others' utility", "Agents strategize against each other"),
+    ("Example", "National economy", "Local market pricing", "Rock-paper-scissors"),
+  ),
+  bold-first-col: true,
+)
+```
+
+## Neuroscience and Psychology
+
+* AI and Neuroscience
+
+::: columns
+:::: {.column width=65%}
+
+- @Definition@: the **brain** processes information, with different parts
+  handling specific cognitive functions
+  - Information processing occurs in the cerebral cortex
+  - E.g., frontal lobe injury may impair decision-making
+
+- @Components@: anatomy of the brain
+  - Composed of ~100 billion neurons
+    - Each neuron connects with 10-100k others via synapses and axons
+  - Signals propagate through electrochemical reactions
+  - Short-term pathways support long-term connections (learning)
+
+- @Remark@: memory
+  - No unified theory of storage; current view: memories are reconstructed
+
+::::
+:::: {.column width=35%}
+
+![](msml610/lectures_source/figures/L01.2.brain.jpg)
+![](msml610/lectures_source/figures/L01.2.neuron.png)
+
+::::
+:::
+
+* The Brain Causes the Mind
+
+- @Remark@: simple cells give rise to thought and consciousness
+
+- @Remark@: supercomputers exceed the brain in raw compute, but still lack
+  its flexibility, learning speed, and energy efficiency
+
+- @Example@: brain-machine interfaces
+  - Brain adjusts to devices, e.g., learning to use prosthetics as limbs
+
+- @Definition@: the **AI singularity** is the future point when AI
+  surpasses human intelligence
+  - AI improves autonomously, leading to rapid growth
+  - Recursive self-improvement leads to superintelligence
+    `#cite("good1965ultraintelligent")`{=typst}
+  - Potential societal impact: the control problem/value alignment
+    (ensuring AI aligns with human values) and economic/social disruption
+    from automation
+  - Achieving the brain's intelligence level remains unknown
+
+```graphviz[width=28%]
+digraph Singularity {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.4;
+    ranksep=0.5;
+    rankdir=LR;
+
+    node [shape=box,
+          style="rounded,filled",
+          penwidth=1.8,
+          fontname="Helvetica",
+          fontsize=12,
+          margin="0.22,0.14",
+          height=0.50];
+
+    edge [color="#A3B1C0",
+          penwidth=1.3,
+          arrowhead=vee,
+          arrowsize=0.75,
+          fontname="Helvetica",
+          fontsize=10,
+          fontcolor="#7B8794"];
+
+    AI      [label="AI\nSystem", fillcolor="#F4A6A6", color="#D46A6A", fontcolor="#6B1F1F"];
+    Improve [label="Improves\nItself", fillcolor="#A0D6D1", color="#4F9A8C", fontcolor="#1F4E45"];
+    Capable [label="Capability\nIncreases", fillcolor="#A6C8F4", color="#5A85C4", fontcolor="#1F3E6B"];
+    Super   [label="Super-\nintelligence", fillcolor="#C6A6F4", color="#8A5FCC", fontcolor="#3E1F6B"];
+
+    AI -> Improve;
+    Improve -> Capable;
+    Capable -> AI [style=dashed, constraint=false, label="  recursive loop"];
+    Capable -> Super [label="  over time"];
+}
+```
+
+* AI and Cognitive Psychology
+
+- @Question@: how do humans think and act?
+  - @Comparison@:
+    - _Cognitive psychology_: the brain is an information-processing
+      device
+      - Stimuli translated into internal representation
+      - Representation manipulated by cognitive processes to derive new
+        internal representations (_"beliefs"_)
+      - Representations turned into actions (_"goals"_)
+    - _Cognitive science_: uses computer models to address memory,
+      language, and logical thinking
+      - Draws on AI's computational models to explain human cognition,
+        making it a close cousin of AI, not its opposite
+    - _Human-computer interaction_: computers augment human abilities
+      - From artificial intelligence (AI) to intelligence augmentation
+
+```graphviz
+digraph CognitivePsychology {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.5;
+    ranksep=0.6;
+    rankdir=LR;
+
+    node [shape=box,
+          style="rounded,filled",
+          penwidth=1.8,
+          fontname="Helvetica",
+          fontsize=12,
+          margin="0.22,0.14",
+          height=0.50];
+
+    edge [color="#A3B1C0",
+          penwidth=1.3,
+          arrowhead=vee,
+          arrowsize=0.75,
+          fontname="Helvetica",
+          fontsize=10,
+          fontcolor="#7B8794"];
+
+    Stimuli [label="Stimuli", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+    Repr    [label="Internal\nRepresentation", fillcolor="#A6E7F4", color="#5FB0C4", fontcolor="#1F4E56"];
+    Process [label="Cognitive\nProcesses", fillcolor="#A0D6D1", color="#4F9A8C", fontcolor="#1F4E45"];
+    Beliefs [label="Beliefs", fillcolor="#A6C8F4", color="#5A85C4", fontcolor="#1F3E6B"];
+    Actions [label="Actions\n(Goals)", fillcolor="#B2E2B2", color="#4F9A5C", fontcolor="#1F4E2E"];
+
+    Stimuli -> Repr;
+    Repr -> Process;
+    Process -> Beliefs [label="  new representations"];
+    Beliefs -> Actions;
+    Beliefs -> Process [style=dashed, constraint=false, label="  update"];
+}
+```
+
+## Engineering, Control, and Language
+
+* AI and Computer Engineering (1/2)
+
+::: columns
+:::: {.column width=55%}
+
+- @Question@: how has computing hardware evolved to become fast enough for
+  AI?
+  - @Definition@: **electronic computers** were built during World War II
+
+  - @Definition@: **Moore's Law**: performance doubled every 18 months
+    (1970-2005) `#cite("moore1965cramming")`{=typst}
+    - Power and scaling issues shifted focus to multi-core over clock speed
+
+::::
+:::: {.column width=40%}
+
+![](msml610/lectures_source/figures/L01.2.eniac.png)
+![](msml610/lectures_source/figures/L01.2.Moore_Law.png)
+
+::::
+:::
+
+* AI and Computer Engineering (2/2)
+
+::: columns
+:::: {.column width=55%}
+
+- @Question@: what hardware trends are shaping AI systems today?
+  - @Definition@: **hardware for AI**
+    - GPUs
+    - TPUs
+    - Wafer-scale engines
+
+  - @Characteristics@: current trends
+    - Massive parallelism (like brain function)
+    - Training compute has doubled every 3-4 months since 2012, far
+      outpacing Moore's Law, driven by more/better chips and spending,
+      not silicon gains alone
+    - GPUs / TPUs used in deep learning
+    - High precision (e.g., 64b) often unnecessary
+
+::::
+:::: {.column width=40%}
+
+![](msml610/lectures_source/figures/L01.2.CPU_GPU_TPU.png)
+
+- @Definition@: **quantum computing** has the potential for significant
+  acceleration in key computations
+  - E.g., Shor's algorithm for factorization `#cite("shor1997factoring")`{=typst}
+
+::::
+:::
+
+* AI and Control Theory
+
+- @Question@: how can artifacts operate under their own control?
+  - @Definition@: **control theory** studies self-regulating feedback
+    control systems
+    - E.g., a water regulator that maintains a constant water flow
+    - Mechanisms to minimize error between current and goal states
+    - Kalman Filter (Kalman, 1960) `#cite("kalman1960filtering")`{=typst}
+    - Based on calculus, matrix, stochastic optimal control
+    - AI: logical inference, symbolic planning, computation
+
+```graphviz
+digraph ControlLoop {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.5;
+    ranksep=0.5;
+    rankdir=LR;
+
+    node [shape=box,
+          style="rounded,filled",
+          penwidth=1.8,
+          fontname="Helvetica",
+          fontsize=12,
+          margin="0.22,0.14",
+          height=0.50];
+
+    edge [color="#A3B1C0",
+          penwidth=1.3,
+          arrowhead=vee,
+          arrowsize=0.75,
+          fontname="Helvetica",
+          fontsize=10,
+          fontcolor="#7B8794"];
+
+    Goal       [label="Goal\nState", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+    Controller [label="Controller", fillcolor="#A0D6D1", color="#4F9A8C", fontcolor="#1F4E45"];
+    System     [label="System", fillcolor="#A6C8F4", color="#5A85C4", fontcolor="#1F3E6B"];
+    Output     [label="Current\nState", fillcolor="#B2E2B2", color="#4F9A5C", fontcolor="#1F4E2E"];
+
+    Goal -> Controller [label="  error"];
+    Controller -> System;
+    System -> Output;
+    Output -> Controller [style=dashed, constraint=false, label="  feedback"];
+}
+```
+
+* AI and Linguistics
+
+- @Question@: how can you create systems that understand natural language?
+  - @Definition@: **computational linguistics** studies sentence structure
+    and meaning
+    - Applications: machine translation (e.g., Google Translate),
+      sentiment analysis in social media, automated customer support
+      chatbots
+
+- @Question@: how does language relate to thought?
+  - @Definition@: **knowledge representation** studies how to represent
+    knowledge for computer reasoning
+    - E.g., first-order logic, knowledge graphs
+
+```graphviz[width=42%]
+digraph Linguistics {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.4;
+    ranksep=0.5;
+    rankdir=LR;
+
+    node [shape=box,
+          style="rounded,filled",
+          penwidth=1.8,
+          fontname="Helvetica",
+          fontsize=12,
+          margin="0.22,0.14",
+          height=0.50];
+
+    edge [color="#A3B1C0",
+          penwidth=1.3,
+          arrowhead=vee,
+          arrowsize=0.75,
+          fontname="Helvetica",
+          fontsize=10,
+          fontcolor="#7B8794"];
+
+    NL     [label="Natural\nLanguage", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+    CL     [label="Computational\nLinguistics", fillcolor="#A0D6D1", color="#4F9A8C", fontcolor="#1F4E45"];
+    KR     [label="Knowledge\nRepresentation", fillcolor="#A0D6D1", color="#4F9A8C", fontcolor="#1F4E45"];
+    Trans  [label="Machine\nTranslation", fillcolor="#A6C8F4", color="#5A85C4", fontcolor="#1F3E6B"];
+    Sent   [label="Sentiment\nAnalysis", fillcolor="#A6C8F4", color="#5A85C4", fontcolor="#1F3E6B"];
+    Chat   [label="Chatbots", fillcolor="#A6C8F4", color="#5A85C4", fontcolor="#1F3E6B"];
+    Reason [label="Reasoning", fillcolor="#A6C8F4", color="#5A85C4", fontcolor="#1F3E6B"];
+
+    NL -> CL;
+    NL -> KR;
+    CL -> Trans;
+    CL -> Sent;
+    CL -> Chat;
+    KR -> Reason;
+
+    { rank=same; Trans; Sent; Chat; Reason; }
+}
+```
+
+## Wrap-Up
+
+* Key Takeaways
+
+- @Key idea@: AI did not emerge from a single field — it inherited its core
+  questions, formalisms, and tools from philosophy, mathematics, economics,
+  neuroscience, psychology, computer science and engineering, control
+  theory, and linguistics
+
+- @Remark@: many of the foundational questions (can machines reason? does
+  the mind reduce to physics? how should a rational agent act under
+  uncertainty?) remain open and continue to shape AI research today
+
+* References
+
+```{=typst}
+#set text(size: 0.75em)
+#references("/msml610/lectures_source/refs.bib")
+```

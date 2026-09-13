@@ -1,0 +1,515 @@
+// type=UMD_slides
+// course_title=MSML610: Advanced Machine Learning
+// lesson_title=L01.2: AI and Machine Learning
+// slides_engine=typst
+// references=
+// - AIMA (Artificial Intelligence: a Modern Approach), Chap 1
+
+// ![](msml610/lectures_source/figures/book_covers/Book_cover_AIMA.jpg){ height=20% }
+
+# What Is Intelligence? What is AI?
+
+* ML, AI, and Intelligence
+
+- @Definition@: **Machine Learning** is a subset of Artificial Intelligence (AI)
+  - Often confused with _deep learning_, _large-language models_, _predictive
+    analytics_, and other related fields
+
+- @Question@: What is **artificial intelligence**?
+  - First, understand what _human intelligence_ is
+
+- @Question@: What is **human intelligence**?
+  - We call ourselves _"homo sapiens"_ because intelligence sets us apart from
+    animals
+  - For thousands of years, we tried to understand how we think
+  - One of the _biggest mysteries_ of nature
+    - Brain is small matter, yet grasps universe's secrets
+      - E.g., theory of relativity, quantum mechanics, abstract mathematics and its
+        limitation like Godel's incompleteness theorems, theory of computation
+    - How can the brain understand, predict, and manipulate a world more complex than
+      itself?
+
+* Artificial Intelligence
+
+::: columns
+:::: {.column width=80%}
+
+// TODO(ai_gp): Add a pic of the darthmouth meeting
+- @Definition@: The term _"Artificial Intelligence"_ was coined in 1956
+  `#cite("mccarthy1955dartmouth")`{=typst}
+
+- @Goal@
+  - Understand human intelligence
+  - Create intelligent entities
+  - _"What I cannot create, I do not understand"_ (Feynman, 1988)
+
+- @Characteristics@
+  - Applies to any human activity and task
+  - Impact exceeds any past historical event
+  - Generates hundreds of billions of dollars annually in market revenue,
+    with trillions in global economic impact projected by 2030
+    `#cite("bughin2018aifrontier")`{=typst}
+  - Has many unresolved problems, unlike disciplines with settled core
+    theories (e.g., arithmetic, Newtonian mechanics within its domain)
+
+::::
+:::: {.column width=20%}
+
+![](msml610/lectures_source/figures/L01.2.Richard_Feynman.jpg)
+
+\footnotesize _Richard Feynman (1965)_
+::::
+:::
+
+* AI Formal Definition
+
+::: columns
+:::: {.column width=65%}
+
+- @Definition@: AI is characterized along **two key axes** `#cite("russell2020aima")`{=typst}
+  - Thinking vs. Acting
+  - Human vs. Rational (ideal performance)
+
+- **Four resulting definitions**: AI as a machine that can:
+  1. Think humanly
+  2. Think rationally
+  3. Act humanly
+  4. Act rationally
+
+- @Question@: Which definition best captures what AI should aim for?
+
+- @Key idea@: Building machines that **act rationally** is the ultimate goal
+  of AI
+
+::::
+:::: {.column width=30%}
+
+```{=typst}
+#styled-table(
+  headers: ("", "Human", "Rational"),
+  rows: (
+    ("Thinking", "Think humanly", "Think rationally"),
+    ("Acting", "Act humanly", "Act rationally"),
+  ),
+  bold-first-col: true,
+)
+```
+
+::::
+:::
+
+* 1. AI as Thinking Humanly
+
+- @Problem@: To build machines that think like humans, first **determine how
+  humans think**
+
+- @Pros@
+  - Express precise theory of the human mind as a computer program
+
+- @Cons@
+  - Unknown workings of the human mind
+  - Anthropocentric definition
+
+* 2. AI as Thinking Rationally
+
+::: columns
+:::: {.column width=65%}
+
+- @Question@: What are the rules of **correct thinking**?
+  - Given correct premises, yield correct conclusions
+
+- @Techniques@: **Logic** studies the "laws of thought"
+  - Formalize statements about objects and their relations
+
+- @Techniques@: **Automatic theorem proving**
+  - Programs solve problems in logical notation
+  - Runs indefinitely if no solution exists, since first-order validity is
+    only semi-decidable
+
+::::
+:::: {.column width=30%}
+
+```graphviz
+digraph laws_of_thought {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.4;
+    ranksep=0.5;
+    rankdir=TB;
+
+    node [shape=box,
+          style="rounded,filled",
+          penwidth=1.8,
+          fontname="Helvetica",
+          fontsize=12,
+          margin="0.22,0.14",
+          height=0.50];
+
+    edge [color="#A3B1C0",
+          penwidth=1.3,
+          arrowhead=vee,
+          arrowsize=0.75,
+          fontname="Helvetica",
+          fontsize=10,
+          fontcolor="#7B8794"];
+
+    premises [label="Correct\npremises", fillcolor="#A9DDB0", color="#4F9A5C", fontcolor="#1F4E2E"];
+    logic [label="Logic", fillcolor="#FFC98A", color="#D98E2B", fontcolor="#6B4517"];
+    conclusion [label="Correct\nconclusions", fillcolor="#9CC4F2", color="#3C6FB0", fontcolor="#1F4E79"];
+
+    premises -> logic -> conclusion;
+}
+```
+
+::::
+:::
+
+* Thinking Rationally: Challenges
+
+- @Challenges@
+  1. **Formalizing informal knowledge is difficult**
+     - _Example_: _"A handshake occurs when two people extend, grip, shake
+       hands, then release."_
+       $$
+       \begin{aligned}
+         & \exists \; x, y, h_x, h_y \\
+         & \quad Person(x) \land Person(y) \land x \neq y \land {}
+         Hand(x, h_x) \land Hand(y, h_y) \land {} \\
+         & \quad MoveToward(h_x, h_y) \land Contact(h_x, h_y) \land {}
+         Shake(h_x, h_y) \land {} \\
+         &\quad Release(h_x, h_y) \\
+       \end{aligned}
+       $$
+  2. **Probabilistic nature of knowledge**
+     - _Example_: In medicine, _"Fever, cough, and fatigue could indicate flu,
+       COVID-19, or another illness."_
+  3. **Scalability challenges**
+     - Large problems may need heuristics for practical solutions
+  4. **Intelligence requires more than rational thinking**
+     - Agent must interact with the world
+     - Problem of the "embodiment of AI"
+
+* 3. AI as Acting Humanly
+
+- @Definition@: An **agent** is something that perceives and acts to reach a goal
+
+- @Goal@: AI designs **agents that can act like humans**
+
+- @Techniques@: **Turing test** `#cite("turing1950computing")`{=typst}
+  - _"A computer passes the Turing test if a human cannot tell whether the
+    answers to questions came from a person or a computer"_
+
+::: columns
+:::: {.column width=75%}
+
+- @Components@: Passing the **(embodied) Turing test** requires
+  1. Natural language processing to communicate
+  2. Knowledge representation to store information
+  3. Automated reasoning to use knowledge and answer questions
+  4. Machine learning to detect patterns
+  5. Computer vision and speech recognition to perceive and understand
+     speech
+  6. Robotics to manipulate objects and move
+
+::::
+:::: {.column width=25%}
+
+![](msml610/lectures_source/figures/L01.1.Ex_machina.jpg)
+
+::::
+:::
+
+* Turing Test: Pros and Cons
+
+::: columns
+:::: {.column width=50%}
+
+- @Pros@
+  - Operational definition of intelligence
+  - Sidesteps philosophical vagueness (e.g., what is consciousness? can a
+    machine think?)
+
+::::
+:::: {.column width=50%}
+
+- @Cons@
+  - Intelligence defined by **anthropomorphic** criteria in human terms
+    (multiple forms of non-human intelligence exist)
+  - Passing means **fooling humans** into thinking it is human
+
+::::
+:::
+
+- @Example@: Aeronautical engineering is about
+  - Correct: Focus on wind tunnels and aerodynamics
+  - Incorrect: Designing machines that imitate birds
+
+* 4. AI as Acting Rationally
+
+- @Definition@: **Rational agents** are agents that do the _"right thing"_
+  given what they know
+
+- @Characteristics@: Agents that **act rationally** should
+  1. Operate autonomously
+  2. Perceive environment
+  3. Persist over time
+  4. Adapt to change
+  5. Create and pursue goals
+
+* Acting Rationally as Ultimate Goal of AI
+
+::: columns
+:::: {.column width=65%}
+
+- @Question@: Which definition of AI best captures what we should build?
+  - Acting vs. Thinking
+  - Rational vs. Human
+
+- **Acting is more fundamental than Thinking**
+  - Acting rationally is broader than thinking rationally
+
+- **Rational is more objective than Human**
+  - Rationality can be mathematically defined
+  - Human behavior is shaped by evolutionary conditions
+
+- @Key idea@: AI should focus on **agents acting rationally**
+
+::::
+:::: {.column width=30%}
+
+```{=typst}
+#styled-table(
+  headers: ("", "Human", "Rational"),
+  rows: (
+    ("Thinking", "Think humanly", "Think rationally"),
+    ("Acting", "Act humanly", "*Act rationally*"),
+  ),
+  bold-first-col: true,
+)
+```
+
+::::
+:::
+
+* Rationality Is Not Absolute
+
+- @Problem@: AI aims to build agents that **do the right thing**, but what is the
+  _right thing_?
+
+- @Example@: You leave the house and a branch strikes you
+  - _"Did you act rationally?"_
+  - Probably
+
+- @Example@: You cross the street without checking for oncoming traffic and a
+  car knocks you over
+  - _"Did you act rationally?"_
+  - It depends (probably not, since checking first was low-cost)
+
+- @Challenges@: Moral issues with self-driving cars
+  - _"Should a car swerve and hit a pedestrian to avoid a frontal crash that would
+    kill two people?"_
+
+* Problems of a Rational Agent
+
+- @Challenges@: **Probabilistic environment**
+  - A rational agent aims for:
+    - Best outcome in a deterministic setup
+    - Best expected outcome under uncertainty
+
+- @Problem@: What does **"best"** mean?
+  - The classical answer: _"best"_ is determined by the _objective function_
+    - E.g., cost function, sum of rewards, loss function, utility
+  - But things are more complex
+
+- @Limitations@
+  - **Omniscience vs no-regrets**
+    - Best is based on available information, not perfect knowledge
+  - Sometimes **no provably correct action** exists, yet an action must be
+    taken
+  - Even **with perfect information** rationality may not be feasible due to:
+    - Cost of acquiring all data (e.g., in medicine)
+    - Computational demands (e.g., traversing a search tree with more
+      branches than atoms in the observable universe, $\sim 10^{80}$)
+    - Real-time demands (e.g., decide within 1 micro-sec in HFT)
+
+- @Solution@: **"Satisficing"**: Achieve _good enough_ instead of _perfect_
+  `#cite("simon1956satisficing")`{=typst}
+  - Acting appropriately given constraints
+
+# What Is Machine Learning?
+
+* Machine Learning: Definitions
+
+::: columns
+:::: {.column width=75%}
+
+- @Question@: How should we **define machine learning**?
+
+- @Definition@
+  - _"Machine learning is the field of study that gives computers the ability to
+    learn without being explicitly programmed"_ (Samuel, 1959) `#cite("samuel1959checkers")`{=typst}
+  - Machine learning builds machines to do _useful things_ without being _explicitly
+    programmed_
+    - E.g., a computer learns checkers by playing against itself, memorizing
+      winning positions
+  - More formally: _"A computer program is said to learn from experience $E$ with
+    respect to some task $T$ and some performance measure $P$, if $P(T)$ improves
+    with experience $E$"_ (Mitchell, 1997) `#cite("mitchell1997machinelearning")`{=typst}
+
+- @Applications@: Common ML examples include
+  - Computer vision
+  - Speech recognition
+  - Natural language processing
+
+::::
+:::: {.column width=20%}
+
+![](msml610/lectures_source/figures/L01.2.Tom_Mitchell.jpg)
+
+\footnotesize _Tom Mitchell (2025)_
+::::
+:::
+
+* The 3 Machine Learning Assumptions
+
+- @Fact@: ML solves a practical problem of:
+  - Gathering a dataset
+  - _Building a statistical model from the dataset algorithmically_
+  - Evaluating the model
+  - Deploying and monitoring the model
+
+- @Problem@ (Abu-Mostafa, 2012) `#cite("abumostafa2012learning")`{=typst}
+  - Most of the phases are "engineering", but _building the model_ is the "research"
+    part
+  - The **three core assumptions** of machine learning are:
+    1. A _pattern exists_
+    2. Pattern cannot be _precisely defined mathematically_
+    3. _Data is available_
+
+- @Question@: Which assumption is **essential**?
+  1. If no pattern exists, does it make sense to run learning?
+  2. Is it a problem if math can devise the pattern but we still use machine
+     learning?
+  3. Can progress happen without data?
+
+- @Remark@: _Without data, no progress is possible_: data availability is
+  the assumption that is truly essential
+
+* AI vs ML vs Deep Learning
+
+::: columns
+:::: {.column width=65%}
+
+- @Definition@
+  - **AI (Artificial Intelligence)**: Machines programmed to reason, learn, and act
+    in a rational way
+  - **ML (Machine Learning)**: Machines capable of performing tasks without being
+    explicitly programmed
+  - _AI models that are not ML_ is possible
+    - E.g., handcrafted rule-based systems (e.g., IBM Deep Blue playing chess)
+      have no learning from data, but are still an AI system
+
+- @Definition@
+  - **DL (Deep Learning)**: ML using a particular type of models, i.e., neural
+    network with many layers
+  - **LLM (Large Language Models)**: Neural networks trained on massive _text_
+    datasets to predict text, often further tuned with reinforcement learning
+    from human feedback (RLHF) `#cite("ouyang2022instructgpt")`{=typst}
+  - _DL models that are not LLMs_ are possible
+    - E.g., a convolutional neural network for vision or speech is a deep
+      learning system but not an LLM
+
+::::
+:::: {.column width=30%}
+
+```tikz
+% Define colors.
+  \definecolor{AIcolor}{RGB}{244,166,166}    % Red/Pink
+  \definecolor{MLcolor}{RGB}{178,226,178}    % Green
+  \definecolor{DLcolor}{RGB}{160,214,209}    % Teal
+  \definecolor{LLMcolor}{RGB}{198,166,244}   % Purple
+
+  % Draw AI circle
+  \fill[AIcolor] (0,0) circle (3);
+  \draw (0,0) circle (3);
+  \node[above] at (0,2) {\textbf{AI}};
+
+  % Draw ML circle inside AI
+  \fill[MLcolor] (0.5,-0.5) circle (2);
+  \draw (0.5,-0.5) circle (2);
+  \node[above] at (0.5,0.5) {\textbf{ML}};
+
+  % Draw DL circle inside ML
+  \fill[DLcolor] (1,-1) circle (1);
+  \draw (1,-1) circle (1);
+  \node[above] at (1,-0.6) {\textbf{DL}};
+
+  % Draw LLM circle inside DL
+  \fill[LLMcolor] (1.2,-1.2) circle (0.6);
+  \draw (1.2,-1.2) circle (0.6);
+  \node[above] at (1.2,-1.4) {\textbf{LLMs}};
+```
+
+::::
+:::
+
+* Limits of AI Compared to Human Intelligence (1/2)
+
+- @Problem@: **AI and ML differ from human intelligence**
+  - Machines do not learn like humans (e.g., LLMs) and have different limitations
+  - Does the brain use gradient descent? Unclear
+  - Does the brain use reinforcement learning? Probably, in a certain sense
+
+- @Limitations@
+  - **Fragility to input variations**
+    - ML models fail with slight input distortions
+    - Adversarial attacks cause misclassification by altering one pixel
+      `#cite("su2019onepixel")`{=typst}
+    - A model trained on a video game fails if the screen rotates slightly; humans
+      continue effortlessly
+  - **Lack of transfer learning**
+    - ML systems cannot apply knowledge across domains without retraining
+  - **Massive data and compute requirements**
+    - ML requires enormous datasets and computational resources
+    - E.g., a teenager learns to drive in hours, but self-driving systems need
+      billions of compute hours and extensive data
+  - **Poor common sense and reasoning**
+    - ML lacks built-in world knowledge and intuitive logic
+
+* Limits of AI Compared to Human Intelligence (2/2)
+
+- @Limitations@
+  - **Opaque decision-making**
+    - Many ML models offer little transparency into decision processes
+    - Limits trust, interpretability, and accountability in critical applications
+  - **Dependence on narrow objectives**
+    - ML systems excel at optimizing narrow tasks but fail with ambiguous goals
+    - E.g., an algorithm maximizing user engagement may promote harmful content
+  - **Susceptibility to bias and data quality**
+    - Models inherit and amplify biases in training data
+  - **Lack of embodiment and physical interaction**
+    - Human cognition is grounded in physical and sensory experience
+
+* Key Takeaways
+
+- @Key idea@: AI should focus on **agents acting rationally**, not on
+  mimicking human thought or behavior
+
+- @Definition@
+  - **AI**: Machines programmed to reason, learn, and act rationally
+  - **ML**: A subset of AI that performs tasks without being explicitly programmed
+  - **DL**: A subset of ML using multi-layer neural networks
+  - **LLM**: A subset of DL trained on massive text datasets to predict
+    text, often further tuned with RLHF
+
+- @Remark@: Current ML/DL systems, despite their power, still fall short of human
+  intelligence on fragility, transfer learning, data efficiency, and common-sense
+  reasoning
+
+* References
+
+```{=typst}
+#set text(size: 0.75em)
+#references("/msml610/lectures_source/refs.bib")
+```
