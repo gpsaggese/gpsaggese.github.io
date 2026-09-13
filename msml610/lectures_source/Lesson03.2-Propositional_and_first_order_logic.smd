@@ -477,15 +477,15 @@ digraph Satisfiability {
 
 ::: columns
 :::: {.column width=50%}
-- **Constants**: represent specific objects
+- @Constants@: represent specific objects
   - E.g., $Socrates$
-- **Predicates**: describe properties or relations
+- @Predicates@: describe properties or relations
   - E.g., $Human(x)$ = _"x is human"_
-- **Functions**: map tuples of objects to objects
+- @Functions@: map tuples of objects to objects
   - E.g., $Mother(x)$ = _"the mother of x"_
-- **Variables**: act as placeholders
+- @Variables@: act as placeholders
   - E.g., $x, y$
-- **Quantifiers**
+- @Quantifiers@: allow to refer to a specific or multiple variables at once
   - E.g., $\forall x$ (for all $x$)
   - E.g., $\exists x$ (there exists an $x$)
 ::::
@@ -497,10 +497,10 @@ digraph Satisfiability {
 :::
 
 * Sentences
-- **Term** is a logical expression that refers to an object
+- @Term@ is a logical expression that refers to an object
   - E.g., $Richard$
 
-- **Atomic sentence** is a predicate symbol (i.e., corresponds to relations)
+- @Atomic sentence@ is a predicate symbol (i.e., corresponds to relations)
   followed by a list of terms in parenthesis
   $Predicate(Term1, Term2, ...)$
   - E.g., $Brother(Richard, John)$ means _"Richard is the brother of John"_,
@@ -508,31 +508,31 @@ digraph Satisfiability {
   - E.g., $Married(Father(Richard), Mother(John))$ means _"the father of Richard
     and the mother of John are married"_
 
-- **Complex sentence** is a sentence using logical connectives complex, with the
+- @Complex sentence@ is a sentence using logical connectives complex, with the
   same syntax and semantics as in propositional logic
 
-- **Variable** is a term that represents a possible object
+- @Variable@ is a term that represents a possible object
   - Typically represented as lowercase letter (e.g., $x$, $y$, $z$)
   - Can be used as argument of a function, e.g., $LeftLeg(x)$
 
-- **Equality symbol** signifies that two terms refer to the same object
+- @Equality symbol@ signifies that two terms refer to the same object
   - E.g., $Father(John) = Henry$
 
 * Quantifiers
-- **Quantifiers** express properties of entire collections of objects, instead
+- @Quantifiers@ express properties of entire collections of objects, instead
   of
   enumerating objects by name (like done in propositional logic)
 
-- **Universal quantifier**: $\forall x\, P(x)$
+- @Universal quantifier@: $\forall x\, P(x)$
   - Universal quantifier makes a statement about _every_ object
   - Statement is true if $P(x)$ is true for all $x$
 
-- **Existential quantifier**: $\exists x\, P(x)$
+- @Existential quantifier@: $\exists x\, P(x)$
   - Existential quantifier makes a statement about _some_ object (without naming
     it)
   - Statement is true if $P(x)$ is true for at least one $x$
 
-- Variables are **bound** by quantifiers or **free** (unbound)
+- Variables are @bound@ by quantifiers or @free@ (unbound)
   - E.g., $\forall x (Cat(x) \implies Mammal(x))$
 
 * Nested Quantifiers
