@@ -126,7 +126,7 @@ TL;DR: My workflow to run a queue of AI agents that fix issues asynchronously.
   to direct the model to do something in a way that would not surprise me
 
 - I have several skills to help with managing the specs
-  - `/auto_task.create_specs`: specs for a list of TODOs
+  - `/auto_task.create_specs_from_todos`: specs for a list of TODOs
   - `/auto_task.criticize`: to review and improve specs of tasks that will be
     executed asynchrously
 

@@ -1,7 +1,9 @@
 // f69c795f 2026-06-23
 // Import AIMA style formatting and macros
+// TODO(ai_gp): Use root-absolute path instead of relative path; change to `#import "/helpers_root/dev_scripts_helpers/typst/aima_style.typ"` (.claude/skills/typst.rules.md:## Boilerplate and Imports)
 #import "../../helpers_root/dev_scripts_helpers/typst/aima_style.typ": aima-style, algorithm, chapter, glossary, wrap-content
 
+// TODO(ai_gp): Add missing citation import: `#import "/helpers_root/dev_scripts_helpers/typst/umd_references.typ": cite, references` (.claude/skills/typst.rules.md:## Boilerplate and Imports)
 // Document metadata
 #set document(
   title: "Causal Inference for Time Series",
@@ -11,7 +13,10 @@
 // Apply the AIMA document template (page/text/heading set + show rules)
 #show: aima-style
 
+// TODO(ai_gp): Use unnumbered chapter for standalone lesson; change to `#chapter("Causal Inference for Time Series")` without the `10` argument (.claude/skills/typst.rules.md:## The `#chapter(...)` Call)
 #chapter(10, "Causal Inference for Time Series")
+
+// TODO(ai_gp): Add mandatory `= Roadmap` section right after `#chapter(...)` before content sections (.claude/skills/typst.rules.md:## Mandatory Sections)
 
 == Introduction and Core Concepts
 
@@ -24,6 +29,10 @@ approaches. The distinguishing feature is #strong[temporal structure]: in time
 series, we observe the same units repeatedly over time, creating opportunities
 and challenges absent in cross-sectional designs.
 
+// TODO(ai_gp): Use `#emph[itself]` instead of markdown `*itself*` (.claude/skills/typst.rules.md:## Typst Vs. Markdown Syntax)
+// TODO(ai_gp): Use `#emph[before]` instead of markdown `*before*` (.claude/skills/typst.rules.md:## Typst Vs. Markdown Syntax)
+// TODO(ai_gp): Use `#emph[after]` instead of markdown `*after*` (.claude/skills/typst.rules.md:## Typst Vs. Markdown Syntax)
+// TODO(ai_gp): Use `#emph[not]` instead of markdown `*not*` (.claude/skills/typst.rules.md:## Typst Vs. Markdown Syntax)
 #strong[Univariate time series causal inference] compares a unit to *itself*
 over time. For example, economists might compare a city's crime rate *before*
 and *after* a new policing policy. The unit serves as its own control, but this
@@ -53,6 +62,7 @@ knowledge to reason counterfactually.
 In time series causal models, we typically observe sequences of variables over
 time: a treatment process $T_t$ (continuous or binary), an outcome $Y_t$, and
 covariates $X_t$. The fundamental principle is that *effects cannot precede
+// TODO(ai_gp): Use `#emph[effects cannot precede causes]` instead of markdown `*effects cannot precede causes*` (.claude/skills/typst.rules.md:## Typst Vs. Markdown Syntax)
 causes*. This means treatment at time $t$ can affect outcomes at times $t$,
 $t+1$, $t+2$, and beyond, but never at times before $t$. Mathematically, $T_t$
 can cause $Y_t$, $Y_{t+1}$, etc., but never $Y_{t-1}$.
@@ -90,8 +100,14 @@ is encoded by the arrow structure.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson10.2-Causal_Inference_for_Time_Series.typ.figs/Lesson10.2-Causal_Inference_for_Time_Series.1.png"),
+  image(
+    "Lesson10.2-Causal_Inference_for_Time_Series.typ.figs/Lesson10.2-Causal_Inference_for_Time_Series.1.png",
+    width: 70%,
+  ),
   caption: [First-order temporal causal graph showing treatment and outcome],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:temporal-causal>
 // render_images:end
 
@@ -118,6 +134,7 @@ treatments $T_{1:t-1}$. This is common in medicine, where dosing depends on
 patient response so far.
 
 Two special cases are particularly important. *Contemporaneous effects* occur
+// TODO(ai_gp): Replace LaTeX `\to` with Typst `arrow.r` in math: change `$T_t \to Y_t$` to `$T_t arrow.r Y_t$` (.claude/skills/typst.rules.md:## Formulas)
 when $T_t \to Y_t$ instantly. *Lagged effects* occur when for some lag $k > 0$.
 In monetary policy, for example, a rate cut this quarter affects GDP over
 several subsequent quarters (a lagged effect). Simultaneously, the Fed adjusts
@@ -217,8 +234,15 @@ responds to sales, creating bidirectional causality that OLS cannot untangle.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson10.2-Causal_Inference_for_Time_Series.typ.figs/Lesson10.2-Causal_Inference_for_Time_Series.2.png"),
+  image(
+    "Lesson10.2-Causal_Inference_for_Time_Series.typ.figs/Lesson10.2-Causal_Inference_for_Time_Series.2.png",
+    width: 70%,
+  ),
+  // TODO(ai_gp): Caption should end with period, not comma; complete the sentence or remove trailing comma (.claude/skills/typst.rules.md:## Figures: Required Elements)
   caption: [Feedback loop structure where policy affects outcome contemporaneously,],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:feedback-loop>
 // render_images:end
 
@@ -393,6 +417,7 @@ in Pearl's do-calculus sense (i.e., causal effect in the interventional sense).
 Rather, it is a predictive notion based on temporal precedence. Granger
 causality answers "does $X$ help predict $Y$?" not "does changing $X$ change
 $Y$?" An important consequence is that both $X \to Y$ and $Y \to X$ can hold
+// TODO(ai_gp): Replace LaTeX `\to` with Typst `arrow.r` in math: change `$X \to Y$` and `$Y \to X$` to use `arrow.r` (.claude/skills/typst.rules.md:## Formulas)
 simultaneously in Granger causality, which is impossible in deterministic
 causality but common in economic feedback systems.
 
@@ -421,6 +446,7 @@ Y_t = α + Σ_{i=1}^p φ_i Y_{t-i} + Σ_{j=1}^p β_j X_{t-j} + η_t
 
 #strong[Definition]: $X$ *Granger-causes* $Y$ if the unrestricted model has
 *strictly smaller* forecast error variance than the restricted model.
+// TODO(ai_gp): Replace LaTeX `\beta` with Typst `β` and `\cdots` with Typst `...` in math: change `$H_0: \beta_1 = \beta_2 = \cdots = \beta_p = 0$` (.claude/skills/typst.rules.md:## Formulas)
 Equivalently, an F-test on $H_0: \beta_1 = \beta_2 = \cdots = \beta_p = 0$
 rejects, meaning at least one past value of $X$ predicts current $Y$
 significantly.
@@ -567,8 +593,15 @@ post-period outcome. The gap represents the policy effect.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson10.2-Causal_Inference_for_Time_Series.typ.figs/Lesson10.2-Causal_Inference_for_Time_Series.3.png"),
+  image(
+    "Lesson10.2-Causal_Inference_for_Time_Series.typ.figs/Lesson10.2-Causal_Inference_for_Time_Series.3.png",
+    width: 70%,
+  ),
+  // TODO(ai_gp): Caption should end with period and use sentence structure; change colon to regular prose (.claude/skills/typst.rules.md:## Figures: Required Elements)
   caption: [Interrupted Time Series design: using pre-period trends as counterfactual],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:its-structure>
 // render_images:end
 
@@ -584,6 +617,7 @@ where $D_t$ is an indicator for the post-intervention period ($D_t = 1$ if
 $t >= t^*$, and 0 otherwise).
 
 The parameters have clear interpretations:
+// TODO(ai_gp): Replace LaTeX `\beta` with Typst `β` in all math expressions: change `$\beta_0$`, `$\beta_1$`, `$\beta_2$`, `$\beta_3$` throughout this section to use β symbol (.claude/skills/typst.rules.md:## Formulas)
 - $\beta_0$: pre-intervention intercept (baseline level)
 - $\beta_1$: pre-intervention slope (trend before the intervention)
 - $\beta_2$: *level change* at the intervention (immediate jump)
@@ -604,12 +638,14 @@ trend steepened.
 
 Several practical details matter for valid ITS:
 
+// TODO(ai_gp): Use `#emph[Autocorrelation]` instead of markdown `*Autocorrelation*` (.claude/skills/typst.rules.md:## Typst Vs. Markdown Syntax)
 *Autocorrelation* is almost always present in time series. Standard OLS standard
 errors are too small, leading to overconfidence. Fit models using
 autocorrelation-robust methods (Newey-West), ARIMA (AutoRegressive Integrated
 Moving Average), or other time-series methods that account for serial
 correlation.
 
+// TODO(ai_gp): Use `#emph[Robustness checks]` instead of markdown `*Robustness checks*` (.claude/skills/typst.rules.md:## Typst Vs. Markdown Syntax)
 *Robustness checks* strengthen ITS conclusions. Vary the pre-intervention window
 (use 1, 2, 5 years of data) to see if results are stable. Run placebo tests by
 pretending the intervention occurred at a fake date; if you find spurious
@@ -625,12 +661,16 @@ model and the intervention date marked. Do the ITS results survive inspection?
 
 ITS is widely used across domains:
 
+// TODO(ai_gp): Use `#emph[Public health]` instead of markdown `*Public health*` (.claude/skills/typst.rules.md:## Typst Vs. Markdown Syntax)
 - *Public health*: estimating the effect of soda taxes on sugar-sweetened
   beverage purchases.
+// TODO(ai_gp): Use `#emph[Policy evaluation]` instead of markdown `*Policy evaluation*` (.claude/skills/typst.rules.md:## Typst Vs. Markdown Syntax)
 - *Policy evaluation*: measuring the effect of congestion pricing in London
   (2003) on traffic volumes, or minimum wage increases on employment.
+// TODO(ai_gp): Use `#emph[Tech and product]` instead of markdown `*Tech and product*` (.claude/skills/typst.rules.md:## Typst Vs. Markdown Syntax)
 - *Tech and product*: quantifying the effect of a website redesign on conversion
   rate or a new recommendation algorithm on engagement.
+// TODO(ai_gp): Use `#emph[Safety interventions]` instead of markdown `*Safety interventions*` (.claude/skills/typst.rules.md:## Typst Vs. Markdown Syntax)
 - *Safety interventions*: did installing speed cameras reduce traffic accidents?
 
 Each application requires careful attention to the timing of the intervention,
@@ -671,12 +711,14 @@ confounding events, and data quality.
   - E.g., New Jersey raises its minimum wage in 1992; Pennsylvania does not
   - Two groups: treated (NJ) and control (PA); two periods: before and after
 
+// TODO(ai_gp): Convert single tagged bullet "Assume..." to plain sentence; it's not a parallel list item (.claude/skills/typst.rules.md:## Lists)
 #strong[Definition]: Difference-in-Differences (DiD) estimates a causal effect by
 comparing the change in outcomes over time between a group that received
 treatment and a group that didn't
 - Assume both groups would have followed the same trend in the absence of
   treatment
 
+// TODO(ai_gp): Use `#algorithm(...)` macro for this structured procedure instead of bare bullet list (.claude/skills/typst.rules.md:## Algorithms and Pseudocode)
 #strong[Procedure]
 - Subtracts out time-invariant differences between groups
 - Subtracts out common time trends across groups
@@ -730,8 +772,15 @@ removed.
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson10.2-Causal_Inference_for_Time_Series.typ.figs/Lesson10.2-Causal_Inference_for_Time_Series.4.png"),
+  image(
+    "Lesson10.2-Causal_Inference_for_Time_Series.typ.figs/Lesson10.2-Causal_Inference_for_Time_Series.4.png",
+    width: 70%,
+  ),
+  // TODO(ai_gp): Caption should end with period and use sentence structure; change colon to regular prose (.claude/skills/typst.rules.md:## Figures: Required Elements)
   caption: [Difference-in-Differences design: the causal effect is the difference],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:did-structure>
 // render_images:end
 
@@ -962,8 +1011,15 @@ the estimated effect. The method's strength is transparency: reviewers can see
 // rendered_images:end
 // render_images:begin
 #figure(
-  image("Lesson10.2-Causal_Inference_for_Time_Series.typ.figs/Lesson10.2-Causal_Inference_for_Time_Series.5.png"),
+  image(
+    "Lesson10.2-Causal_Inference_for_Time_Series.typ.figs/Lesson10.2-Causal_Inference_for_Time_Series.5.png",
+    width: 70%,
+  ),
+  // TODO(ai_gp): Caption should end with period and use sentence structure; change colon to regular prose (.claude/skills/typst.rules.md:## Figures: Required Elements)
   caption: [Synthetic control construction: the donor pool is weighted optimally],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
 ) <fig:synthetic-control-construction>
 // render_images:end
 
@@ -1015,6 +1071,7 @@ the gap between the treated unit's outcome and the weighted average of donor out
 A critical challenge is that there is only *one* treated unit---standard
 inference does not apply. The solution is #strong[placebo tests] by permutation:
 
+// TODO(ai_gp): Use `#algorithm(...)` macro for this structured procedure instead of bare numbered list (.claude/skills/typst.rules.md:## Algorithms and Pseudocode)
 1. Pretend each donor was the treated unit.
 2. Compute the synthetic control and causal-effect trajectory for each.
 3. Compare the *actual* treated unit's effect against this null distribution.
@@ -1087,6 +1144,7 @@ summarizes the key properties of each approach.
 
 #show table.cell.where(y: 0): set text(weight: "bold")
 
+// TODO(ai_gp): Use `styled-table(headers: (...), rows: (...), bold-first-col: false)` from aima_style.typ instead of raw `table(...)` (.claude/skills/typst.rules.md:## Tables)
 #figure(
   table(
     columns: (1.1fr, 1.2fr, 2fr, 2fr),
@@ -1118,6 +1176,9 @@ summarizes the key properties of each approach.
     table.hline(stroke: 1.2pt),
   ),
   caption: [Comparison of causal inference methods for time series data.],
+  kind: "table",
+  supplement: [Table.],
+  placement: auto,
 ) <tbl:causal-methods>
 
 *Granger Causality*: uses the own history as control, offering fast predictive
@@ -1165,3 +1226,7 @@ The key takeaway is that *temporal structure is a resource if exploited with the
 right tool, and a trap if ignored*. Each method has specific assumptions and
 conditions under which it excels. Matching method to design and checking
 assumptions carefully produces credible causal inference.
+
+// TODO(ai_gp): Add mandatory `= Summary` section (.claude/skills/typst.rules.md:## Mandatory Sections)
+
+// TODO(ai_gp): Add mandatory `= References` section (.claude/skills/typst.rules.md:## Mandatory Sections)

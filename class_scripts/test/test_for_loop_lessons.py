@@ -740,6 +740,7 @@ class Test_generate_script_e2e(hunitest.TestCase):
     # `openai` + network) and shells out to `lint_text.py
     # --use_dockerized_prettier` (needs Docker).
     @pytest.mark.need_dev_container
+    @pytest.mark.skip(reason="Run manually: needs real OpenAI API credits")
     def test1(self) -> None:
         """
         Fast test: `_generate_script()` executes successfully with minimal source file.
@@ -831,6 +832,7 @@ class Test_process_lecture_file_e2e(hunitest.TestCase):
         )
 
     @pytest.mark.need_dev_container
+    @pytest.mark.skip(reason="Run manually: needs real OpenAI API credits")
     def test3(self) -> None:
         """
         Fast test: Process file with `generate_script` action.

@@ -141,7 +141,6 @@ WARNING: Can't find s3fs: continuing
 # Workflow in short
 
 /slides.review            03.1   .    .   .   .   .
-
 /slides.add_visuals       .
 /slides.add_references    .
 /slides.lint              .
@@ -171,44 +170,13 @@ run_typst.py              .
 > run_typst.py --input msml610/book/Lesson01.2-AI_and_Machine_Learning.typ
 
 > /text.humanize          .
+> /book.fix_headings
+> /book.improve_text_tags
 
 Edit book chapter
 
 run_typst.py --compress_pdf .
 > compress_pdf.py --input msml610/book/Lesson01.3*.pdf
-
-### [ ] Add cc loop in gen_book_chapters
-- Instead of using an LLM use cc agent
-  - Iterate until it compiles
-  - run_typst.py --input msml610/book/Lesson01.4-Brief_History_of_AI.typ --output msml610/book/Lesson01.4-Brief_History_of_AI.pdf --action render_images --skip_action open_pdf
-
-- Keep the LLM chat open so that we don't have to send the same instructions over and
-  over (only for the library version)
-- Also we can use this to keep track of the old text and make the transitions
-  smoother
-
-### [x] gen_book_chapter.py
-
-- Print all the actions in a table using the standard function like other scripts
-- Make --action render_pdf default
-
-- The entire slide should be sent together and not in chunks as done by
-  _process_panel_body and other related functions
-  - Make a proposal in 5 bullet points of what to change
-
-### [x] Improve the generation
-- [x] Compare gpt-4o-mini to a better model
-  - hllm_cli vs hllm
-
-- [x] Still lots of tags... modify the prompt to remove them
-  - Latex not converted correctly
-  - Do not keep the formatting in the page (e.g., pros vs cons)
-
-- [x] The figures embedded in the text are good, but we need caption and a reference
-  in the text
-
-- [ ] Use Definition to have the tag on the side
-- x ] "References" need to be a larger font
 
 # Workflows
 

@@ -125,7 +125,7 @@ graph TD
 | Action           | Default | Function                                        | Effect                                          |
 | ---------------- | ------- | ----------------------------------------------- | ----------------------------------------------- |
 | `git_add`        | off     | `csccouti.git_add_with_retry()`                 | Adds the chapter file to Git                    |
-| `lint`           | on      | `_lint_typst_file()` / `_lint_with_lint_text()` | `typstyle` for `.typ`, `lint_text.py` otherwise |
+| `lint`           | on      | `_lint_with_lint_text()`                        | Runs `lint_text.py` (dispatches to `typstyle` for `.typ`) |
 | `fix_typst_code` | on      | `_fix_typst_code()`                             | Runs Claude Code `/book.fix_rendered_pdf` skill |
 | `render_pdf`     | on      | `_render_book_chapter()`                        | Compiles to PDF                                 |
 | `open_pdf`       | off     | `_open_book_chapter_pdf()`                      | Opens the compiled PDF in Skim                  |

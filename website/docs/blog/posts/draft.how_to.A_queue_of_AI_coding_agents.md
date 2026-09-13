@@ -148,7 +148,7 @@ TL;DR: My workflow to run a queue of AI agents that fix issues asynchronously.
   time of the PR review
 
 - I have several agent skills to help with managing the specs:
-  - `/auto_task.create_specs`: create specs for a list of TODOs
+  - `/auto_task.create_specs_from_todos`: create specs for a list of TODOs
   - `/auto_task.criticize`: to review and improve specs of tasks that will be
     executed asynchronously
 
