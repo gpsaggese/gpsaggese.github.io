@@ -152,7 +152,7 @@
 * Supervised Learning: Bin Analogy (1/2)
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 
 - Consider a bin with \red{red} and \green{green} marbles
   - We want to estimate $\Pr(\text{pick a \red{red} marble}) = \mu$ where the
@@ -338,7 +338,7 @@
   \end{alignat*}
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=70%}
 - Since $g \in \{h_1, h_2, \cdots, h_M\}$ then
   $\Pr(\calB)
   \le \Pr(\bigcup_i \calB_i)
@@ -442,7 +442,7 @@ digraph ML_Phases {
   $h \in \calH$ that gets the desired classification $D$
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=70%}
 
 - @Example@
   - 4 points in a plane $A, B, C, D$
@@ -610,7 +610,7 @@ digraph ML_Phases {
 - Consider the growth function $m_{\calH}$ for different hypothesis sets $\calH$
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - **Perceptron on a plane**
   - $m_{\calH}(3) = 8$
   - $m_{\calH}(4) = 14$ (2 XOR classifications not possible)
@@ -655,7 +655,7 @@ digraph ML_Phases {
 :::
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - **Positive rays** $\sign(x - a)$ on $\bbR$
   - $m_{\calH}(N) = N + 1$
   - Origin of rays $a$ can be placed in $N + 1$ intervals
@@ -694,7 +694,7 @@ digraph ML_Phases {
 
 * Growth Function: Examples
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 
 - **Positive intervals** on $\bbR$ $x \in [a, b]$
   - $m_{\calH}(N) = {N + 1 \choose 2} + 1 \sim \N^2$
@@ -741,7 +741,7 @@ digraph ML_Phases {
 \vspace{1cm}
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 
 - **Convex sets on a plane**
   - $m_{\calH}(N) = 2^N$
@@ -911,7 +911,7 @@ digraph ML_Phases {
   $$
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=65%}
 
 - $N^d e^{-N}$ abstracts the upper bound term
   - Plot $N^d e^{-N}$ vs. $N$: Power dominates for small $N$, exponential for
@@ -928,7 +928,7 @@ digraph ML_Phases {
 :::
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=65%}
 
 - Plot intersection of $N^d e^{-N}$ with a probability as a function of $d$
   - Examples $N$ needed are proportional to $d$
@@ -970,7 +970,7 @@ digraph ML_Phases {
 
 * How to Void the VC Analysis Guarantee
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 - Consider the case where data is genuinely non-linear
   - E.g., "o" points in the center and "x" in the corners
 

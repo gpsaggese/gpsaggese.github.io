@@ -160,7 +160,7 @@
     model, since the deployed model was retrained on more data
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=70%}
 
 // TODO(ai_gp): Make the font bigger
 
@@ -348,7 +348,7 @@ timeline
   - Typically $y = 1$ encodes the rare class to predict
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=70%}
 
 - @Components@: You have 4 possible cases:
   - $act = 1$, $pred = 1$ $\to$ true positive (TP)
@@ -671,7 +671,7 @@ timeline
 * Model Selection as Learning
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=62%}
 
 - @Interpretation@: _"picking the model with smallest $E_{val}$"\_ is a **form of
   learning**:

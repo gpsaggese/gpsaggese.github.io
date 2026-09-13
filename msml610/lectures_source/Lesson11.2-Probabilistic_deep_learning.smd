@@ -56,7 +56,7 @@
 
 * Neurons in the Brain
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - **Fact**: the brain is jam-packed with neurons
   - Each neuron has inputs (dendrites) and an output (axon)
   - Neurons connect their output to inputs of different neurons, sending pulse
@@ -90,7 +90,7 @@
 
 * The "One Learning Algorithm" Theory
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - **Fact**: the brain can perform various tasks
   - E.g., process vision, sense of touch, do math, play pickleball
   - Doesn't have thousands of different programs
@@ -143,7 +143,7 @@
 * NN vs Logistic Regression + Non-linear Transform
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - **Problem**: logistic regression with non-linear transformations might seem
   sufficient for any problem
   - However, the number of features increases rapidly
@@ -175,7 +175,7 @@
 
 * Neural Network Perceptron
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - **Definition**: A perceptron has $n$ inputs and 1 output (like a brain neuron)
   - Aka "artificial neuron", "logistic unit"
 
@@ -230,7 +230,7 @@
 * Activation Functions
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - **Sigmoid Function**
     $$\theta(s) = \frac{1}{1 + \exp(-s)}$$
   - Output range: $[0, 1]$
@@ -284,7 +284,7 @@
   - Many functions cross the origin or have $\theta(0) = 0$
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - **ReLU (Rectified Linear Unit)**:
   - $\theta(s) = \max(0, s)$
   - Output range: $[0, \infty)$
@@ -422,7 +422,7 @@
 * Structure of Feedforward Neural Network
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - **Hidden Layers**
   - $0 < l < L$
   - Each neuron
@@ -877,7 +877,7 @@
 * Residual Networks (ResNets)
 
 ::: columns
-:::: {.column width=70%}
+:::: {.column width=65%}
 - **Motivation for Deep Networks**
   - Deeper networks perform better on complex tasks
   - Very deep networks suffer from vanishing/exploding gradient problems
@@ -1442,7 +1442,7 @@ digraph FeedbackSystem {
 
 * Sequence-to-Sequence Attention
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=70%}
 - **Definition**: if the RNN model is
   $\vh_i = RNN(\vh_{i-1}, \vx_i)$
 

@@ -16,7 +16,7 @@
 
 * A Discrete Bayesian 1-D Dog
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - Dog with sensor
   - Wanders around offices and halls
 
@@ -37,7 +37,7 @@
 
 * You Cannot Trust Either Source Alone
 ::: columns
-:::: {.column width=45%}
+:::: {.column width=55%}
 
 - **Measurements Alone**
   - Sensor says "door"

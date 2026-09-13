@@ -61,7 +61,7 @@
 - @Problem@: you have finite amount of data points $N$
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
   $$
   \begin{aligned}
   & D_{val} = \{K \text{ points}\} \\
@@ -122,7 +122,7 @@
 - After research is done, all available data can be used to learn
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 
 - **Algorithm**
   1. Train with $N - K$ points to learn $g^-$
@@ -159,7 +159,7 @@
 
 * Cross-validation
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 
 - **Divide dataset** into $K$ folds, each with $\frac{N}{K}$ samples
   - Each fold should reflect dataset statistics

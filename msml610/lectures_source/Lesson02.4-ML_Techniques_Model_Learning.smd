@@ -366,7 +366,7 @@ digraph StreamModel {
 * Map-Reduce for Batch Gradient Descent
 
 ::: columns
-:::: {.column width=45%}
+:::: {.column width=50%}
 
 - Batch GD can be expressed in @map-reduce@, like many learning algorithms
 

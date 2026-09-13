@@ -357,7 +357,7 @@ digraph ExpertSystem {
 * Probabilistic Reasoning and ML (1987-)
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 
 - @AI and scientific method@
   - Rigorous methods to test performance
@@ -413,7 +413,7 @@ digraph ExpertSystem {
 * Bayesian Networks (1988-)
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=70%}
 
 - @Bayesian networks@ _(Pearl, 1988)_ `#cite("pearl1988probabilistic")`{=typst}
   - AI is linked with:
@@ -441,7 +441,7 @@ digraph ExpertSystem {
 * Reinforcement Learning (1988-)
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=70%}
 
 - **Reinforcement Learning** _(Sutton, 1988)_ `#cite("sutton1988td")`{=typst}
   involves agents learning by interacting with an environment
@@ -519,7 +519,7 @@ mindmap
 * Deep Learning (2011-Present)
 
 ::: columns
-:::: {.column width=58%}
+:::: {.column width=63%}
 
 - @Deep learning@
   - ML models with multiple layers of computing elements
@@ -660,7 +660,7 @@ digraph DLPipeline {
 * What Can AI Do Today? (2/2)
 
 ::: columns
-:::: {.column width=78%}
+:::: {.column width=80%}
 
 - @Game playing@
   - 1997: Deep Blue defeated Kasparov
@@ -744,7 +744,7 @@ digraph DLPipeline {
 * Benefits of AI
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=70%}
 
 - Our civilization is the product of **human intelligence**
   - Greater machine intelligence leads to better human society
@@ -770,7 +770,7 @@ digraph DLPipeline {
 * Risks of AI (1/2)
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=70%}
 
 - @Autonomous weapons@
   - Locate and eliminate targets autonomously
@@ -823,7 +823,7 @@ digraph DLPipeline {
 * Human-Level AI (AGI)
 
 ::: columns
-:::: {.column width=68%}
+:::: {.column width=70%}
 
 - @Human-level AI (AGI)@
   - Machines able to learn to do anything a human can do
@@ -1003,7 +1003,7 @@ digraph CIRLLoop {
 * My 2 Cents
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 
 - AI alignment is a serious problem
   - For now philosophical, at some point a real one
@@ -1021,7 +1021,7 @@ digraph CIRLLoop {
 ::::
 :::
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 
 - IMO it's as urgent as debating what political system humanity will need when living
   on Mars

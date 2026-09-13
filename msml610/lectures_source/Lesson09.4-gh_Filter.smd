@@ -58,7 +58,7 @@
      - _Cons_: Scale is noisy, water weight fluctuates, different clothes
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - **Problem**: Prediction doesn't match measurements
   - E.g., at time $t$:
     - Estimate $\hat{x}_{t|t-1} = 159$ based on calorie intake and energy
@@ -91,7 +91,7 @@
 
 * Example of Estimating Body Weight
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - Assume you know the initial weight and the gain rate
   - \black{Black line} is the actual weight (i.e., _ground truth_)
   - \red{Red line} is the _prediction_ from previous day's weight
@@ -107,7 +107,7 @@
 - Not impressive since the prediction model describes the ground truth
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - When the model predicts a gain of -10lb/day (incorrect)
   - Estimates diverge from measurements
 ::::
@@ -119,7 +119,7 @@
 * Example of Estimating Body Weight
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - Two **problems**
   - The filter needs a correct guess of the weight change rate
   - The rate of change can vary over time
@@ -156,7 +156,7 @@
 * g-h Filter Algorithm: Pseudo-Code
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 
 1. **Initialization**
    - Initialize state of the filter
@@ -203,7 +203,7 @@ digraph BayesianFlow {
 
 * Interpretation of $g$
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - If $g = 0$:
   - Follow system model, ignore measurements
 
@@ -226,7 +226,7 @@ digraph BayesianFlow {
 
 * Interpretation of $h$
 ::: columns
-:::: {.column width=40%}
+:::: {.column width=45%}
 - Estimate model parameters from data:
   - Change of weight
   - Rate of change of measurements
@@ -252,7 +252,7 @@ digraph BayesianFlow {
 
 * Control Theory Nomenclature
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - State space models developed in control theory $\to$ different nomenclature
 
 - **System**: object to estimate/track

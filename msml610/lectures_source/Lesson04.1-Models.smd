@@ -31,7 +31,7 @@
 * Naive Bayes: Weather Prediction Example
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 
 - @Problem@
   - Predict if kids play outside using past weather observations
@@ -123,7 +123,7 @@
 
 * 1-Rule
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=70%}
 
 - Aka "tree stump", i.e., a decision tree with a single node
 
@@ -213,7 +213,7 @@
 
 * Decision Tree
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 
 - @Characteristics@
   - Supervised learning
@@ -242,7 +242,7 @@
 
 * Typical Decision Trees
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=70%}
 
 - **Each node** tests a feature against a constant
   - Split input space with hyperplanes parallel to axes
@@ -306,7 +306,7 @@
     - Max depth of trees
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 
 - **Some training sets are hard to learn**
   - E.g., `XORs`, parity
@@ -351,7 +351,7 @@
   - CART (Classification And Regression Trees)
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 
 - Typically, the problem has a **recursive formulation**
   - Consider the current "leaf"

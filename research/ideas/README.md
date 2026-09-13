@@ -8,14 +8,22 @@
 
 ## Active Projects
 
+- If you want to work closely with me and my research assistants, these are the
+  projects that are in progress and that I am excited about
+
 | Project | Paper | Code | Assignee |
 | :------ | :---- | :--- | :------- |
 | Noesis (core platform) | [`link`](../../papers/Noesis/) | [`link`](../../research/Noesis/) | gpsaggese |
-| RL for Automated EDA | [`link`](../../papers/RL_for_Automated_EDA/) | [`link`](../agentic_data_science/) | Delvitron1019 + gpsaggese |
-| RL for Optimal Strategy in Racket Sports | [`link`](../../papers/Optimal_strategy_for_racket_sports/) | - | PranavShashidhara + gpsaggese |
-| Monte Carlo Tree Search for Discrete NP Problems | [`link`](../../papers/AlphaZero_MCTS_for_TSP/) | [`link`](../Implement_MonteCarlo_Tree_Search_and_Alpha_Zero/) | Eyepatch0 + gpsaggese |
+| RL for Automated EDA | [`link`](../../papers/RL_for_Automated_EDA/) | [`link`](../agentic_data_science/) | Delvitron1019, AnupamaSharma2000, gpsaggese |
+| RL for Optimal Strategy in Racket Sports | [`link`](../../papers/Optimal_strategy_for_racket_sports/) | - | PranavShashidhara, gpsaggese |
+| Monte Carlo Tree Search for Discrete NP Problems | [`link`](../../papers/AlphaZero_MCTS_for_TSP/) | [`link`](../Implement_MonteCarlo_Tree_Search_and_Alpha_Zero/) | Eyepatch0, gpsaggese |
 | Causal Analysis of Agent Skill and Luck | [`link`](../../papers/Causal_Analysis_of_Agent_Skill_And_Luck/) | [`link`](../Causal_Analysis_of_Agent_Skill_And_Luck/) | gpsaggese |
-| Causal Analysis of Age and Startup Success | [`link`](../../papers/Causal_Analysis_of_Age_and_Startup_Success/) | - | gpsaggese |
+| Causal Analysis of Age and Startup Success | [`link`](../../papers/Causal_Analysis_of_Age_and_Startup_Success/) | - | Under-the-stars, gpsaggese |
+| Agentic outreach | TBD | [`link`](../agentic_outreach/) | gpsaggese |
+| Financial tradability analysis | TBD | TBD | gpsaggese |
+
+- Also getting a current project and finish it will lead to faster publication on
+  blogs and papers
 
 ## Description of Files
 

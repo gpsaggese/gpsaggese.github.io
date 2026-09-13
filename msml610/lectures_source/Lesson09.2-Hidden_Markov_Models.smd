@@ -216,7 +216,7 @@
 
 * Markov Random Fields: Model Form
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - $Pr(X) = \frac{1}{Z} \prod_{C \in \mathcal{C}} \psi_C(X_C)$
 - $X$: set of all random variables in the model
 - $\mathcal{C}$: set of cliques in the graph (fully connected subset of nodes)

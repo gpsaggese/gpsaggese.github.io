@@ -13,7 +13,7 @@
 * Overfitting: Definition
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 
 - **Overfitting** occurs when the model fits the data more than what is
   warranted
@@ -60,7 +60,7 @@
 * Optimal Fit
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 
 - The opposite of overfitting is **optimal fit**
   - Train a model with proper complexity for the data
@@ -93,7 +93,7 @@
   - Noise $\varepsilon$: e.g., market noise, missing features
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 
 - **Fit with:**
   - _Line_
@@ -290,7 +290,7 @@
   $$
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 
 - **Bias term**
   $$
@@ -322,7 +322,7 @@
 * Variance and Bias Term Varying Cardinality of $\calH$
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 
 - If hypothesis set **has a single function**: $\calH = \{ h \ne f \}$
   - Large bias
@@ -338,7 +338,7 @@
 :::
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 
 \vspace{1cm}
 
@@ -385,7 +385,7 @@
   - The line model _approximates better_ than the constant model
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 - **Learning**
   - Algorithm:
     - Pick 2 points as training set $D$
@@ -415,7 +415,7 @@
   the model
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - Typical **shape** of bias-variance curves
   - $E_{in}$ and $E_{out}$ start from the same point
   - $E_{in}$
@@ -451,7 +451,7 @@
   $$
 
 ::: columns
-:::: {.column width=45%}
+:::: {.column width=50%}
 
 - Interpret regularization parameter:
   - Small $\lambda$:
@@ -513,7 +513,7 @@
 
 * Bias as Deterministic Noise
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=70%}
 - The bias term can be interpreted as **deterministic noise**
 
 - **Bias** is the part of the target function that hypothesis set cannot
@@ -553,7 +553,7 @@
 
 * Deterministic vs Stochastic Noise Example
 ::: columns
-:::: {.column width=70%}
+:::: {.column width=75%}
 - **Two targets**:
   - Noisy low-order target (10th order polynomial)
   - Noiseless high-order target (50th order polynomial)
@@ -581,7 +581,7 @@
 
 * Deterministic vs Stochastic Noise Example
 ::: columns
-:::: {.column width=70%}
+:::: {.column width=75%}
 
 - Noisy low-order target:
   - Fit 2nd to 10th order polynomial
@@ -661,7 +661,7 @@
     - Regularization amount $\lambda$
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - For **learning curves**
   $$
   E_{in}, E_{out} = f(N \vert d_{VC})
@@ -700,7 +700,7 @@
   - $E_{out} \ge E_{in}$ for any $N$
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 
 - **Small $N$**
   - $E_{in}$ is small (even 0)
@@ -727,7 +727,7 @@
 
 * High-Bias vs High-Variance Regime
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 - From the learning curve you can see the two regimes:
 
   - **High-variance regime** for small $N$
