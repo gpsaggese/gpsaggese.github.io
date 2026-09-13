@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.0
+#       jupytext_version: 1.19.5
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -64,7 +64,10 @@ _LOG = logging.getLogger(__name__)
 utils.init_loggers(_LOG)
 
 # %% [markdown]
-# ## The Three Engines
+# # Part 1: Propositional Logic With `sympy`
+
+# %% [markdown]
+# ## The three engines
 #
 # - The same question, "does this sentence follow?", is answered by
 #   different machinery in each library:
@@ -79,21 +82,18 @@ utils.init_loggers(_LOG)
 #   symbols and connectives, while `z3` also handles quantifiers,
 #   predicates, and functions
 
-# %% [markdown]
-# # Part 1: Propositional Logic With `sympy`
-
 # %%
-# TODO(ai_gp): Explain how sympy builds sentences using weather_symbols and adding pointers to the code using the hintrospection stuff.
+# TODO(ai_gp): Explain how sympy builds sentences using weather_symbols and
+# adding pointers to the code using the hintrospection stuff.
 
 # %%
 # Show the weather sentences every propositional cell reuses.
-for label, sentence in utils.weather_sentences().items():
-    print("%-26s -> %s" % (label, utils.format_sentence(sentence)))
+utils.show_weather_sentences()
 # Outcome: 8 sentences covering every connective of the lecture, from a
 # plain conjunction to a biconditional.
 
 # %% [markdown]
-# ## Cell 1.1: Sentences as Symbols, Parsed and Evaluated
+# ## Cell 1.1: Sentences as symbols, parsed and evaluated
 #
 # **Goal**:
 # - Represent the lecture's weather symbols ($Rain$, $Cold$, $Sunny$,
@@ -112,7 +112,8 @@ for label, sentence in utils.weather_sentences().items():
 #   value at the toggled model
 
 # %%
-# TODO(ai_gp): Add an option to cell1_1_sentences_and_truth_tables to use all the variables instead of only the ones that are of use given the sentence 
+# TODO(ai_gp): Add an option to cell1_1_sentences_and_truth_tables to use all
+# the variables instead of only the ones that are of use given the sentence.
 
 # %%
 # Parse a weather sentence and evaluate it in every model.
@@ -135,7 +136,7 @@ utils.cell1_1_sentences_and_truth_tables()
 #   its children's colors, which is compositional semantics made visible
 
 # %% [markdown]
-# ## Cell 1.2: Equivalences and Normal Forms
+# ## Cell 1.2: Equivalences and normal forms
 #
 # **Goal**:
 # - Verify the lecture's equivalences (De Morgan, distributivity,
@@ -175,7 +176,7 @@ utils.cell1_2_equivalences_and_normal_forms()
 # # Part 2: Propositional Satisfiability With `PySAT`
 
 # %% [markdown]
-# ## Cell 2.1: From Formula to Clauses, in DIMACS
+# ## Cell 2.1: From formula to clauses, in DIMACS
 #
 # **Goal**:
 # - Turn a `sympy` CNF sentence into `PySAT`'s clause format: one integer
@@ -209,7 +210,7 @@ utils.cell2_1_cnf_to_dimacs()
 #   next cells reuses, from the pigeonhole formula to random 3-SAT
 
 # %% [markdown]
-# ## Cell 2.2: A Real Solver Against Model Checking
+# ## Cell 2.2: A real solver against model checking
 #
 # **Goal**:
 # - Hand the encoded clauses to a `PySAT` solver and read back a satisfying
@@ -247,7 +248,7 @@ utils.cell2_2_solver_vs_model_checking()
 #   one?", not "how many?"
 
 # %% [markdown]
-# ## Cell 2.3: Refutation, and the 3-SAT Phase Transition
+# ## Cell 2.3: Refutation, and the 3-SAT phase transition
 #
 # **Goal**:
 # - Prove $KB \models \alpha$ the lecture's way, by showing that
@@ -291,7 +292,7 @@ utils.cell2_3_refutation_and_phase_transition()
 # # Part 3: First-Order Logic With `z3`
 
 # %% [markdown]
-# ## Cell 3.1: Quantifiers Over a Real Domain
+# ## Cell 3.1: Quantifiers over a real domain
 #
 # **Goal**:
 # - Declare a finite domain, predicates, and quantified formulas in `z3`,
@@ -331,7 +332,7 @@ utils.cell3_1_z3_quantifiers()
 #   a refutation is how a prover states "this always holds"
 
 # %% [markdown]
-# ## Cell 3.2: One Question, Three Engines
+# ## Cell 3.2: One question, three engines
 #
 # **Goal**:
 # - Take one entailment question at the propositional layer and at the

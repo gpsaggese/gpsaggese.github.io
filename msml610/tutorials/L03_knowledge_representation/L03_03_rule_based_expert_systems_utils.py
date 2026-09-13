@@ -243,6 +243,19 @@ OBSERVABLE_FEATURES: Tuple[str, ...] = tuple(
 )
 
 
+def show_animal_catalog() -> None:
+    """
+    Display the observable features and the facts the rules derive.
+    """
+    print("Observable features (percepts):")
+    print(f"  {', '.join(OBSERVABLE_FEATURES)}")
+    print()
+    print("Derived facts (classes and species):")
+    print("  Classes: mammal, bird, carnivore, ungulate")
+    print(f"  Species: {', '.join(SPECIES)}")
+    print()
+
+
 def show_rule_base(rules: Sequence[Rule] = ANIMAL_RULES) -> None:
     """
     Display a rule base as a table of premises and conclusions.

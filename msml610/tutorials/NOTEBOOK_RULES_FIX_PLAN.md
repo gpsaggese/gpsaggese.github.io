@@ -23,7 +23,7 @@ Source: audit of all `msml610/tutorials/**/*.ipynb` against
 | S4 | Skill `notebook.refactor_to_utils`: move inline viz/widget code to `*_utils.py`; create the file if missing |
 | S5 | Skill `notebook.format_interactive_cells`, then hand-upgrade its output: the skill still targets the older Goal/Plots/Key-observations triplet, so after running it, rewrite to the required `**Goal**` -> `**Implementation**: \`fn(...)\`` -> `**Usage**` (`- Inputs` / `- Panels`) -> `**Guided usage**` structure per `## Visualization Cell Triplet Details` |
 | S6 | Skill `notebook.format_md_cells` for bullet/wrap, plus manual check for sentence case, ASCII-only, emdash-to-colon (skill doesn't guarantee these) |
-| S7 | Skill `notebook.fix_packages`: remove inline `!pip install`, reconcile `requirements.txt`/`Dockerfile` |
+| S7 | Skill `notebook.fix_packages`: keep the shared `class_project` Dockerfile/`requirements.txt` as is; make sure each notebook has a pinned `!pip install` cell (right after the autoreload/logging cell) for every package it and its `*_utils.py` need beyond that shared base |
 | S8 | Skill `notebook.delete_dead_code`: drop unused functions, leftover commented/debug cells |
 | S9 | Skill `git.move`: rename a `*_utils.py` file and update its notebook's import when naming breaks convention |
 | manual | No skill covers it; fix by hand against the quoted rule |
@@ -39,7 +39,7 @@ currently pass it) - budget the most time there.
 ### L03_01_entailment_implication_inference
 - [ ] [S6] Cell headers to sentence case (e.g. "Cell 1.1: Possible worlds, models, and satisfaction")
 - [ ] manual: add `%load_ext autoreload` / `%autoreload 2` to setup cell (missing, unlike sibling files)
-- [ ] [S7] remove commented `# !pip install -q sympy==1.14.0`; confirm `sympy` in `requirements.txt`
+- [ ] [S7] keep the pinned `# !pip install -q sympy==1.14.0` cell as is (per-notebook install, not `requirements.txt`); no action needed
 
 ### L03_02_wumpus_world
 - [ ] [S1] fix Part 3 numbering gap (Cell 3.2 with no Cell 3.1)
@@ -47,22 +47,22 @@ currently pass it) - budget the most time there.
 - [ ] [S5] move `**Goal**` to directly follow the cell title in Cell 2.1/2.2 (prose/lists currently precede it)
 - [ ] [S6] sentence-case Title-case headers (e.g. "Cell 1.1: The Wumpus World Grid and the Knowledge Base")
 - [ ] [S6] bullet-ify stray sentence in "Example of Reasoning" section
-- [ ] [S7] remove commented pip-install line
+- [ ] [S7] keep the pinned pip-install cell as is; no action needed
 
 ### L03_03_rule_based_expert_systems
 - [ ] [S1] group the pre-Part-1 cells (Winston-rules print, "The Rule Base") under a `# Part N:` header
 - [ ] manual: move inline `print()` feature/species catalog to a `utils.show_...()` helper, consistent with the very next cell's pattern
-- [ ] [S7] remove commented pip-install line
+- [ ] [S7] keep the pinned pip-install cell as is; no action needed
 
 ### L03_04_ontology_reasoning
-- [ ] [S7] remove commented pip-install line (only issue found)
+- [ ] [S7] keep the pinned pip-install cell as is; no action needed (nothing else was found)
 
 ### L03_06_logic_solvers
 - [ ] [S1] group "The Three Engines" comparison table under a `# Part N:` header
 - [ ] [S6] sentence-case cell/section headers
 - [ ] [S4]/manual: replace hand-formatted `"%-26s -> %s"` print table (~lines 152-156) with a pandas `DataFrame` + `display()`; move to a `utils.show_...()` helper
 - [ ] [S6] wrap long comment lines (~144, 148, 169) to 85 chars, add trailing periods
-- [ ] [S7] remove commented pip-install line
+- [ ] [S7] keep the pinned pip-install cell as is; no action needed
 
 ---
 
@@ -229,7 +229,7 @@ Per-file extras:
 - [ ] [S6] wrap 15 long lines (~107, 341, 378, 432); replace `±` (~line 285) with ASCII
 - [ ] manual: label bare `print(belief)` (~line 70)
 - [ ] [S4] move the inline `interact(show_prior, ...)` call + `show_prior()` callback (~345-374) into utils
-- [ ] [S7] remove commented `!pip install --quiet filterpy` (~line 29)
+- [ ] [S7] pin the version instead of removing the cell (currently unpinned `!pip install --quiet filterpy`, ~line 29); keep it as the per-notebook install
 
 ### L09_05_02_univariate_kalman_filter
 - [ ] [S1] rename level-1 `# Cell 1/2`; restore missing `Cell 2.X` numbering under "Bad Initial Estimate"/"Extreme amount of noise"/"Too much belief in the model"
@@ -244,13 +244,13 @@ Per-file extras:
 - [ ] [S6] wrap lines ~67, 146
 - [ ] manual: label bare `print(P2)` (~124); replace semicolon-suppression `plt.plot(...);` (~199) with `_ = ...`
 - [ ] manual: add a Comments panel (`add_fitted_text_box`) to both interactive utils functions (currently none)
-- [ ] [S7] remove commented `!pip install --quiet filterpy` (~line 29)
+- [ ] [S7] pin the version instead of removing the cell (currently unpinned `!pip install --quiet filterpy`, ~line 29); keep it as the per-notebook install
 
 ### L09_05_04_non_linear_kalman_filter
 - [ ] [S1] add Part/Cell structure (currently only the notebook title + one incidental `### Unscented transform`)
 - [ ] [S5] add Goal/Implementation/Usage/Guided-usage markdown throughout (currently none)
 - [ ] [S4] move inline `plt.subplot`/`plt.scatter` blocks (~71-76, 121-125) into utils, matching the `time_ut.plot_*` calls already used elsewhere in the same file
-- [ ] [S7] remove commented `!pip install --quiet filterpy` (~line 29)
+- [ ] [S7] pin the version instead of removing the cell (currently unpinned `!pip install --quiet filterpy`, ~line 29); keep it as the per-notebook install
 
 ### L09_03_01_multi_armed_bandits_sim_API (near-compliant API notebook)
 - [ ] [S1] rename Part 6/7 sub-headers from `## Example N:`/`## Pattern N:` to `## Cell 6.N:`/`## Cell 7.N:`

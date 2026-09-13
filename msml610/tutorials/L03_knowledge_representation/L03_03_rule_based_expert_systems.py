@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.0
+#       jupytext_version: 1.19.5
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -58,24 +58,15 @@ hnotebook.config_notebook()
 _LOG = logging.getLogger(__name__)
 utils.init_loggers(_LOG)
 
+# %% [markdown]
+# # Part 1: Rules and Working Memory
+
 # %%
-# Explain Winston's animal identification rules
-#
-# Patrick Winston's classic animal-identification rule base is a canonical
-# example in AI education (Winston, 1977). It uses observable features of
-# animals to derive increasingly specific classifications through a chain of
-# inference rules. The rules demonstrate both forward chaining (data-driven)
-# and how to organize knowledge hierarchically.
-#
-# Observable features (what an agent can perceive directly):
-print("Observable features (percepts):")
-print(f"  {', '.join(utils.OBSERVABLE_FEATURES)}")
-print()
-# Derived facts (what the rules conclude):
-print("Derived facts (classes and species):")
-print(f"  Classes: mammal, bird, carnivore, ungulate")
-print(f"  Species: {', '.join(utils.SPECIES)}")
-print()
+# Winston's classic animal-identification rule base is a canonical example in
+# AI education (Winston, 1977): it uses observable features to derive
+# increasingly specific classifications through a chain of inference rules,
+# and shows how to organize knowledge hierarchically.
+utils.show_animal_catalog()
 
 # %% [markdown]
 # ## The Rule Base
@@ -94,9 +85,6 @@ print()
 utils.show_rule_base()
 # Outcome: 14 rules, whose premises are either observable features or facts
 # concluded by an earlier rule.
-
-# %% [markdown]
-# # Part 1: Rules and Working Memory
 
 # %% [markdown]
 # ## Cell 1.1: Rules, working memory, and the reflex agent baseline

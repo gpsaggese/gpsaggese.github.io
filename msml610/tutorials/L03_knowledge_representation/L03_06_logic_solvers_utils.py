@@ -115,6 +115,14 @@ def weather_sentences() -> Dict[str, Any]:
     return sentences
 
 
+def show_weather_sentences() -> None:
+    """
+    Display the weather sentences every propositional cell reuses.
+    """
+    sentences_df = pd.DataFrame({"sentence": list(weather_sentences().keys())})
+    display(sentences_df)
+
+
 def format_sentence(sentence: sympy.Basic) -> str:
     """
     Render a `sympy` sentence in the lecture's own infix notation.

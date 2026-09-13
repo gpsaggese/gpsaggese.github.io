@@ -60,7 +60,7 @@ _NEIGHBOR_DELTA = ((0, 1), (0, -1), (-1, 0), (1, 0))
 # the wumpus on the way, and narrows the candidate models down to one.
 _DEFAULT_SEED = 29
 # Enumerating more than this many variables exhausts memory, so runtimes past
-# this point are extrapolated instead of measured (see `cell3_2_scaling()`).
+# this point are extrapolated instead of measured (see `cell3_1_scaling()`).
 _MAX_ENUMERATED_VARS = 18
 
 
@@ -1533,7 +1533,7 @@ def cell2_3_three_views(
 
 
 # #############################################################################
-# Cell 3.2: Model checking does not scale
+# Cell 3.1: Model checking does not scale
 # #############################################################################
 
 
@@ -1665,7 +1665,7 @@ def model_checking_reference(
     return projected
 
 
-def cell3_2_scaling(
+def cell3_1_scaling(
     *,
     figsize: Optional[Tuple[float, float]] = None,
     fixed_grid_size: Optional[int] = None,
