@@ -9,7 +9,7 @@ Parse Markdown lesson files and iterate through slides, headers, and comments.
 # Usage Example
 
 - Parse a lesson file and print all extracted items:
-> lesson_parser.py --input_file /path/to/lesson.txt
+> lesson_parser.py -i /path/to/lesson.txt
 """
 
 import argparse
@@ -33,12 +33,7 @@ def _parse() -> argparse.ArgumentParser:
         description=__doc__,
         formatter_class=hparser.CustomHelpFormatter,
     )
-    parser.add_argument(
-        "--input_file",
-        type=str,
-        required=True,
-        help="Path to the lesson file to parse",
-    )
+    hparser.add_input_file_arg(parser)
     parser.add_argument(
         "--item_type",
         type=str,
@@ -67,7 +62,7 @@ def _main(parser: argparse.ArgumentParser) -> None:
     """
     args = parser.parse_args()
     hdbg.init_logger(verbosity=args.log_level, use_exec_path=True)
-    input_file = args.input_file
+    input_file = args.input
     item_type = args.item_type
     output_file = args.output_file
     hdbg.dassert_file_exists(
