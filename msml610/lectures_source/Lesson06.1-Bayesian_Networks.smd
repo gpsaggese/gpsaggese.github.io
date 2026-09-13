@@ -114,7 +114,7 @@
 * Failure of Logic AI: Garden World Example
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=70%}
 - Consider propositions:
   - $Rain$ = _"it rains"_
   - $WetGrass$ = _"the grass is wet"_
@@ -317,7 +317,7 @@ digraph BayesianFlow {
 * Conditional Independence: Example
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=70%}
 - Two events can **become independent** once we know third event
 
 - Consider:
@@ -484,7 +484,7 @@ digraph BayesianFlow {
 * Bayesian Networks: Garden World Example
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - Consider Garden World with 5 variables
   - $Rain$: directly influenced by $Weather$
   - $Sprinkler$: influenced by $Weather$ (e.g., less likely when raining)
@@ -523,7 +523,7 @@ digraph BayesianFlow {
 * Garden World Example: Dependencies
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 - $Rain$ and $Sprinkler$ are **dependent** (marginally)
   $$Rain \not\perp Sprinkler \iff Rain \leftrightarrow Sprinkler$$
   - If no $Rain$, then $Weather = sunny$ and $Sprinkler$ more likely (sprinklers
@@ -566,7 +566,7 @@ digraph BayesianFlow {
 * Garden World Example: Explaining Away
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 - $Rain$ and $Sprinkler$ are **conditionally independent** given $WetGrass$ (but
   only if $Weather$ not observed)
   $$Rain \perp Sprinkler | WetGrass \text{(but not } Weather)$$
@@ -613,7 +613,7 @@ digraph BayesianFlow {
 * Garden World Example: Independence
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 - $StockMarketUp$ is **(unconditionally) independent** of all other variables
   - But is it really?
   - Change in $StockMarket$ doesn't affect $Weather$
@@ -697,7 +697,7 @@ digraph BayesianFlow {
 - Two neighbors, $John$ and $Mary$ will $Call$ when they hear $Alarm$
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 - Structure of graph shows:
   - $Burglary$ and $Earthquake$ affect $Alarm$
   - $JohnCalls$ and $MaryCalls$ depend only on $Alarm$, not on $Burglary$ and
@@ -735,7 +735,7 @@ digraph BayesianFlow {
 * Burglar Example: Probabilities
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 - Probability of:
   - $Burglary$ is 0.001
   - $Earthquake$ is 0.002
@@ -791,7 +791,7 @@ digraph BayesianFlow {
 - Two neighbors, $John$ and $Mary$ will $Call$ when they hear $Alarm$
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 - **John**
   - Almost always $Call$s when hears alarm
   - Sometimes confuses telephone with $Alarm$ and $Call$s (false positives)
@@ -823,7 +823,7 @@ digraph BayesianFlow {
 * Burglar Example: CPTs
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - Node without parents has unconditional probability
 
 - Single input variable:

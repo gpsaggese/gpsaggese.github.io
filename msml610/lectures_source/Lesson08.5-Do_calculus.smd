@@ -441,7 +441,7 @@ digraph FailsBD {
 * Chains, Forks, and Colliders
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 - @Chain@: $X \to M \to Y$
   - Conditioning on $M$ blocks causal effect
   - Keep mediators unconditioned
@@ -471,7 +471,7 @@ digraph CausalFlow {
 \vspace{1.0cm}
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 - @Fork@: $X \leftarrow Z \to Y$ (confounder)
   - Conditioning on $Z$ removes confounding
   - **Must condition**
@@ -501,7 +501,7 @@ digraph CausalDAG {
 \vspace{0.5cm}
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 - @Collider@: $X \to M \leftarrow Y$
   - Conditioning on $M$ introduces bias
   - Keep colliders unconditioned
@@ -568,7 +568,7 @@ digraph ColliderExample {
   treatment to outcome
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 - Graph structure:
   - $X$: treatment
   - $M$: mediator

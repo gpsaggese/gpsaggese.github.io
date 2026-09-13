@@ -65,7 +65,7 @@
 * AI Formal Definition
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=70%}
 
 - @Definition@: AI is characterized along **two key axes**
   `#cite("russell2020aima")`{=typst}
@@ -114,7 +114,7 @@
 * 2. AI as Thinking Rationally
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=70%}
 
 - @Question@: What are the rules of **correct thinking**?
   - Given correct premises, yield correct conclusions
@@ -260,7 +260,7 @@ digraph laws_of_thought {
 * Acting Rationally as Ultimate Goal of AI
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=70%}
 
 - @Question@: Which definition of AI best captures what we should build?
   - Acting vs. Thinking
@@ -341,7 +341,7 @@ digraph laws_of_thought {
 * Machine Learning: Definitions
 
 ::: columns
-:::: {.column width=75%}
+:::: {.column width=80%}
 
 - @Question@: How should we **define machine learning**?
 
@@ -399,7 +399,7 @@ digraph laws_of_thought {
 * AI vs ML vs Deep Learning
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=70%}
 
 - @Definition@
   - **AI (Artificial Intelligence)**: Machines programmed to reason, learn, and act

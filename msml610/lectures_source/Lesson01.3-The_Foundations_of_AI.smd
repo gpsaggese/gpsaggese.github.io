@@ -48,7 +48,7 @@ mindmap
 * AI and Philosophy (2/2)
 
 ::: columns
-:::: {.column width=75%}
+:::: {.column width=80%}
 
 - @Question@: What does knowledge come from?
   - @Comparison@
@@ -136,7 +136,7 @@ mindmap
 * AI and Economics (1/2)
 
 ::: columns
-:::: {.column width=68%}
+:::: {.column width=70%}
 
 - @Question@: How to decide to maximize payoff given preferences?
   - @Comparison@
@@ -363,7 +363,7 @@ digraph CognitivePsychology {
 * AI and Computer Engineering (1/2)
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 
 - @Question@: How has computing hardware evolved to become fast enough for AI?
   - @Definition@: **Electronic computers** were built during World War II
@@ -383,7 +383,7 @@ digraph CognitivePsychology {
 * AI and Computer Engineering (2/2)
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 
 - @Question@: What hardware trends are shaping AI systems today?
   - @Definition@: **Hardware for AI**

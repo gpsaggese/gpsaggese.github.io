@@ -480,7 +480,7 @@
   $$
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 
 - @Question@: Why doing this?
 
@@ -934,7 +934,7 @@
 * Non-Linearly Separable SVM Problem
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=60%}
 
 - In general there are different types of **non-linearly separable data sets**
 
@@ -964,7 +964,7 @@
 * Soft-Margin SVM: Advantages
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 
 - Even with linearly separable data, improve $E_{out}$ using soft margin SVM at
   the cost of worse $E_{in}$

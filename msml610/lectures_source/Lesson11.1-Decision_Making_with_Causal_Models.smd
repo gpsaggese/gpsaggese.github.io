@@ -112,7 +112,7 @@
   - We need a causal graph
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - **Case A**: Gender $\to$ Drug, Gender $\to$ Recovery
   - Gender confounds treatment choice
   - Correct answer: look at the _subgroup_ table
@@ -373,7 +373,7 @@ digraph DecisionLoop {
   - All causal arrows from $Gender$, $Age$, etc. into $Drug$ are cut
 
 ::: columns
-:::: {.column width=45%}
+:::: {.column width=60%}
 \begingroup \centering
 Before:
 \endgroup
@@ -573,7 +573,7 @@ digraph GardenDecisionDiagram {
 * Decision Network: Medical Example
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - **Example**: whether to run a diagnostic test before treating a patient
   - Chance: disease status, test result, outcome
   - Decision: order test?, choose therapy?
@@ -753,7 +753,7 @@ digraph ID {
 // TODO(gp): Improve this
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 **Bayesian**
 
 - Posterior $\Pr(\theta | \mathcal{D})$

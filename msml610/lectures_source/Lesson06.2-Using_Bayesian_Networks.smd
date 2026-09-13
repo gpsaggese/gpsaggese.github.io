@@ -97,7 +97,7 @@
 
 * Evaluate a Bayesian Network: Example
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 - @Problem@: Given Pearl Los Angeles example, you want to compute the probability
   that:
   - The alarm has sounded ($Alarm$)
@@ -193,7 +193,7 @@ digraph BayesianFlow {
   ordering the nodes
 
 ::: columns
-:::: {.column width=30%}
+:::: {.column width=40%}
 ```graphviz
 digraph BayesianNetwork {
     splines=true;
@@ -282,7 +282,7 @@ digraph BayesianNetwork {
 * Causal vs Diagnostic Models
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=70%}
 - @Definition@: A **causal model** goes from causes to symptoms
   - E.g., $Burglary \to Alarm$
   - Simpler (i.e., fewer and more robust dependencies)
@@ -391,7 +391,7 @@ digraph CausalModel {
 
 * Conditional Independence on Markov Blanket
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - @Theorem@: In a Bayesian network, each variable is **conditionally
   independent** of:
   - Its predecessors given its parents
@@ -510,7 +510,7 @@ digraph BayesianFlow {
 
 * Markov Blanket: Medical Example
 ::: columns
-:::: {.column width=25%}
+:::: {.column width=30%}
 - Consider the risk factors and outcomes for heart disease
 ::::
 :::: {.column width=70%}
@@ -992,7 +992,7 @@ digraph InsuranceRiskModel {
   evidence_
   
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=70%}
 - @Solution@:
   - Sample variables in _topological order_
   - Source nodes have known _unconditional probability distribution_
@@ -1099,7 +1099,7 @@ digraph BayesianFlow {
 
 * Importance Sampling
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 
 - @Definition@: **Importance sampling**
   - Draw samples from _easier_ distribution $Q(X)$
@@ -1171,7 +1171,7 @@ digraph BayesianFlow {
 
 * Markov Chain Monte Carlo: Mixing
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 - @Definition@: **Mixing** describes how quickly a Markov chain _forgets its
   starting point_ and explores the whole state space efficiently
   - A _well-mixed_ chain:
