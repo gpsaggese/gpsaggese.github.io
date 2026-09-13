@@ -404,7 +404,7 @@ digraph MCTSIterationExample {
 * UCT: Worked Example
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - @Example@: at the root $N(s) = 10$, $\ln N(s) = 2.30$, and $c = 1.4$
 
 ```{=typst}

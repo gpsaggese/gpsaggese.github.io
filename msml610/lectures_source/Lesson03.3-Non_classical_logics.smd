@@ -46,7 +46,7 @@
   - Different formal models make different assumptions on how truth is defined
 
 ::: columns
-:::: {.column width=45%}
+:::: {.column width=50%}
 
 - @Examples@:
   - _Propositional logic_: world consists of facts that are either true or false
@@ -101,7 +101,7 @@ digraph OntologicalLevels {
 * Non-monotonic Logic
 
 ::: columns
-:::: {.column width=45%}
+:::: {.column width=50%}
 
 - @Definition@: **Non-monotonic logic** is a logic where adding new information
   can invalidate previous conclusions `#cite("mccarthy1980circumscription")`{=typst}
@@ -215,7 +215,7 @@ digraph NonMonotonicReasoning {
 * Common Sense Reasoning: Restaurant Example
 
 ::: columns
-:::: {.column width=45%}
+:::: {.column width=50%}
 
 - **Initial facts**
   - $Bob$ enters a $Restaurant$
@@ -302,7 +302,7 @@ digraph RestaurantExample {
 * Inductive Logic Programming
 
 ::: columns
-:::: {.column width=45%}
+:::: {.column width=50%}
 
 - @Definition@: **Inductive logic programming** learns logical rules from
   examples and background knowledge
@@ -364,7 +364,7 @@ digraph ILP {
   - More expressive than propositional logic, less than first-order logic
 
 ::: columns
-:::: {.column width=45%}
+:::: {.column width=50%}
 
 - @Components@
   - _Classes_: abstract groups (e.g., $Person$, $Animal$)
@@ -433,7 +433,7 @@ digraph DescriptionLogic {
   `#cite("horrocks2003owl")`{=typst}
 
 ::: columns
-:::: {.column width=45%}
+:::: {.column width=50%}
 
 - @Components@:
   - $\mathcal{S}$: transitive properties (e.g., $ancestorOf$)
@@ -485,7 +485,7 @@ digraph SHOINFeatures {
 * OWL
 
 ::: columns
-:::: {.column width=45%}
+:::: {.column width=50%}
 
 - @Definition@: **Web Ontology Language (OWL)** `#cite("mcguinness2004owl")`{=typst}
   - Semantic web language for complex knowledge
@@ -537,7 +537,7 @@ digraph OWLVariants {
 * Example of OWL in RDF
 
 ::: columns
-:::: {.column width=45%}
+:::: {.column width=40%}
 
 ```graphviz
 digraph OWL_Example {
@@ -572,7 +572,7 @@ digraph OWL_Example {
   - Represents structured information in a machine-readable way
 
 ::: columns
-:::: {.column width=45%}
+:::: {.column width=50%}
 
 - @Components@: the basic building block is a triple
   - _Subject_: entity being described (e.g., `Nuvolo`)
@@ -635,7 +635,7 @@ digraph OWL_Example {
 * Semantic Web
 
 ::: columns
-:::: {.column width=40%}
+:::: {.column width=45%}
 
 - @Definition@: **Semantic Web**
   - Extends the Web for machine understanding
@@ -693,7 +693,7 @@ digraph SemanticWebStack {
 * WikiData
 
 ::: columns
-:::: {.column width=45%}
+:::: {.column width=50%}
 
 - @Definition@: **WikiData** is a free, collaborative knowledge base for Wikipedia
   `#cite("vrandecic2014wikidata")`{=typst}
@@ -747,7 +747,7 @@ digraph WikiDataStructure {
 * DBPedia
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 
 - @Definition@: **DBpedia** extracts structured content from Wikipedia, creating
   a large-scale, multilingual knowledge graph `#cite("lehmann2015dbpedia")`{=typst}
@@ -772,7 +772,7 @@ digraph WikiDataStructure {
 * Semantic Networks
 
 ::: columns
-:::: {.column width=45%}
+:::: {.column width=50%}
 
 - @Definition@: **Semantic Networks** represent knowledge as graphs of concepts
   and relations
@@ -823,7 +823,7 @@ digraph SemanticNetwork {
 * WordNet
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 
 - @Definition@: **WordNet** `#cite("miller1995wordnet")`{=typst}
   - Is a large lexical database of English words
@@ -860,7 +860,7 @@ digraph SemanticNetwork {
   - Represents commonsense knowledge
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 
 - @Components@
   - Nodes: concepts (words, phrases)

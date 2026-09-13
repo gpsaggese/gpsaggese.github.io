@@ -344,7 +344,7 @@
     sentence $\alpha \implies \beta$ is a tautology
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 - @Key idea@: The deduction theorem is like a _bridge_ between two different
   but closely related ideas:
   - _Entailment_ $\models$ is a semantic notion
@@ -377,25 +377,27 @@ digraph DeductionBridge {
 
 * Satisfiability
 ::: columns
-:::: {.column width=55%}
-- @Definition@: A sentence $\alpha$ is **satisfiable** iff $\alpha$ is true for
-  some model
+:::: {.column width=60%}
+- @Definition@:
+  - A sentence $\alpha$ is **satisfiable** iff $\alpha$ is true for some model $m$
+  - **SAT problem** is about determining satisfiability of sentence in propositional
+    logic
+    - One can enumerate all the possible models until one is found to satisfy the
+      sentence $\alpha$
+    - It is NP-complete (Cook, 1971) `#cite("cook1971complexity")`{=typst}
 
-- @Definition@: **SAT problem** is about determining satisfiability of sentence
-  in propositional logic
-  - One can enumerate all the possible models until one is found to satisfy the
-    sentence $\alpha$
-  - It is NP-complete (Cook, 1971) `#cite("cook1971complexity")`{=typst}
+- @Corollary@:
+  - A sentence $\alpha$ is **un-satisfiable** iff $\alpha$ is never true (i.e., a
+    contradiction)
+  - **Validity and satisfiability**: 
+    - $\alpha$ is valid (i.e., a tautology) iff $\lnot \alpha$ is un-satisfiable
+    - By contrapositive, $\alpha$ is satisfiable iff $\lnot \alpha$ is not valid
+      ($\lnot \alpha$ is not a tautology)
 
-- @Corollary@: A sentence $\alpha$ is **un-satisfiable** iff $\alpha$ is never
-  true (i.e., a contradiction)
-
-- @Corollary@: **Validity and satisfiability**
-  - $\alpha$ is valid (i.e., a tautology) iff $\lnot \alpha$ is un-satisfiable
-  - By contrapositive, $\alpha$ is satisfiable iff $\lnot \alpha$ is not valid
-    ($\lnot \alpha$ is not a tautology)
 ::::
 :::: {.column width=40%}
+
+// TODO(ai_gp): Make the Border of Valid blue
 ```graphviz[width=100%]
 digraph Satisfiability {
   graph [bgcolor="transparent", fontname="Helvetica"];
@@ -411,55 +413,47 @@ digraph Satisfiability {
       style="rounded,filled"; color="#A0D6D1"; fillcolor="#E7F6F5";
       labelloc=b; fontsize=11; fontcolor="#1F5A55";
 
-      valid [label="Valid\n(tautologies)", shape=box,
+      valid [label="Valid", shape=box,
              style="rounded,filled", fillcolor="#A6C8F4", penwidth=0];
     }
   }
 }
 ```
-\footnotesize _Unsatisfiable sentences lie outside the "Satisfiable" box_
 ::::
 :::
 
 * Proof by Contradiction
-- @Definition@: **Proof method**: The sentence $\alpha \models \beta$ is true
-  iff the sentence $\alpha \land \lnot \beta$ is un-satisfiable (i.e., a
-  contradiction)
+- @Definition@: The **proof by contradiction** consists in showing that the sentence
+  $\alpha \models \beta$ is true iff the sentence $\alpha \land \lnot \beta$ is
+  un-satisfiable (i.e., a contradiction)
 
-- @Algorithm@: In a proof by contradiction:
+- @Algorithm@: In a proof by contradiction for $\alpha \implies \beta$
   - Assume $\alpha$
   - Assume that the sentence $\beta$ is false
   - Prove that this leads to a contradiction
   - Thus $\beta$ must be true
 
-// TODO(gp): Finish this
-
 * Propositional Logic: Pros and Cons
 - @Pros@
-  - Declarative
+  - _Declarative_
     - Semantics is based on relation between sentences and possible worlds
-  - Can deal with partial information
+  - Can deal with _partial information_
     - E.g., "A white knight is in `b1` or in `f6`" is represented with
       $WK1_{b1} \lor WK2_{f6}$
-  - Compositional semantics
+  - _Compositional semantics_
     - The meaning of a sentence is a function of the meaning of its parts
-  - Context independent
-  - Unambiguous
+  - _Context independent_
+    - It only cares about the truth values of statements, it doesn't look
+      inside the statements themselves (atomic representation)
+    - E.g., natural languages are context-dependent (e.g., _"She is ready"_)
+  - _Unambiguous_
 
 - @Cons@
   - Can't concisely describe environment with many objects, e.g.,
     - E.g., _"The pawn is in a cell around `b1`"_ requires all the possible
       states to be enumerated
-  - Can't represent uncertainty
+  - Can't represent _uncertainty_
     - E.g., _"There is 50% of probability that the pawn is in `b1`"_
-
-\begingroup \scriptsize
-| **Pros** | **Cons** |
-|---|---|
-| Declarative, compositional semantics | Can't concisely describe environments with many objects |
-| Can deal with partial information | Can't represent uncertainty |
-| Context independent, unambiguous | |
-\endgroup
 
 # First-order Logic
 
@@ -472,8 +466,8 @@ digraph Satisfiability {
   - Introducing _quantifiers_ (e.g., $\forall$, $\exists$)
   - Using _predicates_ to represent properties and relations
 
-- @Pros@: Combines pros of propositional logic with pros of natural language
-  - Built around objects and relations
+- @Pros@:
+  - Built around _objects and relations_
   - Allows to express facts about some or all objects, e.g.,
      - _"Some humans have green eyes"_
      - _"Chess pieces around the Queen are at risk"_
@@ -648,6 +642,44 @@ digraph Satisfiability {
 | Existential Instantiation | $\exists x\, P(x)$ | $P(c)$, a new constant $c$ |
 | Modus Ponens | $P$, $P \implies Q$ | $Q$ |
 \endgroup
+
+* First-Order Logic (FOL): Cons
+- **Undecidability**
+  - No algorithm always terminates when checking if a sentence is entailed
+  - Propositional logic is decidable (truth tables always finish)
+  - E.g., asking "is this formula satisfiable?" may run forever with no answer
+- **Computational complexity**
+  - Unification (matching variables to terms) and quantifiers are expensive to
+    process
+  - Reasoning must search over potentially infinite sets of objects
+  - E.g., proving "$\exists x, P(x)$" may require checking an unbounded number
+    of candidates
+- **No native uncertainty handling**
+  - FOL only allows statements to be strictly true or false
+    - Cannot represent probability, vagueness, or degrees of belief
+  - E.g., _"Most birds fly"_ or _"She is probably ready"_ can't be expressed
+  - Need probabilistic logic
+- **Monotonicity**
+  - Once a fact is proven true, no new information can retract it
+  - Real-world reasoning often needs revision as new facts appear
+  - E.g., _"Tweety is a bird $\implies$ Tweety flies"_ breaks once you learn
+    _"Tweety is a penguin"_
+  - Need non-monotonic logics
+- **Limited expressiveness for higher-order concepts**
+  - FOL can quantify over _objects_ ("for all x") but not over
+    _predicates/properties themselves_
+  - E.g., cannot easily express "some properties are more important than others"
+  - Need higher-order logic
+- **No built-in temporal or modal reasoning**
+  - Base FOL has no way to express time, necessity, possibility, or belief
+  - E.g., _"It will rain tomorrow"_ or _"It's possible that P ..."_
+  - Need: modal logic (possibility/necessity), temporal logic (time), or epistemic
+    logic (belief)
+- **Knowledge engineering burden**
+  - Converting messy natural language into precise predicates/quantifiers is hard
+    and error-prone
+  - E.g., _"Some humans have green eyes"_ $\implies$ $\exists x\, (Human(x) \land
+    GreenEyes(x))$
 
 * References
 

@@ -239,7 +239,7 @@ digraph MissingnessMechanisms {
   - _K-means binning_: Cluster values into bins along one dimension
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 
 - @Example@: Discretizing age
   - `Child`: [0, 13), `Teen`: [13, 20), `Adult`: [20, 65), `Senior`: [65, $\infty$)

@@ -283,7 +283,7 @@ digraph POMDP_Model {
     raining"_
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 
 - The **\green{transition model}** is $\Pr(Rain_t | Rain_{t-1})$
   - $\Pr(R_t | R_{t-1}=T) = 0.7$
@@ -358,7 +358,7 @@ digraph POMDP_Model {
   $$
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - **First-order Markov assumption**:
   $$\Pr(\vX_i | \vX_{0:i-1}) = \Pr(\vX_i | \vX_{i-1})$$
 
@@ -832,7 +832,7 @@ digraph HMM {
 \endgroup
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 
 - Final most probable state
   - Sunny (Day 3)

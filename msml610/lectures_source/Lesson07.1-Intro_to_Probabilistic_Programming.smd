@@ -346,7 +346,7 @@ PDF varying $\alpha, \beta$
 * Coin Example: Effect of Priors (2/2)
 
 ::: columns
-:::: {.column width=40%}
+:::: {.column width=45%}
 
 - **Properties**:
   - _Outcome_: Bayesian analysis yields a posterior distribution, not a single value
@@ -501,7 +501,7 @@ Kruschke diagram
 * Bayesian Statistics
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 
 - @Components@
   - The **"knowns"**

@@ -1131,7 +1131,7 @@ digraph route_heuristic {
   - The graph-search version is optimal when $h$ is **consistent**
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - @Intuition@: A* pops nodes in non-decreasing order of $f$, so it sweeps out
   **contours** of equal $f$ value
   - Every node with $f(n) < C^*$ is expanded
@@ -1554,7 +1554,7 @@ digraph ttt_and_or_tree {
 * Minimax on a Tic-Tac-Toe Endgame
 
 ::: columns
-:::: {.column width=32%}
+:::: {.column width=36%}
 - Cells are numbered $0$ to $8$, left to right and top to bottom
 
 ```tikz
@@ -1747,7 +1747,7 @@ digraph ttt_endgame {
 * Alpha-Beta: Worked Example
 
 ::: columns
-:::: {.column width=44%}
+:::: {.column width=50%}
 - $Max$ chooses $a_1$, $a_2$, $a_3$ leading to $B$, $C$, $D$, and the leaves
   are read left to right
 
@@ -1814,7 +1814,7 @@ digraph alpha_beta {
 * Alpha-Beta: Worked Example
 
 ::: columns
-:::: {.column width=44%}
+:::: {.column width=50%}
 - $Max$ chooses $a_1$, $a_2$, $a_3$ leading to $B$, $C$, $D$, and the leaves
   are read left to right
 

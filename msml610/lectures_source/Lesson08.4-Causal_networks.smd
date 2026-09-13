@@ -123,7 +123,7 @@ digraph BayesianNetwork1 {
 
 * Causal DAG: Example
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - @Definition@: **Explanatory variables** (aka treatment) can be manipulated or
   observed when changes applied
   - E.g., _"does coffee before exam help test score?"_
@@ -159,7 +159,7 @@ digraph SCMExample {
 
 * Example: Tornado Warning
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - Consider a **severe weather alert system**
   - The _causal diagram_ has the following nodes and structure:
     - $T$: _"Tornado forms"_
@@ -210,7 +210,7 @@ digraph Tornado_Warning {
 
 * Tornado Warning: Level 1 (Association)
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - **Association** (observational quantity) understands how one fact informs
   another
 
@@ -256,7 +256,7 @@ digraph Tornado_Warning {
 
 * Tornado Warning: Level 2 (Intervention)
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - @Question@: _If you make radio broadcast, will residents be warned?_
   - Yes
   - Breaks "rules of nature" as $A$ broadcasts only if $W$ is issued
@@ -312,7 +312,7 @@ digraph Tornado_Warning {
 
 * Tornado Warning: Level 3 (Counterfactual)
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - @Definition@: **Counterfactual** reasoning
   - Assume residents warned: $R=1$
   - Know $A, B$ broadcast because $W$ issued, after $T$ formed
@@ -386,7 +386,7 @@ digraph Tornado_Warning {
 
 * Structural Causal Model: Sprinkler Example
 ::: columns
-:::: {.column width=70%}
+:::: {.column width=75%}
 - @Example@: _Structural equations for sprinkle example_
 // TODO(ai_gp): Why is not rendered correctly.
   $$
@@ -444,7 +444,7 @@ digraph BayesianFlow {
 
 * Observed Vs. Unobserved Variables
 ::: columns
-:::: {.column width=45%}
+:::: {.column width=50%}
 - @Definition@: **Observed variables** (measurable/visible) are directly measured
   or collected in dataset
   - E.g., Education, Income
@@ -513,7 +513,7 @@ digraph EducationIncomeModel_ObservedUnobserved_Vertical {
 
 * Endogenous Vs. Exogenous Variables
 ::: columns
-:::: {.column width=45%}
+:::: {.column width=50%}
 - @Definition@: **Endogenous variables** have their values determined _within_
   model
   - Dependent on other system variables
@@ -583,7 +583,7 @@ digraph EducationIncomeModel_EndoExo{
 
 * Endo / Exogenous, Observed / Unobserved Vars
 ::: columns
-:::: {.column width=40%}
+:::: {.column width=45%}
 - @Characteristics@:
   - _Exogenous + unobserved_: capture randomness, unknown factors
   - _Exogenous + observed_: potential intervention targets
@@ -741,7 +741,7 @@ digraph RiskFactors {
 
 * Mediator Variable
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - @Definition@: **Mediator variable** $M$ is an intermediate variable that
   _transmits_ causal effect from $X$ to $Y$
   - Lies on causal path between $X$ and $Y$
@@ -770,7 +770,7 @@ digraph CausalFlow {
 :::
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - @Remark@: **Direct vs. indirect effects**
   - Indirect: $X$ affects $Y$ through $M$
   - Direct: $X$ affects $Y$ not through $M$
@@ -801,7 +801,7 @@ digraph CausalFlow {
 * Mediator Variable: Example
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=70%}
 - @Question@: Does training increase employee productivity?
 
 - @Answer@: There is an indirect causal effect through mediator
@@ -841,7 +841,7 @@ digraph CausalFlow {
 
 * Moderator Variable
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - @Definition@: A **moderator variable** $M$ changes _strength_ or _direction_ of
   relationship between $X$ and $Y$
   - Not part of causal chain, but _conditions_ the relationship
@@ -869,7 +869,7 @@ digraph ModeratorModel {
 :::
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - @Question@: What is the relationship between stress and job performance?
 
 - @Answer@: Social support acts as a moderator
@@ -900,7 +900,7 @@ digraph ModeratorModel {
 
 * Confounder Variable
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 
 - @Definition@: **Confounder** $C$ is a variable that affects both treatment
   (cause) and outcome (effect)
@@ -1152,7 +1152,7 @@ digraph ColliderDiagram {
   - Introduces spurious association between parents
 
 ::: columns
-:::: {.column width=70%}
+:::: {.column width=75%}
 - @Example@: Consider the causal graph with the following variables
   - $D$ = Diet, $E$ = Exercise, $W$ = Body Weight, $H$ = Heart Disease
 
@@ -1224,7 +1224,7 @@ digraph ChainStructure {
 :::
 
 ::: columns
-:::: {.column width=40%}
+:::: {.column width=65%}
 - @Example@:
   - $Education$ influences $Income$, which influences $LifeQuality$
   - Education's effect on quality passes through income
@@ -1251,7 +1251,7 @@ digraph EducationChain {
 
 * Fork
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 - @Definition@: **Fork** $D \leftarrow X \to C$ is when a single variable $X$
   influences multiple targets
   - $X$ is confounder (common cause) of $C$ and $D$
@@ -1282,7 +1282,7 @@ digraph CausalDAG {
 :::
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 - @Example@:
   - $Lifestyle$ confounds $Weight$ and $BloodPressure$
   - Outcomes correlated due to shared cause

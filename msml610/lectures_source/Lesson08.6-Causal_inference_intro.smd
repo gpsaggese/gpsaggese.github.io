@@ -47,7 +47,7 @@
   ```
 
 ::: columns
-:::: {.column width=80%}
+:::: {.column width=85%}
 
 - @Definition@: **Treatment** $T$ indicates treatment assignment
   - $T_i = 1$ if unit $i$ received the treatment
@@ -87,7 +87,7 @@ digraph CausalDiagram {
   - The other remains _counterfactual_
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 
 - @Example@: outcome `weekly_amount_sold` conditioned on `is_on_sale`
   - Stores with sales sell more (from 50 to 150)
@@ -460,7 +460,7 @@ digraph SalesModelExtended {
 * The Bias Equation: Visual Example
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 
 - Plot `weekly_amount_sold` vs `avg_week_sales` (business size)
   - \red{Red}: treated (cut prices)
@@ -479,7 +479,7 @@ digraph SalesModelExtended {
 \vspace{0.5cm}
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 
 - Observed difference has _two causes_
   - Treatment effect: price cuts boost sales
@@ -502,7 +502,7 @@ digraph SalesModelExtended {
   disappears when groups combined
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 
 - @Key insight@:
   - Confounder influences relationship
@@ -684,7 +684,7 @@ digraph SalesModelExtended {
 - Collect the data (`id`, `gender`, `age`, `cross_sell_email`, `conversion`)
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - Compute the mean by group in `cross_sell_email`
 
 - Compute the ATE, i.e., difference between each treated group and control
@@ -781,7 +781,7 @@ digraph SalesModelExtended {
   - Outcome $Y$ = customer converted to a new product (or not)
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 
 - @Assumption@: $T$ was randomized, so:
   - The treatment is independent from potential outcomes
@@ -839,7 +839,7 @@ digraph CausalKG {
   - Only very profitable businesses can afford consultants?
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - @Solution@
   - Setting up a randomized trial is difficult
   - You need to untangle causation from association
@@ -1001,7 +1001,7 @@ digraph CausalGraph {
 
 * Identification: Consultancy Example
 ::: columns
-:::: {.column width=40%}
+:::: {.column width=45%}
 - Consider the consultancy graph
 ::::
 :::: {.column width=55%}

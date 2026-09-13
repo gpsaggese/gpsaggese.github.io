@@ -61,7 +61,7 @@
 - **Data** looks like:
 
 ::: columns
-:::: {.column width=40%}
+:::: {.column width=55%}
 ![](msml610/lectures_source/figures/L07.3.Chemical_shift_hierarchical1.png)
 ::::
 :::: {.column width=45%}
@@ -89,7 +89,7 @@
 * Chemical Shift: Unpooled Model
 
 ::: columns
-:::: {.column width=40%}
+:::: {.column width=45%}
 - **Model each group independently**
   - Use same model structure to compare groups
 ::::
@@ -100,7 +100,7 @@
 
 * Chemical Shift: Hierarchical Model
 ::: columns
-:::: {.column width=40%}
+:::: {.column width=45%}
 - **Add two hyperpriors on $\mu$**
   - Mean of $\mu$
   - Standard deviation of $\mu$
@@ -118,7 +118,7 @@
 
 * Chemical Shift: Results
 ::: columns
-:::: {.column width=45%}
+:::: {.column width=50%}
 - Compare estimates of two models
   - 20 groups
   - Each model has 4 estimated variables
@@ -138,7 +138,7 @@
 
 * Shrinkage
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - **Hierarchical models shrink parameters towards a common mean**
   - Groups share information through the hyper-prior
   - Model groups as neither independent nor a single group

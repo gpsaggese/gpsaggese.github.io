@@ -21,7 +21,7 @@
   - Assume linear relationship between $Y$ and $X$
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 
 - E.g.,
   - Nobel laureates in a country vs amount of chocolate consumed
@@ -85,7 +85,7 @@
 
 * Linear Model: Synthetic Example
 ::: columns
-:::: {.column width=35%}
+:::: {.column width=40%}
 - Generate **random data from ground truth**
   - $\alpha = 2.5$
   - $\beta = 0.9$
@@ -98,7 +98,7 @@
 
 * Linear Model: Synthetic Example
 ::: columns
-:::: {.column width=45%}
+:::: {.column width=50%}
 - Create **linear model in PyMC**
 - **Use vague priors**
   - Prior of intercept $\alpha$ and $\beta$ centered around $0$
@@ -112,7 +112,7 @@
 
 * Linear Model: Synthetic Example
 ::: columns
-:::: {.column width=40%}
+:::: {.column width=35%}
 - Run the sampler
 - Ground truth
   - $\alpha = 2.5$
@@ -146,7 +146,7 @@
 * Linear Model: Bike Rental Example
 
 ::: columns
-:::: {.column width=45%}
+:::: {.column width=50%}
 
 - **Fit model** with PyMC:
   $$\mu = 69 + 7.9 X$$
@@ -241,7 +241,7 @@
 
 * Negative Binomial Distribution
 ::: columns
-:::: {.column width=45%}
+:::: {.column width=50%}
 - **Negative binomial distribution**
   - Models failures/trials for fixed successes in IID Bernoulli trials
   - Generalizes geometric distribution, modeling trials to first success
@@ -282,7 +282,7 @@
 
 * Robust Regression
 ::: columns
-:::: {.column width=40%}
+:::: {.column width=45%}
 - **Outliers** pull regression line away from data
 
 - **Robust regression** is a generalized linear model
@@ -324,7 +324,7 @@
 \vspace{0.5cm}
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 
 - **Logistic function** (aka sigmoid)
   $$
@@ -553,7 +553,7 @@
 - Generate random data
 
 ::: columns
-:::: {.column width=40%}
+:::: {.column width=45%}
 ![](msml610/lectures_source/figures/L07.4.Multiple_linear_regression1.png)
 ::::
 :::: {.column width=55%}
@@ -564,7 +564,7 @@
 - PyMC model
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 ![](msml610/lectures_source/figures/L07.4.Multiple_linear_regression_model_code.png)
 ::::
 :::: {.column width=45%}
@@ -577,7 +577,7 @@
 - Solve model
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 ![](msml610/lectures_source/figures/L07.4.Multiple_linear_regression_results1.png)
 ::::
 :::: {.column width=45%}
@@ -593,7 +593,7 @@
 - PyMC model
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=60%}
 ![](msml610/lectures_source/figures/L07.4.Multiple_linear_regression_model_RentedBikes_model_code.png)
 ::::
 :::: {.column width=40%}

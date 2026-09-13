@@ -1088,7 +1088,7 @@ digraph OntologyComponents {
 * Example: University Ontology
 
 ::: columns
-:::: {.column width=35%}
+:::: {.column width=40%}
 
 - **Classes**
   - `Student`

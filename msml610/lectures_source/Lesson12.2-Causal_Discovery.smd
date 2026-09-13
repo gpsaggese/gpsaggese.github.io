@@ -64,7 +64,7 @@
 * The Discovery Problem
 
 ::: columns
-:::: {.column width=45%}
+:::: {.column width=50%}
 - **Assumptions**:
   - We have observational and interventional data
   - We do not know the true causal DAG
@@ -183,7 +183,7 @@ digraph Discovery {
 - **Problem**: path cancellation leads to violation of faithfulness
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 
 - **Example**:
   - Two paths: $X \to Y$ and $X \to Z \to Y$
@@ -367,7 +367,7 @@ digraph Workflow {
 // TODO(gp): Maybe use tree instead of mind map
 
 ::: columns
-:::: {.column width=40%}
+:::: {.column width=45%}
 - _Constraint-based_: use conditional independence tests
 - _Score-based_: search DAG space to optimize a goodness-of-fit score
 - _Functional_: exploit specific noise or functional form for identifiability

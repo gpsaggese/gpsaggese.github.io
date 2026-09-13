@@ -41,7 +41,7 @@
   - Covariates: $\vX_t$
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - A simple **temporal causal graph** (first-order)
 
 - **Key principle**: _effects cannot precede causes_
@@ -146,7 +146,7 @@ digraph TemporalCausal {
   - Cannot interpret coefficients as causal effects
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - **Example**
   - Monetary policy $\to$ inflation $\to$ monetary policy
   - Advertising $\to$ sales $\to$ advertising budget

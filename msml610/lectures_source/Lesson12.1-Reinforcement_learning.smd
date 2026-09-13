@@ -34,7 +34,7 @@
 
 * Markov Decision Processes (MDPs)
 ::: columns
-:::: {.column width=70%}
+:::: {.column width=75%}
 - **MDPs** are a model for sequential decision making
 
 1. **Initial state** $s_0$
@@ -115,7 +115,7 @@ digraph MDP {
 - **Example**: environment is fully observable and stochastic
 
 ::: columns
-:::: {.column width=70%}
+:::: {.column width=75%}
 - E.g., a robot navigating a slippery surface
   - It knows its exact location and the map (_fully observable_)
   - Its wheels may slip unpredictably (_stochastic outcome_)
@@ -397,7 +397,7 @@ digraph MDP {
 * MDP: Tetris Example
 
 ::: columns
-:::: {.column width=70%}
+:::: {.column width=75%}
 - **States $S$**
   - Current board configuration and falling piece
 - **Actions $A$**
@@ -594,7 +594,7 @@ digraph MDP {
 * Dynamic Decision Networks
 
 ::: columns
-:::: {.column width=40%}
+:::: {.column width=45%}
 - _Observation variables_ (ovals)
   - Capture the information available to the agent about the current state, which
     may be incomplete or noisy
@@ -698,7 +698,7 @@ digraph DynamicDecisionDiagram {
 * Dynamic Decision Networks: Grid World Example
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 
 - DDN models the 4x3 Grid World in terms of time slices with the agent's state,
   actions, and rewards
@@ -791,7 +791,7 @@ digraph GridWorldDDN {
 * Dynamic Decision Networks: Tetris Example
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 
 - DDN models Tetris in terms of time slices with the game's state, actions, and
   rewards
@@ -1026,7 +1026,7 @@ digraph TetrisDDN {
 * The $n$-Bandit Problem
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 
 - The $n$-bandit problem is:
   - Simple MDP
@@ -1707,7 +1707,7 @@ digraph TetrisDDN {
 * Causal Reinforcement Learning
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 
 - **Definition**: Extends RL by incorporating causal inference (structural causal
   models, do-calculus, counterfactual reasoning) into how agents learn and act
@@ -1874,7 +1874,7 @@ digraph Confounding {
 * Structural Causal Models for MDPs
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 
 - **Definition**: A structural causal model (SCM) augments the MDP with explicit
   causal mechanisms
@@ -1977,7 +1977,7 @@ digraph SCM {
 * Deconfounding Offline / Off-Policy Data
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 
 - **Motivation**: Offline RL trains on logged data from a different (often
   unknown) policy, exactly the setting where confounding is most likely!
@@ -2054,7 +2054,7 @@ digraph OfflineRL {
 * Causal Generalization Across Environments
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 
 - **Question**: Will a policy learned under environment $\mathcal{E}_1$ hold under
   environment $\mathcal{E}_2$?

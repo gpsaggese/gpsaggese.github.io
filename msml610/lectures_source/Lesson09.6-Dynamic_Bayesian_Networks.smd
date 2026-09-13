@@ -101,7 +101,7 @@
 
 * DBN Example: Tracking a Robot (2/3)
 ::: columns
-:::: {.column width=40%}
+:::: {.column width=45%}
 - The DBN structure models both intra-slice (within time) and inter-slice
   (across time) dependencies
 
@@ -158,7 +158,7 @@ digraph BayesianFlow {
 * DBN Example: Tracking a Robot (3/3)
 
 ::: columns
-:::: {.column width=40%}
+:::: {.column width=45%}
 
 - **Replicate for Multiple Time Slices**:
    - Create slices for $t = 0, 1, 2, \ldots$ with the above variables and

@@ -175,7 +175,7 @@ digraph LearningParadigms {
   - Often involve physical simulation or real-world interaction
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 
 - @Components@
   - _Agent_: Learner and decision maker
