@@ -523,8 +523,6 @@ digraph SemanticWebStack {
 ::::
 :::
 
-## Semantic Network Implementations
-
 * WikiData
 
 - @Definition@: **WikiData** is a free, collaborative knowledge base for Wikipedia
@@ -750,10 +748,10 @@ digraph WordNet {
 ::::
 :::
 
-- @Applications@: natural language understanding; question answering, chatbots;
-  commonsense AI reasoning; semantic search, recommendation
-
-## Knowledge Graphs
+- @Applications@:
+  - Natural language understanding
+  - Question answering / chatbots
+  - Commonsense AI reasoning
 
 * Knowledge Graphs
 
@@ -772,8 +770,9 @@ digraph WordNet {
 - @Applications@: question answering, recommendation, semantic search
   - Used by Google, Facebook, academic search engines
 
-
 * Knowledge Graph: University Example
+
+// TODO(ai_gp): Make it look better according to graphviz.rules.md
 ```graphviz
 digraph UniversityOntology {
     rankdir=LR;
