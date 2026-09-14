@@ -283,40 +283,39 @@ explanatory content whatsoever.
 // Slide: Model Checking is Sound and Complete
 #wrap-content(
   [
-    // rendered_images:begin
-    //             ```graphviz
-    //             digraph ModelChecking {
-    //               graph [rankdir=TB, bgcolor="transparent", nodesep=0.25, ranksep=0.35,
-    //                      fontname="Helvetica"];
-    //               node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11,
-    //                     fontcolor="#26215C", color="#7F77DD", penwidth=1.2];
-    //               edge [color="#888888", penwidth=1.2];
-    //
-    //               enumerate [label="Enumerate all\nmodels", fillcolor="#A0D6D1"];
-    //               filter [label="Keep models\nwhere KB true", fillcolor="#A6E7F4"];
-    //               check [label="Check alpha true\nin all of them", fillcolor="#A6C8F4"];
-    //
-    //               enumerate -> filter -> check;
-    //             }
-    //             ```
-    //             label=fig:modelcheckingissoundandcomplete
-    //             caption=The three-stage model-checking pipeline for testing whether KB entails a query.
-    // width=100%
-    // placement=auto
-    // rendered_images:end
-    // render_images:begin
-    #figure(
-      image(
-        "Lesson03.2-Propositional_and_first_order_logic.typ.figs/Lesson03.2-Propositional_and_first_order_logic.1.png",
-        width: 100%,
-      ),
-      caption: [The three-stage model-checking pipeline for testing whether KB
-        entails a query.],
-      kind: "figure",
-      supplement: [Fig.],
-      placement: auto,
-    ) <fig:modelcheckingissoundandcomplete>
-    // render_images:end
+// rendered_images:begin
+//                 ```graphviz
+//                 digraph ModelChecking {
+//                   graph [rankdir=TB, bgcolor="transparent", nodesep=0.25, ranksep=0.35,
+//                          fontname="Helvetica"];
+//                   node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11,
+//                         fontcolor="#26215C", color="#7F77DD", penwidth=1.2];
+//                   edge [color="#888888", penwidth=1.2];
+//     
+//                   enumerate [label="Enumerate all\nmodels", fillcolor="#A0D6D1"];
+//                   filter [label="Keep models\nwhere KB true", fillcolor="#A6E7F4"];
+//                   check [label="Check alpha true\nin all of them", fillcolor="#A6C8F4"];
+//     
+//                   enumerate -> filter -> check;
+//                 }
+//                 ```
+//                 label=fig:modelcheckingissoundandcomplete
+//                 caption=The three-stage model-checking pipeline for testing whether KB entails a query.
+//     width=100%
+//     placement=auto
+// rendered_images:end
+// render_images:begin
+#figure(
+  image(
+    "Lesson03.2-Propositional_and_first_order_logic.typ.figs/Lesson03.2-Propositional_and_first_order_logic.1.png",
+    width: 100%,
+  ),
+  caption: [The three-stage model-checking pipeline for testing whether KB entails a query.],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
+) <fig:modelcheckingissoundandcomplete>
+// render_images:end
   ],
   align: right,
   column-gutter: 1em,
@@ -555,40 +554,39 @@ another, it suffices to check whether their material implication is valid.
 
 #wrap-content(
   [
-    // rendered_images:begin
-    //         ```graphviz
-    //         digraph DeductionBridge {
-    //           graph [rankdir=TB, bgcolor="transparent", nodesep=0.3, ranksep=0.4,
-    //                  fontname="Helvetica"];
-    //           node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11,
-    //                 fontcolor="#26215C", color="#7F77DD", penwidth=1.2];
-    //           edge [color="#888888", penwidth=1.4, fontname="Helvetica", fontsize=10,
-    //                 fontcolor="#45296B"];
-    //
-    //           entailment [label="Entailment\n(semantic)", fillcolor="#A6C8F4"];
-    //           implication [label="Implication\n(syntactic)", fillcolor="#A0D6D1"];
-    //
-    //           entailment -> implication [dir=both, label="Deduction\nTheorem"];
-    //         }
-    //         ```
-    //         label=fig:deductiontheorem
-    //         caption=The deduction theorem bridging semantic entailment and syntactic implication.
-    // width=100%
-    // placement=auto
-    // rendered_images:end
-    // render_images:begin
-    #figure(
-      image(
-        "Lesson03.2-Propositional_and_first_order_logic.typ.figs/Lesson03.2-Propositional_and_first_order_logic.2.png",
-        width: 100%,
-      ),
-      caption: [The deduction theorem bridging semantic entailment and syntactic
-        implication.],
-      kind: "figure",
-      supplement: [Fig.],
-      placement: auto,
-    ) <fig:deductiontheorem>
-    // render_images:end
+// rendered_images:begin
+//             ```graphviz
+//             digraph DeductionBridge {
+//               graph [rankdir=TB, bgcolor="transparent", nodesep=0.3, ranksep=0.4,
+//                      fontname="Helvetica"];
+//               node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11,
+//                     fontcolor="#26215C", color="#7F77DD", penwidth=1.2];
+//               edge [color="#888888", penwidth=1.4, fontname="Helvetica", fontsize=10,
+//                     fontcolor="#45296B"];
+//     
+//               entailment [label="Entailment\n(semantic)", fillcolor="#A6C8F4"];
+//               implication [label="Implication\n(syntactic)", fillcolor="#A0D6D1"];
+//     
+//               entailment -> implication [dir=both, label="Deduction\nTheorem"];
+//             }
+//             ```
+//             label=fig:deductiontheorem
+//             caption=The deduction theorem bridging semantic entailment and syntactic implication.
+//     width=100%
+//     placement=auto
+// rendered_images:end
+// render_images:begin
+#figure(
+  image(
+    "Lesson03.2-Propositional_and_first_order_logic.typ.figs/Lesson03.2-Propositional_and_first_order_logic.2.png",
+    width: 100%,
+  ),
+  caption: [The deduction theorem bridging semantic entailment and syntactic implication.],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
+) <fig:deductiontheorem>
+// render_images:end
   ],
   align: right,
   column-gutter: 1em,
@@ -621,46 +619,45 @@ known algorithm solves every instance in polynomial time.
 
 #wrap-content(
   [
-    // rendered_images:begin
-    //         ```graphviz
-    //         digraph Satisfiability {
-    //           graph [bgcolor="transparent", fontname="Helvetica"];
-    //           node [fontname="Helvetica", fontsize=10, fontcolor="#26215C"];
-    //
-    //           subgraph cluster_all {
-    //             label="All sentences";
-    //             style="rounded,filled"; color="#F4A6A6"; fillcolor="#FBEAEA";
-    //             labelloc=b; fontsize=11; fontcolor="#7A2E2E";
-    //
-    //             subgraph cluster_sat {
-    //               label="Satisfiable";
-    //               style="rounded,filled"; color="#A0D6D1"; fillcolor="#E7F6F5";
-    //               labelloc=b; fontsize=11; fontcolor="#1F5A55";
-    //
-    //               valid [label="Valid\n(tautologies)", shape=box,
-    //                      style="rounded,filled", fillcolor="#A6C8F4", penwidth=0];
-    //             }
-    //           }
-    //         }
-    //         ```
-    //         label=fig:satisfiability
-    //         caption=Nested regions of all sentences, satisfiable sentences, and valid tautologies.
-    // width=100%
-    // placement=auto
-    // rendered_images:end
-    // render_images:begin
-    #figure(
-      image(
-        "Lesson03.2-Propositional_and_first_order_logic.typ.figs/Lesson03.2-Propositional_and_first_order_logic.3.png",
-        width: 100%,
-      ),
-      caption: [Nested regions of all sentences, satisfiable sentences, and valid
-        tautologies.],
-      kind: "figure",
-      supplement: [Fig.],
-      placement: auto,
-    ) <fig:satisfiability>
-    // render_images:end
+// rendered_images:begin
+//             ```graphviz
+//             digraph Satisfiability {
+//               graph [bgcolor="transparent", fontname="Helvetica"];
+//               node [fontname="Helvetica", fontsize=10, fontcolor="#26215C"];
+//     
+//               subgraph cluster_all {
+//                 label="All sentences";
+//                 style="rounded,filled"; color="#F4A6A6"; fillcolor="#FBEAEA";
+//                 labelloc=b; fontsize=11; fontcolor="#7A2E2E";
+//     
+//                 subgraph cluster_sat {
+//                   label="Satisfiable";
+//                   style="rounded,filled"; color="#A0D6D1"; fillcolor="#E7F6F5";
+//                   labelloc=b; fontsize=11; fontcolor="#1F5A55";
+//     
+//                   valid [label="Valid\n(tautologies)", shape=box,
+//                          style="rounded,filled", fillcolor="#A6C8F4", penwidth=0];
+//                 }
+//               }
+//             }
+//             ```
+//             label=fig:satisfiability
+//             caption=Nested regions of all sentences, satisfiable sentences, and valid tautologies.
+//     width=100%
+//     placement=auto
+// rendered_images:end
+// render_images:begin
+#figure(
+  image(
+    "Lesson03.2-Propositional_and_first_order_logic.typ.figs/Lesson03.2-Propositional_and_first_order_logic.3.png",
+    width: 100%,
+  ),
+  caption: [Nested regions of all sentences, satisfiable sentences, and valid tautologies.],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
+) <fig:satisfiability>
+// render_images:end
   ],
   align: right,
   column-gutter: 1em,

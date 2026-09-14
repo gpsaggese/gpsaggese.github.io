@@ -542,72 +542,61 @@ digraph Satisfiability {
 
 - @Example@:
   - _"Brothers are siblings"_
-    - $\forall x, y \; Brother(x, y) \implies Sibling(x, y)$
+    - $\forall x, y \ Brother(x, y) \implies Sibling(x, y)$
   - Siblings is a symmetric relationship
-    - $\forall x, y \; Sibling(x, y) \iff Sibling(y, x)$
+    - $\forall x, y \ Sibling(x, y) \iff Sibling(y, x)$
   - _"Everybody loves somebody"_
-    - $\forall x \; \exists y \; Loves(x, y)$
+    - $\forall x \ \exists y \ Loves(x, y)$
   - _"There is someone loved by everyone"_
-    - $\exists y \; \forall x \; Loves(x, y)$
+    - $\exists y \ \forall x \ Loves(x, y)$
 
 * Connection between $\forall$ and $\exists$
 - @Fact@: the universal and existential quantifiers are **connected** through
   negation and De Morgan rules
 // TODO(ai_gp): Use a better latex
   $$
-  \forall x \; \lnot P(x) \iff \lnot \exists x: P(x)
+  \forall \; x \ \lnot P(x) \iff \lnot \exists \; x \ P(x)
   $$
   $$
-  \lnot (\forall x \; P(x)) \iff \exists x \lnot P(x)
+  \lnot (\forall x \ P(x)) \iff \exists \; x \ \lnot P(x)
   $$
   $$
-  \forall x \; P(x) \iff \lnot \exists x \lnot P(x)
+  \forall x \ P(x) \iff \lnot \exists x \ \lnot P(x)
   $$
   $$
-  \exists x \; P(x) \iff \lnot (\forall x \; \lnot P(x))
+  \exists x \ P(x) \iff \lnot (\forall x \ \lnot P(x))
   $$
 
 ## Semantics
 
-* First-order Logic: Semantics
-- @Definition@: **Semantics** define how sentences are interpreted in a domain
+* First-Order Logic: Semantics
+- @Semantics@ define how sentences are interpreted in a domain
 
-- Symbols represent entities, relationships, and functions in the domain
-  - **Constant symbols** represent specific objects
+- @Symbols@ represent entities, relationships, and functions in the domain
+  - @Constant symbols@ represent specific objects
     - E.g., $Alice$, $GP$, $CS101$
 
-  - **Predicate symbols** represent relationships among objects, e.g.,
+  - @Predicate symbols@ represent relationships among objects, e.g.,
     - $EnrolledIn(Student, Class)$
     - $Teaches(Professor, Class)$
     - $IsStudent(x)$, $IsProfessor(x)$
 
-  - **Function symbols** represent mappings between objects
+  - @Function symbols@ represent mappings between objects
     - E.g., $AdvisorOf(Student)$, $DepartmentOf(Professor)$
 
-- @Definition@: an **interpretation** (aka grounding) maps the world to its
-  mathematical description, and vice versa
+- An @interpretation@ (aka grounding) maps the world to its mathematical description,
+  and vice versa
   - There are many possible interpretations
-  - The intended interpretation is often the one that is the most natural
+  - The intended interpretation is often the one that is the _most natural_
     - E.g., map the symbol $GP$ $\to$ me
-    - E.g., $\forall x \, (Human(x) \implies Mortal(x))$ means that every
-      human is mortal
+    - E.g., $\forall x \, (Human(x) \implies Mortal(x))$ means that every human is
+      mortal
 
 * Representing Knowledge in FOL
-- @Pros@: FOL enables representation of:
-  - General rules: $\forall x\, (Bird(x) \implies CanFly(x))$
-  - Specific facts: $Bird(Tweety)$
 
-- **Relations**: Complex relations are captured through predicates:
-  - $Loves(Romeo, Juliet)$, $GreaterThan(3, 2)$
+- First-Order Logic enables representation of complex knowledge
 
-- **Functions**: Functions express object construction:
-  - $FatherOf(John)$
-
-- **Knowledge base**: Built from axioms and facts
-
-- **Reasoning**: Enables reasoning about objects, properties, and their
-  relationships
-
+// TODO(ai_gp): Convert it to typst table
 \begingroup \scriptsize
 | **Category** | **Example** |
 |---|---|
@@ -617,65 +606,63 @@ digraph Satisfiability {
 | Functions | $FatherOf(John)$ |
 \endgroup
 
+- @Knowledge base@ can be built from axioms and facts
+
+- @Reasoning@: Enables reasoning about objects, properties, and their relationships
+
 * First-Order Logic: Inference
 - @Goal@: derive new sentences from existing ones using sound rules
 
-  - **Universal Instantiation**:
+  - @Universal Instantiation@:
     - From $\forall x\, P(x)$ infer $P(c)$ for any constant $c$
 
-  - **Existential Instantiation**:
+  - @Existential Instantiation@:
     - From $\exists x\, P(x)$ infer $P(c)$ with a new constant $c$
 
-  - **Standard rules**: Propositional logic rules such as Modus Ponens, Modus
-    Tollens, Resolution, etc., also apply within FOL
+  - @Standard Inference rules@: propositional logic rules also apply within FOL
     - Modus ponens: from $P$ and $P \implies Q$, infer $Q$
+    - Modus tollens: TODO(ai_gp)
+    - Resolution: TODO(ai_gp)
 
 - @Fact@: FOL inference is semi-decidable (Turing, 1936)
-  `#cite("turing1936computable")`{=typst}:
-  - If a sentence is entailed, a proof can be found
-  - If not entailed, proof search may not terminate
-
-\begingroup \scriptsize
-| **Rule** | **From** | **Infer** |
-|---|---|---|
-| Universal Instantiation | $\forall x\, P(x)$ | $P(c)$, any constant $c$ |
-| Existential Instantiation | $\exists x\, P(x)$ | $P(c)$, a new constant $c$ |
-| Modus Ponens | $P$, $P \implies Q$ | $Q$ |
-\endgroup
-
-* First-Order Logic (FOL): Cons
-- **Undecidability**
+  `#cite("turing1936computable")`{=typst}
   - No algorithm always terminates when checking if a sentence is entailed
+    - E.g., asking _"is this formula satisfiable?"_ may run forever with no answer
+    - If a sentence is entailed, a proof can be found
+    - If not entailed, proof search may not terminate
   - Propositional logic is decidable (truth tables always finish)
-  - E.g., asking "is this formula satisfiable?" may run forever with no answer
-- **Computational complexity**
+
+* First-Order Logic: Cons
+- @Computational complexity@
   - Unification (matching variables to terms) and quantifiers are expensive to
     process
   - Reasoning must search over potentially infinite sets of objects
   - E.g., proving "$\exists x, P(x)$" may require checking an unbounded number
     of candidates
-- **No native uncertainty handling**
+- @No native uncertainty handling@
   - FOL only allows statements to be strictly true or false
     - Cannot represent probability, vagueness, or degrees of belief
   - E.g., _"Most birds fly"_ or _"She is probably ready"_ can't be expressed
   - Need probabilistic logic
-- **Monotonicity**
+- @Monotonicity@
   - Once a fact is proven true, no new information can retract it
   - Real-world reasoning often needs revision as new facts appear
   - E.g., _"Tweety is a bird $\implies$ Tweety flies"_ breaks once you learn
     _"Tweety is a penguin"_
   - Need non-monotonic logics
-- **Limited expressiveness for higher-order concepts**
+
+* First-Order Logic: Cons
+- @Limited expressiveness for higher-order concepts@
   - FOL can quantify over _objects_ ("for all x") but not over
     _predicates/properties themselves_
   - E.g., cannot easily express "some properties are more important than others"
   - Need higher-order logic
-- **No built-in temporal or modal reasoning**
+- @No built-in temporal or modal reasoning@
   - Base FOL has no way to express time, necessity, possibility, or belief
   - E.g., _"It will rain tomorrow"_ or _"It's possible that P ..."_
   - Need: modal logic (possibility/necessity), temporal logic (time), or epistemic
     logic (belief)
-- **Knowledge engineering burden**
+- @Knowledge engineering burden@
   - Converting messy natural language into precise predicates/quantifiers is hard
     and error-prone
   - E.g., _"Some humans have green eyes"_ $\implies$ $\exists x\, (Human(x) \land
