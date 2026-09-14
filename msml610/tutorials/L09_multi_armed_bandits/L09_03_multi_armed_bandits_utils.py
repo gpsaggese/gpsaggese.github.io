@@ -818,11 +818,11 @@ def cell3_greedy_algorithm_failure() -> None:
 
 
 # #############################################################################
-# Cell 5: Epsilon-Greedy Algorithm
+# Cell 4: Epsilon-Greedy Algorithm
 # #############################################################################
 
 
-def cell5_epsilon_greedy() -> None:
+def cell4_epsilon_greedy() -> None:
     """
     Show how epsilon-greedy balances exploration and exploitation.
 
@@ -978,7 +978,7 @@ def cell5_epsilon_greedy() -> None:
 
 
 # #############################################################################
-# Cell 6: Confidence Intervals for Each Arm
+# Cell 5: Confidence Intervals for Each Arm
 # #############################################################################
 
 
@@ -998,7 +998,7 @@ def _hoeffding_half_width(n: int, confidence: float) -> float:
     return float(np.sqrt(np.log(2.0 / delta) / (2.0 * n)))
 
 
-def cell6_confidence_intervals() -> None:
+def cell5_confidence_intervals() -> None:
     """
     Show empirical means and confidence intervals shrinking with more pulls.
 
@@ -1145,11 +1145,11 @@ def cell6_confidence_intervals() -> None:
 
 
 # #############################################################################
-# Cell 7: Upper Confidence Bound (UCB) Intuition
+# Cell 6: Upper Confidence Bound (UCB) Intuition
 # #############################################################################
 
 
-def cell7_ucb_intuition() -> None:
+def cell6_ucb_intuition() -> None:
     """
     Show the UCB index as empirical mean plus exploration bonus.
 
@@ -1249,11 +1249,11 @@ def cell7_ucb_intuition() -> None:
 
 
 # #############################################################################
-# Cell 8: UCB Algorithm Simulation
+# Cell 7: UCB Algorithm Simulation
 # #############################################################################
 
 
-def cell8_ucb_simulation() -> None:
+def cell7_ucb_simulation() -> None:
     """
     Run `UCBStrategy` on 4 Bernoulli arms and show pull counts and regret.
 
@@ -1387,11 +1387,11 @@ def cell8_ucb_simulation() -> None:
 
 
 # #############################################################################
-# Cell 9: UCB Exploration Bonus Decay
+# Cell 8: UCB Exploration Bonus Decay
 # #############################################################################
 
 
-def cell9_ucb_bonus_decay() -> None:
+def cell8_ucb_bonus_decay() -> None:
     """
     Show how the UCB exploration bonus sqrt(2 log(t) / N_i) decays with N_i.
 
@@ -1466,7 +1466,7 @@ def cell9_ucb_bonus_decay() -> None:
 
 
 # #############################################################################
-# Cell 10: Regret Accumulation
+# Cell 9: Regret Accumulation
 # #############################################################################
 
 
@@ -1493,7 +1493,7 @@ def _build_strategy(algorithm: str, *, seed: int) -> sim.Strategy:
     return strategy
 
 
-def cell10_regret_accumulation() -> None:
+def cell9_regret_accumulation() -> None:
     """
     Visualize per-step and cumulative regret for a chosen algorithm.
 
@@ -1612,7 +1612,7 @@ def cell10_regret_accumulation() -> None:
 
 
 # #############################################################################
-# Cell 11: Comparing Algorithms: Regret Curves
+# Cell 10: Comparing Algorithms: Regret Curves
 # #############################################################################
 
 _ALGORITHM_BIG_O = {
@@ -1624,7 +1624,7 @@ _ALGORITHM_BIG_O = {
 }
 
 
-def cell11_regret_comparison() -> None:
+def cell10_regret_comparison() -> None:
     """
     Compare cumulative regret curves of several algorithms on a log-t axis.
 
@@ -1761,11 +1761,11 @@ def cell11_regret_comparison() -> None:
 
 
 # #############################################################################
-# Cell 12: Bayesian Bandits: Prior and Posterior
+# Cell 11: Bayesian Bandits: Prior and Posterior
 # #############################################################################
 
 
-def cell12_bayesian_prior_posterior() -> None:
+def cell11_bayesian_prior_posterior() -> None:
     """
     Show a Beta prior updating into a Beta posterior as data arrives.
 
@@ -1910,7 +1910,7 @@ def cell12_bayesian_prior_posterior() -> None:
 
 
 # #############################################################################
-# Cell 13: Thompson Sampling Algorithm
+# Cell 12: Thompson Sampling Algorithm
 # #############################################################################
 
 
@@ -1965,7 +1965,7 @@ def _replay_thompson_sampling(
     }
 
 
-def cell13_thompson_sampling() -> None:
+def cell12_thompson_sampling() -> None:
     """
     Show Thompson Sampling drawing from each arm's posterior and picking argmax.
 
@@ -2112,7 +2112,7 @@ def cell13_thompson_sampling() -> None:
 
 
 # #############################################################################
-# Cell 14: Thompson Sampling: Probability Matching
+# Cell 13: Thompson Sampling: Probability Matching
 # #############################################################################
 
 
@@ -2142,7 +2142,7 @@ def _monte_carlo_prob_optimal(
     return (counts / n_samples).tolist()
 
 
-def cell14_probability_matching() -> None:
+def cell13_probability_matching() -> None:
     """
     Compare theoretical Pr(arm optimal) with the empirical selection frequency.
 
@@ -2255,11 +2255,11 @@ def cell14_probability_matching() -> None:
 
 
 # #############################################################################
-# Cell 15: UCB vs Thompson Sampling Comparison
+# Cell 14: UCB vs Thompson Sampling Comparison
 # #############################################################################
 
 
-def cell15_ucb_vs_thompson() -> None:
+def cell14_ucb_vs_thompson() -> None:
     """
     Compare UCB1 and Thompson Sampling on the same bandit environment.
 

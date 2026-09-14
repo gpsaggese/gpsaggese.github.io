@@ -1,9 +1,9 @@
 """
-Utility functions for causal inference tutorial (L08_04_05).
+Utility functions for the propensity score tutorial (L08_04_05).
 
 Import as:
 
-import msml610.tutorials.L08_causal_inference.L08_04_05_causal_inference_utils as mtlcil00ciu
+import msml610.tutorials.L08_causal_inference.L08_04_05_propensity_score_utils as mtl0psu
 """
 
 from typing import Callable, List, Optional, Tuple

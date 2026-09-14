@@ -1134,11 +1134,11 @@ def cell1_4_rewards_and_returns(
 
 
 # #############################################################################
-# Cell 2.1 (equations): Bellman optimality equation system for all states
+# Cell 2.2 (equations): Bellman optimality equation system for all states
 # #############################################################################
 
 
-def cell2_1_bellman_equations(
+def cell2_2_bellman_equations(
     *,
     figsize: Optional[Tuple[float, float]] = None,
 ) -> None:
@@ -1354,11 +1354,11 @@ def cell2_1_bellman_one_state(
 
 
 # #############################################################################
-# Cell 2.2: Value iteration converging over sweeps
+# Cell 2.3: Value iteration converging over sweeps
 # #############################################################################
 
 
-def cell2_2_value_iteration(
+def cell2_3_value_iteration(
     *,
     figsize: Optional[Tuple[float, float]] = None,
 ) -> None:
@@ -1478,11 +1478,11 @@ def cell2_2_value_iteration(
 
 
 # #############################################################################
-# Cell 2.3: Extracting the optimal policy
+# Cell 2.4: Extracting the optimal policy
 # #############################################################################
 
 
-def cell2_3_extract_policy(
+def cell2_4_extract_policy(
     *,
     figsize: Optional[Tuple[float, float]] = None,
 ) -> None:

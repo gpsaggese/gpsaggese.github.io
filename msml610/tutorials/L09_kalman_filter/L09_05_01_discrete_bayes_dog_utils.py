@@ -10,7 +10,7 @@ import copy
 import logging
 from typing import Dict, List, Optional, Tuple, Union
 
-from ipywidgets import Dropdown, VBox, interactive_output
+from ipywidgets import Dropdown, IntSlider, VBox, interact, interactive_output
 from filterpy.discrete_bayes import predict, update
 from IPython.display import display
 import matplotlib.pyplot as plt
@@ -213,6 +213,29 @@ def lh_hallway(hall: np.ndarray, z: int, z_prob: float) -> np.ndarray:
     likelihood = np.ones(len(hall))
     likelihood[hall == z] *= scale
     return likelihood
+
+
+def cell1_3_predict_only_widget(
+    predict_beliefs: List[Pdf], hallway: np.ndarray
+) -> None:
+    """
+    Interactively step through belief flattening under repeated predicts.
+
+    With no sensor updates, each prediction step loses information; this
+    lets the student scrub through the steps and watch the belief go
+    from a single spike to a flat (uninformative) distribution.
+
+    :param predict_beliefs: sequence of belief distributions, one per
+        prediction-only step (no sensor updates)
+    :param hallway: hallway map (0=wall, 1=door)
+    """
+
+    def _show_prior(step: int) -> None:
+        plot_belief(predict_beliefs[step - 1], hallway=hallway)
+        plt.title(f"Step {step}")
+        plt.show()
+
+    interact(_show_prior, step=IntSlider(value=1, max=len(predict_beliefs)))
 
 
 def dassert_sensor_info(sensor_info: Dict[str, List]) -> None:
@@ -569,7 +592,6 @@ def animate_discrete_bayes_with_movement_and_info(
             axes[0],
             sensor_text,
             box_xy=(0.02, 0.98),
-            box_width=0.96,
             box_height=0.96,
             max_fontsize=10,
             min_fontsize=6,

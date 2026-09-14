@@ -637,6 +637,7 @@ def plot_kf_info(
     show_prior: str = "scatter",
     show_measurements: str = "scatter",
     show_posterior: str = "scatter",
+    ax: Optional[plt.Axes] = None,
 ) -> None:
     """
     Plot Kalman filter info with measurements, prior, and posterior over time.
@@ -654,6 +655,7 @@ def plot_kf_info(
         "line", or "none"
     :param show_posterior: how to plot the posterior — "scatter", "line",
         or "none"
+    :param ax: axis to plot on; if None, a new figure is created
     """
     times = list(range(len(info)))
     predict_xs = [kf.prior.mean for kf in info]
@@ -661,7 +663,9 @@ def plot_kf_info(
     update_stds = [np.sqrt(kf.posterior.var) for kf in info]
     zs = [kf.measurement for kf in info]
     actual_positions = [kf.actual_pos for kf in info]
-    _, ax = plt.subplots(figsize=(12, 6))
+    owns_figure = ax is None
+    if owns_figure:
+        _, ax = plt.subplots(figsize=(12, 6))
     # Optionally plot prior (predict) as red up-triangle or line.
     if show_prior == "scatter":
         ax.scatter(
@@ -753,7 +757,7 @@ def plot_kf_info(
             upper,
             alpha=alpha,
             color="green",
-            label=f"Posterior ±{n_std}σ",
+            label=f"Posterior +/-{n_std} sigma",
         )
     ax.set_xlabel("Time Step")
     ax.set_ylabel("Position")
@@ -762,7 +766,8 @@ def plot_kf_info(
     ax.grid(True, alpha=0.3)
     if ylim is not None:
         ax.set_ylim(ylim)
-    plt.tight_layout()
+    if owns_figure:
+        plt.tight_layout()
 
 
 # #############################################################################
@@ -869,8 +874,25 @@ def cell2_interactive_dog_simulation() -> None:
             acceleration=acceleration,
             n_steps=num_steps,
         )
-        plot_kf_info(info, show_actual_pos="line")
-        fig_dog = plt.gcf()
+        fig_dog, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
+        plot_kf_info(info, show_actual_pos="line", ax=ax1)
+        # Comments panel.
+        final_var = info[-1].posterior.var
+        detail = (
+            f"seed = {seed}\n"
+            f"process_var = {process_var:.2f}\n"
+            f"sensor_var = {sensor_var:.2f}\n"
+            f"initial_position = {initial_position:.1f}\n"
+            f"actual_initial_pos = {actual_initial_pos:.1f}\n"
+            f"initial_pos_var = {initial_pos_var:.1f}\n"
+            f"acceleration = {acceleration:.3f}\n\n"
+            f"final posterior mean = {info[-1].posterior.mean:.2f}\n"
+            f"final posterior var = {final_var:.3f}"
+        )
+        ax2.axis("off")
+        ax2.set_title("Comments", fontsize=14, fontweight="bold")
+        htutori.add_fitted_text_box(ax2, detail, max_fontsize=12, min_fontsize=9)
+        plt.tight_layout()
 
     # Create process_var widget.
     process_var_slider, process_var_box = htutori.build_widget_control(

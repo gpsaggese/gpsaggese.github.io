@@ -80,7 +80,8 @@ class GridWorldEnv(gym.Env):
 
         Terminal states are absorbing (stay in place with zero reward).
         """
-        _LOG.debug(hprint.func_signature_to_str())
+        # Note: `hprint.func_signature_to_str()` looks up the caller by name
+        # in the module globals, so it cannot be called from inside a method.
         # Terminal states are absorbing: stay in place with zero reward.
         if cell in self.terminal_cells:
             s_id = self._cell_to_id[cell]
@@ -121,7 +122,8 @@ class GridWorldEnv(gym.Env):
         gamma: float = 1.0,
         p_intended: float = 0.8,
     ) -> None:
-        _LOG.debug(hprint.func_signature_to_str())
+        # Note: `hprint.func_signature_to_str()` looks up the caller by name
+        # in the module globals, so it cannot be called from inside a method.
         super().__init__()
         self.n_cols = 4
         self.n_rows = 3
@@ -514,7 +516,7 @@ def q_learning(
         "policy": final_policy,
         "policies": policies,
     }
-    _LOG.debug(hprint.to_str("len(result[q]) len(returns)"))
+    _LOG.debug(hprint.to_str("len(q) len(returns)"))
     return result
 
 

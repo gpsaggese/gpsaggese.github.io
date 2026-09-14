@@ -11,24 +11,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # TODO(ai_gp): Use import
-from ipywidgets import (
-    Output,
-    HBox,
-    VBox,
-    FloatSlider,
-    ToggleButtons,
-    Dropdown,
-    Checkbox,
-    IntSlider,
-)
+from ipywidgets import Output, HBox, VBox, ToggleButtons, Dropdown, Checkbox
 from IPython.display import display, clear_output
 import networkx as nx
-
-# TODO(ai_gp): Use import
-from scipy.stats import jarque_bera, linregress
+import scipy.stats
 
 import helpers.hdbg as hdbg
 import helpers.hnotebook as hnotebo
+import helpers.htutorial as htutori
 
 _LOG = logging.getLogger(__name__)
 
@@ -54,13 +44,13 @@ def cell1_correlation_vs_causation():
     Interactive widget showing correlation vs causation problem.
     """
 
-    def plot_causal_structures(correlation_strength, _intervention_mode):
+    def plot_causal_structures(seed, correlation_strength, _intervention_mode):
         """
         Plot two DAGs with identical correlation but different causation.
         """
-        _, axes = plt.subplots(1, 2, figsize=(14, 5))
+        _, axes = plt.subplots(1, 3, figsize=(18, 5))
         # Generate correlated data.
-        np.random.seed(42)
+        np.random.seed(seed)
         n_samples = 200
         noise = np.random.normal(0, 1 - correlation_strength, n_samples)
         X = np.random.normal(0, 1, n_samples)
@@ -72,7 +62,7 @@ def cell1_correlation_vs_causation():
         axes[0].scatter(X, Y_chain, alpha=0.6, s=30, color="steelblue")
         axes[0].set_xlabel("X", fontsize=12)
         axes[0].set_ylabel("Y", fontsize=12)
-        axes[0].set_title("Chain: X → Y", fontsize=13, fontweight="bold")
+        axes[0].set_title("Chain: X -> Y", fontsize=13, fontweight="bold")
         corr = np.corrcoef(X, Y_chain)[0, 1]
         axes[0].text(
             0.05,
@@ -87,7 +77,7 @@ def cell1_correlation_vs_causation():
         axes[1].scatter(X, Y_reverse, alpha=0.6, s=30, color="coral")
         axes[1].set_xlabel("X", fontsize=12)
         axes[1].set_ylabel("Y", fontsize=12)
-        axes[1].set_title("Reverse: Z → Y → X", fontsize=13, fontweight="bold")
+        axes[1].set_title("Reverse: Z -> Y -> X", fontsize=13, fontweight="bold")
         corr_rev = np.corrcoef(X, Y_reverse)[0, 1]
         axes[1].text(
             0.05,
@@ -98,26 +88,44 @@ def cell1_correlation_vs_causation():
             bbox=dict(boxstyle="round", facecolor="lightyellow", alpha=0.5),
             fontsize=10,
         )
-        for ax in axes:
+        for ax in axes[:2]:
             ax.set_xlim(-4, 4)
             ax.set_ylim(-4, 4)
             ax.grid(True, alpha=0.3)
+        # Comments panel.
+        axes[2].axis("off")
+        axes[2].set_title("Comments", fontsize=13, fontweight="bold")
+        detail = (
+            f"seed = {seed}\n"
+            f"correlation (r) = {correlation_strength:.2f}\n\n"
+            "KEY INSIGHT: same observational correlation,\n"
+            "opposite causal implications.\n\n"
+            "Without intervention data or additional\n"
+            "assumptions, we cannot distinguish these\n"
+            "structures from correlation alone."
+        )
+        htutori.add_fitted_text_box(axes[2], detail, max_fontsize=12, min_fontsize=9)
         plt.tight_layout()
         plt.show()
-        # Summary box.
-        print("\n" + "=" * 60)
-        print(
-            "KEY INSIGHT: Same observational correlation, opposite causal implications."
-        )
-        print(
-            "Without intervention data or additional assumptions, we cannot distinguish"
-        )
-        print("these structures from correlation alone.")
-        print("=" * 60)
 
     # Create interactive widget.
-    correlation_slider = FloatSlider(
-        value=0.8, min=0.3, max=0.99, step=0.05, description="Correlation (r):"
+    seed_slider, seed_box = htutori.build_widget_control(
+        name="seed",
+        description="random seed",
+        min_val=0,
+        max_val=100,
+        step=1,
+        initial_value=42,
+        is_float=False,
+    )
+    correlation_slider, correlation_box = htutori.build_widget_control(
+        name="r",
+        description="Correlation (r)",
+        min_val=0.3,
+        max_val=0.99,
+        step=0.05,
+        initial_value=0.8,
+        is_float=True,
     )
     mode_toggle = ToggleButtons(
         options=["Observational", "Interventional"],
@@ -128,14 +136,18 @@ def cell1_correlation_vs_causation():
     def update(change):
         with output:
             clear_output(wait=True)
-            plot_causal_structures(correlation_slider.value, mode_toggle.value)
+            plot_causal_structures(
+                seed_slider.value, correlation_slider.value, mode_toggle.value
+            )
 
+    seed_slider.observe(update, names="value")
     correlation_slider.observe(update, names="value")
     mode_toggle.observe(update, names="value")
     display(
         VBox(
             [
-                HBox([correlation_slider, mode_toggle]),
+                seed_box,
+                HBox([correlation_box, mode_toggle]),
                 output,
             ]
         )
@@ -151,7 +163,7 @@ def cell2_markov_equivalence():
     Show three indistinguishable DAG structures.
     """
 
-    def plot_markov_equivalence(sample_size):
+    def plot_markov_equivalence(seed, sample_size):
         """
         Plot three Markov equivalent structures.
         """
@@ -159,23 +171,23 @@ def cell2_markov_equivalence():
         # Create 3 subplots for DAGs + CI structure.
         gs = fig.add_gridspec(3, 3, hspace=0.4, wspace=0.3)
         # Generate data from one structure (chain).
-        np.random.seed(42)
+        np.random.seed(seed)
         Z = np.random.normal(0, 1, sample_size)
         Y = 0.8 * Z + np.random.normal(0, 0.5, sample_size)
         X = 0.8 * Y + np.random.normal(0, 0.5, sample_size)
         # Compute correlations.
         corr_XZ = np.corrcoef(X, Z)[0, 1]
         # Compute partial correlation X-Z given Y using residuals.
-        reg_X_Y = linregress(Y, X)  # type: ignore
+        reg_X_Y = scipy.stats.linregress(Y, X)
         residuals_X = X - (reg_X_Y.slope * Y + reg_X_Y.intercept)  # type: ignore
-        reg_Z_Y = linregress(Y, Z)  # type: ignore
+        reg_Z_Y = scipy.stats.linregress(Y, Z)
         residuals_Z = Z - (reg_Z_Y.slope * Y + reg_Z_Y.intercept)  # type: ignore
         corr_XZ_given_Y = np.corrcoef(residuals_X, residuals_Z)[0, 1]
         # Plot three DAG structures.
         structures = [
-            ("Chain: X → Y → Z", [(0, 1), (1, 2)]),
-            ("Reverse: Z → Y → X", [(2, 1), (1, 0)]),
-            ("Common Cause: X ← Y → Z", [(1, 0), (1, 2)]),
+            ("Chain: X -> Y -> Z", [(0, 1), (1, 2)]),
+            ("Reverse: Z -> Y -> X", [(2, 1), (1, 0)]),
+            ("Common Cause: X <- Y -> Z", [(1, 0), (1, 2)]),
         ]
         for idx, (title, edges) in enumerate(structures):
             ax = fig.add_subplot(gs[0, idx])
@@ -196,8 +208,9 @@ def cell2_markov_equivalence():
         ax_ci = fig.add_subplot(gs[1, :])
         ci_text = (
             "All three structures imply the SAME conditional independence:\n"
-            "X ⊥ Z | Y (X is independent of Z given Y)\n\n"
-            "Why? Because Y blocks all paths between X and Z in all three structures."
+            "X _|_ Z | Y (X is independent of Z given Y)\n\n"
+            "Why? Because Y blocks all paths between X and Z in all three\n"
+            "structures."
         )
         ax_ci.text(
             0.5,
@@ -238,17 +251,18 @@ def cell2_markov_equivalence():
         ax_cond.set_ylim(-1, 1)
         ax_cond.grid(True, alpha=0.3, axis="y")
         ax_n = fig.add_subplot(gs[2, 2])
-        ax_n.text(
-            0.5,
-            0.5,
-            f"Sample Size: N = {sample_size}",
-            ha="center",
-            va="center",
-            fontsize=11,
-            bbox=dict(boxstyle="round", facecolor="lightgreen", alpha=0.7),
-            transform=ax_n.transAxes,
-        )
         ax_n.axis("off")
+        ax_n.set_title("Comments", fontsize=11, fontweight="bold")
+        detail = (
+            f"seed = {seed}\n"
+            f"sample size N = {sample_size}\n\n"
+            f"corr(X, Z) = {corr_XZ:.3f}\n"
+            f"corr(X, Z | Y) = {corr_XZ_given_Y:.3f}\n\n"
+            "All 3 structures have identical\n"
+            "covariance matrices: no amount of\n"
+            "data can tell them apart."
+        )
+        htutori.add_fitted_text_box(ax_n, detail, max_fontsize=10, min_fontsize=7)
         plt.suptitle(
             "Markov Equivalence: Three Indistinguishable Structures",
             fontsize=14,
@@ -258,18 +272,34 @@ def cell2_markov_equivalence():
         plt.show()
 
     # Interactive widget.
-    sample_slider = IntSlider(
-        value=100, min=50, max=5000, step=50, description="Sample Size (N):"
+    seed_slider, seed_box = htutori.build_widget_control(
+        name="seed",
+        description="random seed",
+        min_val=0,
+        max_val=100,
+        step=1,
+        initial_value=42,
+        is_float=False,
+    )
+    sample_slider, sample_box = htutori.build_widget_control(
+        name="N",
+        description="Sample Size (N)",
+        min_val=50,
+        max_val=5000,
+        step=50,
+        initial_value=100,
+        is_float=False,
     )
     output = Output()
 
     def update(change):
         with output:
             clear_output(wait=True)
-            plot_markov_equivalence(sample_slider.value)
+            plot_markov_equivalence(seed_slider.value, sample_slider.value)
 
+    seed_slider.observe(update, names="value")
     sample_slider.observe(update, names="value")
-    display(VBox([sample_slider, output]))
+    display(VBox([seed_box, sample_box, output]))
     update(None)
 
 
@@ -281,13 +311,13 @@ def cell3_causal_effects():
     Show why edge direction determines causal effect.
     """
 
-    def plot_interventions(intervention_strength, sample_size):
+    def plot_interventions(seed, intervention_strength, sample_size):
         """
         Plot counterfactual outcomes for three structures.
         """
-        fig, axes = plt.subplots(1, 3, figsize=(15, 4))
+        fig, axes = plt.subplots(1, 4, figsize=(19, 4))
         # Simulate three structures with intervention.
-        np.random.seed(42)
+        np.random.seed(seed)
         # Chain: X -> Y -> Z.
         X_baseline = np.random.normal(0, 1, sample_size)
         X_intervened = np.ones(sample_size) * intervention_strength
@@ -303,13 +333,13 @@ def cell3_causal_effects():
         effect_common = 0.0  # No direct effect on Z.
         effects = [effect_chain, effect_reverse, effect_common]
         titles = [
-            "Chain: X → Y → Z\n(LARGE effect)",
-            "Reverse: Z → Y → X\n(NO effect)",
+            "Chain: X -> Y -> Z\n(LARGE effect)",
+            "Reverse: Z -> Y -> X\n(NO effect)",
             "Common Cause: Y confounds\n(NO direct effect)",
         ]
         colors = ["green", "red", "orange"]
         for idx, (ax, title, effect, color) in enumerate(
-            zip(axes, titles, effects, colors)
+            zip(axes[:3], titles, effects, colors)
         ):
             ax.bar(
                 ["Effect on Z"],
@@ -318,7 +348,7 @@ def cell3_causal_effects():
                 alpha=0.7,
                 width=0.3,
             )
-            ax.set_ylabel("Causal Effect (Δ Z)", fontsize=11)
+            ax.set_ylabel("Causal Effect (delta Z)", fontsize=11)
             ax.set_title(title, fontsize=12, fontweight="bold")
             ax.set_ylim(-2, 3)
             ax.grid(True, alpha=0.3, axis="y")
@@ -331,6 +361,19 @@ def cell3_causal_effects():
                 fontsize=11,
                 fontweight="bold",
             )
+        # Comments panel.
+        axes[3].axis("off")
+        axes[3].set_title("Comments", fontsize=12, fontweight="bold")
+        detail = (
+            f"seed = {seed}\n"
+            f"intervention strength = {intervention_strength:.2f}\n"
+            f"sample size N = {sample_size}\n\n"
+            "KEY INSIGHT: edge direction determines\n"
+            "whether an intervention works.\n"
+            "Choosing the wrong DAG leads to\n"
+            "ineffective or harmful interventions."
+        )
+        htutori.add_fitted_text_box(axes[3], detail, max_fontsize=11, min_fontsize=8)
         plt.suptitle(
             "Why Edge Direction Matters: Same Correlation, Different Effects",
             fontsize=14,
@@ -338,35 +381,52 @@ def cell3_causal_effects():
         )
         plt.tight_layout()
         plt.show()
-        print("\n" + "=" * 70)
-        print(
-            "KEY INSIGHT: Edge direction determines whether an intervention works."
-        )
-        print(
-            "Choosing the wrong DAG leads to ineffective or harmful interventions."
-        )
-        print("=" * 70)
 
     # Interactive widgets.
-    intervention_slider = FloatSlider(
-        value=1.5, min=0, max=3, step=0.1, description="Intervention Strength:"
+    seed_slider, seed_box = htutori.build_widget_control(
+        name="seed",
+        description="random seed",
+        min_val=0,
+        max_val=100,
+        step=1,
+        initial_value=42,
+        is_float=False,
     )
-    sample_slider = IntSlider(
-        value=100, min=100, max=5000, step=100, description="Sample Size (N):"
+    intervention_slider, intervention_box = htutori.build_widget_control(
+        name="strength",
+        description="Intervention Strength",
+        min_val=0.0,
+        max_val=3.0,
+        step=0.1,
+        initial_value=1.5,
+        is_float=True,
+    )
+    sample_slider, sample_box = htutori.build_widget_control(
+        name="N",
+        description="Sample Size (N)",
+        min_val=100,
+        max_val=5000,
+        step=100,
+        initial_value=100,
+        is_float=False,
     )
     output = Output()
 
     def update(change):
         with output:
             clear_output(wait=True)
-            plot_interventions(intervention_slider.value, sample_slider.value)
+            plot_interventions(
+                seed_slider.value, intervention_slider.value, sample_slider.value
+            )
 
+    seed_slider.observe(update, names="value")
     intervention_slider.observe(update, names="value")
     sample_slider.observe(update, names="value")
     display(
         VBox(
             [
-                HBox([intervention_slider, sample_slider]),
+                seed_box,
+                HBox([intervention_box, sample_box]),
                 output,
             ]
         )
@@ -386,11 +446,13 @@ def cell4_pc_algorithm():
         """
         Animate PC algorithm on small DAG.
         """
-        fig, (ax_left, ax_right) = plt.subplots(1, 2, figsize=(14, 6))
+        fig, (ax_left, ax_right, ax_comments) = plt.subplots(
+            1, 3, figsize=(19, 6)
+        )
         # Simplified visualization of PC steps.
         steps = [
-            ("Step 1: Test X1 ⊥ X2", True, "Test 1/6"),
-            ("Step 2: Test X1 ⊥ X3", False, "Test 2/6"),
+            ("Step 1: Test X1 _|_ X2", True, "Test 1/6"),
+            ("Step 2: Test X1 _|_ X3", False, "Test 2/6"),
             ("Step 3: Orient V-structures", None, "Orientation"),
             ("Step 4: Final CPDAG", None, "Complete"),
         ]
@@ -436,6 +498,22 @@ def cell4_pc_algorithm():
             )
             ax_right.set_title("Current Test", fontsize=12, fontweight="bold")
             ax_right.axis("off")
+        # Comments panel.
+        ax_comments.axis("off")
+        ax_comments.set_title("Comments", fontsize=12, fontweight="bold")
+        detail = (
+            f"alpha = {alpha_threshold:.3f}\n"
+            f"test type = {test_type}\n"
+            f"speed = {speed:.1f}x\n\n"
+            "PC recovers the skeleton via CI\n"
+            "tests, then orients v-structures.\n"
+            "It is sound in the large-sample\n"
+            "limit, but CI tests are\n"
+            "underpowered in finite samples."
+        )
+        htutori.add_fitted_text_box(
+            ax_comments, detail, max_fontsize=11, min_fontsize=8
+        )
         plt.suptitle(
             "The PC Algorithm: Learning from Conditional Independence Tests",
             fontsize=14,
@@ -443,26 +521,30 @@ def cell4_pc_algorithm():
         )
         plt.tight_layout()
         plt.show()
-        print(
-            "PC Algorithm: Sound in large sample limit, but CI tests are "
-            "underpowered in finite samples."
-        )
 
     # Interactive widgets.
-    alpha_slider = FloatSlider(
-        value=0.05,
-        min=0.001,
-        max=0.2,
+    alpha_slider, alpha_box = htutori.build_widget_control(
+        name="alpha",
+        description="Alpha (CI threshold)",
+        min_val=0.001,
+        max_val=0.2,
         step=0.01,
-        description="Alpha (CI threshold):",
+        initial_value=0.05,
+        is_float=True,
     )
     test_dropdown = Dropdown(
         options=["Partial correlation", "Gaussian G-squared", "Conditional MI"],
         value="Partial correlation",
         description="Test Type:",
     )
-    speed_slider = FloatSlider(
-        value=1.0, min=0.5, max=2.0, step=0.1, description="Speed:"
+    speed_slider, speed_box = htutori.build_widget_control(
+        name="speed",
+        description="Speed",
+        min_val=0.5,
+        max_val=2.0,
+        step=0.1,
+        initial_value=1.0,
+        is_float=True,
     )
     output = Output()
 
@@ -479,7 +561,7 @@ def cell4_pc_algorithm():
     display(
         VBox(
             [
-                HBox([alpha_slider, test_dropdown, speed_slider]),
+                HBox([alpha_box, test_dropdown, speed_box]),
                 output,
             ]
         )
@@ -499,7 +581,9 @@ def cell5_ges_algorithm():
         """
         Plot GES search progress.
         """
-        fig, (ax_left, ax_right) = plt.subplots(1, 2, figsize=(14, 5))
+        fig, (ax_left, ax_right, ax_comments) = plt.subplots(
+            1, 3, figsize=(19, 5)
+        )
         # Simulate BIC scores during search.
         iterations = np.arange(0, 15)
         bic_scores = -100 + 20 * np.sin(iterations / 3) - 0.5 * iterations
@@ -514,7 +598,8 @@ def cell5_ges_algorithm():
         nx.draw_networkx_edges(G, pos, ax=ax_left, width=2, arrowsize=15)
         nx.draw_networkx_labels(G, pos, font_size=11, ax=ax_left)
         ax_left.set_title(
-            f"Current DAG Structure\nN={sample_size}, Regularization={regularization:.2f}",
+            f"Current DAG Structure\n"
+            f"N={sample_size}, Regularization={regularization:.2f}",
             fontsize=12,
             fontweight="bold",
         )
@@ -538,19 +623,44 @@ def cell5_ges_algorithm():
         )
         ax_right.grid(True, alpha=0.3)
         ax_right.legend()
+        # Comments panel.
+        ax_comments.axis("off")
+        ax_comments.set_title("Comments", fontsize=12, fontweight="bold")
+        detail = (
+            f"sample size N = {sample_size}\n"
+            f"regularization = {regularization:.2f}\n\n"
+            "GES searches DAG space with a\n"
+            "greedy forward-backward heuristic:\n"
+            "forward adds edges, backward\n"
+            "removes low-value edges.\n\n"
+            "Greedy search can get stuck in\n"
+            "local optima; multiple random\n"
+            "starts improve robustness."
+        )
+        htutori.add_fitted_text_box(
+            ax_comments, detail, max_fontsize=11, min_fontsize=8
+        )
         plt.tight_layout()
         plt.show()
-        print(
-            "GES: Forward phase adds edges, backward phase removes low-value edges. "
-            "Greedy search can get stuck in local optima."
-        )
 
     # Interactive widgets.
-    sample_slider = IntSlider(
-        value=100, min=50, max=10000, step=100, description="Sample Size (N):"
+    sample_slider, sample_box = htutori.build_widget_control(
+        name="N",
+        description="Sample Size (N)",
+        min_val=50,
+        max_val=10000,
+        step=100,
+        initial_value=100,
+        is_float=False,
     )
-    regularization_slider = FloatSlider(
-        value=0.5, min=0, max=2, step=0.1, description="Regularization:"
+    regularization_slider, regularization_box = htutori.build_widget_control(
+        name="reg",
+        description="Regularization",
+        min_val=0.0,
+        max_val=2.0,
+        step=0.1,
+        initial_value=0.5,
+        is_float=True,
     )
     output = Output()
 
@@ -564,7 +674,7 @@ def cell5_ges_algorithm():
     display(
         VBox(
             [
-                HBox([sample_slider, regularization_slider]),
+                HBox([sample_box, regularization_box]),
                 output,
             ]
         )
@@ -580,14 +690,14 @@ def cell6_lingam_nongaussian():
     Show how non-Gaussianity enables full DAG recovery.
     """
 
-    def plot_lingam(skewness, snr):
+    def plot_lingam(seed, skewness, snr):
         """
         Plot LiNGAM with non-Gaussian noise.
         """
-        fig = plt.figure(figsize=(15, 5))
-        gs = fig.add_gridspec(1, 3, hspace=0.3, wspace=0.3)
+        fig = plt.figure(figsize=(19, 5))
+        gs = fig.add_gridspec(1, 4, hspace=0.3, wspace=0.3)
         # Generate data with non-Gaussian noise.
-        np.random.seed(42)
+        np.random.seed(seed)
         n_samples = 200
         # Generate skewed noise.
         if skewness > 0:
@@ -600,7 +710,7 @@ def cell6_lingam_nongaussian():
         Z = 0.8 * Y + noise * np.sqrt(1 - snr)
         # Plot three scatter plots.
         for idx, (data_x, data_y, title) in enumerate(
-            [(X, Y, "X → Y"), (Y, Z, "Y → Z"), (X, Z, "X → Z (indirect)")]
+            [(X, Y, "X -> Y"), (Y, Z, "Y -> Z"), (X, Z, "X -> Z (indirect)")]
         ):
             ax = fig.add_subplot(gs[0, idx])
             ax.scatter(data_x, data_y, alpha=0.6, s=30, color="steelblue")
@@ -608,6 +718,28 @@ def cell6_lingam_nongaussian():
             ax.set_ylabel("Output", fontsize=10)
             ax.set_title(title, fontsize=11, fontweight="bold")
             ax.grid(True, alpha=0.3)
+        # Jarque-Bera test for non-Gaussianity.
+        jb_result = scipy.stats.jarque_bera(noise)
+        is_non_gaussian = jb_result.pvalue < 0.05  # type: ignore
+        # Comments panel.
+        ax_comments = fig.add_subplot(gs[0, 3])
+        ax_comments.axis("off")
+        ax_comments.set_title("Comments", fontsize=11, fontweight="bold")
+        detail = (
+            f"seed = {seed}\n"
+            f"skewness = {skewness:.1f}\n"
+            f"SNR = {snr:.2f}\n\n"
+            f"Jarque-Bera stat = {jb_result.statistic:.2f}\n"  # type: ignore
+            f"p-value = {jb_result.pvalue:.4f}\n"  # type: ignore
+            f"data are "
+            f"{'NON-GAUSSIAN' if is_non_gaussian else 'GAUSSIAN'}\n\n"
+            "Non-Gaussianity breaks the\n"
+            "directional symmetry: LiNGAM\n"
+            "exploits it to orient edges."
+        )
+        htutori.add_fitted_text_box(
+            ax_comments, detail, max_fontsize=10, min_fontsize=7
+        )
         plt.suptitle(
             "LiNGAM: Non-Gaussianity Reveals Causal Direction",
             fontsize=14,
@@ -615,40 +747,50 @@ def cell6_lingam_nongaussian():
         )
         plt.tight_layout()
         plt.show()
-        # Jarque-Bera test for non-Gaussianity.
-        jb_result = jarque_bera(noise)  # type: ignore
-        print(
-            f"\nJarque-Bera Test: statistic={jb_result.statistic:.4f}, p-value={jb_result.pvalue:.4f}"
-        )  # type: ignore
-        if jb_result.pvalue < 0.05:  # type: ignore
-            print("Result: Data are NON-GAUSSIAN (rejects normality)")
-        else:
-            print("Result: Data appear GAUSSIAN (cannot reject normality)")
 
     # Interactive widgets.
-    skewness_slider = FloatSlider(
-        value=0, min=0, max=5, step=0.5, description="Skewness:"
+    seed_slider, seed_box = htutori.build_widget_control(
+        name="seed",
+        description="random seed",
+        min_val=0,
+        max_val=100,
+        step=1,
+        initial_value=42,
+        is_float=False,
     )
-    snr_slider = FloatSlider(
-        value=0.8,
-        min=0.1,
-        max=0.99,
+    skewness_slider, skewness_box = htutori.build_widget_control(
+        name="skewness",
+        description="Skewness",
+        min_val=0.0,
+        max_val=5.0,
+        step=0.5,
+        initial_value=0.0,
+        is_float=True,
+    )
+    snr_slider, snr_box = htutori.build_widget_control(
+        name="snr",
+        description="Signal-to-Noise Ratio",
+        min_val=0.1,
+        max_val=0.99,
         step=0.05,
-        description="Signal-to-Noise Ratio:",
+        initial_value=0.8,
+        is_float=True,
     )
     output = Output()
 
     def update(change):
         with output:
             clear_output(wait=True)
-            plot_lingam(skewness_slider.value, snr_slider.value)
+            plot_lingam(seed_slider.value, skewness_slider.value, snr_slider.value)
 
+    seed_slider.observe(update, names="value")
     skewness_slider.observe(update, names="value")
     snr_slider.observe(update, names="value")
     display(
         VBox(
             [
-                HBox([skewness_slider, snr_slider]),
+                seed_box,
+                HBox([skewness_box, snr_box]),
                 output,
             ]
         )
@@ -668,7 +810,7 @@ def cell7_algorithm_comparison():
         """
         Plot three algorithm outputs side-by-side.
         """
-        fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+        fig, axes = plt.subplots(1, 4, figsize=(19, 5))
         algorithms = [
             "PC (Constraint-Based)",
             "GES (Score-Based)",
@@ -677,7 +819,7 @@ def cell7_algorithm_comparison():
         edge_counts = [4, 5, 6]
         ambiguity = [2, 0, 0]
         for idx, (ax, algo, edges, ambig) in enumerate(
-            zip(axes, algorithms, edge_counts, ambiguity)
+            zip(axes[:3], algorithms, edge_counts, ambiguity)
         ):
             # Draw sample DAG.
             G = nx.DiGraph()
@@ -712,6 +854,21 @@ def cell7_algorithm_comparison():
             )
             ax.set_title(algo, fontsize=12, fontweight="bold")
             ax.axis("off")
+        # Comments panel.
+        axes[3].axis("off")
+        axes[3].set_title("Comments", fontsize=12, fontweight="bold")
+        detail = (
+            f"dataset type = {dataset_type}\n"
+            f"sample size N = {sample_size}\n\n"
+            "PC: good for exploratory\n"
+            "analysis, returns equivalence\n"
+            "class.\n\n"
+            "GES: more directed edges,\n"
+            "assumes no hidden confounders.\n\n"
+            "LiNGAM: requires non-\n"
+            "Gaussianity, full DAG recovery."
+        )
+        htutori.add_fitted_text_box(axes[3], detail, max_fontsize=10, min_fontsize=7)
         plt.suptitle(
             "Comparing Causal Discovery Algorithms",
             fontsize=14,
@@ -719,11 +876,6 @@ def cell7_algorithm_comparison():
         )
         plt.tight_layout()
         plt.show()
-        print(
-            "PC: Good for exploratory analysis.\n"
-            "GES: More directed edges, assumes no hidden confounders.\n"
-            "LiNGAM: Requires non-Gaussianity, full DAG recovery."
-        )
 
     # Interactive widgets.
     dataset_dropdown = Dropdown(
@@ -731,8 +883,14 @@ def cell7_algorithm_comparison():
         value="Linear Gaussian",
         description="Dataset Type:",
     )
-    sample_slider = IntSlider(
-        value=100, min=100, max=5000, step=100, description="Sample Size (N):"
+    sample_slider, sample_box = htutori.build_widget_control(
+        name="N",
+        description="Sample Size (N)",
+        min_val=100,
+        max_val=5000,
+        step=100,
+        initial_value=100,
+        is_float=False,
     )
     output = Output()
 
@@ -746,7 +904,7 @@ def cell7_algorithm_comparison():
     display(
         VBox(
             [
-                HBox([dataset_dropdown, sample_slider]),
+                HBox([dataset_dropdown, sample_box]),
                 output,
             ]
         )
@@ -766,11 +924,11 @@ def cell8_validation():
         """
         Plot validation dashboard.
         """
-        fig = plt.figure(figsize=(15, 5))
-        gs = fig.add_gridspec(1, 3, hspace=0.3, wspace=0.3)
+        fig = plt.figure(figsize=(19, 5))
+        gs = fig.add_gridspec(1, 4, hspace=0.3, wspace=0.3)
         # CI validation test results.
         ax1 = fig.add_subplot(gs[0, 0])
-        tests = ["X⊥Z|Y", "X⊥W|Y", "Y⊥Z"]
+        tests = ["X_|_Z|Y", "X_|_W|Y", "Y_|_Z"]
         p_values = [0.12, 0.03, 0.45]
         colors = ["green" if p > alpha_threshold else "red" for p in p_values]
         ax1.barh(tests, p_values, color=colors, alpha=0.7)
@@ -786,7 +944,7 @@ def cell8_validation():
             0.5,
             0.5,
             "Placebo Test Result:\n"
-            "Shuffled data found 0 edges\n(expected: 0)\n✓ PASS",
+            "Shuffled data found 0 edges\n(expected: 0)\nOK PASS",
             ha="center",
             va="center",
             fontsize=11,
@@ -813,6 +971,21 @@ def cell8_validation():
         ax3.set_title("Sensitivity Analysis", fontsize=11, fontweight="bold")
         ax3.grid(True, alpha=0.3)
         ax3.legend()
+        # Comments panel.
+        validation_score = 0.67
+        ax4 = fig.add_subplot(gs[0, 3])
+        ax4.axis("off")
+        ax4.set_title("Comments", fontsize=11, fontweight="bold")
+        detail = (
+            f"alpha = {alpha_threshold:.2f}\n"
+            f"confounder strength = {confounder_strength:.2f}\n\n"
+            f"validation score = {validation_score:.1%}\n"
+            "of implied CIs confirmed\n\n"
+            "A discovered DAG is a\n"
+            "hypothesis; validation checks\n"
+            "consistency with the data."
+        )
+        htutori.add_fitted_text_box(ax4, detail, max_fontsize=10, min_fontsize=7)
         plt.suptitle(
             "Validating Discovered DAGs with Refutation Tests",
             fontsize=14,
@@ -820,21 +993,25 @@ def cell8_validation():
         )
         plt.tight_layout()
         plt.show()
-        validation_score = 0.67
-        print(
-            f"\nValidation Score: {validation_score:.1%} of implied CIs confirmed"
-        )
 
     # Interactive widgets.
-    alpha_slider = FloatSlider(
-        value=0.05,
-        min=0.01,
-        max=0.2,
+    alpha_slider, alpha_box = htutori.build_widget_control(
+        name="alpha",
+        description="Alpha (CI threshold)",
+        min_val=0.01,
+        max_val=0.2,
         step=0.01,
-        description="Alpha (CI threshold):",
+        initial_value=0.05,
+        is_float=True,
     )
-    confounder_slider = FloatSlider(
-        value=0.3, min=0, max=1, step=0.1, description="Confounder Strength:"
+    confounder_slider, confounder_box = htutori.build_widget_control(
+        name="confounder",
+        description="Confounder Strength",
+        min_val=0.0,
+        max_val=1.0,
+        step=0.1,
+        initial_value=0.3,
+        is_float=True,
     )
     output = Output()
 
@@ -848,7 +1025,7 @@ def cell8_validation():
     display(
         VBox(
             [
-                HBox([alpha_slider, confounder_slider]),
+                HBox([alpha_box, confounder_box]),
                 output,
             ]
         )
@@ -868,9 +1045,10 @@ def cell9_domain_knowledge():
         """
         Plot discovery with and without constraints.
         """
-        fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+        # 1xN layout: unconstrained DAG, constrained DAG, Comments.
+        fig, axes = plt.subplots(1, 3, figsize=(19, 5))
         # Without constraints.
-        ax = axes[0, 0]
+        ax = axes[0]
         G_unconstrained = nx.DiGraph()
         G_unconstrained.add_nodes_from([1, 2, 3, 4])
         G_unconstrained.add_edges_from([(1, 2), (1, 3), (2, 4), (3, 4)])
@@ -884,28 +1062,8 @@ def cell9_domain_knowledge():
         nx.draw_networkx_labels(G_unconstrained, pos, font_size=11, ax=ax)
         ax.set_title("No Constraints", fontsize=11, fontweight="bold")
         ax.axis("off")
-        # Constraints listed.
-        ax = axes[0, 1]
-        constraints_text = (
-            "Domain Knowledge Constraints:\n"
-            "• Forbidden: 3 → 1 (outcome cannot cause treatment)\n"
-            "• Required: 1 → 2 (treatment causes outcome)\n"
-            "• Temporal order: 1 → {2,3} → 4"
-        )
-        ax.text(
-            0.5,
-            0.5,
-            constraints_text,
-            ha="center",
-            va="center",
-            fontsize=10,
-            bbox=dict(boxstyle="round", facecolor="lightyellow", alpha=0.7),
-            transform=ax.transAxes,
-        )
-        ax.axis("off")
-        ax.set_title("Expert Constraints", fontsize=11, fontweight="bold")
         # With constraints.
-        ax = axes[1, 0]
+        ax = axes[1]
         G_constrained = nx.DiGraph()
         G_constrained.add_nodes_from([1, 2, 3, 4])
         G_constrained.add_edges_from([(1, 2), (1, 3), (2, 4)])
@@ -916,27 +1074,23 @@ def cell9_domain_knowledge():
         nx.draw_networkx_labels(G_constrained, pos, font_size=11, ax=ax)
         ax.set_title("With Constraints", fontsize=11, fontweight="bold")
         ax.axis("off")
-        # Impact summary.
-        ax = axes[1, 1]
-        impact_text = (
-            f"Impact of Constraints (Prior Strength: {prior_strength:.2f}):\n"
-            f"• Search space reduction: 60%\n"
-            f"• Ambiguous edges removed: 2\n"
-            f"• Convergence time: 40% faster\n"
-            f"• Accuracy improvement: ~25%"
+        # Comments panel: expert constraints + impact summary.
+        axes[2].axis("off")
+        axes[2].set_title("Comments", fontsize=11, fontweight="bold")
+        detail = (
+            "Expert constraints:\n"
+            "- Forbidden: 3 -> 1\n"
+            "  (outcome cannot cause treatment)\n"
+            "- Required: 1 -> 2\n"
+            "  (treatment causes outcome)\n"
+            "- Temporal order: 1 -> {2,3} -> 4\n\n"
+            f"Impact (prior strength = {prior_strength:.2f}):\n"
+            "- Search space reduction: 60%\n"
+            "- Ambiguous edges removed: 2\n"
+            "- Convergence time: 40% faster\n"
+            "- Accuracy improvement: ~25%"
         )
-        ax.text(
-            0.5,
-            0.5,
-            impact_text,
-            ha="center",
-            va="center",
-            fontsize=10,
-            bbox=dict(boxstyle="round", facecolor="lightcyan", alpha=0.7),
-            transform=ax.transAxes,
-        )
-        ax.axis("off")
-        ax.set_title("Impact Summary", fontsize=11, fontweight="bold")
+        htutori.add_fitted_text_box(axes[2], detail, max_fontsize=10, min_fontsize=7)
         plt.suptitle(
             "Domain Knowledge Integration: Constraints and Prior DAGs",
             fontsize=14,
@@ -946,8 +1100,14 @@ def cell9_domain_knowledge():
         plt.show()
 
     # Interactive widgets.
-    prior_slider = FloatSlider(
-        value=0.5, min=0, max=1, step=0.1, description="Prior Strength:"
+    prior_slider, prior_box = htutori.build_widget_control(
+        name="prior",
+        description="Prior Strength",
+        min_val=0.0,
+        max_val=1.0,
+        step=0.1,
+        initial_value=0.5,
+        is_float=True,
     )
     output = Output()
 
@@ -957,7 +1117,7 @@ def cell9_domain_knowledge():
             plot_domain_constraints(prior_slider.value)
 
     prior_slider.observe(update, names="value")
-    display(VBox([prior_slider, output]))
+    display(VBox([prior_box, output]))
     update(None)
 
 
@@ -990,85 +1150,63 @@ def cell10_end_to_end_workflow():
         ]
         # Stage 1: Data Preparation.
         ax = fig.add_subplot(gs[0, 0])
-        ax.text(
-            0.5,
-            0.5,
-            "Stage 1: Data Prep\n✓ Variables: 5\n✓ Samples: 500\n✓ Non-Gaussian",
-            ha="center",
-            va="center",
-            fontsize=10,
-            bbox=dict(boxstyle="round", facecolor=colors[0], alpha=0.7),
-            transform=ax.transAxes,
-        )
+        ax.set_facecolor(colors[0])
         ax.axis("off")
+        ax.set_title("Stage 1: Data Prep", fontsize=10, fontweight="bold")
+        htutori.add_fitted_text_box(
+            ax,
+            "Variables: 5\nSamples: 500\nNon-Gaussian: yes",
+            max_fontsize=10,
+            min_fontsize=7,
+        )
         # Stage 2: Algorithm Selection.
         ax = fig.add_subplot(gs[0, 1])
-        algo_text = "Stage 2: Algorithms\n"
-        for algo in selected_algorithms:
-            algo_text += f"✓ {algo}\n"
-        ax.text(
-            0.5,
-            0.5,
-            algo_text,
-            ha="center",
-            va="center",
-            fontsize=10,
-            bbox=dict(boxstyle="round", facecolor=colors[1], alpha=0.7),
-            transform=ax.transAxes,
-        )
+        ax.set_facecolor(colors[1])
         ax.axis("off")
+        ax.set_title("Stage 2: Algorithms", fontsize=10, fontweight="bold")
+        algo_text = "\n".join(selected_algorithms)
+        htutori.add_fitted_text_box(ax, algo_text, max_fontsize=10, min_fontsize=7)
         # Stage 3: Consensus.
         ax = fig.add_subplot(gs[0, 2])
-        ax.text(
-            0.5,
-            0.5,
-            "Stage 3: Consensus\nEdges found by 2+ algos\n(more trustworthy)",
-            ha="center",
-            va="center",
-            fontsize=10,
-            bbox=dict(boxstyle="round", facecolor=colors[2], alpha=0.7),
-            transform=ax.transAxes,
-        )
+        ax.set_facecolor(colors[2])
         ax.axis("off")
+        ax.set_title("Stage 3: Consensus", fontsize=10, fontweight="bold")
+        htutori.add_fitted_text_box(
+            ax,
+            "Edges found by 2+ algos\n(more trustworthy)",
+            max_fontsize=10,
+            min_fontsize=7,
+        )
         # Stage 4: Refinement.
         ax = fig.add_subplot(gs[1, 0])
-        ax.text(
-            0.5,
-            0.5,
-            "Stage 4: Refinement\nExpert review\nAdd constraints",
-            ha="center",
-            va="center",
-            fontsize=10,
-            bbox=dict(boxstyle="round", facecolor=colors[3], alpha=0.7),
-            transform=ax.transAxes,
-        )
+        ax.set_facecolor(colors[3])
         ax.axis("off")
+        ax.set_title("Stage 4: Refinement", fontsize=10, fontweight="bold")
+        htutori.add_fitted_text_box(
+            ax, "Expert review\nAdd constraints", max_fontsize=10, min_fontsize=7
+        )
         # Stage 5: Validation.
         ax = fig.add_subplot(gs[1, 1])
-        ax.text(
-            0.5,
-            0.5,
-            "Stage 5: Validation\nRefutation tests\nSensitivity analysis",
-            ha="center",
-            va="center",
-            fontsize=10,
-            bbox=dict(boxstyle="round", facecolor=colors[4], alpha=0.7),
-            transform=ax.transAxes,
-        )
+        ax.set_facecolor(colors[4])
         ax.axis("off")
+        ax.set_title("Stage 5: Validation", fontsize=10, fontweight="bold")
+        htutori.add_fitted_text_box(
+            ax,
+            "Refutation tests\nSensitivity analysis",
+            max_fontsize=10,
+            min_fontsize=7,
+        )
         # Stage 6: Final DAG.
         ax = fig.add_subplot(gs[1, 2])
-        ax.text(
-            0.5,
-            0.5,
-            "Stage 6: Final DAG\nRefined & validated\nReady for inference",
-            ha="center",
-            va="center",
-            fontsize=10,
-            bbox=dict(boxstyle="round", facecolor=colors[5], alpha=0.7),
-            transform=ax.transAxes,
-        )
+        ax.set_facecolor(colors[5])
         ax.axis("off")
+        ax.set_title("Stage 6: Final DAG", fontsize=10, fontweight="bold")
+        htutori.add_fitted_text_box(
+            ax,
+            "Refined & validated\nReady for inference",
+            max_fontsize=10,
+            min_fontsize=7,
+        )
         # Progress bar at bottom.
         ax = fig.add_subplot(gs[2, :])
         progress_pct = (progress_stage + 1) / len(stages)
@@ -1109,8 +1247,14 @@ def cell10_end_to_end_workflow():
     algo_pc = Checkbox(value=True, description="PC")
     algo_ges = Checkbox(value=True, description="GES")
     algo_lingam = Checkbox(value=False, description="LiNGAM")
-    progress_slider = IntSlider(
-        value=0, min=0, max=5, step=1, description="Progress Stage:"
+    progress_slider, progress_box = htutori.build_widget_control(
+        name="stage",
+        description="Progress Stage",
+        min_val=0,
+        max_val=5,
+        step=1,
+        initial_value=0,
+        is_float=False,
     )
     output = Output()
 
@@ -1140,7 +1284,7 @@ def cell10_end_to_end_workflow():
             [
                 dataset_dropdown,
                 HBox([algo_pc, algo_ges, algo_lingam]),
-                progress_slider,
+                progress_box,
                 output,
             ]
         )

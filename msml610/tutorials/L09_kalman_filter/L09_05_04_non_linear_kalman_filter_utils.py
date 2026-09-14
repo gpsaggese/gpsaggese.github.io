@@ -160,6 +160,46 @@ def plot_nonlinear_func(
     plt.show()
 
 
+def plot_input_output_scatter(data: np.ndarray, f: Callable, n: int) -> None:
+    """
+    Scatter the first n input samples next to their transformed output.
+
+    :param data: input data samples
+    :param f: the nonlinear function to apply
+    :param n: number of points to plot
+    """
+    plt.subplot(121)
+    plt.scatter(data[:n], range(n), alpha=0.2, s=1)
+    plt.title("Input")
+    plt.subplot(122)
+    plt.title("Output")
+    plt.scatter(f(data[:n]), range(n), alpha=0.2, s=1)
+
+
+def plot_sigma_points(
+    mean: tuple,
+    p: np.ndarray,
+    sigmas: np.ndarray,
+    *,
+    seed: int = 100,
+    n_samples: int = 5000,
+) -> None:
+    """
+    Scatter sampled points from a Gaussian alongside its sigma points.
+
+    :param mean: mean of the Gaussian
+    :param p: covariance of the Gaussian
+    :param sigmas: sigma points, shape (2n+1, 2)
+    :param seed: random seed for the sampled points
+    :param n_samples: number of points to sample
+    """
+    plt.figure(figsize=[4, 4])
+    np.random.seed(seed)
+    xs, ys = np.random.multivariate_normal(mean=mean, cov=p, size=n_samples).T
+    plt.scatter(xs, ys, marker="o", alpha=0.05, color="k", edgecolors="none")
+    plt.scatter(sigmas[:, 0], sigmas[:, 1], c="r", s=30)
+
+
 def plot_bivariate_colormap(xs: np.ndarray, ys: np.ndarray) -> None:
     """
     Plot a bivariate colormap using kernel density estimation.

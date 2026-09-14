@@ -77,6 +77,31 @@ def plot_gh_filter_results_with_params(
 # #############################################################################
 
 
+def cell1_1_plot_ground_truth_and_measurements(
+    measured_weights: np.ndarray,
+    ground_truth: np.ndarray,
+    dst_dir: str,
+    dst_filename: str,
+) -> pd.DataFrame:
+    """
+    Plot the raw weight measurements against the (unknown, in practice)
+    ground truth.
+
+    :param measured_weights: array of weight measurements
+    :param ground_truth: array of true weight values
+    :param dst_dir: directory to save the output figure
+    :param dst_filename: filename for the output figure
+    :return: DataFrame with the measurements and ground truth columns
+    """
+    idx = pd.date_range("2011-01-01", periods=len(measured_weights))
+    df = pd.DataFrame(measured_weights.T, index=idx, columns=["measurements"])
+    df["ground_truth"] = ground_truth
+    df["measurements"].plot(marker=".", markersize=10, linestyle="None")
+    df["ground_truth"].plot(color="k", linewidth=2)
+    plt.savefig(os.path.join(dst_dir, dst_filename))
+    return df
+
+
 def predict_using_gain_guess(
     initial_weight: float,
     measures: List[float],
@@ -216,7 +241,10 @@ def cell1_4_create_interactive_gain_rate_widget(
         nonlocal fig_gain
         if fig_gain is not None:
             plt.close(fig_gain)
-        fig_gain = plt.figure(figsize=plt.rcParams["figure.figsize"])
+        figsize = plt.rcParams["figure.figsize"]
+        fig_gain, (ax1, ax2) = plt.subplots(
+            1, 2, figsize=(figsize[0] * 1.6, figsize[1])
+        )
         time_step = 1
         ests, preds = predict_using_gain_guess(
             weight, measured_weights, gain_rate, weight_scale, time_step
@@ -226,9 +254,24 @@ def cell1_4_create_interactive_gain_rate_widget(
             "weight_scale": weight_scale,
             "gain_rate": gain_rate,
         }
+        plt.sca(ax1)
         plot_gh_filter_results_with_params(
             measured_weights, preds, ests, ground_truth, params
         )
+        # Comments panel.
+        final_error = abs(ests[-1] - ground_truth[-1])
+        detail = (
+            f"initial_weight = {weight:.1f}\n"
+            f"weight_scale = {weight_scale:.2f}\n"
+            f"gain_rate = {gain_rate:.2f}\n\n"
+            f"final estimate = {ests[-1]:.2f}\n"
+            f"final ground truth = {ground_truth[-1]:.2f}\n"
+            f"final |error| = {final_error:.2f}"
+        )
+        ax2.axis("off")
+        ax2.set_title("Comments", fontsize=14, fontweight="bold")
+        htutori.add_fitted_text_box(ax2, detail, max_fontsize=12, min_fontsize=9)
+        plt.tight_layout()
 
     # Create slider for initial weight.
     weight_slider, weight_box = htutori.build_widget_control(
@@ -553,7 +596,10 @@ def cell2_1_create_interactive_linear_noisy_data_widget() -> None:
         nonlocal fig_noisy
         if fig_noisy is not None:
             plt.close(fig_noisy)
-        fig_noisy = plt.figure(figsize=plt.rcParams["figure.figsize"])
+        figsize = plt.rcParams["figure.figsize"]
+        fig_noisy, (ax1, ax2) = plt.subplots(
+            1, 2, figsize=(figsize[0] * 1.6, figsize[1])
+        )
         # Use fixed values for x0 and dx.
         vals, ground_truth = gen_linear_noisy_data(
             x0=0, dx=1, count=count, noise_factor=noise_factor, seed=seed
@@ -564,15 +610,31 @@ def cell2_1_create_interactive_linear_noisy_data_widget() -> None:
                 "ground_truth": ground_truth,
             }
         )
-        df["measurements"].plot(marker=".", markersize=10, linestyle="None")
-        df["ground_truth"].plot(color="k", linewidth=2)
-        plt.xlim(-10, 110)
-        plt.ylim(-10, 110)
-        plt.legend(loc="upper left")
-        plt.xlabel("Time step")
-        plt.ylabel("Value")
-        plt.title("Linear Noisy Data Generation")
-        plt.grid(True, alpha=0.3)
+        df["measurements"].plot(
+            marker=".", markersize=10, linestyle="None", ax=ax1
+        )
+        df["ground_truth"].plot(color="k", linewidth=2, ax=ax1)
+        ax1.set_xlim(-10, 110)
+        ax1.set_ylim(-10, 110)
+        ax1.legend(loc="upper left")
+        ax1.set_xlabel("Time step")
+        ax1.set_ylabel("Value")
+        ax1.set_title("Linear Noisy Data Generation")
+        ax1.grid(True, alpha=0.3)
+        # Comments panel.
+        residual = vals - np.array(ground_truth)
+        detail = (
+            f"seed = {seed}\n"
+            f"count = {count}\n"
+            f"noise_factor = {noise_factor:.2f}\n\n"
+            f"x0 = 0, dx = 1\n\n"
+            f"residual mean = {residual.mean():.2f}\n"
+            f"residual std = {residual.std():.2f}"
+        )
+        ax2.axis("off")
+        ax2.set_title("Comments", fontsize=14, fontweight="bold")
+        htutori.add_fitted_text_box(ax2, detail, max_fontsize=12, min_fontsize=9)
+        plt.tight_layout()
 
     # Create seed widget (first widget per convention).
     seed_slider, seed_box = htutori.build_widget_control(
@@ -646,7 +708,10 @@ def cell2_9_create_interactive_gh_filter_widget() -> None:
         nonlocal fig_gh
         if fig_gh is not None:
             plt.close(fig_gh)
-        fig_gh = plt.figure(figsize=plt.rcParams["figure.figsize"])
+        figsize = plt.rcParams["figure.figsize"]
+        fig_gh, (ax1, ax2) = plt.subplots(
+            1, 2, figsize=(figsize[0] * 1.6, figsize[1])
+        )
         # Generate test data with current noise level.
         zs, ground_truth = gen_linear_noisy_data(
             x0=5, dx=5, count=100, noise_factor=noise_factor
@@ -654,18 +719,30 @@ def cell2_9_create_interactive_gh_filter_widget() -> None:
         # Apply g-h filter.
         data = gh_filter(data=zs, x0=x, dx=dx, g=g, h=h)
         # Plot ground truth as black line.
-        plt.plot(ground_truth, color="k", linewidth=2, label="Ground truth")
+        ax1.plot(ground_truth, color="k", linewidth=2, label="Ground truth")
         # Plot measurements as scatter.
-        plt.scatter(
+        ax1.scatter(
             list(range(len(zs))), zs, marker=".", lw=1, label="Measurements"
         )
         # Plot filtered estimates as line.
-        plt.plot(data, color="b", label="Filtered estimates")
-        plt.legend(loc="upper left")
-        plt.xlabel("Time step")
-        plt.ylabel("Value")
-        plt.title("g-h Filter Interactive Example")
-        plt.grid(True, alpha=0.3)
+        ax1.plot(data, color="b", label="Filtered estimates")
+        ax1.legend(loc="upper left")
+        ax1.set_xlabel("Time step")
+        ax1.set_ylabel("Value")
+        ax1.set_title("g-h Filter Interactive Example")
+        ax1.grid(True, alpha=0.3)
+        # Comments panel.
+        rmse = float(np.sqrt(np.mean((data - np.array(ground_truth)) ** 2)))
+        detail = (
+            f"x0 = {x:.1f}, dx = {dx:.2f}\n"
+            f"g = {g:.2f}, h = {h:.2f}\n"
+            f"noise_factor = {noise_factor:.1f}\n\n"
+            f"RMSE(estimate, truth) = {rmse:.2f}"
+        )
+        ax2.axis("off")
+        ax2.set_title("Comments", fontsize=14, fontweight="bold")
+        htutori.add_fitted_text_box(ax2, detail, max_fontsize=12, min_fontsize=9)
+        plt.tight_layout()
 
     # Create x widget.
     x_slider, x_box = htutori.build_widget_control(
@@ -760,7 +837,10 @@ def cell2_5_create_interactive_non_linear_noisy_data_widget() -> None:
         nonlocal fig_non_linear
         if fig_non_linear is not None:
             plt.close(fig_non_linear)
-        fig_non_linear = plt.figure(figsize=plt.rcParams["figure.figsize"])
+        figsize = plt.rcParams["figure.figsize"]
+        fig_non_linear, (ax1, ax2) = plt.subplots(
+            1, 2, figsize=(figsize[0] * 1.6, figsize[1])
+        )
         # Use fixed values for x0 and dx.
         vals, ground_truth = gen_non_linear_noisy_data(
             x0=0,
@@ -772,7 +852,7 @@ def cell2_5_create_interactive_non_linear_noisy_data_widget() -> None:
         )
         # Plot ground truth as line.
         pd.Series(ground_truth).plot(
-            color="k", linewidth=2, label="Ground truth"
+            color="k", linewidth=2, label="Ground truth", ax=ax1
         )
         # Plot measurements as scatter points.
         pd.Series(vals).plot(
@@ -781,12 +861,28 @@ def cell2_5_create_interactive_non_linear_noisy_data_widget() -> None:
             linestyle="None",
             color="b",
             label="Measurements",
+            ax=ax1,
         )
-        plt.legend(loc="upper left")
-        plt.xlabel("Time step")
-        plt.ylabel("Value")
-        plt.title("Non-Linear Noisy Data Generation")
-        plt.grid(True, alpha=0.3)
+        ax1.legend(loc="upper left")
+        ax1.set_xlabel("Time step")
+        ax1.set_ylabel("Value")
+        ax1.set_title("Non-Linear Noisy Data Generation")
+        ax1.grid(True, alpha=0.3)
+        # Comments panel.
+        residual = vals - ground_truth
+        detail = (
+            f"seed = {seed}\n"
+            f"count = {count}\n"
+            f"noise_factor = {noise_factor:.2f}\n"
+            f"accel = {accel:.2f}\n\n"
+            f"x0 = 0, dx = 1\n\n"
+            f"residual mean = {residual.mean():.2f}\n"
+            f"residual std = {residual.std():.2f}"
+        )
+        ax2.axis("off")
+        ax2.set_title("Comments", fontsize=14, fontweight="bold")
+        htutori.add_fitted_text_box(ax2, detail, max_fontsize=12, min_fontsize=9)
+        plt.tight_layout()
 
     # Create seed widget (first widget per convention).
     seed_slider, seed_box = htutori.build_widget_control(
@@ -850,3 +946,84 @@ def cell2_5_create_interactive_non_linear_noisy_data_widget() -> None:
             ]
         )
     )
+
+
+def cell2_7_plot_varying_g_noisy(dst_dir: str, dst_filename: str) -> None:
+    """
+    Compare g-h filter estimates for 3 values of g on noisy linear data.
+
+    A smaller g follows the model more than the measurements; a larger g
+    follows the measurements more than the model; too large a g follows
+    the measurements and rejects no noise.
+
+    :param dst_dir: directory to save the output figure
+    :param dst_filename: filename for the output figure
+    """
+    np.random.seed(100)
+    zs, ground_truth = gen_linear_noisy_data(
+        x0=5, dx=5, count=50, noise_factor=50
+    )
+    df = pd.DataFrame(zs)
+    df.columns = ["measures"]
+    df["ground_truth"] = ground_truth
+    df["g=0.1"] = gh_filter(data=zs, x0=0.0, dx=5.0, dt=1.0, g=0.1, h=0.01)
+    df["g=0.4"] = gh_filter(data=zs, x0=0.0, dx=5.0, dt=1.0, g=0.4, h=0.01)
+    df["g=0.8"] = gh_filter(data=zs, x0=0.0, dx=5.0, dt=1.0, g=0.8, h=0.01)
+    df.drop("measures", axis=1).plot()
+    df["measures"].plot(
+        marker=".",
+        markersize=10,
+        color="b",
+        # Hide line.
+        linestyle="None",
+    )
+    plt.savefig(os.path.join(dst_dir, dst_filename))
+
+
+def cell2_7_plot_varying_g_step(dst_dir: str, dst_filename: str) -> None:
+    """
+    Compare g-h filter estimates for 3 values of g on a step-like signal.
+
+    A large g follows the measurements more closely than the (constant
+    velocity) model, so it tracks the step faster but is noisier.
+
+    :param dst_dir: directory to save the output figure
+    :param dst_filename: filename for the output figure
+    """
+    zs = [5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+    for _ in range(50):
+        zs.append(14)
+    df = pd.DataFrame(zs)
+    df.columns = ["measures"]
+    df["g=0.1"] = gh_filter(data=zs, x0=0.0, dx=1, dt=1.0, g=0.1, h=0.01)
+    df["g=0.4"] = gh_filter(data=zs, x0=0.0, dx=1, dt=1.0, g=0.4, h=0.01)
+    df["g=0.8"] = gh_filter(data=zs, x0=0.0, dx=1, dt=1.0, g=0.8, h=0.01)
+    df.plot()
+    plt.savefig(os.path.join(dst_dir, dst_filename))
+
+
+def cell2_8_plot_varying_h(dst_dir: str, dst_filename: str) -> None:
+    """
+    Compare g-h filter estimates for 3 (dx, h) combinations on a ramp.
+
+    `h` affects how much the filter favors the measurement of `dx/dt` vs
+    its own prediction: a small `h` with a wrong `dx` guess causes large,
+    slow ringing; a large `h` adapts faster, with smaller, higher-
+    frequency ringing.
+
+    :param dst_dir: directory to save the output figure
+    :param dst_filename: filename for the output figure
+    """
+    # Go from 0 to 1 in 50 steps (dx = 1 / 50 = 0.02) without noise.
+    zs = np.linspace(0, 1, 50)
+    df = pd.DataFrame(zs)
+    df.columns = ["measures"]
+    # dx is close to ground truth with small h: we track the signal right.
+    df["dx=0 h=0.05"] = gh_filter(data=zs, x0=0, dx=0, dt=1.0, g=0.2, h=0.05)
+    # dx is wrong, with small h: big ringing, and we adapt slowly (lower
+    # frequency).
+    df["dx=2 h=0.05"] = gh_filter(data=zs, x0=0, dx=2, dt=1.0, g=0.2, h=0.05)
+    # dx is wrong, with large h: small ringing with higher frequency.
+    df["dx=2 h=0.5"] = gh_filter(data=zs, x0=0, dx=2, dt=1.0, g=0.2, h=0.5)
+    df.plot()
+    plt.savefig(os.path.join(dst_dir, dst_filename))

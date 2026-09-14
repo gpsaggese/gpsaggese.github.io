@@ -34,7 +34,9 @@ def load_xmas_sales_data(data_dir: str) -> pd.DataFrame:
     return data
 
 
-def plot_xmas_sales_boxplot(data: pd.DataFrame, *, figsize: tuple = (10, 5)) -> mfigure.Figure:
+def plot_xmas_sales_boxplot(
+    data: pd.DataFrame, *, figsize: tuple = (10, 5)
+) -> mfigure.Figure:
     """
     Create a boxplot of weekly sales by treatment status.
 
@@ -43,12 +45,7 @@ def plot_xmas_sales_boxplot(data: pd.DataFrame, *, figsize: tuple = (10, 5)) -> 
     :return: matplotlib figure object
     """
     fig, ax = plt.subplots(1, 1, figsize=figsize)
-    sns.boxplot(
-        y="weekly_amount_sold",
-        x="is_on_sale",
-        data=data,
-        ax=ax
-    )
+    sns.boxplot(y="weekly_amount_sold", x="is_on_sale", data=data, ax=ax)
     ax.set_xlabel("is_on_sale", fontsize=20)
     ax.set_ylabel("weekly_amount_sold", fontsize=20)
     ax.tick_params(axis="both", which="major", labelsize=18)
@@ -60,11 +57,14 @@ def plot_xmas_sales_boxplot(data: pd.DataFrame, *, figsize: tuple = (10, 5)) -> 
 # #############################################################################
 
 
-def plot_sales_bias_analysis(data: pd.DataFrame, marker: str = "o") -> mfigure.Figure:
+def plot_sales_bias_analysis(
+    data: pd.DataFrame, marker: str = "o"
+) -> mfigure.Figure:
     """
     Plot sales bias analysis showing treated vs control groups with regression lines.
 
-    :param data: DataFrame with columns 'is_on_sale', 'avg_week_sales', 'weekly_amount_sold'
+    :param data: DataFrame with columns 'is_on_sale', 'avg_week_sales',
+        'weekly_amount_sold'
     :param marker: Marker style for plotting
     :return: matplotlib figure object
     """
@@ -310,6 +310,76 @@ def plot_simpsons_paradox():
     plt.xlabel("x")
     plt.ylabel("y")
     plt.legend(fontsize=10, loc="best")
+    return fig
+
+
+# #############################################################################
+# Cell 1.4: University Simpson's Paradox.
+# #############################################################################
+
+
+# #############################################################################
+# Cell 2.3: School scores.
+# #############################################################################
+
+
+def plot_top_school_size_boxplot(
+    df: pd.DataFrame, *, figsize: tuple = (8, 4)
+) -> mfigure.Figure:
+    """
+    Plot the school size distribution for top-scoring vs other schools.
+
+    :param df: DataFrame with columns 'avg_score', 'number_of_students'
+    :param figsize: figure size as (width, height)
+    :return: matplotlib figure object
+    """
+    threshold_score = np.quantile(df["avg_score"], 0.99)
+    threshold_students = np.quantile(df["number_of_students"], 0.98)
+    plot_data = df[["avg_score", "number_of_students"]].copy()
+    plot_data["top_school"] = plot_data["avg_score"] >= threshold_score
+    # Remove outliers.
+    plot_data = plot_data[plot_data["number_of_students"] < threshold_students][
+        ["top_school", "number_of_students"]
+    ]
+    fig, ax = plt.subplots(1, 1, figsize=figsize)
+    sns.boxplot(x="top_school", y="number_of_students", data=plot_data, ax=ax)
+    ax.set_title("Number of students of 1% top schools (right)")
+    return fig
+
+
+def plot_score_by_school_size_scatter(
+    df: pd.DataFrame, *, figsize: tuple = (10, 5)
+) -> mfigure.Figure:
+    """
+    Plot school score against school size, highlighting extreme scores.
+
+    :param df: DataFrame with columns 'avg_score', 'number_of_students'
+    :param figsize: figure size as (width, height)
+    :return: matplotlib figure object
+    """
+    q_99 = np.quantile(df["avg_score"], 0.99)
+    q_01 = np.quantile(df["avg_score"], 0.01)
+    # Fix seed for reproducible sampling.
+    plot_data = df.sample(10000, random_state=42).copy()
+    is_extreme = (plot_data["avg_score"] > q_99) | (plot_data["avg_score"] < q_01)
+    plot_data["group"] = np.where(is_extreme, "Top and bottom", "Middle")
+    fig, ax = plt.subplots(1, 1, figsize=figsize)
+    sns.scatterplot(
+        y="avg_score",
+        x="number_of_students",
+        data=plot_data.query("group == 'Middle'"),
+        label="Middle",
+        ax=ax,
+    )
+    sns.scatterplot(
+        y="avg_score",
+        x="number_of_students",
+        data=plot_data.query("group != 'Middle'"),
+        color="0.7",
+        label="Top and bottom",
+        ax=ax,
+    )
+    ax.set_title("School score by number of students in the school")
     return fig
 
 
