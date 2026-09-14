@@ -74,7 +74,8 @@ def cell1_1_sample_bernoulli_widget() -> None:
 
 def cell1_2_sample_binomial_widget() -> None:
     """
-    Sample from a Binomial(trials, p) distribution and print the realizations.
+    Sample from a Binomial(trials, p) distribution and print the
+    realizations.
     """
     n_slider, n_box = htutori.build_widget_control(
         name="n",
@@ -225,7 +226,8 @@ def cell1_5_sample_beta_widget() -> None:
 
 def plot_beta() -> None:
     """
-    Plot beta distribution for various alpha and beta parameter combinations.
+    Plot beta distribution for various alpha and beta parameter
+    combinations.
     """
     # Alpha and beta values to plot.
     a_params = [0.8, 1.0, 2.0, 4.0]
@@ -393,7 +395,9 @@ def beta_prior_interactive() -> None:
             # Panel 1: the posterior density, with the true theta marked.
             fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
             label = f"Posterior: alpha={alpha:g}, beta={beta:g}"
-            ax1.fill_between(x, 0, post, alpha=0.5, color="steelblue", label=label)
+            ax1.fill_between(
+                x, 0, post, alpha=0.5, color="steelblue", label=label
+            )
             ax1.axvline(theta_real, ymax=0.3, linestyle="--", color="black")
             ax1.set_xlabel("theta")
             ax1.set_ylabel("density")
@@ -527,7 +531,8 @@ def sin_loss(y_hat: LossValue, y_true: LossValue) -> LossValue:
 
 def asymmetric_loss(y_hat: LossValue, y_true: LossValue) -> LossValue:
     """
-    Compute asymmetric loss function with different penalties for over/under prediction.
+    Compute asymmetric loss function with different penalties for over/under
+    prediction.
 
     :param y_hat: Predicted value(s)
     :param y_true: True value(s)

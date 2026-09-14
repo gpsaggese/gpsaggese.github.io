@@ -21,9 +21,7 @@ _LOG = logging.getLogger(__name__)
 # #############################################################################
 
 
-def plot_data_and_model(
-    bikes: pd.DataFrame, idata: Any, mean_line: Any
-) -> None:
+def plot_data_and_model(bikes: pd.DataFrame, idata: Any, mean_line: Any) -> None:
     """
     Plot the bike-rental data against a fitted model's mean and HDI bands.
 
@@ -70,8 +68,8 @@ def scatter_plot(x: np.ndarray, y: np.ndarray) -> None:
     """
     Plot `y` against each column of `x`, plus the columns against each other.
 
-    Uses a 1xN horizontal layout, one panel per relationship, instead of a
-    2x2 grid.
+    Uses a 1xN horizontal layout, one panel per relationship, instead of a 2x2
+    grid.
 
     :param x: independent variables, one column per feature
     :param y: dependent variable

@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.5
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -297,7 +297,10 @@ display(df.sort_values(by="avg_score", ascending=False).head(5))
 fig = mtl0cireout.plot_top_school_size_boxplot(df)
 top_school_size_png = f"{out_dir_name}/L08.4.top_school_size.png"
 hmatplo.save_fig(
-    fig, top_school_size_png, print_markdown=True, path_prefix=markdown_path_prefix
+    fig,
+    top_school_size_png,
+    print_markdown=True,
+    path_prefix=markdown_path_prefix,
 )
 
 # %%

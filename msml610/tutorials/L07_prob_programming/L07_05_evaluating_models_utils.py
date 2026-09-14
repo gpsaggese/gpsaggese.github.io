@@ -3,7 +3,7 @@ Utility functions for the evaluating models tutorial (L07_05).
 
 Import as:
 
-import msml610.tutorials.L07_prob_programming.L07_05_evaluating_models_utils as mtlpel0emu
+import msml610.tutorials.L07_prob_programming.L07_05_evaluating_models_utils as mtlppl0emu
 """
 
 import logging

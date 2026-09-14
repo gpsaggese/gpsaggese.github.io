@@ -76,7 +76,7 @@ def init_loggers(notebook_log: logging.Logger) -> None:
 
 
 # #############################################################################
-# The hidden wumpus world
+# WumpusWorld
 # #############################################################################
 
 
@@ -329,32 +329,13 @@ def to_clauses(
                     symbol = literal
                     is_positive = True
                 hdbg.dassert_in(
-                    symbol, index, "Sentence mentions a variable outside the table"
+                    symbol,
+                    index,
+                    "Sentence mentions a variable outside the table",
                 )
                 literals.append((index[symbol], is_positive))
             clauses.append(literals)
     return clauses
-
-
-def satisfying_mask(
-    sentences: Sequence[sympy.Basic],
-    var_order: Sequence[sympy.Symbol],
-    bits: np.ndarray,
-) -> np.ndarray:
-    """
-    Mark the assignments in `bits` that satisfy every sentence.
-
-    This is the model checking algorithm: it implements the definition of
-    entailment directly, at the cost of touching all $2^n$ rows.
-
-    :param sentences: sentences forming the knowledge base
-    :param var_order: variables, in the column order of `bits`
-    :param bits: assignments from `enumerate_assignments()`
-    :return: boolean mask of shape `(2 ** n_vars,)`, one entry per assignment
-    """
-    clauses = to_clauses(sentences, var_order)
-    mask = evaluate_clauses(clauses, bits)
-    return mask
 
 
 def evaluate_clauses(
@@ -382,6 +363,27 @@ def evaluate_clauses(
     return mask
 
 
+def satisfying_mask(
+    sentences: Sequence[sympy.Basic],
+    var_order: Sequence[sympy.Symbol],
+    bits: np.ndarray,
+) -> np.ndarray:
+    """
+    Mark the assignments in `bits` that satisfy every sentence.
+
+    This is the model checking algorithm: it implements the definition of
+    entailment directly, at the cost of touching all $2^n$ rows.
+
+    :param sentences: sentences forming the knowledge base
+    :param var_order: variables, in the column order of `bits`
+    :param bits: assignments from `enumerate_assignments()`
+    :return: boolean mask of shape `(2 ** n_vars,)`, one entry per assignment
+    """
+    clauses = to_clauses(sentences, var_order)
+    mask = evaluate_clauses(clauses, bits)
+    return mask
+
+
 def entailment_verdict(kb_mask: np.ndarray, alpha_mask: np.ndarray) -> str:
     """
     Decide entailment by comparing the two model sets.
@@ -405,7 +407,7 @@ def entailment_verdict(kb_mask: np.ndarray, alpha_mask: np.ndarray) -> str:
 
 
 # #############################################################################
-# The knowledge base: TELL and ASK
+# KnowledgeBase
 # #############################################################################
 
 
@@ -808,9 +810,9 @@ def draw_model_table(
     """
     Draw the truth table over the model variables, shading the model sets.
 
-    Each row is one candidate world. Rows in $M(KB)$ get a blue wash, and rows
-    in $M(\\alpha)$ get a dashed orange outline, so inclusion and the gaps
-    that break it are visible at a glance.
+    Each row is one candidate world. Rows in $M(KB)$ get a blue wash, and rows in
+    $M(\\alpha)$ get a dashed orange outline, so inclusion and the gaps that
+    break it are visible at a glance.
 
     :param ax: axes to draw on
     :param bits: assignments from `enumerate_assignments()`
@@ -1400,15 +1402,31 @@ def inference_trace() -> List[Tuple[str, str, str]]:
         ("2. TELL   %s" % format_sentence(axiom), "black", "normal"),
         ("          (breeze axiom for the cell)", "dimgray", "normal"),
         ("3. TELL   %s" % format_sentence(safe_start), "black", "normal"),
-        ("          (the agent stood in (1,1) and survived)", "dimgray", "normal"),
+        (
+            "          (the agent stood in (1,1) and survived)",
+            "dimgray",
+            "normal",
+        ),
         ("4. Biconditional elimination on 2:", "#2166ac", "bold"),
-        ("          B_1_2 >> (%s)" % format_sentence(disjunction), "#2166ac", "normal"),
+        (
+            "          B_1_2 >> (%s)" % format_sentence(disjunction),
+            "#2166ac",
+            "normal",
+        ),
         ("5. Modus ponens on 1 and 4:", "#2166ac", "bold"),
         ("          %s" % format_sentence(disjunction), "#2166ac", "normal"),
         ("6. Resolution on 3 and 5:", "#2166ac", "bold"),
         ("          %s" % format_sentence(resolved), "#2166ac", "normal"),
-        ("Conclusion: at least one neighbor other than (1,1)", "#b2182b", "bold"),
-        ("holds a pit, and neither one is entailed on its own.", "#b2182b", "bold"),
+        (
+            "Conclusion: at least one neighbor other than (1,1)",
+            "#b2182b",
+            "bold",
+        ),
+        (
+            "holds a pit, and neither one is entailed on its own.",
+            "#b2182b",
+            "bold",
+        ),
     ]
     return lines
 
@@ -1426,7 +1444,11 @@ def implication_view() -> List[Tuple[str, str, str]]:
         ("  %s" % format_sentence(axiom), "black", "normal"),
         ("", "black", "normal"),
         ("Its connectives:", "black", "bold"),
-        ("  Equivalent(.,.)  biconditional, 'if and only if'", "#2166ac", "normal"),
+        (
+            "  Equivalent(.,.)  biconditional, 'if and only if'",
+            "#2166ac",
+            "normal",
+        ),
         ("  |                disjunction, 'or'", "#2166ac", "normal"),
         ("", "black", "normal"),
         ("Its atoms:", "black", "bold"),
@@ -1597,26 +1619,20 @@ def measure_scaling(size: int, *, seed: int = _DEFAULT_SEED) -> Dict[str, float]
     """
     Time brute-force model checking and a SAT solver on the same query.
 
-    Model checking enumerates all $2^n$ assignments, so it is only measured
-    while the enumeration fits in memory. The SAT solver answers the same
-    question by searching, never materializing the model set.
+    Model checking enumerates all $2^n$ assignments, so it is only measured while
+    the enumeration fits in memory. The SAT solver answers the same question by
+    searching, never materializing the model set.
 
     :param size: number of rows and columns of the grid
     :param seed: random seed for the hidden layout
-    :return: dict with the grid size, variable count, and both runtimes
-        ```
-
-        {'size': 4.0, 'n_vars': 16.0, 'model_secs': 0.01, 'sat_secs': 0.004}
-
-        ```
+    :return: dict with the grid size, variable count, and both runtimes ```
+        {'size': 4.0, 'n_vars': 16.0, 'model_secs': 0.01, 'sat_secs': 0.004} ```
     """
     sentences, var_order, alpha = build_scaling_problem(size, seed=seed)
     n_vars = len(var_order)
     # Time the SAT solver on `KB and not alpha`, the standard entailment query.
     query = sympy.And(*sentences, sympy.Not(alpha))
-    sat_secs = time_call(
-        lambda: slinfere.satisfiable(query, algorithm="dpll2")
-    )
+    sat_secs = time_call(lambda: slinfere.satisfiable(query, algorithm="dpll2"))
     # Time the enumeration alone, with the CNF conversion left outside so that
     # the measurement tracks the $2^n$ growth and nothing else.
     model_secs = float("nan")
@@ -1751,14 +1767,11 @@ def cell3_1_scaling(
             ax1.set_xticks(sizes)
             ax1.set_xticklabels(["%dx%d" % (s, s) for s in sizes])
             ax1.set_xlabel(
-                "grid size\n\n"
-                "runtime of the same safety query, on a log scale",
+                "grid size\n\nruntime of the same safety query, on a log scale",
                 fontsize=9,
             )
             ax1.set_ylabel("runtime (s)", fontsize=11)
-            ax1.set_title(
-                "Runtime vs grid size", fontsize=13, fontweight="bold"
-            )
+            ax1.set_title("Runtime vs grid size", fontsize=13, fontweight="bold")
             ax1.legend(fontsize=9)
             ax1.grid(True, alpha=0.3)
             # Panel 2: comments on the largest grid in the curve.
@@ -1786,11 +1799,7 @@ def cell3_1_scaling(
                     2.0 ** last["n_vars"],
                     model_text,
                     last["sat_secs"],
-                    (
-                        projected[-1]
-                        if np.isnan(model_secs)
-                        else model_secs
-                    )
+                    (projected[-1] if np.isnan(model_secs) else model_secs)
                     / last["sat_secs"],
                     _MAX_ENUMERATED_VARS,
                 )
@@ -1806,7 +1815,9 @@ def cell3_1_scaling(
         display(output)
     else:
         # Variable grid size: show slider controls
-        assert size_slider is not None and size_box is not None  # type checker guard
+        assert (
+            size_slider is not None and size_box is not None
+        )  # type checker guard
         param_info = make_param_info(
             {
                 "grid_size": "the largest grid side included in the curve; the "
@@ -1851,7 +1862,11 @@ def first_order_instantiation(
         ("Universal instantiation, {x/%d, y/%d}:" % cell, "black", "bold"),
         ("  Breeze%s <=>" % str(cell), "#006d2c", "normal"),
         ("    exists x', y':", "#006d2c", "normal"),
-        ("      Adjacent(%d, %d, x', y') and Pit(x', y')" % cell, "#006d2c", "normal"),
+        (
+            "      Adjacent(%d, %d, x', y') and Pit(x', y')" % cell,
+            "#006d2c",
+            "normal",
+        ),
         ("", "black", "normal"),
         ("Existential instantiation over the neighbors:", "black", "bold"),
         ("  Breeze%s <=> %s" % (str(cell), ground_or), "#006d2c", "normal"),
@@ -1924,9 +1939,7 @@ def cell4_1_first_order(
                 sublabels,
                 highlight=cell,
             )
-            ax2.set_title(
-                "Grounded instance", fontsize=13, fontweight="bold"
-            )
+            ax2.set_title("Grounded instance", fontsize=13, fontweight="bold")
             ax2.set_xlabel(
                 "col\n\nblue: the cell bound to (x, y), "
                 "yellow: the witnesses bound to (x', y')",

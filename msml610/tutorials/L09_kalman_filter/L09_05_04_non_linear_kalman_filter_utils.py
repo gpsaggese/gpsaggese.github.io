@@ -10,7 +10,6 @@ import logging
 from typing import Callable, List, Optional
 
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import scipy.stats
 
@@ -48,7 +47,9 @@ def plot_nonlinear_xy() -> None:
     ax = fig.add_subplot(111, projection="3d")
     # Plane z = x + y.
     ax.plot_surface(
-        X, Y, FX,
+        X,
+        Y,
+        FX,
         color="#4C72B0",
         alpha=0.55,
         linewidth=0,
@@ -57,7 +58,9 @@ def plot_nonlinear_xy() -> None:
     )
     # Paraboloid z = 0.1*x^2 + y^2.
     ax.plot_surface(
-        X, Y, FY,
+        X,
+        Y,
+        FY,
         color="#DD8452",
         alpha=0.55,
         linewidth=0,
@@ -235,7 +238,8 @@ def plot_monte_carlo_mean(
     plot_colormap: bool = True,
 ) -> None:
     """
-    Plot the Monte Carlo mean estimate versus the true mean of a nonlinear function.
+    Plot the Monte Carlo mean estimate versus the true mean of a nonlinear
+    function.
 
     :param xs: x-axis input samples
     :param ys: y-axis input samples

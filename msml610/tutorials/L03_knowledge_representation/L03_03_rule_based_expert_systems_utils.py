@@ -83,7 +83,7 @@ def init_loggers(notebook_log: logging.Logger) -> None:
 
 
 # #############################################################################
-# Rules and working memory
+# Rule
 # #############################################################################
 
 
@@ -135,6 +135,11 @@ class Rule:
         return "%s: %s -> %s" % (self.name, premises, self.conclusion)
 
 
+# #############################################################################
+# Fact
+# #############################################################################
+
+
 @dataclasses.dataclass(frozen=True)
 class Fact:
     """
@@ -149,6 +154,11 @@ class Fact:
     rule: str
     # Propagated certainty factor of the fact, in $[0, 1]$.
     cf: float
+
+
+# #############################################################################
+# Activation
+# #############################################################################
 
 
 @dataclasses.dataclass(frozen=True)
@@ -336,6 +346,11 @@ def compute_strata(rules: Sequence[Rule]) -> Dict[str, int]:
     return strata
 
 
+# #############################################################################
+# RuleEngine
+# #############################################################################
+
+
 class RuleEngine:
     """
     A forward-chaining production system with an explicit recognize-act cycle.
@@ -420,8 +435,8 @@ class RuleEngine:
         """
         Collect every rule that matches the current working memory.
 
-        Only the lowest stratum that has a match is returned, so a default
-        rule never fires ahead of the rules that could block it.
+        Only the lowest stratum that has a match is returned, so a default rule
+        never fires ahead of the rules that could block it.
 
         :return: matching rules, in rule base order
         """
@@ -735,13 +750,13 @@ def propagate_certainty(
     Propagate certainty factors from observed facts through the rule base.
 
     A conclusion is no stronger than the weakest premise supporting it,
-    discounted by the certainty of the rule itself. Two rules concluding the
-    same fact are combined with `combine_cf()`.
+    discounted by the certainty of the rule itself. Two rules concluding the same
+    fact are combined with `combine_cf()`.
 
     :param facts: observed facts, each taken as certain
     :param rules: rule base carrying the per-rule certainty factors
-    :return: certainty factor per fact, e.g.,
-        `{'mammal': 0.9, 'carnivore': 0.72}`
+    :return: certainty factor per fact, e.g., `{'mammal': 0.9, 'carnivore':
+        0.72}`
     """
     cf: Dict[str, float] = {fact: 1.0 for fact in facts}
     # One pass in dependency order is enough, and guarantees that each rule
@@ -1291,8 +1306,8 @@ def _relevant_rules(percepts: Sequence[str]) -> List[Rule]:
     """
     Keep the rules that could ever fire from a set of observable percepts.
 
-    The graph drawn in `cell2_1_forward_chaining()` must keep its shape while
-    the checkboxes change, so relevance is computed once from the full percept
+    The graph drawn in `cell2_1_forward_chaining()` must keep its shape while the
+    checkboxes change, so relevance is computed once from the full percept
     universe rather than from the percepts currently on.
 
     :param percepts: every percept the cell can observe

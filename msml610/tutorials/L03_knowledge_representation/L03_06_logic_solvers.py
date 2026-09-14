@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.5
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -45,12 +45,16 @@ import logging
 # !pip install -q networkx==3.6.1 python-sat==1.9.dev15 sympy==1.14.0 z3-solver==5.1.0.0
 
 import networkx
+
 print("networkx version: ", networkx.__version__)
 import pysat
+
 print("pysat version: ", pysat.__version__)
 import sympy
+
 print("sympy version: ", sympy.__version__)
 import z3
+
 print("z3 version: ", z3.get_version_string())
 
 # %%

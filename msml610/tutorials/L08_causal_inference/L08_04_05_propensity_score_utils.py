@@ -37,8 +37,8 @@ def plot_engagement_vs_intervention(
     Plot regression of engagement_score against intervention treatment.
 
     Visualizes the relationship between intervention (treatment) and
-    engagement_score with a scatter plot and regression line. Horizontal
-    jitter is applied to reveal overlapping points.
+    engagement_score with a scatter plot and regression line. Horizontal jitter
+    is applied to reveal overlapping points.
 
     :param data: DataFrame with columns 'intervention' and 'engagement_score'
     :param figsize: Figure size as (width, height)
@@ -104,12 +104,13 @@ def plot_engagement_density_by_intervention(
     jitter_strength: float = 0.02,
 ) -> None:
     """
-    Plot density of engagement_score by intervention group with mean and variance.
+    Plot density of engagement_score by intervention group with mean and
+    variance.
 
-    Shows the distribution of engagement_score separately for control and
-    treated groups using kernel density estimation curves. Mean values are shown
-    as solid lines and ±1 standard deviation bounds as dotted lines. Scatter
-    points with jitter show the underlying data.
+    Shows the distribution of engagement_score separately for control and treated
+    groups using kernel density estimation curves. Mean values are shown as solid
+    lines and ±1 standard deviation bounds as dotted lines. Scatter points with
+    jitter show the underlying data.
 
     :param data: DataFrame with columns 'intervention' and 'engagement_score'
     :param figsize: Figure size as (width, height)
@@ -188,7 +189,8 @@ def plot_engagement_vs_intervention_by_department(
     jitter_strength: float = 0.03,
 ) -> None:
     """
-    Plot regression of engagement_score vs intervention, stratified by department.
+    Plot regression of engagement_score vs intervention, stratified by
+    department.
 
     Creates multiple subplots showing the relationship between intervention and
     engagement_score for each department, useful for understanding heterogeneous
@@ -196,7 +198,7 @@ def plot_engagement_vs_intervention_by_department(
     overlapping points.
 
     :param data: DataFrame with columns 'intervention', 'engagement_score',
-                 'departament_id' (or 'department_id')
+        'departament_id' (or 'department_id')
     :param figsize_per_plot: Size per subplot as (width, height)
     :param max_departments: Maximum number of departments to plot
     :param jitter_strength: Amount of horizontal jitter to add
@@ -292,8 +294,8 @@ def plot_all_correlations_to_intervention(
     showing the treatment effect on each variable.
 
     :param data: DataFrame with 'intervention' column and numeric columns
-    :param numeric_cols: List of numeric column names to include. If None,
-                         uses all numeric columns except 'intervention'
+    :param numeric_cols: List of numeric column names to include. If None, uses
+        all numeric columns except 'intervention'
     :param figsize: Figure size as (width, height)
     """
     if numeric_cols is None:
@@ -346,8 +348,8 @@ def plot_all_variables_vs_intervention(
     jitter and mean lines for each group.
 
     :param data: DataFrame with 'intervention' column and numeric columns
-    :param numeric_cols: List of numeric column names to include. If None,
-                         uses all numeric columns except 'intervention'
+    :param numeric_cols: List of numeric column names to include. If None, uses
+        all numeric columns except 'intervention'
     :param figsize_per_plot: Size per subplot as (width, height)
     """
     if numeric_cols is None:
@@ -432,12 +434,12 @@ def plot_all_variables_density_by_intervention(
     Plot density curves for each numeric variable by intervention group.
 
     Creates a grid of subplots, one for each numeric column, showing probability
-    density functions for control (blue) and treated (red) groups with mean
-    lines marking central tendency.
+    density functions for control (blue) and treated (red) groups with mean lines
+    marking central tendency.
 
     :param data: DataFrame with 'intervention' column and numeric columns
-    :param numeric_cols: List of numeric column names to include. If None,
-                         uses all numeric columns except 'intervention'
+    :param numeric_cols: List of numeric column names to include. If None, uses
+        all numeric columns except 'intervention'
     :param figsize_per_plot: Size per subplot as (width, height)
     """
     if numeric_cols is None:
@@ -520,15 +522,16 @@ def propensity_score_matching(
     """
     Perform 1-nearest neighbor propensity score matching.
 
-    For each treated unit, finds the nearest control unit (and vice versa)
-    based on propensity score distance. Uses KNeighborsRegressor with
-    n_neighbors=1 to fit outcome models for each group.
+    For each treated unit, finds the nearest control unit (and vice versa) based
+    on propensity score distance. Uses KNeighborsRegressor with n_neighbors=1 to
+    fit outcome models for each group.
 
     :param data: DataFrame with treatment, propensity score, and outcome columns
     :param treatment_col: Name of binary treatment column
     :param ps_col: Name of propensity score column
     :param outcome_col: Name of outcome column
-    :return: DataFrame with original data plus 'match' column with matched outcomes
+    :return: DataFrame with original data plus 'match' column with matched
+        outcomes
     """
 
     # Separate treated and control groups.
@@ -595,9 +598,9 @@ def plot_iptw(
     """
     Plot Inverse Probability of Treatment Weighting (IPTW) results.
 
-    Visualizes the relationship between propensity score and outcome, with
-    point sizes representing IPTW weights. Blue dots represent control units,
-    red dots represent treated units.
+    Visualizes the relationship between propensity score and outcome, with point
+    sizes representing IPTW weights. Blue dots represent control units, red dots
+    represent treated units.
 
     :param data: DataFrame with treatment, propensity score, and outcome columns
     :param ps_col: Name of propensity score column
@@ -652,8 +655,8 @@ def estimate_ate_iptw(
     """
     Estimate Average Treatment Effect using Inverse Probability weighting.
 
-    Computes IPTW weights as 1/PS for treated and 1/(1-PS) for control,
-    then calculates weighted averages of outcomes in each group.
+    Computes IPTW weights as 1/PS for treated and 1/(1-PS) for control, then
+    calculates weighted averages of outcomes in each group.
 
     :param data: DataFrame with treatment, propensity score, and outcome columns
     :param ps_col: Name of propensity score column
@@ -767,7 +770,8 @@ def plot_propensity_distributions(
     distribution and the propensity distribution after applying stabilized
     weights. This illustrates how weighting improves covariate balance.
 
-    :param data: DataFrame with treatment, propensity score columns, and optional weights
+    :param data: DataFrame with treatment, propensity score columns, and optional
+        weights
     :param ps_col: Name of propensity score column
     :param treatment_col: Name of binary treatment column
     :param figsize: Figure size as (width, height)
@@ -880,8 +884,8 @@ def estimate_confidence_interval_bootstrap(
     Estimate confidence interval using bootstrap resampling.
 
     Resamples data with replacement and applies estimation function to each
-    sample to estimate parameter distribution. Computes percentiles from
-    the bootstrap distribution to form a confidence interval.
+    sample to estimate parameter distribution. Computes percentiles from the
+    bootstrap distribution to form a confidence interval.
 
     :param data: DataFrame to resample
     :param est_fn: Estimation function to apply to each sample

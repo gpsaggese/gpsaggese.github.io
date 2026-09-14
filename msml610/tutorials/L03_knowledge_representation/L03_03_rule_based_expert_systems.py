@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.5
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -44,8 +44,10 @@ import logging
 # !pip install -q networkx==3.6.1 scikit-learn==1.9.1
 
 import networkx
+
 print("networkx version: ", networkx.__version__)
 import sklearn
+
 print("sklearn version: ", sklearn.__version__)
 
 # %%

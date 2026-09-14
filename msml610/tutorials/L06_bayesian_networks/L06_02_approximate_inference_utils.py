@@ -7,7 +7,7 @@ Bayesian network.
 
 Import as:
 
-import approximate_inference_utils as utils
+import msml610.tutorials.L06_bayesian_networks.L06_02_approximate_inference_utils as mtlbnl0aiu
 """
 
 import itertools
@@ -298,8 +298,8 @@ def _build_query_controls(
     """
     Build the shared query-and-evidence control widgets.
 
-    Creates a dropdown to pick the query variable and, for every node, a
-    checkbox marking it as observed plus a True/False value selector.
+    Creates a dropdown to pick the query variable and, for every node, a checkbox
+    marking it as observed plus a True/False value selector.
 
     :param default_query: Query variable selected initially
     :param default_evidence: Initial evidence assignment
@@ -389,9 +389,9 @@ def _plot_inverse_transform(
     figsize: Tuple[float, float],
 ) -> None:
     """
-    Draw the target, the CDF with one inverse-transform sample, and a
-    sample histogram vs the target, shared by the discrete and continuous
-    inverse-transform cells.
+    Draw the target, the CDF with one inverse-transform sample, and a sample
+    histogram vs the target, shared by the discrete and continuous inverse-
+    transform cells.
 
     :param dist: "biased die (discrete)" or "exponential (continuous)"
     :param lam: exponential rate, used only when `dist` is exponential
@@ -418,9 +418,7 @@ def _plot_inverse_transform(
             edgecolor="black",
             alpha=0.85,
         )
-        ax1.set_title(
-            "Target: biased die", fontsize=13, fontweight="bold"
-        )
+        ax1.set_title("Target: biased die", fontsize=13, fontweight="bold")
         ax1.set_xlabel("face")
         ax1.set_ylabel("P(face)")
         # Panel 2: the staircase CDF with one r mapped to its x.
@@ -436,13 +434,13 @@ def _plot_inverse_transform(
         x0 = int(samples[0])
         # Horizontal line at the sampled r and vertical drop to its x.
         ax2.axhline(r0, color=_REFERENCE_COLOR, linestyle=":", linewidth=2)
-        ax2.plot([x0, x0], [0, r0], color=_REFERENCE_COLOR, linestyle=":",
-                 linewidth=2)
+        ax2.plot(
+            [x0, x0], [0, r0], color=_REFERENCE_COLOR, linestyle=":", linewidth=2
+        )
         ax2.scatter([x0], [r0], color=_REFERENCE_COLOR, zorder=5)
         ax2.text(0.55, r0 + 0.02, f"r={r0:.2f}", color=_REFERENCE_COLOR)
         ax2.text(x0 + 0.05, 0.02, f"x={x0}", color=_REFERENCE_COLOR)
-        ax2.set_title("CDF and inverse map", fontsize=13,
-                      fontweight="bold")
+        ax2.set_title("CDF and inverse map", fontsize=13, fontweight="bold")
         ax2.set_xlabel("face")
         ax2.set_ylabel("F(x) = P(X <= x)")
         ax2.legend(fontsize=9, loc="lower right")
@@ -465,8 +463,7 @@ def _plot_inverse_transform(
             linewidth=2,
             label="target",
         )
-        ax3.set_title("Sample histogram", fontsize=13,
-                      fontweight="bold")
+        ax3.set_title("Sample histogram", fontsize=13, fontweight="bold")
         ax3.set_xlabel("face")
         ax3.set_ylabel("frequency")
         ax3.legend(fontsize=9)
@@ -490,9 +487,7 @@ def _plot_inverse_transform(
         # Panel 1: the target density.
         ax1.plot(grid, pdf, color=_EMPIRICAL_COLOR, linewidth=2.5)
         ax1.fill_between(grid, pdf, alpha=0.2, color=_EMPIRICAL_COLOR)
-        ax1.set_title(
-            "Target: exponential", fontsize=13, fontweight="bold"
-        )
+        ax1.set_title("Target: exponential", fontsize=13, fontweight="bold")
         ax1.set_xlabel("x")
         ax1.set_ylabel("density f(x)")
         # Panel 2: the smooth CDF with one r mapped to its x.
@@ -500,14 +495,13 @@ def _plot_inverse_transform(
         r0 = float(u[0])
         x0 = -np.log(1 - r0) / lam
         ax2.axhline(r0, color=_REFERENCE_COLOR, linestyle=":", linewidth=2)
-        ax2.plot([x0, x0], [0, r0], color=_REFERENCE_COLOR, linestyle=":",
-                 linewidth=2)
+        ax2.plot(
+            [x0, x0], [0, r0], color=_REFERENCE_COLOR, linestyle=":", linewidth=2
+        )
         ax2.scatter([x0], [r0], color=_REFERENCE_COLOR, zorder=5)
-        ax2.text(grid[1], r0 + 0.02, f"r={r0:.2f}",
-                 color=_REFERENCE_COLOR)
+        ax2.text(grid[1], r0 + 0.02, f"r={r0:.2f}", color=_REFERENCE_COLOR)
         ax2.text(x0, 0.03, f"x={x0:.2f}", color=_REFERENCE_COLOR)
-        ax2.set_title("CDF and inverse map", fontsize=13,
-                      fontweight="bold")
+        ax2.set_title("CDF and inverse map", fontsize=13, fontweight="bold")
         ax2.set_xlabel("x")
         ax2.set_ylabel("F(x) = P(X <= x)")
         ax2.legend(fontsize=9, loc="lower right")
@@ -529,8 +523,7 @@ def _plot_inverse_transform(
             linewidth=2.5,
             label="target",
         )
-        ax3.set_title("Sample histogram", fontsize=13,
-                      fontweight="bold")
+        ax3.set_title("Sample histogram", fontsize=13, fontweight="bold")
         ax3.set_xlabel("x")
         ax3.set_ylabel("density")
         ax3.legend(fontsize=9)
@@ -548,11 +541,10 @@ def _plot_inverse_transform(
     # Panel 4: comments tying the construction together.
     ax4.axis("off")
     ax4.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
-    htutori.add_fitted_text_box(
-        ax4, detail, max_fontsize=12, min_fontsize=9
-    )
+    htutori.add_fitted_text_box(ax4, detail, max_fontsize=12, min_fontsize=9)
     plt.tight_layout()
     plt.show()
+
 
 def cell1_1_inverse_transform_discrete_widget(
     *,
@@ -751,9 +743,7 @@ def cell1_3_prior_sampling_widget(
             ax2.set_xticklabels([f"{_SHORT[track]}=F", f"{_SHORT[track]}=T"])
             ax2.set_ylim([0, 1.05])
             ax2.set_ylabel(f"P({_SHORT[track]})")
-            ax2.set_title(
-                f"Marginal of {track}", fontsize=13, fontweight="bold"
-            )
+            ax2.set_title(f"Marginal of {track}", fontsize=13, fontweight="bold")
             ax2.legend(fontsize=9)
             # Panel 3: estimated joint frequencies vs the exact joint.
             combos = list(itertools.product([0, 1], repeat=4))
@@ -774,10 +764,7 @@ def cell1_3_prior_sampling_widget(
             emp = np.bincount(keys, minlength=16) / n
             # Exact joint probability of every configuration.
             exact_joint = np.array(
-                [
-                    _joint_product(dict(zip(_NODES, combo)))
-                    for combo in combos
-                ]
+                [_joint_product(dict(zip(_NODES, combo))) for combo in combos]
             )
             pos = np.arange(16)
             ax3.bar(
@@ -930,10 +917,20 @@ def cell1_4_convergence_widget(
             ax1.legend(fontsize=9)
             # Panel 2: the fan of all chains narrowing toward the exact value.
             for chain in chains:
-                ax2.plot(steps, chain, color=_EMPIRICAL_COLOR, alpha=0.3,
-                         linewidth=0.8)
-            ax2.axhline(exact, color=_REFERENCE_COLOR, linestyle=":",
-                        linewidth=2, label="exact")
+                ax2.plot(
+                    steps,
+                    chain,
+                    color=_EMPIRICAL_COLOR,
+                    alpha=0.3,
+                    linewidth=0.8,
+                )
+            ax2.axhline(
+                exact,
+                color=_REFERENCE_COLOR,
+                linestyle=":",
+                linewidth=2,
+                label="exact",
+            )
             ax2.set_xscale("log")
             ax2.set_xlabel("N (log scale)")
             ax2.set_ylabel("estimate")
@@ -1029,8 +1026,8 @@ def cell2_1_rejection_sampling_widget(
     output = ipywidgets.Output()
 
     def update_plot(change: Optional[Any] = None) -> None:
-        """
-        Generate prior samples, filter by evidence, and estimate the posterior.
+        """Generate prior samples, filter by evidence, and estimate the
+        posterior.
         """
         _ = change
         with output:
@@ -1205,8 +1202,9 @@ def cell2_2_likelihood_weighting_widget(
             # Scale dot area by weight relative to the largest shown weight.
             sizes = 10 + 120 * (w_show / (w_show.max() + 1e-12))
             colors = np.where(q_show == 1, _EMPIRICAL_COLOR, "#AED6F1")
-            ax1.scatter(xs, ys, s=sizes, c=colors, edgecolor="black",
-                        linewidth=0.3)
+            ax1.scatter(
+                xs, ys, s=sizes, c=colors, edgecolor="black", linewidth=0.3
+            )
             ax1.set_title(
                 f"Weighted samples (first {show})",
                 fontsize=13,
@@ -1245,7 +1243,9 @@ def cell2_2_likelihood_weighting_widget(
             est_true = float(w_true / (weights.sum() + 1e-12))
             estimate = [1 - est_true, est_true]
             # Rejection estimate on the same prior draw for a fair comparison.
-            prior = _prior_sample_array(np.random.default_rng(seed_slider.value), n)
+            prior = _prior_sample_array(
+                np.random.default_rng(seed_slider.value), n
+            )
             keep = np.ones(n, dtype=bool)
             for var, val in evidence.items():
                 keep &= prior[var] == val
@@ -1434,9 +1434,7 @@ def cell3_1_markov_chain_widget(
                 arrows=True,
                 edge_color="#85929E",
             )
-            ax1.set_title(
-                "Transition diagram", fontsize=13, fontweight="bold"
-            )
+            ax1.set_title("Transition diagram", fontsize=13, fontweight="bold")
             # Panel 2: evolving distribution (solid) vs stationary (dotted).
             x = np.arange(len(_MC_STATES))
             ax2.bar(
@@ -1485,8 +1483,7 @@ def cell3_1_markov_chain_widget(
                 f"  {tv[t]:.4f}\n\n"
                 f"Stationary distribution:\n"
                 + "".join(
-                    f"  {s}: {p:.3f}\n"
-                    for s, p in zip(_MC_STATES, stationary)
+                    f"  {s}: {p:.3f}\n" for s, p in zip(_MC_STATES, stationary)
                 )
                 + "\nThe limit is the same for\n"
                 "any starting state."
@@ -1533,9 +1530,7 @@ def _bimodal_density(x: np.ndarray) -> np.ndarray:
     return 0.5 * (left + right)
 
 
-def _metropolis_1d(
-    rng: np.random.Generator, n: int, step: float
-) -> np.ndarray:
+def _metropolis_1d(rng: np.random.Generator, n: int, step: float) -> np.ndarray:
     """
     Run a 1-D random-walk Metropolis sampler on the bimodal target.
 
@@ -1645,8 +1640,13 @@ def cell3_2_mixing_burnin_widget(
                 linewidth=0.7,
             )
             if burnin > 0:
-                ax1.axvspan(0, min(burnin, show), color="#F5B7B1", alpha=0.4,
-                            label="burn-in")
+                ax1.axvspan(
+                    0,
+                    min(burnin, show),
+                    color="#F5B7B1",
+                    alpha=0.4,
+                    label="burn-in",
+                )
                 ax1.legend(fontsize=9)
             ax1.set_title(
                 f"Trace (first {show})", fontsize=13, fontweight="bold"
@@ -1757,9 +1757,7 @@ def _markov_blanket(graph: nx.DiGraph, node: str) -> List[str]:
     return sorted(blanket)
 
 
-def _gibbs_full_conditional(
-    var: str, state: Dict[str, int]
-) -> np.ndarray:
+def _gibbs_full_conditional(var: str, state: Dict[str, int]) -> np.ndarray:
     """
     Compute the full conditional P(var | everything else) for a binary node.
 
@@ -1856,8 +1854,8 @@ def cell3_3_gibbs_sampling_widget(
     output = ipywidgets.Output()
 
     def update_plot(change: Optional[Any] = None) -> None:
-        """
-        Run the Gibbs sampler and compare its estimate with the exact value.
+        """Run the Gibbs sampler and compare its estimate with the exact
+        value.
         """
         _ = change
         with output:
@@ -1939,9 +1937,7 @@ def cell3_3_gibbs_sampling_widget(
             ax3.set_ylim([0, 1.05])
             ax3.set_xlabel("sweep (after burn-in)")
             ax3.set_ylabel(f"P({_SHORT[query_var]}=T | e)")
-            ax3.set_title(
-                "Running estimate", fontsize=13, fontweight="bold"
-            )
+            ax3.set_title("Running estimate", fontsize=13, fontweight="bold")
             ax3.legend(fontsize=9)
             # Panel 4: comments.
             ax4.axis("off")
@@ -2020,8 +2016,8 @@ def _mh_chain(
     # Initialize hidden variables; evidence stays clamped throughout.
     state = {}
     for node in _NODES:
-        state[node] = evidence[node] if node in evidence else int(
-            rng.random() < 0.5
+        state[node] = (
+            evidence[node] if node in evidence else int(rng.random() < 0.5)
         )
     history = {node: np.empty(n_iters, dtype=int) for node in _NODES}
     n_accept = 0
@@ -2101,8 +2097,8 @@ def cell3_4_metropolis_hastings_widget(
     output = ipywidgets.Output()
 
     def update_plot(change: Optional[Any] = None) -> None:
-        """
-        Run Metropolis-Hastings and visualize proposals, trace, and estimate.
+        """Run Metropolis-Hastings and visualize proposals, trace, and
+        estimate.
         """
         _ = change
         with output:
@@ -2117,23 +2113,45 @@ def cell3_4_metropolis_hastings_widget(
             _, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, figsize=figsize)
             # Panel 1: current vs proposed state with the acceptance prob.
             ax1.axis("off")
-            ax1.set_title(
-                "Last proposed move", fontsize=13, fontweight="bold"
-            )
+            ax1.set_title("Last proposed move", fontsize=13, fontweight="bold")
             cur_str = ", ".join(
                 f"{_SHORT[n]}={'T' if cur[n] else 'F'}" for n in _NODES
             )
             prop_str = ", ".join(
                 f"{_SHORT[n]}={'T' if prop[n] else 'F'}" for n in _NODES
             )
-            ax1.text(0.05, 0.75, "current:", fontsize=11, fontweight="bold",
-                     transform=ax1.transAxes)
-            ax1.text(0.05, 0.66, cur_str, fontsize=11, transform=ax1.transAxes,
-                     family="monospace")
-            ax1.text(0.05, 0.48, "proposed:", fontsize=11, fontweight="bold",
-                     transform=ax1.transAxes)
-            ax1.text(0.05, 0.39, prop_str, fontsize=11, transform=ax1.transAxes,
-                     family="monospace")
+            ax1.text(
+                0.05,
+                0.75,
+                "current:",
+                fontsize=11,
+                fontweight="bold",
+                transform=ax1.transAxes,
+            )
+            ax1.text(
+                0.05,
+                0.66,
+                cur_str,
+                fontsize=11,
+                transform=ax1.transAxes,
+                family="monospace",
+            )
+            ax1.text(
+                0.05,
+                0.48,
+                "proposed:",
+                fontsize=11,
+                fontweight="bold",
+                transform=ax1.transAxes,
+            )
+            ax1.text(
+                0.05,
+                0.39,
+                prop_str,
+                fontsize=11,
+                transform=ax1.transAxes,
+                family="monospace",
+            )
             ax1.text(
                 0.05,
                 0.18,
@@ -2146,7 +2164,7 @@ def cell3_4_metropolis_hastings_widget(
             q_series = history[query_var]
             show = min(n_iters, 1500)
             # A lightly jittered trace makes the 0/1 path readable.
-            jitter = (history[query_var][:show] + rng.normal(0, 0.04, show))
+            jitter = history[query_var][:show] + rng.normal(0, 0.04, show)
             ax2.plot(
                 np.arange(show),
                 jitter,
@@ -2154,8 +2172,9 @@ def cell3_4_metropolis_hastings_widget(
                 linewidth=0.5,
             )
             ax2.set_yticks([0, 1])
-            ax2.set_yticklabels([f"{_SHORT[query_var]}=F",
-                                 f"{_SHORT[query_var]}=T"])
+            ax2.set_yticklabels(
+                [f"{_SHORT[query_var]}=F", f"{_SHORT[query_var]}=T"]
+            )
             ax2.set_title(
                 f"Trace (accept rate {accept_rate:.2f})",
                 fontsize=12,

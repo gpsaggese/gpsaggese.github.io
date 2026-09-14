@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.5
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -212,7 +212,9 @@ with pm.Model() as model_neg:
     )
     #
     idata_neg = pm.sample()
-    idata_neg = pm.sample_posterior_predictive(idata_neg, extend_inferencedata=True)
+    idata_neg = pm.sample_posterior_predictive(
+        idata_neg, extend_inferencedata=True
+    )
 
 # %%
 pm.model_to_graphviz(model_neg)
@@ -533,12 +535,7 @@ eps_stddev_real = 0.5
 eps_real = np.random.normal(0, eps_stddev_real, size=N)
 
 # Independent variables, means [10, 2] and std devs [1, 1.5].
-X = np.array(
-    [
-        np.random.normal(i, j, N)
-        for i, j in zip([10, 2], [1, 1.5])
-    ]
-).T
+X = np.array([np.random.normal(i, j, N) for i, j in zip([10, 2], [1, 1.5])]).T
 X_mean = X.mean(axis=0, keepdims=True)
 X_centered = X - X_mean
 
@@ -592,7 +589,9 @@ az.plot_trace(idata_mlr, var_names=var_names)
 ut.save_plt("Lesson07_Multiple_linear_regression_results1.png")
 
 # %%
-mlr_summary = az.summary(idata_mlr, var_names=var_names, round_to=2, kind="stats")
+mlr_summary = az.summary(
+    idata_mlr, var_names=var_names, round_to=2, kind="stats"
+)
 ut.save_df(mlr_summary, "Lesson07_Multiple_linear_regression_results2.png")
 display(mlr_summary)
 
@@ -644,5 +643,7 @@ ut.save_plt(
 )
 
 # %%
-mlb_summary = az.summary(idata_mlb, var_names=var_names, round_to=2, kind="stats")
+mlb_summary = az.summary(
+    idata_mlb, var_names=var_names, round_to=2, kind="stats"
+)
 display(mlb_summary)

@@ -84,8 +84,8 @@ def cell1_1_plot_ground_truth_and_measurements(
     dst_filename: str,
 ) -> pd.DataFrame:
     """
-    Plot the raw weight measurements against the (unknown, in practice)
-    ground truth.
+    Plot the raw weight measurements against the (unknown, in practice) ground
+    truth.
 
     :param measured_weights: array of weight measurements
     :param ground_truth: array of true weight values
@@ -115,8 +115,7 @@ def predict_using_gain_guess(
     :param estimated_weight: Initial estimated weight
     :param measures: List of weight measurements
     :param gain_rate: Rate of weight gain
-    :param scale_factor: Scale factor for blending prediction and
-        measurement
+    :param scale_factor: Scale factor for blending prediction and measurement
     :param time_step: Time step between predictions
     :return: Tuple of (estimated weights, predicted weights)
     """
@@ -234,8 +233,7 @@ def cell1_4_create_interactive_gain_rate_widget(
         Plot gain rate prediction with given parameters.
 
         :param weight: Initial weight estimate
-        :param weight_scale: Scale factor for blending prediction and
-            measurement
+        :param weight_scale: Scale factor for blending prediction and measurement
         :param gain_rate: Rate of weight gain per time step
         """
         nonlocal fig_gain
@@ -461,8 +459,8 @@ def gen_non_linear_noisy_data(
     """
     Generate random data with acceleration and additive noise.
 
-    Starting from x0, with initial slope dx, affected by random noise
-    N(0, noise_factor).
+    Starting from x0, with initial slope dx, affected by random noise N(0,
+    noise_factor).
 
     :param x0: Initial value
     :param dx: Initial slope
@@ -484,8 +482,8 @@ def cell2_2_plot_gh_filter_with_params(params: dict) -> None:
     """
     Demonstrate g-h filter with correct initial guesses.
 
-    Shows how the filter performs when starting values match the true
-    system parameters.
+    Shows how the filter performs when starting values match the true system
+    parameters.
 
     :param params: Dictionary of filter parameters (x0, dx, dt, g, h)
     """
@@ -576,8 +574,8 @@ def cell2_1_create_interactive_linear_noisy_data_widget() -> None:
     """
     Create interactive widget for visualizing linear noisy data generation.
 
-    Allows user to interactively adjust parameters to see how they affect
-    the generated data and ground truth.
+    Allows user to interactively adjust parameters to see how they affect the
+    generated data and ground truth.
     """
     fig_noisy = None
 
@@ -683,9 +681,8 @@ def cell2_9_create_interactive_gh_filter_widget() -> None:
     """
     Create interactive widget for exploring g-h filter parameters.
 
-    Allows user to interactively adjust initial state (x, dx), filter
-    gains (g, h), and noise level to see their effect on filtering noisy
-    linear data.
+    Allows user to interactively adjust initial state (x, dx), filter gains (g,
+    h), and noise level to see their effect on filtering noisy linear data.
     """
     fig_gh = None
 
@@ -815,8 +812,8 @@ def cell2_5_create_interactive_non_linear_noisy_data_widget() -> None:
     """
     Create interactive widget for visualizing non-linear noisy data.
 
-    Allows user to interactively adjust parameters including acceleration
-    to see how they affect the generated data and ground truth.
+    Allows user to interactively adjust parameters including acceleration to see
+    how they affect the generated data and ground truth.
     """
     fig_non_linear = None
 
@@ -952,9 +949,9 @@ def cell2_7_plot_varying_g_noisy(dst_dir: str, dst_filename: str) -> None:
     """
     Compare g-h filter estimates for 3 values of g on noisy linear data.
 
-    A smaller g follows the model more than the measurements; a larger g
-    follows the measurements more than the model; too large a g follows
-    the measurements and rejects no noise.
+    A smaller g follows the model more than the measurements; a larger g follows
+    the measurements more than the model; too large a g follows the measurements
+    and rejects no noise.
 
     :param dst_dir: directory to save the output figure
     :param dst_filename: filename for the output figure
@@ -984,8 +981,8 @@ def cell2_7_plot_varying_g_step(dst_dir: str, dst_filename: str) -> None:
     """
     Compare g-h filter estimates for 3 values of g on a step-like signal.
 
-    A large g follows the measurements more closely than the (constant
-    velocity) model, so it tracks the step faster but is noisier.
+    A large g follows the measurements more closely than the (constant velocity)
+    model, so it tracks the step faster but is noisier.
 
     :param dst_dir: directory to save the output figure
     :param dst_filename: filename for the output figure

@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.5
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -29,7 +29,6 @@ import pymc as pm
 import numpy as np
 import scipy.stats as stats
 import matplotlib.pyplot as plt
-import preliz as pz
 from IPython.display import display
 
 # %%
@@ -532,7 +531,9 @@ with pm.Model() as model_c:
 
 # %%
 coords = {"b_dim_0": [0]}
-_ = az.plot_trace(idata_c, var_names=["a", "b"], coords=coords, divergences="top")
+_ = az.plot_trace(
+    idata_c, var_names=["a", "b"], coords=coords, divergences="top"
+)
 
 # %%
 # Non-centered (re-parametrized) model.

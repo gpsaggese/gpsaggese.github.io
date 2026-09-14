@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.5
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -296,7 +296,10 @@ print(f"ATE (IPW): {ate_ipw:.4f}")
 # %%
 # Compute bootstrap 95% confidence interval for ATE using IPW.
 est_fn = lambda data: mtl0psu.estimate_ate_with_ps(
-    data, ps_formula=formula, treatment_col=treatment_col, outcome_col=outcome_col
+    data,
+    ps_formula=formula,
+    treatment_col=treatment_col,
+    outcome_col=outcome_col,
 )
 
 ci = mtl0psu.estimate_confidence_interval_bootstrap(

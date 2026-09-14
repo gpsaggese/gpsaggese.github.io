@@ -104,7 +104,9 @@ def cell1_correlation_vs_causation():
             "assumptions, we cannot distinguish these\n"
             "structures from correlation alone."
         )
-        htutori.add_fitted_text_box(axes[2], detail, max_fontsize=12, min_fontsize=9)
+        htutori.add_fitted_text_box(
+            axes[2], detail, max_fontsize=12, min_fontsize=9
+        )
         plt.tight_layout()
         plt.show()
 
@@ -262,7 +264,9 @@ def cell2_markov_equivalence():
             "covariance matrices: no amount of\n"
             "data can tell them apart."
         )
-        htutori.add_fitted_text_box(ax_n, detail, max_fontsize=10, min_fontsize=7)
+        htutori.add_fitted_text_box(
+            ax_n, detail, max_fontsize=10, min_fontsize=7
+        )
         plt.suptitle(
             "Markov Equivalence: Three Indistinguishable Structures",
             fontsize=14,
@@ -373,7 +377,9 @@ def cell3_causal_effects():
             "Choosing the wrong DAG leads to\n"
             "ineffective or harmful interventions."
         )
-        htutori.add_fitted_text_box(axes[3], detail, max_fontsize=11, min_fontsize=8)
+        htutori.add_fitted_text_box(
+            axes[3], detail, max_fontsize=11, min_fontsize=8
+        )
         plt.suptitle(
             "Why Edge Direction Matters: Same Correlation, Different Effects",
             fontsize=14,
@@ -781,7 +787,9 @@ def cell6_lingam_nongaussian():
     def update(change):
         with output:
             clear_output(wait=True)
-            plot_lingam(seed_slider.value, skewness_slider.value, snr_slider.value)
+            plot_lingam(
+                seed_slider.value, skewness_slider.value, snr_slider.value
+            )
 
     seed_slider.observe(update, names="value")
     skewness_slider.observe(update, names="value")
@@ -868,7 +876,9 @@ def cell7_algorithm_comparison():
             "LiNGAM: requires non-\n"
             "Gaussianity, full DAG recovery."
         )
-        htutori.add_fitted_text_box(axes[3], detail, max_fontsize=10, min_fontsize=7)
+        htutori.add_fitted_text_box(
+            axes[3], detail, max_fontsize=10, min_fontsize=7
+        )
         plt.suptitle(
             "Comparing Causal Discovery Algorithms",
             fontsize=14,
@@ -1090,7 +1100,9 @@ def cell9_domain_knowledge():
             "- Convergence time: 40% faster\n"
             "- Accuracy improvement: ~25%"
         )
-        htutori.add_fitted_text_box(axes[2], detail, max_fontsize=10, min_fontsize=7)
+        htutori.add_fitted_text_box(
+            axes[2], detail, max_fontsize=10, min_fontsize=7
+        )
         plt.suptitle(
             "Domain Knowledge Integration: Constraints and Prior DAGs",
             fontsize=14,
@@ -1165,7 +1177,9 @@ def cell10_end_to_end_workflow():
         ax.axis("off")
         ax.set_title("Stage 2: Algorithms", fontsize=10, fontweight="bold")
         algo_text = "\n".join(selected_algorithms)
-        htutori.add_fitted_text_box(ax, algo_text, max_fontsize=10, min_fontsize=7)
+        htutori.add_fitted_text_box(
+            ax, algo_text, max_fontsize=10, min_fontsize=7
+        )
         # Stage 3: Consensus.
         ax = fig.add_subplot(gs[0, 2])
         ax.set_facecolor(colors[2])

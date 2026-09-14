@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.5
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -41,8 +41,6 @@
 import logging
 
 # Third-party libraries.
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 # %%
 # Use this for most notebooks.

@@ -135,9 +135,11 @@ def _sample_valid_cov_params(
     Sample random valid 2D covariance parameters (positive definite matrix).
 
     Draws var_x and var_y uniformly in [var_min, var_max], then draws
+    ```
     cov_xy in (-cov_fraction * sqrt(var_x * var_y),
-               +cov_fraction * sqrt(var_x * var_y)) to guarantee positive
-    definiteness.
+               +cov_fraction * sqrt(var_x * var_y))
+    ```
+    to guarantee positive definiteness.
 
     :param var_min: minimum value for var_x and var_y
     :param var_max: maximum value for var_x and var_y
@@ -229,9 +231,9 @@ def _plot_product_of_gaussians(
     """
     Plot two 2D Gaussians and their product as covariance ellipses.
 
-    The product of G1 ~ N(0, Sigma1) and G2 ~ N(0, Sigma2) is proportional
-    to N(0, Sigma) where Sigma^{-1} = Sigma1^{-1} + Sigma2^{-1}. The
-    product is always more certain (smaller ellipse) than either factor.
+    The product of G1 ~ N(0, Sigma1) and G2 ~ N(0, Sigma2) is proportional to
+    N(0, Sigma) where Sigma^{-1} = Sigma1^{-1} + Sigma2^{-1}. The product is
+    always more certain (smaller ellipse) than either factor.
 
     :param var_x1: variance of x dimension for Gaussian 1
     :param var_y1: variance of y dimension for Gaussian 1
@@ -330,9 +332,9 @@ def cell_1_2_plot_sum_of_gaussians() -> None:
     """
     Create interactive widget for exploring the sum of two 2D Gaussians.
 
-    Shows G1 (yellow), G2 (green), and G1 + G2 (blue) as covariance
-    ellipses. The sum covariance equals Sigma1 + Sigma2. A "Random" button
-    assigns random valid covariance parameters to both Gaussians.
+    Shows G1 (yellow), G2 (green), and G1 + G2 (blue) as covariance ellipses. The
+    sum covariance equals Sigma1 + Sigma2. A "Random" button assigns random valid
+    covariance parameters to both Gaussians.
     """
     fig_sum = None
 
@@ -472,10 +474,9 @@ def cell_1_3_plot_product_of_gaussians() -> None:
     """
     Create interactive widget for exploring the product of two 2D Gaussians.
 
-    Shows G1 (yellow), G2 (green), and G1 * G2 (blue) as covariance
-    ellipses. The product is always more certain (smaller) than either
-    factor. A "Random" button assigns random valid covariance parameters to
-    both Gaussians.
+    Shows G1 (yellow), G2 (green), and G1 * G2 (blue) as covariance ellipses. The
+    product is always more certain (smaller) than either factor. A "Random"
+    button assigns random valid covariance parameters to both Gaussians.
     """
     fig_prod = None
 
@@ -617,8 +618,8 @@ def cell_1_1_plot_covariance_matrix() -> None:
     """
     Create interactive widget for exploring 2D covariance matrix.
 
-    Allows user to adjust var_x, var_y, cov_xy, number of samples, and seed
-    to visualize the covariance ellipse and sampled data points.
+    Allows user to adjust var_x, var_y, cov_xy, number of samples, and seed to
+    visualize the covariance ellipse and sampled data points.
     """
     fig_cov = None
 
@@ -936,8 +937,8 @@ def plot_hidden_variable_comparison(
     """
     Plot side-by-side comparison of 1D KF vs 2D KF tracking.
 
-    The 1D filter tracks position only (no hidden variable).
-    The 2D filter tracks position and velocity (velocity is the hidden variable).
+    The 1D filter tracks position only (no hidden variable). The 2D filter tracks
+    position and velocity (velocity is the hidden variable).
 
     :param xs: true positions, shape (count,)
     :param zs: noisy measurements, shape (count,)
@@ -990,9 +991,7 @@ def plot_hidden_variable_comparison(
         f"MSE 2D = {mse_2d:.3f}\n\n"
         f"{'2D' if mse_2d < mse_1d else '1D'} filter wins"
     )
-    htutori.add_fitted_text_box(
-        axes[2], detail, max_fontsize=12, min_fontsize=9
-    )
+    htutori.add_fitted_text_box(axes[2], detail, max_fontsize=12, min_fontsize=9)
     fig.suptitle(title, fontsize=12)
     plt.tight_layout()
 

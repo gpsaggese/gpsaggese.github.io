@@ -61,7 +61,8 @@ def plot_sales_bias_analysis(
     data: pd.DataFrame, marker: str = "o"
 ) -> mfigure.Figure:
     """
-    Plot sales bias analysis showing treated vs control groups with regression lines.
+    Plot sales bias analysis showing treated vs control groups with regression
+    lines.
 
     :param data: DataFrame with columns 'is_on_sale', 'avg_week_sales',
         'weekly_amount_sold'
@@ -78,7 +79,12 @@ def plot_sales_bias_analysis(
         x="avg_week_sales",
         y="weekly_amount_sold",
         scatter=False,
-        line_kws={"color": "red", "linewidth": 1, "linestyle": "--", "marker": "."},
+        line_kws={
+            "color": "red",
+            "linewidth": 1,
+            "linestyle": "--",
+            "marker": ".",
+        },
     )
     plt.scatter(
         x=df_treated["avg_week_sales"],
@@ -96,7 +102,12 @@ def plot_sales_bias_analysis(
         x="avg_week_sales",
         y="weekly_amount_sold",
         scatter=False,
-        line_kws={"color": "blue", "linewidth": 1, "linestyle": "--", "marker": "."},
+        line_kws={
+            "color": "blue",
+            "linewidth": 1,
+            "linestyle": "--",
+            "marker": ".",
+        },
     )
 
     plt.scatter(
@@ -243,7 +254,8 @@ def plot_single_vs_separate_trends():
 
 def plot_simpsons_paradox():
     """
-    Plot Simpson's paradox showing how overall trend can differ from group trends.
+    Plot Simpson's paradox showing how overall trend can differ from group
+    trends.
 
     :return: matplotlib figure object
     """
@@ -315,7 +327,6 @@ def plot_simpsons_paradox():
 
 # #############################################################################
 # Cell 1.4: University Simpson's Paradox.
-# #############################################################################
 
 
 # #############################################################################
@@ -361,7 +372,9 @@ def plot_score_by_school_size_scatter(
     q_01 = np.quantile(df["avg_score"], 0.01)
     # Fix seed for reproducible sampling.
     plot_data = df.sample(10000, random_state=42).copy()
-    is_extreme = (plot_data["avg_score"] > q_99) | (plot_data["avg_score"] < q_01)
+    is_extreme = (plot_data["avg_score"] > q_99) | (
+        plot_data["avg_score"] < q_01
+    )
     plot_data["group"] = np.where(is_extreme, "Top and bottom", "Middle")
     fig, ax = plt.subplots(1, 1, figsize=figsize)
     sns.scatterplot(

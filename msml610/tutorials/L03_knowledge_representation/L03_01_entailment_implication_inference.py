@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.5
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -71,13 +71,11 @@ colab_setup.maybe_enable_autoreload()
 
 import logging
 
-import matplotlib.pyplot as plt
-import seaborn as sns
-
 # %%
 # !pip install -q sympy==1.14.0
 
 import sympy
+
 print("sympy version: ", sympy.__version__)
 
 # %%

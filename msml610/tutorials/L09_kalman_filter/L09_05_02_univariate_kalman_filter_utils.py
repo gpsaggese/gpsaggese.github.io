@@ -409,8 +409,8 @@ def cell1_2_plot_gaussian_product() -> None:
     """
     Create interactive widget for exploring product of Gaussians.
 
-    Allows user to adjust parameters of two Gaussians and see their
-    product both analytically and numerically.
+    Allows user to adjust parameters of two Gaussians and see their product both
+    analytically and numerically.
     """
     fig_prod = None
 
@@ -642,19 +642,19 @@ def plot_kf_info(
     """
     Plot Kalman filter info with measurements, prior, and posterior over time.
 
-    For each time step, the prior (predict) is plotted as a red up-triangle,
-    the measurement as a black circle, and the posterior (update) as a green
-    down-triangle (or line if show_posterior="line"). Posterior uncertainty
-    is shown as shaded bands for 1, 2, and 3 standard deviations.
+    For each time step, the prior (predict) is plotted as a red up-triangle, the
+    measurement as a black circle, and the posterior (update) as a green down-
+    triangle (or line if show_posterior="line"). Posterior uncertainty is shown
+    as shaded bands for 1, 2, and 3 standard deviations.
 
-    :param info: list of KfInfo named tuples with prior, measurement,
-        actual_pos, and posterior fields
+    :param info: list of KfInfo named tuples with prior, measurement, actual_pos,
+        and posterior fields
     :param ylim: y-axis limits as (ymin, ymax); if None, matplotlib auto-scales
     :param show_prior: how to plot the prior — "scatter", "line", or "none"
-    :param show_actual_pos: how to plot actual dog position — "scatter",
-        "line", or "none"
-    :param show_posterior: how to plot the posterior — "scatter", "line",
+    :param show_actual_pos: how to plot actual dog position — "scatter", "line",
         or "none"
+    :param show_posterior: how to plot the posterior — "scatter", "line", or
+        "none"
     :param ax: axis to plot on; if None, a new figure is created
     """
     times = list(range(len(info)))
@@ -796,8 +796,8 @@ def _run_dog_simulation(
     :param initial_pos_var: initial position variance (default 400.0 = 20^2)
     :param acceleration: dog's acceleration (default 0.0)
     :param n_steps: number of simulation steps
-    :return: list of KfInfo named tuples with prior, measurement, actual_pos,
-        and posterior fields
+    :return: list of KfInfo named tuples with prior, measurement, actual_pos, and
+        posterior fields
     """
     np.random.seed(seed)
     x = Gaussian(initial_position, initial_pos_var)
