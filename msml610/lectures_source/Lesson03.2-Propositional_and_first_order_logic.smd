@@ -10,24 +10,24 @@
 //  - Chap 9: Inference in first-order logic
 //  - Chap 10, Knowledge representation
 
-# Propositional logic
+# Propositional Logic
 
 ## Syntax
 
 // ## 7.4, Propositional logic (p. 263)
 
 * Propositional Logic
+
 - @Definition@: **Propositional logic** is a formal system for reasoning about
   statements that can be _true_ or _false_
   - **Syntax** defines the allowable sentences
     - Consists of proposition symbol and logical connectives
     - E.g., $P \land Q$
   - **Semantics** is the way in which the truth of sentences is determined
-    - Truth tables or deduction rules evaluate the truth value of complex
-      sentences
+    - Truth tables or deduction rules evaluate the truth value of complex sentences
     - E.g., if $P$ is true and $Q$ is false then $P \land Q$ is false
 
-- @Applications@:
+- @Applications@
   - _SAT solvers_
     - Tools for determining if a propositional logic formula can be satisfied
     - E.g., used in hardware verification and scheduling problems
@@ -41,18 +41,20 @@
 // ## Syntax of propositional logic
 
 * Proposition Symbol
+
 - A @proposition symbol@ is an _atomic symbol_
   - E.g., $P$, $Q$, $North$
-  - Doesn't have truth value, it is just a symbol for a real-world statement
-    (needs grounding for semantics)
+  - Doesn't have truth value, it is just a symbol for a real-world statement (needs
+    grounding for semantics)
   - Stands for a proposition that can be true or false
     - E.g., $K_{E,5}$ = "the Knight is in E5"
-    - $K_{E,5}$ is not composed of any other symbol: it is an atomic symbol
-- $True$ and $False$ are @built-in symbols@, i.e., proposition symbols with
-  inherent truth values
+    - $K_{E,5}$ is not composed of any other symbol: It is an atomic symbol
 
-- @Fact@: Propositional logic is an _atomic representation_ since 
-  propositions have no internal structure
+- $True$ and $False$ are @built-in symbols@, i.e., proposition symbols with inherent
+  truth values
+
+- @Fact@: Propositional logic is an _atomic representation_ since propositions have
+  no internal structure
 
 * Sentences
 
@@ -76,13 +78,14 @@
 - @Key idea@: Each sentence (atomic or complex) can be only true or false
 
 * Propositional Logic: Weather Example
-- @Atomic sentences@:
+
+- @Atomic sentences@
   - $Rain$ = _"it's raining"_
   - $Cold$ = _"it's cold"_
   - $Sunny$ = _"it's sunny"_
   - $Snow$ = _"it's snowing"_
   - $Cloudy$ = _"it's cloudy"_
-  - Can be negated: e.g., $\lnot Rain$ = _"it's not raining"_
+  - Can be negated: E.g., $\lnot Rain$ = _"it's not raining"_
 
 - @Conjunction / Disjunction@
   - E.g., $Rain \land Cloudy$ = _"it's raining and it's cloudy"_
@@ -96,14 +99,14 @@
   - E.g., $Rain \implies \lnot Snow$ = _"if it's raining, it's not snowing"_
 
 - @Biconditional@: $(A \implies B) \land (B \implies A)$
-  - E.g., $Sunny \iff \lnot Cloudy$ = _"it's sunny if and only if it's not
-    cloudy"_
+  - E.g., $Sunny \iff \lnot Cloudy$ = _"it's sunny if and only if it's not cloudy"_
 
-* Grammar in BNF form
+* Grammar in BNF Form
+
 - @Definition@: **Backus Normal Form** formally represents the grammar of
   propositional logic (Backus, 1959) `#cite("backus1959syntax")`{=typst}
 
-- @Problem@: the same sentence can be parsed in multiple ways (ambiguity)
+- @Problem@: The same sentence can be parsed in multiple ways (ambiguity)
   - E.g., $\lnot A \lor B = (\lnot A) \lor B$ or $\lnot (A \lor B)$ ?
 
 ::: columns
@@ -112,20 +115,25 @@
 - @Solution@: Eliminate ambiguity by defining operator precedence
   - E.g., $\lnot$ has higher precedence than $\land, \lor$
   - So $\lnot A \lor B$ means $(\lnot A) \lor B$
+
 ::::
 :::: {.column width=60%}
-![Backus Normal Form for Propositional Logic](msml610/lectures_source/figures/L03.propositional_logic_BNF.png){ height=40% }
+
+![Backus Normal Form for Propositional Logic](msml610/lectures_source/figures/L03.propositional_logic_BNF.png){
+height=40% }
+
 ::::
 :::
 
 ## Semantics
 
 * Semantics of Propositional Logic
-- @Semantics@ are rules for determining the truth of a sentence
-  $\alpha$ with respect to a model $m$
+
+- @Semantics@ are rules for determining the truth of a sentence $\alpha$ with respect
+  to a model $m$
   - Determine if a sentence is true or false, given a possible world
 
-- @Model@  $m$ fixes the truth value (true or false) for every atomic sentence
+- @Model@ $m$ fixes the truth value (true or false) for every atomic sentence
 
 - The models are **abstractions** of the real world and have no a-priori connection
   to a specific world, e.g.,
@@ -135,14 +143,15 @@
   - Need grounding
 
 * Computing the Truth Value of a Sentence
-- @Algorithm@: the **truth value of a sentence** is derived from the truth of the
+
+- @Algorithm@: The **truth value of a sentence** is derived from the truth of the
   proposition symbols, recursively from the model $m$
   $$
   m = \{ P_{1,2}=F, P_{2,2}=F, P_{3,1}=T \}
   $$
 
-- All sentences $\alpha$ are constructed from atomic sentences (assigned by
-  $m$) and connectives:
+- All sentences $\alpha$ are constructed from atomic sentences (assigned by $m$) and
+  connectives:
   - $\lnot P$ is true iff $P$ is false in $m$
   - $P \land Q$ is true iff $P$ and $Q$ are both true in $m$
   - $P \implies Q$ is true unless $P$ is true and $Q$ is false in $m$
@@ -150,14 +159,17 @@
 
 ::: columns
 :::: {.column width=60%}
-- @Definition@: **Truth table** contains truth value of a sentence for each
-  possible model $m$
+
+- @Definition@: **Truth table** contains truth value of a sentence for each possible
+  model $m$
 
 - E.g., $X = A \land B \lor C$
   - Enumerate every assignment of $A$, $B$, $C$
   - $X$ is true whenever $C$ is true, or $A$ and $B$ are both true
+
 ::::
 :::: {.column width=40%}
+
 ```{=typst}
 #styled-table(
   headers: ("A", "B", "C", "X"),
@@ -174,12 +186,14 @@
   bold-first-col: false,
 )
 ```
+
 ::::
 :::
 
 * Interpretation of Implication
-- @Fact@: in a logical implication "$P \implies Q$" there is **no causation**
-  between $P$ and $Q$
+
+- @Fact@: In a logical implication "$P \implies Q$" there is **no causation** between
+  $P$ and $Q$
 
 - "$P \implies Q$" means _"If $P$ is true, I claim that $Q$ is true. Otherwise I am
   making no claim"_
@@ -194,12 +208,13 @@
 
 ## Inference and Proof
 
-* Model Checking is Sound and Complete
+* Model Checking Is Sound and Complete
+
 - @Algorithm@: **Model checking**
   - Enumerates all the models (truth tables)
   - Checks if $\alpha$ is true for every model where $KB$ is true
 
-- @Fact@: in propositional logic, the _model checking_ algorithm is:
+- @Fact@: In propositional logic, the _model checking_ algorithm is:
   - **Sound**
     - _"Any inference made by the algorithm is correct"_
     - Implements the definition of entailment
@@ -207,36 +222,37 @@
     - _"Any true sentence is inferred correctly by the algorithm"_
     - Always terminates since there is a finite number of models
 
-- @Fact@: complexity of model checking with $n$ variables
+- @Fact@: Complexity of model checking with $n$ variables
   - _Time complexity_ is $O(2^n)$ (NP-complete)
     - Worst case is exponential
     - Average case is better than exponential
   - _Space complexity_ is $O(n)$ since enumeration is depth-first
 
 * Inference in Propositional Logic
-- @Definition@: **Inference rules** are rules of reasoning (i.e., deriving
-  correct statements from the statements of the knowledge base)
-  - **Modus Ponens**: if $p \implies q$ and $p$, infer $q$
+
+- @Definition@: **Inference rules** are rules of reasoning (i.e., deriving correct
+  statements from the statements of the knowledge base)
+  - **Modus Ponens**: If $p \implies q$ and $p$, infer $q$
     - _"If it rains, the ground will be wet. It rains. Therefore, the ground is wet"_
-  - **Modus Tollens**: if $p \implies q$ and $\lnot q$, infer $\lnot p$
+  - **Modus Tollens**: If $p \implies q$ and $\lnot q$, infer $\lnot p$
     - _"If it rains, the ground will be wet. The ground is not wet. Therefore, it did
       not rain"_
   - **Syllogism** (aka transitivity)
     - If $p \implies q$ and $q \implies r$, then $p \implies r$
   - **Disjunctive Syllogism**
     - If $p \lor q$ and $\lnot p$, infer $q$
-  - **Addition**: if $p$, then $p \lor q$
-  - **Simplification**: from $p \land q$, infer $p$ or $q$
-  - **Conjunction**: from $p$ and $q$, infer $p \land q$
+  - **Addition**: If $p$, then $p \lor q$
+  - **Simplification**: From $p \land q$, infer $p$ or $q$
+  - **Conjunction**: From $p$ and $q$, infer $p \land q$
   - **Resolution Rule** (Robinson, 1965) `#cite("robinson1965resolution")`{=typst}
     - From $(p \lor q)$ and $(\lnot p \lor r)$, infer $(q \lor r)$
 
 * Propositional Theorem Proving
+
 - @Algorithm@: **Prove a sentence** $\alpha$ under a knowledge base $KB$ in
   propositional logic
   - Apply rules of inference to construct a proof of $\alpha$
-  - Given a $KB$, a query $\alpha$ has one of the following entailment
-    statuses:
+  - Given a $KB$, a query $\alpha$ has one of the following entailment statuses:
     1. Entailed (i.e., $KB \models \alpha$)
     2. Refuted (i.e., $KB \models \lnot \alpha$)
     3. Unknown (i.e., $KB$ entails neither $\alpha$ nor $\lnot \alpha$)
@@ -248,6 +264,7 @@
   - If the proof is short, theorem proving can be more efficient than model checking
 
 * Logical Equivalence of Sentences
+
 - @Logical equivalence@: Two sentences $\alpha$ and $\beta$ are logically equivalent
   $\alpha \equiv \beta$
   - Iff they are true in the same set of models:
@@ -262,6 +279,7 @@
 - @Example@: $P \lor Q \equiv Q \lor P$
 
 * Logical Equivalences (1/2)
+
 - @Commutativity@ of $\land$ and $\lor$
   $$
   (\alpha \land \beta) \equiv (\beta \land \alpha)
@@ -301,23 +319,23 @@
 
 * Logical Equivalences (2/2)
 
-- @Contraposition@:
+- @Contraposition@
   $$
   (\alpha \implies \beta) \equiv (\lnot \beta \implies \lnot \alpha)
   $$
 
-- @Implication elimination@:
+- @Implication elimination@
   $$
   (\alpha \implies \beta) \equiv (\lnot \alpha \lor \beta)
   $$
 
-- @Biconditional elimination@:
+- @Biconditional elimination@
   $$
   (\alpha \iff \beta)
   \equiv (\alpha \implies \beta) \land (\beta \implies \alpha)
   $$
 
-- @De Morgan laws@:
+- @De Morgan laws@
   $$
   \lnot (\alpha \land \beta) \equiv (\lnot \alpha \lor \lnot \beta)
   $$
@@ -332,31 +350,34 @@
   - E.g., $P \lor \lnot P$
   - Every tautology is equivalent to the sentence $True$
 
-- @Definition@: **Contradiction** is a sentence $\alpha$ that is false for all
-  the models
+- @Definition@: **Contradiction** is a sentence $\alpha$ that is false for all the
+  models
   - E.g., $P \land \lnot P$
   - Every contradiction is equivalent to the sentence $False$
 
 * Deduction Theorem
+
 - @Theorem@: **Deduction theorem**
-  - The sentence $\alpha$ entails $\beta$ (written $\alpha \models \beta$) iff
-    the
+  - The sentence $\alpha$ entails $\beta$ (written $\alpha \models \beta$) iff the
     sentence $\alpha \implies \beta$ is a tautology
 
 ::: columns
 :::: {.column width=65%}
-- @Key idea@: The deduction theorem is like a _bridge_ between two different
-  but closely related ideas:
+
+- @Key idea@: The deduction theorem is like a _bridge_ between two different but
+  closely related ideas:
   - _Entailment_ $\models$ is a semantic notion
     - It's about truth across all models
-    - $\alpha$ entails $\beta$ means in every possible world where $\alpha$ is
-      true, $\beta$ is also true
+    - $\alpha$ entails $\beta$ means in every possible world where $\alpha$ is true,
+      $\beta$ is also true
   - _Implication_ $\implies$ is a syntactic notion
     - $\alpha \implies \beta$ is just another formula inside the logic
+
 ::::
 :::: {.column width=35%}
 
 // TODO(ai_gp): Apply graphviz.rules.md
+
 ```graphviz
 digraph DeductionBridge {
   graph [rankdir=TB, bgcolor="transparent", nodesep=0.3, ranksep=0.4,
@@ -372,13 +393,16 @@ digraph DeductionBridge {
   entailment -> implication [dir=both, label="Deduction\nTheorem"];
 }
 ```
+
 ::::
 :::
 
 * Satisfiability
+
 ::: columns
 :::: {.column width=60%}
-- @Definition@:
+
+- @Definition@
   - A sentence $\alpha$ is **satisfiable** iff $\alpha$ is true for some model $m$
   - **SAT problem** is about determining satisfiability of sentence in propositional
     logic
@@ -386,10 +410,10 @@ digraph DeductionBridge {
       sentence $\alpha$
     - It is NP-complete (Cook, 1971) `#cite("cook1971complexity")`{=typst}
 
-- @Corollary@:
+- @Corollary@
   - A sentence $\alpha$ is **un-satisfiable** iff $\alpha$ is never true (i.e., a
     contradiction)
-  - **Validity and satisfiability**: 
+  - **Validity and satisfiability**:
     - $\alpha$ is valid (i.e., a tautology) iff $\lnot \alpha$ is un-satisfiable
     - By contrapositive, $\alpha$ is satisfiable iff $\lnot \alpha$ is not valid
       ($\lnot \alpha$ is not a tautology)
@@ -398,6 +422,7 @@ digraph DeductionBridge {
 :::: {.column width=40%}
 
 // TODO(ai_gp): Make the Border of Valid blue
+
 ```graphviz[width=100%]
 digraph Satisfiability {
   graph [bgcolor="transparent", fontname="Helvetica"];
@@ -419,10 +444,12 @@ digraph Satisfiability {
   }
 }
 ```
+
 ::::
 :::
 
 * Proof by Contradiction
+
 - @Definition@: The **proof by contradiction** consists in showing that the sentence
   $\alpha \models \beta$ is true iff the sentence $\alpha \land \lnot \beta$ is
   un-satisfiable (i.e., a contradiction)
@@ -434,6 +461,7 @@ digraph Satisfiability {
   - Thus $\beta$ must be true
 
 * Propositional Logic: Pros and Cons
+
 - @Pros@
   - _Declarative_
     - Semantics is based on relation between sentences and possible worlds
@@ -443,15 +471,15 @@ digraph Satisfiability {
   - _Compositional semantics_
     - The meaning of a sentence is a function of the meaning of its parts
   - _Context independent_
-    - It only cares about the truth values of statements, it doesn't look
-      inside the statements themselves (atomic representation)
+    - It only cares about the truth values of statements, it doesn't look inside the
+      statements themselves (atomic representation)
     - E.g., natural languages are context-dependent (e.g., _"She is ready"_)
   - _Unambiguous_
 
 - @Cons@
   - Can't concisely describe environment with many objects, e.g.,
-    - E.g., _"The pawn is in a cell around `b1`"_ requires all the possible
-      states to be enumerated
+    - E.g., _"The pawn is in a cell around `b1`"_ requires all the possible states to
+      be enumerated
   - Can't represent _uncertainty_
     - E.g., _"There is 50% of probability that the pawn is in `b1`"_
 
@@ -462,32 +490,39 @@ digraph Satisfiability {
 ## Syntax
 
 * First-Order Logic (FOL)
+
 - @Definition@: **First-order logic** (FOL) extends propositional logic by:
   - Introducing _quantifiers_ (e.g., $\forall$, $\exists$)
   - Using _predicates_ to represent properties and relations
 
-- @Pros@:
+- @Pros@
   - Built around _objects and relations_
   - Allows to express facts about some or all objects, e.g.,
-     - _"Some humans have green eyes"_
-     - _"Chess pieces around the Queen are at risk"_
+    - _"Some humans have green eyes"_
+    - _"Chess pieces around the Queen are at risk"_
   - FOL provides expressive power to represent structured, relational knowledge
 
 * First-Order Logic: Syntax
 
 ::: columns
 :::: {.column width=50%}
-- @Constants@: represent specific objects
+
+- @Constants@: Represent specific objects
   - E.g., $Socrates$
-- @Predicates@: describe properties or relations
+
+- @Predicates@: Describe properties or relations
   - E.g., $Human(x)$ = _"x is human"_
-- @Functions@: map tuples of objects to objects
+
+- @Functions@: Map tuples of objects to objects
   - E.g., $Mother(x)$ = _"the mother of x"_
-- @Variables@: act as placeholders
+
+- @Variables@: Act as placeholders
   - E.g., $x, y$
-- @Quantifiers@: allow to refer to a specific or multiple variables at once
+
+- @Quantifiers@: Allow to refer to a specific or multiple variables at once
   - E.g., $\forall x$ (for all $x$)
   - E.g., $\exists x$ (there exists an $x$)
+
 ::::
 :::: {.column width=50%}
 
@@ -497,19 +532,19 @@ digraph Satisfiability {
 :::
 
 * Sentences
+
 - @Term@ is a logical expression that refers to an object
   - E.g., $Richard$
 
-- @Atomic sentence@ is a predicate symbol (i.e., corresponds to relations)
-  followed by a list of terms in parenthesis
-  $Predicate(Term1, Term2, ...)$
-  - E.g., $Brother(Richard, John)$ means _"Richard is the brother of John"_,
-    under a given grounding / interpretation,  
-  - E.g., $Married(Father(Richard), Mother(John))$ means _"the father of Richard
-    and the mother of John are married"_
+- @Atomic sentence@ is a predicate symbol (i.e., corresponds to relations) followed
+  by a list of terms in parenthesis $Predicate(Term1, Term2, ...)$
+  - E.g., $Brother(Richard, John)$ means _"Richard is the brother of John"_, under a
+    given grounding / interpretation,
+  - E.g., $Married(Father(Richard), Mother(John))$ means _"the father of Richard and
+    the mother of John are married"_
 
-- @Complex sentence@ is a sentence using logical connectives complex, with the
-  same syntax and semantics as in propositional logic
+- @Complex sentence@ is a sentence using logical connectives complex, with the same
+  syntax and semantics as in propositional logic
 
 - @Variable@ is a term that represents a possible object
   - Typically represented as lowercase letter (e.g., $x$, $y$, $z$)
@@ -519,8 +554,8 @@ digraph Satisfiability {
   - E.g., $Father(John) = Henry$
 
 * Quantifiers
-- @Quantifiers@ express properties of entire collections of objects, instead
-  of
+
+- @Quantifiers@ express properties of entire collections of objects, instead of
   enumerating objects by name (like done in propositional logic)
 
 - @Universal quantifier@: $\forall x\, P(x)$
@@ -528,19 +563,19 @@ digraph Satisfiability {
   - Statement is true if $P(x)$ is true for all $x$
 
 - @Existential quantifier@: $\exists x\, P(x)$
-  - Existential quantifier makes a statement about _some_ object (without naming
-    it)
+  - Existential quantifier makes a statement about _some_ object (without naming it)
   - Statement is true if $P(x)$ is true for at least one $x$
 
 - Variables are @bound@ by quantifiers or @free@ (unbound)
   - E.g., $\forall x (Cat(x) \implies Mammal(x))$
 
 * Nested Quantifiers
+
 - Complex sentences can be expressed using **multiple quantifiers**
   - The order of quantifiers is important
   - Need to use parentheses to clarify
 
-- @Example@:
+- @Example@
   - _"Brothers are siblings"_
     - $\forall x, y \ Brother(x, y) \implies Sibling(x, y)$
   - Siblings is a symmetric relationship
@@ -550,37 +585,39 @@ digraph Satisfiability {
   - _"There is someone loved by everyone"_
     - $\exists y \ \forall x \ Loves(x, y)$
 
-* Connection between $\forall$ and $\exists$
-- @Fact@: the universal and existential quantifiers are **connected** through
+* Connection Between $\forall$ and $\exists$
+
+- @Fact@: The universal and existential quantifiers are **connected** through
   negation and De Morgan rules
+
 // TODO(ai_gp): Use a better latex
-  $$
+
+$$
   \forall \; x \ \lnot P(x) \iff \lnot \exists \; x \ P(x)
-  $$
-  $$
+$$
+$$
   \lnot (\forall x \ P(x)) \iff \exists \; x \ \lnot P(x)
-  $$
-  $$
+$$
+$$
   \forall x \ P(x) \iff \lnot \exists x \ \lnot P(x)
-  $$
-  $$
+$$
+$$
   \exists x \ P(x) \iff \lnot (\forall x \ \lnot P(x))
-  $$
+$$
 
 ## Semantics
 
 * First-Order Logic: Semantics
+
 - @Semantics@ define how sentences are interpreted in a domain
 
 - @Symbols@ represent entities, relationships, and functions in the domain
   - @Constant symbols@ represent specific objects
     - E.g., $Alice$, $GP$, $CS101$
-
   - @Predicate symbols@ represent relationships among objects, e.g.,
     - $EnrolledIn(Student, Class)$
     - $Teaches(Professor, Class)$
     - $IsStudent(x)$, $IsProfessor(x)$
-
   - @Function symbols@ represent mappings between objects
     - E.g., $AdvisorOf(Student)$, $DepartmentOf(Professor)$
 
@@ -611,16 +648,14 @@ digraph Satisfiability {
 - @Reasoning@: Enables reasoning about objects, properties, and their relationships
 
 * First-Order Logic: Inference
-- @Goal@: derive new sentences from existing ones using sound rules
 
-  - @Universal Instantiation@:
+- @Goal@: Derive new sentences from existing ones using sound rules
+  - @Universal Instantiation@
     - From $\forall x\, P(x)$ infer $P(c)$ for any constant $c$
-
-  - @Existential Instantiation@:
+  - @Existential Instantiation@
     - From $\exists x\, P(x)$ infer $P(c)$ with a new constant $c$
-
-  - @Standard Inference rules@: propositional logic rules also apply within FOL
-    - Modus ponens: from $P$ and $P \implies Q$, infer $Q$
+  - @Standard Inference rules@: Propositional logic rules also apply within FOL
+    - Modus ponens: From $P$ and $P \implies Q$, infer $Q$
     - Modus tollens: TODO(ai_gp)
     - Resolution: TODO(ai_gp)
 
@@ -633,40 +668,45 @@ digraph Satisfiability {
   - Propositional logic is decidable (truth tables always finish)
 
 * First-Order Logic: Cons
+
 - @Computational complexity@
   - Unification (matching variables to terms) and quantifiers are expensive to
     process
   - Reasoning must search over potentially infinite sets of objects
-  - E.g., proving "$\exists x, P(x)$" may require checking an unbounded number
-    of candidates
+  - E.g., proving "$\exists x, P(x)$" may require checking an unbounded number of
+    candidates
+
 - @No native uncertainty handling@
   - FOL only allows statements to be strictly true or false
     - Cannot represent probability, vagueness, or degrees of belief
   - E.g., _"Most birds fly"_ or _"She is probably ready"_ can't be expressed
   - Need probabilistic logic
+
 - @Monotonicity@
   - Once a fact is proven true, no new information can retract it
   - Real-world reasoning often needs revision as new facts appear
-  - E.g., _"Tweety is a bird $\implies$ Tweety flies"_ breaks once you learn
-    _"Tweety is a penguin"_
+  - E.g., _"Tweety is a bird $\implies$ Tweety flies"_ breaks once you learn _"Tweety
+    is a penguin"_
   - Need non-monotonic logics
 
 * First-Order Logic: Cons
+
 - @Limited expressiveness for higher-order concepts@
-  - FOL can quantify over _objects_ ("for all x") but not over
-    _predicates/properties themselves_
+  - FOL can quantify over _objects_ ("for all x") but not over _predicates/properties
+    themselves_
   - E.g., cannot easily express "some properties are more important than others"
   - Need higher-order logic
+
 - @No built-in temporal or modal reasoning@
   - Base FOL has no way to express time, necessity, possibility, or belief
   - E.g., _"It will rain tomorrow"_ or _"It's possible that P ..."_
-  - Need: modal logic (possibility/necessity), temporal logic (time), or epistemic
+  - Need: Modal logic (possibility/necessity), temporal logic (time), or epistemic
     logic (belief)
+
 - @Knowledge engineering burden@
-  - Converting messy natural language into precise predicates/quantifiers is hard
-    and error-prone
-  - E.g., _"Some humans have green eyes"_ $\implies$ $\exists x\, (Human(x) \land
-    GreenEyes(x))$
+  - Converting messy natural language into precise predicates/quantifiers is hard and
+    error-prone
+  - E.g., _"Some humans have green eyes"_ $\implies \exists x\, (Human(x) \land GreenEyes(x))$
 
 * References
 
