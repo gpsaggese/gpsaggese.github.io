@@ -36,7 +36,7 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "L06_01_exact_inference.ipynb"
         # Run test.
-        self.helper(notebook_name)
+        self.helper(notebook_name, generate_html=True)
 
     @pytest.mark.slow
     def test2(self) -> None:
@@ -46,4 +46,4 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "L06_02_approximate_inference.ipynb"
         # Run test.
-        self.helper(notebook_name)
+        self.helper(notebook_name, generate_html=True)

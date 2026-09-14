@@ -36,4 +36,4 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "L09_03_02_multi_armed_bandits.ipynb"
         # Run test.
-        self.helper(notebook_name)
+        self.helper(notebook_name, generate_html=True)

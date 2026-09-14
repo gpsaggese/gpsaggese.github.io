@@ -8,5 +8,5 @@
 
 REPO_NAME=gpsaggese
 # The file should be all lower case.
-IMAGE_NAME=umd_project_l03_knowledge_representation
+IMAGE_NAME=msml610_l03_knowledge_representation
 FULL_IMAGE_NAME=$REPO_NAME/$IMAGE_NAME
