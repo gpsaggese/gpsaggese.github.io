@@ -991,7 +991,7 @@ def cell3_1_factor_operations_widget(
                 fontweight="bold",
             )
             tbl1 = ax1.table(
-                cellText=np.round(before_df.values, 4),
+                cellText=before_df.round(4).values,
                 colLabels=list(before_df.columns),
                 loc="center",
                 cellLoc="center",
@@ -1012,7 +1012,7 @@ def cell3_1_factor_operations_widget(
                 fontweight="bold",
             )
             tbl2 = ax2.table(
-                cellText=np.round(after_df.values, 4),
+                cellText=after_df.round(4).values,
                 colLabels=list(after_df.columns),
                 loc="center",
                 cellLoc="center",
@@ -1231,7 +1231,7 @@ def cell3_2_variable_elimination_widget(
                     fontweight="bold",
                 )
                 tbl = ax2.table(
-                    cellText=np.round(new_df.values, 5),
+                    cellText=new_df.round(5).values,
                     colLabels=list(new_df.columns),
                     loc="center",
                     cellLoc="center",
@@ -1465,7 +1465,18 @@ def cell3_3_pruning_widget(
             # Posterior on the pruned network (irrelevant nodes removed).
             if prune:
                 sub_nodes = relevant
-                sub_model = model.subgraph(sub_nodes).copy()
+                # `subgraph()` keeps only nodes/edges, not CPDs, so rebuild
+                # the model from the induced edges and the matching CPDs.
+                sub_edges = [
+                    (u, v)
+                    for u, v in model.edges()
+                    if u in sub_nodes and v in sub_nodes
+                ]
+                sub_model = pgmodels.DiscreteBayesianNetwork(sub_edges)
+                sub_model.add_nodes_from(sub_nodes)
+                sub_model.add_cpds(
+                    *[cpd for cpd in model.get_cpds() if cpd.variable in sub_nodes]
+                )
                 sub_infer = pginference.VariableElimination(sub_model)
                 pruned = sub_infer.query(
                     [query_var], evidence=evidence, show_progress=False
