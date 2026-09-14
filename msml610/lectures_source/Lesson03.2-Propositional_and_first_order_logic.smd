@@ -204,7 +204,31 @@ height=40% }
   - An implication is true whenever the consequent is _always true_
     - E.g., _"If i am a bycicle then the pope is Catholic"_ is a true statement
 
-// TODO(ai_gp): Add a truth table for implication
+::: columns
+:::: {.column width=60%}
+
+- @Truth table for implication@ $P \implies Q$
+  - The implication is false only when $P$ is true and $Q$ is false
+  - All other cases are true
+
+::::
+:::: {.column width=40%}
+
+```{=typst}
+#styled-table(
+  headers: ("P", "Q", "P ⟹ Q"),
+  rows: (
+    ("F", "F", "T"),
+    ("F", "T", "T"),
+    ("T", "F", "F"),
+    ("T", "T", "T"),
+  ),
+  bold-first-col: false,
+)
+```
+
+::::
+:::
 
 ## Inference and Proof
 
@@ -376,21 +400,19 @@ height=40% }
 ::::
 :::: {.column width=35%}
 
-// TODO(ai_gp): Apply graphviz.rules.md
-
 ```graphviz
 digraph DeductionBridge {
-  graph [rankdir=TB, bgcolor="transparent", nodesep=0.3, ranksep=0.4,
-         fontname="Helvetica"];
-  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11,
-        fontcolor="#26215C", color="#7F77DD", penwidth=1.2];
-  edge [color="#888888", penwidth=1.4, fontname="Helvetica", fontsize=10,
-        fontcolor="#45296B"];
+  graph [rankdir=TB, bgcolor="transparent", nodesep=0.4, ranksep=0.5,
+         fontname="Helvetica", margin="0.2"];
+  node [shape="box,rounded", style="filled,solid", fontname="Helvetica",
+        fontsize=11, fontcolor="#1a1a1a", penwidth=1.5];
+  edge [color="#555555", penwidth=1.5, fontname="Helvetica", fontsize=9,
+        fontcolor="#333333", arrowsize=1.2];
 
-  entailment [label="Entailment\n(semantic)", fillcolor="#A6C8F4"];
-  implication [label="Implication\n(syntactic)", fillcolor="#A0D6D1"];
+  entailment [label="Entailment\n(semantic)", fillcolor="#B4D7F5", color="#2E5C8A"];
+  implication [label="Implication\n(syntactic)", fillcolor="#B0E5DB", color="#2E7570"];
 
-  entailment -> implication [dir=both, label="Deduction\nTheorem"];
+  entailment -> implication [dir=both, label="Deduction\nTheorem", color="#555555"];
 }
 ```
 
@@ -421,8 +443,6 @@ digraph DeductionBridge {
 ::::
 :::: {.column width=40%}
 
-// TODO(ai_gp): Make the Border of Valid blue
-
 ```graphviz[width=100%]
 digraph Satisfiability {
   graph [bgcolor="transparent", fontname="Helvetica"];
@@ -439,7 +459,7 @@ digraph Satisfiability {
       labelloc=b; fontsize=11; fontcolor="#1F5A55";
 
       valid [label="Valid", shape=box,
-             style="rounded,filled", fillcolor="#A6C8F4", penwidth=0];
+             style="rounded,filled", fillcolor="#A6C8F4", color="#2E5C8A", penwidth=2];
     }
   }
 }
@@ -590,19 +610,17 @@ digraph Satisfiability {
 - @Fact@: The universal and existential quantifiers are **connected** through
   negation and De Morgan rules
 
-// TODO(ai_gp): Use a better latex
-
 $$
-  \forall \; x \ \lnot P(x) \iff \lnot \exists \; x \ P(x)
+\forall x \ \lnot P(x) \iff \lnot \exists x \ P(x)
 $$
 $$
-  \lnot (\forall x \ P(x)) \iff \exists \; x \ \lnot P(x)
+\lnot (\forall x \ P(x)) \iff \exists x \ \lnot P(x)
 $$
 $$
-  \forall x \ P(x) \iff \lnot \exists x \ \lnot P(x)
+\forall x \ P(x) \iff \lnot \exists x \ \lnot P(x)
 $$
 $$
-  \exists x \ P(x) \iff \lnot (\forall x \ \lnot P(x))
+\exists x \ P(x) \iff \lnot (\forall x \ \lnot P(x))
 $$
 
 ## Semantics
@@ -633,15 +651,18 @@ $$
 
 - First-Order Logic enables representation of complex knowledge
 
-// TODO(ai_gp): Convert it to typst table
-\begingroup \scriptsize
-| **Category** | **Example** |
-|---|---|
-| General rules | $\forall x\, (Bird(x) \implies CanFly(x))$ |
-| Specific facts | $Bird(Tweety)$ |
-| Relations | $Loves(Romeo, Juliet)$, $GreaterThan(3, 2)$ |
-| Functions | $FatherOf(John)$ |
-\endgroup
+```{=typst}
+#styled-table(
+  headers: ("Category", "Example"),
+  rows: (
+    ("General rules", $forall x (Bird(x) implies CanFly(x))$),
+    ("Specific facts", $Bird(Tweety)$),
+    ("Relations", $Loves(Romeo, Juliet), GreaterThan(3, 2)$),
+    ("Functions", $FatherOf(John)$),
+  ),
+  bold-first-col: true,
+)
+```
 
 - @Knowledge base@ can be built from axioms and facts
 
@@ -656,8 +677,8 @@ $$
     - From $\exists x\, P(x)$ infer $P(c)$ with a new constant $c$
   - @Standard Inference rules@: Propositional logic rules also apply within FOL
     - Modus ponens: From $P$ and $P \implies Q$, infer $Q$
-    - Modus tollens: TODO(ai_gp)
-    - Resolution: TODO(ai_gp)
+    - Modus tollens: From $P \implies Q$ and $\lnot Q$, infer $\lnot P$
+    - Resolution: From $(P \lor Q)$ and $(\lnot P \lor R)$, infer $(Q \lor R)$
 
 - @Fact@: FOL inference is semi-decidable (Turing, 1936)
   `#cite("turing1936computable")`{=typst}
