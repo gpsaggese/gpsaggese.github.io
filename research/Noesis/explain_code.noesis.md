@@ -1,7 +1,8 @@
 # File Description
 
-research/Noesis/batch_call_auction.py research/Noesis/contract_dispatch.py research/Noesis/main.py research/Noesis/passthrough_proxy.py research/Noesis/platform_api.py research/Noesis/postgres_store.py
-
+research/Noesis/batch_call_auction.py research/Noesis/contract_dispatch.py
+research/Noesis/main.py research/Noesis/passthrough_proxy.py
+research/Noesis/platform_api.py research/Noesis/postgres_store.py
 - `batch_call_auction.py`
   - In-memory order book for a batch call auction
   - Queues buy/sell orders, buckets by capability tier
@@ -13,12 +14,11 @@ research/Noesis/batch_call_auction.py research/Noesis/contract_dispatch.py resea
 - `contract_dispatch.py`
   - Turns a cleared auction round's fills into contracts
   - Then dispatches each contract to a (mocked) fulfillment layer
-  - Records pass/fail.
+  - Records pass/fail
 - `platform_api.py`
   - HTTP API surface over the auction and gateway
   - Adds API-key auth, contract/round id tracking
-  - Adds a thin FastAPI layer with no extra business logic beyond that
-    bookkeeping
+  - Adds a thin FastAPI layer with no extra business logic beyond that bookkeeping
 - `postgres_store.py`
   - Persistence layer swapping the in-memory stores for Postgres-backed ones, so
     order book, contract log, and request log survive process restarts
@@ -105,17 +105,13 @@ research/Noesis/batch_call_auction.py research/Noesis/contract_dispatch.py resea
 - `Bid(dataclass)`
   - `__init__(self, buyer_id: str, n_tasks: int, c_level_min: str, l_max: float, r_min: float, p_max: float) -> None`
     - Validates and stores one buy order
-
 - `Ask(dataclass)`
   - `__init__(self, seller_id: str, n_tasks: int, c_level: str, l_typical: float, r_typical: float, p_min: float) -> None`
     - Validates and stores one sell order
-
 - `Fill(dataclass)`
   - Plain data holder, no custom methods
-
 - `TierClearResult(dataclass)`
   - Plain data holder, no custom methods
-
 - `OrderBookStore(abc.ABC)`
   - `add_bid(self, bid: Bid) -> None`
     - Abstract, queue a bid
@@ -127,7 +123,6 @@ research/Noesis/batch_call_auction.py research/Noesis/contract_dispatch.py resea
     - Abstract, return pending asks in submission order
   - `clear(self) -> None`
     - Abstract, drop every stored bid/ask
-
 - `_InMemoryOrderBookStore(OrderBookStore)`
   - `__init__(self) -> None`
     - Init empty in-memory bid/ask lists
@@ -141,7 +136,6 @@ research/Noesis/batch_call_auction.py research/Noesis/contract_dispatch.py resea
     - Return copy of internal ask list
   - `clear(self) -> None`
     - Reset internal bid/ask lists to empty
-
 - `OrderBook`
   - `__init__(self, *, store: Optional[OrderBookStore] = None) -> None`
     - Init book, defaulting to in-memory store
@@ -398,32 +392,33 @@ research/Noesis/batch_call_auction.py research/Noesis/contract_dispatch.py resea
 
 ## Uses
 
-- `OrderBook.clear_round()` calls `_match_orders_in_tier()` per capability tier
-  and returns `Dict[str, TierClearResult]`
+- `OrderBook.clear_round()` calls `_match_orders_in_tier()` per capability tier and
+  returns `Dict[str, TierClearResult]`
 - `TierClearResult` aggregates `List[Fill]`
 - `build_contracts()` consumes `List[Bid]` and `Dict[str, TierClearResult]` to
   produce `List[Contract]`
-- `dispatch_contracts()` mutates each `Contract.fulfilled` via `mock_fulfill()`
-  or an injected `fulfillment_func`
-- `_MarketState.clear_round()` calls `OrderBook.clear_round()`,
-  `build_contracts()`, and `dispatch_contracts()` in sequence
+- `dispatch_contracts()` mutates each `Contract.fulfilled` via `mock_fulfill()` or an
+  injected `fulfillment_func`
+- `_MarketState.clear_round()` calls `OrderBook.clear_round()`, `build_contracts()`,
+  and `dispatch_contracts()` in sequence
 - `create_app()` wires `_MarketState` and `Gateway` into the FastAPI endpoints
 - `main.py` builds `OrderBook`/`Gateway` and, for the postgres backend,
-  `PostgresOrderBookStore`/`PostgresRequestLogStore`/`PostgresContractStore`,
-  then calls `create_app()`
+  `PostgresOrderBookStore`/`PostgresRequestLogStore`/`PostgresContractStore`, then
+  calls `create_app()`
 - `postgres_store.py`'s `Postgres*` classes wrap `hsqlimpl.DbConnection` and
-  implement the `ABC`s owned by `batch_call_auction.py`, `passthrough_proxy.py`,
-  and `platform_api.py`
+  implement the `ABC`s owned by `batch_call_auction.py`, `passthrough_proxy.py`, and
+  `platform_api.py`
 
 ## Mirrors
 
-- `BidRequest` (`platform_api.py`) <-> `Bid` (`batch_call_auction.py`): same
-  fields, no shared code
-- `AskRequest` (`platform_api.py`) <-> `Ask` (`batch_call_auction.py`): same
-  fields, no shared code
+- `BidRequest` (`platform_api.py`) <-> `Bid` (`batch_call_auction.py`): same fields,
+  no shared code
+- `AskRequest` (`platform_api.py`) <-> `Ask` (`batch_call_auction.py`): same fields,
+  no shared code
 - `ContractResponse` (`platform_api.py`) <-> `Contract` (`contract_dispatch.py`):
   same fields plus an assigned `contract_id`
-- `CompletionResponse`/`LogEntryResponse` (`platform_api.py`) <->
-  `RequestLogEntry` (`passthrough_proxy.py`): same fields
-- `RoundClearResponse` (`platform_api.py`) <-> the `(tier, round_id,
-  clearing_price, matched_volume)` pricing-dissemination event shape
+- `CompletionResponse`/`LogEntryResponse` (`platform_api.py`) <-> `RequestLogEntry`
+  (`passthrough_proxy.py`): same fields
+- `RoundClearResponse` (`platform_api.py`) <-> the
+  `(tier, round_id, clearing_price, matched_volume)` pricing-dissemination event
+  shape

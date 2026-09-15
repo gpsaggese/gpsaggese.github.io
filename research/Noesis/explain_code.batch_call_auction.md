@@ -25,17 +25,13 @@
 - `Bid(dataclass)`
   - `__init__(self, buyer_id: str, n_tasks: int, c_level_min: str, l_max: float, r_min: float, p_max: float) -> None`
     - Validates and stores one buy order
-
 - `Ask(dataclass)`
   - `__init__(self, seller_id: str, n_tasks: int, c_level: str, l_typical: float, r_typical: float, p_min: float) -> None`
     - Validates and stores one sell order
-
 - `Fill(dataclass)`
   - Plain data holder, no custom methods
-
 - `TierClearResult(dataclass)`
   - Plain data holder, no custom methods
-
 - `OrderBookStore(abc.ABC)`
   - `add_bid(self, bid: Bid) -> None`
     - Queue a bid
@@ -47,7 +43,6 @@
     - Return pending asks in submission order
   - `clear(self) -> None`
     - Abstract, drop every stored bid/ask
-
 - `_InMemoryOrderBookStore(OrderBookStore)`
   - `__init__(self) -> None`
     - Init empty in-memory bid/ask lists
@@ -61,7 +56,6 @@
     - Return copy of stored asks
   - `clear(self) -> None`
     - Reset bid/ask lists to empty
-
 - `OrderBook`
   - `__init__(self, *, store: Optional[OrderBookStore] = None) -> None`
     - Init book, defaulting to in-memory store
@@ -98,5 +92,6 @@
 
 ## Uses
 
-- `OrderBook.clear_round()` calls `_match_orders_in_tier()` per capability tier and returns `Dict[str, TierClearResult]`
+- `OrderBook.clear_round()` calls `_match_orders_in_tier()` per capability tier and
+  returns `Dict[str, TierClearResult]`
 - `TierClearResult` aggregates `List[Fill]`
