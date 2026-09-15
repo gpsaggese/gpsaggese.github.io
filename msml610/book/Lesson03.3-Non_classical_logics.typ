@@ -1399,6 +1399,34 @@ responsible for every course a given student takes.
 ) <fig:knowledgegraphuniversityexample>
 // render_images:end
 
+= Summary
+
+This chapter examined how loosening the ontological and epistemological commitments
+of classical logic yields formalisms suited to incomplete, evolving knowledge.
+#emph[Non-monotonic and default reasoning] let a system draw tentative conclusions
+from typical cases and retract them when exceptions surface, the mechanism behind
+common sense reasoning and the open-world/closed-world distinction that governs how
+absent facts are interpreted. #emph[Inductive logic programming] shows that such
+default rules need not be hand-authored: they can be learned directly from examples
+and background knowledge, at the cost of combinatorial search and sensitivity to
+noise.
+
+A second thread moved from reasoning about defaults to representing structured domain
+knowledge formally. #emph[Description logics], notably the ALC and SHOIN families,
+occupy a deliberate middle ground between propositional and first-order logic:
+expressive enough to define concept hierarchies and support subsumption and instance
+checking, yet still decidable. #emph[OWL] builds directly on SHOIN, trading
+expressiveness for tractability across its Lite, DL, and Full profiles, while
+#emph[RDF] and #emph[SPARQL] supply the concrete subject-predicate-object syntax and
+query language that let such ontologies be published and retrieved on the web.
+
+These pieces converge in the #emph[Semantic Web] and in #emph[knowledge graphs]: RDF
+triples accumulate into large graph structures, exemplified by Wikidata, DBpedia,
+WordNet, and ConceptNet, that support path traversal and schema inference at scale.
+The original vision of a fully machine-readable web remains only partially realized,
+but its core ideas already power question answering, recommendation, and semantic
+search across production systems, from Google's Knowledge Graph to Semantic Scholar.
+
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:949 '* References'
 // Slide: References
 = References
