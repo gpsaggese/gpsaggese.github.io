@@ -80,7 +80,7 @@
 - Edit and improve the notebook
   ```
   > docker_jupyter.sh
-  > docker_jupyter_port_forward.sh umd_project_ml_explainability.jupyter <PORT>
+  > docker_jupyter_port_forward.py umd_project_ml_explainability.jupyter <PORT>
   Open http://localhost:8889/lab
   ```
 

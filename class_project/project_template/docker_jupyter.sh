@@ -42,15 +42,10 @@ DOCKER_ENGINE_CURRENT=$(get_docker_engine)
 DOCKER_CMD=$(get_docker_cmd)
 
 if [[ "$DOCKER_ENGINE_CURRENT" == "apple" ]]; then
-    # Apple container's -p port forwarding is broken (v1.0.0), so we skip it
-    # and print instructions for a manual port forward script.
+    # Apple container's -p port forwarding is broken (v1.0.0), so we start
+    # a local port-forward tunnel ourselves instead of asking the user to
+    # run it by hand in another terminal.
     echo "Apple container engine detected."
-    echo "NOTE: Apple's container tool has a bug where -p port forwarding does"
-    echo "not work. To access Jupyter from your browser, run this in another"
-    echo "terminal after the container starts:"
-    echo ""
-    echo "  docker_jupyter_port_forward.sh $CONTAINER_NAME $JUPYTER_HOST_PORT"
-    echo ""
     DOCKER_CMD_OPTS=$(get_docker_jupyter_options $CONTAINER_NAME $JUPYTER_HOST_PORT $JUPYTER_USE_VIM)
     # Run container in detached mode (we follow logs instead of -ti).
     run "$DOCKER_CMD run --rm -d $DOCKER_CMD_OPTS $FULL_IMAGE_NAME $CMD"
@@ -61,6 +56,16 @@ if [[ "$DOCKER_ENGINE_CURRENT" == "apple" ]]; then
         echo "Direct URL: http://$CONTAINER_IP:$JUPYTER_HOST_PORT"
         echo ""
     fi
+    # echo "To access Jupyter from your browser, run this in another terminal "
+    # echo "after the container starts:"
+    # echo "> docker_jupyter_port_forward.py $CONTAINER_NAME $JUPYTER_HOST_PORT"
+    # Start the tunnel in the background and make sure it is killed whenever
+    # this script exits, for any reason (normal exit, error, Ctrl+C).
+    docker_jupyter_port_forward.py "$CONTAINER_NAME" "$JUPYTER_HOST_PORT" &
+    TUNNEL_PID=$!
+    trap 'kill $TUNNEL_PID 2>/dev/null' EXIT INT TERM
+    echo "Tunnel started (PID $TUNNEL_PID): http://localhost:$JUPYTER_HOST_PORT"
+    echo ""
     # Follow logs so the user sees Jupyter output.
     $DOCKER_CMD logs -f $CONTAINER_NAME
 else

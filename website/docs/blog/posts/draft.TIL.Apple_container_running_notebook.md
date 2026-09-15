@@ -114,7 +114,7 @@ ports at the application level.
    detection skips it automatically)
 2. `docker_jupyter.sh` prints the container's bridge100 IP and a command to run
 3. The user opens a second terminal and runs
-   `docker_jupyter_port_forward.sh`, a standalone script that:
+   `docker_jupyter_port_forward.py`, a standalone script that:
    - Gets the container's bridge100 IP
    - Starts a Python TCP forwarder relaying
      `localhost:<PORT>` → `<container_IP>:<PORT>`
@@ -131,7 +131,7 @@ ports at the application level.
   not work. To access Jupyter from your browser, run this in another
   terminal after the container starts:
 
-    ./docker_jupyter_port_forward.sh umd_project_l12_reinforcement_learning.jupyter 8888
+    ./docker_jupyter_port_forward.py umd_project_l12_reinforcement_learning.jupyter 8888
 
   Container IP: 192.168.64.54
   Direct URL: http://192.168.64.54:8888
@@ -142,7 +142,7 @@ ports at the application level.
 
 - On terminal 2 Set up port forwarding
   ```
-  > docker_jupyter_port_forward.sh umd_project_l12_reinforcement_learning.jupyter 8888
+  > docker_jupyter_port_forward.py umd_project_l12_reinforcement_learning.jupyter 8888
 
   Container: umd_project_l12_reinforcement_learning.jupyter
   Bridge IP: 192.168.64.54
@@ -153,7 +153,7 @@ ports at the application level.
 
 - Then open `http://localhost:8888` in your browser
 
-- The forwarder script is at `dev_scripts_helpers/docker/docker_jupyter_port_forward.sh`
+- The forwarder script is at `dev_scripts_helpers/docker/docker_jupyter_port_forward.py`
 
 ## References
 
@@ -163,5 +163,5 @@ ports at the application level.
 - The integration is in
   [`msml610/tutorials/L12_reinforcement_learning/docker_jupyter.sh`](/msml610/tutorials/L12_reinforcement_learning/docker_jupyter.sh)
 - The port forward script:
-  [`docker_jupyter_port_forward.sh`](/msml610/tutorials/L12_reinforcement_learning/docker_jupyter_port_forward.sh)
+  [`docker_jupyter_port_forward.py`](/msml610/tutorials/L12_reinforcement_learning/docker_jupyter_port_forward.py)
 - Apple's container CLI docs: `container --help`
