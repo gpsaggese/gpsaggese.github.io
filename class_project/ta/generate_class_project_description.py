@@ -76,10 +76,8 @@ def _read_prompt() -> str:
     :return: the prompt template string
     """
     prompt_path = str(_PROMPT_FILE_PATH)
-    hdbg.dassert(
-        os.path.exists(prompt_path),
-        "Prompt file does not exist: %s",
-        prompt_path,
+    hdbg.dassert_path_exists(
+        prompt_path, "Prompt file does not exist: %s", prompt_path
     )
     prompt = hio.from_file(prompt_path)
     return prompt
@@ -92,10 +90,8 @@ def _read_csv(input_path: str) -> pd.DataFrame:
     :param input_path: path to the CSV file
     :return: the dataframe containing tool data
     """
-    hdbg.dassert(
-        os.path.exists(input_path),
-        "Input CSV file does not exist: %s",
-        input_path,
+    hdbg.dassert_path_exists(
+        input_path, "Input CSV file does not exist: %s", input_path
     )
     df = pd.read_csv(input_path)
     _LOG.debug("Read CSV with shape=%s", df.shape)
