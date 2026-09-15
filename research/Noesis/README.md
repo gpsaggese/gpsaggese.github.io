@@ -1,19 +1,19 @@
 # Noesis
+
 - Implementation of the \Noesis{} protocol described in `papers/Noesis/*.tex`: a
   two-sided market for LLM inference capacity
-
 - `NoesisMarket`: a batch call-auction that matches buyer/seller orders and
   dispatches cleared contracts to a (mocked) fulfillment layer
 - `NoesisServer`: a minimal passthrough proxy that routes prompts to registered LLM
   providers and logs every request/response pair
 - `NoesisPlatform`: a thin `fastapi` HTTP surface over both with an optional
   persistent (Postgres) backend and a Docker Compose deployment for local dev
-
 - See:
   - `architecture.md` for the full C4-model architecture
   - `plan.Noesis.md` for the milestone-by-milestone implementation roadmap
 
 ## Structure of the Dir
+
 - `devops/`
   - Dockerfiles, Docker Compose deployment, and container entrypoint scripts for
     `main.py`'s app plus a Postgres sidecar
@@ -21,9 +21,9 @@
   - Unit tests for every module below, one `test_*.py` per module
 
 ## Description of Files
+
 - `.dockerignore`
-  - Restricts the DEV Docker build context to `devops/` and
-    `helpers_root/devops/`
+  - Restricts the DEV Docker build context to `devops/` and `helpers_root/devops/`
 - `architecture.md`
   - C4-model architecture (context/container/component) for the codebase
 - `changelog.txt`
@@ -36,24 +36,24 @@
 - `invoke.yaml`
   - `pyinvoke` config (`auto_dash_names: false`, command echo on)
 - `plan.marketing.md`
-  - Plan for bootstrapping supply/demand liquidity once `NoesisPlatform` exposes
-    a public API
+  - Plan for bootstrapping supply/demand liquidity once `NoesisPlatform` exposes a
+    public API
 - `plan.Noesis.md`
   - Milestone-by-milestone implementation roadmap for the \Noesis{} protocol
 - `pytest.ini`
-  - Pytest markers (`slow`, `superslow`, `requires_docker_in_docker`, ...) and
-    CLI options
+  - Pytest markers (`slow`, `superslow`, `requires_docker_in_docker`, ...) and CLI
+    options
 - `repo_config.yaml`
   - Repo/Docker/S3 metadata read by `helpers.repo_config_utils`
 - `spec.PR_P2.md`
   - Implementation spec for `PR_P2`: containerized cloud deployment
 - `spec.PR_P2b.md`
-  - Implementation spec for `PR_P2b`: swap the in-memory state for a Postgres
-    backend
+  - Implementation spec for `PR_P2b`: swap the in-memory state for a Postgres backend
 - `tasks.py`
   - Exposes the `invoke` targets (Docker, AWS, pytest) from `helpers.lib_tasks`
 
 ### Code
+
 - `batch_call_auction.py`
   - `OrderBook`: pending bid/ask queue and call-auction clearing
 - `contract_dispatch.py`
@@ -66,13 +66,14 @@
   - `Gateway`: routes a prompt to a registered LLM provider and logs the
     request/response pair
 - `platform_api.py`
-  - `fastapi` app factory wrapping the auction, dispatch, and proxy modules
-    behind HTTP endpoints
+  - `fastapi` app factory wrapping the auction, dispatch, and proxy modules behind
+    HTTP endpoints
 - `postgres_store.py`
   - Postgres-backed implementations of the three in-memory storage interfaces
     (`OrderBookStore`, `ContractStore`, `RequestLogStore`)
 
 ## Description of Executables
+
 | Command                                   | Description                                                                   |
 | :---------------------------------------- | :---------------------------------------------------------------------------- |
 | `uvicorn research.Noesis.main:app`        | Serve the `NoesisPlatform` HTTP API directly (in-process, no Docker)          |
@@ -81,21 +82,22 @@
 | `invoke run_fast_tests`                   | Run the fast unit test suite under `test/`                                    |
 
 ### `main.py`
-What it does:
 
+What it does:
 - Builds the `fastapi` `app` object that `uvicorn` serves
 - Selects the `OrderBook`/`Gateway`/`ContractStore` backend from the
   `NOESIS_DB_BACKEND` env var (`"memory"` or `"postgres"`)
 - Parses `NOESIS_API_KEYS` into the `{api_key: account_id}` map
   `platform_api.create_app()` uses for `X-API-Key` auth
-
 Examples:
-
 - Run with the default in-memory backend, no auth configured:
+
   ```bash
   > uvicorn research.Noesis.main:app --host 0.0.0.0 --port 8000
   ```
+
 - Run against Postgres, with one API key mapped to `acct_1`:
+
   ```bash
   > export NOESIS_DB_BACKEND=postgres
   > export POSTGRES_HOST=localhost POSTGRES_DB=noesis POSTGRES_PORT=5432 \
@@ -105,27 +107,28 @@ Examples:
   ```
 
 ### `devops/docker_run/run_docker_noesis.sh`
-// TODO(ai_gp): This file doesn't exist?
-What it does:
 
+// TODO(ai_gp): This file doesn't exist? What it does:
 - Starts `noesis_api` (and its `noesis_postgres` dependency) via `docker compose`,
   using `devops/compose/docker-compose.noesis.yml` as an override on top of the base
   dev-container compose file
 - Prints container status, then tails `noesis_api` logs
 - Stops the containers on `Ctrl-C` (`SIGINT`/`SIGTERM` trap)
-
 Examples:
-
 - Run with the default image tag (`1.0.0`):
+
   ```bash
   > devops/docker_run/run_docker_noesis.sh
   ```
+
 - Run a specific local image version:
+
   ```bash
   > devops/docker_run/run_docker_noesis.sh 1.2.0
   ```
 
 ## Description of Workflows
+
 - Local, in-memory dev loop
   - `> uvicorn research.Noesis.main:app --reload` serves the API with the default
     `NOESIS_DB_BACKEND=memory`; state resets on every restart
@@ -150,18 +153,19 @@ Examples:
     tying the steps above together and persisting the result via `ContractStore`
 
 ## Description of Architecture
+
 - Full C1 (context), C2 (container), and C3 (component) diagrams, plus the design
   rationale behind each, live in `architecture.md`. In short:
   - Every stateful store (`OrderBook`'s order queue, `platform_api`'s contract/round
-    log, `Gateway`'s request log) sits behind a pluggable `abc.ABC`, with an in-memory
-    default and a `postgres_store.py` implementation
+    log, `Gateway`'s request log) sits behind a pluggable `abc.ABC`, with an
+    in-memory default and a `postgres_store.py` implementation
   - `passthrough_proxy.py` (`NoesisServer`) has no import relationship with
-    `batch_call_auction.py`/`contract_dispatch.py` (`NoesisMarket`); `platform_api.py`
-    unifies both only as two independent route groups on one HTTP app, not as a shared
-    dependency graph
+    `batch_call_auction.py`/`contract_dispatch.py` (`NoesisMarket`);
+    `platform_api.py` unifies both only as two independent route groups on one HTTP
+    app, not as a shared dependency graph
   - Every side effect that would be non-deterministic in a test (fulfillment outcome,
-    provider network call, wall-clock time) is injected as a callable, so tests control
-    it directly
+    provider network call, wall-clock time) is injected as a callable, so tests
+    control it directly
   - `main.py` is the single place that selects the storage backend, once, at import
     time, from `NOESIS_DB_BACKEND`; every other module is unaware which backend is
     active
@@ -169,6 +173,7 @@ Examples:
 # GP Notes
 
 ## Build
+```
 cd /Users/saggese/src/umd_classes2/research/Noesis
 i docker_build_local_image --version 1.0.0
 
@@ -183,6 +188,7 @@ uvicorn research.Noesis.main:app --reload
 
 Verify:
 curl http://127.0.0.1:8000/health
+```
 
 ## Generate APIs
 
@@ -196,6 +202,7 @@ curl http://127.0.0.1:8000/health
 2. No server needed — dump spec straight from create_app()
 cd /Users/saggese/src/umd_classes2
 
+```
 python3 -c "
 import json
 import research.Noesis.batch_call_auction as rnbacaau
@@ -206,6 +213,7 @@ app = rnoplapi.create_app(rnbacaau.OrderBook(), rnopapro.Gateway(), {'key1': 'ac
 with open('openapi.json', 'w') as f:
     json.dump(app.openapi(), f, indent=2)
 "
+```
 
 This is the schema built from the Pydantic models/routes in platform_api.py — no
 HTTP round trip, no running process.

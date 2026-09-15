@@ -1,6 +1,7 @@
 // > open_md.py -i research/Noesis/architecture.md
 
 # Rules
+
 - This document describe the code as it is, without making reference to intermediate
   PRs and how the code evolved
 - It refers to:
@@ -8,21 +9,21 @@
   - The implementation plan `research/Noesis/plan.Noesis.md`
 
 # Overview
+
 - `research/Noesis` contains:
   - `NoesisMarket`
   - `NoesisServer`
-  - a thin HTTP surface over both (`NoesisPlatform` section)
-  - a runnable deployment around that HTTP surface
-
+  - A thin HTTP surface over both (`NoesisPlatform` section)
+  - A runnable deployment around that HTTP surface
 - The HTTP surface
   - `batch_call_auction.py` and `contract_dispatch.py`: a call-auction that matches
     buyer/seller orders for LLM inference capacity and dispatches cleared contracts
     to a fulfillment layer
   - `passthrough_proxy.py`: a minimal LLM API gateway that routes prompts to
     registered providers and logs every request/response pair
-  - `platform_api.py`: a `fastapi.FastAPI` app factory that wraps both of the
-    above behind HTTP endpoints, so an external caller can reach them without
-    importing the Python modules directly
+  - `platform_api.py`: a `fastapi.FastAPI` app factory that wraps both of the above
+    behind HTTP endpoints, so an external caller can reach them without importing the
+    Python modules directly
   - `postgres_store.py`: Postgres-backed implementations of the storage interfaces
     the three modules above define, so their in-memory state can be swapped for a
     persistent backend
@@ -31,13 +32,11 @@
     `uvicorn research.Noesis.main:app`
   - `devops/`: Docker Compose deployment of `main.py`'s `app` plus a Postgres sidecar
     for local dev
-
 - Problem solved: implements a two-sided market for LLM inference capacity
   (capability tier, latency, reliability, price), a mock fulfillment/dispatch layer
   for matched contracts, and a logging/proxy layer for LLM calls, reachable over HTTP
   by a caller outside the Python process, with an optional persistent (Postgres)
   backend and a containerized deployment path
-
 - Key design decisions visible from the code:
   - Every stateful store (`OrderBook`'s pending orders, `platform_api`'s
     contract/round log, `Gateway`'s request log) sits behind a pluggable `abc.ABC`
@@ -47,15 +46,14 @@
     provider network call, wall-clock time) is injected as a callable
     (`FulfillmentFunc`, `ProviderCallFunc`, `clock_func`, `rng`), so tests control it
     directly
-  - Dataclasses encode the schema and validate every field with `hdbg.dassert_*`
-    at construction time
+  - Dataclasses encode the schema and validate every field with `hdbg.dassert_*` at
+    construction time
   - `platform_api.py` adds no new validation logic: it reuses the same
     `hdbg.dassert_*` checks already in the three lower modules, catching the
     resulting `AssertionError` once at the app level and returning an HTTP 400
   - `main.py` selects the storage backend once, at import time, from
     `NOESIS_DB_BACKEND` (`"memory"` default or `"postgres"`); every other module is
     unaware which backend is active
-
 - Who uses it: the unit test suites under `research/Noesis/test/`; an HTTP client
   wrapped in a `fastapi.testclient.TestClient` in tests, or a real HTTP client
   against `main.py`'s `app` when run via `uvicorn` or the
@@ -64,9 +62,9 @@
 # Architecture (C4 Model)
 
 ## C1 (Context)
+
 - Describes how the Noesis prototype fits with its (simulated) users and the external
   systems it integrates with, some of which are stubbed or optional
-
 - The buyer/seller side is a test harness or an HTTP caller of
   `POST /bids`/`POST /asks`
 - `External caller` is any HTTP client that reaches `NoesisMarket` and
@@ -115,8 +113,10 @@ C4Context
 ```
 
 ## C2 (Container)
+
 - Describes the six modules inside `research/Noesis` and the dependencies between
   them
+
 ```mermaid
 %%{init: {"c4": {"c4ShapeMargin": 90, "c4ShapePadding": 20, "diagramMarginX": 40, "diagramMarginY": 50, "personFontSize": 16, "personFontWeight": "bold", "systemFontSize": 16, "external_systemFontSize": 16, "containerFontSize": 16, "containerFontWeight": "bold", "boundaryFontSize": 16, "messageFontSize": 15}}}%%
 C4Container
@@ -179,9 +179,9 @@ C4Container
   the process
 
 ## C3 (Component)
+
 - Describes the runtime call chain from order submission through logged fulfillment
   outcome, the primary multi-module flow in this codebase
-
 - `OrderBook.submit_bid()`/`submit_ask()` and `clear_round()` no longer hold
   `List[Bid]`/`List[Ask]` state directly: they delegate to an injected
   `OrderBookStore` (`_InMemoryOrderBookStore` by default), so `clear_round()` fetches
