@@ -10,7 +10,6 @@ import logging
 from typing import Callable, List, Optional
 
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import scipy.stats
 
@@ -48,7 +47,9 @@ def plot_nonlinear_xy() -> None:
     ax = fig.add_subplot(111, projection="3d")
     # Plane z = x + y.
     ax.plot_surface(
-        X, Y, FX,
+        X,
+        Y,
+        FX,
         color="#4C72B0",
         alpha=0.55,
         linewidth=0,
@@ -57,7 +58,9 @@ def plot_nonlinear_xy() -> None:
     )
     # Paraboloid z = 0.1*x^2 + y^2.
     ax.plot_surface(
-        X, Y, FY,
+        X,
+        Y,
+        FY,
         color="#DD8452",
         alpha=0.55,
         linewidth=0,
@@ -160,6 +163,46 @@ def plot_nonlinear_func(
     plt.show()
 
 
+def plot_input_output_scatter(data: np.ndarray, f: Callable, n: int) -> None:
+    """
+    Scatter the first n input samples next to their transformed output.
+
+    :param data: input data samples
+    :param f: the nonlinear function to apply
+    :param n: number of points to plot
+    """
+    plt.subplot(121)
+    plt.scatter(data[:n], range(n), alpha=0.2, s=1)
+    plt.title("Input")
+    plt.subplot(122)
+    plt.title("Output")
+    plt.scatter(f(data[:n]), range(n), alpha=0.2, s=1)
+
+
+def plot_sigma_points(
+    mean: tuple,
+    p: np.ndarray,
+    sigmas: np.ndarray,
+    *,
+    seed: int = 100,
+    n_samples: int = 5000,
+) -> None:
+    """
+    Scatter sampled points from a Gaussian alongside its sigma points.
+
+    :param mean: mean of the Gaussian
+    :param p: covariance of the Gaussian
+    :param sigmas: sigma points, shape (2n+1, 2)
+    :param seed: random seed for the sampled points
+    :param n_samples: number of points to sample
+    """
+    plt.figure(figsize=[4, 4])
+    np.random.seed(seed)
+    xs, ys = np.random.multivariate_normal(mean=mean, cov=p, size=n_samples).T
+    plt.scatter(xs, ys, marker="o", alpha=0.05, color="k", edgecolors="none")
+    plt.scatter(sigmas[:, 0], sigmas[:, 1], c="r", s=30)
+
+
 def plot_bivariate_colormap(xs: np.ndarray, ys: np.ndarray) -> None:
     """
     Plot a bivariate colormap using kernel density estimation.
@@ -195,7 +238,8 @@ def plot_monte_carlo_mean(
     plot_colormap: bool = True,
 ) -> None:
     """
-    Plot the Monte Carlo mean estimate versus the true mean of a nonlinear function.
+    Plot the Monte Carlo mean estimate versus the true mean of a nonlinear
+    function.
 
     :param xs: x-axis input samples
     :param ys: y-axis input samples

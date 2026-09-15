@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.1
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -14,10 +14,10 @@
 # ---
 
 # %% [markdown]
-# # Univariate Kalman Filter
+# # Univariate Kalman filter
 
 # %% [markdown]
-# # Imports
+# ## Imports
 
 # %%
 # %load_ext autoreload
@@ -25,6 +25,9 @@
 
 import logging
 
+import numpy as np
+
+import helpers.hintrospection as hintros
 import helpers.htutorial as ut
 
 ut.config_notebook()
@@ -39,20 +42,28 @@ import L09_05_02_univariate_kalman_filter_utils as time_ut
 
 dst_dir = "figures"
 hio.create_dir(dst_dir, incremental=True)
-# # cp msml610/tutorials/figures/*.png msml610/lectures_source/figures
+# !cp msml610/tutorials/figures/*.png msml610/lectures_source/figures
 
 # %% [markdown]
-# # Cell 1: Sum and Product of Gaussians
+# # Part 1: Sum and Product of Gaussians
+
+# %% [markdown]
+# ## Cell 1.1: Representing a Gaussian
+#
+# **Goal**:
+# - Introduce `time_ut.Gaussian(mean, var)`, the `(mean, var)` named tuple
+#   used to represent a belief throughout this notebook
 
 # %%
 x = time_ut.Gaussian(3.4, 10.1)
-print(x)
+print("x=", x)
 print("x.mean=", x.mean)
 print("x.var=", x.var)
 
 # %% [markdown]
-# ## Cell 1.1: Sum of Gaussians
-# - Given two Gaussians $X$ and $Y$
+# ## Cell 1.2: Sum of Gaussians
+#
+# - Given 2 Gaussians $X$ and $Y$
 #   $$X \sim Normal(\mu_1, \sigma_1^2)$$
 #   $$Y \sim Normal(\mu_2, \sigma_2^2)$$
 # - For correlated Gaussians with correlation coefficient $\rho$, the sum
@@ -63,7 +74,10 @@ print("x.var=", x.var)
 #   - The mean is the sum of the means (by linearity)
 #   - For independent Gaussians ($\rho = 0$), the variance is the sum of
 #     variances (uncertainty increases)
-#   - Positive correlation increases variance, negative correlation decreases it
+#   - Positive correlation increases variance, negative correlation
+#     decreases it
+#
+# **Implementation**: `time_ut.gaussian_sum(x, y)`
 
 # %%
 # Sum two Gaussians.
@@ -71,55 +85,65 @@ x = time_ut.Gaussian(10, 0.2**2)
 y = time_ut.Gaussian(15, 0.7**2)
 
 z = time_ut.gaussian_sum(x, y)
-print(z)
+print("z=", z)
 
 # %%
 ax = time_ut.plot_gaussian(x, label="x")
 time_ut.plot_gaussian(y, ax=ax, label="y")
-time_ut.plot_gaussian(z, ax=ax, label="z");
+_ = time_ut.plot_gaussian(z, ax=ax, label="z")
 
 # %% [markdown]
-# **Goal**:
-# - Explore the sum of two Gaussians $X \sim N(\mu_1, \sigma_1^2)$ and
-#   $Y \sim N(\mu_2, \sigma_2^2)$ with correlation $\rho$
-# - Observe how mean and variance of $Z = X + Y$ change with parameters
-#
-# **Plots**:
-# - Input Gaussians $X$ (blue) and $Y$ (yellow) as filled PDFs
-# - Analytical sum $Z$ (red line)
-# - Numerical sum via sampling (light coral histogram)
-#
-# **Parameters**:
-# - `mu1` ($\mu_1$): mean of $X$
-# - `sigma1` ($\sigma_1$): standard deviation of $X$
-# - `mu2` ($\mu_2$): mean of $Y$
-# - `sigma2` ($\sigma_2$): standard deviation of $Y$
-# - `rho` ($\rho$): correlation coefficient between $X$ and $Y$
-#
-# **Key observations**:
-# - The mean of $Z$ is always $\mu_1 + \mu_2$ regardless of correlation
-# - Positive $\rho$ increases variance; negative $\rho$ decreases it
-# - For independent Gaussians ($\rho = 0$), variance is simply
-#   $\sigma_1^2 + \sigma_2^2$
+# **Implementation**: `time_ut.cell1_1_plot_gaussian_sum()`
+# - Plots input Gaussians $X$ (blue) and $Y$ (yellow) as filled PDFs, the
+#   analytical sum $Z$ (red line), and a numerical sum via sampling
+#   (light coral histogram)
 
 # %%
-# Interactive exploration of sum of Gaussians with correlation.
+hintros.print_obj_info(time_ut.cell1_1_plot_gaussian_sum)
+
+# %%
 time_ut.cell1_1_plot_gaussian_sum()
 
 # %% [markdown]
-# ## Cell 1.2: Product of Gaussians
-# - Given two Gaussians $X$ and $Y$
+# **Usage**
+# - Inputs
+#   - **`mu1`** ($\mu_1$): mean of $X$
+#   - **`sigma1`** ($\sigma_1$): standard deviation of $X$
+#   - **`mu2`** ($\mu_2$): mean of $Y$
+#   - **`sigma2`** ($\sigma_2$): standard deviation of $Y$
+#   - **`rho`** ($\rho$): correlation coefficient between $X$ and $Y$
+#
+# - Panels
+#   - **`left`**: $X$ and $Y$ as filled PDFs, the analytical sum $Z$, and
+#     the sampled numerical sum
+
+# %% [markdown]
+# **Guided usage**
+# - Set `rho=0`
+#   - Observe $Z$'s variance equals $\sigma_1^2 + \sigma_2^2$ exactly
+# - Raise `rho` toward `1`
+#   - Observe $Z$'s variance grows beyond $\sigma_1^2 + \sigma_2^2$
+# - Lower `rho` toward `-1`
+#   - Observe $Z$'s variance shrinks below $\sigma_1^2 + \sigma_2^2$
+# - In every case, observe $Z$'s mean stays $\mu_1 + \mu_2$
+
+# %% [markdown]
+# ## Cell 1.3: Product of Gaussians
+#
+# - Given 2 Gaussians $X$ and $Y$
 #   $$X \sim Normal(\mu_X, \sigma_X^2)$$
 #   $$Y \sim Normal(\mu_Y, \sigma_Y^2)$$
 # - The product $Z = X \cdot Y$ (PDF multiplication) is a Gaussian
 #   $Normal(\mu_Z, \sigma_Z^2)$ with:
-#   $$\mu_Z = \frac{\mu_X \sigma_Y^2 + \mu_Y \sigma_X^2}{\sigma_X^2 + \sigma_Y^2}$$
+#   $$\mu_Z = \frac{\mu_X \sigma_Y^2 + \mu_Y \sigma_X^2}{\sigma_X^2 +
+#     \sigma_Y^2}$$
 #   $$\sigma_Z^2 = \frac{\sigma_X^2 \sigma_Y^2}{\sigma_X^2 + \sigma_Y^2}$$
 # - **Interpretation:**
 #   - Reduces variance by incorporating more information
-#   - If one Gaussian $X$ is narrower (more accurate), result leans towards $X$
-#   - If two Gaussians are similar (measures corroborate), result becomes more
-#     certain
+#   - If one Gaussian $X$ is narrower (more accurate), the result leans
+#     towards $X$
+#   - If the 2 Gaussians are similar (measures corroborate), the result
+#     becomes more certain
 
 # %% [markdown]
 # **Gaussian products in terms of precision**
@@ -130,24 +154,27 @@ time_ut.cell1_1_plot_gaussian_sum()
 #   $$\tau_Z = \tau_X + \tau_Y$$
 #   $$\sigma_Z^2 = \frac{1}{\frac{1}{\sigma_X^2} + \frac{1}{\sigma_Y^2}}$$
 # - The mean is the average of the means weighted by the precisions
-#   $$\mu_Z = \sigma_Z^2 (\frac{\mu_X}{\sigma_X^2} + \frac{\mu_Y}{\sigma_Y^2})$$
+#   $$\mu_Z = \sigma_Z^2 (\frac{\mu_X}{\sigma_X^2} +
+#     \frac{\mu_Y}{\sigma_Y^2})$$
 #
 # - The mean is averaged towards the more certain Gaussian
 # - The variance is smaller than both
+#
+# **Implementation**: `time_ut.gaussian_multiply(x, y)`
 
 # %%
 # Product of two equal Gaussians.
 x = time_ut.Gaussian(10, 1.0)
 
 z = time_ut.gaussian_multiply(x, x)
-print(z)
+print("z=", z)
 
 # The result is more certain than both.
 
 # %%
 ax = time_ut.plot_gaussian(x, label="x")
 time_ut.plot_gaussian(x, ax=ax, label="x")
-time_ut.plot_gaussian(z, ax=ax, label="z");
+_ = time_ut.plot_gaussian(z, ax=ax, label="z")
 
 # %%
 # Product of two different Gaussians.
@@ -155,95 +182,104 @@ x = time_ut.Gaussian(10, 0.2**2)
 y = time_ut.Gaussian(15, 0.7**2)
 
 z = time_ut.gaussian_multiply(x, y)
-print(z)
+print("z=", z)
 
 ax = time_ut.plot_gaussian(x, label="x")
 time_ut.plot_gaussian(y, ax=ax, label="y")
-time_ut.plot_gaussian(z, ax=ax, label="z");
+_ = time_ut.plot_gaussian(z, ax=ax, label="z")
 
 # %%
 x = time_ut.Gaussian(10.2, 1)
 y = time_ut.Gaussian(9.7, 1)
 
 z = time_ut.gaussian_multiply(x, y)
-print(z)
+print("z=", z)
 
 ax = time_ut.plot_gaussian(x, label="x")
 time_ut.plot_gaussian(y, ax=ax, label="y")
-time_ut.plot_gaussian(z, ax=ax, label="z");
+_ = time_ut.plot_gaussian(z, ax=ax, label="z")
 
 # %% [markdown]
-# **Goal**:
-# - Explore the product of two Gaussian PDFs $X \sim N(\mu_1, \sigma_1^2)$ and
-#   $Y \sim N(\mu_2, \sigma_2^2)$
-# - Observe how combining two beliefs (product) reduces uncertainty
-#
-# **Plots**:
-# - Input Gaussians $X$ (blue) and $Y$ (yellow) as filled PDFs
-# - Analytical product $Z$ (red line)
-# - Numerical product via importance sampling (light coral histogram)
-#
-# **Parameters**:
-# - `mu1` ($\mu_1$): mean of $X$
-# - `sigma1` ($\sigma_1$): standard deviation of $X$
-# - `mu2` ($\mu_2$): mean of $Y$
-# - `sigma2` ($\sigma_2$): standard deviation of $Y$
-#
-# **Key observations**:
-# - The product pulls the mean toward the more certain (narrower) Gaussian
-# - The resulting variance is smaller than both input variances
-# - When inputs agree, the result is very sharp (high certainty)
+# **Implementation**: `time_ut.cell1_2_plot_gaussian_product()`
+# - Plots input Gaussians $X$ (blue) and $Y$ (yellow) as filled PDFs, the
+#   analytical product $Z$ (red line), and a numerical product via
+#   importance sampling (light coral histogram)
 
 # %%
-# Interactive exploration of product of Gaussians.
+hintros.print_obj_info(time_ut.cell1_2_plot_gaussian_product)
+
+# %%
 time_ut.cell1_2_plot_gaussian_product()
 
 # %% [markdown]
-# # Cell 2: Tracking the Dog
+# **Usage**
+# - Inputs
+#   - **`mu1`** ($\mu_1$): mean of $X$
+#   - **`sigma1`** ($\sigma_1$): standard deviation of $X$
+#   - **`mu2`** ($\mu_2$): mean of $Y$
+#   - **`sigma2`** ($\sigma_2$): standard deviation of $Y$
+#
+# - Panels
+#   - **`left`**: $X$ and $Y$ as filled PDFs, the analytical product $Z$,
+#     and the sampled numerical product
 
 # %% [markdown]
+# **Guided usage**
+# - Set `sigma1` much smaller than `sigma2`
+#   - Observe $Z$'s mean sits close to `mu1`: the product pulls the mean
+#     toward the more certain (narrower) Gaussian
+# - Set `mu1` close to `mu2`, both with small sigmas
+#   - Observe $Z$ becomes very sharp: when the inputs agree, the product
+#     is highly certain
+# - Compare $Z$'s width to both inputs
+#   - Observe it is always narrower than either input
+
+# %% [markdown]
+# # Part 2: Tracking the Dog
+
+# %% [markdown]
+# ## Cell 2.1: The predict-update cycle
+#
 # - The intuition is the same as the discrete case
-#
 # - There is a cycle of prediction and updates
-#     1) Predict: prior = x_est using system model
-#     2) Update: posterior = likelihood * prior
-#
+#   1. Predict: prior = x_est using system model
+#   2. Update: posterior = likelihood * prior
 # - Create prior (using current estimate and system model)
 #   - `prior = predict(x, process_model)`
 # - Create likelihood (using measurement)
 #   - `likelihood = gaussian(z, sensor_var)`
 # - Update belief using prior and likelihood
 #   - `x = update(prior, likelihood)`
+# - Sum adds uncertainty; multiplication reduces uncertainty
+# - Let's assume that the dog moves in the hallway, back and forth (it's
+#   not circular), and we have a sensor that measures the distance of the
+#   dog from one extreme
 
 # %% [markdown]
-# - Sum adds uncertainty
-# - Multiplication reduces uncertainty
-
-# %% [markdown]
-# - Let's assume that the dog moves in the hallway, back and forth
-#   - It's not circular
-# - We have a sensor that measures the distance of the dog from one extreme
-
-# %% [markdown]
-# We can use Newton's equation of motion to compute the position of the dog,
-# based on current position and velocity
+# We can use Newton's equation of motion to compute the position of the
+# dog, based on current position and velocity
 #
 # $$\overline{x}_k = x_{k-1} + v_k \Delta_t$$
 #
 # - $x_{k-1}$ has uncertainty quantified by a Gaussian
 # - $v_k$ has also uncertainty quantified by a Gaussian
 #
-# We can compute the sum of two Gaussians in terms of mean and uncertainty
-# - It makes sense since we know that uncertainty becomes larger
+# We can compute the sum of 2 Gaussians in terms of mean and uncertainty.
+# It makes sense since we know that uncertainty becomes larger.
+#
+# The likelihood $z | x$ is the probability of measures given the current
+# state.
 
 # %% [markdown]
-# - The likelihood $z | x$ is the probability of measures given the current
-#   state
+# ## Cell 2.2: Simulating the dog and its sensor
 #
+# **Goal**:
+# - Simulate a dog moving at constant velocity, with a noisy sensor, to
+#   generate the data the filter will track in Cell 2.3
 #
+# **Implementation**: `time_ut.DogSimulation(...)`
 
 # %%
-import numpy as np
 np.random.seed(13)
 
 # Variance in the dog's movement.
@@ -256,7 +292,8 @@ x = time_ut.Gaussian(0.0, 20.0**2)
 velocity = 1.0
 # Time step in seconds.
 dt = 1.0
-# Displacement to add to x (representing how to model the movement of the dog).
+# Displacement to add to x (representing how to model the movement of the
+# dog).
 process_model = time_ut.Gaussian(velocity * dt, process_var)
 
 # Simulate dog and get measurements.
@@ -264,14 +301,22 @@ dog = time_ut.DogSimulation(
     x0=x.mean,
     velocity=process_model.mean,
     measurement_var=sensor_var,
-    process_var=process_model.var)
+    process_var=process_model.var,
+)
 
 # Simulate dog and collect measurements and actual positions.
 n_steps = 10
 sim_data = [dog.move_and_sense() for _ in range(n_steps)]
 zs = [m for m, _ in sim_data]
 actual_positions = [pos for _, pos in sim_data]
-print(zs)
+print("zs=", zs)
+
+# %% [markdown]
+# ## Cell 2.3: Running the Kalman filter
+#
+# **Goal**:
+# - Run the predict-update cycle from Cell 2.1 on the simulated data, and
+#   check that the posterior's uncertainty settles below the sensor's
 
 # %%
 # Perform Kalman filter on measurements.
@@ -281,30 +326,39 @@ for z, actual_pos in zip(zs, actual_positions):
     likelihood = time_ut.Gaussian(z, sensor_var)
     x = time_ut.update(prior, likelihood)
     kf_info.append(
-        time_ut.KfInfo(prior=prior, measurement=z, actual_pos=actual_pos, posterior=x)
+        time_ut.KfInfo(
+            prior=prior, measurement=z, actual_pos=actual_pos, posterior=x
+        )
     )
 
 print(time_ut.kf_info_to_df(kf_info))
 
 # %% [markdown]
-# - The uncertainty after prediction is > than the uncertainty after update (as usual)
-# - The variance of the prior at time 0 is very large, but after we measure, the
-#     variance of the measurement "dominates" (i.
-# - The posterior values are always between the measurement and the prior
-# - After a few cycles the posterior variance is around 1, which is smaller than the sensor variance ~2
-#   - Using a model + measurements is better
+# - The uncertainty after prediction is larger than the uncertainty after
+#   update (as usual)
+# - The variance of the prior at time 0 is very large, but after we
+#   measure, the variance of the measurement "dominates"
+# - The posterior values are always between the measurement and the
+#   prior
+# - After a few cycles the posterior variance is around 1, which is
+#   smaller than the sensor variance (~2): using a model + measurements
+#   is better
 
 # %%
 # Plot Kalman filter results.
 time_ut.plot_kf_info(kf_info, show_actual_pos="scatter")
 
 # %% [markdown]
-# ## Bad Initial Estimate
+# ## Cell 2.4: Bad initial estimate
+#
+# **Goal**:
+# - Start the filter's belief far from the dog's true starting position,
+#   and check that it still converges given enough measurements
 
 # %%
 seed = 42
 process_var = 2.0
-sensor_var = 2.0 ** 2
+sensor_var = 2.0**2
 # Belief about initial position.
 initial_position = 400
 initial_pos_var = 1.0
@@ -312,8 +366,18 @@ initial_pos_var = 1.0
 actual_initial_pos = 0.0
 n_steps = 100
 
-kf_info = time_ut._run_dog_simulation(seed, process_var, sensor_var, initial_position, actual_initial_pos=actual_initial_pos, initial_pos_var=initial_pos_var, n_steps=n_steps)
-time_ut.plot_kf_info(kf_info, show_prior="none", show_actual_pos="line", show_posterior="line")
+kf_info = time_ut._run_dog_simulation(
+    seed,
+    process_var,
+    sensor_var,
+    initial_position,
+    actual_initial_pos=actual_initial_pos,
+    initial_pos_var=initial_pos_var,
+    n_steps=n_steps,
+)
+time_ut.plot_kf_info(
+    kf_info, show_prior="none", show_actual_pos="line", show_posterior="line"
+)
 
 # %%
 # Belief about initial position.
@@ -322,39 +386,71 @@ initial_pos_var = 100.0
 # Actual initial position.
 actual_initial_pos = 0.0
 
-kf_info = time_ut._run_dog_simulation(seed, process_var, sensor_var, initial_position, actual_initial_pos=actual_initial_pos, initial_pos_var=initial_pos_var, n_steps=n_steps)
-time_ut.plot_kf_info(kf_info, show_prior="none", show_actual_pos="line", show_posterior="line")
+kf_info = time_ut._run_dog_simulation(
+    seed,
+    process_var,
+    sensor_var,
+    initial_position,
+    actual_initial_pos=actual_initial_pos,
+    initial_pos_var=initial_pos_var,
+    n_steps=n_steps,
+)
+time_ut.plot_kf_info(
+    kf_info, show_prior="none", show_actual_pos="line", show_posterior="line"
+)
 
 # %% [markdown]
-# ## Extreme amount of noise
+# ## Cell 2.5: Extreme amount of noise
+#
+# **Goal**:
+# - Push the sensor noise to an extreme, and check that the filter still
+#   recovers the dog's position as long as the process model is trusted
 
 # %%
 seed = 42
 process_var = 2.0
-sensor_var = 300.0 ** 2
+sensor_var = 300.0**2
 initial_position = 0.0
 n_steps = 1000
 
-kf_info = time_ut._run_dog_simulation(seed, process_var, sensor_var, initial_position, n_steps=n_steps)
-time_ut.plot_kf_info(kf_info, show_prior="none", show_actual_pos="line", show_posterior="line")
+kf_info = time_ut._run_dog_simulation(
+    seed, process_var, sensor_var, initial_position, n_steps=n_steps
+)
+time_ut.plot_kf_info(
+    kf_info, show_prior="none", show_actual_pos="line", show_posterior="line"
+)
 
 # %% [markdown]
-# - Even with extreme amounts of noise we recover the position of the dog
-#   - This is because the process error is small (we can trust the model)
+# - Even with extreme amounts of noise we recover the position of the
+#   dog
+# - This is because the process error is small (we can trust the model)
 
 # %% [markdown]
-# ## Too much belief in the model
+# ## Cell 2.6: Too much belief in the model
+#
+# **Goal**:
+# - Have the dog accelerate, violating the constant-velocity process
+#   model, and check that an over-confident filter fails to track it
 
 # %%
 seed = 42
 process_var = 2.0
-sensor_var = 300.0 ** 2
+sensor_var = 300.0**2
 acceleration = 0.04
 initial_position = 0.0
 n_steps = 300
 
-kf_info = time_ut._run_dog_simulation(seed, process_var, sensor_var, initial_position, acceleration=acceleration, n_steps=n_steps)
-time_ut.plot_kf_info(kf_info, show_prior="none", show_actual_pos="line", show_posterior="line")
+kf_info = time_ut._run_dog_simulation(
+    seed,
+    process_var,
+    sensor_var,
+    initial_position,
+    acceleration=acceleration,
+    n_steps=n_steps,
+)
+time_ut.plot_kf_info(
+    kf_info, show_prior="none", show_actual_pos="line", show_posterior="line"
+)
 
 # %% [markdown]
 # - The filter is not able to follow the change of velocity of the dog
@@ -362,45 +458,81 @@ time_ut.plot_kf_info(kf_info, show_prior="none", show_actual_pos="line", show_po
 # %%
 seed = 42
 process_var = 2.0
-sensor_var = 2.0 ** 2
+sensor_var = 2.0**2
 acceleration = 0.04
 initial_position = 0.0
 n_steps = 50
 
-kf_info = time_ut._run_dog_simulation(seed, process_var, sensor_var, initial_position, acceleration=acceleration, n_steps=n_steps)
-time_ut.plot_kf_info(kf_info, show_prior="none", show_actual_pos="line", show_posterior="line", show_measurements="none")
+kf_info = time_ut._run_dog_simulation(
+    seed,
+    process_var,
+    sensor_var,
+    initial_position,
+    acceleration=acceleration,
+    n_steps=n_steps,
+)
+time_ut.plot_kf_info(
+    kf_info,
+    show_prior="none",
+    show_actual_pos="line",
+    show_posterior="line",
+    show_measurements="none",
+)
 
 # %% [markdown]
-# **Goal**:
-# - Explore a Kalman filter tracking a dog moving in 1D with Gaussian noise
-# - Understand how the filter balances process model and sensor measurements
+# ## Cell 2.7: Interactively exploring the filter
 #
-# **Plots**:
+# **Goal**:
+# - Let students sweep every parameter from Cells 2.4-2.6 at once, to
+#   consolidate the intuition for how the filter balances the process
+#   model against sensor measurements
+#
+# **Implementation**: `time_ut.cell2_interactive_dog_simulation()`
 # - Prior (predict) as red up-triangles: prediction from motion model
 # - Measurement as black circles: noisy sensor readings
 # - Posterior (update) as green down-triangles: filtered estimate
-# - Posterior uncertainty as shaded green bands ($\pm 1, 2, 3 \sigma$)
-#
-# **Parameters**:
-# - `process_var` ($\sigma_p^2$): variance in the dog's movement model
-# - `sensor_var` ($\sigma_s^2$): variance in the sensor measurements
-# - `initial_position` ($x_0$): belief about the dog's starting position
-# - `actual_initial_pos`: the dog's true starting position (can differ from
-#   belief to simulate a wrong initial estimate)
-# - `initial_pos_var`: uncertainty (variance) in the initial position belief;
-#   large values mean we are very uncertain about where the dog starts
-# - `acceleration`: dog's acceleration (m/s²); non-zero values make the dog
-#   speed up over time, testing the filter's ability to track
-# - `seed`: random seed for reproducibility
-#
-# **Key observations**:
-# - With small `sensor_var`, measurements dominate and the filter trusts the sensor
-# - With small `process_var`, the motion model dominates and changes less
-# - After several steps, posterior variance stabilizes below both input variances
+# - Posterior uncertainty as shaded green bands (+-1, 2, 3 sigma)
 
 # %%
-# Interactive Dog simulation with adjustable parameters.
+hintros.print_obj_info(time_ut.cell2_interactive_dog_simulation)
+
+# %%
 time_ut.cell2_interactive_dog_simulation()
 
 # %% [markdown]
-# - Is it better to have precise measurements (`sensor_var` << `process_var`) or vice versa?
+# **Usage**
+# - Inputs
+#   - **`process_var`** ($\sigma_p^2$): variance in the dog's movement
+#     model
+#   - **`sensor_var`** ($\sigma_s^2$): variance in the sensor
+#     measurements
+#   - **`initial_position`** ($x_0$): belief about the dog's starting
+#     position
+#   - **`actual_initial_pos`**: the dog's true starting position (can
+#     differ from the belief to simulate a wrong initial estimate)
+#   - **`initial_pos_var`**: uncertainty (variance) in the initial
+#     position belief; large values mean we are very uncertain about
+#     where the dog starts
+#   - **`acceleration`**: dog's acceleration ($m/s^2$); non-zero values
+#     make the dog speed up over time, testing the filter's ability to
+#     track
+#   - **`seed`**: random seed for reproducibility
+#
+# - Panels
+#   - **`left`**: prior, measurements, posterior, and posterior
+#     uncertainty bands over time
+#   - **`Comments`**: the current parameters, and the final posterior
+#     mean/variance
+
+# %% [markdown]
+# **Guided usage**
+# - Lower `sensor_var` far below `process_var`
+#   - Observe the posterior in Comments tracks the measurements closely:
+#     the filter trusts the sensor
+# - Lower `process_var` far below `sensor_var`
+#   - Observe the posterior changes less: the motion model dominates
+# - Let the simulation run its full 25 steps
+#   - Observe the final posterior variance in Comments stabilizes below
+#     both input variances
+# - Is it better to have precise measurements (`sensor_var` <<
+#   `process_var`) or vice versa?

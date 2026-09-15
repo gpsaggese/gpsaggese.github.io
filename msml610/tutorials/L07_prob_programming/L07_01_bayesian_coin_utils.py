@@ -14,6 +14,7 @@ import ipywidgets
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats as stats
+import seaborn as sns
 from IPython.display import clear_output, display
 
 import helpers.htutorial as htutori
@@ -22,7 +23,109 @@ _LOG = logging.getLogger(__name__)
 
 
 # #############################################################################
-# Probability distributions.
+# Cell 1.1: Bernoulli
+# #############################################################################
+
+
+def cell1_1_sample_bernoulli_widget() -> None:
+    """
+    Sample from a Bernoulli(p) distribution and print the realizations.
+    """
+    n_slider, n_box = htutori.build_widget_control(
+        name="n",
+        description="number of samples",
+        min_val=1,
+        max_val=50,
+        step=1,
+        initial_value=4,
+        is_float=False,
+    )
+    p_slider, p_box = htutori.build_widget_control(
+        name="p",
+        description="success probability",
+        min_val=0.0,
+        max_val=1.0,
+        step=0.01,
+        initial_value=0.35,
+        is_float=True,
+    )
+    output = ipywidgets.Output()
+
+    def update_plot(change: object = None) -> None:
+        _ = change
+        with output:
+            clear_output(wait=True)
+            n = int(n_slider.value)
+            p = p_slider.value
+            data = stats.bernoulli.rvs(p=p, size=n)
+            print(f"Bernoulli(p={p}) - {n} realizations:")
+            print("data=", data)
+
+    n_slider.observe(update_plot, names="value")
+    p_slider.observe(update_plot, names="value")
+    update_plot()
+    display(ipywidgets.VBox([n_box, p_box, output]))
+
+
+# #############################################################################
+# Cell 1.2: Binomial
+# #############################################################################
+
+
+def cell1_2_sample_binomial_widget() -> None:
+    """
+    Sample from a Binomial(trials, p) distribution and print the
+    realizations.
+    """
+    n_slider, n_box = htutori.build_widget_control(
+        name="n",
+        description="number of samples",
+        min_val=1,
+        max_val=50,
+        step=1,
+        initial_value=4,
+        is_float=False,
+    )
+    trials_slider, trials_box = htutori.build_widget_control(
+        name="trials",
+        description="trials per sample",
+        min_val=1,
+        max_val=100,
+        step=1,
+        initial_value=10,
+        is_float=False,
+    )
+    p_slider, p_box = htutori.build_widget_control(
+        name="p",
+        description="success probability",
+        min_val=0.0,
+        max_val=1.0,
+        step=0.01,
+        initial_value=0.35,
+        is_float=True,
+    )
+    output = ipywidgets.Output()
+
+    def update_plot(change: object = None) -> None:
+        _ = change
+        with output:
+            clear_output(wait=True)
+            n = int(n_slider.value)
+            trials = int(trials_slider.value)
+            p = p_slider.value
+            data = stats.binom.rvs(n=trials, p=p, size=n)
+            print(f"Binomial(n={trials}, p={p}) - {n} realizations:")
+            print("data=", data)
+
+    n_slider.observe(update_plot, names="value")
+    trials_slider.observe(update_plot, names="value")
+    p_slider.observe(update_plot, names="value")
+    update_plot()
+    display(ipywidgets.VBox([n_box, trials_box, p_box, output]))
+
+
+# #############################################################################
+# Cell 1.4: Binomial Distribution Grid
 # #############################################################################
 
 
@@ -65,9 +168,66 @@ def plot_binomial() -> None:
     htutori.process_figure(title)
 
 
+def cell1_5_sample_beta_widget() -> None:
+    """
+    Sample from a Beta(a, b) distribution and print the realizations.
+    """
+    n_slider, n_box = htutori.build_widget_control(
+        name="n",
+        description="number of samples",
+        min_val=1,
+        max_val=50,
+        step=1,
+        initial_value=4,
+        is_float=False,
+    )
+    a_slider, a_box = htutori.build_widget_control(
+        name="a",
+        description="alpha (shape1)",
+        min_val=0.1,
+        max_val=10.0,
+        step=0.1,
+        initial_value=2.0,
+        is_float=True,
+    )
+    b_slider, b_box = htutori.build_widget_control(
+        name="b",
+        description="beta (shape2)",
+        min_val=0.1,
+        max_val=10.0,
+        step=0.1,
+        initial_value=5.0,
+        is_float=True,
+    )
+    output = ipywidgets.Output()
+
+    def update_plot(change: object = None) -> None:
+        _ = change
+        with output:
+            clear_output(wait=True)
+            n = int(n_slider.value)
+            a = a_slider.value
+            b = b_slider.value
+            data = stats.beta.rvs(a=a, b=b, size=n)
+            print(f"Beta(a={a}, b={b}) - {n} realizations:")
+            print("data=", data)
+
+    n_slider.observe(update_plot, names="value")
+    a_slider.observe(update_plot, names="value")
+    b_slider.observe(update_plot, names="value")
+    update_plot()
+    display(ipywidgets.VBox([n_box, a_box, b_box, output]))
+
+
+# #############################################################################
+# Cell 1.7: Beta Distribution Grid
+# #############################################################################
+
+
 def plot_beta() -> None:
     """
-    Plot beta distribution for various alpha and beta parameter combinations.
+    Plot beta distribution for various alpha and beta parameter
+    combinations.
     """
     # Alpha and beta values to plot.
     a_params = [0.8, 1.0, 2.0, 4.0]
@@ -156,15 +316,22 @@ def _validate_ab(
 
 def beta_prior_interactive() -> None:
     """
-    Create an interactive ipywidgets visualization with a single Beta prior.
+    Create an interactive Beta-prior posterior-update visualization.
     """
-    # Widgets.
+    sns.set_style("whitegrid")
+    # Widgets, seed first.
+    seed_int: ipywidgets.IntText = ipywidgets.IntText(
+        value=42,
+        description="seed",
+        style={"description_width": "90px"},
+        layout=ipywidgets.Layout(width="200px"),
+    )
     theta_slider: ipywidgets.FloatSlider = ipywidgets.FloatSlider(
         value=0.35,
         min=0.0,
         max=1.0,
         step=0.01,
-        description="θ (true)",
+        description="theta (true)",
         readout_format=".2f",
         continuous_update=False,
         style={"description_width": "90px"},
@@ -176,18 +343,12 @@ def beta_prior_interactive() -> None:
         style={"description_width": "90px"},
         layout=ipywidgets.Layout(width="420px"),
     )
-    seed_int: ipywidgets.IntText = ipywidgets.IntText(
-        value=42,
-        description="seed",
-        style={"description_width": "90px"},
-        layout=ipywidgets.Layout(width="200px"),
-    )
     # Single prior parameter widgets.
     a1: ipywidgets.FloatText = ipywidgets.FloatText(
-        value=1.0, description="α", layout=ipywidgets.Layout(width="150px")
+        value=1.0, description="alpha", layout=ipywidgets.Layout(width="150px")
     )
     b1: ipywidgets.FloatText = ipywidgets.FloatText(
-        value=1.0, description="β", layout=ipywidgets.Layout(width="150px")
+        value=1.0, description="beta", layout=ipywidgets.Layout(width="150px")
     )
     index_slider: ipywidgets.IntSlider = ipywidgets.IntSlider(
         value=0,
@@ -205,8 +366,9 @@ def beta_prior_interactive() -> None:
     ipywidgets.jslink((play, "value"), (index_slider, "value"))
     out: ipywidgets.Output = ipywidgets.Output()
 
-    # Core update function
-    def refresh_plot(*args) -> None:
+    # Core update function.
+    def refresh_plot(change: object = None) -> None:
+        _ = change
         with out:
             clear_output(wait=True)
             theta_real: float = theta_slider.value
@@ -230,29 +392,44 @@ def beta_prior_interactive() -> None:
                 else 1.0
             )
             ymax *= 1.1
-            plt.figure(figsize=(8, 5))
-            label = f"Posterior: α={alpha:g}, β={beta:g}"
-            plt.fill_between(x, 0, post, alpha=0.5, label=label)
-            plt.axvline(theta_real, ymax=0.3, linestyle="--")
-            plt.xlabel("θ")
-            plt.ylabel("density")
-            plt.xlim(0, 1)
-            plt.ylim(0, max(10, ymax))
-            plt.legend(loc="upper left", frameon=False)
-            title = f"Posterior after N={N} trials, y={y} heads"
-            plt.title(title)
+            # Panel 1: the posterior density, with the true theta marked.
+            fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+            label = f"Posterior: alpha={alpha:g}, beta={beta:g}"
+            ax1.fill_between(
+                x, 0, post, alpha=0.5, color="steelblue", label=label
+            )
+            ax1.axvline(theta_real, ymax=0.3, linestyle="--", color="black")
+            ax1.set_xlabel("theta")
+            ax1.set_ylabel("density")
+            ax1.set_xlim(0, 1)
+            ax1.set_ylim(0, max(10, ymax))
+            ax1.legend(loc="upper left", frameon=False)
+            ax1.set_title(f"Posterior after N={N} trials, y={y} heads")
+            # Panel 2: comments with the current parameters and posterior.
+            ax2.axis("off")
+            ax2.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
+            text_content = (
+                f"theta (true) = {theta_real:.2f}\n"
+                f"seed = {seed}\n\n"
+                f"Prior: Beta(alpha={alpha:g}, beta={beta:g})\n\n"
+                f"Trial index: {idx}\n"
+                f"N = {N}, y = {y} heads\n\n"
+                f"Posterior: Beta(alpha={alpha + y:g}, beta={beta + N - y:g})"
+            )
+            htutori.add_fitted_text_box(ax2, text_content)
+            plt.tight_layout()
             plt.show()
 
-    # Bind observers
-    for w in [theta_slider, trials_text, seed_int, a1, b1, index_slider]:
+    # Bind observers.
+    for w in [seed_int, theta_slider, trials_text, a1, b1, index_slider]:
         w.observe(refresh_plot, names="value")
 
-    # Initial draw
+    # Initial draw.
     refresh_plot()
 
-    # Layout.
+    # Layout, seed first.
     prior_box = ipywidgets.HBox([a1, b1])
-    top_box = ipywidgets.HBox([theta_slider, seed_int])
+    top_box = ipywidgets.HBox([seed_int, theta_slider])
     trials_box = ipywidgets.HBox([trials_text])
     index_box = ipywidgets.HBox([play, index_slider])
     #
@@ -354,7 +531,8 @@ def sin_loss(y_hat: LossValue, y_true: LossValue) -> LossValue:
 
 def asymmetric_loss(y_hat: LossValue, y_true: LossValue) -> LossValue:
     """
-    Compute asymmetric loss function with different penalties for over/under prediction.
+    Compute asymmetric loss function with different penalties for over/under
+    prediction.
 
     :param y_hat: Predicted value(s)
     :param y_true: True value(s)

@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.5
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -24,9 +24,6 @@
 #   pull next
 # - **Orchestration**: `BanditExperiment`, `BanditSimulation`, and
 #   `BanditEnsemble`, running one, many, or many-times-many trials
-
-# %% [markdown]
-# # Multi Armed Bandits Sim API
 
 # %% [markdown]
 # ## Imports and Setup
@@ -388,7 +385,7 @@ ensemble.plot_ensemble_comparison(ensemble_results=ensemble_results, epsilon=0.2
 # # Part 6: Composition Examples
 
 # %% [markdown]
-# ## Example 1: Smallest Meaningful Object
+# ## Cell 6.1: Smallest Meaningful Object
 #
 # Just the environment, pulled a few times.
 
@@ -397,7 +394,7 @@ mini_bandit = sim.MultiArmedBandit(k_machines=2, mu_values=[0.1, 0.3], seed=7)
 print([mini_bandit.pull(0) for _ in range(3)])
 
 # %% [markdown]
-# ## Example 2: Add a Policy, Manually
+# ## Cell 6.2: Add a Policy, Manually
 #
 # Drive the environment with a policy's decisions, without `BanditExperiment`.
 # This is exactly what `BanditExperiment.run()` automates.
@@ -412,7 +409,7 @@ for _ in range(10):
 print("manual total=", total)
 
 # %% [markdown]
-# ## Example 3: Combine Into a `BanditExperiment`
+# ## Cell 6.3: Combine Into a `BanditExperiment`
 #
 # Same environment and policy shape, now expressed with the library's own
 # orchestration class.
@@ -426,7 +423,7 @@ _, _, mini_total = mini_experiment.run()
 print("BanditExperiment total=", mini_total)
 
 # %% [markdown]
-# ## Example 4: End-to-End: `BanditSimulation`
+# ## Cell 6.4: End-to-End: `BanditSimulation`
 #
 # Repeat Example 3's shape 20 times with varying seeds, to get a statistic
 # instead of one anecdote.
@@ -451,7 +448,7 @@ print(
 # # Part 7: API Patterns
 
 # %% [markdown]
-# ## Pattern 1: Strategy Pattern
+# ## Cell 7.1: Strategy Pattern
 #
 # Any `Strategy` subclass plugs into the same `BanditExperiment` unchanged.
 
@@ -469,7 +466,7 @@ for strategy_obj in [
     print(type(strategy_obj).__name__, "-> total=", total)
 
 # %% [markdown]
-# ## Pattern 2: Keyword-Only Configuration
+# ## Cell 7.2: Keyword-Only Configuration
 #
 # Every constructor uses `*,` to force keyword arguments: readable call sites,
 # no positional-order bugs.
@@ -481,7 +478,7 @@ except TypeError as e:
     print("TypeError=", e)
 
 # %% [markdown]
-# ## Pattern 3: Class-as-Parameter
+# ## Cell 7.3: Class-as-Parameter
 #
 # `.run_trials()` and `.run_ensemble()` take a strategy *class* plus a
 # parameter dict, not an instance: a fresh strategy is built per trial so

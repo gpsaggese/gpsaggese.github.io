@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.1
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -28,6 +28,7 @@ import logging
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+import helpers.hintrospection as hintros
 import L05_01_01_hoeffding_inequality_utils as utils
 
 # Set plotting style.
@@ -44,77 +45,136 @@ logging.basicConfig(level=logging.INFO)
 _LOG = logging.getLogger(__name__)
 
 # %% [markdown]
-# # Cell 1: Building Intuition about Hoeffding Inequality
+# # Part 1: Building Intuition about Hoeffding Inequality
 
 # %% [markdown]
-# ## Cell 1.1: Basic Bernoulli Sampling Code
+# ## Cell 1.1: Basic Bernoulli sampling code
 #
-# - Demonstrate basic Bernoulli sampling
-# - Show the code for:
-#   - Generating Bernoulli samples
-#   - Computing the empirical mean $\nu$
-#   - Comparing with the true mean $\mu$
+# **Goal**:
+# - Walk through the mechanics of Bernoulli sampling in plain code, before
+#   any interactive widget: draw samples, compute the empirical mean $\nu$,
+#   and compare it against the true mean $\mu$
+#
+# **Implementation**: `cell1_1_basic_bernoulli_sampling(mu=0.6, N=10,
+# seed=42)`
+# - Draws `N` Bernoulli(`mu`) samples with `_generate_bernoulli_samples()`
+# - Prints the raw samples, the count of successes and failures, and the
+#   empirical mean $\nu$ next to the true mean $\mu$
 
 # %%
 # Demonstrate basic Bernoulli sampling.
 utils.cell1_1_basic_bernoulli_sampling()
 
 # %% [markdown]
-# ## Cell 1.2: Samples Over Time and Empirical PDF
+# ## Cell 1.2: Samples over time and empirical PDF
 #
-# - Visualize $N$ samples from a Bernoulli distribution:
-#   - As a sequence over time
-#   - As an empirical probability distribution function (PDF)
+# **Goal**:
+# - Visualize $N$ samples from a Bernoulli distribution as a sequence over
+#   time and as an empirical probability distribution function (PDF), side
+#   by side
 #
-# **Parameters**:
-# - `mu` ($\mu$): True probability of success (between 0 and 1)
-# - `N` ($N$): Number of samples to draw
-# - `seed`: Random seed for reproducibility
+# **Implementation**: `cell1_2_samples_over_time_and_pdf()`
+# - Draws `N` Bernoulli(`mu`) samples with `_generate_bernoulli_samples()`
+# - Plots the samples over time, then the same samples as an empirical PDF
+#   next to the theoretical Bernoulli PDF, in `_plot_bernoulli_sample2()`
+
+# %%
+hintros.print_obj_info(utils.cell1_2_samples_over_time_and_pdf)
+
+# %% [markdown]
+# **Usage**
+# - Inputs
+#   - **`mu`**: true probability of success, 0.1-0.9
+#   - **`N`**: number of samples drawn, 10-500
+#   - **`seed`**: random seed for the draw
+#
+# - Panels
+#   - **`Bernoulli samples over time`**: each sample plotted by index,
+#     colored by outcome, with the true `mu` marked as a dashed line
+#   - **`Empirical PDF`**: bar comparison of the empirical outcome
+#     frequencies against the theoretical Bernoulli PDF
+#   - **`Comments`**: current `mu`, `N`, `seed`, and the counts of
+#     successes/failures
 
 # %%
 # Display N samples over time and their empirical PDF.
 utils.cell1_2_samples_over_time_and_pdf()
 
 # %% [markdown]
-# ## Cell 1.3: Distribution of Empirical Mean
+# **Guided usage**
+# - Raise `N` from 10 toward 500, leaving `mu` fixed
+#   - Observe the empirical PDF bars converge toward the theoretical
+#     Bernoulli PDF
+# - Change `seed` a few times at a small `N`
+#   - Observe the empirical PDF swing further from the theoretical one than
+#     it does at large `N`
+
+# %% [markdown]
+# ## Cell 1.3: Distribution of empirical mean
 #
-# - Examine what happens when we repeatedly sample $N$ points many times
-# - Each trial produces an empirical mean $\nu$
-# - This cell:
-#   - Shows the distribution of $\nu$ over many trials
-#   - Compares it with the expected distribution predicted by:
-#     - Law of Large Numbers
-#     - Central Limit Theorem
+# **Goal**:
+# - Show the distribution of the empirical mean $\nu$ over many repeated
+#   trials, and compare it with the Central Limit Theorem prediction
 #
-# **Parameters**:
-# - `mu` ($\mu$): True probability of success (between 0 and 1)
-# - `N` ($N$): Number of samples drawn in each trial
-# - `n_samples`: Number of trials to repeat the experiment (how many times we compute $\nu$)
-# - `seed`: Random seed for reproducibility
+# **Implementation**: `cell1_3_distribution_empirical_mean()`
+# - Repeats sampling `n_samples` times in `_plot_bernoulli_sample4()`, each
+#   trial drawing `N` Bernoulli(`mu`) samples and recording its own $\nu$
+# - Overlays the empirical histogram of $\nu$ with the
+#   $\mathcal{N}\left(\mu, \sqrt{\mu(1-\mu)/N}\right)$ density predicted by
+#   the Central Limit Theorem
+
+# %%
+hintros.print_obj_info(utils.cell1_3_distribution_empirical_mean)
+
+# %% [markdown]
+# **Usage**
+# - Inputs
+#   - **`mu`**: true probability of success, 0.1-0.9
+#   - **`N`**: samples per trial, 10-500
+#   - **`log10(n_samples)`**: number of trials, log-scaled from 100 to
+#     10000
+#   - **`seed`**: random seed for the trials
 #
-# **Key concepts**:
-# - By the Law of Large Numbers: $\nu$ converges to $\mu$ as $N$ increases
-# - By the Central Limit Theorem: $\nu$ is approximately normally distributed:
-#   - $\nu \sim \mathcal{N}\left(\mu, \sqrt{\frac{\mu(1-\mu)}{N}}\right)$
+# - Panels
+#   - **`Distribution of empirical mean nu`**: histogram of $\nu$ across
+#     trials, with the CLT-predicted normal density overlaid and the true
+#     `mu` marked
+#   - **`Comments`**: current parameters, empirical mean/std of $\nu$, and
+#     the CLT-predicted mean/std
 
 # %%
 # Display the distribution of empirical mean nu from repeated sampling.
 utils.cell1_3_distribution_empirical_mean()
 
 # %% [markdown]
-# # Cell 2: Hoeffding Inequality: Theoretical Bounds
+# **Guided usage**
+# - Raise `N` from 10 toward 500, leaving `n_samples` fixed
+#   - Observe the histogram narrow around `mu`, matching the shrinking
+#     $\sqrt{\mu(1-\mu)/N}$ predicted spread
+# - Raise `log10(n_samples)` toward its maximum
+#   - Observe the histogram fill in and match the CLT curve more closely,
+#     since more trials means a smoother empirical distribution
+# - By the Law of Large Numbers, $\nu$ converges to $\mu$ as $N$ increases,
+#   which the previous experiment already shows as the narrowing histogram
+
+# %% [markdown]
+# # Part 2: Hoeffding Inequality: Theoretical Bounds
 #
 # - The Hoeffding inequality provides a concentration bound
 #     - It quantifies how quickly the sample mean converges to the true mean as $N$
 #       increases
 
 # %% [markdown]
-# ## Cell 2.1: Hoeffding Inequality Statement
+# ## Cell 2.1: Hoeffding inequality statement
+#
+# **Goal**:
+# - State the Hoeffding inequality precisely, and name every symbol in it,
+#   so the interactive cells that follow can be read against a fixed
+#   reference
 #
 # - For $N$ independent Bernoulli random variables $X_1, \ldots, X_N$ with
 #   probability $\mu$
 # - Let $\nu = \frac{1}{N} \sum_{i=1}^{N} X_i$ be the sample mean
-#
 # - The Hoeffding inequality states:
 #
 # $$P(|\nu - \mu| \geq \epsilon) \leq 2 \exp(-2N\epsilon^2)$$
@@ -124,8 +184,6 @@ utils.cell1_3_distribution_empirical_mean()
 #   - $\mu$ is the true probability
 #   - $\epsilon > 0$ is the deviation threshold
 #   - $N$ is the number of samples
-#
-# **Key insights**:
 # - The bound decreases exponentially with $N$
 # - The bound is independent of $\mu$ (distribution-free)
 # - Larger $\epsilon$ requires larger $N$ for the same confidence
@@ -134,176 +192,193 @@ utils.cell1_3_distribution_empirical_mean()
 #   - $\nu < \mu - \epsilon$
 
 # %% [markdown]
-# ## Cell 2.2: Interactive Hoeffding Inequality Demonstration
+# ## Cell 2.2: Interactive Hoeffding inequality demonstration
 #
-# - This interactive visualization demonstrates the Hoeffding inequality across
-#   multiple probability distributions
-# - The Hoeffding inequality is distribution-free:
-#   - It applies to any bounded random variable in [0, 1]
-#   - Regardless of its specific distribution
+# **Goal**:
+# - Demonstrate that the Hoeffding inequality is distribution-free: watch it
+#   hold across five different bounded distributions on $[0, 1]$, not only
+#   the Bernoulli one
 #
-# - The visualization shows four plots:
-#   - **Underlying Distribution**: The PDF/PMF of the selected distribution
-#     showing the shape of the random variable $X$
-#   - **Distribution of Sample Mean**: Histogram of sample means $\nu$ from
-#     repeated sampling, with tail areas highlighted in red
-#   - **Bound vs Empirical**: Comparison of theoretical Hoeffding bound vs
-#     empirical probability
-#   - **Comments**: Parameters and interpretation
+# **Implementation**: `cell2_2_hoeffding_inequality_demo()`
+# - Draws `N` samples from the chosen `Distribution` with
+#   `_generate_samples_from_distribution()`, repeats it to build the
+#   empirical distribution of $\nu$
+# - Computes the Hoeffding bound $2\exp(-2N\epsilon^2)$, capped at 1.0, and
+#   the empirical tail probability $P(|\nu - \text{mean}| \geq \epsilon)$,
+#   then plots both in `_plot_hoeffding_inequality_demo()`
+
+# %%
+hintros.print_obj_info(utils.cell2_2_hoeffding_inequality_demo)
+
+# %% [markdown]
+# **Usage**
+# - Inputs
+#   - **`Distribution`**: Bernoulli, Uniform, Binomial, Truncated Gaussian,
+#     or Truncated Exponential
+#   - **`mu`**: distribution parameter, interpretation depends on
+#     `Distribution`
+#   - **`N`** (log scale): number of samples per trial, powers of 2 from 8
+#     to 1024
+#   - **`epsilon`**: deviation threshold
+#   - **`seed`**: random seed
 #
-# - Note: The bound is capped at 1.0 since probabilities cannot exceed 1
-#
-# **Distribution options**:
-# - **Bernoulli**: Binary outcomes (0 or 1), parameter $\mu$ is success
-#   probability
-# - **Uniform [0, 1]**: Continuous uniform distribution ($\mu$ parameter ignored)
-# - **Binomial (scaled)**: Binomial(10, $\mu$) scaled to [0, 1]
-# - **Truncated Gaussian**: Normal($\mu$, 0.2) truncated to [0, 1]
-# - **Truncated Exponential**: Exponential with mean near $\mu$, truncated to
-#   [0, 1]
-#
-# **Parameters**:
-# - `Distribution`: Select the probability distribution
-# - `mu` ($\mu$): Distribution parameter (interpretation varies by distribution)
-# - `N` ($N$): Number of samples per trial (larger $N$ = tighter concentration)
-# - `epsilon` ($\epsilon$): Deviation threshold (smaller $\epsilon$ = stricter
-#   bound)
-# - `seed`: Random seed for reproducibility
-#
-# **Key insight**:
-# - The Hoeffding bound works for ALL these distributions
-# - Without knowing which one is being used
-# - This is the power of distribution-free bounds
-#
-# **Experiments to try**:
-# - Compare Bernoulli vs Uniform:
-#   - Both satisfy the bound despite different shapes
-# - Increase $N$:
-#   - See how all distributions concentrate around their mean
-# - Try Truncated Gaussian with different $\mu$ values:
-#   - The bound still holds even though the distribution shape changes
-#     dramatically near boundaries
-# - Compare bound tightness:
-#   - Some distributions give tighter empirical probabilities than others
-#   - But the bound always holds
+# - Panels
+#   - **`<Distribution> distribution`**: the PDF/PMF of the selected
+#     distribution
+#   - **`Distribution of sample mean`**: histogram of $\nu$ across trials,
+#     with the tail beyond `epsilon` shaded red
+#   - **`Bound vs empirical`**: bar comparison of the Hoeffding bound
+#     against the measured tail probability
+#   - **`Comments`**: current distribution, parameters, and both
+#     probabilities
 
 # %%
 # Demonstrate the Hoeffding inequality with multiple distributions.
 utils.cell2_2_hoeffding_inequality_demo()
 
 # %% [markdown]
-# ## Cell 2.3: Empirical Probability vs Hoeffding Bound
+# **Guided usage**
+# - Switch `Distribution` through all five options, leaving `mu`, `N`,
+#   `epsilon` fixed
+#   - Observe the empirical probability stays at or below the Hoeffding
+#     bound every time, even though the underlying shape changes
+#     completely
+# - Raise `N` from small to large
+#   - Observe both the bound and the empirical probability shrink, and the
+#     histogram narrow around the true mean
+
+# %% [markdown]
+# ## Cell 2.3: Empirical probability vs Hoeffding bound
 #
-# - This visualization shows how both the theoretical Hoeffding bound and the
-#   empirical probability change
-# - We vary one parameter while holding the other fixed
-# - This helps understand:
-#   - **Exponential decay**: Both quantities decrease exponentially
-#   - **Bound validity**: The empirical probability is always below the bound
-#   - **Bound tightness**: How close the empirical probability is to the bound
-#   - **Parameter trade-offs**: The relationship between $N$ and $\epsilon$
+# **Goal**:
+# - Compare the Hoeffding bound against the empirical tail probability as a
+#   single parameter, $N$ or $\epsilon$, sweeps across its range
 #
-# **Two scanning modes**:
+# **Implementation**: `cell2_3_empirical_vs_bound()`
+# - Sweeps `Scan variable` (`N` or `epsilon`) over a fixed range with the
+#   other one held at `fixed_N`/`fixed_epsilon`, in
+#   `_plot_hoeffding_inequality_demo2()`
+# - At each sweep point, computes the theoretical bound and estimates the
+#   empirical tail probability over `n_trials` resamples
+
+# %%
+hintros.print_obj_info(utils.cell2_3_empirical_vs_bound)
+
+# %% [markdown]
+# **Usage**
+# - Inputs
+#   - **`Distribution`**: distribution the samples are drawn from
+#   - **`Scan variable`**: sweep `N` (fix epsilon) or sweep `epsilon` (fix
+#     N)
+#   - **`mu`**: distribution parameter
+#   - **`fixed_N`**: `N` used while scanning `epsilon`
+#   - **`fixed_epsilon`**: `epsilon` used while scanning `N`
+#   - **`seed`**: random seed for the resamples
+#   - **`Use log scale for y-axis`**: toggle a log y-axis on the scan plot
 #
-# - **Scan $N$ (fix $\epsilon$)**:
-#   - Shows how increasing sample size $N$ improves concentration
-#   - For a fixed deviation threshold $\epsilon$
-#   - Both bound and empirical probability decrease exponentially with $N$
-#   - Demonstrates why we need relatively few samples for good concentration
-#   - Useful for determining required sample size for target confidence
-#
-# - **Scan $\epsilon$ (fix $N$)**:
-#   - Shows how the probability of large deviations decreases
-#   - As we increase the tolerance $\epsilon$
-#   - Both quantities decrease as $\epsilon$ increases
-#   - Larger $\epsilon$ means more tolerance, so deviation probability drops
-#   - Useful for understanding achievable precision for given sample size
-#
-# **Interactive controls**:
-# - `Distribution`: Select probability distribution
-# - `Scan variable`: Choose to scan $N$ or $\epsilon$
-# - `mu` ($\mu$): Distribution parameter
-# - `fixed_N`: $N$ value used when scanning $\epsilon$
-# - `fixed_epsilon`: $\epsilon$ value used when scanning $N$
-# - `seed`: Random seed for reproducibility
-#
-# **Key observation**:
-# - The empirical probability (blue line) is always at or below the theoretical
-#   bound (red line)
-# - This confirms the Hoeffding inequality
-# - The gap between them shows how conservative the bound is
+# - Panels
+#   - **`Hoeffding bound vs empirical`**: bound and empirical probability
+#     plotted against the scanned variable
+#   - **`Comments`**: current scan variable, fixed value, and distribution
 
 # %%
 # Visualize how bound and empirical probability change with N or epsilon.
 utils.cell2_3_empirical_vs_bound()
 
 # %% [markdown]
-# ## Cell 2.4: Hoeffding Bound as a Function of $N$ and $\epsilon$
+# **Guided usage**
+# - Scan `N` with `epsilon` fixed
+#   - Observe both curves decay exponentially, and the empirical curve stay
+#     at or below the bound at every point
+# - Switch to scanning `epsilon` with `N` fixed
+#   - Observe the same exponential-decay shape, now driven by $\epsilon^2$
+#     instead of $N$
+
+# %% [markdown]
+# ## Cell 2.4: Hoeffding bound as a function of $N$ and $\epsilon$
 #
-# - The Hoeffding bound formula is:
+# **Goal**:
+# - Explore the two-parameter shape of the Hoeffding bound
+#   $2\exp(-2N\epsilon^2)$ as a function of both $N$ and $\epsilon$ at once
 #
-# $$\text{Bound} = 2 \exp(-2N\epsilon^2)$$
+# **Implementation**: `cell2_4_bound_surface_heatmap()`
+# - Evaluates the bound over a grid of `N` and `epsilon` values up to
+#   `N_max`/`epsilon_max`, in `_plot_hoeffding_bound_surface()`
+# - Renders the grid as a heatmap, a contour plot, or a 1D slice at a fixed
+#   `N` or `epsilon`, depending on `View mode`
+
+# %%
+hintros.print_obj_info(utils.cell2_4_bound_surface_heatmap)
+
+# %% [markdown]
+# **Usage**
+# - Inputs
+#   - **`View mode`**: heatmap, fix `N` and vary `epsilon`, fix `epsilon`
+#     and vary `N`, or contour plot
+#   - **`N_max`**: upper end of the `N` range plotted
+#   - **`epsilon_max`**: upper end of the `epsilon` range plotted
+#   - **`fixed_N`**: `N` held fixed in `Fix N, vary epsilon` mode
+#   - **`fixed_epsilon`**: `epsilon` held fixed in `Fix epsilon, vary N`
+#     mode
 #
-# - This interactive visualization shows how the bound changes as we vary $N$
-#   and $\epsilon$
-# - Understanding this relationship is crucial for:
-#   - Choosing appropriate sample sizes $N$ for a desired confidence level
-#   - Understanding the trade-off between deviation tolerance ($\epsilon$) and
-#     sample requirements
-#   - Seeing the exponential decay in both $N$ and $\epsilon^2$
-#
-# **View modes**:
-# - **Heatmap**:
-#   - Shows the bound value as a color map across all $(N, \epsilon)$
-#     combinations
-# - **Fix $N$, vary $\epsilon$**:
-#   - See how increasing tolerance (larger $\epsilon$) affects the bound
-#   - For a fixed sample size
-# - **Fix $\epsilon$, vary $N$**:
-#   - See how increasing sample size improves the bound
-#   - For a fixed deviation threshold
-# - **Contour plot**:
-#   - Shows curves of constant probability
-#   - Useful for finding $(N, \epsilon)$ pairs that achieve the same confidence
-#
-# **Key observations**:
-# - The bound is exponentially sensitive to both $N$ and $\epsilon$
-# - To halve $\epsilon$ while maintaining the same bound, you need to quadruple
-#   $N$
-# - For practical confidence levels (e.g., 0.05):
-#   - The required $N$ grows quadratically with $1/\epsilon$
+# - Panels
+#   - **`Bound surface`**: heatmap, contour, or line view of the bound,
+#     depending on `View mode`
+#   - **`Comments`**: current view mode and range
 
 # %%
 # Explore the Hoeffding bound as a function of N and epsilon.
 utils.cell2_4_bound_surface_heatmap()
 
 # %% [markdown]
-# ## Cell 2.5: 3D Surface Visualization of Hoeffding Bound
+# **Guided usage**
+# - Switch `View mode` from `Heatmap` to `Contour plot`
+#   - Observe the same bound surface, now read off as curves of constant
+#     probability instead of color
+# - Raise `fixed_N` in `Fix N, vary epsilon` mode
+#   - Observe the bound-vs-epsilon curve drop faster, since a larger `N`
+#     makes the bound more sensitive to `epsilon`
+
+# %% [markdown]
+# ## Cell 2.5: 3D surface visualization of Hoeffding bound
 #
-# - This cell provides a three-dimensional surface plot of the Hoeffding bound
-# - Offering a different perspective on how the bound varies with $N$ and
-#   $\epsilon$
+# **Goal**:
+# - View the Hoeffding bound as a 3D surface over $N$ and $\epsilon$, to see
+#   the exponential decay in both dimensions at once
 #
-# - The 3D surface makes it easier to:
-#   - Visualize the exponential decay in both dimensions simultaneously
-#   - See the steepest descent directions
-#   - Understand the "valley" structure where the bound is smallest
-#   - Rotate the view to examine the surface from different angles
+# **Implementation**: `cell2_5_bound_3d_surface()`
+# - Evaluates the bound over the same $(N, \epsilon)$ grid as Cell 2.4, in
+#   `_plot_hoeffding_bound_3d()`
+# - Renders it as a 3D surface, with the viewing angle set by
+#   `elevation`/`azimuth`, optionally with a log-scaled $Z$-axis
+
+# %%
+hintros.print_obj_info(utils.cell2_5_bound_3d_surface)
+
+# %% [markdown]
+# **Usage**
+# - Inputs
+#   - **`N_max`**: upper end of the `N` range plotted
+#   - **`epsilon_max`**: upper end of the `epsilon` range plotted
+#   - **`elevation`**: viewing angle from above, 0 (horizontal) to 90
+#     (top-down)
+#   - **`azimuth`**: rotation angle around the vertical axis, 0-360
+#   - **`Use log scale for Z-axis`**: toggle a log-scaled bound axis
 #
-# **Interactive controls**:
-# - `N_max`, `epsilon_max`: Control the range of the surface
-# - `elevation`: Viewing angle from above (0=horizontal, 90=top-down)
-# - `azimuth`: Rotation angle around the vertical axis
-# - `Use log scale for Z-axis`: Toggle logarithmic scale for better visibility
-#   of small bound values
-#
-# **Suggested experiments**:
-# - Start with default view to see the overall shape
-# - Rotate using azimuth slider (0 to 360 degrees) to view from different sides
-# - Change elevation to see the surface from different heights
-# - Enable log scale to better see the structure at small bound values
-# - Compare with the heatmap view above to build intuition
+# - Panels
+#   - **`Bound surface (3D)`**: the bound plotted as a surface over $N$ and
+#     $\epsilon$
+#   - **`Comments`**: current range and viewing angle
 
 # %%
 # Visualize the Hoeffding bound as a 3D surface.
 utils.cell2_5_bound_3d_surface()
+
+# %% [markdown]
+# **Guided usage**
+# - Rotate `azimuth` through a full sweep from 0 to 360
+#   - Observe the same "valley" shape from every side: the bound is
+#     smallest at large `N` and large `epsilon`
+# - Turn on `Use log scale for Z-axis`
+#   - Observe the surface's flat-looking tail resolve into visible
+#     structure, since the bound spans several orders of magnitude

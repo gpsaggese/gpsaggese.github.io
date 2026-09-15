@@ -6,7 +6,7 @@ computations for the canonical AIMA burglary-alarm Bayesian network.
 
 Import as:
 
-import exact_inference_utils as utils
+import msml610.tutorials.L06_bayesian_networks.L06_01_exact_inference_utils as mtlbnl0eiu
 """
 
 import itertools
@@ -231,8 +231,8 @@ def _build_query_controls(
     """
     Build the shared query-and-evidence control widgets.
 
-    Creates a dropdown to pick the query variable and, for every node, a
-    checkbox marking it as observed plus a True/False value selector.
+    Creates a dropdown to pick the query variable and, for every node, a checkbox
+    marking it as observed plus a True/False value selector.
 
     :param default_query: Query variable selected initially
     :param default_evidence: Initial evidence assignment
@@ -410,11 +410,7 @@ def cell1_2_query_roles_widget(
         with output:
             clear_output(wait=True)
             query_var, evidence = _read_query(query_dd, checks, valdds)
-            hidden = [
-                n
-                for n in _NODES
-                if n != query_var and n not in evidence
-            ]
+            hidden = [n for n in _NODES if n != query_var and n not in evidence]
             # Color each node by its role in the current query.
             node_colors = {}
             for n in _NODES:
@@ -436,9 +432,7 @@ def cell1_2_query_roles_widget(
             # Summarize the partition as text in the second panel.
             ax2.axis("off")
             ax2.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
-            query_str = (
-                f"P({_SHORT[query_var]} | {_fmt_evidence(evidence)})"
-            )
+            query_str = f"P({_SHORT[query_var]} | {_fmt_evidence(evidence)})"
             hidden_str = (
                 ", ".join(_SHORT[h] for h in hidden) if hidden else "(none)"
             )
@@ -518,9 +512,7 @@ def cell2_1_normalization_widget(
             _, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=figsize)
             # Panel 1: the three derivation equations as math text.
             ax1.axis("off")
-            ax1.set_title(
-                "Derivation", fontsize=14, fontweight="bold", pad=20
-            )
+            ax1.set_title("Derivation", fontsize=14, fontweight="bold", pad=20)
             equations = [
                 r"$P(X \mid e) = \alpha\, P(X, e)$",
                 r"$P(X, e) = \sum_{y} P(X, e, y)$",
@@ -548,9 +540,7 @@ def cell2_1_normalization_widget(
                 values = [unnorm[1], unnorm[0]]
                 title = "Unnormalized joint P(B, j,m)"
                 ylabel = "P(B, j,m)"
-            bar_df = pd.DataFrame(
-                {"B": ["B=T", "B=F"], "value": values}
-            )
+            bar_df = pd.DataFrame({"B": ["B=T", "B=F"], "value": values})
             sns.barplot(
                 data=bar_df,
                 x="B",
@@ -565,9 +555,7 @@ def cell2_1_normalization_widget(
             ax2.set_ylabel(ylabel, fontsize=12)
             ax2.set_xlabel("")
             for i, v in enumerate(values):
-                ax2.text(
-                    i, v, f"{v:.4g}", ha="center", va="bottom", fontsize=11
-                )
+                ax2.text(i, v, f"{v:.4g}", ha="center", va="bottom", fontsize=11)
             # Panel 3: comments explaining alpha.
             ax3.axis("off")
             ax3.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
@@ -712,9 +700,7 @@ def cell2_2_enumeration_widget(
             ax3.set_title("Posterior", fontsize=13, fontweight="bold")
             ax3.legend(fontsize=10)
             for i, v in enumerate(computed):
-                ax3.text(
-                    i, v + 0.02, f"{v:.3f}", ha="center", fontsize=10
-                )
+                ax3.text(i, v + 0.02, f"{v:.3f}", ha="center", fontsize=10)
             # Panel 4: comments.
             ax4.axis("off")
             ax4.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
@@ -768,9 +754,9 @@ def cell2_3_enumeration_tree_widget(
     """
     Draw the enumeration computation as a tree to expose repeated work.
 
-    Fixes the canonical query P(Burglary | j,m) with hidden Earthquake and
-    Alarm, branches over their values in a chosen order, and highlights the
-    repeated leaf subexpressions that motivate variable elimination.
+    Fixes the canonical query P(Burglary | j,m) with hidden Earthquake and Alarm,
+    branches over their values in a chosen order, and highlights the repeated
+    leaf subexpressions that motivate variable elimination.
 
     :param figsize: Optional figure size
     """
@@ -858,9 +844,7 @@ def cell2_3_enumeration_tree_widget(
                     )
                     # The repeated call factor depends on the Alarm value.
                     a_val = v1 if first_var == "Alarm" else v2
-                    face = (
-                        leaf_colors[a_val] if highlight else "#EAECEE"
-                    )
+                    face = leaf_colors[a_val] if highlight else "#EAECEE"
                     leaf_txt = "P(j|a)P(m|a)"
                     ax1.text(
                         x2,
@@ -871,9 +855,7 @@ def cell2_3_enumeration_tree_widget(
                         fontsize=8,
                         bbox=dict(boxstyle="round", facecolor=face),
                     )
-                    ax1.plot(
-                        [x2, x2], [3.3, 2.1], color="gray", linewidth=1
-                    )
+                    ax1.plot([x2, x2], [3.3, 2.1], color="gray", linewidth=1)
                     idx += 1
             # Count operations: products and additions over the leaves.
             n_leaves = 4
@@ -991,7 +973,7 @@ def cell3_1_factor_operations_widget(
                 fontweight="bold",
             )
             tbl1 = ax1.table(
-                cellText=np.round(before_df.values, 4),
+                cellText=before_df.round(4).values,
                 colLabels=list(before_df.columns),
                 loc="center",
                 cellLoc="center",
@@ -1012,7 +994,7 @@ def cell3_1_factor_operations_widget(
                 fontweight="bold",
             )
             tbl2 = ax2.table(
-                cellText=np.round(after_df.values, 4),
+                cellText=after_df.round(4).values,
                 colLabels=list(after_df.columns),
                 loc="center",
                 cellLoc="center",
@@ -1057,9 +1039,7 @@ def cell3_1_factor_operations_widget(
     display(
         ipywidgets.VBox(
             [
-                ipywidgets.Label(
-                    "Pick a factor and a variable to sum out:"
-                ),
+                ipywidgets.Label("Pick a factor and a variable to sum out:"),
                 factor_dd,
                 sumout_dd,
                 output,
@@ -1136,7 +1116,7 @@ def _variable_elimination_steps(
         )
     # Enumeration cost for the same query, for the comparison bar.
     n_hidden = len(order)
-    enum_ops = (2 ** n_hidden) * (len(model.get_cpds()) - 1)
+    enum_ops = (2**n_hidden) * (len(model.get_cpds()) - 1)
     return steps, enum_ops
 
 
@@ -1147,9 +1127,9 @@ def cell3_2_variable_elimination_widget(
     """
     Walk through variable elimination on the alarm query step by step.
 
-    Advances the elimination one variable at a time, showing the shrinking
-    factor list, the factor created at each step, and how the operation count
-    compares with enumeration.
+    Advances the elimination one variable at a time, showing the shrinking factor
+    list, the factor created at each step, and how the operation count compares
+    with enumeration.
 
     :param figsize: Optional figure size
     """
@@ -1231,7 +1211,7 @@ def cell3_2_variable_elimination_widget(
                     fontweight="bold",
                 )
                 tbl = ax2.table(
-                    cellText=np.round(new_df.values, 5),
+                    cellText=new_df.round(5).values,
                     colLabels=list(new_df.columns),
                     loc="center",
                     cellLoc="center",
@@ -1240,9 +1220,7 @@ def cell3_2_variable_elimination_widget(
                 tbl.set_fontsize(9)
                 tbl.scale(1, 1.4)
             else:
-                ax2.set_title(
-                    "New factor", fontsize=12, fontweight="bold"
-                )
+                ax2.set_title("New factor", fontsize=12, fontweight="bold")
                 ax2.text(
                     0.5,
                     0.5,
@@ -1273,9 +1251,7 @@ def cell3_2_variable_elimination_widget(
                 edgecolor="black",
             )
             ax3_twin.set_xticks([0, 1, 3, 4])
-            ax3_twin.set_xticklabels(
-                ["B=T", "B=F", "enum", "VE"], fontsize=9
-            )
+            ax3_twin.set_xticklabels(["B=T", "B=F", "enum", "VE"], fontsize=9)
             ax3_twin.set_ylabel("operations", fontsize=11)
             ax3.set_title(
                 "Posterior and op count", fontsize=12, fontweight="bold"
@@ -1446,8 +1422,7 @@ def cell3_3_pruning_widget(
                 relevant |= nx.ancestors(graph, node)
             short = {n: n[0] if n != "Neighbor" else "N" for n in nodes_ext}
             node_colors = {
-                n: ("#82E0AA" if n in relevant else "#D5D8DC")
-                for n in nodes_ext
+                n: ("#82E0AA" if n in relevant else "#D5D8DC") for n in nodes_ext
             }
             _, (ax1, ax2, ax3) = plt.subplots(
                 1, 3, figsize=figsize, gridspec_kw={"width_ratios": [1.4, 1, 1]}
@@ -1465,7 +1440,22 @@ def cell3_3_pruning_widget(
             # Posterior on the pruned network (irrelevant nodes removed).
             if prune:
                 sub_nodes = relevant
-                sub_model = model.subgraph(sub_nodes).copy()
+                # `subgraph()` keeps only nodes/edges, not CPDs, so rebuild
+                # the model from the induced edges and the matching CPDs.
+                sub_edges = [
+                    (u, v)
+                    for u, v in model.edges()
+                    if u in sub_nodes and v in sub_nodes
+                ]
+                sub_model = pgmodels.DiscreteBayesianNetwork(sub_edges)
+                sub_model.add_nodes_from(sub_nodes)
+                sub_model.add_cpds(
+                    *[
+                        cpd
+                        for cpd in model.get_cpds()
+                        if cpd.variable in sub_nodes
+                    ]
+                )
                 sub_infer = pginference.VariableElimination(sub_model)
                 pruned = sub_infer.query(
                     [query_var], evidence=evidence, show_progress=False
@@ -1539,9 +1529,7 @@ def cell3_3_pruning_widget(
     display(
         ipywidgets.VBox(
             [
-                ipywidgets.Label(
-                    "Set the query and evidence; toggle pruning:"
-                ),
+                ipywidgets.Label("Set the query and evidence; toggle pruning:"),
                 query_dd,
                 *rows,
                 prune_toggle,
@@ -1618,9 +1606,7 @@ def cell4_1_complexity_widget(
                 with_labels=True,
                 arrows=True,
             )
-            ax1.set_title(
-                f"Polytree (n={n})", fontsize=12, fontweight="bold"
-            )
+            ax1.set_title(f"Polytree (n={n})", fontsize=12, fontweight="bold")
             # Panel 2: a densely connected DAG on n nodes.
             dense = nx.DiGraph()
             dense.add_nodes_from(range(n))
@@ -1643,7 +1629,7 @@ def cell4_1_complexity_widget(
             # Panel 3: cost curves over node count, with the current n marked.
             ns = np.arange(3, 11)
             poly_cost = const * ns
-            dense_cost = const * (2.0 ** ns)
+            dense_cost = const * (2.0**ns)
             ax3.plot(
                 ns,
                 poly_cost,
@@ -1661,17 +1647,13 @@ def cell4_1_complexity_widget(
                 label="dense O(2^n)",
             )
             current_cost = (
-                const * n if structure == "polytree" else const * (2.0 ** n)
+                const * n if structure == "polytree" else const * (2.0**n)
             )
-            ax3.scatter(
-                [n], [current_cost], color="black", s=80, zorder=5
-            )
+            ax3.scatter([n], [current_cost], color="black", s=80, zorder=5)
             ax3.set_yscale("log")
             ax3.set_xlabel("number of nodes n", fontsize=11)
             ax3.set_ylabel("operations (log scale)", fontsize=11)
-            ax3.set_title(
-                "Cost vs network size", fontsize=12, fontweight="bold"
-            )
+            ax3.set_title("Cost vs network size", fontsize=12, fontweight="bold")
             ax3.legend(fontsize=10)
             ax3.grid(True, alpha=0.3)
             # Panel 4: comments.
@@ -1728,9 +1710,9 @@ def cell4_2_breakdown_widget(
     """
     Summarize the regimes where exact inference works or breaks down.
 
-    A dropdown selects one of three regimes and updates a recommendation
-    banner; a sketch reminds students that continuous variables turn the
-    summation into an intractable integral.
+    A dropdown selects one of three regimes and updates a recommendation banner;
+    a sketch reminds students that continuous variables turn the summation into
+    an intractable integral.
 
     :param figsize: Optional figure size
     """
@@ -1817,9 +1799,7 @@ def cell4_2_breakdown_widget(
                 tbl[scenario_to_row[scenario], col].set_facecolor(color)
             # Panel 2: a small continuous-variable sketch.
             ax2.axis("off")
-            ax2.set_title(
-                "Continuous case", fontsize=13, fontweight="bold"
-            )
+            ax2.set_title("Continuous case", fontsize=13, fontweight="bold")
             sketch = nx.DiGraph([("X", "Y"), ("Y", "Z")])
             pos = {"X": (0, 1), "Y": (1, 1), "Z": (2, 1)}
             nx.draw(
@@ -1856,8 +1836,7 @@ def cell4_2_breakdown_widget(
             )
             htutori.add_fitted_text_box(
                 ax3,
-                detail
-                + "\n\nExact methods stay the\n"
+                detail + "\n\nExact methods stay the\n"
                 "gold-standard reference for\n"
                 "validating approximate ones\n"
                 "on small networks.",

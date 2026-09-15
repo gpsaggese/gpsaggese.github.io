@@ -196,8 +196,8 @@ class GridWorld:
         """
         Convert a dict over states into a 2D array for heatmap plotting.
 
-        Row 3 (top of the grid) is placed in the first array row so the
-        heatmap orientation matches the drawn grid.
+        Row 3 (top of the grid) is placed in the first array row so the heatmap
+        orientation matches the drawn grid.
 
         :param values: mapping from cell to a scalar value
         :param fill: value used for walls / missing cells
@@ -383,8 +383,8 @@ def q_learning(
     :param max_steps: step cap per episode (guards against non-terminating runs)
     :param snapshot_every: if > 0, store the greedy policy every this many
         episodes
-    :return: dict with the final Q-table, per-episode returns, visit counts,
-        the final greedy policy, and optional policy snapshots
+    :return: dict with the final Q-table, per-episode returns, visit counts, the
+        final greedy policy, and optional policy snapshots
     """
     rng = np.random.RandomState(seed)
     # Initialize all Q-values to zero.
@@ -629,8 +629,8 @@ def cell1_3_full_transition_model(
     """
     Print the full transition model Pr(s' | s, a) for every state-action pair.
 
-    Displays a multi-row table where each row shows the probability
-    distribution over next states for one (s, a) pair.
+    Displays a multi-row table where each row shows the probability distribution
+    over next states for one (s, a) pair.
 
     :param figsize: optional figure size
     """
@@ -989,8 +989,8 @@ def _sample_trajectory(
     seed: int,
     max_steps: int = 30,
 ) -> List[Tuple[int, int]]:
-    """
-    Roll out a trajectory from START following `policy` under the slip model.
+    """Roll out a trajectory from START following `policy` under the slip
+    model.
     """
     rng = np.random.RandomState(seed)
     s = env.start
@@ -1134,11 +1134,11 @@ def cell1_4_rewards_and_returns(
 
 
 # #############################################################################
-# Cell 2.1 (equations): Bellman optimality equation system for all states
+# Cell 2.2 (equations): Bellman optimality equation system for all states
 # #############################################################################
 
 
-def cell2_1_bellman_equations(
+def cell2_2_bellman_equations(
     *,
     figsize: Optional[Tuple[float, float]] = None,
 ) -> None:
@@ -1354,11 +1354,11 @@ def cell2_1_bellman_one_state(
 
 
 # #############################################################################
-# Cell 2.2: Value iteration converging over sweeps
+# Cell 2.3: Value iteration converging over sweeps
 # #############################################################################
 
 
-def cell2_2_value_iteration(
+def cell2_3_value_iteration(
     *,
     figsize: Optional[Tuple[float, float]] = None,
 ) -> None:
@@ -1478,11 +1478,11 @@ def cell2_2_value_iteration(
 
 
 # #############################################################################
-# Cell 2.3: Extracting the optimal policy
+# Cell 2.4: Extracting the optimal policy
 # #############################################################################
 
 
-def cell2_3_extract_policy(
+def cell2_4_extract_policy(
     *,
     figsize: Optional[Tuple[float, float]] = None,
 ) -> None:
@@ -1570,8 +1570,8 @@ def cell2_3_extract_policy(
 
 # Preset policies used to illustrate policy evaluation.
 def _preset_policy(env: GridWorld, name: str) -> Dict[Tuple[int, int], str]:
-    """
-    Return one of several named preset policies over the non-terminal states.
+    """Return one of several named preset policies over the non-terminal
+    states.
     """
     if name == "always-up":
         return {s: "Up" for s in env.nonterminal_states}

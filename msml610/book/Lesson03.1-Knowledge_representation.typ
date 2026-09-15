@@ -501,7 +501,7 @@ machine-readable meaning to data shared across the internet.
 // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:301 '* Syntax and Semantics of a KB'
 // Slide: Syntax and Semantics of a KB
 A #strong[knowledge base (KB)] is a set of sentences and rules that together encode
-what is known about the world. The sentences, often denoted α, express assertions
+what is known about the world. The sentences, often denoted $alpha$, express assertions
 that may be observed directly, assumed as background knowledge, or derived through
 reasoning. For instance, sentences like "it rains," "the ground is dry," or "the
 ground is wet" each state a fact about the current state of affairs. Rules, on the
@@ -529,7 +529,7 @@ introducing falsehoods.
 
 Finally, not every logic treats truth the same way. In classical logic, each sentence
 is simply true or false with no middle ground. #strong[Fuzzy logic] relaxes this
-binary view by allowing degrees of truth, so a sentence α might have
+binary view by allowing degrees of truth, so a sentence $alpha$ might have
 $"Truth"(alpha) = 0.5$, indicating partial truth. #strong[Probabilistic logic] takes
 a different approach: rather than assigning a truth degree, it assigns a probability
 that the sentence is true, such as $Pr(alpha) = 0.3$. These alternatives matter in
@@ -676,8 +676,8 @@ $(italic("Rain") = T, italic("WetGround") = T)$ is one model over two Boolean
 variables; it pins down a single complete state of affairs.
 
 Given a model, we can ask whether a particular sentence comes out true under that
-assignment. If a sentence α is true in model $m$, we say that #strong[the model $m$
-  satisfies α], sometimes written $m models alpha$. For example, the model
+assignment. If a sentence $alpha$ is true in model $m$, we say that #strong[the model $m$
+  satisfies $alpha$], sometimes written $m models alpha$. For example, the model
 $(italic("Rain") = T, italic("WetGround") = F)$ satisfies the sentence
 $alpha: italic("Rain") = T$, because Rain is indeed true in that assignment,
 regardless of what WetGround happens to be. The phrasing may feel backwards at first:
@@ -686,7 +686,7 @@ claims hold, but in logic the convention runs the other way, treating the senten
 given and asking which worlds make it true.
 
 This convention motivates a useful piece of notation. We write $M(alpha)$ for
-#strong[the set of all models in which α is true]. Continuing the example above,
+#strong[the set of all models in which $alpha$ is true]. Continuing the example above,
 suppose the language has just two Boolean variables, Rain and WetGround, so there are
 four models in total. The sentence $alpha: italic("Rain") = T$ is true in exactly two
 of them:
@@ -708,10 +708,10 @@ $M(alpha) = emptyset$.
 // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:444 '* Logical Entailment'
 // Slide: Logical Entailment
 #strong[Logical entailment] between sentences is the relationship that holds when one
-sentence follows logically from another in a knowledge base. Formally, "α entails β"
-(written $alpha models beta$) means that in every model in which α is true, β is also
+sentence follows logically from another in a knowledge base. Formally, "$alpha$ entails $beta$"
+(written $alpha models beta$) means that in every model in which $alpha$ is true, $beta$ is also
 true. An equivalent way to state this is $M(alpha) subset.eq M(beta)$: the set of
-models satisfying α is a subset of the models satisfying β.
+models satisfying $alpha$ is a subset of the models satisfying $beta$.
 
 Consider the "rain and wet ground" world. Suppose
 $"KB" = {"Rain", "Rain" arrow.r "WetGround"}$. This knowledge base entails
@@ -719,10 +719,10 @@ $"WetGround"$ because in every model where $"Rain"$ holds and
 $"Rain" arrow.r "WetGround"$ holds, $"WetGround"$ must also hold. There is simply no
 model that satisfies the KB yet violates $"WetGround"$.
 
-As a second illustration, take a simple arithmetic world where α is "$x = 0$" and β
-is "$x dot.op y = 0$." Here α entails β because in any model where $x = 0$ is true,
-$x dot.op y = 0$ is necessarily true regardless of the value of $y$. The truth of α
-constrains the world tightly enough that β cannot fail.
+As a second illustration, take a simple arithmetic world where $alpha$ is "$x = 0$" and $beta$
+is "$x dot.op y = 0$." Here $alpha$ entails $beta$ because in any model where $x = 0$ is true,
+$x dot.op y = 0$ is necessarily true regardless of the value of $y$. The truth of $alpha$
+constrains the world tightly enough that $beta$ cannot fail.
 
 Entailment is not tied to any particular proof procedure; it preserves truth across
 all models. If you believe the sentences in your KB, you #emph[must] believe the
@@ -787,9 +787,9 @@ strategies drive this process:
 // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:512 '* Model Checking'
 // Slide: Model Checking
 Recall that $M("KB")$ represents the set of all models, or possible worlds, in which
-our knowledge base $"KB"$ is true. The central question is whether a sentence α is
+our knowledge base $"KB"$ is true. The central question is whether a sentence $alpha$ is
 entailed by the knowledge base, written $"KB" models alpha$. By definition, this
-holds exactly when α is true in every model where $"KB"$ is true, that is, when
+holds exactly when $alpha$ is true in every model where $"KB"$ is true, that is, when
 $M("KB") subset.eq M(alpha)$.
 
 #strong[Model checking] provides a brute-force algorithm for answering this question:
@@ -799,11 +799,11 @@ $M("KB") subset.eq M(alpha)$.
     propositional symbols in the language).],
   [Identify which of those models satisfy the knowledge base, giving the set
     $M("KB")$.],
-  [Verify that α is true in every model belonging to $M("KB")$.],
+  [Verify that $alpha$ is true in every model belonging to $M("KB")$.],
 ))
 
-If every model in $M("KB")$ also makes α true, then $"KB" models alpha$ holds. If
-even a single model in $M("KB")$ falsifies α, the entailment fails. The procedure is
+If every model in $M("KB")$ also makes $alpha$ true, then $"KB" models alpha$ holds. If
+even a single model in $M("KB")$ falsifies $alpha$, the entailment fails. The procedure is
 conceptually straightforward but computationally expensive: the number of models
 grows exponentially with the number of propositional symbols, making exhaustive
 enumeration impractical for large knowledge bases. Nevertheless, model checking
@@ -831,7 +831,7 @@ entailed by the knowledge base. It never misses a valid conclusion.
 
 Model checking (brute-force enumeration of all truth assignments) is both sound and
 complete when the model space is finite. It is sound because every model consistent
-with $"KB" and alpha$ genuinely makes α true, so it never asserts a false entailment.
+with $"KB" and alpha$ genuinely makes $alpha$ true, so it never asserts a false entailment.
 It is complete because exhaustive enumeration guarantees that every entailed sentence
 will be discovered.
 
@@ -859,8 +859,8 @@ operates entirely on syntax (the internal representation), the formal structure
 mirrors reality in two specific ways. First, sentences in the representation
 correspond to aspects of the real world. Second, entailment between sentences in the
 representation corresponds to implication between aspects of the real world. If
-sentence α entails sentence β within the formal system, then whatever real-world fact
-α describes genuinely implies whatever β describes. The syntactic derivation
+sentence $alpha$ entails sentence $beta$ within the formal system, then whatever real-world fact
+$alpha$ describes genuinely implies whatever $beta$ describes. The syntactic derivation
 "follows" the semantic relationship, so reasoning carried out inside the machine
 tracks reasoning about the actual world.
 

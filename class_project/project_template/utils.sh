@@ -680,11 +680,17 @@ list_and_inspect_docker_image() {
     #
     # Lists all images matching FULL_IMAGE_NAME and attempts to inspect
     # their architecture using docker manifest inspect.
+    #
+    # Skipped for the Apple engine: `container manifest inspect` needs the
+    # `container-manifest` plugin, which is not bundled with the `container`
+    # CLI, so it always fails with "Plugin 'container-manifest' not found".
     # """
     local DOCKER_CMD
     DOCKER_CMD=$(get_docker_cmd)
     run "$DOCKER_CMD image ls | grep '$FULL_IMAGE_NAME' || true"
-    ($DOCKER_CMD manifest inspect $FULL_IMAGE_NAME | grep arch) || true
+    if [[ "$(get_docker_engine)" != "apple" ]]; then
+        ($DOCKER_CMD manifest inspect $FULL_IMAGE_NAME | grep arch) || true
+    fi
 }
 
 

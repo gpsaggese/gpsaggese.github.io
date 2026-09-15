@@ -36,7 +36,7 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "L07_01_bayesian_coin.ipynb"
         # Run test.
-        self.helper(notebook_name)
+        self.helper(notebook_name, generate_html=True)
 
     @pytest.mark.slow
     def test2(self) -> None:
@@ -46,7 +46,7 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "L07_02_probabilistic_programming.ipynb"
         # Run test.
-        self.helper(notebook_name)
+        self.helper(notebook_name, generate_html=True)
 
     @pytest.mark.slow
     def test3(self) -> None:
@@ -56,7 +56,7 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "L07_02_robust_modeling.ipynb"
         # Run test.
-        self.helper(notebook_name)
+        self.helper(notebook_name, generate_html=True)
 
     @pytest.mark.slow
     def test4(self) -> None:
@@ -66,7 +66,7 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "L07_03_hierarchical_models.ipynb"
         # Run test.
-        self.helper(notebook_name)
+        self.helper(notebook_name, generate_html=True)
 
     @pytest.mark.slow
     def test5(self) -> None:
@@ -76,7 +76,7 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "L07_04_generalized_linear_models.ipynb"
         # Run test.
-        self.helper(notebook_name)
+        self.helper(notebook_name, generate_html=True)
 
     @pytest.mark.slow
     def test6(self) -> None:
@@ -86,4 +86,4 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "L07_05_evaluating_models.ipynb"
         # Run test.
-        self.helper(notebook_name)
+        self.helper(notebook_name, generate_html=True)

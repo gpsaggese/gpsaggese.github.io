@@ -818,11 +818,11 @@ def cell3_greedy_algorithm_failure() -> None:
 
 
 # #############################################################################
-# Cell 5: Epsilon-Greedy Algorithm
+# Cell 4: Epsilon-Greedy Algorithm
 # #############################################################################
 
 
-def cell5_epsilon_greedy() -> None:
+def cell4_epsilon_greedy() -> None:
     """
     Show how epsilon-greedy balances exploration and exploitation.
 
@@ -833,7 +833,9 @@ def cell5_epsilon_greedy() -> None:
     """
     true_means = [0.4, 0.7, 0.5]
     action_colors = {
-        "init": "gray", "explore": "tab:blue", "exploit": "tab:green"
+        "init": "gray",
+        "explore": "tab:blue",
+        "exploit": "tab:green",
     }
     # Create seed widget (must be first, per convention).
     seed_slider, seed_box = htutori.build_widget_control(
@@ -901,11 +903,7 @@ def cell5_epsilon_greedy() -> None:
             _, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, figsize=(20, 5))
             # Panel 1: timeline colored by decision type (explore vs exploit).
             for action_type, color in action_colors.items():
-                idx = [
-                    t
-                    for t, a in enumerate(action_types)
-                    if a == action_type
-                ]
+                idx = [t for t, a in enumerate(action_types) if a == action_type]
                 if not idx:
                     continue
                 ax1.scatter(
@@ -970,15 +968,13 @@ def cell5_epsilon_greedy() -> None:
             plt.show()
 
     run_button.on_click(on_run_clicked)
-    controls = ipywidgets.VBox(
-        [seed_box, coins_box, epsilon_box, run_button]
-    )
+    controls = ipywidgets.VBox([seed_box, coins_box, epsilon_box, run_button])
     display(controls, output)
     on_run_clicked(run_button)
 
 
 # #############################################################################
-# Cell 6: Confidence Intervals for Each Arm
+# Cell 5: Confidence Intervals for Each Arm
 # #############################################################################
 
 
@@ -998,7 +994,7 @@ def _hoeffding_half_width(n: int, confidence: float) -> float:
     return float(np.sqrt(np.log(2.0 / delta) / (2.0 * n)))
 
 
-def cell6_confidence_intervals() -> None:
+def cell5_confidence_intervals() -> None:
     """
     Show empirical means and confidence intervals shrinking with more pulls.
 
@@ -1096,13 +1092,9 @@ def cell6_confidence_intervals() -> None:
             ax1.grid(True, alpha=0.3, axis="y")
             # Panel 2: half-width vs N, with a marker at the current N.
             n_range = list(range(2, 201))
-            half_widths = [
-                _hoeffding_half_width(n, confidence) for n in n_range
-            ]
+            half_widths = [_hoeffding_half_width(n, confidence) for n in n_range]
             ax2.plot(n_range, half_widths, color="black", linewidth=2)
-            ax2.scatter(
-                [n_pulls], [half_width], color="red", s=80, zorder=3
-            )
+            ax2.scatter([n_pulls], [half_width], color="red", s=80, zorder=3)
             ax2.set_xlabel("N (pulls per machine)")
             ax2.set_ylabel("CI half-width")
             ax2.set_title("More pulls shrink the CI")
@@ -1145,11 +1137,11 @@ def cell6_confidence_intervals() -> None:
 
 
 # #############################################################################
-# Cell 7: Upper Confidence Bound (UCB) Intuition
+# Cell 6: Upper Confidence Bound (UCB) Intuition
 # #############################################################################
 
 
-def cell7_ucb_intuition() -> None:
+def cell6_ucb_intuition() -> None:
     """
     Show the UCB index as empirical mean plus exploration bonus.
 
@@ -1185,9 +1177,7 @@ def cell7_ucb_intuition() -> None:
         with output:
             clear_output(wait=True)
             t = t_slider.value
-            bonuses = [
-                sim.ucb_bonus(t, pull_counts[i]) for i in range(3)
-            ]
+            bonuses = [sim.ucb_bonus(t, pull_counts[i]) for i in range(3)]
             ucb_values = [empirical_means[i] + bonuses[i] for i in range(3)]
             best_machine = int(np.argmax(ucb_values))
             # Create 1x2 layout: stacked bar chart, comments.
@@ -1249,11 +1239,11 @@ def cell7_ucb_intuition() -> None:
 
 
 # #############################################################################
-# Cell 8: UCB Algorithm Simulation
+# Cell 7: UCB Algorithm Simulation
 # #############################################################################
 
 
-def cell8_ucb_simulation() -> None:
+def cell7_ucb_simulation() -> None:
     """
     Run `UCBStrategy` on 4 Bernoulli arms and show pull counts and regret.
 
@@ -1342,7 +1332,10 @@ def cell8_ucb_simulation() -> None:
             # Panel 2: N_i(t) for each arm.
             for i in range(4):
                 ax2.plot(
-                    rounds, running_counts[i], color=colors[i], linewidth=2,
+                    rounds,
+                    running_counts[i],
+                    color=colors[i],
+                    linewidth=2,
                     label=f"Machine {i + 1}",
                 )
             ax2.set_xlabel("Round t")
@@ -1387,11 +1380,11 @@ def cell8_ucb_simulation() -> None:
 
 
 # #############################################################################
-# Cell 9: UCB Exploration Bonus Decay
+# Cell 8: UCB Exploration Bonus Decay
 # #############################################################################
 
 
-def cell9_ucb_bonus_decay() -> None:
+def cell8_ucb_bonus_decay() -> None:
     """
     Show how the UCB exploration bonus sqrt(2 log(t) / N_i) decays with N_i.
 
@@ -1466,7 +1459,7 @@ def cell9_ucb_bonus_decay() -> None:
 
 
 # #############################################################################
-# Cell 10: Regret Accumulation
+# Cell 9: Regret Accumulation
 # #############################################################################
 
 
@@ -1493,7 +1486,7 @@ def _build_strategy(algorithm: str, *, seed: int) -> sim.Strategy:
     return strategy
 
 
-def cell10_regret_accumulation() -> None:
+def cell9_regret_accumulation() -> None:
     """
     Visualize per-step and cumulative regret for a chosen algorithm.
 
@@ -1558,9 +1551,7 @@ def cell10_regret_accumulation() -> None:
             experiment.run()
             choices = experiment.machine_choices
             mu_star = max(true_means)
-            instantaneous_regret = [
-                mu_star - true_means[c] for c in choices
-            ]
+            instantaneous_regret = [mu_star - true_means[c] for c in choices]
             cumulative_regret = sim.compute_regret(true_means, choices)
             rounds = list(range(1, t_horizon + 1))
             # Create a 1x3 layout: per-step regret, cumulative regret,
@@ -1570,8 +1561,7 @@ def cell10_regret_accumulation() -> None:
             # optimal arm was chosen.
             best_machine = int(np.argmax(true_means))
             bar_colors = [
-                "tab:green" if c == best_machine else "tab:red"
-                for c in choices
+                "tab:green" if c == best_machine else "tab:red" for c in choices
             ]
             ax1.bar(rounds, instantaneous_regret, color=bar_colors)
             ax1.set_xlabel("Round t")
@@ -1612,7 +1602,7 @@ def cell10_regret_accumulation() -> None:
 
 
 # #############################################################################
-# Cell 11: Comparing Algorithms: Regret Curves
+# Cell 10: Comparing Algorithms: Regret Curves
 # #############################################################################
 
 _ALGORITHM_BIG_O = {
@@ -1624,7 +1614,7 @@ _ALGORITHM_BIG_O = {
 }
 
 
-def cell11_regret_comparison() -> None:
+def cell10_regret_comparison() -> None:
     """
     Compare cumulative regret curves of several algorithms on a log-t axis.
 
@@ -1761,11 +1751,11 @@ def cell11_regret_comparison() -> None:
 
 
 # #############################################################################
-# Cell 12: Bayesian Bandits: Prior and Posterior
+# Cell 11: Bayesian Bandits: Prior and Posterior
 # #############################################################################
 
 
-def cell12_bayesian_prior_posterior() -> None:
+def cell11_bayesian_prior_posterior() -> None:
     """
     Show a Beta prior updating into a Beta posterior as data arrives.
 
@@ -1807,9 +1797,7 @@ def cell12_bayesian_prior_posterior() -> None:
     pull_button = ipywidgets.Button(
         description="Pull Arm", button_style="success"
     )
-    reset_button = ipywidgets.Button(
-        description="Reset", button_style="warning"
-    )
+    reset_button = ipywidgets.Button(description="Reset", button_style="warning")
     output = ipywidgets.Output()
     # Observed data state: number of successes and failures so far.
     state = {"successes": 0, "failures": 0, "rng": np.random.RandomState(42)}
@@ -1833,11 +1821,19 @@ def cell12_bayesian_prior_posterior() -> None:
             _, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
             # Panel 1: prior (light, dotted) and posterior (solid, shaded).
             ax1.plot(
-                x, prior_pdf, color="tab:blue", linestyle=":", alpha=0.6,
-                linewidth=2, label=f"Prior Beta({alpha},{beta})",
+                x,
+                prior_pdf,
+                color="tab:blue",
+                linestyle=":",
+                alpha=0.6,
+                linewidth=2,
+                label=f"Prior Beta({alpha},{beta})",
             )
             ax1.plot(
-                x, post_pdf, color="tab:orange", linewidth=2.5,
+                x,
+                post_pdf,
+                color="tab:orange",
+                linewidth=2.5,
                 label=f"Posterior Beta({post_alpha:.0f},{post_beta:.0f})",
             )
             ax1.fill_between(x, post_pdf, alpha=0.2, color="tab:orange")
@@ -1910,7 +1906,7 @@ def cell12_bayesian_prior_posterior() -> None:
 
 
 # #############################################################################
-# Cell 13: Thompson Sampling Algorithm
+# Cell 12: Thompson Sampling Algorithm
 # #############################################################################
 
 
@@ -1928,8 +1924,8 @@ def _replay_thompson_sampling(
     :param true_means: true Bernoulli success probability of each arm
     :param seed: random seed
     :param n_rounds: number of rounds to run
-    :return: dict with "choices", "rewards", "samples_history",
-        "alphas_history", "betas_history" (one entry per round)
+    :return: dict with "choices", "rewards", "samples_history", "alphas_history",
+        "betas_history" (one entry per round)
     """
     bandit = sim.MultiArmedBandit(
         k_machines=k_machines,
@@ -1965,7 +1961,7 @@ def _replay_thompson_sampling(
     }
 
 
-def cell13_thompson_sampling() -> None:
+def cell12_thompson_sampling() -> None:
     """
     Show Thompson Sampling drawing from each arm's posterior and picking argmax.
 
@@ -2044,7 +2040,10 @@ def cell13_thompson_sampling() -> None:
             for i in range(k_machines):
                 pdf = _beta_pdf(x, alphas[i], betas[i])
                 ax1.plot(
-                    x, pdf, color=colors[i], linewidth=2,
+                    x,
+                    pdf,
+                    color=colors[i],
+                    linewidth=2,
                     label=f"Machine {i + 1} (mu={true_means[i]:.2f})",
                 )
                 # Mark the sampled theta_i for this arm on its curve.
@@ -2054,8 +2053,12 @@ def cell13_thompson_sampling() -> None:
                 marker = "*" if i == choice else "o"
                 marker_size = 250 if i == choice else 100
                 ax1.scatter(
-                    [samples[i]], [sample_pdf], color=colors[i],
-                    marker=marker, s=marker_size, edgecolor="black",
+                    [samples[i]],
+                    [sample_pdf],
+                    color=colors[i],
+                    marker=marker,
+                    s=marker_size,
+                    edgecolor="black",
                     zorder=3,
                 )
             ax1.set_xlabel("mu")
@@ -2112,7 +2115,7 @@ def cell13_thompson_sampling() -> None:
 
 
 # #############################################################################
-# Cell 14: Thompson Sampling: Probability Matching
+# Cell 13: Thompson Sampling: Probability Matching
 # #############################################################################
 
 
@@ -2142,7 +2145,7 @@ def _monte_carlo_prob_optimal(
     return (counts / n_samples).tolist()
 
 
-def cell14_probability_matching() -> None:
+def cell13_probability_matching() -> None:
     """
     Compare theoretical Pr(arm optimal) with the empirical selection frequency.
 
@@ -2201,9 +2204,7 @@ def cell14_probability_matching() -> None:
                 for _ in range(n_pulls):
                     bandit.pull(i)
             alphas = [1.0 + sum(r) for r in bandit.machine_rewards]
-            betas = [
-                1.0 + len(r) - sum(r) for r in bandit.machine_rewards
-            ]
+            betas = [1.0 + len(r) - sum(r) for r in bandit.machine_rewards]
             theoretical_prob = _monte_carlo_prob_optimal(
                 alphas, betas, n_samples=50000, seed=seed + 1
             )
@@ -2255,11 +2256,11 @@ def cell14_probability_matching() -> None:
 
 
 # #############################################################################
-# Cell 15: UCB vs Thompson Sampling Comparison
+# Cell 14: UCB vs Thompson Sampling Comparison
 # #############################################################################
 
 
-def cell15_ucb_vs_thompson() -> None:
+def cell14_ucb_vs_thompson() -> None:
     """
     Compare UCB1 and Thompson Sampling on the same bandit environment.
 
@@ -2347,9 +2348,7 @@ def cell15_ucb_vs_thompson() -> None:
                 choices = experiment.machine_choices
                 results[name] = {
                     "regret": sim.compute_regret(true_means, choices),
-                    "pull_counts": [
-                        choices.count(i) for i in range(k_machines)
-                    ],
+                    "pull_counts": [choices.count(i) for i in range(k_machines)],
                 }
             rounds = list(range(1, t_horizon + 1))
             # Create 1x3 layout: regret curves, pull counts, comments.
@@ -2357,8 +2356,11 @@ def cell15_ucb_vs_thompson() -> None:
             # Panel 1: regret curves for both algorithms, overlaid.
             for name, color in colors.items():
                 ax1.plot(
-                    rounds, results[name]["regret"], color=color,
-                    linewidth=2, label=name,
+                    rounds,
+                    results[name]["regret"],
+                    color=color,
+                    linewidth=2,
+                    label=name,
                 )
             ax1.set_xlabel("Round t")
             ax1.set_ylabel("Cumulative regret L_t")
@@ -2369,8 +2371,11 @@ def cell15_ucb_vs_thompson() -> None:
             x_pos = np.arange(k_machines)
             width = 0.35
             ax2.bar(
-                x_pos - width / 2, results["UCB"]["pull_counts"], width,
-                color=colors["UCB"], label="UCB",
+                x_pos - width / 2,
+                results["UCB"]["pull_counts"],
+                width,
+                color=colors["UCB"],
+                label="UCB",
             )
             ax2.bar(
                 x_pos + width / 2,

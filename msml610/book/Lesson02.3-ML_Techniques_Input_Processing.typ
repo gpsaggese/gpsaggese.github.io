@@ -437,7 +437,7 @@ does not exist when predictions must be made in real time.
 // Slide: Dimensionality Reduction
 
 The goal of #strong[dimensionality reduction] is to shrink the number of features in
-a dataset while preserving the information that matters most. Consider a 1024×640
+a dataset while preserving the information that matters most. Consider a $1024 times 640$
 image: rather than working with every pixel, one can compress the representation down
 to just 10 principal components that capture the dominant patterns. Similarly,
 collapsing three color channels (red, green, blue) into a single luminance value

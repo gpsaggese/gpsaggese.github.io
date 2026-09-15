@@ -83,6 +83,31 @@ def weather_symbols() -> Dict[str, Any]:
     return result
 
 
+def format_sentence(sentence: sympy.Basic) -> str:
+    """
+    Render a `sympy` sentence in the lecture's own infix notation.
+
+    `sympy`'s printer spells out `Implies(A, B)` and `Equivalent(A, B)`,
+    which is harder to read than `A => B` and `A <=> B`.
+
+    :param sentence: sentence to render
+    :return: string form, e.g., `Rain => ~Snow`
+    """
+    if isinstance(sentence, sympy.Implies):
+        text = " => ".join(_format_arg(arg) for arg in sentence.args)
+    elif isinstance(sentence, sympy.Equivalent):
+        text = " <=> ".join(_format_arg(arg) for arg in sentence.args)
+    elif isinstance(sentence, sympy.And):
+        text = " & ".join(_format_arg(arg) for arg in sentence.args)
+    elif isinstance(sentence, sympy.Or):
+        text = " | ".join(_format_arg(arg) for arg in sentence.args)
+    elif isinstance(sentence, sympy.Not):
+        text = "~" + _format_arg(sentence.args[0])
+    else:
+        text = str(sentence)
+    return text
+
+
 def weather_sentences() -> Dict[str, Any]:
     """
     Build the catalog of weather sentences used across the notebook.
@@ -115,29 +140,12 @@ def weather_sentences() -> Dict[str, Any]:
     return sentences
 
 
-def format_sentence(sentence: sympy.Basic) -> str:
+def show_weather_sentences() -> None:
     """
-    Render a `sympy` sentence in the lecture's own infix notation.
-
-    `sympy`'s printer spells out `Implies(A, B)` and `Equivalent(A, B)`,
-    which is harder to read than `A => B` and `A <=> B`.
-
-    :param sentence: sentence to render
-    :return: string form, e.g., `Rain => ~Snow`
+    Display the weather sentences every propositional cell reuses.
     """
-    if isinstance(sentence, sympy.Implies):
-        text = " => ".join(_format_arg(arg) for arg in sentence.args)
-    elif isinstance(sentence, sympy.Equivalent):
-        text = " <=> ".join(_format_arg(arg) for arg in sentence.args)
-    elif isinstance(sentence, sympy.And):
-        text = " & ".join(_format_arg(arg) for arg in sentence.args)
-    elif isinstance(sentence, sympy.Or):
-        text = " | ".join(_format_arg(arg) for arg in sentence.args)
-    elif isinstance(sentence, sympy.Not):
-        text = "~" + _format_arg(sentence.args[0])
-    else:
-        text = str(sentence)
-    return text
+    sentences_df = pd.DataFrame({"sentence": list(weather_sentences().keys())})
+    display(sentences_df)
 
 
 def _format_arg(arg: sympy.Basic) -> str:
@@ -228,8 +236,8 @@ def is_equivalent(alpha: sympy.Basic, beta: sympy.Basic) -> bool:
     """
     Check `alpha == beta` the semantic way, as the lecture defines it.
 
-    Two sentences are logically equivalent iff they are true in the same
-    models, which holds iff `~(alpha <=> beta)` has no model at all.
+    Two sentences are logically equivalent iff they are true in the same models,
+    which holds iff `~(alpha <=> beta)` has no model at all.
 
     :param alpha: first sentence
     :param beta: second sentence
@@ -1392,9 +1400,9 @@ def random_3sat_clauses(
     """
     Generate a uniform random 3-SAT instance.
 
-    Each clause picks 3 distinct variables and flips a fair coin for the sign
-    of each literal, which is the standard random 3-SAT ensemble used to
-    study the satisfiability phase transition.
+    Each clause picks 3 distinct variables and flips a fair coin for the sign of
+    each literal, which is the standard random 3-SAT ensemble used to study the
+    satisfiability phase transition.
 
     :param n_vars: number of variables
     :param n_clauses: number of clauses
@@ -2045,7 +2053,7 @@ def _propositional_entailment_row(engine: str) -> Dict[str, str]:
     The query is the lecture's own: `{Rain, Rain => WetGround} |= WetGround`,
     decided by refutation, which every one of the three engines can express.
 
-    :param engine: `"sympy"`, `"PySAT"`, or `"z3"`
+    :param engine:`"sympy"`, `"PySAT"`, or `"z3"`
     :return: one row of the comparison table
     """
     rain, wet_ground = sympy.symbols("Rain WetGround")

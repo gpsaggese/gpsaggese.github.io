@@ -10,7 +10,7 @@ import copy
 import logging
 from typing import Dict, List, Optional, Tuple, Union
 
-from ipywidgets import Dropdown, VBox, interactive_output
+from ipywidgets import Dropdown, IntSlider, VBox, interact, interactive_output
 from filterpy.discrete_bayes import predict, update
 from IPython.display import display
 import matplotlib.pyplot as plt
@@ -96,18 +96,17 @@ def plot_beliefs(
     use_hallway: bool = True,
 ) -> None:
     """
-    Plot two belief distributions, either side by side or together as bars
-    with different colors and a legend.
+    Plot two belief distributions, either side by side or together as bars with
+    different colors and a legend.
 
     :param belief1: The first belief array
     :param belief2: The second belief array
-    :param title1: The title for the first belief distribution (also used
-        as label if same_plot=True)
-    :param title2: The title for the second belief distribution (also used
-        as label if same_plot=True)
+    :param title1: The title for the first belief distribution (also used as
+        label if same_plot=True)
+    :param title2: The title for the second belief distribution (also used as
+        label if same_plot=True)
     :param y_lim: The limits for the y-axis
-    :param same_plot: If True, show both beliefs on the same axes with
-        legend
+    :param same_plot: If True, show both beliefs on the same axes with legend
     :param use_hallway: If True, mark door positions from HALLWAY constant
     """
     if not same_plot:
@@ -198,8 +197,8 @@ def lh_hallway(hall: np.ndarray, z: int, z_prob: float) -> np.ndarray:
     """
     Compute likelihood that a measurement matches positions in the hallway.
 
-    Creates a likelihood array where positions matching the measurement z
-    are scaled according to the measurement probability.
+    Creates a likelihood array where positions matching the measurement z are
+    scaled according to the measurement probability.
 
     :param hall: Array representing the hallway map (0=wall, 1=door)
     :param z: Measurement value (0 or 1)
@@ -213,6 +212,29 @@ def lh_hallway(hall: np.ndarray, z: int, z_prob: float) -> np.ndarray:
     likelihood = np.ones(len(hall))
     likelihood[hall == z] *= scale
     return likelihood
+
+
+def cell1_3_predict_only_widget(
+    predict_beliefs: List[Pdf], hallway: np.ndarray
+) -> None:
+    """
+    Interactively step through belief flattening under repeated predicts.
+
+    With no sensor updates, each prediction step loses information; this lets the
+    student scrub through the steps and watch the belief go from a single spike
+    to a flat (uninformative) distribution.
+
+    :param predict_beliefs: sequence of belief distributions, one per prediction-
+        only step (no sensor updates)
+    :param hallway: hallway map (0=wall, 1=door)
+    """
+
+    def _show_prior(step: int) -> None:
+        plot_belief(predict_beliefs[step - 1], hallway=hallway)
+        plt.title(f"Step {step}")
+        plt.show()
+
+    interact(_show_prior, step=IntSlider(value=1, max=len(predict_beliefs)))
 
 
 def dassert_sensor_info(sensor_info: Dict[str, List]) -> None:
@@ -237,8 +259,8 @@ def get_dog_movements2() -> PosList:
 
 
 def get_dog_movements3() -> PosList:
-    """
-    The dog runs between positions 0 and 3 for 12 steps, then back for 12 steps.
+    """The dog runs between positions 0 and 3 for 12 steps, then back for 12
+    steps.
     """
     positions = [0, 0] + [0, 1, 2, 3, 3, 2, 1, 0] * 6
     return positions
@@ -371,8 +393,8 @@ def animate_discrete_bayes(
     """
     Create animation function for discrete Bayes filter.
 
-    Returns a function that alternates between plotting priors and
-    posteriors as the step parameter changes.
+    Returns a function that alternates between plotting priors and posteriors as
+    the step parameter changes.
 
     :param hallway: Map of the hallway (0=wall, 1=door)
     :param priors: List of prior belief distributions
@@ -442,9 +464,9 @@ def animate_discrete_bayes_with_movement(
     """
     Create animation function for discrete Bayes filter with movement plot.
 
-    Returns a function that alternates between plotting priors and
-    posteriors as the step parameter changes, along with a plot showing
-    the dog's movement trajectory.
+    Returns a function that alternates between plotting priors and posteriors as
+    the step parameter changes, along with a plot showing the dog's movement
+    trajectory.
 
     :param hallway: Map of the hallway (0=wall, 1=door)
     :param priors: List of prior belief distributions
@@ -515,11 +537,12 @@ def animate_discrete_bayes_with_movement_and_info(
     sensor_info: Dict[str, List],
 ):
     """
-    Create animation function for discrete Bayes filter with movement plot and sensor info box.
+    Create animation function for discrete Bayes filter with movement plot and
+    sensor info box.
 
-    Returns a function that alternates between plotting priors and
-    posteriors as the step parameter changes, along with a plot showing
-    the dog's movement trajectory and a text box with sensor information.
+    Returns a function that alternates between plotting priors and posteriors as
+    the step parameter changes, along with a plot showing the dog's movement
+    trajectory and a text box with sensor information.
 
     :param hallway: Map of the hallway (0=wall, 1=door)
     :param priors: List of prior belief distributions
@@ -569,7 +592,6 @@ def animate_discrete_bayes_with_movement_and_info(
             axes[0],
             sensor_text,
             box_xy=(0.02, 0.98),
-            box_width=0.96,
             box_height=0.96,
             max_fontsize=10,
             min_fontsize=6,
@@ -624,9 +646,9 @@ def cell2_1_interactive() -> None:
     """
     Interactive visualization of discrete Bayes filter tracking a dog.
 
-    Creates an interactive widget that animates the belief update process
-    as the dog moves through a hallway with noisy sensors. Includes controls
-    for movement function, initial prior, and sensor probability.
+    Creates an interactive widget that animates the belief update process as the
+    dog moves through a hallway with noisy sensors. Includes controls for
+    movement function, initial prior, and sensor probability.
     """
     hallway = get_hallway1()
     # Create widgets for controls.
@@ -743,9 +765,9 @@ def cell2_2_interactive() -> None:
     """
     Interactive visualization of discrete Bayes filter tracking a dog.
 
-    Creates an interactive widget that animates the belief update process
-    as the dog moves through a hallway with noisy sensors. Includes controls
-    for movement function, initial prior, and sensor probability.
+    Creates an interactive widget that animates the belief update process as the
+    dog moves through a hallway with noisy sensors. Includes controls for
+    movement function, initial prior, and sensor probability.
     """
     hallway = get_hallway2()
     # Create widgets for controls.

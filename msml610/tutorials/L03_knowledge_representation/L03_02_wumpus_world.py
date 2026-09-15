@@ -47,6 +47,7 @@ plt.rcParams["figure.figsize"] = (12, 6)
 # !pip install -q sympy==1.14.0
 
 import sympy
+
 print("sympy version: ", sympy.__version__)
 
 # %%
@@ -108,7 +109,7 @@ utils.init_loggers(_LOG)
 #   implicates as the wumpus
 
 # %% [markdown]
-# ## Cell 1.1: The Wumpus World Grid and the Knowledge Base
+# ## Cell 1.1: The wumpus world grid and the knowledge base
 #
 # **Goal**:
 # - Give students a concrete grid to reason about before any logic is
@@ -155,26 +156,31 @@ utils.cell1_1_world_and_kb()
 #   - Not(B_1_1): observed, no breeze felt
 # - Model checking combines these: Not(B_1_1) forces (P_2_1 | P_1_2) false
 # - So both P_2_1 and P_1_2 are false: no pit at (2,1), no pit at (1,2)
-#
-# KB proves this by inference. Agent never stepped into (2,1) or (1,2).
-#
+# - `KB` proves this by inference
+#   - Agent never stepped into (2,1) or (1,2)
 # - Blue = actually visited
 #   - Only (1,1) is blue
 # - Green = proved pit-free by entailment
-#    - (2,1) and (1,2) are green but not blue: proof, not observation.
+#   - (2,1) and (1,2) are green but not blue: proof, not observation
 
 # %% [markdown]
 # # Part 2: Models and Entailment
 
 # %% [markdown]
-# ## Cell 2.1: Models and the Breeze Axiom
-#
-# We need to understand what entailment means formally. Part 1 built a `KB` from percepts; this part makes precise what the agent can conclude from it. A sentence α is entailed by the `KB` exactly when every model (every possible world) consistent with the `KB` also makes α true. This part introduces models concretely, so that entailment can later be checked directly as $M(KB) \subseteq M(\alpha)$.
+# ## Cell 2.1: Models and the breeze axiom
 #
 # **Goal**:
 # - Introduce a model as one full true/false assignment to every pit variable
 # - Encode the breeze axiom
 #   $B_{1,2} \Leftrightarrow (P_{1,1} \lor P_{2,2} \lor P_{1,3})$
+#
+# - Part 1 built a `KB` from percepts
+#   - This part makes precise what the agent can conclude from it
+# - A sentence $\alpha$ is entailed by the `KB` exactly when every model
+#   (every possible world) consistent with the `KB` also makes $\alpha$
+#   true
+# - Models are introduced concretely here, so entailment can later be
+#   checked directly as $M(KB) \subseteq M(\alpha)$
 #
 # - The KB is:
 #     1. Breeze axiom: Equivalent(B_1_2, P_1_1 | P_1_3 | P_2_2)
@@ -195,18 +201,19 @@ utils.cell2_1_models_and_axiom()
 # **Key observations**:
 # - $M(KB)$ is the shaded subset of rows in the table
 # - Adding one more pit variable would double the table: this is the $2^n$
-#   growth that Cell 3.2 measures directly
+#   growth that Cell 3.1 measures directly
 
 # %% [markdown]
-# ## Cell 2.2: Entailment as Model Inclusion
+# ## Cell 2.2: Entailment as model inclusion
+#
+# **Goal**:
+# - Answer questions (e.g., "is cell $(2,2)$ provably safe?") by model
+#   checking directly
 #
 # - Same KB as before
 #     1. Breeze axiom: Equivalent(B_1_2, P_1_1 | P_1_3 | P_2_2)
 #     2. B_1_2: a breeze was observed at (1, 2)
 #     3. Not(P_1_1): agent started at (1, 1), survived, no pit
-#
-# **Goal**:
-# - Answer questions (e.g., "is cell $(2,2)$ provably safe?") by model checking directly
 #
 # **Explanation of Widget**
 # - _Model table_: same table as Cell 2.1, now with a second shading color for
@@ -241,7 +248,7 @@ utils.cell2_2_entailment()
 # - Entailment is a property of the full model sets, never of one row alone
 
 # %% [markdown]
-# ## Cell 2.3: Implication, Entailment, and Inference
+# ## Cell 2.3: Implication, entailment, and inference
 #
 # **Goal**:
 # - Separate three ideas that are easy to conflate
@@ -282,7 +289,7 @@ utils.cell2_3_three_views()
 # answers the same entailment query without ever building M(KB) explicitly.
 
 # %% [markdown]
-# ## Cell 3.2: Model Checking Doesn't Scale
+# ## Cell 3.1: Model checking doesn't scale
 #
 # **Goal**:
 # - Measure how brute-force model checking degrades as the grid grows, and
@@ -296,7 +303,7 @@ utils.cell2_3_three_views()
 
 # %%
 # Compare brute-force model checking against a SAT solver as the grid grows.
-utils.cell3_2_scaling(fixed_grid_size=6)
+utils.cell3_1_scaling(fixed_grid_size=6)
 
 # %% [markdown]
 # **Key observations**:
@@ -311,7 +318,7 @@ utils.cell3_2_scaling(fixed_grid_size=6)
 # # Part 4: First-Order Logic and the Full Agent
 
 # %% [markdown]
-# ## Cell 4.1: From Propositional Rules to First-Order Sentences
+# ## Cell 4.1: From propositional rules to first-order sentences
 #
 # **Goal**:
 # - Rewrite the propositional breeze axiom as a single first-order sentence
@@ -338,7 +345,7 @@ utils.cell4_1_first_order()
 #   for that cell
 
 # %% [markdown]
-# ## Cell 4.2: The Agent Loop: KB Grows, Candidate Models Shrink
+# ## Cell 4.2: The agent loop: KB grows, candidate models shrink
 #
 # **Goal**:
 # - Tie every prior cell together in a stepping agent that `TELL`s new

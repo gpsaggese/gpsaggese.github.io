@@ -135,9 +135,11 @@ def _sample_valid_cov_params(
     Sample random valid 2D covariance parameters (positive definite matrix).
 
     Draws var_x and var_y uniformly in [var_min, var_max], then draws
+    ```
     cov_xy in (-cov_fraction * sqrt(var_x * var_y),
-               +cov_fraction * sqrt(var_x * var_y)) to guarantee positive
-    definiteness.
+               +cov_fraction * sqrt(var_x * var_y))
+    ```
+    to guarantee positive definiteness.
 
     :param var_min: minimum value for var_x and var_y
     :param var_max: maximum value for var_x and var_y
@@ -229,9 +231,9 @@ def _plot_product_of_gaussians(
     """
     Plot two 2D Gaussians and their product as covariance ellipses.
 
-    The product of G1 ~ N(0, Sigma1) and G2 ~ N(0, Sigma2) is proportional
-    to N(0, Sigma) where Sigma^{-1} = Sigma1^{-1} + Sigma2^{-1}. The
-    product is always more certain (smaller ellipse) than either factor.
+    The product of G1 ~ N(0, Sigma1) and G2 ~ N(0, Sigma2) is proportional to
+    N(0, Sigma) where Sigma^{-1} = Sigma1^{-1} + Sigma2^{-1}. The product is
+    always more certain (smaller ellipse) than either factor.
 
     :param var_x1: variance of x dimension for Gaussian 1
     :param var_y1: variance of y dimension for Gaussian 1
@@ -330,9 +332,9 @@ def cell_1_2_plot_sum_of_gaussians() -> None:
     """
     Create interactive widget for exploring the sum of two 2D Gaussians.
 
-    Shows G1 (yellow), G2 (green), and G1 + G2 (blue) as covariance
-    ellipses. The sum covariance equals Sigma1 + Sigma2. A "Random" button
-    assigns random valid covariance parameters to both Gaussians.
+    Shows G1 (yellow), G2 (green), and G1 + G2 (blue) as covariance ellipses. The
+    sum covariance equals Sigma1 + Sigma2. A "Random" button assigns random valid
+    covariance parameters to both Gaussians.
     """
     fig_sum = None
 
@@ -472,10 +474,9 @@ def cell_1_3_plot_product_of_gaussians() -> None:
     """
     Create interactive widget for exploring the product of two 2D Gaussians.
 
-    Shows G1 (yellow), G2 (green), and G1 * G2 (blue) as covariance
-    ellipses. The product is always more certain (smaller) than either
-    factor. A "Random" button assigns random valid covariance parameters to
-    both Gaussians.
+    Shows G1 (yellow), G2 (green), and G1 * G2 (blue) as covariance ellipses. The
+    product is always more certain (smaller) than either factor. A "Random"
+    button assigns random valid covariance parameters to both Gaussians.
     """
     fig_prod = None
 
@@ -617,8 +618,8 @@ def cell_1_1_plot_covariance_matrix() -> None:
     """
     Create interactive widget for exploring 2D covariance matrix.
 
-    Allows user to adjust var_x, var_y, cov_xy, number of samples, and seed
-    to visualize the covariance ellipse and sampled data points.
+    Allows user to adjust var_x, var_y, cov_xy, number of samples, and seed to
+    visualize the covariance ellipse and sampled data points.
     """
     fig_cov = None
 
@@ -816,7 +817,7 @@ def run_dog_kalman_filter(
     for z in zs:
         kalman_filter.predict()
         kalman_filter.update(np.array([[z]]))
-        means.append(float(kalman_filter.x[0]))
+        means.append(float(kalman_filter.x[0, 0]))
         variances.append(float(kalman_filter.P[0, 0]))
     return np.array(means), np.array(variances)
 
@@ -828,6 +829,7 @@ def plot_dog_tracking(
     variances: np.ndarray,
     *,
     title: str = "Dog Tracking with Multivariate Kalman Filter",
+    ax: Optional[plt.Axes] = None,
 ) -> None:
     """
     Plot true positions, noisy measurements, and Kalman filter estimates.
@@ -837,12 +839,15 @@ def plot_dog_tracking(
     :param means: Kalman filter estimated positions, shape (count,)
     :param variances: Kalman filter position variances, shape (count,)
     :param title: plot title
+    :param ax: axis to plot on; if None, a new figure is created
     """
     steps = np.arange(len(xs))
     std = np.sqrt(np.array(variances))
-    plt.figure(figsize=(10, 5))
-    plt.plot(steps, xs, label="True position", color="k", lw=2)
-    plt.scatter(
+    owns_figure = ax is None
+    if owns_figure:
+        _, ax = plt.subplots(figsize=(10, 5))
+    ax.plot(steps, xs, label="True position", color="k", lw=2)
+    ax.scatter(
         steps,
         zs,
         label="Measurements",
@@ -851,8 +856,8 @@ def plot_dog_tracking(
         alpha=0.7,
         zorder=5,
     )
-    plt.plot(steps, means, label="KF estimate", color="b", lw=2)
-    plt.fill_between(
+    ax.plot(steps, means, label="KF estimate", color="b", lw=2)
+    ax.fill_between(
         steps,
         means - std,
         means + std,
@@ -860,12 +865,13 @@ def plot_dog_tracking(
         alpha=0.2,
         label="KF +/- 1 std",
     )
-    plt.xlabel("Time step")
-    plt.ylabel("Position (m)")
-    plt.title(title)
-    plt.legend()
-    plt.grid(True, alpha=0.3)
-    plt.tight_layout()
+    ax.set_xlabel("Time step")
+    ax.set_ylabel("Position (m)")
+    ax.set_title(title)
+    ax.legend()
+    ax.grid(True, alpha=0.3)
+    if owns_figure:
+        plt.tight_layout()
 
 
 # #############################################################################
@@ -913,7 +919,7 @@ def run_dog_kalman_filter_1d(
     for z in zs:
         kalman_filter.predict()
         kalman_filter.update(np.array([[z]]))
-        means.append(float(kalman_filter.x[0]))
+        means.append(float(kalman_filter.x[0, 0]))
         variances.append(float(kalman_filter.P[0, 0]))
     return np.array(means), np.array(variances)
 
@@ -931,8 +937,8 @@ def plot_hidden_variable_comparison(
     """
     Plot side-by-side comparison of 1D KF vs 2D KF tracking.
 
-    The 1D filter tracks position only (no hidden variable).
-    The 2D filter tracks position and velocity (velocity is the hidden variable).
+    The 1D filter tracks position only (no hidden variable). The 2D filter tracks
+    position and velocity (velocity is the hidden variable).
 
     :param xs: true positions, shape (count,)
     :param zs: noisy measurements, shape (count,)
@@ -945,7 +951,7 @@ def plot_hidden_variable_comparison(
     steps = np.arange(len(xs))
     std_1d = np.sqrt(np.array(variances_1d))
     std_2d = np.sqrt(np.array(variances_2d))
-    fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+    fig, axes = plt.subplots(1, 3, figsize=(19, 5))
     for ax, means, stds, label, color in [
         (axes[0], means_1d, std_1d, "1D KF (position only)", "orange"),
         (axes[1], means_2d, std_2d, "2D KF (pos + vel hidden)", "b"),
@@ -976,7 +982,17 @@ def plot_hidden_variable_comparison(
         ax.grid(True, alpha=0.3)
     mse_1d = float(np.mean((means_1d - xs) ** 2))
     mse_2d = float(np.mean((means_2d - xs) ** 2))
-    fig.suptitle(f"{title}\nMSE: 1D={mse_1d:.3f}  2D={mse_2d:.3f}", fontsize=12)
+    # Comments panel.
+    axes[2].axis("off")
+    axes[2].set_title("Comments", fontsize=14, fontweight="bold")
+    detail = (
+        f"count = {len(xs)}\n\n"
+        f"MSE 1D = {mse_1d:.3f}\n"
+        f"MSE 2D = {mse_2d:.3f}\n\n"
+        f"{'2D' if mse_2d < mse_1d else '1D'} filter wins"
+    )
+    htutori.add_fitted_text_box(axes[2], detail, max_fontsize=12, min_fontsize=9)
+    fig.suptitle(title, fontsize=12)
     plt.tight_layout()
 
 
@@ -1110,8 +1126,23 @@ def cell_dog_tracking_interactive() -> None:
         np.random.seed(seed)
         xs_i, zs_i = compute_dog_data(z_var, process_var, count=count)
         means_i, variances_i = run_dog_kalman_filter(zs_i, z_var, process_var)
-        plot_dog_tracking(xs_i, zs_i, means_i, variances_i)
-        fig_dog = plt.gcf()
+        fig_dog, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 5))
+        plot_dog_tracking(xs_i, zs_i, means_i, variances_i, ax=ax1)
+        # Comments panel.
+        mse = float(np.mean((means_i - xs_i) ** 2))
+        detail = (
+            f"seed = {seed}\n"
+            f"z_var = {z_var:.2f}\n"
+            f"process_var = {process_var:.2f}\n"
+            f"count = {count}\n\n"
+            f"final estimate = {means_i[-1]:.2f}\n"
+            f"final true position = {xs_i[-1]:.2f}\n"
+            f"MSE(estimate, truth) = {mse:.3f}"
+        )
+        ax2.axis("off")
+        ax2.set_title("Comments", fontsize=14, fontweight="bold")
+        htutori.add_fitted_text_box(ax2, detail, max_fontsize=12, min_fontsize=9)
+        plt.tight_layout()
 
     # Seed widget is always first.
     seed_slider, seed_box = htutori.build_widget_control(

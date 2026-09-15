@@ -80,7 +80,8 @@ class GridWorldEnv(gym.Env):
 
         Terminal states are absorbing (stay in place with zero reward).
         """
-        _LOG.debug(hprint.func_signature_to_str())
+        # Note: `hprint.func_signature_to_str()` looks up the caller by name
+        # in the module globals, so it cannot be called from inside a method.
         # Terminal states are absorbing: stay in place with zero reward.
         if cell in self.terminal_cells:
             s_id = self._cell_to_id[cell]
@@ -121,7 +122,8 @@ class GridWorldEnv(gym.Env):
         gamma: float = 1.0,
         p_intended: float = 0.8,
     ) -> None:
-        _LOG.debug(hprint.func_signature_to_str())
+        # Note: `hprint.func_signature_to_str()` looks up the caller by name
+        # in the module globals, so it cannot be called from inside a method.
         super().__init__()
         self.n_cols = 4
         self.n_rows = 3
@@ -214,7 +216,9 @@ class GridWorldEnv(gym.Env):
 
     def render(self) -> None:
         """
-        Draw the grid. In `human` mode, show via plt.show().
+        Draw the grid.
+
+        In `human` mode, show via plt.show().
         """
         _LOG.debug(hprint.to_str("self.render_mode"))
         _, ax = plt.subplots(figsize=(6, 4))
@@ -254,8 +258,8 @@ class GridWorldEnv(gym.Env):
         *,
         fill: float = np.nan,
     ) -> np.ndarray:
-        """
-        Convert a dict over (col, row) cells into a 2D array for heatmap plots.
+        """Convert a dict over (col, row) cells into a 2D array for heatmap
+        plots.
         """
         return mtlrll0ut.to_grid(values, self.n_rows, self.n_cols, fill=fill)
 
@@ -429,6 +433,7 @@ def _greedy_action_id(
 ) -> int:
     """
     Return the action with the highest Q-value at state `s_id`.
+
     Query by flattened key `(s_id * 4 + a_id)`.
     """
     _LOG.debug(hprint.to_str("s_id"))
@@ -452,9 +457,8 @@ def q_learning(
     The agent sees only (s, a, r, s') tuples via env.step() — it never reads
     env.P (the transition model).
 
-    :return: dict with Q-table (flat key), per-episode returns, visit counts,
-        the final greedy policy as a cell->action dict, per-episode greedy
-        policies.
+    :return: dict with Q-table (flat key), per-episode returns, visit counts, the
+        final greedy policy as a cell->action dict, per-episode greedy policies.
     """
     _LOG.debug(hprint.to_str("n_episodes alpha epsilon seed"))
     n_states = env.observation_space.n
@@ -514,7 +518,7 @@ def q_learning(
         "policy": final_policy,
         "policies": policies,
     }
-    _LOG.debug(hprint.to_str("len(result[q]) len(returns)"))
+    _LOG.debug(hprint.to_str("len(q) len(returns)"))
     return result
 
 
@@ -725,8 +729,8 @@ def cell1_3_transition_table(
     *,
     figsize: Optional[Tuple[float, float]] = None,
 ) -> None:
-    """
-    Display the explicit transition row from env.P for a chosen (state, action).
+    """Display the explicit transition row from env.P for a chosen (state,
+    action).
     """
     _LOG.debug(hprint.to_str("figsize"))
     if figsize is None:
@@ -1122,6 +1126,7 @@ def cell2_2_value_iteration(
 ) -> None:
     """
     Step through value iteration sweeps and watch utilities converge.
+
     Uses the gymnasium env's `value_iteration()` planner which reads env.P.
     """
     _LOG.debug(hprint.to_str("figsize"))

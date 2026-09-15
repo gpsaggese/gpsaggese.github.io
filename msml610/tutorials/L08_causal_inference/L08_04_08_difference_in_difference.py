@@ -14,7 +14,7 @@
 # ---
 
 # %% [markdown]
-# # Difference In Difference
+# # Difference in difference
 
 # %% [markdown]
 # ## Imports
@@ -35,47 +35,34 @@ except ImportError:
 
 # %%
 import helpers.hnotebook as hnotebo
-
 import helpers.htutorial as ut
-# import L08_04_08_difference_in_difference_utils as mtl
 
 ut.config_notebook()
 
 # Initialize logger.
 logging.basicConfig(level=logging.INFO)
 _LOG = logging.getLogger(__name__)
-hnotebo.set_logger_to_print(_LOG)
-hnotebo.set_all_loggers_to_print()
-
-# %%
-# import warnings
-
-# import helpers.hmodule as hmodule
-# from lightgbm import LGBMRegressor
-# import fklearn.causal.validation.curves
-# import fklearn.causal.validation.auc
-
-# warnings.filterwarnings("ignore", category=UserWarning, module="lightgbm")
-# warnings.filterwarnings(
-#    "ignore",
-#    message="X does not have valid feature names",
-#    category=UserWarning,
-# )
-# logging.getLogger("lightgbm").setLevel(logging.ERROR)
-
-# hmodule.install_module_if_not_present(
-#    ["lightgbm", "fklearn"],
-#    use_activate=True,
-#    use_sudo=False,
-#    venv_path="/opt/venv",
-# )
+hnotebo.init_loggers(_LOG, set_all_loggers_to_print=True)
 
 # %% [markdown]
-# # Load data
+# # Part 1: Loading Data
+
+# %% [markdown]
+# ## Cell 1.1: Loading the marketing panel data
+#
+# **Goal**:
+# - Load a marketing panel dataset used to estimate the effect of an
+#   offline campaign via difference-in-differences
+#
+# The data is in a panel format:
+# - Each row is a (`date`, `city`) pair
+# - **downloads**: the outcome to predict
+# - **treated**: indicator of whether the city received the intervention
+# - **tau**: the (known, ground-truth) treatment effect
 
 # %%
 dir_name = "L08_data"
-# #!ls $dir_name
+# !ls $dir_name
 
 out_dir_name = "figures/"
 
@@ -83,42 +70,68 @@ out_dir_name = "figures/"
 mkt_data = pd.read_csv(f"{dir_name}/short_offline_mkt_south.csv").astype(
     {"date": "datetime64[ns]"}
 )
-print("mkt_data=", mkt_data.shape)
+print("mkt_data.shape=", mkt_data.shape)
 display(mkt_data.head())
 
-# Marketing data in a panel format.
-# - Each line is a (`date`, `city`)
-# - The outcome to predict is `downloads`
-# - `treated` is the indicator of the intervention
-# - `tau` is the treatment effect
+# %% [markdown]
+# # Part 2: Canonical Difference-in-Differences
+
+# %% [markdown]
+# ## Cell 2.1: Checking the pre/post intervention windows
+#
+# **Goal**:
+# - Check the date range covered by each of the 4 (treated, post) groups,
+#   to confirm the panel spans both a pre- and a post-intervention period
 
 # %%
 # Compute pre- and post-intervention period.
-(
+pre_post_windows = (
     mkt_data.assign(w=lambda d: d["treated"] * d["post"])
     .groupby(["w"])
     .agg({"date": ["min", "max"]})
 )
+display(pre_post_windows)
 
-# %%
-## Canonical DiD
+# %% [markdown]
+# ## Cell 2.2: Computing group-time average outcomes
+#
+# **Goal**:
+# - Compute the average outcome for each of the 4 (treated, post) groups,
+#   the building block of the difference-in-differences estimator
 
 # %%
 did_data = mkt_data.groupby(["treated", "post"]).agg(
     {"downloads": "mean", "date": "min"}
 )
+display(did_data)
 
-did_data
+# %% [markdown]
+# ## Cell 2.3: Computing the average treatment effect on the treated
+#
+# **Goal**:
+# - Estimate the ATT as the treated group's actual post-period outcome
+#   minus its counterfactual (parallel-trends) outcome
+#
+# **Implementation**:
+# - `y0_est`: the treated group's pre-period outcome, plus the control
+#   group's pre-to-post change
+# - `att = <treated, post-period outcome> - y0_est`
 
 # %%
 y0_est = (
-    did_data.loc[1].loc[0, "downloads"]  # treated baseline
-    # control evolution
-    + did_data.loc[0].diff().loc[1, "downloads"]
+    did_data.loc[1].loc[0, "downloads"]  # Treated baseline.
+    + did_data.loc[0].diff().loc[1, "downloads"]  # Control evolution.
 )
 
 att = did_data.loc[1].loc[1, "downloads"] - y0_est
-att
+print("att=", att)
+
+# %% [markdown]
+# ## Cell 2.4: Comparing against the known ground-truth effect
+#
+# **Goal**:
+# - Compare the estimated ATT against the dataset's known, ground-truth
+#   `tau`, to check how close the difference-in-differences estimator got
 
 # %%
-mkt_data.query("post==1").query("treated==1")["tau"].mean()
+print("mean tau=", mkt_data.query("post==1").query("treated==1")["tau"].mean())

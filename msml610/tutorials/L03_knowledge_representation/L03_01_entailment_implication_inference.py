@@ -71,13 +71,11 @@ colab_setup.maybe_enable_autoreload()
 
 import logging
 
-import matplotlib.pyplot as plt
-import seaborn as sns
-
 # %%
 # !pip install -q sympy==1.14.0
 
 import sympy
+
 print("sympy version: ", sympy.__version__)
 
 # %%
@@ -94,7 +92,7 @@ utils.init_loggers(_LOG)
 # # Part 1: Models and Satisfaction
 
 # %% [markdown]
-# ## Cell 1.1: Possible Worlds, Models, and Satisfaction
+# ## Cell 1.1: Possible worlds, models, and satisfaction
 #
 # **Goal**:
 # - Ground "model" as one full true/false assignment to every variable, using
@@ -124,7 +122,7 @@ utils.cell1_1_models_and_satisfaction()
 # # Part 2: Entailment as Model Inclusion
 
 # %% [markdown]
-# ## Cell 2.1: Entailment as Model Inclusion, by Model Checking
+# ## Cell 2.1: Entailment as model inclusion, by model checking
 #
 # **Goal**:
 # - Define $KB \models \alpha$ as $M(KB) \subseteq M(\alpha)$, and verify that
@@ -153,7 +151,7 @@ utils.cell2_1_entailment_model_checking()
 #   is enough to break it, no matter how many rows agree
 
 # %% [markdown]
-# ## Cell 2.2: The Same Definition on a Non-Boolean World
+# ## Cell 2.2: The same definition on a non-Boolean world
 #
 # **Goal**:
 # - Show that $M(KB) \subseteq M(\alpha)$ does not require Boolean
@@ -185,7 +183,7 @@ utils.cell2_2_nonboolean_world()
 # # Part 3: Implication, Entailment, and Inference
 
 # %% [markdown]
-# ## Cell 3.1: Implication, Entailment, and Inference: Three Views
+# ## Cell 3.1: Implication, entailment, and inference: three views
 #
 # **Goal**:
 # - Separate three ideas the lecture distinguishes on one running example

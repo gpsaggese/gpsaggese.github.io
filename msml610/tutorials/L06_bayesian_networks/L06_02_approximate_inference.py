@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.3
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -31,9 +31,6 @@
 #   reference that every estimate is compared against
 
 # %% [markdown]
-# # Approximate Inference
-
-# %% [markdown]
 # ## Imports
 
 # %%
@@ -44,11 +41,10 @@
 import logging
 
 # Third-party libraries.
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 # %%
 # Use this for most notebooks.
+import helpers.hintrospection as hintros
 import helpers.htutorial as htutori
 
 import L06_02_approximate_inference_utils as utils
@@ -69,324 +65,472 @@ except ImportError:
 # # Part 1: From Randomness to Samples
 
 # %% [markdown]
-# ## Cell 1.1: Turning Uniform Randomness into Any Distribution
+# ## Cell 1.1: Turning uniform randomness into a discrete distribution
 #
 # **Goal**:
-# - Show that a single stream of uniform numbers $r \in [0,1]$ becomes samples
-#   from any distribution via the inverse CDF
+# - Show that a stream of uniform numbers $r \in [0,1]$ becomes samples from
+#   a discrete target, a biased die, via the inverse CDF
 #
-# **Plots**:
-# - _Target distribution_: a discrete biased die or a continuous exponential
-# - _CDF and inverse map_: the CDF $F(x)$ with a sampled $r$ mapped to its
-#   $x = F^{-1}(r)$
-# - _Sample histogram_: $N$ generated samples (solid) vs the target (dotted)
-# - _Comments_: the construction and the achieved accuracy
-#
-# **Parameters**:
-# - `Target`: biased die (discrete) vs exponential (continuous)
-# - `lambda` ($\lambda$): rate of the exponential
-# - `N` ($N$): number of samples drawn
-# - `seed`: random seed
-#
-# **Key observations**:
-# - Every sampler ultimately consumes uniform numbers; the CDF is the adapter
-# - For discrete targets find the smallest $x$ with $F(x) > r$; for the
-#   exponential invert in closed form, $x = -\frac{1}{\lambda}\ln(1-r)$
-# - Larger $N$ fills the histogram in toward the target
+# **Implementation**: `cell1_1_inverse_transform_discrete_widget()`
+# - Draws `N` uniform numbers, then maps each through the die's inverse CDF
+#   in `_plot_inverse_transform()`: the smallest face $x$ with $F(x) > r$
+# - Overlays the resulting sample histogram on the target PMF
 
 # %%
-# TODO(ai_gp): Split this into two cells one for discrete die and the other for the exponentials. Also update the markdown above.
-# Reuse the code as much as possible.
-
-# Map a uniform r through the CDF into a sample from the chosen target.
-utils.cell1_1_inverse_transform_widget()
+hintros.print_obj_info(utils.cell1_1_inverse_transform_discrete_widget)
 
 # %% [markdown]
-# - One trick underlies everything: stretch a flat $[0,1]$ number through the
-#   CDF and it comes out distributed like the target
-# - Sampling a network is just doing this many times in the right order
-# - When $F^{-1}$ has no closed form the same idea works with numerical inversion
+# **Usage**
+# - Inputs
+#   - **`seed`**: random seed for the uniform stream
+#   - **`N`** (log scale): number of samples drawn
+#
+# - Panels
+#   - **`Target: biased die`**: the die's probability mass function
+#   - **`CDF and inverse map`**: the staircase CDF, with one sampled $r$
+#     mapped to its face $x$
+#   - **`Sample histogram`**: $N$ generated samples (solid) vs the target
+#     (dotted)
+#   - **`Comments`**: the construction and the achieved accuracy
+
+# %%
+# Map a uniform r through the die's CDF into a sampled face.
+utils.cell1_1_inverse_transform_discrete_widget()
 
 # %% [markdown]
-# ## Cell 1.2: Prior Sampling from the Sprinkler Network
+# **Guided usage**
+# - Raise `N` from small to large, leaving `seed` fixed
+#   - Observe the sample histogram fill in toward the target PMF, and the
+#     `max |freq - P|` error in Comments shrink
+# - Change `seed` a few times at a small `N`
+#   - Observe the single mapped point $r \to x$ jump to a different face
+#     each time, while the underlying CDF never changes
+
+# %% [markdown]
+# ## Cell 1.2: Turning uniform randomness into a continuous distribution
 #
 # **Goal**:
-# - Scale the single-variable trick up to a whole Bayesian network
-# - Sample variables in topological order to generate full events with no
-#   evidence
-# - Compare estimated frequencies with the exact joint
+# - Show the same inverse-transform trick on a continuous target, an
+#   exponential, where the inverse CDF has a closed form
 #
-# **Plots**:
-# - _DAG_: the sprinkler network, colored by topological depth
-# - _Marginal_: estimated $P(\cdot)$ of a tracked variable vs its exact value
-# - _Joint frequencies_: estimated joint over all 16 configurations vs exact
-# - _Comments_: the sampling order and the achieved errors
+# **Implementation**: `cell1_2_inverse_transform_continuous_widget()`
+# - Draws `N` uniform numbers, then maps each through
+#   $x = -\frac{1}{\lambda}\ln(1-r)$ in `_plot_inverse_transform()`, the
+#   same helper Cell 1.1 uses
+# - Overlays the resulting sample histogram on the target density
+
+# %%
+hintros.print_obj_info(utils.cell1_2_inverse_transform_continuous_widget)
+
+# %% [markdown]
+# **Usage**
+# - Inputs
+#   - **`seed`**: random seed for the uniform stream
+#   - **`lambda`**: rate of the exponential
+#   - **`N`** (log scale): number of samples drawn
 #
-# **Parameters**:
-# - `N` ($N$): number of full events to generate
-# - `Track marginal`: variable whose marginal estimate is tracked
-# - `seed`: random seed
+# - Panels
+#   - **`Target: exponential`**: the exponential density
+#   - **`CDF and inverse map`**: the smooth CDF, with one sampled $r$
+#     mapped to its $x$
+#   - **`Sample histogram`**: $N$ generated samples (solid) vs the target
+#     density (dotted)
+#   - **`Comments`**: the construction and the achieved accuracy
+
+# %%
+# Map a uniform r through the exponential's closed-form inverse CDF.
+utils.cell1_2_inverse_transform_continuous_widget()
+
+# %% [markdown]
+# **Guided usage**
+# - Raise `N` from small to large, leaving `lambda` fixed
+#   - Observe the sample histogram fill in toward the target density, and
+#     the sample mean in Comments approach the theoretical mean $1/\lambda$
+# - Raise `lambda`
+#   - Observe the target density and the histogram both compress toward 0,
+#     since a larger rate means a smaller expected value
+# - One trick underlies both cells: stretch a flat $[0,1]$ number through
+#   the CDF and it comes out distributed like the target; when $F^{-1}$
+#   has no closed form the same idea works with numerical inversion
+
+# %% [markdown]
+# ## Cell 1.3: Prior sampling from the sprinkler network
 #
-# **Key observations**:
-# - Topological order guarantees every parent has a value before its child
-# - Prior sampling realizes the factorization
-#   $\prod_i \Pr(x_i \mid parents(X_i))$
-# - The relative frequency of an event approximates its joint probability
+# **Goal**:
+# - Scale the single-variable trick up to a whole Bayesian network, by
+#   sampling every variable in topological order to generate full events
+#
+# **Implementation**: `cell1_3_prior_sampling_widget()`
+# - Generates `N` full events with `_prior_sample_array()`, sampling each
+#   node only after its parents already have a value
+# - Compares the estimated marginal of `Track marginal` and the estimated
+#   joint over all 16 configurations against the exact `pgmpy` values
+
+# %%
+hintros.print_obj_info(utils.cell1_3_prior_sampling_widget)
+
+# %% [markdown]
+# **Usage**
+# - Inputs
+#   - **`seed`**: random seed for the generated events
+#   - **`N`** (log scale): number of full events to generate
+#   - **`Track marginal`**: variable whose marginal estimate is tracked
+#
+# - Panels
+#   - **`Sample parents before children`**: the sprinkler DAG, colored by
+#     topological depth
+#   - **`Marginal of <var>`**: estimated $P(\cdot)$ of the tracked variable
+#     vs its exact value
+#   - **`Joint frequencies`**: estimated joint over all 16 configurations
+#     vs the exact joint
+#   - **`Comments`**: the sampling order and the achieved errors
 
 # %%
 # Generate N complete worlds in topological order and compare with the exact joint.
-utils.cell1_2_prior_sampling_widget()
+utils.cell1_3_prior_sampling_widget()
 
 # %% [markdown]
-# - Prior sampling is inverse-transform sampling, once per node, parents first
-# - The fraction of samples equal to an event estimates that event's joint
-#   probability
-# - With more samples both the marginal and the joint estimates sharpen
+# **Guided usage**
+# - Raise `N` from small to large, leaving `Track marginal` fixed
+#   - Observe the estimated marginal bar converge onto the exact reference,
+#     and the joint-frequency dots settle onto the exact joint curve
+# - Switch `Track marginal` across all four variables
+#   - Observe every one of them converges the same way: prior sampling
+#     realizes the factorization $\prod_i \Pr(x_i \mid parents(X_i))$
+#     regardless of which variable is tracked
 
 # %% [markdown]
-# ## Cell 1.3: Consistency and the 1/sqrt(N) Convergence Rate
+# ## Cell 1.4: Consistency and the 1/sqrt(N) convergence rate
 #
 # **Goal**:
-# - Make convergence tangible and show estimates are consistent
-# - Show that error shrinks like $1/\sqrt{N}$, setting expectations for every
-#   later sampler
+# - Make Monte Carlo convergence tangible, and show that error shrinks like
+#   $1/\sqrt{N}$, setting expectations for every later sampler
 #
-# **Plots**:
-# - _One estimate_: a single running estimate converging to the exact value
-# - _Independent chains_: a fan of chains (different seeds) narrowing with $N$
-# - _Error vs N_: absolute error on log-log axes with a $-1/2$ reference slope
-# - _Comments_: the exact value and the final error
+# **Implementation**: `cell1_4_convergence_widget()`
+# - Runs `reps` independent running-estimate chains of the chosen `Estimate`
+#   event up to `max N`, each from its own seed offset from `seed`
+# - Plots the RMS error across chains against a $-1/2$ reference slope on
+#   log-log axes
+
+# %%
+hintros.print_obj_info(utils.cell1_4_convergence_widget)
+
+# %% [markdown]
+# **Usage**
+# - Inputs
+#   - **`seed`**: base random seed for the independent chains
+#   - **`max N`** (log scale): largest sample count shown
+#   - **`reps`**: number of independent chains in the fan
+#   - **`Estimate`**: which marginal event is being estimated
 #
-# **Parameters**:
-# - `max N` ($N$): largest sample count shown
-# - `reps`: number of independent chains in the fan
-# - `Estimate`: which marginal event is being estimated
-# - `seed`: random seed
-#
-# **Key observations**:
-# - Estimates are consistent: $N_{PS}(x)/N \to \Pr(x)$
-# - A slope of $-1/2$ on log-log axes is the signature of Monte Carlo
-# - Accuracy is expensive, which motivates smarter samplers
+# - Panels
+#   - **`One estimate`**: a single running estimate converging to the
+#     exact value
+#   - **`<reps> independent chains`**: the fan of chains narrowing as $N$
+#     grows
+#   - **`Error vs N`**: RMS error on log-log axes with a $-1/2$ reference
+#     slope
+#   - **`Comments`**: the exact value and the final error
 
 # %%
 # Show one estimate, many estimates, and the 1/sqrt(N) error rate.
-utils.cell1_3_convergence_widget()
+utils.cell1_4_convergence_widget()
 
 # %% [markdown]
-# - Sampling is consistent but slow to sharpen
-# - The $1/\sqrt{N}$ law is unavoidable for plain Monte Carlo
-# - This is why the rest of the notebook focuses on using each sample better
+# **Guided usage**
+# - Watch the fan of chains as `max N` grows
+#   - Observe every chain narrows toward the exact value, but never stops
+#     wobbling: consistency guarantees convergence, not a fixed error at
+#     any finite $N$
+# - Compare the `Error vs N` curve against its $-1/2$ reference slope
+#   - Observe the two track each other closely: 10x accuracy costs 100x
+#     samples, which is why the rest of the notebook focuses on using each
+#     sample better, not just drawing more of them
 
 # %% [markdown]
 # # Part 2: Conditioning on Evidence
 
 # %% [markdown]
-# ## Cell 2.1: Rejection Sampling
+# ## Cell 2.1: Rejection sampling
 #
 # **Goal**:
-# - Introduce the simplest way to condition on evidence
-# - Generate prior samples and throw away those that disagree with the evidence
-# - Expose the central weakness when evidence is rare
+# - Introduce the simplest way to condition on evidence: generate prior
+#   samples and throw away those that disagree with it
 #
-# **Plots**:
-# - _Sample stream_: dots colored by kept (matches evidence) vs rejected
-# - _Retained fraction_: counts of generated, rejected, and kept samples
-# - _Posterior estimate_: $P(X \mid \mathbf{e})$ vs the exact reference
-# - _Comments_: the retained fraction and the estimate
+# **Implementation**: `cell2_1_rejection_sampling_widget()`
+# - Draws `N` prior samples and keeps only the ones matching every
+#   `observe <node>` value
+# - Estimates $P(X \mid \mathbf{e})$ from the kept samples, and reports the
+#   retained fraction
+
+# %%
+hintros.print_obj_info(utils.cell2_1_rejection_sampling_widget)
+
+# %% [markdown]
+# **Usage**
+# - Inputs
+#   - **`seed`**: random seed for the prior samples
+#   - **`N`** (log scale): total prior samples generated
+#   - **`Query X`**: the query variable
+#   - **`observe <node>`**: one checkbox plus True/False value per node,
+#     marking it as evidence
 #
-# **Parameters**:
-# - `N` ($N$): total prior samples generated
-# - `Query X`: the query variable
-# - `observe <node>`: evidence selection and value
-# - `seed`: random seed
-#
-# **Key observations**:
-# - Rejection sampling is consistent: kept samples are distributed as
-#   $P(X \mid \mathbf{e})$
-# - The retained fraction equals $\Pr(\mathbf{e})$
-# - The effective sample size, not $N$, controls accuracy
+# - Panels
+#   - **`Sample stream (first N)`**: dots colored by kept (matches
+#     evidence) vs rejected
+#   - **`Retained fraction`**: counts of generated, rejected, and kept
+#     samples
+#   - **`Posterior estimate`**: $P(X \mid \mathbf{e})$ vs the exact
+#     reference
+#   - **`Comments`**: the retained fraction and the estimate
 
 # %%
 # Keep only the prior samples that agree with the evidence.
 utils.cell2_1_rejection_sampling_widget()
 
 # %% [markdown]
-# - Correct but wasteful: only samples that already agree with the evidence are
-#   kept
-# - The rarer the evidence, the more samples are burned to learn anything
-# - This motivates keeping every sample and correcting with weights
+# **Guided usage**
+# - Mark one more node as evidence, making it harder to satisfy
+#   - Observe `Retained fraction`'s kept count drop sharply: the rarer the
+#     evidence, the more samples are burned just to learn anything
+# - Raise `N` at a fixed, fairly rare evidence setting
+#   - Observe the posterior estimate keeps improving, but far slower than
+#     `N` itself grows, since only the kept fraction actually contributes
 
 # %% [markdown]
-# ## Cell 2.2: Importance Sampling and Likelihood Weighting
+# ## Cell 2.2: Importance sampling and likelihood weighting
 #
 # **Goal**:
-# - Fix rejection's waste by keeping every sample and correcting with weights
-# - Show likelihood weighting as the Bayesian-network instance of the idea
-# - Watch for weight collapse via the effective sample size
+# - Fix rejection's waste by keeping every sample and correcting with
+#   importance weights instead of discarding disagreeing ones
 #
-# **Plots**:
-# - _Weighted samples_: dots sized by importance weight $w = \Pr(X)/Q(X)$
-# - _Weight distribution_: histogram of weights, flagging collapse
-# - _Posterior estimate_: weighted estimate vs exact and vs rejection
-# - _Comments_: the effective sample size and the estimates
+# **Implementation**: `cell2_2_likelihood_weighting_widget()`
+# - Draws `N` samples with `_likelihood_weight_array()`, clamping evidence
+#   nodes and weighting each sample by $w = \Pr(X)/Q(X)$
+# - Reports the effective sample size alongside the weighted posterior
+#   estimate
+
+# %%
+hintros.print_obj_info(utils.cell2_2_likelihood_weighting_widget)
+
+# %% [markdown]
+# **Usage**
+# - Inputs
+#   - **`seed`**: random seed for the weighted samples
+#   - **`N`** (log scale): number of weighted samples
+#   - **`Query X`**: the query variable
+#   - **`observe <node>`**: one checkbox plus True/False value per node,
+#     marking it as evidence
 #
-# **Parameters**:
-# - `N` ($N$): number of weighted samples
-# - `Query X`: the query variable
-# - `observe <node>`: evidence selection and value
-# - `seed`: random seed
-#
-# **Key observations**:
-# - Drawing from an easier $Q$ and weighting by $w=\Pr(X)/Q(X)$ stays unbiased
-# - Every sample is kept, so no work is discarded
-# - Very uneven weights shrink the effective sample size despite a large $N$
+# - Panels
+#   - **`Weighted samples (first N)`**: dots sized by importance weight
+#     $w = \Pr(X)/Q(X)$
+#   - **`Weight distribution`**: histogram of weights, flagging collapse
+#   - **`Posterior estimate`**: weighted estimate vs exact and vs
+#     rejection
+#   - **`Comments`**: the effective sample size and the estimates
 
 # %%
 # Keep every sample and correct the bias with importance weights.
 utils.cell2_2_likelihood_weighting_widget()
 
 # %% [markdown]
-# - Reweight instead of reject: importance sampling spends every sample
-# - It focuses effort where the evidence lives
-# - It only helps if the weights stay reasonably balanced
+# **Guided usage**
+# - Set the same rare evidence used in Cell 2.1, at the same `N`
+#   - Observe the weight distribution grow uneven, but the posterior
+#     estimate still tracks the exact reference: no sample was discarded
+#     to get there
+# - Compare the effective sample size in Comments against `N`
+#   - Observe it fall well below `N` once weights get uneven: very
+#     uneven weights shrink the effective sample size despite a large $N$
 
 # %% [markdown]
 # # Part 3: Markov Chain Monte Carlo
 
 # %% [markdown]
-# ## Cell 3.1: Markov Chains and the Stationary Distribution
+# ## Cell 3.1: Markov chains and the stationary distribution
 #
 # **Goal**:
-# - Introduce the core MCMC idea, a designed random walk over states
-# - Show its long-run distribution settles to a fixed stationary shape
-# - Show the limit is independent of where the walk starts
+# - Introduce the core MCMC idea, a designed random walk whose long-run
+#   distribution settles to a fixed shape independent of the start
 #
-# **Plots**:
-# - _Transition diagram_: states as nodes with the current state highlighted
-# - _State distribution_: $\pi_t$ (solid) settling onto the stationary (dotted)
-# - _Convergence_: total-variation distance to stationary decaying with $t$
-# - _Comments_: the stationary distribution and current distance
+# **Implementation**: `cell3_1_markov_chain_widget()`
+# - Steps a fixed transition matrix `t` times from `Initial state`, and
+#   compares the evolving distribution $\pi_t$ against the exact
+#   `_stationary_distribution()`
+# - Tracks total-variation distance to stationary at every step
+
+# %%
+hintros.print_obj_info(utils.cell3_1_markov_chain_widget)
+
+# %% [markdown]
+# **Usage**
+# - Inputs
+#   - **`seed`**: random seed (unused by this deterministic walk, kept for
+#     convention)
+#   - **`t`**: number of steps taken
+#   - **`Initial state`**: where the walk starts
 #
-# **Parameters**:
-# - `t`: number of steps taken
-# - `Initial state`: where the walk starts
-# - `seed`: random seed
-#
-# **Key observations**:
-# - A Markov chain is memoryless: the next state depends only on the current one
-# - Under ergodicity and aperiodicity $\pi_t$ converges to a unique stationary
-#   distribution
-# - MCMC builds a chain whose stationary distribution is the posterior
+# - Panels
+#   - **`Transition diagram`**: states as nodes, with the current
+#     most-likely state highlighted
+#   - **`State distribution`**: $\pi_t$ (solid) settling onto the
+#     stationary distribution (dotted)
+#   - **`Convergence`**: total-variation distance to stationary decaying
+#     with $t$
+#   - **`Comments`**: the stationary distribution and current distance
 
 # %%
 # Step the chain and watch the state distribution converge to a fixed shape.
 utils.cell3_1_markov_chain_widget()
 
 # %% [markdown]
-# - The magic link: design the walk so the posterior is its equilibrium
-# - Then just walk and count where the chain lands
-# - Convergence happens regardless of the starting state
+# **Guided usage**
+# - Raise `t` from 0 toward 40, leaving `Initial state` fixed
+#   - Observe $\pi_t$ settle onto the stationary distribution and the
+#     total-variation distance decay toward 0
+# - Change `Initial state` to a different state, then repeat
+#   - Observe $\pi_t$ still converges to the exact same stationary shape:
+#     the limit does not depend on where the walk starts
 
 # %% [markdown]
-# ## Cell 3.2: Mixing and Burn-in
+# ## Cell 3.2: Mixing and burn-in
 #
 # **Goal**:
-# - Show that a correct stationary distribution is not enough
-# - Show that mixing speed determines whether finite-sample estimates are
-#   trustworthy
-# - Introduce burn-in as discarding the chain's wandering start
+# - Show that a correct stationary distribution is not enough: mixing
+#   speed determines whether finite-sample estimates can be trusted
 #
-# **Plots**:
-# - _Trace_: the sampled value over iterations with the burn-in region shaded
-# - _Collected samples_: histogram vs the true bimodal posterior
-# - _Autocorrelation_: autocorrelation vs lag, high for poor mixing
-# - _Comments_: the mixing diagnostics
+# **Implementation**: `cell3_2_mixing_burnin_widget()`
+# - Runs a Metropolis chain on a bimodal target with `_metropolis_1d()`,
+#   varying the proposal `step` size
+# - Discards the first `burnin` samples, then compares the trace,
+#   histogram, and autocorrelation of what remains
+
+# %%
+hintros.print_obj_info(utils.cell3_2_mixing_burnin_widget)
+
+# %% [markdown]
+# **Usage**
+# - Inputs
+#   - **`seed`**: random seed for the chain
+#   - **`step`**: proposal step size controlling mixing quality
+#   - **`burnin`**: number of initial samples discarded
+#   - **`N`** (log scale): total iterations
 #
-# **Parameters**:
-# - `step`: proposal step size controlling mixing quality
-# - `burnin`: number of initial samples discarded
-# - `N` ($N$): total iterations
-# - `seed`: random seed
-#
-# **Key observations**:
-# - Good mixing moves between modes often with low correlation
-# - Early samples reflect the arbitrary start and are discarded as burn-in
-# - Poor mixing gives biased, high-variance estimates even with a correct target
+# - Panels
+#   - **`Trace (first N)`**: the sampled value over iterations, with the
+#     burn-in region shaded
+#   - **`Collected samples`**: histogram of kept samples vs the true
+#     bimodal posterior
+#   - **`Autocorrelation`**: autocorrelation vs lag, high for poor mixing
+#   - **`Comments`**: the mixing diagnostics
 
 # %%
 # Tune the step size between poor and good mixing and set the burn-in.
 utils.cell3_2_mixing_burnin_widget()
 
 # %% [markdown]
-# - Right target, wrong speed: a chain can be correct in the limit yet useless
-# - Watch the trace and the autocorrelation, not just the final histogram
-# - Small steps stay stuck in one mode; large steps explore both
+# **Guided usage**
+# - Set `step` very small, then very large
+#   - Observe the trace stay stuck near one mode when `step` is small, but
+#     jump between both modes when `step` is large, with autocorrelation
+#     dropping to match
+# - Raise `burnin` at a small `step`
+#   - Observe the histogram still misses one mode: a correct target and a
+#     longer burn-in cannot fix a chain that never explores both modes
 
 # %% [markdown]
-# ## Cell 3.3: Gibbs Sampling and the Markov Blanket
+# ## Cell 3.3: Gibbs sampling and the Markov blanket
 #
 # **Goal**:
-# - Specialize MCMC to Bayesian networks with Gibbs sampling
-# - Resample one variable at a time from its Markov blanket
-# - Hold evidence clamped so every sample is consistent with it
+# - Specialize MCMC to Bayesian networks with Gibbs sampling: resample one
+#   variable at a time from its Markov blanket, evidence held clamped
 #
-# **Plots**:
-# - _DAG_: evidence frozen, the resampled variable and its blanket highlighted
-# - _Full conditional_: $P(X_i \mid \text{MB}(X_i))$ being sampled from
-# - _Running estimate_: $P(Rain \mid \mathbf{e})$ vs the exact reference
-# - _Comments_: the hidden variables and the estimate
+# **Implementation**: `cell3_3_gibbs_sampling_widget()`
+# - Runs `sweeps` Gibbs sweeps with `_gibbs_chain()`, resampling each
+#   hidden variable from `_gibbs_full_conditional()` while evidence nodes
+#   stay fixed
+# - Tracks the running posterior estimate for `Query X` after discarding
+#   `burnin` sweeps
+
+# %%
+hintros.print_obj_info(utils.cell3_3_gibbs_sampling_widget)
+
+# %% [markdown]
+# **Usage**
+# - Inputs
+#   - **`seed`**: random seed for the sweeps
+#   - **`sweeps`** (log scale): number of Gibbs sweeps
+#   - **`burnin`**: burn-in sweeps discarded
+#   - **`Query X`**: the query variable
+#   - **`observe <node>`**: one checkbox plus True/False value per node,
+#     marking it as evidence
 #
-# **Parameters**:
-# - `sweeps`: number of Gibbs sweeps
-# - `burnin`: burn-in sweeps discarded
-# - `Query X` and `observe <node>`: query and evidence
-# - `seed`: random seed
-#
-# **Key observations**:
-# - Gibbs only needs the local conditional $P(X_i \mid \text{MB}(X_i))$
-# - Evidence variables stay clamped, so no rejection is needed
-# - It is simple and local but mixes slowly under strong correlations
+# - Panels
+#   - **`Resample <var> from its blanket`**: the DAG with evidence frozen
+#     and the resampled variable plus its blanket highlighted
+#   - **`P(<var> | blanket)`**: the full conditional currently being
+#     sampled from
+#   - **`Running estimate`**: $P(\text{Query X} \mid \mathbf{e})$ vs the
+#     exact reference
+#   - **`Comments`**: the hidden variables and the estimate
 
 # %%
 # Resample each hidden variable from its Markov blanket with evidence clamped.
 utils.cell3_3_gibbs_sampling_widget()
 
 # %% [markdown]
-# - Gibbs sampling is MCMC made local: resample one variable from its blanket
-# - Easy to code and scales to large graphs via local updates
-# - Watch out for slow mixing under strong correlations
+# **Guided usage**
+# - Raise `sweeps` from small to large, leaving `burnin` fixed
+#   - Observe the running estimate settle onto the exact reference
+# - Watch which variable gets resampled across several sweeps
+#   - Observe it cycles through only the hidden variables: evidence
+#     variables stay clamped, so no rejection is ever needed
 
 # %% [markdown]
-# ## Cell 3.4: Metropolis-Hastings and Accept/Reject Moves
+# ## Cell 3.4: Metropolis-Hastings and accept/reject moves
 #
 # **Goal**:
-# - Generalize beyond Gibbs to Metropolis-Hastings
-# - Correct an arbitrary proposal with an acceptance probability
-# - Unify proposing, accepting, and exploring
+# - Generalize beyond Gibbs to Metropolis-Hastings: correct an arbitrary
+#   proposal with an acceptance probability instead of always accepting
 #
-# **Plots**:
-# - _Last proposed move_: current vs proposed state with acceptance probability
-# - _Trace_: accepted states over iterations with the acceptance rate
-# - _Running estimate_: $P(Rain \mid Sprinkler{=}T)$ vs the exact reference
-# - _Comments_: the proposal mix, acceptance rate, and estimate
+# **Implementation**: `cell3_4_metropolis_hastings_widget()`
+# - Proposes a local or broad move with probability `p_local`, and accepts
+#   or rejects it via the Hastings ratio in `_mh_chain()`
+# - Tracks the running posterior estimate for the fixed query
+#   $P(Rain \mid Sprinkler{=}T)$ after discarding `burnin` iterations
+
+# %%
+hintros.print_obj_info(utils.cell3_4_metropolis_hastings_widget)
+
+# %% [markdown]
+# **Usage**
+# - Inputs
+#   - **`seed`**: random seed for the chain
+#   - **`p_local`**: probability of a local single-variable move vs a
+#     broad jump
+#   - **`iters`** (log scale): number of iterations
+#   - **`burnin`**: burn-in iterations discarded
 #
-# **Parameters**:
-# - `p_local`: probability of a local single-variable move vs a broad jump
-# - `iters`: number of iterations
-# - `burnin`: burn-in iterations discarded
-# - `seed`: random seed
-#
-# **Key observations**:
-# - Metropolis-Hastings sometimes accepts downhill moves, escaping local modes
-# - The acceptance ratio guarantees the posterior is the stationary distribution
-# - Gibbs sampling is the special case where every proposal is accepted
+# - Panels
+#   - **`Last proposed move`**: current vs proposed state, with the
+#     acceptance probability $A(x, x')$
+#   - **`Trace (accept rate)`**: accepted states over iterations, with the
+#     running acceptance rate
+#   - **`Running estimate`**: $P(Rain \mid Sprinkler{=}T)$ vs the exact
+#     reference
+#   - **`Comments`**: the proposal mix, acceptance rate, and estimate
 
 # %%
 # Propose a move, then accept or reject it by the Hastings ratio.
 utils.cell3_4_metropolis_hastings_widget()
 
 # %% [markdown]
-# - Propose anything, then correct with the Hastings ratio
-# - Flexibility is the prize and the cost: any proposal is valid, but a bad one
-#   mixes slowly
-# - Gibbs is just the case where you always accept
+# **Guided usage**
+# - Lower `p_local` toward 0, favoring broad jumps
+#   - Observe the acceptance rate in the trace title drop: broad proposals
+#     land in low-probability regions more often and get rejected
+# - Set `p_local` to 1.0
+#   - Observe the chain behaves like Cell 3.3's Gibbs sampler: Gibbs is
+#     the special case of Metropolis-Hastings where every proposal is a
+#     local move drawn from the exact conditional, so it is always accepted

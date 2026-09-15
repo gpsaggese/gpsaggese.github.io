@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.1
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -27,6 +27,7 @@ import logging
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import seaborn as sns
 
 # Set plotting style.
@@ -34,6 +35,8 @@ sns.set_style("whitegrid")
 plt.rcParams["figure.figsize"] = (12, 6)
 
 # %%
+from IPython.display import display
+
 import L05_01_04_growth_function_utils as mtugrowf
 import helpers.htutorial as ut
 
@@ -44,7 +47,10 @@ logging.basicConfig(level=logging.INFO)
 _LOG = logging.getLogger(__name__)
 
 # %% [markdown]
-# # Cell 1: Positive Rays
+# # Part 1: Growth Functions for Specific Hypothesis Sets
+
+# %% [markdown]
+# ## Cell 1.1: Positive rays
 #
 # **Hypothesis Set**: $h(x) = \text{sign}(x - a)$ for some threshold $a$
 #
@@ -84,12 +90,13 @@ print(f"Points shattered: {result['is_shattered']}")
 # %% [markdown]
 # ### Observation
 #
-# - For positive rays with $N=5$ points, we get $m_H(5) = 6 = N + 1$ (exactly as predicted)
+# - For positive rays with $N=5$ points, we get $m_H(5) = 6 = N + 1$
+#   (exactly as predicted)
 # - The points are NOT shattered since $6 < 2^5 = 32$
 # - This linear growth means positive rays have very limited expressiveness
 
 # %% [markdown]
-# # Cell 2: Positive Intervals
+# ## Cell 1.2: Positive intervals
 #
 # **Hypothesis Set**: $h(x) = +1$ if $a \leq x \leq b$, else $-1$
 #
@@ -99,7 +106,8 @@ print(f"Points shattered: {result['is_shattered']}")
 #
 # **Goal**:
 # - Verify the quadratic growth pattern for positive intervals
-# - Compare empirical results with theoretical predictions across multiple values of $N$
+# - Compare empirical results with theoretical predictions across
+#   multiple values of $N$
 
 # %%
 # Create tester for positive intervals.
@@ -117,8 +125,8 @@ results_df = calculator.compute_growth_curve(
 # Compare with theory.
 compared = mtugrowf.compare_with_theory(results_df, "Positive Intervals")
 
-print("=== Growth Function for Positive Intervals ===")
-print(compared[["n", "m_h_n_mean", "theoretical", "max_dichotomies"]])
+# Growth function for positive intervals.
+display(compared[["n", "m_h_n_mean", "theoretical", "max_dichotomies"]])
 
 # %% [markdown]
 # ### Observation
@@ -128,7 +136,7 @@ print(compared[["n", "m_h_n_mean", "theoretical", "max_dichotomies"]])
 # - For $N=6$: $m_H(6) = 22$ vs $2^6 = 64$ (break point at $N=3$)
 
 # %% [markdown]
-# # Cell 3: Perceptron
+# ## Cell 1.3: Perceptron growth curve
 #
 # **Hypothesis Set**: $h(x) = \text{sign}(w^T x + b)$ (linear separator in 2D)
 #
@@ -139,9 +147,8 @@ print(compared[["n", "m_h_n_mean", "theoretical", "max_dichotomies"]])
 # **Break Point**: 4
 #
 # **Goal**:
-# - Demonstrate the transition from exponential to polynomial growth in the perceptron
-# - Identify the break point where shattering is no longer possible
-# - Compare empirical growth function with theoretical predictions
+# - Compare the empirical growth function of the 2D perceptron against its
+#   theoretical prediction, across a range of $N$
 
 # %%
 # Create perceptron tester.
@@ -159,8 +166,8 @@ results_df = calculator.compute_growth_curve(
 # Compare with theory.
 compared = mtugrowf.compare_with_theory(results_df, "Perceptron")
 
-print("=== Growth Function for 2D Perceptron ===")
-print(
+# Growth function for 2D perceptron.
+display(
     compared[
         [
             "n",
@@ -172,9 +179,17 @@ print(
     ]
 )
 
+# %% [markdown]
+# ## Cell 1.4: Perceptron break point
+#
+# **Goal**:
+# - Demonstrate the transition from exponential to polynomial growth in the
+#   perceptron, and identify the break point where shattering stops
+
+# %%
 # Find break point.
 break_point = calculator.find_break_point(generator, max_n=6)
-print(f"\nBreak point: N = {break_point}")
+print("break_point=", break_point)
 
 # %% [markdown]
 # ### Observation
@@ -185,7 +200,7 @@ print(f"\nBreak point: N = {break_point}")
 # - Growth becomes polynomial after the break point
 
 # %% [markdown]
-# # Cell 4: Demonstrating the XOR Problem
+# ## Cell 1.5: Demonstrating the XOR problem
 #
 # **Goal**:
 # - Explicitly test that the XOR pattern is not realizable by a perceptron
@@ -221,7 +236,7 @@ print(f"Linearly separable pattern realizable: {is_realizable_sep}")
 # - Other patterns (like horizontal or vertical splits) ARE separable
 
 # %% [markdown]
-# # Cell 5: Convex Sets
+# ## Cell 1.6: Convex sets
 #
 # **Hypothesis Set**: Select any subset of points and take their convex hull
 #
@@ -247,12 +262,12 @@ results_df = calculator.compute_growth_curve(
     generator, n_range=n_range, num_trials=1
 )
 
-print("=== Growth Function for Convex Sets ===")
-print(results_df[["n", "m_h_n_mean", "max_dichotomies", "is_shattered_mean"]])
+# Growth function for convex sets.
+display(results_df[["n", "m_h_n_mean", "max_dichotomies", "is_shattered_mean"]])
 
 # Verify all points are shattered.
 all_shattered = np.all(results_df["is_shattered_mean"] == 1.0)
-print(f"\nAll configurations shattered: {all_shattered}")
+print("all_shattered=", all_shattered)
 
 # %% [markdown]
 # ### Observation
@@ -263,7 +278,10 @@ print(f"\nAll configurations shattered: {all_shattered}")
 # - Without a break point, generalization bounds are useless
 
 # %% [markdown]
-# # Cell 6: Estimating VC Dimension
+# # Part 2: VC Dimension and Growth Curve Comparison
+
+# %% [markdown]
+# ## Cell 2.1: Estimating VC dimension
 #
 # **Goal**:
 # - Estimate the VC dimension for the 2D perceptron
@@ -292,10 +310,11 @@ for n, shattered in vc_result["results_by_n"].items():
 # - The VC dimension for 2D perceptron is 3
 # - For $N \leq 3$: Some configurations can be shattered
 # - For $N \geq 4$: No configuration can be shattered
-# - This matches the theoretical prediction: VC dim = $d + 1$ for $d$-dimensional perceptron
+# - This matches the theoretical prediction: VC dim = $d + 1$ for
+#   $d$-dimensional perceptron
 
 # %% [markdown]
-# # Cell 7: Visualizing Growth Curves
+# ## Cell 2.2: Visualizing growth curves
 #
 # **Goal**:
 # - Compare growth functions across multiple hypothesis sets
@@ -340,7 +359,10 @@ visualizer.plot_multiple_growth_curves(
 # The key insight: Polynomial growth $\Rightarrow$ learning is feasible!
 
 # %% [markdown]
-# # Cell 8: Computing Realizable Dichotomies
+# # Part 3: Realizable Dichotomies and Edge Cases
+
+# %% [markdown]
+# ## Cell 3.1: Computing realizable dichotomies
 #
 # **Goal**:
 # - Examine which specific dichotomies are realizable for a small example
@@ -354,25 +376,26 @@ tester = mtugrowf.PerceptronTester(random_state=42)
 
 points = generator.generate_random(n=3, d=2)
 enumerator = mtugrowf.DichotomyEnumerator(n=3)
+print("points=\n", points)
 
-print("=== Testing All Dichotomies for 3 Random 2D Points ===")
-print(f"Points:\n{points}\n")
-print("Dichotomy | Labels      | Realizable")
-print("-" * 45)
-
-realizable_count = 0
+# Build a table of every dichotomy and whether the perceptron realizes it.
+rows = []
 for i in range(enumerator.count_dichotomies()):
     labels = enumerator.get_dichotomy(i)
     is_realizable = tester.test_dichotomy(points, labels)
-    realizable_count += is_realizable
-    labels_str = str(labels).replace(" ", "")
-    status = "Yes" if is_realizable else "No"
-    print(f"{i:9d} | {labels_str:11s} | {status}")
+    rows.append(
+        {
+            "dichotomy": i,
+            "labels": str(labels).replace(" ", ""),
+            "realizable": is_realizable,
+        }
+    )
+dichotomies_df = pd.DataFrame(rows)
+display(dichotomies_df)
 
-print(
-    f"\nTotal realizable: {realizable_count} / {enumerator.count_dichotomies()}"
-)
-print(f"Points shattered: {realizable_count == enumerator.count_dichotomies()}")
+realizable_count = dichotomies_df["realizable"].sum()
+print("realizable_count=", realizable_count, "/", enumerator.count_dichotomies())
+print("is_shattered=", realizable_count == enumerator.count_dichotomies())
 
 # %% [markdown]
 # ### Observation
@@ -382,12 +405,11 @@ print(f"Points shattered: {realizable_count == enumerator.count_dichotomies()}")
 # - This demonstrates why VC dimension = 3 for 2D perceptron
 
 # %% [markdown]
-# # Cell 9: Finding Hypotheses that Realize Dichotomies
+# ## Cell 3.2: Finding a hypothesis for positive rays
 #
 # **Goal**:
-# - Find the actual hypothesis parameters that realize a given labeling
-# - Extract thresholds for positive rays and weights for perceptrons
-# - Understand which hypotheses are "closest" to the data
+# - Find the actual threshold that realizes a given labeling for positive
+#   rays, not just whether one exists
 
 # %%
 # Find threshold for a positive ray pattern.
@@ -396,51 +418,56 @@ generator = mtugrowf.PointGenerator(seed=42)
 
 points = generator.generate_line_1d(n=5)
 labels = np.array([-1, -1, 1, 1, 1])
-
-print("=== Finding Hypothesis for Positive Rays ===")
-print(f"Points: {points.flatten()}")
-print(f"Labels: {labels}")
+print("points=", points.flatten())
+print("labels=", labels)
 
 hypothesis = tester.find_hypothesis(points, labels)
 if hypothesis:
-    print(f"\nFound threshold: a = {hypothesis['threshold']:.3f}")
+    print("threshold=", hypothesis["threshold"])
     print(f"Rule: h(x) = +1 if x >= {hypothesis['threshold']:.3f}, else -1")
 
+# %% [markdown]
+# ## Cell 3.3: Finding a hypothesis for perceptron
+#
+# **Goal**:
+# - Find the actual weights and intercept that realize a given labeling for
+#   a 2D perceptron
+
+# %%
 # Find perceptron weights for a linearly separable pattern.
 tester_p = mtugrowf.PerceptronTester(random_state=42)
 points_2d = np.array([[0, 0], [1, 0], [0, 1], [1, 1]])
 labels_2d = np.array([-1, -1, 1, 1])
-
-print("\n=== Finding Hypothesis for Perceptron ===")
-print(f"Points:\n{points_2d}")
-print(f"Labels: {labels_2d}")
+print("points_2d=\n", points_2d)
+print("labels_2d=", labels_2d)
 
 hypothesis_p = tester_p.find_hypothesis(points_2d, labels_2d)
 if hypothesis_p:
     w = hypothesis_p["weights"]
     b = hypothesis_p["intercept"]
-    print(f"\nFound weights: w = {w}")
-    print(f"Found intercept: b = {b:.3f}")
+    print("weights=", w)
+    print("intercept=", b)
     print(f"Rule: h(x) = sign({w[0]:.3f}*x1 + {w[1]:.3f}*x2 + {b:.3f})")
 
 # %% [markdown]
 # ### Observation
 #
-# - We can find the actual parameters (threshold, weights) that realize a labeling
-# - This is useful for understanding which hypotheses are "closest" to the data
-# - For perceptron, sklearn finds a linear separator via the perceptron algorithm
+# - We can find the actual parameters (threshold, weights) that realize a
+#   labeling
+# - This is useful for understanding which hypotheses are "closest" to the
+#   data
+# - For perceptron, sklearn finds a linear separator via the perceptron
+#   algorithm
 
 # %% [markdown]
-# # Cell 10: Edge Cases
+# ## Cell 3.4: Edge case: N=1
 #
 # **Goal**:
-# - Test edge cases to ensure robustness of the growth function calculator
-# - Examine behavior with $N=1$ point
-# - Explore how special configurations (collinear points) affect shattering
+# - Check that the growth function calculator behaves sensibly at the
+#   smallest possible $N$
 
 # %%
 # Test with N=1 point.
-print("=== Edge Case: N=1 ===")
 generator = mtugrowf.PointGenerator(seed=42)
 
 for name, tester in [
@@ -455,10 +482,17 @@ for name, tester in [
     else:
         points = generator.generate_random(n=1, d=2)
     result = calculator.compute_growth_function(points)
-    print(f"{name:20s}: m_H(1) = {result['m_h_n']}")
+    print(f"{name}: m_H(1) = {result['m_h_n']}")
 
+# %% [markdown]
+# ## Cell 3.5: Edge case: collinear points
+#
+# **Goal**:
+# - Check how a degenerate point configuration, 3 collinear points, affects
+#   whether the perceptron can shatter them
+
+# %%
 # Test with collinear points (edge case for perceptron).
-print("\n=== Edge Case: Collinear Points ===")
 tester = mtugrowf.PerceptronTester(random_state=42)
 calculator = mtugrowf.GrowthFunctionCalculator(
     tester, verbose=False, show_progress=False
@@ -466,9 +500,8 @@ calculator = mtugrowf.GrowthFunctionCalculator(
 
 points_collinear = generator.generate_collinear(n=3, d=2)
 result = calculator.compute_growth_function(points_collinear)
-print(f"3 collinear points: m_H(3) = {result['m_h_n']}")
-print("Expected for general position: 8")
-print(f"Collinear breaks shattering: {result['m_h_n'] < 8}")
+print("m_h_n=", result["m_h_n"], "(expected for general position: 8)")
+print("collinear_breaks_shattering=", result["m_h_n"] < 8)
 
 # %% [markdown]
 # ### Observation

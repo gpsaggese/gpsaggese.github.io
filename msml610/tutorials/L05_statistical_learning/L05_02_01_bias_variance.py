@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.1
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -33,6 +33,7 @@ sns.set_style("whitegrid")
 plt.rcParams["figure.figsize"] = (12, 6)
 
 # %%
+import helpers.hintrospection as hintros
 import helpers.htutorial as ut
 import L05_02_01_bias_variance_utils as utils
 
@@ -43,193 +44,256 @@ logging.basicConfig(level=logging.INFO)
 _LOG = logging.getLogger(__name__)
 
 # %% [markdown]
-# # Cell 1: Approximation
+# # Part 1: Approximation vs Learning
+
+# %% [markdown]
+# ## Cell 1.1: Approximation
 #
 # **Goal**:
-# - Demonstrate the concept of approximation - how well different models can fit a target function
-# - Visualize how a constant model (horizontal line) and a linear model (diagonal line) approximate a sinusoidal target function $f(x) = \sin(\pi x)$ for $x \in [-1, 1]$
-# - Compare approximation capability between simple (constant) and more complex (linear) models
+# - Compare how well a constant model and a linear model can approximate
+#   the true target function $f(x) = \sin(\pi x)$ on $x \in [-1, 1]$, with
+#   no notion of training data yet
 #
-# **Plots**:
-# - Display three plots:
-#   - _True function vs constant model_: Shows $g_0(x) = b$ (mean of $f(x)$), with orange shading for approximation error
-#   - _True function vs linear model_: Shows $g_1(x) = ax + b$ (fitted using least squares), with orange shading for approximation error
-#   - _Comments_: Displays approximation errors and observations
-#
-# **Parameters**:
-# - None (this is a static visualization)
-#
-# **Key observations**:
-# - The constant model has high approximation error - it cannot capture any variation in the target function
-# - The linear model has lower approximation error - it can capture the general trend, though not the curvature
-# - Lower approximation error means better fit, but doesn't always mean better learning (as we'll see with bias-variance tradeoff)
+# **Implementation**: `cell1_approximation()`
+# - Fits $g_0(x) = b$ and $g_1(x) = ax + b$ directly to the dense true
+#   function by least squares, in `fit_constant_model()`/`fit_linear_model()`
+# - Plots `True function vs constant model` and `True function vs linear
+#   model`, each shading the approximation error, plus a `Comments` panel
+#   with both models' equations and errors
 
 # %%
 # Display approximation comparison between constant and linear models.
 utils.cell1_approximation()
 
 # %% [markdown]
-# # Cell 2: Learning Once
+# ## Cell 1.2: Learning once
 #
 # **Goal**:
-# - Demonstrate the difference between learning and approximation
-# - Show how models trained on a limited training set (learning) perform differently than models that approximate the full function
-# - Illustrate the key difference between in-sample error ($E_{in}$) and out-of-sample error ($E_{out}$)
+# - Contrast learning from a small training set with the pure
+#   approximation of Cell 1.1, and separate in-sample error $E_{in}$ from
+#   out-of-sample error $E_{out}$
 #
-# **Plots**:
-# - Display three plots:
-#   - _Constant model $g_0$_: Shows true function $f(x) = \sin(\pi x)$, fitted model, and training points (red dots), with $E_{in}$ and $E_{out}$ displayed
-#   - _Linear model $g_1$_: Shows true function, fitted model, and training points, with $E_{in}$ and $E_{out}$ displayed
-#   - _Comments_: Displays errors and observations about learning vs approximation
+# **Implementation**: `cell2_learning_once()`
+# - Draws `N_samples` random training points and fits $g_0$/$g_1$ to them
+#   with `fit_models_and_predict()`
+# - Computes $E_{in}$ (error on the training points) and $E_{out}$ (error
+#   against the true function) for both models
+
+# %%
+hintros.print_obj_info(utils.cell2_learning_once)
+
+# %% [markdown]
+# **Usage**
+# - Inputs
+#   - **`seed`**: random seed for the training points sampled
+#   - **`N_samples`**: number of training points, 2-20
 #
-# **Parameters**:
-# - `seed`: Random seed controlling which training points are sampled
-# - `N_samples`: Number of random points in the training set (default: 2)
-#
-# **Key observations**:
-# - $E_{in}$ measures how well the model fits the training data
-# - $E_{out}$ measures how well the model generalizes to the full function
-# - With very few samples (e.g., $N=2$), a linear model can achieve $E_{in}=0$ (perfect fit on training data) but still have high $E_{out}$
-# - This demonstrates that learning from limited data is fundamentally different from approximation
-# - Try different seeds to see how training set selection affects performance
+# - Panels
+#   - **`Constant model`**: $f(x)$, the fitted $g_0$, and the training
+#     points, titled with $E_{in}$/$E_{out}$
+#   - **`Linear model`**: $f(x)$, the fitted $g_1$, and the training
+#     points, titled with $E_{in}$/$E_{out}$
+#   - **`Comments`**: current `seed`, `N_samples`, and both models'
+#     $E_{in}$/$E_{out}$
 
 # %%
 # Display learning from N random samples with interactive controls.
 utils.cell2_learning_once()
 
 # %% [markdown]
-# # Cell 3: Learning (Bias-Variance Decomposition)
+# **Guided usage**
+# - Leave `N_samples` at 2 and change `seed` a few times
+#   - Observe the linear model reaches $E_{in} = 0$ on almost every draw
+#     (2 points fully determine a line), yet $E_{out}$ still varies widely
+# - Raise `N_samples` from 2 toward 20
+#   - Observe $E_{in}$ for the linear model rise off zero, while $E_{out}$
+#     for both models settles down: fitting 2 points perfectly is not the
+#     same as learning $f$
+
+# %% [markdown]
+# # Part 2: Bias-Variance Decomposition
+
+# %% [markdown]
+# ## Cell 2.1: Learning: bias-variance decomposition
 #
 # **Goal**:
-# - Visualize the bias-variance tradeoff by showing how models trained on different random training sets vary around the true function $f(x) = \sin(\pi x)$
-# - Demonstrate bias and variance decomposition by running multiple learning experiments with different training sets
-# - Show how model complexity affects both bias (systematic error) and variance (sensitivity to training data)
+# - Repeat Cell 1.2's experiment across many random training sets, and
+#   read bias and variance off how the resulting models scatter around $f$
 #
-# **Plots**:
-# - Display three plots:
-#   - _Constant models_: True function and all fitted constant models (green lines with transparency), with dashed line showing average model
-#   - _Linear models_: True function and all fitted linear models (magenta lines with transparency), with dashed line showing average model
-#   - _Comments_: Average errors and explanation of bias-variance tradeoff
+# **Implementation**: `cell3_learning_bias_variance()`
+# - Runs `N_experiments` independent draws of `N_samples` points, refitting
+#   $g_0$ and $g_1$ each time
+# - Overlays every fitted model in translucent lines, plus the average
+#   model as a dashed line, so bias (average vs $f$) and variance (spread
+#   around the average) are both visible at once
+
+# %%
+hintros.print_obj_info(utils.cell3_learning_bias_variance)
+
+# %% [markdown]
+# **Usage**
+# - Inputs
+#   - **`seed`**: random seed for the experiments
+#   - **`N_samples`**: training points per experiment, 2-20
+#   - **`N_experiments`**: number of repeated experiments, 5-100
 #
-# **Parameters**:
-# - `seed`: Random seed for reproducibility
-# - `N_samples`: Number of training points per experiment (default: 2)
-# - `N_experiments`: Number of different training sets to generate (default: 100)
-#
-# **Key observations**:
-# - Constant model ($g_0$): Low variance (all lines very similar), high bias (far from true function) - the model is too simple to capture the pattern
-# - Linear model ($g_1$): Higher variance (lines spread out more), lower bias (average model closer to true function) - the model is more flexible but sensitive to training data
-# - This illustrates the bias-variance tradeoff: simpler models have low variance but high bias; more complex models have lower bias but higher variance
-# - The total out-of-sample error decomposes as: $E_{out} = \text{bias}^2 + \text{variance} + \text{noise}$
-# - Try increasing `N_samples` to see how more data reduces variance
-# - Try increasing `N_experiments` to get more stable estimates of bias and variance
+# - Panels
+#   - **`Constant models`**: $f(x)$, every fitted $g_0$, and their average
+#   - **`Linear models`**: $f(x)$, every fitted $g_1$, and their average
+#   - **`Comments`**: average $E_{in}$/$E_{out}$ and the bias-variance
+#     reading for both models
 
 # %%
 # Display bias-variance decomposition over multiple experiments.
 utils.cell3_learning_bias_variance()
 
 # %% [markdown]
-# ## Cell 4: Learning Plots (Bias-Variance as Function of Training Set Size)
+# **Guided usage**
+# - Compare the two panels at the default `N_samples = 2`
+#   - Observe the constant lines cluster tightly (low variance) but sit
+#     far from $f$ (high bias), while the linear lines spread widely
+#     (higher variance) but average closer to $f$ (lower bias)
+# - Raise `N_experiments` toward 100
+#   - Observe the average line in each panel stabilize, giving a more
+#     reliable bias estimate without changing how spread out the
+#     individual fits are
+
+# %% [markdown]
+# ## Cell 2.2: Learning plots: bias-variance vs training set size
 #
 # **Goal**:
-# - Show how bias, variance, and overall error change as we increase the number of training samples
-# - Visualize the bias-variance decomposition as a function of training set size ($N_{samples}$)
-# - Demonstrate the classic bias-variance curves and how more data affects both components of the learning error
+# - Trace how $E_{in}$, $E_{out}$, $\text{bias}^2$, and variance move as
+#   training set size grows, for both models at once
 #
-# **Plots**:
-# - Display three plots:
-#   - _Constant model ($g_0$)_: Shows $E_{in}$, $E_{out}$, $\text{Bias}^2$, and $\text{Variance}$ as functions of $N_{samples}$
-#   - _Linear model ($g_1$)_: Shows $E_{in}$, $E_{out}$, $\text{Bias}^2$, and $\text{Variance}$ as functions of $N_{samples}$
-#   - _Comments_: Error decomposition formula and observations
-# - Show error decomposition: For a deterministic target function (no noise), $E_{out} = \text{Bias}^2 + \text{Variance}$
+# **Implementation**: `cell4_learning_plots()`
+# - Repeats Cell 2.1's experiment at every training size from 2 up to
+#   `max_N_samples`, averaging `N_experiments` trials at each size
+# - Plots the four error curves for $g_0$ and $g_1$ side by side, verifying
+#   $E_{out} \approx \text{Bias}^2 + \text{Variance}$ for this noise-free
+#   target
+
+# %%
+hintros.print_obj_info(utils.cell4_learning_plots)
+
+# %% [markdown]
+# **Usage**
+# - Inputs
+#   - **`seed`**: random seed, fixed across training sizes for a fair
+#     comparison
+#   - **`N_experiments`**: experiments averaged per training size, 20-200
+#   - **`max_N_samples`**: largest training size swept, 5-30
 #
-# **Parameters**:
-# - `seed`: Random seed for reproducibility (fixed to ensure consistent comparison)
-# - `N_experiments`: Number of experiments to average over for each $N_{samples}$ value
-# - `max_N_samples`: Maximum number of training samples to test
-#
-# **Key observations**:
-# - **Constant model**: Very low variance (almost constant across $N_{samples}$) because it's insensitive to training data, but high bias because it cannot capture the sinusoidal pattern
-# - **Linear model**: Higher variance (especially with few samples) because it's more flexible and sensitive to training data, but lower bias because it can better approximate the target function
-# - **As $N_{samples}$ increases**: Variance decreases for both models (more data leads to more stable fits), while bias remains relatively constant (determined by model capacity)
-# - **$E_{out}$ decomposition**: You can verify that $E_{out} \approx \text{Bias}^2 + \text{Variance}$ by comparing the curves
-# - **The bias-variance tradeoff**: Simpler models (constant) have low variance but high bias; more complex models (linear) have higher variance but lower bias
-# - Try increasing `N_experiments` to get smoother, more stable curves
+# - Panels
+#   - **`Constant model (g_0), bias-variance analysis`**: $E_{in}$,
+#     $E_{out}$, $\text{Bias}^2$, and variance vs training size
+#   - **`Linear model (g_1), bias-variance analysis`**: the same four
+#     curves for $g_1$
+#   - **`Comments`**: the decomposition formula and both models' values
+#     at `max_N_samples`
 
 # %%
 # Display bias-variance decomposition as a function of N_samples.
 utils.cell4_learning_plots()
 
 # %% [markdown]
-# ## Cell 5: Learning with Noise (Bias-Variance Decomposition)
+# **Guided usage**
+# - Raise `max_N_samples` toward 30
+#   - Observe variance keep shrinking toward 0 for both models, while
+#     each model's bias curve flattens out at its own level
+# - Compare the flattened bias level between panels
+#   - Observe the linear model's bias floor sits below the constant
+#     model's: more model capacity lowers bias, at the cost of the
+#     variance seen in Cell 2.1
+
+# %% [markdown]
+# # Part 3: Bias-Variance With Noise
+
+# %% [markdown]
+# ## Cell 3.1: Learning with noise: bias-variance decomposition
 #
 # **Goal**:
-# - Extend Cell 3 by adding Gaussian noise to the training data
-# - Demonstrate how noise affects the bias-variance tradeoff
-# - Show how adding noise to training labels $y = f(x) + \mathcal{N}(0, \sigma^2)$ affects both the variance and out-of-sample error of learned models
+# - Repeat Cell 2.1's multi-experiment view with Gaussian noise added to
+#   the training labels, $y = f(x) + \mathcal{N}(0, \sigma^2)$
 #
-# **Plots**:
-# - Display three plots:
-#   - _Constant models_: True function and all fitted constant models (green lines with transparency), with dashed line showing average model
-#   - _Linear models_: True function and all fitted linear models (magenta lines with transparency), with dashed line showing average model
-#   - _Comments_: Average errors and explanation of noise effects
+# **Implementation**: `cell5_learning_with_noise()`
+# - Adds noise of standard deviation `noise_std` to each training draw
+#   before fitting $g_0$/$g_1$, otherwise identical to
+#   `cell3_learning_bias_variance()`
+
+# %%
+hintros.print_obj_info(utils.cell5_learning_with_noise)
+
+# %% [markdown]
+# **Usage**
+# - Inputs
+#   - **`seed`**: random seed for the experiments
+#   - **`noise_std`**: standard deviation $\sigma$ of the label noise,
+#     0-0.5
+#   - **`N_samples`**: training points per experiment, 2-20
+#   - **`N_experiments`**: number of repeated experiments, 5-100
 #
-# **Parameters**:
-# - `seed`: Random seed for reproducibility
-# - `N_samples`: Number of training points per experiment (default: 2)
-# - `N_experiments`: Number of different training sets to generate (default: 100)
-# - `noise_std`: Standard deviation of Gaussian noise added to training labels (default: 0.0)
-#
-# **Key observations**:
-# - **With $\sigma = 0$**: Same behavior as Cell 3 (no noise case)
-# - **With $\sigma > 0$**: Training data is corrupted by Gaussian noise
-#   - Models try to fit the noisy observations instead of the true function
-#   - This increases variance for both models (more sensitivity to data)
-#   - $E_{out}$ increases because models partially fit the noise
-#   - The error decomposition becomes: $E_{out} = \text{Bias}^2 + \text{Variance} + \sigma^2$ (noise variance)
-# - **Constant model**: Still has low variance, but noise increases $E_{out}$
-# - **Linear model**: Variance increases significantly with noise (tries to fit noise)
-# - Try increasing `noise_std` to see how noise affects the spread of fitted models
-# - Try increasing `N_samples` to see how more data helps average out the noise
+# - Panels
+#   - **`Constant models`**: $f(x)$, every fitted $g_0$, and their average
+#   - **`Linear models`**: $f(x)$, every fitted $g_1$, and their average
+#   - **`Comments`**: average $E_{in}$/$E_{out}$ for both models at the
+#     current noise level
 
 # %%
 # Display bias-variance decomposition with noise over multiple experiments.
 utils.cell5_learning_with_noise()
 
 # %% [markdown]
-# ## Cell 6: Learning Plots with Noise (Bias-Variance as Function of Training Set Size)
+# **Guided usage**
+# - Leave `noise_std` at 0 and compare against Cell 2.1
+#   - Observe the two panels match Cell 2.1 exactly: zero noise recovers
+#     the noise-free case
+# - Raise `noise_std` from 0 toward 0.5
+#   - Observe both panels spread out further and $E_{out}$ climb for both
+#     models, since every fit now chases noise the true function never had
+
+# %% [markdown]
+# ## Cell 3.2: Learning plots with noise: bias-variance vs training set size
 #
 # **Goal**:
-# - Extend Cell 4 by adding Gaussian noise to the training data
-# - Visualize how $E_{in}$, $E_{out}$, $\text{Bias}^2$, and $\text{Variance}$ change as a function of training set size when training data is corrupted by Gaussian noise
-# - Demonstrate how more data helps mitigate the effects of noise
+# - Trace $E_{in}$, $E_{out}$, $\text{bias}^2$, and variance against
+#   training set size, as in Cell 2.2, now with noisy training labels
 #
-# **Plots**:
-# - Display three plots:
-#   - _Constant model ($g_0$)_: Shows error components as functions of $N_{samples}$
-#   - _Linear model ($g_1$)_: Shows error components as functions of $N_{samples}$
-#   - _Comments_: Error decomposition with noise formula and observations
-# - Show error decomposition with noise: $E_{out} = \text{Bias}^2 + \text{Variance} + \sigma^2$ (noise variance $\sigma^2$ is irreducible error)
+# **Implementation**: `cell6_learning_plots_with_noise()`
+# - Repeats Cell 2.2's sweep with `noise_std` added to every training draw
+#   before fitting, over `N_samples` from 2 up to the current slider value
+
+# %%
+hintros.print_obj_info(utils.cell6_learning_plots_with_noise)
+
+# %% [markdown]
+# **Usage**
+# - Inputs
+#   - **`seed`**: random seed, fixed across training sizes
+#   - **`noise_std`**: standard deviation $\sigma$ of the label noise,
+#     0-0.5
+#   - **`log(N_samples)`** (log scale): largest training size swept, 2-256
+#   - **`log(N_experiments)`** (log scale): experiments averaged per
+#     training size, 16-1024
 #
-# **Parameters**:
-# - `seed`: Random seed for reproducibility (fixed to ensure consistent comparison)
-# - `N_experiments`: Number of experiments to average over for each $N_{samples}$ value
-# - `max_N_samples`: Maximum number of training samples to test
-# - `noise_std`: Standard deviation of Gaussian noise $\sigma$ added to training labels (default: 0.0)
-#
-# **Key observations**:
-# - **With $\sigma = 0$**: Same behavior as Cell 4 (deterministic case)
-# - **With $\sigma > 0$**: Training data includes random noise
-#   - Variance increases for both models compared to the no-noise case
-#   - $E_{out}$ increases by approximately $\sigma^2$ (the irreducible error from noise)
-#   - As $N_{samples}$ increases, variance decreases (more data averages out noise)
-#   - Bias remains relatively constant (determined by model capacity, not noise)
-# - **The noise term**: Represents the best possible error - even a perfect model cannot do better than $\sigma^2$ when learning from noisy data
-# - **More data helps**: Increasing $N_{samples}$ reduces the variance component but cannot reduce the noise component
-# - Try setting `noise_std = 0.1` or `0.2` to see the noise effect
-# - Try increasing `max_N_samples` to see how variance continues to decrease with more data
-# - Compare with Cell 4 ($\sigma = 0$) to see the additional error from noise
+# - Panels
+#   - **`Constant model (g_0), bias-variance analysis`**: $E_{in}$,
+#     $E_{out}$, $\text{Bias}^2$, and variance vs training size
+#   - **`Linear model (g_1), bias-variance analysis`**: the same four
+#     curves for $g_1$
+#   - **`Comments`**: the noisy decomposition formula and both models'
+#     values at the largest training size
 
 # %%
 # Display bias-variance decomposition with noise as a function of N_samples.
 utils.cell6_learning_plots_with_noise()
+
+# %% [markdown]
+# **Guided usage**
+# - Set `noise_std` to 0.1 or 0.2 and compare against Cell 2.2
+#   - Observe both $E_{out}$ curves shift up by roughly $\sigma^2$, while
+#     the bias curves barely move: noise adds an irreducible floor, it
+#     does not change what the model class can represent
+# - Raise `log(N_samples)` toward its maximum with noise still on
+#   - Observe variance keeps shrinking as before, but $E_{out}$ levels off
+#     above 0: more data cannot remove the noise term, only the variance
+#     term

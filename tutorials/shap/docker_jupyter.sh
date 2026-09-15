@@ -49,7 +49,7 @@ if [[ "$DOCKER_ENGINE_CURRENT" == "apple" ]]; then
     echo "not work. To access Jupyter from your browser, run this in another"
     echo "terminal after the container starts:"
     echo ""
-    echo "  docker_jupyter_port_forward.sh $CONTAINER_NAME $JUPYTER_HOST_PORT"
+    echo "  docker_jupyter_port_forward.py $CONTAINER_NAME $JUPYTER_HOST_PORT"
     echo ""
     DOCKER_CMD_OPTS=$(get_docker_jupyter_options $CONTAINER_NAME $JUPYTER_HOST_PORT $JUPYTER_USE_VIM)
     # Run container in detached mode (we follow logs instead of -ti).

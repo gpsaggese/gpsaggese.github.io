@@ -53,7 +53,7 @@ hmodule.install_module_if_not_present(
 # %%
 import helpers.htutorial as htutori
 
-import class_cs_refreshers.tutorials.notebooks.L95_05_game_theory_utils as utils
+import L95_05_game_theory_utils as utils
 
 htutori.config_notebook()
 

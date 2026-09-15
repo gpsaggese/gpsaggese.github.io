@@ -1,11 +1,13 @@
 // f69c795f 2026-06-23
 // Import AIMA style formatting and macros
-// TODO(ai_gp): Use root-absolute path instead of relative path; change to `#import "/helpers_root/dev_scripts_helpers/typst/aima_style.typ"` (.claude/skills/typst.rules.md:## Boilerplate and Imports)
-#import "../../helpers_root/dev_scripts_helpers/typst/aima_style.typ": (
-  aima-style, algorithm, chapter, glossary, wrap-content,
+#import "/helpers_root/dev_scripts_helpers/typst/aima_style.typ": (
+  aima-style, algorithm, chapter, glossary, styled-table, wrap-content,
+)
+// Import the custom citation/bibliography system.
+#import "/helpers_root/dev_scripts_helpers/typst/umd_references.typ": (
+  cite, references,
 )
 
-// TODO(ai_gp): Add missing citation import: `#import "/helpers_root/dev_scripts_helpers/typst/umd_references.typ": cite, references` (.claude/skills/typst.rules.md:## Boilerplate and Imports)
 // Document metadata
 #set document(
   title: "Causal Inference for Time Series",
@@ -15,14 +17,24 @@
 // Apply the AIMA document template (page/text/heading set + show rules)
 #show: aima-style
 
-// TODO(ai_gp): Use unnumbered chapter for standalone lesson; change to `#chapter("Causal Inference for Time Series")` without the `10` argument (.claude/skills/typst.rules.md:## The `#chapter(...)` Call)
-#chapter(10, "Causal Inference for Time Series")
+#chapter("Causal Inference for Time Series")
 
-// TODO(ai_gp): Add mandatory `= Roadmap` section right after `#chapter(...)` before content sections (.claude/skills/typst.rules.md:## Mandatory Sections)
+= Roadmap
 
-== Introduction and Core Concepts
+This chapter adapts causal inference to data where the same units are observed
+repeatedly over time. We start from what makes temporal causality different from
+the cross-sectional case (autocorrelation, non-stationarity, feedback loops,
+time-varying confounders) and how the arrow of time both helps and misleads. We
+then cover four families of methods for estimating causal effects from time series:
+#emph[Granger causality] for predictive precedence, #emph[Interrupted Time Series]
+for single-unit policy changes, #emph[Difference-in-Differences] for treated versus
+control panels (including modern staggered-adoption estimators), and
+#emph[Synthetic Control] for a single treated unit with no comparable control. We
+close by comparing when each method applies.
 
-=== Time Series vs. Cross-Sectional Causality
+= Introduction and Core Concepts
+
+== Time Series vs. Cross-Sectional Causality
 
 // Slide: Temporal Causal Structures
 
@@ -31,14 +43,10 @@ approaches. The distinguishing feature is #strong[temporal structure]: in time
 series, we observe the same units repeatedly over time, creating opportunities and
 challenges absent in cross-sectional designs.
 
-// TODO(ai_gp): Use `#emph[itself]` instead of markdown `*itself*` (.claude/skills/typst.rules.md:## Typst Vs. Markdown Syntax)
-// TODO(ai_gp): Use `#emph[before]` instead of markdown `*before*` (.claude/skills/typst.rules.md:## Typst Vs. Markdown Syntax)
-// TODO(ai_gp): Use `#emph[after]` instead of markdown `*after*` (.claude/skills/typst.rules.md:## Typst Vs. Markdown Syntax)
-// TODO(ai_gp): Use `#emph[not]` instead of markdown `*not*` (.claude/skills/typst.rules.md:## Typst Vs. Markdown Syntax)
-#strong[Univariate time series causal inference] compares a unit to *itself* over
-time. For example, economists might compare a city's crime rate *before* and *after*
+#strong[Univariate time series causal inference] compares a unit to #emph[itself] over
+time. For example, economists might compare a city's crime rate #emph[before] and #emph[after]
 a new policing policy. The unit serves as its own control, but this creates a
-critical complication: observations are *not* independent. Each observation depends
+critical complication: observations are #emph[not] independent. Each observation depends
 on the previous one through autocorrelation, violating the independence assumption of
 standard statistical tests.
 
@@ -56,17 +64,16 @@ example illustrates the difficulty: did the Federal Reserve rate cut in 2020 cau
 the stock market rebound? We cannot rerun 2020 with a different policy, so we must
 rely on temporal structure and domain knowledge to reason counterfactually.
 
-=== Temporal Causal Structures: Basic Setup
+== Temporal Causal Structures: Basic Setup
 
 // Slide: Temporal Causal Graphs
 
 In time series causal models, we typically observe sequences of variables over time:
 a treatment process $T_t$ (continuous or binary), an outcome $Y_t$, and covariates
-$X_t$. The fundamental principle is that *effects cannot precede
-// TODO(ai_gp): Use `#emph[effects cannot precede causes]` instead of markdown `*effects cannot precede causes*` (.claude/skills/typst.rules.md:## Typst Vs. Markdown Syntax)
-causes*. This means treatment at time $t$ can affect outcomes at times $t$, $t+1$,
+$X_t$. The fundamental principle is that #emph[effects cannot precede
+  causes]. This means treatment at time $t$ can affect outcomes at times $t$, $t+1$,
 $t+2$, and beyond, but never at times before $t$. Mathematically, $T_t$ can cause
-$Y_t$, $Y_{t+1}$, etc., but never $Y_{t-1}$.
+$Y_t$, $Y_(t+1)$, etc., but never $Y_(t-1)$.
 
 This constraint is immensely powerful because it eliminates a large class of
 incorrect causal directions without any data analysis. We can represent this temporal
@@ -114,43 +121,42 @@ structure.
 ) <fig:temporal-causal>
 // render_images:end
 
-=== Temporal Causal Structures: Key Quantities
+== Temporal Causal Structures: Key Quantities
 
 // Slide: Causal Effects in Time Series
 
-The central causal quantity in time series is the effect of a *sustained
-intervention*. Suppose we force the treatment sequence from some time t_start onward
+The central causal quantity in time series is the effect of a #emph[sustained
+  intervention]. Suppose we force the treatment sequence from some time t_start onward
 to a fixed level. The #strong[sustained intervention causal effect] is defined as:
 
 The causal effect of a sustained intervention is the difference in expected outcomes
 between forcing treatment on versus off from time t_start onward.
 
 This measures the average outcome at time $t$ when we force the treatment to one
-level versus zero from $t_0$ onward. The intuition is that we *force* the treatment
+level versus zero from $t_0$ onward. The intuition is that we #emph[force] the treatment
 sequence, contrasting it with what would have happened without intervention.
 
 #strong[Dynamic treatment] occurs when treatment at time $t$ depends on the unit's
-history: covariates $X_{1:t}$, past outcomes $Y_{1:t-1}$, and past treatments
-$T_{1:t-1}$. This is common in medicine, where dosing depends on patient response so
+history: covariates $X_(1:t)$, past outcomes $Y_(1:t-1)$, and past treatments
+$T_(1:t-1)$. This is common in medicine, where dosing depends on patient response so
 far.
 
-Two special cases are particularly important. *Contemporaneous effects* occur
-// TODO(ai_gp): Replace LaTeX `\to` with Typst `arrow.r` in math: change `$T_t \to Y_t$` to `$T_t arrow.r Y_t$` (.claude/skills/typst.rules.md:## Formulas)
-when $T_t \to Y_t$ instantly. *Lagged effects* occur when for some lag $k > 0$. In
+Two special cases are particularly important. #emph[Contemporaneous effects] occur
+when $T_t arrow.r Y_t$ instantly. #emph[Lagged effects] occur when for some lag $k > 0$. In
 monetary policy, for example, a rate cut this quarter affects GDP over several
 subsequent quarters (a lagged effect). Simultaneously, the Fed adjusts rates based on
 past GDP, creating feedback loops that complicate causal inference.
 
-== Challenges Specific to Time Series
+= Challenges Specific to Time Series
 
-=== Autocorrelation and Standard Errors
+== Autocorrelation and Standard Errors
 
 // Slide: Autocorrelation
 
 #strong[Autocorrelation] means that $Y_t$ is correlated with its own past values:
-$Y_{t-1}$, $Y_{t-2}$, etc. This has profound consequences for statistical inference.
+$Y_(t-1)$, $Y_(t-2)$, etc. This has profound consequences for statistical inference.
 When we compute standard errors assuming independent observations, our estimates are
-*too small*. Autocorrelated data carries less independent information than the number
+#emph[too small]. Autocorrelated data carries less independent information than the number
 of observations suggests. Significance tests reject the null hypothesis far more
 often than their nominal rate, leading to spurious conclusions.
 
@@ -165,12 +171,12 @@ at multiple lags and asymptotically produce correct inference. When autocorrelat
 is present, always use HAC standard errors, cluster standard errors, or bootstrap
 methods rather than naive OLS inference.
 
-=== Non-Stationarity and Trends
+== Non-Stationarity and Trends
 
 // Slide: Spurious Regression
 
 A #strong[stationary process] has constant mean, variance, and autocovariance over
-time. Many real-world economic and social time series are *not* stationary; GDP,
+time. Many real-world economic and social time series are #emph[not] stationary; GDP,
 prices, and populations grow, creating trends that persist.
 
 Non-stationarity leads to #strong[spurious regression], a classic pitfall. Two
@@ -189,12 +195,12 @@ controlling for the shared trend.
 The key is to test for stationarity using unit-root tests (ADF, KPSS) and transform
 non-stationary series before causal inference.
 
-=== Feedback Loops and Simultaneity
+== Feedback Loops and Simultaneity
 
 // Slide: Feedback Loops
 
-In time series, cause and effect frequently influence each other, creating *feedback
-loops*. This causes #strong[simultaneity bias] in regression: when $Y_t$ and $T_t$
+In time series, cause and effect frequently influence each other, creating #emph[feedback
+  loops]. This causes #strong[simultaneity bias] in regression: when $Y_t$ and $T_t$
 are jointly determined by unobserved shocks, OLS estimates are inconsistent, and
 coefficients cannot be interpreted as causal effects.
 
@@ -228,7 +234,7 @@ bidirectional causality that OLS cannot untangle.
 // }
 // ```
 // label=fig:feedback-loop
-// caption=Feedback loop structure where policy affects outcome contemporaneously,
+// caption=Feedback loop structure where policy affects outcome contemporaneously and vice versa.
 // width=70%
 // placement=auto
 // rendered_images:end
@@ -238,15 +244,14 @@ bidirectional causality that OLS cannot untangle.
     "Lesson10.2-Causal_Inference_for_Time_Series.typ.figs/Lesson10.2-Causal_Inference_for_Time_Series.2.png",
     width: 70%,
   ),
-  // TODO(ai_gp): Caption should end with period, not comma; complete the sentence or remove trailing comma (.claude/skills/typst.rules.md:## Figures: Required Elements)
-  caption: [Feedback loop structure where policy affects outcome contemporaneously,],
+  caption: [Feedback loop structure where policy affects outcome contemporaneously and vice versa.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
 ) <fig:feedback-loop>
 // render_images:end
 
-=== Structural Vector Autoregressions
+== Structural Vector Autoregressions
 
 // Slide: VARs and Structural Shocks
 
@@ -257,9 +262,7 @@ influence each other over time.
 
 A #strong[VAR(p) model] with $k$ variables is formulated as:
 
-```
-Y_t = c + A_1 Y_{t-1} + A_2 Y_{t-2} + ... + A_p Y_{t-p} + ε_t
-```
+$ Y_t = c + A_1 Y_(t-1) + A_2 Y_(t-2) + ... + A_p Y_(t-p) + epsilon_t $
 
 Here $Y_t$ is a vector of $k$ time series, the $A_i$ are coefficient matrices
 encoding dependence on lagged values, and $epsilon_t$ are structural shocks
@@ -267,13 +270,13 @@ encoding dependence on lagged values, and $epsilon_t$ are structural shocks
 system, revealing the causal effects of unexpected changes.
 
 The key challenge is #strong[identification]: how do we determine causality
-direction? The solution is to impose *structural assumptions*. For instance, in
-monetary policy, we might assume that the Fed reacts to inflation *within* the same
-quarter, but inflation responds to policy *in the next quarter*. This timing
+direction? The solution is to impose #emph[structural assumptions]. For instance, in
+monetary policy, we might assume that the Fed reacts to inflation #emph[within] the same
+quarter, but inflation responds to policy #emph[in the next quarter]. This timing
 restriction identifies the causal direction. Once identified, we can simulate
 interventions (permanent shocks) and trace their effects through the system.
 
-=== Instrumental Variables for Time Series
+== Instrumental Variables for Time Series
 
 // Slide: Exogenous Variation
 
@@ -293,7 +296,7 @@ treatment changes with the instrument. Compliers may differ from the full popula
 limiting generalizability. Additionally, finding a credible instrument is difficult
 in practice.
 
-=== Natural Experiments and Exogenous Shocks
+== Natural Experiments and Exogenous Shocks
 
 // Slide: Natural Experiments
 
@@ -312,7 +315,7 @@ system's control) and affects treatment assignment but not outcomes directly.
 However, they are rare, cannot be replicated, and typically estimate effects in
 specific contexts that may not generalize.
 
-=== Time-Varying Confounders
+== Time-Varying Confounders
 
 // Slide: Unobserved Confounders
 
@@ -326,20 +329,20 @@ hard to measure but crucial confounders. Naive before-after comparisons will be
 biased by these time-varying factors.
 
 The solution depends on whether confounders are time-invariant or time-varying. If a
-confounder is *time-invariant* (e.g., genetics), simple before-after comparisons can
+confounder is #emph[time-invariant] (e.g., genetics), simple before-after comparisons can
 difference it out. This is the core principle behind fixed-effects models and
-Difference-in-Differences. If the confounder is *time-varying* (e.g., mood, weather),
+Difference-in-Differences. If the confounder is #emph[time-varying] (e.g., mood, weather),
 differencing does not eliminate bias. More sophisticated methods are needed: modeling
 the confounder explicitly, proxying for it with measured variables, or finding
 exogenous variation unrelated to the confounder.
 
-=== Other Practical Challenges
+== Other Practical Challenges
 
 // Slide: Additional Complications
 
 Several additional complications arise in time series causal inference:
 
-#strong[Anticipation effects] occur when units change behavior *before* treatment if
+#strong[Anticipation effects] occur when units change behavior #emph[before] treatment if
 they expect it. When a tax cut is announced but not yet implemented, consumers may
 delay purchases to time them with the cut, biasing estimates.
 
@@ -357,7 +360,7 @@ assume equispaced observations. Sensor dropouts, holidays, weekends, and other
 irregularities complicate analysis. Imputation or specialized methods (e.g.,
 state-space models) are needed.
 
-=== When Temporal Structure Helps
+== When Temporal Structure Helps
 
 // Slide: Strengths of Temporal Data
 
@@ -365,7 +368,7 @@ Temporal structure is a resource for causal inference when exploited correctly. 
 orders causes before effects, eliminating many causal directions a priori. This
 reduces the number of hypotheses and focuses analysis on plausible mechanisms.
 
-The unit serves as its own control, so *time-invariant confounders* are automatically
+The unit serves as its own control, so #emph[time-invariant confounders] are automatically
 controlled. A person's genes, geography, and institutional features remain constant
 over time, so within-person comparisons difference them out. This is much more
 powerful than requiring a separate control unit.
@@ -377,7 +380,7 @@ studying the effect of a sugary-drink ban, for example, we compare the same city
 before and after. Genes, climate, and culture are held fixed, making the comparison
 much cleaner than comparing different cities.
 
-=== When Temporal Structure Misleads
+== When Temporal Structure Misleads
 
 // Slide: Pitfalls of Temporal Data
 
@@ -395,9 +398,9 @@ Regime changes invalidate models. A model fit before COVID may not generalize af
 The key takeaway is that temporal data is informative, but blindly applying
 cross-sectional tools to it creates more problems than it solves.
 
-== Granger Causality
+= Granger Causality
 
-=== Intuition and Definition
+== Intuition and Definition
 
 // Slide: Granger Causality Concept
 
@@ -410,44 +413,38 @@ It is important to understand what Granger causality is NOT. It is not causation
 Pearl's do-calculus sense (i.e., causal effect in the interventional sense). Rather,
 it is a predictive notion based on temporal precedence. Granger causality answers
 "does $X$ help predict $Y$?" not "does changing $X$ change $Y$?" An important
-consequence is that both $X \to Y$ and $Y \to X$ can hold
-// TODO(ai_gp): Replace LaTeX `\to` with Typst `arrow.r` in math: change `$X \to Y$` and `$Y \to X$` to use `arrow.r` (.claude/skills/typst.rules.md:## Formulas)
+consequence is that both $X arrow.r Y$ and $Y arrow.r X$ can hold
 simultaneously in Granger causality, which is impossible in deterministic causality
 but common in economic feedback systems.
 
 A famous example illustrates the limitation: ice cream sales do not Granger-cause
-drowning. Instead, *temperature* Granger-causes both ice cream sales and drowning.
+drowning. Instead, #emph[temperature] Granger-causes both ice cream sales and drowning.
 They are correlated because of a common cause, not because one causes the other.
 Granger causality captures this dependence but misses the underlying mechanism.
 
-=== Formal Definition
+== Formal Definition
 
 // Slide: Granger Causality Test
 
 Consider two stationary time series $X_t$ and $Y_t$. We compare two predictors of
 $Y_t$:
 
-1. *Restricted model*: uses only past $Y$
-```
-Y_t = α + Σ_{i=1}^p φ_i Y_{t-i} + ε_t
-```
+1. #emph[Restricted model]: uses only past $Y$
+  $ Y_t = alpha + sum_(i=1)^p phi_i Y_(t-i) + epsilon_t $
 
-2. *Unrestricted model*: adds past $X$
-```
-Y_t = α + Σ_{i=1}^p φ_i Y_{t-i} + Σ_{j=1}^p β_j X_{t-j} + η_t
-```
+2. #emph[Unrestricted model]: adds past $X$
+  $ Y_t = alpha + sum_(i=1)^p phi_i Y_(t-i) + sum_(j=1)^p beta_j X_(t-j) + eta_t $
 
-#strong[Definition]: $X$ *Granger-causes* $Y$ if the unrestricted model has *strictly
-smaller* forecast error variance than the restricted model.
-// TODO(ai_gp): Replace LaTeX `\beta` with Typst `β` and `\cdots` with Typst `...` in math: change `$H_0: \beta_1 = \beta_2 = \cdots = \beta_p = 0$` (.claude/skills/typst.rules.md:## Formulas)
-Equivalently, an F-test on $H_0: \beta_1 = \beta_2 = \cdots = \beta_p = 0$ rejects,
+#strong[Definition]: $X$ #emph[Granger-causes] $Y$ if the unrestricted model has #emph[strictly
+  smaller] forecast error variance than the restricted model.
+Equivalently, an F-test on $H_0: beta_1 = beta_2 = ... = beta_p = 0$ rejects,
 meaning at least one past value of $X$ predicts current $Y$ significantly.
 
 The test is straightforward: fit both models by OLS, compute sum-of-squared
 residuals, and test whether including $X$ reduces the residual sum of squares
 significantly. If yes, we conclude $X$ Granger-causes $Y$.
 
-=== Key Assumptions
+== Key Assumptions
 
 // Slide: Stationarity and Lag Selection
 
@@ -474,17 +471,17 @@ even though it does not. This cannot be tested; we must rely on domain knowledge
 than the sampling interval, Granger causality may fail to detect it or even reverse
 the direction.
 
-=== Limitations
+== Limitations
 
 // Slide: When Granger Fails
 
-#strong[Granger causality is not causation.] It tests *predictive* relationships, not
-*interventional* ones. Granger-causal relationships can be entirely spurious, driven
+#strong[Granger causality is not causation.] It tests #emph[predictive] relationships, not
+#emph[interventional] ones. Granger-causal relationships can be entirely spurious, driven
 by a common cause with no true causal link.
 
 The barometer example is instructive: a barometer reading $X_t$ Granger-causes storms
 because falling atmospheric pressure precedes storms. But manually raising the
-barometer does *not* cause a storm. The atmosphere is the true cause; the barometer
+barometer does #emph[not] cause a storm. The atmosphere is the true cause; the barometer
 merely signals it.
 
 #strong[Aggregation problems] arise when sampling frequency is wrong. Monthly data
@@ -501,7 +498,7 @@ relationships.
 $T \gg p$---for 4 lags, at least 100 observations. Short samples produce unreliable
 inference and low power.
 
-=== Practical Example: Advertising and Sales
+== Practical Example: Advertising and Sales
 
 // Slide: Granger Causality Example
 
@@ -511,11 +508,11 @@ weekly data on ad spend $X_t$ and sales $Y_t$. We fit both the restricted model
 If the unrestricted model has significantly lower forecast error, we conclude ad
 spend Granger-causes sales.
 
-However, a critical caveat applies: this does *not* mean "if we spend more on ads,
+However, a critical caveat applies: this does #emph[not] mean "if we spend more on ads,
 sales will rise." Both variables could be driven by seasonal demand patterns. A
 consumer goods company spends more on ads before holidays (which also see naturally
 higher sales), creating an apparent Granger relationship. To get an interventional
-answer---what happens if we *change* ad spending---requires an experiment or a causal
+answer---what happens if we #emph[change] ad spending---requires an experiment or a causal
 design (e.g., randomized experiments, natural experiments).
 
 Another widely-studied question is whether Twitter sentiment scores Granger-cause
@@ -523,9 +520,9 @@ stock returns. Research finds mixed results: sentiment does Granger-cause
 short-horizon returns for some stocks, but effect sizes are small and may reflect
 transaction-level feedback loops rather than true predictive value.
 
-== Interrupted Time Series (ITS)
+= Interrupted Time Series (ITS)
 
-=== Design and Motivation
+== Design and Motivation
 
 // Slide: ITS Core Idea
 
@@ -538,7 +535,7 @@ The #strong[fundamental challenge] is the absence of a control group: the whole
 population is treated. A naive before-after comparison might show change, but we
 cannot distinguish the policy effect from concurrent trends or other events.
 
-The #strong[solution] is to use the *pre-intervention trajectory* as a counterfactual
+The #strong[solution] is to use the #emph[pre-intervention trajectory] as a counterfactual
 forecast. We fit a model to pre-intervention data, extrapolate it forward under the
 assumption that the trend would have continued absent the intervention, then compare
 the forecast (counterfactual) to what actually happened. The gap is the estimated
@@ -578,7 +575,7 @@ outcome. The gap represents the policy effect.
 // }
 // ```
 // label=fig:its-structure
-// caption=Interrupted Time Series design: using pre-period trends as counterfactual
+// caption=Interrupted Time Series design extrapolates the pre-period trend as a counterfactual.
 // width=70%
 // placement=auto
 // rendered_images:end
@@ -588,55 +585,50 @@ outcome. The gap represents the policy effect.
     "Lesson10.2-Causal_Inference_for_Time_Series.typ.figs/Lesson10.2-Causal_Inference_for_Time_Series.3.png",
     width: 70%,
   ),
-  // TODO(ai_gp): Caption should end with period and use sentence structure; change colon to regular prose (.claude/skills/typst.rules.md:## Figures: Required Elements)
-  caption: [Interrupted Time Series design: using pre-period trends as
-    counterfactual],
+  caption: [Interrupted Time Series design extrapolates the pre-period trend as a counterfactual.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
 ) <fig:its-structure>
 // render_images:end
 
-=== Segmented Regression Formulation
+== Segmented Regression Formulation
 
 // Slide: ITS Regression Model
 
 The standard ITS model is #strong[segmented regression]:
 
-`Y_t = β₀ + β₁ t + β₂ D_t + β₃ (t - t*) D_t + ε_t`
+$ Y_t = beta_0 + beta_1 t + beta_2 D_t + beta_3 (t - t^*) D_t + epsilon_t $
 
 where $D_t$ is an indicator for the post-intervention period ($D_t = 1$ if
 $t >= t^*$, and 0 otherwise).
 
 The parameters have clear interpretations:
-// TODO(ai_gp): Replace LaTeX `\beta` with Typst `β` in all math expressions: change `$\beta_0$`, `$\beta_1$`, `$\beta_2$`, `$\beta_3$` throughout this section to use β symbol (.claude/skills/typst.rules.md:## Formulas)
-- $\beta_0$: pre-intervention intercept (baseline level)
-- $\beta_1$: pre-intervention slope (trend before the intervention)
-- $\beta_2$: *level change* at the intervention (immediate jump)
-- $\beta_3$: *slope change* after the intervention (change in trend)
+- $beta_0$: pre-intervention intercept (baseline level)
+- $beta_1$: pre-intervention slope (trend before the intervention)
+- $beta_2$: #emph[level change] at the intervention (immediate jump)
+- $beta_3$: #emph[slope change] after the intervention (change in trend)
 
 This formulation lets us test two key hypotheses:
-1. Is there a jump at t_start ? Test $H_0: \beta_2 = 0$.
-2. Does the trajectory change? Test $H_0: \beta_3 = 0$.
+1. Is there a jump at t_start ? Test $H_0: beta_2 = 0$.
+2. Does the trajectory change? Test $H_0: beta_3 = 0$.
 
-The estimated effect is $\beta_2$ (immediate level change) plus the cumulative effect
-of $\beta_3$ over the post-period (slope change). A positive $\beta_2$ means the
-outcome jumped up at intervention; a positive $\beta_3$ means the trend steepened.
+The estimated effect is $beta_2$ (immediate level change) plus the cumulative effect
+of $beta_3$ over the post-period (slope change). A positive $beta_2$ means the
+outcome jumped up at intervention; a positive $beta_3$ means the trend steepened.
 
-=== Implementation Details
+== Implementation Details
 
 // Slide: ITS Best Practices
 
 Several practical details matter for valid ITS:
 
-// TODO(ai_gp): Use `#emph[Autocorrelation]` instead of markdown `*Autocorrelation*` (.claude/skills/typst.rules.md:## Typst Vs. Markdown Syntax)
-*Autocorrelation* is almost always present in time series. Standard OLS standard
+#emph[Autocorrelation] is almost always present in time series. Standard OLS standard
 errors are too small, leading to overconfidence. Fit models using
 autocorrelation-robust methods (Newey-West), ARIMA (AutoRegressive Integrated Moving
 Average), or other time-series methods that account for serial correlation.
 
-// TODO(ai_gp): Use `#emph[Robustness checks]` instead of markdown `*Robustness checks*` (.claude/skills/typst.rules.md:## Typst Vs. Markdown Syntax)
-*Robustness checks* strengthen ITS conclusions. Vary the pre-intervention window (use
+#emph[Robustness checks] strengthen ITS conclusions. Vary the pre-intervention window (use
 1, 2, 5 years of data) to see if results are stable. Run placebo tests by pretending
 the intervention occurred at a fake date; if you find spurious effects, your design
 is picking up something other than the true intervention.
@@ -645,40 +637,36 @@ Always check for confounding events near t_start : seasonality, holidays, econom
 shocks. Visual diagnostics are crucial: plot the series with the fitted model and the
 intervention date marked. Do the ITS results survive inspection?
 
-=== Applications
+== Applications
 
 // Slide: ITS Applications
 
 ITS is widely used across domains:
 
-// TODO(ai_gp): Use `#emph[Public health]` instead of markdown `*Public health*` (.claude/skills/typst.rules.md:## Typst Vs. Markdown Syntax)
-- *Public health*: estimating the effect of soda taxes on sugar-sweetened beverage
+- #emph[Public health]: estimating the effect of soda taxes on sugar-sweetened beverage
   purchases.
-// TODO(ai_gp): Use `#emph[Policy evaluation]` instead of markdown `*Policy evaluation*` (.claude/skills/typst.rules.md:## Typst Vs. Markdown Syntax)
-- *Policy evaluation*: measuring the effect of congestion pricing in London (2003) on
+- #emph[Policy evaluation]: measuring the effect of congestion pricing in London (2003) on
   traffic volumes, or minimum wage increases on employment.
-// TODO(ai_gp): Use `#emph[Tech and product]` instead of markdown `*Tech and product*` (.claude/skills/typst.rules.md:## Typst Vs. Markdown Syntax)
-- *Tech and product*: quantifying the effect of a website redesign on conversion rate
+- #emph[Tech and product]: quantifying the effect of a website redesign on conversion rate
   or a new recommendation algorithm on engagement.
-// TODO(ai_gp): Use `#emph[Safety interventions]` instead of markdown `*Safety interventions*` (.claude/skills/typst.rules.md:## Typst Vs. Markdown Syntax)
-- *Safety interventions*: did installing speed cameras reduce traffic accidents?
+- #emph[Safety interventions]: did installing speed cameras reduce traffic accidents?
 
 Each application requires careful attention to the timing of the intervention,
 confounding events, and data quality.
 
-=== Strengths and Weaknesses
+== Strengths and Weaknesses
 
 // Slide: ITS Evaluation
 
 #strong[Pros of ITS]:
-- Works when *no control group exists*: policies are often applied universally (same
+- Works when #emph[no control group exists]: policies are often applied universally (same
   rules for all units).
-- Uses the unit as its own control, so *time-invariant confounders cancel*: genes,
+- Uses the unit as its own control, so #emph[time-invariant confounders cancel]: genes,
   geography, and institutional features are held fixed.
 
 #strong[Cons of ITS]:
-- Relies on *extrapolation* of the pre-period trend, introducing model dependence.
-- Vulnerable to *co-occurring events*: "was it the policy or the recession?"
+- Relies on #emph[extrapolation] of the pre-period trend, introducing model dependence.
+- Vulnerable to #emph[co-occurring events]: "was it the policy or the recession?"
 - Autocorrelation inflates errors if ignored.
 - Needs a long, stable pre-period, which is rare in practice.
 
@@ -688,44 +676,43 @@ confounding events, and data quality.
 3. The pre-period is long and stable.
 4. The outcome has low noise relative to effect size.
 
-== Difference-in-Differences (DiD)
+= Difference-in-Differences (DiD)
 
-=== Motivation and Setup
+== Motivation and Setup
 
 // Slide: DiD Core Concept
 // TODO(ai_gp): Overlaps with 08.4
 
 #strong[Motivating Example]
-- Suppose a policy is rolled out in *some* units but not others
+- Suppose a policy is rolled out in #emph[some] units but not others
   - E.g., New Jersey raises its minimum wage in 1992; Pennsylvania does not
   - Two groups: treated (NJ) and control (PA); two periods: before and after
 
-// TODO(ai_gp): Convert single tagged bullet "Assume..." to plain sentence; it's not a parallel list item (.claude/skills/typst.rules.md:## Lists)
 #strong[Definition]: Difference-in-Differences (DiD) estimates a causal effect by
 comparing the change in outcomes over time between a group that received treatment
-and a group that didn't
-- Assume both groups would have followed the same trend in the absence of treatment
+and a group that didn't, assuming both groups would have followed the same trend in
+the absence of treatment.
 
-// TODO(ai_gp): Use `#algorithm(...)` macro for this structured procedure instead of bare bullet list (.claude/skills/typst.rules.md:## Algorithms and Pseudocode)
-#strong[Procedure]
-- Subtracts out time-invariant differences between groups
-- Subtracts out common time trends across groups
-- What's left is attributed to the policy
+#algorithm(
+  "Difference-in-Differences",
+  (
+    [Subtract out time-invariant differences between groups.],
+    [Subtract out common time trends across groups.],
+    [Attribute what's left to the policy.],
+  ),
+)
 
 - #strong[Example]: Card & Krueger (1994) studied the NJ minimum wage
   - Standard theory predicted employment would fall
   - DiD estimate: essentially zero (a surprising result)
 
-=== The Core Idea Graphically
+== The Core Idea Graphically
 
 // Slide: DiD Visual
 
-The DiD estimator with two groups and two periods is shown in @fig:did-structure
-shows the DiD estimator with two groups and two periods:
+@fig:did-structure shows the DiD estimator with two groups and two periods:
 
-```
-τ̂_{DiD} = (Ȳ^T_{post} - Ȳ^T_{pre}) - (Ȳ^C_{post} - Ȳ^C_{pre})
-```
+$ hat(tau)_("DiD") = (macron(Y)^T_("post") - macron(Y)^T_("pre")) - (macron(Y)^C_("post") - macron(Y)^C_("pre")) $
 
 Here the treated group mean is compared against the control mean, with subscripts
 denoting time periods (pre vs. post). Visually, we compute the change in the treated
@@ -755,7 +742,7 @@ between-group differences and common time trends are removed.
 // }
 // ```
 // label=fig:did-structure
-// caption=Difference-in-Differences design: the causal effect is the difference
+// caption=Difference-in-Differences design: the causal effect is the difference of differences between treated and control groups.
 // width=70%
 // placement=auto
 // rendered_images:end
@@ -765,23 +752,20 @@ between-group differences and common time trends are removed.
     "Lesson10.2-Causal_Inference_for_Time_Series.typ.figs/Lesson10.2-Causal_Inference_for_Time_Series.4.png",
     width: 70%,
   ),
-  // TODO(ai_gp): Caption should end with period and use sentence structure; change colon to regular prose (.claude/skills/typst.rules.md:## Figures: Required Elements)
-  caption: [Difference-in-Differences design: the causal effect is the difference],
+  caption: [Difference-in-Differences design: the causal effect is the difference of differences between treated and control groups.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
 ) <fig:did-structure>
 // render_images:end
 
-=== Regression Formulation
+== Regression Formulation
 
 // Slide: DiD Regression
 
 The equivalent regression formulation with unit $i$ and time $t$ is:
 
-```
-Y_{it} = α + β·Treat_i + γ·Post_t + τ·(Treat_i × Post_t) + ε_{it}
-```
+$ Y_(i t) = alpha + beta dot.op "Treat"_i + gamma dot.op "Post"_t + tau dot.op ("Treat"_i times "Post"_t) + epsilon_(i t) $
 
 The parameters are:
 - $alpha$: baseline outcome in control units in pre-period
@@ -791,39 +775,35 @@ The parameters are:
 
 A more flexible #strong[fixed-effects] generalization is:
 
-```
-Y_{it} = α_i + λ_t + τ D_{it} + ε_{it}
-```
+$ Y_(i t) = alpha_i + lambda_t + tau D_(i t) + epsilon_(i t) $
 
 Here $alpha_i$ are unit fixed effects (absorb all time-invariant unit traits:
 location, management, size), $lambda_t$ are time fixed effects (absorb all common
-shocks: recessions, industry trends), and $D_{i,t}$ indicates whether unit $i$ is
+shocks: recessions, industry trends), and $D_(i,t)$ indicates whether unit $i$ is
 treated at time $t$. The fixed-effects specification is more flexible because it
 allows heterogeneous levels and trends across units, not just between treated and
 control groups.
 
-=== The Parallel Trends Assumption
+== The Parallel Trends Assumption
 
 // Slide: Identifying Assumption
 
 The identifying assumption for DiD is #strong[parallel trends]: in the absence of
-treatment, treated and control units would have followed the *same trend* over time:
+treatment, treated and control units would have followed the #emph[same trend] over time:
 
-```
-E[Y^{(0)}_{it} - Y^{(0)}_{i,t-1} | Treat_i = 1] = E[Y^{(0)}_{it} - Y^{(0)}_{i,t-1} | Treat_i = 0]
-```
+$ E[Y^((0))_(i t) - Y^((0))_(i,t-1) | "Treat"_i = 1] = E[Y^((0))_(i t) - Y^((0))_(i,t-1) | "Treat"_i = 0] $
 
-where $Y^{(0)}$ denotes the untreated potential outcome. The intuition is: levels can
-differ (NJ may always have higher wages than PA), but *changes* should match. Both
+where $Y^((0))$ denotes the untreated potential outcome. The intuition is: levels can
+differ (NJ may always have higher wages than PA), but #emph[changes] should match. Both
 regions should move together absent the policy.
 
 The assumption is #strong[untestable]---it is a counterfactual statement about what
 would have happened without treatment. We cannot directly observe it. However, we can
-gain credibility by checking *pre-treatment* trends. If treated and control units
+gain credibility by checking #emph[pre-treatment] trends. If treated and control units
 move in parallel before treatment, we gain confidence (though no proof) that parallel
 trends hold post-treatment.
 
-=== Checking Parallel Trends
+== Checking Parallel Trends
 
 // Slide: Parallel Trends Testing
 
@@ -840,19 +820,19 @@ post-treatment periods, we capture dynamic treatment effects.
 
 #strong[Red flags] include:
 - Significant pre-trends with opposite sign from the estimated effect
-- Divergence starting *before* the policy (suggesting selection or anticipation, not
+- Divergence starting #emph[before] the policy (suggesting selection or anticipation, not
   treatment effect)
 
 If pre-trends diverge, #strong[do not just add linear trend terms and hope]. Use a
 different method (synthetic control, matching on trends) instead.
 
-=== Estimation Details
+== Estimation Details
 
 // Slide: DiD Standard Errors and Inference
 
 Several practical issues arise in DiD estimation:
 
-#strong[Standard errors must be clustered] at the *unit level*. Bertrand, Duflo, and
+#strong[Standard errors must be clustered] at the #emph[unit level]. Bertrand, Duflo, and
 Mullainathan (2004) showed that ignoring clustering overrejects the null by 40+
 percent when autocorrelation is present. Most software has clustering options; always
 use them.
@@ -871,7 +851,7 @@ across groups and time.
 - Ignoring clustering when standard errors are autocorrelated.
 - Using too short a pre-period, making it impossible to check parallel trends.
 
-=== Robustness Checks
+== Robustness Checks
 
 // Slide: DiD Robustness
 
@@ -880,7 +860,7 @@ Strengthen DiD conclusions through robustness checks:
 #strong[Placebo treatments in time]: pretend treatment happened earlier. Should get
 no effect if the design is sound.
 
-#strong[Placebo outcomes]: apply DiD to unrelated outcomes that *should not* change.
+#strong[Placebo outcomes]: apply DiD to unrelated outcomes that #emph[should not] change.
 If minimum wage affects employment but not commodity prices, commodity prices should
 be unaffected in a DiD estimate.
 
@@ -891,14 +871,14 @@ the design is fragile.
 #strong[Sensitivity to functional form]: check whether results change with
 logarithmic vs. level outcomes, or linear vs. spline trend adjustments.
 
-#strong[Falsification tests]: subset the data in ways that *should not* yield
+#strong[Falsification tests]: subset the data in ways that #emph[should not] yield
 effects. If they do, your design picks up something other than treatment.
 
 The Card & Krueger minimum wage study exemplifies good robustness practice: they
 tried different fast-food chains and different controls, and the null effect held up,
 lending credibility.
 
-=== Staggered Adoption and Modern Estimators
+== Staggered Adoption and Modern Estimators
 
 // Slide: Multiple Periods and Heterogeneous Effects
 
@@ -909,7 +889,7 @@ with:
 
 However, recent econometric research (Goodman-Bacon 2021, de Chaisemartin &
 D'Haultfœuille 2020) revealed a critical flaw: with heterogeneous effects across
-units and time, TWFE becomes a *weighted average where some weights are negative*.
+units and time, TWFE becomes a #emph[weighted average where some weights are negative].
 Already-treated units serve as controls for later-treated units, which can produce
 wrong-sign bias.
 
@@ -924,11 +904,11 @@ Modern staggered DiD estimators fix this:
 - #strong[Borusyak, Jaravel, & Spiess (2024)]: imputation estimator using
   never-treated or not-yet-treated units as controls.
 
-The key takeaway: for staggered adoption, *do not* default to TWFE. Use a modern
+The key takeaway: for staggered adoption, #emph[do not] default to TWFE. Use a modern
 estimator and report the full event-study plot showing effects by lag relative to
 treatment.
 
-=== Summary: Strengths and Limits
+== Summary: Strengths and Limits
 
 // Slide: DiD Evaluation
 
@@ -949,26 +929,26 @@ treatment.
 2. No co-occurring shocks hit treated and controls differently.
 3. Staggered timing is handled with modern estimators.
 
-== Synthetic Control Methods
+= Synthetic Control Methods
 
-=== Motivation and Construction
+== Motivation and Construction
 
 // Slide: Synthetic Control Overview
 
-#strong[Synthetic Control] methods handle a scenario where DiD falls short: when *no
-single control unit* matches the treated unit. Studying California's 1988 tobacco
+#strong[Synthetic Control] methods handle a scenario where DiD falls short: when #emph[no
+  single control unit] matches the treated unit. Studying California's 1988 tobacco
 control program (Prop. 99) illustrates the issue. California is large, diverse, and
 economically unique. Comparing it to any single state (Texas, Florida, or any other)
 is unconvincing because the state does not match California on key pre-treatment
 characteristics.
 
 The #strong[synthetic control idea] (Abadie & Gardeazabal 2003; Abadie, Diamond, &
-Hainmueller 2010) constructs a *weighted average* of control units that best matches
+Hainmueller 2010) constructs a #emph[weighted average] of control units that best matches
 the treated unit's pre-treatment characteristics. As shown in
 @fig:synthetic-control-construction, this weighted combination becomes the
 #strong[synthetic control]---a data-driven, transparent counterfactual. We compare
 the treated unit to the synthetic control in the post-period. The gap is the
-estimated effect. The method's strength is transparency: reviewers can see *which*
+estimated effect. The method's strength is transparency: reviewers can see #emph[which]
 donors contribute and how much, making the counterfactual explicit.
 
 // rendered_images:begin
@@ -994,7 +974,7 @@ donors contribute and how much, making the counterfactual explicit.
 // }
 // ```
 // label=fig:synthetic-control-construction
-// caption=Synthetic control construction: the donor pool is weighted optimally
+// caption=Synthetic control construction: the donor pool is weighted to match the treated unit's pre-treatment trend.
 // width=70%
 // placement=auto
 // rendered_images:end
@@ -1004,15 +984,14 @@ donors contribute and how much, making the counterfactual explicit.
     "Lesson10.2-Causal_Inference_for_Time_Series.typ.figs/Lesson10.2-Causal_Inference_for_Time_Series.5.png",
     width: 70%,
   ),
-  // TODO(ai_gp): Caption should end with period and use sentence structure; change colon to regular prose (.claude/skills/typst.rules.md:## Figures: Required Elements)
-  caption: [Synthetic control construction: the donor pool is weighted optimally],
+  caption: [Synthetic control construction: the donor pool is weighted to match the treated unit's pre-treatment trend.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
 ) <fig:synthetic-control-construction>
 // render_images:end
 
-=== Formal Setup
+== Formal Setup
 
 // Slide: Synthetic Control Formal Definition
 
@@ -1022,19 +1001,15 @@ unit, and X_0 is a matrix of the same predictors for donors (size k by J matrix)
 
 #strong[Weights] must satisfy: each weight is nonnegative and sums to one.
 
-```
-w_j ≥ 0, Σ_{j=2}^{J+1} w_j = 1
-```
+$ w_j >= 0, quad sum_(j=2)^(J+1) w_j = 1 $
 
-Non-negativity and unit-sum ensure weights are a *convex combination* of donors,
-placing the synthetic control in the *convex hull* of the donor pool. This prevents
+Non-negativity and unit-sum ensure weights are a #emph[convex combination] of donors,
+placing the synthetic control in the #emph[convex hull] of the donor pool. This prevents
 extrapolation---the synthetic control is never outside the range spanned by donors.
 
 We choose optimal weights to minimize pre-treatment mismatch:
 
-```
-w* = argmin_w (X_1 - X_0 w)' V (X_1 - X_0 w)
-```
+$ w^* = arg min_w (X_1 - X_0 w)' V (X_1 - X_0 w) $
 
 subject to $w_j >= 0$, $sum w_j = 1$.
 
@@ -1045,26 +1020,28 @@ predictor matrix; the outer loop finds $V$.
 
 The #strong[estimated causal effect] at time $t >= t^*$ is:
 
-```
-τ̂_t = Y_{1t} - Σ_{j=2}^{J+1} w_j* Y_{jt}
-```
+$ hat(tau)_t = Y_(1 t) - sum_(j=2)^(J+1) w_j^* Y_(j t) $
 
 the gap between the treated unit's outcome and the weighted average of donor
 outcomes.
 
-=== Inference via Placebos
+== Inference via Placebos
 
 // Slide: Inference Strategy
 
-A critical challenge is that there is only *one* treated unit---standard inference
+A critical challenge is that there is only #emph[one] treated unit---standard inference
 does not apply. The solution is #strong[placebo tests] by permutation:
 
-// TODO(ai_gp): Use `#algorithm(...)` macro for this structured procedure instead of bare numbered list (.claude/skills/typst.rules.md:## Algorithms and Pseudocode)
-1. Pretend each donor was the treated unit.
-2. Compute the synthetic control and causal-effect trajectory for each.
-3. Compare the *actual* treated unit's effect against this null distribution.
+#algorithm(
+  "Placebo Inference for Synthetic Control",
+  (
+    [Pretend each donor was the treated unit.],
+    [Compute the synthetic control and causal-effect trajectory for each.],
+    [Compare the #emph[actual] treated unit's effect against this null distribution.],
+  ),
+)
 
-If the treated unit's effect is *larger in magnitude* than most placebo effects, we
+If the treated unit's effect is #emph[larger in magnitude] than most placebo effects, we
 have evidence of a real effect. Compute an empirical p-value from the placebos.
 
 A useful variant filters placebos to keep only those with good pre-treatment fit. A
@@ -1072,7 +1049,7 @@ donor with poor pre-fit produces noise, not a legitimate null. In the California
 tobacco study, the post-period gap for California was larger than 38 of 39 placebo
 runs, yielding p approximately 0.026---strong evidence the policy worked.
 
-=== When Synthetic Control Works
+== When Synthetic Control Works
 
 // Slide: Synthetic Control Prerequisites
 
@@ -1095,12 +1072,12 @@ Canonical successes include:
 - Abadie et al. (2010): California Prop. 99 tobacco control
 - Abadie et al. (2015): German reunification's effect on West German GDP
 
-=== When Synthetic Control Fails
+== When Synthetic Control Fails
 
 // Slide: Synthetic Control Limitations
 
 #strong[Poor pre-treatment fit] is a fatal flaw. If no convex combination of donors
-matches the treated unit, the treated unit is an *outlier* in donor space. Reported
+matches the treated unit, the treated unit is an #emph[outlier] in donor space. Reported
 effects are unreliable---you are extrapolating in high-dimensional space.
 
 #strong[Treatment contaminates donors] (spillovers). If neighboring states are also
@@ -1120,62 +1097,40 @@ averages over donors who differ in important but unmeasured ways.
 #strong[Diagnostic]: always plot the pre-treatment fit. Poor fit means do not trust
 the post-period gap.
 
-=== Comparison with Other Methods
+== Comparison with Other Methods
 
 // Slide: Method Comparison
 
-Each causal inference method has distinct strengths. @tbl:causal-methods summarizes
+Each causal inference method has distinct strengths. @tab:causal-methods summarizes
 the key properties of each approach.
 
-#show table.cell.where(y: 0): set text(weight: "bold")
-
-// TODO(ai_gp): Use `styled-table(headers: (...), rows: (...), bold-first-col: false)` from aima_style.typ instead of raw `table(...)` (.claude/skills/typst.rules.md:## Tables)
 #figure(
-  table(
-    columns: (1.1fr, 1.2fr, 2fr, 2fr),
-    inset: 6pt,
-    align: left + horizon,
-
-    stroke: none,
-
-    table.hline(stroke: 1.2pt),
-    [Method], [Control Group], [Strength], [Key Assumption],
-    table.hline(stroke: 0.8pt),
-
-    [Granger], [Own history], [Predictive screen],
-    [Stationarity, no common causes],
-
-    [ITS], [Pre-period of same unit],
-    [Works without controls],
-    [Stable pre-trend, no co-events],
-
-    [DiD], [Untreated comparison],
-    [Removes time-invariant confounders],
-    [Parallel trends],
-
-    [Synthetic Control],
-    [Weighted donor pool],
-    [Data-driven counterfactual],
-    [Good pre-fit, no spillovers],
-
-    table.hline(stroke: 1.2pt),
+  styled-table(
+    headers: ("Method", "Control Group", "Strength", "Key Assumption"),
+    rows: (
+      ("Granger", "Own history", "Predictive screen", "Stationarity, no common causes"),
+      ("ITS", "Pre-period of same unit", "Works without controls", "Stable pre-trend, no co-events"),
+      ("DiD", "Untreated comparison", "Removes time-invariant confounders", "Parallel trends"),
+      ("Synthetic Control", "Weighted donor pool", "Data-driven counterfactual", "Good pre-fit, no spillovers"),
+    ),
+    bold-first-col: true,
   ),
   caption: [Comparison of causal inference methods for time series data.],
   kind: "table",
   supplement: [Table.],
   placement: auto,
-) <tbl:causal-methods>
+) <tab:causal-methods>
 
-*Granger Causality*: uses the own history as control, offering fast predictive
+#emph[Granger Causality]: uses the own history as control, offering fast predictive
 screening but only testing predictions, not interventions.
 
-*ITS*: works without controls when policies are universal, but relies on stable
+#emph[ITS]: works without controls when policies are universal, but relies on stable
 pre-trends and extrapolation.
 
-*DiD*: removes time-invariant confounders using unit fixed effects and common shocks
+#emph[DiD]: removes time-invariant confounders using unit fixed effects and common shocks
 using time fixed effects. Requires parallel pre-trends.
 
-*Synthetic Control*: provides data-driven counterfactuals using weighted donors,
+#emph[Synthetic Control]: provides data-driven counterfactuals using weighted donors,
 transparent and avoids extrapolation (convex hull property), but inference is
 permutation-based and requires long, clean pre-periods.
 
@@ -1189,7 +1144,7 @@ permutation-based and requires long, clean pre-periods.
 - Sensitive to donor pool choice---discipline needed.
 - Requires long, clean pre-period.
 
-=== Putting It All Together
+== Putting It All Together
 
 // Slide: Method Selection Guide
 
@@ -1207,11 +1162,28 @@ are plausible, and you have panel data with units and time.
 #strong[Use Synthetic Control] when one (or few) treated units have a rich donor
 pool, and no single donor is credible but a weighted combination is.
 
-The key takeaway is that *temporal structure is a resource if exploited with the
-right tool, and a trap if ignored*. Each method has specific assumptions and
+The key takeaway is that #emph[temporal structure is a resource if exploited with the
+  right tool, and a trap if ignored]. Each method has specific assumptions and
 conditions under which it excels. Matching method to design and checking assumptions
 carefully produces credible causal inference.
 
-// TODO(ai_gp): Add mandatory `= Summary` section (.claude/skills/typst.rules.md:## Mandatory Sections)
+= Summary
 
-// TODO(ai_gp): Add mandatory `= References` section (.claude/skills/typst.rules.md:## Mandatory Sections)
+Time series causal inference must confront autocorrelation, non-stationarity,
+feedback loops, and time-varying confounders that cross-sectional methods ignore,
+but the arrow of time also rules out backward causal directions for free. Granger
+causality tests whether the past of one series improves prediction of another,
+which is useful but not interventional. When a single unit is treated, Interrupted
+Time Series extrapolates its own pre-period trend as the counterfactual.
+Difference-in-Differences adds a control group and removes both time-invariant and
+common shocks, provided pre-trends are parallel, with modern estimators fixing
+two-way fixed effects under staggered adoption. Synthetic Control replaces a single
+comparison unit with a transparent weighted combination of donors when no single
+unit matches well. Choosing among them is a matter of matching the method's
+assumptions to the data's design: what serves as the control, and how credible that
+control is.
+
+= References
+
+#set text(size: 0.75em)
+#references("/msml610/lectures_source/refs.bib")
