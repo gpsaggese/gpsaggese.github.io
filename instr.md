@@ -1,107 +1,107 @@
-In http://localhost:8888/lab/tree/git_root/msml610/tutorials/L03_knowledge_representation
+I want to create a document that explains the auto_task workflow, including the
+different ways of executing tasks.
 
-1) Add a cell explaining the wumpus world problem in markdown
-Explain the breeze axiom 
+I want to do it without losing any information from the docs below. So if there is
+content to be moved, we need to move it from the files
 
-2) Explain what is the correct strategy to win
+Let's write a technical reference in how_to.auto_task.md but I want to make sure the
+information from the original source is not replicated,
 
-3) Shows agent knows only what's told, not hidden truth.
+How would you do that?
 
-- TELL percept button calls kb.tell_percept(cell), which adds 3 sentences to KB:
-  a. Not(P_cell) — agent stood here and survived, so no pit.
-  b. Breeze axiom for cell (biconditional linking breeze to neighbor pits).
-  c. Observed breeze literal (true/false) from world.percept(cell).
+1) Read the following resources
 
-4) In cell2_1_models_and_axiom 
+- ./helpers_root/dev_scripts_helpers/ai/todo_janitor.template.md
+- ./helpers_root/todo_janitor.prompt.update_plan.md
+- ./helpers_root/todo_janitor.README.md
 
-- remove model count
-- remove log2(models)
+- website/docs/blog/posts/:
+  - draft.how_to.My_agentic_engineering_flow.md
+  - draft.how_to.Stacked_PRs_for_agentic_developent.md
+  - draft.how_to.A_queue_of_AI_coding_agents.md
 
-## Plan
+2) Read the skills
+.claude/skills/auto_task.create_specs_from_todos/SKILL.md
+.claude/skills/auto_task.criticize/SKILL.md
+.claude/skills/auto_task.execute_interactively/SKILL.md
+.claude/skills/auto_task.execute_remotely_with_single_pr/SKILL.md
+.claude/skills/auto_task.execute_with_stacked_prs/SKILL.md
 
-- Confirmed with user:
-  - Cell 2.1 becomes fully static: `n` fixed at 3, no widget
-  - "Remove model count" = remove the bar chart panel only; keep the
-    numeric counts in the Comments text panel
-  - Tasks 1 and 2 become two separate new markdown cells
+.claude/skills/auto_task.rules.md
+.claude/templates/auto_task.template.md
 
-- [x] Task 1: add a new markdown cell in `L03_02_wumpus_world.py` (paired
-      with the `.ipynb`), placed right after `# Part 1: ...` and before
-      `## Cell 1.1`, explaining the wumpus world problem
-  - [x] Hidden 4x4 grid, agent starts at `(1, 1)`, pits and the wumpus kill
-        the agent, gold is the goal, percepts are breeze / stench / glitter
-  - [x] Explain the breeze axiom informally: a breeze is felt in a cell if
-        and only if at least one neighboring cell holds a pit
-- [x] Task 2: add a second new markdown cell (right after the Task 1 cell,
-      still before `## Cell 1.1`) explaining the correct strategy to win
-  - [x] Only move into cells the `KB` proves safe, use `TELL`/`ASK` to grow
-        certainty, grab the gold once found, return to the start cell
-- [x] Task 3: fix the "Key observations" markdown cell after `## Cell 1.1`
-      (currently says "every TELL adds one sentence", which is inaccurate)
-      to correctly describe that `TELL percept` adds up to three sentences
-      to the `KB`
-  - [x] `Not(P_cell)`: the agent stood in the cell and survived, so no pit
-  - [x] The breeze axiom for the cell, linking the breeze percept to
-        neighboring pits
-  - [x] The observed breeze literal (true/false) from `world.percept(cell)`
-  - [x] Keep the point that the agent only knows what has been `TELL`-ed,
-        never the hidden truth
-- [x] Task 4: in `cell2_1_models_and_axiom` (`L03_02_wumpus_world_utils.py`)
-  - [x] Remove the `log2(models)` slider control, fixing the number of
-        enumerated pit variables to 3 (the breeze axiom's own variables),
-        making the cell a static (non-interactive) display
-  - [x] Remove the "Model count" bar chart panel (`draw_count_bars` call),
-        changing the layout from 1x3 to 1x2 subplots (model table +
-        comments); keep the numeric counts in the Comments text panel
-  - [x] Update the Cell 2.1 markdown (Goal bullets, Key observations) and
-        the function docstring to match the simplified, non-interactive
-        cell
-- [x] Apply matching edits to the paired notebook `L03_02_wumpus_world.ipynb`
-      (via jupytext sync)
-- [x] Run the notebook top to bottom to confirm it executes without error
+3) Read the content below
+```
+### [ ] Document the flow
+
+- Go to `master`
+
+- Create a `tasks.md` (e.g., from `msml610/prompt.slides_and_book_flow.md`) in the
+  auto_task format
+
+- Review the task with
+  ```
+  claude> /auto_task.criticize tasks.md
+  ```
+
+- Then kick off the execution
+  ```
+  claude> /auto_task.execute_with_stacked_prs tasks.md
+  claude> /auto_task.execute_interactively tasks.md
+  ```
+
+ /auto_task.execute_remotely_with_single_pr tasks.md
+
+- // TODO(ai_gp): Describe the auto task rules
+
+.claude/skills/auto_task.rules.md
+.claude/templates/auto_task.template.md
+
+- Describe the auto_task skills
+
+> mdm skill l auto_task
+auto_task.create_specs_from_todos
+auto_task.criticize
+auto_task.execute_interactively
+auto_task.execute_with_stacked_prs
+
+- Once everything is clear
+
+git_create_issue_and_branch.py --gh_issue_title "Improve msml610/3.2 and 3.3 slides"
+
+Close the wrong PR
+
+gh pr close UmdTask557_Improve_msml6103_2_and_3_3_slides -c "Wrong" --delete-branch
+
+- Explain the /pr.* skills
+
+### Document the flow for 
+
+/auto_task.execute_remotely_with_single_pr
+
+This even creates automatically the issue and branch or one
+can do it manually with:
+
+> git_create_issue_and_branch.py --gh_issue_title "Replace pathlib.Path uses below with os.path" --gh_issue_body_file ./instr.md --submodules --no_abort_if_not_clean
+
+### [ ] Create one or multiple PRs
+
+- Make a decision based on `* Affected repos:` using --submodule depending
+
+```
+
+## Plan: Write `helpers_root/how_to.auto_task.md`
+
+- [x] Draft outline for `helpers_root/how_to.auto_task.md` and get it approved
+- [x] Write full document content following `.claude/skills/markdown.rules.md`
+  and `.claude/skills/text.rules.md`
+- [x] Verify formatting against both rule files
+- [x] `git add` the new file (do not commit)
 
 ## Result
-
-- Done:
-  - Added two new markdown cells before `## Cell 1.1` in
-    `L03_02_wumpus_world.py`/`.ipynb`: "The Wumpus World Problem" (grid,
-    percepts, informal breeze axiom) and "The Correct Strategy to Win"
-    (KB-proved safety, no guessing, grab gold, return to start)
-  - Fixed the Cell 1.1 "Key observations" markdown, which incorrectly said
-    "every TELL adds one sentence"; it now lists the 3 sentences
-    `TELL percept` adds (`Not(P_cell)`, the breeze axiom, the observed
-    breeze literal) and restates that the agent never sees the hidden truth
-  - Simplified `cell2_1_models_and_axiom` in `L03_02_wumpus_world_utils.py`:
-    removed the `log2(models)` slider (n fixed at 3, the breeze axiom's own
-    variable count) and the "Model count" bar chart; layout is now 1x2
-    (model table + comments), comments still report the model counts as
-    text
-  - Updated Cell 2.1's Goal/Key-observations markdown to match the
-    simplified, non-interactive cell
-  - Synced the `.ipynb` from the `.py` via `jupytext --sync`, then ran the
-    whole notebook inside Docker
-    (`docker_cmd.sh "python .../L03_02_wumpus_world.py"`): executed
-    top to bottom with no errors
-  - Ran `ruff check` on both changed Python files: no new lint issues
-    (pre-existing `E402` notebook-import warnings only)
-- Not done / flagged:
-  - The `.ipynb`'s stored cell outputs (images) were not regenerated; only
-    the source cells were synced from the `.py`. Re-run the notebook in
-    Jupyter Lab to refresh the displayed plots, especially Cell 2.1's now
-    2-panel output
-  - `jupytext --sync` also touched
-    `L03_03_rule_based_expert_systems.py`/`.ipynb` (only a
-    `jupytext_version` metadata bump, `1.19.0` -> `1.19.5`, no content
-    change) even though this task never opened that notebook; likely the
-    live Jupyter Lab server (see the URL at the top of this file)
-    autosaved it during this session. Flagging rather than reverting,
-    since it may be a legitimate autosave from your open tab
-  - The `helpers_root` submodule now shows as modified too (staged edit to
-    `.claude/skills/notebook.rules.md`, plus untracked
-    `dev_scripts_helpers/coding_tools/notify.py.log` and
-    `helpers/hselect_input_output.py.log`), none of which this task
-    touched. It was clean at the start of this session, so something else
-    (the live Jupyter Lab server, or another process) changed it
-    concurrently. Flagging, not reverting
-  - No files were staged (`git add`): all edits were to already-tracked
-    files, not new ones, per the "Add Files to the Repo" rule
+- Done: wrote `helpers_root/how_to.auto_task.md`, a narrative how-to covering
+  the auto_task pipeline (create, criticize, three execute modes), pointing to
+  `auto_task.rules.md` and each `SKILL.md` instead of duplicating conventions
+  - `git add`-ed in the `helpers_root` repo, not committed
+- Not done: nothing else from `instr.md`'s other scratch notes (pr.* skills,
+  closing wrong PRs, etc.) was in scope for this sub-task

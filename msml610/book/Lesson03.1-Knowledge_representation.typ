@@ -53,7 +53,7 @@ shared and reused across tasks and domains.
 
 // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:21 '## What Is Knowledge Representation'
 // Slide: What Is Knowledge Representation
-== What Is Knowledge Representation
+= What Is Knowledge Representation
 
 // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:23 '* Defining Knowledge Representation'
 // Slide: Defining Knowledge Representation
@@ -113,7 +113,7 @@ corpus.
 
 // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:54 '## Design Choices in Knowledge Representation'
 // Slide: Design Choices in Knowledge Representation
-== Design Choices in Knowledge Representation
+= Design Choices in Knowledge Representation
 
 // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:56 '* Expressiveness Vs. Tractability'
 // Slide: Expressiveness Vs. Tractability
@@ -303,7 +303,7 @@ subregions, reflecting its distinct feature profile.
 
 // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:180 '## Languages for Representing Knowledge'
 // Slide: Languages for Representing Knowledge
-== Languages for Representing Knowledge
+= Languages for Representing Knowledge
 
 // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:182 '* Natural Languages'
 // Slide: Natural Languages
@@ -496,7 +496,7 @@ machine-readable meaning to data shared across the internet.
 
 // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:299 '## Knowledge Bases and Their Semantics'
 // Slide: Knowledge Bases and Their Semantics
-== Knowledge Bases and Their Semantics
+= Knowledge Bases and Their Semantics
 
 // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:301 '* Syntax and Semantics of a KB'
 // Slide: Syntax and Semantics of a KB
@@ -703,7 +703,7 @@ $M(alpha) = emptyset$.
 
 // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:442 '## Entailment and Inference'
 // Slide: Entailment and Inference
-== Entailment and Inference
+= Entailment and Inference
 
 // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:444 '* Logical Entailment'
 // Slide: Logical Entailment
@@ -928,7 +928,7 @@ relationships rather than playing arbitrary symbol games.
 
 // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:616 '## Logical Agents and Rule-Based Systems'
 // Slide: Logical Agents and Rule-Based Systems
-== Logical Agents and Rule-Based Systems
+= Logical Agents and Rule-Based Systems
 
 // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:618 '* Reflex and Rule-Based Agents'
 // Slide: Reflex and Rule-Based Agents
@@ -1028,7 +1028,7 @@ most likely to succeed given what it does know.
 
 // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:685 '## Ontologies'
 // Slide: Ontologies
-== Ontologies
+= Ontologies
 
 // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:687 '* Ontologies'
 // Slide: Ontologies
@@ -1185,7 +1185,7 @@ to support both human understanding and automated reasoning.
 
 // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:805 '## Reasoning in Ontologies'
 // Slide: Reasoning in Ontologies
-== Reasoning in Ontologies
+= Reasoning in Ontologies
 
 // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:807 '* Class-Level Reasoning Tasks'
 // Slide: Class-Level Reasoning Tasks

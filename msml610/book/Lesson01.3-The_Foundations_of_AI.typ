@@ -39,7 +39,7 @@ computers by centuries.
 
 // From: msml610/lectures_source/Lesson01.3-The_Foundations_of_AI.smd:12 '## Overview'
 // Slide: Overview
-== The Foundations of AI
+= The Foundations of AI
 
 // From: msml610/lectures_source/Lesson01.3-The_Foundations_of_AI.smd:14 '* AI Relates to Many Other Disciplines'
 // Slide: AI Relates to Many Other Disciplines
@@ -95,7 +95,7 @@ computers by centuries.
 
 // From: msml610/lectures_source/Lesson01.3-The_Foundations_of_AI.smd:29 '## Philosophy'
 // Slide: Philosophy
-== Philosophy
+= Philosophy
 
 // From: msml610/lectures_source/Lesson01.3-The_Foundations_of_AI.smd:31 '* AI and Philosophy (1/2)'
 // Slide: AI and Philosophy (1/2)
@@ -173,7 +173,7 @@ one).
 
 // From: msml610/lectures_source/Lesson01.3-The_Foundations_of_AI.smd:85 '## Mathematics and Computation'
 // Slide: Mathematics and Computation
-== Mathematics and Computation
+= Mathematics and Computation
 
 // From: msml610/lectures_source/Lesson01.3-The_Foundations_of_AI.smd:87 '* AI and Mathematics'
 // Slide: AI and Mathematics
@@ -259,7 +259,7 @@ than exact ones.
 
 // From: msml610/lectures_source/Lesson01.3-The_Foundations_of_AI.smd:144 '## Economics'
 // Slide: Economics
-== Economics
+= Economics
 
 // From: msml610/lectures_source/Lesson01.3-The_Foundations_of_AI.smd:146 '* AI and Economics (1/2)'
 // Slide: AI and Economics (1/2)
@@ -415,7 +415,7 @@ demands.
 
 // From: msml610/lectures_source/Lesson01.3-The_Foundations_of_AI.smd:230 '## Neuroscience and Psychology'
 // Slide: Neuroscience and Psychology
-== Neuroscience and Psychology
+= Neuroscience and Psychology
 
 // From: msml610/lectures_source/Lesson01.3-The_Foundations_of_AI.smd:232 '* AI and Neuroscience'
 // Slide: AI and Neuroscience
@@ -699,7 +699,7 @@ the third.
 
 // From: msml610/lectures_source/Lesson01.3-The_Foundations_of_AI.smd:378 '## Engineering, Control, and Language'
 // Slide: Engineering, Control, and Language
-== Engineering, Control, and Language
+= Engineering, Control, and Language
 
 // From: msml610/lectures_source/Lesson01.3-The_Foundations_of_AI.smd:380 '* AI and Computer Engineering (1/2)'
 // Slide: AI and Computer Engineering (1/2)
@@ -818,8 +818,9 @@ AI pipelines.
 // From: msml610/lectures_source/Lesson01.3-The_Foundations_of_AI.smd:434 '* AI and Control Theory'
 // Slide: AI and Control Theory
 
-#strong[Control theory] is the study of self-regulating feedback control systems, the
-mechanisms that let artifacts operate under their own control. A classic example is a
+How can artifacts operate under their own control? #strong[Control theory] is the
+study of the self-regulating feedback control systems that answer this question. A
+classic example is a
 water regulator that maintains a constant flow rate: the system continuously measures
 the actual flow, compares it to the desired setpoint, and adjusts a valve to close
 the gap. More generally, control theory provides mechanisms to minimize the error

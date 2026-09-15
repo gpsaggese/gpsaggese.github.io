@@ -273,14 +273,14 @@ merely extending them.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:193 '* Common Sense Reasoning'
 // Slide: Common Sense Reasoning
-=== Common Sense Reasoning
-
-Much of what humans know about the world is never stated explicitly: if you drop a
-glass, it will likely break; people eat food when hungry. These facts feel too
-obvious to mention, yet they underpin virtually every inference a person makes in
-daily life. #strong[Common sense reasoning] is the capacity to make assumptions and
-draw conclusions based on this kind of everyday knowledge about the world, filling in
-gaps that formal logic alone cannot bridge.
+This same pattern of defeasible, revisable inference reaches far beyond formal
+domains like university enrollment, into the everyday reasoning people do without a
+second thought. Much of what humans know about the world is never stated explicitly:
+if you drop a glass, it will likely break; people eat food when hungry. These facts
+feel too obvious to mention, yet they underpin virtually every inference a person
+makes in daily life. #strong[Common sense reasoning] is the capacity to make
+assumptions and draw conclusions based on this kind of everyday knowledge about the
+world, filling in gaps that formal logic alone cannot bridge.
 
 Common sense reasoning has several distinctive characteristics. It deals with
 incomplete, uncertain, and ambiguous information rather than clean, fully specified
@@ -1117,11 +1117,12 @@ ontological links upstream from `Q5`.
 
 // From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:747 '* DBPedia'
 // Slide: DBPedia
-#strong[DBpedia] extracts structured content from Wikipedia to create a large-scale,
-multilingual knowledge graph #cite("lehmann2015dbpedia"). Rather than treating
-encyclopedia articles as flat text, DBpedia parses infoboxes, categories, and other
-semi-structured elements into machine-readable form, making the wealth of Wikipedia
-accessible to automated reasoning systems.
+A related knowledge graph pursues the same goal through automated extraction rather
+than community curation. #strong[DBpedia] extracts structured content from Wikipedia
+to create a large-scale, multilingual knowledge graph #cite("lehmann2015dbpedia").
+Rather than treating encyclopedia articles as flat text, DBpedia parses infoboxes,
+categories, and other semi-structured elements into machine-readable form, making the
+wealth of Wikipedia accessible to automated reasoning systems.
 
 The underlying data is stored as RDF triples, each following the pattern
 #emph[(Subject, Predicate, Object)]. For instance, the entity "Berlin" might be

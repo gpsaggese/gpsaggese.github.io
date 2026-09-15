@@ -515,7 +515,7 @@ learning algorithm at the end.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:277 '* Framing the Question'
 // Slide: Framing the Question
-#strong[Framing the Question]
+=== Framing the Question
 
 Formulating the question is the most important part of any machine learning problem.
 A misunderstanding at this stage cascades into everything that follows: solving the
@@ -543,7 +543,7 @@ know if you had found it.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:296 '* Input Data: Fit, Quality, and Scale'
 // Slide: Input Data: Fit, Quality, and Scale
-#strong[Input Data: Fit, Quality, and Scale]
+=== Input Data: Fit, Quality, and Scale
 
 The data used to build a predictive model must be specific to the prediction goal. If
 the task is to predict movie ratings, for instance, the training examples should be
@@ -582,7 +582,7 @@ returns than investing in algorithmic sophistication alone.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:320 '* What Makes a Good Feature'
 // Slide: What Makes a Good Feature
-#strong[What Makes a Good Feature]
+=== What Makes a Good Feature
 
 #strong[Features] are higher-level, more compact representations of raw inputs that
 capture the information most relevant to a learning task. Rather than feeding a model
@@ -629,7 +629,7 @@ several common mistakes:
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:338 '* What Makes a Good Model'
 // Slide: What Makes a Good Model
-#strong[What Makes a Good Model]
+=== What Makes a Good Model
 
 A good predictive model balances several desirable properties that often pull against
 one another, as @fig:whatmakesagoodmodel illustrates. Understanding these tradeoffs
@@ -731,7 +731,7 @@ to the constraints of the problem at hand.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:409 '* How Are Machine Learning Systems Organized?'
 // Slide: How Are Machine Learning Systems Organized?
-#strong[How Are Machine Learning Systems Organized?]
+=== How Are Machine Learning Systems Organized?
 
 Machine learning systems are organized as a #strong[pipeline]: a sequence of stages
 where the problem is broken down into sub-problems, each sub-problem is solved in
@@ -759,7 +759,7 @@ moves the system metric can be deprioritized.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:433 '* Example of Photo OCR System'
 // Slide: Example of Photo OCR System
-#strong[Example of Photo OCR System]
+=== Example of Photo OCR System
 
 The goal of #strong[optical character recognition] (OCR) is to build systems that can
 read text appearing in a photograph or scanned document. This task is more
@@ -870,7 +870,7 @@ detected text region to find the splits between individual letters.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:494 '* Getting More Data'
 // Slide: Getting More Data
-#strong[Getting More Data]
+=== Getting More Data
 
 The ideal recipe for machine learning is straightforward: combine a #emph[low-bias
   algorithm] with a #emph[massive amount of data]. A low-bias model has enough
@@ -904,7 +904,7 @@ less daunting than expected, and two broad strategies cover most situations:
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:511 '* Getting Mode Data: OCR Pipeline'
 // Slide: Getting Mode Data: OCR Pipeline
-#strong[Getting Mode Data: OCR Pipeline]
+=== Getting Mode Data: OCR Pipeline
 
 How can we increase the size of a training set for a problem like optical character
 recognition (OCR)? Several practical strategies exist, ranging from fully synthetic
@@ -935,7 +935,7 @@ ultimately hurting rather than helping generalization.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:528 '* Ceiling Analysis for ML Pipeline'
 // Slide: Ceiling Analysis for ML Pipeline
-#strong[Ceiling Analysis for ML Pipeline]
+=== Ceiling Analysis for ML Pipeline
 
 The most valuable resource in any machine learning project is time. Researchers' time
 is extremely expensive, and spending months optimizing one component of a pipeline
@@ -963,7 +963,7 @@ bottleneck one or two steps away.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:552 '* Ceiling Analysis for ML Pipeline: OCT Example'
 // Slide: Ceiling Analysis for ML Pipeline: OCT Example
-#strong[Ceiling Analysis for ML Pipeline: OCT Example]
+=== Ceiling Analysis for ML Pipeline: OCT Example
 
 Consider a concrete example: an OCR pipeline whose baseline accuracy is 72%. A
 ceiling analysis reveals which component deserves attention first. As
@@ -997,9 +997,18 @@ exceeding the marginal contributions of character segmentation (+1%) and
 classification (+10%) when applied in sequence. This ordering shows where investment
 in engineering effort will have the highest return.
 
+= Summary
+
+Machine learning paradigms differ in how they use labels, but every project's
+success is decided far upstream of the learning algorithm: how the question is
+framed, whether the input data actually fits the goal, and how good the features
+are. A well-organized ML pipeline treats these as sequential stages, and ceiling
+analysis is the tool for deciding which stage is actually worth the next unit of
+engineering effort, rather than guessing.
+
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:580 '* References'
 // Slide: References
-#strong[References]
+= References
 
 #set text(size: 0.75em)
 #references("/msml610/lectures_source/refs.bib")
