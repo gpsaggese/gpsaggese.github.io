@@ -238,56 +238,56 @@ sneaks in along the way.
 
 #wrap-content(
   [
-// rendered_images:begin
-//         ```graphviz
-//         digraph laws_of_thought {
-//             bgcolor="transparent";
-//             pad="0.15";
-//             splines=spline;
-//             nodesep=0.4;
-//             ranksep=0.5;
-//             rankdir=TB;
-//     
-//             node [shape=box,
-//                   style="rounded,filled",
-//                   penwidth=1.8,
-//                   fontname="Helvetica",
-//                   fontsize=12,
-//                   margin="0.22,0.14",
-//                   height=0.50];
-//     
-//             edge [color="#A3B1C0",
-//                   penwidth=1.3,
-//                   arrowhead=vee,
-//                   arrowsize=0.75,
-//                   fontname="Helvetica",
-//                   fontsize=10,
-//                   fontcolor="#7B8794"];
-//     
-//             premises [label="Correct\npremises", fillcolor="#A9DDB0", color="#4F9A5C", fontcolor="#1F4E2E"];
-//             logic [label="Logic", fillcolor="#FFC98A", color="#D98E2B", fontcolor="#6B4517"];
-//             conclusion [label="Correct\nconclusions", fillcolor="#9CC4F2", color="#3C6FB0", fontcolor="#1F4E79"];
-//     
-//             premises -> logic -> conclusion;
-//         }
-//         ```
-//         label=fig:2aiasthinkingrationally
-//         caption=Diagram relating Correct premises, Logic and Correct conclusions
-//     width=100%
-//     placement=auto
-// rendered_images:end
-// render_images:begin
-#figure(
-  image(
-    "Lesson01.2-AI_and_Machine_Learning.typ.figs/Lesson01.2-AI_and_Machine_Learning.1.png",
-    width: 100%,
-  ),
-  caption: [Diagram relating Correct premises, Logic and Correct conclusions],
-  kind: "figure",
-  supplement: [Fig.],
-  placement: auto,
-) <fig:2aiasthinkingrationally>
-// render_images:end
+    // rendered_images:begin
+    //         ```graphviz
+    //         digraph laws_of_thought {
+    //             bgcolor="transparent";
+    //             pad="0.15";
+    //             splines=spline;
+    //             nodesep=0.4;
+    //             ranksep=0.5;
+    //             rankdir=TB;
+    //
+    //             node [shape=box,
+    //                   style="rounded,filled",
+    //                   penwidth=1.8,
+    //                   fontname="Helvetica",
+    //                   fontsize=12,
+    //                   margin="0.22,0.14",
+    //                   height=0.50];
+    //
+    //             edge [color="#A3B1C0",
+    //                   penwidth=1.3,
+    //                   arrowhead=vee,
+    //                   arrowsize=0.75,
+    //                   fontname="Helvetica",
+    //                   fontsize=10,
+    //                   fontcolor="#7B8794"];
+    //
+    //             premises [label="Correct\npremises", fillcolor="#A9DDB0", color="#4F9A5C", fontcolor="#1F4E2E"];
+    //             logic [label="Logic", fillcolor="#FFC98A", color="#D98E2B", fontcolor="#6B4517"];
+    //             conclusion [label="Correct\nconclusions", fillcolor="#9CC4F2", color="#3C6FB0", fontcolor="#1F4E79"];
+    //
+    //             premises -> logic -> conclusion;
+    //         }
+    //         ```
+    //         label=fig:2aiasthinkingrationally
+    //         caption=Diagram relating Correct premises, Logic and Correct conclusions
+    //     width=100%
+    //     placement=auto
+    // rendered_images:end
+    // render_images:begin
+    #figure(
+      image(
+        "Lesson01.2-AI_and_Machine_Learning.typ.figs/Lesson01.2-AI_and_Machine_Learning.1.png",
+        width: 100%,
+      ),
+      caption: [Diagram relating Correct premises, Logic and Correct conclusions],
+      kind: "figure",
+      supplement: [Fig.],
+      placement: auto,
+    ) <fig:2aiasthinkingrationally>
+    // render_images:end
   ],
   align: right,
   column-gutter: 1em,
@@ -543,13 +543,13 @@ remains as much a conceptual challenge as a technical one.
 // From: msml610/lectures_source/Lesson01.2-AI_and_Machine_Learning.smd:313 '* Problems of a Rational Agent'
 // Slide: Problems of a Rational Agent
 Beyond such moral dilemmas, rational agents also face more mundane practical
-obstacles. A rational agent operating in a #strong[probabilistic environment] aims for
-the best outcome when the world is deterministic, and for the best #strong[expected
-outcome]
-when uncertainty is involved. But what does "best" actually mean? The classical
-answer is that "best" is determined by an #strong[objective function]: a cost
-function, a sum of rewards, a loss function, or a utility that assigns a numerical
-score to each possible outcome so that the agent can compare alternatives.
+obstacles. A rational agent operating in a #strong[probabilistic environment] aims
+for the best outcome when the world is deterministic, and for the best
+#strong[expected outcome] when uncertainty is involved. But what does "best" actually
+mean? The classical answer is that "best" is determined by an #strong[objective
+  function]: a cost function, a sum of rewards, a loss function, or a utility that
+assigns a numerical score to each possible outcome so that the agent can compare
+alternatives.
 
 In practice, however, the picture is more complex, and several limitations constrain
 what rationality can deliver.
@@ -677,61 +677,61 @@ enterprise impossible rather than merely suboptimal.
 // Slide: AI vs ML vs Deep Learning
 With these assumptions in place, it is worth situating machine learning precisely
 within the broader AI landscape. #strong[Artificial Intelligence (AI)] refers to
-machines programmed to reason, learn,
-and act in a rational way. #strong[Machine Learning (ML)] is a subset of AI in which
-machines become capable of performing tasks without being explicitly programmed for
-each one. They improve through experience with data instead. AI models that are not
-ML are entirely possible: handcrafted rule-based systems, such as IBM's Deep Blue
-chess engine, contain no learning from data whatsoever, yet they still qualify as AI
-systems because they encode expert reasoning into their decision logic.
+machines programmed to reason, learn, and act in a rational way. #strong[Machine
+  Learning (ML)] is a subset of AI in which machines become capable of performing
+tasks without being explicitly programmed for each one. They improve through
+experience with data instead. AI models that are not ML are entirely possible:
+handcrafted rule-based systems, such as IBM's Deep Blue chess engine, contain no
+learning from data whatsoever, yet they still qualify as AI systems because they
+encode expert reasoning into their decision logic.
 
 #wrap-content(
   [
-// rendered_images:begin
-//         ```tikz
-//         % Define colors.
-//         \definecolor{AIcolor}{RGB}{244,166,166}    % Red/Pink
-//         \definecolor{MLcolor}{RGB}{178,226,178}    % Green
-//         \definecolor{DLcolor}{RGB}{160,214,209}    % Teal
-//         \definecolor{LLMcolor}{RGB}{198,166,244}   % Purple
-//     
-//         % Draw AI circle
-//         \fill[AIcolor] (0,0) circle (3);
-//         \draw (0,0) circle (3);
-//         \node[above] at (0,2) {\textbf{AI}};
-//     
-//         % Draw ML circle inside AI
-//         \fill[MLcolor] (0.5,-0.5) circle (2);
-//         \draw (0.5,-0.5) circle (2);
-//         \node[above] at (0.5,0.5) {\textbf{ML}};
-//     
-//         % Draw DL circle inside ML
-//         \fill[DLcolor] (1,-1) circle (1);
-//         \draw (1,-1) circle (1);
-//         \node[above] at (1,-0.6) {\textbf{DL}};
-//     
-//         % Draw LLM circle inside DL
-//         \fill[LLMcolor] (1.2,-1.2) circle (0.6);
-//         \draw (1.2,-1.2) circle (0.6);
-//         \node[above] at (1.2,-1.4) {\textbf{LLMs}};
-//         ```
-//         label=fig:aivsmlvsdeeplearning
-//         caption=Diagram illustrating AI vs ML vs Deep Learning
-//     width=100%
-//     placement=auto
-// rendered_images:end
-// render_images:begin
-#figure(
-  image(
-    "Lesson01.2-AI_and_Machine_Learning.typ.figs/Lesson01.2-AI_and_Machine_Learning.2.png",
-    width: 100%,
-  ),
-  caption: [Diagram illustrating AI vs ML vs Deep Learning],
-  kind: "figure",
-  supplement: [Fig.],
-  placement: auto,
-) <fig:aivsmlvsdeeplearning>
-// render_images:end
+    // rendered_images:begin
+    //         ```tikz
+    //         % Define colors.
+    //         \definecolor{AIcolor}{RGB}{244,166,166}    % Red/Pink
+    //         \definecolor{MLcolor}{RGB}{178,226,178}    % Green
+    //         \definecolor{DLcolor}{RGB}{160,214,209}    % Teal
+    //         \definecolor{LLMcolor}{RGB}{198,166,244}   % Purple
+    //
+    //         % Draw AI circle
+    //         \fill[AIcolor] (0,0) circle (3);
+    //         \draw (0,0) circle (3);
+    //         \node[above] at (0,2) {\textbf{AI}};
+    //
+    //         % Draw ML circle inside AI
+    //         \fill[MLcolor] (0.5,-0.5) circle (2);
+    //         \draw (0.5,-0.5) circle (2);
+    //         \node[above] at (0.5,0.5) {\textbf{ML}};
+    //
+    //         % Draw DL circle inside ML
+    //         \fill[DLcolor] (1,-1) circle (1);
+    //         \draw (1,-1) circle (1);
+    //         \node[above] at (1,-0.6) {\textbf{DL}};
+    //
+    //         % Draw LLM circle inside DL
+    //         \fill[LLMcolor] (1.2,-1.2) circle (0.6);
+    //         \draw (1.2,-1.2) circle (0.6);
+    //         \node[above] at (1.2,-1.4) {\textbf{LLMs}};
+    //         ```
+    //         label=fig:aivsmlvsdeeplearning
+    //         caption=Diagram illustrating AI vs ML vs Deep Learning
+    //     width=100%
+    //     placement=auto
+    // rendered_images:end
+    // render_images:begin
+    #figure(
+      image(
+        "Lesson01.2-AI_and_Machine_Learning.typ.figs/Lesson01.2-AI_and_Machine_Learning.2.png",
+        width: 100%,
+      ),
+      caption: [Diagram illustrating AI vs ML vs Deep Learning],
+      kind: "figure",
+      supplement: [Fig.],
+      placement: auto,
+    ) <fig:aivsmlvsdeeplearning>
+    // render_images:end
   ],
   align: right,
   column-gutter: 1em,
@@ -756,16 +756,15 @@ systems because they encode expert reasoning into their decision logic.
 // Slide: Limits of AI Compared to Human Intelligence (1/2)
 Placing these systems within a taxonomy is one thing; matching human intelligence is
 another. #strong[AI and machine learning systems differ] fundamentally from human
-intelligence
-and machines do not learn the way humans do: large language models, for instance,
-process statistical patterns over enormous corpora, yet a child acquires language
-from a comparatively tiny stream of input. Whether the brain uses anything resembling
-gradient descent remains an open and actively debated question in computational
-neuroscience. Reinforcement learning comes closer: dopaminergic reward signals in the
-brain bear a striking resemblance to temporal-difference error signals, so the brain
-probably does something analogous to reinforcement learning, at least in a loose
-sense. Still, the gap between biological and artificial learning is wide, and it
-shows up in several concrete limitations.
+intelligence and machines do not learn the way humans do: large language models, for
+instance, process statistical patterns over enormous corpora, yet a child acquires
+language from a comparatively tiny stream of input. Whether the brain uses anything
+resembling gradient descent remains an open and actively debated question in
+computational neuroscience. Reinforcement learning comes closer: dopaminergic reward
+signals in the brain bear a striking resemblance to temporal-difference error
+signals, so the brain probably does something analogous to reinforcement learning, at
+least in a loose sense. Still, the gap between biological and artificial learning is
+wide, and it shows up in several concrete limitations.
 
 - #emph[Fragility to input variations.] Current ML models can fail catastrophically
   when inputs are distorted even slightly. Adversarial attacks demonstrate this
