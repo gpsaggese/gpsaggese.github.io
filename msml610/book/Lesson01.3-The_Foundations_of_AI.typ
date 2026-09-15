@@ -1,7 +1,7 @@
 // git_hash=9b64c438-lol timestamp=20260909_100210
 // Import AIMA style formatting and macros.
 #import "/helpers_root/dev_scripts_helpers/typst/aima_style.typ": (
-  aima-style, algorithm, chapter, glossary, styled-table, wrap-content,
+  aima-style, chapter, styled-table, wrap-content,
 )
 // Import the custom citation/bibliography system.
 #import "/helpers_root/dev_scripts_helpers/typst/umd_references.typ": (
@@ -646,8 +646,8 @@ offering a distinct but complementary lens on the machinery of the mind.
         "Lesson01.3-The_Foundations_of_AI.typ.figs/Lesson01.3-The_Foundations_of_AI.4.png",
         width: 100%,
       ),
-      caption: [Cognitive psychology model: stimulus → representation → processing →
-        beliefs → action.],
+      caption: [Cognitive psychology model: stimulus $arrow.r$ representation
+        $arrow.r$ processing $arrow.r$ beliefs $arrow.r$ action.],
       kind: "figure",
       supplement: [Fig.],
       placement: auto,
@@ -663,7 +663,8 @@ offering a distinct but complementary lens on the machinery of the mind.
   encoding of what has been perceived. Cognitive processes then manipulate that
   representation to derive new internal representations, commonly called
   #emph[beliefs]. Finally, those beliefs are translated back into actions directed at
-  #emph[goals]. The pipeline, stimulus → representation → belief → action, mirrors
+  #emph[goals]. The pipeline, stimulus $arrow.r$ representation $arrow.r$ belief
+  $arrow.r$ action, mirrors
   the sense–think–act loop that appears throughout AI agent design, and it is no
   coincidence: early AI researchers drew heavily on this model when building their
   first systems. @fig:aiandcognitivepsychology traces this flow: stimuli enter the

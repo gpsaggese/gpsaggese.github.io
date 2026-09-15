@@ -31,7 +31,6 @@ framing problems appropriately and choosing suitable algorithms.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:7 '# Machine Learning Paradigms'
 // Slide: Machine Learning Paradigms
-= Machine Learning Paradigms
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:9 '## Major Paradigms'
 // Slide: Major Paradigms
@@ -39,7 +38,6 @@ framing problems appropriately and choosing suitable algorithms.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:11 '* Machine Learning Paradigms: A Taxonomy'
 // Slide: Machine Learning Paradigms: A Taxonomy
-
 How do the major machine learning paradigms differ in the way they access data and
 receive feedback? The answer turns on two axes: whether labeled outputs are
 available, and whether the learner interacts with its environment sequentially or
@@ -127,7 +125,6 @@ algorithm.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:53 '* Machine Learning Paradigms: Examples (1/3)'
 // Slide: Machine Learning Paradigms: Examples (1/3)
-
 How do you set up a machine learning problem? The answer depends on what kind of data
 you have and what kind of feedback the learning system receives. There are five major
 paradigms, each suited to a different setting.
@@ -172,9 +169,10 @@ a machine learning problem.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:74 '* Machine Learning Paradigms: Examples (2/3)'
 // Slide: Machine Learning Paradigms: Examples (2/3)
-
-#strong[Online learning] trains a model incrementally from a stream of data arriving
-in real time, rather than requiring the entire dataset up front. A practical example
+Several further paradigms round out the taxonomy by varying how and when data or
+feedback becomes available. #strong[Online learning] trains a model incrementally
+from a stream of data arriving in real time, rather than requiring the entire
+dataset up front. A practical example
 is online logistic regression for click-through rate prediction, where the model
 updates its weights after each user interaction rather than retraining on a stored
 batch.
@@ -204,9 +202,9 @@ labeling effort where it will reduce uncertainty the most.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:99 '* Machine Learning Paradigms: Examples (3/3)'
 // Slide: Machine Learning Paradigms: Examples (3/3)
-
-#strong[Federated learning] trains models across decentralized devices without
-sharing raw data #cite("mcmahan2017federated"). Each participant (a phone, a
+A final group of paradigms addresses how learning scales beyond a single dataset,
+model, or agent. #strong[Federated learning] trains models across decentralized
+devices without sharing raw data #cite("mcmahan2017federated"). Each participant (a phone, a
 hospital, a bank) keeps its data local and sends only model updates to a central
 server, which aggregates them into a single improved model. This preserves privacy by
 design: the raw records never leave their origin. A typical application is fraud
@@ -251,7 +249,6 @@ that no single-agent training regime would have uncovered.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:124 '* Supervised Learning'
 // Slide: Supervised Learning
-
 #emph[Supervised learning] learns a function $f: X arrow.r Y$ that maps inputs to
 correct outputs #cite("mitchell1997machinelearning"). The training set consists of
 example pairs $(bold(x), y)$, where each input $bold(x)$ is paired with the correct
@@ -276,9 +273,9 @@ theme that recurs throughout the course.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:145 '* Unsupervised Learning'
 // Slide: Unsupervised Learning
-
-#emph[Unsupervised learning] learns from data without labeled outputs. Rather than
-receiving explicit feedback or correct answers, the algorithm's goal is to discover
+Where supervised learning relies on explicit answers, #emph[unsupervised learning]
+learns from data without labeled outputs. Rather than receiving explicit feedback or
+correct answers, the algorithm's goal is to discover
 patterns, groupings, or structure hidden within the data itself. Because there is no
 ground-truth label to compare against, evaluation tends to be more qualitative than
 in supervised settings: a practitioner judges whether the discovered structure is
@@ -316,9 +313,9 @@ architecture.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:167 '* Reinforcement Learning'
 // Slide: Reinforcement Learning
-
-#emph[Reinforcement learning] (RL) is a paradigm in which an agent learns by
-interacting with an environment to maximize cumulative reward #cite(
+The third core paradigm departs from both of these: #emph[reinforcement learning]
+(RL) is a paradigm in which an agent learns by interacting with an environment to
+maximize cumulative reward #cite(
   "suttonbarto2018rlbook",
 ). Rather than learning from a fixed dataset of labeled examples, the agent discovers
 which actions yield the best outcomes through trial and error. Formally, the goal is
@@ -403,7 +400,6 @@ receives both a reward and a new state from the environment, then repeats.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:219 '* Reinforcement Learning: Examples'
 // Slide: Reinforcement Learning: Examples
-
 Reinforcement learning finds natural application in any domain where an agent must
 make a sequence of decisions and can learn from the outcomes of those decisions over
 time.
@@ -441,7 +437,6 @@ over traditional supervised approaches.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:234 '* Machine Learning Flow'
 // Slide: Machine Learning Flow
-
 Every machine learning project follows a common pipeline whose stages build on one
 another. The process begins with a #strong[question]: a concrete problem statement
 such as "how can we predict house prices?" That question determines what #emph[input

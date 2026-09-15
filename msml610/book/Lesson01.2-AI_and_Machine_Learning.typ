@@ -67,7 +67,6 @@ that extraordinary capability in a machine.
 
 // From: msml610/lectures_source/Lesson01.2-AI_and_Machine_Learning.smd:33 '* Artificial Intelligence'
 // Slide: Artificial Intelligence
-
 #wrap-content(
   [
     #figure(
@@ -148,7 +147,6 @@ complex phenomenon we have ever tried to reproduce.
 
 // From: msml610/lectures_source/Lesson01.2-AI_and_Machine_Learning.smd:64 '* AI Formal Definition'
 // Slide: AI Formal Definition
-
 === A Formal Definition of AI
 
 #grid(
@@ -316,7 +314,6 @@ shortcomings.
 
 // From: msml610/lectures_source/Lesson01.2-AI_and_Machine_Learning.smd:168 '* Thinking Rationally: Challenges'
 // Slide: Thinking Rationally: Challenges
-
 There are several #strong[challenges with thinking rationally]. The first one is that
 #emph[formalizing the informal knowledge] that humans use effortlessly turns out to
 be extraordinarily difficult. Consider something as mundane as a handshake. In plain
@@ -511,7 +508,6 @@ biases, and cultural context that are difficult to pin down as a stable benchmar
 
 // From: msml610/lectures_source/Lesson01.2-AI_and_Machine_Learning.smd:295 '* Rationality Is Not Absolute'
 // Slide: Rationality Is Not Absolute
-
 AI aims to build agents that #strong[do the right thing], but what exactly counts as
 the "right thing"? This question is far less straightforward than it first appears,
 and much of the work in agent design revolves around making it precise enough to be
@@ -546,9 +542,10 @@ remains as much a conceptual challenge as a technical one.
 
 // From: msml610/lectures_source/Lesson01.2-AI_and_Machine_Learning.smd:313 '* Problems of a Rational Agent'
 // Slide: Problems of a Rational Agent
-
-A rational agent operating in a #strong[probabilistic environment] aims for the best
-outcome when the world is deterministic, and for the best #strong[expected outcome]
+Beyond such moral dilemmas, rational agents also face more mundane practical
+obstacles. A rational agent operating in a #strong[probabilistic environment] aims for
+the best outcome when the world is deterministic, and for the best #strong[expected
+outcome]
 when uncertainty is involved. But what does "best" actually mean? The classical
 answer is that "best" is determined by an #strong[objective function]: a cost
 function, a sum of rewards, a loss function, or a utility that assigns a numerical
@@ -588,7 +585,6 @@ and, in many domains, all that can honestly be demanded.
 
 // From: msml610/lectures_source/Lesson01.2-AI_and_Machine_Learning.smd:342 '* Machine Learning: Definitions'
 // Slide: Machine Learning: Definitions
-
 How should we define #strong[machine learning]? The question seems straightforward,
 but the field has evolved considerably since its earliest formulations, and the way
 we frame the definition shapes how we think about what these systems can and cannot
@@ -644,7 +640,7 @@ rather than by a programmer manually encoding every rule the system needs to fol
 
 // From: msml610/lectures_source/Lesson01.2-AI_and_Machine_Learning.smd:374 '* The 3 Machine Learning Assumptions'
 // Slide: The 3 Machine Learning Assumptions
-
+Turning this idea into a working system follows a concrete engineering pipeline.
 Machine learning addresses a practical engineering challenge that unfolds in stages:
 gathering a dataset, building a statistical model from that dataset algorithmically,
 evaluating the model's quality, and finally deploying and monitoring it in
@@ -679,8 +675,9 @@ enterprise impossible rather than merely suboptimal.
 
 // From: msml610/lectures_source/Lesson01.2-AI_and_Machine_Learning.smd:399 '* AI vs ML vs Deep Learning'
 // Slide: AI vs ML vs Deep Learning
-
-#strong[Artificial Intelligence (AI)] refers to machines programmed to reason, learn,
+With these assumptions in place, it is worth situating machine learning precisely
+within the broader AI landscape. #strong[Artificial Intelligence (AI)] refers to
+machines programmed to reason, learn,
 and act in a rational way. #strong[Machine Learning (ML)] is a subset of AI in which
 machines become capable of performing tasks without being explicitly programmed for
 each one. They improve through experience with data instead. AI models that are not
@@ -757,8 +754,9 @@ systems because they encode expert reasoning into their decision logic.
 
 // From: msml610/lectures_source/Lesson01.2-AI_and_Machine_Learning.smd:457 '* Limits of AI Compared to Human Intelligence (1/2)'
 // Slide: Limits of AI Compared to Human Intelligence (1/2)
-
-#strong[AI and machine learning systems differ] fundamentally from human intelligence
+Placing these systems within a taxonomy is one thing; matching human intelligence is
+another. #strong[AI and machine learning systems differ] fundamentally from human
+intelligence
 and machines do not learn the way humans do: large language models, for instance,
 process statistical patterns over enormous corpora, yet a child acquires language
 from a comparatively tiny stream of input. Whether the brain uses anything resembling
@@ -799,7 +797,6 @@ shows up in several concrete limitations.
 
 // From: msml610/lectures_source/Lesson01.2-AI_and_Machine_Learning.smd:480 '* Limits of AI Compared to Human Intelligence (2/2)'
 // Slide: Limits of AI Compared to Human Intelligence (2/2)
-
 - #emph[Lack of transparency.] Many ML models remain largely opaque: they produce
   predictions without exposing the reasoning behind them, which limits trust,
   interpretability, and accountability in high-stakes settings such as medical
