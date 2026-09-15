@@ -19,6 +19,15 @@
 
 #chapter("L02.6: ML Techniques - How to Do Research")
 
+= Roadmap
+
+This chapter is about how to do machine learning research and engineering well, not
+just how the algorithms work. We start from the principle that #emph[simple is
+better]: prefer the simplest model that fits the data, and only add complexity when
+it earns its keep. We then cover a practical research methodology, including how to
+scope a project, iterate quickly, and combine incremental and iterative development
+so that every step produces something usable.
+
 // From: msml610/lectures_source/Lesson02.6-ML_Techniques_How_To_Do_Research.smd:7 '# How to Do Research'
 // Slide: How to Do Research
 = How to Do Research
@@ -622,11 +631,19 @@ build the right thing next.
 
 #figure(
   image("../lectures_source/figures/L02.6.Skateboard.png", width: 80%),
-  caption: [Skateboard],
+  caption: [Incremental and iterative delivery: skateboard, scooter, bicycle, car.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
 ) <fig:skateboard>
+
+= Summary
+
+Good research practice favors the simplest model that fits the data, adding
+complexity only when it demonstrably earns its keep. A sound research methodology
+scopes work tightly, iterates quickly toward something usable, and delivers
+incrementally so that every step both works on its own and builds toward the final
+system, rather than delivering an unusable slice of the end product.
 
 // From: msml610/lectures_source/Lesson02.6-ML_Techniques_How_To_Do_Research.smd:416 '* References'
 // Slide: References
