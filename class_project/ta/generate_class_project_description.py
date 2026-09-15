@@ -29,7 +29,7 @@ Set the OPENAI_API_KEY using export before running the script.
 
 import argparse
 import logging
-import pathlib
+import os
 import time
 from typing import Any, Optional
 
@@ -49,7 +49,9 @@ _LOG = logging.getLogger(__name__)
 # #############################################################################
 
 # Path to the prompt template file.
-_PROMPT_FILE_PATH = pathlib.Path(__file__).parent / "project_prompt.md"
+_PROMPT_FILE_PATH = os.path.join(
+    os.path.dirname(__file__), "project_prompt.md"
+)
 
 # Expected columns in the input CSV.
 _EXPECTED_COLUMNS = [
@@ -75,7 +77,7 @@ def _read_prompt() -> str:
     """
     prompt_path = str(_PROMPT_FILE_PATH)
     hdbg.dassert(
-        pathlib.Path(prompt_path).exists(),
+        os.path.exists(prompt_path),
         "Prompt file does not exist: %s",
         prompt_path,
     )
@@ -91,7 +93,7 @@ def _read_csv(input_path: str) -> pd.DataFrame:
     :return: the dataframe containing tool data
     """
     hdbg.dassert(
-        pathlib.Path(input_path).exists(),
+        os.path.exists(input_path),
         "Input CSV file does not exist: %s",
         input_path,
     )
@@ -152,9 +154,9 @@ def create_markdown_file(
     for _, row in tqdm.tqdm(rows.iterrows(), total=len(rows)):
         project_name = row["Tool"]
         file_name = f"{project_name.replace(' ', '_')}_Project_Description.md"
-        markdown_path = str(pathlib.Path(out_dir) / file_name)
+        markdown_path = os.path.join(out_dir, file_name)
         # In incremental mode skip projects whose output already exists.
-        if incremental and pathlib.Path(markdown_path).exists():
+        if incremental and os.path.exists(markdown_path):
             _LOG.warning("Skipping (already exists): %s", file_name)
             continue
         if dry_run:
@@ -237,8 +239,8 @@ def _main(parser: argparse.ArgumentParser) -> None:
     args = parser.parse_args()
     hdbg.init_logger(verbosity=args.log_level, use_exec_path=True)
     # Expand user/relative paths to absolute ones early to avoid surprises.
-    input_path = str(pathlib.Path(args.input).expanduser().resolve())
-    out_dir = str(pathlib.Path(args.out_dir).expanduser().resolve())
+    input_path = os.path.abspath(os.path.expanduser(args.input))
+    out_dir = os.path.abspath(os.path.expanduser(args.out_dir))
     incremental = not args.no_incremental
     dry_run = args.dry_run
     _LOG.info("incremental=%s dry_run=%s", incremental, dry_run)
