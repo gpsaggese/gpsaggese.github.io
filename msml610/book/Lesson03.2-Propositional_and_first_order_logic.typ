@@ -1,7 +1,7 @@
 // git_hash=9b64c438-xu0 timestamp=20260909_100210
 // Import AIMA style formatting and macros.
 #import "/helpers_root/dev_scripts_helpers/typst/aima_style.typ": (
-  aima-style, algorithm, chapter, glossary, styled-table, wrap-content,
+  aima-style, algorithm, chapter, styled-table, wrap-content,
 )
 // Import the custom citation/bibliography system.
 #import "/helpers_root/dev_scripts_helpers/typst/umd_references.typ": (
@@ -183,7 +183,7 @@ the grammar permits more than one parse tree for the same string.
 
 // From: msml610/lectures_source/Lesson03.2-Propositional_and_first_order_logic.smd:124 '* Semantics of Propositional Logic'
 // Slide: Semantics of Propositional Logic
-#strong[Semantics] are the rules for determining the truth of a sentence α with
+#strong[Semantics] are the rules for determining the truth of a sentence $alpha$ with
 respect to a model $m$. Where syntax tells you whether a sentence is well-formed,
 semantics tells you whether it is _true or false_ given a particular possible world.
 
@@ -207,7 +207,7 @@ symbol. For instance, the model
 $ m = { P_(1,2) = F, P_(2,2) = F, P_(3,1) = T } $
 
 fixes the truth of three atomic propositions, and from those assignments the truth of
-any compound sentence follows mechanically. Every sentence α is built from atomic
+any compound sentence follows mechanically. Every sentence $alpha$ is built from atomic
 sentences (whose values come directly from $m$) and five connectives, each with a
 precise definition:
 
@@ -264,12 +264,13 @@ One connective's truth table trips up newcomers more than the rest: in a logical
 implication $P arrow.r.double Q$, there is #strong[no causation] between $P$ and $Q$.
 The statement "$P arrow.r.double Q$" says only: "if $P$ is true, I claim that $Q$ is
 true; otherwise I am making no claim at all." This purely truth-functional reading
-leads to results that feel strange at first. For instance, "5 is odd arrow.r.double
-that Tokyo is the capital of Japan" is a true sentence in propositional logic,
+leads to results that feel strange at first. For instance, "5 is odd
+$arrow.r.double$ that Tokyo is the capital of Japan" is a true sentence in
+propositional logic,
 because both the antecedent and the consequent happen to be true, even though oddness
 of a number has nothing to do with geography. The key insight is that an implication
 is true whenever its antecedent is false, regardless of the consequent. So "5 is even
-arrow.r.double pigs fly" is also true: because 5 is not even, the antecedent is
+$arrow.r.double$ pigs fly" is also true: because 5 is not even, the antecedent is
 false, and the implication makes no claim at all, which by convention counts as true.
 These #emph[vacuously true] implications are a frequent source of confusion, but they
 follow directly from the truth table for material implication and carry no causal or
@@ -324,7 +325,7 @@ explanatory content whatsoever.
   The #strong[model checking algorithm] works by enumerating every possible model
   (that is, every row of the truth table for the variables involved), filtering to
   keep only those models in which the knowledge base $K B$ is true, and then
-  verifying that the query sentence α holds in every one of those surviving models.
+  verifying that the query sentence $alpha$ holds in every one of those surviving models.
   @fig:modelcheckingissoundandcomplete illustrates this three-stage pipeline:
   enumerate all models, retain those satisfying the knowledge base, then confirm the
   query across what remains.
@@ -332,7 +333,7 @@ explanatory content whatsoever.
 
 This procedure has two important guarantees in propositional logic. It is
 #strong[sound], meaning any inference it produces is correct: if the algorithm
-reports that $K B$ entails α, that relationship genuinely holds, because the
+reports that $K B$ entails $alpha$, that relationship genuinely holds, because the
 algorithm directly implements the definition of entailment by checking every model.
 It is also #strong[complete], meaning every true entailment will be found: the
 algorithm works for any knowledge base and any query sentence, and it always
@@ -409,17 +410,17 @@ showing the premises each rule requires and the conclusion it licenses.
 // From: msml610/lectures_source/Lesson03.2-Propositional_and_first_order_logic.smd:271 '* Propositional Theorem Proving'
 // Slide: Propositional Theorem Proving
 Chaining these inference rules together is exactly what #strong[propositional theorem
-  proving] does: the central task is to prove a sentence α from a knowledge base KB
-by applying rules of inference to construct a formal proof. Given a knowledge base
-and a query α, exactly one of three entailment statuses holds: the query is
+  proving] does: the central task is to prove a sentence $alpha$ from a knowledge base
+KB by applying rules of inference to construct a formal proof. Given a knowledge base
+and a query $alpha$, exactly one of three entailment statuses holds: the query is
 #emph[entailed] ($"KB" models alpha$), meaning it follows from what is known; it is
 #emph[refuted] ($"KB" models not alpha$), meaning its negation follows; or it is
-#emph[unknown], meaning KB entails neither α nor ¬α.
+#emph[unknown], meaning KB entails neither $alpha$ nor $not alpha$.
 
 Two broad strategies exist for establishing entailment. #emph[Model checking]
-enumerates all possible truth assignments and verifies that α is true in every model
-where KB is true. #emph[Propositional theorem proving], by contrast, builds a
-stepwise proof from KB to α using inference rules, without exhaustively listing
+enumerates all possible truth assignments and verifies that $alpha$ is true in every
+model where KB is true. #emph[Propositional theorem proving], by contrast, builds a
+stepwise proof from KB to $alpha$ using inference rules, without exhaustively listing
 models. When a short proof exists, theorem proving can be dramatically more efficient
 than model checking, since it avoids the exponential enumeration of all assignments.
 When proofs are long or hard to find, however, the two approaches may converge in
@@ -428,13 +429,13 @@ cost.
 // From: msml610/lectures_source/Lesson03.2-Propositional_and_first_order_logic.smd:288 '* Logical Equivalence of Sentences'
 // Slide: Logical Equivalence of Sentences
 Both proof strategies rely on a shared notion of sameness between sentences. Two
-sentences α and β are #strong[logically equivalent], written $alpha equiv beta$, when
-they are true in exactly the same set of models:
+sentences $alpha$ and $beta$ are #strong[logically equivalent], written
+$alpha equiv beta$, when they are true in exactly the same set of models:
 
 $ M(alpha) = M(beta) $
 
-An equivalent way to state this: α and β are logically equivalent if and only if each
-entails the other:
+An equivalent way to state this: $alpha$ and $beta$ are logically equivalent if and
+only if each entails the other:
 
 $ alpha models beta and beta models alpha $
 
@@ -489,17 +490,18 @@ rule lets them be cleaned up immediately.
 // From: msml610/lectures_source/Lesson03.2-Propositional_and_first_order_logic.smd:336 '* Logical Equivalences (2/2)'
 // Slide: Logical Equivalences (2/2)
 Four more equivalences round out this toolkit. #strong[Contraposition] states that an
-implication and its contrapositive are logically equivalent: if α arrow.r.double β,
-then not-β arrow.r.double not-α, and vice versa.
+implication and its contrapositive are logically equivalent: if
+$alpha arrow.r.double beta$, then $not beta arrow.r.double not alpha$, and vice versa.
 
 $ (alpha arrow.r.double beta) equiv (not beta arrow.r.double not alpha) $
 
 This equivalence is the foundation of proof by contrapositive, a technique where
-instead of showing "if α then β" directly, you show "if not β then not α," which can
-sometimes be more straightforward.
+instead of showing "if $alpha$ then $beta$" directly, you show "if not $beta$ then not
+$alpha$," which can sometimes be more straightforward.
 
-#strong[Implication elimination] rewrites a conditional as a disjunction: α
-arrow.r.double β is equivalent to saying either α is false or β is true.
+#strong[Implication elimination] rewrites a conditional as a disjunction:
+$alpha arrow.r.double beta$ is equivalent to saying either $alpha$ is false or
+$beta$ is true.
 
 $ (alpha arrow.r.double beta) equiv (not alpha or beta) $
 
@@ -508,8 +510,8 @@ normal form (CNF), since it removes the implication connective entirely in favor
 negation and disjunction.
 
 #strong[Biconditional elimination] breaks a biconditional into two separate
-implications: α if and only if β means that α arrow.r.double β and β arrow.r.double
-α.
+implications: $alpha$ if and only if $beta$ means that
+$alpha arrow.r.double beta$ and $beta arrow.r.double alpha$.
 
 $
   (alpha arrow.l.r.double beta) equiv (alpha arrow.r.double beta) and (beta arrow.r.double alpha)
@@ -538,16 +540,16 @@ for use in resolution-based theorem provers.
 // Slide: Deduction Theorem
 Beyond rewriting individual sentences, some sentences carry a special status
 regardless of model. A #strong[valid sentence] (also called a #strong[tautology]) is
-a sentence α that is true in every model. The classic example is $P or not P$: no
+a sentence $alpha$ that is true in every model. The classic example is $P or not P$: no
 matter what truth value P takes, the disjunction holds. Because a tautology cannot
 fail to be true, every tautology is logically equivalent to the sentence $"True"$.
 
-The mirror image of validity is #strong[contradiction]: a sentence α that is false in
+The mirror image of validity is #strong[contradiction]: a sentence $alpha$ that is false in
 every model. The paradigmatic case is $P and not P$, which no assignment of truth
 values can satisfy. Every contradiction is equivalent to the sentence $"False"$.
 
 These two extremes, always true and always false, anchor a powerful result known as
-the #strong[deduction theorem]: the sentence α entails β (written
+the #strong[deduction theorem]: the sentence $alpha$ entails $beta$ (written
 $alpha models beta$) if and only if the sentence $alpha arrow.r.double beta$ is a
 tautology. In other words, to check whether one sentence semantically follows from
 another, it suffices to check whether their material implication is valid.
@@ -595,11 +597,11 @@ another, it suffices to check whether their material implication is valid.
   Why is this result so useful? It acts as a bridge between two ideas that look
   similar but live at different levels of the logic. #emph[Entailment] ($models$) is
   a semantic notion: it talks about truth across all models, asserting that in every
-  possible world where α is true, β is also true. #emph[Implication]
+  possible world where $alpha$ is true, $beta$ is also true. #emph[Implication]
   ($arrow.r.double$) is a syntactic notion: $alpha arrow.r.double beta$ is just
   another formula inside the logic, built from the same connectives as any other
   sentence. The deduction theorem tells us these two perspectives coincide: the
-  semantic relationship "α makes β unavoidable" holds exactly when the syntactic
+  semantic relationship "$alpha$ makes $beta$ unavoidable" holds exactly when the syntactic
   object $alpha arrow.r.double beta$ is a tautology. @fig:deductiontheorem
   illustrates how the deduction theorem connects the semantic concept of entailment
   with the syntactic concept of implication, unifying these two perspectives into a
@@ -609,10 +611,10 @@ another, it suffices to check whether their material implication is valid.
 // From: msml610/lectures_source/Lesson03.2-Propositional_and_first_order_logic.smd:405 '* Satisfiability'
 // Slide: Satisfiability
 The deduction theorem reduces entailment to a syntactic check on a single formula; a
-related question asks whether a sentence can be true at all. A sentence α is
+related question asks whether a sentence can be true at all. A sentence $alpha$ is
 #strong[satisfiable] if and only if it is true in at least one model. Checking
 whether a given sentence has such a model is the #strong[SAT problem]: one could, in
-principle, enumerate every possible model until finding one that makes α true. This
+principle, enumerate every possible model until finding one that makes $alpha$ true. This
 brute-force approach highlights why the problem is hard: Cook showed in 1971 that
 propositional satisfiability is NP-complete #cite("cook1971complexity"), meaning no
 known algorithm solves every instance in polynomial time.
@@ -663,11 +665,11 @@ known algorithm solves every instance in polynomial time.
   column-gutter: 1em,
   columns: (1fr, 40%),
 )[
-  On the other end of the spectrum, a sentence α is #emph[unsatisfiable] if no model
-  makes it true; it is a contradiction. Satisfiability and validity turn out to be
-  two sides of the same coin: α is valid (a tautology) if and only if $not alpha$ is
-  unsatisfiable. By contrapositive, α is satisfiable if and only if $not alpha$ is
-  not valid. These equivalences are practically useful because they let us reduce a
+  On the other end of the spectrum, a sentence $alpha$ is #emph[unsatisfiable] if no
+  model makes it true; it is a contradiction. Satisfiability and validity turn out to
+  be two sides of the same coin: $alpha$ is valid (a tautology) if and only if
+  $not alpha$ is unsatisfiable. By contrapositive, $alpha$ is satisfiable if and only
+  if $not alpha$ is not valid. These equivalences are practically useful because they let us reduce a
   validity question to a satisfiability question and vice versa, reusing whichever
   solver we already have. @fig:satisfiability illustrates the relationship: the set
   of valid sentences (tautologies) sits inside the larger set of satisfiable
@@ -687,10 +689,10 @@ attempt to construct one collapses into contradiction.
 The method translates that equivalence into a step-by-step argument:
 
 #algorithm("Proof by Contradiction", (
-  [Assume the premises α.],
-  [Assume that the target conclusion β is false.],
+  [Assume the premises $alpha$.],
+  [Assume that the target conclusion $beta$ is false.],
   [Derive a contradiction from these two assumptions taken together.],
-  [Conclude that β must be true whenever α is.],
+  [Conclude that $beta$ must be true whenever $alpha$ is.],
 ))
 
 The power of this technique is that searching for a contradiction is often easier

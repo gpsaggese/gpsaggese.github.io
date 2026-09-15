@@ -158,7 +158,8 @@ complex phenomenon we have ever tried to reproduce.
 )[
   Let's now focus on finding a formal definition of AI. AI is characterized along
   #strong[two key axes] #cite("russell2020aima"): the first distinguishes whether we
-  care about an agent's internal _thought processes_ or its external _behavior_,
+  care about an agent's internal #emph[thought processes] or its external
+  #emph[behavior],
   while the second asks whether the standard of success is fidelity to #strong[human]
   performance or to an #strong[ideal, rational] standard. Crossing these two axes
   yields four distinct ways to define artificial intelligence: a machine that can (1)
@@ -274,7 +275,7 @@ sneaks in along the way.
 //         }
 //         ```
 //         label=fig:2aiasthinkingrationally
-//         caption=Diagram relating Correct premises, Logic and Correct conclusions
+//         caption=How correct premises pass through logic to yield correct conclusions.
 //     width=100%
 //     placement=auto
 // rendered_images:end
@@ -284,7 +285,7 @@ sneaks in along the way.
     "Lesson01.2-AI_and_Machine_Learning.typ.figs/Lesson01.2-AI_and_Machine_Learning.1.png",
     width: 100%,
   ),
-  caption: [Diagram relating Correct premises, Logic and Correct conclusions],
+  caption: [How correct premises pass through logic to yield correct conclusions.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -480,26 +481,10 @@ defined mathematically through #emph[expected-utility maximization] or similar f
 criteria, whereas human behavior is shaped by evolutionary pressures, cognitive
 biases, and cultural context that are difficult to pin down as a stable benchmark.
 
-#wrap-content(
-  [
-    #figure(
-      styled-table(
-        headers: ("", "Human", "Rational"),
-        rows: (
-          ("Thinking", "Think humanly", "Think rationally"),
-          ("Acting", "Act humanly", [#strong[Act rationally]]),
-        ),
-        bold-first-col: true,
-      ),
-      caption: [AI should focus on agents acting rationally.],
-      kind: "table",
-      supplement: [Table.],
-      placement: auto,
-    ) <tab:actingrationallyasultimategoalofai>
-  ],
-  align: right,
-  column-gutter: 1em,
+#grid(
   columns: (1fr, 40%),
+  column-gutter: 1em,
+  align: (left, top),
 )[
   These considerations point to a single cell in the classic two-by-two matrix shown
   in @tab:actingrationallyasultimategoalofai: AI should focus on #strong[agents
@@ -507,6 +492,21 @@ biases, and cultural context that are difficult to pin down as a stable benchmar
   design systems that select actions maximizing expected performance given the
   information available, rather than chasing a moving and poorly understood model of
   human cognition.
+][
+  #figure(
+    styled-table(
+      headers: ("", "Human", "Rational"),
+      rows: (
+        ("Thinking", "Think humanly", "Think rationally"),
+        ("Acting", "Act humanly", [#strong[Act rationally]]),
+      ),
+      bold-first-col: true,
+    ),
+    caption: [AI should focus on agents acting rationally.],
+    kind: "table",
+    supplement: [Table.],
+    placement: auto,
+  ) <tab:actingrationallyasultimategoalofai>
 ]
 
 // From: msml610/lectures_source/Lesson01.2-AI_and_Machine_Learning.smd:295 '* Rationality Is Not Absolute'
@@ -569,7 +569,7 @@ what rationality can deliver.
   acquiring all relevant data can be prohibitive: ordering every conceivable medical
   test before diagnosing a patient is neither practical nor ethical. Second, the
   computational demands may be staggering: a search tree can have more branches than
-  atoms in the observable universe ($tilde 10^{80}$), making exhaustive exploration
+  atoms in the observable universe ($tilde 10^(80)$), making exhaustive exploration
   physically impossible. Third, real-time constraints may leave no room for
   deliberation at all: a high-frequency trading system, for instance, must decide
   within a single microsecond.
@@ -618,7 +618,7 @@ good; it figured that out from experience.
   ],
   align: right,
   column-gutter: 1em,
-  columns: (1fr, 20%),
+  columns: (1fr, 30%),
 )[
   Tom Mitchell later sharpened this intuition into something more precise and
   testable. In his 1997 formulation, "a computer program is said to learn from
@@ -719,7 +719,7 @@ systems because they encode expert reasoning into their decision logic.
 //         \node[above] at (1.2,-1.4) {\textbf{LLMs}};
 //         ```
 //         label=fig:aivsmlvsdeeplearning
-//         caption=Diagram illustrating AI vs ML vs Deep Learning
+//         caption=How AI, ML, deep learning, and LLMs nest within one another.
 //     width=100%
 //     placement=auto
 // rendered_images:end
@@ -729,7 +729,7 @@ systems because they encode expert reasoning into their decision logic.
     "Lesson01.2-AI_and_Machine_Learning.typ.figs/Lesson01.2-AI_and_Machine_Learning.2.png",
     width: 100%,
   ),
-  caption: [Diagram illustrating AI vs ML vs Deep Learning],
+  caption: [How AI, ML, deep learning, and LLMs nest within one another.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -738,7 +738,7 @@ systems because they encode expert reasoning into their decision logic.
   ],
   align: right,
   column-gutter: 1em,
-  columns: (1fr, 30%),
+  columns: (1fr, 45%),
 )[
   Within machine learning, #strong[Deep Learning (DL)] denotes the use of a
   particular family of models (neural networks with many layers) to learn

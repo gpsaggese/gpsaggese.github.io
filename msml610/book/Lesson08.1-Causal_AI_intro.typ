@@ -1,9 +1,11 @@
 // Import AIMA style formatting and macros
-// TODO(ai_gp): Use root-absolute import path `/helpers_root/...` instead of relative `../../` which breaks when file moves to different directory depth (typst.rules.md:## Boilerplate and Imports)
-#import "../../helpers_root/dev_scripts_helpers/typst/aima_style.typ": (
-  aima-style, algorithm, chapter, glossary, wrap-content,
+#import "/helpers_root/dev_scripts_helpers/typst/aima_style.typ": (
+  aima-style, algorithm, chapter, glossary, styled-table, wrap-content,
 )
-// TODO(ai_gp): Add separate import from `/helpers_root/dev_scripts_helpers/typst/umd_references.typ` for `cite` and `references` functions (typst.rules.md:## Boilerplate and Imports)
+// Import the custom citation/bibliography system.
+#import "/helpers_root/dev_scripts_helpers/typst/umd_references.typ": (
+  cite, references,
+)
 
 // Document metadata
 #set document(
@@ -14,14 +16,24 @@
 // Apply the AIMA document template (page/text/heading set + show rules)
 #show: aima-style
 
-// TODO(ai_gp): Use unnumbered #chapter("Introduction to Causal AI") instead of #chapter(8, ...) for standalone lesson; numbered form is only for one chapter of a larger numbered book (typst.rules.md:## The `#chapter(...)` Call)
-#chapter(8, "Introduction to Causal AI")
+#chapter("Introduction to Causal AI")
 
-// TODO(ai_gp): Add `= Roadmap` section as first level-1 heading right after #chapter(...), before first content section (typst.rules.md:## Mandatory Sections)
+= Roadmap
 
-== Introduction and Motivation
+This chapter motivates #emph[causal AI] as the missing layer between prediction and
+decision-making. We start from the limits of correlation-based machine learning:
+what it can and cannot answer, and the recurring failure modes (confounding,
+Simpson's paradox, feedback loops, distribution shift) that result from ignoring
+causal structure. We then introduce Judea Pearl's #emph[Ladder of Causation]
+(association, intervention, counterfactuals) as the conceptual backbone of causal
+reasoning, and walk through a practical workflow for applying causal AI in business,
+from defining outcomes and building a causal DAG through deployment. We close with
+how causal models support #emph[explainability] alongside techniques like LIME,
+PDP, and SHAP.
 
-=== Background
+= Introduction and Motivation
+
+== Background
 
 // Slide: Big Data and Traditional AI
 
@@ -51,9 +63,8 @@ and historical reports. #strong[Predictive analytics] answers "What will happen?
 using forecasting models. #strong[Prescriptive analytics] answers "What should we
 do?" through optimization programs. At the highest level, #strong[simulation and
   optimization] answers "What is the best we can do?" by modeling complex scenarios
-and finding optimal strategies.
+and finding optimal strategies, as @fig:analyticalsophistication shows.
 
-// TODO(ai_gp): Add figure label `<fig:...>` and in-text reference `@fig:...` - every figure needs both to be integrated into prose (typst.rules.md:## Figures: Required Elements)
 #figure(
   image(
     "../lectures_source/figures/L08.1.Analytical_sophistication.png",
@@ -66,13 +77,13 @@ and finding optimal strategies.
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
-)
+) <fig:analyticalsophistication>
 
 Each step up this ladder requires more sophisticated methodology and delivers greater
 business value, but also demands stronger assumptions about the underlying
 data-generating process.
 
-=== What ML Systems Can and Cannot Tell You
+== What ML Systems Can and Cannot Tell You
 
 // Slide: The Illusion of Understanding
 
@@ -83,7 +94,7 @@ behind those patterns or answer "what if" scenarios.
 
 The critical distinction is between #strong[prediction] and #strong[explanation]. A
 model may achieve 95% accuracy in predicting customer churn, yet it cannot tell you
-what *causes* churn. Similarly, accurate sales forecasts cannot predict the effects
+what #emph[causes] churn. Similarly, accurate sales forecasts cannot predict the effects
 of pricing changes, because the model has only learned correlations in historical
 data---it has no representation of causal mechanisms.
 
@@ -127,32 +138,34 @@ variable tells you something about the other.
 // \node[box=1.5cm, fill=red!25] (causation) at ([yshift=-6pt]correlation.center) {};
 // \node[font=\Large\bfseries] at (causation.center) {Causation};
 // ```
+// label=fig:associationcorrelationcausation
+// caption=Causation is a subset of correlation, which is a subset of association.
 // width=70%
 // placement=auto
 // rendered_images:end
 // render_images:begin
-// TODO(ai_gp): Add caption, label `<fig:...>`, and in-text reference `@fig:...` - every figure needs all three elements (typst.rules.md:## Figures: Required Elements)
 #figure(
   image(
     "Lesson08.1-Causal_AI_intro.typ.figs/Lesson08.1-Causal_AI_intro.1.png",
     width: 70%,
   ),
+  caption: [Causation is a subset of correlation, which is a subset of association.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
-)
+) <fig:associationcorrelationcausation>
 // render_images:end
 
-#strong[Correlation] is a specific form of association describing a linear
+As @fig:associationcorrelationcausation shows, #strong[correlation] is a specific form of association describing a linear
 relationship between variables. The classic example is that ice cream sales and
 drowning deaths correlate---both increase in summer due to a shared confounding
 variable (warm weather), not because one causes the other.
 
-#strong[Causation] means that changing one variable *directly* changes another. For
+#strong[Causation] means that changing one variable #emph[directly] changes another. For
 instance, asbestos causes cancer. Establishing causation requires either a causal
 model or a controlled experiment. The fundamental illusion is that high correlation
-*feels like* understanding, but real understanding means knowing what happens when
-you *intervene*.
+#emph[feels like] understanding, but real understanding means knowing what happens when
+you #emph[intervene].
 
 // Slide: What ML Systems Can Tell You
 
@@ -168,52 +181,45 @@ correlation from causation.
 
 // Slide: What ML Systems Cannot Tell You
 
-The limitations of ML systems become clear when we consider what they *cannot* tell
+The limitations of ML systems become clear when we consider what they #emph[cannot] tell
 us:
 
-// TODO(ai_gp): Use #emph[...] for list item lead phrases followed by colons, not #strong[...] - these are not formal definitions but emphasis on list items (typst.rules.md:## Highlighting and Emphasis)
-#strong[Causation from observational data alone]: Strong correlations may arise from
+#emph[Causation from observational data alone]: Strong correlations may arise from
 confounding, reverse causation, or mere coincidence.
 
-// TODO(ai_gp): Use #emph[...] for list item lead phrases followed by colons, not #strong[...] - these are not formal definitions but emphasis on list items (typst.rules.md:## Highlighting and Emphasis)
-#strong[Effects of interventions]: Questions like "If we change $X$, what happens to
+#emph[Effects of interventions]: Questions like "If we change $X$, what happens to
 $Y$?" cannot be answered from observational data without causal assumptions. For
 example, "If we lower prices by 10%, will revenue increase?" requires understanding
 the causal mechanism linking price to demand.
 
-// TODO(ai_gp): Use #emph[...] for list item lead phrases followed by colons, not #strong[...] - these are not formal definitions but emphasis on list items (typst.rules.md:## Highlighting and Emphasis)
-#strong[Counterfactuals]: Questions about what would have happened under different
+#emph[Counterfactuals]: Questions about what would have happened under different
 decisions---"Would the customer have churned if we offered them a
 discount?"---require reasoning beyond observed data.
 
-// TODO(ai_gp): Use #emph[...] for list item lead phrases followed by colons, not #strong[...] - these are not formal definitions but emphasis on list items (typst.rules.md:## Highlighting and Emphasis)
-#strong[Fairness]: A model can be *statistically* unbiased
-($EE["Prediction"] = EE["True Value"]$) yet *causally* biased if it uses variables
+#emph[Fairness]: A model can be #emph[statistically] unbiased
+($EE["Prediction"] = EE["True Value"]$) yet #emph[causally] biased if it uses variables
 that are proxies for protected attributes, even when those attributes are not
 explicitly included.
 
-// TODO(ai_gp): Use #emph[...] for list item lead phrases followed by colons, not #strong[...] - these are not formal definitions but emphasis on list items (typst.rules.md:## Highlighting and Emphasis)
-#strong[Optimal decisions]: ML optimizes for accuracy, not business outcomes. A 90%
+#emph[Optimal decisions]: ML optimizes for accuracy, not business outcomes. A 90%
 accurate model might lead to worse decisions than an 85% accurate one, depending on
 the consequences of different types of errors.
 
 #pagebreak()
 
-== Why Causal AI Matters
+= Why Causal AI Matters
 
-=== Problems with Traditional AI
+== Problems with Traditional AI
 
 // Slide: Problem 1: Correlation is Not Causation!
 
-// TODO(ai_gp): Use #emph[...] for emphasis of a key claim that is not a formal definition - "correlation is not causation" is rhetorical emphasis, not a term being formally named (typst.rules.md:## Highlighting and Emphasis)
-The most fundamental problem with traditional AI is that #strong[correlation is not
+The most fundamental problem with traditional AI is that #emph[correlation is not
   causation]. Correlation describes statistical relationships between variables: it
 excels at finding patterns in past data to predict the future, but it does not
 explain cause. Variables may move together by coincidence or due to hidden
 confounding factors.
 
-// TODO(ai_gp): Use #emph[...] for second mention of "Causation" which was already #strong-defined earlier at line 150 - subsequent references become #emph (typst.rules.md:## Highlighting and Emphasis)
-#strong[Causation], by contrast, explains how changing one variable influences
+#emph[Causation], by contrast, explains how changing one variable influences
 another. It cannot be concluded from correlation alone. The key insight is that data
 itself does not understand causes and effects---only humans can identify the relevant
 variables and relationships from context and domain knowledge. Without causal
@@ -230,15 +236,13 @@ Sometimes both causal directions are plausible: does top-notch consulting improv
 businesses, or do successful businesses hire top consultants? Without causal
 analysis, the data alone cannot distinguish these explanations.
 
-// TODO(ai_gp): Use #emph[...] for context/domain phrase "hotel industry" - this is emphasis within an example, not a formal definition (typst.rules.md:## Highlighting and Emphasis)
-In the #strong[hotel industry], prices tend to be low when hotels are empty and high
+In the #emph[hotel industry], prices tend to be low when hotels are empty and high
 when demand fills rooms. A naive correlation-based analysis might suggest that
 increasing prices leads to selling more rooms---the exact opposite of the true causal
 relationship. The confounding variable is demand: high demand causes both high prices
-*and* high occupancy.
+#emph[and] high occupancy.
 
-// TODO(ai_gp): Use #emph[...] for context/domain phrase "online marketplace" - this is emphasis within an example, not a formal definition (typst.rules.md:## Highlighting and Emphasis)
-For an #strong[online marketplace], the causal question "What is the impact of
+For an #emph[online marketplace], the causal question "What is the impact of
 lowering prices on units sold?" requires understanding that gains from selling more
 units must compensate for the loss from selling cheaper. Furthermore, price cuts have
 heterogeneous effects depending on the type of business (clothing versus
@@ -338,12 +342,12 @@ population.
 example, fraud rates may increase due to new fraud tactics, rendering a model trained
 on historical fraud rates less effective.
 
-Causal models help address distribution shift because they encode *mechanisms* rather
+Causal models help address distribution shift because they encode #emph[mechanisms] rather
 than mere patterns. Mechanisms tend to be more stable across distribution shifts than
 statistical correlations. Understanding "why" enables prediction in new contexts
 where correlations may break down.
 
-=== Optimization vs. Inference vs. Decision Theory
+== Optimization vs. Inference vs. Decision Theory
 
 // Slide: Optimization vs. Inference vs. Decision Theory
 
@@ -368,30 +372,30 @@ information, and causal models.
 // Slide: Where ML Falls Short
 
 ML focuses primarily on inference and optimization, but real-world problems demand
-decision theory---the ability to act under uncertainty with causal knowledge.
+decision theory---the ability to act under uncertainty with causal knowledge, as
+@tab:paradigms shows.
 
-// TODO(ai_gp): Use styled-table(...) from aima_style.typ instead of raw #table(...), wrap in #figure(...) with caption/label/kind:"table"/supplement:[Table.], add in-text reference @tab:... (typst.rules.md:## Tables)
-#block(
-  inset: 8pt,
-)[
-  #set text(size: 8.5pt)
-  #table(
-    columns: (auto, auto, auto, auto),
-    inset: 6pt,
-    stroke: 0.5pt,
-    [*Paradigm*], [*Question*], [*Assumes*], [*Output*],
-    [Optimization], [What maximizes $f(x)$?], [Known objective], [Optimal $x^*$],
-
-    [Inference], [What is $theta$?], [Model structure], [Parameter estimates],
-    [Decision theory], [What should we *do*?], [Uncertainty], [Recommended action],
-  )
-]
+#figure(
+  styled-table(
+    headers: ("Paradigm", "Question", "Assumes", "Output"),
+    rows: (
+      ("Optimization", [What maximizes $f(x)$?], "Known objective", [Optimal $x^*$]),
+      ("Inference", [What is $theta$?], "Model structure", "Parameter estimates"),
+      ("Decision theory", "What should we do?", "Uncertainty", "Recommended action"),
+    ),
+    bold-first-col: true,
+  ),
+  caption: [Three paradigms that machine learning conflates: optimization, inference, and decision theory.],
+  kind: "table",
+  supplement: [Table.],
+  placement: auto,
+) <tab:paradigms>
 
 #strong[Causal AI bridges inference and decision theory]. Inference tells us what the
 world looks like; causal models tell us what happens when we act; decision theory
 tells us which action to choose. This bridge is precisely what traditional ML lacks.
 
-=== The Cost of Ignoring Causality
+== The Cost of Ignoring Causality
 
 // Slide: The Cost of Ignoring Causality (1/2)
 
@@ -430,15 +434,15 @@ fix is to distinguish correlation from causal effect before taking action.
 
 #strong[Causal AI] addresses these limitations by providing a framework that:
 
-- *Understands the why*: determines cause-and-effect relationships between variables,
+- #emph[Understands the why]: determines cause-and-effect relationships between variables,
   answering questions like "Did the marketing campaign increase sales?"
-- *Identifies interventions*: finds variables and actions that change outcomes, such
+- #emph[Identifies interventions]: finds variables and actions that change outcomes, such
   as "Which lifestyle changes reduce blood pressure?"
-- *Predicts counterfactuals*: hypothesizes outcomes under different circumstances,
+- #emph[Predicts counterfactuals]: hypothesizes outcomes under different circumstances,
   such as predicting student grades if they attended a different school
-- *Avoids bias*: ensures fairness beyond training data biases by accounting for
+- #emph[Avoids bias]: ensures fairness beyond training data biases by accounting for
   confounding variables
-- *Improves decisions*: understands relationships for better choices, such as
+- #emph[Improves decisions]: understands relationships for better choices, such as
   improving supply chains by understanding the impact of decisions on logistics
 
 // Slide: Causal AI vs Traditional AI
@@ -451,14 +455,14 @@ produces poor models.
 understanding when and why causation and association differ, and understanding
 cause-and-effect relationships to intervene on causes for desired effects.
 
-As Judea Pearl stated in 2021: *"The next revolution of data science is the science
-of interpreting reality, not of summarizing data."*
+As Judea Pearl stated in 2021: #emph["The next revolution of data science is the
+  science of interpreting reality, not of summarizing data."]
 
 #pagebreak()
 
-== Causal AI Fundamentals
+= Causal AI Fundamentals
 
-=== The Ladder of Causation
+== The Ladder of Causation
 
 // Slide: The Ladder of Causation
 
@@ -466,25 +470,26 @@ Judea Pearl provided a three-level framework for understanding causality---the
 #strong[Ladder of Causation]. Each rung represents a qualitatively different type of
 reasoning, and higher rungs cannot be answered using tools from lower rungs alone.
 
-// TODO(ai_gp): Use styled-table(...) from aima_style.typ instead of raw #table(...), wrap in #figure(...) with caption/label/kind:"table"/supplement:[Table.], add in-text reference @tab:... (typst.rules.md:## Tables)
-#block(
-  inset: 8pt,
-)[
-  #set text(size: 8.5pt)
-  #table(
-    columns: (auto, auto, auto, auto),
-    inset: 6pt,
-    stroke: 0.5pt,
-    [*Level*], [*Symbol*], [*Activity*], [*Questions*],
-    [1. Association], [$Pr(Y | X)$], [Observing], [What is?],
-    [2. Intervention], [$Pr(Y | "do"(X), Z)$], [Intervening], [What if?],
-    [3. Counterfactuals], [$Pr(Y_X | x', y')$], [Imagining], [Why?],
-  )
-]
+#figure(
+  styled-table(
+    headers: ("Level", "Symbol", "Activity", "Questions"),
+    rows: (
+      ("1. Association", [$Pr(Y | X)$], "Observing", "What is?"),
+      ("2. Intervention", [$Pr(Y | "do"(X), Z)$], "Intervening", "What if?"),
+      ("3. Counterfactuals", [$Pr(Y_X | x', y')$], "Imagining", "Why?"),
+    ),
+    bold-first-col: true,
+  ),
+  caption: [Pearl's Ladder of Causation: association, intervention, and counterfactuals.],
+  kind: "table",
+  supplement: [Table.],
+  placement: auto,
+) <tab:ladderofcausation>
 
-This hierarchy is not merely a matter of increasing complexity---it represents
-fundamentally different kinds of knowledge. No amount of observational data (Rung 1)
-can answer interventional questions (Rung 2) without additional causal assumptions.
+As @tab:ladderofcausation shows, this hierarchy is not merely a matter of
+increasing complexity---it represents fundamentally different kinds of knowledge.
+No amount of observational data (Rung 1) can answer interventional questions (Rung
+2) without additional causal assumptions.
 
 // Slide: Rung 1: Association
 
@@ -498,13 +503,13 @@ asking "what does a symptom tell you about a disease?" or "what does a survey te
 you about election outcomes?"
 
 Association is powerful for prediction---if you observe $X$, you can update your
-belief about $Y$---but it provides no information about what happens if you *change*
+belief about $Y$---but it provides no information about what happens if you #emph[change]
 $X$.
 
 // Slide: Rung 2: Intervention
 
 #strong[Rung 2: Intervention] addresses the question: "What happens to $Y$ if you
-*do* $X$?"
+#emph[do] $X$?"
 
 Mathematically represented as $Pr(Y | "do"(X), Z)$, this rung requires understanding
 the impact of action $X$ on $Y$ under conditions $Z$. Crucially, this requires a
@@ -521,7 +526,7 @@ headache be cured?", and "If we ban sugary sodas, what happens to obesity rates?
 $Y$?"
 
 Represented symbolically as $Pr(Y_X | x', y')$, this is the highest form of causal
-reasoning. It requires imagining what *would* have happened if the facts were
+reasoning. It requires imagining what #emph[would] have happened if the facts were
 different---a capacity that demands full understanding of cause-and-effect
 mechanisms.
 
@@ -530,7 +535,7 @@ dose?", "What would the jury have concluded with different evidence?", and "Why 
 the marketing campaign fail?" Counterfactual reasoning is essential for attribution,
 explanation, and learning from past decisions.
 
-=== Correlation vs. Causation Models
+== Correlation vs. Causation Models
 
 // Slide: Correlation vs Causation Model
 
@@ -569,34 +574,34 @@ intervention? What are the confounding and effecting factors? Only after answeri
 these questions does the team create a model diagram (typically a DAG), followed by
 targeted data acquisition aligned with the causal structure.
 
-=== Data Science vs. Decision Science
+== Data Science vs. Decision Science
 
 // Slide: From Data Science to Decision Science
 
 Data science and decision science represent #strong[two fundamentally different
   paradigms]:
 
-// TODO(ai_gp): Use styled-table(...) from aima_style.typ instead of raw #table(...), wrap in #figure(...) with caption/label/kind:"table"/supplement:[Table.], add in-text reference @tab:... (typst.rules.md:## Tables)
-#block(
-  inset: 8pt,
-)[
-  #set text(size: 8.5pt)
-  #table(
-    columns: (auto, auto, auto),
-    inset: 6pt,
-    stroke: 0.5pt,
-    [*Dimension*], [*Data Science*], [*Decision Science*],
-    [Goal], [Predict outcomes], [Choose best actions],
-    [Core question], ["What will happen?"], ["What should we do?"],
-    [Method], [Statistical models, ML], [Causal models, decision theory],
-    [Output], [Score, forecast, cluster], [Recommended action + expected outcome],
+#figure(
+  styled-table(
+    headers: ("Dimension", "Data Science", "Decision Science"),
+    rows: (
+      ("Goal", "Predict outcomes", "Choose best actions"),
+      ("Core question", "\"What will happen?\"", "\"What should we do?\""),
+      ("Method", "Statistical models, ML", "Causal models, decision theory"),
+      ("Output", "Score, forecast, cluster", "Recommended action + expected outcome"),
+      ("Success metric", "Accuracy, AUC, RMSE", "Business outcome, ROI, impact"),
+      ("Data requirement", "Historical observations", "Observations + causal structure"),
+    ),
+    bold-first-col: true,
+  ),
+  caption: [Data science predicts outcomes; decision science chooses actions.],
+  kind: "table",
+  supplement: [Table.],
+  placement: auto,
+) <tab:datavsdecisionscience>
 
-    [Success metric], [Accuracy, AUC, RMSE], [Business outcome, ROI, impact],
-    [Data requirement], [Historical observations], [Observations + causal structure],
-  )
-]
-
-The key insight is that most organizations have data science teams focused on
+As @tab:datavsdecisionscience shows, the key insight is that most organizations
+have data science teams focused on
 prediction, while business stakeholders actually need decision science. The gap
 between "what will happen" and "what should we do" is precisely #strong[causal
   reasoning]. Machine learning excels at prediction but fails at "what-if" questions
@@ -607,27 +612,25 @@ and decisions involving interventions.
 The distinction between predictive and causal questions clarifies when standard ML
 suffices and when causal methods are needed:
 
-// TODO(ai_gp): Use styled-table(...) from aima_style.typ instead of raw #table(...), wrap in #figure(...) with caption/label/kind:"table"/supplement:[Table.], add in-text reference @tab:... (typst.rules.md:## Tables)
-#block(
-  inset: 8pt,
-)[
-  #set text(size: 8.5pt)
-  #table(
-    columns: (auto, auto),
-    inset: 6pt,
-    stroke: 0.5pt,
-    [*Predictive Question*], [*Causal Question*],
-    [Which patients will be readmitted?], [Which intervention reduces readmission?],
+#figure(
+  styled-table(
+    headers: ("Predictive Question", "Causal Question"),
+    rows: (
+      ("Which patients will be readmitted?", "Which intervention reduces readmission?"),
+      ("Which customers will churn?", "What action prevents churn?"),
+      ("What will sales be next quarter?", "How would a 10% price cut affect sales?"),
+      ("Which students will fail the exam?", "Does tutoring improve exam scores?"),
+      ("Which transactions are fraudulent?", "What policy changes reduce fraud?"),
+    ),
+  ),
+  caption: [Predictive questions ask what will happen; causal questions ask what would happen under a different action.],
+  kind: "table",
+  supplement: [Table.],
+  placement: auto,
+) <tab:predictivevscausal>
 
-    [Which customers will churn?], [What action prevents churn?],
-    [What will sales be next quarter?], [How would a 10% price cut affect sales?],
-
-    [Which students will fail the exam?], [Does tutoring improve exam scores?],
-    [Which transactions are fraudulent?], [What policy changes reduce fraud?],
-  )
-]
-
-#strong[Predictive questions] require only standard ML and observational data. They
+As @tab:predictivevscausal shows, #strong[predictive questions] require only
+standard ML and observational data. They
 are useful for monitoring and alerting. #strong[Causal questions] require causal
 models or experiments. They answer "what if" and "why" and are essential for
 decisions and policy design.
@@ -653,9 +656,9 @@ advance to Levels 2 and 3, where the greatest business value lies.
 
 #pagebreak()
 
-== Causal AI in Business
+= Causal AI in Business
 
-=== Business Context and Motivation
+== Business Context and Motivation
 
 // Slide: Digital Transformation in Business
 
@@ -694,12 +697,12 @@ Successful AI projects follow several principles:
 4. #strong[Start with an initial pilot]---a small team tackling a targeted problem to
   demonstrate the merit of the causal AI approach.
 
-=== The Causal AI Workflow
+== The Causal AI Workflow
 
 // Slide: AI in Business
 
 The Causal AI workflow in business follows a cyclic process connecting eight key
-components:
+components, as @fig:causalaiworkflow shows.
 
 // rendered_images:begin
 // ```graphviz
@@ -730,20 +733,22 @@ components:
 //   Results -> BusinessGoals;
 // }
 // ```
+// label=fig:causalaiworkflow
+// caption=Cyclic causal AI workflow connecting business goals to results and back.
 // width=70%
 // placement=auto
 // rendered_images:end
 // render_images:begin
-// TODO(ai_gp): Add caption, label `<fig:...>`, and in-text reference `@fig:...` - every figure needs all three elements (typst.rules.md:## Figures: Required Elements)
 #figure(
   image(
     "Lesson08.1-Causal_AI_intro.typ.figs/Lesson08.1-Causal_AI_intro.2.png",
     width: 70%,
   ),
+  caption: [Cyclic causal AI workflow connecting business goals to results and back.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
-)
+) <fig:causalaiworkflow>
 // render_images:end
 
 This cycle emphasizes that causal AI is not a one-shot analysis but an iterative
@@ -829,6 +834,8 @@ The causal DAG reveals the complexity:
 //     StoreDistance -> ProductAmount;
 // }
 // ```
+// label=fig:pricedag
+// caption=Causal DAG for a price intervention, with product supply and store distance as confounders.
 // width=70%
 // placement=auto
 // rendered_images:end
@@ -838,14 +845,14 @@ The causal DAG reveals the complexity:
     "Lesson08.1-Causal_AI_intro.typ.figs/Lesson08.1-Causal_AI_intro.3.png",
     width: 70%,
   ),
+  caption: [Causal DAG for a price intervention, with product supply and store distance as confounders.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
-)
+) <fig:pricedag>
 // render_images:end
 
-// TODO(ai_gp): Add caption, label `<fig:...>`, and in-text reference `@fig:...` - every figure needs all three elements (typst.rules.md:## Figures: Required Elements)
-The DAG reveals multiple confounders: product supply and distance to store affect
+As @fig:pricedag shows, the DAG reveals multiple confounders: product supply and distance to store affect
 product amount independently of price, and competitive offers mediate part of the
 price effect. Without this causal structure, a naive analysis would conflate these
 distinct pathways.
@@ -914,7 +921,7 @@ wins for trust and momentum; defining the hypothesis by building a preliminary D
 with expert input; and pursuing incremental model development built in small stages
 with regular feedback.
 
-=== Explainability and Interpretability
+== Explainability and Interpretability
 
 // Slide: The Importance of Explainability
 
@@ -966,6 +973,20 @@ This convergence brings together causal AI, traditional AI, deep learning, and
 generative techniques into unified systems that can both predict and explain, both
 correlate and reason about causation.
 
-// TODO(ai_gp): Add `= Summary` level-1 section before references (typst.rules.md:## Mandatory Sections)
+= Summary
 
-// TODO(ai_gp): Add `= References` level-1 section at the end; required even if .smd has no such slide (typst.rules.md:## Mandatory Sections)
+Correlation-based machine learning excels at prediction but cannot answer
+intervention or counterfactual questions, and ignoring that gap produces confounded
+analyses, Simpson's paradox, feedback loops, and models that degrade under
+distribution shift. Pearl's Ladder of Causation frames the fix: association,
+intervention, and counterfactuals are qualitatively different kinds of knowledge,
+and only a causal model reaches the top two rungs. Applying causal AI in practice
+means running a workflow, defining outcomes and interventions, building and
+refining a causal DAG, acquiring data aligned to that DAG, and deploying with a
+hybrid team, so that organizations move from descriptive and predictive analytics
+toward genuine causal and decision-making maturity.
+
+= References
+
+#set text(size: 0.75em)
+#references("/msml610/lectures_source/refs.bib")

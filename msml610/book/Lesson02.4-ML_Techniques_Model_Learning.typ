@@ -19,19 +19,26 @@
 
 #chapter("L02.4: ML Techniques - Model Learning")
 
+= Roadmap
+
+This chapter covers how machine learning models are actually fit to data through
+numerical optimization. We start with #emph[gradient descent], the workhorse
+iterative method that minimizes a cost function by repeatedly stepping opposite
+its gradient, and examine how the learning rate governs the trade-off between
+convergence speed and stability. We then look at how gradient descent scales to
+large datasets through its #emph[batch], #emph[stochastic], and #emph[mini-batch]
+variants, and how it supports #emph[online learning] and distributed computation
+via #emph[map-reduce]. Finally, we survey #emph[alternatives to gradient descent],
+including coordinate descent and the closed-form pseudo-inverse solution for
+linear models.
+
 // From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:11 '# The Optimization Problem'
 // Slide: The Optimization Problem
-// TODO(ai_gp): Replace standalone #strong[...] with real Typst heading syntax
-// (= for level-1, == for level-2, etc.) (.claude/skills/typst.rules.md:##
-// Structural Hierarchy)
-#strong[The Optimization Problem]
+= The Optimization Problem
 
 // From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:13 '* Minimizing a Function'
 // Slide: Minimizing a Function
-// TODO(ai_gp): Replace standalone #strong[...] with real Typst heading syntax
-// (= for level-1, == for level-2, etc.) (.claude/skills/typst.rules.md:##
-// Structural Hierarchy)
-#strong[Minimizing a Function]
+= Minimizing a Function
 
 The goal of optimization in machine learning is to minimize a scalar function
 $J(bold(w))$ of $P$ variables $bold(w)$. A common instance is the #strong[in-sample
@@ -43,17 +50,11 @@ which averages the pointwise error of a hypothesis $h_(bold(w))$ over $N$ traini
 examples $(bold(x)_i, y_i)$.
 
 Two broad strategies exist for finding the minimizer. The first is an
-// TODO(ai_gp): Use #strong[...] instead of #emph[...] here since this term
-// is being formally introduced/defined with the colon-based definition pattern
-// (.claude/skills/typst.rules.md:## Highlighting and Emphasis)
-#emph[analytical approach]: set the gradient of $J(bold(w))$ equal to zero and solve
+#strong[analytical approach]: set the gradient of $J(bold(w))$ equal to zero and solve
 for $bold(w)^*$ in closed form. This is elegant when it works, but many objective
 functions do not admit a closed-form solution, or the solution is too expensive to
 compute for large $P$. The second is a
-// TODO(ai_gp): Use #strong[...] instead of #emph[...] here since this term
-// is being formally introduced/defined with the colon-based definition pattern
-// (.claude/skills/typst.rules.md:## Highlighting and Emphasis)
-#emph[numerical approach]: use an iterative method that updates $bold(w)$ step by
+#strong[numerical approach]: use an iterative method that updates $bold(w)$ step by
 step until $J(bold(w))$ reaches its minimum. Gradient descent is the prototypical
 example. A numerical method remains applicable even when an analytical solution
 exists, making it the more general-purpose tool, and it scales naturally to the
@@ -64,10 +65,7 @@ minimum of the objective surface.
 
 #figure(
   image("../lectures_source/figures/L02.4.Gradient_descent_2.png", width: 80%),
-  // TODO(ai_gp): Caption must describe what the figure shows in a single clause,
-  // not just label it. Example: "Gradient descent surface showing convergence to
-  // minimum." (.claude/skills/typst.rules.md:## Figures: Required Elements)
-  caption: [Gradient descent 2],
+  caption: [Gradient descent path converging toward a minimum of the objective surface.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -75,10 +73,7 @@ minimum of the objective surface.
 
 // From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:43 '* Gradient Descent: Intuition'
 // Slide: Gradient Descent: Intuition
-// TODO(ai_gp): Replace standalone #strong[...] with real Typst heading syntax
-// (= for level-1, == for level-2, etc.) (.claude/skills/typst.rules.md:##
-// Structural Hierarchy)
-#strong[Gradient Descent: Intuition]
+= Gradient Descent: Intuition
 
 Imagine standing on a hilly surface with the goal of reaching the lowest point. How
 do you get there? At each position, you look around to assess the slope in every
@@ -89,9 +84,7 @@ optimization, as @fig:gradientdescent1 illustrates.
 
 #figure(
   image("../lectures_source/figures/L02.4.Gradient_descent_1.png", width: 80%),
-  // TODO(ai_gp): Caption must describe what the figure shows, not just label it
-  // (.claude/skills/typst.rules.md:## Figures: Required Elements)
-  caption: [Gradient descent 1],
+  caption: [Hillside analogy for gradient descent: stepping along the steepest downhill direction.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -101,10 +94,7 @@ optimization, as @fig:gradientdescent1 illustrates.
 functions. Starting from an initial guess, the algorithm iteratively adjusts its
 parameters by moving in the direction of the negative gradient (the direction of
 steepest decrease). In the general case, gradient descent converges to a
-// TODO(ai_gp): Use #strong[...] instead of #emph[...] here since this term
-// is being formally defined with the "a point that is..." pattern
-// (.claude/skills/typst.rules.md:## Highlighting and Emphasis)
-#emph[local minimum], a point that is lower than all nearby points but not
+#strong[local minimum], a point that is lower than all nearby points but not
 necessarily the lowest point overall. However, when the objective function
 $J(bold(w))$ is convex, every local minimum is also the global minimum, so gradient
 descent is guaranteed to find the best possible solution. Common models whose loss
@@ -114,19 +104,13 @@ contains no misleading valleys or plateaus.
 
 // From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:73 '# Gradient Descent'
 // Slide: Gradient Descent
-// TODO(ai_gp): Replace standalone #strong[...] with real Typst heading syntax
-// (= for level-1, == for level-2, etc.) (.claude/skills/typst.rules.md:##
-// Structural Hierarchy)
-#strong[Gradient Descent]
+= Gradient Descent
 
 // From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:75 '* Gradient Descent with Fixed Learning Rate (1/3)'
 // Slide: Gradient Descent with Fixed Learning Rate (1/3)
-// TODO(ai_gp): Replace standalone #strong[...] with real Typst heading syntax
-// (= for level-1, == for level-2, etc.) (.claude/skills/typst.rules.md:##
-// Structural Hierarchy)
-#strong[Gradient Descent with Fixed Learning Rate (1/3)]
+== Gradient Descent with Fixed Learning Rate (1/3)
 
-Consider the contour plot of a loss function $E_{"in"}$ over weight space. Gradient
+Consider the contour plot of a loss function $E_"in"$ over weight space. Gradient
 descent begins from an initial point $bold(w)(0)$, which might be chosen randomly or
 set to the origin. At each step, the algorithm moves a fixed distance $eta$
 (#strong[the learning rate]) through weight space:
@@ -134,22 +118,22 @@ set to the origin. At each step, the algorithm moves a fixed distance $eta$
 $ bold(w)(t + 1) = bold(w)(t) + eta hat(bold(v)) $
 
 where $hat(bold(v))$ is a unit vector indicating the direction of the step. The goal
-is to choose $hat(bold(v))$ so that $E_{"in"}(bold(w))$ decreases as much as
+is to choose $hat(bold(v))$ so that $E_"in"(bold(w))$ decreases as much as
 possible.
 
 To see which direction accomplishes this, examine the change in the error:
 
 $
-  Delta E_{"in"} & = E_{"in"}(bold(w)(t + 1)) - E_{"in"}(bold(w)(t)) \
-                 & = E_{"in"}(bold(w)(t) + eta hat(bold(v))) - E_{"in"}(bold(w)(t)) \
-                 & approx eta nabla E_{"in"}(bold(w)(t))^T hat(bold(v)) + O(eta^2)
+  Delta E_"in" & = E_"in"(bold(w)(t + 1)) - E_"in"(bold(w)(t)) \
+                 & = E_"in"(bold(w)(t) + eta hat(bold(v))) - E_"in"(bold(w)(t)) \
+                 & approx eta nabla E_"in"(bold(w)(t))^T hat(bold(v)) + O(eta^2)
 $
 
 The last line follows from a first-order Taylor expansion around $bold(w)(t)$.
 Standard gradient descent retains only the $O(eta)$ term and discards higher-order
-contributions. Because $eta$ is a positive scalar, making $Delta E_{"in"}$ as
+contributions. Because $eta$ is a positive scalar, making $Delta E_"in"$ as
 negative as possible requires choosing $hat(bold(v))$ to minimize the inner product
-$nabla E_{"in"}(bold(w)(t))^T hat(bold(v))$; the unit vector that achieves this
+$nabla E_"in"(bold(w)(t))^T hat(bold(v))$; the unit vector that achieves this
 points in the direction opposite the gradient. More advanced methods such as
 #emph[conjugate gradient] retain the $O(eta^2)$ term as well, which allows them to
 account for curvature information and often converge faster, though at a higher
@@ -157,10 +141,7 @@ per-step cost.
 
 // From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:107 '* Gradient Descent with Fixed Learning Rate (2/3)'
 // Slide: Gradient Descent with Fixed Learning Rate (2/3)
-// TODO(ai_gp): Replace standalone #strong[...] with real Typst heading syntax
-// (= for level-1, == for level-2, etc.) (.claude/skills/typst.rules.md:##
-// Structural Hierarchy)
-#strong[Gradient Descent with Fixed Learning Rate (2/3)]
+== Gradient Descent with Fixed Learning Rate (2/3)
 
 The change in the in-sample error $E_(i n)$ when moving along a unit direction
 $hat(bold(v))$ is approximately
@@ -181,10 +162,7 @@ At that choice the change equals $- eta \| nabla E_(i n) (bold(w)(t)) \|$, the
 steepest possible decrease for a step of size $eta$.
 
 Substituting this optimal direction back into the weight update gives the full
-// TODO(ai_gp): Use #emph[...] instead of #strong[...] here since this is not
-// a formal definition in a sentence like "Term is/refers to..." but rather a
-// label/emphasis (.claude/skills/typst.rules.md:## Highlighting and Emphasis)
-rule for the #strong[change in weights]:
+rule for the #emph[change in weights]:
 
 $
   Delta bold(w) &= bold(w)(t + 1) - bold(w)(t) \
@@ -199,10 +177,7 @@ function, following the locally steepest downhill path at every step.
 
 // From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:133 '* Gradient Descent with Fixed Learning Rate (3/3)'
 // Slide: Gradient Descent with Fixed Learning Rate (3/3)
-// TODO(ai_gp): Replace standalone #strong[...] with real Typst heading syntax
-// (= for level-1, == for level-2, etc.) (.claude/skills/typst.rules.md:##
-// Structural Hierarchy)
-#strong[Gradient Descent with Fixed Learning Rate (3/3)]
+== Gradient Descent with Fixed Learning Rate (3/3)
 
 The gradient descent update formula specifies how each component of the weight vector
 changes at every step. The full vector update is
@@ -231,10 +206,7 @@ criteria and stopping conditions.
 
 // From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:153 '* Gradient Descent: Stopping Criteria'
 // Slide: Gradient Descent: Stopping Criteria
-// TODO(ai_gp): Replace standalone #strong[...] with real Typst heading syntax
-// (= for level-1, == for level-2, etc.) (.claude/skills/typst.rules.md:##
-// Structural Hierarchy)
-#strong[Gradient Descent: Stopping Criteria]
+== Gradient Descent: Stopping Criteria
 
 When should gradient descent stop? In theory, the algorithm terminates when the
 change in the in-sample error reaches zero, $Delta E_("in") = bold(0)$. In practice,
@@ -259,17 +231,11 @@ diagnostic for catching these issues early.
 
 // From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:167 '# Tuning Gradient Descent'
 // Slide: Tuning Gradient Descent
-// TODO(ai_gp): Replace standalone #strong[...] with real Typst heading syntax
-// (= for level-1, == for level-2, etc.) (.claude/skills/typst.rules.md:##
-// Structural Hierarchy)
-#strong[Tuning Gradient Descent]
+= Tuning Gradient Descent
 
 // From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:169 '* Choosing the Learning Rate'
 // Slide: Choosing the Learning Rate
-// TODO(ai_gp): Replace standalone #strong[...] with real Typst heading syntax
-// (= for level-1, == for level-2, etc.) (.claude/skills/typst.rules.md:##
-// Structural Hierarchy)
-#strong[Choosing the Learning Rate]
+== Choosing the Learning Rate
 
 Consider a one-dimensional convex function whose minimum we seek via gradient
 descent. The behavior of the algorithm depends critically on the choice of learning
@@ -282,9 +248,7 @@ illustrates this slow, cautious trajectory.
 
 #figure(
   image("../lectures_source/figures/L02.4.Gradient_descent_3a.png", width: 80%),
-  // TODO(ai_gp): Caption must describe what the figure shows, not just label it
-  // (.claude/skills/typst.rules.md:## Figures: Required Elements)
-  caption: [Gradient descent 3a],
+  caption: [Slow, cautious convergence when the learning rate is too small.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -298,9 +262,7 @@ this oscillatory behavior.
 
 #figure(
   image("../lectures_source/figures/L02.4.Gradient_descent_3b.png", width: 80%),
-  // TODO(ai_gp): Caption must describe what the figure shows, not just label it
-  // (.claude/skills/typst.rules.md:## Figures: Required Elements)
-  caption: [Gradient descent 3b],
+  caption: [Oscillating, potentially diverging updates when the learning rate is too large.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -319,9 +281,7 @@ early large steps give way to finer adjustments near the optimum.
 
 #figure(
   image("../lectures_source/figures/L02.4.Gradient_descent_3c.png", width: 80%),
-  // TODO(ai_gp): Caption must describe what the figure shows, not just label it
-  // (.claude/skills/typst.rules.md:## Figures: Required Elements)
-  caption: [Gradient descent 3c],
+  caption: [Adaptive learning-rate schedule combining large early steps with finer late-stage adjustments.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -329,10 +289,7 @@ early large steps give way to finer adjustments near the optimum.
 
 // From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:202 '* Gradient Descent with Variable Learning Rate'
 // Slide: Gradient Descent with Variable Learning Rate
-// TODO(ai_gp): Replace standalone #strong[...] with real Typst heading syntax
-// (= for level-1, == for level-2, etc.) (.claude/skills/typst.rules.md:##
-// Structural Hierarchy)
-#strong[Gradient Descent with Variable Learning Rate]
+== Gradient Descent with Variable Learning Rate
 
 When using #strong[gradient descent with a fixed learning rate], every update moves
 the same distance through weight space regardless of how steep the surface is. The
@@ -367,10 +324,7 @@ movement far from the optimum and cautious refinement near it.
 
 // From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:222 '* Feature Scaling in Gradient Descent'
 // Slide: Feature Scaling in Gradient Descent
-// TODO(ai_gp): Replace standalone #strong[...] with real Typst heading syntax
-// (= for level-1, == for level-2, etc.) (.claude/skills/typst.rules.md:##
-// Structural Hierarchy)
-#strong[Feature Scaling in Gradient Descent]
+== Feature Scaling in Gradient Descent
 
 Unscaled features distort the error surface. When one feature ranges from 1 to 1000
 while another ranges from 0.01 to 1, the level sets of $E_"in" (bold(w))$ become
@@ -389,11 +343,11 @@ well in every direction and gradient descent converges faster and more smoothly.
 
 // From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:236 '# Scaling to Large Datasets'
 // Slide: Scaling to Large Datasets
-#strong[Scaling to Large Datasets]
+= Scaling to Large Datasets
 
 // From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:238 '* Issues with Batch Gradient Descent'
 // Slide: Issues with Batch Gradient Descent
-#strong[Issues with Batch Gradient Descent]
+== Issues with Batch Gradient Descent
 
 Consider the squared error over $N$ training samples, defined as
 
@@ -431,28 +385,23 @@ dramatically cheaper per-step computation.
 
 // From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:263 '* Stochastic Gradient Descent'
 // Slide: Stochastic Gradient Descent
-#strong[Stochastic Gradient Descent]
+== Stochastic Gradient Descent
 
 #strong[Stochastic Gradient Descent] (SGD) updates the weights using only a single
 training example chosen at random, rather than computing the gradient over the entire
 dataset. This makes each update far cheaper, which is especially valuable when the
 training set is large.
 
-// TODO(ai_gp): Use #algorithm("Stochastic Gradient Descent", [...]) instead of
-// a bare numbered list for this procedure (.claude/skills/typst.rules.md:##
-// Algorithms and Pseudocode)
-
-The procedure works as follows:
-
-1. Pick one example $(bold(x)_n, y_n)$ at random from the training set.
-2. Compute the gradient of the loss for that single example,
-  $nabla e(h(bold(x)_n), y_n)$, and form the weight update
-  $Delta bold(w) = -eta nabla e$.
-3. Apply the update to each weight:
-
-$
-  w_j (t + 1) = w_j (t) - 2 eta (h_(bold(w))(bold(x)_t) - y_t) frac(partial h_(bold(w))(bold(x)_t), partial w_j)
-$
+#algorithm(
+  "Stochastic Gradient Descent",
+  [
+    *loop* until a stopping criterion is met \
+    #h(1em) Pick one example $(bold(x)_n, y_n)$ at random from the training set \
+    #h(1em) Compute the gradient $nabla e(h(bold(x)_n), y_n)$ for that example \
+    #h(1em) Update each weight: $w_j (t + 1) = w_j (t) - 2 eta (h_(bold(w))(bold(x)_t) - y_t) frac(partial h_(bold(w))(bold(x)_t), partial w_j)$ \
+    *end loop*
+  ],
+)
 
 Because each step relies on a single randomly selected example, the path SGD traces
 through weight space is noisy: it does not follow the smooth trajectory of batch
@@ -478,7 +427,7 @@ solutions that generalize better.
 
 // From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:294 '* Mini-Batch Gradient Descent'
 // Slide: Mini-Batch Gradient Descent
-#strong[Mini-Batch Gradient Descent]
+== Mini-Batch Gradient Descent
 
 #strong[Mini-batch gradient descent] brings together characteristics of both
 #emph[batch] and #emph[stochastic gradient descent]. Rather than computing the
@@ -497,10 +446,11 @@ the cost of reduced regularization effect and higher memory usage per step.
 
 // From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:302 '* SGD vs BGD vs Mini-Batch'
 // Slide: SGD vs BGD vs Mini-Batch
-#strong[SGD vs BGD vs Mini-Batch]
+== SGD vs BGD vs Mini-Batch
 
-As @tab:sgdvsbgdvsminibatch shows, Table of Aspect, Batch GD, Stochastic GD,
-Mini-Batch GD.
+@tab:sgdvsbgdvsminibatch compares batch, stochastic, and mini-batch gradient descent
+across computation cost, memory use, randomization, implicit regularization,
+parallelizability, and suitability for online learning.
 
 #figure(
   styled-table(
@@ -540,10 +490,7 @@ Mini-Batch GD.
     ),
     bold-first-col: true,
   ),
-  // TODO(ai_gp): Caption must not list out every column header. Instead, describe
-  // what the table shows in one short clause. Example: "Comparison of gradient
-  // descent variants." (.claude/skills/typst.rules.md:## Figures: Required Elements)
-  caption: [Table of Aspect, Batch GD, Stochastic GD, Mini-Batch GD],
+  caption: [Comparison of gradient descent variants.],
   kind: "table",
   supplement: [Table.],
   placement: auto,
@@ -551,13 +498,10 @@ Mini-Batch GD.
 
 // From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:320 '* On-Line Learning and Gradient Descent'
 // Slide: On-Line Learning and Gradient Descent
-#strong[On-Line Learning and Gradient Descent]
+== On-Line Learning and Gradient Descent
 
 In many applications, training data arrives as a
-// TODO(ai_gp): Use #emph[...] instead of #strong[...] here since this is
-// emphasis/contrast, not a formal definition in a sentence like "Term
-// is/refers to..." (.claude/skills/typst.rules.md:## Highlighting and Emphasis)
-#strong[continuous stream]
+#emph[continuous stream]
 rather than a fixed batch. The model must incorporate new observations on the fly,
 updating its parameters as each example (or small group of examples) becomes
 available. This contrasts sharply with the #emph[offline setting], where the entire
@@ -590,7 +534,7 @@ time, so yesterday's optimal parameters may no longer be adequate today.
 // }
 // ```
 // label=fig:onlinelearningandgradientdescent
-// caption=Diagram relating Model
+// caption=Streaming data flowing through a model that updates its weights with each new input.
 // width=70%
 // placement=auto
 // rendered_images:end
@@ -600,7 +544,7 @@ time, so yesterday's optimal parameters may no longer be adequate today.
     "Lesson02.4-ML_Techniques_Model_Learning.typ.figs/Lesson02.4-ML_Techniques_Model_Learning.1.png",
     width: 70%,
   ),
-  caption: [Diagram relating Model],
+  caption: [Streaming data flowing through a model that updates its weights with each new input.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -624,11 +568,9 @@ rate was poorly chosen, if the model class changes, or if a subtle bug corrupted
 earlier updates. Retaining at least a representative buffer or summary statistics
 provides a safety net that pure online updates lack.
 
-// Revert garbled section at top, restore proper context
-
 // From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:369 '* Map-Reduce for Batch Gradient Descent'
 // Slide: Map-Reduce for Batch Gradient Descent
-#strong[Map-Reduce for Batch Gradient Descent]
+== Map-Reduce for Batch Gradient Descent
 
 Batch gradient descent lends itself naturally to distributed computation because its
 core operation, summing gradient contributions across the entire dataset, is
@@ -695,7 +637,7 @@ independent per-example terms.
 // }
 // ```
 // label=fig:mapreduceforbatchgradientdescent
-// caption=Diagram relating Shuffle & Reduce
+// caption=Map-reduce pipeline: workers compute partial gradients, aggregation combines them, and the model is updated.
 // width=70%
 // placement=auto
 // rendered_images:end
@@ -705,9 +647,92 @@ independent per-example terms.
     "Lesson02.4-ML_Techniques_Model_Learning.typ.figs/Lesson02.4-ML_Techniques_Model_Learning.2.png",
     width: 70%,
   ),
-  caption: [Diagram relating Shuffle & Reduce],
+  caption: [Map-reduce pipeline: workers compute partial gradients, aggregation combines them, and the model is updated.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
 ) <fig:mapreduceforbatchgradientdescent>
 // render_images:end
+
+// From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:450 '# Alternatives to Gradient Descent'
+// Slide: Alternatives to Gradient Descent
+= Alternatives to Gradient Descent
+
+// From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:452 '* Coordinate Descent'
+// Slide: Coordinate Descent
+== Coordinate Descent
+
+#strong[Coordinate descent] minimizes a multivariate function $J(x_0, ..., x_n)$ by
+optimizing along one coordinate direction $x_i$ at a time, instead of computing every
+partial derivative at once as gradient descent does.
+
+#algorithm(
+  "Coordinate Descent",
+  [
+    Pick a random starting point $bold(w)(0)$ \
+    Pick a random order for the coordinates ${x_i}$ \
+    *loop* over the coordinates in that order \
+    #h(1em) Find the minimum along the current coordinate (a 1D optimization problem) \
+    #h(1em) Move to the next coordinate $x_(i+1)$ \
+    *until* one full cycle over all coordinates yields no improvement
+  ],
+)
+
+The sequence of iterates $bold(w)(t)$ is guaranteed to be non-increasing in the
+objective value, and the procedure converges to a #emph[local] minimum, as
+@fig:coordinatedescent illustrates.
+
+#wrap-content(
+  [
+    #figure(
+      image("../lectures_source/figures/L02.4.Coordinate_descent.png", width: 100%),
+      caption: [Coordinate descent path zig-zagging toward the minimum of a contour.],
+      kind: "figure",
+      supplement: [Fig.],
+      placement: auto,
+    ) <fig:coordinatedescent>
+  ],
+  align: right,
+  column-gutter: 1em,
+  columns: (1fr, 45%),
+)[
+  Each step of coordinate descent moves along a single axis, producing the
+  right-angled staircase trajectory that its contour plot shows. This differs from
+  gradient descent, whose steps generally point in a direction that is not aligned
+  with any single coordinate axis, cutting diagonally across the contours instead.
+]
+
+// From: msml610/lectures_source/Lesson02.4-ML_Techniques_Model_Learning.smd:471 '* Gradient Descent vs Pseudo-Inverse'
+// Slide: Gradient Descent vs Pseudo-Inverse
+== Gradient Descent vs the Pseudo-Inverse
+
+For linear models, the optimal weights can be found either via the
+#emph[pseudo-inverse] or via gradient descent.
+
+The #strong[pseudo-inverse] approach requires no parameter selection and converges
+in a single step, though that step is itself sometimes computed incrementally. It
+computes the $P times P$ matrix $(bold(X)^T bold(X))^(-1)$, whose inversion costs
+$O(P^3)$; for $P approx 10000$, gradient descent becomes the more practical choice.
+
+#strong[Gradient descent], by contrast, requires choosing a learning rate $eta$ and
+typically many iterations, with stopping criteria and oscillations to monitor. It
+remains effective even when the number of features $P$ is very large, where the
+pseudo-inverse's cubic cost becomes prohibitive.
+
+= Summary
+
+This chapter developed gradient descent as the central tool for fitting model
+parameters by numerical optimization. Starting from the intuition of walking
+downhill, we derived the update rule that moves weights opposite the gradient,
+examined how the learning rate trades off convergence speed against stability, and
+saw how #strong[batch], #strong[stochastic], and #strong[mini-batch] gradient
+descent trade accuracy of the gradient estimate for computational cost, enabling
+optimization to scale to large and streaming datasets. Map-reduce showed how batch
+gradient descent's sum-then-update structure parallelizes across machines. Finally,
+coordinate descent and the pseudo-inverse offered alternatives to gradient descent
+that are preferable in specific regimes, such as low-dimensional linear models.
+
+= References
+
+#set text(size: 0.75em)
+#references("/msml610/lectures_source/refs.bib")

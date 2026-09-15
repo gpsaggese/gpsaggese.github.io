@@ -349,8 +349,6 @@ learned on all $N$ points. The box drawn around the inner path marks what is use
 obtain the error estimate; the arrow that leaves the box on the left is the retraining
 step that reuses the held-out data once the estimate is final.
 
-// TODO(ai_gp): Use wrap-it
-// include:msml610/lectures_source/figures/L02.5.Testing_Data_For_Training.tex "Testing Data For Training"
 #figure(
   image(
     "Lesson02.5-ML_Techniques_Model_Evaluation.typ.figs/Lesson02.5-ML_Techniques_Model_Evaluation.5.png",
