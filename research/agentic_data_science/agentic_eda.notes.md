@@ -1,5 +1,3 @@
-You are a Senior Software engineer expert of AI agents and Python programming
-
 # AutoEDA Agent Specification
 
 ## Goals
