@@ -1,63 +1,107 @@
-helpers_root/dev_scripts_helpers/system_tools/create_links.py and stage_links.py
+I want to create a document that explains the auto_task workflow, including the
+different ways of executing tasks.
 
-print only the basename of the files
+I want to do it without losing any information from the docs below. So if there is
+content to be moved, we need to move it from the files
 
-Instead of printing
+Let's write a technical reference in how_to.auto_task.md but I want to make sure the
+information from the original source is not replicated,
+
+How would you do that?
+
+1) Read the following resources
+
+- ./helpers_root/dev_scripts_helpers/ai/todo_janitor.template.md
+- ./helpers_root/todo_janitor.prompt.update_plan.md
+- ./helpers_root/todo_janitor.README.md
+
+- website/docs/blog/posts/:
+  - draft.how_to.My_agentic_engineering_flow.md
+  - draft.how_to.Stacked_PRs_for_agentic_developent.md
+  - draft.how_to.A_queue_of_AI_coding_agents.md
+
+2) Read the skills
+.claude/skills/auto_task.create_specs_from_todos/SKILL.md
+.claude/skills/auto_task.criticize/SKILL.md
+.claude/skills/auto_task.execute_interactively/SKILL.md
+.claude/skills/auto_task.execute_remotely_with_single_pr/SKILL.md
+.claude/skills/auto_task.execute_with_stacked_prs/SKILL.md
+
+.claude/skills/auto_task.rules.md
+.claude/templates/auto_task.template.md
+
+3) Read the content below
+```
+### [ ] Document the flow
+
+- Go to `master`
+
+- Create a `tasks.md` (e.g., from `msml610/prompt.slides_and_book_flow.md`) in the
+  auto_task format
+
+- Review the task with
+  ```
+  claude> /auto_task.criticize tasks.md
+  ```
+
+- Then kick off the execution
+  ```
+  claude> /auto_task.execute_with_stacked_prs tasks.md
+  claude> /auto_task.execute_interactively tasks.md
+  ```
+
+ /auto_task.execute_remotely_with_single_pr tasks.md
+
+- // TODO(ai_gp): Describe the auto task rules
+
+.claude/skills/auto_task.rules.md
+.claude/templates/auto_task.template.md
+
+- Describe the auto_task skills
+
+> mdm skill l auto_task
+auto_task.create_specs_from_todos
+auto_task.criticize
+auto_task.execute_interactively
+auto_task.execute_with_stacked_prs
+
+- Once everything is clear
+
+git_create_issue_and_branch.py --gh_issue_title "Improve msml610/3.2 and 3.3 slides"
+
+Close the wrong PR
+
+gh pr close UmdTask557_Improve_msml6103_2_and_3_3_slides -c "Wrong" --delete-branch
+
+- Explain the /pr.* skills
+
+### Document the flow for 
+
+/auto_task.execute_remotely_with_single_pr
+
+This even creates automatically the issue and branch or one
+can do it manually with:
+
+> git_create_issue_and_branch.py --gh_issue_title "Replace pathlib.Path uses below with os.path" --gh_issue_body_file ./instr.md --submodules --no_abort_if_not_clean
+
+### [ ] Create one or multiple PRs
+
+- Make a decision based on `* Affected repos:` using --submodule depending
+
 ```
 
-src_file                                                                    | dst_file                                                                                                                      | current_state | target_state |
---------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------- | ------------ |
-class_project/project_template/.dockerignore                                | -                                                                                                                             | missing       | -            |
--                                                                           | msml610/tutorials/L03_knowledge_representation/.ipynb_checkpoints/L03_01_entailment_implication_inference-checkpoint.ipynb    | extra         | -            |
--                                                                           | msml610/tutorials/L03_knowledge_representation/.ipynb_checkpoints/L03_01_entailment_implication_inference_utils-checkpoint.py | extra         | -            |
--                                                                           | msml610/tutorials/L03_knowledge_representation/.ipynb_checkpoints/L03_02_wumpus_world-checkpoint.ipynb                        | extra         | -            |
-```
+## Plan: Write `helpers_root/how_to.auto_task.md`
 
-print
-
-```
-src_dir=class_project/project_template/
-dst_dir=msml610/tutorials/L03_knowledge_representation/
-
-src_file                                                                    | dst_file                                                                                                                      | current_state | target_state |
---------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------- | ------------ |
-.dockerignore                                | -                                                                                                                             | missing       | -            |
--                                                                           | L03_01_entailment_implication_inference-checkpoint.ipynb    | extra         | -            |
--                                                                           | L03_01_entailment_implication_inference_utils-checkpoint.py | extra         | -            |
--                                                                           | L03_02_wumpus_world-checkpoint.ipynb                        | extra         | -            |
-```
-
-## Plan
-- [x] Read `create_links.py` and `stage_links.py`, and `helpers/htable.py` to
-      understand table construction/printing
-- [x] `create_links.py`:
-  - [x] `_build_status_table()`: report `src_file`/`dst_file` as basenames
-        (keep `-` for the missing side)
-  - [x] `_build_stage_status_table()`: report `link`/`target_file` as
-        basenames
-  - [x] `_main()`: print `src_dir=...`/`dst_dir=...` header before the
-        `--replace_links` table, and `dst_dir=...` header before the
-        `--stage_links` table
-  - [x] Update the docstrings of the two `_build_*_table()` functions to
-        note the basename-only reporting
-- [x] `stage_links.py`:
-  - [x] `build_status_table()`: report `link`/`target_file` as basenames
-  - [x] `main()`: print `dst_dir=...` header before the table
-  - [x] Update the docstring of `build_status_table()`
-- [x] Sanity-check both scripts still parse/run (`python3 -c "import ..."` /
-      `--help`)
-- [x] `git add` the two modified files (no commit)
+- [x] Draft outline for `helpers_root/how_to.auto_task.md` and get it approved
+- [x] Write full document content following `.claude/skills/markdown.rules.md`
+  and `.claude/skills/text.rules.md`
+- [x] Verify formatting against both rule files
+- [x] `git add` the new file (do not commit)
 
 ## Result
-- Done: `create_links.py` and `stage_links.py` now print only the basename
-  of each file in the table, with a `src_dir=`/`dst_dir=` (or `dst_dir=`
-  only, for the stage tables) header printed once above the table
-  - Verified with dry-run invocations of `--replace_links`, `--stage_links`,
-    and the standalone `stage_links.py` against real dirs in the repo
-  - Staged (`git add`, not committed) both modified files inside the
-    `helpers_root` submodule
-- Not done: nothing outstanding from this task
-  - `helpers_root/dev_scripts_helpers/system_tools/test/test_lib_ffind.py`
-    and a new `test/outcomes/Test_main.test1/` dir showed up as
-    modified/untracked in `git status` inside `helpers_root`; these are
-    pre-existing, unrelated to this task, and were left untouched
+- Done: wrote `helpers_root/how_to.auto_task.md`, a narrative how-to covering
+  the auto_task pipeline (create, criticize, three execute modes), pointing to
+  `auto_task.rules.md` and each `SKILL.md` instead of duplicating conventions
+  - `git add`-ed in the `helpers_root` repo, not committed
+- Not done: nothing else from `instr.md`'s other scratch notes (pr.* skills,
+  closing wrong PRs, etc.) was in scope for this sub-task
