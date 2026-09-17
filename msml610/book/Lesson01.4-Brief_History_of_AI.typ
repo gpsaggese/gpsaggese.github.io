@@ -42,51 +42,50 @@ conclude with reflections on future risks, benefits, and open questions surround
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:15 '* AI Timeline'
 // Slide: AI Timeline
-
 The timeline diagram provided illustrates the evolution of artificial intelligence
 (AI) from its inception to the present. Each milestone is marked along a diagonal
 line, with significant events and periods in AI development annotated at various
 points. Here's a breakdown of the key phases and events depicted in the timeline:
 
-1. #strong[The Beginning (1943-1956)]: This period marks the foundational work in AI,
+1. #emph[The Beginning (1943-1956)]: This period marks the foundational work in AI,
   including the development of the McCullock-Pitts Neuron in 1943, the proposal of
   the Turing Test in 1947, and the Dartmouth Workshop in 1956, which is often
   considered the birth of AI as a field.
 
-2. #strong[Early Enthusiasm (1956-1969)]: During this time, machines began solving
+2. #emph[Early Enthusiasm (1956-1969)]: During this time, machines began solving
   mathematical problems and playing games. The programming language Lisp was
   developed in 1958, and early neural networks were explored.
 
-3. #strong[A Dose of Reality (1966-1973)]: Researchers faced challenges such as
+3. #emph[A Dose of Reality (1966-1973)]: Researchers faced challenges such as
   combinatorial explosion, where early AI methods didn't scale well. Neural networks
   were not yet ready for practical applications.
 
-4. #strong[Expert Systems Era (1970-1987)]: This era saw the rise of expert systems,
+4. #emph[Expert Systems Era (1970-1987)]: This era saw the rise of expert systems,
   which used rule-based knowledge and domain-specific reasoning. The AI industry
   began to emerge, with languages like Prolog being used for AI programming.
 
-5. #strong[AI Winter Begins (1987-1993)]: The limitations of expert systems became
+5. #emph[AI Winter Begins (1987-1993)]: The limitations of expert systems became
   apparent, as they were brittle and couldn't reason under uncertainty. This led to a
   period of reduced funding and interest in AI, known as the AI Winter.
 
-6. #strong[AI Return (1986-1990s)]: The field saw a resurgence with the debate
-  between connectionist (neural networks) and symbolic AI approaches. Machine
-  learning from examples became more prominent.
+6. #emph[AI Return (1986-1990s)]: The field saw a resurgence with the debate between
+  connectionist (neural networks) and symbolic AI approaches. Machine learning from
+  examples became more prominent.
 
-7. #strong[Big Data AI (Late 1980s-2000s)]: The availability of web-scale data,
+7. #emph[Big Data AI (Late 1980s-2000s)]: The availability of web-scale data,
   including text and images, led to data-driven methods. IBM's Watson winning
   Jeopardy! in 2011 is a notable milestone from this period.
 
-8. #strong[Deep Learning Boom (2011-Present)]: Advances in GPUs and deep learning
+8. #emph[Deep Learning Boom (2011-Present)]: Advances in GPUs and deep learning
   layers enabled breakthroughs in image and speech recognition, surpassing
   human-level performance in some tasks. The ImageNet competition in 2012 was a
   pivotal moment.
 
-9. #strong[Modern AI (2010s-Present)]: This phase includes achievements like
-  AlphaGo's victory over human champions, the development of multimodal models,
-  reinforcement learning advancements, and the rise of transformers.
+9. #emph[Modern AI (2010s-Present)]: This phase includes achievements like AlphaGo's
+  victory over human champions, the development of multimodal models, reinforcement
+  learning advancements, and the rise of transformers.
 
-10. #strong[The Future (2025 and Beyond)]: The timeline anticipates goals such as
+10. #emph[The Future (2025 and Beyond)]: The timeline anticipates goals such as
   achieving general intelligence, unified learning across domains, and human-like
   adaptability in AI systems.
 
@@ -223,9 +222,9 @@ of AI research and development.
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:177 '* The Beginning (1943-1956)'
 // Slide: The Beginning (1943-1956)
-== The Beginning (1943-1956)
-
-#strong[Artificial neuron] models, introduced by McCulloch and Pitts in 1943 #cite(
+This history opens in 1943, with the earliest attempts to formalize thought as
+computation. #strong[Artificial neuron] models, introduced by McCulloch and Pitts in
+1943 #cite(
   "mcculloch1943logical",
 ), are inspired by both brain physiology and propositional logic. These models form
 the basis of artificial neural networks, where each neuron can be in an "on" or "off"
@@ -256,7 +255,7 @@ AI to tackle complex problems beyond mere numerical calculations.
   [
     #figure(
       image("../lectures_source/figures/L01.4.Alan_Turing.jpg", width: 100%),
-      caption: [Alan Turing],
+      caption: [Alan Turing, 1951],
       kind: "figure",
       supplement: [Fig.],
       placement: auto,
@@ -276,14 +275,12 @@ AI to tackle complex problems beyond mere numerical calculations.
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:208 '* Enthusiasm and Great Expectations (1952-1969)'
 // Slide: Enthusiasm and Great Expectations (1952-1969)
-== Enthusiasm and Great Expectations (1952-1969)
-
-The early years of artificial intelligence (AI) were marked by significant
-achievements. Initially, computers were limited to performing arithmetic operations.
-However, the prevailing belief that "a machine can never do X"—where X could be tasks
-like playing games, solving puzzles, or taking IQ tests—was consistently challenged
-by AI researchers. They demonstrated that machines could indeed perform these tasks,
-one after another.
+That early promise soon fueled a decade of enthusiasm and confidence. The early years
+of artificial intelligence (AI) were marked by significant achievements. Initially,
+computers were limited to performing arithmetic operations. However, the prevailing
+belief that "a machine can never do X"—where X could be tasks like playing games,
+solving puzzles, or taking IQ tests—was consistently challenged by AI researchers.
+They demonstrated that machines could indeed perform these tasks, one after another.
 
 One notable development during this period was the creation of the #strong[General
   Problem Solver], a program designed to mimic human problem-solving abilities. It
@@ -311,7 +308,7 @@ processing.
   [
     #figure(
       image("../lectures_source/figures/L01.4.Marvin_Minsky.jpg", width: 100%),
-      caption: [Marvin Minsky],
+      caption: [Marvin Minsky (2008)],
       kind: "figure",
       supplement: [Fig.],
       placement: auto,
@@ -330,15 +327,14 @@ processing.
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:238 '* First AI Winter (1975-1980)'
 // Slide: First AI Winter (1975-1980)
-== First AI Winter (1975-1980)
-
-Early successes in artificial intelligence (AI) led to high expectations for the
-field. However, between 1965 and 1975, AI struggled to address #emph[real problems]
-effectively. One major issue was that many AI solutions were based on #emph[human
-  problem-solving methods], which did not always translate well to computational
-approaches. Additionally, AI systems faced significant challenges with _combinatorial
-explosion_. For instance, while theorem proving could tackle small problems using
-brute force methods, it failed to scale to larger, more complex issues.
+That optimism did not last. Early successes in artificial intelligence (AI) led to
+high expectations for the field. However, between 1965 and 1975, AI struggled to
+address #emph[real problems] effectively. One major issue was that many AI solutions
+were based on #emph[human problem-solving methods], which did not always translate
+well to computational approaches. Additionally, AI systems faced significant
+challenges with #emph[combinatorial explosion]. For instance, while theorem proving
+could tackle small problems using brute force methods, it failed to scale to larger,
+more complex issues.
 
 During this period, neural networks were not a viable solution either. They required
 algorithms such as backpropagation, which were not yet developed, as well as
@@ -350,14 +346,12 @@ AI slowed considerably through the late 1970s.
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:254 '* Expert Systems (1980-1990)'
 // Slide: Expert Systems (1980-1990)
-== Expert Systems (1980-1990)
-
-#strong[Expert systems], also known as "knowledge-based systems," are a class of
-artificial intelligence that combines #emph[weak methods] with #emph[extensive domain
-  knowledge] encoded as rules. These systems utilize inference engines to apply these
-rules to a set of known facts, allowing them to draw conclusions or make decisions.
-Examples of expert systems include rule-based systems and logic programming languages
-such as Prolog.
+The 1980s brought a new approach to renewed AI research. #strong[Expert systems],
+also known as "knowledge-based systems," are a class of artificial intelligence that
+combines #emph[weak methods] with #emph[extensive domain knowledge] encoded as rules.
+These systems utilize inference engines to apply these rules to a set of known facts,
+allowing them to draw conclusions or make decisions. Examples of expert systems
+include rule-based systems and logic programming languages such as Prolog.
 
 #strong[Weak AI], or "narrow AI," refers to systems that employ #emph[weak methods]
 like search and logic, which often struggle to scale effectively. Unlike general AI,
@@ -370,8 +364,6 @@ expert systems, leading to the emergence of AI as a commercial industry.
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:310 '* Second AI Winter (late 1980-early 1990)'
 // Slide: Second AI Winter (late 1980-early 1990)
-== Second AI Winter (late 1980-early 1990)
-
 The initial excitement surrounding expert systems was immense, but they ultimately
 failed to meet expectations. This shortfall can be attributed to several factors.
 First, the construction and upkeep of expert systems proved to be a challenging task.
@@ -400,8 +392,6 @@ technologies led to reduced funding and interest in AI research and development.
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:326 '* Return of Neural Networks (1986-)'
 // Slide: Return of Neural Networks (1986-)
-== Return of Neural Networks (1986-)
-
 The #emph[back-propagation algorithm] was (re)discovered in the mid-1980s, marking a
 significant advancement in the field of artificial intelligence. This algorithm,
 which was first applied to neural networks in the 1970s by Paul Werbos, plays a
@@ -431,17 +421,16 @@ variability and complexity inherent in real-world data.
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:344 '* Probabilistic Reasoning and ML (1987-)'
 // Slide: Probabilistic Reasoning and ML (1987-)
-== Probabilistic Reasoning and ML (1987-)
-
-The integration of artificial intelligence with the scientific method emphasizes the
-use of rigorous methods to evaluate performance. This approach is evident in various
-applications such as speech recognition and handwritten character recognition, where
-systematic testing is crucial to assess the effectiveness of AI systems. Benchmarks
-play a significant role in measuring progress within the field. For instance, the
-MNIST dataset is a standard benchmark for handwritten digit recognition, while
-ImageNet serves as a benchmark for image object recognition. Additionally, SAT
-Competitions provide benchmarks for evaluating the performance of boolean
-satisfiability solvers.
+Alongside this connectionist revival, AI research adopted a more rigorous, scientific
+methodology. The integration of artificial intelligence with the scientific method
+emphasizes the use of rigorous methods to evaluate performance. This approach is
+evident in various applications such as speech recognition and handwritten character
+recognition, where systematic testing is crucial to assess the effectiveness of AI
+systems. Benchmarks play a significant role in measuring progress within the field.
+For instance, the MNIST dataset is a standard benchmark for handwritten digit
+recognition, while ImageNet serves as a benchmark for image object recognition.
+Additionally, SAT Competitions provide benchmarks for evaluating the performance of
+boolean satisfiability solvers.
 
 AI has undergone a significant transformation over the years. Initially, the focus
 was on boolean logic, but it has since shifted towards probability-based approaches.
@@ -451,17 +440,16 @@ techniques. This evolution reflects a broader transition from #emph[a-priori
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:377 '* Speech Recognition: From Rules to Statistics'
 // Slide: Speech Recognition: From Rules to Statistics
-== Speech Recognition: From Rules to Statistics
-
-In the 1970s, the field of artificial intelligence saw the development of several
-ad-hoc approaches, particularly in the realm of rule-based systems. These systems,
-while innovative for their time, were characterized by limited robustness. They often
-relied on specific rules crafted for particular tasks, which made them fragile and
-prone to failure when faced with unexpected inputs or scenarios. This fragility was a
-significant drawback, as highlighted by the sentiment expressed in the quote, "Every
-time I fire a linguist, the performance of the speech recognizer goes up" (Jelinek,
-1988). This remark underscores the limitations of relying heavily on handcrafted
-rules, suggesting that removing human-crafted elements sometimes led to better system
+Speech recognition illustrates this shift especially well. In the 1970s, the field of
+artificial intelligence saw the development of several ad-hoc approaches,
+particularly in the realm of rule-based systems. These systems, while innovative for
+their time, were characterized by limited robustness. They often relied on specific
+rules crafted for particular tasks, which made them fragile and prone to failure when
+faced with unexpected inputs or scenarios. This fragility was a significant drawback,
+as highlighted by the sentiment expressed in the quote, "Every time I fire a
+linguist, the performance of the speech recognizer goes up" (Jelinek, 1988). This
+remark underscores the limitations of relying heavily on handcrafted rules,
+suggesting that removing human-crafted elements sometimes led to better system
 performance.
 
 The 1980s marked a significant shift with the introduction of #strong[Hidden Markov
@@ -482,8 +470,7 @@ extensive manual intervention.
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:395 '* Bayesian Networks (1988-)'
 // Slide: Bayesian Networks (1988-)
-== Bayesian Networks (1988-)
-
+This same period also produced a formal framework for reasoning under uncertainty.
 #strong[Bayesian networks], as introduced by Judea Pearl in 1988 #cite(
   "pearl1988probabilistic",
 ), are a fundamental concept in artificial intelligence. They establish a connection
@@ -504,7 +491,7 @@ potentially fraudulent activities.
   [
     #figure(
       image("../lectures_source/figures/L01.4.Judea_Pearl.jpg", width: 100%),
-      caption: [Judea Pearl],
+      caption: [Judea Pearl (2013)],
       kind: "figure",
       supplement: [Fig.],
       placement: auto,
@@ -523,8 +510,7 @@ potentially fraudulent activities.
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:420 '* Reinforcement Learning (1988-)'
 // Slide: Reinforcement Learning (1988-)
-== Reinforcement Learning (1988-)
-
+The same era saw a parallel advance in how agents learn from experience.
 #strong[Reinforcement learning], as introduced by Sutton in 1988 #cite(
   "sutton1988td",
 ), involves agents learning by interacting with their environment. This approach
@@ -544,7 +530,7 @@ that maximize the likelihood of achieving desired outcomes.
   [
     #figure(
       image("../lectures_source/figures/L01.4.Richard_Sutton.jpg", width: 100%),
-      caption: [Richard Sutton],
+      caption: [Richard Sutton (2025)],
       kind: "figure",
       supplement: [Fig.],
       placement: auto,
@@ -563,10 +549,9 @@ that maximize the likelihood of achieving desired outcomes.
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:441 '* Reunification (1990s-2000s)'
 // Slide: Reunification (1990s-2000s)
-== Reunification (1990s-2000s)
-
-As @fig:reunification1990s2000s shows, the diagram relates #strong[Reunification] to
-its #strong[Contributing fields] and #strong[Reunified subfields].
+By the 1990s, these separate strands began to converge into a single field. As
+@fig:reunification1990s2000s shows, the diagram relates #strong[Reunification] to its
+#strong[Contributing fields] and #strong[Reunified subfields].
 
 // rendered_images:begin
 // ```mermaid
@@ -609,8 +594,6 @@ its #strong[Contributing fields] and #strong[Reunified subfields].
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:462 '* Big Data (2001-Present)'
 // Slide: Big Data (2001-Present)
-== Big Data (2001-Present)
-
 The focus in artificial intelligence has shifted significantly from algorithms to
 data. For the past 60 years, the primary emphasis in AI was on developing
 sophisticated algorithms and models. However, in many contemporary problems, the
@@ -628,9 +611,9 @@ it feasible to analyze and extract insights from data at a scale that was previo
 unimaginable.
 
 In 2011, IBM's Watson demonstrated the power of data-driven AI by defeating human
-champions in the game of _Jeopardy!_ #cite("ferrucci2010watson"). This achievement
-underscored the potential of AI systems that can leverage vast amounts of information
-to outperform human experts in specific tasks.
+champions in the game of #emph[Jeopardy!] #cite("ferrucci2010watson"). This
+achievement underscored the potential of AI systems that can leverage vast amounts of
+information to outperform human experts in specific tasks.
 
 // A narrow, 2-column table pairs with its paragraph via `#grid`, not
 // `wrap-content` — a table is a rectangular block, not something text
@@ -663,13 +646,12 @@ to outperform human experts in specific tasks.
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:492 '* Deep Learning (2011-Present)'
 // Slide: Deep Learning (2011-Present)
-== Deep Learning (2011-Present)
-
-#strong[Deep learning] refers to machine learning models that consist of multiple
-layers of computing elements, allowing them to learn complex patterns in data.
-Although the foundational ideas of deep learning have been around since the 1970s,
-they were largely forgotten until their resurgence in the 1990s, when they achieved
-notable success in digit recognition tasks.
+This data-driven momentum set the stage for deep learning's rise. #strong[Deep
+  learning] refers to machine learning models that consist of multiple layers of
+computing elements, allowing them to learn complex patterns in data. Although the
+foundational ideas of deep learning have been around since the 1970s, they were
+largely forgotten until their resurgence in the 1990s, when they achieved notable
+success in digit recognition tasks.
 
 As shown in @fig:deeplearning2011present, deep learning bridges the gap between
 traditional machine learning, which relies on handcrafted features, and raw input
@@ -767,8 +749,6 @@ speech.
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:570 '* Progress in AI Research'
 // Slide: Progress in AI Research
-== Progress in AI Research
-
 The field of deep learning has seen a surge in interest, driven by significant
 advancements in computational capabilities and algorithmic innovations. This growing
 enthusiasm is reflected in the rapid improvements in training times and the
@@ -807,11 +787,10 @@ evolution of AI capabilities.
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:592 '* What Can AI Do Today? (1/2)'
 // Slide: What Can AI Do Today? (1/2)
-== What Can AI Do Today? (1/2)
-
-Robotic vehicles have made significant strides, with Waymo's driverless fleet
-achieving remarkable milestones. The fleet has logged far more miles than its initial
-10 million-mile safety target, showcasing the advancements in autonomous vehicle
+This growth translates into concrete capabilities across many domains today. Robotic
+vehicles have made significant strides, with Waymo's driverless fleet achieving
+remarkable milestones. The fleet has logged far more miles than its initial 10
+million-mile safety target, showcasing the advancements in autonomous vehicle
 technology.
 
 #wrap-content(
@@ -897,8 +876,6 @@ improving user engagement and satisfaction.
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:629 '* What Can AI Do Today? (2/2)'
 // Slide: What Can AI Do Today? (2/2)
-== What Can AI Do Today? (2/2)
-
 The history of AI in game playing is marked by several significant milestones. In
 1997, IBM's Deep Blue made headlines by defeating world chess champion Garry
 Kasparov. This event was a landmark in AI development, showcasing the potential of
@@ -975,17 +952,16 @@ intelligence.
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:662 '* The AI Hype Cycle'
 // Slide: The AI Hype Cycle
-== The AI Hype Cycle
-
-Enthusiasm for artificial intelligence has not grown steadily over the years;
-instead, it has experienced cycles of boom and bust. Historically, there have been
-two significant "AI winters," periods marked by a decline in interest and funding
-following unmet expectations. The current boom in AI is primarily driven by the
-availability of vast amounts of data and increased computational power, rather than a
-breakthrough in a single algorithm. The history of AI development shows periods of
-high enthusiasm followed by downturns, from the early enthusiasm, through the rise
-and fall of expert systems, to the current deep learning and large language model
-boom, punctuated by the two AI winters.
+Despite these achievements, AI's history is not one of steady progress. Enthusiasm
+for artificial intelligence has not grown steadily over the years; instead, it has
+experienced cycles of boom and bust. Historically, there have been two significant
+"AI winters," periods marked by a decline in interest and funding following unmet
+expectations. The current boom in AI is primarily driven by the availability of vast
+amounts of data and increased computational power, rather than a breakthrough in a
+single algorithm. The history of AI development shows periods of high enthusiasm
+followed by downturns, from the early enthusiasm, through the rise and fall of expert
+systems, to the current deep learning and large language model boom, punctuated by
+the two AI winters.
 
 A key idea to consider is that past booms in AI also seemed inevitable at the time,
 which serves as a reason for caution regarding current claims about the imminent
@@ -996,12 +972,10 @@ disillusionment.
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:713 '# Risks and Benefits of AI'
 // Slide: Risks and Benefits of AI
-= Risks and Benefits of AI
+#strong[Risks and Benefits of AI]
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:715 '* Benefits of AI'
 // Slide: Benefits of AI
-== Benefits of AI
-
 #emph[Human intelligence] has been the driving force behind the development of our
 civilization. As we advance towards greater machine intelligence, we anticipate
 improvements in human society. The idea is encapsulated in the phrase, "First solve
@@ -1039,14 +1013,12 @@ prosperous future for all.
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:736 '* Risks of AI (1/2)'
 // Slide: Risks of AI (1/2)
-== Risks of AI (1/2)
-
-The development of #emph[autonomous weapons] raises significant ethical and strategic
-concerns. These systems are designed to locate and eliminate targets without human
-intervention, allowing for the deployment of a large number of weapons
-simultaneously. This capability could potentially lead to escalated conflicts and
-unintended casualties, as the decision-making process is entirely in the hands of
-machines.
+Alongside these benefits, AI carries serious risks. The development of
+#emph[autonomous weapons] raises significant ethical and strategic concerns. These
+systems are designed to locate and eliminate targets without human intervention,
+allowing for the deployment of a large number of weapons simultaneously. This
+capability could potentially lead to escalated conflicts and unintended casualties,
+as the decision-making process is entirely in the hands of machines.
 
 In the realm of #emph[surveillance and persuasion], artificial intelligence plays a
 pivotal role. AI technologies enable mass surveillance, allowing governments and
@@ -1115,8 +1087,6 @@ experts and malicious actors.
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:767 '* Risks of AI (2/2)'
 // Slide: Risks of AI (2/2)
-== Risks of AI (2/2)
-
 The impact of machines on employment is a multifaceted issue. On one hand, machines
 have the potential to eliminate jobs by automating tasks previously performed by
 humans. However, there is a rebuttal to this concern: machines can enhance
@@ -1138,9 +1108,8 @@ reliability.
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:786 '* Human-Level AI (AGI)'
 // Slide: Human-Level AI (AGI)
-== Human-Level AI (AGI)
-
-The concept of #strong[Human-level AI], also known as #strong[Artificial General
+Beyond these near-term risks lies a longer-term question: human-level AI itself. The
+concept of #strong[Human-level AI], also known as #strong[Artificial General
   Intelligence] (AGI), refers to machines that can learn to perform any task that a
 human can do. This level of AI represents a significant leap from current
 capabilities, where machines are typically specialized for specific tasks. The
@@ -1162,8 +1131,6 @@ self-improving.
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:838 '* The Problem of Control'
 // Slide: The Problem of Control
-== The Problem of Control
-
 Can humans control machines more intelligent than themselves? This question raises
 significant concerns about the potential risks and challenges associated with
 advanced artificial intelligence (AI).
@@ -1192,8 +1159,6 @@ importance of carefully considering the objectives we set for AI systems.
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:857 '* Solutions to Problem of Control'
 // Slide: Solutions to Problem of Control
-== Solutions to Problem of Control
-
 The #strong[checks-and-balances] approach is a naive solution to AI governance. It
 relies on researchers and corporations to develop voluntary self-governance
 principles, while governments and international organizations establish advisory
@@ -1217,8 +1182,6 @@ cooperation and alignment between AI systems and their human users.
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:874 '* Cooperative Inverse Reinforcement Learning'
 // Slide: Cooperative Inverse Reinforcement Learning
-== Cooperative Inverse Reinforcement Learning
-
 AI systems can infer human goals by observing actions and behaviors. For instance,
 consider a scenario where an AI observes a person, GP, who appears tired, sits on the
 couch, notices a messy table, and then starts watching TV. From these observations,
@@ -1238,26 +1201,25 @@ inference), action (AI acts), and feedback (human reaction).
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:930 '* E/acc vs P(doom)'
 // Slide: E/acc vs P(doom)
-== E/acc vs P(doom)
+Zooming out from specific safety techniques, AI's future direction remains hotly
+debated. #strong[Accelerationism], often abbreviated as e/acc, is the belief that
+rapid progress in artificial intelligence is either beneficial or inevitable.
+Proponents argue that more powerful AI tools can be leveraged to solve global
+problems, suggesting that efforts to slow down AI development are either unrealistic
+or counterproductive.
 
-Accelerationism, often abbreviated as #emph[e/acc], is the belief that rapid progress
-in artificial intelligence is either beneficial or inevitable. Proponents argue that
-more powerful AI tools can be leveraged to solve global problems, suggesting that
-efforts to slow down AI development are either unrealistic or counterproductive.
-
-The term #emph["Probability of Doom"] is used informally by AI researchers to
+The term #strong["Probability of Doom"] is used informally by AI researchers to
 estimate the likelihood that advanced AI could cause catastrophic harm. This concept
 helps quantify the risks associated with AI development, providing a framework for
 discussing potential dangers.
 
 // From: msml610/lectures_source/Lesson01.4-Brief_History_of_AI.smd:956 '* My 2 Cents'
 // Slide: My 2 Cents
-== My 2 Cents
-
-AI alignment is a pressing issue that, while currently philosophical, is expected to
-become a tangible challenge in the future. Many in the tech industry have leveraged
-the topic of AI alignment more as a marketing tool for themselves and their companies
-rather than addressing the core issues.
+Where do I personally land in this debate? AI alignment is a pressing issue that,
+while currently philosophical, is expected to become a tangible challenge in the
+future. Many in the tech industry have leveraged the topic of AI alignment more as a
+marketing tool for themselves and their companies rather than addressing the core
+issues.
 
 #wrap-content(
   [
