@@ -40,6 +40,8 @@ switches, balancing productivity gains against review complexity
   - **Sequential tasks**: Each task must complete before the next begins, and
     feedback between steps shapes future work, forcing a linear progression
 
+// TODO(ai_gp): Use green for human tasks and blue for agent tasks in the entire file.
+// TODO(ai_gp): Rename Task 1 as "Assign Task 1", "Review Task 1"
 ```mermaid
 graph TB
   classDef execute fill:#2ecc71,stroke:#27ae60,color:#fff,font-weight:bold
@@ -89,6 +91,8 @@ graph TB
   from the loop, leaving only: run -> review -> repeat with faster feedback and lower
   cognitive load per cycle
 
+// TODO(ai_gp): Debug why the unicode icons are not rendered by render_images
+// TODO(ai_gp): Use green for human tasks and blue for agent tasks in the entire file.
 ```mermaid
 graph LR
     subgraph spec["📋 Spec Phase"]
@@ -187,69 +191,132 @@ graph LR
 
 ### GitHub Stacked PRs
 
-- GitHub started offering native stacked PR support in summer 2026, allowing multiple
-  PRs to stack on a single branch with automatic dependency tracking
-  - Each PR links to the previous one, and merging happens in order
-- **Creating the stack**: branch each task off the previous one and open a PR against
-  that parent branch:
+- GitHub provides native stacked PR support (currently in public preview): a stack is
+  a dependency chain of PRs where the bottom PR targets the trunk branch (e.g., `main`)
+  and each PR above it targets the branch of the PR below it
+  - GitHub shows a stack icon and a stack map on every PR in the chain, and it
+    automatically retargets the PR above when the PR below merges
+- There are two ways to build a stack: the `gh stack` CLI extension (fastest for an
+  agent-driven workflow) or the GitHub web UI (no extension required)
 
-  - Create first PR `Step 1`
-    ```bash
-    # Create the branch.
-    > git checkout -b feature/step-1-schema main
-    # ... agent adds database schema ...
-    > git add -A && git commit -m "Step 1: add database schema"
-    > git push -u origin feature/step-1-schema
-    # ... agent works ...
+#### Option A: `gh stack` CLI Extension
 
-    # Create review on GitHub.
-    > gh pr create --base main --head feature/step-1-schema \
-        --title "Step 1: add database schema"
-    ```
-
-  - Create second PR `Step 2`
-    ```bash
-    > git checkout -b feature/step-2-api feature/step-1-schema
-    # ... agent adds API endpoint ...
-    > git add -A && git commit -m "Step 2: add API endpoint"
-    > git push -u origin feature/step-2-api
-    > gh pr create --base feature/step-1-schema --head feature/step-2-api \
-        --title "Step 2: add API endpoint"
-    ```
-
-  - Create last PR `Step 3`
-    ```bash
-    > git checkout -b feature/step-3-ui feature/step-2-api
-    # ... agent adds UI component ...
-    > git add -A && git commit -m "Step 3: add UI component"
-    > git push -u origin feature/step-3-ui
-    > gh pr create --base feature/step-2-api --head feature/step-3-ui \
-        --title "Step 3: add UI component"
-    ```
-
-- GitHub renders the three PRs as a linked stack. When `feature/step-1-schema` merges
-  into `main`, GitHub automatically retargets Step 2's PR base to `main`
-- **Updating an earlier PR**: if review feedback lands on Step 1, every downstream
-  branch needs a manual rebase:
+- One-time setup:
 
   ```bash
-  > git checkout feature/step-1-schema
-  # ... apply fix ...
-  > git add -A && git commit -m "Fix: address review comment"
-  > git push
-
-  > git checkout feature/step-2-api
-  > git rebase feature/step-1-schema
-  > git push --force-with-lease
-
-  > git checkout feature/step-3-ui
-  > git rebase feature/step-2-api
-  > git push --force-with-lease
+  > gh extension install github/gh-stack
   ```
 
+- Create the stack for our three-task example:
+
+  ```bash
+  # Initialize the stack: creates and checks out the first branch off main.
+  > gh stack init feature/step-1-schema
+  # ... agent adds database schema ...
+  > git add -A && git commit -m "Step 1: add database schema"
+
+  # Add the second layer on top of the first.
+  > gh stack add feature/step-2-api
+  # ... agent adds API endpoint ...
+  > git add -A && git commit -m "Step 2: add API endpoint"
+
+  # Add the third layer on top of the second.
+  > gh stack add feature/step-3-ui
+  # ... agent adds UI component ...
+  > git add -A && git commit -m "Step 3: add UI component"
+
+  # Push every branch and create the three linked PRs in one shot.
+  > gh stack submit --auto
+  ```
+
+- `gh stack submit` pushes all branches and creates one PR per layer with the bases
+  wired up automatically: Step 1 targets `main`, Step 2 targets
+  `feature/step-1-schema`, and Step 3 targets `feature/step-2-api`
+- Check the stack at any time:
+
+  ```bash
+  > gh stack view
+  ```
+
+- **Updating an earlier PR**: if review feedback lands on Step 1, fix it in place and
+  let `gh stack` cascade the rebase instead of rebasing each branch by hand:
+
+  ```bash
+  > gh stack checkout feature/step-1-schema
+  # ... apply fix ...
+  > git add -A && git commit -m "Fix: address review comment"
+
+  # Rebase every branch above Step 1 onto the fixed commit and push.
+  > gh stack rebase --upstack
+  > gh stack push
+  > gh stack top
+  ```
+
+- **Merging the stack**: stacks merge bottom-up. Every PR below the one you merge
+  must already be approved with passing checks, and the stack must have a linear
+  history:
+
+  ```bash
+  # Merge only Step 1: Step 2 and Step 3 auto-retarget onto main.
+  > gh stack merge feature/step-1-schema --squash
+
+  # Merge Step 1 and Step 2 together, leaving Step 3 open.
+  > gh stack merge feature/step-2-api --squash
+
+  # Merge the entire stack at once.
+  > gh stack merge --yes --squash
+  ```
+
+  - Branch protection rules and required checks are enforced on every PR in the
+    stack, not only the bottom one, and stacks work with merge queues
+
+#### Option B: GitHub Web UI (No Extension)
+
+- Create the first PR normally, targeting `main`:
+
+  ```bash
+  > git checkout -b feature/step-1-schema main
+  # ... agent adds database schema ...
+  > git add -A && git commit -m "Step 1: add database schema"
+  > git push -u origin feature/step-1-schema
+  > gh pr create --base main --head feature/step-1-schema \
+      --title "Step 1: add database schema"
+  ```
+
+- Create the second PR against the first PR's branch, then click **Create stack** on
+  the PR page (GitHub also shows a banner offering this automatically once it detects
+  the chained bases):
+
+  ```bash
+  > git checkout -b feature/step-2-api feature/step-1-schema
+  # ... agent adds API endpoint ...
+  > git add -A && git commit -m "Step 2: add API endpoint"
+  > git push -u origin feature/step-2-api
+  > gh pr create --base feature/step-1-schema --head feature/step-2-api \
+      --title "Step 2: add API endpoint"
+  ```
+
+- Add the third PR the same way. From here on you can also use the stack icon on any
+  PR in the chain and choose **Add to stack**, which points the new PR's base at the
+  current top of the stack automatically:
+
+  ```bash
+  > git checkout -b feature/step-3-ui feature/step-2-api
+  # ... agent adds UI component ...
+  > git add -A && git commit -m "Step 3: add UI component"
+  > git push -u origin feature/step-3-ui
+  > gh pr create --base feature/step-2-api --head feature/step-3-ui \
+      --title "Step 3: add UI component"
+  ```
+
+- Once linked, GitHub renders the three PRs as a connected stack. Merging
+  `feature/step-1-schema` into `main` automatically retargets Step 2's base to `main`
+
 - Refer to
-  [GitHub's stacked PRs documentation](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-stacked-pull-requests)
-  for setup and workflow details
+  [GitHub's stacked PRs documentation](https://docs.github.com/en/pull-requests/get-started/about-stacked-prs)
+  and the
+  [CLI quickstart](https://docs.github.com/en/pull-requests/get-started/stacked-prs-quickstart)
+  for full setup and workflow details
 
 ### GitHub Stacked PRs + Helpers
 
@@ -293,6 +360,19 @@ graph LR
   # Optionally skip PR creation
   > invoke git_branch_create --name "feature/step-1-schema" --no-create-pr
   ```
+
+#### Linking Helper-Created Branches into a Native Stack
+
+- Once the helpers scripts have created the branch chain (each branch created off the
+  previous one, per task), link them into one native GitHub stack without recreating
+  anything locally:
+
+  ```bash
+  > gh stack link feature/step-1-schema feature/step-2-api feature/step-3-ui
+  ```
+
+- This combines the helpers framework's issue tracking and worktree support with
+  GitHub's native stack view, bottom-up merge ordering, and automatic PR retargeting
 
 #### Syncing with Master
 
