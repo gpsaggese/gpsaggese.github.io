@@ -29,8 +29,8 @@ switches, balancing productivity gains against review complexity
     agent make expensive mistakes
 - As humans, we avoid constant context switching and prefer continuous blocks of
   similar work
-  - E.g., reviewing five related changes is more productive and error-resistant than
-    alternating between running tasks, reviewing, running again, reviewing again
+  - E.g., reviewing five related changes is more productive than alternating between
+    running tasks, reviewing, running again, reviewing again
 
 ## Understanding Your Workflow
 
@@ -38,27 +38,28 @@ switches, balancing productivity gains against review complexity
   - **Independent tasks**: Agents run in parallel on separate paths, and you review
     all results when complete
   - **Sequential tasks**: Each task must complete before the next begins, and
-    feedback between steps shapes future work
-    - Sequential tasks depend on feedback from previous steps, forcing a linear
-      progression
+    feedback between steps shapes future work, forcing a linear progression
 
 ```mermaid
 graph TB
+  classDef execute fill:#2ecc71,stroke:#27ae60,color:#fff,font-weight:bold
+  classDef review fill:#3498db,stroke:#2980b9,color:#fff,font-weight:bold
+  
   subgraph independent["Independent Tasks (Parallel)"]
-    A1["Task 1"] -->|run| A1r["Review 1"]
-    A2["Task 2"] -->|run| A2r["Review 2"]
-    A3["Task 3"] -->|run| A3r["Review 3"]
+    A1["Assign Task 1"]:::execute -->|run| A1r["Review Task 1"]:::review
+    A2["Assign Task 2"]:::execute -->|run| A2r["Review Task 2"]:::review
+    A3["Assign Task 3"]:::execute -->|run| A3r["Review Task 3"]:::review
     A1r -->|finish| end1["Done"]
     A2r -->|finish| end1
     A3r -->|finish| end1
   end
 
   subgraph sequential["Sequential Tasks"]
-    B1["Task 1"] -->|run| B1r["Review 1"]
-    B1r -->|feedback| B2["Task 2"]
-    B2 -->|run| B2r["Review 2"]
-    B2r -->|feedback| B3["Task 3"]
-    B3 -->|run| B3r["Review 3"]
+    B1["Assign Task 1"]:::execute -->|run| B1r["Review Task 1"]:::review
+    B1r -->|feedback| B2["Assign Task 2"]:::execute
+    B2 -->|run| B2r["Review Task 2"]:::review
+    B2r -->|feedback| B3["Assign Task 3"]:::execute
+    B3 -->|run| B3r["Review Task 3"]:::review
   end
 ```
 
@@ -85,26 +86,44 @@ graph TB
 ## Strategy 2: Precompiled Task List
 
 - This approach is still interactive, but the idea is to remove spec-writing time
-  from the loop, leaving only: run → review → repeat with faster feedback and lower
+  from the loop, leaving only: run -> review -> repeat with faster feedback and lower
   cognitive load per cycle
 
 ```mermaid
-timeline
-  title Interactive Workflow: Tight Feedback Loops
-  Spec All : Write complete spec list
-  Loop 1: Assign Task 1
-  Loop 1: Agent runs
-  Loop 1: You review
-  Loop 1: Assign Task 2
-  Loop 2: Agent runs
-  Loop 2: You review
-  Loop 2: Assign Task 3
-  Loop 3: Agent runs
-  Loop 3: You review
+graph LR
+    classDef execute fill:#2ecc71,stroke:#27ae60,color:#fff,font-weight:bold
+    classDef review fill:#3498db,stroke:#2980b9,color:#fff,font-weight:bold
+    
+    subgraph spec["📋 Spec Phase"]
+        S["Write complete spec list"]:::review
+    end
+    
+    subgraph loop1["🔄 Loop 1"]
+        L1a["👤 You assign Task 1"]:::review
+        L1b["🤖 Agent runs"]:::execute
+        L1c["👤 You review"]:::review
+        L1a --> L1b --> L1c
+    end
+    
+    subgraph loop2["🔄 Loop 2"]
+        L2a["👤 You assign Task 2"]:::review
+        L2b["🤖 Agent runs"]:::execute
+        L2c["👤 You review"]:::review
+        L2a --> L2b --> L2c
+    end
+    
+    subgraph loop3["🔄 Loop 3"]
+        L3a["👤 You assign Task 3"]:::review
+        L3b["🤖 Agent runs"]:::execute
+        L3c["👤 You review"]:::review
+        L3a --> L3b --> L3c
+    end
+    
+    spec --> loop1 --> loop2 --> loop3
 ```
 
-- A variation of the precompiled is to let the agent go ahead through the task list
-  and commit multiple times
+- A variation of the precompiled task list is to let the agent go ahead through the
+  task list and commit multiple times
 - **Cons**:
   - Reviewing the work becomes difficult since in Git / GitHub the unit of work is
     typically a PR as a group of commits and not a list of commits
@@ -116,6 +135,7 @@ timeline
   - Agent completes multiple tasks in sequence
   - Agent creates multiple PRs automatically (one per task or logical change)
   - You review all PRs together when the agent finishes
+  - All stacked PRs are merged together in sequence
 - **Pros**:
   - This creates a single uninterrupted work block for the user and the agent
 - **Cons**
@@ -127,15 +147,29 @@ timeline
     downstream changes (aka the problem of "stacked PRs")
 
 ```mermaid
-timeline
-  title Stacked PRs: Single Long Run + Batch Review
-  Spec All : Write complete spec list
-  Run Phase : Agent Task 1
-  Run Phase : Agent Task 2
-  Run Phase : Agent Task 3
-  Run Phase : All PRs created
-  Review Phase: Review all PRs
-  Review Phase: Rebase if needed
+graph LR
+    classDef execute fill:#2ecc71,stroke:#27ae60,color:#fff,font-weight:bold
+    classDef review fill:#3498db,stroke:#2980b9,color:#fff,font-weight:bold
+    
+    subgraph spec["📋 Spec Phase"]
+        S["Write complete spec list"]:::review
+    end
+    
+    subgraph run["🤖 Run Phase"]
+        R1["Agent Task 1"]:::execute
+        R2["Agent Task 2"]:::execute
+        R3["Agent Task 3"]:::execute
+        R4["All PRs created"]:::execute
+        R1 --> R2 --> R3 --> R4
+    end
+    
+    subgraph review["👤 Review Phase"]
+        V1["Review all PRs"]:::review
+        V2["Rebase if needed"]:::review
+        V1 --> V2
+    end
+    
+    spec --> run --> review
 ```
 
 ## When to Use Each Strategy
@@ -159,32 +193,116 @@ timeline
 
 ### GitHub Stacked PRs
 
-- GitHub started offering native stacked PR support in summer 2026, allowing multiple
-  PRs to stack on a single branch with automatic dependency tracking
-  - Each PR links to the previous one, and merging happens in order
-- **Creating the stack**: branch each task off the previous one and open a PR against
-  that parent branch:
+- GitHub provides native stacked PR support (currently in public preview): a stack is
+  a dependency chain of PRs where the bottom PR targets the trunk branch (e.g., `main`)
+  and each PR above it targets the branch of the PR below it
+  - GitHub shows a stack icon and a stack map on every PR in the chain, and it
+    automatically retargets the PR above when the PR below merges
+- There are two ways to build a stack: the `gh stack` CLI extension (fastest for an
+  agent-driven workflow) or the GitHub web UI (no extension required)
+
+#### Option A: `gh stack` CLI Extension
+
+- One-time setup:
 
   ```bash
-  # Create the branch.
+  > gh extension install github/gh-stack
+  ```
+
+- Create the stack for our three-task example:
+
+  ```bash
+  # Initialize the stack: creates and checks out the first branch off main.
+  > gh stack init feature/step-1-schema
+  # ... agent adds database schema ...
+  > git add -A && git commit -m "Step 1: add database schema"
+
+  # Add the second layer on top of the first.
+  > gh stack add feature/step-2-api
+  # ... agent adds API endpoint ...
+  > git add -A && git commit -m "Step 2: add API endpoint"
+
+  # Add the third layer on top of the second.
+  > gh stack add feature/step-3-ui
+  # ... agent adds UI component ...
+  > git add -A && git commit -m "Step 3: add UI component"
+
+  # Push every branch and create the three linked PRs in one shot.
+  > gh stack submit --auto
+  ```
+
+- `gh stack submit` pushes all branches and creates one PR per layer with the bases
+  wired up automatically: Step 1 targets `main`, Step 2 targets
+  `feature/step-1-schema`, and Step 3 targets `feature/step-2-api`
+- Check the stack at any time:
+
+  ```bash
+  > gh stack view
+  ```
+
+- **Updating an earlier PR**: if review feedback lands on Step 1, fix it in place and
+  let `gh stack` cascade the rebase instead of rebasing each branch by hand:
+
+  ```bash
+  > gh stack checkout feature/step-1-schema
+  # ... apply fix ...
+  > git add -A && git commit -m "Fix: address review comment"
+
+  # Rebase every branch above Step 1 onto the fixed commit and push.
+  > gh stack rebase --upstack
+  > gh stack push
+  > gh stack top
+  ```
+
+- **Merging the stack**: stacks merge bottom-up. Every PR below the one you merge
+  must already be approved with passing checks, and the stack must have a linear
+  history:
+
+  ```bash
+  # Merge only Step 1: Step 2 and Step 3 auto-retarget onto main.
+  > gh stack merge feature/step-1-schema --squash
+
+  # Merge Step 1 and Step 2 together, leaving Step 3 open.
+  > gh stack merge feature/step-2-api --squash
+
+  # Merge the entire stack at once.
+  > gh stack merge --yes --squash
+  ```
+
+  - Branch protection rules and required checks are enforced on every PR in the
+    stack, not only the bottom one, and stacks work with merge queues
+
+#### Option B: GitHub Web UI (No Extension)
+
+- Create the first PR normally, targeting `main`:
+
+  ```bash
   > git checkout -b feature/step-1-schema main
   # ... agent adds database schema ...
   > git add -A && git commit -m "Step 1: add database schema"
   > git push -u origin feature/step-1-schema
-  # ... agent works ...
-
-  # Create review on GitHub.
   > gh pr create --base main --head feature/step-1-schema \
       --title "Step 1: add database schema"
   ```
-  ```
+
+- Create the second PR against the first PR's branch, then click **Create stack** on
+  the PR page (GitHub also shows a banner offering this automatically once it detects
+  the chained bases):
+
+  ```bash
   > git checkout -b feature/step-2-api feature/step-1-schema
   # ... agent adds API endpoint ...
   > git add -A && git commit -m "Step 2: add API endpoint"
   > git push -u origin feature/step-2-api
   > gh pr create --base feature/step-1-schema --head feature/step-2-api \
       --title "Step 2: add API endpoint"
+  ```
 
+- Add the third PR the same way. From here on you can also use the stack icon on any
+  PR in the chain and choose **Add to stack**, which points the new PR's base at the
+  current top of the stack automatically:
+
+  ```bash
   > git checkout -b feature/step-3-ui feature/step-2-api
   # ... agent adds UI component ...
   > git add -A && git commit -m "Step 3: add UI component"
@@ -193,29 +311,14 @@ timeline
       --title "Step 3: add UI component"
   ```
 
-- GitHub renders the three PRs as a linked stack. When `feature/step-1-schema` merges
-  into `main`, GitHub automatically retargets Step 2's PR base to `main`
-- **Updating an earlier PR**: if review feedback lands on Step 1, every downstream
-  branch needs a manual rebase:
-
-  ```bash
-  > git checkout feature/step-1-schema
-  # ... apply fix ...
-  > git add -A && git commit -m "Fix: address review comment"
-  > git push
-
-  > git checkout feature/step-2-api
-  > git rebase feature/step-1-schema
-  > git push --force-with-lease
-
-  > git checkout feature/step-3-ui
-  > git rebase feature/step-2-api
-  > git push --force-with-lease
-  ```
+- Once linked, GitHub renders the three PRs as a connected stack. Merging
+  `feature/step-1-schema` into `main` automatically retargets Step 2's base to `main`
 
 - Refer to
-  [GitHub's stacked PRs documentation](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-stacked-pull-requests)
-  for setup and workflow details
+  [GitHub's stacked PRs documentation](https://docs.github.com/en/pull-requests/get-started/about-stacked-prs)
+  and the
+  [CLI quickstart](https://docs.github.com/en/pull-requests/get-started/stacked-prs-quickstart)
+  for full setup and workflow details
 
 ### GitHub Stacked PRs + Helpers
 
@@ -260,6 +363,19 @@ timeline
   > invoke git_branch_create --name "feature/step-1-schema" --no-create-pr
   ```
 
+#### Linking Helper-Created Branches into a Native Stack
+
+- Once the helpers scripts have created the branch chain (each branch created off the
+  previous one, per task), link them into one native GitHub stack without recreating
+  anything locally:
+
+  ```bash
+  > gh stack link feature/step-1-schema feature/step-2-api feature/step-3-ui
+  ```
+
+- This combines the helpers framework's issue tracking and worktree support with
+  GitHub's native stack view, bottom-up merge ordering, and automatic PR retargeting
+
 #### Syncing with Master
 
 - After creating your branch stack, use `invoke git_merge_master` to bring in changes
@@ -301,68 +417,6 @@ timeline
   # Filter to specific file types
   > invoke git_branch_diff --target master --file-types py,md
   ```
-
-### Git-Spice
-
-- `git-spice` is a CLI tool designed specifically for managing stacked PR workflows
-  It automates:
-  - Creating and managing branch stacks
-  - Rebasing dependent changes
-  - Syncing multiple PRs in batch
-- **Creating the stack**: `gs branch create` stacks a new branch on top of the
-  current one and, with `-m`, commits the staged changes in the same step. There is
-  no need to name a base branch by hand: `gs` tracks it automatically
-
-```bash
-> gs repo init
-
-# ... agent adds database schema ...
-> git add -A
-> gs branch create feature/step-1-schema -m "Step 1: add database schema"
-
-# ... agent adds API endpoint ...
-> git add -A
-> gs branch create feature/step-2-api -m "Step 2: add API endpoint"
-
-# ... agent adds UI component ...
-> git add -A
-> gs branch create feature/step-3-ui -m "Step 3: add UI component"
-
-> gs stack submit
-```
-
-Each `gs branch create` call stacks on top of the branch you were on, so Step 2 lands
-on Step 1 and Step 3 lands on Step 2 automatically. `gs stack submit` opens (or
-updates) all three PRs in one command, setting each PR's base to its parent branch
-**Updating an earlier PR**: `gs commit amend` restacks every downstream branch by
-default, so there is no manual rebase chain:
-
-```bash
-> gs branch checkout feature/step-1-schema
-# ... apply fix ...
-> git add -A
-> gs commit amend
-
-> gs stack submit
-```
-
-`gs commit amend` amends the fix into Step 1 and automatically rebases Step 2 and
-Step 3 on top of it. `gs stack submit` then pushes the updated branches and refreshes
-all three PRs
-Refer to the [git-spice documentation](https://github.com/abhinav/git-spice) for
-installation and usage
-
-#### Comparing the Two Workflows
-
-| Operation                      | GitHub CLI (`gh` / `git`)                        | `git-spice` (`gs`)                                           |
-| :----------------------------- | :----------------------------------------------- | :----------------------------------------------------------- |
-| Create one branch in the stack | `git checkout -b` (name parent manually)         | `gs branch create` (parent tracked automatically)            |
-| Open all PRs                   | One `gh pr create` per branch, base set manually | One `gs stack submit` for the whole stack                    |
-| Fix an earlier task            | Rebase each downstream branch by hand            | `gs commit amend` restacks downstream branches automatically |
-| Push fixes to all PRs          | One `git push --force-with-lease` per branch     | One `gs stack submit`                                        |
-`git-spice` trades a bit of setup (`gs repo init`) for automation that scales better
-as the stack grows: a 6-task stack means 6 manual rebases with plain `git`, but the
-same `gs commit amend` call regardless of stack length
 
 ## Key Takeaways
 

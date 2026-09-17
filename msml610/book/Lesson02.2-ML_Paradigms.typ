@@ -31,7 +31,6 @@ framing problems appropriately and choosing suitable algorithms.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:7 '# Machine Learning Paradigms'
 // Slide: Machine Learning Paradigms
-= Machine Learning Paradigms
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:9 '## Major Paradigms'
 // Slide: Major Paradigms
@@ -39,7 +38,6 @@ framing problems appropriately and choosing suitable algorithms.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:11 '* Machine Learning Paradigms: A Taxonomy'
 // Slide: Machine Learning Paradigms: A Taxonomy
-
 How do the major machine learning paradigms differ in the way they access data and
 receive feedback? The answer turns on two axes: whether labeled outputs are
 available, and whether the learner interacts with its environment sequentially or
@@ -80,30 +78,30 @@ algorithm.
 //          fontcolor="#26215C", color="#D8D6EE", penwidth=1.2,
 //          height=0.46, margin="0.18,0.09"];
 //   edge  [arrowhead=none, penwidth=1.4, color="#B9B6D6"];
-// 
+//
 //   root [label="Learning Paradigms", shape=box, style="rounded,filled",
 //         fillcolor="#26215C", fontcolor="white", fontsize=14, penwidth=0,
 //         margin="0.26,0.16"];
-// 
+//
 //   // Label availability - violet
 //   label_avail [label="Label Availability", fillcolor="white", color="#7C74D6", fontcolor="#45296B", penwidth=1.6, fontsize=12];
 //   supervised   [label=<<b>Supervised</b><br/><font point-size="9" color="#45296B">Labeled input-output pairs</font>>, fillcolor="#EFEDFC", color="#CBC7F0", fontcolor="#45296B"];
 //   unsupervised [label=<<b>Unsupervised</b><br/><font point-size="9" color="#45296B">Unlabeled data, discover structure</font>>, fillcolor="#EFEDFC", color="#CBC7F0", fontcolor="#45296B"];
 //   selfsup      [label=<<b>Self-supervised</b><br/><font point-size="9" color="#45296B">Labels derived from data</font>>, fillcolor="#EFEDFC", color="#CBC7F0", fontcolor="#45296B"];
 //   semisup      [label=<<b>Semi-supervised</b><br/><font point-size="9" color="#45296B">Mixed labeled + unlabeled</font>>, fillcolor="#EFEDFC", color="#CBC7F0", fontcolor="#45296B"];
-// 
+//
 //   // Interactive - blue
 //   interactive  [label="Interactive/Sequential", fillcolor="white", color="#3E86C8", fontcolor="#1F4E79", penwidth=1.6, fontsize=12];
 //   rl           [label=<<b>Reinforcement</b><br/><font point-size="9" color="#1F4E79">Learn from delayed rewards</font>>, fillcolor="#E8F1FB", color="#BFD8F1", fontcolor="#1F4E79"];
 //   active       [label=<<b>Active Learning</b><br/><font point-size="9" color="#1F4E79">Request labels on demand</font>>, fillcolor="#E8F1FB", color="#BFD8F1", fontcolor="#1F4E79"];
 //   online       [label=<<b>Online Learning</b><br/><font point-size="9" color="#1F4E79">Sequential data, incremental update</font>>, fillcolor="#E8F1FB", color="#BFD8F1", fontcolor="#1F4E79"];
-// 
+//
 //   root -> label_avail [color="#7C74D6", penwidth=2.0];
 //   root -> interactive [color="#3E86C8", penwidth=2.0];
-// 
+//
 //   label_avail -> {supervised unsupervised selfsup semisup} [color="#A9A3E6"];
 //   interactive -> {rl active online}                        [color="#8FB6DE"];
-// 
+//
 //   { rank=same; supervised; unsupervised; selfsup; semisup; rl; active; online; }
 // }
 // ```
@@ -118,7 +116,8 @@ algorithm.
     "Lesson02.2-ML_Paradigms.typ.figs/Lesson02.2-ML_Paradigms.1.png",
     width: 80%,
   ),
-  caption: [Diagram relating learning paradigms, label availability and interactive/sequential.],
+  caption: [Diagram relating learning paradigms, label availability and
+    interactive/sequential.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -127,7 +126,6 @@ algorithm.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:53 '* Machine Learning Paradigms: Examples (1/3)'
 // Slide: Machine Learning Paradigms: Examples (1/3)
-
 How do you set up a machine learning problem? The answer depends on what kind of data
 you have and what kind of feedback the learning system receives. There are five major
 paradigms, each suited to a different setting.
@@ -172,12 +170,12 @@ a machine learning problem.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:74 '* Machine Learning Paradigms: Examples (2/3)'
 // Slide: Machine Learning Paradigms: Examples (2/3)
-
-#strong[Online learning] trains a model incrementally from a stream of data arriving
-in real time, rather than requiring the entire dataset up front. A practical example
-is online logistic regression for click-through rate prediction, where the model
-updates its weights after each user interaction rather than retraining on a stored
-batch.
+Several further paradigms round out the taxonomy by varying how and when data or
+feedback becomes available. #strong[Online learning] trains a model incrementally
+from a stream of data arriving in real time, rather than requiring the entire dataset
+up front. A practical example is online logistic regression for click-through rate
+prediction, where the model updates its weights after each user interaction rather
+than retraining on a stored batch.
 
 #strong[Multi-task learning] trains a single model to perform multiple related tasks
 simultaneously, exploiting shared structure across those tasks. For instance, a model
@@ -204,25 +202,25 @@ labeling effort where it will reduce uncertainty the most.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:99 '* Machine Learning Paradigms: Examples (3/3)'
 // Slide: Machine Learning Paradigms: Examples (3/3)
-
-#strong[Federated learning] trains models across decentralized devices without
-sharing raw data #cite("mcmahan2017federated"). Each participant (a phone, a
-hospital, a bank) keeps its data local and sends only model updates to a central
-server, which aggregates them into a single improved model. This preserves privacy by
-design: the raw records never leave their origin. A typical application is fraud
-detection or credit scoring across multiple banks, where pooling the underlying
+A final group of paradigms addresses how learning scales beyond a single dataset,
+model, or agent. #strong[Federated learning] trains models across decentralized
+devices without sharing raw data #cite("mcmahan2017federated"). Each participant (a
+phone, a hospital, a bank) keeps its data local and sends only model updates to a
+central server, which aggregates them into a single improved model. This preserves
+privacy by design: the raw records never leave their origin. A typical application is
+fraud detection or credit scoring across multiple banks, where pooling the underlying
 transaction data would violate regulatory constraints, yet each institution benefits
 from patterns visible only in the combined population.
 
 #strong[Evolutionary learning] optimizes model structures or parameters through
-algorithms inspired by natural selection. A population of candidate
-solutions is maintained; each generation, the fittest individuals are selected,
-recombined, and mutated to produce offspring that (on average) perform better.
-Because the process relies on fitness evaluation rather than gradient computation, it
-is #emph[gradient-free], making it applicable to discrete, non-differentiable, or
-highly multimodal search spaces where backpropagation cannot reach. Genetic
-algorithms are the most familiar instance, but the family also includes evolution
-strategies, genetic programming, and neuroevolution.
+algorithms inspired by natural selection. A population of candidate solutions is
+maintained; each generation, the fittest individuals are selected, recombined, and
+mutated to produce offspring that (on average) perform better. Because the process
+relies on fitness evaluation rather than gradient computation, it is
+#emph[gradient-free], making it applicable to discrete, non-differentiable, or highly
+multimodal search spaces where backpropagation cannot reach. Genetic algorithms are
+the most familiar instance, but the family also includes evolution strategies,
+genetic programming, and neuroevolution.
 
 #strong[Curriculum learning] structures the training process so that a model
 encounters easier examples or tasks first, with difficulty increasing gradually over
@@ -251,7 +249,6 @@ that no single-agent training regime would have uncovered.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:124 '* Supervised Learning'
 // Slide: Supervised Learning
-
 #emph[Supervised learning] learns a function $f: X arrow.r Y$ that maps inputs to
 correct outputs #cite("mitchell1997machinelearning"). The training set consists of
 example pairs $(bold(x), y)$, where each input $bold(x)$ is paired with the correct
@@ -259,10 +256,10 @@ output $y$. Because every training example carries a label $y_i$, supervised lea
 requires labeled data, and performance is measured by the error the learned function
 makes on a separate test set that was held out during training.
 
-Two main task types fall under this umbrella. #emph[Classification] produces a
+Two main task types fall under this umbrella. #strong[Classification] produces a
 discrete label: an email filter that outputs "Spam" or "Not Spam," a digit recognizer
 that returns one of the digits 0 through 9, or a sentiment analyzer that labels text
-as positive, negative, or neutral. #emph[Regression], by contrast, produces a
+as positive, negative, or neutral. #strong[Regression], by contrast, produces a
 continuous value: predicting house prices from features like size and location,
 forecasting oil demand, or estimating future stock prices. The choice between
 classification and regression is determined by the nature of the output variable, not
@@ -276,13 +273,13 @@ theme that recurs throughout the course.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:145 '* Unsupervised Learning'
 // Slide: Unsupervised Learning
-
-#emph[Unsupervised learning] learns from data without labeled outputs. Rather than
-receiving explicit feedback or correct answers, the algorithm's goal is to discover
-patterns, groupings, or structure hidden within the data itself. Because there is no
-ground-truth label to compare against, evaluation tends to be more qualitative than
-in supervised settings: a practitioner judges whether the discovered structure is
-meaningful, useful, or interpretable for the task at hand.
+Where supervised learning relies on explicit answers, #emph[unsupervised learning]
+learns from data without labeled outputs. Rather than receiving explicit feedback or
+correct answers, the algorithm's goal is to discover patterns, groupings, or
+structure hidden within the data itself. Because there is no ground-truth label to
+compare against, evaluation tends to be more qualitative than in supervised settings:
+a practitioner judges whether the discovered structure is meaningful, useful, or
+interpretable for the task at hand.
 
 Several families of techniques fall under this umbrella:
 
@@ -316,9 +313,9 @@ architecture.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:167 '* Reinforcement Learning'
 // Slide: Reinforcement Learning
-
-#emph[Reinforcement learning] (RL) is a paradigm in which an agent learns by
-interacting with an environment to maximize cumulative reward #cite(
+The third core paradigm departs from both of these: #emph[reinforcement learning]
+(RL) is a paradigm in which an agent learns by interacting with an environment to
+maximize cumulative reward #cite(
   "suttonbarto2018rlbook",
 ). Rather than learning from a fixed dataset of labeled examples, the agent discovers
 which actions yield the best outcomes through trial and error. Formally, the goal is
@@ -348,45 +345,46 @@ receives both a reward and a new state from the environment, then repeats.
 
 #wrap-content(
   [
-// rendered_images:begin
-//             ```graphviz
-//             digraph BayesianFlow {
-//                 splines=true;
-//                 nodesep=1.0;
-//                 ranksep=0.75;
-//     
-//                 node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
-//     
-//                 // Node styles
-//                 Agent      [label="Agent", shape=box, fillcolor="#F4A6A6"];
-//                 Env        [label="Environment", shape=box, fillcolor="#B2E2B2"];
-//     
-//                 // Force ranks
-//                 //{ rank=same; Agent; Env; }
-//     
-//                 // Edges
-//                 Agent -> Env [label="  Action", fontcolor=black, labeldistance=2.0];
-//                 Env -> Agent [label="  State", fontcolor=black, labeldistance=2.0];
-//                 Env -> Agent [label="  Reward", fontcolor=black, labeldistance=2.0];
-//             }
-//             ```
-//             label=fig:reinforcementlearning
-//             caption=Diagram relating agent, environment and reward signals in the RL loop.
-// width=100%
-// placement=auto
-// rendered_images:end
-// render_images:begin
-#figure(
-  image(
-    "Lesson02.2-ML_Paradigms.typ.figs/Lesson02.2-ML_Paradigms.2.png",
-    width: 100%,
-  ),
-  caption: [Diagram relating agent, environment and reward signals in the RL loop.],
-  kind: "figure",
-  supplement: [Fig.],
-  placement: auto,
-) <fig:reinforcementlearning>
-// render_images:end
+    // rendered_images:begin
+    //             ```graphviz
+    //             digraph BayesianFlow {
+    //                 splines=true;
+    //                 nodesep=1.0;
+    //                 ranksep=0.75;
+    //
+    //                 node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+    //
+    //                 // Node styles
+    //                 Agent      [label="Agent", shape=box, fillcolor="#F4A6A6"];
+    //                 Env        [label="Environment", shape=box, fillcolor="#B2E2B2"];
+    //
+    //                 // Force ranks
+    //                 //{ rank=same; Agent; Env; }
+    //
+    //                 // Edges
+    //                 Agent -> Env [label="  Action", fontcolor=black, labeldistance=2.0];
+    //                 Env -> Agent [label="  State", fontcolor=black, labeldistance=2.0];
+    //                 Env -> Agent [label="  Reward", fontcolor=black, labeldistance=2.0];
+    //             }
+    //             ```
+    //             label=fig:reinforcementlearning
+    //             caption=Diagram relating agent, environment and reward signals in the RL loop.
+    // width=100%
+    // placement=auto
+    // rendered_images:end
+    // render_images:begin
+    #figure(
+      image(
+        "Lesson02.2-ML_Paradigms.typ.figs/Lesson02.2-ML_Paradigms.2.png",
+        width: 100%,
+      ),
+      caption: [Diagram relating agent, environment and reward signals in the RL
+        loop.],
+      kind: "figure",
+      supplement: [Fig.],
+      placement: auto,
+    ) <fig:reinforcementlearning>
+    // render_images:end
   ],
   align: right,
   column-gutter: 1em,
@@ -403,7 +401,6 @@ receives both a reward and a new state from the environment, then repeats.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:219 '* Reinforcement Learning: Examples'
 // Slide: Reinforcement Learning: Examples
-
 Reinforcement learning finds natural application in any domain where an agent must
 make a sequence of decisions and can learn from the outcomes of those decisions over
 time.
@@ -441,7 +438,6 @@ over traditional supervised approaches.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:234 '* Machine Learning Flow'
 // Slide: Machine Learning Flow
-
 Every machine learning project follows a common pipeline whose stages build on one
 another. The process begins with a #strong[question]: a concrete problem statement
 such as "how can we predict house prices?" That question determines what #emph[input
@@ -493,7 +489,8 @@ engineering new features, or tuning parameters).
     "Lesson02.2-ML_Paradigms.typ.figs/Lesson02.2-ML_Paradigms.3.png",
     width: 70%,
   ),
-  caption: [Diagram illustrating the machine learning workflow: from question to evaluation.],
+  caption: [Diagram illustrating the machine learning workflow: from question to
+    evaluation.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -515,7 +512,7 @@ learning algorithm at the end.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:277 '* Framing the Question'
 // Slide: Framing the Question
-#strong[Framing the Question]
+=== Framing the Question
 
 Formulating the question is the most important part of any machine learning problem.
 A misunderstanding at this stage cascades into everything that follows: solving the
@@ -543,7 +540,7 @@ know if you had found it.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:296 '* Input Data: Fit, Quality, and Scale'
 // Slide: Input Data: Fit, Quality, and Scale
-#strong[Input Data: Fit, Quality, and Scale]
+=== Input Data: Fit, Quality, and Scale
 
 The data used to build a predictive model must be specific to the prediction goal. If
 the task is to predict movie ratings, for instance, the training examples should be
@@ -582,7 +579,7 @@ returns than investing in algorithmic sophistication alone.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:320 '* What Makes a Good Feature'
 // Slide: What Makes a Good Feature
-#strong[What Makes a Good Feature]
+=== What Makes a Good Feature
 
 #strong[Features] are higher-level, more compact representations of raw inputs that
 capture the information most relevant to a learning task. Rather than feeding a model
@@ -591,9 +588,9 @@ numbers: the overall intensity and the vertical symmetry of the image. Those two
 quantities compress thousands of pixel values into a pair of informative signals that
 a simple classifier can work with directly. The same reduction applies far beyond
 images: to predict a house price you would use square footage, number of bedrooms,
-and school-district rating rather than raw photographs of the property, and to predict
-a loan default you would use the debt-to-income ratio and the number of late payments
-rather than the raw transaction log.
+and school-district rating rather than raw photographs of the property, and to
+predict a loan default you would use the debt-to-income ratio and the number of late
+payments rather than the raw transaction log.
 
 Good features share three characteristics. First, they #emph[retain the information
   that matters] for distinguishing between classes or predicting a target. Second,
@@ -629,7 +626,7 @@ several common mistakes:
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:338 '* What Makes a Good Model'
 // Slide: What Makes a Good Model
-#strong[What Makes a Good Model]
+=== What Makes a Good Model
 
 A good predictive model balances several desirable properties that often pull against
 one another, as @fig:whatmakesagoodmodel illustrates. Understanding these tradeoffs
@@ -644,7 +641,7 @@ is essential for choosing the right model for a given application.
 //     nodesep=0.5;
 //     ranksep=0.6;
 //     rankdir=TB;
-// 
+//
 //     node [shape=box,
 //           style="rounded,filled",
 //           penwidth=1.8,
@@ -652,7 +649,7 @@ is essential for choosing the right model for a given application.
 //           fontsize=11,
 //           margin="0.18,0.10",
 //           height=0.45];
-// 
+//
 //     edge [style=dashed,
 //           color="#B23A48",
 //           penwidth=1.3,
@@ -660,15 +657,15 @@ is essential for choosing the right model for a given application.
 //           fontname="Helvetica",
 //           fontsize=9,
 //           fontcolor="#6B1F1F"];
-// 
+//
 //     Accurate      [label="Accurate", fillcolor="#9CC4F2", color="#3C6FB0", fontcolor="#1F4E79", penwidth=2.4];
 //     Interpretable [label="Interpretable", fillcolor="#A9DDB0", color="#4F9A5C", fontcolor="#1F4E2E"];
 //     Simple        [label="Simple", fillcolor="#A9DDB0", color="#4F9A5C", fontcolor="#1F4E2E"];
 //     Fast          [label="Fast", fillcolor="#A9DDB0", color="#4F9A5C", fontcolor="#1F4E2E"];
 //     Scalable      [label="Scalable", fillcolor="#A9DDB0", color="#4F9A5C", fontcolor="#1F4E2E"];
-// 
+//
 //     { rank=same; Interpretable; Simple; Fast; Scalable; }
-// 
+//
 //     Accurate -> Interpretable [label="  Trade-off  "];
 //     Accurate -> Simple [label="  Overfitting risk  "];
 //     Accurate -> Fast [label="  Compute cost  "];
@@ -686,7 +683,8 @@ is essential for choosing the right model for a given application.
     "Lesson02.2-ML_Paradigms.typ.figs/Lesson02.2-ML_Paradigms.4.png",
     width: 70%,
   ),
-  caption: [Tradeoffs between accuracy, interpretability, simplicity, speed and scalability.],
+  caption: [Tradeoffs between accuracy, interpretability, simplicity, speed and
+    scalability.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -731,7 +729,7 @@ to the constraints of the problem at hand.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:409 '* How Are Machine Learning Systems Organized?'
 // Slide: How Are Machine Learning Systems Organized?
-#strong[How Are Machine Learning Systems Organized?]
+=== How Are Machine Learning Systems Organized?
 
 Machine learning systems are organized as a #strong[pipeline]: a sequence of stages
 where the problem is broken down into sub-problems, each sub-problem is solved in
@@ -759,7 +757,7 @@ moves the system metric can be deprioritized.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:433 '* Example of Photo OCR System'
 // Slide: Example of Photo OCR System
-#strong[Example of Photo OCR System]
+=== Example of Photo OCR System
 
 The goal of #strong[optical character recognition] (OCR) is to build systems that can
 read text appearing in a photograph or scanned document. This task is more
@@ -787,7 +785,7 @@ at every stage is therefore critical.
 //     nodesep=0.35;
 //     ranksep=0.5;
 //     rankdir=LR;
-// 
+//
 //     node [shape=box,
 //           style="rounded,filled",
 //           penwidth=1.8,
@@ -795,7 +793,7 @@ at every stage is therefore critical.
 //           fontsize=11,
 //           margin="0.18,0.10",
 //           height=0.45];
-// 
+//
 //     edge [color="#A3B1C0",
 //           penwidth=1.3,
 //           arrowhead=vee,
@@ -803,14 +801,14 @@ at every stage is therefore critical.
 //           fontname="Helvetica",
 //           fontsize=9,
 //           fontcolor="#7B8794"];
-// 
+//
 //     Image    [label="Input\nimage", shape=ellipse, fillcolor="#FFC98A", color="#D98E2B", fontcolor="#6B4517"];
 //     Detect   [label="Text\ndetection", fillcolor="#9CC4F2", color="#3C6FB0", fontcolor="#1F4E79"];
 //     Segment  [label="Character\nsegmentation", fillcolor="#9CC4F2", color="#3C6FB0", fontcolor="#1F4E79"];
 //     Classify [label="Character\nclassification", fillcolor="#9CC4F2", color="#3C6FB0", fontcolor="#1F4E79"];
 //     Spell    [label="Spelling\ncorrection", fillcolor="#9CC4F2", color="#3C6FB0", fontcolor="#1F4E79"];
 //     Text     [label="Output\ntext", shape=ellipse, fillcolor="#A9DDB0", color="#4F9A5C", fontcolor="#1F4E2E"];
-// 
+//
 //     Image -> Detect;
 //     Detect -> Segment [label="  Boxes  "];
 //     Segment -> Classify [label="  h e l l o  "];
@@ -829,7 +827,8 @@ at every stage is therefore critical.
     "Lesson02.2-ML_Paradigms.typ.figs/Lesson02.2-ML_Paradigms.5.png",
     width: 70%,
   ),
-  caption: [Four-stage OCR pipeline: text detection, character segmentation, classification and spelling correction.],
+  caption: [Four-stage OCR pipeline: text detection, character segmentation,
+    classification and spelling correction.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -849,14 +848,13 @@ each simpler than the one above it.
 
 Applying that principle, the detection stage uses a #strong[sliding window approach]
 to search for text systematically. The idea is to train a binary classifier that
-distinguishes
-windows containing letters from windows containing only background. This is a simpler
-learning problem than recognizing which letter a window contains; the classifier only
-needs to say "text" or "not text." At inference time, the trained classifier is swept
-across the image in both the horizontal and vertical directions, evaluated at
-multiple window scales to handle text of different sizes. Evaluating the classifier
-on a single window is computationally cheap, so this exhaustive scan remains
-practical even for large images.
+distinguishes windows containing letters from windows containing only background.
+This is a simpler learning problem than recognizing which letter a window contains;
+the classifier only needs to say "text" or "not text." At inference time, the trained
+classifier is swept across the image in both the horizontal and vertical directions,
+evaluated at multiple window scales to handle text of different sizes. Evaluating the
+classifier on a single window is computationally cheap, so this exhaustive scan
+remains practical even for large images.
 
 The classifier's output probabilities are assembled into a #emph[text likelihood
   map], essentially a heatmap where bright regions indicate a high probability of
@@ -870,7 +868,7 @@ detected text region to find the splits between individual letters.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:494 '* Getting More Data'
 // Slide: Getting More Data
-#strong[Getting More Data]
+=== Getting More Data
 
 The ideal recipe for machine learning is straightforward: combine a #emph[low-bias
   algorithm] with a #emph[massive amount of data]. A low-bias model has enough
@@ -904,7 +902,7 @@ less daunting than expected, and two broad strategies cover most situations:
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:511 '* Getting Mode Data: OCR Pipeline'
 // Slide: Getting Mode Data: OCR Pipeline
-#strong[Getting Mode Data: OCR Pipeline]
+=== Getting Mode Data: OCR Pipeline
 
 How can we increase the size of a training set for a problem like optical character
 recognition (OCR)? Several practical strategies exist, ranging from fully synthetic
@@ -935,13 +933,13 @@ ultimately hurting rather than helping generalization.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:528 '* Ceiling Analysis for ML Pipeline'
 // Slide: Ceiling Analysis for ML Pipeline
-#strong[Ceiling Analysis for ML Pipeline]
+=== Ceiling Analysis for ML Pipeline
 
-The most valuable resource in any machine learning project is time. Researchers' time
-is extremely expensive, and spending months optimizing one component of a pipeline
-only to discover that the optimization barely moves the needle on overall performance
-is a costly mistake. The central question, then, is: which part of the pipeline
-deserves the investment of time and resources?
+#strong[The most valuable resource in any machine learning project is time].
+Researchers' time is extremely expensive, and spending months optimizing one
+component of a pipeline only to discover that the optimization barely moves the
+needle on overall performance is a costly mistake. The central question, then, is:
+which part of the pipeline deserves the investment of time and resources?
 
 #emph[Ceiling analysis] provides a principled answer by quantifying how much each
 pipeline component limits end-to-end performance. The procedure begins by choosing a
@@ -963,7 +961,7 @@ bottleneck one or two steps away.
 
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:552 '* Ceiling Analysis for ML Pipeline: OCT Example'
 // Slide: Ceiling Analysis for ML Pipeline: OCT Example
-#strong[Ceiling Analysis for ML Pipeline: OCT Example]
+=== Ceiling Analysis for ML Pipeline: OCT Example
 
 Consider a concrete example: an OCR pipeline whose baseline accuracy is 72%. A
 ceiling analysis reveals which component deserves attention first. As
@@ -997,9 +995,18 @@ exceeding the marginal contributions of character segmentation (+1%) and
 classification (+10%) when applied in sequence. This ordering shows where investment
 in engineering effort will have the highest return.
 
+= Summary
+
+Machine learning paradigms differ in how they use labels, but every project's success
+is decided far upstream of the learning algorithm: how the question is framed,
+whether the input data actually fits the goal, and how good the features are. A
+well-organized ML pipeline treats these as sequential stages, and ceiling analysis is
+the tool for deciding which stage is actually worth the next unit of engineering
+effort, rather than guessing.
+
 // From: msml610/lectures_source/Lesson02.2-ML_Paradigms.smd:580 '* References'
 // Slide: References
-#strong[References]
+= References
 
 #set text(size: 0.75em)
 #references("/msml610/lectures_source/refs.bib")

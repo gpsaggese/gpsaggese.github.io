@@ -67,7 +67,6 @@ that extraordinary capability in a machine.
 
 // From: msml610/lectures_source/Lesson01.2-AI_and_Machine_Learning.smd:33 '* Artificial Intelligence'
 // Slide: Artificial Intelligence
-
 #wrap-content(
   [
     #figure(
@@ -148,7 +147,6 @@ complex phenomenon we have ever tried to reproduce.
 
 // From: msml610/lectures_source/Lesson01.2-AI_and_Machine_Learning.smd:64 '* AI Formal Definition'
 // Slide: AI Formal Definition
-
 === A Formal Definition of AI
 
 #grid(
@@ -158,8 +156,7 @@ complex phenomenon we have ever tried to reproduce.
 )[
   Let's now focus on finding a formal definition of AI. AI is characterized along
   #strong[two key axes] #cite("russell2020aima"): the first distinguishes whether we
-  care about an agent's internal #emph[thought processes] or its external
-  #emph[behavior],
+  care about an agent's internal _thought processes_ or its external _behavior_,
   while the second asks whether the standard of success is fidelity to #strong[human]
   performance or to an #strong[ideal, rational] standard. Crossing these two axes
   yields four distinct ways to define artificial intelligence: a machine that can (1)
@@ -241,56 +238,56 @@ sneaks in along the way.
 
 #wrap-content(
   [
-// rendered_images:begin
-//         ```graphviz
-//         digraph laws_of_thought {
-//             bgcolor="transparent";
-//             pad="0.15";
-//             splines=spline;
-//             nodesep=0.4;
-//             ranksep=0.5;
-//             rankdir=TB;
-//     
-//             node [shape=box,
-//                   style="rounded,filled",
-//                   penwidth=1.8,
-//                   fontname="Helvetica",
-//                   fontsize=12,
-//                   margin="0.22,0.14",
-//                   height=0.50];
-//     
-//             edge [color="#A3B1C0",
-//                   penwidth=1.3,
-//                   arrowhead=vee,
-//                   arrowsize=0.75,
-//                   fontname="Helvetica",
-//                   fontsize=10,
-//                   fontcolor="#7B8794"];
-//     
-//             premises [label="Correct\npremises", fillcolor="#A9DDB0", color="#4F9A5C", fontcolor="#1F4E2E"];
-//             logic [label="Logic", fillcolor="#FFC98A", color="#D98E2B", fontcolor="#6B4517"];
-//             conclusion [label="Correct\nconclusions", fillcolor="#9CC4F2", color="#3C6FB0", fontcolor="#1F4E79"];
-//     
-//             premises -> logic -> conclusion;
-//         }
-//         ```
-//         label=fig:2aiasthinkingrationally
-//         caption=How correct premises pass through logic to yield correct conclusions.
-//     width=100%
-//     placement=auto
-// rendered_images:end
-// render_images:begin
-#figure(
-  image(
-    "Lesson01.2-AI_and_Machine_Learning.typ.figs/Lesson01.2-AI_and_Machine_Learning.1.png",
-    width: 100%,
-  ),
-  caption: [How correct premises pass through logic to yield correct conclusions.],
-  kind: "figure",
-  supplement: [Fig.],
-  placement: auto,
-) <fig:2aiasthinkingrationally>
-// render_images:end
+    // rendered_images:begin
+    //         ```graphviz
+    //         digraph laws_of_thought {
+    //             bgcolor="transparent";
+    //             pad="0.15";
+    //             splines=spline;
+    //             nodesep=0.4;
+    //             ranksep=0.5;
+    //             rankdir=TB;
+    //
+    //             node [shape=box,
+    //                   style="rounded,filled",
+    //                   penwidth=1.8,
+    //                   fontname="Helvetica",
+    //                   fontsize=12,
+    //                   margin="0.22,0.14",
+    //                   height=0.50];
+    //
+    //             edge [color="#A3B1C0",
+    //                   penwidth=1.3,
+    //                   arrowhead=vee,
+    //                   arrowsize=0.75,
+    //                   fontname="Helvetica",
+    //                   fontsize=10,
+    //                   fontcolor="#7B8794"];
+    //
+    //             premises [label="Correct\npremises", fillcolor="#A9DDB0", color="#4F9A5C", fontcolor="#1F4E2E"];
+    //             logic [label="Logic", fillcolor="#FFC98A", color="#D98E2B", fontcolor="#6B4517"];
+    //             conclusion [label="Correct\nconclusions", fillcolor="#9CC4F2", color="#3C6FB0", fontcolor="#1F4E79"];
+    //
+    //             premises -> logic -> conclusion;
+    //         }
+    //         ```
+    //         label=fig:2aiasthinkingrationally
+    //         caption=Diagram relating Correct premises, Logic and Correct conclusions
+    //     width=100%
+    //     placement=auto
+    // rendered_images:end
+    // render_images:begin
+    #figure(
+      image(
+        "Lesson01.2-AI_and_Machine_Learning.typ.figs/Lesson01.2-AI_and_Machine_Learning.1.png",
+        width: 100%,
+      ),
+      caption: [Diagram relating Correct premises, Logic and Correct conclusions],
+      kind: "figure",
+      supplement: [Fig.],
+      placement: auto,
+    ) <fig:2aiasthinkingrationally>
+    // render_images:end
   ],
   align: right,
   column-gutter: 1em,
@@ -317,7 +314,6 @@ shortcomings.
 
 // From: msml610/lectures_source/Lesson01.2-AI_and_Machine_Learning.smd:168 '* Thinking Rationally: Challenges'
 // Slide: Thinking Rationally: Challenges
-
 There are several #strong[challenges with thinking rationally]. The first one is that
 #emph[formalizing the informal knowledge] that humans use effortlessly turns out to
 be extraordinarily difficult. Consider something as mundane as a handshake. In plain
@@ -481,10 +477,26 @@ defined mathematically through #emph[expected-utility maximization] or similar f
 criteria, whereas human behavior is shaped by evolutionary pressures, cognitive
 biases, and cultural context that are difficult to pin down as a stable benchmark.
 
-#grid(
-  columns: (1fr, 40%),
+#wrap-content(
+  [
+    #figure(
+      styled-table(
+        headers: ("", "Human", "Rational"),
+        rows: (
+          ("Thinking", "Think humanly", "Think rationally"),
+          ("Acting", "Act humanly", [#strong[Act rationally]]),
+        ),
+        bold-first-col: true,
+      ),
+      caption: [AI should focus on agents acting rationally.],
+      kind: "table",
+      supplement: [Table.],
+      placement: auto,
+    ) <tab:actingrationallyasultimategoalofai>
+  ],
+  align: right,
   column-gutter: 1em,
-  align: (left, top),
+  columns: (1fr, 40%),
 )[
   These considerations point to a single cell in the classic two-by-two matrix shown
   in @tab:actingrationallyasultimategoalofai: AI should focus on #strong[agents
@@ -492,26 +504,10 @@ biases, and cultural context that are difficult to pin down as a stable benchmar
   design systems that select actions maximizing expected performance given the
   information available, rather than chasing a moving and poorly understood model of
   human cognition.
-][
-  #figure(
-    styled-table(
-      headers: ("", "Human", "Rational"),
-      rows: (
-        ("Thinking", "Think humanly", "Think rationally"),
-        ("Acting", "Act humanly", [#strong[Act rationally]]),
-      ),
-      bold-first-col: true,
-    ),
-    caption: [AI should focus on agents acting rationally.],
-    kind: "table",
-    supplement: [Table.],
-    placement: auto,
-  ) <tab:actingrationallyasultimategoalofai>
 ]
 
 // From: msml610/lectures_source/Lesson01.2-AI_and_Machine_Learning.smd:295 '* Rationality Is Not Absolute'
 // Slide: Rationality Is Not Absolute
-
 AI aims to build agents that #strong[do the right thing], but what exactly counts as
 the "right thing"? This question is far less straightforward than it first appears,
 and much of the work in agent design revolves around making it precise enough to be
@@ -546,13 +542,14 @@ remains as much a conceptual challenge as a technical one.
 
 // From: msml610/lectures_source/Lesson01.2-AI_and_Machine_Learning.smd:313 '* Problems of a Rational Agent'
 // Slide: Problems of a Rational Agent
-
-A rational agent operating in a #strong[probabilistic environment] aims for the best
-outcome when the world is deterministic, and for the best #strong[expected outcome]
-when uncertainty is involved. But what does "best" actually mean? The classical
-answer is that "best" is determined by an #strong[objective function]: a cost
-function, a sum of rewards, a loss function, or a utility that assigns a numerical
-score to each possible outcome so that the agent can compare alternatives.
+Beyond such moral dilemmas, rational agents also face more mundane practical
+obstacles. A rational agent operating in a #strong[probabilistic environment] aims
+for the best outcome when the world is deterministic, and for the best
+#strong[expected outcome] when uncertainty is involved. But what does "best" actually
+mean? The classical answer is that "best" is determined by an #strong[objective
+  function]: a cost function, a sum of rewards, a loss function, or a utility that
+assigns a numerical score to each possible outcome so that the agent can compare
+alternatives.
 
 In practice, however, the picture is more complex, and several limitations constrain
 what rationality can deliver.
@@ -569,7 +566,7 @@ what rationality can deliver.
   acquiring all relevant data can be prohibitive: ordering every conceivable medical
   test before diagnosing a patient is neither practical nor ethical. Second, the
   computational demands may be staggering: a search tree can have more branches than
-  atoms in the observable universe ($tilde 10^(80)$), making exhaustive exploration
+  atoms in the observable universe ($tilde 10^{80}$), making exhaustive exploration
   physically impossible. Third, real-time constraints may leave no room for
   deliberation at all: a high-frequency trading system, for instance, must decide
   within a single microsecond.
@@ -588,7 +585,6 @@ and, in many domains, all that can honestly be demanded.
 
 // From: msml610/lectures_source/Lesson01.2-AI_and_Machine_Learning.smd:342 '* Machine Learning: Definitions'
 // Slide: Machine Learning: Definitions
-
 How should we define #strong[machine learning]? The question seems straightforward,
 but the field has evolved considerably since its earliest formulations, and the way
 we frame the definition shapes how we think about what these systems can and cannot
@@ -618,7 +614,7 @@ good; it figured that out from experience.
   ],
   align: right,
   column-gutter: 1em,
-  columns: (1fr, 30%),
+  columns: (1fr, 20%),
 )[
   Tom Mitchell later sharpened this intuition into something more precise and
   testable. In his 1997 formulation, "a computer program is said to learn from
@@ -644,7 +640,7 @@ rather than by a programmer manually encoding every rule the system needs to fol
 
 // From: msml610/lectures_source/Lesson01.2-AI_and_Machine_Learning.smd:374 '* The 3 Machine Learning Assumptions'
 // Slide: The 3 Machine Learning Assumptions
-
+Turning this idea into a working system follows a concrete engineering pipeline.
 Machine learning addresses a practical engineering challenge that unfolds in stages:
 gathering a dataset, building a statistical model from that dataset algorithmically,
 evaluating the model's quality, and finally deploying and monitoring it in
@@ -679,66 +675,67 @@ enterprise impossible rather than merely suboptimal.
 
 // From: msml610/lectures_source/Lesson01.2-AI_and_Machine_Learning.smd:399 '* AI vs ML vs Deep Learning'
 // Slide: AI vs ML vs Deep Learning
-
-#strong[Artificial Intelligence (AI)] refers to machines programmed to reason, learn,
-and act in a rational way. #strong[Machine Learning (ML)] is a subset of AI in which
-machines become capable of performing tasks without being explicitly programmed for
-each one. They improve through experience with data instead. AI models that are not
-ML are entirely possible: handcrafted rule-based systems, such as IBM's Deep Blue
-chess engine, contain no learning from data whatsoever, yet they still qualify as AI
-systems because they encode expert reasoning into their decision logic.
+With these assumptions in place, it is worth situating machine learning precisely
+within the broader AI landscape. #strong[Artificial Intelligence (AI)] refers to
+machines programmed to reason, learn, and act in a rational way. #strong[Machine
+  Learning (ML)] is a subset of AI in which machines become capable of performing
+tasks without being explicitly programmed for each one. They improve through
+experience with data instead. AI models that are not ML are entirely possible:
+handcrafted rule-based systems, such as IBM's Deep Blue chess engine, contain no
+learning from data whatsoever, yet they still qualify as AI systems because they
+encode expert reasoning into their decision logic.
 
 #wrap-content(
   [
-// rendered_images:begin
-//         ```tikz
-//         % Define colors.
-//         \definecolor{AIcolor}{RGB}{244,166,166}    % Red/Pink
-//         \definecolor{MLcolor}{RGB}{178,226,178}    % Green
-//         \definecolor{DLcolor}{RGB}{160,214,209}    % Teal
-//         \definecolor{LLMcolor}{RGB}{198,166,244}   % Purple
-//     
-//         % Draw AI circle
-//         \fill[AIcolor] (0,0) circle (3);
-//         \draw (0,0) circle (3);
-//         \node[above] at (0,2) {\textbf{AI}};
-//     
-//         % Draw ML circle inside AI
-//         \fill[MLcolor] (0.5,-0.5) circle (2);
-//         \draw (0.5,-0.5) circle (2);
-//         \node[above] at (0.5,0.5) {\textbf{ML}};
-//     
-//         % Draw DL circle inside ML
-//         \fill[DLcolor] (1,-1) circle (1);
-//         \draw (1,-1) circle (1);
-//         \node[above] at (1,-0.6) {\textbf{DL}};
-//     
-//         % Draw LLM circle inside DL
-//         \fill[LLMcolor] (1.2,-1.2) circle (0.6);
-//         \draw (1.2,-1.2) circle (0.6);
-//         \node[above] at (1.2,-1.4) {\textbf{LLMs}};
-//         ```
-//         label=fig:aivsmlvsdeeplearning
-//         caption=How AI, ML, deep learning, and LLMs nest within one another.
-//     width=100%
-//     placement=auto
-// rendered_images:end
-// render_images:begin
-#figure(
-  image(
-    "Lesson01.2-AI_and_Machine_Learning.typ.figs/Lesson01.2-AI_and_Machine_Learning.2.png",
-    width: 100%,
-  ),
-  caption: [How AI, ML, deep learning, and LLMs nest within one another.],
-  kind: "figure",
-  supplement: [Fig.],
-  placement: auto,
-) <fig:aivsmlvsdeeplearning>
-// render_images:end
+    // rendered_images:begin
+    //         ```tikz
+    //         % Define colors.
+    //         \definecolor{AIcolor}{RGB}{244,166,166}    % Red/Pink
+    //         \definecolor{MLcolor}{RGB}{178,226,178}    % Green
+    //         \definecolor{DLcolor}{RGB}{160,214,209}    % Teal
+    //         \definecolor{LLMcolor}{RGB}{198,166,244}   % Purple
+    //
+    //         % Draw AI circle
+    //         \fill[AIcolor] (0,0) circle (3);
+    //         \draw (0,0) circle (3);
+    //         \node[above] at (0,2) {\textbf{AI}};
+    //
+    //         % Draw ML circle inside AI
+    //         \fill[MLcolor] (0.5,-0.5) circle (2);
+    //         \draw (0.5,-0.5) circle (2);
+    //         \node[above] at (0.5,0.5) {\textbf{ML}};
+    //
+    //         % Draw DL circle inside ML
+    //         \fill[DLcolor] (1,-1) circle (1);
+    //         \draw (1,-1) circle (1);
+    //         \node[above] at (1,-0.6) {\textbf{DL}};
+    //
+    //         % Draw LLM circle inside DL
+    //         \fill[LLMcolor] (1.2,-1.2) circle (0.6);
+    //         \draw (1.2,-1.2) circle (0.6);
+    //         \node[above] at (1.2,-1.4) {\textbf{LLMs}};
+    //         ```
+    //         label=fig:aivsmlvsdeeplearning
+    //         caption=Diagram illustrating AI vs ML vs Deep Learning
+    //     width=100%
+    //     placement=auto
+    // rendered_images:end
+    // render_images:begin
+    #figure(
+      image(
+        "Lesson01.2-AI_and_Machine_Learning.typ.figs/Lesson01.2-AI_and_Machine_Learning.2.png",
+        width: 100%,
+      ),
+      caption: [Diagram illustrating AI vs ML vs Deep Learning],
+      kind: "figure",
+      supplement: [Fig.],
+      placement: auto,
+    ) <fig:aivsmlvsdeeplearning>
+    // render_images:end
   ],
   align: right,
   column-gutter: 1em,
-  columns: (1fr, 45%),
+  columns: (1fr, 30%),
 )[
   Within machine learning, #strong[Deep Learning (DL)] denotes the use of a
   particular family of models (neural networks with many layers) to learn
@@ -757,17 +754,17 @@ systems because they encode expert reasoning into their decision logic.
 
 // From: msml610/lectures_source/Lesson01.2-AI_and_Machine_Learning.smd:457 '* Limits of AI Compared to Human Intelligence (1/2)'
 // Slide: Limits of AI Compared to Human Intelligence (1/2)
-
-#strong[AI and machine learning systems differ] fundamentally from human intelligence
-and machines do not learn the way humans do: large language models, for instance,
-process statistical patterns over enormous corpora, yet a child acquires language
-from a comparatively tiny stream of input. Whether the brain uses anything resembling
-gradient descent remains an open and actively debated question in computational
-neuroscience. Reinforcement learning comes closer: dopaminergic reward signals in the
-brain bear a striking resemblance to temporal-difference error signals, so the brain
-probably does something analogous to reinforcement learning, at least in a loose
-sense. Still, the gap between biological and artificial learning is wide, and it
-shows up in several concrete limitations.
+Placing these systems within a taxonomy is one thing; matching human intelligence is
+another. #strong[AI and machine learning systems differ] fundamentally from human
+intelligence and machines do not learn the way humans do: large language models, for
+instance, process statistical patterns over enormous corpora, yet a child acquires
+language from a comparatively tiny stream of input. Whether the brain uses anything
+resembling gradient descent remains an open and actively debated question in
+computational neuroscience. Reinforcement learning comes closer: dopaminergic reward
+signals in the brain bear a striking resemblance to temporal-difference error
+signals, so the brain probably does something analogous to reinforcement learning, at
+least in a loose sense. Still, the gap between biological and artificial learning is
+wide, and it shows up in several concrete limitations.
 
 - #emph[Fragility to input variations.] Current ML models can fail catastrophically
   when inputs are distorted even slightly. Adversarial attacks demonstrate this
@@ -799,7 +796,6 @@ shows up in several concrete limitations.
 
 // From: msml610/lectures_source/Lesson01.2-AI_and_Machine_Learning.smd:480 '* Limits of AI Compared to Human Intelligence (2/2)'
 // Slide: Limits of AI Compared to Human Intelligence (2/2)
-
 - #emph[Lack of transparency.] Many ML models remain largely opaque: they produce
   predictions without exposing the reasoning behind them, which limits trust,
   interpretability, and accountability in high-stakes settings such as medical
