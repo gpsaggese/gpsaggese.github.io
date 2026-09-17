@@ -1,0 +1,52 @@
+# Core data stack
+numpy
+pandas
+pydantic
+matplotlib
+seaborn
+
+# Environment/config
+python-dotenv
+
+# LangChain — used as a multi-provider chat-model shim (get_chat_model).
+# Only the provider adapters, message types, and .invoke() are used: no chains,
+# prompt templates, output parsers, or tool binding.
+#
+# The `langchain` meta-package is deliberately NOT listed. Nothing imports it,
+# and it depends on langgraph, which would pull an unused orchestration stack
+# into the image. The provider adapters below need only langchain-core.
+langchain-core
+
+# Model provider adapters imported in config/config.py
+langchain-openai
+langchain-anthropic
+langchain-google-genai
+
+# Ingestion (src/ingest/file_loader.py)
+openpyxl>=3.1
+chardet>=5.0
+pyarrow>=14.0
+
+# Analysis libraries. NOTE: these are not imported by src/ — they are needed
+# because the agent generates Python that runs in the Jupyter kernel and
+# reaches for them. scipy.stats is named explicitly in the subagent prompt;
+# statsmodels is referenced by subagent._auto_fix; scikit-learn is a common
+# fallback in LLM-generated analysis code. Removing them causes generated
+# cells to fail at runtime, not at import time.
+statsmodels>=0.14
+scipy>=1.11
+scikit-learn>=1.3
+
+# Notebook + reporting
+nbformat>=5.9
+nbclient>=0.8
+ipykernel>=6.29
+
+# PDF export fallback (when tectonic unavailable)
+weasyprint>=60.0
+
+# Backend server
+fastapi>=0.115
+uvicorn[standard]>=0.30
+python-multipart>=0.0.9
+websockets>=12.0
