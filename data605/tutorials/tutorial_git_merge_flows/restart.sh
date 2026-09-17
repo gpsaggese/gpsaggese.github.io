@@ -1,17 +1,10 @@
 #!/bin/bash -xe
-# -x: print each command to stderr before running it, so the tutorial log
-#     shows exactly what ran.
-# -e: exit immediately if any command exits with a non-zero status.
+#
 # Build a small local scratch repo with a diverging history:
 # - `main` advances by one commit that edits a shared line.
 # - `feature` branches off *before* that commit, then edits the *same* line
 #   five times, in five small commits (mimicking a branch with many tiny
 #   "Update" commits).
-#
-# Source this before each demo script to get an identical starting point:
-# ```
-# > source restart.sh
-# > ./demo_1_merge.sh
 # ```
 
 echo "=== phase: reset the scratch repo directory ==="
@@ -46,7 +39,7 @@ def process(rows):
 EOF
 git add shared.py
 # -m: commit message given inline.
-git commit -m "Initial commit"
+git commit -m "Update #1"
 # -M: rename the current branch to "main", overwriting it if it exists.
 git branch -M main
 # -b: create branch "feature" and switch to it.
@@ -58,7 +51,7 @@ git checkout main
 sed -i.bak 's/# Step 2: normalize/# Step 2: normalize input rows/' shared.py
 rm -f shared.py.bak
 # -a: stage all tracked, modified files. -m: message inline.
-git commit -am "Update"
+git commit -am "Update #2"
 git checkout feature
 
 echo "=== phase: advance feature with five commits on the same line ==="
@@ -67,8 +60,10 @@ echo "=== phase: advance feature with five commits on the same line ==="
 for i in 1 2 3 4 5; do
     sed -i.bak "s/# Step 2:.*/# Step 2: normalize (v$i)/" shared.py
     rm -f shared.py.bak
-    # -a: stage all tracked, modified files. -m: message inline.
-    git commit -am "Update"
+    # -a: stage all tracked, modified files
+    # -m: message inline, numbered sequentially from the 2 commits already on
+    #     `main`
+    git commit -am "Update #$((i + 2))"
 done
 
 echo "=== phase: show the two starting histories ==="
