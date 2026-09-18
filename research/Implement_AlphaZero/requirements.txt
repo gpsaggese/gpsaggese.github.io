@@ -1,0 +1,8 @@
+ipywidgets
+matplotlib
+numpy
+pandas
+seaborn
+tqdm
+# The root conftest still uses pytest's legacy path hook argument.
+pytest<9
