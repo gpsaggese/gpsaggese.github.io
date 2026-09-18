@@ -1,0 +1,1740 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Personal website of GP Saggese - Startup Boy and AI Researcher">
+      
+      
+        <meta name="author" content="Giacinto Paolo Saggese">
+      
+      
+        <link rel="canonical" href="https://gpsaggese.github.io/blog/how-to-compare-and-choose-llm-models/">
+      
+      
+        <link rel="prev" href="../llm-cli-in-30-mins/">
+      
+      
+        <link rel="next" href="../how-to-count-llm-usage-costs/">
+      
+      
+        
+      
+      
+        <link rel="alternate" type="application/rss+xml" title="RSS feed" href="../../feed_rss_created.xml">
+        <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="../../feed_rss_updated.xml">
+      
+      <link rel="icon" href="../../assets/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>How to Compare and Choose LLM Models - GP's AI Research</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/blog.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#how_to_compare_llm_models" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="GP&#39;s AI Research" class="md-header__button md-logo" aria-label="GP's AI Research" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            GP's AI Research
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              How to Compare and Choose LLM Models
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../02_cv/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  CV/Resume
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../03_education/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Education
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../04_teaching/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Teaching
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../05_publications/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Publications
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../06_research/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Research
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../07_coding/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Coding
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../08_screw_ups/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Screwups
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="../" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Blog
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden>
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="GP&#39;s AI Research" class="md-nav__button md-logo" aria-label="GP's AI Research" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="logo">
+
+    </a>
+    GP's AI Research
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_cv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CV/Resume
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03_education/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Education
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_teaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Teaching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_publications/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Publications
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_research/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Research
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07_coding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Coding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_screw_ups/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Screwups
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Blog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+  <div class="md-content md-content--post" data-md-component="content">
+    <div class="md-sidebar md-sidebar--post" data-md-component="sidebar" data-md-type="navigation">
+      <div class="md-sidebar__scrollwrap">
+        <div class="md-sidebar__inner md-post">
+          <nav class="md-nav md-nav--primary">
+            <div class="md-post__back">
+              <div class="md-nav__title md-nav__container">
+                <a href="../" class="md-nav__link">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+                  <span class="md-ellipsis">
+                    Back to index
+                  </span>
+                </a>
+              </div>
+            </div>
+            
+              <div class="md-post__authors md-typeset">
+                
+                  <div class="md-profile md-post__profile">
+                    <span class="md-author md-author--long">
+                      <img src="https://github.com/gpsaggese.png" alt="Giacinto Paolo Saggese">
+                    </span>
+                    <span class="md-profile__description">
+                      <strong>
+                        
+                          <a href="https://gpsaggese.github.io/">Giacinto Paolo Saggese</a>
+                        
+                      </strong>
+                      <br>
+                      Adjunct Professor at University of Maryland
+                    </span>
+                  </div>
+                
+              </div>
+            
+            <ul class="md-post__meta md-nav__list">
+              <li class="md-nav__item md-nav__item--section">
+                <div class="md-post__title">
+                  <span class="md-ellipsis">
+                    Metadata
+                  </span>
+                </div>
+                <nav class="md-nav">
+                  <ul class="md-nav__list">
+                    <li class="md-nav__item">
+                      <div class="md-nav__link">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5z"/></svg>
+                        <time datetime="2026-05-15 00:00:00+00:00" class="md-ellipsis">Friday, May 15, 2026</time>
+                      </div>
+                    </li>
+                    
+                    
+                      <li class="md-nav__item">
+                        <div class="md-nav__link">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 3v15h3V3zm3 2 4 13 3-1-4-13zM5 5v13h3V5zM3 19v2h18v-2z"/></svg>
+                          <span class="md-ellipsis">
+                            in
+                            
+                              <a href="../category/LLM/">LLM</a>, 
+                              <a href="../category/AI-Tools/">AI Tools</a></span>
+                        </div>
+                      </li>
+                    
+                    
+                      
+                      <li class="md-nav__item">
+                        <div class="md-nav__link">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8m0-18a10 10 0 0 1 10 10 10 10 0 0 1-10 10C6.47 22 2 17.5 2 12A10 10 0 0 1 12 2m.5 5v5.25l4.5 2.67-.75 1.23L11 13V7z"/></svg>
+                          <span class="md-ellipsis">
+                            
+                              7 min read
+                            
+                          </span>
+                        </div>
+                      </li>
+                    
+                  </ul>
+                </nav>
+              </li>
+            </ul>
+            
+          </nav>
+          
+            
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the_landscape_of_llm_evaluation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Landscape of LLM Evaluation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#where_to_find_reliable_benchmarks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Where to Find Reliable Benchmarks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#my_efficiency_metric" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        My Efficiency Metric
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#model_comparison_by_category" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Model Comparison by Category
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Model Comparison by Category">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reasoning_and_planning_models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reasoning and Planning Models
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agentic_coding_models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agentic Coding Models
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#text_processing_models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Text Processing Models
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#my_personal_workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        My Personal Workflow
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+          
+        </div>
+      </div>
+    </div>
+    <article class="md-content__inner md-typeset">
+      
+        
+  
+
+
+
+
+<p>TL;DR Comparing LLMs across real benchmarks and use an <em>efficiency</em> metric that
+combines quality, cost, and speed to pick the right model for each task</p>
+<!-- more -->
+
+<h1 id="how_to_compare_llm_models">How to Compare LLM Models<a class="headerlink" href="#how_to_compare_llm_models" title="Permanent link">#</a></h1>
+<h2 id="the_landscape_of_llm_evaluation">The Landscape of LLM Evaluation<a class="headerlink" href="#the_landscape_of_llm_evaluation" title="Permanent link">#</a></h2>
+<ul>
+<li>Choosing between 50+ available models is hard without a systematic framework</li>
+<li>Different models excel at different things:<ul>
+<li>Some are fast but are mediocre at reasoning</li>
+<li>Some score highest on benchmarks but cost 100x more</li>
+<li>Some are great for code but struggle with "creative" reasoning</li>
+</ul>
+</li>
+<li>The goal is to pick the right model for your workflow at the minimum price</li>
+</ul>
+<!--  rendered_images:begin -->
+<!--  ```mermaid -->
+<!--  mindmap -->
+<!--    root((LLM Model Selection)) -->
+<!--      Quality -->
+<!--        Benchmark Scores -->
+<!--        Reasoning Ability -->
+<!--        Code Generation -->
+<!--        Task Fit -->
+<!--      Cost -->
+<!--        Input Tokens -->
+<!--        Output Tokens -->
+<!--        Provider Markup -->
+<!--        Daily Budget -->
+<!--      Speed -->
+<!--        Latency -->
+<!--        Tokens Per Second -->
+<!--        Time To First Token -->
+<!--        Throughput -->
+<!--      Context -->
+<!--        Window Size -->
+<!--        Long Document Support -->
+<!--        Memory / State -->
+<!--  ``` -->
+<!--  rendered_images:end -->
+<!--  render_images:begin -->
+<p><img alt="" src="../how_to.Compare_LLM_models.md.figs/how_to.Compare_LLM_models.1.png" /></p>
+<!--  render_images:end -->
+
+<div style="text-align: center; font-style: italic;">
+The four dimensions of LLM model selection: Quality, Cost, Speed, and Context
+work together to determine the right model for any given task.
+</div>
+
+<h2 id="where_to_find_reliable_benchmarks">Where to Find Reliable Benchmarks<a class="headerlink" href="#where_to_find_reliable_benchmarks" title="Permanent link">#</a></h2>
+<ul>
+<li>Multiple websites rank AI models, each with a different methodology:</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Site</th>
+<th style="text-align: left;">Address</th>
+<th style="text-align: left;">Best For</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Artificial Analysis</td>
+<td style="text-align: left;">https://artificialanalysis.ai</td>
+<td style="text-align: left;">Comparing quality, cost, speed, latency, context window, and benchmarks. Best for production model selection.</td>
+</tr>
+<tr>
+<td style="text-align: left;">Arena (formerly Chatbot Arena)</td>
+<td style="text-align: left;">https://arena.ai</td>
+<td style="text-align: left;">Human preference rankings from blind head-to-head evaluations. Measures real-world user preference.</td>
+</tr>
+<tr>
+<td style="text-align: left;">LiveBench</td>
+<td style="text-align: left;">https://livebench.ai</td>
+<td style="text-align: left;">Contamination-resistant benchmarking with frequently refreshed test sets and objective scoring.</td>
+</tr>
+<tr>
+<td style="text-align: left;">Hugging Face Open LLM Leaderboard</td>
+<td style="text-align: left;">https://huggingface.co/spaces/open-llm-leaderboard</td>
+<td style="text-align: left;">Comparing open-source and open-weight models with transparent evaluation.</td>
+</tr>
+<tr>
+<td style="text-align: left;">Vellum LLM Leaderboard</td>
+<td style="text-align: left;">https://www.vellum.ai/llm-leaderboard</td>
+<td style="text-align: left;">Quick comparison of frontier models across reasoning, coding, and general capabilities.</td>
+</tr>
+<tr>
+<td style="text-align: left;">LiveCodeBench</td>
+<td style="text-align: left;">https://livecodebench.github.io</td>
+<td style="text-align: left;">Coding-focused benchmarking using fresh programming problems.</td>
+</tr>
+<tr>
+<td style="text-align: left;">OpenRouter Rankings</td>
+<td style="text-align: left;">https://openrouter.ai/rankings</td>
+<td style="text-align: left;">Real-world usage, popularity, and provider adoption metrics.</td>
+</tr>
+<tr>
+<td style="text-align: left;">Stanford AI Index</td>
+<td style="text-align: left;">https://hai.stanford.edu/ai-index</td>
+<td style="text-align: left;">Industry trends, model ecosystem analysis, and AI market context.</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>I find the most useful sites day-to-day are:<ul>
+<li><strong>OpenRouter Rankings</strong>: Real-world usage data shows what others are actually
+  using in production</li>
+<li><strong>Artificial Analysis</strong>: Combines benchmarks with pricing, speed, and latency
+  in one place</li>
+</ul>
+</li>
+</ul>
+<h2 id="my_efficiency_metric">My Efficiency Metric<a class="headerlink" href="#my_efficiency_metric" title="Permanent link">#</a></h2>
+<ul>
+<li>Raw benchmark scores can be misleading because they ignore cost and speed</li>
+<li>A model that scores 90% but costs 50x more than an 85% model may not be the
+  better choice for daily use</li>
+<li>
+<p>I use an <em>efficiency</em> metric that captures the trade-off:</p>
+<div class="arithmatex">\[
+\text{Efficiency} = \frac{\text{Quality} \times \text{Speed}}{\text{Cost}}
+\]</div>
+</li>
+</ul>
+<!--  rendered_images:begin -->
+<!--  ```graphviz -->
+<!--  digraph EfficiencyMetric { -->
+<!--      splines=false; -->
+<!--      nodesep=1.2; -->
+<!--      ranksep=0.6; -->
+<!--   -->
+<!--      node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.7]; -->
+<!--   -->
+<!--      // Input nodes -->
+<!--      Quality [label="Quality\n(Coding IQ 0-100)", fillcolor="#A6C8F4"]; -->
+<!--      Speed   [label="Speed\n(Tokens/sec)", fillcolor="#B2E2B2"]; -->
+<!--      Cost    [label="Cost\n($ per 1M tokens)", fillcolor="#F4A6A6"]; -->
+<!--   -->
+<!--      // Operator nodes -->
+<!--      Multiply [label="Quality × Speed", fillcolor="#FFD1A6", shape=diamond]; -->
+<!--      Divide   [label="Efficiency\n(Quality × Speed) / Cost", fillcolor="#A0D6D1", shape=box, style="rounded,filled,bold", penwidth=2.5]; -->
+<!--   -->
+<!--      // Output -->
+<!--      Decision [label="High Eff. → Cheap & Fast\nLow Eff. → Expensive & Slow", fillcolor="#D4A6F4", shape=box, style="rounded,filled"]; -->
+<!--   -->
+<!--      // Edges -->
+<!--      Quality -> Multiply; -->
+<!--      Speed -> Multiply; -->
+<!--      Multiply -> Divide; -->
+<!--      Cost -> Divide [color="#CC3333", penwidth=1.5]; -->
+<!--      Divide -> Decision [penwidth=2.0]; -->
+<!--   -->
+<!--      // Force rank alignment -->
+<!--      { rank=same; Quality; Speed; Cost; } -->
+<!--      Multiply -> Divide [style=invis, weight=10]; -->
+<!--  } -->
+<!--  ``` -->
+<!--  rendered_images:end -->
+<!--  render_images:begin -->
+<p><img alt="" src="../how_to.Compare_LLM_models.md.figs/how_to.Compare_LLM_models.2.png" /></p>
+<!--  render_images:end -->
+
+<div style="text-align: center; font-style: italic;">
+The efficiency metric combines Quality × Speed into a numerator representing
+"useful work per second" and divides by Cost to find the value each model
+delivers per dollar.
+</div>
+
+<ul>
+<li>
+<p>The components are:</p>
+<ul>
+<li><strong>Quality</strong>: Artificial Analysis Coding Index (0-100), a benchmark composite
+  for code generation tasks</li>
+<li><strong>Speed</strong>: Tokens per second (p50 throughput) from OpenRouter</li>
+<li><strong>Cost</strong>: Cost per 1M tokens (input + output) from OpenRouter</li>
+</ul>
+</li>
+<li>
+<p>Higher efficiency means more quality throughput per dollar</p>
+</li>
+<li>The metric favors cheap, fast models while penalizing expensive slow ones</li>
+</ul>
+<h2 id="model_comparison_by_category">Model Comparison by Category<a class="headerlink" href="#model_comparison_by_category" title="Permanent link">#</a></h2>
+<ul>
+<li>
+<p>I organize models into three categories matching my daily use cases:</p>
+<ul>
+<li><strong>Reasoning and planning</strong>: Models for architecture, refactoring plans, and
+  complex multi-step reasoning</li>
+<li><strong>Agentic coding</strong>: Models I use for code generation with AI coding
+  assistants (<code>claude-code</code>, <code>pi-dev</code> are my favorite harnesses)</li>
+<li><strong>Text processing</strong>: Models for batch text tasks (summarization,
+  classification, extraction)</li>
+</ul>
+</li>
+<li>
+<p>I wrote a little script to generate tables summarizing the characteristics of
+  the models</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>&gt;<span class="w"> </span>openrouter_models_table.py<span class="w"> </span>--models_from_file<span class="w"> </span>models.txt
+</code></pre></div>
+</li>
+<li>
+<p>The script lives at
+  <code>helpers_root/dev_scripts_helpers/llms/openrouter_models_table.py</code> and
+  supports more options:
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>&gt;<span class="w"> </span>openrouter_models_table.py<span class="w"> </span>--models_from_file<span class="w"> </span>models.txt<span class="w"> </span>-v<span class="w"> </span>DEBUG<span class="w"> </span>-a<span class="w"> </span>fetch_aa_benchmarks<span class="w"> </span>-a<span class="w"> </span>fetch_openrouter_throughput
+</code></pre></div></p>
+</li>
+</ul>
+<!--  rendered_images:begin -->
+<!--  ```mermaid -->
+<!--  quadrantChart -->
+<!--      title Model Categories by Quality and Cost -->
+<!--      x-axis "Low Cost" -->
+<p>"High Cost" --&gt;</p>
+<!--      y-axis "Low Quality" -->
+<p>"High Quality" --&gt;</p>
+<!--      quadrant-1 "Best Value (Sweet Spot)" -->
+<!--      quadrant-2 "Premium Picks" -->
+<!--      quadrant-3 "Budget Basics" -->
+<!--      quadrant-4 "Avoid (Poor Value)" -->
+<!--      deepseek-v4-flash: [0.15, 0.55] -->
+<!--      deepseek-v4-pro: [0.25, 0.65] -->
+<!--      mimo-v2-5-pro: [0.25, 0.60] -->
+<!--      qwen3-7-max: [0.35, 0.68] -->
+<!--      claude-sonnet-4-6: [0.50, 0.72] -->
+<!--      claude-opus-4-7: [0.75, 0.80] -->
+<!--      gemini-3-1-pro: [0.45, 0.78] -->
+<!--      gpt-5-5: [0.85, 0.82] -->
+<!--      gpt-oss-120b: [0.10, 0.38] -->
+<!--  ``` -->
+<!--  rendered_images:end -->
+<!--  render_images:begin -->
+<p><img alt="" src="../how_to.Compare_LLM_models.md.figs/how_to.Compare_LLM_models.3.png" /></p>
+<!--  render_images:end -->
+
+<div style="text-align: center; font-style: italic;">
+The quadrant chart clusters models into value groups. Models in the
+upper-left quadrant deliver high quality at low cost — the efficiency
+sweet spot for daily use. Premium models cluster in the upper-right,
+while the lower-left holds budget-friendly options for simple tasks.
+</div>
+
+<!-- TODO(ai_gp): Add list of models -->
+
+<h3 id="reasoning_and_planning_models">Reasoning and Planning Models<a class="headerlink" href="#reasoning_and_planning_models" title="Permanent link">#</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>&gt;<span class="w"> </span>openrouter_models_table.py<span class="w"> </span>--models_from_file<span class="w"> </span>helpers_root/dev_scripts_helpers/llms/reasoning_models.txt
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">AA_Slug</th>
+<th style="text-align: right;">In_Cost</th>
+<th style="text-align: right;">Out_Cost</th>
+<th style="text-align: left;">Context</th>
+<th style="text-align: left;">Released</th>
+<th style="text-align: right;">Coding_IQ</th>
+<th style="text-align: right;">General_IQ</th>
+<th style="text-align: right;">Speed</th>
+<th style="text-align: left;">Week_Toks</th>
+<th style="text-align: left;">Month_Toks</th>
+<th style="text-align: right;">Efficiency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">claude-opus-4-7</td>
+<td style="text-align: right;">5.00</td>
+<td style="text-align: right;">25.0</td>
+<td style="text-align: left;">1M</td>
+<td style="text-align: left;">2026-04-16</td>
+<td style="text-align: right;">52.5</td>
+<td style="text-align: right;">57.3</td>
+<td style="text-align: right;">90.0</td>
+<td style="text-align: left;">1504.7B</td>
+<td style="text-align: left;">7671.2B</td>
+<td style="text-align: right;">158</td>
+</tr>
+<tr>
+<td style="text-align: left;">claude-sonnet-4-6</td>
+<td style="text-align: right;">3.00</td>
+<td style="text-align: right;">15.0</td>
+<td style="text-align: left;">1M</td>
+<td style="text-align: left;">2026-02-17</td>
+<td style="text-align: right;">46.4</td>
+<td style="text-align: right;">44.4</td>
+<td style="text-align: right;">42.5</td>
+<td style="text-align: left;">1849.1B</td>
+<td style="text-align: left;">7614.3B</td>
+<td style="text-align: right;">110</td>
+</tr>
+<tr>
+<td style="text-align: left;">deepseek-v4-pro</td>
+<td style="text-align: right;">0.435</td>
+<td style="text-align: right;">0.870</td>
+<td style="text-align: left;">1M</td>
+<td style="text-align: left;">2026-04-23</td>
+<td style="text-align: right;">47.5</td>
+<td style="text-align: right;">51.5</td>
+<td style="text-align: right;">43.0</td>
+<td style="text-align: left;">1861.1B</td>
+<td style="text-align: left;">5387.6B</td>
+<td style="text-align: right;">1565</td>
+</tr>
+<tr>
+<td style="text-align: left;">gemini-2-5-pro</td>
+<td style="text-align: right;">1.25</td>
+<td style="text-align: right;">10.0</td>
+<td style="text-align: left;">1M</td>
+<td style="text-align: left;">2025-06-17</td>
+<td style="text-align: right;">32.0</td>
+<td style="text-align: right;">34.6</td>
+<td style="text-align: right;">84.0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">9.8B</td>
+<td style="text-align: right;">239</td>
+</tr>
+<tr>
+<td style="text-align: left;">gemini-3-1-pro-preview</td>
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">12.0</td>
+<td style="text-align: left;">1M</td>
+<td style="text-align: left;">2026-02-19</td>
+<td style="text-align: right;">55.5</td>
+<td style="text-align: right;">57.2</td>
+<td style="text-align: right;">95.0</td>
+<td style="text-align: left;">239.3B</td>
+<td style="text-align: left;">1423.5B</td>
+<td style="text-align: right;">377</td>
+</tr>
+<tr>
+<td style="text-align: left;">gemini-3-5-flash</td>
+<td style="text-align: right;">1.50</td>
+<td style="text-align: right;">9.00</td>
+<td style="text-align: left;">1M</td>
+<td style="text-align: left;">2026-05-19</td>
+<td style="text-align: right;">45.0</td>
+<td style="text-align: right;">55.3</td>
+<td style="text-align: right;">170.0</td>
+<td style="text-align: left;">492.7B</td>
+<td style="text-align: left;">1371.3B</td>
+<td style="text-align: right;">729</td>
+</tr>
+<tr>
+<td style="text-align: left;">kat-coder-pro-v2</td>
+<td style="text-align: right;">0.300</td>
+<td style="text-align: right;">1.20</td>
+<td style="text-align: left;">256K</td>
+<td style="text-align: left;">2026-03-27</td>
+<td style="text-align: right;">45.6</td>
+<td style="text-align: right;">43.8</td>
+<td style="text-align: right;">16.0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: right;">486</td>
+</tr>
+<tr>
+<td style="text-align: left;">kimi-k2-6</td>
+<td style="text-align: right;">0.680</td>
+<td style="text-align: right;">3.41</td>
+<td style="text-align: left;">262K</td>
+<td style="text-align: left;">2026-04-20</td>
+<td style="text-align: right;">47.1</td>
+<td style="text-align: right;">53.9</td>
+<td style="text-align: right;">43.0</td>
+<td style="text-align: left;">342.0B</td>
+<td style="text-align: left;">2818.1B</td>
+<td style="text-align: right;">495</td>
+</tr>
+<tr>
+<td style="text-align: left;">gpt-5-2</td>
+<td style="text-align: right;">1.75</td>
+<td style="text-align: right;">14.0</td>
+<td style="text-align: left;">400K</td>
+<td style="text-align: left;">2025-12-10</td>
+<td style="text-align: right;">48.7</td>
+<td style="text-align: right;">51.3</td>
+<td style="text-align: right;">41.0</td>
+<td style="text-align: left;">67.6B</td>
+<td style="text-align: left;">103.4B</td>
+<td style="text-align: right;">127</td>
+</tr>
+<tr>
+<td style="text-align: left;">gpt-5-3-codex</td>
+<td style="text-align: right;">1.75</td>
+<td style="text-align: right;">14.0</td>
+<td style="text-align: left;">400K</td>
+<td style="text-align: left;">2026-02-24</td>
+<td style="text-align: right;">53.1</td>
+<td style="text-align: right;">53.6</td>
+<td style="text-align: right;">41.0</td>
+<td style="text-align: left;">81.4B</td>
+<td style="text-align: left;">337.6B</td>
+<td style="text-align: right;">138</td>
+</tr>
+<tr>
+<td style="text-align: left;">gpt-5-4</td>
+<td style="text-align: right;">2.50</td>
+<td style="text-align: right;">15.0</td>
+<td style="text-align: left;">1M</td>
+<td style="text-align: left;">2026-03-05</td>
+<td style="text-align: right;">57.2</td>
+<td style="text-align: right;">56.8</td>
+<td style="text-align: right;">42.0</td>
+<td style="text-align: left;">241.0B</td>
+<td style="text-align: left;">1133.9B</td>
+<td style="text-align: right;">137</td>
+</tr>
+<tr>
+<td style="text-align: left;">gpt-5-5</td>
+<td style="text-align: right;">5.00</td>
+<td style="text-align: right;">30.0</td>
+<td style="text-align: left;">1M</td>
+<td style="text-align: left;">2026-04-24</td>
+<td style="text-align: right;">59.1</td>
+<td style="text-align: right;">60.2</td>
+<td style="text-align: right;">33.0</td>
+<td style="text-align: left;">447.2B</td>
+<td style="text-align: left;">1979.6B</td>
+<td style="text-align: right;">56</td>
+</tr>
+<tr>
+<td style="text-align: left;">qwen3-7-max</td>
+<td style="text-align: right;">1.25</td>
+<td style="text-align: right;">3.75</td>
+<td style="text-align: left;">1M</td>
+<td style="text-align: left;">2026-05-21</td>
+<td style="text-align: right;">50.1</td>
+<td style="text-align: right;">56.6</td>
+<td style="text-align: right;">45.0</td>
+<td style="text-align: left;">178.3B</td>
+<td style="text-align: left;">368.3B</td>
+<td style="text-align: right;">451</td>
+</tr>
+<tr>
+<td style="text-align: left;">qwen3-7-plus</td>
+<td style="text-align: right;">0.400</td>
+<td style="text-align: right;">1.60</td>
+<td style="text-align: left;">1M</td>
+<td style="text-align: left;">2026-06-03</td>
+<td style="text-align: right;">46.5</td>
+<td style="text-align: right;">53.3</td>
+<td style="text-align: right;">11.0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: right;">256</td>
+</tr>
+<tr>
+<td style="text-align: left;">mimo-v2-5-pro</td>
+<td style="text-align: right;">0.435</td>
+<td style="text-align: right;">0.870</td>
+<td style="text-align: left;">1M</td>
+<td style="text-align: left;">2026-04-22</td>
+<td style="text-align: right;">45.5</td>
+<td style="text-align: right;">53.8</td>
+<td style="text-align: right;">29.0</td>
+<td style="text-align: left;">519.0B</td>
+<td style="text-align: left;">2467.9B</td>
+<td style="text-align: right;">1011</td>
+</tr>
+</tbody>
+</table>
+<h3 id="agentic_coding_models">Agentic Coding Models<a class="headerlink" href="#agentic_coding_models" title="Permanent link">#</a></h3>
+<!-- TODO(ai_gp): Re-run the benchmarks and rank the models by efficiency -->
+
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>&gt;<span class="w"> </span>openrouter_models_table.py<span class="w"> </span>--models_from_file<span class="w"> </span>helpers_root/dev_scripts_helpers/llms/agentic_coding_models.txt
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">AA_Slug</th>
+<th style="text-align: right;">In_Cost</th>
+<th style="text-align: right;">Out_Cost</th>
+<th style="text-align: left;">Context</th>
+<th style="text-align: left;">Released</th>
+<th style="text-align: right;">Coding_IQ</th>
+<th style="text-align: right;">General_IQ</th>
+<th style="text-align: right;">Speed</th>
+<th style="text-align: left;">Week_Toks</th>
+<th style="text-align: left;">Month_Toks</th>
+<th style="text-align: right;">Efficiency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">claude-opus-4-7</td>
+<td style="text-align: right;">5.00</td>
+<td style="text-align: right;">25.0</td>
+<td style="text-align: left;">1M</td>
+<td style="text-align: left;">2026-04-16</td>
+<td style="text-align: right;">52.5</td>
+<td style="text-align: right;">57.3</td>
+<td style="text-align: right;">90.0</td>
+<td style="text-align: left;">1504.7B</td>
+<td style="text-align: left;">7671.2B</td>
+<td style="text-align: right;">158</td>
+</tr>
+<tr>
+<td style="text-align: left;">claude-sonnet-4-6</td>
+<td style="text-align: right;">3.00</td>
+<td style="text-align: right;">15.0</td>
+<td style="text-align: left;">1M</td>
+<td style="text-align: left;">2026-02-17</td>
+<td style="text-align: right;">46.4</td>
+<td style="text-align: right;">44.4</td>
+<td style="text-align: right;">42.5</td>
+<td style="text-align: left;">1849.1B</td>
+<td style="text-align: left;">7614.3B</td>
+<td style="text-align: right;">110</td>
+</tr>
+<tr>
+<td style="text-align: left;">deepseek-v4-flash</td>
+<td style="text-align: right;">0.098</td>
+<td style="text-align: right;">0.197</td>
+<td style="text-align: left;">1M</td>
+<td style="text-align: left;">2026-04-23</td>
+<td style="text-align: right;">38.7</td>
+<td style="text-align: right;">46.5</td>
+<td style="text-align: right;">50.0</td>
+<td style="text-align: left;">4066.7B</td>
+<td style="text-align: left;">13216.4B</td>
+<td style="text-align: right;">6562</td>
+</tr>
+<tr>
+<td style="text-align: left;">deepseek-v4-pro</td>
+<td style="text-align: right;">0.435</td>
+<td style="text-align: right;">0.870</td>
+<td style="text-align: left;">1M</td>
+<td style="text-align: left;">2026-04-23</td>
+<td style="text-align: right;">47.5</td>
+<td style="text-align: right;">51.5</td>
+<td style="text-align: right;">43.0</td>
+<td style="text-align: left;">1861.1B</td>
+<td style="text-align: left;">5387.6B</td>
+<td style="text-align: right;">1565</td>
+</tr>
+<tr>
+<td style="text-align: left;">gemini-2-5-pro</td>
+<td style="text-align: right;">1.25</td>
+<td style="text-align: right;">10.0</td>
+<td style="text-align: left;">1M</td>
+<td style="text-align: left;">2025-06-17</td>
+<td style="text-align: right;">32.0</td>
+<td style="text-align: right;">34.6</td>
+<td style="text-align: right;">84.0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">9.8B</td>
+<td style="text-align: right;">239</td>
+</tr>
+<tr>
+<td style="text-align: left;">gemini-3-1-pro-preview</td>
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">12.0</td>
+<td style="text-align: left;">1M</td>
+<td style="text-align: left;">2026-02-19</td>
+<td style="text-align: right;">55.5</td>
+<td style="text-align: right;">57.2</td>
+<td style="text-align: right;">95.0</td>
+<td style="text-align: left;">239.3B</td>
+<td style="text-align: left;">1423.5B</td>
+<td style="text-align: right;">377</td>
+</tr>
+<tr>
+<td style="text-align: left;">kat-coder-pro-v2</td>
+<td style="text-align: right;">0.300</td>
+<td style="text-align: right;">1.20</td>
+<td style="text-align: left;">256K</td>
+<td style="text-align: left;">2026-03-27</td>
+<td style="text-align: right;">45.6</td>
+<td style="text-align: right;">43.8</td>
+<td style="text-align: right;">16.0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: right;">486</td>
+</tr>
+<tr>
+<td style="text-align: left;">kimi-k2-6</td>
+<td style="text-align: right;">0.680</td>
+<td style="text-align: right;">3.41</td>
+<td style="text-align: left;">262K</td>
+<td style="text-align: left;">2026-04-20</td>
+<td style="text-align: right;">47.1</td>
+<td style="text-align: right;">53.9</td>
+<td style="text-align: right;">43.0</td>
+<td style="text-align: left;">342.0B</td>
+<td style="text-align: left;">2818.1B</td>
+<td style="text-align: right;">495</td>
+</tr>
+<tr>
+<td style="text-align: left;">qwen3-7-max</td>
+<td style="text-align: right;">1.25</td>
+<td style="text-align: right;">3.75</td>
+<td style="text-align: left;">1M</td>
+<td style="text-align: left;">2026-05-21</td>
+<td style="text-align: right;">50.1</td>
+<td style="text-align: right;">56.6</td>
+<td style="text-align: right;">45.0</td>
+<td style="text-align: left;">178.3B</td>
+<td style="text-align: left;">368.3B</td>
+<td style="text-align: right;">451</td>
+</tr>
+<tr>
+<td style="text-align: left;">mimo-v2-5-pro</td>
+<td style="text-align: right;">0.435</td>
+<td style="text-align: right;">0.870</td>
+<td style="text-align: left;">1M</td>
+<td style="text-align: left;">2026-04-22</td>
+<td style="text-align: right;">45.5</td>
+<td style="text-align: right;">53.8</td>
+<td style="text-align: right;">29.0</td>
+<td style="text-align: left;">519.0B</td>
+<td style="text-align: left;">2467.9B</td>
+<td style="text-align: right;">1011</td>
+</tr>
+</tbody>
+</table>
+<h3 id="text_processing_models">Text Processing Models<a class="headerlink" href="#text_processing_models" title="Permanent link">#</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>&gt;<span class="w"> </span>openrouter_models_table.py<span class="w"> </span>--models_from_file<span class="w"> </span>helpers_root/dev_scripts_helpers/llms/text_models.txt
+</code></pre></div>
+<!-- TODO(ai_gp): This table is messed up -->
+
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">AA_Slug</th>
+<th style="text-align: right;">In_Cost</th>
+<th style="text-align: right;">Out_Cost</th>
+<th style="text-align: left;">Context</th>
+<th style="text-align: left;">Released</th>
+<th style="text-align: right;">Coding_IQ</th>
+<th style="text-align: right;">General_IQ</th>
+<th style="text-align: right;">Speed</th>
+<th style="text-align: left;">Week_Toks</th>
+<th style="text-align: left;">Month_Toks</th>
+<th style="text-align: right;">Efficiency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">gpt-oss-120b</td>
+<td style="text-align: right;">0.039</td>
+<td style="text-align: right;">0.180</td>
+<td style="text-align: left;">131K</td>
+<td style="text-align: left;">2025-08-05</td>
+<td style="text-align: right;">28.6</td>
+<td style="text-align: right;">33.3</td>
+<td style="text-align: right;">10.0</td>
+<td style="text-align: left;">424.1B</td>
+<td style="text-align: left;">1746.0B</td>
+<td style="text-align: right;">1306</td>
+</tr>
+<tr>
+<td style="text-align: left;">gpt-oss-20b</td>
+<td style="text-align: right;">0.029</td>
+<td style="text-align: right;">0.140</td>
+<td style="text-align: left;">131K</td>
+<td style="text-align: left;">2025-08-05</td>
+<td style="text-align: right;">18.5</td>
+<td style="text-align: right;">24.5</td>
+<td style="text-align: right;">59.0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">28.3B</td>
+<td style="text-align: right;">6459</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Note: This category has fewer data points because smaller open-weight models
+  are not always tracked by Artificial Analysis benchmarks (Coding_IQ and
+  Speed may be missing)</li>
+</ul>
+<h2 id="my_personal_workflow">My Personal Workflow<a class="headerlink" href="#my_personal_workflow" title="Permanent link">#</a></h2>
+<ul>
+<li>
+<p>After comparing models across these categories, my daily setup has converged
+  to the following</p>
+</li>
+<li>
+<p><strong>Reasoning and planning</strong>: I use <code>Claude Opus 4.7-4.8</code> or <code>Sonnet 4.6</code> for
+  architecture design, refactoring plans, and complex multi-step analysis</p>
+<ul>
+<li>These are the most expensive models I use, but the quality is worth it for
+  tasks where correctness and depth matter</li>
+</ul>
+</li>
+<li>
+<p><strong>Agentic coding</strong>: I use <code>Deepseek-v4-flash</code> at max effort for most code
+  generation</p>
+<ul>
+<li>It is slightly slower and marginally worse than <code>Claude Haiku 4.5</code> in my gut
+  benchmark, but it is almost 10x cheaper</li>
+<li>The efficiency metric reflects this: it dominates the agentic coding table
+  because its cost is so low and with a decent quality</li>
+</ul>
+</li>
+<li>
+<p><strong>Daily spend</strong>: With this setup I spend around $10 per day on tokens</p>
+</li>
+<li>
+<p><strong>Quality principle</strong>: My goal is to write code with AI that matches or
+  exceeds what I write by hand</p>
+<ul>
+<li>I review and edit every single line of generated code: the same way I have reviewed
+  thousands of PRs from humans</li>
+<li>I have measured a productivity increase of ~10x in terms of high-quality
+  lines of code per day<ul>
+<li>Before AI: ~150 lines of new code per day</li>
+<li>After AI: ~3000 lines of new code per day</li>
+</ul>
+</li>
+<li>The refactoring and gardening of code probably is at 100-1000x since I
+  literally can leave it running and churn on boring operations (once I spent
+  time writing a prompt and making sure it does 99% of the write things)</li>
+</ul>
+</li>
+<li>
+<p><strong>Key insight</strong>:</p>
+<ul>
+<li>The most expensive model is rarely the best choice for routine work</li>
+<li>Efficiency metrics reveal that mid-range models (<code>Deepseek V4</code>, <code>Qwen</code>,
+  <code>MIMO</code>) deliver 80-90% of the quality at 5-10% of the cost</li>
+<li>Reserve premium models for tasks where the extra quality directly impacts the
+  outcome</li>
+</ul>
+</li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+  
+
+
+
+      
+    </article>
+  </div>
+
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2025 Giacinto Paolo Saggese
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://linkedin.com/in/gpsaggese" target="_blank" rel="noopener" title="linkedin.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/gpsaggese" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="mailto:gsaggese@umd.edu" target="_blank" rel="noopener" title="" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4l208 156a48 48 0 0 0 57.6 0l208-156c12.1-9.1 19.2-23.3 19.2-38.4 0-26.5-21.5-48-48-48zM0 196v188c0 35.3 28.7 64 64 64h384c35.3 0 64-28.7 64-64V196L313.6 344.8c-34.1 25.6-81.1 25.6-115.2 0z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "toc.integrate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+  
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-4QREMZZGV6');
+  </script>
+
+  </body>
+</html>

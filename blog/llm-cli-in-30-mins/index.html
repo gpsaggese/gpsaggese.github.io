@@ -1,0 +1,1452 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Transform text files with LLMs from the command line, integrate AI into your editing workflow">
+      
+      
+        <meta name="author" content="Giacinto Paolo Saggese">
+      
+      
+        <link rel="canonical" href="https://gpsaggese.github.io/blog/llm-cli-in-30-mins/">
+      
+      
+        <link rel="prev" href="../llm-cli-in-30-minutes/">
+      
+      
+        <link rel="next" href="../how-to-compare-and-choose-llm-models/">
+      
+      
+        
+      
+      
+        <link rel="alternate" type="application/rss+xml" title="RSS feed" href="../../feed_rss_created.xml">
+        <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="../../feed_rss_updated.xml">
+      
+      <link rel="icon" href="../../assets/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>LLM CLI in 30 mins - GP's AI Research</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/blog.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#introduction" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="GP&#39;s AI Research" class="md-header__button md-logo" aria-label="GP's AI Research" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            GP's AI Research
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              LLM CLI in 30 mins
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../02_cv/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  CV/Resume
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../03_education/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Education
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../04_teaching/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Teaching
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../05_publications/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Publications
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../06_research/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Research
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../07_coding/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Coding
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../08_screw_ups/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Screwups
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="../" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Blog
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden>
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="GP&#39;s AI Research" class="md-nav__button md-logo" aria-label="GP's AI Research" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="logo">
+
+    </a>
+    GP's AI Research
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_cv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CV/Resume
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03_education/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Education
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_teaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Teaching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_publications/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Publications
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_research/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Research
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07_coding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Coding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_screw_ups/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Screwups
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Blog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+  <div class="md-content md-content--post" data-md-component="content">
+    <div class="md-sidebar md-sidebar--post" data-md-component="sidebar" data-md-type="navigation">
+      <div class="md-sidebar__scrollwrap">
+        <div class="md-sidebar__inner md-post">
+          <nav class="md-nav md-nav--primary">
+            <div class="md-post__back">
+              <div class="md-nav__title md-nav__container">
+                <a href="../" class="md-nav__link">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+                  <span class="md-ellipsis">
+                    Back to index
+                  </span>
+                </a>
+              </div>
+            </div>
+            
+              <div class="md-post__authors md-typeset">
+                
+                  <div class="md-profile md-post__profile">
+                    <span class="md-author md-author--long">
+                      <img src="https://github.com/gpsaggese.png" alt="Giacinto Paolo Saggese">
+                    </span>
+                    <span class="md-profile__description">
+                      <strong>
+                        
+                          <a href="https://gpsaggese.github.io/">Giacinto Paolo Saggese</a>
+                        
+                      </strong>
+                      <br>
+                      Adjunct Professor at University of Maryland
+                    </span>
+                  </div>
+                
+              </div>
+            
+            <ul class="md-post__meta md-nav__list">
+              <li class="md-nav__item md-nav__item--section">
+                <div class="md-post__title">
+                  <span class="md-ellipsis">
+                    Metadata
+                  </span>
+                </div>
+                <nav class="md-nav">
+                  <ul class="md-nav__list">
+                    <li class="md-nav__item">
+                      <div class="md-nav__link">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5z"/></svg>
+                        <time datetime="2026-05-08 00:00:00+00:00" class="md-ellipsis">Friday, May 8, 2026</time>
+                      </div>
+                    </li>
+                    
+                    
+                      <li class="md-nav__item">
+                        <div class="md-nav__link">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 3v15h3V3zm3 2 4 13 3-1-4-13zM5 5v13h3V5zM3 19v2h18v-2z"/></svg>
+                          <span class="md-ellipsis">
+                            in
+                            
+                              <a href="../category/Developer-Tools/">Developer Tools</a>, 
+                              <a href="../category/LLM/">LLM</a></span>
+                        </div>
+                      </li>
+                    
+                    
+                      
+                      <li class="md-nav__item">
+                        <div class="md-nav__link">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8m0-18a10 10 0 0 1 10 10 10 10 0 0 1-10 10C6.47 22 2 17.5 2 12A10 10 0 0 1 12 2m.5 5v5.25l4.5 2.67-.75 1.23L11 13V7z"/></svg>
+                          <span class="md-ellipsis">
+                            
+                              5 min read
+                            
+                          </span>
+                        </div>
+                      </li>
+                    
+                  </ul>
+                </nav>
+              </li>
+            </ul>
+            
+          </nav>
+          
+            
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Introduction
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when_to_use_it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to Use It
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installation_and_setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installation and Setup
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core_concepts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Concepts
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Core Concepts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key_options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hands-on_examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hands-On Examples
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Hands-On Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example_1_basic_text_transformation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 1: Basic Text Transformation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example_2_edit_a_file_in_place" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 2: Edit a File in Place
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example_3_apply_a_skill_from_claude_code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 3: Apply a Skill From Claude Code
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example_4_transform_only_part_of_a_file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 4: Transform Only Part of a File
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example_5_apply_a_rule_with_auto-linting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example 5: Apply a Rule with Auto-Linting
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tips_and_gotchas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tips and Gotchas
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tips and Gotchas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tip_1_use_pipes_for_chaining" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tip 1: Use Pipes for Chaining
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tip_2_estimate_output_size_for_large_files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tip 2: Estimate Output Size for Large Files
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tip_3_use_dry-run_to_preview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tip 3: Use Dry-Run to Preview
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gotcha_1_stdin_requires_output_specification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gotcha 1: Stdin Requires Output Specification
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gotcha_2_only_one_prompt_option_at_a_time" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gotcha 2: Only One Prompt Option at a Time
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gotcha_3_linting_only_works_with_markdown" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gotcha 3: Linting Only Works with Markdown
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next_steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next Steps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced_combining_with_other_tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced: Combining with Other Tools
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+          
+        </div>
+      </div>
+    </div>
+    <article class="md-content__inner md-typeset">
+      
+        
+  
+
+
+
+
+  <h1>LLM CLI in 30 mins</h1>
+
+<p>TL;DR: <code>llm_cli</code> is a lightweight CLI tool that applies LLM transformations to
+text and code files. Use it to refactor code, improve docs, apply linting
+rules, or run custom prompts on file chunks, all from shell without leaving
+editor.</p>
+<!-- more -->
+
+<h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">#</a></h2>
+<ul>
+<li>Text transformation is a common dev task: refactoring code, improving docs,
+  fixing style issues, applying rules to slide decks, generating summaries</li>
+<li>
+<p><code>llm_cli</code> automates this: pipe text through LLM directly from shell</p>
+</li>
+<li>
+<p><code>llm_cli</code> solves several problems:</p>
+</li>
+<li>Apply LLM transformations without leaving terminal</li>
+<li>Use system prompts, rules, or skills to guide LLM behavior</li>
+<li>Process specific file chunks without touching the rest</li>
+<li>Chain transformations in shell pipelines</li>
+<li>
+<p>Auto-lint output with <code>Prettier</code></p>
+</li>
+<li>
+<p>Unlike generic LLM wrappers, <code>llm_cli</code> integrates with Claude Code skills and
+  rules: apply same transformations from command line as from IDE</p>
+</li>
+</ul>
+<h2 id="when_to_use_it">When to Use It<a class="headerlink" href="#when_to_use_it" title="Permanent link">#</a></h2>
+<ul>
+<li>Use <code>llm_cli</code> when you need to:</li>
+<li>Refactor multiple files with same rules</li>
+<li>Apply a skill (e.g., "fix documentation" or "improve code style") to a file</li>
+<li>Extract a file section, transform with LLM, and reassemble original</li>
+<li>Integrate LLM transformations into shell scripts or <code>Makefiles</code></li>
+<li>
+<p>Test a prompt or rule before applying via Claude Code</p>
+</li>
+<li>
+<p>Similar tools are </p>
+</li>
+<li><code>llm</code> CLI (Simon Willison)</li>
+<li>ChatGPT</li>
+<li>one-off Python scripts
+  but none combine LLM + file handling + rule integration as cleanly</li>
+</ul>
+<h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">#</a></h2>
+<ul>
+<li>Python 3.11 or later</li>
+<li>Access to LLM API (OpenAI, Anthropic, or OpenRouter)</li>
+<li><code>llm</code> Python library installed (auto-included in helpers)</li>
+<li><code>.claude/skills/</code> dir with skill definitions (optional, but useful)</li>
+</ul>
+<h2 id="installation_and_setup">Installation and Setup<a class="headerlink" href="#installation_and_setup" title="Permanent link">#</a></h2>
+<ul>
+<li>
+<p><code>llm_cli</code> comes with helpers library. Verify it's available:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>&gt;<span class="w"> </span>llm_cli.py<span class="w"> </span>--help
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>usage:<span class="w"> </span>llm_cli.py<span class="w"> </span><span class="o">[</span>-h<span class="o">]</span><span class="w"> </span><span class="o">[</span>--input<span class="w"> </span>INPUT<span class="o">]</span><span class="w"> </span><span class="o">[</span>--input_text<span class="w"> </span>INPUT_TEXT<span class="o">]</span><span class="w"> </span>...
+</code></pre></div>
+</li>
+<li>
+<p>Configure LLM API key:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>&gt;<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="nv">OPENAI_API_KEY</span><span class="o">=</span><span class="s2">&quot;your-key-here&quot;</span>
+</code></pre></div>
+</li>
+<li>
+<p>Or for Claude via Anthropic:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>&gt;<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="nv">ANTHROPIC_API_KEY</span><span class="o">=</span><span class="s2">&quot;your-key-here&quot;</span>
+</code></pre></div>
+</li>
+<li>
+<p>Check that LLM is working:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>&gt;<span class="w"> </span>llm_cli.py<span class="w"> </span>--input_text<span class="w"> </span><span class="s2">&quot;Say hello&quot;</span><span class="w"> </span>--output<span class="w"> </span>-
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>Hello!<span class="w"> </span>How<span class="w"> </span>can<span class="w"> </span>I<span class="w"> </span><span class="nb">help</span><span class="w"> </span>you<span class="w"> </span>today?
+</code></pre></div>
+</li>
+</ul>
+<h2 id="core_concepts">Core Concepts<a class="headerlink" href="#core_concepts" title="Permanent link">#</a></h2>
+<ul>
+<li><code>llm_cli</code> operates in these stages:</li>
+<li><strong>Read input</strong>: From file, stdin, or directly as text</li>
+<li><strong>Extract chunk (optional)</strong>: Use <code>--select</code> to process only part of file</li>
+<li><strong>Choose a prompt</strong>: Inline prompt, file, rule from <code>.claude/skills/</code>, or full skill</li>
+<li><strong>Transform</strong>: Send text through LLM</li>
+<li><strong>Optionally lint</strong>: Auto-format output (e.g., with <code>Prettier</code>)</li>
+<li>
+<p><strong>Write output</strong>: To file, stdout, or back to input file</p>
+</li>
+<li>
+<p>Each stage optional depending on use case. Simplest usage: input and output</p>
+</li>
+</ul>
+<h3 id="key_options">Key Options<a class="headerlink" href="#key_options" title="Permanent link">#</a></h3>
+<ul>
+<li><code>--input FILE</code> / <code>-i FILE</code>: Input file path. Use <code>-</code> for stdin</li>
+<li><code>--input_text TEXT</code>: Input text from command line</li>
+<li><code>--output FILE</code> / <code>-o FILE</code>: Output file path. Use <code>-</code> for stdout</li>
+<li><code>--system_prompt TEXT</code> / <code>-p TEXT</code>: Prompt text to guide the LLM</li>
+<li><code>--system_prompt_file FILE</code> / <code>-pf FILE</code>: Read prompt from file</li>
+<li><code>--rule SPEC</code>: Extract a rule from <code>.claude/skills/topic.rules.md</code></li>
+<li><code>--skill NAME</code>: Use a skill's full <code>SKILL.md</code> file as prompt</li>
+<li><code>--select SPEC</code>: Process only lines matching a selection spec</li>
+<li><code>--lint</code>: Auto-format output with <code>Prettier</code></li>
+<li><code>--model MODEL</code>: Which LLM to use (default: gpt-4)</li>
+<li><code>--modify_in_place</code> / <code>-m</code>: Edit file in place instead of creating new one</li>
+</ul>
+<h2 id="hands-on_examples">Hands-On Examples<a class="headerlink" href="#hands-on_examples" title="Permanent link">#</a></h2>
+<h3 id="example_1_basic_text_transformation">Example 1: Basic Text Transformation<a class="headerlink" href="#example_1_basic_text_transformation" title="Permanent link">#</a></h3>
+<ul>
+<li>
+<p>Start with simplest case: transform input text and print result</p>
+</li>
+<li>
+<p>Create a sample file:</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>&gt;<span class="w"> </span>cat<span class="w"> </span>&gt;<span class="w"> </span>input.txt<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="s">The quick brown fox jumps over the lazy dog.</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="s">It was a dark and stormy night.</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="s">The hero entered the room with caution.</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="s">EOF</span>
+</code></pre></div>
+<ul>
+<li>Transform with a simple prompt:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>&gt;<span class="w"> </span>llm_cli.py<span class="w"> </span>-i<span class="w"> </span>input.txt<span class="w"> </span>-o<span class="w"> </span>-<span class="w"> </span>--system_prompt<span class="w"> </span><span class="s2">&quot;Rewrite this in one sentence&quot;</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>The<span class="w"> </span>quick<span class="w"> </span>brown<span class="w"> </span>fox<span class="w"> </span>leaped<span class="w"> </span>over<span class="w"> </span>a<span class="w"> </span>lazy<span class="w"> </span>dog<span class="w"> </span>during<span class="w"> </span>a<span class="w"> </span>dark,<span class="w"> </span>stormy<span class="w"> </span>night<span class="w"> </span>as<span class="w"> </span>the<span class="w"> </span>cautious<span class="w"> </span>hero<span class="w"> </span>entered<span class="w"> </span>the<span class="w"> </span>room.
+</code></pre></div>
+<ul>
+<li><code>-o -</code> prints to stdout instead of writing to file</li>
+</ul>
+<h3 id="example_2_edit_a_file_in_place">Example 2: Edit a File in Place<a class="headerlink" href="#example_2_edit_a_file_in_place" title="Permanent link">#</a></h3>
+<ul>
+<li>Process a file and save result back to itself:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>&gt;<span class="w"> </span>llm_cli.py<span class="w"> </span>-i<span class="w"> </span>input.txt<span class="w"> </span>--system_prompt<span class="w"> </span><span class="s2">&quot;Make this more formal&quot;</span><span class="w"> </span>-m
+</code></pre></div>
+<ul>
+<li>Check result:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>&gt;<span class="w"> </span>cat<span class="w"> </span>input.txt
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>A<span class="w"> </span>swift,<span class="w"> </span>auburn<span class="w"> </span>canine<span class="w"> </span>traversed<span class="w"> </span>an<span class="w"> </span>obstacle<span class="w"> </span>formed<span class="w"> </span>by<span class="w"> </span>a<span class="w"> </span>sluggish<span class="w"> </span>animal.
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>It<span class="w"> </span>was<span class="w"> </span>an<span class="w"> </span>exceptionally<span class="w"> </span>dark<span class="w"> </span>evening<span class="w"> </span>accompanied<span class="w"> </span>by<span class="w"> </span>severe<span class="w"> </span>meteorological<span class="w"> </span>conditions.
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>The<span class="w"> </span>protagonist<span class="w"> </span>proceeded<span class="w"> </span>cautiously<span class="w"> </span>into<span class="w"> </span>the<span class="w"> </span>chamber.
+</code></pre></div>
+<ul>
+<li><code>-m</code> flag modifies file in place without separate output file</li>
+</ul>
+<h3 id="example_3_apply_a_skill_from_claude_code">Example 3: Apply a Skill From Claude Code<a class="headerlink" href="#example_3_apply_a_skill_from_claude_code" title="Permanent link">#</a></h3>
+<ul>
+<li>If you have a skill in <code>.claude/skills/</code>, apply it directly:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>&gt;<span class="w"> </span>llm_cli.py<span class="w"> </span>-i<span class="w"> </span>code.py<span class="w"> </span>--skill<span class="w"> </span>coding.fix_docstring<span class="w"> </span>-m
+</code></pre></div>
+<ul>
+<li>This applies entire <code>coding.fix_docstring</code> skill to your file</li>
+<li>Skills more powerful than inline prompts: contain detailed instructions and examples</li>
+</ul>
+<h3 id="example_4_transform_only_part_of_a_file">Example 4: Transform Only Part of a File<a class="headerlink" href="#example_4_transform_only_part_of_a_file" title="Permanent link">#</a></h3>
+<ul>
+<li>
+<p>Extract a chunk, transform it, reassemble. Useful when only specific lines need changes</p>
+</li>
+<li>
+<p>Create a sample file with markers:</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>&gt;<span class="w"> </span>cat<span class="w"> </span>&gt;<span class="w"> </span>slides.txt<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="s">## Slide 1: Introduction</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="s">This is a basic intro slide.</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="s">It needs better content.</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="s">## Slide 2: Main Topic</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="s">The main point is important.</span>
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="s">But unclear.</span>
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="s">## Slide 3: Conclusion</span>
+<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>
+<a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a><span class="s">Wrap up the presentation.</span>
+<a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a><span class="s">Make it memorable.</span>
+<a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a><span class="s">EOF</span>
+</code></pre></div>
+<ul>
+<li>Transform only Slide 2 using line numbers:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>&gt;<span class="w"> </span>llm_cli.py<span class="w"> </span>-i<span class="w"> </span>slides.txt<span class="w"> </span>--select<span class="w"> </span><span class="m">6</span>:8<span class="w"> </span>--system_prompt<span class="w"> </span><span class="s2">&quot;Improve clarity&quot;</span><span class="w"> </span>-m
+</code></pre></div>
+<ul>
+<li><code>--select 6:8</code> processes only lines 6-8, leaving rest untouched</li>
+</ul>
+<h3 id="example_5_apply_a_rule_with_auto-linting">Example 5: Apply a Rule with Auto-Linting<a class="headerlink" href="#example_5_apply_a_rule_with_auto-linting" title="Permanent link">#</a></h3>
+<ul>
+<li>Rules are snippets from a skill file. Extract one and apply with auto-formatting:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>&gt;<span class="w"> </span>llm_cli.py<span class="w"> </span>-i<span class="w"> </span>README.md<span class="w"> </span>--rule<span class="w"> </span><span class="s1">&#39;.claude/skills/markdown.rules.md:42:# Fix Bold Labels&#39;</span><span class="w"> </span>--lint<span class="w"> </span>-m
+</code></pre></div>
+<ul>
+<li>Rule specified as <code>file:line_number:rule_name</code>. <code>--lint</code> runs <code>Prettier</code> on output for consistent formatting</li>
+</ul>
+<h2 id="tips_and_gotchas">Tips and Gotchas<a class="headerlink" href="#tips_and_gotchas" title="Permanent link">#</a></h2>
+<h3 id="tip_1_use_pipes_for_chaining">Tip 1: Use Pipes for Chaining<a class="headerlink" href="#tip_1_use_pipes_for_chaining" title="Permanent link">#</a></h3>
+<ul>
+<li><code>llm_cli</code> integrates with Unix pipes: transform output from one tool into input for another</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>&gt;<span class="w"> </span>cat<span class="w"> </span>raw_notes.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>llm_cli.py<span class="w"> </span>-i<span class="w"> </span>-<span class="w"> </span>-o<span class="w"> </span>-<span class="w"> </span>--system_prompt<span class="w"> </span><span class="s2">&quot;Summarize in 3 bullet points&quot;</span>
+</code></pre></div>
+<h3 id="tip_2_estimate_output_size_for_large_files">Tip 2: Estimate Output Size for Large Files<a class="headerlink" href="#tip_2_estimate_output_size_for_large_files" title="Permanent link">#</a></h3>
+<ul>
+<li>By default, <code>llm_cli</code> shows a progress bar but doesn't know output size</li>
+<li>Help it:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>&gt;<span class="w"> </span>llm_cli.py<span class="w"> </span>-i<span class="w"> </span>large_file.py<span class="w"> </span>--system_prompt<span class="w"> </span><span class="s2">&quot;Add type hints&quot;</span><span class="w"> </span>--expected_num_chars<span class="w"> </span><span class="m">50000</span>
+</code></pre></div>
+<ul>
+<li>Or let it auto-estimate:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>&gt;<span class="w"> </span>llm_cli.py<span class="w"> </span>-i<span class="w"> </span>large_file.py<span class="w"> </span>--system_prompt<span class="w"> </span><span class="s2">&quot;Add type hints&quot;</span><span class="w"> </span>--progress_bar
+</code></pre></div>
+<h3 id="tip_3_use_dry-run_to_preview">Tip 3: Use Dry-Run to Preview<a class="headerlink" href="#tip_3_use_dry-run_to_preview" title="Permanent link">#</a></h3>
+<ul>
+<li>Before modifying files, dry-run to see what would happen:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>&gt;<span class="w"> </span>llm_cli.py<span class="w"> </span>-i<span class="w"> </span>important_file.py<span class="w"> </span>--system_prompt<span class="w"> </span><span class="s2">&quot;Refactor&quot;</span><span class="w"> </span>--dry_run
+</code></pre></div>
+<ul>
+<li>Shows LLM params without calling API or modifying files</li>
+</ul>
+<h3 id="gotcha_1_stdin_requires_output_specification">Gotcha 1: Stdin Requires Output Specification<a class="headerlink" href="#gotcha_1_stdin_requires_output_specification" title="Permanent link">#</a></h3>
+<ul>
+<li>When reading from stdin with <code>-i -</code>, must specify an output:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>&gt;<span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;text&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>llm_cli.py<span class="w"> </span>-i<span class="w"> </span>-<span class="w"> </span>-o<span class="w"> </span>output.txt<span class="w">  </span><span class="c1"># OK</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>&gt;<span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;text&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>llm_cli.py<span class="w"> </span>-i<span class="w"> </span>-<span class="w">                 </span><span class="c1"># ERROR</span>
+</code></pre></div>
+<ul>
+<li>Use <code>-o -</code> to print to stdout:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>&gt;<span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;text&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>llm_cli.py<span class="w"> </span>-i<span class="w"> </span>-<span class="w"> </span>-o<span class="w"> </span>-
+</code></pre></div>
+<h3 id="gotcha_2_only_one_prompt_option_at_a_time">Gotcha 2: Only One Prompt Option at a Time<a class="headerlink" href="#gotcha_2_only_one_prompt_option_at_a_time" title="Permanent link">#</a></h3>
+<ul>
+<li>Use <code>-p</code> (inline), <code>-pf</code> (from file), <code>--rule</code> (from rules), or <code>--skill</code> (full skill), not multiple:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>&gt;<span class="w"> </span>llm_cli.py<span class="w"> </span>-i<span class="w"> </span>file.txt<span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;Fix it&quot;</span><span class="w"> </span>--rule<span class="w"> </span><span class="s1">&#39;.claude/skills/my.rules.md:10:Rule&#39;</span><span class="w">  </span><span class="c1"># ERROR</span>
+</code></pre></div>
+<h3 id="gotcha_3_linting_only_works_with_markdown">Gotcha 3: Linting Only Works with Markdown<a class="headerlink" href="#gotcha_3_linting_only_works_with_markdown" title="Permanent link">#</a></h3>
+<ul>
+<li><code>--lint</code> flag currently formats output as Markdown with <code>Prettier</code>. If working with code files, linting won't apply:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>&gt;<span class="w"> </span>llm_cli.py<span class="w"> </span>-i<span class="w"> </span>code.py<span class="w"> </span>--system_prompt<span class="w"> </span><span class="s2">&quot;Add comments&quot;</span><span class="w"> </span>--lint<span class="w">  </span><span class="c1"># Linting won&#39;t affect Python</span>
+</code></pre></div>
+<h2 id="next_steps">Next Steps<a class="headerlink" href="#next_steps" title="Permanent link">#</a></h2>
+<ul>
+<li>Read full docs in <code>dev_scripts_helpers/llms/README.md</code></li>
+<li>Explore existing skills in <code>.claude/skills/</code> to see available transformations</li>
+<li>Create custom rule for repetitive tasks (e.g., "Fix grammar in slide decks")</li>
+<li>Integrate <code>llm_cli</code> into <code>Makefile</code> or shell script for batch processing</li>
+<li>Experiment with different models using <code>--model openrouter/anthropic/claude-opus-4.6</code></li>
+</ul>
+<h2 id="advanced_combining_with_other_tools">Advanced: Combining with Other Tools<a class="headerlink" href="#advanced_combining_with_other_tools" title="Permanent link">#</a></h2>
+<ul>
+<li>Use <code>llm_cli</code> alongside other helpers:</li>
+<li>
+<p>Refactor code and run tests:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>&gt;<span class="w"> </span>llm_cli.py<span class="w"> </span>-i<span class="w"> </span>module.py<span class="w"> </span>--system_prompt<span class="w"> </span><span class="s2">&quot;Refactor for readability&quot;</span><span class="w"> </span>-m<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>module_test.py
+</code></pre></div>
+</li>
+<li>
+<p>Fix a specific function in a file:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>&gt;<span class="w"> </span>llm_cli.py<span class="w"> </span>-i<span class="w"> </span>file.py<span class="w"> </span>--select<span class="w"> </span><span class="s2">&quot;def my_func&quot;</span><span class="w"> </span>--skill<span class="w"> </span>coding.fix_docstring<span class="w"> </span>-m
+</code></pre></div>
+</li>
+<li>
+<p>Process multiple files in a loop:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>&gt;<span class="w"> </span><span class="k">for</span><span class="w"> </span>file<span class="w"> </span><span class="k">in</span><span class="w"> </span>*.md<span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span>llm_cli.py<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$file</span><span class="s2">&quot;</span><span class="w"> </span>--skill<span class="w"> </span>markdown.fix_bullet_points<span class="w"> </span>-m<span class="p">;</span><span class="w"> </span><span class="k">done</span>
+</code></pre></div>
+</li>
+<li>
+<p><code>llm_cli</code> bridges terminal and LLM capabilities. Use it whenever you write
+  manual prompts to fix or improve text: that's a sign the transformation should
+  be automated</p>
+</li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+  
+
+
+
+      
+    </article>
+  </div>
+
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2025 Giacinto Paolo Saggese
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://linkedin.com/in/gpsaggese" target="_blank" rel="noopener" title="linkedin.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/gpsaggese" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="mailto:gsaggese@umd.edu" target="_blank" rel="noopener" title="" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4l208 156a48 48 0 0 0 57.6 0l208-156c12.1-9.1 19.2-23.3 19.2-38.4 0-26.5-21.5-48-48-48zM0 196v188c0 35.3 28.7 64 64 64h384c35.3 0 64-28.7 64-64V196L313.6 344.8c-34.1 25.6-81.1 25.6-115.2 0z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "toc.integrate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+  
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-4QREMZZGV6');
+  </script>
+
+  </body>
+</html>

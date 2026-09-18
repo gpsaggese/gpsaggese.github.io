@@ -1,0 +1,269 @@
+[INFO 02-27 07:33:20] ax.api.client: Generated new trial 0 with parameters {'x1': 0.5, 'x2': 0.5, 'x3': 0.5, 'x4': 0.5, 'x5': 0.5, 'x6': 0.5} using GenerationNode CenterOfSearchSpace.
+[INFO 02-27 07:33:20] ax.api.client: Generated new trial 1 with parameters {'x1': 0.391513, 'x2': 0.744357, 'x3': 0.554977, 'x4': 0.056312, 'x5': 0.159878, 'x6': 0.985035} using GenerationNode Sobol.
+[INFO 02-27 07:33:20] ax.api.client: Generated new trial 2 with parameters {'x1': 0.892288, 'x2': 0.126754, 'x3': 0.380229, 'x4': 0.776583, 'x5': 0.561968, 'x6': 0.474456} using GenerationNode Sobol.
+[INFO 02-27 07:33:20] ax.api.client: Generated new trial 3 with parameters {'x1': 0.609371, 'x2': 0.86885, 'x3': 0.835388, 'x4': 0.457249, 'x5': 0.899206, 'x6': 0.055396} using GenerationNode Sobol.
+[INFO 02-27 07:33:20] ax.api.client: Generated new trial 4 with parameters {'x1': 0.108053, 'x2': 0.252201, 'x3': 0.228887, 'x4': 0.740877, 'x5': 0.253945, 'x6': 0.544689} using GenerationNode Sobol.
+[INFO 02-27 07:33:20] ax.api.client: Trial 0 marked COMPLETED.
+[INFO 02-27 07:33:20] ax.api.client: Trial 1 marked COMPLETED.
+[INFO 02-27 07:33:20] ax.api.client: Trial 2 marked COMPLETED.
+[INFO 02-27 07:33:20] ax.api.client: Trial 3 marked COMPLETED.
+[INFO 02-27 07:33:20] ax.api.client: Trial 4 marked COMPLETED.
+/opt/homebrew/Caskroom/miniconda/base/envs/msml610-project/lib/python3.13/site-packages/ax/adapter/transforms/winsorize.py:131: AxOptimizationWarning:
+
+Encountered a `MultiObjective` without objective thresholds. We will winsorize each objective separately. We strongly recommend specifying the objective thresholds when using multi-objective optimization.
+
+[INFO 02-27 07:33:21] ax.api.client: Generated new trial 5 with parameters {'x1': 0.151624, 'x2': 0.914986, 'x3': 0.697332, 'x4': 0.583097, 'x5': 0.628482, 'x6': 0.433263} using GenerationNode MBM.
+[WARNING 02-27 07:33:21] ax.api.client: 5 trials requested but only 1 could be generated.
+[INFO 02-27 07:33:21] ax.api.client: Trial 5 marked COMPLETED.
+/opt/homebrew/Caskroom/miniconda/base/envs/msml610-project/lib/python3.13/site-packages/ax/adapter/transforms/winsorize.py:131: AxOptimizationWarning:
+
+Encountered a `MultiObjective` without objective thresholds. We will winsorize each objective separately. We strongly recommend specifying the objective thresholds when using multi-objective optimization.
+
+[INFO 02-27 07:33:27] ax.api.client: Generated new trial 6 with parameters {'x1': 0.587502, 'x2': 0.547808, 'x3': 0.80354, 'x4': 0.442007, 'x5': 0.714056, 'x6': 0.290779} using GenerationNode MBM.
+[INFO 02-27 07:33:27] ax.api.client: Generated new trial 7 with parameters {'x1': 0.401936, 'x2': 0.355762, 'x3': 0.0, 'x4': 0.762926, 'x5': 0.164051, 'x6': 0.49651} using GenerationNode MBM.
+[INFO 02-27 07:33:27] ax.api.client: Generated new trial 8 with parameters {'x1': 0.643714, 'x2': 1.0, 'x3': 0.800845, 'x4': 0.449793, 'x5': 1.0, 'x6': 0.601396} using GenerationNode MBM.
+[INFO 02-27 07:33:27] ax.api.client: Generated new trial 9 with parameters {'x1': 0.547114, 'x2': 0.471506, 'x3': 0.965503, 'x4': 0.70177, 'x5': 0.257823, 'x6': 0.272914} using GenerationNode MBM.
+[INFO 02-27 07:33:27] ax.api.client: Generated new trial 10 with parameters {'x1': 0.589143, 'x2': 0.498629, 'x3': 0.752614, 'x4': 0.250091, 'x5': 1.0, 'x6': 0.0} using GenerationNode MBM.
+[INFO 02-27 07:33:27] ax.api.client: Trial 6 marked COMPLETED.
+[INFO 02-27 07:33:27] ax.api.client: Trial 7 marked COMPLETED.
+[INFO 02-27 07:33:27] ax.api.client: Trial 8 marked COMPLETED.
+[INFO 02-27 07:33:27] ax.api.client: Trial 9 marked COMPLETED.
+[INFO 02-27 07:33:27] ax.api.client: Trial 10 marked COMPLETED.
+/opt/homebrew/Caskroom/miniconda/base/envs/msml610-project/lib/python3.13/site-packages/ax/adapter/transforms/winsorize.py:131: AxOptimizationWarning:
+
+Encountered a `MultiObjective` without objective thresholds. We will winsorize each objective separately. We strongly recommend specifying the objective thresholds when using multi-objective optimization.
+
+[INFO 02-27 07:33:33] ax.api.client: Generated new trial 11 with parameters {'x1': 0.327819, 'x2': 0.82697, 'x3': 0.615919, 'x4': 0.538638, 'x5': 0.489701, 'x6': 0.036321} using GenerationNode MBM.
+[INFO 02-27 07:33:33] ax.api.client: Generated new trial 12 with parameters {'x1': 0.068338, 'x2': 0.446687, 'x3': 0.364801, 'x4': 0.586849, 'x5': 0.413354, 'x6': 0.692637} using GenerationNode MBM.
+[INFO 02-27 07:33:33] ax.api.client: Generated new trial 13 with parameters {'x1': 0.179819, 'x2': 0.754623, 'x3': 0.369217, 'x4': 0.633876, 'x5': 0.39854, 'x6': 0.038173} using GenerationNode MBM.
+[INFO 02-27 07:33:33] ax.api.client: Generated new trial 14 with parameters {'x1': 0.451451, 'x2': 0.860311, 'x3': 0.753302, 'x4': 0.491942, 'x5': 0.588265, 'x6': 0.033683} using GenerationNode MBM.
+[INFO 02-27 07:33:33] ax.api.client: Generated new trial 15 with parameters {'x1': 0.060133, 'x2': 0.33081, 'x3': 0.085162, 'x4': 0.697233, 'x5': 0.368306, 'x6': 0.0} using GenerationNode MBM.
+[INFO 02-27 07:33:33] ax.api.client: Trial 11 marked COMPLETED.
+[INFO 02-27 07:33:33] ax.api.client: Trial 12 marked COMPLETED.
+[INFO 02-27 07:33:33] ax.api.client: Trial 13 marked COMPLETED.
+[INFO 02-27 07:33:33] ax.api.client: Trial 14 marked COMPLETED.
+[INFO 02-27 07:33:33] ax.api.client: Trial 15 marked COMPLETED.
+/opt/homebrew/Caskroom/miniconda/base/envs/msml610-project/lib/python3.13/site-packages/ax/adapter/transforms/winsorize.py:131: AxOptimizationWarning:
+
+Encountered a `MultiObjective` without objective thresholds. We will winsorize each objective separately. We strongly recommend specifying the objective thresholds when using multi-objective optimization.
+
+[INFO 02-27 07:33:40] ax.api.client: Generated new trial 16 with parameters {'x1': 0.216204, 'x2': 0.29278, 'x3': 0.229557, 'x4': 0.48594, 'x5': 0.464246, 'x6': 0.0} using GenerationNode MBM.
+[INFO 02-27 07:33:40] ax.api.client: Generated new trial 17 with parameters {'x1': 0.275103, 'x2': 0.488697, 'x3': 0.531808, 'x4': 0.491311, 'x5': 0.474927, 'x6': 0.0} using GenerationNode MBM.
+[INFO 02-27 07:33:40] ax.api.client: Generated new trial 18 with parameters {'x1': 0.185862, 'x2': 0.249232, 'x3': 0.008636, 'x4': 0.470968, 'x5': 0.43793, 'x6': 0.0} using GenerationNode MBM.
+[INFO 02-27 07:33:40] ax.api.client: Generated new trial 19 with parameters {'x1': 0.26124, 'x2': 0.448837, 'x3': 0.355501, 'x4': 0.499651, 'x5': 0.546784, 'x6': 0.0} using GenerationNode MBM.
+[INFO 02-27 07:33:40] ax.api.client: Generated new trial 20 with parameters {'x1': 0.278128, 'x2': 0.550402, 'x3': 0.761471, 'x4': 0.498157, 'x5': 0.459332, 'x6': 0.0} using GenerationNode MBM.
+[INFO 02-27 07:33:40] ax.api.client: Trial 16 marked COMPLETED.
+[INFO 02-27 07:33:40] ax.api.client: Trial 17 marked COMPLETED.
+[INFO 02-27 07:33:40] ax.api.client: Trial 18 marked COMPLETED.
+[INFO 02-27 07:33:40] ax.api.client: Trial 19 marked COMPLETED.
+[INFO 02-27 07:33:40] ax.api.client: Trial 20 marked COMPLETED.
+/opt/homebrew/Caskroom/miniconda/base/envs/msml610-project/lib/python3.13/site-packages/ax/adapter/transforms/winsorize.py:131: AxOptimizationWarning:
+
+Encountered a `MultiObjective` without objective thresholds. We will winsorize each objective separately. We strongly recommend specifying the objective thresholds when using multi-objective optimization.
+
+[INFO 02-27 07:33:49] ax.api.client: Generated new trial 21 with parameters {'x1': 0.376436, 'x2': 0.807133, 'x3': 0.0, 'x4': 0.325234, 'x5': 0.23018, 'x6': 0.0} using GenerationNode MBM.
+[INFO 02-27 07:33:49] ax.api.client: Generated new trial 22 with parameters {'x1': 0.350621, 'x2': 0.617897, 'x3': 0.0, 'x4': 0.322017, 'x5': 0.246642, 'x6': 0.0} using GenerationNode MBM.
+[INFO 02-27 07:33:49] ax.api.client: Generated new trial 23 with parameters {'x1': 0.385823, 'x2': 0.905524, 'x3': 0.071386, 'x4': 0.432501, 'x5': 0.316459, 'x6': 0.0} using GenerationNode MBM.
+[INFO 02-27 07:33:49] ax.api.client: Generated new trial 24 with parameters {'x1': 0.349832, 'x2': 0.0, 'x3': 0.012766, 'x4': 0.323521, 'x5': 0.296755, 'x6': 0.0} using GenerationNode MBM.
+[INFO 02-27 07:33:49] ax.api.client: Generated new trial 25 with parameters {'x1': 0.362411, 'x2': 0.710702, 'x3': 0.0, 'x4': 0.327016, 'x5': 0.245114, 'x6': 0.0} using GenerationNode MBM.
+[INFO 02-27 07:33:49] ax.api.client: Trial 21 marked COMPLETED.
+[INFO 02-27 07:33:49] ax.api.client: Trial 22 marked COMPLETED.
+[INFO 02-27 07:33:49] ax.api.client: Trial 23 marked COMPLETED.
+[INFO 02-27 07:33:49] ax.api.client: Trial 24 marked COMPLETED.
+[INFO 02-27 07:33:49] ax.api.client: Trial 25 marked COMPLETED.
+/opt/homebrew/Caskroom/miniconda/base/envs/msml610-project/lib/python3.13/site-packages/ax/adapter/transforms/winsorize.py:131: AxOptimizationWarning:
+
+Encountered a `MultiObjective` without objective thresholds. We will winsorize each objective separately. We strongly recommend specifying the objective thresholds when using multi-objective optimization.
+
+[INFO 02-27 07:33:59] ax.api.client: Generated new trial 26 with parameters {'x1': 0.392884, 'x2': 0.790738, 'x3': 0.112769, 'x4': 0.553015, 'x5': 0.1894, 'x6': 0.036848} using GenerationNode MBM.
+[INFO 02-27 07:33:59] ax.api.client: Generated new trial 27 with parameters {'x1': 0.123045, 'x2': 0.0, 'x3': 0.042263, 'x4': 0.156944, 'x5': 0.159459, 'x6': 0.278697} using GenerationNode MBM.
+[INFO 02-27 07:33:59] ax.api.client: Generated new trial 28 with parameters {'x1': 0.38113, 'x2': 0.696513, 'x3': 0.084548, 'x4': 0.493201, 'x5': 0.164481, 'x6': 0.036677} using GenerationNode MBM.
+[INFO 02-27 07:33:59] ax.api.client: Generated new trial 29 with parameters {'x1': 0.3945, 'x2': 0.897024, 'x3': 0.263951, 'x4': 0.589956, 'x5': 0.348485, 'x6': 0.032489} using GenerationNode MBM.
+[INFO 02-27 07:33:59] ax.api.client: Generated new trial 30 with parameters {'x1': 0.0, 'x2': 0.0, 'x3': 0.027936, 'x4': 0.103679, 'x5': 0.145297, 'x6': 0.0} using GenerationNode MBM.
+[INFO 02-27 07:33:59] ax.api.client: Trial 26 marked COMPLETED.
+[INFO 02-27 07:33:59] ax.api.client: Trial 27 marked COMPLETED.
+[INFO 02-27 07:33:59] ax.api.client: Trial 28 marked COMPLETED.
+[INFO 02-27 07:33:59] ax.api.client: Trial 29 marked COMPLETED.
+[INFO 02-27 07:33:59] ax.api.client: Trial 30 marked COMPLETED.
+/opt/homebrew/Caskroom/miniconda/base/envs/msml610-project/lib/python3.13/site-packages/ax/adapter/transforms/winsorize.py:131: AxOptimizationWarning:
+
+Encountered a `MultiObjective` without objective thresholds. We will winsorize each objective separately. We strongly recommend specifying the objective thresholds when using multi-objective optimization.
+
+[INFO 02-27 07:34:10] ax.api.client: Generated new trial 31 with parameters {'x1': 0.240123, 'x2': 0.168999, 'x3': 0.087481, 'x4': 0.0, 'x5': 0.0387, 'x6': 0.378348} using GenerationNode MBM.
+[INFO 02-27 07:34:10] ax.api.client: Generated new trial 32 with parameters {'x1': 0.0, 'x2': 0.214579, 'x3': 0.07655, 'x4': 0.238637, 'x5': 0.015334, 'x6': 0.540226} using GenerationNode MBM.
+[INFO 02-27 07:34:10] ax.api.client: Generated new trial 33 with parameters {'x1': 0.21581, 'x2': 0.0, 'x3': 0.113822, 'x4': 0.0, 'x5': 0.007846, 'x6': 0.154967} using GenerationNode MBM.
+[INFO 02-27 07:34:10] ax.api.client: Generated new trial 34 with parameters {'x1': 0.366292, 'x2': 0.644416, 'x3': 0.111865, 'x4': 0.457557, 'x5': 0.029958, 'x6': 0.118865} using GenerationNode MBM.
+[INFO 02-27 07:34:10] ax.api.client: Generated new trial 35 with parameters {'x1': 0.0, 'x2': 0.0, 'x3': 0.093649, 'x4': 0.294273, 'x5': 0.0, 'x6': 0.420555} using GenerationNode MBM.
+[INFO 02-27 07:34:10] ax.api.client: Trial 31 marked COMPLETED.
+[INFO 02-27 07:34:10] ax.api.client: Trial 32 marked COMPLETED.
+[INFO 02-27 07:34:10] ax.api.client: Trial 33 marked COMPLETED.
+[INFO 02-27 07:34:10] ax.api.client: Trial 34 marked COMPLETED.
+[INFO 02-27 07:34:10] ax.api.client: Trial 35 marked COMPLETED.
+/opt/homebrew/Caskroom/miniconda/base/envs/msml610-project/lib/python3.13/site-packages/ax/adapter/transforms/winsorize.py:131: AxOptimizationWarning:
+
+Encountered a `MultiObjective` without objective thresholds. We will winsorize each objective separately. We strongly recommend specifying the objective thresholds when using multi-objective optimization.
+
+[INFO 02-27 07:34:22] ax.api.client: Generated new trial 36 with parameters {'x1': 0.164675, 'x2': 0.110282, 'x3': 0.033666, 'x4': 0.242145, 'x5': 0.31869, 'x6': 0.484066} using GenerationNode MBM.
+[INFO 02-27 07:34:22] ax.api.client: Generated new trial 37 with parameters {'x1': 0.0, 'x2': 0.0, 'x3': 0.065832, 'x4': 0.0, 'x5': 0.26862, 'x6': 0.281754} using GenerationNode MBM.
+[INFO 02-27 07:34:22] ax.api.client: Generated new trial 38 with parameters {'x1': 0.661333, 'x2': 0.0, 'x3': 0.104426, 'x4': 0.0, 'x5': 0.151001, 'x6': 0.12151} using GenerationNode MBM.
+[INFO 02-27 07:34:22] ax.api.client: Generated new trial 39 with parameters {'x1': 0.0, 'x2': 0.422283, 'x3': 0.084804, 'x4': 0.0, 'x5': 0.218196, 'x6': 0.183752} using GenerationNode MBM.
+[INFO 02-27 07:34:22] ax.api.client: Generated new trial 40 with parameters {'x1': 0.400664, 'x2': 0.829594, 'x3': 0.143687, 'x4': 0.60424, 'x5': 0.201616, 'x6': 0.0} using GenerationNode MBM.
+[INFO 02-27 07:34:22] ax.api.client: Trial 36 marked COMPLETED.
+[INFO 02-27 07:34:22] ax.api.client: Trial 37 marked COMPLETED.
+[INFO 02-27 07:34:22] ax.api.client: Trial 38 marked COMPLETED.
+[INFO 02-27 07:34:22] ax.api.client: Trial 39 marked COMPLETED.
+[INFO 02-27 07:34:22] ax.api.client: Trial 40 marked COMPLETED.
+/opt/homebrew/Caskroom/miniconda/base/envs/msml610-project/lib/python3.13/site-packages/ax/adapter/transforms/winsorize.py:131: AxOptimizationWarning:
+
+Encountered a `MultiObjective` without objective thresholds. We will winsorize each objective separately. We strongly recommend specifying the objective thresholds when using multi-objective optimization.
+
+[INFO 02-27 07:34:33] ax.api.client: Generated new trial 41 with parameters {'x1': 0.241169, 'x2': 0.072409, 'x3': 0.051997, 'x4': 0.313538, 'x5': 0.199532, 'x6': 0.58329} using GenerationNode MBM.
+[INFO 02-27 07:34:33] ax.api.client: Generated new trial 42 with parameters {'x1': 0.210456, 'x2': 0.005331, 'x3': 0.024969, 'x4': 0.229353, 'x5': 0.074913, 'x6': 0.412528} using GenerationNode MBM.
+[INFO 02-27 07:34:33] ax.api.client: Generated new trial 43 with parameters {'x1': 0.236719, 'x2': 0.016444, 'x3': 0.0376, 'x4': 0.281455, 'x5': 0.100435, 'x6': 0.48203} using GenerationNode MBM.
+[INFO 02-27 07:34:33] ax.api.client: Generated new trial 44 with parameters {'x1': 0.047488, 'x2': 0.0, 'x3': 0.0, 'x4': 0.0, 'x5': 0.002278, 'x6': 0.0} using GenerationNode MBM.
+[INFO 02-27 07:34:33] ax.api.client: Generated new trial 45 with parameters {'x1': 0.241268, 'x2': 0.127544, 'x3': 0.078072, 'x4': 0.319484, 'x5': 0.390314, 'x6': 0.650627} using GenerationNode MBM.
+[INFO 02-27 07:34:33] ax.api.client: Trial 41 marked COMPLETED.
+[INFO 02-27 07:34:34] ax.api.client: Trial 42 marked COMPLETED.
+[INFO 02-27 07:34:34] ax.api.client: Trial 43 marked COMPLETED.
+[INFO 02-27 07:34:34] ax.api.client: Trial 44 marked COMPLETED.
+[INFO 02-27 07:34:34] ax.api.client: Trial 45 marked COMPLETED.
+/opt/homebrew/Caskroom/miniconda/base/envs/msml610-project/lib/python3.13/site-packages/ax/adapter/transforms/winsorize.py:131: AxOptimizationWarning:
+
+Encountered a `MultiObjective` without objective thresholds. We will winsorize each objective separately. We strongly recommend specifying the objective thresholds when using multi-objective optimization.
+
+[INFO 02-27 07:34:47] ax.api.client: Generated new trial 46 with parameters {'x1': 0.136459, 'x2': 0.096715, 'x3': 0.139911, 'x4': 0.170371, 'x5': 0.266983, 'x6': 0.398363} using GenerationNode MBM.
+[INFO 02-27 07:34:47] ax.api.client: Generated new trial 47 with parameters {'x1': 0.182747, 'x2': 0.134869, 'x3': 0.134667, 'x4': 0.24365, 'x5': 0.389788, 'x6': 0.584851} using GenerationNode MBM.
+[INFO 02-27 07:34:47] ax.api.client: Generated new trial 48 with parameters {'x1': 0.158971, 'x2': 0.049458, 'x3': 0.147174, 'x4': 0.25286, 'x5': 0.505401, 'x6': 0.609553} using GenerationNode MBM.
+[INFO 02-27 07:34:47] ax.api.client: Generated new trial 49 with parameters {'x1': 0.152158, 'x2': 0.113958, 'x3': 0.135086, 'x4': 0.192574, 'x5': 0.283485, 'x6': 0.454002} using GenerationNode MBM.
+[INFO 02-27 07:34:47] ax.api.client: Generated new trial 50 with parameters {'x1': 0.119534, 'x2': 0.073708, 'x3': 0.139429, 'x4': 0.14706, 'x5': 0.249583, 'x6': 0.326762} using GenerationNode MBM.
+[INFO 02-27 07:34:47] ax.api.client: Trial 46 marked COMPLETED.
+[INFO 02-27 07:34:47] ax.api.client: Trial 47 marked COMPLETED.
+[INFO 02-27 07:34:47] ax.api.client: Trial 48 marked COMPLETED.
+[INFO 02-27 07:34:47] ax.api.client: Trial 49 marked COMPLETED.
+[INFO 02-27 07:34:47] ax.api.client: Trial 50 marked COMPLETED.
+/opt/homebrew/Caskroom/miniconda/base/envs/msml610-project/lib/python3.13/site-packages/ax/adapter/transforms/winsorize.py:131: AxOptimizationWarning:
+
+Encountered a `MultiObjective` without objective thresholds. We will winsorize each objective separately. We strongly recommend specifying the objective thresholds when using multi-objective optimization.
+
+[INFO 02-27 07:35:02] ax.api.client: Generated new trial 51 with parameters {'x1': 0.227082, 'x2': 0.22126, 'x3': 0.149737, 'x4': 0.229659, 'x5': 0.289894, 'x6': 0.63921} using GenerationNode MBM.
+[INFO 02-27 07:35:02] ax.api.client: Generated new trial 52 with parameters {'x1': 0.210237, 'x2': 0.203292, 'x3': 0.147959, 'x4': 0.203341, 'x5': 0.278111, 'x6': 0.533177} using GenerationNode MBM.
+[INFO 02-27 07:35:02] ax.api.client: Generated new trial 53 with parameters {'x1': 0.417632, 'x2': 0.820199, 'x3': 0.108268, 'x4': 0.578586, 'x5': 0.295562, 'x6': 0.110233} using GenerationNode MBM.
+[INFO 02-27 07:35:02] ax.api.client: Generated new trial 54 with parameters {'x1': 0.217059, 'x2': 0.205231, 'x3': 0.128753, 'x4': 0.226308, 'x5': 0.274643, 'x6': 0.733714} using GenerationNode MBM.
+[INFO 02-27 07:35:02] ax.api.client: Generated new trial 55 with parameters {'x1': 0.13971, 'x2': 0.0, 'x3': 0.182117, 'x4': 0.064316, 'x5': 0.151969, 'x6': 0.089558} using GenerationNode MBM.
+[INFO 02-27 07:35:02] ax.api.client: Trial 51 marked COMPLETED.
+[INFO 02-27 07:35:02] ax.api.client: Trial 52 marked COMPLETED.
+[INFO 02-27 07:35:02] ax.api.client: Trial 53 marked COMPLETED.
+[INFO 02-27 07:35:02] ax.api.client: Trial 54 marked COMPLETED.
+[INFO 02-27 07:35:02] ax.api.client: Trial 55 marked COMPLETED.
+/opt/homebrew/Caskroom/miniconda/base/envs/msml610-project/lib/python3.13/site-packages/ax/adapter/transforms/winsorize.py:131: AxOptimizationWarning:
+
+Encountered a `MultiObjective` without objective thresholds. We will winsorize each objective separately. We strongly recommend specifying the objective thresholds when using multi-objective optimization.
+
+[INFO 02-27 07:35:20] ax.api.client: Generated new trial 56 with parameters {'x1': 0.239857, 'x2': 0.240336, 'x3': 0.345094, 'x4': 0.273985, 'x5': 0.313609, 'x6': 0.654747} using GenerationNode MBM.
+[INFO 02-27 07:35:20] ax.api.client: Generated new trial 57 with parameters {'x1': 0.215576, 'x2': 0.199164, 'x3': 0.151757, 'x4': 0.22276, 'x5': 0.294369, 'x6': 0.577677} using GenerationNode MBM.
+[INFO 02-27 07:35:20] ax.api.client: Generated new trial 58 with parameters {'x1': 0.334963, 'x2': 0.180287, 'x3': 0.146883, 'x4': 0.170092, 'x5': 0.334309, 'x6': 0.650531} using GenerationNode MBM.
+[INFO 02-27 07:35:20] ax.api.client: Generated new trial 59 with parameters {'x1': 0.170498, 'x2': 0.0, 'x3': 0.207238, 'x4': 0.067998, 'x5': 0.218468, 'x6': 0.240109} using GenerationNode MBM.
+[INFO 02-27 07:35:20] ax.api.client: Generated new trial 60 with parameters {'x1': 0.427379, 'x2': 0.838658, 'x3': 0.254237, 'x4': 0.583066, 'x5': 0.306542, 'x6': 0.0} using GenerationNode MBM.
+[INFO 02-27 07:35:20] ax.api.client: Trial 56 marked COMPLETED.
+[INFO 02-27 07:35:20] ax.api.client: Trial 57 marked COMPLETED.
+[INFO 02-27 07:35:20] ax.api.client: Trial 58 marked COMPLETED.
+[INFO 02-27 07:35:20] ax.api.client: Trial 59 marked COMPLETED.
+[INFO 02-27 07:35:20] ax.api.client: Trial 60 marked COMPLETED.
+/opt/homebrew/Caskroom/miniconda/base/envs/msml610-project/lib/python3.13/site-packages/ax/adapter/transforms/winsorize.py:131: AxOptimizationWarning:
+
+Encountered a `MultiObjective` without objective thresholds. We will winsorize each objective separately. We strongly recommend specifying the objective thresholds when using multi-objective optimization.
+
+[INFO 02-27 07:35:37] ax.api.client: Generated new trial 61 with parameters {'x1': 0.240618, 'x2': 0.231637, 'x3': 0.599108, 'x4': 0.291309, 'x5': 0.304252, 'x6': 0.653339} using GenerationNode MBM.
+[INFO 02-27 07:35:37] ax.api.client: Generated new trial 62 with parameters {'x1': 0.216788, 'x2': 0.20736, 'x3': 0.331099, 'x4': 0.272593, 'x5': 0.292369, 'x6': 0.57154} using GenerationNode MBM.
+[INFO 02-27 07:35:37] ax.api.client: Generated new trial 63 with parameters {'x1': 0.178146, 'x2': 0.159436, 'x3': 0.231958, 'x4': 0.238553, 'x5': 0.269344, 'x6': 0.463022} using GenerationNode MBM.
+[INFO 02-27 07:35:37] ax.api.client: Generated new trial 64 with parameters {'x1': 0.406654, 'x2': 0.912236, 'x3': 0.379604, 'x4': 0.544757, 'x5': 0.18143, 'x6': 0.083715} using GenerationNode MBM.
+[INFO 02-27 07:35:37] ax.api.client: Generated new trial 65 with parameters {'x1': 0.235043, 'x2': 0.223468, 'x3': 0.492325, 'x4': 0.288997, 'x5': 0.29966, 'x6': 0.629463} using GenerationNode MBM.
+[INFO 02-27 07:35:37] ax.api.client: Trial 61 marked COMPLETED.
+[INFO 02-27 07:35:37] ax.api.client: Trial 62 marked COMPLETED.
+[INFO 02-27 07:35:37] ax.api.client: Trial 63 marked COMPLETED.
+[INFO 02-27 07:35:37] ax.api.client: Trial 64 marked COMPLETED.
+[INFO 02-27 07:35:37] ax.api.client: Trial 65 marked COMPLETED.
+/opt/homebrew/Caskroom/miniconda/base/envs/msml610-project/lib/python3.13/site-packages/ax/adapter/transforms/winsorize.py:131: AxOptimizationWarning:
+
+Encountered a `MultiObjective` without objective thresholds. We will winsorize each objective separately. We strongly recommend specifying the objective thresholds when using multi-objective optimization.
+
+[INFO 02-27 07:35:55] ax.api.client: Generated new trial 66 with parameters {'x1': 0.203542, 'x2': 0.174615, 'x3': 0.267047, 'x4': 0.265666, 'x5': 0.280975, 'x6': 0.530998} using GenerationNode MBM.
+[INFO 02-27 07:35:55] ax.api.client: Generated new trial 67 with parameters {'x1': 0.069654, 'x2': 0.0, 'x3': 0.286139, 'x4': 0.13332, 'x5': 0.0, 'x6': 0.0} using GenerationNode MBM.
+[INFO 02-27 07:35:55] ax.api.client: Generated new trial 68 with parameters {'x1': 0.14003, 'x2': 0.077258, 'x3': 0.181403, 'x4': 0.193263, 'x5': 0.240946, 'x6': 0.352108} using GenerationNode MBM.
+[INFO 02-27 07:35:55] ax.api.client: Generated new trial 69 with parameters {'x1': 0.15823, 'x2': 0.111704, 'x3': 0.196925, 'x4': 0.215822, 'x5': 0.255983, 'x6': 0.406691} using GenerationNode MBM.
+[INFO 02-27 07:35:55] ax.api.client: Generated new trial 70 with parameters {'x1': 0.229885, 'x2': 0.198794, 'x3': 0.355476, 'x4': 0.295809, 'x5': 0.288114, 'x6': 0.606564} using GenerationNode MBM.
+[INFO 02-27 07:35:55] ax.api.client: Trial 66 marked COMPLETED.
+[INFO 02-27 07:35:55] ax.api.client: Trial 67 marked COMPLETED.
+[INFO 02-27 07:35:55] ax.api.client: Trial 68 marked COMPLETED.
+[INFO 02-27 07:35:55] ax.api.client: Trial 69 marked COMPLETED.
+[INFO 02-27 07:35:55] ax.api.client: Trial 70 marked COMPLETED.
+/opt/homebrew/Caskroom/miniconda/base/envs/msml610-project/lib/python3.13/site-packages/ax/adapter/transforms/winsorize.py:131: AxOptimizationWarning:
+
+Encountered a `MultiObjective` without objective thresholds. We will winsorize each objective separately. We strongly recommend specifying the objective thresholds when using multi-objective optimization.
+
+[INFO 02-27 07:36:16] ax.api.client: Generated new trial 71 with parameters {'x1': 0.192576, 'x2': 0.0, 'x3': 0.073695, 'x4': 0.0, 'x5': 0.234933, 'x6': 0.0} using GenerationNode MBM.
+[INFO 02-27 07:36:16] ax.api.client: Generated new trial 72 with parameters {'x1': 0.177659, 'x2': 0.15405, 'x3': 0.228897, 'x4': 0.260197, 'x5': 0.274975, 'x6': 0.503722} using GenerationNode MBM.
+[INFO 02-27 07:36:16] ax.api.client: Generated new trial 73 with parameters {'x1': 0.119129, 'x2': 0.040214, 'x3': 0.126874, 'x4': 0.1712, 'x5': 0.222834, 'x6': 0.289385} using GenerationNode MBM.
+[INFO 02-27 07:36:16] ax.api.client: Generated new trial 74 with parameters {'x1': 0.106444, 'x2': 0.0, 'x3': 0.121381, 'x4': 0.137194, 'x5': 0.196265, 'x6': 0.205337} using GenerationNode MBM.
+[INFO 02-27 07:36:16] ax.api.client: Generated new trial 75 with parameters {'x1': 0.201359, 'x2': 0.177271, 'x3': 0.27965, 'x4': 0.279903, 'x5': 0.284186, 'x6': 0.559006} using GenerationNode MBM.
+[INFO 02-27 07:36:16] ax.api.client: Trial 71 marked COMPLETED.
+[INFO 02-27 07:36:16] ax.api.client: Trial 72 marked COMPLETED.
+[INFO 02-27 07:36:16] ax.api.client: Trial 73 marked COMPLETED.
+[INFO 02-27 07:36:16] ax.api.client: Trial 74 marked COMPLETED.
+[INFO 02-27 07:36:16] ax.api.client: Trial 75 marked COMPLETED.
+/opt/homebrew/Caskroom/miniconda/base/envs/msml610-project/lib/python3.13/site-packages/ax/adapter/transforms/winsorize.py:131: AxOptimizationWarning:
+
+Encountered a `MultiObjective` without objective thresholds. We will winsorize each objective separately. We strongly recommend specifying the objective thresholds when using multi-objective optimization.
+
+[INFO 02-27 07:36:38] ax.api.client: Generated new trial 76 with parameters {'x1': 0.043458, 'x2': 0.0, 'x3': 0.126426, 'x4': 0.11101, 'x5': 0.150214, 'x6': 0.116875} using GenerationNode MBM.
+[INFO 02-27 07:36:38] ax.api.client: Generated new trial 77 with parameters {'x1': 0.133144, 'x2': 0.140888, 'x3': 0.200093, 'x4': 0.249368, 'x5': 0.275271, 'x6': 0.446895} using GenerationNode MBM.
+[INFO 02-27 07:36:38] ax.api.client: Generated new trial 78 with parameters {'x1': 0.011107, 'x2': 0.0, 'x3': 0.150712, 'x4': 0.209875, 'x5': 0.249319, 'x6': 0.218212} using GenerationNode MBM.
+[INFO 02-27 07:36:38] ax.api.client: Generated new trial 79 with parameters {'x1': 0.233197, 'x2': 0.198327, 'x3': 0.405013, 'x4': 0.30846, 'x5': 0.287131, 'x6': 0.643284} using GenerationNode MBM.
+[INFO 02-27 07:36:38] ax.api.client: Generated new trial 80 with parameters {'x1': 0.088508, 'x2': 0.105086, 'x3': 0.171214, 'x4': 0.235534, 'x5': 0.268207, 'x6': 0.365472} using GenerationNode MBM.
+[INFO 02-27 07:36:38] ax.api.client: Trial 76 marked COMPLETED.
+[INFO 02-27 07:36:38] ax.api.client: Trial 77 marked COMPLETED.
+[INFO 02-27 07:36:38] ax.api.client: Trial 78 marked COMPLETED.
+[INFO 02-27 07:36:38] ax.api.client: Trial 79 marked COMPLETED.
+[INFO 02-27 07:36:38] ax.api.client: Trial 80 marked COMPLETED.
+/opt/homebrew/Caskroom/miniconda/base/envs/msml610-project/lib/python3.13/site-packages/ax/adapter/transforms/winsorize.py:131: AxOptimizationWarning:
+
+Encountered a `MultiObjective` without objective thresholds. We will winsorize each objective separately. We strongly recommend specifying the objective thresholds when using multi-objective optimization.
+
+[INFO 02-27 07:37:01] ax.api.client: Generated new trial 81 with parameters {'x1': 0.071793, 'x2': 0.091426, 'x3': 0.099253, 'x4': 0.077418, 'x5': 0.123278, 'x6': 0.133826} using GenerationNode MBM.
+[INFO 02-27 07:37:01] ax.api.client: Generated new trial 82 with parameters {'x1': 0.134558, 'x2': 0.105337, 'x3': 0.126356, 'x4': 0.163756, 'x5': 0.207919, 'x6': 0.267627} using GenerationNode MBM.
+[INFO 02-27 07:37:01] ax.api.client: Generated new trial 83 with parameters {'x1': 0.116655, 'x2': 0.09418, 'x3': 0.116719, 'x4': 0.135068, 'x5': 0.185173, 'x6': 0.219408} using GenerationNode MBM.
+[INFO 02-27 07:37:01] ax.api.client: Generated new trial 84 with parameters {'x1': 0.153493, 'x2': 0.12572, 'x3': 0.139437, 'x4': 0.193858, 'x5': 0.227207, 'x6': 0.327102} using GenerationNode MBM.
+[INFO 02-27 07:37:01] ax.api.client: Generated new trial 85 with parameters {'x1': 0.169545, 'x2': 0.15767, 'x3': 0.21471, 'x4': 0.245579, 'x5': 0.263628, 'x6': 0.493055} using GenerationNode MBM.
+[INFO 02-27 07:37:01] ax.api.client: Trial 81 marked COMPLETED.
+[INFO 02-27 07:37:01] ax.api.client: Trial 82 marked COMPLETED.
+[INFO 02-27 07:37:01] ax.api.client: Trial 83 marked COMPLETED.
+[INFO 02-27 07:37:01] ax.api.client: Trial 84 marked COMPLETED.
+[INFO 02-27 07:37:01] ax.api.client: Trial 85 marked COMPLETED.
+/opt/homebrew/Caskroom/miniconda/base/envs/msml610-project/lib/python3.13/site-packages/ax/adapter/transforms/winsorize.py:131: AxOptimizationWarning:
+
+Encountered a `MultiObjective` without objective thresholds. We will winsorize each objective separately. We strongly recommend specifying the objective thresholds when using multi-objective optimization.
+
+[INFO 02-27 07:37:25] ax.api.client: Generated new trial 86 with parameters {'x1': 0.0, 'x2': 0.231973, 'x3': 0.207716, 'x4': 0.0, 'x5': 0.0, 'x6': 0.055143} using GenerationNode MBM.
+[INFO 02-27 07:37:25] ax.api.client: Generated new trial 87 with parameters {'x1': 0.0, 'x2': 0.163713, 'x3': 0.073618, 'x4': 0.0, 'x5': 0.082168, 'x6': 0.084425} using GenerationNode MBM.
+[INFO 02-27 07:37:25] ax.api.client: Generated new trial 88 with parameters {'x1': 0.0, 'x2': 0.17977, 'x3': 0.0, 'x4': 0.205581, 'x5': 0.0, 'x6': 0.083075} using GenerationNode MBM.
+[INFO 02-27 07:37:25] ax.api.client: Generated new trial 89 with parameters {'x1': 0.0, 'x2': 0.336388, 'x3': 0.335039, 'x4': 0.0, 'x5': 0.0, 'x6': 0.0} using GenerationNode MBM.
+[INFO 02-27 07:37:25] ax.api.client: Generated new trial 90 with parameters {'x1': 0.104258, 'x2': 0.18271, 'x3': 0.422298, 'x4': 0.277, 'x5': 0.280856, 'x6': 0.640805} using GenerationNode MBM.
+[INFO 02-27 07:37:25] ax.api.client: Trial 86 marked COMPLETED.
+[INFO 02-27 07:37:25] ax.api.client: Trial 87 marked COMPLETED.
+[INFO 02-27 07:37:25] ax.api.client: Trial 88 marked COMPLETED.
+[INFO 02-27 07:37:25] ax.api.client: Trial 89 marked COMPLETED.
+[INFO 02-27 07:37:26] ax.api.client: Trial 90 marked COMPLETED.
+/opt/homebrew/Caskroom/miniconda/base/envs/msml610-project/lib/python3.13/site-packages/ax/adapter/transforms/winsorize.py:131: AxOptimizationWarning:
+
+Encountered a `MultiObjective` without objective thresholds. We will winsorize each objective separately. We strongly recommend specifying the objective thresholds when using multi-objective optimization.
+
+[INFO 02-27 07:37:51] ax.api.client: Generated new trial 91 with parameters {'x1': 0.142705, 'x2': 0.152053, 'x3': 0.200055, 'x4': 0.230101, 'x5': 0.240741, 'x6': 0.435857} using GenerationNode MBM.
+[INFO 02-27 07:37:51] ax.api.client: Generated new trial 92 with parameters {'x1': 0.112939, 'x2': 0.105917, 'x3': 0.097835, 'x4': 0.129171, 'x5': 0.158138, 'x6': 0.185724} using GenerationNode MBM.
+[INFO 02-27 07:37:51] ax.api.client: Generated new trial 93 with parameters {'x1': 0.129466, 'x2': 0.128422, 'x3': 0.149501, 'x4': 0.186143, 'x5': 0.203034, 'x6': 0.307018} using GenerationNode MBM.
+[INFO 02-27 07:37:51] ax.api.client: Generated new trial 94 with parameters {'x1': 0.136141, 'x2': 0.142431, 'x3': 0.176814, 'x4': 0.212186, 'x5': 0.223489, 'x6': 0.378381} using GenerationNode MBM.
+[INFO 02-27 07:37:51] ax.api.client: Generated new trial 95 with parameters {'x1': 0.157914, 'x2': 0.166849, 'x3': 0.25402, 'x4': 0.257103, 'x5': 0.267601, 'x6': 0.525994} using GenerationNode MBM.
+[INFO 02-27 07:37:51] ax.api.client: Trial 91 marked COMPLETED.
+[INFO 02-27 07:37:51] ax.api.client: Trial 92 marked COMPLETED.
+[INFO 02-27 07:37:51] ax.api.client: Trial 93 marked COMPLETED.
+[INFO 02-27 07:37:51] ax.api.client: Trial 94 marked COMPLETED.
+[INFO 02-27 07:37:51] ax.api.client: Trial 95 marked COMPLETED.

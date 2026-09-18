@@ -1,0 +1,441 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <meta charset="utf-8">
+    <title>data605 - Class Links</title>
+    <style>
+    /* ==========================================================================
+   Class Links â€” matches the data605 book-chapter style
+   (same typography/color system as Lesson*.book_chapter.html pages)
+   ========================================================================== */
+
+:root {
+  --text-color: #2b2b2b;
+  --heading-color: #1a1a1a;
+  --muted-color: #6b6b6b;
+  --link-color: #8b1e1e;
+  --border-color: #e0dcd4;
+  --bg-color: #fdfcfa;
+  --code-bg: #f4f2ee;
+  --serif: Georgia, "Palatino Linotype", "Book Antiqua", Palatino, serif;
+  --sans: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  --page-padding-x: 2rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--bg-color);
+}
+
+body {
+  font-family: var(--serif);
+  font-size: 19px;
+  line-height: 1.7;
+  color: var(--text-color);
+  background: var(--bg-color);
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 5rem var(--page-padding-x) 8rem;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- Heading ---------- */
+
+h1 {
+  font-family: var(--serif);
+  font-size: 1.9em;
+  font-weight: bold;
+  text-align: center;
+  color: #00008b;
+  letter-spacing: 0.02em;
+  margin-top: 0;
+  margin-bottom: 1.4em;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  padding-left: var(--page-padding-x);
+  padding-right: var(--page-padding-x);
+}
+
+/* ---------- Links ---------- */
+
+a {
+  color: var(--link-color);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(139, 30, 30, 0.35);
+}
+
+a:hover {
+  border-bottom-color: var(--link-color);
+}
+
+/* ---------- Table ---------- */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 2em 0;
+  font-size: 0.95em;
+}
+
+th, td {
+  padding: 0.7em 0.9em;
+  border-bottom: 1px solid var(--border-color);
+  text-align: left;
+}
+
+th {
+  font-family: var(--sans);
+  text-transform: uppercase;
+  font-size: 0.8em;
+  letter-spacing: 0.04em;
+  color: var(--muted-color);
+}
+
+tr:hover td {
+  background: var(--code-bg);
+}
+
+td:first-child {
+  font-weight: bold;
+  color: var(--heading-color);
+  white-space: nowrap;
+}
+
+td.missing {
+  color: var(--muted-color);
+  font-style: italic;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 600px) {
+  :root {
+    --page-padding-x: 1.2rem;
+  }
+  body {
+    font-size: 17px;
+    padding: 2.5rem var(--page-padding-x) 5rem;
+  }
+  h1 {
+    font-size: 1.5em;
+  }
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+
+/* ---------- Print ---------- */
+
+@media print {
+  body {
+    max-width: none;
+    padding: 0;
+  }
+  a {
+    color: var(--text-color);
+    border-bottom: none;
+  }
+}
+    </style>
+    </head>
+    <body>
+    <h1>data605 - Class Links</h1>
+    <table>
+    <tr>
+      <th>Lesson</th>
+      <th>Slides (PDF)</th>
+      <th>Commentary (HTML)</th>
+      <th>Commentary (PDF)</th>
+      <th>Recap (TXT)</th>
+    </tr>
+      <tr>
+    <td>Lesson01.1-Intro</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson01.1-Intro.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson01.1-Intro.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson01.1-Intro.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson01.1-Intro.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson01.2-Big_Data</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson01.2-Big_Data.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson01.2-Big_Data.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson01.2-Big_Data.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson01.2-Big_Data.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson01.3-Is_Data_Science_Just_Hype</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson01.3-Is_Data_Science_Just_Hype.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson01.3-Is_Data_Science_Just_Hype.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson01.3-Is_Data_Science_Just_Hype.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson01.3-Is_Data_Science_Just_Hype.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson01.4-Data_Models</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson01.4-Data_Models.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson01.4-Data_Models.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson01.4-Data_Models.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson01.4-Data_Models.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson02.1-Git</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson02.1-Git.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson02.1-Git.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson02.1-Git.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson02.1-Git.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson02.2-Git_Branching</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson02.2-Git_Branching.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson02.2-Git_Branching.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson02.2-Git_Branching.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson02.2-Git_Branching.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson02.3-Data_Pipelines</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson02.3-Data_Pipelines.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson02.3-Data_Pipelines.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson02.3-Data_Pipelines.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson02.3-Data_Pipelines.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson03.1-DevOps</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson03.1-DevOps.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson03.1-DevOps.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson03.1-DevOps.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson03.1-DevOps.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson03.2-Docker</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson03.2-Docker.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson03.2-Docker.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson03.2-Docker.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson03.2-Docker.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson03.3-Docker_Compose</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson03.3-Docker_Compose.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson03.3-Docker_Compose.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson03.3-Docker_Compose.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson03.3-Docker_Compose.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson04.1-Relational_DBs</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson04.1-Relational_DBs.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson04.1-Relational_DBs.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson04.1-Relational_DBs.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson04.1-Relational_DBs.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson04.2-SQL</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson04.2-SQL.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson04.2-SQL.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson04.2-SQL.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson04.2-SQL.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson04.3-Data_Storage</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson04.3-Data_Storage.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson04.3-Data_Storage.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson04.3-Data_Storage.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson04.3-Data_Storage.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson05.1-NoSQL</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson05.1-NoSQL.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson05.1-NoSQL.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson05.1-NoSQL.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson05.1-NoSQL.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson05.2-NoSQL_Taxonomy</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson05.2-NoSQL_Taxonomy.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson05.2-NoSQL_Taxonomy.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson05.2-NoSQL_Taxonomy.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson05.2-NoSQL_Taxonomy.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson05.3-Apache_HBase</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson05.3-Apache_HBase.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson05.3-Apache_HBase.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson05.3-Apache_HBase.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson05.3-Apache_HBase.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson06.1-MongoDB</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson06.1-MongoDB.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson06.1-MongoDB.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson06.1-MongoDB.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson06.1-MongoDB.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson06.2-MongoDB_Commands</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson06.2-MongoDB_Commands.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson06.2-MongoDB_Commands.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson06.2-MongoDB_Commands.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson06.2-MongoDB_Commands.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson06.3-MongoDB_Config</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson06.3-MongoDB_Config.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson06.3-MongoDB_Config.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson06.3-MongoDB_Config.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson06.3-MongoDB_Config.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson06.4-CouchBase</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson06.4-CouchBase.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson06.4-CouchBase.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson06.4-CouchBase.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson06.4-CouchBase.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson07.1-Airflow</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson07.1-Airflow.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson07.1-Airflow.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson07.1-Airflow.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson07.1-Airflow.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson07.2-Data_Wrangling</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson07.2-Data_Wrangling.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson07.2-Data_Wrangling.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson07.2-Data_Wrangling.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson07.2-Data_Wrangling.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson07.3-Serialization_Formats</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson07.3-Serialization_Formats.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson07.3-Serialization_Formats.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson07.3-Serialization_Formats.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson07.3-Serialization_Formats.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson07.4-Big_Data_Architectures</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson07.4-Big_Data_Architectures.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson07.4-Big_Data_Architectures.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson07.4-Big_Data_Architectures.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson07.4-Big_Data_Architectures.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson08.1-Cluster_Architecture</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson08.1-Cluster_Architecture.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson08.1-Cluster_Architecture.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson08.1-Cluster_Architecture.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson08.1-Cluster_Architecture.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson08.2-Map_Reduce</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson08.2-Map_Reduce.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson08.2-Map_Reduce.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson08.2-Map_Reduce.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson08.2-Map_Reduce.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson08.3-Hadoop</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson08.3-Hadoop.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson08.3-Hadoop.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson08.3-Hadoop.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson08.3-Hadoop.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson08.4-Map_Reduce_Algorithms</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson08.4-Map_Reduce_Algorithms.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson08.4-Map_Reduce_Algorithms.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson08.4-Map_Reduce_Algorithms.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson08.4-Map_Reduce_Algorithms.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson09.1-Spark_Intro</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson09.1-Spark_Intro.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson09.1-Spark_Intro.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson09.1-Spark_Intro.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson09.1-Spark_Intro.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson09.2-Spark_Primitives</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson09.2-Spark_Primitives.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson09.2-Spark_Primitives.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson09.2-Spark_Primitives.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson09.2-Spark_Primitives.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson09.3-Dask</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson09.3-Dask.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson09.3-Dask.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson09.3-Dask.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson09.3-Dask.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson10.1-Parallel_DBs</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson10.1-Parallel_DBs.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson10.1-Parallel_DBs.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson10.1-Parallel_DBs.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson10.1-Parallel_DBs.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson10.2-Streaming_and_Real_Time_Analytics</td>
+    <td class="missing">Slides</td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson10.2-Streaming_and_Real_Time_Analytics.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson10.2-Streaming_and_Real_Time_Analytics.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson10.2-Streaming_and_Real_Time_Analytics.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson11.1-Cloud_Computing</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson11.1-Cloud_Computing.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson11.1-Cloud_Computing.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson11.1-Cloud_Computing.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson11.1-Cloud_Computing.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson11.2-Cloud_Computing_Enablers</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson11.2-Cloud_Computing_Enablers.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson11.2-Cloud_Computing_Enablers.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson11.2-Cloud_Computing_Enablers.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson11.2-Cloud_Computing_Enablers.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson11.3-AWS_Overview</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson11.3-AWS_Overview.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson11.3-AWS_Overview.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson11.3-AWS_Overview.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson11.3-AWS_Overview.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson12.1-Graph_Data_Management</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson12.1-Graph_Data_Management.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson12.1-Graph_Data_Management.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson12.1-Graph_Data_Management.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson12.1-Graph_Data_Management.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson12.2-Neo4j</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson12.2-Neo4j.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson12.2-Neo4j.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson12.2-Neo4j.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson12.2-Neo4j.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson12.3-Graph_Data_Processing</td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_pdf/Lesson12.3-Graph_Data_Processing.pdf">Slides</a></td>
+    <td><a href="https://htmlpreview.github.io/?https://media.githubusercontent.com/media/gpsaggese/gpsaggese.github.io/master/data605/lectures_commentary/Lesson12.3-Graph_Data_Processing.book_chapter.html">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_commentary/Lesson12.3-Graph_Data_Processing.book_chapter.pdf">Commentary</a></td>
+    <td><a href="https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/lectures_recap/Lesson12.3-Graph_Data_Processing.recap.md">Recap</a></td>
+  </tr>
+  <tr>
+    <td>Lesson_93_Sorrentum_Project</td>
+    <td class="missing">Slides</td>
+    <td class="missing">Commentary</td>
+    <td class="missing">Commentary</td>
+    <td class="missing">Recap</td>
+  </tr>
+    </table>
+    </body>
+    </html>

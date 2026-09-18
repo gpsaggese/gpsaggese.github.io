@@ -1,0 +1,1689 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Personal website of GP Saggese - Startup Boy and AI Researcher">
+      
+      
+        <meta name="author" content="Giacinto Paolo Saggese">
+      
+      
+        <link rel="canonical" href="https://gpsaggese.github.io/blog/vim-shortcuts/">
+      
+      
+        <link rel="prev" href="../fastapi-in-60-minutes/">
+      
+      
+        <link rel="next" href="../mixed-keyboard-shortcuts/">
+      
+      
+        
+      
+      
+        <link rel="alternate" type="application/rss+xml" title="RSS feed" href="../../feed_rss_created.xml">
+        <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="../../feed_rss_updated.xml">
+      
+      <link rel="icon" href="../../assets/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Vim Shortcuts - GP's AI Research</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/blog.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#command_line" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="GP&#39;s AI Research" class="md-header__button md-logo" aria-label="GP's AI Research" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            GP's AI Research
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Vim Shortcuts
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../02_cv/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  CV/Resume
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../03_education/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Education
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../04_teaching/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Teaching
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../05_publications/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Publications
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../06_research/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Research
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../07_coding/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Coding
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../08_screw_ups/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Screwups
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="../" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Blog
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden>
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="GP&#39;s AI Research" class="md-nav__button md-logo" aria-label="GP's AI Research" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="logo">
+
+    </a>
+    GP's AI Research
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02_cv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CV/Resume
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03_education/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Education
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04_teaching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Teaching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05_publications/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Publications
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06_research/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Research
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07_coding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Coding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08_screw_ups/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Screwups
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Blog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+  <div class="md-content md-content--post" data-md-component="content">
+    <div class="md-sidebar md-sidebar--post" data-md-component="sidebar" data-md-type="navigation">
+      <div class="md-sidebar__scrollwrap">
+        <div class="md-sidebar__inner md-post">
+          <nav class="md-nav md-nav--primary">
+            <div class="md-post__back">
+              <div class="md-nav__title md-nav__container">
+                <a href="../" class="md-nav__link">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+                  <span class="md-ellipsis">
+                    Back to index
+                  </span>
+                </a>
+              </div>
+            </div>
+            
+              <div class="md-post__authors md-typeset">
+                
+                  <div class="md-profile md-post__profile">
+                    <span class="md-author md-author--long">
+                      <img src="https://github.com/gpsaggese.png" alt="Giacinto Paolo Saggese">
+                    </span>
+                    <span class="md-profile__description">
+                      <strong>
+                        
+                          <a href="https://gpsaggese.github.io/">Giacinto Paolo Saggese</a>
+                        
+                      </strong>
+                      <br>
+                      Adjunct Professor at University of Maryland
+                    </span>
+                  </div>
+                
+              </div>
+            
+            <ul class="md-post__meta md-nav__list">
+              <li class="md-nav__item md-nav__item--section">
+                <div class="md-post__title">
+                  <span class="md-ellipsis">
+                    Metadata
+                  </span>
+                </div>
+                <nav class="md-nav">
+                  <ul class="md-nav__list">
+                    <li class="md-nav__item">
+                      <div class="md-nav__link">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5z"/></svg>
+                        <time datetime="2026-08-20 00:00:00+00:00" class="md-ellipsis">Thursday, August 20, 2026</time>
+                      </div>
+                    </li>
+                    
+                    
+                      <li class="md-nav__item">
+                        <div class="md-nav__link">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 3v15h3V3zm3 2 4 13 3-1-4-13zM5 5v13h3V5zM3 19v2h18v-2z"/></svg>
+                          <span class="md-ellipsis">
+                            in
+                            
+                              <a href="../category/Productivity/">Productivity</a></span>
+                        </div>
+                      </li>
+                    
+                    
+                      
+                      <li class="md-nav__item">
+                        <div class="md-nav__link">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8m0-18a10 10 0 0 1 10 10 10 10 0 0 1-10 10C6.47 22 2 17.5 2 12A10 10 0 0 1 12 2m.5 5v5.25l4.5 2.67-.75 1.23L11 13V7z"/></svg>
+                          <span class="md-ellipsis">
+                            
+                              11 min read
+                            
+                          </span>
+                        </div>
+                      </li>
+                    
+                  </ul>
+                </nav>
+              </li>
+            </ul>
+            
+          </nav>
+          
+            
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+</nav>
+          
+        </div>
+      </div>
+    </div>
+    <article class="md-content__inner md-typeset">
+      
+        
+  
+
+
+
+
+<p>TL;DR: A cheat sheet of Vim commands and concepts.</p>
+<!-- more -->
+
+<h1 id="command_line">Command line<a class="headerlink" href="#command_line" title="Permanent link">#</a></h1>
+<ul>
+<li>Open and run a command in vim: <code>&gt; vim -c '...'</code></li>
+<li>Print the path of VIMRUNTIME: <code>&gt; vim --cmd 'echo $VIMRUNTIME' --cmd 'quit'</code></li>
+<li>Regenerate the tags (?): <code>&gt; vim -c "helptags ~/.vim/doc"</code></li>
+<li>Skip reading the config <code>.vimrc</code>: <code>&gt; vim -u 'NONE'</code></li>
+</ul>
+<h1 id="brief_concepts">Brief concepts<a class="headerlink" href="#brief_concepts" title="Permanent link">#</a></h1>
+<p><strong>Buffer</strong>
+- An in-memory representation of a file's content, once it's loaded into Vim
+- Multiple buffers can be open at once (one per file you've edited/loaded)
+  - Lists open buffers: <code>:buffers</code> 
+  - Switches to one buffer: <code>:b &lt;name/number&gt;</code> </p>
+<p><strong>Window (aka viewport)</strong>
+- A viewport into a buffer: the visible frame showing (part of) a buffer's content
+- Multiple windows can display the same buffer simultaneously
+  - E.g., two views scrolled to different lines
+- Created by splitting the screen
+  - Navigate with <code>Ctrl-w</code> + direction (<code>h/j/k/l</code>)
+  - Closed with <code>:q</code> (doesn't close the buffer, just the view)</p>
+<p><strong>Split</strong>
+- The act of dividing the screen into multiple windows
+- Horizontal split: <code>:split</code> or <code>:sp</code> (stacks windows top/bottom)
+- Vertical split: <code>:vsplit</code> or <code>:vsp</code> (side by side)
+  - Each split is a window
+  - Each window shows a buffer</p>
+<p><strong>How they relate</strong>
+- Tabs (<code>:tabnew</code>) contain layouts of windows
+- Windows contain/display buffers
+- Buffers hold the actual file content
+- In brief: one buffer -&gt; can be shown in many windows -&gt; windows are arranged via
+  splits -&gt; splits live inside tabs</p>
+<h1 id="help">Help<a class="headerlink" href="#help" title="Permanent link">#</a></h1>
+<ul>
+<li>Get help: <code>:help TOPIC</code></li>
+<li><code>CTRL-d</code> or <code>tab</code> to auto-complete</li>
+<li>Get help on a shortcut: <code>:help CTRL-W_CTRL-W</code></li>
+<li>Open help about TOPIC in a vertical split: <code>:vert help TOPIC</code></li>
+<li>E.g., <code>:vert help marks</code></li>
+<li>Get help about registers: <code>:help registers</code></li>
+<li>Get help about copying and moving: <code>:help copy-move</code></li>
+</ul>
+<h1 id="custom_shortcuts_from_vimrc">Custom shortcuts (from <code>.vimrc</code>)<a class="headerlink" href="#custom_shortcuts_from_vimrc" title="Permanent link">#</a></h1>
+<h2 id="leader_key">Leader key<a class="headerlink" href="#leader_key" title="Permanent link">#</a></h2>
+<ul>
+<li>Leader key is set to comma (default is <code>\</code>): <code>,</code></li>
+</ul>
+<h2 id="editing_and_movement">Editing and movement<a class="headerlink" href="#editing_and_movement" title="Permanent link">#</a></h2>
+<ul>
+<li>Delete line into the black hole register (doesn't clobber clipboard): <code>&lt;C-c&gt;&lt;C-d&gt;</code></li>
+<li>Open file under cursor in a new tab (overrides default "go to declaration"): <code>gd</code></li>
+<li>Shift-Down/Shift-Up pass through as normal <code>&lt;Down&gt;</code>/<code>&lt;Up&gt;</code> (macOS compatibility)</li>
+</ul>
+<h2 id="tabs">Tabs<a class="headerlink" href="#tabs" title="Permanent link">#</a></h2>
+<ul>
+<li>Go to next tab: <code>&lt;C-p&gt;</code></li>
+<li>Go to previous tab: <code>&lt;C-o&gt;</code></li>
+</ul>
+<h2 id="windows">Windows<a class="headerlink" href="#windows" title="Permanent link">#</a></h2>
+<ul>
+<li><code>&lt;C-w&gt;&lt;C-w&gt;</code> is disabled; use directional <code>&lt;C-w&gt;h/j/k/l</code> instead</li>
+</ul>
+<h2 id="navigating">Navigating<a class="headerlink" href="#navigating" title="Permanent link">#</a></h2>
+<ul>
+<li>Highlight from the current <code>*</code> line to the line before the next <code>*</code>: <code>,y</code></li>
+<li>Move to the next <code>*</code> line: <code>,n</code></li>
+<li>Move to the previous <code>*</code> line: <code>,p</code></li>
+</ul>
+<h2 id="autocorrect">Autocorrect<a class="headerlink" href="#autocorrect" title="Permanent link">#</a></h2>
+<ul>
+<li>Autocorrect the word under/before the cursor: <code>&lt;C-l&gt;&lt;C-l&gt;</code></li>
+</ul>
+<h2 id="taglist_tags">Taglist / tags<a class="headerlink" href="#taglist_tags" title="Permanent link">#</a></h2>
+<ul>
+<li>Toggle the tag list panel: <code>&lt;C-Y&gt;&lt;C-Y&gt;</code></li>
+<li>Open tag under cursor in a new tab (<code>:TagTab</code>): <code>&lt;C-Y&gt;&lt;C-T&gt;</code></li>
+<li>Open tag under cursor in a preview window (<code>:TagPreview</code>): <code>&lt;C-Y&gt;&lt;C-P&gt;</code></li>
+</ul>
+<h2 id="function_keys">Function keys<a class="headerlink" href="#function_keys" title="Permanent link">#</a></h2>
+<ul>
+<li>Quit without saving all buffers: <code>&lt;F1&gt;</code></li>
+<li>Toggle search highlighting: <code>&lt;F2&gt;</code></li>
+<li>Toggle spell checking: <code>&lt;F3&gt;</code></li>
+<li>Toggle paste mode: <code>&lt;F4&gt;</code></li>
+<li>Re-sync syntax highlighting from the start of the file: <code>&lt;F5&gt;</code></li>
+</ul>
+<h3 id="quickfix_buffers_non-diff_mode">Quickfix / buffers (non-diff mode)<a class="headerlink" href="#quickfix_buffers_non-diff_mode" title="Permanent link">#</a></h3>
+<ul>
+<li>Previous / next quickfix error: <code>&lt;F9&gt;</code> / <code>&lt;F10&gt;</code></li>
+<li>Previous / next buffer: <code>&lt;S-F9&gt;</code> / <code>&lt;S-F10&gt;</code></li>
+</ul>
+<h3 id="diff_mode_vimdiff">Diff mode (<code>vimdiff</code>)<a class="headerlink" href="#diff_mode_vimdiff" title="Permanent link">#</a></h3>
+<ul>
+<li>Refresh the diff view: <code>&lt;F8&gt;</code></li>
+<li>Get diff (pull change from the other file into this one): <code>&lt;F6&gt;</code></li>
+<li>Put diff (push change from this file into the other one): <code>&lt;F7&gt;</code></li>
+<li>Accept left side (copy left file to right, keep it as baseline): <code>&lt;F9&gt;</code></li>
+<li>Accept right side (copy right file to left, overwriting it): <code>&lt;F10&gt;</code></li>
+</ul>
+<h1 id="settings">Settings<a class="headerlink" href="#settings" title="Permanent link">#</a></h1>
+<ul>
+<li>Show value of a variable: <code>:set var?</code></li>
+<li>Disable an option: <code>:set noXXXX</code></li>
+<li>Set for all buffer: <code>:set XXXX</code></li>
+<li>
+<p>Toggle for all buffer: <code>:set XXXX!</code></p>
+</li>
+<li>
+<p>Set only for the current buffer: <code>:setlocal XXXX</code></p>
+</li>
+</ul>
+<h2 id="useful_settings">Useful settings<a class="headerlink" href="#useful_settings" title="Permanent link">#</a></h2>
+<ul>
+<li>Disable flashing on error: <code>:set visualbells</code></li>
+<li>Disable beeping on error: <code>:set noerrorbells</code></li>
+<li>Set case sensitive/insensitive: <code>:set ic, set noic</code></li>
+<li>Set preview height: <code>:set previewheight=15</code></li>
+<li>Show line number: <code>:set number</code> (or <code>:set nu</code>)</li>
+<li>To avoid automatic indentation: <code>:set paste</code></li>
+</ul>
+<h2 id="misc_settings">Misc settings<a class="headerlink" href="#misc_settings" title="Permanent link">#</a></h2>
+<ul>
+<li>Show cursor line (using underline): <code>:set cursorline</code></li>
+<li>To highlight the position of the cursor.: <code>:highlight CursorLine guibg=lightblue ctermbg=lightgray</code></li>
+<li>Show all the color scheme: <code>:highlight</code></li>
+<li>Show the palette: <code>:runtime syntax/colortest.vim</code></li>
+</ul>
+<h2 id="setting_path">Setting path<a class="headerlink" href="#setting_path" title="Permanent link">#</a></h2>
+<ul>
+<li>Print path: <code>:set path</code></li>
+<li>Look for certain file in path: <code>:find file_name</code></li>
+<li>Update path: <code>:set path+=/path/</code></li>
+</ul>
+<h2 id="opening_files_under_the_cursor">Opening files under the cursor<a class="headerlink" href="#opening_files_under_the_cursor" title="Permanent link">#</a></h2>
+<ul>
+<li>Open file under the cursor: <code>gf</code></li>
+<li>Jump to a file and line (like in a cfile): <code>gF</code></li>
+<li>Open an URL under the cursor with the default browse: <code>gx</code></li>
+<li>Open file under the cursor in a split window: <code>CTRL-W, CTRL-F</code></li>
+</ul>
+<h2 id="custom_clipboard_shortcuts_from_vimrc">Custom clipboard shortcuts (from <code>.vimrc</code>)<a class="headerlink" href="#custom_clipboard_shortcuts_from_vimrc" title="Permanent link">#</a></h2>
+<ul>
+<li>Copy current line to system clipboard (normal or visual mode): <code>ycc</code> (not standard)</li>
+<li>Copy <code>file:line 'content'</code> reference of line under cursor to clipboard: <code>ycl</code></li>
+</ul>
+<h2 id="edit_command_and_search_history">Edit command and search history<a class="headerlink" href="#edit_command_and_search_history" title="Permanent link">#</a></h2>
+<ul>
+<li>Edit search history In command mode: <code>q:</code></li>
+<li>Search in search history: <code>q/</code>, <code>q?</code></li>
+</ul>
+<h1 id="moving">Moving<a class="headerlink" href="#moving" title="Permanent link">#</a></h1>
+<ul>
+<li>
+<p>Move one character at the time: <code>ijkl</code></p>
+</li>
+<li>
+<p>Move forward to the start/end of a word: <code>w, e</code></p>
+</li>
+<li>
+<p>Move backward to the start/end of a word: <code>b, ge</code></p>
+</li>
+<li>
+<p>Go to the start of the file: <code>gg</code></p>
+</li>
+<li>
+<p>Go to the end of the file: <code>G</code></p>
+</li>
+<li>
+<p>Move to the Home, Middle, or Last of the current screen: <code>H, M, L</code></p>
+</li>
+<li>Move to the next/previous paragraph: <code>), (</code></li>
+<li>Move to the beginning/end of a line: <code>0, $</code></li>
+<li>Move to the first character of a line: <code>^</code></li>
+</ul>
+<h2 id="move_to_char">Move to char<a class="headerlink" href="#move_to_char" title="Permanent link">#</a></h2>
+<ul>
+<li>Move to the next, previous occurrence of character <code>x</code>: <code>fx, Fx</code></li>
+<li>Repeat the last <code>fx</code> command: <code>;</code></li>
+<li>Like <code>fx</code>, but moves to the character immediately before: <code>tx</code></li>
+</ul>
+<h2 id="moving_on_wrapped-around_lines">Moving on wrapped-around lines<a class="headerlink" href="#moving_on_wrapped-around_lines" title="Permanent link">#</a></h2>
+<ul>
+<li>Move up and down: <code>gj,gk</code></li>
+<li>Move at the beginning/end of a line: <code>g$,g0</code></li>
+<li>Move to the center: <code>gm</code></li>
+</ul>
+<h2 id="highlighting_stuff">Highlighting stuff<a class="headerlink" href="#highlighting_stuff" title="Permanent link">#</a></h2>
+<ul>
+<li>Reselect a visual area: <code>gv</code></li>
+<li>
+<p>Highlight a word without moving: <code>*#</code></p>
+</li>
+<li>
+<p>Block highlight: <code>CTRL-v</code></p>
+</li>
+<li>
+<p>Move to the next matching word under the cursor: <code>*</code></p>
+</li>
+<li>Move to the previous matching word under the cursor: <code>#</code></li>
+</ul>
+<h2 id="moving_the_edit_window">Moving the edit window<a class="headerlink" href="#moving_the_edit_window" title="Permanent link">#</a></h2>
+<ul>
+<li>Move line with cursor to the center: <code>zz</code></li>
+<li>Move line with cursor to the top of the page: <code>z&lt;CR&gt;</code></li>
+<li>Move line with cursor to the bottom of the page: <code>z-</code></li>
+</ul>
+<h1 id="editing">Editing<a class="headerlink" href="#editing" title="Permanent link">#</a></h1>
+<ul>
+<li>Go to insertion mode: <code>i</code></li>
+<li>Insert at the beginning of the line: <code>I</code></li>
+<li>Insert at the end of the line: <code>A</code> (append)</li>
+<li>Replace one char: <code>r</code></li>
+<li>
+<p>Replace more than one chars: <code>R</code></p>
+</li>
+<li>
+<p>Change case of a char: <code>~</code></p>
+</li>
+<li>Switch case of {motion} text: <code>g~{motion}</code></li>
+</ul>
+<h2 id="go_to_normal_mode_for_one_command">Go to normal mode for one command<a class="headerlink" href="#go_to_normal_mode_for_one_command" title="Permanent link">#</a></h2>
+<ul>
+<li>Execute one command while in insert mode: <code>CTRL-O</code> + command</li>
+<li>Delete the rest of the line while in command mode: <code>CTRL-O d$</code></li>
+<li>
+<p>Find the next <code>k</code> while in command mode: <code>CTRL-O fk</code></p>
+</li>
+<li>
+<p>Yank and insert: <code>c{motion}</code> yank the text and then insert</p>
+</li>
+</ul>
+<h2 id="joining">Joining<a class="headerlink" href="#joining" title="Permanent link">#</a></h2>
+<ul>
+<li>Join selected lines (with spaces): <code>J</code></li>
+<li>
+<p>Join selected lines without spaces: <code>gJ</code></p>
+</li>
+<li>
+<p>Delete line without saving in the buffer (black hole): <code>"_dd</code></p>
+</li>
+</ul>
+<h2 id="use_registers">Use registers<a class="headerlink" href="#use_registers" title="Permanent link">#</a></h2>
+<ul>
+<li>Show the contents of registers: <code>:reg</code></li>
+<li>Delete and save in 0 registers (from 0 to 9): <code>0_d</code></li>
+<li>Copy and save in 0 registers: <code>0_y</code></li>
+<li>Paste content of register 0: <code>0_p</code></li>
+</ul>
+<h2 id="files">Files<a class="headerlink" href="#files" title="Permanent link">#</a></h2>
+<ul>
+<li>Write the range to a file: <code>:[range]w FILE</code></li>
+<li>Read file and paste it in the current spot: <code>:r FILE</code></li>
+</ul>
+<h2 id="format_indent">Format / Indent<a class="headerlink" href="#format_indent" title="Permanent link">#</a></h2>
+<ul>
+<li>Indent a range of lines: <code>:[range]!indent (or =)</code></li>
+<li>
+<p>Indent entire file: <code>gg=G</code></p>
+</li>
+<li>
+<p>Visual select entire file: <code>ggVG</code></p>
+</li>
+<li>Format comments and text: <code>gq{motion}</code></li>
+<li>
+<p>E.g., <code>gq)</code></p>
+</li>
+<li>
+<p>Sort entire file: <code>%! sort | uniq</code></p>
+</li>
+</ul>
+<h1 id="buffers">Buffers<a class="headerlink" href="#buffers" title="Permanent link">#</a></h1>
+<ul>
+<li>
+<p>Redraw the screen: <code>:redraw</code></p>
+</li>
+<li>
+<p>Next/previous file in the list: <code>:n, :N</code></p>
+</li>
+<li>Show all the files splitting the screen: <code>:all</code></li>
+<li>Close all the previews: <code>CTRL-w + z</code></li>
+<li>Show all the files in a tabbed way: <code>:tab ball</code></li>
+<li>
+<p>Close the tabs (with all the splits): <code>:tabc</code></p>
+</li>
+<li>
+<p>Show all the buffers / files: <code>:buffers</code></p>
+</li>
+<li>
+<p>Go to buffer N: <code>:b &lt;NUMBER&gt;</code></p>
+</li>
+<li>
+<p>Go to previous / next buffer: <code>:bN</code>, <code>:bn</code></p>
+</li>
+<li>
+<p>Go to buffer by name: <code>:buf ...</code> (<code>&lt;CTRL-D&gt;</code> to autocomplete)</p>
+</li>
+<li>
+<p>Print the name of the buffer: <code>:echo bufname("%")</code></p>
+</li>
+<li>
+<p>Delete current buffer: <code>:bd</code></p>
+</li>
+<li>
+<p>Delete buffer N: <code>:bd N</code></p>
+</li>
+</ul>
+<h2 id="bufexplorer">BufExplorer<a class="headerlink" href="#bufexplorer" title="Permanent link">#</a></h2>
+<ul>
+<li>Get help about bufexplorer: <code>:help bufexplorer</code></li>
+<li>To show the buffer browser: <code>\be or CTRL-j</code></li>
+</ul>
+<h2 id="minibufexplorer">MiniBufExplorer<a class="headerlink" href="#minibufexplorer" title="Permanent link">#</a></h2>
+<ul>
+<li>Select next/previous buffer: <code>CTRL-j and CTRL-k</code></li>
+<li>To toggle MiniBufExplorer: <code>:TMiniBufExplorer</code></li>
+</ul>
+<h1 id="viewports">Viewports<a class="headerlink" href="#viewports" title="Permanent link">#</a></h1>
+<ul>
+<li>
+<p>Split horizontally: <code>:split</code>, <code>:sp</code></p>
+</li>
+<li>
+<p>Split vertically: <code>:vsplit</code>, <code>:vsp</code></p>
+</li>
+<li>
+<p>Close the active window: <code>CTRL-w q</code></p>
+</li>
+</ul>
+<h2 id="move_between_viewports">Move between viewports<a class="headerlink" href="#move_between_viewports" title="Permanent link">#</a></h2>
+<ul>
+<li><code>CTRL-w CTRL-w</code></li>
+<li>Move one viewport down: <code>CTRL-w j</code></li>
+<li>Move one viewport up: <code>CTRL-w k</code></li>
+<li>Move one viewport to the left: <code>CTRL-w h</code></li>
+<li>
+<p>Move one viewport to the right: <code>CTRL-w l</code></p>
+</li>
+<li>
+<p>Resize viewports to be of equal size: <code>CTRL-w =</code></p>
+</li>
+</ul>
+<h2 id="change_size_of_viewport">Change size of viewport<a class="headerlink" href="#change_size_of_viewport" title="Permanent link">#</a></h2>
+<ul>
+<li>Reduce active viewport by one line: <code>CTRL-w -</code></li>
+<li>Reduce active viewport by 10 lines: <code>CTRL-w 10-</code></li>
+<li>Increase active viewport by one line: <code>CTRL-w +</code></li>
+</ul>
+<h1 id="search_and_replace">Search and replace<a class="headerlink" href="#search_and_replace" title="Permanent link">#</a></h1>
+<ul>
+<li>Clear previous search: <code>:noh</code>, <code>:nohlsearch</code></li>
+</ul>
+<h2 id="turn_off_highlighting_completely">Turn off highlighting completely<a class="headerlink" href="#turn_off_highlighting_completely" title="Permanent link">#</a></h2>
+<ul>
+<li><code>:set nohlsearch</code></li>
+<li>
+<p>Toggle <code>:set nohlsearch!</code></p>
+</li>
+<li>
+<p>Help with search and replace: <code>:help substitute</code></p>
+</li>
+</ul>
+<h2 id="replace_old_with_new_everywhere">Replace OLD with NEW everywhere<a class="headerlink" href="#replace_old_with_new_everywhere" title="Permanent link">#</a></h2>
+<ul>
+<li><code>:%s/OLD/NEW/g</code></li>
+<li>Case insensitive: <code>cgi</code></li>
+<li>
+<p>Case sensitive: <code>cg</code> or <code>cgI</code></p>
+</li>
+<li>
+<p>Incremental search: <code>/</code></p>
+</li>
+<li>
+<p>To replace exactly the word foo: <code>%s/\&lt;foo\&gt;/bar/gc</code></p>
+</li>
+</ul>
+<h2 id="to_replace_from_the_cursor_to_the_end_of_the_file">To replace from the cursor to the end of the file<a class="headerlink" href="#to_replace_from_the_cursor_to_the_end_of_the_file" title="Permanent link">#</a></h2>
+<ul>
+<li><code>.,$s/foo/bar/</code></li>
+<li>The range is <code>.</code> (cursor) to <code>$</code></li>
+</ul>
+<h2 id="repeat_last_substitute">Repeat last substitute<a class="headerlink" href="#repeat_last_substitute" title="Permanent link">#</a></h2>
+<ul>
+<li><code>&amp;</code> (flags are not remembered)</li>
+<li>
+<p><code>&amp;&amp;</code> (to keep the flags)</p>
+</li>
+<li>
+<p>Repeat last substitute on all lines with the same flags: <code>g&amp;</code></p>
+</li>
+</ul>
+<h2 id="pull_onto_searchcommand_line">Pull <word> onto search/command line<a class="headerlink" href="#pull_onto_searchcommand_line" title="Permanent link">#</a></h2>
+<ul>
+<li><code>/&lt;CTRL-r&gt;&lt;CTRL-w&gt;</code></li>
+<li>
+<p><code>:%s/&lt;CTRL-r&gt;&lt;CTRL-w&gt;/NEW/g</code></p>
+</li>
+<li>
+<p>Delete using non-greedy matching: <code>:%s/|\/tmp.\{-}|/|/g</code></p>
+</li>
+<li>
+<p>Preview search result at the bottom of the window: <code>:g/\&lt;DmaImage2System\&gt;/</code></p>
+</li>
+<li>
+<p>To show some context: <code>:g/\&lt;DmaImage2System\&gt;/z#.5 " echo "=========="</code></p>
+</li>
+<li>
+<p>Preview all the occurrence of the word under cursor in a separate window: <code>[I</code></p>
+</li>
+</ul>
+<h1 id="navigating_filesystem">Navigating Filesystem<a class="headerlink" href="#navigating_filesystem" title="Permanent link">#</a></h1>
+<ul>
+<li>
+<p><code>netrw</code> ships with Vim and allows to navigate the file system</p>
+</li>
+<li>
+<p>Open netrw in the directory of the current file: <code>:Ex</code></p>
+</li>
+<li>Open current path: <code>:Ex &lt;path&gt;</code></li>
+<li>Open horizontal split: <code>:Sex</code></li>
+<li>
+<p>Open vertical split: <code>:Vex</code></p>
+</li>
+<li>
+<p>Open file or descent into dir: <code>&lt;Enter&gt;</code></p>
+</li>
+<li>Go up one dir: <code>-</code></li>
+<li>Go back to previous dir (history): <code>u</code></li>
+<li>Preview file in a split: <code>p</code></li>
+</ul>
+<h1 id="vim_regex">Vim regex<a class="headerlink" href="#vim_regex" title="Permanent link">#</a></h1>
+<ul>
+<li>Help for regex: <code>:help regex</code></li>
+</ul>
+<h2 id="using_perl">Using perl<a class="headerlink" href="#using_perl" title="Permanent link">#</a></h2>
+<ul>
+<li>
+<p>Execute perl CMD on all the lines selected: <code>:perldo CMD</code></p>
+</li>
+<li>
+<p>Print matching lines: <code>:%!perl -ne 'print if ///'</code></p>
+</li>
+<li>
+<p>Replace and print: <code>:%!perl -ne 's/reg[^\w]//; print $_'</code></p>
+</li>
+<li>
+<p>Use very magic (to use perl-like tokens): <code>/\vdassert_.*\(/</code></p>
+</li>
+<li>
+<p>Alphabetic character: <code>\a</code></p>
+</li>
+<li>Save token: <code>\( \)</code></li>
+<li>Token number 1: <code>\1</code></li>
+<li>Any character: <code>.</code></li>
+<li>One or more: <code>\+</code></li>
+<li>Any number of times: <code>*</code></li>
+<li>a or b: <code>[ab]</code></li>
+<li>Match foo or bar: <code>foo\|bar</code></li>
+<li>Match the previous token non greedy (e.g., .{-}): <code>{-}</code></li>
+<li>Like <code>*</code> but not greedy so we can match multiple times the same line: <code>\{-0,}</code></li>
+<li>Replace <code>1.</code> with <code>5$1</code>: <code>s/1\(.\)/5\1/cg</code></li>
+</ul>
+<h2 id="vim_regex_examples">Vim regex examples<a class="headerlink" href="#vim_regex_examples" title="Permanent link">#</a></h2>
+<ul>
+<li>dos2unix (<code>&lt;CTRL-v&gt;&lt;CR&gt;</code> to enter <code>^M</code> character): <code>:1,$s/^M//g</code></li>
+<li>To add a <code>#</code> in front to a selection: <code>:'&lt;,'&gt;s/^\(.\)/#\1/g</code></li>
+<li>To prepend a XXXX in front of each line of a block: <code>:'&lt;,'&gt;s/^/XXXX/</code></li>
+<li>Replace <code>//... Ppe</code> with <code>//... PPE</code>: <code>:%s/\(\/\/.*\)Ppe/\1PPE/cg</code></li>
+<li>Replace <code>/* XXXX */</code> with <code>// XXXX</code>: <code>:%s/\/\*\(.*\)\*\//\/\/\1/cg</code></li>
+</ul>
+<h1 id="tags">Tags<a class="headerlink" href="#tags" title="Permanent link">#</a></h1>
+<ul>
+<li>Show tag stack: <code>:tags</code></li>
+<li>Jump to tag: <code>:tag TAG</code></li>
+<li>List matching tags: <code>:ts[elect] TAG</code></li>
+<li>Split window <code>:tag</code>: <code>:stag TAG</code></li>
+</ul>
+<h2 id="jump_to_the_tag_under_the_cursor">Jump to the tag under the cursor<a class="headerlink" href="#jump_to_the_tag_under_the_cursor" title="Permanent link">#</a></h2>
+<ul>
+<li><code>CTRL-]</code></li>
+<li>Use <code>:tselect</code> instead of :tag: <code>g]</code></li>
+</ul>
+<h2 id="preview_split_tag">Preview / split tag<a class="headerlink" href="#preview_split_tag" title="Permanent link">#</a></h2>
+<ul>
+<li>Split horizontally and get to the tag under the cursor: <code>CTRL-W ]</code></li>
+<li>Preview window for the tag under cursor: <code>CTRL-W g}</code></li>
+<li>
+<p>Close all the preview windows: <code>CTRL-W z</code></p>
+</li>
+<li>
+<p>Pop from the stack: <code>CTRL-t</code></p>
+</li>
+</ul>
+<h1 id="indent">Indent<a class="headerlink" href="#indent" title="Permanent link">#</a></h1>
+<ul>
+<li>Get help: <code>:help cinoptions, :help cinoptions-values</code></li>
+<li>To reindent the current block: <code>=a{</code></li>
+</ul>
+<h1 id="quickfix">Quickfix<a class="headerlink" href="#quickfix" title="Permanent link">#</a></h1>
+<ul>
+<li>Help quickfix: <code>:help quickfix</code></li>
+</ul>
+<h2 id="make">Make<a class="headerlink" href="#make" title="Permanent link">#</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>:let &amp;makeprg=&quot;cd /home/saggese/src/zs/trunks/tree2/build/host/; make&quot;
+</code></pre></div>
+<h2 id="grep_and_quickfix">Grep and quickfix<a class="headerlink" href="#grep_and_quickfix" title="Permanent link">#</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>&gt;<span class="w"> </span><span class="se">\g</span>rep<span class="w"> </span>-n<span class="w"> </span>-R<span class="w"> </span><span class="s2">&quot;dbg.dassert&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>/tmp/tmp
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>&gt;<span class="w"> </span>vi<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;cfile /tmp/tmp&quot;</span>
+</code></pre></div>
+<h2 id="quickfix_open_window_with_all_matches">Quickfix: open window with all matches<a class="headerlink" href="#quickfix_open_window_with_all_matches" title="Permanent link">#</a></h2>
+<ul>
+<li><code>:copen</code></li>
+<li>Jump to n-th error: <code>:cc n</code></li>
+</ul>
+<h2 id="go_to_prev_next_quickfix">Go to prev / next quickfix<a class="headerlink" href="#go_to_prev_next_quickfix" title="Permanent link">#</a></h2>
+<ul>
+<li>Prev: <code>:cp</code> or <code>&lt;F9&gt;</code></li>
+<li>Next: <code>:cn</code> or <code>&lt;F10&gt;</code></li>
+<li>Show current error: <code>:cc</code></li>
+</ul>
+<h1 id="marks">Marks<a class="headerlink" href="#marks" title="Permanent link">#</a></h1>
+<ul>
+<li>List all the current marks: <code>:marks</code></li>
+</ul>
+<h2 id="set_a_mark">Set a mark<a class="headerlink" href="#set_a_mark" title="Permanent link">#</a></h2>
+<ul>
+<li><code>m[a-z]</code></li>
+<li>Marks valid within on file: <code>a-z</code></li>
+<li>
+<p>Marks (aka file marks) are valid between files: <code>A-Z</code></p>
+</li>
+<li>
+<p>Go to the corresponding parenthesis: <code>%</code></p>
+</li>
+<li>
+<p>Jump to beginning of line of mark: <code>'a</code></p>
+</li>
+<li>
+<p>Jump to position of mark: <code>`a</code></p>
+</li>
+</ul>
+<h2 id="delete_mark">Delete mark<a class="headerlink" href="#delete_mark" title="Permanent link">#</a></h2>
+<ul>
+<li><code>:delmarks A</code></li>
+<li>
+<p>Delete all the marks: <code>:delmarks A-Z 0-9 a-z [].^\"</code> or <code>KillMarks</code></p>
+</li>
+<li>
+<p>Beginning-end sentence markers: <code>()</code></p>
+</li>
+<li>
+<p>Beginning-end paragraph markers: <code>{}</code></p>
+</li>
+<li>
+<p>Alternate between last marks: <code>`</code></p>
+</li>
+</ul>
+<h1 id="autocompletion">Autocompletion<a class="headerlink" href="#autocompletion" title="Permanent link">#</a></h1>
+<p>// http://www.vim.org/tips/tip.php?tip_id=91</p>
+<h2 id="to_find_the_matching_words_in_insertion_mode">To find the matching words in insertion mode<a class="headerlink" href="#to_find_the_matching_words_in_insertion_mode" title="Permanent link">#</a></h2>
+<ul>
+<li>find matching word backwards: <code>&lt;CTRL-P&gt;</code></li>
+<li>find matching word forward: <code>&lt;CTRL-N&gt;</code></li>
+</ul>
+<!--
+- :help i_Ctrl-N
+- :help i_Ctrl-P
+- :help ins-completion
+- :help complete
+- :help completeopt         " To change pop-up menu
+-->
+
+<h1 id="vimdiff">Vimdiff<a class="headerlink" href="#vimdiff" title="Permanent link">#</a></h1>
+<ul>
+<li>vimdiff: go to prev difference: <code>[c</code>, <code>&lt;F9&gt;</code></li>
+<li>vimdiff: go to next difference: <code>]c</code>, <code>&lt;F10&gt;</code></li>
+<li>vimdiff: get text: <code>:diffget</code></li>
+<li>vimdiff: copy next text: <code>:diffput</code></li>
+<li>vimdiff: refresh update: <code>:diffupdate</code></li>
+</ul>
+<h2 id="vimdiff_switch_between_vertical_and_horizontal_split">vimdiff: Switch between vertical and horizontal split<a class="headerlink" href="#vimdiff_switch_between_vertical_and_horizontal_split" title="Permanent link">#</a></h2>
+<ul>
+<li>Vertical split: <code>CTRL-w J</code></li>
+<li>Horizontal split: <code>CTRL-w H</code></li>
+</ul>
+<h1 id="spellchecking">SpellChecking<a class="headerlink" href="#spellchecking" title="Permanent link">#</a></h1>
+<ul>
+<li>To set the file: <code>:setlocal spelllang=en_us</code>, <code>:set spellfile=~/.vim/spell/en.utf-8.add</code></li>
+<li>To enable / disable the spelling: <code>:setlocal spell / nospell</code></li>
+<li>To go to the next/prev misspelled word: <code>]s</code>, <code>[s</code></li>
+<li>To add to the local spell check: <code>zg</code></li>
+<li>To see spelling suggestions: <code>z=</code></li>
+<li>Accept the first suggestion: <code>1z=</code></li>
+<li>To regenerate the .spl file after editing the .add file: <code>:mkspell! ~/.vim/spell/en.utf-8.add</code></li>
+</ul>
+<h1 id="folding">Folding<a class="headerlink" href="#folding" title="Permanent link">#</a></h1>
+<ul>
+<li>Close everything (foldlevel=0): <code>zM</code></li>
+<li>Open all folds: <code>zR</code></li>
+<li>Bump foldlevel up twice: <code>zr zr</code></li>
+<li>Open all / close one more level: <code>zR</code> / <code>zm</code></li>
+<li>Open current fold recursively: <code>zO</code></li>
+<li>
+<p>Open just one level at the cursor: <code>zo</code></p>
+</li>
+<li>
+<p>Move the cursor to the next fold: <code>zj</code></p>
+</li>
+<li>Move the cursor to the previous fold: <code>zk</code></li>
+<li>
+<p>Jump to start/end of the fold: <code>[z, ]z</code></p>
+</li>
+<li>
+<p>Toggle fold: <code>za</code></p>
+</li>
+<li>Toggle fold recursively: <code>zA</code></li>
+</ul>
+<h1 id="crypt">Crypt<a class="headerlink" href="#crypt" title="Permanent link">#</a></h1>
+<ul>
+<li>Open file</li>
+<li>Set <code>:cm blowfish2</code> and enter password</li>
+<li>Save <code>:w</code></li>
+</ul>
+<h1 id="functions">Functions<a class="headerlink" href="#functions" title="Permanent link">#</a></h1>
+<ul>
+<li>How to write functions: http://vim.sourceforge.net/tips/tip.php?tip_id=32</li>
+<li>Get help for functions: <code>:help functions</code></li>
+<li>Get help for script: <code>:help script</code></li>
+<li>http://vim.sourceforge.net/scripts/script.php?script_id=72</li>
+<li>http://vim.sourceforge.net/scripts/script.php?script_id=197</li>
+</ul>
+<h1 id="non-ascii_editing">Non-Ascii Editing<a class="headerlink" href="#non-ascii_editing" title="Permanent link">#</a></h1>
+<h2 id="inserting_non-printable_chars">Inserting non-printable chars<a class="headerlink" href="#inserting_non-printable_chars" title="Permanent link">#</a></h2>
+<ul>
+<li>To insert a tab, i.e., <code>^I</code>: <code>CTRL-v + TAB</code></li>
+<li>To insert a return, i.e., <code>^M</code>: <code>CTRL-v + ENTER</code></li>
+<li>To match non-ascii chars: <code>/[^\x00-\x7F]</code></li>
+</ul>
+<h2 id="hex_editing">Hex editing<a class="headerlink" href="#hex_editing" title="Permanent link">#</a></h2>
+<ul>
+<li>To see character under the cursor: <code>ga</code></li>
+<li>To show non-printable characters: <code>:set display=uhex</code></li>
+<li>To open a file in hex form: vim -b datafile, :%!xxd</li>
+</ul>
+<h2 id="digraphs">Digraphs<a class="headerlink" href="#digraphs" title="Permanent link">#</a></h2>
+<p>//Greek/math symbols in gvim with
+//  http://www.alecjacobson.com/weblog/?p=443
+//  http://tlt.its.psu.edu/suggestions/international/bylanguage/mathchart.html</p>
+<ul>
+<li>
+<p>to see all the symbols: <code>:digraphs</code></p>
+</li>
+<li>
+<p>triple equality: <code>CTRL-k =3</code></p>
+</li>
+<li>belongs: <code>CTRL-k (-</code></li>
+<li>there exists: <code>CTRL-k TE</code></li>
+<li>for all: <code>CTRL-k FA</code></li>
+</ul>
+<h1 id="useful_packages">Useful Packages<a class="headerlink" href="#useful_packages" title="Permanent link">#</a></h1>
+<!--
+- Minibufexplorer
+- Commentify
+- Showmarks
+- NERDTree
+
+- Orgmode for vim
+    - https://github.com/jceb/vim-orgmode
+
+- Txtfmt (The Vim Highlighter) : "Rich text" highlighting in Vim! (colors,
+  underline, bold, italic, etc...)
+    - `http://www.vim.org/scripts/script.php?script_id=2208`
+
+- MultipleSearch : Highlight multiple searches at the same time, each with a
+  different color.
+     - `http://www.vim.org/scripts/script.php?script_id=479`
+
+- project.tar.gz : Organize/Navigate projects of files (like IDE/buffer explorer)
+    - `http://www.vim.org/scripts/script.php?script_id=69`
+
+- DoxygenToolkit.vim : Simplify Doxygen documentation in C, C++, Python.
+    - `http://www.vim.org/scripts/script.php?script_id=987`
+-->
+
+<h2 id="commentify">Commentify<a class="headerlink" href="#commentify" title="Permanent link">#</a></h2>
+<ul>
+<li>Comment the selected block out with: <code>:norm i# (lower case i)</code></li>
+<li>To uncomment, highlight your block again, and uncomment with: <code>:norm ^x</code></li>
+<li>Toggle: <code>:TC</code></li>
+<li>Comment: <code>:CC</code></li>
+<li>Uncomment: <code>:UC</code></li>
+<li>To prepend a XXXX in front of each line of a block: <code>:'&lt;,'&gt;s/^/XXXX/</code></li>
+</ul>
+<h2 id="vim-commentary">vim-commentary<a class="headerlink" href="#vim-commentary" title="Permanent link">#</a></h2>
+<ul>
+<li>Plugin: <code>tpope/vim-commentary</code> (https://github.com/tpope/vim-commentary)</li>
+<li>Install via vim-plug: add <code>Plug 'tpope/vim-commentary'</code> to <code>.vimrc</code>, then run
+  <code>:PlugInstall</code></li>
+<li>Comment/uncomment current line: <code>gcc</code></li>
+<li>Comment/uncomment a motion or visual selection: <code>gc{motion}</code>, e.g. <code>gcap</code>,
+  or <code>gc</code> in visual mode</li>
+</ul>
+<!--
+## CTRLP
+
+// https://vimawesome.com/plugin/ctrlp-vim-everything-has-changed
+
+- Fuzzy, buffer, mru, tag finder
+- To find a font
+
+## VimTaglist
+
+// http://vim-taglist.sourceforge.net/manual.html
+:TlistToggle
+:TlistShowPrototype (CTRL-SPACE or space on the tag window)
+:help TlistToggle
+-->
+
+<h2 id="ctags">ctags<a class="headerlink" href="#ctags" title="Permanent link">#</a></h2>
+<ul>
+<li>Jump to the tag underneath the cursor: <code>g]</code> or <code>:tag CTRL+(gr)</code></li>
+<li>Jump back up in the tag stack: <code>Ctrl-t</code></li>
+<li>Jump to next / prev matching tag: <code>:tn</code>, <code>:tp</code></li>
+<li>
+<p>List the tags that match <tag_name>: <code>:ts[elect] &lt;tag_name&gt;</code></p>
+</li>
+<li>
+<p>Preview window (horizontal split): <code>:pts[elect] &lt;tag_name&gt;</code></p>
+</li>
+<li>Open a preview window with the location of the tag definition: <code>Ctrl + w }</code></li>
+<li>Close preview window: <code>:pc</code></li>
+<li>
+<p>Show the contents of the tag stack: <code>:tags</code></p>
+</li>
+<li>
+<p>Copy word under cursor to command line: <code>CTRL + (gr)</code></p>
+</li>
+</ul>
+<h2 id="alternate">Alternate<a class="headerlink" href="#alternate" title="Permanent link">#</a></h2>
+<ul>
+<li>Switches to the file corresponding to the current file being edited: <code>:A</code></li>
+<li>Splits and switches: <code>:AS</code></li>
+<li>Vertical splits and switches: <code>:AV</code></li>
+<li>New tab and switches: <code>:AT</code></li>
+<li>Cycles through matches: <code>:AN</code></li>
+<li>Switches to file under cursor: <code>:IH</code></li>
+<li>Splits and switches: <code>:IHS</code></li>
+<li>Vertical splits and switches: <code>:IHV</code></li>
+<li>New tab and switches: <code>:IHT</code></li>
+<li>Cycles through matches: <code>:IHN</code></li>
+<li>Switches to file under cursor: <code>&lt;Leader&gt;ih</code></li>
+<li>Switches to the alternate file of file under cursor: <code>&lt;Leader&gt;is</code></li>
+<li>(e.g. on <foo.h> switches to foo.cpp): ``</li>
+<li>Cycles through matches: <code>&lt;Leader&gt;ihn</code></li>
+</ul>
+<h2 id="showmarks">ShowMarks<a class="headerlink" href="#showmarks" title="Permanent link">#</a></h2>
+<ul>
+<li>Help about marks: <code>:tab help showmarks</code></li>
+<li>Toggles ShowMarks on and off.: <code>\mt</code></li>
+<li>Hides an individual mark.: <code>\mh</code></li>
+<li>Hides all marks in the current buffer.: <code>\ma</code></li>
+<li>Places the next available mark.: <code>\mm</code></li>
+</ul>
+<h2 id="cscope">Cscope<a class="headerlink" href="#cscope" title="Permanent link">#</a></h2>
+<!--
+:cs help
+If you get "cscope no connections", use :cs add cscope.out
+:cs reset                 " To reset the connections
+
+CTRL-\ + char:
+  s " Symbol: find all references to the token under cursor
+  g " Global: find global definition(s) of the token under cursor
+  c " Calls: find all calls to the function name under cursor
+  t " Text: find all instances of the text under cursor
+  e " Egrep: egrep search for the word under cursor
+  f " File: open the filename under cursor
+  i " Includes: find files that include the filename under cursor
+  d " Called: find functions that function under cursor calls
+-->
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+  
+
+
+
+      
+    </article>
+  </div>
+
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2025 Giacinto Paolo Saggese
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://linkedin.com/in/gpsaggese" target="_blank" rel="noopener" title="linkedin.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/gpsaggese" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="mailto:gsaggese@umd.edu" target="_blank" rel="noopener" title="" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4l208 156a48 48 0 0 0 57.6 0l208-156c12.1-9.1 19.2-23.3 19.2-38.4 0-26.5-21.5-48-48-48zM0 196v188c0 35.3 28.7 64 64 64h384c35.3 0 64-28.7 64-64V196L313.6 344.8c-34.1 25.6-81.1 25.6-115.2 0z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "toc.integrate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+  
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-4QREMZZGV6');
+  </script>
+
+  </body>
+</html>
