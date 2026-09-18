@@ -28,7 +28,7 @@
   - Implement the restructuring of the slides and fix the high importance issues
     reported by the skill
 
-- Make sure the `<SMD_FILE>`>`>`>`>`>`>`>` renders correctly:
+- Make sure the `<SMD_FILE>` renders correctly:
   ```
   > gen_slides.py -i <SMD_FILE>
   ```
