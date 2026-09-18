@@ -6,7 +6,10 @@
 # Representation as a Foundation for Decisions
 
 * Why Knowledge Representation Matters
-// From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:22 '* Why Knowledge Representation Matters'
+// From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:59 '* Why Knowledge Representation Matters'
+
+::: columns
+:::: {.column width=80%}
 
 - @Motivation@: **Why KR is essential to AI**
 
@@ -22,12 +25,43 @@
      - Users can understand _why_ a system made a decision
      - Critical for high-stakes domains (healthcare, law, autonomous systems)
 
-  4) **Enables white-box learning**
+  4) **Enables planning and abstract reasoning**
      - Robots plan actions using abstract symbolic knowledge
      - Conversational agents reason about intent and context
 
+::::
+:::: {.column width=20%}
+
+```graphviz
+digraph WhyKR {
+  bgcolor="transparent";
+  pad="0.15";
+  rankdir=TB;
+  splines=spline;
+  nodesep=0.4;
+  ranksep=0.5;
+
+  node [shape=box, style="rounded,filled", penwidth=1.8,
+        fontname="Helvetica", fontsize=12, margin="0.22,0.14", height=0.50];
+  edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+        fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+  Perception [label="Perception\n(raw data)", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+  KR         [label="Knowledge\nRepresentation", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
+  Reasoning  [label="Reasoning", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
+  Action     [label="Action /\nExplanation", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+
+  Perception -> KR;
+  KR -> Reasoning;
+  Reasoning -> Action;
+}
+```
+
+::::
+:::
+
 * What Is Knowledge Representation?
-// From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:42 '* What is Knowledge Representation?'
+// From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:44 '* Defining Knowledge Representation'
 
 - @Definition@: **Knowledge Representation (KR)** is the study of how to formally
   encode information so that machines can reason with it
@@ -48,22 +82,19 @@
   - ...
 
 * Expressiveness vs. Tractability
-// From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:62 '* Expressiveness vs. Tractability'
+// From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:113 '* Expressiveness Vs. Tractability'
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=70%}
 
-- @Definition@: Tradeoff in AI / ML between:
+- @Definition@: In knowledge representation there is a **trade-off** between:
   - _Expressiveness_: richness of concepts that can be captured
   - _Tractability_: whether reasoning can be performed efficiently
 
 - @Fact@: More expressive languages lead to harder computation
 
 ::::
-:::: {.column width=35%}
-
-// TODO(ai_gp): Switch to a font more similar to DejaVu or Computer Modern
-// TODO(ai_gp): Make the comments on the axes bigger and closer to the axes
+:::: {.column width=30%}
 
 ```tikz
 \begin{axis}[
@@ -71,15 +102,15 @@
   height=8cm,
   axis lines=middle,
   xlabel style={
-    at={(axis description cs:0.5,-0.1)},
+    at={(axis description cs:0.5,-0.05)},
     anchor=north,
-    font=\large
+    font=\Huge\bfseries\sffamily
   },
   ylabel style={
-    at={(axis description cs:-0.07,0.5)},
+    at={(axis description cs:-0.02,0.5)},
     anchor=south,
     rotate=90,
-    font=\large
+    font=\Huge\bfseries\sffamily
   },
   xlabel={\textbf{Expressiveness}},
   ylabel={\textbf{Tractability}},
@@ -97,9 +128,9 @@
   \addplot[domain=1:9, ultra thick, dashed, blue] {10 / x};
 
   % Points
-  \addplot[only marks, mark=*] coordinates {(2,5)} node[above right, font=\large] {\textbf{Atomic}};
-  \addplot[only marks, mark=*] coordinates {(5,2)} node[above right, font=\large] {\textbf{Factored}};
-  \addplot[only marks, mark=*] coordinates {(8,1.25)} node[below right, font=\large] {\textbf{Structured}};
+  \addplot[only marks, mark=*] coordinates {(2,5)} node[above right, font=\huge\bfseries\sffamily] {\textbf{Atomic}};
+  \addplot[only marks, mark=*] coordinates {(5,2)} node[above right, font=\huge\bfseries\sffamily] {\textbf{Factored}};
+  \addplot[only marks, mark=*] coordinates {(8,1.25)} node[below right, font=\huge\bfseries\sffamily] {\textbf{Structured}};
 \end{axis}
 ```
 
@@ -112,19 +143,19 @@
 - @Example@
   - _Atomic_: treats each state as a single, indivisible entity: simple but
     limited
-    - E.g., depth-first search algorithms (e.g., `E3` in chess)
-  - _Factored_: captures relationships between variables but can't express complex
-    structures
-    - E.g., propositional logic: 
-      _"Minesweeper example: breeze at 1,2 iff pit at adjacent cells"_
-      $B_{1,2} \Leftrightarrow (P_{1,1} \lor P_{2,2} \lor P_{1,3})$
+    - E.g., a chess position treated as one opaque state in game-tree search
+  - _Factored_: captures simple relationships between variables, without
+    structure
+    - E.g., propositional logic:
+      $B_{1,2} \iff (P_{1,1} \lor P_{2,2} \lor P_{1,3})$ =
+      _"Wumpus World example: breeze at 1,2 iff pit at adjacent cells"_
   - _Structured_: more expressive but undecidable in general
     - E.g., first-order logic:
-      $\forall x \, \forall y \, Father(x, y) \Rightarrow Parent(x, y)$ =
+      $\forall x \, \forall y \, Father(x, y) \implies Parent(x, y)$ =
       _"A father of a person is their parent"_
 
 * Symbolic vs. Sub-symbolic Representation
-// From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:137 '* Symbolic vs. Sub-symbolic Representation'
+// From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:180 '* Symbolic Vs. Sub-symbolic Representation'
 
 ::: columns
 :::: {.column width=55%}
@@ -132,13 +163,13 @@
 - @Definition@: **Symbolic KR** uses discrete, human-readable symbols
   - E.g., logic, knowledge graphs
   - Interpretable and suitable for rule-based reasoning
-  - Struggle with ambiguity
+  - Struggles with ambiguity
 
 - @Definition@: **Sub-symbolic KR** uses learned, distributed representations
   - E.g., vector embeddings
-  - Lack transparency
+  - Lacks transparency
 
-- @Definition@: **Neuro-symbolic KR** blend the two approaches
+- @Definition@: **Neuro-symbolic KR** blends the two approaches
   - Reason over learned concepts using structured logic
 
 ::::
@@ -151,45 +182,45 @@
 :::
 
 * Neuro-symbolic Approach: Conceptual Spaces
-// From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:163 '* Neuro-symbolic Approach: Conceptual Spaces'
+// From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:207 '* Conceptual Spaces'
 
 - @Definition@: **Conceptual spaces** are frameworks for representing knowledge
   using geometric structures
   - Each dimension represents an interpretable feature
+  - A **concept** is a region in a multidimensional space
   - Similarity between objects is modeled by spatial distance
-  - A **concepts** is a region in a multidimensional space
-
-- @Pros@:
-  - Natural modeling of similarity and vagueness
-  - Symbolic systems use discrete symbols without structure (e.g., `Car` vs
-    `Bicycle`)
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=65%}
 
 - @Example@: Transportation methods
-  - Dimensions: `Environmental Friendliness`, `Technological Advancement`
-  - Wooden Transportation (red region)
-  - Vehicles (blue region)
-  - Advanced Vehicles (nested subset)
+  - Dimensions: `Environmental friendliness`, `Technological advancement`
+  - `Wooden` (red region) overlaps `Vehicle` (blue region)
+  - `Bicycle`, `Motorbike`, ... are nested subregions of `Vehicle`
+  - `Elevator` in `Vehicle` outside any other subregion
 
 ::::
-:::: {.column width=40%}
+:::: {.column width=35%}
 
 ![](msml610/lectures_source/figures/L03.conceptual_spaces.png)
 
 ::::
 :::
 
+- @Pros@:
+  - Natural modeling of similarity and vagueness
+  - Better than symbolic systems, in which discrete symbols carry no similarity
+    structure (e.g., `Car` vs `Bicycle`)
+
 * Procedural vs. Declarative Representation
-// From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:216 '* Procedural vs Declarative Approaches'
+// From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:261 '* Procedural vs Declarative Approaches'
 
 - @Definition@: **Procedural approach** focuses on _how_ a task is done
   - Encodes desired behavior directly into the program
   - E.g., a robot programmed with specific steps to navigate a maze
 
-- @Definition@: **Declarative approach** specifies _what_ the goal is, but _not
-  how_ to achieve it
+- @Definition@: **Declarative approach** specifies _what_ the goal is, but not
+  _how_ to achieve it
   - Describes relationships between actions and goals
   - Leaves solution search to the system
   - E.g., describing the goal "reach the exit of the maze" and letting the robot
@@ -200,12 +231,13 @@
   - Procedural: more control, less flexibility
   - Declarative: more abstraction, easier to modify or extend
 
-- @Approach@: Many successful AI systems use a hybrid approach
+- @Remark@: Many successful AI systems use a _hybrid approach_
   - Declarative knowledge can be compiled into procedural code
-  - E.g., a planner generates procedures (plans) from declarative goals
+  - E.g., a planner generates procedures (plans) from declarative goals (e.g.,
+    SQL)
 
 * Natural Language as a Representation
-// From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:193 '* Natural languages'
+// From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:239 '* Natural Languages'
 
 - @Definition@: **Natural languages** (e.g., English, Italian) are:
   - _Expressive_
@@ -216,25 +248,87 @@
     - Meaning depends on the sentence and context
     - E.g., "Look!"
 
-- @Concept@: **Sapir-Whorf hypothesis**
+- @Definition@: The **Sapir-Whorf hypothesis** claims
   - _"The language you speak shapes how you perceive, think about, and experience
     the world"_
     - Even through arbitrary grammatical features (e.g., gender of nouns)
+  - The strong version is rejected, while a weak influence is supported by
+    evidence
 
 - @Example@
   - Some languages lack words for certain concepts (e.g., direction)
   - Some languages have many words for the same concepts
     - E.g., Arctic languages have many words for snow (e.g., fresh, hard)
+    - E.g., Russian has separate words for dark blue and light blue
   - Newspeak from 1984 (Orwell)
     - You can't think certain concepts since you don't have words for it
 
 * Programming Languages as a Representation
-// From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:238 '* Programming Languages'
+// From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:278 '* Programming Languages'
 
-- @Concept@: A **programming language** (e.g., C++, Python) is a formal and
+::: columns
+:::: {.column width=50%}
+
+- @Definition@: A **programming language** (e.g., C++, Python) is a formal and
   procedural language
   - _Data structures_ represent facts
   - _Code_ updates data structures in a domain-specific way
+
+::::
+:::: {.column width=50%}
+
+```graphviz
+digraph ProgVsDeclarative {
+  bgcolor="transparent";
+  pad="0.15";
+  rankdir=TB;
+  splines=spline;
+  nodesep=0.5;
+  ranksep=0.4;
+
+  node [shape=box, style="rounded,filled", penwidth=1.6,
+        fontname="Helvetica", fontsize=11, margin="0.2,0.12", height=0.45];
+  edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.7,
+        fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
+
+  subgraph cluster_prog {
+    label = "<b>Programming Language</b>";
+    labelloc = "t";
+    fontname = "Helvetica-Bold";
+    fontsize = 11.5;
+    fontcolor = "#3A4A5C";
+    style = "rounded,filled";
+    fillcolor = "#F7F9FB";
+    color = "#C7D0DA";
+    penwidth = 1.0;
+    margin = 14;
+
+    Data [label="Data structures\n(facts)", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+    Code [label="Code\n(domain logic)", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
+    Data -> Code [label="  coupled", dir=both];
+  }
+
+  subgraph cluster_decl {
+    label = "<b>Declarative Language</b>";
+    labelloc = "t";
+    fontname = "Helvetica-Bold";
+    fontsize = 11.5;
+    fontcolor = "#3A4A5C";
+    style = "rounded,filled";
+    fillcolor = "#F7F9FB";
+    color = "#C7D0DA";
+    penwidth = 1.0;
+    margin = 14;
+
+    Knowledge [label="Knowledge\n(domain-specific)", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+    Inference [label="Inference\n(domain-independent)", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+    Knowledge -> Inference [label="  separate", style=dashed];
+  }
+}
+```
+
+::::
+:::
 
 - @Limitations@: Programming languages lack:
   1. A general _mechanism for deriving facts from other facts_
@@ -244,7 +338,7 @@
        information or quantify uncertainty
      - E.g., _"A white knight is in `b1` or in `f6`"_
 
-- @Concept@: In **declarative language** knowledge and inference are separate:
+- @Definition@: In **declarative language** knowledge and inference are separate:
   1. _Knowledge_ represents the domain-specific problem
      - The meaning of a sentence is a function of the meaning of its parts
        (compositional semantics)
@@ -256,7 +350,7 @@
 # Formal Knowledge Representation
 
 * Propositional Logic: Syntax and Semantics
-// From: msml610/lectures_source/Lesson03.2-Propositional_and_first_order_logic.smd:24 '* Propositional Logic'
+// From: msml610/lectures_source/Lesson03.2-Propositional_and_first_order_logic.smd:19 '* Propositional Logic'
 
 - @Definition@: **Propositional logic** is a formal system for reasoning about
   statements that can be true or false
@@ -282,7 +376,7 @@
 // ## Syntax of propositional logic
 
 * First-Order Logic: Quantifiers and Inference
-// From: msml610/lectures_source/Lesson03.2-Propositional_and_first_order_logic.smd:442 '* Quantifiers'
+// From: msml610/lectures_source/Lesson03.2-Propositional_and_first_order_logic.smd:575 '* Quantifiers'
 
 - **Quantifiers** express properties of entire collections of objects, instead of
   enumerating objects by name (like done in propositional logic)
@@ -300,7 +394,7 @@
   - E.g., $\forall x (Cat(x) \rightarrow Mammal(x))$
 
 * Logical Entailment and Inference
-// From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:517 '* Logical Entailment'
+// From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:711 '* Logical Entailment'
 
 - @Definition@: **Logical entailment** between sentences is the fact that a
   sentence follows logically from another sentence in a KB
@@ -309,12 +403,10 @@
   - Equivalent to $M(\alpha) \subseteq M(\beta)$
 
 - @Example@: in the "rain and wet ground" world
-  - $\alpha: "(Rain = T, WetGround = T)"$ entails
-    $\beta: "Rain \implies WetGround"$
-  - If you know for a fact that it's raining and the ground is wet, then you can
-    confidently conclude that the rule "if it rains, then the ground is wet" must
-    be true (at least in this world)
-  - The specific concrete fact supports the general conditional rule
+  - $KB = \{Rain, Rain \implies WetGround\}$ entails $WetGround$
+  - In every model where $Rain$ is true and $Rain \implies WetGround$ is true,
+    $WetGround$ is also true
+  - There is no model that satisfies $KB$ but violates $WetGround$
 
 - @Example@: in the "sitting table" world
   - $\alpha$: "$x = 0$", $\beta$: "$x \cdot y = 0$"
@@ -328,7 +420,7 @@
   - _"If you believe your KB, you must believe the entailed sentences"_
 
 * Non-Monotonic Logic and Default Reasoning
-// From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:54 '* Non-monotonic Logic'
+// From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:104 '* Non-monotonic Logic'
 
 - @Definition@: **Non-monotonic logic** is a logic where adding new information
   can invalidate previous conclusions
@@ -350,39 +442,75 @@
     circumstances
 
 * Open World vs. Closed World Assumptions
-// From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:161 '* Open World vs Closed World Assumptions'
+// From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:188 '* Open World vs Closed World Assumptions'
 
 - @Definition@: the **Closed World Assumption (CWA)** implies that any missing
   information is false by default
   - E.g., in relational databases (SQL), logic programming, business rules
+  - Best for complete, static knowledge
 
 - @Example@:
-  - Fact: _"Alice takes CS101"_
+  - Fact: _"Alice takes CS101"_ is in the database
   - Nothing said about Bob
-  - CWA conclusion: _"Bob does not take CS101"_
+  - CWA conclusion: _"Bob does not take CS101"_ (assumed false)
 
 - @Definition@: the **Open World Assumption (OWA)** implies that any missing
   information is unknown, not false
-  - E.g., semantic Web (RDF, OWL), incomplete or growing data
+  - E.g., semantic Web (RDF, OWL)
+  - Best for incomplete, evolving data
 
 - @Example@:
   - Fact: _"Alice takes CS101"_ is known
   - Nothing said about Bob
-  - OWA conclusion: _"Bob's enrollment is unknown"_
+  - OWA conclusion: _"Bob's enrollment is unknown"_ (could be true or false)
 
 * Inductive Logic Programming: Learning Rules from Examples
-// From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:181 '* Inductive Logic Programming'
+// From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:212 '* Inductive Logic Programming'
 
 - @Definition@: **Inductive logic programming** learns logical rules from
   examples and background knowledge
   - Given positive/negative examples and background facts, infer rules that
     explain them
 
+::: columns
+:::: {.column width=55%}
+
 - @Example@
   - Background knowledge: _"Birds have wings"_
   - Positive: _"Tweety is a bird that can fly"_
   - Negative: _"Penguin cannot fly"_
   - Learned rule: _"Birds can fly unless they are penguins"_
+
+::::
+:::: {.column width=45%}
+
+```graphviz
+digraph ILP {
+  graph [rankdir=TD, splines=curved, bgcolor="transparent",
+         ranksep="1.1 equally", nodesep=0.26, pad=0.4, fontname="Helvetica"];
+  node  [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=14,
+         fontcolor="#26215C", color="#D8D6EE", penwidth=1.2,
+         height=0.52, margin="0.24,0.10"];
+  edge  [arrowhead=vee, penwidth=1.6, color="#B9B6D6"];
+
+  background [label="Background Knowledge",
+              fillcolor="#FBEEE2", color="#C07A45"];
+  pos_ex [label="Positive Examples",
+          fillcolor="#E5F4EE", color="#2F9678"];
+  neg_ex [label="Negative Examples",
+          fillcolor="#FFF3E0", color="#D97706"];
+  hypothesis [label="Hypothesis Space", fillcolor="#EFEDFC", color="#7C74D6"];
+  learned_rule [label="Learned Rules", fillcolor="#E8F1FB", color="#3E86C8"];
+
+  background -> hypothesis [color="#C07A45", penwidth=2.0];
+  pos_ex -> hypothesis [color="#2F9678", penwidth=2.0];
+  neg_ex -> hypothesis [color="#D97706", penwidth=2.0];
+  hypothesis -> learned_rule [color="#3E86C8", penwidth=2.0];
+}
+```
+
+::::
+:::
 
 - @Pros@:
   - Produces human-readable rules
@@ -391,7 +519,7 @@
 
 - @Challenges@:
   - Computational complexity with large datasets
-  - Can Handle noisy, incomplete data
+  - Struggles with noisy, incomplete data
 
 # Knowledge Representation Frameworks
 
@@ -400,11 +528,16 @@
 // https://en.wikipedia.org/wiki/Description_logic
 
 * Rule-Based Systems and Knowledge-Based Agents
-// From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:362 '* Rule-Based Systems (1/2)'
+// From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:875 '* Rule-Based Agents'
+
+::: columns
+:::: {.column width=70%}
 
 - @Definition@: A **rule-based system** uses "if-then" rules to derive
   conclusions or make decisions
   - It mimics human decision-making by applying logical rules to a set of facts
+  - It generalizes _reflex agents_, which act on the current percept alone with
+    a single condition-action rule
 
 - @Key components@
   - _Knowledge base_: stores facts and rules
@@ -418,13 +551,46 @@
   - _Act_: apply the chosen rule to modify facts or trigger actions
   - _Repeat_: continue until no more rules can be applied
 
+::::
+:::: {.column width=30%}
+
+```graphviz
+digraph RuleBasedLoop {
+  bgcolor="transparent";
+  pad="0.15";
+  rankdir=TB;
+  splines=spline;
+  nodesep=0.4;
+  ranksep=0.4;
+
+  node [shape=box, style="rounded,filled", penwidth=1.6,
+        fontname="Helvetica", fontsize=10.5, margin="0.2,0.12", height=0.45];
+  edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.7,
+        fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
+
+  Match    [label="Match\n(find matching rules)", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
+  Conflict [label="Conflict resolution\n(pick rule)", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
+  Act      [label="Act\n(apply rule)", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
+  Memory   [label="Working memory\n(current facts)", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+
+  Match -> Conflict;
+  Conflict -> Act;
+  Act -> Match [label="  Repeat", constraint=false];
+  Memory -> Match [style=dashed];
+  Act -> Memory [style=dashed, label="  Updates", constraint=false];
+}
+```
+
+::::
+:::
+
 - @Example@
   - _Rule_: If a patient has a fever and a rash, then suggest measles
   - _Fact_: Patient has a fever and a rash
   - _Conclusion_: Suggest measles
 
 * Grounding: Connecting Symbols to the World
-// From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:403 '* Grounding: Definition and Framework'
+// From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:482 '* Grounding'
 
 ::: columns
 :::: {.column width=50%}
@@ -437,7 +603,32 @@
 ::::
 :::: {.column width=50%}
 
-// include:msml610/lectures_source/Lesson01.1.aux.md "L03.1_Grounding"
+```graphviz
+digraph Grounding {
+  bgcolor="transparent";
+  pad="0.15";
+  rankdir=TB;
+  splines=spline;
+  nodesep=0.4;
+  ranksep=0.5;
+
+  node [shape=box, style="rounded,filled", penwidth=1.6,
+        fontname="Helvetica", fontsize=10.5, margin="0.18,0.1", height=0.42];
+  edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.65,
+        fontname="Helvetica", fontsize=9, fontcolor="#7B8794"];
+
+  Reality1    [label="<<b>Reality</b><br/>(observable facts)>", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+  Represent1  [label="<<b>Representation</b><br/>(mental model)>", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
+  Reason      [label="<<b>Reason</b><br/>(logical analysis)>", fillcolor="#B2E2B2", color="#4F9A5C", fontcolor="#1F4E2E"];
+  Represent2  [label="<<b>Representation</b><br/>(conclusion)>", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+  Reality2    [label="<<b>Reality</b><br/>(interpreted truth)>", fillcolor="#F4A6A6", color="#C0455B", fontcolor="#6B2A2A"];
+
+  Reality1 -> Represent1 [label="  Perceives"];
+  Represent1 -> Reason [label="  Informs"];
+  Reason -> Represent2 [label="  Produces"];
+  Represent2 -> Reality2 [label="  Validates"];
+}
+```
 
 ::::
 :::
@@ -456,7 +647,10 @@
   - Autonomous agents, cognitive systems
 
 * Ontologies: Components and Structure
-// From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:747 '* Ontologies: Components'
+// From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:1030 '* Components of an Ontology'
+
+::: columns
+:::: {.column width=50%}
 
 - **Classes / Concepts**: Represent general concepts in a domain
   - E.g., `Person`, `City`, `Car`
@@ -471,18 +665,53 @@
 - **Attributes / Data values**: Specify data associated with instances
   - E.g., (`GP`, `hasAge`, `<your_guess>`)
 
+::::
+:::: {.column width=50%}
+
+```graphviz
+digraph OntologyComponents {
+  bgcolor="transparent";
+  pad="0.15";
+  rankdir=TB;
+  splines=spline;
+  nodesep=0.4;
+  ranksep=0.35;
+
+  node [shape=box, style="rounded,filled", penwidth=1.5,
+        fontname="Helvetica", fontsize=9.5, margin="0.16,0.1", height=0.4];
+  edge [color="#A3B1C0", penwidth=1.2, arrowhead=vee, arrowsize=0.6,
+        fontname="Helvetica", fontsize=8.5, fontcolor="#7B8794"];
+
+  ParentClass [label="<<b>Person</b> (class)>", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+  ChildClass  [label="<<b>Student</b> (subclass)>", fillcolor="#A6C8F4", color="#3C6FB0", fontcolor="#1F4E79"];
+  Individual  [label="<<b>GP</b> (individual)>", fillcolor="#C6A6F4", color="#8F5FC0", fontcolor="#45296B"];
+  Property    [label="<<b>hasAge</b> (property)>", fillcolor="#A0D6D1", color="#4F9A8F", fontcolor="#1F4E4A"];
+  Attribute   [label="<<b>42</b> (attribute value)>", fillcolor="#FFD1A6", color="#D9A85F", fontcolor="#6B4517"];
+  Axiom       [label="<<b>Axiom</b>:<br/>Human(x) => Mortal(x)>", fillcolor="#F4A6A6", color="#C0455B", fontcolor="#6B2A2A"];
+
+  ChildClass -> ParentClass [label="  subclass of"];
+  Individual -> ParentClass [label="  instance of"];
+  Individual -> Property [label="  has"];
+  Property -> Attribute [label="  value"];
+  ParentClass -> Axiom [style=dashed, label="  constrained by"];
+}
+```
+
+::::
+:::
+
 - **Constraints**: Rules that restrict the kinds of values a property can take
-  - E.g., (`Ferrari 458`, `mustBe`, `red`)
+  - E.g., `hasColor` on `Car` must range over {`red`, `yellow`, ...}
 
 - **Axioms**: Logical statements that define rules and constraints
-  - E.g., all humans are mortal: $\forall x (Person(x) \implies Mortal(x))$
+  - E.g., all humans are mortal: $\forall x (Human(x) \implies Mortal(x))$
 
 - **Hierarchies**: Organize classes and properties into parent-child
   relationships
   - E.g., `Student` is a subclass of `Person`
 
 * Ontologies: A Worked Example (University Domain)
-// From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:772 '* Ontology: Example University'
+// From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:1088 '* Example: University Ontology'
 
 ::: columns
 :::: {.column width=35%}
@@ -556,7 +785,7 @@ digraph UniversityOntology {
 ## Reasoning in Ontologies
 
 * Reasoning in Ontologies: Inference Tasks
-// From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:845 '* Example of Reasoning Tasks (1/4)'
+// From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:1165 '* Class-Level Reasoning Tasks'
 
 - **Subsumption**
   - _"Is class `A` a subclass of `B`?"_
@@ -568,8 +797,8 @@ digraph UniversityOntology {
 - **Satisfiability**
   - _"Can an instance of a concept exist?"_
   - Test if a concept is logically consistent (i.e., without contradiction)
-  - E.g., if the concept `FlyingPenguin` requires flying but is also defined as a
-    penguin (which cannot fly), it might be not satisfiable
+  - E.g., the concept `FlyingPenguin` requires flying but is also defined as a
+    penguin (which cannot fly), so it is unsatisfiable
 
 - **Classification**
   - _Organize concepts into a hierarchy_
@@ -579,7 +808,7 @@ digraph UniversityOntology {
     places `Penguin` under `Bird`, and `Bird` under `Animal`
 
 * Description Logics and OWL
-// From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:209 '* Description Logic'
+// From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:272 '* Description Logic'
 
 - @Definition@: **Description logic** represents structured knowledge about a
   domain
@@ -603,7 +832,16 @@ digraph UniversityOntology {
   - Used widely in ontologies (e.g., OWL)
 
 * RDF and SPARQL: Representation Standards
-// From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:370 '* RDF (Resource Description Framework)'
+// From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:391 '* Resource Description Framework'
+
+- @Definition@: **Resource Description Framework (RDF)** (2004)
+  - Is a standard model for data interchange on the web
+  - Represents structured information in a machine-readable way
+
+- @Components@: the basic building block is a triple
+  - _Subject_: entity being described (e.g., `Nuvolo`)
+  - _Predicate_: property or relationship (e.g., `isA`)
+  - _Object_: value or entity (e.g., `Dog`)
 
 - @Pros@
   - Statements form directed graphs of nodes and edges
@@ -616,14 +854,17 @@ digraph UniversityOntology {
   - Supporting ontologies
 
 * Semantic Networks and Knowledge Graphs
-// From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:480 '* Semantic Networks'
+// From: msml610/lectures_source/Lesson03.3-Non_classical_logics.smd:707 '* Semantic Networks'
+
+::: columns
+:::: {.column width=50%}
 
 - @Definition@: **Semantic Networks** represent knowledge as graphs of concepts
   and relations
 
 - @Components@:
   - _Nodes_: concepts
-  - _Edges_: relations (e.g., "is-a", "part-of")
+  - _Edges_: relations (e.g., "is-a", "part-of", "has-property")
     - E.g., `Dog` is `Animal` $\to$ `Dog` inherits `Animal` traits
 
 - @Examples@:
@@ -631,13 +872,58 @@ digraph UniversityOntology {
 
 - @Pros@:
   - Easy to visualize and traverse
-  - Support reasoning
+  - Support reasoning via path traversal
   - Used in early AI systems and current KG applications
+
+::::
+:::: {.column width=50%}
+
+```graphviz
+digraph SemanticNetwork {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.5;
+    ranksep=0.6;
+    rankdir=TB;
+
+    node [shape=ellipse,
+          style="rounded,filled",
+          penwidth=1.8,
+          fontname="Helvetica",
+          fontsize=11,
+          margin="0.20,0.12"];
+
+    edge [color="#A3B1C0",
+          penwidth=1.3,
+          arrowhead=vee,
+          arrowsize=0.75,
+          fontname="Helvetica",
+          fontsize=9,
+          fontcolor="#7B8794"];
+
+    animal [label="Animal", fillcolor="#FFC98A", color="#D98E2B", fontcolor="#6B4517"];
+    mammal [label="Mammal", fillcolor="#A9DDB0", color="#4F9A5C", fontcolor="#1F4E2E"];
+    dog [label="Dog", fillcolor="#A9DDB0", color="#4F9A5C", fontcolor="#1F4E2E"];
+    cat [label="Cat", fillcolor="#A9DDB0", color="#4F9A5C", fontcolor="#1F4E2E"];
+    fido [label="Fido\n(instance)", fillcolor="#9CC4F2", color="#3C6FB0", fontcolor="#1F4E79"];
+    property [label="Has 4 legs", fillcolor="#C7ECF0", color="#7CC6D0", fontcolor="#1F4E56"];
+
+    animal -> mammal [label="is-a"];
+    animal -> dog [label="is-a"];
+    animal -> cat [label="is-a"];
+    dog -> fido [label="instance"];
+    dog -> property [label="property"];
+}
+```
+
+::::
+:::
 
 # Graphical Models for Uncertainty
 
 * Why Logic Fails Under Uncertainty
-// From: msml610/lectures_source/Lesson06.1-Bayesian_Networks.smd:17 '* Logic-Based AI Under Uncertainty: Problem'
+// From: msml610/lectures_source/Lesson06.1-Bayesian_Networks.smd:18 '* Logic-Based AI Under Uncertainty: Problem'
 
 - @Definition@: **Logic-based AI systems**:
   - Are based on propositional logic
@@ -657,7 +943,7 @@ digraph UniversityOntology {
      - Other agents may interfere
 
 * Bayesian Networks: Definition and Structure
-// From: msml610/lectures_source/Lesson06.1-Bayesian_Networks.smd:422 '* Bayesian Networks: Definition'
+// From: msml610/lectures_source/Lesson06.1-Bayesian_Networks.smd:429 '* Bayesian Networks: Definition'
 
 - Aka: "Bayes nets", "Belief networks", "Probabilistic networks", "Graphical
   models" (broader class), "Causal networks" (arrows have special meaning)
@@ -674,7 +960,7 @@ digraph UniversityOntology {
 # Causal Graphical Models
 
 * Causal Networks (Causal DAGs): Definition and Structure
-// From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:91 '* Causal DAG'
+// From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:92 '* Causal DAG'
 
 - **Causal DAG**
   - _Directed_: Arrows show cause $\rightarrow$ effect
@@ -693,7 +979,7 @@ digraph UniversityOntology {
   - Assumes all relevant variables included (no hidden confounders)
 
 * The Ladder of Causation: Association, Intervention, Counterfactual
-// From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:159 '* Example: Tornado Warning'
+// From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:160 '* Example: Tornado Warning'
 
 ::: columns
 :::: {.column width=50%}
@@ -743,8 +1029,11 @@ digraph Tornado_Warning {
 ::::
 :::
 
+- @Goal@: look at this example using the ladder of causation
+  - Association $\to$ intervention $\to$ counterfactual
+
 * Structural Causal Models (SCM): Definition
-// From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:366 '* Structural Causal Model'
+// From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:367 '* Structural Causal Model'
 
 - A **Structural Causal Model** (SCM) translates a causal DAG into mathematical
   equations to define how variables interact
@@ -771,7 +1060,7 @@ digraph Tornado_Warning {
 # Integrating Logic and Causality
 
 * Markov Logic Networks: Combining Logic and Probability
-// From: msml610/lectures_source/Lesson09.2-Hidden_Markov_Models.smd:286 '* Markov Logic Networks: Basics'
+// From: msml610/lectures_source/Lesson09.2-Hidden_Markov_Models.smd:287 '* Markov Logic Networks: Basics'
 
 - A **Markov Logic Network** (MLN) combines:
   - First-order logic (expressing knowledge with rules and quantifiers)
@@ -814,7 +1103,7 @@ digraph Tornado_Warning {
 ## #############################################################################
 
 * From Correlation to Causal Reasoning: What Graphs Add
-// From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:15 '* (Non-Causal) Bayesian Networks'
+// From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:16 '* (Non-Causal) Bayesian Networks'
 
 - **Bayesian networks** represent a joint distribution function
   - The direction of the arrow represent _conditional dependence_ (not
@@ -875,12 +1164,12 @@ digraph BayesianNetwork1 {
   - Are equivalent and convey the same information
   - Have different difficulties to be estimated
 
-- There is an **asymmetry in nature**
+- **Asymmetry in nature** reveals causality
   - Extinguishing fire stops smoke
   - Clearing smoke doesn't affect fire
 
 * Choosing a Representation: Logic, Probability, or Causal Graphs
-// From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:76 '* Causal (Bayesian) Networks'
+// From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:77 '* Causal (Bayesian) Networks'
 
 - **Causal networks are Bayesian networks with only causal edges**
   - Use judgment based on nature instead of just statistics

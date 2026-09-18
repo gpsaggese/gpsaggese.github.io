@@ -3,17 +3,6 @@
 // lesson_title=Lesson 02.2: Integrating Causality and Probability in ML
 // slides_engine=typst
 
-// References:
-//- [B002] Pearl et al., "The Book of Why", 2018
-//- [B050] Hernan & Robins, "Causal Inference: What If", 2020
-//- [P009] Pearl, "The Seven Pillars of Causal Reasoning with Reflections on
-//  Machine Learning", 2021
-//  https://cacm.acm.org/research/seven-pillars-of-causal-reasoning-with-reflections-on-machine-learning/
-//- [P063] Rubin, "Estimating Causal Effects of Treatments in Randomized and
-//  Nonrandomized Studies", 1974 https://doi.org/10.1037/h0037350
-//- [P069] Lakshminarayanan et al., "Simple and Scalable Predictive Uncertainty
-//  Estimation Using Deep Ensembles", 2017 https://arxiv.org/abs/1706.04599
-
 # Bridging Prediction and Decision
 
 * Introduction
