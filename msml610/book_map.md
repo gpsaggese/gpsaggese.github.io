@@ -242,11 +242,11 @@ WARNING: Can't find s3fs: continuing
 Execute msml610/book/prompt.slides_and_book_flow.md
 ```
 
-- [ ] 5.1
+- [.] 5.1
 - [ ] 5.2
 - [ ] 5.3
 
-- [ ] 6.1
+- [.] 6.1
 - [ ] 6.2
 - [ ] 6.3
 

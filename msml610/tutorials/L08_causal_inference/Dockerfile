@@ -14,13 +14,15 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     ca-certificates \
     git \
+    graphviz \
     && rm -rf /var/lib/apt/lists/*
 
-# Install project specific packages.
+# Install project specific packages. Pin jupytext to avoid jitter in the
+# notebook files due to changing version.
 RUN mkdir -p /install
 COPY requirements.txt /install/requirements.txt
 RUN pip install --upgrade pip && \
-    pip install --no-cache-dir jupyterlab jupyterlab_vim jupytext -r /install/requirements.txt
+    pip install --no-cache-dir jupyterlab jupyterlab_vim jupytext==1.19.3 -r /install/requirements.txt
 
 # Config.
 COPY etc_sudoers /install/

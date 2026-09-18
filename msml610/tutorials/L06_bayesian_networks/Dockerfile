@@ -9,7 +9,7 @@ FROM python:3.12-slim
 # Avoid interactive prompts during apt operations.
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install CA certificates, git, build tools, and graphviz for DAG visualization.
+# Install CA certificates (needed for HTTPS), git, and basic build tools.
 RUN apt-get update && apt-get install -y \
     build-essential \
     ca-certificates \

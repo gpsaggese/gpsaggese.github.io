@@ -1,9 +1,8 @@
 # Goal
 
+- The user will pass you slides and you will save the path in the `<SMD_FILE>`
+  (e.g., SMD_FILE=msml610/lectures_source/Lesson06.1*.smd)
 - Process the slides and the book for the following set of slides
-  ```
-  SMD_FILE=msml610/lectures_source/Lesson05.1*.smd
-  ```
 
 # Workflow
 
@@ -14,10 +13,10 @@
 
 ## Read convention
 
-- Read the conventions for
-  - books: `.claude/skills/book_map.rules.md`
-  - slides: `.claude/skills/slides.rules.md`
-  - typst code: `.claude/skills/typst.rules.md`
+- Read the conventions for:
+  - Books: `.claude/skills/book_map.rules.md`
+  - Slides: `.claude/skills/slides.rules.md`
+  - Typst code: `.claude/skills/typst.rules.md`
 
 ## Review and Improve slides
 
