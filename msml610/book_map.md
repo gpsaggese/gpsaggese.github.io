@@ -64,7 +64,6 @@
 - [ ] `/slides.lint_incrementally`
 - [ ] `/slides.fix_formatting`
 
-
 Lesson | Num slides | Check for error | Add visuals | Slides posted | Generate commentary | Review commentary | Duration | Comm Posted | Tutorial | Video |
 
 Lesson01.1-Class.smd   | 14 | 90% | Yes | Yes | n/a | n/a | n/a | n/a | n/a | n/a |
@@ -242,11 +241,11 @@ WARNING: Can't find s3fs: continuing
 Execute msml610/book/prompt.slides_and_book_flow.md
 ```
 
-- [.] 5.1
+- [x] 5.1
 - [ ] 5.2
 - [ ] 5.3
 
-- [.] 6.1
+- [x] 6.1
 - [ ] 6.2
 - [ ] 6.3
 
@@ -293,7 +292,7 @@ run_typst.py --compress_pdf .
 # Workflows
 
 // TODO(ai_gp): Where to move?
-// ./class_scripts/how_to_work_on_slides.md ? -> how_to.Work_on_slides.md
+// ./class_scripts/how_to.Work_on_slides.md
 
 ## Overview
 

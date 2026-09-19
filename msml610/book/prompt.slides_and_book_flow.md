@@ -1,7 +1,7 @@
 # Goal
 
 - The user will pass you slides and you will save the path in the `<SMD_FILE>`
-  (e.g., SMD_FILE=msml610/lectures_source/Lesson06.1*.smd)
+  (e.g., `SMD_FILE=msml610/lectures_source/Lesson06.1*.smd`)
 - Process the slides and the book for the following set of slides
 
 # Workflow

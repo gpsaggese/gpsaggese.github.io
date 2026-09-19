@@ -33,7 +33,7 @@
 
 - @Problem@: Real-world agents face _uncertainty_ from:
   1. _Partial observability_
-     - Agent can't see the full state of the world
+     - Agents can't see the full state of the world
   2. _Non-determinism_
      - Actions don't always have deterministic or predictable outcomes
   3. _Adversarial conditions_
@@ -43,12 +43,12 @@
 
 - @Naive Solution@: A possible solution to logic-based AI under uncertainty is to
   use:
-  1. **Belief state**, i.e., set of all possible current world states
+  1. @Belief state@, i.e., set of all possible current world states
      - _Cons_: difficult to enumerate and track
-  2. **Causal and exhaustive augmentation** for rules
+  2. @Causal and exhaustive augmentation@ for rules
      - _Cons_: must consider all possible preconditions for acting, even unlikely
        ones
-  3. **Contingent plans** to handle every possible sensor report and belief
+  3. @Contingent plans@ to handle every possible sensor report and belief
      - _Cons_:
        - Plans become large and complex
        - No guaranteed plan may exist, yet action is required
@@ -59,13 +59,13 @@
 
 ::: columns
 :::: {.column width=55%}
-- @Remark@: Obvious preconditions
+- @Obvious preconditions@
   - Car has fuel
   - Car battery is charged
   - Car key is the right one
   - ...
 
-- @Remark@: Less obvious preconditions
+- @Less obvious preconditions@
   - Electrical system is intact
   - Fuel pump is working
   - Fuel lines are not clogged
@@ -111,13 +111,13 @@ digraph BayesianFlow {
 ::::
 :::
 
-- @Problem@: Every precondition requires something else to achieve the goal
+- @Problem@: Every precondition requires _something else_ to achieve the goal
 
 ## The Qualification Problem
 
 * Causal and Exhaustive Rules
 
-- @Definition@: Causal and exhaustive augmentation of logic rules
+- @Definition@: **Causal and exhaustive augmentation** of logic rules
   - To use propositional logic under uncertainty, need to augment left side of
     rules $X \implies Y$ to make it:
     1. _Causal_: identify true causal-effect relationships
