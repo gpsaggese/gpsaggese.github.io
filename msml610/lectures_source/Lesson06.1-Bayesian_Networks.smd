@@ -174,13 +174,12 @@ digraph BayesianFlow {
 
 - @Question@: What about the converse $WetGrass \implies Rain$?
   - "$WetGrass \implies Rain$" is not true in general
-    - Grass could be wet because of sprinkler system
-    - Grass could be wet because of morning dew
+    - Grass could be wet because of sprinkler system or morning dew
 
 - @Remark@: to make the rules hold, also consider propositions $Cover$
   (_"protective cover over the grass"_), $Evaporate$ (_"water evaporates
   quickly"_), $Sprinkler$ (_"sprinkler system is on"_), and $Dew$ (_"morning
-  dew"_)
+  dew"_), ...
 
 * Garden World: Causal and Exhaustive Rules
 
@@ -188,13 +187,13 @@ digraph BayesianFlow {
 
   1. **Causal**: _"If it rains, the grass is not covered, and the water does not
      evaporate quickly, the grass is wet"_
-     - $Rain \land \lnot Cover \land \lnot Evaporate \land \ldots \implies WetGrass$
+     $$Rain \land \lnot Cover \land \lnot Evaporate \land \ldots \implies WetGrass$$
 
   2. **Exhaustive**: _"Grass is wet if it rains or sprinkler is on or morning
      dew"_
-     - $WetGrass \implies Rain \lor Sprinkler \lor Dew \lor \ldots$
+     $$WetGrass \implies Rain \lor Sprinkler \lor Dew \lor \ldots$$
 
-```graphviz[width=80%]
+```graphviz[width=70%]
 digraph BayesianFlow {
     splines=true;
     nodesep=1.0;
@@ -218,8 +217,8 @@ digraph BayesianFlow {
     Rain -> WetGrass;
     Rain -> Cover;
     Rain -> Evaporate;
-    Cover -> WetGrass [label="blocks", style=dashed];
-    Evaporate -> WetGrass [label="blocks", style=dashed];
+    Cover -> WetGrass [label=" Blocks", style=dashed];
+    Evaporate -> WetGrass [label=" Blocks", style=dashed];
     Sprinkler -> WetGrass;
     Dew -> WetGrass;
 }
@@ -229,7 +228,7 @@ digraph BayesianFlow {
 
 * Probability and Utility
 
-- @Remark@: propositional logic alone is not enough to act under uncertainty
+- @Remark@: Propositional logic alone is not enough to act under uncertainty
 
 - @Solution@: Acting under uncertainty requires combining:
   - **Probability**: handle uncertainty and partial knowledge
@@ -242,15 +241,24 @@ digraph BayesianFlow {
   - Evaluate plans based on performance on average, given known info
   - Still success is not guaranteed
 
-- @Example@: when to leave for the airport (missed flight $= -100$, best in bold)
+* Probability and Utility: Example
 
-\begingroup \scriptsize
+- When to leave for the airport?
+
+- There are two "forces" pushing in two opposite directions
+  - Leave as late as possible to avoid waiting at the airport
+  - Not missing the airport
+
+- Assume: if you miss the flight, utility is $-100$
+
+```{=typst}
+#set text(size: 0.85em)
 | **Leave before** | **Pr(catch)** | **Utility if caught** | **Expected utility** |
 | ---------------- | ------------- | --------------------- | -------------------- |
 | 90 min           | 0.95          | 10                    | 4.50                 |
 | **120 min**      | **0.98**      | **7**                 | **4.86**             |
 | 24 h             | 0.9999        | -20                   | -20.01               |
-\endgroup
+```
 
 * Probability as Belief
 
