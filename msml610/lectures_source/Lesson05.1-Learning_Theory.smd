@@ -354,100 +354,101 @@ digraph ML_Phases {
 
 * Validation Setup: One Coin
 
-- In a **validation set-up**, you have a coin and want to determine if it is
+- In a @validation set-up@, you have a single coin and want to determine if it is
   fair
 
-- Assume the coin is unbiased: $\mu = 0.5$
-- Toss the coin 10 times
-- @Question@: How likely is that you get 10 heads (i.e., the coin looks biased
-  $\nu = 0$)?
-  $$
-  \Pr(\text{coin shows } \nu = 0) = 1 / 2^{10} = 1 / 1024 \approx 0.1\%
-  $$
-
-- **Conclusion**: the probability that the in-sample performance ($\nu=0.0$)
-  is completely different from the out-of-sample performance ($\mu=0.5$) is
-  very low
+- @Procedure@
+  - Assume the coin is unbiased: $\mu = 0.5$
+  - Toss the coin 10 times
+  - **Question**: How likely is that you get 10 heads (i.e., the coin looks biased
+    $\nu = 0$)?
+    $$
+    \Pr(\text{coin shows } \nu = 0) = 1 / 2^{10} = 1 / 1024 \approx 0.1\%
+    $$
+  - **Conclusion**: the probability that the in-sample performance ($\nu=0.0$)
+    is completely different from the out-of-sample performance ($\mu=0.5$) is
+    very low
 
 * Learning Setup: Many Coins
 
-- In a **learning set-up**, you have many coins and you need to choose one and
-  determine if it's fair
+- In a @learning set-up@, you have many coins, you need to choose one and determine
+  if it's fair
 
-- @Question@: if you have 1000 fair coins, how likely is it that at least one
-  appears totally biased using 10 experiments?
+- @Procedure@:
+  - **Question**: if you have 1000 fair coins, how likely is it that at least one
+    appears totally biased using 10 experiments?
   - I.e., out-of-sample performance is completely different from in-sample
     performance
-  $$
-  \begin{aligned}
-  \Pr(\text{at least one coin has } \nu = 0) &
-  = 1 - \Pr(\text{all coins have } \nu \neq 0)\\
-  &= 1 - (\Pr(\text{a coin has } \nu \neq 0)) ^{1000}\\
-  &= 1 - (1 - \Pr(\text{a coin has } \nu = 0)) ^{1000}\\
-  &= 1 - (1 - 1 / 2 ^ {10}) ^ {1000}\\
-  &\approx 62\%
-  \end{aligned}
-  $$
-
-- **Conclusion**: It is probable, more than 50\%
-
-// TODO(gp): Merge the next two slides
+    $$
+    \begin{aligned}
+    \Pr(\text{at least one coin has } \nu = 0) &
+    = 1 - \Pr(\text{all coins have } \nu \neq 0)\\
+    &= 1 - (\Pr(\text{a coin has } \nu \neq 0)) ^{1000}\\
+    &= 1 - (1 - \Pr(\text{a coin has } \nu = 0)) ^{1000}\\
+    &= 1 - (1 - 1 / 2 ^ {10}) ^ {1000}\\
+    &\approx 62\%
+    \end{aligned}
+    $$
+  - **Conclusion**: the probability that in-sample performance is completely
+    different from out-of-sample performance is more than 50\%
 
 * Hoeffding Bound: Validation vs Learning
-- In **validation / testing**
-  - Use Hoeffding to assess how well our $g$ (the _chosen hypothesis_)
-    approximates $f$ (the _unknown target function_):
-    $$
-    \Pr(|E_{in} - E_{out}| > \varepsilon) \le 2 \exp(-2 \varepsilon^2 N)
-    $$
-    where:
-    \begingroup \small
-    \begin{alignat*}{2}
-    & E_{in}(g) = \frac{1}{N} \sum_i e(g(\vx_i), f(\vx_i)) \\
-    & E_{out}(g) = \EE_{\vx}[e(g(\vx), f(\vx))] \\
-    \end{alignat*}
-    \endgroup
-  - Since the hypothesis $g$ is final and fixed, Hoeffding inequality bounds how
-    far $E_{out}$ can be from $E_{in}$
+- In @validation / testing@, use Hoeffding to assess how well our $g$ (the _chosen
+  hypothesis_) approximates $f$ (the _unknown target function_):
+  $$
+  \Pr(|E_{in} - E_{out}| > \varepsilon) \le 2 \exp(-2 \varepsilon^2 N)
+  $$
+  where:
+  $$
+  \begin{alignat*}{2}
+  & E_{in}(g) = \frac{1}{N} \sum_i e(g(\vx_i), f(\vx_i)) \\
+  & E_{out}(g) = \EE_{\vx}[e(g(\vx), f(\vx))] \\
+  \end{alignat*}
+  $$
 
-- In **learning**
-  - Need to account that our hypothesis is the best of $M$ hypotheses, so:
-    $$
-    \Pr(|E_{in} - E_{out}| > \varepsilon) \le 2 M \exp(-2 \varepsilon^2 N)
-    $$
+- In @learning@, need to account that our hypothesis is the best of $M$ hypotheses,
+  so:
+  $$
+  \Pr(|E_{in} - E_{out}| > \varepsilon) \le 2 M \exp(-2 \varepsilon^2 N)
+  $$
   - The bound for $E_{out}$ from Hoeffding is weak
 
-- **Questions**:
+- @Questions@:
   - Is the bound weak because it needs to be?
   - Is it possible to replace it with a stricter bound?
 
 * Why the Union Bound Is Loose
 
-- The Hoeffding inequality and the union bound applied to training set
+- @Recap@: The Hoeffding inequality and the union bound applied to training set is
+  **(artificially) too loose**
   $$
   \Pr(|E_{in} - E_{out}| > \varepsilon) \le 2 M \exp(-2 \varepsilon^2 N)
   $$
-  is **artificially** too loose
 
 - $M$ was coming from the bad event:
+  $$
   \begin{alignat*}{2}
   \calB_i
-  &= \textit{"hypothesis $h_i$ does not generalize out-of-sample"} \\
-  &= "|E_{in}(h_i) - E_{out}(h_i)| > \varepsilon"
+  &= \text{hypothesis $h_i$ does not generalize out-of-sample} \\
+  &= |E_{in}(h_i) - E_{out}(h_i)| > \varepsilon
   \end{alignat*}
+  $$
 
 ::: columns
 :::: {.column width=70%}
-- Let $\calB$ be the bad event "$g$ does not generalize"
-  - Since $g \in \{h_1, h_2, \cdots, h_M\}$ then
-    $\Pr(\calB)
-    \le \Pr(\bigcup_i \calB_i)
-    \le \sum_i \Pr(\calB_i)$
 
-- The union bound is tight only if the events are disjoint, and leads to a
-  conservative estimate if events overlap
-- **In reality**, bad events are extremely overlapping because bad hypotheses
-  are extremely similar
+- Let $\calB$ be the bad event _"$g$ does not generalize"_
+  - Since $g \in \{h_1, h_2, \cdots, h_M\}$ then
+    $$
+    \Pr(\calB)
+    \le \Pr(\bigcup_i \calB_i)
+    \le \sum_i \Pr(\calB_i)
+    $$
+
+- The union bound is **tight** only if the events are disjoint, but it leads to a
+  **conservative** estimate if events overlap
+  - In practice, bad events are **extremely overlapping** because bad hypotheses are
+    extremely similar
 
 ::::
 :::: {.column width=30%}
@@ -468,25 +469,24 @@ digraph ML_Phases {
 ::::
 :::
 
-//* Why Union Bound for Hoeffding Is Loose: Intuition
-//
-//// TODO(Gp): Improve this
-//
-//- Consider two linearly separable classes on a plane, in terms of the ground
-//  truth and a training set
-//
-//- Consider two 2D perceptrons with similar weights: $g_1, g_2$
-//- $E_{out}$ is the area where each hypothesis $g_i$ and the ground truth
-//  disagree
-//- $\Delta E_{out}$ is the differential area between the two $E_{out}$
-//
-//- $E_{in}$ corresponds to the points in the training set falling in the area
-//  corresponding to $E_{out}$
-//- $\Delta E_{in}$ is the number of points falling in $\Delta E_{out}$, i.e.,
-//  changing classification going from one hypothesis to the other
-//
-//- Thus the two "bad events" $\calB_1$ and $\calB_2$ are related to
-//  $\Delta E_{in}$ and $\Delta E_{out}$
+* Why Union Bound for Hoeffding Is Loose: Intuition
+
+// TODO(ai_gp): Improve it with some diagrams
+- Consider two linearly separable classes on a plane, in terms of the ground
+  truth and a training set
+
+- Consider two 2D perceptrons with similar weights: $g_1, g_2$
+- $E_{out}$ is the area where each hypothesis $g_i$ and the ground truth
+  disagree
+- $\Delta E_{out}$ is the differential area between the two $E_{out}$
+
+- $E_{in}$ corresponds to the points in the training set falling in the area
+  corresponding to $E_{out}$
+- $\Delta E_{in}$ is the number of points falling in $\Delta E_{out}$, i.e.,
+  changing classification going from one hypothesis to the other
+
+- Thus the two "bad events" $\calB_1$ and $\calB_2$ are related to
+  $\Delta E_{in}$ and $\Delta E_{out}$
 
 # Growth Function
 
@@ -494,10 +494,10 @@ digraph ML_Phases {
 
 * Dichotomy: Definition
 
-- @Problem@: classify $N$ (fixed) points $\vx_1, ..., \vx_N$ with a hypothesis
-  set $\calH$ of binary classifiers
+- You need to classify $N$ (fixed) points $\vx_1, ..., \vx_N$ with a hypothesis set
+  $\calH$ of binary classifiers
 - Consider an assignment $D$ of the points to certain class $\vd_1, ..., \vd_N$
-- $D$ is a **dichotomy** for hypothesis set $\calH$ $\iff$ there exists
+- @Definition@: $D$ is a **dichotomy** for hypothesis set $\calH$ $\iff$ there exists
   $h \in \calH$ that gets the desired classification $D$
 
 ::: columns
