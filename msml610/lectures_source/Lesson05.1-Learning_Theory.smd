@@ -50,16 +50,18 @@ digraph LessonFlow {
 
 * Visual ML Experiment: Setup
 
-::: columns
-:::: {.column width=50%}
 - Consider the supervised classification problem
 
-- **\black{Input}**
+::: columns
+:::: {.column width=50%}
+- **Input**
   - A 9 bit vector represented as a 3x3 array
-- **\black{Training set}**
+
+- **Training set**
   - The \blue{blue row} $\vx_1, \vx_2, \vx_3$ for $f(\vx) = -1$
   - The \green{green row} $\vx_4, \vx_5, \vx_6$ for $f(\vx) = +1$
-- **\black{Test set}**
+
+- **Test set**
   - For the \red{red pattern} $\vx_0$, is $f(\vx_0) = -1 \text{ or } +1$?
 
 ::::
@@ -108,14 +110,14 @@ digraph LessonFlow {
 * Visual ML Experiment: Competing Models
 
 ::: columns
-:::: {.column width=70%}
+:::: {.column width=60%}
 
-- **\black{Model 1}**
+- **Model 1**
   - $f(\vx) = +1$ when $\vx$ has an axis of symmetry
   - $f(\vx) = -1$ when $\vx$ is not symmetric
   - The test set is symmetrical $\implies f(\vx_0) = +1$
 
-- **\black{Model 2}**
+- **Model 2**
   - $f(\vx) = +1$ when the top left square $\vx$ is empty
   - $f(\vx) = -1$ when the top left square $\vx$ is full
   - The test set has top left square full $\implies f(\vx_0) = -1$
@@ -126,9 +128,9 @@ digraph LessonFlow {
 
 - @Question@: how can a limited data set reveal enough information to define
   the entire target function?
-  - **\black{Is machine learning possible?}**
+  - **Is machine learning possible?**
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
 ```raw_latex
 \documentclass[border=1pt]{standalone}
@@ -172,19 +174,17 @@ digraph LessonFlow {
 :::
 
 * Possible vs Probable
-- The function can assume **any value outside data**
-  - E.g., with summer temperature data, the function could assume a different
-    value for winter
+- The (unknown) function can assume **any value outside training data**
 
 - **How to learn an unknown function?**
   - Estimating at unseen points seems impossible in general
   - Requires assumptions or models about behavior
 
-- Difference between:
-  - **Possible**
+- Difference between **possible** and **probable**
+  - _Possible_
     - No knowledge of the unknown function
     - E.g., could be linear, quadratic, or sine wave outside known data
-  - **Probable**
+  - _Probable_
     - Some knowledge of the unknown function from domain knowledge or historical
       data patterns
     - E.g., if historical weather data forms a sinusoidal pattern, unknown
@@ -198,7 +198,7 @@ digraph LessonFlow {
 :::: {.column width=55%}
 
 - Consider a bin with \red{red} and \green{green} marbles
-  - We want to estimate $\Pr(\text{pick a \red{red} marble}) = \mu$ where the
+  - We want to estimate $\Pr(\text{pick a red marble}) = \mu$ where the
     value of $\mu$ is unknown
   - We pick $N$ marbles independently with replacement
   - The fraction of \red{red} marbles is $\nu$
@@ -212,16 +212,16 @@ digraph LessonFlow {
 
 - @Question@: does the sample fraction $\nu$ tell us anything about the bin
   fraction $\mu$?
-  - **"No"**
+  - **No**
     - In strict terms, we don't know anything about the marbles we didn't pick
     - The sample can be mostly \green{green}, while the bin is mostly \red{red}
     - This is _possible_, but _not probable_
-  - **"Yes"**
+  - **Yes**
     - Under certain conditions, the sample frequency is close to the real
       frequency
 
-- @Key idea@: the Hoeffding inequality makes the intuition "possible but not
-  probable" formal
+- @Key idea@: the Hoeffding inequality makes the intuition _"possible but not
+  probable"_ formal
 
 * Hoeffding Inequality
 - Consider a Bernoulli random variable $X$ with probability of success $\mu$
@@ -235,7 +235,7 @@ digraph LessonFlow {
   \Pr(|\nu - \mu| > \varepsilon) \le \frac{2}{e^{2 \varepsilon^2 N}}
   $$
 
-- @Remark@:
+- @Remarks@:
   - Valid for all $N$ and $\varepsilon$, not an asymptotic result
   - Holds only if you sample $\nu$ and $\mu$ at random and in the same way
   - The bound does not depend on $\mu$
@@ -249,8 +249,8 @@ digraph LessonFlow {
 
 * Bin Analogy: Connecting to Learning
 
-- Let's connect the bin analogy, Hoeffding inequality, and feasibility of
-  machine learning `#cite("abumostafa2012learning")`{=typst}
+- Let's connect the **bin analogy**, **Hoeffding inequality**, and **feasibility of
+  machine learning** `#cite("abumostafa2012learning")`{=typst}
   - You know $f(\vx)$ at points $\vx \in \calX$
   - You choose a hypothesis $h: \calX \rightarrow \calY = \{-1, +1\}$
   - Each point $\vx \in \calX$ is a marble
@@ -261,9 +261,9 @@ digraph LessonFlow {
   - The out-of-sample error $E_{out}(h)$ is the fraction $\mu$ of \red{red}
     marbles in the bin
   - $\vx_1, ..., \vx_N$ are picked randomly and independently from a
-    distribution over $\calX$ which is the same as for $E_{out}$
+    distribution over $\calX$ which is the same as for $E_{in}$ and $E_{out}$
 
-- Hoeffding inequality holds and bounds the error going from in-sample to
+- **Hoeffding inequality** holds and bounds the error going from in-sample to
   out-of-sample for a fixed $h$
   $$
   \Pr(|E_{in}(h) - E_{out}(h)| > \varepsilon) \le 2 e^{-2 \varepsilon^2 N}
@@ -275,64 +275,65 @@ digraph LessonFlow {
 
 * Learning Phases: College Analogy (1/2)
 
-- In machine learning there are several phases
+- In machine learning there are @several phases@
+
 ```graphviz
 digraph ML_Phases {
   rankdir=LR;
   node [shape=box, style="rounded,filled", fillcolor=white, fontname="Helvetica", fontsize=12, penwidth=1.4];
 
-  learning   [label="Learning Phase\n(Training Set)"];
-  validation [label="Validation Phase\n(Validation Set)"];
-  testing    [label="Testing Phase\n(Test Set)"];
-  production [label="Out-of-Sample Phase\n(Production)"];
+  learning   [label="Learning Phase"];
+  validation [label="Validation Phase"];
+  testing    [label="Testing Phase"];
+  production [label="Production Phase"];
 
   learning -> validation -> testing -> production;
 }
 ```
 
-- This set-up is very similar to studying and exams in a college course
+- This set-up is very similar to studying and exams in a @college course@
 
-- Students study the material
-  - This is the **learning phase**
+- Students study the _course material_
+  - This is the @learning phase@
 
-- Before the final exam, students receive practice problems and solutions
+- Before the final exam, students receive _practice problems and solutions_
   - Studying the problems improves performance by understanding what they need to
     improve
-  - This corresponds to the **validation set**
+  - This corresponds to the @validation set@
 
 * Learning Phases: College Analogy (2/2)
 
-- The final exam corresponds to the **testing phase**
+- The final exam corresponds to the @testing phase@
   - These problems are different than the problems in the validation set
+  - The goal is to gauge learning effectively
 
-  - Why not give out exam problems to improve performance?
-    - Doing well in the exam isn't the goal
-    - The goal is to learn the course material
+- Why not _give out exam problems_ to improve performance?
+  - Doing well in the exam isn't the goal (_overfitting_)
+  - The goal is to learn the course material
 
-  - The final exam isn't strictly necessary
-    - Gauges how well you've learned
-    - Motivates you to study
-    - Knowing exam problems in advance wouldn't gauge learning effectively
+- The final exam _isn't strictly necessary_
+  - Gauges how well you've learned
+  - Motivates you to study
 
-- @Question@: what does the **out-of-sample phase** correspond to?
-  - Using the course knowledge on real problems after the course
-  - None of these problems were seen while studying or in the exam
+- Using the course knowledge on real problems after the course is the @production@
+  phase
+  - None of these problems were seen while studying or in the exam (_true out of
+    sample_)
 
 ## From Validation to Learning
 
 * Validation vs Learning: Many Hypotheses
 
-- You have learned that for a given $h$, in-sample performance $E_{in}(h) = \nu$
-  needs to be close to out-of-sample performance $E_{out}(h) = \mu$
-  - This is the **validation setup**, after you have already learned a model
+- @Recap@: for a given $h$, in-sample performance $E_{in}(h) = \nu$ needs to be close
+  to out-of-sample performance $E_{out}(h) = \mu$
+  - This is the @validation setup@, i.e., after you have already learned a model
 
-- In a **learning setup** you choose the final hypothesis $g$ from $M$
-  hypotheses
+- In a @learning setup@ you choose the final hypothesis $g$ from $M$ hypotheses
   - You need a bound on the out-of-sample performance of the chosen hypothesis
     $g \in \calH$, regardless of which hypothesis you choose
   - You need a Hoeffding counterpart for the case of choosing from multiple
     hypotheses
-    \begingroup \small
+    $$
     \begin{alignat*}{2}
     & \forall g \in \calH = \{h_1, ... , h_M\} \; \Pr(|E_{in}(g) - E_{out}(g)| > \varepsilon)
     &
@@ -347,7 +348,7 @@ digraph ML_Phases {
     & \text{  (by Hoeffding)}
     \\
     \end{alignat*}
-    \endgroup
+    $$
 - @Problem@: the bound is weak
   - It grows linearly with the number of hypotheses $M$, which is often infinite
 
@@ -486,49 +487,6 @@ digraph ML_Phases {
 //
 //- Thus the two "bad events" $\calB_1$ and $\calB_2$ are related to
 //  $\Delta E_{in}$ and $\Delta E_{out}$
-
-* Training vs Testing: College Course Analogy (1/2)
-- In machine learning there are several phases
-```graphviz
-digraph ML_Phases {
-  rankdir=LR;
-  node [shape=box, style="rounded,filled", fillcolor=white, fontname="Helvetica", fontsize=12, penwidth=1.4];
-
-  learning   [label="Learning Phase\n(Training Set)"];
-  validation [label="Validation Phase\n(Validation Set)"];
-  testing    [label="Testing Phase\n(Test Set)"];
-  production [label="Out-of-Sample Phase\n(Production)"];
-
-  learning -> validation -> testing -> production;
-}
-```
-
-- This set-up is very similar to studying and exams in a college course
-
-- Students study the material
-  - This is the **learning phase**
-
-- Before the final exam, students receive practice problems and solutions
-  - Studying the problems improves performance by understating what they need to
-    improve
-  - This corresponds to the **validation set**
-
-* Training vs Testing: College Course Analogy (2/2)
-
-- The final exam corresponds to the **testing phase**
-  - These problems are different than the problems in the validation set
-
-  - Why not give out exam problems to improve performance?
-    - Doing well in the exam isn't the goal
-    - The goal is to learn the course material
-
-  - The final exam isn't strictly necessary
-    - Gauges how well you've learned
-    - Motivates you to study
-    - Knowing exam problems in advance wouldn't gauge learning effectively
-
-- @Question@
-  - This is the **out-of-sample phase**
 
 # Growth Function
 

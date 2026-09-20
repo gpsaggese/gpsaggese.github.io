@@ -246,11 +246,14 @@ digraph BayesianFlow {
 - When to leave for the airport?
 
 - There are two "forces" pushing in two opposite directions
-  - Leave as late as possible to avoid waiting at the airport
-  - Not missing the airport
+  - Leave late to avoid waiting at the airport
+  - Leave early to not miss the airport
 
-- Assume: if you miss the flight, utility is $-100$
+- Assume:
+  - Waiting at the airport is losing 0.1 utility per minute
+  - If you miss the flight, utility is $-100$
 
+// TODO(ai_gp): Update the table
 ```{=typst}
 #set text(size: 0.85em)
 | **Leave before** | **Pr(catch)** | **Utility if caught** | **Expected utility** |
@@ -262,7 +265,8 @@ digraph BayesianFlow {
 
 * Probability as Belief
 
-- @Problem@: there is **no uncertainty in the actual world**
+- @Problem@: we **assign probabilities** to events like "it rained", but
+  there is **no uncertainty in the actual world**
   - E.g., the grass is wet, but either it rained or not
 
 - @Key idea@: **knowledge is subjective**
@@ -273,7 +277,7 @@ digraph BayesianFlow {
   - Initially, observe _"wet grass"_
     - From past data: $\Pr(Rain | WetGrass) = 0.8$
     - Current belief: _"80% chance it rained if grass is wet"_ (a posterior after
-      the wet-grass evidence, and the prior for the next update)
+      the wet-grass evidence)
   - Further observe _"sprinkler was on"_
     - Wet grass could be due to sprinkler, not rain
     - Belief changes: $\Pr(Rain | WetGrass \land Sprinkler) = 0.4$ (Bayesian
@@ -281,7 +285,8 @@ digraph BayesianFlow {
   - Weather report (assumed reliable) says there was no rain
     - Evidence overrides prior:
       $\Pr(Rain | WetGrass \land Sprinkler \land WeatherReport) \approx 0$
-  - Each statement was correct given the evidence available at that time
+  - Each statement was correct (even if contradictory!) given the evidence available
+    at that time
     - New evidence revises the belief, without making the earlier statements
       false
 
@@ -293,9 +298,9 @@ digraph BayesianFlow {
 
 * Full Joint Probability Distribution
 
-- @Definition@: Consider the **full joint probability distribution** of a set of
-  random variables $X_1, X_2, \dots, X_n$ assigns probability to every possible
-  world `#cite("russell2020aima")`{=typst}:
+- @Definition@: The **full joint probability distribution** of a set of random
+  variables $X_1, X_2, \dots, X_n$ assigns probability to every possible world
+  `#cite("russell2020aima")`{=typst}:
   $$
   \Pr(X_1 = x_1, X_2 = x_2, \dots, X_n = x_n)
   $$
@@ -305,31 +310,30 @@ digraph BayesianFlow {
 
 - @Cons@
   - Size grows exponentially $k^n$ with number of variables $n$ and values $k$
-  - Impractical for real-world problems with many variables
   - Manually specifying each entry is tedious or impossible
+  - Impractical for real-world problems with many variables
 
 - @Remark@: In the real world, many variables are **not fully dependent** on all
   others
-  - _Conditional and absolute independence_ of random variables:
-    - Reduces number of variables needed in model
-    - Makes compact and structured representations possible
-      - E.g., factorized probabilistic models, Bayesian networks
+  - **Independence** (conditional or absolute) of random variables: reduces number of
+    variables needed in model
 
 * Independence of Random Variables
 
-- @Definition@: Two random variables $X$ and $Y$ are **independent** iff:
+- @Definition@: Two random variables $X$ and $Y$ are **independent** $X \perp Y$ iff:
   $$
   \Pr(X, Y) = \Pr(X) \cdot \Pr(Y)
   $$
 
-- _Equivalently_: Knowing $Y$ tells nothing about $X$
+- **Equivalently**: Knowing $Y$ tells nothing about $X$
   $$
   \Pr(X | Y) = \Pr(X)
   $$
-  - E.g., events "coin flip" and "weather" are independent
-    $$
-    \Pr(Coin=Heads | Weather=Rainy) = \Pr(Coin=Heads)
-    $$
+
+- @Example@: The events _"coin flip"_ and _"weather"_ are independent
+  $$
+  \Pr(Coin=Heads | Weather=Rainy) = \Pr(Coin=Heads)
+  $$
 
 - @Consequence@: Independence of random variables:
   - Reduces number of parameters needed to model system
@@ -340,14 +344,16 @@ digraph BayesianFlow {
     $$
     \Pr(X_1, X_2, X_3) = \Pr(X_1) \cdot \Pr(X_2) \cdot \Pr(X_3)
     $$
+  - E.g., factorized probabilistic models, Bayesian networks
 
 ## Conditional Independence
 
 * Conditional Independence
 
 - @Definition@: Two random variables $X$ and $Y$ are **conditionally
-  independent** given a random variable $Z$ iff knowing $Z$ makes $X$ and $Y$
-  independent `#cite("koller2009pgm")`{=typst}:
+  independent** given a random variable $Z$ 
+  $X \perp Y | Z$ iff knowing $Z$ makes $X$ and $Y$ independent
+  `#cite("koller2009pgm")`{=typst}:
   $$
   X \perp Y | Z \iff \Pr(X, Y | Z) = \Pr(X | Z) \cdot \Pr(Y | Z)
   $$
@@ -368,7 +374,7 @@ digraph BayesianFlow {
 
 ::: columns
 :::: {.column width=70%}
-- Consider (two events can **become independent** once we know a third event):
+- Consider
   - $Fire$ = _"there is a fire in the house"_
   - $Toast$ = _"someone burned toast"_
   - $Alarm$ = _"the fire alarm rings"_
@@ -377,6 +383,10 @@ digraph BayesianFlow {
 - **Dependencies**
   - $Alarm$ depends on $Fire$ or $Toast$
   - $Call$ depends on whether $Alarm$ rings
+  - In reality $Toast$ can also cause $Fire$ (the toaster burns down the house)
+  - Also $Fire$ can cause $Toast$
+    - If the house burns down the toast burns
+    - If the house burns, you run away and leave the toaster on
 
 ::::
 :::: {.column width=30%}
@@ -409,9 +419,50 @@ digraph BayesianFlow {
   - $Call$ is conditionally independent of $Fire$ and $Toast$ given $Alarm$
   - Once alarm rang, the specific cause doesn't affect whether friend calls
     $$\Pr(Call | Alarm, Fire, Toast) = \Pr(Call | Alarm)$$
+  - Two events can **become independent** once we know a third event
 
 - @Interpretation@: $Alarm$ ringing "blocks" the path from $Fire$ and $Toast$ to
   $Call$
+
+* Dependence and Independence are Function of Mechanisms
+
+- $Sprinkler$ and $Rain$ are dependent or independent depending on **how the world
+  works** and **how we model it**
+
+- @Example@
+  - If $Sprinkler$ is on a fixed schedule, then it is independent from $Rain$
+  - If $Sprinkler$ is connected to the weather report API then it is dependent on
+    $Rain$
+  - If I check the weather report and call my mom to turn on the $Sprinkler$ and she
+    forgets, then $Sprinkler \perp Rain$
+  - If the sprinkler is broken, then $Sprinkler \perp Rain$
+
+- **Dependence and Independence**
+  - Is not a property of "Sprinkler" and "Rain" as fixed real-world objects
+  - Is a property of the joint distribution implied by the causal pathways connecting
+    them
+  - Is a property of how we model things: maybe we model them as independent, even if
+    there is a small dependency
+
+* Probability vs Causation
+- Independence and dependence are **symmetric relationships** from a purely
+  probability point of view
+  - _"A depends on B"_ is equivalent on _"B depends on A"_ since $P(A, B)$ is
+    symmetric
+  - Independence is also symmetric
+  - $\Pr(Sprinkler | Rain) = \Pr(Sprinkler)$ then by Bayes
+    $$\Pr(Rain | Sprinkler)
+    = \Pr(Sprinkler | Rain) \frac{\Pr(Rain)}{\Pr(Sprinkler)}
+    = \Pr(Rain)$$
+
+- Causation is an **asymmetric relationship**
+  - $Rain$ can cause someone to skip the $Sprinkler$
+  - The $Sprinkler$ cannot cause $Rain$
+  - The causal arrow points one way $Rain \to Sprinkler$
+  - Still the statistical dependency you measure from the data doesn't have a
+    direction
+    - In $\Pr(Rain | Sprinkler)$ knowing that the $Sprinkler$ is on, tells you
+      something about the $Rain$ even if $Rain$ is not caused by it
 
 * Explaining Away
 
@@ -485,23 +536,25 @@ digraph BayesianFlow {
      $$
      \Pr(X_i | Parents(X_i))
      $$
-     - If node has no parents, it has prior probability
+     - If node has no parents, it has a prior probability
 
 * Bayesian Networks vs Propositional Logic
 
-- @Remark@: Bayesian networks analogous for uncertain knowledge to propositional
-  logic for definite knowledge
-  - Propositional logic = rigid rules (`True` or `False`)
-  - Bayesian networks = flexible, degrees of belief
-  - Replace $X \implies Y$ with $\Pr(Y | X)$
+- @Remark@: Bayesian networks is the extension for uncertain knowledge to
+  propositional logic (for definite knowledge)
+  - Propositional logic = rigid rules, $X \implies Y$
+  - Bayesian networks = degrees of belief, $\Pr(Y | X)$
 
 ::: columns
 :::: {.column width=65%}
 - @Example@: Garden world
   - $R$ = "It is raining", $W$ = "The grass is wet"
-  - Propositional logic: If $R \implies W$ and $R$ is true, then $W$ must be true
-  - Bayesian network:
-    $\Pr(R = True) = 0.2$, $\Pr(W | R) = 0.9$, $\Pr(W | \lnot R) = 0.1$
+  - Propositional logic
+    - If $R \implies W$ and $R$ is true
+    - Then $W$ must be true
+  - Bayesian network
+    - $\Pr(R = True) = 0.2$, $\Pr(W | R) = 0.9$, $\Pr(W | \lnot R) = 0.1$
+    - Then $\Pr(W = True) = \Pr(W | R) \Pr(R) = 0.9 \cdot 0.2 = 0.18$
 
 ::::
 :::: {.column width=35%}
@@ -533,17 +586,17 @@ digraph BayesianFlow {
 - @Theorem@: **Graph topology** and **conditional probabilities** are sufficient
   to specify the full joint distribution, (often) very concisely
   $$
-  \Pr(x_1, \dots, x_n) = \prod_{i=1}^{n} \Pr(x_i | parents(X_i))
+  \Pr(X_1, \dots, X_n) = \prod_{i=1}^{n} \Pr(X_i | Parents(X_i))
   $$
 
 - Topology of network (nodes and edges) specifies conditional independence
   relationships
   - E.g., $X \to Y$ means _"$X$ has direct influence on $Y$"_ (not necessarily
-    _$X$ causes $Y$_)
+    _"$X$ causes $Y$"_)
 
 - Nodes are directly influenced by parents and indirectly by ancestors
 
-- **How to build Bayesian Network**
+- @How to build Bayesian Network@
   - Domain experts decide what relationships exist among variables, determining
     topology
   - Conditional probabilities can be specified or estimated
@@ -552,14 +605,16 @@ digraph BayesianFlow {
 
 * Conditional Probability Table
 
-- @Definition@: _Conditional Probability Table_ (CPT) encodes probability of
-  node $X_i$ given parents $Parents(X_i)$
+- @Definition@: **Conditional Probability Table** (CPT) encodes probability of node
+  $X_i$ given parents $Parents(X_i)$
   $$
   \Pr(X_i | Parents(X_i))
   $$
 
 - Each row of CPT contains conditional probability of node under conditioning
   case (possible combination of parent values)
+
+// TODO(ai_gp): Add example A <- B, C
 
 - **Note**
   - Natural for discrete variables, but can extend to continuous variables
@@ -571,7 +626,9 @@ digraph BayesianFlow {
 ::: columns
 :::: {.column width=65%}
 - Consider events:
-  - $T$ = "Traffic Jam", $S$ = "Snow", $R$ = "Rush Hour"
+  - $T$ = "Traffic Jam"
+  - $S$ = "Snow"
+  - $R$ = "Rush Hour"
 - CPT models $\Pr(T | S, R)$
 
 ::::
@@ -598,6 +655,7 @@ digraph BayesianFlow {
 ::::
 :::
 
+// TODO(ai_gp): Convert to typst
 \begingroup \scriptsize
 | T 		| P(T\|S,R) | P(T\|S,-R) | P(T\|-S,R) | P(T\|-S,-R) |
 |-------|----------|-----------|-----------|------------|
@@ -619,8 +677,8 @@ digraph BayesianFlow {
 * Garden World Network
 
 ::: columns
-:::: {.column width=55%}
-- Consider Garden World with 5 variables
+:::: {.column width=50%}
+- Consider @Garden World with 5 variables@
   - $Rain$: directly influenced by $Weather$
   - $Sprinkler$: influenced by $Weather$ (e.g., less likely when raining)
   - $WetGrass$: affected by both $Rain$ and $Sprinkler$
@@ -628,7 +686,7 @@ digraph BayesianFlow {
   - $StockMarketUp$: whether stock market is up or down
 
 ::::
-:::: {.column width=45%}
+:::: {.column width=50%}
 ```graphviz
 digraph BayesianFlow {
     splines=true;
@@ -658,20 +716,20 @@ digraph BayesianFlow {
 * Garden World: Fork Dependence
 
 ::: columns
-:::: {.column width=65%}
-- $Rain$ and $Sprinkler$ are **dependent** (marginally)
-  $$Rain \not\perp Sprinkler \iff Rain \leftrightarrow Sprinkler$$
+:::: {.column width=55%}
+- $Rain$ and $Sprinkler$ are @dependent@
+  $$Rain \not\perp Sprinkler$$
   - If no $Rain$, then $Weather = sunny$ and $Sprinkler$ more likely (sprinklers
     on in sunny weather)
   - $Rain$ and $Sprinkler$ related since they share common parent $Weather$
 
-- $Rain$ and $Sprinkler$ are **conditionally independent** given $Weather$
+- $Rain$ and $Sprinkler$ are @conditionally independent@ given $Weather$
   $$Rain \perp Sprinkler | Weather$$
   - Once $Weather$ fixed, knowing if it rained tells nothing about $Sprinkler$
-  - Correlation "explained" by $Weather$ (confounder)
+  - Correlation "explained" by $Weather$ (@confounder@)
 
 ::::
-:::: {.column width=35%}
+:::: {.column width=45%}
 ```graphviz
 digraph BayesianFlow {
     splines=true;
@@ -701,22 +759,22 @@ digraph BayesianFlow {
 * Fork and Collider Together
 
 ::: columns
-:::: {.column width=65%}
-- $Rain$ and $Sprinkler$ are **dependent** given $WetGrass$ (with $Weather$ not
+:::: {.column width=55%}
+- $Rain$ and $Sprinkler$ are @dependent@ given $WetGrass$ (with $Weather$ not
   observed)
   $$Rain \not\perp Sprinkler | WetGrass$$
   - Given wet grass, sprinkler off increases the chance of rain (and vice versa)
 
-- $Rain$ and $Sprinkler$ are **dependent** given $WetGrass$ and $Weather$
+- $Rain$ and $Sprinkler$ are @dependent@ given $WetGrass$ and $Weather$
   $$Rain \not\perp Sprinkler | WetGrass, Weather$$
   - Sunny: rain unlikely, sprinkler likely, so wet grass and sprinkler off
     $\implies$ must have $Rain$
 
-- **Fork path** (common cause) is blocked by observing $Weather$, **collider
-  path** (common effect) is opened by observing $WetGrass$
+- @Fork path@ (common cause) is blocked by observing $Weather$
+- @Collider path@ (common effect) is opened by observing $WetGrass$
 
 ::::
-:::: {.column width=35%}
+:::: {.column width=45%}
 ```graphviz
 digraph BayesianFlow {
     splines=true;
@@ -746,10 +804,11 @@ digraph BayesianFlow {
 * Garden World: Independent Node
 
 ::: columns
-:::: {.column width=65%}
-- $StockMarketUp$ is **(unconditionally) independent** of all other variables
-  - It has no edges: absence of an edge encodes independence
+:::: {.column width=55%}
+- $StockMarketUp$ is @(unconditionally) independent@ of all other variables
   - Change in $StockMarketUp$ doesn't affect $Weather$
+  - Change in $Weather$ doesn't affect $StockMarketUp$
+  - It has no edges: absence of an edge encodes independence
 
 - @Question@: Is the independence assumption realistic?
   - In the past, there was a dependency of the stock market on $Weather$
@@ -758,7 +817,7 @@ digraph BayesianFlow {
   - If the dependence matters, add the edge $Weather \to StockMarketUp$
 
 ::::
-:::: {.column width=35%}
+:::: {.column width=45%}
 ```graphviz
 digraph BayesianFlow {
     splines=true;
@@ -789,20 +848,22 @@ digraph BayesianFlow {
 
 * Burglar Alarm: Network
 
+::: columns
+:::: {.column width=60%}
 - Famous example from Judea Pearl `#cite("pearl1988probabilistic")`{=typst}
+
 - $Alarm$ system installed at home in LA
   - Detects $Burglary$, but also responds to minor $Earthquake$
+
 - Two neighbors, $John$ and $Mary$ will $Call$ when they hear $Alarm$
 
-::: columns
-:::: {.column width=65%}
 - Structure of graph shows:
   - $Burglary$ and $Earthquake$ affect $Alarm$
   - $JohnCalls$ and $MaryCalls$ depend only on $Alarm$, not on $Burglary$ and
     $Earthquake$
 
 ::::
-:::: {.column width=35%}
+:::: {.column width=40%}
 ```graphviz
 digraph BayesianFlow {
     splines=true;
@@ -833,7 +894,7 @@ digraph BayesianFlow {
 * Burglar Alarm: Probabilities
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=60%}
 - Probability of:
   - $Burglary$ is 0.001
   - $Earthquake$ is 0.002
@@ -842,6 +903,7 @@ digraph BayesianFlow {
   - Fairly reliable at detecting $Burglary$
   - Responds to minor $Earthquake$ (false positives)
 
+// TODO(ai_gp): Convert to typst table
 \begingroup \scriptsize
 | **Burglary** | **Earthquake** | **P(Alarm\| B,E)** |
 | ------------ | -------------- | -------------------- |
@@ -858,7 +920,7 @@ digraph BayesianFlow {
   $$
 
 ::::
-:::: {.column width=35%}
+:::: {.column width=40%}
 ```graphviz
 digraph BayesianFlow {
     splines=true;
@@ -891,7 +953,7 @@ digraph BayesianFlow {
 - Two neighbors, $John$ and $Mary$ will $Call$ when they hear $Alarm$
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=60%}
 - **John**
   - Almost always $Call$s when hears alarm
   - Sometimes confuses telephone with $Alarm$ and $Call$s (false positives)
@@ -900,8 +962,8 @@ digraph BayesianFlow {
   - Misses alarm 30% of cases (false negatives)
 
 ::::
-:::: {.column width=35%}
-\vspace{-0.5cm}
+:::: {.column width=40%}
+// TODO(ai_gp): Convert to typst table
 \begingroup \scriptsize
 | **Alarm** | **P(JohnCalls)** |
 | --------- | --------------- |
@@ -922,6 +984,8 @@ digraph BayesianFlow {
 
 * Burglar Alarm: CPTs
 
+// TODO(ai_gp): Create a divved fence for each block
+
 ::: columns
 :::: {.column width=55%}
 - Node without parents has unconditional (prior) probability
@@ -934,6 +998,7 @@ digraph BayesianFlow {
 ::::
 :::: {.column width=45%}
 \vspace{-1cm}
+// TODO(ai_gp): Convert to typst table
 \begingroup \scriptsize
 | **P(Burglary)** |
 | --------------- |
@@ -942,6 +1007,7 @@ digraph BayesianFlow {
 
 \vspace{0.3cm}
 
+// TODO(ai_gp): Convert to typst table
 \begingroup \scriptsize
 | **Alarm** | **P(JohnCalls)** | **P(-JohnCalls)** |
 | --------- | --------------- | --------------- |
@@ -951,6 +1017,7 @@ digraph BayesianFlow {
 
 \vspace{0.3cm}
 
+// TODO(ai_gp): Convert to typst table
 \begingroup \scriptsize
 | **Burglary** | **Earthquake** | **P(Alarm)** |
 | ------------ | -------------- | ---------- |
