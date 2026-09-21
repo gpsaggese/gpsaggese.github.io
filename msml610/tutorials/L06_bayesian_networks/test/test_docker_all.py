@@ -1,6 +1,6 @@
 """
 Run each notebook in msml610/tutorials/L06_bayesian_networks/ inside Docker
-using docker_cmd.sh.
+using run_nbconvert.py.
 
 Import as:
 
@@ -36,7 +36,9 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "L06_01_exact_inference.ipynb"
         # Run test.
-        self.helper(notebook_name, generate_html=True)
+        self.run_notebook(
+            notebook_name, use_docker_cmd=False, generate_html=True
+        )
 
     @pytest.mark.slow
     def test2(self) -> None:
@@ -46,4 +48,6 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "L06_02_approximate_inference.ipynb"
         # Run test.
-        self.helper(notebook_name, generate_html=True)
+        self.run_notebook(
+            notebook_name, use_docker_cmd=False, generate_html=True
+        )

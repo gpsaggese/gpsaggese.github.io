@@ -32,4 +32,7 @@ CONTAINER_NAME="${IMAGE_NAME}.bash"
 PORT=
 DOCKER_CMD=$(get_docker_bash_command)
 DOCKER_CMD_OPTS=$(get_docker_bash_options $CONTAINER_NAME $PORT)
+# Remove a stale container from an interrupted run and clean up on exit.
+kill_existing_container
+cleanup_container_on_exit
 run "$DOCKER_CMD $DOCKER_CMD_OPTS $FULL_IMAGE_NAME bash"

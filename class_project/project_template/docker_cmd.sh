@@ -39,4 +39,14 @@ DOCKER_CMD=$(get_docker_cmd_command)
 PORT=""
 DOCKER_RUN_OPTS=""
 DOCKER_CMD_OPTS=$(get_docker_bash_options $CONTAINER_NAME $PORT $DOCKER_RUN_OPTS)
-run "$DOCKER_CMD $DOCKER_CMD_OPTS $FULL_IMAGE_NAME bash -c '$CMD'"
+# Remove a stale container from an interrupted run and clean up on exit.
+kill_existing_container
+cleanup_container_on_exit
+# Run the client in the background and wait for it. The Apple engine client
+# fails to forward Ctrl-C to the container and keeps running, so a foreground
+# run would never reach the cleanup trap. `wait` returns as soon as the trap
+# fires, and the trap removes the container, which also ends the client. Keep
+# stdin attached (`<&0`) since a background job otherwise reads /dev/null.
+run "$DOCKER_CMD $DOCKER_CMD_OPTS $FULL_IMAGE_NAME bash -c '$CMD' <&0 &"
+# Return the exit status of the container command.
+wait $!

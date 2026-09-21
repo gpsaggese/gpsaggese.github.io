@@ -1,6 +1,6 @@
 """
 Run each notebook in msml610/tutorials/L10_causal_discovery/ inside Docker
-using docker_cmd.sh.
+using run_nbconvert.py.
 
 Import as:
 
@@ -36,4 +36,6 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "L10_2_causal_discovery.ipynb"
         # Run test.
-        self.helper(notebook_name)
+        self.run_notebook(
+            notebook_name, use_docker_cmd=False, generate_html=True
+        )

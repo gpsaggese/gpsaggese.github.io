@@ -705,3 +705,28 @@ kill_existing_container_if_forced() {
         kill_container_by_name $CONTAINER_NAME
     fi
 }
+
+
+kill_existing_container() {
+    # """
+    # Kill and remove any container named CONTAINER_NAME.
+    #
+    # Call it before starting a container. A previous run stopped with Ctrl-C
+    # can leave its container alive, and the fixed name then blocks the new run.
+    # """
+    kill_container_by_name $CONTAINER_NAME
+}
+
+
+cleanup_container_on_exit() {
+    # """
+    # Kill and remove the container CONTAINER_NAME when the script exits.
+    #
+    # `--rm` removes a container only when the container exits by itself. Ctrl-C
+    # stops the client process but not the container, so also clean up when the
+    # script exits for any reason (normal exit, error, Ctrl-C, kill).
+    # """
+    trap 'kill_container_by_name $CONTAINER_NAME' EXIT
+    trap 'exit 130' INT
+    trap 'exit 143' TERM
+}

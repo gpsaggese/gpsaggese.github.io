@@ -2,13 +2,15 @@
 
 - This document explains how a tutorial notebook (`msml610/tutorials/L<NN>_<topic>/*.ipynb`)
   turns into something a reader can either jump to from the slides or run live
-  A. A reader jump from a slide straight to the matching notebook cell (view, maybe
-     run)
-  B. A reader run the notebook themselves without setting up a local environment
-  C. A reader runs the notebook locally using Docker
+  - Goal1: A reader jump from a slide straight to the matching notebook cell (view,
+    maybe run)
+  - Goal2: A reader run the notebook themselves without setting up a local
+    environment
+  - Goal3: A reader runs the notebook locally using Docker
 
-- The two goals need different hosting, and can be combined: a Colab link is
-    both clickable from a slide (with `#scrollTo=<cell_id>`) and runnable
+- The two goals need different hosting, and can be combined
+  - E.g., a Colab link is both clickable from a slide (with `#scrollTo=<cell_id>`)
+    and runnable
 
 ## Command Summary
 
@@ -19,19 +21,19 @@
 | `helpers_root/dev_scripts_helpers/notebooks/publish_notebook.py` | Convert/publish/open a notebook as HTML (local, S3, or webserver) |
 | `helpers_root/dev_scripts_helpers/notebooks/extract_notebook_images.py` | Extract screenshots from marked notebook cells           |
 | `helpers_root/dev_scripts_helpers/notebooks/add_toc_to_notebook.py` | Add a clickable table of contents inside the notebook itself |
-| `helpers_root/dev_scripts_helpers/notebooks/run_nbconvert.sh` | Execute a notebook top to bottom and convert to HTML inside Docker, with `html_anchorfix` |
+| `helpers_root/dev_scripts_helpers/notebooks/run_nbconvert.py` | Execute notebooks top to bottom and convert to HTML inside Docker, with `html_anchorfix` |
 | `claude> /slides.add_tutorial_links $SMD_FILE`               | Link each slide section to its matching notebook cell           |
 | `class_scripts/colab_setup.py`                               | Shared setup so a tutorial notebook's `helpers`/`_utils.py` imports work on Colab/Binder |
 
 ## Flow 1: Static HTML with Per-Cell Anchors (for slide -> cell links)
 
-- Use this when the only goal is Goal A (jump from a slide to the right spot in
+- Use this when the only goal is Goal 1. (jump from a slide to the right spot in
   the notebook), read-only is fine
 
 ### Prepare the Notebook
 
-- If the notebook uses `ipywidgets`, turn on widget-state saving so the static
-  export still shows the widgets' last rendered state:
+- If the notebook uses `ipywidgets`, turn on widget-state saving so the static export
+  still shows the widgets' last rendered state:
   - Jupyter: `Settings -> Save Widget State Automatically`
   - Re-run all cells afterward
 - Without this step, cells with interactive widgets export as blank in the HTML

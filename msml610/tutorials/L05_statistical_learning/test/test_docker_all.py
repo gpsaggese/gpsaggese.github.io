@@ -1,6 +1,6 @@
 """
 Run each notebook in msml610/tutorials/L05_statistical_learning/ inside Docker
-using docker_cmd.sh.
+using run_nbconvert.py.
 
 Import as:
 
@@ -36,7 +36,9 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "L05_01_01_hoeffding_inequality.ipynb"
         # Run test.
-        self.helper(notebook_name, generate_html=True)
+        self.run_notebook(
+            notebook_name, use_docker_cmd=False, generate_html=True
+        )
 
     @pytest.mark.slow
     def test2(self) -> None:
@@ -46,7 +48,9 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "L05_01_02_bin_analogy_ml.ipynb"
         # Run test.
-        self.helper(notebook_name, generate_html=True)
+        self.run_notebook(
+            notebook_name, use_docker_cmd=False, generate_html=True
+        )
 
     @pytest.mark.slow
     def test3(self) -> None:
@@ -56,7 +60,9 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "L05_01_03_vc_dimension.ipynb"
         # Run test.
-        self.helper(notebook_name, generate_html=True)
+        self.run_notebook(
+            notebook_name, use_docker_cmd=False, generate_html=True
+        )
 
     @pytest.mark.slow
     def test4(self) -> None:
@@ -66,7 +72,9 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "L05_01_04_growth_function.ipynb"
         # Run test.
-        self.helper(notebook_name, generate_html=True)
+        self.run_notebook(
+            notebook_name, use_docker_cmd=False, generate_html=True
+        )
 
     @pytest.mark.slow
     def test5(self) -> None:
@@ -76,7 +84,9 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "L05_02_01_bias_variance.ipynb"
         # Run test.
-        self.helper(notebook_name, generate_html=True)
+        self.run_notebook(
+            notebook_name, use_docker_cmd=False, generate_html=True
+        )
 
     @pytest.mark.slow
     def test6(self) -> None:
@@ -86,4 +96,6 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "L05_02_02_overfitting.ipynb"
         # Run test.
-        self.helper(notebook_name, generate_html=True)
+        self.run_notebook(
+            notebook_name, use_docker_cmd=False, generate_html=True
+        )
