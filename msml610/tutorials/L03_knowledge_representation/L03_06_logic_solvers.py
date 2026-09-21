@@ -32,15 +32,6 @@
 #     models
 #   - Routing one entailment question to whichever engine can answer it
 
-# %% [markdown]
-# ## Imports
-
-# %%
-# %load_ext autoreload
-# %autoreload 2
-
-import logging
-
 # %%
 # !pip install -q networkx==3.6.1 python-sat==1.9.dev15 sympy==1.14.0 z3-solver==5.1.0.0
 
@@ -58,6 +49,13 @@ import z3
 print("z3 version: ", z3.get_version_string())
 
 # %%
+# %load_ext autoreload
+# %autoreload 2
+
+import logging
+
+
+# %%
 import helpers.hnotebook as hnotebook
 
 import L03_06_logic_solvers_utils as utils
@@ -66,6 +64,12 @@ import L03_06_logic_solvers_utils as utils
 hnotebook.config_notebook()
 _LOG = logging.getLogger(__name__)
 utils.init_loggers(_LOG)
+
+# Convert `display` into `print()` when running outside IPython.
+try:
+    from IPython.display import display
+except ImportError:
+    display = print  # type: ignore
 
 # %% [markdown]
 # # Part 1: Propositional Logic With `sympy`
@@ -99,7 +103,7 @@ utils.show_weather_sentences()
 # %% [markdown]
 # ## Cell 1.1: Sentences as symbols, parsed and evaluated
 #
-# **Goal**:
+# **Goal**
 # - Represent the lecture's weather symbols ($Rain$, $Cold$, $Sunny$,
 #   $Snow$, $Cloudy$) as `sympy.logic` boolean symbols, and build atomic and
 #   complex sentences from them
@@ -142,7 +146,7 @@ utils.cell1_1_sentences_and_truth_tables()
 # %% [markdown]
 # ## Cell 1.2: Equivalences and normal forms
 #
-# **Goal**:
+# **Goal**
 # - Verify the lecture's equivalences (De Morgan, distributivity,
 #   contraposition, double negation, implication elimination, biconditional
 #   elimination) by checking $M(\alpha) = M(\beta)$, not by trusting the
@@ -182,7 +186,7 @@ utils.cell1_2_equivalences_and_normal_forms()
 # %% [markdown]
 # ## Cell 2.1: From formula to clauses, in DIMACS
 #
-# **Goal**:
+# **Goal**
 # - Turn a `sympy` CNF sentence into `PySAT`'s clause format: one integer
 #   per symbol, negative for a negated literal
 # - Read the resulting DIMACS file, the exchange format every SAT solver
@@ -216,7 +220,7 @@ utils.cell2_1_cnf_to_dimacs()
 # %% [markdown]
 # ## Cell 2.2: A real solver against model checking
 #
-# **Goal**:
+# **Goal**
 # - Hand the encoded clauses to a `PySAT` solver and read back a satisfying
 #   model, or `UNSAT`
 # - Compare solve time against enumerating every model, on the pigeonhole
@@ -254,7 +258,7 @@ utils.cell2_2_solver_vs_model_checking()
 # %% [markdown]
 # ## Cell 2.3: Refutation, and the 3-SAT phase transition
 #
-# **Goal**:
+# **Goal**
 # - Prove $KB \models \alpha$ the lecture's way, by showing that
 #   $KB \land \lnot \alpha$ is unsatisfiable, using `PySAT` instead of
 #   enumerating models
@@ -298,7 +302,7 @@ utils.cell2_3_refutation_and_phase_transition()
 # %% [markdown]
 # ## Cell 3.1: Quantifiers over a real domain
 #
-# **Goal**:
+# **Goal**
 # - Declare a finite domain, predicates, and quantified formulas in `z3`,
 #   for the lecture's own $Loves$ and Aristotle examples
 # - Watch `z3` return a concrete model witnessing $\exists$, instead of a
@@ -338,7 +342,7 @@ utils.cell3_1_z3_quantifiers()
 # %% [markdown]
 # ## Cell 3.2: One question, three engines
 #
-# **Goal**:
+# **Goal**
 # - Take one entailment question at the propositional layer and at the
 #   first-order layer, and route it to the engine that can answer it
 # - See why `sympy` and `PySAT` stop at propositional logic while `z3` alone

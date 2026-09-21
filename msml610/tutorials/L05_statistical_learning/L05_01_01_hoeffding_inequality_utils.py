@@ -17,6 +17,7 @@ import scipy.stats
 from IPython.display import display
 
 import helpers.hdbg as hdbg
+import helpers.hnotebook as hnotebo
 
 try:
     import helpers.htutorial as htutori
@@ -27,6 +28,15 @@ _LOG = logging.getLogger(__name__)
 
 # Suppress FutureWarnings from seaborn and other libraries.
 warnings.filterwarnings("ignore", category=FutureWarning)
+
+
+def init_loggers(notebook_log: logging.Logger) -> None:
+    """
+    Wire the notebook logger into the utils logger.
+
+    :param notebook_log: logger owned by the notebook
+    """
+    hnotebo.init_loggers(notebook_log, utils_log=_LOG)
 
 
 # #############################################################################
@@ -925,7 +935,6 @@ def cell2_2_hoeffding_inequality_demo() -> None:
     - Truncated Exponential: Exponential distribution truncated to [0, 1]
     """
     mu_init = 0.6
-    N_init = 100
     epsilon_init = 0.1
     seed_init = 42
     # Create distribution selector.
@@ -1438,8 +1447,6 @@ def _plot_hoeffding_bound_surface(
         fig, (ax1, ax2) = plt.subplots(
             1, 2, figsize=(18, 5), gridspec_kw={"width_ratios": [1.5, 1]}
         )
-        # Use logarithmic scale for better visualization.
-        bound_grid_log = np.log10(bound_grid + 1e-10)
         im = ax1.contourf(
             N_grid,
             epsilon_grid,

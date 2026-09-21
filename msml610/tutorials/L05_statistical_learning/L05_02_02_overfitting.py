@@ -15,9 +15,12 @@
 
 # %% [markdown]
 # # Overfitting
-
-# %% [markdown]
-# ## Imports
+#
+# - This notebook shows overfitting on a noisy sample of a known target
+#   function, by comparing models of different complexity on the same data
+# - The pedagogical arc:
+#   - The true target function, noisy observations, and the train/test split
+#   - Model comparison: constant vs linear fit to the same sample
 
 # %%
 # %load_ext autoreload
@@ -25,23 +28,23 @@
 
 import logging
 
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-# Set plotting style.
-sns.set_style("whitegrid")
-plt.rcParams["figure.figsize"] = (12, 6)
 
 # %%
 import helpers.hintrospection as hintros
-import helpers.htutorial as ut
+import helpers.hnotebook as hnotebook
+
 import L05_02_02_overfitting_utils as utils
 
-ut.config_notebook()
-
-# Initialize logger.
-logging.basicConfig(level=logging.INFO)
+# Initialize notebook configuration and logging.
+hnotebook.config_notebook()
 _LOG = logging.getLogger(__name__)
+utils.init_loggers(_LOG)
+
+# Convert `display` into `print()` when running outside IPython.
+try:
+    from IPython.display import display
+except ImportError:
+    display = print  # type: ignore
 
 # %% [markdown]
 # # Part 1: Overfitting: Data, Models, and Generalization
@@ -49,36 +52,27 @@ _LOG = logging.getLogger(__name__)
 # %% [markdown]
 # ## Cell 1.1: True target function and data sampling
 #
-# **Goal**:
+# **Goal**
 # - Visualize an unknown target function $f(x)$, sample noisy observations
 #   from it, and split them into training and test data, the basic setup
 #   every learning problem in this notebook starts from
-#
-# **Implementation**: `cell1_plot_true_target_function()`
-# - Samples `N` points from the chosen `Function`, adds Gaussian noise of
-#   scale `epsilon`, and splits them 80/20 into training and test sets
-# - Stores the split in shared state so Cell 1.2 fits models against the
-#   same data
-
-# %%
-hintros.print_obj_info(utils.cell1_plot_true_target_function)
 
 # %% [markdown]
-# **Usage**
+# **Description**
 # - Inputs
-#   - **`seed`**: random seed for the sampled points and the train/test
+#   - `seed`: random seed for the sampled points and the train/test
 #     split
-#   - **`Function`**: target function $f$: slow sinusoid, fast sinusoid,
+#   - `Function`: target function $f$: slow sinusoid, fast sinusoid,
 #     parabola, constant, or linear
-#   - **`epsilon`**: standard deviation of the observation noise, 0-1
-#   - **`N (total samples)`** (log scale): total points sampled, 4-1024
+#   - `epsilon`: standard deviation of the observation noise, 0-1
+#   - `N (total samples)` (log scale): total points sampled, 4-1024
 #
 # - Panels
-#   - **`True target function`**: the noiseless $f(x)$, plus a noisy
+#   - `True target function`: the noiseless $f(x)$, plus a noisy
 #     overlay when `epsilon` > 0
-#   - **`In-sample data (80%)`**: the training points
-#   - **`Out-of-sample data (20%)`**: the test points
-#   - **`Comments`**: current parameters and the train/test split sizes
+#   - `In-sample data (80%)`: the training points
+#   - `Out-of-sample data (20%)`: the test points
+#   - `Comments`: current parameters and the train/test split sizes
 
 # %%
 # Display the true target function with interactive controls.
@@ -96,38 +90,38 @@ utils.cell1_plot_true_target_function()
 #     in Cell 1.2
 
 # %% [markdown]
-# ## Cell 1.2: Model comparison: constant vs linear
-#
-# **Goal**:
-# - Fit a constant or linear model to Cell 1.1's training split, and
-#   compare in-sample error $E_{in}$ against out-of-sample error $E_{out}$
-#
-# **Implementation**: `cell2_plot_model()`
-# - Fits $h(x) = b$ (hypothesis class $\mathcal{H}_0$) or
-#   $h(x) = ax + b$ (hypothesis class $\mathcal{H}_1$) to the training
-#   data from Cell 1.1's shared state, depending on `Model Type`
-# - `Resample and Relearn` draws a fresh training/test split from the same
-#   `Function`/`epsilon`/`N` and refits
+# **Implementation** `cell1_plot_true_target_function()`
+# - Samples `N` points from the chosen `Function`, adds Gaussian noise of
+#   scale `epsilon`, and splits them 80/20 into training and test sets
+# - Stores the split in shared state so Cell 1.2 fits models against the
+#   same data
 
 # %%
-hintros.print_obj_info(utils.cell2_plot_model)
+hintros.print_obj_info(utils.cell1_plot_true_target_function)
 
 # %% [markdown]
-# **Usage**
+# ## Cell 1.2: Model comparison: constant vs linear
+#
+# **Goal**
+# - Fit a constant or linear model to Cell 1.1's training split, and
+#   compare in-sample error $E_{in}$ against out-of-sample error $E_{out}$
+
+# %% [markdown]
+# **Description**
 # - Inputs
-#   - **`Model Type`**: `Constant` ($h(x) = b$) or `Linear`
+#   - `Model Type`: `Constant` ($h(x) = b$) or `Linear`
 #     ($h(x) = ax + b$)
-#   - **`Resample and Relearn`**: draws a new training/test split and
+#   - `Resample and Relearn`: draws a new training/test split and
 #     refits
 #
 # - Panels
-#   - **`In-sample data and model`**: training points, the fitted $h(x)$,
+#   - `In-sample data and model`: training points, the fitted $h(x)$,
 #     and $E_{in}$
-#   - **`Out-of-sample data and model`**: test points, the same $h(x)$,
+#   - `Out-of-sample data and model`: test points, the same $h(x)$,
 #     and $E_{out}$
-#   - **`True function vs model`**: $f(x)$ against $h(x)$, with the
+#   - `True function vs model`: $f(x)$ against $h(x)$, with the
 #     approximation error shaded
-#   - **`Comments`**: learned parameters, $E_{in}$, and $E_{out}$
+#   - `Comments`: learned parameters, $E_{in}$, and $E_{out}$
 
 # %%
 # Display model learning with interactive controls.
@@ -146,3 +140,14 @@ utils.cell2_plot_model()
 # - Run Cell 1.1 again with a new `Function` or `seed` before revisiting
 #   this cell: it always fits against whatever split Cell 1.1 last
 #   produced
+
+# %% [markdown]
+# **Implementation** `cell2_plot_model()`
+# - Fits $h(x) = b$ (hypothesis class $\mathcal{H}_0$) or
+#   $h(x) = ax + b$ (hypothesis class $\mathcal{H}_1$) to the training
+#   data from Cell 1.1's shared state, depending on `Model Type`
+# - `Resample and Relearn` draws a fresh training/test split from the same
+#   `Function`/`epsilon`/`N` and refits
+
+# %%
+hintros.print_obj_info(utils.cell2_plot_model)

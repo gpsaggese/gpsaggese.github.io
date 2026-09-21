@@ -15,9 +15,16 @@
 
 # %% [markdown]
 # # Bias Variance
-
-# %% [markdown]
-# ## Imports
+#
+# - This notebook estimates bias and variance by learning repeatedly from
+#   random training sets, on the target function $f(x) = \sin(\pi x)$, to show
+#   how the expected error splits into two parts
+# - The pedagogical arc:
+#   - Approximation vs learning: the best constant and linear models, then one
+#     learned model
+#   - The bias-variance decomposition, and how it changes with the training set
+#     size
+#   - The same decomposition when the observations are noisy
 
 # %%
 # %load_ext autoreload
@@ -25,23 +32,23 @@
 
 import logging
 
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-# Set plotting style.
-sns.set_style("whitegrid")
-plt.rcParams["figure.figsize"] = (12, 6)
 
 # %%
 import helpers.hintrospection as hintros
-import helpers.htutorial as ut
+import helpers.hnotebook as hnotebook
+
 import L05_02_01_bias_variance_utils as utils
 
-ut.config_notebook()
-
-# Initialize logger.
-logging.basicConfig(level=logging.INFO)
+# Initialize notebook configuration and logging.
+hnotebook.config_notebook()
 _LOG = logging.getLogger(__name__)
+utils.init_loggers(_LOG)
+
+# Convert `display` into `print()` when running outside IPython.
+try:
+    from IPython.display import display
+except ImportError:
+    display = print  # type: ignore
 
 # %% [markdown]
 # # Part 1: Approximation vs Learning
@@ -49,12 +56,12 @@ _LOG = logging.getLogger(__name__)
 # %% [markdown]
 # ## Cell 1.1: Approximation
 #
-# **Goal**:
+# **Goal**
 # - Compare how well a constant model and a linear model can approximate
 #   the true target function $f(x) = \sin(\pi x)$ on $x \in [-1, 1]$, with
 #   no notion of training data yet
 #
-# **Implementation**: `cell1_approximation()`
+# **Implementation** `cell1_approximation()`
 # - Fits $g_0(x) = b$ and $g_1(x) = ax + b$ directly to the dense true
 #   function by least squares, in `fit_constant_model()`/`fit_linear_model()`
 # - Plots `True function vs constant model` and `True function vs linear
@@ -68,32 +75,23 @@ utils.cell1_approximation()
 # %% [markdown]
 # ## Cell 1.2: Learning once
 #
-# **Goal**:
+# **Goal**
 # - Contrast learning from a small training set with the pure
 #   approximation of Cell 1.1, and separate in-sample error $E_{in}$ from
 #   out-of-sample error $E_{out}$
-#
-# **Implementation**: `cell2_learning_once()`
-# - Draws `N_samples` random training points and fits $g_0$/$g_1$ to them
-#   with `fit_models_and_predict()`
-# - Computes $E_{in}$ (error on the training points) and $E_{out}$ (error
-#   against the true function) for both models
-
-# %%
-hintros.print_obj_info(utils.cell2_learning_once)
 
 # %% [markdown]
-# **Usage**
+# **Description**
 # - Inputs
-#   - **`seed`**: random seed for the training points sampled
-#   - **`N_samples`**: number of training points, 2-20
+#   - `seed`: random seed for the training points sampled
+#   - `N_samples`: number of training points, 2-20
 #
 # - Panels
-#   - **`Constant model`**: $f(x)$, the fitted $g_0$, and the training
+#   - `Constant model`: $f(x)$, the fitted $g_0$, and the training
 #     points, titled with $E_{in}$/$E_{out}$
-#   - **`Linear model`**: $f(x)$, the fitted $g_1$, and the training
+#   - `Linear model`: $f(x)$, the fitted $g_1$, and the training
 #     points, titled with $E_{in}$/$E_{out}$
-#   - **`Comments`**: current `seed`, `N_samples`, and both models'
+#   - `Comments`: current `seed`, `N_samples`, and both models'
 #     $E_{in}$/$E_{out}$
 
 # %%
@@ -111,36 +109,36 @@ utils.cell2_learning_once()
 #     same as learning $f$
 
 # %% [markdown]
+# **Implementation** `cell2_learning_once()`
+# - Draws `N_samples` random training points and fits $g_0$/$g_1$ to them
+#   with `fit_models_and_predict()`
+# - Computes $E_{in}$ (error on the training points) and $E_{out}$ (error
+#   against the true function) for both models
+
+# %%
+hintros.print_obj_info(utils.cell2_learning_once)
+
+# %% [markdown]
 # # Part 2: Bias-Variance Decomposition
 
 # %% [markdown]
 # ## Cell 2.1: Learning: bias-variance decomposition
 #
-# **Goal**:
+# **Goal**
 # - Repeat Cell 1.2's experiment across many random training sets, and
 #   read bias and variance off how the resulting models scatter around $f$
-#
-# **Implementation**: `cell3_learning_bias_variance()`
-# - Runs `N_experiments` independent draws of `N_samples` points, refitting
-#   $g_0$ and $g_1$ each time
-# - Overlays every fitted model in translucent lines, plus the average
-#   model as a dashed line, so bias (average vs $f$) and variance (spread
-#   around the average) are both visible at once
-
-# %%
-hintros.print_obj_info(utils.cell3_learning_bias_variance)
 
 # %% [markdown]
-# **Usage**
+# **Description**
 # - Inputs
-#   - **`seed`**: random seed for the experiments
-#   - **`N_samples`**: training points per experiment, 2-20
-#   - **`N_experiments`**: number of repeated experiments, 5-100
+#   - `seed`: random seed for the experiments
+#   - `N_samples`: training points per experiment, 2-20
+#   - `N_experiments`: number of repeated experiments, 5-100
 #
 # - Panels
-#   - **`Constant models`**: $f(x)$, every fitted $g_0$, and their average
-#   - **`Linear models`**: $f(x)$, every fitted $g_1$, and their average
-#   - **`Comments`**: average $E_{in}$/$E_{out}$ and the bias-variance
+#   - `Constant models`: $f(x)$, every fitted $g_0$, and their average
+#   - `Linear models`: $f(x)$, every fitted $g_1$, and their average
+#   - `Comments`: average $E_{in}$/$E_{out}$ and the bias-variance
 #     reading for both models
 
 # %%
@@ -159,36 +157,37 @@ utils.cell3_learning_bias_variance()
 #     individual fits are
 
 # %% [markdown]
-# ## Cell 2.2: Learning plots: bias-variance vs training set size
-#
-# **Goal**:
-# - Trace how $E_{in}$, $E_{out}$, $\text{bias}^2$, and variance move as
-#   training set size grows, for both models at once
-#
-# **Implementation**: `cell4_learning_plots()`
-# - Repeats Cell 2.1's experiment at every training size from 2 up to
-#   `max_N_samples`, averaging `N_experiments` trials at each size
-# - Plots the four error curves for $g_0$ and $g_1$ side by side, verifying
-#   $E_{out} \approx \text{Bias}^2 + \text{Variance}$ for this noise-free
-#   target
+# **Implementation** `cell3_learning_bias_variance()`
+# - Runs `N_experiments` independent draws of `N_samples` points, refitting
+#   $g_0$ and $g_1$ each time
+# - Overlays every fitted model in translucent lines, plus the average
+#   model as a dashed line, so bias (average vs $f$) and variance (spread
+#   around the average) are both visible at once
 
 # %%
-hintros.print_obj_info(utils.cell4_learning_plots)
+hintros.print_obj_info(utils.cell3_learning_bias_variance)
 
 # %% [markdown]
-# **Usage**
+# ## Cell 2.2: Learning plots: bias-variance vs training set size
+#
+# **Goal**
+# - Trace how $E_{in}$, $E_{out}$, $\text{bias}^2$, and variance move as
+#   training set size grows, for both models at once
+
+# %% [markdown]
+# **Description**
 # - Inputs
-#   - **`seed`**: random seed, fixed across training sizes for a fair
+#   - `seed`: random seed, fixed across training sizes for a fair
 #     comparison
-#   - **`N_experiments`**: experiments averaged per training size, 20-200
-#   - **`max_N_samples`**: largest training size swept, 5-30
+#   - `N_experiments`: experiments averaged per training size, 20-200
+#   - `max_N_samples`: largest training size swept, 5-30
 #
 # - Panels
-#   - **`Constant model (g_0), bias-variance analysis`**: $E_{in}$,
+#   - `Constant model (g_0), bias-variance analysis`: $E_{in}$,
 #     $E_{out}$, $\text{Bias}^2$, and variance vs training size
-#   - **`Linear model (g_1), bias-variance analysis`**: the same four
+#   - `Linear model (g_1), bias-variance analysis`: the same four
 #     curves for $g_1$
-#   - **`Comments`**: the decomposition formula and both models' values
+#   - `Comments`: the decomposition formula and both models' values
 #     at `max_N_samples`
 
 # %%
@@ -206,36 +205,39 @@ utils.cell4_learning_plots()
 #     variance seen in Cell 2.1
 
 # %% [markdown]
+# **Implementation** `cell4_learning_plots()`
+# - Repeats Cell 2.1's experiment at every training size from 2 up to
+#   `max_N_samples`, averaging `N_experiments` trials at each size
+# - Plots the four error curves for $g_0$ and $g_1$ side by side, verifying
+#   $E_{out} \approx \text{Bias}^2 + \text{Variance}$ for this noise-free
+#   target
+
+# %%
+hintros.print_obj_info(utils.cell4_learning_plots)
+
+# %% [markdown]
 # # Part 3: Bias-Variance With Noise
 
 # %% [markdown]
 # ## Cell 3.1: Learning with noise: bias-variance decomposition
 #
-# **Goal**:
+# **Goal**
 # - Repeat Cell 2.1's multi-experiment view with Gaussian noise added to
 #   the training labels, $y = f(x) + \mathcal{N}(0, \sigma^2)$
-#
-# **Implementation**: `cell5_learning_with_noise()`
-# - Adds noise of standard deviation `noise_std` to each training draw
-#   before fitting $g_0$/$g_1$, otherwise identical to
-#   `cell3_learning_bias_variance()`
-
-# %%
-hintros.print_obj_info(utils.cell5_learning_with_noise)
 
 # %% [markdown]
-# **Usage**
+# **Description**
 # - Inputs
-#   - **`seed`**: random seed for the experiments
-#   - **`noise_std`**: standard deviation $\sigma$ of the label noise,
+#   - `seed`: random seed for the experiments
+#   - `noise_std`: standard deviation $\sigma$ of the label noise,
 #     0-0.5
-#   - **`N_samples`**: training points per experiment, 2-20
-#   - **`N_experiments`**: number of repeated experiments, 5-100
+#   - `N_samples`: training points per experiment, 2-20
+#   - `N_experiments`: number of repeated experiments, 5-100
 #
 # - Panels
-#   - **`Constant models`**: $f(x)$, every fitted $g_0$, and their average
-#   - **`Linear models`**: $f(x)$, every fitted $g_1$, and their average
-#   - **`Comments`**: average $E_{in}$/$E_{out}$ for both models at the
+#   - `Constant models`: $f(x)$, every fitted $g_0$, and their average
+#   - `Linear models`: $f(x)$, every fitted $g_1$, and their average
+#   - `Comments`: average $E_{in}$/$E_{out}$ for both models at the
 #     current noise level
 
 # %%
@@ -252,35 +254,37 @@ utils.cell5_learning_with_noise()
 #     models, since every fit now chases noise the true function never had
 
 # %% [markdown]
-# ## Cell 3.2: Learning plots with noise: bias-variance vs training set size
-#
-# **Goal**:
-# - Trace $E_{in}$, $E_{out}$, $\text{bias}^2$, and variance against
-#   training set size, as in Cell 2.2, now with noisy training labels
-#
-# **Implementation**: `cell6_learning_plots_with_noise()`
-# - Repeats Cell 2.2's sweep with `noise_std` added to every training draw
-#   before fitting, over `N_samples` from 2 up to the current slider value
+# **Implementation** `cell5_learning_with_noise()`
+# - Adds noise of standard deviation `noise_std` to each training draw
+#   before fitting $g_0$/$g_1$, otherwise identical to
+#   `cell3_learning_bias_variance()`
 
 # %%
-hintros.print_obj_info(utils.cell6_learning_plots_with_noise)
+hintros.print_obj_info(utils.cell5_learning_with_noise)
 
 # %% [markdown]
-# **Usage**
+# ## Cell 3.2: Learning plots with noise: bias-variance vs training set size
+#
+# **Goal**
+# - Trace $E_{in}$, $E_{out}$, $\text{bias}^2$, and variance against
+#   training set size, as in Cell 2.2, now with noisy training labels
+
+# %% [markdown]
+# **Description**
 # - Inputs
-#   - **`seed`**: random seed, fixed across training sizes
-#   - **`noise_std`**: standard deviation $\sigma$ of the label noise,
+#   - `seed`: random seed, fixed across training sizes
+#   - `noise_std`: standard deviation $\sigma$ of the label noise,
 #     0-0.5
-#   - **`log(N_samples)`** (log scale): largest training size swept, 2-256
-#   - **`log(N_experiments)`** (log scale): experiments averaged per
+#   - `log(N_samples)` (log scale): largest training size swept, 2-256
+#   - `log(N_experiments)` (log scale): experiments averaged per
 #     training size, 16-1024
 #
 # - Panels
-#   - **`Constant model (g_0), bias-variance analysis`**: $E_{in}$,
+#   - `Constant model (g_0), bias-variance analysis`: $E_{in}$,
 #     $E_{out}$, $\text{Bias}^2$, and variance vs training size
-#   - **`Linear model (g_1), bias-variance analysis`**: the same four
+#   - `Linear model (g_1), bias-variance analysis`: the same four
 #     curves for $g_1$
-#   - **`Comments`**: the noisy decomposition formula and both models'
+#   - `Comments`: the noisy decomposition formula and both models'
 #     values at the largest training size
 
 # %%
@@ -297,3 +301,11 @@ utils.cell6_learning_plots_with_noise()
 #   - Observe variance keeps shrinking as before, but $E_{out}$ levels off
 #     above 0: more data cannot remove the noise term, only the variance
 #     term
+
+# %% [markdown]
+# **Implementation** `cell6_learning_plots_with_noise()`
+# - Repeats Cell 2.2's sweep with `noise_std` added to every training draw
+#   before fitting, over `N_samples` from 2 up to the current slider value
+
+# %%
+hintros.print_obj_info(utils.cell6_learning_plots_with_noise)

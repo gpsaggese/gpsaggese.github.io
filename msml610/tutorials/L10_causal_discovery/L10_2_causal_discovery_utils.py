@@ -16,22 +16,21 @@ from IPython.display import display, clear_output
 import networkx as nx
 import scipy.stats
 
-import helpers.hdbg as hdbg
 import helpers.hnotebook as hnotebo
 import helpers.htutorial as htutori
 
 _LOG = logging.getLogger(__name__)
 
 
-def init_logger(notebook_log: logging.Logger) -> None:
+def init_loggers(notebook_log: logging.Logger) -> None:
     """
-    Initialize logger for the notebook.
+    Wire the notebook logger into the utils logger.
+
+    :param notebook_log: logger owned by the notebook
     """
-    hnotebo.config_notebook()
-    hdbg.init_logger(verbosity=logging.INFO, use_exec_path=False)
-    hnotebo.set_logger_to_print(notebook_log)
-    global _LOG
-    _LOG = hnotebo.set_logger_to_print(_LOG)
+    hnotebo.init_loggers(
+        notebook_log, utils_log=_LOG, set_all_loggers_to_print=True
+    )
 
 
 # #############################################################################
@@ -323,7 +322,8 @@ def cell3_causal_effects():
         # Simulate three structures with intervention.
         np.random.seed(seed)
         # Chain: X -> Y -> Z.
-        X_baseline = np.random.normal(0, 1, sample_size)
+        # Draw and discard to keep the random stream unchanged.
+        np.random.normal(0, 1, sample_size)
         X_intervened = np.ones(sample_size) * intervention_strength
         Y_chain = 0.8 * X_intervened + np.random.normal(0, 0.3, sample_size)
         Z_chain = 0.8 * Y_chain + np.random.normal(0, 0.3, sample_size)
@@ -331,9 +331,10 @@ def cell3_causal_effects():
         # Reverse: Z -> Y -> X (no effect on Z).
         effect_reverse = 0.0  # Intervening on X doesn't affect Z.
         # Common Cause: Y confounds both X and Z.
-        Y_confound = np.random.normal(0, 1, sample_size)
-        X_conf = 0.8 * Y_confound + np.random.normal(0, 0.3, sample_size)
-        Z_conf = 0.8 * Y_confound + np.random.normal(0, 0.3, sample_size)
+        # Draw and discard to keep the random stream unchanged.
+        np.random.normal(0, 1, sample_size)
+        np.random.normal(0, 0.3, sample_size)
+        np.random.normal(0, 0.3, sample_size)
         effect_common = 0.0  # No direct effect on Z.
         effects = [effect_chain, effect_reverse, effect_common]
         titles = [

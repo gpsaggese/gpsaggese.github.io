@@ -14,6 +14,8 @@ import numpy as np
 import ipywidgets
 from IPython.display import display
 
+import helpers.hnotebook as hnotebo
+
 try:
     import helpers.htutorial as htutori
 except ImportError:
@@ -23,6 +25,15 @@ _LOG = logging.getLogger(__name__)
 
 # Suppress FutureWarnings from seaborn and other libraries.
 warnings.filterwarnings("ignore", category=FutureWarning)
+
+
+def init_loggers(notebook_log: logging.Logger) -> None:
+    """
+    Wire the notebook logger into the utils logger.
+
+    :param notebook_log: logger owned by the notebook
+    """
+    hnotebo.init_loggers(notebook_log, utils_log=_LOG)
 
 
 # #############################################################################

@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.0
+#       jupytext_version: 1.19.3
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -27,8 +27,12 @@
 #   - Propositional rules rewritten as first-order sentences
 #   - A full agent loop that ties every piece together
 
-# %% [markdown]
-# ## Imports
+# %%
+# !pip install -q sympy==1.14.0
+
+import sympy
+
+print("sympy version: ", sympy.__version__)
 
 # %%
 # %load_ext autoreload
@@ -36,19 +40,6 @@
 
 import logging
 
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-# Set plotting style.
-sns.set_style("whitegrid")
-plt.rcParams["figure.figsize"] = (12, 6)
-
-# %%
-# !pip install -q sympy==1.14.0
-
-import sympy
-
-print("sympy version: ", sympy.__version__)
 
 # %%
 import helpers.hnotebook as hnotebook
@@ -59,6 +50,12 @@ import L03_02_wumpus_world_utils as utils
 hnotebook.config_notebook()
 _LOG = logging.getLogger(__name__)
 utils.init_loggers(_LOG)
+
+# Convert `display` into `print()` when running outside IPython.
+try:
+    from IPython.display import display
+except ImportError:
+    display = print  # type: ignore
 
 # %% [markdown]
 # # Part 1: Percepts and the Knowledge Base
@@ -111,7 +108,7 @@ utils.init_loggers(_LOG)
 # %% [markdown]
 # ## Cell 1.1: The wumpus world grid and the knowledge base
 #
-# **Goal**:
+# **Goal**
 # - Give students a concrete grid to reason about before any logic is
 #   introduced
 # - Show that a knowledge-based agent knows only what it has been `TELL`-ed,
@@ -169,7 +166,7 @@ utils.cell1_1_world_and_kb()
 # %% [markdown]
 # ## Cell 2.1: Models and the breeze axiom
 #
-# **Goal**:
+# **Goal**
 # - Introduce a model as one full true/false assignment to every pit variable
 # - Encode the breeze axiom
 #   $B_{1,2} \Leftrightarrow (P_{1,1} \lor P_{2,2} \lor P_{1,3})$
@@ -206,7 +203,7 @@ utils.cell2_1_models_and_axiom()
 # %% [markdown]
 # ## Cell 2.2: Entailment as model inclusion
 #
-# **Goal**:
+# **Goal**
 # - Answer questions (e.g., "is cell $(2,2)$ provably safe?") by model
 #   checking directly
 #
@@ -250,7 +247,7 @@ utils.cell2_2_entailment()
 # %% [markdown]
 # ## Cell 2.3: Implication, entailment, and inference
 #
-# **Goal**:
+# **Goal**
 # - Separate three ideas that are easy to conflate
 #   - a sentence's internal structure
 #   - a semantic guarantee across models
@@ -291,7 +288,7 @@ utils.cell2_3_three_views()
 # %% [markdown]
 # ## Cell 3.1: Model checking doesn't scale
 #
-# **Goal**:
+# **Goal**
 # - Measure how brute-force model checking degrades as the grid grows, and
 #   compare it against a SAT solver on the same `KB`
 #
@@ -320,7 +317,7 @@ utils.cell3_1_scaling(fixed_grid_size=6)
 # %% [markdown]
 # ## Cell 4.1: From propositional rules to first-order sentences
 #
-# **Goal**:
+# **Goal**
 # - Rewrite the propositional breeze axiom as a single first-order sentence
 #   with a universal quantifier, and instantiate it for a specific cell
 #
@@ -347,7 +344,7 @@ utils.cell4_1_first_order()
 # %% [markdown]
 # ## Cell 4.2: The agent loop: KB grows, candidate models shrink
 #
-# **Goal**:
+# **Goal**
 # - Tie every prior cell together in a stepping agent that `TELL`s new
 #   percepts and re-`ASK`s safety at each step
 #

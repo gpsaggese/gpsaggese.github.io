@@ -15,9 +15,18 @@
 
 # %% [markdown]
 # # Propensity score
-
-# %% [markdown]
-# ## Imports
+#
+# - This notebook estimates the effect of a manager-training intervention on
+#   employee engagement from observational data, using propensity scores to
+#   correct for the fact that treated and control managers differ
+# - The pedagogical arc:
+#   - Exploratory analysis of the management-training data
+#   - Naive and covariate-adjusted treatment effect estimates
+#   - Estimating the propensity score and adjusting for it
+#   - Propensity score matching and inverse probability of treatment
+#     weighting (IPTW)
+#   - Variance of the IPW estimator, via bootstrap confidence intervals
+#   - Stabilized propensity weights
 
 # %%
 # %load_ext autoreload
@@ -27,25 +36,26 @@ import logging
 
 import pandas as pd
 import statsmodels.formula.api as smf
-from IPython.display import display
 
 # %%
-import helpers.hnotebook as hnotebo
+import helpers.hnotebook as hnotebook
 import helpers.hpandas_display as hpandisp
 import helpers.hpandas_stats as hpanstat
-import helpers.htutorial as ut
-import L08_04_05_propensity_score_utils as mtl0psu
 
-ut.config_notebook()
+import L08_04_05_propensity_score_utils as utils
 
-# Initialize logger.
-logging.basicConfig(level=logging.INFO)
+# Initialize notebook configuration and logging.
+hnotebook.config_notebook()
 _LOG = logging.getLogger(__name__)
-# Note: the original code called a non-existent `set_all_loggers_to_print()`
-# top-level function; `init_loggers(..., set_all_loggers_to_print=True)` is
-# the actual public API for what this was trying to do.
-hnotebo.init_loggers(_LOG, set_all_loggers_to_print=True)
+utils.init_loggers(_LOG)
 
+# Convert `display` into `print()` when running outside IPython.
+try:
+    from IPython.display import display
+except ImportError:
+    display = print  # type: ignore
+
+# %%
 dir_name = "L08_data"
 # !ls $dir_name
 
@@ -57,7 +67,7 @@ out_dir_name = "figures/"
 # %% [markdown]
 # ## Cell 1.1: Loading the management-training data
 #
-# **Goal**:
+# **Goal**
 # - Load the manager-training dataset used throughout this notebook
 #
 # The dataset contains information on managers with the following
@@ -83,11 +93,11 @@ hpandisp.display_df(df)
 # %% [markdown]
 # ## Cell 1.2: Exploring distributions and correlations
 #
-# **Goal**:
+# **Goal**
 # - Check the distribution of each variable, and how variables correlate
 #   with each other, before fitting any model
 #
-# **Implementation**: `hpanstat.explore_dataframe(df, ...)`
+# **Implementation** `hpanstat.explore_dataframe(df, ...)`
 
 # %%
 show_distributions = True
@@ -105,11 +115,11 @@ hpanstat.explore_dataframe(
 # %% [markdown]
 # ## Cell 2.1: Estimating the unadjusted average treatment effect
 #
-# **Goal**:
+# **Goal**
 # - Estimate the treatment effect by regressing the outcome on the
 #   treatment indicator alone, ignoring all other covariates
 #
-# **Implementation**: `smf.ols("engagement_score ~ intervention", data=df)`
+# **Implementation** `smf.ols("engagement_score ~ intervention", data=df)`
 
 # %%
 model = smf.ols("engagement_score ~ intervention", data=df).fit()
@@ -121,39 +131,39 @@ display(model.summary().tables[1])
 # %% [markdown]
 # ## Cell 2.2: Visualizing engagement by treatment status
 #
-# **Goal**:
+# **Goal**
 # - Visualize the raw relationship between treatment and outcome, both
 #   overall and split by department
 #
-# **Implementation**: `mtl0psu.plot_engagement_vs_intervention(df)`,
-# `mtl0psu.plot_engagement_vs_intervention_by_department(df)`
+# **Implementation** `utils.plot_engagement_vs_intervention(df)`,
+# `utils.plot_engagement_vs_intervention_by_department(df)`
 
 # %%
-mtl0psu.plot_engagement_vs_intervention(df)
+utils.plot_engagement_vs_intervention(df)
 
 # %%
-mtl0psu.plot_engagement_vs_intervention_by_department(df)
+utils.plot_engagement_vs_intervention_by_department(df)
 
 # %% [markdown]
 # ## Cell 2.3: Visualizing every covariate by treatment status
 #
-# **Goal**:
+# **Goal**
 # - Check whether the treated and control groups differ on any observed
 #   covariate, which would indicate confounding
 #
-# **Implementation**: `mtl0psu.plot_all_variables_density_by_intervention(df)`
+# **Implementation** `utils.plot_all_variables_density_by_intervention(df)`
 
 # %%
-mtl0psu.plot_all_variables_density_by_intervention(df)
+utils.plot_all_variables_density_by_intervention(df)
 
 # %% [markdown]
 # ## Cell 2.4: Adjusting for covariates
 #
-# **Goal**:
+# **Goal**
 # - Re-estimate the treatment effect while adjusting for the observed
 #   covariates, to see how much the naive estimate was biased
 #
-# **Implementation**:
+# **Implementation**
 # - `smf.ols("engagement_score ~ intervention + tenure + ...", data=df)`
 
 # %%
@@ -184,11 +194,11 @@ print("95% CI (naive):", model.conf_int().loc["intervention", :].values.T)
 # %% [markdown]
 # ## Cell 3.1: Estimating the propensity score
 #
-# **Goal**:
+# **Goal**
 # - Fit a propensity-score model, the probability of treatment given
 #   covariates, to later use as a single balancing score
 #
-# **Implementation**: `smf.logit("intervention ~ ...", data=df)`
+# **Implementation** `smf.logit("intervention ~ ...", data=df)`
 
 # %%
 ps_model = smf.logit(
@@ -207,7 +217,7 @@ display(data_ps[["intervention", "engagement_score", "propensity_score"]].head()
 # %% [markdown]
 # ## Cell 3.2: Adjusting for the propensity score directly
 #
-# **Goal**:
+# **Goal**
 # - Use the propensity score itself as a single covariate, instead of the
 #   full covariate set, to adjust for confounding
 
@@ -225,40 +235,40 @@ print("ATE (propensity-score covariate):", model_ps.params["intervention"])
 # %% [markdown]
 # ## Cell 4.1: Matching on the propensity score
 #
-# **Goal**:
+# **Goal**
 # - Estimate the ATE by matching each treated unit to its nearest control
 #   unit (and vice versa) on the propensity score
 #
-# **Implementation**: `mtl0psu.propensity_score_matching(data_ps)`,
-# `mtl0psu.calculate_psm_ate(predicted)`
+# **Implementation** `utils.propensity_score_matching(data_ps)`,
+# `utils.calculate_psm_ate(predicted)`
 
 # %%
 # Perform 1-nearest neighbor propensity score matching.
-predicted = mtl0psu.propensity_score_matching(data_ps)
+predicted = utils.propensity_score_matching(data_ps)
 display(predicted.head())
 
 # %%
 # Calculate average treatment effect from propensity score matching.
-hat_ATE = mtl0psu.calculate_psm_ate(predicted)
+hat_ATE = utils.calculate_psm_ate(predicted)
 print(f"ATE (propensity score matching): {hat_ATE:.4f}")
 
 # %% [markdown]
 # ## Cell 4.2: Inverse probability of treatment weighting
 #
-# **Goal**:
+# **Goal**
 # - Estimate the ATE by reweighting units by the inverse of their
 #   propensity score, instead of matching
 #
-# **Implementation**: `mtl0psu.plot_iptw(data_ps)`,
-# `mtl0psu.estimate_ate_iptw(data_ps)`
+# **Implementation** `utils.plot_iptw(data_ps)`,
+# `utils.estimate_ate_iptw(data_ps)`
 
 # %%
 # Plot inverse probability of treatment weighting results.
-mtl0psu.plot_iptw(data_ps)
+utils.plot_iptw(data_ps)
 
 # %%
 # Estimate ATE using IPTW.
-weighted_e_y1, weighted_e_y0, hat_ATE = mtl0psu.estimate_ate_iptw(data_ps)
+weighted_e_y1, weighted_e_y0, hat_ATE = utils.estimate_ate_iptw(data_ps)
 
 print("E[Y1]:", weighted_e_y1)
 print("E[Y0]:", weighted_e_y0)
@@ -270,12 +280,12 @@ print("ATE:", hat_ATE)
 # %% [markdown]
 # ## Cell 5.1: Estimating the ATE with bootstrap confidence intervals
 #
-# **Goal**:
+# **Goal**
 # - Quantify the uncertainty of the IPW estimator via bootstrap
 #   resampling, since it has no simple closed-form standard error
 #
-# **Implementation**: `mtl0psu.estimate_ate_with_ps(...)`,
-# `mtl0psu.estimate_confidence_interval_bootstrap(...)`
+# **Implementation** `utils.estimate_ate_with_ps(...)`,
+# `utils.estimate_confidence_interval_bootstrap(...)`
 
 # %%
 # Prepare formula and variables for IPW estimation.
@@ -288,21 +298,21 @@ outcome_col = "engagement_score"
 
 # %%
 # Estimate ATE using IPW estimator.
-ate_ipw = mtl0psu.estimate_ate_with_ps(
+ate_ipw = utils.estimate_ate_with_ps(
     df, formula, treatment_col=treatment_col, outcome_col=outcome_col
 )
 print(f"ATE (IPW): {ate_ipw:.4f}")
 
 # %%
 # Compute bootstrap 95% confidence interval for ATE using IPW.
-est_fn = lambda data: mtl0psu.estimate_ate_with_ps(
+est_fn = lambda data: utils.estimate_ate_with_ps(
     data,
     ps_formula=formula,
     treatment_col=treatment_col,
     outcome_col=outcome_col,
 )
 
-ci = mtl0psu.estimate_confidence_interval_bootstrap(
+ci = utils.estimate_confidence_interval_bootstrap(
     df, est_fn, rounds=200, seed=123, n_jobs=4, pcts=[2.5, 97.5]
 )
 print(f"ATE: {ate_ipw:.4f}")
@@ -314,7 +324,7 @@ print(f"95% confidence interval: {ci}")
 # %% [markdown]
 # ## Cell 6.1: Checking the pseudo-population sample sizes
 #
-# **Goal**:
+# **Goal**
 # - Check how many "effective" units the IPTW pseudo-population represents
 #   for each group, since extreme propensity scores can inflate a few
 #   units' weight far beyond their actual count
@@ -336,19 +346,19 @@ print("Untreated pseudo-population sample size:", sum(weight_nt))
 # %% [markdown]
 # ## Cell 6.2: Estimating the ATE with stabilized weights
 #
-# **Goal**:
+# **Goal**
 # - Re-estimate the ATE with stabilized weights, which rescale by the
 #   marginal treatment probability to reduce the influence of extreme
 #   propensity scores
 #
-# **Implementation**: `mtl0psu.estimate_ate_stabilized_weights(data_ps)`,
-# `mtl0psu.plot_propensity_distributions(data_ps)`
+# **Implementation** `utils.estimate_ate_stabilized_weights(data_ps)`,
+# `utils.plot_propensity_distributions(data_ps)`
 
 # %%
 # Estimate ATE using stabilized propensity weights.
-ate_stabilized = mtl0psu.estimate_ate_stabilized_weights(data_ps)
+ate_stabilized = utils.estimate_ate_stabilized_weights(data_ps)
 print(f"ATE (stabilized weights): {ate_stabilized:.4f}")
 
 # %%
 # Plot propensity score distributions before and after weighting.
-mtl0psu.plot_propensity_distributions(data_ps)
+utils.plot_propensity_distributions(data_ps)

@@ -31,15 +31,6 @@
 #   written from scratch, so that every step of the recognize-act cycle is
 #   visible and can be single-stepped
 
-# %% [markdown]
-# ## Imports
-
-# %%
-# %load_ext autoreload
-# %autoreload 2
-
-import logging
-
 # %%
 # !pip install -q networkx==3.6.1 scikit-learn==1.9.1
 
@@ -51,6 +42,13 @@ import sklearn
 print("sklearn version: ", sklearn.__version__)
 
 # %%
+# %load_ext autoreload
+# %autoreload 2
+
+import logging
+
+
+# %%
 import helpers.hnotebook as hnotebook
 
 import L03_03_rule_based_expert_systems_utils as utils
@@ -59,6 +57,12 @@ import L03_03_rule_based_expert_systems_utils as utils
 hnotebook.config_notebook()
 _LOG = logging.getLogger(__name__)
 utils.init_loggers(_LOG)
+
+# Convert `display` into `print()` when running outside IPython.
+try:
+    from IPython.display import display
+except ImportError:
+    display = print  # type: ignore
 
 # %% [markdown]
 # # Part 1: Rules and Working Memory
@@ -91,7 +95,7 @@ utils.show_rule_base()
 # %% [markdown]
 # ## Cell 1.1: Rules, working memory, and the reflex agent baseline
 #
-# **Goal**:
+# **Goal**
 # - Contrast a simple reflex agent (percept only) with a rule-based agent
 #   (percept plus working memory)
 # - Introduce Winston's animal-identification rules as the running example
@@ -133,7 +137,7 @@ utils.cell1_1_reflex_vs_rule_based()
 # %% [markdown]
 # ## Cell 2.1: Forward chaining: watching working memory fill up
 #
-# **Goal**:
+# **Goal**
 # - Animate forward (data-driven) chaining over Winston's rules, one fired
 #   rule per frame
 #
@@ -171,7 +175,7 @@ utils.cell2_1_forward_chaining()
 # %% [markdown]
 # ## Cell 2.2: Backward chaining: the AND-OR proof tree for a goal
 #
-# **Goal**:
+# **Goal**
 # - Run goal-driven backward chaining on a goal such as `cheetah` and contrast
 #   which rules it explores against forward chaining on the same facts
 #
@@ -210,7 +214,7 @@ utils.cell2_2_backward_chaining()
 # %% [markdown]
 # ## Cell 2.3: Conflict resolution: specificity, recency, and priority
 #
-# **Goal**:
+# **Goal**
 # - Show that when multiple rules match the same working memory, the strategy
 #   used to pick one changes the final derived fact set
 # - The rule base here adds a leopard rule that conflicts with the cheetah
@@ -254,7 +258,7 @@ utils.cell2_3_conflict_resolution()
 # %% [markdown]
 # ## Cell 3.1: Explaining conclusions and certainty factors
 #
-# **Goal**:
+# **Goal**
 # - Answer MYCIN's two explanation questions for any conclusion, then extend
 #   crisp rules with certainty factors and compare the resulting diagnosis
 #   ranking
@@ -305,7 +309,7 @@ utils.cell3_1_explanation_and_certainty()
 # %% [markdown]
 # ## Cell 4.1: Non-monotonic reasoning: Tweety the penguin
 #
-# **Goal**:
+# **Goal**
 # - Run the classic default-reasoning case: a default rule concludes Tweety
 #   flies, then a new fact retracts that conclusion
 # - The default rule is `bird` $\land$ `~abnormal` $\to$ `flies`, where
@@ -344,7 +348,7 @@ utils.cell4_1_non_monotonic()
 # %% [markdown]
 # ## Cell 4.2: Closed world vs open world on the same query
 #
-# **Goal**:
+# **Goal**
 # - Query a fact that is simply absent from working memory under the closed
 #   world assumption and under the open world assumption, side by side
 #
@@ -384,7 +388,7 @@ utils.cell4_2_cwa_vs_owa()
 # %% [markdown]
 # ## Cell 5.1: Rules vs learned classifier: explainability vs accuracy
 #
-# **Goal**:
+# **Goal**
 # - Compare the hand-built rule engine against a decision tree trained on the
 #   same animal dataset, on accuracy, latency, and auditability
 # - Noise is applied to the percepts rather than to the labels, since that is

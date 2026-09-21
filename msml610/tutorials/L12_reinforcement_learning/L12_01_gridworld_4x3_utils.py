@@ -23,6 +23,7 @@ import pandas as pd
 import seaborn as sns
 from IPython.display import clear_output, display
 
+import helpers.hnotebook as hnotebo
 import helpers.htutorial as htutori
 
 import msml610.tutorials.L12_reinforcement_learning.L12_01_utils as mtlrll0ut
@@ -31,7 +32,12 @@ _LOG = logging.getLogger(__name__)
 
 
 def init_loggers(notebook_log: logging.Logger) -> None:
-    mtlrll0ut.init_loggers(notebook_log)
+    """
+    Wire the notebook logger into the utils logger.
+
+    :param notebook_log: logger owned by the notebook
+    """
+    hnotebo.init_loggers(notebook_log, utils_log=_LOG)
 
 
 # #############################################################################

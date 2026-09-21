@@ -15,9 +15,17 @@
 
 # %% [markdown]
 # # Multi-armed bandits
-
-# %% [markdown]
-# ## Imports
+#
+# - This notebook explores the exploration vs exploitation tradeoff with
+#   interactive slot-machine simulations, built on the same simulation classes
+#   as the API notebook (`L09_03_multi_armed_bandits_sim.py`)
+# - The pedagogical arc:
+#   - The casino problem, and the exploration vs exploitation dilemma
+#   - Why greedy fails, and how epsilon-greedy fixes it
+#   - Confidence intervals and the Upper Confidence Bound (UCB) algorithm
+#   - Regret accumulation, and comparing algorithms through regret curves
+#   - Bayesian bandits and Thompson Sampling
+#   - UCB vs Thompson Sampling, head-to-head
 
 # %%
 # %load_ext autoreload
@@ -25,24 +33,24 @@
 
 import logging
 
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-# Set plotting style.
-sns.set_style("whitegrid")
-plt.rcParams["figure.figsize"] = (12, 6)
 
 # %%
 import helpers.hintrospection as hintros
-import helpers.htutorial as ut
-import L09_03_multi_armed_bandits_sim as sim
+import helpers.hnotebook as hnotebook
+
 import L09_03_multi_armed_bandits_utils as utils
+import L09_03_multi_armed_bandits_sim as sim
 
-ut.config_notebook()
-
-# Initialize logger.
-logging.basicConfig(level=logging.INFO)
+# Initialize notebook configuration and logging.
+hnotebook.config_notebook()
 _LOG = logging.getLogger(__name__)
+utils.init_loggers(_LOG)
+
+# Convert `display` into `print()` when running outside IPython.
+try:
+    from IPython.display import display
+except ImportError:
+    display = print  # type: ignore
 
 # %% [markdown]
 # # Part 1: Introduction: Casino Slot Machines
@@ -50,36 +58,29 @@ _LOG = logging.getLogger(__name__)
 # %% [markdown]
 # ## Cell 1.1: Playing the casino
 #
-# **Goal**:
+# **Goal**
 # - There are 3 slot machines, and you have 10 coins
 # - Each machine gives you a payout in $[-1, 1]$ with an unknown mean
 #   $\mu_i$
 # - Choose which machine to play, and track total winnings and coin
 #   budget
 # - How do you maximize your winnings?
-#
-# **Implementation**: `utils.cell1_casino_slot_machines()`
-# - Each machine is drawn as a placeholder box showing its last reward,
-#   sample mean, and pull count once played
 
-# %%
-hintros.print_obj_info(utils.cell1_casino_slot_machines)
+# %% [markdown]
+# **Description**
+# - Inputs
+#   - `random seed`: seed for the hidden machine rewards
+#   - `number of coins`: total coins available to play
+#   - `Show True Means`: reveal the hidden $\mu_i$ for each machine
+#   - `Play Machine 1/2/3`: spend one coin pulling that machine
+#   - `Reset Game`: start over with a fresh coin budget
+#
+# - Panels
+#   - `Machine 1/2/3`: each machine's last reward, sample mean, and
+#     pull count so far
 
 # %%
 utils.cell1_casino_slot_machines()
-
-# %% [markdown]
-# **Usage**
-# - Inputs
-#   - **`random seed`**: seed for the hidden machine rewards
-#   - **`number of coins`**: total coins available to play
-#   - **`Show True Means`**: reveal the hidden $\mu_i$ for each machine
-#   - **`Play Machine 1/2/3`**: spend one coin pulling that machine
-#   - **`Reset Game`**: start over with a fresh coin budget
-#
-# - Panels
-#   - **`Machine 1/2/3`**: each machine's last reward, sample mean, and
-#     pull count so far
 
 # %% [markdown]
 # **Guided usage**
@@ -89,6 +90,14 @@ utils.cell1_casino_slot_machines()
 # - Toggle `Show True Means`
 #   - Observe how far the sample means still are from the hidden $\mu_i$
 #     after only a few pulls
+
+# %% [markdown]
+# **Implementation** `utils.cell1_casino_slot_machines()`
+# - Each machine is drawn as a placeholder box showing its last reward,
+#   sample mean, and pull count once played
+
+# %%
+hintros.print_obj_info(utils.cell1_casino_slot_machines)
 
 # %% [markdown]
 # ## Core Classes
@@ -120,7 +129,7 @@ for cls in [
 # %% [markdown]
 # ## Cell 2.1: Comparing the 3 basic strategies
 #
-# **Goal**:
+# **Goal**
 # - Demonstrate the fundamental tradeoff between exploration and
 #   exploitation on the same 3 slot machines, each with a fixed but
 #   unknown true mean $\mu_i$
@@ -137,25 +146,20 @@ for cls in [
 # - **Balanced (epsilon-greedy)**: explore with probability $\epsilon$,
 #   otherwise exploit the best known machine. Balances the 2 extremes:
 #   $\epsilon$ controls how much exploration is kept
-#
-# **Implementation**: `utils.cell2_exploration_vs_exploitation()`
 
-# %%
-hintros.print_obj_info(utils.cell2_exploration_vs_exploitation)
+# %% [markdown]
+# **Description**
+# - Inputs
+#   - `random seed`: seed for the hidden machine rewards
+#   - `number of coins`: number of coins each strategy plays
+#   - `exploration probability`: $\epsilon$ for the balanced strategy
+#
+# - Panels
+#   - `left`: cumulative reward over time for each of the 3
+#     strategies
 
 # %%
 utils.cell2_exploration_vs_exploitation()
-
-# %% [markdown]
-# **Usage**
-# - Inputs
-#   - **`random seed`**: seed for the hidden machine rewards
-#   - **`number of coins`**: number of coins each strategy plays
-#   - **`exploration probability`**: $\epsilon$ for the balanced strategy
-#
-# - Panels
-#   - **`left`**: cumulative reward over time for each of the 3
-#     strategies
 
 # %% [markdown]
 # **Guided usage**
@@ -167,37 +171,38 @@ utils.cell2_exploration_vs_exploitation()
 #   - Observe the balanced strategy's curve approaches pure exploitation
 
 # %% [markdown]
+# **Implementation** `utils.cell2_exploration_vs_exploitation()`
+
+# %%
+hintros.print_obj_info(utils.cell2_exploration_vs_exploitation)
+
+# %% [markdown]
 # # Part 3: Greedy Algorithm Failure
 
 # %% [markdown]
 # ## Cell 3.1: Watching greedy get stuck
 #
-# **Goal**:
+# **Goal**
 # - See the greedy algorithm get permanently stuck on a suboptimal arm
 # - Understand why pure exploitation is not enough
-#
-# **Implementation**: `utils.cell3_greedy_algorithm_failure()`
 
-# %%
-hintros.print_obj_info(utils.cell3_greedy_algorithm_failure)
+# %% [markdown]
+# **Description**
+# - Inputs
+#   - `random seed`: seed for the hidden machine rewards and pulls
+#   - `number of coins`: number of coins to play
+#   - `Run Greedy Algorithm`: replay with the current settings
+#
+# - Panels
+#   - `Pull timeline`: which machine was pulled at each round and the
+#     reward it returned, color-coded by machine
+#   - `Empirical mean estimates`: empirical mean of each machine over
+#     time, with the (usually hidden) true means shown as dotted lines
+#   - `Comments`: current seed, pull counts, and whether greedy got
+#     stuck
 
 # %%
 utils.cell3_greedy_algorithm_failure()
-
-# %% [markdown]
-# **Usage**
-# - Inputs
-#   - **`random seed`**: seed for the hidden machine rewards and pulls
-#   - **`number of coins`**: number of coins to play
-#   - **`Run Greedy Algorithm`**: replay with the current settings
-#
-# - Panels
-#   - **`Pull timeline`**: which machine was pulled at each round and the
-#     reward it returned, color-coded by machine
-#   - **`Empirical mean estimates`**: empirical mean of each machine over
-#     time, with the (usually hidden) true means shown as dotted lines
-#   - **`Comments`**: current seed, pull counts, and whether greedy got
-#     stuck
 
 # %% [markdown]
 # **Guided usage**
@@ -213,38 +218,39 @@ utils.cell3_greedy_algorithm_failure()
 #     luck
 
 # %% [markdown]
+# **Implementation** `utils.cell3_greedy_algorithm_failure()`
+
+# %%
+hintros.print_obj_info(utils.cell3_greedy_algorithm_failure)
+
+# %% [markdown]
 # # Part 4: Epsilon-Greedy Algorithm
 
 # %% [markdown]
 # ## Cell 4.1: Fixing greedy with a little exploration
 #
-# **Goal**:
+# **Goal**
 # - See how a small exploration probability $\epsilon$ prevents the
 #   "stuck forever" failure of pure greedy from Part 3
-#
-# **Implementation**: `utils.cell4_epsilon_greedy()`
 
-# %%
-hintros.print_obj_info(utils.cell4_epsilon_greedy)
+# %% [markdown]
+# **Description**
+# - Inputs
+#   - `random seed`: seed for the hidden machine rewards and pulls
+#   - `number of coins`: number of coins to play
+#   - `exploration probability`: $\epsilon$
+#   - `Run Epsilon-Greedy`: replay with the current settings
+#
+# - Panels
+#   - `Pull timeline`: pulls color-coded by decision type
+#     (gray=init, blue=explore, green=exploit)
+#   - `Pull counts`: number of times each machine was pulled
+#   - `Cumulative reward`: total reward earned over time
+#   - `Comments`: current seed, epsilon, decision counts, pull
+#     counts
 
 # %%
 utils.cell4_epsilon_greedy()
-
-# %% [markdown]
-# **Usage**
-# - Inputs
-#   - **`random seed`**: seed for the hidden machine rewards and pulls
-#   - **`number of coins`**: number of coins to play
-#   - **`exploration probability`**: $\epsilon$
-#   - **`Run Epsilon-Greedy`**: replay with the current settings
-#
-# - Panels
-#   - **`Pull timeline`**: pulls color-coded by decision type
-#     (gray=init, blue=explore, green=exploit)
-#   - **`Pull counts`**: number of times each machine was pulled
-#   - **`Cumulative reward`**: total reward earned over time
-#   - **`Comments`**: current seed, epsilon, decision counts, pull
-#     counts
 
 # %% [markdown]
 # **Guided usage**
@@ -260,39 +266,40 @@ utils.cell4_epsilon_greedy()
 #     exploiting less
 
 # %% [markdown]
+# **Implementation** `utils.cell4_epsilon_greedy()`
+
+# %%
+hintros.print_obj_info(utils.cell4_epsilon_greedy)
+
+# %% [markdown]
 # # Part 5: Confidence Intervals for Each Arm
 
 # %% [markdown]
 # ## Cell 5.1: Quantifying uncertainty per arm
 #
-# **Goal**:
+# **Goal**
 # - Introduce confidence bounds and uncertainty quantification for the
 #   empirical mean of each arm
-#
-# **Implementation**: `utils.cell5_confidence_intervals()`
 
-# %%
-hintros.print_obj_info(utils.cell5_confidence_intervals)
+# %% [markdown]
+# **Description**
+# - Inputs
+#   - `random seed`: seed for the pulls
+#   - `pulls per machine`: number of pulls $N$ per machine
+#   - `confidence`: confidence level (e.g., 90%, 95%, 99%)
+#   - `Show True Means`: reveal the hidden $\mu_i$ as dotted lines
+#
+# - Panels
+#   - `Empirical mean with CI`: bar chart of empirical mean per
+#     machine with a Hoeffding confidence-interval error bar
+#   - `CI half-width vs N`: theoretical curve of how the half-width
+#     shrinks as the number of pulls grows, with a marker at the current
+#     $N$
+#   - `Comments`: current seed, $N$, confidence level, and numeric CI
+#     bounds
 
 # %%
 utils.cell5_confidence_intervals()
-
-# %% [markdown]
-# **Usage**
-# - Inputs
-#   - **`random seed`**: seed for the pulls
-#   - **`pulls per machine`**: number of pulls $N$ per machine
-#   - **`confidence`**: confidence level (e.g., 90%, 95%, 99%)
-#   - **`Show True Means`**: reveal the hidden $\mu_i$ as dotted lines
-#
-# - Panels
-#   - **`Empirical mean with CI`**: bar chart of empirical mean per
-#     machine with a Hoeffding confidence-interval error bar
-#   - **`CI half-width vs N`**: theoretical curve of how the half-width
-#     shrinks as the number of pulls grows, with a marker at the current
-#     $N$
-#   - **`Comments`**: current seed, $N$, confidence level, and numeric CI
-#     bounds
 
 # %% [markdown]
 # **Guided usage**
@@ -308,35 +315,36 @@ utils.cell5_confidence_intervals()
 #     bonus" used by UCB in Part 6
 
 # %% [markdown]
+# **Implementation** `utils.cell5_confidence_intervals()`
+
+# %%
+hintros.print_obj_info(utils.cell5_confidence_intervals)
+
+# %% [markdown]
 # # Part 6: Upper Confidence Bound (UCB) Intuition
 
 # %% [markdown]
 # ## Cell 6.1: UCB as mean plus a bonus
 #
-# **Goal**:
+# **Goal**
 # - See the UCB index as empirical mean plus an exploration bonus
 # - Build intuition for why UCB can prefer a machine with a lower
 #   empirical mean if it has been pulled fewer times
-#
-# **Implementation**: `utils.cell6_ucb_intuition()`
 
-# %%
-hintros.print_obj_info(utils.cell6_ucb_intuition)
+# %% [markdown]
+# **Description**
+# - Inputs
+#   - `current round`: $t$, the round used to compute every bonus
+#
+# - Panels
+#   - `UCB index`: stacked bar chart with empirical mean (blue)
+#     stacked with the exploration bonus (orange); the machine with the
+#     highest total (marked `*`) would be pulled next
+#   - `Comments`: current $t$, and each machine's $N_i$, mean,
+#     bonus, and UCB index
 
 # %%
 utils.cell6_ucb_intuition()
-
-# %% [markdown]
-# **Usage**
-# - Inputs
-#   - **`current round`**: $t$, the round used to compute every bonus
-#
-# - Panels
-#   - **`UCB index`**: stacked bar chart with empirical mean (blue)
-#     stacked with the exploration bonus (orange); the machine with the
-#     highest total (marked `*`) would be pulled next
-#   - **`Comments`**: current $t$, and each machine's $N_i$, mean,
-#     bonus, and UCB index
 
 # %% [markdown]
 # **Guided usage**
@@ -349,35 +357,36 @@ utils.cell6_ucb_intuition()
 #     for all arms regardless of which one is pulled
 
 # %% [markdown]
+# **Implementation** `utils.cell6_ucb_intuition()`
+
+# %%
+hintros.print_obj_info(utils.cell6_ucb_intuition)
+
+# %% [markdown]
 # # Part 7: UCB Algorithm Simulation
 
 # %% [markdown]
 # ## Cell 7.1: Running UCB1 end-to-end
 #
-# **Goal**:
+# **Goal**
 # - Watch UCB1 run end-to-end on 4 arms and converge to the best one
-#
-# **Implementation**: `utils.cell7_ucb_simulation()`
 
-# %%
-hintros.print_obj_info(utils.cell7_ucb_simulation)
+# %% [markdown]
+# **Description**
+# - Inputs
+#   - `random seed`: seed for the hidden means and pulls
+#   - `time horizon`: $T$, number of rounds to simulate
+#   - `Run UCB Algorithm`: replay with the current settings
+#
+# - Panels
+#   - `Pull timeline`: which machine was pulled at each round
+#   - `Pull counts over time`: $N_i(t)$ for each machine as the run
+#     progresses
+#   - `Cumulative regret`: $L_t$ over time
+#   - `Comments`: pull counts, optimal arm, and final regret
 
 # %%
 utils.cell7_ucb_simulation()
-
-# %% [markdown]
-# **Usage**
-# - Inputs
-#   - **`random seed`**: seed for the hidden means and pulls
-#   - **`time horizon`**: $T$, number of rounds to simulate
-#   - **`Run UCB Algorithm`**: replay with the current settings
-#
-# - Panels
-#   - **`Pull timeline`**: which machine was pulled at each round
-#   - **`Pull counts over time`**: $N_i(t)$ for each machine as the run
-#     progresses
-#   - **`Cumulative regret`**: $L_t$ over time
-#   - **`Comments`**: pull counts, optimal arm, and final regret
 
 # %% [markdown]
 # **Guided usage**
@@ -392,35 +401,36 @@ utils.cell7_ucb_simulation()
 #     slowly than the optimal arm's
 
 # %% [markdown]
+# **Implementation** `utils.cell7_ucb_simulation()`
+
+# %%
+hintros.print_obj_info(utils.cell7_ucb_simulation)
+
+# %% [markdown]
 # # Part 8: UCB Exploration Bonus Decay
 
 # %% [markdown]
 # ## Cell 8.1: Isolating the bonus term
 #
-# **Goal**:
+# **Goal**
 # - Isolate how the UCB exploration bonus $\sqrt{2 \log(t) / N_i}$
 #   depends on $N_i$ alone
-#
-# **Implementation**: `utils.cell8_ucb_bonus_decay()`
-
-# %%
-hintros.print_obj_info(utils.cell8_ucb_bonus_decay)
-
-# %%
-utils.cell8_ucb_bonus_decay()
 
 # %% [markdown]
-# **Usage**
+# **Description**
 # - Inputs
-#   - **`current round`**: $t$, fixed while `pulls of arm i` varies
-#   - **`pulls of arm i`**: $N_i$, the number of pulls of the arm under
+#   - `current round`: $t$, fixed while `pulls of arm i` varies
+#   - `pulls of arm i`: $N_i$, the number of pulls of the arm under
 #     inspection
 #
 # - Panels
-#   - **`Bonus vs N_i`**: curve of the exploration bonus as a function
+#   - `Bonus vs N_i`: curve of the exploration bonus as a function
 #     of the number of pulls, at a fixed round $t$, with a marker at the
 #     current $N_i$
-#   - **`Comments`**: current $t$, $N_i$, and the resulting bonus value
+#   - `Comments`: current $t$, $N_i$, and the resulting bonus value
+
+# %%
+utils.cell8_ucb_bonus_decay()
 
 # %% [markdown]
 # **Guided usage**
@@ -432,39 +442,40 @@ utils.cell8_ucb_bonus_decay()
 #     but $N_i$ dominates the shape of the decay
 
 # %% [markdown]
+# **Implementation** `utils.cell8_ucb_bonus_decay()`
+
+# %%
+hintros.print_obj_info(utils.cell8_ucb_bonus_decay)
+
+# %% [markdown]
 # # Part 9: Regret Accumulation
 
 # %% [markdown]
 # ## Cell 9.1: Per-step vs cumulative regret
 #
-# **Goal**:
+# **Goal**
 # - Visualize how per-step and cumulative regret accumulate for a chosen
 #   algorithm
-#
-# **Implementation**: `utils.cell9_regret_accumulation()`
 
-# %%
-hintros.print_obj_info(utils.cell9_regret_accumulation)
+# %% [markdown]
+# **Description**
+# - Inputs
+#   - `algorithm`: Random, Greedy, Epsilon-Greedy, or UCB
+#   - `random seed`: seed for the hidden means and pulls
+#   - `time horizon`: $T$, number of rounds to simulate
+#   - `Run Algorithm`: replay with the current settings
+#
+# - Panels
+#   - `Per-step regret`: bar chart of instantaneous regret
+#     $\ell_t = \mu^* - \mu_{A_t}$ at every round, colored green when
+#     the optimal arm was chosen
+#   - `Cumulative regret`: line plot of
+#     $L_t = \sum_{\tau \le t} \ell_\tau$
+#   - `Comments`: algorithm, optimal-arm pull count, and final
+#     regret
 
 # %%
 utils.cell9_regret_accumulation()
-
-# %% [markdown]
-# **Usage**
-# - Inputs
-#   - **`algorithm`**: Random, Greedy, Epsilon-Greedy, or UCB
-#   - **`random seed`**: seed for the hidden means and pulls
-#   - **`time horizon`**: $T$, number of rounds to simulate
-#   - **`Run Algorithm`**: replay with the current settings
-#
-# - Panels
-#   - **`Per-step regret`**: bar chart of instantaneous regret
-#     $\ell_t = \mu^* - \mu_{A_t}$ at every round, colored green when
-#     the optimal arm was chosen
-#   - **`Cumulative regret`**: line plot of
-#     $L_t = \sum_{\tau \le t} \ell_\tau$
-#   - **`Comments`**: algorithm, optimal-arm pull count, and final
-#     regret
 
 # %% [markdown]
 # **Guided usage**
@@ -478,37 +489,38 @@ utils.cell9_regret_accumulation()
 #   - Compare how differently each one's cumulative regret curve bends
 
 # %% [markdown]
+# **Implementation** `utils.cell9_regret_accumulation()`
+
+# %%
+hintros.print_obj_info(utils.cell9_regret_accumulation)
+
+# %% [markdown]
 # # Part 10: Comparing Algorithms: Regret Curves
 
 # %% [markdown]
 # ## Cell 10.1: Regret growth rate across algorithms
 #
-# **Goal**:
+# **Goal**
 # - Compare the regret growth rate of Random, Greedy, Epsilon-Greedy,
 #   UCB, and Thompson Sampling on the same log-t axis
-#
-# **Implementation**: `utils.cell10_regret_comparison()`
 
-# %%
-hintros.print_obj_info(utils.cell10_regret_comparison)
+# %% [markdown]
+# **Description**
+# - Inputs
+#   - `base random seed`: seed shared across the trials being
+#     averaged
+#   - `number of arms`: $K$
+#   - `T (time horizon)`: given as $\log_2(T)$
+#   - `Run Comparison`: replay with the current settings
+#
+# - Panels
+#   - `Regret curves`: mean cumulative regret (averaged over a few
+#     trials) for each selected algorithm, log scale on the round axis
+#   - `Comments`: final regret for each selected algorithm, with its
+#     theoretical growth rate
 
 # %%
 utils.cell10_regret_comparison()
-
-# %% [markdown]
-# **Usage**
-# - Inputs
-#   - **`base random seed`**: seed shared across the trials being
-#     averaged
-#   - **`number of arms`**: $K$
-#   - **`T (time horizon)`**: given as $\log_2(T)$
-#   - **`Run Comparison`**: replay with the current settings
-#
-# - Panels
-#   - **`Regret curves`**: mean cumulative regret (averaged over a few
-#     trials) for each selected algorithm, log scale on the round axis
-#   - **`Comments`**: final regret for each selected algorithm, with its
-#     theoretical growth rate
 
 # %% [markdown]
 # **Guided usage**
@@ -524,38 +536,39 @@ utils.cell10_regret_comparison()
 #     degrade much more gracefully
 
 # %% [markdown]
+# **Implementation** `utils.cell10_regret_comparison()`
+
+# %%
+hintros.print_obj_info(utils.cell10_regret_comparison)
+
+# %% [markdown]
 # # Part 11: Bayesian Bandits: Prior and Posterior
 
 # %% [markdown]
 # ## Cell 11.1: Updating a belief with data
 #
-# **Goal**:
+# **Goal**
 # - Introduce Bayesian inference for bandits: start from a prior belief
 #   and update it with observed data
-#
-# **Implementation**: `utils.cell11_bayesian_prior_posterior()`
-
-# %%
-hintros.print_obj_info(utils.cell11_bayesian_prior_posterior)
-
-# %%
-utils.cell11_bayesian_prior_posterior()
 
 # %% [markdown]
-# **Usage**
+# **Description**
 # - Inputs
-#   - **`random seed`**: seed for the simulated pulls
-#   - **`prior alpha`**, **`prior beta`**: the Beta prior's parameters
-#   - **`Pull Arm`**: simulate one more pull and update the posterior
-#   - **`Reset`**: clear pulls and return to the prior
+#   - `random seed`: seed for the simulated pulls
+#   - `prior alpha`, `prior beta`: the Beta prior's parameters
+#   - `Pull Arm`: simulate one more pull and update the posterior
+#   - `Reset`: clear pulls and return to the prior
 #
 # - Panels
-#   - **`Prior vs posterior`**: prior $\text{Beta}(\alpha, \beta)$
+#   - `Prior vs posterior`: prior $\text{Beta}(\alpha, \beta)$
 #     (dotted) and posterior $\text{Beta}(\alpha+s, \beta+f)$ (solid,
 #     shaded) probability density over the unknown success probability
 #     $\mu$
-#   - **`Comments`**: successes $s$, failures $f$, and posterior
+#   - `Comments`: successes $s$, failures $f$, and posterior
 #     mean/variance
+
+# %%
+utils.cell11_bayesian_prior_posterior()
 
 # %% [markdown]
 # **Guided usage**
@@ -569,39 +582,40 @@ utils.cell11_bayesian_prior_posterior()
 #     prior belief
 
 # %% [markdown]
+# **Implementation** `utils.cell11_bayesian_prior_posterior()`
+
+# %%
+hintros.print_obj_info(utils.cell11_bayesian_prior_posterior)
+
+# %% [markdown]
 # # Part 12: Thompson Sampling Algorithm
 
 # %% [markdown]
 # ## Cell 12.1: Sampling from each arm's posterior
 #
-# **Goal**:
+# **Goal**
 # - See Thompson Sampling sample one $\theta_i$ from each arm's
 #   posterior and pull the arm with the highest sample
-#
-# **Implementation**: `utils.cell12_thompson_sampling()`
 
-# %%
-hintros.print_obj_info(utils.cell12_thompson_sampling)
+# %% [markdown]
+# **Description**
+# - Inputs
+#   - `random seed`: seed for the hidden means and pulls
+#   - `number of arms`, `number of rounds`: size of the
+#     simulated run
+#   - `round to inspect`: which round's posteriors and samples to
+#     display
+#   - `Run Thompson Sampling`: replay with the current settings
+#
+# - Panels
+#   - `Posterior curves`: one Beta posterior density per arm at the
+#     chosen round, with a dot at each arm's sampled $\theta_i$ (a star
+#     marks the arm that was actually pulled)
+#   - `Comments`: each arm's posterior parameters, sampled value,
+#     and the round's selection
 
 # %%
 utils.cell12_thompson_sampling()
-
-# %% [markdown]
-# **Usage**
-# - Inputs
-#   - **`random seed`**: seed for the hidden means and pulls
-#   - **`number of arms`**, **`number of rounds`**: size of the
-#     simulated run
-#   - **`round to inspect`**: which round's posteriors and samples to
-#     display
-#   - **`Run Thompson Sampling`**: replay with the current settings
-#
-# - Panels
-#   - **`Posterior curves`**: one Beta posterior density per arm at the
-#     chosen round, with a dot at each arm's sampled $\theta_i$ (a star
-#     marks the arm that was actually pulled)
-#   - **`Comments`**: each arm's posterior parameters, sampled value,
-#     and the round's selection
 
 # %% [markdown]
 # **Guided usage**
@@ -615,40 +629,41 @@ utils.cell12_thompson_sampling()
 #     increasingly around the true best arm
 
 # %% [markdown]
+# **Implementation** `utils.cell12_thompson_sampling()`
+
+# %%
+hintros.print_obj_info(utils.cell12_thompson_sampling)
+
+# %% [markdown]
 # # Part 13: Thompson Sampling: Probability Matching
 
 # %% [markdown]
 # ## Cell 13.1: Verifying probability matching
 #
-# **Goal**:
+# **Goal**
 # - Verify that Thompson Sampling selects each arm with probability
 #   exactly equal to the probability that arm is optimal given the data
-#
-# **Implementation**: `utils.cell13_probability_matching()`
-
-# %%
-hintros.print_obj_info(utils.cell13_probability_matching)
-
-# %%
-utils.cell13_probability_matching()
 
 # %% [markdown]
-# **Usage**
+# **Description**
 # - Inputs
-#   - **`random seed`**: seed for the simulated pulls
-#   - **`pulls per arm (data)`**: how much data each arm's posterior is
+#   - `random seed`: seed for the simulated pulls
+#   - `pulls per arm (data)`: how much data each arm's posterior is
 #     conditioned on
-#   - **`Run 1000 Steps`**: resample 1000 more Thompson Sampling draws
+#   - `Run 1000 Steps`: resample 1000 more Thompson Sampling draws
 #     from the fixed posterior
 #
 # - Panels
-#   - **`Theoretical Pr(optimal)`**: bar chart of
+#   - `Theoretical Pr(optimal)`: bar chart of
 #     $\Pr(i = i^* \mid \mathcal{D})$ for each arm, estimated with a
 #     large number of posterior draws
-#   - **`Empirical frequency`**: bar chart of how often each arm wins
+#   - `Empirical frequency`: bar chart of how often each arm wins
 #     when sampling 1000 more times from the same fixed posterior
-#   - **`Comments`**: posterior parameters and the theoretical vs
+#   - `Comments`: posterior parameters and the theoretical vs
 #     empirical numbers
+
+# %%
+utils.cell13_probability_matching()
 
 # %% [markdown]
 # **Guided usage**
@@ -663,40 +678,41 @@ utils.cell13_probability_matching()
 #     sharpens the posterior toward the truly best arm
 
 # %% [markdown]
+# **Implementation** `utils.cell13_probability_matching()`
+
+# %%
+hintros.print_obj_info(utils.cell13_probability_matching)
+
+# %% [markdown]
 # # Part 14: UCB vs Thompson Sampling Comparison
 
 # %% [markdown]
 # ## Cell 14.1: Head-to-head on the same environment
 #
-# **Goal**:
+# **Goal**
 # - Compare the 2 order-optimal algorithms empirically on the same
 #   bandit environment
-#
-# **Implementation**: `utils.cell14_ucb_vs_thompson()`
 
-# %%
-hintros.print_obj_info(utils.cell14_ucb_vs_thompson)
+# %% [markdown]
+# **Description**
+# - Inputs
+#   - `random seed`: seed for the hidden means and pulls
+#   - `number of arms`: $K$
+#   - `suboptimality gap`: $\Delta$ between the best and next-best
+#     arm
+#   - `time horizon`: $T$
+#   - `Run Both Algorithms`: replay with the current settings
+#
+# - Panels
+#   - `Regret curves`: cumulative regret of UCB and Thompson
+#     Sampling overlaid
+#   - `Pull counts`: grouped bar chart of pull counts per arm for
+#     each algorithm
+#   - `Comments`: setup ($K$, $\Delta$, $T$) and each algorithm's
+#     final regret
 
 # %%
 utils.cell14_ucb_vs_thompson()
-
-# %% [markdown]
-# **Usage**
-# - Inputs
-#   - **`random seed`**: seed for the hidden means and pulls
-#   - **`number of arms`**: $K$
-#   - **`suboptimality gap`**: $\Delta$ between the best and next-best
-#     arm
-#   - **`time horizon`**: $T$
-#   - **`Run Both Algorithms`**: replay with the current settings
-#
-# - Panels
-#   - **`Regret curves`**: cumulative regret of UCB and Thompson
-#     Sampling overlaid
-#   - **`Pull counts`**: grouped bar chart of pull counts per arm for
-#     each algorithm
-#   - **`Comments`**: setup ($K$, $\Delta$, $T$) and each algorithm's
-#     final regret
 
 # %% [markdown]
 # **Guided usage**
@@ -710,3 +726,9 @@ utils.cell14_ucb_vs_thompson()
 #   - Observe both algorithms need more pulls of the suboptimal arms
 #     before locking onto the best one, since the arms are harder to
 #     distinguish
+
+# %% [markdown]
+# **Implementation** `utils.cell14_ucb_vs_thompson()`
+
+# %%
+hintros.print_obj_info(utils.cell14_ucb_vs_thompson)

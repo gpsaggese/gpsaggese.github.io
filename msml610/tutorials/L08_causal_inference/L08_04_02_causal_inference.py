@@ -15,9 +15,14 @@
 
 # %% [markdown]
 # # Causal inference
-
-# %% [markdown]
-# ## Imports
+#
+# - This notebook explores causal graphs (DAGs) to show how graph structure
+#   determines causal roles and which variables are statistically dependent
+#   when others are observed
+# - The pedagogical arc:
+#   - Causal roles in a DAG: confounder, mediator, and collider
+#   - D-separation basics on a running example DAG, queried with `pgmpy`
+#   - An interactive d-separation explorer with a conditioning set
 
 # %%
 # %load_ext autoreload
@@ -25,26 +30,25 @@
 
 import logging
 
-import matplotlib.pyplot as plt
 import networkx as nx
 import pgmpy.base as pgmpy_base
-import seaborn as sns
-
-# Set plotting style.
-# TODO(gp): Is this needed?
-sns.set_style("whitegrid")
-plt.rcParams["figure.figsize"] = (12, 6)
 
 # %%
 import helpers.hintrospection as hintros
-import helpers.htutorial as ut
-import L08_04_02_causal_inference_utils as mtl0cireout
+import helpers.hnotebook as hnotebook
 
-ut.config_notebook()
+import L08_04_02_causal_inference_utils as utils
 
-# Initialize logger.
-logging.basicConfig(level=logging.INFO)
+# Initialize notebook configuration and logging.
+hnotebook.config_notebook()
 _LOG = logging.getLogger(__name__)
+utils.init_loggers(_LOG)
+
+# Convert `display` into `print()` when running outside IPython.
+try:
+    from IPython.display import display
+except ImportError:
+    display = print  # type: ignore
 
 # %% [markdown]
 # # Part 1: Causal Roles
@@ -52,29 +56,19 @@ _LOG = logging.getLogger(__name__)
 # %% [markdown]
 # ## Cell 1.1: Exploring causal roles in a DAG
 #
-# **Goal**:
+# **Goal**
 # - Visualize which nodes in a DAG play the role of confounder, mediator, or
 #   collider relative to a selected treatment-outcome pair
 # - Build intuition for how graph structure determines causal relationships
-#
-# **Implementation**: `mtl0cireout.cell1_causal_roles_explorer()`
-# - `_classify_causal_roles()` labels each node as a confounder (common
-#   ancestor of treatment and outcome), mediator (on a directed path from
-#   treatment to outcome), or collider (both path-neighbors point into it)
-# - `_plot_causal_roles()` colors the DAG: treatment green, outcome blue,
-#   confounders orange, mediators purple, colliders red, other light blue
-
-# %%
-hintros.print_obj_info(mtl0cireout.cell1_causal_roles_explorer)
 
 # %% [markdown]
-# **Usage**
+# **Description**
 # - Inputs
-#   - **`Graph`**: select a predefined causal graph (Confounder, Mediator,
+#   - `Graph`: select a predefined causal graph (Confounder, Mediator,
 #     Collider, etc.)
-#   - **`Treatment`**: the treatment node
-#   - **`Outcome`**: the outcome node
-#   - **`Show`**: redraw the DAG for the current selection
+#   - `Treatment`: the treatment node
+#   - `Outcome`: the outcome node
+#   - `Show`: redraw the DAG for the current selection
 #
 # - Panels
 #   - the DAG, color-coded by causal role, with a legend naming the
@@ -82,7 +76,7 @@ hintros.print_obj_info(mtl0cireout.cell1_causal_roles_explorer)
 #     pair
 
 # %%
-mtl0cireout.cell1_causal_roles_explorer()
+utils.cell1_causal_roles_explorer()
 
 # %% [markdown]
 # **Guided usage**
@@ -95,16 +89,27 @@ mtl0cireout.cell1_causal_roles_explorer()
 #     different roles depending on the treatment-outcome pair chosen
 
 # %% [markdown]
+# **Implementation** `utils.cell1_causal_roles_explorer()`
+# - `_classify_causal_roles()` labels each node as a confounder (common
+#   ancestor of treatment and outcome), mediator (on a directed path from
+#   treatment to outcome), or collider (both path-neighbors point into it)
+# - `_plot_causal_roles()` colors the DAG: treatment green, outcome blue,
+#   confounders orange, mediators purple, colliders red, other light blue
+
+# %%
+hintros.print_obj_info(utils.cell1_causal_roles_explorer)
+
+# %% [markdown]
 # # Part 2: D-Separation Basics
 
 # %% [markdown]
 # ## Cell 2.1: Building and visualizing a DAG
 #
-# **Goal**:
+# **Goal**
 # - Build a specific DAG to use as a running example for querying
 #   d-separation properties by hand
 #
-# **Implementation**: `mtl0cireout.plot_graph_highlight(model)`
+# **Implementation** `utils.plot_graph_highlight(model)`
 
 # %%
 model = nx.DiGraph(
@@ -118,16 +123,16 @@ model = nx.DiGraph(
     ]
 )
 
-mtl0cireout.plot_graph_highlight(model)
+utils.plot_graph_highlight(model)
 
 # %% [markdown]
 # ## Cell 2.2: Querying d-separation with pgmpy
 #
-# **Goal**:
+# **Goal**
 # - Demonstrate how conditioning on a node can open or close paths between
 #   2 other nodes, by querying `pgmpy`'s exact d-separation check
 #
-# **Implementation**: `dag.is_dconnected(node1, node2, observed=...)`
+# **Implementation** `dag.is_dconnected(node1, node2, observed=...)`
 # - `D` and `C` are connected only through the collider `D -> A <- G`:
 #   unobserved, the collider blocks the path; observing `A`, or its
 #   descendant `G`, opens it
@@ -158,27 +163,19 @@ print("G, F dependent (given E):", dag.is_dconnected("G", "F", observed=["E"]))
 # %% [markdown]
 # ## Cell 3.1: Exploring d-separation interactively
 #
-# **Goal**:
+# **Goal**
 # - Interactively explore d-separation for any pair of nodes in the DAG
 #   built in Part 2
 # - See how adding nodes to the conditioning set opens or closes paths
-#
-# **Implementation**: `mtl0cireout.cell3_d_separation_explorer(model, dag)`
-# - Plots the reachable subgraph containing the selected nodes and their
-#   descendants, then reports `dag.is_dconnected()` for the current
-#   selection
-
-# %%
-hintros.print_obj_info(mtl0cireout.cell3_d_separation_explorer)
 
 # %% [markdown]
-# **Usage**
+# **Description**
 # - Inputs
-#   - **`Node 1`**: first node to query
-#   - **`Node 2`**: second node to query
-#   - **`Conditioning`**: set of nodes to condition on (shift-click to
+#   - `Node 1`: first node to query
+#   - `Node 2`: second node to query
+#   - `Conditioning`: set of nodes to condition on (shift-click to
 #     select multiple)
-#   - **`Run`**: recompute the plot and the d-separation result
+#   - `Run`: recompute the plot and the d-separation result
 #
 # - Panels
 #   - the reachable subgraph, with node1 green, node2 blue, conditioning
@@ -187,7 +184,7 @@ hintros.print_obj_info(mtl0cireout.cell3_d_separation_explorer)
 #     current conditioning set
 
 # %%
-mtl0cireout.cell3_d_separation_explorer(
+utils.cell3_d_separation_explorer(
     model,
     dag,
 )
@@ -203,3 +200,12 @@ mtl0cireout.cell3_d_separation_explorer(
 # - Set `Node 1=G`, `Node 2=D`, with `A` in `Conditioning`
 #   - Observe they become independent: conditioning on the mediator `A`
 #     blocks the causal path from `D` to `G`
+
+# %% [markdown]
+# **Implementation** `utils.cell3_d_separation_explorer(model, dag)`
+# - Plots the reachable subgraph containing the selected nodes and their
+#   descendants, then reports `dag.is_dconnected()` for the current
+#   selection
+
+# %%
+hintros.print_obj_info(utils.cell3_d_separation_explorer)

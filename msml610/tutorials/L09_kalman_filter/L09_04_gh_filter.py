@@ -15,9 +15,16 @@
 
 # %% [markdown]
 # # g-h filter
-
-# %% [markdown]
-# ## Imports
+#
+# - This notebook builds a g-h filter, which blends a model-based prediction
+#   with each noisy measurement, first on a body-weight example and then on
+#   noisy linear and non-linear data
+# - The pedagogical arc:
+#   - Ground truth vs measurements, and the effect of a known, a wrong, and a
+#     learned gain rate
+#   - Noisy linear data with a correct initial guess, a wrong initial guess,
+#     and extreme noise
+#   - Non-linear noisy data, and the effect of varying `g` and `h`
 
 # %%
 # %load_ext autoreload
@@ -26,20 +33,25 @@
 import logging
 
 import numpy as np
-from IPython.display import display
-
-import helpers.htutorial as ut
-
-ut.config_notebook()
-
-# Initialize logger.
-logging.basicConfig(level=logging.INFO)
-_LOG = logging.getLogger(__name__)
 
 # %%
 import helpers.hio as hio
-import L09_04_gh_filter_utils as time_ut
+import helpers.hnotebook as hnotebook
 
+import L09_04_gh_filter_utils as utils
+
+# Initialize notebook configuration and logging.
+hnotebook.config_notebook()
+_LOG = logging.getLogger(__name__)
+utils.init_loggers(_LOG)
+
+# Convert `display` into `print()` when running outside IPython.
+try:
+    from IPython.display import display
+except ImportError:
+    display = print  # type: ignore
+
+# %%
 dst_dir = "figures"
 hio.create_dir(dst_dir, incremental=True)
 # !cp msml610/tutorials/figures/*.png msml610/lectures_source/figures
@@ -50,12 +62,12 @@ hio.create_dir(dst_dir, incremental=True)
 # %% [markdown]
 # ## Cell 1.1: Ground truth vs measurements
 #
-# **Goal**:
+# **Goal**
 # - Look at a weight-measurement series against the (in practice unknown)
 #   ground truth, before fitting any filter to it
 #
-# **Implementation**:
-# - `time_ut.cell1_1_plot_ground_truth_and_measurements(...)`
+# **Implementation**
+# - `utils.cell1_1_plot_ground_truth_and_measurements(...)`
 
 # %%
 n_samples = 12
@@ -81,7 +93,7 @@ measured_weights = np.array(
     ]
 )
 
-df = time_ut.cell1_1_plot_ground_truth_and_measurements(
+df = utils.cell1_1_plot_ground_truth_and_measurements(
     measured_weights, ground_truth, dst_dir, "L09_04_ground_truth.png"
 )
 display(df.head())
@@ -89,11 +101,11 @@ display(df.head())
 # %% [markdown]
 # ## Cell 1.2: Knowing the gain rate
 #
-# **Goal**:
+# **Goal**
 # - Filter the measurements with the g-h filter's internal model set to
 #   the correct gain rate, and check how closely it tracks the truth
 #
-# **Implementation**: `time_ut.cell1_2_plot_gh_filter_with_known_gain_rate`
+# **Implementation** `utils.cell1_2_plot_gh_filter_with_known_gain_rate`
 # - `predict_using_gain_guess()` predicts via `weight + gain_rate *
 #   time_step`, then blends the prediction with the measurement by
 #   `weight_scale`
@@ -110,14 +122,14 @@ params = {
     "initial_weight": 160.0,
 }
 file_name = "L09_04_knowing_gain_rate.png"
-time_ut.cell1_2_plot_gh_filter_with_known_gain_rate(
+utils.cell1_2_plot_gh_filter_with_known_gain_rate(
     measured_weights, ground_truth, params, dst_dir, file_name
 )
 
 # %% [markdown]
 # ## Cell 1.3: Wrong guess of the gain rate
 #
-# **Goal**:
+# **Goal**
 # - Refit with a badly wrong gain-rate guess, to see how the filter's
 #   tracking degrades when its internal model is wrong
 
@@ -133,36 +145,32 @@ params = {
     "initial_weight": 160.0,
 }
 file_name = "L09_04_wrong_gain_rate.png"
-time_ut.cell1_3_plot_gh_filter_with_known_gain_rate(
+utils.cell1_3_plot_gh_filter_with_known_gain_rate(
     measured_weights, ground_truth, params, dst_dir, file_name
 )
 
 # %% [markdown]
 # ## Cell 1.4: Interactively exploring the gain rate
 #
-# **Goal**:
+# **Goal**
 # - Let students sweep the initial weight, blending factor, and gain rate
 #   by hand, to build intuition for how each one shapes the fit
-#
-# **Implementation**: `time_ut.cell1_4_create_interactive_gain_rate_widget()`
-
-# %%
-time_ut.cell1_4_create_interactive_gain_rate_widget(
-    measured_weights, ground_truth
-)
 
 # %% [markdown]
-# **Usage**
+# **Description**
 # - Inputs
-#   - **`weight`**: initial weight estimate
-#   - **`weight_scale`**: blending factor between prediction and
+#   - `weight`: initial weight estimate
+#   - `weight_scale`: blending factor between prediction and
 #     measurement
-#   - **`gain_rate`**: assumed rate of weight gain per time step
+#   - `gain_rate`: assumed rate of weight gain per time step
 #
 # - Panels
-#   - **`left`**: measurements, ground truth, predictions, and estimates
-#   - **`Comments`**: the current parameters, and the final estimate's
+#   - `left`: measurements, ground truth, predictions, and estimates
+#   - `Comments`: the current parameters, and the final estimate's
 #     error against the ground truth
+
+# %%
+utils.cell1_4_create_interactive_gain_rate_widget(measured_weights, ground_truth)
 
 # %% [markdown]
 # **Guided usage**
@@ -172,14 +180,17 @@ time_ut.cell1_4_create_interactive_gain_rate_widget(
 #   - Observe the estimate line converges back onto the ground truth
 
 # %% [markdown]
+# **Implementation** `utils.cell1_4_create_interactive_gain_rate_widget()`
+
+# %% [markdown]
 # ## Cell 1.5: Learning the gain rate
 #
-# **Goal**:
+# **Goal**
 # - Let the filter itself update its gain-rate guess from the residual at
 #   each step, instead of relying on a fixed guess
 #
-# **Implementation**:
-# - `time_ut.cell1_5_plot_gh_filter_with_learning_gain_rate`
+# **Implementation**
+# - `utils.cell1_5_plot_gh_filter_with_learning_gain_rate`
 # - `predict_learning_gain_rate()` updates `gain_rate` by `gain_scale *
 #   residual / time_step` at every step
 
@@ -198,7 +209,7 @@ params = {
 }
 file_name = "L09_04_learning_gain_rate.png"
 
-time_ut.cell1_5_plot_gh_filter_with_learning_gain_rate(
+utils.cell1_5_plot_gh_filter_with_learning_gain_rate(
     measured_weights, ground_truth, params, dst_dir, file_name
 )
 
@@ -208,28 +219,25 @@ time_ut.cell1_5_plot_gh_filter_with_learning_gain_rate(
 # %% [markdown]
 # ## Cell 2.1: Interactively exploring noisy linear data
 #
-# **Goal**:
+# **Goal**
 # - Let students see how the seed, sample count, and noise level shape a
 #   synthetic linear-plus-noise series, before filtering it
-#
-# **Implementation**:
-# - `time_ut.cell2_1_create_interactive_linear_noisy_data_widget()`
-
-# %%
-time_ut.cell2_1_create_interactive_linear_noisy_data_widget()
 
 # %% [markdown]
-# **Usage**
+# **Description**
 # - Inputs
-#   - **`seed`**: random seed for the noise
-#   - **`count`**: number of points to generate
-#   - **`noise_factor`**: standard deviation of the additive noise
+#   - `seed`: random seed for the noise
+#   - `count`: number of points to generate
+#   - `noise_factor`: standard deviation of the additive noise
 #
 # - Panels
-#   - **`left`**: the noisy measurements against the noiseless ground
+#   - `left`: the noisy measurements against the noiseless ground
 #     truth
-#   - **`Comments`**: the current parameters, and the residual mean/std
+#   - `Comments`: the current parameters, and the residual mean/std
 #     dev between measurements and ground truth
+
+# %%
+utils.cell2_1_create_interactive_linear_noisy_data_widget()
 
 # %% [markdown]
 # **Guided usage**
@@ -238,13 +246,17 @@ time_ut.cell2_1_create_interactive_linear_noisy_data_widget()
 #     with it
 
 # %% [markdown]
+# **Implementation**
+# - `utils.cell2_1_create_interactive_linear_noisy_data_widget()`
+
+# %% [markdown]
 # ## Cell 2.2: Correct initial guess
 #
-# **Goal**:
+# **Goal**
 # - Filter noisy data with initial guesses that match the true system, as
 #   a baseline for the wrong-guess case in Cell 2.3
 #
-# **Implementation**: `time_ut.cell2_2_plot_gh_filter_with_params(params)`
+# **Implementation** `utils.cell2_2_plot_gh_filter_with_params(params)`
 
 # %%
 # Demonstrate g-h filter with correct initial guesses.
@@ -256,12 +268,12 @@ params = {
     "g": 0.1,
     "h": 0.02,
 }
-time_ut.cell2_2_plot_gh_filter_with_params(params)
+utils.cell2_2_plot_gh_filter_with_params(params)
 
 # %% [markdown]
 # ## Cell 2.3: Wrong initial guess
 #
-# **Goal**:
+# **Goal**
 # - Refit with wrong initial guesses, to see how much the filter still
 #   recovers thanks to the correcting effect of the measurements
 
@@ -275,46 +287,43 @@ params = {
     "g": 0.2,
     "h": 0.02,
 }
-time_ut.cell2_3_plot_gh_filter_with_params(params)
+utils.cell2_3_plot_gh_filter_with_params(params)
 
 # %% [markdown]
 # ## Cell 2.4: Extreme noise
 #
-# **Goal**:
+# **Goal**
 # - Check how the filter degrades as the noise level grows far beyond
 #   what Cells 2.2/2.3 used
 #
-# **Implementation**: `time_ut.cell2_4_extreme_noise()`
+# **Implementation** `utils.cell2_4_extreme_noise()`
 
 # %%
-time_ut.cell2_4_extreme_noise()
+utils.cell2_4_extreme_noise()
 
 # %% [markdown]
 # ## Cell 2.5: Interactively exploring non-linear noisy data
 #
-# **Goal**:
+# **Goal**
 # - Let students see how adding acceleration to the generating process
 #   changes the data, since the g-h filter assumes constant velocity
-#
-# **Implementation**:
-# - `time_ut.cell2_5_create_interactive_non_linear_noisy_data_widget()`
-
-# %%
-time_ut.cell2_5_create_interactive_non_linear_noisy_data_widget()
 
 # %% [markdown]
-# **Usage**
+# **Description**
 # - Inputs
-#   - **`seed`**: random seed for the noise
-#   - **`count`**: number of points to generate
-#   - **`noise_factor`**: standard deviation of the additive noise
-#   - **`accel`**: acceleration of the underlying process
+#   - `seed`: random seed for the noise
+#   - `count`: number of points to generate
+#   - `noise_factor`: standard deviation of the additive noise
+#   - `accel`: acceleration of the underlying process
 #
 # - Panels
-#   - **`left`**: the noisy measurements against the accelerating ground
+#   - `left`: the noisy measurements against the accelerating ground
 #     truth
-#   - **`Comments`**: the current parameters, and the residual mean/std
+#   - `Comments`: the current parameters, and the residual mean/std
 #     dev between measurements and ground truth
+
+# %%
+utils.cell2_5_create_interactive_non_linear_noisy_data_widget()
 
 # %% [markdown]
 # **Guided usage**
@@ -326,79 +335,81 @@ time_ut.cell2_5_create_interactive_non_linear_noisy_data_widget()
 #     systematically lag behind it
 
 # %% [markdown]
+# **Implementation**
+# - `utils.cell2_5_create_interactive_non_linear_noisy_data_widget()`
+
+# %% [markdown]
 # ## Cell 2.6: Non-linear data with the g-h filter
 #
-# **Goal**:
+# **Goal**
 # - Apply the (constant-velocity) g-h filter to the accelerating data
 #   from Cell 2.5, to see the systematic lag predicted there
 #
-# **Implementation**: `time_ut.cell2_6_non_linear_gh_filter()`
+# **Implementation** `utils.cell2_6_non_linear_gh_filter()`
 
 # %%
-time_ut.cell2_6_non_linear_gh_filter()
+utils.cell2_6_non_linear_gh_filter()
 
 # %% [markdown]
 # ## Cell 2.7: Varying g
 #
-# **Goal**:
+# **Goal**
 # - Compare 3 values of `g` on the same noisy data, and on a step-like
 #   signal, to see the tradeoff between smoothing and responsiveness
 #
-# **Implementation**: `time_ut.cell2_7_plot_varying_g_noisy(...)`,
-# `time_ut.cell2_7_plot_varying_g_step(...)`
+# **Implementation** `utils.cell2_7_plot_varying_g_noisy(...)`,
+# `utils.cell2_7_plot_varying_g_step(...)`
 # - If `g` is smaller we follow more our model than the measurements
 # - If `g` is larger we follow more the measurements than our model
 # - If `g` is too large we follow the measurements and reject no noise
 
 # %%
-time_ut.cell2_7_plot_varying_g_noisy(dst_dir, "L09_04_varying_g1.png")
+utils.cell2_7_plot_varying_g_noisy(dst_dir, "L09_04_varying_g1.png")
 
 # %%
 # If g is large we follow more the measures than our model.
-time_ut.cell2_7_plot_varying_g_step(dst_dir, "L09_04_varying_g2.png")
+utils.cell2_7_plot_varying_g_step(dst_dir, "L09_04_varying_g2.png")
 
 # %% [markdown]
 # ## Cell 2.8: Varying h
 #
-# **Goal**:
+# **Goal**
 # - Compare 3 `(dx, h)` combinations on a ramp signal, to see how `h`
 #   trades off ringing amplitude against adaptation speed
 #
-# **Implementation**: `time_ut.cell2_8_plot_varying_h(dst_dir, ...)`
+# **Implementation** `utils.cell2_8_plot_varying_h(dst_dir, ...)`
 # - `h` affects how much we favor the measurement of $\frac{dx}{dt}$ vs
 #   our prediction
 # - If the signal is varying a lot, then we will react to the transient
 #   rapidly
 
 # %%
-time_ut.cell2_8_plot_varying_h(dst_dir, "L09_04_varying_h1.png")
+utils.cell2_8_plot_varying_h(dst_dir, "L09_04_varying_h1.png")
 
 # %% [markdown]
 # ## Cell 2.9: Interactively exploring the g-h filter
 #
-# **Goal**:
+# **Goal**
 # - Let students sweep every g-h filter parameter, plus the noise level,
 #   at once, to consolidate the intuition built in Cells 2.2-2.8
-#
-# **Implementation**: `time_ut.cell2_9_create_interactive_gh_filter_widget()`
-
-# %%
-time_ut.cell2_9_create_interactive_gh_filter_widget()
 
 # %% [markdown]
-# **Usage**
+# **Description**
 # - Inputs
-#   - **`x`**: initial state estimate
-#   - **`dx`**: initial rate-of-change estimate
-#   - **`g`**: state gain
-#   - **`h`**: rate gain
-#   - **`noise_factor`**: standard deviation of the additive noise
+#   - `x`: initial state estimate
+#   - `dx`: initial rate-of-change estimate
+#   - `g`: state gain
+#   - `h`: rate gain
+#   - `noise_factor`: standard deviation of the additive noise
 #
 # - Panels
-#   - **`left`**: ground truth, noisy measurements, and filtered
+#   - `left`: ground truth, noisy measurements, and filtered
 #     estimates
-#   - **`Comments`**: the current parameters, and the RMSE between the
+#   - `Comments`: the current parameters, and the RMSE between the
 #     estimate and the ground truth
+
+# %%
+utils.cell2_9_create_interactive_gh_filter_widget()
 
 # %% [markdown]
 # **Guided usage**
@@ -407,3 +418,6 @@ time_ut.cell2_9_create_interactive_gh_filter_widget()
 #     filter converges
 # - Raise `noise_factor` to its max
 #   - Observe the RMSE grows, and the estimate line gets visibly noisier
+
+# %% [markdown]
+# **Implementation** `utils.cell2_9_create_interactive_gh_filter_widget()`

@@ -15,27 +15,46 @@
 
 # %% [markdown]
 # # Evaluating models
-
-# %% [markdown]
-# ## Imports
+#
+# - This notebook evaluates and compares Bayesian models fit with `pymc`, using
+#   a linear and a quadratic model on the same data
+# - The pedagogical arc:
+#   - Posterior predictive check examples
+#   - Bayesian p-values for the mean, the IQR, and the entire distribution
+#   - Overfitting: in-sample vs out-of-sample fit
+#   - Predictive accuracy with WAIC and LOO
+#   - Comparing models, and averaging their predictions
 
 # %%
 # %load_ext autoreload
 # %autoreload 2
 
+import logging
+
 import arviz as az
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import pymc as pm
-import numpy as np
-import matplotlib.pyplot as plt
-from IPython.display import display
 
 # %%
+import helpers.hnotebook as hnotebook
 import helpers.htutorial as ut
-import L07_05_evaluating_models_utils as putils
 
-ut.config_notebook()
+import L07_05_evaluating_models_utils as utils
 
+# Initialize notebook configuration and logging.
+hnotebook.config_notebook()
+_LOG = logging.getLogger(__name__)
+utils.init_loggers(_LOG)
+
+# Convert `display` into `print()` when running outside IPython.
+try:
+    from IPython.display import display
+except ImportError:
+    display = print  # type: ignore
+
+# %%
 dir_name = "./L07_data"
 # !ls $dir_name
 
@@ -45,11 +64,11 @@ dir_name = "./L07_data"
 # %% [markdown]
 # ## Cell 1.1: Loading and transforming the data
 #
-# **Goal**:
+# **Goal**
 # - Load a near-linear synthetic dataset, and expand it into powers of `x`
 #   so a linear and a quadratic model can be fit on the same feature matrix
 #
-# **Implementation**:
+# **Implementation**
 # - `x_p` stacks `x**1`, `x**2`; both `x_p` and `y` are then standardized
 #   to zero mean, unit variance
 
@@ -71,7 +90,7 @@ y_c = (y - y.mean()) / y.std()
 # %% [markdown]
 # ## Cell 1.2: Visualizing the raw data
 #
-# **Goal**:
+# **Goal**
 # - Plot the (0th-order, i.e., original) standardized data before fitting
 
 # %%
@@ -83,11 +102,11 @@ ut.save_plt("Lesson07.Comparing_models.data.png")
 # %% [markdown]
 # ## Cell 1.3: Fitting the linear model
 #
-# **Goal**:
+# **Goal**
 # - Fit a linear model on the standardized data, as the baseline the
 #   quadratic model in Cell 1.4 will be compared against
 #
-# **Implementation**:
+# **Implementation**
 # - `mu = alpha + beta*x`; `idata_kwargs={"log_likelihood": True}` is
 #   needed to later compute WAIC/LOO in Part 4
 
@@ -108,11 +127,11 @@ with pm.Model() as model_l:
 # %% [markdown]
 # ## Cell 1.4: Fitting the quadratic model
 #
-# **Goal**:
+# **Goal**
 # - Fit a quadratic model on the same data, to compare against the linear
 #   fit
 #
-# **Implementation**:
+# **Implementation**
 # - `mu = alpha + beta_1*x + beta_2*x^2`, with `beta` a 2-dim vector
 
 # %%
@@ -133,7 +152,7 @@ with pm.Model() as model_p:
 # %% [markdown]
 # ## Cell 1.5: Computing the posterior mean estimates
 #
-# **Goal**:
+# **Goal**
 # - Extract the posterior mean of each model's parameters, to plug into
 #   the fitted-line formula in Cell 1.6
 
@@ -164,7 +183,7 @@ print(
 # %% [markdown]
 # ## Cell 1.6: Visualizing the fitted models
 #
-# **Goal**:
+# **Goal**
 # - Plot the data together with the linear and quadratic mean-posterior
 #   fits, to see how much the extra quadratic term changes the fit
 
@@ -183,7 +202,7 @@ ut.save_plt("Lesson07.Comparing_models.model_fit.png")
 # %% [markdown]
 # ## Cell 1.7: Posterior predictive checks
 #
-# **Goal**:
+# **Goal**
 # - Compare each model's posterior-predictive distribution against the
 #   observed data
 
@@ -203,11 +222,11 @@ ut.save_plt("Lesson07.Comparing_models.quadr_model_PPC.png")
 # %% [markdown]
 # ## Cell 2.1: Comparing Bayesian p-value for mean and IQR
 #
-# **Goal**:
+# **Goal**
 # - Compare the Bayesian p-value of the mean, and of the interquartile
 #   range, between the linear and quadratic models
 #
-# **Implementation**: `putils.iqr(x, a=-1)`
+# **Implementation** `utils.iqr(x, a=-1)`
 # - Interquartile range statistic, passed to `az.plot_bpv(t_stat=...)`
 
 # %%
@@ -223,13 +242,13 @@ axes[0].set_title("mean")
 
 # Plot the Bayesian p-value for interquartile range for both models.
 for idata, c in zip(idatas, colors):
-    az.plot_bpv(idata, kind="t_stat", t_stat=putils.iqr, ax=axes[1], color=c)
+    az.plot_bpv(idata, kind="t_stat", t_stat=utils.iqr, ax=axes[1], color=c)
 axes[1].set_title("IQR")
 
 # %% [markdown]
 # ## Cell 2.2: Comparing Bayesian p-value for the entire distribution
 #
-# **Goal**:
+# **Goal**
 # - Compare the Bayesian p-value computed over the entire distribution,
 #   rather than a single statistic
 
@@ -245,7 +264,7 @@ for idata, c in zip(idatas, colors):
 # %% [markdown]
 # ## Cell 3.1: In-sample vs out-of-sample data
 #
-# **Goal**:
+# **Goal**
 # - Look at the in-sample data (black) plus 2 extra held-out points (red),
 #   used next to show how model order affects generalization
 
@@ -262,11 +281,11 @@ ax.plot(x1, y1, "rs")
 # %% [markdown]
 # ## Cell 3.2: Fitting models of increasing order on in-sample data
 #
-# **Goal**:
+# **Goal**
 # - Fit polynomials of order 0, 1, and 5 on the in-sample data, and check
 #   their R^2 on that same data
 #
-# **Implementation**: `putils.plot_models(x0, y0, ps, ax)`
+# **Implementation** `utils.plot_models(x0, y0, ps, ax)`
 # - Plots each fitted polynomial with its R^2 computed against `(x0, y0)`
 
 # %%
@@ -280,12 +299,12 @@ for i in order:
     p = np.polynomial.Polynomial.fit(x0, y0, deg=i)
     ps.append(p)
 
-putils.plot_models(x0, y0, ps, ax)
+utils.plot_models(x0, y0, ps, ax)
 
 # %% [markdown]
 # ## Cell 3.3: Evaluating the fit models on out-of-sample data
 #
-# **Goal**:
+# **Goal**
 # - Recompute each model's R^2 including the 2 held-out points: the
 #   order-5 model's R^2 collapses, showing it overfit the in-sample data
 
@@ -297,7 +316,7 @@ ax.plot(x1, y1, "rs", zorder=3)
 
 x_all = np.concatenate((x0, x1))
 y_all = np.concatenate((y0, y1))
-putils.plot_models(x_all, y_all, ps, ax)
+utils.plot_models(x_all, y_all, ps, ax)
 
 # %% [markdown]
 # # Part 4: Calculating Predictive Accuracy
@@ -305,7 +324,7 @@ putils.plot_models(x_all, y_all, ps, ax)
 # %% [markdown]
 # ## Cell 4.1: WAIC
 #
-# **Goal**:
+# **Goal**
 # - Compute the Widely Applicable Information Criterion for both models,
 #   an estimate of out-of-sample predictive accuracy
 
@@ -320,7 +339,7 @@ display(waic_q)
 # %% [markdown]
 # ## Cell 4.2: LOO
 #
-# **Goal**:
+# **Goal**
 # - Compute the Pareto-smoothed importance-sampling leave-one-out estimate
 #   for both models, an alternative to WAIC
 
@@ -338,7 +357,7 @@ display(loo_q)
 # %% [markdown]
 # ## Cell 5.1: Model comparison table and plot
 #
-# **Goal**:
+# **Goal**
 # - Rank the linear and quadratic models by predictive accuracy, using
 #   `az.compare()`'s default (LOO-based) criterion
 
@@ -355,7 +374,7 @@ az.plot_compare(cmp_df)
 # %% [markdown]
 # ## Cell 6.1: Weighted predictions
 #
-# **Goal**:
+# **Goal**
 # - Combine both models' posterior-predictive samples into a single
 #   weighted mixture, using pseudo-BMA-style weights
 
@@ -367,7 +386,7 @@ idata_w = az.weight_predictions(idatas, weights)
 # %% [markdown]
 # ## Cell 6.2: Visualizing the weighted posterior predictive
 #
-# **Goal**:
+# **Goal**
 # - Compare the linear, quadratic, and weighted posterior-predictive
 #   densities on one plot
 

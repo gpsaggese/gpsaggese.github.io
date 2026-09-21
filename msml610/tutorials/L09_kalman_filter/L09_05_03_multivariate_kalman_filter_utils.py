@@ -18,12 +18,23 @@ import matplotlib.pyplot as plt
 import numpy as np
 from IPython.display import display
 
+import helpers.hnotebook as hnotebo
+
 try:
     import helpers.htutorial as htutori
 except ImportError:
     import helpers.htutorial as htutori
 
 _LOG = logging.getLogger(__name__)
+
+
+def init_loggers(notebook_log: logging.Logger) -> None:
+    """
+    Wire the notebook logger into the utils logger.
+
+    :param notebook_log: logger owned by the notebook
+    """
+    hnotebo.init_loggers(notebook_log, utils_log=_LOG)
 
 
 def plot_correlated_data(

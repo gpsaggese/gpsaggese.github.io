@@ -13,7 +13,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats as stats
 
+import helpers.hnotebook as hnotebo
+
 _LOG = logging.getLogger(__name__)
+
+
+def init_loggers(notebook_log: logging.Logger) -> None:
+    """
+    Wire the notebook logger into the utils logger.
+
+    :param notebook_log: logger owned by the notebook
+    """
+    hnotebo.init_loggers(notebook_log, utils_log=_LOG)
 
 
 # #############################################################################

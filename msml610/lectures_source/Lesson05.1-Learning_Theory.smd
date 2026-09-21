@@ -10,8 +10,7 @@
 :::: {.column width=55%}
 
 - This lesson asks **whether machine learning is even possible**: it turns the
-  "possible vs probable" intuition into the Hoeffding inequality and shows why
-  it is too weak once we choose among many hypotheses
+  "possible vs probable" intuition into the Hoeffding inequality
 - It then introduces the **growth function**: counting dichotomies, shattering,
   and break points to replace the number of hypotheses $M$ with a finite count
 - It closes with the **VC dimension**: the single number that measures the
@@ -494,30 +493,32 @@ digraph ML_Phases {
 
 * Dichotomy: Definition
 
-- You need to classify $N$ (fixed) points $\vx_1, ..., \vx_N$ with a hypothesis set
-  $\calH$ of binary classifiers
-- Consider an assignment $D$ of the points to certain class $\vd_1, ..., \vd_N$
+- @Problem@
+  - You need to classify $N$ (fixed) points $\vx_1, ..., \vx_N$ with a hypothesis set
+    $\calH$ of binary classifiers
+  - Assignment $D$ of the points to certain class $\vd_1, ..., \vd_N$
+
 - @Definition@: $D$ is a **dichotomy** for hypothesis set $\calH$ $\iff$ there exists
   $h \in \calH$ that gets the desired classification $D$
 
+* Dichotomy: Example
 ::: columns
 :::: {.column width=70%}
 
-- @Example@
-  - 4 points in a plane $A, B, C, D$
-  - Binary classification
-  - $\calH$ = \{ bidimensional perceptrons \}
-  - Moving the separating hyperplane, you get different classifications for the
-    points (i.e., dichotomies)
-    ```
-          D1    D2   D3   D4   D...
-    A     o     x      ...
-    B     x     x
-    C     x     o
-    D     x     o      ...
-    ```
-  - There are at most $2^N$ dichotomies
-  - Certain classifications are not possible (e.g., XOR assignment)
+- Classify 4 points in a plane $A, B, C, D$
+- $\calH$ = \{ bidimensional perceptrons \}
+- Moving the separating hyperplane, you get different classifications for the
+  points (i.e., dichotomies)
+  ```
+        D1    D2   D3   D4   D...
+  A     o     x      ...
+  B     x     x
+  C     x     o
+  D     x     o      ...
+  ```
+- There are at most $2^N$ dichotomies
+- Certain classifications are not possible
+  - E.g., XOR assignment
 
 ::::
 :::: {.column width=30%}
@@ -588,14 +589,14 @@ digraph ML_Phases {
 * Dichotomies vs Hypotheses
 
 ::: columns
-:::: {.column width=58%}
+:::: {.column width=60%}
 
-- A **hypothesis** classifies each point of $\calX$:
+- A @hypothesis@ classifies each point:
   $\calX \rightarrow \{-1, +1\}$
-- A **dichotomy** classifies each point of a fixed set:
+
+- A @dichotomy@ classifies each point of a fixed set:
   $\{\vx_1, ..., \vx_N\} \rightarrow \{-1, +1\}$
-  - Dichotomies are "mini-hypotheses", i.e., hypotheses restricted to given
-    points
+  - Dichotomies are _"mini-hypotheses"_, i.e., hypotheses restricted to given points
 
 - From the training set point of view what matters are dichotomies and not
   hypotheses
@@ -646,17 +647,17 @@ digraph HypothesesToDichotomies {
 
 * Number of Dichotomies
 
-- The **number of different dichotomies** is indicated by
-  $|\calH(\vx_1, ..., \vx_N)|$
-  - It depends on:
-    - The number of points $N$
-    - Hypothesis set $\calH$ (i.e., the possible models)
-    - Where the points are placed
-  - The number of dichotomies is always finite, since
-    $|\calH(\vx_1, ..., \vx_N)| \le 2^N$
-  - The number of hypotheses is usually infinite, i.e., $|\calH| = \infty$
+- The **number of different dichotomies** of an hypothesis set is indicated by
+  $|\calH(\vx_1, ..., \vx_N)|$ and depends on:
+  - The number of points $N$
+  - Hypothesis set $\calH$ (i.e., the possible models)
+  - Where the points are placed
 
-- The "complexity" of $\calH$ is related to the number of dichotomies it can
+- The number of dichotomies is always finite, since
+  $|\calH(\vx_1, ..., \vx_N)| \le 2^N$
+- The number of hypotheses is typically infinite, i.e., $|\calH| = \infty$
+
+- The @"complexity"@ of $\calH$ is related to the number of dichotomies it can
   generate, not to the number of hypotheses
 
 ## The Growth Function
