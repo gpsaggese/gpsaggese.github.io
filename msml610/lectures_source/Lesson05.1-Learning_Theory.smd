@@ -664,20 +664,20 @@ digraph HypothesesToDichotomies {
 
 * Growth Function: Definition
 
-- The **growth function** counts the maximum number of possible dichotomies on
-  $N$ points for a hypothesis set $\calH$:
-
+- @Definition@: The **growth function** counts the maximum number of possible
+  dichotomies on $N$ points for a hypothesis set $\calH$:
   $$
   m_{\calH}(N)
   = \max_{\vx_1, \cdots, \vx_N \in \calX} |\calH(\vx_1, \cdots, \vx_N)|
   $$
 
-- **Why growth function?**
+- @Intuition@: **Why max in the growth function?**
   - The number of dichotomies depends on where the points are placed
   - The growth function considers the maximum by placing points in the most
     "favorable way" for the hypothesis set
+  - It's the "worst case of overfitting"
 
-- To compute $m_{\calH}(N)$ by **brute force**:
+- @Algorithm@: To compute $m_{\calH}(N)$ by **brute force**:
   - Consider all possible placements of $N$ points $\vx_1, ..., \vx_N$
   - Consider all possible hypotheses $h \in \calH$
   - Compute the corresponding dichotomy for $h$ on $\vx_1, ..., \vx_N$
@@ -687,9 +687,10 @@ digraph HypothesesToDichotomies {
 
 - Given:
   - A hypothesis set $\calH$ (e.g., bidimensional perceptrons)
-  - $N$ (fixed) points $\vx_1, ..., \vx_N$
+  - $N$ points $\vx_1, ..., \vx_N$
   - An assignment $D$ of the points to certain class $\vd_1, ..., \vd_N$
 
+// TODO(ai_gp): Convert it into a typst table (what, fixed / free, notes)
 - There are various quantities in the definition of dichotomy
   - The hypothesis set $\calH$
     - It is fixed
@@ -704,6 +705,8 @@ digraph HypothesesToDichotomies {
     - It is a free parameter, removed by the growth function through $\max$
 
 * Growth Function Is Non-Decreasing
+
+// TODO(ai_gp): Improve adding examples and intuition
 
 - $m_{\calH}(N)$ is non-decreasing in $N$ (not necessarily strictly increasing)
 - @Example@
@@ -726,10 +729,11 @@ digraph HypothesesToDichotomies {
 - **Perceptron on a plane**
   - $m_{\calH}(3) = 8$
   - $m_{\calH}(4) = 14$ (2 XOR classifications not possible)
+  - ...
 ::::
 :::: {.column width=45%}
 
-// TODO(gp): Use x_1, x_2, ... instead of A
+// TODO(ai_gp): Use x_1, x_2, ... instead of A
 
 ```tikz[width=60%]
 \bfseries
@@ -770,7 +774,7 @@ digraph HypothesesToDichotomies {
 :::: {.column width=55%}
 - **Positive rays** $\sign(x - a)$ on $\bbR$
   - $m_{\calH}(N) = N + 1$
-  - Origin of rays $a$ can be placed in $N + 1$ intervals
+  - _Proof_: Origin of rays $a$ can be placed in $N + 1$ intervals
 
 ::::
 :::: {.column width=45%}
@@ -811,9 +815,10 @@ digraph HypothesesToDichotomies {
 
 - **Positive intervals** on $\bbR$ $x \in [a, b]$
   - $m_{\calH}(N) = {N + 1 \choose 2} + 1 \sim N^2$
-  - Place the 2 endpoints $a < b$ in 2 distinct gaps out of the $N + 1$ gaps
-    between the points
-  - Add 1 dichotomy for both endpoints in the same gap (all points are $-1$)
+  - _Proof_:
+    - Place the 2 endpoints $a < b$ in distinct gaps out of the $N + 1$ gaps between
+      the points
+    - Add 1 dichotomy for both endpoints in the same gap (all points are $-1$)
 
 ::::
 :::: {.column width=45%}
@@ -859,7 +864,9 @@ digraph HypothesesToDichotomies {
 
 - **Convex sets on a plane**
   - $m_{\calH}(N) = 2^N$
-  - Place points in a circle and can classify $N$ points in any way
+  - _Proof_:
+    - Place points in a circle ("best case" for the growth function)
+    - Can classify $N$ points in any way
 
 ::::
 :::: {.column width=45%}
@@ -904,12 +911,15 @@ digraph HypothesesToDichotomies {
 
 - Given a hypothesis set $\calH$
 
-- A hypothesis set $\calH$ **shatters $N$ points** $\iff$ $m_{\calH}(N) = 2^N$
+- @Definition@: A hypothesis set $\calH$ **shatters $N$ points**
+  $\iff m_{\calH}(N) = 2^N$
   - There is a placement of $N$ points for which every one of the $2^N$ class
     assignments can be classified using some $h \in \calH$
   - It does not mean all sets of $N$ points can be classified in any way
 
-- $k$ is a **break point** for $\calH$ $\iff m_{\calH}(k) < 2^k$
+// TODO(ai_gp): Remove the break point and use VC dimension
+
+- @Definition@: $k$ is a **break point** for $\calH$ $\iff m_{\calH}(k) < 2^k$
   - I.e., no data set of size $k$ can be shattered by $\calH$
   - E.g.,
     - For 2D perceptron: a break point is 4
@@ -919,8 +929,8 @@ digraph HypothesesToDichotomies {
 
 * Break Points and the VC Inequality
 
-- If there is a break point for a hypothesis set $\calH$, it can be shown that:
-
+- @Theorem@: if there is a break point for a hypothesis set $\calH$, it can be shown
+  that:
   - $m_{\calH}(N)$ is polynomial in $N$
   - Instead of Hoeffding's inequality for learning
     $$
@@ -932,11 +942,12 @@ digraph HypothesesToDichotomies {
     \Pr(\text{bad generalization}) \le
     4 m_\calH(2N) e^{-\frac{1}{8} \varepsilon^2 N}
     $$
-  - Since $m_{\calH}(N)$ is polynomial in $N$, it will be dominated by the
-    negative exponential, given enough examples
+
+- @Corollary@: since $m_{\calH}(N)$ is polynomial in $N$, it will be dominated by the
+  negative exponential, given enough examples $N$
   - You can have a generalization bound: machine learning works!
 
-- A hypothesis set can be characterized from the learning point of view by the
+- From the learning point of view, an hypothesis set $\calH$ is characterized by the
   **existence and value of a break point**
 
 //* What Can Replace $M$ in Hoeffding Inequality
@@ -979,8 +990,9 @@ digraph HypothesesToDichotomies {
 
 * VC Dimension: Definition
 
-- The **VC dimension of a hypothesis set** $\calH$, denoted as $d_{VC}(\calH)$,
-  is defined as the largest value of $N$ for which $m_{\calH}(N) = 2^N$
+- @Definition@: The **VC dimension of a hypothesis set** $\calH$, denoted as
+  $d_{VC}(\calH)$, is defined as the largest value of $N$ for which
+  $m_{\calH}(N) = 2^N$
   - I.e., the VC dimension is the most points $\calH$ can shatter
     `#cite("shalevshwartz2014understanding")`{=typst}
 
@@ -995,8 +1007,8 @@ digraph HypothesesToDichotomies {
 
   - The _smallest break point_ is $d_{VC} + 1$
 
-  - The _growth function_ is bounded in terms of the VC dimension (Sauer's
-    lemma) `#cite("sauer1972density")`{=typst}:
+  - The _growth function_ is bounded in terms of the VC dimension
+    `#cite("sauer1972density")`{=typst}:
     $m_{\calH} \le \sum_{i=0}^{d_{VC}} {N \choose i}$
 
   - The VC dimension is the _order of the polynomial bounding_ $m_{\calH}$
@@ -1024,49 +1036,52 @@ digraph HypothesesToDichotomies {
   the growth function is polynomial and learning is feasible
 
 * VC Dimension: Interpretation
-- The VC dimension **measures the complexity** of a hypothesis set in terms of
-  **effective parameters**
+- @Intuition@: The VC dimension measures the complexity of a hypothesis set in terms
+  of **effective parameters**
 
 - @Example@
   - A perceptron in a $d$-dimensional space has $d_{VC} = d + 1$
   - In fact $d_{VC}$ is the number of perceptron parameters!
   - E.g., for a 2D perceptron ($d = 2$), the break point is 4, so $d_{VC} = 3$
 
-- The VC dimension considers the model as a black box in order to estimate
-  effective parameters
-  - How many points $N$ a model can shatter, not the number of parameters
+- @Fact@:
+  - The VC dimension considers the model as a black box in order to estimate
+    effective parameters
+    - How many points $N$ a model can shatter? Not the number of parameters
 
-- Not all parameters contribute to degrees of freedom
-  - E.g., combining $N$ 1D perceptrons gives $2N$ parameters, but the effective
-    degrees of freedom remain 2
+  - Not all parameters contribute to degrees of freedom
+    - E.g., combining $N$ 1D perceptrons gives $2N$ parameters, but the effective
+      degrees of freedom remain 2
 
-- A complex hypothesis $\calH$ has more parameters (higher VC dimension
-  $d_{VC}$) and requires more examples for training
+  - A complex hypothesis $\calH$ has higher VC dimension $d_{VC}$ and requires more
+    examples for training
 
 ## VC Generalization Bounds
 
 * VC Generalization Bounds: Bound Term
 
 - @Question@: How many data points are needed to obtain
-  $\Pr(|E_{in} - E_{out}| > \varepsilon) \le \delta$?
+  $$
+  \Pr(\text{bad generalization})
+  = \Pr(|E_{in} - E_{out}| > \varepsilon) \le \delta
+  $$
 
-- The VC inequality states
+- @Answer@: The VC inequality states
   $$
   \Pr(\text{bad generalization}) \le
     4 m_\calH(2N) e^{-\frac{1}{8} \varepsilon^2 N}
   $$
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=50%}
 
-- $N^d e^{-N}$ abstracts the upper bound term
-  - Plot $N^d e^{-N}$ vs. $N$: Power dominates for small $N$, exponential for
-    large $N$ and brings it to 0
-  - Vary $d$ (VC dimension) function peaks for larger $N$, then approaches
-    the region of interest $< 1$
+- @Analysis@: Approximate the upper bound term as $N^d e^{-N}$
+  - Plot $N^d e^{-N}$ vs. $N$
+  - Power dominates for small $N$
+  - Exponential dominates for large $N$ and brings it to 0
 
 ::::
-:::: {.column width=35%}
+:::: {.column width=50%}
 
 ![](msml610/lectures_source/figures/L05.1.VC_Generalization_Bounds.png)
 
@@ -1075,16 +1090,27 @@ digraph HypothesesToDichotomies {
 
 * VC Generalization Bounds: Sample Size
 
-::: columns
-:::: {.column width=65%}
+- @Question@: _"I have a model with VC dimension $d$ and I can accept a max
+  probability of overfitting $p$. How many samples $N$ do I need?"_
 
-- Plot intersection of $N^d e^{-N}$ with a probability as a function of $d$
-  - Examples $N$ needed are proportional to $d$
-  - Rule of thumb: $N \ge 10 d_{VC}$ for generalization
+::: columns
+:::: {.column width=50%}
+
+- @Answer@: Consider 
+  $$
+  \Pr(\text{bad generalization})
+  \sim 
+  N^d e^{-N}
+  $$
+
+- Plot intersection of $N^d e^{-N}$ with a probability $p$ as a function of $d$
+
+- The number of examples $N$ needed are proportional to $d$
+  - **Rule of thumb**: $N \ge 10 d_{VC}$ for generalization
     `#cite("abumostafa2012learning")`{=typst}
 
 ::::
-:::: {.column width=35%}
+:::: {.column width=50%}
 
 ![](msml610/lectures_source/figures/L05.1.VC_Generalization_Bounds2.png)
 
@@ -1097,45 +1123,44 @@ digraph HypothesesToDichotomies {
   $$
   \Pr(|E_{in} - E_{out}| > \varepsilon) \le
     4 m_\calH(2N) e^{-\frac{1}{8} \varepsilon^2 N}
+    = \delta
   $$
   can be used in several ways to relate $\varepsilon$, $\delta$, and $N$
 
-- Examples
-  - "Given $\varepsilon$ = 1% error, how many examples $N$ are needed to get
-    $\delta = 0.05$?"
-  - "Given $N$ examples, what's the probability of an error larger than
-    $\varepsilon$?"
+- @Examples@
+  - _"Given $\varepsilon$ = 1% error, how many examples $N$ are needed to get
+    $\delta = 0.05$?"_
+  - _"Given $N$ examples, what's the probability of an error larger than
+    $\varepsilon$?"_
+  - ...
 
-- You can equate $\delta$ to $4 m_{\calH}(2N) e^{-\frac{1}{8}\varepsilon^2 N}$
-  and solve for $\varepsilon$, getting
+- For the first question, you can equate $\delta$ to
+  $4 m_{\calH}(2N) e^{-\frac{1}{8}\varepsilon^2 N}$
+- Solve for $\varepsilon$, getting
   $$
   \Omega(N, \calH, \delta)
   = \sqrt{\frac{8}{N} \ln \frac{4 m_{\calH}(2N)}{\delta}}
   $$
-- Then you can say $|E_{out} - E_{in}| \le \Omega(N, \calH, \delta)$ with
-  probability $\ge 1 - \delta$
-  - The generalization bounds are then:
-    $\Pr(E_{out} \le E_{in} + \Omega) \ge 1 - \delta$
-
-## Limits of the VC Guarantee
+- Thus the generalization bounds are:
+    $$\Pr(E_{out} \le E_{in} + \Omega) \ge 1 - \delta$$
 
 * Data Snooping Voids the VC Guarantee
 
 ::: columns
 :::: {.column width=65%}
-- Consider the case where data is genuinely non-linear
+- Consider the case with non-linear data
   - E.g., "o" points in the center and "x" in the corners
 
-- Transform to high-dimensional $\calZ$ with:
+- Transform data to high-dimensional $\calZ$ with:
   $$
   \Phi: \vx = (x_0, ... , x_d) \rightarrow \vz = (z_0, ... , z_{\tilde{d}})
   $$
 
 - $d_{VC} \le \tilde{d} + 1$; smaller $\tilde{d}$ improves generalization
-  - Use $\vz = (1, x_1, x_2, x_1 x_2, x_1^2, x_2^2)$
-  - Why not $\vz = (1, x_1^2, x_2^2)$?
-  - Why not $\vz = (1, x_1^2 + x_2^2)$?
-  - Why not $\vz = (x_1^2 + x_2^2 - 0.6)$?
+  - $\vz = (1, x_1, x_2, x_1 x_2, x_1^2, x_2^2) \to \tilde{d} = 6$
+  - $\vz = (1, x_1^2, x_2^2) \to \tilde{d} = 3$
+  - $\vz = (1, x_1^2 + x_2^2) \to \tilde{d} = 2$
+  - $\vz = (x_1^2 + x_2^2 - 0.6) \to \tilde{d} = 1$
 
 ::::
 :::: {.column width=35%}
@@ -1144,17 +1169,11 @@ digraph HypothesesToDichotomies {
 ::::
 :::
 
-- Some model coefficients were zero and discarded, leaving machine learning the
-  rest
+- For VC analysis, complexity is that of the initial hypothesis set
   - VC analysis is a warranty, forfeited if data is examined before model
     selection (data snooping) `#cite("abumostafa2012learning")`{=typst}
-  - From VC analysis, complexity is that of the initial hypothesis set
 
 * Summary
-
-- @Key idea@: learning is feasible because, for a fixed hypothesis, in-sample
-  error tracks out-of-sample error; the VC dimension extends this guarantee to
-  a whole hypothesis set with infinitely many hypotheses
 
 - @Recap@
   - _Feasibility_: the target function is unknown outside the data, so learning
