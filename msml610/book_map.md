@@ -24,7 +24,7 @@
 | `msml610/lectures_source/Lesson04.1-Models.smd`                              |       |        |           |          |
 | `msml610/lectures_source/Lesson04.2-Models.smd`                              |       |        |           |          |
 | `msml610/lectures_source/Lesson04.3-Models.smd`                              |       |        |           |          |
-| `msml610/lectures_source/Lesson05.1-Learning_Theory.smd`                     |       |        |           | 70%      |
+| `msml610/lectures_source/Lesson05.1-Learning_Theory.smd`                     | yes   |        |           | 70%      |
 | `msml610/lectures_source/Lesson05.2-Overfitting.smd`                         |       |        |           | 70%      |
 | `msml610/lectures_source/Lesson05.3-Learn_Validation.smd`                    |       |        |           | -        |
 | `msml610/lectures_source/Lesson06.1-Bayesian_Networks.smd`                   | yes   | 80%    |           | 70%      |

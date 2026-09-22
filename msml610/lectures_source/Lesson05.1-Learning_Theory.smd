@@ -470,7 +470,9 @@ digraph ML_Phases {
 
 * Why Union Bound for Hoeffding Is Loose: Intuition
 
-// TODO(ai_gp): Improve it with some diagrams
+::: columns
+:::: {.column width=60%}
+
 - Consider two linearly separable classes on a plane, in terms of the ground
   truth and a training set
 
@@ -486,6 +488,40 @@ digraph ML_Phases {
 
 - Thus the two "bad events" $\calB_1$ and $\calB_2$ are related to
   $\Delta E_{in}$ and $\Delta E_{out}$
+  - They heavily overlap because $g_1, g_2$ are similar hypotheses
+  - Union bound assumes disjoint events, causing the overestimate
+
+::::
+:::: {.column width=40%}
+
+```tikz[width=100%]
+\bfseries
+% Draw two overlapping regions representing E_out for two hypotheses
+\draw[thick, red, dashed] (0,0) ellipse (2.5cm and 1.8cm);
+\draw[thick, blue, dashed] (1.5,0) ellipse (2.5cm and 1.8cm);
+
+% Label the regions
+\node[red] at (-2.2,-2.2) {$E_{out}(g_1)$};
+\node[blue] at (3.2,-2.2) {$E_{out}(g_2)$};
+
+% Draw overlapping region with different shade
+\fill[green!30, opacity=0.5] (0.2,-0.5) .. controls (0.2,-1.2) and (1.3,-1.2) .. (1.3,-0.5) .. controls (1.3,0.2) and (0.2,0.2) .. (0.2,-0.5);
+\node[green, text width=2cm] at (0.75,0.8) {$\Delta E_{out}$\newline (overlap)};
+
+% Draw sample points
+\foreach \x/\y in {-1.5/0.5, -0.5/1, 1/1.2, 2.5/0.3, -2/0, 0.5/-1} {
+    \draw[black, thick] (\x,\y) circle (2pt);
+}
+
+% Add arrows showing sample points in delta region
+\foreach \x/\y in {0.5/-1} {
+    \draw[thick, green, ->] (\x,\y) -- (\x+0.3,\y+0.5);
+}
+```
+
+::::
+:::
+
 
 # Growth Function
 
@@ -580,8 +616,6 @@ digraph ML_Phases {
 % Draw single line
 \draw[red, dotted, thick] (5, 0) -- (0, 3.5);
 ```
-
-// TODO: Finish a few plots.
 
 ::::
 :::
@@ -690,35 +724,47 @@ digraph HypothesesToDichotomies {
   - $N$ points $\vx_1, ..., \vx_N$
   - An assignment $D$ of the points to certain class $\vd_1, ..., \vd_N$
 
-// TODO(ai_gp): Convert it into a typst table (what, fixed / free, notes)
-- There are various quantities in the definition of dichotomy
-  - The hypothesis set $\calH$
-    - It is fixed
-  - The number of dimensions of the input space
-    - It is fixed through the hypothesis set $\calH$
-  - The number of points $N$
-    - Input to the growth function $m_{\calH}(N)$
-  - How the points are assigned to the classes $\vd_1, ..., \vd_N$
-    - It is a free parameter, removed by how each hypothesis in $\calH$ "splits"
-      the space
-  - Where the points are positioned $\vx_1, ..., \vx_N$
-    - It is a free parameter, removed by the growth function through $\max$
+- Quantities in the definition of dichotomy:
+
+```{=typst}
+#styled-table(
+  headers: ("Quantity", "Fixed / Free", "Notes"),
+  rows: (
+    ([$cal(H)$ (hypothesis set)], [Fixed], [Defined at the outset]),
+    ([Input space dimensions], [Fixed], [Determined by $cal(H)$]),
+    ([$N$ (number of points)], [Fixed], [Parameter to growth function $m_(cal(H))(N)$]),
+    ([Point assignments $bold(underline(d))_1, dots, bold(underline(d))_N$], [Free], [Removed by how $cal(H)$ splits the space]),
+    ([Point positions $bold(underline(x))_1, dots, bold(underline(x))_N$], [Free], [Removed by $max$ in growth function]),
+  ),
+  col-widths: (1.8fr, 1.2fr, 2.0fr),
+  width: 95%,
+)
+```
 
 * Growth Function Is Non-Decreasing
 
-// TODO(ai_gp): Improve adding examples and intuition
-
 - $m_{\calH}(N)$ is non-decreasing in $N$ (not necessarily strictly increasing)
+
+- @Intuition@: Adding more points cannot reduce the number of possible dichotomies
+  - If $\calH$ can shatter $N$ points in some way, it can always reproduce those
+    same dichotomies when given $N+1$ points
+  - By ignoring the label of the new point, any dichotomy on $N$ points extends
+    to at least 2 dichotomies on $N+1$ points (one with new point as $+1$, one as
+    $-1$)
+
 - @Example@
-  - The number of dichotomies on $N=3$ points $m_{\calH}(3)$ is smaller than or
-    equal to the number of dichotomies on $N=4$ points
-  - In fact each dichotomy on 3 points comes from at least one dichotomy on 4
-    points, ignoring the new point
+  - For $N=3$ points: $m_{\calH}(3) \le m_{\calH}(4)$
+  - Each of the $m_{\calH}(3)$ dichotomies on 3 points can be extended to at
+    least one dichotomy on 4 points by ignoring the new point
+  - Formally: $m_{\calH}(N) \le m_{\calH}(N+1) \le 2 m_{\calH}(N)$
 
 - $m_{\calH}(N)$ increases with the complexity of $\calH$
+  - More powerful hypothesis sets can shatter more points
+  - E.g., higher-dimensional perceptrons can shatter larger sets
 
 - $m_{\calH}(N)$ increases with the number of dimensions in the input space
-  (i.e., feature space)
+  - Richer feature spaces allow more flexible decision boundaries
+  - E.g., 2D perceptron ($d_{VC}=3$) vs 3D perceptron ($d_{VC}=4$)
 
 * Growth Function: Examples (1/2)
 
@@ -733,30 +779,28 @@ digraph HypothesesToDichotomies {
 ::::
 :::: {.column width=45%}
 
-// TODO(ai_gp): Use x_1, x_2, ... instead of A
-
 ```tikz[width=60%]
 \bfseries
 % Draw rectangle
 \draw[thick] (0,0) rectangle (5,3.5);
 
 % Define coordinates for points
-\coordinate (A) at (2.5,3);   % top circle
-\coordinate (B) at (3.8,2);   % right cross
-\coordinate (C) at (2.5,1);   % bottom circle
-\coordinate (D) at (1,1.2);   % left cross
+\coordinate (X1) at (2.5,3);   % top circle
+\coordinate (X2) at (3.8,2);   % right cross
+\coordinate (X3) at (2.5,1);   % bottom circle
+\coordinate (X4) at (1,1.2);   % left cross
 
 % Draw symbols
-\node at (A) {\Large $\circ$};
-\node at (B) {\Large $\times$};
-\node at (C) {\Large $\circ$};
-\node at (D) {\Large $\times$};
+\node at (X1) {\Large $\circ$};
+\node at (X2) {\Large $\times$};
+\node at (X3) {\Large $\circ$};
+\node at (X4) {\Large $\times$};
 
 % Add labels
-\node[above right] at (A) {$A$};
-\node[above left] at (B) {$B$};
-\node[below right] at (C) {$C$};
-\node[below left] at (D) {$D$};
+\node[above right] at (X1) {$x_1$};
+\node[above left] at (X2) {$x_2$};
+\node[below right] at (X3) {$x_3$};
+\node[below left] at (X4) {$x_4$};
 
 % Define coordinates for points
 \coordinate (TopCircle) at (5, 0);
@@ -1175,19 +1219,16 @@ digraph HypothesesToDichotomies {
 
 * Summary
 
-- @Recap@
-  - _Feasibility_: the target function is unknown outside the data, so learning
-    is _possible_ but only _probable_
-  - _Hoeffding inequality_: bounds $|E_{in} - E_{out}|$ for a fixed hypothesis,
-    but the union bound makes it weak by a factor $M$ when choosing among many
-    hypotheses
-  - _Growth function_: counts the dichotomies a hypothesis set can generate on
-    $N$ points; a break point makes it polynomial in $N$
-  - _VC dimension_: the largest $N$ that $\calH$ can shatter, a measure of
-    effective parameters; it gives the VC inequality and the rule of thumb
-    $N \ge 10 d_{VC}$
-  - _Caveat_: the guarantee holds only if the hypothesis set is fixed before
-    looking at the data, so data snooping voids it
+- **Feasibility**: the target function is unknown outside the data, so learning is
+  _possible_ but only _probable_
+- **Hoeffding inequality**: bounds $|E_{in} - E_{out}|$ for a fixed hypothesis, but
+  the union bound makes it weak by a factor $M$ when choosing among many hypotheses
+- **Growth function**: counts the dichotomies a hypothesis set can generate on $N$
+  points; a break point makes it polynomial in $N$
+- **VC dimension**: the largest $N$ that $\calH$ can shatter, a measure of effective
+  parameters; it gives the VC inequality and the rule of thumb $N \ge 10 d_{VC}$
+- **Caveat**: the guarantee holds only if the hypothesis set is fixed before looking
+  at the data, so data snooping voids it
 
 * References
 

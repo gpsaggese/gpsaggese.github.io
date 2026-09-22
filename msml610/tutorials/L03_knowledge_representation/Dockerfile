@@ -21,11 +21,13 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install project specific packages. Pin jupytext to avoid jitter in the
-# notebook files due to changing version.
+# notebook files due to changing version. Pin ipykernel below 7 since 7.3.0
+# randomly stops answering execute requests, which hangs `jupyter nbconvert
+# --execute` forever.
 RUN mkdir -p /install
 COPY requirements.txt /install/requirements.txt
 RUN pip install --upgrade pip && \
-    pip install --no-cache-dir jupyterlab jupyterlab_vim jupytext==1.19.3 -r /install/requirements.txt
+    pip install --no-cache-dir jupyterlab jupyterlab_vim "ipykernel<7" jupytext==1.19.3 -r /install/requirements.txt
 
 # Config.
 COPY etc_sudoers /install/
