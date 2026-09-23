@@ -54,7 +54,7 @@
   - `racket_game.py`: zero-sum placement game
   - `racket_strategy_utils.py`: plots and experiment helpers for the notebooks
 
-- [ ] PR1: Scaffold the project and encode the sport parameters (see
+- [x] PR1: Scaffold the project and encode the sport parameters (see
       spec.racket_strategy_PR1.md)
   - Depends on: none
   - Copy the Docker files from `class_project/project_template/`
