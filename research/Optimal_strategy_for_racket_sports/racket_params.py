@@ -1,16 +1,40 @@
-"""Parameters and geometry for racket sports models."""
+"""
+Parameters and geometry for racket sports models.
+
+Import as:
+
+import research.Optimal_strategy_for_racket_sports.racket_params as rosfrsrpa
+"""
 
 import dataclasses
+import logging
 from typing import Literal
 
 import numpy as np
 
+import helpers.hdbg as hdbg
+import helpers.hprint as hprint
+
+_LOG = logging.getLogger(__name__)
+
+# #############################################################################
+# Constants
+# #############################################################################
+
+
 GRAVITY_MPS2 = 9.81
+
+
+# #############################################################################
+# CourtGeometry
+# #############################################################################
 
 
 @dataclasses.dataclass(frozen=True)
 class CourtGeometry:
-    """Court dimensions and net geometry."""
+    """
+    Court dimensions and net geometry.
+    """
 
     length_m: float
     width_m: float
@@ -20,23 +44,31 @@ class CourtGeometry:
     service_line_m: float = 0.0
 
     def __post_init__(self) -> None:
-        if self.length_m <= 0:
-            raise ValueError(f"length_m must be positive, got {self.length_m}")
-        if self.width_m <= 0:
-            raise ValueError(f"width_m must be positive, got {self.width_m}")
-        if self.net_height_center_m <= 0:
-            raise ValueError(
-                f"net_height_center_m must be positive, got {self.net_height_center_m}"
-            )
-        if self.net_height_post_m <= 0:
-            raise ValueError(
-                f"net_height_post_m must be positive, got {self.net_height_post_m}"
-            )
+        """
+        Validate the court geometry parameters.
+        """
+        hdbg.dassert_lt(0, self.length_m, "length_m must be positive")
+        hdbg.dassert_lt(0, self.width_m, "width_m must be positive")
+        hdbg.dassert_lt(
+            0,
+            self.net_height_center_m,
+            "net_height_center_m must be positive",
+        )
+        hdbg.dassert_lt(
+            0, self.net_height_post_m, "net_height_post_m must be positive"
+        )
+
+
+# #############################################################################
+# CourtRegion
+# #############################################################################
 
 
 @dataclasses.dataclass(frozen=True)
 class CourtRegion:
-    """Rectangular region on the court."""
+    """
+    Rectangular region on the court.
+    """
 
     x_min: float
     x_max: float
@@ -44,17 +76,22 @@ class CourtRegion:
     y_max: float
 
     def __post_init__(self) -> None:
-        if self.x_min >= self.x_max:
-            raise ValueError(
-                f"x_min must be < x_max, got {self.x_min} >= {self.x_max}"
-            )
-        if self.y_min >= self.y_max:
-            raise ValueError(
-                f"y_min must be < y_max, got {self.y_min} >= {self.y_max}"
-            )
+        """
+        Validate the region bounds.
+        """
+        hdbg.dassert_lt(self.x_min, self.x_max, "x_min must be less than x_max")
+        hdbg.dassert_lt(self.y_min, self.y_max, "y_min must be less than y_max")
 
     def contains(self, x: np.ndarray, y: np.ndarray) -> np.ndarray:
-        """Check if points (x, y) are in the region."""
+        """
+        Check if points (x, y) are in the region.
+
+        :param x: array of x coordinates to test
+        :param y: array of y coordinates to test
+        :return: boolean array, True where the (x, y) point lies within
+            the region
+        """
+        _LOG.debug(hprint.to_str("x y"))
         return (
             (x >= self.x_min)
             & (x <= self.x_max)
@@ -63,49 +100,73 @@ class CourtRegion:
         )
 
 
+# #############################################################################
+# SportParams
+# #############################################################################
+
+
 @dataclasses.dataclass(frozen=True)
 class SportParams:
-    """Sport-specific parameters."""
+    """
+    Sport-specific parameters.
+    """
 
     name: str
     court: CourtGeometry
     max_ball_speed_mps: float
 
     def __post_init__(self) -> None:
-        if not self.name:
-            raise ValueError("name cannot be empty")
-        if self.max_ball_speed_mps <= 0:
-            raise ValueError(
-                f"max_ball_speed_mps must be positive, got {self.max_ball_speed_mps}"
-            )
+        """
+        Validate the sport parameters.
+        """
+        hdbg.dassert_ne(self.name, "", "name cannot be empty")
+        hdbg.dassert_lt(
+            0,
+            self.max_ball_speed_mps,
+            "max_ball_speed_mps must be positive",
+        )
+
+
+# #############################################################################
+# ShotErrorModel
+# #############################################################################
 
 
 @dataclasses.dataclass(frozen=True)
 class ShotErrorModel:
-    """Error model for shot execution."""
+    """
+    Error model for shot execution.
+    """
 
     sigma_theta_rad: float
     sigma_v_frac: float
     sigma_phi_rad: float
 
     def __post_init__(self) -> None:
-        if self.sigma_theta_rad < 0:
-            raise ValueError(
-                f"sigma_theta_rad must be non-negative, got {self.sigma_theta_rad}"
-            )
-        if self.sigma_v_frac < 0:
-            raise ValueError(
-                f"sigma_v_frac must be non-negative, got {self.sigma_v_frac}"
-            )
-        if self.sigma_phi_rad < 0:
-            raise ValueError(
-                f"sigma_phi_rad must be non-negative, got {self.sigma_phi_rad}"
-            )
+        """
+        Validate the shot error parameters.
+        """
+        hdbg.dassert_lte(
+            0, self.sigma_theta_rad, "sigma_theta_rad must be non-negative"
+        )
+        hdbg.dassert_lte(
+            0, self.sigma_v_frac, "sigma_v_frac must be non-negative"
+        )
+        hdbg.dassert_lte(
+            0, self.sigma_phi_rad, "sigma_phi_rad must be non-negative"
+        )
+
+
+# #############################################################################
+# PlayerParams
+# #############################################################################
 
 
 @dataclasses.dataclass(frozen=True)
 class PlayerParams:
-    """Player-specific parameters."""
+    """
+    Player-specific parameters.
+    """
 
     reaction_time_s: float
     move_speed_mps: float
@@ -113,29 +174,41 @@ class PlayerParams:
     error: ShotErrorModel
 
     def __post_init__(self) -> None:
-        if self.reaction_time_s < 0:
-            raise ValueError(
-                f"reaction_time_s must be non-negative, got {self.reaction_time_s}"
-            )
-        if self.move_speed_mps <= 0:
-            raise ValueError(
-                f"move_speed_mps must be positive, got {self.move_speed_mps}"
-            )
-        if self.contact_height_m <= 0:
-            raise ValueError(
-                f"contact_height_m must be positive, got {self.contact_height_m}"
-            )
+        """
+        Validate the player parameters.
+        """
+        hdbg.dassert_lte(
+            0, self.reaction_time_s, "reaction_time_s must be non-negative"
+        )
+        hdbg.dassert_lt(
+            0, self.move_speed_mps, "move_speed_mps must be positive"
+        )
+        hdbg.dassert_lt(
+            0, self.contact_height_m, "contact_height_m must be positive"
+        )
+
+
+# #############################################################################
+# Court geometry helpers
+# #############################################################################
 
 
 def get_net_height(court: CourtGeometry, x: np.ndarray) -> np.ndarray:
-    """Net height as a function of lateral position x.
-
-    Linear interpolation from center height to post height at the singles sideline.
-    Origin at net center; x is lateral (0 on center line).
     """
+    Net height as a function of lateral position x.
+
+    Linear interpolation from center height to post height at the singles
+    sideline. Origin at net center; x is lateral (0 on center line).
+
+    :param court: court geometry providing the net height parameters
+    :param x: lateral position(s) at which to evaluate the net height
+    :return: net height(s) at the given lateral position(s)
+    """
+    _LOG.debug(hprint.to_str("court x"))
     x_abs = np.abs(x)
     x_post = court.width_m / 2
-
+    # Interpolate linearly between the center and post heights up to the
+    # sideline, then hold flat beyond it.
     height = np.where(
         x_abs <= x_post,
         court.net_height_center_m
@@ -147,40 +220,56 @@ def get_net_height(court: CourtGeometry, x: np.ndarray) -> np.ndarray:
 
 
 def get_half_court_region(court: CourtGeometry) -> CourtRegion:
-    """Region of the returner's half of the court (y > 0)."""
-    return CourtRegion(
+    """
+    Region of the returner's half of the court (y > 0).
+
+    :param court: court geometry to compute the half-court region for
+    :return: rectangular region covering the returner's half of the court
+    """
+    _LOG.debug(hprint.to_str("court"))
+    region = CourtRegion(
         x_min=-court.width_m / 2,
         x_max=court.width_m / 2,
         y_min=0,
         y_max=court.length_m / 2,
     )
+    _LOG.debug("return=%s", region)
+    return region
 
 
 def get_service_box_region(
     court: CourtGeometry, serve_side: Literal["deuce", "ad"]
 ) -> CourtRegion:
-    """Service box region.
-
-    Args:
-        serve_side: "deuce" -> x in [-W/2, 0], "ad" -> x in [0, W/2]
     """
-    if serve_side not in ("deuce", "ad"):
-        raise ValueError(f"serve_side must be 'deuce' or 'ad', got {serve_side}")
+    Service box region.
 
+    :param court: court geometry to compute the service box for
+    :param serve_side: "deuce" -> x in [-W/2, 0], "ad" -> x in [0, W/2]
+    :return: rectangular region covering the specified service box
+    """
+    _LOG.debug(hprint.to_str("court serve_side"))
+    hdbg.dassert_in(serve_side, ("deuce", "ad"), "Invalid serve_side")
     service_line_y = court.service_line_m
     nv_zone_y = court.non_volley_zone_m
     width_half = court.width_m / 2
-
+    # Deuce side spans the left half of the court width, ad side the right
+    # half.
     if serve_side == "deuce":
         x_min = -width_half
         x_max = 0
     else:  # ad
         x_min = 0
         x_max = width_half
-
-    return CourtRegion(
+    region = CourtRegion(
         x_min=x_min, x_max=x_max, y_min=nv_zone_y, y_max=service_line_y
     )
+    _LOG.debug("return=%s", region)
+    return region
+
+
+# #############################################################################
+# Presets
+# #############################################################################
 
 
 TENNIS = SportParams(

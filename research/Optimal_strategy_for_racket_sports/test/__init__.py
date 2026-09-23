@@ -1,1 +1,3 @@
-"""Tests for racket strategy models."""
+"""
+Tests for racket strategy models.
+"""

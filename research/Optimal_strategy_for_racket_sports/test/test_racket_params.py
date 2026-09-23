@@ -1,30 +1,55 @@
-"""Tests for racket_params module."""
+"""
+Tests for racket_params module.
+"""
 
 import dataclasses
+import logging
+from typing import List, Literal
 
 import numpy as np
-import pytest
 
+import helpers.hunit_test as hunitest
 from research.Optimal_strategy_for_racket_sports import racket_params
 
+_LOG = logging.getLogger(__name__)
 
-class TestCourtGeometry:
-    """Tests for CourtGeometry dataclass."""
 
-    def test_valid_court(self):
+# #############################################################################
+# TestCourtGeometry
+# #############################################################################
+
+
+class TestCourtGeometry(hunitest.TestCase):
+    """
+    Test `racket_params.CourtGeometry`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that a court with valid dimensions is created successfully.
+        """
+        # Prepare inputs.
+        length_m = 23.77
+        width_m = 8.23
+        # Run test.
         court = racket_params.CourtGeometry(
-            length_m=23.77,
-            width_m=8.23,
+            length_m=length_m,
+            width_m=width_m,
             net_height_center_m=0.914,
             net_height_post_m=1.07,
             non_volley_zone_m=0.0,
             service_line_m=6.40,
         )
-        assert court.length_m == 23.77
-        assert court.width_m == 8.23
+        # Check outputs.
+        self.assertEqual(court.length_m, length_m)
+        self.assertEqual(court.width_m, width_m)
 
-    def test_invalid_length(self):
-        with pytest.raises(ValueError):
+    def test2(self) -> None:
+        """
+        Test that a non-positive length_m raises an assertion.
+        """
+        # Run test and check outputs.
+        with self.assertRaises(AssertionError):
             racket_params.CourtGeometry(
                 length_m=-1,
                 width_m=8.23,
@@ -32,167 +57,390 @@ class TestCourtGeometry:
                 net_height_post_m=1.07,
             )
 
-    def test_frozen(self):
+    def test3(self) -> None:
+        """
+        Test that a CourtGeometry instance cannot be mutated after creation.
+        """
+        # Prepare inputs.
         court = racket_params.CourtGeometry(
             length_m=23.77,
             width_m=8.23,
             net_height_center_m=0.914,
             net_height_post_m=1.07,
         )
-        with pytest.raises(dataclasses.FrozenInstanceError):
+        # Run test and check outputs.
+        with self.assertRaises(dataclasses.FrozenInstanceError):
             court.length_m = 24.0
 
 
-class TestCourtRegion:
-    """Tests for CourtRegion dataclass."""
+# #############################################################################
+# TestCourtRegion
+# #############################################################################
 
-    def test_valid_region(self):
+
+class TestCourtRegion(hunitest.TestCase):
+    """
+    Test `racket_params.CourtRegion`.
+    """
+
+    def helper(self, x: np.ndarray, y: np.ndarray, expected: List[bool]) -> None:
+        """
+        Test helper for `CourtRegion.contains()`.
+
+        :param x: array of x coordinates to test
+        :param y: array of y coordinates to test
+        :param expected: expected containment result for each (x, y) point
+        """
+        # Prepare inputs.
         region = racket_params.CourtRegion(x_min=-1, x_max=1, y_min=0, y_max=2)
-        assert region.x_min == -1
-        assert region.x_max == 1
+        # Run test.
+        actual = region.contains(x, y)
+        # Check outputs.
+        self.assert_equal(str(actual.tolist()), str(expected))
 
-    def test_invalid_x_bounds(self):
-        with pytest.raises(ValueError):
+    def test1(self) -> None:
+        """
+        Test that a region with valid bounds is created successfully.
+        """
+        # Prepare inputs.
+        x_min = -1
+        x_max = 1
+        # Run test.
+        region = racket_params.CourtRegion(
+            x_min=x_min, x_max=x_max, y_min=0, y_max=2
+        )
+        # Check outputs.
+        self.assertEqual(region.x_min, x_min)
+        self.assertEqual(region.x_max, x_max)
+
+    def test2(self) -> None:
+        """
+        Test that x_min >= x_max raises an assertion.
+        """
+        # Run test and check outputs.
+        with self.assertRaises(AssertionError):
             racket_params.CourtRegion(x_min=1, x_max=1, y_min=0, y_max=2)
 
-    def test_contains_interior(self):
-        region = racket_params.CourtRegion(x_min=-1, x_max=1, y_min=0, y_max=2)
-        assert region.contains(np.array([0.0]), np.array([1.0]))[0]
+    def test3(self) -> None:
+        """
+        Test that a point strictly inside the region is contained.
+        """
+        # Prepare inputs.
+        x = np.array([0.0])
+        y = np.array([1.0])
+        expected = [True]
+        # Run test and check outputs.
+        self.helper(x, y, expected)
 
-    def test_contains_boundary(self):
-        region = racket_params.CourtRegion(x_min=-1, x_max=1, y_min=0, y_max=2)
-        assert region.contains(np.array([-1.0]), np.array([0.0]))[0]
-        assert region.contains(np.array([1.0]), np.array([2.0]))[0]
+    def test4(self) -> None:
+        """
+        Test that points on the region boundary are contained.
+        """
+        # Prepare inputs.
+        x = np.array([-1.0, 1.0])
+        y = np.array([0.0, 2.0])
+        expected = [True, True]
+        # Run test and check outputs.
+        self.helper(x, y, expected)
 
-    def test_contains_outside(self):
-        region = racket_params.CourtRegion(x_min=-1, x_max=1, y_min=0, y_max=2)
-        assert not region.contains(np.array([2.0]), np.array([1.0]))[0]
-        assert not region.contains(np.array([0.0]), np.array([3.0]))[0]
+    def test5(self) -> None:
+        """
+        Test that points outside the region are not contained.
+        """
+        # Prepare inputs.
+        x = np.array([2.0, 0.0])
+        y = np.array([1.0, 3.0])
+        expected = [False, False]
+        # Run test and check outputs.
+        self.helper(x, y, expected)
 
-    def test_contains_vectorized(self):
-        region = racket_params.CourtRegion(x_min=-1, x_max=1, y_min=0, y_max=2)
+    def test6(self) -> None:
+        """
+        Test that contains() evaluates correctly over an array of points.
+        """
+        # Prepare inputs.
         x = np.array([-1, 0, 1, 2])
         y = np.array([1, 1, 1, 1])
-        result = region.contains(x, y)
-        assert np.array_equal(result, [True, True, True, False])
+        expected = [True, True, True, False]
+        # Run test and check outputs.
+        self.helper(x, y, expected)
 
 
-class TestGetNetHeight:
-    """Tests for get_net_height function."""
+# #############################################################################
+# Test_get_net_height
+# #############################################################################
 
-    def test_center_height(self):
+
+class Test_get_net_height(hunitest.TestCase):
+    """
+    Test `racket_params.get_net_height()`.
+    """
+
+    def helper(self, x: np.ndarray, expected: float) -> None:
+        """
+        Test helper for `get_net_height()`.
+
+        :param x: single-element array with the lateral position to evaluate
+        :param expected: expected net height at `x[0]`
+        """
+        # Prepare inputs.
         court = racket_params.TENNIS.court
-        height = racket_params.get_net_height(court, np.array([0.0]))
-        assert np.isclose(height[0], court.net_height_center_m)
+        # Run test.
+        actual = racket_params.get_net_height(court, x)
+        # Check outputs.
+        self.assertAlmostEqual(actual[0], expected)
 
-    def test_post_height(self):
+    def test1(self) -> None:
+        """
+        Test that the net height at the center matches net_height_center_m.
+        """
+        # Prepare inputs.
+        x = np.array([0.0])
+        expected = racket_params.TENNIS.court.net_height_center_m
+        # Run test and check outputs.
+        self.helper(x, expected)
+
+    def test2(self) -> None:
+        """
+        Test that the net height at the sideline matches net_height_post_m.
+        """
+        # Prepare inputs.
         court = racket_params.TENNIS.court
         x_post = court.width_m / 2
-        height = racket_params.get_net_height(court, np.array([x_post]))
-        assert np.isclose(height[0], court.net_height_post_m)
+        x = np.array([x_post])
+        expected = court.net_height_post_m
+        # Run test and check outputs.
+        self.helper(x, expected)
 
-    def test_symmetry(self):
+    def test3(self) -> None:
+        """
+        Test that the net height is symmetric around the center line.
+        """
+        # Prepare inputs.
         court = racket_params.TENNIS.court
         x = np.array([2.0])
+        # Run test.
         height_pos = racket_params.get_net_height(court, x)
         height_neg = racket_params.get_net_height(court, -x)
-        assert np.isclose(height_pos[0], height_neg[0])
+        # Check outputs.
+        self.assertAlmostEqual(height_pos[0], height_neg[0])
 
-    def test_linear_interpolation(self):
+    def test4(self) -> None:
+        """
+        Test that the net height interpolates linearly between center and
+        post.
+        """
+        # Prepare inputs.
         court = racket_params.TENNIS.court
         x_post = court.width_m / 2
-        x_half = x_post / 2
-        height_half = racket_params.get_net_height(court, np.array([x_half]))
+        x = np.array([x_post / 2])
         expected = court.net_height_center_m + 0.5 * (
             court.net_height_post_m - court.net_height_center_m
         )
-        assert np.isclose(height_half[0], expected)
+        # Run test and check outputs.
+        self.helper(x, expected)
 
-    def test_vectorized(self):
+    def test5(self) -> None:
+        """
+        Test that get_net_height() evaluates correctly over an array of
+        positions.
+        """
+        # Prepare inputs.
         court = racket_params.TENNIS.court
         x = np.array([0.0, 1.0, 2.0])
+        # Run test.
         heights = racket_params.get_net_height(court, x)
-        assert len(heights) == 3
-        assert heights[0] == court.net_height_center_m
+        # Check outputs.
+        self.assertEqual(len(heights), 3)
+        self.assertAlmostEqual(heights[0], court.net_height_center_m)
 
 
-class TestGetHalfCourtRegion:
-    """Tests for get_half_court_region function."""
-
-    def test_tennis_half_court(self):
-        region = racket_params.get_half_court_region(racket_params.TENNIS.court)
-        assert region.x_min == -racket_params.TENNIS.court.width_m / 2
-        assert region.x_max == racket_params.TENNIS.court.width_m / 2
-        assert region.y_min == 0
-        assert region.y_max == racket_params.TENNIS.court.length_m / 2
-
-    def test_pickleball_half_court(self):
-        region = racket_params.get_half_court_region(
-            racket_params.PICKLEBALL.court
-        )
-        assert region.x_min == -racket_params.PICKLEBALL.court.width_m / 2
-        assert region.x_max == racket_params.PICKLEBALL.court.width_m / 2
-        assert region.y_min == 0
-        assert region.y_max == racket_params.PICKLEBALL.court.length_m / 2
+# #############################################################################
+# Test_get_half_court_region
+# #############################################################################
 
 
-class TestGetServiceBoxRegion:
-    """Tests for get_service_box_region function."""
+class Test_get_half_court_region(hunitest.TestCase):
+    """
+    Test `racket_params.get_half_court_region()`.
+    """
 
-    def test_tennis_deuce(self):
-        region = racket_params.get_service_box_region(
-            racket_params.TENNIS.court, "deuce"
-        )
-        assert region.x_min == -racket_params.TENNIS.court.width_m / 2
-        assert region.x_max == 0
-        assert region.y_min == 0
-        assert region.y_max == racket_params.TENNIS.court.service_line_m
+    def helper(self, court: racket_params.CourtGeometry, expected: str) -> None:
+        """
+        Test helper for `get_half_court_region()`.
 
-    def test_tennis_ad(self):
-        region = racket_params.get_service_box_region(
-            racket_params.TENNIS.court, "ad"
-        )
-        assert region.x_min == 0
-        assert region.x_max == racket_params.TENNIS.court.width_m / 2
-        assert region.y_min == 0
-        assert region.y_max == racket_params.TENNIS.court.service_line_m
+        :param court: court geometry to compute the half-court region for
+        :param expected: expected string representation of the region
+        """
+        # Run test.
+        actual = racket_params.get_half_court_region(court)
+        # Check outputs.
+        self.assert_equal(str(actual), expected)
 
-    def test_pickleball_deuce(self):
-        region = racket_params.get_service_box_region(
-            racket_params.PICKLEBALL.court, "deuce"
-        )
-        assert region.x_min == -racket_params.PICKLEBALL.court.width_m / 2
-        assert region.x_max == 0
-        assert region.y_min == racket_params.PICKLEBALL.court.non_volley_zone_m
-        assert region.y_max == racket_params.PICKLEBALL.court.service_line_m
-
-    def test_invalid_serve_side(self):
-        with pytest.raises(ValueError):
-            racket_params.get_service_box_region(
-                racket_params.TENNIS.court, "invalid"
+    def test1(self) -> None:
+        """
+        Test the half-court region bounds for tennis.
+        """
+        # Prepare inputs.
+        court = racket_params.TENNIS.court
+        # Prepare outputs.
+        expected = str(
+            racket_params.CourtRegion(
+                x_min=-4.115, x_max=4.115, y_min=0, y_max=11.885
             )
+        )
+        # Run test and check outputs.
+        self.helper(court, expected)
+
+    def test2(self) -> None:
+        """
+        Test the half-court region bounds for pickleball.
+        """
+        # Prepare inputs.
+        court = racket_params.PICKLEBALL.court
+        # Prepare outputs.
+        expected = str(
+            racket_params.CourtRegion(
+                x_min=-3.05, x_max=3.05, y_min=0, y_max=6.705
+            )
+        )
+        # Run test and check outputs.
+        self.helper(court, expected)
 
 
-class TestPresets:
-    """Tests for preset sport and player parameters."""
+# #############################################################################
+# Test_get_service_box_region
+# #############################################################################
 
-    def test_tennis_params(self):
-        assert racket_params.TENNIS.name == "Tennis"
-        assert racket_params.TENNIS.court.length_m == 23.77
-        assert racket_params.TENNIS.court.width_m == 8.23
-        assert racket_params.TENNIS.court.service_line_m == 6.40
 
-    def test_pickleball_params(self):
-        assert racket_params.PICKLEBALL.name == "Pickleball"
-        assert racket_params.PICKLEBALL.court.length_m == 13.41
-        assert racket_params.PICKLEBALL.court.non_volley_zone_m == 2.13
+class Test_get_service_box_region(hunitest.TestCase):
+    """
+    Test `racket_params.get_service_box_region()`.
+    """
 
-    def test_default_player(self):
-        assert racket_params.DEFAULT_PLAYER.reaction_time_s == 0.2
-        assert racket_params.DEFAULT_PLAYER.move_speed_mps == 1.5
-        assert racket_params.DEFAULT_PLAYER.contact_height_m == 1.0
+    def helper(
+        self,
+        court: racket_params.CourtGeometry,
+        serve_side: Literal["deuce", "ad"],
+        expected: str,
+    ) -> None:
+        """
+        Test helper for `get_service_box_region()`.
 
-    def test_default_error(self):
-        assert np.isclose(
+        :param court: court geometry to compute the service box for
+        :param serve_side: "deuce" or "ad"
+        :param expected: expected string representation of the region
+        """
+        # Run test.
+        actual = racket_params.get_service_box_region(court, serve_side)
+        # Check outputs.
+        self.assert_equal(str(actual), expected)
+
+    def test1(self) -> None:
+        """
+        Test the deuce-side service box bounds for tennis.
+        """
+        # Prepare inputs.
+        court = racket_params.TENNIS.court
+        serve_side = "deuce"
+        # Prepare outputs.
+        expected = str(
+            racket_params.CourtRegion(
+                x_min=-4.115, x_max=0, y_min=0.0, y_max=6.40
+            )
+        )
+        # Run test and check outputs.
+        self.helper(court, serve_side, expected)
+
+    def test2(self) -> None:
+        """
+        Test the ad-side service box bounds for tennis.
+        """
+        # Prepare inputs.
+        court = racket_params.TENNIS.court
+        serve_side = "ad"
+        # Prepare outputs.
+        expected = str(
+            racket_params.CourtRegion(
+                x_min=0, x_max=4.115, y_min=0.0, y_max=6.40
+            )
+        )
+        # Run test and check outputs.
+        self.helper(court, serve_side, expected)
+
+    def test3(self) -> None:
+        """
+        Test the deuce-side service box bounds for pickleball, which start
+        after the non-volley zone.
+        """
+        # Prepare inputs.
+        court = racket_params.PICKLEBALL.court
+        serve_side = "deuce"
+        # Prepare outputs.
+        expected = str(
+            racket_params.CourtRegion(
+                x_min=-3.05, x_max=0, y_min=2.13, y_max=6.71
+            )
+        )
+        # Run test and check outputs.
+        self.helper(court, serve_side, expected)
+
+    def test4(self) -> None:
+        """
+        Test that an unrecognized serve_side raises an assertion.
+        """
+        # Prepare inputs.
+        court = racket_params.TENNIS.court
+        serve_side = "invalid"
+        # Run test and check outputs.
+        with self.assertRaises(AssertionError):
+            racket_params.get_service_box_region(court, serve_side)
+
+
+# #############################################################################
+# TestPresets
+# #############################################################################
+
+
+class TestPresets(hunitest.TestCase):
+    """
+    Test the preset `racket_params.TENNIS`, `racket_params.PICKLEBALL`,
+    `racket_params.DEFAULT_PLAYER`, and `racket_params.DEFAULT_ERROR`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test the preset TENNIS sport parameters.
+        """
+        # Check outputs.
+        self.assertEqual(racket_params.TENNIS.name, "Tennis")
+        self.assertEqual(racket_params.TENNIS.court.length_m, 23.77)
+        self.assertEqual(racket_params.TENNIS.court.width_m, 8.23)
+        self.assertEqual(racket_params.TENNIS.court.service_line_m, 6.40)
+
+    def test2(self) -> None:
+        """
+        Test the preset PICKLEBALL sport parameters.
+        """
+        # Check outputs.
+        self.assertEqual(racket_params.PICKLEBALL.name, "Pickleball")
+        self.assertEqual(racket_params.PICKLEBALL.court.length_m, 13.41)
+        self.assertEqual(racket_params.PICKLEBALL.court.non_volley_zone_m, 2.13)
+
+    def test3(self) -> None:
+        """
+        Test the preset DEFAULT_PLAYER parameters.
+        """
+        # Check outputs.
+        self.assertEqual(racket_params.DEFAULT_PLAYER.reaction_time_s, 0.2)
+        self.assertEqual(racket_params.DEFAULT_PLAYER.move_speed_mps, 1.5)
+        self.assertEqual(racket_params.DEFAULT_PLAYER.contact_height_m, 1.0)
+
+    def test4(self) -> None:
+        """
+        Test the preset DEFAULT_ERROR shot error model.
+        """
+        # Check outputs.
+        self.assertAlmostEqual(
             racket_params.DEFAULT_ERROR.sigma_theta_rad, np.radians(1.5)
         )
