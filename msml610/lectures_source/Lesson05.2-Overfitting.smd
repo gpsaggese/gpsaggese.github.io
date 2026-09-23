@@ -8,8 +8,10 @@
 
 * Roadmap
 
-- This lesson covers **overfitting**: what it is, why it happens, and how to
-  recognize it through concrete regression and classification examples
+- This lesson covers **overfitting**
+  - What it is
+  - Why it happens
+  - How to recognize it through concrete regression and classification examples
 - It then derives the **bias-variance decomposition**, showing how
   out-of-sample error splits into bias, variance, and noise as a function of
   model complexity
@@ -23,22 +25,17 @@
 * Overfitting: Definition
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=50%}
 
-- **Overfitting** occurs when the model fits the data more than what is
+- @Definition@: **Overfitting** occurs when the model fits the data more than what is
   warranted `#cite("abumostafa2012learning")`{=typst}
 
 - Surpass point where $E_{out}$ is minimal (optimal fit)
   - Model complexity too high for data/noise
-  - Noise in training set mistaken for signal
-
-- **Fitting noise instead of signal** is not useless but harmful
-  - Model infers in-sample pattern that, when extrapolated out-of-sample,
-    deviates from target function $\implies$ poor generalization
-
 ::::
-:::: {.column width=45%}
+:::: {.column width=50%}
 
+// TODO(ai_gp): Remove model complexity
 ```tikz
 \bfseries
 % Axis
@@ -67,43 +64,44 @@
 ::::
 :::
 
+- @Fact@: **Fitting noise** instead of signal is _not useless but actually harmful_
+  - Model infers in-sample pattern that, when extrapolated out-of-sample,
+    deviates from target function $\implies$ poor generalization
+
 * Optimal Fit
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=40%}
 
-- The opposite of overfitting is **optimal fit**
-  - Train a model with proper complexity for the data
+- The opposite of overfitting is **optimal fit**, i.e., train a model with proper
+  complexity for the data
 
 - The optimal fit:
-  - Implies $E_{out}$ is minimal
+  - Implies $E_{out}$ is minimal (not $E_{in}$)
   - Does not imply generalization error $E_{out} - E_{in}$ is minimal
-    - E.g., no training implies generalization error equal to 0
 
-- The **generalization error** is the additional error $E_{out} - E_{in}$ when
-  going from in-sample to out-of-sample
+- The **generalization error** is the error $E_{out} - E_{in}$ when going from
+  in-sample to out-of-sample
 
 ::::
-:::: {.column width=40%}
+:::: {.column width=60%}
 
 ![](msml610/lectures_source/figures/L05.2.Optimal_fit.png)
 
 ::::
 :::
 
-* Overfitting: Diamond Price Example
+* Overfitting: Regression Example
 - Predict diamond price as a function of carat size (regression problem)
 
-- **True relationship**
-  $$
-  \text{price} \sim (\text{carat size})^2 + \varepsilon
-  $$
+- **True relationship** is
+  $\text{price} \sim (\text{carat size})^2 + \varepsilon$
   where:
-  - Square function: larger, rarer diamonds command a convex price premium
-  - Noise $\varepsilon$: e.g., market noise, missing features
+  - Square function: larger, rarer diamonds command a price premium
+  - Noise $\varepsilon$: e.g., missing features, true stochasticity
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=45%}
 
 - **Fit with:**
   - _Line_
@@ -117,7 +115,7 @@
     - Low bias
     - High variance (many degrees of freedom)
 ::::
-:::: {.column width=45%}
+:::: {.column width=55%}
 
 ![](msml610/lectures_source/figures/L05.2.Diamond_price_example.png)
 
@@ -130,37 +128,22 @@
   - The true class boundary has a parabola shape
 
 - You can use logistic regression and a decision boundary equal to:
-  - A line $\text{logit}(w_0 + w_1 x + w_2 y)$
+  - _Line_: $\text{logit}(w_0 + w_1 x + w_2 y)$
     - Underfit
     - High bias, low variance
-  - A parabola $\text{logit}(w_0 + w_1 x + w_2 x^2 + w_3 x y + w_4 y^2)$
+  - _Parabola: $\text{logit}(w_0 + w_1 x + w_2 x^2 + w_3 x y + w_4 y^2)$
     - Right fit
-  - A wiggly decision boundary
+  - Wiggly decision boundary: 
     $\text{logit}(w_0 + \text{high powers of } x_1, x_2)$
     - Overfit
     - Low bias, high variance
 
-![](msml610/lectures_source/figures/L05.2.Optimal_fit2.png){ width=80% }
+// TODO(ai_gp): Split into 3 pics and remove the caption
+![](msml610/lectures_source/figures/L05.2.Optimal_fit2.png){ width=60% }
 
 # Bias Variance Analysis
 
-## From VC Analysis to Bias-Variance
-
-* VC Analysis vs Bias-Variance Analysis
-- Both VC analysis and bias-variance analysis are concerned with the hypothesis
-  set $\calH$
-  - **VC analysis** `#cite("vapnikchervonenkis1971uniform")`{=typst}:
-    $$
-    E_{out} \le E_{in} + \Omega(\calH)
-    $$
-  - **Bias-variance analysis**
-    $$
-    E_{out} = \text{bias + variance}
-    $$
-
-// TODO(gp): Redraw this
-
-![](msml610/lectures_source/figures/L05.2.VC_analysis_vs_Bias_Variance_analysis.png){ width=80% }
+## Bias-Variance Analysis
 
 * Hypothesis Set and Bias-Variance Analysis
 - **Learning** consists in finding $g \in \calH$ such that $g \approx f$ where
@@ -169,9 +152,10 @@
 - The **tradeoff in learning** is between
   `#cite("geman1992biasvariance")`{=typst}:
 
+// TODO(ai_gp): Add a column explaining
 ```{=typst}
 #styled-table(
-  headers: ("Low complexity pole", "High complexity pole"),
+  headers: ("Low complexity", "High complexity"),
   rows: (
     ([Bias], [Variance]),
     ([Underfitting], [Overfitting]),
@@ -182,15 +166,102 @@
 )
 ```
 
+* VC Analysis vs Bias-Variance Analysis
+
+::: columns
+:::: {.column width=60%}
+
+- Both VC analysis and bias-variance analysis are concerned with the hypothesis
+  set $\calH$
+
+- **VC analysis** `#cite("vapnikchervonenkis1971uniform")`{=typst}:
+  $$
+  E_{out} \le E_{in} + \Omega(\calH)
+  $$
+
+- **Bias-variance analysis**
+  $$
+  E_{out} = \text{bias + variance}
+  $$
+
+::::
+:::: {.column width=35%}
+
+// ![](msml610/lectures_source/figures/L05.2.VC_analysis_vs_Bias_Variance_analysis.png){ width=80% }
+
+```tikz
+\tikzset{every node/.style={font=\sffamily}}
+\newcommand{\Eout}{(0,6.0) (0.9,5.1) (1.8,4.4) (2.7,4.0) (4.5,3.6) (6.3,3.4) (9.0,3.3)}
+\newcommand{\Ein}{(0,0.5) (0.9,1.2) (1.8,1.7) (2.7,2.0) (4.5,2.35) (6.3,2.6) (9.0,2.85)}
+
+\fill[gray!8] plot[smooth] coordinates {\Eout} -- (9,6.5) -- (0,6.5) -- cycle;
+\fill[gray!8] plot[smooth] coordinates {\Ein} -- (9,0) -- (0,0) -- cycle;
+
+\draw[line width=0.6pt] (0,0) -- (9,0);
+\draw[line width=0.6pt] (0,0) -- (0,6.5);
+
+\draw[line width=0.6pt] (0,2.9) -- (9,2.9);
+
+\draw[red!70!black, line width=0.9pt, smooth] plot coordinates {\Eout};
+\draw[blue!70!black, line width=0.9pt, smooth] plot coordinates {\Ein};
+
+\draw[line width=0.5pt] (1.8,0) -- (1.8,4.4);
+\filldraw[draw=black, fill=red!70!black] (1.8,4.4) circle (3.2pt);
+\filldraw[draw=black, fill=blue!70!black] (1.8,1.7) circle (3.2pt);
+
+\node[red!70!black] at (6.6,3.85) {$E_{\text{out}}$};
+\node[blue!70!black] at (7.6,2.55) {$E_{\text{in}}$};
+\node[align=left] at (4.7,3.3) {generalization error};
+\node[align=left] at (4.0,2.55) {in-sample error};
+
+\node[rotate=90] at (-0.9,3.25) {Expected Error};
+\node at (4.5,-0.6) {Number of Data Points, $N$};
+\node[font=\bfseries] at (4.5,-1.35) {VC Analysis};
+```
+
+```tikz
+\tikzset{every node/.style={font=\sffamily}}
+\newcommand{\Eout}{(0,6.0) (0.9,5.1) (1.8,4.4) (2.7,4.0) (4.5,3.6) (6.3,3.4) (9.0,3.3)}
+\newcommand{\Ein}{(0,0.5) (0.9,1.2) (1.8,1.7) (2.7,2.0) (4.5,2.35) (6.3,2.6) (9.0,2.85)}
+
+\fill[gray!8] plot[smooth] coordinates {\Eout} -- (9,6.5) -- (0,6.5) -- cycle;
+\fill[gray!8] (0,0) rectangle (9,2.9);
+
+\draw[line width=0.6pt] (0,0) -- (9,0);
+\draw[line width=0.6pt] (0,0) -- (0,6.5);
+
+\draw[line width=1.3pt] (0,2.9) -- (9,2.9);
+
+\draw[red!70!black, line width=0.9pt, smooth] plot coordinates {\Eout};
+\draw[blue!70!black, line width=0.5pt, smooth] plot coordinates {\Ein};
+
+\draw[line width=0.5pt] (1.8,0) -- (1.8,4.4);
+\filldraw[draw=black, fill=red!70!black] (1.8,4.4) circle (3.2pt);
+\filldraw[draw=black, fill=blue!70!black] (1.8,1.7) circle (3.2pt);
+
+\node[red!70!black] at (6.6,3.85) {$E_{\text{out}}$};
+\node[blue!70!black] at (7.6,2.55) {$E_{\text{in}}$};
+\node[align=left] at (4.7,3.3) {variance};
+\node[align=left] at (3.4,1.2) {bias};
+
+\node[rotate=90] at (-0.9,3.25) {Expected Error};
+\node at (4.5,-0.6) {Number of Data Points, $N$};
+\node[font=\bfseries] at (4.5,-1.35) {Bias-Variance Analysis};
+```
+
+::::
+:::
+
 ## Deriving the Bias-Variance Decomposition
 
 * Decomposing Error in Bias-Variance (1/4)
 - @Problem@
-  - Regression set-up: target is a real-valued function
+  - Regression set-up: target is a real-valued function $f(\vx)$
   - Hypothesis set $\calH = \{ h_1(\vx), h_2(\vx), ... h_n(\vx) \}$
   - Training data $\calD$ with $N$ examples
   - Squared error $E_{out} = \EE[(g(\vx) - f(\vx))^2]$
-  - Choose the best function $g \in \calH$ that approximates unknown $f$
+  - Choose the best function $g \in \calH$ that approximates unknown $f$ out of
+    sample
 
 - @Question@
   - What is the out-of-sample error $E_{out}(g)$ as function of $\calH$ for a
@@ -204,9 +275,9 @@
   \triangleq \EE_{\vx}[ ( g^{(D)}(\vx) - f(\vx)) ^ 2 ]
   $$
 
-- Interested in:
+- We are interested in:
   - Hypothesis set $\calH$ rather than specific $h$
-  - Training set $D$ of $N$ examples, rather than a specific $D$
+  - Training set of $N$ examples, rather than a specific $D$
 
 - Remove dependency from $D$ by averaging over all possible training sets $D$
   with $N$ examples:
@@ -225,7 +296,7 @@
 
 - Focus on $\EE_D [( g^{(D)}(\vx) - f(\vx) ) ^ 2 ]$ which is a function of $\vx$
 
-- Define the \textit{average hypothesis} over all training sets as:
+- Define the _average hypothesis_ over all training sets as:
   $$
   \overline{g}(\vx) \triangleq \EE_D [ g^{(D)} (\vx) ]
   $$
@@ -275,6 +346,7 @@
   $$
 
 - Finally:
+  $$
   \begin{alignat*}{3}
   E_{out}(\calH)
   & = \EE_{\vx} [ \EE_D [ ( g^{(D)} - \overline{g} ) ^ 2 ] +
@@ -291,33 +363,35 @@
   &
   \\
   \end{alignat*}
+  $$
 
 // TODO: Add a numerical example
 
 * Interpretation of Average Hypothesis
-- The **average hypothesis** over all training sets
+- @Definition@: The **average hypothesis** over all training sets is:
   $$
   \overline{g}(\vx) \triangleq \EE_D [ g^{(D)} (\vx) ]
   $$
-  can be interpreted as the "best" hypothesis from $\calH$ training on $N$
-  samples
+
+- @Intuition@: It can be interpreted as the "best" hypothesis from $\calH$ training
+  on $N$ samples
   - Note: $\overline{g}$ is not necessarily $\in \calH$
 
 - In fact it's like **ensemble learning**:
   - Consider all the possible data sets $D$ with $N$ samples
   - Learn $g$ from each $D$
-  - Average all the hypotheses
+  - Average all the learned hypotheses
 
-* Interpretation of Variance and Bias Terms
+* Interpretation of Bias Terms
+::: columns
+:::: {.column width=60%}
+
 - The out-of-sample error can be decomposed as:
   $$
   E_{out}(\calH) = \text{bias}^2 + \text{variance}
   $$
 
-::: columns
-:::: {.column width=65%}
-
-- **Bias term**
+- @Bias term@
   $$
   \text{bias}^2 = \EE_{\vx} [ ( \overline{g}(\vx) - f(\vx) ) ^ 2 ]
   $$
@@ -325,8 +399,21 @@
   - Measures how limited $\calH$ is
     - I.e., the ability of $\calH$ to approximate the target with infinite
       training sets
+    - But we have only one data set $D$ at a time, incurring a cost
 
-- **Variance term**
+::::
+:::: {.column width=40%}
+
+![](msml610/lectures_source/figures/L05.2.bias_variance.png)
+
+::::
+:::
+
+* Interpretation of Variance Term
+::: columns
+:::: {.column width=60%}
+
+- @Variance term@
   $$
   \text{variance} = \EE_{\vx} \EE_D [ ( g^{(D)}(\vx) - \overline{g}(\vx) ) ^ 2]
   $$
@@ -335,9 +422,7 @@
       $\overline{g}$
     - But we have only one data set $D$ at a time, incurring a cost
 ::::
-:::: {.column width=35%}
-
-![](msml610/lectures_source/figures/L05.2.bias_variance.png)
+:::: {.column width=40%}
 
 ![](msml610/lectures_source/figures/L05.2.bias_variance_decomposition.png)
 
