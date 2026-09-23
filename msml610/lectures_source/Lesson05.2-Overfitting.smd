@@ -6,6 +6,16 @@
 // references=
 // - Abu-Mostafa et al.: _"Learning From Data"_ (2012)
 
+* Roadmap
+
+- This lesson covers **overfitting**: what it is, why it happens, and how to
+  recognize it through concrete regression and classification examples
+- It then derives the **bias-variance decomposition**, showing how
+  out-of-sample error splits into bias, variance, and noise as a function of
+  model complexity
+- It closes with **learning curves**, the dual view of bias-variance analysis
+  as a function of training set size rather than model complexity
+
 # Overfitting
 
 // Overfitting
@@ -16,7 +26,7 @@
 :::: {.column width=55%}
 
 - **Overfitting** occurs when the model fits the data more than what is
-  warranted
+  warranted `#cite("abumostafa2012learning")`{=typst}
 
 - Surpass point where $E_{out}$ is minimal (optimal fit)
   - Model complexity too high for data/noise
@@ -89,7 +99,7 @@
   \text{price} \sim (\text{carat size})^2 + \varepsilon
   $$
   where:
-  - Square function: price increases more with rarity
+  - Square function: larger, rarer diamonds command a convex price premium
   - Noise $\varepsilon$: e.g., market noise, missing features
 
 ::: columns
@@ -134,10 +144,12 @@
 
 # Bias Variance Analysis
 
+## From VC Analysis to Bias-Variance
+
 * VC Analysis vs Bias-Variance Analysis
 - Both VC analysis and bias-variance analysis are concerned with the hypothesis
   set $\calH$
-  - **VC analysis**:
+  - **VC analysis** `#cite("vapnikchervonenkis1971uniform")`{=typst}:
     $$
     E_{out} \le E_{in} + \Omega(\calH)
     $$
@@ -154,18 +166,30 @@
 - **Learning** consists in finding $g \in \calH$ such that $g \approx f$ where
   $f$ is an unknown function
 
-- The **tradeoff in learning** is between:
-  - Bias vs variance
-  - Overfitting vs underfitting
-  - More complex vs less complex $\calH$ / $h$
-  - Approximation (in-sample) vs generalization (out-of-sample)
+- The **tradeoff in learning** is between
+  `#cite("geman1992biasvariance")`{=typst}:
+
+```{=typst}
+#styled-table(
+  headers: ("Low complexity pole", "High complexity pole"),
+  rows: (
+    ([Bias], [Variance]),
+    ([Underfitting], [Overfitting]),
+    ([Less complex $cal(H)$ / $h$], [More complex $cal(H)$ / $h$]),
+    ([Approximation (in-sample)], [Generalization (out-of-sample)]),
+  ),
+  bold-first-col: false,
+)
+```
+
+## Deriving the Bias-Variance Decomposition
 
 * Decomposing Error in Bias-Variance (1/4)
 - @Problem@
   - Regression set-up: target is a real-valued function
   - Hypothesis set $\calH = \{ h_1(\vx), h_2(\vx), ... h_n(\vx) \}$
   - Training data $\calD$ with $N$ examples
-  - Squared error $E_out = \EE[(g(\vx) - f(\vx))^2]$
+  - Squared error $E_{out} = \EE[(g(\vx) - f(\vx))^2]$
   - Choose the best function $g \in \calH$ that approximates unknown $f$
 
 - @Question@
@@ -177,7 +201,7 @@
   explicit $g^{(D)}$:
   $$
   E_{out}(g^{(D)})
-  \defeq \EE_{\vx}[ ( g^{(D)}(\vx) - f(\vx)) ^ 2 ]
+  \triangleq \EE_{\vx}[ ( g^{(D)}(\vx) - f(\vx)) ^ 2 ]
   $$
 
 - Interested in:
@@ -188,7 +212,7 @@
   with $N$ examples:
   $$
   E_{out}(\calH)
-  \defeq \EE_{D}[ E_{out}(g^{(D)}) ]
+  \triangleq \EE_{D}[ E_{out}(g^{(D)}) ]
   = \EE_{D}[\EE_{\vx}[ ( g^{(D)}(\vx) - f(\vx)) ^ 2 ]]
   $$
 
@@ -203,12 +227,13 @@
 
 - Define the \textit{average hypothesis} over all training sets as:
   $$
-  \overline{g}(\vx) \defeq \EE_D [ g^{(D)} (\vx) ]
+  \overline{g}(\vx) \triangleq \EE_D [ g^{(D)} (\vx) ]
   $$
 
 - Add and subtract it inside the $\EE_D$ expression:
-  $$
+
   \begingroup \small
+  $$
   \begin{aligned}
   E_{out}(\calH)
   = & \EE_{\vx} \left[ \EE_D \left[ \left(
@@ -234,8 +259,8 @@
   2 \EE_D[(g^{(D)} - \overline{g})] (\overline{g} - f)
   \right]\\
   \end{aligned}
-  \endgroup
   $$
+  \endgroup
 
 * Decomposing Error in Bias-Variance (4/4)
 - The cross term:
@@ -272,7 +297,7 @@
 * Interpretation of Average Hypothesis
 - The **average hypothesis** over all training sets
   $$
-  \overline{g}(\vx) \defeq \EE_D [ g^{(D)} (\vx) ]
+  \overline{g}(\vx) \triangleq \EE_D [ g^{(D)} (\vx) ]
   $$
   can be interpreted as the "best" hypothesis from $\calH$ training on $N$
   samples
@@ -359,7 +384,9 @@
 
 // TODO: Add pic (see book)
 
-* Bias-Variance Trade-Off: Numerical Example
+## Bias-Variance Tradeoff in Practice
+
+* Bias-Variance Trade-Off: Numerical Example (1/2)
 - **Machine learning problem**:
   - Target function $f(x) = \sin(\pi x), x \in [-1, 1]$
   - Noiseless target
@@ -375,7 +402,7 @@
   - Best for _learning_: learn the unknown function with minimal error from 2
     points
 
-* Bias-Variance Trade-Off: Numerical Example
+* Bias-Variance Trade-Off: Numerical Example (2/2)
 
 - **Approximation**
   - $E_{out}(g_0) = 0.5$
@@ -412,7 +439,7 @@
 
 * Bias-Variance Curves
 - **Bias-variance curves** are plots of $E_{out}$ increasing the complexity of
-  the model
+  the model `#cite("hastie2009elements")`{=typst}
 
 ::: columns
 :::: {.column width=55%}
@@ -482,6 +509,8 @@
 - Regularization param $\lambda$
 - Training epochs for neural network
 
+## Noise and Overfitting
+
 * Bias-Variance Decomposition with a Noisy Target
 - Extend bias-variance decomposition to **a noisy target**
   $$
@@ -537,21 +566,25 @@
 :::
 
 * Deterministic vs Stochastic Noise in Practice
-- **Deterministic noise:**
-  - Fixed for a particular $\vx$
-  - Depends on $\calH$
-  - Independent of $\varepsilon$ or $D$
 
-- **Stochastic noise:**
-  - Not fixed for $\vx$
-  - Independent of $D$ or $\calH$
+```{=typst}
+#styled-table(
+  headers: ("Property", "Deterministic noise", "Stochastic noise"),
+  rows: (
+    ([Fixed for a given $bold(x)$?], [Yes], [No]),
+    ([Depends on $cal(H)$?], [Yes], [No]),
+    ([Independent of $D$?], [Yes (also of $epsilon$)], [Yes]),
+  ),
+  bold-first-col: true,
+)
+```
 
 - In a machine learning problem, no difference exists between stochastic and
   deterministic noise, as $\calH$ and $D$ are fixed
   - From the training set alone, you cannot determine if data is from a
     _noiseless complex_ target or a _noisy simple_ target
 
-* Deterministic vs Stochastic Noise Example
+* Deterministic vs Stochastic Noise Example (1/2)
 ::: columns
 :::: {.column width=75%}
 - **Two targets**:
@@ -579,7 +612,7 @@
 ::::
 :::
 
-* Deterministic vs Stochastic Noise Example
+* Deterministic vs Stochastic Noise Example (2/2)
 ::: columns
 :::: {.column width=75%}
 
@@ -636,14 +669,21 @@
 
 * Overfitting as a Function of Data Resources, Model Complexity, Noise
 
-- You can measure overfitting in terms of **generalization error**
-  $\frac{E_{out} - E_{in}}{E_{out}}$
+- You can measure overfitting in terms of the **relative generalization
+  error** $\frac{E_{out} - E_{in}}{E_{out}}$
 
-  - $\uparrow$ data resources $N \implies \downarrow$ overfitting
-  - $\uparrow$ model complexity $d_{VC} \implies \uparrow$ overfitting
-  - $\uparrow$ deterministic noise (target complexity) $\implies \uparrow$
-    overfitting
-  - $\uparrow$ stochastic noise $\sigma^2 \implies \uparrow$ overfitting
+```{=typst}
+#styled-table(
+  headers: ("Increasing factor", "Effect on overfitting"),
+  rows: (
+    ([Data resources $N$], [Decreases]),
+    ([Model complexity $d_(V C)$], [Increases]),
+    ([Deterministic noise (target complexity)], [Increases]),
+    ([Stochastic noise $sigma^2$], [Increases]),
+  ),
+  bold-first-col: false,
+)
+```
 
 # Learning Curves
 
@@ -811,3 +851,28 @@
 //- The generalization error is: $E_{out} - E_{in} = 2 \sigma^2 (\frac{d + 1}{N})$
 //  which shows that what matters is $\frac{d + 1}{N}$ (our rule of thumb was
 //  $N > 10 d_{VC}$)
+
+* Summary
+
+- @Key idea@: overfitting happens when a model fits noise instead of signal,
+  and the bias-variance decomposition explains why: $E_{out} = \text{bias}^2 +
+  \text{variance}$ (plus noise for a noisy target)
+
+- @Recap@
+  - _Overfitting_: going past the model complexity that minimizes $E_{out}$
+    trades in-sample fit for out-of-sample generalization
+  - _Bias-variance decomposition_: $E_{out}$ splits into bias (how well
+    $\calH$ can approximate $f$ on average) and variance (how much the
+    learned $g$ varies across training sets)
+  - _Complexity control_: regularization and other complexity knobs trade
+    bias for variance; the rule of thumb $d_{VC} \approx N / 10$ matches model
+    complexity to available data
+  - _Learning curves_: the dual view of bias-variance analysis, showing
+    $E_{in}$ and $E_{out}$ converge as the training set size $N$ grows
+
+* References
+
+```{=typst}
+#set text(size: 0.75em)
+#references("/msml610/lectures_source/refs.bib")
+```

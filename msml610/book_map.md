@@ -237,19 +237,20 @@ WARNING: Can't find s3fs: continuing
 
 # Workflow in short
 
+// TODO(ai_gp): Where to move this piece?
+
 ```
-Execute msml610/book/prompt.slides_and_book_flow.md
+claude> Execute msml610/book/prompt.slides_and_book_flow.md msml610/lectures_source/Lesson05.2-Overfitting.smd
 ```
 
 - [x] 5.1
-- [ ] 5.2
+- [.] 5.2
 - [ ] 5.3
 
 - [x] 6.1
 - [ ] 6.2
 - [ ] 6.3
 
-// TODO(ai_gp): Where to move?
 
 /slides.review            05.1
 /slides.add_visuals       .
