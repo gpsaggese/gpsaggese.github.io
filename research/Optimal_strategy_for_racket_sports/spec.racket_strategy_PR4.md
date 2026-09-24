@@ -3,7 +3,7 @@
 - `PR4` of `plan.racket_strategy.md`: implement paper Section V-A, the placement
   decision as a zero-sum game between striker and returner
 - Scope: `racket_game.py` (payoff matrix, equilibrium solver, exploitability)
-- Roadmap position: depends on `PR3`; `PR5` and `PR6` call it
+- Roadmap position: depends on `PR3`; `PR5` and `PR7` call it
 - This is a specification only: no code in this document has been implemented
 
 ## Design Decisions
@@ -92,7 +92,7 @@
 - Equilibria may not be unique: tests check value and indifference only
 - With a step-function $R$ the payoff is mostly 0 or $P_{\mathrm{in}}$, so
   supports can be sparse and grid-dependent
-- 400 x 400 payoffs are fine for HiGHS; the reviewer checks runtime in `PR6`
+- 400 x 400 payoffs are fine for HiGHS; the reviewer checks runtime in `PR7`
 
 ## Result (to Fill in Once Implemented)
 

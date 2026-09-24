@@ -97,4 +97,16 @@
 
 ## Result (to Fill in Once Implemented)
 
-- TBD
+- Done
+  - `racket_trajectory.py` implements `get_flight_time()`, `get_height_at()`,
+    `solve_launch_speed()`, `get_feasible_launches()`, `sample_shot_errors()`,
+    and `simulate_landings()`, plus `FeasibleLaunches`, `ShotErrors`, and
+    `Landings`
+  - `test/test_racket_trajectory.py` reproduces the Figure 1 numbers
+    ($v_0 = 22.91$ m/s, $T_f = 0.881$ s, net clearance 0.40 m at 12 m) and
+    covers infeasibility, error sampling, and landing simulation; all 11
+    tests pass
+- Not done
+  - `simulate_landings()` takes an explicit `sport` parameter not listed in
+    the spec's interface: the net-clearance check needs the court geometry
+    from `get_net_height()`, which the listed signature omits

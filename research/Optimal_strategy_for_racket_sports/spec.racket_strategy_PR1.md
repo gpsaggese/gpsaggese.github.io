@@ -4,7 +4,7 @@
   layer that every later PR imports
 - Scope: Docker scaffold from `class_project/project_template/`, and
   `racket_params.py` holding the model $\mathcal{M}$ of paper Section VII
-- Roadmap position: depends on nothing; `PR2`-`PR6` import `racket_params.py`
+- Roadmap position: depends on nothing; `PR2`-`PR7` import `racket_params.py`
 - This is a specification only: no code in this document has been implemented
 
 ## Design Decisions
@@ -33,7 +33,7 @@
 
 - YAML file or plain `dict`: rejected, they add I/O or lose type hints and
   construction-time validation
-- Trade-off: frozen dataclasses are verbose but make every experiment in `PR6` an
+- Trade-off: frozen dataclasses are verbose but make every experiment in `PR7` an
   explicit, hashable parameter set (`dataclasses.replace()` for sweeps)
 
 ## Out of Scope
@@ -46,7 +46,7 @@
 
 - `research/Optimal_strategy_for_racket_sports/` is empty
 - `papers/Optimal_strategy_for_racket_sports/figures/make_figures.py:30-37`
-  hard-codes $g$, $h_0$, net distance, and net height; `PR7` handles it
+  hard-codes $g$, $h_0$, net distance, and net height; `PR8` handles it
 - `class_project/project_template/`: Docker scripts; `requirements.txt` lacks `scipy`
 
 ## Implementation

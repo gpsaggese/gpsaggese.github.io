@@ -6,11 +6,7 @@
 
 * Problem
 - `papers/Optimal_strategy_for_racket_sports/paper.md` proposes a reduced-order
-  framework for shot placement in tennis and pickleball, but no code implements it
-  - Section IX lists the implementation as future work (i)
-  - Section VI is hand-computed with illustrative $P_{\mathrm{in}}$ values
-  - `papers/Optimal_strategy_for_racket_sports/figures/make_figures.py` hard-codes
-    the physics and the toy scores inline
+  framework for shot placement in tennis and pickleball
 - Goal: a tested package in `research/Optimal_strategy_for_racket_sports/` that:
   - Implements Sections III-VII of the paper
   - Produces computational results that replace the hand-worked example
@@ -21,6 +17,33 @@
   - Post-shot positioning as a repeated game (iv)
   - Doubles geometry and minimax validation on rally data (v)
   - Drag and spin bias quantification (Section VIII)
+
+* Model
+- 2D court-fixed frame, already implemented in `racket_params.py`: origin at
+  the net center on the ground, `x` lateral, `y` along the court (striker side
+  `y < 0`, returner side `y > 0`)
+- Striker: at a fixed position `(x_s, y_s)` on their side of the court, hits
+  the ball
+- Returner: at a fixed starting position `(x_r, y_r)` on the other side
+  - For the first shot of a point, the starting position is the serve
+    position (`get_service_box_region()`)
+  - For later shots in a rally, the starting position is wherever the
+    previous shot left the returner (out of scope until `PR7`'s example
+    notebook)
+- Shot: the striker aims at a target point `(x, y)` on the returner's side;
+  execution error (`ShotErrorModel`) gives the actual landing a Gaussian
+  scatter around `(x, y)`, already implemented in
+  `racket_trajectory.get_feasible_launches()` / `simulate_landings()` (`PR2`)
+- `PR3`'s grid scoring builds directly on this: each grid cell is a candidate
+  target `(x, y)`; $P_{\mathrm{in}}$ is the in-bounds fraction of the landing
+  scatter around it, and reachability $R$ compares the returner's travel time
+  from `(x_r, y_r)` to the cell against the ball's flight time (a function of
+  the ball's speed)
+- The composite score $S(c) = P_{\mathrm{in}}(c)\,(1 - R(c))$ is exactly the
+  "probability B misses the shot" (a winner) the user cares about; `PR6`'s
+  notebook exposes this as a heatmap over every candidate `(x, y)`, driven by
+  click-to-run controls for ball speed, player move speed, shot std dev, and
+  both players' positions
 
 * Info
 - **Type**: feature
@@ -62,7 +85,7 @@
   - Add `README.md` with quick start and the module table above
   - Add `test/test_racket_params.py`
 
-- [ ] PR2: Implement the closed-form trajectory model of Section III-C (see
+- [x] PR2: Implement the closed-form trajectory model of Section III-C (see
       spec.racket_strategy_PR2.md)
   - Depends on: PR1
   - Add `racket_trajectory.py`: launch speed solver, feasible set, error sampling,
@@ -89,16 +112,26 @@
   - Add `test/test_racket_strategy_utils.py` and
     `test/test_docker_racket_strategy.py`
 
-- [ ] PR6: Add the example notebook with computational results for Sections VI-VIII
-      (see spec.racket_strategy_PR6.md)
+- [ ] PR6: Add an interactive shot-placement exploration notebook (see
+      spec.racket_strategy_PR6.md)
+  - Depends on: PR3, PR5
+  - Add `racket_strategy.exploration.ipynb` / `.py`: click-to-run controls for
+    ball speed, player move speed, shot std dev (`error_scale`), and both
+    players' positions, driving `P_in`, `1 - R`, and `S` heatmaps
+  - Add `build_exploration_widget()` to `racket_strategy_utils.py`
+  - Extend `test/test_racket_strategy_utils.py` and
+    `test/test_docker_racket_strategy.py`
+
+- [ ] PR7: Add the example notebook with computational results for Sections VI-VIII
+      (see spec.racket_strategy_PR7.md)
   - Depends on: PR5
   - Add `racket_strategy.example.ipynb` / `.py` and the experiment helpers
   - Export result figures and tables to `results/`
 
-- [ ] PR7: Report the computational results in the paper
-  - Depends on: PR6
-  - No spec: prose update whose content is fixed by the PR6 outputs
-  - Add a "Computational Results" section to `paper.md` with the PR6 figures
+- [ ] PR8: Report the computational results in the paper
+  - Depends on: PR7
+  - No spec: prose update whose content is fixed by the PR7 outputs
+  - Add a "Computational Results" section to `paper.md` with the PR7 figures
   - Fix the $P_{\mathrm{in}}$ formula of Section IV-B and describe the aim-angle
     choice
   - Update the abstract, the contributions, Section VI caveat, and Section IX

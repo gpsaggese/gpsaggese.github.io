@@ -22,6 +22,7 @@ _LOG = logging.getLogger(__name__)
 # #############################################################################
 
 
+# Standard gravitational acceleration, in m/s^2.
 GRAVITY_MPS2 = 9.81
 
 
@@ -40,7 +41,9 @@ class CourtGeometry:
     width_m: float
     net_height_center_m: float
     net_height_post_m: float
+    # Default: no non-volley zone (e.g., tennis).
     non_volley_zone_m: float = 0.0
+    # Default: no service line defined.
     service_line_m: float = 0.0
 
     def __post_init__(self) -> None:
@@ -273,40 +276,64 @@ def get_service_box_region(
 
 
 TENNIS = SportParams(
+    # Sport label.
     name="Tennis",
     court=CourtGeometry(
+        # ITF singles court length.
         length_m=23.77,
+        # ITF singles court width.
         width_m=8.23,
+        # ITF net height at the center strap.
         net_height_center_m=0.914,
+        # ITF net height at the posts.
         net_height_post_m=1.07,
+        # Tennis has no non-volley zone.
         non_volley_zone_m=0.0,
+        # ITF distance from net to service line.
         service_line_m=6.40,
     ),
+    # TODO(ai_gp): Use groundstrokes.
+    # Fastest recorded serve, ~263 km/h.
     max_ball_speed_mps=73.14,
 )
 
 PICKLEBALL = SportParams(
+    # Sport label.
     name="Pickleball",
     court=CourtGeometry(
+        # USA Pickleball court length.
         length_m=13.41,
+        # USA Pickleball court width.
         width_m=6.10,
+        # USA Pickleball net height; modeled as flat (center == post).
         net_height_center_m=0.867,
         net_height_post_m=0.867,
+        # "Kitchen" depth from the net (7 ft).
         non_volley_zone_m=2.13,
+        # Baseline distance from net (length_m / 2).
         service_line_m=6.71,
     ),
+    # Approximate fastest recorded shot speed.
     max_ball_speed_mps=24.59,
 )
 
 DEFAULT_ERROR = ShotErrorModel(
+    # Illustrative, not calibrated to real players (mirrors paper Figure 1).
+    # Std dev of launch-angle error.
     sigma_theta_rad=np.radians(1.5),
+    # Std dev of launch-speed error, as a fraction.
     sigma_v_frac=0.05,
+    # Std dev of lateral aim-angle error.
     sigma_phi_rad=np.radians(1.5),
 )
 
 DEFAULT_PLAYER = PlayerParams(
+    # Simple visual reaction time baseline (t_r).
     reaction_time_s=0.2,
+    # Maximum court movement speed (v_p).
     move_speed_mps=1.5,
+    # Typical ball contact height above the court.
     contact_height_m=1.0,
+    # Default (illustrative) shot execution error.
     error=DEFAULT_ERROR,
 )

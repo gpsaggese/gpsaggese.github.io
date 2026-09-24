@@ -4,7 +4,8 @@
   that walks through the API of `PR1`-`PR4`, one layer per section
 - Scope: `racket_strategy_utils.py` (plot and widget helpers), the Jupytext pair
   `racket_strategy.API.ipynb` / `.py`, and its Docker end-to-end test
-- Roadmap position: depends on `PR2`, `PR3`, `PR4`; `PR6` reuses the utils
+- Roadmap position: depends on `PR2`, `PR3`, `PR4`; `PR6` and `PR7` reuse the
+  utils
 - This is a specification only: no code in this document has been implemented
 
 ## Design Decisions
@@ -25,12 +26,14 @@
 
 - `plotly`: extra dependency; `matplotlib` and `ipywidgets` are in the template
 - One notebook per module: fragments the story; sections mirror the layers instead
-- Trade-off: a small grid keeps runtime low but hides fine-grid effects (`PR6`)
+- Trade-off: a small grid keeps runtime low but hides fine-grid effects (`PR7`)
 
 ## Out of Scope
 
-- Computational results and parameter sweeps: `PR6`
-- Paper figures: `PR7`
+- The interactive exploration notebook with ball speed / shot std dev / player
+  position controls: `PR6`
+- Computational results and parameter sweeps: `PR7`
+- Paper figures: `PR8`
 
 ## Current State
 

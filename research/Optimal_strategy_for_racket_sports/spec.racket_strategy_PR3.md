@@ -2,7 +2,7 @@
 
 - `PR3` of `plan.racket_strategy.md`: implement paper Section IV (grid, Monte Carlo
   $P_{\mathrm{in}}$, reachability, composite score, serve) in `racket_scoring.py`
-- Roadmap position: depends on `PR2`; `PR4`-`PR6` build on it
+- Roadmap position: depends on `PR2`; `PR4`-`PR7` build on it
 - This is a specification only: no code in this document has been implemented
 
 ## Design Decisions
@@ -13,7 +13,7 @@
   - Decision: a sample counts if it clears the net and lands in the legal region
     (half court or service box); the cell hit rate is kept as `p_hit_cell`
   - Why: the per-cell reading scales with cell area, so the argmax would depend
-    on grid resolution; `PR7` fixes the formula in the paper
+    on grid resolution; `PR8` fixes the formula in the paper
 - **Reachability as in the paper**: cell center, nominal $T_f$ (Section IV-C)
 - **Best angle per cell**: $S(c) = \max_\ell P_{\mathrm{in}}(c,\ell)\,(1 -
   R(c,\ell))$ over the feasible angles $\ell$ of `PR2`; the max comes after $R$
@@ -67,7 +67,7 @@
   def make_serve_situation(sport, server, serve_side) -> ShotSituation: ...
   ```
 - A cell with no feasible angle gets `p_in = 0`, `score = 0`, `theta_deg = NaN`
-- `p_in_se` $= \sqrt{p(1-p)/K}$ feeds the resolution study of `PR6`
+- `p_in_se` $= \sqrt{p(1-p)/K}$ feeds the resolution study of `PR7`
 
 ## Interaction with Existing Code
 
