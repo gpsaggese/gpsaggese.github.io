@@ -35,7 +35,6 @@
 ::::
 :::: {.column width=50%}
 
-// TODO(ai_gp): Remove model complexity
 ```tikz
 \bfseries
 % Axis
@@ -49,15 +48,11 @@
 % In-sample error curve
 \draw[thick, blue] plot[smooth, domain=0.6:6] (\x, {2.0/(0.5*\x^2.0+0.3)});
 
-% Model complexity (square root curve)
-\draw[thick, violet] plot[smooth, domain=0.6:6] (\x, {1.0*(\x/1.5)^0.6});
-
-% Out-of-sample error curve (in-sample + model complexity)
+% Out-of-sample error curve
 \draw[thick, red] plot[smooth, domain=0.6:6] (\x, {2.0/(0.5*\x^2.0+0.3) + 1.0*(\x/1.5)^0.6});
 
 % Labels
 \node[blue] at (5.0,0.7) {In-sample Error};
-\node[violet] at (5.5,1.5) {Model Complexity};
 \node[red] at (6.0,2.8) {Out-of-sample Error};
 ```
 
@@ -140,8 +135,11 @@
     - Overfit
     - Low bias, high variance
 
-// TODO(ai_gp): Split into 3 pics and remove the caption
-![](msml610/lectures_source/figures/L05.2.Optimal_fit2.png){ width=60% }
+![](msml610/lectures_source/figures/L05.2.Classification_underfit.png)
+
+![](msml610/lectures_source/figures/L05.2.Classification_rightfit.png)
+
+![](msml610/lectures_source/figures/L05.2.Classification_overfit.png)
 
 # Bias Variance Analysis
 
@@ -509,8 +507,9 @@
 ::::
 :::: {.column width=30%}
 
-![Constant model fit on one training set](msml610/lectures_source/figures/L05.2.Learning_Once_0.png)
-![Linear model fit on one training set](msml610/lectures_source/figures/L05.2.Learning_Once_1.png)
+// TODO(gp): Regenerate these two figures, missing on disk.
+//![Constant model fit on one training set](msml610/lectures_source/figures/L05.2.Learning_Once_0.png)
+//![Linear model fit on one training set](msml610/lectures_source/figures/L05.2.Learning_Once_1.png)
 
 ::::
 :::
@@ -540,8 +539,9 @@
 //![](msml610/lectures_source/figures/L05.2.Bias_Variance_Numerical_Example1.png)
 //![](msml610/lectures_source/figures/L05.2.Bias_Variance_Numerical_Example2.png)
 
-![Constant models: high bias, low variance](msml610/lectures_source/figures/L05.2.Bias_Variance_Learning_0.png)
-![Linear models: low bias, high variance](msml610/lectures_source/figures/L05.2.Bias_Variance_Learning_1.png)
+// TODO(gp): Regenerate these two figures, missing on disk.
+//![Constant models: high bias, low variance](msml610/lectures_source/figures/L05.2.Bias_Variance_Learning_0.png)
+//![Linear models: low bias, high variance](msml610/lectures_source/figures/L05.2.Bias_Variance_Learning_1.png)
 
 ::::
 :::
@@ -797,21 +797,49 @@
 * Learning Curves vs Bias-Variance Curves
 - @Definition@: **Learning curves** are the dual of the bias-variance curves
 
+::: columns
+:::: {.column width=50%}
+
 - For @bias-variance curves@
   $$
   E_{in}, E_{out} = f(d_{VC} \vert N)
   $$
   - _Keep fixed the complexity of training set_
     - Number of examples $N$
-  - _Vary the model comple≈ity_ in terms of:
+  - _Vary the model complexity_ in terms of:
     - Model complexity $d$
     - Number of features $p$
     - Regularization amount $\lambda$
 
-// TODO(ai_gp): Add a similar curve as below for bias-variance
+::::
+:::: {.column width=50%}
+
+```tikz
+\bfseries
+% Axes
+\draw[->] (0,0) -- (7,0) node[below] {Model Complexity, $d_{VC}$};
+\draw[->] (0,0) -- (0,4) node[above] {Expected Error};
+
+% Dotted convergence line
+\draw[dotted, thick] (0,1.5) -- (6.8,1.5);
+
+% E_in curve (decreasing)
+\draw[thick, blue] plot[smooth, domain=0.4:6.5] (\x, {1.5 - 1.0/(0.6*\x + 0.4)});
+
+% E_out curve (U-shaped)
+\draw[thick, red] plot[smooth, domain=0.5:6.5] (\x, {0.3*\x + 1.5 - 0.7/(0.6*\x + 0.4)});
+
+% Labels
+\node[blue] at (5.8,0.95) {$E_{\text{in}}$};
+\node[red] at (5.8,2.15) {$E_{\text{out}}$};
+```
+
+::::
+:::
 
 ::: columns
 :::: {.column width=50%}
+
 - For @learning curves@
   $$
   E_{in}, E_{out} = f(N \vert d_{VC})
@@ -845,12 +873,11 @@
 :::
 
 * Typical Form of Learning Curves
+::: columns
+:::: {.column width=65%}
 - @Learning curves@ plot $E_{in}$ and $E_{out}$ as a function of data amount $N$,
   given the model complexity
   - $E_{out} \ge E_{in}$ for any $N$
-
-::: columns
-:::: {.column width=65%}
 
 - @Small@ $N$
   - $E_{in}$ is small (even 0)
@@ -869,34 +896,79 @@
 ::::
 :::: {.column width=35%}
 
-// TODO(ai_gp): Use /figure.create_tikz for these 2 pics
-![](msml610/lectures_source/figures/L05.2.learning_curve.png)
+// ![](msml610/lectures_source/figures/L05.2.learning_curve.png)
+// ![](msml610/lectures_source/figures/L05.2.learning_curve2.png)
 
-![](msml610/lectures_source/figures/L05.2.learning_curve2.png)
+```tikz
+\bfseries
+% Axes
+\draw[->] (0,0) -- (7,0) node[below] {Number of Data Points, $N$};
+\draw[->] (0,0) -- (0,4) node[above] {Expected Error};
+
+% Dotted convergence line
+\draw[dotted, thick] (0,1.5) -- (6.8,1.5);
+
+% E_in curve (increasing towards convergence)
+\draw[thick, blue] plot[smooth, domain=0.4:6.5] (\x, {1.5 - 1.2/(0.6*\x + 0.4)});
+
+% E_out curve (decreasing towards convergence)
+\draw[thick, red] plot[smooth, domain=0.5:6.5] (\x, {1.5 + 0.9/(0.6*\x + 0.4)});
+
+% Labels
+\node[blue] at (5.8,1.0) {$E_{\text{in}}$};
+\node[red] at (5.8,2.1) {$E_{\text{out}}$};
+```
+
+```tikz
+\bfseries
+% Axes
+\draw[->] (0,0) -- (7,0) node[below] {Number of Data Points, $N$};
+\draw[->] (0,0) -- (0,4) node[above] {Expected Error};
+
+% Regions
+\fill[gray!10] (0,0) -- (3.5,0) -- (3.5,4) -- (0,4) -- cycle;
+\node[gray, font=\small, align=center] at (1.75, 3.5) {High-Variance\\Regime};
+\node[gray, font=\small, align=center] at (5.25, 3.5) {High-Bias\\Regime};
+
+% Vertical line separator
+\draw[dashed, gray, thick] (3.5,0) -- (3.5,4);
+
+% E_in curve
+\draw[thick, blue] plot[smooth, domain=0.4:6.5] (\x, {1.5 - 1.2/(0.6*\x + 0.4)});
+
+% E_out curve
+\draw[thick, red] plot[smooth, domain=0.5:6.5] (\x, {1.5 + 0.9/(0.6*\x + 0.4)});
+
+% Labels
+\node[blue] at (5.8,1.0) {$E_{\text{in}}$};
+\node[red] at (5.8,2.1) {$E_{\text{out}}$};
+```
 ::::
 :::
 
 * High-Bias vs High-Variance Regime
 ::: columns
-:::: {.column width=65%}
-- From the learning curve you can see the two regimes:
+:::: {.column width=70%}
+- From the learning curve you can see the two regimes
 
-  - **High-variance regime** for small $N$
-    - $E_{in}$ is small
-    - Small data set $D$ $\implies$ high dependency on $D$
+- @High-variance regime@ for small $N$
+  - $E_{in}$ is small
+  - Small data set $D$ $\implies$ high dependency on $D$
 
-  - More data helps reduce gap between $E_{in}$ and $E_{out}$
+- More data helps reduce gap between $E_{in}$ and $E_{out}$
 
-  - **High-bias regime** for large $N$
-    - $E_{in}$ is large; flattens for large $N$
-    - Best model fitted; more data won't help
-    - $E_{out}$ can be close to $E_{in}$ (good generalization) or not
+- @High-bias regime@ for large $N$
+  - $E_{in}$ is large; flattens for large $N$
+  - Best model fitted; more data won't help
+  - $E_{out}$ can be close to $E_{in}$ (good generalization) or not
 ::::
-:::: {.column width=35%}
+:::: {.column width=30%}
 
-![](msml610/lectures_source/figures/L05.2.Irreducible_Error1.png)
+// TODO(gp): Convert to tikz and comment out the pics in place.
+// TODO(gp): Regenerate these two figures, missing on disk.
+//![](msml610/lectures_source/figures/L05.2.Irreducible_Error1.png)
+//![](msml610/lectures_source/figures/L05.2.Irreducible_Error2.png)
 
-![](msml610/lectures_source/figures/L05.2.Irreducible_Error2.png)
 ::::
 :::
 

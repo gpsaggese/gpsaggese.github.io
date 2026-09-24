@@ -729,9 +729,7 @@ Out-of-sample Error (E_out):
     # Display widgets and output.
     display(seed_box, n_samples_box, noise_box, output)
     # Initial plot.
-    update_plot(
-        seed_slider.value, n_samples_slider.value, noise_slider.value
-    )
+    update_plot(seed_slider.value, n_samples_slider.value, noise_slider.value)
 
 
 # #############################################################################
