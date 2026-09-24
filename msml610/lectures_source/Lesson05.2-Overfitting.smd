@@ -73,15 +73,17 @@
 ::: columns
 :::: {.column width=40%}
 
-- The opposite of overfitting is **optimal fit**, i.e., train a model with proper
-  complexity for the data
+- The opposite of overfitting is not underfitting, but @optimal fit@, i.e., train a
+  model with proper complexity for the data
 
 - The optimal fit:
   - Implies $E_{out}$ is minimal (not $E_{in}$)
   - Does not imply generalization error $E_{out} - E_{in}$ is minimal
 
-- The **generalization error** is the error $E_{out} - E_{in}$ when going from
+- The @generalization error@ is the error $E_{out} - E_{in}$ when going from
   in-sample to out-of-sample
+
+- The degradation of fit is $\frac{E_{out} - E_{in}}{E_{in}$
 
 ::::
 :::: {.column width=60%}
@@ -94,7 +96,7 @@
 * Overfitting: Regression Example
 - Predict diamond price as a function of carat size (regression problem)
 
-- **True relationship** is
+- @True relationship@ is
   $\text{price} \sim (\text{carat size})^2 + \varepsilon$
   where:
   - Square function: larger, rarer diamonds command a price premium
@@ -103,7 +105,7 @@
 ::: columns
 :::: {.column width=45%}
 
-- **Fit with:**
+- @Fit with@
   - _Line_
     - Underfit
     - High bias (large error)
@@ -146,13 +148,12 @@
 ## Bias-Variance Analysis
 
 * Hypothesis Set and Bias-Variance Analysis
-- **Learning** consists in finding $g \in \calH$ such that $g \approx f$ where
+- @Learning@ consists in finding $g \in \calH$ such that $g \approx f$ where
   $f$ is an unknown function
 
-- The **tradeoff in learning** is between
-  `#cite("geman1992biasvariance")`{=typst}:
+- The **tradeoff in learning** is between low complexity and high complexity
+  models `#cite("geman1992biasvariance")`{=typst}:
 
-// TODO(ai_gp): Add a column explaining
 ```{=typst}
 #styled-table(
   headers: ("Low complexity", "High complexity"),
@@ -174,12 +175,12 @@
 - Both VC analysis and bias-variance analysis are concerned with the hypothesis
   set $\calH$
 
-- **VC analysis** `#cite("vapnikchervonenkis1971uniform")`{=typst}:
+- @VC analysis@ `#cite("vapnikchervonenkis1971uniform")`{=typst}:
   $$
   E_{out} \le E_{in} + \Omega(\calH)
   $$
 
-- **Bias-variance analysis**
+- @Bias-variance analysis@
   $$
   E_{out} = \text{bias + variance}
   $$
@@ -421,6 +422,7 @@
     - With infinite training sets, we could focus on the "best" $g$, which is
       $\overline{g}$
     - But we have only one data set $D$ at a time, incurring a cost
+
 ::::
 :::: {.column width=40%}
 
@@ -432,15 +434,18 @@
 * Variance and Bias Term Varying Cardinality of $\calH$
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=60%}
 
-- If hypothesis set **has a single function**: $\calH = \{ h \ne f \}$
+- If hypothesis set has a @single function@:
+  $$
+  \calH = \{ h \ne f \}
+  $$
   - Large bias
     - $h$ might be far from $f$
   - Variance = 0
     - No cost in choosing hypothesis
 ::::
-:::: {.column width=35%}
+:::: {.column width=40%}
 
 ![](msml610/lectures_source/figures/L05.2.Bias_Variance_tradeoff_example1.png)
 
@@ -448,19 +453,21 @@
 :::
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=60%}
 
 \vspace{1cm}
 
-- If hypothesis set **has many functions**:
-  $\calH = \{ \text{many hypotheses } h \}$
+- If hypothesis set has @many functions@:
+  $$
+  \calH = \{ \text{many hypotheses } h \}
+  $$
   - Bias can be 0
     - E.g., if $f \in \calH$
   - Large variance
     - Depending on data set $D$, end up far from $f$
     - Larger $\calH$, farther $g$ from $f$
 ::::
-:::: {.column width=35%}
+:::: {.column width=40%}
 
 ![](msml610/lectures_source/figures/L05.2.Bias_Variance_tradeoff_example2.png)
 
@@ -471,36 +478,50 @@
 
 ## Bias-Variance Tradeoff in Practice
 
-* Bias-Variance Trade-Off: Numerical Example (1/2)
-- **Machine learning problem**:
+* Bias-Variance Trade-Off: Numerical Example (1/3)
+
+- @Problem@:
   - Target function $f(x) = \sin(\pi x), x \in [-1, 1]$
   - Noiseless target
   - You have $f(\vx)$ for $N = 2$ points
 
-- **Two hypotheses sets** $\calH$:
+- @Two hypotheses sets@ $\calH$:
   - Constant model: $\calH_0: h(x) = b$
   - Linear model: $\calH_1: h(x) = ax + b$
 
-- **Which model is best**?
-  - Depends on the perspective!
+- @Which model is best@?
+  - Depends on what is the goal!
   - Best for _approximation_: minimal error approximating the sinusoid
-  - Best for _learning_: learn the unknown function with minimal error from 2
-    points
+  - Best for _learning_: learn the unknown function with minimal error from 2 points
 
-* Bias-Variance Trade-Off: Numerical Example (2/2)
+* Bias-Variance Trade-Off: Numerical Example (2/3)
 
-- **Approximation**
+::: columns
+:::: {.column width=70%}
+
+- @Approximation@
   - $E_{out}(g_0) = 0.5$
     - $g_0$ is a constant and approximates the sinusoid poorly (higher bias)
   - $E_{out}(g_1) = 0.2$
     - $g_1$ is a line and has more degrees of freedom (lower bias)
   - The line model _approximates better_ than the constant model
 
+::::
+:::: {.column width=30%}
+
+![Constant model fit on one training set](msml610/lectures_source/figures/L05.2.Learning_Once_0.png)
+![Linear model fit on one training set](msml610/lectures_source/figures/L05.2.Learning_Once_1.png)
+
+::::
+:::
+
+* Bias-Variance Trade-Off: Numerical Example (3/3)
+
 ::: columns
 :::: {.column width=65%}
-- **Learning**
+- @Learning@
   - Algorithm:
-    - Pick 2 points as training set $D$
+    - Pick $N$ points as training set $D$
     - Learn $g$ from $D$
     - Compute $\EE_D [ E_{out}(g) ]$
   - Average over all data sets $D$:
@@ -516,15 +537,18 @@
 ::::
 :::: {.column width=35%}
 
-![](msml610/lectures_source/figures/L05.2.Bias_Variance_Numerical_Example1.png)
-![](msml610/lectures_source/figures/L05.2.Bias_Variance_Numerical_Example2.png)
+//![](msml610/lectures_source/figures/L05.2.Bias_Variance_Numerical_Example1.png)
+//![](msml610/lectures_source/figures/L05.2.Bias_Variance_Numerical_Example2.png)
+
+![Constant models: high bias, low variance](msml610/lectures_source/figures/L05.2.Bias_Variance_Learning_0.png)
+![Linear models: low bias, high variance](msml610/lectures_source/figures/L05.2.Bias_Variance_Learning_1.png)
 
 ::::
 :::
 
 * Bias-Variance Curves
-- **Bias-variance curves** are plots of $E_{out}$ increasing the complexity of
-  the model `#cite("hastie2009elements")`{=typst}
+- @Bias-variance curves@ are plots of $E_{out}$ increasing the complexity of the
+  model `#cite("hastie2009elements")`{=typst}
 
 ::: columns
 :::: {.column width=55%}
@@ -533,26 +557,25 @@
   - $E_{in}$
     - Is decreasing with increasing model complexity
     - Can even go to 0
-  - $E_{out}$
-    - Is always larger than $E_{in}$
-    - Is the sum of bias and variance
-    - Has a bowl shape
-    - Reaches a minimum for optimal fit
-    - Before the minimum there is a "high bias / underfitting" regime
-    - After the minimum there is a "high variance / overfitting" regime
 ::::
 :::: {.column width=45%}
 
 ![](msml610/lectures_source/figures/L05.2.bias_variance_curve.png)
 
-![](msml610/lectures_source/figures/L05.2.bias_variance_decomposition.png)
-
 ::::
 :::
 
+- $E_{out}$
+  - Is always larger than $E_{in}$
+  - Is the sum of bias and variance
+  - Has a bowl shape
+  - Reaches a minimum for optimal fit
+  - Before the minimum there is a "high bias / underfitting" regime
+  - After the minimum there is a "high variance / overfitting" regime
+
 * Bias-Variance Curves and Regularization
 
-- Use **model with regularization** to learn at the same time:
+- Use @model with regularization@ to learn at the same time:
   - Model coefficients $\vw$
   - Model "complexity" (e.g., VC dimension)
 
@@ -565,7 +588,7 @@
 ::: columns
 :::: {.column width=50%}
 
-- Interpret regularization parameter:
+- Interpret @regularization parameter@:
   - Small $\lambda$:
     - Complex model
     - Low bias
@@ -579,6 +602,7 @@
 ::::
 :::: {.column width=50%}
 
+// TODO(gp): Make it bigger or recompute it
 ![](msml610/lectures_source/figures/L05.2.regularization.png)
 
 ::::
@@ -597,7 +621,7 @@
 ## Noise and Overfitting
 
 * Bias-Variance Decomposition with a Noisy Target
-- Extend bias-variance decomposition to **a noisy target**
+- Extend bias-variance decomposition to @a noisy target@
   $$
   y = f(\vx; \vw) + \varepsilon = \vw^T \vx + \varepsilon
   $$
@@ -620,27 +644,27 @@
   $$
 
 - The out-of-sample error is the sum of 3 contributions
-  1. **Variance**: from the set of hypotheses to the centroid of the hypothesis
+  1. @Variance@: from the set of hypotheses to the centroid of the hypothesis
      set
-  2. **Bias**: from the centroid of the hypothesis set to the noiseless function
-  3. **Noise**: from the noiseless function to the real function
+  2. @Bias@: from the centroid of the hypothesis set to the noiseless function
+  3. @Noise@: from the noiseless function to the real function
 
 * Bias as Deterministic Noise
 ::: columns
 :::: {.column width=70%}
-- The bias term can be interpreted as **deterministic noise**
+- The bias term can be interpreted as @deterministic noise@
 
-- **Bias** is the part of the target function that hypothesis set cannot
+- @Bias@ is the part of the target function that hypothesis set cannot
   capture:
   $$
   h^*(\vx) - f(\vx)
   $$
   where:
-  - $h^*()$ is the best approximation of $f(\vx)$ in the hypothesis set
-    $\calH$ (e.g., $\overline{g}(x)$)
+  - $h^*$ is the best approximation of $f(\vx)$ in the hypothesis set $\calH$ (e.g.,
+    $\overline{g}(x)$)
 
 - The hypothesis set $\calH$ cannot learn the deterministic noise since it is
-  outside of its ability, and thus it behaves like "noise"
+  outside of its _ability_, and thus it behaves like _noise_
 
 ::::
 :::: {.column width=30%}
@@ -658,37 +682,38 @@
   rows: (
     ([Fixed for a given $bold(x)$?], [Yes], [No]),
     ([Depends on $cal(H)$?], [Yes], [No]),
-    ([Independent of $D$?], [Yes (also of $epsilon$)], [Yes]),
+    ([Depends on $D$?], [No(also of $epsilon$)], [No]),
   ),
   bold-first-col: true,
 )
 ```
 
-- In a machine learning problem, no difference exists between stochastic and
-  deterministic noise, as $\calH$ and $D$ are fixed
-  - From the training set alone, you cannot determine if data is from a
-    _noiseless complex_ target or a _noisy simple_ target
+- In a machine learning problem, no difference exists between _stochastic_ and
+  _deterministic_ noise, as $\calH$ and $D$ are fixed
+- From the training set alone, you cannot determine if data is from:
+  - a _noiseless complex_ target; or 
+  - a _noisy simple_ target
 
 * Deterministic vs Stochastic Noise Example (1/2)
 ::: columns
-:::: {.column width=75%}
-- **Two targets**:
+:::: {.column width=70%}
+- @Two targets@:
   - Noisy low-order target (10th order polynomial)
   - Noiseless high-order target (50th order polynomial)
 
-- **Training set**
+- @Training set@
   - Generate $N=15$ data points
 
-- **Two models**
+- @Two models@
   - ${\calH}_{2}$ low-order hypothesis (2nd order polynomial)
   - ${\calH}_{10}$ high-order hypothesis (10th order polynomial)
 
-- Learning model:
+- The learning model:
   - Sees only training samples
   - Can't distinguish noise sources
 
 ::::
-:::: {.column width=25%}
+:::: {.column width=30%}
 
 ![](msml610/lectures_source/figures/L05.2.deterministic_noise_example1.png)
 
@@ -701,22 +726,22 @@
 ::: columns
 :::: {.column width=75%}
 
-- Noisy low-order target:
+- @Noisy low-order target@:
   - Fit 2nd to 10th order polynomial
   - $\downarrow E_{in}$ (more degrees of freedom), $\uparrow\uparrow E_{out}$
     (fits noise)
 
-- Noiseless high-order target
+- @Noiseless high-order target@
   - Fit 2nd to 10th order polynomial
   - Same phenomenon
   - $\downarrow E_{in}$ (more degrees of freedom), $\uparrow\uparrow E_{out}$
     (fits noise)
 
-- **Wrong approach**
+- @Wrong approach@
   - Target is 10th order polynomial
   - Use 10-order hypothesis to fit target perfectly
 
-- **Right approach**
+- @Right approach@
   - Consider number of data points, i.e., 15 points
   - Rule of thumb from VC analysis
     $$
@@ -725,26 +750,23 @@
   - Use 1 or 2 degrees of freedom
 
 ::::
-:::: {.column width=25%}
+:::: {.column width=20%}
 
 ![](msml610/lectures_source/figures/L05.2.deterministic_noise_example3.png)
-
 ![](msml610/lectures_source/figures/L05.2.deterministic_noise_example5.png)
-
 ![](msml610/lectures_source/figures/L05.2.deterministic_noise_example4.png)
-
 ![](msml610/lectures_source/figures/L05.2.deterministic_noise_example6.png)
 
 ::::
 :::
 
 * Amount of Data and Model Complexity
-- One must match the _model complexity_ to
-  - **Data resources**
-  - **Signal to noise ratio**
-  - **Not target complexity**
+- One must match the @model complexity@ to
+  - _Data resources_
+  - _Signal to noise ratio_
+  - _Not target complexity_
 
-- The rule of thumb is:
+- The @rule of thumb@ is:
   $$
   d_{VC} (\text{degrees of freedom of the model})
   = N (\text{number of data points}) / 10
@@ -752,10 +774,10 @@
   - In other words, 10 data points needed to fit a degree of freedom
   - If the data is noisy, you need even more data
 
-* Overfitting as a Function of Data Resources, Model Complexity, Noise
+* Overfitting Dependencies
 
-- You can measure overfitting in terms of the **relative generalization
-  error** $\frac{E_{out} - E_{in}}{E_{out}}$
+- Overfitting can be measured in terms of the @relative generalization error@
+  $\frac{E_{out} - E_{in}}{E_{out}}$
 
 ```{=typst}
 #styled-table(
@@ -773,21 +795,24 @@
 # Learning Curves
 
 * Learning Curves vs Bias-Variance Curves
-- **Learning curves** are the dual of the bias-variance curves
+- @Definition@: **Learning curves** are the dual of the bias-variance curves
 
-- For **bias-variance curves**
+- For @bias-variance curves@
   $$
   E_{in}, E_{out} = f(d_{VC} \vert N)
   $$
-  - Keep the complexity of training set fixed (number of examples $N$)
-  - Vary the model in terms of:
+  - _Keep fixed the complexity of training set_
+    - Number of examples $N$
+  - _Vary the model comple≈ity_ in terms of:
     - Model complexity $d$
     - Number of features $p$
     - Regularization amount $\lambda$
 
+// TODO(ai_gp): Add a similar curve as below for bias-variance
+
 ::: columns
-:::: {.column width=60%}
-- For **learning curves**
+:::: {.column width=50%}
+- For @learning curves@
   $$
   E_{in}, E_{out} = f(N \vert d_{VC})
   $$
@@ -795,7 +820,7 @@
   - Vary the size $N$ of training set
 
 ::::
-:::: {.column width=40%}
+:::: {.column width=50%}
 
 ```tikz
 \bfseries
@@ -820,30 +845,31 @@
 :::
 
 * Typical Form of Learning Curves
-- Learning curves plot $E_{in}$ and $E_{out}$ as a function of data amount $N$,
-  given the model $h()$
+- @Learning curves@ plot $E_{in}$ and $E_{out}$ as a function of data amount $N$,
+  given the model complexity
   - $E_{out} \ge E_{in}$ for any $N$
 
 ::: columns
 :::: {.column width=65%}
 
-- **Small $N$**
+- @Small@ $N$
   - $E_{in}$ is small (even 0)
   - The model is likely overfitted, memorizing and generalizing poorly
   - $E_{out}$ is large
 
-- **Increasing $N$**
+- @Increasing@ $N$
   - $E_{in} \uparrow$ as the model cannot fit all data
   - $E_{out} \downarrow$ as the model fits better and generalizes better
   - Generalization error $E_{out} - E_{in} \downarrow$
 
-- **$N \to \infty$**
+- @Infinite data@: $N \to \infty$
   - $E_{in}$ reaches a maximum (irreducible error)
   - $E_{out}$ reaches a minimum
   - $E_{out} - E_{in}$ depends on the complexity of the model
 ::::
 :::: {.column width=35%}
 
+// TODO(ai_gp): Use /figure.create_tikz for these 2 pics
 ![](msml610/lectures_source/figures/L05.2.learning_curve.png)
 
 ![](msml610/lectures_source/figures/L05.2.learning_curve2.png)

@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.0
+#       jupytext_version: 1.19.3
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -217,6 +217,39 @@ hintros.print_obj_info(utils.cell4_learning_plots)
 
 # %% [markdown]
 # # Part 3: Bias-Variance With Noise
+
+# %% [markdown]
+# ## Cell 3.0: Learning once with noise
+#
+# **Goal**
+# - Contrast learning from a small training set with noisy labels, and see
+#   how noise affects in-sample and out-of-sample error
+
+# %% [markdown]
+# **Description**
+# - Inputs
+#   - `seed`: random seed for the training points sampled
+#   - `N_samples`: number of training points, 2-20
+#   - `noise_std`: standard deviation $\sigma$ of the label noise, 0-0.5
+#
+# - Panels
+#   - `Constant model`: $f(x)$, the fitted $g_0$, and the training
+#     points, titled with $E_{in}$/$E_{out}$
+#   - `Linear model`: $f(x)$, the fitted $g_1$, and the training
+#     points, titled with $E_{in}$/$E_{out}$
+#   - `Comments`: current `seed`, `N_samples`, noise std, and both models'
+#     $E_{in}$/$E_{out}$
+
+# %%
+# Display learning from N random samples with noise and interactive controls.
+utils.cell2_learning_once_with_noise()
+
+# %% [markdown]
+# **Implementation** `cell2_learning_once_with_noise()`
+# - Draws `N_samples` random training points with Gaussian noise and fits
+#   $g_0$/$g_1$ to them with `fit_models_and_predict()`
+# - Computes $E_{in}$ and $E_{out}$ for both models, demonstrating how noise
+#   inflates both errors
 
 # %% [markdown]
 # ## Cell 3.1: Learning with noise: bias-variance decomposition

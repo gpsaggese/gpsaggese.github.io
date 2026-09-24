@@ -15,6 +15,7 @@ import numpy as np
 from IPython.display import clear_output, display
 
 import helpers.hnotebook as hnotebo
+import msml610.tutorials.msml610_utils as mtumsuti
 
 try:
     import helpers.htutorial as htutori
@@ -174,6 +175,9 @@ def compute_all_errors(
     e_in_linear = compute_approximation_error(x_train, y_train, y_linear_train)
 
     # Compute out-of-sample error E_out (on full dense grid).
+    # E_out is measured against the noiseless `y_true`, while E_in is
+    # measured against the noisy `y_train`, so E_out excludes the noise
+    # term and can end up lower than E_in when `noise_std` is large.
     e_out_const = compute_approximation_error(x_dense, y_true, y_const_dense)
     e_out_linear = compute_approximation_error(x_dense, y_true, y_linear_dense)
 
@@ -188,6 +192,7 @@ def setup_model_comparison_axis(
     y_label: str = "f(x)",
     y_lim: Tuple[float, float] = (-1.5, 1.5),
     add_origin_lines: bool = True,
+    legend_loc: str = "upper right",
 ) -> None:
     """
     Setup standard axis formatting for model comparison plots.
@@ -198,12 +203,13 @@ def setup_model_comparison_axis(
     :param y_label: Label for y-axis
     :param y_lim: Y-axis limits
     :param add_origin_lines: Whether to add horizontal/vertical lines at origin
+    :param legend_loc: Location of the legend
     """
     ax.set_xlabel(x_label, fontsize=12)
     ax.set_ylabel(y_label, fontsize=12)
     ax.set_ylim(y_lim)
     ax.set_title(title, fontsize=14, fontweight="bold")
-    ax.legend(loc="upper right")
+    ax.legend(loc=legend_loc)
     ax.grid(True, alpha=0.3)
     if add_origin_lines:
         ax.axhline(y=0, color="k", linestyle="-", linewidth=0.5)
@@ -515,6 +521,7 @@ def cell2_learning_once() -> None:
             setup_model_comparison_axis(
                 ax1,
                 f"Constant Model: E_in={e_in_const:.4f}, E_out={e_out_const:.4f}",
+                legend_loc="upper left",
             )
             # Plot 2: True function vs Linear model.
             ax2 = axes[1]
@@ -527,6 +534,7 @@ def cell2_learning_once() -> None:
             setup_model_comparison_axis(
                 ax2,
                 f"Linear Model: E_in={e_in_linear:.4f}, E_out={e_out_linear:.4f}",
+                legend_loc="upper left",
             )
             # Plot 3: Comments.
             ax3 = axes[2]
@@ -547,6 +555,14 @@ Out-of-sample Error (E_out):
 """
             htutori.add_fitted_text_box(ax3, comment_text)
             plt.tight_layout()
+            descriptions = [
+                "Constant model fit on one training set",
+                "Linear model fit on one training set",
+                "In/out-of-sample errors",
+            ]
+            mtumsuti.save_axes_separately(
+                axes, "L05.2.Learning_Once.png", descriptions=descriptions
+            )
             plt.show()
 
     # Link widgets to update function.
@@ -558,6 +574,164 @@ Out-of-sample Error (E_out):
     display(seed_box, n_samples_box, output)
     # Initial plot.
     update_plot(seed_slider.value, n_samples_slider.value)
+
+
+def cell2_learning_once_with_noise() -> None:
+    """
+    Show learning from N random samples with Gaussian noise added.
+
+    Uses interactive widgets to control:
+    - seed: Random seed for reproducibility
+    - N_samples: Number of training points to sample
+    - noise_std: Standard deviation of Gaussian noise added to training labels
+
+    Similar to cell2_learning_once but adds noise to training data,
+    demonstrating how noise affects model fitting and out-of-sample error.
+    """
+    # Create output widget for displaying plots.
+    output = ipywidgets.Output()
+
+    # Create widgets - seed must be first as per conventions.
+    seed_slider, seed_box = htutori.build_widget_control(
+        name="seed",
+        description="Random seed",
+        min_val=0,
+        max_val=100,
+        step=1,
+        initial_value=42,
+        is_float=False,
+    )
+    n_samples_slider, n_samples_box = htutori.build_widget_control(
+        name="N_samples",
+        description="Number of training samples",
+        min_val=2,
+        max_val=20,
+        step=1,
+        initial_value=2,
+        is_float=False,
+    )
+    noise_slider, noise_box = htutori.build_widget_control(
+        name="noise_std",
+        description="Noise standard deviation",
+        min_val=0.0,
+        max_val=0.5,
+        step=0.05,
+        initial_value=0.0,
+        is_float=True,
+    )
+
+    def update_plot(seed: int, n_samples: int, noise_std: float) -> None:
+        """Update the visualization based on widget values."""
+        with output:
+            clear_output(wait=True)
+            # Set random seed for reproducibility.
+            np.random.seed(seed)
+            # Generate training data by sampling random points with noise.
+            x_train, y_train = generate_training_data(
+                n_samples, noise_std=noise_std
+            )
+            # Create dense x values for plotting the true function and computing E_out.
+            x_dense = np.linspace(-1, 1, 200)
+            y_true = target_function(x_dense)
+            # Fit models to training data and generate predictions.
+            b, y_const_dense, (a, b_linear), y_linear_dense = (
+                fit_models_and_predict(x_train, y_train, x_dense)
+            )
+            # Generate predictions on training data for E_in computation.
+            y_const_train = np.full_like(x_train, b)
+            y_linear_train = a * x_train + b_linear
+            # Compute all error metrics.
+            e_in_const, e_in_linear, e_out_const, e_out_linear = (
+                compute_all_errors(
+                    x_train,
+                    y_train,
+                    x_dense,
+                    y_true,
+                    y_const_train,
+                    y_const_dense,
+                    y_linear_train,
+                    y_linear_dense,
+                )
+            )
+            # Create figure with 3 subplots.
+            fig, axes = plt.subplots(1, 3, figsize=(18, 5))
+            # Plot 1: True function vs Constant model.
+            ax1 = axes[0]
+            ax1.plot(x_dense, y_true, "b-", linewidth=2, label="True f(x)")
+            ax1.plot(
+                x_dense,
+                y_const_dense,
+                "g-",
+                linewidth=2,
+                label="Constant g_0(x)",
+            )
+            # Show training points.
+            plot_training_points(ax1, x_train, y_train)
+            setup_model_comparison_axis(
+                ax1,
+                f"Constant Model: E_in={e_in_const:.4f}, E_out={e_out_const:.4f}",
+                legend_loc="upper left",
+            )
+            # Plot 2: True function vs Linear model.
+            ax2 = axes[1]
+            ax2.plot(x_dense, y_true, "b-", linewidth=2, label="True f(x)")
+            ax2.plot(
+                x_dense, y_linear_dense, "m-", linewidth=2, label="Linear g_1(x)"
+            )
+            # Show training points.
+            plot_training_points(ax2, x_train, y_train)
+            setup_model_comparison_axis(
+                ax2,
+                f"Linear Model: E_in={e_in_linear:.4f}, E_out={e_out_linear:.4f}",
+                legend_loc="upper left",
+            )
+            # Plot 3: Comments.
+            ax3 = axes[2]
+            ax3.axis("off")
+            comment_text = f"""
+Learning with Noise
+
+Training Set: {n_samples} random points
+Seed: {seed}
+Noise std: {noise_std:.3f}
+
+In-sample Error (E_in):
+  Constant: {e_in_const:.4f}
+  Linear:   {e_in_linear:.4f}
+
+Out-of-sample Error (E_out):
+  Constant: {e_out_const:.4f}
+  Linear:   {e_out_linear:.4f}
+"""
+            htutori.add_fitted_text_box(ax3, comment_text)
+            plt.tight_layout()
+            descriptions = [
+                "Constant model fit on noisy training set",
+                "Linear model fit on noisy training set",
+                "In/out-of-sample errors",
+            ]
+            mtumsuti.save_axes_separately(
+                axes,
+                "L05.2.Learning_Once_With_Noise.png",
+                descriptions=descriptions,
+            )
+            plt.show()
+
+    # Link widgets to update function.
+    ipywidgets.interactive_output(
+        update_plot,
+        {
+            "seed": seed_slider,
+            "n_samples": n_samples_slider,
+            "noise_std": noise_slider,
+        },
+    )
+    # Display widgets and output.
+    display(seed_box, n_samples_box, noise_box, output)
+    # Initial plot.
+    update_plot(
+        seed_slider.value, n_samples_slider.value, noise_slider.value
+    )
 
 
 # #############################################################################
@@ -731,6 +905,16 @@ Average Out-of-sample Error:
 """
             htutori.add_fitted_text_box(ax3, comment_text)
             plt.tight_layout()
+            descriptions = [
+                "Constant models: high bias, low variance",
+                "Linear models: low bias, high variance",
+                "Average in/out-of-sample errors",
+            ]
+            mtumsuti.save_axes_separately(
+                axes,
+                "L05.2.Bias_Variance_Learning.png",
+                descriptions=descriptions,
+            )
             plt.show()
 
     # Link widgets to update function.

@@ -600,88 +600,140 @@ def generate_animation(
 # Figure saving utilities.
 # #############################################################################
 
-FIG_DIR = "/app/lectures_source/figures"
+# Figures dir, relative to the git root, so markdown image references
+# (e.g., `msml610/lectures_source/figures/foo.png`) stay valid regardless of
+# where the code runs. Tutorial Docker containers mount the git root at
+# `/git_root` (see `class_project/project_template/utils.sh`), not `/app`,
+# so an `/app`-based path was never on a mounted volume and any file saved
+# there lived only in the container's throwaway layer.
+FIG_DIR_REL_PATH = "msml610/lectures_source/figures"
+FIG_DIR = os.path.join(
+    os.environ.get("CSFY_GIT_ROOT_PATH", "."), FIG_DIR_REL_PATH
+)
 
 
-def save_ax(ax: Any, file_name: str) -> None:
+def save_ax(ax: Any, file_name: str, description: str = "") -> None:
     """
     Save matplotlib axes figure to file and print markdown reference.
 
     :param ax: Matplotlib axes object
     :param file_name: Output filename
+    :param description: Alt text for the markdown image reference
     """
-    file_name = os.path.join(FIG_DIR, file_name)
-    ax.figure.savefig(file_name, dpi=300, bbox_inches="tight")
+    abs_file_name = os.path.join(FIG_DIR, file_name)
+    ax.figure.savefig(abs_file_name, dpi=300, bbox_inches="tight")
     #
-    file_name = file_name.replace("/app/", "")
-    cmd = f"![]({file_name})"
+    rel_file_name = os.path.join(FIG_DIR_REL_PATH, file_name)
+    cmd = f"![{description}]({rel_file_name})"
     _LOG.info(cmd)
 
 
-def save_fig(axes: Any, file_name: str) -> None:
+def save_fig(axes: Any, file_name: str, description: str = "") -> None:
     """
     Save matplotlib figure from axes array to file and print markdown reference.
 
     :param axes: Array of matplotlib axes
     :param file_name: Output filename
+    :param description: Alt text for the markdown image reference
     """
-    file_name = os.path.join(FIG_DIR, file_name)
+    abs_file_name = os.path.join(FIG_DIR, file_name)
     fig = axes[0, 0].figure
-    fig.savefig(file_name, dpi=300, bbox_inches="tight")
+    fig.savefig(abs_file_name, dpi=300, bbox_inches="tight")
     #
-    file_name = file_name.replace("/app/", "")
-    cmd = f"![]({file_name})"
+    rel_file_name = os.path.join(FIG_DIR_REL_PATH, file_name)
+    cmd = f"![{description}]({rel_file_name})"
     _LOG.info(cmd)
 
 
-def save_dot(model: Any, file_name: str) -> None:
+def save_axes_separately(
+    axes: Any, file_name: str, descriptions: Optional[List[str]] = None
+) -> None:
+    """
+    Save each axes of a matplotlib figure to its own file.
+
+    E.g., for `axes` of length 3 and `file_name="foo.png"`, produces
+    `foo_0.png`, `foo_1.png`, `foo_2.png`, each cropped to that axes.
+
+    :param axes: Array or list of matplotlib axes from the same figure
+    :param file_name: Base output filename (numeric suffix inserted before
+        the extension)
+    :param descriptions: Alt text for each axes' markdown image reference,
+        one per axes; empty alt text is used if not given
+    """
+    axes = list(axes)
+    if descriptions is None:
+        descriptions = [""] * len(axes)
+    hdbg.dassert_eq(len(descriptions), len(axes))
+    fig = axes[0].figure
+    fig.canvas.draw()
+    renderer = fig.canvas.get_renderer()
+    hio.create_dir(FIG_DIR, incremental=True)
+    base, ext = os.path.splitext(file_name)
+    for i, ax in enumerate(axes):
+        part_file_name = f"{base}_{i}{ext}"
+        abs_part_file_name = os.path.join(FIG_DIR, part_file_name)
+        extent = ax.get_tightbbox(renderer).transformed(
+            fig.dpi_scale_trans.inverted()
+        )
+        fig.savefig(abs_part_file_name, dpi=300, bbox_inches=extent)
+        _LOG.info("Figure generated and saved to '%s'", abs_part_file_name)
+        #
+        rel_part_file_name = os.path.join(FIG_DIR_REL_PATH, part_file_name)
+        cmd = f"![{descriptions[i]}]({rel_part_file_name})"
+        _LOG.info(cmd)
+
+
+def save_dot(model: Any, file_name: str, description: str = "") -> None:
     """
     Save PyMC model graph to PNG file and print markdown reference.
 
     :param model: PyMC model object
     :param file_name: Output filename
+    :param description: Alt text for the markdown image reference
     """
     import pymc as pm
 
     dot = pm.model_to_graphviz(model)
     dot2 = copy.deepcopy(dot)
     file_name = file_name.replace(".png", "")
-    file_name = os.path.join(FIG_DIR, file_name)
+    abs_file_name = os.path.join(FIG_DIR, file_name)
     # 300 is print quality; try 600 for very sharp images.
     dot2.graph_attr["dpi"] = "300"
-    dot2.render(file_name, format="png", cleanup=True)
+    dot2.render(abs_file_name, format="png", cleanup=True)
     #
-    file_name = file_name.replace("/app/", "")
-    cmd = f"![]({file_name})"
+    rel_file_name = os.path.join(FIG_DIR_REL_PATH, file_name) + ".png"
+    cmd = f"![{description}]({rel_file_name})"
     _LOG.info(cmd)
 
 
-def save_df(df: "pd.DataFrame", file_name: str) -> None:
+def save_df(df: "pd.DataFrame", file_name: str, description: str = "") -> None:
     """
     Save DataFrame as image file and print markdown reference.
 
     :param df: DataFrame to save
     :param file_name: Output filename
+    :param description: Alt text for the markdown image reference
     """
     import dataframe_image as dfi  # type: ignore[import-untyped]
 
-    file_name = os.path.join(FIG_DIR, file_name)
-    dfi.export(df, file_name, table_conversion="matplotlib", dpi=300)
+    abs_file_name = os.path.join(FIG_DIR, file_name)
+    dfi.export(df, abs_file_name, table_conversion="matplotlib", dpi=300)
     #
-    file_name = file_name.replace("/app/", "")
-    cmd = f"![]({file_name})"
+    rel_file_name = os.path.join(FIG_DIR_REL_PATH, file_name)
+    cmd = f"![{description}]({rel_file_name})"
     _LOG.info(cmd)
 
 
-def save_plt(file_name: str) -> None:
+def save_plt(file_name: str, description: str = "") -> None:
     """
     Save current matplotlib figure to file and print markdown reference.
 
     :param file_name: Output filename
+    :param description: Alt text for the markdown image reference
     """
-    file_name = os.path.join(FIG_DIR, file_name)
-    plt.savefig(file_name, dpi=300, bbox_inches="tight")
+    abs_file_name = os.path.join(FIG_DIR, file_name)
+    plt.savefig(abs_file_name, dpi=300, bbox_inches="tight")
     #
-    file_name = file_name.replace("/app/", "")
-    cmd = f"![]({file_name})"
+    rel_file_name = os.path.join(FIG_DIR_REL_PATH, file_name)
+    cmd = f"![{description}]({rel_file_name})"
     _LOG.info(cmd)
