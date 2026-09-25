@@ -3,7 +3,7 @@ Plotting and widget helpers for the `racket_strategy` notebooks.
 
 Import as:
 
-import research.Optimal_strategy_for_racket_sports.racket_strategy_utils as rosfrsut
+import research.Optimal_strategy_for_racket_sports.racket_strategy_utils as rosfrsrsu
 """
 
 import dataclasses

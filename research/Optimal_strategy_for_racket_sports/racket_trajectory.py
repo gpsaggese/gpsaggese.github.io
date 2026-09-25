@@ -3,7 +3,7 @@ Closed-form ball flight and error propagation for racket sports.
 
 Import as:
 
-import research.Optimal_strategy_for_racket_sports.racket_trajectory as rosfrstr
+import research.Optimal_strategy_for_racket_sports.racket_trajectory as rosfrsrtr
 """
 
 import dataclasses

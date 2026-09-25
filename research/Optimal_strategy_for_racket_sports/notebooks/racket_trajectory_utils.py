@@ -3,7 +3,7 @@ Plotting helpers for the `racket_trajectory.API` notebook.
 
 Import as:
 
-import research.Optimal_strategy_for_racket_sports.notebooks.racket_trajectory_utils as rosfrsntrtu
+import research.Optimal_strategy_for_racket_sports.notebooks.racket_trajectory_utils as rosfrsnrtu
 """
 
 import logging

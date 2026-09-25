@@ -3,7 +3,7 @@ Grid-based Monte Carlo scoring for shot placement in racket sports.
 
 Import as:
 
-import research.Optimal_strategy_for_racket_sports.racket_scoring as rosfrssc
+import research.Optimal_strategy_for_racket_sports.racket_scoring as rosfrsrsc
 """
 
 import dataclasses
