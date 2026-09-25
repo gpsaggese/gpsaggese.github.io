@@ -89,7 +89,6 @@ _print_docker_jupyter_help() {
     echo "  -f          Force kill existing container with same name before starting"
     echo "  -h          Print this help message and exit"
     echo "  -p PORT     Host port to forward to Jupyter Lab (default: 8888)"
-    echo "  -r          Open Jupyter Lab at the repo root instead of this script's dir"
     echo "  -u          Enable vim keybindings in Jupyter Lab"
     echo "  -v          Enable verbose output (set -x)"
 }
@@ -99,27 +98,25 @@ parse_docker_jupyter_args() {
     # """
     # Parse command-line arguments for docker_jupyter.sh.
     #
-    # Sets JUPYTER_HOST_PORT, JUPYTER_USE_VIM, JUPYTER_OPEN_ROOT, TARGET_DIR,
-    # VERBOSE, FORCE, and OLD_CMD_OPTS in the caller's scope.  Enables set -x
-    # when -v is passed. Prints help and exits when -h is passed.
+    # Sets JUPYTER_HOST_PORT, JUPYTER_USE_VIM, TARGET_DIR, VERBOSE, FORCE, and
+    # OLD_CMD_OPTS in the caller's scope.  Enables set -x when -v is passed.
+    # Prints help and exits when -h is passed.
     #
     # :param @: command-line arguments forwarded from the calling script
     # """
     # Set defaults.
     JUPYTER_HOST_PORT=8888
     JUPYTER_USE_VIM=0
-    JUPYTER_OPEN_ROOT=0
     VERBOSE=0
     FORCE=0
     # Save original args to pass through to run_jupyter.sh.
     OLD_CMD_OPTS="$*"
     # Parse options.
-    while getopts "fhp:ruv" flag; do
+    while getopts "fhp:uv" flag; do
         case "${flag}" in
             f) FORCE=1;;
             h) _print_docker_jupyter_help; exit 0;;
             p) JUPYTER_HOST_PORT=${OPTARG};;  # Port for Jupyter Lab.
-            r) JUPYTER_OPEN_ROOT=1;;          # Open Jupyter Lab at repo root.
             u) JUPYTER_USE_VIM=1;;            # Enable vim bindings.
             v) VERBOSE=1;;                    # Enable verbose output.
             *) _print_docker_jupyter_help; exit 1;;
@@ -503,14 +500,11 @@ get_docker_jupyter_options() {
     # :param container_name: Name for the Docker container
     # :param host_port: Host port to forward to container port 8888
     # :param jupyter_use_vim: 0 or 1 to enable vim bindings
-    # :param jupyter_default_dir: "/git_root/..." path Jupyter Lab should open
-    #   to by default, or empty string to open at Jupyter Lab's own root
     # :return: docker run options string
     # """
     local container_name=$1
     local host_port=$2
     local jupyter_use_vim=$3
-    local jupyter_default_dir=$4
     # Run as the current user when user is saggese.
     if [[ "$(whoami)" == "saggese" ]]; then
         echo "Overwriting jupyter_use_vim since user='saggese'" >&2
@@ -525,8 +519,7 @@ get_docker_jupyter_options() {
     echo "--name $container_name \
     $port_opt \
     $(get_docker_common_options) \
-    -e JUPYTER_USE_VIM=$jupyter_use_vim \
-    -e JUPYTER_DEFAULT_DIR=$jupyter_default_dir"
+    -e JUPYTER_USE_VIM=$jupyter_use_vim"
 }
 
 
@@ -654,50 +647,10 @@ get_jupyter_args() {
     # """
     # Print the standard Jupyter Lab command-line arguments.
     #
-    # :param jupyter_default_dir: "/git_root/..." path Jupyter Lab should
-    #   open to by default, or empty string to use Jupyter Lab's own root
     # :return: space-separated Jupyter Lab args for port 8888 with no browser,
     #   allow root, and no authentication
     # """
-    local jupyter_default_dir=$1
-    local args="--port=8888 --no-browser --ip=0.0.0.0 --allow-root --ServerApp.token='' --ServerApp.password=''"
-    if [[ -n "$jupyter_default_dir" ]]; then
-        args="$args --ServerApp.default_url=/lab/tree$jupyter_default_dir"
-    fi
-    echo "$args"
-}
-
-
-get_relative_script_dir() {
-    # """
-    # Return the directory of a script, relative to GIT_ROOT.
-    #
-    # :param script_path: path of the script (pass ${BASH_SOURCE[0]})
-    # :return: directory of script_path, relative to GIT_ROOT
-    # """
-    local script_path=$1
-    local script_dir
-    script_dir=$(cd "$(dirname "$script_path")" && pwd)
-    echo "${script_dir#${GIT_ROOT}/}"
-}
-
-
-get_jupyter_target_dir() {
-    # """
-    # Return the "/git_root/..." path Jupyter Lab should open to by default.
-    #
-    # :param script_path: path of the calling script (pass ${BASH_SOURCE[0]})
-    # :param open_root: 1 to open Jupyter Lab at its own root instead of the
-    #   script's directory, 0 otherwise
-    # :return: "/git_root/<rel_dir>", or empty string when open_root is 1
-    # """
-    local script_path=$1
-    local open_root=$2
-    if [[ $open_root == 1 ]]; then
-        echo ""
-        return
-    fi
-    echo "/git_root/$(get_relative_script_dir "$script_path")"
+    echo "--port=8888 --no-browser --ip=0.0.0.0 --allow-root --ServerApp.token='' --ServerApp.password=''"
 }
 
 
@@ -714,8 +667,9 @@ get_run_jupyter_cmd() {
     # """
     local script_path=$1
     local cmd_opts=$2
-    local rel_dir
-    rel_dir=$(get_relative_script_dir "$script_path")
+    local script_dir
+    script_dir=$(cd "$(dirname "$script_path")" && pwd)
+    local rel_dir="${script_dir#${GIT_ROOT}/}"
     echo "/git_root/${rel_dir}/run_jupyter.sh $cmd_opts"
 }
 
