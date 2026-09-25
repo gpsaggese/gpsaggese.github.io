@@ -127,4 +127,22 @@ Exploration Notebook
 
 ## Result (to Fill in Once Implemented)
 
-- TBD
+- Implemented `build_exploration_widget()` in `racket_strategy_utils.py`
+  and the Jupytext pair `racket_strategy.exploration.ipynb` / `.py`, as
+  specced
+- Click-to-run is a `Run` button plus `ipywidgets.Output()` (the same
+  pattern `notebook_utils_template.py` and `PR5`'s `build_score_widget()`
+  use), rather than the `ipywidgets.interact_manual()` decorator named in
+  the spec; behavior matches the spec's requirement (one Monte Carlo
+  re-sample per click, not per slider drag), and the function returns the
+  widget container so `Test_build_exploration_widget` can assert on it
+  without running the notebook UI
+- The widget also renders one static default run at build time, so the
+  Docker end-to-end test has output even though the `Run` button itself
+  is never clicked programmatically
+- `racket_strategy.exploration.ipynb` was executed end to end locally via
+  `jupyter nbconvert --execute` (outside Docker) with no errors; the
+  `@pytest.mark.slow` Docker test (`test3`) is written but not run in this
+  session
+- `test/test_racket_strategy_utils.py::Test_build_exploration_widget` and
+  the full local test suite (49/49) pass

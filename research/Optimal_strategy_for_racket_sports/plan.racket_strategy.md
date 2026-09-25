@@ -92,7 +92,7 @@
     vectorized landing simulation
   - Add `test/test_racket_trajectory.py` reproducing the Figure 1 numbers
 
-- [ ] PR3: Implement grid-based Monte Carlo scoring for rally and serve, Section IV
+- [x] PR3: Implement grid-based Monte Carlo scoring for rally and serve, Section IV
       (see spec.racket_strategy_PR3.md)
   - Depends on: PR2
   - Add `racket_scoring.py`: target grid, opponent-independent launch table,
@@ -111,8 +111,13 @@
   - Add `racket_strategy_utils.py` and `racket_strategy.API.ipynb` / `.py`
   - Add `test/test_racket_strategy_utils.py` and
     `test/test_docker_racket_strategy.py`
+  - Partially done ahead of `PR4`: `draw_court()`, `plot_trajectory_fan()`,
+    `plot_court_heatmap()`, `plot_launch_tradeoff()`, `build_score_widget()`,
+    and the API notebook's Parts 1-7 (sport parameters through serve) are
+    implemented, to unblock `PR6`; `plot_mixed_strategy()` and the
+    notebook's Part 8 (placement game) still need `PR4`'s `racket_game.py`
 
-- [ ] PR6: Add an interactive shot-placement exploration notebook (see
+- [x] PR6: Add an interactive shot-placement exploration notebook (see
       spec.racket_strategy_PR6.md)
   - Depends on: PR3, PR5
   - Add `racket_strategy.exploration.ipynb` / `.py`: click-to-run controls for

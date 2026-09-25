@@ -96,4 +96,20 @@
 
 ## Result (to Fill in Once Implemented)
 
-- TBD
+- Partially implemented ahead of `PR4`, to unblock `PR6`:
+  - `racket_strategy_utils.py`: `draw_court()`, `plot_trajectory_fan()`,
+    `plot_court_heatmap()`, `plot_launch_tradeoff()`, `build_score_widget()`
+  - `racket_strategy.API.ipynb` / `.py`: Parts 1-7 (sport parameters
+    through serve); Part 8 (placement game) is not written
+  - `test/test_racket_strategy_utils.py`, `test/test_docker_racket_strategy.py`
+    (`test1`, running `racket_strategy.API.ipynb`)
+- Not yet implemented: `plot_mixed_strategy()` (needs `racket_game.py`'s
+  `GameSolution`) and the notebook's Part 8
+- `racket_strategy.API.ipynb` was executed end to end locally via
+  `jupyter nbconvert --execute` (outside Docker) with no errors; the
+  `@pytest.mark.slow` Docker test is written but not run in this session
+- A local-only gotcha found while building `PR6`'s widget, not specific to
+  this PR: an inline-backend `matplotlib` figure left open inside an
+  `ipywidgets.Output()` context can stall the kernel's idle handshake on
+  the next update; every widget update function here calls `plt.close(fig)`
+  right after `plt.show()`

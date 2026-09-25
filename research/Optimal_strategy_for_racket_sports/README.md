@@ -34,6 +34,13 @@ Modules are organized in layers, with each layer importing only from layers abov
 | `racket_game.py` | Zero-sum shot placement game |
 | `racket_strategy_utils.py` | Plotting and experiment helpers for notebooks |
 
+## Notebooks
+
+| Notebook | Purpose |
+|----------|---------|
+| `racket_strategy.API.ipynb` | Guided walkthrough of the package API, one layer at a time |
+| `racket_strategy.exploration.ipynb` | Click-to-run exploration of shot placement: ball speed, shot dispersion, player positions |
+
 ## Development
 
 Requirements are in `requirements.txt`. Add scipy for optimization and numerical integration.

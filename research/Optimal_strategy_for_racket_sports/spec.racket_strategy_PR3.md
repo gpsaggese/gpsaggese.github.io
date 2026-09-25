@@ -97,4 +97,13 @@
 
 ## Result (to Fill in Once Implemented)
 
-- TBD
+- Implemented `racket_scoring.py` and `test/test_racket_scoring.py` exactly
+  as specced
+- `Test_compute_reachability` and `Test_compute_score` reproduce Table II's
+  $R$ and $S$ columns for both regimes, including the argmax cells ($c_3$
+  tennis, $c_1$ pickleball)
+- `estimate_launch_table()` always emits one row per target cell, using a
+  `NaN`-valued placeholder row (`p_in = 0`) for a cell with no feasible
+  angle; `compute_reachability()` treats a `NaN` flight time as
+  unreachable, so `score_targets()` needs no separate cell-presence check
+- 48/48 tests pass locally (`pytest research/Optimal_strategy_for_racket_sports/test/`)

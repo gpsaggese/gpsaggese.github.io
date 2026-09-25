@@ -337,3 +337,19 @@ DEFAULT_PLAYER = PlayerParams(
     # Default (illustrative) shot execution error.
     error=DEFAULT_ERROR,
 )
+
+SERVE_PLAYER_TENNIS = PlayerParams(
+    reaction_time_s=DEFAULT_PLAYER.reaction_time_s,
+    move_speed_mps=DEFAULT_PLAYER.move_speed_mps,
+    # Illustrative overhead tennis serve contact height.
+    contact_height_m=2.7,
+    error=DEFAULT_ERROR,
+)
+
+SERVE_PLAYER_PICKLEBALL = PlayerParams(
+    reaction_time_s=DEFAULT_PLAYER.reaction_time_s,
+    move_speed_mps=DEFAULT_PLAYER.move_speed_mps,
+    # Illustrative underhand pickleball serve contact height (below waist).
+    contact_height_m=0.7,
+    error=DEFAULT_ERROR,
+)
