@@ -8,7 +8,15 @@ Kats
 - Supports multiple forecasting models like ARIMA, Prophet, Holt-Winters, and advanced ML-based models.  
 - Offers utilities for data manipulation and visualization, making it easy to analyze and interpret results.  
 
----
+### Fall2026
+
+#### Tutorial
+
+- Usual description of "Learn X in 60 mins"
+
+#### Project
+
+- TODO(ai_gp): Improve the description below
 
 **Project 1: Stock Price Forecasting**  
 **Difficulty**: 1 (Easy)  
@@ -28,9 +36,10 @@ Develop a model to forecast future stock prices for a selected company based on 
 - **Model Evaluation**: Evaluate forecasts with MAE and RMSE across both models.  
 - **Visualization**: Plot historical vs. predicted prices for both ARIMA and Prophet.  
 
----
+- Repeat the same analysis for multiple stocks and different forecasting intervals
 
-**Project 2: Anomaly Detection in Energy Consumption**  
+### Project 2: Anomaly Detection in Energy Consumption
+
 **Difficulty**: 2 (Medium)  
 
 **Project Objective**:  
@@ -51,7 +60,7 @@ Identify anomalies in building energy consumption data to detect unusual usage p
 
 ---
 
-**Project 3: Multi-Seasonal Time Series Forecasting for Retail Sales**  
+### Project 3: Multi-Seasonal Time Series Forecasting for Retail Sales
 **Difficulty**: 3 (Hard)  
 
 **Project Objective**:  

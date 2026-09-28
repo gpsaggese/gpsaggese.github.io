@@ -7,9 +7,19 @@ Polars is a fast DataFrame library designed for data manipulation and analysis, 
 - Powerful query capabilities with SQL-like syntax for data transformation.
 - Memory-efficient operations, making it suitable for handling large datasets.
 
----
+#### Tutorial
 
-**Project 1: Movie Ratings Analysis (Difficulty: 1 - Easy)**
+- Usual tutorial "Learn X in 60 mins"
+- Compare it pandas from the functional point of view
+
+#### Project
+
+- Create a benchmark and evaluate both pandas and polars on it
+// TODO(ai_gp): Improve this
+
+### Project 1: Movie Ratings Analysis
+
+- Difficulty: 1 - Easy
 
 **Project Objective**  
 Analyze movie ratings from the MovieLens dataset to understand trends in user preferences over time and identify factors that influence ratings.
@@ -33,9 +43,9 @@ Analyze movie ratings from the MovieLens dataset to understand trends in user pr
 - Visualization:  
   Use Polars with Matplotlib or Seaborn to visualize trends and insights from the analysis.
 
----
+#### Project 2: E-commerce Customer Segmentation
 
-**Project 2: E-commerce Customer Segmentation (Difficulty: 2 - Medium)**
+- Difficulty: 2 - Medium
 
 **Project Objective**  
 Segment customers based on their purchasing behavior using clustering techniques, aiming to optimize marketing strategies.
@@ -59,9 +69,9 @@ Segment customers based on their purchasing behavior using clustering techniques
 - Evaluate Clusters:  
   Analyze the characteristics of each cluster and visualize the results to identify patterns and insights.
 
----
+### Project 3: COVID-19 Case Prediction
 
-**Project 3: COVID-19 Case Prediction (Difficulty: 3 - Hard)**
+- Difficulty: 3 - Hard
 
 **Project Objective**  
 Build a predictive model to forecast COVID-19 cases using time-series analysis, focusing on the impact of various factors like mobility and public health measures.
