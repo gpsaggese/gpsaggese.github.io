@@ -30,7 +30,7 @@
 
 - A chunk is addressed by (`file`, `anchor`), where the anchor is a header
   path or an explicit named marker in the source:
-  ```
+  ```text
   markdown.rules.md#Lists and Items/Bullet Lists
   ```
 - The injected block in the destination is delimited and carries the source
@@ -41,11 +41,11 @@
   <!-- END INCLUDE -->
   ```
 - The update operation must be idempotent:
-  ```
+  ```text
   update(update(D)) == update(D)
   ```
 - Staleness is detected by comparing hashes, without rewriting the file:
-  ```
+  ```text
   stale(block) = sha(current_source_text) != block.sha
   ```
 - The MCP surface is three tools:

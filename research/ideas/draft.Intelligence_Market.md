@@ -1,9 +1,9 @@
 # Intelligence Market
 
 ## Status
-- **Status**: draft
-- **Complete Specs**: 20%
-- **Assignee**: TBD
+- **Status:**: draft
+- **Complete Specs:**: 20%
+- **Assignee:**: TBD
 
 ## Core Idea
 - Treat "intelligence" (LLM inference capacity at a given capability,
@@ -23,7 +23,7 @@
 
 ## Formalization
 - A contract is a tuple:
-  ```
+  ```text
   contract = (N_tasks, C_level, L_max, R_min, P)
   ```
   where
@@ -46,7 +46,7 @@
     demand cross
 
 - Notation:
-  ```
+  ```text
   clearing_price(C_level, t) = uniform price at auction round t for tier
                                 C_level
   ```

@@ -1,9 +1,9 @@
 # How AlphaEvolve Works (and Reproducing It at Small Scale)
 
 ## Status
-- **Status**: draft
-- **Complete Specs**: 15%
-- **Assignee**: TBD
+- **Status:**: draft
+- **Complete Specs:**: 15%
+- **Assignee:**: TBD
 
 ## Core Idea
 - DeepMind's AlphaEvolve pairs an LLM (proposes code mutations) with an
@@ -15,13 +15,14 @@
   scored problem (not matrix multiplication at DeepMind's scale, but something
   a single researcher can iterate on in days)
 - Related to [[draft.Closed_Form_Formula_Discovery]] and
-  [[draft.LLM_for_Symbolic_Regression]] — same "LLM proposes, evaluator
+  [[draft.LLM_for_Symbolic_Regression]]: same "LLM proposes, evaluator
   scores, search selects" pattern applied to different discovery targets
 
 ## Formalization
 - Population `P_t` of candidate programs at generation `t`
-- Mutation: `p' = LLM(prompt(p, feedback))` — LLM rewrites/edits a parent
-  program conditioned on its score and (optionally) an execution trace/error
+- Mutation: `p' = LLM(prompt(p, feedback))`
+  - The LLM rewrites/edits a parent program conditioned on its score and
+    (optionally) an execution trace/error
 - Selection: keep top-k by evaluator score `f(p)`, with some diversity
   mechanism (e.g., island populations) to avoid premature convergence
 
@@ -30,8 +31,9 @@
   approximation constant for a known inequality, where `f(p)` is cheap to
   compute (runtime, correctness, approximation error)
 - **Failure mode**: LLM mutations converge to trivial "cheat" solutions that
-  exploit gaps in the evaluator rather than genuinely improving the algorithm
-  (reward hacking) — worth documenting explicitly
+  exploit gaps in the evaluator rather than genuinely improving the
+  algorithm (reward hacking)
+  - Worth documenting explicitly
 
 ## Questions
 1. How much of AlphaEvolve's benefit comes from the LLM's code-editing prior
@@ -52,6 +54,16 @@
 - [ ] Pick a small, cheaply-scored target problem
 - [ ] Implement a minimal LLM-mutation + selection loop
 - [ ] Compare against a random-mutation baseline at matched compute budget
+
+## Implementation plan
+
+- Milestone 1
+  - Do this and that
+  - This is the result
+
+- Milestone 2
+  - Do this and that
+  - This is the result
 
 ## References
 - Novikov, A., et al. (2025). _AlphaEvolve: A coding agent for scientific and

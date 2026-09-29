@@ -7,8 +7,8 @@
 
 ## Core Idea
 - Build a pipeline that takes one source post (Markdown in the repo) and
-  publishes adapted versions across channels — LinkedIn, Substack, an MkDocs
-  website, X — each with the format and length that channel rewards, then
+  publishes adapted versions across channels (LinkedIn, Substack, an MkDocs
+  website, X), each with the format and length that channel rewards, then
   collects the engagement metrics back into one place
 - The system side is plumbing (one source of truth, per-channel adapters,
   scheduled publishing); the research side is the feedback loop: with
@@ -26,19 +26,19 @@
 - Better: randomize the manipulable factor (e.g., headline variant, posting
   hour) so the comparison is an experiment, not an observational fit
 - Minimum bar: report effect sizes with confidence intervals, and state the
-  number of posts needed for the effect to be detectable at all — with a handful
-  of posts per month, most claims are underpowered
+  number of posts needed for the effect to be detectable at all: with a
+  handful of posts per month, most claims are underpowered
 
 ## Key Examples
 - **Format adaptation**: one technical article becomes a long-form Substack
-  piece, a short LinkedIn post with a hook, and a docs page — same content,
+  piece, a short LinkedIn post with a hook, and a docs page: same content,
   three shapes
 - **Headline A/B**: two headline variants for the same post, randomized, with
   click-through as the outcome
 - **Cross-channel funnel**: measure whether LinkedIn posts actually move
   Substack subscriptions, or whether the channels are independent audiences
 - **Failure mode**: the pipeline optimizes for engagement and drifts toward
-  clickbait, degrading the thing being promoted — so content quality has to be
+  clickbait, degrading the thing being promoted, so content quality has to be
   a constraint, not a free variable
 
 ## Questions

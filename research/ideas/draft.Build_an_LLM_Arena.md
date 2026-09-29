@@ -10,7 +10,7 @@
   a judge (human or LLM) picks the better response, and the votes are aggregated
   into a ranking via a Bradley-Terry / Elo-style model
 - The point is not to reproduce the public leaderboard but to have a
-  self-hosted evaluation harness that works on *our* task distribution, where
+  self-hosted evaluation harness that works on _our_ task distribution, where
   absolute scoring is unreliable but pairwise preference is cheap
 - This gives the agent-comparison ideas in this directory
   ([[in_progress.Comparison_of_Coding_Agents]],
@@ -32,12 +32,12 @@
 ## Key Examples
 - **Model arena**: two chat models, same prompt, blind pairwise vote
 - **Agent arena**: two coding agents on the same repo task, judged on the diff
-  they produce — needs a sandbox per side, not just a text response
+  they produce (needs a sandbox per side, not just a text response)
 - **Judge calibration**: a held-out subset judged by both humans and an LLM, to
   measure agreement and detect judge bias (length, formatting, self-preference)
-- **Failure mode**: rank instability — with too few votes the leaderboard
-  reshuffles between runs and any conclusion drawn from it is noise, which is
-  the same skill-vs-luck concern as
+- **Failure mode**: with too few votes, rank instability sets in: the
+  leaderboard reshuffles between runs and any conclusion drawn from it is
+  noise, the same skill-vs-luck concern as
   [[draft.Skill_vs_Luck_in_Agent_Benchmarks]]
 
 ## Questions

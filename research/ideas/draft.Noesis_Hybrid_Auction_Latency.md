@@ -33,7 +33,7 @@
   at a posted overage price `P_overage >= P` (analogous to real-time prices
   exceeding day-ahead prices in electricity markets, paper
   `sec:related_commodity_markets`)
-  ```
+  ```text
   spot_price(t) = P              if balance(contract, t) > 0
                 = P_overage      otherwise
   ```

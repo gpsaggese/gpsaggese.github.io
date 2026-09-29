@@ -28,14 +28,14 @@
 ## Formalization
 
 - A chunked prompt is a triple:
-  ```
+  ```text
   (enumerate, body, verify)
   ```
   - `enumerate(input) -> [u_1, ..., u_N]`: produce the work units
   - `body(u_i) -> patch_i`: one model call per unit, with fresh context
   - `verify(u_i, patch_i) -> pass | fail`: deterministic check before commit
 - The driver loop, run outside the model:
-  ```
+  ```python
   for u in enumerate(input):
       for attempt in 1..K:
           p = body(u)
@@ -44,7 +44,7 @@
           mark_failed(u)
   ```
 - Cost model: single-shot vs chunked
-  ```
+  ```text
   cost_single  = 1 call with context O(sum |u_i|)
   cost_chunked = N calls with context O(max |u_i|) + shared preamble
   ```

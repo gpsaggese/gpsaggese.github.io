@@ -18,7 +18,7 @@
 ## Formalization
 - Logarithmic Market Scoring Rule (LMSR) cost function for a binary market
   with outcome shares `q_yes`, `q_no`, liquidity parameter `b`:
-  ```
+  ```text
   C(q) = b * log(exp(q_yes / b) + exp(q_no / b))
   ```
 - Market-implied probability: `p_yes = exp(q_yes/b) / (exp(q_yes/b) + exp(q_no/b))`
@@ -33,7 +33,7 @@
   accuracy/cost tradeoff against the single-trusted-reporter case
 
 ## Questions
-1. How does resolution-source trust interact with market liquidity `b` —
+1. How does resolution-source trust interact with market liquidity `b`:
    does a thin market amplify the effect of a bad oracle more than a deep one?
 2. Can on-chain dispute mechanisms (bond-and-challenge) recover most of the
    accuracy lost to a first attempt at manipulation, and at what gas cost?
@@ -54,6 +54,16 @@
 - [ ] Simulate trusted vs. adversarial oracle scenarios
 - [ ] Break the problem into phases (contract, simulation, empirical
   comparison)
+
+## Implementation plan
+
+- Milestone 1
+  - Do this and that
+  - This is the result
+
+- Milestone 2
+  - Do this and that
+  - This is the result
 
 ## References
 - Hanson, R. (2003). _Combinatorial Information Market Design_ (LMSR)

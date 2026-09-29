@@ -1,93 +1,151 @@
 # Lean
 
-**Lean**
-[https://arxiv.org/pdf/2202.01344](https://arxiv.org/pdf/2202.01344)
-[https://projectnumina.ai/](https://projectnumina.ai/)
-[https://huggingface.co/blog/AI-MO/kimina-prover](https://huggingface.co/blog/AI-MO/kimina-prover)
-[https://chatgpt.com/share/6906bdd6-e4b8-8013-8a77-a7194618d7bb](https://chatgpt.com/share/6906bdd6-e4b8-8013-8a77-a7194618d7bb)
-[https://chatgpt.com/share/6906bf0b-b5c0-8013-bdee-26e9d7e75175](https://chatgpt.com/share/6906bf0b-b5c0-8013-bdee-26e9d7e75175)
-[https://arxiv.org/abs/2102.11107](https://arxiv.org/abs/2102.11107)
-[https://ista.ac.at/en/research/locatello-group/](https://ista.ac.at/en/research/locatello-group/)
+## Status
+- **Status:**: draft
+- **Complete Specs:**: TBD
+- **Assignee:**: TBD
 
-**Coding**
-Llm and lean
-[https://chatgpt.com/share/68e1c12d-5210-8013-a8d2-d198ff3d4a1d](https://chatgpt.com/share/68e1c12d-5210-8013-a8d2-d198ff3d4a1d)
+## Core Idea
 
-|  |  | Reinforcement learning environment for Lean proofs | [https://leandojo.org](https://leandojo.org/) |
-| :---- | :---- | :---- | :---- |
-| MiniF2F |  | Math problem benchmark for Lean/LLMs | [https://github.com/openai/miniF2F](https://github.com/openai/miniF2F) |
-| Mathlib4 |  | Comprehensive Lean 4 mathematics library | [https://github.com/leanprover-community/mathlib4](https://github.com/leanprover-community/mathlib4) |
-| ProofNet |  | Dataset for neural theorem proving | [https://github.com/openai/proofnet](https://github.com/openai/proofnet) |
-| Lean Copilot (Experimental) |  | VSCode extension for LLM-assisted Lean proofs | (Community prototype on GitHub) |
+- Explore using LLMs for automated theorem proving in Lean, building on
+  existing formal-proof environments, benchmarks, and libraries
+- Investigate combining LLMs with both Lean and Python for proof search
+  and formalization workflows
 
-Python-Lean
-[https://chatgpt.com/share/68e1c5e6-d3a8-8013-b038-46e2f4082092](https://chatgpt.com/share/68e1c5e6-d3a8-8013-b038-46e2f4082092)
-\#
-ROI
-Product roadmap
-\#
-livestream here: https://youtube.com/live/2Auc57lxgeU
-repo here: https://github.com/pymc-labs/ai\_decision\_workshop
-Tutorials for class
+## Formalization
 
-* Write notes and then do videos
-*
+- Mathematical notation, definitions, or pseudocode
+- Use LaTeX math where helpful
+  ```text
+  VC_eff = VC(H) + log(N_strategies_tested)
+  ```
 
-Automatically generate images with OpenAI api
-Get notification for weather through api
-Generate research for understanding relationship btw people and not
+## Key Examples
 
-* add papers
+- **[Example 1]**: [Concrete scenario illustrating the idea]
+- **[Example 2]**: [Second scenario, possibly from a different domain]
+- **[Example 3]**: [Edge case or failure mode]
 
-\> ./dev\_scripts\_umd\_msml610/thin\_client/tmux.py
-Traceback (most recent call last):
-  File "/Users/saggese/src/umd\_msml6101/./dev\_scripts\_umd\_msml610/thin\_client/tmux.py", line 12, in \<module\>
-    assert os.path.exists(os.path.join(dir\_name, "thin\_client\_utils.py")), (
-           \~\~\~\~\~\~\~\~\~\~\~\~\~\~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-AssertionError: Can't find thin\_client\_utils.py
-ln \-sf ../../helpers\_root/dev\_scripts\_helpers/thin\_client/tmux.py ./dev\_scripts\_umd\_msml610/thin\_client/tmux.py
-PyCG (Practical Call Graph Generator
-flake8-function-order
+## Questions
 
-| pyan3 | Lightweight call graph generator using static parsing |
-| :---- | :---- |
-| SnakeViz | Works on runtime profiling (not static), gives function timing & hierarchy |
-| pycallgraph2 | Creates runtime call graphs (requires code execution) |
-| code2flow | Turns structured Python code into flowcharts, but less accurate for dynamic code |
+1. [Open question 1: what remains unknown?]
+2. [Open question 2: what would a proof or counterexample look like?]
+3. [Provocative implication: if true, what does this change?]
 
-[**pyreverse**](https://pylint.readthedocs.io/en/latest/user_guide/usage/run.html#cmdoption-pyreverse)
+## Research Topics
 
-| radon | Static analysis for complexity, can complement class structure graphs |
-| :---- | :---- |
+- **LeanDojo** (https://leandojo.org): reinforcement learning environment
+  for Lean proofs
+- **MiniF2F** (https://github.com/openai/miniF2F): math problem benchmark
+  for Lean and LLMs
+- **Mathlib4** (https://github.com/leanprover-community/mathlib4):
+  comprehensive Lean 4 mathematics library
+- **ProofNet** (https://github.com/openai/proofnet): dataset for neural
+  theorem proving
+- **Lean Copilot**: experimental VSCode extension for LLM-assisted Lean
+  proofs (community prototype on GitHub)
 
-Pydeps
+## Next steps
 
-| Xenon | Enforces complexity thresholds based on Radon | ✅ Built on Radon | CI-friendly enforcement |
-| :---- | :---- | :---- | :---- |
-| Lizard | Measures cyclomatic complexity for many languages | ✅ Yes | Lightweight & fast |
+- [ ] Look for related research (what has already been done)
+- [ ] Finalize the implementation plan
+- [ ] GP to review / approve the plan
+- [ ] Hack a quick end-to-end prototype (e.g., in 1-2 days) to show that you
+      understood the problem and can make progress
+- [ ] Break the problem down in phases and milestones
+- [ ] Execute one step at the time
 
-| Vulture | Finds dead (unused) code | 🚫 Complementary | Prune unused functions/classes |
-| :---- | :---- | :---- | :---- |
+## Implementation plan
 
-[https://hbr.org/2025/09/ai-generated-workslop-is-destroying-productivity](https://hbr.org/2025/09/ai-generated-workslop-is-destroying-productivity)
-[https://www.youtube.com/watch?v=PA7js-mSU3Q](https://www.youtube.com/watch?v=PA7js-mSU3Q)
-[https://www.youtube.com/watch?v=LQY3CzUfJgA](https://www.youtube.com/watch?v=LQY3CzUfJgA)
-[https://www.wsj.com/articles/amazons-finance-teams-are-relying-more-on-aiand-not-j\[…\]mple-stuff-21313906?st=iCwaCy\&reflink=desktopwebshare\_permalink](https://www.wsj.com/articles/amazons-finance-teams-are-relying-more-on-aiand-not-j%5B%E2%80%A6%5Dmple-stuff-21313906?st=iCwaCy&reflink=desktopwebshare_permalink)
-[https://distyl.ai/](https://distyl.ai/)
-[https://www.prnewswire.co.uk/news-releases/pecan-ai-launches-demandforecastai-to-fix-th\[…\]ap-with-genai-powered-supply-chain-insights-302540307.html](https://www.prnewswire.co.uk/news-releases/pecan-ai-launches-demandforecastai-to-fix-th%5B%E2%80%A6%5Dap-with-genai-powered-supply-chain-insights-302540307.html)
-[https://www.youtube.com/watch?v=Szlz3JE-L5M](https://www.youtube.com/watch?v=Szlz3JE-L5M)
-[https://samwitty.github.io/papers/Witty\_Dissertation.pdf](https://samwitty.github.io/papers/Witty_Dissertation.pdf)
-AI Assisted Causal Inference, with Sam Witty
-[https://www.youtube.com/watch?v=Szlz3JE-L5M](https://www.youtube.com/watch?v=Szlz3JE-L5M)
-How to speak
-[https://www.youtube.com/watch?v=Unzc731iCUY\&list=PLOe2Tlpw8fRABuFqrQg9tqcCJ0R0\_Eubi](https://www.youtube.com/watch?v=Unzc731iCUY&list=PLOe2Tlpw8fRABuFqrQg9tqcCJ0R0_Eubi)
-[https://parabole.ai/](https://parabole.ai/)
-[https://www.forbes.com/sites/stevebanker/2024/04/15/what-georgia-pacific-is-doing-with-causal-ai-is-remarkable/](https://www.forbes.com/sites/stevebanker/2024/04/15/what-georgia-pacific-is-doing-with-causal-ai-is-remarkable/)
-[https://www.linkedin.com/posts/davewangmia\_i-mapped-81-ai-companies-disrupting-wall-activity-7358518819625000960-578I/](https://www.linkedin.com/posts/davewangmia_i-mapped-81-ai-companies-disrupting-wall-activity-7358518819625000960-578I/)
-[https://www.res-group.com/resources/blog/data-as-the-path-to-lower-operating-costs-and-higher-performance/](https://www.res-group.com/resources/blog/data-as-the-path-to-lower-operating-costs-and-higher-performance/)
-https://www.evolver.ai/
+- Milestone 1
+  - Do this and that
+  - This is the result
 
-**Papers**
-[https://papers.ssrn.com/sol3/Delivery.cfm/SSRN\_ID4706629\_code2969338.pdf?abstractid=4706629\&mirid=1\&type=2](https://papers.ssrn.com/sol3/Delivery.cfm/SSRN_ID4706629_code2969338.pdf?abstractid=4706629&mirid=1&type=2)
-[https://m.youtube.com/watch?v=WWCWsub3YkE\&pp=ygUTRnBnYXMgbm90IGdvb2QgZGVlcA%3D%3D](https://m.youtube.com/watch?v=WWCWsub3YkE&pp=ygUTRnBnYXMgbm90IGdvb2QgZGVlcA%3D%3D)
-https://m.youtube.com/playlist?list=PLJePd8QU\_LYKZwJnByZ8FHDg5l1rXtcIq
+- Milestone 2
+  - Do this and that
+  - This is the result
+
+## References
+
+- Lean and LLM background papers and notes:
+  - https://arxiv.org/pdf/2202.01344
+  - https://arxiv.org/abs/2102.11107
+  - https://projectnumina.ai/
+  - https://huggingface.co/blog/AI-MO/kimina-prover
+  - https://ista.ac.at/en/research/locatello-group/
+  - ChatGPT session, "LLM and Lean":
+    https://chatgpt.com/share/6906bdd6-e4b8-8013-8a77-a7194618d7bb
+  - ChatGPT session:
+    https://chatgpt.com/share/6906bf0b-b5c0-8013-bdee-26e9d7e75175
+  - ChatGPT session, "LLM and Lean":
+    https://chatgpt.com/share/68e1c12d-5210-8013-a8d2-d198ff3d4a1d
+  - ChatGPT session, "Python-Lean":
+    https://chatgpt.com/share/68e1c5e6-d3a8-8013-b038-46e2f4082092
+
+- Uncategorized notes and links captured in this file, not yet organized
+  into their own idea:
+  - Product roadmap and ROI notes (no detail captured)
+  - Class tutorials: write notes, then record videos
+    - Livestream: https://youtube.com/live/2Auc57lxgeU
+    - Repo: https://github.com/pymc-labs/ai_decision_workshop
+  - Automatically generate images with the OpenAI API
+  - Get a notification for weather through an API
+  - Generate research for understanding the relationship between people
+    (note incomplete in source)
+  - Add papers (note incomplete in source)
+  - `tmux.py` traceback and fix:
+    ```text
+    > ./dev_scripts_umd_msml610/thin_client/tmux.py
+    Traceback (most recent call last):
+      File "dev_scripts_umd_msml610/thin_client/tmux.py", line 12, in <module>
+        assert os.path.exists(os.path.join(dir_name, "thin_client_utils.py"))
+    AssertionError: Can't find thin_client_utils.py
+    ```
+    Fix:
+    ```bash
+    > ln -sf ../../helpers_root/dev_scripts_helpers/thin_client/tmux.py \
+        ./dev_scripts_umd_msml610/thin_client/tmux.py
+    ```
+  - Python call-graph and complexity-analysis tools:
+    - PyCG: practical call graph generator
+    - flake8-function-order
+    - pyan3: lightweight call graph generator using static parsing
+    - SnakeViz: runtime profiling, gives function timing and hierarchy
+    - pycallgraph2: creates runtime call graphs (requires code execution)
+    - code2flow: turns structured Python code into flowcharts, less
+      accurate for dynamic code
+    - pyreverse:
+      https://pylint.readthedocs.io/en/latest/user_guide/usage/run.html#cmdoption-pyreverse
+    - radon: static analysis for complexity, can complement class
+      structure graphs
+    - Pydeps
+    - Xenon: enforces complexity thresholds based on radon, CI-friendly
+      enforcement
+    - Lizard: measures cyclomatic complexity for many languages,
+      lightweight and fast
+    - Vulture: finds dead (unused) code
+  - Causal AI and other business or research links:
+    - https://hbr.org/2025/09/ai-generated-workslop-is-destroying-productivity
+    - https://www.youtube.com/watch?v=PA7js-mSU3Q
+    - https://www.youtube.com/watch?v=LQY3CzUfJgA
+    - WSJ, on AI use in finance teams:
+      https://www.wsj.com/articles/amazons-finance-teams-are-relying-more-on-ai
+    - https://distyl.ai/
+    - PR Newswire, Pecan AI DemandForecastAI launch:
+      https://www.prnewswire.co.uk/news-releases/pecan-ai-launches-demandforecastai-to-fix-the-gap-with-genai-powered-supply-chain-insights-302540307.html
+    - https://www.youtube.com/watch?v=Szlz3JE-L5M
+    - "AI Assisted Causal Inference", with Sam Witty:
+      https://samwitty.github.io/papers/Witty_Dissertation.pdf
+    - "How to speak":
+      https://www.youtube.com/watch?v=Unzc731iCUY&list=PLOe2Tlpw8fRABuFqrQg9tqcCJ0R0_Eubi
+    - https://parabole.ai/
+    - Forbes, causal AI at Georgia-Pacific:
+      https://www.forbes.com/sites/stevebanker/2024/04/15/what-georgia-pacific-is-doing-with-causal-ai-is-remarkable/
+    - LinkedIn post, AI companies disrupting Wall Street:
+      https://www.linkedin.com/posts/davewangmia_i-mapped-81-ai-companies-disrupting-wall-activity-7358518819625000960-578I/
+    - https://www.res-group.com/resources/blog/data-as-the-path-to-lower-operating-costs-and-higher-performance/
+    - https://www.evolver.ai/
+  - Papers and talks:
+    - https://papers.ssrn.com/sol3/Delivery.cfm/SSRN_ID4706629_code2969338.pdf
+    - https://m.youtube.com/watch?v=WWCWsub3YkE
+    - https://m.youtube.com/playlist?list=PLJePd8QU_LYKZwJnByZ8FHDg5l1rXtcIq

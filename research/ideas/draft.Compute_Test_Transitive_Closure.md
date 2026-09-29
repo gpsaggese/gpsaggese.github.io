@@ -28,8 +28,8 @@
 
 ## Key Examples
 - **Static-only precision loss**: a test imports a module dynamically
-  (`importlib.import_module`) — static analysis misses the edge, so the test
-  is wrongly excluded from the affected set; dynamic coverage data catches
+  (`importlib.import_module`): static analysis misses the edge, so the test
+  is wrongly excluded from the affected set. Dynamic coverage data catches
   this
 - **Validation approach**: run the full suite once with coverage instrumentation,
   compare the coverage-derived test-to-code map against the static closure,
@@ -58,5 +58,15 @@
 - [ ] Cross-validate against coverage.py data on a full test run
 - [ ] Prototype a `pytest --affected-by <diff>` mode
 
+## Implementation plan
+
+- Milestone 1
+  - Do this and that
+  - This is the result
+
+- Milestone 2
+  - Do this and that
+  - This is the result
+
 ## References
-- `pyan` — Python static call graph generator
+- `pyan`: Python static call graph generator

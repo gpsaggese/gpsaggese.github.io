@@ -28,7 +28,7 @@ through essential documentation:
 - [policies/](policies/): team policies and standards
 - [class_project/tutorials_checklist.md](class_project/tutorials_checklist.md):
   required tutorials
-- [.claude/skills/tool_X_in_60_mins.rules.md](.claude/skills/tool_X_in_60_mins.rules.md):
+- [.claude/skills/tutorials_in_60_mins.rules.md](.claude/skills/tutorials_in_60_mins.rules.md):
   content format requirements
 - [class_project/how_to_contribute.md](class_project/how_to_contribute.md):
   contribution guidelines

@@ -1,10 +1,9 @@
 # Agentic Codebase Auto-Cleanup Driven by TODOs
 
 ## Status
-
-- **Status**: draft
-- **Complete Specs**: 30%
-- **Assignee**: TBD
+**Status:**: draft
+**Complete Specs:**: 30%
+**Assignee:**: TBD
 
 ## Core Idea
 
@@ -35,19 +34,19 @@
   - $r(t)$: risk, i.e., blast radius if the fix is wrong (public API, test
     coverage of the touched lines, criticality of the module)
 - Priority orders cheap and safe work first:
-  ```
+  ```text
   score(t) = b(t) / (c(t) + eps) * (1 - r(t))
   ```
   - $b(t)$ is the estimated benefit (e.g., unblocks other TODOs, removes a
     known bug)
 - Routing policy by risk band:
-  ```
+  ```text
   r(t) < r_lo         -> auto-fix, human reviews the PR
   r_lo <= r < r_hi    -> agent proposes a plan, human approves, then fix
   r(t) >= r_hi        -> file an issue only, do not attempt
   ```
 - Acceptance gate for any generated PR:
-  ```
+  ```text
   accept iff (tests pass) and (lint clean) and (diff touches only planned files)
   ```
 - Dependency ordering: TODOs referencing the same symbol form a cluster and

@@ -1,9 +1,9 @@
 # Document and Improve a Blockchain Python Toolchain
 
 ## Status
-- **Status**: draft
-- **Complete Specs**: 15%
-- **Assignee**: TBD
+- **Status:**: draft
+- **Complete Specs:**: 15%
+- **Assignee:**: TBD
 
 ## Core Idea
 - There is existing code implementing a blockchain-related Python toolchain
@@ -13,6 +13,14 @@
   missing (tests, docs, examples), and produce both a README (following the
   `readme.create` skill conventions) and a prioritized list of concrete
   improvements
+
+## Formalization
+
+- Mathematical notation, definitions, or pseudocode
+- Use LaTeX math where helpful
+  ```
+  VC_eff = VC(H) + log(N_strategies_tested)
+  ```
 
 ## Key Examples
 - **Documentation gap**: a command or module with no docstring/README
@@ -40,6 +48,16 @@
 - [ ] Write a first-pass README documenting current behavior
 - [ ] List concrete, prioritized improvements (docs, tests, DX)
 - [ ] Implement the highest-priority improvements
+
+## Implementation plan
+
+- Milestone 1
+  - Do this and that
+  - This is the result
+
+- Milestone 2
+  - Do this and that
+  - This is the result
 
 ## References
 - (to be filled in once the toolchain's location/repo is identified)

@@ -12,17 +12,25 @@
   slow, incomplete, or missing fields available in the logged-in UI
 - Build a Chrome extension that runs in the user's own authenticated session
   and extracts their own data (posts, likes, messages, metadata) into a
-  structured, portable format (JSON/CSV) — strictly self-data-export, not
+  structured, portable format (JSON/CSV): strictly self-data-export, not
   scraping other users' data or bypassing access controls
 - Interesting angle: compare what the official export API gives you vs. what
   the rendered UI shows, and quantify the gap
+
+## Formalization
+
+- Mathematical notation, definitions, or pseudocode
+- Use LaTeX math where helpful
+  ```text
+  VC_eff = VC(H) + log(N_strategies_tested)
+  ```
 
 ## Key Examples
 - **Instagram**: export your own posts, captions, likes-received counts, and
   comment threads into a structured archive richer than the official ZIP
   export
 - **Failure mode**: platform changes its DOM/internal API and silently breaks
-  the extractor — worth designing for graceful detection of breakage rather
+  the extractor: worth designing for graceful detection of breakage rather
   than silently producing empty/wrong data
 
 ## Questions
@@ -47,5 +55,15 @@
 - [ ] Design a breakage-detection mechanism (schema/shape checks)
 - [ ] Document the legal/ethical boundary explicitly before expanding scope
 
+## Implementation plan
+
+- Milestone 1
+  - Do this and that
+  - This is the result
+
+- Milestone 2
+  - Do this and that
+  - This is the result
+
 ## References
-- GDPR Article 20 — Right to data portability
+- GDPR Article 20: Right to data portability

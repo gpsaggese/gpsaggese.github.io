@@ -1,10 +1,9 @@
 # Compression as a Proxy for Understanding
 
 ## Status
-
-- **Status**: draft
-- **Complete Specs**: 30%
-- **Assignee**: TBD
+**Status:**: draft
+**Complete Specs:**: 30%
+**Assignee:**: TBD
 
 ## Core Idea
 

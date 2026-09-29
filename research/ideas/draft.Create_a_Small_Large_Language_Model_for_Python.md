@@ -18,17 +18,13 @@
   unit tests, giving a much stricter success criterion than perplexity or
   human judgment
 
-## Training Data
-- **TinyStories-for-code analogue**: synthetically generate short Python
-  functions (single-purpose, <15 lines, restricted to a small standard-library
-  subset) using a large model, following the same "generate simple examples
-  with a big model, train a tiny model on them" recipe as TinyStories
-- **CodeParrot / The Stack (Python subset)** — filtered to short, self-contained
-  functions (drop files with wide imports, classes, or heavy dependencies) to
-  match the "small vocabulary" spirit of the sibling ideas
-- **HumanEval / MBPP-style problem sets** — small, well-scoped function-level
-  problems with accompanying unit tests, useful both as training signal and as
-  held-out evaluation
+## Formalization
+
+- Mathematical notation, definitions, or pseudocode
+- Use LaTeX math where helpful
+  ```text
+  VC_eff = VC(H) + log(N_strategies_tested)
+  ```
 
 ## Key Examples
 - **Model size sweep**: train 1M/10M/50M/125M parameter models on the same
@@ -39,7 +35,7 @@
   restricting the domain further shrinks the model needed for a given pass
   rate
 - **Failure mode**: small models produce syntactically valid code with
-  off-by-one or wrong-operator bugs — plausible-looking but functionally
+  off-by-one or wrong-operator bugs: plausible-looking but functionally
   incorrect, the code analogue of TinyStories' "locally fluent, globally
   inconsistent" failure
 
@@ -61,6 +57,18 @@
   reward signal)
 - Comparison against the Kids_Book and Logic variants: is there a shared
   "narrow-domain scaling law," or does each domain compress differently?
+- **Training corpus choice**: a TinyStories-for-code analogue, synthetically
+  generating short Python functions (single-purpose, under 15 lines,
+  restricted standard-library subset) with a large model, following the same
+  "generate simple examples with a big model, train a tiny model on them"
+  recipe as TinyStories
+- **Existing code corpora**: CodeParrot and The Stack (Python subset), filtered
+  to short self-contained functions (drop files with wide imports, classes, or
+  heavy dependencies) to match the "small vocabulary" spirit of the sibling
+  ideas
+- **Evaluation sets**: HumanEval and MBPP-style problem sets provide small,
+  well-scoped function-level problems with unit tests, usable both as training
+  signal and as held-out evaluation
 
 ## Next steps
 - [ ] Look for related research (TinyStories, phi-1 "textbooks are all you
@@ -68,6 +76,16 @@
 - [ ] Reproduce a HumanEval/MBPP-style baseline at small scale as a sanity check
 - [ ] Design the model-size sweep experiment with automatic pass@1 scoring
 - [ ] Break the problem down into phases and milestones
+
+## Implementation plan
+
+- Milestone 1
+  - Do this and that
+  - This is the result
+
+- Milestone 2
+  - Do this and that
+  - This is the result
 
 ## References
 - Eldan, R., & Li, Y. (2023). _TinyStories: How Small Can Language Models Be

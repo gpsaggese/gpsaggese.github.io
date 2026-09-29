@@ -31,19 +31,19 @@
 
 - Sequence-to-sequence formulation: encode the point set, decode the
   expression tokens
-  ```
+  ```text
   p_theta(g | {(x_i, y_i)}) = prod_t p_theta(g_t | g_<t, encode(D))
   ```
   - The encoder must be permutation-invariant over points, e.g., a set encoder
     rather than a plain sequence encoder
 - Constants are handled by a hybrid scheme: the model emits a skeleton with
   placeholders, and a numeric optimizer fits the constants
-  ```
+  ```text
   skeleton:  c1 * sin(c2 * x) + c3
   fit:       argmin_c MSE(skeleton(c), D)
   ```
 - Search loop, since one shot is insufficient:
-  ```
+  ```text
   pool = {}
   repeat:
       cand = sample K skeletons from p_theta(. | D, pool_feedback)

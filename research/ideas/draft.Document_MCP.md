@@ -1,9 +1,9 @@
 # Document Model Context Protocol (MCP)
 
 ## Status
-- **Status**: draft
-- **Complete Specs**: 15%
-- **Assignee**: TBD
+- **Status:**: draft
+- **Complete Specs:**: 15%
+- **Assignee:**: TBD
 
 ## Core Idea
 - Model Context Protocol (MCP) is becoming the standard way LLM apps (Claude
@@ -15,6 +15,14 @@
   minimal MCP server exposing a tool and a resource, wiring it into an MCP
   client (Claude Desktop/Code), and the common gotchas (auth, stdio vs. SSE
   transport, schema validation errors)
+
+## Formalization
+
+- Mathematical notation, definitions, or pseudocode
+- Use LaTeX math where helpful
+  ```
+  VC_eff = VC(H) + log(N_strategies_tested)
+  ```
 
 ## Key Examples
 - **Minimal server**: a "hello world" MCP server exposing one tool (e.g.
@@ -30,7 +38,7 @@
 2. Where do most first-time implementers get stuck (auth flow? transport
    choice? schema validation?), and can a tutorial front-load exactly those?
 3. How does MCP compare to writing a plain function-calling tool schema
-   directly — when is the extra protocol layer worth it?
+   directly: when is the extra protocol layer worth it?
 
 ## Research Topics
 - MCP spec (transports, capability negotiation, resources vs. tools vs.
@@ -40,9 +48,19 @@
 
 ## Next steps
 - [ ] Look for existing MCP tutorials/docs to avoid duplicating content
-- [ ] Draft an outline (follow `tool_X_in_60_mins.create` skill conventions)
+- [ ] Draft an outline (follow `tutorials_in_60_mins.create` skill conventions)
 - [ ] Build and test a minimal end-to-end example server + client
 - [ ] Write up gotchas encountered while building the example
+
+## Implementation plan
+
+- Milestone 1
+  - Do this and that
+  - This is the result
+
+- Milestone 2
+  - Do this and that
+  - This is the result
 
 ## References
 - Anthropic, _Model Context Protocol specification_

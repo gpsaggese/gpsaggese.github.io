@@ -18,10 +18,18 @@
   layer that flags/confirms before suggesting destructive commands
   (`rm -rf`, force-push)
 
+## Formalization
+
+- Mathematical notation, definitions, or pseudocode
+- Use LaTeX math where helpful
+  ```text
+  VC_eff = VC(H) + log(N_strategies_tested)
+  ```
+
 ## Key Examples
 - **Prose**: writer types "The experiment showed that", tool suggests a
   plausible continuation grounded in the rest of the document (not a generic
-  LLM completion) — measure how often suggestions are accepted verbatim vs.
+  LLM completion): measure how often suggestions are accepted verbatim vs.
   edited vs. rejected
 - **Terminal**: after `git status` shows conflicts, tool suggests
   `git mergetool` or a targeted `git checkout --ours <file>` rather than a
@@ -34,7 +42,7 @@
 1. What context window (document history, shell history, cwd state, recent
    errors) is actually predictive of a useful next suggestion, vs. noise?
 2. How do you measure "good autocomplete" for prose, where there's no
-   analogue to code's pass/fail tests — acceptance rate? edit distance from
+   analogue to code's pass/fail tests: acceptance rate? edit distance from
    suggestion to final text?
 3. For the terminal variant, how do you keep the safety layer from being
    either too aggressive (annoying false positives) or too permissive (misses
@@ -54,5 +62,15 @@
 - [ ] Extend to the prose-writing variant if the terminal prototype validates
   the interaction pattern
 
+## Implementation plan
+
+- Milestone 1
+  - Do this and that
+  - This is the result
+
+- Milestone 2
+  - Do this and that
+  - This is the result
+
 ## References
-- fig.io / Warp — existing terminal-autocomplete products (prior art)
+- fig.io / Warp: existing terminal-autocomplete products (prior art)

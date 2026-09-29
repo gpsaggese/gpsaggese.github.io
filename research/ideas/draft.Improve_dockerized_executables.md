@@ -1,9 +1,9 @@
 # Improve Transparency of Dockerized Executables
 
 ## Status
-- **Status**: draft
-- **Complete Specs**: 20%
-- **Assignee**: TBD
+- **Status:**: draft
+- **Complete Specs:**: 20%
+- **Assignee:**: TBD
 
 ## Core Idea
 - Dockerized CLI executables (tools packaged and run entirely inside a
@@ -15,8 +15,16 @@
   introspectable build provenance (which image, which layer, which
   dependency versions actually ran)
 - Different concern from [[docker.shrink_container]] /
-  [[docker.shrink_requirements]] (which target size/speed) — this is about
+  [[docker.shrink_requirements]] (which target size/speed): this is about
   runtime behavioral transparency and debuggability
+
+## Formalization
+
+- Mathematical notation, definitions, or pseudocode
+- Use LaTeX math where helpful
+  ```
+  VC_eff = VC(H) + log(N_strategies_tested)
+  ```
 
 ## Key Examples
 - **Opaque failure today**: a dockerized executable exits non-zero with a
@@ -27,7 +35,7 @@
   dumps image digest, dependency versions, and the effective resolved config
 - **Provenance example**: two runs produce different output; a
   `--show-provenance` flag reveals that the image digest silently changed
-  between runs (e.g., `:latest` tag drift) — the actual root cause
+  between runs (e.g., `:latest` tag drift): the actual root cause
 
 ## Questions
 1. What's the minimal set of "transparency" features (dry-run, explain,
@@ -48,11 +56,21 @@
 
 ## Next steps
 - [ ] Inventory the dockerized executables in this repo and their current
-  failure/debugging experience
+      failure/debugging experience
 - [ ] Prototype a `--dry-run` / `--explain` wrapper for one tool
 - [ ] Add provenance capture (image digest, key dependency versions) to that
-  tool's output
+      tool's output
 - [ ] Generalize into a reusable pattern if the prototype proves useful
+
+## Implementation plan
+
+- Milestone 1
+  - Do this and that
+  - This is the result
+
+- Milestone 2
+  - Do this and that
+  - This is the result
 
 ## References
 - (none yet)

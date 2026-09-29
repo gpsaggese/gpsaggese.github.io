@@ -24,7 +24,7 @@
 - Candidate definitions flagged in the paper: raw token count, wall-clock
   compute duration, or a benchmark-normalized task-equivalent
 - Proposed definition to work out in full:
-  ```
+  ```text
   task_equivalent(x) = tokens(x) * capability_weight(model_used_for_x)
   ```
   where `capability_weight` is calibrated against a fixed reference model,

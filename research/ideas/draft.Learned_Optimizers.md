@@ -1,15 +1,19 @@
 # Gradient Descent as a Neural Network (Learned Optimizers)
 
-**Status:** draft | **Specs:** 10% | **Assignee:** —
+## Status
+- **Status:**: draft
+- **Complete Specs:**: 10%
+- **Assignee:**: TBD
 
 ## Core Idea
 
-Replace a hand-crafted parameter-update rule (SGD, Adam, RMSprop, ...) with a
-neural network that consumes the gradient (and its history) and outputs the
-update itself. The optimizer is meta-trained across many optimization tasks
-so that it *learns* the update rule, rather than having it hand-designed
-(cf. "Learning to learn by gradient descent by gradient descent",
-Andrychowicz et al. 2016).
+- Replace a hand-crafted parameter-update rule (SGD, Adam, RMSprop, ...)
+  with a neural network that consumes the gradient (and its history) and
+  outputs the update itself
+- Meta-train the optimizer across many optimization tasks so that it
+  _learns_ the update rule, rather than having it hand-designed (cf.
+  _Learning to Learn by Gradient Descent by Gradient Descent_, Andrychowicz
+  et al., 2016)
 
 ## Formalization
 
@@ -61,6 +65,26 @@ optimization trajectory:
 - Stability and generalization of learned optimizers outside the
   meta-training task distribution
 - Compute/memory overhead of the optimizer network itself
+
+## Next steps
+
+- [ ] Look for related research (what has already been done)
+- [ ] Finalize the implementation plan
+- [ ] GP to review / approve the plan
+- [ ] Hack a quick end-to-end prototype (e.g., in 1-2 days) to show that you
+      understood the problem and can make progress
+- [ ] Break the problem down in phases and milestones
+- [ ] Execute one step at the time
+
+## Implementation plan
+
+- Milestone 1
+  - Do this and that
+  - This is the result
+
+- Milestone 2
+  - Do this and that
+  - This is the result
 
 ## References
 
