@@ -8,7 +8,7 @@
 ## Core Idea
 
 - Write a practical, hands-on tutorial (following the
-  `tutorials_in_60_mins.create` conventions already used in this repo) that
+  `tutorial_in_60_mins.create` conventions already used in this repo) that
   teaches engineers to build a custom agent with the Claude Agent SDK: the
   agentic loop, tool definitions, memory/context management, and deployment
   patterns (CLI, server, scheduled job)
@@ -63,7 +63,7 @@
 ## Implementation plan
 
 - Read the Claude Agent SDK docs and existing examples
-- Draft an outline (follow `tutorials_in_60_mins.create` skill conventions)
+- Draft an outline (follow `tutorial_in_60_mins.create` skill conventions)
 - Build a minimal working agent end-to-end
 - Build a second, slightly more complex example (memory or multi-tool)
 - Write up gotchas encountered while building the examples

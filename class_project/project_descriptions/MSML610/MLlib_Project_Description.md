@@ -23,10 +23,20 @@ MLlib
 
 # Tutorial
 
-- Usual tutorial "Learn MLlib in 60 mins", following
-  `.claude/skills/tutorials_in_60_mins.rules.md`
-- Create `tutorials/MLlib/` with
-  `.claude/skills/tutorials_in_60_mins.create/SKILL.md`
+- Implement the tutorial "Learn MLlib in 60 mins", following
+  `.claude/skills/tutorial_in_60_mins.rules.md`
+  - Build it with `.claude/skills/tutorial_in_60_mins.create/SKILL.md`
+  - Follow the workflow in `tutorials/README.gp.md` and the quality principles in
+    `tutorials/tutorials_checklist.md`
+- Check the previous tutorials and projects, listed in the section
+  `Existing Tutorials and Projects` of
+  `.claude/skills/tutorial_in_60_mins.rules.md`
+  - No earlier tutorial or project uses MLlib, so read the earlier Spark projects of
+    DATA605 for the Spark setup in Docker
+    - `class_project/data605/Spring2025/projects/TutorTask516_Spring2025_Real_Time_Bitcoin_Price_Analysis_with_Apache_Spark/`
+    - `class_project/data605/Spring2025/projects/TutorTask94_Spring2025_Real_time_Bitcoin_Data_Processing_with_PySpark/`
+    - `class_project/data605/Spring2025/projects/TutorTask108_Spring2025_Implementing_Real-Time_Bitcoin_Price_Analysis_with_Spark_SQL/`
+- Create `tutorials/MLlib/`, since it does not exist yet
 - Make it look like `msml610/tutorials/L03_knowledge_representation/`
 - Use the skills in `.claude/skills/notebook.*` to automate part of the work, and
   document how you used them

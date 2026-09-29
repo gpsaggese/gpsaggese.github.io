@@ -17,9 +17,20 @@ CrewAI
 
 # Tutorial
 
-- Usual tutorial "Learn CrewAI in 60 mins", following
-  `.claude/skills/tutorials_in_60_mins.rules.md`
+- Implement the tutorial "Learn CrewAI in 60 mins", following
+  `.claude/skills/tutorial_in_60_mins.rules.md`
+  - Build it with `.claude/skills/tutorial_in_60_mins.create/SKILL.md`
+  - Follow the workflow in `tutorials/README.gp.md` and the quality principles in
+    `tutorials/tutorials_checklist.md`
+- Check the previous tutorials and projects, listed in the section
+  `Existing Tutorials and Projects` of
+  `.claude/skills/tutorial_in_60_mins.rules.md`
+  - Read the `README.md` of the Fall2025 CrewAI project, and reuse what is good
+    - `class_project/msml610/Fall2025/projects/UmdTask111_Fall_2025_CrewAI_project_medium/`
+  - Read the `README.md` of `tutorials/LangChain/`, `tutorials/LangGraph/`, and
+    `tutorials/Autogen/` for the related multi-agent tools
 - Start from the existing `tutorials/CrewAI/` and make it better
+  - It has no `README.md`: add one
 - Make it look like `msml610/tutorials/L03_knowledge_representation/`
 - Use the skills in `.claude/skills/notebook.*` to automate part of the work, and
   document how you used them

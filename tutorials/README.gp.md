@@ -90,10 +90,10 @@
 - Skills
   ```
   > mdm skill f tutorials_in_
-  helpers_root/.claude/skills/tutorials_in_60_mins.create/SKILL.md
-  helpers_root/.claude/skills/tutorials_in_60_mins.format/SKILL.md
-  helpers_root/.claude/skills/tutorials_in_60_mins.merge_markdown/SKILL.md
-  helpers_root/.claude/skills/tutorials_in_60_mins.propagate_docker_changes/SKILL.md
+  helpers_root/.claude/skills/tutorial_in_60_mins.create/SKILL.md
+  helpers_root/.claude/skills/tutorial_in_60_mins.format/SKILL.md
+  helpers_root/.claude/skills/tutorial_in_60_mins.merge_markdown/SKILL.md
+  helpers_root/.claude/skills/tutorial_in_60_mins.propagate_docker_changes/SKILL.md
 
   > mdm skill f notebook
   helpers_root/.claude/skills/notebook.create_api_intro/SKILL.md

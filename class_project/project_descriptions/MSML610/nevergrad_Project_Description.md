@@ -22,10 +22,20 @@ Nevergrad
 
 # Tutorial
 
-- Usual tutorial "Learn Nevergrad in 60 mins", following
-  `.claude/skills/tutorials_in_60_mins.rules.md`
-- Create `tutorials/nevergrad/` with
-  `.claude/skills/tutorials_in_60_mins.create/SKILL.md`
+- Implement the tutorial "Learn Nevergrad in 60 mins", following
+  `.claude/skills/tutorial_in_60_mins.rules.md`
+  - Build it with `.claude/skills/tutorial_in_60_mins.create/SKILL.md`
+  - Follow the workflow in `tutorials/README.gp.md` and the quality principles in
+    `tutorials/tutorials_checklist.md`
+- Check the previous tutorials and projects, listed in the section
+  `Existing Tutorials and Projects` of
+  `.claude/skills/tutorial_in_60_mins.rules.md`
+  - No earlier tutorial or project uses Nevergrad, so read the closest optimization
+    work
+  - Read `tutorials/Ax_Multi_Objective_Optimization/README.md`
+  - Read the `README.md` of the Fall2025 Optuna project
+    - `class_project/msml610/Fall2025/projects/UmdTask60_Fall2025_Optuna_Customer_Segmentation_Using_Clustering/`
+- Create `tutorials/nevergrad/`, since it does not exist yet
 - Make it look like `msml610/tutorials/L03_knowledge_representation/`
 - Use the skills in `.claude/skills/notebook.*` to automate part of the work, and
   document how you used them

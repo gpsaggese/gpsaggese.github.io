@@ -19,10 +19,18 @@ W&B Weave
 
 # Tutorial
 
-- Usual tutorial "Learn W&B Weave in 60 mins", following
-  `.claude/skills/tutorials_in_60_mins.rules.md`
-- Create `tutorials/WB_Weave/` with
-  `.claude/skills/tutorials_in_60_mins.create/SKILL.md`
+- Implement the tutorial "Learn W&B Weave in 60 mins", following
+  `.claude/skills/tutorial_in_60_mins.rules.md`
+  - Build it with `.claude/skills/tutorial_in_60_mins.create/SKILL.md`
+  - Follow the workflow in `tutorials/README.gp.md` and the quality principles in
+    `tutorials/tutorials_checklist.md`
+- Check the previous tutorials and projects, listed in the section
+  `Existing Tutorials and Projects` of
+  `.claude/skills/tutorial_in_60_mins.rules.md`
+  - No earlier tutorial or project uses Weave, so read the Fall2025 Weights & Biases
+    project for the related tracking tool, and reuse what is good
+    - `class_project/msml610/Fall2025/projects/TutorTask_103_Weights_and_Biases_Hard/`
+- Create `tutorials/WB_Weave/`, since it does not exist yet
 - Make it look like `msml610/tutorials/L03_knowledge_representation/`
 - Use the skills in `.claude/skills/notebook.*` to automate part of the work, and
   document how you used them

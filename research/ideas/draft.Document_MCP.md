@@ -48,7 +48,7 @@
 
 ## Next steps
 - [ ] Look for existing MCP tutorials/docs to avoid duplicating content
-- [ ] Draft an outline (follow `tutorials_in_60_mins.create` skill conventions)
+- [ ] Draft an outline (follow `tutorial_in_60_mins.create` skill conventions)
 - [ ] Build and test a minimal end-to-end example server + client
 - [ ] Write up gotchas encountered while building the example
 
@@ -59,7 +59,7 @@
     and where they are incomplete or scattered
   - Define the target reader and the minimal mental model to teach: client,
     server, transport, capability negotiation
-  - Draft a tutorial outline following the `tutorials_in_60_mins.create`
+  - Draft a tutorial outline following the `tutorial_in_60_mins.create`
     skill conventions
   - This is the result: an outline document listing sections, target
     reader, and the gaps in existing MCP docs the tutorial will fill
@@ -85,7 +85,7 @@
 
 - Milestone 4: write and validate the tutorial
   - Assemble the outline, examples, and gotchas into the full tutorial per
-    `tutorials_in_60_mins.create` conventions
+    `tutorial_in_60_mins.create` conventions
   - Have a second engineer follow the tutorial from a clean environment,
     noting where they get stuck
   - Revise the tutorial based on the friction points observed

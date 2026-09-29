@@ -18,12 +18,22 @@ PyTorch Geometric
 
 # Tutorial
 
-- Usual tutorial "Learn PyTorch Geometric in 60 mins", following
-  `.claude/skills/tutorials_in_60_mins.rules.md`
-- Create `tutorials/PyTorch_Geometric/` with
-  `.claude/skills/tutorials_in_60_mins.create/SKILL.md`
-  - A previous session delivered a PyTorch Geometric project: see the `Result` column
-    in `class_project/project_descriptions/README.md`, and reuse what is good
+- Implement the tutorial "Learn PyTorch Geometric in 60 mins", following
+  `.claude/skills/tutorial_in_60_mins.rules.md`
+  - Build it with `.claude/skills/tutorial_in_60_mins.create/SKILL.md`
+  - Follow the workflow in `tutorials/README.gp.md` and the quality principles in
+    `tutorials/tutorials_checklist.md`
+- Check the previous tutorials and projects, listed in the section
+  `Existing Tutorials and Projects` of
+  `.claude/skills/tutorial_in_60_mins.rules.md`
+  - Read the `README.md` of the Fall2025 PyTorch Geometric project, and reuse what
+    is good
+    - `class_project/msml610/Fall2025/projects/UmdTask23_Fall2025_PyTorch_Geometric_Drug_Drug_Interaction_Prediction/`
+  - Read the `README.md` of the Fall2025 DGL and NetworkX fraud detection projects
+    for the related graph tools
+    - `class_project/msml610/Fall2025/projects/UmdTask88_Fall2025_DGL_Fraud_Detection_in_Credit_Card_Transactions/`
+    - `class_project/msml610/Fall2025/projects/TutorTask26_Fall2025_NetworkX_Fraud_Detection_in_Financial_Transactions/`
+- Create `tutorials/PyTorch_Geometric/`, since it does not exist yet
 - Make it look like `msml610/tutorials/L03_knowledge_representation/`
 - Use the skills in `.claude/skills/notebook.*` to automate part of the work, and
   document how you used them

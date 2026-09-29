@@ -18,10 +18,21 @@ Semantic Kernel
 
 # Tutorial
 
-- Usual tutorial "Learn Semantic Kernel in 60 mins", following
-  `.claude/skills/tutorials_in_60_mins.rules.md`
-- Create `tutorials/SemanticKernel/` with
-  `.claude/skills/tutorials_in_60_mins.create/SKILL.md`
+- Implement the tutorial "Learn Semantic Kernel in 60 mins", following
+  `.claude/skills/tutorial_in_60_mins.rules.md`
+  - Build it with `.claude/skills/tutorial_in_60_mins.create/SKILL.md`
+  - Follow the workflow in `tutorials/README.gp.md` and the quality principles in
+    `tutorials/tutorials_checklist.md`
+- Check the previous tutorials and projects, listed in the section
+  `Existing Tutorials and Projects` of
+  `.claude/skills/tutorial_in_60_mins.rules.md`
+  - No earlier tutorial or project uses Semantic Kernel, so read the closest agent
+    work
+  - Read the `README.md` of `tutorials/LangChain/`, `tutorials/LangGraph/`,
+    `tutorials/Autogen/`, and `tutorials/tutorial_pydanticAI/`
+  - Read the `README.md` of the Fall2025 CrewAI project
+    - `class_project/msml610/Fall2025/projects/UmdTask111_Fall_2025_CrewAI_project_medium/`
+- Create `tutorials/SemanticKernel/`, since it does not exist yet
 - Make it look like `msml610/tutorials/L03_knowledge_representation/`
 - Use the skills in `.claude/skills/notebook.*` to automate part of the work, and
   document how you used them

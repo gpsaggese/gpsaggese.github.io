@@ -22,11 +22,19 @@ CLIP-ViT-Large-Patch14
 
 # Tutorial
 
-- Usual tutorial "Learn CLIP in 60 mins", following
-  `.claude/skills/tutorials_in_60_mins.rules.md`
-- Create `tutorials/CLIP/` with `.claude/skills/tutorials_in_60_mins.create/SKILL.md`
-  - A previous session delivered a CLIP project: see the `Result` column in
-    `class_project/project_descriptions/README.md`, and reuse what is good
+- Implement the tutorial "Learn CLIP in 60 mins", following
+  `.claude/skills/tutorial_in_60_mins.rules.md`
+  - Build it with `.claude/skills/tutorial_in_60_mins.create/SKILL.md`
+  - Follow the workflow in `tutorials/README.gp.md` and the quality principles in
+    `tutorials/tutorials_checklist.md`
+- Check the previous tutorials and projects, listed in the section
+  `Existing Tutorials and Projects` of
+  `.claude/skills/tutorial_in_60_mins.rules.md`
+  - Read the `README.md` of the Fall2025 CLIP project, and reuse what is good
+    - `class_project/msml610/Fall2025/projects/TutorTask37_Fall2025_CLIP_ViT_Large_Patch14_Generative_Art_from_Text_Prompts/`
+  - Look at the code of the second Fall2025 CLIP project, which has no `README.md`
+    - `class_project/msml610/Fall2025/projects/CLIP_ViT_Large_Task22/`
+- Create `tutorials/CLIP/`, since it does not exist yet
 - Make it look like `msml610/tutorials/L03_knowledge_representation/`
 - Use the skills in `.claude/skills/notebook.*` to automate part of the work, and
   document how you used them

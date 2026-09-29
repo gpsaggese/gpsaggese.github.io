@@ -40,22 +40,22 @@
 
 ## Conventions
 
-- `.claude/skills/tutorials_in_60_mins.rules.md`: Main spec for a 60-minute
+- `.claude/skills/tutorial_in_60_mins.rules.md`: Main spec for a 60-minute
   tutorial
 - `.claude/skills/tool_guide_in_30_mins.rules.md`: Single-markdown quick-reference
   guide for a tool (not a tutorial directory)
 
 ## Skills
 
-- `.claude/skills/tutorials_in_60_mins.create/SKILL.md`: Create a new tutorial
+- `.claude/skills/tutorial_in_60_mins.create/SKILL.md`: Create a new tutorial
   dir
-- `.claude/skills/tutorials_in_60_mins.format/SKILL.md`: Format a dir to follow
+- `.claude/skills/tutorial_in_60_mins.format/SKILL.md`: Format a dir to follow
   the conventions
-- `.claude/skills/tutorials_in_60_mins.merge_markdown/SKILL.md`: Merge a
+- `.claude/skills/tutorial_in_60_mins.merge_markdown/SKILL.md`: Merge a
   markdown file into a notebook
-- `.claude/skills/tutorials_in_60_mins.propagate_docker_changes/SKILL.md`:
+- `.claude/skills/tutorial_in_60_mins.propagate_docker_changes/SKILL.md`:
   Sync the Docker files with `project_template`
-- `helpers_root/how_to.ai_workflows.md`: Lists the `tutorials_in_60_mins` skill
+- `helpers_root/how_to.ai_workflows.md`: Lists the `tutorial_in_60_mins` skill
   group
 
 ## Workflow
@@ -75,6 +75,48 @@
   `LangChain_LangGraph`, `TorchRL_MAC`)
 - `research/Causal_Analysis_of_Agent_Skill_And_Luck/all.learn_Causal_Analysis_of_Success_in_60_minutes.how_to_guide.md`:
   Research-side tutorial
+
+## Tutorial Specs
+
+- A tutorial spec is the proposal file of one tool. It describes the "Learn X in
+  60 Minutes" tutorial of the current session and the class projects that use
+  the tool
+- `.claude/skills/tutorial_specs.rules.md`: Rules for the spec files
+  - File naming: `<Tool>_Project_Description.md`
+  - Sections in order: `# Description`, `# Tutorial`, `# Project`
+  - Fields of a project, difficulty ladder, dataset and task rules
+  - Columns of the tracking table in `class_project/project_descriptions/README.md`
+- `.claude/templates/tutorial_specs.template.md`: Template to copy for a new spec
+- `class_project/project_descriptions/{MSML610,DATA605}/`: One spec per tool, named
+  `<Tool>_Project_Description.md`
+- `class_project/project_descriptions/README.md`: Tracking table with status,
+  authors, GitHub issue, result dir, and session
+- `class_project/project_descriptions/MSML610/Ax_Project_Description.md`: Example
+  with three project options in the standard fields
+- `class_project/project_descriptions/MSML610/CrewAI_Project_Description.md`:
+  Example with a `Tutorial` section that has full specs
+
+## Tool Guides (Learn X in 30 Minutes)
+
+- A tool guide is a single markdown file, about 30 minutes of reading. It is not a
+  tutorial dir: no notebooks, no Docker files
+- `.claude/skills/tool_guide_in_30_mins.rules.md`: Rules for a guide
+  - Length: 2,000-4,000 words
+  - Section order: TL;DR, Introduction, Why X, Installation, Basic Usage, Core
+    Features, Advanced Features, Practical Examples, Tips, Common Gotchas,
+    Comparison Tables
+  - Bash commands start with `>`, all code blocks have a language tag, ASCII only
+- `.claude/skills/blog.write_tutorial_readme/SKILL.md`: Write the guide for one
+  tool or concept
+- `.claude/skills/blog.rules.md`: Blog conventions that the guide also follows
+- `tutorials/<Tool>/in_30_mins.<Tool>.md`: Guide kept next to the tutorial dir
+  (e.g., `tutorials/pgmpy/in_30_mins.pgmpy.md`)
+- `website/docs/blog/posts/in_30_mins.<Tool>.md`: Published guides (`uv`,
+  `ripgrep`, `Python_Packaging`, `Python_Code_Coverage`,
+  `mdm_unified_markdown_manager`, `simonw_llm_cli`, `helpers_llm_cli`)
+- `website/docs/blog/posts/draft.in_30_mins.<Tool>.md`: Draft guides (`pi_dev`,
+  `helpers_caching`, `helpers_hllm_decorator`, `helpers_typesetting_system`)
+- `website/README.blog.md`: Tracks guides and their status
 
 ## Blog Posts
 
@@ -154,7 +196,7 @@
 - `class_project/project_descriptions/prompt.update_README.md`: Prompt to update the
   descriptions README
 
-# Per-term Data
+# Per-Class Data
 
 - `class_project/data605/Spring2026/projects.csv`: DATA605 Spring 2026 team and
   project assignments

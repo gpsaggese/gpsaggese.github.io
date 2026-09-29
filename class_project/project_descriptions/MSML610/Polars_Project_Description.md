@@ -18,10 +18,17 @@ Polars
 
 # Tutorial
 
-- Usual tutorial "Learn Polars in 60 mins", following
-  `.claude/skills/tutorials_in_60_mins.rules.md`
-- Create `tutorials/Polars/` with
-  `.claude/skills/tutorials_in_60_mins.create/SKILL.md`
+- Implement the tutorial "Learn Polars in 60 mins", following
+  `.claude/skills/tutorial_in_60_mins.rules.md`
+  - Build it with `.claude/skills/tutorial_in_60_mins.create/SKILL.md`
+  - Follow the workflow in `tutorials/README.gp.md` and the quality principles in
+    `tutorials/tutorials_checklist.md`
+- Check the previous tutorials and projects, listed in the section
+  `Existing Tutorials and Projects` of
+  `.claude/skills/tutorial_in_60_mins.rules.md`
+  - No earlier tutorial or project uses Polars, so imitate the reference tutorials
+    listed there
+- Create `tutorials/Polars/`, since it does not exist yet
 - Make it look like `msml610/tutorials/L03_knowledge_representation/`
 - Use the skills in `.claude/skills/notebook.*` to automate part of the work, and
   document how you used them

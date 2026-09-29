@@ -18,11 +18,18 @@ NLTK
 
 # Tutorial
 
-- Usual tutorial "Learn NLTK in 60 mins", following
-  `.claude/skills/tutorials_in_60_mins.rules.md`
-- Create `tutorials/NLTK/` with `.claude/skills/tutorials_in_60_mins.create/SKILL.md`
-  - A previous session delivered an NLTK project: see the `Result` column in
-    `class_project/project_descriptions/README.md`, and reuse what is good
+- Implement the tutorial "Learn NLTK in 60 mins", following
+  `.claude/skills/tutorial_in_60_mins.rules.md`
+  - Build it with `.claude/skills/tutorial_in_60_mins.create/SKILL.md`
+  - Follow the workflow in `tutorials/README.gp.md` and the quality principles in
+    `tutorials/tutorials_checklist.md`
+- Check the previous tutorials and projects, listed in the section
+  `Existing Tutorials and Projects` of
+  `.claude/skills/tutorial_in_60_mins.rules.md`
+  - Read the `README.md` of the earlier NLTK projects, and reuse what is good
+    - `class_project/msml610/Fall2025/projects/UmdTask66_Fall2025_NLTK_Named_Entity_Recognition_in_Scientific_Publications/`
+    - `class_project/data605/Spring2025/projects/TutorTask98_Spring2025_Real-Time_Bitcoin_Sentiment_Analysis_Using_NLTK_and_Selenium/`
+- Create `tutorials/NLTK/`, since it does not exist yet
 - Make it look like `msml610/tutorials/L03_knowledge_representation/`
 - Use the skills in `.claude/skills/notebook.*` to automate part of the work, and
   document how you used them

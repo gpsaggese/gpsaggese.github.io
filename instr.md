@@ -9,7 +9,7 @@ Use the info below
 
 ## Conventions
 
-- `.claude/skills/tutorials_in_60_mins.rules.md`: Main spec for a 60-minute
+- `.claude/skills/tutorial_in_60_mins.rules.md`: Main spec for a 60-minute
   tutorial
   - Time split: setup, intro, API notebook, example notebook
   - Deliverables: `<project>_utils.py`, `<project>.API.ipynb`,
@@ -19,15 +19,15 @@ Use the info below
 
 ## Skills
 
-- `.claude/skills/tutorials_in_60_mins.create/SKILL.md`: Create a new tutorial
+- `.claude/skills/tutorial_in_60_mins.create/SKILL.md`: Create a new tutorial
   dir
-- `.claude/skills/tutorials_in_60_mins.format/SKILL.md`: Format a dir to follow
+- `.claude/skills/tutorial_in_60_mins.format/SKILL.md`: Format a dir to follow
   the conventions
-- `.claude/skills/tutorials_in_60_mins.merge_markdown/SKILL.md`: Merge a
+- `.claude/skills/tutorial_in_60_mins.merge_markdown/SKILL.md`: Merge a
   markdown file into a notebook
-- `.claude/skills/tutorials_in_60_mins.propagate_docker_changes/SKILL.md`:
+- `.claude/skills/tutorial_in_60_mins.propagate_docker_changes/SKILL.md`:
   Sync the Docker files with `project_template`
-- `helpers_root/how_to.ai_workflows.md`: Lists the `tutorials_in_60_mins` skill
+- `helpers_root/how_to.ai_workflows.md`: Lists the `tutorial_in_60_mins` skill
   group
 
 ## Workflow

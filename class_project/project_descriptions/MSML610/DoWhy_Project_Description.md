@@ -18,8 +18,20 @@ DoWhy
 
 # Tutorial
 
-- Usual tutorial "Learn DoWhy in 60 mins", following
-  `.claude/skills/tutorials_in_60_mins.rules.md`
+- Implement the tutorial "Learn DoWhy in 60 mins", following
+  `.claude/skills/tutorial_in_60_mins.rules.md`
+  - Build it with `.claude/skills/tutorial_in_60_mins.create/SKILL.md`
+  - Follow the workflow in `tutorials/README.gp.md` and the quality principles in
+    `tutorials/tutorials_checklist.md`
+- Check the previous tutorials and projects, listed in the section
+  `Existing Tutorials and Projects` of
+  `.claude/skills/tutorial_in_60_mins.rules.md`
+  - Read `tutorials/dowhy/README.md`
+  - Read the `README.md` of the Spring2025 DoWhy project of DATA605, and reuse what
+    is good
+    - `class_project/data605/Spring2025/projects/TutorTask119_Spring2025_Real-Time_Bitcoin_Causal_Analysis_with_DoWhy/`
+  - Read the `README.md` of `tutorials/CausalML_Diabetes_Study/` and
+    `tutorials/causalnex/` for the related causal tools
 - Start from the existing `tutorials/dowhy/` and make it better
 - Make it look like `msml610/tutorials/L03_knowledge_representation/`
 - Use the skills in `.claude/skills/notebook.*` to automate part of the work, and

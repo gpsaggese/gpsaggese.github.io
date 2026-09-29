@@ -18,10 +18,22 @@ RLlib
 
 # Tutorial
 
-- Usual tutorial "Learn RLlib in 60 mins", following
-  `.claude/skills/tutorials_in_60_mins.rules.md`
-- Create `tutorials/RLlib/` with
-  `.claude/skills/tutorials_in_60_mins.create/SKILL.md`
+- Implement the tutorial "Learn RLlib in 60 mins", following
+  `.claude/skills/tutorial_in_60_mins.rules.md`
+  - Build it with `.claude/skills/tutorial_in_60_mins.create/SKILL.md`
+  - Follow the workflow in `tutorials/README.gp.md` and the quality principles in
+    `tutorials/tutorials_checklist.md`
+- Check the previous tutorials and projects, listed in the section
+  `Existing Tutorials and Projects` of
+  `.claude/skills/tutorial_in_60_mins.rules.md`
+  - No earlier tutorial or project uses RLlib, so read the closest RL work
+  - Read the `README.md` of `tutorials/gymnasium/` and `tutorials/TorchRL_MAC/`
+  - Read the `README.md` of the Fall2025 CleanRL project
+    - `class_project/msml610/Fall2025/projects/UmdTask49_Fall2025_CleanRL_Reinforcement_Learning_for_Stock_Trading/`
+  - Read the `README.md` of the Ray projects of DATA605 for the Ray setup in Docker
+    - `class_project/data605/Spring2025/projects/TutorTask93_Spring2025_Real-Time_Bitcoin_Data_Processing_with_Apache_Ray/`
+    - `class_project/data605/Spring2026/projects/UmdTask464_DATA605_Spring2026_Ray_Housing_Price_Prediction/`
+- Create `tutorials/RLlib/`, since it does not exist yet
 - Make it look like `msml610/tutorials/L03_knowledge_representation/`
 - Use the skills in `.claude/skills/notebook.*` to automate part of the work, and
   document how you used them
@@ -113,8 +125,6 @@ RLlib
     conditions
   - **Visualize the Flights**: Use 2D or 3D plots in Matplotlib or the PyBullet
     viewer to show the flight paths
-- **Bonus Ideas (Optional)**:
-  - Implement different weather or lighting conditions (AirSim)
-  - Explore multi-agent coordination (multiple drones reaching goals simultaneously)
-  - Compare SAC with PPO for continuous navigation
-  - Add energy efficiency metrics (penalize excessive thrust)
+- **Bonus Ideas (Optional)**: Explore multi-agent coordination (multiple drones
+  reaching goals simultaneously); compare SAC with PPO for continuous navigation; add
+  energy efficiency metrics (penalize excessive thrust)
