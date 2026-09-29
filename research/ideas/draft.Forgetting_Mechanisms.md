@@ -76,13 +76,50 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- Milestone 1: build non-stationary benchmarks with a known drift rate
+  - Implement a synthetic drifting task (a non-stationary bandit or
+    regression target) with a controllable drift rate
+  - Implement the two Key Examples testbeds: an RL environment with
+    gradually changing rules, and a CTR-style environment with drifting
+    user preference
+  - Instrument each environment to report the ground-truth drift rate and
+    a reference optimal-policy baseline
+  - This is the result: two tested environments with configurable drift
+    rate and a reference optimal baseline to measure regret against
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- Milestone 2: implement exponential-decay forgetting and sweep $\tau$
+  - Add exponential decay weighting $w_t = e^{-t/\tau}$ to a baseline
+    online learner (online regression or Q-learning)
+  - Sweep $\tau$ over a wide range and measure regret/error against drift
+    rate on both testbeds
+  - Fit the empirical relationship between the best-performing $\tau^*$
+    and the environment's drift rate
+  - This is the result: adaptation-speed vs. stability curves for fixed
+    $\tau$, and an estimated $\tau^*$-vs-drift-rate relationship
+
+- Milestone 3: test a learned $\tau$ against the best fixed $\tau$
+  - Implement an online or meta-learned procedure that adapts $\tau$
+    during training instead of fixing it
+  - Compare it against the best fixed $\tau$ from Milestone 2 on the drift
+    pattern used for tuning
+  - Re-evaluate on drift patterns not seen during tuning to check for
+    meta-overfitting to the tuning pattern
+  - This is the result: a comparison of learned vs. fixed $\tau$,
+    including whether the learned rule generalizes to unseen drift
+    patterns
+
+- Milestone 4: test content-aware forgetting against uniform decay
+  - Design a content-aware forgetting rule that weights observations by
+    estimated relevance or surprise, not only by age
+  - Build a task with mixed stationary and drifting components (some
+    features stable, others changing) to separate the two forgetting
+    styles
+  - Compare content-aware and exponential-decay forgetting on this task
+    and relate the results to the bias-variance tradeoff from the Research
+    Topics
+  - This is the result: quantitative evidence on whether content-aware
+    forgetting beats exponential decay when structure is mixed
+    stationary/non-stationary
 
 ## References
 

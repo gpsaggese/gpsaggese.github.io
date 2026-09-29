@@ -66,13 +66,48 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- Milestone 1: derive VC dimension bounds for parametrized DAG families
+  - Formalize the hypothesis class $\mathcal{H}_G$ induced by a DAG $G$
+    with maximum indegree $k$ and a fixed conditional family, starting with
+    linear Gaussian conditionals
+  - Derive a closed-form or bounded VC dimension as a function of the
+    number of nodes $n$, indegree $k$, and per-node parameter count
+  - Check that the bound reduces to the known linear-classifier VC bound in
+    the degenerate single-node case
+  - This is the result: a derived VC dimension formula or bound for the
+    linear-Gaussian DAG family, with a proof sketch
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- Milestone 2: build a synthetic DAG benchmark
+  - Generate synthetic DAGs at varying $n$, maximum indegree, and
+    conditional family (linear Gaussian, then non-linear), replicating the
+    10-node DAG vs. fully-connected comparison from Key Examples across
+    multiple configurations
+  - Estimate empirical sample complexity via simulation (minimum samples to
+    reach a target generalization error) and compare it to the Milestone 1
+    bound
+  - This is the result: a benchmark suite and plots of empirical vs.
+    derived sample complexity across DAG configurations
+
+- Milestone 3: test structural misspecification
+  - Generate data from a true DAG $G^*$, then fit models under a
+    misspecified structure $G'$ (varying degree of misspecification) and
+    under a structure-free correlational model
+  - Compare generalization error across the correct-structure,
+    misspecified-structure, and structure-free models to test whether
+    wrong structure hurts more than ignoring causality (Question 1)
+  - This is the result: a quantitative comparison of generalization error
+    across the three model classes
+
+- Milestone 4: extend to Markov equivalence and interventions
+  - Test whether Markov-equivalent DAGs (same skeleton and v-structures)
+    yield the same VC dimension under the Milestone 1 formula and
+    empirically (Question 3)
+  - Propose and work out an example of an "interventional VC dimension"
+    that counts the complexity of representable interventions, not just
+    observational fit (Research Topic)
+  - This is the result: an answer, proof or counterexample, to whether
+    Markov-equivalent graphs share VC dimension, plus a worked example of
+    the interventional VC dimension definition
 
 ## References
 

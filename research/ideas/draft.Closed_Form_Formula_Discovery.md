@@ -76,13 +76,37 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- **Milestone 1: produce a black-box relationship and held-out splits**
+  - Take the fitted relationship $\hat{g}(x)$ from an existing causal or
+    skill/luck analysis, for example the hedge fund performance model in
+    `draft.Causal_Analysis_of_Hedge_Fund_Performance.md`
+  - Build a reproducible time-based split (train period versus later
+    market regime) and a population-based split (disjoint set of
+    agents/funds) for later out-of-sample evaluation
+  - This is the result: a saved $\hat{g}(x)$ plus two held-out evaluation
+    sets (a later time period and a disjoint population)
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- **Milestone 2: distill $\hat{g}$ into candidate closed-form formulas**
+  - Apply symbolic regression tools (PySR, AI Feynman, gplearn) to
+    $\hat{g}(x)$, sweeping the complexity penalty $\lambda$ in
+    $g_{\text{sym}} = \arg\min_{g \in \mathcal{G}} \text{error}(g, \hat g)
+    + \lambda \cdot \text{complexity}(g)$
+  - Record the in-sample error/complexity trade-off curve across the swept
+    $\lambda$ values
+  - This is the result: a set of candidate closed-form formulas at
+    different complexity levels, each with its in-sample fit error
+
+- **Milestone 3: test out-of-sample stability against a regularization
+  baseline**
+  - Evaluate each candidate $g_{\text{sym}}$ on the later time period and
+    the disjoint population held out in Milestone 1, measuring the drop
+    in fit relative to in-sample error
+  - Compare against a direct-regularization baseline (a sparsity-penalized
+    version of the original black-box model) at matched complexity, on the
+    same held-out splits
+  - This is the result: a quantitative comparison of out-of-sample
+    stability between symbolic-regression distillation and direct
+    regularization, at matched model complexity
 
 ## References
 

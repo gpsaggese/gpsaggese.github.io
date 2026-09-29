@@ -75,13 +75,42 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- Milestone 1: build a minimal autoreload prototype
+  - Pick a concrete substrate to start from (a plain text/code file watched
+    via filesystem events, or a Jupyter notebook watched via cell
+    execution), and implement a watcher that diffs the document on every
+    save/execution
+  - Feed each diff, with surrounding document context, to an LLM and
+    capture its proposed incremental edit as a structured patch
+  - This is the result: a working prototype that observes a live-edited
+    file and returns a contextual proposed edit after each change
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- Milestone 2: define the edit protocol and conflict resolution
+  - Represent LLM edits as structured, line-range patches with an
+    accept/reject/partial-accept state machine
+  - Handle the case where a human edits a region the LLM has an
+    outstanding proposal on, including retracting a partially accepted
+    suggestion
+  - This is the result: an edit-state protocol validated against a
+    scripted sequence of interleaved human and LLM edits, including
+    conflicting ones
+
+- Milestone 3: evaluate suggestion quality against interaction logs
+  - Replay Jupyter notebook revision histories and synthetic
+    Copilot-style accept/reject sequences through the prototype
+  - Measure edit distance between the LLM's proposed edit and the eventual
+    accepted code, plus acceptance rate and end-to-end latency
+  - This is the result: quantitative suggestion-quality and latency
+    numbers for the prototype across the replayed logs
+
+- Milestone 4: build a UI and ablate autoreload granularity
+  - Build a thin UI (a VS Code extension or a small web app) that shows
+    LLM edits as inline diffs or an annotation layer alongside human edits
+  - Ablate the autoreload trigger granularity (per keystroke, per cell,
+    per save) and measure its effect on latency and how often it
+    interrupts the human's editing flow
+  - This is the result: a recommendation for the granularity/UI pattern
+    that best balances latency against disruption, backed by the ablation
 
 ## References
 

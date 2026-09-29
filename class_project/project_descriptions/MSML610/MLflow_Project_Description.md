@@ -1,21 +1,31 @@
-**MLflow** is an open-source platform designed to manage the end-to-end machine
-learning lifecycle. It streamlines the process of tracking experiments, packaging
-code into reproducible runs, and sharing and deploying models. Key features of MLflow
-include:
+**Description**
 
-- **Tracking**: Log and query experiments, metrics, parameters, and artifacts.
-- **Projects**: Package data science code in a reusable, reproducible format.
-- **Models**: Manage and deploy models from various ML libraries.
-- **Registry**: Central repository to manage the full lifecycle of MLflow Models.
+MLflow is an open-source platform designed to manage the end-to-end machine learning
+lifecycle. It streamlines the process of tracking experiments, packaging code into
+reproducible runs, and sharing and deploying models.
+
+Technologies Used
+MLflow
+
+- **Tracking**: Log and query experiments, metrics, parameters, and artifacts
+- **Projects**: Package data science code in a reusable, reproducible format
+- **Models**: Manage and deploy models from various ML libraries
+- **Registry**: Central repository to manage the full lifecycle of MLflow Models
 
 ### Fall2026
 
-// TODO(ai_gp): Improve this
-
 #### Tutorial
 
-- Usual tutorial "Learn X in 60 mins"
-- Check if there is some already existing tutorial and make it better
+- Usual tutorial "Learn MLflow in 60 mins", following
+  `.claude/skills/tutorials_in_60_mins.rules.md`
+- Check if there is an existing tutorial and make it better
+- Make it look like `msml610/tutorials/L03_knowledge_representation/`
+- Use the skills in `.claude/skills/notebook.*` to automate part of the work, and
+  document how you used them
+- Deliverables:
+  - `mlflow_utils.py`
+  - `mlflow.API.ipynb`
+  - `mlflow.example.ipynb`
 
 #### Project: Forecasting Renewable Energy Production
 
@@ -23,15 +33,21 @@ include:
   energy sources like wind or solar.
 - **Dataset Suggestions**: "Wind Power Forecasting" dataset from Kaggle.
 - **Tasks**:
-  - Conduct exploratory data analysis using Python libraries to understand patterns
-    in energy production.
-  - Engineer features such as weather data or time of day to enhance model accuracy.
-  - Use MLflow to log experiments across various deep learning models (e.g., LSTM,
-    GRU) for time series forecasting.
-  - Evaluate and compare model performance; deploy the best model using MLflow's
-    deployment capabilities.
-- **Bonus Ideas**: Integrate an external API (e.g., OpenWeatherMap) to enhance
-  forecasting with real-time weather data.
+  - **Explore the Data**: Conduct exploratory data analysis using Python libraries
+    to understand patterns in energy production.
+  - **Engineer Features**: Engineer features such as weather data or time of day to
+    enhance model accuracy.
+  - **Track Experiments**: Use MLflow to log experiments across various deep
+    learning models (e.g., LSTM, GRU) for time series forecasting.
+  - **Evaluate and Deploy**: Evaluate and compare model performance; deploy the best
+    model using MLflow's deployment capabilities.
+- **Bonus Ideas (Optional)**: Integrate an external API (e.g., OpenWeatherMap) to
+  enhance forecasting with real-time weather data.
+- TODO(ai_gp): Improve this
+
+#### Milestones
+
+- TODO(ai_gp): Add milestones related to the project
 
 ### Project 1: Predicting Air Quality Index Using Time Series Data
 
@@ -44,11 +60,11 @@ include:
   - Use MLflow to track experiments with different time series forecasting models
     like ARIMA or Prophet.
   - Implement a simple baseline model and log its performance metrics.
-  - Utilize MLflow to save and compare the models' performance. 
+  - Utilize MLflow to save and compare the models' performance.
   - Also use MLflow to track hyperparameters like ARIMA order or Prophet seasonality
     modes.
-- **Bonus Ideas**: Implement a dashboard using Flask that visualizes predictions vs.
-  actual data over time.
+- **Bonus Ideas (Optional)**: Implement a dashboard using Flask that visualizes
+  predictions vs. actual data over time.
 
 ### Project 2: Identifying Anomalies in Network Traffic
 
@@ -62,5 +78,5 @@ include:
     SVM.
   - Use MLflow to log parameters and metrics, comparing model performances.
   - Implement a model registry with MLflow to manage different versions.
-- **Bonus Ideas**: Test the model on streaming data using a simulated network traffic
-  generator.
+- **Bonus Ideas (Optional)**: Test the model on streaming data using a simulated
+  network traffic generator.

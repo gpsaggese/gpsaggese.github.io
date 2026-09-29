@@ -52,13 +52,43 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- Milestone 1: build a quantization-aware training testbed
+  - Train a small-to-medium reference network (e.g. a CNN on CIFAR-10 or
+    an MLP on MNIST) at full precision to establish the baseline accuracy
+  - Implement pluggable quantizers covering post-training quantization
+    (PTQ), quantization-aware training (QAT) with a straight-through
+    gradient estimator, ternary weights ($-1, 0, 1$), and simulated fp4/
+    fp8 precision
+  - This is the result: a testbed reproducing the full-precision baseline
+    plus working PTQ and QAT pipelines for each quantization scheme
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- Milestone 2: compare train-then-quantize versus quantize-during-training
+  - Run PTQ (train at full precision, then quantize) and QAT (quantize
+    during training) at matched bit budgets (ternary, fp4, fp8), keeping
+    architecture, data, and optimizer identical across runs
+  - Record final accuracy, training-loss stability, and convergence speed
+    for each bit budget and strategy
+  - This is the result: an accuracy-versus-bit-budget table showing which
+    strategy wins at each bit width, answering the train-then-quantize
+    versus quantize-during-training question from Core Idea
+
+- Milestone 3: search per-layer mixed precision
+  - Probe each layer's sensitivity to quantization (e.g. accuracy drop
+    from quantizing that layer alone) to rank layers by tolerance
+  - Use a greedy or sensitivity-guided search to allocate a total bit
+    budget unevenly across layers (mixing ternary, fp4, and fp8 layers)
+    and train the resulting mixed-precision network with QAT
+  - This is the result: a mixed-precision configuration that matches or
+    beats the best uniform-precision network from Milestone 2 at the same
+    average bit budget
+
+- Milestone 4: analyze what drives the optimal precision per layer
+  - Correlate each layer's optimal bit width (from Milestone 3) against
+    candidate predictors such as layer depth, weight variance, and
+    gradient-magnitude sensitivity
+  - This is the result: a predictive heuristic linking a measurable
+    per-layer statistic to its optimal precision, validated by comparing
+    the heuristic's suggested allocation against the searched one
 
 ## References
 

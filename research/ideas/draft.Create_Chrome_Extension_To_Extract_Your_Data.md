@@ -57,13 +57,36 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- Milestone 1: inventory the data gap and design the extractor
+  - Compare, field by field, what Instagram's authenticated web UI shows
+    against what its official "Download Your Data" export includes
+  - Design the content-script, background-worker, and message-passing
+    architecture, scoped to same-origin requests within the user's own
+    authenticated session only
+  - This is the result: a documented field-level gap table and an extension
+    architecture spec
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- Milestone 2: build a minimal extractor for one data type
+  - Implement a content script that extracts the user's own posts, captions,
+    and like counts from the authenticated session
+  - Implement export to a structured JSON/CSV file with a defined schema
+  - This is the result: a working extension that exports the user's own
+    posts into a structured archive richer than the official ZIP export
+
+- Milestone 3: add breakage detection and extend data types
+  - Add schema/shape validation against expected DOM selectors or internal
+    API response shapes, so a platform change fails loudly instead of
+    silently producing empty or wrong data
+  - Extend extraction to comments and message threads
+  - This is the result: an extractor that detects and reports its own
+    breakage, covering posts, comments, and messages
+
+- Milestone 4: document the legal/ethical boundary and add rate limiting
+  - Write explicit self-data-only design constraints into the extension: no
+    other users' data, no bypassing of access controls
+  - Add rate limiting to avoid triggering anti-automation defenses
+  - This is the result: a documented boundary and rate-limiting safeguards
+    built into the extraction flow
 
 ## References
 - GDPR Article 20: Right to data portability

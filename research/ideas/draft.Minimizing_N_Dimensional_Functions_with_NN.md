@@ -85,13 +85,50 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- Milestone 1: build the benchmark harness and classical baselines
+  - Implement the standard test functions (Rosenbrock, Rastrigin, Ackley) for
+    configurable dimension $N$, with a shared interface that logs every
+    function evaluation
+  - Implement CMA-ES, GP-based Bayesian optimization, and plain gradient
+    descent as baselines, each tracking optimality gap
+    $f(x_t) - f(x^{*})$ versus function-evaluation count
+  - This is the result: a benchmark harness with three baselines producing
+    optimality-gap-versus-eval-count curves on all three test functions
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- Milestone 2: implement and evaluate the NN-surrogate variant
+  - Train a NN regressor $\hat{f}_{\theta} \approx f$ from sampled points,
+    following the DNGO-style approach, and use its predictions (and a
+    cheap uncertainty proxy, e.g. an ensemble or MC-dropout) to drive an
+    acquisition step
+  - Run it on the Milestone 1 benchmark suite and compare wall-clock time
+    and evaluation budget to GP-based Bayesian optimization and CMA-ES
+  - This is the result: optimality-gap curves for the NN-surrogate method
+    plotted against the classical baselines, showing whether it matches or
+    beats GP-based Bayesian optimization within the same eval budget
+
+- Milestone 3: implement and evaluate the amortized-optimization variant
+  - Define a parametric family $f_{c}$ (e.g. shifted/scaled Rosenbrock or
+    quadratic bowls indexed by $c$) and train $h_{\phi}(c)$ to predict
+    $\arg\min_{x} f_{c}(x)$, using $f_{c}(h_{\phi}(c))$ as the training
+    loss so no ground-truth minimizer is required
+  - Evaluate $h_{\phi}$ on held-out $c$ drawn from the training
+    distribution, and separately on $c$ drawn from a shifted distribution,
+    to probe the sensitivity question from Research Topics
+  - This is the result: measured inference-time speedup of $h_{\phi}$ over
+    per-instance iterative solving, plus a quantified accuracy gap between
+    in-distribution and distribution-shifted $c$
+
+- Milestone 4: hybrid refinement and constrained extension
+  - Combine the amortized network's output as an initial guess $x_0$
+    followed by a few steps of classical local refinement (gradient
+    descent or CMA-ES), and compare against pure amortized and pure
+    iterative solutions on speed/accuracy trade-off
+  - Add a constrained variant using a differentiable convex-optimization
+    layer (`cvxpylayers` or OptNet) inside $h_{\phi}$, and test on a
+    version of $f_{c}$ with simple linear or box constraints
+  - This is the result: a speed-versus-accuracy trade-off curve for the
+    hybrid method, and a working constrained amortized optimizer that
+    satisfies constraints by construction
 
 ## References
 

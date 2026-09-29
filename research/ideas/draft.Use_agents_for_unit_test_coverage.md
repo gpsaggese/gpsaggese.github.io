@@ -48,13 +48,41 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- Milestone 1: measure baseline coverage
+  - Run the existing coverage tooling (per
+    `all.run_unit_tests.how_to_guide.md`) across the codebase
+  - Rank files and functions by coverage gap to build the target list the
+    agent will work through
+  - This is the result: a baseline coverage report ranking the
+    lowest-coverage files and functions
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- Milestone 2: build incremental mode
+  - Add a pre-commit or CI hook that diffs changed files in a commit or PR
+  - For each changed function lacking coverage, dispatch an agent that
+    follows the `testing.reach_coverage` skill and
+    `all.write_unit_tests.how_to_guide.md` conventions to add or update
+    tests
+  - Run the updated test suite to confirm the new tests pass and coverage
+    improves for the changed code
+  - This is the result: a working incremental-mode hook that, on a sample
+    PR, generates passing tests for the newly changed code
+
+- Milestone 3: build non-incremental (batch) mode
+  - Write a script that iterates over the lowest-coverage targets from
+    Milestone 1 and dispatches one agent per file or function to write
+    tests up to a target coverage threshold
+  - Run the full test suite after each batch to catch regressions before
+    accepting the generated tests
+  - This is the result: a batch run that raises coverage for a sample set
+    of target files to the chosen threshold, with all new tests passing
+
+- Milestone 4: evaluate test quality and cost
+  - Check that agent-written tests are meaningful rather than
+    coverage-padding, e.g. via mutation testing or assert-density checks
+  - Measure agent cost (tokens and time) per percentage point of coverage
+    gained, for both modes
+  - This is the result: a quality report cross-checking agent-written
+    tests via mutation testing, plus a cost-per-coverage-point metric
 
 ## References
 

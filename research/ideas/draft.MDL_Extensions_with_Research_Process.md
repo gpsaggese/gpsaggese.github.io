@@ -84,13 +84,44 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- Milestone 1: formalize $C_{\text{search}}$ and derive a bound
+  - Define $C_{\text{search}}$ precisely, beyond the naive
+    $\log(N_{\text{attempts}})$ count, to account for pruning, early
+    stopping, and correlation between trials in a search
+  - Derive or adapt a generalization bound (PAC-Bayes or MDL-style) that
+    uses $C = C_{\text{model}} + C_{\text{search}}$, and check that it
+    reduces to the standard model-only bound when $C_{\text{search}} = 0$
+  - This is the result: a written formal bound with a proof sketch and a
+    worked derivation of $C_{\text{search}}$
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- Milestone 2: collect real AutoML search trajectories
+  - Instrument an AutoML pipeline (random/grid search or an
+    Optuna/NAS-style search) over architectures and hyperparameters on a
+    benchmark dataset
+  - Log every trial's held-out score and the full search trajectory
+    (order, pruning decisions, early stops), and compute both the naive
+    $\log(N_{\text{attempts}})$ estimate and the refined
+    $C_{\text{search}}$ from Milestone 1 for each run
+  - This is the result: a dataset of AutoML search trajectories with both
+    complexity estimates and the observed train/test generalization gap
+    attached to each run
+
+- Milestone 3: test the bound's predictive power
+  - Correlate the search-aware bound from Milestone 1 against the actual
+    generalization gap across many independent AutoML runs, varying the
+    search budget $N$ and the dataset
+  - Compare its predictive accuracy against the naive VC/MDL bound that
+    ignores search complexity entirely
+  - This is the result: a plot/table showing whether the search-aware
+    bound predicts overfitting better than the model-only bound
+
+- Milestone 4: prototype a trajectory-based overfitting detector
+  - Build a detector that flags likely overfitting from the trajectory
+    through model space (e.g., rate of held-out-score improvement per
+    trial) rather than only the final model's held-out score
+  - Test the detector on a held-out subset of the runs from Milestone 2
+  - This is the result: a working detector with measured precision and
+    recall for flagging overfit runs on the held-out trajectories
 
 ## References
 

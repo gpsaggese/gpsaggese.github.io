@@ -50,13 +50,46 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- Milestone 1: survey prior art and define the target spec
+  - Survey existing packed-arithmetic techniques (SIMD-within-a-register/
+    SWAR, bit-slicing, packed arithmetic in cryptography and DSP) to
+    answer the open question of whether this is already a standard
+    technique, and pin down what would be novel
+  - Define a concrete spec: word width, number and width of packed
+    lanes (e.g. four 16-bit or eight 8-bit integers per 64-bit word), and
+    the target operations (add, subtract, compare, and optionally
+    multiply)
+  - This is the result: a written comparison against existing SWAR/SIMD
+    techniques, plus a concrete packing-layout and operation-set spec
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- Milestone 2: implement and verify the software reference
+  - Implement packed-word add, subtract, and compare routines in a
+    systems language (C or Rust), with guard bits or masking to prevent
+    overflow bleeding between adjacent lanes
+  - Unit-test the packed routines against an unpacked scalar-loop
+    reference on randomized inputs, including boundary and overflow
+    cases
+  - This is the result: a packed-word arithmetic library that matches the
+    scalar reference on randomized correctness tests
+
+- Milestone 3: benchmark against native SIMD and scalar baselines
+  - Benchmark the packed-word implementation, native SIMD intrinsics
+    (SSE/AVX or NEON), and a plain scalar loop on a representative
+    streaming workload (e.g. large-batch counting or accumulation)
+  - Measure throughput and instructions-per-element for each approach
+  - This is the result: a throughput comparison table showing where
+    packed-word SWAR wins, loses, or ties against native SIMD and scalar
+    baselines
+
+- Milestone 4: prototype the FPGA/VLIW streaming variant
+  - Prototype the streaming computation described in Core Idea, either as
+    an FPGA design (via an HLS tool or Verilog, in simulation) or as a
+    cycle-accurate simulation of a VLIW pipeline processing packed words
+  - Measure achievable throughput per unit resource (LUTs, or simulated
+    issue width) against an unpacked baseline on the same pipeline
+  - This is the result: an FPGA/VLIW simulation or synthesis result
+    quantifying the throughput and resource-efficiency gain of packed-word
+    streaming over the unpacked baseline
 
 ## References
 

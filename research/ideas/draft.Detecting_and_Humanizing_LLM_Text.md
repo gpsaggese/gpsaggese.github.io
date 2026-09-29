@@ -65,13 +65,48 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- Milestone 1: build the paired human/LLM corpus
+  - Collect human text on a fixed set of prompts (e.g. student essays or
+    articles), controlling topic and length per prompt
+  - Generate matched completions on the same prompts from 2-3 model families
+    (e.g. Claude, GPT, Llama) to enable cross-family testing later
+  - Split into train/val/test, tagging each example with topic, length, and
+    model family
+  - This is the result: a labeled paired corpus ready for detector training
+    and transfer evaluation
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- Milestone 2: train and evaluate baseline detectors $d_\theta$
+  - Implement a zero-shot detector using DetectGPT-style curvature and
+    log-likelihood/entropy features (no training needed)
+  - Implement a supervised detector: a fine-tuned encoder classifier trained
+    on the Milestone 1 corpus
+  - Evaluate both in-domain and cross-family (train on one model family, test
+    on another), reporting AUC at a fixed false-positive rate
+  - This is the result: an AUC-at-fixed-FPR table comparing zero-shot vs
+    supervised detection, in-domain and cross-family
+
+- Milestone 3: build the humanizer $g_\phi$ and close the adversarial loop
+  - Start from `.claude/skills/blog.humanize` as the prompting-based baseline
+    humanizer
+  - Define the semantic constraint $\text{sim}(g_\phi(x), x) \ge \tau$ with an
+    embedding similarity metric, and score content fidelity (fact
+    preservation) separately
+  - Retrain $d_\theta$ on
+    $\{\text{human}\} \cup \{\text{LLM}\} \cup \{g_\phi(\text{LLM})\}$,
+    alternating detector retraining and humanizer refinement for several
+    rounds
+  - This is the result: an AUC-at-fixed-FPR curve across adversarial rounds,
+    with fidelity scores per round, showing whether detection holds an edge or
+    converges to chance
+
+- Milestone 4: check fairness and generalization
+  - Measure the final detector's false-positive rate on non-native-English
+    human writing samples
+  - Hold out one model family from detector training to test whether the
+    signal is a model-specific fingerprint or a general "machine register"
+  - This is the result: a fairness report (false-positive rate by writer
+    population) and a cross-family transfer table, answering the Questions
+    section's three open points
 
 ## References
 - Mitchell, E., et al., _DetectGPT: Zero-Shot Machine-Generated Text Detection

@@ -96,13 +96,46 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- Milestone 1: build the `@llm` decorator core
+  - Implement `@llm(model=...)` as in Formalization: the docstring becomes
+    the prompt, and the function signature gives the input and output types
+  - Use `hdbg.dassert` to validate the LLM output against the inferred type,
+    with multi-shot retry on a validation failure
+  - Wire in caching via `helpers/hcache_simple.py` so repeated calls with the
+    same arguments skip the LLM
+  - This is the result: a working decorator library with 3-5 example
+    `@llm`-decorated functions (e.g. summarization, classification) passing
+    their auto-generated unit tests
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- Milestone 2: add batching, compilation, and code-calling-LLM
+  - Add automatic batching of concurrent `@llm` calls issued in the same
+    execution window
+  - Auto-generate unit tests from the input/output pairs observed during
+    test runs
+  - Implement the `compile` step: once enough cached input/output pairs
+    exist for a function, replace the LLM call with a lookup table or a
+    small fine-tuned model, and diff its behavior against the LLM version
+  - Prototype the reverse direction: let an `@llm`-decorated function call
+    back into arbitrary Python functions as tools mid-generation
+  - This is the result: one example function that starts all-LLM and is
+    `compile`d into deterministic/cached code with no change to its call
+    site, plus one example of an LLM call invoking Python code
+
+- Milestone 3: type system for the uncertainty boundary
+  - Extend the type annotations with an `Uncertain[T]` wrapper that marks a
+    value as LLM-produced rather than code-produced
+  - Build a static checker (a lint pass) that flags an `Uncertain[T]` value
+    flowing into code that assumes deterministic input
+  - This is the result: a lint tool that runs over the Milestone 1 and 2
+    example programs and correctly flags an injected unsafe-uncertainty bug
+
+- Milestone 4: evaluate against existing LLM-orchestration frameworks
+  - Port 2-3 representative programs from the DSPy, LCEL, and Semantic
+    Kernel corpora (see Research Topics) into this decorator-based DSL
+  - Compare code size, readability, and reliance on manual prompt
+    engineering between the ported version and the original
+  - This is the result: a comparison table (lines of code, number of manual
+    prompt-formatting steps) across the ported example programs
 
 ## References
 

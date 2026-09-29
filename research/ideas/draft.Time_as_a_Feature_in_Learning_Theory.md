@@ -141,13 +141,50 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- Milestone 1: formalize and relate the drift bound and $VC_T$
+  - Write a precise definition of $\mathcal{H}_t$, the drift metric
+    $\|h_{t+1} - h_t\|$, and the cumulative drift $D_T$ used in the
+    time-aware PAC bound
+  - Derive or adapt a proof for the time-aware bound
+    $n \gtrsim (VC(\mathcal{H}) + D_T + \log(1/\delta)) / \epsilon^2$,
+    checking it against existing concept-drift and dynamic-regret bounds in
+    the online learning literature
+  - Relate $D_T$ to $VC_T = VC(\bigcup_{t=1}^T \mathcal{H}_t)$: determine
+    whether they are two views of the same bound or capture different
+    information (Research Topic, Question 7)
+  - This is the result: a written derivation (or proof sketch) of both
+    bounds and a formal statement of how $D_T$ and $VC_T$ relate
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- Milestone 2: build a synthetic drift testbed
+  - Implement the linear-classifier-with-drift example
+    ($h_t(x) = \text{sign}(w_t^\top x)$, $w_t$ drifting smoothly) and the
+    seasonal-model example (alternating $h_{\text{holiday}}$ and
+    $h_{\text{regular}}$) as controllable synthetic generators
+  - Sweep drift rate and measure empirical sample complexity needed to hit
+    a target generalization error, for each generator
+  - Compare empirical sample complexity against the bound predictions from
+    Milestone 1, at matching drift rates
+  - This is the result: plots of empirical vs. predicted sample complexity
+    across drift regimes, showing where each bound is tight or loose
+
+- Milestone 3: case study on a real non-stationary domain
+  - Pick one of the Key Examples with available data (e.g., stock market
+    regime shifts or fraud detection adversarial drift)
+  - Fit a rolling-window model over time, estimate $D_T$ and $VC_T$
+    empirically from the sequence of fitted hypotheses, and track forecast
+    performance over the same period
+  - This is the result: a case study showing whether the empirical drift
+    metric tracks the observed degradation in forecast performance
+
+- Milestone 4: test the forgetting/stability trade-off
+  - Train models with different memory policies (full history, sliding
+    window, exponential decay) and a stability-penalized objective, on the
+    Milestone 2 and 3 testbeds
+  - Compare generalization error across policies as a function of drift
+    rate, to address whether penalizing instability outperforms penalizing
+    raw complexity (Question 5)
+  - This is the result: a comparison table of forgetting/stability policies
+    and their generalization error across drift regimes
 
 ## References
 

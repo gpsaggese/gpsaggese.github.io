@@ -80,13 +80,42 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- **Milestone 1: build the static analysis layer**
+  - Use `astroid` (or `jedi`) to build a name/type-resolved function-level
+    call graph that follows `self.foo()` and imported-name calls to their
+    real definitions, not just raw `ast` edges
+  - Use `grimp` to build the module-level import graph for the
+    package/module abstraction layer
+  - This is the result: a Python library that, given a target codebase,
+    returns a structured graph with nodes for modules/classes/functions
+    and edges for imports/calls
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- **Milestone 2: render multi-level static diagrams**
+  - Map the graph into a nested file -> class -> function structure, and
+    render module-level and file-level views with Graphviz `cluster_*`
+    subgraphs
+  - Add class-level diagrams (inheritance, composition) reusing
+    `pyreverse`-style UML output
+  - This is the result: static Graphviz diagrams at three abstraction
+    levels (module, file, class) for a sample codebase
+
+- **Milestone 3: build the interactive click-to-follow explorer**
+  - Build a `dash-cytoscape` app using compound nodes for the file ->
+    class -> function nesting, with expand/collapse and click-to-drill-down
+  - Use `libcst` to keep exact source spans so each node can show its
+    real source snippet, not just a structural label
+  - This is the result: a running interactive web app that lets a user
+    click through a real codebase from module down to function, seeing
+    source code at each level
+
+- **Milestone 4: animate interactions and validate on a real codebase**
+  - Add animation of a call trace or execution path over the graph (e.g.,
+    highlighting nodes/edges in sequence as a chosen entry point runs)
+  - Run the full pipeline on `helpers_root` or another module of this
+    repo as the target codebase
+  - This is the result: a demo animating a call trace over the graph of a
+    real repo module, with a short write-up of what the visualization
+    reveals about that module's structure
 
 ## References
 - Author(s), _Title_. (Year)

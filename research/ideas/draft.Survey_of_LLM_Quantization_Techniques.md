@@ -49,13 +49,38 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- Milestone 1: map the technique and tool landscape
+  - Enumerate the main quantization approaches (post-training quantization
+    vs. quantization-aware training, GPTQ, AWQ, bitsandbytes, GGUF/
+    `llama.cpp`, SmoothQuant) and the Python tool implementing each
+  - Read each technique's source paper and extract its algorithmic
+    difference (calibration data needs, weight-only vs. weight+activation,
+    supported bit-widths)
+  - This is the result: a reference table mapping techniques to tools,
+    supported bit-widths, and supported model families
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- Milestone 2: build a common benchmarking harness
+  - Pick 1-2 open-weight LLMs and quantize each with every selected tool at
+    matching bit-widths (4-bit and 8-bit)
+  - Measure perplexity/accuracy on a standard benchmark, inference latency,
+    and memory footprint, all on the same hardware
+  - This is the result: a benchmark harness runnable across quantization
+    tools on the chosen models, producing comparable metrics
+
+- Milestone 3: run the cross-tool tradeoff analysis
+  - Execute the harness across all selected tools and bit-widths
+  - Plot quality degradation against compression ratio and against
+    inference speedup for each technique
+  - This is the result: a comparison table/plot of accuracy retention vs.
+    compression ratio vs. inference speed across techniques
+
+- Milestone 4: write up the survey
+  - Synthesize the benchmark results and the tool/technique landscape into
+    a written survey
+  - Include a recommendation matrix for choosing a technique given
+    deployment constraints (edge vs. server, latency vs. quality)
+  - This is the result: a survey document with a technique-selection
+    recommendation matrix, backed by the Milestone 3 benchmark data
 
 ## References
 

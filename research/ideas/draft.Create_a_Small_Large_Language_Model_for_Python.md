@@ -79,13 +79,42 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- Milestone 1: build narrow-Python training corpora and an eval harness
+  - Generate synthetic short (under 15 lines) single-purpose Python functions
+    with a large model, following the TinyStories "big model generates
+    simple examples" recipe, restricted to a narrow standard-library subset
+  - Filter CodeParrot and The Stack Python subset to short, self-contained
+    functions, dropping files with wide imports, classes, or heavy
+    dependencies, as a second "real code" corpus
+  - Set up HumanEval and MBPP as held-out eval sets with an execution
+    sandbox for automatic pass@1 scoring
+  - This is the result: two training corpora (synthetic and filtered real)
+    and a working pass@1 evaluation harness
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- Milestone 2: run the model-size sweep with automatic pass@1 scoring
+  - Train 1M/10M/50M/125M parameter models with a fixed architecture family
+    on each corpus, at matched compute budget
+  - Score every checkpoint on HumanEval/MBPP-style problems for syntactic
+    validity and pass@1
+  - This is the result: a size x corpus grid with syntactic-validity and
+    pass@1 curves, and the minimum parameter count for reliable
+    single-function code generation
+
+- Milestone 3: run the domain-width ablation and analyze failure modes
+  - Train matched-size models on "single-purpose functions only" vs.
+    "functions plus simple classes" corpora
+  - Categorize failures at each size: syntax errors vs. plausible-looking
+    but functionally wrong code (off-by-one, wrong operator)
+  - This is the result: a quantified effect of domain width on required
+    model size, and a taxonomy of small-model code failure modes
+
+- Milestone 4: test execution-guided fine-tuning
+  - Fine-tune the best small checkpoint using unit-test pass/fail as a
+    reward signal (rejection sampling or RL-style fine-tuning)
+  - Compare pass@1 at matched parameter count against the
+    next-token-prediction-only baseline from Milestone 2
+  - This is the result: a measured pass@1 gain (or lack of one) from
+    execution feedback at fixed model size
 
 ## References
 - Eldan, R., & Li, Y. (2023). _TinyStories: How Small Can Language Models Be

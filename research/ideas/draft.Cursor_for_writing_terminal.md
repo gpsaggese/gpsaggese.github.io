@@ -64,13 +64,39 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- Milestone 1: build the terminal-suggestion prototype
+  - Build a shell wrapper (zsh/bash hook or PTY proxy) that captures command
+    history, current directory state, and recent command output as context
+  - Call an LLM to produce inline next-command suggestions, with
+    Tab-to-accept and keep-typing-to-reject UX
+  - This is the result: a working shell wrapper that offers inline
+    next-command suggestions grounded in shell state
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- Milestone 2: build the destructive-command safety layer
+  - Implement pattern and heuristic detection for destructive commands
+    (`rm -rf`, force-push, `DROP TABLE`, and similar)
+  - Add a confirmation step that blocks autocompletion of the destructive
+    tail until the user explicitly confirms
+  - This is the result: a safety layer that intercepts destructive-command
+    suggestions before they can be completed
+
+- Milestone 3: define and measure evaluation metrics
+  - Instrument the wrapper to log suggestion acceptance rate, edit distance
+    between suggestion and final command, and the safety layer's
+    false-positive/false-negative rate
+  - Run a small self-dogfooding and volunteer user study over real terminal
+    sessions to collect these metrics
+  - This is the result: acceptance-rate and safety-layer precision/recall
+    numbers measured from real usage
+
+- Milestone 4: extend to the prose-writing variant
+  - Port the context-selection and suggestion UX to a text editor plugin
+    (e.g., Zed) for next-sentence/next-clause suggestions grounded in the
+    document so far
+  - Measure acceptance rate and edited-vs.-verbatim-accepted rate, and
+    compare against the terminal variant's numbers
+  - This is the result: a working prose-autocomplete plugin with acceptance
+    metrics comparable to the terminal variant
 
 ## References
 - fig.io / Warp: existing terminal-autocomplete products (prior art)

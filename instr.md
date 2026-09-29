@@ -109,3 +109,69 @@ Use the info below
   - `####` headings are kept, as an explicit exception to `markdown.rules.md`
   - Newest session goes first, and older session sections are kept
   - `Project N` entries are the project options next to the session section
+
+# Task 2: Reformat the Proposals in `chosen_projects.csv`
+
+- Request: "Do the same also for the files in
+  `./class_project/msml610/Fall2026/chosen_projects.csv`"
+- Scope (confirmed with the user): reformat only the 12 MSML610 tutorial
+  proposals in the CSV
+  - `CLIP-ViT-Large-Patch14`, `CrewAI`, `DoWhy`, `Kats`, `MLflow`, `MLlib`,
+    `NLTK`, `Polars`, `PyTorch_Geometric`, `RLlib`, `SemanticKernel`, `WB_Weave`
+  - Research ideas and the research dir in the CSV are not touched
+
+## Plan
+
+- [x] Add milestones to `.claude/skills/tutorial_specs.rules.md` and
+  `.claude/templates/tutorial_specs.template.md` (user request during task 2)
+  - Milestones must be related to the project: name the project tasks and the
+    result of each milestone
+  - Also relaxed: comparison tools are optional, and options are not renumbered
+- [x] Read the 12 proposals and compare each one with
+  `.claude/skills/tutorial_specs.rules.md`
+- [x] Reformat each file to the template, keeping all existing content
+  - Do not invent new tutorial specs, projects, datasets, or tasks
+  - Keep `TODO(ai_gp)` markers
+- [x] Verify structure of all 12 files with a script
+- [x] Re-run `git add` on the two rules and template files (edited files are
+  tracked, no new files)
+
+## Result
+
+### Done
+
+- Reformatted the 12 proposals to the template: `CLIP-ViT-Large-Patch14`,
+  `CrewAI`, `DoWhy`, `Kats`, `MLflow`, `MLlib`, `NLTK`, `Polars`,
+  `PyTorch_Geometric`, `RLlib`, `SemanticKernel`, `WB_Weave`
+  - Description, `Technologies Used`, `### Fall2026` with `#### Tutorial`,
+    `#### Project: <Title>`, `#### Milestones`, then the `### Project N` options
+  - Fields are bullets, difficulty is `N (Easy|Medium|Hard)`, bonus ideas are
+    next to their own project
+  - A script checked the structure of all 12 files
+- Added milestones to the rules and the template
+  - Each milestone must name the project tasks it advances and its result
+
+### Not done
+
+- Milestones are not written in the 12 files: each has
+  `TODO(ai_gp): Add milestones related to the project`
+  - The projects are not defined enough, and milestones need project decisions
+- Task names are not added to the tasks of the `### Project N` options that had
+  none (`CrewAI`, `MLflow`, `PyTorch_Geometric`, `SemanticKernel`)
+- Research ideas and the research dir in `chosen_projects.csv` are untouched
+  (out of the confirmed scope)
+- To confirm, since these are my choices:
+  - Standard tutorial bullets were added to all 12 files (reference to `L03`,
+    notebook skills, deliverables named `<tool>_utils.py`, etc.)
+  - Option numbers are not changed, so `CrewAI`, `RLlib`, `MLflow`, `SemanticKernel`,
+    `Kats`, `Polars`, and `PyTorch_Geometric` skip the option that became the
+    session project
+  - `Difficulty` is dropped from the session projects of `PyTorch_Geometric` and
+    `SemanticKernel`
+  - `WB_Weave` options 1 and 2 have `TODO(ai_gp): Add the difficulty`
+  - `WB_Weave` bonus ideas for "Project 1/2/3" moved to option 1, option 2, and
+    the session project
+  - Session project titles for `CLIP`, `CrewAI`, `DoWhy`, `Kats`, and `Polars`
+    are written by me from their objectives
+- Removed the `---` separators from the 12 proposals and from the template, and
+  the rules now say not to use them (user request after task 2)

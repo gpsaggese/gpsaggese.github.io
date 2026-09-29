@@ -51,13 +51,43 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- Milestone 1: locate and inventory the toolchain
+  - Search the repo/ecosystem for the blockchain-related code and confirm its
+    scope and boundaries
+  - Enumerate entry points: CLI commands, scripts, `invoke` tasks, and any
+    deployed contracts or services it talks to
+  - Map dependencies: Python packages, blockchain SDKs/node RPC endpoints, and
+    config files or secrets it needs
+  - This is the result: an inventory listing every entry point, dependency,
+    and external service the toolchain touches
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- Milestone 2: write the first-pass README
+  - Follow the `readme.create` skill conventions for structure, purpose, and
+    file/executable listing
+  - For each entry point, document what problem it solves and how to invoke
+    it, with example commands
+  - Trace and document the current end-to-end workflow (e.g. deploy contract
+    -> configure -> run) exactly as it exists today
+  - This is the result: a README checked into the toolchain's directory that
+    lets a new developer run the existing workflow
+
+- Milestone 3: audit developer experience and test coverage
+  - Run each documented command to find fragile manual steps, missing error
+    handling, and undocumented assumptions
+  - Check packaging (pip-installable, pinned dependencies) and CLI ergonomics
+    (help text, argument validation)
+  - Measure existing test coverage, or confirm there is none, and identify
+    which entry points and failure paths lack tests
+  - This is the result: a prioritized improvement list (docs, tests, DX),
+    ranked by developer impact vs effort
+
+- Milestone 4: implement the highest-priority improvements
+  - Collapse the manual multi-step workflow into a single script or `invoke`
+    task, following this repo's automation conventions
+  - Add tests for the highest-risk untested entry points identified in
+    Milestone 3
+  - This is the result: an updated toolchain where the previously manual
+    workflow runs as one command, with tests covering its critical path
 
 ## References
 - (to be filled in once the toolchain's location/repo is identified)

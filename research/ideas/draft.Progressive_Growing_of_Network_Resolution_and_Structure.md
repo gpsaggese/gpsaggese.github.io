@@ -52,13 +52,44 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- Milestone 1: build the fixed-architecture baseline
+  - Pick a testbed domain where "resolution" has a clear meaning (e.g.,
+    image classification/generation, analogous to Progressive GAN) and a
+    fixed model architecture and input resolution as the control
+  - Train the baseline to convergence and record final quality/accuracy,
+    wall-clock training time, and parameter count
+  - This is the result: baseline compute and quality numbers to compare all
+    later growing variants against
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- Milestone 2: implement progressive resolution growth
+  - Design a schedule that increases the number of gradient dimensions
+    (input/output resolution) over training steps, doubling or stepping up
+    at fixed intervals
+  - Implement a smooth blending (fade-in) between resolution stages so newly
+    added dimensions do not destabilize already-trained weights
+  - Train under the progressive schedule and compare final quality and
+    wall-clock time against the Milestone 1 baseline
+  - This is the result: a quantified compute/quality tradeoff of
+    progressive-resolution training vs. the fixed-resolution baseline
+
+- Milestone 3: implement differentiable structure growth
+  - Parameterize the network's width/depth as differentiable quantities
+    (e.g., learnable gates on channels/layers, DARTS-style relaxation) so
+    the architecture itself can grow or shrink during training
+  - Add a parameter-count regularization term to the loss so training
+    searches for the "optimal" number of parameters for the corpus
+  - Track parameter count and validation performance across training steps
+  - This is the result: a differentiable-architecture training run whose
+    parameter count converges to a steady state, with a performance vs.
+    parameter-count curve
+
+- Milestone 4: combine both mechanisms and evaluate
+  - Train a model with progressive resolution growth and differentiable
+    structure growth enabled simultaneously
+  - Compare final architecture size, total training compute, and quality
+    against the baseline and against each mechanism used alone
+  - This is the result: an ablation table isolating the contribution of
+    resolution growth vs. structure growth vs. the combined approach
 
 ## References
 

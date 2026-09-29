@@ -73,13 +73,44 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- Milestone 1: design the test spec and assertion types
+  - Define a fixture file format (e.g. YAML) with skill name, input, and
+    one or more assertions per test case
+  - Define the assertion types: exact match, structural (e.g. valid JSON
+    against a schema), semantic equivalence, and behavioral invariants,
+    answering what the minimal passing set looks like (Question 1)
+  - This is the result: a documented `skilltest` fixture schema and
+    assertion-type reference, with 2-3 example fixture files
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- Milestone 2: build the runner core
+  - Implement a CLI runner that loads fixtures, invokes the target skill,
+    and evaluates outputs with rule-based checks first and an LLM-as-judge
+    check for semantic assertions
+  - Handle non-determinism by repeating each LLM-judged case a fixed number
+    of times and requiring a majority pass, or by using a similarity
+    threshold instead of exact match (Question 2)
+  - Add an isolation layer that mocks external API calls and file system
+    access during a test run, analogous to mocking in traditional unit
+    tests (Research Topic)
+  - This is the result: a working `skilltest` CLI that runs a small suite
+    against a real skill and reports pass/fail with dependencies mocked out
+
+- Milestone 3: add snapshot and property-based modes
+  - Implement snapshot testing: store a golden output per test case and
+    flag a run whose output drifts beyond a configurable threshold
+  - Implement property-based input generators that probe boundary
+    conditions (empty input, very long input, adversarial prompts) instead
+    of only fixed examples
+  - This is the result: snapshot and property-based tests running against
+    2-3 example skills, catching an injected regression in each mode
+
+- Milestone 4: pilot on real skills and wire into CI
+  - Write `skilltest` suites for 3-5 existing skills in `.claude/skills/`
+  - Run the suite with a cheap model in CI and the full model as a
+    pre-release gate (Question 3), and measure the LLM-judge's false
+    positive and false negative rate against manually labeled outcomes
+  - This is the result: a CI job that runs skill regression tests on every
+    commit for the piloted skills, plus a judge-accuracy report
 
 ## References
 

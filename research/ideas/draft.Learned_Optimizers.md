@@ -78,13 +78,45 @@ optimization trajectory:
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- Milestone 1: build the meta-training pipeline
+  - Implement a coordinatewise LSTM optimizer $g_{\phi}$ that consumes a
+    per-parameter gradient (and hidden state) and outputs a per-parameter
+    update, following the Andrychowicz et al. design
+  - Define a small suite of meta-training tasks (synthetic quadratic bowls,
+    a small MNIST MLP) and a truncated-BPTT meta-training loop that
+    minimizes cumulative loss along the optimization trajectory
+  - This is the result: a meta-trained optimizer that reliably outperforms
+    a randomly initialized update rule on its own meta-training tasks
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- Milestone 2: benchmark against Adam, SGD, and RMSprop
+  - Train the same architectures (MNIST MLP, a small CNN) with tuned Adam,
+    SGD, and RMsprop baselines under matched compute budgets
+  - Compare convergence speed and final loss, and separately track the
+    wall-clock and step-count overhead of running $g_{\phi}$ at each step
+  - This is the result: a comparison table showing where the learned
+    optimizer wins or loses against tuned baselines, and its compute
+    overhead relative to them
+
+- Milestone 3: test generalization outside the meta-training distribution
+  - Evaluate the meta-trained optimizer, without retraining, on
+    architectures and datasets not seen during meta-training (a larger
+    MLP, a different activation function, a CNN on Fashion-MNIST)
+  - Track whether performance degrades gracefully or the optimizer
+    diverges/stalls outside its training distribution
+  - This is the result: a generalization report characterizing which
+    architecture/task shifts the learned optimizer transfers to and which
+    it fails on
+
+- Milestone 4: attempt distillation into a closed-form rule
+  - Log the learned optimizer's inputs (gradient, momentum-like features,
+    curvature proxies) and outputs across many training runs
+  - Fit a simple closed-form update rule (e.g., a low-order polynomial or
+    a hand-picked functional form over those features) to approximate
+    $g_{\phi}$'s behavior, and measure the fit's fidelity and its impact on
+    convergence when substituted in
+  - This is the result: an assessment of whether the learned optimizer's
+    behavior can be captured by an interpretable closed-form rule, with a
+    quantified fidelity/performance gap
 
 ## References
 

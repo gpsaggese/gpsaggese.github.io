@@ -80,13 +80,40 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- Milestone 1: implement and validate the core PINN framework
+  - Implement a generic PINN trainer: an NN $u_{\theta}(x, t)$, autodiff-based
+    residual $R_{\theta}$, and collocation/boundary/initial-point sampling
+    per the Formalization loss $L(\theta)$
+  - Validate on Burgers' equation, the canonical PINN benchmark, against its
+    known analytical/numerical reference solution
+  - This is the result: a working PINN implementation that reproduces the
+    Burgers' equation solution within an acceptable error vs. the reference
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- Milestone 2: benchmark against classical solvers
+  - Implement finite-difference/finite-element baseline solvers for the
+    same 1D/2D PDEs (heat/diffusion and Schrodinger equations)
+  - Compare accuracy vs. compute (wall-clock time, evaluation count) between
+    the PINN and the classical solvers at matched accuracy targets
+  - This is the result: an accuracy-vs-compute comparison across PDEs,
+    directly addressing the Research Topics benchmarking question
+
+- Milestone 3: investigate spectral bias and adaptive sampling
+  - Construct a stiff, multi-scale, or high-frequency test case where
+    spectral bias is expected to hurt PINN accuracy
+  - Test architecture and loss-reweighting variants, plus an adaptive
+    collocation-point sampling strategy, against uniform sampling
+  - This is the result: a quantified improvement (or lack of one) from
+    adaptive sampling and reweighting on the spectral-bias failure case
+
+- Milestone 4: extend to inverse and high-dimensional problems
+  - Implement the inverse/parameter-estimation variant: infer an unknown
+    coefficient (e.g., diffusivity) from sparse, noisy observations, and
+    compare against a classical parameter-estimation baseline
+  - Attempt a high-dimensional PDE (e.g., a Black-Scholes-type equation)
+    where mesh-based methods become infeasible
+  - This is the result: inverse-problem accuracy vs. the classical baseline,
+    plus a demonstration of PINN scaling to a high-dimensional case that
+    mesh-based methods cannot handle
 
 ## References
 

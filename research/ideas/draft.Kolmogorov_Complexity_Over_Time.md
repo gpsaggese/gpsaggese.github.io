@@ -68,13 +68,44 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- Milestone 1: build a practical compressibility estimator
+  - Implement an estimator for $K(x_t \mid x_{<t})$ using an off-the-shelf
+    compressor (e.g., gzip/LZ77 or PPM) and, separately, a small sequence
+    model's negative log-likelihood as a compression proxy
+  - Validate the estimator on synthetic streams with known, controlled
+    regime shifts (e.g., switching the generating process at a known time)
+  - This is the result: an estimator that correctly flags the known
+    injected regime shifts in synthetic data
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- Milestone 2: implement online change-point detection
+  - Track the incremental description length
+    $L = \sum_{t=1}^{T} K(x_t \mid x_{<t})$ online, and flag a regime shift
+    when its rate jumps past a calibrated threshold
+  - Benchmark detection accuracy and lead time against standard baselines
+    (CUSUM, Bayesian online changepoint detection) on the synthetic streams
+  - This is the result: a detector with measured precision/recall and
+    detection lead time versus the two baselines
+
+- Milestone 3: apply the detector to the key example domains
+  - Run the detector on a financial time series spanning a known regime
+    change (e.g., 2008 crisis or COVID-19 turbulence) and on a network
+    intrusion detection dataset with labeled attack windows
+  - Measure detection precision/recall and lead time against the labeled
+    events in each dataset
+  - This is the result: precision/recall and lead-time numbers on two real
+    labeled domains, compared to the synthetic-data results
+
+- Milestone 4: study the compression-approximation gap and predictability
+  limit
+  - Compare detection quality across compressor choices (gzip/LZ77 vs PPM
+    vs neural log-likelihood) to characterize how the choice of
+    approximation to the uncomputable $K$ affects detection
+  - Empirically test whether $K(x_t \mid x_{<t})$ approaches $|x_t|$ (full
+    incompressibility) near labeled regime boundaries, as a proxy for the
+    predictability-limit question
+  - This is the result: a comparison of compressor choices, plus an
+    empirical answer to whether conditional complexity approaches the
+    incompressibility limit at regime boundaries
 
 ## References
 

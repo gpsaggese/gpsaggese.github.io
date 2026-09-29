@@ -54,13 +54,43 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- Milestone 1: survey existing MCP docs and scope the tutorial outline
+  - Catalog what the spec repo, SDK READMEs, and blog posts already cover,
+    and where they are incomplete or scattered
+  - Define the target reader and the minimal mental model to teach: client,
+    server, transport, capability negotiation
+  - Draft a tutorial outline following the `tutorials_in_60_mins.create`
+    skill conventions
+  - This is the result: an outline document listing sections, target
+    reader, and the gaps in existing MCP docs the tutorial will fill
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- Milestone 2: build the minimal end-to-end server and client example
+  - Implement a "hello world" MCP server exposing one tool (`get_weather`)
+    and one resource, in the Python SDK
+  - Repeat the same server in the TypeScript SDK
+  - Connect each server to an MCP client (Claude Desktop or Claude Code)
+    and verify a full tool-call round trip
+  - This is the result: two working minimal MCP servers (Python,
+    TypeScript), each verified against a live client with a successful
+    tool call
+
+- Milestone 3: build the real integration example and catalog gotchas
+  - Wrap an existing helpers-repo utility as an MCP tool exposed to a
+    client
+  - Deliberately reproduce the common failure modes: tool input schema
+    mismatch, stdio vs. SSE transport confusion, and an auth failure
+  - Write a minimal reproduction and fix for each gotcha
+  - This is the result: a working helpers-repo MCP integration plus a
+    documented, reproducible list of gotchas with fixes
+
+- Milestone 4: write and validate the tutorial
+  - Assemble the outline, examples, and gotchas into the full tutorial per
+    `tutorials_in_60_mins.create` conventions
+  - Have a second engineer follow the tutorial from a clean environment,
+    noting where they get stuck
+  - Revise the tutorial based on the friction points observed
+  - This is the result: a published tutorial that a new engineer can
+    follow, unassisted, to build and connect a working MCP server
 
 ## References
 - Anthropic, _Model Context Protocol specification_

@@ -57,13 +57,38 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- Milestone 1: stand up the Lean/LeanDojo/Mathlib4 baseline
+  - Install Lean 4, Mathlib4, and LeanDojo, and extract a subset of MiniF2F
+    problems into LeanDojo's interaction format
+  - Run an off-the-shelf LLM (prompted via API, no fine-tuning) as a
+    tactic-proposal model inside LeanDojo's proof-search loop
+  - This is the result: a reproducible pass rate on the MiniF2F subset for
+    the prompted-LLM baseline, with logged proof traces for every attempt
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- Milestone 2: build the Python-Lean proof-search bridge
+  - Use LeanDojo's interaction API to let the LLM propose tactics
+    iteratively, feeding the resulting proof state (or Lean error message)
+    back into the next prompt
+  - Add multi-sample proposal (best-of-n tactics per step) and a retry
+    budget per proof
+  - This is the result: an end-to-end, Python-driven proof-search loop that
+    attempts the MiniF2F subset and reports success or failure with retries
+
+- Milestone 3: improve search with retrieval and error-conditioned repair
+  - Add premise retrieval from Mathlib4 (e.g. embedding-based lemma search)
+    to narrow the tactic search space
+  - Condition retries on the Lean error message rather than resampling
+    blind, and compare against the ProofNet dataset for informal-to-formal
+    statement translation
+  - This is the result: a measured pass-rate improvement over the Milestone
+    1 baseline, with an ablation showing which addition (retrieval vs
+    error-conditioned repair) contributed most
+
+- Milestone 4: distill solved traces into a lighter model
+  - Fine-tune (or train a lightweight adapter for) a smaller model on the
+    proof traces collected in Milestones 2 and 3
+  - This is the result: a comparison of the fine-tuned model against the
+    prompted-only baseline on a held-out MiniF2F split
 
 ## References
 

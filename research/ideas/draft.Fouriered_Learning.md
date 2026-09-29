@@ -69,13 +69,45 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- Milestone 1: build synthetic benchmarks with controlled frequency-domain
+  sparsity
+  - Construct a dataset from a known band-limited/periodic function class
+    (few dominant frequencies) so Fourier-domain sparsity is controllable
+  - Construct a matched "dense" control dataset whose true mapping is not
+    simpler in the Fourier domain, as a negative control
+  - This is the result: two synthetic datasets (Fourier-sparse and
+    Fourier-dense) with known ground-truth complexity in each domain
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- Milestone 2: compare learning $f$ (raw domain) vs. $g$ (Fourier domain)
+  - Implement the raw-domain baseline: learn $f$ with $y \approx f(x)$
+    directly
+  - Implement the Fourier-domain model: compute $\hat x = \mathcal F(x)$,
+    $\hat y = \mathcal F(y)$, learn $g$ with $\hat y \approx g(\hat x)$,
+    and invert with $\mathcal F^{-1}$
+  - Measure sample complexity (error vs. training-set size) and model
+    complexity (parameter count, sparsity) for both on both benchmarks
+  - This is the result: sample-efficiency curves comparing $f$ and $g$ on
+    the Fourier-sparse and Fourier-dense benchmarks
+
+- Milestone 3: validate on a real seasonal forecasting dataset
+  - Apply both approaches to a real seasonal time series (e.g.,
+    electricity demand or retail sales with known yearly/weekly
+    seasonality)
+  - Compare forecast error and sample efficiency of the Fourier-domain
+    model against the raw-domain baseline and a standard seasonal baseline
+    (e.g., SARIMA)
+  - This is the result: a forecast-error and sample-efficiency comparison
+    table on a real dataset, benchmarked against a standard seasonal model
+
+- Milestone 4: test generalization to other bases and to FNO-style
+  spectral learning
+  - Repeat the Milestone 2 comparison with a wavelet basis in place of the
+    Fourier basis, to check whether the benefit is basis-specific
+  - Implement a small Fourier Neural Operator baseline on a PDE-style task
+    and compare it against the raw-domain and Fourier-domain regressions
+  - This is the result: an assessment of whether the frequency-domain
+    advantage generalizes beyond Fourier, and how it relates to FNO's
+    spectral-convolution approach
 
 ## References
 

@@ -138,13 +138,47 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- **Milestone 1: build the agent-based talent/luck simulator**
+  - Implement the population of $N = 100$ agents with independent talent
+    vectors $\mathbf{T}_i$, the Bernoulli event process, and the
+    multiplicative capital update from the Formalization
+  - Verify the base model reproduces the target stylized fact: talent
+    normally distributed but final capital $C_T$ following a Pareto tail
+  - This is the result: a working simulator whose output distribution can be
+    inspected (histograms, log-log rank plots) to confirm Pareto-shaped
+    inequality emerges from luck alone
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- **Milestone 2: validate causal ML estimation on synthetic ground truth**
+  - Apply causal forests (treatment: number of lucky events, outcome:
+    $C_T$, moderator: $\mathbf{T}_i$) to estimate CATEs, and double machine
+    learning to partial out talent confounders
+  - Compare recovered luck/talent effects against the simulator's known
+    true parameters to check estimator bias and variance
+  - This is the result: a validated causal-estimation pipeline that
+    recovers the simulator's known ground-truth effects within a measured
+    error bound
+
+- **Milestone 3: add model improvements and test the luck-dominance claim**
+  - Extend the simulator with talent evolution, path dependence, and the
+    reputation feedback loop $q_{i,t+1} = q_{i,t} + \gamma \log(1 +
+    C_{i,t})$
+  - Rerun the causal estimators from Milestone 2 on the richer model and
+    track $\text{corr}(\#\text{lucky events}, C_T)$ versus
+    $\text{corr}(|\mathbf{T}_i|, C_T)$ as complexity increases
+  - This is the result: a report on whether luck's dominance over talent
+    persists, weakens, or strengthens as feedback loops and path
+    dependence are added
+
+- **Milestone 4: calibrate against real data and compare policies**
+  - Gather talent proxies, opportunity data, and outcome data (wealth or
+    income distributions, startup funding rounds, or scientific career
+    citations/grants), and fit simulator parameters so its Pareto exponent
+    matches the empirical one
+  - Simulate egalitarian, meritocratic, and random allocation policies on
+    the calibrated model and measure resulting inequality
+  - This is the result: a calibrated model matching an observed real-world
+    Pareto exponent, plus a comparison table of how each allocation policy
+    changes outcome inequality
 
 ## References
 

@@ -66,13 +66,40 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- Milestone 1: build training corpora and reproduce a baseline
+  - Assemble the TinyStories corpus and a vocabulary-restricted tokenizer
+    matching the target 3-4-year-old vocabulary
+  - Reproduce a small TinyStories baseline model as a sanity check that the
+    training pipeline yields coherent short stories
+  - Build a parallel corpus of Project Gutenberg children's books filtered by
+    Flesch-Kincaid reading level, for the synthetic-vs-real corpus ablation
+  - This is the result: two comparable training corpora (synthetic
+    TinyStories-style and filtered real books) and a working baseline model
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- Milestone 2: run the model-size sweep
+  - Train 1M/10M/50M/125M parameter models with a fixed architecture family
+    on each corpus, at matched compute budget
+  - Checkpoint periodically and track loss/perplexity curves per model size
+  - This is the result: a size x corpus grid of trained checkpoints ready for
+    coherence evaluation
+
+- Milestone 3: evaluate coherence beyond perplexity
+  - Build automatic checks: grammar-checker pass rate, a character
+    name-consistency tracker, and a GPT-4-as-judge plot-consistency score
+  - Run a small human eval to calibrate the automatic judge against human
+    ratings of grammar, plot consistency, and causality
+  - Plot coherence against parameter count to find the size threshold where
+    name drift and plot inconsistency disappear
+  - This is the result: a coherence-vs-size curve and the minimum parameter
+    count for coherent multi-sentence story generation, per corpus
+
+- Milestone 4: run the vocabulary ablation and cross-domain comparison
+  - Sweep the allowed vocabulary size at fixed model size and measure the
+    resulting coherence tradeoff
+  - Compare the resulting scaling curve against the sibling Logic and Python
+    domain ideas, if their results are available
+  - This is the result: a vocabulary-size vs. required-model-size tradeoff
+    curve, and a documented comparison against the sibling narrow-domain LMs
 
 ## References
 - Eldan, R., & Li, Y. (2023). _TinyStories: How Small Can Language Models Be

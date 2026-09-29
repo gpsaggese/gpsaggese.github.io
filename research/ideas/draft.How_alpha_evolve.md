@@ -57,13 +57,42 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- Milestone 1: build the evolutionary loop infrastructure
+  - Implement population management (spawn, store, retire candidate
+    programs) and a pluggable evaluator interface returning score $f(p)$
+  - Implement selection with an island-population diversity mechanism to
+    avoid premature convergence
+  - Pick the toy target problem (e.g., a sorting network or an
+    approximation constant for a known inequality) with a cheap,
+    deterministic evaluator
+  - This is the result: a working generation loop that evolves a
+    population under a non-LLM (random) mutation operator on the toy
+    problem
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- Milestone 2: add the LLM mutation operator
+  - Build the mutation prompt template: parent program, its score, and
+    optional execution trace/error, producing an edited child program
+  - Wire the LLM mutation operator into the Milestone 1 loop in place of
+    random mutation
+  - This is the result: an end-to-end LLM-mutation plus selection loop
+    that improves the toy problem's best score over generations
+
+- Milestone 3: compare against baselines and audit for reward hacking
+  - Run LLM-mutation vs random-mutation at matched compute budget (same
+    number of evaluator calls) and compare best-score convergence curves
+  - Manually inspect top-scoring candidates each generation for evaluator
+    exploits (reward hacking) rather than genuine improvement
+  - This is the result: a convergence-curve comparison plus a documented
+    list of any reward-hacking cases found and how the evaluator was
+    tightened to close them
+
+- Milestone 4: ablate feedback richness
+  - Rerun the LLM-mutation loop with score-only feedback versus
+    score-plus-execution-trace/error feedback in the mutation prompt
+  - Measure convergence speed (generations or evaluator calls to reach a
+    fixed score threshold) for each feedback condition
+  - This is the result: an ablation showing whether trace/error feedback
+    measurably speeds up convergence over score-only feedback
 
 ## References
 - Novikov, A., et al. (2025). _AlphaEvolve: A coding agent for scientific and

@@ -80,13 +80,42 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- Milestone 1: build the evaluation harness and held-out task sets
+  - Select 2-3 target skills/prompts to study (e.g., a coding skill and a
+    summarization skill), and construct held-out task sets with reference
+    outputs or grading rubrics for each
+  - Implement a harness that runs a skill/prompt $N$ times per task and
+    collects the raw outputs, latencies, and token counts
+  - This is the result: a working eval harness producing raw output logs
+    for a chosen skill across its held-out task set
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- Milestone 2: implement the quality metric suite
+  - Implement consistency (variance of scores across repeated runs at
+    fixed settings), robustness (score delta under paraphrased
+    instructions/inputs), and context sensitivity (score delta after
+    injecting irrelevant context) scorers
+  - Implement an instruction-following fidelity scorer via an
+    LLM-as-judge, following an MT-Bench/AlpacaEval-style rubric
+  - This is the result: per-skill scorecards reporting each quality
+    sub-dimension as a reproducible number
+
+- Milestone 3: validate the metrics against known-good/known-bad prompts
+  - Construct prompt variants with deliberately injected defects
+    (ambiguous instructions, missing constraints, excessive verbosity) as
+    known-bad controls
+  - Check whether the metric suite ranks the known-good and known-bad
+    variants in the expected order, and run a bootstrap/variance analysis
+    to determine how many eval samples are needed for a stable score
+  - This is the result: a validation report showing metric sensitivity to
+    known defects and the minimum sample size needed for a reliable score
+
+- Milestone 4: close the loop with automated prompt optimization
+  - Use the quality metrics as a reward signal in a DSPy-style iterative
+    prompt-rewrite loop applied to one target skill from Milestone 1
+  - Check the optimized prompt for reward hacking (outputs that game the
+    LLM-judge score without improving actual task success)
+  - This is the result: before/after quality scorecards for the optimized
+    prompt, plus a documented check for reward-hacking artifacts
 
 ## References
 

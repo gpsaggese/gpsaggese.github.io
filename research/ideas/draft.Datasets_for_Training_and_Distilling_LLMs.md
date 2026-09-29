@@ -69,13 +69,46 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- Milestone 1: build the corpus comparison table
+  - Survey pre-training corpora: Wikipedia dumps, Project Gutenberg, ArXiv,
+    and the Common Crawl derivatives (C4, RefinedWeb, FineWeb, The Pile,
+    Dolma)
+  - Survey distillation sets: Alpaca-style self-instruct, OpenOrca, UltraChat,
+    OpenHermes, and logged prompt/response pairs from
+    [[draft.Clone_openrouter]]
+  - For each corpus, record tokens, license, cleaning already applied, access
+    mechanism, storage footprint, and known contamination issues
+  - This is the result: a comparison table covering every candidate corpus,
+    checked into this idea's directory
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- Milestone 2: build a reusable preprocessing pipeline
+  - Pick one curated corpus (e.g. Wikipedia) and one web-derived slice (e.g.
+    FineWeb) as the pilot pair
+  - Implement a streaming/sharded loader so neither corpus needs to fit on
+    local disk at once
+  - Implement deduplication (MinHash/LSH) and quality filtering (classifier or
+    perplexity threshold), and measure how much each step removes
+  - This is the result: a script (or `invoke` task) that turns either raw
+    corpus into tokenized, deduped shards end-to-end
+
+- Milestone 3: check benchmark contamination and compare distillation sources
+  - Run an n-gram overlap check between the two pilot corpora and the test
+    sets of the benchmarks the dependent small-LM ideas plan to report
+  - Assemble one teacher-generated distillation sample on a target task and
+    compare it against a generic instruction set of matched token count
+  - This is the result: a contamination report for both pilot corpora, plus a
+    documented, justified choice of distillation source
+
+- Milestone 4: wire the shared data path into the dependent ideas
+  - Point each dependent idea at the pipeline from Milestone 2:
+    - [[draft.Create_a_Small_Large_Language_Model_for_Python]]
+    - [[draft.Create_a_Small_Large_Language_Model_for_Kids_Book]]
+    - [[draft.Create_a_Small_Large_Language_Model_for_Logic]]
+    - [[draft.Train_LLM_on_simple_language]]
+  - Summarize the quality-vs-quantity and dedup-redundancy findings from
+    Milestones 2 and 3 against the Questions section
+  - This is the result: one shared, documented data-loading path referenced by
+    name in every dependent idea file
 
 ## References
 - Raffel, C., et al., _Exploring the Limits of Transfer Learning with a Unified

@@ -64,13 +64,39 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- Milestone 1: inventory the repo and pick a target tool
+  - List the dockerized executables in this repo and, for each, note the
+    current failure/debugging experience: what a non-zero exit looks like
+    today
+  - Select one representative tool matching the opaque-failure example
+    (generic traceback, unclear root cause) as the prototype target
+  - This is the result: an inventory table of dockerized executables, with
+    one tool chosen and its current debugging pain points documented
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- Milestone 2: prototype `--dry-run` and `--explain`
+  - Add a `--dry-run` flag that prints the exact `docker run` command,
+    mounts, and environment without executing it
+  - Add an `--explain` flag that, on failure, dumps the image digest,
+    dependency versions, and the effective resolved config
+  - This is the result: the chosen tool supports both flags, with a
+    captured transcript showing them on a real failing run
+
+- Milestone 3: add provenance capture and reproduce tag drift
+  - Capture image digest and key dependency versions automatically at run
+    time, via `docker inspect` and an in-image manifest/SBOM-style dump
+  - Reproduce the provenance example (two runs differing because a
+    `:latest` tag drifted) and confirm `--show-provenance` surfaces the
+    digest change as the root cause
+  - This is the result: a reproduced tag-drift case where provenance
+    capture correctly identifies the digest change
+
+- Milestone 4: generalize into a reusable pattern
+  - Extract the dry-run/explain/provenance logic from the prototype into a
+    small wrapper/library usable by other dockerized executables
+  - Apply the wrapper to a second, different dockerized tool and note what
+    was reusable versus what needed per-tool customization
+  - This is the result: a reusable wrapper applied to two tools, with a
+    short list of what generalized and what did not
 
 ## References
 - (none yet)
