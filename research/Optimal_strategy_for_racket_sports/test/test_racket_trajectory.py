@@ -21,6 +21,10 @@ _LOG = logging.getLogger(__name__)
 class Test_solve_launch_speed(hunitest.TestCase):
     """
     Test `racket_trajectory.solve_launch_speed()`.
+
+    Tests cover:
+    - Happy path: normal inputs (theta=8 deg, d_target=20 m, h0=1 m)
+    - Edge case: angle unable to reach target returns NaN
     """
 
     def test1(self) -> None:
@@ -47,6 +51,8 @@ class Test_solve_launch_speed(hunitest.TestCase):
         # A steep negative angle drives `h0 + d_target * tan(theta)` negative.
         theta = np.array([np.radians(-60.0)])
         h0 = 1.0
+        # Prepare outputs.
+        # Expected: result is NaN
         # Run test.
         actual = racket_trajectory.solve_launch_speed(d_target, theta, h0)
         # Check outputs.
@@ -61,6 +67,10 @@ class Test_solve_launch_speed(hunitest.TestCase):
 class Test_get_flight_time(hunitest.TestCase):
     """
     Test `racket_trajectory.get_flight_time()`.
+
+    Tests cover:
+    - Edge case: h0=0 gives textbook formula result
+    - Happy path: normal inputs (v0=22.9133, theta=8 deg, h0=1 m)
     """
 
     def test1(self) -> None:
@@ -102,6 +112,11 @@ class Test_get_flight_time(hunitest.TestCase):
 class Test_get_height_at(hunitest.TestCase):
     """
     Test `racket_trajectory.get_height_at()`.
+
+    Tests cover:
+    - Happy path: net clearance calculation
+    - Edge case: x=0 (at striker position) returns h0
+    - Edge case: negative angle (downward trajectory)
     """
 
     def test1(self) -> None:
@@ -123,6 +138,38 @@ class Test_get_height_at(hunitest.TestCase):
         # Check outputs.
         self.assertAlmostEqual(actual_clearance, expected_clearance, places=2)
 
+    def test2(self) -> None:
+        """
+        Test height at x=0 (at the striker position), should equal h0.
+        """
+        # Prepare inputs.
+        x = np.array([0.0])
+        v0 = np.array([22.9133])
+        theta = np.array([np.radians(8.0)])
+        h0 = 2.5
+        # Prepare outputs.
+        expected = h0
+        # Run test.
+        height = racket_trajectory.get_height_at(x, v0, theta, h0)
+        # Check outputs.
+        self.assertAlmostEqual(height[0], expected, places=6)
+
+    def test3(self) -> None:
+        """
+        Test with negative angle (downward trajectory).
+        """
+        # Prepare inputs.
+        x = np.array([5.0])
+        v0 = np.array([15.0])
+        theta = np.array([np.radians(-10.0)])
+        h0 = 2.0
+        # Prepare outputs.
+        # Expected: height is less than h0 for downward angle
+        # Run test.
+        height = racket_trajectory.get_height_at(x, v0, theta, h0)
+        # Check outputs.
+        self.assertLess(height[0], h0)
+
 
 # #############################################################################
 # Test_get_feasible_launches
@@ -132,6 +179,10 @@ class Test_get_height_at(hunitest.TestCase):
 class Test_get_feasible_launches(hunitest.TestCase):
     """
     Test `racket_trajectory.get_feasible_launches()`.
+
+    Tests cover:
+    - Happy path: finds feasible launches within speed and net clearance constraints
+    - Edge case: tiny max_ball_speed_mps yields no feasible launches
     """
 
     def test1(self) -> None:
@@ -145,6 +196,8 @@ class Test_get_feasible_launches(hunitest.TestCase):
         h0 = 1.0
         sport = racket_params.TENNIS
         theta_grid_rad = np.radians(np.arange(1.0, 45.0, 1.0))
+        # Prepare outputs.
+        # Expected: some feasible launches found with valid speeds and clearances
         # Run test.
         actual = racket_trajectory.get_feasible_launches(
             striker_xy,
@@ -172,6 +225,8 @@ class Test_get_feasible_launches(hunitest.TestCase):
             max_ball_speed_mps=0.5,
         )
         theta_grid_rad = np.radians(np.arange(1.0, 45.0, 1.0))
+        # Prepare outputs.
+        expected_count = 0
         # Run test.
         actual = racket_trajectory.get_feasible_launches(
             striker_xy,
@@ -181,7 +236,7 @@ class Test_get_feasible_launches(hunitest.TestCase):
             theta_grid_rad=theta_grid_rad,
         )
         # Check outputs.
-        self.assertEqual(len(actual.theta_rad), 0)
+        self.assertEqual(len(actual.theta_rad), expected_count)
 
 
 # #############################################################################
@@ -192,6 +247,10 @@ class Test_get_feasible_launches(hunitest.TestCase):
 class Test_sample_shot_errors(hunitest.TestCase):
     """
     Test `racket_trajectory.sample_shot_errors()`.
+
+    Tests cover:
+    - Happy path: same seed produces reproducible random samples
+    - Edge case: zero sigmas produce zero-valued draws
     """
 
     def test1(self) -> None:
@@ -201,6 +260,8 @@ class Test_sample_shot_errors(hunitest.TestCase):
         # Prepare inputs.
         error = racket_params.DEFAULT_ERROR
         n_samples = 10
+        # Prepare outputs.
+        # Expected: two calls with same seed produce identical arrays
         # Run test.
         actual1 = racket_trajectory.sample_shot_errors(
             error, n_samples, np.random.default_rng(42)
@@ -222,14 +283,18 @@ class Test_sample_shot_errors(hunitest.TestCase):
             sigma_theta_rad=0.0, sigma_v_frac=0.0, sigma_phi_rad=0.0
         )
         n_samples = 5
+        # Prepare outputs.
+        expected_d_theta = np.zeros(n_samples)
+        expected_d_v = np.zeros(n_samples)
+        expected_phi = np.zeros(n_samples)
         # Run test.
         actual = racket_trajectory.sample_shot_errors(
             error, n_samples, np.random.default_rng(0)
         )
         # Check outputs.
-        np.testing.assert_array_equal(actual.d_theta_rad, np.zeros(n_samples))
-        np.testing.assert_array_equal(actual.d_v_frac, np.zeros(n_samples))
-        np.testing.assert_array_equal(actual.phi_rad, np.zeros(n_samples))
+        np.testing.assert_array_equal(actual.d_theta_rad, expected_d_theta)
+        np.testing.assert_array_equal(actual.d_v_frac, expected_d_v)
+        np.testing.assert_array_equal(actual.phi_rad, expected_phi)
 
 
 # #############################################################################
@@ -240,6 +305,11 @@ class Test_sample_shot_errors(hunitest.TestCase):
 class Test_simulate_landings(hunitest.TestCase):
     """
     Test `racket_trajectory.simulate_landings()`.
+
+    Tests cover:
+    - Edge case: zero-error samples land exactly on nominal target
+    - Edge case: symmetric lateral errors produce symmetric landings
+    - Happy path: realistic simulation with multiple launches and error samples
     """
 
     def test1(self) -> None:
@@ -263,6 +333,8 @@ class Test_simulate_landings(hunitest.TestCase):
         errors = racket_trajectory.ShotErrors(
             d_theta_rad=np.zeros(1), d_v_frac=np.zeros(1), phi_rad=np.zeros(1)
         )
+        # Prepare outputs.
+        # Expected: all landings match target location exactly
         # Run test.
         actual = racket_trajectory.simulate_landings(
             striker_xy, target_xy, h0, sport, launches, errors
@@ -298,6 +370,8 @@ class Test_simulate_landings(hunitest.TestCase):
             d_v_frac=np.zeros(2),
             phi_rad=np.array([phi, -phi]),
         )
+        # Prepare outputs.
+        # Expected: symmetric errors produce symmetric landing positions
         # Run test.
         actual = racket_trajectory.simulate_landings(
             striker_xy, target_xy, h0, sport, launches, errors
@@ -305,3 +379,33 @@ class Test_simulate_landings(hunitest.TestCase):
         # Check outputs.
         self.assertAlmostEqual(actual.x_m[0, 0], -actual.x_m[0, 1])
         self.assertAlmostEqual(actual.y_m[0, 0], actual.y_m[0, 1])
+
+    def test3(self) -> None:
+        """
+        Test realistic landing simulation with multiple launches and error samples.
+        """
+        # Prepare inputs.
+        striker_xy = (0.0, -11.0)
+        target_xy = (0.0, 5.0)
+        h0 = 1.0
+        sport = racket_params.TENNIS
+        launches = racket_trajectory.FeasibleLaunches(
+            theta_rad=np.array([np.radians(10.0), np.radians(15.0)]),
+            v0_mps=np.array([20.0, 22.0]),
+            flight_time_s=np.array([0.9, 1.0]),
+            net_clearance_m=np.array([0.5, 0.7]),
+        )
+        errors = racket_trajectory.ShotErrors(
+            d_theta_rad=np.array([0.01, -0.01, 0.005]),
+            d_v_frac=np.array([0.05, -0.05, 0.02]),
+            phi_rad=np.array([np.radians(1.0), np.radians(-1.0), 0.0]),
+        )
+        # Prepare outputs.
+        expected_shape = (2, 3)
+        # Run test.
+        actual = racket_trajectory.simulate_landings(
+            striker_xy, target_xy, h0, sport, launches, errors
+        )
+        # Check outputs.
+        self.assertEqual(actual.x_m.shape, expected_shape)
+        self.assertEqual(actual.y_m.shape, expected_shape)

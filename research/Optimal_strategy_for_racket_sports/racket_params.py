@@ -1,6 +1,12 @@
 """
 Parameters and geometry for racket sports models.
 
+Provides sport-specific parameters, player capabilities, court geometry, and
+error models for shot placement analysis in racket sports (tennis, pickleball).
+
+For detailed package documentation and architecture, see `README.md` in the
+parent directory.
+
 Import as:
 
 import research.Optimal_strategy_for_racket_sports.racket_params as rosfrsrpa
@@ -87,20 +93,22 @@ class CourtRegion:
 
     def contains(self, x: np.ndarray, y: np.ndarray) -> np.ndarray:
         """
-        Check if points (x, y) are in the region.
+        Check if points `(x, y)` are in the region.
 
         :param x: array of x coordinates to test
         :param y: array of y coordinates to test
-        :return: boolean array, True where the (x, y) point lies within
+        :return: boolean array, True where the `(x, y)` point lies within
             the region
         """
         _LOG.debug(hprint.to_str("x y"))
-        return (
+        result = (
             (x >= self.x_min)
             & (x <= self.x_max)
             & (y >= self.y_min)
             & (y <= self.y_max)
         )
+        _LOG.debug("return=%s", result)
+        return result
 
 
 # #############################################################################
@@ -198,10 +206,10 @@ class PlayerParams:
 
 def get_net_height(court: CourtGeometry, x: np.ndarray) -> np.ndarray:
     """
-    Net height as a function of lateral position x.
+    Net height as a function of lateral position `x`.
 
     Linear interpolation from center height to post height at the singles
-    sideline. Origin at net center; x is lateral (0 on center line).
+    sideline. Origin at net center; `x` is lateral (0 on center line).
 
     :param court: court geometry providing the net height parameters
     :param x: lateral position(s) at which to evaluate the net height
@@ -219,6 +227,7 @@ def get_net_height(court: CourtGeometry, x: np.ndarray) -> np.ndarray:
         * (x_abs / x_post),
         court.net_height_post_m,
     )
+    _LOG.debug("return=%s", height)
     return height
 
 
@@ -247,7 +256,9 @@ def get_service_box_region(
     Service box region.
 
     :param court: court geometry to compute the service box for
-    :param serve_side: "deuce" -> x in [-W/2, 0], "ad" -> x in [0, W/2]
+    :param serve_side: Service side designation
+        - "deuce" -> x in [-W/2, 0]
+        - "ad" -> x in [0, W/2]
     :return: rectangular region covering the specified service box
     """
     _LOG.debug(hprint.to_str("court serve_side"))

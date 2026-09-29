@@ -54,6 +54,24 @@ class Test_make_target_grid(hunitest.TestCase):
         self.assertAlmostEqual(last_row["y_min"], 2.0)
         self.assertAlmostEqual(last_row["y_max"], 3.0)
 
+    def test2(self) -> None:
+        """
+        Test a single cell (1x1 grid): edge case of minimal grid size.
+        """
+        # Prepare inputs.
+        region = racket_params.CourtRegion(
+            x_min=0.0, x_max=4.0, y_min=0.0, y_max=6.0
+        )
+        n_x = 1
+        n_y = 1
+        # Run test.
+        actual = racket_scoring.make_target_grid(region, n_x, n_y)
+        # Check outputs.
+        self.assertEqual(len(actual), 1)
+        self.assertEqual(actual.iloc[0]["cell_id"], 0)
+        self.assertAlmostEqual(actual.iloc[0]["x_m"], 2.0)
+        self.assertAlmostEqual(actual.iloc[0]["y_m"], 3.0)
+
 
 # #############################################################################
 # Test_compute_reachability
@@ -92,19 +110,23 @@ class Test_compute_reachability(hunitest.TestCase):
         """
         Test the tennis regime: `T_f = 0.8` s, reach radius 0.9 m.
         """
+        # Prepare inputs.
+        flight_time_s = 0.8
         # Prepare outputs.
         expected = [True, True, False, False, False]
         # Run test and check outputs.
-        self.helper(0.8, expected)
+        self.helper(flight_time_s, expected)
 
     def test2(self) -> None:
         """
         Test the pickleball regime: `T_f = 0.2` s, no time to move.
         """
+        # Prepare inputs.
+        flight_time_s = 0.2
         # Prepare outputs.
         expected = [False, False, False, False, False]
         # Run test and check outputs.
-        self.helper(0.2, expected)
+        self.helper(flight_time_s, expected)
 
     def test3(self) -> None:
         """
@@ -141,11 +163,12 @@ class Test_compute_score(hunitest.TestCase):
         reachable = np.array([True, True, False, False, False])
         # Prepare outputs.
         expected = [0.0, 0.0, 0.85, 0.77, 0.65]
+        expected_argmax = 2
         # Run test.
         actual = racket_scoring.compute_score(p_in, reachable)
         # Check outputs.
         np.testing.assert_allclose(actual, expected, atol=1e-9)
-        self.assertEqual(int(np.argmax(actual)), 2)
+        self.assertEqual(int(np.argmax(actual)), expected_argmax)
 
     def test2(self) -> None:
         """
@@ -154,11 +177,13 @@ class Test_compute_score(hunitest.TestCase):
         # Prepare inputs.
         p_in = np.array([0.95, 0.91, 0.85, 0.77, 0.65])
         reachable = np.array([False, False, False, False, False])
+        # Prepare outputs.
+        expected_argmax = 0
         # Run test.
         actual = racket_scoring.compute_score(p_in, reachable)
         # Check outputs.
         np.testing.assert_allclose(actual, p_in, atol=1e-9)
-        self.assertEqual(int(np.argmax(actual)), 0)
+        self.assertEqual(int(np.argmax(actual)), expected_argmax)
 
 
 # #############################################################################
@@ -202,6 +227,10 @@ class Test_estimate_launch_table(hunitest.TestCase):
             2,
         )
         config = racket_scoring.ScoringConfig(n_samples=1, seed=0)
+        # Prepare outputs.
+        expected_p_in_inside = 1.0
+        expected_p_in_outside = 0.0
+        min_rows_required = 0
         # Run test.
         actual = racket_scoring.estimate_launch_table(
             sport, situation, targets, config
@@ -211,10 +240,12 @@ class Test_estimate_launch_table(hunitest.TestCase):
         outside_cell_id = targets.loc[targets["y_m"] > 5.0, "cell_id"].iloc[0]
         inside_rows = actual[actual["cell_id"] == inside_cell_id]
         outside_rows = actual[actual["cell_id"] == outside_cell_id]
-        self.assertGreater(len(inside_rows), 0)
-        self.assertTrue((inside_rows["p_in"] == 1.0).all())
+        self.assertGreater(len(inside_rows), min_rows_required)
+        self.assertTrue((inside_rows["p_in"] == expected_p_in_inside).all())
         if len(outside_rows) > 0:
-            self.assertTrue((outside_rows["p_in"] == 0.0).all())
+            self.assertTrue(
+                (outside_rows["p_in"] == expected_p_in_outside).all()
+            )
 
     def test2(self) -> None:
         """
@@ -247,6 +278,9 @@ class Test_estimate_launch_table(hunitest.TestCase):
             1,
         )
         config = racket_scoring.ScoringConfig(n_samples=5000, seed=1)
+        # Prepare outputs.
+        expected_p_in = 0.5
+        num_std_errs = 3
         # Run test.
         actual = racket_scoring.estimate_launch_table(
             sport, situation, targets, config
@@ -254,7 +288,7 @@ class Test_estimate_launch_table(hunitest.TestCase):
         # Check outputs.
         p_in = actual["p_in"].mean()
         p_in_se = actual["p_in_se"].mean()
-        self.assertLess(abs(p_in - 0.5), 3 * p_in_se)
+        self.assertLess(abs(p_in - expected_p_in), num_std_errs * p_in_se)
 
     def test3(self) -> None:
         """
@@ -275,13 +309,16 @@ class Test_estimate_launch_table(hunitest.TestCase):
             racket_params.get_half_court_region(sport.court), 1, 1
         )
         config = racket_scoring.ScoringConfig(n_samples=10, seed=0)
+        # Prepare outputs.
+        expected_len = 1
+        expected_p_in = 0.0
         # Run test.
         actual = racket_scoring.estimate_launch_table(
             sport, situation, targets, config
         )
         # Check outputs.
-        self.assertEqual(len(actual), 1)
-        self.assertEqual(actual.iloc[0]["p_in"], 0.0)
+        self.assertEqual(len(actual), expected_len)
+        self.assertEqual(actual.iloc[0]["p_in"], expected_p_in)
         self.assertTrue(np.isnan(actual.iloc[0]["theta_deg"]))
 
 
@@ -313,6 +350,9 @@ class Test_score_targets(hunitest.TestCase):
         )
         returner = racket_params.DEFAULT_PLAYER
         returner_xy = (0.0, 6.0)
+        # Prepare outputs.
+        min_score = 0
+        max_score_tolerance = 1e-9
         # Run test.
         actual = racket_scoring.score_targets(
             launch_table, returner, returner_xy
@@ -322,8 +362,44 @@ class Test_score_targets(hunitest.TestCase):
             sorted(actual["cell_id"].tolist()),
             sorted(targets["cell_id"].tolist()),
         )
-        self.assertTrue((actual["score"] >= 0).all())
-        self.assertTrue((actual["score"] <= actual["p_in"] + 1e-9).all())
+        self.assertTrue((actual["score"] >= min_score).all())
+        self.assertTrue(
+            (actual["score"] <= actual["p_in"] + max_score_tolerance).all()
+        )
+
+    def test2(self) -> None:
+        """
+        Test edge case with a single target cell.
+        """
+        # Prepare inputs.
+        sport = racket_params.TENNIS
+        striker = racket_params.DEFAULT_PLAYER
+        situation = racket_scoring.make_rally_situation(
+            sport, striker, (0.0, -11.0)
+        )
+        region = racket_params.get_half_court_region(sport.court)
+        targets = racket_scoring.make_target_grid(region, 1, 1)
+        config = racket_scoring.ScoringConfig(n_samples=200, seed=1)
+        launch_table = racket_scoring.estimate_launch_table(
+            sport, situation, targets, config
+        )
+        returner = racket_params.DEFAULT_PLAYER
+        returner_xy = (0.0, 6.0)
+        # Prepare outputs.
+        expected_len = 1
+        min_score = 0
+        max_score_tolerance = 1e-9
+        # Run test.
+        actual = racket_scoring.score_targets(
+            launch_table, returner, returner_xy
+        )
+        # Check outputs.
+        self.assertEqual(len(actual), expected_len)
+        self.assertTrue(actual["score"].iloc[0] >= min_score)
+        self.assertTrue(
+            actual["score"].iloc[0]
+            <= actual["p_in"].iloc[0] + max_score_tolerance
+        )
 
 
 # #############################################################################
@@ -347,11 +423,54 @@ class Test_select_best_cell(hunitest.TestCase):
                 "score": [0.1, 0.9, 0.5],
             }
         )
+        # Prepare outputs.
+        expected_cell_id = 1
+        expected_score = 0.9
         # Run test.
         actual = racket_scoring.select_best_cell(scores)
         # Check outputs.
-        self.assertEqual(int(actual["cell_id"]), 1)
-        self.assertAlmostEqual(float(actual["score"]), 0.9)
+        self.assertEqual(int(actual["cell_id"]), expected_cell_id)
+        self.assertAlmostEqual(float(actual["score"]), expected_score)
+
+    def test2(self) -> None:
+        """
+        Test edge case with a single row.
+        """
+        # Prepare inputs.
+        scores = pd.DataFrame(
+            {
+                "cell_id": [42],
+                "score": [0.7],
+            }
+        )
+        # Prepare outputs.
+        expected_cell_id = 42
+        expected_score = 0.7
+        # Run test.
+        actual = racket_scoring.select_best_cell(scores)
+        # Check outputs.
+        self.assertEqual(int(actual["cell_id"]), expected_cell_id)
+        self.assertAlmostEqual(float(actual["score"]), expected_score)
+
+    def test3(self) -> None:
+        """
+        Test edge case with tied scores: returns first occurrence.
+        """
+        # Prepare inputs.
+        scores = pd.DataFrame(
+            {
+                "cell_id": [0, 1, 2],
+                "score": [0.5, 0.8, 0.8],
+            }
+        )
+        # Prepare outputs.
+        expected_cell_id = 1
+        expected_score = 0.8
+        # Run test.
+        actual = racket_scoring.select_best_cell(scores)
+        # Check outputs: should return first row with max score
+        self.assertAlmostEqual(float(actual["score"]), expected_score)
+        self.assertEqual(int(actual["cell_id"]), expected_cell_id)
 
 
 # #############################################################################
@@ -364,34 +483,57 @@ class Test_make_serve_situation(hunitest.TestCase):
     Test `racket_scoring.make_serve_situation()`.
     """
 
-    def helper(self, sport: racket_params.SportParams) -> None:
+    def helper(self, sport: racket_params.SportParams, side: str) -> None:
         """
         Test helper for `make_serve_situation()`: every grid cell center
         lies in the service box.
 
         :param sport: sport parameters to build the serve situation for
+        :param side: court side ("deuce" or "ad")
         """
         # Prepare inputs.
         server = racket_params.SERVE_PLAYER_TENNIS
+        grid_size = 3
+        striker_y_index = 1
+        expected_striker_y_sign = -1
         # Run test.
-        situation = racket_scoring.make_serve_situation(sport, server, "deuce")
-        targets = racket_scoring.make_target_grid(situation.legal_region, 3, 3)
+        situation = racket_scoring.make_serve_situation(sport, server, side)
+        targets = racket_scoring.make_target_grid(
+            situation.legal_region, grid_size, grid_size
+        )
         # Check outputs.
-        service_box = racket_params.get_service_box_region(sport.court, "deuce")
+        service_box = racket_params.get_service_box_region(sport.court, side)
         in_box = service_box.contains(
             targets["x_m"].to_numpy(), targets["y_m"].to_numpy()
         )
         self.assertTrue(bool(in_box.all()))
-        self.assertLess(situation.striker_xy[1], 0)
+        self.assertLess(
+            situation.striker_xy[striker_y_index], expected_striker_y_sign
+        )
 
     def test1(self) -> None:
         """
         Test the deuce-side serve situation for tennis.
         """
-        self.helper(racket_params.TENNIS)
+        # Prepare inputs.
+        side = "deuce"
+        # Run test.
+        self.helper(racket_params.TENNIS, side)
 
     def test2(self) -> None:
         """
         Test the deuce-side serve situation for pickleball.
         """
-        self.helper(racket_params.PICKLEBALL)
+        # Prepare inputs.
+        side = "deuce"
+        # Run test.
+        self.helper(racket_params.PICKLEBALL, side)
+
+    def test3(self) -> None:
+        """
+        Test the ad-side serve situation for tennis: edge case of different court side.
+        """
+        # Prepare inputs.
+        side = "ad"
+        # Run test.
+        self.helper(racket_params.TENNIS, side)

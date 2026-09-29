@@ -37,7 +37,7 @@ class Test_docker(hdoctest.DockerTestCase):
         self.helper(notebook_name)
 
     @pytest.mark.slow
-    def test3(self) -> None:
+    def test2(self) -> None:
         """
         Test that `racket_strategy.exploration.ipynb` runs without error
         inside Docker.

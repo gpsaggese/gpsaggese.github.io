@@ -12,6 +12,7 @@ from typing import Literal, Tuple
 
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
 
 import helpers.hdbg as hdbg
 import helpers.hprint as hprint
@@ -55,7 +56,7 @@ class ShotSituation:
 # #############################################################################
 
 
-@dataclasses.dataclass(frozen=True)
+@dataclasses.dataclass(frozen=True, kw_only=True)
 class ScoringConfig:
     """
     Monte Carlo sampling configuration for `estimate_launch_table()`.
@@ -166,7 +167,9 @@ def estimate_launch_table(
     )
     h0 = situation.striker.contact_height_m
     rows = []
-    for _, cell in targets.iterrows():
+    for _, cell in tqdm(
+        targets.iterrows(), total=len(targets), desc="Scoring targets"
+    ):
         cell_id = cell["cell_id"]
         x_m = float(cell["x_m"])
         y_m = float(cell["y_m"])
@@ -248,7 +251,7 @@ def estimate_launch_table(
 # #############################################################################
 
 
-def compute_reachability(
+def _compute_reachability(
     dist_m: np.ndarray,
     flight_time_s: np.ndarray,
     returner: racket_params.PlayerParams,
@@ -275,7 +278,7 @@ def compute_reachability(
     return reachable
 
 
-def compute_score(p_in: np.ndarray, reachable: np.ndarray) -> np.ndarray:
+def _compute_score(p_in: np.ndarray, reachable: np.ndarray) -> np.ndarray:
     """
     Composite score `S(c) = P_in(c) * (1 - R(c))` (Section IV-D).
 
@@ -309,14 +312,16 @@ def score_targets(
     """
     _LOG.debug(hprint.to_str("returner returner_xy"))
     scores = launch_table.copy()
+    # Calculate Euclidean distance from returner to each cell center.
     dist_m = np.sqrt(
         (scores["x_m"] - returner_xy[0]) ** 2
         + (scores["y_m"] - returner_xy[1]) ** 2
     )
-    reachable = compute_reachability(
+    # Compute reachability and composite score for each cell.
+    reachable = _compute_reachability(
         dist_m.to_numpy(), scores["flight_time_s"].to_numpy(), returner
     )
-    score = compute_score(scores["p_in"].to_numpy(), reachable)
+    score = _compute_score(scores["p_in"].to_numpy(), reachable)
     scores["reachable"] = reachable
     scores["score"] = score
     # Keep the best angle per cell.
@@ -391,6 +396,7 @@ def make_serve_situation(
     """
     _LOG.debug(hprint.to_str("sport server serve_side"))
     legal_region = racket_params.get_service_box_region(sport.court, serve_side)
+    # Position server at baseline center, aligned with the service box.
     x_mid = (legal_region.x_min + legal_region.x_max) / 2
     striker_xy = (x_mid, -sport.court.length_m / 2)
     situation = ShotSituation(

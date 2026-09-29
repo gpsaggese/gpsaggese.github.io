@@ -34,7 +34,7 @@ _LOG = logging.getLogger(__name__)
 # #############################################################################
 
 
-def draw_court(ax: Axes, court: racket_params.CourtGeometry) -> None:
+def _draw_court(ax: Axes, court: racket_params.CourtGeometry) -> None:
     """
     Draw the court boundary, net, and service/non-volley lines on `ax`.
 
@@ -69,6 +69,7 @@ def draw_court(ax: Axes, court: racket_params.CourtGeometry) -> None:
         ax.axhline(
             -court.non_volley_zone_m, color="gray", linestyle=":", linewidth=1.0
         )
+    # Set axis limits, aspect ratio, and labels.
     ax.set_xlim(-half_width - 1, half_width + 1)
     ax.set_ylim(-half_length - 1, half_length + 1)
     ax.set_aspect("equal")
@@ -104,6 +105,7 @@ def plot_trajectory_fan(
     _LOG.debug(hprint.to_str("striker_xy target_xy theta_deg"))
     if ax is None:
         _, ax = plt.subplots(figsize=plt.rcParams["figure.figsize"])
+    # Compute launch parameters: contact height, distance to target, and required speed.
     h0 = player.contact_height_m
     x_s, y_s = striker_xy
     x_t, y_t = target_xy
@@ -112,6 +114,7 @@ def plot_trajectory_fan(
     v0 = racket_trajectory.solve_launch_speed(
         np.array([d_target]), np.array([theta_rad]), h0
     )[0]
+    # Compute and plot the nominal trajectory.
     x_grid = np.linspace(0, d_target, 200)
     z_nominal = racket_trajectory.get_height_at(
         x_grid, np.full_like(x_grid, v0), np.full_like(x_grid, theta_rad), h0
@@ -193,6 +196,7 @@ def plot_court_heatmap(
     hdbg.dassert_in(column, scores.columns, "column must be in scores")
     if ax is None:
         _, ax = plt.subplots(figsize=plt.rcParams["figure.figsize"])
+    # Extract unique x and y coordinates to compute cell patch sizes and value range.
     x_vals = np.unique(scores["x_m"].to_numpy(dtype=float))
     y_vals = np.unique(scores["y_m"].to_numpy(dtype=float))
     x_step = float(np.min(np.diff(x_vals))) if len(x_vals) > 1 else 1.0
@@ -205,6 +209,7 @@ def plot_court_heatmap(
         vmax = vmin + 1.0
     cmap = plt.get_cmap("viridis")
     norm = mcolors.Normalize(vmin=vmin, vmax=vmax)
+    # Draw a colored rectangle for each grid cell.
     for _, row in scores.iterrows():
         value = row[column]
         color = cmap(norm(value)) if np.isfinite(value) else "lightgray"
@@ -217,10 +222,11 @@ def plot_court_heatmap(
             linewidth=0.5,
         )
         ax.add_patch(rect)
-    draw_court(ax, sport.court)
+    _draw_court(ax, sport.court)
     scalar_mappable = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
     scalar_mappable.set_array([])
     plt.colorbar(scalar_mappable, ax=ax, label=column)
+    # Overlay markers for positions (e.g., striker, returner).
     if markers:
         for label, (marker_x, marker_y) in markers.items():
             ax.scatter(
@@ -332,6 +338,7 @@ def build_score_widget(
     def update(change: Optional[object] = None) -> None:
         """
         Re-score the cached launch table and redraw the heatmaps.
+
         """
         _ = change
         with output:
@@ -345,6 +352,7 @@ def build_score_widget(
             scores = racket_scoring.score_targets(
                 launch_table, current_returner, returner_xy
             )
+            # Create heatmaps for probability in and score.
             markers = {"Returner": returner_xy}
             fig, (ax_p_in, ax_score) = plt.subplots(1, 2, figsize=(12, 5))
             plot_court_heatmap(
@@ -459,10 +467,12 @@ def build_exploration_widget(
     def run(_button: Optional[object] = None) -> None:
         """
         Resample the launch table for the current controls and redraw.
+
         """
         _ = _button
         with output:
             clear_output(wait=True)
+            # Configure sport and error parameters from slider values.
             custom_sport = dataclasses.replace(
                 sport, max_ball_speed_mps=max_speed_slider.value
             )
@@ -473,6 +483,7 @@ def build_exploration_widget(
                 sigma_v_frac=base_error.sigma_v_frac * error_scale,
                 sigma_phi_rad=base_error.sigma_phi_rad * error_scale,
             )
+            # Create striker and returner players with current parameters.
             striker = dataclasses.replace(
                 racket_params.DEFAULT_PLAYER, error=scaled_error
             )
@@ -480,8 +491,10 @@ def build_exploration_widget(
                 racket_params.DEFAULT_PLAYER,
                 move_speed_mps=move_speed_slider.value,
             )
+            # Extract position coordinates from slider values.
             striker_xy = (striker_x_slider.value, striker_y_slider.value)
             returner_xy = (returner_x_slider.value, returner_y_slider.value)
+            # Compute rally situation and target grid for Monte Carlo sampling.
             situation = racket_scoring.make_rally_situation(
                 custom_sport, striker, striker_xy
             )
@@ -497,6 +510,7 @@ def build_exploration_widget(
             scores = scores.copy()
             # Winner probability for the striker: 1 - R(c).
             scores["winner_prob"] = 1 - scores["reachable"].astype(float)
+            # Create heatmaps for probability in, winner probability, and score.
             markers = {"Striker": striker_xy, "Returner": returner_xy}
             fig, (ax_p_in, ax_winner, ax_score) = plt.subplots(
                 1, 3, figsize=(16, 5)
