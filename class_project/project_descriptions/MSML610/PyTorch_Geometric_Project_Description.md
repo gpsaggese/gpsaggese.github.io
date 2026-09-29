@@ -1,11 +1,14 @@
-**Description**
+# Description
 
-PyTorch Geometric is a library built on top of PyTorch that facilitates deep learning
-on irregularly structured data, particularly graphs. It provides efficient
-implementations of various graph neural network (GNN) architectures, along with data
-loaders and utilities for handling graph-structured data.
+PyTorch Geometric is a library built on top of PyTorch for deep learning on
+irregularly structured data, particularly graphs. It solves the problem of training
+graph neural networks (GNNs) efficiently, with implementations of common GNN layers,
+mini-batch loaders for large graphs, and ready-to-use graph datasets. It is worth a
+60-minute tutorial because the message-passing abstraction lets a student go from a
+raw graph to a trained node classifier in a few dozen lines.
 
-Technologies Used
+## Technologies Used
+
 PyTorch Geometric
 
 - Support for various graph neural network architectures (e.g., GCN, GAT)
@@ -13,13 +16,14 @@ PyTorch Geometric
 - Predefined datasets and utilities for graph processing
 - Built-in support for message passing and graph convolutions
 
-### Fall2026
-
-#### Tutorial
+# Tutorial
 
 - Usual tutorial "Learn PyTorch Geometric in 60 mins", following
   `.claude/skills/tutorials_in_60_mins.rules.md`
-- Check if there is an existing tutorial and make it better
+- Create `tutorials/PyTorch_Geometric/` with
+  `.claude/skills/tutorials_in_60_mins.create/SKILL.md`
+  - A previous session delivered a PyTorch Geometric project: see the `Result` column
+    in `class_project/project_descriptions/README.md`, and reuse what is good
 - Make it look like `msml610/tutorials/L03_knowledge_representation/`
 - Use the skills in `.claude/skills/notebook.*` to automate part of the work, and
   document how you used them
@@ -28,65 +32,91 @@ PyTorch Geometric
   - `pytorch_geometric.API.ipynb`
   - `pytorch_geometric.example.ipynb`
 
-#### Project: Fraud Detection in Financial Transactions
+# Project
 
-- **Project Objective**: The aim is to detect fraudulent transactions in a financial
-  network by classifying transaction nodes, optimizing for precision and recall
-  metrics
-- **Dataset Suggestions**: Utilize the "Credit Card Fraud Detection" dataset from
-  [Kaggle](https://www.kaggle.com/datasets/dalpozz/creditcard-fraud)
+## Project 1: Fraud Detection in Financial Transactions
+
+- **Difficulty**: 2 (Medium)
+- **Project Objective**: Detect illicit transactions in a financial transaction graph
+  by classifying transaction nodes, optimizing for precision and recall on the
+  illicit class, and measure how much the graph structure adds over a features-only
+  baseline
+- **Dataset Suggestions**:
+  [Elliptic Data Set](https://www.kaggle.com/datasets/ellipticco/elliptic-data-set),
+  loaded with `torch_geometric.datasets.EllipticBitcoinDataset`
 - **Tasks**:
-  - **Construct the Graph**: Construct a transaction graph where nodes represent
-    accounts and edges represent transactions
-  - **Learn Node Embeddings**: Use node embeddings from a GraphSAGE model to capture
-    transaction patterns
-  - **Train a Classifier**: Train a classifier (e.g., logistic regression) on the
-    embeddings to identify fraudulent transactions
-  - **Evaluate the Model**: Evaluate the model using precision, recall, and F1 score
-    metrics
-- **Bonus Ideas (Optional)**: Implement a semi-supervised learning approach to
-  improve fraud detection; analyze the model's performance on different transaction
-  types
-- TODO(ai_gp): Improve this
+  - **Load the Transaction Graph**: Load the graph, inspect nodes, edges, features,
+    and labels, and mask the nodes with unknown labels
+  - **Define the Problem**: Classify each transaction as illicit or licit, train on
+    the early time steps and test on the later ones, and train a features-only
+    logistic regression baseline
+  - **Train GraphSAGE**: Train a GraphSAGE model built with `SAGEConv` and
+    `NeighborLoader`, and fit a logistic regression on the learned node embeddings
+  - **Evaluate the Models**: Compute precision, recall, F1, and the precision-recall
+    AUC on the illicit class for the baseline, GraphSAGE, and the embedding
+    classifier
+  - **Visualize the Embeddings**: Project the node embeddings to 2D with t-SNE
+    colored by label, and plot the precision-recall curves of the models
+- **Bonus Ideas (Optional)**: Use the unlabeled nodes with a semi-supervised
+  approach; build a k-nearest-neighbor graph on the tabular
+  [Credit Card Fraud Detection](https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud)
+  dataset and compare with Elliptic
 
-#### Milestones
+### Milestones
 
-- TODO(ai_gp): Add milestones related to the project
+- Milestone 1: Set up the container and the data
+  - Project tasks: Load the Transaction Graph
+  - Result: `tutorials/PyTorch_Geometric/` container running, and a table with the
+    number of nodes, edges, and labels per time step
+- Milestone 2: API notebook
+  - Project tasks: Train GraphSAGE
+  - Result: `pytorch_geometric.API.ipynb` covering `Data`, built-in datasets,
+    `GCNConv` and `SAGEConv` message passing, and `NeighborLoader` on a small graph
+- Milestone 3: Example notebook
+  - Project tasks: Define the Problem, Train GraphSAGE, Evaluate the Models,
+    Visualize the Embeddings
+  - Result: `pytorch_geometric.example.ipynb` running end to end
 
-### Project 1: Social Network Analysis for Community Detection
+## Project 2: Social Network Analysis for Community Detection
 
 - **Difficulty**: 1 (Easy)
-- **Project Objective**: The goal is to identify and visualize communities within a
-  social network graph by learning node embeddings and clustering them into groups,
-  optimizing for modularity as a measure of community structure
-- **Dataset Suggestions**: Use the "Facebook Social Network" dataset available on
-  Kaggle
+- **Project Objective**: Identify and visualize communities within a social network
+  graph by learning node embeddings and clustering them into groups, optimizing for
+  modularity as a measure of community structure
+- **Dataset Suggestions**:
+  [Facebook Social Circles (ego-Facebook)](https://snap.stanford.edu/data/ego-Facebook.html)
 - **Tasks**:
-  - Load and preprocess the social network graph using PyTorch Geometric utilities
-  - Train a Graph Convolutional Network (GCN) to learn node embeddings
-  - Apply a clustering algorithm (e.g., k-means) to group nodes into communities
-  - Evaluate clustering quality using modularity and visualize communities in the
-    graph
+  - **Load the Graph**: Load and preprocess the social network graph using PyTorch
+    Geometric utilities
+  - **Learn Node Embeddings**: Train a Graph Convolutional Network (GCN) to learn
+    node embeddings
+  - **Cluster the Nodes**: Apply a clustering algorithm (e.g., k-means) to group
+    nodes into communities
+  - **Evaluate the Communities**: Evaluate clustering quality using modularity and
+    visualize communities in the graph
 - **Bonus Ideas (Optional)**: Experiment with different GNN architectures (e.g., GAT)
   for embeddings; try other clustering methods (spectral clustering, DBSCAN) and
   compare results
 
-### Project 3: Drug-Drug Interaction Prediction
+## Project 3: Drug-Drug Interaction Prediction
 
 - **Difficulty**: 3 (Hard)
-- **Project Objective**: The goal is to predict potential interactions between drugs
-  based on their molecular structures represented as graphs, optimizing for the
-  accuracy of predictions
-- **Dataset Suggestions**: Use the "Drug-Drug Interaction" dataset from
-  [Kaggle](https://www.kaggle.com/datasets/andrews124/drug-drug-interaction)
+- **Project Objective**: Predict potential interactions between drugs based on their
+  molecular structures represented as graphs, optimizing for the accuracy of
+  predictions
+- **Dataset Suggestions**:
+  [TDC DrugBank DDI](https://tdcommons.ai/multi_pred_tasks/ddi/) (drug pairs with
+  SMILES strings)
 - **Tasks**:
-  - Transform molecular structures into graph representations using atom and bond
-    information
-  - Implement a Graph Neural Network (GNN) like Graph Attention Network (GAT) to
-    learn drug representations
-  - Train the model to predict interactions between drug pairs and evaluate using
-    ROC-AUC scores
-  - Analyze feature importance to understand which molecular features contribute to
+  - **Build Molecular Graphs**: Transform the SMILES of each drug into a graph with
+    atom and bond features, e.g., with `torch_geometric.utils.from_smiles`
+  - **Build Labeled Pairs**: Take the interacting pairs as positives and sample
+    non-interacting pairs as negatives
+  - **Learn Drug Representations**: Implement a Graph Attention Network (`GATConv`)
+    to learn a representation of each drug, and train a pair classifier on top
+  - **Evaluate the Model**: Evaluate the predictions using ROC-AUC and
+    precision-recall AUC
+  - **Analyze Feature Importance**: Analyze which molecular features contribute to
     interactions
 - **Bonus Ideas (Optional)**: Explore transfer learning with pre-trained GNN models
   on similar datasets; conduct a comparative analysis with traditional machine

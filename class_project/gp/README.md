@@ -42,7 +42,8 @@
 
 - `.claude/skills/tutorials_in_60_mins.rules.md`: Main spec for a 60-minute
   tutorial
-- `.claude/skills/tutorials_in_30_mins.rules.md`: Shorter 30-minute variant
+- `.claude/skills/tool_guide_in_30_mins.rules.md`: Single-markdown quick-reference
+  guide for a tool (not a tutorial directory)
 
 ## Skills
 

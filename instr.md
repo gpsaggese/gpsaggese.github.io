@@ -14,7 +14,8 @@ Use the info below
   - Time split: setup, intro, API notebook, example notebook
   - Deliverables: `<project>_utils.py`, `<project>.API.ipynb`,
     `<project>.example.ipynb`
-- `.claude/skills/tutorials_in_30_mins.rules.md`: Shorter 30-minute variant
+- `.claude/skills/tool_guide_in_30_mins.rules.md`: Single-markdown quick-reference
+  guide for a tool (not a tutorial directory)
 
 ## Skills
 
