@@ -2,9 +2,9 @@
 
 ## Status
 
-- **Status**: draft
-- **Complete Specs**: 20%
-- **Assignee**: TBD
+- **Status:**: draft
+- **Complete Specs:**: 20%
+- **Assignee:**: TBD
 
 ## Core Idea
 
@@ -20,7 +20,9 @@
   the arithmetic/logic answer correct?), which makes this domain a cleaner testbed
   for measuring reasoning capability vs. parameter count
 
-## Training Data
+## Formalization
+
+### Training Data
 
 - **TinyGSM / GSM8K-style synthetic problems**: grade-school arithmetic and word
   problems, easy to generate synthetically at any scale and difficulty
@@ -59,7 +61,7 @@
 - Comparison against the Kids_Book and Python variants: does "restrict domain to
   shrink model" hold equally well for language, math, and code?
 
-## Next Steps
+## Next steps
 
 - [ ] Look for related research (TinyGSM, phi-1/phi-2 "textbooks are all you need"
       line of work, small-model math reasoning)
@@ -67,8 +69,18 @@
 - [ ] Design the model-size sweep experiment with automatic correctness scoring
 - [ ] Break the problem down into phases and milestones
 
+## Implementation plan
+
+- Milestone 1
+  - Do this and that
+  - This is the result
+
+- Milestone 2
+  - Do this and that
+  - This is the result
+
 ## References
 
-- Cobbe, K., et al. (2021). _Training Verifiers to Solve Math Word Problems_ (GSM8K)
-- Saxton, D., et al. (2019). _Analysing Mathematical Reasoning Abilities of Neural
-  Models_ (DeepMind Mathematics Dataset)
+- 2021, Cobbe et al., "Training Verifiers to Solve Math Word Problems", GSM8K
+- 2019, Saxton et al., "Analysing Mathematical Reasoning Abilities of Neural
+  Models", DeepMind Mathematics Dataset

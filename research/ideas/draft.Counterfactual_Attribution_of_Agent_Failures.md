@@ -2,9 +2,9 @@
 
 ## Status
 
-- **Status**: draft
-- **Complete Specs**: 30%
-- **Assignee**: TBD
+- **Status:**: draft
+- **Complete Specs:**: 30%
+- **Assignee:**: TBD
 
 ## Core Idea
 
@@ -55,12 +55,13 @@
   agent drops a constraint stated in the task
   - Attribution isolates a harness event rather than a reasoning error, which a human
     post-mortem almost never identifies
-- **Diffuse degradation**: many small deviations each with $\Delta_k \approx
-  0.02$,
-  indicating no single fix will move the outcome
+- **Diffuse degradation**: many small deviations, each with
+  $\Delta_k \approx 0.02$
+  - Indicates that no single fix will move the outcome
 - **Null profile**: all $\Delta_k \approx 0$ and the run fails from any starting
-  point, so the task is ambiguous or the environment is broken, and the task should
-  be flagged in the benchmark
+  point
+  - The task is ambiguous or the environment is broken
+  - Flag the task in the benchmark
 
 ## Questions
 
@@ -93,7 +94,7 @@
 - **Feedback into scaffolds**: use recurring blame modes to auto-generate skill and
   prompt fixes, connecting to `draft.Measuring_Quality_of_Skills_and_Prompts.md`
 
-## Next Steps
+## Next steps
 
 - [ ] Look for related research (what has already been done)
 - [ ] Finalize the implementation plan
@@ -103,7 +104,7 @@
 - [ ] Break the problem down in phases and milestones
 - [ ] Execute one step at the time
 
-## Implementation Plan
+## Implementation plan
 
 - Milestone 1: build checkpoint and resume
   - Instrument an open agent harness to snapshot environment plus context at every
@@ -131,8 +132,8 @@
 
 ## References
 
-- Shapley, _A Value for n-Person Games_ (1953)
-- Pearl, _Causality: Models, Reasoning, and Inference_ (2009)
+- 2009, Pearl, "Causality: Models, Reasoning, and Inference"
+- 1953, Shapley, "A Value for n-Person Games"
 - `draft.Comparison_of_Debugging_Agents.md`
 - `draft.Measuring_Quality_of_Skills_and_Prompts.md`
 - `in_progress.Comparison_of_Coding_Agents.md`

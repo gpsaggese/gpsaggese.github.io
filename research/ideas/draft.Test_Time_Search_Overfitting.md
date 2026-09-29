@@ -2,9 +2,9 @@
 
 ## Status
 
-- **Status**: draft
-- **Complete Specs**: 30%
-- **Assignee**: TBD
+- **Status:**: draft
+- **Complete Specs:**: 30%
+- **Assignee:**: TBD
 
 ## Core Idea
 
@@ -12,16 +12,17 @@
   retries) all generate many candidates and keep the one that maximizes a proxy
   score: a reward model, a verifier, visible unit tests, or a vote
 - Picking the maximum over $N$ noisy proxy evaluations is structurally identical to
-  backtesting $N$ strategies and deploying the best one, so the effective complexity
-  of the answer grows with the search, not with the model
+  backtesting $N$ strategies and deploying the best one
+  - The effective complexity of the answer grows with the search, not with the model
   - This connects `draft.Backtesting_Complexity.md` and
     `draft.MDL_Extensions_with_Research_Process.md` directly to LLM inference
 - The prediction is non-obvious and testable: true quality should rise, peak, and
-  then decline with $N$, because the selection increasingly exploits proxy noise
-  rather than real quality
-- Practical payoff: a stopping rule for $N$ derived from measurable quantities, and a
-  correction to reported test-time-scaling gains that are measured with the same
-  proxy used for selection
+  then decline with $N$
+  - Reason: the selection increasingly exploits proxy noise rather than real quality
+- Practical payoff:
+  - A stopping rule for $N$ derived from measurable quantities
+  - A correction to reported test-time-scaling gains that are measured with the same
+    proxy used for selection
 
 ## Formalization
 
@@ -47,17 +48,19 @@
 ## Key Examples
 
 - **Reward model best-of-$N$**: true win rate improves up to a moderate $N$, then
-  degrades as the policy is pushed into the region where the reward model was never
-  trained, the standard reward overoptimization curve
-- **Unit-test-guided repair**: an agent generates patches until visible tests pass,
-  and the fraction of patches that also pass held-out tests falls as $N$ grows, i.e.,
-  the patch is fit to the visible test set
+  degrades
+  - The policy is pushed into the region where the reward model was never trained
+  - This is the standard reward overoptimization curve
+- **Unit-test-guided repair**: an agent generates patches until visible tests pass
+  - The fraction of patches that also pass held-out tests falls as $N$ grows
+  - I.e., the patch is fit to the visible test set
 - **Self-consistency voting**: majority voting has $\rho$ close to 1 when errors are
-  independent, so it should show a much later peak than reward model selection,
-  giving a clean contrast for the theory
-- **Failure mode**: a proxy with heavy-tailed noise (a verifier that occasionally
-  assigns a huge score to a degenerate answer) makes $N^{*}$ very small, so more
-  compute is strictly harmful
+  independent
+  - It should show a much later peak than reward model selection
+  - This gives a clean contrast for the theory
+- **Failure mode**: a proxy with heavy-tailed noise makes $N^{*}$ very small
+  - E.g., a verifier that occasionally assigns a huge score to a degenerate answer
+  - More compute is then strictly harmful
 
 ## Questions
 
@@ -89,7 +92,7 @@
 - **Connection to MDL**: express the search as extra description length and check
   whether the MDL penalty predicts the observed degradation
 
-## Next Steps
+## Next steps
 
 - [ ] Look for related research (what has already been done)
 - [ ] Finalize the implementation plan
@@ -99,7 +102,7 @@
 - [ ] Break the problem down in phases and milestones
 - [ ] Execute one step at the time
 
-## Implementation Plan
+## Implementation plan
 
 - Milestone 1: build the candidate generation harness
   - Tasks with cheap ground truth: math word problems and code tasks with
@@ -125,9 +128,9 @@
 
 ## References
 
-- Gao et al., _Scaling Laws for Reward Model Overoptimization_ (2022)
-- Cobbe et al., _Training Verifiers to Solve Math Word Problems_ (2021)
-- Bailey et al., _The Probability of Backtest Overfitting_ (2014)
+- 2022, Gao et al., "Scaling Laws for Reward Model Overoptimization"
+- 2021, Cobbe et al., "Training Verifiers to Solve Math Word Problems"
+- 2014, Bailey et al., "The Probability of Backtest Overfitting"
 - `draft.Backtesting_Complexity.md`
 - `draft.MDL_Extensions_with_Research_Process.md`
 - `draft.Skill_vs_Luck_in_Agent_Benchmarks.md`

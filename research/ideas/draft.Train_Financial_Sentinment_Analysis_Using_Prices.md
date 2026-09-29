@@ -2,9 +2,9 @@
 
 ## Status
 
-- **Status**: draft
-- **Complete Specs**: 15%
-- **Assignee**: TBD
+- **Status:**: draft
+- **Complete Specs:**: 15%
+- **Assignee:**: TBD
 
 ## Core Idea
 
@@ -20,14 +20,17 @@
 
 ## Formalization
 
-- Label: `y_i = sign(return(t_i, t_i + Δ))` for news item `i` published at `t_i`, for
-  some horizon `Δ`
-- Model: `ŷ_i = f_θ(text_i)` trained to predict `y_i`
-- Evaluate on a held-out, strictly-later time period; compare predictive power of `ŷ`
-  for _out-of-sample_ returns against a human-labeled-sentiment baseline (e.g.,
-  FinBERT scores) and against a naive momentum baseline
+### Price-Response Labeling
 
-## Attribution: Which News Explains a Large Price Move
+- Label: `y_i = sign(return(t_i, t_i + Delta))` for news item `i` published at `t_i`,
+  for some horizon `Delta`
+- Model: `y_hat_i = f_theta(text_i)` trained to predict `y_i`
+- Evaluate on a held-out, strictly-later time period
+  - Compare predictive power of `y_hat` for _out-of-sample_ returns against:
+    - A human-labeled-sentiment baseline (e.g., FinBERT scores)
+    - A naive momentum baseline
+
+### Attribution: Which News Explains a Large Price Move
 
 - The mirror image of the labeling problem above: instead of starting from a news
   item and looking forward at the price, start from a large price move and look
@@ -62,7 +65,7 @@
 
 1. Does price-derived labeling produce a sentiment signal with genuine out-of-sample
    predictive power, or does it overfit to look-ahead/leakage in the labeling window?
-2. How sensitive are results to the choice of horizon `Δ` and to controlling for
+2. How sensitive are results to the choice of horizon `Delta` and to controlling for
    overall market movement (excess return vs. raw return as the label)?
 3. Does this approach transfer across asset classes (equities vs. FX vs. crypto), or
    is it tied to one market's specific news-to-price dynamics?
@@ -80,7 +83,7 @@
 - Comparison against existing financial sentiment benchmarks (FinBERT,
   Loughran-McDonald dictionary)
 
-## Next Steps
+## Next steps
 
 - [ ] Assemble a news+price dataset with precise timestamps
 - [ ] Define the label (return horizon, excess-return control)
@@ -89,7 +92,17 @@
       unexplained-move fraction
 - [ ] Backtest predictive power out-of-sample, checking for leakage
 
+## Implementation plan
+
+- Milestone 1
+  - Do this and that
+  - This is the result
+
+- Milestone 2
+  - Do this and that
+  - This is the result
+
 ## References
 
-- Araci, D. (2019). _FinBERT: Financial Sentiment Analysis with Pre-trained Language
-  Models_
+- 2019, Araci, "FinBERT: Financial Sentiment Analysis with Pre-trained Language
+  Models"

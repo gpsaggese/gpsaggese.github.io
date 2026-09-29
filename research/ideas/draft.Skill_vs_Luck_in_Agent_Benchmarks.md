@@ -2,15 +2,15 @@
 
 ## Status
 
-- **Status**: draft
-- **Complete Specs**: 30%
-- **Assignee**: TBD
+- **Status:**: draft
+- **Complete Specs:**: 30%
+- **Assignee:**: TBD
 
 ## Core Idea
 
 - Agent leaderboards (e.g., SWE-bench style suites) are reported as a single number
-  from one run over a few hundred tasks, and small score gaps are read as real
-  capability differences
+  from one run over a few hundred tasks
+  - Small score gaps are read as real capability differences
 - The same decomposition applied to hedge fund managers in
   `draft.Causal_Analysis_of_Hedge_Fund_Performance.md` applies here: an observed
   benchmark score is skill plus luck
@@ -30,8 +30,9 @@
 - Let $s_{a,i,r} \in \{0,1\}$ be the success of agent $a$ on task $i$ in run $r$,
   with $N$ tasks and $R$ runs
 - The reported score is the mean
-  $\hat{\theta}_a = \frac{1}{NR} \sum_{i,r}
-  s_{a,i,r}$
+  $$
+  \hat{\theta}_a = \frac{1}{NR} \sum_{i,r} s_{a,i,r}
+  $$
 - Variance decomposes into a task-sampling term and a run-to-run term:
   $$
   \mathrm{Var}(\hat{\theta}_a) =
@@ -52,8 +53,9 @@
 ## Key Examples
 
 - **Indistinguishable leaderboard neighbors**: two agents scoring 0.42 and 0.45 on
-  500 tasks differ by 15 tasks; if the paired disagreement rate is high, the gap sits
-  inside the confidence interval and the ranking is noise
+  500 tasks differ by 15 tasks
+  - If the paired disagreement rate is high, the gap sits inside the confidence
+    interval and the ranking is noise
 - **Flaky environments**: tasks whose containers fail intermittently contribute
   variance but no signal, and inflate $\sigma^2_{run}$ without measuring capability
 - **Persistence test**: split the benchmark into two disjoint halves and measure rank
@@ -61,8 +63,8 @@
   - Low correlation means the leaderboard measures the task sample, not the agent,
     the same conclusion drawn about fund manager persistence
 - **Scaffold search**: a lab evaluating 200 prompt/scaffold variants and publishing
-  the best is running a backtest with $K = 200$, so several points of the reported
-  gain are winner's curse
+  the best is running a backtest with $K = 200$
+  - Several points of the reported gain are winner's curse
 
 ## Questions
 
@@ -94,7 +96,7 @@
 - **Contamination control**: compare pre- and post-cutoff task subsets to separate
   memorization from capability
 
-## Next Steps
+## Next steps
 
 - [ ] Finalize the implementation plan
 - [ ] GP to review / approve the plan
@@ -128,10 +130,9 @@
 
 ## References
 
-- Fama and French, _Luck versus Skill in the Cross-Section of Mutual Fund Returns_
-  (2010)
-- Bailey et al., _The Probability of Backtest Overfitting_ (2014)
-- Embretson and Reise, _Item Response Theory for Psychologists_ (2000)
+- 2014, Bailey et al., "The Probability of Backtest Overfitting"
+- 2010, Fama et al., "Luck versus Skill in the Cross-Section of Mutual Fund Returns"
+- 2000, Embretson et al., "Item Response Theory for Psychologists"
 - `draft.Causal_Analysis_of_Hedge_Fund_Performance.md`
 - `draft.Backtesting_Complexity.md`
 - `draft.Measure_ability_to_predict_events.md`

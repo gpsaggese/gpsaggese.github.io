@@ -2,20 +2,25 @@
 
 ## Status
 
-**Status:**: in_progress **Complete Specs:**: 15% **Assignee:**: —
+- **Status:**: in_progress
+- **Complete Specs:**: 15%
+- **Assignee:**: TBD
 
 ## Core Idea
 
-The final goal is to build the equivalent of Claude Code, but for data science: an
-agent that can be dropped in front of an unknown dataset and autonomously run the
-exploratory data analysis (EDA) loop, forming hypotheses about the data-generating
-process, testing them with statistical tools, and converging on a correct model
-The central insight is that this loop can be trained with reinforcement learning with
-verifiable rewards (RLVR) if the training data comes from randomly generated
-graphical models rather than real datasets. Because the ground-truth generating
-process (the graph) is known at training time, the agent's discovered structure can
-be scored exactly against it, giving a clean, verifiable reward signal, the same
-recipe that makes RLVR work for math and code
+- The final goal is to build the equivalent of Claude Code, but for data science
+  - An agent dropped in front of an unknown dataset
+  - The agent autonomously runs the exploratory data analysis (EDA) loop:
+    - Forms hypotheses about the data-generating process
+    - Tests the hypotheses with statistical tools
+    - Converges on a correct model
+- The central insight is that this loop can be trained with reinforcement learning
+  with verifiable rewards (RLVR) if the training data comes from randomly generated
+  graphical models rather than real datasets
+- The ground-truth generating process (the graph) is known at training time
+  - The agent's discovered structure can be scored exactly against it
+  - This gives a clean, verifiable reward signal
+  - This is the same recipe that makes RLVR work for math and code
 
 ## Formalization
 
@@ -33,7 +38,7 @@ recipe that makes RLVR work for math and code
   and emits a discovered graph $\hat{G}$
 - Reward is verifiable because $G^*$ is known at training time:
 
-  ```
+  ```text
   r = score(G_hat, G*, D_test)
   ```
 
@@ -86,7 +91,7 @@ recipe that makes RLVR work for math and code
 - **Sim-to-real evaluation**: Benchmark the trained agent on real datasets where the
   ground-truth graph is unknown
 
-## Next Steps
+## Next steps
 
 - [ ] Look for related research (what has already been done)
 - [ ] Finalize the implementation plan
@@ -96,7 +101,7 @@ recipe that makes RLVR work for math and code
 - [ ] Break the problem down in phases and milestones
 - [ ] Execute one step at the time
 
-## Implementation Plan
+## Implementation plan
 
 - Milestone 1: Synthetic environment
   - Build a random graph generator (`pgmpy` Bayesian networks or `sklearn`

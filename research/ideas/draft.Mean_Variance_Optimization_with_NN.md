@@ -2,9 +2,9 @@
 
 ## Status
 
-- **Status**: draft
-- **Complete Specs**: 10%
-- **Assignee**: TBD
+- **Status:**: draft
+- **Complete Specs:**: 10%
+- **Assignee:**: TBD
 
 ## Core Idea
 
@@ -26,9 +26,13 @@
 
 ## Formalization
 
-\[ w^{\*}(c) = \arg\min\_{w} \; w^{T} \Sigma w - \lambda \mu^{T} w \quad \text{s.t.}
-\quad \mathbf{1}^{T} w = 1, \; w \in \mathcal{C} \]
-- **Amortized variant**: train `h_phi(c) ≈ w*(c)` across sampled instances `c`, so
+- Optimal weights `w*(c)` for problem instance `c = (mu, Sigma)`, with constraint
+  set $\mathcal{C}$:
+  $$
+  w^{*}(c) = \arg\min_{w} \; w^{T} \Sigma w - \lambda \mu^{T} w
+  \quad \text{s.t.} \quad \mathbf{1}^{T} w = 1, \; w \in \mathcal{C}
+  $$
+- **Amortized variant**: train `h_phi(c) ~= w*(c)` across sampled instances `c`, so
   inference is one forward pass instead of a solve
 - **Decision-focused variant**: train `h_phi(features) -> w` directly against
   realized utility, with a differentiable solver layer (`cvxpylayers`, OptNet) inside
@@ -66,7 +70,7 @@
 - Performance attribution of the resulting portfolios, connecting to
   [[draft.Causal_Analysis_of_Hedge_Fund_Performance]]
 
-## Next Steps
+## Next steps
 
 - [ ] Look for related research (deep portfolio optimization, decision-focused
       learning literature)
@@ -76,14 +80,22 @@
       speed vs. a convex solver
 - [ ] Implement the decision-focused variant and compare out-of-sample utility
 
+## Implementation plan
+
+- Milestone 1
+  - Do this and that
+  - This is the result
+
+- Milestone 2
+  - Do this and that
+  - This is the result
+
 ## References
 
-- Markowitz, H., _Portfolio Selection_. (1952)
-- Amos, B., & Kolter, J. Z., _OptNet: Differentiable Optimization as a Layer in
-  Neural Networks_. (2017)
-- Agrawal, A., et al., _Differentiable Convex Optimization Layers_. (2019)
-- Elmachtoub, A. N., & Grigas, P., _Smart "Predict, then Optimize"_. (2022)
-- Zhang, Z., Zohren, S., & Roberts, S., _Deep Learning for Portfolio Optimization_
-  (2020)
-- DeMiguel, V., Garlappi, L., & Uppal, R., _Optimal Versus Naive Diversification_
-  (2009)
+- 2022, Elmachtoub et al., "Smart 'Predict, then Optimize'"
+- 2020, Zhang et al., "Deep Learning for Portfolio Optimization"
+- 2019, Agrawal et al., "Differentiable Convex Optimization Layers"
+- 2017, Amos et al., "OptNet: Differentiable Optimization as a Layer in Neural
+  Networks"
+- 2009, DeMiguel et al., "Optimal Versus Naive Diversification"
+- 1952, Markowitz, "Portfolio Selection"

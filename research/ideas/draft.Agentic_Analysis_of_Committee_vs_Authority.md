@@ -2,9 +2,9 @@
 
 ## Status
 
-- **Status**: draft
-- **Complete Specs**: 30%
-- **Assignee**: TBD
+- **Status:**: draft
+- **Complete Specs:**: 30%
+- **Assignee:**: TBD
 
 ## Core Idea
 
@@ -72,7 +72,7 @@
 
 - **Small independent committee beats solo expert**: $n = 5$ uncorrelated agents with
   $p = 0.7$ each beats solo expert with $p = 0.9$
-  - Accuracy: committee → 98.3%, solo → 90%
+  - Accuracy: committee -> 98.3%, solo -> 90%
   - But small time cost $T(5)$, so quality-per-unit-time still high
 - **Correlated errors kill the committee**: same setup with error correlation
   $\rho = 0.8$ (shared training/bias)
@@ -116,22 +116,22 @@
   information (agents don't see all others' opinions), and adaptive topology (agents
   select conversation partners)
 
-## Next Steps
+## Next steps
 
 - [ ] Look for related research (Condorcet, opinion dynamics, organizational theory)
 - [ ] Finalize the agent-based model and parameter space
 - [ ] GP to review and approve the formalization
-- [ ] Hack a quick end-to-end simulation (1–2 days) showing non-monotonic curve on
+- [ ] Hack a quick end-to-end simulation (1-2 days) showing non-monotonic curve on
       committee size vs. accuracy
 - [ ] Break into phases and milestones
 - [ ] Execute one step at a time
 
-## Implementation Plan
+## Implementation plan
 
 - **Milestone 1**: Build baseline agent model and Condorcet majority vote
   - Implement agent with noisy signal and majority vote aggregation
   - Sweep committee size $n$ and individual accuracy $p$, verify Condorcet theorem
-    (accuracy → 1 as $n \to \infty$ for $p > 0.5$)
+    (accuracy -> 1 as $n \to \infty$ for $p > 0.5$)
   - Output: validated simulation confirming textbook result
 - **Milestone 2**: Add error correlation and measure degradation
   - Add correlation knob $\rho$ (shared bias or cascade model)
@@ -155,10 +155,9 @@
 
 ## References
 
-- Condorcet, M.-J.-A.-N. de. _Essai sur l'application de l'analyse à la probabilité
-  des décisions rendues à la pluralité des voix._ (1785)
-- DeGroot, M. H. _Reaching a Consensus._ Journal of the American Statistical
-  Association (1974)
-- French, J. R. P., Harary, F., and Zeeman, E. C. _The anatomy of a controversy._
-  (1968)
-- Surowiecki, J. _The Wisdom of Crowds._ (2004)
+- 2004, Surowiecki, "The Wisdom of Crowds"
+- 1974, DeGroot, "Reaching a Consensus", Journal of the American Statistical
+  Association
+- 1968, French et al., "The anatomy of a controversy"
+- 1785, Condorcet, "Essai sur l'application de l'analyse a la probabilite des
+  decisions rendues a la pluralite des voix"

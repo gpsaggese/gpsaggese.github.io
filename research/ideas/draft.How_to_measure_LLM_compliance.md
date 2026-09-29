@@ -2,9 +2,9 @@
 
 ## Status
 
-- **Status**: draft
-- **Complete Specs**: 30%
-- **Assignee**: TBD
+- **Status:**: draft
+- **Complete Specs:**: 30%
+- **Assignee:**: TBD
 
 ## Core Idea
 
@@ -18,9 +18,11 @@
   - Compliance decays as the number of active instructions grows
   - Decay depends on instruction position, phrasing (prohibition vs prescription),
     and conflict with the model's priors
-- This is non-obvious because a model can score high on any single instruction in
-  isolation and still violate most of them when they are presented together, so
-  per-instruction evaluation overstates real compliance
+- This is non-obvious
+  - A model can score high on any single instruction in isolation
+  - The same model can still violate most instructions when they are presented
+    together
+  - So per-instruction evaluation overstates real compliance
 
 ## Formalization
 
@@ -29,13 +31,13 @@
 - Let $M(x, I)$ be the model output for input $x$ under instruction set $I$
 - Per-instruction compliance:
 
-  ```
+  ```text
   c_k(x, I) = 1[v_k(M(x, I)) == pass]
   ```
 
 - Aggregate compliance and the decay curve:
 
-  ```
+  ```text
   C(n) = E_x [ (1/n) * sum_k c_k(x, I_n) ]
   ```
 
@@ -43,7 +45,7 @@
   - The object of study is the shape of $C(n)$, not $C$ at one value of $n$
 - Isolation gap measures the cost of bundling:
 
-  ```
+  ```text
   gap(n) = C(1) - C(n)
   ```
 
@@ -95,6 +97,7 @@
   `draft.Create_LLM_Benchmark_for_thoroughness.md`
 
 ## Next steps
+
 - [ ] Look for related research (what has already been done)
 - [ ] Finalize the implementation plan
 - [ ] GP to review / approve the plan
@@ -103,7 +106,7 @@
 - [ ] Break the problem down in phases and milestones
 - [ ] Execute one step at the time
 
-## Implementation Plan
+## Implementation plan
 
 - Milestone 1: build the instruction pool and verifiers
   - Extract atomic, independently checkable instructions from an existing rule set
@@ -131,10 +134,10 @@
 
 ## References
 
-- Zhou et al., _Instruction-Following Evaluation for Large Language Models (IFEval)_
-  (2023)
-- Qin et al., _InFoBench: Evaluating Instruction Following Ability in Large Language
-  Models_. (2024)
-- Jiang et al., _FollowBench: A Multi-level Fine-grained Constraints Following
-  Benchmark for LLMs_. (2024)
-- Liu et al., _Lost in the Middle: How Language Models Use Long Contexts_. (2023)
+- 2024, Qin et al., "InFoBench: Evaluating Instruction Following Ability in Large
+  Language Models"
+- 2024, Jiang et al., "FollowBench: A Multi-level Fine-grained Constraints Following
+  Benchmark for LLMs"
+- 2023, Zhou et al., "Instruction-Following Evaluation for Large Language Models
+  (IFEval)"
+- 2023, Liu et al., "Lost in the Middle: How Language Models Use Long Contexts"

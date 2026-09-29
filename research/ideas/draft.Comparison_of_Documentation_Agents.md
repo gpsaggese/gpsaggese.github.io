@@ -1,27 +1,59 @@
 # Comparison of AI Code Documentation Agents
 
-## Description
+## Status
+
+- **Status:**: draft
+- **Complete Specs:**: 80%
+- **Assignee:**: TBD
+
+## Core Idea
 
 - **AI Documentation Agents** are systems that automatically generate and maintain
-  software documentation, including docstrings, API documentation, architecture
-  guides, README files, and inline comments with minimal human intervention
-- They span from lightweight inline generators (e.g., `GitHub Copilot`, `TabNine`) to
-  full documentation frameworks (e.g., `Sphinx` with LLM extensions, `Mintlify`,
-  `Documate`, `Javadoc` AI enhancements)
-- Key capabilities include extracting intent from code, generating narrative
-  explanations of complex logic, maintaining docs in sync with code changes,
-  auto-generating examples and usage patterns, generating architecture diagrams, and
-  multiformat output (Markdown, ReStructuredText, HTML, PDF)
-- Agents differ in documentation accuracy (does the doc match the actual code?),
-  readability and style consistency, coverage completeness (all public APIs
-  documented?), and ability to regenerate docs automatically after code refactoring
+  software documentation with minimal human intervention
+  - Documentation types:
+    - Docstrings
+    - API documentation
+    - Architecture guides
+    - README files
+    - Inline comments
+- Agents span from lightweight inline generators to full documentation frameworks
+  - Lightweight inline generators
+    - E.g., `GitHub Copilot`, `TabNine`
+  - Full documentation frameworks
+    - E.g., `Sphinx` with LLM extensions, `Mintlify`, `Documate`, `Javadoc` AI
+      enhancements
+- Key capabilities:
+  - Extract intent from code
+  - Generate narrative explanations of complex logic
+  - Maintain docs in sync with code changes
+  - Auto-generate examples and usage patterns
+  - Generate architecture diagrams
+  - Multiformat output (Markdown, ReStructuredText, HTML, PDF)
+- Agents differ in:
+  - Documentation accuracy: does the doc match the actual code?
+  - Readability and style consistency
+  - Coverage completeness: are all public APIs documented?
+  - Ability to regenerate docs automatically after code refactoring
 - Most tools expose APIs or IDE integrations, making them accessible in standard
   development workflows (GitHub, GitLab, VS Code, IntelliJ)
-- This project teaches students that documentation is often overlooked in AI
-  benchmarks despite being critical for software maintainability—good metrics for doc
-  quality are subtle and require human judgment
+- Documentation is often overlooked in AI benchmarks despite being critical for
+  software maintainability
+  - Good metrics for doc quality are subtle and require human judgment
+- Project objective: design a controlled empirical study that benchmarks at least
+  three AI documentation agents across multiple Python/TypeScript packages of
+  varying complexity and domain
+  - Select agents from different categories (IDE, specialized docs, framework)
+  - Apply each agent to generate full documentation for the same set of packages
+  - Systematically compare:
+    - Documentation accuracy
+    - Readability and consistency
+    - Coverage of public APIs
+    - Usefulness of examples
+    - Maintainability after code changes
 
-## Comparison of Documentation Agents
+## Formalization
+
+### Comparison of Documentation Agents
 
 | Type             | Name                | Description                                                                 | Website                                             | Strength                    |
 | ---------------- | ------------------- | --------------------------------------------------------------------------- | --------------------------------------------------- | --------------------------- |
@@ -32,7 +64,7 @@
 | Full platform    | Documate            | AI-powered documentation generation and management for code repositories    | https://www.documate.io                             | Full lifecycle management   |
 | Custom           | OpenAI Codex + LLM  | Fine-tuned LLM specifically trained on documentation patterns               | https://platform.openai.com                         | Highly flexible             |
 
-## Documentation Agent Capabilities
+### Documentation Agent Capabilities
 
 | Level                    | Capability                    | Example behaviors                                |
 | ------------------------ | ----------------------------- | ------------------------------------------------ |
@@ -42,139 +74,180 @@
 | L3 -- Sync with changes  | Update docs when code changes | Regenerate docstring after parameter rename      |
 | L4 -- Autonomous docs    | Generate + publish + maintain | Full API docs on website, auto-updated from code |
 
-## Project Objective
+### Documentation Evaluation Rubric
 
-Design a controlled empirical study that benchmarks at least three AI documentation
-agents across multiple Python/TypeScript packages of varying complexity and domain
-The project aims to answer: _Which agents generate the most accurate, readable,
-complete, and maintainable documentation: and under what conditions?_ Students will
-select agents from different categories (IDE, specialized docs, framework), apply
-each to generate full documentation for the same set of packages, and systematically
-compare: documentation accuracy, readability and consistency, coverage of public
-APIs, usefulness of examples, and maintainability after code changes
+- Accuracy (40 points)
+  - Docstring accurately describes function behavior: 10 pts
+  - Parameter descriptions are correct and complete: 10 pts
+  - Return type and value description are accurate: 10 pts
+  - Exception/error handling documented: 10 pts
+- Readability (25 points)
+  - Clear, concise prose with good grammar: 10 pts
+  - Consistent style across all docstrings: 10 pts
+  - Appropriate use of formatting (code blocks, lists): 5 pts
+- Coverage (20 points)
+  - All public functions documented: 10 pts
+  - All public classes and methods documented: 10 pts
+- Examples (10 points)
+  - Examples provided for key functions: 5 pts
+  - Examples are correct and runnable: 5 pts
+- Maintainability (5 points)
+  - Docs easily regenerated after code changes: 5 pts
 
-## Tasks
+## Key Examples
 
-- **Agent Setup & Configuration**: Install and configure at least three chosen
-  documentation agents (e.g., GitHub Copilot, Mintlify, Documate) in isolated
-  environments; document API keys, cost (if cloud-based), and integration with
-  version control/build systems
-- **Package Selection & Baseline**: Select 3–5 open-source Python/TypeScript packages
-  of varying complexity (simple utility, data science library, web framework, CLI
-  tool); strip existing documentation (keep only code); measure baseline: number of
-  public functions/classes, API complexity, code volume
-- **Documentation Generation**: For each agent, generate complete documentation:
-  docstrings for all public APIs, module-level docs, README, usage examples; measure:
-  time to generate, number of tokens/API calls, and generation cost
-- **Accuracy Assessment**: Have experienced developers manually review generated
-  documentation and score accuracy on: (a) docstring matches function behavior, (b)
-  parameter descriptions are correct, (c) return types and examples are accurate, (d)
-  edge cases and exceptions are documented
-- **Readability & Style Consistency**: Assess generated documentation on: (a) prose
-  clarity and grammar, (b) consistency of style across docstrings, (c) appropriate
-  level of detail (not too verbose, not too terse), (d) presence of headers and
-  structural formatting
-- **Coverage Completeness**: Measure what percentage of public APIs are documented by
-  each agent; identify which types of APIs are most often missed (decorators,
-  abstract methods, private helpers mistakenly exposed)
-- **Example Quality**: Evaluate auto-generated examples on: (a) correctness (do
-  examples run without errors?), (b) clarity (do they illustrate key use cases?), (c)
-  completeness (do they cover common workflows?)
-- **Maintenance Simulation**: Introduce code changes (rename function, add parameter,
-  change return type, refactor module structure) and measure: (a) how well each agent
-  regenerates updated documentation, (b) which agent detects deprecated APIs, (c) how
-  well agents handle breaking changes
-- **Comparative Scorecard**: Build a rubric weighing accuracy, readability, coverage,
-  example quality, and maintainability; score each agent and identify which agent
-  excels in each dimension
+- **[Example 1]**: [Concrete scenario illustrating the idea]
+- **[Example 2]**: [Second scenario, possibly from a different domain]
+- **[Example 3]**: [Edge case or failure mode]
 
-## Package Selection Suggestions
+## Questions
 
-- **Utility Library** (Simple, high coverage)
-  - `httpx`: HTTP client library
-  - `pendulum`: DateTime manipulation
-  - `Click`: CLI framework
-  - Source: https://github.com/encode/httpx
-- **Data Science Library** (Complex, many functions)
-  - `Polars`: DataFrame library
-  - `scikit-learn`: ML library (focus on one module)
-  - Source: https://github.com/pola-rs/polars
-- **Web Framework** (Medium complexity, many classes)
-  - `FastAPI`: Web framework
-  - `Django REST Framework`: API framework
-  - Source: https://github.com/tiangolo/fastapi
-- **CLI Tool** (Mixed complexity)
-  - `Invoke`: Python task runner
-  - `Poetry`: Dependency management
-  - Source: https://github.com/pyinvoke/invoke
+1. _Which agents generate the most accurate, readable, complete, and maintainable
+   documentation, and under what conditions?_
+2. [Open question 2: what would a proof or counterexample look like?]
+3. [Provocative implication: if true, what does this change?]
 
-## Documentation Evaluation Rubric
+## Research Topics
 
-### Accuracy (40 Points)
+- **Multi-Language Comparison**: compare how each agent handles documentation
+  across Python, TypeScript, and Go
+  - Evaluate language-specific strengths
+- **Domain-Specific Documentation**: test agents on domain-specific packages
+  - E.g., cryptography, NLP, robotics
+  - Measure whether specialized knowledge is reflected in generated docs
+- **Interactive Documentation**: evaluate agents' ability to generate interactive
+  docs
+  - E.g., Jupyter notebooks, animated examples, interactive diagrams
+- **Localization**: test whether agents can generate documentation in multiple
+  languages
+  - Evaluate translation quality
+- **Semantic Analysis**: use code similarity tools to measure whether generated
+  examples are diverse
+  - Check that examples are not just variations of the same pattern
+- **Automated Doc Validation**: create tests that verify examples in generated
+  documentation actually run and pass
+  - Measure correctness
+- **User Feedback Integration**: deploy generated documentation to real users
+  - Collect feedback on helpfulness
+  - Identify which agents produce the most useful docs
+- **Cost Analysis**: for cloud-based agents, estimate total cost to document a
+  1000-function library
+  - Compare to manual documentation effort
 
-- Docstring accurately describes function behavior: 10 pts
-- Parameter descriptions are correct and complete: 10 pts
-- Return type and value description are accurate: 10 pts
-- Exception/error handling documented: 10 pts
+## Next steps
 
-### Readability (25 Points)
+- [ ] Look for related research (what has already been done)
+- [ ] Finalize the implementation plan
+- [ ] GP to review / approve the plan
+- [ ] Hack a quick end-to-end prototype (e.g., in 1-2 days) to show that you
+      understood the problem and can make progress
+- [ ] Break the problem down in phases and milestones
+- [ ] Execute one step at the time
 
-- Clear, concise prose with good grammar: 10 pts
-- Consistent style across all docstrings: 10 pts
-- Appropriate use of formatting (code blocks, lists): 5 pts
+## Implementation plan
 
-### Coverage (20 Points)
+- Milestone 1: set up agents and select packages
+  - **Agent Setup and Configuration**: install and configure at least three chosen
+    documentation agents in isolated environments
+    - E.g., GitHub Copilot, Mintlify, Documate
+    - Document API keys
+    - Document cost (if cloud-based)
+    - Document integration with version control and build systems
+  - **Package Selection and Baseline**: select 3-5 open-source Python/TypeScript
+    packages of varying complexity
+    - Simple utility
+    - Data science library
+    - Web framework
+    - CLI tool
+  - Strip existing documentation and keep only code
+  - Measure baseline:
+    - Number of public functions/classes
+    - API complexity
+    - Code volume
+  - Package selection suggestions:
+    - **Utility Library** (simple, high coverage)
+      - `httpx`: HTTP client library
+      - `pendulum`: DateTime manipulation
+      - `Click`: CLI framework
+      - Source: https://github.com/encode/httpx
+    - **Data Science Library** (complex, many functions)
+      - `Polars`: DataFrame library
+      - `scikit-learn`: ML library (focus on one module)
+      - Source: https://github.com/pola-rs/polars
+    - **Web Framework** (medium complexity, many classes)
+      - `FastAPI`: Web framework
+      - `Django REST Framework`: API framework
+      - Source: https://github.com/tiangolo/fastapi
+    - **CLI Tool** (mixed complexity)
+      - `Invoke`: Python task runner
+      - `Poetry`: Dependency management
+      - Source: https://github.com/pyinvoke/invoke
 
-- All public functions documented: 10 pts
-- All public classes and methods documented: 10 pts
+- Milestone 2: generate documentation
+  - **Documentation Generation**: for each agent, generate complete documentation
+    - Docstrings for all public APIs
+    - Module-level docs
+    - README
+    - Usage examples
+  - Measure:
+    - Time to generate
+    - Number of tokens/API calls
+    - Generation cost
 
-### Examples (10 Points)
+- Milestone 3: assess the generated documentation
+  - **Accuracy Assessment**: have experienced developers manually review generated
+    documentation and score accuracy on:
+    - Docstring matches function behavior
+    - Parameter descriptions are correct
+    - Return types and examples are accurate
+    - Edge cases and exceptions are documented
+  - **Readability and Style Consistency**: assess generated documentation on:
+    - Prose clarity and grammar
+    - Consistency of style across docstrings
+    - Appropriate level of detail (not too verbose, not too terse)
+    - Presence of headers and structural formatting
+  - **Coverage Completeness**: measure what percentage of public APIs are documented
+    by each agent
+    - Identify which types of APIs are most often missed
+    - E.g., decorators, abstract methods, private helpers mistakenly exposed
+  - **Example Quality**: evaluate auto-generated examples on:
+    - Correctness: do examples run without errors?
+    - Clarity: do they illustrate key use cases?
+    - Completeness: do they cover common workflows?
 
-- Examples provided for key functions: 5 pts
-- Examples are correct and runnable: 5 pts
+- Milestone 4: simulate maintenance and build the scorecard
+  - **Maintenance Simulation**: introduce code changes
+    - Rename function
+    - Add parameter
+    - Change return type
+    - Refactor module structure
+  - Measure:
+    - How well each agent regenerates updated documentation
+    - Which agent detects deprecated APIs
+    - How well agents handle breaking changes
+  - **Comparative Scorecard**: build a rubric weighing accuracy, readability,
+    coverage, example quality, and maintainability
+    - Score each agent
+    - Identify which agent excels in each dimension
 
-### Maintainability (5 Points)
-
-- Docs easily regenerated after code changes: 5 pts
-
-## Bonus Ideas
-
-- **Multi-Language Comparison**: Compare how each agent handles documentation across
-  Python, TypeScript, and Go; evaluate language-specific strengths
-- **Domain-Specific Documentation**: Test agents on domain-specific packages
-  (cryptography, NLP, robotics); measure whether specialized knowledge is reflected
-  in generated docs
-- **Interactive Documentation**: Evaluate agents' ability to generate interactive
-  docs (Jupyter notebooks, animated examples, interactive diagrams)
-- **Localization**: Test whether agents can generate documentation in multiple
-  languages; evaluate translation quality
-- **Semantic Analysis**: Use code similarity tools to measure whether generated
-  examples are diverse (not just variations of the same pattern)
-- **Automated Doc Validation**: Create tests that verify examples in generated
-  documentation actually run and pass; measure correctness
-- **User Feedback Integration**: Deploy generated documentation to real users;
-  collect feedback on helpfulness and identify which agents produce most useful docs
-- **Cost Analysis**: For cloud-based agents, estimate total cost to document a
-  1000-function library; compare to manual documentation effort
-
-## Useful Resources
+## References
 
 - **Documentation Benchmarks**:
   - DocString Parser: https://github.com/rr-/docstring_parser
   - PyDocStyle: https://www.pydocstyle.org (PEP 257 checker)
   - Sphinx: https://www.sphinx-doc.org (Python docs generation)
 - **Package Sources**:
-  - GitHub API: Search for repositories by stars, language, topic
+  - GitHub API: search for repositories by stars, language, topic
   - PyPI: https://pypi.org (Python packages)
   - NPM: https://www.npmjs.com (JavaScript packages)
 - **Documentation Quality Metrics**:
-  - Flesch Reading Ease: Measure readability
-  - BLEU Score: Evaluate documentation similarity to reference
-  - Tree Sitter: Parse code structure for coverage analysis
+  - Flesch Reading Ease: measure readability
+  - BLEU Score: evaluate documentation similarity to reference
+  - Tree Sitter: parse code structure for coverage analysis
 - **Agent Resources**:
   - GitHub Copilot API: https://docs.github.com/en/copilot/quickstart
   - Mintlify Documentation: https://mintlify.com/docs
   - Tabnine API: https://www.tabnine.com/enterprise
 - **Human Evaluation**:
-  - Likert Scale: Standardized rating system for documentation quality
-  - Inter-Rater Reliability: Calculate Fleiss' Kappa for multiple reviewers
+  - Likert Scale: standardized rating system for documentation quality
+  - Inter-Rater Reliability: calculate Fleiss' Kappa for multiple reviewers

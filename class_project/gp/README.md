@@ -1,68 +1,60 @@
-# Main guidelines
+# Main Guidelines
 
 - `class_project/README.md`: Project rules for DATA605 and MSML610. Two project
-  types, team size, deliverables. Start here.
+  types, team size, deliverables. Start here
 - `class_project/how_to_contribute.md`: Fork and PR workflow for student
-  contributions.
+  contributions
 
-# Project template and creation
+# Project Template and Creation
 
 - `class_project/create_project.README.md`: How to use create_project.py to copy the
-  template into a new project dir.
+  template into a new project dir
 - `class_project/project_template/docker_scripts.README.md`: Explains the Docker
-  scripts in the template.
+  scripts in the template
 
-# Project descriptions
+# Project Descriptions
 
 - `class_project/project_descriptions/README.md`: Tables of all tool projects for
-  DATA605 and MSML610.
-- `class_project/project_descriptions/all_projects.md`: Full project list.
+  DATA605 and MSML610
+- `class_project/project_descriptions/all_projects.md`: Full project list
 - `class_project/project_descriptions/paper_candidates_analysis.md`: Analysis of
-  candidate papers for research projects.
+  candidate papers for research projects
 - `class_project/project_descriptions/DATA605/<tool>_Project_Description.md`: One
-  blueprint per DATA605 tool.
+  blueprint per DATA605 tool
 - `class_project/project_descriptions/MSML610/<tool>_Project_Description.md`: One
-  blueprint per MSML610 tool.
+  blueprint per MSML610 tool
 
-# Instructor (GP) files
+# Instructor (GP) Files
 
-- `class_project/gp/README.md`: Steps to check student PRs and file locations.
-- `class_project/gp/gp_notes.md`: Instructor notes.
-- `class_project/gp/new_class_checklist.md`: Canvas links and setup steps for a new
-  term.
-- `class_project/gp/email.project.md`: Email to students about the project and
-  template.
-- `class_project/gp/email.research.md`: Email to students about research projects.
-- `class_project/gp/email.DATA605_Spring2025.md`: DATA605 Spring 2025 course email.
-- `class_project/gp/email.MSML610_Fall2025.md`: MSML610 Fall 2025 course email.
-- `class_project/gp/email.drill_quiz.md`: Email about drill quizzes.
+- `class_project/gp/README.md`: Steps to check student PRs and file locations
+- `class_project/gp/gp_notes.md`: Instructor notes
 
-# TA files
+# TA Files
 
 - `class_project/ta/README.md`: TA workflow. Build tool list, then generate
-  descriptions.
+  descriptions
 - `class_project/ta/project_prompt.md`: LLM prompt to make a project blueprint for a
-  tool.
+  tool
 - `class_project/ta/research_prompt.md`: LLM prompt for research project
-  descriptions.
-- `class_project/ta/DATA605_project_example.md`: Example description (TextBlob).
+  descriptions
+- `class_project/ta/DATA605_project_example.md`: Example description (TextBlob)
 - `class_project/ta/generate_class_project_description.py`: Script that generates the
-  descriptions.
+  descriptions
 
 # Prompts
 
-- `class_project/prompt.readme.md`: Rules for the project CSV (Team column, GroupId).
+- `class_project/prompt.readme.md`: Rules for the project CSV (Team column, GroupId)
 - `class_project/project_descriptions/prompt.analysis.md`: Prompt for project
-  analysis.
+  analysis
 - `class_project/project_descriptions/prompt.update_README.md`: Prompt to update the
-  descriptions README.
+  descriptions README
 
-# Per-term data
+# Per-term Data
 
 - `class_project/data605/Spring2026/projects.csv`: DATA605 Spring 2026 team and
-  project assignments.
+  project assignments
 - `class_project/msml610/Fall2026/class_project.csv`: MSML610 Fall 2026 project
-  choices.
+  choices
 - `class_project/msml610/Fall2026/chosen_projects.csv`: MSML610 Fall 2026 final
-  project list.
-- `class_project/data605/<Term>/projects/`: Student work per term.
+  project list
+- `class_project/data605/<Term>/projects/`: Student work per term
