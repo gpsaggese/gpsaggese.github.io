@@ -1,6 +1,5 @@
-In each dir msml610 and data605 class_project/msml610/Fall2026
-class_project/data605/Fall2026 there are is a file
-like class_project/msml610/Fall2026/class_project.csv
+- In each dir class_project/msml610/Fall2026 and class_project/data605/Fall2026 there
+  is a file like class_project/msml610/Fall2026/class_project.csv
 
 - There is a single Team column that is the merge of Team1, Team2, Team3
 - The two Choice {1,2,3} are full url vs basename
@@ -23,4 +22,3 @@ like class_project/msml610/Fall2026/class_project.csv
 
   - Manual assignment
     https://docs.google.com/spreadsheets/d/1dqKxYRboFxied-FseN0VysborAxUkuBYCV4dddiKPwM/edit?resourcekey=&gid=978923818#gid=978923818
-
