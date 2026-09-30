@@ -2,6 +2,7 @@ path,is_group,group_id
 class_project/project_descriptions/MSML610/CLIP-ViT-Large-Patch14_Project_Description.md ,True,32
 class_project/project_descriptions/MSML610/CrewAI_Project_Description.md ,True,13
 class_project/project_descriptions/MSML610/DoWhy_Project_Description.md ,True,30
+class_project/project_descriptions/MSML610/Gensim_Project_Description.md,False,36
 class_project/project_descriptions/MSML610/Kats_Project_Description.md ,False,10
 class_project/project_descriptions/MSML610/MLflow_Project_Description.md ,False,21
 class_project/project_descriptions/MSML610/MLlib_Project_Description.md ,False,12
@@ -11,6 +12,7 @@ class_project/project_descriptions/MSML610/PyTorch_Geometric_Project_Description
 class_project/project_descriptions/MSML610/RLlib_Project_Description.md ,False,34
 class_project/project_descriptions/MSML610/SemanticKernel_Project_Description.md ,True,15
 class_project/project_descriptions/MSML610/WB_Weave_Project_Description.md ,True,29
+class_project/project_descriptions/MSML610/trl_Project_Description.md ,True,35
 research/ideas/draft.AI_Knowledge_Management_Development.md,True,9
 research/ideas/draft.Agentic_Analysis_of_Committee_vs_Authority.md,False,33
 research/ideas/draft.Analysis_of_Apple_Containers.md,True,8
