@@ -1,0 +1,41 @@
+# OS files
+.DS_Store
+
+# Python cache/build artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+
+# Secrets and local environment files
+.env
+*.env
+config/.env
+*.secret
+*secret*
+*.key
+*.pem
+langchain-reference
+traces
+sessions/
+.codex-run/
+node_modules/
+# Root-anchored: frontend/package.json and frontend/package-lock.json are
+# tracked and required to build. An unanchored pattern matches at any depth and
+# would exclude them from a fresh checkout.
+/package.json
+/package-lock.json
+frontend/.next/
+
+.playwright-cli/
+.playwright-mcp/
+
+output/
+*.log
+reference_repos/
+landing.png
+plan-*.png
+session-page.png
