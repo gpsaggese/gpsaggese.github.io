@@ -4,7 +4,6 @@
 
 - **Status:**: draft
 - **Complete Specs:**: 80%
-- **Assignee:**: TBD
 
 ## Core Idea
 
@@ -196,8 +195,12 @@
 
 1. _Which agents detect the most real vulnerabilities, avoid false positives,
    provide clear explanations, and suggest working fixes?_
-2. [Open question 2: what would a proof or counterexample look like?]
-3. [Provocative implication: if true, what does this change?]
+2. What would a fair comparison look like? Precision and recall against
+   seeded vulnerabilities with known ground truth are needed, since an agent
+   that flags every line has perfect recall and is useless.
+3. If an agent reliably reaches autonomous hardening (L4), does human security
+   review become a verification step, and how often does its patch introduce a
+   new vulnerability?
 
 ## Research Topics
 

@@ -3,7 +3,6 @@
 ## Status
 - **Status**: draft
 - **Complete Specs**: 10%
-- **Assignee**: TBD
 
 ## Core Idea
 - `NoesisMarket` clears every `T` minutes (default 5), but a large share of

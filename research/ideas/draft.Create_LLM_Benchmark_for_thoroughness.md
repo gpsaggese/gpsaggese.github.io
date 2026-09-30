@@ -4,7 +4,6 @@
 
 - **Status:**: draft
 - **Complete Specs:**: 30%
-- **Assignee:**: TBD
 
 ## Core Idea
 
@@ -126,9 +125,9 @@
 
 ## References
 
-- 2024, Hsieh et al., "RULER: What's the Real Context Size of Your Long-Context
-  Language Models?"
-- 2023, Zhou et al., "Instruction-Following Evaluation for Large Language Models
-  (IFEval)"
-- 2023, Liu et al., "Lost in the Middle: How Language Models Use Long Contexts"
-- 2023, Kamradt, "Needle In A Haystack: LLM Pressure Test"
+- Hsieh et al., _RULER: What's the Real Context Size of Your Long-Context Language
+  Models?_. (2024)
+- Zhou et al., _Instruction-Following Evaluation for Large Language Models (IFEval)_.
+  (2023)
+- Liu et al., _Lost in the Middle: How Language Models Use Long Contexts_. (2023)
+- Kamradt, _Needle In A Haystack: LLM Pressure Test_. (2023)

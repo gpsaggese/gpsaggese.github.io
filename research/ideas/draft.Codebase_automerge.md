@@ -3,7 +3,6 @@
 ## Status
 **Status:**: draft
 **Complete Specs:**: 15%
-**Assignee:**: TBD
 
 ## Core Idea
 - The `github.split_branch_in_PRs` skill already proposes how to split a

@@ -3,7 +3,6 @@
 ## Status
 - **Status:**: draft
 - **Complete Specs:**: 15%
-- **Assignee:**: TBD
 
 ## Core Idea
 - DeepMind's AlphaEvolve pairs an LLM (proposes code mutations) with an

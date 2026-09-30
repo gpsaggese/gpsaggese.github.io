@@ -3,7 +3,6 @@
 ## Status
 - **Status**: draft
 - **Complete Specs**: 20%
-- **Assignee**: TBD
 
 ## Core Idea
 - Train a very small LM restricted to a single, narrow slice of Python (e.g.,

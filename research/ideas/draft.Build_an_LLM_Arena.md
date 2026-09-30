@@ -3,7 +3,6 @@
 ## Status
 - **Status**: draft
 - **Complete Specs**: 10%
-- **Assignee**: TBD
 
 ## Core Idea
 - Build a Chatbot-Arena-style system: a prompt is sent to two anonymized models,

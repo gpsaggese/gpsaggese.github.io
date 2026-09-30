@@ -4,7 +4,6 @@
 
 - **Status**: done
 - **Complete Specs**: TBD
-- **Assignee**: TBD
 
 ## Core Idea
 

@@ -4,7 +4,6 @@
 
 - **Status:**: draft
 - **Complete Specs:**: 30%
-- **Assignee:**: TBD
 
 ## Core Idea
 
@@ -130,9 +129,10 @@
 
 ## References
 
-- 2014, Bailey et al., "The Probability of Backtest Overfitting"
-- 2010, Fama et al., "Luck versus Skill in the Cross-Section of Mutual Fund Returns"
-- 2000, Embretson et al., "Item Response Theory for Psychologists"
+- Bailey et al., _The Probability of Backtest Overfitting_. (2014)
+- Fama et al., _Luck versus Skill in the Cross-Section of Mutual Fund Returns_.
+  (2010)
+- Embretson et al., _Item Response Theory for Psychologists_. (2000)
 - `draft.Causal_Analysis_of_Hedge_Fund_Performance.md`
 - `draft.Backtesting_Complexity.md`
 - `draft.Measure_ability_to_predict_events.md`

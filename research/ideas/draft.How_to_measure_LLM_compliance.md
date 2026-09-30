@@ -4,7 +4,6 @@
 
 - **Status:**: draft
 - **Complete Specs:**: 30%
-- **Assignee:**: TBD
 
 ## Core Idea
 
@@ -134,10 +133,10 @@
 
 ## References
 
-- 2024, Qin et al., "InFoBench: Evaluating Instruction Following Ability in Large
-  Language Models"
-- 2024, Jiang et al., "FollowBench: A Multi-level Fine-grained Constraints Following
-  Benchmark for LLMs"
-- 2023, Zhou et al., "Instruction-Following Evaluation for Large Language Models
-  (IFEval)"
-- 2023, Liu et al., "Lost in the Middle: How Language Models Use Long Contexts"
+- Qin et al., _InFoBench: Evaluating Instruction Following Ability in Large Language
+  Models_. (2024)
+- Jiang et al., _FollowBench: A Multi-level Fine-grained Constraints Following
+  Benchmark for LLMs_. (2024)
+- Zhou et al., _Instruction-Following Evaluation for Large Language Models (IFEval)_.
+  (2023)
+- Liu et al., _Lost in the Middle: How Language Models Use Long Contexts_. (2023)

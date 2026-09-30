@@ -4,7 +4,6 @@
 
 - **Status:**: draft
 - **Complete Specs:**: 30%
-- **Assignee:**: TBD
 
 ## Core Idea
 
@@ -155,9 +154,9 @@
 
 ## References
 
-- 2004, Surowiecki, "The Wisdom of Crowds"
-- 1974, DeGroot, "Reaching a Consensus", Journal of the American Statistical
-  Association
-- 1968, French et al., "The anatomy of a controversy"
-- 1785, Condorcet, "Essai sur l'application de l'analyse a la probabilite des
-  decisions rendues a la pluralite des voix"
+- Surowiecki, _The Wisdom of Crowds_. (2004)
+- DeGroot, _Reaching a Consensus_, Journal of the American Statistical Association.
+  (1974)
+- French et al., _The anatomy of a controversy_. (1968)
+- Condorcet, _Essai sur l'application de l'analyse a la probabilite des decisions
+  rendues a la pluralite des voix_. (1785)

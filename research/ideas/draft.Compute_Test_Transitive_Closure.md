@@ -3,7 +3,6 @@
 ## Status
 - **Status**: draft
 - **Complete Specs**: 15%
-- **Assignee**: TBD
 
 ## Core Idea
 - CI runtime grows with codebase size unless tests can be selectively run

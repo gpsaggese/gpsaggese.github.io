@@ -2,9 +2,8 @@
 
 ## Status
 
-- **Status**: draft
-- **Complete Specs**: 30%
-- **Assignee**: TBD
+- **Status:**: draft
+- **Complete Specs:**: 30%
 
 ## Core Idea
 
@@ -116,6 +115,7 @@
   claim of skill must beat
 
 ## Next steps
+
 - [ ] Look for related research (what has already been done)
 - [ ] Finalize the implementation plan
 - [ ] GP to review / approve the plan

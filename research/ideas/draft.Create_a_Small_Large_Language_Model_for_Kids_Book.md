@@ -3,7 +3,6 @@
 ## Status
 - **Status**: draft
 - **Complete Specs**: 20%
-- **Assignee**: TBD
 
 ## Core Idea
 - Train a very small LM (~10M-50M parameters) restricted to the vocabulary and

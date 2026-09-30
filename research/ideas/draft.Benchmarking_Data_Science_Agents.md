@@ -4,7 +4,6 @@
 
 - **Status:**: draft
 - **Complete Specs:**: 60%
-- **Assignee:**: TBD
 
 ## Core Idea
 
@@ -56,8 +55,13 @@
 
 - **Capability gap**: an agent excels at isolated coding tasks but fails at
   multi-tool orchestration or long-horizon planning
-- **[Example 2]**: [Second scenario, possibly from a different domain]
-- **[Example 3]**: [Edge case or failure mode]
+- **Rank disagreement**: a model ranks near the top on SWE-bench and in the
+  bottom half on DSBench; a low rank correlation between the two benchmarks
+  shows that they measure different skills
+- **Incomparable scores**: two leaderboards report `pass@1` and best-of-$k$
+  results, or scaffolds of different strength, so the raw numbers cannot be
+  merged without normalization; near-saturated benchmarks with top scores
+  within 1-2 points give rankings that are mostly noise
 
 ## Questions
 

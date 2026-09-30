@@ -1,83 +1,124 @@
-# AutoKeras
+# Description
 
-## Description
-- AutoKeras is an open-source AutoML library for deep learning that simplifies
-  the process of building machine learning models.
-- It automates the model selection and hyperparameter tuning process, allowing
-  users to focus on data rather than the complexities of model architecture.
-- The tool supports various types of tasks, including classification,
-  regression, and image classification, making it versatile for different
-  projects.
-- AutoKeras provides a user-friendly API that integrates seamlessly with
-  TensorFlow and Keras, making it accessible for both beginners and advanced
-  users.
-- The library includes functionalities for data preprocessing, model evaluation,
-  and visualization of results, enhancing the overall workflow.
+AutoKeras is an open-source AutoML library for deep learning, built on Keras and
+TensorFlow. It solves the problem of hand-designing and tuning a neural network by
+searching architectures and hyperparameters automatically for tabular, image, text,
+and time-series data. It is worth a 60-minute tutorial because a few lines of code
+launch a full architecture search, and the trade-off between search budget and
+accuracy can be measured.
 
-## Project Objective
-The goal of this project is to develop a machine learning model that predicts
-housing prices based on various features such as location, size, and amenities.
-The project will focus on optimizing the model to achieve the highest accuracy
-in price prediction.
+## Technologies Used
 
-## Dataset Suggestions
-1. **Kaggle Housing Prices Dataset**
-   - **Source**: Kaggle
-   - **URL**:
-     [Housing Prices](https://www.kaggle.com/c/house-prices-advanced-regression-techniques/data)
-   - **Data Contains**: Features of houses including area, number of rooms,
-     location, and sale prices.
-   - **Access Requirements**: A free Kaggle account for downloading the dataset.
+AutoKeras
 
-2. **Zillow Home Value Index (ZHVI)**
-   - **Source**: Zillow
-   - **URL**:
-     [Zillow Data](https://www.zillow.com/howto/api/Zillow-Data-API.htm)
-   - **Data Contains**: Monthly median home values for various regions in the
-     U.S.
-   - **Access Requirements**: API key required for access, but free for
-     non-commercial use.
+- Task APIs: `StructuredDataRegressor`, `StructuredDataClassifier`,
+  `ImageClassifier`, `TextClassifier`, and `TimeseriesForecaster`
+- Automatic architecture search and hyperparameter tuning, controlled by `max_trials`
+  and the choice of tuner
+- `AutoModel` with input and head blocks to define a custom search space
+- Export of the best model as a plain Keras model
 
-3. **OpenStreetMap (OSM) Housing Data**
-   - **Source**: OpenStreetMap
-   - **URL**: [OSM Data](https://download.geofabrik.de/)
-   - **Data Contains**: Geographic data including housing attributes (e.g.,
-     number of floors, building type).
-   - **Access Requirements**: No authentication needed, but requires data
-     parsing.
+# Tutorial
 
-4. **UCI Machine Learning Repository - Boston Housing Dataset**
-   - **Source**: UCI Machine Learning Repository
-   - **URL**: [Boston Housing](https://archive.ics.uci.edu/ml/datasets/Housing)
-   - **Data Contains**: Various features of housing in Boston, including crime
-     rate, number of rooms, and property tax rates.
-   - **Access Requirements**: No restrictions for downloading.
+- Implement the tutorial "Learn AutoKeras in 60 mins", following
+  `.claude/skills/tutorial_in_60_mins.rules.md`
+  - Build it with `.claude/skills/tutorial_in_60_mins.create/SKILL.md`
+  - Follow the workflow in `tutorials/README.gp.md` and the quality principles in
+    `tutorials/tutorials_checklist.md`
+- Check the previous tutorials and projects, listed in the section
+  `Existing Tutorials and Projects` of `.claude/skills/tutorial_in_60_mins.rules.md`
+  - Read the `README.md` of the Fall2025 AutoKeras image project, and reuse what is
+    good
+    - `class_project/msml610/Fall2025/projects/UmdTask123_Fall2025_Fashion_Product_Image_Classification_AutoKeras/`
+  - Read the scripts of the Fall2025 AutoKeras forecasting project, which has no
+    `README.md`
+    - `class_project/msml610/Fall2025/projects/TutorTask_67_Fall2025_AutoKeras_Electricity_Load_Forecasting/`
+  - Read the `README.md` of `tutorials/TensorFlow/` for the Keras basics
+- Create `tutorials/AutoKeras/`, since it does not exist yet
+- Make it look like `msml610/tutorials/L03_knowledge_representation/`
+- Use the skills in `.claude/skills/notebook.*` to automate part of the work, and
+  document how you used them
+- Compare briefly with FLAML and AutoGluon from the AutoML point of view, e.g.,
+  accuracy for the same search time
+- Deliverables:
+  - `autokeras_utils.py`
+  - `autokeras.API.ipynb`
+  - `autokeras.example.ipynb`
 
-## Tasks
-- **Data Collection**: Gather data from the selected dataset(s) and prepare it
-  for analysis.
-- **Data Preprocessing**: Clean the data by handling missing values, encoding
-  categorical variables, and normalizing numerical features.
-- **Model Training**: Use AutoKeras to automatically search for the best model
-  architecture and hyperparameters for predicting housing prices.
-- **Model Evaluation**: Assess the model's performance using metrics such as
-  Mean Absolute Error (MAE) and R-squared values.
-- **Results Visualization**: Create visualizations to present the model's
-  predictions against actual prices and highlight important features.
+# Project
 
-## Bonus Ideas
-- Extend the project by incorporating additional features such as local
-  amenities, school ratings, or economic indicators to improve prediction
-  accuracy.
-- Compare the performance of AutoKeras with traditional machine learning
-  algorithms (like linear regression or decision trees) to highlight the
-  advantages of using AutoML.
-- Implement a web app using Flask or Streamlit to allow users to input features
-  and get real-time price predictions.
+## Project 1: House Price Prediction with AutoML
 
-## Useful Resources
-- [AutoKeras Documentation](https://autokeras.com/)
-- [Kaggle Datasets](https://www.kaggle.com/datasets)
-- [Zillow API Documentation](https://www.zillow.com/howto/api/APIOverview.htm)
-- [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/index.php)
-- [OpenStreetMap API](https://wiki.openstreetmap.org/wiki/API)
+- **Difficulty**: 1 (Easy)
+- **Project Objective**: Predict house sale prices with an automatically searched
+  neural network, and measure how much the search beats simple baselines
+- **Dataset Suggestions**:
+  [Kaggle - House Prices](https://www.kaggle.com/c/house-prices-advanced-regression-techniques/data)
+- **Tasks**:
+  - **Preprocess the Data**: Load the Ames data, split it into train and test, and
+    report the missing values per column
+  - **Define the Problem**: Predict the log of `SalePrice` as a regression problem,
+    and fit a mean predictor and a `Ridge` regression as baselines
+  - **Search with AutoKeras**: Fit `StructuredDataRegressor` with `max_trials` of 10
+    and 30, and record the search time and the validation loss of each trial
+  - **Evaluate the Model**: Compare MAE and R-squared of the best model with the
+    baselines on the test set
+  - **Visualize the Results**: Plot the predicted vs. actual prices, and the
+    validation loss vs. the trial number
+- **Bonus Ideas (Optional)**: Add engineered features, e.g., house age and total
+  area, and check if the search improves; serve the exported model with Streamlit
+
+### Milestones
+
+- Milestone 1: Set up the container and the data
+  - Project tasks: Preprocess the Data
+  - Result: `tutorials/AutoKeras/` container running, and the table of missing values
+    with the train and test split of the Ames data
+- Milestone 2: API notebook
+  - Project tasks: Search with AutoKeras
+  - Result: `autokeras.API.ipynb` covering `StructuredDataRegressor`, `max_trials`,
+    `AutoModel` with custom blocks, and `export_model()`
+- Milestone 3: Example notebook
+  - Project tasks: Define the Problem, Search with AutoKeras, Evaluate the Model,
+    Visualize the Results
+  - Result: `autokeras.example.ipynb` running end to end
+
+## Project 2: Image Classification with Architecture Search
+
+- **Difficulty**: 2 (Medium)
+- **Project Objective**: Classify small color images with `ImageClassifier` and
+  compare the searched network with a hand-designed CNN
+- **Dataset Suggestions**: [CIFAR-10](https://www.cs.toronto.edu/~kriz/cifar.html),
+  using a subset of 10,000 training images to fit the Docker container
+- **Tasks**:
+  - **Load the Images**: Load a stratified subset of CIFAR-10 and show one image per
+    class
+  - **Build a Baseline CNN**: Train a small Keras CNN with a fixed architecture
+  - **Search the Architecture**: Run `ImageClassifier` with the `greedy` and
+    `hyperband` tuners for the same number of trials
+  - **Evaluate the Models**: Compare test accuracy, parameter count, and search time
+    of the three models
+  - **Inspect the Best Model**: Export the best model and print its layers with
+    `model.summary()`
+- **Bonus Ideas (Optional)**: Add data augmentation blocks to the search space
+
+## Project 3: Weather Forecasting with a Time-Series Search
+
+- **Difficulty**: 3 (Hard)
+- **Project Objective**: Forecast the next-hour temperature with
+  `TimeseriesForecaster`, and measure how stable the search result is across seeds
+- **Dataset Suggestions**:
+  [Jena Climate](https://www.kaggle.com/datasets/mnassrib/jena-climate)
+- **Tasks**:
+  - **Resample the Data**: Aggregate the 10-minute records to hourly means and build
+    sliding windows of 24 hours
+  - **Define the Baselines**: Compute the persistence forecast and a seasonal-naive
+    forecast with a 24-hour lag
+  - **Search the Forecaster**: Fit `TimeseriesForecaster` with five random seeds and
+    a fixed `max_trials`
+  - **Evaluate the Forecasts**: Report the mean and standard deviation of the test
+    MAE and RMSE across the seeds
+  - **Analyze the Trade-Offs**: Plot the MAE vs. the search time for `max_trials` of
+    5, 10, and 20
+- **Bonus Ideas (Optional)**: Add pressure and humidity as extra input features and
+  test the gain

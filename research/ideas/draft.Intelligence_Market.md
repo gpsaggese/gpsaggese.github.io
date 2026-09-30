@@ -3,7 +3,6 @@
 ## Status
 - **Status:**: draft
 - **Complete Specs:**: 20%
-- **Assignee:**: TBD
 
 ## Core Idea
 - Treat "intelligence" (LLM inference capacity at a given capability,

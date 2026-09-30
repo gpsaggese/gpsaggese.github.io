@@ -25,3 +25,7 @@
     https://docs.google.com/spreadsheets/d/1dY1al_9ATovLvfIfuoaYemzVmjU_moNqNXzC01sD8Rw/edit?resourcekey=&gid=1339190693#gid=1339190693
   - Manual assignment
     https://docs.google.com/spreadsheets/d/1dqKxYRboFxied-FseN0VysborAxUkuBYCV4dddiKPwM/edit?resourcekey=&gid=978923818#gid=978923818
+
+- Make sure that no project is assigned to more than one person / team
+- If there is a "conflict" try to find an assignment that makes everyone happy
+  without moving 

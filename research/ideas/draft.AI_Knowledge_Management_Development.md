@@ -4,7 +4,6 @@
 
 - **Status:**: draft
 - **Complete Specs:**: 80%
-- **Assignee:**: TBD
 
 ## Core Idea
 
@@ -37,22 +36,42 @@
 
 ## Formalization
 
-- Mathematical notation, definitions, or pseudocode
-- Use LaTeX math where helpful
+- Model the knowledge base as a typed graph $G = (V, E)$
+  - Nodes $V$: architectural decisions, design patterns, code components,
+    documents, and quality outcomes
+  - Edges $E$: `implements`, `documents`, `motivated_by`, `affects`
+- Documentation gap score for a component $c$:
+  $\mathrm{gap}(c) = \mathrm{complexity}(c) \cdot (1 - \mathrm{coverage}(c))$,
+  where $\mathrm{coverage}(c)$ is the fraction of its public interface that
+  has documentation
+- Staleness score for a document $d$ linked to code $C(d)$:
+  $\mathrm{stale}(d) = \mathrm{churn}(C(d)) \, / \, (1 + \mathrm{churn}(d))$,
+  measured over the commits since $d$ was last edited
+- Link quality: precision and recall of the recovered decision-to-code edges
+  against a labeled set of ground-truth links
 
 ## Key Examples
 
 - **Design-intent query**: find all components that prioritize latency over
   consistency
   - Search by design intent rather than by keywords
-- **[Example 2]**: [Second scenario, possibly from a different domain]
-- **[Example 3]**: [Edge case or failure mode]
+- **Stale documentation**: a README states that all writes go through a
+  queue, and a later commit adds a direct database write; the system flags the
+  README section as inconsistent with the code
+- **Ungrounded rationale**: the reason for a design choice exists only in a
+  chat thread, so the system has no source to cite; a good system says so
+  instead of producing a plausible but invented explanation
 
 ## Questions
 
-1. [Open question 1: what remains unknown?]
-2. [Open question 2: what would a proof or counterexample look like?]
-3. [Provocative implication: if true, what does this change?]
+1. How accurately can decisions be linked to code from commit messages and
+   documentation alone, and how does accuracy change with documentation
+   quality?
+2. What would show that a "why" answer is grounded? An answer that cites no
+   source, or contradicts a recorded decision, would be a counterexample.
+3. If the system answers "why" reliably, does the value of writing decision
+   records by hand go down, or up because they become the source of truth the
+   system draws on?
 
 ## Research Topics
 
@@ -140,33 +159,33 @@
 
 ## References
 
-- 2023, Robillard et al., "Recommendation Systems for Software Engineering", IEEE
-  Software, Vol. 33, No. 4
+- Robillard et al., _Recommendation Systems for Software Engineering_, IEEE Software,
+  Vol. 33, No. 4. (2023)
   - Survey of 100+ recommendation systems for software development including
     knowledge-based systems
   - Found that systems combining code analysis with documentation achieve 78%
     accuracy in recommending architectural patterns
-- 2023, GitHub, "GitHub Copilot Research" (https://github.blog/research/)
+- GitHub, _GitHub Copilot Research_ (https://github.blog/research/). (2023)
   - Large-scale study of 100,000+ developers using AI-assisted coding
   - Findings show developers using knowledge-assisted tools spend 30% less time
     searching for information and make 15% fewer architectural inconsistency
     errors
-- 2022, Iyer et al., "Towards Automated Knowledge Extraction for Software
-  Architecture", ASE
+- Iyer et al., _Towards Automated Knowledge Extraction for Software Architecture_,
+  ASE. (2022)
   - Built NLP pipeline to extract architectural decisions from documentation and
     commit messages
   - Achieved 82% precision in linking decisions to relevant code components
-- 2022, Allamanis et al., "Learning to Represent Programs with Graphs", ICLR
+- Allamanis et al., _Learning to Represent Programs with Graphs_, ICLR. (2022)
   - Graph neural networks for learning semantic representations of code
   - Enabled knowledge transfer between different codebases (transfer learning
     effectiveness)
-- 2021, LeClair et al., "A Neural Model for Generating Natural Language Summaries
-  of Program Subroutines", ICSE
+- LeClair et al., _A Neural Model for Generating Natural Language Summaries of
+  Program Subroutines_, ICSE. (2021)
   - Deep learning models for automatically generating documentation from code
   - Generated documentation that developers rated as 70% as good as manual
     documentation
-- 2020, Wang et al., "Enriching Code with Comments: A Transformer-Based
-  Approach", ICSE
+- Wang et al., _Enriching Code with Comments: A Transformer-Based Approach_, ICSE.
+  (2020)
   - Used sequence-to-sequence transformers to generate code comments describing
     functionality
   - Demonstrated 85% semantic correctness on held-out test set

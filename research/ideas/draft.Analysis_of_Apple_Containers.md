@@ -4,7 +4,6 @@
 
 - **Status:**: draft
 - **Complete Specs:**: 60%
-- **Assignee:**: TBD
 
 ## Core Idea
 
@@ -37,15 +36,24 @@
 
 ## Key Examples
 
-- **[Example 1]**: [Concrete scenario illustrating the idea]
-- **[Example 2]**: [Second scenario, possibly from a different domain]
-- **[Example 3]**: [Edge case or failure mode]
+- **Cold-start comparison**: launch the sentiment server 20 times with each
+  runtime and compare time-to-first-successful-health-check, where a VM-per-
+  container design may start slower or faster than a shared Docker VM
+- **Sustained inference**: send all 2,000 IMDb reviews to each server and
+  compare requests per second and peak RAM, where Docker Desktop's shared
+  Linux VM may hold memory that Apple Containers releases per container
+- **Compatibility failure**: a `compose.yaml` with a model server and a
+  pre-processing sidecar runs unchanged under `docker compose` but needs manual
+  rewriting for Apple Containers
 
 ## Questions
 
 1. _When is Apple Containers preferable over Docker Desktop on macOS?_
-2. [Open question 2: what would a proof or counterexample look like?]
-3. [Provocative implication: if true, what does this change?]
+2. Are the throughput and latency differences larger than run-to-run noise on
+   the same machine, and would a single outlier run flip the conclusion?
+3. If Apple Containers matches Docker Desktop on throughput with a smaller
+   memory footprint, does it become the default runtime for local ML inference
+   on Apple Silicon?
 
 ## Research Topics
 

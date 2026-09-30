@@ -1,95 +1,140 @@
-**Description**
+# Description
 
-In this project, students will utilize `trl`, a Python library designed for reinforcement learning and fine-tuning transformer models, to improve natural language processing tasks. This tool allows users to efficiently adapt pre-trained models to specific tasks by leveraging reinforcement learning techniques. It includes features for reward modeling, training strategies, and seamless integration with Hugging Face's Transformers.
+`trl` (Transformer Reinforcement Learning) is the Hugging Face library to post-train
+language models with supervised fine-tuning, reward modeling, preference
+optimization, and reinforcement learning. It solves the problem of steering a
+pre-trained language model towards a goal that is hard to write as a loss, e.g.,
+style, politeness, or user preference, by optimizing a reward. It is worth a
+60-minute tutorial because the same trainer classes cover the whole alignment recipe,
+and small models such as GPT-2 show the effect on a laptop.
 
-**Project 1: Text Generation with Reinforcement Learning**  
-**Difficulty**: 1
+## Technologies Used
 
-**Project Objective**:  
-Develop a model that generates creative text, such as poetry or short stories, by optimizing the text generation process through reinforcement learning.
+`trl`
 
-**Dataset Suggestions**:  
-- "Shakespeare's Works" dataset available on Kaggle: [Shakespeare's Works](https://www.kaggle.com/datasets/kingburrito777/shakespeare-text) 
+- Supervised fine-tuning with `SFTTrainer`
+- Reward modeling with `RewardTrainer` from preference pairs
+- Preference optimization with `DPOTrainer`
+- Reinforcement learning against a reward function with `GRPOTrainer` and
+  `PPOTrainer`, with a KL penalty to the reference model
 
-**Tasks**:  
-- Set Up `trl` Environment:  
-  Install the `trl` library and set up the environment for model training.
-  
-- Load Pre-trained Model:  
-  Use a pre-trained GPT-2 model from Hugging Face Transformers for text generation.
+# Tutorial
 
-- Define Reward Function:  
-  Create a reward function that evaluates the creativity or coherence of generated text.
+- Implement the tutorial "Learn trl in 60 mins", following
+  `.claude/skills/tutorial_in_60_mins.rules.md`
+  - Build it with `.claude/skills/tutorial_in_60_mins.create/SKILL.md`
+  - Follow the workflow in `tutorials/README.gp.md` and the quality principles in
+    `tutorials/tutorials_checklist.md`
+- Check the previous tutorials and projects, listed in the section
+  `Existing Tutorials and Projects` of `.claude/skills/tutorial_in_60_mins.rules.md`
+  - Read the `README.md` of the Fall2025 `trl` projects, and reuse what is good
+    - `class_project/msml610/Fall2025/projects/UmdTask_43_Fall2025_trl_Dialogue_System_Enhancement/`
+    - `class_project/msml610/Fall2025/projects/UmdTask20_Fall2025_trl_Sentiment_Analysis_with_Reinforcement_Learning/`
+  - Read the `README.md` of the Fall2025 `trlx` and PEFT projects for the related
+    post-training tools
+    - `class_project/msml610/Fall2025/projects/UmdTask18_Fall2025_trlx_Automated_Text_Summarization_with_Feedback_Loop/`
+    - `class_project/msml610/Fall2025/projects/UmdTask96_Fall2025_PEFT_Sentiment_Analysis_on_Movie_Reviews/`
+  - Read the notebooks of `msml610/tutorials/L12_reinforcement_learning/` for the
+    reinforcement learning background
+  - The `trl` API changes across versions, so pin the version in the Docker container
+    and check that the Fall2025 code still runs
+- Create `tutorials/trl/`, since it does not exist yet
+- Make it look like `msml610/tutorials/L03_knowledge_representation/`
+- Use the skills in `.claude/skills/notebook.*` to automate part of the work, and
+  document how you used them
+- Compare briefly with `trlx` from the training loop point of view, i.e., the reward
+  function, the KL control, and the supported algorithms
+- Deliverables:
+  - `trl_utils.py`
+  - `trl.API.ipynb`
+  - `trl.example.ipynb`
 
-- Fine-tune Model:  
-  Apply reinforcement learning techniques to fine-tune the model using the defined reward function.
+# Project
 
-- Generate and Evaluate Text:  
-  Generate new text samples and evaluate them based on the reward function.
+## Project 1: Style Optimization of Text Generation
 
-**Bonus Ideas**:  
-- Experiment with different reward functions to see how it affects the quality of generated text.  
-- Compare the performance of the fine-tuned model against the original GPT-2 model.
+- **Difficulty**: 1 (Easy)
+- **Project Objective**: Steer GPT-2 towards a Shakespearean style by optimizing a
+  reward, and measure the gain over the base model
+- **Dataset Suggestions**:
+  [Tiny Shakespeare](https://github.com/karpathy/char-rnn/blob/master/data/tinyshakespeare/input.txt)
+- **Tasks**:
+  - **Preprocess the Text**: Split the text into prompts of 16 words, with the
+    following 30 words as the reference, and hold out 10% for the evaluation
+  - **Define the Problem**: Write a reward function that is the fraction of words of
+    the Shakespeare vocabulary minus a repetition penalty, and measure the reward of
+    the base GPT-2
+  - **Fine-Tune with SFT**: Run `SFTTrainer` on the training text as the supervised
+    starting point
+  - **Optimize with RL**: Run `GRPOTrainer` with the reward function, and log the
+    mean reward at each step
+  - **Evaluate the Model**: Compare the mean reward, the perplexity, and the
+    repetition rate of the base, SFT, and RL models on the held-out prompts
+  - **Visualize the Results**: Plot the reward curve, and show five prompts with the
+    generation of each model
+- **Bonus Ideas (Optional)**: Compare two different reward functions; test the effect
+  of the KL coefficient
 
----
+### Milestones
 
-**Project 2: Dialogue System Enhancement**  
-**Difficulty**: 2
+- Milestone 1: Set up the container and the data
+  - Project tasks: Preprocess the Text
+  - Result: `tutorials/trl/` container running with the pinned `trl` version, and a
+    table with the number of prompts and references
+- Milestone 2: API notebook
+  - Project tasks: Fine-Tune with SFT, Optimize with RL
+  - Result: `trl.API.ipynb` covering `SFTTrainer`, `RewardTrainer`, `DPOTrainer`,
+    `GRPOTrainer`, and a custom reward function
+- Milestone 3: Example notebook
+  - Project tasks: Define the Problem, Fine-Tune with SFT, Optimize with RL, Evaluate
+    the Model, Visualize the Results
+  - Result: `trl.example.ipynb` running end to end
 
-**Project Objective**:  
-Enhance a dialogue system to improve user satisfaction by optimizing responses using reinforcement learning techniques.
+## Project 2: Preference Optimization of a Dialogue Model
 
-**Dataset Suggestions**:  
-- "DailyDialog" dataset available on Hugging Face: [DailyDialog](https://huggingface.co/datasets/dailydialog)
+- **Difficulty**: 2 (Medium)
+- **Project Objective**: Make a small dialogue model answer in a more polite and
+  positive way, using preference pairs and a reward model
+- **Dataset Suggestions**:
+  [DailyDialog](https://huggingface.co/datasets/li2017dailydialog/daily_dialog)
+- **Tasks**:
+  - **Load the Dialogues**: Build the (context, response) pairs from DailyDialog,
+    using the last utterance of the context as the prompt
+  - **Build Preference Pairs**: Sample two responses per context from
+    `DialoGPT-small`, and mark as `chosen` the one with the higher positive sentiment
+    score
+  - **Train a Reward Model**: Fit `RewardTrainer` on the pairs, and report its
+    pairwise accuracy on a held-out split
+  - **Optimize the Dialogue Model**: Run `DPOTrainer` on the pairs, starting from
+    `DialoGPT-small`
+  - **Evaluate the Responses**: Compare the reward model win rate, the mean
+    sentiment, and the response length of the base and optimized models on 200
+    held-out contexts
+  - **Analyze the Behavior**: Read ten examples, and look for reward hacking such as
+    generic or repeated replies
+- **Bonus Ideas (Optional)**: Compare `DPOTrainer` with plain `SFTTrainer` on the
+  `chosen` responses only
 
-**Tasks**:  
-- Set Up `trl` Environment:  
-  Install and configure the `trl` library for dialogue system enhancement.
+## Project 3: Reward and KL Trade-Offs in Customer Replies
 
-- Load Pre-trained Dialogue Model:  
-  Use a pre-trained conversational model from Hugging Face, such as DialoGPT.
-
-- Define User Satisfaction Reward:  
-  Implement a reward system based on user feedback or sentiment analysis of responses.
-
-- Fine-tune Dialogue Model:  
-  Use reinforcement learning to fine-tune the dialogue model based on the user satisfaction rewards.
-
-- Evaluate Dialogue Quality:  
-  Test the enhanced dialogue system with users and analyze improvements in satisfaction.
-
-**Bonus Ideas**:  
-- Implement a feedback loop where user interactions continuously improve the model over time.  
-- Compare the enhanced model with traditional fine-tuning methods to assess performance differences.
-
----
-
-**Project 3: Sentiment Analysis with Reinforcement Learning**  
-**Difficulty**: 3
-
-**Project Objective**:  
-Create a sentiment analysis model that adapts over time using reinforcement learning to optimize classification accuracy based on user feedback.
-
-**Dataset Suggestions**:  
-- "Twitter US Airline Sentiment" dataset available on Kaggle: [Twitter US Airline Sentiment](https://www.kaggle.com/datasets/crowdflower/twitter-airline-sentiment)
-
-**Tasks**:  
-- Set Up `trl` Environment:  
-  Install and configure the `trl` library for sentiment analysis tasks.
-
-- Load Pre-trained Sentiment Model:  
-  Use a pre-trained BERT model from Hugging Face for initial sentiment classification.
-
-- Define User Feedback Reward System:  
-  Create a reward function based on user feedback on sentiment predictions.
-
-- Fine-tune Sentiment Model:  
-  Apply reinforcement learning techniques to adapt the sentiment model based on the defined reward system.
-
-- Evaluate Model Performance:  
-  Measure the classification accuracy before and after applying reinforcement learning techniques.
-
-**Bonus Ideas**:  
-- Implement an active learning approach where the model requests user feedback on uncertain predictions.  
-- Explore multi-task learning by integrating additional sentiment-related tasks to improve overall performance.
-
+- **Difficulty**: 3 (Hard)
+- **Project Objective**: Train a model to write positive replies to unhappy airline
+  passengers, and measure the trade-off between the reward and the drift from the
+  base model
+- **Dataset Suggestions**:
+  [Twitter US Airline Sentiment](https://www.kaggle.com/datasets/crowdflower/twitter-airline-sentiment)
+- **Tasks**:
+  - **Select the Prompts**: Keep the negative tweets, remove the mentions and the
+    links, and use them as prompts
+  - **Define the Reward**: Combine the positive score of a pre-trained sentiment
+    classifier on the reply with a penalty for replies over 40 tokens
+  - **Optimize the Policy**: Train GPT-2 with `GRPOTrainer` for three values of the
+    KL coefficient `beta`, with three seeds each
+  - **Evaluate the Trade-Offs**: Plot the mean reward vs. the KL divergence to the
+    reference model, with the standard deviation over the seeds
+  - **Check the Text Quality**: Measure the distinct-2 ratio of the replies, and read
+    20 samples to detect reward hacking
+  - **Compare with a Baseline**: Fine-tune with `SFTTrainer` on the best-of-8 replies
+    by reward, and compare it with the RL model
+- **Bonus Ideas (Optional)**: Add a second reward for the relevance of the reply to
+  the tweet, and study how the two rewards trade off

@@ -3,7 +3,6 @@
 ## Status
 - **Status:**: draft
 - **Complete Specs:**: 40%
-- **Assignee:**: ...
 
 ## Core Idea
 

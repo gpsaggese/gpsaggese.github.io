@@ -3,7 +3,6 @@
 ## Status
 - **Status**: draft
 - **Complete Specs**: 15%
-- **Assignee**: TBD
 
 ## Core Idea
 - The Noesis protocol paper (`papers/Noesis/03_contracts_and_notation.tex`)

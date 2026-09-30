@@ -4,7 +4,6 @@
 
 - **Status:**: in_progress
 - **Complete Specs:**: 80%
-- **Assignee:**: TBD
 
 ## Core Idea
 
@@ -69,16 +68,26 @@
 
 ## Key Examples
 
-- **[Example 1]**: [Concrete scenario illustrating the idea]
-- **[Example 2]**: [Second scenario, possibly from a different domain]
-- **[Example 3]**: [Edge case or failure mode]
+- **Same dataset, different agents**: run AutoGluon, PyCaret, and Jupyter AI
+  on the UCI Heart Disease dataset and compare test AUC, runtime, and
+  readability of the generated code
+- **Multi-agent vs single agent**: an AutoGen pipeline with separate EDA,
+  modeling, and reporting agents against a single ChatGPT Advanced Data
+  Analysis session on the same task
+- **Silent failure**: a dataset with a leaked feature or corrupted labels; an
+  agent reports 0.99 AUC without any warning, while a better agent flags the
+  leak
 
 ## Questions
 
 1. Which agents produce the best models, most readable code, and most useful
    insights, and under what conditions?
-2. [Open question 2: what would a proof or counterexample look like?]
-3. [Provocative implication: if true, what does this change?]
+2. How much of the ranking is due to the agent and how much to the dataset?
+   Rank reversals across datasets would be a counterexample to any claim that
+   one agent is best.
+3. If an AutoML tool matches the LLM-based agents on performance at a fraction
+   of the cost, is the value of the LLM agents only in the explanation and
+   reporting layer?
 
 ## Research Topics
 

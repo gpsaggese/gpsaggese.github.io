@@ -4,7 +4,6 @@
 
 - **Status:**: draft
 - **Complete Specs:**: 15%
-- **Assignee:**: TBD
 
 ## Core Idea
 
@@ -94,15 +93,31 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- Milestone 1: dataset and labels
+  - Assemble a news and price dataset with precise timestamps
+  - Define labels $y_i$ for several horizons $\Delta$, using both raw and
+    excess returns
+  - Split by time and check for leakage (timestamp alignment, no news after
+    the cutoff)
+  - This is the result: a versioned dataset, the labeling code, and a leakage
+    checklist
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- Milestone 2: fine-tune and compare
+  - Fine-tune a baseline model on the price-derived labels
+  - Compare out-of-sample predictive power against FinBERT, the
+    Loughran-McDonald dictionary, and a momentum baseline
+  - This is the result: a predictive-power table across horizons and evidence
+    for or against price-derived labels
+
+- Milestone 3: move attribution
+  - Detect moves above $k$ standard deviations and pull the candidate news
+    before each move
+  - Rank candidates by LLM plausibility with an explicit "unexplained" class
+  - Check the result against a hand-labeled set of known event days
+  - This is the result: the unexplained-move fraction and the false-attribution
+    rate
 
 ## References
 
-- 2019, Araci, "FinBERT: Financial Sentiment Analysis with Pre-trained Language
-  Models"
+- Araci, _FinBERT: Financial Sentiment Analysis with Pre-trained Language Models_.
+  (2019)

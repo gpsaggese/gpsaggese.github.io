@@ -69,6 +69,7 @@
 | [DoWhy](../data605/Spring2025/project_descriptions/DoWhy_Project_Description.md) | Done | [Mayur Sangle](https://github.com/Mayur074) | [TutorTask119](https://github.com/causify-ai/tutorials/issues/119) | [Result](../data605/Spring2025/projects/TutorTask119_Spring2025_Real-Time_Bitcoin_Causal_Analysis_with_DoWhy) | Spring2025 |
 | [DocsGPT](DATA605/DocsGPT_Project_Description.md) | Done | [Priyanshee Parmar](https://github.com/09priyanshee)<br>[Kshiti Deshpande](https://github.com/kshitideshpande) | [TutorTask111](https://github.com/causify-ai/tutorials/issues/111)<br>[UmdTask437](https://github.com/gpsaggese/gpsaggese.github.io/issues/437) | [Result 1](../data605/Spring2025/projects/TutorTask111_Spring2025_Real-Time_Bitcoin_Data_Q&A_Bot_with_DocsGPT)<br>[Result 2](../data605/Spring2026/projects/UmdTask437_DATA605_Spring2026_DocsGPT) | Spring2025<br>Spring2026 |
 | [Dolibarr](DATA605/Dolibarr_Project_Description.md) |  | — | — | — | — |
+| [DuckDB](DATA605/DuckDB_Project_Description.md) |  | — | — | — | — |
 | [ERPNext](DATA605/ERPNext_Project_Description.md) |  | — | — | — | — |
 | [ElasticSearch_WebTraffic](../data605/Spring2024/SorrTask833_ElasticSearch_WebTraffic/README.md) | Done | [@Berks97](https://github.com/Berks97) | [SorrTask833](https://github.com/causify-ai/kaizenflow/issues/833) | [Result](../data605/Spring2024/SorrTask833_ElasticSearch_WebTraffic) | Spring2024 |
 | [FLAML](DATA605/FLAML_Project_Description.md) |  | — | — | — | — |

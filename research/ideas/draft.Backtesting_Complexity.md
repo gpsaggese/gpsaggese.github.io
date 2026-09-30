@@ -4,7 +4,6 @@
 
 - **Status:**: draft
 - **Complete Specs:**: 10%
-- **Assignee:**: TBD
 
 ## Core Idea
 
@@ -77,13 +76,25 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- Milestone 1: simulate the search penalty
+  - Generate $N$ random strategies with no true edge on synthetic returns and
+    select the best one by in-sample Sharpe ratio
+  - Measure the out-of-sample Sharpe ratio of the selected strategy as $N$
+    grows from 1 to 10,000
+  - Fit the in-sample vs out-of-sample gap against $\log N$ and compare it
+    with the $VC_{\text{eff}}$ prediction
+  - This is the result: a curve of the overfitting gap as a function of $N$
+    and a measure of how well the $\log N$ term explains it
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- Milestone 2: apply to real data and formalize
+  - Run the same procedure on a public price dataset with a parameterized
+    strategy family (e.g., moving-average crossovers), counting every tested
+    parameter setting as one strategy
+  - Compute a Rademacher-complexity bound and a multiple-testing-corrected
+    significance level for the selected strategy
+  - Write the selection-bias statement in VC terms
+  - This is the result: a corrected performance estimate for the selected
+    strategy and a first formal statement of the selection bias
 
 ## References
 

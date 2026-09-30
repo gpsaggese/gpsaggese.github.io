@@ -3,7 +3,6 @@
 ## Status
 - **Status**: draft
 - **Complete Specs**: TBD
-- **Assignee**: TBD
 
 ## Core Idea
 - Build a tutorial that teaches how to understand, implement, and apply

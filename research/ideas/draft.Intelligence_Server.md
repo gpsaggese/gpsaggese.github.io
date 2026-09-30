@@ -3,7 +3,6 @@
 ## Status
 - **Status:**: draft
 - **Complete Specs:**: 15%
-- **Assignee:**: TBD
 
 ## Core Idea
 - Build a lightweight LLM API gateway, modeled on OpenRouter, that proxies

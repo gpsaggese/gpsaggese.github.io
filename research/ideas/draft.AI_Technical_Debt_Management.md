@@ -4,7 +4,6 @@
 
 - **Status**: draft
 - **Complete Specs**: TBD
-- **Assignee**: TBD
 
 ## Core Idea
 

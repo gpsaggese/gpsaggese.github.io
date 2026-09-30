@@ -3,7 +3,6 @@
 ## Status
 - **Status:**: draft
 - **Complete Specs:**: 15%
-- **Assignee:**: TBD
 
 ## Core Idea
 - Model Context Protocol (MCP) is becoming the standard way LLM apps (Claude
