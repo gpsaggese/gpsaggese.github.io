@@ -170,9 +170,11 @@
 
 ## References
 
-- GAIA Benchmark paper and dataset:
-  https://huggingface.co/datasets/gaia-benchmark/GAIA
-- SWE-bench official site and leaderboard: https://www.swebench.com/
-- DSBench GitHub repository: https://github.com/LiqiangJing/DSBench
-- MLE-Bench GitHub repository: https://github.com/openai/mle-bench
-- DataSciBench paper (arXiv 2025): https://arxiv.org/abs/2502.13897
+- Mialon et al., _GAIA: A Benchmark for General AI Assistants_. (2023)
+- Jimenez et al., _SWE-bench: Can Language Models Resolve Real-World GitHub
+  Issues?_. (2024)
+- Jing et al., _DSBench: How Far Are Data Science Agents from Becoming Data
+  Science Experts?_. (2024)
+- Chan et al., _MLE-bench: Evaluating Machine Learning Agents on Machine
+  Learning Engineering_. (2024)
+- Zhang et al., _DataSciBench: An LLM Agent Benchmark for Data Science_. (2025)

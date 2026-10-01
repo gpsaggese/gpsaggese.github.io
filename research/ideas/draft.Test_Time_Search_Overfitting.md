@@ -90,6 +90,9 @@
   token budget, with the overfitting penalty as the explanatory variable
 - **Connection to MDL**: express the search as extra description length and check
   whether the MDL penalty predicts the observed degradation
+- **Related ideas**: `draft.Backtesting_Complexity.md`,
+  `draft.MDL_Extensions_with_Research_Process.md`, and
+  `draft.Skill_vs_Luck_in_Agent_Benchmarks.md`
 
 ## Next steps
 
@@ -130,6 +133,3 @@
 - Gao et al., _Scaling Laws for Reward Model Overoptimization_. (2022)
 - Cobbe et al., _Training Verifiers to Solve Math Word Problems_. (2021)
 - Bailey et al., _The Probability of Backtest Overfitting_. (2014)
-- `draft.Backtesting_Complexity.md`
-- `draft.MDL_Extensions_with_Research_Process.md`
-- `draft.Skill_vs_Luck_in_Agent_Benchmarks.md`

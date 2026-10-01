@@ -63,6 +63,8 @@
 - Overfitting detection using Rademacher complexity
 - Formalizing selection bias in VC theory
 - Designing publication and disclosure standards based on learning theory
+- **Source material**: derived from `Research_plan/paper.tex` (Section: MDL
+  Extensions / Backtesting Complexity)
 
 ## Next steps
 
@@ -98,5 +100,4 @@
 
 ## References
 
-- Derived from `Research_plan/paper.tex` (Section: MDL Extensions / Backtesting
-  Complexity)
+- TBD

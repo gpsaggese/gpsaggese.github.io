@@ -94,6 +94,10 @@
   estimate the shrinkage needed for reported scores
 - **Contamination control**: compare pre- and post-cutoff task subsets to separate
   memorization from capability
+- **Related ideas**: `draft.Causal_Analysis_of_Hedge_Fund_Performance.md`,
+  `draft.Backtesting_Complexity.md`, `draft.Measure_ability_to_predict_events.md`,
+  `draft.Benchmarking_Data_Science_Agents.md`, and
+  `in_progress.Comparison_of_Coding_Agents.md`
 
 ## Next steps
 
@@ -133,8 +137,3 @@
 - Fama et al., _Luck versus Skill in the Cross-Section of Mutual Fund Returns_.
   (2010)
 - Embretson et al., _Item Response Theory for Psychologists_. (2000)
-- `draft.Causal_Analysis_of_Hedge_Fund_Performance.md`
-- `draft.Backtesting_Complexity.md`
-- `draft.Measure_ability_to_predict_events.md`
-- `draft.Benchmarking_Data_Science_Agents.md`
-- `in_progress.Comparison_of_Coding_Agents.md`

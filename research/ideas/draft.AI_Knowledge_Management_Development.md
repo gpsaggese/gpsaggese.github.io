@@ -165,7 +165,7 @@
     knowledge-based systems
   - Found that systems combining code analysis with documentation achieve 78%
     accuracy in recommending architectural patterns
-- GitHub, _GitHub Copilot Research_ (https://github.blog/research/). (2023)
+- GitHub, _GitHub Copilot Research_. (2023)
   - Large-scale study of 100,000+ developers using AI-assisted coding
   - Findings show developers using knowledge-assisted tools spend 30% less time
     searching for information and make 15% fewer architectural inconsistency

@@ -121,9 +121,10 @@
 | `draft.Tutorial_claude_agent_sdk.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Tutorial_claude_agent_sdk.md) | draft | - | 10% | - | - |
 | `draft.VC_Dimension_of_Causal_Networks.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.VC_Dimension_of_Causal_Networks.md) | draft | - | 10% | - | - |
 | `draft.Noesis_Hybrid_Auction_Latency.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Noesis_Hybrid_Auction_Latency.md) | draft | - | 10% | - | - |
+| `draft.Distribution_Shift_in_Time_Series_Forecasting.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Distribution_Shift_in_Time_Series_Forecasting.md) | draft | - | 0% | - | - |
 
 # Note
 - If the specs are not complete for a task you are interested in, before starting
   the work, ask GP to improve them so that there is clarity on what's the goal
 
-// Last update timestamp: "Sep 30 15:45"
+// Last update timestamp: "Oct 1 11:10"

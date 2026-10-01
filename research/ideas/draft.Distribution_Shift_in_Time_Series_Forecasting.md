@@ -1,168 +1,155 @@
-# Empirical Analysis of Foundation Model Robustness to Distribution Shifts in Time-Series Forecasting
+# Foundation Model Robustness to Distribution Shifts in Time-Series Forecasting
 
 ## Status
-**Status:** draft  
-**Complete Specs:** 0%  
-**Assignee:** TBD
 
-# Template B: Full Research Project
+- **Status:**: draft
+- **Complete Specs:**: 0%
 
-## Description
-- **Core Problem**: Foundation models (LLMs, vision transformers, time-series
-  models like Chronos, TimesFM) are trained on diverse datasets but often fail
-  silently when deployed on data with different statistical properties,
-  seasonality patterns, or value ranges
-- **Key Angle**: Systematic measurement of how various types of distribution
-  shifts (covariate shift, label shift, concept drift, temporal shift) affect
-  forecasting accuracy across model families
-- **Novelty**: Most benchmarks test on held-out test sets from the same
-  distribution; this project measures _transfer_ robustness explicitly
-- **Contribution**: Taxonomy of shift types, quantitative degradation curves,
-  and practical detection methods for practitioners
+## Core Idea
 
-## Project Objective
-Real-world time-series data often violates the assumption that training and test
-distributions are identical. Stock prices shift regimes, sensor networks degrade
-over time, and seasonal patterns change. This project asks: **How robust are
-state-of-the-art foundation models to different types of distribution shifts,
-and can we predict or detect when a model will fail?**
+- Foundation models (time-series models like Chronos and TimesFM, fine-tuned
+  LLMs) are trained on diverse datasets but often fail silently when deployed on
+  data with different statistical properties, seasonality patterns, or value
+  ranges: the model keeps running, but its predictions degrade
+- Most benchmarks test on a held-out split from the same distribution, so they
+  do not measure _transfer_ robustness; real-world series instead show regime
+  shifts, sensor degradation, and seasonal changes that violate the IID
+  assumption
+- Hypothesis: different shift types (covariate shift, label shift, concept
+  drift, temporal shift) degrade forecasting accuracy in predictable ways, and
+  the degradation can be detected in real time with statistical tests on the
+  prediction residuals
+- Contribution: a taxonomy of shift types, quantitative degradation curves per
+  model family, and practical drift-detection methods for practitioners
+  deploying forecasting models in production
 
-We will:
+## Formalization
 
-1. Curate a suite of time-series datasets with documented distributional shifts
-2. Benchmark foundation models (and classical baselines) on in-distribution vs
-   shifted test splits
-3. Quantify accuracy degradation per shift type
-4. Develop early-warning metrics to flag when a deployed model is drifting
+- Let $(x_t, y_t)$ be the (history window, target) pair at time $t$, drawn from
+  $P_t(x, y)$, and let $P_{train}$ and $P_{test}$ be the train and test
+  distributions
+- Shift types, defined by what changes between $P_{train}$ and $P_{test}$:
+  - **Covariate shift**: $P(x)$ changes, $P(y \mid x)$ is fixed (e.g., a scale
+    shift of the input series)
+  - **Label shift**: $P(y)$ changes, $P(x \mid y)$ is fixed
+  - **Concept drift**: $P(y \mid x)$ changes (e.g., a regime change)
+  - **Temporal shift**: $P_t$ depends on the time index through a seasonal or
+    regime component (e.g., a seasonal reversal)
+- Degradation of model $m$ under shift type $s$, for an error metric
+  $\text{Err} \in \{\text{MAE}, \text{RMSE}, \text{MAPE}\}$:
+  ```
+  Delta(m, s) = Err_m(shifted_s) / Err_m(in_distribution) - 1
+  ```
+- Residual-based drift score: with residuals $e_t = y_t - \hat{y}_t$, a reference
+  window $R$, and a recent window $W_t$ of length $w$
+  ```
+  D_t = Wasserstein(dist(e in R), dist(e in W_t)),  alarm if D_t > tau
+  ```
+  - Evaluate by detection latency (time between the true shift and the alarm)
+    and false-positive rate as a function of $\tau$
 
-This addresses a critical gap for practitioners deploying forecasting models in
-production
+## Key Examples
 
-## Core Thesis
-- **Conventional view**: A model trained on historical data will generalize to
-  future data if test data comes from the same distribution
-- **Empirical motivation**: Real-world time series experience regime shifts,
-  concept drift, and seasonal changes that violate IID assumptions; most
-  production failures are silent (model runs but predictions degrade)
-- **Hypothesis**: Different shift types (covariate vs. label vs. concept drift)
-  degrade model performance predictably, and this degradation can be detected in
-  real time via statistical tests on prediction residuals
-- **Goal**: A quantitative framework mapping shift type → expected performance
-  drop, plus a dashboard tool for monitoring deployed models
+- **Electricity load**: hourly demand has clear seasonal, weekly, and annual
+  cycles; grid modernization, weather patterns, and policy changes introduce
+  covariate shift that a model trained on earlier years has not seen
+- **Stock prices**: market regime changes and macro events change
+  $P(y \mid x)$, so a model trained on one regime can degrade on the next (concept
+  drift)
+- **Synthetic shifts**: apply a controlled scale shift or a seasonal reversal
+  to a clean series, so that the shift type and its onset are known exactly
+- **Silent failure**: the model returns forecasts with no error, and accuracy
+  drops only after the shift; a residual-based alarm is the only signal
 
-## Dataset Suggestions
-1. **UCI Time Series Archive: Multiple Shift Datasets**
-   - Source: https://www.cs.ucr.edu/~eamonn/time_series_data_2018/
-   - Contains: 128 labeled time-series datasets (ECG, stock prices, sensor data,
-     weather) with documented structural breaks and regime changes
-   - Access: Free download
-   - Why: Provides ground-truth shift points; enables controlled evaluation
+## Questions
 
-2. **Kaggle: Energy Consumption Data (Electricity Load)**
-   - Source:
-     https://www.kaggle.com/datasets/robikscube/hourly-energy-consumption
-   - Contains: Hourly electricity demand (kWh) from 2004–2018; clear seasonal,
-     weekly, and annual cycles with structural breaks during crises
-   - Access: Free with Kaggle account
-   - Why: Real-world covariate shift from grid modernization, weather patterns,
-     and policy changes
+1. Does each shift type degrade accuracy in a predictable, model-family-specific
+   way? A counterexample is a robustness ranking of the models that flips
+   between datasets for the same shift type.
+2. Do foundation models generalize better than classical baselines (ARIMA,
+   Prophet) to covariate shift but not to concept drift, or are both families
+   equally brittle?
+3. Can residual-based tests (e.g., Wasserstein distance) flag a model decay
+   before the error visibly increases, and with what lead time at an acceptable
+   false-positive rate?
+4. If true, what does this change? Organizations would select models by their
+   documented robustness to the expected shift types, not by holdout accuracy,
+   and would trigger retraining by detected drift, not by a fixed schedule.
 
-3. **Yahoo! Finance API: Stock Price Time Series**
-   - Source: yfinance Python library (free, no key required)
-   - Contains: OHLCV (open, high, low, close, volume) data for equities, crypto,
-     indices with market regime shifts
-   - Access: Free tier
-   - Why: Extreme volatility shifts, sentiment-driven regime changes, and
-     concept drift from macro events
+## Research Topics
 
-4. **NOAA Climate Data Online**
-   - Source: https://www.ncei.noaa.gov/cdo-web/
-   - Contains: Daily temperature, precipitation, wind speed with long-term
-     climate drift and seasonal anomalies
-   - Access: Free registration; REST API available
-   - Why: Explicitly documents climate shift; natural benchmarks for concept
-     drift
+- **Shift taxonomy**: operationalize the four shift types for time series, and
+  generate a synthetic version of each (e.g., scale shifts, seasonal reversals)
+- **Shift detection baselines**: Kolmogorov-Smirnov test, Wasserstein distance
+  on rolling windows, ADWIN, and DDM, integrated into a monitoring framework
+- **Models**: at least 3 foundation models (Chronos, TimesFM, or fine-tuned
+  LLMs) and 3 classical methods (ARIMA, Prophet, ESN)
+- **Datasets**: candidate sources, to check for usable shift points:
+  - UCR Time Series Archive: 128 labeled datasets (ECG, sensor, and others),
+    https://www.cs.ucr.edu/~eamonn/time_series_data_2018/
+  - Kaggle hourly energy consumption (2004-2018), real covariate shift from
+    grid modernization, weather, and policy changes
+  - Yahoo! Finance via the `yfinance` library: OHLCV data for equities, crypto,
+    and indices with market regime shifts
+  - NOAA Climate Data Online: daily temperature, precipitation, and wind speed
+    with long-term climate drift, https://www.ncei.noaa.gov/cdo-web/
+  - M4 Forecasting Competition: 100k series (hourly to yearly) with known
+    train/test splits, which allows comparison to published baselines
+- **Adaptive retraining**: fixed retraining schedules vs drift-triggered
+  retraining, and the cost/benefit trade-off
+- **Robust training**: pre-train on synthetic shift-augmented data and measure
+  zero-shot transfer to real shifts; compare domain randomization over mixed
+  shift types to standard data augmentation
+- **Forecast horizon**: how the shift sensitivity grows from 1-step to 30-step
+  ahead forecasts
+- **Early-warning alternatives**: autoencoder reconstruction error vs
+  statistical tests as a predictor of model failure
+- **Causal analysis**: which causal variables drive the shifts, and whether
+  interventions on slow-moving variables predict regime changes
 
-5. **M4 Forecasting Competition Dataset**
-   - Source: https://github.com/Mcompetitions/M4-methods/tree/master/Dataset
-   - Contains: 100k time series (hourly, daily, weekly, monthly, yearly) with
-     known train/test splits and documented anomalies
-   - Access: Free download
-   - Why: Standardized benchmarks; enables direct comparison to published
-     baselines
+## Next steps
 
-## Tasks
-1. **Formalize Distribution Shift Taxonomy**: Define and operationalize
-   covariate shift, label shift, concept drift, and temporal shift in
-   time-series context; create synthetic versions of each (e.g., scale shifts,
-   seasonal reversals) to enable controlled evaluation
+- [ ] Look for related research (what has already been done)
+- [ ] Finalize the implementation plan
+- [ ] GP to review / approve the plan
+- [ ] Hack a quick end-to-end prototype (e.g., in 1-2 days) to show that you
+      understood the problem and can make progress
+- [ ] Break the problem down in phases and milestones
+- [ ] Execute one step at the time
 
-2. **Implement Shift Detection Baselines**: Code statistical tests for
-   distribution shift (Kolmogorov-Smirnov, Wasserstein distance on rolling
-   windows, ADWIN, DDM) and integrate into a monitoring framework
+## Implementation plan
 
-3. **Benchmark Foundation Models & Classical Baselines**: Train at least 3
-   foundation models (Chronos, TimesFM, or fine-tuned LLMs) and 3 classical
-   methods (ARIMA, Prophet, ESN) on in-distribution training data
+- Milestone 1: shift taxonomy and detection baselines
+  - Define the four shift types and generate a synthetic version of each on
+    clean series
+  - Code the detection baselines (KS, rolling-window Wasserstein, ADWIN, DDM)
+  - This is the result: a labeled set of shifted series and a detector library
+    with known detection latency on synthetic shifts
 
-4. **Evaluate on Shifted Test Splits**: For each dataset and each shift type,
-   measure accuracy (MAE, RMSE, MAPE) on in-distribution vs. shifted test
-   splits; record degradation curves
+- Milestone 2: benchmark on shifted test splits
+  - Curate the datasets and train 3 foundation models and 3 classical methods
+    on in-distribution data
+  - For each dataset and shift type, measure MAE, RMSE, and MAPE on the
+    in-distribution and shifted test splits
+  - This is the result: degradation curves $\Delta(m, s)$ for every model and
+    shift type
 
-5. **Analyze Shift Sensitivity Profiles**: Compute rank correlations between
-   model architectures' robustness to shifts; identify which model families are
-   robust to which shift types
+- Milestone 3: shift sensitivity profiles
+  - Compute rank correlations between the robustness of the model families
+  - Identify which model families are robust to which shift types
+  - This is the result: a mapping from shift type to expected performance drop
 
-6. **Develop Real-Time Monitoring Dashboard**: Implement a tool that flags when
-   deployed models are drifting; test threshold tuning to balance false
-   positives vs. detection latency
+- Milestone 4: real-time monitoring
+  - Implement a dashboard that flags when a deployed model is drifting
+  - Tune the alarm threshold to balance false positives against detection
+    latency
+  - This is the result: a monitoring tool and a measured lead time of the
+    residual-based alarm over the visible accuracy drop
 
-## Expected Findings
-1. **Concept drift causes the largest accuracy degradation**: Models trained on
-   pre-2008 financial data will be ~30–50% less accurate on post-2008 data;
-   seasonal concept drift is often undetected
-2. **Foundation models generalize better to covariate shifts but not concept
-   drift**: Pre-trained transformers show 10–20% smaller accuracy drop on
-   scaling shifts but fail silently on seasonal reversals
-3. **Classical ARIMA and Prophet are more interpretable but similarly brittle**:
-   Both are robust to magnitude shifts but fail on regime changes; Prophet's
-   built-in changepoint detection is moderately effective (~70% recall at 1%
-   false positive rate)
-4. **Residual-based tests detect drift weeks before accuracy degrades**:
-   Wasserstein distance on prediction residuals flags model decay 2–4 weeks
-   before MAE visibly increases
+## References
 
-## Bonus Ideas
-- **Adaptive Retraining**: Compare fixed retraining schedules vs
-  drift-triggered retraining; quantify cost/benefit tradeoff
-- **Transfer Learning for Shifts**: Pre-train models on synthetic
-  shift-augmented data; measure zero-shot transfer to real shifts
-- **Domain Randomization in Forecasting**: Do models trained on mixtures of
-  shift types generalize better? Compare to standard data augmentation
-
-## Extensions
-- **Multi-Step-Ahead Forecasting**: How does shift sensitivity grow with
-  forecast horizon? (e.g., 1-step vs. 30-step ahead)
-- **Anomaly Detection as Early Warning**: Can reconstruction error from
-  autoencoders predict model failure better than statistical tests?
-- **Causal Analysis**: Which causal variables drive shifts? Can interventions on
-  slow-moving variables predict regime changes?
-
-## Policy / Practical Implications
-- **Monitoring Requirements**: Production forecasting pipelines should implement
-  drift detection; current best practices lag by 5+ years
-- **Model Selection**: Organizations should choose models based on documented
-  robustness to their expected shift types, not just accuracy on holdout data
-- **Retraining Strategy**: Reactive retraining on new data is inefficient;
-  proactive retraining triggered by detected shifts can reduce alert latency by
-  50%+
-
-## Useful Resources
-- [Chronos: Pretrained Language Models for Forecasting](https://arxiv.org/abs/2401.16588)
-  — Foundation model for time series; arXiv preprint
-- [Concept Drift Adaptation in Time-Series Forecasting](https://ieeexplore.ieee.org/document/8215634)
-  — Gama et al. (2018) IEEE TKDE
-- [The UCR Time Series Archive](https://www.cs.ucr.edu/~eamonn/time_series_data_2018/)
-  — 128 labeled datasets with ground-truth anomalies
-- [ADWIN: Adaptive Windowing for Change Detection](https://dl.acm.org/doi/10.1145/1642194.1642271)
-  — Bifet & Gavalda (2007)
+- Ansari et al., _Chronos: Learning the Language of Time Series_. (2024)
+- Gama et al., _A Survey on Concept Drift Adaptation_. (2014)
+- Dau et al., _The UCR Time Series Archive_. (2019)
+- Bifet and Gavalda, _Learning from Time-Changing Data with Adaptive Windowing_.
+  (2007)

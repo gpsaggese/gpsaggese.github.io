@@ -108,7 +108,7 @@ NetworkX
 - **Difficulty**: 3 (Hard)
 - **Project Objective**: Measure how fast the airline network breaks apart under
   random failures and under targeted attacks, and compare it with random graphs
-- **Dataset Suggestions**: [OpenFlights Routes](https://openflights.org/data.html)
+- **Dataset Suggestions**: [OpenFlights Routes](https://openflights.org/data)
 - **Tasks**:
   - **Build the Network**: Build a directed graph of airports from `routes.dat`, and
     keep the largest strongly connected component

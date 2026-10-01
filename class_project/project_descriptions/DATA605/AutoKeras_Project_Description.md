@@ -34,7 +34,6 @@ AutoKeras
     `README.md`
     - `class_project/msml610/Fall2025/projects/TutorTask_67_Fall2025_AutoKeras_Electricity_Load_Forecasting/`
   - Read the `README.md` of `tutorials/TensorFlow/` for the Keras basics
-- Create `tutorials/AutoKeras/`, since it does not exist yet
 - Make it look like `msml610/tutorials/L03_knowledge_representation/`
 - Use the skills in `.claude/skills/notebook.*` to automate part of the work, and
   document how you used them
