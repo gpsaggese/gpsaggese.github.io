@@ -31,7 +31,9 @@ Gensim
     - `class_project/data605/Spring2026/projects/UmdTask420_DATA605_Spring2026_Gensim_topic_modeling/`
   - Read the `README.md` of the Fall2025 SBert project for the neural embeddings
     - `class_project/msml610/Fall2025/projects/Fall2025_SBert_Sentiment_Analysis_with_Sentence_Embeddings/`
-- Create `tutorials/Gensim/`, since it does not exist yet
+- Create the project dir following the class instructions in
+  `class_project/README.md`, section `Contribution to the Repo`
+  - Start from `class_project/project_template`
 - Make it look like `msml610/tutorials/L03_knowledge_representation/`
 - Use the skills in `.claude/skills/notebook.*` to automate part of the work, and
   document how you used them
@@ -44,88 +46,110 @@ Gensim
 
 # Project
 
-## Project 1: Sentiment Classification of Movie Reviews
+## Project 1 (Fall2026): Sentiment Classification of Financial News
 
-- **Difficulty**: 1 (Easy)
-- **Project Objective**: Classify movie reviews as positive or negative from Word2Vec
-  document vectors, and check if they beat a bag-of-words baseline
+- **Project Objective**: Classify financial news sentences as negative, neutral, or
+  positive from Word2Vec sentence vectors, and check if they beat a TF-IDF baseline
 - **Dataset Suggestions**:
-  [IMDB Dataset of 50K Movie Reviews](https://www.kaggle.com/datasets/lakshmi25npathi/imdb-dataset-of-50k-movie-reviews)
+  [Financial PhraseBank](https://huggingface.co/datasets/takala/financial_phrasebank),
+  with 4,846 sentences from company news labeled by finance experts (use the file
+  `Sentences_50Agree.txt` in the zip of the dataset repo)
 - **Tasks**:
-  - **Preprocess the Text**: Tokenize the reviews with `simple_preprocess`, remove
-    the stop words, and split them into train and test sets
-  - **Define the Problem**: Predict the sentiment as a binary label, and fit a TF-IDF
-    plus logistic regression baseline
-  - **Train Word Embeddings**: Train `Word2Vec` on the training reviews, and inspect
-    the `most_similar` words of five sentiment words
-  - **Build Document Features**: Represent each review as the mean of its word
+  - **Preprocess the Text**: Tokenize the sentences with `simple_preprocess`, remove
+    the stop words, and make a stratified train and test split
+  - **Define the Problem**: Predict the sentiment as a 3-class label, and fit a TF-IDF
+    plus logistic regression baseline and a majority-class baseline
+  - **Train Word Embeddings**: Train `Word2Vec` on the training sentences, and inspect
+    the `most_similar` words of five finance terms, e.g., `profit`, `loss`, and `debt`
+  - **Build Sentence Features**: Represent each sentence as the mean of its word
     vectors, and fit a logistic regression on them
-  - **Evaluate the Models**: Report accuracy, precision, and recall of both models on
-    the test set, with a confusion matrix
+  - **Evaluate the Models**: Report accuracy and macro-F1 of all models on the test
+    set, with a confusion matrix, since the neutral class dominates
   - **Visualize the Embeddings**: Project the 200 most frequent words to 2D with PCA
-    and label the sentiment words
-- **Bonus Ideas (Optional)**: Compare logistic regression with SVM and Random Forest;
-  test the effect of the `vector_size` and `window` parameters
+    and label the finance terms
+- **Bonus Ideas (Optional)**: Load the pretrained `glove-wiki-gigaword-100` vectors
+  with `gensim.downloader` as `KeyedVectors` and compare them with the embeddings
+  trained on 4,800 sentences; test the effect of `vector_size` and `window`
 
 ### Milestones
 
 - Milestone 1: Set up the container and the data
   - Project tasks: Preprocess the Text
-  - Result: `tutorials/Gensim/` container running, and a table with the vocabulary
-    size and the tokens per review
+  - Result: project dir created and container running, and a table with the
+    vocabulary size, the tokens per sentence, and the class counts
 - Milestone 2: API notebook
-  - Project tasks: Train Word Embeddings, Build Document Features
+  - Project tasks: Train Word Embeddings, Build Sentence Features
   - Result: `gensim.API.ipynb` covering `Word2Vec`, `FastText`, `KeyedVectors`,
     `Dictionary`, `TfidfModel`, `LdaModel` with `CoherenceModel`, and
     `MatrixSimilarity`
 - Milestone 3: Example notebook
-  - Project tasks: Define the Problem, Train Word Embeddings, Build Document
+  - Project tasks: Define the Problem, Train Word Embeddings, Build Sentence
     Features, Evaluate the Models, Visualize the Embeddings
   - Result: `gensim.example.ipynb` running end to end
 
-## Project 2: Topic Modeling and Classification of News Articles
+## Project 2: Topic Modeling of FOMC Statements and the Next Rate Decision
 
-- **Difficulty**: 2 (Medium)
-- **Project Objective**: Find the main topics of BBC news articles, and check how
-  well they align with the category labels used by a supervised classifier
+- **Project Objective**: Find the main topics of the Federal Open Market Committee
+  (FOMC) statements, and check if the topic weights predict the next meeting's rate
+  decision (hike, hold, or cut) better than a persistence baseline
 - **Dataset Suggestions**:
-  [BBC News](https://www.kaggle.com/datasets/yufengdev/bbc-fulltext-and-category),
-  with about 2,200 articles in 5 categories
+  - [FOMC statements](https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm),
+    about 120 scheduled meetings from 2010 to 2025, linked from the Fed calendar page
+    and from the yearly historical pages
+  - [Federal Funds Target Range, Upper Limit](https://fred.stlouisfed.org/series/DFEDTARU)
+    to label the rate decisions
 - **Tasks**:
+  - **Collect the Statements**: Download the statement of each scheduled meeting with
+    `requests` and `BeautifulSoup`, and remove the paragraph that lists the voters
   - **Preprocess the Text**: Lowercase, tokenize, and remove the stop words, then
-    build a `Dictionary` and a bag-of-words corpus
-  - **Fit the Topic Models**: Fit `LdaModel` for 3 to 12 topics, and choose the
-    number of topics with the `CoherenceModel` c_v score
-  - **Visualize the Topics**: Show the topics and their distances with `pyLDAvis`
-  - **Classify the Articles**: Train `Word2Vec` or `FastText`, average the vectors of
-    each article, and fit a logistic regression and an SVM
-  - **Evaluate the Classifiers**: Report accuracy, precision, recall, and F1 for each
-    category on the test set
-  - **Interpret the Topics**: Plot a heatmap of the topic weights per category, and
-    describe which topics match which category
-- **Bonus Ideas (Optional)**: Compare `LdaModel` with the `Nmf` model of Gensim; find
-  the categories that share topics; use a feed-forward network on FastText vectors
+    build a `Dictionary` with `filter_extremes` and a bag-of-words corpus
+  - **Fit the Topic Models**: Fit `LdaModel` for 3 to 10 topics with a fixed
+    `random_state`, and choose the number of topics with the `CoherenceModel` c_v
+    score
+  - **Predict the Next Decision**: Label each meeting with the target change at the
+    next meeting, then fit logistic regressions on the topic weights and on
+    `TfidfModel` features, training only on meetings before each test year (2016 on)
+  - **Evaluate the Classifiers**: Compare accuracy, macro-F1, and the recall of hikes
+    and cuts against the always-hold and the repeat-last-decision baselines
+  - **Interpret the Topics**: Name each topic from its top words, and plot the topic
+    weights over time with the hiking and cutting cycles shaded
+- **Bonus Ideas (Optional)**: Compare `LdaModel` with the `Nmf` model of Gensim; use
+  `MatrixSimilarity` to measure how much each statement differs from the previous
+  one and relate it to rate changes; train a `Word2Vec` classifier on the hawkish
+  and dovish sentences of the
+  [Trillion Dollar Words](https://huggingface.co/datasets/gtfintechlab/fomc_communication)
+  dataset
 
-## Project 3: Similarity and Clustering of Research Papers
+## Project 3: Similar-Company Search from 10-K Risk Factors
 
-- **Difficulty**: 3 (Hard)
-- **Project Objective**: Retrieve the papers similar to a given abstract and group
-  the papers by research area, comparing two embedding models
+- **Project Objective**: Retrieve the companies most similar to a given company from
+  the Risk Factors section of their 10-K filings, and test if the neighbors share the
+  industry and move together in the market more than random pairs, comparing three
+  text representations
 - **Dataset Suggestions**:
-  [arXiv Dataset](https://www.kaggle.com/datasets/Cornell-University/arxiv), using a
-  sample of 20,000 abstracts
+  - [EDGAR-CORPUS](https://huggingface.co/datasets/eloukas/edgar-corpus), annual 10-K
+    reports split by item, using the `section_1A` field of the filings of one year
+    (stream a sample of about 2,000 filings)
+  - [SEC EDGAR submissions API](https://www.sec.gov/edgar/sec-api-documentation) for
+    the SIC code and the ticker of each company, with a `User-Agent` header
+  - Daily prices from [yfinance](https://pypi.org/project/yfinance/)
 - **Tasks**:
-  - **Preprocess the Abstracts**: Sample abstracts from categories such as `cs.AI`,
-    `cs.LG`, and `stat.ML`, then clean and tokenize them
-  - **Train the Embeddings**: Train `FastText` and `Word2Vec` on the abstracts, and
-    compare their vectors for out-of-vocabulary words
-  - **Build Document Vectors**: Represent each abstract as the average of its word
-    vectors, for each of the two models
-  - **Rank Similar Papers**: Retrieve the ten nearest abstracts with
-    `MatrixSimilarity`, and judge the topical relevance of 20 queries by hand
-  - **Cluster the Papers**: Apply K-means and hierarchical clustering to the vectors,
-    and report the Silhouette Score and the Davies-Bouldin Index
-  - **Evaluate against the Categories**: Compare the clusters with the arXiv
-    categories using the adjusted Rand index, for both embedding models
-- **Bonus Ideas (Optional)**: Label each cluster with its top keywords; build a
-  recommender that combines the similarity search with the cluster of the query
+  - **Extract the Risk Factors**: Keep the filings with at least 500 words of
+    `section_1A`, then clean and tokenize them with `simple_preprocess`
+  - **Add the Industry Labels**: Get the SIC code of each company from the submissions
+    API, and group the companies by 2-digit SIC major group
+  - **Train the Embeddings**: Train `Word2Vec` and `FastText` on the risk factors, and
+    compare the `most_similar` words of risk terms such as `inflation` and
+    `cyberattack`, including a misspelled word
+  - **Build the Similarity Indexes**: Represent each company with `TfidfModel`
+    vectors as the baseline, and with the average `Word2Vec` and `FastText` vectors,
+    then index each one with `MatrixSimilarity`
+  - **Evaluate the Retrieval**: Report precision@10 of the same SIC group for each
+    representation, with a bootstrap 95% confidence interval over the companies
+  - **Test the Economic Meaning**: Compare the mean correlation of daily returns
+    between each company and its top-10 neighbors with the one of random pairs, using
+    the returns of the calendar year after the filings and skipping delisted tickers
+- **Bonus Ideas (Optional)**: Cluster the companies with K-means and compare the
+  clusters with the SIC groups using the adjusted Rand index; compare with SBert
+  sentence embeddings; measure the year-over-year change of the risk-factor vector of
+  each company

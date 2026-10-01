@@ -49,6 +49,11 @@ Team,
 - Sign up for office hours with this
   [sign-up form](https://docs.google.com/forms/d/1QiRnWVwMzKJbjY62aBnWAdZ-_h0LYC8F1np0MRC_p78)
 
+# Slack Channel
+
+- Join the
+  [Slack channel](https://umdresearch.slack.com/archives/C0C5RE1AD0V)
+
 # How to Use Office Hours
 
 - You do not have to come every 2-3 weeks

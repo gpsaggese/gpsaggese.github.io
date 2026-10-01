@@ -38,7 +38,9 @@ and small models such as GPT-2 show the effect on a laptop.
     reinforcement learning background
   - The `trl` API changes across versions, so pin the version in the Docker container
     and check that the Fall2025 code still runs
-- Create `tutorials/trl/`, since it does not exist yet
+- Create the project dir following the class instructions in
+  `class_project/README.md`, section `Contribution to the Repo`
+  - Start from `class_project/project_template`
 - Make it look like `msml610/tutorials/L03_knowledge_representation/`
 - Use the skills in `.claude/skills/notebook.*` to automate part of the work, and
   document how you used them
@@ -51,90 +53,101 @@ and small models such as GPT-2 show the effect on a laptop.
 
 # Project
 
-## Project 1: Style Optimization of Text Generation
+## Project 1 (Fall2026): Financial News Sentiment with a Verifiable Reward
 
-- **Difficulty**: 1 (Easy)
-- **Project Objective**: Steer GPT-2 towards a Shakespearean style by optimizing a
-  reward, and measure the gain over the base model
+- **Project Objective**: Teach a small language model to label financial news tweets as
+  bearish, bullish, or neutral, first with SFT and then with RL against a verifiable
+  reward, and measure the gain in macro-F1 over the base model
 - **Dataset Suggestions**:
-  [Tiny Shakespeare](https://github.com/karpathy/char-rnn/blob/master/data/tinyshakespeare/input.txt)
+  [Twitter Financial News Sentiment](https://huggingface.co/datasets/zeroshot/twitter-financial-news-sentiment)
+  - Use `sent_train.csv` for training and `sent_valid.csv` as the held-out set
 - **Tasks**:
-  - **Preprocess the Text**: Split the text into prompts of 16 words, with the
-    following 30 words as the reference, and hold out 10% for the evaluation
-  - **Define the Problem**: Write a reward function that is the fraction of words of
-    the Shakespeare vocabulary minus a repetition penalty, and measure the reward of
-    the base GPT-2
-  - **Fine-Tune with SFT**: Run `SFTTrainer` on the training text as the supervised
-    starting point
-  - **Optimize with RL**: Run `GRPOTrainer` with the reward function, and log the
-    mean reward at each step
-  - **Evaluate the Model**: Compare the mean reward, the perplexity, and the
-    repetition rate of the base, SFT, and RL models on the held-out prompts
-  - **Visualize the Results**: Plot the reward curve, and show five prompts with the
-    generation of each model
-- **Bonus Ideas (Optional)**: Compare two different reward functions; test the effect
-  of the KL coefficient
+  - **Preprocess the Tweets**: Turn each tweet into a prompt that asks for one label
+    word, keep 2,200 training tweets, and keep the validation file untouched for the
+    evaluation
+  - **Define the Problem**: Measure the zero-shot macro-F1 of the base model, and fit
+    TF-IDF with logistic regression as the classical baseline
+  - **Fine-Tune with SFT**: Run `SFTTrainer` on 200 labeled tweets as a warm start, so
+    that the model learns the answer format
+  - **Optimize with RL**: Run `GRPOTrainer` on the other 2,000 tweets with a reward of
+    1 for the correct label and a penalty for extra text, and log the mean reward at
+    each step
+  - **Evaluate the Models**: Compare the macro-F1, the accuracy, and the rate of
+    invalid answers of the base, SFT, RL, and TF-IDF models on the validation tweets
+  - **Visualize the Results**: Plot the reward curve, and the confusion matrices of
+    the base and RL models
+- **Bonus Ideas (Optional)**: Compare the SFT and RL recipe with plain SFT on all the
+  training tweets; use a reward that penalizes more the confusion of bullish with
+  bearish
 
 ### Milestones
 
 - Milestone 1: Set up the container and the data
-  - Project tasks: Preprocess the Text
-  - Result: `tutorials/trl/` container running with the pinned `trl` version, and a
-    table with the number of prompts and references
+  - Project tasks: Preprocess the Tweets
+  - Result: project dir created and container running with the pinned `trl` version,
+    and a table with the number of tweets and the class counts of each split
 - Milestone 2: API notebook
   - Project tasks: Fine-Tune with SFT, Optimize with RL
   - Result: `trl.API.ipynb` covering `SFTTrainer`, `RewardTrainer`, `DPOTrainer`,
     `GRPOTrainer`, and a custom reward function
 - Milestone 3: Example notebook
   - Project tasks: Define the Problem, Fine-Tune with SFT, Optimize with RL, Evaluate
-    the Model, Visualize the Results
+    the Models, Visualize the Results
   - Result: `trl.example.ipynb` running end to end
 
-## Project 2: Preference Optimization of a Dialogue Model
+## Project 2: Preference Optimization of Cautious Investment Answers
 
-- **Difficulty**: 2 (Medium)
-- **Project Objective**: Make a small dialogue model answer in a more polite and
-  positive way, using preference pairs and a reward model
+- **Project Objective**: Make a small language model answer investing questions with
+  balanced and risk-aware language, using preference pairs and a reward model, and
+  measure the drop in overconfident claims
 - **Dataset Suggestions**:
-  [DailyDialog](https://huggingface.co/datasets/li2017dailydialog/daily_dialog)
+  [Finance-Alpaca](https://huggingface.co/datasets/gbharti/finance-alpaca)
+  (financial questions and answers, in the file `Cleaned_date.json`)
 - **Tasks**:
-  - **Load the Dialogues**: Build the (context, response) pairs from DailyDialog,
-    using the last utterance of the context as the prompt
-  - **Build Preference Pairs**: Sample two responses per context from
-    `DialoGPT-small`, and mark as `chosen` the one with the higher positive sentiment
-    score
+  - **Load the Questions**: Keep 2,000 questions with an empty `input` that ask for
+    advice (e.g., with "should", "invest", or "retirement"), and hold out 200 for the
+    evaluation
+  - **Build Preference Pairs**: Sample two answers per question from a small instruct
+    model such as `Qwen2.5-0.5B-Instruct`, and mark as `chosen` the answer with the
+    higher caution score, which adds points for risk language (e.g., "risk",
+    "diversif") and subtracts points for overconfident phrases (e.g., "guaranteed",
+    "risk-free")
   - **Train a Reward Model**: Fit `RewardTrainer` on the pairs, and report its
     pairwise accuracy on a held-out split
-  - **Optimize the Dialogue Model**: Run `DPOTrainer` on the pairs, starting from
-    `DialoGPT-small`
-  - **Evaluate the Responses**: Compare the reward model win rate, the mean
-    sentiment, and the response length of the base and optimized models on 200
-    held-out contexts
-  - **Analyze the Behavior**: Read ten examples, and look for reward hacking such as
-    generic or repeated replies
+  - **Optimize with DPO**: Run `DPOTrainer` on the pairs, starting from the same small
+    instruct model
+  - **Evaluate the Answers**: Compare the reward model win rate, the rate of
+    overconfident claims measured with a second and different phrase list, and the
+    answer length of the base and optimized models on the 200 held-out questions
+  - **Analyze the Behavior**: Read ten examples, and look for reward hacking such as a
+    boilerplate disclaimer added to every answer
 - **Bonus Ideas (Optional)**: Compare `DPOTrainer` with plain `SFTTrainer` on the
-  `chosen` responses only
+  `chosen` answers only
 
-## Project 3: Reward and KL Trade-Offs in Customer Replies
+## Project 3: Numeric Reasoning on Financial Reports with GRPO
 
-- **Difficulty**: 3 (Hard)
-- **Project Objective**: Train a model to write positive replies to unhappy airline
-  passengers, and measure the trade-off between the reward and the drift from the
-  base model
+- **Project Objective**: Train a small language model to answer numeric questions about
+  company financial reports with a verifiable reward, and measure the trade-off between
+  the accuracy and the drift from the base model
 - **Dataset Suggestions**:
-  [Twitter US Airline Sentiment](https://www.kaggle.com/datasets/crowdflower/twitter-airline-sentiment)
+  [FinQA](https://github.com/czyssrs/FinQA) (questions over the earnings reports of
+  S&P 500 companies, with the gold program and the supporting facts)
+  - Use `dataset/train.json` for training and `dataset/dev.json` for the evaluation
 - **Tasks**:
-  - **Select the Prompts**: Keep the negative tweets, remove the mentions and the
-    links, and use them as prompts
-  - **Define the Reward**: Combine the positive score of a pre-trained sentiment
-    classifier on the reply with a penalty for replies over 40 tokens
-  - **Optimize the Policy**: Train GPT-2 with `GRPOTrainer` for three values of the
-    KL coefficient `beta`, with three seeds each
+  - **Select the Questions**: Keep the questions whose gold `program` has at most two
+    operations, and build a short prompt from the supporting facts (`gold_inds`) and
+    the question, with 500 questions for training and 200 for the evaluation
+  - **Define the Reward**: Parse the final number of the completion, and give 1 if it
+    is within 1% of `exe_ans` (accepting percent notation), plus a small bonus for the
+    format `Answer: <number>`
+  - **Optimize the Policy**: Train a small instruct model with `GRPOTrainer` for three
+    values of the KL coefficient `beta`, with three seeds each
   - **Evaluate the Trade-Offs**: Plot the mean reward vs. the KL divergence to the
-    reference model, with the standard deviation over the seeds
-  - **Check the Text Quality**: Measure the distinct-2 ratio of the replies, and read
-    20 samples to detect reward hacking
-  - **Compare with a Baseline**: Fine-tune with `SFTTrainer` on the best-of-8 replies
-    by reward, and compare it with the RL model
-- **Bonus Ideas (Optional)**: Add a second reward for the relevance of the reply to
-  the tweet, and study how the two rewards trade off
+    reference model, with the standard deviation over the seeds, and report the
+    accuracy on the held-out questions for each `beta`
+  - **Check the Reasoning Quality**: Measure the share of answers that only copy a
+    number of the prompt, and read 20 completions to detect reward hacking
+  - **Compare with a Baseline**: Fine-tune with `SFTTrainer` on the best-of-8
+    completions by reward, and compare it with the RL models and the base model
+- **Bonus Ideas (Optional)**: Repeat the best setting with `PPOTrainer` and compare it
+  with `GRPOTrainer`; add a reward for a step-by-step format

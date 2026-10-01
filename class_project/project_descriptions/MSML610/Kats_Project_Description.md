@@ -31,7 +31,9 @@ Kats
   - Read `tutorials/Prophet/README.md`
   - Read the `README.md` of the Fall2025 Prophet project, and reuse what is good
     - `class_project/msml610/Fall2025/projects/Tutortask41_Fall2025_prophet_COVID_19_Case_Prediction/`
-- Create `tutorials/Kats/`, since it does not exist yet
+- Create the project dir following the class instructions in
+  `class_project/README.md`, section `Contribution to the Repo`
+  - Start from `class_project/project_template`
 - Make it look like `msml610/tutorials/L03_knowledge_representation/`
 - Use the skills in `.claude/skills/notebook.*` to automate part of the work, and
   document how you used them
@@ -43,9 +45,52 @@ Kats
 
 # Project
 
-## Project 1: Stock Price Forecasting
+## Project 1 (Fall2026): Forecasting US Inflation and Unemployment with Rolling Evaluation
 
-- **Difficulty**: 2 (Medium)
+- **Project Objective**: Forecast the monthly US inflation rate and the unemployment
+  rate 12 months ahead with several Kats models and an ensemble, and check if they
+  beat a seasonal naive baseline in a rolling-origin evaluation
+- **Dataset Suggestions**:
+  - [CPI for All Urban Consumers, not seasonally adjusted (CPIAUCNS)](https://fred.stlouisfed.org/series/CPIAUCNS)
+  - [Unemployment Rate, not seasonally adjusted (UNRATENSA)](https://fred.stlouisfed.org/series/UNRATENSA)
+- **Tasks**:
+  - **Preprocess the Data**: Download both series from FRED, compute the monthly
+    inflation rate as the percent change of the CPI index, and convert each series
+    into a `TimeSeriesData` object
+  - **Define the Forecasting Problem**: Forecast 12 months ahead from yearly origins
+    from 2015 to 2024, fitting only on the data before each origin, and compute the
+    last-value and seasonal naive baselines
+  - **Forecast with Kats Models**: Fit `SARIMAModel`, `HoltWintersModel`,
+    `ProphetModel`, and `ThetaModel` at each origin, and forecast the next 12 months
+  - **Combine the Models**: Average the forecasts with equal weights, and build a
+    weighted ensemble with `KatsEnsemble`
+  - **Evaluate the Forecasts**: Compare MAE, RMSE, and MASE by horizon, the coverage
+    of the 80% prediction intervals, and the share of origins in which each model
+    beats the seasonal naive baseline
+  - **Visualize the Forecasts**: Plot the forecasts against the actual values for the
+    2021 origin, when inflation surged, and plot the error by horizon
+- **Bonus Ideas (Optional)**: Repeat the evaluation with the real-time vintages of
+  [ALFRED](https://alfred.stlouisfed.org/) to remove the effect of data revisions;
+  add the Kats `LinearModel` trend model as another baseline
+
+### Milestones
+
+- Milestone 1: Set up the container and the data
+  - Project tasks: Preprocess the Data
+  - Result: project dir created and container running, and the monthly US inflation
+    rate and unemployment rate as clean `TimeSeriesData` objects
+- Milestone 2: API notebook
+  - Project tasks: Forecast with Kats Models, Combine the Models
+  - Result: `kats.API.ipynb` covering `TimeSeriesData`, `SARIMAModel`,
+    `HoltWintersModel`, `ProphetModel`, `ThetaModel`, and `KatsEnsemble` on a
+    synthetic series, and one change point detector
+- Milestone 3: Example notebook
+  - Project tasks: Define the Forecasting Problem, Forecast with Kats Models, Combine
+    the Models, Evaluate the Forecasts, Visualize the Forecasts
+  - Result: `kats.example.ipynb` running end to end
+
+## Project 2: Stock Price Forecasting
+
 - **Project Objective**: Develop a model to forecast future stock prices for a
   selected company from historical price data, and choose between a baseline model
   and a trend and seasonality model by forecast error
@@ -66,56 +111,31 @@ Kats
   different forecasting intervals; add trading volume as a feature and test the Kats
   `MLARModel`
 
-### Milestones
+## Project 3: Change Point Detection in Market Volatility and the Yield Curve
 
-- Milestone 1: Set up the container and the data
-  - Project tasks: Preprocess the Data
-  - Result: `tutorials/Kats/` container running, and the Tesla prices as a clean
-    `TimeSeriesData` object with a train and test split
-- Milestone 2: API notebook
-  - Project tasks: Forecast with Kats
-  - Result: `kats.API.ipynb` covering `TimeSeriesData`, `ARIMAModel`, `ProphetModel`,
-    and `HoltWintersModel` on a synthetic series, and one change point detector
-- Milestone 3: Example notebook
-  - Project tasks: Define the Forecasting Problem, Forecast with Kats, Evaluate the
-    Forecasts, Visualize the Forecasts
-  - Result: `kats.example.ipynb` running end to end
-
-## Project 2: Anomaly Detection in Energy Consumption
-
-- **Difficulty**: 2 (Medium)
-- **Project Objective**: Identify anomalies in building energy consumption data to
-  detect unusual usage patterns
+- **Project Objective**: Detect regime shifts in the VIX and in the 10-year minus
+  2-year Treasury spread with Kats detectors, and check which detector flags known
+  stress events early with few false alarms, compared with a rolling z-score rule
 - **Dataset Suggestions**:
-  [Hourly Energy Consumption Dataset](https://www.kaggle.com/datasets/robikscube/hourly-energy-consumption)
+  - [CBOE Volatility Index: VIX (VIXCLS)](https://fred.stlouisfed.org/series/VIXCLS)
+  - [10-Year minus 2-Year Treasury Spread (T10Y2Y)](https://fred.stlouisfed.org/series/T10Y2Y)
+  - [NBER Recession Indicator (USREC)](https://fred.stlouisfed.org/series/USREC)
 - **Tasks**:
-  - **Preprocess the Data**: Download the dataset, load it into a pandas DataFrame,
-    convert the timestamps, and handle missing values
-  - **Detect Anomalies**: Use `CUSUMDetector` for sudden shifts, `BOCPDetector`
-    (Bayesian Online Change Point Detection) for trend changes, and `OutlierDetector`
-    for seasonal outliers
-  - **Visualize Anomalies**: Highlight the anomalies of each method on time-series
-    plots
-  - **Report Findings**: Compare the results across detectors and discuss business
-    implications
-- **Bonus Ideas (Optional)**: Build an ensemble anomaly detector that combines
-  results from multiple models
-
-## Project 3: Multi-Seasonal Time Series Forecasting for Retail Sales
-
-- **Difficulty**: 3 (Hard)
-- **Project Objective**: Build a forecasting model to predict future retail sales
-  while accounting for multiple seasonal effects like holidays and promotions
-- **Dataset Suggestions**:
-  [Store Sales - Time Series Forecasting](https://www.kaggle.com/competitions/store-sales-time-series-forecasting/data)
-- **Tasks**:
-  - **Preprocess the Data**: Load the retail sales data, clean it, create holiday and
-    promotion features, and encode categorical variables
-  - **Forecast Multiple Seasonalities**: Fit `ProphetModel` with holiday regressors,
-    `HoltWintersModel` for multiple seasonal cycles, and `SARIMAModel` for strong
-    seasonal patterns
-  - **Evaluate the Models**: Compare MAE and RMSE of the models
-  - **Visualize the Forecasts**: Plot the forecasts of each model alongside the
-    historical sales data
-- **Bonus Ideas (Optional)**: Incorporate external economic indicators (e.g.,
-  inflation) and test hybrid models
+  - **Preprocess the Data**: Download the daily series from FRED for 2015 to 2025,
+    drop the days without a value, and convert each one into a `TimeSeriesData`
+    object
+  - **Define the Detection Problem**: Fix a reference list of stress events, e.g.,
+    Aug 2015, Feb 2018, Mar 2020, Mar 2023, and Aug 2024, and count a detection as
+    correct if it falls within 10 trading days of an event
+  - **Build a Baseline**: Flag a change when the 20-day rolling z-score of the series
+    exceeds 3
+  - **Detect Change Points**: Run `CUSUMDetector` on rolling windows, `BOCPDetector`
+    online, and `RobustStatDetector`, using only the data up to each date, and use
+    `OutlierDetector` for one-day spikes
+  - **Evaluate the Detectors**: Report precision, recall, F1, and the median
+    detection delay in days of each detector and of the baseline
+  - **Visualize the Detections**: Plot each series with the detected points, the
+    event dates, and the recession bands
+- **Bonus Ideas (Optional)**: Apply `OutlierDetector` to the daily trading volume of
+  Bitcoin (`BTC-USD` from `yfinance`); build an ensemble that flags a stress event
+  when two detectors agree

@@ -32,7 +32,9 @@ Semantic Kernel
     `tutorials/Autogen/`, and `tutorials/tutorial_pydanticAI/`
   - Read the `README.md` of the Fall2025 CrewAI project
     - `class_project/msml610/Fall2025/projects/UmdTask111_Fall_2025_CrewAI_project_medium/`
-- Create `tutorials/SemanticKernel/`, since it does not exist yet
+- Create the project dir following the class instructions in
+  `class_project/README.md`, section `Contribution to the Repo`
+  - Start from `class_project/project_template`
 - Make it look like `msml610/tutorials/L03_knowledge_representation/`
 - Use the skills in `.claude/skills/notebook.*` to automate part of the work, and
   document how you used them
@@ -45,9 +47,56 @@ Semantic Kernel
 
 # Project
 
-## Project 1: Multi-Agent Economic Report
+## Project 1 (Fall2026): SEC Filings Fundamentals Assistant
 
-- **Difficulty**: 2 (Medium)
+- **Project Objective**: An agent calls a plugin on SEC EDGAR XBRL data to answer
+  questions on company fundamentals, with numbers that match the source and beat the
+  numbers recalled by a no-plugin LLM
+- **Dataset Suggestions**: EDGAR XBRL company facts, e.g., Apple at
+  `https://data.sec.gov/api/xbrl/companyfacts/CIK0000320193.json`
+  - Documented in
+    [SEC EDGAR APIs](https://www.sec.gov/search-filings/edgar-application-programming-interfaces)
+  - SEC requires a `User-Agent` header with a contact email
+  - Ticker to CIK map at `https://www.sec.gov/files/company_tickers.json`
+- **Tasks**:
+  - **Ingest the Company Facts**: Map the tickers of 5 companies to CIK with
+    `company_tickers.json`, download their company facts JSON with the `User-Agent`
+    header, cache it, and save a table with the ticker, the concept, the fiscal
+    year, and the annual value
+  - **Register the Plugin**: Register a `@kernel_function` that takes a ticker, a
+    concept (e.g., `NetIncomeLoss`, `Assets`), and a fiscal year, and returns the
+    annual value from the company facts JSON
+  - **Initialize the Agent**: Initialize a `ChatCompletionAgent` with automatic
+    function calling and ask questions such as "What was the net income of Apple in
+    fiscal 2023?" for 5 companies
+  - **Verify the Outputs**: Check that the numbers in 20 answers match the XBRL
+    values across models (local vs. hosted), and compare with a baseline that
+    answers from model memory without the plugin
+  - **Report the Results**: Collect the exact-match rate and the median relative
+    error of each model in a comparison table
+- **Bonus Ideas (Optional)**: Add a function for derived ratios (net margin,
+  debt-to-assets); store 10-K risk-factor text in a vector-store memory and answer
+  qualitative questions with citations
+
+### Milestones
+
+- Milestone 1: Set up the container and the data
+  - Project tasks: Ingest the Company Facts
+  - Result: project dir created and container running, and the table of annual XBRL
+    values for the 5 companies
+- Milestone 2: API notebook
+  - Project tasks: Register the Plugin, Initialize the Agent
+  - Result: `semantic_kernel.API.ipynb` covering `Kernel`, a plugin with
+    `@kernel_function`, a `ChatCompletionAgent` with automatic function calling, and
+    a local and a hosted chat model
+- Milestone 3: Example notebook
+  - Project tasks: Register the Plugin, Initialize the Agent, Verify the Outputs,
+    Report the Results
+  - Result: `semantic_kernel.example.ipynb` running end to end and producing the
+    comparison table
+
+## Project 2: Multi-Agent Economic Report
+
 - **Project Objective**: Specialized SK agents (gatherer, analyst, presenter)
   collaborate to produce an economic brief on GDP, inflation, and unemployment trends
   whose numbers match the source data
@@ -66,54 +115,31 @@ Semantic Kernel
   - **Export the Report**: Export an HTML report with charts and takeaways
 - **Bonus Ideas (Optional)**: Add a forecasting plugin for short-term projections
 
-### Milestones
+## Project 3: Loan Default Risk Triage
 
-- Milestone 1: Set up the container and the data
-  - Project tasks: Ingest the Indicators
-  - Result: `tutorials/SemanticKernel/` container running, and the indicator table
-    for the chosen countries
-- Milestone 2: API notebook
-  - Project tasks: Define the Agents, Share Memory
-  - Result: `semantic_kernel.API.ipynb` covering `Kernel`, plugins with
-    `@kernel_function`, prompt templates, function calling, and memory
-- Milestone 3: Example notebook
-  - Project tasks: Define the Agents, Share Memory, Evaluate the Report, Export the
-    Report
-  - Result: `semantic_kernel.example.ipynb` running end to end and exporting the HTML
-    report
-
-## Project 2: Housing Price Analyzer
-
-- **Difficulty**: 2 (Medium)
-- **Project Objective**: Use SK planning and plugins to clean, analyze, and model a
-  housing dataset, and interpret coefficients and feature importance
-- **Dataset Suggestions**: Real Estate Valuation (regression):
-  [UCI - Real Estate Valuation](https://archive.ics.uci.edu/dataset/477/real+estate+valuation+data+set)
+- **Project Objective**: Let an SK agent plan and run a credit risk workflow (clean,
+  train, score, explain) from a natural-language request, and check that its
+  approve, refer, or decline decisions match a plain scikit-learn pipeline and beat a
+  no-plugin LLM baseline
+- **Dataset Suggestions**: Default of Credit Card Clients (30,000 clients, default
+  in the next month):
+  [UCI - Default of Credit Card Clients](https://archive.ics.uci.edu/dataset/350/default+of+credit+card+clients)
 - **Tasks**:
-  - **Build the Plugins**: Write plugins for data cleaning, correlation, and model
-    training (linear regression or random forest)
-  - **Plan the Workflow**: Let the planner sequence the plugin functions from the
-    request "analyze housing prices"
-  - **Evaluate the Models**: Report the validation scores of the models
-  - **Write the Report**: Output a notebook and a short report with the coefficients
-    and the feature importance
-- **Bonus Ideas (Optional)**: Add a feature-selection plugin (e.g., Lasso) and
-  compare models
-
-## Project 3: Function-Calling Chatbot
-
-- **Difficulty**: 1 (Easy)
-- **Project Objective**: An agent calls a Python function (plugin) to compute Iris
-  summary statistics and returns structured results
-- **Dataset Suggestions**: Iris:
-  [UCI - Iris](https://archive.ics.uci.edu/dataset/53/iris)
-- **Tasks**:
-  - **Register the Plugin**: Register a `@kernel_function` that loads the CSV and
-    returns the per-feature mean and standard deviation
-  - **Initialize the Agent**: Initialize a chat agent and ask for "summary stats for
-    Iris"
-  - **Verify the Outputs**: Verify that the outputs match pandas across multiple
-    models (local vs. hosted)
-  - **Report the Results**: Collect the outputs of each model in a comparison table
-- **Bonus Ideas (Optional)**: Add another function to output a small correlation
-  table
+  - **Build the Plugins**: Write `@kernel_function` plugins for data cleaning, default
+    rate by segment (e.g., education and age band), model training (logistic
+    regression and gradient boosting), and scoring one applicant as a probability of
+    default
+  - **Plan the Workflow**: Let the model sequence the plugin functions with
+    `FunctionChoiceBehavior.Auto` from the request "assess the default risk of
+    applicant 17 and explain the main drivers", and log the order of the calls
+  - **Write the Prompt Template**: Write a prompt template that turns the score and
+    the top coefficients into an approve, refer, or decline note with fixed
+    probability thresholds
+  - **Evaluate the Workflow**: Report ROC-AUC and precision-recall AUC of the scoring
+    plugin on a stratified held-out set, the agreement of the agent decision with the
+    direct scikit-learn decision on 100 test applicants, and the same agreement for a
+    baseline LLM that sees the applicant row but has no plugins
+  - **Write the Report**: Output a notebook and a short report with the coefficients,
+    the feature importance, and the agreement table
+- **Bonus Ideas (Optional)**: Add a threshold-tuning plugin that trades off approval
+  rate and expected loss; compare a local model with a hosted model

@@ -31,7 +31,9 @@ Snorkel
     classification projects, and reuse what is good
     - `class_project/data605/Spring2026/projects/UmdTask458_DATA605_Spring2026_FastText_text_classification/`
     - `class_project/data605/Spring2026/projects/UmdTask443_DATA605_Spring2026_HuggingFace_Text_Classification_Model/`
-- Create `tutorials/Snorkel/`, since it does not exist yet
+- Create the project dir following the class instructions in
+  `class_project/README.md`, section `Contribution to the Repo`
+  - Start from `class_project/project_template`
 - Make it look like `msml610/tutorials/L03_knowledge_representation/`
 - Use the skills in `.claude/skills/notebook.*` to automate part of the work, and
   document how you used them
@@ -44,36 +46,38 @@ Snorkel
 
 # Project
 
-## Project 1: News Topic Classification with Weak Labels
+## Project 1 (Fall2026): Financial News Sentiment with Weak Labels
 
-- **Difficulty**: 1 (Easy)
-- **Project Objective**: Classify news articles into four topics without labeling the
-  training set by hand, using labeling functions and a label model
+- **Project Objective**: Classify finance tweets as bearish, bullish, or neutral without
+  labeling the training set by hand, using labeling functions and a label model
 - **Dataset Suggestions**:
-  [AG News](https://www.kaggle.com/datasets/amananandrai/ag-news-classification-dataset)
+  [Twitter Financial News Sentiment](https://huggingface.co/datasets/zeroshot/twitter-financial-news-sentiment)
 - **Tasks**:
-  - **Preprocess the Text**: Merge the title and the description, and split the data
-    into an unlabeled train set, a labeled dev set of 500 articles, and a test set
-  - **Define the Problem**: Fix the four classes and macro F1 as the metric, and
-    measure the majority-class baseline
+  - **Preprocess the Text**: Load the train and validation files, hold out 500 labeled
+    tweets from the train file as the dev set, ignore the labels of the other train
+    tweets, and use the validation file as the test set
+  - **Define the Problem**: Fix the three classes and macro F1 as the metric, measure
+    the majority-class baseline, and tune the functions on the dev set only
   - **Write Labeling Functions**: Write 10-15 keyword and regex functions with
-    `@labeling_function()`, and report coverage, overlaps, and conflicts with
-    `LFAnalysis`
+    `@labeling_function()`, e.g., "beats estimates", "downgrade", or a signed percent
+    move such as "-4%", and report coverage, overlaps, and conflicts with `LFAnalysis`
   - **Train the Models**: Fit `LabelModel` and `MajorityLabelVoter`, and train a
     logistic regression on TF-IDF features with the probabilistic labels
   - **Evaluate the Models**: Report accuracy and macro F1 on the test set for the
     majority vote, the label model, the end model, and a fully supervised upper bound
   - **Analyze the Errors**: Plot the accuracy and coverage of each function, inspect
-    the misclassified articles, and refine two functions
-- **Bonus Ideas (Optional)**: Add a labeling function that wraps a zero-shot
-  classifier; compare with training on 200 hand-labeled articles
+    the tweets that confuse bullish and bearish, and refine two functions
+- **Bonus Ideas (Optional)**: Add a labeling function from the
+  [Loughran-McDonald lexicon](https://sraf.nd.edu/loughranmcdonald-master-dictionary/);
+  test the same functions on
+  [Financial PhraseBank](https://huggingface.co/datasets/takala/financial_phrasebank)
 
 ### Milestones
 
 - Milestone 1: Set up the container and the data
   - Project tasks: Preprocess the Text
-  - Result: `tutorials/Snorkel/` container running, and the counts of the train, dev,
-    and test splits
+  - Result: project dir created and container running, and the counts of the train,
+    dev, and test splits
 - Milestone 2: API notebook
   - Project tasks: Write Labeling Functions, Train the Models
   - Result: `snorkel.API.ipynb` covering `labeling_function`, `PandasLFApplier`,
@@ -83,47 +87,54 @@ Snorkel
     Evaluate the Models, Analyze the Errors
   - Result: `snorkel.example.ipynb` running end to end
 
-## Project 2: Spam Detection in Comments with Augmentation
+## Project 2: Routing Consumer Complaints with Augmentation
 
-- **Difficulty**: 2 (Medium)
-- **Project Objective**: Detect spam in video comments with weak labels, and test if
-  data augmentation improves the end model
+- **Project Objective**: Route bank customer complaints to the right financial product
+  with weak labels, and test if data augmentation improves the end model
 - **Dataset Suggestions**:
-  [UCI - YouTube Spam Collection](https://archive.ics.uci.edu/dataset/380/youtube+spam+collection)
+  [CFPB Consumer Complaint Database](https://www.consumerfinance.gov/data-research/consumer-complaints/),
+  using 20,000 complaints with a narrative from 2023 onward
 - **Tasks**:
-  - **Load the Comments**: Merge the five video files and split them into train, dev,
-    and test sets
-  - **Write Labeling Functions**: Write functions for links, calls to action, and
-    comment length, and one with a `preprocessor` that adds a lowercase text field
-  - **Aggregate the Labels**: Compare `LabelModel` and `MajorityLabelVoter` on the
-    dev set with precision, recall, and F1
-  - **Augment the Data**: Write two `transformation_function`s, e.g., synonym swap
-    and random deletion, and apply them with `PandasTFApplier`
+  - **Load the Complaints**: Read the CSV file, keep five products (credit reporting,
+    debt collection, mortgage, credit card, and checking or savings account), and split
+    by `Date received` so that dev and test hold the newest complaints
+  - **Write Labeling Functions**: Write functions for product names, credit bureau
+    names, and fee words, and one with a `preprocessor` that adds a lowercase text
+    field without the `XXXX` redaction tokens
+  - **Aggregate the Labels**: Compare `LabelModel` and `MajorityLabelVoter` on the dev
+    set with precision, recall, and macro F1, against the majority-class baseline
+  - **Augment the Data**: Write two `transformation_function`s, e.g., a swap with a
+    small finance synonym list and random deletion, and apply them with
+    `PandasTFApplier` and a `RandomPolicy`
   - **Evaluate the End Model**: Train logistic regression with and without the
-    augmented data, and compare the test F1
-- **Bonus Ideas (Optional)**: Add a labeling function from a pre-trained sentiment
-  model
+    augmented data, and compare the macro F1 on the test set
+- **Bonus Ideas (Optional)**: Add a labeling function from a pre-trained zero-shot
+  classifier; compare with training on 500 hand-labeled complaints
 
-## Project 3: Robustness of Weak Supervision on Newsgroups
+## Project 3: Robustness of Weak Supervision for Credit Default
 
-- **Difficulty**: 3 (Hard)
 - **Project Objective**: Measure how noisy labeling functions degrade the label model
-  and the majority vote, and find the data slices where the end model fails
+  and the majority vote on an imbalanced credit risk task, and find the borrower slices
+  where the end model fails
 - **Dataset Suggestions**:
-  [20 Newsgroups](https://scikit-learn.org/stable/datasets/real_world.html#the-20-newsgroups-text-dataset),
-  using five categories
+  [UCI - Default of Credit Card Clients](https://archive.ics.uci.edu/dataset/350/default+of+credit+card+clients)
 - **Tasks**:
-  - **Load the Newsgroups**: Fetch five categories with `fetch_20newsgroups`,
-    removing headers, footers, and quotes
-  - **Write Diverse Functions**: Write keyword and regex functions, and a function
-    that uses the vocabulary learned from a small labeled seed set
+  - **Load the Clients**: Read the 30,000 clients, and make a stratified split into an
+    unlabeled train set, a labeled dev set of 1,000 clients, and a test set of 6,000
+    clients, keeping the 22% default rate in each
+  - **Write Diverse Functions**: Write 8-10 functions on the repayment status `PAY_0`
+    to `PAY_6`, the credit utilization `BILL_AMT1 / LIMIT_BAL`, and the ratio of the
+    payment to the bill, without using `SEX` or `MARRIAGE`
   - **Inject Noise**: Add 0, 2, 4, and 6 labeling functions that vote at random
-  - **Compare the Aggregators**: For each noise level, fit `LabelModel` and
-    `MajorityLabelVoter`, and record the accuracy of the labels on the dev set
-  - **Evaluate on Slices**: Define three `slicing_function`s, e.g., short documents
-    and documents with conflicting votes, and report the end model F1 with
+  - **Compare the Aggregators**: For each noise level, fit `LabelModel` with the
+    `class_balance` of the dev set and `MajorityLabelVoter`, record the F1 of the
+    default class on the dev set, and compare with a logistic regression trained on
+    the 1,000 dev labels
+  - **Evaluate on Slices**: Define three `slicing_function`s, e.g., credit limit below
+    50,000, age under 30, and utilization above 90%, and report the end model F1 with
     `slice_dataframe`
-  - **Report the Robustness**: Plot the end model macro F1 vs. the number of noisy
-    functions for both aggregators, with the standard deviation over five seeds
+  - **Report the Robustness**: Plot the end model F1 of the default class vs. the
+    number of noisy functions for both aggregators, with the standard deviation over
+    five seeds
 - **Bonus Ideas (Optional)**: Estimate the accuracy of each function from the label
   model weights, and drop the worst functions

@@ -34,7 +34,6 @@ LakeFS is an open-source data versioning tool designed for managing data lakes. 
 - **Model Evaluation**: Use metrics like Mean Absolute Error (MAE) and visualize predictions against actual values.
 - **Experiment Tracking**: Use LakeFS branching to test different model parameters and track results.
 
-
 ### Project 3: Anomaly Detection in Financial Transactions
 **Difficulty**: 3 (Hard)
 

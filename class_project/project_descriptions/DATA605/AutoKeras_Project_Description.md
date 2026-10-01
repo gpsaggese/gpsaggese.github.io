@@ -34,6 +34,9 @@ AutoKeras
     `README.md`
     - `class_project/msml610/Fall2025/projects/TutorTask_67_Fall2025_AutoKeras_Electricity_Load_Forecasting/`
   - Read the `README.md` of `tutorials/TensorFlow/` for the Keras basics
+- Create the project dir following the class instructions in
+  `class_project/README.md`, section `Contribution to the Repo`
+  - Start from `class_project/project_template`
 - Make it look like `msml610/tutorials/L03_knowledge_representation/`
 - Use the skills in `.claude/skills/notebook.*` to automate part of the work, and
   document how you used them
@@ -46,78 +49,102 @@ AutoKeras
 
 # Project
 
-## Project 1: House Price Prediction with AutoML
+## Project 1 (Fall2026): Volatility Forecasting with a Time-Series Search
 
-- **Difficulty**: 1 (Easy)
-- **Project Objective**: Predict house sale prices with an automatically searched
-  neural network, and measure how much the search beats simple baselines
-- **Dataset Suggestions**:
-  [Kaggle - House Prices](https://www.kaggle.com/c/house-prices-advanced-regression-techniques/data)
+- **Project Objective**: Forecast the next-day volatility of the S&P 500 with
+  `TimeseriesForecaster`, and measure if the search beats standard volatility
+  models and how stable the result is across seeds
+- **Dataset Suggestions**: Daily prices of the `SPY` ETF from
+  [yfinance](https://github.com/ranaroussi/yfinance), from 2005 to 2025
 - **Tasks**:
-  - **Preprocess the Data**: Load the Ames data, split it into train and test, and
-    report the missing values per column
-  - **Define the Problem**: Predict the log of `SalePrice` as a regression problem,
-    and fit a mean predictor and a `Ridge` regression as baselines
-  - **Search with AutoKeras**: Fit `StructuredDataRegressor` with `max_trials` of 10
-    and 30, and record the search time and the validation loss of each trial
-  - **Evaluate the Model**: Compare MAE and R-squared of the best model with the
-    baselines on the test set
-  - **Visualize the Results**: Plot the predicted vs. actual prices, and the
-    validation loss vs. the trial number
-- **Bonus Ideas (Optional)**: Add engineered features, e.g., house age and total
-  area, and check if the search improves; serve the exported model with Streamlit
+  - **Build the Volatility Series**: Download the open, high, low, and close prices
+    once, save them to a CSV file, and compute the daily log return and the
+    Garman-Klass estimator of the daily variance
+  - **Define the Baselines**: Compute the persistence forecast, the 22-day moving
+    average, and a HAR regression on the daily, weekly, and monthly average
+    volatility
+  - **Split the Data by Time**: Use three expanding walk-forward folds that test on
+    2020-2021, 2022-2023, and 2024-2025, validate on the last 20% of each training
+    window, and fit the scalers on the training window only
+  - **Search the Forecaster**: Fit `TimeseriesForecaster` with a `lookback` of 22
+    days, a fixed `max_trials`, a cap on the epochs, and five random seeds, and
+    export the best model
+  - **Evaluate the Forecasts**: Report the mean and standard deviation across the
+    seeds of the test RMSE of the log volatility and of the QLIKE loss for each
+    fold, next to the baselines
+  - **Analyze the Trade-Offs**: Plot the RMSE vs. the search time for `max_trials`
+    of 5, 10, and 20 on the last fold
+- **Bonus Ideas (Optional)**: Add the
+  [FRED - VIX Index](https://fred.stlouisfed.org/series/VIXCLS) as an extra input
+  feature and test the gain
 
 ### Milestones
 
 - Milestone 1: Set up the container and the data
-  - Project tasks: Preprocess the Data
-  - Result: `tutorials/AutoKeras/` container running, and the table of missing values
-    with the train and test split of the Ames data
+  - Project tasks: Build the Volatility Series
+  - Result: project dir created and container running, and the CSV file of the `SPY`
+    prices with the table of the daily log return and the Garman-Klass variance
 - Milestone 2: API notebook
-  - Project tasks: Search with AutoKeras
-  - Result: `autokeras.API.ipynb` covering `StructuredDataRegressor`, `max_trials`,
-    `AutoModel` with custom blocks, and `export_model()`
+  - Project tasks: Search the Forecaster
+  - Result: `autokeras.API.ipynb` covering `TimeseriesForecaster`, `lookback`,
+    `max_trials`, the cap on the epochs, the random seeds, and `export_model()`
 - Milestone 3: Example notebook
-  - Project tasks: Define the Problem, Search with AutoKeras, Evaluate the Model,
-    Visualize the Results
+  - Project tasks: Define the Baselines, Split the Data by Time, Search the
+    Forecaster, Evaluate the Forecasts, Analyze the Trade-Offs
   - Result: `autokeras.example.ipynb` running end to end
 
-## Project 2: Image Classification with Architecture Search
+## Project 2: Credit Card Default Prediction with AutoML
 
-- **Difficulty**: 2 (Medium)
-- **Project Objective**: Classify small color images with `ImageClassifier` and
-  compare the searched network with a hand-designed CNN
-- **Dataset Suggestions**: [CIFAR-10](https://www.cs.toronto.edu/~kriz/cifar.html),
-  using a subset of 10,000 training images to fit the Docker container
-- **Tasks**:
-  - **Load the Images**: Load a stratified subset of CIFAR-10 and show one image per
-    class
-  - **Build a Baseline CNN**: Train a small Keras CNN with a fixed architecture
-  - **Search the Architecture**: Run `ImageClassifier` with the `greedy` and
-    `hyperband` tuners for the same number of trials
-  - **Evaluate the Models**: Compare test accuracy, parameter count, and search time
-    of the three models
-  - **Inspect the Best Model**: Export the best model and print its layers with
-    `model.summary()`
-- **Bonus Ideas (Optional)**: Add data augmentation blocks to the search space
-
-## Project 3: Weather Forecasting with a Time-Series Search
-
-- **Difficulty**: 3 (Hard)
-- **Project Objective**: Forecast the next-hour temperature with
-  `TimeseriesForecaster`, and measure how stable the search result is across seeds
+- **Project Objective**: Predict which credit card clients will miss their next
+  payment with an automatically searched neural network, and measure how much the
+  search beats simple baselines
 - **Dataset Suggestions**:
-  [Jena Climate](https://www.kaggle.com/datasets/mnassrib/jena-climate)
+  [UCI - Default of Credit Card Clients](https://archive.ics.uci.edu/dataset/350/default+of+credit+card+clients)
 - **Tasks**:
-  - **Resample the Data**: Aggregate the 10-minute records to hourly means and build
-    sliding windows of 24 hours
-  - **Define the Baselines**: Compute the persistence forecast and a seasonal-naive
-    forecast with a 24-hour lag
-  - **Search the Forecaster**: Fit `TimeseriesForecaster` with five random seeds and
-    a fixed `max_trials`
-  - **Evaluate the Forecasts**: Report the mean and standard deviation of the test
-    MAE and RMSE across the seeds
-  - **Analyze the Trade-Offs**: Plot the MAE vs. the search time for `max_trials` of
-    5, 10, and 20
-- **Bonus Ideas (Optional)**: Add pressure and humidity as extra input features and
-  test the gain
+  - **Preprocess the Data**: Load the 30,000 clients, make a stratified train,
+    validation, and test split, and report the default rate and the missing values
+    per column
+  - **Define the Problem**: Predict `default payment next month` as an imbalanced
+    binary classification, and fit a majority-class predictor and a
+    `LogisticRegression` as baselines
+  - **Search with AutoKeras**: Fit `StructuredDataClassifier` with `max_trials` of
+    10 and 30 and `objective="val_auc"`, and record the search time and the
+    validation AUC of each trial
+  - **Customize the Search Space**: Define an `AutoModel` with
+    `StructuredDataInput`, `StructuredDataBlock`, and `ClassificationHead`, and
+    compare it with the default classifier search
+  - **Evaluate the Models**: Export the best model with `export_model()`, reload it
+    in Keras, and compare ROC-AUC, PR-AUC, and the recall of defaulters among the
+    20% highest risk scores with the baselines on the test set
+  - **Visualize the Results**: Plot the ROC and precision-recall curves of all
+    models, and the validation AUC vs. the trial number
+- **Bonus Ideas (Optional)**: Compare the AUC across `AGE` and `SEX` groups to audit
+  the model for bias; repeat the study on the Give Me Some Credit data from Kaggle
+
+## Project 3: Financial News Sentiment with Architecture Search
+
+- **Project Objective**: Classify financial news headlines as bearish, bullish, or
+  neutral with `TextClassifier`, and compare the searched network with simple
+  baselines and a hand-designed Keras model
+- **Dataset Suggestions**:
+  [Twitter Financial News Sentiment](https://huggingface.co/datasets/zeroshot/twitter-financial-news-sentiment),
+  with about 9,500 training and 2,400 validation headlines
+- **Tasks**:
+  - **Load the Headlines**: Load the data with `datasets`, remove the URLs and the
+    texts that appear in both splits, and report the class counts
+  - **Build the Baselines**: Fit a majority-class predictor, a TF-IDF with
+    `LogisticRegression`, and a small Keras model with `TextVectorization` and
+    `Embedding`
+  - **Search the Architecture**: Run `TextClassifier` with the `greedy` and
+    `hyperband` tuners for the same `max_trials`, using 20% of the training set for
+    validation
+  - **Evaluate the Models**: Compare macro-F1 and the recall of the bearish class
+    on the official validation split, with the parameter count and the search time
+    of each model
+  - **Inspect the Best Model**: Export the best model, print its layers with
+    `model.summary()`, and list ten bearish headlines predicted as neutral
+- **Bonus Ideas (Optional)**: Define an `AutoModel` with `TextInput`, `TextBlock`,
+  and `ClassificationHead` to restrict the search space; test the best model on the
+  sentences of
+  [FinanceInc/auditor_sentiment](https://huggingface.co/datasets/FinanceInc/auditor_sentiment)
+  and measure the drop in macro-F1
