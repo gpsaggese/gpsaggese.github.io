@@ -3,7 +3,6 @@
 ## Status
 - **Status**: draft
 - **Complete Specs**: 15%
-- **Assignee**: TBD
 
 ## Core Idea
 - Many platforms (e.g., Instagram) make it hard to programmatically export

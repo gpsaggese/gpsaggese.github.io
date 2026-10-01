@@ -3,7 +3,6 @@
 ## Status
 - **Status**: draft
 - **Complete Specs**: 15%
-- **Assignee**: TBD
 
 ## Core Idea
 - Cursor brought inline, context-aware AI autocomplete to code editing; the

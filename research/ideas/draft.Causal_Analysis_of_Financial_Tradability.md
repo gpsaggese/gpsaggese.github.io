@@ -3,8 +3,7 @@
 ## Status
 
 - **Status:**: draft
-- **Complete Specs:**: 60%
-- **Assignee:**: TBD
+- **Complete Specs:**: 90%
 
 ## Core Idea
 
@@ -27,21 +26,42 @@
 
 ## Formalization
 
-- Mathematical notation, definitions, or pseudocode
-- Use LaTeX math where helpful
+- Let $h$ be the trading horizon, $p_h$ the hit rate at horizon $h$, and $g_h$
+  the average absolute move captured per trade
+  - Expected return per trade: $\mathbb{E}[r_h] = (2 p_h - 1) \, g_h$
+  - $g_h$ grows with $h$ (e.g., $g_h \propto \sigma \sqrt{h}$) while $p_h$
+    falls with $h$
+- Over $N$ independent trades, with $W \sim \mathrm{Bin}(N, p_h)$ wins:
+  $\mathrm{PnL}_N = g_h (2W - N)$, so $P(\mathrm{PnL}_N > 0) = P(W > N/2)$
+- Minimum hit rate for a target probability $q$ of positive PnL (normal
+  approximation): $p^{*}_h \approx \frac{1}{2} + \frac{z_q}{2 \sqrt{N}}$
+- Causal question: treat the horizon $H$ as the treatment and the net
+  risk-adjusted return $Y$ as the outcome, adjusting for confounders $Z$
+  (volatility, volume, regime): $\mathbb{E}[Y \mid do(H = h)]$
+- Optimal horizon: $h^{*} = \arg\max_h \mathrm{Sharpe}(h)$ net of costs
 
 ## Key Examples
 
-- **[Example 1]**: [Concrete scenario illustrating the idea]
-- **[Example 2]**: [Second scenario, possibly from a different domain]
-- **[Example 3]**: [Edge case or failure mode]
+- **Minimum hit rate**: with $N = 1000$ one-minute trades and $q = 95\%$,
+  $p^{*} \approx 0.5 + 1.645 / (2 \sqrt{1000}) \approx 0.526$, so a model
+  needs a 52.6% hit rate before costs to be profitable 19 times out of 20
+- **Horizon trade-off**: a 1-minute horizon may have a higher hit rate than a
+  1-hour horizon, but the smaller move per trade may not cover fees and
+  slippage; the optimal horizon depends on both effects
+- **Regime confounding**: one horizon looks best only because the sample
+  covers a trending, high-volatility week; adjusting for volatility removes
+  the apparent horizon effect
 
 ## Questions
 
 1. What is the minimum hit rate (probability of correct predictions) needed at
    different trading horizons to achieve a target probability of positive PnL?
-2. [Open question 2: what would a proof or counterexample look like?]
-3. [Provocative implication: if true, what does this change?]
+2. What would refute the existence of a single optimal horizon? A
+   horizon effect that changes sign across regimes, so no fixed $h^{*}$
+   dominates, would be a counterexample.
+3. If the required hit rate after costs exceeds what any model achieves at
+   every horizon, does that mean the market is untradeable for this model
+   class, and how would a null result be told apart from a weak model?
 
 ## Research Topics
 
@@ -142,21 +162,21 @@
 
 ## References
 
-- 2022, Krauss et al., "Deep Learning in Finance", arXiv
+- Krauss et al., _Deep Learning in Finance_, arXiv. (2022)
   - Trained neural networks to predict cryptocurrency price movements at different
     horizons
   - Found that hit rates decrease significantly as prediction horizon increases,
     validating the speed-accuracy tradeoff
-- 2021, Ritter et al., "Algorithmic Trading with Machine Learning", Medium
+- Ritter et al., _Algorithmic Trading with Machine Learning_, Medium. (2021)
   - Tutorial on evaluating PnL probability distributions as a function of hit rate
     and position sizing
   - Provides formulas for relating minimum hit rates to profit factor targets
-- 2020, Easley et al., "Microstructure and Ambiguity", Journal of Finance
+- Easley et al., _Microstructure and Ambiguity_, Journal of Finance. (2020)
   - Studied how information asymmetry varies with trading frequency and order flow
   - Found that microstructure effects dominate at shorter horizons, suggesting
     predictability decays over time
-- 2019, Arnott et al., "How Can 'Smart Beta' Go Horribly Wrong?", Research
-  Affiliates
+- Arnott et al., _How Can 'Smart Beta' Go Horribly Wrong?_, Research Affiliates.
+  (2019)
   - Analyzed factor performance across different rebalancing horizons and found
     regime-dependent optimal horizons
   - Showed that shorter-term strategies incur higher costs and often underperform

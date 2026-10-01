@@ -3,8 +3,7 @@
 ## Status
 
 - **Status:**: draft
-- **Complete Specs:**: 60%
-- **Assignee:**: TBD
+- **Complete Specs:**: 90%
 
 ## Core Idea
 
@@ -56,8 +55,13 @@
 
 - **Capability gap**: an agent excels at isolated coding tasks but fails at
   multi-tool orchestration or long-horizon planning
-- **[Example 2]**: [Second scenario, possibly from a different domain]
-- **[Example 3]**: [Edge case or failure mode]
+- **Rank disagreement**: a model ranks near the top on SWE-bench and in the
+  bottom half on DSBench; a low rank correlation between the two benchmarks
+  shows that they measure different skills
+- **Incomparable scores**: two leaderboards report `pass@1` and best-of-$k$
+  results, or scaffolds of different strength, so the raw numbers cannot be
+  merged without normalization; near-saturated benchmarks with top scores
+  within 1-2 points give rankings that are mostly noise
 
 ## Questions
 
@@ -166,9 +170,11 @@
 
 ## References
 
-- GAIA Benchmark paper and dataset:
-  https://huggingface.co/datasets/gaia-benchmark/GAIA
-- SWE-bench official site and leaderboard: https://www.swebench.com/
-- DSBench GitHub repository: https://github.com/LiqiangJing/DSBench
-- MLE-Bench GitHub repository: https://github.com/openai/mle-bench
-- DataSciBench paper (arXiv 2025): https://arxiv.org/abs/2502.13897
+- Mialon et al., _GAIA: A Benchmark for General AI Assistants_. (2023)
+- Jimenez et al., _SWE-bench: Can Language Models Resolve Real-World GitHub
+  Issues?_. (2024)
+- Jing et al., _DSBench: How Far Are Data Science Agents from Becoming Data
+  Science Experts?_. (2024)
+- Chan et al., _MLE-bench: Evaluating Machine Learning Agents on Machine
+  Learning Engineering_. (2024)
+- Zhang et al., _DataSciBench: An LLM Agent Benchmark for Data Science_. (2025)

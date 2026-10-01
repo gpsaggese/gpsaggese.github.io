@@ -3,8 +3,7 @@
 ## Status
 
 - **Status:**: draft
-- **Complete Specs:**: 10%
-- **Assignee:**: TBD
+- **Complete Specs:**: 90%
 
 ## Core Idea
 
@@ -82,20 +81,35 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- Milestone 1: walk-forward harness and baselines
+  - Load daily returns for a fixed universe of liquid assets and define a
+    walk-forward rebalancing schedule
+  - Implement equal-weight, minimum-variance (with Ledoit-Wolf shrinkage), and
+    classical mean-variance with a convex solver
+  - Report Sharpe ratio, turnover, and maximum weight after transaction costs
+  - This is the result: a baseline table that any learned allocator must beat
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- Milestone 2: amortized variant
+  - Sample instances $c = (\mu, \Sigma)$ from the universe and train
+    $h_\phi(c) \approx w^{*}(c)$ under long-only and turnover constraints
+  - Measure the gap to the solver optimum and the honest per-instance time
+  - This is the result: the speed-accuracy trade-off and the constraint sets
+    where amortization pays
+
+- Milestone 3: decision-focused variant
+  - Train features-to-weights end to end with a differentiable solver layer
+    (`cvxpylayers`) and realized utility as the loss
+  - Compare against the baselines and the two-step pipeline in the
+    walk-forward test
+  - This is the result: out-of-sample utility of decision-focused vs
+    predict-then-optimize, with the share of the gain due to shrinkage
 
 ## References
 
-- 2022, Elmachtoub et al., "Smart 'Predict, then Optimize'"
-- 2020, Zhang et al., "Deep Learning for Portfolio Optimization"
-- 2019, Agrawal et al., "Differentiable Convex Optimization Layers"
-- 2017, Amos et al., "OptNet: Differentiable Optimization as a Layer in Neural
-  Networks"
-- 2009, DeMiguel et al., "Optimal Versus Naive Diversification"
-- 1952, Markowitz, "Portfolio Selection"
+- Elmachtoub et al., _Smart 'Predict, then Optimize'_. (2022)
+- Zhang et al., _Deep Learning for Portfolio Optimization_. (2020)
+- Agrawal et al., _Differentiable Convex Optimization Layers_. (2019)
+- Amos et al., _OptNet: Differentiable Optimization as a Layer in Neural Networks_.
+  (2017)
+- DeMiguel et al., _Optimal Versus Naive Diversification_. (2009)
+- Markowitz, _Portfolio Selection_. (1952)

@@ -32,7 +32,9 @@ MLflow
   - Read the `README.md` of the Fall2025 Weights & Biases project for a related
     experiment-tracking tool
     - `class_project/msml610/Fall2025/projects/TutorTask_103_Weights_and_Biases_Hard/`
-- Create `tutorials/MLflow/`, since it does not exist yet
+- Create the project dir following the class instructions in
+  `class_project/README.md`, section `Contribution to the Repo`
+  - Start from `class_project/project_template`
 - Make it look like `msml610/tutorials/L03_knowledge_representation/`
 - Use the skills in `.claude/skills/notebook.*` to automate part of the work, and
   document how you used them
@@ -43,79 +45,113 @@ MLflow
 
 # Project
 
-## Project 1: Forecasting Renewable Energy Production
+## Project 1 (Fall2026): Volatility Forecasting with Walk-Forward Model Comparison
 
-- **Difficulty**: 2 (Medium)
-- **Project Objective**: Build a system to forecast the production of a wind turbine,
-  and use MLflow to track, compare, register, and serve the best model
+- **Project Objective**: Forecast the next-week volatility of the S&P 500 with
+  several models, compare them with walk-forward validation, and use MLflow to track
+  every fold and register the best model
 - **Dataset Suggestions**:
-  [Wind Power Forecasting](https://www.kaggle.com/datasets/theforcecoder/wind-power-forecasting)
+  - [S&P 500 Index (SP500)](https://fred.stlouisfed.org/series/SP500), the last 10
+    years of daily closes
+  - [CBOE Volatility Index: VIX (VIXCLS)](https://fred.stlouisfed.org/series/VIXCLS)
 - **Tasks**:
-  - **Preprocess the Data**: Explore the turbine series, resample it to hourly steps,
-    handle missing values, and split it chronologically into train, validation, and
-    test sets
-  - **Define the Forecasting Problem**: Predict the active power one hour ahead from
-    lagged power, weather variables, and time of day, and compute a persistence
-    baseline
-  - **Track Experiments**: Use `mlflow.start_run`, `mlflow.log_params`,
-    `mlflow.log_metrics`, and `mlflow.autolog` to log LSTM and GRU models across
-    window lengths and hidden sizes
-  - **Evaluate and Register Models**: Compare runs by MAE and RMSE on the validation
-    set in the MLflow UI, and register the best model in the Model Registry with
-    `mlflow.register_model`
-  - **Serve and Visualize**: Deploy the registered model with `mlflow models serve`,
-    query the REST endpoint on the test set, and plot predictions vs. actual power
-- **Bonus Ideas (Optional)**: Integrate an external API (e.g., OpenWeatherMap) to
-  enhance forecasting with real-time weather data
+  - **Preprocess the Data**: Download both series from FRED, compute the daily log
+    returns and the realized volatility of the next 5 days as the target, and build
+    the features only from data up to each day
+  - **Define the Forecasting Problem**: Predict the target from lagged realized
+    volatility and the VIX, and compute a persistence baseline that repeats the last
+    5-day realized volatility
+  - **Track Walk-Forward Runs**: Use a parent run per model and a nested run per
+    fold of an expanding `TimeSeriesSplit`, with `mlflow.log_params` and
+    `mlflow.log_metric` with the `step` argument, to compare a HAR-style linear
+    regression, a `GradientBoostingRegressor`, and a GARCH(1,1) from `arch`
+  - **Package the Models**: Wrap the GARCH model in an `mlflow.pyfunc.PythonModel`
+    since it has no flavor, log it with `mlflow.pyfunc.log_model`, and run the
+    pipeline with an `MLproject` file and `mlflow run`
+  - **Compare and Register Models**: Rank the parent runs by mean RMSE and QLIKE loss
+    across folds with `mlflow.search_runs`, and register the best one with
+    `mlflow.register_model` under the alias `champion`
+  - **Visualize the Errors**: Log with `mlflow.log_figure` the plots of predicted vs.
+    realized volatility, and the error by fold in calm and crisis periods
+- **Bonus Ideas (Optional)**: Add a GJR-GARCH model for the asymmetric response to
+  negative returns; run a Mincer-Zarnowitz regression of realized on predicted
+  volatility and log its R-squared
 
 ### Milestones
 
 - Milestone 1: Set up the container and the data
   - Project tasks: Preprocess the Data
-  - Result: `tutorials/MLflow/` container running with the MLflow tracking UI, and
-    the hourly turbine table with the chronological splits
+  - Result: project dir created and container running with the MLflow tracking UI,
+    and a table of the daily log returns, the lagged features, and the 5-day-ahead
+    realized volatility target of the S&P 500
 - Milestone 2: API notebook
-  - Project tasks: Track Experiments, Evaluate and Register Models
-  - Result: `mlflow.API.ipynb` covering tracking (parameters, metrics, artifacts),
-    autologging, models, and the Model Registry on a synthetic regression
+  - Project tasks: Track Walk-Forward Runs, Package the Models, Compare and
+    Register Models
+  - Result: `mlflow.API.ipynb` covering parent and nested runs, `mlflow.log_params`,
+    `mlflow.log_metric` with `step`, `mlflow.log_figure`,
+    `mlflow.pyfunc.PythonModel`, an `MLproject` run, `mlflow.search_runs`, and
+    `mlflow.register_model` with an alias on a synthetic time series
 - Milestone 3: Example notebook
-  - Project tasks: Define the Forecasting Problem, Track Experiments, Evaluate and
-    Register Models, Serve and Visualize
+  - Project tasks: Define the Forecasting Problem, Track Walk-Forward Runs, Package
+    the Models, Compare and Register Models, Visualize the Errors
   - Result: `mlflow.example.ipynb` running end to end
 
-## Project 2: Identifying Anomalies in Network Traffic
+## Project 2: Credit Card Default Prediction
 
-- **Difficulty**: 2 (Medium)
-- **Project Objective**: Detect anomalies in network traffic that could indicate
-  potential security threats
+- **Project Objective**: Predict if a credit card client defaults next month, and use
+  MLflow to track the tuning runs, compare them, register, and serve the best model
 - **Dataset Suggestions**:
-  [CICIDS2017](https://www.kaggle.com/datasets/chethuhn/network-intrusion-dataset)
+  [Default of Credit Card Clients](https://archive.ics.uci.edu/dataset/350/default+of+credit+card+clients),
+  with 30,000 clients of a Taiwanese bank, their limits, bills, and payment history
 - **Tasks**:
-  - **Preprocess the Data**: Handle missing values and normalize features
-  - **Train Anomaly Detectors**: Train an ensemble of anomaly detection models like
-    Isolation Forest or One-Class SVM
-  - **Track Experiments**: Use MLflow to log parameters and metrics, and compare
-    model performances
-  - **Register Models**: Implement a model registry with MLflow to manage different
-    versions
-- **Bonus Ideas (Optional)**: Test the model on streaming data using a simulated
-  network traffic generator
+  - **Preprocess the Data**: Replace the undocumented codes of `EDUCATION` and
+    `MARRIAGE` with the "other" category, rename `PAY_0` to `PAY_1`, and make a
+    stratified 60/20/20 train, validation, and test split
+  - **Define the Prediction Problem**: Predict the default from the limit, the
+    demographics, and 6 months of payment history, and compute a logistic regression
+    with default parameters as the baseline
+  - **Track Experiments**: Use `mlflow.start_run` with nested runs per model family,
+    `mlflow.log_params`, `mlflow.log_metrics`, and `mlflow.autolog` to log logistic
+    regression, random forest, and gradient boosting over hyperparameter grids
+  - **Package the Pipeline**: Write an `MLproject` file with the model family and the
+    seed as parameters, and run it with `mlflow run`
+  - **Evaluate and Register Models**: Compare runs by ROC AUC, PR AUC, and KS
+    statistic on the validation set in the MLflow UI, register the best model with
+    `mlflow.register_model`, set the alias `champion`, and report the test metrics
+    once
+  - **Serve and Visualize**: Deploy `models:/credit_default@champion` with
+    `mlflow models serve`, query the REST endpoint on the test set, and plot the
+    default rate by score decile
+- **Bonus Ideas (Optional)**: Choose the approval threshold that minimizes the
+  expected cost of a missed default versus a rejected good client, and log the cost
+  with `mlflow.log_metric`; log SHAP plots as artifacts
 
-## Project 3: Predicting Air Quality Index Using Time Series Data
+## Project 3: Fraud Detector with Model Versions and Alias Promotion
 
-- **Difficulty**: 1 (Easy)
-- **Project Objective**: Predict the Air Quality Index (AQI) in a given city using
-  historical data
+- **Project Objective**: Detect fraudulent card transactions with a time-ordered
+  split, and use the MLflow Model Registry to version two detectors, promote the
+  better one, and roll back
 - **Dataset Suggestions**:
-  [Air Quality Data in India](https://www.kaggle.com/datasets/rohanrao/air-quality-data-in-india)
-  (select the Delhi station)
+  [Credit Card Fraud Detection](https://www.openml.org/d/1597), with 284,807
+  transactions of European cardholders over two days and 492 frauds
 - **Tasks**:
-  - **Load and Explore the Data**: Use pandas and Matplotlib to explore the dataset
-  - **Build a Baseline**: Implement a simple baseline model and log its performance
-    metrics
-  - **Track Forecasting Experiments**: Use MLflow to track time series models like
-    ARIMA or Prophet, including hyperparameters like the ARIMA order or the Prophet
-    seasonality mode
-  - **Compare Models**: Use MLflow to save and compare the performance of the models
-- **Bonus Ideas (Optional)**: Implement a dashboard using Flask that visualizes
-  predictions vs. actual data over time
+  - **Load and Split the Data**: Sort the transactions by `Time`, use the first 70%
+    for training, the next 15% for validation, and the last 15% for testing, and
+    report the fraud rate of each split
+  - **Build a Baseline**: Fit a logistic regression with `class_weight="balanced"`,
+    and log its parameters and metrics with `mlflow.start_run` and
+    `mlflow.sklearn.autolog`
+  - **Track a Second Detector**: Fit a `RandomForestClassifier` as a second detector,
+    and run both detectors as entry points of an `MLproject` file with `mlflow run`,
+    logging each model with `mlflow.sklearn.log_model` and a signature
+  - **Register and Promote Models**: Register both models as versions of
+    `fraud_detector` with `mlflow.register_model`, and set the alias `champion` on
+    the version with the best validation PR AUC using `MlflowClient`
+  - **Load by Alias and Roll Back**: Score the test set with
+    `mlflow.pyfunc.load_model("models:/fraud_detector@champion")`, then move the
+    alias back to version 1 and compare the metrics
+  - **Evaluate and Visualize**: Report PR AUC and the recall at 1% false positive
+    rate of both versions on the test set, and plot their precision-recall curves
+- **Bonus Ideas (Optional)**: Add a promotion gate that moves the alias only if the
+  new version improves the validation PR AUC; log the cost of missed frauds as a
+  metric

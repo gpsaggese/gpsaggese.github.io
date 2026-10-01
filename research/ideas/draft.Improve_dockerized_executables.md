@@ -3,7 +3,6 @@
 ## Status
 - **Status:**: draft
 - **Complete Specs:**: 20%
-- **Assignee:**: TBD
 
 ## Core Idea
 - Dockerized CLI executables (tools packaged and run entirely inside a

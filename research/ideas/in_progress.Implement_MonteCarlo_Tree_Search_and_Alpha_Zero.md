@@ -3,7 +3,6 @@
 ## Status
 - **Status:**: in_progress
 - **Complete Specs:**: 20%
-- **Assignee:**: TBD
 
 ## Core Idea
 

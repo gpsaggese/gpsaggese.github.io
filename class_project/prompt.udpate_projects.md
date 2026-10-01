@@ -1,5 +1,9 @@
-- In each dir class_project/msml610/Fall2026 and class_project/data605/Fall2026 there
-  is a file like class_project/msml610/Fall2026/class_project.csv
+- In each dir
+  - class_project/msml610/Fall2026
+  - class_project/data605/Fall2026
+  there is a file like
+  - class_project/*/Fall2026/class_project.csv
+  - class_project/*/Fall2026/chosen_projects.csv
 
 - There is a single Team column that is the merge of Team1, Team2, Team3
 - The two Choice {1,2,3} are full url vs basename
@@ -19,6 +23,9 @@
 - The original data is in 
   - Form responses
     https://docs.google.com/spreadsheets/d/1dY1al_9ATovLvfIfuoaYemzVmjU_moNqNXzC01sD8Rw/edit?resourcekey=&gid=1339190693#gid=1339190693
-
   - Manual assignment
     https://docs.google.com/spreadsheets/d/1dqKxYRboFxied-FseN0VysborAxUkuBYCV4dddiKPwM/edit?resourcekey=&gid=978923818#gid=978923818
+
+- Make sure that no project is assigned to more than one person / team
+- If there is a "conflict" try to find an assignment that makes everyone happy
+  without moving too many other people

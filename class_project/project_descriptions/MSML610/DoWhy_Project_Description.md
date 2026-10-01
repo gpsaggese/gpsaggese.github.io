@@ -43,9 +43,52 @@ DoWhy
 
 # Project
 
-## Project 1: Effect of Credit Limit on Loan Default
+## Project 1 (Fall2026): Effect of Fed Rate Hikes on Equity Returns
 
-- **Difficulty**: 2 (Medium)
+- **Project Objective**: Estimate the causal effect of a Federal Reserve rate hike on
+  the next-month return of the S&P 500, controlling for inflation, unemployment, and
+  market volatility
+- **Dataset Suggestions**:
+  - [FRED - Federal Funds Effective Rate](https://fred.stlouisfed.org/series/FEDFUNDS)
+  - [FRED - Consumer Price Index](https://fred.stlouisfed.org/series/CPIAUCSL) and
+    [FRED - Unemployment Rate](https://fred.stlouisfed.org/series/UNRATE)
+  - S&P 500 (`^GSPC`) and VIX (`^VIX`) prices from
+    [yfinance](https://pypi.org/project/yfinance/)
+- **Tasks**:
+  - **Build the Monthly Panel**: Merge the funds rate, inflation, unemployment,
+    S&P 500 returns, and VIX into one monthly table
+  - **Define the Treatment**: Define a rate-hike indicator as a monthly change of the
+    funds rate of at least 0.10 percentage points, so that noise near zero is not a
+    hike, and the outcome as the next-month S&P 500 return
+  - **Estimate the Effect**: Build the graph with lagged confounders and estimate the
+    ATE with `backdoor.linear_regression` and `backdoor.propensity_score_weighting`
+  - **Refute the Estimate**: Run `placebo_treatment_refuter` and
+    `data_subset_refuter`, and check `add_unobserved_common_cause`
+  - **Visualize the Effect**: Plot the hike indicator over the return series, and the
+    ATE with confidence intervals for each estimator
+- **Bonus Ideas (Optional)**: Repeat the analysis for rate cuts or for sector ETFs
+
+### Milestones
+
+- Milestone 1: Set up the container and the data
+  - Project tasks: Build the Monthly Panel
+  - Result: `tutorials/dowhy/` container running, and the monthly table with the
+    funds rate, inflation, unemployment, S&P 500 return, and VIX
+- Milestone 2: API notebook
+  - Project tasks: Estimate the Effect, Refute the Estimate
+  - Result: `dowhy.API.ipynb` covering `CausalModel`, `identify_effect`,
+    `estimate_effect` (`backdoor.linear_regression`,
+    `backdoor.propensity_score_weighting`, and `iv.instrumental_variable`
+    estimators), and `refute_estimate` (`placebo_treatment_refuter`,
+    `data_subset_refuter`, and `add_unobserved_common_cause`) on a synthetic dataset
+    with a known effect
+- Milestone 3: Example notebook
+  - Project tasks: Define the Treatment, Estimate the Effect, Refute the Estimate,
+    Visualize the Effect
+  - Result: `dowhy.example.ipynb` running end to end
+
+## Project 2: Effect of Credit Limit on Loan Default
+
 - **Project Objective**: Estimate the causal effect of a high credit limit on the
   probability of default in the next month, and measure how robust the estimate is to
   violated assumptions
@@ -63,55 +106,14 @@ DoWhy
   - **Refute the Estimate**: Call `refute_estimate` with `placebo_treatment_refuter`,
     `random_common_cause`, and `data_subset_refuter`, and report the new estimates
   - **Interpret the Results**: Plot the ATE with confidence intervals per estimator
-    and discuss whether an unobserved bank risk score can break the estimate
+    and discuss whether an unobserved bank risk score can break the estimate, and
+    whether past repayment status is a confounder or a mediator of the limit
 - **Bonus Ideas (Optional)**: Estimate the effect by age group with an EconML
   estimator called through DoWhy; add a sensitivity analysis to unobserved
   confounding
 
-### Milestones
-
-- Milestone 1: Set up the container and the data
-  - Project tasks: Preprocess the Data
-  - Result: `tutorials/dowhy/` container running, and a clean table with the
-    treatment, the outcome, and the confounders
-- Milestone 2: API notebook
-  - Project tasks: Define the Causal Graph, Estimate the Effect, Refute the Estimate
-  - Result: `dowhy.API.ipynb` covering `CausalModel`, `identify_effect`,
-    `estimate_effect`, and `refute_estimate` on a synthetic dataset with a known
-    effect
-- Milestone 3: Example notebook
-  - Project tasks: Define the Causal Graph, Estimate the Effect, Refute the Estimate,
-    Interpret the Results
-  - Result: `dowhy.example.ipynb` running end to end
-
-## Project 2: Effect of Fed Rate Hikes on Equity Returns
-
-- **Difficulty**: 2 (Medium)
-- **Project Objective**: Estimate the causal effect of a Federal Reserve rate hike on
-  the next-month return of the S&P 500, controlling for inflation, unemployment, and
-  market volatility
-- **Dataset Suggestions**:
-  [FRED - Federal Funds Effective Rate](https://fred.stlouisfed.org/series/FEDFUNDS)
-  - [FRED - Consumer Price Index](https://fred.stlouisfed.org/series/CPIAUCSL) and
-    [FRED - Unemployment Rate](https://fred.stlouisfed.org/series/UNRATE)
-  - S&P 500 (`^GSPC`) and VIX (`^VIX`) prices from
-    [yfinance](https://pypi.org/project/yfinance/)
-- **Tasks**:
-  - **Build the Monthly Panel**: Merge the funds rate, inflation, unemployment,
-    S&P 500 returns, and VIX into one monthly table
-  - **Define the Treatment**: Define a rate-hike indicator as a positive monthly
-    change of the funds rate, and the outcome as the next-month S&P 500 return
-  - **Estimate the Effect**: Build the graph with lagged confounders and estimate the
-    ATE with `backdoor.linear_regression` and `backdoor.propensity_score_weighting`
-  - **Refute the Estimate**: Run `placebo_treatment_refuter` and
-    `data_subset_refuter`, and check `add_unobserved_common_cause`
-  - **Visualize the Effect**: Plot the hike indicator over the return series, and the
-    ATE with confidence intervals for each estimator
-- **Bonus Ideas (Optional)**: Repeat the analysis for rate cuts or for sector ETFs
-
 ## Project 3: Effect of Oil Price Shocks on Airline Stocks
 
-- **Difficulty**: 3 (Hard)
 - **Project Objective**: Estimate the causal effect of a weekly oil price surge on
   the weekly return of airline stocks, and test how robust the estimate is to
   unobserved confounding
@@ -121,7 +123,8 @@ DoWhy
     [yfinance](https://pypi.org/project/yfinance/)
 - **Tasks**:
   - **Merge the Data Sources**: Align weekly oil prices, airline ETF, S&P 500, and
-    VIX on week-end dates
+    VIX on week-end dates, define the surge as a weekly oil price rise in the top
+    decile, and drop the weeks around the negative WTI price of April 2020
   - **Define the Causal Graph**: Encode market return and volatility as common causes
     of the oil shock and of the airline return
   - **Estimate the Effects**: Estimate the ATE with `backdoor.linear_regression` and

@@ -3,8 +3,7 @@
 ## Status
 
 - **Status:**: draft
-- **Complete Specs:**: 80%
-- **Assignee:**: TBD
+- **Complete Specs:**: 90%
 
 ## Core Idea
 
@@ -96,16 +95,25 @@
 
 ## Key Examples
 
-- **[Example 1]**: [Concrete scenario illustrating the idea]
-- **[Example 2]**: [Second scenario, possibly from a different domain]
-- **[Example 3]**: [Edge case or failure mode]
+- **Library-level run**: apply each agent to the same Python library and rate
+  every generated docstring on accuracy, readability, completeness, and
+  maintainability
+- **Sync with changes**: rename a function parameter and check whether each
+  agent updates the docstring and the usage examples (capability level L3)
+- **Hallucinated documentation**: an agent documents that a function raises
+  `ValueError` when it never does, or writes an example that does not run;
+  executable-example tests catch this while a fluency rating does not
 
 ## Questions
 
 1. _Which agents generate the most accurate, readable, complete, and maintainable
    documentation, and under what conditions?_
-2. [Open question 2: what would a proof or counterexample look like?]
-3. [Provocative implication: if true, what does this change?]
+2. How reliable are the quality ratings themselves? Low inter-rater agreement
+   (e.g., Fleiss' Kappa) between reviewers would show that the rubric cannot
+   rank the agents.
+3. If the best agent's documentation passes the executable-example tests and
+   is rated on par with human-written documentation, does the developer's
+   job shift from writing documentation to reviewing it?
 
 ## Research Topics
 

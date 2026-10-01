@@ -3,8 +3,7 @@
 ## Status
 
 - **Status:**: draft
-- **Complete Specs:**: 30%
-- **Assignee:**: TBD
+- **Complete Specs:**: 90%
 
 ## Core Idea
 
@@ -93,6 +92,9 @@
   constraint, premature commit, tool misuse) across benchmarks
 - **Feedback into scaffolds**: use recurring blame modes to auto-generate skill and
   prompt fixes, connecting to `draft.Measuring_Quality_of_Skills_and_Prompts.md`
+- **Related ideas**: `draft.Comparison_of_Debugging_Agents.md`,
+  `in_progress.Comparison_of_Coding_Agents.md`, and
+  `draft.Skill_vs_Luck_in_Agent_Benchmarks.md`
 
 ## Next steps
 
@@ -132,9 +134,5 @@
 
 ## References
 
-- 2009, Pearl, "Causality: Models, Reasoning, and Inference"
-- 1953, Shapley, "A Value for n-Person Games"
-- `draft.Comparison_of_Debugging_Agents.md`
-- `draft.Measuring_Quality_of_Skills_and_Prompts.md`
-- `in_progress.Comparison_of_Coding_Agents.md`
-- `draft.Skill_vs_Luck_in_Agent_Benchmarks.md`
+- Pearl, _Causality: Models, Reasoning, and Inference_. (2009)
+- Shapley, _A Value for n-Person Games_. (1953)

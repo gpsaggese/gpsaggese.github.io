@@ -1,9 +1,9 @@
 # RL for Tennis / Pickleball Rally Strategy
 
 ## Status
-**Status:**: in_progress
-**Complete Specs:**: 50%
-**Assignee:**: TBD
+
+- **Status:**: in_progress
+- **Complete Specs:**: 50%
 
 ## Core Idea
 
@@ -160,6 +160,7 @@
   - Approximation 4: continuous ball speed/spin actions for pace variation
 
 ## Next steps
+
 - [ ] Look for related research (what has already been done)
 - [ ] Finalize the implementation plan
 - [ ] GP to review / approve the plan

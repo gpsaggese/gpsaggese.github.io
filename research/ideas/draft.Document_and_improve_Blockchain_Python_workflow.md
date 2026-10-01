@@ -3,7 +3,6 @@
 ## Status
 - **Status:**: draft
 - **Complete Specs:**: 15%
-- **Assignee:**: TBD
 
 ## Core Idea
 - There is existing code implementing a blockchain-related Python toolchain

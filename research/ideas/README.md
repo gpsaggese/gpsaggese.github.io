@@ -83,10 +83,12 @@
 | `draft.Code_Visualization.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Code_Visualization.md) | draft | - | 20% | - | - |
 | `in_progress.Implement_MonteCarlo_Tree_Search_and_Alpha_Zero.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/in_progress.Implement_MonteCarlo_Tree_Search_and_Alpha_Zero.md) | in progress | Eyepatch0 + gpsaggese | 20% | - | - |
 | `draft.Intelligence_Market.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Intelligence_Market.md) | draft | - | 20% | - | - |
+| `draft.Create_a_Small_Large_Language_Model_for_Logic.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Create_a_Small_Large_Language_Model_for_Logic.md) | draft | - | 20% | - | - |
 | `in_progress.RL_for_auto_EDA.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/in_progress.RL_for_auto_EDA.md) | in progress | Delvitron1019 + gpsaggese | 15% | - | - |
 | `draft.Intelligence_Server.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Intelligence_Server.md) | draft | - | 15% | - | - |
 | `draft.Noesis_Reputation_Detection_Bound.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Noesis_Reputation_Detection_Bound.md) | draft | - | 15% | - | - |
 | `draft.Noesis_Task_Unit_Definition.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Noesis_Task_Unit_Definition.md) | draft | - | 15% | - | - |
+| `draft.Train_Financial_Sentinment_Analysis_Using_Prices.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Train_Financial_Sentinment_Analysis_Using_Prices.md) | draft | - | 15% | - | - |
 | `draft.Backtesting_Complexity.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Backtesting_Complexity.md) | draft | - | 10% | - | - |
 | `draft.Blog_Cross_Posting_and_Engagement_System.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Blog_Cross_Posting_and_Engagement_System.md) | draft | - | 10% | - | - |
 | `draft.Build_an_LLM_Arena.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Build_an_LLM_Arena.md) | draft | - | 10% | - | - |
@@ -96,13 +98,13 @@
 | `draft.Create_Chrome_Extension_To_Extract_Your_Data.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Create_Chrome_Extension_To_Extract_Your_Data.md) | draft | - | 10% | - | - |
 | `draft.Create_Prediction_Market_on_blockchain.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Create_Prediction_Market_on_blockchain.md) | draft | - | 10% | - | - |
 | `draft.Create_a_Small_Large_Language_Model_for_Kids_Book.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Create_a_Small_Large_Language_Model_for_Kids_Book.md) | draft | - | 10% | - | - |
-| `draft.Create_a_Small_Large_Language_Model_for_Logic.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Create_a_Small_Large_Language_Model_for_Logic.md) | draft | - | 10% | - | - |
 | `draft.Create_a_Small_Large_Language_Model_for_Python.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Create_a_Small_Large_Language_Model_for_Python.md) | draft | - | 10% | - | - |
 | `draft.Cursor_for_writing_terminal.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Cursor_for_writing_terminal.md) | draft | - | 10% | - | - |
 | `draft.Datasets_for_Training_and_Distilling_LLMs.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Datasets_for_Training_and_Distilling_LLMs.md) | draft | - | 10% | - | - |
 | `draft.Detecting_and_Humanizing_LLM_Text.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Detecting_and_Humanizing_LLM_Text.md) | draft | - | 10% | - | - |
 | `draft.Document_MCP.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Document_MCP.md) | draft | - | 10% | - | - |
 | `draft.Document_and_improve_Blockchain_Python_workflow.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Document_and_improve_Blockchain_Python_workflow.md) | draft | - | 10% | - | - |
+| `draft.Faster_Autoregressive_Generation_via_Word_Stem_Chunks_and_Diffusion.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Faster_Autoregressive_Generation_via_Word_Stem_Chunks_and_Diffusion.md) | draft | - | 10% | - | - |
 | `draft.Forgetting_Mechanisms.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Forgetting_Mechanisms.md) | draft | - | 10% | - | - |
 | `draft.Fouriered_Learning.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Fouriered_Learning.md) | draft | - | 10% | - | - |
 | `draft.How_alpha_evolve.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.How_alpha_evolve.md) | draft | - | 10% | - | - |
@@ -116,13 +118,13 @@
 | `draft.Solving_Differential_Equations_with_NN.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Solving_Differential_Equations_with_NN.md) | draft | - | 10% | - | - |
 | `draft.Text_to_Sign_Language_Video.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Text_to_Sign_Language_Video.md) | draft | - | 10% | - | - |
 | `draft.Time_as_a_Feature_in_Learning_Theory.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Time_as_a_Feature_in_Learning_Theory.md) | draft | - | 10% | - | - |
-| `draft.Train_Financial_Sentinment_Analysis_Using_Prices.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Train_Financial_Sentinment_Analysis_Using_Prices.md) | draft | - | 10% | - | - |
 | `draft.Tutorial_claude_agent_sdk.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Tutorial_claude_agent_sdk.md) | draft | - | 10% | - | - |
 | `draft.VC_Dimension_of_Causal_Networks.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.VC_Dimension_of_Causal_Networks.md) | draft | - | 10% | - | - |
 | `draft.Noesis_Hybrid_Auction_Latency.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Noesis_Hybrid_Auction_Latency.md) | draft | - | 10% | - | - |
+| `draft.Distribution_Shift_in_Time_Series_Forecasting.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Distribution_Shift_in_Time_Series_Forecasting.md) | draft | - | 0% | - | - |
 
 # Note
 - If the specs are not complete for a task you are interested in, before starting
   the work, ask GP to improve them so that there is clarity on what's the goal
 
-// Last update timestamp: "Aug 14 23:01"
+// Last update timestamp: "Oct 1 11:10"

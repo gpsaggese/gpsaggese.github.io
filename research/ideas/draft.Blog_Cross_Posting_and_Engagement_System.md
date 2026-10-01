@@ -3,7 +3,6 @@
 ## Status
 - **Status**: draft
 - **Complete Specs**: 10%
-- **Assignee**: TBD
 
 ## Core Idea
 - Build a pipeline that takes one source post (Markdown in the repo) and

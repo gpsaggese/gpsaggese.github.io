@@ -3,8 +3,7 @@
 ## Status
 
 - **Status:**: draft
-- **Complete Specs:**: 20%
-- **Assignee:**: TBD
+- **Complete Specs:**: 90%
 
 ## Core Idea
 
@@ -71,16 +70,31 @@
 
 ## Implementation plan
 
-- Milestone 1
-  - Do this and that
-  - This is the result
+- Milestone 1: data and baseline
+  - Generate GSM8K-style and DeepMind Mathematics problems with difficulty
+    controlled by the number of reasoning steps
+  - Write the exact-match scorer for arithmetic answers
+  - Train the smallest models (1M and 10M parameters) as a sanity-check
+    baseline
+  - This is the result: single-step and multi-step accuracy for the smallest
+    models, and a validated scoring pipeline
 
-- Milestone 2
-  - Do this and that
-  - This is the result
+- Milestone 2: size sweep and curriculum
+  - Train 1M/10M/50M/125M parameter models on the same corpus, with and
+    without an easy-to-hard curriculum
+  - Add formal-logic proof steps to the corpus and measure the transfer to
+    arithmetic word problems
+  - This is the result: accuracy vs parameter count curves, the minimum size
+    for reliable 2-3 step reasoning, and the curriculum and transfer effects
+
+- Milestone 3: verifier-guided fine-tuning
+  - Fine-tune the best small model with exact-match correctness as the reward
+  - Compare it with supervised pretraining at the same compute
+  - This is the result: evidence on whether a checkable signal is more
+    sample-efficient than next-token prediction alone
 
 ## References
 
-- 2021, Cobbe et al., "Training Verifiers to Solve Math Word Problems", GSM8K
-- 2019, Saxton et al., "Analysing Mathematical Reasoning Abilities of Neural
-  Models", DeepMind Mathematics Dataset
+- Cobbe et al., _Training Verifiers to Solve Math Word Problems_, GSM8K. (2021)
+- Saxton et al., _Analysing Mathematical Reasoning Abilities of Neural Models_,
+  DeepMind Mathematics Dataset. (2019)
