@@ -28,4 +28,4 @@
 
 - Make sure that no project is assigned to more than one person / team
 - If there is a "conflict" try to find an assignment that makes everyone happy
-  without moving 
+  without moving too many other people
