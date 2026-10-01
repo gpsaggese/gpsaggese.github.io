@@ -3,11 +3,9 @@
 ## Status
 
 - **Status:**: draft
-- **Complete Specs:**: 10%
+- **Complete Specs:**: 90%
 
 ## Core Idea
-
-// TODO(ai_gp): Improve this idea
 
 - Problem: how to make autoregressive NN generation faster?
 - Approach 1: generate words and stems (caveman style)

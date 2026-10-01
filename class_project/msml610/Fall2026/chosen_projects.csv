@@ -13,25 +13,25 @@ class_project/project_descriptions/MSML610/RLlib_Project_Description.md ,False,3
 class_project/project_descriptions/MSML610/SemanticKernel_Project_Description.md ,True,15
 class_project/project_descriptions/MSML610/WB_Weave_Project_Description.md ,True,29
 class_project/project_descriptions/MSML610/trl_Project_Description.md ,True,35
-research/ideas/draft.AI_Knowledge_Management_Development.md,True,9
-research/ideas/draft.Agentic_Analysis_of_Committee_vs_Authority.md,False,33
-research/ideas/draft.Backtesting_Complexity.md,False,25
-research/ideas/draft.Benchmarking_Data_Science_Agents.md,False,14
-research/ideas/draft.Causal_Analysis_of_Financial_Tradability.md,True,6
-research/ideas/draft.Comparison_of_Documentation_Agents.md,True,8
-research/ideas/draft.Comparison_of_Security_Analysis_Agents.md,True,26
-research/ideas/draft.Counterfactual_Attribution_of_Agent_Failures.md,True,1
-research/ideas/draft.Build_an_LLM_Arena.md,True,20
-research/ideas/draft.Create_LLM_Benchmark_for_thoroughness.md,True,22
-research/ideas/draft.Create_a_Small_Large_Language_Model_for_Logic.md,True,7
-research/ideas/draft.Faster_Autoregressive_Generation_via_Word_Stem_Chunks_and_Diffusion.md,True,4
-research/ideas/draft.How_to_measure_LLM_compliance.md,False,2
-research/ideas/draft.Mean_Variance_Optimization_with_NN.md,False,11
-research/ideas/draft.Skill_vs_Luck_in_Agent_Benchmarks.md,True,5
-research/ideas/draft.Test_Time_Search_Overfitting.md,False,24
-research/ideas/draft.Train_Financial_Sentinment_Analysis_Using_Prices.md,False,19
-research/ideas/draft.Distribution_Shift_in_Time_Series_Forecasting.md,True,23
+research/ideas/draft.AI_Knowledge_Management_Development.md ,True,9
+research/ideas/draft.Agentic_Analysis_of_Committee_vs_Authority.md ,False,33
+research/ideas/draft.Backtesting_Complexity.md ,False,25
+research/ideas/draft.Benchmarking_Data_Science_Agents.md ,False,14
+research/ideas/draft.Causal_Analysis_of_Financial_Tradability.md ,True,6
+research/ideas/draft.Comparison_of_Documentation_Agents.md ,True,8
+research/ideas/draft.Comparison_of_Security_Analysis_Agents.md ,True,26
+research/ideas/draft.Counterfactual_Attribution_of_Agent_Failures.md ,True,1
+research/ideas/draft.Build_an_LLM_Arena.md ,True,20
+research/ideas/draft.Create_LLM_Benchmark_for_thoroughness.md ,True,22
+research/ideas/draft.Create_a_Small_Large_Language_Model_for_Logic.md ,True,7
+research/ideas/draft.Faster_Autoregressive_Generation_via_Word_Stem_Chunks_and_Diffusion.md ,True,4
+research/ideas/draft.How_to_measure_LLM_compliance.md ,False,2
+research/ideas/draft.Mean_Variance_Optimization_with_NN.md ,False,11
+research/ideas/draft.Skill_vs_Luck_in_Agent_Benchmarks.md ,True,5
+research/ideas/draft.Test_Time_Search_Overfitting.md ,False,24
+research/ideas/draft.Train_Financial_Sentinment_Analysis_Using_Prices.md ,False,19
+research/ideas/draft.Distribution_Shift_in_Time_Series_Forecasting.md ,True,23
 research/Causal_Analysis_of_Agent_Skill_And_Luck/,True,28
-research/ideas/in_progress.Comparison_of_Data_Science_Agents.md,False,16
-research/ideas/in_progress.RL_for_auto_EDA.md,True,31
-class_project/project_descriptions/MSML610/nevergrad_Project_Description.md,False,3
+research/ideas/in_progress.Comparison_of_Data_Science_Agents.md ,False,16
+research/ideas/in_progress.RL_for_auto_EDA.md ,True,31
+class_project/project_descriptions/MSML610/nevergrad_Project_Description.md ,False,3

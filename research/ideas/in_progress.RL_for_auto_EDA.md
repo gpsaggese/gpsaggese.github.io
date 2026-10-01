@@ -3,7 +3,7 @@
 ## Status
 
 - **Status:**: in_progress
-- **Complete Specs:**: 15%
+- **Complete Specs:**: 90%
 
 ## Core Idea
 
