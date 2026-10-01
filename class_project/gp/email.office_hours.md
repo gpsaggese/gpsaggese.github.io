@@ -1,52 +1,101 @@
-Team!
+Team,
 
-This year, we are going to emphasizing even more working together 
+# Why Office Hours
 
-This interaction working on your project is what previous students really enjoyed
-from this class so we will give you more of that, instead of boring lessons (you can
-watch the videos!).
+- This year the class puts even more emphasis on working together
+  - Working with me on your project is what previous students enjoyed most
+  - We will give you more of that, instead of "boring" lessons
+  - You can watch the lecture videos on your own time
+- The value of the class is to prepare you to do research and work in machine
+  learning
+  - We will use the same setup you will find in the real world
+  - You have a slot with your supervisor (me, in your case)
+  - You work with your supervisor to make progress towards the goal
+- The goal is to make your project the highest possible quality, so that you can
+  get:
+  - A good grade
+  - Ideally, a publication (blog post or paper)
 
-The value of the class is to make you able to conduct research / work in machine
-learning. So we will use the same setup you will encounter in the real world.
-You have a slot with your "supervisor" (me in your case) and you work with him/her
-to make progress towards the goal.
+# What Office Hours Are
 
-Projects have a weekly check-in, where we can discuss anything you want (project
-progress, specs, doubts, questions, etc.)
+- Every project has a periodic check-in with me (probably bi-weekly or every 3 weeks)
+  - This applies to both project types: small research projects and tutorials
+- In the check-in we can discuss anything you want:
+  - Project progress
+  - Specs
+  - Doubts
+  - Questions
 
-- You don't have to come to office hours every week, only when there is something you
-  want to discuss
-- Showing up all the time to ask trivial questions just to be noticed will not give
-  you extra point (maybe even the opposite)
-- Every group has 5-10 mins of time (depending on how many teams are joining the
-  office hours), so come prepared with questions
-- You can stay the entire office hours since you will definitively learn from the
-  other projects: every team has more or less the same questions
+# Slots
+
+- The current slots are, every week:
+  - **Mon**: 9am ET
+  - **Wed**: 2pm ET
+  - **Fri**: 12pm ET
+- All slots use the same Zoom link we use for class
+- I spread the slots over different days and times so that at least one works for
+  everyone
+  - Pick the slot that works best for your team
+- If none of the slots works for you:
+  - Email me a few times that work for your team
+  - In exceptional circumstances we can find another time that works for both of us
+  - Do not abuse this
+    - E.g., do not ask to meet on Saturday at 7am, between your morning run and
+      your brunch with friends: I also have a life
+    - I have more than 50 teams per semester, so you need to be flexible
+
+# Sign Up
+
+- Sign up for office hours with this
+  [sign-up form](https://docs.google.com/forms/d/1QiRnWVwMzKJbjY62aBnWAdZ-_h0LYC8F1np0MRC_p78)
+
+# How to Use Office Hours
+
+- You do not have to come every 2-3 weeks
+  - Come only when there is something you want to discuss
+  - Attendance is not graded
+- Showing up all the time to ask trivial questions just to be noticed gives no
+  extra points
+  - It may even have the opposite effect
+- Send an email (gsaggese@umd.edu) for quick questions that do not need a
+  discussion, always put the TAs in cc
+- Talk to the TAs for more organizational questions (e.g., how do I install Docker?
+  What is pandas?)
+- Read the class FAQs, look at other students projects
+
+# How to Come Prepared
+
+- Every team has 5-10 minutes, depending on how many teams join the office hours
+  - Come with your questions ready
+- Before the slot:
+  - Check the project instructions: the answer may already be there
+  - Write down your questions
+  - Have your repo, GitHub issue, or notebook open, ready to share your screen
+- During your 5-10 minutes:
+  - Say what you did since the last check-in
+  - Say where you are blocked
+  - Say which decision you need from me
+
+# Stay and Listen
+
+- You can stay for the entire office hours
+  - You will learn from the other projects
+  - Every team has more or less the same questions
   - Like the guru said: "you can learn a lot just by listening"
 
-- The goal is to make sure your project is the highest possible quality so you can
-  get a good grade and ideally some sort of publication
+# Be Fair to Your Colleagues
 
-- The current slots are:
-  - Mon 9am
-  - Wed 2pm
-  - Fri 12pm ET
+- Office hours are voluntary on my side
+  - Spending this time is not part of my duties
+  - I believe that you can benefit from it, so I am happy to help you
+- Please do not abuse the system, in ways I cannot even foresee, at the expense of
+  your colleagues
+- Remember the Tragedy of the Commons:
+  - "When a resource is shared and can benefit the individual at a cost to the
+    community, it is rational for the individual to overuse the resource, even
+    though this collectively leads to the depletion of the resource for everyone"
 
+See you in the office hours!
 
-- Usual Zoom link
-  - I've tried to spread them around so
-
-- I've tried to spread them over days / times so at least one works for everyone
-  - In exceptional circumstances we can find another time that works for you
-    and me when those times are not easy for you
-  - Do not abuse the system by asking to meet me on Sat morning at 7am between your
-    morning run and your brunch with friends. I also have a life.
-
-- Note that spending all this time is not part of my duties, but I believe that you
-  can benefit from this and so I am happy to help you
-  - Of course, please don't abuse the system (in ways I can't even foresee at
-    detriment of your colleagues)
-  - Remember the Tragedy of the Commons: "When a resource is shared and can benefit
-    the individual at a cost to the community, it is rational for the individual to
-    overuse the resource, even though this collectively leads to the depletion of the
-    resource for everyone"
+Best,
+GP
