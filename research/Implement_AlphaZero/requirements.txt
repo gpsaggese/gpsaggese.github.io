@@ -1,0 +1,10 @@
+ipywidgets
+matplotlib
+numpy
+pandas
+seaborn
+tqdm
+# The Dockerfile installs the CPU wheel before resolving these requirements.
+torch==2.6.0
+# The root conftest still uses pytest's legacy path hook argument.
+pytest<9
