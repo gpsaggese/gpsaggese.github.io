@@ -136,8 +136,8 @@
 - Fix heading levels and text tags to match the `.smd` structure:
 
   ```bash
-  claude> /book.fix_headings $TYP_FILE
-  claude> /book.improve_text_tags $TYP_FILE
+  claude> /book_chapter.fix_headings $TYP_FILE
+  claude> /book_chapter.improve_text_tags $TYP_FILE
   ```
 
 ### Render the Book Chapter

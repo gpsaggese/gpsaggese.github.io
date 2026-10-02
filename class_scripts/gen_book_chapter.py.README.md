@@ -126,7 +126,7 @@ graph TD
 | ---------------- | ------- | ----------------------------------------------- | ----------------------------------------------- |
 | `git_add`        | off     | `csccouti.git_add_with_retry()`                 | Adds the chapter file to Git                    |
 | `lint`           | on      | `_lint_with_lint_text()`                        | Runs `lint_text.py` (dispatches to `typstyle` for `.typ`) |
-| `fix_typst_code` | on      | `_fix_typst_code()`                             | Runs Claude Code `/book.fix_rendered_pdf` skill |
+| `fix_typst_code` | on      | `_fix_typst_code()`                             | Runs Claude Code `/book_chapter.fix_rendered_pdf` skill |
 | `render_pdf`     | on      | `_render_book_chapter()`                        | Compiles to PDF                                 |
 | `open_pdf`       | off     | `_open_book_chapter_pdf()`                      | Opens the compiled PDF in Skim                  |
 - Facts: `_VALID_ACTIONS` and `_DEFAULT_ACTIONS` define this table; `--action` /
@@ -135,7 +135,7 @@ graph TD
   `typst compile` failure (`hdbg.dfatal()` in `_compile_typst()`), which aborts the
   whole script before a later action could run, so the fix has to happen first for
   `render_pdf` to then compile cleanly. It shells out to `ccp` (see
-  `dev_scripts_helpers/ai/ccp`) with the `/book.fix_rendered_pdf <output_file>`
+  `dev_scripts_helpers/ai/ccp`) with the `/book_chapter.fix_rendered_pdf <output_file>`
   prompt, which itself drives `run_typst.py` in a loop until there are no compile
   warnings/errors
 - `_render_book_chapter()` always passes `--action render_images` to `run_typst.py`

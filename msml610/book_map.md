@@ -286,8 +286,8 @@ run_typst.py              .
 > run_typst.py --input msml610/book/Lesson01.2-AI_and_Machine_Learning.typ
 
 > /text.humanize          .
-> /book.fix_headings      .
-> /book.improve_text_tags .
+> /book_chapter.fix_headings      .
+> /book_chapter.improve_text_tags .
 
 Edit book chapter
 

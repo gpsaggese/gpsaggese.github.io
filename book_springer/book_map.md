@@ -175,7 +175,7 @@ book_springer/tutorials/Lesson10_01_q_learning/q_learning.ipynb
 
 ### Slides
 - `book_springer/lectures_source/Lesson02.1_From_Data_Science_To_Decision_Science.smd`
-// TODO: Needs update from the original material /book.update_from_source
+// TODO: Needs update from the original material /book_chapter.update_from_source
 
 ### Lesson Materials
 - `book_springer/lectures_source/Lesson02.1_From_Data_Science_To_Decision_Science.smd`
@@ -348,7 +348,7 @@ book_springer/tutorials/Lesson10_01_q_learning/q_learning.ipynb
 ### Book Chapter
 
 - `book_springer/book/Lesson04.1_Knowledge_Representation.tex`
-// [ ] TODO: Needs update from the smd /book.update_from_source
+// [ ] TODO: Needs update from the smd /book_chapter.update_from_source
 
 ## 05: Probabilistic ML
 

@@ -6,16 +6,16 @@
 
 * Roadmap
 
-- This lesson covers **Bayesian networks**: Their semantics as a compact
+- This lesson covers @Bayesian networks@: Their semantics as a compact
   representation of a joint distribution, and how to construct one from domain
   knowledge
 
-- It introduces the **Markov blanket**: The minimal set of nodes that makes a
+- It introduces the @Markov blanket@: The minimal set of nodes that makes a
   variable conditionally independent of the rest of the network, and compact ways to
   represent conditional probability tables
 
-- It then covers **exact inference** (enumeration, variable elimination) and
-  **approximate inference** via Monte Carlo sampling (rejection sampling, importance
+- It then covers @exact inference@ (enumeration, variable elimination) and
+  @approximate inference@ via Monte Carlo sampling (rejection sampling, importance
   sampling, MCMC, Gibbs sampling, Metropolis-Hastings)
 
 # Semantics of Bayesian Networks
@@ -26,14 +26,14 @@
 
 - @Definition@: Two equivalent semantic interpretations of a Bayesian Network
   `#cite("pearl1988probabilistic")`{=typst}:
-  1. **Joint Distribution View**
+  1. @Joint Distribution View@
      - The network encodes the _joint probability distribution_ over all variables
      - Computed as the product of local conditional probabilities:
        $$
        P(X_1, ..., X_n) = \prod_{i=1}^{n} P(X_i \mid \text{Parents}(X_i))
        $$
      - Useful for constructing models and understanding overall behavior
-  2. **Conditional Independence View**
+  2. @Conditional Independence View@
      - The structure encodes _conditional independency_ between variables
      - Useful for inference and reasoning
      - A variable is conditionally independent of its non-descendants given its
