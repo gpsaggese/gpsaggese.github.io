@@ -9,13 +9,26 @@
 // - Chap 13: Probabilistic reasoning
 // - Chap 14: Probabilistic reasoning over time
 
+* Roadmap
+
+- This lesson covers **Bayesian networks**: their semantics as a compact
+  representation of a joint distribution, and how to construct one from
+  domain knowledge
+- It introduces the **Markov blanket**: the minimal set of nodes that makes
+  a variable conditionally independent of the rest of the network, and
+  compact ways to represent conditional probability tables
+- It then covers **exact inference** (enumeration, variable elimination) and
+  **approximate inference** via Monte Carlo sampling (rejection sampling,
+  importance sampling, MCMC, Gibbs sampling, Metropolis-Hastings)
+
 # Semantics of Bayesian Networks
 
 // ## 13.2 The semantics of Bayesian networks (p. 427)
 
 * Bayesian Networks: Semantics
 
-- @Definition@: Two equivalent semantic interpretations of a Bayesian Network:
+- @Definition@: Two equivalent semantic interpretations of a Bayesian Network
+  `#cite("pearl1988probabilistic")`{=typst}:
 
   1. **Joint Distribution View**
      - The network encodes the _joint probability distribution_ over all
@@ -147,8 +160,11 @@ digraph BayesianFlow {
 
 # Constructing a Bayesian Network
 
-* Constructing a Bayesian Network
-1. **Gather domain knowledge**
+* Steps to Construct a Bayesian Network
+
+::: columns
+:::: {.column width=60%}
+1. **Gather domain knowledge** `#cite("russell2020aima")`{=typst}
    - List all relevant random variables necessary to describe the system
    - Identify key variables and their potential interactions
 
@@ -168,6 +184,27 @@ digraph BayesianFlow {
    - Have domain experts review it
    - Ensure that the network is a Directed Acyclic Graph (DAG)
    - Test the network by predicting known outcomes and comparing with actual data
+::::
+:::: {.column width=40%}
+```graphviz
+digraph ConstructionSteps {
+    splines=true;
+    nodesep=0.5;
+    ranksep=0.4;
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11,
+          penwidth=1.4, fillcolor="#A0D6D1"];
+
+    Gather [label="1. Gather\ndomain knowledge"];
+    Order [label="2. Order\nthe nodes"];
+    Pick [label="3. Pick\nminimal parents"];
+    Estimate [label="4. Estimate\nCPTs"];
+    Validate [label="5. Validate\nthe model"];
+
+    Gather -> Order -> Pick -> Estimate -> Validate;
+}
+```
+::::
+:::
 
 * Bayesian Networks: Properties
 - @Fact@: Bayesian networks are a representation with several useful properties:
@@ -277,7 +314,12 @@ digraph BayesianNetwork {
 ::::
 :::
 
-- The graph _minimal_ in terms of connectivity when all edges are causal
+- @Comparison@: the three diagrams order the same 5 variables differently
+  - _Causal order_ (leftmost): fewest edges, minimal
+  - _Reversed causal order_ (middle): redundant edges added to stay consistent
+  - _Arbitrary order_ (rightmost): most edges
+- The graph is _minimal_ in terms of connectivity when all edges are causal,
+  as in the causal-order diagram
 
 * Causal vs Diagnostic Models
 
@@ -312,11 +354,14 @@ digraph CausalModel {
 ::::
 :::
 
+# Markov Blankets
+
 * Markov Blanket of a Node
 
 ::: columns
 :::: {.column width=50%}
-- @Definition@: The **Markov blanket** of a **\gray{node}** $X$ consists of:
+- @Definition@: The **Markov blanket** `#cite("pearl1988probabilistic")`{=typst}
+  of a **\gray{node}** $X$ consists of:
   1. The **\red{parents}** of $X$
      - The nodes that influence $X$
   2. The **\green{children}** of $X$
@@ -690,12 +735,26 @@ digraph StockPriceGraph {
 
 - You don't need to know $RC$ and $GE$ to estimate **Stock Price**
 
+# Compact Representation of Conditional Probability Tables
+
 // ### 13.2.2, Efficient representation of conditional distributions (p. 433)
 
 * Specifying a Conditional Probability Table
 - @Problem@: **Conditional Probability Table (CPT)** for a node requires $O(2^k)$
-  values in the worst case
+  values in the worst case `#cite("koller2009pgm")`{=typst}
   - Difficult to specify even with a small number of parents $k$
+
+- @Example@: the $Alarm$ node from the burglary network has $k=2$ parents,
+  already requiring $2^2 = 4$ rows:
+
+  \begingroup \scriptsize
+  | $Burglary$ | $Earthquake$ | $\Pr(Alarm=T \mid B, E)$ |
+  | ---------- | ------------ | ------------------------ |
+  | T          | T            | 0.95                     |
+  | T          | F            | 0.94                     |
+  | F          | T            | 0.29                     |
+  | F          | F            | 0.001                    |
+  \endgroup
 
 - Often, the relationship is not completely arbitrary, e.g.,
   - _Deterministic nodes_
@@ -715,7 +774,7 @@ digraph StockPriceGraph {
   - Deterministic nodes do _not_ involve randomness or probability
   - Often used in models to simplify relationships and computations
 
-* Noisy Logic Relationships
+* Noisy Logical Relationships
 - @Definition@: **noisy logical relationships** (e.g., noisy-OR, noisy-MAX):
   - Are a _probabilistic version_ of a logical relationship
   - Can be simpler to describe given $k$ parents
@@ -739,7 +798,7 @@ digraph StockPriceGraph {
     \end{align*}
     $$
 
-* Context-specific Independence
+* Context-Specific Independence
 - @Definition@: a variable exhibits **context-specific independence** if it is
   conditionally independent of its parents given certain values of others
 
@@ -898,10 +957,10 @@ digraph InsuranceRiskModel {
 
 // ## 13.3 Exact inference in Bayesian networks (p. 440)
 
-* Exact Inference in Bayesian Networks
+* The Inference Problem
 
-- @Problem@: Compute _posterior_ $P(X|\vE=\ve)$ for query variable $X$, given
-  evidence $\ve$, where:
+- @Problem@: Compute _posterior_ $P(X|\vE=\ve)$ `#cite("russell2020aima")`{=typst}
+  for query variable $X$, given evidence $\ve$, where:
   - Query variable $X$
   - Evidence variables $\vE = \{E_1, \dots, E_m\}$
   - Hidden variables $\vY = \{Y_1, \dots, Y_\ell\}$
@@ -924,6 +983,9 @@ digraph InsuranceRiskModel {
   - Basis for approximate methods when exact methods are impractical
 
 * Exact Inference in Bayesian Networks: Example
+
+::: columns
+:::: {.column width=65%}
 - @Problem@: You get a call from both John and Mary, what is the probability
   of the burglary?
   $$P(Burglary | JohnCalls=True, MaryCalls=True)$$
@@ -931,6 +993,33 @@ digraph InsuranceRiskModel {
 - @Solution@: A conditional probability can be computed summing terms from the
   _full joint distribution_
   $$\Pr(X | \ve) = \alpha \Pr(X, \ve) = \alpha \sum_y \Pr(X, \ve, \vy)$$
+::::
+:::: {.column width=35%}
+```graphviz[width=70%]
+digraph BayesianFlow {
+    splines=true;
+    nodesep=1.0;
+    ranksep=0.75;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    Burglary [label="Burglary", fillcolor="#A6C8F4"];
+    Earthquake [label="Earthquake", fillcolor="#FFD1A6"];
+    Alarm [label="Alarm", fillcolor="#B2E2B2"];
+    JohnCalls [label="JohnCalls", fillcolor="#C6A6F4"];
+    MaryCalls [label="MaryCalls", fillcolor="#C6A6F4"];
+
+    { rank = same; Burglary; Earthquake; }
+    { rank = same; JohnCalls; MaryCalls; }
+
+    Burglary -> Alarm;
+    Earthquake -> Alarm;
+    Alarm -> JohnCalls;
+    Alarm -> MaryCalls;
+}
+```
+::::
+:::
 
 - Terms of the joint distribution can be written as _products of conditional
   probabilities_ from the Bayesian network
@@ -949,8 +1038,9 @@ digraph InsuranceRiskModel {
 # Approximate Inference in Bayesian Networks
 
 * Monte Carlo Algorithms
-- @Definition@: **Monte Carlo algorithms** are _randomized sampling algorithms_
-  used to estimate quantities that are difficult to calculate exactly
+- @Definition@: **Monte Carlo algorithms** `#cite("koller2009pgm")`{=typst} are
+  _randomized sampling algorithms_ used to estimate quantities that are
+  difficult to calculate exactly
   - E.g., samples from the posterior probability of a Bayes network
 
 - @Pros@
@@ -1124,16 +1214,8 @@ digraph BayesianFlow {
   - _Improves inference efficiency_ over rejection sampling
 
 * Markov Chain Monte Carlo
-- This is one of my _top 10 most mind-blowing algorithms_ in history
-  - Euclid's GCD
-  - Fundamental theorem of calculus
-  - Quicksort
-  - Fast Fourier Transform
-  - Viterbi algorithm
-  - MCMC sampling
-  - Kalman filter
-  - RSA Algorithm
-  - ...
+- MCMC sampling is one of the _most influential algorithms_ in computer
+  science, alongside Quicksort and the Fast Fourier Transform
 - Invented by Ulam, Von Neumann, Metropolis and others during the Manhattan
   Project (1940s)
   - Used to solve _high-dimensional integrals_, _Bayesian inference_, ...
@@ -1147,6 +1229,29 @@ digraph BayesianFlow {
     connected
 
 * Markov Chain Construction
+
+```graphviz[width=90%]
+digraph MarkovChain {
+    rankdir=LR;
+    splines=true;
+    nodesep=0.6;
+    ranksep=0.6;
+    node [shape=circle, style=filled, fontname="Helvetica", fontsize=12,
+          penwidth=1.4, fillcolor="#A0D6D1"];
+
+    x0 [label=<x<SUP>(0)</SUP>>];
+    x1 [label=<x<SUP>(1)</SUP>>];
+    x2 [label=<x<SUP>(2)</SUP>>];
+    dots [shape=plaintext, label="...", fillcolor=transparent];
+    xt [label=<x<SUP>(t)</SUP>>, fillcolor="#A6C8F4"];
+
+    x0 -> x1 [label="Pr(x->x')"];
+    x1 -> x2;
+    x2 -> dots;
+    dots -> xt [label="stationary"];
+}
+```
+
 - A **Markov chain** is a _random walk_ through states, where the future depends
   only on the present
   - _Sequence of states_: $\vx^{(0)}, \vx^{(1)}, \vx^{(2)}, \dots$
@@ -1220,8 +1325,8 @@ digraph BayesianFlow {
   - May need many samples for accurate estimates
 
 * Metropolis–Hastings Sampling
-- **Metropolis–Hastings sampling** is a more _general Markov Chain Monte Carlo_
-  method than Gibbs sampling
+- @Definition@: **Metropolis–Hastings sampling** is a more _general Markov
+  Chain Monte Carlo_ method than Gibbs sampling
 
 - @Algorithm@:
   - Start at a current state $\vx$
@@ -1246,3 +1351,31 @@ digraph BayesianFlow {
 - @Cons@:
   - May mix slowly if proposal steps are poorly chosen
   - Requires careful tuning of proposal distribution for efficiency
+
+* Summary
+
+- @Key idea@: a Bayesian network encodes a joint distribution compactly via
+  local CPTs and the conditional independencies implied by its graph
+  structure
+- @Recap@
+  - _Semantics_: the network factorizes $\Pr(X_1, ..., X_n)$ as a product of
+    $\Pr(X_i | Parents(X_i))$ terms, and each variable is conditionally
+    independent of its non-descendants given its parents
+  - _Construction_: order nodes causally, connect each node to its minimal
+    parent set, and estimate the resulting CPTs; the _Markov blanket_
+    (parents, children, spouses) is the minimal set needed to predict a
+    node
+  - _Compact CPTs_: deterministic nodes, noisy-OR/noisy-MAX, and
+    context-specific independence keep CPT size manageable as the number of
+    parents grows
+  - _Exact inference_ (enumeration, variable elimination) is efficient for
+    trees but intractable in general, motivating _approximate inference_ via
+    Monte Carlo sampling: rejection sampling, importance sampling, and MCMC
+    methods (Gibbs sampling, Metropolis-Hastings)
+
+* References
+
+```{=typst}
+#set text(size: 0.75em)
+#references("/msml610/lectures_source/refs.bib")
+```

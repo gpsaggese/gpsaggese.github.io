@@ -888,11 +888,6 @@
   - $E_{in} \uparrow$ as the model cannot fit all data
   - $E_{out} \downarrow$ as the model fits better and generalizes better
   - Generalization error $E_{out} - E_{in} \downarrow$
-
-- @Infinite data@: $N \to \infty$
-  - $E_{in}$ reaches a maximum (irreducible error)
-  - $E_{out}$ reaches a minimum
-  - $E_{out} - E_{in}$ depends on the complexity of the model
 ::::
 :::: {.column width=35%}
 
@@ -945,6 +940,11 @@
 ```
 ::::
 :::
+
+- @Infinite data@: $N \to \infty$
+  - $E_{in}$ reaches a maximum (irreducible error)
+  - $E_{out}$ reaches a minimum
+  - $E_{out} - E_{in}$ depends on the complexity of the model
 
 * High-Bias vs High-Variance Regime
 ::: columns

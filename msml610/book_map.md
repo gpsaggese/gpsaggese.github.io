@@ -244,8 +244,8 @@ claude> Execute msml610/book/prompt.slides_and_book_flow.md msml610/lectures_sou
 ```
 
 - [x] 5.1
-- [.] 5.2
-- [ ] 5.3
+- [x] 5.2
+- [x] 5.3
 
 - [x] 6.1
 - [ ] 6.2
