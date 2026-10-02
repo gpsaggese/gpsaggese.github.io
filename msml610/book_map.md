@@ -248,9 +248,13 @@ claude> Execute msml610/book/prompt.slides_and_book_flow.md msml610/lectures_sou
 - [x] 5.3
 
 - [x] 6.1
-- [ ] 6.2
-- [ ] 6.3
+- [x] 6.2
 
+- [ ] 7.1
+- [ ] 7.2
+
+LID=06.2; gen_slides.py -i msml610/$LID --daemon
+LID=06.2; render_book_chapter.py -i msml610/$LID --daemon
 
 /slides.review            05.1
 /slides.add_visuals       .
