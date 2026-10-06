@@ -8,14 +8,20 @@ package-mode = false
 [tool.poetry.dependencies]
 python = ">= 3.11,<4.0"
 fastapi = "*"
+httpx = "*"
 numpy = "*"
 pandas = "*"
 psycopg2-binary = "*"
+# Noesis MVP gateway: async Postgres pool (`noesis_db.py`).
+psycopg = { version = "*", extras = ["binary", "pool"] }
+pyyaml = "*"
 pydantic = "*"
 pytest = "*"
 uvicorn = { version = "*", extras = ["standard"] }
 
 [tool.poetry.dev-dependencies]
+# Proves the gateway is OpenAI-compatible (`test/test_gateway_api.py`).
+openai = "*"
 
 [build-system]
 requires = ["poetry>=0.12"]

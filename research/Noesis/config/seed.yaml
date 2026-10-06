@@ -1,0 +1,13 @@
+# Demo sellers chosen from docs/findings/openrouter_spike.md.
+# provider_slug = OpenRouter endpoint tag we pin; provider_name = what OpenRouter reports back.
+sellers:
+  - {seller_id: coreweave, provider_slug: coreweave/fp16,  provider_name: CoreWeave}
+  - {seller_id: groq,      provider_slug: groq,            provider_name: Groq}
+  - {seller_id: deepinfra, provider_slug: deepinfra/turbo, provider_name: DeepInfra}
+  - {seller_id: together,  provider_slug: together,        provider_name: Together}
+  - {seller_id: novita,    provider_slug: novita/bf16,     provider_name: Novita}
+
+# API keys are NOT stored here: each account names the env var (.env) holding its key.
+accounts:
+  - {account_id: buyer_1,  kind: buyer,    api_key_env: NOESIS_BUYER_1_KEY}
+  - {account_id: operator, kind: operator, api_key_env: NOESIS_OPERATOR_KEY}
