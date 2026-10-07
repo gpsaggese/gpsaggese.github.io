@@ -49,10 +49,12 @@
   % Provenance: the macro content (roles, time model, point-in-time data,
   % identification, estimator templates, literature-level graph) was moved
   % from `papers/Causal_Analysis_for_Finance` (see `notes.md`). The
-  % probabilistic and Bayesian formulation (Sections~\ref{sec:model},
-  % the last column of Table~\ref{tab:estimator_templates}, the last row of
+  % probabilistic and Bayesian formulation (Section~\ref{sec:model}, the
+  % last column of Table~\ref{tab:estimator_templates}, the last row of
   % Table~\ref{tab:macro_fields}, and the calibration and prior-sensitivity
-  % checks) is new and does not come from `notes.md`.
+  % checks) and Section~\ref{sec:state_of_the_art} are new and do not come
+  % from `notes.md`. Every statement about a cited work was checked against
+  % its abstract or its publisher page (see `references.bib`).
 
   \section{Introduction}\label{sec:introduction}
 
@@ -74,9 +76,10 @@
       This is a source of ``factor mirages''
       \cite{lopezdeprado2025primer}.
     \item
-      There is one macro history, a few hundred monthly observations, and
-      nothing is randomized. Point estimates and asymptotic standard errors
-      hide how little the data identify.
+      There is one macro history of limited length (FRED-MD starts in
+      January 1959 \cite{fredmddb}), and nothing is randomized. Point
+      estimates and asymptotic standard errors hide how little the data
+      identify.
     \end{itemize}
   \item
     Why a probabilistic formulation:
@@ -88,13 +91,13 @@
       downstream claim. A posterior carries it explicitly.
     \item
       Latent regimes: a posterior over regime paths replaces a hard
-      classification of dates \cite{hamilton1989new}.
+      classification of dates \cite{hamilton1989new,sims2006were}.
     \item
       Hierarchy: partial pooling of firm-level exposures to macro shocks
       \cite{gelman2007data}.
     \item
       Priors: shrinkage in vector autoregressions (VARs)
-      \cite{doan1984forecasting,giannone2015prior}.
+      \cite{doan1984forecasting,banbura2010large,giannone2015prior}.
     \end{itemize}
   \item
     Scope relative to the companion paper \cite{adia2026finance}: the
@@ -139,8 +142,8 @@
       An evaluation protocol (Section~\ref{sec:evaluation}).
     \end{itemize}
   \item
-    Roadmap: Section~\ref{sec:related_work} reviews related work and
-    Section~\ref{sec:problem} formulates the problems.
+    Roadmap: Section~\ref{sec:state_of_the_art} reviews the state of the art
+    and Section~\ref{sec:problem} formulates the problems.
     Section~\ref{sec:model} defines the model,
     Section~\ref{sec:point_in_time} the data layer, and
     Section~\ref{sec:identification_with_shocks} identification.
@@ -151,42 +154,310 @@
     Section~\ref{sec:conclusion} concludes.
   \end{itemize}
 
-  \section{Related Work}\label{sec:related_work}
+  \section{State of the Art}\label{sec:state_of_the_art}
 
-  \begin{itemize}
-  \tightlist
-  \item
-    \textbf{Macro variables in asset pricing.} Macro shocks as priced
-    risks \cite{chen1986economic}; risk premia conditional on macro state
-    \cite{ferson1991variation}. Contrast: each paper specifies one model.
-    The role of the macro variable (confounder, modifier, priced risk) is
-    left implicit. This paper makes the role an explicit edge attribute.
-  \item
-    \textbf{Identified macro shocks.} Monetary policy surprises
-    \cite{gertler2015monetary}, narrative shocks
-    \cite{romer2004new}, oil supply shocks \cite{kilian2009oil}; dynamic
-    effects by local projections \cite{jorda2005local}. Contrast: these
-    supply the shocks and the estimator. This paper makes the shock a
-    node type that the validator checks.
-  \item
-    \textbf{Time-series causal discovery.} PCMCI \cite{runge2019pcmci}
-    and VAR-LiNGAM \cite{hyvarinen2010var}. Contrast: on short samples
-    the output is noisy, so it serves as a consistency check only.
-  \item
-    \textbf{Bayesian macroeconometrics.} VARs \cite{sims1980macroeconomics},
-    shrinkage priors \cite{doan1984forecasting,giannone2015prior},
-    time-varying parameter VARs with stochastic volatility
-    \cite{primiceri2005time}, Bayesian dynamic stochastic general
-    equilibrium (DSGE) models \cite{smets2007shocks}, regime switching
-    \cite{hamilton1989new}. Contrast: these target macro forecasting and
-    policy analysis. Here they form the macro layer of a model with a firm
-    layer below it.
-  \item
-    \textbf{Real-time macro data.} The real-time data set of
-    \cite{croushore2001real} and the FRED-MD database
-    \cite{mccracken2016fredmd}. Contrast: these are data resources. Here
-    vintage and release lag are node attributes of the Theory Spec.
-  \end{itemize}
+  This section reviews what has been done in five strands that the model of
+  Section~\ref{sec:model} draws on: macro variables in asset pricing, Bayesian
+  macroeconometrics, identification of dynamic causal effects, causal graphs
+  and discovery for time series, and real-time macroeconomic data.
+  Table~\ref{tab:state_of_the_art} in Section~\ref{sec:sota_summary} summarizes
+  the strands and the gap that each leaves.
+
+  \subsection{Macro Variables in Asset Pricing}\label{sec:sota_asset_pricing}
+
+  Macro variables entered asset pricing as priced risks.
+  Chen et al.~\cite{chen1986economic} test whether innovations in macroeconomic variables
+  are rewarded in the stock market. They find that the spread between long and
+  short interest rates, expected and unexpected inflation, industrial
+  production, and the spread between high- and low-grade bonds are
+  significantly priced, while neither the market portfolio nor aggregate
+  consumption is priced separately. Later work lets risk premia depend on the
+  state of the economy. Ferson and Harvey~\cite{ferson1991variation} associate most of the
+  predictable variation in monthly stock and bond returns with the sensitivity
+  to economic variables in a multi-beta model, and find that time variation in
+  the premium for beta risk is more important than time variation in the
+  betas. Lettau and Ludvigson~\cite{lettau2001resurrecting} condition the CAPM and the consumption
+  CAPM on the log consumption--wealth ratio. The conditional models perform far
+  better than the unconditional ones and about as well as the Fama--French
+  three-factor model on portfolios sorted by size and book-to-market.
+
+  The empirical record of macro variables is mixed. Welch and Goyal~\cite{welch2008comprehensive}
+  re-examine variables proposed as predictors of the equity premium. They
+  report that, by and large, the models predicted poorly both in sample and
+  out of sample over the period studied, that the models appear unstable, and
+  that they would not have helped an investor with access only to available
+  information to time the market profitably. For monetary policy,
+  Bernanke and Kuttner~\cite{bernanke2005what} find that a hypothetical unanticipated 25-basis-point cut in the
+  Federal funds rate target is associated, on average, with about a 1\%
+  increase in broad stock indexes. They attribute the largest part of the
+  response to the effect of unanticipated policy actions on expected excess
+  returns.
+
+  Omitted variables and misspecification are central to the causal critique of
+  this literature. Giglio and Xiu~\cite{giglio2021asset} show that standard estimators of risk
+  premia in linear asset pricing models are biased if some priced factors are
+  omitted, and propose a three-pass estimator that is valid when not all
+  factors are observed. L{\'o}pez de Prado~\cite{lopezdeprado2023causal} argues that virtually all
+  journal articles in the factor investing literature make associational
+  claims: authors do not identify the causal graph, justify their
+  specification by correlations, and propose no experiments to falsify causal
+  mechanisms. L{\'o}pez de Prado and Zoonekynd~\cite{lopezdeprado2025primer} introduce the factor mirage, a
+  factor model that appears statistically valid but is causally misspecified,
+  and show how collider bias and confounder bias can arise in the standard
+  regression framework.
+
+  Bayesian methods enter asset pricing through prior beliefs about models and
+  through model probabilities. P{\'a}stor and Stambaugh~\cite{pastor2000comparing} study investors who
+  update prior beliefs centered on risk-based or characteristic-based pricing
+  models, and show that modest uncertainty about the pricing abilities of the
+  models substantially reduces the differences between optimal portfolios.
+  Barillas and Shanken~\cite{barillas2018comparing} derive a Bayesian asset pricing test that is
+  computed in closed form from the F-statistic, and compute model probabilities
+  for all models built from subsets of candidate traded factors.
+  Bryzgalova et al.~\cite{bryzgalova2023bayesian} propose a framework that estimates prices of
+  risk for tradable and nontradable factors, detects weakly identified
+  factors, and averages over 2.25 quadrillion models with a Bayesian model
+  averaging of stochastic discount factors (BMA-SDF).
+
+  In these works the role of a macro variable (confounder, modifier, or priced
+  risk) is implicit in the specification. It is not recorded as a property of
+  an edge in a causal graph. The Bayesian studies address the choice among
+  pricing models or factors, not the causal structure that links macro states
+  to characteristics and returns.
+
+  \subsection{Bayesian Macroeconometrics}\label{sec:sota_bayesian_macro}
+
+  Bayesian methods in macroeconomics start from the vector autoregression (VAR).
+  Sims~\cite{sims1980macroeconomics} argues that macroeconomic models are unlikely to
+  be overidentified, as the existing statistical theory usually assumes, and
+  presents an example of econometric work in a non-standard style. The paper is
+  the standard reference for the VAR approach. The large number of VAR
+  parameters motivated informative priors. Doan et al.~\cite{doan1984forecasting} develop a
+  forecasting procedure based on a Bayesian method for estimating VARs. They
+  apply it to ten macroeconomic variables and show improved out-of-sample
+  forecasts relative to univariate equations. They also note that no automatic
+  causal interpretations arise from such models. Litterman~\cite{litterman1986forecasting}
+  reports that five years of forecasting with Bayesian VARs were, on average, as
+  accurate as the best known commercial forecasting services.
+  Ba{\'n}bura et al.~\cite{banbura2010large} show that Bayesian shrinkage makes VARs usable for
+  large models, with the degree of shrinkage set in relation to the
+  cross-sectional dimension, and that large VARs with shrinkage produce
+  credible impulse responses. Giannone et al.~\cite{giannone2015prior} treat the informativeness
+  of the prior as additional parameters, in the spirit of hierarchical
+  modeling, and report good forecasting performance and accurate estimation of
+  impulse responses. Koop and Korobilis~\cite{koop2010bayesian} and Del Negro and
+  Schorfheide~\cite{delnegro2011bayesian} survey the methods: VARs, factor-augmented VARs, and time-varying-parameter
+  extensions with stochastic volatility estimated by Markov chain Monte Carlo
+  (MCMC), and also reduced-form and structural VARs, dynamic stochastic general
+  equilibrium (DSGE) models, posterior model probabilities, and model
+  averaging.
+
+  Time variation and regimes are modeled in several ways. Primiceri~\cite{primiceri2005time}
+  models monetary policy and the private sector as a time-varying structural
+  VAR in which both the coefficients and the covariance matrix of the
+  innovations vary, and proposes an MCMC algorithm for the posterior.
+  Hamilton~\cite{hamilton1989new} models occasional discrete shifts in the growth rate of
+  a nonstationary series and presents algorithms to infer the unobserved
+  shifts. Sims and Zha~\cite{sims2006were} confront a multivariate regime-switching model
+  for monetary policy with U.S. data. When coefficients are allowed to change,
+  the best fit has changes only in the monetary policy rule, with three
+  estimated regimes. For structural models, Smets and Wouters~\cite{smets2003estimated,smets2007shocks}
+  estimate DSGE models with Bayesian likelihood methods
+  on seven macroeconomic time series, for the euro area and the U.S.
+  respectively. The U.S. model competes with Bayesian VARs in out-of-sample
+  prediction. Herbst and Schorfheide~\cite{herbst2016bayesian} describe MCMC, sequential Monte Carlo,
+  and particle-filter methods for the estimation of linearized and nonlinear
+  DSGE models.
+
+  Mixed sampling frequencies are handled by regression or by state-space
+  models. Ghysels et al.~\cite{ghysels2007midas} study mixed data sampling (MIDAS) regressions,
+  which combine series sampled at different frequencies, with a focus on
+  volatility. Schorfheide and Song~\cite{schorfheide2015real} develop a VAR for quarterly and monthly
+  series in state-space form, estimate it with Bayesian methods under a
+  Minnesota-style prior, and compare real-time forecasts with those of MIDAS
+  regressions. Mariano and Murasawa~\cite{mariano2003new} apply maximum likelihood factor analysis to
+  quarterly real GDP and monthly coincident indicators and obtain an index
+  related to latent monthly GDP.
+
+  These models are built for forecasting and for the analysis of macroeconomic
+  policy. They have no firm layer, and a claim about the return of a firm
+  characteristic is outside their scope.
+
+  \subsection{Identification of Dynamic Causal Effects}\label{sec:sota_identification}
+
+  Identification is the central issue of causal macroeconomics.
+  Ramey~\cite{ramey2016macroeconomic} reviews the identification of macroeconomic
+  shocks and examines monetary, fiscal, and technology shocks in detail. Shock
+  measures take several forms. Romer and Romer~\cite{romer2004new} combine narrative records of
+  the intentions of the Federal Reserve with its internal forecasts to derive a
+  measure of monetary shocks for 1969--1996 that is relatively free of
+  endogenous and anticipatory movements. They report larger and faster effects
+  on output and inflation than conventional indicators.
+  Gertler and Karadi~\cite{gertler2015monetary} use high-frequency surprises around policy
+  announcements as external instruments. They find that modest movements in
+  short rates lead to large movements in credit costs, through term premia and
+  credit spreads. Nakamura and Steinsson~\cite{nakamura2018high} document that, after an interest rate
+  hike measured in a 30-minute window around announcements, forecasts of output
+  growth also increase, and explain this by an information effect of the
+  announcements. Miranda-Agrippino and Ricco~\cite{miranda2021transmission} propose a high-frequency
+  instrument that accounts for informational rigidities.
+  Bauer and Swanson~\cite{bauer2023reassessment} note that surprises are correlated with
+  macroeconomic and financial data available before the announcement, and
+  orthogonalize them with respect to these data. Their estimates of the
+  macroeconomic effects are substantially larger than most earlier estimates.
+  For oil, Kilian~\cite{kilian2009oil} separates oil supply shocks, shocks to the
+  global demand for industrial commodities, and demand shocks specific to the
+  oil market. Changes in the composition of these shocks help explain why
+  regressions of macroeconomic aggregates on oil prices are unstable.
+
+  Several estimators use such shocks. Jord{\`a}~\cite{jorda2005local} introduces local
+  projections, which compute impulse responses without specifying the
+  underlying multivariate dynamic system. Plagborg-M{\o}ller and Wolf~\cite{plagborg2021local} prove that
+  local projections and VARs estimate the same impulse responses and differ in
+  their finite-sample properties. Stock and Watson~\cite{stock2018identification} show how
+  external instruments identify dynamic causal effects, with local projections
+  with instrumental variables or with a VAR. Under a restrictive instrument
+  validity condition, comparing the two provides a test of invertibility.
+  Ferreira et al.~\cite{ferreira2025bayesian} regularize local projections with informative
+  priors. The estimates keep the flexibility of local projections with a degree
+  of estimation uncertainty comparable to Bayesian VARs.
+
+  In structural VARs, Bayesian inference interacts with identification.
+  Uhlig~\cite{uhlig2005what} identifies monetary policy shocks by sign restrictions on
+  the responses of prices, nonborrowed reserves, and the federal funds rate. The
+  response of real GDP is left unrestricted, and the effect of a contractionary
+  shock on real GDP is found to be ambiguous. Rubio-Ram{\'\i}rez et al.~\cite{rubio2010structural}
+  establish rank conditions for global identification of structural VARs and
+  develop algorithms for small-sample estimation and inference with nonlinear
+  restrictions. Arias et al.~\cite{arias2018inference} develop algorithms to draw from
+  posterior distributions when sign and zero restrictions identify the
+  structural VAR. Baumeister and Hamilton~\cite{baumeister2015sign} show that, when the model is
+  underidentified, the asymptotic posterior of the contemporaneous coefficients
+  is confined to a set, within which the height of the posterior is
+  proportional to the height of the prior. Part of the inference then comes
+  exclusively from the prior, and the prior implicit in the traditional
+  sign-restriction approach does not vanish asymptotically.
+
+  These methods identify the effect of a macroeconomic shock on macroeconomic
+  and financial aggregates. They do not tie the identification strategy to the
+  role that a macro variable plays in a firm-level claim, and they do not
+  record the strategy as an attribute of a graph that a validator can check.
+
+  \subsection{Causal Graphs and Discovery for Time Series}\label{sec:sota_discovery}
+
+  Time-series causal analysis starts from Granger causality.
+  Granger~\cite{granger1969investigating} proposes testable definitions of causality and
+  feedback and illustrates them with two-variable models. White and Lu~\cite{white2010granger}
+  link Granger causality to structural causality in dynamic structural systems.
+  Given a corresponding conditional form of exogeneity, Granger causality holds
+  if and only if structural causality holds, and conditional exogeneity is
+  necessary for valid structural inference.
+
+  Graph-based methods choose the structure of an SVAR from the data.
+  Swanson and Granger~\cite{swanson1997impulse} propose a data-determined method to test structural
+  models of the VAR errors, which helps to check that the orderings used for
+  impulse responses are sensible. Demiralp and Hoover~\cite{demiralp2003searching} apply the PC
+  algorithm, which uses tests of conditional independence, to select the causal
+  order of an SVAR, and evaluate it in a Monte Carlo study. Non-Gaussianity
+  gives a second route. Hyv{\"a}rinen et al.~\cite{hyvarinen2010var} show that a non-Gaussian SVAR is
+  identifiable without prior knowledge of the network structure and apply the
+  method to financial and brain imaging data. Moneta et al.~\cite{moneta2013causal} use
+  independent component analysis for microeconomic data on firm growth and
+  performance and for macroeconomic data on monetary policy.
+
+  For larger datasets, Runge et al.~\cite{runge2019pcmci} combine linear or nonlinear
+  conditional independence tests with a causal discovery algorithm (PCMCI).
+  The method targets high-dimensional and nonlinear time series with limited
+  sample sizes. It is validated on climate and heart time series and on
+  synthetic data. Runge~\cite{runge2020pcmciplus} extends the method to contemporaneous
+  links (PCMCI$^{+}$) in the causally sufficient case. Pamfil et al.~\cite{pamfil2020dynotears}
+  propose DYNOTEARS, a score-based method with an acyclicity constraint that
+  estimates contemporaneous and lagged relationships. They apply it to datasets
+  from finance and molecular biology.
+
+  Bayesian approaches represent uncertainty about the graph itself.
+  Friedman and Koller~\cite{friedman2003being} observe that, when the amount of data is modest,
+  many network structures can have a non-negligible posterior, and compute the
+  posterior of structural features by MCMC over variable orders.
+  Lorch et al.~\cite{lorch2021dibs} propose a differentiable framework for joint posterior
+  inference of the graph and the parameters of the conditional distributions,
+  with variational inference. For the effect of an intervention on a time
+  series, Brodersen et al.~\cite{brodersen2015inferring} use a Bayesian state-space model that
+  predicts the counterfactual response had no intervention taken place, with
+  priors and MCMC posterior inference.
+
+  These methods recover or test a graph from the data of one system. With one
+  short macro history they are noisy. The proposed model therefore uses
+  discovery only as a consistency check against the graph extracted from a
+  paper (Section~\ref{sec:identification_with_shocks}).
+
+  \subsection{Real-Time Macroeconomic Data}\label{sec:sota_real_time}
+
+  Croushore and Stark~\cite{croushore2001real} construct a real-time data set of quarterly vintages
+  of major macroeconomic variables, examine the properties of several variables
+  across vintages, and show with an example how data revisions can affect
+  forecasts. Orphanides~\cite{orphanides2001monetary} shows that real-time policy
+  recommendations from the Taylor rule differ considerably from those obtained
+  with ex post revised data, and that policy reaction functions estimated on
+  revised data can misdescribe historical policy. Croushore~\cite{croushore2011frontiers}
+  surveys the effects of revisions on structural modeling, forecasting, and
+  monetary policy analysis. For research use, McCracken and Ng~\cite{mccracken2016fredmd,mccracken2021fredqd}
+  provide FRED-MD, a monthly database, and FRED-QD, a
+  quarterly database. Both are public and updated from the Federal Reserve
+  Economic Data (FRED) database. Their historical vintages start in 1999-08 for
+  FRED-MD and in 2018-05 for FRED-QD \cite{fredmddb}. The Archival Federal
+  Reserve Economic Data (ALFRED) retrieves each release of a series that was
+  available on a given date \cite{alfred}.
+
+  These works document the effect of revisions and provide the data. They do
+  not specify how a causal model records, for each variable, the release lag
+  and the vintage policy that its theory requires.
+
+  \subsection{Summary and Positioning}\label{sec:sota_summary}
+
+  Table~\ref{tab:state_of_the_art} summarizes the strands. The works reviewed
+  treat the elements separately: roles of macro variables in asset pricing,
+  probabilistic macro models, shock identification, graph discovery, and
+  vintages. The model of Section~\ref{sec:model} combines them in one two-level
+  model, in which node and edge attributes make the role, the shock, the lag,
+  and the vintage explicit.
+
+  \begin{table}[H]
+    \centering
+    \begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{0.17\linewidth}
+      >{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X
+      >{\raggedright\arraybackslash}X}
+      \toprule
+      Strand & Representative works & What they provide & What is missing here \\
+      \midrule
+      Macro variables in asset pricing
+      & \cite{chen1986economic,ferson1991variation,giglio2021asset,bryzgalova2023bayesian}
+      & Priced macro risks, conditional premia, omitted-factor bias, Bayesian
+      model comparison
+      & Macro role not recorded as a graph attribute \\
+      Bayesian macroeconometrics
+      & \cite{giannone2015prior,primiceri2005time,smets2007shocks,schorfheide2015real}
+      & Shrinkage priors, time variation, DSGE models, mixed frequencies
+      & No firm layer \\
+      Identification
+      & \cite{gertler2015monetary,bauer2023reassessment,baumeister2015sign,ferreira2025bayesian}
+      & External instruments, Bayesian structural VARs and local projections
+      & Strategy not tied to a firm-level claim or to a checkable graph
+      attribute \\
+      Graphs and discovery
+      & \cite{runge2019pcmci,hyvarinen2010var,friedman2003being,brodersen2015inferring}
+      & Time-series discovery, posteriors over structures, Bayesian
+      counterfactuals
+      & Short macro history: used here as a consistency check \\
+      Real-time data
+      & \cite{croushore2001real,orphanides2001monetary,mccracken2021fredqd,alfred}
+      & Vintages and evidence on revisions
+      & Vintage not a node attribute of a causal model \\
+      \bottomrule
+    \end{tabularx}
+    \caption{Strands of the state of the art and the gap that each leaves.}
+    \label{tab:state_of_the_art}
+  \end{table}
 
   \section{Problem Formulation}\label{sec:problem}
 
@@ -337,14 +608,16 @@
     unrolling.
   \item
     Mixed frequency: native frequency per node, aggregation rule per edge
-    (end-of-period, average, MIDAS weights).
+    (end-of-period, average, MIDAS weights \cite{ghysels2007midas}).
   \item
     Option: treat a low-frequency series as a partial observation of a
-    high-frequency latent process.
+    high-frequency latent process, in state-space form
+    \cite{schorfheide2015real,mariano2003new}.
   \item
-    Stationarity transforms recorded per series (FRED-MD codes
-    \cite{mccracken2016fredmd}). Levels of trending series in a regression
-    are the classic spurious-regression trap.
+    Stationarity transforms recorded per series (FRED-MD and FRED-QD
+    transformation codes \cite{mccracken2016fredmd,mccracken2021fredqd}).
+    Levels of trending series in a regression are the classic
+    spurious-regression trap.
   \end{itemize}
 
   \subsection{Priors and Regimes}\label{sec:priors_and_regimes}
@@ -353,11 +626,13 @@
   \tightlist
   \item
     Shrinkage priors on VAR coefficients, with the prior tightness
-    estimated or set by hierarchical choice
-    \cite{doan1984forecasting,giannone2015prior}.
+    estimated as a hyperparameter, in the spirit of hierarchical modeling
+    \cite{doan1984forecasting,banbura2010large,giannone2015prior}.
   \item
     Markov-switching regimes with a transition matrix \(\Pi\); the
-    posterior over \(s_{1:T}\) is an output.
+    posterior over \(s_{1:T}\) is an output
+    \cite{hamilton1989new,sims2006were}. Time-varying coefficients and
+    volatilities as an alternative \cite{primiceri2005time}.
   \item
     Partial pooling of firm exposures \(\beta_i\) toward a shared mean.
   \item
@@ -385,9 +660,18 @@
     vintage, final revised), chosen by what the paper's theory requires.
   \item
     Adapter signature \texttt{(series,\ as\_of\_date)}, returning only what
-    was knowable on that date. Sources: ALFRED, the Philadelphia Fed
-    Real-Time Data Set \cite{croushore2001real}, FRED-MD and FRED-QD
-    \cite{mccracken2016fredmd}.
+    was knowable on that date. Sources: ALFRED \cite{alfred}, the
+    Philadelphia Fed Real-Time Data Set \cite{croushore2001real}, and the
+    vintages of FRED-MD and FRED-QD \cite{mccracken2016fredmd,
+    mccracken2021fredqd}.
+  \item
+    Vintage coverage limits the sample: FRED-MD vintages start in 1999-08
+    and FRED-QD vintages in 2018-05 \cite{fredmddb}. Earlier real-time
+    samples may need ALFRED or the real-time data set.
+  \item
+    Evidence that revisions matter: real-time and ex post revised data give
+    different policy-rule prescriptions \cite{orphanides2001monetary} and
+    different forecasts \cite{croushore2001real,croushore2011frontiers}.
   \item
     Probabilistic reading: the information set \(\mathcal{D}_d\) is the
     conditioning set of the posterior.
@@ -403,19 +687,26 @@
   \item
     One short, non-randomized macro history limits identification.
   \item
-    \texttt{instrument} node type for identified shocks: monetary
-    surprises \cite{gertler2015monetary}, narrative shocks
-    \cite{romer2004new}, oil supply shocks \cite{kilian2009oil}.
+    \texttt{instrument} node type for identified shocks: high-frequency
+    monetary surprises \cite{gertler2015monetary,nakamura2018high}, narrative
+    shocks \cite{romer2004new}, oil market shocks \cite{kilian2009oil}.
   \item
     Validator check: does the estimate use an identified shock or the
     endogenous policy rate?
   \item
-    Weak identification: when the shock is weak, the posterior of
-    \(\tau\) is expected to stay close to the prior. Report both.
+    Instrument validity: surprises can be predictable from public data, and
+    can mix policy news with information about the economy
+    \cite{bauer2023reassessment,miranda2021transmission}. The validator
+    records whether the shock was orthogonalized.
+  \item
+    Weak identification: part of the inference then comes from the prior. In
+    underidentified structural VARs the posterior within the identified set is
+    proportional to the prior \cite{baumeister2015sign}. Report the prior
+    next to the posterior.
   \item
     Time-series discovery as a consistency check only: PCMCI
     \cite{runge2019pcmci}, VAR-LiNGAM \cite{hyvarinen2010var}, Granger
-    as a weak baseline.
+    causality as a weak baseline \cite{granger1969investigating}.
   \item
     Structural break and regime tests (Bai-Perron \cite{bai1998estimating},
     Hamilton \cite{hamilton1989new}). A macro edge that holds before 2008
@@ -447,19 +738,21 @@
       \midrule
       Dynamic effect of a macro shock & Local projections
       \cite{jorda2005local}, SVAR (\texttt{statsmodels}) & Bayesian VAR with a
-      shrinkage prior \cite{giannone2015prior}; posterior impulse responses
-      \\
-      Macro-conditional factor premium & Conditional Fama-MacBeth with macro
-      interactions \cite{ferson1991variation} & Hierarchical regression with
-      time-varying coefficients \cite{primiceri2005time} \\
-      Regime-dependent effect & Markov-switching regression
-      \cite{hamilton1989new} & Bayesian Markov-switching regression;
-      posterior regime probabilities \\
+      shrinkage prior \cite{giannone2015prior} or Bayesian local projections
+      \cite{ferreira2025bayesian}; posterior impulse responses \\
+      Macro-conditional factor premium & Cross-sectional regressions with
+      macro interactions, i.e., conditional multi-beta models
+      \cite{ferson1991variation} & State-space regression with time-varying
+      coefficients (for VARs, \cite{primiceri2005time}) \\
+      Regime-dependent effect & Markov-switching model
+      \cite{hamilton1989new}, regime-switching VAR \cite{sims2006were} &
+      Posterior regime probabilities from the Bayesian model \\
       Macro risk priced in the cross-section & Two-pass beta estimation on
       macro shock series & Joint hierarchical model of exposures and risk
       premium \\
-      Mixed-frequency prediction & MIDAS regression & Bayesian MIDAS or
-      mixed-frequency state-space model \\
+      Mixed-frequency prediction & MIDAS regression
+      \cite{ghysels2007midas} & Bayesian mixed-frequency VAR in state-space
+      form \cite{schorfheide2015real} \\
       \bottomrule
     \end{tabularx}
     \caption{Estimator templates for macro claims and their probabilistic
@@ -580,7 +873,9 @@
     are expected to be wide.
   \item
     \textbf{Prior sensitivity.} With little data, conclusions can depend
-    on the prior. Report results under more than one prior.
+    on the prior, and in sign-restricted structural VARs the influence of the
+    implicit prior does not vanish asymptotically
+    \cite{baumeister2015sign}. Report results under more than one prior.
   \item
     \textbf{Regime instability.} Estimated regimes and breaks can change
     with the sample end date.

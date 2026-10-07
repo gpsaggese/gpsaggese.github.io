@@ -5,7 +5,7 @@ by:
 - Converting the “theory” into Python model  
 - Optimizing the causal DAG (where the optimization criteria are specified later)
 
-This idea sits where four bodies of work.
+This idea sits where four bodies of work meet.
 
 ## **Relevant academic work**
 
@@ -20,7 +20,10 @@ This idea sits where four bodies of work.
   Causality" (*JEL*)  
   * This bridges DAGs and the econometrics tradition finance papers actually use.  
 * Hünermund & Bareinboim, "Causal Inference and Data Fusion in Econometrics."  
-  * It maps IV, diff-in-diff and similar designs onto graphical identification.
+  * It reviews graph-based methods for confounding bias, sample selection bias,
+    surrogate experiments, and transportability. It stresses that the
+    identification criteria are algorithmic, so they can be automated. Published in
+    *The Econometrics Journal* 28(1), 2025.
 
 **2\. Causality in finance specifically (the motivation and the "spec")**
 
@@ -29,56 +32,93 @@ This idea sits where four bodies of work.
     authors don't identify a causal graph, justify specifications by correlations,
     and propose no falsification experiments. That is exactly the gap your system
     fills.  
-* López de Prado & Zoonekynd, "Causality and Factor Investing: A Primer" (2025) and
-  "A Protocol for Causal Factor Investing."  
-  * They introduce the "factor mirage," a model that looks statistically valid but is
-    causally misspecified, plus a seven-step protocol. The protocol starts with
-    causal discovery that combines algorithms such as PC or LiNGAM with domain
-    knowledge. Treat it as a ready-made checklist for your validator.  
+* López de Prado & Zoonekynd, "Correcting the Factor Mirage: A Research Protocol for
+  Causal Factor Investing" (2024, SSRN 4697929, forthcoming in the *Journal of
+  Portfolio Management*).  
+  * It describes the "factor mirage," a model that looks statistically valid but is
+    causally misspecified, and proposes a seven-step protocol: variable selection,
+    causal discovery, causal adjustment, estimation of causal effects, portfolio
+    construction, backtesting, and multiple testing adjustment. Step 2 builds a DAG
+    from domain knowledge and discovery algorithms such as PC or LiNGAM. Treat the
+    protocol as a ready-made checklist for your validator.  
+* López de Prado & Zoonekynd, "Causality and Factor Investing: A Primer" (2025, SSRN
+  5277078, ADIA Lab Research Paper Series No. 16).  
+  * It circulated in May 2025 under the title "A Protocol for Causal Factor
+    Investing." It is the same paper, not a second one.  
+  * It shows how confounder bias and collider bias distort regression-based factor
+    models. It applies the PC algorithm to the daily returns of the risk factors of
+    85 Barra risk models, and lists 26 models where adding a collider changes the sign
+    of the estimated coefficient. It also turns the protocol into a checklist of
+    questions for due diligence.  
 * López de Prado, Lipton & Zoonekynd, "The Case for Causal Factor Investing" (2024)  
   * It argues that choosing the correct specification requires knowledge of the
     causal graph behind the data-generating process.  
 * Harvey, Liu & Zhu (2016), "…and the Cross-Section of Expected Returns."  
 * Hou, Xue & Zhang (2020), "Replicating Anomalies."  
 * Jensen, Kelly & Pedersen (2023), "Is There a Replication Crisis in Finance?"  
-  * This is the replication literature your outputs will be judged against.
+  * This is the replication literature your outputs will be judged against. The
+    three studies disagree: Harvey et al. argue that new factors need a t-statistic of
+    at least 3.0, Hou et al. find that 65% of 452 anomalies fail the single-test
+    hurdle (|t| = 1.96) once microcaps are mitigated, and Jensen et al. find that most
+    factors replicate. None of them tests the causal specification.
 
 **3\. Extracting causal structure from text**
 
 * Yang, Han & Poon (2022), "A Survey on Extraction of Causal Relations from Natural
   Language Text." This is the pre-LLM baseline.  
-* FinCausal shared tasks (FNP workshop, 2020–2023). These are finance-specific
-  cause/effect span detection datasets.  
+* FinCausal shared tasks (Mariko et al. 2020, FNP workshop, with later editions each
+  year). These are finance-specific tasks: classify causal sentences (Task 1) and
+  extract cause/effect spans (Task 2). They label spans inside a segment and do not
+  build a graph.  
 * Kıcıman et al. (2023), "Causal Reasoning and Large Language Models: Opening a New
-  Frontier." Also Jin et al. on Corr2Cause/CLadder, and Zečević et al., "Causal
-  Parrots." Read the last one for the failure modes.  
-* "Zero-shot Causal Graph Extrapolation from Text via LLMs" (arXiv 2312.14670). It
-  builds causal graphs from iterated pairwise LLM queries over text.  
-* LACR (arXiv 2402.15301). It uses RAG over aggregated literature, has the LLM label
-  associational relations, and applies self-consistency to reduce uncertainty in
-  graph recovery.  
-* **ReCast (2025)** is the most directly relevant benchmark. It contains 292
-  expert-annotated causal graphs from peer-reviewed economics and public-policy
-  articles and scores extraction with normalized Structural Hamming Distance plus
-  per-node/per-edge LLM judging.
+  Frontier." Also Jin et al. (ICLR 2024), "Can Large Language Models Infer Causation
+  from Correlation?" (the Corr2Cause data set), and Zečević et al., "Causal Parrots."
+  Read the last one for the failure modes.  
+* Antonucci, Piqué & Zaffalon (2023), "Zero-shot Causal Graph Extrapolation from Text
+  via LLMs" (arXiv 2312.14670). It builds causal graphs from iterated pairwise LLM
+  queries over text, tested on biomedical abstracts.  
+* Zhang et al. (2024), "Causal Graph Discovery with Retrieval-Augmented Generation
+  based Large Language Models" (arXiv 2402.15301), which introduces the method LACR.
+  It uses RAG over papers from Google Scholar and PubMed, has the LLM extract
+  associations instead of causal claims, aggregates the decisions across documents by
+  majority vote, and recovers the skeleton before the edge orientation. It is tested
+  on three small medical graphs (ASIA, SACHS, CORONARY).  
+* Garg & Fetzer (2025), "Causal Claims in Economics" (arXiv 2501.06873). It builds
+  evidence-annotated claim graphs for 44,852 economics papers (1980 to 2023). Each
+  edge is labeled by its evidentiary basis. It is a study of the literature and does
+  not feed an identification or estimation step.  
+* **ReCITE** (Saklad et al., arXiv 2505.18931, version 4, April 2026; named ReCAST in
+  version 2) is the most directly relevant benchmark, but it is not specific to
+  finance. It contains 292 causal graphs transcribed by annotators from the causal
+  loop diagrams of open-access MDPI and PLOS articles. Only 5.5% of the articles fall
+  under economics, econometrics, and finance. It scores extraction with an LLM judge
+  (node and edge precision and recall) plus structural Hamming distance and its
+  normalized version. The best model reaches an F1 score of 0.535.
 
 **4\. Paper-to-code and LLM quant research agents**
 
 * Paper2Code / PaperCoder (Seo et al., ICLR 2026). It runs three stages, planning,
   analysis and generation, each with specialized agents. Generated repos needed only
-  minor modifications to run, averaging 0.48% of code lines. Their
-  planning→analysis→coding split is worth copying.  
-* PaperBench (OpenAI, 2025). Its rubric-based replication grading is a good template
-  for your evaluation.  
+  minor modifications to run, averaging 0.81% of code lines in the latest version (v5;
+  the 0.48% figure comes from an earlier version). It targets machine learning
+  papers. Their planning→analysis→coding split is worth copying.  
+* PaperBench (Starace et al., OpenAI, 2025). Agents replicate 20 ICML 2024 papers
+  from scratch and are graded on rubrics with 8,316 tasks. Its rubric-based grading is
+  a good template for your evaluation.  
 * RD-Agent(Q) (Microsoft, NeurIPS 2025). A Research stage forms hypotheses from
   domain priors, and a Development stage uses a code agent to implement them and run
   real-market backtests. It's open source and the closest finance analogue.  
-* FactorEngine. It turns unstructured financial reports into executable Python
-  factors through a two-stage reflect-and-validate workflow that outputs structured
-  JSON and pseudo-code.  
+* Lin et al. (2026), "FactorEngine: A Program-level Knowledge-Infused Factor Mining
+  Framework for Quantitative Investment" (arXiv 2603.16365). It turns unstructured
+  financial reports into executable Python factors through a two-stage
+  reflect-and-validate workflow that outputs structured JSON and LaTeX-style
+  pseudo-code. It is evaluated on the CSI 300 and CSI 500 universes. The paper does
+  not mention causal graphs.  
 * Chen & Zimmermann (2022), "Open Source Cross-Sectional Asset Pricing." It provides
-  code and data for 300+ published signals, which makes it your best ground truth for
-  the code-generation half.
+  code and data for 319 characteristics, which makes it your best ground truth for
+  the code-generation half. For the 161 characteristics that were clearly significant
+  in the original papers, 98% of the reproduced long-short portfolios have t-statistics
+  above 1.96.
 
 ## **How I'd structure the system**
 
@@ -161,9 +201,10 @@ a wrong data recipe goes to 2, a missing confounder to 3, a bug to 5\.
 * **Look-ahead bias in data recipes.** Reporting lags and fiscal-year alignment are
   where generated code goes wrong most often. Encode availability timing explicitly
   in the IR.  
-* **Evaluate the two halves separately.** Use ReCast-style SHD and edge-level
-  precision/recall for extraction. Use Chen-Zimmermann signal replication
-  (correlation with their published signal, matching t-stats) for code.
+* **Evaluate the two halves separately.** Use ReCITE-style SHD and edge-level
+  precision/recall for extraction. ReCITE has few finance papers, so plan a finance
+  gold set. Use Chen-Zimmermann signal replication (correlation with their published
+  signal, matching t-stats) for code.
 
 A good first milestone is to restrict scope to cross-sectional anomaly papers. You
 get hundreds of ground-truth implementations from Chen & Zimmermann, the DAGs are

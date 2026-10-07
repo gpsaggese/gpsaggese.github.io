@@ -2,8 +2,10 @@
 %
 % Citation keys use `<lastname><year><shorttopic>`, e.g. `walker2001minimax`.
 %
-% TODO(*): The entries were written from the references listed in `notes.md`
-% and from memory. Verify every entry. Entries with a `note` that starts with
+% Every entry was checked on 2026-10-07 against the publisher or the arXiv
+% record (title, authors, venue, identifier). The `howpublished` or `note`
+% field carries the arXiv or SSRN identifier because the `amsplain` style does
+% not print the `eprint` field. Entries with a `note` that starts with
 % `TODO(*)` are incomplete.
 
 % #############################################################################
@@ -39,15 +41,26 @@
   year    = {2020},
   volume  = {58},
   number  = {4},
-  pages   = {1129--1179}
+  pages   = {1129--1179},
+  doi     = {10.1257/jel.20191597}
 }
 
-@misc{hunermund2019causal,
-  author        = {H{\"u}nermund, Paul and Bareinboim, Elias},
-  title         = {Causal Inference and Data Fusion in Econometrics},
-  year          = {2019},
-  eprint        = {1912.09104},
-  archiveprefix = {arXiv}
+@article{hunermund2025causal,
+  author  = {H{\"u}nermund, Paul and Bareinboim, Elias},
+  title   = {Causal Inference and Data Fusion in Econometrics},
+  journal = {The Econometrics Journal},
+  year    = {2025},
+  volume  = {28},
+  number  = {1},
+  pages   = {41--82},
+  note    = {arXiv:1912.09104}
+}
+
+@misc{sharma2020dowhy,
+  author       = {Sharma, Amit and K{\i}c{\i}man, Emre},
+  title        = {{DoWhy}: An End-to-End Library for Causal Inference},
+  year         = {2020},
+  howpublished = {arXiv:2011.04216}
 }
 
 % #############################################################################
@@ -59,28 +72,32 @@
   title     = {Causal Factor Investing: Can Factor Investing Become Scientific?},
   series    = {Cambridge Elements in Quantitative Finance},
   publisher = {Cambridge University Press},
-  year      = {2023}
+  year      = {2023},
+  doi       = {10.1017/9781009397315}
 }
 
 @misc{lopezdeprado2024case,
-  author = {L{\'o}pez de Prado, Marcos and Lipton, Alexander and Zoonekynd, Vincent},
-  title  = {The Case for Causal Factor Investing},
-  year   = {2024},
-  note   = {TODO(*): Add venue or SSRN identifier}
+  author       = {L{\'o}pez de Prado, Marcos and Lipton, Alexander and Zoonekynd, Vincent},
+  title        = {The Case for Causal Factor Investing},
+  year         = {2024},
+  howpublished = {SSRN 4774522},
+  note         = {ADIA Lab Research Series}
+}
+
+@misc{lopezdeprado2024mirage,
+  author       = {L{\'o}pez de Prado, Marcos and Zoonekynd, Vincent},
+  title        = {Correcting the Factor Mirage: A Research Protocol for Causal Factor Investing},
+  year         = {2024},
+  howpublished = {SSRN 4697929},
+  note         = {Forthcoming in The Journal of Portfolio Management (2026)}
 }
 
 @misc{lopezdeprado2025primer,
-  author = {L{\'o}pez de Prado, Marcos and Zoonekynd, Vincent},
-  title  = {Causality and Factor Investing: A Primer},
-  year   = {2025},
-  note   = {TODO(*): Add venue or SSRN identifier}
-}
-
-@misc{lopezdeprado2025protocol,
-  author = {L{\'o}pez de Prado, Marcos and Zoonekynd, Vincent},
-  title  = {A Protocol for Causal Factor Investing},
-  year   = {2025},
-  note   = {TODO(*): Verify year and add venue or SSRN identifier}
+  author       = {L{\'o}pez de Prado, Marcos and Zoonekynd, Vincent},
+  title        = {Causality and Factor Investing: A Primer},
+  year         = {2025},
+  howpublished = {SSRN 5277078},
+  note         = {ADIA Lab Research Paper Series, No.~16, v2.1. Circulated in May 2025 under the title ``A Protocol for Causal Factor Investing''}
 }
 
 @article{harvey2016cross,
@@ -90,7 +107,8 @@
   year    = {2016},
   volume  = {29},
   number  = {1},
-  pages   = {5--68}
+  pages   = {5--68},
+  doi     = {10.1093/rfs/hhv059}
 }
 
 @article{hou2020replicating,
@@ -100,7 +118,8 @@
   year    = {2020},
   volume  = {33},
   number  = {5},
-  pages   = {2019--2133}
+  pages   = {2019--2133},
+  doi     = {10.1093/rfs/hhy131}
 }
 
 @article{jensen2023replication,
@@ -110,7 +129,8 @@
   year    = {2023},
   volume  = {78},
   number  = {5},
-  pages   = {2465--2518}
+  pages   = {2465--2518},
+  doi     = {10.1111/jofi.13249}
 }
 
 @article{chen2022open,
@@ -120,7 +140,8 @@
   year    = {2022},
   volume  = {11},
   number  = {2},
-  pages   = {207--264}
+  pages   = {207--264},
+  doi     = {10.1561/104.00000112}
 }
 
 % #############################################################################
@@ -134,92 +155,112 @@
   year    = {2022},
   volume  = {64},
   number  = {5},
-  pages   = {1161--1186}
+  pages   = {1161--1186},
+  doi     = {10.1007/s10115-022-01665-w}
+}
+
+@inproceedings{mariko2020fincausal,
+  author    = {Mariko, Dominique and Abi Akl, Hanna and Labidurie, Estelle and Durfort, St{\'e}phane and de Mazancourt, Hugues and El-Haj, Mahmoud},
+  title     = {Financial Document Causality Detection Shared Task ({FinCausal} 2020)},
+  booktitle = {Proceedings of the 1st Joint Workshop on Financial Narrative Processing and MultiLing Financial Summarisation (FNP-FNS 2020)},
+  year      = {2020},
+  note      = {COLING 2020, Barcelona. arXiv:2012.02505}
 }
 
 @misc{kiciman2023causal,
-  author        = {K{\i}c{\i}man, Emre and Ness, Robert and Sharma, Amit and Tan, Chenhao},
-  title         = {Causal Reasoning and Large Language Models: Opening a New Frontier for Causality},
-  year          = {2023},
-  eprint        = {2305.00050},
-  archiveprefix = {arXiv}
+  author       = {K{\i}c{\i}man, Emre and Ness, Robert and Sharma, Amit and Tan, Chenhao},
+  title        = {Causal Reasoning and Large Language Models: Opening a New Frontier for Causality},
+  year         = {2023},
+  howpublished = {arXiv:2305.00050},
+  note         = {Transactions on Machine Learning Research}
 }
 
 @misc{jin2023corr2cause,
-  author        = {Jin, Zhijing and Liu, Jiarui and Lyu, Zhiheng and Poff, Spencer and Sachan, Mrinmaya and Mihalcea, Rada and Diab, Mona and Sch{\"o}lkopf, Bernhard},
-  title         = {Can Large Language Models Infer Causation from Correlation?},
-  year          = {2023},
-  eprint        = {2306.05836},
-  archiveprefix = {arXiv}
+  author       = {Jin, Zhijing and Liu, Jiarui and Lyu, Zhiheng and Poff, Spencer and Sachan, Mrinmaya and Mihalcea, Rada and Diab, Mona and Sch{\"o}lkopf, Bernhard},
+  title        = {Can Large Language Models Infer Causation from Correlation?},
+  year         = {2023},
+  howpublished = {arXiv:2306.05836},
+  note         = {ICLR 2024}
 }
 
 @misc{zecevic2023causal,
-  author        = {Ze{\v{c}}evi{\'c}, Matej and Willig, Moritz and Dhami, Devendra Singh and Kersting, Kristian},
-  title         = {Causal Parrots: Large Language Models May Talk Causality But Are Not Causal},
-  year          = {2023},
-  eprint        = {2308.13067},
-  archiveprefix = {arXiv}
+  author       = {Ze{\v{c}}evi{\'c}, Matej and Willig, Moritz and Dhami, Devendra Singh and Kersting, Kristian},
+  title        = {Causal Parrots: Large Language Models May Talk Causality But Are Not Causal},
+  year         = {2023},
+  howpublished = {arXiv:2308.13067},
+  note         = {Transactions on Machine Learning Research}
 }
 
-@misc{zeroshot2023causal,
-  key           = {Zero-shot},
-  title         = {Zero-shot Causal Graph Extrapolation from Text via {LLMs}},
-  year          = {2023},
-  eprint        = {2312.14670},
-  archiveprefix = {arXiv},
-  note          = {TODO(*): Add authors}
+@misc{antonucci2023zeroshot,
+  author       = {Antonucci, Alessandro and Piqu{\'e}, Gregorio and Zaffalon, Marco},
+  title        = {Zero-shot Causal Graph Extrapolation from Text via {LLMs}},
+  year         = {2023},
+  howpublished = {arXiv:2312.14670},
+  note         = {XAI4Sci Workshop at AAAI 2024}
 }
 
-@misc{lacr2024,
-  key           = {LACR},
-  title         = {{LACR}},
-  year          = {2024},
-  eprint        = {2402.15301},
-  archiveprefix = {arXiv},
-  note          = {TODO(*): Add authors and full title}
+@misc{zhang2024lacr,
+  author       = {Zhang, Yuzhe and Zhang, Yipeng and Gan, Yidong and Yao, Lina and Wang, Chen},
+  title        = {Causal Graph Discovery with Retrieval-Augmented Generation based Large Language Models},
+  year         = {2024},
+  howpublished = {arXiv:2402.15301},
+  note         = {Introduces the LACR method (LLM Assisted Causal Recovery)}
 }
 
-@misc{recast2025,
-  key   = {ReCast},
-  title = {{ReCast}: Benchmark of Expert-Annotated Causal Graphs from Economics and Public-Policy Articles},
-  year  = {2025},
-  note  = {TODO(*): Add authors, venue, and identifier. The benchmark contains 292 expert-annotated causal graphs}
+@misc{garg2025causal,
+  author       = {Garg, Prashant and Fetzer, Thiemo},
+  title        = {Causal Claims in Economics},
+  year         = {2025},
+  howpublished = {arXiv:2501.06873}
+}
+
+@misc{saklad2025recite,
+  author       = {Saklad, Ryan and Chadha, Aman and Pavlov, Oleg and Moraffah, Raha},
+  title        = {Can Large Language Models Infer Causal Relationships from Real-World Text?},
+  year         = {2025},
+  howpublished = {arXiv:2505.18931},
+  note         = {Version 4, April 2026. Introduces the ReCITE benchmark, named ReCAST in version 2}
 }
 
 % #############################################################################
 % Paper-to-code and LLM quant agents.
 % #############################################################################
 
+@misc{blecher2023nougat,
+  author       = {Blecher, Lukas and Cucurull, Guillem and Scialom, Thomas and Stojnic, Robert},
+  title        = {Nougat: Neural Optical Understanding for Academic Documents},
+  year         = {2023},
+  howpublished = {arXiv:2308.13418}
+}
+
 @misc{seo2026paper2code,
-  author        = {Seo, Minju and Baek, Jinheon and Lee, Seongyun and Hwang, Sung Ju},
-  title         = {Paper2Code: Automating Code Generation from Scientific Papers in Machine Learning},
-  year          = {2026},
-  eprint        = {2504.17192},
-  archiveprefix = {arXiv},
-  note          = {ICLR 2026. TODO(*): Verify authors and venue}
+  author       = {Seo, Minju and Baek, Jinheon and Lee, Seongyun and Hwang, Sung Ju},
+  title        = {{Paper2Code}: Automating Code Generation from Scientific Papers in Machine Learning},
+  year         = {2026},
+  howpublished = {arXiv:2504.17192},
+  note         = {ICLR 2026}
 }
 
 @misc{starace2025paperbench,
-  author        = {Starace, Giulio and others},
-  title         = {{PaperBench}: Evaluating {AI}'s Ability to Replicate {AI} Research},
-  year          = {2025},
-  eprint        = {2504.01848},
-  archiveprefix = {arXiv}
+  author       = {Starace, Giulio and Jaffe, Oliver and Sherburn, Dane and Aung, James and Chan, Jun Shern and Maksin, Leon and Dias, Rachel and Mays, Evan and Kinsella, Benjamin and Thompson, Wyatt and Heidecke, Johannes and Glaese, Amelia and Patwardhan, Tejal},
+  title        = {{PaperBench}: Evaluating {AI}'s Ability to Replicate {AI} Research},
+  year         = {2025},
+  howpublished = {arXiv:2504.01848}
 }
 
 @misc{li2025rdagent,
-  author        = {Li, Yuante and others},
-  title         = {{R\&D-Agent-Quant}: A Multi-Agent Framework for Data-Centric Factors and Model Joint Optimization},
-  year          = {2025},
-  eprint        = {2505.15155},
-  archiveprefix = {arXiv},
-  note          = {NeurIPS 2025. TODO(*): Verify authors and venue}
+  author       = {Li, Yuante and Yang, Xu and Yang, Xiao and Xu, Minrui and Wang, Xisen and Liu, Weiqing and Bian, Jiang},
+  title        = {{R\&D-Agent-Quant}: A Multi-Agent Framework for Data-Centric Factors and Model Joint Optimization},
+  year         = {2025},
+  howpublished = {arXiv:2505.15155},
+  note         = {NeurIPS 2025}
 }
 
-@misc{factorengine,
-  key   = {FactorEngine},
-  title = {{FactorEngine}},
-  note  = {TODO(*): Add authors, year, venue, and identifier}
+@misc{lin2026factorengine,
+  author       = {Lin, Qinhong and Feng, Ruitao and Feng, Yinglun and Huang, Zhenxin and Chen, Yukun and Yang, Zhongliang and Zhou, Linna and Fei, Binjie and Liu, Jiaqi and Li, Yu},
+  title        = {{FactorEngine}: A Program-level Knowledge-Infused Factor Mining Framework for Quantitative Investment},
+  year         = {2026},
+  howpublished = {arXiv:2603.16365}
 }
 
 % #############################################################################
