@@ -1,0 +1,629 @@
+\input{papers/template/style.tex}
+
+\begin{document}
+  \title{Causal Macroeconomic Modeling with Bayesian and Probabilistic
+    Structural Models}
+
+  \author{ADIA Authors}
+  % TODO(*): Fill in the affiliation.
+  \address{\textless{}Department\textgreater{},
+    \textless{}Organization\textgreater{},
+    \textless{}City, State/Country\textgreater{}}
+  \email{@adia.ae}
+
+  \keywords{causal inference, macroeconomics, Bayesian modeling,
+    probabilistic modeling, structural causal models, point-in-time data}
+
+  \date{\today}
+
+  \begin{abstract}
+    Macroeconomic variables enter causal models of asset returns in three
+    roles: as common causes of firm characteristics and returns, as effect
+    modifiers, and as priced risks. Using them raises problems that
+    cross-sectional analysis avoids: one short non-randomized history,
+    release lags and data revisions, mixed sampling frequencies, and regime
+    changes.
+
+    This paper formulates causal macroeconomic modeling as a probabilistic
+    inference problem. A two-level structural causal model (SCM) is written
+    as a hierarchical Bayesian generative model, with a macro layer indexed
+    by time and a firm layer indexed by firm and time. Identification relies
+    on externally identified shocks and on point-in-time data adapters.
+    Posterior distributions over effects, regimes, and parameters make the
+    weak identifying information of a short history explicit. The model
+    extends the Theory Spec of a companion paper that converts finance papers
+    into executable causal models.
+
+    The paper presents the design and an evaluation protocol. No empirical
+    evaluation has been carried out yet.
+  \end{abstract}
+
+  \maketitle
+
+  \setcounter{tocdepth}{2}
+  \tableofcontents
+
+  % Status: OUTLINE stage. Each section lists the content it will contain.
+  % Bullets are replaced by prose after the outline is approved.
+  %
+  % Provenance: the macro content (roles, time model, point-in-time data,
+  % identification, estimator templates, literature-level graph) was moved
+  % from `papers/Causal_Analysis_for_Finance` (see `notes.md`). The
+  % probabilistic and Bayesian formulation (Sections~\ref{sec:model},
+  % the last column of Table~\ref{tab:estimator_templates}, the last row of
+  % Table~\ref{tab:macro_fields}, and the calibration and prior-sensitivity
+  % checks) is new and does not come from `notes.md`.
+
+  \section{Introduction}\label{sec:introduction}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Problem: macroeconomic variables are part of the causal structure of
+    asset returns, but one short history makes them hard to model.
+
+    \begin{itemize}
+    \tightlist
+    \item
+      A cross-sectional graph can be static. Macro variables force a
+      time-unrolled graph with lags and feedback.
+    \item
+      Omitting a macro common cause misattributes effects: a rate rise
+      lowers valuations, which raises book-to-market, and also lowers
+      realized returns directly. The value effect is then misattributed.
+      This is a source of ``factor mirages''
+      \cite{lopezdeprado2025primer}.
+    \item
+      There is one macro history, a few hundred monthly observations, and
+      nothing is randomized. Point estimates and asymptotic standard errors
+      hide how little the data identify.
+    \end{itemize}
+  \item
+    Why a probabilistic formulation:
+
+    \begin{itemize}
+    \tightlist
+    \item
+      Short samples: parameter uncertainty is large and enters every
+      downstream claim. A posterior carries it explicitly.
+    \item
+      Latent regimes: a posterior over regime paths replaces a hard
+      classification of dates \cite{hamilton1989new}.
+    \item
+      Hierarchy: partial pooling of firm-level exposures to macro shocks
+      \cite{gelman2007data}.
+    \item
+      Priors: shrinkage in vector autoregressions (VARs)
+      \cite{doan1984forecasting,giannone2015prior}.
+    \end{itemize}
+  \item
+    Scope relative to the companion paper \cite{adia2026finance}: the
+    pipeline, the Theory Spec, and the factor mirage diagnostic are defined
+    there and not repeated here. This paper defines only what macro
+    variables add.
+  \item
+    Simplifying assumptions (bullet list, bold lead-in each):
+
+    \begin{itemize}
+    \tightlist
+    \item
+      \textbf{Macro layer exogenous to firms.} Edges run from macro to
+      firm, not the reverse.
+    \item
+      \textbf{Public macro data only.} FRED-MD, FRED-QD, and ALFRED.
+    \item
+      \textbf{Linear-Gaussian components first.} Nonlinear and
+      heavy-tailed variants are deferred.
+    \end{itemize}
+  \item
+    Contributions, each tied to a section:
+
+    \begin{itemize}
+    \tightlist
+    \item
+      A two-level hierarchical probabilistic model with three macro roles
+      (Section~\ref{sec:model}).
+    \item
+      Point-in-time data handling in the model's information set
+      (Section~\ref{sec:point_in_time}).
+    \item
+      Identification with shocks and posterior uncertainty under weak
+      identification (Section~\ref{sec:identification_with_shocks}).
+    \item
+      Estimator templates with probabilistic counterparts, and a simulator
+      (Section~\ref{sec:estimators}).
+    \item
+      Theory Spec extensions and a macro-connected literature-level graph
+      (Section~\ref{sec:literature_graph}).
+    \item
+      An evaluation protocol (Section~\ref{sec:evaluation}).
+    \end{itemize}
+  \item
+    Roadmap: Section~\ref{sec:related_work} reviews related work and
+    Section~\ref{sec:problem} formulates the problems.
+    Section~\ref{sec:model} defines the model,
+    Section~\ref{sec:point_in_time} the data layer, and
+    Section~\ref{sec:identification_with_shocks} identification.
+    Section~\ref{sec:estimators} covers estimators and the simulator, and
+    Section~\ref{sec:literature_graph} the literature-level graph.
+    Section~\ref{sec:evaluation} presents the evaluation protocol.
+    Section~\ref{sec:limitations} discusses limitations and
+    Section~\ref{sec:conclusion} concludes.
+  \end{itemize}
+
+  \section{Related Work}\label{sec:related_work}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{Macro variables in asset pricing.} Macro shocks as priced
+    risks \cite{chen1986economic}; risk premia conditional on macro state
+    \cite{ferson1991variation}. Contrast: each paper specifies one model.
+    The role of the macro variable (confounder, modifier, priced risk) is
+    left implicit. This paper makes the role an explicit edge attribute.
+  \item
+    \textbf{Identified macro shocks.} Monetary policy surprises
+    \cite{gertler2015monetary}, narrative shocks
+    \cite{romer2004new}, oil supply shocks \cite{kilian2009oil}; dynamic
+    effects by local projections \cite{jorda2005local}. Contrast: these
+    supply the shocks and the estimator. This paper makes the shock a
+    node type that the validator checks.
+  \item
+    \textbf{Time-series causal discovery.} PCMCI \cite{runge2019pcmci}
+    and VAR-LiNGAM \cite{hyvarinen2010var}. Contrast: on short samples
+    the output is noisy, so it serves as a consistency check only.
+  \item
+    \textbf{Bayesian macroeconometrics.} VARs \cite{sims1980macroeconomics},
+    shrinkage priors \cite{doan1984forecasting,giannone2015prior},
+    time-varying parameter VARs with stochastic volatility
+    \cite{primiceri2005time}, Bayesian dynamic stochastic general
+    equilibrium (DSGE) models \cite{smets2007shocks}, regime switching
+    \cite{hamilton1989new}. Contrast: these target macro forecasting and
+    policy analysis. Here they form the macro layer of a model with a firm
+    layer below it.
+  \item
+    \textbf{Real-time macro data.} The real-time data set of
+    \cite{croushore2001real} and the FRED-MD database
+    \cite{mccracken2016fredmd}. Contrast: these are data resources. Here
+    vintage and release lag are node attributes of the Theory Spec.
+  \end{itemize}
+
+  \section{Problem Formulation}\label{sec:problem}
+
+  \subsection{Notation and Setup}\label{sec:notation_and_setup}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    A Theory Spec \(\mathcal{T}\) as defined in the companion paper
+    \cite{adia2026finance}, with the macro extensions of
+    Section~\ref{sec:literature_graph}.
+  \item
+    Macro layer: a vector of macro series \(\mathbf{m}_t\) for
+    \(t = 1, \dots, T\) and a latent regime \(s_t\).
+  \item
+    Firm layer: characteristics \(x_{i,t}\) and returns \(r_{i,t+1}\) for
+    firm \(i\).
+  \item
+    Parameters \(\theta = (\theta_m, \theta_f)\) for the macro and firm
+    layers.
+  \item
+    Information set \(\mathcal{D}_d\): the data vintage that was knowable
+    on date \(d\).
+  \item
+    Target: the posterior \(p(\theta, s_{1:T} | \mathcal{D}_d,
+    \mathcal{T})\) and the induced posterior of the estimand \(\tau\).
+  \end{itemize}
+
+  \subsection{Simplifying Assumptions}\label{sec:simplifying_assumptions}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Bullet list, bold lead-in each: the macro layer is exogenous to
+    firms; time-indexing removes feedback cycles; macro names come from a
+    small canonical list (real policy rate, term spread, credit spread,
+    industrial production growth); components are linear-Gaussian at
+    first.
+  \end{itemize}
+
+  \subsection{Problem 1: Role Assignment}\label{sec:problem_1_role_assignment}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    For every edge from a macro node, decide whether it means common
+    cause, effect modifier, or direct cause (priced risk), and record the
+    role in \(\mathcal{T}\).
+  \item
+    Quality measured by agreement with expert labels on a set of papers.
+  \end{itemize}
+
+  \subsection{Problem 2: Point-in-Time Information
+  Set}\label{sec:problem_2_point_in_time}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Given \(\mathcal{T}\) and a date \(d\), build \(\mathcal{D}_d\) such
+    that every observation was published on or before \(d\), under the
+    vintage policy that the paper's theory requires.
+  \end{itemize}
+
+  \subsection{Problem 3: Identification and Posterior
+  Inference}\label{sec:problem_3_identification_and_inference}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Decide whether \(\tau\) is identified from an exogenous shock or
+    from the endogenous policy rate.
+  \item
+    Compute the posterior of \(\tau\) given \(\mathcal{D}_d\), integrating
+    over regime and parameter uncertainty.
+  \item
+    Report the prior next to the posterior, so that the identifying
+    content of the data is visible.
+  \end{itemize}
+
+  \section{Probabilistic Two-Level Model}\label{sec:model}
+
+  \subsection{Three Roles of Macro
+  Nodes}\label{sec:three_roles_of_macro_nodes}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{Common cause.} Rates, credit spreads, and the business cycle
+    drive both characteristics and returns. Omission yields misattributed
+    effects. Probabilistic reading: the macro state enters both the
+    characteristic and the return equations, so omitting it biases the
+    posterior of the characteristic effect.
+  \item
+    \textbf{Effect modifier.} Regime-dependent claims, such as momentum
+    crashing after market rebounds or value paying off in recoveries
+    (\texttt{modulated\_by} edge attribute or interaction node).
+    Probabilistic reading: the coefficient depends on the regime \(s_t\).
+  \item
+    \textbf{Direct cause or priced risk.} Macro shock with firm-level
+    exposure (beta) \cite{chen1986economic}. Probabilistic reading: the
+    exposures \(\beta_i\) are draws from a common distribution.
+  \end{itemize}
+
+  \subsection{Two-Level Hierarchical Model}\label{sec:two_level_model}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Two-level SCM \cite{pearl2009causality}: the macro layer is indexed by
+    time, the firm layer by firm and time. Edges run from macro to firm,
+    not the reverse.
+  \item
+    Generative description:
+
+    \begin{itemize}
+    \tightlist
+    \item
+      Regime: \(s_t | s_{t-1} \sim \text{Markov}(\Pi)\).
+    \item
+      Macro layer: \(\mathbf{m}_t | \mathbf{m}_{t-1}, \dots,
+      \mathbf{m}_{t-p}, s_t \sim p(\cdot | \theta_m)\), e.g., a VAR with
+      regime-dependent coefficients.
+    \item
+      Firm layer: \(r_{i,t+1} | x_{i,t}, \mathbf{m}_t, s_t \sim
+      p(\cdot | \beta_i, \theta_f)\), with \(\beta_i\) drawn from a common
+      prior (partial pooling).
+    \end{itemize}
+  \item
+    Figure~\ref{fig:two_level_scm} shows the two-level SCM.
+  \end{itemize}
+
+  \begin{figure}[H]
+    \centering
+    % TODO(*): Replace the placeholder with the two-level SCM diagram.
+    \fbox{\parbox{0.9\linewidth}{\centering\vspace{3em}
+      Figure placeholder\vspace{3em}}}
+    \caption{Two-level structural causal model with a macro layer and a firm
+      layer.}
+    \label{fig:two_level_scm}
+  \end{figure}
+
+  \subsection{Time Model}\label{sec:time_model}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Lags on every edge, contemporaneous flag, feedback made acyclic by
+    unrolling.
+  \item
+    Mixed frequency: native frequency per node, aggregation rule per edge
+    (end-of-period, average, MIDAS weights).
+  \item
+    Option: treat a low-frequency series as a partial observation of a
+    high-frequency latent process.
+  \item
+    Stationarity transforms recorded per series (FRED-MD codes
+    \cite{mccracken2016fredmd}). Levels of trending series in a regression
+    are the classic spurious-regression trap.
+  \end{itemize}
+
+  \subsection{Priors and Regimes}\label{sec:priors_and_regimes}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Shrinkage priors on VAR coefficients, with the prior tightness
+    estimated or set by hierarchical choice
+    \cite{doan1984forecasting,giannone2015prior}.
+  \item
+    Markov-switching regimes with a transition matrix \(\Pi\); the
+    posterior over \(s_{1:T}\) is an output.
+  \item
+    Partial pooling of firm exposures \(\beta_i\) toward a shared mean.
+  \item
+    Prior sensitivity: report the posterior of \(\tau\) under at least two
+    prior choices.
+  \item
+    Inference by Markov chain Monte Carlo (MCMC) or variational methods in
+    a probabilistic programming library (e.g., PyMC or Stan).
+  \end{itemize}
+
+  % TODO(*): Decide the prior families and the inference engine.
+
+  \section{Point-in-Time Data}\label{sec:point_in_time}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Revisions and release lags make revised data a source of look-ahead
+    bias. GDP for the first quarter is first published weeks later and then
+    revised for years. Generated code uses today's revised numbers by
+    default.
+  \item
+    Fields: \texttt{release\_lag}, the time from the period's end to first
+    publication, and \texttt{vintage\_policy} (first release, real-time
+    vintage, final revised), chosen by what the paper's theory requires.
+  \item
+    Adapter signature \texttt{(series,\ as\_of\_date)}, returning only what
+    was knowable on that date. Sources: ALFRED, the Philadelphia Fed
+    Real-Time Data Set \cite{croushore2001real}, FRED-MD and FRED-QD
+    \cite{mccracken2016fredmd}.
+  \item
+    Probabilistic reading: the information set \(\mathcal{D}_d\) is the
+    conditioning set of the posterior.
+  \item
+    Open question: model a first release as a noisy measurement of the
+    final value, with the revision variance estimated from the vintages.
+  \end{itemize}
+
+  \section{Identification with Shocks}\label{sec:identification_with_shocks}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    One short, non-randomized macro history limits identification.
+  \item
+    \texttt{instrument} node type for identified shocks: monetary
+    surprises \cite{gertler2015monetary}, narrative shocks
+    \cite{romer2004new}, oil supply shocks \cite{kilian2009oil}.
+  \item
+    Validator check: does the estimate use an identified shock or the
+    endogenous policy rate?
+  \item
+    Weak identification: when the shock is weak, the posterior of
+    \(\tau\) is expected to stay close to the prior. Report both.
+  \item
+    Time-series discovery as a consistency check only: PCMCI
+    \cite{runge2019pcmci}, VAR-LiNGAM \cite{hyvarinen2010var}, Granger
+    as a weak baseline.
+  \item
+    Structural break and regime tests (Bai-Perron \cite{bai1998estimating},
+    Hamilton \cite{hamilton1989new}). A macro edge that holds before 2008
+    and vanishes after is a finding, not a bug.
+  \end{itemize}
+
+  \section{Estimators and Simulator}\label{sec:estimators}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Table~\ref{tab:estimator_templates} maps each paper claim to an
+    estimator template and to its probabilistic counterpart.
+  \item
+    Simulator: macro layer (VAR or regime switching) first, firm layer
+    conditional on it, to test estimator recovery under macro confounding.
+    The simulator is the generative model of Section~\ref{sec:model} run
+    forward with known parameters.
+  \item
+    Posterior predictive checks compare simulated and observed macro
+    series.
+  \end{itemize}
+
+  \begin{table}[H]
+    \centering
+    \begin{tabularx}{\linewidth}{lXX}
+      \toprule
+      Paper's claim & Estimator template & Probabilistic counterpart \\
+      \midrule
+      Dynamic effect of a macro shock & Local projections
+      \cite{jorda2005local}, SVAR (\texttt{statsmodels}) & Bayesian VAR with a
+      shrinkage prior \cite{giannone2015prior}; posterior impulse responses
+      \\
+      Macro-conditional factor premium & Conditional Fama-MacBeth with macro
+      interactions \cite{ferson1991variation} & Hierarchical regression with
+      time-varying coefficients \cite{primiceri2005time} \\
+      Regime-dependent effect & Markov-switching regression
+      \cite{hamilton1989new} & Bayesian Markov-switching regression;
+      posterior regime probabilities \\
+      Macro risk priced in the cross-section & Two-pass beta estimation on
+      macro shock series & Joint hierarchical model of exposures and risk
+      premium \\
+      Mixed-frequency prediction & MIDAS regression & Bayesian MIDAS or
+      mixed-frequency state-space model \\
+      \bottomrule
+    \end{tabularx}
+    \caption{Estimator templates for macro claims and their probabilistic
+      counterparts.}
+    \label{tab:estimator_templates}
+  \end{table}
+
+  \section{Literature-Level Graph}\label{sec:literature_graph}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Macro is the glue between graphs. Canonical macro names (real policy
+    rate, term spread, credit spread, industrial production growth)
+    connect graphs from macro papers and from cross-sectional finance
+    papers into pathways that no single paper tested, e.g., policy to
+    credit spread to distress returns.
+  \item
+    The system can generate the combined model and test it.
+  \item
+    Table~\ref{tab:macro_fields} lists the Theory Spec fields added for
+    macro nodes, edges, and validation.
+  \end{itemize}
+
+  \begin{table}[H]
+    \centering
+    \begin{tabularx}{\linewidth}{lX}
+      \toprule
+      Component & Added fields or checks \\
+      \midrule
+      Node & \texttt{level} (macro, firm, or industry), \texttt{frequency},
+      \texttt{transform}, \texttt{release\_lag}, \texttt{vintage\_policy},
+      \texttt{source\_series\_id} \\
+      Edge & \texttt{lag}, \texttt{contemporaneous} flag,
+      \texttt{modulated\_by}, \texttt{aggregation\_rule},
+      \texttt{regime\_scope} \\
+      New node type & \texttt{instrument} or shock, with the source study for
+      its identification \\
+      Validation & Time-series discovery check, endogeneity check of the macro
+      regressor, structural-break check \\
+      Probabilistic model & \texttt{prior}, \texttt{pooling} (none, partial,
+      or complete), \texttt{regime\_variable} \\
+      \bottomrule
+    \end{tabularx}
+    \caption{Theory Spec extensions for macroeconomic variables.}
+    \label{tab:macro_fields}
+  \end{table}
+  % TODO(*): Decide the names of the probabilistic model fields.
+
+  \section{Evaluation Protocol}\label{sec:evaluation}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Status: protocol only. No results are reported.
+  \item
+    First milestone: the macro confounder role, a handful of FRED-MD series
+    with point-in-time handling, applied to the cross-sectional anomaly
+    papers of the companion paper \cite{adia2026finance} and the signals of
+    \cite{chen2022open}.
+  \item
+    \textbf{Role assignment.} Agreement of the extracted macro roles with
+    expert labels (Problem~1).
+  \item
+    \textbf{Factor survival.} Which published factors survive macro
+    adjustment.
+  \item
+    \textbf{Recovery.} In the simulator, does the estimator recover known
+    effects when macro confounding is present?
+  \item
+    \textbf{Calibration.} In the simulator, do posterior credible intervals
+    cover the true effect at the nominal rate?
+  \item
+    \textbf{Vintage ablation.} Run the same estimates under first-release,
+    real-time, and final-revised vintages. Measure the look-ahead effect.
+  \item
+    Baselines: the same claim without the macro node; the frequentist
+    estimator template of Table~\ref{tab:estimator_templates}.
+  \item
+    Table~\ref{tab:evaluation} lists metrics, data, and baselines.
+  \end{itemize}
+
+  \begin{table}[H]
+    \centering
+    \begin{tabularx}{\linewidth}{lXXX}
+      \toprule
+      Component & Metrics & Data & Baseline or variant \\
+      \midrule
+      Role assignment & Agreement with expert labels (accuracy per edge) &
+      Anomaly papers with expert-labeled macro edges & Not applicable \\
+      Factor survival & Share of published factors with a significant effect
+      after macro adjustment & Anomaly papers, FRED-MD series & The same claim
+      without the macro node \\
+      Recovery & Bias and error of the estimated effect & Simulator output &
+      Frequentist estimator template \\
+      Calibration & Coverage of credible intervals & Simulator output & Not
+      applicable \\
+      Vintage ablation & Change in the estimate across vintage policies &
+      ALFRED vintages & Final-revised data \\
+      \bottomrule
+    \end{tabularx}
+    \caption{Evaluation protocol: components, metrics, data, and baselines.}
+    \label{tab:evaluation}
+  \end{table}
+  % TODO(*): Replace with a Technical Evaluation section once an
+  % implementation exists.
+
+  \section{Discussion and Limitations}\label{sec:limitations}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{Look-ahead bias.} Release lags and data revisions are the main
+    failure points of generated code.
+  \item
+    \textbf{Small samples.} Macro history is short, so discovery
+    algorithms are noisy and serve only as consistency checks. Posteriors
+    are expected to be wide.
+  \item
+    \textbf{Prior sensitivity.} With little data, conclusions can depend
+    on the prior. Report results under more than one prior.
+  \item
+    \textbf{Regime instability.} Estimated regimes and breaks can change
+    with the sample end date.
+  \item
+    \textbf{Computation.} Hierarchical models over many firms need
+    scalable inference.
+  \item
+    \textbf{Endogeneity.} Without an identified shock, a macro regressor
+    such as the policy rate is endogenous to the economy.
+  \end{itemize}
+
+  \section{Conclusion and Future Work}\label{sec:conclusion}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Summary of contributions in 2 to 3 sentences.
+  \item
+    State plainly: design and protocol only, no implementation or
+    empirical evaluation yet.
+  \item
+    Numbered next steps:
+
+    \begin{enumerate}
+    \def\labelenumi{\arabic{enumi}.}
+    \tightlist
+    \item
+      Extend the Theory Spec schema with the macro fields.
+    \item
+      Build the point-in-time adapter for ALFRED and FRED-MD.
+    \item
+      Implement the estimator templates and their probabilistic
+      counterparts.
+    \item
+      Build the simulator and run the recovery and calibration checks.
+    \item
+      Add the macro confounder role to the anomaly-paper evaluation.
+    \item
+      Connect macro papers and finance papers in the literature-level
+      graph.
+    \end{enumerate}
+  \end{itemize}
+
+  \bibliographystyle{amsplain}
+  \bibliography{references}
+\end{document}

@@ -1,0 +1,174 @@
+#!/bin/bash -e
+#
+# Dockerized latex build script.
+#
+# Usage: ./run_latex.sh [NUM_PASSES | -h | --help]
+#
+# Arguments:
+#   NUM_PASSES    Number of LaTeX compilation passes (default: 2)
+#
+#                 - 1: Single pdflatex pass (quick, no cross-references resolved)
+#                 - 2: Two pdflatex passes (resolves cross-references, no bibliography)
+#                 - 3: Two pdflatex passes + bibtex + two more pdflatex passes
+#                      (full build with bibliography and cross-references)
+#
+# The script also:
+#   - Renders any images in the .tex files via render_images.py
+#   - Copies the resulting PDF to Google Drive (if mounted)
+#   - Opens the PDF in Skim on macOS (if installed)
+#
+
+# TODO(gp): Convert to Python using hdocker.
+
+# ---------------------------------------------------------------------------
+# Help and argument parsing.
+# ---------------------------------------------------------------------------
+if [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]]; then
+    cat <<'EOF'
+Usage: ./run_latex.sh [NUM_PASSES | -h | --help]
+
+Build the LaTeX document inside a Docker container and open the resulting PDF.
+
+Arguments:
+  NUM_PASSES    Number of LaTeX compilation passes (default: 2)
+
+                - 1: Single pdflatex pass (quick, no cross-references resolved)
+                - 2: Two pdflatex passes (resolves cross-references, no bibliography)
+                - 3: Two pdflatex passes + bibtex + two more pdflatex passes
+                     (full build with bibliography and cross-references)
+
+  -h, --help    Show this help message and exit.
+
+The script also:
+  - Renders any images found in the .tex files via
+    helpers_root/dev_scripts_helpers/documentation/render_images.py
+  - Copies the resulting PDF to Google Drive (if the mount point exists)
+  - Opens the PDF in Skim on macOS (if Skim is installed)
+
+Examples:
+  ./run_latex.sh        # Build with 2 passes
+  ./run_latex.sh 1      # Quick single-pass build
+  ./run_latex.sh 3      # Full build with bibliography
+EOF
+    exit 0
+fi
+
+# Find the actual git root directory.
+export GIT_ROOT=$(pwd)
+if [[ -z $GIT_ROOT ]]; then
+    echo "Can't find GIT_ROOT=$GIT_ROOT"
+    exit -1
+fi;
+echo "GIT_ROOT=$GIT_ROOT"
+
+SCRIPT_SOURCE=$0
+if [[ -z $1 ]]; then
+    NUM_PASSES=2
+else
+    NUM_PASSES=$1
+fi;
+SCRIPT_DIR=$(dirname $SCRIPT_SOURCE)
+echo $SCRIPT_DIR
+echo "SCRIPT_DIR=$SCRIPT_DIR"
+
+if [[ ./figs ]]; then
+    rm -rf figs
+fi;
+EXEC=$GIT_ROOT/helpers_root/dev_scripts_helpers/documentation/render_images.py
+for FILE_NAME in $SCRIPT_DIR/*.tex; do
+  echo "Processing $FILE_NAME"
+  "$EXEC" -i "$FILE_NAME"
+done
+
+#if [[ ./figs ]]; then
+#    cp figs/* $SCRIPT_DIR/figs
+#fi;
+
+LATEX_NAME=$SCRIPT_DIR/paper.tex
+echo "LATEX_NAME=$LATEX_NAME"
+
+PDF_NAME=$(basename $SCRIPT_DIR).pdf
+echo "PDF_NAME=$PDF_NAME"
+
+PDF_FILE_NAME=$SCRIPT_DIR/$PDF_NAME
+
+DOCKERIZED_LATEX=$(find $GIT_ROOT -name "dockerized_latex.py" -type f 2>/dev/null | head -1)
+if [[ -z $DOCKERIZED_LATEX ]]; then
+    echo "Can't find dockerized_latex.py"
+    exit -1
+fi
+echo "DOCKERIZED_LATEX=$DOCKERIZED_LATEX"
+
+# First pdflatex pass - generates .aux file
+if [[ $NUM_PASSES -ge 1 ]]; then
+    $DOCKERIZED_LATEX -i ${LATEX_NAME} -o $PDF_FILE_NAME
+fi;
+
+if [[ $NUM_PASSES -ge 2 ]]; then
+    $DOCKERIZED_LATEX -i ${LATEX_NAME} -o $PDF_FILE_NAME
+fi;
+
+if [[ $NUM_PASSES -ge 3 ]]; then
+    if [[ -f $SCRIPT_DIR/references.bib ]]; then
+        # Run bibtex to process bibliography
+        # Extract directory and base name for bibtex
+        TEX_DIR=$(dirname $LATEX_NAME)
+        TEX_BASE=$(basename $LATEX_NAME .tex)
+        cp $SCRIPT_DIR/*.bib .
+        bibtex $TEX_BASE
+
+        # Third pdflatex pass - resolves all cross-references
+        $DOCKERIZED_LATEX -i ${LATEX_NAME} -o $PDF_FILE_NAME
+        $DOCKERIZED_LATEX -i ${LATEX_NAME} -o $PDF_FILE_NAME
+    fi;
+fi;
+
+LOGFILE=paper.log
+grep -E "LaTeX Warning:|Package .* Warning:|Class .* Warning:" "$LOGFILE"
+
+# Copy to Google Drive locations if they exist
+GDRIVE_PAPERS="/Users/saggese/Library/CloudStorage/GoogleDrive-gp@causify.ai/Shared drives/Eng - External (GP)/Papers/"
+GDRIVE_INTERNAL="/Users/saggese/Library/CloudStorage/GoogleDrive-gp@causify.ai/Shared drives/Eng - External (GP)/Internal_Papers_Latest"
+
+if [[ -d "$GDRIVE_PAPERS" ]]; then
+    echo "Copying to Google Drive Papers folder..."
+    cmd="cp -f $PDF_FILE_NAME '$GDRIVE_PAPERS'"
+    echo $cmd
+    eval $cmd
+else
+    echo "Warning: Google Drive Papers folder not found, skipping copy"
+fi
+
+if [[ -d "$GDRIVE_INTERNAL" ]]; then
+    echo "Copying to Google Drive Internal Papers folder..."
+    cmd="cp -f $PDF_FILE_NAME '$GDRIVE_INTERNAL'"
+    echo $cmd
+    eval $cmd
+else
+    echo "Warning: Google Drive Internal Papers folder not found, skipping copy"
+fi
+
+# Check if we're on macOS
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    echo "Running on macOS"
+
+    # Check if Skim.app exists (system-wide or in user's Applications)
+    if [[ -d "/Applications/Skim.app" ]] || [[ -d "$HOME/Applications/Skim.app" ]]; then
+        echo "Skim is installed."
+        # do something that requires Skim here
+        # From open_file_cmd.sh
+        /usr/bin/osascript << EOF
+set theFile to POSIX file "$PDF_FILE_NAME" as alias
+tell application "Skim"
+activate
+set theDocs to get documents whose path is (get POSIX path of theFile)
+if (count of theDocs) > 0 then revert theDocs
+open theFile
+end tell
+EOF
+    else
+        echo "Skim is not installed."
+    fi
+else
+    echo "Not running on macOS."
+fi

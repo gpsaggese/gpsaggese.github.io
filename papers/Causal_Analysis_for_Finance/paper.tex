@@ -1,0 +1,521 @@
+\input{papers/template/style.tex}
+
+\begin{document}
+  \title{From Papers to Causal Models: Extracting, Validating, and
+    Executing Financial Theories}
+
+  \author{ADIA Authors}
+  % TODO(*): Fill in the affiliation.
+  \address{\textless{}Department\textgreater{},
+    \textless{}Organization\textgreater{},
+    \textless{}City, State/Country\textgreater{}}
+  \email{@adia.ae}
+
+  \keywords{causal inference, factor investing, large language models,
+    structural causal models, paper-to-code}
+
+  \date{\today}
+
+  \begin{abstract}
+    Published finance research rarely states the causal graph behind its
+    empirical claims. Factor-investing studies in particular justify model
+    specifications through correlations, which can produce statistically
+    valid but causally misspecified models (``factor mirages''). Manual
+    replication and causal re-analysis of the literature do not scale.
+
+    This paper proposes a system that converts a finance paper into an
+    executable theory. The system extracts variables, causal claims, and the
+    empirical specification into a typed intermediate representation (the
+    Theory Spec), validates the implied causal directed acyclic graph (DAG)
+    against the authors' own specification, and generates three artifacts: a
+    simulator, a replication module, and a causal estimator. Generated
+    outputs are verified against the tables reported in the source paper.
+
+    The paper presents the design and an evaluation protocol. No empirical
+    evaluation has been carried out yet.
+  \end{abstract}
+
+  \maketitle
+
+  \setcounter{tocdepth}{2}
+  \tableofcontents
+
+  % Status: OUTLINE stage. Each section lists the content it will contain,
+  % derived from `notes.md`. Bullets are replaced by prose after the outline
+  % is approved.
+
+  \section{Introduction}\label{sec:introduction}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Problem: finance papers state empirical associations, while the
+    underlying causal theory is implicit and unverified.
+
+    \begin{itemize}
+    \tightlist
+    \item
+      Most factor-investing articles make associational claims: no causal
+      graph, specifications justified by correlations, no falsification
+      experiments \cite{lopezdeprado2023causal}.
+    \item
+      Consequence: the ``factor mirage'', i.e., a model that looks
+      statistically valid but is causally misspecified
+      \cite{lopezdeprado2025primer}.
+    \item
+      Replication evidence shows the cost of unverified claims
+      \cite{harvey2016cross,hou2020replicating,jensen2023replication}.
+    \end{itemize}
+  \item
+    Prior work falls in four categories, each with a gap:
+
+    \begin{itemize}
+    \tightlist
+    \item
+      Causal inference provides the formal language (SCMs, do-calculus,
+      identification) but is not applied to published papers at scale.
+    \item
+      Causal factor investing proposes a protocol but applies it by hand.
+    \item
+      Causal extraction from text recovers graphs but stops before the
+      estimator, and rarely targets finance.
+    \item
+      Paper-to-code agents generate code from papers but ignore causal
+      validity.
+    \end{itemize}
+  \item
+    This paper fills the gap: a pipeline from PDF to causally validated,
+    executable model, built around a typed Theory Spec of which the DAG is
+    one view.
+  \item
+    Simplifying assumptions (bullet list, bold lead-in each):
+
+    \begin{itemize}
+    \tightlist
+    \item
+      \textbf{Empirical papers first.} Equilibrium and theory papers are
+      routed to a separate path (Section~\ref{sec:limitations}).
+    \item
+      \textbf{Cross-sectional anomalies as initial scope.} Small DAGs and
+      public ground-truth implementations \cite{chen2022open}.
+    \item
+      \textbf{Public data only.} The simulator must run without
+      proprietary data.
+    \item
+      \textbf{Firm-level nodes only.} Macroeconomic nodes, time-unrolling,
+      and point-in-time macro data are treated in a companion paper
+      \cite{adia2026macro}.
+    \end{itemize}
+  \item
+    Contributions, each tied to a section:
+
+    \begin{itemize}
+    \tightlist
+    \item
+      The Theory Spec intermediate representation (Section~\ref{sec:theory_spec}).
+    \item
+      A six-stage pipeline with causal validation and feedback routing
+      (Section~\ref{sec:architecture}).
+    \item
+      An automated ``factor mirage'' diagnostic: theory DAG vs.~empirical
+      specification (Section~\ref{sec:architecture}).
+    \item
+      An evaluation protocol for the extraction and code halves (Section~\ref{sec:evaluation}).
+    \end{itemize}
+  \item
+    Roadmap: Section~\ref{sec:related_work} reviews related work,
+    Section~\ref{sec:problem} formulates the problems, and
+    Section~\ref{sec:theory_spec} defines the Theory Spec.
+    Section~\ref{sec:architecture} describes the pipeline, and
+    Section~\ref{sec:evaluation} presents the evaluation protocol.
+    Section~\ref{sec:limitations} discusses limitations and
+    Section~\ref{sec:conclusion} concludes.
+  \end{itemize}
+
+  \section{Related Work}\label{sec:related_work}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{Causal inference foundations.} SCMs, do-calculus, backdoor and
+    frontdoor identification \cite{pearl2009causality,pearl2018book};
+    code-friendly treatment \cite{peters2017elements}; bridge between
+    DAGs and potential outcomes \cite{imbens2020potential}; econometric
+    designs (IV, difference in differences) as graphical identification
+    \cite{hunermund2019causal}. Contrast: these supply the language, not
+    the extraction or the execution.
+  \item
+    \textbf{Causality in finance.} Causal factor investing
+    \cite{lopezdeprado2023causal,lopezdeprado2024case}, the primer and
+    seven-step protocol
+    \cite{lopezdeprado2025primer,lopezdeprado2025protocol}; replication
+    literature
+    \cite{harvey2016cross,hou2020replicating,jensen2023replication}.
+    Contrast: the protocol is manual. This paper automates it and uses the
+    protocol as the validator checklist.
+  \item
+    \textbf{Causal structure from text.} Pre-LLM survey
+    \cite{yang2022survey}; FinCausal shared tasks; LLM causal reasoning
+    and its failure modes
+    \cite{kiciman2023causal,jin2023corr2cause,zecevic2023causal}; graph
+    extraction by iterated pairwise queries and by retrieval with
+    self-consistency \cite{zeroshot2023causal,lacr2024}; ReCast
+    benchmark of expert-annotated economics graphs \cite{recast2025}.
+    Contrast: no work carries the extracted graph through identification
+    and into code.
+  \item
+    \textbf{Paper-to-code and LLM quant agents.} PaperCoder's plan,
+    analyze, generate split \cite{seo2026paper2code}; rubric-based
+    replication grading \cite{starace2025paperbench}; RD-Agent(Q)
+    \cite{li2025rdagent}; FactorEngine \cite{factorengine};
+    open-source signals \cite{chen2022open}. Contrast: these generate
+    code without checking that the estimand is identified from the paper's
+    own graph.
+  \end{itemize}
+
+  \section{Problem Formulation}\label{sec:problem}
+
+  \subsection{Notation and Setup}\label{sec:notation_and_setup}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    A source paper \(P\); a Theory Spec
+    \(\mathcal{T} = (G, \mathcal{A}, \tau,
+    \mathcal{S})\) with DAG \(G = (V, E)\), assumptions \(\mathcal{A}\),
+    estimand \(\tau\), and empirical specification \(\mathcal{S}\).
+  \item
+    Node attributes: observed or latent, unit, time index, level (firm,
+    industry).
+  \item
+    Edge attributes: sign, lag, status (\texttt{stated} or
+    \texttt{inferred}), provenance.
+  \end{itemize}
+
+  \subsection{Simplifying Assumptions}\label{sec:simplifying_assumptions}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Bullet list, bold lead-in each: time-indexing removes feedback cycles;
+    availability timing is encoded in the Theory Spec; the finance
+    ontology is small and fixed; variable recipes can be expressed with
+    standard data sources.
+  \end{itemize}
+
+  \subsection{Problem 1: Extraction}\label{sec:problem_1_extraction}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Map \(P\) to \(\mathcal{T}\) such that every node, edge, and
+    assumption carries a provenance pointer. The pointer is
+    format-specific: page and span (PDF), file, line, and label (LaTeX),
+    heading path and line (Markdown).
+  \item
+    The input \(P\) may be a PDF, a LaTeX source bundle, or a Markdown
+    file.
+  \item
+    Quality measured by structural distance and edge-level precision and
+    recall against expert graphs.
+  \end{itemize}
+
+  \subsection{Problem 2: Causal
+  Validation}\label{sec:problem_2_causal_validation}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Decide whether \(\tau\) is identifiable from \(G\).
+  \item
+    Decide whether \(\mathcal{S}\) is consistent with \(G\): no collider
+    or mediator controls, no omitted confounders.
+  \item
+    List the conditional independencies implied by \(G\) for testing.
+  \end{itemize}
+
+  \subsection{Problem 3: Executable Model
+  Generation}\label{sec:problem_3_executable_model_generation}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Map \(\mathcal{T}\) to a simulator, a replication module, and a causal
+    estimator.
+  \item
+    Verification: reproduced outputs match reported tables within a
+    tolerance \(\epsilon\).
+  \end{itemize}
+
+  \subsection{Problem 4: DAG Optimization
+  (open)}\label{sec:problem_4_dag_optimization_open}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Select a revised DAG \(G^{*}\) that minimizes an objective \(J(G)\).
+  \item
+    The criterion \(J\) is deliberately unspecified. Candidates:
+    out-of-sample fit, number of untestable assumptions, agreement with
+    the literature-level graph.
+  \end{itemize}
+
+  % TODO(*): Notes defer the optimization criterion. Decide on J.
+
+  \section{The Theory Spec}\label{sec:theory_spec}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Why not DAG to code: a bare DAG lacks data recipes, estimators, and
+    timing.
+  \item
+    Schema (Pydantic or JSON):
+
+    \begin{itemize}
+    \tightlist
+    \item
+      \texttt{nodes}: id, canonical name, observed or latent, data recipe,
+      unit, time index
+    \item
+      \texttt{edges}: source, target, sign, lag, functional-form hint,
+      confidence, provenance, \texttt{stated} vs.~\texttt{inferred}
+    \item
+      \texttt{assumptions}: exogeneity, no unobserved confounding
+    \item
+      \texttt{estimand}: e.g., ATE of a characteristic on next-month
+      return
+    \item
+      \texttt{empirical\_spec}: regressions, sorts, controls, fixed
+      effects, sample
+    \end{itemize}
+  \item
+    Canonicalization against a small finance ontology (value, size,
+    momentum, accruals, leverage) so graphs from different papers merge.
+  \item
+    Rule: generated code never depends silently on an \texttt{inferred}
+    edge.
+  \item
+    Table~\ref{tab:theory_spec_fields} lists the schema fields and their role in later stages.
+  \end{itemize}
+
+  \begin{table}[H]
+    \centering
+    \begin{tabularx}{\linewidth}{lXX}
+      \toprule
+      Field & Content & Role in later stages \\
+      \midrule
+      \texttt{nodes} & Id, canonical name, observed or latent, data recipe,
+      unit, time index & Data construction in code generation (Stage 5) and
+      verification (Stage 6) \\
+      \texttt{edges} & Source, target, sign, lag, functional-form hint,
+      confidence, provenance, \texttt{stated} or \texttt{inferred} &
+      Identification and independence tests (Stage 4), simulator structure
+      (Stage 5) \\
+      \texttt{assumptions} & Exogeneity, no unobserved confounding &
+      Identification (Stage 4) \\
+      \texttt{estimand} & E.g., ATE of a characteristic on next-month return
+      & Identification (Stage 4), causal estimator (Stage 5) \\
+      \texttt{empirical\_spec} & Regressions, sorts, controls, fixed effects,
+      sample & Factor mirage diagnostic (Stage 4), replication module
+      (Stage 5), verification (Stage 6) \\
+      \bottomrule
+    \end{tabularx}
+    \caption{Theory Spec schema fields.}
+    \label{tab:theory_spec_fields}
+  \end{table}
+
+  \section{System Architecture}\label{sec:architecture}
+
+  \begin{figure}[H]
+    \centering
+    % TODO(*): Replace the placeholder with the pipeline diagram.
+    \fbox{\parbox{0.9\linewidth}{\centering\vspace{3em}
+      Figure placeholder\vspace{3em}}}
+    \caption{Pipeline from input document to verified executable model.}
+    \label{fig:pipeline}
+  \end{figure}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Figure~\ref{fig:pipeline} shows the pipeline: PDF, LaTeX, or Markdown
+    input; Parse; Claim extraction; Theory Spec; Causal validation; Code
+    generation; Execute and verify; feedback loop.
+  \item
+    \textbf{Stage 1, Parse.} One front end per input format, all producing
+    the same normalized document representation (sections, equations,
+    tables, bibliography, source anchors). Stages 2 to 6 read only this
+    representation, so they are format-agnostic. Tables become
+    verification targets.
+
+    \begin{itemize}
+    \tightlist
+    \item
+      \textbf{PDF.} Layout and OCR based extraction (Nougat, Marker, or
+      GROBID). Fallback when no source is available. Equation and table
+      errors are possible.
+    \item
+      \textbf{LaTeX.} Parse the source directly: flatten
+      \texttt{\textbackslash{}input} and \texttt{\textbackslash{}include}
+      files, expand custom macros, read \texttt{equation} and
+      \texttt{tabular} environments, resolve
+      \texttt{\textbackslash{}label}, \texttt{\textbackslash{}ref}, and
+      \texttt{\textbackslash{}cite} keys, and read the \texttt{.bib} file.
+      Equations and tables are exact. Preferred when the source is
+      available (e.g., an arXiv source bundle).
+    \item
+      \textbf{Markdown.} Parse the AST (e.g., with pandoc): headings,
+      \texttt{\$...\$} math, pipe tables, and citation keys. Quality
+      depends on the converter when the Markdown was generated from
+      another format.
+    \item
+      Format choice: LaTeX if available, then Markdown, then PDF.
+    \item
+      Open issue: tables generated by code and included as external files
+      are absent from the source text.
+    \end{itemize}
+  \item
+    \textbf{Stage 2, Claim extraction.} Multi-pass LLM extraction of
+    variables, causal claims, empirical specification, and testable
+    implications. Every item has a provenance pointer, as the main defense
+    against hallucinated edges.
+  \item
+    \textbf{Stage 3, Theory Spec.} Assemble and canonicalize.
+  \item
+    \textbf{Stage 4, Causal validation.} DoWhy, pgmpy, or y0:
+
+    \begin{itemize}
+    \tightlist
+    \item
+      enforce acyclicity, handle feedback by time-indexing
+    \item
+      run identification of \(\tau\) from \(G\)
+    \item
+      compare the theory DAG with the empirical specification (the
+      automated factor mirage diagnostic)
+    \item
+      list implied conditional independencies
+    \end{itemize}
+  \item
+    \textbf{Stage 5, Code generation.} Plan, analyze, code. Three
+    artifacts: simulator (SCM with known effects), replication module
+    (data construction plus the paper's estimator), causal estimator
+    (identified estimate). Boilerplate (CRSP and Compustat merges,
+    portfolio sorts, Newey-West) is a tested library that the LLM composes
+    rather than rewrites.
+  \item
+    \textbf{Stage 6, Execute and verify.} Sandbox run; compare to reported
+    tables; route mismatches: wrong data recipe to Stage 2, missing
+    confounder to Stage 3, bug to Stage 5.
+  \end{itemize}
+
+  \section{Evaluation Protocol}\label{sec:evaluation}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Status: protocol only. No results are reported.
+  \item
+    Initial scope: cross-sectional anomaly papers, hundreds of
+    ground-truth implementations \cite{chen2022open}.
+  \item
+    \textbf{Extraction.} Normalized Structural Hamming Distance and
+    edge-level precision and recall, ReCast style \cite{recast2025};
+    per-node and per-edge LLM judging.
+  \item
+    \textbf{Code.} Correlation with published signals, matching
+    t-statistics \cite{chen2022open}; rubric-based grading
+    \cite{starace2025paperbench}.
+  \item
+    \textbf{Validation.} Share of papers with a flagged mirage.
+  \item
+    Baselines: direct paper-to-code without a DAG; pipeline without the
+    validation stage.
+  \item
+    \textbf{Input format ablation.} Run the same papers from PDF, LaTeX,
+    and Markdown inputs. Measure how parsing errors (equations, tables,
+    citations) propagate to extraction and replication metrics.
+  \item
+    Table~\ref{tab:evaluation} lists metrics, data, and baselines.
+  \end{itemize}
+
+  \begin{table}[H]
+    \centering
+    \begin{tabularx}{\linewidth}{lXXX}
+      \toprule
+      Component & Metrics & Data & Baseline or variant \\
+      \midrule
+      Extraction & Normalized SHD, edge-level precision and recall, per-node
+      and per-edge LLM judging & ReCast benchmark & Not applicable \\
+      Code & Correlation with the published signal, matching t-statistics,
+      rubric score & Chen--Zimmermann signals & Direct paper-to-code without a
+      DAG \\
+      Validation & Share of papers with a flagged mirage & Anomaly papers &
+      Pipeline without the validation stage \\
+      Input format & Propagation of parsing errors to extraction and
+      replication metrics & The same papers as PDF, LaTeX, and Markdown & PDF
+      front end \\
+      \bottomrule
+    \end{tabularx}
+    \caption{Evaluation protocol: components, metrics, data, and baselines.}
+    \label{tab:evaluation}
+  \end{table}
+  % TODO(*): Replace with a Technical Evaluation section once an
+  % implementation exists.
+
+  \section{Discussion and Limitations}\label{sec:limitations}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{Theory papers.} Equilibrium models (simultaneous equations,
+    fixed points) do not map to a DAG. Route to a structural equations and
+    solver path.
+  \item
+    \textbf{Implicit graphs.} Most papers never state a DAG.
+    \texttt{stated} and \texttt{inferred} edges are kept separate. Quality
+    of inferred edges depends on the LLM \cite{zecevic2023causal}.
+  \item
+    \textbf{Input availability.} Most finance papers circulate as PDF
+    only. LaTeX sources exist mainly for preprints, and journal Markdown
+    is rare, so the PDF front end remains the main path.
+  \item
+    \textbf{Look-ahead bias.} Reporting lags and fiscal-year alignment
+    are the main failure points of generated code.
+  \item
+    \textbf{Validator scope.} A graph that passes identification is not
+    proof of causality. Assumptions in \(\mathcal{A}\) stay untested.
+  \end{itemize}
+
+  \section{Conclusion and Future Work}\label{sec:conclusion}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Summary of contributions in 2 to 3 sentences.
+  \item
+    State plainly: design and protocol only, no implementation or
+    empirical evaluation yet.
+  \item
+    Numbered next steps:
+
+    \begin{enumerate}
+    \def\labelenumi{\arabic{enumi}.}
+    \tightlist
+    \item
+      Implement the Theory Spec schema.
+    \item
+      Build the tested library of estimators and data adapters.
+    \item
+      Run the anomaly-paper evaluation.
+    \item
+      Define the DAG optimization criterion.
+    \item
+      Build the literature-level graph.
+    \end{enumerate}
+  \end{itemize}
+
+  \bibliographystyle{amsplain}
+  \bibliography{references}
+\end{document}
