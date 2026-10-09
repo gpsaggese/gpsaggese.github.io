@@ -4,7 +4,6 @@
 
 - **Status**: draft
 - **Complete Specs**: 30%
-- **Assignee**: TBD
 
 ## Core Idea
 
@@ -31,19 +30,19 @@
 
 - Sequence-to-sequence formulation: encode the point set, decode the
   expression tokens
-  ```
+  ```text
   p_theta(g | {(x_i, y_i)}) = prod_t p_theta(g_t | g_<t, encode(D))
   ```
   - The encoder must be permutation-invariant over points, e.g., a set encoder
     rather than a plain sequence encoder
 - Constants are handled by a hybrid scheme: the model emits a skeleton with
   placeholders, and a numeric optimizer fits the constants
-  ```
+  ```text
   skeleton:  c1 * sin(c2 * x) + c3
   fit:       argmin_c MSE(skeleton(c), D)
   ```
 - Search loop, since one shot is insufficient:
-  ```
+  ```text
   pool = {}
   repeat:
       cand = sample K skeletons from p_theta(. | D, pool_feedback)
@@ -121,13 +120,13 @@
   the related framing in `draft.Closed_Form_Formula_Discovery.md`
 
 ## Next steps
-[ ] Look for related research (what has already been done)
-[ ] Finalize the implementation plan
-[ ] GP to review / approve the plan
-[ ] Hack a quick end-to-end prototype (e.g., in 1-2 days) to show that you
-    understood the problem and can make progress
-[ ] Break the problem down in phases and milestones
-[ ] Execute one step at the time
+- [ ] Look for related research (what has already been done)
+- [ ] Finalize the implementation plan
+- [ ] GP to review / approve the plan
+- [ ] Hack a quick end-to-end prototype (e.g., in 1-2 days) to show that you
+      understood the problem and can make progress
+- [ ] Break the problem down in phases and milestones
+- [ ] Execute one step at the time
 
 ## Implementation plan
 

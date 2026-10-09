@@ -56,7 +56,7 @@ Before starting, understand these non-negotiable principles:
   > mdm skill describe coding
   > mdm skill describe notebooks
   > mdm skill describe testing
-  > mdm skill describe tool_X_in_60_mins
+  > mdm skill describe tutorial_in_60_mins
   ```
 
 - [ ] Review key skills relevant to tutorials:

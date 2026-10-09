@@ -1,52 +1,207 @@
-- Run a Python script
-  ```
-  > cd tutorials/causalnex/
-  > docker_cmd.sh "python /git_root/tutorials/causalnex/causalnex.API.py"
-  ``` 
+# Main Guidelines
 
-# Fix the PR issues
-> (cd helpers_root; chmod -R +w docs; git reset --hard origin/master; chmod -R +w docs)
-> git -c submodule.recurse=false checkout UmdTask27_Fall2025_HMMlearn_Anomaly_Detection_in_Network_Traffic
+- `class_project/README.md`: Project rules for DATA605 and MSML610. Two project
+  types, team size, deliverables. Start here
+- `class_project/how_to_contribute.md`: Fork and PR workflow for student
+  contributions
 
-- Look for different files
-> git diff --name-status master...
+# Project Template and Creation
 
-- Only files inside the class_project should be modified
-```
-> git restore --source origin/master --worktree --staged -- . ':(exclude)class_project/**'
-```
+- `class_project/create_project.README.md`: How to use create_project.py to copy the
+  template into a new project dir
+- `class_project/project_template/docker_scripts.README.md`: Explains the Docker
+  scripts in the template
 
-git fetch origin
-gh pr checkout $1
-git merge -X theirs master
+# Project Descriptions
 
-find . -name "tmp.*" | xargs rm -rf
-find . -name ".DS_Store" | xargs rm -rf
-find . -name "__pycache__" | xargs rm -rf
+- `class_project/project_descriptions/README.md`: Tables of all tool projects for
+  DATA605 and MSML610
+- `class_project/project_descriptions/all_projects.md`: Full project list
+- `class_project/project_descriptions/paper_candidates_analysis.md`: Analysis of
+  candidate papers for research projects
+- `class_project/project_descriptions/DATA605/<tool>_Project_Description.md`: One
+  blueprint per DATA605 tool
+- `class_project/project_descriptions/MSML610/<tool>_Project_Description.md`: One
+  blueprint per MSML610 tool
 
-rsync -av --delete \
-  --exclude='class_project/**' \
-  --exclude='.git' \
-  /Users/saggese/src/umd_classes1/ \
-  /Users/saggese/src/umd_class_scripts/
+# TA Files
 
-git status
+- `class_project/ta/README.md`: TA workflow. Build tool list, then generate
+  descriptions
+- `class_project/ta/project_prompt.md`: LLM prompt to make a project blueprint for a
+  tool
+- `class_project/ta/research_prompt.md`: LLM prompt for research project
+  descriptions
+- `class_project/ta/DATA605_project_example.md`: Example description (TextBlob)
+- `class_project/ta/generate_class_project_description.py`: Script that generates the
+  descriptions
 
-git add data605 msml610
-git add README.slides.md
-git add -u
+# Tutorials (Learn X in 60 Minutes)
 
-# Check that the files from the students are in the right dir
-# git diff --name-only origin/master...HEAD
-#
-git commit -m "Merge" && git push
+## Conventions
 
-find class_project/MSML610/Fall2025/Projects/UmdTask78_Fall2025_Ax_Multi_Objective_Optimization_for_Marketing_Campaigns/  -type f -exec du -h {} + | sort -hr | head -n 10
+- `.claude/skills/tutorial_in_60_mins.rules.md`: Main spec for a 60-minute
+  tutorial
+- `.claude/skills/tool_guide_in_30_mins.rules.md`: Single-markdown quick-reference
+  guide for a tool (not a tutorial directory)
 
-class_project/create_PR.sh
+## Skills
 
-class_project/create_PR.py \
-  --input_file class_project/fall2025_msml610_branches_dirs.txt \
-  --source_dir /Users/saggese/src/umd_class_scripts \
-  --dst_dir /Users/saggese/src/umd_classes3
-  --copy_dirs
+- `.claude/skills/tutorial_in_60_mins.create/SKILL.md`: Create a new tutorial
+  dir
+- `.claude/skills/tutorial_in_60_mins.format/SKILL.md`: Format a dir to follow
+  the conventions
+- `.claude/skills/tutorial_in_60_mins.merge_markdown/SKILL.md`: Merge a
+  markdown file into a notebook
+- `.claude/skills/tutorial_in_60_mins.propagate_docker_changes/SKILL.md`:
+  Sync the Docker files with `project_template`
+- `helpers_root/how_to.ai_workflows.md`: Lists the `tutorial_in_60_mins` skill
+  group
+
+## Workflow
+
+- `tutorials/README.gp.md`: Steps to create a tutorial, from
+  `class_project/create_project.py` to `/blog.write_tutorial_readme`
+- `tutorials/tutorials_checklist.md`: Onboarding checklist and quality principles
+- `helpers_root/docs/blogging/all.write_blog.how_to_guide.md`: Blog guide that
+  points to the tutorial conventions
+
+## Templates and Examples
+
+- `tutorials/project_template/`: Skeleton to copy (`template_utils.py`,
+  `template.API.ipynb`, `template.example.ipynb`, Docker scripts)
+- `tutorials/fastapi/`: Complete example of the three deliverables
+- `tutorials/<tool>/`: One dir per tool (e.g., `shap`, `lime`, `tsfresh`,
+  `LangChain_LangGraph`, `TorchRL_MAC`)
+- `research/Causal_Analysis_of_Agent_Skill_And_Luck/all.learn_Causal_Analysis_of_Success_in_60_minutes.how_to_guide.md`:
+  Research-side tutorial
+
+## Tutorial Specs
+
+- A tutorial spec is the proposal file of one tool. It describes the "Learn X in
+  60 Minutes" tutorial of the current session and the class projects that use
+  the tool
+- `.claude/skills/tutorial_specs.rules.md`: Rules for the spec files
+  - File naming: `<Tool>_Project_Description.md`
+  - Sections in order: `# Description`, `# Tutorial`, `# Project`
+  - Fields of a project, difficulty ladder, dataset and task rules
+  - Columns of the tracking table in `class_project/project_descriptions/README.md`
+- `.claude/templates/tutorial_specs.template.md`: Template to copy for a new spec
+- `class_project/project_descriptions/{MSML610,DATA605}/`: One spec per tool, named
+  `<Tool>_Project_Description.md`
+- `class_project/project_descriptions/README.md`: Tracking table with status,
+  authors, GitHub issue, result dir, and session
+- `class_project/project_descriptions/MSML610/Ax_Project_Description.md`: Example
+  with three project options in the standard fields
+- `class_project/project_descriptions/MSML610/CrewAI_Project_Description.md`:
+  Example with a `Tutorial` section that has full specs
+
+## Tool Guides (Learn X in 30 Minutes)
+
+- A tool guide is a single markdown file, about 30 minutes of reading. It is not a
+  tutorial dir: no notebooks, no Docker files
+- `.claude/skills/tool_guide_in_30_mins.rules.md`: Rules for a guide
+  - Length: 2,000-4,000 words
+  - Section order: TL;DR, Introduction, Why X, Installation, Basic Usage, Core
+    Features, Advanced Features, Practical Examples, Tips, Common Gotchas,
+    Comparison Tables
+  - Bash commands start with `>`, all code blocks have a language tag, ASCII only
+- `.claude/skills/blog.write_tutorial_readme/SKILL.md`: Write the guide for one
+  tool or concept
+- `.claude/skills/blog.rules.md`: Blog conventions that the guide also follows
+- `tutorials/<Tool>/in_30_mins.<Tool>.md`: Guide kept next to the tutorial dir
+  (e.g., `tutorials/pgmpy/in_30_mins.pgmpy.md`)
+- `website/docs/blog/posts/in_30_mins.<Tool>.md`: Published guides (`uv`,
+  `ripgrep`, `Python_Packaging`, `Python_Code_Coverage`,
+  `mdm_unified_markdown_manager`, `simonw_llm_cli`, `helpers_llm_cli`)
+- `website/docs/blog/posts/draft.in_30_mins.<Tool>.md`: Draft guides (`pi_dev`,
+  `helpers_caching`, `helpers_hllm_decorator`, `helpers_typesetting_system`)
+- `website/README.blog.md`: Tracks guides and their status
+
+## Blog Posts
+
+- `website/docs/blog/posts/in_60_mins.<Tool>.md`: Published posts (`CausalML`,
+  `Tensorflow`, `AutoGen`, `BambooAI`, `TorchRL_MAC`, `FastAPI`)
+- `website/docs/blog/posts/draft.in_60_mins.GluonTS.md`: Draft post
+- `website/README.blog.md`: Tracks blog posts and their status
+
+# Research Projects
+
+## Rules and Policies
+
+- `class_project/README.md`: "Research Projects" section. Open question, teams of at
+  most 3 students, good work becomes a blog post or paper
+- `class_project/gp/email.project.md`: Email to students describing the small
+  research project (notebooks, GitHub, blog or paper, video) and the links to pick
+  an idea
+- `class_project/gp/email.research.md`: Email on doing research while taking the
+  class
+- `policies/how_to_join_the_research_team.md`: Steps to join the research group
+- `msml610/lectures_source/Class_Mechanics.aux.md`: Slides "Class Project: Small
+  Research"
+- `data605/gp/announcements.md`: Announcements with the project sign-up links
+
+## Research Ideas
+
+- `research/ideas/README.md`: Index of ideas
+  - Table of active projects and assignees
+  - Status prefixes and tracking table for all ideas
+- `research/ideas/<STATUS>.<Idea_Name>.md`: One file per idea
+  - `<STATUS>` is `draft`, `ready`, `in_progress`, or `done`
+- `research/ideas/to_review/`: Draft ideas waiting for review
+- `.claude/templates/research_idea.template.md`: Template for an idea file
+- `.claude/skills/research_idea.rules.md`: Rules for file naming, template use, and
+  the `README.md` tracking table
+
+## Skills
+
+- `.claude/skills/research_idea.add_from_file/SKILL.md`: Split a raw idea dump into
+  idea files
+- `.claude/skills/research_idea.brainstorm/SKILL.md`: Brainstorm 5 new ideas
+- `.claude/skills/research_idea.check_redundant/SKILL.md`: Find and merge
+  overlapping ideas
+- `.claude/skills/research_idea.format/SKILL.md`: Format an idea file to the
+  template
+- `.claude/skills/research_idea.update_readme/SKILL.md`: Update the tracking table
+  in `research/ideas/README.md`
+- `.claude/skills/research_idea.write_draft_paper/SKILL.md`: Write a conference
+  paper draft from an idea
+- `.claude/skills/paper.*/SKILL.md`: Improve a paper (`paper.fix_figures`,
+  `paper.improve_bibliography`, `paper.suggest_improvements`, `paper.use_style`)
+
+## Code and Papers
+
+- `research/<Project>/`: Code, notebooks, and notes for an active project
+  - `research/Noesis/`: Noesis core platform
+  - `research/agentic_data_science/`: RL for Automated EDA
+  - `research/Causal_Analysis_of_Agent_Skill_And_Luck/`: Causal analysis of agent
+    skill and luck
+  - `research/Causal_Analysis_of_Financial_Tradability/`: Financial tradability
+    analysis
+  - `research/Implement_MonteCarlo_Tree_Search_and_Alpha_Zero/`: MCTS for discrete
+    NP problems
+  - `research/agentic_outreach/`: Agentic outreach
+- `papers/<Paper_Name>/`: Paper for a project (e.g., `Noesis`,
+  `RL_for_Automated_EDA`, `Optimal_strategy_for_racket_sports`,
+  `AlphaZero_MCTS_for_TSP`)
+- `papers/template/`: Paper template (`paper.md`, `Makefile`, `references.bib`,
+  `ieee-template.typ`)
+- `website/docs/06_research.md`: Research areas and publication lists
+
+# Prompts
+
+- `class_project/prompt.readme.md`: Rules for the project CSV (Team column, GroupId)
+- `class_project/project_descriptions/prompt.analysis.md`: Prompt for project
+  analysis
+- `class_project/project_descriptions/prompt.update_README.md`: Prompt to update the
+  descriptions README
+
+# Per-Class Data
+
+- `class_project/data605/Spring2026/projects.csv`: DATA605 Spring 2026 team and
+  project assignments
+- `class_project/msml610/Fall2026/class_project.csv`: MSML610 Fall 2026 project
+  choices
+- `class_project/msml610/Fall2026/chosen_projects.csv`: MSML610 Fall 2026 final
+  project list
+- `class_project/data605/<Term>/projects/`: Student work per term

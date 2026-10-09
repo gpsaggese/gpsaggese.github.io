@@ -1,9 +1,8 @@
 # Intelligence Server
 
 ## Status
-- **Status**: draft
-- **Complete Specs**: 15%
-- **Assignee**: TBD
+- **Status:**: draft
+- **Complete Specs:**: 15%
 
 ## Core Idea
 - Build a lightweight LLM API gateway, modeled on OpenRouter, that proxies
@@ -94,13 +93,13 @@
   under-delivery from noise, for reliable fulfillment reporting
 
 ## Next steps
-[ ] Look for related research (what has already been done)
-[ ] Finalize the implementation plan
-[ ] GP to review / approve the plan
-[ ] Hack a quick end-to-end prototype (e.g., in 1-2 days) to show that you
-    understood the problem and can make progress
-[ ] Break the problem down in phases and milestones
-[ ] Execute one step at the time
+- [ ] Look for related research (what has already been done)
+- [ ] Finalize the implementation plan
+- [ ] GP to review / approve the plan
+- [ ] Hack a quick end-to-end prototype (e.g., in 1-2 days) to show that you
+      understood the problem and can make progress
+- [ ] Break the problem down in phases and milestones
+- [ ] Execute one step at the time
 
 ## Implementation plan
 - Milestone 1: build a minimal passthrough proxy with logging

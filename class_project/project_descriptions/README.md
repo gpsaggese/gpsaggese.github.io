@@ -69,6 +69,7 @@
 | [DoWhy](../data605/Spring2025/project_descriptions/DoWhy_Project_Description.md) | Done | [Mayur Sangle](https://github.com/Mayur074) | [TutorTask119](https://github.com/causify-ai/tutorials/issues/119) | [Result](../data605/Spring2025/projects/TutorTask119_Spring2025_Real-Time_Bitcoin_Causal_Analysis_with_DoWhy) | Spring2025 |
 | [DocsGPT](DATA605/DocsGPT_Project_Description.md) | Done | [Priyanshee Parmar](https://github.com/09priyanshee)<br>[Kshiti Deshpande](https://github.com/kshitideshpande) | [TutorTask111](https://github.com/causify-ai/tutorials/issues/111)<br>[UmdTask437](https://github.com/gpsaggese/gpsaggese.github.io/issues/437) | [Result 1](../data605/Spring2025/projects/TutorTask111_Spring2025_Real-Time_Bitcoin_Data_Q&A_Bot_with_DocsGPT)<br>[Result 2](../data605/Spring2026/projects/UmdTask437_DATA605_Spring2026_DocsGPT) | Spring2025<br>Spring2026 |
 | [Dolibarr](DATA605/Dolibarr_Project_Description.md) |  | — | — | — | — |
+| [DuckDB](DATA605/DuckDB_Project_Description.md) |  | — | — | — | — |
 | [ERPNext](DATA605/ERPNext_Project_Description.md) |  | — | — | — | — |
 | [ElasticSearch_WebTraffic](../data605/Spring2024/SorrTask833_ElasticSearch_WebTraffic/README.md) | Done | [@Berks97](https://github.com/Berks97) | [SorrTask833](https://github.com/causify-ai/kaizenflow/issues/833) | [Result](../data605/Spring2024/SorrTask833_ElasticSearch_WebTraffic) | Spring2024 |
 | [FLAML](DATA605/FLAML_Project_Description.md) |  | — | — | — | — |
@@ -296,7 +297,7 @@
 | [Polars](MSML610/Polars_Project_Description.md) |  | — | — | — | — |
 | [Pomegranate](MSML610/Pomegranate_Project_Description.md) |  | — | — | — | — |
 | [Prefect](MSML610/Prefect_Project_Description.md) |  | — | — | — | — |
-| [PyTorch Geometric](MSML610/PyTorch%20Geometric_Project_Description.md) | Done | [Madhumitha Rajagopal](https://github.com/madhusomethingg), [@SreyaVarma](https://github.com/SreyaVarma) | [UmdTask23](https://github.com/gpsaggese/gpsaggese.github.io/issues/23) | [Result](../msml610/Fall2025/projects/UmdTask23_Fall2025_PyTorch_Geometric_Drug_Drug_Interaction_Prediction) | Fall2025 |
+| [PyTorch Geometric](MSML610/PyTorch_Geometric_Project_Description.md) | Done | [Madhumitha Rajagopal](https://github.com/madhusomethingg), [@SreyaVarma](https://github.com/SreyaVarma) | [UmdTask23](https://github.com/gpsaggese/gpsaggese.github.io/issues/23) | [Result](../msml610/Fall2025/projects/UmdTask23_Fall2025_PyTorch_Geometric_Drug_Drug_Interaction_Prediction) | Fall2025 |
 | [RLlib](MSML610/RLlib_Project_Description.md) |  | — | — | — | — |
 | [SBert](MSML610/SBert_Project_Description.md) | Done | — | — | [Result](../msml610/Fall2025/projects/Fall2025_SBert_Sentiment_Analysis_with_Sentence_Embeddings) | Fall2025 |
 | [SHAP](MSML610/SHAP_Project_Description.md) | Done | [Prahar Modi](https://github.com/Prahar08modi) | [TutorTask_28](https://github.com/causify-ai/tutorials/issues/28) | [Result](../msml610/Fall2025/projects/TutorTask_28_Fall2025_SHAP_Credit_Scoring_Model_with_SHAP_for_Interpretability) | Fall2025 |
@@ -315,7 +316,7 @@
 | [Tianshou](MSML610/Tianshou_Project_Description.md) |  | — | — | — | — |
 | [TorchRL](MSML610/TorchRL_Project_Description.md) | Done | [Saransh Kumar](https://github.com/saranshkr), [Inesh Tandon](https://github.com/Ineshtandy) | [UmdTask21](https://github.com/gpsaggese/gpsaggese.github.io/issues/21) | [Result](../msml610/Fall2025/projects/UmdTask21_Fall2025_TorchRL_Multi-Agent_Cooperation) | Fall2025 |
 | [Vertex AI](MSML610/Vertex%20AI_Project_Description.md) | Done | [Abhinav Kumar](https://github.com/AbhinavKumar333), [@CoderAd1](https://github.com/CoderAd1), [@bala2306](https://github.com/bala2306) | [UmdTask79](https://github.com/gpsaggese/gpsaggese.github.io/issues/79) | [Result](../msml610/Fall2025/projects/UmdTask79_Fall2025_Vertex_AI_Sentiment_Analysis_on_Social_Media_Posts) | Fall2025 |
-| [W&B Weave](MSML610/W&B%20Weave_Project_Description.md) |  | — | — | — | — |
+| [W&B Weave](MSML610/WB_Weave_Project_Description.md) |  | — | — | — | — |
 | [Weights & Biases](MSML610/Weights%20&%20Biases_Project_Description.md) | Done | — | — | [Result](../msml610/Fall2025/projects/TutorTask_103_Weights_and_Biases_Hard) | Fall2025 |
 | [What-If Tool (WIT)](MSML610/What-If%20Tool%20%28WIT%29_Project_Description.md) | Done | [Tauksik Anil Kumar](https://github.com/Tauksik5) | [UmdTask211](https://github.com/gpsaggese/gpsaggese.github.io/issues/211) | [Result](../msml610/Fall2025/projects/UmdTask211_Fall2025_WIT_Credit_Card_Fraud_Detection) | Fall2025 |
 | [Whisper Large V3](MSML610/Whisper%20Large%20V3_Project_Description.md) | Done | [sriyank sagi](https://github.com/Sriyank-s) | [UmdTask40](https://github.com/gpsaggese/gpsaggese.github.io/issues/40) | [Result](../msml610/Fall2025/projects/UmdTask40_Fall2025_Whisper-Large-V3_Multilingual_Customer_Support_Chatbot) | Fall2025 |

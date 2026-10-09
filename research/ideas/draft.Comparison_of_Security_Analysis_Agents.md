@@ -1,115 +1,87 @@
 # Comparison of AI Security Analysis Agents
 
-## Description
+## Status
 
-- **AI Security Analysis Agents** are tools that automatically detect
-  vulnerabilities, suggest security hardening measures, and validate compliance
-  with security policies with minimal human intervention
-- They range from vulnerability scanners with AI-enhanced analysis (e.g., `Snyk`
-  with LLM backend, `Checkmarx`, `Semgrep` with security rules) to full
-  autonomous security reasoning agents (e.g., `CodeQL` with LLM interpretation,
-  `GitHub Advanced Security` features)
-- Key capabilities include identifying OWASP Top 10 vulnerabilities (injection,
-  broken authentication, XSS, CSRF, insecure deserialization, weak crypto,
-  access control flaws), detecting supply-chain risks and dependency
-  vulnerabilities, suggesting secure API alternatives and hardening patterns,
-  validating access controls and data flow, explaining vulnerability impact and
-  attack scenarios, and recommending remediation steps
-- Agents differ in false positive rates (flagging non-vulnerabilities as bugs—
-  erodes trust), coverage of vulnerability classes (broad vs. specialized),
-  ability to trace taint flow and data dependencies across files and modules,
-  explainability of findings (why is this a vulnerability?), and practical
-  integration with developer workflows (IDE, CI/CD, GitHub)
-- This project teaches students critical thinking about security claims in AI
-  tools—false negatives can be catastrophic (real vulnerability missed), and
-  false positives create alert fatigue (developers ignore tool)
+- **Status:**: draft
+- **Complete Specs:**: 90%
 
-## Comparison of Security Analysis Agents
+## Core Idea
 
-| Type              | Name                  | Description                                                                          | Website                                  | Strength                     |
-| ----------------- | --------------------- | ------------------------------------------------------------------------------------ | ---------------------------------------- | ---------------------------- |
-| Cloud scanner     | Snyk                  | AI-powered vulnerability scanner for code and dependencies with LLM explanations     | https://snyk.io                          | Fast, developer-friendly     |
-| Static analysis   | Semgrep               | Pattern-matching security rules with LLM-enhanced explanations and fix suggestions   | https://semgrep.dev                      | Customizable, low false +    |
-| Enterprise        | Checkmarx             | Static code analysis for OWASP Top 10, CWE, SANS 25 vulnerabilities                 | https://checkmarx.com                    | Enterprise, comprehensive    |
-| CodeQL + LLM      | GitHub Code Scanning  | GitHub-integrated security scanning with LLM explanations of findings                | https://github.com/advanced-security     | GitHub-native, free tier     |
-| Specialized       | Fortify SCA           | Software composition analysis with vulnerability database and LLM explanations      | https://www.microfocus.com/fortify       | Legacy systems, compliance   |
-| Open-source       | OWASP Dependency-Check| Detects known vulnerabilities in dependencies; enhanced with LLM explanations        | https://owasp.org/www-project-dependency-check | Free, open-source            |
+- **AI Security Analysis Agents** are tools that automatically:
+  - Detect vulnerabilities
+  - Suggest security hardening measures
+  - Validate compliance with security policies
+  - Work with minimal human intervention
+- Agents range from AI-enhanced scanners to full autonomous security reasoning agents
+  - Vulnerability scanners with AI-enhanced analysis
+    - E.g., `Snyk` with LLM backend, `Checkmarx`, `Semgrep` with security rules
+  - Autonomous security reasoning agents
+    - E.g., `CodeQL` with LLM interpretation, `GitHub Advanced Security` features
+- Key capabilities:
+  - Identify OWASP Top 10 vulnerabilities
+    - Injection
+    - Broken authentication
+    - XSS
+    - CSRF
+    - Insecure deserialization
+    - Weak crypto
+    - Access control flaws
+  - Detect supply-chain risks and dependency vulnerabilities
+  - Suggest secure API alternatives and hardening patterns
+  - Validate access controls and data flow
+  - Explain vulnerability impact and attack scenarios
+  - Recommend remediation steps
+- Agents differ in:
+  - False positive rates: flagging non-vulnerabilities as bugs erodes trust
+  - Coverage of vulnerability classes (broad vs. specialized)
+  - Ability to trace taint flow and data dependencies across files and modules
+  - Explainability of findings: why is this a vulnerability?
+  - Practical integration with developer workflows (IDE, CI/CD, GitHub)
+- Critical thinking about security claims in AI tools is needed
+  - False negatives can be catastrophic: a real vulnerability is missed
+  - False positives create alert fatigue: developers ignore the tool
+- Project objective: design a controlled empirical study that benchmarks at least
+  three AI security analysis agents on a curated dataset of deliberately vulnerable
+  and secure code examples
+  - Create a security benchmark
+    - Intentional vulnerabilities
+    - Real CVEs
+    - Secure patterns
+  - Apply each agent to detect vulnerabilities
+  - Systematically compare:
+    - True positive rate (real vulnerabilities caught)
+    - False positive rate (false alarms)
+    - Vulnerability classification accuracy (OWASP category)
+    - Explanation quality
+    - Remediation correctness
 
-## Vulnerability Detection Capabilities
+## Formalization
 
-| Level                        | Capability                       | Example behaviors                                   |
-| ---------------------------- | -------------------------------- | --------------------------------------------------- |
-| L0 -- Flag known CVEs        | Identify known vulnerabilities   | "lodash < 4.17.21 has CVE-2021-23337"             |
-| L1 -- Detect patterns         | Find OWASP Top 10 patterns      | "SQL injection risk: user input in query"          |
-| L2 -- Trace data flow         | Track taint across files        | "Untrusted input from API used in SQL query at L42" |
-| L3 -- Explain & suggest fix   | Propose remediation             | "Use parameterized queries instead of string concat" |
-| L4 -- Autonomous hardening    | Trace & auto-fix vulnerabilities | Apply security patch, verify fix, run tests        |
+### Comparison of Security Analysis Agents
 
-## Project Objective
+| Type            | Name                   | Description                                                                        | Website                                        | Strength                   |
+| --------------- | ---------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------- | -------------------------- |
+| Cloud scanner   | Snyk                   | AI-powered vulnerability scanner for code and dependencies with LLM explanations   | https://snyk.io                                | Fast, developer-friendly   |
+| Static analysis | Semgrep                | Pattern-matching security rules with LLM-enhanced explanations and fix suggestions | https://semgrep.dev                            | Customizable, low false +  |
+| Enterprise      | Checkmarx              | Static code analysis for OWASP Top 10, CWE, SANS 25 vulnerabilities                | https://checkmarx.com                          | Enterprise, comprehensive  |
+| CodeQL + LLM    | GitHub Code Scanning   | GitHub-integrated security scanning with LLM explanations of findings              | https://github.com/advanced-security           | GitHub-native, free tier   |
+| Specialized     | Fortify SCA            | Software composition analysis with vulnerability database and LLM explanations     | https://www.microfocus.com/fortify             | Legacy systems, compliance |
+| Open-source     | OWASP Dependency-Check | Detects known vulnerabilities in dependencies; enhanced with LLM explanations      | https://owasp.org/www-project-dependency-check | Free, open-source          |
 
-Design a controlled empirical study that benchmarks at least three AI security
-analysis agents on a curated dataset of deliberately vulnerable and secure code
-examples. The project aims to answer: _Which agents detect the most real
-vulnerabilities, avoid false positives, provide clear explanations, and suggest
-working fixes?_ Students will create a security benchmark (intentional
-vulnerabilities + real CVEs + secure patterns), apply each agent to detect
-vulnerabilities, and systematically compare: true positive rate (real
-vulnerabilities caught), false positive rate (false alarms), vulnerability
-classification accuracy (OWASP category), explanation quality, and remediation
-correctness.
+### Vulnerability Detection Capabilities
 
-## Tasks
-
-- **Security Benchmark Creation**: Curate or create 40–50 code snippets covering:
-  - 15–20 intentional vulnerabilities (seeded bugs following OWASP Top 10)
-  - 10–15 real CVEs from CVE database with proof-of-concept code
-  - 15–20 secure code patterns (common mistakes but actually safe)
-  - Document: vulnerability type (OWASP category), attack scenario, severity
-    (critical/high/medium/low), correct remediation
-
-- **Agent Setup & Execution**: Install and configure at least three security
-  agents (e.g., Snyk, Semgrep, GitHub Code Scanning); run each agent on all
-  benchmark snippets; record: findings reported, severity assigned, confidence
-  score, and explanation provided
-
-- **Vulnerability Detection Accuracy**: For each reported finding, measure: (a)
-  true positive (is it a real vulnerability?), (b) false positive (is the code
-  actually safe?), (c) missed vulnerability (did agent miss a real bug?), (d)
-  correct OWASP classification
-
-- **False Positive Analysis**: Measure false positive rate (FP / (FP + TP));
-  identify which vulnerability classes have highest false alarm rate; document
-  examples of false positives to understand agent confusion patterns
-
-- **Severity Rating Accuracy**: Compare agent-assigned severity (critical/high/
-  medium/low) with consensus severity from security experts; measure: (a) is the
-  rating appropriate for the vulnerability?, (b) does agent over/under-estimate
-  risk?
-
-- **Explanation Quality**: Extract agent's explanation of each vulnerability;
-  score on: (a) technical accuracy (does it explain the attack?), (b) clarity for
-  developers, (c) completeness (covers impact + attack scenario), (d) usefulness
-  for remediation
-
-- **Remediation Suggestion Correctness**: For each vulnerability, extract
-  agent's fix suggestion; measure: (a) does suggested fix eliminate the
-  vulnerability? (b) are there side effects or performance regression? (c) is the
-  fix idiomatic and maintainable?
-
-- **Data Flow Tracing**: Test multi-file vulnerabilities where untrusted input
-  flows from API → business logic → database; measure which agents correctly
-  trace taint across module boundaries
-
-- **Comparative Scorecard**: Build a rubric weighing: true positive rate, false
-  positive rate, severity accuracy, explanation quality, and fix correctness;
-  rank agents and identify specialization (e.g., which agent best detects
-  injection vs. auth flaws)
-
-## Vulnerability Benchmark Categories
+| Level                         | Capability                         | Example behaviors                                    |
+| ----------------------------- | ---------------------------------- | ---------------------------------------------------- |
+| L0 -- Flag known CVEs         | Identify known vulnerabilities     | "lodash < 4.17.21 has CVE-2021-23337"                |
+| L1 -- Detect patterns         | Find OWASP Top 10 patterns         | "SQL injection risk: user input in query"            |
+| L2 -- Trace data flow         | Track taint across files           | "Untrusted input from API used in SQL query at L42"  |
+| L3 -- Explain and suggest fix | Propose remediation                | "Use parameterized queries instead of string concat" |
+| L4 -- Autonomous hardening    | Trace and auto-fix vulnerabilities | Apply security patch, verify fix, run tests          |
 
 ### OWASP Top 10 (2021)
 
 1. **Broken Access Control** (vertical/horizontal privilege escalation)
+
    ```python
    # Vulnerable: No permission check
    def delete_user(user_id):
@@ -123,6 +95,7 @@ correctness.
    ```
 
 2. **Cryptographic Failures** (weak hashing, bad RNG, hardcoded keys)
+
    ```python
    # Vulnerable: Weak hash
    import hashlib
@@ -134,6 +107,7 @@ correctness.
    ```
 
 3. **Injection** (SQL, OS command, LDAP)
+
    ```python
    # Vulnerable: String concatenation
    query = f"SELECT * FROM users WHERE name = '{user_input}'"
@@ -149,7 +123,7 @@ correctness.
 6. **Vulnerable Components** (outdated dependencies, known CVEs)
 7. **Authentication Failures** (weak password, session fixation, no MFA)
 8. **Data Integrity Failures** (insecure deserialization, unsigned tokens)
-9. **Logging & Monitoring Failures** (not logging security events)
+9. **Logging and Monitoring Failures** (not logging security events)
 10. **SSRF** (Server-Side Request Forgery)
 
 ### Supply Chain Risks
@@ -165,125 +139,201 @@ correctness.
 - Using deprecated algorithms (MD5, SHA1)
 - Insecure key management
 
-## Sample Vulnerability Scenarios
+## Key Examples
 
-### SQL Injection
+- **SQL Injection**:
+  ```python
+  def find_user_by_email(email: str):
+      # Vulnerable
+      query = f"SELECT * FROM users WHERE email = '{email}'"
+      return database.execute(query)
 
-```python
-def find_user_by_email(email: str):
-    # Vulnerable
-    query = f"SELECT * FROM users WHERE email = '{email}'"
-    return database.execute(query)
+  def find_user_by_email_secure(email: str):
+      # Secure
+      query = "SELECT * FROM users WHERE email = ?"
+      return database.execute(query, [email])
+  ```
 
-def find_user_by_email_secure(email: str):
-    # Secure
-    query = "SELECT * FROM users WHERE email = ?"
-    return database.execute(query, [email])
-```
+- **Cross-Site Scripting (XSS)**:
+  ```python
+  # Vulnerable: Unescaped user input in HTML
+  html = f"<h1>Welcome {user_input}</h1>"
 
-### Cross-Site Scripting (XSS)
+  # Secure: HTML escape
+  from html import escape
+  html = f"<h1>Welcome {escape(user_input)}</h1>"
+  ```
 
-```python
-# Vulnerable: Unescaped user input in HTML
-html = f"<h1>Welcome {user_input}</h1>"
+- **Insecure Deserialization**:
+  ```python
+  import pickle
+  # Vulnerable: Arbitrary code execution via pickle
+  data = pickle.loads(user_input)
 
-# Secure: HTML escape
-from html import escape
-html = f"<h1>Welcome {escape(user_input)}</h1>"
-```
+  # Secure: Use json.loads with restricted types
+  import json
+  data = json.loads(user_input)
+  ```
 
-### Insecure Deserialization
+- **Path Traversal**:
+  ```python
+  import os
+  # Vulnerable: No path validation
+  file_path = os.path.join("/var/files", user_input)
+  with open(file_path, 'r') as f:
+      return f.read()
 
-```python
-import pickle
-# Vulnerable: Arbitrary code execution via pickle
-data = pickle.loads(user_input)
+  # Secure: Validate and normalize path
+  from pathlib import Path
+  base_dir = Path("/var/files").resolve()
+  file_path = (base_dir / user_input).resolve()
+  if base_dir not in file_path.parents:
+      raise ValueError("Invalid path")
+  ```
 
-# Secure: Use json.loads with restricted types
-import json
-data = json.loads(user_input)
-```
+## Questions
 
-### Path Traversal
+1. _Which agents detect the most real vulnerabilities, avoid false positives,
+   provide clear explanations, and suggest working fixes?_
+2. What would a fair comparison look like? Precision and recall against
+   seeded vulnerabilities with known ground truth are needed, since an agent
+   that flags every line has perfect recall and is useless.
+3. If an agent reliably reaches autonomous hardening (L4), does human security
+   review become a verification step, and how often does its patch introduce a
+   new vulnerability?
 
-```python
-import os
-# Vulnerable: No path validation
-file_path = os.path.join("/var/files", user_input)
-with open(file_path, 'r') as f:
-    return f.read()
+## Research Topics
 
-# Secure: Validate and normalize path
-from pathlib import Path
-base_dir = Path("/var/files").resolve()
-file_path = (base_dir / user_input).resolve()
-if base_dir not in file_path.parents:
-    raise ValueError("Invalid path")
-```
+- **Obfuscation Robustness**: intentionally obfuscate vulnerabilities
+  - E.g., split into multiple statements, indirect data flow
+  - Measure which agents still detect them
+  - Test AI robustness vs. adversarial vulnerability hiding
+- **Real CVE Dataset**: source real vulnerabilities from the CVE database
+  (https://cve.mitre.org) with proof-of-concept code
+  - Measure which agents correctly identify published CVEs
+- **Performance Regression**: measure wall-clock time and API cost to analyze
+  codebases of different sizes (1k, 10k, 100k LOC)
+  - Compare agent efficiency
+- **Fix Verification**: for each remediation suggested by an agent, verify:
+  - Does the fix eliminate the vulnerability?
+  - Would regression tests in the original codebase pass with the fix?
+  - Does the fix introduce performance issues?
+- **Compliance Checking**: test whether agents can validate compliance with
+  security frameworks
+  - OWASP Top 10
+  - CWE Top 25
+  - NIST Cybersecurity Framework
+- **Supply Chain Analysis**: create a project with intentionally outdated
+  dependencies (with known CVEs)
+  - Measure whether agents detect them and suggest upgrades
+- **Taint Analysis**: create multi-file vulnerabilities where untrusted input flows
+  through multiple modules
+  - Measure which agents successfully trace taint across boundaries
+- **False Positive Investigation**: for each false positive, investigate why the
+  agent flagged it
+  - Identify systematic patterns
+  - E.g., agent overly cautious about string operations
+- **Developer Trust**: survey developers on which agent explanations are most
+  trusted
+  - Correlate trust with accuracy metrics
+- **Cost Analysis**: compare API costs for security scanning
+  - Calculate cost-per-finding
+  - Calculate cost-per-vulnerability-fixed
 
-## Bonus Ideas
+## Next steps
 
-- **Obfuscation Robustness**: Intentionally obfuscate vulnerabilities (split into
-  multiple statements, indirect data flow) and measure which agents still detect
-  them; test AI robustness vs. adversarial vulnerability hiding
+- [ ] Look for related research (what has already been done)
+- [ ] Finalize the implementation plan
+- [ ] GP to review / approve the plan
+- [ ] Hack a quick end-to-end prototype (e.g., in 1-2 days) to show that you
+      understood the problem and can make progress
+- [ ] Break the problem down in phases and milestones
+- [ ] Execute one step at the time
 
-- **Real CVE Dataset**: Source real vulnerabilities from CVE database
-  (https://cve.mitre.org) with proof-of-concept code; measure which agents
-  correctly identify published CVEs
+## Implementation plan
 
-- **Performance Regression**: Measure wall-clock time and API cost to analyze
-  codebases of different sizes (1k, 10k, 100k LOC); compare agent efficiency
+- Milestone 1: create the security benchmark
+  - **Security Benchmark Creation**: curate or create 40-50 code snippets covering:
+    - 15-20 intentional vulnerabilities (seeded bugs following OWASP Top 10)
+    - 10-15 real CVEs from the CVE database with proof-of-concept code
+    - 15-20 secure code patterns (common mistakes but actually safe)
+  - Document for each snippet:
+    - Vulnerability type (OWASP category)
+    - Attack scenario
+    - Severity (critical/high/medium/low)
+    - Correct remediation
 
-- **Fix Verification**: For each remediation suggested by an agent, verify: (a)
-  does fix eliminate vulnerability? (b) are there regression tests in the
-  original codebase that would pass with the fix? (c) does fix introduce
-  performance issues?
+- Milestone 2: set up and run the agents
+  - **Agent Setup and Execution**: install and configure at least three security
+    agents
+    - E.g., Snyk, Semgrep, GitHub Code Scanning
+  - Run each agent on all benchmark snippets
+  - Record:
+    - Findings reported
+    - Severity assigned
+    - Confidence score
+    - Explanation provided
 
-- **Compliance Checking**: Test whether agents can validate compliance with
-  security frameworks (OWASP Top 10, CWE Top 25, NIST Cybersecurity Framework)
+- Milestone 3: evaluate detection quality
+  - **Vulnerability Detection Accuracy**: for each reported finding, measure:
+    - True positive: is it a real vulnerability?
+    - False positive: is the code actually safe?
+    - Missed vulnerability: did the agent miss a real bug?
+    - Correct OWASP classification
+  - **False Positive Analysis**: measure false positive rate as $FP / (FP + TP)$
+    - Identify which vulnerability classes have the highest false alarm rate
+    - Document examples of false positives to understand agent confusion patterns
+  - **Severity Rating Accuracy**: compare agent-assigned severity
+    (critical/high/medium/low) with consensus severity from security experts
+    - Is the rating appropriate for the vulnerability?
+    - Does the agent over/under-estimate risk?
+  - **Data Flow Tracing**: test multi-file vulnerabilities where untrusted input
+    flows from API -> business logic -> database
+    - Measure which agents correctly trace taint across module boundaries
 
-- **Supply Chain Analysis**: Create a project with intentionally outdated
-  dependencies (with known CVEs); measure whether agents detect and suggest
-  upgrades
+- Milestone 4: evaluate explanations and fixes, then build the scorecard
+  - **Explanation Quality**: extract the agent's explanation of each vulnerability
+    and score on:
+    - Technical accuracy: does it explain the attack?
+    - Clarity for developers
+    - Completeness: covers impact and attack scenario
+    - Usefulness for remediation
+  - **Remediation Suggestion Correctness**: for each vulnerability, extract the
+    agent's fix suggestion and measure:
+    - Does the suggested fix eliminate the vulnerability?
+    - Are there side effects or performance regression?
+    - Is the fix idiomatic and maintainable?
+  - **Comparative Scorecard**: build a rubric weighing:
+    - True positive rate
+    - False positive rate
+    - Severity accuracy
+    - Explanation quality
+    - Fix correctness
+  - Rank agents and identify specialization
+    - E.g., which agent best detects injection vs auth flaws
 
-- **Taint Analysis**: Create multi-file vulnerabilities where untrusted input
-  flows through multiple modules; measure which agents successfully trace taint
-  across boundaries
-
-- **False Positive Investigation**: For each false positive, investigate why the
-  agent flagged it; identify systematic patterns (e.g., agent overly cautious
-  about string operations)
-
-- **Developer Trust**: Survey developers on which agent explanations are most
-  trusted; correlate trust with accuracy metrics
-
-- **Cost Analysis**: Compare API costs for security scanning; calculate
-  cost-per-finding and cost-per-vulnerability-fixed
-
-## Useful Resources
+## References
 
 - **Vulnerability Datasets**:
   - CVE Mitre Database: https://cve.mitre.org
   - CWE Top 25: https://cwe.mitre.org/top25
   - OWASP Top 10: https://owasp.org/www-project-top-ten
-  - Vulnerable Code Examples: https://github.com/payloadbox/sql-injection-payload-list
-
+  - Vulnerable Code Examples:
+    https://github.com/payloadbox/sql-injection-payload-list
 - **Security Analysis Tools**:
   - Snyk Documentation: https://docs.snyk.io
   - Semgrep Documentation: https://semgrep.dev/docs
   - GitHub Code Scanning: https://docs.github.com/en/code-security/code-scanning
   - OWASP Dependency-Check: https://owasp.org/www-project-dependency-check
-
-- **Testing & Verification**:
-  - pytest: https://docs.pytest.org
-  - Security testing frameworks: https://github.com/msabegun/awesome-api-security-testing
+- **Testing and Verification**:
+  - Pytest: https://docs.pytest.org
+  - Security testing frameworks:
+    https://github.com/msabegun/awesome-api-security-testing
   - Bandit (Python security linter): https://bandit.readthedocs.io
-
-- **References**:
-  - *The Web Application Hacker's Handbook* by Stuttard & Pinto
+- **Books and Guides**:
+  - _The Web Application Hacker's Handbook_ by Stuttard and Pinto
   - OWASP Testing Guide: https://owasp.org/www-project-web-security-testing-guide
   - PortSwigger Web Security Academy: https://portswigger.net/web-security
-
 - **Agent APIs**:
   - Snyk API: https://snyk.io/docs/api
   - GitHub GraphQL API: https://docs.github.com/en/graphql

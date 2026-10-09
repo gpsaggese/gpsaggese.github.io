@@ -32,7 +32,6 @@ Apache TVM is an open-source deep learning compiler that enables high performanc
   - Evaluate model performance and inference time improvements on different hardware configurations.
   - Evaluate classification accuracy and compare inference time across hardware (CPU vs GPU, TVM vs non-TVM).  
 
-
 **Project 3: Large-Scale Document Anomaly Detection**
 - **Difficulty**: 3
 - **Project Objective**: Detect anomalies in large-scale document metadata using optimized machine learning pipelines.
@@ -46,6 +45,5 @@ Apache TVM is an open-source deep learning compiler that enables high performanc
   - Analyze detection results and interpret anomalies in context.
   - Compare anomaly detection accuracy and inference latency with vs. without TVM optimization.  
 - Analyze detected anomalies and interpret model results.
-
 
 - **Bonus Ideas (Optional)**: Implement advanced preprocessing using NLP techniques like dimensionality reduction and evaluate its impact on the anomaly detection's effectiveness.

@@ -3,7 +3,6 @@
 ## Status
 - **Status**: draft
 - **Complete Specs**: 20%
-- **Assignee**: TBD
 
 ## Core Idea
 - Train a very small LM (~10M-50M parameters) restricted to the vocabulary and
@@ -14,23 +13,13 @@
   apply the same "restrict the domain to shrink the model" methodology to
   different vocabularies
 
-## Training Data
-- **TinyStories** (Eldan & Li, Microsoft Research) — the canonical dataset for
-  this: GPT-3.5/4-generated short stories using only words a 3-4 year old would
-  know. Showed ~10M-parameter models can produce coherent text when trained on
-  this restricted distribution
-  - Paper: "TinyStories: How Small Can Language Models Be and Still Speak
-    Coherent English?"
-- Optionally augment with public-domain children's books (Project Gutenberg
-  children's collection) filtered by Flesch-Kincaid reading level, to test
-  whether real (vs. synthetic) restricted-vocabulary text changes the
-  size/coherence tradeoff
-- **LittleLearner / LittleCurriculum** ([littlelearner-ll.github.io](https://littlelearner-ll.github.io))
-  — related prior work: trains 0.6B-5B param models on an 88B-token corpus
-  filtered to K-5 Common Core standards, to get an "interpretable knowledge
-  boundary" for studying acquired vs. elicited capabilities. Different goal
-  (knowledge-boundary study, not model-size minimization) but same
-  curriculum-restricted-domain methodology
+## Formalization
+
+- Mathematical notation, definitions, or pseudocode
+- Use LaTeX math where helpful
+  ```text
+  VC_eff = VC(H) + log(N_strategies_tested)
+  ```
 
 ## Key Examples
 - **Model size sweep**: train 1M/10M/50M/125M parameter models on the same
@@ -56,12 +45,60 @@
   human eval on plot consistency)
 - Synthetic-data generation pipelines (prompting a large model to produce
   vocabulary-constrained training data)
+- **Training corpus choice**: TinyStories (Eldan & Li), a synthetic corpus of
+  GPT-3.5/4-generated short stories restricted to the vocabulary a 3-4 year
+  old would know, versus public-domain children's books (Project Gutenberg)
+  filtered by Flesch-Kincaid reading level, to test whether synthetic vs.
+  real restricted-vocabulary text changes the size/coherence tradeoff
+- **Comparison to LittleLearner/LittleCurriculum**: a related project that
+  trains 0.6B-5B parameter models on an 88B-token K-5 Common Core corpus to
+  study an "interpretable knowledge boundary" (acquired vs. elicited
+  capabilities), a different goal from model-size minimization but the same
+  curriculum-restricted-domain methodology
 
 ## Next steps
-- [ ] Look for related research (TinyStories follow-ups, other constrained-domain LMs)
+- [ ] Look for related research (TinyStories follow-ups, other
+      constrained-domain LMs)
 - [ ] Reproduce TinyStories baseline at small scale as a sanity check
 - [ ] Design the model-size sweep experiment
 - [ ] Break the problem down into phases and milestones
+
+## Implementation plan
+
+- Milestone 1: build training corpora and reproduce a baseline
+  - Assemble the TinyStories corpus and a vocabulary-restricted tokenizer
+    matching the target 3-4-year-old vocabulary
+  - Reproduce a small TinyStories baseline model as a sanity check that the
+    training pipeline yields coherent short stories
+  - Build a parallel corpus of Project Gutenberg children's books filtered by
+    Flesch-Kincaid reading level, for the synthetic-vs-real corpus ablation
+  - This is the result: two comparable training corpora (synthetic
+    TinyStories-style and filtered real books) and a working baseline model
+
+- Milestone 2: run the model-size sweep
+  - Train 1M/10M/50M/125M parameter models with a fixed architecture family
+    on each corpus, at matched compute budget
+  - Checkpoint periodically and track loss/perplexity curves per model size
+  - This is the result: a size x corpus grid of trained checkpoints ready for
+    coherence evaluation
+
+- Milestone 3: evaluate coherence beyond perplexity
+  - Build automatic checks: grammar-checker pass rate, a character
+    name-consistency tracker, and a GPT-4-as-judge plot-consistency score
+  - Run a small human eval to calibrate the automatic judge against human
+    ratings of grammar, plot consistency, and causality
+  - Plot coherence against parameter count to find the size threshold where
+    name drift and plot inconsistency disappear
+  - This is the result: a coherence-vs-size curve and the minimum parameter
+    count for coherent multi-sentence story generation, per corpus
+
+- Milestone 4: run the vocabulary ablation and cross-domain comparison
+  - Sweep the allowed vocabulary size at fixed model size and measure the
+    resulting coherence tradeoff
+  - Compare the resulting scaling curve against the sibling Logic and Python
+    domain ideas, if their results are available
+  - This is the result: a vocabulary-size vs. required-model-size tradeoff
+    curve, and a documented comparison against the sibling narrow-domain LMs
 
 ## References
 - Eldan, R., & Li, Y. (2023). _TinyStories: How Small Can Language Models Be

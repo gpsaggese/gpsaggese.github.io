@@ -2,6 +2,78 @@
 
 This document outlines all issues organized by EPIC for GitHub/Linear/Jira tracking.
 
+**GitHub Tracking:** These EPICs/Issues were also filed as real GitHub issues on
+project board [AutoML-v1.3 - AgenticEDA](https://github.com/orgs/causify-ai/projects/116)
+(16 items, across `causify-ai/helpers` and `causify-ai/tutorials`, snapshot taken
+2026-09-17). Every Issue below that has a real-world counterpart now carries a
+**Status** line and **GitHub Issue** / **Related Links** pointing at it. This
+document, together with `AutoEDA_Plan.md`, is now the source of truth for
+AutoEDA status — the live GitHub project does not need to be checked
+separately going forward. Its Status column is frequently stale: some issues
+shown "In Progress" there actually have closed-and-unmerged PRs, and #666
+showed "Todo" despite real research already sitting in its comment thread.
+
+**Status legend:** ✅ Done · 🔶 In progress / partially done · ⬜ Not started
+
+---
+
+## EPIC 0: Research & Framework Selection
+
+**Goal:** Survey the state of the art in agentic EDA and pick the
+orchestration framework before building.
+
+**Owner:** andresryes, PranavShashidhara, madhurlak0810, indrayudd,
+HarshitGadge, aangelo9
+
+### Issue #0.1: Investigate SOTA in Agentic EDA
+**Epic:** Research & Framework Selection
+**Priority:** P0 (Critical)
+**Complexity:** M
+**Owner:** andresryes, PranavShashidhara, madhurlak0810, indrayudd,
+HarshitGadge, aangelo9
+**Status:** 🔶 Research done in GitHub comments; never consolidated into a
+standalone doc
+**GitHub Issue:** https://github.com/causify-ai/tutorials/issues/666
+
+**Description:**
+Survey academic papers and high-quality blog posts on agentic EDA, LLM for
+data analysis, automated EDA with LLMs, and multi-agent systems for data
+science. Identify existing projects (Kaggle, etc.) and benchmarks. Compare
+frameworks (LangChain, LangGraph, AutoGen, CrewAI) for the EDA use case, and
+consolidate findings into a doc covering: common approaches, the best
+framework for the v0.1 MVP, key challenges (especially evaluation), and what
+to do differently.
+
+**What was actually found (from the issue's comment thread):**
+- Papers: "Towards Automated Cross-domain Exploratory Data Analysis through
+  Large Language Models" (VLDB,
+  https://www.vldb.org/pvldb/vol18/p5086-zhu.pdf), QUIS
+  (https://arxiv.org/html/2410.10270v1), InsightPilot (Microsoft Research,
+  https://www.microsoft.com/en-us/research/wp-content/uploads/2023/12/InsightPilot.pdf)
+  — which wraps XInsight (causal explanations,
+  https://www.microsoft.com/en-us/research/wp-content/uploads/2023/03/XInsight-final.pdf),
+  QuickInsights (basic insight mining,
+  https://www.microsoft.com/en-us/research/wp-content/uploads/2019/05/QuickInsights-camera-ready-final.pdf),
+  and MetaInsight (structured insight selection,
+  https://www.microsoft.com/en-us/research/wp-content/uploads/2021/03/rdm337-maA.pdf).
+- Benchmark: DataSciBench (https://datascibench.github.io, paper
+  https://arxiv.org/html/2502.13897v1) — contains reusable EDA prompts.
+- Framework decision: **LangGraph chosen** — confirms this plan's EPIC 1/3
+  choice.
+- Proposed architecture (InsightPilot-style): an LLM Planner + Schema
+  Profiler drives a 3-stage Insight Engine — QuickInsights (mines
+  `basic_insights[]`) → MetaInsight (dedupes/reranks into a `shortlist[]`) →
+  XInsight (adds causal "why" explanations) — feeding a Final Report Builder
+  that produces narrative markdown plus chart specs.
+- Proposed v0 scope: multivariate time series as the central input type,
+  notebook as the output.
+
+**Acceptance Criteria:**
+- ~~Consolidated findings document (gdoc) written~~ — not done; findings only
+  exist in the issue's comment thread.
+- ✅ Framework selected (LangGraph).
+- ✅ Key papers and a candidate architecture identified.
+
 ---
 
 ## EPIC 1: Foundation & Infrastructure Setup
@@ -11,6 +83,8 @@ This document outlines all issues organized by EPIC for GitHub/Linear/Jira track
 **Priority:** P0 (Critical)
 **Complexity:** M
 **Owner:** TBD
+**Status:** 🔶 Proven out via a standalone tutorial; never integrated as a
+`helpers` dependency/module as this issue specifies
 
 **Description:**
 Add LangGraph and LangChain as project dependencies. Set up base module for initialization and configuration.
@@ -28,7 +102,27 @@ Add LangGraph and LangChain as project dependencies. Set up base module for init
 - Test fixtures available for other issues
 
 **Related Links:**
-- https://github.com/causify-ai/helpers/issues/986
+- https://github.com/causify-ai/helpers/issues/986 — Schema Parser for
+  AutoEDA Agent. 🔶 Two competing unmerged draft PRs:
+  [#989](https://github.com/causify-ai/helpers/pull/989) (draft, LangGraph
+  scaffold under `langgraph/`: `src/agent/graph.py`, `schema_parser.py`,
+  `raw_data_analyzer.py`, with CI + tests) and
+  [#991](https://github.com/causify-ai/helpers/pull/991) (draft, simpler
+  `autoeda/` package: `schema_parser.py`, `raw_data_analyzer.py`, `agent.py`).
+  Neither merged.
+- https://github.com/causify-ai/tutorials/issues/655 — "Schema Parser
+  Component", a duplicate spec of helpers#986 filed in `tutorials`. ⬜ No PR,
+  no comments, nothing done.
+- https://github.com/causify-ai/tutorials/issues/609 — "Tutorial on LangGraph
+  on how to build agents". ✅ Done, merged
+  [PR #614](https://github.com/causify-ai/tutorials/pull/614), with
+  follow-ups #633 (docs/blog) and #649 (README instructions). Originally at
+  `tutorials/tutorial_langgraph/`, but that directory was **later deleted**
+  in a cleanup commit ("Remove old files", sha `4fbaff56`). The LangGraph
+  example code that survives today lives in
+  `tutorials/langchain_reference/graphs/` (`hello_state_graph.py`,
+  `hitl_worker.py`, `react_from_scratch.py`, `subgraph_worker.py`, etc.) and
+  in `tutorials/agentic_eda/simple_pemdas_agent/`.
 
 ---
 
@@ -37,6 +131,7 @@ Add LangGraph and LangChain as project dependencies. Set up base module for init
 **Priority:** P0 (Critical)
 **Complexity:** S
 **Owner:** TBD
+**Status:** ✅ Done, but at a different location than planned
 
 **Description:**
 Create the package structure for the AutoEDA agent system.
@@ -53,6 +148,25 @@ Create the package structure for the AutoEDA agent system.
 - All submodules are discoverable
 - Package structure follows helpers conventions
 
+**Related Links:**
+- https://github.com/causify-ai/helpers/issues/997 — "Move all project code
+  in //tutorial". ✅ Done (contributor comment "All done", 2025-09-21; no PR,
+  landed via direct commits). Real location:
+  `causify-ai/tutorials/agentic_eda/` (contains `generate_EDA_context.py`,
+  `test/`, `output_notebooks/`, `runnable_dir/`, plus
+  `advanced_insightpilot_recreation/`, `intermediate_v0_timeseries_agent/`,
+  `simple_pemdas_agent/`, `agentui/`) — **not** `helpers/hagentic_eda/`.
+- https://github.com/causify-ai/tutorials/issues/628 — "Create a runnable dir
+  for AgenticEDA". ✅ Done, merged
+  [PR #641](https://github.com/causify-ai/tutorials/pull/641). Built the
+  runnable-dir skeleton at `tutorials/agentic_eda/` (`devops/`,
+  `invoke.yaml`, `tasks.py`, `pytest.ini`).
+
+**Divergence note:** `import helpers.hagentic_eda` was never achieved — the
+`helpers/hagentic_eda/` package this issue (and EPICs 2–7 below) describe was
+never created. All real consolidated code lives in
+`causify-ai/tutorials/agentic_eda/` instead.
+
 ---
 
 ### Issue #1.3: Create integration tests setup
@@ -60,6 +174,8 @@ Create the package structure for the AutoEDA agent system.
 **Priority:** P0 (Critical)
 **Complexity:** M
 **Owner:** TBD
+**Status:** ✅ CI/test plumbing done at the repo level; the
+fixtures/sample-dataset tasks below are not done
 
 **Description:**
 Set up pytest fixtures and test infrastructure for AutoEDA testing.
@@ -79,9 +195,23 @@ Set up pytest fixtures and test infrastructure for AutoEDA testing.
 - Sample datasets load correctly
 - Fixtures cover common scenarios
 
+**Related Links:**
+- https://github.com/causify-ai/helpers/issues/998 — "Enable unit tests in
+  tutorial". ✅ Done, merged
+  [PR #638](https://github.com/causify-ai/tutorials/pull/638) (2025-09-03).
+  Copied `helpers`' reusable CI workflows (fast/slow/superslow tests, linter)
+  into `causify-ai/tutorials/.github/workflows/`, and updated the reusable
+  workflow to use the built-in `GITHUB_TOKEN` instead of a new secret. This
+  covers CI plumbing only — it does not create the fixtures/sample datasets
+  this issue's Tasks list.
+
 ---
 
 ## EPIC 2: Agent State Management
+
+**Status:** ⬜ Not started. The schema-parsing subset of this EPIC overlaps
+with helpers#986's two unmerged draft PRs (#989, #991) and with
+tutorials#655 — see Issue #1.1's Related Links.
 
 ### Issue #2.1: Define AgentState schema with Pydantic
 **Epic:** Agent State Management
@@ -240,6 +370,9 @@ Create helper methods for common state updates.
 ---
 
 ## EPIC 3: LangGraph Agent Orchestration
+
+**Status:** ⬜ Not started against this exact design. PR #989's `graph.py`
+(from helpers#986, unmerged) is the closest real analog.
 
 ### Issue #3.1: Define graph nodes
 **Epic:** LangGraph Agent Orchestration
@@ -419,6 +552,36 @@ Generate visual documentation of the graph structure.
 
 ---
 
+### Issue #3.6: User Interaction System for EDA Approval
+**Epic:** LangGraph Agent Orchestration
+**Priority:** P1 (High)
+**Complexity:** L
+**Owner:** TBD
+**Status:** ⬜ Not started
+**GitHub Issue:** https://github.com/causify-ai/tutorials/issues/662
+
+**Description:**
+Interactive plan presentation, user-feedback incorporation, approval-workflow
+management, change-request handling, and version history of analyses.
+
+**Tasks:**
+- [ ] Interactive plan presentation
+- [ ] User feedback incorporation
+- [ ] Approval workflow management
+- [ ] Change request handling
+- [ ] Version history of analyses
+
+**Acceptance Criteria:**
+- User can review and approve/modify the proposed EDA plan before execution
+- Feedback loop is auditable via version history
+
+**Related Links:** loosely related work exists in
+`tutorials/agentic_eda/agentui/` (the AgenTUI chat interface, see its
+`sprint_markdowns/`), but it was built for the broader agent and was never
+scoped specifically to "EDA plan approval."
+
+---
+
 ## EPIC 4: System Prompt Engineering
 
 ### Issue #4.1: Design system prompt template structure
@@ -558,6 +721,30 @@ Create tests and utilities for prompt quality assurance.
 
 ---
 
+### Issue #4.5: Few-Shot Prompt Collection for EDA
+**Epic:** System Prompt Engineering
+**Priority:** P1 (High)
+**Complexity:** M
+**Owner:** TBD
+**Status:** ⬜ Not started
+**GitHub Issue:** https://github.com/causify-ai/tutorials/issues/658
+
+**Description:**
+Curate examples of high-quality EDA analyses to use as few-shot prompts.
+
+**Tasks:**
+- [ ] 10+ complete EDA examples using public datasets
+- [ ] Include both code and narrative explanations
+- [ ] Cover different data types and domains
+- [ ] Show example of ideal output format
+- [ ] Include common edge cases and solutions
+
+**Acceptance Criteria:**
+- Collection is directly usable as few-shot context for the agent
+- Examples span all supported data types
+
+---
+
 ## EPIC 5: Tool Definitions and Integration
 
 ### Issue #5.1: Implement inspection tools
@@ -565,6 +752,7 @@ Create tests and utilities for prompt quality assurance.
 **Priority:** P1 (High)
 **Complexity:** L
 **Owner:** TBD
+**Status:** 🔶 A related but unmerged attempt exists
 
 **Description:**
 Create tools for data inspection and exploration.
@@ -595,6 +783,17 @@ Create tools for data inspection and exploration.
 **Tests:**
 - `helpers/test/test_hagentic_eda_tools.py::Test_get_dataframe_info`
 - `helpers/test/test_hagentic_eda_tools.py::Test_detect_data_issues`
+
+**Related Links:**
+- https://github.com/causify-ai/helpers/issues/850 — "Reorg all the EDA
+  files": build per-column stats (type inference, non-null/non-zero %,
+  distinct values, timestamp distributions) + LLM column understanding,
+  output a notebook and EDA gdoc. Attempted in
+  [PR #979](https://github.com/causify-ai/helpers/pull/979) (added
+  `dev_scripts_helpers/documentation/generate_EDA_context.py` + test), but
+  the **PR was closed without merging**. The equivalent script now lives
+  instead at `tutorials/agentic_eda/generate_EDA_context.py` (consolidated
+  there via #997).
 
 ---
 
@@ -731,11 +930,44 @@ Create registry of all tools for agent discovery.
 
 ## EPIC 6: Data Type Analysis Modules
 
+**Status:** ⬜ Not started. tutorials#657 ("Data Type Specific Analysis
+Templates") is the umbrella real issue for Issues 6.1-6.4 below — it defines
+the same four template groups (time series, categorical, scalar,
+cross-variable) almost verbatim, with no PR or comments against it.
+
+### Issue #6.0: Advanced Data Type Inference
+**Epic:** Data Type Analysis Modules
+**Priority:** P1 (High)
+**Complexity:** L
+**Owner:** HarshitGadge
+**Status:** ⬜ Not started
+**GitHub Issue:** https://github.com/causify-ai/tutorials/issues/656
+
+**Description:**
+Implement intelligent data type detection beyond basic dtypes.
+
+**Tasks:**
+- [ ] Time series patterns
+- [ ] Categorical variables (including high-cardinality)
+- [ ] Text data characteristics
+- [ ] Semantic types (email, phone, address, etc.)
+- [ ] Relationship detection between columns
+
+**Acceptance Criteria:**
+- Detection is accurate across the listed feature types
+- Output feeds directly into Issues 6.1-6.4's routing logic
+
+---
+
 ### Issue #6.1: Time Series Analysis Module
 **Epic:** Data Type Analysis Modules
 **Priority:** P1 (High)
 **Complexity:** L
 **Owner:** Pranav + Harshit
+**Status:** ⬜ Not started as specified. A loosely related, informal
+prototype exists at `tutorials/agentic_eda/intermediate_v0_timeseries_agent/`
+(not tied to a tracking issue).
+**GitHub Issue:** part of https://github.com/causify-ai/tutorials/issues/657
 
 **Description:**
 Implement analysis functions for time series data.
@@ -775,6 +1007,10 @@ Implement analysis functions for time series data.
 **Priority:** P1 (High)
 **Complexity:** L
 **Owner:** Sai
+**Status:** ⬜ Not started — no PR, no comments, empty issue body
+**GitHub Issue:** https://github.com/causify-ai/helpers/issues/992
+("Categorical variables agent for AutoEDA", assignees protocorn /
+srinivassaitangudu — an exact owner match with "Sai" here)
 
 **Description:**
 Implement analysis functions for categorical data.
@@ -812,6 +1048,10 @@ Implement analysis functions for categorical data.
 **Priority:** P1 (High)
 **Complexity:** L
 **Owner:** Madhur
+**Status:** ⬜ Not started
+**GitHub Issue:** part of https://github.com/causify-ai/tutorials/issues/657
+(the "Scalar Analysis" template group: distribution fitting, outlier
+detection, descriptive statistics)
 
 **Description:**
 Implement analysis functions for numeric data.
@@ -852,6 +1092,10 @@ Implement analysis functions for numeric data.
 **Priority:** P1 (High)
 **Complexity:** L
 **Owner:** Sahil + Sai
+**Status:** ⬜ Not started
+**GitHub Issue:** part of https://github.com/causify-ai/tutorials/issues/657
+(the "Cross-variable Analysis" template group: correlation matrices,
+interaction effects, conditional distributions)
 
 **Description:**
 Implement analysis functions for relationships between variables.
@@ -889,6 +1133,7 @@ Implement analysis functions for relationships between variables.
 **Priority:** P2 (Medium)
 **Complexity:** L
 **Owner:** TBD
+**Status:** ⬜ Not started — no direct GitHub issue
 
 **Description:**
 Create orchestrator that routes to appropriate analysis module.
@@ -918,6 +1163,8 @@ Create orchestrator that routes to appropriate analysis module.
 ---
 
 ## EPIC 7: Code Generation and Execution
+
+**Status:** ⬜ Not started, no direct real issue on project 116.
 
 ### Issue #7.1: Code generation from agent responses
 **Epic:** Code Generation and Execution
@@ -1057,28 +1304,64 @@ Track execution history and generate reports.
 
 ---
 
-## EPIC 8: Jupyter Integration & Frontend
+## EPIC 8: Jupyter Integration, Frontend & Service Layer
 
 **Note:** This is a Phase 2 epic (weeks 7-9). Requires significant TypeScript/frontend work.
+
+**Status:** ⬜ Not started.
 
 ### Issue #8.1: Server Extension (Python)
 **Priority:** P2 (Medium)
 **Complexity:** L
 **Owner:** TBD
+**Status:** ⬜ Not started
 
 ### Issue #8.2: Frontend Extension (TypeScript)
 **Priority:** P2 (Medium)
 **Complexity:** XL
 **Owner:** TBD
+**Status:** ⬜ Not started
 
 ### Issue #8.3: Communication Bridge
 **Priority:** P2 (Medium)
 **Complexity:** L
 **Owner:** TBD
+**Status:** ⬜ Not started
+
+### Issue #8.4: FastAPI Microservice for AutoEDA
+**Priority:** P1 (High)
+**Complexity:** L
+**Owner:** TBD
+**Status:** ⬜ Not started
+**GitHub Issue:** https://github.com/causify-ai/tutorials/issues/659
+
+**Description:**
+RESTful API endpoints for schema validation, analysis planning, execution
+management, and result retrieval.
+
+**Tasks:**
+- [ ] RESTful API endpoints for:
+  - Schema validation
+  - Analysis planning
+  - Execution management
+  - Result retrieval
+- [ ] Authentication and rate limiting
+- [ ] Async processing support
+- [ ] Health monitoring endpoints
+- [ ] OpenAPI documentation
+
+**Acceptance Criteria:**
+- All endpoints implemented and documented via OpenAPI
+- Auth/rate-limiting enforced
 
 ---
 
 ## EPIC 9: Testing & Quality Assurance
+
+**Status:** 🔶 Repo-level CI is done (helpers#998 → merged
+[tutorials PR #638](https://github.com/causify-ai/tutorials/pull/638));
+AutoEDA-specific unit/integration/benchmark/validation tests below are not
+started.
 
 ### Issue #9.1: Unit tests for core modules
 **Epic:** Testing & Quality Assurance
@@ -1181,7 +1464,65 @@ Create datasets for comprehensive testing.
 
 ---
 
+### Issue #9.5: AutoEDA Benchmarking System
+**Epic:** Testing & Quality Assurance
+**Priority:** P1 (High)
+**Complexity:** L
+**Owner:** TBD
+**Status:** ⬜ Not started (no code); research seed found via Issue #0.1
+**GitHub Issue:** https://github.com/causify-ai/tutorials/issues/660
+
+**Description:**
+Create evaluation framework for AutoEDA agent performance.
+
+**Tasks:**
+- [ ] Curated benchmark datasets
+- [ ] Evaluation metrics:
+  - Insight accuracy
+  - Coverage completeness
+  - Code quality
+  - Report clarity
+- [ ] Comparison with state-of-the-art solutions
+- [ ] Performance tracking over time
+
+**Acceptance Criteria:**
+- Metrics are reproducible and automatable
+
+**Related Links:** the DataSciBench benchmark
+(https://datascibench.github.io, https://arxiv.org/html/2502.13897v1) was
+identified as a reusable source of benchmark prompts during the SOTA
+research in Issue #0.1 (tutorials#666).
+
+---
+
+### Issue #9.6: Out-of-Sample Validation System
+**Epic:** Testing & Quality Assurance
+**Priority:** P1 (High)
+**Complexity:** L
+**Owner:** TBD
+**Status:** ⬜ Not started
+**GitHub Issue:** https://github.com/causify-ai/tutorials/issues/661
+
+**Description:**
+Implement robust train-test split functionality for EDA.
+
+**Tasks:**
+- [ ] Time-based splitting for time series
+- [ ] Stratified splitting for categorical data
+- [ ] Insight consistency checking across splits
+- [ ] Overfitting detection
+- [ ] Cross-validation support
+
+**Acceptance Criteria:**
+- Splits are correct per data type
+- Consistency/overfitting checks are automated
+
+---
+
 ## EPIC 10: Documentation & Examples
+
+**Status:** ⬜ Not started. The seed research for this EPIC already exists
+informally — see Issue #0.1 / tutorials#666.
 
 ### Issue #10.1: API documentation
 **Epic:** Documentation & Examples
@@ -1275,17 +1616,18 @@ Create comprehensive example notebook showing full workflow.
 ## Summary of Dependencies
 
 ```
-EPIC 1 (Foundation)
-  └─> EPIC 2 (State Management)
-      └─> EPIC 3 (Graph Orchestration)
-          ├─> EPIC 4 (System Prompts)
-          ├─> EPIC 5 (Tools)
-          └─> EPIC 6 (Analysis)
-              └─> EPIC 7 (Code Generation & Execution)
-                  └─> EPIC 9 (Testing)
-                      └─> EPIC 10 (Documentation)
+EPIC 0 (Research) — SOTA + framework selection [LangGraph chosen; write-up still pending]
+  └─> EPIC 1 (Foundation)
+        └─> EPIC 2 (State Management)
+            └─> EPIC 3 (Graph Orchestration)
+                ├─> EPIC 4 (System Prompts)
+                ├─> EPIC 5 (Tools)
+                └─> EPIC 6 (Analysis)
+                    └─> EPIC 7 (Code Generation & Execution)
+                        └─> EPIC 9 (Testing)
+                            └─> EPIC 10 (Documentation)
 
-EPIC 8 (Jupyter Integration) [Phase 2]
+EPIC 8 (Jupyter Integration, Frontend & Service Layer) [Phase 2]
   └─> (Can run in parallel, but depends on all prior EPICs)
 ```
 
@@ -1299,3 +1641,36 @@ EPIC 8 (Jupyter Integration) [Phase 2]
 - Documentation complete and clear
 - Agent successfully analyzes provided datasets
 - Performance acceptable (< 5s per decision)
+
+---
+
+## Appendix: GitHub Project 116 Cross-Reference
+
+Snapshot of https://github.com/orgs/causify-ai/projects/116
+("AutoML-v1.3 - AgenticEDA", 16 items, captured 2026-09-17). This table is
+now the authoritative status source for that project — the live project's
+Status column is often stale (see the note at the top of this document), so
+it does not need to be checked separately going forward.
+
+| GitHub Issue | Maps to | Status | Location |
+|---|---|---|---|
+| [helpers#850](https://github.com/causify-ai/helpers/issues/850) | Issue #5.1 | 🔶 Attempted, not merged | [PR #979](https://github.com/causify-ai/helpers/pull/979) closed unmerged; superseded by `tutorials/agentic_eda/generate_EDA_context.py` |
+| [helpers#986](https://github.com/causify-ai/helpers/issues/986) | Issue #1.1 | 🔶 Two unmerged drafts | [PR #989](https://github.com/causify-ai/helpers/pull/989) (`langgraph/`), [PR #991](https://github.com/causify-ai/helpers/pull/991) (`autoeda/`) |
+| [helpers#992](https://github.com/causify-ai/helpers/issues/992) | Issue #6.2 | ⬜ Not started | — |
+| [tutorials#609](https://github.com/causify-ai/tutorials/issues/609) | Issue #1.1 | ✅ Done, later deleted | merged [PR #614](https://github.com/causify-ai/tutorials/pull/614); dir removed in cleanup commit `4fbaff56`; surviving code in `tutorials/langchain_reference/graphs/`, `tutorials/agentic_eda/simple_pemdas_agent/` |
+| [helpers#997](https://github.com/causify-ai/helpers/issues/997) | Issue #1.2 | ✅ Done (different location) | `tutorials/agentic_eda/` |
+| [helpers#998](https://github.com/causify-ai/helpers/issues/998) | Issue #1.3 | ✅ Done | merged [PR #638](https://github.com/causify-ai/tutorials/pull/638); `tutorials/.github/workflows/` |
+| [tutorials#628](https://github.com/causify-ai/tutorials/issues/628) | Issues #1.2 / #1.3 | ✅ Done | merged [PR #641](https://github.com/causify-ai/tutorials/pull/641); `tutorials/agentic_eda/` |
+| [tutorials#655](https://github.com/causify-ai/tutorials/issues/655) | Issue #1.1 (dup of helpers#986) | ⬜ Not started | — |
+| [tutorials#656](https://github.com/causify-ai/tutorials/issues/656) | Issue #6.0 | ⬜ Not started | — |
+| [tutorials#657](https://github.com/causify-ai/tutorials/issues/657) | Issues #6.1-#6.4 | ⬜ Not started | related prototype `tutorials/agentic_eda/intermediate_v0_timeseries_agent/` |
+| [tutorials#658](https://github.com/causify-ai/tutorials/issues/658) | Issue #4.5 | ⬜ Not started | — |
+| [tutorials#659](https://github.com/causify-ai/tutorials/issues/659) | Issue #8.4 | ⬜ Not started | — |
+| [tutorials#660](https://github.com/causify-ai/tutorials/issues/660) | Issue #9.5 | ⬜ Not started (research seed in #666) | — |
+| [tutorials#661](https://github.com/causify-ai/tutorials/issues/661) | Issue #9.6 | ⬜ Not started | — |
+| [tutorials#662](https://github.com/causify-ai/tutorials/issues/662) | Issue #3.6 | ⬜ Not started | loosely related `tutorials/agentic_eda/agentui/` |
+| [tutorials#666](https://github.com/causify-ai/tutorials/issues/666) | Issue #0.1 | 🔶 Research done, not consolidated | comment thread only |
+
+**Biggest divergence:** all real merged AutoEDA code lives in
+`causify-ai/tutorials/agentic_eda/`, not `helpers/hagentic_eda/` as specified
+throughout this document.

@@ -6,6 +6,42 @@ This plan breaks down the AutoEDA agent specification into EPICs and Issues for
 team implementation. The agent is a Jupyter-native, agentic framework for
 autonomous data analysis using LangGraph for orchestration.
 
+These EPICs were also tracked as real GitHub issues on project board
+[AutoML-v1.3 - AgenticEDA](https://github.com/orgs/causify-ai/projects/116)
+(16 items, snapshot 2026-09-17). This doc is now self-sufficient — the live
+project does not need to be checked separately (see the Appendix at the
+bottom for the full cross-reference). **Callout:** all real merged AutoEDA
+code lives in `causify-ai/tutorials/agentic_eda/`, not `helpers/hagentic_eda/`
+as assumed throughout EPICs 1-7 below — see Issue 1.2's status note.
+
+---
+
+## EPIC 0: Research & Framework Selection
+
+**Goal:** Survey the state of the art in agentic EDA and pick the
+orchestration framework before building.
+
+**Owner:** andresryes, PranavShashidhara, madhurlak0810, indrayudd,
+HarshitGadge, aangelo9
+
+### Issue 0.1: Investigate SOTA in Agentic EDA
+**Status:** 🔶 Research done in GitHub comments
+(https://github.com/causify-ai/tutorials/issues/666), never consolidated
+into a standalone doc as the issue requested.
+- Papers found: VLDB cross-domain automated-EDA survey
+  (https://www.vldb.org/pvldb/vol18/p5086-zhu.pdf), QUIS
+  (https://arxiv.org/html/2410.10270v1), InsightPilot
+  (https://www.microsoft.com/en-us/research/wp-content/uploads/2023/12/InsightPilot.pdf)
+  wrapping XInsight, QuickInsights, MetaInsight; benchmark DataSciBench
+  (https://datascibench.github.io)
+- Framework decision: **LangGraph** (confirms EPIC 1/3 choice below)
+- Proposed architecture: LLM Planner + Schema Profiler -> Insight Engine
+  (QuickInsights -> MetaInsight -> XInsight) -> Final Report Builder
+- Proposed v0 scope: multivariate time series input, notebook output
+- **Acceptance Criteria:**
+  - ✅ Framework selected
+  - ~~Consolidated write-up~~ — not done, findings live only in issue comments
+
 ---
 
 ## EPIC 1: Foundation & Infrastructure Setup
@@ -15,6 +51,17 @@ autonomous data analysis using LangGraph for orchestration.
 **Owner:** DevOps/Infrastructure Team
 
 ### Issue 1.1: Set up LangGraph and LangChain integration
+**Status:** 🔶 Proven via a standalone tutorial
+(https://github.com/causify-ai/tutorials/issues/609, done, merged
+[PR #614](https://github.com/causify-ai/tutorials/pull/614)) but never
+integrated as a `helpers` dependency/module as this issue specifies. That
+tutorial's directory (`tutorial_langgraph/`) was later deleted; surviving
+LangGraph example code lives in `tutorials/langchain_reference/graphs/` and
+`tutorials/agentic_eda/simple_pemdas_agent/`. Schema-parsing counterpart:
+https://github.com/causify-ai/helpers/issues/986 has two unmerged draft PRs
+([#989](https://github.com/causify-ai/helpers/pull/989),
+[#991](https://github.com/causify-ai/helpers/pull/991)); duplicate spec at
+https://github.com/causify-ai/tutorials/issues/655 has no work against it.
 - Add LangGraph and LangChain to project dependencies
 - Create base module: `helpers/lang_graph_setup.py`
 - Document version compatibility and requirements
@@ -23,6 +70,13 @@ autonomous data analysis using LangGraph for orchestration.
   - Example LangGraph state and graph work correctly
 
 ### Issue 1.2: Define core module structure for AutoEDA
+**Status:** ✅ Done, but at a different location than planned. Real
+consolidated code is at `causify-ai/tutorials/agentic_eda/` (via
+https://github.com/causify-ai/helpers/issues/997, done, and
+https://github.com/causify-ai/tutorials/issues/628, done, merged
+[PR #641](https://github.com/causify-ai/tutorials/pull/641)) — `import
+helpers.hagentic_eda` was never achieved; the `helpers/hagentic_eda/`
+package below was never created.
 - Create `helpers/hagentic_eda/` package with submodules
 - Submodules: `state.py`, `graph.py`, `tools.py`, `prompts.py`, `utils.py`
 - Create `__init__.py` with public exports
@@ -31,6 +85,11 @@ autonomous data analysis using LangGraph for orchestration.
   - All submodules are discoverable
 
 ### Issue 1.3: Create integration tests setup
+**Status:** ✅ CI/test plumbing done at the repo level via
+https://github.com/causify-ai/helpers/issues/998 (done, merged
+[PR #638](https://github.com/causify-ai/tutorials/pull/638), copied
+`helpers`' reusable CI workflows into `tutorials/.github/workflows/`); the
+fixtures/sample-dataset tasks below are not done.
 - Add pytest fixtures for AutoEDA agent testing
 - Set up test data directory with sample datasets
 - Create utility functions for test assertions
@@ -45,6 +104,8 @@ autonomous data analysis using LangGraph for orchestration.
 **Goal:** Design and implement the agent state schema for tracking analysis progress, dataset context, and execution history.
 
 **Owner:** Data Engineering Team
+
+**Status:** ⬜ Not started.
 
 ### Issue 2.1: Define AgentState schema with Pydantic
 **File:** `helpers/hagentic_eda/state.py`
@@ -96,6 +157,10 @@ autonomous data analysis using LangGraph for orchestration.
 
 **Owner:** Agent Core Team
 
+**Status:** ⬜ Not started against this exact design.
+[PR #989](https://github.com/causify-ai/helpers/pull/989)'s `graph.py`
+(from helpers#986, unmerged) is the closest real analog.
+
 ### Issue 3.1: Define graph nodes
 **File:** `helpers/hagentic_eda/graph.py`
 - Implement `agent_node`: Main reasoning with LLM
@@ -144,6 +209,18 @@ autonomous data analysis using LangGraph for orchestration.
 - **Acceptance Criteria:**
   - Diagram renders correctly
   - Documentation is clear
+
+### Issue 3.6: User Interaction System for EDA Approval
+**Status:** ⬜ Not started (https://github.com/causify-ai/tutorials/issues/662).
+Loosely related: `tutorials/agentic_eda/agentui/` (AgenTUI chat interface),
+but not scoped specifically to EDA-plan approval.
+- Interactive plan presentation
+- User feedback incorporation
+- Approval workflow management
+- Change request handling
+- Version history of analyses
+- **Acceptance Criteria:**
+  - User can review/approve/modify the proposed EDA plan before execution
 
 ---
 
@@ -194,6 +271,13 @@ autonomous data analysis using LangGraph for orchestration.
   - Tests pass
   - Prompts under context limits
 
+### Issue 4.5: Few-Shot Prompt Collection for EDA
+**Status:** ⬜ Not started (https://github.com/causify-ai/tutorials/issues/658).
+- 10+ complete EDA examples (code + narrative), across data types/domains
+- Include common edge cases and solutions
+- **Acceptance Criteria:**
+  - Collection is directly usable as few-shot context for the agent
+
 ---
 
 ## EPIC 5: Tool Definitions and Integration
@@ -203,6 +287,12 @@ autonomous data analysis using LangGraph for orchestration.
 **Owner:** Data Science & Helpers Integration Team
 
 ### Issue 5.1: Implement inspection tools
+**Status:** 🔶 Attempted, not merged. helpers#850 "Reorg all the EDA files"
+(https://github.com/causify-ai/helpers/issues/850) added
+`dev_scripts_helpers/documentation/generate_EDA_context.py` in
+[PR #979](https://github.com/causify-ai/helpers/pull/979), but the PR was
+closed without merging. The script now lives instead at
+`tutorials/agentic_eda/generate_EDA_context.py`.
 **File:** `helpers/hagentic_eda/tools.py`
 - `get_dataframe_info(df)`: Returns schema, shape, samples
 - `get_column_statistics(df, column)`: Distribution, outliers, null count
@@ -258,7 +348,22 @@ autonomous data analysis using LangGraph for orchestration.
 
 **Owner:** Analytics Team (split by data type)
 
+**Status:** ⬜ Not started. tutorials#657
+(https://github.com/causify-ai/tutorials/issues/657, "Data Type Specific
+Analysis Templates") is the umbrella real issue for Issues 6.1-6.4 — same
+four template groups, no PR or comments.
+
+### Issue 6.0: Advanced Data Type Inference (Owner: HarshitGadge)
+**Status:** ⬜ Not started (https://github.com/causify-ai/tutorials/issues/656,
+exact owner match with real assignee HarshitGadge).
+- Time series patterns, categorical (incl. high-cardinality), text
+  characteristics, semantic types (email/phone/address), column relationships
+- **Acceptance Criteria:**
+  - Detection accurate; feeds Issues 6.1-6.4's routing logic
+
 ### Issue 6.1: Time Series Analysis Module (Owner: Pranav + Harshit)
+**Status:** ⬜ Not started as specified; loosely related informal prototype
+at `tutorials/agentic_eda/intermediate_v0_timeseries_agent/`.
 **File:** `helpers/hagentic_eda/analysis_timeseries.py`
 - `analyze_time_series_autocorr()`: ACF/PACF plots
 - `detect_seasonality()`: Decomposition and seasonal detection
@@ -270,6 +375,10 @@ autonomous data analysis using LangGraph for orchestration.
   - Visualizations are clear
 
 ### Issue 6.2: Categorical Analysis Module (Owner: Sai)
+**Status:** ⬜ Not started —
+https://github.com/causify-ai/helpers/issues/992 ("Categorical variables
+agent for AutoEDA", assignees protocorn/srinivassaitangudu, exact owner
+match), no PR, no comments.
 **File:** `helpers/hagentic_eda/analysis_categorical.py`
 - `analyze_categorical_distribution()`: Frequency counts, cardinality
 - `time_series_categorical()`: Category distribution over time
@@ -280,6 +389,7 @@ autonomous data analysis using LangGraph for orchestration.
   - Output is interpretable
 
 ### Issue 6.3: Scalar (Numeric) Analysis Module (Owner: Madhur)
+**Status:** ⬜ Not started; part of tutorials#657's Scalar Analysis template group.
 **File:** `helpers/hagentic_eda/analysis_scalar.py`
 - `analyze_distribution()`: Histogram, KDE, normality tests
 - `detect_outliers()`: IQR, z-score, isolation forest methods
@@ -291,6 +401,7 @@ autonomous data analysis using LangGraph for orchestration.
   - Statistics are accurate
 
 ### Issue 6.4: Cross-Variable Analysis Module (Owner: Sahil + Sai)
+**Status:** ⬜ Not started; part of tutorials#657's Cross-variable Analysis template group.
 **File:** `helpers/hagentic_eda/analysis_cross_variable.py`
 - `correlate_time_series()`: Correlation between time series
 - `categorical_numeric_interaction()`: Groups and aggregations
@@ -301,6 +412,7 @@ autonomous data analysis using LangGraph for orchestration.
   - Insights are actionable
 
 ### Issue 6.5: Unified Analysis Orchestrator
+**Status:** ⬜ Not started — no direct GitHub issue.
 **File:** `helpers/hagentic_eda/analysis.py`
 - Create `AnalysisOrchestrator` class
 - Route to appropriate analysis module based on detected types
@@ -316,6 +428,8 @@ autonomous data analysis using LangGraph for orchestration.
 **Goal:** Enable the agent to generate and execute Python code in notebook cells with error recovery.
 
 **Owner:** Execution Engine Team
+
+**Status:** ⬜ Not started, no direct real issue.
 
 ### Issue 7.1: Code generation from agent responses
 **File:** `helpers/hagentic_eda/code_generation.py`
@@ -355,13 +469,15 @@ autonomous data analysis using LangGraph for orchestration.
 
 ---
 
-## EPIC 8: Jupyter Integration & Frontend
+## EPIC 8: Jupyter Integration, Frontend & Service Layer
 
-**Goal:** Create the browser-to-kernel bridge and JupyterLab extension.
+**Goal:** Create the browser-to-kernel bridge, JupyterLab extension, and a service layer around the agent.
 
 **Owner:** Frontend/Integration Team
 
 **Note:** This requires JupyterLab extension development (TypeScript) which is a major undertaking. Consider this phase 2.
+
+**Status:** ⬜ Not started.
 
 ### Issue 8.1: Server Extension (Python)
 - Backend service hosting LangGraph agent
@@ -378,6 +494,14 @@ autonomous data analysis using LangGraph for orchestration.
 - Bidirectional WebSocket handling
 - Synchronization between UI and kernel state
 
+### Issue 8.4: FastAPI Microservice for AutoEDA
+**Status:** ⬜ Not started (https://github.com/causify-ai/tutorials/issues/659).
+- REST endpoints: schema validation, analysis planning, execution
+  management, result retrieval
+- Auth + rate limiting, async processing, health monitoring, OpenAPI docs
+- **Acceptance Criteria:**
+  - All endpoints implemented and documented
+
 ---
 
 ## EPIC 9: Testing & Quality Assurance
@@ -385,6 +509,11 @@ autonomous data analysis using LangGraph for orchestration.
 **Goal:** Comprehensive testing framework for the AutoEDA agent.
 
 **Owner:** QA Team
+
+**Status:** 🔶 Repo-level CI is done (helpers#998 -> merged
+[tutorials PR #638](https://github.com/causify-ai/tutorials/pull/638));
+AutoEDA-specific unit/integration/benchmark/validation tests below are not
+started.
 
 ### Issue 9.1: Unit tests for core modules
 - Test state management (EPIC 2)
@@ -420,6 +549,22 @@ autonomous data analysis using LangGraph for orchestration.
   - Datasets cover all data types
   - Easy to use in tests
 
+### Issue 9.5: AutoEDA Benchmarking System
+**Status:** ⬜ Not started (https://github.com/causify-ai/tutorials/issues/660);
+research seed found via Issue 0.1 (DataSciBench benchmark).
+- Curated benchmark datasets
+- Metrics: insight accuracy, coverage completeness, code quality, report clarity
+- Comparison with SOTA solutions; performance tracking over time
+- **Acceptance Criteria:**
+  - Metrics reproducible and automatable
+
+### Issue 9.6: Out-of-Sample Validation System
+**Status:** ⬜ Not started (https://github.com/causify-ai/tutorials/issues/661).
+- Time-based splitting for time series; stratified splitting for categorical data
+- Insight consistency checking across splits; overfitting detection; CV support
+- **Acceptance Criteria:**
+  - Splits correct per data type; consistency/overfitting checks automated
+
 ---
 
 ## EPIC 10: Documentation & Examples
@@ -427,6 +572,8 @@ autonomous data analysis using LangGraph for orchestration.
 **Goal:** Create comprehensive documentation and example notebooks.
 
 **Owner:** Documentation Team
+
+**Status:** ⬜ Not started. Seed research already exists informally — see Issue 0.1.
 
 ### Issue 10.1: API documentation
 - Docstrings for all public functions
@@ -456,6 +603,11 @@ autonomous data analysis using LangGraph for orchestration.
 ---
 
 ## Implementation Roadmap
+
+### Phase 0: Research (done informally)
+- SOTA survey and framework choice (LangGraph) already happened in
+  tutorials#666's comment thread — see Issue 0.1. Never written up as the
+  standalone doc the issue asked for.
 
 ### Phase 1: Foundation (Weeks 1-3)
 - EPIC 1: Infrastructure setup
@@ -502,6 +654,7 @@ autonomous data analysis using LangGraph for orchestration.
 
 | EPIC | Owner | Skills |
 |------|-------|--------|
+| 0 | Research | SOTA survey, framework evaluation |
 | 1 | DevOps | Infrastructure, CI/CD |
 | 2 | Data Eng | Python, Pydantic, Data structures |
 | 3 | Agent Core | LangGraph, Python, State machines |
@@ -512,3 +665,36 @@ autonomous data analysis using LangGraph for orchestration.
 | 8 | Frontend | TypeScript, JupyterLab, WebSockets |
 | 9 | QA | Testing, pytest, Performance |
 | 10 | Docs | Technical writing, Examples |
+
+---
+
+## Appendix: GitHub Project 116 Cross-Reference
+
+Snapshot of https://github.com/orgs/causify-ai/projects/116
+("AutoML-v1.3 - AgenticEDA", 16 items, captured 2026-09-17) — the
+authoritative status source; the live project's Status column is often
+stale (some "In Progress" issues had closed-unmerged PRs; #666 showed
+"Todo" despite real research in its comments).
+
+| GitHub Issue | Maps to | Status | Location |
+|---|---|---|---|
+| [helpers#850](https://github.com/causify-ai/helpers/issues/850) | Issue 5.1 | 🔶 Attempted, not merged | [PR #979](https://github.com/causify-ai/helpers/pull/979) closed unmerged; superseded by `tutorials/agentic_eda/generate_EDA_context.py` |
+| [helpers#986](https://github.com/causify-ai/helpers/issues/986) | Issue 1.1 | 🔶 Two unmerged drafts | [PR #989](https://github.com/causify-ai/helpers/pull/989) (`langgraph/`), [PR #991](https://github.com/causify-ai/helpers/pull/991) (`autoeda/`) |
+| [helpers#992](https://github.com/causify-ai/helpers/issues/992) | Issue 6.2 | ⬜ Not started | — |
+| [tutorials#609](https://github.com/causify-ai/tutorials/issues/609) | Issue 1.1 | ✅ Done, later deleted | merged [PR #614](https://github.com/causify-ai/tutorials/pull/614); dir removed in cleanup commit `4fbaff56`; surviving code in `tutorials/langchain_reference/graphs/`, `tutorials/agentic_eda/simple_pemdas_agent/` |
+| [helpers#997](https://github.com/causify-ai/helpers/issues/997) | Issue 1.2 | ✅ Done (different location) | `tutorials/agentic_eda/` |
+| [helpers#998](https://github.com/causify-ai/helpers/issues/998) | Issue 1.3 | ✅ Done | merged [PR #638](https://github.com/causify-ai/tutorials/pull/638); `tutorials/.github/workflows/` |
+| [tutorials#628](https://github.com/causify-ai/tutorials/issues/628) | Issues 1.2 / 1.3 | ✅ Done | merged [PR #641](https://github.com/causify-ai/tutorials/pull/641); `tutorials/agentic_eda/` |
+| [tutorials#655](https://github.com/causify-ai/tutorials/issues/655) | Issue 1.1 (dup of helpers#986) | ⬜ Not started | — |
+| [tutorials#656](https://github.com/causify-ai/tutorials/issues/656) | Issue 6.0 | ⬜ Not started | — |
+| [tutorials#657](https://github.com/causify-ai/tutorials/issues/657) | Issues 6.1-6.4 | ⬜ Not started | related prototype `tutorials/agentic_eda/intermediate_v0_timeseries_agent/` |
+| [tutorials#658](https://github.com/causify-ai/tutorials/issues/658) | Issue 4.5 | ⬜ Not started | — |
+| [tutorials#659](https://github.com/causify-ai/tutorials/issues/659) | Issue 8.4 | ⬜ Not started | — |
+| [tutorials#660](https://github.com/causify-ai/tutorials/issues/660) | Issue 9.5 | ⬜ Not started (research seed in #666) | — |
+| [tutorials#661](https://github.com/causify-ai/tutorials/issues/661) | Issue 9.6 | ⬜ Not started | — |
+| [tutorials#662](https://github.com/causify-ai/tutorials/issues/662) | Issue 3.6 | ⬜ Not started | loosely related `tutorials/agentic_eda/agentui/` |
+| [tutorials#666](https://github.com/causify-ai/tutorials/issues/666) | Issue 0.1 | 🔶 Research done, not consolidated | comment thread only |
+
+**Biggest divergence:** all real merged AutoEDA code lives in
+`causify-ai/tutorials/agentic_eda/`, not `helpers/hagentic_eda/` as assumed
+throughout EPICs 1-7.
