@@ -4,6 +4,7 @@
 **Instructor:** Giacinto Paolo Saggese (GP) · **TAs:** Prahar Modi, Krishna Taduri
 **Source:** https://umd.instructure.com/courses/1379231/announcements
 **Announcements:** 28, listed oldest → newest. Times shown in Eastern Time.
+**Additional emails:** 12 drafts and notes without dates, see [Additional Emails and Drafts](#additional-emails-and-drafts)
 
 ---
 
@@ -759,3 +760,385 @@ Team DATA605,
 
 Best,
 GP
+
+---
+
+## Additional Emails and Drafts
+
+Emails and drafts from GP's notes that are not in the ELMS announcements above.
+Dates, links, and authors are not recorded in the notes. Some items refer to the 2024
+course (ELMS course 1358712) and to its TA Shaunak. Passcodes and access codes are
+masked as `########`.
+
+| # | Title | Note | |---|---|---| | 29 | [TA roles](#29-ta-roles) | Addressed to TAs
+| | 30 | [Class 2: Final class project
+information](#30-class-2-final-class-project-information) | | | 31 | [Announcement 2:
+Quiz examples and midterm
+project](#31-announcement-2-quiz-examples-and-midterm-project) | | | 32 | [Demo quiz
+with Lockdown Browser](#32-demo-quiz-with-lockdown-browser) | Struck through in the
+notes | | 33 | [First quiz availability](#33-first-quiz-availability) | | | 34 |
+[After class 5: Docker quiz](#34-after-class-5-docker-quiz) | | | 35 | [Recordings,
+tutorials, and quiz results](#35-recordings-tutorials-and-quiz-results) | | | 36 |
+[Project announcement: Collision](#36-project-announcement-collision) | Unfinished
+draft | | 37 | [Request for grading](#37-request-for-grading) | Reply template with
+placeholders | | 38 | [Assignment 1: Git and GitHub](#38-assignment-1-git-and-github)
+| Struck through in the notes | | 39 | [Announcement 2: Slides, schedule, and Quiz
+1](#39-announcement-2-slides-schedule-and-quiz-1) | Struck through in the notes | |
+  40 | [Class 3: Assignment](#40-class-3-assignment) | Struck through in the notes |
+
+---
+
+### 29. TA roles
+
+I encourage each Instructor and TA to complete a "Statement of Mutual Expectations."
+We expect TAs to:
+
+- attend weekly lectures
+- hold 2 office hours per week
+- Grade assignments and homework
+
+https://docs.google.com/spreadsheets/d/1u2_jEckf0Fj7JOlsBSnA5FHgXedczx445YtD2qcBwEE/edit?resourcekey=&gid=1867832355#gid=1867832355
+
+---
+
+### 30. Class 2: Final class project information
+
+5) We will send out some information about the final class project in a few classes
+
+- So far nobody needs to be signed up
+- If you see references to the projects in the slides or in some document, pls point
+  it to me so we can remove them, since they are from last year class (which had a
+  different approach to the class project)
+
+---
+
+### 31. Announcement 2: Quiz examples and midterm project
+
+1) The link is on the usual spot on the homepage
+
+2) We will send out in the next few days some examples of the first quiz on Git and
+how to take it
+
+3) Make sure to complete your assignments
+https://umd.instructure.com/courses/1358712/assignments
+
+- Even if they are not graded, you need to get them done so you can keep pace with
+  the class and be ready for projects and quizzes
+
+4) We will send out some information about the midterm project soon. So far nobody
+needs to be signed up. If you see references to the projects in the slides or in some
+document, pls point it to me so we can remove them, since they are from last year
+class (which had a different approach to the class project)
+
+---
+
+### 32. Demo quiz with Lockdown Browser
+
+**Status:** Struck through in the original notes.
+
+3) Tomorrow, we will publish a demo quiz with 5 example questions and no marking
+
+- We will set it up with the Lockdown browser
+- This quiz is here to make sure that you have Lockdown browser in advance of the
+  midterm. If you haven't already, download Lockdown Browser at:
+  http://go.umd.edu/lockdown-browser
+
+If you have any questions let me or your TA Shaunak know.
+
+---
+
+### 33. First quiz availability
+
+Hello,
+
+The first quiz will be available from 11am to 8pm today. The quiz has 20 questions
+and you will have 15 minutes to solve it. The quiz can only be solved from the
+external application Lockdown browser.
+
+The access code is: `########`
+
+Best of Luck
+
+---
+
+### 34. After class 5: Docker quiz
+
+Greetings DATA605 astronauts,
+
+1) The recordings of the latest classes have been posted in the usual place on the
+homepage of the class https://umd.instructure.com/courses/1358712/pages/homepage
+2) The next quiz will be on this Friday / Saturday
+   1) It will be on Docker and Docker compose: 20 questions in 20 minutes
+   2) We will double check that all questions are covered by slides and tutorials
+   3) Please study the corresponding slides
+   4) Make sure you do the Docker tutorials (play with it, modify it, watch the
+   video). The goal is to internalize the material and become familiar with it
+
+Let's go team!
+
+Best, GP
+
+---
+
+### 35. Recordings, tutorials, and quiz results
+
+1) The recordings of the latest classes have been posted (in the usual place on the
+homepage of the class <https://umd.instructure.com/courses/1358712/pages/homepage>)
+
+2) Study the SQL tutorial and Jupyter tutorial, how it's implemented with Docker,
+etc.
+
+- https://github.com/gpsaggese/umd_data605/tree/main/tutorials/tutorial_jupyter
+- This could have been an example of the class project like "Implement a Dockerized
+  version of Jupyter"
+
+3) Quizzes results have been published. The class did well as a whole. Keep studying
+hard!
+
+4) We'll publish the class projects in the next few days with detailed instructions
+
+5) The next quiz is on Docker and DockerCompose on March 1
+
+- Another reason for studying and playing with the tutorials since they are all
+  concrete examples of using Docker
+
+---
+
+### 36. Project announcement: Collision
+
+**Status:** Unfinished draft, the text ends at "In any case".
+
+Hello DATA605 defenders,
+
+It has been reporting a few cases of students overwriting other students' ups in the
+project Google sheet.
+
+Several interesting phenomena at play that we study in DATA605 (hash table
+collisions, transaction atomicity, race conditions), behavior finance ones (e.g.,
+over-confidence, self-importance), incentive design, etc.
+
+1) I assume that students know that one can see the modifications, so that we track
+down what happened
+2) I assume that students signed at time=k, thought about student who signed at
+time=h with h < k would know that student h might complain, but student k bet on the
+fact that student h would just move on, instead of complaining about it and us doing
+a forensic investigation on what happened
+3) Student k might have justified with "I started looking at that project, but I
+needed to check on my food on microwave, which gave student h a window of opportunity
+to create a race condition. I wish there was a way to lock that DB table to make
+transactions atomic".
+4) I'll make the assumption that it was due to over-excitement about a single
+project.
+
+The solution is that we will allow different students to work on the same project,
+but we will generate a different project for the same tech.
+
+A possible incentive design could have been to have students colliding to both lose
+that project. This might have created a perverse incentive to sabotage other students
+by avoiding them to get their favorite project. Another solution could have been both
+students do the project, but they get smaller grade.
+
+We could have allow only comments and not editing of the Google Sheet, resolving the
+collisions ourselves.
+
+In any case
+
+---
+
+### 37. Request for grading
+
+**Status:** Reply template, "XYZ" and the scores are placeholders.
+
+Hi XYZ,
+
+I understand that you have spent energy and passion on your project, and I can see it
+from your work and your demeanour in class.
+
+We have done our best to be fair and judge each contribution individually and in
+reference to the other students
+
+- The TAs have spent enormous energy carefully reviewing more than 120 projects.
+- This year the quality of the projects was much higher than previous year. Four
+  projects were of exceptional quality projects and we will work with the students
+  and turn them into publications.
+- For your advance, we have given 5 extra points for attendance and survey
+  completion, and normalized the scores as per UMD practice.
+
+At the same time, there will always be situations where you feel you receive less
+than what fair. I know how it feels since it happens and happened to me many many
+times. There are jobs that you will not get because you are not from the "right"
+nation / background / color / religion / gender / … Your startup won't receive
+funding because you don't hang out with the "right" people (since you are busy
+working!). My only suggestion is to bottle this feeling and transform it into doing
+so well that nobody can ignore you. That's the only way I have found to deal with the
+intrinsic unfairness of the world. On the other side, don't ignore when you are
+lucky… in the long run the central theorem rules and everybody gets what they deserve
++- a little standard deviation.
+
+After all this philosophy and new age motivational speech, I've attached the rubric
+we have used to score the projects. Your scores were:
+
+I hope you will use this information to understand how to improve for next time
+challenge.
+
+Here is the rubric we used to grade the projects.
+
+- All deliverables delivered (10)
+  - Are all required components submitted, including code, documentation, and any
+    other specified materials?
+  - Does everything follow the project's standard structure and formatting
+    guidelines?
+  - Is the submission complete enough for someone else to evaluate or run without
+    requesting extra files or explanations?
+- Working Docker (5)
+  - Does the Docker container build without errors, following the provided
+    instructions?
+  - Does the project run successfully inside the container and behave as expected?
+  - Are all necessary environment configurations, ports, and dependencies correctly
+    set?
+- Documentation Quality (5)
+  - Does the documentation clearly explain how to set up, run, and understand the
+    project?
+  - Is it well-written, free from major grammar or formatting issues, and easy to
+    follow?
+  - Does it include all required sections such as installation steps, usage examples,
+    API descriptions, or architectural decisions?
+  - Does it adhere to the formatting and organizational guidelines we provided?
+- Actual project complexity (5)
+  - How much depth and effort does the project demonstrate beyond the initial
+    suggested scope?
+  - Did the student add significant features, handle edge cases, or show creative
+    problem-solving?
+  - Is the architecture or technical implementation non-trivial or particularly
+    well-considered?
+- Code quality (5)
+  - Is the code clean, modular, and easy to understand?
+  - Are comments and docstrings used appropriately to explain non-obvious logic?
+  - Is the overall structure of the codebase sensible and maintainable?
+  - Does it follow consistent style conventions (e.g., PEP 8 or another relevant
+    standard)?
+- PR quality (5)
+  - Was the pull request (PR) well-organized, with meaningful commit messages and a
+    clear description?
+  - Did the student follow good GitHub practices, such as linking issues, keeping PRs
+    scoped, and avoiding unnecessary noise?
+  - Was the PR free of obvious clutter like unrelated test code or temporary debug
+    statements?
+- Depth and understanding (5)
+  - Does the student show a solid understanding of the tools and techniques they
+    used?
+  - Do the design decisions reflect thoughtful trade-offs and justification, rather
+    than blindly following tutorials?
+  - Is there evidence that the student could explain and defend their implementation
+    in a review?
+- Late submission (-5)
+  - Was the submission turned in after the deadline without an approved extension?
+- Incomplete work (-5)
+  - Are there major parts of the project that are missing or obviously broken?
+  - Does the submission fail to meet critical functional or structural expectations?
+  - Are there signs that the project was rushed or left unfinished or AI generated?
+
+---
+
+### 38. Assignment 1: Git and GitHub
+
+**Status:** Struck through in the original notes.
+
+Hello DATA605 team,
+
+This is a preparation for the in-class quiz and for the class project.
+
+1) Study the slides on Git
+
+- [Lesson02.1-Git.pdf](https://github.com/gpsaggese/umd_classes/blob/master/data605/lectures/Lesson02.1-Git.pdf)
+- [Lesson02.2-Git_Branching.pdf](https://github.com/gpsaggese/umd_classes/blob/master/data605/lectures/Lesson02.2-Git_Branching.pdf)
+
+2) Do the Git tutorial:
+https://github.com/gpsaggese/umd_classes/tree/master/data605/tutorials/tutorial_git
+
+3) Do the GitHub tutorial is
+
+https://github.com/gpsaggese/umd_classes/tree/master/data605/tutorials/tutorial_github
+
+4) If you see any problem in the tutorials (code or video), pls send an email to me
+with your TAs in cc. To make this more interesting, there might be (or not!) some
+mistakes on purpose, to see if you find them. Happy egg hunt!
+
+5) To ensure you do the tutorials, we will create an assignment that you need to
+check as done and then post a picture of your browser at the end of the tutorial. If
+you don't do/study the tutorials, you won't be able to do well on quizzes and the
+class project.
+
+6) Get familiar with the GitHub repos you will interact with during class
+
+- [DATA605 Git repo](https://github.com/gpsaggese/umd_classes/)
+- [Helpers](https://github.com/causify-ai/helpers)
+- Please fork and star these repos so that GitHub promotes them
+
+Best, GP
+
+---
+
+### 39. Announcement 2: Slides, schedule, and Quiz 1
+
+**Status:** Struck through in the original notes.
+
+Hello DATA605 team,
+
+1) The slides are at the usual place
+https://github.com/gpsaggese/umd_data605/tree/main/lectures and the recorded class
+videos are https://umd.instructure.com/courses/1379231/pages/homepage
+
+2) The updated schedule of classes and quizzes is
+[here](https://docs.google.com/document/d/1LYd7QqGOU2_JR5QOWaAxWCwBB2cy16n57dSaVV6A3tc)
+
+3) Before the next class, we'll do a "drill" to make sure you know how to use the
+Lockdown browser (http://go.umd.edu/lockdown-browser) and you get a sense of the
+quizzes
+
+- This will not be graded!
+- The goal is only to make sure you know how to take the quiz and know what to expect
+
+4) Prepare for Quiz #1 on Git and Data Pipelines
+
+- Study the slides on Git
+  [here](https://github.com/gpsaggese/umd_data605/blob/main/lectures/02%20-%20Git%2C%20Data%20Pipelines.pdf)
+- Video of the Git tutorial is
+  [here](https://drive.google.com/file/d/12TcMNs4vZoZUWq47TUgcqB875GMfqK01/view?usp=drive_link)
+- Do the Git tutorial is
+  https://github.com/gpsaggese/umd_data605/blob/main/tutorials/tutorial_git/tutorial_git.md
+- Do the GitHub tutorial is
+  https://github.com/gpsaggese/umd_data605/blob/main/tutorials/tutorial_github/README.md
+- Get familiar with the GitHub repos you will interact with during class
+  - [DATA605 Git repo](https://github.com/gpsaggese/umd_data605)
+  - [Helpers](https://github.com/causify-ai/helpers)
+  - [Tutorials](https://github.com/causify-ai/tutorials)
+  - [KaizenFlow](https://github.com/causify-ai/kaizenflow)
+- The goal is to become familiar with Git
+
+5) Quiz #1 on Git and Data Pipelines
+
+- The quizzes will be multi-choice
+- There will be ~20 questions and you will have 15 minutes to solve it
+- The quizzes are taken at home without any other resource (cheating doesn't pay
+  off!)
+- The quiz can only be solved from the external application Lockdown browser
+- You can decide when to take the quiz over 2 days (typically all day Friday and
+  Saturday) to make sure it works for everyone
+
+---
+
+### 40. Class 3: Assignment
+
+**Status:** Struck through in the original notes.
+
+As we said, Linux/bash/Docker works decently only Mac and Linux, but not Windows.
+
+We have tried several times to get Windows to work, but failed, so the plan is to
+have Windows laptop get to install a VM and run linux
+
+Instructions are:
+https://github.com/sorrentum/sorrentum/blob/master/docs/work_tools/all.sorrentum_development.how_to_guide.md#supporting-os
+
+There is no grading for this assignment, just mark it as done. The goal is for you to
+get set up for the next steps of the class.

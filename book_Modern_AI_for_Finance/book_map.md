@@ -25,27 +25,58 @@
 ## Short TOC
 - Foundations
   - 01, Why Finance Is Different
-  - 02, Deep Learning Refresher
-  - 03, Financial Data Engineering
-- Transformers and LLMs
-  - 04, Attention and the Transformer Architecture
-  - 05, LLMs and Foundation Models
-  - 06, Adapting LLMs to Finance
+    - Finance primer: instruments, returns, Sharpe ratio, costs, capacity
+    - Non-stationarity, fat tails, low signal-to-noise
+    - Backtest discipline: overfitting, multiple testing, purged CV, deflated Sharpe
+    - Causal vs. predictive: spurious factors
+  - 02, Deep Learning, Transformers, and LLMs
+    - Refresher: deep learning, transformers, LLMs
+    - Adapting LLMs: fine-tuning, RAG, domain-pretrained models
+  - 03, Data engineering
+    - Point-in-time correctness (as-of joins)
+    - Survivorship bias and delisting returns
+    - Restatements and revisions
+    - Corporate actions and adjusted prices
+    - Identifiers and symbology (CUSIP, ISIN, PERMNO)
+    - Timestamps, time zones, calendars
+    - Data vendors (CRSP, Compustat, TAQ, EDGAR)
+    - Alternative data classification
 - Market Prediction with Deep Learning
-  - 07, Price and Volatility Forecasting
-  - 08, Limit Order Book Modeling
-  - 09, Portfolio Optimization and Reinforcement Learning
+  - 04, Price and Volatility Forecasting
+    - Baselines first: linear, ARIMA/GARCH, GBDT
+    - Time series foundation models (Chronos, TimesFM, Lag-Lama)
+    - Alpha research: signals, IC, turnover, decay
+    - Factors: classic, ML-based, factor zoo, causal factors
+  - 05, Limit Order Book Modeling
+    - Microstructure and LOB mechanics
+    - Market impact and execution cost
+  - 06, Portfolio Optimization and Reinforcement Learning
+    - Portfolio optimization and constraints
+    - Hedging (deep hedging)
+    - RL where it works: execution, market making, hedging
+    - RL where it is mostly hype: end-to-end trading
 - Language in Finance
-  - 10, NLP for Filings, News, and Earnings Calls
-  - 11, LLM Agents for Financial Research
-  - 12, Conversational Finance Assistants
+  - 07, News, Filings, Earnings Calls
+    - LLMs for finance text
+  - 08, Agents: automating the research loop
+  - 09, Conversational finance assistants
 - Risk, Operations, and Governance
-  - 13, Credit Risk and Fraud Detection
-  - 14, Explainability and Robustness
-  - 15, Regulation, Model Risk Management, and Deployment
+  - 10, Risk, Credit Risk, and Fraud
+    - Market risk: VaR/ES, covariance, factor risk models
+    - Credit risk and fraud detection
+  - 11, Explainability and Robustness
+  - 12, Regulation, Model Risk Management, and Deployment
 - Frontiers
-  - 16, Generative Models for Synthetic Markets
-  - 17, The Road Ahead
+  - 13, Market simulation
+    - GANs / diffusion models for scenario generation
+    - Agent-based market simulation
+    - Stress testing
+    - Synthetic data: augmenting scarce data
+    - Fidelity: stylized facts (fat tails, volatility clustering)
+  - 14, The Road Ahead: multimodal models, open problems
+
+- Resources
+  - /Users/saggese/src/notes1/finance_index.md
 
 ## All Lesson Materials
 - `data605/all_tocs.md`
@@ -69,27 +100,23 @@
 |                                                         |        |          |           |          |      |
 | **Foundations**                                         |        |          |           |          |      |
 | 01. Why Finance Is Different                            | N/A    |          |           |          |      |
-| 02. Deep Learning Refresher                             | N/A    |          |           |          |      |
+| 02. Deep Learning, Transformers, and LLMs               | N/A    |          |           |          |      |
 | 03. Financial Data Engineering                          | N/A    |          |           |          |      |
-| **Transformers and LLMs**                               |        |          |           |          |      |
-| 04. Attention and the Transformer Architecture          | N/A    |          |           |          |      |
-| 05. LLMs and Foundation Models                          | N/A    |          |           |          |      |
-| 06. Adapting LLMs to Finance                            | N/A    |          |           |          |      |
 | **Market Prediction with Deep Learning**                |        |          |           |          |      |
-| 07. Price and Volatility Forecasting                    | N/A    |          |           |          |      |
-| 08. Limit Order Book Modeling                           | N/A    |          |           |          |      |
-| 09. Portfolio Optimization and Reinforcement Learning   | N/A    |          |           |          |      |
+| 04. Price and Volatility Forecasting                    | N/A    |          |           |          |      |
+| 05. Limit Order Book Modeling                           | N/A    |          |           |          |      |
+| 06. Portfolio Optimization and Reinforcement Learning   | N/A    |          |           |          |      |
 | **Language in Finance**                                 |        |          |           |          |      |
-| 10. NLP for Filings, News, and Earnings Calls           | N/A    |          |           |          |      |
-| 11. LLM Agents for Financial Research                   | N/A    |          |           |          |      |
-| 12. Conversational Finance Assistants                   | N/A    |          |           |          |      |
+| 07. NLP for Filings, News, and Earnings Calls           | N/A    |          |           |          |      |
+| 08. LLM Agents for Financial Research                   | N/A    |          |           |          |      |
+| 09. Conversational Finance Assistants                   | N/A    |          |           |          |      |
 | **Risk, Operations, and Governance**                    |        |          |           |          |      |
-| 13. Credit Risk and Fraud Detection                     | N/A    |          |           |          |      |
-| 14. Explainability and Robustness                       | N/A    |          |           |          |      |
-| 15. Regulation, Model Risk Management, and Deployment   | N/A    |          |           |          |      |
+| 10. Credit Risk and Fraud Detection                     | N/A    |          |           |          |      |
+| 11. Explainability and Robustness                       | N/A    |          |           |          |      |
+| 12. Regulation, Model Risk Management, and Deployment   | N/A    |          |           |          |      |
 | **Frontiers**                                           |        |          |           |          |      |
-| 16. Generative Models for Synthetic Markets             | N/A    |          |           |          |      |
-| 17. The Road Ahead                                      | N/A    |          |           |          |      |
+| 13. Generative Models for Synthetic Markets             | N/A    |          |           |          |      |
+| 14. The Road Ahead                                      | N/A    |          |           |          |      |
 
 ## `book_Modern_AI_for_Finance` Tutorials
 
@@ -101,7 +128,7 @@
 - Write one slide deck per chapter in `book_Modern_AI_for_Finance/lectures_source/`
   (30-35 slides each)
 - Write the finance-specific content from scratch for chapters where the
-  `_Not covered_` share exceeds 50%: 03, 08, 10, 13, 16, 17
+  `_Not covered_` share exceeds 50%: 03, 05, 07, 10, 13, 14
 - Add tutorial notebooks under `book_Modern_AI_for_Finance/tutorials/`
 - Collect related books, packages, and papers for each chapter: the previous map
   had empty placeholders for them
@@ -153,44 +180,80 @@
   - [35%]: Extreme-value and tail-risk modeling, multiple-testing corrections for
     backtests, adaptive markets, finance-specific regime detection
 
-## 02: Deep Learning Refresher
+## 02: Deep Learning, Transformers, and LLMs
 
 ### Goals
-- Review the neural architectures used throughout the book
-- Explain training dynamics: optimization, initialization, and normalization
-- Show regularization methods for small and noisy financial datasets
+- Review the neural architectures and training methods used throughout the book
+- Explain attention, transformers, and how LLMs are pretrained, scaled, evaluated
+- Compare fine-tuning, instruction tuning, and RAG for adapting LLMs to finance
 
 ### Topics
-- Feedforward Networks
-  - Multilayer Perceptrons (MLPs)
-  - Backpropagation and automatic differentiation
-- Architectures for Spatial and Sequential Data
-  - Convolutional Neural Networks (CNNs)
-  - Recurrent Neural Networks (RNNs) and LSTMs
-- Optimization and Training Dynamics
-  - Gradient-based optimizers and learning-rate schedules
-  - Vanishing and exploding gradients
-- Regularization for Small and Noisy Datasets
-  - Weight decay, dropout, and early stopping
-  - Data augmentation
+- Neural Network Fundamentals
+  - MLPs, backpropagation, and automatic differentiation
+  - CNNs, RNNs, and LSTMs
+- Training on Small and Noisy Datasets
+  - Optimizers, learning-rate schedules, vanishing and exploding gradients
+  - Weight decay, dropout, early stopping, and data augmentation
+- Attention and Transformers
+  - Self-attention, multi-head attention, and positional encoding
+  - Transformers vs. RNNs: long sequences, parallelism, and cost of attention
+  - Variants for time series and multi-asset inputs
+- LLM Pretraining and Scaling
+  - Pretraining objectives and datasets
+  - Scaling laws and emergent reasoning
+- The LLM Landscape
+  - Open vs. proprietary models
+  - Evaluation, benchmarking, limitations, and failure modes
+- Adapting LLMs to Finance
+  - Fine-tuning and instruction tuning for financial tasks
+  - RAG over filings, news, and research, and RAG vs. fine-tuning trade-offs
+  - Domain-pretrained models such as BloombergGPT
 
 ### Slides
 - N/A: no dedicated deck yet
 
 ### Lesson Materials
 - `msml610/lectures_source/Lesson11.2-Probabilistic_deep_learning.smd`
-  - [90%]: Perceptron and MLP, activations, backpropagation, automatic
+  - [35%]: Perceptron and MLP, activations, backpropagation, automatic
     differentiation, CNNs and ResNets, RNNs, vanishing gradients, LSTM/GRU,
     weight initialization, batch normalization, learning-rate schedules, early
-    stopping, regularization, data augmentation
+    stopping, regularization, data augmentation, RNN limits, sequence-to-sequence
+    attention, types of attention, transformer architecture, pretraining
+- `book_Agentic_AI/lectures_source/Lesson02.1-LLM_Building_Blocks.smd`
+  - [30%]: Query-key-value attention, scaled dot-product, multi-head, self vs.
+    cross vs. causal attention, positional encoding, transformer block, residual
+    connections, LayerNorm, attention cost, masked vs. autoregressive objectives,
+    pretraining pipeline, scaling laws, emergent abilities, decoding, context
+    windows, expressivity limits
+- `book_Agentic_AI/lectures_source/Lesson07.1-Tool_use_and_retrieval.smd`
+  - [10%]: RAG loop, retrieval as a tool call, vector databases, approximate
+    nearest-neighbor indexes, hybrid search, grounding in regulated domains,
+    long context vs. retrieval, needle-in-a-haystack evaluation of long context
+- `book_Agentic_AI/lectures_source/Lesson04.1-LLM_Reasoning.smd`
+  - [10%]: Chain-of-thought and variants, premise-order brittleness, limits of
+    self-correction
+- `book_Agentic_AI/lectures_source/Lesson11.1_Lessons_from_training_agentic_models.smd`
+  - [10%]: Data curation, multi-stage training pipelines, case studies of open
+    frontier models, training cost
 - `msml610/lectures_source/Lesson05.2-Overfitting.smd`
-  - [20%]: Bias-variance analysis, learning curves, high-bias vs. high-variance
+  - [5%]: Bias-variance analysis, learning curves, high-bias vs. high-variance
     regimes as the basis for regularization
 - `msml610/lectures_source/Lesson05.3-Learn_Validation.smd`
-  - [10%]: Cross-validation and bootstrap for tuning on scarce data
+  - [5%]: Cross-validation and bootstrap for tuning on scarce data
+- `book_Agentic_AI/lectures_source/Lesson09.1_Post_training_and_verifiable_agents.smd`
+  - [5%]: Verifiable benchmarks, reward hacking, the verification gap
+- `book_Agentic_AI/lectures_source/Lesson08.1-Learning_to_reason.smd`
+  - [5%]: Preference data, reward models and PPO, DPO, iterative preference
+    optimization
+- `book_Agentic_AI/lectures_source/Lesson10.1_Open_training_recipes_for_reasoning.smd`
+  - [5%]: Open post-training pipeline, DPO vs. PPO, preference feedback
+    collection, RAG plus reasoning training for scientific synthesis
 - _Not covered_
-  - [10%]: Regularization tuned to financial noise levels, time-aware
-    validation for neural networks
+  - [20%]: Regularization tuned to financial noise levels, time-aware validation
+    for neural networks, time series transformers and multi-asset attention,
+    survey of general-purpose benchmark suites, composition of pretraining
+    datasets, parameter-efficient fine-tuning, supervised instruction tuning on
+    financial tasks, domain-pretrained finance models
 
 ## 03: Financial Data Engineering
 
@@ -233,123 +296,9 @@
   - [55%]: Order book structure, fundamental and alternative data sources,
     point-in-time (as-of) joins, survivorship-bias-free universes
 
-# Part II: Transformers and LLMs
+# Part II: Market Prediction with Deep Learning
 
-## 04: Attention and the Transformer Architecture
-
-### Goals
-- Explain self-attention and multi-head attention step by step
-- Show how positional encoding injects order into attention
-- Compare transformers with RNNs on long financial sequences
-
-### Topics
-- Attention Mechanisms
-  - Self-attention mechanisms
-  - Multi-head attention
-- Sequence Order
-  - Positional encoding
-- Transformers vs. Recurrent Models
-  - Why transformers beat RNNs on long sequences
-  - Parallelism and the cost of attention
-- Architectural Variants for Finance
-  - Variants for time series and multi-asset inputs
-
-### Slides
-- N/A: no dedicated deck yet
-
-### Lesson Materials
-- `book_Agentic_AI/lectures_source/Lesson02.1-LLM_Building_Blocks.smd`
-  - [85%]: Query-key-value attention, scaled dot-product, multi-head, self vs.
-    cross vs. causal attention, positional encoding, transformer block,
-    residual connections, LayerNorm, attention cost
-- `msml610/lectures_source/Lesson11.2-Probabilistic_deep_learning.smd`
-  - [40%]: RNN limits, sequence-to-sequence attention, types of attention,
-    transformer architecture, pretraining
-- _Not covered_
-  - [10%]: Finance-specific variants: time series transformers, multi-asset
-    attention
-
-## 05: LLMs and Foundation Models
-
-### Goals
-- Describe how LLMs are pretrained and why they scale
-- Survey the modern LLM landscape and how to evaluate it
-- Identify LLM limitations and failure modes that matter in finance
-
-### Topics
-- Pretraining
-  - Pretraining objectives and datasets
-- Scaling
-  - Scaling laws and emergent reasoning
-- The Model Landscape
-  - The modern LLM landscape
-  - Open vs. proprietary models
-- Evaluation and Limits
-  - Evaluation and benchmarking
-  - Limitations and failure modes
-
-### Slides
-- N/A: no dedicated deck yet
-
-### Lesson Materials
-- `book_Agentic_AI/lectures_source/Lesson02.1-LLM_Building_Blocks.smd`
-  - [40%]: Masked vs. autoregressive objectives, pretraining pipeline, scaling
-    laws, emergent abilities, decoding, context windows, expressivity limits
-- `book_Agentic_AI/lectures_source/Lesson04.1-LLM_Reasoning.smd`
-  - [30%]: Chain-of-thought and variants, premise-order brittleness, limits of
-    self-correction
-- `book_Agentic_AI/lectures_source/Lesson11.1_Lessons_from_training_agentic_models.smd`
-  - [25%]: Data curation, multi-stage training pipelines, case studies of open
-    frontier models, training cost
-- `book_Agentic_AI/lectures_source/Lesson09.1_Post_training_and_verifiable_agents.smd`
-  - [20%]: Verifiable benchmarks, reward hacking, the verification gap
-- `book_Agentic_AI/lectures_source/Lesson07.1-Tool_use_and_retrieval.smd`
-  - [10%]: Needle-in-a-haystack evaluation of long context
-- _Not covered_
-  - [15%]: Survey of general-purpose benchmark suites, composition of pretraining
-    datasets
-
-## 06: Adapting LLMs to Finance
-
-### Goals
-- Compare fine-tuning, instruction tuning, and retrieval for finance
-- Show how to build a RAG pipeline over financial documents
-- Review domain-pretrained finance models and their trade-offs
-
-### Topics
-- Fine-Tuning
-  - Fine-tuning strategies
-  - Instruction tuning for financial tasks
-- Retrieval-Augmented Generation (RAG)
-  - Retrieval over filings, news, and research
-  - RAG vs. fine-tuning trade-offs
-- Domain-Pretrained Models
-  - Domain-pretrained finance models
-  - BloombergGPT and similar approaches
-
-### Slides
-- N/A: no dedicated deck yet
-
-### Lesson Materials
-- `book_Agentic_AI/lectures_source/Lesson07.1-Tool_use_and_retrieval.smd`
-  - [40%]: RAG loop, retrieval as a tool call, vector databases, approximate
-    nearest-neighbor indexes, hybrid search, grounding in regulated domains,
-    long context vs. retrieval
-- `book_Agentic_AI/lectures_source/Lesson08.1-Learning_to_reason.smd`
-  - [25%]: Preference data, reward models and PPO, DPO, iterative preference
-    optimization
-- `book_Agentic_AI/lectures_source/Lesson10.1_Open_training_recipes_for_reasoning.smd`
-  - [25%]: Open post-training pipeline, DPO vs. PPO, preference feedback
-    collection, RAG plus reasoning training for scientific synthesis
-- `book_Agentic_AI/lectures_source/Lesson11.1_Lessons_from_training_agentic_models.smd`
-  - [10%]: Data curation, multi-stage training pipelines, training cost
-- _Not covered_
-  - [40%]: Parameter-efficient fine-tuning, supervised instruction tuning on
-    financial tasks, domain-pretrained finance models
-
-# Part III: Market Prediction with Deep Learning
-
-## 07: Price and Volatility Forecasting
+## 04: Price and Volatility Forecasting
 
 ### Goals
 - Cover the time series fundamentals needed for financial forecasting
@@ -388,7 +337,7 @@
   - [35%]: Temporal transformers for forecasting, multi-asset panel attention,
     trading-oriented metrics (directional accuracy, information coefficient)
 
-## 08: Limit Order Book Modeling
+## 05: Limit Order Book Modeling
 
 ### Goals
 - Introduce market microstructure and the limit order book
@@ -420,7 +369,7 @@
   - [85%]: Market microstructure, order book dynamics, market impact, high-frequency
     signals, latency and capacity constraints
 
-## 09: Portfolio Optimization and Reinforcement Learning
+## 06: Portfolio Optimization and Reinforcement Learning
 
 ### Goals
 - Embed portfolio optimization inside differentiable models
@@ -456,9 +405,9 @@
   - [40%]: Differentiable portfolio layers, execution-specific RL, transaction
     cost and market impact models, mean-variance and CVaR constraints
 
-# Part IV: Language in Finance
+# Part III: Language in Finance
 
-## 10: NLP for Filings, News, and Earnings Calls
+## 07: NLP for Filings, News, and Earnings Calls
 
 ### Goals
 - Extract signals from filings, news, and earnings-call transcripts
@@ -494,7 +443,7 @@
   - [60%]: Financial sentiment models, named entity and event extraction, SEC
     filing parsing, financial text classification
 
-## 11: LLM Agents for Financial Research
+## 08: LLM Agents for Financial Research
 
 ### Goals
 - Build agents that call tools and retrieve financial data
@@ -533,7 +482,7 @@
   - [35%]: Multi-agent analyst workflow design, finance-specific tools (market data
     APIs, filings)
 
-## 12: Conversational Finance Assistants
+## 09: Conversational Finance Assistants
 
 ### Goals
 - Design advisory chatbots and natural-language portfolio queries
@@ -571,9 +520,9 @@
   - [50%]: Advisory chatbot design, natural-language portfolio querying, user
     experience and trust measurement
 
-# Part V: Risk, Operations, and Governance
+# Part IV: Risk, Operations, and Governance
 
-## 13: Credit Risk and Fraud Detection
+## 10: Credit Risk and Fraud Detection
 
 ### Goals
 - Apply tabular deep learning to credit scoring
@@ -614,7 +563,7 @@
   - [55%]: Tabular deep learning, graph neural networks, fraud typologies,
     fair-lending regulation
 
-## 14: Explainability and Robustness
+## 11: Explainability and Robustness
 
 ### Goals
 - Explain model predictions with Shapley values and attention
@@ -652,7 +601,7 @@
   - [15%]: Finance-specific feature importance, adversarial attacks on market
     models
 
-## 15: Regulation, Model Risk Management, and Deployment
+## 12: Regulation, Model Risk Management, and Deployment
 
 ### Goals
 - Map AI systems to compliance frameworks such as SR 11-7 and the EU AI Act
@@ -688,9 +637,9 @@
   - [40%]: Compliance frameworks (SR 11-7, EU AI Act), model validation and
     governance process, latency budgets for financial systems
 
-# Part VI: Frontiers
+# Part V: Frontiers
 
-## 16: Generative Models for Synthetic Markets
+## 13: Generative Models for Synthetic Markets
 
 ### Goals
 - Explain GANs and diffusion models for financial time series
@@ -720,7 +669,7 @@
   - [70%]: GAN and diffusion architectures for time series, synthetic financial data
     pipelines, stress-scenario generation, fidelity and risk evaluation
 
-## 17: The Road Ahead
+## 14: The Road Ahead
 
 ### Goals
 - Show how multimodal models fuse text, tabular, and time series data
