@@ -34,7 +34,7 @@ _LOG = logging.getLogger(__name__)
 # #############################################################################
 
 
-def _draw_court(ax: Axes, court: racket_params.CourtGeometry) -> None:
+def draw_court(ax: Axes, court: racket_params.CourtGeometry) -> None:
     """
     Draw the court boundary, net, and service/non-volley lines on `ax`.
 
@@ -222,7 +222,7 @@ def plot_court_heatmap(
             linewidth=0.5,
         )
         ax.add_patch(rect)
-    _draw_court(ax, sport.court)
+    draw_court(ax, sport.court)
     scalar_mappable = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
     scalar_mappable.set_array([])
     plt.colorbar(scalar_mappable, ax=ax, label=column)
