@@ -40,6 +40,7 @@ Modules are organized in layers, with each layer importing only from layers abov
 |----------|---------|
 | `racket_strategy.API.ipynb` | Guided walkthrough of the package API, one layer at a time |
 | `racket_strategy.exploration.ipynb` | Click-to-run exploration of shot placement: ball speed, shot dispersion, player positions |
+| `racket_shot_probability.ipynb` | Serve and return widget: probability that a Gaussian return lands in, closed form vs Monte Carlo |
 
 ## Development
 
