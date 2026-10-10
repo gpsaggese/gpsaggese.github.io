@@ -105,12 +105,14 @@ per-char cost, log without contract id. `/completions` is a bespoke shape.
 
 ### 5.2 Metering — `noesis/metering` (new; GP `PR_S4`, `PR_S6`, `PR_S11`)
 
-Status: not started. This is the core of the MVP.
+Status: checker foundation implemented; prober, calibration runner, and window
+orchestration remain. See `checker.README.md`.
 
 **Two separate reliability measures per contract κ over its window W:**
 
-- **Latency reliability** `r_lat(κ)` = share of *all* requests in W (buyer traffic
-  and canaries) with `status=ok` and `latency ≤ l_max(κ)`.
+- **Latency reliability** `r_lat(κ)` = share of eligible *buyer* requests in W
+  with `status=ok` and `latency ≤ l_max(κ)`. Canary latency is excluded by
+  default because short synthetic prompts are not representative buyer traffic.
 - **Quality score** `q(κ)` = share of *canary* requests in W graded correct.
 
 **Violation rule (corrected).** For each measure, compute a one-sided 95% **Wilson**
@@ -118,9 +120,15 @@ confidence interval (exact Clopper–Pearson when n < 10). Flag the measure only
 **upper** bound < the promised level:
 - latency violation ⇔ `upper(r_lat) < r_min(κ)`
 - quality violation ⇔ `upper(q) < q_min` (market-wide, §6)
-- **contract FAILED** ⇔ either violation; otherwise **PASSED**
-- If W has fewer than `n_min` requests or `c_min` canaries, verdict = `INSUFFICIENT`
-  (not reported to reputation; shown on dashboard)
+- **contract FAILED** ⇔ either sufficiently sampled metric has a conclusive
+  violation
+- **contract PASSED** ⇔ both metrics have enough evidence and neither violates
+  its promise
+- Otherwise verdict = `INSUFFICIENT` (not reported to reputation; shown on
+  dashboard). A sufficiently sampled failure takes precedence if the other
+  metric lacks evidence
+- Checker/configuration errors also produce `INSUFFICIENT` and never penalize
+  the seller
 
 *Why the upper bound:* the null hypothesis is "seller is compliant". We only reject it
 when even the optimistic estimate misses the promise. The paper (§5 eq.
@@ -166,7 +174,7 @@ ignores latency/reliability. Fulfillment is `random() < 0.9`. No ids/timestamps 
 | K4 | Unmatched **asks** carry over to the next round (standing asks). Unmatched **bids** expire (simulator re-bids). GP's code drops both |
 | K5 | Scheduler: clear every `T` seconds (default 10 s demo, configurable). An empty round must not stop the scheduler. Keep `POST /rounds/clear` for tests/debug |
 | K6 | Each fill → `Contract` with id, round id, buyer, seller, `n_tasks`, tier, `l_max`, `r_min`, `price`, `state=PENDING`. Activated immediately → `ACTIVE` with `window_start` |
-| K7 | Window closes when `n_tasks` requests are served **or** `window_max_s` elapses (default 60 s) → `CLOSED` → metering verdict → `PASSED` / `FAILED` / `INSUFFICIENT` |
+| K7 | Window starts on the first valid buyer request and closes when its targets are served or its deadline elapses. Use 60 s for the demo and at most 300 s for normal MVP runs → `CLOSED` → metering verdict → `PASSED` / `FAILED` / `INSUFFICIENT` |
 | K8 | Replace `mock_fulfill` coin-flip: contract result comes from the metering verdict. Keep `mock_fulfill` for unit tests only |
 
 ### 5.4 Reputation — `noesis/reputation` (new; GP `PR_M3`)
@@ -207,7 +215,7 @@ blocked within ~2–4 contracts (under 1 minute at demo cadence).
 | `q_min` (canary accuracy) | 0.85 | |
 | Canaries per contract | 10 | |
 | `n_min` / `c_min` | 20 requests / 8 canaries | Below → INSUFFICIENT |
-| Window | `n_tasks` requests or 60 s | |
+| Window | first valid buyer request until targets complete; 60 s demo, ≤300 s normal MVP | Collection deadline, not polling cadence |
 | Confidence | one-sided 95% (z = 1.645) | |
 | Reputation | ρ0 0.8, λ 0.3, ρ_min 0.5, cooldown 6 rounds, probation 3 passes | |
 | Spend cap | $50/month (Proposed, D9) | 1-hr demo ≈ 1–3 M tokens ≈ $1–3 at 70B prices; verify in week 1 |
