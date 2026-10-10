@@ -8,15 +8,33 @@
   providers and logs every request/response pair
 - `NoesisPlatform`: a thin `fastapi` HTTP surface over both with an optional
   persistent (Postgres) backend and a Docker Compose deployment for local dev
+- `Noesis MVP gateway`: an OpenAI-compatible server that routes each request to the
+  one real provider its contract names (OpenRouter, provider pinned), measures it,
+  and logs every call for grading; the first piece of the MVP described in
+  `docs/mvp_prd.md`
 - See:
   - `architecture.md` for the full C4-model architecture
   - `plan.Noesis.md` for the milestone-by-milestone implementation roadmap
+  - `docs/onboarding.md` to set up, run, and test the MVP gateway
+  - `docs/gateway.README.md` for the gateway's design
 
 ## Structure of the Dir
 
+- `config/`
+  - `seed.yaml`: demo sellers and accounts loaded by `noesis_seed.py`
 - `devops/`
   - Dockerfiles, Docker Compose deployment, and container entrypoint scripts for
     `main.py`'s app plus a Postgres sidecar
+- `docs/`
+  - MVP spec (`mvp_prd.md`), plan (`mvp_plan.md`), decisions
+    (`mvp_decisions.md`), progress (`mvp_progress.md`), gateway design
+    (`gateway.README.md`), onboarding (`onboarding.md`, `how_we_work.md`,
+    `glossary.md`), and measurements (`findings/`)
+- `migrations/`
+  - SQL schema for the MVP, applied automatically by `noesis_db.apply_migrations()`
+- `scripts/`
+  - `detection_math.py`: false-alarm / detection rates of the violation rules
+  - `spike_openrouter.py`: measure pinned OpenRouter providers for one model
 - `test/`
   - Unit tests for every module below, one `test_*.py` per module
 
@@ -33,6 +51,8 @@
     `plan.Noesis.md` PR
 - `conftest.py`
   - Pytest bootstrap shared by every test module under `test/`
+- `env.example`
+  - Template for `.env` (git-ignored): OpenRouter key and the gateway's API keys
 - `invoke.yaml`
   - `pyinvoke` config (`auto_dash_names: false`, command echo on)
 - `plan.marketing.md`
@@ -59,12 +79,36 @@
 - `contract_dispatch.py`
   - `Contract` schema, `build_contracts()`, and stubbed fulfillment dispatch (stands
     in for `NoesisServer`)
+- `gateway_admin.py`
+  - `create_dev_contract()`: ACTIVE contracts by hand until the auction exists
+- `gateway_api.py`
+  - Gateway HTTP endpoints: `/v1/chat/completions`, `/v1/models`, `/health`, admin
+- `gateway_app.py`
+  - Gateway app factory (startup: connect, migrate, seed) and the real server
+- `gateway_fake_provider.py`
+  - `FakeProvider`: scripted provider for tests
+- `gateway_faults.py`
+  - Demo fault injection: per-seller slowdown and model swap
+- `gateway_openrouter.py`
+  - `OpenRouterProvider`: pinned OpenRouter calls; `classify_error()` blame rules
+- `gateway_providers.py`
+  - `Provider` interface, `ProviderCall` / `ProviderResult`, statuses
+- `gateway_request_log.py`
+  - One `requests` row per provider call; attribution check
+- `gateway_routing.py`
+  - API key -> account; contract -> seller -> provider
 - `main.py`
   - `uvicorn` entry point; builds the module-level `app`, wired to the memory or
     Postgres backend selected via `NOESIS_DB_BACKEND`
 - `passthrough_proxy.py`
   - `Gateway`: routes a prompt to a registered LLM provider and logs the
     request/response pair
+- `noesis_db.py`
+  - Async `psycopg` 3 connection pool and migrations runner
+- `noesis_seed.py`
+  - Loads `config/seed.yaml` into Postgres; hashes API keys
+- `noesis_settings.py`
+  - Gateway settings from `.env` and the environment
 - `platform_api.py`
   - `fastapi` app factory wrapping the auction, dispatch, and proxy modules behind
     HTTP endpoints
@@ -77,6 +121,9 @@
 | Command                                   | Description                                                                   |
 | :---------------------------------------- | :---------------------------------------------------------------------------- |
 | `uvicorn research.Noesis.main:app`        | Serve the `NoesisPlatform` HTTP API directly (in-process, no Docker)          |
+| `uvicorn research.Noesis.gateway_app:build_default_app --factory` | Serve the MVP gateway (see `docs/onboarding.md`) |
+| `scripts/spike_openrouter.py`             | Measure pinned OpenRouter providers (`--dry-run` costs nothing)               |
+| `scripts/detection_math.py`               | Print violation-rule false-alarm / detection rates                            |
 | `devops/docker_run/run_docker_noesis.sh`  | Build and run the dockerized API (plus a Postgres sidecar) via Docker Compose |
 | `devops/docker_run/run_jupyter_server.sh` | Start a Jupyter server inside the dev container                               |
 | `invoke run_fast_tests`                   | Run the fast unit test suite under `test/`                                    |
