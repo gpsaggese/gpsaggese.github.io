@@ -104,8 +104,9 @@ utils.cell0_1_plot_courts()
 #   - `Court`: the serve (blue arrow), the return (orange arrow), the target
 #     service box (shaded), the 1 and 2 sigma ellipses, and 1000 simulated
 #     landing points
-#   - `Comments`: whether the serve is in, $P_{in}$ from the formula, and the
-#     Monte Carlo estimate $\hat{P}$ with its standard error
+#   - `Comments`: whether the serve is in, $P_{in}$ from the formula, the Monte
+#     Carlo estimate $\hat{P}$ with its standard error, and the legend of the
+#     court
 
 # %%
 # Build the serve and return widget for `SPORT`.
@@ -145,12 +146,15 @@ _ = utils.cell1_1_plot_shot_widget(SPORT)
 # **Implementation** `cell1_1_plot_shot_widget(sport)`
 # - Builds 7 sliders with `htutori.build_widget_control()`
 # - On every slider change:
-#   - Finds the target service box with `racket_params.get_service_box_region()`,
-#     and checks the serve with `CourtRegion.contains()`
+#   - Rounds the slider values to 6 decimals with `_round_slider_value()`, so
+#     the `+` / `-` buttons cannot drift past a line
+#   - Checks the serve with `_check_serve()`: the target box follows the sign of
+#     `x1`, a serve on the kitchen line is out, and the box stops at the baseline
 #   - Computes $P_{in}$ with `compute_p_in()` on `get_striker_half_region()`
 #   - Draws 1000 landing points with `sample_landings()`, and counts the ones in
-#   - Draws the court with `draw_court()` plus the center service line, and the
-#     comments with `htutori.add_fitted_text_box()`
+#   - Draws the court with `draw_court()` plus the center service line
+#   - Fills the comments panel with `htutori.add_fitted_text_box()`, and puts the
+#     legend below the comments, so it never covers the court
 
 # %% [markdown]
 # ## Model Assumptions and Limits

@@ -6,7 +6,9 @@ Import as:
 import research.Optimal_strategy_for_racket_sports.test.test_racket_shot_probability_utils as rosfrsttrspu
 """
 
+import dataclasses
 import logging
+import types
 import unittest.mock as umock
 from typing import List, Tuple
 
@@ -87,6 +89,29 @@ class Test_get_striker_half_region(hunitest.TestCase):
         )
         # Run test and check outputs.
         self.helper(court, expected)
+
+    def test3(self) -> None:
+        """
+        Test that a court with a `nan`, `inf`, or negative size raises an error.
+        """
+        # Prepare inputs.
+        # `CourtGeometry` itself rejects `nan` and negative sizes, so stand-in
+        # objects with the same fields reach the check in
+        # `get_striker_half_region()`; it accepts `inf`.
+        court = racket_params.TENNIS.court
+        bad_courts = [
+            types.SimpleNamespace(width_m=float("nan"), length_m=23.77),
+            types.SimpleNamespace(width_m=8.23, length_m=-1.0),
+            dataclasses.replace(court, length_m=float("inf")),
+            dataclasses.replace(court, width_m=float("inf")),
+        ]
+        # Run test and check outputs.
+        for bad_court in bad_courts:
+            with self.subTest(court=bad_court):
+                with self.assertRaises(AssertionError):
+                    racket_shot_probability_utils.get_striker_half_region(
+                        bad_court
+                    )
 
 
 # #############################################################################
@@ -213,6 +238,33 @@ class Test_compute_p_in(hunitest.TestCase):
         expected = 0.0
         # Run test and check outputs.
         self.helper(court, target_xy, std_xy, expected)
+
+    def test8(self) -> None:
+        """
+        Test that a `nan` or `inf` target, or a bad std, raises an error.
+        """
+        # Prepare inputs.
+        region = racket_shot_probability_utils.get_striker_half_region(
+            racket_params.TENNIS.court
+        )
+        nan, inf = float("nan"), float("inf")
+        target_xy = (0.0, -5.0)
+        std_xy = (0.5, 1.0)
+        bad_inputs = [
+            ((nan, -5.0), std_xy),
+            ((0.0, inf), std_xy),
+            (target_xy, (nan, 1.0)),
+            (target_xy, (0.5, inf)),
+            (target_xy, (0.0, 1.0)),
+            (target_xy, (0.5, -1.0)),
+        ]
+        # Run test and check outputs.
+        for bad_target_xy, bad_std_xy in bad_inputs:
+            with self.subTest(target_xy=bad_target_xy, std_xy=bad_std_xy):
+                with self.assertRaises(AssertionError):
+                    racket_shot_probability_utils.compute_p_in(
+                        bad_target_xy, bad_std_xy, region
+                    )
 
 
 # #############################################################################
@@ -344,6 +396,95 @@ class Test_sample_landings(hunitest.TestCase):
         std_xy = (2.0, 3.0)
         # Run test and check outputs.
         self.helper(court, target_xy, std_xy)
+
+    def test7(self) -> None:
+        """
+        Test that a bad target, std, or `n_samples` raises an error.
+        """
+        # Prepare inputs.
+        nan, inf = float("nan"), float("inf")
+        target_xy = (0.0, -5.0)
+        std_xy = (0.5, 1.0)
+        n_samples = 10
+        bad_inputs = [
+            ((nan, -5.0), std_xy, n_samples),
+            ((inf, -5.0), std_xy, n_samples),
+            (target_xy, (nan, 1.0), n_samples),
+            (target_xy, (inf, 1.0), n_samples),
+            (target_xy, (0.0, 1.0), n_samples),
+            (target_xy, (-1.0, 1.0), n_samples),
+            (target_xy, std_xy, 0),
+            (target_xy, std_xy, -5),
+            (target_xy, std_xy, 2.5),
+        ]
+        # Run test and check outputs.
+        for bad_target_xy, bad_std_xy, bad_n_samples in bad_inputs:
+            with self.subTest(
+                target_xy=bad_target_xy, std_xy=bad_std_xy, n=bad_n_samples
+            ):
+                with self.assertRaises(AssertionError):
+                    racket_shot_probability_utils.sample_landings(
+                        bad_target_xy,
+                        bad_std_xy,
+                        bad_n_samples,
+                        np.random.default_rng(1),
+                    )
+
+
+# #############################################################################
+# Test__round_slider_value
+# #############################################################################
+
+
+class Test__round_slider_value(hunitest.TestCase):
+    """
+    Test `racket_shot_probability_utils._round_slider_value()`.
+    """
+
+    def helper(self, value: float, expected: str) -> None:
+        """
+        Test helper for `_round_slider_value()`.
+
+        :param value: slider value
+        :param expected: expected rounded value, as printed by `str()`
+        """
+        # Run test.
+        actual = str(racket_shot_probability_utils._round_slider_value(value))
+        # Check outputs.
+        self.assert_equal(actual, expected)
+
+    def test1(self) -> None:
+        """
+        Test that the drift of 21 `+` clicks from -2.1 rounds to 0.
+        """
+        # Prepare inputs.
+        value = 6.38378239159465e-16
+        # Prepare outputs.
+        expected = "0.0"
+        # Run test and check outputs.
+        self.helper(value, expected)
+
+    def test2(self) -> None:
+        """
+        Test that -0.0 becomes 0.0, so it does not print as "-0.00".
+        """
+        # Prepare inputs.
+        value = -0.0
+        # Prepare outputs.
+        expected = "0.0"
+        # Run test and check outputs.
+        self.helper(value, expected)
+
+    def test3(self) -> None:
+        """
+        Test that a drifted ordinary value rounds back to its slider step.
+        """
+        # Prepare inputs.
+        value = 4.1000000000000005
+        # Prepare outputs.
+        expected = "4.1"
+        # Run test and check outputs.
+        self.helper(value, expected)
 
 
 # #############################################################################
@@ -568,6 +709,8 @@ class Test_cell1_1_plot_shot_widget(hunitest.TestCase):
           in the deuce box: yes"""
         # Run test.
         widget, texts = self._build_and_record(sport)
+        # Each slider box is `[slider, -, text, +]`: index 0 is the slider and
+        # index 3 the `+` button.
         x1_slider = widget.children[0].children[0]
         plus_button = widget.children[0].children[3]
         # From -2.1, 21 clicks of 0.1 drift to 6.4e-16 instead of exactly 0.

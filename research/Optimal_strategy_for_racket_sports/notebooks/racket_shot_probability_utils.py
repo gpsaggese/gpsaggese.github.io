@@ -11,6 +11,7 @@ Import as:
 import research.Optimal_strategy_for_racket_sports.notebooks.racket_shot_probability_utils as rosfrsnrspu
 """
 
+import dataclasses
 import logging
 from typing import Any, Optional, Tuple
 
@@ -61,6 +62,16 @@ def get_striker_half_region(
         `W` is the court width and `L` is the court length
     """
     _LOG.debug(hprint.to_str("court"))
+    # `CourtGeometry` rejects sizes that are not positive, but accepts `inf`,
+    # which would give an infinite half court.
+    hdbg.dassert(
+        np.isfinite(court.width_m) and np.isfinite(court.length_m),
+        "Court width_m=%s and length_m=%s must be finite",
+        court.width_m,
+        court.length_m,
+    )
+    hdbg.dassert_lt(0, court.width_m, "Court width must be positive")
+    hdbg.dassert_lt(0, court.length_m, "Court length must be positive")
     # Mirror of `racket_params.get_half_court_region()` across the net (y = 0).
     region = racket_params.CourtRegion(
         x_min=-court.width_m / 2,
@@ -70,6 +81,30 @@ def get_striker_half_region(
     )
     _LOG.debug("return=%s", region)
     return region
+
+
+def _dassert_target_and_std(
+    target_xy: Tuple[float, float], std_xy: Tuple[float, float]
+) -> None:
+    """
+    Check that the target and the stds are finite, and the stds positive.
+
+    `scipy` and `numpy` do not raise on these values, they return a wrong
+    number instead:
+    - A `nan` target gives a `nan` probability and `nan` samples
+    - An `inf` target or std gives a probability of 0 and `inf` samples
+    - A std of 0 gives NaN in `scipy` and the target every time in `numpy`
+
+    :param target_xy: aim point `(x2, y2)` in meters
+    :param std_xy: standard deviations `(std_x2, std_y2)` in meters
+    """
+    _LOG.debug(hprint.to_str("target_xy std_xy"))
+    hdbg.dassert(
+        np.all(np.isfinite(target_xy)), "target_xy=%s must be finite", target_xy
+    )
+    hdbg.dassert(np.all(np.isfinite(std_xy)), "std_xy=%s must be finite", std_xy)
+    hdbg.dassert_lt(0, std_xy[0], "std_x2 must be positive")
+    hdbg.dassert_lt(0, std_xy[1], "std_y2 must be positive")
 
 
 def compute_p_in(
@@ -97,11 +132,9 @@ def compute_p_in(
         of `region` with a small std
     """
     _LOG.debug(hprint.to_str("target_xy std_xy region"))
+    _dassert_target_and_std(target_xy, std_xy)
     x2, y2 = target_xy
     std_x2, std_y2 = std_xy
-    # `scipy` returns NaN instead of raising for a std that is not positive.
-    hdbg.dassert_lt(0, std_x2, "std_x2 must be positive")
-    hdbg.dassert_lt(0, std_y2, "std_y2 must be positive")
     # Probability that `X` lands between `x_min` and `x_max`.
     cdf_x_max = scipy.stats.norm.cdf(region.x_max, loc=x2, scale=std_x2)
     cdf_x_min = scipy.stats.norm.cdf(region.x_min, loc=x2, scale=std_x2)
@@ -136,19 +169,21 @@ def sample_landings(
 
     :param target_xy: aim point `(x2, y2)` in meters
     :param std_xy: standard deviations `(std_x2, std_y2)` in meters
-    :param n_samples: number of landing points to draw
+    :param n_samples: number of landing points to draw, a positive integer
     :param rng: random generator to draw from, passed in explicitly so that the
         same seed gives the same points, e.g., `np.random.default_rng(1)`
     :return: arrays `(x, y)` of landing coordinates, each of shape
         `(n_samples,)`
     """
     _LOG.debug(hprint.to_str("target_xy std_xy n_samples"))
+    _dassert_target_and_std(target_xy, std_xy)
+    # `numpy` silently returns empty arrays for 0 samples.
+    hdbg.dassert_isinstance(
+        n_samples, (int, np.integer), "n_samples must be an integer"
+    )
+    hdbg.dassert_lt(0, n_samples, "n_samples must be positive")
     x2, y2 = target_xy
     std_x2, std_y2 = std_xy
-    # Same check as `compute_p_in()`: `rng.normal()` silently returns the target
-    # every time for a std of 0.
-    hdbg.dassert_lt(0, std_x2, "std_x2 must be positive")
-    hdbg.dassert_lt(0, std_y2, "std_y2 must be positive")
     # Draw each coordinate on its own since `X` and `Y` are independent.
     x = rng.normal(x2, std_x2, n_samples)
     y = rng.normal(y2, std_y2, n_samples)
@@ -254,8 +289,14 @@ def _check_serve(
     _LOG.debug(hprint.to_str("x1 y1 court"))
     serve_side = "deuce" if x1 <= 0 else "ad"
     box = racket_params.get_service_box_region(court, serve_side)
+    # Cap the box at the baseline: the pickleball preset's service line
+    # (6.71 m) is 5 mm past its baseline (13.41 / 2 = 6.705 m), so without the
+    # cap a serve just past the baseline would count as in.
+    # `racket_params.py` is left as is; the issue is raised with GP.
+    box = dataclasses.replace(box, y_max=min(box.y_max, court.length_m / 2))
     in_box = bool(box.contains(np.array([x1]), np.array([y1]))[0])
-    # For tennis the kitchen line is the net (0 m), so this never bites there.
+    # For tennis the kitchen distance is 0 (the net), so this only rejects a
+    # serve on the net line (`y1 = 0`), which the `y1` slider cannot reach.
     is_serve_in = in_box and y1 > court.non_volley_zone_m
     _LOG.debug("return=%s", (serve_side, box, is_serve_in))
     return serve_side, box, is_serve_in
@@ -301,7 +342,8 @@ def _draw_samples(
     ax.scatter(x[is_in], y[is_in], s=4, c="tab:green", alpha=0.4, label="in")
     ax.scatter(x[~is_in], y[~is_in], s=4, c="tab:red", alpha=0.4, label="out")
     # View: the court plus 1 m, widened to include every dot, so the cloud is
-    # not cut off for targets and stds at the slider limits.
+    # not cut off for targets and stds at the slider limits. The extra 0.5 m
+    # keeps the outermost dots off the frame of the plot.
     half_width = court.width_m / 2
     half_length = court.length_m / 2
     ax.set_xlim(
@@ -339,6 +381,8 @@ def _draw_sigma_ellipses(
             edgecolor="black",
             linestyle=linestyle,
             label=f"{k} sigma",
+            # Above the dots (`zorder` 1) and the lines and markers (`zorder`
+            # 2), so the ellipses stay visible in a dense cloud.
             zorder=3,
         )
         ax.add_patch(ellipse)
@@ -447,8 +491,10 @@ def cell1_1_plot_shot_widget(
     # Enough Monte Carlo points for a standard error of at most 0.016, few
     # enough to keep the scatter readable.
     n_samples = 1000
-    # Serve sliders: `(x1, y1)` on player 2's side (`y1 > 0`), starting in the
-    # middle of the deuce service box.
+    # Serve sliders: `(x1, y1)` on player 2's side, starting in the middle of
+    # the deuce service box. `x1` spans the singles court from sideline to
+    # sideline; `y1` goes from 0.1 m past the net (never on the net line) to
+    # the baseline.
     x1_init = round(-half_width / 2, 1)
     x1_slider, x1_box = htutori.build_widget_control(
         "x1", "serve x", -half_width, half_width, 0.1, x1_init
@@ -458,7 +504,8 @@ def cell1_1_plot_shot_widget(
         "y1", "serve y", 0.1, half_length, 0.1, y1_init
     )
     # Return sliders: `(x2, y2)` on player 1's side (`y2 <= 0`), up to 2 m
-    # outside the lines, starting 1.5 m inside the baseline.
+    # outside the sidelines and the baseline, so out shots can be explored,
+    # starting 1.5 m inside the baseline.
     x2_init = round(half_width / 2, 1)
     x2_slider, x2_box = htutori.build_widget_control(
         "x2", "return x", -half_width - 2, half_width + 2, 0.1, x2_init
@@ -467,14 +514,16 @@ def cell1_1_plot_shot_widget(
     y2_slider, y2_box = htutori.build_widget_control(
         "y2", "return y", -half_length - 2, 0.0, 0.1, y2_init
     )
-    # Spread of the return: a std must be strictly positive.
+    # Spread of the return: a std must be strictly positive. From 0.1 m (a
+    # very precise player) to 3 m (a wild shot, wider than a service box).
     std_x2_slider, std_x2_box = htutori.build_widget_control(
         "std_x2", "return std x", 0.1, 3.0, 0.1, 0.5
     )
     std_y2_slider, std_y2_box = htutori.build_widget_control(
         "std_y2", "return std y", 0.1, 3.0, 0.1, 1.0
     )
-    # Seed of the Monte Carlo samples, placed last as the notebook rules ask.
+    # Seed of the Monte Carlo samples, placed last as the notebook rules ask;
+    # 101 seeds are plenty to see the sampling noise.
     seed_slider, seed_box = htutori.build_widget_control(
         "seed", "random seed", 0, 100, 1, 1, is_float=False
     )
@@ -512,7 +561,9 @@ def cell1_1_plot_shot_widget(
             is_in = region.contains(x, y)
             p_hat = is_in.mean()
             # Panel 1: the court, the target box, the dots, the ellipses, and
-            # the two shots, in this order so the shots are drawn on top.
+            # the two shots. Within the same `zorder` later artists are drawn
+            # on top, so the arrows (`zorder` 3) end up above the ellipses
+            # (`zorder` 3); the player markers (`zorder` 2) stay below them.
             fig, (ax_court, ax_text) = plt.subplots(1, 2, figsize=figsize)
             racket_strategy_utils.draw_court(ax_court, court)
             _draw_center_service_line(ax_court, court)
