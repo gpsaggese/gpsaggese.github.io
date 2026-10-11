@@ -2,8 +2,10 @@
 
 - Goal: from zero to running the gateway and its tests in about an hour, then
   picking a first task
-- Read next: `how_we_work.md` (process), `glossary.md` (terms),
-  `gateway.README.md` (design)
+- Read next:
+  - `how_we_work.md` (process)
+  - `glossary.md` (terms)
+  - `gateway.README.md` (design)
 
 ## 1. What Noesis Is (5 Minutes)
 
