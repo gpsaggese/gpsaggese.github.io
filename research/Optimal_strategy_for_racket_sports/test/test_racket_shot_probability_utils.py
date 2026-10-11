@@ -14,7 +14,9 @@ from typing import List, Tuple
 
 import ipywidgets
 import matplotlib
+import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
+import matplotlib.text as mtext
 import numpy as np
 import pytest
 
@@ -500,6 +502,7 @@ class Test__check_serve(hunitest.TestCase):
     def helper(
         self,
         court: racket_params.CourtGeometry,
+        side: str,
         x1: float,
         y1: float,
         expected: str,
@@ -508,69 +511,266 @@ class Test__check_serve(hunitest.TestCase):
         Test helper for `_check_serve()`.
 
         :param court: court geometry of the serve
+        :param side: "deuce" or "ad", the side the server serves from
         :param x1: where the serve lands, across the court
         :param y1: where the serve lands, along the court
-        :param expected: expected `(side, is_serve_in)` as a string
+        :param expected: expected fault, "" if the serve is in
         """
         # Run test.
-        side, _, is_serve_in = racket_shot_probability_utils._check_serve(
-            x1, y1, court
+        _, actual = racket_shot_probability_utils._check_serve(
+            side, x1, y1, court
         )
-        actual = str((side, is_serve_in))
         # Check outputs.
         self.assert_equal(actual, expected)
 
     def test1(self) -> None:
         """
-        Test that a pickleball serve on the kitchen line is not in.
+        Test that a deuce serve into the diagonal box (x <= 0) is in.
+        """
+        # Prepare inputs.
+        court = racket_params.TENNIS.court
+        side = "deuce"
+        x1 = -2.0
+        y1 = 3.0
+        # Prepare outputs.
+        expected = ""
+        # Run test and check outputs.
+        self.helper(court, side, x1, y1, expected)
+
+    def test2(self) -> None:
+        """
+        Test that an ad serve into the diagonal box (x >= 0) is in.
+        """
+        # Prepare inputs.
+        court = racket_params.TENNIS.court
+        side = "ad"
+        x1 = 2.0
+        y1 = 3.0
+        # Prepare outputs.
+        expected = ""
+        # Run test and check outputs.
+        self.helper(court, side, x1, y1, expected)
+
+    def test3(self) -> None:
+        """
+        Test that a deuce serve into the same-side box (x > 0) is a fault.
+        """
+        # Prepare inputs.
+        court = racket_params.TENNIS.court
+        side = "deuce"
+        x1 = 2.0
+        y1 = 3.0
+        # Prepare outputs.
+        expected = "into the wrong box"
+        # Run test and check outputs.
+        self.helper(court, side, x1, y1, expected)
+
+    def test4(self) -> None:
+        """
+        Test that an ad serve into the same-side box (x < 0) is a fault.
+        """
+        # Prepare inputs.
+        court = racket_params.TENNIS.court
+        side = "ad"
+        x1 = -2.0
+        y1 = 3.0
+        # Prepare outputs.
+        expected = "into the wrong box"
+        # Run test and check outputs.
+        self.helper(court, side, x1, y1, expected)
+
+    def test5(self) -> None:
+        """
+        Test that a tennis serve past the service line is long.
+        """
+        # Prepare inputs.
+        court = racket_params.TENNIS.court
+        side = "deuce"
+        x1 = -2.0
+        y1 = 7.0
+        # Prepare outputs.
+        expected = "long"
+        # Run test and check outputs.
+        self.helper(court, side, x1, y1, expected)
+
+    def test6(self) -> None:
+        """
+        Test that a serve past the singles sideline is wide.
+        """
+        # Prepare inputs.
+        court = racket_params.TENNIS.court
+        side = "deuce"
+        x1 = -4.5
+        y1 = 3.0
+        # Prepare outputs.
+        expected = "wide"
+        # Run test and check outputs.
+        self.helper(court, side, x1, y1, expected)
+
+    def test7(self) -> None:
+        """
+        Test that a tennis serve on the service line and the sideline is in.
+        """
+        # Prepare inputs.
+        court = racket_params.TENNIS.court
+        side = "deuce"
+        x1 = -4.115
+        y1 = 6.4
+        # Prepare outputs.
+        expected = ""
+        # Run test and check outputs.
+        self.helper(court, side, x1, y1, expected)
+
+    def test8(self) -> None:
+        """
+        Test that a serve on the center line is in, for the deuce box.
+        """
+        # Prepare inputs.
+        court = racket_params.TENNIS.court
+        side = "deuce"
+        x1 = 0.0
+        y1 = 3.0
+        # Prepare outputs.
+        expected = ""
+        # Run test and check outputs.
+        self.helper(court, side, x1, y1, expected)
+
+    def test9(self) -> None:
+        """
+        Test that a pickleball serve short of the kitchen line is a fault.
         """
         # Prepare inputs.
         court = racket_params.PICKLEBALL.court
+        side = "deuce"
         x1 = -1.5
-        y1 = court.non_volley_zone_m
+        y1 = 1.0
         # Prepare outputs.
-        expected = "('deuce', False)"
+        expected = "in the kitchen"
         # Run test and check outputs.
-        self.helper(court, x1, y1, expected)
+        self.helper(court, side, x1, y1, expected)
 
-    def test2(self) -> None:
+    def test10(self) -> None:
+        """
+        Test that a pickleball serve on the kitchen line is a fault.
+        """
+        # Prepare inputs.
+        court = racket_params.PICKLEBALL.court
+        side = "deuce"
+        x1 = -1.5
+        y1 = 2.13
+        # Prepare outputs.
+        expected = "in the kitchen"
+        # Run test and check outputs.
+        self.helper(court, side, x1, y1, expected)
+
+    def test11(self) -> None:
         """
         Test that a pickleball serve just past the kitchen line is in.
         """
         # Prepare inputs.
         court = racket_params.PICKLEBALL.court
+        side = "deuce"
         x1 = -1.5
-        y1 = court.non_volley_zone_m + 0.01
+        y1 = 2.14
         # Prepare outputs.
-        expected = "('deuce', True)"
+        expected = ""
         # Run test and check outputs.
-        self.helper(court, x1, y1, expected)
+        self.helper(court, side, x1, y1, expected)
+
+    def test12(self) -> None:
+        """
+        Test that a pickleball serve 3 mm past the baseline is long.
+        """
+        # Prepare inputs.
+        court = racket_params.PICKLEBALL.court
+        side = "deuce"
+        x1 = -1.5
+        y1 = 6.708
+        # Prepare outputs.
+        expected = "long"
+        # Run test and check outputs.
+        self.helper(court, side, x1, y1, expected)
+
+    def test13(self) -> None:
+        """
+        Test that the deuce box is at x <= 0 on player 2's side.
+        """
+        # Prepare inputs.
+        court = racket_params.TENNIS.court
+        side = "deuce"
+        x1 = -2.0
+        y1 = 3.0
+        # Prepare outputs.
+        expected = "CourtRegion(x_min=-4.115, x_max=0, y_min=0.0, y_max=6.4)"
+        # Run test.
+        actual, _ = racket_shot_probability_utils._check_serve(
+            side, x1, y1, court
+        )
+        # Check outputs.
+        self.assert_equal(str(actual), expected)
+
+
+# #############################################################################
+# Test__get_server_xy
+# #############################################################################
+
+
+class Test__get_server_xy(hunitest.TestCase):
+    """
+    Test `racket_shot_probability_utils._get_server_xy()`.
+    """
+
+    def helper(
+        self, court: racket_params.CourtGeometry, side: str, expected: str
+    ) -> None:
+        """
+        Test helper for `_get_server_xy()`.
+
+        :param court: court geometry of the serve
+        :param side: "deuce" or "ad"
+        :param expected: expected position, with 3 decimals
+        """
+        # Run test.
+        x, y = racket_shot_probability_utils._get_server_xy(side, court)
+        actual = f"({x:.3f}, {y:.3f})"
+        # Check outputs.
+        self.assert_equal(actual, expected)
+
+    def test1(self) -> None:
+        """
+        Test the deuce stance: right of the center mark, behind the baseline.
+        """
+        # Prepare inputs.
+        court = racket_params.TENNIS.court
+        side = "deuce"
+        # Prepare outputs.
+        expected = "(0.500, -12.185)"
+        # Run test and check outputs.
+        self.helper(court, side, expected)
+
+    def test2(self) -> None:
+        """
+        Test the ad stance: left of the center mark, behind the baseline.
+        """
+        # Prepare inputs.
+        court = racket_params.TENNIS.court
+        side = "ad"
+        # Prepare outputs.
+        expected = "(-0.500, -12.185)"
+        # Run test and check outputs.
+        self.helper(court, side, expected)
 
     def test3(self) -> None:
         """
-        Test that a tennis serve on the service line is in.
+        Test the pickleball deuce stance, behind its shorter baseline.
         """
         # Prepare inputs.
-        court = racket_params.TENNIS.court
-        x1 = 1.5
-        y1 = court.service_line_m
+        court = racket_params.PICKLEBALL.court
+        side = "deuce"
         # Prepare outputs.
-        expected = "('ad', True)"
+        expected = "(0.500, -7.005)"
         # Run test and check outputs.
-        self.helper(court, x1, y1, expected)
-
-    def test4(self) -> None:
-        """
-        Test that a serve on the center line (`x1 = 0`) targets the deuce box.
-        """
-        # Prepare inputs.
-        court = racket_params.TENNIS.court
-        x1 = 0.0
-        y1 = 3.0
-        # Prepare outputs.
-        expected = "('deuce', True)"
-        # Run test and check outputs.
-        self.helper(court, x1, y1, expected)
+        self.helper(court, side, expected)
 
 
 # #############################################################################
@@ -589,8 +789,7 @@ class Test__build_comments_text(hunitest.TestCase):
         """
         # Prepare inputs.
         serve_xy = (-2.1, 3.2)
-        serve_side = "deuce"
-        is_serve_in = True
+        side = "deuce"
         target_xy = (1.0, -6.0)
         std_xy = (0.8, 1.6)
         p_in = 0.9997
@@ -612,13 +811,45 @@ class Test__build_comments_text(hunitest.TestCase):
         # Run test.
         actual = racket_shot_probability_utils._build_comments_text(
             serve_xy,
-            serve_side,
-            is_serve_in,
+            side,
             target_xy,
             std_xy,
             p_in,
             p_hat,
             n_samples,
+        )
+        # Check outputs.
+        self.assert_equal(actual, expected, dedent=True)
+
+
+# #############################################################################
+# Test__build_fault_text
+# #############################################################################
+
+
+class Test__build_fault_text(hunitest.TestCase):
+    """
+    Test `racket_shot_probability_utils._build_fault_text()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that a fault names the reason and shows no probability.
+        """
+        # Prepare inputs.
+        serve_xy = (2.0, 3.2)
+        side = "deuce"
+        fault = "into the wrong box"
+        # Prepare outputs.
+        expected = """
+        Serve to (x1, y1) = (2.00, 3.20)
+          in the deuce box: no
+
+        Fault: into the wrong box
+          No return, so no P_in and no P_hat"""
+        # Run test.
+        actual = racket_shot_probability_utils._build_fault_text(
+            serve_xy, side, fault
         )
         # Check outputs.
         self.assert_equal(actual, expected, dedent=True)
@@ -636,30 +867,52 @@ class Test_cell1_1_plot_shot_widget(hunitest.TestCase):
 
     def _build_and_record(
         self, sport: racket_params.SportParams
-    ) -> Tuple[ipywidgets.VBox, List[str]]:
+    ) -> Tuple[ipywidgets.VBox, List[str], List[str]]:
         """
-        Build the widget, recording the comments text of every redraw.
+        Build the widget, recording what every redraw shows.
 
-        For this test only, `plt.show()` is replaced by a function that saves
-        the text of the comments panel of the figure being shown.
+        For this test only, `plt.show()` is replaced by a function that saves,
+        for the figure being shown:
+        - the text of the comments panel
+        - a summary of the court: how many arrows, dot clouds and ellipses it
+          has, and its text labels (e.g., "Fault")
 
         :param sport: sport whose court the widget draws
-        :return: the widget, and the list that fills up with comments texts
+        :return: the widget, and the lists that fill up with comments texts and
+            court summaries
         """
         texts: List[str] = []
+        courts: List[str] = []
 
-        def _record_comments() -> None:
-            texts.append(plt.gcf().axes[-1].texts[-1].get_text())
+        def _record_redraw() -> None:
+            ax_court, ax_text = plt.gcf().axes[0], plt.gcf().axes[-1]
+            texts.append(ax_text.texts[-1].get_text())
+            # An arrow is an `Annotation`, which is also a text: split them.
+            arrows = [
+                t for t in ax_court.texts if isinstance(t, mtext.Annotation)
+            ]
+            labels = [
+                t.get_text()
+                for t in ax_court.texts
+                if not isinstance(t, mtext.Annotation)
+            ]
+            ellipses = [
+                p for p in ax_court.patches if isinstance(p, mpatches.Ellipse)
+            ]
+            courts.append(
+                f"arrows={len(arrows)} dots={len(ax_court.collections)} "
+                f"ellipses={len(ellipses)} labels={labels}"
+            )
 
         self.enterContext(
             umock.patch.object(
                 racket_shot_probability_utils.plt,
                 "show",
-                side_effect=_record_comments,
+                side_effect=_record_redraw,
             )
         )
         widget = racket_shot_probability_utils.cell1_1_plot_shot_widget(sport)
-        return widget, texts
+        return widget, texts, courts
 
     def helper(self, sport: racket_params.SportParams) -> None:
         """
@@ -668,8 +921,9 @@ class Test_cell1_1_plot_shot_widget(hunitest.TestCase):
         :param sport: sport whose court the widget draws
         """
         # Prepare outputs.
-        # 7 slider boxes (x1, y1, x2, y2, std_x2, std_y2, seed), then the plot.
-        expected = str(["HBox"] * 7 + ["Output"])
+        # The side toggle, 7 slider boxes (x1, y1, x2, y2, std_x2, std_y2,
+        # seed), then the plot.
+        expected = str(["ToggleButtons"] + ["HBox"] * 7 + ["Output"])
         # Run test.
         widget = racket_shot_probability_utils.cell1_1_plot_shot_widget(sport)
         actual = str([type(child).__name__ for child in widget.children])
@@ -699,7 +953,10 @@ class Test_cell1_1_plot_shot_widget(hunitest.TestCase):
     @pytest.mark.slow
     def test3(self) -> None:
         """
-        Test that clicking `+` from the default `x1` up to 0 picks the deuce box.
+        Test that clicking `+` from the default `x1` up to 0 keeps the serve in.
+
+        Without rounding, `x1` drifts to 6.4e-16, just right of the center line,
+        which is outside the deuce box and would be a false fault.
         """
         # Prepare inputs.
         sport = racket_params.TENNIS
@@ -708,16 +965,45 @@ class Test_cell1_1_plot_shot_widget(hunitest.TestCase):
         Serve to (x1, y1) = (0.00, 3.20)
           in the deuce box: yes"""
         # Run test.
-        widget, texts = self._build_and_record(sport)
-        # Each slider box is `[slider, -, text, +]`: index 0 is the slider and
-        # index 3 the `+` button.
-        x1_slider = widget.children[0].children[0]
-        plus_button = widget.children[0].children[3]
+        widget, texts, _ = self._build_and_record(sport)
+        # The controls are `[side, x1, y1, ...]`, and each slider box is
+        # `[slider, -, text, +]`: index 0 is the slider and index 3 the `+`
+        # button.
+        x1_box = widget.children[1]
+        x1_slider = x1_box.children[0]
+        plus_button = x1_box.children[3]
         # From -2.1, 21 clicks of 0.1 drift to 6.4e-16 instead of exactly 0.
         n_clicks = round(-x1_slider.value / x1_slider.step)
         for _ in range(n_clicks):
             plus_button.click()
         actual = "\n".join(texts[-1].splitlines()[:2])
+        plt.close("all")
+        # Check outputs.
+        self.assert_equal(actual, expected, dedent=True)
+
+    def test4(self) -> None:
+        """
+        Test that a fault hides the return, the ellipses, the dots and `P_in`.
+        """
+        # Prepare inputs.
+        sport = racket_params.TENNIS
+        # The default `x1` (-2.1) is in the deuce box, so an ad serve to it
+        # goes into the wrong box.
+        side = "ad"
+        # Prepare outputs.
+        # One arrow (the serve), no dots, no ellipses, and a "Fault" label.
+        expected = """
+        arrows=1 dots=0 ellipses=0 labels=['Fault']
+        Serve to (x1, y1) = (-2.10, 3.20)
+          in the ad box: no
+
+        Fault: into the wrong box
+          No return, so no P_in and no P_hat"""
+        # Run test.
+        widget, texts, courts = self._build_and_record(sport)
+        side_toggle = widget.children[0]
+        side_toggle.value = side
+        actual = courts[-1] + "\n" + texts[-1]
         plt.close("all")
         # Check outputs.
         self.assert_equal(actual, expected, dedent=True)

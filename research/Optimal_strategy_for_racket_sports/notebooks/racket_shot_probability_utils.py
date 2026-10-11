@@ -268,46 +268,89 @@ def _round_slider_value(value: float) -> float:
     return rounded
 
 
-def _check_serve(
-    x1: float, y1: float, court: racket_params.CourtGeometry
-) -> Tuple[str, racket_params.CourtRegion, bool]:
+def _get_server_xy(
+    side: str, court: racket_params.CourtGeometry
+) -> Tuple[float, float]:
     """
-    Find the target service box of a serve to `(x1, y1)`, and whether it is in.
+    Find where player 1 stands to serve from `side`.
 
-    The target box follows the sign of `x1`, as in
-    `racket_params.get_service_box_region()`: `x1 <= 0` is the deuce box. A
-    serve on the kitchen (non-volley) line is a fault, while
-    `CourtRegion.contains()` counts every line as in, so the serve must also
-    land strictly past the kitchen line.
+    The rules only ask the server to stand behind the baseline, between the
+    center mark and the sideline, on the half that matches the side (tennis
+    and pickleball alike). The numbers are a typical singles stance, not rule
+    values:
+    - 0.5 m beside the center mark, so the diagonal of the serve is visible
+    - 0.3 m behind the baseline, since the feet may not touch it
 
+    :param side: "deuce" or "ad"
+    :param court: court geometry, e.g., `racket_params.TENNIS.court`
+    :return: server position, e.g., `(0.5, -12.185)` for a tennis deuce serve
+    """
+    _LOG.debug(hprint.to_str("side court"))
+    hdbg.dassert_in(side, ("deuce", "ad"), "Invalid serve side")
+    # Player 1 faces +y, so their right-hand (deuce) half is at x > 0.
+    x = 0.5 if side == "deuce" else -0.5
+    server_xy = (x, -court.length_m / 2 - 0.3)
+    _LOG.debug("return=%s", server_xy)
+    return server_xy
+
+
+def _check_serve(
+    side: str, x1: float, y1: float, court: racket_params.CourtGeometry
+) -> Tuple[racket_params.CourtRegion, str]:
+    """
+    Find the legal service box for `side`, and why a serve to `(x1, y1)` is a
+    fault, if it is one.
+
+    Orientation, checked against `racket_params.get_service_box_region()` (the
+    PR1 spec warns that deuce and ad are easy to flip): player 2 faces -y, so
+    their right-hand (deuce) service box is at `x <= 0`. In this frame a deuce
+    server stands at `x > 0` and serves cross-court into the box at `x <= 0`
+    on player 2's side; ad is the mirror image.
+
+    The legal box is only the one diagonal from the server. Every line is in,
+    except the pickleball kitchen (non-volley) line, which is a fault.
+
+    :param side: "deuce" or "ad", the side the server serves from
     :param x1: where the serve lands, across the court, e.g., -2.1
     :param y1: where the serve lands, along the court, e.g., 3.2
     :param court: court geometry, e.g., `racket_params.PICKLEBALL.court`
-    :return: side ("deuce" or "ad"), its service box, and whether the serve is
-        in, e.g., `("deuce", CourtRegion(...), True)`
+    :return: the legal box, and the fault: "" if the serve is in, otherwise
+        "wide", "into the wrong box", "long", "in the kitchen", or "into the
+        net", e.g., `(CourtRegion(...), "long")`
     """
-    _LOG.debug(hprint.to_str("x1 y1 court"))
-    serve_side = "deuce" if x1 <= 0 else "ad"
-    box = racket_params.get_service_box_region(court, serve_side)
+    _LOG.debug(hprint.to_str("side x1 y1 court"))
+    hdbg.dassert_in(side, ("deuce", "ad"), "Invalid serve side")
+    box = racket_params.get_service_box_region(court, side)
     # Cap the box at the baseline: the pickleball preset's service line
     # (6.71 m) is 5 mm past its baseline (13.41 / 2 = 6.705 m), so without the
     # cap a serve just past the baseline would count as in.
     # `racket_params.py` is left as is; the issue is raised with GP.
     box = dataclasses.replace(box, y_max=min(box.y_max, court.length_m / 2))
-    in_box = bool(box.contains(np.array([x1]), np.array([y1]))[0])
-    # For tennis the kitchen distance is 0 (the net), so this only rejects a
-    # serve on the net line (`y1 = 0`), which the `y1` slider cannot reach.
-    is_serve_in = in_box and y1 > court.non_volley_zone_m
-    _LOG.debug("return=%s", (serve_side, box, is_serve_in))
-    return serve_side, box, is_serve_in
+    # Name one fault per serve, checking in this order.
+    if abs(x1) > court.width_m / 2:
+        fault = "wide"
+    elif not box.x_min <= x1 <= box.x_max:
+        fault = "into the wrong box"
+    elif y1 > box.y_max:
+        fault = "long"
+    elif y1 <= court.non_volley_zone_m:
+        # Pickleball: short of the kitchen line or on it. Tennis has no
+        # kitchen (0 m), so only a serve on the net line, which the `y1` slider
+        # cannot reach.
+        has_kitchen = court.non_volley_zone_m > 0
+        fault = "in the kitchen" if has_kitchen else "into the net"
+    else:
+        fault = ""
+    _LOG.debug("return=%s", (box, fault))
+    return box, fault
 
 
 def _draw_service_box(ax: Axes, box: racket_params.CourtRegion) -> None:
     """
-    Shade the target service box of the serve.
+    Shade the legal service box: the one diagonal from the server.
 
     :param ax: court axes to draw on
-    :param box: service box, from `_check_serve()`
+    :param box: legal service box, from `_check_serve()`
     """
     _LOG.debug(hprint.to_str("box"))
     box_rect = mpatches.Rectangle(
@@ -420,10 +463,49 @@ def _draw_players_and_arrows(
     ax.plot(*serve_xy, "o", color="tab:orange", label="player 2")
 
 
+def _draw_fault(
+    ax: Axes,
+    server_xy: Tuple[float, float],
+    serve_xy: Tuple[float, float],
+    court: racket_params.CourtGeometry,
+) -> None:
+    """
+    Draw a serve that is a fault: the serve arrow, a red cross where it lands,
+    and a red "Fault" label on player 2's half.
+
+    :param ax: court axes to draw on
+    :param server_xy: where player 1 serves from
+    :param serve_xy: where the serve lands, `(x1, y1)`
+    :param court: court geometry, to place the label in player 2's half
+    """
+    _LOG.debug(hprint.to_str("server_xy serve_xy"))
+    # An annotation with empty text is just an arrow, from `xytext` to `xy`.
+    ax.annotate(
+        "",
+        xy=serve_xy,
+        xytext=server_xy,
+        arrowprops={"arrowstyle": "->", "color": "tab:blue"},
+    )
+    ax.plot(*server_xy, "o", color="tab:blue", label="player 1")
+    ax.plot(*serve_xy, "x", color="tab:red", markersize=10, mew=2, label="fault")
+    # Label in the middle of player 2's half, on a white box so it reads over
+    # the court lines.
+    ax.text(
+        0.0,
+        court.length_m / 4,
+        "Fault",
+        color="tab:red",
+        fontsize=20,
+        fontweight="bold",
+        ha="center",
+        va="center",
+        bbox={"facecolor": "white", "edgecolor": "tab:red"},
+    )
+
+
 def _build_comments_text(
     serve_xy: Tuple[float, float],
-    serve_side: str,
-    is_serve_in: bool,
+    side: str,
     target_xy: Tuple[float, float],
     std_xy: Tuple[float, float],
     p_in: float,
@@ -431,11 +513,10 @@ def _build_comments_text(
     n_samples: int,
 ) -> str:
     """
-    Build the text of the comments panel from the current state.
+    Build the text of the comments panel for a serve that is in.
 
     :param serve_xy: where the serve lands, `(x1, y1)`
-    :param serve_side: "deuce" or "ad", from `_check_serve()`
-    :param is_serve_in: whether the serve lands in its service box
+    :param side: "deuce" or "ad", the side the server serves from
     :param target_xy: aim point of the return, `(x2, y2)`
     :param std_xy: standard deviations `(std_x2, std_y2)`
     :param p_in: closed-form probability that the return is in
@@ -444,20 +525,41 @@ def _build_comments_text(
     :return: multi-line text, e.g., starting with
         "Serve to (x1, y1) = (-2.10, 3.20)"
     """
-    _LOG.debug(hprint.to_str("serve_xy serve_side is_serve_in p_in p_hat"))
+    _LOG.debug(hprint.to_str("serve_xy side p_in p_hat"))
     # Standard error of `P_hat` from the true probability `P_in`, not from
     # `P_hat` itself: `sqrt(P_hat * (1 - P_hat) / N)` is 0 when all dots land
     # on one side, which would claim no uncertainty at all.
     p_hat_se = np.sqrt(p_in * (1 - p_in) / n_samples)
-    serve_in_str = "yes" if is_serve_in else "no"
     text = (
         f"Serve to (x1, y1) = ({serve_xy[0]:.2f}, {serve_xy[1]:.2f})\n"
-        f"  in the {serve_side} box: {serve_in_str}\n\n"
+        f"  in the {side} box: yes\n\n"
         f"Return to (x2, y2) = ({target_xy[0]:.2f}, {target_xy[1]:.2f})\n"
         f"  (std_x2, std_y2) = ({std_xy[0]:.2f}, {std_xy[1]:.2f})\n\n"
         f"P_in (closed form) = {p_in:.4f}\n"
         f"P_hat (Monte Carlo, N = {n_samples}) = {p_hat:.4f}\n"
         f"  standard error = {p_hat_se:.4f}"
+    )
+    _LOG.debug("return=%s", text)
+    return text
+
+
+def _build_fault_text(
+    serve_xy: Tuple[float, float], side: str, fault: str
+) -> str:
+    """
+    Build the text of the comments panel for a serve that is a fault.
+
+    :param serve_xy: where the serve lands, `(x1, y1)`
+    :param side: "deuce" or "ad", the side the server serves from
+    :param fault: why the serve is a fault, from `_check_serve()`, e.g., "long"
+    :return: multi-line text, e.g., ending with "Fault: long"
+    """
+    _LOG.debug(hprint.to_str("serve_xy side fault"))
+    text = (
+        f"Serve to (x1, y1) = ({serve_xy[0]:.2f}, {serve_xy[1]:.2f})\n"
+        f"  in the {side} box: no\n\n"
+        f"Fault: {fault}\n"
+        f"  No return, so no P_in and no P_hat"
     )
     _LOG.debug("return=%s", text)
     return text
@@ -471,18 +573,21 @@ def cell1_1_plot_shot_widget(
     """
     Build the serve and return widget for `sport` and display it.
 
-    Player 1 serves from beside the center mark to `(x1, y1)`. Player 2 moves
-    there and aims a return at `(x2, y2)` with Gaussian spread
-    `(std_x2, std_y2)`. Every slider change redraws a 1 x 2 figure:
-    - Court: both shots, the 1 and 2 sigma ellipses of the return, and Monte
-      Carlo landing points colored by in or out
-    - Comments: closed-form `P_in`, the Monte Carlo estimate with its standard
-      error, whether the serve lands in the diagonal service box, and the
-      legend of the court
+    Player 1 serves from the chosen side (deuce or ad), behind the baseline
+    beside the center mark, to `(x1, y1)`. The serve is in only if it lands in
+    the service box diagonal from the server. If it is in, player 2 moves to
+    `(x1, y1)` and aims a return at `(x2, y2)` with Gaussian spread
+    `(std_x2, std_y2)`. Every control change redraws a 1 x 2 figure:
+    - Court: the serve, and for a serve that is in, the return, the 1 and 2
+      sigma ellipses, and Monte Carlo landing points colored by in or out; for
+      a fault, a red cross and a "Fault" label instead
+    - Comments: whether the serve is in; for a serve that is in, the
+      closed-form `P_in` and the Monte Carlo estimate with its standard error;
+      and the legend of the court
 
     :param sport: sport whose court is drawn, e.g., `racket_params.TENNIS`
     :param figsize: figure size (width, height) in inches
-    :return: the displayed widget: the sliders, then the plot output
+    :return: the displayed widget: the controls, then the plot output
     """
     _LOG.debug(hprint.to_str("sport"))
     court = sport.court
@@ -491,10 +596,15 @@ def cell1_1_plot_shot_widget(
     # Enough Monte Carlo points for a standard error of at most 0.016, few
     # enough to keep the scatter readable.
     n_samples = 1000
-    # Serve sliders: `(x1, y1)` on player 2's side, starting in the middle of
-    # the deuce service box. `x1` spans the singles court from sideline to
-    # sideline; `y1` goes from 0.1 m past the net (never on the net line) to
-    # the baseline.
+    # Side of the serve: it decides where the server stands and which box is
+    # legal.
+    side_toggle = ipywidgets.ToggleButtons(
+        options=["deuce", "ad"], value="deuce", description="side"
+    )
+    # Serve sliders: `(x1, y1)` anywhere on player 2's half, so faults are
+    # possible, starting in the middle of the deuce service box. `x1` spans the
+    # singles court from sideline to sideline; `y1` goes from 0.1 m past the
+    # net (never on the net line) to the baseline.
     x1_init = round(-half_width / 2, 1)
     x1_slider, x1_box = htutori.build_widget_control(
         "x1", "serve x", -half_width, half_width, 0.1, x1_init
@@ -531,7 +641,7 @@ def cell1_1_plot_shot_widget(
 
     def update_plot(change: Optional[Any] = None) -> None:
         """
-        Redraw both panels from the current slider values.
+        Redraw both panels from the current control values.
 
         :param change: change event sent by `observe()` (unused)
         """
@@ -539,6 +649,7 @@ def cell1_1_plot_shot_widget(
         with output:
             clear_output(wait=True)
             # Read the slider values, rounded before any logic uses them.
+            side = side_toggle.value
             x1 = _round_slider_value(x1_slider.value)
             y1 = _round_slider_value(y1_slider.value)
             x2 = _round_slider_value(x2_slider.value)
@@ -547,44 +658,41 @@ def cell1_1_plot_shot_widget(
                 _round_slider_value(std_x2_slider.value),
                 _round_slider_value(std_y2_slider.value),
             )
-            serve_side, box, is_serve_in = _check_serve(x1, y1, court)
-            # Player 1 stands on the baseline just beside the center mark, on
-            # the side diagonal to the target box. The 0.5 m offset is a
-            # typical stance, not a rule value: it keeps the server off the
-            # center line so the diagonal is visible.
-            server_xy = (0.5 if serve_side == "deuce" else -0.5, -half_length)
-            # Closed form and Monte Carlo estimate on player 1's half.
-            region = get_striker_half_region(court)
-            p_in = compute_p_in((x2, y2), std_xy, region)
-            rng = np.random.default_rng(seed_slider.value)
-            x, y = sample_landings((x2, y2), std_xy, n_samples, rng)
-            is_in = region.contains(x, y)
-            p_hat = is_in.mean()
-            # Panel 1: the court, the target box, the dots, the ellipses, and
-            # the two shots. Within the same `zorder` later artists are drawn
-            # on top, so the arrows (`zorder` 3) end up above the ellipses
-            # (`zorder` 3); the player markers (`zorder` 2) stay below them.
+            # The side, not `x1`, decides the stance and the legal box.
+            server_xy = _get_server_xy(side, court)
+            box, fault = _check_serve(side, x1, y1, court)
+            # Panel 1: the court and the legal box, shaded.
             fig, (ax_court, ax_text) = plt.subplots(1, 2, figsize=figsize)
             racket_strategy_utils.draw_court(ax_court, court)
             _draw_center_service_line(ax_court, court)
             _draw_service_box(ax_court, box)
-            _draw_samples(ax_court, x, y, is_in, court)
-            _draw_sigma_ellipses(ax_court, (x2, y2), std_xy)
-            _draw_players_and_arrows(ax_court, server_xy, (x1, y1), (x2, y2))
+            if fault:
+                # A fault ends the point: no return, so no dots, no ellipses,
+                # and no probability.
+                _draw_fault(ax_court, server_xy, (x1, y1), court)
+                text = _build_fault_text((x1, y1), side, fault)
+            else:
+                # Closed form and Monte Carlo estimate on player 1's half.
+                region = get_striker_half_region(court)
+                p_in = compute_p_in((x2, y2), std_xy, region)
+                rng = np.random.default_rng(seed_slider.value)
+                x, y = sample_landings((x2, y2), std_xy, n_samples, rng)
+                is_in = region.contains(x, y)
+                p_hat = is_in.mean()
+                # The dots, the ellipses, and the two shots. Within the same
+                # `zorder` later artists are drawn on top, so the arrows
+                # (`zorder` 3) end up above the ellipses (`zorder` 3); the
+                # player markers (`zorder` 2) stay below them.
+                _draw_samples(ax_court, x, y, is_in, court)
+                _draw_sigma_ellipses(ax_court, (x2, y2), std_xy)
+                _draw_players_and_arrows(ax_court, server_xy, (x1, y1), (x2, y2))
+                text = _build_comments_text(
+                    (x1, y1), side, (x2, y2), std_xy, p_in, p_hat, n_samples
+                )
             ax_court.set_title(sport.name)
             # Panel 2: comments with the current state only.
             ax_text.axis("off")
             ax_text.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
-            text = _build_comments_text(
-                (x1, y1),
-                serve_side,
-                is_serve_in,
-                (x2, y2),
-                std_xy,
-                p_in,
-                p_hat,
-                n_samples,
-            )
             htutori.add_fitted_text_box(
                 ax_text, text, max_fontsize=13, min_fontsize=9
             )
@@ -598,8 +706,9 @@ def cell1_1_plot_shot_widget(
             # on rerun, so close it once shown.
             plt.close(fig)
 
-    # Redraw on every slider change: no Run button.
-    sliders = [
+    # Redraw on every control change: no Run button.
+    controls = [
+        side_toggle,
         x1_slider,
         y1_slider,
         x2_slider,
@@ -608,12 +717,12 @@ def cell1_1_plot_shot_widget(
         std_y2_slider,
         seed_slider,
     ]
-    for slider in sliders:
-        slider.observe(update_plot, names="value")
+    for control in controls:
+        control.observe(update_plot, names="value")
     # Draw once now, so the cell has output even without interaction.
     update_plot()
-    # Sliders on top, the plot below.
+    # Controls on top, the plot below.
     boxes = [x1_box, y1_box, x2_box, y2_box, std_x2_box, std_y2_box, seed_box]
-    widget = ipywidgets.VBox(boxes + [output])
+    widget = ipywidgets.VBox([side_toggle] + boxes + [output])
     display(widget)
     return widget
