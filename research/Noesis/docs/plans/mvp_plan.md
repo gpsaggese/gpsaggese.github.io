@@ -3,7 +3,10 @@
 <!-- Public, technical version. Keep business/funding/IP material out of this repo. -->
 
 - **Date**: 2026-09-29
-- **Spec**: `mvp_prd.md` (v0.2)
+- **Canonical roadmap**: `plan.Noesis.md`
+- **Purpose**: detailed implementation tracker and acceptance criteria for the
+  canonical component PRs
+- **Spec**: `../specs/mvp_prd.md` (v0.2)
 - **Target**: recorded demo that meets all PRD §8 success criteria by **Fri 2026-12-11**
   (~11 weeks, three people part-time)
 - **Owners (proposed, PRD D11)**:
@@ -42,7 +45,7 @@ Live status and history: `mvp_progress.md`.
 |---|---|---|---|---|---|
 | M0 | Setup + facts | Tue 9/29 – Fri 10/9 | J+G+L | GP's tests pass locally and in CI with no `helpers` monorepo. OpenRouter spike confirms ≥ 3 pinnable providers for the model. Schema frozen. Decisions signed | ✅ 9/30 (GP email pending) |
 | M1 | Real server | Mon 10/12 – Fri 10/30 | J (+L: T1.5, T2.1 starts) | Unmodified `openai` Python SDK → our gateway → 3 pinned providers. Every log row has `contract_id` + verified `actual_provider` | ✅ 10/4 (spend cap deferred) |
-| M2 | Checker | Mon 11/2 – Fri 11/20 | J + L | Calibrated canary set ≥ 150. Offline replay: injected slowdown and model swap flagged, healthy traffic not flagged, rates within ±5 pts of `detection_math.py` | ⬜ next |
+| M2 | Checker | Mon 11/2 – Fri 11/20 | J + L | Calibrated canary set ≥ 150. Offline replay: injected slowdown and model swap flagged, healthy traffic not flagged, rates within ±5 pts of `detection_math.py` | 🟨 foundation merged 10/11; runtime and data remain |
 | M3 | Loop closed (parallel with M1–M2) | Mon 10/12 – Fri 11/20 | G | With fake gateway: auction on timer, filter works, contracts go ACTIVE→verdict, a failing seller is blocked, cooled down, put on probation, reinstated | ⬜ |
 | M4 | Integrated demo | Mon 11/23 – Fri 12/11 | J+G+L | PRD §8 criteria 1–8 in one recorded 60-min run | ⬜ |
 
@@ -83,10 +86,10 @@ Every task: branch → PR → tests green in CI → one reviewer (another teamma
 
 | ID | Task | Acceptance | GP-PR |
 |---|---|---|---|
-| T2.1 | Canary bank ≥ 300 (`data/canaries/*.jsonl`) + normalizers + exact-match grader | Grader unit tests incl. number formats ("1,000" = "1000") | PR_S11 (simplified) |
-| T2.2 | **Calibration run**: each canary 3× per healthy provider + 3× on the 8B model. Keep healthy=100%, weak ≤ 60%. Also measure latency p95 per provider → set `l_max` | `docs/findings/calibration.md`: survivors ≥ 150, weak-model accuracy on survivors, per-provider p95, cost | PR_S11 |
+| T2.1 | 🟨 PR #604: canary-bank validation, secret balanced selection, normalizers, and exact-match grader; production bank ≥ 300 (`data/canaries/*.jsonl`) remains | Grader unit tests incl. number formats ("1,000" = "1000"); bank has ≥ 300 records | PR_S11 (simplified) |
+| T2.2 | 🟨 PR #604 added the calibration persistence schema. Run each canary 3× per healthy provider + 3× on the 8B model. Keep healthy=100%, weak ≤ 60%. Also measure latency p95 per provider → set `l_max` | `docs/findings/calibration.md`: survivors ≥ 150, weak-model accuracy on survivors, per-provider p95, cost | PR_S11 |
 | T2.3 | Prober: for each ACTIVE contract, send `canaries_per_contract` canaries spread over the window, marked `is_canary` server-side only | Integration test with fake provider | new |
-| T2.4 | Metering: close windows (n_tasks served or 60 s), compute `r_lat`, `q`, Wilson/Clopper–Pearson upper bounds, verdict + reason, INSUFFICIENT rule | Unit tests reproduce `scripts/detection_math.py` cases. Property test: never FAILED when all requests pass | PR_S4, PR_S6 (corrected) |
+| T2.4 | 🟨 PR #604: immutable evidence, seller-attribution rules, separate `r_lat`/`q` upper bounds, verdicts, and atomic persistence. Window-closing orchestration (n_tasks served or 60 s) remains | Unit tests reproduce `scripts/detection_math.py` cases. Property test: never FAILED when all requests pass | PR_S4, PR_S6 (corrected) |
 | T2.5 | `VerdictSink` interface → reputation (in-process) | Contract test shared with T3.4 | PR_S4 |
 | T2.6 | **Offline replay harness**: generate synthetic request streams (healthy / slowed / weak-model at measured accuracies), run metering, report flag rates | Rates within ±5 pts of analytic numbers over 1,000 simulated contracts | new |
 

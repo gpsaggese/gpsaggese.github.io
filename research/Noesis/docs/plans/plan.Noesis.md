@@ -6,6 +6,15 @@
 - The \Noesis{} protocol overview is in `papers/Noesis/*.tex`
 - The architecture document `research/Noesis/docs/architecture.md`
 
+## Plan hierarchy
+
+- This file is the canonical Noesis roadmap and defines the component-level PRs.
+- `mvp_plan.md` decomposes those PRs into smaller implementation tasks and
+  acceptance criteria.
+- `mvp_progress.md` records the current implementation status.
+- A checked PR is complete. An unchecked PR may be either not started or partially
+  implemented; partial status is stated in that PR's section below.
+
 ## Roadmap
 
 - **v0.1**: NoesisMarket accepting inputing requests from suppliers and demands of
@@ -15,7 +24,7 @@
   - [ ] `PR_P2`
 - **v0.2**: Create an adapter from OpenRouter to the API as demand to provide
   capacity
-  - [ ] `PR_S7`
+  - [x] `PR_S7`
   - [ ] `PR_S9`
 - **v0.3**: Every 10 seconds an auction is run and an allocation is available
   - [ ] `PR_M7`
@@ -340,19 +349,30 @@
 
 ### `PR_S4`: [ ] Fulfillment Monitoring Wired to the Market (stubbed Both Sides)
 
+- Status (2026-10-12): partially implemented. PR #597 added contract binding,
+  request logging, and provider attribution. PR #604 added seller-attributable
+  evidence, separate latency/quality assessments, verdicts, and persistence. The
+  prober, window-closing worker, and market-facing `VerdictSink` remain open.
 - Background: `papers/Noesis/05_noesis_server.tex` sec:fulfillment_monitoring
   Equation~eq:success_indicator defines per-request success as the conjunction
   `capability_ok(x) and latency_ok(x)`, and `measured_reliability`
   (Definition~measured_reliability) is the mean of that joint indicator over the
-  fulfillment window, not two independently thresholded metrics
+  fulfillment window
 - Background: the storage schema needs the `contract` field from
   sec:gateway_architecture (`PR_S1` shipped without it); add it, nullable for
   pre-market traffic, so requests can be grouped by `kappa`
-- Compute a per-request success indicator
-  `s(x) = capability_ok(x) and latency_ok(x)`, then
-  `measured_reliability = mean(s(x) for x in window)`, and flag a violation when
-  `measured_reliability < R_min`; `capability_ok` depends on `NoesisServer` `PR_S11`
-  below and is stubbed here if `PR_S11` has not landed yet
+- MVP specialization: assess latency reliability and deterministic canary quality
+  separately. Combining them hides sparse quality failures inside a larger volume
+  of normal buyer traffic.
+  - Buyer requests provide latency evidence; canary latency is excluded by default
+    because short synthetic prompts would bias buyer-experienced latency.
+  - Deterministic canaries provide quality evidence through `PR_S11`.
+  - Seller timeouts and upstream errors count as failures. Buyer errors, gateway
+    errors, spend-cap refusals, and attribution mismatches are excluded.
+  - Either sufficiently sampled metric can fail the contract. Passing requires
+    sufficient evidence for both metrics; otherwise the verdict is `INSUFFICIENT`.
+  - Checker/configuration failures produce `INSUFFICIENT` and never penalize the
+    seller.
 - Report violations via a **mocked** market-facing interface, matching the mock
   fulfillment interface on the `NoesisMarket` side (its `PR_M2`): real integration
   is deferred until both plans reach this point together
@@ -384,24 +404,27 @@
 
 ### `PR_S6`: [ ] Statistical Fulfillment Violation Test
 
+- Status (2026-10-12): the pure statistical and verdict logic landed in PR #604.
+  Runtime window orchestration and offline replay validation remain open.
 - Background: `papers/Noesis/05_noesis_server.tex`'s fulfillment monitoring section
   notes that `PR_S4`'s naive rule, flagging $\kappa$ whenever
   `measured_reliability < R_min`, conflates genuine under-delivery with sampling
   noise on a small fulfillment window; the paper proposes a one-sided hypothesis test
   instead
-- Replace `PR_S4`'s threshold with a normal-approximation lower confidence bound
-  $\hat r_{\text{lower}}(\kappa, W)$, computed from `measured_reliability` and the
-  window size `|W|` at a configurable confidence level $1 - \delta$; flag $\kappa$
-  only when $\hat r_{\text{lower}}(\kappa, W) < R_{\min}(\kappa)$; fall back to an
-  exact Clopper-Pearson interval when `|W|` is small
-- Unit tests: a contract with a small window and a borderline sample reliability is
-  NOT flagged when the confidence interval still clears `R_min` (a case that
-  `PR_S4`'s naive rule would have flagged as a false positive); a contract with a
-  large window and the same sample reliability IS flagged
+- Use a one-sided **upper** confidence bound for each of `PR_S4`'s latency and
+  quality rates. Flag a metric only when even its optimistic upper bound is below
+  the promised rate. Use an exact Clopper-Pearson upper bound for fewer than 10
+  observations and Wilson otherwise.
+- Unit tests: small or borderline samples are not failed while their upper bound
+  still reaches the promise; clear under-delivery with enough evidence is failed;
+  all-success evidence is never failed.
 - Result: fewer false-positive violation reports feeding `NoesisMarket` `PR_M3`'s
   reputation update, addressing the "attribution reliability" open question below
 
-### `PR_S7`: [ ] Real Provider Liquidity Via an OpenRouter-backed `ProviderConfig`
+### `PR_S7`: [x] Real Provider Liquidity Via an OpenRouter-backed `ProviderConfig`
+
+- Implemented by PR #597. The gateway pins an OpenRouter provider, disables
+  fallbacks, verifies the served provider, and records usage, cost, and latency.
 
 - Background: `05_noesis_server.tex` models `NoesisServer` "on multi-provider routers
   such as OpenRouter" precisely because a router like OpenRouter already pools dozens
@@ -423,6 +446,10 @@
 
 ### `PR_S8`: [ ] OpenRouter-compatible API Interface for `NoesisServer`
 
+- Status (2026-10-12): partially implemented by PR #597. The gateway supports
+  non-streaming `/v1/chat/completions`, `/v1/models`, Bearer authentication, and an
+  unmodified OpenAI Python SDK client. Exact `/api/v1` route, streaming, and error
+  parity remain open before this can be called a complete OpenRouter replacement.
 - Background:
   - `NoesisPlatform` `PR_P1` sketches a bespoke HTTP wrapper around `Gateway.call()`
     without specifying its wire format
@@ -494,6 +521,10 @@
 
 ### `PR_S11`: [ ] Capability-measurement Estimator (hat-c(x))
 
+- Status (2026-10-12): PR #604 established the deterministic benchmark-probe
+  implementation: versioned normalizers, exact-match grading, bank validation, and
+  secret balanced selection. The production canary bank, live-provider calibration,
+  and scheduled probing remain open.
 - Background: `papers/Noesis/01_introduction.tex` Table~tab:components lists
   capability measurement as one of the five pluggable components, instantiated in the
   paper as "a verifier model, benchmark probe, or reference-model agreement," with a
@@ -501,14 +532,13 @@
   alternative; `05_noesis_server.tex` sec:fulfillment_monitoring's success indicator
   (Equation~eq:success_indicator) needs `hat c(x)` as an input, which no PR above
   builds: `PR_S4`/`PR_S6` currently take `measured_reliability` as already computed
-- Define a pluggable interface `estimate_capability(prompt, response) -> tier`;
-  implement a first instantiation via reference-model agreement, reusing `PR_S3`'s
-  agreement-label machinery in the other direction (compare the delivered response
-  against a stronger reference model instead of comparing two routing candidates)
-- Unit tests: a response matching the reference model's answer is assigned a tier at
-  or above the contract's `C_level`; a response that disagrees is assigned a lower
-  tier; the interface accepts a second, artificialanalysis -style stub implementation
-  without changing call sites
+- Define a pluggable capability-measurement interface. For the MVP, instantiate it
+  with calibrated deterministic benchmark probes whose expected answers can be
+  graded locally. Reference-model agreement remains a later interchangeable
+  implementation when deterministic grading is not suitable.
+- Unit tests: deterministic answer normalization and grading cover supported answer
+  formats; invalid bank records are rejected; balanced selection is reproducible
+  for the checker while remaining secret from sellers.
 - Result: `NoesisServer` `PR_S4`/`PR_S6` gain a real (not stubbed) source for
   `capability_ok(x)`; should land before `PR_S4`/`PR_S6` are considered complete
 
@@ -571,6 +601,10 @@
 
 ### `PR_P2b`: [ ] Use Postgres Backend
 
+- Status (2026-10-12): partially implemented. PR #597 persisted gateway contracts,
+  request logs, attribution, and fault metadata. PR #604 added checker policies,
+  windows, probe claims, immutable evidence, and verdicts. Persistent market order
+  books and remaining component stores are still open.
 - Externalize the in-memory state of `NoesisMarket` and of `NoesisServer` assume
   (order book, contract log, request log) to a real datastore (e.g Postgres or Redis)
   - A cloud deployment cannot rely on a single long-lived process the way the current
