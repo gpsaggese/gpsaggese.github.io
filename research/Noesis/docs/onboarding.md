@@ -2,8 +2,10 @@
 
 - Goal: from zero to running the gateway and its tests in about an hour, then
   picking a first task
-- Read next: `how_we_work.md` (process), `glossary.md` (terms),
-  `gateway.README.md` (design)
+- Read next:
+  - `how_we_work.md` (process)
+  - `glossary.md` (terms)
+  - `gateway_design.md` (design)
 
 ## 1. What Noesis Is (5 Minutes)
 
@@ -13,8 +15,8 @@
   request, test providers with known-answer questions, and lower the reputation of
   sellers that under-deliver
 - Background: the paper `papers/Noesis/Noesis.pdf` (by GP), GP's roadmap
-  `research/Noesis/plan.Noesis.md`, and the MVP spec `docs/mvp_prd.md`
-- Status: `docs/mvp_progress.md`
+  `research/Noesis/docs/plans/plan.Noesis.md`, and the MVP spec `docs/specs/mvp_prd.md`
+- Status: `docs/plans/mvp_progress.md`
 
 ## 2. Access You Need
 
@@ -75,7 +77,7 @@
   ```
 
   - `noesis_test` is wiped by the tests; `noesis_dev` is for the server
-  - Tables are created automatically on startup (`migrations/001_init.sql`)
+  - Tables are created automatically on startup (`common/migrations/001_init.sql`)
 
 - Secrets: copy the template and fill it in. `research/Noesis/.env` is git-ignored
 
@@ -91,7 +93,7 @@
 
   ```bash
   > export PYTHONPATH=$PWD/helpers_root:$PWD
-  > ~/dev/.venvs/noesis/bin/python -m pytest -q research/Noesis/test
+  > ~/dev/.venvs/noesis/bin/python -m pytest -q research/Noesis
   ```
 
 - Expected: all pass; GP's Docker-in-Docker Postgres tests (`test_postgres_store.py`)
@@ -103,7 +105,7 @@
 
 ```bash
 > export PYTHONPATH=$PWD/helpers_root:$PWD
-> ~/dev/.venvs/noesis/bin/uvicorn research.Noesis.gateway_app:build_default_app \
+> ~/dev/.venvs/noesis/bin/uvicorn research.Noesis.gateway.gateway_app:build_default_app \
     --factory --port 8000
 ```
 
@@ -128,16 +130,16 @@
 
 ## 6. Read the Code in This Order
 
-1. `docs/gateway.README.md`: the picture and the request flow
+1. `docs/gateway_design.md`: the picture and the request flow
 2. `gateway_providers.py`: the interface everything plugs into
 3. `gateway_api.py`: the main endpoint, top to bottom
 4. `gateway_routing.py`, `gateway_request_log.py`, `gateway_openrouter.py`
-5. `test/test_gateway_api.py`: how the whole thing is exercised
+5. `gateway/test/test_gateway_api.py`: how the whole thing is exercised
 6. GP's `batch_call_auction.py` (the market milestone builds on it)
 
 ## 7. Pick a First Task
 
-- Open tasks with owners are in `docs/mvp_plan.md` §3; the next milestone is the
+- Open tasks with owners are in `docs/plans/mvp_plan.md` §3; the next milestone is the
   checker (M2)
 - Good first tasks:
   - Add test questions to the canary bank (M2, T2.1): no prior code knowledge needed

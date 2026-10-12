@@ -5,7 +5,7 @@ services:
       file: tmp.docker-compose.yml
       service: app
     command: >
-      uvicorn research.Noesis.main:app
+      uvicorn research.Noesis.noesis_platform.main:app
       --host 0.0.0.0 --port 8000
     ports:
       - "8000:8000"

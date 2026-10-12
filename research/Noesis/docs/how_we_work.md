@@ -2,6 +2,9 @@
 
 - The process for every change to `research/Noesis/`, so GP can review quickly and
   anyone can see why the code is the way it is
+
+// TODO(javin): Update since for core controbutors we will just work on the main
+// repo. We can still have the fork approach for external contributors.
 - Contributions use the **fork and PR** method described in
   `class_project/how_to_contribute.md`; this doc adds the Noesis-specific parts
 
@@ -41,13 +44,13 @@
 - `gpsaggese/umd_classes` is the repo's former name; GitHub redirects it, and it's
   the prefix `how_to_contribute.md` uses for issue references
 
-- Keep PRs reviewable: one component or one milestone task per PR. If a PR needs
-  more than ~400 lines of non-test code, split it
+- Keep PRs reviewable: one component or one milestone task per PR
+  - If a PR needs more than ~400 lines of non-test code, split it
 
 ## Conventions (GP's Rules)
 
-- Coding rules: `helpers_root/.claude/skills/coding.rules.md`; testing rules:
-  `helpers_root/.claude/skills/testing.rules.md`. The ones that matter most here:
+- Coding rules: `helpers_root/.claude/skills/coding.rules.md`
+- The ones that matter most here:
   - `hdbg.dassert_*` with a message instead of `assert` / `if ... raise`
     (exception: `RoutingError`, which is a client error mapped to HTTP)
   - `typing` hints (`Dict`, `Optional`), not `dict` / `X | None`
@@ -58,17 +61,21 @@
   - `_LOG.debug(hprint.to_str("a b"))` at function entry, `_LOG.debug("return=%s", x)`
     at exit; single quotes around values in log messages, no trailing period
   - Section banners `# ####...` between classes / groups of functions
-- Tests:
-  - File `test/test_<module>.py`; class `Test_<function>` or `Test<Class>`; methods
+
+- Testing rules: `helpers_root/.claude/skills/testing.rules.md`
+  - File `<component>/test/test_<module>.py`; class `Test_<function>` or `Test<Class>`; methods
     `test1`, `test2`, ... with a docstring saying what is tested
   - Sections `# Prepare inputs.` / `# Prepare outputs.` / `# Run test.` /
     `# Check outputs.`
   - Compare whole outputs with `self.assert_equal(str(actual), str(expected))`
   - No base test classes; share code through module functions
-    (`test/gateway_test_utils.py`)
+    (`gateway/test/gateway_test_utils.py`)
   - No network in tests: mock HTTP (`httpx.MockTransport`) or use `FakeProvider`
+
 - Formatting: `black --line-length 82`, `isort --settings-path .isort.cfg` (repo
   root)
+// TODO(javin): There is a linters2/lint.py that does even more complex checks
+// and formatting. I will write a short intro.
 
 ## Never in This Repo
 
@@ -80,39 +87,38 @@
 
 ## PR Description Template
 
-Copy this into every PR:
+- Copy this into every PR:
+  ```markdown
+  Fixes gpsaggese/umd_classes#<issue_number>
 
-```markdown
-Fixes gpsaggese/umd_classes#<issue_number>
+  ## What
+  - One paragraph: what this PR adds or changes, and which plan task(s) it closes
+    (e.g., `mvp_plan.md` T2.4)
 
-## What
-- One paragraph: what this PR adds or changes, and which plan task(s) it closes
-  (e.g., `mvp_plan.md` T2.4)
+  ## Why
+  - The problem it solves; link the PRD section
 
-## Why
-- The problem it solves; link the PRD section
+  ## How It Works
+  - Main flow in a few bullets; point to the README/doc section updated
 
-## How It Works
-- Main flow in a few bullets; point to the README/doc section updated
+  ## Decisions
+  - Each non-obvious choice: decision, why, alternatives considered. Add it to
+    `docs/specs/mvp_decisions.md` and link it here
 
-## Decisions
-- Each non-obvious choice: decision, why, alternatives considered. Add it to
-  `docs/mvp_decisions.md` and link it here
+  ## Evidence
+  - Tests added (count, what they cover) and the command to run them
+  - Any live check (what was called, result, cost)
 
-## Evidence
-- Tests added (count, what they cover) and the command to run them
-- Any live check (what was called, result, cost)
+  ## Not in This PR
+  - Deliberately deferred items, and where they're tracked
 
-## Not in This PR
-- Deliberately deferred items, and where they're tracked
-
-## Questions for Reviewers
-- Anything you want GP's opinion on
-```
+  ## Questions for Reviewers
+  - Anything you want GP's opinion on
+  ```
 
 ## Keeping Docs in Sync
 
-- Change a module -> update its section in `gateway.README.md` (or the README of
+- Change a module -> update its section in `gateway_design.md` (or the README of
   the component you touched)
 - Make a decision -> add it to `mvp_decisions.md`
 - Finish a task -> tick it in `mvp_plan.md` and add a line to `mvp_progress.md`
