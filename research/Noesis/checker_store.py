@@ -232,7 +232,9 @@ async def finalize_contract(
             )
             stored_ids = {row[0] for row in await cursor.fetchall()}
             if stored_ids != set(request_ids):
-                raise ValueError("evidence contains requests from another contract")
+                raise ValueError(
+                    "evidence contains requests from another contract"
+                )
         await conn.execute(
             "INSERT INTO contract_verdicts ("
             " contract_id, n, r_lat, r_lat_upper, n_canary, q, q_upper,"

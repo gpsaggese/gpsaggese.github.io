@@ -56,7 +56,11 @@ class Test_classify_latency(hunitest.TestCase):
         """
         Test the latency boundary is inclusive.
         """
-        for latency, success in [(1999.0, True), (2000.0, True), (2000.1, False)]:
+        for latency, success in [
+            (1999.0, True),
+            (2000.0, True),
+            (2000.1, False),
+        ]:
             request = rnochmod.RequestObservation(1, rnogapro.OK, latency)
             result = rnochevi.classify_latency(request, _CONTRACT, _POLICY)
             self.assertTrue(result.eligible)
@@ -119,7 +123,9 @@ class Test_classify_quality(hunitest.TestCase):
         """
         Test a missing grade is a checker error, not a seller failure.
         """
-        evidence = rnochevi.build_evidence([_canary(1, None)], _CONTRACT, _POLICY)
+        evidence = rnochevi.build_evidence(
+            [_canary(1, None)], _CONTRACT, _POLICY
+        )
         self.assertFalse(evidence.checker_healthy)
         self.assertEqual(
             evidence.requests[0].quality.reason,
@@ -184,7 +190,9 @@ class Test_decide_verdict(hunitest.TestCase):
         requests += [_canary(101), _canary(102)]
         decision = _decision(requests)
         self.assertEqual(decision.verdict, rnochmod.Verdict.FAILED)
-        self.assertEqual(decision.reason_codes, (rnochver.LATENCY_BELOW_PROMISE,))
+        self.assertEqual(
+            decision.reason_codes, (rnochver.LATENCY_BELOW_PROMISE,)
+        )
 
     def test5(self) -> None:
         """

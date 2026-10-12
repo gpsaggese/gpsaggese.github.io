@@ -42,7 +42,9 @@ def _excluded(reason: str) -> rnochmod.EvidenceClassification:
 
 
 def _checker_error(reason: str) -> rnochmod.EvidenceClassification:
-    return rnochmod.EvidenceClassification(False, None, reason, checker_error=True)
+    return rnochmod.EvidenceClassification(
+        False, None, reason, checker_error=True
+    )
 
 
 def _eligible(success: bool, reason: str) -> rnochmod.EvidenceClassification:

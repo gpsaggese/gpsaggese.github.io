@@ -40,7 +40,9 @@ def normalize_alnum_lower(value: str) -> str:
     """
     Ignore case, whitespace, and punctuation.
     """
-    return "".join(character.lower() for character in value if character.isalnum())
+    return "".join(
+        character.lower() for character in value if character.isalnum()
+    )
 
 
 def normalize_integer(value: str) -> str:
@@ -159,4 +161,6 @@ def grade_response(
         )
     correct = actual == expected
     reason = MATCH if correct else VALUE_MISMATCH
-    return rnochmod.GradeResult(correct, reason, expected, actual, GRADER_VERSION)
+    return rnochmod.GradeResult(
+        correct, reason, expected, actual, GRADER_VERSION
+    )

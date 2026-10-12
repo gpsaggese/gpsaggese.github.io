@@ -40,7 +40,9 @@ def parse_canary(record: Mapping[str, object]) -> rnochmod.Canary:
     Parse one JSON-compatible record into an immutable canary.
     """
     seed = record.get("generator_seed")
-    if seed is not None and (not isinstance(seed, int) or isinstance(seed, bool)):
+    if seed is not None and (
+        not isinstance(seed, int) or isinstance(seed, bool)
+    ):
         raise CanaryBankError("'generator_seed' must be an integer or null")
     return rnochmod.Canary(
         canary_id=_required_text(record, "id"),
@@ -98,7 +100,9 @@ def validate_bank(canaries: Iterable[rnochmod.Canary]) -> Tuple[str, ...]:
     return tuple(errors)
 
 
-def load_canary_bank(directory: str, bank_version: str) -> Tuple[rnochmod.Canary, ...]:
+def load_canary_bank(
+    directory: str, bank_version: str
+) -> Tuple[rnochmod.Canary, ...]:
     """
     Load and validate every JSONL file in a bank directory.
     """
@@ -120,7 +124,8 @@ def load_canary_bank(directory: str, bank_version: str) -> Tuple[rnochmod.Canary
                 ) from error
             if not isinstance(record, dict):
                 raise CanaryBankError(
-                    "%s:%s: each line must be a JSON object" % (path, line_number)
+                    "%s:%s: each line must be a JSON object"
+                    % (path, line_number)
                 )
             try:
                 canary = parse_canary(record)
@@ -188,7 +193,8 @@ def select_canaries(
         )
     generator = random.Random(_selection_seed(secret, contract_id))
     groups: Dict[str, List[rnochmod.Canary]] = {
-        family: list(items) for family, items in group_by_family(canaries).items()
+        family: list(items)
+        for family, items in group_by_family(canaries).items()
     }
     for items in groups.values():
         generator.shuffle(items)

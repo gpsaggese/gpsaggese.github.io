@@ -99,7 +99,9 @@ def upper_confidence_bound(
     return wilson_upper(successes, total, confidence)
 
 
-def is_conclusive_failure(upper_bound: Optional[float], promised_rate: float) -> bool:
+def is_conclusive_failure(
+    upper_bound: Optional[float], promised_rate: float
+) -> bool:
     """
     Return whether even the optimistic bound misses the promise.
     """

@@ -38,7 +38,9 @@ class Test_grade_response(hunitest.TestCase):
             ("code_output", "a  \r\nb\n", "a\nb"),
         ]
         for normalizer, expected, response in cases:
-            result = rnochgra.grade_response(_canary(expected, normalizer), response)
+            result = rnochgra.grade_response(
+                _canary(expected, normalizer), response
+            )
             self.assertTrue(result.correct)
             self.assertEqual(result.reason, rnochgra.MATCH)
 
