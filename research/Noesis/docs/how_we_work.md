@@ -63,13 +63,13 @@
   - Section banners `# ####...` between classes / groups of functions
 
 - Testing rules: `helpers_root/.claude/skills/testing.rules.md`
-  - File `test/test_<module>.py`; class `Test_<function>` or `Test<Class>`; methods
+  - File `<component>/test/test_<module>.py`; class `Test_<function>` or `Test<Class>`; methods
     `test1`, `test2`, ... with a docstring saying what is tested
   - Sections `# Prepare inputs.` / `# Prepare outputs.` / `# Run test.` /
     `# Check outputs.`
   - Compare whole outputs with `self.assert_equal(str(actual), str(expected))`
   - No base test classes; share code through module functions
-    (`test/gateway_test_utils.py`)
+    (`gateway/test/gateway_test_utils.py`)
   - No network in tests: mock HTTP (`httpx.MockTransport`) or use `FakeProvider`
 
 - Formatting: `black --line-length 82`, `isort --settings-path .isort.cfg` (repo
@@ -103,7 +103,7 @@
 
   ## Decisions
   - Each non-obvious choice: decision, why, alternatives considered. Add it to
-    `docs/mvp_decisions.md` and link it here
+    `docs/specs/mvp_decisions.md` and link it here
 
   ## Evidence
   - Tests added (count, what they cover) and the command to run them
@@ -118,7 +118,7 @@
 
 ## Keeping Docs in Sync
 
-- Change a module -> update its section in `gateway.README.md` (or the README of
+- Change a module -> update its section in `gateway_design.md` (or the README of
   the component you touched)
 - Make a decision -> add it to `mvp_decisions.md`
 - Finish a task -> tick it in `mvp_plan.md` and add a line to `mvp_progress.md`
