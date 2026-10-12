@@ -32,8 +32,15 @@
 #   `L03_04_ontology_reasoning_utils.py`, rather than downloaded, so that the
 #   cells need no network access and every axiom the reasoner uses is visible
 
-# %% [markdown]
-# ## Imports
+# %%
+# !pip install -q networkx==3.6.1 owlready2==0.51
+
+import networkx
+
+print("networkx version: ", networkx.__version__)
+import importlib.metadata
+
+print("owlready2 version: ", importlib.metadata.version("owlready2"))
 
 # %%
 # %load_ext autoreload
@@ -41,14 +48,6 @@
 
 import logging
 
-# %%
-# !pip install -q networkx==3.6.1 owlready2==0.51
-
-import networkx
-print("networkx version: ", networkx.__version__)
-import owlready2
-import importlib.metadata
-print("owlready2 version: ", importlib.metadata.version("owlready2"))
 
 # %%
 import helpers.hnotebook as hnotebook
@@ -60,13 +59,19 @@ hnotebook.config_notebook()
 _LOG = logging.getLogger(__name__)
 utils.init_loggers(_LOG)
 
+# Convert `display` into `print()` when running outside IPython.
+try:
+    from IPython.display import display
+except ImportError:
+    display = print  # type: ignore
+
 # %% [markdown]
 # # Part 1: What an Ontology Adds to a Schema
 
 # %% [markdown]
 # ## Cell 1.1: Building the university ontology
 #
-# **Goal**:
+# **Goal**
 # - Construct the lecture's university ontology in code: classes, properties,
 #   and one cardinality axiom
 # - Distinguish an ontology from a plain database schema, a taxonomy, and a
@@ -127,7 +132,7 @@ utils.show_pizza_axioms()
 # %% [markdown]
 # ## Cell 2.1: Subsumption and an inconsistent vegetarian
 #
-# **Goal**:
+# **Goal**
 # - Run class-level reasoning on the Pizza ontology and read the verdict for
 #   one class at a time
 # - Ask the reasoner to classify a `VegetarianPizza` that lists a meat
@@ -179,7 +184,7 @@ utils.cell2_1_subsumption_and_inconsistency()
 # %% [markdown]
 # ## Cell 2.2: Asserted hierarchy vs inferred hierarchy
 #
-# **Goal**:
+# **Goal**
 # - Compare the class hierarchy as authored against the hierarchy after
 #   classification, on the same ontology
 #
@@ -222,7 +227,7 @@ utils.cell2_2_asserted_vs_inferred()
 # %% [markdown]
 # ## Cell 2.3: Interactive axiom editor
 #
-# **Goal**:
+# **Goal**
 # - Add or remove one axiom, re-run the reasoner, and watch which edges the
 #   hierarchy gains or loses
 #
@@ -270,7 +275,7 @@ utils.cell2_3_axiom_editor()
 # %% [markdown]
 # ## Cell 3.1: Unsatisfiable concepts: the flying penguin
 #
-# **Goal**:
+# **Goal**
 # - Define `FlyingPenguin` as `Penguin` and `FlyingThing`, and confirm the
 #   reasoner marks the concept unsatisfiable
 #
@@ -310,7 +315,7 @@ utils.cell3_1_flying_penguin()
 # %% [markdown]
 # ## Cell 4.1: Realization, retrieval, and the open world assumption
 #
-# **Goal**:
+# **Goal**
 # - Perform realization (the most specific class of an individual) and
 #   retrieval (the individuals satisfying a class), then ask a question about
 #   a fact that was never asserted
@@ -360,7 +365,7 @@ utils.cell4_1_realization_and_owa()
 # %% [markdown]
 # ## Cell 5.1: Reasoner runtime as axioms grow
 #
-# **Goal**:
+# **Goal**
 # - Measure how reasoner runtime grows as cardinality constraints and a
 #   property chain are added to the university ontology
 #

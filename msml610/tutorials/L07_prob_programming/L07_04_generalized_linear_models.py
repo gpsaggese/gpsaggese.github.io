@@ -15,32 +15,62 @@
 
 # %% [markdown]
 # # Generalized linear models
+#
+# - This notebook fits generalized linear models with `pymc`, changing the
+#   likelihood and the link to match the type of the data
+# - The pedagogical arc:
+#   - Linear regression on synthetic and on bike rental data
+#   - Counting: a Negative Binomial model and its posterior predictive checks
+#   - Robust regression on Anscombe's outlier dataset
+#   - Logistic regression on the iris data, and its decision boundary
+#   - Variable variance: a model whose variance depends on age
+#   - Multiple linear regression, and a Negative Binomial model with two
+#     predictors for the rented bikes
 
-# %% [markdown]
-# ## Imports
+# %%
+# !pip install -q dataframe_image==0.2.7 graphviz==0.21
+
+import dataframe_image
+
+print("dataframe_image version: ", dataframe_image.__version__)
+
+import graphviz
+
+print("graphviz version: ", graphviz.__version__)
 
 # %%
 # %load_ext autoreload
 # %autoreload 2
 
-# !sudo /bin/bash -c "(source /venv/bin/activate; pip install --quiet graphviz)"
-# !sudo /bin/bash -c "(source /venv/bin/activate; pip install --quiet dataframe_image)"
+import logging
 
 import arviz as az
-import pandas as pd
-import xarray as xr
-import pymc as pm
-import numpy as np
-import seaborn as sns
 import matplotlib.pyplot as plt
-from IPython.display import display
+import numpy as np
+import pandas as pd
+import pymc as pm
+import scipy.stats
+import seaborn as sns
+import xarray as xr
 
 # %%
+import helpers.hnotebook as hnotebook
 import helpers.htutorial as ut
-import L07_04_generalized_linear_models_utils as putils
 
-ut.config_notebook()
+import L07_04_generalized_linear_models_utils as utils
 
+# Initialize notebook configuration and logging.
+hnotebook.config_notebook()
+_LOG = logging.getLogger(__name__)
+utils.init_loggers(_LOG)
+
+# Convert `display` into `print()` when running outside IPython.
+try:
+    from IPython.display import display
+except ImportError:
+    display = print  # type: ignore
+
+# %%
 dir_name = "./L07_data"
 # !ls $dir_name
 
@@ -50,12 +80,12 @@ dir_name = "./L07_data"
 # %% [markdown]
 # ## Cell 1.1: Synthetic example
 #
-# **Goal**:
+# **Goal**
 # - Fit a Bayesian linear regression on synthetic data with a known
 #   `alpha`/`beta`/noise, so the recovered posterior can be checked against
 #   the ground truth
 #
-# **Implementation**:
+# **Implementation**
 # - `alpha ~ Normal(0, 10)`, `beta ~ Normal(0, 1)`, `sigma ~ HalfCauchy(5)`,
 #   `y ~ Normal(alpha + beta*x, sigma)`
 
@@ -115,14 +145,14 @@ display(az.summary(idata_g, var_names="alpha beta sigma".split(), kind="stats"))
 # %% [markdown]
 # ## Cell 1.2: Bike rental example
 #
-# **Goal**:
+# **Goal**
 # - Fit the same linear-regression pattern to real data: predicting bike
 #   rentals from temperature
 #
-# **Implementation**:
+# **Implementation**
 # - Same `alpha`/`beta`/`sigma` priors as `model_g`, refit on
 #   `bikes.temperature`/`bikes.rented`
-# - `putils.plot_data_and_model()` overlays the fitted mean and 50%/94%
+# - `utils.plot_data_and_model()` overlays the fitted mean and 50%/94%
 #   posterior-predictive bands on the raw data
 
 # %%
@@ -182,7 +212,7 @@ plt.ylabel("rented bikes")
 _ = plt.legend()
 
 # %%
-putils.plot_data_and_model(bikes, idata_lb_pp, mean_line)
+utils.plot_data_and_model(bikes, idata_lb_pp, mean_line)
 
 # %% [markdown]
 # # Part 2: Counting
@@ -190,11 +220,11 @@ putils.plot_data_and_model(bikes, idata_lb_pp, mean_line)
 # %% [markdown]
 # ## Cell 2.1: Fitting a Negative Binomial model
 #
-# **Goal**:
+# **Goal**
 # - Refit the bike-rental data with a Negative Binomial likelihood, better
 #   suited to non-negative counts than the Gaussian model in Part 1
 #
-# **Implementation**:
+# **Implementation**
 # - `mu = exp(alpha + beta*temperature)` keeps the mean positive;
 #   `y ~ NegativeBinomial(mu, sigma)`, where `sigma` controls the variance
 
@@ -225,12 +255,12 @@ az.plot_trace(idata_neg, var_names=["~mu"])
 # %% [markdown]
 # ## Cell 2.2: Comparing posterior predictive checks
 #
-# **Goal**:
+# **Goal**
 # - Compare the Negative Binomial fit against the Gaussian fit from Part 1,
 #   on both the fitted curve and the posterior-predictive distribution
 
 # %%
-putils.plot_data_and_model(bikes, idata_neg, mean_line)
+utils.plot_data_and_model(bikes, idata_neg, mean_line)
 
 # %%
 az.plot_ppc(idata_lb_pp, num_pp_samples=200, alpha=0.1, mean=False)
@@ -244,7 +274,7 @@ az.plot_ppc(idata_neg, num_pp_samples=200, alpha=0.1, mean=False)
 # %% [markdown]
 # ## Cell 3.1: Anscombe's outlier dataset
 #
-# **Goal**:
+# **Goal**
 # - Look at a small dataset with one clear outlier, used next to contrast
 #   a non-robust and a robust regression
 
@@ -258,11 +288,11 @@ ans.plot("x", "y", kind="scatter")
 # %% [markdown]
 # ## Cell 3.2: Non-robust vs robust fit
 #
-# **Goal**:
+# **Goal**
 # - Fit an ordinary least-squares line (sensitive to the outlier) and a
 #   Bayesian Student-t regression (robust to it), and compare both fits
 #
-# **Implementation**:
+# **Implementation**
 # - OLS via `scipy.stats.linregress`
 # - Student-t model: `nu ~ Exponential(1/29) + 1` (shifted so `nu >= 1`),
 #   `y ~ StudentT(alpha + beta*x, sigma, nu)`
@@ -324,7 +354,7 @@ ut.save_ax(ax, "Lesson07_Non_robust_regression2")
 # %% [markdown]
 # ## Cell 3.3: Posterior predictive check
 #
-# **Goal**:
+# **Goal**
 # - Check the robust model's posterior-predictive fit against the data
 
 # %%
@@ -343,7 +373,7 @@ plt.xlim(0, 20)
 # %% [markdown]
 # ## Cell 4.1: Iris data for two species
 #
-# **Goal**:
+# **Goal**
 # - Prepare a 2-class subset of the iris dataset and one feature, sepal
 #   length, to classify `setosa` vs `versicolor`
 
@@ -371,11 +401,11 @@ x_c = x_0 - x_0.mean()
 # %% [markdown]
 # ## Cell 4.2: Fitting a logistic regression
 #
-# **Goal**:
+# **Goal**
 # - Fit a Bayesian logistic regression, and derive the decision boundary
 #   `bd` where the predicted probability crosses 0.5
 #
-# **Implementation**:
+# **Implementation**
 # - `theta = sigmoid(alpha + beta*x_c)`, `y ~ Bernoulli(theta)`;
 #   `bd = -alpha / beta` is the boundary where `theta = 0.5`
 
@@ -408,7 +438,7 @@ ut.save_fig(ax, "Lesson07_Logistic_regression_result.png")
 # %% [markdown]
 # ## Cell 4.3: Visualizing the decision boundary
 #
-# **Goal**:
+# **Goal**
 # - Plot the fitted sigmoid, the decision boundary and its HDI, and the
 #   raw data together
 
@@ -439,7 +469,7 @@ ut.save_ax(ax, "Lesson07_Logistic_regression_result2.png")
 # %% [markdown]
 # ## Cell 5.1: Babies growth data
 #
-# **Goal**:
+# **Goal**
 # - Look at babies' length by age in months: the spread grows with age, so
 #   a constant-variance model would be a poor fit
 
@@ -456,11 +486,11 @@ ut.save_ax(ax, "Lesson07_Variable_variance_data.png")
 # %% [markdown]
 # ## Cell 5.2: Fitting a model with variance as a function of age
 #
-# **Goal**:
+# **Goal**
 # - Model both the mean and the standard deviation as functions of `month`,
 #   instead of assuming constant variance
 #
-# **Implementation**:
+# **Implementation**
 # - `mu = alpha + beta*sqrt(month)`, `sigma = gamma + delta*month`,
 #   `y ~ Normal(mu, sigma)`
 
@@ -488,7 +518,7 @@ ut.save_dot(model_vv, "Lesson07_Variable_variance_model.png")
 # %% [markdown]
 # ## Cell 5.3: Visualizing the fitted mean and variance bands
 #
-# **Goal**:
+# **Goal**
 # - Plot the fitted mean with 1 and 2 standard-deviation bands against the
 #   raw data, to see the variance growing with age
 
@@ -517,11 +547,11 @@ ut.save_plt("Lesson07_Variable_variance_result.png")
 # %% [markdown]
 # ## Cell 6.1: Synthetic multi-feature data
 #
-# **Goal**:
+# **Goal**
 # - Generate synthetic data with 2 independent features, to fit a multiple
 #   linear regression against a known ground truth
 #
-# **Implementation**: `putils.scatter_plot(x, y)`
+# **Implementation** `utils.scatter_plot(x, y)`
 # - Plots `y` against each feature, plus the two features against each
 #   other, in a 1xN layout
 
@@ -543,17 +573,17 @@ X_centered = X - X_mean
 y = alpha_real + np.dot(X, beta_real) + eps_real
 
 # %%
-putils.scatter_plot(X_centered, y)
+utils.scatter_plot(X_centered, y)
 ut.save_plt("Lesson07_Multiple_linear_regression3.png")
 
 # %% [markdown]
 # ## Cell 6.2: Fitting the multiple regression model
 #
-# **Goal**:
+# **Goal**
 # - Fit the multiple linear regression, centering `X` for a more stable
 #   sampler geometry, then recovering the original-scale intercept
 #
-# **Implementation**:
+# **Implementation**
 # - `alpha_tmp ~ Normal(0, 10)`, `beta ~ Normal(0, 1)` (length 2), fit on
 #   `X_centered`; `alpha = alpha_tmp - X_mean . beta` undoes the centering
 
@@ -579,7 +609,7 @@ pm.model_to_graphviz(model_mlr)
 # %% [markdown]
 # ## Cell 6.3: Inspecting the fit
 #
-# **Goal**:
+# **Goal**
 # - Check the sampling trace and numerical summary against the known
 #   ground-truth `alpha_real`/`beta_real`
 
@@ -601,11 +631,11 @@ display(mlr_summary)
 # %% [markdown]
 # ## Cell 7.1: Fitting a Negative Binomial model with two predictors
 #
-# **Goal**:
+# **Goal**
 # - Extend Part 2's single-predictor Negative Binomial model with a second
 #   predictor, `hour`, to see if it improves the fit
 #
-# **Implementation**:
+# **Implementation**
 # - `mu = exp(alpha + beta0*temperature + beta1*hour)`,
 #   `y ~ NegativeBinomial(mu, sigma)`
 
@@ -631,7 +661,7 @@ ut.save_dot(
 # %% [markdown]
 # ## Cell 7.2: Inspecting the fit
 #
-# **Goal**:
+# **Goal**
 # - Check the sampling trace and numerical summary for the two-predictor
 #   model
 

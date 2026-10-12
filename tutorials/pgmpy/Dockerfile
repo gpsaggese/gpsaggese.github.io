@@ -19,12 +19,13 @@ ENV PATH="/opt/venv/bin:$PATH"
 # Upgrade pip inside the venv.
 RUN python -m pip install --upgrade pip
 
-# Install project specific packages.
+# Install project specific packages. Pin jupytext to avoid jitter in the
+# notebook files due to changing version. Pin ipykernel below 7 since 7.3.0
+# randomly stops answering execute requests, which hangs `jupyter nbconvert
+# --execute` forever.
 COPY requirements.txt /install/requirements.txt
-RUN pip install --upgrade pip 
-# Pin down jupytext to avoid jitter in the notebook files due to changing
-# version.
-RUN pip install --no-cache-dir jupyterlab jupyterlab_vim jupytext==1.19.3 -r /install/requirements.txt
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir jupyterlab jupyterlab_vim "ipykernel<7" jupytext==1.19.3 -r /install/requirements.txt
 
 # Install pygraphviz.
 RUN apt-get update && apt-get install -y --no-install-recommends \

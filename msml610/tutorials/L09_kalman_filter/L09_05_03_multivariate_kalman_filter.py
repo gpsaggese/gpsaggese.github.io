@@ -15,9 +15,26 @@
 
 # %% [markdown]
 # # Multivariate Kalman filter
+#
+# - This notebook extends the Kalman filter to multivariate Gaussians, and
+#   uses it to track a dog whose velocity is a hidden variable
+# - The pedagogical arc:
+#   - Multivariate Gaussians, covariance, and using correlations to improve
+#     estimates
+#   - Sum and product of bidimensional Gaussians
+#   - Tracking a dog with hidden variables: designing the state, the system
+#     model, the noise matrices, and the measurement function, then running
+#     the filter
+#   - The effect of adding a hidden variable, comparing 1D and 2D filters
 
-# %% [markdown]
-# ## Imports
+# %%
+# `filterpy` is an extra for this notebook, pinned to the version already
+# in requirements.txt.
+# !sudo /bin/bash -c "(source /venv/bin/activate; pip install --quiet filterpy==1.4.5)"
+
+import filterpy
+
+print("filterpy version: ", filterpy.__version__)
 
 # %%
 # %load_ext autoreload
@@ -28,29 +45,28 @@ import logging
 import matplotlib.pyplot as plt
 import numpy as np
 
+# %%
 import helpers.hintrospection as hintros
-import helpers.htutorial as ut
+import helpers.hio as hio
+import helpers.hnotebook as hnotebook
 
-ut.config_notebook()
+import L09_05_03_multivariate_kalman_filter_utils as utils
 
-# Initialize logger.
-logging.basicConfig(level=logging.INFO)
+# Initialize notebook configuration and logging.
+hnotebook.config_notebook()
 _LOG = logging.getLogger(__name__)
+utils.init_loggers(_LOG)
+
+# Convert `display` into `print()` when running outside IPython.
+try:
+    from IPython.display import display
+except ImportError:
+    display = print  # type: ignore
 
 # %%
-import helpers.hio as hio
-import L09_05_03_multivariate_kalman_filter_utils as time_ut
-
 dst_dir = "figures"
 hio.create_dir(dst_dir, incremental=True)
 # !cp msml610/tutorials/figures/*.png msml610/lectures_source/figures
-
-# %%
-# `filterpy` is an extra for this notebook, pinned to the version already
-# in requirements.txt.
-# !sudo /bin/bash -c "(source /venv/bin/activate; pip install --quiet filterpy==1.4.5)"
-
-import filterpy
 
 # %% [markdown]
 # # Part 1: Multivariate Gaussians
@@ -81,7 +97,7 @@ import filterpy
 # %%
 height = [60, 62, 63, 65, 65.1, 68, 69, 70, 72, 74]
 weight = [95, 120, 127, 119, 151, 143, 173, 171, 180, 210]
-time_ut.plot_correlated_data(
+utils.plot_correlated_data(
     height, weight, xlabel="Height (in)", ylabel="Weight (lbs)", equal=False
 )
 print("cov=\n", np.cov(height, weight))
@@ -89,11 +105,11 @@ print("cov=\n", np.cov(height, weight))
 # %% [markdown]
 # ## Cell 1.2: The multivariate Gaussian PDF
 #
-# **Goal**:
+# **Goal**
 # - Evaluate the multivariate Gaussian PDF at a point, given a mean
 #   vector and a covariance matrix
 #
-# **Implementation**: `filterpy.stats.multivariate_gaussian(x, mu, P)`
+# **Implementation** `filterpy.stats.multivariate_gaussian(x, mu, P)`
 
 # %%
 from filterpy.stats import multivariate_gaussian
@@ -107,31 +123,25 @@ print("multivariate_gaussian=", multivariate_gaussian(x, mu, P))
 # %% [markdown]
 # ## Cell 1.3: Visualizing a 2D covariance
 #
-# **Goal**:
+# **Goal**
 # - Visualize a 2D Gaussian's covariance both as a 3D sampled surface and
 #   as a 2D covariance-ellipse-style matrix plot
-#
-# **Implementation**: `time_ut.plot_3d_sampled_covariance(mu, P)`,
-# `time_ut.cell_1_1_plot_covariance_matrix()`
 
 # %%
-time_ut.plot_3d_sampled_covariance(mu, P)
-
-# %%
-hintros.print_obj_info(time_ut.cell_1_1_plot_covariance_matrix)
-
-# %%
-time_ut.cell_1_1_plot_covariance_matrix()
+utils.plot_3d_sampled_covariance(mu, P)
 
 # %% [markdown]
-# **Usage**
+# **Description**
 # - Inputs
-#   - **`sigma_x`**, **`sigma_y`**: standard deviations along each axis
-#   - **`rho`**: correlation coefficient between the 2 axes
+#   - `sigma_x`, `sigma_y`: standard deviations along each axis
+#   - `rho`: correlation coefficient between the 2 axes
 #
 # - Panels
-#   - **`left`**: the resulting covariance matrix as a heatmap
-#   - **`right`**: the corresponding covariance ellipse
+#   - `left`: the resulting covariance matrix as a heatmap
+#   - `right`: the corresponding covariance ellipse
+
+# %%
+utils.cell_1_1_plot_covariance_matrix()
 
 # %% [markdown]
 # **Guided usage**
@@ -139,6 +149,13 @@ time_ut.cell_1_1_plot_covariance_matrix()
 #   - Observe the ellipse is axis-aligned
 # - Raise `rho` toward `1`
 #   - Observe the ellipse tilts and elongates along the diagonal
+
+# %% [markdown]
+# **Implementation** `utils.plot_3d_sampled_covariance(mu, P)`,
+# `utils.cell_1_1_plot_covariance_matrix()`
+
+# %%
+hintros.print_obj_info(utils.cell_1_1_plot_covariance_matrix)
 
 # %% [markdown]
 # ## Cell 1.4: Using correlations to improve estimates
@@ -200,10 +217,10 @@ filterpy.stats.plot_covariance_ellipse((10, 10), P4, ec="k", fc="b")
 #   - Blue: G1 + G2
 # - The sum is always larger (less certain) than either factor
 #
-# **Implementation**: `time_ut.cell_1_2_plot_sum_of_gaussians()`
+# **Implementation** `utils.cell_1_2_plot_sum_of_gaussians()`
 
 # %%
-time_ut.cell_1_2_plot_sum_of_gaussians()
+utils.cell_1_2_plot_sum_of_gaussians()
 
 # %% [markdown]
 # ## Cell 2.2: Product of 2 2D Gaussians
@@ -217,10 +234,10 @@ time_ut.cell_1_2_plot_sum_of_gaussians()
 #   - Blue: G1 * G2
 # - The product is always smaller (more certain) than either factor
 #
-# **Implementation**: `time_ut.cell_1_3_plot_product_of_gaussians()`
+# **Implementation** `utils.cell_1_3_plot_product_of_gaussians()`
 
 # %%
-time_ut.cell_1_3_plot_product_of_gaussians()
+utils.cell_1_3_plot_product_of_gaussians()
 
 # %% [markdown]
 # # Part 3: Tracking a Dog with Hidden Variables
@@ -239,18 +256,18 @@ time_ut.cell_1_3_plot_product_of_gaussians()
 # %% [markdown]
 # ## Cell 3.1: Simulating the dog
 #
-# **Goal**:
+# **Goal**
 # - Simulate the dog's true trajectory and noisy sensor measurements,
 #   used throughout the rest of Part 3
 #
-# **Implementation**: `time_ut.compute_dog_data(z_var, process_var,
+# **Implementation** `utils.compute_dog_data(z_var, process_var,
 # count)`
 
 # %%
 z_var = 1.0
 process_var = 0.1
 count = 50
-xs, zs = time_ut.compute_dog_data(z_var, process_var, count=count)
+xs, zs = utils.compute_dog_data(z_var, process_var, count=count)
 print("xs=", xs)
 print("zs=", zs)
 
@@ -429,11 +446,11 @@ print("R =", R)
 # %% [markdown]
 # ## Cell 3.10: Running the Kalman filter
 #
-# **Goal**:
+# **Goal**
 # - Run the full predict-update cycle on the simulated dog data, and
 #   check that the estimate converges close to the true position
 #
-# **Implementation**: `time_ut.run_dog_kalman_filter(zs, z_var,
+# **Implementation** `utils.run_dog_kalman_filter(zs, z_var,
 # process_var)`
 # - The filter alternates predict and update at every time step
 # - After a few steps the estimate converges close to the true position
@@ -441,42 +458,32 @@ print("R =", R)
 #   accumulate
 
 # %%
-means, variances = time_ut.run_dog_kalman_filter(zs, z_var, process_var)
-time_ut.plot_dog_tracking(xs, zs, means, variances)
+means, variances = utils.run_dog_kalman_filter(zs, z_var, process_var)
+utils.plot_dog_tracking(xs, zs, means, variances)
 
 # %% [markdown]
 # ## Cell 3.11: Interactively exploring dog tracking
 #
-# **Goal**:
+# **Goal**
 # - Let students sweep the noise levels and see the filter adapt in real
 #   time
-#
-# **Implementation**: `time_ut.cell_dog_tracking_interactive()`
-# - Increasing `z_var` makes the sensor noisier: the filter smooths more
-#   aggressively and leans on its own prediction
-# - Increasing `process_var` makes the dog more unpredictable: the
-#   filter trusts measurements more and follows them closely
-# - The blue band shows the +-1 sigma position uncertainty of the filter
-
-# %%
-hintros.print_obj_info(time_ut.cell_dog_tracking_interactive)
-
-# %%
-time_ut.cell_dog_tracking_interactive()
 
 # %% [markdown]
-# **Usage**
+# **Description**
 # - Inputs
-#   - **`seed`**: random seed for reproducibility
-#   - **`z_var`**: measurement noise variance
-#   - **`process_var`**: process noise variance
-#   - **`count`**: number of simulation steps
+#   - `seed`: random seed for reproducibility
+#   - `z_var`: measurement noise variance
+#   - `process_var`: process noise variance
+#   - `count`: number of simulation steps
 #
 # - Panels
-#   - **`left`**: true position, measurements, KF estimate, and +-1 std
+#   - `left`: true position, measurements, KF estimate, and +-1 std
 #     dev band
-#   - **`Comments`**: the current parameters, and the final estimate's
+#   - `Comments`: the current parameters, and the final estimate's
 #     MSE against the true position
+
+# %%
+utils.cell_dog_tracking_interactive()
 
 # %% [markdown]
 # **Guided usage**
@@ -485,6 +492,17 @@ time_ut.cell_dog_tracking_interactive()
 #     prediction more than the noisy measurements
 # - Raise `process_var` far above `z_var`
 #   - Observe the KF estimate follows the measurements closely
+
+# %% [markdown]
+# **Implementation** `utils.cell_dog_tracking_interactive()`
+# - Increasing `z_var` makes the sensor noisier: the filter smooths more
+#   aggressively and leans on its own prediction
+# - Increasing `process_var` makes the dog more unpredictable: the
+#   filter trusts measurements more and follows them closely
+# - The blue band shows the +-1 sigma position uncertainty of the filter
+
+# %%
+hintros.print_obj_info(utils.cell_dog_tracking_interactive)
 
 # %% [markdown]
 # # Part 4: Effect of Hidden Variables
@@ -527,19 +545,17 @@ time_ut.cell_dog_tracking_interactive()
 # - 2D filter: $F = [[1, \Delta t], [0, 1]]$,
 #   $Q = diag(0, process\_var)$, $H = [[1, 0]]$, $R = [[z\_var]]$
 #
-# **Implementation**: `time_ut.plot_hidden_variable_comparison(...)`
+# **Implementation** `utils.plot_hidden_variable_comparison(...)`
 
 # %%
 # Static comparison with default parameters.
 np.random.seed(42)
-xs_ex, zs_ex = time_ut.compute_dog_data(z_var=1.0, process_var=0.1, count=50)
-means_1d, var_1d = time_ut.run_dog_kalman_filter_1d(
+xs_ex, zs_ex = utils.compute_dog_data(z_var=1.0, process_var=0.1, count=50)
+means_1d, var_1d = utils.run_dog_kalman_filter_1d(
     zs_ex, z_var=1.0, process_var=0.1
 )
-means_2d, var_2d = time_ut.run_dog_kalman_filter(
-    zs_ex, z_var=1.0, process_var=0.1
-)
-time_ut.plot_hidden_variable_comparison(
+means_2d, var_2d = utils.run_dog_kalman_filter(zs_ex, z_var=1.0, process_var=0.1)
+utils.plot_hidden_variable_comparison(
     xs_ex, zs_ex, means_1d, var_1d, means_2d, var_2d
 )
 
@@ -563,36 +579,26 @@ time_ut.plot_hidden_variable_comparison(
 # %% [markdown]
 # ## Cell 4.2: Interactively comparing 1D vs 2D filters
 #
-# **Goal**:
+# **Goal**
 # - Let students vary the noise levels and see the MSE gap between the
 #   1D and 2D filters change in real time
-#
-# **Implementation**: `time_ut.cell_hidden_variable_comparison_interactive()`
-# - Increasing `z_var`: both filters degrade, but the 2D filter degrades
-#   less because it uses its motion model to bridge noisy measurements
-# - Increasing `process_var`: the dog's velocity changes more
-#   erratically; the advantage of the 2D filter is reduced but still
-#   present
-
-# %%
-hintros.print_obj_info(time_ut.cell_hidden_variable_comparison_interactive)
-
-# %%
-time_ut.cell_hidden_variable_comparison_interactive()
 
 # %% [markdown]
-# **Usage**
+# **Description**
 # - Inputs
-#   - **`seed`**: random seed for reproducibility
-#   - **`z_var`**: measurement noise variance
-#   - **`process_var`**: process noise variance
-#   - **`count`**: number of simulation steps
+#   - `seed`: random seed for reproducibility
+#   - `z_var`: measurement noise variance
+#   - `process_var`: process noise variance
+#   - `count`: number of simulation steps
 #
 # - Panels
-#   - **`left`**: 1D filter (position only) tracking
-#   - **`middle`**: 2D filter (position + hidden velocity) tracking
-#   - **`Comments`**: the current parameters, both filters' MSE, and
+#   - `left`: 1D filter (position only) tracking
+#   - `middle`: 2D filter (position + hidden velocity) tracking
+#   - `Comments`: the current parameters, both filters' MSE, and
 #     which one wins
+
+# %%
+utils.cell_hidden_variable_comparison_interactive()
 
 # %% [markdown]
 # **Guided usage**
@@ -602,3 +608,14 @@ time_ut.cell_hidden_variable_comparison_interactive()
 # - Raise `z_var` while keeping `process_var` low
 #   - Observe both MSEs grow, but the 2D filter's MSE stays lower: it
 #     still benefits from anticipating motion even with noisy sensors
+
+# %% [markdown]
+# **Implementation** `utils.cell_hidden_variable_comparison_interactive()`
+# - Increasing `z_var`: both filters degrade, but the 2D filter degrades
+#   less because it uses its motion model to bridge noisy measurements
+# - Increasing `process_var`: the dog's velocity changes more
+#   erratically; the advantage of the 2D filter is reduced but still
+#   present
+
+# %%
+hintros.print_obj_info(utils.cell_hidden_variable_comparison_interactive)

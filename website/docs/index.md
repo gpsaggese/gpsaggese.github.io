@@ -40,7 +40,7 @@
     - Neapolitan is Recognized by UNESCO as a distinct language rather than a
       dialect of Italian
     - It is partially intelligible with Italian; linguistic studies suggest that,
-      in some respects, Spanish is closer to standard Italian than Neapolitan
+      in some respects, Neapolitan is closer to Spanish than standard Italian
 - **Latin and Ancient Greek:** Five years of classical studies, including
   competitive translation and interpretation during the 1990s (yes, there is
   such a thing as competitive Latin)

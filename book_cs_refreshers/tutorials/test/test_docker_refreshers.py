@@ -35,7 +35,9 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "notebooks/L91_01_refresher_probability.ipynb"
         # Run test.
-        self.helper(notebook_name)
+        self.run_notebook(
+            notebook_name, use_docker_cmd=True, generate_html=False
+        )
 
     @pytest.mark.slow
     def test2(self) -> None:
@@ -48,7 +50,9 @@ class Test_docker(hdoctest.DockerTestCase):
             "notebooks/L92_02_refresher_probability_distributions.ipynb"
         )
         # Run test.
-        self.helper(notebook_name)
+        self.run_notebook(
+            notebook_name, use_docker_cmd=True, generate_html=False
+        )
 
     @pytest.mark.slow
     def test3(self) -> None:
@@ -58,7 +62,9 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "notebooks/L94_04_information_theory.ipynb"
         # Run test.
-        self.helper(notebook_name)
+        self.run_notebook(
+            notebook_name, use_docker_cmd=True, generate_html=False
+        )
 
     @pytest.mark.slow
     def test4(self) -> None:
@@ -68,4 +74,6 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "notebooks/L95_05_game_theory.ipynb"
         # Run test.
-        self.helper(notebook_name)
+        self.run_notebook(
+            notebook_name, use_docker_cmd=True, generate_html=False
+        )

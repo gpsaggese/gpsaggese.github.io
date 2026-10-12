@@ -1,31 +1,73 @@
 // type=UMD_slides
 // course_title=MSML610: Advanced Machine Learning
-// lesson_title=L05.1: Machine Learning Theories
+// lesson_title=L05.1: Learning Theory
 // version=v1.0 (2026-09-03)
 // slides_engine=typst
-// references=
-// - Abu-Mostafa et al.: _"Learning From Data"_ (2012)
+
+* Roadmap
+
+::: columns
+:::: {.column width=55%}
+
+- This lesson asks **whether machine learning is even possible**: it turns the
+  "possible vs probable" intuition into the Hoeffding inequality
+- It then introduces the **growth function**: counting dichotomies, shattering,
+  and break points to replace the number of hypotheses $M$ with a finite count
+- It closes with the **VC dimension**: the single number that measures the
+  complexity of a hypothesis set, yields generalization bounds, and tells us
+  how many examples we need
+
+::::
+:::: {.column width=45%}
+
+```graphviz
+digraph LessonFlow {
+  rankdir=TB;
+  bgcolor="transparent";
+  nodesep=0.3;
+  ranksep=0.4;
+  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12,
+        penwidth=1.4, fillcolor="#9CC4F2", color="#3C6FB0", fontcolor="#1F4E79"];
+  edge [color="#8C8C8C", penwidth=1.2];
+
+  hoeffding [label=<<b>Hoeffding inequality</b><br/>fixed h: E<SUB>in</SUB> tracks E<SUB>out</SUB>>];
+  union     [label=<<b>Union bound</b><br/>M hypotheses: bound too weak>,
+             fillcolor="#FFB3B3", color="#D64545", fontcolor="#6B1F1F"];
+  growth    [label=<<b>Growth function</b><br/>replace M with m<SUB>H</SUB>(N)>];
+  vc        [label=<<b>VC dimension</b><br/>N &ge; 10 d<SUB>VC</SUB> examples>];
+
+  hoeffding -> union -> growth -> vc;
+}
+```
+
+::::
+:::
 
 # Is Machine Learning Even Possible?
 
-* A Simple Visual ML Experiment (1/2)
+## The Feasibility Problem
+
+* Visual ML Experiment: Setup
+
+- Consider the supervised classification problem
 
 ::: columns
 :::: {.column width=50%}
-- Consider the supervised classification problem
-
-- **\black{Input}**
+- **Input**
   - A 9 bit vector represented as a 3x3 array
-- **\black{Training set}**
+
+- **Training set**
   - The \blue{blue row} $\vx_1, \vx_2, \vx_3$ for $f(\vx) = -1$
   - The \green{green row} $\vx_4, \vx_5, \vx_6$ for $f(\vx) = +1$
-- **\black{Test set}**
+
+- **Test set**
   - For the \red{red pattern} $\vx_0$, is $f(\vx_0) = -1 \text{ or } +1$?
 
 ::::
 :::: {.column width=50%}
 
-```latex
+```raw_latex
+\documentclass[border=1pt]{standalone}
 \usepackage{tikz}
 \begin{document}
 
@@ -64,17 +106,17 @@
 ::::
 :::
 
-* A Simple Visual ML Experiment (2/2)
+* Visual ML Experiment: Competing Models
 
 ::: columns
-:::: {.column width=70%}
+:::: {.column width=60%}
 
-- **\black{Model 1}**
+- **Model 1**
   - $f(\vx) = +1$ when $\vx$ has an axis of symmetry
   - $f(\vx) = -1$ when $\vx$ is not symmetric
   - The test set is symmetrical $\implies f(\vx_0) = +1$
 
-- **\black{Model 2}**
+- **Model 2**
   - $f(\vx) = +1$ when the top left square $\vx$ is empty
   - $f(\vx) = -1$ when the top left square $\vx$ is full
   - The test set has top left square full $\implies f(\vx_0) = -1$
@@ -83,14 +125,14 @@
   - Some have a value of -1 on the test point, others +1
   - Which one is it?
 
-- @Question@: How can a limited data set reveal enough information to define the
-  entire
-  target function?
-  - **\black{Is machine learning possible?}**
+- @Question@: how can a limited data set reveal enough information to define
+  the entire target function?
+  - **Is machine learning possible?**
 ::::
-:::: {.column width=30%}
+:::: {.column width=40%}
 
-```latex
+```raw_latex
+\documentclass[border=1pt]{standalone}
 \usepackage{tikz}
 \begin{document}
 
@@ -130,32 +172,32 @@
 ::::
 :::
 
-* Is Machine Learning Possible?
-- The function can assume **any value outside data**
-  - E.g., with summer temperature data, the function could assume a different
-    value for winter
+* Possible vs Probable
+- The (unknown) function can assume **any value outside training data**
 
 - **How to learn an unknown function?**
   - Estimating at unseen points seems impossible in general
   - Requires assumptions or models about behavior
 
-- Difference between:
-  - **Possible**
+- Difference between **possible** and **probable**
+  - _Possible_
     - No knowledge of the unknown function
     - E.g., could be linear, quadratic, or sine wave outside known data
-  - **Probable**
+  - _Probable_
     - Some knowledge of the unknown function from domain knowledge or historical
       data patterns
     - E.g., if historical weather data forms a sinusoidal pattern, unknown
       points likely follow that pattern
 
-* Supervised Learning: Bin Analogy (1/2)
+## Hoeffding Inequality and the Bin Analogy
+
+* Bin Analogy: Estimating a Probability
 
 ::: columns
 :::: {.column width=55%}
 
 - Consider a bin with \red{red} and \green{green} marbles
-  - We want to estimate $\Pr(\text{pick a \red{red} marble}) = \mu$ where the
+  - We want to estimate $\Pr(\text{pick a red marble}) = \mu$ where the
     value of $\mu$ is unknown
   - We pick $N$ marbles independently with replacement
   - The fraction of \red{red} marbles is $\nu$
@@ -167,77 +209,130 @@
 ::::
 :::
 
-- @Question@
-  - **"No"**
+- @Question@: does the sample fraction $\nu$ tell us anything about the bin
+  fraction $\mu$?
+  - **No**
     - In strict terms, we don't know anything about the marbles we didn't pick
     - The sample can be mostly \green{green}, while the bin is mostly \red{red}
     - This is _possible_, but _not probable_
-  - **"Yes"**
+  - **Yes**
     - Under certain conditions, the sample frequency is close to the real
       frequency
 
-- **Possible vs probable**
-  - It is **possible** that we don't know anything about the marbles in the bin
-  - It is **probable** that we know something
-  - Hoeffding inequality makes this intuition formal
+- @Key idea@: the Hoeffding inequality makes the intuition _"possible but not
+  probable"_ formal
 
 * Hoeffding Inequality
 - Consider a Bernoulli random variable $X$ with probability of success $\mu$
 
 - Estimate the mean $\mu$ using $N$ samples with $\nu = \frac{1}{N} \sum_i X_i$
 
-- The **probably approximately correct** (PAC) statement holds:
+- The **probably approximately correct** (PAC)
+  `#cite("valiant1984theory")`{=typst} statement holds
+  `#cite("hoeffding1963probability")`{=typst}:
   $$
   \Pr(|\nu - \mu| > \varepsilon) \le \frac{2}{e^{2 \varepsilon^2 N}}
   $$
 
-- **Remarks:**
+- @Remarks@:
   - Valid for all $N$ and $\varepsilon$, not an asymptotic result
   - Holds only if you sample $\nu$ and $\mu$ at random and in the same way
-  - If $N$ increases, it is exponentially small that $\nu$ will deviate from
-    $\mu$ by more than $\varepsilon$
   - The bound does not depend on $\mu$
   - Trade-off between $N$, $\varepsilon$, and the bound:
+    - The bound shrinks exponentially in $N$
     - Smaller $\varepsilon$ requires larger $N$ for the same probability bound
     - Since $\nu \in [\mu - \varepsilon, \mu + \varepsilon]$, you want small
       $\varepsilon$ with a large probability
   - It is a statement about $\nu$ and not $\mu$ although you use it to state
-    something about $\nu$ (like for a confidence interval)
+    something about $\mu$ (like for a confidence interval)
 
-* Supervised Learning: Bin Analogy (2/2)
+* Bin Analogy: Connecting to Learning
 
-- Let's connect the bin analogy, Hoeffding inequality, and feasibility of
-  machine learning
+- Let's connect the **bin analogy**, **Hoeffding inequality**, and **feasibility of
+  machine learning** `#cite("abumostafa2012learning")`{=typst}
   - You know $f(\vx)$ at points $\vx \in \calX$
-  - You choose an hypothesis $h: \calX \rightarrow \calY = \{0, 1\}$
+  - You choose a hypothesis $h: \calX \rightarrow \calY = \{-1, +1\}$
   - Each point $\vx \in \calX$ is a marble
-  - You color \red{red} if the hypothesis is correct $h(\vx) = f(\vx)$,
-    \green{green} otherwise
-  - The in-sample error $E_{in}(h)$ corresponds to $\nu$
-  - The marbles of unknown color corresponds to $E_{out}(h) = \mu$
-  - $\vx_1, ..., \vx_n$ are picked randomly and independently from a
-    distribution over $\calX$ which is the same as for $E_{out}$
+  - You color the marble \green{green} if the hypothesis is correct
+    $h(\vx) = f(\vx)$, \red{red} otherwise
+  - The in-sample error $E_{in}(h)$ is the fraction $\nu$ of \red{red} marbles
+    in the sample
+  - The out-of-sample error $E_{out}(h)$ is the fraction $\mu$ of \red{red}
+    marbles in the bin
+  - $\vx_1, ..., \vx_N$ are picked randomly and independently from a
+    distribution over $\calX$ which is the same as for $E_{in}$ and $E_{out}$
 
-- Hoeffding inequality holds and bounds the error going from in-sample to
-  out-of-sample
+- **Hoeffding inequality** holds and bounds the error going from in-sample to
+  out-of-sample for a fixed $h$
   $$
-  \Pr(|E_{in} - E_{out}| > \varepsilon) \le c
+  \Pr(|E_{in}(h) - E_{out}(h)| > \varepsilon) \le 2 e^{-2 \varepsilon^2 N}
   $$
-  - Generalization over unknown points (i.e., marbles) is possible
-  - **Machine learning is possible!**
+  - Generalization over unknown points (i.e., marbles) is possible for a fixed
+    $h$
 
-* Validation vs Learning: Bin Analogy
+## Training, Validation, and Testing
 
-- You have learned that for a given $h$, in-sample performance $E_{in}(h) = \nu$
-  needs to be close to out-of-sample performance $E_{out}(h) = \mu$
-  - This is the **validation setup**, after you have already learned a model
+* Learning Phases: College Analogy (1/2)
 
-- In a **learning setup** you have $h$ to choose from $M$ hypotheses
+- In machine learning there are @several phases@
+
+```graphviz
+digraph ML_Phases {
+  rankdir=LR;
+  node [shape=box, style="rounded,filled", fillcolor=white, fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+  learning   [label="Learning Phase"];
+  validation [label="Validation Phase"];
+  testing    [label="Testing Phase"];
+  production [label="Production Phase"];
+
+  learning -> validation -> testing -> production;
+}
+```
+
+- This set-up is very similar to studying and exams in a @college course@
+
+- Students study the _course material_
+  - This is the @learning phase@
+
+- Before the final exam, students receive _practice problems and solutions_
+  - Studying the problems improves performance by understanding what they need to
+    improve
+  - This corresponds to the @validation set@
+
+* Learning Phases: College Analogy (2/2)
+
+- The final exam corresponds to the @testing phase@
+  - These problems are different than the problems in the validation set
+  - The goal is to gauge learning effectively
+
+- Why not _give out exam problems_ to improve performance?
+  - Doing well in the exam isn't the goal (_overfitting_)
+  - The goal is to learn the course material
+
+- The final exam _isn't strictly necessary_
+  - Gauges how well you've learned
+  - Motivates you to study
+
+- Using the course knowledge on real problems after the course is the @production@
+  phase
+  - None of these problems were seen while studying or in the exam (_true out of
+    sample_)
+
+## From Validation to Learning
+
+* Validation vs Learning: Many Hypotheses
+
+- @Recap@: for a given $h$, in-sample performance $E_{in}(h) = \nu$ needs to be close
+  to out-of-sample performance $E_{out}(h) = \mu$
+  - This is the @validation setup@, i.e., after you have already learned a model
+
+- In a @learning setup@ you choose the final hypothesis $g$ from $M$ hypotheses
   - You need a bound on the out-of-sample performance of the chosen hypothesis
-    $h \in \calH$, regardless of which hypothesis you choose
+    $g \in \calH$, regardless of which hypothesis you choose
   - You need a Hoeffding counterpart for the case of choosing from multiple
     hypotheses
-    \begingroup \small
+    $$
     \begin{alignat*}{2}
     & \forall g \in \calH = \{h_1, ... , h_M\} \; \Pr(|E_{in}(g) - E_{out}(g)| > \varepsilon)
     &
@@ -252,103 +347,107 @@
     & \text{  (by Hoeffding)}
     \\
     \end{alignat*}
-    \endgroup
+    $$
 - @Problem@: the bound is weak
+  - It grows linearly with the number of hypotheses $M$, which is often infinite
 
-* Validation vs Learning: Coin Analogy
-- In a **validation set-up**, you have a coin and want to determine if it is
+* Validation Setup: One Coin
+
+- In a @validation set-up@, you have a single coin and want to determine if it is
   fair
 
-- Assume the coin is unbiased: $\mu = 0.5$
-- Toss the coin 10 times
-- @Question@: How likely is that you get 10 heads (i.e., the coin looks biased
-  $\nu = 0$)?
-  $$
-  \Pr(\text{coin shows } \nu = 0) = 1 / 2^{10} = 1 / 1024 \approx 0.1\%
-  $$
+- @Procedure@
+  - Assume the coin is unbiased: $\mu = 0.5$
+  - Toss the coin 10 times
+  - **Question**: How likely is that you get 10 heads (i.e., the coin looks biased
+    $\nu = 0$)?
+    $$
+    \Pr(\text{coin shows } \nu = 0) = 1 / 2^{10} = 1 / 1024 \approx 0.1\%
+    $$
+  - **Conclusion**: the probability that the in-sample performance ($\nu=0.0$)
+    is completely different from the out-of-sample performance ($\mu=0.5$) is
+    very low
 
-- **Conclusion**: the probability that the out-of-sample performance ($\nu=0.0$)
-  is completely different from the in-sample perf ($\mu=0.5$) is very low
+* Learning Setup: Many Coins
 
-* Validation vs Learning: Coin Analogy
+- In a @learning set-up@, you have many coins, you need to choose one and determine
+  if it's fair
 
-- In a **learning set-up**, you have many coins and you need to choose one and
-  determine if it's fair
-
-- If you have 1000 fair coins, how likely is it that at least one appears
-  totally
-  biased using 10 experiments?
+- @Procedure@:
+  - **Question**: if you have 1000 fair coins, how likely is it that at least one
+    appears totally biased using 10 experiments?
   - I.e., out-of-sample performance is completely different from in-sample
     performance
+    $$
+    \begin{aligned}
+    \Pr(\text{at least one coin has } \nu = 0) &
+    = 1 - \Pr(\text{all coins have } \nu \neq 0)\\
+    &= 1 - (\Pr(\text{a coin has } \nu \neq 0)) ^{1000}\\
+    &= 1 - (1 - \Pr(\text{a coin has } \nu = 0)) ^{1000}\\
+    &= 1 - (1 - 1 / 2 ^ {10}) ^ {1000}\\
+    &\approx 62\%
+    \end{aligned}
+    $$
+  - **Conclusion**: the probability that in-sample performance is completely
+    different from out-of-sample performance is more than 50\%
+
+* Hoeffding Bound: Validation vs Learning
+- In @validation / testing@, use Hoeffding to assess how well our $g$ (the _chosen
+  hypothesis_) approximates $f$ (the _unknown target function_):
   $$
-  \begin{aligned}
-  \Pr(\text{at least one coin has } \nu = 0) &
-  = 1 - \Pr(\text{all coins have } \nu \neq 0)\\
-  &= 1 - (\Pr(\text{a coin has } \nu \neq 0)) ^{10}\\
-  &= 1 - (1 - \Pr(\text{a coin has } \nu = 0)) ^{10}\\
-  &= 1 - (1 - 1 / 2 ^ {10}) ^ {1000}\\
-  &\approx 0.63\%
-  \end{aligned}
+  \Pr(|E_{in} - E_{out}| > \varepsilon) \le 2 \exp(-2 \varepsilon^2 N)
+  $$
+  where:
+  $$
+  \begin{alignat*}{2}
+  & E_{in}(g) = \frac{1}{N} \sum_i e(g(\vx_i), f(\vx_i)) \\
+  & E_{out}(g) = \EE_{\vx}[e(g(\vx), f(\vx))] \\
+  \end{alignat*}
   $$
 
-- **Conclusion**: It is probable, more than 50\%
-
-// TODO(gp): Merge the next two slides
-
-* Validation vs Learning: Hoeffding Inequality
-- In **validation / testing**
-  - Use Hoeffding to assess how well our $g$ (the _chosen hypothesis_)
-    approximates $f$ (the _unknown hypothesis_):
-    $$
-    \Pr(|E_{in} - E_{out}| > \varepsilon) \le 2 \exp(-2 \varepsilon^2 N)
-    $$
-    where:
-    \begingroup \small
-    \begin{alignat*}{2}
-    & E_{in}(g) = \frac{1}{N} \sum_i e(g(\vx_i), f(\vx_i)) \\
-    & E_{out}(g) = \EE_{\vx}[e(g(\vx), f(\vx))] \\
-    \end{alignat*}
-    \endgroup
-  - Since the hypothesis $g$ is final and fixed, Hoeffding inequality guarantees
-    that you can learn since it gives a bound for $E_{out}$ to track $E_{in}$
-
-- In **learning**
-  - Need to account that our hypothesis is the best of $M$ hypotheses, so:
-    $$
-    \Pr(|E_{in} - E_{out}| > \varepsilon) \le 2 M \exp(-2 \varepsilon^2 N)
-    $$
-  - The bound for $E_{out}$ from Hoeffding is weak
-
-- **Questions**:
-  - Is the bound weak because it needs to be?
-  - Is it possible to replace it with a stricter bound?
-
-* Intuition Why Bound for Hoeffding Is Weak
-- The Hoeffding inequality and the union bound applied to training set
+- In @learning@, need to account that our hypothesis is the best of $M$ hypotheses,
+  so:
   $$
   \Pr(|E_{in} - E_{out}| > \varepsilon) \le 2 M \exp(-2 \varepsilon^2 N)
   $$
-  is **artificially** too loose
+  - The bound for $E_{out}$ from Hoeffding is weak
+
+- @Questions@:
+  - Is the bound weak because it needs to be?
+  - Is it possible to replace it with a stricter bound?
+
+* Why the Union Bound Is Loose
+
+- @Recap@: The Hoeffding inequality and the union bound applied to training set is
+  **(artificially) too loose**
+  $$
+  \Pr(|E_{in} - E_{out}| > \varepsilon) \le 2 M \exp(-2 \varepsilon^2 N)
+  $$
 
 - $M$ was coming from the bad event:
+  $$
   \begin{alignat*}{2}
   \calB_i
-  &= \textit{"hypothesis $h_i$ does not generalize out-of-sample"} \\
-  &= "|E_{in}(h_i) - E_{out}(h_i)| > \varepsilon"
+  &= \text{hypothesis $h_i$ does not generalize out-of-sample} \\
+  &= |E_{in}(h_i) - E_{out}(h_i)| > \varepsilon
   \end{alignat*}
+  $$
 
 ::: columns
 :::: {.column width=70%}
-- Since $g \in \{h_1, h_2, \cdots, h_M\}$ then
-  $\Pr(\calB)
-  \le \Pr(\bigcup_i \calB_i)
-  \le \sum_i \Pr(\calB_i)$
 
-- The union bound assumes the events are disjoint, leading to a conservative
-  estimate if events overlap
-- **In reality**, bad events are extremely overlapping because bad hypotheses
-  are
-  extremely similar
+- Let $\calB$ be the bad event _"$g$ does not generalize"_
+  - Since $g \in \{h_1, h_2, \cdots, h_M\}$ then
+    $$
+    \Pr(\calB)
+    \le \Pr(\bigcup_i \calB_i)
+    \le \sum_i \Pr(\calB_i)
+    $$
+
+- The union bound is **tight** only if the events are disjoint, but it leads to a
+  **conservative** estimate if events overlap
+  - In practice, bad events are **extremely overlapping** because bad hypotheses are
+    extremely similar
 
 ::::
 :::: {.column width=30%}
@@ -369,96 +468,93 @@
 ::::
 :::
 
-//* Why Union Bound for Hoeffding Is Loose: Intuition
-//
-//// TODO(Gp): Improve this
-//
-//- Consider two linearly separable classes on a plane, in terms of the ground
-//  truth and a training set
-//
-//- Consider two 2D perceptrons with similar weights: $g_1, g_2$
-//- $E_{out}$ is the area where each hypothesis $g_i$ and the ground truth
-//  disagree
-//- $\Delta E_{out}$ is the differential area between the two $E_{out}$
-//
-//- $E_{in}$ corresponds to the points in the training set falling in the area
-//  corresponding to $E_{out}$
-//- $\Delta E_{in}$ is the number of points falling in $\Delta E_{out}$, i.e.,
-//  changing classification going from one hypothesis to the other
-//
-//- Thus the two "bad events" $\calB_1$ and $\calB_2$ are related to
-//  $\Delta E_{in}$ and $\Delta E_{out}$
+* Why Union Bound for Hoeffding Is Loose: Intuition
 
-* Training vs Testing: College Course Analogy (1/2)
-- In machine learning there are several phases
-```graphviz
-digraph ML_Phases {
-  rankdir=LR;
-  node [shape=box, style="rounded,filled", fillcolor=white, fontname="Helvetica", fontsize=12, penwidth=1.4];
+::: columns
+:::: {.column width=60%}
 
-  learning   [label="Learning Phase\n(Training Set)"];
-  validation [label="Validation Phase\n(Validation Set)"];
-  testing    [label="Testing Phase\n(Test Set)"];
-  production [label="Out-of-Sample Phase\n(Production)"];
+- Consider two linearly separable classes on a plane, in terms of the ground
+  truth and a training set
 
-  learning -> validation -> testing -> production;
+- Consider two 2D perceptrons with similar weights: $g_1, g_2$
+- $E_{out}$ is the area where each hypothesis $g_i$ and the ground truth
+  disagree
+- $\Delta E_{out}$ is the differential area between the two $E_{out}$
+
+- $E_{in}$ corresponds to the points in the training set falling in the area
+  corresponding to $E_{out}$
+- $\Delta E_{in}$ is the number of points falling in $\Delta E_{out}$, i.e.,
+  changing classification going from one hypothesis to the other
+
+- Thus the two "bad events" $\calB_1$ and $\calB_2$ are related to
+  $\Delta E_{in}$ and $\Delta E_{out}$
+  - They heavily overlap because $g_1, g_2$ are similar hypotheses
+  - Union bound assumes disjoint events, causing the overestimate
+
+::::
+:::: {.column width=40%}
+
+```tikz[width=100%]
+\bfseries
+% Draw two overlapping regions representing E_out for two hypotheses
+\draw[thick, red, dashed] (0,0) ellipse (2.5cm and 1.8cm);
+\draw[thick, blue, dashed] (1.5,0) ellipse (2.5cm and 1.8cm);
+
+% Label the regions
+\node[red] at (-2.2,-2.2) {$E_{out}(g_1)$};
+\node[blue] at (3.2,-2.2) {$E_{out}(g_2)$};
+
+% Draw overlapping region with different shade
+\fill[green!30, opacity=0.5] (0.2,-0.5) .. controls (0.2,-1.2) and (1.3,-1.2) .. (1.3,-0.5) .. controls (1.3,0.2) and (0.2,0.2) .. (0.2,-0.5);
+\node[green, text width=2cm] at (0.75,0.8) {$\Delta E_{out}$\newline (overlap)};
+
+% Draw sample points
+\foreach \x/\y in {-1.5/0.5, -0.5/1, 1/1.2, 2.5/0.3, -2/0, 0.5/-1} {
+    \draw[black, thick] (\x,\y) circle (2pt);
+}
+
+% Add arrows showing sample points in delta region
+\foreach \x/\y in {0.5/-1} {
+    \draw[thick, green, ->] (\x,\y) -- (\x+0.3,\y+0.5);
 }
 ```
 
-- This set-up is very similar to studying and exams in a college course
+::::
+:::
 
-- Students study the material
-  - This is the **learning phase**
-
-- Before the final exam, students receive practice problems and solutions
-  - Studying the problems improves performance by understating what they need to
-    improve
-  - This corresponds to the **validation set**
-
-* Training vs Testing: College Course Analogy (2/2)
-
-- The final exam corresponds to the **testing phase**
-  - These problems are different than the problems in the validation set
-
-  - Why not give out exam problems to improve performance?
-    - Doing well in the exam isn't the goal
-    - The goal is to learn the course material
-
-  - The final exam isn't strictly necessary
-    - Gauges how well you've learned
-    - Motivates you to study
-    - Knowing exam problems in advance wouldn't gauge learning effectively
-
-- @Question@
-  - This is the **out-of-sample phase**
 
 # Growth Function
 
+## Dichotomies
+
 * Dichotomy: Definition
-- @Problem@: classify $N$ (fixed) points $\vx_1, ..., \vx_N$ with an hypothesis
-  set $\calH$ of multi-class classifiers
-- Consider an assignment $D$ of the points to certain class $\vd_1, ..., \vd_N$
-- $D$ is a **dichotomy** for hypothesis set $\calH$ $\iff$ there exists
+
+- @Problem@
+  - You need to classify $N$ (fixed) points $\vx_1, ..., \vx_N$ with a hypothesis set
+    $\calH$ of binary classifiers
+  - Assignment $D$ of the points to certain class $\vd_1, ..., \vd_N$
+
+- @Definition@: $D$ is a **dichotomy** for hypothesis set $\calH$ $\iff$ there exists
   $h \in \calH$ that gets the desired classification $D$
 
+* Dichotomy: Example
 ::: columns
 :::: {.column width=70%}
 
-- @Example@
-  - 4 points in a plane $A, B, C, D$
-  - Binary classification
-  - $\calH$ = \{ bidimensional perceptrons \}
-  - Moving the separating hyperplane, you get different classifications for the
-    points (i.e., dichotomies)
-    ```
-          D1    D2   D3   D4   D...
-    A     o     x      ...
-    B     x     x
-    C     o     o
-    D     x     o      ...
-    ```
-  - There are at most $2^N$ dichotomies
-  - Certain classifications are not possible (e.g., XOR assignment)
+- Classify 4 points in a plane $A, B, C, D$
+- $\calH$ = \{ bidimensional perceptrons \}
+- Moving the separating hyperplane, you get different classifications for the
+  points (i.e., dichotomies)
+  ```
+        D1    D2   D3   D4   D...
+  A     o     x      ...
+  B     x     x
+  C     x     o
+  D     x     o      ...
+  ```
+- There are at most $2^N$ dichotomies
+- Certain classifications are not possible
+  - E.g., XOR assignment
 
 ::::
 :::: {.column width=30%}
@@ -477,7 +573,7 @@ digraph ML_Phases {
 % Draw symbols
 \node at (A) {\Large $\circ$};
 \node at (B) {\Large $\times$};
-\node at (C) {\Large $\circ$};
+\node at (C) {\Large $\times$};
 \node at (D) {\Large $\times$};
 
 % Add labels
@@ -487,11 +583,11 @@ digraph ML_Phases {
 \node[below left] at (D) {$D$};
 
 % Define coordinates for points
-\coordinate (TopCircle) at (5, 0);
-\coordinate (BottomCircle) at (0, 3.5);
+\coordinate (LineStart) at (0, 2.5);
+\coordinate (LineEnd) at (5, 2.5);
 
-% Draw single line between the circles
-\draw[red, dotted, thick] (TopCircle) -- (BottomCircle);
+% Draw a line isolating A from the other points
+\draw[red, dotted, thick] (LineStart) -- (LineEnd);
 ```
 
 ```tikz
@@ -521,92 +617,157 @@ digraph ML_Phases {
 \draw[red, dotted, thick] (5, 0) -- (0, 3.5);
 ```
 
-// TODO: Finish a few plots.
-
 ::::
 :::
 
 * Dichotomies vs Hypotheses
-- An **hypothesis** classifies each point of $\calX$: $\calX \rightarrow \{-1,
-  +1\}$
-- A **dichotomy** classifies each point of a fixed set:
+
+::: columns
+:::: {.column width=60%}
+
+- A @hypothesis@ classifies each point:
+  $\calX \rightarrow \{-1, +1\}$
+
+- A @dichotomy@ classifies each point of a fixed set:
   $\{\vx_1, ..., \vx_N\} \rightarrow \{-1, +1\}$
-  - Dichotomies are "mini-hypotheses", i.e., hypotheses restricted to given
-    points
-  - A dichotomy depends on:
-    - The number of points $N$
-    - Hypothesis set $\calH$ (i.e., the possible models)
-    - Where the points are placed
-    - How the points are assigned
-
-- The **number of different dichotomies** is indicated by
-  $|\calH(\vx_1, ..., \vx_N)|$
-  - The number of dichotomies is always finite, since
-    $|\calH(\vx_1, ..., \vx_N)| \le N^K$
-  - The number of hypotheses is usually infinite, i.e., $|\calH| = \infty$
-
-- The "complexity" of $\calH$ is related to the number of hypothesis
+  - Dichotomies are _"mini-hypotheses"_, i.e., hypotheses restricted to given points
 
 - From the training set point of view what matters are dichotomies and not
   hypotheses
   - Many (infinite) hypotheses can correspond to the same dichotomy
 
-* Growth Function
-- The **growth function** counts the maximum number of possible dichotomies on
-  $N$ points for a hypothesis set $\calH$:
+::::
+:::: {.column width=42%}
 
+```graphviz
+digraph HypothesesToDichotomies {
+  rankdir=LR;
+  bgcolor="transparent";
+  nodesep=0.25;
+  ranksep=0.9;
+  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12,
+        penwidth=1.4];
+  edge [color="#8C8C8C", penwidth=1.2];
+
+  subgraph cluster_hyp {
+    label=<Hypotheses<br/>(infinite)>;
+    fontname="Helvetica"; fontsize=12; fontcolor="#3A4A5C";
+    style="rounded,filled"; fillcolor="#F7F9FB"; color="#C7D0DA"; margin=14;
+    node [fillcolor="#A9DDB0", color="#4F9A5C", fontcolor="#1F4E2E"];
+    h4 [label=<h<SUB>4</SUB>>];
+    h3 [label=<h<SUB>3</SUB>>];
+    h2 [label=<h<SUB>2</SUB>>];
+    h1 [label=<h<SUB>1</SUB>>];
+  }
+
+  subgraph cluster_dich {
+    label=<Dichotomies<br/>(at most 2<SUP>N</SUP>)>;
+    fontname="Helvetica"; fontsize=12; fontcolor="#3A4A5C";
+    style="rounded,filled"; fillcolor="#F7F9FB"; color="#C7D0DA"; margin=14;
+    node [fillcolor="#9CC4F2", color="#3C6FB0", fontcolor="#1F4E79"];
+    d2 [label=<D<SUB>2</SUB>>];
+    d1 [label=<D<SUB>1</SUB>>];
+  }
+
+  h1 -> d1;
+  h2 -> d1;
+  h3 -> d2;
+  h4 -> d2;
+}
+```
+
+::::
+:::
+
+* Number of Dichotomies
+
+- The **number of different dichotomies** of an hypothesis set is indicated by
+  $|\calH(\vx_1, ..., \vx_N)|$ and depends on:
+  - The number of points $N$
+  - Hypothesis set $\calH$ (i.e., the possible models)
+  - Where the points are placed
+
+- The number of dichotomies is always finite, since
+  $|\calH(\vx_1, ..., \vx_N)| \le 2^N$
+- The number of hypotheses is typically infinite, i.e., $|\calH| = \infty$
+
+- The @"complexity"@ of $\calH$ is related to the number of dichotomies it can
+  generate, not to the number of hypotheses
+
+## The Growth Function
+
+* Growth Function: Definition
+
+- @Definition@: The **growth function** counts the maximum number of possible
+  dichotomies on $N$ points for a hypothesis set $\calH$:
   $$
   m_{\calH}(N)
   = \max_{\vx_1, \cdots, \vx_N \in \calX} |\calH(\vx_1, \cdots, \vx_N)|
   $$
 
-- **Why growth function?**
-  - The dichotomies depend on point distribution and assignment
+- @Intuition@: **Why max in the growth function?**
+  - The number of dichotomies depends on where the points are placed
   - The growth function considers the maximum by placing points in the most
     "favorable way" for the hypothesis set
+  - It's the "worst case of overfitting"
 
-- To compute $m_{\calH}(N)$ by **brute force**:
+- @Algorithm@: To compute $m_{\calH}(N)$ by **brute force**:
   - Consider all possible placements of $N$ points $\vx_1, ..., \vx_N$
-  - Consider all possible assignments of the points to the classes
   - Consider all possible hypotheses $h \in \calH$
   - Compute the corresponding dichotomy for $h$ on $\vx_1, ..., \vx_N$
   - Count the number of different dichotomies
 
 * What Can Vary in a Dichotomy
+
 - Given:
-  - An hypothesis set $\calH$ (e.g., bidimensional perceptrons)
-  - $N$ (fixed) points $\vx_1, ..., \vx_N$
+  - A hypothesis set $\calH$ (e.g., bidimensional perceptrons)
+  - $N$ points $\vx_1, ..., \vx_N$
   - An assignment $D$ of the points to certain class $\vd_1, ..., \vd_N$
 
-- $D$ is a **dichotomy** for hypothesis set $\calH$ $\iff$ there exists
-  $h \in \calH$ that gets the desired classification $D$
+- Quantities in the definition of dichotomy:
 
-- There are various quantities in the definition of dichotomy
-  - The hypothesis set $\calH$
-    - It is fixed
-  - The number of dimensions of the input space
-    - It is fixed through the hypothesis set $\calH$
-  - The number of points $N$
-    - Input to the growth function $m_{\calH}(N)$
-  - How the points are assigned to the classes $\vd_1, ..., \vd_N$
-    - It is a free parameter, removed by how each hypothesis in $\calH$ "splits"
-      the space 
-  - Where the points are positioned $\vx_1, ..., \vx_N$
-    - It is a free parameter, removed by the growth function through $\max$
+```{=typst}
+#styled-table(
+  headers: ("Quantity", "Fixed / Free", "Notes"),
+  rows: (
+    ([$cal(H)$ (hypothesis set)], [Fixed], [Defined at the outset]),
+    ([Input space dimensions], [Fixed], [Determined by $cal(H)$]),
+    ([$N$ (number of points)], [Fixed], [Parameter to growth function $m_(cal(H))(N)$]),
+    ([Point assignments $bold(underline(d))_1, dots, bold(underline(d))_N$], [Free], [Removed by how $cal(H)$ splits the space]),
+    ([Point positions $bold(underline(x))_1, dots, bold(underline(x))_N$], [Free], [Removed by $max$ in growth function]),
+  ),
+  col-widths: (1.8fr, 1.2fr, 2.0fr),
+  width: 95%,
+)
+```
 
-* Growth Function Is Increasing
-- $m_{\calH}(N)$ increases (although not monotonically) with $N$
+* Growth Function Is Non-Decreasing
+
+- $m_{\calH}(N)$ is non-decreasing in $N$ (not necessarily strictly increasing)
+
+- @Intuition@: Adding more points cannot reduce the number of possible dichotomies
+  - If $\calH$ can shatter $N$ points in some way, it can always reproduce those
+    same dichotomies when given $N+1$ points
+  - By ignoring the label of the new point, any dichotomy on $N$ points extends
+    to at least 2 dichotomies on $N+1$ points (one with new point as $+1$, one as
+    $-1$)
+
 - @Example@
-  - The number of dichotomies on $N=3$ points $m_{\calH}(3)$ is smaller or equal
-    than the number of dichotomies on $N=4$ points
-  - In fact we can ignore a new point and get the same classification
+  - For $N=3$ points: $m_{\calH}(3) \le m_{\calH}(4)$
+  - Each of the $m_{\calH}(3)$ dichotomies on 3 points can be extended to at
+    least one dichotomy on 4 points by ignoring the new point
+  - Formally: $m_{\calH}(N) \le m_{\calH}(N+1) \le 2 m_{\calH}(N)$
 
 - $m_{\calH}(N)$ increases with the complexity of $\calH$
+  - More powerful hypothesis sets can shatter more points
+  - E.g., higher-dimensional perceptrons can shatter larger sets
 
 - $m_{\calH}(N)$ increases with the number of dimensions in the input space
-  (i.e., feature space)
+  - Richer feature spaces allow more flexible decision boundaries
+  - E.g., 2D perceptron ($d_{VC}=3$) vs 3D perceptron ($d_{VC}=4$)
 
-* Growth Function: Examples
+* Growth Function: Examples (1/2)
+
 - Consider the growth function $m_{\calH}$ for different hypothesis sets $\calH$
 
 ::: columns
@@ -614,10 +775,9 @@ digraph ML_Phases {
 - **Perceptron on a plane**
   - $m_{\calH}(3) = 8$
   - $m_{\calH}(4) = 14$ (2 XOR classifications not possible)
+  - ...
 ::::
 :::: {.column width=45%}
-
-// TODO(gp): Use x_1, x_2, ... instead of A
 
 ```tikz[width=60%]
 \bfseries
@@ -625,22 +785,22 @@ digraph ML_Phases {
 \draw[thick] (0,0) rectangle (5,3.5);
 
 % Define coordinates for points
-\coordinate (A) at (2.5,3);   % top circle
-\coordinate (B) at (3.8,2);   % right cross
-\coordinate (C) at (2.5,1);   % bottom circle
-\coordinate (D) at (1,1.2);   % left cross
+\coordinate (X1) at (2.5,3);   % top circle
+\coordinate (X2) at (3.8,2);   % right cross
+\coordinate (X3) at (2.5,1);   % bottom circle
+\coordinate (X4) at (1,1.2);   % left cross
 
 % Draw symbols
-\node at (A) {\Large $\circ$};
-\node at (B) {\Large $\times$};
-\node at (C) {\Large $\circ$};
-\node at (D) {\Large $\times$};
+\node at (X1) {\Large $\circ$};
+\node at (X2) {\Large $\times$};
+\node at (X3) {\Large $\circ$};
+\node at (X4) {\Large $\times$};
 
 % Add labels
-\node[above right] at (A) {$A$};
-\node[above left] at (B) {$B$};
-\node[below right] at (C) {$C$};
-\node[below left] at (D) {$D$};
+\node[above right] at (X1) {$x_1$};
+\node[above left] at (X2) {$x_2$};
+\node[below right] at (X3) {$x_3$};
+\node[below left] at (X4) {$x_4$};
 
 % Define coordinates for points
 \coordinate (TopCircle) at (5, 0);
@@ -658,7 +818,7 @@ digraph ML_Phases {
 :::: {.column width=55%}
 - **Positive rays** $\sign(x - a)$ on $\bbR$
   - $m_{\calH}(N) = N + 1$
-  - Origin of rays $a$ can be placed in $N + 1$ intervals
+  - _Proof_: Origin of rays $a$ can be placed in $N + 1$ intervals
 
 ::::
 :::: {.column width=45%}
@@ -692,14 +852,17 @@ digraph ML_Phases {
 ::::
 :::
 
-* Growth Function: Examples
+* Growth Function: Examples (2/2)
+
 ::: columns
 :::: {.column width=55%}
 
 - **Positive intervals** on $\bbR$ $x \in [a, b]$
-  - $m_{\calH}(N) = {N + 1 \choose 2} + 1 \sim \N^2$
-  - Pick 2 distinct intervals out of $N + 1$, and there is a dichotomy with 2
-    points in the same interval
+  - $m_{\calH}(N) = {N + 1 \choose 2} + 1 \sim N^2$
+  - _Proof_:
+    - Place the 2 endpoints $a < b$ in distinct gaps out of the $N + 1$ gaps between
+      the points
+    - Add 1 dichotomy for both endpoints in the same gap (all points are $-1$)
 
 ::::
 :::: {.column width=45%}
@@ -745,7 +908,9 @@ digraph ML_Phases {
 
 - **Convex sets on a plane**
   - $m_{\calH}(N) = 2^N$
-  - Place points in a circle and can classify $N$ points in any way
+  - _Proof_:
+    - Place points in a circle ("best case" for the growth function)
+    - Can classify $N$ points in any way
 
 ::::
 :::: {.column width=45%}
@@ -784,15 +949,21 @@ digraph ML_Phases {
 ::::
 :::
 
-* Break Point of an Hypothesis Set
-- Given an hypothesis set $\calH$
+## Break Points
 
-- A hypothesis set $\calH$ **shatters $N$ points** $\iff$ $m_{\calH}(N) = 2^N$
-  - There is a position of $N$ points and a class assignment that you can
-    classify using $h \in \calH$
+* Shattering and Break Points
+
+- Given a hypothesis set $\calH$
+
+- @Definition@: A hypothesis set $\calH$ **shatters $N$ points**
+  $\iff m_{\calH}(N) = 2^N$
+  - There is a placement of $N$ points for which every one of the $2^N$ class
+    assignments can be classified using some $h \in \calH$
   - It does not mean all sets of $N$ points can be classified in any way
 
-- $k$ is a **break point** for $\calH$ $\iff m_{\calH}(k) < 2^k$
+// TODO(ai_gp): Remove the break point and use VC dimension
+
+- @Definition@: $k$ is a **break point** for $\calH$ $\iff m_{\calH}(k) < 2^k$
   - I.e., no data set of size $k$ can be shattered by $\calH$
   - E.g.,
     - For 2D perceptron: a break point is 4
@@ -800,24 +971,27 @@ digraph ML_Phases {
     - For positive intervals: a break point is 3
     - For convex set on a plane: there is no break point
 
-* Break Point for an Hypothesis Set and Learning
-- If there is a break point for a hypothesis set $\calH$, it can be shown that:
+* Break Points and the VC Inequality
 
+- @Theorem@: if there is a break point for a hypothesis set $\calH$, it can be shown
+  that:
   - $m_{\calH}(N)$ is polynomial in $N$
   - Instead of Hoeffding's inequality for learning
     $$
     \Pr(|E_{in}(g) - E_{out}(g)| > \varepsilon) \le 2 M e^{-2 \varepsilon^2 N}
     $$
-    you can use the Vapnik-Chervonenkis inequality:
+    you can use the Vapnik-Chervonenkis inequality
+    `#cite("vapnikchervonenkis1971uniform")`{=typst}:
     $$
     \Pr(\text{bad generalization}) \le
     4 m_\calH(2N) e^{-\frac{1}{8} \varepsilon^2 N}
     $$
-   - Since $m_{\calH}(N)$ is polynomial in $N$, it will be dominated by the
-     negative exponential, given enough examples
-   - You can have a generalization bound: machine learning works!
 
-- A hypothesis set can be characterized from the learning point of view by the
+- @Corollary@: since $m_{\calH}(N)$ is polynomial in $N$, it will be dominated by the
+  negative exponential, given enough examples $N$
+  - You can have a generalization bound: machine learning works!
+
+- From the learning point of view, an hypothesis set $\calH$ is characterized by the
   **existence and value of a break point**
 
 //* What Can Replace $M$ in Hoeffding Inequality
@@ -858,10 +1032,13 @@ digraph ML_Phases {
 
 # The VC Dimension
 
-* VC Dimension of an Hypothesis Set
-- The **VC dimension of a hypothesis set** $\calH$, denoted as $d_{VC}(\calH)$,
-  is defined as the largest value of $N$ for which $m_{\calH}(N) = 2^N$
+* VC Dimension: Definition
+
+- @Definition@: The **VC dimension of a hypothesis set** $\calH$, denoted as
+  $d_{VC}(\calH)$, is defined as the largest value of $N$ for which
+  $m_{\calH}(N) = 2^N$
   - I.e., the VC dimension is the most points $\calH$ can shatter
+    `#cite("shalevshwartz2014understanding")`{=typst}
 
 - @Properties@: of the VC dimension: if $d_{VC}(\calH) = N$ then
 
@@ -872,118 +1049,162 @@ digraph ML_Phases {
 
   - $\calH$ can _shatter_ $N$ points for any $N \le d_{VC}(\calH)$
 
-  - The _smallest break point_ is $d_{VC} - 1$
+  - The _smallest break point_ is $d_{VC} + 1$
 
-  - The _growth function_ in terms of the VC dimension is
+  - The _growth function_ is bounded in terms of the VC dimension
+    `#cite("sauer1972density")`{=typst}:
     $m_{\calH} \le \sum_{i=0}^{d_{VC}} {N \choose i}$
 
   - The VC dimension is the _order of the polynomial bounding_ $m_{\calH}$
 
+* VC Dimension: Examples
+
+- @Examples@: the hypothesis sets from the growth function examples, ordered by
+  VC dimension
+
+```{=typst}
+#styled-table(
+  headers: ("Hypothesis set", "Growth function", "Break point", "VC dimension"),
+  rows: (
+    ([Positive rays], [$m_H (N) = N + 1$], [2], [1]),
+    ([Positive intervals], [$m_H (N) = binom(N + 1, 2) + 1$], [3], [2]),
+    ([Perceptron on a plane], [$m_H (3) = 8, m_H (4) = 14$], [4], [3]),
+    ([Convex sets on a plane], [$m_H (N) = 2^N$], [none], [$oo$]),
+  ),
+  col-widths: (1.6fr, 2.2fr, 0.9fr, 1.2fr),
+  width: 95%,
+)
+```
+
+- @Interpretation@: $d_{VC}$ is finite $\iff$ $\calH$ has a break point, i.e.,
+  the growth function is polynomial and learning is feasible
+
 * VC Dimension: Interpretation
-- The VC dimension **measures the complexity** of a hypothesis set in terms of
-  **effective parameters**
+- @Intuition@: The VC dimension measures the complexity of a hypothesis set in terms
+  of **effective parameters**
 
 - @Example@
   - A perceptron in a $d$-dimensional space has $d_{VC} = d + 1$
   - In fact $d_{VC}$ is the number of perceptron parameters!
-  - E.g., for a 2D perceptron ($d = 2$), the break point is 2, so $d_{VC} = 3$
+  - E.g., for a 2D perceptron ($d = 2$), the break point is 4, so $d_{VC} = 3$
 
-- The VC dimension considers the model as a black box in order to estimate
-  effective parameters
-  - How many points $N$ a model can shatter, not the number of parameters
+- @Fact@:
+  - The VC dimension considers the model as a black box in order to estimate
+    effective parameters
+    - How many points $N$ a model can shatter? Not the number of parameters
 
-- Not all parameters contribute to degrees of freedom
-  - E.g., combining $N$ 1D perceptrons gives $2N$ parameters, but the effective
-    degrees of freedom remain 2
+  - Not all parameters contribute to degrees of freedom
+    - E.g., combining $N$ 1D perceptrons gives $2N$ parameters, but the effective
+      degrees of freedom remain 2
 
-- A complex hypothesis $\calH$:
-  - Has more parameters (higher VC dimension $d_{VC}$)
-  - Requires more examples for training
+  - A complex hypothesis $\calH$ has higher VC dimension $d_{VC}$ and requires more
+    examples for training
 
-* VC Generalization Bounds
+## VC Generalization Bounds
+
+* VC Generalization Bounds: Bound Term
+
 - @Question@: How many data points are needed to obtain
-  $\Pr(|E_{in} - E_{out}| > \varepsilon) \le \delta$?
+  $$
+  \Pr(\text{bad generalization})
+  = \Pr(|E_{in} - E_{out}| > \varepsilon) \le \delta
+  $$
 
-- The VC inequality states
+- @Answer@: The VC inequality states
   $$
   \Pr(\text{bad generalization}) \le
     4 m_\calH(2N) e^{-\frac{1}{8} \varepsilon^2 N}
   $$
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=50%}
 
-- $N^d e^{-N}$ abstracts the upper bound term
-  - Plot $N^d e^{-N}$ vs. $N$: Power dominates for small $N$, exponential for
-    large $N$ and brings it to 0
-  - Vary $d$ (VC dimension) function peaks for larger $N$, then approaches
-    the region of interest $< 1$
+- @Analysis@: Approximate the upper bound term as $N^d e^{-N}$
+  - Plot $N^d e^{-N}$ vs. $N$
+  - Power dominates for small $N$
+  - Exponential dominates for large $N$ and brings it to 0
 
 ::::
-:::: {.column width=35%}
+:::: {.column width=50%}
 
 ![](msml610/lectures_source/figures/L05.1.VC_Generalization_Bounds.png)
 
 ::::
 :::
 
-::: columns
-:::: {.column width=65%}
+* VC Generalization Bounds: Sample Size
 
-- Plot intersection of $N^d e^{-N}$ with a probability as a function of $d$
-  - Examples $N$ needed are proportional to $d$
-  - Rule of thumb: $N \ge 10 d_{VC}$ for generalization
+- @Question@: _"I have a model with VC dimension $d$ and I can accept a max
+  probability of overfitting $p$. How many samples $N$ do I need?"_
+
+::: columns
+:::: {.column width=50%}
+
+- @Answer@: Consider 
+  $$
+  \Pr(\text{bad generalization})
+  \sim 
+  N^d e^{-N}
+  $$
+
+- Plot intersection of $N^d e^{-N}$ with a probability $p$ as a function of $d$
+
+- The number of examples $N$ needed are proportional to $d$
+  - **Rule of thumb**: $N \ge 10 d_{VC}$ for generalization
+    `#cite("abumostafa2012learning")`{=typst}
 
 ::::
-:::: {.column width=35%}
+:::: {.column width=50%}
 
 ![](msml610/lectures_source/figures/L05.1.VC_Generalization_Bounds2.png)
 
 ::::
 :::
 
-* VC Generalization Bounds
-- The VC inequality 
+* VC Generalization Bounds: Error Bar
+
+- The VC inequality
   $$
-  \Pr(|E_{in} - E_{out}| > \varepsilon) \le 
+  \Pr(|E_{in} - E_{out}| > \varepsilon) \le
     4 m_\calH(2N) e^{-\frac{1}{8} \varepsilon^2 N}
+    = \delta
   $$
-  can be used in several ways to relate $\varepsilon$, $\delta$, and $N$, e.g.,
+  can be used in several ways to relate $\varepsilon$, $\delta$, and $N$
 
-- Examples
-  - "Given $\varepsilon$ = 1% error, how many examples $N$ are needed to get
-    $\delta = 0.05$?"
-  - "Given $N$ examples, what's the probability of an error larger than
-    $\varepsilon$?"
+- @Examples@
+  - _"Given $\varepsilon$ = 1% error, how many examples $N$ are needed to get
+    $\delta = 0.05$?"_
+  - _"Given $N$ examples, what's the probability of an error larger than
+    $\varepsilon$?"_
+  - ...
 
-- You can equate $\delta$ to $4 m_{\calH}(2N) e^{\frac{1}{8}\varepsilon^2 N}$
-  and
-  solve for $\varepsilon$, getting
+- For the first question, you can equate $\delta$ to
+  $4 m_{\calH}(2N) e^{-\frac{1}{8}\varepsilon^2 N}$
+- Solve for $\varepsilon$, getting
   $$
   \Omega(N, \calH, \delta)
   = \sqrt{\frac{8}{N} \ln \frac{4 m_{\calH}(2N)}{\delta}}
   $$
-- Then you can say $|E_{out} - E_{in}| \le \Omega(N, \calH, \delta)$ with
-  probability $\ge 1 - \delta$
-  - The generalization bounds are then:
-    $\Pr(E_{out} \le E_{in} + \Omega) \ge 1 - \delta$
+- Thus the generalization bounds are:
+    $$\Pr(E_{out} \le E_{in} + \Omega) \ge 1 - \delta$$
 
-* How to Void the VC Analysis Guarantee
+* Data Snooping Voids the VC Guarantee
+
 ::: columns
 :::: {.column width=65%}
-- Consider the case where data is genuinely non-linear
+- Consider the case with non-linear data
   - E.g., "o" points in the center and "x" in the corners
 
-- Transform to high-dimensional $\calZ$ with:
+- Transform data to high-dimensional $\calZ$ with:
   $$
   \Phi: \vx = (x_0, ... , x_d) \rightarrow \vz = (z_0, ... , z_{\tilde{d}})
   $$
 
 - $d_{VC} \le \tilde{d} + 1$; smaller $\tilde{d}$ improves generalization
-  - Use $\vz = (1, x_1, x_2, x_1 x_2, x_1^2, x_2^2)$
-  - Why not $\vz = (1, x_1^2, x_2^2)$?
-  - Why not $\vz = (1, x_1^2 + x_2^2)$?
-  - Why not $\vz = (x_1^2 + x_2^2 - 0.6)$?
+  - $\vz = (1, x_1, x_2, x_1 x_2, x_1^2, x_2^2) \to \tilde{d} = 6$
+  - $\vz = (1, x_1^2, x_2^2) \to \tilde{d} = 3$
+  - $\vz = (1, x_1^2 + x_2^2) \to \tilde{d} = 2$
+  - $\vz = (x_1^2 + x_2^2 - 0.6) \to \tilde{d} = 1$
 
 ::::
 :::: {.column width=35%}
@@ -992,8 +1213,26 @@ digraph ML_Phases {
 ::::
 :::
 
-- Some model coefficients were zero and discarded, leaving machine learning the
-  rest
+- For VC analysis, complexity is that of the initial hypothesis set
   - VC analysis is a warranty, forfeited if data is examined before model
-    selection (data snooping)
-  - From VC analysis, complexity is that of the initial hypothesis set
+    selection (data snooping) `#cite("abumostafa2012learning")`{=typst}
+
+* Summary
+
+- **Feasibility**: the target function is unknown outside the data, so learning is
+  _possible_ but only _probable_
+- **Hoeffding inequality**: bounds $|E_{in} - E_{out}|$ for a fixed hypothesis, but
+  the union bound makes it weak by a factor $M$ when choosing among many hypotheses
+- **Growth function**: counts the dichotomies a hypothesis set can generate on $N$
+  points; a break point makes it polynomial in $N$
+- **VC dimension**: the largest $N$ that $\calH$ can shatter, a measure of effective
+  parameters; it gives the VC inequality and the rule of thumb $N \ge 10 d_{VC}$
+- **Caveat**: the guarantee holds only if the hypothesis set is fixed before looking
+  at the data, so data snooping voids it
+
+* References
+
+```{=typst}
+#set text(size: 0.75em)
+#references("/msml610/lectures_source/refs.bib")
+```

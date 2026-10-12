@@ -31,7 +31,9 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "CausalML.example.ipynb"
         # Run test.
-        self.helper(notebook_name)
+        self.run_notebook(
+            notebook_name, use_docker_cmd=True, generate_html=False
+        )
 
     @pytest.mark.slow
     def test2(self) -> None:
@@ -41,4 +43,6 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "CausalML.API.ipynb"
         # Run test.
-        self.helper(notebook_name)
+        self.run_notebook(
+            notebook_name, use_docker_cmd=True, generate_html=False
+        )

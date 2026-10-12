@@ -16,25 +16,19 @@
 
 # %% [markdown]
 # # Causal discovery: learning causal structure from data
-
-# %% [markdown]
-# This notebook teaches causal discovery through interactive visualizations and
-# incremental examples, building intuition about how algorithms infer causal
-# structure from observational data.
-
-# %% [markdown]
-# ## Imports
-
-# %%
-# %load_ext autoreload
-# %autoreload 2
-
-import logging
-
-try:
-    from IPython.display import display
-except ImportError:
-    display = print  # type: ignore
+#
+# - This notebook teaches causal discovery through interactive visualizations
+#   and incremental examples, building intuition about how algorithms infer
+#   causal structure from observational data
+# - The pedagogical arc:
+#   - Correlation vs causation, Markov equivalence, and why the direction of
+#     an edge matters for interventions
+#   - The PC algorithm (conditional independence tests), score-based search
+#     with GES, and LiNGAM for non-Gaussian data
+#   - Comparing the three algorithms on the same data
+#   - Validating discovered DAGs with refutation tests, and integrating domain
+#     knowledge
+#   - An end-to-end workflow from data to a validated DAG
 
 # %%
 import helpers.hmodule as hmodule
@@ -48,19 +42,33 @@ hmodule.install_module_if_not_present(
     venv_path="/opt/venv",
 )
 
+import networkx
+
+print("networkx version: ", networkx.__version__)
+
+# %%
+# %load_ext autoreload
+# %autoreload 2
+
+import logging
+
+
 # %%
 import helpers.hintrospection as hintros
-import helpers.hnotebook as hnotebo
+import helpers.hnotebook as hnotebook
 
-import msml610_utils as ut
 import L10_2_causal_discovery_utils as utils
 
-ut.config_notebook()
-
-# Initialize logger.
-logging.basicConfig(level=logging.INFO)
+# Initialize notebook configuration and logging.
+hnotebook.config_notebook()
 _LOG = logging.getLogger(__name__)
-hnotebo.init_loggers(_LOG, set_all_loggers_to_print=True)
+utils.init_loggers(_LOG)
+
+# Convert `display` into `print()` when running outside IPython.
+try:
+    from IPython.display import display
+except ImportError:
+    display = print  # type: ignore
 
 # %% [markdown]
 # # Part 1: The Core Problem: Correlation vs. Causation
@@ -68,34 +76,27 @@ hnotebo.init_loggers(_LOG, set_all_loggers_to_print=True)
 # %% [markdown]
 # ## Cell 1.1: Two DAGs, one correlation
 #
-# **Goal**:
+# **Goal**
 # - Recognize that identical observational patterns can hide opposite
 #   causal implications
-#
-# **Implementation**: `utils.cell1_correlation_vs_causation()`
-# - Generates data from a chain `X -> Y` and a reverse `Z -> Y -> X`
-#   structure that produce the same `X`/`Y` correlation
 
-# %%
-hintros.print_obj_info(utils.cell1_correlation_vs_causation)
+# %% [markdown]
+# **Description**
+# - Inputs
+#   - `seed`: random seed for the sampled data
+#   - `Correlation (r)`: strength of correlation between $X$ and $Y$
+#   - `Mode`: toggle between observational and interventional framing
+#
+# - Panels
+#   - `Chain: X -> Y`: scatter plot, with a note that intervening on
+#     $X$ changes $Y$
+#   - `Reverse: Z -> Y -> X`: scatter plot with the identical
+#     correlation, but intervening on $X$ has no effect
+#   - `Comments`: current seed and correlation, plus the key
+#     takeaway
 
 # %%
 utils.cell1_correlation_vs_causation()
-
-# %% [markdown]
-# **Usage**
-# - Inputs
-#   - **`seed`**: random seed for the sampled data
-#   - **`Correlation (r)`**: strength of correlation between $X$ and $Y$
-#   - **`Mode`**: toggle between observational and interventional framing
-#
-# - Panels
-#   - **`Chain: X -> Y`**: scatter plot, with a note that intervening on
-#     $X$ changes $Y$
-#   - **`Reverse: Z -> Y -> X`**: scatter plot with the identical
-#     correlation, but intervening on $X$ has no effect
-#   - **`Comments`**: current seed and correlation, plus the key
-#     takeaway
 
 # %% [markdown]
 # **Guided usage**
@@ -108,40 +109,41 @@ utils.cell1_correlation_vs_causation()
 #     these structures, we need additional assumptions or interventions
 
 # %% [markdown]
+# **Implementation** `utils.cell1_correlation_vs_causation()`
+# - Generates data from a chain `X -> Y` and a reverse `Z -> Y -> X`
+#   structure that produce the same `X`/`Y` correlation
+
+# %%
+hintros.print_obj_info(utils.cell1_correlation_vs_causation)
+
+# %% [markdown]
 # # Part 2: Markov Equivalence: Three Indistinguishable Structures
 
 # %% [markdown]
 # ## Cell 2.1: Same independencies, different DAGs
 #
-# **Goal**:
+# **Goal**
 # - Show that different DAGs encode identical conditional independencies
 # - Introduce the CPDAG as the best we can do with observational data
 #   alone
 # - Understand why causal discovery outputs equivalence classes, not
 #   unique DAGs
-#
-# **Implementation**: `utils.cell2_markov_equivalence()`
-# - Generates data from a chain `X -> Y -> Z`, then computes the
-#   marginal and conditional (given $Y$) correlation between $X$ and $Z$
 
-# %%
-hintros.print_obj_info(utils.cell2_markov_equivalence)
+# %% [markdown]
+# **Description**
+# - Inputs
+#   - `seed`: random seed for the sampled data
+#   - `Sample Size (N)`: number of observations
+#
+# - Panels
+#   - `Chain`/`Reverse`/`Common Cause`: the 3 Markov-equivalent DAGs
+#   - **CI text**: states the shared independence $X \perp Z \mid Y$
+#   - `Marginal Correlation`/`Conditional Correlation`: bar charts of
+#     corr($X$, $Z$) and corr($X$, $Z \mid Y$)
+#   - `Comments`: current seed, $N$, and the 2 correlation values
 
 # %%
 utils.cell2_markov_equivalence()
-
-# %% [markdown]
-# **Usage**
-# - Inputs
-#   - **`seed`**: random seed for the sampled data
-#   - **`Sample Size (N)`**: number of observations
-#
-# - Panels
-#   - **`Chain`/`Reverse`/`Common Cause`**: the 3 Markov-equivalent DAGs
-#   - **CI text**: states the shared independence $X \perp Z \mid Y$
-#   - **`Marginal Correlation`/`Conditional Correlation`**: bar charts of
-#     corr($X$, $Z$) and corr($X$, $Z \mid Y$)
-#   - **`Comments`**: current seed, $N$, and the 2 correlation values
 
 # %% [markdown]
 # **Guided usage**
@@ -156,40 +158,41 @@ utils.cell2_markov_equivalence()
 #     the CPDAG, never a unique DAG
 
 # %% [markdown]
+# **Implementation** `utils.cell2_markov_equivalence()`
+# - Generates data from a chain `X -> Y -> Z`, then computes the
+#   marginal and conditional (given $Y$) correlation between $X$ and $Z$
+
+# %%
+hintros.print_obj_info(utils.cell2_markov_equivalence)
+
+# %% [markdown]
 # # Part 3: Why Direction Matters: Causal Effects via Intervention
 
 # %% [markdown]
 # ## Cell 3.1: Same correlation, different interventions
 #
-# **Goal**:
+# **Goal**
 # - Show concretely why edge direction determines causal effect
 # - Build intuition for why structure recovery is crucial for policy
 # - Demonstrate that the same correlation leads to wildly different
 #   intervention outcomes
-#
-# **Implementation**: `utils.cell3_causal_effects()`
-# - Simulates intervening on $X$ (set to a high value) and measures the
-#   effect on $Z$ under 3 structures: chain, reverse, common cause
 
-# %%
-hintros.print_obj_info(utils.cell3_causal_effects)
+# %% [markdown]
+# **Description**
+# - Inputs
+#   - `seed`: random seed for the sampled data
+#   - `Intervention Strength`: magnitude of the change applied to
+#     $X$
+#   - `Sample Size (N)`: observations used for effect estimation
+#
+# - Panels
+#   - `Chain: X -> Y -> Z`: large effect on $Z$ (green bar)
+#   - `Reverse: Z -> Y -> X`: no effect on $Z$ (red bar)
+#   - `Common Cause`: no direct effect on $Z$ (orange bar)
+#   - `Comments`: current parameters and the key takeaway
 
 # %%
 utils.cell3_causal_effects()
-
-# %% [markdown]
-# **Usage**
-# - Inputs
-#   - **`seed`**: random seed for the sampled data
-#   - **`Intervention Strength`**: magnitude of the change applied to
-#     $X$
-#   - **`Sample Size (N)`**: observations used for effect estimation
-#
-# - Panels
-#   - **`Chain: X -> Y -> Z`**: large effect on $Z$ (green bar)
-#   - **`Reverse: Z -> Y -> X`**: no effect on $Z$ (red bar)
-#   - **`Common Cause`**: no direct effect on $Z$ (orange bar)
-#   - **`Comments`**: current parameters and the key takeaway
 
 # %% [markdown]
 # **Guided usage**
@@ -202,40 +205,41 @@ utils.cell3_causal_effects()
 #     ineffective or harmful interventions
 
 # %% [markdown]
+# **Implementation** `utils.cell3_causal_effects()`
+# - Simulates intervening on $X$ (set to a high value) and measures the
+#   effect on $Z$ under 3 structures: chain, reverse, common cause
+
+# %%
+hintros.print_obj_info(utils.cell3_causal_effects)
+
+# %% [markdown]
 # # Part 4: The PC Algorithm: Learning From Conditional Independence Tests
 
 # %% [markdown]
 # ## Cell 4.1: Testing independence, then orienting edges
 #
-# **Goal**:
+# **Goal**
 # - Understand constraint-based discovery
 # - See step-by-step how PC uses conditional independence (CI) tests
 # - Build intuition for why CI tests are powerful but fallible
-#
-# **Implementation**: `utils.cell4_pc_algorithm()`
-# - Steps through a simplified PC run on a 3-node graph: test, remove
-#   edges that pass, then orient v-structures
 
-# %%
-hintros.print_obj_info(utils.cell4_pc_algorithm)
+# %% [markdown]
+# **Description**
+# - Inputs
+#   - `Alpha (CI threshold)`: significance level for CI tests
+#   - `Test Type`: CI test method (partial correlation, Gaussian
+#     G-squared, conditional MI)
+#   - `Speed`: animation speed for the step-by-step progression
+#
+# - Panels
+#   - `PC Algorithm Progression`: the evolving graph structure as
+#     edges are removed
+#   - `Current Test`: the current step, its p-value, and the
+#     separating set
+#   - `Comments`: current parameters and the algorithm's guarantees
 
 # %%
 utils.cell4_pc_algorithm()
-
-# %% [markdown]
-# **Usage**
-# - Inputs
-#   - **`Alpha (CI threshold)`**: significance level for CI tests
-#   - **`Test Type`**: CI test method (partial correlation, Gaussian
-#     G-squared, conditional MI)
-#   - **`Speed`**: animation speed for the step-by-step progression
-#
-# - Panels
-#   - **`PC Algorithm Progression`**: the evolving graph structure as
-#     edges are removed
-#   - **`Current Test`**: the current step, its p-value, and the
-#     separating set
-#   - **`Comments`**: current parameters and the algorithm's guarantees
 
 # %% [markdown]
 # **Guided usage**
@@ -249,39 +253,40 @@ utils.cell4_pc_algorithm()
 #     underpowered in finite samples
 
 # %% [markdown]
+# **Implementation** `utils.cell4_pc_algorithm()`
+# - Steps through a simplified PC run on a 3-node graph: test, remove
+#   edges that pass, then orient v-structures
+
+# %%
+hintros.print_obj_info(utils.cell4_pc_algorithm)
+
+# %% [markdown]
 # # Part 5: Score-Based Search: GES (Greedy Equivalence Search)
 
 # %% [markdown]
 # ## Cell 5.1: Optimizing a score instead of testing independence
 #
-# **Goal**:
+# **Goal**
 # - Introduce score-based discovery, where algorithms optimize fit to
 #   data
 # - Show how BIC balances likelihood fit with model complexity
 # - Understand the forward-backward search strategy
-#
-# **Implementation**: `utils.cell5_ges_algorithm()`
-# - Simulates a BIC trajectory across search iterations, with a
-#   forward/backward phase transition marker
 
-# %%
-hintros.print_obj_info(utils.cell5_ges_algorithm)
+# %% [markdown]
+# **Description**
+# - Inputs
+#   - `Sample Size (N)`: number of observations (the BIC penalty is
+#     proportional to $\log(N)$)
+#   - `Regularization`: strength of the sparsity penalty
+#
+# - Panels
+#   - `Current DAG Structure`: the DAG found at the current settings
+#   - `Score Trajectory (GES Search)`: BIC score vs. iteration, with
+#     the forward/backward transition marked
+#   - `Comments`: current parameters and the search strategy
 
 # %%
 utils.cell5_ges_algorithm()
-
-# %% [markdown]
-# **Usage**
-# - Inputs
-#   - **`Sample Size (N)`**: number of observations (the BIC penalty is
-#     proportional to $\log(N)$)
-#   - **`Regularization`**: strength of the sparsity penalty
-#
-# - Panels
-#   - **`Current DAG Structure`**: the DAG found at the current settings
-#   - **`Score Trajectory (GES Search)`**: BIC score vs. iteration, with
-#     the forward/backward transition marked
-#   - **`Comments`**: current parameters and the search strategy
 
 # %% [markdown]
 # **Guided usage**
@@ -293,39 +298,40 @@ utils.cell5_ges_algorithm()
 #     optima, so multiple random starts improve robustness
 
 # %% [markdown]
+# **Implementation** `utils.cell5_ges_algorithm()`
+# - Simulates a BIC trajectory across search iterations, with a
+#   forward/backward phase transition marker
+
+# %%
+hintros.print_obj_info(utils.cell5_ges_algorithm)
+
+# %% [markdown]
 # # Part 6: Non-Gaussian Methods: LiNGAM for Full Identifiability
 
 # %% [markdown]
 # ## Cell 6.1: Breaking symmetry with non-Gaussian noise
 #
-# **Goal**:
+# **Goal**
 # - Show how non-Gaussianity breaks directional symmetry
 # - Enable full DAG recovery instead of just equivalence classes
 # - Build intuition for when functional assumptions are powerful
-#
-# **Implementation**: `utils.cell6_lingam_nongaussian()`
-# - Generates a chain with skewed (or Gaussian) noise, and runs a
-#   Jarque-Bera test for non-Gaussianity
 
-# %%
-hintros.print_obj_info(utils.cell6_lingam_nongaussian)
+# %% [markdown]
+# **Description**
+# - Inputs
+#   - `seed`: random seed for the sampled data
+#   - `Skewness`: non-Gaussianity of the noise distribution (0 =
+#     Gaussian)
+#   - `Signal-to-Noise Ratio`: ratio of signal to noise strength
+#
+# - Panels
+#   - `X -> Y`/`Y -> Z`/`X -> Z (indirect)`: scatter plots of each
+#     pair
+#   - `Comments`: current parameters, the Jarque-Bera test result,
+#     and the key takeaway
 
 # %%
 utils.cell6_lingam_nongaussian()
-
-# %% [markdown]
-# **Usage**
-# - Inputs
-#   - **`seed`**: random seed for the sampled data
-#   - **`Skewness`**: non-Gaussianity of the noise distribution (0 =
-#     Gaussian)
-#   - **`Signal-to-Noise Ratio`**: ratio of signal to noise strength
-#
-# - Panels
-#   - **`X -> Y`/`Y -> Z`/`X -> Z (indirect)`**: scatter plots of each
-#     pair
-#   - **`Comments`**: current parameters, the Jarque-Bera test result,
-#     and the key takeaway
 
 # %% [markdown]
 # **Guided usage**
@@ -339,37 +345,40 @@ utils.cell6_lingam_nongaussian()
 #     edges and recover the full DAG
 
 # %% [markdown]
+# **Implementation** `utils.cell6_lingam_nongaussian()`
+# - Generates a chain with skewed (or Gaussian) noise, and runs a
+#   Jarque-Bera test for non-Gaussianity
+
+# %%
+hintros.print_obj_info(utils.cell6_lingam_nongaussian)
+
+# %% [markdown]
 # # Part 7: Comparing Algorithms: Which One to Use?
 
 # %% [markdown]
 # ## Cell 7.1: PC, GES, and LiNGAM on the same data
 #
-# **Goal**:
+# **Goal**
 # - Show outputs from PC, GES, and LiNGAM on the same data
 # - Build intuition for algorithm selection based on assumptions
 # - Understand consensus edges as most trustworthy
-#
-# **Implementation**: `utils.cell7_algorithm_comparison()`
 
-# %%
-hintros.print_obj_info(utils.cell7_algorithm_comparison)
+# %% [markdown]
+# **Description**
+# - Inputs
+#   - `Dataset Type`: nature of the data (linear Gaussian, linear
+#     non-Gaussian, nonlinear)
+#   - `Sample Size (N)`: number of observations
+#
+# - Panels
+#   - `PC (Constraint-Based)`: CPDAG output, with an edge/ambiguity
+#     count
+#   - `GES (Score-Based)`: full DAG output
+#   - `LiNGAM (Functional)`: full DAG output
+#   - `Comments`: current parameters and each algorithm's tradeoffs
 
 # %%
 utils.cell7_algorithm_comparison()
-
-# %% [markdown]
-# **Usage**
-# - Inputs
-#   - **`Dataset Type`**: nature of the data (linear Gaussian, linear
-#     non-Gaussian, nonlinear)
-#   - **`Sample Size (N)`**: number of observations
-#
-# - Panels
-#   - **`PC (Constraint-Based)`**: CPDAG output, with an edge/ambiguity
-#     count
-#   - **`GES (Score-Based)`**: full DAG output
-#   - **`LiNGAM (Functional)`**: full DAG output
-#   - **`Comments`**: current parameters and each algorithm's tradeoffs
 
 # %% [markdown]
 # **Guided usage**
@@ -383,39 +392,40 @@ utils.cell7_algorithm_comparison()
 #     trustworthy
 
 # %% [markdown]
+# **Implementation** `utils.cell7_algorithm_comparison()`
+
+# %%
+hintros.print_obj_info(utils.cell7_algorithm_comparison)
+
+# %% [markdown]
 # # Part 8: Validating Discovered DAGs with Refutation Tests
 
 # %% [markdown]
 # ## Cell 8.1: Checking whether a DAG's implications hold
 #
-# **Goal**:
+# **Goal**
 # - Show how to validate that a discovered DAG's implications hold in
 #   the data
 # - Understand refutation as a check on model assumptions
 # - Build sensitivity to hidden confounding
-#
-# **Implementation**: `utils.cell8_validation()`
 
-# %%
-hintros.print_obj_info(utils.cell8_validation)
+# %% [markdown]
+# **Description**
+# - Inputs
+#   - `Alpha (CI threshold)`: significance level for validation
+#   - `Confounder Strength`: magnitude of hidden confounding
+#
+# - Panels
+#   - `CI Test Validation`: bar chart of p-values for implied
+#     independencies (green: holds, red: violated)
+#   - `Placebo Test`: discovery output on shuffled data (should find
+#     ~0 edges)
+#   - `Sensitivity Analysis`: robustness vs. hidden confounder
+#     strength
+#   - `Comments`: current parameters and the validation score
 
 # %%
 utils.cell8_validation()
-
-# %% [markdown]
-# **Usage**
-# - Inputs
-#   - **`Alpha (CI threshold)`**: significance level for validation
-#   - **`Confounder Strength`**: magnitude of hidden confounding
-#
-# - Panels
-#   - **`CI Test Validation`**: bar chart of p-values for implied
-#     independencies (green: holds, red: violated)
-#   - **`Placebo Test`**: discovery output on shuffled data (should find
-#     ~0 edges)
-#   - **`Sensitivity Analysis`**: robustness vs. hidden confounder
-#     strength
-#   - **`Comments`**: current parameters and the validation score
 
 # %% [markdown]
 # **Guided usage**
@@ -428,37 +438,38 @@ utils.cell8_validation()
 #     consistency with the data, it does not prove it
 
 # %% [markdown]
+# **Implementation** `utils.cell8_validation()`
+
+# %%
+hintros.print_obj_info(utils.cell8_validation)
+
+# %% [markdown]
 # # Part 9: Domain Knowledge Integration: Constraints and Prior DAGs
 
 # %% [markdown]
 # ## Cell 9.1: Combining expert knowledge with discovery
 #
-# **Goal**:
+# **Goal**
 # - Show how expert knowledge (forbidden/required edges, temporal
 #   order) drastically improves discovery accuracy without losing
 #   data-driven insights
 # - Understand constraint-based discovery as combining human and
 #   machine intelligence
-#
-# **Implementation**: `utils.cell9_domain_knowledge()`
 
-# %%
-hintros.print_obj_info(utils.cell9_domain_knowledge)
+# %% [markdown]
+# **Description**
+# - Inputs
+#   - `Prior Strength`: how much to trust expert knowledge
+#
+# - Panels
+#   - `No Constraints`: fully automatic discovery result
+#   - `With Constraints`: discovery with the expert constraints
+#     applied, fewer ambiguities
+#   - `Comments`: the expert constraints, and the impact summary
+#     (search-space reduction, edges affected)
 
 # %%
 utils.cell9_domain_knowledge()
-
-# %% [markdown]
-# **Usage**
-# - Inputs
-#   - **`Prior Strength`**: how much to trust expert knowledge
-#
-# - Panels
-#   - **`No Constraints`**: fully automatic discovery result
-#   - **`With Constraints`**: discovery with the expert constraints
-#     applied, fewer ambiguities
-#   - **`Comments`**: the expert constraints, and the impact summary
-#     (search-space reduction, edges affected)
 
 # %% [markdown]
 # **Guided usage**
@@ -471,40 +482,39 @@ utils.cell9_domain_knowledge()
 #     the best results, but wrong priors inject errors
 
 # %% [markdown]
+# **Implementation** `utils.cell9_domain_knowledge()`
+
+# %%
+hintros.print_obj_info(utils.cell9_domain_knowledge)
+
+# %% [markdown]
 # # Part 10: End-to-End Workflow: From Data to Validated DAG
 
 # %% [markdown]
 # ## Cell 10.1: The full discovery pipeline
 #
-# **Goal**:
+# **Goal**
 # - Integrate all techniques into a complete discovery pipeline
 # - Show the practical workflow from raw data to validated causal
 #   structure
 # - Understand causal discovery as an iterative, multi-stage process
-#
-# **Implementation**: `utils.cell10_end_to_end_workflow()`
-# - 6 stages: data preparation, algorithm selection, consensus,
-#   refinement, validation, and the final DAG
 
-# %%
-hintros.print_obj_info(utils.cell10_end_to_end_workflow)
+# %% [markdown]
+# **Description**
+# - Inputs
+#   - `Dataset`: type of data (synthetic: linear Gaussian,
+#     non-Gaussian; real: economic)
+#   - `PC`/`GES`/`LiNGAM`: checkboxes selecting which algorithms to
+#     run
+#   - `Progress Stage`: current stage in the workflow (0 to 5)
+#
+# - Panels
+#   - `Stage 1-6`: one panel per pipeline stage, highlighted once
+#     reached
+#   - `Overall Progress`: a progress bar over all 6 stages
 
 # %%
 utils.cell10_end_to_end_workflow()
-
-# %% [markdown]
-# **Usage**
-# - Inputs
-#   - **`Dataset`**: type of data (synthetic: linear Gaussian,
-#     non-Gaussian; real: economic)
-#   - **`PC`/`GES`/`LiNGAM`**: checkboxes selecting which algorithms to
-#     run
-#   - **`Progress Stage`**: current stage in the workflow (0 to 5)
-#
-# - Panels
-#   - **`Stage 1-6`**: one panel per pipeline stage, highlighted once
-#     reached
-#   - **`Overall Progress`**: a progress bar over all 6 stages
 
 # %% [markdown]
 # **Guided usage**
@@ -514,6 +524,14 @@ utils.cell10_end_to_end_workflow()
 # - Toggle the `PC`/`GES`/`LiNGAM` checkboxes
 #   - Observe the `Stage 2: Algorithms` panel updates with the selected
 #     set; multiple algorithms provide robustness via consensus
+
+# %% [markdown]
+# **Implementation** `utils.cell10_end_to_end_workflow()`
+# - 6 stages: data preparation, algorithm selection, consensus,
+#   refinement, validation, and the final DAG
+
+# %%
+hintros.print_obj_info(utils.cell10_end_to_end_workflow)
 
 # %% [markdown]
 # # Summary

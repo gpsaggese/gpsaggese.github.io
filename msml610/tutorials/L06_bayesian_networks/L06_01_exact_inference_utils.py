@@ -778,7 +778,6 @@ def cell2_3_enumeration_tree_widget(
     output = ipywidgets.Output()
     # Fix the running example: query Burglary=True, observe both calls.
     query_val = 1
-    evidence = {"JohnCalls": 1, "MaryCalls": 1}
 
     def update_plot(change: Optional[Any] = None) -> None:
         """

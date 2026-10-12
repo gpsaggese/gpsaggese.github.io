@@ -1,6 +1,6 @@
 """
 Run each notebook in msml610/tutorials/L09_multi_armed_bandits/ inside Docker
-using docker_cmd.sh.
+using run_nbconvert.py.
 
 Import as:
 
@@ -36,4 +36,6 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "L09_03_02_multi_armed_bandits.ipynb"
         # Run test.
-        self.helper(notebook_name, generate_html=True)
+        self.run_notebook(
+            notebook_name, use_docker_cmd=False, generate_html=True
+        )

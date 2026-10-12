@@ -15,28 +15,49 @@
 
 # %% [markdown]
 # # Bayesian Coin
-
-# %% [markdown]
-# ## Imports
+#
+# - This notebook builds Bayesian inference on a coin-flip example, from the
+#   Bernoulli, binomial, and Beta distributions to an analytical posterior, a
+#   numerical posterior with `pymc`, and a decision with a loss function
+# - The pedagogical arc:
+#   - Bernoulli, binomial, and Beta distributions, with interactive widgets
+#     and parameter grids
+#   - Analytical solution: a Beta prior updated by streaming coin-flip data,
+#     and three different priors updated at once
+#   - Numerical solution with `pymc` for growing sample sizes ($N=4$, 20, 100),
+#     read with `arviz`, plus the Savage-Dickey ratio and the ROPE
+#   - Decision with a loss function: turning the posterior samples into a
+#     point estimate
 
 # %%
 # %load_ext autoreload
 # %autoreload 2
 
+import logging
+
 import arviz as az
-import pymc as pm
-import numpy as np
-import scipy.stats as stats
 import matplotlib.pyplot as plt
+import numpy as np
 import preliz as pz
-from IPython.display import display
+import pymc as pm
+import scipy.stats as stats
 
 # %%
 import helpers.hintrospection as hintros
-import helpers.htutorial as ut
-import L07_01_bayesian_coin_utils as coin_ut
+import helpers.hnotebook as hnotebook
 
-ut.config_notebook()
+import L07_01_bayesian_coin_utils as utils
+
+# Initialize notebook configuration and logging.
+hnotebook.config_notebook()
+_LOG = logging.getLogger(__name__)
+utils.init_loggers(_LOG)
+
+# Convert `display` into `print()` when running outside IPython.
+try:
+    from IPython.display import display
+except ImportError:
+    display = print  # type: ignore
 
 # %% [markdown]
 # # Part 1: Probability Distributions
@@ -44,29 +65,23 @@ ut.config_notebook()
 # %% [markdown]
 # ## Cell 1.1: Bernoulli
 #
-# **Goal**:
+# **Goal**
 # - Build intuition for the Bernoulli distribution, a single trial with two
 #   outcomes
 # - $X \sim \text{Bernoulli}(p)$ means $P(X = 1) = p$ and
 #   $P(X = 0) = 1 - p$, $0 \leq p \leq 1$
-#
-# **Implementation**: `cell1_1_sample_bernoulli_widget()`
-# - Draws `n` samples from `scipy.stats.bernoulli(p)` and prints them
-
-# %%
-hintros.print_obj_info(coin_ut.cell1_1_sample_bernoulli_widget)
 
 # %% [markdown]
-# **Usage**
+# **Description**
 # - Inputs
-#   - **`n`**: number of samples drawn, 1-50
-#   - **`p`**: success probability, 0-1
+#   - `n`: number of samples drawn, 1-50
+#   - `p`: success probability, 0-1
 #
 # - Panels
-#   - **`data`**: printed array of `n` realizations, each 0 or 1
+#   - `data`: printed array of `n` realizations, each 0 or 1
 
 # %%
-coin_ut.cell1_1_sample_bernoulli_widget()
+utils.cell1_1_sample_bernoulli_widget()
 
 # %% [markdown]
 # **Guided usage**
@@ -76,32 +91,33 @@ coin_ut.cell1_1_sample_bernoulli_widget()
 #     probability
 
 # %% [markdown]
+# **Implementation** `cell1_1_sample_bernoulli_widget()`
+# - Draws `n` samples from `scipy.stats.bernoulli(p)` and prints them
+
+# %%
+hintros.print_obj_info(utils.cell1_1_sample_bernoulli_widget)
+
+# %% [markdown]
 # ## Cell 1.2: Binomial
 #
-# **Goal**:
+# **Goal**
 # - Build intuition for the binomial distribution, the count of successes
 #   over `trials` independent Bernoulli draws
 # - $P(X = k) = \binom{\text{trials}}{k} p^k (1 - p)^{\text{trials} - k}$
-#
-# **Implementation**: `cell1_2_sample_binomial_widget()`
-# - Draws `n` samples from `scipy.stats.binom(trials, p)` and prints them
-
-# %%
-hintros.print_obj_info(coin_ut.cell1_2_sample_binomial_widget)
 
 # %% [markdown]
-# **Usage**
+# **Description**
 # - Inputs
-#   - **`n`**: number of samples drawn, 1-50
-#   - **`trials`**: trials per sample, 1-100
-#   - **`p`**: success probability, 0-1
+#   - `n`: number of samples drawn, 1-50
+#   - `trials`: trials per sample, 1-100
+#   - `p`: success probability, 0-1
 #
 # - Panels
-#   - **`data`**: printed array of `n` realizations, each a count in
+#   - `data`: printed array of `n` realizations, each a count in
 #     `[0, trials]`
 
 # %%
-coin_ut.cell1_2_sample_binomial_widget()
+utils.cell1_2_sample_binomial_widget()
 
 # %% [markdown]
 # **Guided usage**
@@ -110,13 +126,20 @@ coin_ut.cell1_2_sample_binomial_widget()
 #     a fair coin 10 times, the number of heads follows `Binomial(10, 0.5)`
 
 # %% [markdown]
+# **Implementation** `cell1_2_sample_binomial_widget()`
+# - Draws `n` samples from `scipy.stats.binom(trials, p)` and prints them
+
+# %%
+hintros.print_obj_info(utils.cell1_2_sample_binomial_widget)
+
+# %% [markdown]
 # ## Cell 1.3: Interactive binomial PMF
 #
-# **Goal**:
+# **Goal**
 # - Explore the binomial PMF's shape directly through `preliz`'s own
 #   interactive widget
 #
-# **Implementation**: `pz.Binomial(p, n).plot_interactive(**params)`
+# **Implementation** `pz.Binomial(p, n).plot_interactive(**params)`
 # - `preliz` builds and displays its own sliders for `p` and `n`; `kind` and
 #   `interval` control how the distribution is summarized
 
@@ -135,45 +158,39 @@ pz.Binomial(p=0.5, n=5).plot_interactive(**params)
 # %% [markdown]
 # ## Cell 1.4: Binomial distribution grid
 #
-# **Goal**:
+# **Goal**
 # - Compare the binomial PMF's shape across a grid of `n` and `p` values at
 #   once
 #
-# **Implementation**: `plot_binomial()`
+# **Implementation** `plot_binomial()`
 # - Plots `stats.binom(n, p).pmf(x)` for every combination of 3 `n` values
 #   and 5 `p` values, one subplot each
 
 # %%
-coin_ut.plot_binomial()
+utils.plot_binomial()
 
 # %% [markdown]
 # ## Cell 1.5: Beta
 #
-# **Goal**:
+# **Goal**
 # - Build intuition for the Beta distribution, a continuous distribution on
 #   $[0, 1]$ used to model a probability or proportion
 # - `a` is the "success" shape parameter, `b` is the "failure" shape
 #   parameter: `a` > `b` skews the density toward 1, `a` = `b` centers it
 #   on 0.5
-#
-# **Implementation**: `cell1_5_sample_beta_widget()`
-# - Draws `n` samples from `scipy.stats.beta(a, b)` and prints them
-
-# %%
-hintros.print_obj_info(coin_ut.cell1_5_sample_beta_widget)
 
 # %% [markdown]
-# **Usage**
+# **Description**
 # - Inputs
-#   - **`n`**: number of samples drawn, 1-50
-#   - **`a`**: alpha shape parameter, 0.1-10
-#   - **`b`**: beta shape parameter, 0.1-10
+#   - `n`: number of samples drawn, 1-50
+#   - `a`: alpha shape parameter, 0.1-10
+#   - `b`: beta shape parameter, 0.1-10
 #
 # - Panels
-#   - **`data`**: printed array of `n` realizations in `[0, 1]`
+#   - `data`: printed array of `n` realizations in `[0, 1]`
 
 # %%
-coin_ut.cell1_5_sample_beta_widget()
+utils.cell1_5_sample_beta_widget()
 
 # %% [markdown]
 # **Guided usage**
@@ -183,13 +200,20 @@ coin_ut.cell1_5_sample_beta_widget()
 #     toward 0
 
 # %% [markdown]
+# **Implementation** `cell1_5_sample_beta_widget()`
+# - Draws `n` samples from `scipy.stats.beta(a, b)` and prints them
+
+# %%
+hintros.print_obj_info(utils.cell1_5_sample_beta_widget)
+
+# %% [markdown]
 # ## Cell 1.6: Interactive beta PMF
 #
-# **Goal**:
+# **Goal**
 # - Explore the Beta density's shape directly through `preliz`'s own
 #   interactive widget
 #
-# **Implementation**: `pz.Beta(alpha, beta).plot_interactive(**params)`
+# **Implementation** `pz.Beta(alpha, beta).plot_interactive(**params)`
 # - `preliz` builds and displays its own sliders for `alpha` and `beta`
 
 # %%
@@ -208,16 +232,16 @@ pz.Beta(alpha=alpha, beta=beta).plot_interactive(**params)
 # %% [markdown]
 # ## Cell 1.7: Beta distribution grid
 #
-# **Goal**:
+# **Goal**
 # - Compare the Beta density's shape across a grid of `alpha` and `beta`
 #   values at once
 #
-# **Implementation**: `plot_beta()`
+# **Implementation** `plot_beta()`
 # - Plots `stats.beta(a, b).pdf(x)` for every combination of 4 `alpha`
 #   values and 4 `beta` values, one subplot each
 
 # %%
-coin_ut.plot_beta()
+utils.plot_beta()
 
 # %% [markdown]
 # # Part 2: Coin Example, Analytical Solution
@@ -225,38 +249,29 @@ coin_ut.plot_beta()
 # %% [markdown]
 # ## Cell 2.1: Beta prior updated by streaming data
 #
-# **Goal**:
+# **Goal**
 # - Watch a single Beta prior turn into a posterior as more coin-flip data
 #   arrives, one trial count at a time
 # - `prior=(1, 1)` is uniform, `(20, 20)` looks Gaussian centered on 0.5,
 #   `(1, 4)` looks exponential centered near 0
-#
-# **Implementation**: `beta_prior_interactive()`
-# - Generates binomial counts $y \sim \text{Binomial}(N, \theta)$ at each
-#   `n_trials` entry with `_generate_data()`
-# - Plots the Beta(`a`+y, `b`+N-y) posterior density for the trial count at
-#   `Index`, steppable via the play button
-
-# %%
-hintros.print_obj_info(coin_ut.beta_prior_interactive)
 
 # %% [markdown]
-# **Usage**
+# **Description**
 # - Inputs
-#   - **`seed`**: random seed for the generated data
-#   - **`theta (true)`**: the true, otherwise-unknown success probability
-#   - **`n_trials`**: comma-separated trial counts to step through
-#   - **`a`, `b`**: the prior's Beta shape parameters
-#   - **`Index`**/play button: which `n_trials` entry is shown
+#   - `seed`: random seed for the generated data
+#   - `theta (true)`: the true, otherwise-unknown success probability
+#   - `n_trials`: comma-separated trial counts to step through
+#   - `a`, `b`: the prior's Beta shape parameters
+#   - `Index`/play button: which `n_trials` entry is shown
 #
 # - Panels
-#   - **`Posterior after N=... trials, y=... heads`**: the posterior
+#   - `Posterior after N=... trials, y=... heads`: the posterior
 #     density, with `theta (true)` marked
-#   - **`Comments`**: current parameters and the resulting posterior
+#   - `Comments`: current parameters and the resulting posterior
 #     distribution
 
 # %%
-coin_ut.beta_prior_interactive()
+utils.beta_prior_interactive()
 
 # %% [markdown]
 # **Guided usage**
@@ -268,20 +283,30 @@ coin_ut.beta_prior_interactive()
 #     the uniform prior is dominated by the data almost immediately
 
 # %% [markdown]
+# **Implementation** `beta_prior_interactive()`
+# - Generates binomial counts $y \sim \text{Binomial}(N, \theta)$ at each
+#   `n_trials` entry with `_generate_data()`
+# - Plots the Beta(`a`+y, `b`+N-y) posterior density for the trial count at
+#   `Index`, steppable via the play button
+
+# %%
+hintros.print_obj_info(utils.beta_prior_interactive)
+
+# %% [markdown]
 # ## Cell 2.2: Updating three priors at once
 #
-# **Goal**:
+# **Goal**
 # - Compare three different Beta priors, uniform, Gaussian-like, and
 #   exponential-like, updated by the same growing dataset side by side
 #
-# **Implementation**: `update_prior()`
+# **Implementation** `update_prior()`
 # - Fixes `theta_real = 0.35` and a shared sequence of `n_trials`/observed
 #   head counts
 # - Plots all three priors' posteriors at each trial count in one grid, so
 #   every prior can be compared at the same amount of data
 
 # %%
-coin_ut.update_prior()
+utils.update_prior()
 
 # %% [markdown]
 # - All three posteriors converge toward the same spike at `theta_real` as
@@ -312,12 +337,12 @@ coin_ut.update_prior()
 # %% [markdown]
 # ## Cell 3.1: Fitting the model with N=4
 #
-# **Goal**:
+# **Goal**
 # - Fit the model above to `N=4` synthetic observations, and read the
 #   fitted posterior with `arviz`'s trace, summary, rank-bar, and
 #   posterior plots
 #
-# **Implementation**:
+# **Implementation**
 # - Builds `model1` with a `Beta(1, 1)` prior and a `Bernoulli` likelihood
 #   observing `data1`, then draws posterior samples with `pm.sample()`
 #   (PyMC's NUTS sampler, 4 chains)
@@ -371,11 +396,11 @@ az.plot_posterior(idata1)
 # %% [markdown]
 # ## Cell 3.2: More data (N=20)
 #
-# **Goal**:
+# **Goal**
 # - Repeat Cell 3.1 with `N=20` observations, and see the posterior
 #   sharpen around `theta_real` as more data arrives
 #
-# **Implementation**:
+# **Implementation**
 # - Same `Beta(1, 1)`/`Bernoulli` model as `model1`, refit on 20
 #   observations as `model2`
 
@@ -406,11 +431,11 @@ az.plot_posterior(idata2)
 # %% [markdown]
 # ## Cell 3.3: Even more data (N=100)
 #
-# **Goal**:
+# **Goal**
 # - Repeat Cell 3.1 with `N=100` observations, to see the posterior
 #   sharpen even further
 #
-# **Implementation**:
+# **Implementation**
 # - Same `Beta(1, 1)`/`Bernoulli` model as `model1`, refit on 100
 #   observations as `model3`
 
@@ -441,11 +466,11 @@ az.plot_posterior(idata3)
 # %% [markdown]
 # ## Cell 3.4: Savage-Dickey ratio
 #
-# **Goal**:
+# **Goal**
 # - Test the point hypothesis $\theta = 0.5$ against each of the three
 #   fitted posteriors via the Savage-Dickey density ratio
 #
-# **Implementation**:
+# **Implementation**
 # - `az.plot_bf()` compares the posterior density at `ref_val=0.5` against
 #   a uniform prior, for `idata1`, `idata2`, and `idata3` in turn
 
@@ -462,11 +487,11 @@ for idata in [idata1, idata2, idata3]:
 # %% [markdown]
 # ## Cell 3.5: ROPE
 #
-# **Goal**:
+# **Goal**
 # - Test whether $\theta$ plausibly equals 0.5 using a Region Of Practical
 #   Equivalence (ROPE) instead of a single point
 #
-# **Implementation**:
+# **Implementation**
 # - `az.plot_posterior()` shades the `[0.45, 0.55]` ROPE and reports the
 #   fraction of the posterior it contains, for each fitted `idata`
 
@@ -481,31 +506,31 @@ for idata in [idata1, idata2, idata3]:
 # %% [markdown]
 # ## Cell 4.1: Minimizing a loss function
 #
-# **Goal**:
+# **Goal**
 # - Turn a posterior into a point estimate by minimizing expected loss,
 #   instead of just reporting the posterior mean
 #
-# **Implementation**: `plot_loss(grid, loss_func)`
+# **Implementation** `plot_loss(grid, loss_func)`
 # - Plots the chosen `loss_func` (squared, absolute, asymmetric, or sine)
 #   against a candidate-estimate grid
 
 # %%
-# loss_func = lambda x: coin_ut.squared_loss(x, theta_real)
-# loss_func = lambda x: coin_ut.abs_loss(x, theta_real)
-# loss_func = lambda x: coin_ut.asymmetric_loss(x, theta_real)
-loss_func = lambda x: coin_ut.sin_loss(x, theta_real)
+# loss_func = lambda x: utils.squared_loss(x, theta_real)
+# loss_func = lambda x: utils.abs_loss(x, theta_real)
+# loss_func = lambda x: utils.asymmetric_loss(x, theta_real)
+loss_func = lambda x: utils.sin_loss(x, theta_real)
 
 grid = np.linspace(-2.0, 2.0, 50)
-coin_ut.plot_loss(grid, loss_func)
+utils.plot_loss(grid, loss_func)
 
 # %% [markdown]
 # ## Cell 4.2: Posterior samples as a distribution
 #
-# **Goal**:
+# **Goal**
 # - Look at the raw posterior draws for `theta` directly: as a sequence,
 #   as a trace, and as a density
 #
-# **Implementation**:
+# **Implementation**
 # - Extracts the `theta` column from `idata1.to_dataframe()` and plots it
 #   as a trace and a KDE
 
@@ -522,17 +547,17 @@ theta_draws.plot(kind="kde")
 # %% [markdown]
 # ## Cell 4.3: Picking the best theta
 #
-# **Goal**:
+# **Goal**
 # - Combine the loss function from Cell 4.1 with the posterior samples to
 #   pick the loss-minimizing point estimate, for both the `N=4` and
 #   `N=20` posteriors
 #
-# **Implementation**: `pick_best_theta(idata)`
+# **Implementation** `pick_best_theta(idata)`
 # - Searches over candidate `theta` values and reports the one minimizing
 #   the expected loss under the posterior in `idata`
 
 # %%
-coin_ut.pick_best_theta(idata1)
+utils.pick_best_theta(idata1)
 
 # %%
-coin_ut.pick_best_theta(idata2)
+utils.pick_best_theta(idata2)

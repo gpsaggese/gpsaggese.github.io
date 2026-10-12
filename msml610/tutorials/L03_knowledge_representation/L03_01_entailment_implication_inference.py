@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.0
+#       jupytext_version: 1.19.3
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -15,10 +15,6 @@
 
 # %% [markdown]
 # # Entailment, Implication, and Inference: the Rain and Wet Ground World
-#
-# - [Open in Binder](https://mybinder.org/v2/gh/gpsaggese/gpsaggese.github.io/gp?filepath=msml610/tutorials/L03_knowledge_representation/L03_01_entailment_implication_inference.ipynb)
-# - For Google Colab, use the standalone copy in
-#   [`examples/L03_01_entailment_implication_inference_colab.ipynb`](https://colab.research.google.com/github/gpsaggese/gpsaggese.github.io/blob/gp/msml610/tutorials/L03_knowledge_representation/examples/L03_01_entailment_implication_inference_colab.ipynb)
 #
 # - This notebook stays on the lecture's own smallest examples, rain and wet
 #   ground, and $x = 0$ implies $x \cdot y = 0$, to make the model-theoretic
@@ -29,54 +25,19 @@
 #   - The same definition applied to a non-Boolean world
 #   - Implication vs entailment vs inference, three views of one example
 
-# %% [markdown]
-# ## Imports
-
-# %%
-# Binder builds its image straight from this GitHub repo, so it already
-# has the whole repo on disk, just not always on `sys.path`. Docker gets
-# `helpers` and the paired `_utils.py` file for free (helpers_root on
-# PYTHONPATH, cwd = this notebook's dir); `colab_setup` reproduces that
-# for Binder too, shared by every tutorial notebook so this cell stays the
-# same everywhere except the `setup()` argument. Plain Python
-# (`subprocess`, not `!`/`get_ipython()`), so the paired .py script still
-# runs standalone outside a notebook.
-#
-# This notebook does not run on Google Colab: Colab starts with none of
-# the repo on disk, so `class_scripts.colab_setup` itself is not
-# importable there. Use the standalone copy in `examples/` for Colab.
-import os
-import sys
-
-ON_BINDER = "BINDER_LAUNCH_HOST" in os.environ
-
-if ON_BINDER:
-    import subprocess
-
-    # `colab_setup` lives inside the repo; Binder already has it on disk,
-    # just not always on `sys.path`.
-    repo_root = subprocess.run(
-        ["git", "rev-parse", "--show-toplevel"],
-        capture_output=True,
-        text=True,
-        check=True,
-    ).stdout.strip()
-    # Docker gets this for free via PYTHONPATH; Binder needs it.
-    sys.path.insert(0, repo_root)
-
-import class_scripts.colab_setup as colab_setup
-
-colab_setup.setup("msml610/tutorials/L03_knowledge_representation")
-colab_setup.maybe_enable_autoreload()
-
-import logging
-
 # %%
 # !pip install -q sympy==1.14.0
 
 import sympy
 
 print("sympy version: ", sympy.__version__)
+
+# %%
+# %load_ext autoreload
+# %autoreload 2
+
+import logging
+
 
 # %%
 import helpers.hnotebook as hnotebook
@@ -88,13 +49,19 @@ hnotebook.config_notebook()
 _LOG = logging.getLogger(__name__)
 utils.init_loggers(_LOG)
 
+# Convert `display` into `print()` when running outside IPython.
+try:
+    from IPython.display import display
+except ImportError:
+    display = print  # type: ignore
+
 # %% [markdown]
 # # Part 1: Models and Satisfaction
 
 # %% [markdown]
 # ## Cell 1.1: Possible worlds, models, and satisfaction
 #
-# **Goal**:
+# **Goal**
 # - Ground "model" as one full true/false assignment to every variable, using
 #   the $(Rain, WetGround)$ world
 # - Introduce $M(\alpha)$, the set of models where a sentence $\alpha$ is
@@ -124,7 +91,7 @@ utils.cell1_1_models_and_satisfaction()
 # %% [markdown]
 # ## Cell 2.1: Entailment as model inclusion, by model checking
 #
-# **Goal**:
+# **Goal**
 # - Define $KB \models \alpha$ as $M(KB) \subseteq M(\alpha)$, and verify that
 #   $KB = \{Rain, Rain \implies WetGround\}$ entails $WetGround$
 # - Run the model-checking algorithm explicitly: enumerate every model, find
@@ -153,7 +120,7 @@ utils.cell2_1_entailment_model_checking()
 # %% [markdown]
 # ## Cell 2.2: The same definition on a non-Boolean world
 #
-# **Goal**:
+# **Goal**
 # - Show that $M(KB) \subseteq M(\alpha)$ does not require Boolean
 #   variables, by checking the lecture's "sitting table" example:
 #   $\alpha$: "$x = 0$" entails $\beta$: "$x \cdot y = 0$", for any $y$
@@ -185,7 +152,7 @@ utils.cell2_2_nonboolean_world()
 # %% [markdown]
 # ## Cell 3.1: Implication, entailment, and inference: three views
 #
-# **Goal**:
+# **Goal**
 # - Separate three ideas the lecture distinguishes on one running example
 #   - Implication inside a single sentence
 #   - Entailment across all models

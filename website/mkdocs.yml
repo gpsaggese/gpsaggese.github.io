@@ -90,6 +90,17 @@ plugins:
         - "Teaching"
       authors: true
       authors_file: .authors.yml
+  - rss:
+      match_path: blog/posts/.*
+      date_from_meta:
+        as_creation: date
+      categories:
+        - categories
+      use_git: false
+      abstract_chars_count: 300
+
+exclude_docs: |
+  blog/posts/draft.*
 
 not_in_nav: |
   short_stories/*

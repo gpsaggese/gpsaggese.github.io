@@ -15,27 +15,50 @@
 
 # %% [markdown]
 # # Probabilistic programming
-
-# %% [markdown]
-# ## Imports
+#
+# - This notebook walks through the Bayesian modeling workflow in `pymc`:
+#   checking, comparing, and averaging models, then the inference engines
+#   behind them and the diagnostics for their convergence
+# - The pedagogical arc:
+#   - Posterior predictive checks and Bayesian p-values for a linear and a
+#     quadratic model
+#   - Overfitting, and out-of-sample predictive accuracy with WAIC and PSIS-LOO
+#   - Comparing and averaging models
+#   - Mixture models: marginalizing over a discrete latent variable
+#   - Inference engines: grid approximation, Monte Carlo, and the Metropolis
+#     sampler
+#   - Diagnosing convergence: centered vs non-centered parametrization, rank
+#     plots, R-hat, effective sample size, and divergences
 
 # %%
 # %load_ext autoreload
 # %autoreload 2
 
+import logging
+
 import arviz as az
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import pymc as pm
-import numpy as np
 import scipy.stats as stats
-import matplotlib.pyplot as plt
-from IPython.display import display
 
 # %%
+import helpers.hnotebook as hnotebook
 import helpers.htutorial as ut
-import L07_02_probabilistic_programming_utils as putils
 
-ut.config_notebook()
+import L07_02_probabilistic_programming_utils as utils
+
+# Initialize notebook configuration and logging.
+hnotebook.config_notebook()
+_LOG = logging.getLogger(__name__)
+utils.init_loggers(_LOG)
+
+# Convert `display` into `print()` when running outside IPython.
+try:
+    from IPython.display import display
+except ImportError:
+    display = print  # type: ignore
 
 # %% [markdown]
 # # Part 1: Posterior Predictive Checks
@@ -43,11 +66,11 @@ ut.config_notebook()
 # %% [markdown]
 # ## Cell 1.1: Loading and preparing the data
 #
-# **Goal**:
+# **Goal**
 # - Load a synthetic, mostly-linear dataset, and build the polynomial
 #   feature rows a linear and a quadratic model will each be fit on
 #
-# **Implementation**:
+# **Implementation**
 # - Reads `L07_data/dummy.csv`, stacks `x**i` for `i` in `1..order`, and
 #   standardizes both the features and the target to mean 0, std 1
 
@@ -74,7 +97,7 @@ y_c = (y - y.mean()) / y.std()
 # %% [markdown]
 # ## Cell 1.2: Visualizing the raw relationship
 #
-# **Goal**:
+# **Goal**
 # - Look at the order-0 feature (the raw, normalized `x`) against `y`
 #   before fitting anything
 
@@ -88,11 +111,11 @@ ut.save_plt("Lesson07.Comparing_models.data.png")
 # %% [markdown]
 # ## Cell 1.3: Fitting linear and quadratic models
 #
-# **Goal**:
+# **Goal**
 # - Fit a linear and a quadratic Bayesian regression on the same data, so
 #   their posterior predictive fit can be compared
 #
-# **Implementation**:
+# **Implementation**
 # - `model_l`: $\mu = \alpha + \beta x$, `model_p`: $\mu = \alpha + \beta_1
 #   x + \beta_2 x^2$, both with a `Normal` likelihood and `pm.sample()`
 
@@ -129,11 +152,11 @@ with pm.Model() as model_p:
 # %% [markdown]
 # ## Cell 1.4: Comparing the fitted models against the data
 #
-# **Goal**:
+# **Goal**
 # - Plot both models' mean-posterior curve against the data, to see the
 #   difference a quadratic term makes
 #
-# **Implementation**:
+# **Implementation**
 # - Extracts posterior means for `alpha`/`beta` from each `idata` via
 #   `az.extract()`, then evaluates each curve over a dense `x` grid
 
@@ -173,11 +196,11 @@ ut.save_plt("Lesson07.Comparing_models.model_fit.png")
 # %% [markdown]
 # ## Cell 1.5: Posterior predictive check plots
 #
-# **Goal**:
+# **Goal**
 # - Check each model's fit by comparing its posterior-predictive samples
 #   against the observed data
 #
-# **Implementation**: `az.plot_ppc(idata, num_pp_samples=100, ...)`
+# **Implementation** `az.plot_ppc(idata, num_pp_samples=100, ...)`
 # - Overlays 100 posterior-predictive draws on the observed data's density,
 #   for the linear and the quadratic model in turn
 
@@ -194,12 +217,12 @@ ut.save_plt("Lesson07.Comparing_models.quadr_model_PPC.png")
 # %% [markdown]
 # ## Cell 1.6: Bayesian p-value for a statistic
 #
-# **Goal**:
+# **Goal**
 # - Compare the Bayesian p-value of the mean and of the interquartile
 #   range (IQR), for both models, as two different test statistics
 #
-# **Implementation**: `az.plot_bpv(idata, kind="t_stat", t_stat=...)`
-# - `t_stat="mean"` uses the built-in mean statistic; `t_stat=putils.iqr`
+# **Implementation** `az.plot_bpv(idata, kind="t_stat", t_stat=...)`
+# - `t_stat="mean"` uses the built-in mean statistic; `t_stat=utils.iqr`
 #   plugs in the custom IQR statistic from the utils file
 
 # %%
@@ -214,12 +237,12 @@ for idata, c in zip(idatas, colors):
 
 # Plot the Bayesian p-value for the interquartile range, for both models.
 for idata, c in zip(idatas, colors):
-    az.plot_bpv(idata, kind="t_stat", t_stat=putils.iqr, ax=axes[1], color=c)
+    az.plot_bpv(idata, kind="t_stat", t_stat=utils.iqr, ax=axes[1], color=c)
 
 # %% [markdown]
 # ## Cell 1.7: Bayesian p-value for the entire distribution
 #
-# **Goal**:
+# **Goal**
 # - Compare the Bayesian p-value across the entire predictive distribution,
 #   not just one summary statistic
 
@@ -234,7 +257,7 @@ for idata, c in zip(idatas, colors):
 # %% [markdown]
 # ## Cell 2.1: In-sample vs out-of-sample data
 #
-# **Goal**:
+# **Goal**
 # - Set up a small in-sample dataset and a separate out-of-sample dataset,
 #   used next to show how model complexity trades off against overfitting
 
@@ -251,11 +274,11 @@ _ = ax.plot(x1, y1, "rs")
 # %% [markdown]
 # ## Cell 2.2: Fitting polynomial models of increasing order
 #
-# **Goal**:
+# **Goal**
 # - Fit polynomials of order 0, 1, and 5 on the in-sample data, and read
 #   off each one's $R^2$
 #
-# **Implementation**: `putils.plot_models(ax, x_n, x0, y0, order, ps)`
+# **Implementation** `utils.plot_models(ax, x_n, x0, y0, order, ps)`
 # - Fits each order with `np.polynomial.Polynomial.fit()`, then plots the
 #   fitted curve and its $R^2$ against `(x0, y0)`
 
@@ -267,16 +290,16 @@ ax.plot(x0, y0, "ko", zorder=3)
 order_list = [0, 1, 5]
 x_n = np.linspace(x0.min(), x0.max(), 100)
 ps = [np.polynomial.Polynomial.fit(x0, y0, deg=i) for i in order_list]
-putils.plot_models(ax, x_n, x0, y0, order_list, ps)
+utils.plot_models(ax, x_n, x0, y0, order_list, ps)
 
 # %% [markdown]
 # ## Cell 2.3: Evaluating the fit on out-of-sample data
 #
-# **Goal**:
+# **Goal**
 # - Score the same 3 fitted models against the combined in-sample plus
 #   out-of-sample data, to see which order actually generalizes
 #
-# **Implementation**: `putils.plot_models(...)`, now scored against the
+# **Implementation** `utils.plot_models(...)`, now scored against the
 # combined dataset instead of only the in-sample one
 
 # %%
@@ -286,16 +309,16 @@ ax.plot(x1, y1, "rs", zorder=3)
 
 x_all = np.concatenate((x0, x1))
 y_all = np.concatenate((y0, y1))
-putils.plot_models(ax, x_n, x_all, y_all, order_list, ps)
+utils.plot_models(ax, x_n, x_all, y_all, order_list, ps)
 
 # %% [markdown]
 # ## Cell 2.4: Calculating predictive accuracy
 #
-# **Goal**:
+# **Goal**
 # - Compute two out-of-sample predictive-accuracy estimates, WAIC and PSIS-
 #   LOO, for the linear and quadratic Bayesian models from Part 1
 #
-# **Implementation**: `az.waic(idata)` and `az.loo(idata)`
+# **Implementation** `az.waic(idata)` and `az.loo(idata)`
 
 # %%
 waic_l = az.waic(idata_l)
@@ -319,11 +342,11 @@ display(loo_q)
 # %% [markdown]
 # ## Cell 3.1: Comparing models
 #
-# **Goal**:
+# **Goal**
 # - Rank the linear and quadratic model by predictive accuracy, with
 #   `az.compare()`'s standard-error-aware comparison
 #
-# **Implementation**: `az.compare({...})`, then `az.plot_compare()`
+# **Implementation** `az.compare({...})`, then `az.plot_compare()`
 
 # %%
 cmp_df = az.compare({"model_l": idata_l, "model_q": idata_q})
@@ -335,11 +358,11 @@ _ = az.plot_compare(cmp_df)
 # %% [markdown]
 # ## Cell 3.2: Model averaging
 #
-# **Goal**:
+# **Goal**
 # - Combine both models' posterior predictive distributions into one
 #   weighted mixture, instead of picking a single "best" model
 #
-# **Implementation**: `az.weight_predictions(idatas, weights)`
+# **Implementation** `az.weight_predictions(idatas, weights)`
 # - Weights the linear and quadratic posterior predictive by 0.35/0.65,
 #   then compares all three predictive densities via `az.plot_kde()`
 
@@ -378,11 +401,11 @@ _ = plt.legend()
 # %% [markdown]
 # ## Cell 4.1: Marginalization over a Gaussian mixture
 #
-# **Goal**:
+# **Goal**
 # - Fit a 2-component Gaussian mixture to chemical-shift data, marginalizing
 #   over a discrete latent component label for every point
 #
-# **Implementation**:
+# **Implementation**
 # - `p ~ Dirichlet([1, 1])` picks the mixture weights, `z ~ Categorical(p)`
 #   assigns each point a component, and `y | z ~ Normal(means[z], sd)` is
 #   the observed likelihood; all three are estimated jointly
@@ -428,11 +451,11 @@ _ = az.plot_trace(trace_kg, varnames)
 # %% [markdown]
 # ## Cell 5.1: Grid approximation
 #
-# **Goal**:
+# **Goal**
 # - Estimate a coin-flip posterior by brute-force grid approximation: a
 #   uniform prior times a Binomial likelihood, normalized over a grid
 #
-# **Implementation**: `putils.posterior_grid(grid_points, heads, tails)`
+# **Implementation** `utils.posterior_grid(grid_points, heads, tails)`
 
 # %%
 heads = 3
@@ -441,7 +464,7 @@ grid_points = 20
 
 print("heads=", heads)
 print("tails=", tails)
-grid, prior, likelihood, posterior = putils.posterior_grid(
+grid, prior, likelihood, posterior = utils.posterior_grid(
     grid_points, heads, tails
 )
 
@@ -454,11 +477,11 @@ _ = plt.legend()
 # %% [markdown]
 # ## Cell 5.2: Monte Carlo estimate of pi
 #
-# **Goal**:
+# **Goal**
 # - Estimate pi by the classic dartboard Monte Carlo method: the fraction
 #   of random points inside the unit circle approximates pi/4
 #
-# **Implementation**:
+# **Implementation**
 # - Draws `N` uniform 2D points in $[-1, 1]^2$ and checks which fall inside
 #   the unit circle
 
@@ -482,18 +505,18 @@ _ = plt.legend(loc=1, frameon=True, framealpha=0.9)
 # %% [markdown]
 # ## Cell 5.3: Metropolis sampler
 #
-# **Goal**:
+# **Goal**
 # - Implement the Metropolis algorithm from scratch, and check that it
 #   recovers a known Beta(2, 5) target density
 #
-# **Implementation**: `putils.metropolis(func, draws)`
+# **Implementation** `utils.metropolis(func, draws)`
 # - Proposes a Gaussian random-walk step, accepts it with probability
 #   `min(1, new_prob / old_prob)`, and repeats it otherwise
 
 # %%
 np.random.seed(3)
 func = stats.beta(2, 5)
-trace = putils.metropolis(func=func)
+trace = utils.metropolis(func=func)
 x_grid = np.linspace(0.01, 0.99, 100)
 y_grid = func.pdf(x_grid)
 plt.xlim(0, 1)
@@ -511,11 +534,11 @@ plt.savefig("B11197_08_05.png")
 # %% [markdown]
 # ## Cell 6.1: Centered vs non-centered parametrization
 #
-# **Goal**:
+# **Goal**
 # - Fit the same hierarchical model in two equivalent parametrizations,
 #   centered and non-centered, and compare their sampling traces
 #
-# **Implementation**:
+# **Implementation**
 # - `model_c`: `b ~ Normal(0, a)` directly (centered)
 # - `model_nc`: `b = b_offset * a` with `b_offset ~ Normal(0, 1)`
 #   (non-centered, easier for NUTS to sample when `a` is small)
@@ -552,12 +575,12 @@ ax = az.plot_trace(
 # %% [markdown]
 # ## Cell 6.2: Rank plots
 #
-# **Goal**:
+# **Goal**
 # - Read the same centered-vs-non-centered comparison off rank plots, a
 #   diagnostic that is easier to read than overlaid trace lines for many
 #   chains
 #
-# **Implementation**: `az.plot_trace(idata, kind="rank_bars", ...)`
+# **Implementation** `az.plot_trace(idata, kind="rank_bars", ...)`
 
 # %%
 _ = az.plot_trace(
@@ -580,7 +603,7 @@ _ = az.plot_trace(
 # %% [markdown]
 # ## Cell 6.3: R-hat
 #
-# **Goal**:
+# **Goal**
 # - Compare the centered and non-centered fits' summary statistics and
 #   R-hat convergence diagnostic side by side
 
@@ -600,7 +623,7 @@ display(az.rhat(idata_nc, var_names="a b".split()).to_dataframe().T)
 # %% [markdown]
 # ## Cell 6.4: Effective sample size (ESS)
 #
-# **Goal**:
+# **Goal**
 # - Compare autocorrelation and effective sample size between the two
 #   parametrizations: the non-centered one should mix better
 
@@ -628,11 +651,11 @@ _ = az.plot_ess(idata_nc, var_names="a", kind="evolution")
 # %% [markdown]
 # ## Cell 6.5: Divergences
 #
-# **Goal**:
+# **Goal**
 # - Visualize where divergent transitions land in parameter space, for
 #   both parametrizations, and check `a`'s marginal for both at once
 #
-# **Implementation**: `az.plot_pair(..., divergences=True)` and
+# **Implementation** `az.plot_pair(..., divergences=True)` and
 # `az.plot_parallel()`
 
 # %%

@@ -15,9 +15,26 @@
 
 # %% [markdown]
 # # Discrete Bayes dog
+#
+# - This notebook tracks a dog wandering in a circular 10-position hallway
+#   with a discrete Bayes filter, combining a door sensor and a movement
+#   sensor
+# - The pedagogical arc:
+#   - The problem, and a belief over positions updated with a perfect and a
+#     noisy door sensor
+#   - Incorporating movement with a perfect and a noisy movement sensor,
+#     via convolution
+#   - Integrating measurements and updates into the predict-update cycle
+#   - An interactive simulation, and the effect of bad sensor data
 
-# %% [markdown]
-# ## Imports
+# %%
+# `filterpy` is an extra for this notebook, pinned to the version already
+# in requirements.txt.
+# !sudo /bin/bash -c "(source /venv/bin/activate; pip install --quiet filterpy==1.4.5)"
+
+import filterpy
+
+print("filterpy version: ", filterpy.__version__)
 
 # %%
 # %load_ext autoreload
@@ -27,21 +44,21 @@ import logging
 
 import numpy as np
 
-import helpers.htutorial as ut
+# %%
+import helpers.hnotebook as hnotebook
 
-ut.config_notebook()
+import L09_05_01_discrete_bayes_dog_utils as utils
 
-# Initialize logger.
-logging.basicConfig(level=logging.INFO)
+# Initialize notebook configuration and logging.
+hnotebook.config_notebook()
 _LOG = logging.getLogger(__name__)
+utils.init_loggers(_LOG)
 
-# %%
-import L09_05_01_discrete_bayes_dog_utils as ut
-
-# %%
-# `filterpy` is an extra for this notebook, pinned to the version already
-# in requirements.txt.
-# !sudo /bin/bash -c "(source /venv/bin/activate; pip install --quiet filterpy==1.4.5)"
+# Convert `display` into `print()` when running outside IPython.
+try:
+    from IPython.display import display
+except ImportError:
+    display = print  # type: ignore
 
 # %% [markdown]
 # # Part 1: Tracking a Dog
@@ -70,13 +87,13 @@ belief = np.array([1 / 10] * 10)
 print("belief=", belief)
 
 # %%
-hallway = ut.get_hallway1()
-ut.plot_belief(belief, hallway=hallway)
+hallway = utils.get_hallway1()
+utils.plot_belief(belief, hallway=hallway)
 
 # %%
 # The map of the office is the following.
-hallway = ut.get_hallway1()
-ut.plot_belief(hallway, hallway=hallway, title="Hallway")
+hallway = utils.get_hallway1()
+utils.plot_belief(hallway, hallway=hallway, title="Hallway")
 
 # %% [markdown]
 # - Let's assume that the sensor always returns the correct answer
@@ -86,7 +103,7 @@ ut.plot_belief(hallway, hallway=hallway, title="Hallway")
 
 # %%
 belief = np.array([1 / 3, 1 / 3, 0, 0, 0, 0, 0, 0, 1 / 3, 0])
-ut.plot_belief(belief, hallway=hallway)
+utils.plot_belief(belief, hallway=hallway)
 
 # %% [markdown]
 # - The next readings are "door", "move right", "door"
@@ -95,7 +112,7 @@ ut.plot_belief(belief, hallway=hallway)
 
 # %%
 belief = np.array([0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-ut.plot_belief(belief, hallway=hallway)
+utils.plot_belief(belief, hallway=hallway)
 
 
 # %% [markdown]
@@ -111,7 +128,7 @@ ut.plot_belief(belief, hallway=hallway)
 
 # %%
 def update_belief(
-    hall: np.ndarray, belief: ut.Pdf, z: int, correct_scale: float
+    hall: np.ndarray, belief: utils.Pdf, z: int, correct_scale: float
 ) -> None:
     """
     Update belief in-place based on a measurement.
@@ -135,7 +152,7 @@ update_belief(hallway, belief, z=reading, correct_scale=3.0)
 print("belief:", belief)
 print("sum =", sum(belief))
 belief /= sum(belief)
-ut.plot_belief(belief, hallway=hallway)
+utils.plot_belief(belief, hallway=hallway)
 
 # %% [markdown]
 # - Now this is not a probability since the sum is 1.6 and not 1.0
@@ -145,7 +162,7 @@ from filterpy.discrete_bayes import normalize
 
 
 def scaled_update(
-    hall: np.ndarray, belief: ut.Pdf, z: int, z_prob: float
+    hall: np.ndarray, belief: utils.Pdf, z: int, z_prob: float
 ) -> None:
     """
     Update belief using scaled likelihood based on measurement probability.
@@ -169,7 +186,7 @@ scaled_update(hallway, belief, z=1, z_prob=0.75)
 print("sum =", sum(belief))
 print("probability of door =", belief[0])
 print("probability of wall =", belief[2])
-ut.plot_belief(belief, hallway=hallway)
+utils.plot_belief(belief, hallway=hallway)
 
 # %% [markdown]
 # - Generalizing the update is always in the form of
@@ -180,7 +197,7 @@ ut.plot_belief(belief, hallway=hallway)
 from filterpy.discrete_bayes import update
 
 
-def lh_hallway(hall: np.ndarray, z: int, z_prob: float) -> ut.Pdf:
+def lh_hallway(hall: np.ndarray, z: int, z_prob: float) -> utils.Pdf:
     """
     Compute likelihood that a measurement matches positions in the hallway.
 
@@ -220,7 +237,7 @@ update(likelihood, belief)
 
 
 # %%
-def perfect_predict(belief: ut.Pdf, move: int) -> ut.Pdf:
+def perfect_predict(belief: utils.Pdf, move: int) -> utils.Pdf:
     """
     Move the position by `move` spaces with perfect prediction.
 
@@ -239,12 +256,12 @@ def perfect_predict(belief: ut.Pdf, move: int) -> ut.Pdf:
 
 
 belief = np.array([0.35, 0.1, 0.2, 0.3, 0, 0, 0, 0, 0, 0.05])
-ut.plot_belief(belief, hallway=hallway)
+utils.plot_belief(belief, hallway=hallway)
 
 # %%
 move = 1
 new_belief = perfect_predict(belief, move)
-ut.plot_belief(new_belief, hallway=hallway)
+utils.plot_belief(new_belief, hallway=hallway)
 
 
 # %% [markdown]
@@ -276,12 +293,12 @@ ut.plot_belief(new_belief, hallway=hallway)
 
 # %%
 def predict_move(
-    belief: ut.Pdf,
+    belief: utils.Pdf,
     move: int,
     p_under: float,
     p_correct: float,
     p_over: float,
-) -> ut.Pdf:
+) -> utils.Pdf:
     """
     Predict movement with uncertainty in the motion model.
 
@@ -314,7 +331,7 @@ belief = [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 move = 2
 prior = predict_move(belief, move, 0.1, 0.8, 0.1)
 
-ut.plot_beliefs(
+utils.plot_beliefs(
     belief,
     prior,
     hallway=hallway,
@@ -330,7 +347,7 @@ belief = [0, 0, 0.4, 0.6, 0, 0, 0, 0, 0, 0]
 move = 2
 prior = predict_move(belief, move, 0.1, 0.8, 0.1)
 
-ut.plot_beliefs(
+utils.plot_beliefs(
     belief,
     prior,
     hallway=hallway,
@@ -364,7 +381,7 @@ print("Final belief:", belief)
 # %%
 # Interactively step through the belief flattening over 100 predict-only
 # steps.
-ut.cell1_3_predict_only_widget(predict_beliefs, hallway)
+utils.cell1_3_predict_only_widget(predict_beliefs, hallway)
 
 
 # %% [markdown]
@@ -373,7 +390,9 @@ ut.cell1_3_predict_only_widget(predict_beliefs, hallway)
 
 
 # %%
-def predict_move_convolution(pdf: ut.Pdf, offset: int, kernel: ut.Pdf) -> ut.Pdf:
+def predict_move_convolution(
+    pdf: utils.Pdf, offset: int, kernel: utils.Pdf
+) -> utils.Pdf:
     N = len(pdf)
     kN = len(kernel)
     width = int((kN - 1) / 2)
@@ -395,7 +414,7 @@ belief = [0.05, 0.05, 0.05, 0.05, 0.55, 0.05, 0.05, 0.05, 0.05, 0.05]
 
 prior = predict_move_convolution(belief, offset=1, kernel=[0.1, 0.8, 0.1])
 
-ut.plot_beliefs(belief, prior, hallway=hallway, same_plot=False)
+utils.plot_beliefs(belief, prior, hallway=hallway, same_plot=False)
 
 # %% [markdown]
 # - A more efficient implementation using numpy is here
@@ -407,7 +426,7 @@ from filterpy.discrete_bayes import predict
 
 belief = [0.05, 0.05, 0.05, 0.05, 0.55, 0.05, 0.05, 0.05, 0.05, 0.05]
 prior = predict(belief, offset=1, kernel=[0.1, 0.8, 0.1])
-ut.plot_beliefs(belief, prior, hallway=hallway, same_plot=False)
+utils.plot_beliefs(belief, prior, hallway=hallway, same_plot=False)
 
 # %% [markdown]
 # - An example with a more complex and asymmetric model uncertainty is
@@ -419,7 +438,7 @@ kernel = (0.05, 0.05, 0.6, 0.2, 0.1)
 belief = [0.05, 0.05, 0.05, 0.05, 0.55, 0.05, 0.05, 0.05, 0.05, 0.05]
 prior = predict(belief, offset=3, kernel=kernel)
 
-ut.plot_beliefs(belief, prior, hallway=hallway, same_plot=False)
+utils.plot_beliefs(belief, prior, hallway=hallway, same_plot=False)
 
 # %% [markdown]
 # ### Integrating measurements and updates
@@ -431,7 +450,7 @@ ut.plot_beliefs(belief, prior, hallway=hallway, same_plot=False)
 # - The output of the update step is then fed into the next prediction
 
 # %%
-hallway = ut.get_hallway1()
+hallway = utils.get_hallway1()
 # Sensor measurements are imperfect.
 kernel = (0.1, 0.8, 0.1)
 
@@ -441,12 +460,12 @@ prior1 = np.array([0.1] * 10)
 # The sensor tells that the dog is in front of a door, but the sensor is
 # imprecise.
 sensor = 1
-likelihood = ut.lh_hallway(hallway, z=sensor, z_prob=0.75)
+likelihood = utils.lh_hallway(hallway, z=sensor, z_prob=0.75)
 
 posterior1 = update(likelihood, prior1)
 
 y_lim = (0, 0.4)
-ut.plot_beliefs(
+utils.plot_beliefs(
     prior1,
     posterior1,
     title1="Prior 1",
@@ -460,7 +479,7 @@ ut.plot_beliefs(
 # The sensor says that the dog moved to the right.
 move = 1
 prior2 = predict(posterior1, move, kernel)
-ut.plot_beliefs(
+utils.plot_beliefs(
     posterior1,
     prior2,
     title1="Posterior1",
@@ -474,10 +493,10 @@ ut.plot_beliefs(
 
 # %%
 # The sensor reports another door.
-likelihood = ut.lh_hallway(hallway, z=1, z_prob=0.75)
+likelihood = utils.lh_hallway(hallway, z=1, z_prob=0.75)
 posterior2 = update(likelihood, prior2)
 
-ut.plot_beliefs(
+utils.plot_beliefs(
     prior2,
     posterior2,
     title1="Prior2",
@@ -492,9 +511,9 @@ ut.plot_beliefs(
 # Then the dog moves again.
 move = 1
 prior3 = predict(posterior2, move, kernel)
-likelihood = ut.lh_hallway(hallway, z=0, z_prob=0.75)
+likelihood = utils.lh_hallway(hallway, z=0, z_prob=0.75)
 posterior3 = update(likelihood, prior3)
-ut.plot_beliefs(
+utils.plot_beliefs(
     prior3,
     posterior3,
     title1="Prior3",
@@ -510,32 +529,29 @@ ut.plot_beliefs(
 # %% [markdown]
 # ## Cell 2.1: Interactive visualization
 #
-# **Goal**:
+# **Goal**
 # - Run the full filter (door sensor + movement sensor) on a dog moving
 #   around the hallway, and see the belief track it in real time
-#
-# **Implementation**: `ut.cell2_1_interactive()`
-# - The green line marks where the dog actually is at each step
-
-# %%
-ut.cell2_1_interactive()
 
 # %% [markdown]
-# **Usage**
+# **Description**
 # - Inputs
-#   - **`Movement`**: the dog's movement pattern (movement1: traverses
+#   - `Movement`: the dog's movement pattern (movement1: traverses
 #     all 10 positions sequentially; movement2: alternates between
 #     positions 0 and 1; movement3: a third pattern)
-#   - **`Initial Prior`**: the starting belief (flat/uniform, all in
+#   - `Initial Prior`: the starting belief (flat/uniform, all in
 #     position 3, or all in position 8)
-#   - **`z_prob`**: door-sensor accuracy, from 1.0 (perfect) down to
+#   - `z_prob`: door-sensor accuracy, from 1.0 (perfect) down to
 #     noisier values
 #
 # - Panels
-#   - **`left`**: the dog's movement trajectory, current position
+#   - `left`: the dog's movement trajectory, current position
 #     highlighted in green
-#   - **`right`**: the belief distribution (prior or posterior), with red
+#   - `right`: the belief distribution (prior or posterior), with red
 #     lines marking door positions
+
+# %%
+utils.cell2_1_interactive()
 
 # %% [markdown]
 # **Guided usage**
@@ -553,29 +569,26 @@ ut.cell2_1_interactive()
 #     door information coming in
 
 # %% [markdown]
+# **Implementation** `utils.cell2_1_interactive()`
+# - The green line marks where the dog actually is at each step
+
+# %% [markdown]
 # ## Cell 2.2: Bad sensor data
 #
-# **Goal**:
+# **Goal**
 # - Inject one bad (wrong) sensor reading into an otherwise-normal run,
 #   to see how the filter reacts to, and recovers from, an outlier
 #   measurement
-#
-# **Implementation**: `ut.cell2_2_interactive()`
-# - Consider a symmetric office geometry and a dog running in circles:
-#   `[1, 1, 0, 1, 0, 1, 1, 0, 1, 0]`. The correct answer is a filter
-#   aligned with the dog, but with uncertainty on which half of the
-#   hallway it is in
-# - Then a completely wrong measurement is injected via a bad sensor:
-#   `[1, 1, 0, 1, 0, 1, 1, 1, 0, 0]`
-
-# %%
-ut.cell2_2_interactive()
 
 # %% [markdown]
-# **Usage**
+# **Description**
 # - Same inputs and panels as Cell 2.1, with the bad-sensor step baked
 #   into the simulated data
-#
+
+# %%
+utils.cell2_2_interactive()
+
+# %% [markdown]
 # **Guided usage**
 # - Step through the simulation
 #   - Observe the first part of the run tracks normally
@@ -586,3 +599,12 @@ ut.cell2_2_interactive()
 #
 # - Although this example is very simple, it incorporates all the
 #   concepts that a Kalman filter relies on
+
+# %% [markdown]
+# **Implementation** `utils.cell2_2_interactive()`
+# - Consider a symmetric office geometry and a dog running in circles:
+#   `[1, 1, 0, 1, 0, 1, 1, 0, 1, 0]`. The correct answer is a filter
+#   aligned with the dog, but with uncertainty on which half of the
+#   hallway it is in
+# - Then a completely wrong measurement is injected via a bad sensor:
+#   `[1, 1, 0, 1, 0, 1, 1, 1, 0, 0]`

@@ -6,6 +6,7 @@ Import as:
 import msml610.tutorials.L08_causal_inference.L08_04_05_propensity_score_utils as mtl0psu
 """
 
+import logging
 from typing import Callable, List, Optional, Tuple
 
 import numpy as np
@@ -16,6 +17,22 @@ import joblib
 import sklearn.linear_model
 import sklearn.neighbors
 import patsy
+
+import helpers.hnotebook as hnotebo
+
+_LOG = logging.getLogger(__name__)
+
+
+def init_loggers(notebook_log: logging.Logger) -> None:
+    """
+    Wire the notebook logger into the utils logger.
+
+    :param notebook_log: logger owned by the notebook
+    """
+    hnotebo.init_loggers(
+        notebook_log, utils_log=_LOG, set_all_loggers_to_print=True
+    )
+
 
 # Standard figure sizes
 _FIGSIZE_SINGLE = (8, 3)

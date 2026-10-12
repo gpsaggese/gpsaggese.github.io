@@ -857,7 +857,9 @@ def _wrap_table_placeholder(
     call = raw_typst.strip()
     if call.startswith("#"):
         call = call[1:]
-    indented_call = "\n".join(f"  {l}" if l else "" for l in call.splitlines())
+    indented_call = "\n".join(
+        f"  {line}" if line else "" for line in call.splitlines()
+    )
     lines = [
         "#figure(",
         f"{indented_call},",
@@ -1279,8 +1281,8 @@ def _fix_typst_code(output_file: str, mode: str, *, dry_run: bool) -> None:
     Use Claude Code (via `ccp`) to fix `output_file` so that
     `run_typst.py --input <output_file>` compiles cleanly.
 
-    Delegates to the `book.fix_rendered_pdf` skill (see
-    `.claude/skills/book.fix_rendered_pdf/SKILL.md`), which runs
+    Delegates to the `book_chapter.fix_rendered_pdf` skill (see
+    `.claude/skills/book_chapter.fix_rendered_pdf/SKILL.md`), which runs
     `run_typst.py`, checks the Typst source against
     `.claude/skills/typst.rules.md`, and checks the rendered PDF, iterating
     until there are no `typst compile` warnings/errors and the PDF looks
@@ -1299,7 +1301,7 @@ def _fix_typst_code(output_file: str, mode: str, *, dry_run: bool) -> None:
         )
         return
     ccp_exec = hgit.find_file("ccp")
-    prompt = f"/book.fix_rendered_pdf {output_file}"
+    prompt = f"/book_chapter.fix_rendered_pdf {output_file}"
     cmd = " ".join([ccp_exec, prompt])
     hsystem.system(cmd, print_command=True, dry_run=dry_run)
 

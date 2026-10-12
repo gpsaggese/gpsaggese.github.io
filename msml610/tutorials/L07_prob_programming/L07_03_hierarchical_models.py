@@ -15,28 +15,50 @@
 
 # %% [markdown]
 # # Hierarchical models
+#
+# - This notebook moves from comparing groups with independent parameters to
+#   hierarchical models that share information across groups, using `pymc`
+# - The pedagogical arc:
+#   - Group comparison: one mean tip per day, first with a vectorized model
+#   - Chemical-shift data grouped by amino acid, fit with a non-hierarchical
+#     and with a hierarchical model
+#   - Comparing the estimates of the two models on one forest plot
 
-# %% [markdown]
-# ## Imports
+# %%
+# !pip install -q graphviz==0.21
+
+import graphviz
+
+print("graphviz version: ", graphviz.__version__)
 
 # %%
 # %load_ext autoreload
 # %autoreload 2
 
-# !sudo /bin/bash -c "(source /venv/bin/activate; pip install --quiet graphviz)"
+import logging
 
+import numpy as np
 import pandas as pd
 import pymc as pm
-import numpy as np
 import seaborn as sns
-from IPython.display import display
 
 # %%
-import helpers.htutorial as ut
-import L07_03_hierarchical_models_utils as putils
+import helpers.hnotebook as hnotebook
 
-ut.config_notebook()
+import L07_03_hierarchical_models_utils as utils
 
+# Initialize notebook configuration and logging.
+hnotebook.config_notebook()
+_LOG = logging.getLogger(__name__)
+utils.init_loggers(_LOG)
+
+# Convert `display` into `print()` when running outside IPython.
+try:
+    from IPython.display import display
+except ImportError:
+    display = print  # type: ignore
+
+# %%
 dir_name = "./L07_data"
 # !ls $dir_name
 
@@ -46,7 +68,7 @@ dir_name = "./L07_data"
 # %% [markdown]
 # ## Cell 1.1: Loading and visualizing the tips data
 #
-# **Goal**:
+# **Goal**
 # - Look at how tip amount varies by day, before fitting a model that
 #   estimates one mean tip per day
 
@@ -60,7 +82,7 @@ _ = sns.boxplot(x="day", y="tip", data=tips)
 # %% [markdown]
 # ## Cell 1.2: Extracting the tip values
 #
-# **Goal**:
+# **Goal**
 # - Pull the raw tip amounts out as the array the model will observe
 
 # %%
@@ -70,7 +92,7 @@ print("tip[:10]=", tip[:10])
 # %% [markdown]
 # ## Cell 1.3: Building the day-group index
 #
-# **Goal**:
+# **Goal**
 # - Turn the categorical `day` column into an integer group index, so the
 #   model can look up each observation's group by position
 
@@ -87,11 +109,11 @@ print("n_groups=", n_groups, "groups=", groups)
 # %% [markdown]
 # ## Cell 1.4: Fitting a vectorized group-comparison model
 #
-# **Goal**:
+# **Goal**
 # - Fit one Normal per day, all at once via vectorized indexing instead of
 #   a Python for-loop over groups
 #
-# **Implementation**:
+# **Implementation**
 # - `mu`/`sigma` are length-`n_groups` vectors; `y ~ Normal(mu[idx],
 #   sigma[idx])` looks up each observation's own group's parameters
 
@@ -113,7 +135,7 @@ with pm.Model() as comparing_groups:
 # %% [markdown]
 # ## Cell 2.1: Loading the chemical-shift data
 #
-# **Goal**:
+# **Goal**
 # - Load per-amino-acid chemical-shift measurements, with both a
 #   theoretical and an experimental value per row
 
@@ -125,7 +147,7 @@ display(cs_data)
 # %% [markdown]
 # ## Cell 2.2: Computing the theory-experiment difference
 #
-# **Goal**:
+# **Goal**
 # - Extract the theory-minus-experiment difference the models below will
 #   treat as the observed quantity
 
@@ -136,7 +158,7 @@ print("diff=", diff)
 # %% [markdown]
 # ## Cell 2.3: Encoding the amino-acid groups
 #
-# **Goal**:
+# **Goal**
 # - Turn the categorical amino-acid column into an integer group index and
 #   a `coords` mapping, so PyMC can label each group by name
 
@@ -152,11 +174,11 @@ print("coords=", coords)
 # %% [markdown]
 # ## Cell 2.4: Fitting a non-hierarchical model
 #
-# **Goal**:
+# **Goal**
 # - Fit one independent `mu`/`sigma` prior per amino-acid group, with no
 #   information shared across groups
 #
-# **Implementation**:
+# **Implementation**
 # - `mu`, `sigma ~ Normal(0, 10)`/`HalfNormal(10)`, one per `aa` group
 
 # %%
@@ -175,11 +197,11 @@ pm.model_to_graphviz(cs_nh)
 # %% [markdown]
 # ## Cell 2.5: Fitting a hierarchical model
 #
-# **Goal**:
+# **Goal**
 # - Refit the same data letting every group's `mu` share information
 #   through a common hyper-prior, instead of being estimated independently
 #
-# **Implementation**:
+# **Implementation**
 # - `mu_mu`, `mu_sigma` are hyper-priors shared across groups; each group's
 #   `mu ~ Normal(mu_mu, mu_sigma)`
 
@@ -203,15 +225,15 @@ pm.model_to_graphviz(cs_h)
 # %% [markdown]
 # ## Cell 2.6: Comparing hierarchical vs non-hierarchical estimates
 #
-# **Goal**:
+# **Goal**
 # - Compare the two models' credible intervals for every group's `mu` on
 #   one forest plot, to see how much the hierarchical prior pulls
 #   estimates toward the global mean
 #
-# **Implementation**: `putils.plot_group_comparison_forest(idata_h,
+# **Implementation** `utils.plot_group_comparison_forest(idata_h,
 # idata_nh)`
 # - Plots both models' 94% credible intervals via `az.plot_forest()`, plus
 #   vertical lines for each model's global mean
 
 # %%
-putils.plot_group_comparison_forest(idata_cs_h, idata_cs_nh)
+utils.plot_group_comparison_forest(idata_cs_h, idata_cs_nh)

@@ -20,7 +20,9 @@ Tests for msml610 tutorials are organized in a two-tier structure:
   - **Interactive bash tests** (`test_docker_bash`): Optional interactive bash
     access tests via `docker_bash.sh` (marked with `@pytest.mark.order(3)`).
   - **Notebook execution tests** (`test1`, `test2`, etc.): Each test runs a
-    specific notebook via `jupyter nbconvert --execute`. Tests are numbered to
+    specific notebook via `run_nbconvert.py` (through
+    `run_notebook(..., use_docker_cmd=False)`), which executes the notebook in
+    the container and generates the HTML. Tests are numbered to
     match notebook numbering (e.g., `test3` runs `L03_03_*.ipynb`).
   - **HTML generation tests** (`test1_html`, `test2_html`, etc.): Optional tests
     to regenerate static HTML renderings of notebooks with working per-cell

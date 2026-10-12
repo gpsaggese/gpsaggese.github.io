@@ -21,29 +21,18 @@
 # - The grid world is the unifying example throughout:
 #   - It appears in the MDP definition, utility of states, Bellman equations,
 #     value iteration, policy iteration, and Q-learning
-# - The pedagogical arc is:
+# - The pedagogical arc:
 #   - Build the environment (states, stochastic transitions, rewards)
 #   - Solve it with full knowledge (value iteration, policy iteration)
 #   - Learn it without knowing the model (Q-learning)
-
-# %% [markdown]
-# ## Imports
 
 # %%
 # %load_ext autoreload
 # %autoreload 2
 
-# System libraries.
 import logging
 
-# Third-party libraries.
-import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sns
-
-# Set plotting style.
-sns.set_style("whitegrid")
-plt.rcParams["figure.figsize"] = (12, 6)
 
 # %%
 import helpers.hintrospection as hintros
@@ -56,17 +45,23 @@ hnotebook.config_notebook()
 _LOG = logging.getLogger(__name__)
 utils.init_loggers(_LOG)
 
+# Convert `display` into `print()` when running outside IPython.
+try:
+    from IPython.display import display
+except ImportError:
+    display = print  # type: ignore
+
 # %% [markdown]
 # # Part 1: Building the Grid World Environment
 
 # %% [markdown]
 # ## Cell 1.0: GridWorld API overview
 #
-# **Goal**:
+# **Goal**
 # - See the `GridWorld` class in action
 # - Build intuition for the environment's basic structure
 #
-# **Implementation**: `utils.GridWorld()`
+# **Implementation** `utils.GridWorld()`
 # - The `GridWorld` class implements the canonical AIMA 4x3 grid world MDP.
 #   Key properties accessible from any `GridWorld` instance:
 #   - `.states`: all 11 reachable cells (col, row) 1-indexed
@@ -136,7 +131,7 @@ for a in env.actions:
 # %% [markdown]
 # ## Cell 1.1: The 4x3 grid and its states
 #
-# **Goal**:
+# **Goal**
 # - Visualize the grid world layout that every later algorithm will reason
 #   about
 # - Identify the special cells: start, terminals, and wall
@@ -146,7 +141,7 @@ for a in env.actions:
 # - Cell `(1, 1)` is `START`, cell `(4, 3)` is the `+1` terminal (green),
 #   cell `(4, 2)` is the `-1` terminal (red), cell `(2, 2)` is a wall (grey)
 #
-# **Implementation**: `utils.cell1_1_show_grid()`
+# **Implementation** `utils.cell1_1_show_grid()`
 
 # %%
 # Draw the grid layout that every later algorithm will reason about.
@@ -159,27 +154,22 @@ utils.cell1_1_show_grid()
 # %% [markdown]
 # ## Cell 1.2: Stochastic action model
 #
-# **Goal**:
+# **Goal**
 # - Show why this is an MDP and not a deterministic puzzle
 # - The unreliable actions are the entire source of difficulty
-#
-# **Implementation**: `utils.cell1_2_stochastic_action()`
-
-# %%
-hintros.print_obj_info(utils.cell1_2_stochastic_action)
-
-# %%
-# Create interactive widget showing the stochastic action model.
-utils.cell1_2_stochastic_action()
 
 # %% [markdown]
-# **Usage**
+# **Description**
 # - Inputs
-#   - **`p_intended`**: probability the intended action succeeds
+#   - `p_intended`: probability the intended action succeeds
 #
 # - Panels
 #   - the grid with arrows showing where the agent can end up from the
 #     current state/action, weighted by probability
+
+# %%
+# Create interactive widget showing the stochastic action model.
+utils.cell1_2_stochastic_action()
 
 # %% [markdown]
 # **Guided usage**
@@ -193,14 +183,17 @@ utils.cell1_2_stochastic_action()
 #   - Observe the agent bounces back to its current cell
 
 # %% [markdown]
+# **Implementation** `utils.cell1_2_stochastic_action()`
+
+# %%
+hintros.print_obj_info(utils.cell1_2_stochastic_action)
+
+# %% [markdown]
 # ## Cell 1.3: Transition model as an explicit table
 #
-# **Goal**:
+# **Goal**
 # - Make the abstract $\Pr(s' \mid s, a)$ concrete as an actual probability
 #   table
-#
-# **Implementation**: `utils.cell1_3_show_transition_table()`,
-# `utils.cell1_3_transition_table()`
 
 # %%
 # Display the concrete Pr(s' | s, a) table for the START state and Up action.
@@ -216,23 +209,20 @@ utils.cell1_3_transition_table()
 #   - Most next states have zero probability
 # - Each $(s, a)$ row sums to $1.0$: it is a probability distribution
 #
-# **Implementation**: `utils.cell1_3_full_transition_model()`
+# **Implementation** `utils.cell1_3_full_transition_model()`
 
-# %%
-hintros.print_obj_info(utils.cell1_3_full_transition_model)
+# %% [markdown]
+# **Description**
+# - Inputs
+#   - `state`: the state to inspect
+#   - `action`: the action to inspect
+#
+# - Panels
+#   - the full $\Pr(s' \mid s, a)$ row for the selected state/action pair
 
 # %%
 # Display the entire transition model for every state-action pair.
 utils.cell1_3_full_transition_model()
-
-# %% [markdown]
-# **Usage**
-# - Inputs
-#   - **`state`**: the state to inspect
-#   - **`action`**: the action to inspect
-#
-# - Panels
-#   - the full $\Pr(s' \mid s, a)$ row for the selected state/action pair
 
 # %% [markdown]
 # **Guided usage**
@@ -241,32 +231,34 @@ utils.cell1_3_full_transition_model()
 #     cell, since both perpendicular directions bounce off a wall
 
 # %% [markdown]
+# **Implementation** `utils.cell1_3_show_transition_table()`,
+# `utils.cell1_3_transition_table()`
+
+# %%
+hintros.print_obj_info(utils.cell1_3_full_transition_model)
+
+# %% [markdown]
 # ## Cell 1.4: Rewards and episode returns
 #
-# **Goal**:
+# **Goal**
 # - Define the reward structure and connect per-step rewards to
 #   discounted return
 # - Show how a single trajectory accumulates $\sum_t \gamma^t R_t$
-#
-# **Implementation**: `utils.cell1_4_rewards_and_returns()`
-
-# %%
-hintros.print_obj_info(utils.cell1_4_rewards_and_returns)
-
-# %%
-# Show per-cell rewards and the discounted return of a sample trajectory.
-utils.cell1_4_rewards_and_returns()
 
 # %% [markdown]
-# **Usage**
+# **Description**
 # - Inputs
-#   - **`seed`**: trajectory seed
-#   - **`r_step`**: living reward per step
-#   - **`gamma`**: discount factor
+#   - `seed`: trajectory seed
+#   - `r_step`: living reward per step
+#   - `gamma`: discount factor
 #
 # - Panels
 #   - the sampled trajectory over the grid, and the running discounted
 #     return
+
+# %%
+# Show per-cell rewards and the discounted return of a sample trajectory.
+utils.cell1_4_rewards_and_returns()
 
 # %% [markdown]
 # **Guided usage**
@@ -283,16 +275,22 @@ utils.cell1_4_rewards_and_returns()
 #     states, not just the final cell
 
 # %% [markdown]
+# **Implementation** `utils.cell1_4_rewards_and_returns()`
+
+# %%
+hintros.print_obj_info(utils.cell1_4_rewards_and_returns)
+
+# %% [markdown]
 # # Part 2: Solving the MDP with Value Iteration
 
 # %% [markdown]
 # ## Cell 2.1: The Bellman equation for one state
 #
-# **Goal**:
+# **Goal**
 # - Build intuition for the Bellman update on a single state
 # - The full algorithm is just this update applied everywhere
 #
-# **Implementation**: `utils.cell2_1_bellman_one_state()`
+# **Implementation** `utils.cell2_1_bellman_one_state()`
 
 # %%
 # Show the value of each action at one state under converged utilities.
@@ -312,31 +310,23 @@ utils.cell2_1_bellman_one_state()
 # %% [markdown]
 # ## Cell 2.2: The Bellman equations for all states
 #
-# **Goal**:
+# **Goal**
 # - See the Bellman optimality equation instantiated for every grid cell
 # - Understand how $U(s) = \max_{a \in A(s)} \sum_{s'} \Pr(s' | s,
 #   a)[R(s') + \gamma U(s')]$ works out with the actual numbers
-#
-# **Implementation**: `utils.cell2_2_bellman_equations()`
-# - For the selected state, shows the optimal action (the one that
-#   achieves the max), each possible next state with its probability,
-#   reward, and discounted utility, and the resulting utility value
 
-# %%
-hintros.print_obj_info(utils.cell2_2_bellman_equations)
+# %% [markdown]
+# **Description**
+# - Inputs
+#   - `state`: the state whose Bellman equation to display
+#   - `gamma`: discount factor
+#
+# - Panels
+#   - the Bellman equation for the selected state, term by term
 
 # %%
 # Pick a state and gamma to see its Bellman optimality equation.
 utils.cell2_2_bellman_equations()
-
-# %% [markdown]
-# **Usage**
-# - Inputs
-#   - **`state`**: the state whose Bellman equation to display
-#   - **`gamma`**: discount factor
-#
-# - Panels
-#   - the Bellman equation for the selected state, term by term
 
 # %% [markdown]
 # **Guided usage**
@@ -350,31 +340,35 @@ utils.cell2_2_bellman_equations()
 #     rewards, and their discounted utilities
 
 # %% [markdown]
-# ## Cell 2.3: Value iteration converging over sweeps
-#
-# **Goal**:
-# - Watch state utilities converge to a fixed point as we sweep the grid
-# - See value information propagate backward from the terminals
-#
-# **Implementation**: `utils.cell2_3_value_iteration()`
+# **Implementation** `utils.cell2_2_bellman_equations()`
+# - For the selected state, shows the optimal action (the one that
+#   achieves the max), each possible next state with its probability,
+#   reward, and discounted utility, and the resulting utility value
 
 # %%
-hintros.print_obj_info(utils.cell2_3_value_iteration)
-
-# %%
-# Step through value iteration sweeps and watch utilities converge.
-utils.cell2_3_value_iteration()
+hintros.print_obj_info(utils.cell2_2_bellman_equations)
 
 # %% [markdown]
-# **Usage**
+# ## Cell 2.3: Value iteration converging over sweeps
+#
+# **Goal**
+# - Watch state utilities converge to a fixed point as we sweep the grid
+# - See value information propagate backward from the terminals
+
+# %% [markdown]
+# **Description**
 # - Inputs
-#   - **`iteration`**: value iteration sweep to display
-#   - **`gamma`**: discount factor
-#   - **`r_step`**: living reward
+#   - `iteration`: value iteration sweep to display
+#   - `gamma`: discount factor
+#   - `r_step`: living reward
 #
 # - Panels
 #   - the grid's utilities at the selected sweep, and how much they
 #     changed from the previous sweep
+
+# %%
+# Step through value iteration sweeps and watch utilities converge.
+utils.cell2_3_value_iteration()
 
 # %% [markdown]
 # **Guided usage**
@@ -386,30 +380,31 @@ utils.cell2_3_value_iteration()
 #   - Observe value propagates further but convergence takes more sweeps
 
 # %% [markdown]
-# ## Cell 2.4: Extracting the optimal policy
-#
-# **Goal**:
-# - Turn converged utilities into an actionable policy
-# - Take the greedy action in every cell
-#
-# **Implementation**: `utils.cell2_4_extract_policy()`
+# **Implementation** `utils.cell2_3_value_iteration()`
 
 # %%
-hintros.print_obj_info(utils.cell2_4_extract_policy)
-
-# %%
-# Show the greedy policy extracted from converged utilities.
-utils.cell2_4_extract_policy()
+hintros.print_obj_info(utils.cell2_3_value_iteration)
 
 # %% [markdown]
-# **Usage**
+# ## Cell 2.4: Extracting the optimal policy
+#
+# **Goal**
+# - Turn converged utilities into an actionable policy
+# - Take the greedy action in every cell
+
+# %% [markdown]
+# **Description**
 # - Inputs
-#   - **`r_step`**: living reward
-#   - **`gamma`**: discount factor
+#   - `r_step`: living reward
+#   - `gamma`: discount factor
 #
 # - Panels
 #   - the grid with an arrow per cell pointing toward the action that
 #     maximizes expected return
+
+# %%
+# Show the greedy policy extracted from converged utilities.
+utils.cell2_4_extract_policy()
 
 # %% [markdown]
 # **Guided usage**
@@ -422,12 +417,18 @@ utils.cell2_4_extract_policy()
 #     risky route
 
 # %% [markdown]
+# **Implementation** `utils.cell2_4_extract_policy()`
+
+# %%
+hintros.print_obj_info(utils.cell2_4_extract_policy)
+
+# %% [markdown]
 # # Part 3: Solving the MDP with Policy Iteration
 
 # %% [markdown]
 # ## Cell 3.1: Policy evaluation for a fixed policy
 #
-# **Goal**:
+# **Goal**
 # - Compute the utility of a fixed (possibly bad) policy
 # - This is a simpler linear problem than the full Bellman equation
 #
@@ -448,24 +449,19 @@ utils.cell2_4_extract_policy()
 #
 # Key insight: policy evaluation trades the hard nonlinear system for a
 # cheap linear one by committing to a fixed action per state first.
-#
-# **Implementation**: `utils.cell3_1_policy_evaluation()`
 
-# %%
-hintros.print_obj_info(utils.cell3_1_policy_evaluation)
+# %% [markdown]
+# **Description**
+# - Inputs
+#   - `policy`: which fixed policy to evaluate
+#   - `gamma`: discount factor
+#
+# - Panels
+#   - the utility of every state under the selected fixed policy
 
 # %%
 # Evaluate a fixed policy by solving the linear Bellman system.
 utils.cell3_1_policy_evaluation()
-
-# %% [markdown]
-# **Usage**
-# - Inputs
-#   - **`policy`**: which fixed policy to evaluate
-#   - **`gamma`**: discount factor
-#
-# - Panels
-#   - the utility of every state under the selected fixed policy
 
 # %% [markdown]
 # **Guided usage**
@@ -476,28 +472,29 @@ utils.cell3_1_policy_evaluation()
 #     policy iteration
 
 # %% [markdown]
-# ## Cell 3.2: Policy improvement and iteration to optimality
-#
-# **Goal**:
-# - Alternate evaluation and improvement until the policy stops changing
-# - Watch convergence to the optimal policy in a few iterations
-#
-# **Implementation**: `utils.cell3_2_policy_iteration()`
+# **Implementation** `utils.cell3_1_policy_evaluation()`
 
 # %%
-hintros.print_obj_info(utils.cell3_2_policy_iteration)
+hintros.print_obj_info(utils.cell3_1_policy_evaluation)
+
+# %% [markdown]
+# ## Cell 3.2: Policy improvement and iteration to optimality
+#
+# **Goal**
+# - Alternate evaluation and improvement until the policy stops changing
+# - Watch convergence to the optimal policy in a few iterations
+
+# %% [markdown]
+# **Description**
+# - Inputs
+#   - `iteration`: evaluate/improve round to display
+#
+# - Panels
+#   - the policy arrows at the selected round
 
 # %%
 # Step through policy iteration rounds and watch arrows flip to optimal.
 utils.cell3_2_policy_iteration()
-
-# %% [markdown]
-# **Usage**
-# - Inputs
-#   - **`iteration`**: evaluate/improve round to display
-#
-# - Panels
-#   - the policy arrows at the selected round
 
 # %% [markdown]
 # **Guided usage**
@@ -511,30 +508,31 @@ utils.cell3_2_policy_iteration()
 #     optimal
 
 # %% [markdown]
+# **Implementation** `utils.cell3_2_policy_iteration()`
+
+# %%
+hintros.print_obj_info(utils.cell3_2_policy_iteration)
+
+# %% [markdown]
 # ## Cell 3.3: Value iteration vs policy iteration
 #
-# **Goal**:
+# **Goal**
 # - Contrast the two exact methods and their convergence behavior
 # - Understand the tradeoff between many cheap sweeps and few expensive
 #   rounds
-#
-# **Implementation**: `utils.cell3_3_compare_solvers()`
-
-# %%
-hintros.print_obj_info(utils.cell3_3_compare_solvers)
-
-# %%
-# Compare convergence of value iteration and policy iteration.
-utils.cell3_3_compare_solvers()
 
 # %% [markdown]
-# **Usage**
+# **Description**
 # - Inputs
-#   - **`gamma`**: discount factor
+#   - `gamma`: discount factor
 #
 # - Panels
 #   - convergence curves for value iteration (many cheap sweeps) and
 #     policy iteration (few expensive rounds)
+
+# %%
+# Compare convergence of value iteration and policy iteration.
+utils.cell3_3_compare_solvers()
 
 # %% [markdown]
 # **Guided usage**
@@ -544,12 +542,18 @@ utils.cell3_3_compare_solvers()
 #     optimal policy, they are just different routes to the same answer
 
 # %% [markdown]
+# **Implementation** `utils.cell3_3_compare_solvers()`
+
+# %%
+hintros.print_obj_info(utils.cell3_3_compare_solvers)
+
+# %% [markdown]
 # # Part 4: Learning Without a Model (Q-Learning)
 
 # %% [markdown]
 # ## Cell 4.1: Why reinforcement learning is harder than planning
 #
-# **Goal**:
+# **Goal**
 # - Contrast planning (knowing the model) with learning (discovering
 #   through action)
 # - Understand why the same optimal policy takes a harder route in RL
@@ -562,7 +566,7 @@ utils.cell3_3_compare_solvers()
 # - The goal is unchanged (maximize expected return), but it must learn
 #   and act at the same time
 #
-# **Implementation**: `utils.cell4_1_planning_vs_learning()`
+# **Implementation** `utils.cell4_1_planning_vs_learning()`
 
 # %%
 # Contrast the known-model and blindfolded-agent views of the same world.
@@ -577,28 +581,23 @@ utils.cell4_1_planning_vs_learning()
 # %% [markdown]
 # ## Cell 4.2: The Q-learning update rule
 #
-# **Goal**:
+# **Goal**
 # - Introduce the single update that powers Q-learning
 # - Show how one experience tuple nudges a Q-value toward a better
 #   estimate
-#
-# **Implementation**: `utils.cell4_2_q_update_rule()`
 
-# %%
-hintros.print_obj_info(utils.cell4_2_q_update_rule)
+# %% [markdown]
+# **Description**
+# - Inputs
+#   - `alpha`: learning rate
+#   - `gamma`: discount factor
+#
+# - Panels
+#   - the TD update applied to one experience tuple, before/after
 
 # %%
 # Show how a single experience tuple nudges a Q-value via the TD update.
 utils.cell4_2_q_update_rule()
-
-# %% [markdown]
-# **Usage**
-# - Inputs
-#   - **`alpha`**: learning rate
-#   - **`gamma`**: discount factor
-#
-# - Panels
-#   - the TD update applied to one experience tuple, before/after
 
 # %% [markdown]
 # **Guided usage**
@@ -611,30 +610,31 @@ utils.cell4_2_q_update_rule()
 #     the next state's value
 
 # %% [markdown]
-# ## Cell 4.3: Exploration vs exploitation with epsilon-greedy
-#
-# **Goal**:
-# - Show why the agent must sometimes act randomly
-# - A purely greedy agent can lock onto a suboptimal path
-#
-# **Implementation**: `utils.cell4_3_exploration()`
+# **Implementation** `utils.cell4_2_q_update_rule()`
 
 # %%
-hintros.print_obj_info(utils.cell4_3_exploration)
+hintros.print_obj_info(utils.cell4_2_q_update_rule)
+
+# %% [markdown]
+# ## Cell 4.3: Exploration vs exploitation with epsilon-greedy
+#
+# **Goal**
+# - Show why the agent must sometimes act randomly
+# - A purely greedy agent can lock onto a suboptimal path
+
+# %% [markdown]
+# **Description**
+# - Inputs
+#   - `epsilon`: exploration probability
+#   - `log(n_episodes)`: number of training episodes
+#   - `seed`: random seed
+#
+# - Panels
+#   - a heatmap of how often the agent has visited each state
 
 # %%
 # Compare state coverage under low vs high exploration.
 utils.cell4_3_exploration()
-
-# %% [markdown]
-# **Usage**
-# - Inputs
-#   - **`epsilon`**: exploration probability
-#   - **`log(n_episodes)`**: number of training episodes
-#   - **`seed`**: random seed
-#
-# - Panels
-#   - a heatmap of how often the agent has visited each state
 
 # %% [markdown]
 # **Guided usage**
@@ -648,32 +648,33 @@ utils.cell4_3_exploration()
 #     a balance, often decaying epsilon over time
 
 # %% [markdown]
-# ## Cell 4.4: Watching Q-learning learn the optimal policy
-#
-# **Goal**:
-# - Run full Q-learning and watch the learned policy emerge
-# - Compare it to the policy value iteration found with full knowledge
-#
-# **Implementation**: `utils.cell4_4_q_learning_converges()`
+# **Implementation** `utils.cell4_3_exploration()`
 
 # %%
-hintros.print_obj_info(utils.cell4_4_q_learning_converges)
-
-# %%
-# Train Q-learning and compare its policy to the value iteration optimum.
-utils.cell4_4_q_learning_converges()
+hintros.print_obj_info(utils.cell4_3_exploration)
 
 # %% [markdown]
-# **Usage**
+# ## Cell 4.4: Watching Q-learning learn the optimal policy
+#
+# **Goal**
+# - Run full Q-learning and watch the learned policy emerge
+# - Compare it to the policy value iteration found with full knowledge
+
+# %% [markdown]
+# **Description**
 # - Inputs
-#   - **`log(n_episodes)`**: training episodes
-#   - **`alpha`**: learning rate
-#   - **`epsilon`**: exploration probability
-#   - **`seed`**: random seed
+#   - `log(n_episodes)`: training episodes
+#   - `alpha`: learning rate
+#   - `epsilon`: exploration probability
+#   - `seed`: random seed
 #
 # - Panels
 #   - the learned policy arrows, and the learning curve of returns over
 #     episodes
+
+# %%
+# Train Q-learning and compare its policy to the value iteration optimum.
+utils.cell4_4_q_learning_converges()
 
 # %% [markdown]
 # **Guided usage**
@@ -687,6 +688,12 @@ utils.cell4_4_q_learning_converges()
 #     converges: model-free learning trades sample efficiency for not
 #     needing a model, reaching the same optimal behavior without ever
 #     reading the model
+
+# %% [markdown]
+# **Implementation** `utils.cell4_4_q_learning_converges()`
+
+# %%
+hintros.print_obj_info(utils.cell4_4_q_learning_converges)
 
 # %% [markdown]
 # # Summary: The Mental Model

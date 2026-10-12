@@ -694,7 +694,7 @@ digraph Containers {
 //- @Example@: The same three commands a human runs
 //  ```bash
 //  > i git_branch_create -i 828
-//  > i gh_create_pr
+//  > i gh_pr_create
 //  > i gh_watch
 //  ```
 
@@ -725,7 +725,7 @@ digraph Containers {
 //   7. Record the plan in `github_PR_plan.md` and re-lint it
 // - @Example@: Carrying a subset of files into a fresh child branch
 //   ```bash
-//   > i git_branch_next_name
+//   > i git_branch_get_next_name
 //   > git_sync_between_branches.sh --src_branch $SRC --dst_branch $DST \
 //       --files "$FILES"
 //   ```

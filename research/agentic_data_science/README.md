@@ -43,7 +43,4 @@
 
 - [.] Check the existing class projects
 
-##
-
-- Create a 
 - Benchmark Claude and another agent of your choice
