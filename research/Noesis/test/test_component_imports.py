@@ -127,7 +127,9 @@ class Test_readmes(hunitest.TestCase):
         missing = []
         # Run test.
         for dir_name in _README_DIRS:
-            if not os.path.isfile(os.path.join(_NOESIS_DIR, dir_name, "README.md")):
+            if not os.path.isfile(
+                os.path.join(_NOESIS_DIR, dir_name, "README.md")
+            ):
                 missing.append(dir_name)
         # Check outputs.
         self.assertEqual(missing, [])

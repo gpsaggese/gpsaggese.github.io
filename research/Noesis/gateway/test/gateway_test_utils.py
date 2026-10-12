@@ -70,7 +70,11 @@ async def running_gateway(
         ) as http:
             resp = await http.post(
                 "/admin/dev-contract",
-                json={"buyer_id": "buyer_1", "seller_id": "groq", "l_max": l_max},
+                json={
+                    "buyer_id": "buyer_1",
+                    "seller_id": "groq",
+                    "l_max": l_max,
+                },
                 headers={"Authorization": f"Bearer {rnctnteut.OPERATOR_KEY}"},
             )
             hdbg.dassert_eq(
