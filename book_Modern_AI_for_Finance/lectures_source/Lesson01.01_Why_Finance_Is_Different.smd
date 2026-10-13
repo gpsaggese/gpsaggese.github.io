@@ -1,0 +1,1274 @@
+// type=UMD_slides
+// course_title=Modern AI for Finance
+// lesson_title=Lesson 01.01: Why Finance Is Different
+// slides_engine=typst
+
+// References:
+// - Chan: _"Quantitative Trading"_ (2009)
+// - Chan: _"Algorithmic Trading"_ (2013)
+// - Chan: _"Machine Trading"_ (2017)
+// - Lopez de Prado: _"Advances in Financial Machine Learning"_ (2018)
+// - Lopez de Prado: _"Machine Learning for Asset Managers"_ (2020)
+// - Grinold and Kahn: _"Active Portfolio Management"_ (1999)
+// - Hasbrouck: _"Securities Trading: Principles and Procedures"_ (2017)
+// - Kakushadze and Serur: _"151 Trading Strategies"_ (2018)
+
+* Roadmap
+
+- This lesson covers the **finance primer**: instruments, returns, risk and the
+  Sharpe ratio, factor models, market microstructure, and implementation costs
+  - This vocabulary separates a real edge from an artifact of leverage, costs,
+    or hidden risk exposure
+
+- It then studies the **statistical properties of financial data**:
+  non-stationarity, heavy tails, volatility clustering, and weak signals
+  - These properties break the assumptions behind standard ML and explain why
+    an accurate-looking model can still lose money
+
+# Finance Primer
+
+## Motivation
+
+* Finance Is Not Vision or NLP
+// From: //notes1/notes/IN_PROGRESS.finance.Machine_learning_for_asset_managers.de_Prado.2020.md:407 '* What are the Risks of ML?'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:409 '2. In finance there is very low signal-to-noise ratio'
+
+- @Motivation@: ML succeeded in vision and language because the
+  data-generating process is stable and the signal is strong
+  - Finance violates both assumptions, so the same recipe often fails
+
+- @Comparison@:
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Property", "Vision and NLP", "Finance"),
+  rows: (
+    ("Signal strength", "High", "Low: arbitrage competes it away"),
+    ("Data-generating process", "Stable", "Drifts: regimes, publication effects"),
+    ("Experiments", "Possible: new labels, A/B tests", "Virtually impossible: one history"),
+    ("Other agents", "Do not react to the model", "Adapt to the edge and erode it"),
+  ),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Key idea@: a model can be statistically accurate and still lose money,
+  because the signal is small, unstable, and expensive to trade
+
+* Running Example: A Momentum Strategy
+// From: //notes1/notes/IN_PROGRESS.finance.151_Trading_strategies.Kakushadze.2018.txt:74 '* Price-momentum strategy'
+// From: //notes1/notes/IN_PROGRESS.finance.Algorithmic_trading.Chan.2013.txt:94 '* Momentum strategies'
+
+::: columns
+:::: {.column width=58%}
+- @Definition@: **cross-sectional momentum** buys past winners and sells past
+  losers
+  - Rank stocks by cumulative return over the last $T = 12$ months, skipping
+    the most recent $S = 1$ month
+  - Buy the top decile and sell the bottom decile
+  - Hold for one month, then repeat
+
+- @Motivation@: one concrete strategy ties every concept in this lesson to the
+  same profit and loss
+
+- @Remark@: drivers of momentum include news events, news sentiment, order
+  flow, and forced asset sales
+::::
+:::: {.column width=37%}
+
+```graphviz
+digraph MOM {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.3;
+    ranksep=0.25;
+    rankdir=TB;
+    // input : orange | process : teal | output : blue
+    node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Helvetica",
+          fontsize=11, margin="0.18,0.08", height=0.38];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    Prices  [label="Prices", fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+    Rank    [label="Rank by past return", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    Book    [label="Long winners,\nshort losers", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+    PnL     [label="PnL after costs", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+
+    Prices -> Rank -> Book -> PnL;
+}
+```
+::::
+:::
+
+## Financial Instruments
+
+* Financial Instruments: Overview
+// From: //notes1/notes/finance.all.txt:21 '** Financial products'
+// From: //notes1/notes/finance.all.txt:2339 '** Stock vs bond'
+// From: //notes1/notes/finance.all.txt:2308 '** Bond: definition'
+
+- @Definition@: a **financial instrument** is a tradable contract that defines
+  a claim on future cash flows
+  - A stock is ownership in a business, a bond is debt
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Instrument", "What the holder gets", "Payoff driver"),
+  rows: (
+    ("Equity", "Ownership of a business", "Dividends and price changes"),
+    ("Bond", "Claim on an issuer's debt", "Coupons and principal repayment"),
+    ("Future", "Obligation to buy or sell at a set price on a set date", "Spot price at maturity versus agreed price"),
+    ("Option", "Right, not obligation, to buy (call) or sell (put) at a strike", "Non-linear payoff in the underlying price"),
+  ),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Applications@: financial products let investors hedge risk, speculate, and
+  raise funds
+
+* Futures and Options Payoffs
+// From: //notes1/notes/finance.all.txt:2992 '** Futures contract'
+// From: //notes1/notes/finance.all.txt:3802 '* Payoff of a call option at expiration'
+// From: //notes1/notes/finance.all.txt:3831 '* Payoff of a put option at expiration'
+
+::: columns
+:::: {.column width=50%}
+- @Definition@: a **futures contract** is an obligation to buy or sell an asset
+  at a price $F$ agreed today, with delivery at maturity $T$
+  - The long payoff $S_T - F$ is linear in the spot price $S_T$
+
+- @Definition@: an **option** gives the right, not the obligation, to trade at
+  a strike $K$
+  - Call payoff: $\max(S_T - K, 0)$
+  - Put payoff: $\max(K - S_T, 0)$
+
+- @Key idea@: futures payoffs are linear in the underlying price, option
+  payoffs are not
+::::
+:::: {.column width=45%}
+
+```tikz
+\tikzset{every node/.style={font=\sffamily\footnotesize}}
+\definecolor{cBlue}{RGB}{60,111,176}
+\definecolor{cCoral}{RGB}{192,69,91}
+\draw[->] (0,0) -- (4.4,0) node[right] {$S_T$};
+\draw[->] (0,-0.2) -- (0,2.7) node[above] {payoff};
+\draw[cBlue, line width=0.8pt] (0,0) -- (2.0,0) -- (4.0,2.0);
+\draw[cCoral, line width=0.8pt] (0,2.0) -- (2.0,0) -- (4.0,0);
+\draw[dashed, gray] (2.0,0) -- (2.0,-0.25) node[below] {$K$};
+\node[cBlue] at (3.5,2.3) {call};
+\node[cCoral] at (0.6,2.3) {put};
+```
+
+\footnotesize _Payoff at expiration of a long call (blue) and a long put (red)
+as a function of the spot price_
+::::
+:::
+
+## Measuring Returns
+
+* Simple Returns and Compounding
+// From: //notes1/notes/finance.all.txt:1165 '** Net return over one holding period'
+// From: //notes1/notes/finance.all.txt:1262 '** Gross return for multiple periods'
+
+- @Definition@: the **net return** over one holding period is the percentage
+  price change, and the **gross return** is the price ratio
+  $$
+  R_t \triangleq \frac{P_t - P_{t-1}}{P_{t-1}}
+  \qquad
+  G_t \triangleq \frac{P_t}{P_{t-1}} = 1 + R_t
+  $$
+
+- @Fact@: gross returns multiply over $k$ periods, so net returns do not add
+  $$
+  1 + R_{(t, t-k)} = \prod_{j=0}^{k-1} (1 + R_{t-j})
+  $$
+
+- @Example@: a gain of 50% followed by a loss of 50% is not a round trip
+  - $1.5 \times 0.5 - 1 = -25\%$
+
+- @Remark@: the arithmetic average of net returns overstates the compound
+  growth of capital
+
+* Log and Excess Returns
+// From: //notes1/notes/finance.all.txt:1414 '** Log return'
+// From: //notes1/notes/finance.all.txt:1461 '** Log return approximates net return'
+// From: //notes1/notes/finance.all.txt:458 '** Excess return'
+// From: //notes1/notes/finance.all.txt:1529 '** Advantages of log returns'
+
+- @Definition@: the **log return** is the difference of log prices
+  $$
+  r_t \triangleq \log\left(\frac{P_t}{P_{t-1}}\right) = \log(1 + R_t)
+  $$
+
+- @Fact@: log returns add over time, and $r_t \approx R_t$ when $R_t$ is small
+  - $r_{(t, t-k)} = \sum_{j=0}^{k-1} r_{t-j}$, so a sum of random variables
+    replaces a product
+
+- @Definition@: the **excess return** is the return above the risk-free rate
+  $R_f$, and the **active return** is the return above a benchmark $R_B$
+  - Excess: $R_P - R_f$
+  - Active: $R_P - R_B$
+
+- @Remark@: log returns are close to Gaussian at monthly frequency, but daily
+  returns stay heavy tailed
+
+## Measuring Risk and Performance
+
+* Volatility
+// From: //notes1/notes/finance.all.txt:1709 '** Risk'
+// From: //notes1/notes/IN_PROGRESS.finance.Quantitative_trading.Chan.2009.txt:277 '* Annualized SR'
+
+- @Definition@: **volatility** is the standard deviation of returns,
+  $\sigma \triangleq \sqrt{\VV[R_t]}$
+
+- @Fact@: for uncorrelated returns, volatility scales with the square root of
+  time
+  $$
+  \sigma_{annual} = \sigma_{daily} \sqrt{252}
+  $$
+  - E.g., 1% daily volatility is about $1\% \times \sqrt{252} \approx 15.9\%$
+    per year
+
+- @Limitations@:
+  - Volatility treats upside and downside moves alike, but investors dislike
+    only losses
+  - Square-root scaling fails when returns are autocorrelated or the variance
+    changes over time
+
+* Drawdown
+// From: //notes1/notes/IN_PROGRESS.finance.Quantitative_trading.Chan.2009.txt:91 '* Drawdown at time t'
+// From: //notes1/notes/IN_PROGRESS.finance.Quantitative_trading.Chan.2009.txt:96 '* Maximum drawdown'
+// From: //notes1/notes/IN_PROGRESS.finance.Quantitative_trading.Chan.2009.txt:100 '* Maximum drawdown duration'
+
+::: columns
+:::: {.column width=50%}
+- @Definition@: the **drawdown** at time $t$ is the loss from the previous
+  equity peak (the high watermark)
+  $$
+  DD_t \triangleq \frac{\max_{s \le t} E_s - E_t}{\max_{s \le t} E_s}
+  $$
+
+- @Definition@: the **maximum drawdown** is the largest peak-to-trough loss,
+  and its **duration** is the longest time to recover a previous peak
+
+- @Remark@: the deepest drawdown is not always the longest one
+
+- @Key idea@: an investor tolerates a limited depth and a limited duration of
+  losses, not only a limited volatility
+::::
+:::: {.column width=45%}
+
+```tikz
+\tikzset{every node/.style={font=\sffamily\footnotesize}}
+\definecolor{cBlue}{RGB}{60,111,176}
+\definecolor{cCoral}{RGB}{192,69,91}
+\begin{scope}[xscale=0.75]
+\draw[->] (0,0) -- (7.4,0) node[right] {time};
+\draw[->] (0,0) -- (0,3.5) node[above] {equity};
+\draw[cBlue, line width=0.8pt] (0.2,0.9) -- (1.0,1.6) -- (1.8,2.2) -- (2.4,2.9) -- (3.2,2.3) -- (4.0,1.6) -- (4.6,2.0) -- (5.4,2.4) -- (6.1,2.9) -- (6.8,3.2);
+\draw[dashed, gray] (2.4,2.9) -- (6.1,2.9);
+\node[gray, above] at (4.2,2.9) {high watermark};
+\draw[<->, cCoral, line width=0.8pt] (4.0,2.9) -- (4.0,1.6);
+\node[cCoral, anchor=west] at (4.1,1.15) {max drawdown};
+\draw[dotted, gray] (2.4,2.9) -- (2.4,0.45);
+\draw[dotted, gray] (6.1,2.9) -- (6.1,0.45);
+\draw[<->, cCoral, line width=0.8pt] (2.4,0.55) -- (6.1,0.55);
+\node[cCoral, above] at (4.25,0.55) {drawdown duration};
+\end{scope}
+```
+
+\footnotesize _Equity curve with its high watermark, maximum drawdown, and
+drawdown duration_
+::::
+:::
+
+* Sharpe Ratio: Definition
+// From: //notes1/notes/finance.all.txt:465 '** Information ratio'
+// From: //notes1/notes/IN_PROGRESS.finance.portfolio_theory.txt:209 '* Portfolio frontier with a risk-free asset and a risky asset'
+
+::: columns
+:::: {.column width=58%}
+- @Definition@: the **Sharpe ratio** is the mean excess return per unit of
+  volatility
+  $$
+  SR \triangleq \frac{\EE[R_P - R_f]}{\sqrt{\VV[R_P - R_f]}}
+  $$
+
+- @Intuition@: leverage scales return and risk together, so $SR$ does not
+  change, and a higher $SR$ supports more leverage at the same risk
+
+- @Definition@: the **information ratio** is the Sharpe ratio of the active
+  return $R_P - R_B$
+
+- @Example@: a long-short momentum book with 8% return and 10% volatility has
+  $SR = 0.8$, with no $R_f$ subtracted because the short leg finances the long
+  leg
+::::
+:::: {.column width=37%}
+
+```tikz
+\tikzset{every node/.style={font=\sffamily\footnotesize}}
+\definecolor{cBlue}{RGB}{60,111,176}
+\definecolor{cOrange}{RGB}{217,142,43}
+\draw[->] (0,0) -- (4.2,0) node[right] {volatility};
+\draw[->] (0,0) -- (0,3.4) node[above] {expected return};
+\draw[cBlue, line width=0.8pt] (0,0.6) -- (4.0,2.6);
+\fill[cOrange] (0,0.6) circle (0.07);
+\node[cOrange, left] at (0,0.6) {$R_f$};
+\fill[cBlue] (1.4,1.3) circle (0.07);
+\node[below right] at (1.4,1.3) {1x};
+\fill[cBlue] (2.8,2.0) circle (0.07);
+\node[below right] at (2.8,2.0) {2x leverage};
+\node[cBlue, above left] at (2.2,1.9) {slope = $SR$};
+```
+
+\footnotesize _Leverage moves a strategy along a line of constant Sharpe ratio_
+::::
+:::
+
+* Sharpe Ratio: Reading It Correctly
+// From: //notes1/notes/IN_PROGRESS.finance.Quantitative_trading.Chan.2009.txt:77 '* How consistent is the strategy?'
+// From: //notes1/notes/IN_PROGRESS.finance.Algorithmic_trading.Chan.2013.txt:539 '* SR and statistical significance'
+// From: //notes1/notes/IN_PROGRESS.finance.Machine_trading.Chan.2017.txt:168 '* Max drawdown'
+
+- @Question@: how long must a backtest run before a Sharpe ratio of 0.8 is
+  distinguishable from luck?
+
+- @Fact@: a Sharpe ratio is a $t$-statistic in disguise,
+  $t \approx SR_{annual} \sqrt{Y}$ with $Y$ years
+  - One-sided thresholds: $t = 1.645$ for 5%, $2.33$ for 1%, $3.09$ for 0.1%
+
+- @Example@: with $SR = 0.8$, $t \approx 1.13$ after 2 years (not significant)
+  and $t \approx 1.79$ after 5 years (significant at 5%)
+
+- @Fact@: rules of thumb for a stand-alone strategy
+  - $SR < 1$ is not good enough
+  - $SR > 2$ is profitable almost every month
+  - $SR > 3$ is profitable almost every day
+
+- @Limitations@: $SR$ is blind to tail risk, and the maximum drawdown is a
+  better tail-risk measure
+
+## Factor Models
+
+* Market Beta and CAPM
+// From: //notes1/notes/IN_PROGRESS.finance.portfolio_theory.txt:865 '* CAPM (Capital Asset Pricing Model)'
+// From: //notes1/notes/IN_PROGRESS.finance.portfolio_theory.txt:877 '* Interpretation of $\beta$ in CAPM'
+// From: //notes1/notes/IN_PROGRESS.finance.portfolio_theory.txt:664 '* Asset variance explained by the market: stylized fact'
+
+::: columns
+:::: {.column width=55%}
+- @Definition@: the **CAPM** (capital asset pricing model) explains an excess
+  return by exposure to the market excess return
+  $$
+  R_i - R_f = \alpha_i + \beta_i (R_M - R_f) + \varepsilon_i
+  $$
+  - $\beta_i$ is the sensitivity of asset $i$ to the market
+
+- @Fact@: only systematic risk is compensated, so CAPM implies $\alpha_i = 0$
+  - Residual risk can be diversified away
+
+- @Fact@: the market explains about 30% of the variance of a typical stock
+  - A portfolio can diversify away the remaining 70%
+::::
+:::: {.column width=40%}
+
+```graphviz
+digraph CAPM {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.35;
+    ranksep=0.5;
+    rankdir=TB;
+    // driver : orange | return : blue | residual : violet
+    node [shape=box, style="rounded,filled", penwidth=1.8, fontname="Helvetica",
+          fontsize=12, margin="0.22,0.12", height=0.45];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    Mkt  [label="Market excess\nreturn", fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+    A    [label="Stock A", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+    B    [label="Stock B", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+    EA   [label="Residual A", fillcolor="#E9E1F7", color="#A88FD9", fontcolor="#45296B"];
+    EB   [label="Residual B", fillcolor="#E9E1F7", color="#A88FD9", fontcolor="#45296B"];
+
+    Mkt -> A [label="  beta A  "];
+    Mkt -> B [label="  beta B  "];
+    EA -> A;
+    EB -> B;
+    { rank=same; EA; Mkt; EB; }
+}
+```
+::::
+:::
+
+* Style Factors
+// From: //notes1/notes/IN_PROGRESS.finance.portfolio_theory.txt:907 '* 3-factor model'
+// From: //notes1/notes/IN_PROGRESS.finance.portfolio_theory.txt:942 '* 4-factor model'
+// From: //notes1/notes/IN_PROGRESS.finance.portfolio_theory.txt:945 '* Explanations for premium from factor exposure'
+// From: //notes1/notes/IN_PROGRESS.finance.151_Trading_strategies.Kakushadze.2018.txt:118 '* Value strategy'
+// From: //notes1/notes/IN_PROGRESS.finance.151_Trading_strategies.Kakushadze.2018.txt:126 '## Low-volatility anomaly (p. 60)'
+
+- @Definition@: a **style factor** is a long-short portfolio built from a
+  stock characteristic that earns a persistent premium
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Factor", "Long minus short", "Candidate explanation"),
+  rows: (
+    ("Market", "Market return minus risk-free rate", "Compensation for systematic risk"),
+    ("Size", "Small caps minus big caps", "Liquidity: higher transaction costs"),
+    ("Value", "High minus low book-to-market", "Financial distress risk"),
+    ("Momentum", "Past winners minus past losers", "Under- and over-reaction to news"),
+    ("Quality", "Profitable, stable firms minus weak firms", "Debated: risk or mispricing"),
+    ("Low volatility", "Low-volatility minus high-volatility stocks", "Contradicts the risk-return trade-off"),
+  ),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Remark@: there is no definitive explanation of why these factors earn a
+  premium
+  - Risk compensation and behavioral biases are both candidates
+
+* Alpha vs. Beta
+// From: //notes1/notes/IN_PROGRESS.finance.Quantitative_equity_portfolio_management.Chincarini.2006.txt:77 '* $\alpha$ and $\beta$: Formal definition'
+// From: //notes1/notes/IN_PROGRESS.finance.Machine_trading.Chan.2017.txt:209 '* Alphas'
+
+::: columns
+:::: {.column width=58%}
+- @Definition@: given a benchmark return $R_B$, a portfolio return splits into
+  an exposure part and a residual part
+  $$
+  R_P = \alpha + \beta R_B + \varepsilon
+  $$
+
+- @Key idea@: raising exposure to the benchmark raises return without adding
+  skill
+
+- @Example@: a long-only momentum book returns 14% while the market returns 12%
+  - With $\beta = 1.1$, exposure explains 13.2%, so $\alpha \approx 0.8\%$
+
+- @Characteristics@: alpha is almost riskless once diversified, but has limited
+  capacity and disappears with time
+::::
+:::: {.column width=37%}
+
+```graphviz
+digraph Decomp {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.25;
+    ranksep=0.5;
+    rankdir=LR;
+    // return : blue | exposure : sage | residual : violet
+    node [shape=box, style="rounded,filled", penwidth=1.8, fontname="Helvetica",
+          fontsize=12, margin="0.22,0.12", height=0.45];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    Ret  [label="Portfolio return", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+    Beta [label="Market beta\ncheap, scalable", fillcolor="#DFEDE0", color="#8FB79A", fontcolor="#2E5A3D"];
+    Tilt [label="Factor tilts\nknown premia", fillcolor="#DFEDE0", color="#8FB79A", fontcolor="#2E5A3D"];
+    Alph [label="Alpha\nscarce, decays", fillcolor="#E9E1F7", color="#A88FD9", fontcolor="#45296B"];
+
+    Beta -> Ret;
+    Tilt -> Ret;
+    Alph -> Ret;
+}
+```
+::::
+:::
+
+## Market Microstructure Basics
+
+* The Limit Order Book
+// From: //notes1/notes/finance.Security_trading.Hasbrouk.2017.txt:688 '### 4.1, Basic limit order processing'
+// From: //notes1/notes/finance.all.txt:653 '** Level 2 quotes'
+
+::: columns
+:::: {.column width=55%}
+- @Definition@: the **limit order book** lists resting buy orders (bids) and
+  sell orders (asks) by price level
+
+- @Fact@: an incoming order matches when its price meets or crosses the best
+  opposite quote
+  - The resting order sets the execution price
+  - Priority goes to price first, then to arrival time
+
+- @Example@: a buy limit order for 50 shares at 120.29 trades 50 shares at
+  120.29 against the best ask
+
+- @Remark@: level 1 quotes show only the best bid and ask, level 2 shows the
+  full depth
+::::
+:::: {.column width=40%}
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Side", "Price", "Size"),
+  rows: (
+    ("Ask", "120.31", "300"),
+    ("Ask", "120.30", "500"),
+    ("Best ask", "120.29", "200"),
+    ("Best bid", "120.25", "400"),
+    ("Bid", "120.24", "700"),
+    ("Bid", "120.23", "900"),
+  ),
+  caption: "Illustrative order book for stock ABC",
+  col-widths: (1.4fr, 1fr, 0.8fr),
+  bold-first-col: true,
+)
+```
+\endgroup
+::::
+:::
+
+* Spread and Liquidity
+// From: //notes1/notes/finance.all.txt:81 '** Bid-ask spread'
+// From: //notes1/notes/finance.Security_trading.Hasbrouk.2017.txt:545 '* Several attributes for liquidity'
+// From: //notes1/notes/finance.all.txt:692 '** Bid-ask bounce'
+
+- @Definition@: the **bid-ask spread** is the gap between the best ask $a$ and
+  the best bid $b$, and the **mid price** is their average
+  $$
+  S \triangleq a - b
+  \qquad
+  M \triangleq \frac{a + b}{2}
+  $$
+
+- @Example@: with bid 120.25 and ask 120.29, the spread is 0.04, about 3.3
+  basis points of the mid price
+
+- @Definition@: **liquidity** has three attributes
+  - _Tightness_: a small spread
+  - _Depth_: large quantities close to the best quotes
+  - _Resiliency_: price changes from large trades dissipate quickly
+
+- @Fact@: the spread pays market makers for inventory risk, liquidity risk, and
+  trading against better-informed traders
+
+- @Remark@: the last trade price flips between bid and ask, so observed prices
+  jump without news (bid-ask bounce)
+
+* Order Types
+// From: //notes1/notes/finance.all.txt:318 '** Market order'
+// From: //notes1/notes/finance.all.txt:339 '** Limit order'
+// From: //notes1/notes/finance.all.txt:353 '** Stop order (or stop-loss) order'
+// From: //notes1/notes/finance.all.txt:414 '** Crossing the spread'
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Order", "Executes when", "Guarantee", "Liquidity role"),
+  rows: (
+    ("Market", "Immediately, at the best available price", "Execution, not price", "Takes liquidity"),
+    ("Limit", "At the limit price or better", "Price, not execution", "Provides liquidity"),
+    ("Stop", "Price reaches the stop price, then becomes a market order", "No price guarantee", "Takes liquidity"),
+    ("Stop limit", "Price reaches the stop price, then becomes a limit order", "Price, not execution", "Provides liquidity"),
+  ),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Key idea@: every order trades certainty of execution against control of
+  price
+
+- @Definition@: **crossing the spread** means trading actively against the
+  best quote, and a limit order trades passively and waits for the market to
+  cross
+
+## Implementation Realities
+
+* Transaction Costs
+// From: //notes1/notes/finance.all.txt:5344 '* Transaction costs'
+// From: //notes1/notes/finance.all.txt:5353 '* Slippage'
+// From: //notes1/notes/finance.all.txt:588 '** Minimum alpha to support turnover and trading costs'
+
+::: columns
+:::: {.column width=58%}
+- @Definition@: **explicit costs** are commissions, fees, and taxes, and
+  **implicit costs** are slippage and opportunity cost
+  - _Slippage_ is the gap between the decision price and the execution price
+
+- @Fact@: costs grow with turnover, the notional traded divided by the gross
+  book size
+
+- @Example@: trading 100% of the book every day at 5 bps costs
+  $252 \times 5 = 1260$ bps, i.e., 12.6% per year, which turns a 10% gross
+  edge into a loss
+
+- @Example@: the momentum book turns over 100% each month at 10 bps, so costs
+  are $12 \times 10 = 120$ bps per year
+::::
+:::: {.column width=37%}
+
+```graphviz
+digraph Net {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.3;
+    ranksep=0.3;
+    rankdir=TB;
+    // result : blue | cost : coral
+    node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Helvetica",
+          fontsize=11, margin="0.18,0.08", height=0.38];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    Gross [label="Gross edge\n8.0% per year", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+    Cost  [label="Costs\n1.2% per year", fillcolor="#F6C6C6", color="#D98C8C", fontcolor="#6B2A2A"];
+    Net   [label="Net edge\n6.8% per year", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+
+    Gross -> Cost [label="  minus  "];
+    Cost -> Net;
+}
+```
+::::
+:::
+
+* Market Impact
+// From: //notes1/notes/finance.all.txt:5374 '* Market impact components'
+// From: //notes1/notes/finance.all.txt:194 '** Market impact'
+
+::: columns
+:::: {.column width=50%}
+- @Definition@: **market impact** is the effect of your own trading on the
+  price: buying moves the price against the buyer
+
+- @Components@:
+  - _Instantaneous_: the cost of crossing the spread
+  - _Temporary_: the order walks the book and the price later reverts
+  - _Permanent_: other participants infer information, so the price stays
+    higher
+
+- @Fact@: small orders pay mostly the spread, large orders pay impact that
+  depends on size, horizon, volume, and volatility
+::::
+:::: {.column width=45%}
+
+```tikz
+\tikzset{every node/.style={font=\sffamily\footnotesize}}
+\definecolor{cBlue}{RGB}{60,111,176}
+\definecolor{cCoral}{RGB}{192,69,91}
+\begin{scope}[xscale=0.75]
+\fill[gray!15] (1.6,0) rectangle (3.2,3.2);
+\node[gray] at (2.4,3.0) {execution};
+\draw[->] (0,0) -- (7.2,0) node[right] {time};
+\draw[->] (0,0) -- (0,3.4) node[above] {price};
+\draw[cBlue, line width=0.8pt] (0.2,1.0) -- (1.6,1.0) -- (3.2,2.4) -- (3.8,2.1) -- (4.5,1.9) -- (5.5,1.75) -- (6.6,1.7);
+\draw[dashed, gray] (1.6,1.0) -- (6.8,1.0);
+\draw[dashed, gray] (3.2,1.7) -- (6.8,1.7);
+\draw[<->, cCoral, line width=0.8pt] (7.0,1.0) -- (7.0,1.7);
+\node[cCoral, right] at (7.0,1.35) {permanent};
+\draw[<->, cCoral, line width=0.8pt] (3.0,1.7) -- (3.0,2.4);
+\node[cCoral, left] at (3.0,2.05) {temporary};
+\node[above] at (0.9,1.0) {arrival price};
+\end{scope}
+```
+
+\footnotesize _Price path around a buy order: the temporary part reverts, the
+permanent part stays_
+::::
+:::
+
+* Strategy Capacity
+// From: //notes1/notes/finance.all.txt:4865 '* Market impact'
+// From: //notes1/notes/IN_PROGRESS.finance.Machine_trading.Chan.2017.txt:215 '- Limited capacity'
+// From: //notes1/notes/IN_PROGRESS.finance.Algorithmic_trading.Chan.2013.txt:62 '- Have low capacity so not interesting anymore for a large fund, but can be'
+
+::: columns
+:::: {.column width=55%}
+- @Definition@: **capacity** is the capital a strategy can deploy before costs
+  and impact erase its edge
+
+- @Fact@: gross PnL grows about linearly with book size, while impact cost
+  grows faster, so net PnL peaks at an optimal book size
+
+- @Fact@: a common rule keeps each trade below 1% of average daily volume
+
+- @Characteristics@: alphas have limited capacity and decay as others discover
+  them
+  - Low-capacity strategies are uninteresting to large funds
+::::
+:::: {.column width=40%}
+
+```tikz
+\tikzset{every node/.style={font=\sffamily\footnotesize}}
+\definecolor{cBlue}{RGB}{60,111,176}
+\definecolor{cCoral}{RGB}{192,69,91}
+\definecolor{cTeal}{RGB}{79,154,92}
+\begin{scope}[x=0.9cm,y=0.5cm]
+\draw[->] (0,0) -- (6.5,0) node[right] {book size};
+\draw[->] (0,0) -- (0,6.0) node[above] {PnL};
+\draw[cTeal, line width=0.4pt, domain=0:6, samples=30] plot (\x, {0.9*\x});
+\draw[cCoral, line width=0.4pt, domain=0:6, samples=30] plot (\x, {0.15*\x*\x});
+\draw[cBlue, line width=0.8pt, domain=0:6, samples=40] plot (\x, {0.9*\x-0.15*\x*\x});
+\draw[dashed, gray] (3,0) -- (3,1.35);
+\node[below] at (3,0) {capacity};
+\node[cBlue, above] at (3,1.4) {net PnL};
+\node[cTeal, above left] at (5.4,4.86) {gross edge};
+\node[cCoral, below right] at (5.4,4.37) {impact cost};
+\end{scope}
+```
+
+\footnotesize _Gross edge, impact cost, and net PnL as a function of book size_
+::::
+:::
+
+# Statistical Properties of Financial Data
+
+## Non-Stationarity
+
+* Prices vs. Returns
+// From: msml610/lectures_source/Lesson10.1-Timeseries_forecasting.smd:83 '* Stationarity: Intuition'
+// From: msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.smd:121 '* Non-Stationarity and Trends'
+// From: //notes1/notes/finance.time_series.txt:143 '* Transforming non-stationary processes in stationary ones'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1191 '## Stationarity vs memory dilemma'
+
+::: columns
+:::: {.column width=55%}
+- @Definition@: a **stationary** series has statistical properties (mean,
+  variance, autocorrelation) that do not change over time
+
+- @Fact@: prices are non-stationary, returns are approximately stationary
+
+- @Problem@: two trending prices look related even when they are not
+  (spurious regression)
+
+- @Problem@: differencing makes a series stationary but removes its memory
+  - Fractional differencing keeps the minimum memory needed for prediction
+::::
+:::: {.column width=40%}
+
+```tikz
+\tikzset{every node/.style={font=\sffamily\footnotesize}}
+\definecolor{cBlue}{RGB}{60,111,176}
+\definecolor{cOrange}{RGB}{217,142,43}
+\begin{scope}[xscale=0.8]
+\draw[->] (0,0) -- (6.7,0) node[right] {$t$};
+\draw[->] (0,0) -- (0,2.3) node[above] {price};
+\draw[cOrange, line width=0.8pt] plot coordinates {(0.00,0.05) (0.08,0.00) (0.16,0.03) (0.24,0.09) (0.32,0.08) (0.40,0.02) (0.48,0.03) (0.56,0.06) (0.64,0.13) (0.72,0.08) (0.80,0.02) (0.88,0.07) (0.96,0.11) (1.04,0.20) (1.12,0.26) (1.20,0.27) (1.28,0.27) (1.36,0.42) (1.44,0.42) (1.52,0.38) (1.60,0.33) (1.68,0.35) (1.76,0.37) (1.84,0.36) (1.92,0.37) (2.00,0.40) (2.08,0.45) (2.16,0.52) (2.24,0.55) (2.32,0.46) (2.40,0.51) (2.48,0.44) (2.56,0.44) (2.64,0.37) (2.72,0.38) (2.80,0.35) (2.88,0.37) (2.96,0.58) (3.04,0.58) (3.12,0.65) (3.20,0.58) (3.28,0.58) (3.36,0.63) (3.44,0.63) (3.52,0.67) (3.60,0.69) (3.68,0.64) (3.76,0.69) (3.84,0.65) (3.92,0.78) (4.00,0.76) (4.08,0.81) (4.16,0.83) (4.24,0.90) (4.32,0.87) (4.40,0.95) (4.48,0.95) (4.56,1.05) (4.64,1.10) (4.72,1.13) (4.80,1.09) (4.88,1.15) (4.96,1.20) (5.04,1.32) (5.12,1.31) (5.20,1.36) (5.28,1.41) (5.36,1.44) (5.44,1.47) (5.52,1.50) (5.60,1.47) (5.68,1.42) (5.76,1.40) (5.84,1.46) (5.92,1.58) (6.00,1.67) (6.08,1.76) (6.16,1.83) (6.24,1.90) (6.32,1.93) (6.40,2.00)};
+\begin{scope}[shift={(0,-2.2)}, yscale=0.6]
+\draw[->] (0,0) -- (6.7,0) node[right] {$t$};
+\draw[cBlue, line width=0.4pt] plot coordinates {(0.08,-0.49) (0.16,0.28) (0.24,0.58) (0.32,-0.15) (0.40,-0.54) (0.48,0.07) (0.56,0.33) (0.64,0.63) (0.72,-0.48) (0.80,-0.52) (0.88,0.44) (0.96,0.33) (1.04,0.84) (1.12,0.57) (1.20,0.05) (1.28,-0.03) (1.36,1.33) (1.44,-0.04) (1.52,-0.28) (1.60,-0.45) (1.68,0.15) (1.76,0.17) (1.84,-0.07) (1.92,0.07) (2.00,0.23) (2.08,0.43) (2.16,0.63) (2.24,0.20) (2.32,-0.76) (2.40,0.44) (2.48,-0.58) (2.56,0.02) (2.64,-0.61) (2.72,0.10) (2.80,-0.27) (2.88,0.20) (2.96,1.68) (3.04,0.08) (3.12,0.50) (3.20,-0.54) (3.28,-0.04) (3.36,0.42) (3.44,0.06) (3.52,0.28) (3.60,0.15) (3.68,-0.38) (3.76,0.37) (3.84,-0.29) (3.92,1.00) (4.00,-0.14) (4.08,0.43) (4.16,0.10) (4.24,0.56) (4.32,-0.19) (4.40,0.58) (4.48,0.04) (4.56,0.71) (4.64,0.40) (4.72,0.17) (4.80,-0.27) (4.88,0.47) (4.96,0.32) (5.04,0.89) (5.12,-0.08) (5.20,0.37) (5.28,0.34) (5.36,0.24) (5.44,0.20) (5.52,0.19) (5.60,-0.19) (5.68,-0.39) (5.76,-0.09) (5.84,0.38) (5.92,0.83) (6.00,0.57) (6.08,0.61) (6.16,0.47) (6.24,0.44) (6.32,0.19) (6.40,0.47)};
+\end{scope}
+\node[anchor=east] at (0,-2.2) {return};
+\end{scope}
+```
+
+\footnotesize _Simulated price (orange) wanders away from its starting level,
+its returns (blue) fluctuate around a constant mean_
+::::
+:::
+
+* Regime Shifts and Drift
+// From: msml610/lectures_source/Lesson10.1-Timeseries_forecasting.smd:1376 '* Change Point Detection in Time Series'
+// From: msml610/lectures_source/Lesson10.1-Timeseries_forecasting.smd:1405 '* Markov-Switching Models'
+// From: //notes1/notes/IN_PROGRESS.finance.Algorithmic_trading.Chan.2013.txt:35 '- Regime shifts'
+// From: //notes1/notes/IN_PROGRESS.finance.Algorithmic_trading.Chan.2013.txt:37 '* Latest crises'
+// From: //notes1/notes/papers.finance.deep_learning.txt:1055 '- ! financial markets are affected by regimes'
+
+::: columns
+:::: {.column width=58%}
+- @Definition@: a **regime** is a period with a stable return distribution,
+  and a **regime shift** is an abrupt change of mean, volatility, or
+  correlations
+  - E.g., bull and bear markets, or crises such as 2008 and the 2010 flash
+    crash
+
+- @Techniques@:
+  - _Change point detection_ finds when mean, variance, or trend changes
+  - _Markov-switching models_ give each regime its own parameters and switch
+    between regimes with a transition matrix
+
+- @Remark@: a regime shift can spoil a backtest that assumes one regime
+::::
+:::: {.column width=37%}
+
+```graphviz
+digraph Regime {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.6;
+    ranksep=0.7;
+    rankdir=TB;
+    // calm regime : sage | stress regime : coral
+    node [shape=box, style="rounded,filled", penwidth=1.8, fontname="Helvetica",
+          fontsize=12, margin="0.22,0.12", height=0.45];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    Bull [label="Calm regime\nhigher mean\nlow volatility", fillcolor="#DFEDE0", color="#8FB79A", fontcolor="#2E5A3D"];
+    Bear [label="Stress regime\nlower mean\nhigh volatility", fillcolor="#F6C6C6", color="#D98C8C", fontcolor="#6B2A2A"];
+
+    Bull -> Bull [label="  0.97  "];
+    Bear -> Bear [label="  0.92  "];
+    Bull -> Bear [label="  0.03  "];
+    Bear -> Bull [label="  0.08  "];
+}
+```
+
+\footnotesize _Two-state Markov-switching model with illustrative transition
+probabilities_
+::::
+:::
+
+* Non-Stationarity Breaks IID
+// From: msml610/lectures_source/Lesson08.1-Causal_AI_intro.smd:275 '* Problem 6: Distribution Shift'
+// From: msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.smd:287 '* When Temporal Structure Misleads'
+// From: //notes1/notes/IN_PROGRESS.finance.Machine_learning_for_asset_managers.de_Prado.2020.md:411 '- Non-stationarity'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1129 '* Financial observations are rarely IID'
+
+- @Problem@: standard ML assumes that training and test data come from the same
+  distribution $\Pr(X, Y)$, but financial data drift
+  - A model fit before a regime change may not hold after it
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Shift", "What changes", "Finance example"),
+  rows: (
+    ("Covariate shift", "Pr(X)", "A volatility regime changes the feature distribution"),
+    ("Concept drift", "Pr(Y given X)", "A factor premium shrinks once it is widely known"),
+    ("Label shift", "Pr(Y)", "Default rates rise in a recession"),
+  ),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Characteristics@: publications and trading change the phenomenon under
+  study, and experimentation is virtually impossible
+
+- @Fact@: observations are rarely IID because labels and features built from
+  overlapping returns share information
+
+## Heavy Tails
+
+* Kurtosis and Fat Tails
+// From: book_cs_refreshers/lectures_source/Lesson91.Refresher_probability.smd:1853 '* Kurtosis'
+// From: book_cs_refreshers/lectures_source/Lesson91.Refresher_probability.smd:1864 '* Excess kurtosis'
+// From: //notes1/notes/IN_PROGRESS.finance.Risk_and_asset_allocation.Meucci.2005.txt:154 '* When to use Cauchy distribution'
+// From: //notes1/notes/IN_PROGRESS.finance.portfolio_theory.txt:80 '* CER model: test for normal distribution'
+
+::: columns
+:::: {.column width=50%}
+- @Definition@: **kurtosis** is the mean of the fourth power of the z-score
+  $$
+  \EE\left[\left(\frac{X - \mu}{\sigma}\right)^4\right]
+  $$
+  - A Gaussian has kurtosis 3, and **excess kurtosis** is kurtosis minus 3
+
+- @Intuition@: high kurtosis means a sharper peak and fatter tails
+  - Mass moves from the shoulders to the center and to the tails
+
+- @Fact@: heavy-tailed families such as Student-t generalize the Gaussian
+  - The Cauchy distribution has no finite moments
+
+- @Techniques@: test normality with the Jarque-Bera test
+::::
+:::: {.column width=45%}
+
+```tikz
+\tikzset{every node/.style={font=\sffamily\footnotesize}}
+\definecolor{cBlue}{RGB}{60,111,176}
+\definecolor{cCoral}{RGB}{192,69,91}
+\begin{scope}[x=0.62cm,y=0.33cm]
+\draw[->] (-4.4,-10.0) -- (4.6,-10.0) node[right] {return};
+\draw[->] (-4.4,-10.0) -- (-4.4,0.5) node[above] {log density};
+\foreach \k/\l in {-4/{$-4\sigma$}, -2/{$-2\sigma$}, 0/{$0$}, 2/{$2\sigma$}, 4/{$4\sigma$}} {
+  \draw (\k,-10.0) -- (\k,-10.3) node[below] {\l};
+}
+\draw[cBlue, line width=0.8pt, domain=-4:4, samples=60] plot (\x, {-0.919 - 0.5*\x*\x});
+\draw[cCoral, line width=0.8pt, domain=-4:4, samples=60] plot (\x, {ln(0.6366) - 2*ln(1 + \x*\x)});
+\node[cBlue, anchor=west] at (4.05,-8.9) {Gaussian};
+\node[cCoral, anchor=west] at (4.05,-6.1) {heavy tail};
+\end{scope}
+```
+
+\footnotesize _Log density of a Gaussian and a Student-t with 3 degrees of
+freedom, both with unit variance_
+::::
+:::
+
+* Extreme Events in Practice
+// From: //notes1/notes/IN_PROGRESS.finance.Machine_trading.Chan.2017.txt:161 '* Example of Kelly betting for SP500'
+// From: //notes1/notes/IN_PROGRESS.finance.Algorithmic_trading.Chan.2013.txt:37 '* Latest crises'
+
+- @Question@: how likely is a 20% one-day drop of the S&P 500 if daily returns
+  are Gaussian with 1% volatility?
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Move", "Gaussian one-sided probability", "Expected wait with daily data"),
+  rows: (
+    ("3 sigma", "1.3 in 1,000", "About 3 years"),
+    ("5 sigma", "3 in 10 million", "About 14,000 years"),
+    ("10 sigma", "8 in 10^24", "Far beyond the age of the universe"),
+    ("20 sigma", "3 in 10^89", "Never"),
+  ),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Example@: on Black Monday, Oct 19, 1987, the market fell about 20%, a
+  20-sigma move under the Gaussian model
+
+- @Example@: Kelly sizing with Gaussian estimates (mean 0.05%, volatility 1%
+  per day) suggests leverage near 5
+  - A 20% drop at 5x leverage would wipe out the equity
+
+- @Key idea@: tail events are far more frequent than the Gaussian predicts, and
+  sizing from Gaussian estimates can ruin a strategy
+
+* Consequences of Heavy Tails
+// From: //notes1/notes/IN_PROGRESS.finance.Machine_trading.Chan.2017.txt:168 '* Max drawdown'
+// From: //notes1/notes/finance.all.txt:1716 '** Value at risk (VaR): intuition'
+// From: //notes1/notes/finance.all.txt:1529 '** Advantages of log returns'
+
+- @Problem@: a few extreme observations dominate squared-error losses and
+  sample variances
+  - Parameter estimates become unstable from one sample to the next
+
+- @Problem@: Gaussian risk numbers understate losses
+  - _Value at risk_ is the loss exceeded with a small probability, such as 5%
+  - A Gaussian fit places far-tail quantiles too close to the center
+
+- @Solution@:
+  - Use robust losses (e.g., Huber) and heavy-tailed likelihoods (e.g.,
+    Student-t)
+  - Report tail-aware measures: maximum drawdown needs no variance estimate
+    and expected shortfall looks beyond the quantile
+
+- @Remark@: taking logs tames the tails at monthly frequency but not for daily
+  or intraday returns
+
+## Dependence Structure
+
+* Volatility Clustering
+// From: //notes1/notes/finance.time_series.txt:1112 '* Volatility clustering'
+// From: //notes1/notes/finance.time_series.txt:1115 '* ARCH: intuition'
+// From: msml610/lectures_source/Lesson10.1-Timeseries_forecasting.smd:860 '* ARCH: Intuition'
+// From: msml610/lectures_source/Lesson10.1-Timeseries_forecasting.smd:893 '* GARCH(p, q): definition'
+
+::: columns
+:::: {.column width=50%}
+- @Definition@: **volatility clustering** means periods of large swings are
+  interspersed with periods of calm
+
+- @Definition@: **ARCH** (auto-regressive conditional heteroskedasticity)
+  makes the error variance depend on past squared errors
+  $$
+  \varepsilon_t = \sigma_t z_t
+  \qquad
+  \sigma_t^2 = \omega + \alpha \varepsilon_{t-1}^2
+  $$
+
+- @Definition@: **GARCH** also adds the previous variance
+  $$
+  \sigma_t^2 = \omega + \alpha \varepsilon_{t-1}^2 + \beta \sigma_{t-1}^2
+  $$
+
+- @Intuition@: the variance itself follows an autoregressive process
+::::
+:::: {.column width=45%}
+
+```tikz
+\tikzset{every node/.style={font=\sffamily\footnotesize}}
+\definecolor{cBlue}{RGB}{60,111,176}
+\begin{scope}[xscale=0.7]
+\draw[->] (0,0) -- (8.2,0) node[right] {$t$};
+\draw[->] (0,-2.1) -- (0,2.1) node[above] {return};
+\draw[cBlue, line width=0.4pt] plot coordinates {(0.00,-0.53) (0.05,-0.53) (0.10,0.32) (0.15,-1.04) (0.20,-0.08) (0.25,-1.19) (0.30,0.74) (0.35,0.14) (0.40,0.83) (0.45,-0.32) (0.50,0.24) (0.55,-0.16) (0.60,-0.37) (0.65,0.07) (0.70,-0.56) (0.75,-0.16) (0.80,0.30) (0.85,0.02) (0.90,-0.16) (0.95,0.80) (1.00,0.03) (1.05,-0.25) (1.10,0.06) (1.15,-0.20) (1.20,-0.14) (1.25,-0.12) (1.30,0.66) (1.35,0.01) (1.40,0.07) (1.45,0.23) (1.50,0.68) (1.55,-0.09) (1.60,-0.24) (1.65,0.92) (1.70,-0.73) (1.75,-0.20) (1.80,0.33) (1.85,1.08) (1.90,-0.57) (1.95,-1.44) (2.00,0.51) (2.05,-0.38) (2.10,-0.26) (2.15,0.29) (2.20,0.13) (2.25,0.15) (2.30,-0.21) (2.35,0.58) (2.40,0.71) (2.45,0.02) (2.50,-0.21) (2.55,0.32) (2.60,0.20) (2.65,-0.42) (2.70,-0.19) (2.75,0.40) (2.80,-0.04) (2.85,-0.12) (2.90,0.07) (2.95,-0.01) (3.00,-0.00) (3.05,-0.57) (3.10,0.62) (3.15,0.08) (3.20,-0.34) (3.25,0.37) (3.30,0.12) (3.35,0.01) (3.40,0.35) (3.45,0.78) (3.50,0.25) (3.55,0.67) (3.60,1.01) (3.65,-0.59) (3.70,-0.30) (3.75,0.42) (3.80,-0.89) (3.85,-0.16) (3.90,0.69) (3.95,0.58) (4.00,0.32) (4.05,-0.99) (4.10,1.45) (4.15,0.44) (4.20,0.56) (4.25,0.35) (4.30,-1.11) (4.35,-1.05) (4.40,-0.94) (4.45,1.51) (4.50,-0.77) (4.55,-0.21) (4.60,-0.20) (4.65,0.42) (4.70,0.34) (4.75,0.17) (4.80,-0.73) (4.85,-1.87) (4.90,0.15) (4.95,0.22) (5.00,0.91) (5.05,-0.08) (5.10,-0.42) (5.15,0.26) (5.20,-0.92) (5.25,-0.67) (5.30,-0.65) (5.35,0.18) (5.40,1.22) (5.45,0.54) (5.50,0.77) (5.55,0.16) (5.60,0.17) (5.65,-0.26) (5.70,-0.15) (5.75,-1.18) (5.80,-0.77) (5.85,-0.84) (5.90,0.56) (5.95,0.43) (6.00,0.70) (6.05,0.96) (6.10,-0.21) (6.15,0.65) (6.20,1.20) (6.25,-0.01) (6.30,0.72) (6.35,-0.11) (6.40,-0.97) (6.45,0.08) (6.50,-0.49) (6.55,0.06) (6.60,-0.25) (6.65,0.16) (6.70,-0.98) (6.75,1.18) (6.80,0.94) (6.85,-0.25) (6.90,-0.60) (6.95,0.00) (7.00,0.39) (7.05,0.23) (7.10,0.21) (7.15,-0.94) (7.20,-0.64) (7.25,0.77) (7.30,0.14) (7.35,-0.84) (7.40,-0.52) (7.45,-0.84) (7.50,-0.64) (7.55,0.73) (7.60,-0.14) (7.65,0.65) (7.70,0.11) (7.75,-0.81) (7.80,-0.38) (7.85,1.27) (7.90,-0.54) (7.95,-0.71)};
+\end{scope}
+```
+
+\footnotesize _Simulated GARCH(1,1) returns: large moves follow large moves,
+calm follows calm_
+::::
+:::
+
+* Returns vs. Squared Returns
+// From: //notes1/notes/finance.time_series.txt:945 '* AR(1) to model financial time series'
+// From: msml610/lectures_source/Lesson10.1-Timeseries_forecasting.smd:622 '* AR(1) to Model Financial Time Series'
+// From: //notes1/notes/IN_PROGRESS.finance.portfolio_theory.txt:90 '* CER model: test for no autocorrelation'
+
+::: columns
+:::: {.column width=50%}
+- @Fact@: returns look like white noise
+  - Autocorrelations are close to zero at all lags
+  - Prices look like a random walk
+
+- @Fact@: squared returns are positively autocorrelated and decay slowly
+  - This is the signature of volatility clustering
+
+- @Example@: with 10 years of daily data, $T = 2520$, the 95% band for a zero
+  autocorrelation is $\pm 1.96 / \sqrt{T} \approx \pm 0.039$
+
+- @Key idea@: direction is hard to predict, but magnitude is predictable, so
+  volatility is the easier forecasting target
+::::
+:::: {.column width=45%}
+
+```tikz
+\tikzset{every node/.style={font=\sffamily\footnotesize}}
+\definecolor{cBlue}{RGB}{60,111,176}
+\definecolor{cCoral}{RGB}{192,69,91}
+\begin{scope}[xscale=0.75]
+\draw[->] (0,0) -- (3.4,0) node[right] {lag};
+\draw[->] (0,-0.5) -- (0,2.0) node[above] {ACF};
+\draw[dashed, gray] (0,0.24) -- (3.2,0.24);
+\draw[dashed, gray] (0,-0.24) -- (3.2,-0.24);
+\foreach \k/\v in {1/0.02, 2/-0.03, 3/0.01, 4/0.0, 5/-0.02, 6/0.03} {
+  \fill[cBlue] (\k*0.5-0.1,0) rectangle (\k*0.5+0.1,\v*6);
+}
+\node[cBlue] at (1.6,1.0) {returns};
+\draw[->] (4.4,0) -- (7.8,0) node[right] {lag};
+\draw[->] (4.4,-0.5) -- (4.4,2.0);
+\foreach \k/\v in {1/0.300, 2/0.285, 3/0.271, 4/0.257, 5/0.244, 6/0.232} {
+  \fill[cCoral] (4.4+\k*0.5-0.1,0) rectangle (4.4+\k*0.5+0.1,\v*6);
+}
+\node[cCoral] at (6.0,2.15) {squared returns};
+\end{scope}
+```
+
+\footnotesize _Illustrative sample ACF of returns (dashed: 95% band) and
+theoretical ACF of squared returns of a GARCH(1,1) with $\alpha = 0.15$,
+$\beta = 0.80$_
+::::
+:::
+
+* Time-Varying Correlations
+// From: //notes1/notes/IN_PROGRESS.finance.portfolio_theory.txt:625 '* Single-index model: statistical properties'
+// From: //notes1/notes/IN_PROGRESS.finance.Machine_learning_for_asset_managers.de_Prado.2020.md:486 '- Covariance matrix include noise due to non-determinism and limited amount of data'
+
+- @Problem@: correlations between assets are not constant, and sample
+  covariance matrices are noisy
+  - Diversification is weakest when it is needed most
+
+- @Fact@: in a one-factor model, two assets are correlated only through the
+  market
+  $$
+  \rho_{ij}
+    = \frac{\beta_i \beta_j \sigma_M^2}
+           {\sqrt{(\beta_i^2 \sigma_M^2 + \sigma_{\varepsilon i}^2)
+                  (\beta_j^2 \sigma_M^2 + \sigma_{\varepsilon j}^2)}}
+  $$
+
+- @Interpretation@: when market variance $\sigma_M^2$ rises against residual
+  variance, every pairwise correlation rises
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Regime", "Market volatility", "Residual volatility", "Correlation"),
+  rows: (
+    ("Calm", "15%", "20%", "0.36"),
+    ("Crisis", "40%", "20%", "0.80"),
+  ),
+  caption: "Two stocks with beta 1 in each regime",
+  bold-first-col: true,
+)
+```
+\endgroup
+
+## Weak Signals
+
+* Low Signal-to-Noise
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1194 '* Low signal-to-noise ratio'
+// From: //notes1/notes/IN_PROGRESS.finance.Machine_learning_for_asset_managers.de_Prado.2020.md:295 '* The Signal-to-noise ratio is too low in finance'
+// From: //notes1/notes/IN_PROGRESS.finance.Active_portfolio_management.Grinold_Kahn.1999.txt:70 '* Information coefficient'
+// From: //notes1/notes/IN_PROGRESS.finance.Active_portfolio_management.Grinold_Kahn.1999.txt:75 '* Fundamental law of active management'
+
+::: columns
+:::: {.column width=58%}
+- @Motivation@: arbitrage competes predictable returns away, so the remaining
+  signal is small next to the noise
+
+- @Definition@: the **information coefficient** (IC) is the correlation
+  between forecasts and realized returns
+  - $R^2 = IC^2$, so $IC = 0.05$ explains 0.25% of the variance
+
+- @Fact@: the fundamental law of active management
+  $$
+  IR \approx IC \times \sqrt{breadth}
+  $$
+  - A weak signal pays only through many independent bets
+  - E.g., $IC = 0.05$ with 1,000 bets per year gives $IR \approx 1.6$
+::::
+:::: {.column width=37%}
+
+```tikz
+\tikzset{every node/.style={font=\sffamily\footnotesize}}
+\definecolor{cBlue}{RGB}{60,111,176}
+\definecolor{cCoral}{RGB}{192,69,91}
+\draw[->] (-2.2,0) -- (2.3,0) node[right] {forecast};
+\draw[->] (0,-2.2) -- (0,2.3) node[above] {return};
+\foreach \x/\y in {0.05/0.69, -0.51/0.52, -0.14/-0.15, 1.04/0.14, -0.02/0.40, 0.62/0.01, 0.32/-0.52, -0.20/-0.25, -0.73/-0.87, -0.89/-0.18, -0.09/-0.18, 0.04/-0.73, -0.04/0.13, 0.41/-0.44, -0.22/-1.12, -0.28/-1.22, -0.78/0.57, -1.21/0.38, 0.18/-0.16, 0.25/0.30, 0.57/-0.10, -0.33/-0.35, -0.54/-0.05, -0.43/0.57, -1.03/-0.65, -0.52/-1.18, 1.05/-1.27, -0.16/-0.30, 0.91/-1.05, 0.59/-0.37, -0.09/-0.37, 0.35/-0.61, -0.04/0.19, 1.01/-1.27, 0.84/0.56, -0.27/0.15, -0.26/0.89, 0.12/-0.11, -0.13/-0.12, -0.10/-0.49, 1.13/-0.99, -1.98/-0.17, -0.08/0.20, -0.11/-0.09, 0.18/0.54, -0.25/-0.22, 1.07/0.34, -0.54/1.25, 0.43/-0.30, -0.65/0.13, -0.46/-0.60, -0.71/-0.31, 0.61/-0.21, -0.80/0.33, 0.04/0.47, 0.66/-0.06, -0.08/-0.03, -0.62/0.34, 0.75/0.13, -0.13/-0.15, -0.43/-0.46, -0.22/-0.47, -0.24/-0.88, 0.19/0.04, -0.63/-1.29, -0.00/0.61, -0.40/-0.29, -0.31/0.34, -0.50/0.52, -0.17/0.50, 0.02/-0.13, -0.81/-0.42, -0.14/0.36, 0.13/-0.38, 0.23/0.55, -0.08/-0.25, -0.22/0.43, 0.30/-0.50, 0.21/-0.25, -0.41/0.66, 0.45/-0.38, 0.04/0.28, -0.35/-0.08, 0.37/-0.96, 0.18/0.41, 0.28/-0.72, 0.18/-0.47, 0.31/0.35, 0.12/-0.41, -0.33/0.45, -0.49/0.25, 0.28/-0.14, 1.32/0.10, 1.18/-1.05, -1.23/0.48, 0.35/-0.15, -0.03/-1.05, -0.35/-0.59, -0.12/0.48, 0.03/0.21, -0.38/-0.26, 0.06/-0.15, 0.70/-0.45, 1.04/-0.49, 0.58/-0.40, 0.91/0.12, 0.22/0.42, -0.35/-0.59, -1.11/0.61, -0.38/-0.34, -0.02/1.09, -0.95/0.09, -0.22/0.28, -0.99/-0.27, 0.46/0.88, 0.88/-0.43, 0.03/-0.06, -0.76/-0.83, 0.42/0.16, -0.08/0.66} {
+  \fill[cBlue!60] (\x,\y) circle (0.04);
+}
+\draw[cCoral, line width=0.8pt] (-2.0,-0.1) -- (2.0,0.1);
+```
+
+\footnotesize _Realized return against forecast for $IC = 0.05$: the fitted line
+(red) is almost flat_
+::::
+:::
+
+* Small Effective Sample Size
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1129 '* Financial observations are rarely IID'
+// From: //notes1/notes/IN_PROGRESS.finance.portfolio_theory.txt:820 '* Statistical reliability'
+// From: //notes1/notes/IN_PROGRESS.finance.Algorithmic_trading.Chan.2013.txt:539 '* SR and statistical significance'
+// From: msml610/lectures_source/Lesson05.2-Overfitting.smd:763 '* Amount of Data and Model Complexity'
+
+::: columns
+:::: {.column width=55%}
+- @Problem@: there is one history, and overlapping labels and autocorrelation
+  make the effective sample size far smaller than the row count
+  - E.g., 10 years of daily rows give 2,520 observations but only about 120
+    independent monthly bets
+
+- @Fact@: the years needed for a significant Sharpe ratio grow as
+  $(t / SR)^2$
+
+- @Fact@: a rule of thumb asks for about 10 observations per degree of freedom
+  - With 120 independent bets, a model should have about 12 free parameters
+::::
+:::: {.column width=40%}
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Annual SR", "Years at 5%", "Years at 1%"),
+  rows: (
+    ("0.5", "10.8", "21.7"),
+    ("1.0", "2.7", "5.4"),
+    ("1.5", "1.2", "2.4"),
+    ("2.0", "0.7", "1.4"),
+  ),
+  caption: "Backtest years for one-sided significance",
+  bold-first-col: true,
+)
+```
+\endgroup
+::::
+:::
+
+* Overfitting Noise
+// From: msml610/lectures_source/Lesson05.2-Overfitting.smd:25 '* Overfitting: Definition'
+// From: msml610/lectures_source/Lesson05.2-Overfitting.smd:677 '* Deterministic vs Stochastic Noise in Practice'
+// From: //notes1/notes/IN_PROGRESS.finance.portfolio_theory.txt:829 '* Data snooping'
+// From: //notes1/notes/IN_PROGRESS.finance.Algorithmic_trading.Chan.2013.txt:28 '* Issues'
+
+::: columns
+:::: {.column width=55%}
+- @Definition@: **overfitting** occurs when a model fits the data more than is
+  warranted, and **data snooping** is an accidental pattern that does not hold
+  out of sample
+
+- @Example@: test 100 worthless signals over 5 years
+  - Each annual Sharpe estimate has a standard deviation of about 0.45
+  - The best of the 100 shows $SR \approx 1.1$ by chance
+
+- @Key idea@: fitting noise is not useless but harmful, because the pattern
+  reverses out of sample
+::::
+:::: {.column width=40%}
+
+```tikz
+\tikzset{every node/.style={font=\sffamily\footnotesize}}
+\definecolor{cBlue}{RGB}{60,111,176}
+\definecolor{cCoral}{RGB}{192,69,91}
+\draw[->] (0,0) -- (6.4,0) node[right] {model complexity};
+\draw[->] (0,0) -- (0,3.3) node[above] {error};
+\draw[cBlue, line width=0.8pt, domain=0.5:6, samples=40] plot (\x, {3.2*exp(-0.55*\x)+0.2});
+\draw[cCoral, line width=0.8pt, domain=0.5:6, samples=40] plot (\x, {3.2*exp(-0.55*\x)+0.2+0.05*\x*\x});
+\draw[dashed, gray] (3.2,0) -- (3.2,1.5);
+\node[below] at (3.2,0) {optimal};
+\node[cBlue, right] at (4.6,0.55) {in-sample};
+\node[cCoral, left] at (5.4,2.4) {out-of-sample};
+```
+
+\footnotesize _In-sample error keeps falling with complexity while out-of-sample
+error turns up_
+::::
+:::
+
+## Putting It Together
+
+* Stylized Facts and ML Failure Modes
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:409 '2. In finance there is very low signal-to-noise ratio'
+// From: //notes1/notes/IN_PROGRESS.finance.Machine_learning_for_asset_managers.de_Prado.2020.md:407 '* What are the Risks of ML?'
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Stylized fact", "Assumption it breaks", "Typical failure"),
+  rows: (
+    ("Non-stationarity", "Train and test share one distribution", "Model decays after deployment"),
+    ("Heavy tails", "Gaussian likelihood, squared error, VaR", "Unstable fits and understated risk"),
+    ("Volatility clustering", "Constant variance, square-root scaling", "Risk misjudged in calm periods"),
+    ("Time-varying correlations", "Stable diversification", "Drawdowns when diversification fails"),
+    ("Low signal-to-noise", "Flexible models learn signal", "Overfitting and false discoveries"),
+    ("Small effective sample", "Cross-validation and t-tests are reliable", "Spurious winners"),
+    ("Costs and capacity", "Frictionless trading", "Paper profits vanish live"),
+  ),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Key idea@: misused ML confuses statistical flukes with patterns, and a very
+  low signal-to-noise ratio turns that confusion into false discoveries
+
+- @Remark@: backtest discipline is covered in detail in Lesson 03.01
+
+* Summary
+
+- @Key idea@: finance is a low signal-to-noise, non-stationary, and adaptive
+  domain, so an accurate-looking model can still lose money
+
+- @Components@: the finance primer fixes the vocabulary
+  - Returns compound, and log returns add
+  - Risk is volatility, drawdown, and the Sharpe ratio, read with its
+    statistical significance
+  - Factor models separate beta, factor tilts, and alpha
+  - Spreads, impact, and capacity turn paper profits into net profits
+
+- @Components@: four statistical properties break standard ML
+  - Non-stationarity breaks the IID assumption
+  - Heavy tails break Gaussian risk numbers
+  - Volatility clustering and time-varying correlations break constant risk
+  - Weak signals and small effective samples make overfitting the default
+
+* References
+
+- **Chan**: _"Quantitative Trading"_ (2009), _"Algorithmic Trading"_ (2013),
+  _"Machine Trading"_ (2017)
+
+- **Lopez de Prado**: _"Advances in Financial Machine Learning"_ (2018),
+  _"Machine Learning for Asset Managers"_ (2020)
+
+- **Grinold and Kahn**: _"Active Portfolio Management"_ (1999)
+
+- **Hasbrouck**: _"Securities Trading: Principles and Procedures"_ (2017)
+
+- **Kakushadze and Serur**: _"151 Trading Strategies"_ (2018)

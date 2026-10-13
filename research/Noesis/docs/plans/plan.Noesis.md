@@ -17,22 +17,46 @@
 
 ## Roadmap
 
-- **v0.1**: NoesisMarket accepting inputing requests from suppliers and demands of
-  compute, with API deployed on a laptop and on the cloud
+- **v0.1**: NoesisMarket fully in-memory and controlled from Python and a notebook,
+  with no database, no API, and no cloud; the notebook shows the input requests
+  (bids and asks from buyers and sellers of compute) and the result of the auction
   - [x] `PR_M1`
+  - [x] `PR_M2`
+  - [ ] `PR_M10`
+  - [ ] `PR_M11`
+  - [ ] `PR_M12`
+  - [ ] `PR_M13`
+- **v0.2**: NoesisMarket on a Postgres database, still controlled from Python and a
+  notebook without APIs
+  - [ ] `PR_M14`
+  - [ ] `PR_M15`
+- **v0.3**: NoesisMarket receives orders through the API and runs an auction every
+  10 seconds, so an allocation is available after each round; fulfillment and
+  providers are still mocked
   - [x] `PR_P1`
+  - [ ] `PR_M7`
+  - [ ] `PR_P6`
+- **v0.4**: The `v0.3` system (API, 10-second auction, mock providers) deployed on
+  the cloud
   - [ ] `PR_P2`
-- **v0.2**: Create an adapter from OpenRouter to the API as demand to provide
-  capacity
+- **v0.5**: Create an adapter from OpenRouter to the API as demand to provide
+  capacity (real providers replace the mock ones on the supply side)
   - [x] `PR_S7`
   - [ ] `PR_S9`
-- **v0.3**: Every 10 seconds an auction is run and an allocation is available
-  - [ ] `PR_M7`
-- **v0.4**: Implement NoesisServer where people can pay for capacity and get served
-  through the API of the providers (without extra charging)
+- **v0.6**: Implement NoesisServer where people can pay for capacity and get served
+  through the API of the providers (without extra charging), with delivery measured
+  against the contract and fed back into seller reputation
   - [x] `PR_S1`
+  - [ ] `PR_S11`
+  - [ ] `PR_S4`
+  - [ ] `PR_S6`
   - [ ] `PR_M8`
+  - [ ] `PR_M3`
   - [ ] `PR_P4`
+- **v0.7**: Buyers can see whether a model was quietly downgraded (model nerfing)
+  and what a correct task costs: a per-model quality and price-per-task time series,
+  with a nerfing flag fed to the market
+  - [ ] `PR_S13`
 - Releases are cumulative: each version also requires every PR listed under the
   versions before it (e.g. `v0.4` also needs `v0.1`-`v0.3`'s PRs)
 
@@ -103,6 +127,11 @@
    model listing only; does divergence from OpenRouter's exact error codes/streaming
    semantics break real OpenRouter clients in practice, before advertising
    `NoesisServer` as a drop-in replacement?
+9. Nerfing vs. legitimate model updates (`PR_S13`): a provider that silently swaps
+   the snapshot behind a stable alias looks identical to nerfing; should a
+   detected quality shift be reported as "downgraded" or as "new model, re-baseline",
+   and can the server tell the two apart without the provider disclosing snapshot
+   ids? -> Project
 
 ## Architecture
 
@@ -140,15 +169,18 @@
    debit timing and regulatory exposure)
 2. Refunds and chargebacks: how does a credit-card chargeback interact with credit
    already spent on a matched contract?
-3. Cloud target for `PR_P2`: which provider to standardize on, and whether the
-   in-memory-to-datastore migration should land before or after the first public
-   deployment
+3. Cloud target for `PR_P2`: which provider to standardize on; the roadmap lands the
+   Postgres-backed market (`v0.2`) before the first public deployment (`v0.4`)
 4. KYC/compliance: does accepting real-currency payments (credit card or crypto)
    trigger money-transmitter obligations that a synthetic task-credit avoids?
 
 # PRs
 
-## NoesisMarket
+- PRs are listed in the order of the roadmap milestones above, `v0.1` first
+- PRs not assigned to a milestone follow, grouped by component and ordered by
+  number
+
+## v0.1: In-memory NoesisMarket with a Notebook
 
 ### `PR_M1`: [x] Minimal Batch Call-auction Simulator
 
@@ -175,6 +207,393 @@
   the auction boundary; swap-in point for the real `NoesisServer` once it exists,
   done by `PR_M8` below
 
+### `PR_M10`: [ ] Library-level Round Runner (no HTTP)
+
+- Background: the only code that turns a cleared auction into stored contracts is
+  `_MarketState.clear_round()` in `research/Noesis/noesis_platform/platform_api.py`:
+  it calls `OrderBook.clear_round()`, `build_contracts()`, and
+  `dispatch_contracts()`, then saves each contract and one `RoundClearResponse` per
+  tier; `ContractStore` and its in-memory implementation live in the same HTTP
+  module, so a caller that wants only the market must import the FastAPI layer
+- Move the orchestration into `market/` as
+  `run_round(order_book, contract_store, fulfillment_func) -> RoundResult`:
+  - `RoundResult` is a plain dataclass: round id, per-tier clearing price and
+    matched volume, contracts, and the unmatched bids and asks
+  - `ContractStore` and its in-memory implementation move next to it
+  - One `round_id` per round, shared by every tier cleared in it (as today)
+- `platform_api.py` delegates to `run_round()` and converts `RoundResult` into its
+  response models, so the HTTP behavior of `PR_P1` does not change
+- `market/` still imports no other Noesis component
+- Unit tests: `run_round()` on a fixture book returns the same clearing prices,
+  matched volumes, and contracts that `_MarketState.clear_round()` returned before
+  the move; an empty book returns a `RoundResult` with no contracts and does not
+  raise; `noesis_platform/test/test_platform_api.py` passes unmodified;
+  `test/test_component_imports.py` still passes
+- Result: the market is driven from Python alone: submit orders, run a round, read
+  contracts and prices, with no HTTP layer in the import path
+
+### `PR_M11`: [ ] Deterministic Scenario Fixtures for Bids and Asks
+
+- Background: `v0.1`'s notebook needs input requests that a reader can scan and
+  that are the same on every run; `PR_M1`'s tests build orders inline, one case at a
+  time
+- Add named scenarios as plain functions returning `(bids, asks)`, each small
+  enough (e.g., at most 10 orders per tier) to read as a table:
+  - `balanced`: demand and supply cross and every order fills
+  - `excess_demand`: some bids stay unmatched
+  - `excess_supply`: some asks stay unmatched
+  - `multi_tier`: two or more `C_level` tiers clear at different prices
+  - `no_cross`: every bid limit price is below every ask limit price, so nothing
+    matches
+- Add a seeded generator `make_random_scenario(seed, n_bids, n_asks, tiers)` for
+  larger demos; the same seed returns the same orders
+- Scenarios are data only: no store, database, network, or clock access, so the
+  in-memory (`v0.1`) and Postgres (`v0.2`) notebooks reuse them unchanged
+- Unit tests: the same seed returns identical orders; each named scenario, run
+  through `PR_M10`'s `run_round()`, shows the regime in its name (`balanced` fully
+  matches, `excess_demand` leaves bids, `excess_supply` leaves asks, `no_cross`
+  matches zero volume, `multi_tier` yields distinct clearing prices per tier)
+- Result: a fixed set of readable input requests, each tied to one auction regime,
+  that the notebooks and later tests share
+
+### `PR_M12`: [ ] Auction Result Report and Plot Helpers
+
+- Background: `TierClearResult`, `Fill`, and `Contract` objects are not readable in
+  a notebook cell; the input requests and the auction result need tables and a plot
+- Add pure helpers in `market/` (no I/O) that return `pandas.DataFrame`:
+  - `orders_to_df(bids, asks)`: one row per order with side, tier, task count,
+    limits, and limit price
+  - `tier_summary_df(round_result)`: one row per tier with clearing price, matched
+    volume, total bid volume, total ask volume, and unmatched volume
+  - `contracts_to_df(contracts)`: one row per contract with tier, price, task
+    count, buyer, seller, and the mocked fulfillment outcome
+  - `unmatched_to_df(round_result)`: unmatched bids and asks with their tier
+- Add `plot_supply_demand(tier, bids, asks, clearing_price)`: step-function demand
+  and supply curves for one tier, with the clearing point marked
+- Unit tests: golden DataFrames for each `PR_M11` scenario; per tier, matched plus
+  unmatched volume equals submitted volume; the plot function returns a figure with
+  the expected number of curves (structure checked, no pixel comparison)
+- Result: any `RoundResult` becomes a set of tables and one plot, so the notebook
+  shows the auction without custom code in its cells
+
+### `PR_M13`: [ ] Notebook: Input Requests and Auction Result (In-memory)
+
+- Add a Jupyter notebook for `NoesisMarket`, paired with a `.py` and with logic in a
+  `*_utils.py`, following the repo's notebook conventions; one section per
+  `PR_M11` scenario:
+  - Build the input requests and show them as a table (`orders_to_df`)
+  - Submit them to an `OrderBook` with the default in-memory store
+  - Run one round with `PR_M10`'s `run_round()`
+  - Show the result: tier summary, supply/demand plot per tier, contracts, and
+    unmatched orders (`PR_M12`)
+- Print each variable with its name next to its value (repo notebook convention)
+- Label the fulfillment outcomes as mocked (`PR_M2`) so the notebook does not imply
+  real delivery
+- The notebook uses no database, HTTP client, environment variable, or network
+- Tests: the notebook executes top to bottom, headless, with
+  `helpers_root/dev_scripts_helpers/notebooks/run_nbconvert.py`, and writes the HTML
+  output; the helpers it calls are covered by `PR_M11` and `PR_M12`
+- Result: a reader opens one notebook and sees the input requests, the supply and
+  demand per tier, the clearing price, and the contracts: the `v0.1` deliverable
+
+## v0.2: NoesisMarket on Postgres, Controlled Without APIs
+
+### `PR_M14`: [ ] Postgres Market State Without the API Layer
+
+- Background: Postgres stores for the order book and for the contract and round log
+  already exist in `research/Noesis/noesis_platform/postgres_store.py`, selected by
+  `main.py` through `NOESIS_DB_BACKEND`; that module imports `platform_api.py` and
+  `passthrough_proxy.py`, so a market-only caller using Postgres imports the HTTP
+  layer and the gateway too
+- Move the market stores into `market/`: `PostgresOrderBookStore` (implements
+  `OrderBookStore`) and `PostgresContractStore` (implements `PR_M10`'s
+  `ContractStore`), plus `init_market_schema(connection)` for the bid, ask,
+  contract, and round tables; reuse the current DDL, do not redesign it
+- Keep the `helpers.hsql` import gated, so an in-memory caller does not need a
+  Postgres driver installed
+- `noesis_platform/postgres_store.py` keeps the request-log store and imports the
+  moved classes, so `main.py` and `PR_P1`'s API behave as before
+- Local Postgres comes from
+  `research/Noesis/devops/compose/docker-compose.noesis.yml`
+- Unit tests (gated like `noesis_platform/test/test_postgres_store.py`):
+  - One store-contract test suite runs against both the in-memory and the Postgres
+    implementation of each store
+  - `run_round()` on Postgres returns the same clearing prices, matched volumes, and
+    contracts as in-memory for every `PR_M11` scenario
+  - `market/` still imports no other Noesis component, and importing it works
+    without a Postgres driver installed
+- Result: `OrderBook(store=PostgresOrderBookStore(connection))` plus `run_round()`
+  runs the market on Postgres from Python alone
+
+### `PR_M15`: [ ] Notebook: Same Scenario on Postgres, With Persistence Across Restart
+
+- Reuse `PR_M13`'s notebook structure and `PR_M11`/`PR_M12` helpers; add a cell
+  that connects to the compose Postgres and calls `init_market_schema()`
+- Parity section: run one scenario in memory and on Postgres, show both
+  `tier_summary_df` tables side by side, and assert they are equal
+- Persistence section: close the connection and open a new one (standing in for a
+  process restart), then read back the pending orders, the contracts, and the latest
+  round per tier; submit more orders, run a second round, and show that `round_id`
+  increases
+- Inspect section: `SELECT` the stored rows of each table, so a reader sees what
+  the market wrote
+- Tests: the notebook executes headless with `run_nbconvert.py` against the compose
+  Postgres, marked like the other Docker-dependent tests
+  (`requires_docker_in_docker`)
+- Result: the same market, with its state in Postgres and surviving a restart,
+  controlled without any API: the `v0.2` deliverable
+
+## v0.3: API Orders and a 10-second Auction, Mock Providers
+
+### `PR_P1`: [x] Public API Surface for NoesisMarket and NoesisServer
+
+- Background:
+  - `NoesisMarket` and `NoesisServer` expose Python library calls only
+    (`OrderBook.submit_bid()`, `Gateway.call()`, etc.)
+  - An external caller cannot reach either component today
+- Wrap the existing modules behind a thin HTTP API (e.g., FastAPI):
+  - `NoesisMarket`: `POST /bids`, `POST /asks`, `GET /contracts/{id}`,
+    `GET /rounds/{tier}/latest` (`NoesisMarket` `PR_M4`'s pricing-dissemination feed)
+  - `NoesisServer`: a passthrough completion endpoint wrapping `Gateway.call()`,
+    `GET /logs`
+  - Auth: a per-account API key, checked before accepting a bid/ask or a gateway call
+- Result: `NoesisMarket` and `NoesisServer` are callable over HTTP by an external
+  client, not just from within the same Python process
+- Implementation note (`research/Noesis/noesis_platform/platform_api.py`): added an unauthenticated
+  `POST /rounds/clear` beyond the list above, since `OrderBook.clear_round()` is the
+  only thing that produces a `Contract`/`TierClearResult` and none of the listed
+  endpoints call it; without it, `GET /contracts/{id}` and
+  `GET /rounds/{tier}/latest` could never be populated by an external caller
+  `GET /rounds/{tier}/latest` reads from an in-process per-tier cache populated by
+  `POST /rounds/clear`, standing in for `PR_M4`'s pub/sub feed until `PR_M4` lands
+
+### `PR_M7`: [ ] Automatic Periodic Auction Clearing (Configurable Cadence)
+
+- Background: `batch_call_auction.py`'s `DEFAULT_BATCH_INTERVAL_MINUTES = 5` constant
+  is documented as "not enforced by this module, which clears one round per
+  `OrderBook.clear_round()` call and leaves scheduling to the caller"; today the only
+  caller is `NoesisPlatform` `PR_P1`'s `POST /rounds/clear`, triggered
+  manually/externally, not on a timer
+- Add a background scheduler (e.g. an `asyncio` task or a thread loop) that calls
+  `clear_round()` every configurable interval `T`, replacing manual triggering as the
+  default path; keep `POST /rounds/clear` available for tests and manual/debug
+  triggering
+- Make `T` a per-deployment configuration value rather than the hardcoded
+  `DEFAULT_BATCH_INTERVAL_MINUTES` constant, so a fast dev/demo cadence (e.g. 10 s)
+  and a production cadence can both be set without a code change
+- Unit tests: with an injectable/fake clock, the scheduler calls `clear_round()` at
+  the expected cadence; changing `T` changes the observed cadence; a round with no
+  matches does not stop the scheduler from clearing the next round
+- The scheduler calls `PR_M10`'s `run_round()` (through the same code path as
+  `POST /rounds/clear`), so contracts and rounds are stored exactly as for a manual
+  round; fulfillment stays the `PR_M2` mock until `PR_M8` swaps it in
+- Result: `NoesisMarket` clears rounds autonomously at a configured cadence instead
+  of only on demand; the roadmap's `v0.3` target ("every 10 seconds an auction is run
+  and an allocation is available") is `T = 10 s` on this scheduler
+
+### `PR_P6`: [ ] Notebook: Push Orders Through the API and Watch 10-second Rounds
+
+- Background: `v0.3` is the first release where orders arrive over HTTP and the
+  auction runs on a timer (`PR_P1` plus `NoesisMarket` `PR_M7`), but nothing yet
+  produces order flow or shows the rounds; fulfillment and providers are the
+  `PR_M2` mock
+- Add a mock order-flow client in `research/Noesis/noesis_platform/`: given a
+  `NoesisMarket` `PR_M11` scenario or a seed, it posts the bids and asks with
+  `POST /bids` and `POST /asks` (with an API key, as `PR_P1` requires), either all
+  at once or spread over a configurable interval
+- Add a Jupyter notebook, paired with a `.py` and with logic in a `*_utils.py`:
+  - Start the API locally with `T = 10 s` and the in-memory backend (or Postgres,
+    through `NOESIS_DB_BACKEND`)
+  - Push a scenario through the API and show the input requests (`PR_M12`'s
+    `orders_to_df`)
+  - Poll `GET /rounds/{tier}/latest` and `GET /contracts/{id}` and show at least
+    three consecutive rounds: round id, clearing price, matched volume, contracts
+  - Show an order submitted between two rounds that is matched only in the next
+    round
+- Label the fulfillment outcomes as mocked, so the notebook does not imply real
+  providers
+- Unit tests: against `fastapi.testclient.TestClient` with `PR_M7`'s fake clock,
+  the client's posted orders produce the same contracts as the library-level
+  `run_round()` on the same scenario; successive timer ticks produce increasing
+  `round_id`s; a request without a valid API key is rejected and posts no order
+- Notebook test: executes headless with
+  `helpers_root/dev_scripts_helpers/notebooks/run_nbconvert.py`
+- Result: a reader sees orders pushed over the API and an allocation after every
+  10-second round, with mocked providers: the `v0.3` deliverable
+
+## v0.4: Cloud Deployment
+
+### `PR_P2`: [ ] Cloud Deployment
+
+- Containerize `PR_P1`'s API into a single Docker image, following this repo's
+  existing Docker template conventions (`class_project/project_template/Dockerfile*`)
+- Deploy to a cloud target:
+  - A single-node container service, e.g. AWS ECS, Fly.io, or Render, to start
+  - Kubernetes deferred until there is more than one process to orchestrate
+- Result: a `NoesisMarket`/`NoesisServer` instance reachable at a public URL
+- TODO(gp): Read the documentation about how to release a product container
+  ./docs/tools/dev_system/all.devops_docker_auto_release.explanation.md
+  ./docs/tools/dev_system/all.devops_docker.how_to_guide.md
+  ./docs/tools/dev_system/all.devops_docker.reference.md
+  ./docs/tools/dev_system/all.docker_optimizer_container.how_to_guide.md
+  ./docs/tools/docker/all.docker.tutorial.md
+  ./docs/tools/docker/all.dockerized_flow.explanation.md
+
+## v0.5: OpenRouter Adapter, Real Providers
+
+### `PR_S7`: [x] Real Provider Liquidity Via an OpenRouter-backed `ProviderConfig`
+
+- Implemented by PR #597. The gateway pins an OpenRouter provider, disables
+  fallbacks, verifies the served provider, and records usage, cost, and latency.
+
+- Background: `05_noesis_server.tex` models `NoesisServer` "on multi-provider routers
+  such as OpenRouter" precisely because a router like OpenRouter already pools dozens
+  of providers and models behind one API key
+  - `ProviderConfig.call_fn` today wraps only test stand-ins, so `Gateway` has no
+    real liquidity yet
+- Add an `OpenRouterProviderConfig` (or a `call_fn` factory) whose `call_fn`:
+  - Forwards `(model, prompt)` to OpenRouter's real chat-completions endpoint
+    (`model` formatted as `"<upstream_provider>/<model>"`, e.g `"openai/gpt-4o"`)
+  - Parses the response back into the raw text `Gateway.call()` returns today
+  - Replaces `PR_S1`'s placeholder `cost_per_char` with the real per-token cost
+    OpenRouter reports in `usage`
+- One registered `OpenRouterProviderConfig` covers every model OpenRouter lists
+  (`GET /api/v1/models`), so `Gateway` gets real multi-provider liquidity from a
+  single integration instead of one bespoke `ProviderConfig` per upstream provider
+- Result: `Gateway` is backed by real, multi-provider liquidity instead of test
+  stand-ins; once wired to `NoesisMarket`, a cleared ask can be fulfilled by an
+  actual OpenRouter call in place of `mock_fulfill()`
+
+### `PR_S9`: [ ] OpenRouter Capacity as Market Supply (Auto-ask Adapter)
+
+- Background:
+  - `PR_S7` gives `Gateway` real OpenRouter-backed capacity and pricing
+    (`GET /api/v1/models`), but nothing in the plan turns that capacity into
+    `NoesisMarket` asks
+  - `POST /asks` (`NoesisPlatform` `PR_P1`) still requires a human/manual submission
+    per seller, so OpenRouter's capacity is invisible to the auction as supply
+- Add an adapter that reads OpenRouter's model catalog and `usage`-reported pricing
+  from `PR_S7`'s `OpenRouterProviderConfig` and periodically submits/refreshes one
+  ask per `(model, tier)` into `NoesisMarket`'s order book (via
+  `OrderBook.submit_ask()` directly, or `POST /asks` once deployed), instead of a
+  manual ask per model
+- Unit tests: given a fixture OpenRouter model catalog, the adapter submits one ask
+  per listed model with tier/price derived from the catalog; a model that drops out
+  of a later catalog refresh has its stale ask withdrawn or not renewed
+- Result:
+  - OpenRouter's capacity participates in `NoesisMarket` auctions as supply without a
+    manual ask per model
+
+## v0.6: NoesisServer: Pay for Capacity, Measured Fulfillment
+
+### `PR_S1`: [x] Minimal Passthrough Proxy with Logging
+
+- Support 2-3 providers behind one API
+- Define the storage schema for prompt, response, and metadata (provider, model,
+  latency, cost)
+- Log raw, unscrubbed prompt/response pairs for now, scoped to synthetic/test traffic
+  only; add PII scrubbing as a follow-up before any real non-synthetic traffic is
+  logged (tracked as an open question below)
+- Result: every request/response pair is logged and queryable
+
+### `PR_S11`: [ ] Capability-measurement Estimator (hat-c(x))
+
+- Status (2026-10-12): PR #604 established the deterministic benchmark-probe
+  implementation: versioned normalizers, exact-match grading, bank validation, and
+  secret balanced selection. The production canary bank, live-provider calibration,
+  and scheduled probing remain open.
+- Background: `papers/Noesis/01_introduction.tex` Table~tab:components lists
+  capability measurement as one of the five pluggable components, instantiated in the
+  paper as "a verifier model, benchmark probe, or reference-model agreement," with a
+  hosted evaluation provider (e.g., artificialanalysis.ai) as the pluggable
+  alternative; `05_noesis_server.tex` sec:fulfillment_monitoring's success indicator
+  (Equation~eq:success_indicator) needs `hat c(x)` as an input, which no PR above
+  builds: `PR_S4`/`PR_S6` currently take `measured_reliability` as already computed
+- Define a pluggable capability-measurement interface. For the MVP, instantiate it
+  with calibrated deterministic benchmark probes whose expected answers can be
+  graded locally. Reference-model agreement remains a later interchangeable
+  implementation when deterministic grading is not suitable.
+- Unit tests: deterministic answer normalization and grading cover supported answer
+  formats; invalid bank records are rejected; balanced selection is reproducible
+  for the checker while remaining secret from sellers.
+- Result: `NoesisServer` `PR_S4`/`PR_S6` gain a real (not stubbed) source for
+  `capability_ok(x)`; should land before `PR_S4`/`PR_S6` are considered complete
+
+### `PR_S4`: [ ] Fulfillment Monitoring Wired to the Market (stubbed Both Sides)
+
+- Status (2026-10-12): partially implemented. PR #597 added contract binding,
+  request logging, and provider attribution. PR #604 added seller-attributable
+  evidence, separate latency/quality assessments, verdicts, and persistence. The
+  prober, window-closing worker, and market-facing `VerdictSink` remain open.
+- Background: `papers/Noesis/05_noesis_server.tex` sec:fulfillment_monitoring
+  Equation~eq:success_indicator defines per-request success as the conjunction
+  `capability_ok(x) and latency_ok(x)`, and `measured_reliability`
+  (Definition~measured_reliability) is the mean of that joint indicator over the
+  fulfillment window
+- Background: the storage schema needs the `contract` field from
+  sec:gateway_architecture (`PR_S1` shipped without it); add it, nullable for
+  pre-market traffic, so requests can be grouped by `kappa`
+- MVP specialization: assess latency reliability and deterministic canary quality
+  separately. Combining them hides sparse quality failures inside a larger volume
+  of normal buyer traffic.
+  - Buyer requests provide latency evidence; canary latency is excluded by default
+    because short synthetic prompts would bias buyer-experienced latency.
+  - Deterministic canaries provide quality evidence through `PR_S11`.
+  - Seller timeouts and upstream errors count as failures. Buyer errors, gateway
+    errors, spend-cap refusals, and attribution mismatches are excluded.
+  - Either sufficiently sampled metric can fail the contract. Passing requires
+    sufficient evidence for both metrics; otherwise the verdict is `INSUFFICIENT`.
+  - Checker/configuration failures produce `INSUFFICIENT` and never penalize the
+    seller.
+- Report violations via a **mocked** market-facing interface, matching the mock
+  fulfillment interface on the `NoesisMarket` side (its `PR_M2`): real integration
+  is deferred until both plans reach this point together
+- Unit tests: violation correctly flagged/not-flagged against fixture contracts and
+  measured outcomes; mocked report call invoked with the right payload
+- Result: closed loop between a matched contract and its measured fulfillment, real
+  once both sides swap the mock for the real interface
+
+### `PR_S6`: [ ] Statistical Fulfillment Violation Test
+
+- Status (2026-10-12): the pure statistical and verdict logic landed in PR #604.
+  Runtime window orchestration and offline replay validation remain open.
+- Background: `papers/Noesis/05_noesis_server.tex`'s fulfillment monitoring section
+  notes that `PR_S4`'s naive rule, flagging $\kappa$ whenever
+  `measured_reliability < R_min`, conflates genuine under-delivery with sampling
+  noise on a small fulfillment window; the paper proposes a one-sided hypothesis test
+  instead
+- Use a one-sided **upper** confidence bound for each of `PR_S4`'s latency and
+  quality rates. Flag a metric only when even its optimistic upper bound is below
+  the promised rate. Use an exact Clopper-Pearson upper bound for fewer than 10
+  observations and Wilson otherwise.
+- Unit tests: small or borderline samples are not failed while their upper bound
+  still reaches the promise; clear under-delivery with enough evidence is failed;
+  all-success evidence is never failed.
+- Result: fewer false-positive violation reports feeding `NoesisMarket` `PR_M3`'s
+  reputation update, addressing the "attribution reliability" open question below
+
+### `PR_M8`: [ ] Real Fulfillment Via NoesisServer's Gateway (swap the `PR_M2` Mock)
+
+- Background: `contract_dispatch.py`'s module docstring says its mocked fulfillment
+  layer "stands in for `NoesisServer` ... which does not exist yet"; that is no
+  longer true once `NoesisServer` `PR_S1` (passthrough proxy) and `PR_S7` (real
+  OpenRouter-backed liquidity) exist, but no PR currently swaps `mock_fulfill()` for
+  a real call: `NoesisServer` `PR_S7`'s own Result line defers this to
+  "`NoesisMarket` (`PR_M3`/`PR_M4` above)", and neither of those PRs performs a
+  fulfillment call
+- Replace `dispatch_contract()`'s call to `mock_fulfill()` with a real call through
+  `NoesisServer`'s `Gateway.call()`, translating each `Contract`'s
+  `(n_tasks, c_level, ...)` into one or more Gateway calls at the contract's tier,
+  and log the real measured outcome (success/failure, latency) back onto the contract
+  in place of the mocked pass/fail; keep `mock_fulfill()` available behind a flag for
+  tests that should not depend on a live/fixture `Gateway`
+- Unit tests: with a fixture `Gateway` in place of the real one, a dispatched
+  contract's `fulfilled`/latency fields are set from the fixture's returned outcome,
+  not from `random.random()` per `DEFAULT_FULFILLMENT_SUCCESS_RATE`
+- Result: a cleared `NoesisMarket` contract is actually served by `NoesisServer` end
+  to end, required before the roadmap's `v0.6` target ("get served through the API of
+  the providers") is true rather than simulated
+
 ### `PR_M3`: [ ] Reputation and Pricing Feedback Loop
 
 - Background: `papers/Noesis/04_noesis_market.tex` sec:reputation
@@ -188,6 +607,94 @@
     outright exclusion
 - Result: sellers that under-deliver lose eligibility/priority, or are downgraded a
   tier, in later auctions
+
+### `PR_P4`: [ ] No-charge Credit Ledger for Bid Gating
+
+- Background: the roadmap's `v0.6` explicitly scopes "No charge", but the only PR
+  that gates `POST /bids` on a balance is `PR_P3`, which requires real Stripe/crypto
+  payment rails; `v0.6` needs the balance-gating _mechanism_ without collecting real
+  payment yet
+- Add a per-account credit ledger (in-memory, or datastore-backed once `PR_P2` lands)
+  seeded with a fixed/free grant of task-credit and no real payment collected; gate
+  `POST /bids` (`PR_P1`) on `account_balance >= n_beta * p_beta` exactly as `PR_P3`
+  describes, debiting only once a bid is matched into a contract
+- Unit tests: a new account starts with the seeded free-credit balance; a bid within
+  balance is accepted and debits on match; a bid exceeding balance is rejected before
+  reaching the auction
+- Result: `POST /bids` is balance-gated end to end with zero real payment collected,
+  satisfying the roadmap's `v0.6` "No charge" scope; `PR_P3` upgrades the same gate
+  to a real-money funding rail when charging for real is in scope
+
+## v0.7: Model-nerfing Detection and Cost per Task
+
+### `PR_S13`: [ ] Model-nerfing Detection and Cost-per-task Tracking
+
+- Background: `papers/Noesis/01_introduction.tex` motivates `NoesisServer` with the
+  buyer having "no standard way to detect that a model has been quietly downgraded
+  (model nerfing)": two providers, or one provider on two days, can charge the same
+  per-token rate while delivering different capability
+- Background: no other PR covers this:
+  - `PR_S4`/`PR_S6` judge one contract's window against `R_min`, so they have no
+    memory of a `(provider, model_id)` across contracts or across weeks
+  - `PR_S11` scores a single response, not a time series
+  - `PR_S2` measures cost and quality once, on logged data, not over time
+  - Market open question 1 (the task unit) is open, so there is no "price per task"
+    number anywhere
+- Reuse what `research/Noesis/checker/` already has: the secret balanced canary
+  selection (`checker_canaries.py`), deterministic grading (`checker_grading.py`),
+  and one-sided bounds (`checker_statistics.py`); this PR adds the longitudinal view
+  per model, not a new grader
+- Define the unit of tracking as `(provider, model_id, probe_set_version)` over
+  non-overlapping windows `W_t` of fixed wall-clock length (e.g., 1 day), with a
+  fixed canary subset per window drawn from the versioned probe set
+- Per window, compute and store:
+  - Quality $\hat q_t$: pass rate of graded canaries (errors and timeouts are
+    excluded from the denominator and counted in availability, consistent with the
+    checker's seller-attributable evidence rule)
+  - Availability: fraction of canary requests that returned a non-error response
+  - Latency: p50 and p95 of canary latency
+  - Tokens per task (prompt and completion): a nerfed model often gets cheaper
+    per request by answering shorter, so cost alone can hide a downgrade
+  - `cost_per_task`: mean billed cost per canary request, using `PR_S7`'s real
+    per-token price (`PR_S7` is in `v0.5`, before this PR)
+  - `cost_per_correct_task = cost_per_task / q_hat_t`: the price of one *passed*
+    task; this is the "price per task" figure that a quality drop at constant token
+    price makes go up
+- Baseline: the first `K_base` windows after a model is first seen, or a pinned
+  onboarding run, stored with `probe_set_version`; a change of `probe_set_version`
+  or of `model_id` starts a new series and is never compared across the boundary
+- Nerfing test per window: one-sided Fisher exact test (normal approximation when
+  both counts are large) of $H_0: q_t \ge q_{\text{base}}$; flag `NERFED` only when
+  both hold: `p < delta` and `q_base - q_hat_t >= Delta_min` (a practical effect
+  size, so a huge sample cannot flag a trivial drop); require `k_consecutive`
+  flagged windows before raising the flag, to control repeated-testing false alarms
+- Verdicts mirror the checker: `OK`, `NERFED`, or `INSUFFICIENT` when the window has
+  fewer than `n_min` graded canaries (never flagged on thin data)
+- Surface the series through a CLI report (one row per model per window: quality,
+  baseline, drop, p-value, availability, p95 latency, `cost_per_task`,
+  `cost_per_correct_task`, verdict) and a store table; emit a `NERFED` event
+  through `PR_S4`'s market-facing report interface at model scope, so `PR_M3` can
+  later discount every contract that routes to that model
+- Unit tests (fake provider using `gateway_faults.py`'s `model_override`, with fixed
+  seeds):
+  - A healthy provider over many windows is never flagged, and the simulated
+    false-flag rate stays at or below `delta`
+  - A mid-series swap to a weaker model is flagged within `k_consecutive` windows of
+    the swap and not before it
+  - A true drop smaller than `Delta_min` is not flagged even at large `n`
+  - Same token price and a quality drop: `cost_per_task` is unchanged and
+    `cost_per_correct_task` rises by the factor $q_{\text{base}} / \hat q_t$
+  - A price increase at constant quality: `cost_per_task` rises and no `NERFED`
+    flag is raised
+  - A window with fewer than `n_min` graded canaries yields `INSUFFICIENT`
+  - A `probe_set_version` change starts a new baseline and never compares across it
+- Result: a per-model time series of quality, availability, latency, and
+  `cost_per_correct_task` for each provider `NoesisServer` routes to, with a nerfing
+  flag that fires on an injected model swap and stays quiet on a healthy provider;
+  gives `NoesisMarket` a model-level (not only contract-level) signal and a first
+  concrete "price per task" number for open question 1 -> Project
+
+## Unscheduled: NoesisMarket
 
 ### `PR_M4`: [ ] Pricing Dissemination Feed
 
@@ -251,49 +758,6 @@
   order book and commit-reveal; stake-backed slashing (the paper's staked-ask
   definition) and real on-chain deployment are out of scope for this PR
 
-### `PR_M7`: [ ] Automatic Periodic Auction Clearing (Configurable Cadence)
-
-- Background: `batch_call_auction.py`'s `DEFAULT_BATCH_INTERVAL_MINUTES = 5` constant
-  is documented as "not enforced by this module, which clears one round per
-  `OrderBook.clear_round()` call and leaves scheduling to the caller"; today the only
-  caller is `NoesisPlatform` `PR_P1`'s `POST /rounds/clear`, triggered
-  manually/externally, not on a timer
-- Add a background scheduler (e.g. an `asyncio` task or a thread loop) that calls
-  `clear_round()` every configurable interval `T`, replacing manual triggering as the
-  default path; keep `POST /rounds/clear` available for tests and manual/debug
-  triggering
-- Make `T` a per-deployment configuration value rather than the hardcoded
-  `DEFAULT_BATCH_INTERVAL_MINUTES` constant, so a fast dev/demo cadence (e.g. 10 s)
-  and a production cadence can both be set without a code change
-- Unit tests: with an injectable/fake clock, the scheduler calls `clear_round()` at
-  the expected cadence; changing `T` changes the observed cadence; a round with no
-  matches does not stop the scheduler from clearing the next round
-- Result: `NoesisMarket` clears rounds autonomously at a configured cadence instead
-  of only on demand; the roadmap's `v0.3` target ("every 10 seconds an auction is run
-  and an allocation is available") is `T = 10 s` on this scheduler
-
-### `PR_M8`: [ ] Real Fulfillment Via NoesisServer's Gateway (swap the `PR_M2` Mock)
-
-- Background: `contract_dispatch.py`'s module docstring says its mocked fulfillment
-  layer "stands in for `NoesisServer` ... which does not exist yet"; that is no
-  longer true once `NoesisServer` `PR_S1` (passthrough proxy) and `PR_S7` (real
-  OpenRouter-backed liquidity) exist, but no PR currently swaps `mock_fulfill()` for
-  a real call: `NoesisServer` `PR_S7`'s own Result line defers this to
-  "`NoesisMarket` (`PR_M3`/`PR_M4` above)", and neither of those PRs performs a
-  fulfillment call
-- Replace `dispatch_contract()`'s call to `mock_fulfill()` with a real call through
-  `NoesisServer`'s `Gateway.call()`, translating each `Contract`'s
-  `(n_tasks, c_level, ...)` into one or more Gateway calls at the contract's tier,
-  and log the real measured outcome (success/failure, latency) back onto the contract
-  in place of the mocked pass/fail; keep `mock_fulfill()` available behind a flag for
-  tests that should not depend on a live/fixture `Gateway`
-- Unit tests: with a fixture `Gateway` in place of the real one, a dispatched
-  contract's `fulfilled`/latency fields are set from the fixture's returned outcome,
-  not from `random.random()` per `DEFAULT_FULFILLMENT_SUCCESS_RATE`
-- Result: a cleared `NoesisMarket` contract is actually served by `NoesisServer` end
-  to end, required before the roadmap's `v0.4` target ("get served through the API of
-  the providers") is true rather than simulated
-
 ### `PR_M9`: [ ] Scored Compatibility (exploratory)
 
 - Background: `papers/Noesis/09_open_questions.tex` sec:open_questions_market item 3,
@@ -315,17 +779,7 @@
   `PR_M1`'s hard-constraint baseline and the scored variant, answering
   `09_open_questions.tex` item 3 empirically rather than leaving it open
 
-## NoesisServer
-
-### `PR_S1`: [x] Minimal Passthrough Proxy with Logging
-
-- Support 2-3 providers behind one API
-- Define the storage schema for prompt, response, and metadata (provider, model,
-  latency, cost)
-- Log raw, unscrubbed prompt/response pairs for now, scoped to synthetic/test traffic
-  only; add PII scrubbing as a follow-up before any real non-synthetic traffic is
-  logged (tracked as an open question below)
-- Result: every request/response pair is logged and queryable
+## Unscheduled: NoesisServer
 
 ### `PR_S2`: [ ] Routing Policy + Cost/quality Measurement
 
@@ -347,40 +801,6 @@
 - Result: a difficulty-aware router with a measured saving, and a first distillation
   experiment with reported (not necessarily strong) results -> Project
 
-### `PR_S4`: [ ] Fulfillment Monitoring Wired to the Market (stubbed Both Sides)
-
-- Status (2026-10-12): partially implemented. PR #597 added contract binding,
-  request logging, and provider attribution. PR #604 added seller-attributable
-  evidence, separate latency/quality assessments, verdicts, and persistence. The
-  prober, window-closing worker, and market-facing `VerdictSink` remain open.
-- Background: `papers/Noesis/05_noesis_server.tex` sec:fulfillment_monitoring
-  Equation~eq:success_indicator defines per-request success as the conjunction
-  `capability_ok(x) and latency_ok(x)`, and `measured_reliability`
-  (Definition~measured_reliability) is the mean of that joint indicator over the
-  fulfillment window
-- Background: the storage schema needs the `contract` field from
-  sec:gateway_architecture (`PR_S1` shipped without it); add it, nullable for
-  pre-market traffic, so requests can be grouped by `kappa`
-- MVP specialization: assess latency reliability and deterministic canary quality
-  separately. Combining them hides sparse quality failures inside a larger volume
-  of normal buyer traffic.
-  - Buyer requests provide latency evidence; canary latency is excluded by default
-    because short synthetic prompts would bias buyer-experienced latency.
-  - Deterministic canaries provide quality evidence through `PR_S11`.
-  - Seller timeouts and upstream errors count as failures. Buyer errors, gateway
-    errors, spend-cap refusals, and attribution mismatches are excluded.
-  - Either sufficiently sampled metric can fail the contract. Passing requires
-    sufficient evidence for both metrics; otherwise the verdict is `INSUFFICIENT`.
-  - Checker/configuration failures produce `INSUFFICIENT` and never penalize the
-    seller.
-- Report violations via a **mocked** market-facing interface, matching the mock
-  fulfillment interface on the `NoesisMarket` side (its `PR_M2`): real integration
-  is deferred until both plans reach this point together
-- Unit tests: violation correctly flagged/not-flagged against fixture contracts and
-  measured outcomes; mocked report call invoked with the right payload
-- Result: closed loop between a matched contract and its measured fulfillment, real
-  once both sides swap the mock for the real interface
-
 ### `PR_S5`: [ ] Answer Fusion Prototype
 
 - Background: `papers/Noesis/05_noesis_server.tex`'s answer-fusion section describes
@@ -401,48 +821,6 @@
   on cost and on a simple correctness proxy (agreement with a fixed reference
   answer), giving a first cost/ reliability trade-off for fusion, analogous to
   `PR_S2`'s cost/quality frontier for routing -> Project
-
-### `PR_S6`: [ ] Statistical Fulfillment Violation Test
-
-- Status (2026-10-12): the pure statistical and verdict logic landed in PR #604.
-  Runtime window orchestration and offline replay validation remain open.
-- Background: `papers/Noesis/05_noesis_server.tex`'s fulfillment monitoring section
-  notes that `PR_S4`'s naive rule, flagging $\kappa$ whenever
-  `measured_reliability < R_min`, conflates genuine under-delivery with sampling
-  noise on a small fulfillment window; the paper proposes a one-sided hypothesis test
-  instead
-- Use a one-sided **upper** confidence bound for each of `PR_S4`'s latency and
-  quality rates. Flag a metric only when even its optimistic upper bound is below
-  the promised rate. Use an exact Clopper-Pearson upper bound for fewer than 10
-  observations and Wilson otherwise.
-- Unit tests: small or borderline samples are not failed while their upper bound
-  still reaches the promise; clear under-delivery with enough evidence is failed;
-  all-success evidence is never failed.
-- Result: fewer false-positive violation reports feeding `NoesisMarket` `PR_M3`'s
-  reputation update, addressing the "attribution reliability" open question below
-
-### `PR_S7`: [x] Real Provider Liquidity Via an OpenRouter-backed `ProviderConfig`
-
-- Implemented by PR #597. The gateway pins an OpenRouter provider, disables
-  fallbacks, verifies the served provider, and records usage, cost, and latency.
-
-- Background: `05_noesis_server.tex` models `NoesisServer` "on multi-provider routers
-  such as OpenRouter" precisely because a router like OpenRouter already pools dozens
-  of providers and models behind one API key
-  - `ProviderConfig.call_fn` today wraps only test stand-ins, so `Gateway` has no
-    real liquidity yet
-- Add an `OpenRouterProviderConfig` (or a `call_fn` factory) whose `call_fn`:
-  - Forwards `(model, prompt)` to OpenRouter's real chat-completions endpoint
-    (`model` formatted as `"<upstream_provider>/<model>"`, e.g `"openai/gpt-4o"`)
-  - Parses the response back into the raw text `Gateway.call()` returns today
-  - Replaces `PR_S1`'s placeholder `cost_per_char` with the real per-token cost
-    OpenRouter reports in `usage`
-- One registered `OpenRouterProviderConfig` covers every model OpenRouter lists
-  (`GET /api/v1/models`), so `Gateway` gets real multi-provider liquidity from a
-  single integration instead of one bespoke `ProviderConfig` per upstream provider
-- Result: `Gateway` is backed by real, multi-provider liquidity instead of test
-  stand-ins; once wired to `NoesisMarket`, a cleared ask can be fulfilled by an
-  actual OpenRouter call in place of `mock_fulfill()`
 
 ### `PR_S8`: [ ] OpenRouter-compatible API Interface for `NoesisServer`
 
@@ -486,26 +864,6 @@
   - Supersedes the wire format of `NoesisPlatform` `PR_P1`'s passthrough-completion
     endpoint once this lands
 
-### `PR_S9`: [ ] OpenRouter Capacity as Market Supply (Auto-ask Adapter)
-
-- Background:
-  - `PR_S7` gives `Gateway` real OpenRouter-backed capacity and pricing
-    (`GET /api/v1/models`), but nothing in the plan turns that capacity into
-    `NoesisMarket` asks
-  - `POST /asks` (`NoesisPlatform` `PR_P1`) still requires a human/manual submission
-    per seller, so OpenRouter's capacity is invisible to the auction as supply
-- Add an adapter that reads OpenRouter's model catalog and `usage`-reported pricing
-  from `PR_S7`'s `OpenRouterProviderConfig` and periodically submits/refreshes one
-  ask per `(model, tier)` into `NoesisMarket`'s order book (via
-  `OrderBook.submit_ask()` directly, or `POST /asks` once deployed), instead of a
-  manual ask per model
-- Unit tests: given a fixture OpenRouter model catalog, the adapter submits one ask
-  per listed model with tier/price derived from the catalog; a model that drops out
-  of a later catalog refresh has its stale ask withdrawn or not renewed
-- Result:
-  - OpenRouter's capacity participates in `NoesisMarket` auctions as supply without a
-    manual ask per model
-
 ### `PR_S10`: [ ] Request Caching for Identical/Near-duplicate Requests
 
 - Background: `papers/Noesis/01_introduction.tex` describes `NoesisServer` as caching
@@ -518,29 +876,6 @@
   - Repeated/duplicate traffic no longer pays a provider twice
   - Measured cache-hit rate on a synthetic traffic fixture with a controlled
     duplication rate -> Project
-
-### `PR_S11`: [ ] Capability-measurement Estimator (hat-c(x))
-
-- Status (2026-10-12): PR #604 established the deterministic benchmark-probe
-  implementation: versioned normalizers, exact-match grading, bank validation, and
-  secret balanced selection. The production canary bank, live-provider calibration,
-  and scheduled probing remain open.
-- Background: `papers/Noesis/01_introduction.tex` Table~tab:components lists
-  capability measurement as one of the five pluggable components, instantiated in the
-  paper as "a verifier model, benchmark probe, or reference-model agreement," with a
-  hosted evaluation provider (e.g., artificialanalysis.ai) as the pluggable
-  alternative; `05_noesis_server.tex` sec:fulfillment_monitoring's success indicator
-  (Equation~eq:success_indicator) needs `hat c(x)` as an input, which no PR above
-  builds: `PR_S4`/`PR_S6` currently take `measured_reliability` as already computed
-- Define a pluggable capability-measurement interface. For the MVP, instantiate it
-  with calibrated deterministic benchmark probes whose expected answers can be
-  graded locally. Reference-model agreement remains a later interchangeable
-  implementation when deterministic grading is not suitable.
-- Unit tests: deterministic answer normalization and grading cover supported answer
-  formats; invalid bank records are rejected; balanced selection is reproducible
-  for the checker while remaining secret from sellers.
-- Result: `NoesisServer` `PR_S4`/`PR_S6` gain a real (not stubbed) source for
-  `capability_ok(x)`; should land before `PR_S4`/`PR_S6` are considered complete
 
 ### `PR_S12`: [ ] Opt-in Distillation Consent and Anonymization Gate
 
@@ -559,45 +894,7 @@
 - Result: `PR_S3`'s distillation experiment can be pointed at `D` built under real
   consent, ahead of the PII open question being fully resolved for raw logging
 
-## NoesisPlatform
-
-### `PR_P1`: [x] Public API Surface for NoesisMarket and NoesisServer
-
-- Background:
-  - `NoesisMarket` and `NoesisServer` expose Python library calls only
-    (`OrderBook.submit_bid()`, `Gateway.call()`, etc.)
-  - An external caller cannot reach either component today
-- Wrap the existing modules behind a thin HTTP API (e.g., FastAPI):
-  - `NoesisMarket`: `POST /bids`, `POST /asks`, `GET /contracts/{id}`,
-    `GET /rounds/{tier}/latest` (`NoesisMarket` `PR_M4`'s pricing-dissemination feed)
-  - `NoesisServer`: a passthrough completion endpoint wrapping `Gateway.call()`,
-    `GET /logs`
-  - Auth: a per-account API key, checked before accepting a bid/ask or a gateway call
-- Result: `NoesisMarket` and `NoesisServer` are callable over HTTP by an external
-  client, not just from within the same Python process
-- Implementation note (`research/Noesis/noesis_platform/platform_api.py`): added an unauthenticated
-  `POST /rounds/clear` beyond the list above, since `OrderBook.clear_round()` is the
-  only thing that produces a `Contract`/`TierClearResult` and none of the listed
-  endpoints call it; without it, `GET /contracts/{id}` and
-  `GET /rounds/{tier}/latest` could never be populated by an external caller
-  `GET /rounds/{tier}/latest` reads from an in-process per-tier cache populated by
-  `POST /rounds/clear`, standing in for `PR_M4`'s pub/sub feed until `PR_M4` lands
-
-### `PR_P2`: [ ] Cloud Deployment
-
-- Containerize `PR_P1`'s API into a single Docker image, following this repo's
-  existing Docker template conventions (`class_project/project_template/Dockerfile*`)
-- Deploy to a cloud target:
-  - A single-node container service, e.g. AWS ECS, Fly.io, or Render, to start
-  - Kubernetes deferred until there is more than one process to orchestrate
-- Result: a `NoesisMarket`/`NoesisServer` instance reachable at a public URL
-- TODO(gp): Read the documentation about how to release a product container
-  ./docs/tools/dev_system/all.devops_docker_auto_release.explanation.md
-  ./docs/tools/dev_system/all.devops_docker.how_to_guide.md
-  ./docs/tools/dev_system/all.devops_docker.reference.md
-  ./docs/tools/dev_system/all.docker_optimizer_container.how_to_guide.md
-  ./docs/tools/docker/all.docker.tutorial.md
-  ./docs/tools/docker/all.dockerized_flow.explanation.md
+## Unscheduled: NoesisPlatform
 
 ### `PR_P2b`: [ ] Use Postgres Backend
 
@@ -605,6 +902,10 @@
   request logs, attribution, and fault metadata. PR #604 added checker policies,
   windows, probe claims, immutable evidence, and verdicts. Persistent market order
   books and remaining component stores are still open.
+- Roadmap (2026-10-13): `NoesisMarket`'s share of this PR (order book, contracts,
+  rounds) is specified as `NoesisMarket` `PR_M14`/`PR_M15` in `v0.2`, driven
+  without the API; what stays here is selecting those stores, plus the request log,
+  for the deployed API
 - Externalize the in-memory state of `NoesisMarket` and of `NoesisServer` assume
   (order book, contract log, request log) to a real datastore (e.g Postgres or Redis)
   - A cloud deployment cannot rely on a single long-lived process the way the current
@@ -636,23 +937,6 @@
   rejected before reaching the auction
 - Result: a buyer can fund an account through either rail and see the balance gate
   bid submission
-
-### `PR_P4`: [ ] No-charge Credit Ledger for Bid Gating
-
-- Background: the roadmap's `v0.4` explicitly scopes "No charge", but the only PR
-  that gates `POST /bids` on a balance is `PR_P3`, which requires real Stripe/crypto
-  payment rails; `v0.4` needs the balance-gating _mechanism_ without collecting real
-  payment yet
-- Add a per-account credit ledger (in-memory, or datastore-backed once `PR_P2` lands)
-  seeded with a fixed/free grant of task-credit and no real payment collected; gate
-  `POST /bids` (`PR_P1`) on `account_balance >= n_beta * p_beta` exactly as `PR_P3`
-  describes, debiting only once a bid is matched into a contract
-- Unit tests: a new account starts with the seeded free-credit balance; a bid within
-  balance is accepted and debits on match; a bid exceeding balance is rejected before
-  reaching the auction
-- Result: `POST /bids` is balance-gated end to end with zero real payment collected,
-  satisfying the roadmap's `v0.4` "No charge" scope; `PR_P3` upgrades the same gate
-  to a real-money funding rail when charging for real is in scope
 
 ### `PR_P5`: [ ] Written Interface Contracts for the Five Pluggable Components
 

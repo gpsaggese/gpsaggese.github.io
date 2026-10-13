@@ -6,8 +6,8 @@
   container service (AWS ECS, Fly.io, or Render); result is a
   `NoesisMarket`/`NoesisServer` instance reachable at a public URL; Kubernetes
   deferred until more than one process needs orchestration
-- Roadmap position: `v0.1`, cumulative on `PR_M1`, `PR_M2`, `PR_S1`, `PR_P1` (all
-  `[x]` already)
+- Roadmap position: `v0.4`, cumulative on every PR of `v0.1`-`v0.3` plus `PR_S1`
+  (`PR_M1`, `PR_M2`, `PR_S1`, `PR_P1` are `[x]` already)
 - Specification only: no code in this document has been implemented
 
 ## Design Decisions
