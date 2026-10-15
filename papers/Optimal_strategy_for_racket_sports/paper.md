@@ -1,11 +1,11 @@
 ---
 title: "Optimal Shot Placement in Racket Sports: A Game-Theoretic Framework"
 author:
-  - name: Pranav Shashidhara, Giacinto Paolo (GP) Saggese
+  - name: "`Pranav Shashidhara, Giacinto Paolo (GP) Saggese, Aahan Rembersu`{=typst}"
     department: "Department of Computer Science"
     organization: "University of Maryland, College Park"
     location: "College Park, MD, USA"
-    email: "`pshashid@umd.edu, gsaggese@umd.edu`{=typst}"
+    email: "`pshashid@umd.edu, gsaggese@umd.edu, arembers@terpmail.umd.edu`{=typst}"
 abstract: |
   Choosing where to place a shot is a central tactical decision in tennis and
   pickleball, yet it is rarely studied as a single, tractable optimization
@@ -381,6 +381,59 @@ Section III-C rather than a numerical ODE solve. The reduction from 3D to a
 per-cell 1D/2D trajectory model is therefore what makes exhaustive grid
 scoring, rather than a small number of hand-picked candidate shots,
 computationally practical within the time constraints of a rally.
+
+## Closed-Form In-Bounds Probability for a Gaussian Landing Point
+
+Section IV-B estimates $P_{\mathrm{in}}$ by propagating stroke errors through
+the trajectory model. A simpler model, which we use as a first building block
+of the computational implementation, places the uncertainty directly on the
+landing point: a shot aimed at $(x_2, y_2)$ lands at $(X, Y)$ with
+
+$$
+X \sim \mathcal{N}(x_2, \sigma_x^2), \qquad Y \sim \mathcal{N}(y_2,
+\sigma_y^2),
+$$
+
+where $X$ and $Y$ are independent. This model uses a frame with the origin at
+the center of the net, $x$ across the court and $y$ along it, rather than the
+striker-centered frame of Section III-A. For a court of length $L$ and width
+$W$, a shot toward the half $y \le 0$ is in when $|X| \le W/2$ and
+$-L/2 \le Y \le 0$. Because the two coordinates are independent and this
+region is a rectangle, the event splits into one condition on $X$ and one on
+$Y$, and $P_{\mathrm{in}}$ is the product of two differences of the standard
+normal CDF $\Phi$:
+
+$$
+\begin{aligned}
+P_{\mathrm{in}} &= p_x \, p_y , \\
+p_x &= \Phi\left(\frac{W/2 - x_2}{\sigma_x}\right)
+- \Phi\left(\frac{-W/2 - x_2}{\sigma_x}\right) , \\
+p_y &= \Phi\left(\frac{-y_2}{\sigma_y}\right)
+- \Phi\left(\frac{-L/2 - y_2}{\sigma_y}\right) ,
+\end{aligned}
+$$
+
+where $p_x$ is the probability that $X$ lands between the sidelines and $p_y$
+the probability that $Y$ lands between the baseline and the net.
+
+With correlated errors this would require a bivariate normal CDF, and with a
+non-rectangular region a two-dimensional integral. The model ignores the net:
+a shot counts as out only if it lands outside the target half.
+
+In the accompanying notebook, the serve and return setting (compare Section
+IV-E) is modeled as follows. The server chooses the deuce or the ad side and
+stands behind the baseline on that side's half of the court. Only the service
+box diagonally across the court is legal, and lines are in, except the
+pickleball non-volley-zone line. A serve that is wide, lands in the wrong box,
+lands long, or, in pickleball, lands in the non-volley zone is a fault, and a
+fault ends the point with no return. After a legal serve to $(x_1, y_1)$, the
+returner moves to $(x_1, y_1)$ and returns toward $(x_2, y_2)$ with spread
+$(\sigma_x, \sigma_y)$, and $P_{\mathrm{in}}$ is the probability that the
+return lands in the server's half. The closed form is checked against a Monte
+Carlo estimate from samples of the same Gaussian, which agrees with it within
+sampling error. It is implemented, with an interactive notebook for both
+sports, in `notebooks/racket_shot_probability_utils.py` of the accompanying
+code.
 
 # Game-Theoretic Placement
 
