@@ -1,0 +1,10 @@
+# Install a CUDA-compatible PyTorch build separately. Proposed, not GPU-validated here.
+diffusers==0.35.1
+transformers==4.56.2
+accelerate==1.10.1
+huggingface-hub==0.34.4
+safetensors==0.6.2
+sentencepiece==0.2.1
+protobuf>=4.25,<7
+Pillow>=10,<12
+numpy>=1.26,<3
