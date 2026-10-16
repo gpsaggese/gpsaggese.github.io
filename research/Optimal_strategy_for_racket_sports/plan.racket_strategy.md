@@ -18,6 +18,15 @@
   - Doubles geometry and minimax validation on rally data (v)
   - Drag and spin bias quantification (Section VIII)
 
+* Vision
+- GP's ideas for applying this research
+  ([#664](https://github.com/gpsaggese/gpsaggese.github.io/issues/664)):
+  - An academic paper (`papers/Optimal_strategy_for_racket_sports/paper.md`)
+  - Mainstream press coverage, e.g., "UMD research solves tennis"
+  - A puzzle-style training app: players see a scenario ("player 1 here, player 2
+    there") and choose the optimal shot, to train their intuition, like chess
+    puzzles
+
 * Model
 - 2D court-fixed frame, already implemented in `racket_params.py`: origin at
   the net center on the ground, `x` lateral, `y` along the court (striker side
@@ -142,3 +151,111 @@
   - Update the abstract, the contributions, Section VI caveat, and Section IX
   - Copy the figures to `papers/Optimal_strategy_for_racket_sports/figures/` and
     update the `Makefile` dependencies
+
+* Milestones
+- The milestones of #590, defined by GP in the
+  [checklist comment](https://github.com/gpsaggese/gpsaggese.github.io/issues/590#issuecomment-6075690143)
+  - A simpler 2D track: the uncertainty sits directly on the landing point, without
+    the trajectory model of `PR2` and `PR3`
+
+- [x] Milestone 1: probability that a return lands in
+  - Done in [#619](https://github.com/gpsaggese/gpsaggese.github.io/pull/619), with
+    the follow-up [#654](https://github.com/gpsaggese/gpsaggese.github.io/pull/654)
+  - Player 1 serves from the deuce or ad side to (`x1`, `y1`), following the serve
+    rules; player 2 moves there and returns toward (`x2`, `y2`) with a 2D Gaussian
+    spread (`std_x2`, `std_y2`)
+  - $P_{\mathrm{in}}$ in closed form, checked by Monte Carlo, in
+    `notebooks/racket_shot_probability_utils.py` and
+    `notebooks/racket_shot_probability.ipynb`
+
+- [ ] Milestone 2: probability of a winning return
+      ([#624](https://github.com/gpsaggese/gpsaggese.github.io/issues/624)), as
+      agreed with GP in #624
+  - Sources:
+    [GP's answers](https://github.com/gpsaggese/gpsaggese.github.io/issues/624#issuecomment-6186123404)
+    and
+    [the agreed summary](https://github.com/gpsaggese/gpsaggese.github.io/issues/624#issuecomment-6194651093)
+  - One-shot setting: player 1 serves, player 2 returns
+  - Player 1 serves and then stays at the center of the baseline, `(0, -L/2)`
+  - Player 2 stands at the serve landing point (`x1`, `y1`) and aims at
+    (`x2`, `y2`); the return lands with the same 2D Gaussian as Milestone 1
+  - Time available to player 1: the ball's flight time $T_f$, from the ball speed
+    (a widget) and the distance, minus a constant reaction time $t_r$
+    - The reaction time stands for the time player 1 needs to decide where the
+      ball will land
+    - $T_f$ uses the distance from player 2 at (`x1`, `y1`) to the aim point
+      (`x2`, `y2`), so it is fixed for each target
+    - Why: the landing error changes the actual distance only by about the
+      spread, small next to the length of the shot, and a fixed $T_f$ keeps the
+      region player 1 can reach a disk around them
+  - Player 1 then moves at a constant speed $v_p$ and reaches the ball if the
+    distance from `(0, -L/2)` to the landing point is at most $v_p (T_f - t_r)$
+  - Winner: the return lands in and player 1 cannot reach it
+    - Computed jointly, since both events depend on the same landing point
+    - Also compute $P_{\mathrm{in}} \cdot P(\text{not reached})$, to show when this
+      factorization holds
+  - A heatmap of the winner probability over every target (`x2`, `y2`) on player
+    1's half, with the best target marked, for tennis and pickleball
+
+* Open Points
+- From
+  [GP's answers on #624](https://github.com/gpsaggese/gpsaggese.github.io/issues/624#issuecomment-6186123404):
+  - **Speed vs accuracy**: the spread does not depend on the ball speed yet, so
+    hitting as fast as possible always looks best, since it leaves player 1 the
+    least time
+    - There is no clear model: ideally it is estimated by experiments, and it
+      differs with the player's level
+  - **Optimal positioning**: where each player should stand, as a function of the
+    ball and of the other player, is left to the RL algorithm later
+    - GP was taught to gravitate toward the center, but does not believe it is
+      optimal
+    - In closed form, the optimal position maximizes the probability of reaching
+      the ball given the opponent's hitting position: it can be solved numerically
+      and compared with what RL finds by brute force
+  - **Factorization**: whether the winner probability factorizes as
+    $P_{\mathrm{in}} \cdot P(\text{not reached})$; GP believes some factorization
+    may hold but is not sure, so Milestone 2 computes both
+
+* Long-Term Goal
+- From
+  [GP's answers on #624](https://github.com/gpsaggese/gpsaggese.github.io/issues/624#issuecomment-6186123404):
+  - First, the best strategy when there is only a serve and a response: maximize
+    winners (Milestone 2)
+  - Then, maximize the probability of winning a game, with brute-force RL or an
+    iterative solution built from the same blocks, e.g., optimizing the
+    probability of winning one step ahead instead of discounting the whole
+    trajectory
+
+* Tasks
+- GP's rule
+  ([#625](https://github.com/gpsaggese/gpsaggese.github.io/issues/625#issuecomment-6185837906)):
+  we only execute tasks that are on this master plan, after creating them in GH
+- Status: `[x]` done, `[-]` in progress (open PR), `[ ]` not started
+
+- [x] Milestone 1 of
+      [#590](https://github.com/gpsaggese/gpsaggese.github.io/issues/590):
+      [PR #619](https://github.com/gpsaggese/gpsaggese.github.io/pull/619)
+- [x] [#623](https://github.com/gpsaggese/gpsaggese.github.io/issues/623):
+      Milestone 1 follow-ups (renames, diagonal serve, "Fault" label),
+      [PR #654](https://github.com/gpsaggese/gpsaggese.github.io/pull/654)
+  - Manual widget checks of the Milestone 1 notebook are still pending
+- [ ] [#624](https://github.com/gpsaggese/gpsaggese.github.io/issues/624):
+      Milestone 2, winner probability heatmap
+- [-] [#625](https://github.com/gpsaggese/gpsaggese.github.io/issues/625):
+      project log `log.racket_strategy.md`,
+      [PR #660](https://github.com/gpsaggese/gpsaggese.github.io/pull/660)
+- [ ] [#626](https://github.com/gpsaggese/gpsaggese.github.io/issues/626):
+      doc on creating a PR with the Claude Code skills
+- [-] [#627](https://github.com/gpsaggese/gpsaggese.github.io/issues/627):
+      paper, add the author and the Milestone 1 model,
+      [PR #661](https://github.com/gpsaggese/gpsaggese.github.io/pull/661)
+- [ ] [#663](https://github.com/gpsaggese/gpsaggese.github.io/issues/663):
+      research other papers about optimal tennis strategy
+- [ ] [#664](https://github.com/gpsaggese/gpsaggese.github.io/issues/664):
+      brainstorm how to apply this research (see Vision)
+- [-] [#666](https://github.com/gpsaggese/gpsaggese.github.io/issues/666):
+      update this master plan with the Milestone 2 discussion
+- [ ] [#669](https://github.com/gpsaggese/gpsaggese.github.io/issues/669):
+      meta-doc on how we run the research project
+- [ ] [#670](https://github.com/gpsaggese/gpsaggese.github.io/issues/670):
+      generate the paper figures from the notebooks
