@@ -153,3 +153,66 @@
   handler (`RoutingError`), like `platform_api.create_app()` does for
   `AssertionError`
 - **Why**: the gateway must never crash or skip logging because a provider failed
+
+## Market Scenario Families (PR_M11)
+
+### D-15. Seeded Named Families With Guaranteed Regimes
+
+- **Decision**: implement five scenario types as parameterized, seeded generators:
+  balanced, excess demand, excess supply, multiple tiers, and non-crossing prices.
+  Each accepts order counts; seeds vary quantities and prices reproducibly.
+- **Why**: the ticket requests coverage of five regimes, not one hardcoded book
+  per regime. Families let tests and notebooks explore many examples of each type.
+- **Alternatives**: one fixed example per type was the initial implementation;
+  it was replaced because it limited variation. Unrestricted random books alone
+  cannot guarantee which regime a caller receives.
+- **Boundary**: generation returns fresh data only. It does not run an auction,
+  touch a database, or establish parity between persistence backends.
+
+### D-16. Construct Quantities and Price Bands to Preserve Each Regime
+
+- **Decision**: draw positive quantities, balance totals by increasing the final
+  order on the smaller side, and add a random positive excess for demand/supply
+  regimes. Use crossing bid/ask price bands, reversing them for no-cross books.
+  Offset multi-tier bands so clearing prices cannot coincide between tiers.
+- **Why**: equal totals alone do not guarantee matching; compatible prices are
+  necessary. Construction guarantees the promised outcome without rejection loops.
+- **Performance terms**: retain compatible buyer terms of 2 seconds and 90%
+  reliability and seller terms of 1 second and 95%. These isolate the price,
+  quantity, and tier behavior. Participant ids remain unique within each side.
+- **Scale**: positive integer quantity and price multipliers support larger values
+  without changing the regime. Prices are illustrative per-task units. Adjusted
+  quantities can exceed the initial random draw range.
+- **Alternatives**: reject randomly generated books until the desired regime appears,
+  or relax the regime guarantee. Construction is predictable and avoids unbounded
+  retries. Performance-aware matching and real provider prices remain out of scope.
+
+### D-17. Local Randomness and Explicit Parameter Contracts
+
+- **Decision**: use a local `random.Random(seed)`; identical inputs and ordered
+  tiers produce equal values without changing global randomness. Named families
+  have positive counts per tier and default to two orders per side and seed 0.
+  All optional named-family arguments are keyword-only, following coding rules.
+  Multi-tier requires at least two distinct tiers. Default examples are readable;
+  counts may be increased for larger demonstrations.
+- **Validation**: reject booleans and noninteger seeds/counts/scales. Named counts
+  and scales must be positive; tier names must be nonblank. The unrestricted
+  random generator retains nonnegative counts, ordered unique tiers, independent
+  quantity draws of 1–100 and price draws of 1–20, and no regime guarantee.
+- **Alternatives**: global random seeding or unordered tier inputs undermine
+  isolation or reproducibility. Fixed prices/quantities across calls do not offer
+  the desired range of examples.
+- **Boundary**: scales support representative large-value tests, not all numerical
+  extremes. Arbitrarily large floats and fractional-price precision are not proven.
+
+### D-18. Validate Regimes Across Seeds Until M10 Is Available
+
+- **Decision**: validate each named family across multiple seeds, counts, and
+  numeric scales using `OrderBook.clear_round()` and deterministic mock dispatch.
+  Check conservation, promised regimes, price limits, fresh objects, and distinct
+  tier prices. Retain generated invariant checks for unrestricted books.
+- **Why**: exact outcomes vary with seed, but the scenario's defining properties
+  must hold for every supported configuration. These checks exercise the existing
+  auction without duplicating M10 orchestration.
+- **Status**: integration through M10's `run_round()` remains pending. This does
+  not waive that original acceptance criterion or establish live-provider delivery.
