@@ -78,9 +78,9 @@ print(trip_plan)
 # Upload files to a vector store.
 vector_store_name = "batch_vector_store"
 file_paths = [
-    "../helpers_root/docs/tools/all.imports_and_packages.how_to_guide.md",
+    "../helpers_root/docs/tools/codebase/all.imports_and_packages.how_to_guide.md",
     "../helpers_root/docs/tools/unit_test/all.write_unit_tests.how_to_guide.md",
-    "../helpers_root/docs/code_guidelines/all.coding_style.how_to_guide.md",
+    "../helpers_root/docs/coding/all.coding_style.how_to_guide.md",
 ]  # Example paths
 
 question = "Is `from pathlib import Path` a correct import according to the coding guidelines?"

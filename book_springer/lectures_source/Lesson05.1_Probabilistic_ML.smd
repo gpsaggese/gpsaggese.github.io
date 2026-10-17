@@ -51,7 +51,7 @@
 * Failure of Logic AI: Garden World Example
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=70%}
 
 - Consider propositions:
   - $Rain$ = _"it rains"_
@@ -450,7 +450,7 @@ digraph CausalModel {
 // From: msml610/lectures_source/Lesson07.4-Generalized_Linear_Models.smd:241 '* Negative Binomial Distribution'
 
 ::: columns
-:::: {.column width=45%}
+:::: {.column width=50%}
 
 - **Negative binomial distribution**
   - Models failures/trials for fixed successes in IID Bernoulli trials
@@ -496,7 +496,7 @@ digraph CausalModel {
 // From: msml610/lectures_source/Lesson07.3-Hierarchical_Models.smd:138 '* Shrinkage'
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 
 - **Hierarchical models shrink parameters towards a common mean**
   - Groups share information through the hyper-prior
@@ -570,7 +570,7 @@ digraph CausalModel {
 // From: msml610/lectures_source/Lesson07.2-Posterior_Based_Decisions.smd:365 '* Chemical Shift: Use Student's t-dist (1/3)'
 
 ::: columns
-:::: {.column width=45%}
+:::: {.column width=50%}
 
 $$
 \begin{equation*}
@@ -712,7 +712,7 @@ $$
 // From: msml610/lectures_source/Lesson07.1-Intro_to_Probabilistic_Programming.smd:345 '* Coin Example: Effect of Priors (2/2)'
 
 ::: columns
-:::: {.column width=40%}
+:::: {.column width=45%}
 
 - **Properties**:
   - _Outcome_: Bayesian analysis yields a posterior distribution, not a single value

@@ -71,12 +71,12 @@ Total: 28 published blogs
 - helpers/hcheck_types.py + dassert
 
 - `helpers_root/import_check/detect_import_cycles.py`
-  - `helpers_root/docs/tools/all.import_check.reference.md`
+  - `helpers_root/docs/tools/codebase/all.import_check.reference.md`
 
 - `linters2/normalize_import.py`
 
 - `helpers_root/dev_scripts_helpers/system_tools/create_links.py`
-  - `docs/tools/dev_system/all.replace_common_files_with_script_links.md`
+  - `docs/tools/dev_system/all.replace_common_files_with_script_links.how_to_guide.md`
 
 - `website/docs/blog/posts/draft.in_5_mins.helpers_render_images.md`
   - `helpers_root/dev_scripts_helpers/documentation/render_images.py`
@@ -110,10 +110,10 @@ Total: 28 published blogs
   dev_scripts_helpers/documentation/README.notes_to_pdf.md
 
 - Invoke bash_print_tree
-  - `helpers_root/docs/tools/all.invoke_git_branch_copy.how_to_guide.md`
+  - `helpers_root/docs/tools/invoke/all.invoke_git_branch_copy.how_to_guide.md`
 
 - Invoke workflow
-  - `helpers_root/docs/tools/all.invoke_workflows.how_to_guide.md`
+  - `helpers_root/docs/tools/invoke/all.invoke_workflows.how_to_guide.md`
 
 - Linter
   - `helpers_root/docs/tools/linter/all.developing_linter.how_to_guide.md`
@@ -122,13 +122,13 @@ Total: 28 published blogs
 - Pre-commit
   - `helpers_root/linters2/lint.README.md`
 
-- `helpers_root/docs/tools/all.invoke_git_branch_copy.how_to_guide.md`
+- `helpers_root/docs/tools/invoke/all.invoke_git_branch_copy.how_to_guide.md`
 
 - https://docs.google.com/spreadsheets/d/1FpBI4tysk2kMSNeTc3WTGOw8KZkr4yG85nfDwqu8Fdo/edit?gid=1995318049#gid=1995318049
 - https://docs.google.com/document/d/1_G5bgSSxrC1EMA1eOx3KXNifj6XFSdZ6cebeZJKpywY/edit?tab=t.ihrvh5211a4x#heading=h.tdzvl3alcciy
 - /Users/saggese/src/csfy1/blog/docs/posts
 
-- Profiling ./helpers_root/docs/tools/all.profiling.how_to_guide.md
+- Profiling ./helpers_root/docs/tools/testing_profiling/all.profiling.how_to_guide.md
 
 - Pre-commit hooks helpers_root/dev_scripts_helpers/git/git_hooks/pre-commit.py
 

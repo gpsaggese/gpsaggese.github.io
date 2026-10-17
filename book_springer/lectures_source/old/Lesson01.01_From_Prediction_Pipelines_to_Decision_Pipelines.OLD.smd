@@ -147,7 +147,7 @@
 // From Lesson 08.1
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 - **Association**: variables co-occur or are statistically dependent
   - E.g., _"buyers of diapers also buy beer"_
   - Says nothing about direction or mechanism
@@ -257,7 +257,7 @@
 // From Lesson 08.2
 
 ::: columns
-:::: {.column width=52%}
+:::: {.column width=55%}
 - **Example**: a tornado warning chain
   - $T$: tornado forms; $W$: warning issued
   - $A, B$: radio and TV broadcast; $R$: residents warned
@@ -385,7 +385,7 @@ digraph Tornado_Warning {
 // From paper [P005] Simpson's Paradox, Confounding, and Collapsibility
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - The numbers alone cannot say whether to prescribe the drug
   - The causal graph decides
 

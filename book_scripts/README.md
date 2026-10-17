@@ -5,6 +5,7 @@
 
 ```
 > ls -1 book_scripts/*prompt*
+book_scripts/prompt.create_lesson_slides.common.md
 book_scripts/prompt.create_lesson_slides_from_chap_toc.md
 book_scripts/prompt.create_lesson_slides_from_topic.md
 book_scripts/prompt.create_latex_book_chap_from_lesson_slides.md
@@ -23,9 +24,7 @@ book_scripts/prompt.update_book_chap_from_lesson_slides.md
   `lesson_slides`
 - Reads the chapter TOC, `### Topics`, and `### Lesson Materials` from
   `book_map.md`
-- Creates a skeleton of titles, asks the user for approval, then calls
-  `slides.write` for 30-35 slides and saves a new
-  `lectures_source/Lesson<CHAP_NUM>.<ID>_<Title>.smd`
+- Collects the material, then runs the common steps below
 - `book_scripts/prompt.create_lesson_slides_from_chap_toc.md`
 
 ## Create `lesson_slides` from a topic list (no book map yet)
@@ -35,6 +34,15 @@ book_scripts/prompt.update_book_chap_from_lesson_slides.md
 - Useful when the book map does not have that chapter yet, or for a course
   such as `msml610`
 - `book_scripts/prompt.create_lesson_slides_from_topic.md`
+
+## Common steps to create `lesson_slides`
+- Steps shared by the two prompts above, executed after the material is read
+- Creates a skeleton of titles, asks the user for approval, then calls
+  `slides.write` for 30-35 slides
+- Creates a notebook for the figures that need data or code, saved with
+  `hmatplo.save_fig()`
+- Saves a new `lectures_source/Lesson<CHAP_NUM>.<ID>_<Title>.smd`
+- `book_scripts/prompt.create_lesson_slides.common.md`
 
 ## Find material
 - Complete the pointers and add references to `resources.md`

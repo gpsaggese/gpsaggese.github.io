@@ -107,7 +107,7 @@
 // From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:256 '* Tornado Warning: Level 2 (Intervention)'
 
 ::: columns
-:::: {.column width=52%}
+:::: {.column width=55%}
 - @Example@: a tornado-warning chain
   - $T$: tornado forms; $W$: warning issued
   - $A, B$: radio and TV broadcast; $R$: residents warned
@@ -156,7 +156,7 @@ digraph Tornado_Warning {
 // From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:366 '* Structural Causal Model'
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - @Definition@: a _structural causal model_ (SCM) writes each variable as a
   function of its direct causes and an exogenous noise term
   $$X_i = f_i(Parents(X_i), \varepsilon_i)$$
@@ -192,7 +192,7 @@ digraph Sprinkler {
 // From: msml610/lectures_source/Lesson08.6-Causal_inference_intro.smd:831 '* Example: Are Consultants Worth It?'
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - @Definition@: in a fork $X \leftarrow Z \rightarrow Y$, $Z$ is a
   _confounder_, a common cause of $X$ and $Y$
   - $X$ and $Y$ are dependent even though neither causes the other
@@ -226,7 +226,7 @@ digraph Consultancy {
 // From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:741 '* Mediator Variable'
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - @Definition@: in a chain $X \rightarrow M \rightarrow Y$, $M$ is a
   _mediator_ that transmits the causal effect of $X$ on $Y$
   - Causation flows only in the direction of the arrows; association flows
@@ -262,7 +262,7 @@ digraph Mediator {
 // From: msml610/lectures_source/Lesson08.6-Causal_inference_intro.smd:973 '* D-separation'
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - @Definition@: in $X \rightarrow M \leftarrow Y$, $M$ is a _collider_;
   $X$ and $Y$ start independent
   - Conditioning on $M$, or on any descendant of $M$, makes $X$ and $Y$
@@ -323,7 +323,7 @@ digraph Collider {
 // From: msml610/lectures_source/Lesson08.5-Do_calculus.smd:79 '* The Do-Operator'
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - @Definition@: $do(X = x)$ overrides $X$'s structural equation, replacing
   $X = f_X(Parents(X), \varepsilon_X)$ with the fixed value $x$
   - Deletes every incoming edge to $X$, producing a _mutilated_ graph
@@ -394,7 +394,7 @@ digraph DoOperator {
 // From: msml610/lectures_source/Lesson08.5-Do_calculus.smd:227 '* Backdoor Paths: Example'
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - @Example@: estimating the causal effect of price on sales
   - Advertising spend is a confounder: it can raise the price a product can
     command _and_ raise sales directly
@@ -427,7 +427,7 @@ digraph BackDoor {
 // From: msml610/lectures_source/Lesson08.5-Do_calculus.smd:563 '* Front-Door Adjustment: Definition'
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - @Problem@: sometimes no observable set blocks every backdoor path,
   because the confounder itself is unobserved
 - @Definition@: the _frontdoor criterion_ identifies the effect through a

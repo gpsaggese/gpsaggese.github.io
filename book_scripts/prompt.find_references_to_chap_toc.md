@@ -10,7 +10,7 @@
   ```
   DIR="/Users/saggese/src/umd_classes1"
   BOOK="book_AI_Software_Engineering"
-  CHAP="## 02. AI Pair Programming Workflows"
+  CHAP="## 02: AI Pair Programming Workflows"
   ```
 
 - Read carefully the entire table of content `<DIR>/<BOOK>/map.md` of the book

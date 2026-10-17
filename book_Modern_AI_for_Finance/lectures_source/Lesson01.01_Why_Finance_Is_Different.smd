@@ -3,16 +3,6 @@
 // lesson_title=Lesson 01.01: Why Finance Is Different
 // slides_engine=typst
 
-// References:
-// - Chan: _"Quantitative Trading"_ (2009)
-// - Chan: _"Algorithmic Trading"_ (2013)
-// - Chan: _"Machine Trading"_ (2017)
-// - Lopez de Prado: _"Advances in Financial Machine Learning"_ (2018)
-// - Lopez de Prado: _"Machine Learning for Asset Managers"_ (2020)
-// - Grinold and Kahn: _"Active Portfolio Management"_ (1999)
-// - Hasbrouck: _"Securities Trading: Principles and Procedures"_ (2017)
-// - Kakushadze and Serur: _"151 Trading Strategies"_ (2018)
-
 * Roadmap
 
 - This lesson covers the **finance primer**: instruments, returns, risk and the
@@ -62,7 +52,7 @@
 // From: //notes1/notes/IN_PROGRESS.finance.Algorithmic_trading.Chan.2013.txt:94 '* Momentum strategies'
 
 ::: columns
-:::: {.column width=58%}
+:::: {.column width=63%}
 - @Definition@: **cross-sectional momentum** buys past winners and sells past
   losers
   - Rank stocks by cumulative return over the last $T = 12$ months, skipping
@@ -138,7 +128,7 @@ digraph MOM {
 // From: //notes1/notes/finance.all.txt:3831 '* Payoff of a put option at expiration'
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - @Definition@: a **futures contract** is an obligation to buy or sell an asset
   at a price $F$ agreed today, with delivery at maturity $T$
   - The long payoff $S_T - F$ is linear in the spot price $S_T$
@@ -153,18 +143,7 @@ digraph MOM {
 ::::
 :::: {.column width=45%}
 
-```tikz
-\tikzset{every node/.style={font=\sffamily\footnotesize}}
-\definecolor{cBlue}{RGB}{60,111,176}
-\definecolor{cCoral}{RGB}{192,69,91}
-\draw[->] (0,0) -- (4.4,0) node[right] {$S_T$};
-\draw[->] (0,-0.2) -- (0,2.7) node[above] {payoff};
-\draw[cBlue, line width=0.8pt] (0,0) -- (2.0,0) -- (4.0,2.0);
-\draw[cCoral, line width=0.8pt] (0,2.0) -- (2.0,0) -- (4.0,0);
-\draw[dashed, gray] (2.0,0) -- (2.0,-0.25) node[below] {$K$};
-\node[cBlue] at (3.5,2.3) {call};
-\node[cCoral] at (0.6,2.3) {put};
-```
+![](book_Modern_AI_for_Finance/lectures_source/figures/L01.01.Option_Payoffs.png)
 
 \footnotesize _Payoff at expiration of a long call (blue) and a long put (red)
 as a function of the spot price_
@@ -248,7 +227,7 @@ as a function of the spot price_
 // From: //notes1/notes/IN_PROGRESS.finance.Quantitative_trading.Chan.2009.txt:100 '* Maximum drawdown duration'
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - @Definition@: the **drawdown** at time $t$ is the loss from the previous
   equity peak (the high watermark)
   $$
@@ -265,24 +244,7 @@ as a function of the spot price_
 ::::
 :::: {.column width=45%}
 
-```tikz
-\tikzset{every node/.style={font=\sffamily\footnotesize}}
-\definecolor{cBlue}{RGB}{60,111,176}
-\definecolor{cCoral}{RGB}{192,69,91}
-\begin{scope}[xscale=0.75]
-\draw[->] (0,0) -- (7.4,0) node[right] {time};
-\draw[->] (0,0) -- (0,3.5) node[above] {equity};
-\draw[cBlue, line width=0.8pt] (0.2,0.9) -- (1.0,1.6) -- (1.8,2.2) -- (2.4,2.9) -- (3.2,2.3) -- (4.0,1.6) -- (4.6,2.0) -- (5.4,2.4) -- (6.1,2.9) -- (6.8,3.2);
-\draw[dashed, gray] (2.4,2.9) -- (6.1,2.9);
-\node[gray, above] at (4.2,2.9) {high watermark};
-\draw[<->, cCoral, line width=0.8pt] (4.0,2.9) -- (4.0,1.6);
-\node[cCoral, anchor=west] at (4.1,1.15) {max drawdown};
-\draw[dotted, gray] (2.4,2.9) -- (2.4,0.45);
-\draw[dotted, gray] (6.1,2.9) -- (6.1,0.45);
-\draw[<->, cCoral, line width=0.8pt] (2.4,0.55) -- (6.1,0.55);
-\node[cCoral, above] at (4.25,0.55) {drawdown duration};
-\end{scope}
-```
+![](book_Modern_AI_for_Finance/lectures_source/figures/L01.01.Drawdown.png)
 
 \footnotesize _Equity curve with its high watermark, maximum drawdown, and
 drawdown duration_
@@ -294,7 +256,7 @@ drawdown duration_
 // From: //notes1/notes/IN_PROGRESS.finance.portfolio_theory.txt:209 '* Portfolio frontier with a risk-free asset and a risky asset'
 
 ::: columns
-:::: {.column width=58%}
+:::: {.column width=63%}
 - @Definition@: the **Sharpe ratio** is the mean excess return per unit of
   volatility
   $$
@@ -313,21 +275,7 @@ drawdown duration_
 ::::
 :::: {.column width=37%}
 
-```tikz
-\tikzset{every node/.style={font=\sffamily\footnotesize}}
-\definecolor{cBlue}{RGB}{60,111,176}
-\definecolor{cOrange}{RGB}{217,142,43}
-\draw[->] (0,0) -- (4.2,0) node[right] {volatility};
-\draw[->] (0,0) -- (0,3.4) node[above] {expected return};
-\draw[cBlue, line width=0.8pt] (0,0.6) -- (4.0,2.6);
-\fill[cOrange] (0,0.6) circle (0.07);
-\node[cOrange, left] at (0,0.6) {$R_f$};
-\fill[cBlue] (1.4,1.3) circle (0.07);
-\node[below right] at (1.4,1.3) {1x};
-\fill[cBlue] (2.8,2.0) circle (0.07);
-\node[below right] at (2.8,2.0) {2x leverage};
-\node[cBlue, above left] at (2.2,1.9) {slope = $SR$};
-```
+![](book_Modern_AI_for_Finance/lectures_source/figures/L01.01.Sharpe_Leverage.png)
 
 \footnotesize _Leverage moves a strategy along a line of constant Sharpe ratio_
 ::::
@@ -364,7 +312,7 @@ drawdown duration_
 // From: //notes1/notes/IN_PROGRESS.finance.portfolio_theory.txt:664 '* Asset variance explained by the market: stylized fact'
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - @Definition@: the **CAPM** (capital asset pricing model) explains an excess
   return by exposure to the market excess return
   $$
@@ -446,7 +394,7 @@ digraph CAPM {
 // From: //notes1/notes/IN_PROGRESS.finance.Machine_trading.Chan.2017.txt:209 '* Alphas'
 
 ::: columns
-:::: {.column width=58%}
+:::: {.column width=63%}
 - @Definition@: given a benchmark return $R_B$, a portfolio return splits into
   an exposure part and a residual part
   $$
@@ -498,7 +446,7 @@ digraph Decomp {
 // From: //notes1/notes/finance.all.txt:653 '** Level 2 quotes'
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - @Definition@: the **limit order book** lists resting buy orders (bids) and
   sell orders (asks) by price level
 
@@ -599,7 +547,7 @@ digraph Decomp {
 // From: //notes1/notes/finance.all.txt:588 '** Minimum alpha to support turnover and trading costs'
 
 ::: columns
-:::: {.column width=58%}
+:::: {.column width=63%}
 - @Definition@: **explicit costs** are commissions, fees, and taxes, and
   **implicit costs** are slippage and opportunity cost
   - _Slippage_ is the gap between the decision price and the execution price
@@ -646,7 +594,7 @@ digraph Net {
 // From: //notes1/notes/finance.all.txt:194 '** Market impact'
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - @Definition@: **market impact** is the effect of your own trading on the
   price: buying moves the price against the buyer
 
@@ -661,25 +609,7 @@ digraph Net {
 ::::
 :::: {.column width=45%}
 
-```tikz
-\tikzset{every node/.style={font=\sffamily\footnotesize}}
-\definecolor{cBlue}{RGB}{60,111,176}
-\definecolor{cCoral}{RGB}{192,69,91}
-\begin{scope}[xscale=0.75]
-\fill[gray!15] (1.6,0) rectangle (3.2,3.2);
-\node[gray] at (2.4,3.0) {execution};
-\draw[->] (0,0) -- (7.2,0) node[right] {time};
-\draw[->] (0,0) -- (0,3.4) node[above] {price};
-\draw[cBlue, line width=0.8pt] (0.2,1.0) -- (1.6,1.0) -- (3.2,2.4) -- (3.8,2.1) -- (4.5,1.9) -- (5.5,1.75) -- (6.6,1.7);
-\draw[dashed, gray] (1.6,1.0) -- (6.8,1.0);
-\draw[dashed, gray] (3.2,1.7) -- (6.8,1.7);
-\draw[<->, cCoral, line width=0.8pt] (7.0,1.0) -- (7.0,1.7);
-\node[cCoral, right] at (7.0,1.35) {permanent};
-\draw[<->, cCoral, line width=0.8pt] (3.0,1.7) -- (3.0,2.4);
-\node[cCoral, left] at (3.0,2.05) {temporary};
-\node[above] at (0.9,1.0) {arrival price};
-\end{scope}
-```
+![](book_Modern_AI_for_Finance/lectures_source/figures/L01.01.Market_Impact.png)
 
 \footnotesize _Price path around a buy order: the temporary part reverts, the
 permanent part stays_
@@ -692,7 +622,7 @@ permanent part stays_
 // From: //notes1/notes/IN_PROGRESS.finance.Algorithmic_trading.Chan.2013.txt:62 '- Have low capacity so not interesting anymore for a large fund, but can be'
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - @Definition@: **capacity** is the capital a strategy can deploy before costs
   and impact erase its edge
 
@@ -707,24 +637,7 @@ permanent part stays_
 ::::
 :::: {.column width=40%}
 
-```tikz
-\tikzset{every node/.style={font=\sffamily\footnotesize}}
-\definecolor{cBlue}{RGB}{60,111,176}
-\definecolor{cCoral}{RGB}{192,69,91}
-\definecolor{cTeal}{RGB}{79,154,92}
-\begin{scope}[x=0.9cm,y=0.5cm]
-\draw[->] (0,0) -- (6.5,0) node[right] {book size};
-\draw[->] (0,0) -- (0,6.0) node[above] {PnL};
-\draw[cTeal, line width=0.4pt, domain=0:6, samples=30] plot (\x, {0.9*\x});
-\draw[cCoral, line width=0.4pt, domain=0:6, samples=30] plot (\x, {0.15*\x*\x});
-\draw[cBlue, line width=0.8pt, domain=0:6, samples=40] plot (\x, {0.9*\x-0.15*\x*\x});
-\draw[dashed, gray] (3,0) -- (3,1.35);
-\node[below] at (3,0) {capacity};
-\node[cBlue, above] at (3,1.4) {net PnL};
-\node[cTeal, above left] at (5.4,4.86) {gross edge};
-\node[cCoral, below right] at (5.4,4.37) {impact cost};
-\end{scope}
-```
+![](book_Modern_AI_for_Finance/lectures_source/figures/L01.01.Strategy_Capacity.png)
 
 \footnotesize _Gross edge, impact cost, and net PnL as a function of book size_
 ::::
@@ -741,7 +654,7 @@ permanent part stays_
 // From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1191 '## Stationarity vs memory dilemma'
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - @Definition@: a **stationary** series has statistical properties (mean,
   variance, autocorrelation) that do not change over time
 
@@ -755,21 +668,7 @@ permanent part stays_
 ::::
 :::: {.column width=40%}
 
-```tikz
-\tikzset{every node/.style={font=\sffamily\footnotesize}}
-\definecolor{cBlue}{RGB}{60,111,176}
-\definecolor{cOrange}{RGB}{217,142,43}
-\begin{scope}[xscale=0.8]
-\draw[->] (0,0) -- (6.7,0) node[right] {$t$};
-\draw[->] (0,0) -- (0,2.3) node[above] {price};
-\draw[cOrange, line width=0.8pt] plot coordinates {(0.00,0.05) (0.08,0.00) (0.16,0.03) (0.24,0.09) (0.32,0.08) (0.40,0.02) (0.48,0.03) (0.56,0.06) (0.64,0.13) (0.72,0.08) (0.80,0.02) (0.88,0.07) (0.96,0.11) (1.04,0.20) (1.12,0.26) (1.20,0.27) (1.28,0.27) (1.36,0.42) (1.44,0.42) (1.52,0.38) (1.60,0.33) (1.68,0.35) (1.76,0.37) (1.84,0.36) (1.92,0.37) (2.00,0.40) (2.08,0.45) (2.16,0.52) (2.24,0.55) (2.32,0.46) (2.40,0.51) (2.48,0.44) (2.56,0.44) (2.64,0.37) (2.72,0.38) (2.80,0.35) (2.88,0.37) (2.96,0.58) (3.04,0.58) (3.12,0.65) (3.20,0.58) (3.28,0.58) (3.36,0.63) (3.44,0.63) (3.52,0.67) (3.60,0.69) (3.68,0.64) (3.76,0.69) (3.84,0.65) (3.92,0.78) (4.00,0.76) (4.08,0.81) (4.16,0.83) (4.24,0.90) (4.32,0.87) (4.40,0.95) (4.48,0.95) (4.56,1.05) (4.64,1.10) (4.72,1.13) (4.80,1.09) (4.88,1.15) (4.96,1.20) (5.04,1.32) (5.12,1.31) (5.20,1.36) (5.28,1.41) (5.36,1.44) (5.44,1.47) (5.52,1.50) (5.60,1.47) (5.68,1.42) (5.76,1.40) (5.84,1.46) (5.92,1.58) (6.00,1.67) (6.08,1.76) (6.16,1.83) (6.24,1.90) (6.32,1.93) (6.40,2.00)};
-\begin{scope}[shift={(0,-2.2)}, yscale=0.6]
-\draw[->] (0,0) -- (6.7,0) node[right] {$t$};
-\draw[cBlue, line width=0.4pt] plot coordinates {(0.08,-0.49) (0.16,0.28) (0.24,0.58) (0.32,-0.15) (0.40,-0.54) (0.48,0.07) (0.56,0.33) (0.64,0.63) (0.72,-0.48) (0.80,-0.52) (0.88,0.44) (0.96,0.33) (1.04,0.84) (1.12,0.57) (1.20,0.05) (1.28,-0.03) (1.36,1.33) (1.44,-0.04) (1.52,-0.28) (1.60,-0.45) (1.68,0.15) (1.76,0.17) (1.84,-0.07) (1.92,0.07) (2.00,0.23) (2.08,0.43) (2.16,0.63) (2.24,0.20) (2.32,-0.76) (2.40,0.44) (2.48,-0.58) (2.56,0.02) (2.64,-0.61) (2.72,0.10) (2.80,-0.27) (2.88,0.20) (2.96,1.68) (3.04,0.08) (3.12,0.50) (3.20,-0.54) (3.28,-0.04) (3.36,0.42) (3.44,0.06) (3.52,0.28) (3.60,0.15) (3.68,-0.38) (3.76,0.37) (3.84,-0.29) (3.92,1.00) (4.00,-0.14) (4.08,0.43) (4.16,0.10) (4.24,0.56) (4.32,-0.19) (4.40,0.58) (4.48,0.04) (4.56,0.71) (4.64,0.40) (4.72,0.17) (4.80,-0.27) (4.88,0.47) (4.96,0.32) (5.04,0.89) (5.12,-0.08) (5.20,0.37) (5.28,0.34) (5.36,0.24) (5.44,0.20) (5.52,0.19) (5.60,-0.19) (5.68,-0.39) (5.76,-0.09) (5.84,0.38) (5.92,0.83) (6.00,0.57) (6.08,0.61) (6.16,0.47) (6.24,0.44) (6.32,0.19) (6.40,0.47)};
-\end{scope}
-\node[anchor=east] at (0,-2.2) {return};
-\end{scope}
-```
+![](book_Modern_AI_for_Finance/lectures_source/figures/L01.01.Prices_vs_Returns.png)
 
 \footnotesize _Simulated price (orange) wanders away from its starting level,
 its returns (blue) fluctuate around a constant mean_
@@ -784,7 +683,7 @@ its returns (blue) fluctuate around a constant mean_
 // From: //notes1/notes/papers.finance.deep_learning.txt:1055 '- ! financial markets are affected by regimes'
 
 ::: columns
-:::: {.column width=58%}
+:::: {.column width=63%}
 - @Definition@: a **regime** is a period with a stable return distribution,
   and a **regime shift** is an abrupt change of mean, volatility, or
   correlations
@@ -868,7 +767,7 @@ probabilities_
 // From: //notes1/notes/IN_PROGRESS.finance.portfolio_theory.txt:80 '* CER model: test for normal distribution'
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - @Definition@: **kurtosis** is the mean of the fourth power of the z-score
   $$
   \EE\left[\left(\frac{X - \mu}{\sigma}\right)^4\right]
@@ -885,22 +784,7 @@ probabilities_
 ::::
 :::: {.column width=45%}
 
-```tikz
-\tikzset{every node/.style={font=\sffamily\footnotesize}}
-\definecolor{cBlue}{RGB}{60,111,176}
-\definecolor{cCoral}{RGB}{192,69,91}
-\begin{scope}[x=0.62cm,y=0.33cm]
-\draw[->] (-4.4,-10.0) -- (4.6,-10.0) node[right] {return};
-\draw[->] (-4.4,-10.0) -- (-4.4,0.5) node[above] {log density};
-\foreach \k/\l in {-4/{$-4\sigma$}, -2/{$-2\sigma$}, 0/{$0$}, 2/{$2\sigma$}, 4/{$4\sigma$}} {
-  \draw (\k,-10.0) -- (\k,-10.3) node[below] {\l};
-}
-\draw[cBlue, line width=0.8pt, domain=-4:4, samples=60] plot (\x, {-0.919 - 0.5*\x*\x});
-\draw[cCoral, line width=0.8pt, domain=-4:4, samples=60] plot (\x, {ln(0.6366) - 2*ln(1 + \x*\x)});
-\node[cBlue, anchor=west] at (4.05,-8.9) {Gaussian};
-\node[cCoral, anchor=west] at (4.05,-6.1) {heavy tail};
-\end{scope}
-```
+![](book_Modern_AI_for_Finance/lectures_source/figures/L01.01.Fat_Tails.png)
 
 \footnotesize _Log density of a Gaussian and a Student-t with 3 degrees of
 freedom, both with unit variance_
@@ -970,7 +854,7 @@ freedom, both with unit variance_
 // From: msml610/lectures_source/Lesson10.1-Timeseries_forecasting.smd:893 '* GARCH(p, q): definition'
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - @Definition@: **volatility clustering** means periods of large swings are
   interspersed with periods of calm
 
@@ -991,15 +875,7 @@ freedom, both with unit variance_
 ::::
 :::: {.column width=45%}
 
-```tikz
-\tikzset{every node/.style={font=\sffamily\footnotesize}}
-\definecolor{cBlue}{RGB}{60,111,176}
-\begin{scope}[xscale=0.7]
-\draw[->] (0,0) -- (8.2,0) node[right] {$t$};
-\draw[->] (0,-2.1) -- (0,2.1) node[above] {return};
-\draw[cBlue, line width=0.4pt] plot coordinates {(0.00,-0.53) (0.05,-0.53) (0.10,0.32) (0.15,-1.04) (0.20,-0.08) (0.25,-1.19) (0.30,0.74) (0.35,0.14) (0.40,0.83) (0.45,-0.32) (0.50,0.24) (0.55,-0.16) (0.60,-0.37) (0.65,0.07) (0.70,-0.56) (0.75,-0.16) (0.80,0.30) (0.85,0.02) (0.90,-0.16) (0.95,0.80) (1.00,0.03) (1.05,-0.25) (1.10,0.06) (1.15,-0.20) (1.20,-0.14) (1.25,-0.12) (1.30,0.66) (1.35,0.01) (1.40,0.07) (1.45,0.23) (1.50,0.68) (1.55,-0.09) (1.60,-0.24) (1.65,0.92) (1.70,-0.73) (1.75,-0.20) (1.80,0.33) (1.85,1.08) (1.90,-0.57) (1.95,-1.44) (2.00,0.51) (2.05,-0.38) (2.10,-0.26) (2.15,0.29) (2.20,0.13) (2.25,0.15) (2.30,-0.21) (2.35,0.58) (2.40,0.71) (2.45,0.02) (2.50,-0.21) (2.55,0.32) (2.60,0.20) (2.65,-0.42) (2.70,-0.19) (2.75,0.40) (2.80,-0.04) (2.85,-0.12) (2.90,0.07) (2.95,-0.01) (3.00,-0.00) (3.05,-0.57) (3.10,0.62) (3.15,0.08) (3.20,-0.34) (3.25,0.37) (3.30,0.12) (3.35,0.01) (3.40,0.35) (3.45,0.78) (3.50,0.25) (3.55,0.67) (3.60,1.01) (3.65,-0.59) (3.70,-0.30) (3.75,0.42) (3.80,-0.89) (3.85,-0.16) (3.90,0.69) (3.95,0.58) (4.00,0.32) (4.05,-0.99) (4.10,1.45) (4.15,0.44) (4.20,0.56) (4.25,0.35) (4.30,-1.11) (4.35,-1.05) (4.40,-0.94) (4.45,1.51) (4.50,-0.77) (4.55,-0.21) (4.60,-0.20) (4.65,0.42) (4.70,0.34) (4.75,0.17) (4.80,-0.73) (4.85,-1.87) (4.90,0.15) (4.95,0.22) (5.00,0.91) (5.05,-0.08) (5.10,-0.42) (5.15,0.26) (5.20,-0.92) (5.25,-0.67) (5.30,-0.65) (5.35,0.18) (5.40,1.22) (5.45,0.54) (5.50,0.77) (5.55,0.16) (5.60,0.17) (5.65,-0.26) (5.70,-0.15) (5.75,-1.18) (5.80,-0.77) (5.85,-0.84) (5.90,0.56) (5.95,0.43) (6.00,0.70) (6.05,0.96) (6.10,-0.21) (6.15,0.65) (6.20,1.20) (6.25,-0.01) (6.30,0.72) (6.35,-0.11) (6.40,-0.97) (6.45,0.08) (6.50,-0.49) (6.55,0.06) (6.60,-0.25) (6.65,0.16) (6.70,-0.98) (6.75,1.18) (6.80,0.94) (6.85,-0.25) (6.90,-0.60) (6.95,0.00) (7.00,0.39) (7.05,0.23) (7.10,0.21) (7.15,-0.94) (7.20,-0.64) (7.25,0.77) (7.30,0.14) (7.35,-0.84) (7.40,-0.52) (7.45,-0.84) (7.50,-0.64) (7.55,0.73) (7.60,-0.14) (7.65,0.65) (7.70,0.11) (7.75,-0.81) (7.80,-0.38) (7.85,1.27) (7.90,-0.54) (7.95,-0.71)};
-\end{scope}
-```
+![](book_Modern_AI_for_Finance/lectures_source/figures/L01.01.Volatility_Clustering.png)
 
 \footnotesize _Simulated GARCH(1,1) returns: large moves follow large moves,
 calm follows calm_
@@ -1012,7 +888,7 @@ calm follows calm_
 // From: //notes1/notes/IN_PROGRESS.finance.portfolio_theory.txt:90 '* CER model: test for no autocorrelation'
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - @Fact@: returns look like white noise
   - Autocorrelations are close to zero at all lags
   - Prices look like a random walk
@@ -1028,31 +904,11 @@ calm follows calm_
 ::::
 :::: {.column width=45%}
 
-```tikz
-\tikzset{every node/.style={font=\sffamily\footnotesize}}
-\definecolor{cBlue}{RGB}{60,111,176}
-\definecolor{cCoral}{RGB}{192,69,91}
-\begin{scope}[xscale=0.75]
-\draw[->] (0,0) -- (3.4,0) node[right] {lag};
-\draw[->] (0,-0.5) -- (0,2.0) node[above] {ACF};
-\draw[dashed, gray] (0,0.24) -- (3.2,0.24);
-\draw[dashed, gray] (0,-0.24) -- (3.2,-0.24);
-\foreach \k/\v in {1/0.02, 2/-0.03, 3/0.01, 4/0.0, 5/-0.02, 6/0.03} {
-  \fill[cBlue] (\k*0.5-0.1,0) rectangle (\k*0.5+0.1,\v*6);
-}
-\node[cBlue] at (1.6,1.0) {returns};
-\draw[->] (4.4,0) -- (7.8,0) node[right] {lag};
-\draw[->] (4.4,-0.5) -- (4.4,2.0);
-\foreach \k/\v in {1/0.300, 2/0.285, 3/0.271, 4/0.257, 5/0.244, 6/0.232} {
-  \fill[cCoral] (4.4+\k*0.5-0.1,0) rectangle (4.4+\k*0.5+0.1,\v*6);
-}
-\node[cCoral] at (6.0,2.15) {squared returns};
-\end{scope}
-```
+![](book_Modern_AI_for_Finance/lectures_source/figures/L01.01.ACF_Returns_vs_Squared_Returns.png)
 
-\footnotesize _Illustrative sample ACF of returns (dashed: 95% band) and
-theoretical ACF of squared returns of a GARCH(1,1) with $\alpha = 0.15$,
-$\beta = 0.80$_
+\footnotesize _Sample ACF of simulated GARCH(1,1) returns and of their squares
+(dashed: 95% band of white noise, dotted: theoretical ACF of the squares with
+$\alpha = 0.15$, $\beta = 0.80$)_
 ::::
 :::
 
@@ -1099,7 +955,7 @@ $\beta = 0.80$_
 // From: //notes1/notes/IN_PROGRESS.finance.Active_portfolio_management.Grinold_Kahn.1999.txt:75 '* Fundamental law of active management'
 
 ::: columns
-:::: {.column width=58%}
+:::: {.column width=63%}
 - @Motivation@: arbitrage competes predictable returns away, so the remaining
   signal is small next to the noise
 
@@ -1116,17 +972,7 @@ $\beta = 0.80$_
 ::::
 :::: {.column width=37%}
 
-```tikz
-\tikzset{every node/.style={font=\sffamily\footnotesize}}
-\definecolor{cBlue}{RGB}{60,111,176}
-\definecolor{cCoral}{RGB}{192,69,91}
-\draw[->] (-2.2,0) -- (2.3,0) node[right] {forecast};
-\draw[->] (0,-2.2) -- (0,2.3) node[above] {return};
-\foreach \x/\y in {0.05/0.69, -0.51/0.52, -0.14/-0.15, 1.04/0.14, -0.02/0.40, 0.62/0.01, 0.32/-0.52, -0.20/-0.25, -0.73/-0.87, -0.89/-0.18, -0.09/-0.18, 0.04/-0.73, -0.04/0.13, 0.41/-0.44, -0.22/-1.12, -0.28/-1.22, -0.78/0.57, -1.21/0.38, 0.18/-0.16, 0.25/0.30, 0.57/-0.10, -0.33/-0.35, -0.54/-0.05, -0.43/0.57, -1.03/-0.65, -0.52/-1.18, 1.05/-1.27, -0.16/-0.30, 0.91/-1.05, 0.59/-0.37, -0.09/-0.37, 0.35/-0.61, -0.04/0.19, 1.01/-1.27, 0.84/0.56, -0.27/0.15, -0.26/0.89, 0.12/-0.11, -0.13/-0.12, -0.10/-0.49, 1.13/-0.99, -1.98/-0.17, -0.08/0.20, -0.11/-0.09, 0.18/0.54, -0.25/-0.22, 1.07/0.34, -0.54/1.25, 0.43/-0.30, -0.65/0.13, -0.46/-0.60, -0.71/-0.31, 0.61/-0.21, -0.80/0.33, 0.04/0.47, 0.66/-0.06, -0.08/-0.03, -0.62/0.34, 0.75/0.13, -0.13/-0.15, -0.43/-0.46, -0.22/-0.47, -0.24/-0.88, 0.19/0.04, -0.63/-1.29, -0.00/0.61, -0.40/-0.29, -0.31/0.34, -0.50/0.52, -0.17/0.50, 0.02/-0.13, -0.81/-0.42, -0.14/0.36, 0.13/-0.38, 0.23/0.55, -0.08/-0.25, -0.22/0.43, 0.30/-0.50, 0.21/-0.25, -0.41/0.66, 0.45/-0.38, 0.04/0.28, -0.35/-0.08, 0.37/-0.96, 0.18/0.41, 0.28/-0.72, 0.18/-0.47, 0.31/0.35, 0.12/-0.41, -0.33/0.45, -0.49/0.25, 0.28/-0.14, 1.32/0.10, 1.18/-1.05, -1.23/0.48, 0.35/-0.15, -0.03/-1.05, -0.35/-0.59, -0.12/0.48, 0.03/0.21, -0.38/-0.26, 0.06/-0.15, 0.70/-0.45, 1.04/-0.49, 0.58/-0.40, 0.91/0.12, 0.22/0.42, -0.35/-0.59, -1.11/0.61, -0.38/-0.34, -0.02/1.09, -0.95/0.09, -0.22/0.28, -0.99/-0.27, 0.46/0.88, 0.88/-0.43, 0.03/-0.06, -0.76/-0.83, 0.42/0.16, -0.08/0.66} {
-  \fill[cBlue!60] (\x,\y) circle (0.04);
-}
-\draw[cCoral, line width=0.8pt] (-2.0,-0.1) -- (2.0,0.1);
-```
+![](book_Modern_AI_for_Finance/lectures_source/figures/L01.01.Weak_Signal.png)
 
 \footnotesize _Realized return against forecast for $IC = 0.05$: the fitted line
 (red) is almost flat_
@@ -1140,7 +986,7 @@ $\beta = 0.80$_
 // From: msml610/lectures_source/Lesson05.2-Overfitting.smd:763 '* Amount of Data and Model Complexity'
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - @Problem@: there is one history, and overlapping labels and autocorrelation
   make the effective sample size far smaller than the row count
   - E.g., 10 years of daily rows give 2,520 observations but only about 120
@@ -1179,7 +1025,7 @@ $\beta = 0.80$_
 // From: //notes1/notes/IN_PROGRESS.finance.Algorithmic_trading.Chan.2013.txt:28 '* Issues'
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - @Definition@: **overfitting** occurs when a model fits the data more than is
   warranted, and **data snooping** is an accidental pattern that does not hold
   out of sample
@@ -1193,19 +1039,7 @@ $\beta = 0.80$_
 ::::
 :::: {.column width=40%}
 
-```tikz
-\tikzset{every node/.style={font=\sffamily\footnotesize}}
-\definecolor{cBlue}{RGB}{60,111,176}
-\definecolor{cCoral}{RGB}{192,69,91}
-\draw[->] (0,0) -- (6.4,0) node[right] {model complexity};
-\draw[->] (0,0) -- (0,3.3) node[above] {error};
-\draw[cBlue, line width=0.8pt, domain=0.5:6, samples=40] plot (\x, {3.2*exp(-0.55*\x)+0.2});
-\draw[cCoral, line width=0.8pt, domain=0.5:6, samples=40] plot (\x, {3.2*exp(-0.55*\x)+0.2+0.05*\x*\x});
-\draw[dashed, gray] (3.2,0) -- (3.2,1.5);
-\node[below] at (3.2,0) {optimal};
-\node[cBlue, right] at (4.6,0.55) {in-sample};
-\node[cCoral, left] at (5.4,2.4) {out-of-sample};
-```
+![](book_Modern_AI_for_Finance/lectures_source/figures/L01.01.Overfitting.png)
 
 \footnotesize _In-sample error keeps falling with complexity while out-of-sample
 error turns up_
@@ -1239,7 +1073,7 @@ error turns up_
 - @Key idea@: misused ML confuses statistical flukes with patterns, and a very
   low signal-to-noise ratio turns that confusion into false discoveries
 
-- @Remark@: backtest discipline is covered in detail in Lesson 03.01
+- @Remark@: backtest discipline is covered in detail in Lesson 02.01
 
 * Summary
 

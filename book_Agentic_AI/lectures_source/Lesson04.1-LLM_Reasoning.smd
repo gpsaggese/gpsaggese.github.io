@@ -3,16 +3,6 @@
 // lesson_title=Lesson 01.04: LLM Reasoning
 // slides_engine=typst
 
-// References:
-//- Chain-of-Thought Reasoning Without Prompting:
-//  https://arxiv.org/abs/2402.10200
-//- Large Language Models Cannot Self-Correct Reasoning Yet:
-//  https://arxiv.org/abs/2310.01798
-//- Premise Order Matters in Reasoning with Large Language Models:
-//  https://arxiv.org/abs/2402.08939
-//- Chain-of-Thought Empowers Transformers to Solve Inherently Serial Problems:
-//  https://arxiv.org/abs/2402.12875
-
 # LLM Reasoning
 
 ## Motivation: Why Reasoning Deserves Its Own Lesson
@@ -138,7 +128,7 @@
 * Search Over Reasoning: Tree and Graph of Thought
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - @Problem@: self-consistency samples _independent_ chains and cannot revisit
   a promising partial path
 
@@ -472,3 +462,16 @@ digraph ToT {
   - How do we make reasoning _robust_ to superficial perturbations?
   - How do we build reliable verifiers so agents can safely self-correct?
   - How do memory and planning extend single-shot reasoning across a full loop?
+
+* References
+
+- Chain-of-Thought Reasoning Without Prompting: https://arxiv.org/abs/2402.10200
+
+- Large Language Models Cannot Self-Correct Reasoning Yet:
+  https://arxiv.org/abs/2310.01798
+
+- Premise Order Matters in Reasoning with Large Language Models:
+  https://arxiv.org/abs/2402.08939
+
+- Chain-of-Thought Empowers Transformers to Solve Inherently Serial Problems:
+  https://arxiv.org/abs/2402.12875

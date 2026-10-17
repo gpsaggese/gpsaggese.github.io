@@ -3,49 +3,53 @@
 - The process for every change to `research/Noesis/`, so GP can review quickly and
   anyone can see why the code is the way it is
 
+- The generic process (the loop, the plan, the progress log, the PR template) is in
+  `helpers_root/docs/planning/all.plan_work.how_to_guide.md`
+  - This doc adds only the Noesis-specific parts
+
 // TODO(javin): Update since for core controbutors we will just work on the main
 // repo. We can still have the fork approach for external contributors.
 - Contributions use the **fork and PR** method described in
-  `class_project/how_to_contribute.md`; this doc adds the Noesis-specific parts
+  `class_project/how_to_contribute.md`
 
 ## The Loop
 
-1. **Pick a task** from `mvp_plan.md` §3 (or propose one)
-2. **Plan before code**: write a short design (what, files, interfaces, tests,
-   open choices) and get a teammate's OK. Non-trivial designs go in the issue
-3. **Open a GitHub issue** in `gpsaggese/gpsaggese.github.io`, title
-   `Noesis: <what>`; note the number, e.g., `#612`
-4. **Sync your fork** with upstream, then **branch** in your fork from `master`,
-   named after the issue: `UmdTask612_Noesis_<short_title>`
+- The steps are the ones in the section "The Loop" of
+  `helpers_root/docs/planning/all.plan_work.how_to_guide.md`
+- Noesis details for each step:
+  - **Pick a task** from `mvp_plan.md` §3 (or propose one)
+  - **Open a GitHub issue** in `gpsaggese/gpsaggese.github.io`, title
+    `Noesis: <what>`; note the number, e.g., `#612`
+  - **Sync your fork** with upstream, then **branch** in your fork from `master`,
+    named after the issue: `UmdTask612_Noesis_<short_title>`
 
-   ```bash
-   > git fetch upstream && git checkout master && git merge upstream/master
-   > git checkout -b UmdTask612_Noesis_<short_title>
-   ```
+    ```bash
+    > git fetch upstream && git checkout master && git merge upstream/master
+    > git checkout -b UmdTask612_Noesis_<short_title>
+    ```
 
-5. **Code + tests** following the conventions below; run the Noesis tests locally
-6. **Commit** specific files (never `git add .`) with the issue reference, then
-   push to your fork:
+  - **Code + tests** following the conventions below; run the Noesis tests locally
+  - **Commit** with the issue reference, then push to your fork:
 
-   ```bash
-   > git add research/Noesis/<file> ...
-   > git commit -m "<message> (gpsaggese/umd_classes#612)"
-   > git push origin UmdTask612_Noesis_<short_title>
-   ```
+    ```bash
+    > git add research/Noesis/<file> ...
+    > git commit -m "<message> (gpsaggese/umd_classes#612)"
+    > git push origin UmdTask612_Noesis_<short_title>
+    ```
 
-7. **Open a PR** from your fork's branch to `gpsaggese/gpsaggese.github.io`
-   `master`, titled like the branch, using the PR description template below. Put
-   `Fixes gpsaggese/umd_classes#612` at the start of a line so the issue closes on
-   merge. Add GP under **Reviewers** (not Assignees)
-8. **Review**: a teammate first, then GP. Address comments in new commits on the
-   same branch
-9. **Merge** (GP), then sync your fork and mirror to the team backup repo
+  - **Open a PR** from your fork's branch to `gpsaggese/gpsaggese.github.io`
+    `master`, titled like the branch, using the PR description template below
+    - Put `Fixes gpsaggese/umd_classes#612` at the start of a line so the issue
+      closes on merge
+      - This overrides the "Filing Process" advice in
+        `helpers_root/docs/work_organization/all.use_github.how_to_guide.md`, which
+        avoids `Fixes`
+    - Add GP under **Reviewers** (not Assignees)
+  - **Review**: a teammate first, then GP
+  - **Merge** (GP), then sync your fork and mirror to the team backup repo
 
 - `gpsaggese/umd_classes` is the repo's former name; GitHub redirects it, and it's
   the prefix `how_to_contribute.md` uses for issue references
-
-- Keep PRs reviewable: one component or one milestone task per PR
-  - If a PR needs more than ~400 lines of non-test code, split it
 
 ## Conventions (GP's Rules)
 
@@ -87,38 +91,21 @@
 
 ## PR Description Template
 
-- Copy this into every PR:
-  ```markdown
-  Fixes gpsaggese/umd_classes#<issue_number>
-
-  ## What
-  - One paragraph: what this PR adds or changes, and which plan task(s) it closes
-    (e.g., `mvp_plan.md` T2.4)
-
-  ## Why
-  - The problem it solves; link the PRD section
-
-  ## How It Works
-  - Main flow in a few bullets; point to the README/doc section updated
-
-  ## Decisions
-  - Each non-obvious choice: decision, why, alternatives considered. Add it to
-    `docs/specs/mvp_decisions.md` and link it here
-
-  ## Evidence
-  - Tests added (count, what they cover) and the command to run them
-  - Any live check (what was called, result, cost)
-
-  ## Not in This PR
-  - Deliberately deferred items, and where they're tracked
-
-  ## Questions for Reviewers
-  - Anything you want GP's opinion on
-  ```
+- Use the template in the section "PR Description Template" of
+  `helpers_root/docs/planning/all.plan_work.how_to_guide.md`
+- Noesis details for each section:
+  - First line: `Fixes gpsaggese/umd_classes#<issue_number>`
+  - What: name the plan task(s) the PR closes (e.g., `mvp_plan.md` T2.4)
+  - Why: link the PRD section (`specs/mvp_prd.md`)
+  - Decisions: add each one to `specs/mvp_decisions.md` and link it
 
 ## Keeping Docs in Sync
 
-- Change a module -> update its section in `gateway_design.md` (or the README of
-  the component you touched)
-- Make a decision -> add it to `mvp_decisions.md`
-- Finish a task -> tick it in `mvp_plan.md` and add a line to `mvp_progress.md`
+- The rules are in the section "Keep Docs in Sync" of
+  `helpers_root/docs/planning/all.plan_work.how_to_guide.md`
+- Noesis files:
+  - Change a module -> update its section in `gateway_design.md` (or the README of
+    the component you touched)
+  - Make a decision -> add it to `specs/mvp_decisions.md`
+  - Finish a task -> tick it in `plans/mvp_plan.md` and add a line to
+    `plans/mvp_progress.md`

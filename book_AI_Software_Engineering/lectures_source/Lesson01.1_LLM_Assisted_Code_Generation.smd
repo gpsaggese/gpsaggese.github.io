@@ -3,43 +3,6 @@
 // lesson_title=Lesson 01.01: LLM-Assisted Code Generation
 // slides_engine=typst
 
-// References:
-// - Alammar et al., "Hands-On Large Language Models: Language Understanding
-//   and Generation":
-//   https://www.oreilly.com/library/view/hands-on-large-language/9781098150952/
-// - Taulli, "AI-Assisted Programming: Better Planning, Coding, Testing, and
-//   Deployment":
-//   https://www.oreilly.com/library/view/ai-assisted-programming/9781098164553/
-// - Ashik et al., "When LLMs Lag Behind: Knowledge Conflicts from Evolving
-//   APIs in Code Generation": https://arxiv.org/abs/2604.09515
-// - Huynh et al., "Large Language Models for Code Generation: A
-//   Comprehensive Survey of Challenges, Techniques, Evaluation, and
-//   Applications": https://arxiv.org/abs/2503.01245
-// - Lee et al., "Hallucination by Code Generation LLMs: Taxonomy,
-//   Benchmarks, Mitigation, and Challenges": https://arxiv.org/abs/2504.20799
-// - Liu et al., "Exploring and Evaluating Hallucinations in LLM-Powered Code
-//   Generation": https://arxiv.org/abs/2404.00971
-// - Tian et al., "CodeHalu: Investigating Code Hallucinations in LLMs via
-//   Execution-based Verification": https://arxiv.org/abs/2405.00253
-// - Lozhkov et al., "StarCoder 2 and The Stack v2: The Next Generation":
-//   https://arxiv.org/abs/2402.19173
-// - Rozière et al., "Code Llama: Open Foundation Models for Code":
-//   https://arxiv.org/abs/2308.12950
-// - Liu et al., "Lost in the Middle: How Language Models Use Long
-//   Contexts": https://arxiv.org/abs/2307.03172
-// - Wei et al., "Chain-of-Thought Prompting Elicits Reasoning in Large
-//   Language Models": https://arxiv.org/abs/2201.11903
-// - Chen et al., "Evaluating Large Language Models Trained on Code":
-//   https://arxiv.org/abs/2107.03374
-// - Austin et al., "Program Synthesis with Large Language Models":
-//   https://arxiv.org/abs/2108.07732
-// - Anthropic, "Prompt engineering overview":
-//   https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview
-// - GitHub Blog, "Inside GitHub: Working with the LLMs behind GitHub
-//   Copilot":
-//   https://github.blog/ai-and-ml/github-copilot/inside-github-working-with-the-llms-behind-github-copilot/
-// - OpenAI, "OpenAI Codex": https://openai.com/index/openai-codex/
-
 # LLM-Assisted Code Generation
 
 ## How LLMs Generate Code
@@ -330,7 +293,7 @@ digraph LostMiddle {
 
 // From internet resource Anthropic, "Prompt engineering overview"
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - @Components@ of a **well-formed code prompt**:
   - _System prompt_: role, conventions, constraints
   - _Context_: the specific files or snippets the task needs
@@ -540,3 +503,55 @@ mindmap
   generating a confident but wrong one?
 - Where is the boundary between an ambiguous spec the model should ask about and
   one it is reasonable to resolve with a default?
+
+* References
+
+- Alammar et al., "Hands-On Large Language Models: Language Understanding and
+  Generation":
+  https://www.oreilly.com/library/view/hands-on-large-language/9781098150952/
+
+- Taulli, "AI-Assisted Programming: Better Planning, Coding, Testing, and
+  Deployment":
+  https://www.oreilly.com/library/view/ai-assisted-programming/9781098164553/
+
+- Ashik et al., "When LLMs Lag Behind: Knowledge Conflicts from Evolving APIs in
+  Code Generation": https://arxiv.org/abs/2604.09515
+
+- Huynh et al., "Large Language Models for Code Generation: A Comprehensive
+  Survey of Challenges, Techniques, Evaluation, and Applications":
+  https://arxiv.org/abs/2503.01245
+
+- Lee et al., "Hallucination by Code Generation LLMs: Taxonomy, Benchmarks,
+  Mitigation, and Challenges": https://arxiv.org/abs/2504.20799
+
+- Liu et al., "Exploring and Evaluating Hallucinations in LLM-Powered Code
+  Generation": https://arxiv.org/abs/2404.00971
+
+- Tian et al., "CodeHalu: Investigating Code Hallucinations in LLMs via
+  Execution-based Verification": https://arxiv.org/abs/2405.00253
+
+- Lozhkov et al., "StarCoder 2 and The Stack v2: The Next Generation":
+  https://arxiv.org/abs/2402.19173
+
+- Rozière et al., "Code Llama: Open Foundation Models for Code":
+  https://arxiv.org/abs/2308.12950
+
+- Liu et al., "Lost in the Middle: How Language Models Use Long Contexts":
+  https://arxiv.org/abs/2307.03172
+
+- Wei et al., "Chain-of-Thought Prompting Elicits Reasoning in Large Language
+  Models": https://arxiv.org/abs/2201.11903
+
+- Chen et al., "Evaluating Large Language Models Trained on Code":
+  https://arxiv.org/abs/2107.03374
+
+- Austin et al., "Program Synthesis with Large Language Models":
+  https://arxiv.org/abs/2108.07732
+
+- Anthropic, "Prompt engineering overview":
+  https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview
+
+- GitHub Blog, "Inside GitHub: Working with the LLMs behind GitHub Copilot":
+  https://github.blog/ai-and-ml/github-copilot/inside-github-working-with-the-llms-behind-github-copilot/
+
+- OpenAI, "OpenAI Codex": https://openai.com/index/openai-codex/

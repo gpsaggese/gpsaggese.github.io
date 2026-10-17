@@ -2,30 +2,7 @@
 // course_title=AI Software Engineering
 // lesson_title=Lesson 05.1: Tools for AI-Assisted Software Development
 // slides_engine=typst
-// References:
-// - Causify, "The Causify AIgentic Development System":
-//   helpers_root/papers/AIgentic_Development_System
-// - Causify, "helpers" development system documentation:
-//   helpers_root/docs
-// - Procida, "Diataxis: A systematic framework for technical
-//   documentation": https://diataxis.fr/
-// - Google, "Engineering Practices: Code Review":
-//   https://google.github.io/eng-practices/review/
-// - Potvin and Levenberg, "Why Google Stores Billions of Lines of Code in a
-//   Single Repository" (CACM, 2016): https://research.google/pubs/pub45424/
-// - Meta, Microsoft, and Uber engineering blogs on monorepo vs. multi-repo
-//   practice at scale
-// - Anthropic, "Claude Code: Remote Control":
-//   https://code.claude.com/docs/en/remote-control
-// - Anthropic, "Claude Code: Security Guidance":
-//   https://code.claude.com/docs/en/security-guidance
-// - Gitleaks, "Gitleaks Action":
-//   https://github.com/gitleaks/gitleaks-action
-// - Semgrep, "Semgrep Documentation": https://semgrep.dev/docs/
-// - Allure, "Allure Report Documentation": https://allurereport.org/docs/
-// - Codecov, "Codecov Documentation": https://docs.codecov.com/
-// - Petazzoni, "Do not use Docker-in-Docker for CI":
-//   https://jpetazzo.github.io/2015/09/03/do-not-use-docker-in-docker-for-ci/
+
 // TODO(gp): At the end of each part add part of the table from
 // book_AI_Software_Engineering/lectures_source/Lesson05.1_Tools.tools_reference.md
 // TODO(gp): List of skills and rules organized and standardized
@@ -340,7 +317,7 @@
 
 * Single vs Multiple Repo
 
-// From helpers_root/docs/tools/all.integrate_repos.how_to_guide.md
+// From helpers_root/docs/tools/git/all.integrate_repos.how_to_guide.md
 // From paper "The Causify AIgentic Development System", Part 2
 
 - @Problem@: Teams want the _modularity_ of many repositories and the _environment
@@ -374,7 +351,7 @@
 // From paper "The Causify AIgentic Development System", Parts 2 and 4
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=54%}
 
 - @Definition@: A directory is **runnable** when it carries its container and
   dependencies, so that it can be deployed as a unit
@@ -453,8 +430,8 @@ digraph RunnableRepo {
 
 * Package Structure and Import Conventions
 
-// From helpers_root/docs/tools/all.imports_and_packages.how_to_guide.md
-// From helpers_root/docs/tools/all.import_check.reference.md
+// From helpers_root/docs/tools/codebase/all.imports_and_packages.how_to_guide.md
+// From helpers_root/docs/tools/codebase/all.import_check.reference.md
 
 - @Goal@: Python packages simplify client imports, hide which file holds the code,
   group related units, and make import loops preventable
@@ -602,7 +579,7 @@ digraph RunnableRepo {
 // helpers_root/docs/tools/docker/all.dind_and_sibling_containers.how_to_guide.md
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=54%}
 
 // TODO(ai_gp): Too much details, point to blog and documentation
 
@@ -782,7 +759,7 @@ digraph Containers {
 
 * Automating PR Review with AI (1/2)
 
-// From helpers_root/docs/tools/all.ai_review.how_to_guide.md
+// From helpers_root/docs/tools/ai/all.ai_review.how_to_guide.md
 
 - @Goal@: Turn a review pass into a list of located, actionable comments instead of
   prose
@@ -808,8 +785,8 @@ digraph Containers {
 
 * Automating PR Review with AI (2/2)
 
-// From helpers_root/docs/tools/all.code_review_tools.reference.md
-// From helpers_root/docs/code_guidelines/all.code_review.how_to_guide.md
+// From helpers_root/docs/tools/ai/all.code_review_tools.reference.md
+// From helpers_root/docs/coding/all.code_review.how_to_guide.md
 
 - @Examples@: Hosted review systems
   - _GitHub Copilot Code Review_: In-platform, minimal setup, shallow analysis
@@ -1009,7 +986,7 @@ digraph AgenticLoop {
 // From helpers_root/docs/tools/git/all.git_hooks.how_to_guide.md
 
 ::: columns
-:::: {.column width=54%}
+:::: {.column width=58%}
 
 - @Definition@: A **git hook** is a script Git runs around an event such as a commit
 
@@ -1158,8 +1135,8 @@ digraph QualityGates {
 
 * Code Coverage Tracking and Enforcement
 
-// From helpers_root/docs/tools/all.codecov.how_to_guide.md
-// From helpers_root/docs/tools/all.code_coverage_subprocess.how_to_guide.md
+// From helpers_root/docs/tools/testing_profiling/all.codecov.how_to_guide.md
+// From helpers_root/docs/tools/testing_profiling/all.code_coverage_subprocess.how_to_guide.md
 
 - @Definition@: Coverage is collected per **test suite**, and each suite uploads
   under its own flag
@@ -1353,7 +1330,7 @@ digraph QualityGates {
 
 * Invoke Workflows: A Centralized Task Registry
 
-// From helpers_root/docs/tools/all.invoke_workflows.how_to_guide.md
+// From helpers_root/docs/tools/invoke/all.invoke_workflows.how_to_guide.md
 // From paper "The Causify AIgentic Development System", Part 4
 
 - @Definition@: `invoke` provides Makefile-like targets written in Python
@@ -1454,7 +1431,7 @@ digraph QualityGates {
 // From helpers_root/docs/tools/dev_system/all.devops_docker.reference.md
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=54%}
 
 - @Definition@: A **stage** is a step in the release workflow of an image
   - _local_: A private release candidate for one developer or server
@@ -1652,3 +1629,39 @@ digraph ReleaseFlow {
 // TODO(gp): Look into governance/provenance frameworks for AI-authored code:
 //   SLSA build provenance, org audit-trail and policy tooling, and published
 //   responsible-AI-coding guidelines
+
+* References
+
+- Causify, "The Causify AIgentic Development System":
+  helpers_root/papers/AIgentic_Development_System
+
+- Causify, "helpers" development system documentation: helpers_root/docs
+
+- Procida, "Diataxis: A systematic framework for technical documentation":
+  https://diataxis.fr/
+
+- Google, "Engineering Practices: Code Review":
+  https://google.github.io/eng-practices/review/
+
+- Potvin and Levenberg, "Why Google Stores Billions of Lines of Code in a Single
+  Repository" (CACM, 2016): https://research.google/pubs/pub45424/
+
+- Meta, Microsoft, and Uber engineering blogs on monorepo vs. multi-repo
+  practice at scale
+
+- Anthropic, "Claude Code: Remote Control":
+  https://code.claude.com/docs/en/remote-control
+
+- Anthropic, "Claude Code: Security Guidance":
+  https://code.claude.com/docs/en/security-guidance
+
+- Gitleaks, "Gitleaks Action": https://github.com/gitleaks/gitleaks-action
+
+- Semgrep, "Semgrep Documentation": https://semgrep.dev/docs/
+
+- Allure, "Allure Report Documentation": https://allurereport.org/docs/
+
+- Codecov, "Codecov Documentation": https://docs.codecov.com/
+
+- Petazzoni, "Do not use Docker-in-Docker for CI":
+  https://jpetazzo.github.io/2015/09/03/do-not-use-docker-in-docker-for-ci/

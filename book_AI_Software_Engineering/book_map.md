@@ -23,24 +23,24 @@
 ## Short TOC
 - The sequence of the parts in the book is:
   - Foundations of AI-Assisted Coding
-    - 01, LLM-Assisted Code Generation
-    - 02, AI Pair Programming Workflows
-    - 03, Prompt Engineering for Code
-    - 04, Retrieval-Augmented Generation for Codebases
+    - 01: LLM-Assisted Code Generation
+    - 02: AI Pair Programming Workflows
+    - 03: Prompt Engineering for Code
+    - 04: Retrieval-Augmented Generation for Codebases
   - AI Across the Development Lifecycle
-    - 05, AI Code Review
-    - 06, Test Generation and Coverage with AI
-    - 07, Multi-Agent Systems for Software Tasks
-    - 08, AI-Driven Refactoring and Legacy Code Migration
-    - 09, Debugging with AI
+    - 05: AI Code Review
+    - 06: Test Generation and Coverage with AI
+    - 07: Multi-Agent Systems for Software Tasks
+    - 08: AI-Driven Refactoring and Legacy Code Migration
+    - 09: Debugging with AI
   - Building, Evaluating, and Deploying AI Coding Systems
-    - 10, Fine-Tuning and Adapting Models for Codebases
-    - 11, Evaluation of AI Coding Tools
-    - 12, AI in CI/CD
+    - 10: Fine-Tuning and Adapting Models for Codebases
+    - 11: Evaluation of AI Coding Tools
+    - 12: AI in CI/CD
   - Trust, Collaboration, and Governance
-    - 13, Trust, Verification, and Hallucination Risks
-    - 14, Human-AI Collaboration Patterns
-    - 15, Ethics, IP, and Security of AI-Generated Software
+    - 13: Trust, Verification, and Hallucination Risks
+    - 14: Human-AI Collaboration Patterns
+    - 15: Ethics, IP, and Security of AI-Generated Software
 
 ## All Lesson Materials
 // No `generate_all_tocs.sh` exists yet for this book (see TODOs): list is
@@ -59,24 +59,24 @@
 | --------------------------------------------- | ------------------------------------------------------ | -------- | --------- | -------- | ---- |
 |                                               |                                                        |          |           |          |      |
 | **Foundations of AI-Assisted Coding**         |                                                        |          |           |          |      |
-| 01. LLM-Assisted Code Generation              | Lesson01.1_LLM_Assisted_Code_Generation.txt           | 100%     |           |          |      |
-| 02. AI Pair Programming Workflows             | Lesson02.1_AI_Pair_Programming_Workflows.txt          | 100%     |           |          |      |
-| 03. Prompt Engineering for Code               | Lesson03.1_Prompt_Engineering_for_Code.txt            | 100%     |           |          |      |
-| 04. Retrieval-Augmented Generation for Codebases | N/A                                                 |          |           |          |      |
+| 01: LLM-Assisted Code Generation              | Lesson01.1_LLM_Assisted_Code_Generation.txt           | 100%     |           |          |      |
+| 02: AI Pair Programming Workflows             | Lesson02.1_AI_Pair_Programming_Workflows.txt          | 100%     |           |          |      |
+| 03: Prompt Engineering for Code               | Lesson03.1_Prompt_Engineering_for_Code.txt            | 100%     |           |          |      |
+| 04: Retrieval-Augmented Generation for Codebases | N/A                                                 |          |           |          |      |
 | **AI Across the Development Lifecycle**       |                                                        |          |           |          |      |
-| 05. AI Code Review                            | N/A                                                    |          |           |          |      |
-| 06. Test Generation and Coverage with AI      | N/A                                                    |          |           |          |      |
-| 07. Multi-Agent Systems for Software Tasks    | N/A                                                    |          |           |          |      |
-| 08. AI-Driven Refactoring and Legacy Code Migration | N/A                                              |          |           |          |      |
-| 09. Debugging with AI                         | N/A                                                    |          |           |          |      |
+| 05: AI Code Review                            | N/A                                                    |          |           |          |      |
+| 06: Test Generation and Coverage with AI      | N/A                                                    |          |           |          |      |
+| 07: Multi-Agent Systems for Software Tasks    | N/A                                                    |          |           |          |      |
+| 08: AI-Driven Refactoring and Legacy Code Migration | N/A                                              |          |           |          |      |
+| 09: Debugging with AI                         | N/A                                                    |          |           |          |      |
 | **Building, Evaluating, and Deploying AI Coding Systems** |                                            |          |           |          |      |
-| 10. Fine-Tuning and Adapting Models for Codebases | N/A                                                |          |           |          |      |
-| 11. Evaluation of AI Coding Tools             | N/A                                                    |          |           |          |      |
-| 12. AI in CI/CD                               | N/A                               | 5%       |           |          |      |
+| 10: Fine-Tuning and Adapting Models for Codebases | N/A                                                |          |           |          |      |
+| 11: Evaluation of AI Coding Tools             | N/A                                                    |          |           |          |      |
+| 12: AI in CI/CD                               | N/A                               | 5%       |           |          |      |
 | **Trust, Collaboration, and Governance**      |                                                        |          |           |          |      |
-| 13. Trust, Verification, and Hallucination Risks | N/A                                                  |          |           |          |      |
-| 14. Human-AI Collaboration Patterns           | Lesson14.1_Human_AI_Collaboration_Patterns.txt        | 100%     |           |          |      |
-| 15. Ethics, IP, and Security of AI-Generated Software | N/A                                             |          |           |          |      |
+| 13: Trust, Verification, and Hallucination Risks | N/A                                                  |          |           |          |      |
+| 14: Human-AI Collaboration Patterns           | Lesson14.1_Human_AI_Collaboration_Patterns.txt        | 100%     |           |          |      |
+| 15: Ethics, IP, and Security of AI-Generated Software | N/A                                             |          |           |          |      |
 
 # Detailed TOC
 

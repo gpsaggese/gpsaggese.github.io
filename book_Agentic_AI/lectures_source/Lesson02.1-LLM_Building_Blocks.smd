@@ -79,7 +79,7 @@
 * The Transformer: High-Level Architecture
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=65%}
 - @Definition@: a decoder-only transformer is a stack of $N$ identical
   _blocks_ applied to token embeddings
   - Each block mixes information across positions (attention) and transforms
@@ -342,7 +342,7 @@ digraph Transformer {
 
 // TODO(ai_gp): Convert it into a table
 ::: columns
-:::: {.column width=48%}
+:::: {.column width=52%}
 **Autoregressive (GPT-style)**
 
 - Predicts the next token left-to-right
