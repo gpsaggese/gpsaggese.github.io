@@ -103,7 +103,9 @@ def parse_bearer(authorization: Optional[str]) -> str:
     """
     if not authorization or not authorization.startswith("Bearer "):
         raise RoutingError(
-            401, "invalid_api_key", "Missing 'Authorization: Bearer <key>' header"
+            401,
+            "invalid_api_key",
+            "Missing 'Authorization: Bearer <key>' header",
         )
     key = authorization[len("Bearer ") :].strip()
     if not key:
@@ -200,6 +202,49 @@ async def resolve_route(
             404, "contract_not_found", f"Contract {contract_id} not found"
         )
     _, state, l_max, seller_id, slug, name = row
+    if state != ACTIVE:
+        raise RoutingError(
+            409,
+            "contract_not_active",
+            f"Contract {contract_id} is {state}, not ACTIVE",
+        )
+    route = Route(
+        buyer_id=buyer_id,
+        contract_id=contract_id,
+        seller_id=seller_id,
+        provider_slug=slug,
+        provider_name=name,
+        l_max=float(l_max),
+    )
+    _LOG.debug("return=%s", route)
+    return route
+
+
+async def resolve_internal_route(
+    pool: psycopg_pool.AsyncConnectionPool,
+    contract_id: int,
+) -> Route:
+    """
+    Resolve an ACTIVE contract for a trusted internal service.
+
+    Unlike `resolve_route()`, this path does not authenticate a buyer because
+    the scheduled prober is acting as Noesis itself.
+    """
+    _LOG.debug(hprint.to_str("contract_id"))
+    async with pool.connection() as conn:
+        cursor = await conn.execute(
+            "SELECT c.buyer_account_id, c.state, c.l_max,"
+            "       s.seller_id, s.provider_slug, s.provider_name "
+            "FROM contracts c JOIN sellers s ON s.seller_id = c.seller_id "
+            "WHERE c.contract_id = %s",
+            (contract_id,),
+        )
+        row = await cursor.fetchone()
+    if row is None:
+        raise RoutingError(
+            404, "contract_not_found", f"Contract {contract_id} not found"
+        )
+    buyer_id, state, l_max, seller_id, slug, name = row
     if state != ACTIVE:
         raise RoutingError(
             409,

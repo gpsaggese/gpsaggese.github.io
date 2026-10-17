@@ -2,13 +2,21 @@
 Test canary-bank validation and secret deterministic selection.
 """
 
+import collections
 import json
 import os
 
 import helpers.hunit_test as hunitest
 
 import research.Noesis.checker.checker_canaries as rnochcan
+import research.Noesis.checker.checker_grading as rnochgra
 import research.Noesis.checker.checker_models as rnochmod
+import research.Noesis.scripts.generate_canary_bank as rnscaba
+
+_NOESIS_DIR = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+)
+_PRODUCTION_BANK_DIR = os.path.join(_NOESIS_DIR, "data", "canaries")
 
 
 def _canary(identifier: str, family: str = "math") -> rnochmod.Canary:
@@ -72,6 +80,55 @@ class Test_load_canary_bank(hunitest.TestCase):
             file_.write("{}\nnot-json\n")
         with self.assertRaisesRegex(rnochcan.CanaryBankError, "bank.jsonl:1"):
             rnochcan.load_canary_bank(self.get_scratch_space(), "v1")
+
+
+# #############################################################################
+# Test_production_canary_bank
+# #############################################################################
+
+
+class Test_production_canary_bank(hunitest.TestCase):
+    """
+    Test the committed v1 candidate bank is complete and reproducible.
+    """
+
+    def test1(self) -> None:
+        """
+        Test the bank has 300 valid, balanced, self-grading candidates.
+        """
+        canaries = rnochcan.load_canary_bank(_PRODUCTION_BANK_DIR, "v1")
+        family_counts = collections.Counter(canary.family for canary in canaries)
+        self.assertEqual(len(canaries), 300)
+        self.assertEqual(
+            family_counts,
+            {
+                "arithmetic": 50,
+                "code-trace": 50,
+                "modular": 50,
+                "ordering": 50,
+                "string": 50,
+                "table": 50,
+            },
+        )
+        grades = [
+            rnochgra.grade_response(canary, canary.answer) for canary in canaries
+        ]
+        self.assertTrue(all(grade.correct for grade in grades))
+
+    def test2(self) -> None:
+        """
+        Test committed records exactly match the deterministic generator.
+        """
+        actual = rnochcan.load_canary_bank(_PRODUCTION_BANK_DIR, "v1")
+        generated_records = [
+            record
+            for records in rnscaba.build_bank().values()
+            for record in records
+        ]
+        expected = tuple(
+            rnochcan.parse_canary(record) for record in generated_records
+        )
+        self.assertEqual(actual, expected)
 
 
 # #############################################################################

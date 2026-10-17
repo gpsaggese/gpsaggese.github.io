@@ -5,10 +5,11 @@
 
 ## Description of Files
 
-| File                  | Description                                                      |
-| :-------------------- | :--------------------------------------------------------------- |
-| `detection_math.py`   | Exact false-alarm and detection probabilities of the violation rules |
-| `spike_openrouter.py` | Measure pinned OpenRouter providers for one model; writes `docs/findings/` |
+| File                      | Description                                       |
+| :------------------------ | :------------------------------------------------ |
+| `detection_math.py`       | Exact false-alarm and detection probabilities     |
+| `generate_canary_bank.py` | Reproducibly generate versioned canary candidates |
+| `spike_openrouter.py`     | Measure pinned OpenRouter providers for one model |
 
 ## Description of Executables
 
@@ -16,6 +17,13 @@
 
   ```bash
   > scripts/detection_math.py
+  ```
+
+- Regenerate the v1 canary candidate bank:
+
+  ```bash
+  > python3 research/Noesis/scripts/generate_canary_bank.py \
+      --output-dir research/Noesis/data/canaries
   ```
 
 - Dry run of the OpenRouter spike (no key, no spend):

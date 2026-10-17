@@ -54,6 +54,7 @@ async def log_request(
     is_canary: bool = False,
     canary_id: Optional[str] = None,
     canary_correct: Optional[bool] = None,
+    grader_version: Optional[str] = None,
     fault_injected: bool = False,
 ) -> int:
     """
@@ -65,6 +66,7 @@ async def log_request(
     :param result: what came back
     :param is_canary: set by the prober (milestone 2) together with
         `canary_id` and `canary_correct`
+    :param grader_version: deterministic grader version for a canary
     :param fault_injected: set when a demo fault altered this call
     :return: the new `request_id`
     """
@@ -74,11 +76,11 @@ async def log_request(
             "INSERT INTO requests ("
             " contract_id, seller_id, pinned_provider, actual_provider,"
             " attribution_mismatch, model_requested, model_served,"
-            " is_canary, canary_id, canary_correct,"
+            " is_canary, canary_id, canary_correct, grader_version,"
             " prompt, completion, prompt_tokens, completion_tokens,"
             " latency_ms, status, cost_usd, fault_injected"
             ") VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s,"
-            "          %s, %s, %s, %s, %s, %s, %s, %s) "
+            "          %s, %s, %s, %s, %s, %s, %s, %s, %s) "
             "RETURNING request_id",
             (
                 route.contract_id,
@@ -91,6 +93,7 @@ async def log_request(
                 is_canary,
                 canary_id,
                 canary_correct,
+                grader_version,
                 json.dumps(call.messages),
                 result.text,
                 result.prompt_tokens,

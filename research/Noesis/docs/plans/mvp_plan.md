@@ -86,9 +86,9 @@ Every task: branch → PR → tests green in CI → one reviewer (another teamma
 
 | ID | Task | Acceptance | GP-PR |
 |---|---|---|---|
-| T2.1 | 🟨 PR #604: canary-bank validation, secret balanced selection, normalizers, and exact-match grader; production bank ≥ 300 (`data/canaries/*.jsonl`) remains | Grader unit tests incl. number formats ("1,000" = "1000"); bank has ≥ 300 records | PR_S11 (simplified) |
-| T2.2 | 🟨 PR #604 added the calibration persistence schema. Run each canary 3× per healthy provider + 3× on the 8B model. Keep healthy=100%, weak ≤ 60%. Also measure latency p95 per provider → set `l_max` | `docs/findings/calibration.md`: survivors ≥ 150, weak-model accuracy on survivors, per-provider p95, cost | PR_S11 |
-| T2.3 | Prober: for each ACTIVE contract, send `canaries_per_contract` canaries spread over the window, marked `is_canary` server-side only | Integration test with fake provider | new |
+| T2.1 | ✅ Versioned 300-question production candidate bank, validation, secret balanced selection, normalizers, and exact-match grader | Grader unit tests incl. number formats ("1,000" = "1000"); bank has ≥ 300 records | PR_S11 (simplified) |
+| T2.2 | 🟨 Live calibration runner, persistence, survivor gate, activation, and findings generator are implemented. The reviewed paid provider run remains | `docs/findings/calibration.md`: survivors ≥ 150, weak-model accuracy on survivors, per-provider p95, cost | PR_S11 |
+| T2.3 | ✅ For each ACTIVE contract, secret deterministic canaries are spread over its window, atomically claimed, sent as ordinary traffic, graded, and persisted server-side | Integration test with fake provider | new |
 | T2.4 | 🟨 PR #604: immutable evidence, seller-attribution rules, separate `r_lat`/`q` upper bounds, verdicts, and atomic persistence. Window-closing orchestration (n_tasks served or 60 s) remains | Unit tests reproduce `scripts/detection_math.py` cases. Property test: never FAILED when all requests pass | PR_S4, PR_S6 (corrected) |
 | T2.5 | `VerdictSink` interface → reputation (in-process) | Contract test shared with T3.4 | PR_S4 |
 | T2.6 | **Offline replay harness**: generate synthetic request streams (healthy / slowed / weak-model at measured accuracies), run metering, report flag rates | Rates within ±5 pts of analytic numbers over 1,000 simulated contracts | new |

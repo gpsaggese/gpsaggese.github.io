@@ -21,7 +21,8 @@ _CALL = rnogapro.ProviderCall(
 _COLUMNS = (
     "contract_id, seller_id, pinned_provider, actual_provider,"
     " attribution_mismatch, model_requested, model_served, is_canary, canary_id,"
-    " canary_correct, prompt, completion, prompt_tokens, completion_tokens,"
+    " canary_correct, grader_version, prompt, completion, prompt_tokens,"
+    " completion_tokens,"
     " latency_ms, status, cost_usd, fault_injected"
 )
 
@@ -166,6 +167,7 @@ class Test_log_request(hunitest.TestCase):
                 "is_canary": False,
                 "canary_id": None,
                 "canary_correct": None,
+                "grader_version": None,
                 "prompt": json.dumps(_MESSAGES),
                 "completion": "391",
                 "prompt_tokens": 20,
@@ -257,6 +259,7 @@ class Test_log_request(hunitest.TestCase):
                 is_canary=True,
                 canary_id="c-17x23",
                 canary_correct=True,
+                grader_version="m2-v1",
                 fault_injected=True,
             )
             row = await _row(pool, request_id)
@@ -266,9 +269,10 @@ class Test_log_request(hunitest.TestCase):
                     row["is_canary"],
                     row["canary_id"],
                     row["canary_correct"],
+                    row["grader_version"],
                     row["fault_injected"],
                 ),
-                (True, "c-17x23", True, True),
+                (True, "c-17x23", True, "m2-v1", True),
             )
 
         rnctnteut.run_with_clean_db(self, _body)

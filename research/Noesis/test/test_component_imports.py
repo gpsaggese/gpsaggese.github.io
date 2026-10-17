@@ -21,7 +21,14 @@ _NOESIS_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _PREFIX = "research.Noesis."
 
 # Dirs that hold code of one component each.
-_COMPONENTS = ["checker", "common", "gateway", "market", "noesis_platform"]
+_COMPONENTS = [
+    "checker",
+    "common",
+    "gateway",
+    "market",
+    "noesis_platform",
+    "prober",
+]
 
 # Dirs that must have a `README.md`.
 _README_DIRS = _COMPONENTS + ["devops", "docs", "scripts"]
@@ -34,6 +41,7 @@ _ALLOWED: Dict[str, List[str]] = {
     "gateway": ["common"],
     "checker": ["common", "gateway.gateway_providers"],
     "noesis_platform": ["market", "gateway.passthrough_proxy"],
+    "prober": ["checker", "common", "gateway"],
 }
 
 
