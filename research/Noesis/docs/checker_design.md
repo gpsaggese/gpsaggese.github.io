@@ -2,9 +2,9 @@
 
 The checker answers one narrow question: did a seller deliver the latency and
 quality promised by a contract? It converts immutable request records into an
-explainable `PASSED`, `FAILED`, or `INSUFFICIENT` verdict. This PR establishes
-the deterministic logic and persistence boundary; a later PR will run it on a
-schedule and send canary traffic.
+explainable `PASSED`, `FAILED`, or `INSUFFICIENT` verdict. The separate
+`prober/` coordination component calibrates deterministic questions and sends
+hidden canary traffic through active contracts.
 
 ## Evaluation flow
 
@@ -45,12 +45,11 @@ wake on new request/probe events or the deadline, then read the window once.
 All decision logic is pure. Database access is kept at the boundary so replaying
 the same frozen evidence under the same policy version produces the same result.
 
-## Deliberately not in this PR
+## Remaining Integration Work
 
-- Canary generation or the initial canary dataset
-- Live-provider calibration runs
-- The prober/scheduler and window-closing worker
-- Gateway insertion of graded canary responses
+- The reviewed, paid live-provider calibration run and its generated findings
+- The window-closing worker that turns frozen request evidence into a verdict
 - Reputation updates, dashboard views, and alerting
 
-Those pieces build on this contract in separate, reviewable PRs.
+Calibration and scheduled probing are run with
+`python3 -m research.Noesis.prober.prober_cli`; see `prober/README.md`.

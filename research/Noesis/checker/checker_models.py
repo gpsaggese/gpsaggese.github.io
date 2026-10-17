@@ -9,7 +9,7 @@ import research.Noesis.checker.checker_models as rnochmod
 import dataclasses
 import enum
 from datetime import datetime
-from typing import Dict, Optional, Tuple
+from typing import Dict, Mapping, Optional, Tuple
 
 
 class Verdict(str, enum.Enum):
@@ -29,6 +29,15 @@ class CheckerDisposition(str, enum.Enum):
 
     VALID = "VALID"
     CHECKER_UNHEALTHY = "CHECKER_UNHEALTHY"
+
+
+class CalibrationRole(str, enum.Enum):
+    """
+    Represent how a model/provider target is used during calibration.
+    """
+
+    HEALTHY = "HEALTHY"
+    WEAK = "WEAK"
 
 
 @dataclasses.dataclass(frozen=True)
@@ -58,6 +67,107 @@ class GradeResult:
     normalized_expected: Optional[str]
     normalized_actual: Optional[str]
     grader_version: str
+
+
+@dataclasses.dataclass(frozen=True)
+class CalibrationTarget:
+    """
+    Represent one provider/model target used during calibration.
+    """
+
+    role: CalibrationRole
+    provider_slug: str
+    model_id: str
+
+    def __post_init__(self) -> None:
+        if not self.provider_slug:
+            raise ValueError("provider_slug must not be empty")
+        if not self.model_id:
+            raise ValueError("model_id must not be empty")
+
+
+@dataclasses.dataclass(frozen=True)
+class CalibrationObservation:
+    """
+    Represent one graded calibration attempt against one target.
+    """
+
+    canary_id: str
+    target: CalibrationTarget
+    attempt: int
+    provider_status: str
+    correct: Optional[bool]
+    latency_ms: float
+    cost_usd: float
+    response: Optional[str] = None
+
+    def __post_init__(self) -> None:
+        if not self.canary_id:
+            raise ValueError("canary_id must not be empty")
+        if self.attempt < 1:
+            raise ValueError("attempt must be positive")
+        if not self.provider_status:
+            raise ValueError("provider_status must not be empty")
+        if self.latency_ms < 0:
+            raise ValueError("latency_ms must not be negative")
+        if self.cost_usd < 0:
+            raise ValueError("cost_usd must not be negative")
+
+
+@dataclasses.dataclass(frozen=True)
+class CanaryCalibration:
+    """
+    Represent the calibration decision for one candidate canary.
+    """
+
+    canary_id: str
+    healthy_accuracy: Optional[float]
+    weak_accuracy: Optional[float]
+    accepted: bool
+    reason: str
+
+
+@dataclasses.dataclass(frozen=True)
+class CalibrationPolicy:
+    """
+    Represent the reproducible settings for one calibration run.
+    """
+
+    repetitions: int = 3
+    max_tokens: int = 64
+    timeout_s: float = 15.0
+    concurrency: int = 5
+    healthy_required_accuracy: float = 1.0
+    weak_maximum_accuracy: float = 0.6
+
+    def __post_init__(self) -> None:
+        if self.repetitions < 1:
+            raise ValueError("repetitions must be positive")
+        if self.max_tokens < 1:
+            raise ValueError("max_tokens must be positive")
+        if self.timeout_s <= 0:
+            raise ValueError("timeout_s must be positive")
+        if self.concurrency < 1:
+            raise ValueError("concurrency must be positive")
+        if not 0 <= self.healthy_required_accuracy <= 1:
+            raise ValueError(
+                "healthy_required_accuracy must be between zero and one"
+            )
+        if not 0 <= self.weak_maximum_accuracy <= 1:
+            raise ValueError(
+                "weak_maximum_accuracy must be between zero and one"
+            )
+
+
+@dataclasses.dataclass(frozen=True)
+class CalibrationExecution:
+    """
+    Represent all reproducible outputs of one calibration execution.
+    """
+
+    observations: Tuple[CalibrationObservation, ...]
+    decisions: Tuple[CanaryCalibration, ...]
+    summary: Mapping[str, object]
 
 
 @dataclasses.dataclass(frozen=True)
@@ -96,6 +206,63 @@ class ContractWindow:
     checker_policy: str
     window_start: Optional[datetime]
     window_end: Optional[datetime]
+
+
+@dataclasses.dataclass(frozen=True)
+class ProbeScheduleItem:
+    """
+    Represent one deterministic canary slot in a contract window.
+    """
+
+    contract_id: int
+    probe_slot: int
+    canary_id: str
+    due_at: datetime
+
+    def __post_init__(self) -> None:
+        if self.contract_id <= 0:
+            raise ValueError("contract_id must be positive")
+        if self.probe_slot < 1:
+            raise ValueError("probe_slot must be positive")
+        if not self.canary_id:
+            raise ValueError("canary_id must not be empty")
+        if self.due_at.utcoffset() is None:
+            raise ValueError("due_at must be timezone-aware")
+
+
+@dataclasses.dataclass(frozen=True)
+class ProbePolicy:
+    """
+    Represent provider-call settings used by the scheduled prober.
+    """
+
+    bank_version: str
+    model_id: str
+    max_tokens: int = 64
+    timeout_multiplier: float = 2.0
+
+    def __post_init__(self) -> None:
+        if not self.bank_version:
+            raise ValueError("bank_version must not be empty")
+        if not self.model_id:
+            raise ValueError("model_id must not be empty")
+        if self.max_tokens < 1:
+            raise ValueError("max_tokens must be positive")
+        if self.timeout_multiplier <= 0:
+            raise ValueError("timeout_multiplier must be positive")
+
+
+@dataclasses.dataclass(frozen=True)
+class ProbeExecution:
+    """
+    Represent the persisted outcome of one claimed probe.
+    """
+
+    probe_id: int
+    request_id: int
+    provider_status: str
+    correct: Optional[bool]
+    grader_reason: str
 
 
 @dataclasses.dataclass(frozen=True)

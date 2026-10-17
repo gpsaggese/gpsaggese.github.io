@@ -17,12 +17,17 @@
 
 | File                    | Description                                              | Cluster    |
 | :---------------------- | :------------------------------------------------------- | :--------- |
+| `checker_calibration.py` | Pure acceptance decisions for calibration observations  | Canaries   |
+| `checker_calibration_report.py` | Markdown findings from one completed calibration | Canaries |
+| `checker_calibration_runtime.py` | Concurrent provider calls and persisted calibration | Canaries |
+| `checker_capability.py` | Pluggable measurement protocol and exact-match implementation | Canaries |
 | `checker_canaries.py`   | Canary-bank validation and secret balanced selection     | Canaries   |
 | `checker_evidence.py`   | Seller-attributable evidence and exclusion rules         | Evidence   |
 | `checker_grading.py`    | Versioned deterministic answer normalization and grading | Canaries   |
 | `checker_models.py`     | Immutable inputs and outputs shared by the checker       | Models     |
+| `checker_probe_schedule.py` | Secret, balanced probe timing across a contract window | Canaries |
 | `checker_statistics.py` | Wilson and exact one-sided upper bounds                  | Statistics |
-| `checker_store.py`      | PostgreSQL reads, probe claims, and atomic finalization  | Database   |
+| `checker_store.py`      | Calibration, probe, evidence, and verdict persistence    | Database   |
 | `checker_verdicts.py`   | Evidence minima, failure precedence, and verdicts        | Verdicts   |
 
 ## Description of Architecture

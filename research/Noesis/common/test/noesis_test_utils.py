@@ -78,7 +78,8 @@ def run_with_clean_db(
             await rnonodb.apply_migrations(pool)
             async with pool.connection() as conn:
                 await conn.execute(
-                    "TRUNCATE accounts, sellers, rounds, canaries CASCADE"
+                    "TRUNCATE accounts, sellers, rounds, canaries,"
+                    " canary_calibration_runs CASCADE"
                 )
             return await body(pool)
         finally:

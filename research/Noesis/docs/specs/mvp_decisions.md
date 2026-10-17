@@ -40,11 +40,24 @@
 
 - **Decision**: Noesis injects known-answer questions under each contract; only
   questions every healthy provider gets right and the weaker 8B model mostly misses
-  are kept
+  are kept. Calibration runs every candidate three times per target, requires 100%
+  healthy-target accuracy and at most 60% weak-target accuracy, and activates a bank
+  only when at least 150 candidates survive
 - **Why**: real buyers won't label their traffic; uncalibrated questions make the
   checker's own error rate unknown. Evidence: on 10/4 the 8B model answered an easy
   probe ("9.9 vs 9.11") correctly, so easy questions can't expose a model swap
 - **Alternatives**: buyer-mixed canaries (PRD v0.1); LLM judge (later)
+
+### D-15. Canary schedules are secret, deterministic, and server-owned
+
+- **Decision**: derive balanced canary choices and times from an HMAC secret plus
+  contract identity. Send only the ordinary prompt to the provider; keep canary ID,
+  expected answer, grade, and grader version in Noesis-owned request evidence
+- **Why**: deterministic schedules are reproducible and testable, while the secret
+  prevents sellers from predicting which requests are probes. Server-only metadata
+  prevents a provider from recognizing a canary from the request envelope
+- **Alternatives**: fresh process-local randomness (hard to replay); public seeded
+  schedules (predictable); marking probes in provider requests (easy to game)
 
 ## Gateway
 

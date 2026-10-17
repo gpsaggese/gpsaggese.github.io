@@ -105,8 +105,9 @@ per-char cost, log without contract id. `/completions` is a bespoke shape.
 
 ### 5.2 Metering — `noesis/metering` (new; GP `PR_S4`, `PR_S6`, `PR_S11`)
 
-Status: checker foundation implemented; prober, calibration runner, and window
-orchestration remain. See `checker_design.md`.
+Status: checker foundation, calibration runner, and scheduled prober are
+implemented. The reviewed paid calibration run and window-closing orchestration
+remain. See `checker_design.md`.
 
 **Two separate reliability measures per contract κ over its window W:**
 

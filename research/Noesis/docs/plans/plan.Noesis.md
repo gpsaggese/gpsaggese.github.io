@@ -498,10 +498,10 @@
 
 ### `PR_S11`: [ ] Capability-measurement Estimator (hat-c(x))
 
-- Status (2026-10-12): PR #604 established the deterministic benchmark-probe
-  implementation: versioned normalizers, exact-match grading, bank validation, and
-  secret balanced selection. The production canary bank, live-provider calibration,
-  and scheduled probing remain open.
+- Status (2026-10-17): PR #604 established versioned normalizers, exact-match
+  grading, bank validation, and secret balanced selection. The follow-up adds the
+  300-question candidate bank, live calibration/activation command, generated
+  findings, and scheduled probing. The reviewed paid calibration run remains open.
 - Background: `papers/Noesis/01_introduction.tex` Table~tab:components lists
   capability measurement as one of the five pluggable components, instantiated in the
   paper as "a verifier model, benchmark probe, or reference-model agreement," with a

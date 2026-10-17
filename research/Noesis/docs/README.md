@@ -3,7 +3,7 @@
 - All docs of `research/Noesis`, grouped by kind
 - Start with `onboarding.md`, then `architecture.md`
 - Component READMEs live next to the code: `../checker/`, `../common/`, `../gateway/`,
-  `../market/`, `../noesis_platform/`
+  `../market/`, `../noesis_platform/`, `../prober/`
 
 ## Structure of the Dir
 
@@ -13,6 +13,9 @@
 | `specs/`    | What and why: MVP requirements, decisions, per-PR implementation specs |
 | `notes/`    | Code walkthroughs, AI prompts, dev notes, TODOs                |
 | `findings/` | Raw measurements, e.g., the OpenRouter provider spike          |
+
+The canary calibration command generates `findings/calibration.md`; a pending
+placeholder is committed until the reviewed paid run is executed.
 
 ## Description of Files
 
