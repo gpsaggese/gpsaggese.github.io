@@ -1,0 +1,22 @@
+{
+  "date": "2026-09-22",
+  "unit_tests": {
+    "passed": 10,
+    "failed": 0
+  },
+  "syntax_compile": "passed",
+  "dry_runs": [
+    "sd15",
+    "sdxl",
+    "sd35",
+    "flux"
+  ],
+  "official_geneval_prompts": 553,
+  "samples_per_prompt": 4,
+  "planned_images": 8848,
+  "GPU_generation": "NOT RUN: no CUDA GPU or PyTorch in workspace",
+  "official_detector_evaluation": "NOT RUN: requires separate GenEval GPU environment",
+  "AR_editing": "Phase 2; not implemented",
+  "model_weights": "Not downloaded; revisions resolved from official HF API",
+  "dependency_stack": "Pinned proposal, not GPU-validated"
+}
