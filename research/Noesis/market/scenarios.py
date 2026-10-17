@@ -25,6 +25,7 @@ _LOG = logging.getLogger(__name__)
 # Scenario type
 # #############################################################################
 
+# TODO(giles): Need a short comment to explain what it is, what it does
 Scenario = Tuple[List[rnbacaau.Bid], List[rnbacaau.Ask]]
 
 
@@ -33,6 +34,10 @@ Scenario = Tuple[List[rnbacaau.Bid], List[rnbacaau.Ask]]
 # #############################################################################
 
 
+# TODO(giles): You can run /coding.improve_code_for_humans which makes the
+# code easier for humans (adding comments, etc).
+# The rule is that each "chunk" of code of 5-10 lines should have a comment
+# explaining what to do.
 def _make_regime(
     seed: int,
     n_bids: int,
@@ -54,6 +59,7 @@ def _make_regime(
     :param price_scale: positive integer price multiplier
     :return: fresh bids and asks with unique participant ids
     """
+    # TODO(giles): FYI there is a also a function to print the entire func signature.
     _LOG.debug(hprint.to_str("seed n_bids n_asks tiers regime"))
     for name, value in (
         ("seed", seed),
@@ -77,6 +83,9 @@ def _make_regime(
         hdbg.dassert_isinstance(tier, str, "tier names must be strings")
         hdbg.dassert_ne(tier.strip(), "", "tier names must not be blank")
     hdbg.dassert_eq(len(tiers), len(set(tiers)), "tiers must be distinct")
+    # TODO(giles): This needs a comment otherwise one needs to read the entire
+    # code to understand what it does. You want code to have "multiple
+    # level of abstractions". The skill will fix this, but FYI
     rng = random.Random(seed)
     bids: List[rnbacaau.Bid] = []
     asks: List[rnbacaau.Ask] = []
@@ -144,6 +153,10 @@ def make_balanced_scenario(
     quantity_scale: int = 1,
     price_scale: int = 1,
 ) -> Scenario:
+    # TODO(giles): you can remove the default from the docstring because
+    # of DRY and the info is in the interface. You can improve the skills
+    # with this rule.
+    # Same everywhere.
     """
     Generate fully matched demand and supply.
 
@@ -327,6 +340,12 @@ def make_no_cross_scenario(
 # #############################################################################
 
 
+# TODO(giles): Some of the comments are not in the interface. The interface
+# only describes what it does, not how. E.g., the types checking, etc. is
+# redundant with the code. The random.Random(seed) is implementation detail,
+# etc.
+# TODO(giles): Add more comments for the chunks of code (manually or with the
+# skill).
 def make_random_scenario(
     seed: int,
     n_bids: int,

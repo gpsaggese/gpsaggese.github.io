@@ -19,6 +19,10 @@ import research.Noesis.market.scenarios as rnmascen
 _LOG = logging.getLogger(__name__)
 
 
+# TODO(giles): You can use /testing.fix_unit_tests and /coding.factor_common_code
+
+
+# TODO(giles): A bit weird since some of this stuff can be 
 def _check_family_arguments(
     self_: hunitest.TestCase,
     factory: Callable[..., rnmascen.Scenario],
@@ -46,6 +50,9 @@ def _check_family_arguments(
         factory(positional_seed)
 
 
+# TODO(giles): Way more comments! Use the skill.
+# The goal is to let user read the high level comments, instead of reading the
+# entire code.
 def _check_regime(
     self_: hunitest.TestCase,
     factory: Callable[..., rnmascen.Scenario],
@@ -64,6 +71,10 @@ def _check_regime(
     fingerprints = set()
     for seed in range(30):
         for n_bids, n_asks, scale in [(1, 1, 1), (3, 2, 1), (2, 4, 10000)]:
+            # TODO(giles): Not a fan of pytest subtests, since they make it
+            # different to repro. I would factor out the code and then 
+            # have one test method to invocation. Maybe it's a pet peeve.
+            # But we should specify it in the skills.
             with self_.subTest(seed=seed, counts=(n_bids, n_asks), scale=scale):
                 kwargs = dict(
                     n_bids=n_bids,
