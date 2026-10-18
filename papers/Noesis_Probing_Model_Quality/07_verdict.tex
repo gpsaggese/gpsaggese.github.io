@@ -1,0 +1,268 @@
+% ##############################################################################
+\section{From probe results to verdicts}
+\label{sec:verdict}
+
+% ==============================================================================
+\subsection{Evidence classification}
+\label{sec:evidence}
+
+The checker reads request rows of a contract window and classifies each row
+twice, once for latency and once for quality. A row is \emph{eligible} for a
+metric, with a success or a failure, or it is \emph{excluded}, or it reveals a
+\emph{checker error}. Table~\ref{tab:evidence} lists the quality rules.
+Latency rules are similar, except that canary rows are excluded from latency by
+default, because short synthetic prompts would bias the buyer-experienced
+latency downward.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabularx}{\linewidth}{@{}p{0.34\linewidth}p{0.27\linewidth}X@{}}
+    \toprule
+    Row & Classification & Reason code \\
+    \midrule
+    Canary, status \texttt{ok}, grade 1 & eligible, success &
+      \texttt{ELIGIBLE\_CORRECT} \\
+    Canary, status \texttt{ok}, grade 0 & eligible, failure &
+      \texttt{ELIGIBLE\_INCORRECT} \\
+    Canary, timeout or upstream error & eligible, failure &
+      \texttt{ELIGIBLE\_SELLER\_FAILURE} \\
+    Canary, buyer error, gateway error, or spend-cap refusal & excluded &
+      \texttt{EXCLUDED\_BUYER\_ERROR}, \texttt{EXCLUDED\_GATEWAY\_ERROR},
+      \texttt{EXCLUDED\_REFUSED\_CAP} \\
+    Canary answered by a provider other than the pinned one & excluded &
+      \texttt{EXCLUDED\_ATTRIBUTION\_MISMATCH} \\
+    Canary, status \texttt{ok}, grade missing & checker error &
+      \texttt{MISSING\_CANARY\_GRADE} \\
+    Buyer request that carries a grade & checker error &
+      \texttt{UNEXPECTED\_CANARY\_GRADE} \\
+    Any row with an unknown status & checker error &
+      \texttt{UNKNOWN\_REQUEST\_STATUS} \\
+    Buyer request & not applicable to quality & \texttt{NOT\_APPLICABLE} \\
+    \bottomrule
+  \end{tabularx}
+  \caption{Quality classification of request rows (\texttt{classify\_quality}).}
+  \label{tab:evidence}
+\end{table}
+
+The classification implements property P5. Only a provider timeout, an upstream
+error, or a wrong answer from the pinned provider counts against the seller.
+A single checker error, such as a grade that is missing on a successful
+response, makes the whole evidence set unhealthy, and the verdict becomes
+\texttt{INSUFFICIENT} with the disposition \texttt{CHECKER\_UNHEALTHY}. The
+design therefore prefers withholding a verdict to blaming a seller for a
+checker fault.
+
+% ==============================================================================
+\subsection{Bound, rule, and verdict}
+\label{sec:verdict_rule}
+
+For a metric with $s$ successes among $n$ eligible rows, the checker computes a
+one-sided upper confidence bound $U(s, n)$ at confidence $1-\delta$ with
+$\delta = 0.05$. For $n \geq 10$ it uses the Wilson bound
+\begin{equation}
+  \label{eq:wilson}
+  U_{\text{W}}(s, n) = \min\!\left\{1,\
+  \frac{\hat p + \dfrac{z^2}{2n} + z\sqrt{\dfrac{\hat p(1-\hat p)}{n} +
+  \dfrac{z^2}{4n^2}}}{1 + \dfrac{z^2}{n}}\right\},
+  \qquad \hat p = \frac{s}{n},\quad z = \Phi^{-1}(1-\delta),
+\end{equation}
+following Wilson \cite{wilson1927} and the comparison of interval methods by
+Brown, Cai, and DasGupta \cite{brown2001}. For $n < 10$ it uses the exact
+Clopper--Pearson bound \cite{clopper1934}, which is the value $\theta$ with
+$\Pr[\mathrm{Bin}(n, \theta) \leq s] = \delta$, and $U = 1$ when $s = n$. A metric with promised rate $\rho$ (here
+$\rminattr$ for latency and $\qminattr$ for quality) and minimum evidence
+$n_{\min}$ is a \emph{conclusive failure} when
+\begin{equation}
+  \label{eq:conclusive_failure}
+  n \geq n_{\min} \;\wedge\; U(s, n) < \rho.
+\end{equation}
+The minima are 20 buyer requests for latency and 8 canaries for quality. The
+test is the one-sided hypothesis test of the white paper with the null
+hypothesis ``the true rate is at least $\rho$'': the null is rejected only if
+even the optimistic end of the interval lies below the promise.
+
+The verdict applies the following precedence, shown in
+Figure~\ref{fig:verdict-flow}. An unhealthy evidence set gives
+\texttt{INSUFFICIENT}. Otherwise a conclusive failure of either metric gives
+\texttt{FAILED}, with a reason code for each failing metric. Otherwise a missing
+minimum on either metric gives \texttt{INSUFFICIENT}. Otherwise the verdict is
+\texttt{PASSED}. A conclusive failure of one metric therefore takes precedence
+over missing evidence on the other, and passing requires enough evidence for
+both. Because the two metrics are tested separately at the same
+level, the probability that a seller exactly at both promises receives a
+failing verdict is at most approximately $2\delta$ by a union bound.
+
+% rendered_images:begin
+% ```graphviz
+% digraph VerdictDecision {
+%   // process : blue | PASSED : sage green | FAILED : coral | INSUFFICIENT : orange | decision : white
+%   bgcolor="transparent";
+%   pad="0.10";
+%   splines=spline;
+%   nodesep=0.25;
+%   ranksep=0.38;
+%   node [shape=box, style="rounded,filled", fillcolor="#FFFFFF", color="#9AA9B8", penwidth=1.8, fontname="Helvetica", fontcolor="#243B53", fontsize=11, margin="0.14,0.08", height=0.42];
+%   edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75, fontname="Helvetica", fontsize=9.5, fontcolor="#7B8794"];
+%   rankdir=TB;
+%   Ev  [label=<<b>Window evidence</b><br/><font point-size="9" color="#6B4517">buyer rows and canary rows</font>>, fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+%   Cl  [label=<<b>Classify every row</b><br/><font point-size="9" color="#41719C">eligible, excluded, or checker error</font>>, fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+%   D1  [label="Any checker error?"];
+%   Un  [label=<<b>INSUFFICIENT</b><br/><font point-size="9" color="#6B4517">CHECKER_UNHEALTHY</font>>, fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+%   As  [label=<<b>Assess latency and quality</b><br/><font point-size="9" color="#41719C">successes s, total n, upper bound U</font>>, fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+%   D2  [label=<Some metric has<br/>n ≥ minimum and U &lt; promise?>];
+%   Fa  [label=<<b>FAILED</b><br/><font point-size="9" color="#6B2A2A">LATENCY_BELOW_PROMISE and/or<br/>QUALITY_BELOW_PROMISE</font>>, fillcolor="#F6C6C6", color="#D98C8C", fontcolor="#6B2A2A"];
+%   D3  [label=<Both metrics have<br/>n ≥ minimum?>];
+%   In  [label=<<b>INSUFFICIENT</b><br/><font point-size="9" color="#6B4517">INSUFFICIENT_LATENCY_EVIDENCE and/or<br/>INSUFFICIENT_QUALITY_EVIDENCE</font>>, fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+%   Pa  [label=<<b>PASSED</b><br/><font point-size="9" color="#4F7A5A">COMPLIANT</font>>, fillcolor="#DFEDE0", color="#8FB79A", fontcolor="#2E5A3D"];
+% 
+%   Ev -> Cl -> D1;
+%   D1 -> Un [label="Yes"];
+%   D1 -> As [label="No"];
+%   As -> D2;
+%   D2 -> Fa [label="Yes"];
+%   D2 -> D3 [label="No"];
+%   D3 -> In [label="No"];
+%   D3 -> Pa [label="Yes"];
+%   { rank=same; D1; Un; }
+%   { rank=same; D2; Fa; }
+%   { rank=same; D3; In; }
+% }
+% ```
+% label=fig:verdict-flow
+% caption=Verdict decision flow. Blue is a process, orange marks evidence and insufficient outcomes, coral marks failure, and green marks a pass.
+% rendered_images:end
+% render_images:begin
+\begin{figure}[H]
+  \includegraphics[width=\linewidth]{07_verdict.tex.figs/07_verdict.1.png}
+  \caption{Verdict decision flow. Blue is a process, orange marks evidence and insufficient outcomes, coral marks failure, and green marks a pass.}
+  \label{fig:verdict-flow}
+\end{figure}
+% render_images:end
+
+% ==============================================================================
+\subsection{Comparison with the lower-bound rule of the white paper}
+\label{sec:lower_vs_upper}
+
+The white paper flags a contract when the \emph{lower} confidence bound on
+the success rate is below $\rminattr$. The prototype's design notes record the
+change to an upper bound as decision D-1 and describe it as proposed to the
+white paper's author, so it is an open design choice rather than an agreed
+revision. The two rules differ in what they treat as evidence of a violation.
+The lower bound lies below the point estimate by construction, so a seller whose
+true rate equals or exceeds the promise has a high probability of a lower bound
+below the promise on a small window. The upper bound lies above the point
+estimate, so a flag requires that the data are inconsistent with
+compliance at the chosen confidence.
+
+Table~\ref{tab:rules} compares the probability of a flag under both rules by
+exact binomial enumeration. Both columns use the one-sided 95\% Wilson interval,
+so that the table isolates the direction of the bound; all scenarios have
+$n \geq 10$. The scenarios restate those of the design notes, and the values
+agree with the script \texttt{scripts/detection\_math.py}.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabularx}{\linewidth}{@{}Xrr@{}}
+    \toprule
+    Scenario (true rate vs.\ promise, $n$ eligible rows) & Lower-bound rule &
+      Upper-bound rule \\
+    \midrule
+    Healthy canaries, 0.98 vs.\ 0.85, $n = 10$ & 1.000 & 0.00003 \\
+    Healthy canaries, 0.95 vs.\ 0.85, $n = 10$ & 1.000 & 0.001 \\
+    Weaker model, canaries 0.70 vs.\ 0.85, $n = 10$ & 1.000 & 0.350 \\
+    Weaker model, canaries 0.50 vs.\ 0.85, $n = 10$ & 1.000 & 0.828 \\
+    Healthy latency, 0.97 vs.\ 0.90, $n = 50$ & 0.445 & 0.00002 \\
+    Healthy latency, 0.95 vs.\ 0.90, $n = 50$ & 0.721 & 0.0008 \\
+    Slowed seller, latency 0.20 vs.\ 0.90, $n = 50$ & 1.000 & 1.000 \\
+    \bottomrule
+  \end{tabularx}
+  \caption{Probability that a contract is flagged under the lower-bound and the
+  upper-bound rule.}
+  \label{tab:rules}
+\end{table}
+
+Under the lower-bound rule every scenario with ten canaries is flagged with
+probability one, including compliant sellers, because even ten successes out of
+ten give a Wilson lower bound of about $0.79$, which is below $0.85$. The
+upper-bound rule flags compliant sellers rarely and still flags a seller whose
+canary accuracy is $0.5$ in about 83\% of contracts.
+
+The upper-bound rule is not exact. When the true rate equals the promise, so
+that the null hypothesis holds with equality, the probability of a flag with the
+promise $0.85$ is $0.021$ for $n = 8$ (exact bound), $0.050$ for $n = 10$, and
+$0.067$ for $n = 20$ and $n = 40$ (Wilson bound). The Wilson bound is therefore
+slightly liberal for these sizes, and the nominal 5\% level is approximate.
+
+\subsection{Separating latency and quality}
+\label{sec:separating}
+
+A merged success indicator, as in \eqref{eq:wp_success}, dilutes quality
+failures when canaries are a small fraction of the requests. Consider a window
+of 50 buyer requests that all succeed and 10 canaries on which a substituted
+model has accuracy $0.5$. The merged success rate is about $0.917$, against a
+promise of $0.90$, and the merged test with 60 requests flags this contract with
+probability $0.026$. Testing the ten canaries separately against
+$\qminattr = 0.85$ flags it with probability $0.828$. This is the argument for
+factoring the indicator in Section~\ref{sec:background_refinements}.
+
+% ==============================================================================
+\subsection{Detection power}
+\label{sec:detection_power}
+
+Let $a$ be the true canary accuracy of a seller on the active bank. The
+probability that the quality metric is a conclusive failure with $n$ usable
+canaries is
+\begin{equation}
+  \label{eq:power}
+  \Pr[\text{FAILED}] = \sum_{s=0}^{n} \binom{n}{s} a^{s} (1-a)^{n-s}\,
+    \mathbb{1}\!\left[U(s, n) < \qminattr\right].
+\end{equation}
+Figure~\ref{fig:detection-power} evaluates \eqref{eq:power} with
+$\qminattr = 0.85$ for $n$ from 8 to 40, and Table~\ref{tab:power} lists the
+smallest $n$ with $\Pr[\text{FAILED}] \geq 0.8$.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{figures/detection_power.png}
+  \caption{Probability of a failing quality verdict as a function of the number
+  of usable canaries, for several true accuracies $a$ and a promise of 0.85.}
+  \label{fig:detection-power}
+\end{figure}
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{@{}lrrrrrr@{}}
+    \toprule
+    True accuracy $a$ & 0.8 & 0.75 & 0.7 & 0.6 & 0.5 & 0.4 \\
+    \midrule
+    Smallest $n$ with $\Pr[\text{FAILED}] \geq 0.8$ & 334 & 84 & 40 & 16 & 10 & 8 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Evidence needed for 80\% detection probability at a promise of 0.85
+  and 95\% one-sided confidence.}
+  \label{tab:power}
+\end{table}
+
+Four observations follow. First, the curves are not monotone in $n$. The
+number of failures that the bound tolerates increases at particular values of
+$n$, which produces the sawtooth pattern, and the rule switches from the exact
+to the Wilson bound at $n = 10$. Second, power depends on the margin between
+$a$ and the promise. With the MVP defaults ($n = 10$, promise $0.85$), a seller
+at $a = 0.5$ is flagged with probability $0.83$, and with probability $0.97$ in
+at least one of two independent contracts. A seller at $a = 0.7$ is flagged with
+probability $0.35$, and a seller at $a = 0.8$ with probability $0.12$.
+Third, a seller whose true accuracy lies slightly below the promise is detected
+only with large samples: $a = 0.8$ needs $n = 334$ for 80\% power. Fourth, a
+seller with $a \geq 0.9$ complies with the promise and is flagged rarely, as the
+test intends.
+
+The relevant accuracy is the accuracy of the \emph{substitute} on the
+\emph{calibrated} bank. Calibration constrains a single weak model to at most
+one correct attempt in three on every retained canary. A different substitute,
+for example a quantized copy of the contracted model, can score much higher on
+the retained canaries and is correspondingly harder to detect. The analysis in
+this section therefore describes the statistical behavior of the rule given $a$
+and does not estimate $a$ for any real substitute.

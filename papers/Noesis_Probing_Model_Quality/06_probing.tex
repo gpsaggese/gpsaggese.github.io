@@ -1,0 +1,302 @@
+% ##############################################################################
+\section{Selection, scheduling, and probing}
+\label{sec:probing}
+
+This section describes how an active contract receives its probes: which
+canaries, at what times, through which path, and with which failure semantics.
+
+% ==============================================================================
+\subsection{Keyed, family-balanced selection}
+\label{sec:selection}
+
+Let $\bank^{*}$ be the set of \texttt{ACTIVE} canaries, grouped by family into
+$\bank^{*}_f$, and let $N$ be the number of probes of contract $\kappa$ (the
+contract field \texttt{canaries\_target}, default 10). Let $k$ be the platform
+secret. The selection procedure derives a seed from the contract identifier,
+\begin{equation}
+  \label{eq:selection_seed}
+  s(\kappa) = \operatorname{int}\!\left(
+    \operatorname{HMAC\text{-}SHA256}_k(\text{decimal}(\mathit{id}_\kappa))[0{:}8]
+  \right),
+\end{equation}
+that is, the first 64 bits of the keyed hash \cite{rfc2104}. It seeds a
+pseudo-random generator, shuffles the canaries of each family and the order of
+the families, and then draws one canary from each family in turn until $N$
+canaries are selected, skipping families that have run out.
+
+\begin{proposition}
+\label{prop:balance}
+If every family has at least $\lceil N/|\family| \rceil$ canaries in
+$\bank^{*}$, the selected batch contains between $\lfloor N/|\family| \rfloor$
+and $\lceil N/|\family| \rceil$ canaries of each family, and it contains no
+canary twice. For fixed $k$ and $\mathit{id}_\kappa$ the batch is identical on
+every invocation.
+\end{proposition}
+
+\begin{proof}
+Each round of the loop takes one canary from each non-empty family, in a fixed
+order, so after $r$ complete rounds each family has contributed $r$ canaries.
+The loop stops after $N$ draws, within a round that has taken at most one
+canary from each family. Canaries are popped from per-family lists, so none is
+drawn twice. The generator is seeded deterministically.
+\end{proof}
+
+With six families and $N = 10$, a contract receives one or two canaries per
+family. Balance limits the dependence of a contract's evidence on the
+difficulty of any single task family. The selection also satisfies property P4
+for a party without $k$, subject to the caveat in
+Section~\ref{sec:limitations} that the generator after the keyed seed is not a
+cryptographic one.
+
+% ==============================================================================
+\subsection{Keyed probe schedule}
+\label{sec:schedule}
+
+Let the contract window start at $t_0$ with maximum length $W$ seconds. The
+schedule divides the window into $N$ equal buckets of width $b = W/N$ and
+places probe $i \in \{1,\dots,N\}$ inside bucket $i$. The position within the
+bucket is a keyed value,
+\begin{equation}
+  \label{eq:schedule}
+  u_i = \frac{\operatorname{int}\!\left(
+      \operatorname{HMAC\text{-}SHA256}_k(\texttt{probe-schedule:}\mathit{id}_\kappa\texttt{:}i)[0{:}8]
+    \right)}{2^{64}},
+  \qquad
+  t_i = t_0 + (i - 1 + 0.2 + 0.6\,u_i)\, b,
+\end{equation}
+so that $t_i$ lies in the middle $60\%$ of its bucket. Figure~\ref{fig:schedule}
+illustrates the construction with five probes.
+
+% rendered_images:begin
+% ```raw_latex
+% \documentclass[tikz]{standalone}
+% \usepackage{amsmath}
+% \usetikzlibrary{arrows.meta, decorations.pathreplacing, positioning, calc}
+% \definecolor{BandBlue}{RGB}{166,200,244}
+% \definecolor{ProbeRed}{RGB}{214,69,69}
+% \definecolor{GridGray}{RGB}{140,140,140}
+% \begin{document}
+% \begin{tikzpicture}[
+%   x=2.3cm, y=1cm, font=\sffamily\small,
+%   bucket/.style={draw=GridGray, line width=0.4pt, fill=gray!6},
+%   band/.style={fill=BandBlue!45, draw=none},
+%   probe/.style={circle, fill=ProbeRed, draw=none, minimum size=5pt, inner sep=0pt},
+%   stem/.style={draw=ProbeRed, line width=0.8pt},
+%   lab/.style={font=\sffamily\footnotesize, align=center}
+% ]
+%   % Buckets and their eligible middle bands.
+%   \foreach \i in {0,1,2,3,4} {
+%     \draw[bucket] (\i,0) rectangle (\i+1,1);
+%     \fill[band] (\i+0.2,0) rectangle (\i+0.8,1);
+%     \draw[GridGray, line width=0.4pt] (\i+0.2,0) -- (\i+0.2,1);
+%     \draw[GridGray, line width=0.4pt] (\i+0.8,0) -- (\i+0.8,1);
+%   }
+%   % Probes at secret positions inside each band: offset (i - 1 + 0.2 + 0.6 u_i) b.
+%   \foreach \i/\p/\fam in {0/0.31/{table}, 1/0.72/{arithmetic}, 2/0.45/{string}, 3/0.26/{modular}, 4/0.64/{ordering}} {
+%     \node[probe] (p\i) at (\i+\p,0.5) {};
+%     \draw[stem] (\i+\p,0.5) -- (\i+\p,1.55);
+%     \node[lab, above] at (\i+\p,1.55) {probe \the\numexpr\i+1\relax\\[-1pt]\textit{\fam}};
+%   }
+%   % Time axis.
+%   \draw[-{Latex[length=2.2mm]}, line width=0.6pt] (0,-0.35) -- (5.15,-0.35);
+%   \foreach \i/\l in {0/{$t_0$}, 1/{$t_0{+}b$}, 2/{$t_0{+}2b$}, 3/{$t_0{+}3b$}, 4/{$t_0{+}4b$}, 5/{$t_0{+}W$}} {
+%     \draw[line width=0.5pt] (\i,-0.28) -- (\i,-0.42);
+%     \node[lab, below] at (\i,-0.42) {\l};
+%   }
+%   % Bucket width brace.
+%   \draw[decorate, decoration={brace, mirror, amplitude=4pt}, line width=0.5pt]
+%     (2,-1.05) -- (3,-1.05) node[midway, below=5pt, lab] {bucket width $b = W/N$};
+%   % Legend.
+%   \node[draw=GridGray, line width=0.4pt, fill=BandBlue!45, minimum size=3mm, inner sep=0pt] (l1) at (0.05,-2.05) {};
+%   \node[lab, right=2pt of l1, anchor=west] {eligible band: middle $60\%$ of a bucket};
+%   \node[draw=GridGray, line width=0.4pt, fill=gray!6, minimum size=3mm, inner sep=0pt] (l2) at (2.45,-2.05) {};
+%   \node[lab, right=2pt of l2, anchor=west] {unused margin: $20\%$ at each end};
+%   \node[probe] (l3) at (4.55,-2.05) {};
+%   \node[lab, right=2pt of l3, anchor=west] {secret probe time};
+% \end{tikzpicture}
+% \end{document}
+% ```
+% label=fig:schedule
+% caption=Probe times for $N = 5$. Each probe falls at a keyed position in the middle 60\% of its bucket. The family labels are illustrative.
+% rendered_images:end
+% render_images:begin
+\begin{figure}[H]
+  \includegraphics[width=\linewidth]{06_probing.tex.figs/06_probing.1.png}
+  \caption{Probe times for $N = 5$. Each probe falls at a keyed position in the middle 60\% of its bucket. The family labels are illustrative.}
+  \label{fig:schedule}
+\end{figure}
+% render_images:end
+
+\begin{proposition}
+\label{prop:spacing}
+All probe times satisfy $t_0 + 0.2\,b \leq t_i \leq t_0 + W - 0.2\,b$, and
+consecutive probes satisfy $0.4\,b \leq t_{i+1} - t_i \leq 1.6\,b$.
+\end{proposition}
+
+\begin{proof}
+From \eqref{eq:schedule}, $t_i = t_0 + (i - 1 + \beta_i)\,b$ with $\beta_i = 0.2 +
+0.6\,u_i \in [0.2, 0.8]$. The first bound follows from $i = 1$ and $i = N$.
+Subtracting consecutive times gives $t_{i+1} - t_i = (1 + \beta_{i+1} -
+\beta_i)\,b$, and $\beta_{i+1} - \beta_i \in [-0.6, 0.6]$.
+\end{proof}
+
+The margins keep probes away from the window boundaries, and the spacing bound
+prevents both long gaps and bursts. For the demo window of 60 s and
+$N = 10$, $b = 6$~s and consecutive probes are between 2.4~s and 9.6~s apart.
+For a window of 300 s, $b = 30$~s. The schedule is a pure function of the
+contract, the active canaries, and $k$, so it can be recomputed and audited. The
+function \texttt{get\_due\_probes} returns the slots with $t_i \leq \text{now}$
+that are not yet claimed, in chronological order.
+
+% ==============================================================================
+\subsection{Executing a probe}
+\label{sec:execution}
+
+One scheduler pass, \texttt{run\_due\_probes}, loads the active contracts and
+the active canaries, rebuilds each contract's schedule, subtracts the claimed
+slots, and executes each due slot. Figure~\ref{fig:probe-execution} shows the
+steps of one probe.
+
+% rendered_images:begin
+% ```graphviz
+% digraph ProbeExecution {
+%   // state change : teal | process : blue | external : violet | failure : coral
+%   bgcolor="transparent";
+%   pad="0.10";
+%   splines=spline;
+%   nodesep=0.25;
+%   ranksep=0.38;
+%   node [shape=box, style="rounded,filled", fillcolor="#FFFFFF", color="#9AA9B8", penwidth=1.8, fontname="Helvetica", fontcolor="#243B53", fontsize=11, margin="0.14,0.08", height=0.42];
+%   edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75, fontname="Helvetica", fontsize=9.5, fontcolor="#7B8794"];
+%   rankdir=TB;
+%   Claim [label=<<b>1. Claim slot</b><br/><font point-size="9" color="#2F6B58">INSERT ... ON CONFLICT DO NOTHING</font>>, fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+%   Skip  [label=<<b>Skip</b><br/><font point-size="9" color="#6B2A2A">another worker owns the slot</font>>, fillcolor="#F6C6C6", color="#D98C8C", fontcolor="#6B2A2A"];
+%   Run   [label=<<b>2. Mark RUNNING</b><br/><font point-size="9" color="#2F6B58">only from SCHEDULED</font>>, fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+%   Route [label=<<b>3. Resolve internal route</b><br/><font point-size="9" color="#41719C">contract must be ACTIVE; no buyer key</font>>, fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+%   Build [label=<<b>4. Build provider call</b><br/><font point-size="9" color="#41719C">one user message, temperature 0, timeout 2 × L<SUB>max</SUB></font>>, fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+%   Call  [label=<<b>5. Call seller provider</b><br/><font point-size="9" color="#41719C">through the demo fault hook</font>>, fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+%   Seller [label=<<b>Seller provider</b>>, fillcolor="#E9E1F7", color="#A88FD9", fontcolor="#45296B"];
+%   Ok    [label="Status ok?"];
+%   Grade [label=<<b>6a. Grade reply</b><br/><font point-size="9" color="#41719C">correct is 1 or 0, or unknown</font>>, fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+%   NoGrade [label=<<b>6b. No grade</b><br/><font point-size="9" color="#41719C">correct is unknown, reason PROVIDER_status</font>>, fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+%   Log   [label=<<b>7. Log request row</b><br/><font point-size="9" color="#2F6B58">is_canary, canary_id, canary_correct, grader_version</font>>, fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+%   Done  [label=<<b>8. Mark COMPLETED</b><br/><font point-size="9" color="#2F6B58">link request, keep grader version</font>>, fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+%   Fail  [label=<<b>FAILED_INTERNAL</b><br/><font point-size="9" color="#6B2A2A">error stored, later probes continue</font>>, fillcolor="#F6C6C6", color="#D98C8C", fontcolor="#6B2A2A"];
+% 
+%   Claim -> Run [label="New row"];
+%   Claim -> Skip [label="Conflict", style=dashed];
+%   Run -> Route;
+%   Route -> Build;
+%   Build -> Call;
+%   Call -> Seller [dir=both, penwidth=1.6, color="#C0455B"];
+%   Call -> Ok;
+%   Ok -> Grade [label="Yes"];
+%   Ok -> NoGrade [label="No"];
+%   Grade -> Log;
+%   NoGrade -> Log;
+%   Log -> Done;
+%   Run -> Fail [style=dashed, label="Exception in steps 2 to 8"];
+%   { rank=same; Claim; Skip; }
+%   { rank=same; Call; Seller; }
+%   { rank=same; Grade; NoGrade; }
+% }
+% ```
+% label=fig:probe-execution
+% caption=Execution of one claimed probe slot. Teal steps change database state, blue steps are processing, violet is the external seller, and coral marks the skip and failure paths.
+% rendered_images:end
+% render_images:begin
+\begin{figure}[H]
+  \includegraphics[width=\linewidth]{06_probing.tex.figs/06_probing.2.png}
+  \caption{Execution of one claimed probe slot. Teal steps change database state, blue steps are processing, violet is the external seller, and coral marks the skip and failure paths.}
+  \label{fig:probe-execution}
+\end{figure}
+% render_images:end
+
+The request that the seller receives is built by \texttt{build\_probe\_call}.
+It contains the contract's model identifier, a single user message with the
+canary prompt, an output limit of at most 64 tokens (capped by the gateway
+setting), temperature $0$, and a timeout of $2 \times L_{\max}$, where
+$L_{\max}$ is the contract latency. It carries no field that identifies a
+probe. The canary identifier, the grade, and the grader version exist only in
+the platform's own \texttt{requests} row, which is written after the response
+returns. Table~\ref{tab:visibility} lists what each party can observe.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabularx}{\linewidth}{@{}p{0.32\linewidth}XX@{}}
+    \toprule
+    Item & Seller provider & Platform database \\
+    \midrule
+    Prompt text & visible & stored in \texttt{requests} \\
+    Model, output limit, temperature & visible & stored \\
+    \texttt{is\_canary}, \texttt{canary\_id} & not sent & stored \\
+    Expected answer and grade & not sent & stored \\
+    Probe slot and scheduled time & not sent & stored in
+      \texttt{canary\_probes} \\
+    Gateway route & pinned provider slug & pinned and actual provider \\
+    \bottomrule
+  \end{tabularx}
+  \caption{Visibility of probe metadata. The seller receives the same message
+  fields as for buyer traffic, apart from the prompt distribution.}
+  \label{tab:visibility}
+\end{table}
+
+The probe uses the gateway's normal serving path through an internal route
+resolver. The function \texttt{resolve\_internal\_route} loads the contract and
+seller by identifier, requires the contract to be \texttt{ACTIVE}, and returns
+the same route object as the buyer-facing resolver, but without buyer
+authentication, because the prober acts as the platform. The call passes
+through the demo fault hook, so a fault injected for a seller affects probes as
+well as buyer traffic. The grade, or a null grade for a failed provider call,
+is stored with the request together with the grader version, and the probe row
+is then completed with a link to the request.
+
+% ==============================================================================
+\subsection{Concurrency and failure semantics}
+\label{sec:failure}
+
+Several workers can run against one database. A slot is claimed with
+\texttt{INSERT ... ON CONFLICT (contract\_id, probe\_slot) DO NOTHING}, and only
+the worker that inserted the row proceeds, which gives at-most-once execution
+per slot. State transitions are guarded (\texttt{SCHEDULED} to
+\texttt{RUNNING}, \texttt{RUNNING} to \texttt{COMPLETED}), so a second
+attempt on the same row fails visibly. The worker polls once per second by
+default and stops after the current pass on \texttt{SIGINT} or \texttt{SIGTERM}.
+A failed database-level pass is logged and retried.
+
+Table~\ref{tab:failures} lists how failures are recorded and whether the seller
+is charged. The principle is P5: an outcome counts against the seller only if
+the provider produced it.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabularx}{\linewidth}{@{}p{0.3\linewidth}Xp{0.17\linewidth}@{}}
+    \toprule
+    Event & Recorded as & Charged to seller \\
+    \midrule
+    Provider timeout or upstream error & request with status \texttt{timeout}
+      or \texttt{upstream\_error}, no grade & yes \\
+    Wrong or malformed answer & request with grade 0 & yes \\
+    Gateway or configuration error & request with status
+      \texttt{gateway\_error} & no (excluded) \\
+    Grader cannot grade a successful reply & grade $\bot$ & no (checker
+      error) \\
+    Exception inside a probe & probe \texttt{FAILED\_INTERNAL} with the error
+      text; later probes continue & no \\
+    Scheduling failure for one contract & logged and returned in the cycle
+      result; other contracts continue & no \\
+    Slot already claimed & skipped & no \\
+    \bottomrule
+  \end{tabularx}
+  \caption{Failure handling in the prober.}
+  \label{tab:failures}
+\end{table}
+
+\paragraph{Operational notes.} The prober code does not reclaim a probe that
+remains \texttt{RUNNING} after a worker crash, so the unique slot key then
+prevents a retry of that slot. The effect is a missing observation, which
+lowers the evidence count and can only move a verdict toward
+\texttt{INSUFFICIENT}. Probes within a pass run sequentially. Section~\ref{sec:limitations}
+discusses these points.

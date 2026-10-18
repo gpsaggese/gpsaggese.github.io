@@ -1,0 +1,254 @@
+% ##############################################################################
+\section{System architecture}
+\label{sec:architecture}
+
+The canary subsystem spans two code directories and reuses the gateway of
+\NoesisServer{}. Figure~\ref{fig:canary-architecture} shows the components and
+the data that flows between them. The top two rows show offline calibration and
+its result, the next two rows show online probing, and the bottom two rows show
+the checker and its stored verdicts. The
+remainder of this section describes the responsibilities, the persisted data
+model, and the design principles.
+
+% rendered_images:begin
+% ```graphviz
+% digraph CanaryArchitecture {
+%   // input : orange | process : blue | stored state : teal | verification : sage green | external : violet
+%   bgcolor="transparent";
+%   pad="0.10";
+%   splines=spline;
+%   nodesep=0.22;
+%   ranksep=0.45;
+%   rankdir=TB;
+%   newrank=true;
+% 
+%   node [shape=box,
+%         style="rounded,filled",
+%         fillcolor="#FFFFFF",
+%         color="#9AA9B8",
+%         penwidth=1.8,
+%         fontname="Helvetica",
+%         fontcolor="#243B53",
+%         fontsize=11,
+%         margin="0.14,0.08",
+%         height=0.42];
+% 
+%   edge [color="#A3B1C0",
+%         penwidth=1.3,
+%         arrowhead=vee,
+%         arrowsize=0.75,
+%         fontname="Helvetica",
+%         fontsize=9,
+%         fontcolor="#7B8794"];
+% 
+%   Bank  [label=<<b>Canary bank</b><br/><font point-size="9" color="#6B4517">300 candidates</font>>,
+%            fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+%   Calib [label=<<b>Calibration</b><br/><font point-size="9" color="#41719C">3 attempts per target</font>>,
+%            fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+% 
+%   Healthy [label=<<b>Reference models</b><br/><font point-size="9" color="#6B52A8">healthy, weak</font>>,
+%            fillcolor="#E9E1F7", color="#A88FD9", fontcolor="#45296B"];
+%   Canaries [label=<<b>canaries</b><br/><font point-size="9" color="#2F6B58">status per canary</font>>,
+%             fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+% 
+%   Schedule [label=<<b>Schedule builder</b><br/><font point-size="9" color="#41719C">keyed, balanced</font>>,
+%               fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+%   Worker   [label=<<b>Prober worker</b><br/><font point-size="9" color="#41719C">claim, execute</font>>,
+%               fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+%   Gateway  [label=<<b>Gateway</b><br/><font point-size="9" color="#41719C">internal route</font>>,
+%               fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+%   Probes   [label=<<b>canary_probes</b><br/><font point-size="9" color="#2F6B58">slot claims</font>>,
+%               fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+%   Measurer [label=<<b>Measurer</b><br/><font point-size="9" color="#41719C">exact match</font>>,
+%               fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+% 
+%   Seller [label=<<b>Seller provider</b><br/><font point-size="9" color="#6B52A8">under contract</font>>,
+%           fillcolor="#E9E1F7", color="#A88FD9", fontcolor="#45296B"];
+%   Requests [label=<<b>requests</b><br/><font point-size="9" color="#2F6B58">graded rows</font>>,
+%             fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+% 
+%   Evidence [label=<<b>Evidence rules</b><br/><font point-size="9" color="#4F7A5A">eligible or not</font>>,
+%               fillcolor="#DFEDE0", color="#8FB79A", fontcolor="#2E5A3D"];
+%   Verdict  [label=<<b>Verdict engine</b><br/><font point-size="9" color="#4F7A5A">bound vs promise</font>>,
+%               fillcolor="#DFEDE0", color="#8FB79A", fontcolor="#2E5A3D"];
+% 
+%   Verdicts [label=<<b>contract_verdicts</b><br/><font point-size="9" color="#2F6B58">frozen evidence</font>>,
+%             fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+% 
+%   Bank -> Calib [label="Candidates"];
+%   Calib -> Healthy [label="Paid calls", dir=both];
+%   Calib -> Canaries [label="Decisions"];
+%   Canaries -> Schedule [label="ACTIVE bank"];
+%   Schedule -> Worker [label="Due slots"];
+%   Worker -> Gateway [label="Probe", penwidth=1.6, color="#C0455B", fontcolor="#C0455B"];
+%   Gateway -> Seller [label="User message", penwidth=1.6, color="#C0455B", fontcolor="#C0455B", dir=both];
+%   Worker -> Probes [label="Claim", dir=both];
+%   Worker -> Measurer [label="Response", style=dashed];
+%   Measurer -> Requests [label="Graded row", style=dashed];
+%   Requests -> Evidence [label="Rows"];
+%   Evidence -> Verdict;
+%   Verdict -> Verdicts [label="Verdict"];
+% 
+%   { rank=same; Bank; Calib; Healthy; }
+%   { rank=same; Canaries; }
+%   { rank=same; Schedule; Worker; Gateway; }
+%   { rank=same; Probes; Measurer; Seller; }
+%   { rank=same; Requests; Evidence; Verdict; }
+%   Bank -> Canaries -> Schedule -> Probes -> Requests [style=invis, weight=50];
+%   Calib -> Worker -> Measurer -> Evidence [style=invis, weight=50];
+%   Healthy -> Gateway -> Seller -> Verdict -> Verdicts [style=invis, weight=50];
+%   Probes -> Measurer -> Seller [style=invis];
+%   Requests -> Evidence -> Verdict [style=invis];
+% 
+%   subgraph cluster_legend {
+%     label     = "Legend";
+%     labelloc  = "t";
+%     fontname  = "Helvetica-Bold";
+%     fontsize  = 12;
+%     fontcolor = "#3A4A5C";
+%     style     = "rounded,filled";
+%     fillcolor = "#FBFBFD";
+%     color     = "#C7D0DA";
+%     penwidth  = 1.0;
+%     margin    = 10;
+% 
+%     node [shape=box, style="rounded,filled", fontsize=9, height=0.26, margin="0.10,0.05"];
+%     LegendSource  [label="Input data", fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+%     LegendProcess [label="Process", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+%     LegendState   [label="Stored state", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+%     LegendMonitor [label="Verification", fillcolor="#DFEDE0", color="#8FB79A", fontcolor="#2E5A3D"];
+%     LegendExt     [label="External", fillcolor="#E9E1F7", color="#A88FD9", fontcolor="#45296B"];
+%     { rank=same; LegendSource; LegendProcess; LegendState; LegendMonitor; LegendExt; }
+%   }
+%   Requests -> LegendSource [style=invis];
+% }
+% ```
+% label=fig:canary-architecture
+% caption=Architecture of the canary subsystem. Blue boxes are processes, teal boxes are PostgreSQL state, green boxes are checker logic, orange is input data, and violet is an external provider. Red edges mark the path that carries a probe to the seller.
+% rendered_images:end
+% render_images:begin
+\begin{figure}[H]
+  \includegraphics[width=\linewidth]{03_architecture.tex.figs/03_architecture.1.png}
+  \caption{Architecture of the canary subsystem. Blue boxes are processes, teal boxes are PostgreSQL state, green boxes are checker logic, orange is input data, and violet is an external provider. Red edges mark the path that carries a probe to the seller.}
+  \label{fig:canary-architecture}
+\end{figure}
+% render_images:end
+
+% ==============================================================================
+\subsection{Components}
+\label{sec:components}
+
+Table~\ref{tab:modules} lists the modules, grouped by role. The
+\texttt{checker/} directory holds both pure decision logic and the persistence
+module; \texttt{prober/} is a thin coordination layer that imports scheduling,
+grading, models, and persistence from \texttt{checker/}, and routing, providers,
+faults, and request logging from the gateway.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabularx}{\linewidth}{@{}p{0.36\linewidth}X@{}}
+    \toprule
+    Module & Responsibility \\
+    \midrule
+    \texttt{checker\_models} & Immutable values shared by all checker modules
+      (canary, grade, observation, policy, schedule item, verdict) \\
+    \texttt{checker\_canaries} & Bank loading and validation; keyed,
+      family-balanced selection \\
+    \texttt{checker\_grading} & Versioned normalizers and exact-match grading \\
+    \texttt{checker\_capability} & \texttt{CapabilityMeasurer} protocol and the
+      deterministic default implementation \\
+    \texttt{checker\_calibration} & Pure per-canary acceptance rule \\
+    \texttt{checker\_calibration\_runtime} & Concurrent provider calls,
+      summaries, and persistence of one run \\
+    \texttt{checker\_calibration\_report} & Markdown findings for a completed
+      run \\
+    \texttt{checker\_probe\_schedule} & Keyed schedule and due-slot selection \\
+    \texttt{checker\_evidence} & Classification of requests as eligible or
+      excluded evidence \\
+    \texttt{checker\_statistics} & Wilson and Clopper--Pearson upper bounds \\
+    \texttt{checker\_verdicts} & Evidence minima, failure precedence, and
+      verdicts \\
+    \texttt{checker\_store} & All SQL: bank registration, calibration runs,
+      probe slots, verdict finalization \\
+    \texttt{prober\_runtime} & One non-blocking pass: claim, execute, grade,
+      persist \\
+    \texttt{prober\_worker} & Repeated passes with retry and graceful shutdown
+      \\
+    \texttt{prober\_cli} & \texttt{calibrate} and \texttt{probe} commands \\
+    \bottomrule
+  \end{tabularx}
+  \caption{Modules of the canary subsystem.}
+  \label{tab:modules}
+\end{table}
+
+% ==============================================================================
+\subsection{Persisted data model}
+\label{sec:data_model}
+
+All state lives in PostgreSQL (migration \texttt{002\_checker.sql}).
+Table~\ref{tab:tables} lists the tables that the subsystem reads and writes.
+Three integrity constraints carry much of the design.
+First, the table \texttt{canary\_probes} has a unique key on
+\texttt{(contract\_id, probe\_slot)}, which makes slot claiming idempotent.
+Second, a check constraint on \texttt{requests} requires that a canary row has
+a canary identifier and that a non-canary row has no canary identifier, no
+grade, and no grader version, so that a grade cannot be attached to buyer
+traffic. Third, \texttt{canary\_calibration\_results} is unique per
+\texttt{(run, canary, role, provider, model, attempt)}, so a run cannot record
+the same attempt twice.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabularx}{\linewidth}{@{}p{0.31\linewidth}X@{}}
+    \toprule
+    Table & Content \\
+    \midrule
+    \texttt{canaries} & One row per canary: prompt, answer, normalizer, family,
+      generator seed, bank version, \texttt{status} (\texttt{DRAFT},
+      \texttt{CALIBRATED}, \texttt{ACTIVE}, \texttt{RETIRED}), measured
+      \texttt{healthy\_acc} and \texttt{weak\_acc}, and metadata that names the
+      last calibration run \\
+    \texttt{canary\_calibration\_runs} & One row per run: bank version,
+      healthy and weak models, repetitions, state, configuration, summary \\
+    \texttt{canary\_calibration\_results} & One row per attempt, including the
+      raw response, provider status, correctness, latency, and cost \\
+    \texttt{canary\_probes} & One row per claimed slot: state, linked request,
+      grader version, error, scheduled and completed times \\
+    \texttt{requests} & One row per request, with \texttt{is\_canary},
+      \texttt{canary\_id}, \texttt{canary\_correct}, \texttt{grader\_version},
+      pinned and actual provider, status, and latency \\
+    \texttt{contract\_verdicts}, \texttt{verdict\_evidence} & The verdict, its
+      counts and bounds, reason codes, and the per-request classification
+      that produced it \\
+    \bottomrule
+  \end{tabularx}
+  \caption{Tables read and written by the canary subsystem. The status
+  \texttt{RETIRED} exists in the schema, and no code path sets it in the
+  version described here.}
+  \label{tab:tables}
+\end{table}
+
+% ==============================================================================
+\subsection{Design principles}
+\label{sec:design_principles}
+
+\begin{itemize}
+  \item \textbf{Pure decision logic.} Acceptance, selection, scheduling,
+    classification, and verdicts are pure functions of their inputs. Database
+    access is confined to \texttt{checker\_store.py}, so replaying frozen
+    evidence under the same policy version reproduces the same result.
+  \item \textbf{No spend by default.} The \texttt{calibrate} command validates
+    its inputs and prints the number of paid calls, and it contacts providers
+    only when \texttt{--execute} is passed.
+  \item \textbf{Constraints over coordination.} Concurrency control uses
+    database uniqueness and guarded state transitions
+    (\texttt{UPDATE ... WHERE state = ...}) rather than application locks.
+  \item \textbf{Versioned artifacts.} The bank, the grader
+    (\texttt{GRADER\_VERSION = m2-v1}), and the checker policy carry version
+    strings that are stored with the data they produced.
+  \item \textbf{No blame without attribution.} Every outcome has a
+    classification that states whether it counts against the seller
+    (Section~\ref{sec:evidence}).
+\end{itemize}

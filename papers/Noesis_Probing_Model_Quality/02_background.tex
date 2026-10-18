@@ -1,0 +1,168 @@
+% ##############################################################################
+\section{Background, problem statement, and threat model}
+\label{sec:background}
+
+This section fixes the notation inherited from the white paper
+\cite{noesis_whitepaper}, states how the prototype changes it, and formulates
+the probing problem.
+
+% ==============================================================================
+\subsection{Contracts and fulfillment monitoring in the white paper}
+\label{sec:background_whitepaper}
+
+The white paper defines an \emph{intelligence contract} as the tuple
+$$
+  \kappa = (\ntasksattr,\ \clevelattr,\ \lmaxattr,\ \rminattr,\ \priceattr),
+$$
+where $\clevelattr$ is a required capability tier in a totally ordered set
+$\calC$, $\lmaxattr$ is the maximum latency per task, and $\rminattr \in [0,1]$
+is the minimum fraction of tasks that must meet both $\clevelattr$ and
+$\lmaxattr$. For a request $x$ served under $\kappa$, the monitoring layer
+estimates the delivered tier $\hat c(x)$ and the measured latency
+$\hat\ell(x)$, and defines the success indicator
+\begin{equation}
+  \label{eq:wp_success}
+  s(x) = \mathbb{1}\!\left[\hat c(x) \succeq \clevelattr(\kappa)
+    \;\wedge\; \hat\ell(x) \leq \lmaxattr(\kappa)\right].
+\end{equation}
+The measured reliability over the request set $W$ served during the
+fulfillment window is the sample mean $\hat r(\kappa, W) = |W|^{-1}\sum_{x\in W}
+s(x)$. To separate under-delivery from sampling noise, the white paper treats
+monitoring as a one-sided hypothesis test with the null hypothesis that the
+seller is compliant, and flags $\kappa$ when a lower confidence bound
+$\hat r_{\text{lower}}(\kappa, W)$ falls below $\rminattr(\kappa)$. The estimator
+of $\hat c(x)$ is a pluggable component, and the white paper names a verifier
+model, a benchmark probe, and agreement with a stronger reference model as
+candidates.
+
+% ==============================================================================
+\subsection{Refinements in the prototype}
+\label{sec:background_refinements}
+
+The prototype keeps the architecture of the white paper and changes three
+details that matter for the canary subsystem.
+
+\begin{enumerate}
+  \item \textbf{Capability is measured by known-answer probes.} The estimator
+    $\hat c(x)$ is replaced by a binary grade on a canary question. The
+    prototype does not map the grade to a tier in $\calC$.
+  \item \textbf{The joint indicator is factored.} The indicator
+    \eqref{eq:wp_success} is split into a latency metric over buyer requests
+    and a quality metric over canary requests. Let $B(\kappa,W)$ denote the
+    buyer requests and $C(\kappa,W)$ the canary requests of a window. The
+    latency success of $x \in B$ is $s_\ell(x) = \mathbb{1}[\hat\ell(x) \leq
+    \lmaxattr]$ for a request that the seller answered, and $s_\ell(x) = 0$ for
+    a seller timeout or upstream error. The quality success of $x \in C$ is
+    $s_q(x) = \grade(c_x, y_x)$, where $c_x$ is the canary and $y_x$ the
+    response, and $s_q(x) = 0$ for a seller timeout or upstream error. The contract carries a promised canary accuracy
+    $\qminattr \in [0,1]$ in addition to $\rminattr$, which applies to latency.
+  \item \textbf{The violation rule uses an upper bound.} A metric is a
+    violation only when the one-sided confidence \emph{upper} bound on its true
+    rate is below the promise. Section~\ref{sec:verdict_rule} analyzes this
+    choice against the lower-bound rule.
+\end{enumerate}
+
+Table~\ref{tab:wp_mapping} summarizes the correspondence.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabularx}{\linewidth}{@{}p{0.2\linewidth}XX@{}}
+    \toprule
+    Concept & White paper & Prototype \\
+    \midrule
+    Capability estimate & pluggable $\hat c(x)$ (verifier, probe, reference
+      agreement) & binary exact-match grade on a canary, behind a
+      \texttt{CapabilityMeasurer} interface \\
+    Success indicator & one joint indicator $s(x)$ & latency indicator on
+      buyer requests, quality indicator on canaries \\
+    Promise & $\clevelattr$ and $\rminattr$ & $\rminattr$ for latency,
+      $\qminattr$ for canary accuracy \\
+    Violation test & lower bound below $\rminattr$ & upper bound below the
+      promise \\
+    Evidence minimum & not specified & 20 buyer requests and 8 canaries \\
+    Attribution & request tagged with $\kappa$ & provider pinned per contract,
+      mismatches excluded \\
+    \bottomrule
+  \end{tabularx}
+  \caption{Correspondence between the white paper's monitoring model and the
+  prototype's canary-based implementation.}
+  \label{tab:wp_mapping}
+\end{table}
+
+% ==============================================================================
+\subsection{Problem statement}
+\label{sec:problem}
+
+\begin{problem}[Probing a seller's delivered quality]
+\label{prob:probing}
+Given an active contract $\kappa$ with seller $s$, a collection window of
+length $W$ seconds that opens at time $t_0$, a target number of probes $N$, a
+secret key $k$, and a bank of candidate canaries $\bank$, produce a sequence of
+probes $(c_i, t_i)_{i=1}^{N}$ with $c_i \in \bank$ and $t_i \in [t_0, t_0+W]$
+such that the properties below hold.
+\end{problem}
+
+\begin{description}
+  \item[P1 Validity.] The expected answer of every canary is known by
+    construction, and grading is a deterministic function of the response.
+  \item[P2 Discrimination.] A canary answered correctly by every healthy
+    provider is answered incorrectly with non-negligible probability by a
+    weaker model, so that correct answers carry information about the
+    contracted capability.
+  \item[P3 Indistinguishability at the provider boundary.] The request that the
+    seller receives contains no field that marks it as a probe.
+  \item[P4 Unpredictability.] Without $k$, neither the identity nor the timing
+    of a probe is predictable from earlier probes.
+  \item[P5 Faithful attribution.] A probe outcome counts against the seller
+    only if the seller caused it. Gateway, configuration, grader, and buyer
+    errors are not charged to the seller.
+  \item[P6 Auditability.] Every probe, response, and grade is persisted, and the
+    same inputs and key reproduce the same selection and schedule.
+\end{description}
+
+% ==============================================================================
+\subsection{Threat model}
+\label{sec:threat_model}
+
+The adversary is a seller that wishes to lower its serving cost while keeping
+the contract revenue. Table~\ref{tab:threats} lists the behaviors considered
+and indicates whether the canary subsystem is intended to address them.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabularx}{\linewidth}{@{}p{0.22\linewidth}XX@{}}
+    \toprule
+    Seller behavior & Effect on evidence & Handled by canaries? \\
+    \midrule
+    Serves a weaker model under the contracted name & lower accuracy on
+      canaries & Yes, if the substitute scores low on the calibrated bank
+      (Section~\ref{sec:detection_power}) \\
+    Serves a quantized or otherwise slightly degraded variant & small accuracy
+      change & Weakly: power is low when the shortfall from the promise is small
+      \\
+    Adds latency & buyer-request latency rises & No: canary latency is
+      excluded and latency is judged on buyer traffic \\
+    Recognizes probes and serves them with a stronger model & canaries
+      overstate quality & Not prevented; the prompt distribution is a known
+      weakness (Section~\ref{sec:limitations}) \\
+    Times out or returns upstream errors & recorded as seller failures & Yes,
+      counted as failed quality evidence \\
+    \bottomrule
+  \end{tabularx}
+  \caption{Seller behaviors considered and whether the canary subsystem is
+  designed to detect them.}
+  \label{tab:threats}
+\end{table}
+
+The analysis rests on the following trust assumptions. The gateway, the
+database, and the checker are operated by the platform and are trusted. The
+key $k$ is held only by the platform. The bank content is \emph{not} assumed
+secret in the prototype, because the bank is checked into the research
+repository and a deterministic script in the same repository regenerates it; the
+secrecy that the design provides concerns which canaries are selected for a
+contract and when they are sent. Provider pinning
+is assumed to work: the gateway routes each contract to the provider slug of the
+seller and records the provider that actually answered. Collusion between
+sellers and between a seller and a buyer is out of scope.

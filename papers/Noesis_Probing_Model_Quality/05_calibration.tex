@@ -1,0 +1,352 @@
+% ##############################################################################
+\section{Calibration}
+\label{sec:calibration}
+
+A generated question can be ambiguous, can depend on an output format that some
+providers do not follow, or can be answered correctly by weak and strong models
+alike. Using such a question as evidence would make the checker's own error
+rate unknown. Calibration therefore measures each candidate against reference
+targets before the prober may use it, and it keeps only the candidates that
+separate a healthy deployment from a weaker one.
+
+% ==============================================================================
+\subsection{Protocol and decision rule}
+\label{sec:calibration_rule}
+
+A \emph{target} is a pair of a provider slug and a model identifier with a
+role. Calibration uses a set $T_H$ of healthy targets, for example the same
+model on several providers, and exactly one weak target $t_w$, for example a
+smaller model of the same family. The MVP example in the prober documentation
+uses a Llama 3.3 70B Instruct model on two providers as healthy targets and a
+Llama 3.1 8B Instruct model on a third provider as the weak target. Every
+canary is sent $R$ times to every target at temperature $0$. Each reply
+receives a grade by \eqref{eq:grade}.
+
+For a canary $c$, let $O_H(c)$ be the $R\,|T_H|$ observations on healthy
+targets and $O_W(c)$ the $R$ observations on the weak target. The canary is
+\emph{usable} if all of these observations exist, every provider status is
+\texttt{ok}, and no grade is $\bot$. For a usable canary define the healthy and
+weak accuracies
+\begin{equation}
+  \label{eq:calibration_accuracy}
+  \acc_H(c) = \frac{1}{|O_H(c)|}\sum_{o \in O_H(c)} \mathbb{1}[o\ \text{correct}],
+  \qquad
+  \acc_W(c) = \frac{1}{|O_W(c)|}\sum_{o \in O_W(c)} \mathbb{1}[o\ \text{correct}].
+\end{equation}
+The decision for canary $c$ is
+\begin{equation}
+  \label{eq:calibration_decision}
+  \text{accept}(c) \iff \text{usable}(c) \;\wedge\; \acc_H(c) \geq \tau_h
+    \;\wedge\; \acc_W(c) \leq \tau_w,
+\end{equation}
+with defaults $R = 3$, $\tau_h = 1$, and $\tau_w = 0.6$. A provider failure, a
+grader failure, or a missing attempt makes the canary unusable. Such a
+canary is reported as \texttt{INCOMPLETE\_OBSERVATIONS} and is never
+interpreted as evidence about model capability. A usable canary that fails
+the healthy test is reported as \texttt{HEALTHY\_ACCURACY\_TOO\_LOW}, and one
+that fails the weak test as \texttt{WEAK\_ACCURACY\_TOO\_HIGH}. Figure~\ref{fig:calibration-decision}
+shows the decision order, and Algorithm~\ref{alg:calibration} gives the
+procedure. Table~\ref{tab:calibration_params} lists the parameters.
+
+% rendered_images:begin
+% ```graphviz
+% digraph CalibrationDecision {
+%   // input : orange | process : blue | accepted : sage green | rejected : coral | decision : white
+%   bgcolor="transparent";
+%   pad="0.10";
+%   splines=spline;
+%   nodesep=0.25;
+%   ranksep=0.38;
+%   node [shape=box, style="rounded,filled", fillcolor="#FFFFFF", color="#9AA9B8", penwidth=1.8, fontname="Helvetica", fontcolor="#243B53", fontsize=11, margin="0.14,0.08", height=0.42];
+%   edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75, fontname="Helvetica", fontsize=9.5, fontcolor="#7B8794"];
+%   rankdir=TB;
+%   Cand  [label=<<b>Candidate canary c</b><br/><font point-size="9" color="#6B4517">from the bank</font>>, fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+%   Run   [label=<<b>Run R attempts on every target</b><br/><font point-size="9" color="#41719C">healthy targets and one weak target, grade each reply</font>>, fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+%   D1 [label="All attempts present,\nprovider ok, gradable?"];
+%   D2 [label=<Healthy accuracy<br/>≥ τ<SUB>h</SUB>?>];
+%   D3 [label=<Weak accuracy<br/>≤ τ<SUB>w</SUB>?>];
+%   Acc [label=<<b>CALIBRATED</b><br/><font point-size="9" color="#4F7A5A">persist both accuracies</font>>, fillcolor="#DFEDE0", color="#8FB79A", fontcolor="#2E5A3D"];
+%   R1 [label=<<b>INCOMPLETE_OBSERVATIONS</b>>, fillcolor="#F6C6C6", color="#D98C8C", fontcolor="#6B2A2A"];
+%   R2 [label=<<b>HEALTHY_ACCURACY_TOO_LOW</b>>, fillcolor="#F6C6C6", color="#D98C8C", fontcolor="#6B2A2A"];
+%   R3 [label=<<b>WEAK_ACCURACY_TOO_HIGH</b>>, fillcolor="#F6C6C6", color="#D98C8C", fontcolor="#6B2A2A"];
+%   Draft [label=<<b>Remains DRAFT</b><br/><font point-size="9" color="#6B2A2A">never scheduled</font>>, fillcolor="#F6C6C6", color="#D98C8C", fontcolor="#6B2A2A"];
+%   Count [label=<At least m canaries<br/>CALIBRATED? (m = 150)>];
+%   Act [label=<<b>Activate bank</b><br/><font point-size="9" color="#4F7A5A">CALIBRATED becomes ACTIVE</font>>, fillcolor="#DFEDE0", color="#8FB79A", fontcolor="#2E5A3D"];
+%   NoAct [label=<<b>Bank not activated</b><br/><font point-size="9" color="#6B2A2A">CLI exits with code 2</font>>, fillcolor="#F6C6C6", color="#D98C8C", fontcolor="#6B2A2A"];
+% 
+%   Cand -> Run;
+%   Run -> D1;
+%   D1 -> D2 [label="Yes"];
+%   D1 -> R1 [label="No"];
+%   D2 -> D3 [label="Yes"];
+%   D2 -> R2 [label="No"];
+%   D3 -> Acc [label="Yes"];
+%   D3 -> R3 [label="No"];
+%   R1 -> Draft [style=dashed];
+%   R2 -> Draft [style=dashed];
+%   R3 -> Draft [style=dashed];
+%   Acc -> Count [label="All candidates evaluated"];
+%   Count -> Act [label="Yes"];
+%   Count -> NoAct [label="No"];
+%   { rank=same; D1; R1; }
+%   { rank=same; D2; R2; }
+%   { rank=same; D3; R3; }
+% }
+% ```
+% label=fig:calibration-decision
+% caption=Decision flow for one candidate canary and for the bank. Blue is a process, green is an accepted outcome, coral is a rejected outcome, and white boxes are decisions.
+% rendered_images:end
+% render_images:begin
+\begin{figure}[H]
+  \includegraphics[width=\linewidth]{05_calibration.tex.figs/05_calibration.1.png}
+  \caption{Decision flow for one candidate canary and for the bank. Blue is a process, green is an accepted outcome, coral is a rejected outcome, and white boxes are decisions.}
+  \label{fig:calibration-decision}
+\end{figure}
+% render_images:end
+
+\begin{algorithm}[htbp]
+  \caption{Calibration of a candidate bank (\texttt{execute\_calibration} and
+  \texttt{evaluate\_canaries}).}
+  \label{alg:calibration}
+  \begin{algorithmic}[1]
+    \Require bank $\bank$; healthy targets $T_H$; weak target $t_w$; repetitions
+      $R$; thresholds $\tau_h, \tau_w$; concurrency limit $K$
+    \Ensure one decision per canary, and a summary
+    \State validate: one bank version, unique canary identifiers, unique
+      targets, $|T_H| \geq 1$, exactly one weak target
+    \ForAll{$(c, t, r) \in \bank \times (T_H \cup \{t_w\}) \times \{1,\dots,R\}$}
+      \Comment{at most $K$ calls in flight}
+      \State $\mathit{res} \gets$ call target $t$ with the prompt of $c$ at
+        temperature $0$
+      \If{$\mathit{res}$ has status \texttt{ok}}
+        \State $g \gets \grade(c, \mathit{res}.\mathit{text})$
+      \Else
+        \State $g \gets \bot$
+      \EndIf
+      \State store the observation $(c, t, r, \mathit{res}.\mathit{status}, g,
+        \mathit{latency}, \mathit{cost}, \mathit{text})$
+    \EndFor
+    \ForAll{$c \in \bank$ in identifier order}
+      \If{$c$ is not usable}
+        \State reason $\gets$ \texttt{INCOMPLETE\_OBSERVATIONS}
+      \ElsIf{$\acc_H(c) < \tau_h$}
+        \State reason $\gets$ \texttt{HEALTHY\_ACCURACY\_TOO\_LOW}
+      \ElsIf{$\acc_W(c) > \tau_w$}
+        \State reason $\gets$ \texttt{WEAK\_ACCURACY\_TOO\_HIGH}
+      \Else
+        \State reason $\gets$ \texttt{CALIBRATED}
+      \EndIf
+    \EndFor
+    \State \Return the decisions and the per-target summary
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabularx}{\linewidth}{@{}p{0.34\linewidth}p{0.12\linewidth}X@{}}
+    \toprule
+    Parameter & Default & Meaning \\
+    \midrule
+    Repetitions $R$ & 3 & Attempts per canary and target \\
+    Healthy threshold $\tau_h$ & 1.0 & Required accuracy over all healthy
+      attempts \\
+    Weak threshold $\tau_w$ & 0.6 & Largest accepted weak accuracy \\
+    Maximum tokens & 64 & Output limit of every call \\
+    Timeout & 15 s & Per-call timeout \\
+    Concurrency $K$ & 5 & Calls in flight \\
+    Minimum survivors $m$ & 150 & Accepted canaries needed to activate the bank
+      \\
+    \bottomrule
+  \end{tabularx}
+  \caption{Calibration policy (\texttt{CalibrationPolicy} and the
+  \texttt{calibrate} command).}
+  \label{tab:calibration_params}
+\end{table}
+
+The number of paid provider calls is $|\bank|\,(|T_H| + 1)\,R$. For the example
+targets above, this is $300 \times 3 \times 3 = 2{,}700$ calls. The
+\texttt{calibrate} command prints this number and stops unless
+\texttt{--execute} is passed.
+
+% ==============================================================================
+\subsection{Analysis of the acceptance rule}
+\label{sec:calibration_analysis}
+
+Suppose that, for a fixed canary, every attempt on a healthy target is correct
+with probability $p$ and every attempt on the weak target is correct with
+probability $w$, and that attempts are independent. Under these assumptions
+the survival probabilities have closed forms.
+
+\begin{proposition}
+\label{prop:acceptance}
+With $\tau_h = 1$, $R = 3$, and $\tau_w = 0.6$, a usable canary is accepted
+with probability $P_H(p)\,P_W(w)$, where
+\begin{equation}
+  \label{eq:acceptance}
+  P_H(p) = p^{\,3|T_H|}, \qquad P_W(w) = (1-w)^3 + 3w(1-w)^2.
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+The condition $\acc_H(c) \geq 1$ requires all $3|T_H|$ healthy attempts to be
+correct, which has probability $p^{3|T_H|}$. The weak accuracy takes values in
+$\{0, 1/3, 2/3, 1\}$, and $\acc_W(c) \leq 0.6$ holds if and only if at most one of
+the three attempts is correct, because $2/3 > 0.6$. The probability of zero or
+one successes in three Bernoulli trials is $(1-w)^3 + 3w(1-w)^2$.
+\end{proof}
+
+Figure~\ref{fig:calibration-acceptance} plots both factors, and
+Table~\ref{tab:acceptance_values} lists values. Three observations follow.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{figures/calibration_acceptance.png}
+  \caption{Survival probability of a candidate canary under the healthy test
+  (left, for one to three healthy targets) and the weak test (right).}
+  \label{fig:calibration-acceptance}
+\end{figure}
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{@{}lrrr@{\qquad}lr@{}}
+    \toprule
+    & \multicolumn{3}{c}{$P_H(p)$ for $|T_H| =$} & & \\
+    \cmidrule(lr){2-4}
+    $p$ & 1 & 2 & 3 & $w$ & $P_W(w)$ \\
+    \midrule
+    0.99 & 0.970 & 0.941 & 0.914 & 0.2 & 0.896 \\
+    0.98 & 0.941 & 0.886 & 0.834 & 0.5 & 0.500 \\
+    0.95 & 0.857 & 0.735 & 0.630 & 0.6 & 0.352 \\
+         &       &       &       & 0.8 & 0.104 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Survival probabilities from \eqref{eq:acceptance}, computed by
+  \texttt{figures/make\_figures.py}.}
+  \label{tab:acceptance_values}
+\end{table}
+
+First, the healthy test is a conjunction over $3|T_H|$ attempts, so each
+additional healthy provider lowers the survival probability geometrically. A
+canary with $p = 0.98$ survives with probability $0.941$ against one provider
+and $0.886$ against two. A larger healthy set yields a more conservative bank
+and a smaller one.
+
+Second, the weak test is a filter on discriminating power against one specific
+weak model. A canary that the weak model answers correctly with probability
+$0.6$ still survives with probability $0.352$, so the retained set contains
+canaries on which the weak model is not uniformly wrong.
+
+Third, the activation threshold can be binding. For illustration, if the
+per-attempt healthy accuracy were $0.98$ on every canary, with two healthy
+targets, and the weak model were correct with probability $0.5$ on every
+canary, the expected number of survivors would be $300 \times 0.886 \times
+0.500 \approx 133$, which is below $m = 150$. These values are assumptions
+chosen to show the interaction of the thresholds and are not measurements. Real
+canaries differ in difficulty, so the realized count can differ in either
+direction.
+
+The independence assumption is optimistic. All calls use temperature $0$, so
+repeated attempts at one target are expected to be strongly correlated, and the
+repetitions mainly check the stability of the serving path rather than provide
+independent samples.
+
+% ==============================================================================
+\subsection{Runtime, persistence, and activation}
+\label{sec:calibration_runtime}
+
+The function \texttt{run\_calibration} executes the protocol and persists it in
+five steps. (i) It registers the bank as \texttt{DRAFT} canaries. (ii) It
+opens a run row in state \texttt{RUNNING}, with the grader version, call
+parameters, thresholds, and targets stored as JSON. (iii) It collects all
+observations concurrently under a semaphore of size $K$. (iv) In one
+transaction it stores every raw response and grade. (v) In a second
+transaction it writes each decision into the canary row (the flag, the two
+accuracies, the status, and the reason) and marks the run \texttt{COMPLETED}. Any
+exception marks the run \texttt{FAILED} and leaves canary statuses unchanged.
+
+Accepted canaries move to \texttt{CALIBRATED}. Rejected canaries return to
+\texttt{DRAFT}, including a canary that a previous run had accepted.
+Activation is a separate step. The function \texttt{activate\_calibrated\_bank}
+takes a completed run, counts the canaries that were accepted by that run, and
+promotes them to \texttt{ACTIVE} only if the count reaches $m$. The run
+identifier ties activation to one set of decisions, and repeating the call is
+safe. The prober loads only \texttt{ACTIVE} canaries of the configured bank
+version. A canary that is already \texttt{ACTIVE} cannot be updated by a
+calibration run, so recalibrating requires a new bank version.
+Figure~\ref{fig:lifecycles} shows the three state machines involved, including
+the probe states of Section~\ref{sec:probing}.
+
+% rendered_images:begin
+% ```graphviz
+% digraph Lifecycles {
+%   // lifecycle states : teal | final or active : sage green | failure : coral
+%   bgcolor="transparent";
+%   pad="0.10";
+%   splines=spline;
+%   nodesep=0.25;
+%   ranksep=0.38;
+%   node [shape=box, style="rounded,filled", fillcolor="#FFFFFF", color="#9AA9B8", penwidth=1.8, fontname="Helvetica", fontcolor="#243B53", fontsize=11, margin="0.14,0.08", height=0.42];
+%   edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75, fontname="Helvetica", fontsize=9.5, fontcolor="#7B8794"];
+%   rankdir=TB;
+%   nodesep=0.35;
+%   ranksep=0.5;
+%   node [fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+% 
+%   subgraph cluster_canary {
+%     label="Canary status"; labelloc="t"; fontname="Helvetica-Bold"; fontsize=12; fontcolor="#3A4A5C";
+%     style="rounded,filled"; fillcolor="#F7F9FB"; color="#C7D0DA"; penwidth=1.0; margin=12;
+%     C_draft [label="DRAFT"];
+%     C_cal   [label="CALIBRATED"];
+%     C_act   [label="ACTIVE", fillcolor="#DFEDE0", color="#8FB79A", fontcolor="#2E5A3D"];
+%     C_draft -> C_cal [label="Accepted"];
+%     C_cal -> C_draft [label="Rejected later", style=dashed];
+%     C_cal -> C_act [label="Activation"];
+%   }
+%   subgraph cluster_run {
+%     label="Calibration run"; labelloc="t"; fontname="Helvetica-Bold"; fontsize=12; fontcolor="#3A4A5C";
+%     style="rounded,filled"; fillcolor="#F7F9FB"; color="#C7D0DA"; penwidth=1.0; margin=12;
+%     R_run  [label="RUNNING"];
+%     R_done [label="COMPLETED", fillcolor="#DFEDE0", color="#8FB79A", fontcolor="#2E5A3D"];
+%     R_fail [label="FAILED", fillcolor="#F6C6C6", color="#D98C8C", fontcolor="#6B2A2A"];
+%     R_run -> R_done [label="Stored"];
+%     R_run -> R_fail [label="Exception", style=dashed];
+%   }
+%   subgraph cluster_probe {
+%     label="Probe slot"; labelloc="t"; fontname="Helvetica-Bold"; fontsize=12; fontcolor="#3A4A5C";
+%     style="rounded,filled"; fillcolor="#F7F9FB"; color="#C7D0DA"; penwidth=1.0; margin=12;
+%     P_sch  [label="SCHEDULED"];
+%     P_run  [label="RUNNING"];
+%     P_done [label="COMPLETED", fillcolor="#DFEDE0", color="#8FB79A", fontcolor="#2E5A3D"];
+%     P_fail [label="FAILED_INTERNAL", fillcolor="#F6C6C6", color="#D98C8C", fontcolor="#6B2A2A"];
+%     P_sch -> P_run [label="Started"];
+%     P_run -> P_done [label="Linked"];
+%     P_run -> P_fail [label="Exception", style=dashed];
+%     P_sch -> P_fail [label="Exception", style=dashed];
+%   }
+% }
+% ```
+% label=fig:lifecycles
+% caption=Lifecycles of a canary, a calibration run, and a probe slot. Teal states are in progress, green states are successful terminal or active states, and coral states are failures. Dashed edges are exceptions or later rejections.
+% rendered_images:end
+% render_images:begin
+\begin{figure}[H]
+  \includegraphics[width=\linewidth]{05_calibration.tex.figs/05_calibration.2.png}
+  \caption{Lifecycles of a canary, a calibration run, and a probe slot. Teal states are in progress, green states are successful terminal or active states, and coral states are failures. Dashed edges are exceptions or later rejections.}
+  \label{fig:lifecycles}
+\end{figure}
+% render_images:end
+
+\subsection{Reporting}
+\label{sec:calibration_report}
+
+After a run, the summary records for each target the number of calls, the
+number of successful and gradable calls, the accuracy on all gradable calls
+and on the surviving canaries, the nearest-rank 95th percentile of latency, and
+the cost. It also records the number of candidates, the accepted and rejected
+counts, the counts per reason code, the total number of calls, and the total
+cost. A markdown renderer writes these figures to
+\texttt{docs/findings/calibration.md}. In the version of the code base that this
+paper describes, that file is a placeholder that states that the reviewed live
+run is pending and contains no measurements.
