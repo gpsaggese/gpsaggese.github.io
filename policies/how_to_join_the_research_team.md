@@ -15,6 +15,8 @@
 ## Read the Policies
 
 - Read the [policies](/policies)
+- Follow [How to Create a PR With Claude Code](pr_process.how_to_guide.md) for
+  every task
 - Make sure you can dedicate time to the projects
 
 ## Join the Team
