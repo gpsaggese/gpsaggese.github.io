@@ -17,6 +17,13 @@
 - Read the [policies](/policies)
 - Make sure you can dedicate time to the projects
 
+## Read the Must-Read Docs
+
+- Read all the docs in the
+  [must-read checklist](/helpers_root/docs/onboarding/all.dev_must_read_checklist.reference.md)
+  before you start working
+- Read the "Team leaders" section only if you lead a project
+
 ## Join the Team
 
 - Join the Research team Slack channel:

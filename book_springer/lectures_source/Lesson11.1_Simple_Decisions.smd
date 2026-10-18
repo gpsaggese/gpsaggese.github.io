@@ -235,7 +235,7 @@
 // From: msml610/lectures_source/Lesson09.1-Reasoning_over_time.smd:276 '* Sensor Model: Rain Example'
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=58%}
 - **Definition**: a _Hidden Markov Model_ (HMM) has a hidden state $\vX_t$
   that evolves under the Markov property, observed only through noisy
   evidence $\vE_t$
@@ -473,7 +473,7 @@ digraph HMM {
 // From: msml610/lectures_source/Lesson09.3-Multi_Armed_Bandits.smd:147 '* The K-Armed Bandit Problem: Formal Definition'
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=62%}
 - **Definition**: a _K-armed bandit_ has $K$ actions ("arms"), each with an
   unknown reward distribution $R_a$, no state, and no transitions
   - At each round $t$, pick arm $A_t$ and observe $R_t \sim R_{A_t}$
@@ -568,7 +568,7 @@ digraph ExploitExplore {
 // From: msml610/lectures_source/Lesson09.3-Multi_Armed_Bandits.smd:599 '* Upper Confidence Bound (UCB1)'
 
 ::: columns
-:::: {.column width=58%}
+:::: {.column width=62%}
 - **Principle**: "optimism in the face of uncertainty", act as if every arm
   is as good as is statistically plausible
   $$

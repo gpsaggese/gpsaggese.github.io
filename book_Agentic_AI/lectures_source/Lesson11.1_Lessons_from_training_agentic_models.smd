@@ -3,12 +3,6 @@
 // lesson_title=Lesson 01.11: Lessons from Training Agentic Models
 // slides_engine=typst
 
-// References:
-//- KIMI K2: Open Agentic Intelligence:
-//  https://agenticai-learning.org/slides/d11.pdf
-//- DeepSeek-V3 Technical Report:
-//  https://agenticai-learning.org/slides/d22.pdf
-
 # Lessons from Training Agentic Models
 
 ## Motivation: From Theory to Practice
@@ -579,3 +573,10 @@
 - **The community is still in early stages**
   - K2 and DeepSeek-V3 show what's possible, but reproducible recipes are still emerging
   - Your contribution: share what works (and what fails) in your own training runs
+
+* References
+
+- KIMI K2: Open Agentic Intelligence:
+  https://agenticai-learning.org/slides/d11.pdf
+
+- DeepSeek-V3 Technical Report: https://agenticai-learning.org/slides/d22.pdf

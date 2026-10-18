@@ -3,14 +3,6 @@
 // lesson_title=Lesson 01.08: Learning to Reason
 // slides_engine=typst
 
-// References:
-//- Direct Preference Optimization: Your Language Model is Secretly a Reward
-//  Model: https://arxiv.org/abs/2305.18290
-//- Iterative Reasoning Preference Optimization:
-//  https://arxiv.org/abs/2404.19733
-//- Chain-of-Verification Reduces Hallucination in Large Language Models:
-//  https://arxiv.org/abs/2309.11495
-
 # Learning to Reason
 
 ## Motivation: From Inference-Time Fixes to Learned Reasoning
@@ -109,7 +101,7 @@
 * Classical Pipeline: Reward Model and PPO
 
 ::: columns
-:::: {.column width=75%}
+:::: {.column width=80%}
 - @Solution@ (classical RLHF)
   - Fit a reward model to the Bradley-Terry likelihood on labeled preference
     pairs
@@ -349,7 +341,7 @@ digraph RLHF {
 * Iterative Reasoning Preference Optimization: Algorithm
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - @Algorithm@ (_Iterative Reasoning Preference Optimization_, IRPO):
   1. Sample $K$ CoT completions per training prompt from the current policy
   2. Label pairs by final-answer correctness, forming $(x, y_w, y_l)$
@@ -435,7 +427,7 @@ digraph IRPO {
 * CoVe: Algorithm
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - @Algorithm@ (_Chain-of-Verification_):
   1. **Draft**: generate an initial response to the query
   2. **Plan**: generate verification questions that would expose factual
@@ -565,3 +557,13 @@ digraph CoVe {
     the model to its own sampling distribution?
   - Can a verifier trained on IRPO-style correctness labels replace CoVe's
     decomposed questions with a single learned check?
+
+* References
+
+- Direct Preference Optimization: Your Language Model is Secretly a Reward
+  Model: https://arxiv.org/abs/2305.18290
+
+- Iterative Reasoning Preference Optimization: https://arxiv.org/abs/2404.19733
+
+- Chain-of-Verification Reduces Hallucination in Large Language Models:
+  https://arxiv.org/abs/2309.11495

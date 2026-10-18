@@ -55,7 +55,7 @@
   markdown file into a notebook
 - `.claude/skills/tutorial_in_60_mins.propagate_docker_changes/SKILL.md`:
   Sync the Docker files with `project_template`
-- `helpers_root/how_to.ai_workflows.md`: Lists the `tutorial_in_60_mins` skill
+- `helpers_root/docs/tools/ai/all.ai_workflows.how_to_guide.md`: Lists the `tutorial_in_60_mins` skill
   group
 
 ## Workflow

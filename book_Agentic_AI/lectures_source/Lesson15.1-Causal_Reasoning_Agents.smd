@@ -1,5 +1,5 @@
 ::: columns
-:::: {.column width=15%}
+:::: {.column width=25%}
 ![](msml610/lectures_source/figures/UMD_Logo.png)
 ::::
 :::: {.column width=75%}
@@ -19,7 +19,7 @@ MSML610: Advanced Machine Learning
 \vspace{1cm}
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=60%}
 **Instructor**: Dr. GP Saggese, [gsaggese@umd.edu](gsaggese@umd.edu)
 
 **References**: See book.from_corr_to_decision/book_map.md (Section 15)
@@ -90,7 +90,7 @@ MSML610: Advanced Machine Learning
 // TODO(gp): Think about a better representation
 
 ::: columns
-:::: {.column width=40%}
+:::: {.column width=60%}
 **Pattern Matching**
 
 - @Pros@

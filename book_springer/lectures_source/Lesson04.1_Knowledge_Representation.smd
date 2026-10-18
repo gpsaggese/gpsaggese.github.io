@@ -158,7 +158,7 @@ digraph WhyKR {
 // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:180 '* Symbolic Vs. Sub-symbolic Representation'
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 
 - @Definition@: **Symbolic KR** uses discrete, human-readable symbols
   - E.g., logic, knowledge graphs
@@ -714,7 +714,7 @@ digraph OntologyComponents {
 // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:1088 '* Example: University Ontology'
 
 ::: columns
-:::: {.column width=35%}
+:::: {.column width=40%}
 - **Classes**
   - `Student`
   - `Professor`
@@ -982,7 +982,7 @@ digraph SemanticNetwork {
 // From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:160 '* Example: Tornado Warning'
 
 ::: columns
-:::: {.column width=50%}
+:::: {.column width=55%}
 - **Example**: Severe weather alert to the public
 
 - **Causal diagram**:
@@ -1114,7 +1114,7 @@ digraph Tornado_Warning {
   the same phenomenon
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 
 - **Example**
   - A Bayesian network with $Fire$ and $Smoke$, which are dependent

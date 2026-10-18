@@ -14,26 +14,26 @@
 ## Short TOC
 - The sequence of the parts in the books are:
   - Motivation
-    - 01, Introduction
-    - 02, Why Decisions, Not Predictions
-    - 03, The Cost of Ignoring Causality, Uncertainty and Dynamics
+    - 01: Introduction
+    - 02: Why Decisions, Not Predictions
+    - 03: The Cost of Ignoring Causality, Uncertainty and Dynamics
   - Advanced Modeling Theory & Tools
-    - 04, Knowledge Representation
-    - 05, Probabilistic ML
-    - 06, Causal ML
+    - 04: Knowledge Representation
+    - 05: Probabilistic ML
+    - 06: Causal ML
   - Data
-    - 07, Building Causal Knowledge
-    - 08, Causal data pipelines
+    - 07: Building Causal Knowledge
+    - 08: Causal data pipelines
   - Decision-Making Theory & Tools
-    - 09, Decision Theory Foundations
-    - 10, Taxonomy of Decision-Making Problems and Algorithms
-    - 11, Simple Decisions
-    - 12, Complex Decisions
-    - 13, Agentic Causal Reasoning
+    - 09: Decision Theory Foundations
+    - 10: Taxonomy of Decision-Making Problems and Algorithms
+    - 11: Simple Decisions
+    - 12: Complex Decisions
+    - 13: Agentic Causal Reasoning
   - Implementation, Deployment, & Governance
-    - 14, Building Stakeholder Alignment
-    - 15, Deployment, Monitoring, and Adaptation
-    - 16, Trust, Explainability, Fairness, and Governance
+    - 14: Building Stakeholder Alignment
+    - 15: Deployment, Monitoring, and Adaptation
+    - 16: Trust, Explainability, Fairness, and Governance
 
 ## All Lesson Materials
 // From ./generate_all_tocs.sh
@@ -65,25 +65,25 @@
 | --------------------------------------------| -------- | --------- | ---------| -----|
 |                                             |          |           |          |      |
 | **Motivation**                              |          |           |          |      |
-| 01. Why Decisions, Not Predictions          | 50%      |           |          |      |
-| 02. The Cost of Ignoring Causality          |          |           |          |      |
+| 01: Why Decisions, Not Predictions          | 50%      |           |          |      |
+| 02: The Cost of Ignoring Causality          |          |           |          |      |
 | **Advanced Modeling Theory & Tools**        |          |           |          |      |
-| 04. Knowledge Representation                |          |           |          |      |
-| 05. Probalistic ML                          |          |           |          |      |
-| 06. Causal ML                               |          |           |          |      |
+| 04: Knowledge Representation                |          |           |          |      |
+| 05: Probalistic ML                          |          |           |          |      |
+| 06: Causal ML                               |          |           |          |      |
 | **Data**                                    |          |           |          |      |
-| 07. Building Causal Knowledge               |          |           |          |      |
-| 08. Causal data pipelines                   |          |           |          |      |
+| 07: Building Causal Knowledge               |          |           |          |      |
+| 08: Causal data pipelines                   |          |           |          |      |
 | **Decision-Making Theory & Tools**          |          |           |          |      |
-| 09. Decision Theory Foundations             |          |           |          |      |
-| 10. Taxonomy of Decision-Making Problems    |          |           |          |      |
-| 11. Simple Decisions                        |          |           |          |      |
-| 12. Complex Decisions                       |          |           |          |      |
-| 13. Agentic Causal Reasoning                |          |           |          |      |
+| 09: Decision Theory Foundations             |          |           |          |      |
+| 10: Taxonomy of Decision-Making Problems    |          |           |          |      |
+| 11: Simple Decisions                        |          |           |          |      |
+| 12: Complex Decisions                       |          |           |          |      |
+| 13: Agentic Causal Reasoning                |          |           |          |      |
 | **Implementation, Deployment, & Governance**|          |           |          |      |
-| 14. Building Stakeholder Alignment          |          |           |          |      |
-| 15. Deployment, Monitoring, and Adaptation  |          |           |          |      |
-| 16. Trust, Explainability, Fairness, and Governance |       |           |          |      |
+| 14: Building Stakeholder Alignment          |          |           |          |      |
+| 15: Deployment, Monitoring, and Adaptation  |          |           |          |      |
+| 16: Trust, Explainability, Fairness, and Governance |       |           |          |      |
 
 ## `book_springer` Tutorials
 

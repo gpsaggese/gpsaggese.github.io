@@ -32,38 +32,38 @@
 ## Short TOC
 - The sequence of the parts in the book is:
   - Foundations
-    - 01, What Is an Agentic AI?
-    - 02, LLM Building Blocks
-    - 03, A Brief History of LLM Agents
-    - 04, LLM Reasoning
+    - 01: What Is an Agentic AI?
+    - 02: LLM Building Blocks
+    - 03: A Brief History of LLM Agents
+    - 04: LLM Reasoning
   - Core Agent Capabilities
-    - 05, Reasoning, Memory, and Planning
-    - 06, Inference-Time Techniques
-    - 07, Tool Use and Retrieval
-    - 08, Learning to Reason
+    - 05: Reasoning, Memory, and Planning
+    - 06: Inference-Time Techniques
+    - 07: Tool Use and Retrieval
+    - 08: Learning to Reason
   - Training Agentic Models
-    - 09, Post-Training and Verifiable Agents
-    - 10, Open Training Recipes for Reasoning
-    - 11, Lessons from Training Agentic Models
-    - 12, Neural-Symbolic Decision Making
+    - 09: Post-Training and Verifiable Agents
+    - 10: Open Training Recipes for Reasoning
+    - 11: Lessons from Training Agentic Models
+    - 12: Neural-Symbolic Decision Making
   - Multi-Agent and Multimodal Systems
-    - 13, Multi-Agent AI
-    - 14, Agent Frameworks
-    - 15, Multimodal Autonomous Agents
-    - 16, From Perception to Action
+    - 13: Multi-Agent AI
+    - 14: Agent Frameworks
+    - 15: Multimodal Autonomous Agents
+    - 16: From Perception to Action
   - Applications
-    - 17, Coding Agents
-    - 18, Enterprise Workflows
-    - 19, Agents for Scientific Discovery
-    - 20, Mathematical Reasoning and Theorem Proving
-    - 21, Embodied Agents and Robotics
+    - 17: Coding Agents
+    - 18: Enterprise Workflows
+    - 19: Agents for Scientific Discovery
+    - 20: Mathematical Reasoning and Theorem Proving
+    - 21: Embodied Agents and Robotics
   - Evaluation, Safety, and Systems
-    - 22, Evaluating Agents
-    - 23, System Design for Agents
-    - 24, Safety and Security of Agentic AI
-    - 25, Trust, Capabilities, and Policy
+    - 22: Evaluating Agents
+    - 23: System Design for Agents
+    - 24: Safety and Security of Agentic AI
+    - 25: Trust, Capabilities, and Policy
   - Outlook
-    - 26, Open Problems and the Road Ahead
+    - 26: Open Problems and the Road Ahead
 
 ## All Lesson Materials
 // From ./generate_all_tocs.sh
@@ -87,38 +87,38 @@
 | ---------------------------------------------- | -------- | --------- | -------- | ---- |
 |                                                |          |           |          |      |
 | **Foundations**                                |          |           |          |      |
-| 01. What Is an Agentic AI?                     | 100%     |           |          |      |
-| 02. LLM Building Blocks                        | 100%     |           |          |      |
-| 03. A Brief History of LLM Agents              | 100%     |           |          |      |
-| 04. LLM Reasoning                              | 100%     |           |          |      |
+| 01: What Is an Agentic AI?                     | 100%     |           |          |      |
+| 02: LLM Building Blocks                        | 100%     |           |          |      |
+| 03: A Brief History of LLM Agents              | 100%     |           |          |      |
+| 04: LLM Reasoning                              | 100%     |           |          |      |
 | **Core Agent Capabilities**                    |          |           |          |      |
-| 05. Reasoning, Memory, and Planning            | 100%     |           |          |      |
-| 06. Inference-Time Techniques                  | 100%     |           |          |      |
-| 07. Tool Use and Retrieval                     | 100%     |           |          |      |
-| 08. Learning to Reason                         | 100%     |           |          |      |
+| 05: Reasoning, Memory, and Planning            | 100%     |           |          |      |
+| 06: Inference-Time Techniques                  | 100%     |           |          |      |
+| 07: Tool Use and Retrieval                     | 100%     |           |          |      |
+| 08: Learning to Reason                         | 100%     |           |          |      |
 | **Training Agentic Models**                    |          |           |          |      |
-| 09. Post-Training and Verifiable Agents        | 100%     |           |          |      |
-| 10. Open Training Recipes for Reasoning        | 100%     |           |          |      |
-| 11. Lessons from Training Agentic Models       | 100%     |           |          |      |
-| 12. Neural-Symbolic Decision Making            |          |           |          |      |
+| 09: Post-Training and Verifiable Agents        | 100%     |           |          |      |
+| 10: Open Training Recipes for Reasoning        | 100%     |           |          |      |
+| 11: Lessons from Training Agentic Models       | 100%     |           |          |      |
+| 12: Neural-Symbolic Decision Making            |          |           |          |      |
 | **Multi-Agent and Multimodal Systems**         |          |           |          |      |
-| 13. Multi-Agent AI                             |          |           |          |      |
-| 14. Agent Frameworks                           |          |           |          |      |
-| 15. Multimodal Autonomous Agents               |          |           |          |      |
-| 16. From Perception to Action                  |          |           |          |      |
+| 13: Multi-Agent AI                             |          |           |          |      |
+| 14: Agent Frameworks                           |          |           |          |      |
+| 15: Multimodal Autonomous Agents               |          |           |          |      |
+| 16: From Perception to Action                  |          |           |          |      |
 | **Applications**                               |          |           |          |      |
-| 17. Coding Agents                              |          |           |          |      |
-| 18. Enterprise Workflows                       |          |           |          |      |
-| 19. Agents for Scientific Discovery            |          |           |          |      |
-| 20. Mathematical Reasoning and Theorem Proving |          |           |          |      |
-| 21. Embodied Agents and Robotics               |          |           |          |      |
+| 17: Coding Agents                              |          |           |          |      |
+| 18: Enterprise Workflows                       |          |           |          |      |
+| 19: Agents for Scientific Discovery            |          |           |          |      |
+| 20: Mathematical Reasoning and Theorem Proving |          |           |          |      |
+| 21: Embodied Agents and Robotics               |          |           |          |      |
 | **Evaluation, Safety, and Systems**            |          |           |          |      |
-| 22. Evaluating Agents                          |          |           |          |      |
-| 23. System Design for Agents                   |          |           |          |      |
-| 24. Safety and Security of Agentic AI          |          |           |          |      |
-| 25. Trust, Capabilities, and Policy            | 40%      |           |          |      |
+| 22: Evaluating Agents                          |          |           |          |      |
+| 23: System Design for Agents                   |          |           |          |      |
+| 24: Safety and Security of Agentic AI          |          |           |          |      |
+| 25: Trust, Capabilities, and Policy            | 40%      |           |          |      |
 | **Outlook**                                    |          |           |          |      | 
-| 26. Open Problems and the Road Ahead           |          |           |          |      |
+| 26: Open Problems and the Road Ahead           |          |           |          |      |
 
 ## Tutorials
 

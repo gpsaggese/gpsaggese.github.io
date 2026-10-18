@@ -3,31 +3,6 @@
 // lesson_title=Lesson 14.01: Human-AI Collaboration Patterns
 // slides_engine=typst
 
-// References:
-// - Kang, "Governed AI-Assisted Engineering: Graduated Human Oversight for
-//   Agentic Code Generation in Regulated Domains": https://arxiv.org/abs/2606.22484
-// - Shukla et al., "Hedwig: Dynamic Autonomy for Coding Agents Under Local
-//   Oversight": https://arxiv.org/abs/2605.11495
-// - Raees et al., "From Trust to Appropriate Reliance: Measurement Constructs
-//   in Human-AI Decision-Making": https://arxiv.org/abs/2604.23896
-// - Li et al., "The Rise of AI Teammates in Software Engineering (SE 3.0)":
-//   https://arxiv.org/abs/2507.15003
-// - He et al., "Fine-Grained Appropriate Reliance: Human-AI Collaboration
-//   with a Multi-Step Transparent Decision Workflow": https://arxiv.org/abs/2501.10909
-// - Mehrotra et al., "A Systematic Review on Fostering Appropriate Trust in
-//   Human-AI Interaction": https://arxiv.org/abs/2311.06305
-// - Peng et al., "The Impact of AI on Developer Productivity: Evidence from
-//   GitHub Copilot": https://arxiv.org/abs/2302.06590
-// - Heilman et al., "GitHub Copilot and Developer Productivity: An
-//   Observational Dose-Response Analysis": https://arxiv.org/abs/2606.00438
-// - Horvitz, "Principles of Mixed-Initiative User Interfaces":
-//   https://doi.org/10.1145/302979.303030
-// - National Academies of Sciences, Engineering, and Medicine, "Human-AI
-//   Teaming: State-of-the-Art and Research Needs":
-//   https://www.nap.edu/catalog/26355/human-ai-teaming-state-of-the-art-and-research-needs
-// - Daugherty et al., "Human + Machine: Reimagining Work in the Age of AI":
-//   https://books.google.com/books?id=wpY4DwAAQBAJ
-
 # Human-AI Collaboration Patterns
 
 ## Collaboration Modes
@@ -145,7 +120,7 @@ digraph CollabModes {
 * Review-Loop in Practice: A Pull-Request Cycle
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=58%}
 - The loop repeats until the reviewer accepts the change
   - Each iteration narrows the gap between what was proposed and what is
     actually correct
@@ -305,7 +280,7 @@ digraph ReviewLoop {
 * Designing a Handoff: Worked Example
 
 ::: columns
-:::: {.column width=45%}
+:::: {.column width=50%}
 - @Steps@:
   1. Agent proposes an action
   2. Check: is it hard to reverse, or does it reach outside the repository
@@ -709,3 +684,39 @@ mindmap
   humans, review each other's work?
 - What governance is needed when a team's shared conventions must satisfy
   external regulatory oversight, not just internal review?
+
+* References
+
+- Kang, "Governed AI-Assisted Engineering: Graduated Human Oversight for Agentic
+  Code Generation in Regulated Domains": https://arxiv.org/abs/2606.22484
+
+- Shukla et al., "Hedwig: Dynamic Autonomy for Coding Agents Under Local
+  Oversight": https://arxiv.org/abs/2605.11495
+
+- Raees et al., "From Trust to Appropriate Reliance: Measurement Constructs in
+  Human-AI Decision-Making": https://arxiv.org/abs/2604.23896
+
+- Li et al., "The Rise of AI Teammates in Software Engineering (SE 3.0)":
+  https://arxiv.org/abs/2507.15003
+
+- He et al., "Fine-Grained Appropriate Reliance: Human-AI Collaboration with a
+  Multi-Step Transparent Decision Workflow": https://arxiv.org/abs/2501.10909
+
+- Mehrotra et al., "A Systematic Review on Fostering Appropriate Trust in
+  Human-AI Interaction": https://arxiv.org/abs/2311.06305
+
+- Peng et al., "The Impact of AI on Developer Productivity: Evidence from GitHub
+  Copilot": https://arxiv.org/abs/2302.06590
+
+- Heilman et al., "GitHub Copilot and Developer Productivity: An Observational
+  Dose-Response Analysis": https://arxiv.org/abs/2606.00438
+
+- Horvitz, "Principles of Mixed-Initiative User Interfaces":
+  https://doi.org/10.1145/302979.303030
+
+- National Academies of Sciences, Engineering, and Medicine, "Human-AI Teaming:
+  State-of-the-Art and Research Needs":
+  https://www.nap.edu/catalog/26355/human-ai-teaming-state-of-the-art-and-research-needs
+
+- Daugherty et al., "Human + Machine: Reimagining Work in the Age of AI":
+  https://books.google.com/books?id=wpY4DwAAQBAJ

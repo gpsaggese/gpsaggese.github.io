@@ -3,17 +3,6 @@
 // lesson_title=Lesson 01.06: Inference-Time Techniques
 // slides_engine=typst
 
-// References:
-//- Large Language Models as Optimizers:
-//  https://arxiv.org/abs/2309.03409
-//- Teaching Large Language Models to Self-Debug:
-//  https://arxiv.org/abs/2304.05128
-//- Large Language Models Cannot Self-Correct Reasoning Yet:
-//  https://arxiv.org/abs/2310.01798
-//- Scaling LLM Test-Time Compute Optimally can be More Effective than Scaling
-//  Model Parameters:
-//  https://arxiv.org/abs/2408.03314
-
 # Inference-Time Techniques
 
 ## Motivation: Beyond a Single Reasoning Chain
@@ -459,3 +448,15 @@
     compute to solve it?
   - Can retrieval and long-context grounding supply the missing verification
     signal for open-ended reasoning tasks?
+
+* References
+
+- Large Language Models as Optimizers: https://arxiv.org/abs/2309.03409
+
+- Teaching Large Language Models to Self-Debug: https://arxiv.org/abs/2304.05128
+
+- Large Language Models Cannot Self-Correct Reasoning Yet:
+  https://arxiv.org/abs/2310.01798
+
+- Scaling LLM Test-Time Compute Optimally can be More Effective than Scaling
+  Model Parameters: https://arxiv.org/abs/2408.03314

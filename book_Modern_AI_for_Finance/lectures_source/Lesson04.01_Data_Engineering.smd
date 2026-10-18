@@ -1,0 +1,1177 @@
+// type=UMD_slides
+// course_title=Modern AI for Finance
+// lesson_title=Lesson 04.01: Data Engineering
+// slides_engine=typst
+
+* Roadmap
+
+- This lesson covers **point-in-time correctness**: how to store and join data
+  so that every value is used only after it was known, despite release lags,
+  restatements, and backfills
+  - The running example is a value signal built on quarterly fundamentals
+
+- It then covers **survivorship bias**: how to build universes that include
+  delisted stocks, and why a missing delisting return inflates a backtest
+
+- It continues with **reference data**: splits, dividends, identifiers, time
+  zones, and calendars, the details that silently break joins
+
+- It surveys **data vendors**: CRSP, TAQ, Compustat, and EDGAR, and how to put
+  their formats behind one schema
+
+- It closes with **alternative data**: satellite, web, ESG, and climate data,
+  and how to judge a dataset before paying for it
+
+# Point-in-Time Correctness
+
+* Why Data Engineering Comes First
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:522 '* Motivation'
+// From: data605/lectures_source/Lesson02.3-Data_Pipelines.smd:373 '* Data Cleaning'
+
+- @Motivation@: a backtest is only as good as its data, and a data bug raises
+  no error
+  - The code runs and the Sharpe ratio is high, but the dataset is wrong
+
+- @Problem@: every data point answers six questions
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Question", "What goes wrong", "Fix"),
+  rows: (
+    ("Known when?", "Look-ahead", "As-of joins"),
+    ("Which assets?", "Survivorship bias", "Point-in-time universe"),
+    ("Which price?", "Splits and dividends", "Adjust on read"),
+    ("Which entity?", "Reused tickers", "Permanent identifiers"),
+    ("Which clock?", "Time zones, DST", "UTC and calendars"),
+    ("Which source?", "Vendor formats", "One schema"),
+  ),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Key idea@: every value must be what a trader could have known, for the
+  assets that traded then
+
+* Running Example: A Value Signal From Fundamentals
+// From: book_Modern_AI_for_Finance/lectures_source/Lesson01.01_Why_Finance_Is_Different.smd:50 '* Running Example: A Momentum Strategy'
+// From: book_Modern_AI_for_Finance/lectures_source/Lesson06.01_Auto_EDA.smd:47 '* Running Example: A Daily Equity Panel'
+
+- @Example@: a value signal on the quarterly fundamentals of 1000 stocks over
+  15 years, simulated so that every defect is known
+  - The signal predicts the next month's return a little (IC about 0.03)
+
+- @Problem@: the data hide defects that a value backtest would trade on
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Planted defect", "What happens", "Fix"),
+  rows: (
+    ("Release lag", "Public 25 to 181 days after the quarter end", "As-of joins"),
+    ("Restatements", "15% revised 20 to 80 days after release", "Vintages"),
+    ("Delistings", "36% of stocks, cheap ones more often", "Universe"),
+    ("Splits, dividends", "One stock: 2 splits, 80 dividends", "Adjust on read"),
+    ("Clocks", "New York and London local time", "UTC"),
+  ),
+  col-widths: (1fr, 2.2fr, 1fr),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+* Three Clocks: Period, Release, Knowledge Time
+// From: //notes1/notes/IN_PROGRESS.finance.Compustat.2017.txt:25 '* Effective date'
+// From: //notes1/notes/IN_PROGRESS.finance.Compustat.2017.txt:34 '* Observation date'
+// From: //notes1/notes/papers.finance.misc.txt:1886 '#### Date and period references'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:562 '* Fundamental data: release data vs report data'
+
+::: columns
+:::: {.column width=58%}
+- @Definition@: a fundamental record has three clocks
+  - **Period end** (`datadate`): what the numbers describe
+  - **Release** (`rdq`): when the company publishes
+  - **Knowledge time** (`effdate`): when the database holds the value
+
+- @Problem@: the release comes weeks or months after the period end
+  - Papers that join on the period end cannot be reproduced once the data is
+    aligned
+
+- @Key idea@: a value is usable at decision time $t$ only if its knowledge
+  time is not after $t$
+::::
+:::: {.column width=42%}
+
+```graphviz
+digraph Clocks {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.3;
+    ranksep=0.3;
+    rankdir=TB;
+    // period : orange | release : teal | database : blue
+    node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Helvetica",
+          fontsize=11, margin="0.18,0.08", height=0.42];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    Period  [label="Period end\n(datadate)", fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+    Release [label="Release\n(rdq): +25 to 181 days", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    Load    [label="Database load\n(effdate)", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+
+    Period -> Release -> Load;
+}
+```
+::::
+:::
+
+* A Point-in-Time Data Model
+// From: //notes1/notes/IN_PROGRESS.finance.Compustat.2017.txt:16 '- Snapshot DB shows information that was available at that time in history'
+// From: //notes1/notes/papers.finance.misc.txt:1845 '#### Overview'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:580 '* Point-in-time'
+
+- @Definition@: a **point-in-time database** stores several values of each
+  variable, each with the interval during which it was the known value
+  - A record is `(asset, period, value, from, through)`
+  - A query on an observation date returns the records with `from` $\le$ date
+    $<$ `through`
+
+- @Example@: one restated record of the running example
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Stock", "Period end", "Value", "From", "Through"),
+  rows: (
+    ("S0272", "2012-09-30", "-0.07", "2012-11-25", "2012-12-21"),
+    ("S0272", "2012-09-30", "-1.56", "2012-12-21", "9999-12-31"),
+  ),
+  bold-first-col: false,
+)
+```
+\endgroup
+
+- @Remark@: the restatement does not erase the first row
+  - A query on 2012-12-01 returns -0.07, and one on 2013-01-15 returns -1.56
+
+* As-of Joins
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1845 '* Look-ahead bias'
+
+::: columns
+:::: {.column width=45%}
+- @Definition@: an **as-of join** attaches to each decision time $t$ the latest
+  record of the asset with knowledge time $\tau \le t$
+  $$
+  x_i(t) \triangleq v_{i,k^*}
+  \quad
+  k^* \triangleq \arg\max_k \{ \tau_{i,k} : \tau_{i,k} \le t \}
+  $$
+
+- @Key idea@: the only change is the join key, `datadate` $\to$ `rdq`
+  - The period end join uses an unreleased value on 5 of 8 decisions
+
+```python
+pd.merge_asof(
+    decisions, funds,
+    left_on="decision_date",
+    right_on="rdq",
+    by="stock",
+)
+```
+::::
+:::: {.column width=55%}
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Decision", "Period end join", "Release join"),
+  rows: (
+    ("2024-01-31", "4.1 (future)", "none"),
+    ("2024-02-29", "4.1", "4.1"),
+    ("2024-03-31", "4.6 (future)", "4.1"),
+    ("2024-04-30", "4.6 (future)", "4.1"),
+    ("2024-05-31", "4.6", "4.6"),
+    ("2024-06-30", "5.2 (future)", "4.6"),
+    ("2024-07-31", "5.2 (future)", "4.6"),
+    ("2024-08-31", "5.2", "5.2"),
+  ),
+  bold-first-col: true,
+)
+```
+\endgroup
+::::
+:::
+
+* Release Lags and Look-Ahead
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:562 '* Fundamental data: release data vs report data'
+
+::: columns
+:::: {.column width=55%}
+- @Fact@: the simulated lags have a mean of 59 days, from 25 to 181
+
+- @Problem@: a fixed lag after the quarter end leaks the earnings news
+  - Lag of 0 to 30 days: IC 0.089, three times the 0.029 of the true release
+    dates
+  - Lag of 45 days: 0.053, and of 90 days: 0.032
+
+- @Key idea@: store the release timestamp of every record
+  - A lag rule must exceed the largest lag
+::::
+:::: {.column width=45%}
+
+![](book_Modern_AI_for_Finance/lectures_source/figures/L04.01.Release_Lag.png)
+
+\footnotesize _Distribution of release lags (top), and mean IC against the
+assumed lag, with the IC of the true release dates as a dashed line (bottom)_
+::::
+:::
+
+* Restatements, Revisions, and Backfill
+// From: //notes1/notes/IN_PROGRESS.finance.Compustat.2017.txt:110 '* Restatement'
+// From: //notes1/notes/IN_PROGRESS.finance.Compustat.2017.txt:113 '* Material change / error'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:570 '* Fundamental data: backfilling'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:573 '* Fundamental data: reinstated value'
+
+::: columns
+:::: {.column width=55%}
+- @Definition@: a **restatement** revises a past statement to correct a
+  material error, e.g., GDP is revised twice after its release
+
+- @Definition@: **backfilling** fills history with data unknown at the
+  publication date
+
+- @Comparison@: three ways to read a restated value
+  - _Latest vintage_: IC 0.044
+  - _Point in time_: IC 0.027
+  - _First reported_: IC 0.029
+
+- @Key idea@: the latest vintage knows the restatement before it happens
+::::
+:::: {.column width=45%}
+
+![](book_Modern_AI_for_Finance/lectures_source/figures/L04.01.Restatements.png)
+
+\footnotesize _Vintages of one restated record (top), and mean IC under three
+rules to read it (bottom)_
+::::
+:::
+
+* Pipelines That Fail Loudly
+// From: data605/lectures_source/Lesson02.3-Data_Pipelines.smd:373 '* Data Cleaning'
+
+::: columns
+:::: {.column width=58%}
+- @Problem@: a point-in-time bug raises no error
+  - The join runs, the metric looks good, and the future sits in the features
+
+- @Solution@: make the knowledge time a checked column
+  - Every join asserts `knowledge_time` $\le$ `decision_time`
+  - Records dated after the clock of the run fail the load
+  - Coding assistants generate one guard and test per join
+
+- @Example@: the guard finds 5 future rows of 8 in the period end join, and 0
+  in the as-of join
+::::
+:::: {.column width=42%}
+
+```graphviz
+digraph Guards {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.3;
+    ranksep=0.3;
+    rankdir=TB;
+    // input : orange | guarded step : teal | output : blue
+    node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Helvetica",
+          fontsize=11, margin="0.18,0.08", height=0.42];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    Ingest [label="Ingest\nguard: no future dates", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    Table  [label="Point-in-time table", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+    Join   [label="As-of join\nguard: known before\ndecision", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+
+    Ingest -> Table -> Join;
+}
+```
+::::
+:::
+
+# Survivorship Bias
+
+* Point-in-Time Universes
+// From: //notes1/notes/IN_PROGRESS.finance.Quantitative_trading.Chan.2009.txt:130 '* Does data suffer from survivorship bias?'
+// From: //notes1/notes/IN_PROGRESS.finance.Quantitative_trading.Chan.2009.txt:237 '* Dealing with survivorship biased data'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1841 '* Survivorship bias'
+// From: //notes1/notes/papers.finance.misc.txt:2587 '- Eliminate stocks priced < $1'
+
+- @Definition@: a **survivorship-bias-free universe** at date $t$ contains
+  every asset that was listed and tradable at $t$
+  - It includes the assets that later went bankrupt, merged, or delisted
+  - Such data is sometimes called "point-in-time"
+
+- @Problem@: using the current universe, e.g., today's index members, for the
+  past
+  - Databases free from survivorship bias are expensive
+
+- @Solution@: select the assets with `listed_on` $\le t <$ `delisted_on`, then
+  apply rules with data known at $t$
+  - E.g., price above \$1 and market capitalization at $t$
+  - Or collect the data yourself, so that it is point-in-time
+
+* Delistings: Causes and Returns
+// From: //notes1/notes/IN_PROGRESS.finance.Quantitative_trading.Chan.2009.txt:130 '* Does data suffer from survivorship bias?'
+// From: //notes1/notes/papers.finance.misc.txt:6657 '  - Delisting info to handle survivorship bias'
+
+- @Definition@: a **delisting** removes a security from an exchange, and the
+  database must record the reason
+
+// TODO(gp): Check the table: the reasons and last returns come from general
+// knowledge and are not in the notes
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Reason", "Last return"),
+  rows: (
+    ("Merger or acquisition", "Close to the deal price"),
+    ("Bankruptcy or liquidation", "Large loss, up to -100%"),
+    ("Failure to meet listing rules", "Large loss"),
+  ),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Fact@: delistings for negative reasons are generally surprises, and the
+  correct delisting return is not available for most of them in CRSP
+  (Shumway, 1997)
+
+// TODO(gp): Check the -30% mean: it is an assumption of the simulation, set
+// by the author after recalling the size of the omitted returns, and it is not
+// in the abstract of Shumway (1997)
+- @Example@: in the simulation 36% of the stocks delist, with a mean delisting
+  return of -30%
+  - 86% of the cheapest decile delists, against 4% of the most expensive
+
+* Missing Delisting Returns
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1841 '* Survivorship bias'
+// From: //notes1/notes/IN_PROGRESS.finance.Quantitative_trading.Chan.2009.txt:130 '* Does data suffer from survivorship bias?'
+
+::: columns
+:::: {.column width=52%}
+- @Problem@: the delisting month of a failing stock often has no return, and
+  the loss disappears from every average
+
+- @Example@: the value premium, i.e., cheapest minus most expensive decile
+  - True delisting return: 3.7% a year
+  - Delisting return missing: 6.5%
+  - Imputed return of -30%: 3.5%
+
+- @Interpretation@: missing returns inflate the premium by 78%
+
+- @Solution@: take the delisting return from the vendor, or impute a
+  conservative one
+::::
+:::: {.column width=48%}
+
+![](book_Modern_AI_for_Finance/lectures_source/figures/L04.01.Delisting_Returns.png)
+
+\footnotesize _Returns of the delisting months (top), and annual return of the
+cheapness deciles under three rules (bottom)_
+::::
+:::
+
+* Data-Quality Tests for the Universe
+// From: data605/lectures_source/Lesson02.3-Data_Pipelines.smd:373 '* Data Cleaning'
+// From: //notes1/notes/IN_PROGRESS.finance.Quantitative_trading.Chan.2009.txt:237 '* Dealing with survivorship biased data'
+
+- @Problem@: survivorship bias is a property of what is missing, so no check
+  on a single value finds it
+
+- @Techniques@: tests that run at every data refresh
+  1. Every exit has a delisting date and a reason
+  2. Every delisting has a delisting return, or an imputed flag
+  3. The assets per date match an external count, e.g., index membership
+  4. No asset has a price after its delisting date
+
+- @Applications@: automation fails the load when a vendor drops the delisted
+  names, and coding assistants generate the tests from the schema
+
+- @Remark@: detecting a survivor-only panel from the data alone is covered in
+  detail in Lesson 06.01
+
+# Reference Data
+
+* Corporate Actions: A Catalog
+// From: //notes1/notes/IN_PROGRESS.finance.Quantitative_trading.Chan.2009.txt:215 '* Are the data split / dividend adjusted?'
+
+- @Definition@: a **corporate action** is an event decided by a company that
+  changes its securities
+
+// TODO(gp): Check the spin-off, merger, and name change rows: they come from
+// general knowledge and are not in the notes
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Action", "Raw price", "Adjustment of earlier data"),
+  rows: (
+    ("Split N for 1", "Divided by N", "Prices times 1/N, volume times N"),
+    ("Reverse split", "Multiplied by N", "Prices times N, volume divided by N"),
+    ("Cash dividend D", "Falls by about D", "Prices times (P-D)/P"),
+    ("Spin-off", "Falls", "New security, factor for the old"),
+    ("Merger", "Target ends", "Delisting return, link identifiers"),
+    ("Name change", "Unchanged", "New label, same security"),
+  ),
+  col-widths: (1fr, 1fr, 1.8fr),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Fact@: without adjustments, the price jumps at the ex-date open compared
+  with the previous close, besides the normal fluctuations
+
+* Split Adjustment
+// From: //notes1/notes/IN_PROGRESS.finance.Quantitative_trading.Chan.2009.txt:219 '* Adjusting for stock splits'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:789 '* Volume bars: cons'
+
+- @Definition@: in an $N$-to-1 split with ex-date $T$, each old share becomes
+  $N$ shares: prices before $T$ are multiplied by $1/N$, and volume by $N$
+  $$
+  \tilde P_t \triangleq P_t \prod_{T > t} \frac{1}{N_T}
+  $$
+  - The product runs over all the splits after date $t$
+
+- @Example@: the simulated stock splits 2 for 1 twice in 20 years
+  - Its first raw close of \$61.98 is \$15.49 split-adjusted
+
+- @Problem@: the raw return on a split day is wrong
+  - The worst raw daily return is -49.0%, and the worst adjusted one is -5.1%
+
+* Dividends and Total Returns
+// From: //notes1/notes/IN_PROGRESS.finance.Quantitative_trading.Chan.2009.txt:227 '* Adjusting for dividends'
+// From: //notes1/notes/finance.all.txt:1321 '** Adjusting for dividends'
+
+::: columns
+:::: {.column width=55%}
+- @Definition@: the **total return** adds the dividend to the price return
+  $$
+  R^{tot}_t \triangleq R_t + \frac{D_t}{P_{t-1}}
+  $$
+
+- @Fact@: the price falls by about $D$ on the ex-date
+  - Multiply earlier prices by $(P - D) / P$: the returns do not change
+  - Adding $D$ to prices changes the returns and can make prices negative
+
+- @Example@: with a 2% yearly yield, \$1 grows to \$7.7 with dividends and
+  to \$5.2 without
+::::
+:::: {.column width=45%}
+
+![](book_Modern_AI_for_Finance/lectures_source/figures/L04.01.Adjusted_Prices.png)
+
+\footnotesize _Growth of \$1 with dividends and with the price only (top), and
+factor that turns the raw close into the adjusted close (bottom)_
+::::
+:::
+
+* Store Raw, Adjust on Read
+// From: //notes1/notes/IN_PROGRESS.finance.Quantitative_trading.Chan.2009.txt:215 '* Are the data split / dividend adjusted?'
+
+::: columns
+:::: {.column width=58%}
+- @Problem@: adjusted prices depend on the future, since every new split or
+  dividend rescales the whole history
+
+- @Example@: the simulated stock closed at \$97.84 on 2010-06-30
+  - Today a database shows \$48.92 split-adjusted, and \$36.58 fully adjusted
+    (factor 0.374)
+
+- @Solution@: store raw prices and a table of corporate actions, and compute
+  the factors on read for a chosen as-of date
+::::
+:::: {.column width=42%}
+
+```graphviz
+digraph Adjust {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.3;
+    ranksep=0.3;
+    rankdir=TB;
+    // input : orange | process : teal | output : blue
+    node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Helvetica",
+          fontsize=11, margin="0.18,0.08", height=0.42];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    Raw    [label="Raw prices", fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+    Action [label="Corporate-action\ntable", fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+    Adjust [label="adjust(as_of)", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    Out    [label="Adjusted series\nas known at as_of", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+
+    Raw -> Adjust;
+    Action -> Adjust;
+    Adjust -> Out;
+}
+```
+::::
+:::
+
+* Tickers Are Not Keys
+// From: //notes1/notes/finance.bloomberg.txt:90 '## Securities'
+
+::: columns
+:::: {.column width=58%}
+- @Problem@: a ticker is a label that an exchange assigns and reassigns
+  - One company can have several tickers over time, and one ticker several
+    companies
+
+// TODO(gp): Check both examples: they come from memory and are not in the
+// notes, in particular the rename date of Meta and the 2005 deal of SBC
+- @Examples@: two directions of the problem
+  - **Meta Platforms** traded as `FB` before its rename and as `META` after
+  - The ticker `T` went from **AT&T Corp.** to the new AT&T Inc., after SBC
+    Communications bought it in 2005
+
+- @Key idea@: join on a permanent identifier, and keep the ticker as an
+  attribute with a date range
+::::
+:::: {.column width=42%}
+
+```graphviz
+digraph Tickers {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.3;
+    ranksep=0.3;
+    rankdir=TB;
+    // one company : blue | one ticker : coral
+    node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Helvetica",
+          fontsize=11, margin="0.18,0.08", height=0.4];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    subgraph cluster_company {
+        label="One company, two tickers";
+        fontname="Helvetica"; fontsize=11; fontcolor="#7B8794";
+        style="rounded"; color="#A3B1C0";
+        FB   [label="FB", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+        META [label="META", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+        FB -> META [label="  rename  "];
+    }
+    subgraph cluster_ticker {
+        label="One ticker, two companies";
+        fontname="Helvetica"; fontsize=11; fontcolor="#7B8794";
+        style="rounded"; color="#A3B1C0";
+        T1 [label="T: AT&T Corp.", fillcolor="#F6C6C6", color="#D98C8C", fontcolor="#6B2A2A"];
+        T2 [label="T: AT&T Inc.", fillcolor="#F6C6C6", color="#D98C8C", fontcolor="#6B2A2A"];
+        T1 -> T2 [label="  2005  "];
+    }
+}
+```
+::::
+:::
+
+* Identifier Systems: CUSIP, ISIN, PERMNO
+// From: //notes1/notes/papers.finance.misc.txt:1826 '- Compustat data is organized around company / security (GVKEY) and issue'
+// From: //notes1/notes/finance.bloomberg.txt:95 '- Loading security'
+
+// TODO(gp): Check the table: the scope, length, and stability of each
+// identifier come from memory, except the Compustat and Bloomberg rows
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Identifier", "Scope", "Stability"),
+  rows: (
+    ("Ticker", "Exchange label", "Changes and is reused"),
+    ("CUSIP", "9 characters, North America", "Can change with actions"),
+    ("ISIN", "12 characters, worldwide", "Wraps the national number"),
+    ("PERMNO", "CRSP security key", "Permanent"),
+    ("GVKEY, IID", "Compustat company, issue", "Permanent company key"),
+    ("BBGID", "Bloomberg security key", "Assigned by Bloomberg"),
+  ),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Key idea@: choose one internal identifier, and map all the others to it
+  through dated mapping tables
+
+* Security Master and Time-Varying Links
+// From: //notes1/notes/papers.finance.misc.txt:1815 '### CRSP'
+
+::: columns
+:::: {.column width=52%}
+- @Definition@: a **security master** is the reference table of every
+  security and its identifiers over time
+
+- @Problem@: a link is true only for a date range
+  - A join on the wrong date attaches the numbers of one company to the
+    returns of another
+
+- @Key idea@: identity is a time-varying fact, so it needs a knowledge time
+  and an as-of join like any other value
+::::
+:::: {.column width=48%}
+
+```graphviz
+digraph Master {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.3;
+    ranksep=0.35;
+    rankdir=TB;
+    // master : blue | dated mappings : teal
+    node [shape=record, style="filled", penwidth=1.6, fontname="Helvetica",
+          fontsize=10, margin="0.12,0.06"];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75];
+
+    Sec  [label="{security|security_id\lissuer_id\lshare_class\llisted_on\ldelisted_on\l}", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+    Ident [label="{identifier|security_id\ltype\lvalue\lvalid_from\lvalid_to\l}", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    Link [label="{vendor_link|security_id\lvendor\lvendor_id\llink_from\llink_to\l}", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+
+    Sec -> Ident;
+    Sec -> Link;
+}
+```
+::::
+:::
+
+* Event, Exchange, and Receipt Time
+// From: data605/lectures_source/Lesson10.2-Streaming_and_Real_Time_Analytics.smd:183 '* Event vs Processing Time'
+// From: data605/lectures_source/Lesson10.2-Streaming_and_Real_Time_Analytics.smd:161 '* Delivery Semantics: At-least once'
+// From: //notes1/notes/papers.finance.misc.txt:1872 '#### Terminology'
+
+- @Definition@: one market event has several times
+  - **Event time**: when the event was generated at the venue
+  - **Processing time**: when the system received it
+  - **Knowledge time**: when the vendor database held the value
+
+- @Problem@: events arrive late, out of order, or duplicated (at-least-once
+  delivery)
+
+- @Example@: Compustat effective times are weekly and intraday updates, which
+  is not the same as its FTP delivery schedule
+
+- @Key idea@: store UTC timestamps, keep the event time and the receipt time,
+  and de-duplicate on the asset, the event time, and a sequence number
+
+* Time Zones, Daylight Saving, and Calendars
+// From: //notes1/notes/finance.all.txt:271 '** NASDAQ trading market hours'
+// From: //notes1/notes/finance.all.txt:276 '** Daylight saving time'
+// From: //notes1/notes/finance.all.txt:290 '** Eastern Time'
+
+::: columns
+:::: {.column width=55%}
+- @Fact@: the US session runs from 9:30 to 16:00 ET, which is UTC-5 in winter
+  and UTC-4 in summer
+
+- @Example@: the 16:00 New York close is 21:00 UTC in winter and 20:00 UTC in
+  summer
+  - New York and London are 5 hours apart, except 28 days a year, since the
+    clocks change on different dates
+
+// TODO(gp): Check the calendar technique: it comes from memory and is not in
+// the notes
+- @Techniques@: store UTC and convert only at the edge
+  - Use one exchange calendar per market, never the next weekday
+::::
+:::: {.column width=45%}
+
+![](book_Modern_AI_for_Finance/lectures_source/figures/L04.01.UTC_Close.png)
+
+\footnotesize _UTC hour of the 16:00 New York close (top), and hours between New
+York and London (bottom), in gray where the gap is not 5_
+::::
+:::
+
+* Automating Reference Data
+// From: data605/lectures_source/Lesson07.2-Data_Wrangling.smd:302 '* Multi-Source Problems'
+// From: //notes1/notes/IN_PROGRESS.finance.Quantitative_trading.Chan.2009.txt:243 '* Does your strategy use high and low data?'
+
+- @Problem@: reference data errors do not raise exceptions, and break joins
+  silently
+
+- @Solution@: ML and automation for three common failures
+  - _Entity resolution_: map names and tickers across identifier systems
+  - _Anomaly detection_: flag bad ticks and unadjusted splits, e.g., a return
+    4 standard deviations away with no news
+  - _Reconciliation_: every price jump matches a corporate-action row
+
+// TODO(gp): Check the entity resolution steps: they are a generic recipe
+// written from memory, and are not in the notes
+- @Techniques@: entity resolution in four steps
+  1. Normalize the names
+  2. Block on a coarse key, e.g., the country
+  3. Score each candidate pair with a string similarity or an embedding
+  4. Send the uncertain band to a person
+
+- @Remark@: detecting these errors in a panel of unknown quality is covered in
+  detail in Lesson 06.01
+
+# Data Vendors
+
+* Four Types of Financial Data
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:532 '* Essential types of financial data'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:543 '* Fundamental data'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:594 '* Market data'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:626 '* Analytics'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:652 '* Alternative data'
+
+- @Definition@: financial data comes in four types, in increasing diversity
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Type", "Examples", "Main pitfall"),
+  rows: (
+    ("Fundamental", "Assets, sales, earnings", "Release vs report date, backfill"),
+    ("Market", "Price, volume, quotes", "Over 10 TB a day, outliers"),
+    ("Analytics", "Ratings, recommendations, sentiment", "Costly, opaque, not exclusive"),
+    ("Alternative", "Social media, satellites", "Cost, privacy, hard to process"),
+  ),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Key idea@: start from the rawest data available, and do not use data
+  processed by somebody else without knowing the processing
+
+* CRSP: Prices, Returns, Delistings
+// From: //notes1/notes/papers.finance.misc.txt:1815 '### CRSP'
+// From: //notes1/notes/papers.finance.misc.txt:6653 '- From CRSP / Compustat'
+// From: //notes1/notes/papers.finance.misc.txt:6657 '  - Delisting info to handle survivorship bias'
+
+- @Definition@: **CRSP** (Center for Research in Security Prices) is a database
+  of US stock data
+  - Daily and monthly returns, shares outstanding, and trading volumes
+  - Delisting information, to handle survivorship bias
+
+// TODO(gp): Check these CRSP characteristics: PERMNO and total returns come
+// from memory, and are not in the notes
+- @Characteristics@
+  - Includes delisted stocks, and identifies each security with a permanent
+    number, PERMNO
+  - Gives returns that include dividends
+
+- @Problem@: the delisting return is missing for most negative delistings
+  - The omitted returns are large (Shumway, 1997)
+
+* TAQ: Tick Data and Bars
+// From: //notes1/notes/papers.finance.misc.txt:6646 '- TAQ'
+// From: //notes1/notes/papers.finance.misc.txt:7204 '- Trade and Quotes (TAQ) tick record'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:608 '* Market data: pros and cons'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:687 '* Bar data'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:751 '* Tick bars: outliers'
+
+- @Definition@: **TAQ** (Trade and Quotes) holds the consolidated intraday
+  transactions and quotes of all the securities on NYSE, AMEX, and NASDAQ
+
+- @Problem@: raw market data is big and needs cleaning
+  - It can exceed 10 TB a day, and an auction prints as one large tick
+
+- @Definition@: **bars** turn irregular ticks into a regular table
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Bar", "Sampled when", "Weakness"),
+  rows: (
+    ("Time", "A fixed interval passes", "Oversamples quiet periods"),
+    ("Tick", "N transactions trade", "Order splitting changes the count"),
+    ("Volume", "N shares trade", "Shares per dollar change with price"),
+    ("Dollar", "N dollars trade", "Size needs scaling by market cap"),
+  ),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+* Compustat: Fundamentals
+// From: //notes1/notes/IN_PROGRESS.finance.Compustat.2017.txt:5 '- Historical and backtesting database providing financial data on publicly traded'
+// From: //notes1/notes/papers.finance.misc.txt:1826 '- Compustat data is organized around company / security (GVKEY) and issue'
+// From: //notes1/notes/papers.finance.misc.txt:1886 '#### Date and period references'
+// From: //notes1/notes/papers.finance.misc.txt:1899 '#### Data collection'
+
+- @Definition@: **Compustat** provides standardized fundamentals of public
+  companies: income statement, balance sheet, and cash flow
+  - Annual and quarterly, preliminary and final, keyed by `GVKEY` and `IID`
+
+- @Characteristics@: **Compustat Snapshot** is the point-in-time product,
+  with the original data and every change since about 1986
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Field", "Meaning"),
+  rows: (
+    ("datadate", "Fiscal period end"),
+    ("rdq", "Earnings release date"),
+    ("effdate, thrudate", "Interval during which the value is known"),
+    ("upd", "Status: limited, preliminary, or final"),
+  ),
+  col-widths: (1fr, 2.4fr),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Problem@: a copy that keeps only the latest restated values is not
+  point-in-time
+
+* EDGAR: Filings
+// From: //notes1/notes/papers.finance.edgar.txt:2 '# 2012, Decoding Inside Information'
+// From: //notes1/notes/papers.finance.edgar.txt:111 '# 2018, Lazy prices'
+// From: //notes1/notes/papers.finance.edgar.txt:166 '# 2018, Do hedge funds profit from public information?'
+// From: //notes1/notes/papers.finance.misc.txt:6482 '### Form 8-K'
+
+- @Definition@: **EDGAR** is the public archive of the filings that companies
+  and insiders send to the SEC
+  - _10-K_ and _10-Q_: annual and quarterly reports
+  - _8-K_: unscheduled events, e.g., a bankruptcy or the departure of the CEO
+  - _Form 4_: trades of insiders, and _Form 13_: holdings of institutions
+
+- @Fact@: the filing delay is part of the data
+  - Insiders report within 2 days since 2002, and the median delay between the
+    trade and the report is 3 days
+
+// TODO(gp): Check that the acceptance time stamped by the SEC on a filing is
+// the best knowledge time: it is recalled from memory
+- @Key idea@: the knowledge time of a filing is its public dissemination time,
+  not the period that it describes
+
+- @Applications@: signals from insider trades (Cohen, Malloy, and Pomorski,
+  2012), 10-K language changes (Cohen, Malloy, and Nguyen, 2020), and filing
+  acquisition by hedge funds (Crane, Crotty, and Umar, 2023)
+
+* XBRL: Structured Facts
+// From: //notes1/notes/IN_PROGRESS.finance.XBRL.txt:212 '* Extensible Business Reporting Language (XBRL)'
+// From: //notes1/notes/IN_PROGRESS.finance.XBRL.txt:222 '* XBRL instance'
+// From: //notes1/notes/IN_PROGRESS.finance.XBRL.txt:236 '* XBRL Contexts'
+// From: //notes1/notes/IN_PROGRESS.finance.XBRL.txt:239 '* XBRL taxonomy'
+// From: //notes1/notes/IN_PROGRESS.finance.XBRL.txt:245 '* iXBRL'
+
+- @Definition@: **XBRL** (Extensible Business Reporting Language) is an open,
+  XML-based standard in which each fact is tagged with its meaning and context
+  - Inline XBRL embeds the tags in the HTML of the filing
+
+- @Components@: an XBRL file
+  - _Items_: facts with one value, and _tuples_: facts with several values
+  - _Contexts_: the entity and the period of a fact
+  - _Taxonomy_: the schemas that define the concepts
+
+// TODO(gp): Check the challenges: they are a reasoned summary and are not in
+// the notes
+- @Challenges@: companies can extend the taxonomy, and a fact is as reported,
+  so restatements and filing times need to be stored
+
+- @Key idea@: use XBRL to fill the point-in-time table, with one row per fact
+  and the filing time as knowledge time
+
+* Vendor Adapters and One Schema
+// From: data605/lectures_source/Lesson02.3-Data_Pipelines.smd:223 '* ETL Paradigm: Example'
+// From: data605/lectures_source/Lesson02.3-Data_Pipelines.smd:267 '* ELT Paradigm'
+// From: data605/lectures_source/Lesson07.3-Serialization_Formats.smd:85 '* (Apache) Parquet'
+// From: //notes1/notes/IN_PROGRESS.finance.Quantitative_trading.Chan.2009.txt:237 '* Dealing with survivorship biased data'
+
+::: columns
+:::: {.column width=55%}
+- @Problem@: vendors differ in format, identifiers, time zones, and quality
+
+- @Solution@: one **adapter** per vendor maps the raw files to one schema
+  - Keep raw files immutable, and store clean tables in Parquet
+  - Snapshot each file with its retrieval time, to build a point-in-time
+    history
+
+- @Applications@: AI assistants draft the adapter and its contract tests from
+  the vendor documentation, and a person reviews them
+::::
+:::: {.column width=45%}
+
+```graphviz
+digraph Adapters {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.3;
+    ranksep=0.3;
+    rankdir=TB;
+    // source : orange | process : teal | output : blue
+    node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Helvetica",
+          fontsize=11, margin="0.18,0.08", height=0.42];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    Raw      [label="Raw vendor files\n(immutable)", fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+    Adapters [label="One adapter\nper vendor", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    Canon    [label="Canonical\npoint-in-time tables", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+
+    Raw -> Adapters -> Canon;
+}
+```
+::::
+:::
+
+# Alternative Data
+
+* Classifying Alternative Data
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:652 '* Alternative data'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:656 '* Alternative data: examples'
+// From: //notes1/notes/papers.finance.misc.txt:5604 '* Data generated by individuals'
+// From: //notes1/notes/papers.finance.misc.txt:5617 '* Data generated by business processes'
+// From: //notes1/notes/papers.finance.misc.txt:5623 '* Data generated by sensors'
+// From: //notes1/notes/papers.finance.misc.txt:5722 '* Attributes of alt-data'
+
+- @Definition@: **alternative data** is everything that is not fundamental
+  data, market data, or analytics
+
+- @Classification@: by the source of the data
+  - _Individuals_: social media, news, web searches, reviews
+  - _Business processes_: transactions, credit cards, scanner data
+  - _Sensors_: satellites, geolocation, weather, Internet of Things
+
+- @Characteristics@: attributes to record for every dataset
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Attribute", "Question"),
+  rows: (
+    ("How well known", "Public, limited sales, or exclusive?"),
+    ("Processing", "Raw, processed, signal, or report?"),
+    ("Quality", "History, gaps, backfill, method?"),
+    ("Alpha content", "Net of cost, orthogonal, capacity?"),
+  ),
+  col-widths: (1fr, 2fr),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+* Satellite Data
+// From: //notes1/notes/papers.finance.misc.txt:5379 '#### Orbital Insight (OI)'
+// From: //notes1/notes/papers.finance.misc.txt:5388 '##### Oil tank data for crude inventories forecast'
+// From: //notes1/notes/papers.finance.misc.txt:5396 '##### Carpark data for Macy's sales forecast'
+
+::: columns
+:::: {.column width=58%}
+- @Examples@: counts from images become indicators
+  - **Oil tank counts** forecast crude inventories: weekly data from 2010 to
+    2017, over 5000 tanks
+  - **Car park counts** lead the same-store sales of Macy's
+
+- @Challenges@
+  - Clouds block the view
+  - Car parks cover stores, not e-commerce
+
+- @Key idea@: the knowledge time is the delivery of the processed number, not
+  the time of the image
+::::
+:::: {.column width=42%}
+
+```graphviz
+digraph Satellite {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.3;
+    ranksep=0.3;
+    rankdir=TB;
+    // source : orange | process : teal | output : blue
+    node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Helvetica",
+          fontsize=11, margin="0.18,0.08", height=0.42];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    Image  [label="Image", fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+    Counts [label="Counts, corrected\nfor seasonality", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    Signal [label="Signal\nknown at delivery", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+
+    Image -> Counts -> Signal;
+}
+```
+::::
+:::
+
+* Web Data
+// From: //notes1/notes/papers.finance.misc.txt:5284 '* Google trends'
+// From: //notes1/notes/papers.finance.misc.txt:5530 '- No need to create / maintain scraping / crawler'
+// From: //notes1/notes/papers.finance.misc.txt:5896 '* Big data compliance'
+
+- @Examples@: web-crawled prices, reviews and ratings, and online search
+  - **Google Trends** shows how often a term is searched, compared with the
+    total search volume
+
+- @Characteristics@: Google Trends
+  - Pros: high frequency, 10 years of history, and objective, since it is not
+    a survey
+  - Cons: ambiguity (Apple vs. apple), seasonality, and outliers
+
+- @Challenges@: every web site is different, so a scraper needs maintenance
+  - Scraping might face legal challenges, and data can have terms of use
+
+// TODO(gp): Check that the past of a web page is usually unrecoverable: it is a
+// reasoned claim, and archives may hold some pages
+- @Key idea@: the web has no point-in-time history, so store each page with its
+  retrieval time
+
+* ESG and Climate Risk Data
+// From: //notes1/notes/papers.finance.misc.txt:5536 '## EagleAlpha'
+
+// TODO(gp): Check this whole slide: ESG and climate risk data are not covered
+// in the notes, and the content is written from memory except the ratings
+// divergence of Berg, Koelbel, and Rigobon (2022)
+- @Definition@: **ESG data** measure the environmental, social, and governance
+  practices of a company, from its disclosures and from rating providers
+  - **Climate risk data** measure its exposure to physical risk, e.g., floods,
+    and to transition risk, e.g., carbon prices
+
+- @Fact@: the ratings of the same firm diverge across six providers
+  - Measurement explains 56% of the divergence, scope 38%, and weights 6%
+    (Berg, Koelbel, and Rigobon, 2022)
+
+- @Problem@: the history is short and not point-in-time
+  - Disclosures are voluntary, and providers rewrite past scores
+
+- @Key idea@: treat an ESG score as the output of a vendor model, with a
+  version and a knowledge time, not as a measurement
+
+* Pitfalls and Evaluation
+// From: //notes1/notes/papers.finance.misc.txt:5658 '* Setbacks from alt-data research'
+// From: //notes1/notes/papers.finance.misc.txt:5782 '* Quality'
+// From: //notes1/notes/papers.finance.misc.txt:5971 '* Short history and seasonality'
+// From: //notes1/notes/papers.finance.misc.txt:5896 '* Big data compliance'
+
+- @Problem@: many alternative datasets fail
+  - No alpha, low capacity, fast decay, high price, or spurious relationships
+
+- @Example@: a short history hides seasonality
+  - Lower Chipotle foot traffic was read as food poisoning, but people were
+    ordering from home in the cold season
+
+- @Techniques@: a checklist before buying
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Check", "Question"),
+  rows: (
+    ("Point in time", "Are knowledge timestamps kept, with no backfill?"),
+    ("History", "Does it cover seasons and regimes?"),
+    ("Orthogonality", "Does it add to the known alpha sources?"),
+    ("Economics", "Does alpha net of cost justify the price?"),
+    ("Compliance", "Are terms of use and personal data clear?"),
+  ),
+  col-widths: (1fr, 2.4fr),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+* LLM Extraction of Unstructured Sources
+// From: //notes1/notes/papers.finance.misc.txt:5852 '* Big data workflow for investment managers'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:679 '* Alternative data: cons'
+
+::: columns
+:::: {.column width=55%}
+- @Problem@: web pages, filings, and PDFs have no fixed schema, so rule-based
+  parsers break often
+
+// TODO(gp): Check these steps: they are a design written from experience, and
+// there is no source in the notes
+- @Solution@: an LLM extraction model turns each document into structured,
+  timestamped fields
+  1. Define the output schema
+  2. Prompt the model with the text and the schema
+  3. Validate: parts add up, the value is in the text
+  4. Store the field with `published_at` and `extracted_at`
+
+- @Key idea@: the knowledge time is `published_at`, when the document became
+  public, not `extracted_at`
+::::
+:::: {.column width=45%}
+
+```graphviz
+digraph Extract {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.3;
+    ranksep=0.3;
+    rankdir=TB;
+    // source : orange | process : teal | output : blue | review : coral
+    node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Helvetica",
+          fontsize=11, margin="0.18,0.08", height=0.42];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    Doc   [label="Filing, web page,\nPDF", fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+    LLM   [label="LLM extractor", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    Check [label="Validator", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    Table [label="Point-in-time table", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+    Human [label="Human review", fillcolor="#F6C6C6", color="#D98C8C", fontcolor="#6B2A2A"];
+
+    Doc -> LLM -> Check -> Table;
+    Check -> Human [label="  fails  "];
+}
+```
+::::
+:::
+
+* Summary
+
+- @Key idea@: data engineering makes every value what a trader could have
+  known, with the right time, assets, units, and entity
+
+- @Components@: correctness and survivorship
+  - Store the knowledge time, join as-of, keep every vintage, and assert it
+  - Build universes with the delisted assets, and keep delisting returns
+
+- @Components@: reference data and vendors
+  - Store raw prices and corporate actions, and adjust on read
+  - Join on permanent identifiers and UTC, and put each vendor behind one
+    adapter
+
+- @Components@: alternative data
+  - Check history, point-in-time availability, cost, and compliance first
+  - Use LLMs to extract structure, and validate every field
+
+* References
+
+- **Shumway**: _"The Delisting Bias in CRSP Data"_, Journal of Finance (1997)
+
+- **Cohen, Malloy, and Pomorski**: _"Decoding Inside Information"_, Journal of
+  Finance (2012)
+
+- **Cohen, Malloy, and Nguyen**: _"Lazy Prices"_, Journal of Finance (2020)
+
+- **Crane, Crotty, and Umar**: _"Hedge Funds and Public Information
+  Acquisition"_, Management Science (2023)
+
+- **Berg, Koelbel, and Rigobon**: _"Aggregate Confusion: The Divergence of ESG
+  Ratings"_, Review of Finance (2022)
+
+- **Lopez de Prado**: _"Advances in Financial Machine Learning"_ (2018)
+
+- **Chan**: _"Quantitative Trading"_ (2009)
+
+// TODO(gp): Check the title, authors, and year of the S&P user guide: the notes
+// only name it the Compustat Snapshot user guide
+- **S&P**: _"Compustat Snapshot North America: User Guide"_ (2017)
+
+// TODO(gp): Check the authors and title of the J.P. Morgan report: the notes
+// only say "2017, JP Morgan, Big data and AI"
+- **J.P. Morgan**: _"Big Data and AI Strategies"_ (2017)
+
+// TODO(gp): Check the title and year of the Eagle Alpha report: the notes only
+// say "2018, Eagle Alpha, Alt-data use cases"
+- **Eagle Alpha**: _"Alt-Data Use Cases"_ (2018)
