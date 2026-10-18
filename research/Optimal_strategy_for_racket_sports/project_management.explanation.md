@@ -49,9 +49,8 @@
 
 - We use Claude Code with the repo's skills and rules (`.claude/rules.md`) to write
   code, tests, notebooks, and docs
-- The step-by-step process for producing a PR will be in the doc of
-  [#626](https://github.com/gpsaggese/gpsaggese.github.io/issues/626) (not written
-  yet)
+- The step-by-step process for producing a PR is in
+  [`pr_process.how_to_guide.md`](../../policies/pr_process.how_to_guide.md)
 
 ## Communication
 
