@@ -12,6 +12,13 @@
   > website/find_published_blogs.sh
   ```
 
+## Ready for Review
+
+- 2026-10-19: `website/docs/blog/posts/in_60_mins.GluonTS.md`
+- 2026-10-19: `website/docs/blog/posts/in_5_mins.helpers_render_images.md`
+
+Total: 2 posts ready for review
+
 ## Published Blogs
 
 - 2026-08-20: `website/docs/blog/posts/shortcuts.vim.md`
@@ -77,11 +84,6 @@ Total: 28 published blogs
 
 - `helpers_root/dev_scripts_helpers/system_tools/create_links.py`
   - `docs/tools/dev_system/all.replace_common_files_with_script_links.md`
-
-- `website/docs/blog/posts/draft.in_5_mins.helpers_render_images.md`
-  - `helpers_root/dev_scripts_helpers/documentation/render_images.py`
-  - `helpers_root/dev_scripts_helpers/documentation/test/test_render_images.py`
-  - `dev_scripts_helpers/documentation/render_images.README.md`
 
 - `website/docs/blog/posts/draft.how_to.Render_md_from_terminal.md`
 
@@ -162,8 +164,6 @@ python.invoke.txt
 
 | File | Words | Ready % | Comment |
 |------|-------|---------|---------|
-| `website/docs/blog/posts/draft.in_60_mins.GluonTS.md` | 2564 | 95% | Nearly complete |
-| `website/docs/blog/posts/draft.in_5_mins.helpers_render_images.md` | 1082 | 95% | Nearly complete |
 | `website/docs/blog/posts/draft.pidev_vs_claude_code_comparison.md` | 1930 | 90% | Nearly publish-ready |
 | `website/docs/blog/posts/draft.how_to.Automate_Coding_with_LLM.md` | 1746 | 90% | Needs final polish |
 | `website/docs/blog/posts/draft.Intro_to_Bayesian_Optimization.md` | 1553 | 90% | Nearly publish-ready |
@@ -220,7 +220,7 @@ python.invoke.txt
 | `website/docs/blog/posts/draft.how_to.Use_tiny_docker_template.md` | 20 | 5% | Barely started, needs everything |
 | `website/docs/blog/posts/draft.how_to.Claude_Code_and_tmux.md` | 19 | 5% | Just a raw link |
 
-Total: 57 draft blogs
+Total: 55 draft blogs
 
 # Publishing Checklist
 
