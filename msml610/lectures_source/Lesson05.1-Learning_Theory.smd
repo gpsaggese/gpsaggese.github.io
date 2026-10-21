@@ -9,11 +9,11 @@
 ::: columns
 :::: {.column width=55%}
 
-- This lesson asks **whether machine learning is even possible**: it turns the
-  "possible vs probable" intuition into the Hoeffding inequality
-- It then introduces the **growth function**: counting dichotomies, shattering,
+- This lesson asks @whether machine learning is even possible@
+  - It turns the "possible vs probable" intuition into the Hoeffding inequality
+- It then introduces the @growth function@: counting dichotomies, shattering,
   and break points to replace the number of hypotheses $M$ with a finite count
-- It closes with the **VC dimension**: the single number that measures the
+- It closes with the @VC dimension@: the single number that measures the
   complexity of a hypothesis set, yields generalization bounds, and tells us
   how many examples we need
 
@@ -120,14 +120,6 @@ digraph LessonFlow {
   - $f(\vx) = +1$ when the top left square $\vx$ is empty
   - $f(\vx) = -1$ when the top left square $\vx$ is full
   - The test set has top left square full $\implies f(\vx_0) = -1$
-
-- Many functions fit the 6 training examples
-  - Some have a value of -1 on the test point, others +1
-  - Which one is it?
-
-- @Question@: how can a limited data set reveal enough information to define
-  the entire target function?
-  - **Is machine learning possible?**
 ::::
 :::: {.column width=40%}
 
@@ -172,22 +164,33 @@ digraph LessonFlow {
 ::::
 :::
 
+- @Problem@: Many functions fit the 6 training examples
+  - Some have a value of -1 on the test point, others +1
+  - Which one is it?
+
+- @Question@:
+  - How can a **limited data** set reveal enough information to define the **entire**
+    target function?
+  - **Is machine learning possible?**
+
 * Possible vs Probable
-- The (unknown) function can assume **any value outside training data**
+- @Problem@: The (unknown) function can assume **any value outside training data**
+  - _How to learn an unknown function?_
+  - Estimating at unseen points seems _impossible_ in general
 
-- **How to learn an unknown function?**
-  - Estimating at unseen points seems impossible in general
-  - Requires assumptions or models about behavior
-
-- Difference between **possible** and **probable**
-  - _Possible_
-    - No knowledge of the unknown function
+- @Solution@: difference between **possible** and **probable**
+  - **Possible**
+    - _"It is possible you don't anything about the unknown function"_
+    - No knowledge of the unknown function $\implies$ impossible to determine the
+      unknown function
     - E.g., could be linear, quadratic, or sine wave outside known data
-  - _Probable_
+  - **Probable**
+    - _"It is probably you know something about the unknown function"_
     - Some knowledge of the unknown function from domain knowledge or historical
       data patterns
-    - E.g., if historical weather data forms a sinusoidal pattern, unknown
-      points likely follow that pattern
+    - E.g., if historical weather data forms a sinusoidal pattern, unknown points
+      likely follow that pattern
+  - You need to make **assumptions** on model behaviors
 
 ## Hoeffding Inequality and the Bin Analogy
 
@@ -197,8 +200,11 @@ digraph LessonFlow {
 :::: {.column width=55%}
 
 - Consider a bin with \red{red} and \green{green} marbles
-  - We want to estimate $\Pr(\text{pick a red marble}) = \mu$ where the
-    value of $\mu$ is unknown
+  - We want to estimate
+    $$
+    \Pr(\text{pick a red marble}) = \mu
+    $$
+    where the value of $\mu$ is unknown
   - We pick $N$ marbles independently with replacement
   - The fraction of \red{red} marbles is $\nu$
 

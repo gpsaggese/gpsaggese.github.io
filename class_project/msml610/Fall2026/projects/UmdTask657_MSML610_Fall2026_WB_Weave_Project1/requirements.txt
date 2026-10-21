@@ -1,0 +1,9 @@
+ipywidgets
+matplotlib
+numpy
+pandas
+seaborn
+tqdm
+weave
+scikit-learn
+python-dotenv
