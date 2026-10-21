@@ -44,8 +44,10 @@ installation, usage, and examples.
 ### Pymupdf4llm
 - Install package:
   ```bash
-  > pip install pymupdf4llm
+  > pip install "pymupdf4llm==1.28.2"
   ```
+The CLI executable is only available in this version since the release of Version 2.0 in October, 19, 2026.
+
 - Verify installation (via CLI):
   ```bash
   # Run help to verify command is available.
@@ -82,7 +84,7 @@ installation, usage, and examples.
 - Verify installation (via Python):
   ```bash
   > python -c "import pdfplumber; print(pdfplumber.__version__)"
-  0.10.3
+  0.11.10
   ```
 - Note: `pdfplumber` is primarily a library without a CLI
   - Use Python import verification above
@@ -99,15 +101,16 @@ installation, usage, and examples.
 - Convert single PDF:
   ```bash
   # Convert input.pdf to Markdown.
-  > pymupdf4llm input.pdf > output.md
+  > pymupdf4llm input.pdf --out output
   ```
+Here output is the directory where you want the Markdown file to be created in.
 
 **Using uvx (no installation needed):**
 
 - Run directly with `uvx`:
   ```bash
   # Convert PDF without installing.
-  > uvx pymupdf4llm input.pdf > output.md
+  > uvx pymupdf4llm@1.28.2 input.pdf --out output-directory-name
   ```
 - Convenient for one-off conversions, trades cold-start time for zero setup
 
@@ -139,18 +142,22 @@ installation, usage, and examples.
 - Run directly with `uvx`:
   ```bash
   # Convert with ML detection without installing.
-  > uvx marker input.pdf --output output.md
+  > uvx marker_single input.pdf --output_format markdown --output_dir directory_name
   ```
 
 **Python usage:**
 
 - Convert with ML-based detection:
   ```python
-  from marker.convert import convert_single_pdf
+  from marker.converters.pdf import PdfConverter
+  from marker.models import create_model_dict
+  from marker.output import text_from_rendered
 
-  result = convert_single_pdf("input.pdf")
+  converter = PdfConverter(artifact_dict=create_model_dict())
+  rendered =   converter("input.md")
+  text, _, images = text_from_rendered(  rendered)
   with open("output.md", "w") as f:
-      f.write(result.markdown)
+      f.write(text)
   ```
 
 ### Markitdown: Multi-Format Support
@@ -160,7 +167,10 @@ installation, usage, and examples.
 **CLI usage:**
 
 - Convert multiple formats:
+
   ```bash
+  # To use markitdown to convert into multiple formats execute,
+  > pip install 'markitdown[all]'
   # Convert PDF to Markdown.
   > markitdown input.pdf -o output.md
   # Convert DOCX to Markdown.
@@ -174,7 +184,7 @@ installation, usage, and examples.
 - Run directly with `uvx`:
   ```bash
   # Convert without installing.
-  > uvx markitdown input.pdf -o output.md
+  > uvx --from 'markitdown[pdf]' markitdown input.pdf -o output.md
   ```
 - Works for all supported formats via single `uvx` call
 
@@ -187,7 +197,7 @@ installation, usage, and examples.
   md = MarkItDown()
   result = md.convert("input.pdf")
   with open("output.md", "w") as f:
-      f.write(result.text_content)
+      f.write(result.markdown)
   ```
 
 ### Pdfplumber: Full Control
@@ -288,8 +298,8 @@ installation, usage, and examples.
   print(response.content[0].text)
   ```
 
-## Specialized Tool: Pdf_to_md.py Script
-The `pdf_to_md.py` script in `helpers_root/dev_scripts_helpers/documentation/`
+## Specialized Tool: convert_pdf_to_md.py Script
+The `convert_pdf_to_md.py` script in `helpers_root/dev_scripts_helpers/documentation/`
 provides a production-ready solution for converting PDFs to Markdown with proper
 image extraction and heading detection.
 
@@ -310,14 +320,14 @@ image extraction and heading detection.
 - Script is self-contained with `uv`:
   ```bash
   # Runs with uv, installs dependencies automatically.
-  > ./helpers_root/dev_scripts_helpers/documentation/pdf_to_md.py \
+  > ./helpers_root/dev_scripts_helpers/documentation/convert_pdf_to_md.py \
     --input document.pdf \
     --output output_dir
   ```
 - Or call via `uv run`:
   ```bash
   # Use uv to run the script.
-  > uv run ./helpers_root/dev_scripts_helpers/documentation/pdf_to_md.py \
+  > uv run ./helpers_root/dev_scripts_helpers/documentation/convert_pdf_to_md.py \
     --input document.pdf \
     --output output_dir
   ```
@@ -327,14 +337,14 @@ image extraction and heading detection.
 - Basic conversion:
   ```bash
   # Convert PDF to Markdown with images.
-  > ./helpers_root/dev_scripts_helpers/documentation/pdf_to_md.py \
+  > ./helpers_root/dev_scripts_helpers/documentation/convert_pdf_to_md.py\
     --input input.pdf \
     --output output_dir
   ```
 - With verbose logging to debug conversion:
   ```bash
   # See detailed processing information.
-  > ./helpers_root/dev_scripts_helpers/documentation/pdf_to_md.py \
+  > ./helpers_root/dev_scripts_helpers/documentation/convert_pdf_to_md.py \
     --input input.pdf \
     --output output_dir \
     -v DEBUG
@@ -361,7 +371,7 @@ image extraction and heading detection.
       └── page_3_rendered_1.png
   ```
 
-**When to Use pdf_to_md.py:**
+**When to Use convert_pdf_to_md.py:**
 
 - PDFs with mixed text, tables, and images
 - Academic papers or technical documents with vector graphics
