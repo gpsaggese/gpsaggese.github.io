@@ -27,6 +27,7 @@ placeholder is committed until the reviewed paid run is executed.
 | `glossary.md`       | Terms used across the code and docs                                | Onboarding |
 | `how_we_work.md`    | Branch, PR, test, and review conventions                           | Onboarding |
 | `onboarding.md`     | Setup, run, test, and first tasks                                  | Onboarding |
+| `run_s11_canary_demo.how_to_guide.md` | Zero-cost reviewer demo for calibration and probing | Onboarding |
 | `plans/mvp_plan.md` | MVP milestones, owners, and task breakdown                         | Plans      |
 | `plans/mvp_progress.md` | Live MVP status and history                                    | Plans      |
 | `plans/plan.Noesis.md` | Protocol implementation roadmap (`PR_M*`, `PR_S*`, `PR_P*`)     | Plans      |

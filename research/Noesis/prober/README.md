@@ -29,6 +29,10 @@
 
 ## Commands
 
+- For a reviewer-oriented walkthrough with expected output and clear boundaries
+  between fake-provider, PostgreSQL, and paid live execution, see
+  `../docs/run_s11_canary_demo.how_to_guide.md`.
+
 - Validate a calibration plan without spending money or writing to PostgreSQL:
 
   ```bash
