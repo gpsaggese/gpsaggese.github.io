@@ -25,7 +25,7 @@ _LOG = logging.getLogger(__name__)
 # Scenario type
 # #############################################################################
 
-# TODO(giles): Need a short comment to explain what it is, what it does
+# A scenario contains buyer bids and seller asks, ready for an auction caller.
 Scenario = Tuple[List[rnbacaau.Bid], List[rnbacaau.Ask]]
 
 
@@ -34,10 +34,6 @@ Scenario = Tuple[List[rnbacaau.Bid], List[rnbacaau.Ask]]
 # #############################################################################
 
 
-# TODO(giles): You can run /coding.improve_code_for_humans which makes the
-# code easier for humans (adding comments, etc).
-# The rule is that each "chunk" of code of 5-10 lines should have a comment
-# explaining what to do.
 def _make_regime(
     seed: int,
     n_bids: int,
@@ -59,8 +55,8 @@ def _make_regime(
     :param price_scale: positive integer price multiplier
     :return: fresh bids and asks with unique participant ids
     """
-    # TODO(giles): FYI there is a also a function to print the entire func signature.
-    _LOG.debug(hprint.to_str("seed n_bids n_asks tiers regime"))
+    _LOG.debug("%s", hprint.func_signature_to_str())
+    # Reject invalid counts and scales before drawing any random values.
     for name, value in (
         ("seed", seed),
         ("n_bids", n_bids),
@@ -72,6 +68,7 @@ def _make_regime(
         hdbg.dassert_ne(type(value), bool, "'%s' must not be boolean", name)
         if name != "seed":
             hdbg.dassert_lt(0, value, "%s must be positive", name)
+    # Preserve caller tier order so repeated inputs produce identical books.
     hdbg.dassert_isinstance(
         tiers, collections.abc.Sequence, "tiers must be an ordered sequence"
     )
@@ -83,13 +80,13 @@ def _make_regime(
         hdbg.dassert_isinstance(tier, str, "tier names must be strings")
         hdbg.dassert_ne(tier.strip(), "", "tier names must not be blank")
     hdbg.dassert_eq(len(tiers), len(set(tiers)), "tiers must be distinct")
-    # TODO(giles): This needs a comment otherwise one needs to read the entire
-    # code to understand what it does. You want code to have "multiple
-    # level of abstractions". The skill will fix this, but FYI
+    # Keep seeded draws independent of the application's global random state.
     rng = random.Random(seed)
     bids: List[rnbacaau.Bid] = []
     asks: List[rnbacaau.Ask] = []
+    # Construct each tier independently, then collect its orders into one book.
     for tier_index, tier in enumerate(tiers):
+        # Start with varied quantities before imposing the requested regime.
         bid_quantities = [rng.randint(1, 100) for _ in range(n_bids)]
         ask_quantities = [rng.randint(1, 100) for _ in range(n_asks)]
         # Raise the smaller total to guarantee full matching before imbalance.
@@ -98,6 +95,7 @@ def _make_regime(
             ask_quantities[-1] += difference
         else:
             bid_quantities[-1] -= difference
+        # Add a positive excess only on the side that must remain unmatched.
         if regime == "demand":
             bid_quantities[rng.randrange(n_bids)] += rng.randint(1, 100)
         elif regime == "supply":
@@ -106,6 +104,7 @@ def _make_regime(
         # Disjoint tier bands guarantee distinct multi-tier clearing prices.
         base = tier_index * 20
         bid_low, ask_low = (1, 6) if regime == "no_cross" else (6, 1)
+        # Buyer terms are compatible with every seller in the same tier.
         for quantity in bid_quantities:
             price = float(
                 (base + rng.randint(bid_low, bid_low + 3)) * price_scale
@@ -120,6 +119,7 @@ def _make_regime(
                     price,
                 )
             )
+        # Continue seller ids across tiers and apply the same quantity scale.
         for quantity in ask_quantities:
             price = float(
                 (base + rng.randint(ask_low, ask_low + 3)) * price_scale
@@ -153,30 +153,21 @@ def make_balanced_scenario(
     quantity_scale: int = 1,
     price_scale: int = 1,
 ) -> Scenario:
-    # TODO(giles): you can remove the default from the docstring because
-    # of DRY and the info is in the interface. You can improve the skills
-    # with this rule.
-    # Same everywhere.
     """
     Generate fully matched demand and supply.
 
     :param seed: integer seed for reproducible varied inputs
-        - Default: `0`
     :param n_bids: positive buyer count in the book
-        - Default: `2`
     :param n_asks: positive seller count in the book
-        - Default: `2`
     :param tier: nonblank capability tier name
-        - Default: `"standard"`
     :param quantity_scale: positive integer multiplier for task quantities
-        - Default: `1`
     :param price_scale: positive integer multiplier for illustrative prices
-        - Default: `1`
     :return: fresh (bids, asks) lists satisfying the named regime
     """
     _LOG.debug(
         hprint.to_str("seed n_bids n_asks tier quantity_scale price_scale")
     )
+    # Delegate construction so every named family shares the same guarantees.
     scenario = _make_regime(
         seed, n_bids, n_asks, [tier], "balanced", quantity_scale, price_scale
     )
@@ -197,22 +188,17 @@ def make_excess_demand_scenario(
     Generate unmatched buyer quantity and fully matched supply.
 
     :param seed: integer seed for reproducible varied inputs
-        - Default: `0`
     :param n_bids: positive buyer count in the book
-        - Default: `2`
     :param n_asks: positive seller count in the book
-        - Default: `2`
     :param tier: nonblank capability tier name
-        - Default: `"standard"`
     :param quantity_scale: positive integer multiplier for task quantities
-        - Default: `1`
     :param price_scale: positive integer multiplier for illustrative prices
-        - Default: `1`
     :return: fresh (bids, asks) lists satisfying the named regime
     """
     _LOG.debug(
         hprint.to_str("seed n_bids n_asks tier quantity_scale price_scale")
     )
+    # Delegate construction so every named family shares the same guarantees.
     scenario = _make_regime(
         seed, n_bids, n_asks, [tier], "demand", quantity_scale, price_scale
     )
@@ -233,22 +219,17 @@ def make_excess_supply_scenario(
     Generate unmatched seller quantity and fully matched demand.
 
     :param seed: integer seed for reproducible varied inputs
-        - Default: `0`
     :param n_bids: positive buyer count in the book
-        - Default: `2`
     :param n_asks: positive seller count in the book
-        - Default: `2`
     :param tier: nonblank capability tier name
-        - Default: `"standard"`
     :param quantity_scale: positive integer multiplier for task quantities
-        - Default: `1`
     :param price_scale: positive integer multiplier for illustrative prices
-        - Default: `1`
     :return: fresh (bids, asks) lists satisfying the named regime
     """
     _LOG.debug(
         hprint.to_str("seed n_bids n_asks tier quantity_scale price_scale")
     )
+    # Delegate construction so every named family shares the same guarantees.
     scenario = _make_regime(
         seed, n_bids, n_asks, [tier], "supply", quantity_scale, price_scale
     )
@@ -269,22 +250,17 @@ def make_multi_tier_scenario(
     Generate fully matched tiers with distinct clearing prices.
 
     :param seed: integer seed for reproducible varied inputs
-        - Default: `0`
     :param n_bids: positive buyer count per tier
-        - Default: `2`
     :param n_asks: positive seller count per tier
-        - Default: `2`
     :param tiers: at least two distinct tier names
-        - Default: `("standard", "frontier")`
     :param quantity_scale: positive integer multiplier for task quantities
-        - Default: `1`
     :param price_scale: positive integer multiplier for illustrative prices
-        - Default: `1`
     :return: fresh (bids, asks) lists satisfying the named regime
     """
     _LOG.debug(
         hprint.to_str("seed n_bids n_asks tiers quantity_scale price_scale")
     )
+    # Preserve caller tier order so repeated inputs produce identical books.
     hdbg.dassert_isinstance(
         tiers, collections.abc.Sequence, "tiers must be an ordered sequence"
     )
@@ -292,6 +268,7 @@ def make_multi_tier_scenario(
         type(tiers), (str, bytes), "tiers must not be a bare string or bytes"
     )
     hdbg.dassert_lte(2, len(tiers), "multi-tier requires at least two tiers")
+    # Delegate construction so every named family shares the same guarantees.
     scenario = _make_regime(
         seed, n_bids, n_asks, tiers, "balanced", quantity_scale, price_scale
     )
@@ -312,22 +289,17 @@ def make_no_cross_scenario(
     Generate zero matches because all bid limits are below ask limits.
 
     :param seed: integer seed for reproducible varied inputs
-        - Default: `0`
     :param n_bids: positive buyer count in the book
-        - Default: `2`
     :param n_asks: positive seller count in the book
-        - Default: `2`
     :param tier: nonblank capability tier name
-        - Default: `"standard"`
     :param quantity_scale: positive integer multiplier for task quantities
-        - Default: `1`
     :param price_scale: positive integer multiplier for illustrative prices
-        - Default: `1`
     :return: fresh (bids, asks) lists satisfying the named regime
     """
     _LOG.debug(
         hprint.to_str("seed n_bids n_asks tier quantity_scale price_scale")
     )
+    # Delegate construction so every named family shares the same guarantees.
     scenario = _make_regime(
         seed, n_bids, n_asks, [tier], "no_cross", quantity_scale, price_scale
     )
@@ -340,12 +312,6 @@ def make_no_cross_scenario(
 # #############################################################################
 
 
-# TODO(giles): Some of the comments are not in the interface. The interface
-# only describes what it does, not how. E.g., the types checking, etc. is
-# redundant with the code. The random.Random(seed) is implementation detail,
-# etc.
-# TODO(giles): Add more comments for the chunks of code (manually or with the
-# skill).
 def make_random_scenario(
     seed: int,
     n_bids: int,
@@ -355,24 +321,11 @@ def make_random_scenario(
     """
     Return reproducible random orders; a particular matching regime is not promised.
 
-    Use a local random.Random(seed), never global random.seed(). Identical
-    arguments (including tier order) produce equal values and fresh objects.
-    Each order draws its tier from the supplied sequence, its task quantity
-    uniformly from integers 1 through 100, and its price from integers 1
-    through 20, represented as float. Generate bids before asks. Within each
-    order draw tier, quantity, then price. Ids are buyer_0, buyer_1, ... and
-    seller_0, seller_1, ... in list order.
-
-    All scenarios use buyer l_max=2.0 and r_min=0.90, and seller
-    l_typical=1.0 and r_typical=0.95. These compatible fixed performance
-    values isolate tier/price matching rather than performance variation.
-
-    Input validation follows the project's assertion conventions:
-    seed is an integer; counts are nonnegative integers (booleans excluded);
-    tiers is a nonempty ordered sequence of distinct nonempty,
-    non-whitespace strings, not a bare string. Do not restrict tier names to
-    a global registry. Zero counts are allowed; even an empty result requires
-    valid arguments. Invalid arguments raise AssertionError.
+    Identical arguments, including tier order, produce equal values and fresh
+    objects without changing global randomness. Quantities range from 1 to 100
+    tasks and prices from 1 to 20. Buyer and seller performance terms are
+    compatible; quantities and prices do not guarantee crossing or balance.
+    Empty sides are allowed. Invalid arguments raise `AssertionError`.
 
     :param seed: integer seed, including zero or negative integers; not bool
     :param n_bids: number of buyer orders, including zero
@@ -381,11 +334,13 @@ def make_random_scenario(
     :return: fresh (bids, asks) lists with the requested lengths
     """
     _LOG.debug(hprint.to_str("seed n_bids n_asks tiers"))
+    # Validate the seed and allow empty sides without accepting negative counts.
     for name, value in (("seed", seed), ("n_bids", n_bids), ("n_asks", n_asks)):
         hdbg.dassert_isinstance(value, int, "'%s' must be an integer", name)
         hdbg.dassert_ne(type(value), bool, "'%s' must not be boolean", name)
     hdbg.dassert_lte(0, n_bids, "n_bids must be nonnegative")
     hdbg.dassert_lte(0, n_asks, "n_asks must be nonnegative")
+    # Preserve caller tier order so repeated inputs produce identical books.
     hdbg.dassert_isinstance(
         tiers, collections.abc.Sequence, "tiers must be an ordered sequence"
     )
@@ -397,7 +352,10 @@ def make_random_scenario(
         hdbg.dassert_isinstance(tier, str, "tier names must be strings")
         hdbg.dassert_ne(tier.strip(), "", "tier names must not be blank")
     hdbg.dassert_eq(len(tiers), len(set(tiers)), "tiers must be distinct")
+    # Keep seeded draws independent of the application's global random state.
     rng = random.Random(seed)
+    # Draw bids before asks, with tier, quantity, and price drawn in that order.
+    # This order preserves the existing seeded output sequence.
     bids = []
     for index in range(n_bids):
         tier = rng.choice(tiers)
@@ -406,6 +364,7 @@ def make_random_scenario(
         bids.append(
             rnbacaau.Bid(f"buyer_{index}", quantity, tier, 2.0, 0.90, price)
         )
+    # Use compatible seller performance terms to isolate tier and price effects.
     asks = []
     for index in range(n_asks):
         tier = rng.choice(tiers)

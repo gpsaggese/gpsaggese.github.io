@@ -103,6 +103,20 @@ including one-order books and large numeric scales. They check reproducibility,
 fresh objects, quantity conservation, regime guarantees, distinct multi-tier prices,
 price limits, and deterministic contract dispatch. The unrestricted generator also
 has validation and invariant checks across 100 seeded books.
+Each former subtest is now an explicit numbered test method, with shared helpers
+for scenario generation, clearing, and assertions. This preserves the seed matrix
+while allowing one failing configuration to be rerun directly. Method docstrings
+identify the seed, order counts, and scale.
+
+- Run all market tests from the repository root:
+  ```bash
+  > PYTHONPATH="$PWD/helpers_root:$PWD" python3 -m pytest research/Noesis/market/test
+  ```
+- Run the balanced case with seed 0, two bids, four asks, and scale 10000:
+  ```bash
+  > PYTHONPATH="$PWD/helpers_root:$PWD" python3 -m pytest research/Noesis/market/test/test_scenarios.py::Test_make_balanced_scenario::test3
+  ```
+
 
 M10's `run_round()` remains unavailable in this checkout. Integration through it
 is still pending; current tests use the auction and existing contract functions.

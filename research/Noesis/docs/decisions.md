@@ -251,6 +251,10 @@
   numeric scales using `OrderBook.clear_round()` and deterministic mock dispatch.
   Check conservation, promised regimes, price limits, fresh objects, and distinct
   tier prices. Retain generated invariant checks for unrestricted books.
+- **Test organization**: expose each seed/count/scale case as a numbered test
+  method calling shared assertion helpers instead of `subTest()`. Keep the full
+  seed matrix and describe each configuration in its method docstring so a failing
+  case can be rerun by its pytest node id.
 - **Why**: exact outcomes vary with seed, but the scenario's defining properties
   must hold for every supported configuration. These checks exercise the existing
   auction without duplicating M10 orchestration.
