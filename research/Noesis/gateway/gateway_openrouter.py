@@ -5,7 +5,7 @@ Every call is pinned (`provider.only=[slug]`, `allow_fallbacks=false`), so the
 answer can only come from the seller's provider. Failures are classified so
 that only real provider failures count against the seller.
 
-This replaces the `PR_S7` placeholder in `plan.Noesis.md`.
+This replaces the `PR_S7` placeholder in `plan.md`.
 
 Import as:
 

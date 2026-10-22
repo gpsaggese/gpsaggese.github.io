@@ -29,7 +29,7 @@
   default); the Postgres implementation lives in `noesis_platform/postgres_store.py`
 - `supply_adapter.py` imports `batch_call_auction.py` (`Ask`, `OrderBook`) and takes
   the OpenRouter catalog as parsed JSON; the HTTP fetch and the seed file live in
-  `noesis_platform/supply_feed.py` (`docs/specs/mvp_decisions.md` D-19–D-21)
+  `noesis_platform/supply_feed.py` (`docs/decisions.md` D-25 to D-27)
 
 ## Deterministic Scenario Families (PR_M11)
 

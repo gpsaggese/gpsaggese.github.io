@@ -1,14 +1,14 @@
 # `PR_P2b`: Use Postgres Backend - Implementation Spec
 
 - This document specifies the Python code, schema, and Docker changes needed to
-  implement `PR_P2b` from `research/Noesis/docs/plans/plan.Noesis.md`
+  implement `PR_P2b` from `research/Noesis/docs/plan.md`
 - Scope, as stated in the plan:
   - Externalize the in-memory state of `NoesisMarket` and `NoesisServer` (order book,
     contract log, request log) to a real datastore (e.g. Postgres or Redis)
   - Result: a `NoesisMarket`/`NoesisServer` instance backed by persistent storage
     instead of the current in-process `List`/`Dict` state
 - Roadmap position: `PR_P2b` is not listed under any `v0.x` roadmap bullet in
-  `plan.Noesis.md`; it is sequenced directly after `PR_P2` (Cloud Deployment) in the
+  `plan.md`; it is sequenced directly after `PR_P2` (Cloud Deployment) in the
   `NoesisPlatform` PR list, and its own `TODO(gp)` note points at how to "inject a
   Postgres instance in the container", i.e. `PR_P2`'s Docker/devops scaffold. This
   spec therefore assumes `PR_P2` lands first and describes its own Docker/config
@@ -94,7 +94,7 @@
 ## Current State
 
 - Three separate in-memory state surfaces, matching the plan's "order book, contract
-  log, request log" list exactly, all lost on process exit (`architecture.md`
+  log, request log" list exactly, all lost on process exit (`design.architecture.md`
   Weakness 6):
   - `batch_call_auction.OrderBook.__init__` (`batch_call_auction.py:317-319`):
     `self._bids: List[Bid] = []` / `self._asks: List[Ask] = []`, appended to by
@@ -118,7 +118,7 @@
 
 ## Implementation
 
-- Follows this codebase's existing dependency-injection idiom (`architecture.md`'s
+- Follows this codebase's existing dependency-injection idiom (`design.architecture.md`'s
   "Key design decisions": "every side effect that would be non-deterministic in a
   test ... is injected as a callable"), extended from injected _callables_
   (`FulfillmentFunc`, `ProviderCallFunc`) to injected _storage objects_: one small
@@ -168,7 +168,7 @@ class OrderBookStore(abc.ABC):
     def clear(self) -> None:
         """
         Drop every stored bid/ask (`OrderBook.clear_round()`'s existing
-        drop-everything semantics; see `architecture.md` Weakness 4).
+        drop-everything semantics; see `design.architecture.md` Weakness 4).
         """
         ...
 
@@ -643,7 +643,7 @@ CREATE TABLE IF NOT EXISTS noesis_request_log (
 - No connection pooling: a single shared `psycopg2` connection serves every request
   for the process lifetime; acceptable for this prototype's expected load, a
   bottleneck if concurrent request volume grows (see "Out of Scope")
-- This PR does not address `architecture.md`'s other open weaknesses (exact-tier-only
+- This PR does not address `design.architecture.md`'s other open weaknesses (exact-tier-only
   matching, at-most-one-bid-per-buyer assumption, no reputation filtering, no rate
   limiting): it only changes where the three state surfaces live, not the business
   logic operating on them

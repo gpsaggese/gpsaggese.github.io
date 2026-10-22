@@ -13,10 +13,10 @@
 ## Goal
 
 - Lay out how to get initial supply and demand liquidity into \Noesis{} once
-  [[plan.Noesis]]'s Milestone 9 (`NoesisPlatform`) exposes a public API, so the
+  [[plan]]'s Milestone 9 (`NoesisPlatform`) exposes a public API, so the
   market is not just correct (Milestones 1-8) but actually has bids and asks flowing
   through it
-- Background: [[plan.Noesis]], `papers/Noesis/01_introduction.tex` (protocol
+- Background: [[plan]], `papers/Noesis/01_introduction.tex` (protocol
   overview), `papers/Noesis/02_market_design.tex` (who the two sides are),
   `papers/Noesis/07_state_of_the_art.tex` (competitive landscape)
 
@@ -37,7 +37,7 @@
 ### Remove the Reason to Wait for Real Sellers
 
 - `NoesisServer` PR1's passthrough proxy already wraps 2-3 real providers directly
-  ([[plan.Noesis]] Milestone 2)
+  ([[plan]] Milestone 2)
 - Until Milestone 9 has enough external sellers, let `NoesisServer` itself post the
   asks (at cost plus a small spread) that clear `NoesisMarket`'s auction, so a buyer
   gets a real fulfilled contract from day one
@@ -99,7 +99,7 @@
 
 ### Lower the Reputation Cold-start Penalty
 
-- `NoesisMarket` PR3's reputation loop ([[plan.Noesis]]) has nothing to go on for a
+- `NoesisMarket` PR3's reputation loop ([[plan]]) has nothing to go on for a
   brand-new seller, which discourages the first sellers from joining
 - Seed a new seller's initial reputation from a public benchmark (e.g.,
   artificialanalysis.ai, already named as a capability-measurement source in
@@ -109,7 +109,7 @@
 
 - **Phase 0 (self-liquidity)**: `NoesisServer` is its own seller; `NoesisMarket`
   clears against it; buyers get real fulfilled contracts with zero external sellers
-  (depends on [[plan.Noesis]] Milestone 3)
+  (depends on [[plan]] Milestone 3)
 - **Phase 1 (campus pilot)**: recruit DATA605/MSML610 students as buyers and a
   handful of idle-capacity holders as the first real sellers, running alongside Phase
   0's self-liquidity as a backstop
@@ -142,7 +142,7 @@
 ## Risks
 
 - Thin liquidity widens the bid/ask spread in early rounds, which is the same open
-  question 5 in [[plan.Noesis]]'s `NoesisMarket` section (batch vs. hybrid spot
+  question 5 in [[plan]]'s `NoesisMarket` section (batch vs. hybrid spot
   market for latency-sensitive buyers)
 - Real, non-synthetic traffic through the campus pilot runs into `NoesisServer`'s
   open question 4 (PII/data-handling safeguards): keep the pilot on synthetic/test
@@ -153,7 +153,7 @@
 
 ## References
 
-- [[plan.Noesis]]: implementation roadmap and PR list this plan assumes
+- [[plan]]: implementation roadmap and PR list this plan assumes
 - `papers/Noesis/01_introduction.tex`: protocol overview and comparison table
 - `papers/Noesis/02_market_design.tex`: demand-side and supply-side participant
   dimensions

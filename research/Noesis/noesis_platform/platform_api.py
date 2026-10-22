@@ -9,7 +9,7 @@ caller (`NoesisPlatform`)
     - A per-tier "latest cleared round" cache, standing in for `NoesisMarket`'s
       pricing-dissemination feed (not implemented yet);
       - `GET /rounds/{tier}/latest` reads this cache instead of that pub/sub
-    - A `POST /rounds/clear` endpoint not in `plan.Noesis.md`'s illustrative
+    - A `POST /rounds/clear` endpoint not in `plan.md`'s illustrative
       endpoint list: without it, `GET /contracts/{contract_id}` and `GET
       /rounds/{tier}/latest` could never be populated by an external caller,
       since `OrderBook.clear_round()` is the only thing that produces a

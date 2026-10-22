@@ -10,10 +10,23 @@
 | Javin Ahuja           | -                           | jahuja@terpmail.umd.edu      | Jav359003           | Noesis                  |
 | Aahan Rembersu        | aahanrembersu07@gmail.com   | arembers@terpmail.umd.edu    | aahanrembersu07     | Racket sports           |
 | Niveda Jawahar        | -                           | nivedaj@umd.edu              | Niveda-227          | Skill and luck          |
-| Krishna Buddi         | -                           | kbuddi@umd.edu               | KrishnaKishoreBuddi | Skill and luck          |
+| Krishna Buddi         | -                           | kbuddi@umd.edu               | bkk8403             | Skill and luck          |
 | Ibrahim Ahmed         | ibrahim.iftaquar@gmail.com  | ibrahima@umd.edu             | Worldsoldure00      | Growth hacking          |
 | Mohammed Syed         | syed.mohammed0975@gmail.com | syed@umd.edu                 | Eyepatch0           | MCTS / AlphaZero        |
 | Shobha Gupta          | s2002290902g@gmail.com      | gupta29@umd.edu              | Under-the-stars     | Age and startup success |
+
+- [ ] @gilesgreene
+- [ ] @Delvitron1019
+- [ ] @sohail-umd
+- [ ] @Sim2200
+- [ ] @caicedoss
+- [ ] @Jav359003
+- [ ] @aahanrembersu07
+- [ ] @Niveda-227
+- [ ] @bkk8403
+- [ ] @Worldsoldure00
+- [ ] @Eyepatch0
+- [ ] @Under-the-stars
 
 ## Resources
 

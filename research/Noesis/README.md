@@ -11,9 +11,9 @@
   proxy, with an optional Postgres backend and a Docker Compose deployment
 - See:
   - `docs/README.md` for the index of all docs
-  - `docs/architecture.md` for the C4-model architecture
+  - `docs/design.architecture.md` for the C4-model architecture
   - `docs/onboarding.md` to set up, run, and test the MVP gateway
-  - `docs/plans/plan.Noesis.md` for the protocol implementation roadmap
+  - `docs/plan.md` for the protocol implementation roadmap
 
 ## Structure of the Dir
 
@@ -83,7 +83,7 @@
   - `devops/docker_run/run_docker_noesis.sh` brings up `noesis_api` next to a
     `noesis_postgres` sidecar, wired through `NOESIS_DB_BACKEND` and `POSTGRES_*` in
     `devops/compose/docker-compose.noesis.yml`
-- Order-to-contract flow (C3 diagram in `docs/architecture.md`)
+- Order-to-contract flow (C3 diagram in `docs/design.architecture.md`)
   - `OrderBook.submit_bid()` / `submit_ask()` queue orders in the `OrderBookStore`
   - `OrderBook.clear_round()` buckets orders by tier and clears each one
   - `build_contracts()` turns the tier results into `Contract`s;

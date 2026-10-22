@@ -5,7 +5,7 @@
 - Turns immutable request records into a `PASSED`, `FAILED`, or `INSUFFICIENT`
   verdict, with the evidence behind it
 - Decision logic is pure; database access sits in `checker_store.py`
-- Design, evaluation flow, and window policy: `docs/checker_design.md`
+- Design, evaluation flow, and window policy: `docs/design.checker.md`
 
 ## Structure of the Dir
 

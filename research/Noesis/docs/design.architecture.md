@@ -1,4 +1,4 @@
-// > open_md.py -i research/Noesis/docs/architecture.md
+// > open_md.py -i research/Noesis/docs/design.architecture.md
 
 # Rules
 
@@ -6,7 +6,7 @@
   PRs and how the code evolved
 - It refers to:
   - The \Noesis{} protocol overview in `papers/Noesis/*.tex`
-  - The implementation plan `research/Noesis/docs/plans/plan.Noesis.md`
+  - The implementation plan `research/Noesis/docs/plan.md`
 
 # Overview
 
@@ -71,7 +71,7 @@
   `POST /bids`/`POST /asks`
 - `External caller` is any HTTP client that reaches `NoesisMarket` and
   `NoesisServer`, gated by an `X-API-Key` header on the write endpoints
-- `NoesisServer` is the real fulfillment layer described in `plan.Noesis.md`'s
+- `NoesisServer` is the real fulfillment layer described in `plan.md`'s
   `NoesisServer` section; `contract_dispatch.mock_fulfill()` is its placeholder in
   this codebase
 - `LLM Providers` are the real backends `passthrough_proxy.Gateway` calls through

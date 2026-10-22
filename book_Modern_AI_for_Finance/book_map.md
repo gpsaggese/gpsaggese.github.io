@@ -32,96 +32,103 @@
 
 ## Short TOC
 
-- Foundations
-  - 01: Why Finance Is Different
-    - Finance primer: instruments, returns, risk and Sharpe ratio, factor models,
-      market microstructure basics, costs, capacity
-    - Non-stationarity, heavy tails, volatility clustering, low signal-to-noise
-  - 02: Strategy Backtesting
-    - Backtest mechanics: simulation, fills, costs, look-ahead and survivorship bias
-    - Backtest discipline: overfitting, multiple testing, purged CV, deflated Sharpe
-    - Causal vs. predictive: spurious factors
-  - 03: Deep Learning, Transformers, LLMs, and Agents
-    - Refresher: deep learning, transformers, LLMs
-    - Adapting LLMs: fine-tuning, RAG, domain-pretrained models
-    - Agents
-- Data Engineering
-  - 04: Data Engineering
-    - Point-in-time correctness (as-of joins)
-    - Survivorship bias and delisting returns
-    - Restatements and revisions
-    - Corporate actions and adjusted prices
-    - Identifiers and symbology (CUSIP, ISIN, PERMNO)
-    - Timestamps, time zones, calendars
-    - Data vendors (CRSP, Compustat, TAQ, EDGAR)
-    - Alternative data: classification and practice
-      - Satellite and web data
-      - ESG and climate risk data
-  - 05: News, Filings, Earnings Calls
-    - LLMs for finance text
-    - Conversational finance assistants
-  - 06: Auto EDA
-    - Levels of automation: profilers, AutoML, LLM agents
-    - Automated profiling: schema, missing values, outliers, distributions
-    - Finance-specific checks: look-ahead, survivorship, stale prices, corporate
-      action breaks
-    - Time-aware EDA: split by time first, structural breaks
-    - Stylized facts: fat tails, volatility clustering, autocorrelation
-    - EDA as snooping: every look is a trial
-    - Agents generating hypotheses, features, and candidate signals
-    - Reproducible EDA reports: generated notebooks with human review
-- Prediction and Portfolio Construction
-  - 07: Forecasting
-    - Baselines first: linear, ARIMA, GBDT
-    - Time series foundation models (Chronos, TimesFM, Lag-Lama)
-    - Alpha research: signals, IC, turnover, decay
-    - Factors: classic, ML-based, factor zoo, causal factors
-    - Regime detection and macro nowcasting
-    - Uncertainty quantification: probabilistic forecasts, calibration, conformal
-      prediction
-    - Volatility Forecasting
-      - GARCH for volatility clustering
-  - 08: Limit Order Book Modeling
-    - Microstructure and LOB mechanics
-    - Market impact and execution cost
-  - 09: Portfolio Optimization and Reinforcement Learning
-    - Portfolio optimization and constraints
-    - Derivatives and fixed income
-      - Neural option pricing and volatility surface
-      - Yield curve and rates
-      - Hedging (deep hedging)
-    - RL where it works: execution, market making, hedging
-    - RL where it is mostly hype: end-to-end trading
-- Research Loop
-  - 10: Auto DS
-    - AutoML for finance: model and hyperparameter search under purged CV
-    - Auto feature engineering: generated features, selection, leakage checks
-    - Auto label generation and objective choice
-    - Experiment tracking: trial counts feed the deflated Sharpe ratio
-    - Human review gates and guardrails against automated overfitting
-  - 11: Agents: Automating the Research Loop
-    - Tool-using agents and architecture: planner, tools, sandbox, critic, memory
-    - Research loop: agents per pipeline step, single vs. multi-agent
-    - Data science agent landscape and evaluation: benchmarks, scorecards
-    - Verification, security, and provenance
-- Risk, Operations, and Governance
-  - 12: Risk, Credit Risk, and Fraud
-    - Market risk: VaR/ES, covariance, factor risk models
-    - Credit risk and fraud detection
-    - Uncertainty in credit: calibrated default probabilities, conformal prediction
-  - 13: Explainability and Robustness
-    - Uncertainty and trust: calibration, conformal prediction
-  - 14: Regulation, Model Risk Management, and Deployment
-- Frontiers
-  - 15: Market Simulation
-    - GANs / diffusion models for scenario generation
-    - Agent-based market simulation
-    - Stress testing
-    - Synthetic data: augmenting scarce data
-    - Fidelity: stylized facts (fat tails, volatility clustering)
-  - 16: The Road Ahead
-    - Multimodal models
-    - Open problems
+### Foundations
+
+- 01: Why Finance Is Different
+  - Finance primer: instruments, returns, risk and Sharpe ratio, factor models,
+    market microstructure basics, costs, capacity
+  - Non-stationarity, heavy tails, volatility clustering, low signal-to-noise
+- 02: Strategy Backtesting
+  - Backtest mechanics: simulation, fills, costs, look-ahead and survivorship bias
+  - Backtest discipline: overfitting, multiple testing, purged CV, deflated Sharpe
+  - Causal vs. predictive: spurious factors
+- 03: Deep Learning, Transformers, LLMs, and Agents
+  - Refresher: deep learning, transformers, LLMs
+  - Adapting LLMs: fine-tuning, RAG, domain-pretrained models
+  - Agents
+
+### Data Engineering
+
+- 04: Data Engineering
+  - Point-in-time correctness (as-of joins)
+  - Survivorship bias and delisting returns
+  - Restatements and revisions
+  - Corporate actions and adjusted prices
+  - Identifiers and symbology (CUSIP, ISIN, PERMNO)
+  - Timestamps, time zones, calendars
+  - Data vendors (CRSP, Compustat, TAQ, EDGAR)
+  - Alternative data: classification and practice
+    - Satellite and web data
+    - ESG and climate risk data
+- 05: News, Filings, Earnings Calls
+  - LLMs for finance text
+  - Conversational finance assistants
+- 06: Auto EDA
+  - Levels of automation: profilers, AutoML, LLM agents
+  - Automated profiling: schema, missing values, outliers, distributions
+  - Finance-specific checks: look-ahead, survivorship, stale prices, corporate
+    action breaks
+  - Time-aware EDA: split by time first, structural breaks
+  - Stylized facts: fat tails, volatility clustering, autocorrelation
+  - EDA as snooping: every look is a trial
+  - Agents generating hypotheses, features, and candidate signals
+  - Reproducible EDA reports: generated notebooks with human review
+
+### Prediction and Portfolio Construction
+- 07: Forecasting
+  - Baselines first: linear, ARIMA, GBDT
+  - Time series foundation models (Chronos, TimesFM, Lag-Lama)
+  - Alpha research: signals, IC, turnover, decay
+  - Factors: classic, ML-based, factor zoo, causal factors
+  - Regime detection and macro nowcasting
+  - Uncertainty quantification: probabilistic forecasts, calibration, conformal
+    prediction
+  - Volatility Forecasting
+    - GARCH for volatility clustering
+- 08: Limit Order Book Modeling
+  - Microstructure and LOB mechanics
+  - Market impact and execution cost
+- 09: Portfolio Optimization and Reinforcement Learning
+  - Portfolio optimization and constraints
+  - Derivatives and fixed income
+    - Neural option pricing and volatility surface
+    - Yield curve and rates
+    - Hedging (deep hedging)
+  - RL where it works: execution, market making, hedging
+  - RL where it is mostly hype: end-to-end trading
+
+### Research Loop
+- 10: Auto DS
+  - AutoML for finance: model and hyperparameter search under purged CV
+  - Auto feature engineering: generated features, selection, leakage checks
+  - Auto label generation and objective choice
+  - Experiment tracking: trial counts feed the deflated Sharpe ratio
+  - Human review gates and guardrails against automated overfitting
+- 11: Agents: Automating the Research Loop
+  - Tool-using agents and architecture: planner, tools, sandbox, critic, memory
+  - Research loop: agents per pipeline step, single vs. multi-agent
+  - Data science agent landscape and evaluation: benchmarks, scorecards
+  - Verification, security, and provenance
+
+### Risk, Operations, and Governance
+- 12: Risk, Credit Risk, and Fraud
+  - Market risk: VaR/ES, covariance, factor risk models
+  - Credit risk and fraud detection
+  - Uncertainty in credit: calibrated default probabilities, conformal prediction
+- 13: Explainability and Robustness
+  - Uncertainty and trust: calibration, conformal prediction
+- 14: Regulation, Model Risk Management, and Deployment
+
+### Frontiers
+- 15: Market Simulation
+  - GANs / diffusion models for scenario generation
+  - Agent-based market simulation
+  - Stress testing
+  - Synthetic data: augmenting scarce data
+  - Fidelity: stylized facts (fat tails, volatility clustering)
+- 16: The Road Ahead
+  - Multimodal models
+  - Open problems
 
 ## All Lesson Materials
 
