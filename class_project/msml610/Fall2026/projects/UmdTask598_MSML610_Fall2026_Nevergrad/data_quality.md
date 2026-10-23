@@ -135,8 +135,9 @@
   - It gives exactly 0% for the training windows of test years 2014 to 2018, while
     the monthly file gives 0.02% to 0.20%
 - The monthly file rounds to 0.01% per month, about 0.12% per year
-- Sharpe ratios need only the average rate over each training window, so a monthly
-  series is enough
+- Sharpe ratios need only the average rate over a period (a training window for a
+  training Sharpe, a test year for an out-of-sample Sharpe), so a monthly series is
+  enough
 
 ### Parsing and Coverage
 

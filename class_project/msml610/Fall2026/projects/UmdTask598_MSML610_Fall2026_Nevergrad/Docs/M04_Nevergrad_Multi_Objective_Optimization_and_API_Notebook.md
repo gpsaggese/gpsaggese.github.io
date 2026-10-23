@@ -11,7 +11,7 @@
 - **Search space is a `Dict`:** `param = ng.p.Dict(weights=ng.p.Array(shape=(n,)), rebal=ng.p.Choice(["monthly", "quarterly", "annual"]))`. A candidate's `.value` is `{"weights": np.ndarray, "rebal": <chosen item>}` (§6.4).
 - **Map weights to the simplex** (softmax or clip-and-renormalize) so they're long-only and sum to 1. Note the caveat in the tutorial: softmax can't reach exact-zero weights and mildly biases toward the interior — though the hard 40% cap already removes single-asset corner solutions (§6.3–§6.4).
 - **40% cap via `register_cheap_constraint`** returning a float **≤ 0 when satisfied**: `lambda d: float(np.max(to_weights(d["weights"])) - 0.40)` (§6.3).
-- **Objectives are `[volatility, −net_return]`; both minimized.** Volatility = `√(wᵀΣw)·√252`; net return = gross annualized return − `cost_bps · turnover`, with **cost = 10 bps** for the main run. Confirm the sign — a flipped sign makes the optimizer reward the wrong thing (§6.3, §11 risks).
+- **Objectives are `[volatility, −net_return]`; both minimized.** Volatility = `√(wᵀΣw)·√252`; net return = gross annualized return − `cost_bps` × annual turnover, with turnover from the M3-3 portfolio simulator and **cost = 10 bps** for the main run. Confirm the sign — a flipped sign makes the optimizer reward the wrong thing (§6.3, §11 risks).
 - **Optimizers:** `NGOpt` (meta-optimizer) vs `RandomSearch` (honest baseline), constructed with the `parametrization=` keyword (not the deprecated `instrumentation=`), kept at the **same budget** (~3,000 each; raise if the front is sparse) so the tutorial can ask whether the meta-optimizer beats random search at equal compute (§6.4, §7).
 - **Explicit `ask`/`tell` loop** (the spec asks for this, not `minimize`): `cand = opt.ask()` → decode `w`, `freq` → `losses = portfolio_losses(w, freq, train_returns, cost_bps)` → `opt.tell(cand, losses)`. Optionally set an upper-bound reference first via `opt.tell(ng.p.MultiobjectiveReference(), [vol_ub, negret_ub])` ("highly advised," else auto-inferred) (§6.4).
 - **Read the front with `optimizer.pareto_front()`** → a list of `Parameter` objects, each with `.value` (→ weights + chosen frequency) and `.losses` (§6.4).
@@ -32,8 +32,8 @@
 
 **Deliverables**
 - `ng.p.Dict(weights=ng.p.Array(shape=(n,)), rebal=ng.p.Choice([...]))` with a `to_weights` simplex mapping, in `nevergrad_utils.py`.
-- `portfolio_losses(weights, rebal_freq, train_returns, cost_bps) → [volatility, −net_return]`, with turnover `Σ|w_new − w_old|` across the chosen frequency's rebalances; net return = gross − `cost_bps · turnover`.
-- The 40% cap registered via `register_cheap_constraint` (float ≤ 0 when satisfied); the risk-free rate from M3-3 reused.
+- `portfolio_losses(weights, rebal_freq, train_returns, cost_bps) → [volatility, −net_return]`, with turnover and cost from the M3-3 portfolio simulator run on `train_returns` at the chosen frequency (no second turnover definition); net return = gross annualized − `cost_bps` × annual turnover.
+- The 40% cap registered via `register_cheap_constraint` (float ≤ 0 when satisfied); the training-window risk-free rate from M3-3 reused for any training Sharpe.
 - A documented softmax/simplex caveat for the tutorial narrative.
 
 **Definition of Done**

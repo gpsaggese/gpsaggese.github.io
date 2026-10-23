@@ -15,7 +15,7 @@
 - **Treat the cached CSV as the source of truth.** `yfinance` serves *adjusted* history that can be restated later (splits, dividends, backfills), so commit a provenance note (fetch date + checksum) and have notebooks load from the cache, not re-fetch (§4.7).
 - **Static fallback (spec-required):** the Ken French **"10 Industry Portfolios (Daily)"** library if Yahoo blocks requests. It provides daily *returns* for ten industry portfolios (not the nine ETFs), so the loader should consume returns directly and skip the price→return step; cache it with the same provenance discipline (§4.8).
 - **Walk-forward is non-negotiable and non-leaking:** 5 training years, 1 test year, rolled one year at a time; training strictly precedes test; no test-year data touches any estimate (§6.1).
-- **Risk-free rate for Sharpe = the training window's average T-bill rate, not 0** — short rates moved from ~0% to ~5% across 2006–2024, which changes Sharpe rankings. State it once and reuse it everywhere Sharpe appears (§6.2). Source: the monthly `RF` column of the Ken French factors file, loaded by `nvutils.load_risk_free_rate()` and sliced per fold with `nvutils.split_fold()`.
+- **Risk-free rate for Sharpe = an average 1-month T-bill rate, not 0** — short rates moved from ~0% to ~5% across 2006–2024, which changes Sharpe rankings. A training Sharpe uses the training window's average; an out-of-sample Sharpe uses the test year's average. Define it once and reuse it everywhere Sharpe appears (§6.2). Source: the monthly `RF` column of the Ken French factors file, loaded by `nvutils.load_risk_free_rate()` and sliced per fold with `nvutils.split_fold()`.
 
 ---
 
@@ -69,16 +69,19 @@
 - **Blocked by:** `M3-2`
 - **Blocks:** `M5-1`
 
-**Context.** Establish the naive comparators the Nevergrad portfolios must beat. For each fold, compute the equal-weight (`1/N`) and closed-form minimum-variance (`w ∝ Σ⁻¹ 1`, renormalized; long-only via `scipy.optimize` if the unconstrained solution goes short) portfolios, apply each to the test year, and record out-of-sample Sharpe and turnover — the comparison backbone reused in M5 (§6.2).
+**Context.** Establish the naive comparators the Nevergrad portfolios must beat. For each fold, compute the equal-weight (`1/N`) and minimum-variance portfolios from the training slice, hold each through the test year with a shared portfolio simulator (monthly rebalancing, 10 bps cost, chained from the previous fold's holdings), and record out-of-sample Sharpe and turnover — the comparison backbone reused in M5 (§6.2). The closed form `w ∝ Σ⁻¹ 1` goes short in every fold (3–5 assets, down to −47%), so the baseline is the long-only minimum-variance portfolio solved with `scipy.optimize`; it is not capped at 40% (it holds 42–82% IEF in every fold).
 
 **Deliverables**
-- Per-fold equal-weight and closed-form minimum-variance weights (long-only, sum to 1).
-- A per-test-year table of out-of-sample Sharpe and turnover for both baselines.
-- The training-window average T-bill risk-free rate chosen and recorded in one place for reuse (§6.2); a shared turnover definition (`Σ|w_new − w_old|`) used everywhere.
-- Baseline and portfolio-stats helpers added to `nevergrad_utils.py` (no duplicated math).
+- Per-fold equal-weight and long-only minimum-variance weights (long-only, sum to 1), from the sample covariance of the training slice; a `max_weight` argument (default 1.0, uncapped) so a 40%-capped variant is one argument away. Annualize `Σ` and tighten `ftol`, or SLSQP stops at its starting point.
+- A shared portfolio simulator — the one turnover definition, reused by M4-1 and M5-1: weights drift with returns between rebalances and reset to target on the first trading day of each period; turnover `Σ|w_target − w_drifted|` per rebalance; `cost_bps × turnover` deducted from that day's return.
+- Chained folds: each test year starts from the previous fold's drifted year-end holdings, so the year-start trade counts as turnover and pays cost; the first test year (2011) starts at its target with no entry trade.
+- Sharpe and volatility helpers with arithmetic annualization (×252, √252, monthly rate ×12). A training Sharpe uses the training-window average risk-free rate; an out-of-sample Sharpe uses the test year's average; both from `load_risk_free_rate()` + `split_fold()` (§6.2).
+- An `nvutils` function returning the per-test-year table of out-of-sample (net) Sharpe and turnover for both baselines, shown in the first section of `nevergrad.example.ipynb` (data → folds → baselines).
+- Baseline and portfolio-stats helpers added to `nevergrad_utils.py` (no duplicated math), with unit tests in `test/test_nevergrad_utils.py`.
 
 **Definition of Done**
-- [ ] Baseline weights are valid (long-only, sum to 1) for every fold.
-- [ ] Per-test-year OOS Sharpe + turnover table populated for both baselines (completes spec Milestone 1).
-- [ ] Risk-free rate recorded and referenced from one place; turnover defined once and reused.
-- [ ] Min-variance long-only handling (clip-renormalize or `scipy.optimize`) is documented.
+- [ ] Baseline weights are valid (long-only, sum to 1) for every fold; the minimum-variance solution's training variance is no higher than clip-and-renormalize's.
+- [ ] Per-test-year OOS Sharpe + turnover table populated for both baselines and shown in `nevergrad.example.ipynb` (completes spec Milestone 1).
+- [ ] Risk-free rate defined in one place (training average for training Sharpe, test-year average for OOS Sharpe); turnover defined once, in the simulator, and reused.
+- [ ] Simulator unit-tested on a hand-computable case (drift, turnover at a rebalance, cost deduction, chaining).
+- [ ] Minimum-variance long-only handling (`scipy.optimize`, not clip-and-renormalize) and the uncapped choice are documented.

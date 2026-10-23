@@ -11,6 +11,7 @@
 - **Vary only seed and cost;** keep everything else fixed (basket, window, budget, selection rule) so the sweep is clean (§6.6).
 - **Seed handling per §4.7:** set the seed **before the parametrization's first use** in every run, or the "fixed seed" won't fix the run.
 - **Reuse the whole M3→M5 pipeline** — data, folds, baselines, objectives, optimization, OOS evaluation — parameterized by seed and `cost_bps`; no duplicated logic.
+- **Re-run the baselines at each cost level:** they pay the same `cost_bps` as the Nevergrad portfolio, so each cost level compares like with like. They have no seed, so they have no seed spread.
 - **Interpret both axes:** the seed spread (optimizer stability) and the cost sensitivity (how fragile the net-of-cost edge is) (§6.6).
 
 ---

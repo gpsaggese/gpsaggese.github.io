@@ -87,7 +87,7 @@
 **Context.** Start the README while the work is fresh, covering the required sections, so documentation isn't left to the final crunch (§8).
 
 **Deliverables**
-- A README draft: Docker setup/build (base image chosen and why, any Dockerfile modifications), how to run the notebooks, an API description of the Nevergrad features used, and the §7 architectural/design decisions with justification.
+- A README draft: Docker setup/build (base image chosen and why, any Dockerfile modifications), how to run the notebooks, an API description of the Nevergrad features used, and the §7 architectural/design decisions with justification — including that the minimum-variance baseline is long-only but deliberately not capped at 40%, and why.
 - Docstrings added to `nevergrad_utils.py` functions (PEP 8); notebooks/`.py` linted with `linters2/lint_cc.py`.
 - A note on which course Claude skills (`notebook.*`, `tutorial_in_60_mins.*`) produced which artifacts.
 

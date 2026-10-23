@@ -9,7 +9,8 @@
 
 ## Notes
 - **The selection rule is fixed and stated:** highest **training** Sharpe → applied to the next test year, so the choice is reproducible, not cherry-picked (§6.5).
-- **Risk-free rate per M3-3** (training-window average T-bill), reused for every Sharpe (§6.2).
+- **Risk-free rate per M3-3:** the training-window average T-bill rate for the training Sharpe that selects the point; the test year's average for the realized out-of-sample Sharpe (§6.2).
+- **Same simulator and chaining as the baselines (M3-3):** the selected portfolio runs at its own chosen rebalancing frequency, and each test year starts from the previous fold's drifted holdings, so switching portfolios between years is charged. The training objective never sees that year-start switch, so realized turnover can exceed the training estimate; report the gap (§6.5).
 - **Max drawdown** = largest peak-to-trough decline of the cumulative net-return series (§6.5).
 - **Report per-fold *and* aggregate** (mean per metric across folds), so the write-up can state clearly whether and when Nevergrad beats the baselines out of sample (§6.5).
 - **Test-year data only** feeds the realized metrics — the walk-forward discipline from M3 carries through here (§6.1, §6.5).
@@ -28,7 +29,7 @@
 
 **Deliverables**
 - A selection routine returning the highest-training-Sharpe front point per fold (weights + rebalancing frequency).
-- Application of the selected portfolio to the fold's test year, yielding a realized net-return series.
+- Application of the selected portfolio to the fold's test year through the M3-3 portfolio simulator (its chosen frequency, chained from the previous fold's holdings), yielding a realized net-return series.
 - The selection rule documented once and reused.
 
 **Definition of Done**
@@ -47,7 +48,7 @@
 **Context.** Compute the realized out-of-sample metrics for the selected Nevergrad portfolio and both baselines, per test year and aggregated, so the results section has concrete numbers to interpret (§6.5).
 
 **Deliverables**
-- Per-fold OOS metrics — cumulative net return, out-of-sample Sharpe, maximum drawdown, turnover — for the Nevergrad portfolio and the equal-weight and minimum-variance baselines (reusing the M3 risk-free rate and turnover definition).
+- Per-fold OOS metrics — cumulative net return, out-of-sample Sharpe, maximum drawdown, turnover — for the Nevergrad portfolio and the equal-weight and minimum-variance baselines (reusing the M3-3 simulator's turnover and the test-year risk-free rate).
 - An aggregate (mean per metric across folds) alongside the per-year table.
 - Metric helpers added to `nevergrad_utils.py` (no duplicated math).
 
