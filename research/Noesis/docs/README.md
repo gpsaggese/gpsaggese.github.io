@@ -35,5 +35,6 @@ placeholder is committed until the reviewed paid run is executed.
 | `spec.PR_M16.md`               | Implementation spec: economic surplus of Noesis vs a posted-price baseline            | Specs      |
 | `spec.PR_P2.md`                | Implementation spec: containerized cloud deployment                                   | Specs      |
 | `spec.PR_P2b.md`               | Implementation spec: Postgres backend                                                 | Specs      |
+| `spec.PR_S13.md`               | Implementation spec: standalone monitoring and model-nerfing detection                | Specs      |
 | `dev_notes.md`                 | Build and OpenAPI-generation notes                                                    | Notes      |
 | `gp_todos.md`                  | Open TODOs                                                                            | Notes      |
