@@ -238,6 +238,18 @@ def _summarize_simulation(
     return txt
 
 
+def _format_weights(weights: np.ndarray) -> str:
+    """
+    Print weights with 6 decimals, showing a solver's -1e-17 as 0.
+
+    E.g., `0.800000 0.000000 0.200000`
+    """
+    # Adding 0.0 turns the -0.0 of a rounded tiny negative into 0.0.
+    rounded = np.round(weights, 6) + 0.0
+    txt = " ".join(f"{w:.6f}" for w in rounded)
+    return txt
+
+
 # #############################################################################
 # Test_download_data
 # #############################################################################
@@ -1418,3 +1430,190 @@ class Test_simulate_portfolio(hunitest.TestCase):
             nvutils.simulate_portfolio(
                 returns, target_weights, initial_weights=initial_weights
             )
+
+
+# #############################################################################
+# Test_annualized_return
+# #############################################################################
+
+
+class Test_annualized_return(hunitest.TestCase):
+    """
+    Test `nevergrad_utils.annualized_return()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that the average daily return is scaled by 252 trading days.
+        """
+        # Prepare inputs.
+        returns = pd.Series([0.01, -0.005, 0.0, 0.003])
+        # Prepare outputs.
+        # The average day returns 0.008 / 4 = 0.002, and 0.002 * 252 = 0.504.
+        expected = "0.5040000"
+        # Run test.
+        actual = nvutils.annualized_return(returns)
+        # Check outputs.
+        self.assert_equal(f"{actual:.7f}", expected)
+
+    def test2(self) -> None:
+        """
+        Test that a bumpy series with the same average gets the same return.
+        """
+        # Prepare inputs.
+        # Alternating +2.04% and -1.96% averages +0.04% a day, like a steady
+        # +0.04% a day; the arithmetic average ignores the volatility drag.
+        returns = pd.Series([0.0204, -0.0196] * 126)
+        # Prepare outputs.
+        expected = "0.1008000"
+        # Run test.
+        actual = nvutils.annualized_return(returns)
+        # Check outputs.
+        self.assert_equal(f"{actual:.7f}", expected)
+
+
+# #############################################################################
+# Test_annualized_volatility
+# #############################################################################
+
+
+class Test_annualized_volatility(hunitest.TestCase):
+    """
+    Test `nevergrad_utils.annualized_volatility()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that the sample standard deviation is scaled by the root of 252.
+        """
+        # Prepare inputs.
+        returns = pd.Series([0.01, -0.01])
+        # Prepare outputs.
+        # The sample variance is (0.01^2 + 0.01^2) / (2 - 1) = 0.0002 a day, so
+        # the annual volatility is sqrt(0.0002 * 252) = 0.2244994. The
+        # population standard deviation would give 0.1587451 instead.
+        expected = "0.2244994"
+        # Run test.
+        actual = nvutils.annualized_volatility(returns)
+        # Check outputs.
+        self.assert_equal(f"{actual:.7f}", expected)
+
+    def test2(self) -> None:
+        """
+        Test that a constant daily return has zero volatility.
+        """
+        # Prepare inputs.
+        returns = pd.Series([0.0004] * 252)
+        # Prepare outputs.
+        expected = "0.0000000"
+        # Run test.
+        actual = nvutils.annualized_volatility(returns)
+        # Check outputs.
+        self.assert_equal(f"{actual:.7f}", expected)
+
+
+# #############################################################################
+# Test_equal_weights
+# #############################################################################
+
+
+class Test_equal_weights(hunitest.TestCase):
+    """
+    Test `nevergrad_utils.equal_weights()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that each of 4 assets gets a quarter.
+        """
+        # Prepare outputs.
+        expected = "0.250000 0.250000 0.250000 0.250000"
+        # Run test.
+        actual = nvutils.equal_weights(4)
+        # Check outputs.
+        self.assert_equal(_format_weights(actual), expected)
+
+
+# #############################################################################
+# Test_min_variance_weights
+# #############################################################################
+
+
+class Test_min_variance_weights(hunitest.TestCase):
+    """
+    Test `nevergrad_utils.min_variance_weights()`.
+
+    The returns are built from the zero-mean patterns `u1 = [1, -1, 1, -1]`,
+    `u2 = [1, 1, -1, -1]`, and `u3 = [1, -1, -1, 1]`, which are uncorrelated
+    with each other, so the covariances can be computed by hand.
+    """
+
+    def helper(
+        self, returns: pd.DataFrame, max_weight: float, expected: str
+    ) -> None:
+        """
+        Solve for the minimum-variance weights and compare with `expected`.
+
+        :param returns: daily returns of the assets, one column per asset
+        :param max_weight: largest weight allowed for one asset
+        :param expected: expected output of `_format_weights()`
+        """
+        # Run test.
+        actual = nvutils.min_variance_weights(returns, max_weight=max_weight)
+        # Check outputs.
+        self.assert_equal(_format_weights(actual), expected)
+
+    def test1(self) -> None:
+        """
+        Test that uncorrelated assets get weights proportional to 1 / variance.
+        """
+        # Prepare inputs.
+        # B's variance is 4 times A's, so the weights are 1 : 1/4 = 0.8 : 0.2.
+        returns = pd.DataFrame(
+            {"A": [0.1, -0.1, 0.1, -0.1], "B": [0.2, 0.2, -0.2, -0.2]}
+        )
+        # Run test.
+        self.helper(returns, 1.0, "0.800000 0.200000")
+
+    def test2(self) -> None:
+        """
+        Test that `max_weight` caps the weight of the calmest asset.
+        """
+        # Prepare inputs.
+        returns = pd.DataFrame(
+            {"A": [0.1, -0.1, 0.1, -0.1], "B": [0.2, 0.2, -0.2, -0.2]}
+        )
+        # Run test.
+        self.helper(returns, 0.6, "0.600000 0.400000")
+
+    def test3(self) -> None:
+        """
+        Test the long-only optimum when the closed form goes short.
+        """
+        # Prepare inputs.
+        # B = 0.2 * u1 + 0.1 * u2 moves with A = 0.1 * u1 but is more volatile,
+        # so the closed form `w ∝ Σ⁻¹ 1` hedges it: [1.333, -0.444, 0.111].
+        # Clipping B to 0 and renormalizing gives [0.923, 0, 0.077], with
+        # variance 0.00876 (in units of 4/3); the long-only optimum holds no B
+        # and splits A and C = 0.2 * u3 by 1 / variance: [0.8, 0, 0.2], with
+        # variance 0.008.
+        u1 = np.array([1, -1, 1, -1])
+        u2 = np.array([1, 1, -1, -1])
+        u3 = np.array([1, -1, -1, 1])
+        returns = pd.DataFrame(
+            {"A": 0.1 * u1, "B": 0.2 * u1 + 0.1 * u2, "C": 0.2 * u3}
+        )
+        # Run test.
+        self.helper(returns, 1.0, "0.800000 0.000000 0.200000")
+
+    def test4(self) -> None:
+        """
+        Test that a cap too small to reach a total of 1 raises an error.
+        """
+        # Prepare inputs.
+        returns = pd.DataFrame(
+            {"A": [0.1, -0.1, 0.1, -0.1], "B": [0.2, 0.2, -0.2, -0.2]}
+        )
+        # Run test and check outputs.
+        with self.assertRaises(AssertionError):
+            nvutils.min_variance_weights(returns, max_weight=0.4)

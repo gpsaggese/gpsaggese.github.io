@@ -27,6 +27,7 @@ from typing import Iterator, List, Tuple, Union, Optional
 import pandas as pd
 import numpy as np
 import yfinance as yf
+import scipy.optimize as spo
 
 import helpers.hdbg as hdbg
 import helpers.hio as hio
@@ -57,6 +58,8 @@ NUM_TRAIN_YEARS = 5
 # Valid weights can miss 0 or 1 by this much from floating-point error, e.g.,
 # after many days of drift or from a numerical solver.
 WEIGHT_TOLERANCE = 1e-6
+
+TRADING_DAYS_PER_YEAR = 252
 
 
 # #############################################################################
@@ -447,7 +450,6 @@ def get_rebalance_days(
     )
     periods = index.to_period(freq_map[rebal_freq])
     return np.r_[True, periods[1:] != periods[:-1]]
-    
 
 def simulate_portfolio(
     returns: pd.DataFrame,
@@ -465,6 +467,7 @@ def simulate_portfolio(
         initial_weights = target_weights.copy()
     else:
         initial_weights = np.asarray(initial_weights)
+    
     check_weights(target_weights, returns.shape[1])
     check_weights(initial_weights, returns.shape[1])
 
@@ -490,6 +493,43 @@ def simulate_portfolio(
     turnover = pd.Series(turnover, index = returns.index)
     return net, turnover, w
     
+def annualized_return(returns: pd.Series) -> float:
+    return returns.mean() * TRADING_DAYS_PER_YEAR
+
+def annualized_volatility(returns: pd.Series) -> float:
+    return returns.std() * np.sqrt(TRADING_DAYS_PER_YEAR)
+
+def equal_weights(num_assets: int) -> np.ndarray:
+    return np.asarray([1/num_assets for _ in range(num_assets)])
+
+def min_variance_weights(
+    train_returns: pd.DataFrame,
+    *,
+    max_weight: float = 1.0
+) -> np.ndarray:
+    n = train_returns.shape[1]
+    cov = train_returns.cov().to_numpy() * TRADING_DAYS_PER_YEAR
+    hdbg.dassert_lte(
+        1,
+        max_weight * n,
+        "No valid portfolio of '%s' assets of maximum weight '%s' exists; weights must sum to 1",
+        n,
+        max_weight
+    )
+    result = spo.minimize(
+        fun = lambda w: w @ cov @ w,
+        x0 = equal_weights(n),
+        method = "SLSQP",
+        bounds = [(0, max_weight)] * n,
+        constraints = [{"type": "eq", "fun": lambda w: w.sum() - 1}],
+        options = {"ftol": 1e-12}
+    )
+    hdbg.dassert(
+        result.success,
+        "Optimizer failed: '%s'",
+        result.message
+    )
     
+    check_weights(result.x, n)
     
-        
+    return result.x
