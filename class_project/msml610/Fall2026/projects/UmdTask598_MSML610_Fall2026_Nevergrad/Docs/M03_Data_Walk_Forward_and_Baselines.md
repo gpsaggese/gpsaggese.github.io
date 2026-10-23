@@ -9,13 +9,13 @@
 
 ## Notes
 - **Basket is fixed:** SPY, EFA, EEM, TLT, IEF, LQD, GLD, VNQ, DBC — a deliberately cross-asset basket with interesting covariance (§4.8).
-- **Window:** daily data from **2006 onward**, long enough for many 5y-train/1y-test folds (~13 test years through the mid-2020s); annualize by a 252-day factor (§4.8).
+- **Window:** daily data from **2006 onward**, long enough for many 5y-train/1y-test folds (15 test years, 2011–2025, with data through 2025; folds follow calendar years); annualize by a 252-day factor (§4.8).
 - **Pass `auto_adjust=True` explicitly and use `Close`** — in `yfinance==1.7.0` the OHLC are already adjusted and there is **no** `Adj Close` column; don't assume one exists (§6.1, §11 risks).
 - **Handle the MultiIndex columns** — `yf.download()` returns MultiIndex columns by default (price-type then ticker), even for a single ticker; select the `Close` level for a (dates × tickers) frame, or pass `multi_level_index=False` (§6.1).
 - **Treat the cached CSV as the source of truth.** `yfinance` serves *adjusted* history that can be restated later (splits, dividends, backfills), so commit a provenance note (fetch date + checksum) and have notebooks load from the cache, not re-fetch (§4.7).
 - **Static fallback (spec-required):** the Ken French **"10 Industry Portfolios (Daily)"** library if Yahoo blocks requests. It provides daily *returns* for ten industry portfolios (not the nine ETFs), so the loader should consume returns directly and skip the price→return step; cache it with the same provenance discipline (§4.8).
 - **Walk-forward is non-negotiable and non-leaking:** 5 training years, 1 test year, rolled one year at a time; training strictly precedes test; no test-year data touches any estimate (§6.1).
-- **Risk-free rate for Sharpe = the training window's average T-bill rate, not 0** — short rates moved from ~0% to ~5% across 2006–2024, which changes Sharpe rankings. State it once and reuse it everywhere Sharpe appears (§6.2).
+- **Risk-free rate for Sharpe = the training window's average T-bill rate, not 0** — short rates moved from ~0% to ~5% across 2006–2024, which changes Sharpe rankings. State it once and reuse it everywhere Sharpe appears (§6.2). Source: the monthly `RF` column of the Ken French factors file, loaded by `nvutils.load_risk_free_rate()` and sliced per fold with `nvutils.split_fold()`.
 
 ---
 
@@ -58,7 +58,7 @@
 
 **Definition of Done**
 - [ ] Folds are contiguous, non-leaking (training strictly precedes test), and rolled yearly.
-- [ ] The generator yields the expected number of folds for a 2006→ window (~13 test years).
+- [ ] The generator yields the expected number of folds for a 2006→ window (15 test years, 2011–2025).
 - [ ] Each fold's training slice is the only input exposed to estimation code.
 
 ---

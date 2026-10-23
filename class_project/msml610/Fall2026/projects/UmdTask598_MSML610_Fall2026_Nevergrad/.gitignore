@@ -1,1 +1,4 @@
 data/
+# Artifacts written by `pytest` and `helpers.hunit_test` (logs, diffs, scratch).
+tmp.*
+.coverage
