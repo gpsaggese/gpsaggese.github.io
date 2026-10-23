@@ -1,0 +1,20 @@
+{
+    "experiments_repo": "https://github.com/SWE-bench/experiments",
+    "experiments_sha": "40f164d5b8f1d249bf95a6df8b74b577fd8e519d",
+    "tasks_dataset": "https://huggingface.co/datasets/SWE-bench/SWE-bench_Verified",
+    "built_at_utc": "2026-10-22 23:44:06",
+    "num_tasks": 500,
+    "num_submission_folders": 182,
+    "num_kept_submissions": 173,
+    "excluded_submissions": {
+        "20250720_mini-v0.0.0-Llama-4-Scout-17B-Instruct": "no per-task results",
+        "20250720_mini-v0.0.0-claude-3-7-sonnet-20250219": "per-task score 10.2% disagrees with the reported 52.8%",
+        "20250720_mini-v0.0.0-gpt-4o-2024-11-20": "no per-task results",
+        "20250720_mini-v0.0.0_gpt-4.1-mini-2025-04-14": "no per-task results",
+        "20250726_mini-v1.0.0_gemini-2.0-flash": "no per-task results",
+        "20250726_mini-v1.0.0_gemini-2.5-flash": "no per-task results",
+        "20250726_mini-v1.0.0_gpt-4.1-2025-04-14": "no per-task results",
+        "20260219_mini-v2.0.0_gpt-5-2-codex": "no per-task results",
+        "20260226_mini-v2.0.0_gemini-3-pro-high": "per-task score 0.0% disagrees with the reported 69.6%"
+    }
+}
