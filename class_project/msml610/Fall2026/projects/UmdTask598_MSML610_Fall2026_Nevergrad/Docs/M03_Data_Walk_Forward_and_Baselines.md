@@ -69,7 +69,7 @@
 - **Blocked by:** `M3-2`
 - **Blocks:** `M5-1`
 
-**Context.** Establish the naive comparators the Nevergrad portfolios must beat. For each fold, compute the equal-weight (`1/N`) and minimum-variance portfolios from the training slice, hold each through the test year with a shared portfolio simulator (monthly rebalancing, 10 bps cost, chained from the previous fold's holdings), and record out-of-sample Sharpe and turnover — the comparison backbone reused in M5 (§6.2). The closed form `w ∝ Σ⁻¹ 1` goes short in every fold (3–5 assets, down to −47%), so the baseline is the long-only minimum-variance portfolio solved with `scipy.optimize`; it is not capped at 40% (it holds 42–82% IEF in every fold).
+**Context.** Establish the naive comparators the Nevergrad portfolios must beat. For each fold, compute the equal-weight (`1/N`) and minimum-variance portfolios from the training slice, hold each through the test year with a shared portfolio simulator (monthly rebalancing, 10 bps cost, chained from the previous fold's holdings), and record out-of-sample Sharpe and turnover — the comparison backbone reused in M5 (§6.2). The closed form `w ∝ Σ⁻¹ 1` goes short in every fold (3–5 assets, down to −47%), so the baseline is the long-only minimum-variance portfolio solved with `scipy.optimize`; it is not capped at 40% (it holds 61–82% IEF in every fold).
 
 **Deliverables**
 - Per-fold equal-weight and long-only minimum-variance weights (long-only, sum to 1), from the sample covariance of the training slice; a `max_weight` argument (default 1.0, uncapped) so a 40%-capped variant is one argument away. Annualize `Σ` and tighten `ftol`, or SLSQP stops at its starting point.
