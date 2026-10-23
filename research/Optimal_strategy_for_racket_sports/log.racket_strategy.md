@@ -15,9 +15,9 @@
     speed, and the probability of a winner from player 2
   - In a later
     [comment](https://github.com/gpsaggese/gpsaggese.github.io/issues/590#issuecomment-6128247188)
-    of 2026-10-12, GP asked to do the heatmap / next milestone next (#624). How
-    the heatmap combines with the reachability and winner probability of
-    Milestone 2 is still to be agreed with GP
+    of 2026-10-12, GP asked to do the heatmap / next milestone next (#624); the
+    design was agreed in
+    [#690](https://github.com/gpsaggese/gpsaggese.github.io/issues/690)
 - Dates are in UTC, as GitHub reports them
 - The plan of GP's initial implementation is `plan.racket_strategy.md`, with one
   `spec.racket_strategy_PR*.md` file per planned PR
@@ -25,8 +25,8 @@
 ## Open Work
 
 - [#624](https://github.com/gpsaggese/gpsaggese.github.io/issues/624): Milestone 2,
-  the reachability and winner probability from #590, shown as a heatmap over every
-  target on player 1's half (details to agree with GP)
+  in the draft [PR #715](https://github.com/gpsaggese/gpsaggese.github.io/pull/715)
+  (see the entry below)
 - [#625](https://github.com/gpsaggese/gpsaggese.github.io/issues/625): this project
   log
 - [#626](https://github.com/gpsaggese/gpsaggese.github.io/issues/626): a short doc
@@ -34,6 +34,64 @@
 - [#627](https://github.com/gpsaggese/gpsaggese.github.io/issues/627): the paper,
   adding Aahan Rembersu as an author and the Milestone 1 model
 - Manual widget checks of the Milestone 1 notebook, noted as in progress in #654
+
+## 2026-10-23: Milestone 2, Probability of a Winning Return
+
+- **Issue**: [#624](https://github.com/gpsaggese/gpsaggese.github.io/issues/624),
+  design agreed in [#690](https://github.com/gpsaggese/gpsaggese.github.io/issues/690)
+- **PR**: [#715](https://github.com/gpsaggese/gpsaggese.github.io/pull/715), by
+  Aahan Rembersu, opened 2026-10-21 as a draft, not merged yet
+- **Milestone**: Milestone 2
+- **What was done**:
+  - New functions in `notebooks/racket_shot_probability_utils.py`, one step at a
+    time:
+    - Player 1's reach: `get_player1_xy()`, `compute_flight_time()`,
+      `compute_is_reached()`
+    - One target: `compute_winner_probability()`, the joint event "in and not
+      reached" by Monte Carlo, with its standard error
+    - The map: `compute_winner_heatmap()` with common random numbers,
+      `find_best_region()`, `find_best_target()`, and `plot_winner_heatmap()` on
+      a fixed 0 to 1 color scale
+    - The widget: `cell2_1_plot_winner_widget()`, with a settings string in the
+      comments panel and as a copyable line under the figure
+  - A new Part 2 of `notebooks/racket_shot_probability.ipynb` (Cell 2.1), with
+    the limitation of #723 in bold at its top
+  - Cell 1.1 and Cell 2.1 share one helper for their common controls,
+    `_build_shared_controls()`; no other existing function changed
+  - The decisions are in the Milestone 2 section of `plan.racket_strategy.md`,
+    and the model is in Section IV-H of the paper
+- **Main finding**: with the defaults, the best return is the middle of player
+  1's half, because player 1 covers only about 0.6 m (a return landing next to
+  them flies about 15 m in 0.61 s at 25 m/s)
+- **Testing**:
+  - Full suite: 183 passed (110 before Milestone 2; 73 new tests); the only
+    failures are the 5 tests of `test_docker_racket_strategy.py`, which fail on
+    master too
+  - Milestone 1 end-to-end check: the same results as master, and the 14 Cell
+    1.1 images are byte identical to master
+  - Milestone 2 end-to-end check (`e2e_milestone2.py`): all 140 checks pass; the
+    notebook rules skip the Part 1 outputs saved on master (see Notebook
+    outputs)
+    - The widget's numbers equal the functions called directly, for 5 settings
+      per sport and side
+    - The fault decision equals `_check_serve()` on 168 serve points
+    - A result rebuilt from the settings string alone is identical
+    - Each control redraws once; slider extremes give no error
+  - 47 planted bugs from the 4 phases, each caught by at least one test; the
+    same outputs in 3 separate processes; the notebook runs top to bottom for
+    both sports
+  - In a fresh clone: the same results; linters (`ruff`, `ruff format`,
+    `docformatter`, `ssort`, `mypy`) clean
+- **Notebook outputs**: the committed notebook keeps the Part 1 outputs that GP
+  saved in [#726](https://github.com/gpsaggese/gpsaggese.github.io/pull/726);
+  the end-to-end checks skip the outputs already on master and check that the
+  new cells have none
+- **Limitations**: the spread does not depend on the ball speed, so hitting as
+  fast as possible always looks best
+  ([#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723)); the
+  bounce is ignored as a 3D effect; player 1 stands at the center of the
+  baseline with constant `t_r` and `v_p`
+- **Note**: written with help from Claude Code; the author reviewed every change
 
 ## 2026-10-14: Fix Private Renames, Serve Direction, and Fault Label
 

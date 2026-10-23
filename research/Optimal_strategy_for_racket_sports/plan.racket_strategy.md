@@ -168,34 +168,70 @@
     `notebooks/racket_shot_probability_utils.py` and
     `notebooks/racket_shot_probability.ipynb`
 
-- [ ] Milestone 2: probability of a winning return
+- [-] Milestone 2: probability of a winning return
       ([#624](https://github.com/gpsaggese/gpsaggese.github.io/issues/624)), as
-      agreed with GP in #624
+      agreed with GP in
+      [#690](https://github.com/gpsaggese/gpsaggese.github.io/issues/690); in
+      progress in [PR #715](https://github.com/gpsaggese/gpsaggese.github.io/pull/715)
   - Sources:
-    [GP's answers](https://github.com/gpsaggese/gpsaggese.github.io/issues/624#issuecomment-6186123404)
+    [GP's answers on #624](https://github.com/gpsaggese/gpsaggese.github.io/issues/624#issuecomment-6186123404),
+    [GP's answers on #690](https://github.com/gpsaggese/gpsaggese.github.io/issues/690#issuecomment-6252896405),
     and
-    [the agreed summary](https://github.com/gpsaggese/gpsaggese.github.io/issues/624#issuecomment-6194651093)
+    [the agreed plan](https://github.com/gpsaggese/gpsaggese.github.io/issues/690#issuecomment-6260766491)
   - One-shot setting: player 1 serves, player 2 returns
-  - Player 1 serves and then stays at the center of the baseline, `(0, -L/2)`
+  - Player 1 serves with the Milestone 1 rules (a fault means no return), then
+    stays at the center of the baseline, `(0, -L/2)`
   - Player 2 stands at the serve landing point (`x1`, `y1`) and aims at
     (`x2`, `y2`); the return lands with the same 2D Gaussian as Milestone 1
-  - Time available to player 1: the ball's flight time $T_f$, from the ball speed
-    (a widget) and the distance, minus a constant reaction time $t_r$
-    - The reaction time stands for the time player 1 needs to decide where the
-      ball will land
-    - $T_f$ uses the distance from player 2 at (`x1`, `y1`) to the aim point
-      (`x2`, `y2`), so it is fixed for each target
-    - Why: the landing error changes the actual distance only by about the
-      spread, small next to the length of the shot, and a fixed $T_f$ keeps the
-      region player 1 can reach a disk around them
-  - Player 1 then moves at a constant speed $v_p$ and reaches the ball if the
-    distance from `(0, -L/2)` to the landing point is at most $v_p (T_f - t_r)$
-  - Winner: the return lands in and player 1 cannot reach it
-    - Computed jointly, since both events depend on the same landing point
-    - Also compute $P_{\mathrm{in}} \cdot P(\text{not reached})$, to show when this
-      factorization holds
+  - Flight time: for each sampled landing point $(X, Y)$, $T_f$ is the distance
+    from (`x1`, `y1`) to $(X, Y)$ divided by the ball speed (a widget)
+    - Why: the aim point is a latent variable, while the landing point is where
+      the ball actually goes (GP on #690)
+  - Player 1 reacts for a constant time $t_r$, the time to decide where the ball
+    will land, then moves at a constant speed $v_p$, and reaches the ball if the
+    distance from `(0, -L/2)` to $(X, Y)$ is at most $v_p \max(0, T_f - t_r)$
+  - Winner: the return lands in AND player 1 does not reach it, computed by
+    Monte Carlo as one event on the same samples, with no product of
+    probabilities (GP on #690)
+  - Defaults: ball speed 25 m/s for tennis and 12 m/s for pickleball,
+    $t_r = 0.2$ s, $v_p = 1.5$ m/s, each with a slider
   - A heatmap of the winner probability over every target (`x2`, `y2`) on player
     1's half, with the best target marked, for tennis and pickleball
+  - Code: new functions in `notebooks/racket_shot_probability_utils.py` and a
+    new Part 2 of `notebooks/racket_shot_probability.ipynb`, in the draft
+    [PR #715](https://github.com/gpsaggese/gpsaggese.github.io/pull/715)
+  - Decisions made while building it:
+    - **Common random numbers**: every target of the heatmap gets
+      `np.random.default_rng(seed)` with the same seed, so all targets use the
+      same standard normal draws, shifted to their own aim point
+      - Two targets differ because of where they aim, not because of sampling
+        noise, so comparing them to find the best one is fair
+    - **Best region and star**: many targets can tie at the top (e.g., every
+      sample a winner, $P(\text{winner}) = 1$), so the best is a region
+      - The region holds every target within 2 standard errors of the highest
+        $P(\text{winner})$, and is outlined on the map
+      - The star is the cell of the region closest to its centroid
+    - **Grid and samples**: 10 x 15 cells for tennis and 9 x 10 for pickleball,
+      with 5000 samples per target, chosen so one map takes under 2 s
+    - **Settings string**: the comments panel and a copyable line under the
+      figure list every setting, e.g., `sport=Tennis side=deuce x1=-2.1 y1=3.2
+      std_x2=0.5 std_y2=1.0 ball_speed=25.0 t_r=0.2 v_p=1.5 seed=1 n_x=10 n_y=15
+      n_samples=5000`, so a result in the Gdoc can be reproduced exactly
+      ([GP on #694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694#issuecomment-6336301932))
+    - **Bounce ignored**: player 1 must reach the landing point by the time the
+      ball lands; the bounce is a 3D effect, and the 2D approximation is good
+      enough for the first and second order effects
+      ([GP on #690](https://github.com/gpsaggese/gpsaggese.github.io/issues/690#issuecomment-6336175829))
+    - **Spread independent of ball speed**: kept as a first approximation, so in
+      this model hitting as fast as possible always looks best; GP filed
+      [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723)
+  - Finding: with the defaults, the best return is the middle of player 1's half,
+    not a spot near the lines
+    - Player 1 covers only about 0.6 m in tennis: a return landing next to them
+      flies about 15 m in 0.61 s at 25 m/s, and $1.5 \cdot (0.61 - 0.2) \approx
+      0.6$ m
+    - So $P(\text{winner})$ is almost $P_{\mathrm{in}}$, except in a small dip
+      around player 1, and the middle keeps the most returns in
 
 * Open Points
 - From
@@ -205,6 +241,8 @@
     least time
     - There is no clear model: ideally it is estimated by experiments, and it
       differs with the player's level
+    - GP filed [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723)
+      for it; Milestone 2 keeps the spread independent of the ball speed
   - **Optimal positioning**: where each player should stand, as a function of the
     ball and of the other player, is left to the RL algorithm later
     - GP was taught to gravitate toward the center, but does not believe it is
@@ -214,7 +252,20 @@
       and compared with what RL finds by brute force
   - **Factorization**: whether the winner probability factorizes as
     $P_{\mathrm{in}} \cdot P(\text{not reached})$; GP believes some factorization
-    may hold but is not sure, so Milestone 2 computes both
+    may hold but is not sure
+    - Resolved in
+      [#690](https://github.com/gpsaggese/gpsaggese.github.io/issues/690#issuecomment-6252896405):
+      Milestone 2 computes the winner probability as one event, with no product
+- From
+  [#690](https://github.com/gpsaggese/gpsaggese.github.io/issues/690#issuecomment-6322544771):
+  - **Reaching after the bounce**: player 1 must reach the landing point by the
+    time the ball lands; in real play they can also take the ball after the
+    bounce, which gives them more time
+    - Resolved in
+      [#690](https://github.com/gpsaggese/gpsaggese.github.io/issues/690#issuecomment-6336175829):
+      ignore the bounce, since it is a 3D effect
+    - The reach rule lives only in `compute_is_reached()`, so a change stays
+      there
 
 * Long-Term Goal
 - From
@@ -239,8 +290,9 @@
       Milestone 1 follow-ups (renames, diagonal serve, "Fault" label),
       [PR #654](https://github.com/gpsaggese/gpsaggese.github.io/pull/654)
   - Manual widget checks of the Milestone 1 notebook are still pending
-- [ ] [#624](https://github.com/gpsaggese/gpsaggese.github.io/issues/624):
-      Milestone 2, winner probability heatmap
+- [-] [#624](https://github.com/gpsaggese/gpsaggese.github.io/issues/624):
+      Milestone 2, winner probability heatmap,
+      [PR #715](https://github.com/gpsaggese/gpsaggese.github.io/pull/715)
 - [-] [#625](https://github.com/gpsaggese/gpsaggese.github.io/issues/625):
       project log `log.racket_strategy.md`,
       [PR #660](https://github.com/gpsaggese/gpsaggese.github.io/pull/660)
