@@ -19,7 +19,7 @@ import pprint
 import shutil
 import unittest.mock as umock
 import zipfile
-from typing import Any, Union
+from typing import Any, Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -204,6 +204,37 @@ def _summarize_fold(
         f"test {test.index.min().date()}..{test.index.max().date()}"
         f" ({len(test)})"
     )
+    return txt
+
+
+def _get_two_asset_returns() -> pd.DataFrame:
+    """
+    Build the returns of two assets on three trading days across a month end.
+
+    On both January days asset A gains 1% and asset B loses 0.5%, so a 60/40
+    portfolio drifts toward A; nothing moves on 2011-02-01, so that day's return
+    is only the cost of any trade.
+    """
+    dates = pd.DatetimeIndex(
+        ["2011-01-03", "2011-01-04", "2011-02-01"], name="Date"
+    )
+    returns = pd.DataFrame(
+        {"A": [0.01, 0.01, 0.0], "B": [-0.005, -0.005, 0.0]}, index=dates
+    )
+    return returns
+
+
+def _summarize_simulation(
+    net: pd.Series, turnover: pd.Series, end_weights: np.ndarray
+) -> str:
+    """
+    Describe the daily net returns, daily turnover, and end weights of a run.
+
+    Values are printed with 7 decimals, enough to check returns to 0.00001%.
+    """
+    df = pd.DataFrame({"net": net, "turnover": turnover})
+    txt = df.to_string(float_format="{:.7f}".format)
+    txt += "\nend_weights " + " ".join(f"{w:.7f}" for w in end_weights)
     return txt
 
 
@@ -1077,3 +1108,313 @@ class Test_get_fold_table(hunitest.TestCase):
         self.assert_equal(
             actual.to_string(), expected, dedent=True, fuzzy_match=True
         )
+
+
+# #############################################################################
+# Test_check_weights
+# #############################################################################
+
+
+class Test_check_weights(hunitest.TestCase):
+    """
+    Test `nevergrad_utils.check_weights()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that weights off by floating-point error pass.
+        """
+        # Prepare inputs.
+        # Ten weights of 0.1 sum to 0.9999999999999999 in floating point.
+        weights = np.full(10, 0.1)
+        # Run test and check outputs.
+        nvutils.check_weights(weights, 10)
+
+    def test2(self) -> None:
+        """
+        Test that a tiny negative weight, like a solver's rounding, passes.
+        """
+        # Prepare inputs.
+        weights = np.array([0.5, 0.5 + 1e-12, -1e-12])
+        # Run test and check outputs.
+        nvutils.check_weights(weights, 3)
+
+    def test3(self) -> None:
+        """
+        Test that a number of weights different from the assets raises an error.
+        """
+        # Prepare inputs.
+        weights = np.array([0.5, 0.5])
+        # Run test and check outputs.
+        with self.assertRaises(AssertionError):
+            nvutils.check_weights(weights, 3)
+
+    def test4(self) -> None:
+        """
+        Test that a short position raises an error, even if the sum is 1.
+        """
+        # Prepare inputs.
+        weights = np.array([1.2, -0.2])
+        # Run test and check outputs.
+        with self.assertRaises(AssertionError):
+            nvutils.check_weights(weights, 2)
+
+    def test5(self) -> None:
+        """
+        Test that weights summing to 0.9 raise an error.
+        """
+        # Prepare inputs.
+        weights = np.array([0.5, 0.4])
+        # Run test and check outputs.
+        with self.assertRaises(AssertionError):
+            nvutils.check_weights(weights, 2)
+
+
+# #############################################################################
+# Test_compute_turnover
+# #############################################################################
+
+
+class Test_compute_turnover(hunitest.TestCase):
+    """
+    Test `nevergrad_utils.compute_turnover()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that moving 10% from one asset to another counts both sides: 0.2.
+        """
+        # Prepare inputs.
+        target_weights = np.array([0.5, 0.3, 0.2])
+        current_weights = np.array([0.4, 0.4, 0.2])
+        # Prepare outputs.
+        expected = "0.2000000"
+        # Run test.
+        actual = nvutils.compute_turnover(target_weights, current_weights)
+        # Check outputs.
+        self.assert_equal(f"{actual:.7f}", expected)
+
+    def test2(self) -> None:
+        """
+        Test that switching every dollar to another asset gives the maximum, 2.
+        """
+        # Prepare inputs.
+        target_weights = np.array([0.0, 1.0])
+        current_weights = np.array([1.0, 0.0])
+        # Prepare outputs.
+        expected = "2.0000000"
+        # Run test.
+        actual = nvutils.compute_turnover(target_weights, current_weights)
+        # Check outputs.
+        self.assert_equal(f"{actual:.7f}", expected)
+
+    def test3(self) -> None:
+        """
+        Test that weight vectors of different lengths raise an error.
+        """
+        # Prepare inputs.
+        target_weights = np.array([0.5, 0.5])
+        current_weights = np.array([0.4, 0.3, 0.3])
+        # Run test and check outputs.
+        with self.assertRaises(AssertionError):
+            nvutils.compute_turnover(target_weights, current_weights)
+
+
+# #############################################################################
+# Test_get_rebalance_days
+# #############################################################################
+
+
+class Test_get_rebalance_days(hunitest.TestCase):
+    """
+    Test `nevergrad_utils.get_rebalance_days()`.
+    """
+
+    def helper(self, rebal_freq: str, expected: str) -> None:
+        """
+        Flag the rebalance days of five dates and compare with `expected`.
+
+        The dates start a month, stay in it, start another month, stay in it, and
+        then start a new quarter.
+
+        :param rebal_freq: rebalancing frequency
+        :param expected: expected flags, one per date
+        """
+        # Prepare inputs.
+        index = pd.DatetimeIndex(
+            ["2011-01-03", "2011-01-04", "2011-02-01", "2011-02-02", "2011-04-01"]
+        )
+        # Run test.
+        actual = nvutils.get_rebalance_days(rebal_freq, index)
+        # Check outputs.
+        self.assert_equal(str(actual.tolist()), expected)
+
+    def test1(self) -> None:
+        """
+        Test that monthly rebalancing trades on the first trading day of a month.
+        """
+        # The first rebalance is on 2011-01-03, the first trading day of 2011,
+        # not on January 1.
+        expected = "[True, False, True, False, True]"
+        self.helper("monthly", expected)
+
+    def test2(self) -> None:
+        """
+        Test that quarterly rebalancing skips the start of February.
+        """
+        expected = "[True, False, False, False, True]"
+        self.helper("quarterly", expected)
+
+    def test3(self) -> None:
+        """
+        Test that annual rebalancing trades only on the first day.
+        """
+        expected = "[True, False, False, False, False]"
+        self.helper("annual", expected)
+
+    def test4(self) -> None:
+        """
+        Test that an unknown frequency raises an error.
+        """
+        # Prepare inputs.
+        index = pd.DatetimeIndex(["2011-01-03", "2011-01-04"])
+        # Run test and check outputs.
+        with self.assertRaises(AssertionError):
+            nvutils.get_rebalance_days("daily", index)
+
+
+# #############################################################################
+# Test_simulate_portfolio
+# #############################################################################
+
+
+class Test_simulate_portfolio(hunitest.TestCase):
+    """
+    Test `nevergrad_utils.simulate_portfolio()`.
+
+    Every test holds a 60/40 target on `_get_two_asset_returns()`. The expected
+    values come from tracking the dollars in each asset by hand, not from the
+    weight formulas in the code:
+    - Day 1: $60 + $40 grows to $60.60 + $39.80 = $100.40, a 0.4% return
+    - Day 2: it grows to $61.206 + $39.601 = $100.807, a 0.40538% return, and
+      the weights drift to 0.6071602 / 0.3928398
+    - 2011-02-01: trading back to 60/40 has turnover 2 * 0.0071602 = 0.0143204,
+      which costs 0.0143204 * 10 bps = 0.0000143
+    """
+
+    def helper(
+        self,
+        rebal_freq: str,
+        cost_bps: float,
+        initial_weights: Optional[np.ndarray],
+        expected: str,
+    ) -> None:
+        """
+        Simulate the 60/40 portfolio and compare the run with `expected`.
+
+        :param rebal_freq: rebalancing frequency
+        :param cost_bps: cost in basis points per unit of turnover
+        :param initial_weights: weights held before the first day
+        :param expected: expected output of `_summarize_simulation()`
+        """
+        # Prepare inputs.
+        returns = _get_two_asset_returns()
+        target_weights = np.array([0.6, 0.4])
+        # Run test.
+        net, turnover, end_weights = nvutils.simulate_portfolio(
+            returns,
+            target_weights,
+            rebal_freq=rebal_freq,
+            cost_bps=cost_bps,
+            initial_weights=initial_weights,
+        )
+        # Check outputs.
+        actual = _summarize_simulation(net, turnover, end_weights)
+        self.assert_equal(actual, expected, dedent=True, fuzzy_match=True)
+
+    def test1(self) -> None:
+        """
+        Test drift, a monthly rebalance, and its cost, starting at the target.
+        """
+        # With no initial weights the portfolio starts at its target, so the
+        # first day has no trade.
+        expected = """
+                          net  turnover
+        Date
+        2011-01-03  0.0040000 0.0000000
+        2011-01-04  0.0040538 0.0000000
+        2011-02-01 -0.0000143 0.0143204
+        end_weights 0.6000000 0.4000000
+        """
+        self.helper("monthly", 10.0, None, expected)
+
+    def test2(self) -> None:
+        """
+        Test that the first day trades from the initial weights to the target.
+        """
+        # Moving from 50/50 to 60/40 has turnover 0.2, which costs 0.0002, so
+        # day 1 nets 0.004 - 0.0002 = 0.0038. Later days match `test1()`.
+        expected = """
+                          net  turnover
+        Date
+        2011-01-03  0.0038000 0.2000000
+        2011-01-04  0.0040538 0.0000000
+        2011-02-01 -0.0000143 0.0143204
+        end_weights 0.6000000 0.4000000
+        """
+        self.helper("monthly", 10.0, np.array([0.5, 0.5]), expected)
+
+    def test3(self) -> None:
+        """
+        Test that annual rebalancing lets the weights drift past a month end.
+        """
+        # No trade on 2011-02-01, so the end weights are the drifted ones that
+        # the next fold would start from.
+        expected = """
+                         net  turnover
+        Date
+        2011-01-03 0.0040000 0.0000000
+        2011-01-04 0.0040538 0.0000000
+        2011-02-01 0.0000000 0.0000000
+        end_weights 0.6071602 0.3928398
+        """
+        self.helper("annual", 10.0, None, expected)
+
+    def test4(self) -> None:
+        """
+        Test that a zero cost leaves the turnover but removes its charge.
+        """
+        expected = """
+                         net  turnover
+        Date
+        2011-01-03 0.0040000 0.0000000
+        2011-01-04 0.0040538 0.0000000
+        2011-02-01 0.0000000 0.0143204
+        end_weights 0.6000000 0.4000000
+        """
+        self.helper("monthly", 0.0, None, expected)
+
+    def test5(self) -> None:
+        """
+        Test that target weights summing to 0.9 raise an error.
+        """
+        # Prepare inputs.
+        returns = _get_two_asset_returns()
+        target_weights = np.array([0.5, 0.4])
+        # Run test and check outputs.
+        with self.assertRaises(AssertionError):
+            nvutils.simulate_portfolio(returns, target_weights)
+
+    def test6(self) -> None:
+        """
+        Test that initial weights for a different number of assets raise an error.
+        """
+        # Prepare inputs.
+        returns = _get_two_asset_returns()
+        target_weights = np.array([0.6, 0.4])
+        initial_weights = np.array([0.4, 0.3, 0.3])
+        # Run test and check outputs.
+        with self.assertRaises(AssertionError):
+            nvutils.simulate_portfolio(
+                returns, target_weights, initial_weights=initial_weights
+            )

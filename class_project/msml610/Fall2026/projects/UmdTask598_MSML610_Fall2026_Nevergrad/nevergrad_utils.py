@@ -22,9 +22,10 @@ import os
 import io
 import zipfile
 import urllib.request
-from typing import Iterator, List, Tuple, Union
+from typing import Iterator, List, Tuple, Union, Optional
 
 import pandas as pd
+import numpy as np
 import yfinance as yf
 
 import helpers.hdbg as hdbg
@@ -52,6 +53,10 @@ RF_PROVENANCE_PATH = "data_provenance_rf.json"
 # Each walk-forward fold trains on this many calendar years and tests on the
 # following year.
 NUM_TRAIN_YEARS = 5
+
+# Valid weights can miss 0 or 1 by this much from floating-point error, e.g.,
+# after many days of drift or from a numerical solver.
+WEIGHT_TOLERANCE = 1e-6
 
 
 # #############################################################################
@@ -384,3 +389,107 @@ def get_fold_table(
         )
     table = pd.DataFrame(rows).set_index("test_year")
     return table
+
+# #############################################################################
+# Portfolio simulation
+# #############################################################################
+
+def check_weights(weights: np.ndarray, num_assets: int) -> None:
+    """
+    Check that weights are long-only and fully invested, with one per asset.
+    """
+    hdbg.dassert_eq(
+        len(weights),
+        num_assets,
+        "Expected '%s' weights, one per asset, but got '%s'",
+        num_assets,
+        len(weights)
+    )
+    hdbg.dassert_lte(
+        -WEIGHT_TOLERANCE,
+        float(weights.min()),
+        "Weights must be non-negative (long-only)"
+    )
+    hdbg.dassert_lte(
+        abs(float(weights.sum()) - 1),
+        WEIGHT_TOLERANCE,
+        "Weights must sum to 1 (fully invested)"
+    )
+
+def compute_turnover(
+    target_weights: np.ndarray,
+    current_weights: np.ndarray
+) -> float:
+    hdbg.dassert_eq(
+        len(target_weights),
+        len(current_weights),
+        "Length '%s' of target_weights and length '%s' of current_weights are not equal",
+        len(target_weights), 
+        len(current_weights)
+    )
+    return float(np.abs(target_weights - current_weights).sum())
+
+def get_rebalance_days(
+    rebal_freq: str,
+    index: pd.DatetimeIndex
+) -> np.ndarray:
+    hdbg.dassert_isinstance(
+        index,
+        pd.DatetimeIndex,
+        "Index must be of type pd.DatetimeIndex"
+    )
+    freq_map = {"monthly": "M", "quarterly": "Q", "annual": "Y"}
+    hdbg.dassert_in(
+        rebal_freq,
+        freq_map.keys(),
+        "Rebalance frequency '%s' is not a possible frequency (only monthly, quarterly, or annual)",
+        rebal_freq
+    )
+    periods = index.to_period(freq_map[rebal_freq])
+    return np.r_[True, periods[1:] != periods[:-1]]
+    
+
+def simulate_portfolio(
+    returns: pd.DataFrame,
+    target_weights: np.ndarray,
+    *,
+    rebal_freq: str = "monthly",
+    cost_bps: float = 10.0,
+    initial_weights: Optional[np.ndarray] = None
+) -> Tuple[pd.Series, pd.Series, np.ndarray]:
+    """
+    Simulate daily portfolio changes.
+    """
+    target_weights = np.asarray(target_weights)
+    if initial_weights is None:
+        initial_weights = target_weights.copy()
+    else:
+        initial_weights = np.asarray(initial_weights)
+    check_weights(target_weights, returns.shape[1])
+    check_weights(initial_weights, returns.shape[1])
+
+    rebalance_days = get_rebalance_days(rebal_freq, returns.index)
+    
+    r = returns.to_numpy()
+    w = initial_weights.copy()
+    
+    net = []
+    turnover = []
+    
+    for t in range(len(r)):
+        if rebalance_days[t]:
+            turnover.append(compute_turnover(target_weights, w))
+            w = target_weights.copy()
+        else:
+            turnover.append(0)
+        gross = w @ r[t]
+        net.append(gross - cost_bps / 10000 * turnover[-1])
+        w = w * (1 + r[t]) / (1 + gross)
+    
+    net = pd.Series(net, index = returns.index)
+    turnover = pd.Series(turnover, index = returns.index)
+    return net, turnover, w
+    
+    
+    
+        
