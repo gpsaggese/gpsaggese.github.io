@@ -9,11 +9,16 @@ import research.Causal_Analysis_of_Agent_Skill_And_Luck.test.test_causal_success
 import logging
 from typing import Any, List, Optional, Tuple
 
+import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import pytest
 
 import helpers.hunit_test as hunitest
+
+# Draw figures without a display.
+matplotlib.use("Agg")
 
 pytest.importorskip(
     "pymc",
@@ -1605,3 +1610,40 @@ class Test_posterior_predictive_check(hunitest.TestCase):
         # Check outputs.
         actual = str({key: value.shape for key, value in ppc.items()})
         self.assert_equal(actual, expected)
+
+
+# #############################################################################
+# Test_plot_talent_capital_luck
+# #############################################################################
+
+
+class Test_plot_talent_capital_luck(hunitest.TestCase):
+    """
+    Test the `plot_talent_capital_luck()` function.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that the plot has 3 panels titled with the computed statistics.
+        """
+        # Prepare inputs.
+        n_agents = 30
+        n_periods = 10
+        seed = 42
+        agents = rcaoasalcsu.create_population(n_agents=n_agents, seed=seed)
+        agents = rcaoasalcsu.run_simulation(
+            agents, n_periods=n_periods, seed=seed
+        )
+        df = rcaoasalcsu.get_results_dataframe(agents)
+        gini = rcaoasalcsu.calculate_gini(df["capital"].to_numpy())
+        # Prepare outputs.
+        expected_n_axes = 3
+        expected_gini_txt = f"Gini {gini:.3f}"
+        # Run test.
+        rcaoasalcsu.plot_talent_capital_luck(df)
+        # Check outputs.
+        fig = plt.gcf()
+        titles = [ax.get_title() for ax in fig.axes]
+        plt.close(fig)
+        self.assertEqual(len(fig.axes), expected_n_axes)
+        self.assertIn(expected_gini_txt, titles[1])

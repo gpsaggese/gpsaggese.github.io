@@ -14,11 +14,15 @@ import research.Causal_Analysis_of_Agent_Skill_And_Luck.causal_success_utils as 
 import logging
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, cast
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import scipy.stats
+import seaborn as sns
 import tqdm
 
 import helpers.hdbg as hdbg
+import helpers.hnotebook as hnotebo
 import helpers.hprint as hprint
 
 # Import PyMC and ArviZ only for the type hints, since they are imported inside
@@ -28,6 +32,17 @@ if TYPE_CHECKING:
     import pymc as pm
 
 _LOG = logging.getLogger(__name__)
+
+
+def init_loggers(notebook_log: logging.Logger) -> None:
+    """
+    Wire the notebook logger into the utils logger.
+
+    :param notebook_log: logger owned by the notebook
+    """
+    _LOG.debug("notebook_log=%s", notebook_log.name)
+    hnotebo.init_loggers(notebook_log, utils_log=_LOG)
+
 
 # __all__ = [
 #     "Agent",
@@ -841,3 +856,82 @@ def posterior_predictive_check(
         "y_pred_std": y_pred_std,
     }
     return ppc_results
+
+
+# #############################################################################
+# Plotting
+# #############################################################################
+
+
+def plot_talent_capital_luck(
+    df: pd.DataFrame,
+    *,
+    figsize: Optional[Tuple[float, float]] = None,
+) -> None:
+    """
+    Plot the talent distribution, the capital distribution, and luck vs capital.
+
+    The three panels show that talent is roughly symmetric while capital is
+    skewed, and how much of log-capital lines up with lucky events.
+
+    :param df: output of `get_results_dataframe()`
+    :param figsize: figure size
+        - Default: `plt.rcParams["figure.figsize"]`
+    """
+    _LOG.debug("df.shape=%s figsize=%s", df.shape, figsize)
+    if figsize is None:
+        figsize = plt.rcParams["figure.figsize"]
+    plot_df = df.assign(log_capital=np.log(df["capital"]))
+    gini = calculate_gini(df["capital"].to_numpy())
+    lucky_events = plot_df["lucky_events"].to_numpy(dtype=float)
+    log_capital = plot_df["log_capital"].to_numpy(dtype=float)
+    corr = float(np.corrcoef(lucky_events, log_capital)[0, 1])
+    n_bins = 20
+    fig, axes = plt.subplots(1, 3, figsize=figsize)
+    # Plot the talent distribution with its mean.
+    sns.histplot(data=plot_df, x="talent_norm", bins=n_bins, ax=axes[0])
+    talent_mean = df["talent_norm"].mean()
+    axes[0].axvline(
+        talent_mean,
+        color="red",
+        linestyle="--",
+        label=f"Mean: {talent_mean:.3f}",
+    )
+    axes[0].set_xlabel("Talent norm")
+    axes[0].set_title(
+        f"Talent (skewness {scipy.stats.skew(df['talent_norm']):.2f})"
+    )
+    axes[0].legend()
+    # Plot the capital distribution with its mean and Gini.
+    sns.histplot(
+        data=plot_df, x="capital", bins=n_bins, color="orange", ax=axes[1]
+    )
+    capital_mean = df["capital"].mean()
+    axes[1].axvline(
+        capital_mean,
+        color="red",
+        linestyle="--",
+        label=f"Mean: {capital_mean:.2f}",
+    )
+    axes[1].set_xlabel("Capital ($)")
+    axes[1].set_title(
+        f"Capital (Gini {gini:.3f}, skewness "
+        f"{scipy.stats.skew(df['capital']):.2f})"
+    )
+    axes[1].legend()
+    # Plot lucky events against log-capital with a linear fit.
+    sns.regplot(
+        data=plot_df,
+        x="lucky_events",
+        y="log_capital",
+        ci=None,
+        scatter_kws={"alpha": 0.6},
+        line_kws={"color": "red", "linestyle": "--"},
+        ax=axes[2],
+    )
+    axes[2].set_xlabel("Lucky events")
+    axes[2].set_ylabel("Log(capital)")
+    axes[2].set_title(f"Luck vs log-capital (r = {corr:.3f})")
+    fig.suptitle(f"{len(df)} agents after the simulation")
+    fig.tight_layout()
+    plt.show()
