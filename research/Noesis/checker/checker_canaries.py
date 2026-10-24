@@ -157,25 +157,25 @@ def group_by_family(
     return {family: tuple(groups[family]) for family in sorted(groups)}
 
 
-def _selection_seed(secret: str, contract_id: int) -> int:
+def _selection_seed(secret: str, selection_key: str) -> int:
     if not secret:
         raise CanaryBankError("selection secret must not be empty")
-    if contract_id <= 0:
-        raise CanaryBankError("contract_id must be positive")
+    if not selection_key:
+        raise CanaryBankError("selection key must not be empty")
     digest = hmac.new(
-        secret.encode(), str(contract_id).encode(), hashlib.sha256
+        secret.encode(), selection_key.encode(), hashlib.sha256
     ).digest()
     return int.from_bytes(digest[:8], "big")
 
 
-def select_canaries(
+def select_canaries_for_key(
     canaries: Sequence[rnochmod.Canary],
-    contract_id: int,
+    selection_key: str,
     count: int,
     secret: str,
 ) -> Tuple[rnochmod.Canary, ...]:
     """
-    Select a secret, repeatable, family-balanced contract batch.
+    Select a secret, repeatable, family-balanced batch for one opaque key.
     """
     if count < 1:
         raise CanaryBankError("selection count must be positive")
@@ -186,7 +186,7 @@ def select_canaries(
         raise CanaryBankError(
             "requested %s canaries from a bank of %s" % (count, len(canaries))
         )
-    generator = random.Random(_selection_seed(secret, contract_id))
+    generator = random.Random(_selection_seed(secret, selection_key))
     groups: Dict[str, List[rnochmod.Canary]] = {
         family: list(items) for family, items in group_by_family(canaries).items()
     }
@@ -204,3 +204,20 @@ def select_canaries(
         if not made_progress:
             break
     return tuple(selected)
+
+
+def select_canaries(
+    canaries: Sequence[rnochmod.Canary],
+    contract_id: int,
+    count: int,
+    secret: str,
+) -> Tuple[rnochmod.Canary, ...]:
+    """
+    Select a secret, repeatable, family-balanced contract batch.
+
+    This compatibility wrapper preserves the exact selection produced before
+    monitoring introduced non-contract selection keys.
+    """
+    if contract_id <= 0:
+        raise CanaryBankError("contract_id must be positive")
+    return select_canaries_for_key(canaries, str(contract_id), count, secret)

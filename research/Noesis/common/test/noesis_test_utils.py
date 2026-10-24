@@ -79,7 +79,7 @@ def run_with_clean_db(
             async with pool.connection() as conn:
                 await conn.execute(
                     "TRUNCATE accounts, sellers, rounds, canaries,"
-                    " canary_calibration_runs CASCADE"
+                    " canary_calibration_runs, monitoring_runs CASCADE"
                 )
             return await body(pool)
         finally:

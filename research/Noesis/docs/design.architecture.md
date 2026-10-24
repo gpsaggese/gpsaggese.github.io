@@ -12,7 +12,7 @@
 
 - `research/Noesis` contains:
   - `NoesisMarket` (`market/`)
-  - `NoesisServer` (`gateway/`, `checker/`, and `prober/`)
+  - `NoesisServer` (`gateway/`, `checker/`, `prober/`, and `monitor/`)
   - Shared infrastructure for the MVP components (`common/`)
   - A thin HTTP surface over the market and the proxy (`noesis_platform/`,
     `NoesisPlatform` section)
@@ -121,7 +121,8 @@ C4Context
 - Allowed imports between components, checked by `test/test_component_imports.py`:
   `gateway/` imports `common/`; `checker/` imports `common/` and
   `gateway/gateway_providers.py`; `prober/` coordinates `checker/`, `common/`, and
-  `gateway/`; `noesis_platform/` imports `market/` and
+  `gateway/`; `monitor/` coordinates `checker/`, `common/`, and the provider
+  modules in `gateway/`; `noesis_platform/` imports `market/` and
   `gateway/passthrough_proxy.py`; `common/` and `market/` import no other component
 
 ```mermaid
@@ -155,6 +156,10 @@ C4Container
     Container(prober_mod, "prober_{runtime,worker,cli}.py", "Python modules", "Claims scheduled canary slots, calls the contracted provider, grades responses, and persists hidden evidence")
   }
 
+  Container_Boundary(monitor, "monitor/") {
+    Container(monitor_mod, "monitor_*.py", "Python modules", "Runs a bounded provider/model check without a contract and persists monitoring-only observations")
+  }
+
   Container_Boundary(common, "common/") {
     Container(infra, "noesis_{settings,db,seed}.py", "Python modules", "Settings, async Postgres pool, migrations, demo seed")
   }
@@ -171,6 +176,9 @@ C4Container
   Rel(prober_mod, checker_mod, "uses schedules, measurement, and persistence")
   Rel(prober_mod, mvp_gateway, "uses routing, provider calls, faults, and logging")
   Rel(prober_mod, infra, "uses settings, migrations, and DB pool")
+  Rel(monitor_mod, checker_mod, "uses active canaries and capability measurement")
+  Rel(monitor_mod, mvp_gateway, "uses provider interface and OpenRouter adapter")
+  Rel(monitor_mod, infra, "uses settings, migrations, and DB pool")
   Rel(dispatch, auction, "imports Bid, Ask, TierClearResult")
   Rel(dispatch, noesis_server, "dispatch_contract() (mocked)")
   Rel(api, auction, "imports OrderBook, Bid, Ask")
@@ -209,6 +217,11 @@ C4Container
   `NOESIS_DB_BACKEND == "postgres"` branch (a deferred import); it is the sole place
   that decides which storage backend every other module runs against for the life of
   the process
+- `monitor_runtime.run_monitoring()` is a separate orchestration path: it selects
+  active calibrated canaries, calls one explicit provider/model target sequentially,
+  grades each successful response, and commits each observation before continuing
+- Monitoring tables have no `contract_id`, and `monitor/` cannot import `market/`;
+  standalone measurements therefore cannot change contract verdicts or reputation
 
 ## C3 (Component)
 
@@ -308,4 +321,27 @@ flowchart LR
     route --> provider["Pinned provider call"]
     provider --> measure["CapabilityMeasurer"]
     measure --> evidence["Server-only graded request evidence"]
+```
+
+### Standalone monitoring flow
+
+- `monitor_cli` validates the bank, target, limits, and planned paid-call count by
+  default; `--execute` is required before PostgreSQL or a live provider is touched
+- `monitor_runtime.run_monitoring()` selects a secret family-balanced subset for
+  one run and calls the target sequentially with a strict timeout
+- Each observation is committed before the next provider call; provider and grader
+  failures remain observation outcomes, while an orchestration failure marks the
+  run `FAILED`
+- The flow ends in monitoring-only tables and has no path to contract verdicts or
+  seller reputation
+
+```mermaid
+flowchart LR
+    active["ACTIVE canary bank"] --> select["Secret balanced selection"]
+    target["Explicit provider/model target"] --> runtime["Sequential monitor runtime"]
+    select --> runtime
+    runtime --> provider["Provider.call() with timeout"]
+    provider --> measure["CapabilityMeasurer"]
+    measure --> observation[("Monitoring observation")]
+    observation --> run[("Monitoring run summary")]
 ```
