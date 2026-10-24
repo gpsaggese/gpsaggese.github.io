@@ -58,7 +58,7 @@ NUM_TRAIN_YEARS = 5
 # Valid weights can miss 0 or 1 by this much from floating-point error, e.g.,
 # after many days of drift or from a numerical solver.
 WEIGHT_TOLERANCE = 1e-6
-
+MONTHS_PER_YEAR = 12
 TRADING_DAYS_PER_YEAR = 252
 
 
@@ -518,10 +518,13 @@ def min_variance_weights(
     )
     result = spo.minimize(
         fun = lambda w: w @ cov @ w,
+        jac = lambda w: 2 * cov @ w,
         x0 = equal_weights(n),
         method = "SLSQP",
         bounds = [(0, max_weight)] * n,
-        constraints = [{"type": "eq", "fun": lambda w: w.sum() - 1}],
+        constraints = [{"type": "eq", 
+                        "fun": lambda w: w.sum() - 1,
+                        "jac": lambda w: np.ones(n)}],
         options = {"ftol": 1e-12}
     )
     hdbg.dassert(
@@ -533,3 +536,56 @@ def min_variance_weights(
     check_weights(result.x, n)
     
     return result.x
+
+def annualized_risk_free_rate(rf_monthly: pd.Series) -> float:
+    hdbg.dassert_lt(
+        0,
+        len(rf_monthly),
+        "Zero risk-free monthly rates provided"
+    )
+    return rf_monthly.mean() * MONTHS_PER_YEAR
+
+def sharpe_ratio(
+    returns: pd.Series,
+    rf_annual: float
+) -> float:
+    m = annualized_return(returns)
+    v = annualized_volatility(returns)
+    
+    hdbg.dassert_lt(
+        0,
+        v,
+        "Volatility computed as '%s'; must be greater than 0",
+        v
+    )
+    return (m - rf_annual) / v
+
+def get_baseline_table(
+    returns: pd.DataFrame,
+    rf_monthly: pd.Series,
+    *,
+    rebal_freq: str = "monthly",
+    cost_bps: float = 10.0,
+    num_train_years: int = NUM_TRAIN_YEARS
+) -> pd.DataFrame:
+    baselines = {"ew": lambda train: equal_weights(train.shape[1]),
+                 "mv": min_variance_weights}
+    end_weights = {name: None for name in baselines}
+    rows = []
+    
+    for test_year in get_test_years(returns.index, num_train_years = num_train_years):
+        train, test = split_fold(returns, test_year, num_train_years = num_train_years)
+        _, rf_test = split_fold(rf_monthly, test_year, num_train_years = num_train_years)
+        rf = annualized_risk_free_rate(rf_test)
+        row = {"test_year": test_year, "rf": rf}
+        for name, get_weights in baselines.items():
+            weights = get_weights(train)
+            net, turnover, end_weights[name] = simulate_portfolio(test, 
+                                                                  weights,
+                                                                  rebal_freq = rebal_freq,
+                                                                  cost_bps = cost_bps,
+                                                                  initial_weights = end_weights[name])
+            row[f"{name}_sharpe"] = sharpe_ratio(net, rf)
+            row[f"{name}_turnover"] = turnover.sum()
+        rows.append(row)
+    return pd.DataFrame(rows).set_index("test_year")

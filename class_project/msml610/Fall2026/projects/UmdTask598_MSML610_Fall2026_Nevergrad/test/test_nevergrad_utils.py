@@ -1617,3 +1617,219 @@ class Test_min_variance_weights(hunitest.TestCase):
         # Run test and check outputs.
         with self.assertRaises(AssertionError):
             nvutils.min_variance_weights(returns, max_weight=0.4)
+
+
+# #############################################################################
+# Test_annualized_risk_free_rate
+# #############################################################################
+
+
+class Test_annualized_risk_free_rate(hunitest.TestCase):
+    """
+    Test `nevergrad_utils.annualized_risk_free_rate()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that the average monthly rate is scaled by 12 months.
+        """
+        # Prepare inputs.
+        dates = pd.date_range("2023-01-01", periods=3, freq="MS", name="Date")
+        rf_monthly = pd.Series([0.001, 0.002, 0.003], index=dates, name="RF")
+        # Prepare outputs.
+        # The average month pays 0.002, and 0.002 * 12 = 0.024.
+        expected = "0.0240000"
+        # Run test.
+        actual = nvutils.annualized_risk_free_rate(rf_monthly)
+        # Check outputs.
+        self.assert_equal(f"{actual:.7f}", expected)
+
+    def test2(self) -> None:
+        """
+        Test that a fold's training and test years get their own rates.
+        """
+        # Prepare inputs.
+        # T-bills pay 0.1% a month until 2010 and 0.4% a month in 2011, like a
+        # jump in short rates between the training window and the test year.
+        dates = pd.date_range("2006-01-01", "2011-12-01", freq="MS", name="Date")
+        rf = pd.Series(np.where(dates.year < 2011, 0.001, 0.004), index=dates)
+        rf_train, rf_test = nvutils.split_fold(rf, 2011)
+        # Prepare outputs.
+        expected = "train 0.0120000, test 0.0480000"
+        # Run test.
+        train_rate = nvutils.annualized_risk_free_rate(rf_train)
+        test_rate = nvutils.annualized_risk_free_rate(rf_test)
+        # Check outputs.
+        actual = f"train {train_rate:.7f}, test {test_rate:.7f}"
+        self.assert_equal(actual, expected)
+
+    def test3(self) -> None:
+        """
+        Test that an empty slice of rates raises an error instead of a NaN.
+        """
+        # Prepare inputs.
+        rf_monthly = pd.Series([], dtype=float)
+        # Run test and check outputs.
+        with self.assertRaises(AssertionError):
+            nvutils.annualized_risk_free_rate(rf_monthly)
+
+
+# #############################################################################
+# Test_sharpe_ratio
+# #############################################################################
+
+
+class Test_sharpe_ratio(hunitest.TestCase):
+    """
+    Test `nevergrad_utils.sharpe_ratio()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test the excess return over the volatility on a hand-computed case.
+        """
+        # Prepare inputs.
+        # Two large daily returns keep the arithmetic exact: the mean is 0.01 a
+        # day, or 2.52 a year, and the sample variance is
+        # (0.02^2 + 0.02^2) / (2 - 1) = 0.0008 a day, or a volatility of
+        # sqrt(0.0008 * 252) = 0.4489989 a year.
+        returns = pd.Series([0.03, -0.01])
+        rf_annual = 0.02
+        # Prepare outputs.
+        # (2.52 - 0.02) / 0.4489989 = 5.5679425.
+        expected = "5.5679425"
+        # Run test.
+        actual = nvutils.sharpe_ratio(returns, rf_annual)
+        # Check outputs.
+        self.assert_equal(f"{actual:.7f}", expected)
+
+    def test2(self) -> None:
+        """
+        Test that mixing a portfolio half and half with T-bills keeps its Sharpe.
+        """
+        # Prepare inputs.
+        # The mix halves both the excess return and the volatility, so their
+        # ratio does not change.
+        returns = pd.Series([0.012, -0.004, 0.007, -0.009, 0.003])
+        rf_annual = 0.0483
+        rf_daily = rf_annual / nvutils.TRADING_DAYS_PER_YEAR
+        mix = 0.5 * returns + 0.5 * rf_daily
+        # Run test.
+        sharpe = nvutils.sharpe_ratio(returns, rf_annual)
+        sharpe_mix = nvutils.sharpe_ratio(mix, rf_annual)
+        # Check outputs.
+        self.assert_equal(f"{sharpe_mix:.7f}", f"{sharpe:.7f}")
+
+    def test3(self) -> None:
+        """
+        Test that zero volatility, like a T-bill's, raises an error.
+        """
+        # Prepare inputs.
+        returns = pd.Series([0.0004] * 10)
+        # Run test and check outputs.
+        with self.assertRaises(AssertionError):
+            nvutils.sharpe_ratio(returns, 0.01)
+
+
+# #############################################################################
+# Test_get_baseline_table
+# #############################################################################
+
+
+class Test_get_baseline_table(hunitest.TestCase):
+    """
+    Test `nevergrad_utils.get_baseline_table()`.
+
+    Two assets trade on 4 days a year in 2010-2012, with 1 training year, so
+    the test years are 2011 and 2012. With annual rebalancing every trade
+    happens on a year's first day, and the expected values follow by hand:
+    - 2010 trains 2011: B's variance is 4 times A's and they are uncorrelated,
+      so min-variance holds [0.8, 0.2]; equal weight holds [0.5, 0.5]
+    - 2011 starts at its targets, so nothing trades. A gains 10% on day 1, so
+      the net returns are [0.05, 0, 0, 0] (EW) and [0.08, 0, 0, 0] (MV), and
+      the holdings drift to [0.5238095, 0.4761905] and [0.8148148, 0.1851852]
+    - 2011 trains 2012: B never moves, so min-variance holds only B: [0, 1]
+    - 2012 starts with each baseline's own year-start trade: EW turnover
+      2 * 0.0238095 = 0.0476190; MV sells all of A, 2 * 0.8148148 = 1.6296296.
+      Both assets gain 2% on day 1, so day 1 nets 0.02 - 10 bps * turnover
+    - A series [x, 0, 0, 0] has mean x / 4 and sample standard deviation x / 2,
+      so its Sharpe ratio is (63 * x - rf) / (7.9372539 * x)
+    - T-bills pay 0.1% a month in 2010, 0.4% in 2011, and 0.2% in 2012; the
+      rf column must be each test year's rate (4.8%, 2.4%), never the training
+      year's 1.2%
+    """
+
+    def helper(self, cost_bps: float, expected: str) -> None:
+        """
+        Build the baseline table of the 2010-2012 data and compare it.
+
+        :param cost_bps: cost in basis points per unit of turnover
+        :param expected: expected table, printed with 7 decimals
+        """
+        # Prepare inputs.
+        dates = pd.DatetimeIndex(
+            list(pd.bdate_range("2010-01-04", periods=4))
+            + list(pd.bdate_range("2011-01-03", periods=4))
+            + list(pd.bdate_range("2012-01-02", periods=4)),
+            name="Date",
+        )
+        returns = pd.DataFrame(
+            {
+                "A": [0.01, -0.01, 0.01, -0.01]
+                + [0.10, 0.0, 0.0, 0.0]
+                + [0.02, 0.0, 0.0, 0.0],
+                "B": [0.02, 0.02, -0.02, -0.02]
+                + [0.0, 0.0, 0.0, 0.0]
+                + [0.02, 0.0, 0.0, 0.0],
+            },
+            index=dates,
+        )
+        months = pd.date_range("2010-01-01", "2012-12-01", freq="MS", name="Date")
+        rf_monthly = pd.Series(
+            months.year.map({2010: 0.001, 2011: 0.004, 2012: 0.002}),
+            index=months,
+            name="RF",
+        )
+        # Run test.
+        actual = nvutils.get_baseline_table(
+            returns,
+            rf_monthly,
+            rebal_freq="annual",
+            cost_bps=cost_bps,
+            num_train_years=1,
+        )
+        # Check outputs.
+        self.assert_equal(
+            actual.to_string(float_format="{:.7f}".format),
+            expected,
+            dedent=True,
+            fuzzy_match=True,
+        )
+
+    def test1(self) -> None:
+        """
+        Test the table on hand-computed data: rates, Sharpe, and chaining.
+        """
+        # 2011 has no trade, so its turnover is 0; 2012 charges each
+        # baseline's own year-start trade, from its own 2011 holdings.
+        expected = """
+                         rf  ew_sharpe  ew_turnover  mv_sharpe  mv_turnover
+        test_year
+        2011      0.0480000  7.8163053    0.0000000  7.8616610    0.0000000
+        2012      0.0240000  7.7857073    0.0476190  7.7726565    1.6296296
+        """
+        self.helper(10.0, expected)
+
+    def test2(self) -> None:
+        """
+        Test that a zero cost leaves the turnover but removes its charge.
+        """
+        # Without costs both baselines net the same 2% on 2012's first day, so
+        # their 2012 Sharpe ratios match; 2011 had no trade, so it is unchanged.
+        expected = """
+                         rf  ew_sharpe  ew_turnover  mv_sharpe  mv_turnover
+        test_year
+        2011      0.0480000  7.8163053    0.0000000  7.8616610    0.0000000
+        2012      0.0240000  7.7860681    0.0476190  7.7860681    1.6296296
+        """
+        self.helper(0.0, expected)
