@@ -3,7 +3,7 @@ title: "How to Convert PDF to Markdown in Python"
 draft: true
 authors:
   - gpsaggese
-date: 2026-04-19
+date: 2026-10-23
 description:
 categories:
   - Developer Tools
@@ -18,19 +18,19 @@ installation, usage, and examples.
 
 ## Why Convert PDFs to Markdown?
 - PDFs are layout-focused, not semantic: preserve visual structure, lose meaning
-- Markdown is portable: version control friendly, tool independent, human
-  readable
+- Markdown is portable: version control friendly, tool independent, human-readable
+- Markdowns preserve structures: headings, lists, tables and code marked as such.
 - LLMs work better with Markdown: cleaner input, better parsing, easier to
   fine-tune
 - Single-source publishing: convert once, render to HTML, PDF, EPUB
-- Automation: batch convert documents, integrate with pipelines
+- Automation: batch convert documents, integrate with pipelines like RAG
 
 ## Quick Comparison
 | Library       | Speed                                    | Accuracy                                   | Learning Curve                           | Best For                   |
 | :------------ | :--------------------------------------- | :----------------------------------------- | :--------------------------------------- | :------------------------- |
-| `pymupdf4llm` | <span style="color:green">Fast</span>    | <span style="color:green">Good</span>      | <span style="color:green">Easy</span>    | Simple docs, speed         |
+| `pymupdf`     | <span style="color:green">Fast</span>    | <span style="color:green">Good</span>      | <span style="color:green">Easy</span>    | Simple docs, speed         |
 | `marker-pdf`  | <span style="color:yellow">Medium</span> | <span style="color:green">Excellent</span> | <span style="color:yellow">Medium</span> | Academic, structured       |
-| `markitdown`  | <span style="color:yellow">Medium</span> | <span style="color:green">Good</span>      | <span style="color:green">Easy</span>    | Multi-format pipelines     |
+| `markitdown`  | <span style="color:yellow">Medium</span> | <span style="color:green">Good</span>      | <span style="color:green">Easy</span>    | Multi-format (DOCX,PPTX)   |
 | `pdfplumber`  | <span style="color:red">Slow</span>      | <span style="color:red">Manual</span>      | <span style="color:red">Hard</span>      | Custom logic, full control |
 
 ## Installation
@@ -41,17 +41,17 @@ installation, usage, and examples.
 - Trade cold-start time (package download) for zero disk footprint
 - See each library's "Using uvx" subsection for examples
 
-### Pymupdf4llm
+### pymupdf
+On October 19, 2026 `PyMuPDF 2.0` was released and the Markdown converter , `Pymupdf4llm` was integrated into it.
 - Install package:
   ```bash
-  > pip install "pymupdf4llm==1.28.2"
+  > pip install pymupdf
   ```
-The CLI executable is only available in this version since the release of Version 2.0 in October, 19, 2026.
 
 - Verify installation (via CLI):
   ```bash
   # Run help to verify command is available.
-  > pymupdf4llm --help
+  > python -c "import pymupdf; print(pymupdf.__version__)"
   ```
 
 ### Marker-pdf
@@ -62,13 +62,13 @@ The CLI executable is only available in this version since the release of Versio
 - Verify installation (via CLI):
   ```bash
   # Run help to verify command is available.
-  > marker --help
+  > marker_single --help
   ```
 
-### Markitdown
+### markitdown
 - Install package:
   ```bash
-  > pip install markitdown
+  > pip install 'markitdown[pdf]'
   ```
 - Verify installation (via CLI):
   ```bash
@@ -76,7 +76,7 @@ The CLI executable is only available in this version since the release of Versio
   > markitdown --help
   ```
 
-### Pdfplumber
+### pdfplumber
 - Install package:
   ```bash
   > pip install pdfplumber
@@ -92,18 +92,24 @@ The CLI executable is only available in this version since the release of Versio
 
 ## Basic Usage
 
-### Pymupdf4llm: Fast and Simple
+### pymupdf: Fast and Simple
 - Best for: Speed and simplicity, LLM-friendly output
 - Designed for large language models, uses lightweight heuristics
 
-**CLI usage:**
+**Python usage:**
 
-- Convert single PDF:
-  ```bash
-  # Convert input.pdf to Markdown.
-  > pymupdf4llm input.pdf --out output
+- Convert PDF to Markdown:
+  ```python
+  import pymupdf
+
+  with pymupdf.open("input.pdf") as doc:
+    markdown = doc.to_markdown()
+  
+  with open("output.md", "w") as f:
+      f.write(markdown)
   ```
-Here output is the directory where you want the Markdown file to be created in.
+**Legacy CLI:**
+- `pymupdf` 2.0 has no Markdown command line tool, but the last standalone release, `pymupdf4llm` 1.28.2, still has one.
 
 **Using uvx (no installation needed):**
 
@@ -112,37 +118,29 @@ Here output is the directory where you want the Markdown file to be created in.
   # Convert PDF without installing.
   > uvx pymupdf4llm@1.28.2 input.pdf --out output-directory-name
   ```
-- Convenient for one-off conversions, trades cold-start time for zero setup
-
-**Python usage:**
-
-- Convert PDF to Markdown:
-  ```python
-  from pymupdf4llm import to_markdown
-
-  md = to_markdown("input.pdf")
-  with open("output.md", "w") as f:
-      f.write(md)
-  ```
-
+  - Convenient for one-off conversions, trades cold-start time for zero setup
+  
 ### Marker-pdf: High-Fidelity Layout Detection
 - Best for: Academic papers, structured documents, tables
-- Uses machine learning for headings, tables, figures
+- Uses a vision machine learning model for layout, headings, tables, figures
+- It is slower but more accurate than heuristic tools
 
 **CLI usage:**
 
 - Convert with layout detection:
   ```bash
   # Convert input.pdf with layout analysis.
-  > marker input.pdf --output output.md
+  > marker_single input.pdf --output_format markdown --output_dir directory_name
+  # Convert a whole folder of pdf files into md
+  > marker folder_name --output_dir output_dir_name
   ```
-
+  
 **Using uvx (no installation needed):**
 
 - Run directly with `uvx`:
   ```bash
   # Convert with ML detection without installing.
-  > uvx marker_single input.pdf --output_format markdown --output_dir directory_name
+  > uvx --from marker-pdf marker_single input.pdf --output_format markdown --output_dir directory_name
   ```
 
 **Python usage:**
@@ -152,15 +150,20 @@ Here output is the directory where you want the Markdown file to be created in.
   from marker.converters.pdf import PdfConverter
   from marker.models import create_model_dict
   from marker.output import text_from_rendered
-
+  
+  output_dir = Path("output")
+  output_dir.mkdir(exist_ok=True)
+  
   converter = PdfConverter(artifact_dict=create_model_dict())
-  rendered =   converter("input.md")
-  text, _, images = text_from_rendered(  rendered)
-  with open("output.md", "w") as f:
-      f.write(text)
+  rendered =   converter("input.pdf")
+  save_output(
+      rendered,
+      str(outpur_dir),
+      "input"
+  )
   ```
 
-### Markitdown: Multi-Format Support
+### markitdown: Multi-Format Support
 - Best for: Mixed document types (PDF, DOCX, PPTX)
 - Prioritizes consistency across formats
 
@@ -169,7 +172,7 @@ Here output is the directory where you want the Markdown file to be created in.
 - Convert multiple formats:
 
   ```bash
-  # To use markitdown to convert into multiple formats execute,
+  # To use markitdown to convert into multiple formats like DOCX, PPTX execute,
   > pip install 'markitdown[all]'
   # Convert PDF to Markdown.
   > markitdown input.pdf -o output.md
@@ -178,7 +181,6 @@ Here output is the directory where you want the Markdown file to be created in.
   # Convert PPTX to Markdown.
   > markitdown input.pptx -o output.md
   ```
-
 **Using uvx (no installation needed):**
 
 - Run directly with `uvx`:
@@ -186,7 +188,7 @@ Here output is the directory where you want the Markdown file to be created in.
   # Convert without installing.
   > uvx --from 'markitdown[pdf]' markitdown input.pdf -o output.md
   ```
-- Works for all supported formats via single `uvx` call
+- Works for all supported formats via single `uvx` call, (change [pdf] to intended format as above)
 
 **Python usage:**
 
@@ -200,8 +202,8 @@ Here output is the directory where you want the Markdown file to be created in.
       f.write(result.markdown)
   ```
 
-### Pdfplumber: Full Control
-- Best for: Custom extraction, precise control over layout
+### pdfplumber: Full Control
+- Best for: Custom extraction where you need full control over what is extracted
 - Low-level tool: you build the Markdown conversion
 
 **Python usage:**
@@ -237,7 +239,7 @@ Here output is the directory where you want the Markdown file to be created in.
 
 ## Advanced Features
 
-### Custom Extraction with Pdfplumber
+### Custom Extraction with pdfplumber
 - Extract specific page ranges:
   ```python
   import pdfplumber
@@ -258,38 +260,42 @@ Here output is the directory where you want the Markdown file to be created in.
       # Crop to top-left quadrant.
       cropped = page.crop((0, 0, page.width/2, page.height/2))
       text = cropped.extract_text()
+      print(text)
   ```
 
 ### Batch Processing
 - Convert multiple PDFs:
   ```python
-  from pathlib import Path
-  from pymupdf4llm import to_markdown
-
-  pdf_dir = Path("pdfs")
-  output_dir = Path("markdown")
-  output_dir.mkdir(exist_ok=True)
-
-  for pdf_file in pdf_dir.glob("*.pdf"):
-      md = to_markdown(str(pdf_file))
-      output_file = output_dir / f"{pdf_file.stem}.md"
-      output_file.write_text(md)
-      print(f"Converted {pdf_file.name}")
+  from pymupdf import convert_batch
+  
+  results = convert_batch(
+      ["sample.pdf", "sample2.pdf"],
+      workers=2,
+      out_dir="output",
+      backend="md",
+  )
+  
+  for item in results:
+      if item.success:
+          print(item.input, "converted successfully")
+      else:
+          print(item.input, "failed:", item.error)
   ```
 
 ### Integration with LLM Processing
 - Convert and send to LLM:
   ```python
-  from pymupdf4llm import to_markdown
+  import pymupdf
 
-  md = to_markdown("document.pdf")
+  with pymupdf.open("document.pdf") as doc:
+    md = doc.to_markdown()
   
   # Process with language model.
   from anthropic import Anthropic
 
   client = Anthropic()
   response = client.messages.create(
-      model="claude-3-5-sonnet-20241022",
+      model="claude-sonnet-5-5",
       max_tokens=1024,
       messages=[
           {"role": "user", "content": f"Summarize:\n{md}"}
@@ -382,28 +388,36 @@ image extraction and heading detection.
 
 **Comparison with Other Tools:**
 
-| Aspect             | pdf_to_md.py           | pymupdf4llm | marker-pdf |
-| :----------------- | :--------------------- | :---------- | :--------- |
-| Image extraction   | Yes, with positioning  | No          | Limited    |
-| Heading detection  | Font-size based        | Heuristics  | ML-based   |
-| Image organization | Separate `images/` dir | Embedded    | Embedded   |
-| Vector graphics    | Renders to image       | No          | No         |
-| Debugging output   | Verbose logging        | No          | Limited    |
-| Use case           | Production docs        | LLM input   | Academic   |
+| Aspect             | pdf_to_md.py           | pymupdf            | marker-pdf     |
+|:-------------------|:-----------------------|:-------------------|:---------------|
+| Image extraction   | Yes, with positioning  | Yes                | yes            |
+| Heading detection  | Font-size based        | Heuristics         | ML-based       |
+| Image organization | Separate `images/` dir | ML-based           | seperate files |
+| Vector graphics    | Renders to image       | Yes                | Limited        |
+| Debugging output   | Verbose logging        | Progress reporting | Limited        |
+| Use case           | Production docs        | LLM input          | Academic       |
 
 
 ## Common Gotchas
-**Scanned PDFs (images, not text)**
+**Scanned PDFs (of images, not text)**
+ - Here OCR is required to recognize the characters.
+ - pymupdf supports OCR though its Markdown converter, provided that an OCR engine and appropriate language data are available.
+ - example:
+```python
+import pymupdf
 
-- Problem: `pymupdf4llm` and others extract nothing from scanned PDFs
-- Solution: Use OCR library first
-  ```bash
-  # Install Tesseract OCR.
-  > pip install pytesseract pillow pdf2image
+with pymupdf.open("scanned.pdf") as doc:
+    md = doc.to_markdown(
+    use_ocr = True,
+    ocr_language = "eng"
+    )
+with open("output.md","w",encoding = "utf-8") as f:
+    f.write(md)
   ```
-- Convert scanned PDF to text-based PDF
+- OCR quality depends on image resolution, scan quality, document layout and language support.
+
 ## When to Use Each Library
-- **Use `pymupdf4llm`** for:
+- **Use `pymupdf`** for:
   - Speed is priority
   - Feeding PDFs to LLMs
   - Simple documents without complex layouts
@@ -427,30 +441,18 @@ image extraction and heading detection.
   - When you need to build your own Markdown conversion
 
 
-<!--
+## Other Tools Worth Exploring 
+Beyond the four libraries covered here, several specialized tools are worth considering:
 
-  	•	Nougat (best for arXiv papers)
-      - https://github.com/facebookresearch/nougat
-	•	GROBID (best for structured extraction)
+- [docling](https://github.com/docling-project/docling):
+  A document conversion toolkit supporting advanced PDF layout analysis, tables, reading order and Markdown export.
+- [Nougat](https://github.com/facebookresearch/nougat):
+  An OCR-based approach designed for academic paper. A standout feature is that it can render mathematical notations.
+- [Pandoc](https://pandoc.org/):
+  If the original LaTeX source is available, convert it directly Markdown instead of reconstructing the document from PDF.
+  - for example, to convert a LaTeX source file:
+``` bash
+pandoc paper.tex -f latex -t gfm -o paper.md
+```
 
-  marker has a REPL interface
-  cat >config.yml
-  inputs:
-  - /Users/saggese/Downloads/2011.00641v1.pdf
 
-  output: output
-  rm -rf output; printf "run\nexit\n"  | uvx --python 3.11 marker --config config.yml
-
-https://github.com/timf34/arxiv2md
-
-https://github.com/docling-project/docling
-
-https://github.com/tonydavis629/markxiv
-
-uvx markitdown[pdf] ~/Downloads/2011.00641v1.pdf -o output.md
-Decent job
-
-pandoc /Users/saggese/papers/2016_Ribeiro_et_al_Why_Should_I_Trust_You_Explaining_the_Predictions_of_Any_Classifier.pdf -t gfm --wrap=none --markdown-headings=atx -o paper_md.md
-
-Convert a latex to markdown using pandoc
--->
