@@ -169,7 +169,7 @@ On October 19, 2026, `PyMuPDF 2.0` was released and the Markdown converter,
     from marker.output import save_output
 
     converter = PdfConverter(artifact_dict=create_model_dict())
-    rendered =   converter("input.pdf")
+    rendered = converter("input.pdf")
     output_dir = Path("output")
     output_dir.mkdir(exist_ok=True)
     save_output(
@@ -345,11 +345,12 @@ extracting images and detecting headings along the way.
 - Applies prettier formatting for clean Markdown output
 - Supports verbose logging for debugging conversions
 - Automatically manages image duplicates via xref tracking
-- Uses `uv` for dependency management (no installation needed)
+- Uses `uv` for dependency management 
+- Needs a checkout with helpers_root
 
 **Installation:**
 
-- Script is self-contained with `uv`:
+- Run it directly; uv installs the Python dependencies:
     ```bash
     # Runs with uv, installs dependencies automatically.
     > ./helpers_root/dev_scripts_helpers/documentation/convert_pdf_to_md.py \
@@ -369,7 +370,7 @@ extracting images and detecting headings along the way.
 - Basic conversion:
     ```bash
     # Convert PDF to Markdown with images.
-    > ./helpers_root/dev_scripts_helpers/documentation/convert_pdf_to_md.py\
+    > ./helpers_root/dev_scripts_helpers/documentation/convert_pdf_to_md.py \
       --input input.pdf \
       --output output_dir
     ```
@@ -492,7 +493,7 @@ pandoc paper.tex -f latex -t gfm -o paper.md
 
 ## What's Next
 
-- Converting a PDF you already have is half the job for academic papers you
+- Converting a PDF you already have is half the job for academic papers; you
   usually start from a link
 - A follow-up post covers
   [download_academic_paper_to_md.py](https://github.com/causify-ai/helpers/blob/master/dev_scripts_helpers/download/download_academic_paper_to_md.py),
