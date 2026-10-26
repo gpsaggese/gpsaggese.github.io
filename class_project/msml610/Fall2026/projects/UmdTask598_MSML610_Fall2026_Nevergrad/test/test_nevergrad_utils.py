@@ -250,6 +250,39 @@ def _format_weights(weights: np.ndarray) -> str:
     return txt
 
 
+def _get_hedge_returns(num_years: int = 1) -> pd.DataFrame:
+    """
+    Build three assets whose closed-form minimum-variance portfolio goes short.
+
+    The returns repeat the zero-mean, mutually uncorrelated patterns
+    `u1 = [1, -1, 1, -1]`, `u2 = [1, 1, -1, -1]`, and `u3 = [1, -1, -1, 1]` on
+    the first 4 business days of each year from 2010:
+    - A = 0.1 * u1
+    - B = 0.2 * u1 + 0.1 * u2: moves with A, but is more volatile
+    - C = 0.2 * u3: uncorrelated with A and B
+    So the sample covariance is (4 / 3) * [[0.01, 0.02, 0], [0.02, 0.05, 0],
+    [0, 0, 0.04]] in every year.
+
+    :param num_years: number of calendar years of data
+    :return: returns indexed by date
+    """
+    dates = pd.DatetimeIndex(
+        [
+            day
+            for year in range(2010, 2010 + num_years)
+            for day in pd.bdate_range(f"{year}-01-04", periods=4)
+        ],
+        name="Date",
+    )
+    u1 = np.tile([1, -1, 1, -1], num_years)
+    u2 = np.tile([1, 1, -1, -1], num_years)
+    u3 = np.tile([1, -1, -1, 1], num_years)
+    returns = pd.DataFrame(
+        {"A": 0.1 * u1, "B": 0.2 * u1 + 0.1 * u2, "C": 0.2 * u3}, index=dates
+    )
+    return returns
+
+
 # #############################################################################
 # Test_download_data
 # #############################################################################
@@ -1620,6 +1653,84 @@ class Test_min_variance_weights(hunitest.TestCase):
 
 
 # #############################################################################
+# Test_closed_form_min_variance_weights
+# #############################################################################
+
+
+class Test_closed_form_min_variance_weights(hunitest.TestCase):
+    """
+    Test `nevergrad_utils.closed_form_min_variance_weights()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that uncorrelated assets get weights proportional to 1 / variance.
+        """
+        # Prepare inputs.
+        # B's variance is 4 times A's, so the weights are 1 : 1/4 = 0.8 : 0.2,
+        # the same as the long-only solver: nothing needs shorting.
+        returns = pd.DataFrame(
+            {"A": [0.1, -0.1, 0.1, -0.1], "B": [0.2, 0.2, -0.2, -0.2]}
+        )
+        # Run test.
+        actual = nvutils.closed_form_min_variance_weights(returns)
+        # Check outputs.
+        self.assert_equal(_format_weights(actual), "0.800000 0.200000")
+
+    def test2(self) -> None:
+        """
+        Test that the closed form shorts an asset that moves with a calmer one.
+        """
+        # Prepare inputs.
+        # Inverting the covariance of `_get_hedge_returns()` gives
+        # Sigma^-1 1 proportional to [12, -4, 1], so the weights are
+        # [12, -4, 1] / 9 = [4/3, -4/9, 1/9]: B is shorted to hedge A.
+        returns = _get_hedge_returns()
+        # Run test.
+        actual = nvutils.closed_form_min_variance_weights(returns)
+        # Check outputs.
+        self.assert_equal(
+            _format_weights(actual), "1.333333 -0.444444 0.111111"
+        )
+
+
+# #############################################################################
+# Test_clip_and_renormalize
+# #############################################################################
+
+
+class Test_clip_and_renormalize(hunitest.TestCase):
+    """
+    Test `nevergrad_utils.clip_and_renormalize()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that the short is dropped and the rest rescaled to sum to 1.
+        """
+        # Prepare inputs.
+        weights = np.array([4 / 3, -4 / 9, 1 / 9])
+        # Prepare outputs.
+        # Dropping -4/9 leaves [4/3, 0, 1/9], which sums to 13/9, so the weights
+        # become [12/13, 0, 1/13].
+        expected = "0.923077 0.000000 0.076923"
+        # Run test.
+        actual = nvutils.clip_and_renormalize(weights)
+        # Check outputs.
+        self.assert_equal(_format_weights(actual), expected)
+
+    def test2(self) -> None:
+        """
+        Test that weights with nothing positive left raise an error.
+        """
+        # Prepare inputs.
+        weights = np.array([-0.5, 0.0])
+        # Run test and check outputs.
+        with self.assertRaises(AssertionError):
+            nvutils.clip_and_renormalize(weights)
+
+
+# #############################################################################
 # Test_annualized_risk_free_rate
 # #############################################################################
 
@@ -1833,3 +1944,46 @@ class Test_get_baseline_table(hunitest.TestCase):
         2012      0.0240000  7.7860681    0.0476190  7.7860681    1.6296296
         """
         self.helper(0.0, expected)
+
+
+# #############################################################################
+# Test_cell2_2_get_min_variance_table
+# #############################################################################
+
+
+class Test_cell2_2_get_min_variance_table(hunitest.TestCase):
+    """
+    Test `nevergrad_utils.cell2_2_get_min_variance_table()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test the closed form, clipping, and the solver on hand-computed folds.
+        """
+        # Prepare inputs.
+        # 3 years of `_get_hedge_returns()` with 1 training year give the test
+        # years 2011 and 2012, whose training slices have the same covariance.
+        returns = _get_hedge_returns(num_years=3)
+        # Prepare outputs.
+        # With Sigma = (4 / 3) * [[0.01, 0.02, 0], [0.02, 0.05, 0], [0, 0, 0.04]]:
+        # - The closed form [4/3, -4/9, 1/9] has 1 short, of -0.444444
+        # - Clipping gives [12/13, 0, 1/13], with annual volatility
+        #   sqrt((4 / 3) * (144 * 0.01 + 0.04) / 169 * 252) = 1.715367
+        # - The solver holds no B and splits A and C by 1 / variance, [0.8, 0,
+        #   0.2], with annual volatility
+        #   sqrt((4 / 3) * (0.64 * 0.01 + 0.04 * 0.04) * 252) = 1.639512
+        expected = """
+                   num_shorts  min_closed_weight  clip_vol  solver_vol top_asset  top_weight
+        test_year
+        2011                1          -0.444444  1.715367    1.639512         A    0.800000
+        2012                1          -0.444444  1.715367    1.639512         A    0.800000
+        """
+        # Run test.
+        actual = nvutils.cell2_2_get_min_variance_table(returns, num_train_years=1)
+        # Check outputs.
+        self.assert_equal(
+            actual.to_string(float_format="{:.6f}".format),
+            expected,
+            dedent=True,
+            fuzzy_match=True,
+        )

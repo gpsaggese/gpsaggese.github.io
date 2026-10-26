@@ -31,6 +31,7 @@ import scipy.optimize as spo
 
 import helpers.hdbg as hdbg
 import helpers.hio as hio
+import helpers.hnotebook as hnotebo
 
 _LOG = logging.getLogger(__name__)
 
@@ -60,6 +61,15 @@ NUM_TRAIN_YEARS = 5
 WEIGHT_TOLERANCE = 1e-6
 MONTHS_PER_YEAR = 12
 TRADING_DAYS_PER_YEAR = 252
+
+
+def init_loggers(notebook_log: logging.Logger) -> None:
+    """
+    Wire the notebook logger into the utils logger.
+
+    :param notebook_log: logger owned by the notebook
+    """
+    hnotebo.init_loggers(notebook_log, utils_log = _LOG)
 
 
 # #############################################################################
@@ -534,8 +544,29 @@ def min_variance_weights(
     )
     
     check_weights(result.x, n)
-    
+
     return result.x
+
+def closed_form_min_variance_weights(train_returns: pd.DataFrame) -> np.ndarray:
+    """
+    Compute the unconstrained minimum-variance weights, proportional to Sigma^-1 1.
+
+    The weights sum to 1 but can be negative, i.e., short positions.
+    """
+    cov = train_returns.cov().to_numpy() * TRADING_DAYS_PER_YEAR
+    inv_ones = np.linalg.solve(cov, np.ones(train_returns.shape[1]))
+    return inv_ones / inv_ones.sum()
+
+def clip_and_renormalize(weights: np.ndarray) -> np.ndarray:
+    """
+    Set negative weights to 0 and rescale the others to sum to 1.
+
+    This is the naive way to make weights long-only; it is not the long-only
+    minimum-variance portfolio of `min_variance_weights()`.
+    """
+    clipped = np.clip(weights, 0, None)
+    hdbg.dassert_lt(0, clipped.sum(), "At least one weight must be positive")
+    return clipped / clipped.sum()
 
 def annualized_risk_free_rate(rf_monthly: pd.Series) -> float:
     hdbg.dassert_lt(
@@ -588,4 +619,55 @@ def get_baseline_table(
             row[f"{name}_sharpe"] = sharpe_ratio(net, rf)
             row[f"{name}_turnover"] = turnover.sum()
         rows.append(row)
+    return pd.DataFrame(rows).set_index("test_year")
+
+
+# #############################################################################
+# Cell 2.2: Why Minimum Variance Needs a Solver
+# #############################################################################
+
+def cell2_2_get_min_variance_table(
+    returns: pd.DataFrame,
+    *,
+    num_train_years: int = NUM_TRAIN_YEARS
+) -> pd.DataFrame:
+    """
+    Compare the closed form, clipping, and the solver on each training slice.
+
+    :param returns: daily returns, one column per asset
+    :param num_train_years: number of calendar years in each training window
+    :return: one row per test year, with columns:
+        - `num_shorts`: number of negative closed-form weights
+        - `min_closed_weight`: most negative closed-form weight
+        - `clip_vol`: training volatility after clipping and renormalizing
+        - `solver_vol`: training volatility of `min_variance_weights()`
+        - `top_asset`, `top_weight`: largest weight of the solver
+    """
+    rows = []
+    for test_year in get_test_years(returns.index, num_train_years = num_train_years):
+        train, _ = split_fold(returns, test_year, num_train_years = num_train_years)
+        closed = closed_form_min_variance_weights(train)
+        clipped = clip_and_renormalize(closed)
+        solver = min_variance_weights(train)
+        clip_vol = annualized_volatility(train @ clipped)
+        solver_vol = annualized_volatility(train @ solver)
+        # The solver searches every long-only portfolio, the clipped one included,
+        # so it can only lose to clipping if it stopped early.
+        hdbg.dassert_lte(
+            solver_vol,
+            clip_vol + WEIGHT_TOLERANCE,
+            "Solver volatility '%s' exceeds clipping's in fold '%s'",
+            solver_vol,
+            test_year
+        )
+        top = int(np.argmax(solver))
+        rows.append({
+            "test_year": test_year,
+            "num_shorts": int((closed < 0).sum()),
+            "min_closed_weight": closed.min(),
+            "clip_vol": clip_vol,
+            "solver_vol": solver_vol,
+            "top_asset": returns.columns[top],
+            "top_weight": solver[top]
+        })
     return pd.DataFrame(rows).set_index("test_year")
