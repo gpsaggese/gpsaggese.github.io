@@ -81,7 +81,11 @@ if [[ "$DOCKER_ENGINE_CURRENT" == "apple" ]]; then
     # Follow logs so the user sees Jupyter output.
     $DOCKER_CMD logs -f $CONTAINER_NAME
 else
-    DOCKER_CMD_OPTS=$(get_docker_jupyter_options $CONTAINER_NAME $JUPYTER_HOST_PORT $JUPYTER_USE_VIM "$JUPYTER_TARGET_DIR")
+    # Let the agent runner start each task's container on the host's Docker daemon
+    # (a sibling of this container), and pass the API key through from the host
+    # shell without writing it anywhere.
+    DOCKER_RUN_OPTS="-v /var/run/docker.sock:/var/run/docker.sock -e ANTHROPIC_API_KEY"
+    DOCKER_CMD_OPTS="$(get_docker_jupyter_options $CONTAINER_NAME $JUPYTER_HOST_PORT $JUPYTER_USE_VIM "$JUPYTER_TARGET_DIR") $DOCKER_RUN_OPTS"
     DOCKER_CMD=$(get_docker_jupyter_command)
     run "$DOCKER_CMD $DOCKER_CMD_OPTS $FULL_IMAGE_NAME $CMD"
 fi

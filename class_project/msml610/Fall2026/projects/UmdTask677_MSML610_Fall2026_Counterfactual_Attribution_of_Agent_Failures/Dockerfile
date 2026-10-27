@@ -4,18 +4,30 @@
 # Python 3.12 slim (already has Python and pip).
 # #############################################################################
 
-FROM python:3.12-slim
+# Build for x86-64 on every host. The official evaluator depends on
+# `ytsaurus-yson`, which ships Linux wheels only for x86-64, and the SWE-rebench
+# task images are x86-64 too. On an Apple Silicon Mac this image runs under
+# emulation.
+FROM --platform=linux/amd64 python:3.12-slim
 
 # Avoid interactive prompts during apt operations.
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install CA certificates (needed for HTTPS), git, and basic build tools.
+# Install CA certificates (needed for HTTPS), git, curl, and basic build tools.
 RUN apt-get update && apt-get install -y \
     build-essential \
     ca-certificates \
+    curl \
     git \
     graphviz \
     && rm -rf /var/lib/apt/lists/*
+
+# Install the Docker CLI only, without a daemon. The agent runner starts each
+# task's container through the host's Docker daemon, whose socket the
+# `docker_*.sh` scripts mount into this container.
+ARG DOCKER_CLI_VERSION=27.5.1
+RUN curl -fsSL "https://download.docker.com/linux/static/stable/$(uname -m)/docker-${DOCKER_CLI_VERSION}.tgz" \
+    | tar -xz -C /usr/local/bin --strip-components=1 docker/docker
 
 # Install project specific packages. Pin jupytext to avoid jitter in the
 # notebook files due to changing version. Pin ipykernel below 7 since 7.3.0
@@ -25,6 +37,18 @@ RUN mkdir -p /install
 COPY requirements.txt /install/requirements.txt
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir jupyterlab jupyterlab_vim "ipykernel<7" jupytext==1.19.3 -r /install/requirements.txt
+
+# Install the official SWE-rebench evaluator (the SWE-bench fork used by
+# SWE-rebench) in its own virtual environment, so its dependencies cannot clash
+# with the runner's. Pin the commit and the dependency versions that scored all
+# the results so far.
+ARG SWEBENCH_FORK_COMMIT=e4907b7a90eafaa1f0a6428fd04fe31cdd8b4284
+COPY requirements.eval.txt /install/requirements.eval.txt
+RUN python -m venv /opt/swebench && \
+    /opt/swebench/bin/pip install --no-cache-dir \
+      -c /install/requirements.eval.txt \
+      "swebench @ git+https://github.com/SWE-rebench/SWE-bench-fork.git@${SWEBENCH_FORK_COMMIT}"
+ENV CAAF_EVAL_PYTHON=/opt/swebench/bin/python
 
 # Config.
 COPY etc_sudoers /install/
