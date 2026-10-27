@@ -435,6 +435,64 @@ sampling error. It is implemented, with an interactive notebook for both
 sports, in `notebooks/racket_shot_probability_utils.py` of the accompanying
 code.
 
+## Winner Probability of a Return
+
+The second building block of the implementation extends Section IV-G from
+"does the return land in" to "is the return a winner": it lands in and the
+server cannot reach it. After a legal serve to $(x_1, y_1)$, the returner hits
+from $(x_1, y_1)$ toward $(x_2, y_2)$ with the Gaussian spread of Section IV-G,
+and the server waits at the center of their baseline, $P = (0, -L/2)$. For
+each of $K$ sampled landing points $(X_k, Y_k)$, the flight time is the
+straight-line distance over a constant ground speed $v_b$ of the ball,
+
+$$
+T_k = \frac{\lVert (X_k, Y_k) - (x_1, y_1) \rVert}{v_b} ,
+$$
+
+so it depends on where the ball lands, not on where it was aimed. The server
+reacts for $t_r$ and then runs in a straight line at speed $v_p$, and reaches
+the landing point if
+
+$$
+\lVert (X_k, Y_k) - P \rVert \le v_p \max(0, \, T_k - t_r) .
+$$
+
+Unlike Section IV-C, the reach is evaluated for each sample. Let $W_k$ be the
+event that sample $k$ lands in the server's half $H$ and is not reached. The
+winner probability is estimated as this one joint event on the same samples,
+
+$$
+P_{\mathrm{win}}(x_2, y_2) \approx \frac{1}{K} \sum_{k=1}^{K}
+\mathbb{1}[W_k] .
+$$
+
+It is not computed as the product
+$P_{\mathrm{in}} \cdot P(\text{not reached})$, since both events depend on the
+same landing point. The model is two-dimensional: the ball flies in a straight
+line at a constant speed, the bounce is ignored, and the server must reach the
+landing point by the time the ball lands.
+
+$P_{\mathrm{win}}$ is evaluated at the centers of a grid over the server's half
+($10 \times 15$ cells for tennis and $9 \times 10$ for pickleball, with
+$K = 5000$), with common random numbers: every target uses the same standard
+normal draws, shifted to its own aim point, so two targets differ because of
+where they aim rather than because of sampling noise. Many targets can tie at
+the top, for example when all $K$ samples are winners, so the best placement
+is reported as a region: every target within two standard errors of the
+highest $P_{\mathrm{win}}$, using the standard error of the difference of two
+estimates, marked at the cell closest to the region's centroid.
+
+With a ball speed of 25 m/s for tennis, $t_r = 0.2$ s, and $v_p = 1.5$ m/s, a
+return that lands next to the server flies about 15 m in 0.61 s, so the server
+covers only about 0.6 m. $P_{\mathrm{win}}$ is then close to $P_{\mathrm{in}}$
+except in a small dip around the server, and the best region is the middle of
+the server's half rather than a spot near the lines. Because the spread does
+not depend on the ball speed in this model, a faster return never lowers
+$P_{\mathrm{win}}$, so hitting as fast as possible always looks best; a speed
+and accuracy trade-off is left to future work. The model is implemented, with
+a heatmap of $P_{\mathrm{win}}$ for both sports, in
+`notebooks/racket_shot_probability_utils.py` of the accompanying code.
+
 # Game-Theoretic Placement
 
 ## Placement as a Zero-Sum Game
