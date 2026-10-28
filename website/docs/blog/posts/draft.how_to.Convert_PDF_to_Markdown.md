@@ -3,6 +3,7 @@ title: "How to Convert PDF to Markdown in Python"
 draft: true
 authors:
     - gpsaggese
+    - LinuTeresa
 date: 2026-10-23
 description:
 categories:
