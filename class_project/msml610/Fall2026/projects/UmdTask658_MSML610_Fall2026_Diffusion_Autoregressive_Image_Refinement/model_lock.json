@@ -1,0 +1,54 @@
+{
+  "sd15": {
+    "repo": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+    "pipeline": "StableDiffusionPipeline",
+    "backbone_billion": 0.86,
+    "width": 512,
+    "height": 512,
+    "steps": 30,
+    "guidance": 7.5,
+    "dtype": "float16",
+    "license": "CreativeML OpenRAIL-M",
+    "latent_layout": "BCHW; scheduler final latent before VAE scaling",
+    "revision": "451f4fe16113bff5a5d2269ed5ad43b0592e9a14"
+  },
+  "sdxl": {
+    "repo": "stabilityai/stable-diffusion-xl-base-1.0",
+    "pipeline": "StableDiffusionXLPipeline",
+    "backbone_billion": 2.6,
+    "width": 1024,
+    "height": 1024,
+    "steps": 30,
+    "guidance": 5.0,
+    "dtype": "float16",
+    "license": "CreativeML Open RAIL++-M",
+    "latent_layout": "BCHW; scheduler final latent before VAE scaling",
+    "revision": "462165984030d82259a11f4367a4eed129e94a7b"
+  },
+  "sd35": {
+    "repo": "stabilityai/stable-diffusion-3.5-large",
+    "pipeline": "StableDiffusion3Pipeline",
+    "backbone_billion": 8.0,
+    "width": 1024,
+    "height": 1024,
+    "steps": 28,
+    "guidance": 3.5,
+    "dtype": "bfloat16",
+    "license": "Stability AI Community License; gated",
+    "latent_layout": "BCHW; scheduler final latent before VAE scaling/shift",
+    "revision": "ceddf0a7fdf2064ea28e2213e3b84e4afa170a0f"
+  },
+  "flux": {
+    "repo": "black-forest-labs/FLUX.1-dev",
+    "pipeline": "FluxPipeline",
+    "backbone_billion": 12.0,
+    "width": 1024,
+    "height": 1024,
+    "steps": 50,
+    "guidance": 3.5,
+    "dtype": "bfloat16",
+    "license": "FLUX.1-dev Non-Commercial License; gated",
+    "latent_layout": "packed BNC; requires Flux unpacking plus VAE scaling/shift",
+    "revision": "3de623fc3c33e44ffbe2bad470d0f45bccf2eb21"
+  }
+}

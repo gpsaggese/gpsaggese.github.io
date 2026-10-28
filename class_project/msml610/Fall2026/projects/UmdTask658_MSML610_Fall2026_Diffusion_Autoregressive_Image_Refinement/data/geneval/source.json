@@ -1,0 +1,8 @@
+{
+  "repo": "https://github.com/djghosh13/geneval",
+  "revision": "af4902f24d3ca90ebbb446dd9891a59e0f82725f",
+  "url": "https://raw.githubusercontent.com/djghosh13/geneval/af4902f24d3ca90ebbb446dd9891a59e0f82725f/prompts/evaluation_metadata.jsonl",
+  "sha256": "5c48e0813e812e3c373fa5c8ed07a8f0a483be30272b4427b0559c8048e67c13",
+  "prompts": 553,
+  "split": "official-test"
+}
