@@ -18,7 +18,7 @@ pytest.importorskip("psycopg2")
 import helpers.hsql_test as hsqltest  # noqa: E402 # pylint: disable=wrong-import-position
 import research.Noesis.market.batch_call_auction as rnbacaau  # noqa: E402 # pylint: disable=wrong-import-position
 import research.Noesis.market.contract_dispatch as rnocodis  # noqa: E402 # pylint: disable=wrong-import-position
-import research.Noesis.noesis_platform.platform_api as rnoplapi  # noqa: E402 # pylint: disable=wrong-import-position
+import research.Noesis.market.round_runner as rnmaroru  # noqa: E402 # pylint: disable=wrong-import-position
 import research.Noesis.noesis_platform.postgres_store as rnoposto  # noqa: E402 # pylint: disable=wrong-import-position
 
 _LOG = logging.getLogger(__name__)
@@ -206,14 +206,14 @@ class TestPostgresContractStore(_NoesisDbHelper):
         """
         Test that `next_round_id()` called twice returns two different,
         increasing ids, and that `save_round()`/`get_latest_round()`
-        round-trip a `RoundClearResponse`.
+        round-trip a `RoundSummary`.
         """
         # Prepare inputs.
         store = rnoposto.PostgresContractStore(self.connection)
         # Run test.
         round_id_1 = store.next_round_id()
         round_id_2 = store.next_round_id()
-        round_response = rnoplapi.RoundClearResponse(
+        round_response = rnmaroru.RoundSummary(
             tier="frontier",
             round_id=round_id_2,
             clearing_price=18.0,

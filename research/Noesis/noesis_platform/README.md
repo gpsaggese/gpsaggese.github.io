@@ -4,7 +4,7 @@
   proxy, with an optional Postgres backend
 - `main.py` builds the module-level `app` that `uvicorn` serves
 - Imports `market/` and `gateway/passthrough_proxy.py`; nothing imports it back
-- Architecture: `docs/architecture.md`
+- Architecture: `docs/design.architecture.md`
 
 ## Structure of the Dir
 
@@ -17,7 +17,7 @@
 | File               | Description                                                              | Cluster  |
 | :----------------- | :----------------------------------------------------------------------- | :------- |
 | `main.py`          | `uvicorn` entry point; picks the memory or Postgres backend              | Entry    |
-| `platform_api.py`  | `create_app()`: HTTP endpoints over the auction, dispatch, and proxy     | HTTP     |
+| `platform_api.py`  | `create_app()`: HTTP endpoints delegating rounds to the market runner     | HTTP     |
 | `postgres_store.py` | Postgres implementations of `OrderBookStore`, `ContractStore`, `RequestLogStore` | Database |
 | `supply_feed.py`   | Reads `common/seed.yaml`, fetches the OpenRouter endpoint catalog, and queues asks via `market/supply_adapter.py` | Supply   |
 
@@ -38,3 +38,8 @@
   of it
 - `postgres_store.py` is imported only inside the `postgres` branch of `main.py`, so
   the default path needs no `psycopg2`
+
+- `platform_api.py` calls `market.round_runner.run_round()` and converts plain
+  market summaries into the existing HTTP response models
+- `PostgresContractStore` implements `market.round_runner.ContractStore` and
+  returns `RoundSummary` dataclasses; it does not import `platform_api.py`

@@ -1,4 +1,4 @@
--- Noesis MVP schema (PRD §7). Shared contract between gateway/metering and
+-- Noesis MVP schema (PRD Sec. 7). Shared contract between gateway/metering and
 -- market/reputation. Idempotent: safe to run on every startup.
 
 CREATE TABLE IF NOT EXISTS accounts (

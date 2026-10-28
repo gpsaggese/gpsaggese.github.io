@@ -1,6 +1,7 @@
 path,is_group,group_id
 class_project/project_descriptions/MSML610/AutoGluon_Project_Description.md,False,37
 class_project/project_descriptions/MSML610/CLIP-ViT-Large-Patch14_Project_Description.md ,True,32
+class_project/project_descriptions/MSML610/CLIP-ViT-Large-Patch14_Project_Description.md,False,18
 class_project/project_descriptions/MSML610/CrewAI_Project_Description.md ,True,13
 class_project/project_descriptions/MSML610/DoWhy_Project_Description.md ,True,30
 class_project/project_descriptions/MSML610/Gensim_Project_Description.md,False,36
@@ -9,7 +10,6 @@ class_project/project_descriptions/MSML610/MLflow_Project_Description.md ,False,
 class_project/project_descriptions/MSML610/MLlib_Project_Description.md ,False,12
 class_project/project_descriptions/MSML610/NLTK_Project_Description.md ,False,17
 class_project/project_descriptions/MSML610/Polars_Project_Description.md ,False,27
-class_project/project_descriptions/MSML610/PyTorch_Geometric_Project_Description.md ,False,18
 class_project/project_descriptions/MSML610/RLlib_Project_Description.md ,False,34
 class_project/project_descriptions/MSML610/SemanticKernel_Project_Description.md ,True,15
 class_project/project_descriptions/MSML610/WB_Weave_Project_Description.md ,True,29

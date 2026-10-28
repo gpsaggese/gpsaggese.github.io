@@ -1,0 +1,501 @@
+instance_id,repo,difficulty,created_at,version
+astropy__astropy-12907,astropy/astropy,15 min - 1 hour,2022-03-03,4.3
+astropy__astropy-13033,astropy/astropy,15 min - 1 hour,2022-03-31,4.3
+astropy__astropy-13236,astropy/astropy,15 min - 1 hour,2022-05-09,5.0
+astropy__astropy-13398,astropy/astropy,1-4 hours,2022-06-24,5.0
+astropy__astropy-13453,astropy/astropy,15 min - 1 hour,2022-07-14,5.0
+astropy__astropy-13579,astropy/astropy,1-4 hours,2022-08-26,5.0
+astropy__astropy-13977,astropy/astropy,15 min - 1 hour,2022-11-01,5.1
+astropy__astropy-14096,astropy/astropy,15 min - 1 hour,2022-12-04,5.1
+astropy__astropy-14182,astropy/astropy,15 min - 1 hour,2022-12-16,5.1
+astropy__astropy-14309,astropy/astropy,<15 min fix,2023-01-23,5.1
+astropy__astropy-14365,astropy/astropy,15 min - 1 hour,2023-02-06,5.1
+astropy__astropy-14369,astropy/astropy,1-4 hours,2023-02-06,5.1
+astropy__astropy-14508,astropy/astropy,15 min - 1 hour,2023-03-09,5.1
+astropy__astropy-14539,astropy/astropy,15 min - 1 hour,2023-03-16,5.1
+astropy__astropy-14598,astropy/astropy,15 min - 1 hour,2023-03-29,5.2
+astropy__astropy-14995,astropy/astropy,<15 min fix,2023-06-27,5.2
+astropy__astropy-7166,astropy/astropy,<15 min fix,2018-02-07,1.3
+astropy__astropy-7336,astropy/astropy,<15 min fix,2018-03-28,1.3
+astropy__astropy-7606,astropy/astropy,15 min - 1 hour,2018-06-29,1.3
+astropy__astropy-7671,astropy/astropy,15 min - 1 hour,2018-07-20,1.3
+astropy__astropy-8707,astropy/astropy,15 min - 1 hour,2019-05-15,3.1
+astropy__astropy-8872,astropy/astropy,15 min - 1 hour,2019-06-19,3.1
+django__django-10097,django/django,<15 min fix,2018-06-26,2.2
+django__django-10554,django/django,1-4 hours,2018-10-24,3.0
+django__django-10880,django/django,<15 min fix,2019-01-21,3.0
+django__django-10914,django/django,<15 min fix,2019-01-30,3.0
+django__django-10973,django/django,15 min - 1 hour,2019-02-11,3.0
+django__django-10999,django/django,<15 min fix,2019-02-16,3.0
+django__django-11066,django/django,<15 min fix,2019-03-09,3.0
+django__django-11087,django/django,15 min - 1 hour,2019-03-16,3.0
+django__django-11095,django/django,15 min - 1 hour,2019-03-19,3.0
+django__django-11099,django/django,<15 min fix,2019-03-20,3.0
+django__django-11119,django/django,<15 min fix,2019-03-24,3.0
+django__django-11133,django/django,<15 min fix,2019-03-27,3.0
+django__django-11138,django/django,1-4 hours,2019-03-28,3.0
+django__django-11141,django/django,15 min - 1 hour,2019-03-28,3.1
+django__django-11149,django/django,15 min - 1 hour,2019-03-30,3.0
+django__django-11163,django/django,<15 min fix,2019-04-02,3.0
+django__django-11179,django/django,<15 min fix,2019-04-05,3.0
+django__django-11206,django/django,15 min - 1 hour,2019-04-13,3.0
+django__django-11211,django/django,15 min - 1 hour,2019-04-13,3.0
+django__django-11239,django/django,<15 min fix,2019-04-16,3.0
+django__django-11265,django/django,15 min - 1 hour,2019-04-21,3.0
+django__django-11276,django/django,15 min - 1 hour,2019-04-24,3.0
+django__django-11292,django/django,15 min - 1 hour,2019-04-27,3.0
+django__django-11299,django/django,<15 min fix,2019-04-28,3.0
+django__django-11333,django/django,15 min - 1 hour,2019-05-06,3.0
+django__django-11400,django/django,1-4 hours,2019-05-22,3.0
+django__django-11433,django/django,<15 min fix,2019-05-31,3.0
+django__django-11451,django/django,<15 min fix,2019-06-08,3.0
+django__django-11477,django/django,15 min - 1 hour,2019-06-14,3.0
+django__django-11490,django/django,<15 min fix,2019-06-19,3.0
+django__django-11532,django/django,15 min - 1 hour,2019-07-02,3.0
+django__django-11551,django/django,15 min - 1 hour,2019-07-09,3.0
+django__django-11555,django/django,<15 min fix,2019-07-10,3.0
+django__django-11603,django/django,<15 min fix,2019-07-28,3.0
+django__django-11728,django/django,15 min - 1 hour,2019-08-29,3.0
+django__django-11734,django/django,15 min - 1 hour,2019-09-01,3.0
+django__django-11740,django/django,15 min - 1 hour,2019-09-03,3.0
+django__django-11749,django/django,15 min - 1 hour,2019-09-05,3.0
+django__django-11790,django/django,15 min - 1 hour,2019-09-17,3.1
+django__django-11815,django/django,15 min - 1 hour,2019-09-24,3.1
+django__django-11820,django/django,<15 min fix,2019-09-26,3.1
+django__django-11848,django/django,15 min - 1 hour,2019-09-28,3.1
+django__django-11880,django/django,<15 min fix,2019-10-07,3.1
+django__django-11885,django/django,1-4 hours,2019-10-08,3.1
+django__django-11951,django/django,<15 min fix,2019-10-21,3.1
+django__django-11964,django/django,<15 min fix,2019-10-23,3.1
+django__django-11999,django/django,15 min - 1 hour,2019-10-31,3.1
+django__django-12039,django/django,15 min - 1 hour,2019-11-06,3.1
+django__django-12050,django/django,15 min - 1 hour,2019-11-10,3.1
+django__django-12125,django/django,<15 min fix,2019-11-22,3.1
+django__django-12143,django/django,15 min - 1 hour,2019-11-25,3.1
+django__django-12155,django/django,15 min - 1 hour,2019-11-28,3.1
+django__django-12193,django/django,<15 min fix,2019-12-08,3.1
+django__django-12209,django/django,<15 min fix,2019-12-12,3.1
+django__django-12262,django/django,15 min - 1 hour,2019-12-30,3.1
+django__django-12273,django/django,15 min - 1 hour,2020-01-03,3.1
+django__django-12276,django/django,<15 min fix,2020-01-05,3.1
+django__django-12304,django/django,<15 min fix,2020-01-09,3.1
+django__django-12308,django/django,<15 min fix,2020-01-12,3.1
+django__django-12325,django/django,1-4 hours,2020-01-15,3.1
+django__django-12406,django/django,15 min - 1 hour,2020-02-02,3.1
+django__django-12419,django/django,<15 min fix,2020-02-05,3.1
+django__django-12663,django/django,15 min - 1 hour,2020-04-04,3.1
+django__django-12708,django/django,1-4 hours,2020-04-12,3.1
+django__django-12713,django/django,15 min - 1 hour,2020-04-13,3.1
+django__django-12741,django/django,<15 min fix,2020-04-17,3.1
+django__django-12754,django/django,15 min - 1 hour,2020-04-19,3.2
+django__django-12774,django/django,15 min - 1 hour,2020-04-22,3.1
+django__django-12858,django/django,15 min - 1 hour,2020-05-05,3.1
+django__django-12965,django/django,15 min - 1 hour,2020-05-24,3.2
+django__django-13012,django/django,15 min - 1 hour,2020-06-02,3.2
+django__django-13023,django/django,<15 min fix,2020-06-04,3.2
+django__django-13028,django/django,15 min - 1 hour,2020-06-05,3.2
+django__django-13033,django/django,15 min - 1 hour,2020-06-07,3.2
+django__django-13089,django/django,<15 min fix,2020-06-20,3.2
+django__django-13109,django/django,<15 min fix,2020-06-25,3.2
+django__django-13112,django/django,<15 min fix,2020-06-26,3.2
+django__django-13121,django/django,15 min - 1 hour,2020-06-29,3.2
+django__django-13128,django/django,1-4 hours,2020-06-30,3.2
+django__django-13158,django/django,15 min - 1 hour,2020-07-06,3.2
+django__django-13195,django/django,15 min - 1 hour,2020-07-15,3.2
+django__django-13212,django/django,1-4 hours,2020-07-21,3.2
+django__django-13279,django/django,15 min - 1 hour,2020-08-07,3.2
+django__django-13297,django/django,<15 min fix,2020-08-12,3.2
+django__django-13315,django/django,15 min - 1 hour,2020-08-17,3.2
+django__django-13343,django/django,15 min - 1 hour,2020-08-24,3.2
+django__django-13344,django/django,1-4 hours,2020-08-24,3.2
+django__django-13346,django/django,15 min - 1 hour,2020-08-25,3.2
+django__django-13363,django/django,<15 min fix,2020-08-29,3.2
+django__django-13401,django/django,15 min - 1 hour,2020-09-09,3.2
+django__django-13406,django/django,<15 min fix,2020-09-10,3.2
+django__django-13410,django/django,<15 min fix,2020-09-11,3.2
+django__django-13417,django/django,<15 min fix,2020-09-14,3.2
+django__django-13449,django/django,1-4 hours,2020-09-22,3.2
+django__django-13512,django/django,<15 min fix,2020-10-08,3.2
+django__django-13513,django/django,15 min - 1 hour,2020-10-08,3.2
+django__django-13516,django/django,15 min - 1 hour,2020-10-08,3.2
+django__django-13551,django/django,<15 min fix,2020-10-17,3.2
+django__django-13568,django/django,15 min - 1 hour,2020-10-19,3.2
+django__django-13569,django/django,15 min - 1 hour,2020-10-19,3.2
+django__django-13590,django/django,15 min - 1 hour,2020-10-23,3.2
+django__django-13658,django/django,15 min - 1 hour,2020-11-09,3.2
+django__django-13670,django/django,15 min - 1 hour,2020-11-12,3.2
+django__django-13741,django/django,<15 min fix,2020-12-02,3.2
+django__django-13786,django/django,15 min - 1 hour,2020-12-17,3.2
+django__django-13794,django/django,<15 min fix,2020-12-19,3.2
+django__django-13807,django/django,<15 min fix,2020-12-23,3.2
+django__django-13809,django/django,15 min - 1 hour,2020-12-24,4.0
+django__django-13810,django/django,15 min - 1 hour,2020-12-26,3.2
+django__django-13820,django/django,15 min - 1 hour,2020-12-28,3.2
+django__django-13821,django/django,<15 min fix,2020-12-29,3.2
+django__django-13837,django/django,1-4 hours,2021-01-04,3.2
+django__django-13925,django/django,15 min - 1 hour,2021-01-21,4.0
+django__django-13933,django/django,<15 min fix,2021-01-26,4.0
+django__django-13964,django/django,15 min - 1 hour,2021-02-02,4.0
+django__django-14007,django/django,1-4 hours,2021-02-13,4.0
+django__django-14011,django/django,1-4 hours,2021-02-15,4.0
+django__django-14017,django/django,15 min - 1 hour,2021-02-18,4.0
+django__django-14034,django/django,15 min - 1 hour,2021-02-22,4.0
+django__django-14053,django/django,15 min - 1 hour,2021-02-25,4.0
+django__django-14089,django/django,<15 min fix,2021-03-06,4.0
+django__django-14122,django/django,15 min - 1 hour,2021-03-13,4.0
+django__django-14140,django/django,15 min - 1 hour,2021-03-17,4.0
+django__django-14155,django/django,15 min - 1 hour,2021-03-19,4.0
+django__django-14170,django/django,15 min - 1 hour,2021-03-23,4.0
+django__django-14238,django/django,15 min - 1 hour,2021-04-08,4.0
+django__django-14311,django/django,15 min - 1 hour,2021-04-25,4.0
+django__django-14315,django/django,<15 min fix,2021-04-26,4.0
+django__django-14349,django/django,15 min - 1 hour,2021-05-04,4.0
+django__django-14351,django/django,15 min - 1 hour,2021-05-05,4.0
+django__django-14373,django/django,<15 min fix,2021-05-10,4.0
+django__django-14376,django/django,<15 min fix,2021-05-10,4.0
+django__django-14404,django/django,<15 min fix,2021-05-17,4.0
+django__django-14434,django/django,15 min - 1 hour,2021-05-23,4.0
+django__django-14493,django/django,<15 min fix,2021-06-05,4.0
+django__django-14500,django/django,15 min - 1 hour,2021-06-08,4.0
+django__django-14534,django/django,<15 min fix,2021-06-17,4.0
+django__django-14539,django/django,<15 min fix,2021-06-19,4.0
+django__django-14559,django/django,15 min - 1 hour,2021-06-26,4.0
+django__django-14580,django/django,<15 min fix,2021-07-01,4.0
+django__django-14608,django/django,<15 min fix,2021-07-07,4.0
+django__django-14631,django/django,1-4 hours,2021-07-13,4.0
+django__django-14672,django/django,15 min - 1 hour,2021-07-20,4.0
+django__django-14725,django/django,15 min - 1 hour,2021-08-01,4.1
+django__django-14752,django/django,<15 min fix,2021-08-07,4.0
+django__django-14765,django/django,<15 min fix,2021-08-12,4.0
+django__django-14771,django/django,15 min - 1 hour,2021-08-15,4.1
+django__django-14787,django/django,<15 min fix,2021-08-23,4.1
+django__django-14792,django/django,<15 min fix,2021-08-24,4.0
+django__django-14855,django/django,<15 min fix,2021-09-14,4.0
+django__django-14915,django/django,<15 min fix,2021-09-29,4.1
+django__django-14999,django/django,<15 min fix,2021-10-16,4.1
+django__django-15022,django/django,15 min - 1 hour,2021-10-24,4.1
+django__django-15037,django/django,15 min - 1 hour,2021-10-30,4.1
+django__django-15098,django/django,15 min - 1 hour,2021-11-17,4.1
+django__django-15103,django/django,15 min - 1 hour,2021-11-19,4.1
+django__django-15104,django/django,<15 min fix,2021-11-19,4.1
+django__django-15127,django/django,<15 min fix,2021-11-25,4.1
+django__django-15128,django/django,1-4 hours,2021-11-25,4.1
+django__django-15161,django/django,15 min - 1 hour,2021-12-06,4.1
+django__django-15252,django/django,15 min - 1 hour,2021-12-28,4.1
+django__django-15268,django/django,1-4 hours,2022-01-01,4.1
+django__django-15277,django/django,<15 min fix,2022-01-03,4.1
+django__django-15278,django/django,15 min - 1 hour,2022-01-03,4.1
+django__django-15280,django/django,15 min - 1 hour,2022-01-04,4.1
+django__django-15315,django/django,<15 min fix,2022-01-13,4.1
+django__django-15368,django/django,<15 min fix,2022-01-27,4.1
+django__django-15375,django/django,15 min - 1 hour,2022-01-28,4.1
+django__django-15380,django/django,<15 min fix,2022-01-31,4.1
+django__django-15382,django/django,15 min - 1 hour,2022-02-01,4.1
+django__django-15467,django/django,<15 min fix,2022-02-27,4.1
+django__django-15499,django/django,<15 min fix,2022-03-10,4.1
+django__django-15503,django/django,1-4 hours,2022-03-12,4.1
+django__django-15525,django/django,15 min - 1 hour,2022-03-18,4.1
+django__django-15554,django/django,15 min - 1 hour,2022-03-29,4.1
+django__django-15561,django/django,15 min - 1 hour,2022-04-01,4.1
+django__django-15563,django/django,15 min - 1 hour,2022-04-06,4.1
+django__django-15569,django/django,<15 min fix,2022-04-08,4.1
+django__django-15572,django/django,<15 min fix,2022-04-09,4.1
+django__django-15629,django/django,1-4 hours,2022-04-23,4.1
+django__django-15695,django/django,15 min - 1 hour,2022-05-16,4.1
+django__django-15731,django/django,15 min - 1 hour,2022-05-24,4.2
+django__django-15732,django/django,15 min - 1 hour,2022-05-24,4.2
+django__django-15741,django/django,<15 min fix,2022-05-28,4.2
+django__django-15814,django/django,15 min - 1 hour,2022-07-03,4.2
+django__django-15851,django/django,<15 min fix,2022-07-18,4.2
+django__django-15863,django/django,<15 min fix,2022-07-20,4.2
+django__django-15916,django/django,15 min - 1 hour,2022-08-04,4.2
+django__django-15930,django/django,<15 min fix,2022-08-07,4.2
+django__django-15957,django/django,1-4 hours,2022-08-13,4.2
+django__django-15973,django/django,15 min - 1 hour,2022-08-19,4.2
+django__django-15987,django/django,<15 min fix,2022-08-23,4.2
+django__django-16032,django/django,15 min - 1 hour,2022-09-06,4.2
+django__django-16082,django/django,15 min - 1 hour,2022-09-21,4.2
+django__django-16100,django/django,<15 min fix,2022-09-24,4.2
+django__django-16116,django/django,<15 min fix,2022-09-25,4.2
+django__django-16136,django/django,15 min - 1 hour,2022-09-29,4.2
+django__django-16139,django/django,<15 min fix,2022-09-30,4.2
+django__django-16145,django/django,<15 min fix,2022-10-03,4.2
+django__django-16255,django/django,<15 min fix,2022-11-04,4.2
+django__django-16256,django/django,15 min - 1 hour,2022-11-04,4.2
+django__django-16263,django/django,1-4 hours,2022-11-06,4.2
+django__django-16315,django/django,15 min - 1 hour,2022-11-22,4.2
+django__django-16333,django/django,<15 min fix,2022-11-27,4.2
+django__django-16429,django/django,<15 min fix,2023-01-05,4.2
+django__django-16454,django/django,15 min - 1 hour,2023-01-15,5.0
+django__django-16485,django/django,15 min - 1 hour,2023-01-18,5.0
+django__django-16493,django/django,15 min - 1 hour,2023-01-20,5.0
+django__django-16502,django/django,15 min - 1 hour,2023-01-26,5.0
+django__django-16527,django/django,15 min - 1 hour,2023-02-05,5.0
+django__django-16560,django/django,1-4 hours,2023-02-16,5.0
+django__django-16569,django/django,<15 min fix,2023-02-17,5.0
+django__django-16595,django/django,<15 min fix,2023-02-24,5.0
+django__django-16612,django/django,15 min - 1 hour,2023-03-02,5.0
+django__django-16631,django/django,1-4 hours,2023-03-06,5.0
+django__django-16642,django/django,<15 min fix,2023-03-11,5.0
+django__django-16661,django/django,15 min - 1 hour,2023-03-18,5.0
+django__django-16662,django/django,15 min - 1 hour,2023-03-18,5.0
+django__django-16667,django/django,15 min - 1 hour,2023-03-20,5.0
+django__django-16801,django/django,<15 min fix,2023-04-26,5.0
+django__django-16819,django/django,15 min - 1 hour,2023-05-01,5.0
+django__django-16877,django/django,15 min - 1 hour,2023-05-19,5.0
+django__django-16899,django/django,<15 min fix,2023-05-26,5.0
+django__django-16901,django/django,15 min - 1 hour,2023-05-30,5.0
+django__django-16938,django/django,15 min - 1 hour,2023-06-03,5.0
+django__django-16950,django/django,15 min - 1 hour,2023-06-06,5.0
+django__django-17029,django/django,<15 min fix,2023-06-29,5.0
+django__django-17084,django/django,15 min - 1 hour,2023-07-17,5.0
+django__django-17087,django/django,<15 min fix,2023-07-17,5.0
+django__django-7530,django/django,15 min - 1 hour,2016-11-08,1.11
+django__django-9296,django/django,<15 min fix,2017-10-27,3.1
+matplotlib__matplotlib-13989,matplotlib/matplotlib,<15 min fix,2019-04-19,3.0
+matplotlib__matplotlib-14623,matplotlib/matplotlib,15 min - 1 hour,2019-06-25,3.1
+matplotlib__matplotlib-20488,matplotlib/matplotlib,15 min - 1 hour,2021-06-23,3.4
+matplotlib__matplotlib-20676,matplotlib/matplotlib,<15 min fix,2021-07-19,3.4
+matplotlib__matplotlib-20826,matplotlib/matplotlib,15 min - 1 hour,2021-08-11,3.4
+matplotlib__matplotlib-20859,matplotlib/matplotlib,<15 min fix,2021-08-19,3.4
+matplotlib__matplotlib-21568,matplotlib/matplotlib,15 min - 1 hour,2021-11-08,3.4
+matplotlib__matplotlib-22719,matplotlib/matplotlib,<15 min fix,2022-03-28,3.5
+matplotlib__matplotlib-22865,matplotlib/matplotlib,15 min - 1 hour,2022-04-20,3.5
+matplotlib__matplotlib-22871,matplotlib/matplotlib,15 min - 1 hour,2022-04-21,3.5
+matplotlib__matplotlib-23299,matplotlib/matplotlib,15 min - 1 hour,2022-06-18,3.5
+matplotlib__matplotlib-23314,matplotlib/matplotlib,15 min - 1 hour,2022-06-21,3.5
+matplotlib__matplotlib-23412,matplotlib/matplotlib,15 min - 1 hour,2022-07-11,3.5
+matplotlib__matplotlib-23476,matplotlib/matplotlib,<15 min fix,2022-07-22,3.5
+matplotlib__matplotlib-24026,matplotlib/matplotlib,15 min - 1 hour,2022-09-28,3.6
+matplotlib__matplotlib-24149,matplotlib/matplotlib,<15 min fix,2022-10-12,3.6
+matplotlib__matplotlib-24177,matplotlib/matplotlib,<15 min fix,2022-10-15,3.6
+matplotlib__matplotlib-24570,matplotlib/matplotlib,<15 min fix,2022-11-30,3.6
+matplotlib__matplotlib-24627,matplotlib/matplotlib,15 min - 1 hour,2022-12-05,3.6
+matplotlib__matplotlib-24637,matplotlib/matplotlib,15 min - 1 hour,2022-12-06,3.6
+matplotlib__matplotlib-24870,matplotlib/matplotlib,15 min - 1 hour,2023-01-02,3.6
+matplotlib__matplotlib-24970,matplotlib/matplotlib,15 min - 1 hour,2023-01-13,3.6
+matplotlib__matplotlib-25122,matplotlib/matplotlib,<15 min fix,2023-02-01,3.6
+matplotlib__matplotlib-25287,matplotlib/matplotlib,<15 min fix,2023-02-22,3.7
+matplotlib__matplotlib-25311,matplotlib/matplotlib,<15 min fix,2023-02-23,3.7
+matplotlib__matplotlib-25332,matplotlib/matplotlib,<15 min fix,2023-02-26,3.7
+matplotlib__matplotlib-25479,matplotlib/matplotlib,<15 min fix,2023-03-16,3.7
+matplotlib__matplotlib-25775,matplotlib/matplotlib,15 min - 1 hour,2023-04-26,3.7
+matplotlib__matplotlib-25960,matplotlib/matplotlib,15 min - 1 hour,2023-05-23,3.7
+matplotlib__matplotlib-26113,matplotlib/matplotlib,<15 min fix,2023-06-12,3.7
+matplotlib__matplotlib-26208,matplotlib/matplotlib,<15 min fix,2023-06-28,3.7
+matplotlib__matplotlib-26291,matplotlib/matplotlib,15 min - 1 hour,2023-07-12,3.7
+matplotlib__matplotlib-26342,matplotlib/matplotlib,15 min - 1 hour,2023-07-18,3.7
+matplotlib__matplotlib-26466,matplotlib/matplotlib,15 min - 1 hour,2023-08-07,3.7
+mwaskom__seaborn-3069,mwaskom/seaborn,15 min - 1 hour,2022-10-09,0.12
+mwaskom__seaborn-3187,mwaskom/seaborn,15 min - 1 hour,2022-12-18,0.12
+pallets__flask-5014,pallets/flask,<15 min fix,2023-03-04,2.3
+psf__requests-1142,psf/requests,<15 min fix,2013-01-25,1.1
+psf__requests-1724,psf/requests,<15 min fix,2013-11-04,2.0
+psf__requests-1766,psf/requests,<15 min fix,2013-11-29,2.0
+psf__requests-1921,psf/requests,<15 min fix,2014-02-14,2.3
+psf__requests-2317,psf/requests,<15 min fix,2014-11-01,2.4
+psf__requests-2931,psf/requests,15 min - 1 hour,2015-12-16,2.9
+psf__requests-5414,psf/requests,<15 min fix,2020-04-05,2.26
+psf__requests-6028,psf/requests,15 min - 1 hour,2022-01-04,2.27
+pydata__xarray-2905,pydata/xarray,15 min - 1 hour,2019-04-17,0.12
+pydata__xarray-3095,pydata/xarray,15 min - 1 hour,2019-07-11,0.12
+pydata__xarray-3151,pydata/xarray,15 min - 1 hour,2019-07-20,0.12
+pydata__xarray-3305,pydata/xarray,15 min - 1 hour,2019-09-12,0.12
+pydata__xarray-3677,pydata/xarray,15 min - 1 hour,2020-01-09,0.12
+pydata__xarray-3993,pydata/xarray,1-4 hours,2020-04-21,0.12
+pydata__xarray-4075,pydata/xarray,<15 min fix,2020-05-18,0.12
+pydata__xarray-4094,pydata/xarray,<15 min fix,2020-05-26,0.12
+pydata__xarray-4356,pydata/xarray,<15 min fix,2020-08-19,0.12
+pydata__xarray-4629,pydata/xarray,<15 min fix,2020-11-30,0.12
+pydata__xarray-4687,pydata/xarray,15 min - 1 hour,2020-12-13,0.12
+pydata__xarray-4695,pydata/xarray,15 min - 1 hour,2020-12-15,0.12
+pydata__xarray-4966,pydata/xarray,15 min - 1 hour,2021-02-26,0.12
+pydata__xarray-6461,pydata/xarray,<15 min fix,2022-04-09,2022.03
+pydata__xarray-6599,pydata/xarray,15 min - 1 hour,2022-05-12,2022.03
+pydata__xarray-6721,pydata/xarray,15 min - 1 hour,2022-06-24,2022.06
+pydata__xarray-6744,pydata/xarray,15 min - 1 hour,2022-07-02,2022.06
+pydata__xarray-6938,pydata/xarray,15 min - 1 hour,2022-08-20,2022.06
+pydata__xarray-6992,pydata/xarray,>4 hours,2022-09-05,2022.06
+pydata__xarray-7229,pydata/xarray,15 min - 1 hour,2022-10-26,2022.09
+pydata__xarray-7233,pydata/xarray,15 min - 1 hour,2022-10-27,2022.09
+pydata__xarray-7393,pydata/xarray,15 min - 1 hour,2022-12-20,2022.09
+pylint-dev__pylint-4551,pylint-dev/pylint,1-4 hours,2021-06-07,2.9
+pylint-dev__pylint-4604,pylint-dev/pylint,15 min - 1 hour,2021-06-22,2.9
+pylint-dev__pylint-4661,pylint-dev/pylint,15 min - 1 hour,2021-07-03,2.10
+pylint-dev__pylint-4970,pylint-dev/pylint,<15 min fix,2021-09-05,2.10
+pylint-dev__pylint-6386,pylint-dev/pylint,15 min - 1 hour,2022-04-19,2.14
+pylint-dev__pylint-6528,pylint-dev/pylint,15 min - 1 hour,2022-05-06,2.14
+pylint-dev__pylint-6903,pylint-dev/pylint,<15 min fix,2022-06-09,2.15
+pylint-dev__pylint-7080,pylint-dev/pylint,15 min - 1 hour,2022-06-28,2.15
+pylint-dev__pylint-7277,pylint-dev/pylint,<15 min fix,2022-08-08,2.15
+pylint-dev__pylint-8898,pylint-dev/pylint,1-4 hours,2023-07-29,3.0
+pytest-dev__pytest-10051,pytest-dev/pytest,15 min - 1 hour,2022-06-15,7.2
+pytest-dev__pytest-10081,pytest-dev/pytest,<15 min fix,2022-06-26,7.2
+pytest-dev__pytest-10356,pytest-dev/pytest,1-4 hours,2022-10-08,7.2
+pytest-dev__pytest-5262,pytest-dev/pytest,<15 min fix,2019-05-14,4.5
+pytest-dev__pytest-5631,pytest-dev/pytest,15 min - 1 hour,2019-07-19,5.0
+pytest-dev__pytest-5787,pytest-dev/pytest,1-4 hours,2019-08-26,5.1
+pytest-dev__pytest-5809,pytest-dev/pytest,<15 min fix,2019-09-01,4.6
+pytest-dev__pytest-5840,pytest-dev/pytest,15 min - 1 hour,2019-09-12,5.1
+pytest-dev__pytest-6197,pytest-dev/pytest,1-4 hours,2019-11-15,5.2
+pytest-dev__pytest-6202,pytest-dev/pytest,<15 min fix,2019-11-16,5.2
+pytest-dev__pytest-7205,pytest-dev/pytest,<15 min fix,2020-05-09,5.4
+pytest-dev__pytest-7236,pytest-dev/pytest,15 min - 1 hour,2020-05-21,5.4
+pytest-dev__pytest-7324,pytest-dev/pytest,15 min - 1 hour,2020-06-05,5.4
+pytest-dev__pytest-7432,pytest-dev/pytest,<15 min fix,2020-06-29,5.4
+pytest-dev__pytest-7490,pytest-dev/pytest,15 min - 1 hour,2020-07-13,6.0
+pytest-dev__pytest-7521,pytest-dev/pytest,<15 min fix,2020-07-20,6.0
+pytest-dev__pytest-7571,pytest-dev/pytest,15 min - 1 hour,2020-07-29,6.0
+pytest-dev__pytest-7982,pytest-dev/pytest,<15 min fix,2020-10-31,6.2
+pytest-dev__pytest-8399,pytest-dev/pytest,15 min - 1 hour,2021-03-04,6.3
+scikit-learn__scikit-learn-10297,scikit-learn/scikit-learn,15 min - 1 hour,2017-12-12,0.20
+scikit-learn__scikit-learn-10844,scikit-learn/scikit-learn,15 min - 1 hour,2018-03-21,0.20
+scikit-learn__scikit-learn-10908,scikit-learn/scikit-learn,15 min - 1 hour,2018-04-03,0.20
+scikit-learn__scikit-learn-11310,scikit-learn/scikit-learn,<15 min fix,2018-06-18,0.20
+scikit-learn__scikit-learn-11578,scikit-learn/scikit-learn,15 min - 1 hour,2018-07-16,0.20
+scikit-learn__scikit-learn-12585,scikit-learn/scikit-learn,<15 min fix,2018-11-14,0.21
+scikit-learn__scikit-learn-12682,scikit-learn/scikit-learn,15 min - 1 hour,2018-11-27,0.22
+scikit-learn__scikit-learn-12973,scikit-learn/scikit-learn,15 min - 1 hour,2019-01-13,0.21
+scikit-learn__scikit-learn-13124,scikit-learn/scikit-learn,15 min - 1 hour,2019-02-09,0.21
+scikit-learn__scikit-learn-13135,scikit-learn/scikit-learn,<15 min fix,2019-02-11,0.21
+scikit-learn__scikit-learn-13142,scikit-learn/scikit-learn,<15 min fix,2019-02-12,0.21
+scikit-learn__scikit-learn-13328,scikit-learn/scikit-learn,<15 min fix,2019-02-28,0.21
+scikit-learn__scikit-learn-13439,scikit-learn/scikit-learn,<15 min fix,2019-03-12,0.21
+scikit-learn__scikit-learn-13496,scikit-learn/scikit-learn,<15 min fix,2019-03-23,0.21
+scikit-learn__scikit-learn-13779,scikit-learn/scikit-learn,<15 min fix,2019-05-03,0.22
+scikit-learn__scikit-learn-14053,scikit-learn/scikit-learn,15 min - 1 hour,2019-06-09,0.22
+scikit-learn__scikit-learn-14087,scikit-learn/scikit-learn,15 min - 1 hour,2019-06-13,0.22
+scikit-learn__scikit-learn-14141,scikit-learn/scikit-learn,<15 min fix,2019-06-21,0.22
+scikit-learn__scikit-learn-14496,scikit-learn/scikit-learn,<15 min fix,2019-07-28,0.22
+scikit-learn__scikit-learn-14629,scikit-learn/scikit-learn,15 min - 1 hour,2019-08-12,0.22
+scikit-learn__scikit-learn-14710,scikit-learn/scikit-learn,15 min - 1 hour,2019-08-21,0.22
+scikit-learn__scikit-learn-14894,scikit-learn/scikit-learn,15 min - 1 hour,2019-09-05,0.22
+scikit-learn__scikit-learn-14983,scikit-learn/scikit-learn,<15 min fix,2019-09-14,0.22
+scikit-learn__scikit-learn-15100,scikit-learn/scikit-learn,15 min - 1 hour,2019-09-26,0.22
+scikit-learn__scikit-learn-25102,scikit-learn/scikit-learn,1-4 hours,2022-12-02,1.3
+scikit-learn__scikit-learn-25232,scikit-learn/scikit-learn,<15 min fix,2022-12-24,1.3
+scikit-learn__scikit-learn-25747,scikit-learn/scikit-learn,15 min - 1 hour,2023-03-02,1.3
+scikit-learn__scikit-learn-25931,scikit-learn/scikit-learn,15 min - 1 hour,2023-03-22,1.3
+scikit-learn__scikit-learn-25973,scikit-learn/scikit-learn,<15 min fix,2023-03-25,1.3
+scikit-learn__scikit-learn-26194,scikit-learn/scikit-learn,15 min - 1 hour,2023-04-17,1.3
+scikit-learn__scikit-learn-26323,scikit-learn/scikit-learn,15 min - 1 hour,2023-05-04,1.3
+scikit-learn__scikit-learn-9288,scikit-learn/scikit-learn,15 min - 1 hour,2017-07-06,0.22
+sphinx-doc__sphinx-10323,sphinx-doc/sphinx,<15 min fix,2022-04-02,5.0
+sphinx-doc__sphinx-10435,sphinx-doc/sphinx,<15 min fix,2022-05-08,5.0
+sphinx-doc__sphinx-10449,sphinx-doc/sphinx,<15 min fix,2022-05-14,5.1
+sphinx-doc__sphinx-10466,sphinx-doc/sphinx,15 min - 1 hour,2022-05-22,5.0
+sphinx-doc__sphinx-10614,sphinx-doc/sphinx,15 min - 1 hour,2022-06-29,7.2
+sphinx-doc__sphinx-10673,sphinx-doc/sphinx,15 min - 1 hour,2022-07-16,5.2
+sphinx-doc__sphinx-11445,sphinx-doc/sphinx,15 min - 1 hour,2023-05-28,7.1
+sphinx-doc__sphinx-11510,sphinx-doc/sphinx,1-4 hours,2023-07-24,7.2
+sphinx-doc__sphinx-7440,sphinx-doc/sphinx,<15 min fix,2020-04-08,3.0
+sphinx-doc__sphinx-7454,sphinx-doc/sphinx,<15 min fix,2020-04-09,3.0
+sphinx-doc__sphinx-7462,sphinx-doc/sphinx,<15 min fix,2020-04-12,3.1
+sphinx-doc__sphinx-7590,sphinx-doc/sphinx,>4 hours,2020-05-01,3.1
+sphinx-doc__sphinx-7748,sphinx-doc/sphinx,15 min - 1 hour,2020-05-30,3.1
+sphinx-doc__sphinx-7757,sphinx-doc/sphinx,15 min - 1 hour,2020-05-30,3.1
+sphinx-doc__sphinx-7889,sphinx-doc/sphinx,<15 min fix,2020-06-29,3.2
+sphinx-doc__sphinx-7910,sphinx-doc/sphinx,<15 min fix,2020-07-04,3.2
+sphinx-doc__sphinx-7985,sphinx-doc/sphinx,15 min - 1 hour,2020-07-19,3.2
+sphinx-doc__sphinx-8035,sphinx-doc/sphinx,15 min - 1 hour,2020-08-01,3.2
+sphinx-doc__sphinx-8056,sphinx-doc/sphinx,15 min - 1 hour,2020-08-05,3.2
+sphinx-doc__sphinx-8120,sphinx-doc/sphinx,15 min - 1 hour,2020-08-14,3.3
+sphinx-doc__sphinx-8265,sphinx-doc/sphinx,15 min - 1 hour,2020-10-03,3.3
+sphinx-doc__sphinx-8269,sphinx-doc/sphinx,<15 min fix,2020-10-03,3.3
+sphinx-doc__sphinx-8459,sphinx-doc/sphinx,<15 min fix,2020-11-20,3.4
+sphinx-doc__sphinx-8475,sphinx-doc/sphinx,<15 min fix,2020-11-22,3.4
+sphinx-doc__sphinx-8548,sphinx-doc/sphinx,1-4 hours,2020-12-17,3.4
+sphinx-doc__sphinx-8551,sphinx-doc/sphinx,15 min - 1 hour,2020-12-19,3.4
+sphinx-doc__sphinx-8593,sphinx-doc/sphinx,15 min - 1 hour,2020-12-27,3.5
+sphinx-doc__sphinx-8595,sphinx-doc/sphinx,<15 min fix,2020-12-27,3.5
+sphinx-doc__sphinx-8621,sphinx-doc/sphinx,<15 min fix,2020-12-30,3.5
+sphinx-doc__sphinx-8638,sphinx-doc/sphinx,15 min - 1 hour,2021-01-01,4.0
+sphinx-doc__sphinx-8721,sphinx-doc/sphinx,<15 min fix,2021-01-21,3.5
+sphinx-doc__sphinx-9229,sphinx-doc/sphinx,1-4 hours,2021-05-15,4.1
+sphinx-doc__sphinx-9230,sphinx-doc/sphinx,<15 min fix,2021-05-15,4.1
+sphinx-doc__sphinx-9258,sphinx-doc/sphinx,<15 min fix,2021-05-21,4.1
+sphinx-doc__sphinx-9281,sphinx-doc/sphinx,<15 min fix,2021-05-29,4.1
+sphinx-doc__sphinx-9320,sphinx-doc/sphinx,<15 min fix,2021-06-11,4.1
+sphinx-doc__sphinx-9367,sphinx-doc/sphinx,<15 min fix,2021-06-20,4.1
+sphinx-doc__sphinx-9461,sphinx-doc/sphinx,1-4 hours,2021-07-17,4.2
+sphinx-doc__sphinx-9591,sphinx-doc/sphinx,<15 min fix,2021-08-29,4.2
+sphinx-doc__sphinx-9602,sphinx-doc/sphinx,15 min - 1 hour,2021-09-01,4.2
+sphinx-doc__sphinx-9658,sphinx-doc/sphinx,15 min - 1 hour,2021-09-20,4.3
+sphinx-doc__sphinx-9673,sphinx-doc/sphinx,15 min - 1 hour,2021-09-25,4.3
+sphinx-doc__sphinx-9698,sphinx-doc/sphinx,<15 min fix,2021-10-03,4.3
+sphinx-doc__sphinx-9711,sphinx-doc/sphinx,<15 min fix,2021-10-06,4.3
+sympy__sympy-11618,sympy/sympy,15 min - 1 hour,2016-09-15,1.0
+sympy__sympy-12096,sympy/sympy,<15 min fix,2017-01-25,1.0
+sympy__sympy-12419,sympy/sympy,15 min - 1 hour,2017-03-25,1.0
+sympy__sympy-12481,sympy/sympy,<15 min fix,2017-04-03,1.0
+sympy__sympy-12489,sympy/sympy,1-4 hours,2017-04-04,1.0
+sympy__sympy-13031,sympy/sympy,15 min - 1 hour,2017-07-23,1.1
+sympy__sympy-13091,sympy/sympy,15 min - 1 hour,2017-08-05,1.1
+sympy__sympy-13372,sympy/sympy,<15 min fix,2017-09-30,1.1
+sympy__sympy-13480,sympy/sympy,<15 min fix,2017-10-18,1.1
+sympy__sympy-13551,sympy/sympy,15 min - 1 hour,2017-10-29,1.1
+sympy__sympy-13615,sympy/sympy,15 min - 1 hour,2017-11-17,1.1
+sympy__sympy-13647,sympy/sympy,15 min - 1 hour,2017-11-28,1.1
+sympy__sympy-13757,sympy/sympy,15 min - 1 hour,2017-12-17,1.1
+sympy__sympy-13798,sympy/sympy,15 min - 1 hour,2017-12-26,1.1
+sympy__sympy-13852,sympy/sympy,1-4 hours,2018-01-06,1.1
+sympy__sympy-13877,sympy/sympy,15 min - 1 hour,2018-01-10,1.1
+sympy__sympy-13878,sympy/sympy,>4 hours,2018-01-10,1.1
+sympy__sympy-13974,sympy/sympy,15 min - 1 hour,2018-01-20,1.1
+sympy__sympy-14248,sympy/sympy,1-4 hours,2018-02-17,1.1
+sympy__sympy-14531,sympy/sympy,15 min - 1 hour,2018-03-18,1.1
+sympy__sympy-14711,sympy/sympy,<15 min fix,2018-05-12,1.1
+sympy__sympy-14976,sympy/sympy,15 min - 1 hour,2018-07-25,1.2
+sympy__sympy-15017,sympy/sympy,<15 min fix,2018-08-03,1.2
+sympy__sympy-15345,sympy/sympy,<15 min fix,2018-10-05,1.4
+sympy__sympy-15349,sympy/sympy,15 min - 1 hour,2018-10-06,1.4
+sympy__sympy-15599,sympy/sympy,15 min - 1 hour,2018-12-06,1.4
+sympy__sympy-15809,sympy/sympy,<15 min fix,2019-01-20,1.4
+sympy__sympy-15875,sympy/sympy,<15 min fix,2019-01-29,1.4
+sympy__sympy-15976,sympy/sympy,15 min - 1 hour,2019-02-13,1.4
+sympy__sympy-16450,sympy/sympy,<15 min fix,2019-03-26,1.5
+sympy__sympy-16597,sympy/sympy,1-4 hours,2019-04-08,1.5
+sympy__sympy-16766,sympy/sympy,<15 min fix,2019-05-01,1.5
+sympy__sympy-16792,sympy/sympy,15 min - 1 hour,2019-05-09,1.5
+sympy__sympy-16886,sympy/sympy,<15 min fix,2019-05-25,1.5
+sympy__sympy-17139,sympy/sympy,<15 min fix,2019-07-01,1.5
+sympy__sympy-17318,sympy/sympy,15 min - 1 hour,2019-08-01,1.5
+sympy__sympy-17630,sympy/sympy,1-4 hours,2019-09-18,1.5
+sympy__sympy-17655,sympy/sympy,<15 min fix,2019-09-25,1.5
+sympy__sympy-18189,sympy/sympy,<15 min fix,2019-12-31,1.6
+sympy__sympy-18199,sympy/sympy,1-4 hours,2020-01-01,1.6
+sympy__sympy-18211,sympy/sympy,15 min - 1 hour,2020-01-03,1.6
+sympy__sympy-18698,sympy/sympy,15 min - 1 hour,2020-02-21,1.6
+sympy__sympy-18763,sympy/sympy,<15 min fix,2020-03-03,1.5
+sympy__sympy-19040,sympy/sympy,15 min - 1 hour,2020-03-31,1.6
+sympy__sympy-19346,sympy/sympy,15 min - 1 hour,2020-05-17,1.7
+sympy__sympy-19495,sympy/sympy,<15 min fix,2020-06-05,1.7
+sympy__sympy-19637,sympy/sympy,<15 min fix,2020-06-24,1.7
+sympy__sympy-19783,sympy/sympy,15 min - 1 hour,2020-07-16,1.7
+sympy__sympy-19954,sympy/sympy,<15 min fix,2020-08-12,1.7
+sympy__sympy-20154,sympy/sympy,15 min - 1 hour,2020-09-26,1.7
+sympy__sympy-20428,sympy/sympy,15 min - 1 hour,2020-11-14,1.8
+sympy__sympy-20438,sympy/sympy,15 min - 1 hour,2020-11-17,1.8
+sympy__sympy-20590,sympy/sympy,15 min - 1 hour,2020-12-12,1.7
+sympy__sympy-20801,sympy/sympy,15 min - 1 hour,2021-01-15,1.8
+sympy__sympy-20916,sympy/sympy,<15 min fix,2021-02-06,1.8
+sympy__sympy-21379,sympy/sympy,15 min - 1 hour,2021-04-24,1.9
+sympy__sympy-21596,sympy/sympy,15 min - 1 hour,2021-06-10,1.9
+sympy__sympy-21612,sympy/sympy,15 min - 1 hour,2021-06-14,1.9
+sympy__sympy-21847,sympy/sympy,<15 min fix,2021-08-10,1.9
+sympy__sympy-21930,sympy/sympy,15 min - 1 hour,2021-08-22,1.9
+sympy__sympy-22080,sympy/sympy,15 min - 1 hour,2021-09-12,1.10
+sympy__sympy-22456,sympy/sympy,15 min - 1 hour,2021-11-10,1.10
+sympy__sympy-22714,sympy/sympy,<15 min fix,2021-12-19,1.10
+sympy__sympy-22914,sympy/sympy,15 min - 1 hour,2022-01-25,1.10
+sympy__sympy-23262,sympy/sympy,15 min - 1 hour,2022-03-21,1.11
+sympy__sympy-23413,sympy/sympy,15 min - 1 hour,2022-04-23,1.11
+sympy__sympy-23534,sympy/sympy,<15 min fix,2022-05-22,1.11
+sympy__sympy-23824,sympy/sympy,15 min - 1 hour,2022-07-23,1.12
+sympy__sympy-23950,sympy/sympy,15 min - 1 hour,2022-08-20,1.12
+sympy__sympy-24066,sympy/sympy,15 min - 1 hour,2022-09-16,1.12
+sympy__sympy-24213,sympy/sympy,15 min - 1 hour,2022-11-03,1.12
+sympy__sympy-24443,sympy/sympy,15 min - 1 hour,2022-12-30,1.12
+sympy__sympy-24539,sympy/sympy,<15 min fix,2023-01-17,1.12
+sympy__sympy-24562,sympy/sympy,<15 min fix,2023-01-21,1.12
+sympy__sympy-24661,sympy/sympy,15 min - 1 hour,2023-02-05,1.12

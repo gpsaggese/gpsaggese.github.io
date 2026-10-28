@@ -126,7 +126,7 @@ def mock_fulfill(
     Stand in for `NoesisServer` and report a pass/fail outcome.
 
     Placeholder for the real fulfillment/monitoring layer (`NoesisServer`
-    section of `plan.Noesis.md`), which does not exist yet; swap this for
+    section of `plan.md`), which does not exist yet; swap this for
     the real interface once it does. For a fixed (non-randomized) outcome,
     pass a plain callable instead, e.g. `lambda contract: True`.
 

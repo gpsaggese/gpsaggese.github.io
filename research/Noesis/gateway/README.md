@@ -5,7 +5,7 @@
   every call for the checker
 - Also holds `passthrough_proxy.py`, the legacy in-process proxy that only
   `noesis_platform/` imports
-- Design, request flow, and blame rules: `docs/gateway_design.md`
+- Design, request flow, and blame rules: `docs/design.gateway.md`
 
 ## Structure of the Dir
 

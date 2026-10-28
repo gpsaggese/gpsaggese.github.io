@@ -6,7 +6,7 @@ Run the real server (OpenRouter-backed) from the repo root with:
 > uvicorn research.Noesis.gateway.gateway_app:build_default_app --factory --port 8000
 
 For setup and the overall design see `research/Noesis/docs/onboarding.md` and
-`research/Noesis/docs/gateway_design.md`.
+`research/Noesis/docs/design.gateway.md`.
 
 Import as:
 
@@ -16,7 +16,8 @@ import research.Noesis.gateway.gateway_app as rnogaapp
 import contextlib
 import logging
 import os
-from typing import AsyncIterator, Mapping, Optional
+from collections.abc import AsyncIterator, Mapping
+from typing import Optional
 
 import fastapi
 from fastapi.exceptions import RequestValidationError

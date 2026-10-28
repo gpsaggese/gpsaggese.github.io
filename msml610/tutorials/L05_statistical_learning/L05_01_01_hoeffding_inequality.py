@@ -31,12 +31,10 @@
 
 import logging
 
-
 # %%
 import helpers.hintrospection as hintros
-import helpers.hnotebook as hnotebook
-
 import L05_01_01_hoeffding_inequality_utils as utils
+from helpers import hnotebook
 
 # Initialize notebook configuration and logging.
 hnotebook.config_notebook()
@@ -56,8 +54,7 @@ except ImportError:
 # ## Cell 1.1: Basic Bernoulli sampling code
 #
 # **Goal**
-# - Walk through the mechanics of Bernoulli sampling in plain code, before
-#   any interactive widget: draw samples, compute the empirical mean $\nu$,
+# - Walk through the mechanics of Bernoulli sampling: draw samples, compute the empirical mean $\nu$,
 #   and compare it against the true mean $\mu$
 #
 # **Implementation** `cell1_1_basic_bernoulli_sampling(mu=0.6, N=10,

@@ -1,212 +1,391 @@
-The goal is to build a system that converts financial papers into theory / models,
-by:
+# Goal
+- The Theory Store turns a corpus of quantitative economics and finance papers into
+  testable, auditable hypotheses
+  - Every claim traces to a page span in a paper
+  - Every test is counted in a ledger, so backtests are deflated honestly
+- The goal is not to remove humans from the loop
+  - Automate the repetitive stages: parse, extract, normalize, map to data,
+    bookkeeping
+  - Humans choose papers, approve names and DAGs, and pass the final gate
+- Target: automate 80-90% of the effort
+  - Speed up = manual minutes / tool minutes, measured per stage
+  - Human gates bound the speed up: 5x at 80%, 10x at 90%
 
-- Creating a causal DAG from the paper explaining the theory  
-- Converting the “theory” into Python model  
-- Optimizing the causal DAG (where the optimization criteria are specified later)
+- Scope
+  - Empirical papers first
+    - Equilibrium and theory papers go to a separate path
+  - Cross-sectional anomalies as the initial domain
+    - Small DAGs and public ground truth implementations
+  - Public data only
+    - The simulator must run without proprietary data
+  - Firm-level nodes in the paper pipeline
+    - Macro nodes, time unrolling, and point-in-time macro data are treated in
+      a companion paper
+// TODO(gp): Decide if macro nodes, time unrolling, and point-in-time data stay in this file or go to the companion paper
 
-This idea sits where four bodies of work meet.
+- Constraints
+  - The Theory Store follows (and enforces) all the rules of our research process
+  - E.g., data split, hypothesis generation and falsification, economic reasoning (vs
+    black or gray box machine learning), deflated SR, embargo, ...
 
-## **Relevant academic work**
+- Non-goals
+  - Do not auto-generate trading strategies
+  - Do not use backtesting to find strategies but only to falsify theories
+  - Do not discover causality from data alone
+  - Do not treat agreement between papers as causal truth
+  - Do not replace the intuituion of the researcher, but augment it
+  - Do not discover causality from data alone
+  - Do not treat agreement between papers as causal truth (Publication bias exists)
+  - Do not read a DAG that passes identification as proof of causality
+    - The assumptions of the Theory Spec stay untested
 
-**1\. Causal inference foundations (the formal language for your DAG)**
+## Applications
 
-* Pearl, *Causality* (2009), and Pearl & Mackenzie, *The Book of Why*  
-  * These cover structural causal models (SCMs), do-calculus, and backdoor/frontdoor
-    identification.  
-* Peters, Janzing & Schölkopf, *Elements of Causal Inference* (2017)  
-  * It's free online and the most code-friendly treatment.  
-* Imbens (2020), "Potential Outcome and Directed Acyclic Graph Approaches to
-  Causality" (*JEL*)  
-  * This bridges DAGs and the econometrics tradition finance papers actually use.  
-* Hünermund & Bareinboim, "Causal Inference and Data Fusion in Econometrics."  
-  * It reviews graph-based methods for confounding bias, sample selection bias,
-    surrogate experiments, and transportability. It stresses that the
-    identification criteria are algorithmic, so they can be automated. Published in
-    *The Econometrics Journal* 28(1), 2025.
+- The applications of the Theory Store are:
+  - Literature meta-analysis
+    - Find which papers agree with each other or disagree, by looking at the causal
+      structures
+  - Replication of papers
+    - Create financial models descripted by papers / books
+  - Ask to a corpus of papers questions like "what drives inflation expectations?"
+  - Find gap: list variable pairs that no paper tests, giving the researchers a map
+    of open questions
+  - Economic prior for ML: use the reduced DAG to pick features, set lags, and
+    regularize
+    - A model that follows a causal story overfits less
 
-**2\. Causality in finance specifically (the motivation and the "spec")**
+# Workflow
 
-* López de Prado, *Causal Factor Investing* (Cambridge Elements, 2023, open access)  
-  * He argues that virtually all factor-investing articles make associational claims:
-    authors don't identify a causal graph, justify specifications by correlations,
-    and propose no falsification experiments. That is exactly the gap your system
-    fills.  
-* López de Prado & Zoonekynd, "Correcting the Factor Mirage: A Research Protocol for
-  Causal Factor Investing" (2024, SSRN 4697929, forthcoming in the *Journal of
-  Portfolio Management*).  
-  * It describes the "factor mirage," a model that looks statistically valid but is
-    causally misspecified, and proposes a seven-step protocol: variable selection,
-    causal discovery, causal adjustment, estimation of causal effects, portfolio
-    construction, backtesting, and multiple testing adjustment. Step 2 builds a DAG
-    from domain knowledge and discovery algorithms such as PC or LiNGAM. Treat the
-    protocol as a ready-made checklist for your validator.  
-* López de Prado & Zoonekynd, "Causality and Factor Investing: A Primer" (2025, SSRN
-  5277078, ADIA Lab Research Paper Series No. 16).  
-  * It circulated in May 2025 under the title "A Protocol for Causal Factor
-    Investing." It is the same paper, not a second one.  
-  * It shows how confounder bias and collider bias distort regression-based factor
-    models. It applies the PC algorithm to the daily returns of the risk factors of
-    85 Barra risk models, and lists 26 models where adding a collider changes the sign
-    of the estimated coefficient. It also turns the protocol into a checklist of
-    questions for due diligence.  
-* López de Prado, Lipton & Zoonekynd, "The Case for Causal Factor Investing" (2024)  
-  * It argues that choosing the correct specification requires knowledge of the
-    causal graph behind the data-generating process.  
-* Harvey, Liu & Zhu (2016), "…and the Cross-Section of Expected Returns."  
-* Hou, Xue & Zhang (2020), "Replicating Anomalies."  
-* Jensen, Kelly & Pedersen (2023), "Is There a Replication Crisis in Finance?"  
-  * This is the replication literature your outputs will be judged against. The
-    three studies disagree: Harvey et al. argue that new factors need a t-statistic of
-    at least 3.0, Hou et al. find that 65% of 452 anomalies fail the single-test
-    hurdle (|t| = 1.96) once microcaps are mitigated, and Jensen et al. find that most
-    factors replicate. None of them tests the causal specification.
+## Build Paper Bank
+- On-board papers / books / ...
+  - Human guides the search
+- Parse papers into one normalized document representation
+  - Sections, equations, tables, bibliography, source anchors
+  - Later stages read only this representation, so they are format agnostic
+  - One front end per input format
+    - LaTeX: parse the source directly (flatten `\input`, expand macros, read
+      `equation` and `tabular`, resolve labels, refs, and cite keys, read the
+      `.bib` file)
+      - Equations and tables are exact
+    - Markdown: parse the AST (e.g., with pandoc)
+      - Quality depends on the converter if the Markdown comes from another
+        format
+    - PDF: layout and OCR extraction (Nougat, Marker, GROBID)
+      - Equation and table errors are possible
+  - Format choice: LaTeX if available, then Markdown, then PDF
+  - Tables become verification targets
+  - Open issue: tables generated by code and included as external files are
+    absent from the source text
+- Filter based on:
+  - Keywords (e.g., microeconomic, macroeconomic)
+  - Regions (e.g., APAC, EMEA, US)
+  - Citations
+  - Quality of the researchers / institution
+  - Prefer identification design over author prestige and citations
+    - Citations lag and favor known authors
+    - Label each paper by evidence: causal design vs other
+- Merge the per-paper Theory Specs into one literature-level graph
+- Human gate: approve the paper list
 
-**3\. Extracting causal structure from text**
+## Extract Causal Claims
+- Extract and store each claim as one record
+  - (Cause, effect, sign, lag, region, period, identification design)
+  - Status: `stated` or `inferred`
+  - Context
+  - Annotate with reference for human analysis
+  - Provenance: format-specific pointer
+    - PDF: page and span
+    - LaTeX: file, line, and label
+    - Markdown: heading path and line
+- Never let later stages depend silently on an `inferred` claim
+  - Why: LLMs perform near random when they infer causal relations from
+    correlational statements (Corr2Cause, Jin et al.)
+  - Why: LLMs may recite causal knowledge from training data instead of
+    reasoning causally (Zecevic et al.)
+  - A provenance pointer on every item is the main defense against
+    hallucinated edges
 
-* Yang, Han & Poon (2022), "A Survey on Extraction of Causal Relations from Natural
-  Language Text." This is the pre-LLM baseline.  
-* FinCausal shared tasks (Mariko et al. 2020, FNP workshop, with later editions each
-  year). These are finance-specific tasks: classify causal sentences (Task 1) and
-  extract cause/effect spans (Task 2). They label spans inside a segment and do not
-  build a graph.  
-* Kıcıman et al. (2023), "Causal Reasoning and Large Language Models: Opening a New
-  Frontier." Also Jin et al. (ICLR 2024), "Can Large Language Models Infer Causation
-  from Correlation?" (the Corr2Cause data set), and Zečević et al., "Causal Parrots."
-  Read the last one for the failure modes.  
-* Antonucci, Piqué & Zaffalon (2023), "Zero-shot Causal Graph Extrapolation from Text
-  via LLMs" (arXiv 2312.14670). It builds causal graphs from iterated pairwise LLM
-  queries over text, tested on biomedical abstracts.  
-* Zhang et al. (2024), "Causal Graph Discovery with Retrieval-Augmented Generation
-  based Large Language Models" (arXiv 2402.15301), which introduces the method LACR.
-  It uses RAG over papers from Google Scholar and PubMed, has the LLM extract
-  associations instead of causal claims, aggregates the decisions across documents by
-  majority vote, and recovers the skeleton before the edge orientation. It is tested
-  on three small medical graphs (ASIA, SACHS, CORONARY).  
-* Garg & Fetzer (2025), "Causal Claims in Economics" (arXiv 2501.06873). It builds
-  evidence-annotated claim graphs for 44,852 economics papers (1980 to 2023). Each
-  edge is labeled by its evidentiary basis. It is a study of the literature and does
-  not feed an identification or estimation step.  
-* **ReCITE** (Saklad et al., arXiv 2505.18931, version 4, April 2026; named ReCAST in
-  version 2) is the most directly relevant benchmark, but it is not specific to
-  finance. It contains 292 causal graphs transcribed by annotators from the causal
-  loop diagrams of open-access MDPI and PLOS articles. Only 5.5% of the articles fall
-  under economics, econometrics, and finance. It scores extraction with an LLM judge
-  (node and edge precision and recall) plus structural Hamming distance and its
-  normalized version. The best model reaches an F1 score of 0.535.
+## Normalize Variables
+- Normalize variable names
+  - E.g., monetary tightening, policy rate hike, increase in federal fund rate
+  - Use specialized LLM (trained on finance literature)
+  - Review by human
+  - Create operators (increase, delay, ...)
+- Map each variable to a canonical id in a small finance ontology
+  - E.g., value, size, momentum, accruals, leverage
+  - Canonical ids let graphs from different papers merge
+- Human gate: approve the canonical names and operators
 
-**4\. Paper-to-code and LLM quant research agents**
+## Create DAG
+- Research questions
+  - How to handle equilibrium?
+    - Route equilibrium papers to a structural equations and solver path
+    - Do not force them into a DAG
+  - How to handle delays?
+    - Delay operator = edge lag
+- Create DAG with:
+  - Nodes: variables
+  - Edges: relationships
+  - Enforce DAG-ness (e.g., remove feedback loops)
+    - Prefer unrolling in time (`X_t -> Y_{t+1}`) over removing edges
+    - Removing an edge is arbitrary and loses real feedback
+- Handle conflicts between papers
+  - Papers disagree on sign, region, and period
+  - Turn a sign conflict into a conditional or regime edge
+  - Do not drop the conflicting claim
+- Human gate: approve the DAG
 
-* Paper2Code / PaperCoder (Seo et al., ICLR 2026). It runs three stages, planning,
-  analysis and generation, each with specialized agents. Generated repos needed only
-  minor modifications to run, averaging 0.81% of code lines in the latest version (v5;
-  the 0.48% figure comes from an earlier version). It targets machine learning
-  papers. Their planning→analysis→coding split is worth copying.  
-* PaperBench (Starace et al., OpenAI, 2025). Agents replicate 20 ICML 2024 papers
-  from scratch and are graded on rubrics with 8,316 tasks. Its rubric-based grading is
-  a good template for your evaluation.  
-* RD-Agent(Q) (Microsoft, NeurIPS 2025). A Research stage forms hypotheses from
-  domain priors, and a Development stage uses a code agent to implement them and run
-  real-market backtests. It's open source and the closest finance analogue.  
-* Lin et al. (2026), "FactorEngine: A Program-level Knowledge-Infused Factor Mining
-  Framework for Quantitative Investment" (arXiv 2603.16365). It turns unstructured
-  financial reports into executable Python factors through a two-stage
-  reflect-and-validate workflow that outputs structured JSON and LaTeX-style
-  pseudo-code. It is evaluated on the CSI 300 and CSI 500 universes. The paper does
-  not mention causal graphs.  
-* Chen & Zimmermann (2022), "Open Source Cross-Sectional Asset Pricing." It provides
-  code and data for 319 characteristics, which makes it your best ground truth for
-  the code-generation half. For the 161 characteristics that were clearly significant
-  in the original papers, 98% of the reproduced long-short portfolios have t-statistics
-  above 1.96.
+## Map Nodes to Data
+- Map nodes to timeseries to data store (e.g., Atlas, ...)
+  - Assess quality of each timeseries
+    - E.g., coverage, time span, gaps
+- Use point-in-time vintages
+  - Macro series are revised
+  - Use the value known on each date, to avoid look-ahead bias
+- Encode the availability timing of each series
+- Firm-level data has look-ahead risk too
+  - Reporting lags and fiscal-year alignment are the main failure points of
+    generated code
 
-## **How I'd structure the system**
+## Merge DAGs
+- "Merge" (i.e., vote, union, weighted average) DAGs from different papers
+  - This is like ensemble learning from the body of literature
 
-The core design decision is to **not go directly from DAG to code.** A bare DAG is
-too thin to generate a model from. Build a typed intermediate representation (a
-"Theory Spec") that the DAG is one view of, and make every stage read and write that
-object.
+## Reduce DAG
+- DAG "reduction"
+  - Not all the edges are meaningful
+    - Test if the data is consistent with the claimed edge (conditional
+      independence / association / ...)
+  - Not all the nodes are predictive or have high-quality data
+  - Propose missing nodes and edges from LLM or human knowledge
+  - "Usual" causal flow
+- Causal validation
+  - Check if the estimand is identifiable from the DAG
+  - Compare the theory DAG with the empirical specification of the paper
+    (the "factor mirage" diagnostic)
+    - Flag collider or mediator controls
+    - Flag omitted confounders
+  - List the conditional independencies implied by the DAG, then test them
+  - Tools: DoWhy, pgmpy, y0
+- The objective for the reduced DAG is open
+  - Candidates: out-of-sample fit, number of untestable assumptions,
+    agreement with the literature-level graph
+- Use the discovery split only (see "Hypothesis Ledger and Data Splits")
+- Log every test and every proposed edge in the ledger
+- Human gate: approve the reduced DAG
 
-PDF ─► 1\. Parse ─► 2\. Claim extraction ─► 3\. Theory Spec (IR) ─► 4\. Causal
-validation  │                        │  ▼                        ▼  
-                                  5\. Code generation ◄────── identification result
-                                  │  ▼  
-                                  6\. Execute & verify against paper's tables ──►
-                                  feedback to 2/3/5
+## Optimize Against Proxy
+- Optimize against a proxy
+  - E.g., use model to predict supply and demand, instead of prices
+  - Regularize to control complexity vs predictive power
+- Log each proxy choice in the ledger
 
-**1\. Parse.** Use PDF→structured text with equations and tables kept intact (Nougat,
-Marker or GROBID). Tables matter because they become your verification targets later.
+## Formalize Hypotheses
+- Formalize set of hypothesis to test
+  - Create a Bayesian prior from the DAG
+  - Fit
+  - Estimate uncertainty
+- Build the prior from the evidence per edge
+  - Number of supporting papers
+  - Quality of the identification design
+  - Agreement on the sign
+- Log each fit in the ledger
 
-**2\. Claim extraction (LLM, multi-pass).** Pull out four distinct things:
+## Generate Code
+- Generate three artifacts from the Theory Spec
+  - Simulator: SCM with known effects
+  - Replication module: data construction plus the estimator of the paper
+  - Causal estimator: the identified estimate of the estimand
+- Boilerplate is a tested library that the LLM composes and does not rewrite
+  - E.g., CRSP and Compustat merges, portfolio sorts, Newey-West
+- Generated code never depends silently on an `inferred` edge
 
-* *Variables*, each with an operational definition (e.g. "B/M \= book equity from
-  Compustat at fiscal year-end t−1 / market cap in Dec t−1").  
-* *Causal claims*, each with sign, mechanism text, lag and functional form if stated.  
-* *Empirical specification*: regressions, sorts, controls, fixed effects, sample.  
-* *Testable implications* the authors state.
+## Verify Against Source Paper
+- Run the generated code in a sandbox
+- Compare the output with the tables of the source paper
+  - Match within a tolerance epsilon
+- Route each mismatch back to the stage that caused it
+  - Wrong data recipe: Extract Causal Claims
+  - Missing confounder: Theory Spec (Normalize Variables and Create DAG)
+  - Bug: Generate Code
+- This supports the "Replication of papers" application
 
-Every item must carry a **provenance pointer** (page and span). This is your main
-defense against hallucinated edges.
+## Validation
+// This is the official flow ADIA uses to validate a proposal
+- Create a proposal
 
-**3\. Theory Spec (the IR).** A Pydantic/JSON schema along these lines:
+- Vote on the proposal
+// TODO(gp): Check who votes and on which criteria
 
-* `nodes`: id, canonical name, observed or latent, data recipe, unit, time index  
-* `edges`: source, target, sign, lag, functional-form hint, confidence, provenance,
-  and `stated` vs `inferred` status  
-* `assumptions`: exogeneity, no unobserved confounding, and so on  
-* `estimand`: e.g. ATE of characteristic X on next-month return  
-* `empirical_spec`: what the paper actually ran
+- Run backtesting
+  - Deflate / adjust by tested hypothesis
+    - Take the number of tested hypotheses from the ledger
+  - Use the validation split
 
-Canonicalize variable names against a small finance ontology (value, size, momentum,
-accruals, leverage, and so on). This lets graphs from different papers merge into a
-literature-level graph later.
+- Final gate
+  - Run OOS
+  - The final OOS split stays untouched until this gate
 
-**4\. Causal validation.** This is the step that makes the system more than a code
-generator. Using DoWhy, pgmpy or y0:
+# Cross-Cutting Rules
 
-* enforce acyclicity, and handle feedback by time-indexing (X\_t → Y\_{t+1})  
-* run identification: is the paper's estimand identifiable from its own DAG?  
-* **compare the theory DAG to the empirical spec.** Flag controls that are colliders
-  or mediators and confounders that were omitted. This is precisely López de Prado's
-  "factor mirage" diagnostic, automated.  
-* list implied conditional independencies, which are testable against data
+## Theory Spec
+- One typed object per paper, with the DAG as one view of it
+  - `nodes`: id, canonical name, observed or latent, data recipe, unit, time
+    index, level (firm, industry)
+  - `edges`: source, target, sign, lag, functional-form hint, confidence,
+    provenance, `stated` or `inferred`
+  - `assumptions`: e.g., exogeneity, no unobserved confounding
+  - `estimand`: e.g., ATE of a characteristic on next-month return
+  - `empirical_spec`: regressions, sorts, controls, fixed effects, sample
+- A bare DAG is not enough for code: it lacks data recipes, estimators, and
+  timing
+- Every stage reads and writes this object
+- Stage mapping to the pipeline of `paper.tex`
+  - Build Paper Bank: Stage 1, Parse
+  - Extract Causal Claims: Stage 2, Claim extraction
+  - Normalize Variables and Create DAG: Stage 3, Theory Spec
+  - Map Nodes to Data: data recipe in the Theory Spec (Stage 3), data
+    construction in Stage 5
+  - Merge DAGs: no stage, the literature-level graph is a next step in
+    `paper.tex`
+  - Reduce DAG: Stage 4, Causal validation
+  - Generate Code: Stage 5, Code generation
+  - Verify Against Source Paper: Stage 6, Execute and verify
+  - Optimize Against Proxy, Formalize Hypotheses, Validation: no stage in
+    `paper.tex`
+// TODO(gp): Check the stage mapping
 
-**5\. Code generation (PaperCoder-style plan → analyze → code).** Generate three
-separate artifacts from the IR:
+## Hypothesis Ledger and Data Splits
+- Problem: DAG reduction tests edges, then backtesting reuses the same data
+  - This is double dipping
+  - "Deflate by tested hypothesis" needs a count
+- Ledger: one record per test
+  - Edge tests in DAG reduction
+  - Edges proposed by the LLM or by a human
+  - Proxy choices
+  - Prior fits
+- Three data splits
+  - Discovery: DAG reduction and proxy choice
+  - Validation: backtesting
+  - Final OOS: touched once, at the final gate
+- Deflate the backtest statistics by the size of the ledger
+  - The seven-step protocol of Lopez de Prado and Zoonekynd ends with a
+    multiple testing adjustment
+  - Harvey, Liu, and Zhu: a new factor should clear a t-statistic of at least
+    3.0 because of multiple testing
 
-* **A simulator.** An SCM that produces synthetic data with known effects, used to
-  check that the paper's estimator recovers the truth under the stated graph. This
-  needs no proprietary data, so it always runs.  
-* **A replication module.** Data construction plus the paper's actual estimator
-  (Fama-MacBeth, portfolio sorts, panel regressions via
-  `linearmodels`/`statsmodels`).  
-* **A causal estimator.** The DoWhy-identified estimate, for comparison with the
-  paper's.
+## Human Review Gates and Metrics
+- Gates
+  - After paper list, normalization, DAG, reduction, and before the proposal
+  - At each gate the human sees a compact artifact with provenance
+  - The human can accept, edit, or reject
+- Log every human decision
+- Metrics
+  - Minutes per stage, tool vs manual baseline
+  - Acceptance rate per stage
+  - Edge-level precision and recall against the gold graph of the pilot (see
+    "Pilot and Evaluation")
 
-Template the boilerplate (CRSP/Compustat merges, portfolio sorts, Newey-West) as a
-tested library. The LLM should compose those functions, not rewrite them each time.
+## Pilot and Evaluation
+- Pilot scope: cross-sectional anomaly papers
+  - Public ground truth for the code: Chen and Zimmermann, 319 characteristics
+- Gold graph
+  - No gold set of causal graphs for finance papers exists
+  - Building it is an open requirement
+// TODO(gp): Decide who builds the gold graph and for how many papers
+- Extraction metrics (ReCITE style)
+  - Normalized structural Hamming distance (SHD)
+  - Edge-level precision and recall
+  - Per-node and per-edge LLM judging
+- Code metrics
+  - Correlation with the published signal
+  - Matching t-statistics
+  - Rubric score
+- Validation metric: share of papers with a flagged mirage
+- Baselines
+  - Direct paper-to-code without a DAG
+  - Pipeline without the causal validation step
+- Input format ablation
+  - Run the same papers as PDF, LaTeX, and Markdown
+  - Measure how parsing errors (equations, tables, citations) propagate to
+    extraction and replication metrics
 
-**6\. Execute and verify.** Run the code in a sandbox and compare outputs with the
-paper's reported tables within tolerances. Route mismatches back to the right stage:
-a wrong data recipe goes to 2, a missing confounder to 3, a bug to 5\.
+# Related Work
 
-## **Things that will bite you**
+- Full references with URLs are in `paper_list.md` at the repo root, section
+  `# Causal Analysis for Finance`
+  - Each subsection below has the same name as a section of that file
+  - One line per paper: what it gives to the Theory Store, or what it lacks
+// TODO(gp): Check the one line summaries against the papers: they come from the old notes
 
-* **Theory papers ≠ empirical papers.** Equilibrium models (simultaneous equations,
-  fixed points) don't map cleanly onto a DAG. Route those to a "structural equations
-  → solver" path instead of forcing a graph.  
-* **Most finance papers never state a DAG.** Much of the graph is implicit. Keep
-  `stated` and `inferred` edges separate and never let the code silently depend on an
-  inferred edge.  
-* **Look-ahead bias in data recipes.** Reporting lags and fiscal-year alignment are
-  where generated code goes wrong most often. Encode availability timing explicitly
-  in the IR.  
-* **Evaluate the two halves separately.** Use ReCITE-style SHD and edge-level
-  precision/recall for extraction. ReCITE has few finance papers, so plan a finance
-  gold set. Use Chen-Zimmermann signal replication (correlation with their published
-  signal, matching t-stats) for code.
+## Causal Inference Foundations
 
-A good first milestone is to restrict scope to cross-sectional anomaly papers. You
-get hundreds of ground-truth implementations from Chen & Zimmermann, the DAGs are
-small, and the "factor mirage" check produces something novel right away. If you'd
-like, I can draft the Theory Spec schema as a Pydantic model next.
+- **Pearl (2009)**: structural causal models, do-calculus, and backdoor / frontdoor
+  identification: the formal base for the DAG and the estimand check
+- **Pearl and Mackenzie (2018)**: non-technical version of the same framework
+- **Peters, Janzing, and Scholkopf (2017)**: free and the most code-friendly
+  treatment of causal models
+- **Imbens (2020)**: bridges DAGs and the potential outcome tradition that finance
+  papers use
+- **Huenermund and Bareinboim (2025)**: identification criteria are algorithmic, so
+  the identification check can be automated
+- **Sharma et al. (2020)**: DoWhy, the library for the identification and estimation
+  steps
+
+## Causality in Finance
+
+- **Lopez de Prado (2023)**: factor papers make associational claims, with no causal
+  graph and no falsification tests: the gap the Theory Store fills
+- **Lopez de Prado and Zoonekynd (2026)**: "Correcting the Factor Mirage", a
+  seven-step protocol for causal factor investing: a checklist for the validator
+- **Lopez de Prado and Zoonekynd (2025)**: "Causality and Factor Investing: A
+  Primer", confounder and collider bias in factor regressions: test cases for the
+  mirage check
+- **Lopez de Prado, Lipton, and Zoonekynd (2024)**: the correct specification needs
+  the causal graph behind the data-generating process
+- Replication literature, the benchmark our outputs are judged against
+  - **Harvey, Liu, and Zhu (2016)**: a new factor needs a t-statistic of at least 3.0
+    because of multiple testing
+  - **Hou, Xue, and Zhang (2020)**: many anomalies fail once microcaps are mitigated
+  - **Jensen, Kelly, and Pedersen (2023)**: most factors replicate
+  - None of the three tests the causal specification
+- **Chen and Zimmermann (2022)**: code and data for 319 characteristics: ground truth
+  for code generation
+
+## Causal Structure From Text
+
+- **Yang, Han, and Poon (2022)**: survey of causal relation extraction from text, the
+  pre-LLM baseline
+- **Mariko et al. (2020)**: FinCausal shared task, finance causal sentences and
+  cause / effect spans: labels spans, builds no graph
+- **Kiciman et al. (2023)**: LLMs on causal reasoning tasks, the case for using LLMs
+  in causal work
+- **Jin et al. (2023)**: Corr2Cause, LLMs perform near random when they infer
+  causation from correlation: why `inferred` claims never feed later stages
+- **Zecevic et al. (2023)**: "Causal Parrots", LLMs may recite causal knowledge
+  instead of reasoning: read for failure modes
+- **Antonucci et al. (2023)**: causal graphs from iterated pairwise LLM queries over
+  text, tested on biomedical abstracts
+- **Zhang et al. (2024)**: LACR, RAG over papers, the LLM extracts associations
+  instead of causal claims, majority vote across documents, skeleton before
+  orientation: reusable in Merge DAGs
+- **Garg and Fetzer (2025)**: evidence-labeled claim graphs for economics papers: a
+  study of the literature, with no identification or estimation step
+- **Saklad et al. (2025)**: ReCITE, benchmark of causal graphs from causal loop
+  diagrams, scored with SHD and node / edge precision and recall: few finance papers
+
+## Paper-to-Code and LLM Quant Agents
+
+- **Lin et al. (2026)**: FactorEngine, turns financial reports into executable Python
+  factors: no causal graph
+- **Li et al. (2025)**: R&D-Agent-Quant, hypotheses from domain priors, then a code
+  agent implements them and runs backtests: closest finance analogue
+- **Seo et al. (2025)**: Paper2Code, planning, analysis, and generation by
+  specialized agents, targets ML papers: stage split to copy
+- **Starace et al. (2025)**: PaperBench, agents replicate ML papers and are graded by
+  rubric: template for our rubric score
+- **Blecher et al. (2023)**: Nougat, PDF to markup with equations: a front end for
+  PDF input in Build Paper Bank
+
+# Open research questions
+- How to represent concepts (i.e., knowledge graphs)

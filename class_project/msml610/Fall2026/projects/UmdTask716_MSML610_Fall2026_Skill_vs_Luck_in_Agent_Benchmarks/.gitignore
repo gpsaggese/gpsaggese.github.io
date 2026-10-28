@@ -1,0 +1,7 @@
+# Logs written by `hdbg.init_logger()` when a script runs.
+*.py.log
+# Temporary files.
+tmp.*
+# Written by `docker_build.sh` on every build. The commit hook rejects `*.log`
+# files, so it stays local.
+docker_build.version.log

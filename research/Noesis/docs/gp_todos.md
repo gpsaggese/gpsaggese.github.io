@@ -1,0 +1,12 @@
+- [ ] GP, Review code end-to-end
+- [ ] GP, Generalize onboarding to all projects
+  - [ ] Write linters2/lint.py docs
+  - [ ] Document the skills
+- [ ] Architecture docs and update cycle
+  - research/Noesis/docs/plan.md seems not updated?
+  - Do not use the section sign since cumbersome: write `Sec. 2`
+  - Some of the content https://github.com/gpsaggese/gpsaggese.github.io/pull/597
+    should be captured in a README
+- [.] Reorg docs
+  - Move docs from research/Noesis to research/Noesis/docs
+- [.] Separate components in dirs (e.g., gateway, auction, ...)

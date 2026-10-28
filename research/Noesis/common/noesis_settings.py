@@ -5,7 +5,7 @@ Values come from `research/Noesis/.env` overlaid with the process environment
 (the environment wins). Invalid values fail at startup, not on the first
 request.
 
-For the overall design see `research/Noesis/docs/gateway_design.md`.
+For the overall design see `research/Noesis/docs/design.gateway.md`.
 
 Import as:
 
@@ -58,7 +58,7 @@ class Settings:
     # Task definition (PRD D1): completions are clamped to this many tokens.
     max_tokens_cap: int
     # Monthly spend cap on real provider cost (PRD G8); not enforced yet, see
-    # `docs/specs/mvp_decisions.md`.
+    # `docs/decisions.md`.
     spend_cap_usd: float
     # Per-request timeout = `timeout_multiplier` * contract `l_max` (PRD G6).
     timeout_multiplier: float
@@ -139,7 +139,9 @@ def load_settings(
         model_id=env.get("NOESIS_MODEL_ID", DEFAULT_MODEL_ID),
         max_tokens_cap=int(max_tokens_cap),
         spend_cap_usd=_get_positive(env, "NOESIS_SPEND_CAP_USD", "50"),
-        timeout_multiplier=_get_positive(env, "NOESIS_TIMEOUT_MULTIPLIER", "2.0"),
+        timeout_multiplier=_get_positive(
+            env, "NOESIS_TIMEOUT_MULTIPLIER", "2.0"
+        ),
         seed_path=env.get("NOESIS_SEED_PATH", DEFAULT_SEED_PATH),
     )
     return settings

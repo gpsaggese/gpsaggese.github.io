@@ -7,19 +7,19 @@ Implementation of the reduced-order framework for shot placement in tennis and p
 ### Build Docker Image
 
 ```bash
-./docker_build.sh
+> docker_build.sh
 ```
 
 ### Run Jupyter Lab
 
 ```bash
-./docker_jupyter.sh
+> docker_jupyter.sh
 ```
 
 ### Run Tests
 
 ```bash
-./docker_exec.sh pytest test/
+> docker_exec.sh pytest test/
 ```
 
 ## Module Structure
@@ -47,13 +47,13 @@ Modules are organized in layers, with each layer importing only from layers abov
 Requirements are in `requirements.txt`. Add scipy for optimization and numerical integration.
 
 ```bash
-pip install -r requirements.txt
+> pip install -r requirements.txt
 ```
 
 Run tests locally:
 
 ```bash
-pytest test/
+> pytest test/
 ```
 
 ## References

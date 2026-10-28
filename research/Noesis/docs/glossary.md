@@ -19,7 +19,7 @@
 | Tier | Capability class (e.g., `standard`); the MVP has one |
 | Auction / clearing | Matching bids to asks every T seconds and setting one price per tier |
 | Contract | A matched deal we can check: tasks, tier, `l_max`, `r_min`, price, state |
-| Task | One chat completion, at most 256 output tokens (PRD D1) |
+| Task | One chat completion, at most 256 output tokens (`decisions.md` D-19) |
 | `l_max` | The contract's latency limit in seconds; the request timeout is 2x this |
 | `r_min` | The contract's promised reliability (share of on-time successful requests) |
 | Window | The requests a contract covers: its task count or 60 s, whichever comes first |
@@ -29,6 +29,7 @@
 | Latency reliability | Share of a contract's requests that succeeded within `l_max` |
 | Quality score | Share of a contract's canaries answered correctly |
 | Confidence interval / upper bound | The range the true rate probably lies in; we flag only if even the upper end misses the promise |
+| Wilson interval | The confidence interval for a proportion that the checker uses |
 | Verdict | A contract's result: PASSED, FAILED, or INSUFFICIENT (too little data) |
 | Reputation (rho) | A seller's score in [0, 1], updated after each verdict; low scores get blocked |
 | Cooldown / probation | After a block: sit out N rounds, then return on probation until 3 passes |
@@ -37,4 +38,4 @@
 | Model swap | Serving a weaker model (Llama 3.1 8B) while claiming the contracted one (70B) |
 | Quantization (fp8 / bf16 / fp16) | Running a model at lower numeric precision: cheaper, sometimes lower quality |
 | p50 / p95 | Typical (median) and near-worst (95th percentile) latency |
-| `PR_S7`, `PR_M3`, ... | Work items in GP's roadmap `research/Noesis/docs/plans/plan.Noesis.md` |
+| `PR_S7`, `PR_M3`, ... | Work items in GP's roadmap `research/Noesis/docs/plan.md` |

@@ -5,7 +5,7 @@
 - Turns immutable request records into a `PASSED`, `FAILED`, or `INSUFFICIENT`
   verdict, with the evidence behind it
 - Decision logic is pure; database access sits in `checker_store.py`
-- Design, evaluation flow, and window policy: `docs/checker_design.md`
+- Design, evaluation flow, and window policy: `docs/design.checker.md`
 
 ## Structure of the Dir
 
@@ -26,9 +26,11 @@
 | `checker_grading.py`    | Versioned deterministic answer normalization and grading | Canaries   |
 | `checker_models.py`     | Immutable inputs and outputs shared by the checker       | Models     |
 | `checker_probe_schedule.py` | Secret, balanced probe timing across a contract window | Canaries |
+| `checker_sink.py`       | Market-facing verdict protocol and recording mock      | Runtime    |
 | `checker_statistics.py` | Wilson and exact one-sided upper bounds                  | Statistics |
 | `checker_store.py`      | Calibration, probe, evidence, and verdict persistence    | Database   |
 | `checker_verdicts.py`   | Evidence minima, failure precedence, and verdicts        | Verdicts   |
+| `checker_windows.py`    | Pure collection-target and deadline readiness logic      | Runtime    |
 
 ## Description of Architecture
 

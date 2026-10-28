@@ -4,7 +4,7 @@ contract log, request log).
 
 Implements the three storage `abc.ABC`s owned by the modules that use them:
 - `batch_call_auction.OrderBookStore` -> `PostgresOrderBookStore`
-- `platform_api.ContractStore` -> `PostgresContractStore`
+- `round_runner.ContractStore` -> `PostgresContractStore`
 - `passthrough_proxy.RequestLogStore` -> `PostgresRequestLogStore`
 
 This module imports the three owning modules to implement their `ABC`s; none
@@ -31,7 +31,7 @@ import helpers.hsql_implementation as hsqlimpl
 import research.Noesis.gateway.passthrough_proxy as rnopapro
 import research.Noesis.market.batch_call_auction as rnbacaau
 import research.Noesis.market.contract_dispatch as rnocodis
-import research.Noesis.noesis_platform.platform_api as rnoplapi
+import research.Noesis.market.round_runner as rnmaroru
 
 _LOG = logging.getLogger(__name__)
 
@@ -204,7 +204,7 @@ class PostgresOrderBookStore(rnbacaau.OrderBookStore):
 # #############################################################################
 
 
-class PostgresContractStore(rnoplapi.ContractStore):
+class PostgresContractStore(rnmaroru.ContractStore):
     """
     Postgres-backed `ContractStore`: persists the contract log in
     `noesis_contracts` and the per-tier "latest cleared round" cache in
@@ -251,8 +251,7 @@ class PostgresContractStore(rnoplapi.ContractStore):
         return contract_id
 
     def get_contract(self, contract_id: int) -> rnocodis.Contract:
-        # `contract_id` is an `int` (already type-coerced by FastAPI's path
-        # parameter before reaching here), so interpolating it is safe.
+        # `contract_id` is an integer key supplied by the store interface.
         query = (
             "SELECT buyer_id, seller_id, n_tasks, c_level, l_max, r_min, "
             f"price, fulfilled FROM noesis_contracts "
@@ -270,7 +269,7 @@ class PostgresContractStore(rnoplapi.ContractStore):
         _LOG.debug("return=%s", round_id)
         return round_id
 
-    def save_round(self, round_response: rnoplapi.RoundClearResponse) -> None:
+    def save_round(self, round_response: rnmaroru.RoundSummary) -> None:
         # No `RETURNING` needed: `round_id` is already known from
         # `next_round_id()`.
         query = """
@@ -290,7 +289,7 @@ class PostgresContractStore(rnoplapi.ContractStore):
         )
         self._connection.commit()
 
-    def get_latest_round(self, tier: str) -> rnoplapi.RoundClearResponse:
+    def get_latest_round(self, tier: str) -> rnmaroru.RoundSummary:
         _LOG.debug(hprint.to_str("tier"))
         # `tier` is caller-controlled (`GET /rounds/{tier}/latest`'s path
         # parameter): bind it as a query parameter via a raw `cursor.execute`
@@ -309,7 +308,7 @@ class PostgresContractStore(rnoplapi.ContractStore):
         hdbg.dassert_is_not(
             row, None, "No cleared round yet for tier '%s'", tier
         )
-        round_response = rnoplapi.RoundClearResponse(
+        round_response = rnmaroru.RoundSummary(
             tier=row[0],
             round_id=row[1],
             clearing_price=row[2],

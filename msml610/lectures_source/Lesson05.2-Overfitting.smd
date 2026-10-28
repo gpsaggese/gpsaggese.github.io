@@ -3,8 +3,6 @@
 // lesson_title=L05.2: Overfitting
 // version=v1.0 (2026-09-03)
 // slides_engine=typst
-// references=
-// - Abu-Mostafa et al.: _"Learning From Data"_ (2012)
 
 * Roadmap
 
@@ -15,12 +13,12 @@
 - It then derives the **bias-variance decomposition**, showing how
   out-of-sample error splits into bias, variance, and noise as a function of
   model complexity
+  - It separates deterministic from stochastic noise
+  - It gives a rule of thumb to match model complexity to the amount of data
 - It closes with **learning curves**, the dual view of bias-variance analysis
   as a function of training set size rather than model complexity
 
 # Overfitting
-
-// Overfitting
 
 * Overfitting: Definition
 
@@ -29,9 +27,9 @@
 
 - @Definition@: **Overfitting** occurs when the model fits the data more than what is
   warranted `#cite("abumostafa2012learning")`{=typst}
-
-- Surpass point where $E_{out}$ is minimal (optimal fit)
+  - Surpass point where $E_{out}$ is minimal (optimal fit)
   - Model complexity too high for data/noise
+
 ::::
 :::: {.column width=50%}
 
@@ -42,8 +40,8 @@
 \draw[->] (0,0) -- (0,5) node[above] {Error};
 
 % Dashed line for optimal VC dimension
-\draw[dashed, thick] (2.5,0) -- (2.5,4.5);
-\node at (2.5,-0.3) {$d_{\text{vc}}^*$};
+\draw[dashed, thick] (2.8,0) -- (2.8,4.5);
+\node at (2.8,-0.3) {$d_{\text{vc}}^*$};
 
 % In-sample error curve
 \draw[thick, blue] plot[smooth, domain=0.6:6] (\x, {2.0/(0.5*\x^2.0+0.3)});
@@ -66,100 +64,123 @@
 * Optimal Fit
 
 ::: columns
-:::: {.column width=40%}
+:::: {.column width=50%}
 
-- The opposite of overfitting is not underfitting, but @optimal fit@, i.e., train a
-  model with proper complexity for the data
+- @Remark@: The opposite of overfitting is not underfitting, but **optimal fit**,
+  i.e., train a model with proper complexity for the data
 
-- The optimal fit:
-  - Implies $E_{out}$ is minimal (not $E_{in}$)
-  - Does not imply generalization error $E_{out} - E_{in}$ is minimal
-
-- The @generalization error@ is the error $E_{out} - E_{in}$ when going from
-  in-sample to out-of-sample
-
-- The degradation of fit is $\frac{E_{out} - E_{in}}{E_{in}$
+- @Definition@: the **generalization error** is the error $E_{out} - E_{in}$ when
+  going from in-sample to out-of-sample
+  - The degradation of fit, i.e., the relative generalization error, is
+    $\frac{E_{out} - E_{in}}{E_{out}}$
 
 ::::
-:::: {.column width=60%}
+:::: {.column width=50%}
 
 ![](msml610/lectures_source/figures/L05.2.Optimal_fit.png)
 
 ::::
 :::
 
+- @Characteristics@: the optimal fit
+  - Implies $E_{out}$ is minimal, not $E_{in}$
+  - Does not imply generalization error $E_{out} - E_{in}$ is minimal
+
 * Overfitting: Regression Example
-- Predict diamond price as a function of carat size (regression problem)
+- @Problem@: predict diamond price as a function of carat size (regression
+  problem)
 
 - @True relationship@ is
-  $\text{price} \sim (\text{carat size})^2 + \varepsilon$
+  $$
+  Price = c \cdot Carat^2 + \varepsilon
+  $$
   where:
   - Square function: larger, rarer diamonds command a price premium
   - Noise $\varepsilon$: e.g., missing features, true stochasticity
 
 ::: columns
-:::: {.column width=45%}
+:::: {.column width=65%}
 
-- @Fit with@
-  - _Line_
-    - Underfit
+- @Fitting data with:@
+  - _Line_ (underfit)
     - High bias (large error)
     - Low variance (stable model)
-  - _Polynomial of degree 2_
-    - right fit
-  - _Polynomial of degree 10_
-    - Overfit (wiggly curve)
+  - _Polynomial of degree 2_ (right fit)
+  - _Polynomial of degree 10_ (overfit / `
     - Low bias
-    - High variance (many degrees of freedom)
+    - High variance (Wiggly curve, too many degrees of freedom)
 ::::
-:::: {.column width=55%}
+:::: {.column width=35%}
 
-![](msml610/lectures_source/figures/L05.2.Diamond_price_example.png)
+![](msml610/lectures_source/figures/L05.2.Diamond_price_underfit.png){width=30%}
+
+![](msml610/lectures_source/figures/L05.2.Diamond_price_rightfit.png){width=30%}
+
+![](msml610/lectures_source/figures/L05.2.Diamond_price_overfit.png){width=30%}
 
 ::::
 :::
 
 * Overfitting: Classification Example
-- Assume:
-  - You want to separate 2 classes using 2 features $x_1, x_2$
+- @Problem@: separate 2 classes using 2 features $x_1, x_2$
   - The true class boundary has a parabola shape
 
-- You can use logistic regression and a decision boundary equal to:
-  - _Line_: $\text{logit}(w_0 + w_1 x + w_2 y)$
+- @Variants@: use logistic regression with a decision boundary
+  $\vw^T \phi(\vx) = 0$ for different features $\phi(\vx)$
+  - _Line_: $\phi = (1, x_1, x_2)$
     - Underfit
     - High bias, low variance
-  - _Parabola: $\text{logit}(w_0 + w_1 x + w_2 x^2 + w_3 x y + w_4 y^2)$
+  - _Quadratic_: $\phi = (1, x_1, x_2, x_1^2, x_1 x_2, x_2^2)$
     - Right fit
-  - Wiggly decision boundary: 
-    $\text{logit}(w_0 + \text{high powers of } x_1, x_2)$
-    - Overfit
+  - _Polynomial of degree 10_: all monomials $x_1^i x_2^j$ with $i + j \le 10$
+    - Overfit (wiggly decision boundary)
     - Low bias, high variance
+
+* Overfitting: Classification Decision Boundaries
+
+::: columns
+:::: {.column width=33%}
+
+- @Line@: underfit
 
 ![](msml610/lectures_source/figures/L05.2.Classification_underfit.png)
 
+::::
+:::: {.column width=33%}
+
+- @Quadratic@: right fit
+
 ![](msml610/lectures_source/figures/L05.2.Classification_rightfit.png)
+
+::::
+:::: {.column width=34%}
+
+- @Degree 10@: overfit
 
 ![](msml610/lectures_source/figures/L05.2.Classification_overfit.png)
 
-# Bias Variance Analysis
+::::
+:::
 
-## Bias-Variance Analysis
+# Bias-Variance Analysis
 
 * Hypothesis Set and Bias-Variance Analysis
 - @Learning@ consists in finding $g \in \calH$ such that $g \approx f$ where
   $f$ is an unknown function
 
-- The **tradeoff in learning** is between low complexity and high complexity
-  models `#cite("geman1992biasvariance")`{=typst}:
+- @Key idea@: the **tradeoff in learning** is between low-complexity and
+  high-complexity models, each with a typical failure mode
+  `#cite("geman1992biasvariance")`{=typst}
 
 ```{=typst}
 #styled-table(
-  headers: ("Low complexity", "High complexity"),
+  headers: ("Low complexity model", "High complexity model"),
   rows: (
-    ([Bias], [Variance]),
+    ([High bias], [High variance]),
     ([Underfitting], [Overfitting]),
     ([Less complex $cal(H)$ / $h$], [More complex $cal(H)$ / $h$]),
-    ([Approximation (in-sample)], [Generalization (out-of-sample)]),
+    ([Poor approximation (large $E_"in"$)],
+     [Poor generalization (large $E_"out" - E_"in"$)]),
   ),
   bold-first-col: false,
 )
@@ -170,8 +191,8 @@
 ::: columns
 :::: {.column width=60%}
 
-- Both VC analysis and bias-variance analysis are concerned with the hypothesis
-  set $\calH$
+- @Comparison@: both VC analysis and bias-variance analysis are concerned with
+  the hypothesis set $\calH$
 
 - @VC analysis@ `#cite("vapnikchervonenkis1971uniform")`{=typst}:
   $$
@@ -180,8 +201,12 @@
 
 - @Bias-variance analysis@
   $$
-  E_{out} = \text{bias + variance}
+  E_{out} = \text{bias}^2 + \text{variance}
   $$
+
+- @Remark@: both plots show the expected error as a function of the training
+  set size $N$
+  - These are _learning curves_, discussed at the end of this lesson
 
 ::::
 :::: {.column width=35%}
@@ -211,7 +236,7 @@
 \node[red!70!black] at (6.6,3.85) {$E_{\text{out}}$};
 \node[blue!70!black] at (7.6,2.55) {$E_{\text{in}}$};
 \node[align=left] at (4.7,3.3) {generalization error};
-\node[align=left] at (4.0,2.55) {in-sample error};
+\node[align=left] at (4.0,1.4) {in-sample error};
 
 \node[rotate=90] at (-0.9,3.25) {Expected Error};
 \node at (4.5,-0.6) {Number of Data Points, $N$};
@@ -254,11 +279,13 @@
 ## Deriving the Bias-Variance Decomposition
 
 * Decomposing Error in Bias-Variance (1/4)
-- @Problem@
+- @Setup@
   - Regression set-up: target is a real-valued function $f(\vx)$
-  - Hypothesis set $\calH = \{ h_1(\vx), h_2(\vx), ... h_n(\vx) \}$
-  - Training data $\calD$ with $N$ examples
-  - Squared error $E_{out} = \EE[(g(\vx) - f(\vx))^2]$
+  - Hypothesis set: $\calH = \{ h_1(\vx), h_2(\vx), ... h_n(\vx) \}$
+  - Training data: $\calD$ with $N$ examples
+  - Squared error: $E_{out} = \EE[(g(\vx) - f(\vx))^2]$
+
+- @Goal@
   - Choose the best function $g \in \calH$ that approximates unknown $f$ out of
     sample
 
@@ -267,19 +294,19 @@
     training set of $N$ examples?
 
 * Decomposing Error in Bias-Variance (2/4)
-- The final hypothesis $g$ depends on training set $D$, so make the dependency
-  explicit $g^{(D)}$:
+- @Step 1@: the final hypothesis $g$ depends on training set $D$, so make the
+  dependency explicit $g^{(D)}$:
   $$
   E_{out}(g^{(D)})
   \triangleq \EE_{\vx}[ ( g^{(D)}(\vx) - f(\vx)) ^ 2 ]
   $$
 
-- We are interested in:
+- @Goal@: we are interested in
   - Hypothesis set $\calH$ rather than specific $h$
   - Training set of $N$ examples, rather than a specific $D$
 
-- Remove dependency from $D$ by averaging over all possible training sets $D$
-  with $N$ examples:
+- @Step 2@: remove dependency from $D$ by averaging over all possible training
+  sets $D$ with $N$ examples:
   $$
   E_{out}(\calH)
   \triangleq \EE_{D}[ E_{out}(g^{(D)}) ]
@@ -287,20 +314,22 @@
   $$
 
 * Decomposing Error in Bias-Variance (3/4)
-- Switch the order of the expectations since the quantity is non-negative:
+- @Step 3@: switch the order of the expectations since the quantity is
+  non-negative:
   $$
   E_{out}(\calH)
-  = \EE_{\vx}[ \EE_{D}[ ( g^{(D)}(\vx) - f(\vx)) ^ 2 ]
+  = \EE_{\vx}[ \EE_{D}[ ( g^{(D)}(\vx) - f(\vx)) ^ 2 ] ]
   $$
 
-- Focus on $\EE_D [( g^{(D)}(\vx) - f(\vx) ) ^ 2 ]$ which is a function of $\vx$
+- @Step 4@: focus on $\EE_D [( g^{(D)}(\vx) - f(\vx) ) ^ 2 ]$ which is a
+  function of $\vx$
 
-- Define the _average hypothesis_ over all training sets as:
+- @Definition@: the **average hypothesis** over all training sets is:
   $$
   \overline{g}(\vx) \triangleq \EE_D [ g^{(D)} (\vx) ]
   $$
 
-- Add and subtract it inside the $\EE_D$ expression:
+- @Step 5@: add and subtract it inside the $\EE_D$ expression:
 
   \begingroup \small
   $$
@@ -333,18 +362,21 @@
   \endgroup
 
 * Decomposing Error in Bias-Variance (4/4)
-- The cross term:
+- @Step 6@: the cross term
   $$
-  \EE_D[(g^{(D)} - \overline{g})] (\overline{g} - f)
+  2 \EE_D[(g^{(D)} - \overline{g})] (\overline{g} - f)
   $$
-  disappears since applying the expectation on $D$, it is equal to:
+  disappears, since $\overline{g}$ is the mean of $g^{(D)}$ over $D$:
   $$
-  (g^{(D)} - \EE_D[\overline{g}]) (\overline{g} - f)
-  = 0 \cdot (\overline{g} - f)
-  = 0 \cdot \text{constant}
+  \EE_D[g^{(D)} - \overline{g}]
+  = \EE_D[g^{(D)}] - \overline{g}
+  = \overline{g} - \overline{g}
+  = 0
   $$
+  and $(\overline{g} - f)$ does not depend on $D$, so the cross term is
+  $2 \cdot 0 \cdot (\overline{g} - f) = 0$
 
-- Finally:
+- @Result@: finally
   $$
   \begin{alignat*}{3}
   E_{out}(\calH)
@@ -353,16 +385,18 @@
   &
   \\
   & = \EE_{\vx} [ \EE_D [ ( g^{(D)} - \overline{g} ) ^ 2 ] ] +
-  \EE_{\vx}[( \overline{g} - f) ^ 2] 
+  \EE_{\vx}[( \overline{g} - f) ^ 2]
   & (\EE_{\vx} \text{ is linear}) \\
   & = \EE_{\vx} [ \text{var}(\vx) ] + \EE_{\vx} [ \text{bias}(\vx)^2 ]
   &
   \\
-  & = \text{variance} + \text{bias}
+  & = \text{variance} + \text{bias}^2
   &
   \\
   \end{alignat*}
   $$
+  where $\text{var}(\vx) \triangleq \EE_D[(g^{(D)}(\vx) - \overline{g}(\vx))^2]$
+  and $\text{bias}(\vx) \triangleq \overline{g}(\vx) - f(\vx)$
 
 // TODO: Add a numerical example
 
@@ -374,9 +408,10 @@
 
 - @Intuition@: It can be interpreted as the "best" hypothesis from $\calH$ training
   on $N$ samples
-  - Note: $\overline{g}$ is not necessarily $\in \calH$
+  - Note: $\overline{g}$ is not necessarily $\in \calH$, so it can differ from
+    the best hypothesis $h^* \in \calH$
 
-- In fact it's like **ensemble learning**:
+- @Remark@: it is like **ensemble learning**
   - Consider all the possible data sets $D$ with $N$ samples
   - Learn $g$ from each $D$
   - Average all the learned hypotheses
@@ -385,20 +420,21 @@
 ::: columns
 :::: {.column width=60%}
 
-- The out-of-sample error can be decomposed as:
+- @Key idea@: the out-of-sample error can be decomposed as:
   $$
   E_{out}(\calH) = \text{bias}^2 + \text{variance}
   $$
 
 - @Bias term@
   $$
-  \text{bias}^2 = \EE_{\vx} [ ( \overline{g}(\vx) - f(\vx) ) ^ 2 ]
+  \text{bias}^2 \triangleq \EE_{\vx} [ ( \overline{g}(\vx) - f(\vx) ) ^ 2 ]
   $$
-  - Does not depend on learning as it is not a function of the data set $D$
+  - Does not depend on a specific data set $D$, as $\overline{g}$ averages over
+    all of them
+    - It still depends on the learning algorithm and on $N$
   - Measures how limited $\calH$ is
     - I.e., the ability of $\calH$ to approximate the target with infinite
       training sets
-    - But we have only one data set $D$ at a time, incurring a cost
 
 ::::
 :::: {.column width=40%}
@@ -414,7 +450,8 @@
 
 - @Variance term@
   $$
-  \text{variance} = \EE_{\vx} \EE_D [ ( g^{(D)}(\vx) - \overline{g}(\vx) ) ^ 2]
+  \text{variance} \triangleq
+  \EE_{\vx} \EE_D [ ( g^{(D)}(\vx) - \overline{g}(\vx) ) ^ 2]
   $$
   - Measures variability of the learned hypothesis from $D$ for any $\vx$
     - With infinite training sets, we could focus on the "best" $g$, which is
@@ -434,7 +471,7 @@
 ::: columns
 :::: {.column width=60%}
 
-- If hypothesis set has a @single function@:
+- @Single function@: the hypothesis set has one function
   $$
   \calH = \{ h \ne f \}
   $$
@@ -455,9 +492,9 @@
 
 \vspace{1cm}
 
-- If hypothesis set has @many functions@:
+- @Many functions@: the hypothesis set has many functions
   $$
-  \calH = \{ \text{many hypotheses } h \}
+  \calH = \{ h_1, h_2, \ldots, h_M \}
   $$
   - Bias can be 0
     - E.g., if $f \in \calH$
@@ -500,7 +537,7 @@
 - @Approximation@
   - $E_{out}(g_0) = 0.5$
     - $g_0$ is a constant and approximates the sinusoid poorly (higher bias)
-  - $E_{out}(g_1) = 0.2$
+  - $E_{out}(g_1) \approx 0.2$
     - $g_1$ is a line and has more degrees of freedom (lower bias)
   - The line model _approximates better_ than the constant model
 
@@ -521,42 +558,53 @@
 - @Learning@
   - Algorithm:
     - Pick $N$ points as training set $D$
-    - Learn $g$ from $D$
-    - Compute $\EE_D [ E_{out}(g) ]$
+    - Learn $g^{(D)}$ from $D$
+    - Compute $E_{out}(g^{(D)})$
   - Average over all data sets $D$:
     $$
-    E_{out} = \text{bias}^2 + \text{variance}
+    \EE_D [ E_{out}(g^{(D)}) ] = \text{bias}^2 + \text{variance}
     $$
   - $E_{out}(g_0) = 0.5 + 0.25 = 0.75$
     - $g_0$ is more stable given the data set (lower variance)
-  - $E_{out}(g_1) = 0.2 + 1.69 = 1.9$
+  - $E_{out}(g_1) = 0.21 + 1.69 = 1.90$
     - $g_1$ heavily depends on the training set (higher variance)
   - The constant model _learns better_ than the line model
 
 ::::
 :::: {.column width=35%}
 
-//![](msml610/lectures_source/figures/L05.2.Bias_Variance_Numerical_Example1.png)
-//![](msml610/lectures_source/figures/L05.2.Bias_Variance_Numerical_Example2.png)
+![](msml610/lectures_source/figures/L05.2.Bias_Variance_Numerical_Example1.png)
 
-// TODO(gp): Regenerate these two figures, missing on disk.
-//![Constant models: high bias, low variance](msml610/lectures_source/figures/L05.2.Bias_Variance_Learning_0.png)
-//![Linear models: low bias, high variance](msml610/lectures_source/figures/L05.2.Bias_Variance_Learning_1.png)
+![](msml610/lectures_source/figures/L05.2.Bias_Variance_Numerical_Example2.png)
 
 ::::
 :::
 
+* How to Measure the Model Complexity
+- @Techniques@: the model complexity is measured by
+  - Number of features
+  - Parameters for model form / degrees of freedom, e.g.,
+    - VC dimension $d_{VC}$
+    - Degree of polynomials
+    - $k$ in KNN (smaller $k$ means a more complex model)
+    - $\nu$ in NuSVM
+  - Regularization param $\lambda$
+  - Training epochs for neural network
+
 * Bias-Variance Curves
-- @Bias-variance curves@ are plots of $E_{out}$ increasing the complexity of the
-  model `#cite("hastie2009elements")`{=typst}
+- @Definition@: **bias-variance curves** are plots of $E_{in}$ and $E_{out}$ as
+  the complexity of the model increases `#cite("hastie2009elements")`{=typst}
 
 ::: columns
 :::: {.column width=55%}
-- Typical **shape** of bias-variance curves
-  - $E_{in}$ and $E_{out}$ start from the same point
-  - $E_{in}$
-    - Is decreasing with increasing model complexity
-    - Can even go to 0
+- @Characteristics@: typical shape of bias-variance curves
+  - $E_{in}$ and $E_{out}$ start close together
+  - $E_{in}$ decreases with increasing model complexity and can even go to 0
+  - $E_{out}$ is always larger than $E_{in}$
+  - $E_{out}$ is the sum of $\text{bias}^2$ and variance
+  - $E_{out}$ has a bowl shape and reaches a minimum for optimal fit
+  - Before the minimum there is a "high bias / underfitting" regime
+  - After the minimum there is a "high variance / overfitting" regime
 ::::
 :::: {.column width=45%}
 
@@ -565,38 +613,75 @@
 ::::
 :::
 
-- $E_{out}$
-  - Is always larger than $E_{in}$
-  - Is the sum of bias and variance
-  - Has a bowl shape
-  - Reaches a minimum for optimal fit
-  - Before the minimum there is a "high bias / underfitting" regime
-  - After the minimum there is a "high variance / overfitting" regime
+* Double Descent
+
+::: columns
+:::: {.column width=55%}
+
+- @Remark@: the bowl shape of $E_{out}$ describes classical models
+  `#cite("belkin2019reconciling")`{=typst}
+
+- @Characteristics@: double descent in over-parameterized models (e.g., deep
+  networks)
+  - $E_{in}$ reaches 0 at the interpolation threshold
+  - $E_{out}$ peaks near the threshold
+  - Past the threshold $E_{out}$ can decrease again as complexity grows
+
+- @Interpretation@: the classical regime of bias-variance analysis still holds
+  - It does not describe what happens past the interpolation threshold
+
+::::
+:::: {.column width=45%}
+
+```tikz
+\bfseries
+% Axes
+\draw[->] (0,0) -- (8,0) node[below] {Model Complexity};
+\draw[->] (0,0) -- (0,4.5) node[above] {Error};
+
+% Interpolation threshold
+\draw[dashed, gray, thick] (4.2,0) -- (4.2,4.1);
+\node[gray, font=\small, align=center] at (4.2,4.7) {Interpolation\\threshold};
+
+% E_in curve
+\draw[thick, blue] plot[smooth] coordinates {(0.4,2.4) (1.3,1.3) (2.2,0.7) (3.0,0.35) (3.7,0.12) (4.2,0.0)};
+\draw[thick, blue] (4.2,0) -- (7.6,0);
+
+% E_out curve
+\draw[thick, red] plot[smooth] coordinates {(0.4,3.0) (1.3,1.9) (2.2,1.5) (3.0,1.9) (3.7,2.9) (4.2,3.8) (4.7,3.0) (5.5,2.0) (6.5,1.5) (7.6,1.3)};
+
+% Labels
+\node[blue] at (6.2,0.4) {$E_{\text{in}}$};
+\node[red] at (6.4,2.2) {$E_{\text{out}}$};
+\node[gray, font=\small] at (1.8,3.7) {Classical};
+\node[gray, font=\small] at (6.2,3.7) {Modern};
+```
+
+::::
+:::
 
 * Bias-Variance Curves and Regularization
 
-- Use @model with regularization@ to learn at the same time:
-  - Model coefficients $\vw$
-  - Model "complexity" (e.g., VC dimension)
+- @Definition@: **regularization** adds a complexity penalty to the in-sample
+  error
+  $$
+  E_{aug}(\vw) \triangleq E_{in}(\vw) + \frac{\lambda}{N} \Omega(\vw)
+  $$
+  - E.g., weight decay uses $\Omega(\vw) = \vw^T \vw$
 
-- Learn the optimal model $\vw(\lambda)$ as a function of
-  $\lambda = \{..., 10^{-1}, 1.0, 10, ...\}$ by optimizing:
+- @Method@: learn the optimal model $\vw(\lambda)$ for each value of
+  $\lambda = \{..., 10^{-1}, 1.0, 10, ...\}$:
   $$
-  \vw(\lambda) = \argmin_{\vw} E_{aug}(\vw) = E_{in}(\vw) + \Omega(\lambda)
+  \vw(\lambda) = \argmin_{\vw} E_{aug}(\vw)
   $$
+  - Pick $\lambda$ using held-out data, not $E_{in}$
 
 ::: columns
 :::: {.column width=50%}
 
-- Interpret @regularization parameter@:
-  - Small $\lambda$:
-    - Complex model
-    - Low bias
-    - High variance
-  - Large $\lambda$:
-    - Simple model
-    - High bias
-    - Low variance
+- @Interpretation@: the regularization parameter $\lambda$ sets the complexity
+  - Small $\lambda$: complex model, low bias, high variance
+  - Large $\lambda$: simple model, high bias, low variance
   - An intermediate $\lambda$ is optimal
 
 ::::
@@ -608,25 +693,16 @@
 ::::
 :::
 
-* How to Measure the Model Complexity
-- Number of features
-- Parameters for model form / degrees of freedom, e.g.,
-  - VC dimension $d_{VC}$
-  - Degree of polynomials
-  - $k$ in KNN
-  - $\nu$ in NuSVM
-- Regularization param $\lambda$
-- Training epochs for neural network
-
 ## Noise and Overfitting
 
 * Bias-Variance Decomposition with a Noisy Target
-- Extend bias-variance decomposition to @a noisy target@
+- @Problem@: extend the bias-variance decomposition to a **noisy target**
   $$
-  y = f(\vx; \vw) + \varepsilon = \vw^T \vx + \varepsilon
+  y = f(\vx) + \varepsilon
   $$
+  where $\varepsilon$ has zero mean and variance $\sigma^2$
 
-- With similar hypothesis and analysis conclude that:
+- @Result@: with a similar hypothesis and analysis conclude that:
   $$
   \begin{aligned}
   E_{out}(\calH)
@@ -639,20 +715,22 @@
   + \EE_{\varepsilon, \vx} \left[
   ( f - y) ^ 2
   \right]\\
-  &= \text{variance + bias + stochastic noise}\\
+  &= \text{variance} + \text{bias}^2 + \text{stochastic noise}\\
   \end{aligned}
   $$
 
-- The out-of-sample error is the sum of 3 contributions
-  1. @Variance@: from the set of hypotheses to the centroid of the hypothesis
-     set
-  2. @Bias@: from the centroid of the hypothesis set to the noiseless function
-  3. @Noise@: from the noiseless function to the real function
+- @Components@: the out-of-sample error is the sum of 3 contributions
+  1. @Variance@: from the learned hypotheses $g^{(D)}$ to their average
+     $\overline{g}$
+  2. @Bias@: from the average hypothesis $\overline{g}$ to the noiseless
+     target $f$
+  3. @Noise@: from the noiseless target $f$ to the observed value $y$, equal to
+     $\sigma^2$
 
 * Bias as Deterministic Noise
 ::: columns
 :::: {.column width=70%}
-- The bias term can be interpreted as @deterministic noise@
+- @Interpretation@: the bias term can be interpreted as **deterministic noise**
 
 - @Bias@ is the part of the target function that hypothesis set cannot
   capture:
@@ -660,11 +738,12 @@
   h^*(\vx) - f(\vx)
   $$
   where:
-  - $h^*$ is the best approximation of $f(\vx)$ in the hypothesis set $\calH$ (e.g.,
-    $\overline{g}(x)$)
+  - $h^*$ is the best approximation of $f(\vx)$ in the hypothesis set $\calH$
+  - The bias term uses $\overline{g}$ in place of $h^*$, which approximates it
+    and can lie outside $\calH$
 
-- The hypothesis set $\calH$ cannot learn the deterministic noise since it is
-  outside of its _ability_, and thus it behaves like _noise_
+- @Key idea@: the hypothesis set $\calH$ cannot learn the deterministic noise
+  since it is outside of its _ability_, and thus it behaves like _noise_
 
 ::::
 :::: {.column width=30%}
@@ -682,16 +761,17 @@
   rows: (
     ([Fixed for a given $bold(x)$?], [Yes], [No]),
     ([Depends on $cal(H)$?], [Yes], [No]),
-    ([Depends on $D$?], [No(also of $epsilon$)], [No]),
+    ([Depends on $epsilon$?], [No], [Yes]),
   ),
   bold-first-col: true,
 )
 ```
 
-- In a machine learning problem, no difference exists between _stochastic_ and
-  _deterministic_ noise, as $\calH$ and $D$ are fixed
-- From the training set alone, you cannot determine if data is from:
-  - a _noiseless complex_ target; or 
+- @Key idea@: in a machine learning problem, no difference exists between
+  _stochastic_ and _deterministic_ noise, as $\calH$ and $D$ are fixed
+
+- @Remark@: from the training set alone, you cannot determine if data is from
+  - a _noiseless complex_ target; or
   - a _noisy simple_ target
 
 * Deterministic vs Stochastic Noise Example (1/2)
@@ -708,7 +788,7 @@
   - ${\calH}_{2}$ low-order hypothesis (2nd order polynomial)
   - ${\calH}_{10}$ high-order hypothesis (10th order polynomial)
 
-- The learning model:
+- @Remark@: the learning model
   - Sees only training samples
   - Can't distinguish noise sources
 
@@ -735,7 +815,7 @@
   - Fit 2nd to 10th order polynomial
   - Same phenomenon
   - $\downarrow E_{in}$ (more degrees of freedom), $\uparrow\uparrow E_{out}$
-    (fits noise)
+    (fits deterministic noise)
 
 - @Wrong approach@
   - Target is 10th order polynomial
@@ -743,11 +823,10 @@
 
 - @Right approach@
   - Consider number of data points, i.e., 15 points
-  - Rule of thumb from VC analysis
-    $$
-    \text{degrees of freedom of model = number of data points / 10}
-    $$
-  - Use 1 or 2 degrees of freedom
+  - Rule of thumb from VC analysis: $N \ge 10 \, d_{VC}$, i.e., about 1 or 2
+    degrees of freedom
+  - $\calH_2$ has 3 parameters, a bit above the rule, but still beats
+    $\calH_{10}$
 
 ::::
 :::: {.column width=20%}
@@ -761,23 +840,28 @@
 :::
 
 * Amount of Data and Model Complexity
-- One must match the @model complexity@ to
+- @Key idea@: match the **model complexity** to
   - _Data resources_
   - _Signal to noise ratio_
-  - _Not target complexity_
 
-- The @rule of thumb@ is:
+- @Counterexample@: matching the model complexity to the _target complexity_
+  fails
+  - E.g., a 10th order model on a 10th order target with 15 points
+
+- @Rule of thumb@: $d_{VC}$ (degrees of freedom of the model) should not exceed
+  $N$ (number of data points) divided by 10
   $$
-  d_{VC} (\text{degrees of freedom of the model})
-  = N (\text{number of data points}) / 10
+  N \ge 10 \, d_{VC}
   $$
   - In other words, 10 data points needed to fit a degree of freedom
   - If the data is noisy, you need even more data
 
 * Overfitting Dependencies
 
-- Overfitting can be measured in terms of the @relative generalization error@
-  $\frac{E_{out} - E_{in}}{E_{out}}$
+- @Definition@: overfitting is measured by the **relative generalization error**
+  $$
+  \frac{E_{out} - E_{in}}{E_{out}}
+  $$
 
 ```{=typst}
 #styled-table(
@@ -795,23 +879,28 @@
 # Learning Curves
 
 * Learning Curves vs Bias-Variance Curves
-- @Definition@: **Learning curves** are the dual of the bias-variance curves
+- @Definition@: **learning curves** are the dual of the bias-variance curves
 
 ::: columns
 :::: {.column width=50%}
 
-- For @bias-variance curves@
-  $$
-  E_{in}, E_{out} = f(d_{VC} \vert N)
-  $$
-  - _Keep fixed the complexity of training set_
-    - Number of examples $N$
-  - _Vary the model complexity_ in terms of:
-    - Model complexity $d$
-    - Number of features $p$
-    - Regularization amount $\lambda$
+- @Bias-variance curves@: $E_{in}, E_{out}$ as a function of $d_{VC}$, at fixed
+  $N$
+  - Fix the size $N$ of the training set
+  - Vary the model complexity, e.g., $d_{VC}$, number of features $p$, or
+    regularization amount $\lambda$
 
 ::::
+:::: {.column width=50%}
+
+- @Learning curves@: $E_{in}, E_{out}$ as a function of $N$, at fixed $d_{VC}$
+  - Fix the model
+  - Vary the size $N$ of the training set
+
+::::
+:::
+
+::: columns
 :::: {.column width=50%}
 
 ```tikz
@@ -820,32 +909,16 @@
 \draw[->] (0,0) -- (7,0) node[below] {Model Complexity, $d_{VC}$};
 \draw[->] (0,0) -- (0,4) node[above] {Expected Error};
 
-% Dotted convergence line
-\draw[dotted, thick] (0,1.5) -- (6.8,1.5);
-
 % E_in curve (decreasing)
-\draw[thick, blue] plot[smooth, domain=0.4:6.5] (\x, {1.5 - 1.0/(0.6*\x + 0.4)});
+\draw[thick, blue] plot[smooth, domain=0.5:6.5] (\x, {0.15 + 3.0/(\x^2.0 + 1.0)});
 
 % E_out curve (U-shaped)
-\draw[thick, red] plot[smooth, domain=0.5:6.5] (\x, {0.3*\x + 1.5 - 0.7/(0.6*\x + 0.4)});
+\draw[thick, red] plot[smooth, domain=0.5:6.5] (\x, {0.15 + 3.0/(\x^2.0 + 1.0) + 0.12*(\x)^1.4});
 
 % Labels
-\node[blue] at (5.8,0.95) {$E_{\text{in}}$};
-\node[red] at (5.8,2.15) {$E_{\text{out}}$};
+\node[blue] at (5.8,0.6) {$E_{\text{in}}$};
+\node[red] at (5.8,2.2) {$E_{\text{out}}$};
 ```
-
-::::
-:::
-
-::: columns
-:::: {.column width=50%}
-
-- For @learning curves@
-  $$
-  E_{in}, E_{out} = f(N \vert d_{VC})
-  $$
-  - Fix the model
-  - Vary the size $N$ of training set
 
 ::::
 :::: {.column width=50%}
@@ -859,16 +932,17 @@
 % Dotted convergence line
 \draw[dotted, thick] (0,1.5) -- (6.8,1.5);
 
-% E_in curve
-\draw[thick, blue] plot[smooth, domain=0.4:6.5] (\x, {1.5 + 1.2/(0.6*\x + 0.4)});
+% E_in curve (increasing)
+\draw[thick, blue] plot[smooth, domain=0.4:6.5] (\x, {1.5 - 1.3/(0.6*\x + 0.7)});
 
-% E_out curve
-\draw[thick, red] plot[smooth, domain=0.5:6.5] (\x, {1.5 - 1.0/(0.6*\x + 0.4)});
+% E_out curve (decreasing)
+\draw[thick, red] plot[smooth, domain=0.4:6.5] (\x, {1.5 + 1.3/(0.6*\x + 0.7)});
 
 % Labels
-\node[red] at (5.8,0.95) {$E_{\text{in}}$};
-\node[blue] at (5.8,2.15) {$E_{\text{out}}$};
+\node[blue] at (5.8,0.9) {$E_{\text{in}}$};
+\node[red] at (5.8,2.2) {$E_{\text{out}}$};
 ```
+
 ::::
 :::
 
@@ -888,6 +962,11 @@
   - $E_{in} \uparrow$ as the model cannot fit all data
   - $E_{out} \downarrow$ as the model fits better and generalizes better
   - Generalization error $E_{out} - E_{in} \downarrow$
+
+- @Infinite data@: $N \to \infty$
+  - $E_{in}, E_{out} \to \text{bias}^2 + \sigma^2$
+  - $E_{out} - E_{in} \to 0$
+  - $\sigma^2$ is the irreducible error
 ::::
 :::: {.column width=35%}
 
@@ -904,14 +983,14 @@
 \draw[dotted, thick] (0,1.5) -- (6.8,1.5);
 
 % E_in curve (increasing towards convergence)
-\draw[thick, blue] plot[smooth, domain=0.4:6.5] (\x, {1.5 - 1.2/(0.6*\x + 0.4)});
+\draw[thick, blue] plot[smooth, domain=0.4:6.5] (\x, {1.5 - 1.3/(0.6*\x + 0.7)});
 
 % E_out curve (decreasing towards convergence)
-\draw[thick, red] plot[smooth, domain=0.5:6.5] (\x, {1.5 + 0.9/(0.6*\x + 0.4)});
+\draw[thick, red] plot[smooth, domain=0.4:6.5] (\x, {1.5 + 1.3/(0.6*\x + 0.7)});
 
 % Labels
-\node[blue] at (5.8,1.0) {$E_{\text{in}}$};
-\node[red] at (5.8,2.1) {$E_{\text{out}}$};
+\node[blue] at (5.8,0.85) {$E_{\text{in}}$};
+\node[red] at (5.8,2.2) {$E_{\text{out}}$};
 ```
 
 ```tikz
@@ -922,58 +1001,141 @@
 
 % Regions
 \fill[gray!10] (0,0) -- (3.5,0) -- (3.5,4) -- (0,4) -- cycle;
-\node[gray, font=\small, align=center] at (1.75, 3.5) {High-Variance\\Regime};
-\node[gray, font=\small, align=center] at (5.25, 3.5) {High-Bias\\Regime};
+\node[gray, font=\small, align=center] at (1.75, 3.7) {High-Variance\\Regime};
+\node[gray, font=\small, align=center] at (5.25, 3.7) {High-Bias\\Regime};
 
 % Vertical line separator
 \draw[dashed, gray, thick] (3.5,0) -- (3.5,4);
 
 % E_in curve
-\draw[thick, blue] plot[smooth, domain=0.4:6.5] (\x, {1.5 - 1.2/(0.6*\x + 0.4)});
+\draw[thick, blue] plot[smooth, domain=0.4:6.5] (\x, {1.5 - 1.3/(0.6*\x + 0.7)});
 
 % E_out curve
-\draw[thick, red] plot[smooth, domain=0.5:6.5] (\x, {1.5 + 0.9/(0.6*\x + 0.4)});
+\draw[thick, red] plot[smooth, domain=0.4:6.5] (\x, {1.5 + 1.3/(0.6*\x + 0.7)});
 
 % Labels
-\node[blue] at (5.8,1.0) {$E_{\text{in}}$};
-\node[red] at (5.8,2.1) {$E_{\text{out}}$};
+\node[blue] at (5.8,0.85) {$E_{\text{in}}$};
+\node[red] at (5.8,2.2) {$E_{\text{out}}$};
 ```
 ::::
 :::
 
-- @Infinite data@: $N \to \infty$
-  - $E_{in}$ reaches a maximum (irreducible error)
-  - $E_{out}$ reaches a minimum
-  - $E_{out} - E_{in}$ depends on the complexity of the model
-
 * High-Bias vs High-Variance Regime
 ::: columns
 :::: {.column width=70%}
-- From the learning curve you can see the two regimes
+- @Remark@: from the learning curve you can see the two regimes
 
 - @High-variance regime@ for small $N$
   - $E_{in}$ is small
   - Small data set $D$ $\implies$ high dependency on $D$
-
-- More data helps reduce gap between $E_{in}$ and $E_{out}$
+  - More data helps reduce gap between $E_{in}$ and $E_{out}$
 
 - @High-bias regime@ for large $N$
   - $E_{in}$ is large; flattens for large $N$
   - Best model fitted; more data won't help
-  - $E_{out}$ can be close to $E_{in}$ (good generalization) or not
+  - The gap $E_{out} - E_{in}$ closes as $N$ grows
 ::::
 :::: {.column width=30%}
 
 // TODO(gp): Convert to tikz and comment out the pics in place.
-// TODO(gp): Regenerate these two figures, missing on disk.
-//![](msml610/lectures_source/figures/L05.2.Irreducible_Error1.png)
-//![](msml610/lectures_source/figures/L05.2.Irreducible_Error2.png)
+![](msml610/lectures_source/figures/L05.2.Irreducible_Error1.png)
+
+![](msml610/lectures_source/figures/L05.2.Irreducible_Error2.png)
 
 ::::
 :::
 
-// TODO: Add pic
+* Diagnosing with Learning Curves
 
+- @Goal@: use the learning curves of a fixed model to decide whether more data
+  helps
+
+::: columns
+:::: {.column width=50%}
+
+- @High-bias model@
+  - $E_{in}$ and $E_{out}$ converge quickly to a high plateau
+  - Small gap: the model is too simple
+  - More data does not help: increase the model complexity
+
+::::
+:::: {.column width=50%}
+
+- @High-variance model@
+  - $E_{in}$ stays low and the gap to $E_{out}$ is large
+  - The gap closes slowly as $N$ grows
+  - More data helps: also try regularization or a simpler model
+
+::::
+:::
+
+::: columns
+:::: {.column width=50%}
+
+```tikz
+\bfseries
+% Axes
+\draw[->] (0,0) -- (7,0) node[below] {$N$};
+\draw[->] (0,0) -- (0,4) node[above] {Error};
+\node at (3.5,3.9) {High Bias};
+
+% E_in curve
+\draw[thick, blue] plot[smooth, domain=0.4:6.5] (\x, {2.2 - 1.3/(0.9*\x + 0.45)});
+
+% E_out curve
+\draw[thick, red] plot[smooth, domain=0.4:6.5] (\x, {2.2 + 1.0/(0.9*\x + 0.45)});
+
+% Labels
+\node[blue] at (5.8,1.7) {$E_{\text{in}}$};
+\node[red] at (5.8,2.7) {$E_{\text{out}}$};
+```
+
+::::
+:::: {.column width=50%}
+
+```tikz
+\bfseries
+% Axes
+\draw[->] (0,0) -- (7,0) node[below] {$N$};
+\draw[->] (0,0) -- (0,4) node[above] {Error};
+\node at (3.5,3.9) {High Variance};
+
+% E_in curve
+\draw[thick, blue] plot[smooth, domain=0.4:6.5] (\x, {0.8 - 0.6/(0.6*\x + 0.9)});
+
+% E_out curve
+\draw[thick, red] plot[smooth, domain=0.4:6.5] (\x, {0.8 + 2.0/(0.45*\x + 0.55)});
+
+% Labels
+\node[blue] at (5.8,0.35) {$E_{\text{in}}$};
+\node[red] at (5.8,1.85) {$E_{\text{out}}$};
+```
+
+::::
+:::
+
+* Learning Curves for Linear Regression
+- @Problem@: noisy linear target $y = \vw^T \vx + \varepsilon$ with noise
+  variance $\sigma^2$, fit by least squares with $d + 1$ parameters on $N$
+  points `#cite("abumostafa2012learning")`{=typst}
+
+- @Result@: for $N > d + 1$ the expected errors are
+  $$
+  \begin{aligned}
+  \EE_D[E_{in}] & = \sigma^2 \left( 1 - \frac{d + 1}{N} \right) \\
+  \EE_D[E_{out}] & = \sigma^2 \left( 1 + \frac{d + 1}{N} \right)
+  \end{aligned}
+  $$
+  - For $N \le d + 1$ the model fits signal and noise perfectly: $E_{in} = 0$
+
+- @Interpretation@
+  - $E_{in}$ increases and $E_{out}$ decreases towards the same limit
+    $\sigma^2$ as $N$ grows
+  - The generalization error is $E_{out} - E_{in} = 2 \sigma^2 \frac{d + 1}{N}$
+  - What matters is the ratio $\frac{d + 1}{N}$, in line with the rule of thumb
+    $N \ge 10 \, d_{VC}$
+
+// Derivation of the results above (not shown)
 //* Example of learning curves for linear regression
 //- Consider a noisy target
 //
@@ -994,8 +1156,8 @@
 //  \hat{\vw}
 //  &= (\mX^T \mX)^{-1} \mX^T (\mX \vw + \vvarepsilon) \\
 //  &= (\mX^T \mX)^{-1} \mX^T \mX \vw +
-//  \mX^T \mX)^{-1} \mX^T \vvarepsilon \\
-//  &= \vw + \mX^T \mX)^{-1} \mX^T \vvarepsilon \\
+//  (\mX^T \mX)^{-1} \mX^T \vvarepsilon \\
+//  &= \vw + (\mX^T \mX)^{-1} \mX^T \vvarepsilon \\
 //  \end{aligned}
 //  $$
 //
@@ -1043,15 +1205,18 @@
 
 - @Recap@
   - _Overfitting_: going past the model complexity that minimizes $E_{out}$
-    trades in-sample fit for out-of-sample generalization
+    gains in-sample fit at the cost of out-of-sample error
   - _Bias-variance decomposition_: $E_{out}$ splits into bias (how well
     $\calH$ can approximate $f$ on average) and variance (how much the
     learned $g$ varies across training sets)
+  - _Noise_: deterministic noise (bias) and stochastic noise ($\sigma^2$) both
+    push a model to overfit, and the training set cannot tell them apart
   - _Complexity control_: regularization and other complexity knobs trade
-    bias for variance; the rule of thumb $d_{VC} \approx N / 10$ matches model
+    bias for variance; the rule of thumb $N \ge 10 \, d_{VC}$ matches model
     complexity to available data
   - _Learning curves_: the dual view of bias-variance analysis, showing
-    $E_{in}$ and $E_{out}$ converge as the training set size $N$ grows
+    $E_{in}$ and $E_{out}$ converge to the same value as the training set size
+    $N$ grows, and whether more data helps
 
 * References
 

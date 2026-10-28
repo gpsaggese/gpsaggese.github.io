@@ -5,7 +5,7 @@
 - Read next:
   - `how_we_work.md` (process)
   - `glossary.md` (terms)
-  - `gateway_design.md` (design)
+  - `design.gateway.md` (design)
 
 ## 1. What Noesis Is (5 Minutes)
 
@@ -15,8 +15,8 @@
   request, test providers with known-answer questions, and lower the reputation of
   sellers that under-deliver
 - Background: the paper `papers/Noesis/Noesis.pdf` (by GP), GP's roadmap
-  `research/Noesis/docs/plans/plan.Noesis.md`, and the MVP spec `docs/specs/mvp_prd.md`
-- Status: `docs/plans/mvp_progress.md`
+  `research/Noesis/docs/plan.md` (with the MVP claim and success criteria)
+- Status: `docs/progress.md`
 
 ## 2. Access You Need
 
@@ -152,7 +152,7 @@
 
 ## 7. Read the Code in This Order
 
-1. `docs/gateway_design.md`: the picture and the request flow
+1. `docs/design.gateway.md`: the picture and the request flow
 2. `gateway_providers.py`: the interface everything plugs into
 3. `gateway_api.py`: the main endpoint, top to bottom
 4. `gateway_routing.py`, `gateway_request_log.py`, `gateway_openrouter.py`
@@ -161,7 +161,7 @@
 
 ## 8. Pick a First Task
 
-- Open tasks with owners are in `docs/plans/mvp_plan.md` §3; the next milestone is the
+- Open tasks with owners are in `docs/plan.md` (Task Breakdown); the next milestone is the
   checker (M2)
 - Good first tasks:
   - Add test questions to the canary bank (M2, T2.1): no prior code knowledge needed
