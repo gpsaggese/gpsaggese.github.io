@@ -891,7 +891,7 @@ Here are a few of the things we'll be looking out for:
 3. File naming conventions
 4. Content relevance to the file purpose
 
-Like I said, everything above is already given in the project instructions and some example files are also available inside **class_project/instructions/tutorial_template/tutorial_github_data605_style**
+Like I said, everything above is already given in the project instructions and some example files are also available inside **class_project/project_template**
 
 **EDIT: The instructions say the task name should be `TutorTask{issue_number}_{project_title}`, but the assignment instructions created the branch name of the convention `UmdTask{issue_number}_{project_title}`.**
 
