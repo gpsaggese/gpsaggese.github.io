@@ -18,6 +18,7 @@
 | File                  | Description                                                           | Cluster  |
 | :-------------------- | :-------------------------------------------------------------------- | :------- |
 | `batch_call_auction.py` | `Bid`, `Ask`, `OrderBook`, and per-tier uniform-price clearing      | Auction  |
+| `round_runner.py` | Library round orchestration, plain results, contract-store interface and memory backend | Runner |
 | `scenarios.py` | Named and seeded bid/ask fixtures | Scenarios |
 | `contract_dispatch.py` | `Contract` schema, `build_contracts()`, and stubbed fulfillment dispatch | Dispatch |
 | `supply_adapter.py` | Pure adapter: OpenRouter endpoint prices -> one `Ask` per seed seller, posted once per round | Supply |
@@ -26,6 +27,8 @@
 
 - `contract_dispatch.py` imports `batch_call_auction.py` (`Bid`, `Ask`,
   `TierClearResult`); not the reverse
+- `round_runner.py` coordinates clearing, contract dispatch, and storage without
+  importing HTTP models or other Noesis components
 - `OrderBook` keeps its orders behind the `OrderBookStore` interface (in-memory by
   default); the Postgres implementation lives in `noesis_platform/postgres_store.py`
 - `supply_adapter.py` imports `batch_call_auction.py` (`Ask`, `OrderBook`) and takes
@@ -119,6 +122,48 @@ identify the seed, order counts, and scale.
   ```
 
 
-M10's `run_round()` remains unavailable in this checkout. Integration through it
-is still pending; current tests use the auction and existing contract functions.
-No matching, database, scheduling, or provider behavior is changed by this module.
+The focused `test_round_runner.py` integration tests exercise all five named
+families through `run_round()`. The larger scenario matrix still tests the auction
+and contract functions directly. Scenario generation changes no matching,
+database, scheduling, or provider behavior.
+
+## Run a Market Round From Python (PR_M10)
+
+`run_round(order_book, contract_store, fulfillment_func)` clears every tier,
+dispatches every matched contract, saves the contracts and tier summaries, and
+returns a plain `RoundResult`. No FastAPI, Pydantic, gateway, or database import
+is required for the in-memory path.
+
+```python
+import research.Noesis.market.batch_call_auction as rnbacaau
+import research.Noesis.market.round_runner as rnmaroru
+import research.Noesis.market.scenarios as rnmascen
+
+bids, asks = rnmascen.make_balanced_scenario(seed=7)
+book = rnbacaau.OrderBook()
+for bid in bids:
+    book.submit_bid(bid)
+for ask in asks:
+    book.submit_ask(ask)
+store = rnmaroru.InMemoryContractStore()
+result = rnmaroru.run_round(book, store, lambda contract: True)
+summary = result.tier_results["standard"]
+print(result.round_id, summary.clearing_price, summary.matched_volume)
+```
+
+- `RoundResult` contains `round_id`, tier summaries, dispatched contracts, and
+  `unmatched_bids` / `unmatched_asks`
+- Every tier summary contains its tier, the shared round id, clearing price, and
+  matched volume; zero-volume tiers are included with no clearing price
+- Unmatched orders are independent copies containing only the remaining quantity,
+  in stable price priority; they are not automatically requeued
+- The store assigns contract ids in dispatch order; `get_contract(id)` reads a
+  saved contract, and `get_latest_round(tier)` reads a tier's latest summary
+- Empty rounds consume one round id, return empty collections, and preserve
+  previous per-tier history; reuse a store to keep ids increasing across rounds
+- Fulfillment is explicit and synchronous, preserving the API's existing stub
+  behavior; this is not live inference fulfillment or an atomic transaction
+- The existing assumption in `build_contracts()` remains: one active bid per buyer
+  supplies contract terms; repeated buyer ids use the last bid's terms
+- PostgreSQL implements the same market-owned `ContractStore` interface in
+  `noesis_platform/postgres_store.py`; the runner never imports that backend

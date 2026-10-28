@@ -133,6 +133,7 @@ C4Container
 
   Container_Boundary(market, "market/") {
     Container(auction, "batch_call_auction.py", "Python module", "OrderBook: pending Bid/Ask queue (via OrderBookStore), per-tier uniform-price clearing")
+    Container(runner, "round_runner.py", "Python module", "run_round(): clears all tiers, dispatches and saves contracts; owns ContractStore and plain round results")
     Container(dispatch, "contract_dispatch.py", "Python module", "Contract schema, build_contracts(), dispatch to a mocked fulfillment layer")
   }
 
@@ -142,7 +143,7 @@ C4Container
   }
 
   Container_Boundary(platform, "noesis_platform/") {
-    Container(api, "platform_api.py", "fastapi.FastAPI app factory", "create_app(): HTTP surface over auction/dispatch and proxy, plus contract_id/round_id bookkeeping (via ContractStore) and API-key auth")
+    Container(api, "platform_api.py", "fastapi.FastAPI app factory", "create_app(): HTTP surface over auction/dispatch and proxy, delegates round execution to round_runner and applies API-key auth")
     Container(store, "postgres_store.py", "Python module", "Postgres implementations of OrderBookStore, ContractStore, RequestLogStore, plus init_schema()")
     Container(entry, "main.py", "uvicorn ASGI entry point", "Builds module-level app: selects memory/postgres backend from NOESIS_DB_BACKEND, calls create_app()")
   }
@@ -174,10 +175,13 @@ C4Container
   Rel(dispatch, auction, "imports Bid, Ask, TierClearResult")
   Rel(dispatch, noesis_server, "dispatch_contract() (mocked)")
   Rel(api, auction, "imports OrderBook, Bid, Ask")
-  Rel(api, dispatch, "imports build_contracts(), dispatch_contracts(), mock_fulfill()")
+  Rel(api, runner, "run_round(), ContractStore")
+  Rel(runner, auction, "clear_round()")
+  Rel(runner, dispatch, "build_contracts(), dispatch_contracts()")
+  Rel(caller, runner, "run_round()", "direct Python")
   Rel(api, proxy, "imports Gateway, ProviderConfig")
   Rel(store, auction, "implements OrderBookStore")
-  Rel(store, api, "implements ContractStore")
+  Rel(store, runner, "implements ContractStore")
   Rel(store, proxy, "implements RequestLogStore")
   Rel(store, postgres, "SELECT/INSERT/DELETE via helpers.hsql_implementation")
   Rel(entry, auction, "OrderBook(store=...)")
@@ -226,12 +230,11 @@ C4Container
 - `dispatch_contract()` mutates `contract.fulfilled` in place using whatever
   `fulfillment_func` is passed (`mock_fulfill()` by default), and returns the same
   object
-- `platform_api._MarketState.clear_round()` is the orchestration point that ties the
-  market side together for the HTTP API: it reads pending bids, calls
-  `OrderBook.clear_round()`, mints one shared `round_id` via
-  `ContractStore.next_round_id()`, builds and dispatches every contract for the
-  round, persists each via `ContractStore.save_contract()`, then persists and returns
-  one `RoundClearResponse` per tier via `ContractStore.save_round()`
+- `market.round_runner.run_round()` owns clearing, shared round-id assignment,
+  contract construction and dispatch, persistence, and residual order reporting
+- `platform_api._MarketState.clear_round()` delegates to that runner and converts
+  plain `RoundSummary` dataclasses into the existing `RoundClearResponse` models;
+  Python callers receive `RoundResult` without importing the HTTP component
 - `passthrough_proxy.Gateway.call()` runs a parallel, currently disconnected flow:
   `call()` looks up the `ProviderConfig` for `provider_name`, times
   `provider_config.call_func(model, prompt)` with the injected `clock_func`, computes
@@ -255,7 +258,7 @@ flowchart LR
     build --> contract["Contract<br/>(fulfilled=None)"]
     contract --> dispatch["dispatch_contract() /<br/>dispatch_contracts()"]
     dispatch --> fulfill["fulfillment_func<br/>(default: mock_fulfill())"]
-    fulfill --> save["ContractStore.save_contract()<br/>(_MarketState.clear_round())"]
+    fulfill --> save["ContractStore.save_contract()<br/>(round_runner.run_round())"]
 ```
 
 ### Supply refresh flow (PR_S9)

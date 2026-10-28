@@ -11,7 +11,7 @@
 | M0 Setup | 10/9 | ✅ 9/30 |
 | M1 Gateway | 10/30 | ✅ PR #597 merged 10/10 (spend cap deferred, `decisions.md` D-9) |
 | M2 Checker | 11/20 | 🟨 foundation merged in PR #604 on 10/11; candidate bank, calibration runtime, and scheduled probing implemented 10/17; paid calibration and window close remain |
-| M3 Market loop | 11/20 | Not started; builds on `batch_call_auction.py` |
+| M3 Market loop | 11/20 | Library round runner implemented; scheduling and live integration remain |
 | M4 Demo | 12/11 | Not started |
 
 - Tests: PR #604 added 28 focused checker/database tests; GP's original tests were
@@ -72,3 +72,4 @@
 | 10/17 | Added the v1 candidate bank, live-calibration runtime and report, pluggable capability measurement, and scheduled prober; paid calibration remains pending review |
 | 10/18 | PR_S9: supply adapter turns OpenRouter endpoint prices into one ask per seed seller before each round (`market/supply_adapter.py`, `noesis_platform/supply_feed.py`; D-25 to D-27) |
 | 10/23 | Split standalone model monitoring and nerfing detection into `PR_S13`-`PR_S16`; no runtime behavior changed |
+| 10/25 | PR_M10: extracted the Python-only market runner and contract store; API delegates without response changes; five M11 regimes validated through the runner (D-29) |

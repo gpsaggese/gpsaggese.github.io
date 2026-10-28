@@ -23,7 +23,7 @@
   (bids and asks from buyers and sellers of compute) and the result of the auction
   - [x] `PR_M1`
   - [x] `PR_M2`
-  - [ ] `PR_M10`
+  - [x] `PR_M10`
   - [ ] `PR_M11`
   - [ ] `PR_M12`
   - [ ] `PR_M13`
@@ -211,14 +211,10 @@
   the auction boundary; swap-in point for the real `NoesisServer` once it exists,
   done by `PR_M8` below
 
-### `PR_M10`: [ ] Library-level Round Runner (no HTTP)
+### `PR_M10`: [x] Library-level Round Runner (no HTTP)
 
-- Background: the only code that turns a cleared auction into stored contracts is
-  `_MarketState.clear_round()` in `research/Noesis/noesis_platform/platform_api.py`:
-  it calls `OrderBook.clear_round()`, `build_contracts()`, and
-  `dispatch_contracts()`, then saves each contract and one `RoundClearResponse` per
-  tier; `ContractStore` and its in-memory implementation live in the same HTTP
-  module, so a caller that wants only the market must import the FastAPI layer
+- Original background: `_MarketState.clear_round()` and the contract stores lived
+  in `noesis_platform/platform_api.py`, coupling Python market callers to HTTP
 - Move the orchestration into `market/` as
   `run_round(order_book, contract_store, fulfillment_func) -> RoundResult`:
   - `RoundResult` is a plain dataclass: round id, per-tier clearing price and
@@ -235,6 +231,9 @@
   `test/test_component_imports.py` still passes
 - Result: the market is driven from Python alone: submit orders, run a round, read
   contracts and prices, with no HTTP layer in the import path
+
+- Implemented in `market/round_runner.py`; focused runner tests, unchanged API
+  tests, and component-boundary checks cover the extraction. See `decisions.md` D-29.
 
 ### `PR_M11`: [ ] Deterministic Scenario Fixtures for Bids and Asks
 

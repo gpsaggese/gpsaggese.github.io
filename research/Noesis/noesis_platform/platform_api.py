@@ -4,8 +4,7 @@ caller (`NoesisPlatform`)
 
 - `create_app()` builds a `fastapi.FastAPI` app that round-trips every request
   to the underlying library call, adding no new business logic beyond:
-    - Assigning a `contract_id`/`round_id`, since neither `batch_call_auction.py`
-      nor `contract_dispatch.py` track one
+    - Delegating round execution and id assignment to `market.round_runner`
     - A per-tier "latest cleared round" cache, standing in for `NoesisMarket`'s
       pricing-dissemination feed (not implemented yet);
       - `GET /rounds/{tier}/latest` reads this cache instead of that pub/sub
@@ -40,7 +39,6 @@ Import as:
 import research.Noesis.noesis_platform.platform_api as rnoplapi
 """
 
-import abc
 import dataclasses
 import logging
 from typing import Callable, Dict, List, Optional
@@ -48,11 +46,11 @@ from typing import Callable, Dict, List, Optional
 import fastapi
 import pydantic
 
-import helpers.hdbg as hdbg
 import helpers.hprint as hprint
 import research.Noesis.gateway.passthrough_proxy as rnopapro
 import research.Noesis.market.batch_call_auction as rnbacaau
 import research.Noesis.market.contract_dispatch as rnocodis
+import research.Noesis.market.round_runner as rnmaroru
 
 _LOG = logging.getLogger(__name__)
 
@@ -134,7 +132,8 @@ class ContractResponse(pydantic.BaseModel):
 
 class RoundClearResponse(pydantic.BaseModel):
     """
-    One cleared tier's outcome, returned by
+    Describe one cleared tier for the round-clearing and latest-round endpoints.
+
     - `POST /rounds/clear`
     - `GET /rounds/{tier}/latest`
 
@@ -204,106 +203,16 @@ class LogEntryResponse(pydantic.BaseModel):
 
 
 # #############################################################################
-# ContractStore
-# #############################################################################
-
-
-class ContractStore(abc.ABC):
-    """
-    Pluggable storage backend for `_MarketState`'s contract log and per-tier
-    "latest cleared round" cache.
-    """
-
-    @abc.abstractmethod
-    def save_contract(self, contract: rnocodis.Contract) -> int:
-        """
-        :return: the `contract_id` assigned to `contract`
-        """
-        ...
-
-    @abc.abstractmethod
-    def get_contract(self, contract_id: int) -> rnocodis.Contract: ...
-
-    @abc.abstractmethod
-    def next_round_id(self) -> int:
-        """
-        Assign one new `round_id`, shared by every tier cleared in the same
-        `clear_round()` call (see `_MarketState.clear_round()`).
-        """
-        ...
-
-    @abc.abstractmethod
-    def save_round(self, round_response: "RoundClearResponse") -> None: ...
-
-    @abc.abstractmethod
-    def get_latest_round(self, tier: str) -> "RoundClearResponse": ...
-
-
-# #############################################################################
-# _InMemoryContractStore
-# #############################################################################
-
-
-class _InMemoryContractStore(ContractStore):
-    """
-    Default `ContractStore`: today's `_contracts_by_id`/`_next_contract_id`/
-    `_latest_round_by_tier`/`_next_round_id`, extracted unchanged.
-    """
-
-    def __init__(self) -> None:
-        self._contracts_by_id: Dict[int, rnocodis.Contract] = {}
-        self._next_contract_id = 0
-        self._latest_round_by_tier: Dict[str, RoundClearResponse] = {}
-        self._next_round_id = 0
-
-    def save_contract(self, contract: rnocodis.Contract) -> int:
-        contract_id = self._next_contract_id
-        self._contracts_by_id[contract_id] = contract
-        self._next_contract_id += 1
-        return contract_id
-
-    def get_contract(self, contract_id: int) -> rnocodis.Contract:
-        hdbg.dassert_in(
-            contract_id,
-            self._contracts_by_id,
-            "Unknown contract_id '%s'",
-            contract_id,
-        )
-        return self._contracts_by_id[contract_id]
-
-    def next_round_id(self) -> int:
-        round_id = self._next_round_id
-        self._next_round_id += 1
-        return round_id
-
-    def save_round(self, round_response: RoundClearResponse) -> None:
-        self._latest_round_by_tier[round_response.tier] = round_response
-
-    def get_latest_round(self, tier: str) -> RoundClearResponse:
-        hdbg.dassert_in(
-            tier,
-            self._latest_round_by_tier,
-            "No cleared round yet for tier '%s'",
-            tier,
-        )
-        return self._latest_round_by_tier[tier]
-
-
-# #############################################################################
 # _MarketState
 # #############################################################################
 
 
 class _MarketState:
     """
-    State this API layer adds on top of `OrderBook`.
+    Adapt the market library to HTTP response models.
 
-    - Tracks what `batch_call_auction.py`/`contract_dispatch.py` don't:
-        - a `contract_id`/`round_id` counter
-        - a per-tier "latest cleared round" cache
-    - Lives in a pluggable `ContractStore` (in-memory by default,
-      `postgres_store.PostgresContractStore` for persistence), not directly on
-      this class
+    The injected market store owns contract ids and round history. This adapter
+    only submits orders and converts plain market data into response models.
     """
 
     def __init__(
@@ -311,7 +220,7 @@ class _MarketState:
         order_book: rnbacaau.OrderBook,
         *,
         fulfillment_func: rnocodis.FulfillmentFunc = rnocodis.mock_fulfill,
-        store: Optional[ContractStore] = None,
+        store: Optional[rnmaroru.ContractStore] = None,
     ) -> None:
         """
         :param order_book: order book backing `submit_bid()`/`submit_ask()`/
@@ -321,7 +230,7 @@ class _MarketState:
             - Default: `contract_dispatch.mock_fulfill`
         :param store: pluggable storage backend for the contract log and
             per-tier "latest cleared round" cache
-            - Default: `_InMemoryContractStore()`; see
+            - Default: `round_runner.InMemoryContractStore()`; see
               `OrderBook.__init__()`'s `store` parameter for why this stays
               an `Optional[...] = None` default rather than a stateful
               class-level one
@@ -329,7 +238,7 @@ class _MarketState:
         self._order_book = order_book
         self._fulfillment_func = fulfillment_func
         if store is None:
-            store = _InMemoryContractStore()
+            store = rnmaroru.InMemoryContractStore()
         self._store = store
 
     def submit_bid(self, bid: rnbacaau.Bid) -> None:
@@ -355,36 +264,14 @@ class _MarketState:
 
         :return: one `RoundClearResponse` per tier cleared this round
         """
-        bids = self._order_book.get_pending_bids()
-        tier_results = self._order_book.clear_round()
-        # One `round_id` for the whole round, shared by every tier cleared
-        # below (not one per tier, and not one per row on a persistent
-        # store; see `spec.PR_P2b.md`'s "Risks and Limitations to Call
-        # Out").
-        round_id = self._store.next_round_id()
-        # Build every contract for the round in one pass, dispatch each to
-        # the (mocked) fulfillment layer, then persist it.
-        contracts = rnocodis.build_contracts(bids, tier_results)
-        rnocodis.dispatch_contracts(
-            contracts, fulfillment_func=self._fulfillment_func
+        result = rnmaroru.run_round(
+            self._order_book, self._store, self._fulfillment_func
         )
-        for contract in contracts:
-            self._store.save_contract(contract)
-        # Publish one `RoundClearResponse` per cleared tier, including tiers
-        # that matched no volume, standing in for `NoesisMarket`'s pricing
-        # feed until it exists.
-        round_responses = []
-        for c_level, tier_result in tier_results.items():
-            matched_volume = sum(fill.n_tasks for fill in tier_result.fills)
-            round_response = RoundClearResponse(
-                tier=c_level,
-                round_id=round_id,
-                clearing_price=tier_result.clearing_price,
-                matched_volume=matched_volume,
-            )
-            self._store.save_round(round_response)
-            round_responses.append(round_response)
-        return round_responses
+        # HTTP serialization stays here; the market stores only plain dataclasses.
+        return [
+            RoundClearResponse(**dataclasses.asdict(summary))
+            for summary in result.tier_results.values()
+        ]
 
     def get_contract(self, contract_id: int) -> ContractResponse:
         """
@@ -409,7 +296,8 @@ class _MarketState:
         :raise AssertionError: if no round has cleared `tier` yet, caught by
             `create_app()`'s exception handler and surfaced as an HTTP 400
         """
-        return self._store.get_latest_round(tier)
+        summary = self._store.get_latest_round(tier)
+        return RoundClearResponse(**dataclasses.asdict(summary))
 
 
 # #############################################################################
@@ -456,7 +344,7 @@ def create_app(
     api_keys: Dict[str, str],
     *,
     fulfillment_func: rnocodis.FulfillmentFunc = rnocodis.mock_fulfill,
-    contract_store: Optional[ContractStore] = None,
+    contract_store: Optional[rnmaroru.ContractStore] = None,
 ) -> fastapi.FastAPI:
     """
     Build the `NoesisPlatform` HTTP API over `order_book` and `gateway`.
@@ -474,7 +362,7 @@ def create_app(
     :param contract_store: pluggable storage backend for `_MarketState`'s
         contract log and per-tier "latest cleared round" cache
         - Default: `None`, threaded through to `_MarketState()` which
-          resolves it to `_InMemoryContractStore()`; `main.py` passes
+          resolves it to `round_runner.InMemoryContractStore()`; `main.py` passes
           `postgres_store.PostgresContractStore(connection)` here when
           `NOESIS_DB_BACKEND=postgres` (see `spec.PR_P2b.md`)
     :return: configured `fastapi.FastAPI` app, ready to serve or wrap in a
