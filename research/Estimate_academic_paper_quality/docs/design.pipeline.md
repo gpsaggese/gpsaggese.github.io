@@ -14,32 +14,34 @@
 
 ## Diagram
 
-```mermaid
-C4Component
-  title Pipeline: Components
-  Container_Boundary(p, "estimate_paper_quality.py + epq_pipeline.py") {
-    Component(cli, "_parse() / _main()", "argparse, hselect_action", "Checks flags, builds PipelineConfig, runs the selected stages")
-    Component(res, "run_resolve()", "Python", "Lines to papers and issues")
-    Component(dl, "run_download()", "Python", "PDF and markdown per paper")
-    Component(ex, "run_extract()", "Python", "Features file per converted paper")
-    Component(rep, "run_report()", "Python", "references.md, report.csv, issues.csv")
-  }
-  Component_Ext(resolver, "epq_resolver", "", "")
-  Component_Ext(fetcher, "epq_fetcher", "", "")
-  Component_Ext(extractor, "epq_extractor", "", "")
-  Component_Ext(rater, "epq_rater", "", "")
-  Component_Ext(report, "epq_report", "", "")
-  Component_Ext(bib, "epq_bib_sources", "", "")
-  Rel(cli, res, "config")
-  Rel(cli, dl, "config, papers")
-  Rel(cli, ex, "config, papers")
-  Rel(cli, rep, "config, papers, issues")
-  Rel(res, resolver, "resolve_lines()")
-  Rel(dl, fetcher, "is_fetched(), fetch_paper()")
-  Rel(ex, extractor, "extract_features()")
-  Rel(ex, rater, "rate_paper()")
-  Rel(ex, bib, "get_citation_count()")
-  Rel(rep, report, "write_references(), write_report(), write_issues()")
+```plantuml
+!pragma layout smetana
+!include <C4/C4_Component>
+LAYOUT_TOP_DOWN()
+title Pipeline: Components
+Container_Boundary(p, "estimate_paper_quality.py + epq_pipeline.py") {
+  Component(cli, "_parse() / _main()", "argparse, hselect_action", "Checks flags, builds PipelineConfig, runs the selected stages")
+  Component(res, "run_resolve()", "Python", "Lines to papers and issues")
+  Component(dl, "run_download()", "Python", "PDF and markdown per paper")
+  Component(ex, "run_extract()", "Python", "Features file per converted paper")
+  Component(rep, "run_report()", "Python", "references.md, report.csv, issues.csv")
+}
+Component_Ext(resolver, "epq_resolver", "", "")
+Component_Ext(fetcher, "epq_fetcher", "", "")
+Component_Ext(extractor, "epq_extractor", "", "")
+Component_Ext(rater, "epq_rater", "", "")
+Component_Ext(report, "epq_report", "", "")
+Component_Ext(bib, "epq_bib_sources", "", "")
+Rel(cli, res, "config")
+Rel(cli, dl, "config, papers")
+Rel(cli, ex, "config, papers")
+Rel(cli, rep, "config, papers, issues")
+Rel(res, resolver, "resolve_lines()")
+Rel(dl, fetcher, "is_fetched(), fetch_paper()")
+Rel(ex, extractor, "extract_features()")
+Rel(ex, rater, "rate_paper()")
+Rel(ex, bib, "get_citation_count()")
+Rel(rep, report, "write_references(), write_report(), write_issues()")
 ```
 
 ## Files and Import Graph

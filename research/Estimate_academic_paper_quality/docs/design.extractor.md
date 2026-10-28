@@ -16,21 +16,23 @@
 
 ## Diagram
 
-```mermaid
-C4Component
-  title Extractor: Components
-  Container_Boundary(e, "epq_extractor.py") {
-    Component(prep, "_prepare_text()", "Pure", "Drops the references, cuts to max_chars")
-    Component(call, "extract_features()", "Python", "Builds the prompt, calls llm_func, converts the answer")
-    Component(schema, "_LlmExtraction", "pydantic model", "Shape of the answer of the LLM")
-    Component(verify, "_locate_quote()", "Pure", "Finds the quote in the page texts, gives the page")
-  }
-  Component_Ext(prompt, "epq_extractor.prompt.md", "Markdown", "System prompt")
-  Component_Ext(llm, "llm_func", "helpers.hllm.get_structured_completion", "Injected by pipeline")
-  Rel(call, prep, "markdown")
-  Rel(call, prompt, "reads")
-  Rel(call, llm, "user prompt, _LlmExtraction")
-  Rel(call, verify, "each quote")
+```plantuml
+!pragma layout smetana
+!include <C4/C4_Component>
+LAYOUT_TOP_DOWN()
+title Extractor: Components
+Container_Boundary(e, "epq_extractor.py") {
+  Component(prep, "_prepare_text()", "Pure", "Drops the references, cuts to max_chars")
+  Component(call, "extract_features()", "Python", "Builds the prompt, calls llm_func, converts the answer")
+  Component(schema, "_LlmExtraction", "pydantic model", "Shape of the answer of the LLM")
+  Component(verify, "_locate_quote()", "Pure", "Finds the quote in the page texts, gives the page")
+}
+Component_Ext(prompt, "epq_extractor.prompt.md", "Markdown", "System prompt")
+Component_Ext(llm, "llm_func", "helpers.hllm.get_structured_completion", "Injected by pipeline")
+Rel(call, prep, "markdown")
+Rel(call, prompt, "reads")
+Rel(call, llm, "user prompt, _LlmExtraction")
+Rel(call, verify, "each quote")
 ```
 
 ## Files and Import Graph

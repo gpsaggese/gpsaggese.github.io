@@ -14,26 +14,28 @@
 
 ## Diagram
 
-```mermaid
-C4Component
-  title Bib Sources: Components
-  Container_Boundary(b, "epq_bib_sources.py") {
-    Component(api, "BibSources", "Python class", "Public lookups that return BibRecord")
-    Component(parse, "_parse_s2() / _parse_crossref() / _parse_arxiv()", "Pure", "Raw JSON or Atom to BibRecord")
-    Component(get, "_get()", "requests, hretry, simple_cache", "Throttled, retried, cached GET")
-  }
-  System_Ext(s2, "Semantic Scholar Graph API", "")
-  System_Ext(cr, "Crossref REST API", "")
-  System_Ext(ax, "arXiv API", "")
-  System_Ext(uw, "Unpaywall API", "")
-  System_Ext(web, "Publisher sites", "")
-  Rel(api, get, "url, params")
-  Rel(api, parse, "raw response")
-  Rel(get, s2, "GET /graph/v1/paper/...")
-  Rel(get, cr, "GET /works")
-  Rel(get, ax, "GET /api/query")
-  Rel(get, uw, "GET /v2/<doi>")
-  Rel(get, web, "GET <url>")
+```plantuml
+!pragma layout smetana
+!include <C4/C4_Component>
+LAYOUT_TOP_DOWN()
+title Bib Sources: Components
+Container_Boundary(b, "epq_bib_sources.py") {
+  Component(api, "BibSources", "Python class", "Public lookups that return BibRecord")
+  Component(parse, "_parse_s2() / _parse_crossref() / _parse_arxiv()", "Pure", "Raw JSON or Atom to BibRecord")
+  Component(get, "_get()", "requests, hretry, simple_cache", "Throttled, retried, cached GET")
+}
+System_Ext(s2, "Semantic Scholar Graph API", "")
+System_Ext(cr, "Crossref REST API", "")
+System_Ext(ax, "arXiv API", "")
+System_Ext(uw, "Unpaywall API", "")
+System_Ext(web, "Publisher sites", "")
+Rel(api, get, "url, params")
+Rel(api, parse, "raw response")
+Rel(get, s2, "GET /graph/v1/paper/...")
+Rel(get, cr, "GET /works")
+Rel(get, ax, "GET /api/query")
+Rel(get, uw, "GET /v2/<doi>")
+Rel(get, web, "GET <url>")
 ```
 
 ## Files and Import Graph

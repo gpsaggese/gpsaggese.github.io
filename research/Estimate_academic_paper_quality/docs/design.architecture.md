@@ -25,20 +25,22 @@
   the affiliations, each with a quote of the paper
 - Chrome downloads the SSRN PDFs, since SSRN blocks scripted clients
 
-```mermaid
-C4Context
-  title Estimate Paper Quality: Context
-  Person(user, "Quant researcher", "Gives a list of papers, reads the CSV report")
-  System(epq, "Estimate Paper Quality pipeline", "Resolves, downloads, converts, extracts, rates, reports")
-  System_Ext(bib, "Bibliographic APIs", "Semantic Scholar, Crossref, arXiv, Unpaywall")
-  System_Ext(sites, "Paper hosts", "arXiv, SSRN, publisher sites, open-access mirrors")
-  System_Ext(chrome, "Chrome", "Started and closed by download_with_chrome.py for SSRN")
-  System_Ext(llm, "LLM provider", "OpenAI or OpenRouter, through helpers.hllm")
-  Rel(user, epq, "Runs estimate_paper_quality.py", "CLI")
-  Rel(epq, bib, "Looks up metadata, links, citations", "HTTPS JSON")
-  Rel(epq, sites, "Downloads PDFs", "HTTPS")
-  Rel(epq, chrome, "Downloads SSRN PDFs", "CDP")
-  Rel(epq, llm, "Extracts features with quotes", "HTTPS JSON")
+```plantuml
+!pragma layout smetana
+!include <C4/C4_Context>
+LAYOUT_LEFT_RIGHT()
+title Estimate Paper Quality: Context
+Person(user, "Quant researcher", "Gives a list of papers, reads the CSV report")
+System(epq, "Estimate Paper Quality pipeline", "Resolves, downloads, converts, extracts, rates, reports")
+System_Ext(bib, "Bibliographic APIs", "Semantic Scholar, Crossref, arXiv, Unpaywall")
+System_Ext(sites, "Paper hosts", "arXiv, SSRN, publisher sites, open-access mirrors")
+System_Ext(chrome, "Chrome", "Started and closed by download_with_chrome.py for SSRN")
+System_Ext(llm, "LLM provider", "OpenAI or OpenRouter, through helpers.hllm")
+Rel(user, epq, "Runs estimate_paper_quality.py", "CLI")
+Rel(epq, bib, "Looks up metadata, links, citations", "HTTPS JSON")
+Rel(epq, sites, "Downloads PDFs", "HTTPS")
+Rel(epq, chrome, "Downloads SSRN PDFs", "CDP")
+Rel(epq, llm, "Extracts features with quotes", "HTTPS JSON")
 ```
 
 ### C2 (Container)
@@ -47,46 +49,48 @@ C4Context
   existing download tool
 - Arrows are imports or calls: each one points down a layer, never up
 
-```mermaid
-C4Container
-  title Estimate Paper Quality: Containers
-  Person(user, "Quant researcher", "")
+```plantuml
+!pragma layout smetana
+!include <C4/C4_Container>
+LAYOUT_TOP_DOWN()
+title Estimate Paper Quality: Containers
+Person(user, "Quant researcher")
 
-  Container_Boundary(script, "Script and orchestration layer") {
-    Container(cli, "estimate_paper_quality.py", "Python CLI", "Parses args, selects stages with hselect_action")
-    Container(pipeline, "epq_pipeline.py", "Python module", "Runs the stages, loops on papers, isolates failures, skips done work")
-  }
+Container_Boundary(script, "Script and orchestration layer") {
+  Container(cli, "estimate_paper_quality.py", "Python CLI", "Parses args, selects stages with hselect_action")
+  Container(pipeline, "epq_pipeline.py", "Python module", "Runs the stages, loops on papers, isolates failures, skips done work")
+}
 
-  Container_Boundary(logic, "Business logic layer") {
-    Container(resolver, "epq_resolver.py", "Python module", "Parses lines, matches papers, dedupes, builds references")
-    Container(extractor, "epq_extractor.py", "Python module", "LLM extraction of features, facts, affiliations, and quotes")
-    Container(rater, "epq_rater.py", "Python module", "Pure Paper quality rating from three signals")
-  }
+Container_Boundary(logic, "Business logic layer") {
+  Container(resolver, "epq_resolver.py", "Python module", "Parses lines, matches papers, dedupes, builds references")
+  Container(extractor, "epq_extractor.py", "Python module", "LLM extraction of features, facts, affiliations, and quotes")
+  Container(rater, "epq_rater.py", "Python module", "Pure Paper quality rating from three signals")
+}
 
-  Container_Boundary(infra, "Infrastructure layer") {
-    Container(bib, "epq_bib_sources.py", "Python module", "HTTP clients with throttle, retry, disk cache")
-    Container(fetcher, "epq_fetcher.py", "Python module", "Runs the download tool, checks and reads the PDF")
-    Container(report, "epq_report.py", "Python module", "Writes and reads all the output files")
-  }
+Container_Boundary(infra, "Infrastructure layer") {
+  Container(bib, "epq_bib_sources.py", "Python module", "HTTP clients with throttle, retry, disk cache")
+  Container(fetcher, "epq_fetcher.py", "Python module", "Runs the download tool, checks and reads the PDF")
+  Container(report, "epq_report.py", "Python module", "Writes and reads all the output files")
+}
 
-  Container_Boundary(ext, "Shared types, existing tool, outputs") {
-    Container_Ext(tool, "download_academic_paper_to_md.py", "Existing uv script", "Downloads a PDF and converts it to markdown")
-    ContainerDb(out, "output_dir", "Files", "references.md, report.csv, issues.csv, papers/, state/")
-    Container(types, "epq_types.py", "Python module", "Dataclasses shared by all modules")
-  }
+Container_Boundary(ext, "Shared types, existing tool, outputs") {
+  Container_Ext(tool, "download_academic_paper_to_md.py", "Existing uv script", "Downloads a PDF and converts it to markdown")
+  ContainerDb(out, "output_dir", "Files", "references.md, report.csv, issues.csv, papers/, state/")
+  Container(types, "epq_types.py", "Python module", "Dataclasses shared by all modules")
+}
 
-  Rel(user, cli, "--input, --output_dir")
-  Rel(cli, pipeline, "run_pipeline(config)")
-  Rel(pipeline, resolver, "resolve_lines()")
-  Rel(pipeline, fetcher, "fetch_paper(), count_pages()")
-  Rel(pipeline, extractor, "extract_features()")
-  Rel(pipeline, rater, "rate_paper()")
-  Rel(pipeline, report, "write_*(), read_features_file()")
-  Rel(pipeline, bib, "get_citation_count()")
-  Rel(resolver, bib, "lookup_*(), search_title()")
-  Rel(resolver, fetcher, "read_pdf_title()")
-  Rel(fetcher, tool, "subprocess")
-  Rel(report, out, "JSON, CSV, markdown")
+Rel(user, cli, "~-~-input, ~-~-output_dir")
+Rel(cli, pipeline, "run_pipeline(config)")
+Rel(pipeline, resolver, "resolve_lines()")
+Rel(pipeline, fetcher, "fetch_paper(), count_pages()")
+Rel(pipeline, extractor, "extract_features()")
+Rel(pipeline, rater, "rate_paper()")
+Rel(pipeline, report, "write_*(), read_features_file()")
+Rel(pipeline, bib, "get_citation_count()")
+Rel(resolver, bib, "lookup_*(), search_title()")
+Rel(resolver, fetcher, "read_pdf_title()")
+Rel(fetcher, tool, "subprocess")
+Rel(report, out, "JSON, CSV, markdown")
 ```
 
 ## Files and Import Graph

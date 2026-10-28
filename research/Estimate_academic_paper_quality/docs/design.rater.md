@@ -16,22 +16,24 @@
 
 ## Diagram
 
-```mermaid
-C4Component
-  title Rater: Components
-  Container_Boundary(r, "epq_rater.py") {
-    Component(pages, "score_page_length()", "Pure", "Page count to score")
-    Component(aff, "score_affiliation()", "Pure", "Affiliations and tiers to best score")
-    Component(cit, "score_citations()", "Pure", "Count, year, today to score, annualized if young")
-    Component(rate, "rate_paper()", "Pure", "Mean of known scores, half up")
-    Component(tiers, "parse_tiers()", "Pure", "YAML dict to AffiliationTiers")
-  }
-  Component_Ext(yaml, "affiliation_tiers.yaml", "YAML", "Dated tier list")
-  Rel(rate, pages, "")
-  Rel(rate, aff, "")
-  Rel(rate, cit, "")
-  Rel(aff, tiers, "AffiliationTiers")
-  Rel(tiers, yaml, "loaded by pipeline")
+```plantuml
+!pragma layout smetana
+!include <C4/C4_Component>
+LAYOUT_TOP_DOWN()
+title Rater: Components
+Container_Boundary(r, "epq_rater.py") {
+  Component(pages, "score_page_length()", "Pure", "Page count to score")
+  Component(aff, "score_affiliation()", "Pure", "Affiliations and tiers to best score")
+  Component(cit, "score_citations()", "Pure", "Count, year, today to score, annualized if young")
+  Component(rate, "rate_paper()", "Pure", "Mean of known scores, half up")
+  Component(tiers, "parse_tiers()", "Pure", "YAML dict to AffiliationTiers")
+}
+Component_Ext(yaml, "affiliation_tiers.yaml", "YAML", "Dated tier list")
+Rel(rate, pages, "")
+Rel(rate, aff, "")
+Rel(rate, cit, "")
+Rel(aff, tiers, "AffiliationTiers")
+Rel(tiers, yaml, "loaded by pipeline")
 ```
 
 ## Files and Import Graph

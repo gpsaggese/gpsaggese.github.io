@@ -17,20 +17,22 @@
 
 ## Diagram
 
-```mermaid
-C4Component
-  title Report: Components
-  Container_Boundary(r, "epq_report.py") {
-    Component(state, "write_papers() / read_papers() / write_issues() / read_issues()", "json", "Stage outputs in state/")
-    Component(feat, "write_features_file() / read_features_file()", "json", "One file per paper, with schema_version")
-    Component(rows, "build_report_rows()", "Pure", "PaperFeatures to CSV rows, in R7 order")
-    Component(out, "write_references() / write_report() / write_issues_csv()", "csv, markdown", "Final outputs")
-  }
-  ContainerDb(dir, "output_dir", "Files", "")
-  Rel(state, dir, "state/*.json")
-  Rel(feat, dir, "papers/*.features.json")
-  Rel(rows, out, "rows")
-  Rel(out, dir, "references.md, report.csv, issues.csv")
+```plantuml
+!pragma layout smetana
+!include <C4/C4_Component>
+LAYOUT_TOP_DOWN()
+title Report: Components
+Container_Boundary(r, "epq_report.py") {
+  Component(state, "write_papers() / read_papers() / write_issues() / read_issues()", "json", "Stage outputs in state/")
+  Component(feat, "write_features_file() / read_features_file()", "json", "One file per paper, with schema_version")
+  Component(rows, "build_report_rows()", "Pure", "PaperFeatures to CSV rows, in R7 order")
+  Component(out, "write_references() / write_report() / write_issues_csv()", "csv, markdown", "Final outputs")
+}
+ContainerDb(dir, "output_dir", "Files", "")
+Rel(state, dir, "state/*.json")
+Rel(feat, dir, "papers/*.features.json")
+Rel(rows, out, "rows")
+Rel(out, dir, "references.md, report.csv, issues.csv")
 ```
 
 ## Files and Import Graph

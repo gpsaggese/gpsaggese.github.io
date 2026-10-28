@@ -16,26 +16,28 @@
 
 ## Diagram
 
-```mermaid
-C4Component
-  title Resolver: Components
-  Container_Boundary(r, "epq_resolver.py") {
-    Component(parse, "parse_line()", "Pure", "Text to InputLine with kind and key")
-    Component(lookup, "_lookup_candidates()", "Calls bib_sources", "InputLine to BibRecord candidates")
-    Component(match, "match_candidates()", "Pure", "Title similarity, author filter, one distinct paper")
-    Component(build, "build_paper()", "Pure", "Canonical record, reference, base name, download inputs")
-    Component(dedupe, "merge_papers()", "Pure", "One Paper per paper_key()")
-    Component(sort, "sort_papers()", "Pure", "Year down, author, title")
-  }
-  Component_Ext(bib, "epq_bib_sources", "", "")
-  Component_Ext(fetch, "epq_fetcher.read_pdf_title()", "", "")
-  Rel(parse, lookup, "InputLine")
-  Rel(lookup, bib, "lookup_*(), search_title()")
-  Rel(lookup, fetch, "local PDF or direct PDF URL")
-  Rel(lookup, match, "candidates")
-  Rel(match, build, "one BibRecord group")
-  Rel(build, dedupe, "Paper")
-  Rel(dedupe, sort, "papers")
+```plantuml
+!pragma layout smetana
+!include <C4/C4_Component>
+LAYOUT_TOP_DOWN()
+title Resolver: Components
+Container_Boundary(r, "epq_resolver.py") {
+  Component(parse, "parse_line()", "Pure", "Text to InputLine with kind and key")
+  Component(lookup, "_lookup_candidates()", "Calls bib_sources", "InputLine to BibRecord candidates")
+  Component(match, "match_candidates()", "Pure", "Title similarity, author filter, one distinct paper")
+  Component(build, "build_paper()", "Pure", "Canonical record, reference, base name, download inputs")
+  Component(dedupe, "merge_papers()", "Pure", "One Paper per paper_key()")
+  Component(sort, "sort_papers()", "Pure", "Year down, author, title")
+}
+Component_Ext(bib, "epq_bib_sources", "", "")
+Component_Ext(fetch, "epq_fetcher.read_pdf_title()", "", "")
+Rel(parse, lookup, "InputLine")
+Rel(lookup, bib, "lookup_*(), search_title()")
+Rel(lookup, fetch, "local PDF or direct PDF URL")
+Rel(lookup, match, "candidates")
+Rel(match, build, "one BibRecord group")
+Rel(build, dedupe, "Paper")
+Rel(dedupe, sort, "papers")
 ```
 
 ## Files and Import Graph

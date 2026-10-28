@@ -15,22 +15,24 @@
 
 ## Diagram
 
-```mermaid
-C4Component
-  title Fetcher: Components
-  Container_Boundary(f, "epq_fetcher.py") {
-    Component(done, "is_fetched()", "os.path", "PDF and markdown exist")
-    Component(fetch, "fetch_paper()", "hsystem", "Tries each download input until one gives a valid PDF and markdown")
-    Component(check, "_check_pdf() / _check_markdown()", "Pure", "%PDF header, non-empty text")
-    Component(read, "read_pdf_pages() / count_pages() / read_pdf_title() / read_markdown()", "pymupdf", "Reads the files")
-  }
-  Container_Ext(tool, "download_academic_paper_to_md.py", "uv script", "")
-  Container_Ext(chrome, "download_with_chrome.py", "uv script", "")
-  Container_Ext(conv, "convert_pdf_to_md.py", "uv script", "")
-  Rel(fetch, tool, "subprocess")
-  Rel(tool, chrome, "SSRN input")
-  Rel(tool, conv, "convert")
-  Rel(fetch, check, "after each run")
+```plantuml
+!pragma layout smetana
+!include <C4/C4_Component>
+LAYOUT_TOP_DOWN()
+title Fetcher: Components
+Container_Boundary(f, "epq_fetcher.py") {
+  Component(done, "is_fetched()", "os.path", "PDF and markdown exist")
+  Component(fetch, "fetch_paper()", "hsystem", "Tries each download input until one gives a valid PDF and markdown")
+  Component(check, "_check_pdf() / _check_markdown()", "Pure", "%PDF header, non-empty text")
+  Component(read, "read_pdf_pages() / count_pages() / read_pdf_title() / read_markdown()", "pymupdf", "Reads the files")
+}
+Container_Ext(tool, "download_academic_paper_to_md.py", "uv script", "")
+Container_Ext(chrome, "download_with_chrome.py", "uv script", "")
+Container_Ext(conv, "convert_pdf_to_md.py", "uv script", "")
+Rel(fetch, tool, "subprocess")
+Rel(tool, chrome, "SSRN input")
+Rel(tool, conv, "convert")
+Rel(fetch, check, "after each run")
 ```
 
 ## Files and Import Graph
