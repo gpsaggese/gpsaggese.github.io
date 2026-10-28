@@ -61,6 +61,18 @@
 - **Alternatives**: fresh process-local randomness (hard to replay); public seeded
   schedules (predictable); marking probes in provider requests (easy to game)
 
+### D-29. Standalone monitoring cannot mutate market state
+
+- **Decision**: run longitudinal provider/model monitoring without market orders or
+  contracts, and store its observations separately from contract evidence
+- **Why**: monitoring must run without buyer traffic, while experimental thresholds
+  and monitor failures must not affect fulfillment, verdicts, or seller reputation
+- **Boundary**: the monitor can reuse the canary bank, capability measurer, and
+  provider interface; it cannot write contracts, contract verdicts, or reputation
+- **Alternatives**: synthetic contracts for monitoring (couples research traffic to
+  market state); reuse contract evidence tables (risks accidental seller penalties)
+- **Status**: proposed in `spec.PR_S13.md`; implementation starts in `PR_S14`
+
 ## Gateway
 
 ### D-4. OpenRouter with the provider pinned, fallbacks off
