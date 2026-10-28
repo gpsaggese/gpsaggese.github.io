@@ -160,3 +160,33 @@ def run_experiment(
     results["n_trades"] = len(rets)
     results["mode"] = mode
     return results
+
+
+def compute_effective_n(rets: pd.Series) -> float:
+    """
+    Compute the effective number of trades, accounting for unequal moves.
+
+    With returns of different sizes, a few large moves dominate the PnL, so
+    the PnL is as noisy as if there were fewer equal-sized trades:
+    N_eff = (sum |r|)^2 / sum r^2. N_eff = N when all |r| are equal.
+
+    :param rets: returns, one per trade
+    :return: effective number of trades
+    """
+    abs_rets = np.abs(rets.to_numpy())
+    n_eff = abs_rets.sum() ** 2 / np.sum(abs_rets**2)
+    return float(n_eff)
+
+
+def compute_min_hit_rate(n: float, *, z_q: float = 1.645) -> float:
+    """
+    Compute the minimum hit rate for a target probability of positive PnL.
+
+    Use the normal approximation from the spec: p* = 1/2 + z_q / (2 sqrt(N)).
+
+    :param n: number of trades (or effective number of trades)
+    :param z_q: normal quantile of the target probability (1.645 for 95%)
+    :return: minimum hit rate
+    """
+    p_star = 0.5 + z_q / (2 * np.sqrt(n))
+    return float(p_star)
