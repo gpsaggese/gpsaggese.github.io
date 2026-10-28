@@ -97,6 +97,8 @@ the same frozen evidence under the same policy version produces the same result.
 
 - The reviewed, paid live-provider calibration run and its generated findings
 - The window-closing worker that turns frozen request evidence into a verdict
+- The proposed runtime architecture and reviewable implementation split are in
+  `spec.PR_S4.md`
 - Reputation updates, dashboard views, and alerting
 
 Calibration and scheduled probing are run with

@@ -525,10 +525,11 @@
 
 ### `PR_S4`: [ ] Fulfillment Monitoring Wired to the Market (stubbed Both Sides)
 
-- Status (2026-10-12): partially implemented. PR #597 added contract binding,
+- Status (2026-10-24): partially implemented. PR #597 added contract binding,
   request logging, and provider attribution. PR #604 added seller-attributable
   evidence, separate latency/quality assessments, verdicts, and persistence. The
-  prober, window-closing worker, and market-facing `VerdictSink` remain open.
+  prober is implemented. `spec.PR_S4.md` defines the remaining window runtime,
+  market-facing `VerdictSink`, and three-PR implementation split.
 - Background: `papers/Noesis/05_noesis_server.tex` sec:fulfillment_monitoring
   Equation~eq:success_indicator defines per-request success as the conjunction
   `capability_ok(x) and latency_ok(x)`, and `measured_reliability`
