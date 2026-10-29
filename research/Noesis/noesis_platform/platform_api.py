@@ -44,10 +44,10 @@ import logging
 from typing import Callable, Dict, List, Optional
 
 import fastapi
-import pydantic
-
 import helpers.hdbg as hdbg
 import helpers.hprint as hprint
+import pydantic
+
 import research.Noesis.gateway.passthrough_proxy as rnopapro
 import research.Noesis.market.batch_call_auction as rnbacaau
 import research.Noesis.market.contract_dispatch as rnocodis

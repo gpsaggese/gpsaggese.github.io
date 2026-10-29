@@ -15,6 +15,7 @@ from typing import Callable, List
 import helpers.hprint as hprint
 import helpers.hsystem as hsystem
 import helpers.hunit_test as hunitest
+
 import research.Noesis.market.batch_call_auction as rnbacaau
 import research.Noesis.market.contract_dispatch as rnocodis
 import research.Noesis.market.round_runner as rnmaroru

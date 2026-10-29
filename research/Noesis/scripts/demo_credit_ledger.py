@@ -27,11 +27,11 @@ import logging
 from typing import Any, Dict, List
 
 import fastapi.testclient
-import httpx
-
 import helpers.hdbg as hdbg
 import helpers.hparser as hparser
 import helpers.hprint as hprint
+import httpx
+
 import research.Noesis.gateway.passthrough_proxy as rnopapro
 import research.Noesis.market.batch_call_auction as rnbacaau
 import research.Noesis.market.credit_ledger as rnmacrle
