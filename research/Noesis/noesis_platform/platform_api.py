@@ -46,10 +46,12 @@ from typing import Callable, Dict, List, Optional
 import fastapi
 import pydantic
 
+import helpers.hdbg as hdbg
 import helpers.hprint as hprint
 import research.Noesis.gateway.passthrough_proxy as rnopapro
 import research.Noesis.market.batch_call_auction as rnbacaau
 import research.Noesis.market.contract_dispatch as rnocodis
+import research.Noesis.market.credit_ledger as rnmacrle
 import research.Noesis.market.round_runner as rnmaroru
 
 _LOG = logging.getLogger(__name__)
@@ -221,6 +223,7 @@ class _MarketState:
         *,
         fulfillment_func: rnocodis.FulfillmentFunc = rnocodis.mock_fulfill,
         store: Optional[rnmaroru.ContractStore] = None,
+        credit_ledger: Optional[rnmacrle.CreditLedger] = None,
     ) -> None:
         """
         :param order_book: order book backing `submit_bid()`/`submit_ask()`/
@@ -234,19 +237,51 @@ class _MarketState:
               `OrderBook.__init__()`'s `store` parameter for why this stays
               an `Optional[...] = None` default rather than a stateful
               class-level one
+        :param credit_ledger: balance gate for `submit_bid()` and the debit
+            on `clear_round()` (`PR_P4`)
+            - Default: `None`, bids are not gated
         """
         self._order_book = order_book
         self._fulfillment_func = fulfillment_func
         if store is None:
             store = rnmaroru.InMemoryContractStore()
         self._store = store
+        self._credit_ledger = credit_ledger
+        # Account behind each `buyer_id` queued for the next round.
+        self._bid_accounts: Dict[str, str] = {}
 
-    def submit_bid(self, bid: rnbacaau.Bid) -> None:
+    def submit_bid(self, bid: rnbacaau.Bid, account_id: str) -> None:
         """
         Queue `bid` on the underlying order book.
 
+        With a credit ledger, the bid is rejected unless `account_id` can
+        cover `n_tasks * p_max`; the balance is debited only on clearing.
+
         :param bid: buy order to queue
+        :param account_id: account placing the bid
+        :raise AssertionError: if the account cannot afford the bid, or
+            `bid.buyer_id` is already bound to another account this round;
+            surfaced by `create_app()` as an HTTP 400
         """
+        if self._credit_ledger is not None:
+            cost = rnmacrle.bid_cost(bid)
+            balance = self._credit_ledger.get_balance(account_id)
+            hdbg.dassert_lte(
+                cost,
+                balance,
+                "Insufficient credit for '%s': bid costs up to %s, balance is %s",
+                account_id,
+                cost,
+                balance,
+            )
+            bound_account = self._bid_accounts.get(bid.buyer_id, account_id)
+            hdbg.dassert_eq(
+                bound_account,
+                account_id,
+                "buyer_id '%s' is already used by another account this round",
+                bid.buyer_id,
+            )
+            self._bid_accounts[bid.buyer_id] = account_id
         self._order_book.submit_bid(bid)
 
     def submit_ask(self, ask: rnbacaau.Ask) -> None:
@@ -256,6 +291,20 @@ class _MarketState:
         :param ask: sell order to queue
         """
         self._order_book.submit_ask(ask)
+
+    def _debit_contract(
+        self, contract_id: int, contract: rnocodis.Contract
+    ) -> None:
+        """
+        Charge the account behind `contract.buyer_id` for the cleared tasks.
+
+        :param contract_id: id the store assigned to `contract`
+        :param contract: contract cleared this round
+        """
+        if self._credit_ledger is not None:
+            account_id = self._bid_accounts[contract.buyer_id]
+            amount = rnmacrle.fill_cost(contract.n_tasks, contract.price)
+            self._credit_ledger.debit(account_id, contract_id, amount)
 
     def clear_round(self) -> List[RoundClearResponse]:
         """
@@ -267,6 +316,9 @@ class _MarketState:
         result = rnmaroru.run_round(
             self._order_book, self._store, self._fulfillment_func
         )
+        for contract_id, contract in zip(result.contract_ids, result.contracts):
+            self._debit_contract(contract_id, contract)
+        self._bid_accounts = {}
         # HTTP serialization stays here; the market stores only plain dataclasses.
         return [
             RoundClearResponse(**dataclasses.asdict(summary))
@@ -345,6 +397,7 @@ def create_app(
     *,
     fulfillment_func: rnocodis.FulfillmentFunc = rnocodis.mock_fulfill,
     contract_store: Optional[rnmaroru.ContractStore] = None,
+    credit_ledger: Optional[rnmacrle.CreditLedger] = None,
 ) -> fastapi.FastAPI:
     """
     Build the `NoesisPlatform` HTTP API over `order_book` and `gateway`.
@@ -365,12 +418,20 @@ def create_app(
           resolves it to `round_runner.InMemoryContractStore()`; `main.py` passes
           `postgres_store.PostgresContractStore(connection)` here when
           `NOESIS_DB_BACKEND=postgres` (see `spec.PR_P2b.md`)
+    :param credit_ledger: per-account free-credit balances; `POST /bids`
+        rejects a bid with an HTTP 400 unless the caller's account can
+        cover `n_tasks * p_max`, and `POST /rounds/clear` debits each
+        cleared contract once (`PR_P4`)
+        - Default: `None`, bids are not gated
     :return: configured `fastapi.FastAPI` app, ready to serve or wrap in a
         `fastapi.testclient.TestClient`
     """
     _LOG.debug(hprint.to_str("api_keys"))
     market_state = _MarketState(
-        order_book, fulfillment_func=fulfillment_func, store=contract_store
+        order_book,
+        fulfillment_func=fulfillment_func,
+        store=contract_store,
+        credit_ledger=credit_ledger,
     )
     require_api_key = _make_require_api_key(api_keys)
     app = fastapi.FastAPI(title="NoesisPlatform")
@@ -405,7 +466,7 @@ def create_app(
     @app.post("/bids", status_code=201)
     def submit_bid(
         bid_request: BidRequest,
-        _account_id: str = fastapi.Depends(require_api_key),
+        account_id: str = fastapi.Depends(require_api_key),
     ) -> BidRequest:
         bid = rnbacaau.Bid(
             bid_request.buyer_id,
@@ -415,7 +476,7 @@ def create_app(
             bid_request.r_min,
             bid_request.p_max,
         )
-        market_state.submit_bid(bid)
+        market_state.submit_bid(bid, account_id)
         return bid_request
 
     @app.post("/asks", status_code=201)
