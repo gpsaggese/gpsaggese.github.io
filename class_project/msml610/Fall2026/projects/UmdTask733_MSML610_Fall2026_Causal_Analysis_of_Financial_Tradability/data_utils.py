@@ -1,0 +1,259 @@
+"""
+Load and clean OHLCV bars for the Causal Analysis of Financial Tradability
+project.
+
+Import as:
+
+import data_utils as dutil
+"""
+
+import hashlib
+import io
+import os
+import zipfile
+
+import numpy as np
+import pandas as pd
+import requests
+
+_BINANCE_URL = "https://data.binance.vision/data/spot/monthly/klines"
+_DATA_DIR = "data"
+_OHLCV_COLUMNS = ["open", "high", "low", "close", "volume"]
+
+
+# #############################################################################
+# Load
+# #############################################################################
+
+
+def _download_month(symbol: str, interval: str, month: str) -> pd.DataFrame:
+    """
+    Download one month of bars from the Binance bulk data files.
+
+    :param symbol: trading pair, e.g., "BTCUSDT"
+    :param interval: bar size, e.g., "5m"
+    :param month: month to download, e.g., "2024-01"
+    :return: OHLCV bars indexed by bar open time (UTC)
+    """
+    file_name = f"{symbol}-{interval}-{month}.zip"
+    url = f"{_BINANCE_URL}/{symbol}/{interval}/{file_name}"
+    resp = requests.get(url, timeout=60)
+    # Fail loudly instead of silently skipping a month.
+    resp.raise_for_status()
+    # Check the file against the checksum that Binance publishes next to it.
+    checksum_resp = requests.get(url + ".CHECKSUM", timeout=60)
+    checksum_resp.raise_for_status()
+    expected = checksum_resp.text.split()[0]
+    actual = hashlib.sha256(resp.content).hexdigest()
+    if actual != expected:
+        raise ValueError(f"Checksum mismatch for {file_name}")
+    with zipfile.ZipFile(io.BytesIO(resp.content)) as zf:
+        csv_name = zf.namelist()[0]
+        # Each row is [open_time, open, high, low, close, volume, ...].
+        df = pd.read_csv(zf.open(csv_name), header=None, usecols=range(6))
+    df.columns = ["open_time"] + _OHLCV_COLUMNS
+    # Binance switched from milliseconds to microseconds in 2025.
+    unit = "us" if df["open_time"].iloc[0] > 1e14 else "ms"
+    df["open_time"] = pd.to_datetime(df["open_time"], unit=unit, utc=True)
+    df = df.set_index("open_time")
+    return df
+
+
+def load_ohlcv(
+    symbol: str, start: str, end: str, *, interval: str = "5m"
+) -> pd.DataFrame:
+    """
+    Load OHLCV bars from Binance, using a local parquet cache.
+
+    The data comes from the monthly files on `data.binance.vision`, which are
+    much faster to download than the API for 5-minute bars.
+
+    :param symbol: trading pair, e.g., "BTCUSDT"
+    :param start: start date (inclusive), e.g., "2020-01-01"
+    :param end: end date (exclusive), e.g., "2026-10-01"
+    :param interval: bar size, e.g., "5m"
+    :return: OHLCV bars indexed by bar open time (UTC), as published by
+        Binance (not cleaned: may have duplicates and gaps)
+    """
+    file_name = f"{symbol}_{interval}_{start}_{end}.parquet"
+    file_path = os.path.join(_DATA_DIR, file_name)
+    # Use the cached file if we already downloaded this data.
+    if os.path.exists(file_path):
+        bars = pd.read_parquet(file_path)
+        return bars
+    start_ts = pd.Timestamp(start, tz="UTC")
+    end_ts = pd.Timestamp(end, tz="UTC")
+    # Download every month that overlaps [start, end).
+    months = pd.period_range(
+        start_ts.tz_localize(None),
+        (end_ts - pd.Timedelta(1, "ns")).tz_localize(None),
+        freq="M",
+    )
+    bars = [_download_month(symbol, interval, str(month)) for month in months]
+    bars = pd.concat(bars)
+    bars = bars[(bars.index >= start_ts) & (bars.index < end_ts)]
+    if bars.empty:
+        msg = f"No data for {symbol} {interval} from {start} to {end}"
+        raise ValueError(msg)
+    os.makedirs(_DATA_DIR, exist_ok=True)
+    bars.to_parquet(file_path)
+    return bars
+
+
+# #############################################################################
+# Clean
+# #############################################################################
+
+
+def _to_timedelta(interval: str) -> pd.Timedelta:
+    """
+    Convert a Binance interval to a timedelta.
+
+    :param interval: bar size, e.g., "5m", "1h", "1d"
+    :return: bar size as a timedelta
+    """
+    units = {"m": "min", "h": "h", "d": "D"}
+    value, unit = int(interval[:-1]), interval[-1]
+    if unit not in units:
+        raise ValueError(f"Invalid interval='{interval}'")
+    return pd.Timedelta(value, units[unit])
+
+
+def find_gaps(bars: pd.DataFrame, *, interval: str = "5m") -> pd.DataFrame:
+    """
+    Find the runs of missing bars.
+
+    :param bars: OHLCV bars indexed by bar open time
+    :param interval: bar size, e.g., "5m"
+    :return: one row per gap with:
+        - `start`: open time of the first missing bar
+        - `end`: open time of the last missing bar
+        - `n_bars`: number of missing bars
+    """
+    step = _to_timedelta(interval)
+    index = bars.index.drop_duplicates().sort_values()
+    # A gap is a jump of more than one bar between consecutive bars.
+    diffs = index.to_series().diff()
+    is_gap = diffs > step
+    gaps = pd.DataFrame(
+        {
+            "start": index[:-1][is_gap.to_numpy()[1:]] + step,
+            "end": index[is_gap.to_numpy()] - step,
+        }
+    )
+    gaps["n_bars"] = ((gaps["end"] - gaps["start"]) / step).astype(int) + 1
+    return gaps
+
+
+def clean_bars(
+    bars: pd.DataFrame,
+    *,
+    interval: str = "5m",
+    max_fill_bars: int = 3,
+    vol_window_bars: int = 288,
+    extreme_std: float = 10.0,
+) -> pd.DataFrame:
+    """
+    Clean OHLCV bars and flag the bars that need care.
+
+    - Drop duplicate timestamps (keep the first)
+    - Put the bars on a regular time grid, so that a shift by n rows is always
+      a shift by n bars
+    - Fill gaps of up to `max_fill_bars` bars with flat bars at the last close
+      and zero volume
+    - Leave longer gaps as NaN and start a new segment after each one, so
+      features and labels can be computed per segment and never span a gap
+    - Flag zero-volume bars and extreme returns, without dropping them, since
+      fat tails are part of what we study
+
+    :param bars: OHLCV bars indexed by bar open time
+    :param interval: bar size, e.g., "5m"
+    :param max_fill_bars: longest gap (in bars) to fill
+    :param vol_window_bars: number of past bars used for the rolling std of
+        returns (288 five-minute bars = 1 day)
+    :param extreme_std: flag a return if |r| > extreme_std * rolling std
+    :return: bars on a regular grid with the OHLCV columns and:
+        - `ret`: return from the previous bar, NaN at the start of a segment
+        - `is_missing`: the bar is not in the data
+        - `is_filled`: the bar is missing and was filled
+        - `is_zero_volume`: the bar is in the data with zero volume
+        - `is_extreme`: |ret| is larger than `extreme_std` rolling stds
+        - `segment_id`: id of the run of bars between long gaps, NaN inside a
+          long gap
+    """
+    step = _to_timedelta(interval)
+    bars = bars[_OHLCV_COLUMNS].sort_index()
+    bars = bars[~bars.index.duplicated(keep="first")]
+    # Put the bars on a regular grid: missing bars become NaN rows.
+    grid = pd.date_range(bars.index[0], bars.index[-1], freq=step)
+    df = bars.reindex(grid)
+    df.index.name = bars.index.name
+    is_missing = df["close"].isna()
+    # Number each run of missing bars and measure its length.
+    run_id = (is_missing != is_missing.shift()).cumsum()
+    run_len = is_missing.groupby(run_id).transform("size")
+    is_filled = is_missing & (run_len <= max_fill_bars)
+    is_long_gap = is_missing & ~is_filled
+    # Fill short gaps with a flat bar at the last close and no volume.
+    last_close = df["close"].ffill()
+    for col in ["open", "high", "low", "close"]:
+        df[col] = df[col].where(~is_filled, last_close)
+    df["volume"] = df["volume"].where(~is_filled, 0.0)
+    # Start a new segment after each long gap.
+    gap_end = is_long_gap.shift(fill_value=False) & ~is_long_gap
+    segment_id = gap_end.cumsum().astype("Int64")
+    df["segment_id"] = segment_id.where(~is_long_gap)
+    # Compute returns within each segment, so no return spans a long gap.
+    prev_close = df.groupby("segment_id")["close"].shift()
+    df["ret"] = df["close"] / prev_close - 1
+    # Use only past returns for the rolling std (no look-ahead).
+    past_std = df.groupby("segment_id")["ret"].transform(
+        lambda r: r.shift().rolling(vol_window_bars, min_periods=12).std()
+    )
+    df["is_missing"] = is_missing
+    df["is_filled"] = is_filled
+    df["is_zero_volume"] = (df["volume"] == 0) & ~is_missing
+    df["is_extreme"] = df["ret"].abs() > extreme_std * past_std
+    cols = _OHLCV_COLUMNS + [
+        "ret",
+        "is_missing",
+        "is_filled",
+        "is_zero_volume",
+        "is_extreme",
+        "segment_id",
+    ]
+    return df[cols]
+
+
+def compute_quality_table(
+    raw_bars: pd.DataFrame, clean: pd.DataFrame, *, interval: str = "5m"
+) -> pd.Series:
+    """
+    Summarize the data quality of one coin.
+
+    :param raw_bars: bars as returned by `load_ohlcv()`
+    :param clean: bars as returned by `clean_bars()`
+    :param interval: bar size, e.g., "5m"
+    :return: counts of bars, duplicates, gaps, and flagged bars
+    """
+    gaps = find_gaps(raw_bars, interval=interval)
+    step = _to_timedelta(interval)
+    longest_gap = gaps["n_bars"].max() * step if len(gaps) else pd.Timedelta(0)
+    n_segments = int(clean["segment_id"].nunique())
+    stats = {
+        "start": clean.index[0],
+        "end": clean.index[-1],
+        "n_grid_bars": len(clean),
+        "n_raw_bars": len(raw_bars),
+        "n_duplicates": int(raw_bars.index.duplicated().sum()),
+        "n_gaps": len(gaps),
+        "n_missing_bars": int(clean["is_missing"].sum()),
+        "longest_gap": longest_gap,
+        "n_filled_bars": int(clean["is_filled"].sum()),
+        "n_long_gaps": n_segments - 1,
+        "n_segments": n_segments,
+        "n_zero_volume": int(clean["is_zero_volume"].sum()),
+        "n_extreme": int(clean["is_extreme"].sum()),
+        "max_abs_ret": float(np.nanmax(clean["ret"].abs())),
+    }
+    return pd.Series(stats)
