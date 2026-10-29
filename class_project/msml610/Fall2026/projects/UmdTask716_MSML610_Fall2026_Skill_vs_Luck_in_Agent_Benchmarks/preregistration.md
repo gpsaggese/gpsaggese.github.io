@@ -78,3 +78,23 @@
 - P6: Less than 1% of the answers get a different result when scored twice
 - P7: In the public samples, $\sigma^2_{run}$ at temperature 0.8 is at least 2
   times $\sigma^2_{run}$ at temperature 0.2, for every model
+
+## How Each Prediction Is Checked
+
+- Added on 2026-10-29, after the first commit of this file and before any of
+  the full runs was scored, to fix how each prediction is read
+  - The same rules are coded in `check_predictions()` in
+    `skill_vs_luck_runs_utils.py`
+- P1: none of the 4 comparisons of the close pair has a Holm-adjusted p below
+  0.05
+- P2: all 8 comparisons of the weaker model have a Holm-adjusted p below 0.05,
+  with the weaker model behind
+- P3: the run share is between 10% and 40% for each of the 6 agents on each
+  benchmark, so 12 values
+- P4: the greedy one-shot plus score of each model on each benchmark is within
+  5 points of the published one, so 6 values
+- P5: over the 5 runs at temperature 0.8, repair has a higher plus score than
+  one-shot for each model on each benchmark, and each model gains more on MBPP+
+  than on HumanEval+
+- P6: less than 1% of the scored answers get a different result the second time
+- P7: the ratio is at least 2 for each of the 8 public models

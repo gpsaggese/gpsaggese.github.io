@@ -1790,3 +1790,160 @@ def plot_temperature_effect(
     ax.legend()
     fig.tight_layout()
     plt.show()
+
+
+def check_predictions(
+    *,
+    validation: pd.DataFrame,
+    score_table: pd.DataFrame,
+    variance_tables: Dict[str, pd.DataFrame],
+    comparisons: pd.DataFrame,
+    flaky_share: float,
+    temperature_table: pd.DataFrame,
+    weak_model: str,
+    pair_models: Tuple[str, str],
+    temperature: float = 0.8,
+) -> pd.DataFrame:
+    """
+    Check each prediction of `preregistration.md` against the results.
+
+    The rules were written before any of the full runs was scored:
+    - P1: no comparison of the close pair is distinguishable
+    - P2: every comparison of the weaker model with a model of the pair is
+      distinguishable, with the weaker model behind
+    - P3: the run share is between 10% and 40% for every agent on every
+      benchmark
+    - P4: every greedy plus score is within 5 points of the published one
+    - P5: in the sampled runs, repair beats one-shot for every model on every
+      benchmark, and every model gains more on MBPP+ than on HumanEval+
+    - P6: less than 1% of the answers change when scored again
+    - P7: `run_ratio` is at least 2 for every public model
+
+    :param validation: output of `compute_validation_table()`
+    :param score_table: output of `compute_score_table()`
+    :param variance_tables: benchmark -> output of `compute_variance_table()`
+        for the sampled runs
+    :param comparisons: output of `compare_agent_pairs()` for the
+        pre-registered family, on both benchmarks
+    :param flaky_share: output of `compute_flaky_share()`
+    :param temperature_table: output of `compute_temperature_table()`
+    :param weak_model: e.g., `deepseek-coder:1.3b-instruct-q4_K_M`
+    :param pair_models: the 2 models of the close pair
+    :param temperature: temperature of the sampled runs
+    :return: 1 row per prediction, `P1` to `P7`, with `prediction`,
+        `observed`, and `holds`
+    """
+    rows = {}
+    # Find the comparisons of the close pair and of the weaker model, with
+    # either scaffold.
+    scaffolds = ("one_shot", "repair")
+    close_pairs = {
+        frozenset(get_agent_label(model, scaffold) for model in pair_models)
+        for scaffold in scaffolds
+    }
+    weak_labels = {
+        get_agent_label(weak_model, scaffold) for scaffold in scaffolds
+    }
+    weak_pairs = {
+        frozenset(
+            (
+                get_agent_label(model, scaffold),
+                get_agent_label(weak_model, scaffold),
+            )
+        )
+        for model in pair_models
+        for scaffold in scaffolds
+    }
+    keys = [
+        frozenset(pair)
+        for pair in zip(comparisons["agent_a"], comparisons["agent_b"])
+    ]
+    close = comparisons[[key in close_pairs for key in keys]]
+    weak = comparisons[[key in weak_pairs for key in keys]]
+    n_benchmarks = comparisons["benchmark"].nunique()
+    hdbg.dassert_eq(len(close), len(scaffolds) * n_benchmarks)
+    hdbg.dassert_eq(len(weak), 2 * len(scaffolds) * n_benchmarks)
+    # P1: the close pair is never distinguishable.
+    n_close = int(close["distinguishable"].sum())
+    rows["P1"] = {
+        "prediction": "The close pair is not distinguishable",
+        "observed": (
+            f"{n_close} of {len(close)} comparisons distinguishable, "
+            f"smallest Holm p {close['p_holm'].min():.3g}"
+        ),
+        "holds": n_close == 0,
+    }
+    # P2: the weaker model is always distinguishable, and behind.
+    sign = np.where(weak["agent_b"].isin(weak_labels), 1, -1)
+    n_weak = int((weak["distinguishable"] & (sign * weak["gap"] > 0)).sum())
+    rows["P2"] = {
+        "prediction": "The weaker model is distinguishable from the pair",
+        "observed": (
+            f"{n_weak} of {len(weak)} comparisons distinguishable with the "
+            f"weaker model behind, largest Holm p {weak['p_holm'].max():.3g}"
+        ),
+        "holds": n_weak == len(weak),
+    }
+    # P3: the run share of every agent on every benchmark.
+    shares = pd.concat(
+        {name: table["run_share"] for name, table in variance_tables.items()}
+    )
+    inside = shares.between(0.1, 0.4)
+    rows["P3"] = {
+        "prediction": "Runs are 10% to 40% of the variance of 1 run",
+        "observed": (
+            f"{int(inside.sum())} of {len(shares)} inside, from "
+            f"{100 * shares.min():.0f}% to {100 * shares.max():.0f}%"
+        ),
+        "holds": bool(inside.all()),
+    }
+    # P4: the greedy scores against the published ones.
+    diff = validation["plus_diff"]
+    within = diff.abs() <= 0.05
+    model, benchmark = diff.abs().idxmax()
+    rows["P4"] = {
+        "prediction": "Greedy scores are within 5 points of the published",
+        "observed": (
+            f"{int(within.sum())} of {len(diff)} within 5 points, largest gap "
+            f"{100 * diff[(model, benchmark)]:+.1f} points "
+            f"({model.split(':')[0]}, {benchmark})"
+        ),
+        "holds": bool(within.all()),
+    }
+    # P5: the gain of repair over one-shot in the sampled runs.
+    plus = score_table.xs(
+        ("local", temperature), level=("source", "temperature")
+    )["plus_pass"]
+    gains = plus.xs("repair", level="scaffold") - plus.xs(
+        "one_shot", level="scaffold"
+    )
+    by_model = gains.unstack("benchmark")
+    hdbg.dassert_eq(sorted(by_model.columns), ["humaneval", "mbpp"])
+    more_on_mbpp = by_model["mbpp"] > by_model["humaneval"]
+    rows["P5"] = {
+        "prediction": "Repair helps every model, more on MBPP+",
+        "observed": (
+            f"gains from {100 * gains.min():+.1f} to {100 * gains.max():+.1f} "
+            f"points, larger on MBPP+ for {int(more_on_mbpp.sum())} of "
+            f"{len(more_on_mbpp)} models"
+        ),
+        "holds": bool((gains > 0).all() and more_on_mbpp.all()),
+    }
+    # P6: the flaky tests.
+    rows["P6"] = {
+        "prediction": "Less than 1% of the answers are flaky",
+        "observed": f"{100 * flaky_share:.2f}% of the answers changed",
+        "holds": flaky_share < 0.01,
+    }
+    # P7: the run variance of the public samples at the 2 temperatures.
+    ratio = temperature_table["run_ratio"]
+    rows["P7"] = {
+        "prediction": "Run variance at 0.8 is at least 2 times that at 0.2",
+        "observed": (
+            f"{int((ratio >= 2).sum())} of {len(ratio)} models at least 2 "
+            f"times, ratio from {ratio.min():.2f} to {ratio.max():.2f}"
+        ),
+        "holds": bool((ratio >= 2).all()),
+    }
+    table = pd.DataFrame.from_dict(rows, orient="index")
+    return table

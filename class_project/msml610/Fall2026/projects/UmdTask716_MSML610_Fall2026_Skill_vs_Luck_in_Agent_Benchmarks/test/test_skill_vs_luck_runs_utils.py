@@ -8,7 +8,7 @@ import logging
 import os
 import pprint
 import zipfile
-from typing import Any, Dict
+from typing import Any, Dict, Tuple
 
 import pandas as pd
 import pytest
@@ -1202,3 +1202,186 @@ class Test_compute_temperature_table(hunitest.TestCase):
         self.assertAlmostEqual(table.loc["m", "sigma2_run_low"], 1 / 8)
         self.assertAlmostEqual(table.loc["m", "sigma2_run_high"], 7 / 24)
         self.assertAlmostEqual(table.loc["m", "run_ratio"], 7 / 3)
+
+
+def _get_comparison_row(
+    benchmark: str,
+    agent_a: Tuple[str, str],
+    agent_b: Tuple[str, str],
+    gap: float,
+    p_holm: float,
+) -> Dict[str, Any]:
+    """
+    Build 1 row of the output of `compare_agent_pairs()`.
+
+    :param benchmark: `humaneval` or `mbpp`
+    :param agent_a: `(model, scaffold)` of agent A
+    :param agent_b: `(model, scaffold)` of agent B
+    :param gap: score of A minus B
+    :param p_holm: Holm-adjusted p-value
+    :return: row with the columns that `check_predictions()` reads
+    """
+    row = {
+        "benchmark": benchmark,
+        "agent_a": rutils.get_agent_label(*agent_a),
+        "agent_b": rutils.get_agent_label(*agent_b),
+        "gap": gap,
+        "p_holm": p_holm,
+        "distinguishable": p_holm < 0.05,
+    }
+    return row
+
+
+def _get_prediction_inputs() -> Dict[str, Any]:
+    """
+    Build the inputs of `check_predictions()`, with every prediction holding.
+
+    :return: keyword arguments of `check_predictions()`
+    """
+    weak, model_a, model_b = "w:1b", "a:7b", "b:8b"
+    models = [weak, model_a, model_b]
+    benchmarks = ["humaneval", "mbpp"]
+    scaffolds = ["one_shot", "repair"]
+    # Greedy scores 2 points above the published ones.
+    validation = pd.DataFrame(
+        {"plus_diff": 0.02},
+        index=pd.MultiIndex.from_product(
+            [models, benchmarks], names=["model", "benchmark"]
+        ),
+    )
+    # Repair gains 2 points on HumanEval+ and 4 points on MBPP+.
+    rows = [
+        {
+            "source": "local",
+            "benchmark": benchmark,
+            "model": model,
+            "temperature": 0.8,
+            "scaffold": scaffold,
+            "plus_pass": 0.5 + (gain if scaffold == "repair" else 0.0),
+        }
+        for benchmark, gain in (("humaneval", 0.02), ("mbpp", 0.04))
+        for model in models
+        for scaffold in scaffolds
+    ]
+    keys = ["source", "benchmark", "model", "temperature", "scaffold"]
+    score_table = pd.DataFrame(rows).set_index(keys).sort_index()
+    # Runs are 25% of the variance of every agent.
+    labels = [rutils.get_agent_label(m, s) for m in models for s in scaffolds]
+    variance_tables = {
+        benchmark: pd.DataFrame({"run_share": 0.25}, index=labels)
+        for benchmark in benchmarks
+    }
+    # The pre-registered family: the close pair is never distinguishable,
+    # and the weaker model is behind both models of the pair.
+    rows = []
+    for benchmark in benchmarks:
+        for scaffold in scaffolds:
+            rows.append(
+                _get_comparison_row(
+                    benchmark,
+                    (model_a, scaffold),
+                    (model_b, scaffold),
+                    0.01,
+                    0.5,
+                )
+            )
+            for model in (model_a, model_b):
+                rows.append(
+                    _get_comparison_row(
+                        benchmark,
+                        (model, scaffold),
+                        (weak, scaffold),
+                        0.2,
+                        0.001,
+                    )
+                )
+        for model in models:
+            rows.append(
+                _get_comparison_row(
+                    benchmark, (model, "repair"), (model, "one_shot"), 0.03, 0.04
+                )
+            )
+    comparisons = pd.DataFrame(rows)
+    temperature_table = pd.DataFrame(
+        {"run_ratio": [2.5, 3.0]}, index=["m1", "m2"]
+    )
+    inputs = {
+        "validation": validation,
+        "score_table": score_table,
+        "variance_tables": variance_tables,
+        "comparisons": comparisons,
+        "flaky_share": 0.0,
+        "temperature_table": temperature_table,
+        "weak_model": weak,
+        "pair_models": (model_a, model_b),
+    }
+    return inputs
+
+
+# #############################################################################
+# Test_check_predictions
+# #############################################################################
+
+
+class Test_check_predictions(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_runs_utils.check_predictions()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test results where every prediction holds.
+        """
+        # Prepare inputs: list 1 comparison of the weaker model the other way
+        # around, which reverses its gap.
+        inputs = _get_prediction_inputs()
+        comparisons = inputs["comparisons"]
+        comparisons.loc[1, ["agent_a", "agent_b"]] = comparisons.loc[
+            1, ["agent_b", "agent_a"]
+        ].to_numpy()
+        comparisons.loc[1, "gap"] = -0.2
+        # Run test.
+        table = rutils.check_predictions(**inputs)
+        # Check outputs.
+        self.assertEqual(list(table.index), [f"P{i}" for i in range(1, 8)])
+        self.assertEqual(table["holds"].tolist(), [True] * 7)
+        self.assertEqual(
+            table.loc["P1", "observed"],
+            "0 of 4 comparisons distinguishable, smallest Holm p 0.5",
+        )
+        self.assertEqual(
+            table.loc["P5", "observed"],
+            "gains from +2.0 to +4.0 points, larger on MBPP+ for 3 of 3 models",
+        )
+
+    def test2(self) -> None:
+        """
+        Test results where every prediction fails.
+        """
+        # Prepare inputs: break each prediction once.
+        inputs = _get_prediction_inputs()
+        comparisons = inputs["comparisons"]
+        # P1: a comparison of the close pair is distinguishable.
+        comparisons.loc[0, "p_holm"] = 0.01
+        comparisons.loc[0, "distinguishable"] = True
+        # P2: the weaker model is ahead in a comparison, which still counts
+        # as distinguishable.
+        comparisons.loc[1, "gap"] = -0.2
+        # P3: half of the variance of an agent comes from the runs.
+        inputs["variance_tables"]["mbpp"].iloc[0, 0] = 0.5
+        # P4: a greedy score is 6 points below the published one.
+        inputs["validation"].iloc[0, 0] = -0.06
+        # P5: a model gains less on MBPP+ than on HumanEval+.
+        key = ("local", "mbpp", "a:7b", 0.8, "repair")
+        inputs["score_table"].loc[key, "plus_pass"] = 0.51
+        # P6 and P7.
+        inputs["flaky_share"] = 0.02
+        inputs["temperature_table"].iloc[0, 0] = 1.5
+        # Run test.
+        table = rutils.check_predictions(**inputs)
+        # Check outputs.
+        self.assertEqual(table["holds"].tolist(), [False] * 7)
+        self.assertEqual(
+            table.loc["P4", "observed"],
+            "5 of 6 within 5 points, largest gap -6.0 points (w, humaneval)",
+        )
