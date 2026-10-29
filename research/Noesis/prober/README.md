@@ -29,10 +29,14 @@
 
 ## Commands
 
+- For an end-to-end walkthrough with expected output and clear boundaries
+  between fake-provider, PostgreSQL, and live execution, see
+  `../docs/run_model_qos_demo.how_to_guide.md`.
+
 - Validate a calibration plan without spending money or writing to PostgreSQL:
 
   ```bash
-  > python3 -m research.Noesis.prober.prober_cli calibrate \
+  > research/Noesis/prober/prober_cli.py calibrate \
       --healthy groq=meta-llama/llama-3.3-70b-instruct \
       --healthy together=meta-llama/llama-3.3-70b-instruct \
       --weak deepinfra=meta-llama/llama-3.1-8b-instruct

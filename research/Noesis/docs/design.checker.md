@@ -102,4 +102,4 @@ the same frozen evidence under the same policy version produces the same result.
 - Reputation updates, dashboard views, and alerting
 
 Calibration and scheduled probing are run with
-`python3 -m research.Noesis.prober.prober_cli`; see `prober/README.md`.
+`research/Noesis/prober/prober_cli.py`; see `prober/README.md`.

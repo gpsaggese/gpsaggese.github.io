@@ -44,7 +44,7 @@
   questions every healthy provider gets right and the weaker 8B model mostly misses
   are kept. Calibration runs every candidate three times per target, requires 100%
   healthy-target accuracy and at most 60% weak-target accuracy, and activates a bank
-  only when at least 150 candidates survive
+  only when at least 150 candidate canaries survive
 - **Why**: real buyers won't label their traffic; uncalibrated questions make the
   checker's own error rate unknown. Evidence: on 10/4 the 8B model answered an easy
   probe ("9.9 vs 9.11") correctly, so easy questions can't expose a model swap

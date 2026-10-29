@@ -134,7 +134,7 @@
   without spending money:
 
   ```bash
-  > python3 -m research.Noesis.prober.prober_cli calibrate \
+  > research/Noesis/prober/prober_cli.py calibrate \
       --healthy groq=meta-llama/llama-3.3-70b-instruct \
       --healthy together=meta-llama/llama-3.3-70b-instruct \
       --weak deepinfra=meta-llama/llama-3.1-8b-instruct
@@ -145,7 +145,7 @@
 - With a calibrated active bank and active contracts, run one scheduler pass:
 
   ```bash
-  > python3 -m research.Noesis.prober.prober_cli probe --once
+  > research/Noesis/prober/prober_cli.py probe --once
   ```
 
 - Omit `--once` for the recurring worker. Stop it cleanly with Ctrl-C.

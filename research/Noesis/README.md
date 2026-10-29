@@ -61,8 +61,8 @@
 | `uvicorn research.Noesis.gateway.gateway_app:build_default_app --factory`        | Serve the MVP gateway (see `docs/onboarding.md`)             |
 | `scripts/spike_openrouter.py`                                                    | Measure pinned OpenRouter providers (`--dry-run` costs nothing) |
 | `scripts/detection_math.py`                                                      | Print violation-rule false-alarm and detection rates         |
-| `python3 -m research.Noesis.prober.prober_cli calibrate ...`                     | Validate or execute live canary calibration                  |
-| `python3 -m research.Noesis.prober.prober_cli probe`                             | Run the scheduled canary worker                              |
+| `research/Noesis/prober/prober_cli.py calibrate ...`                             | Validate or execute live canary calibration                  |
+| `research/Noesis/prober/prober_cli.py probe`                                     | Run the scheduled canary worker                              |
 | `devops/docker_run/run_docker_noesis.sh`                                         | Build and run the dockerized API plus a Postgres sidecar     |
 | `invoke run_fast_tests`                                                          | Run the fast unit test suite                                 |
 
