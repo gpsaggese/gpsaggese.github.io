@@ -24,6 +24,7 @@
 | `r_min` | The contract's promised reliability (share of on-time successful requests) |
 | Window | The requests a contract covers: its task count or 60 s, whichever comes first |
 | Canary / test question | A question with one known answer, sent by our prober to grade quality |
+| Candidate canary | A canary before calibration; accepted candidate canaries enter the active canary bank |
 | Calibration | Keeping only canaries every healthy provider gets right and a weaker model misses |
 | Prober | The part of Noesis that sends canaries under each active contract |
 | Latency reliability | Share of a contract's requests that succeeded within `l_max` |

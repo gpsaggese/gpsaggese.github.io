@@ -27,6 +27,7 @@ placeholder is committed until the reviewed paid run is executed.
 | `glossary.md`                  | Terms used across the code and docs                                                   | Onboarding |
 | `how_we_work.md`               | Branch, PR, test, and review conventions                                              | Onboarding |
 | `onboarding.md`                | Setup, run, test, and first tasks                                                     | Onboarding |
+| `run_model_qos_demo.how_to_guide.md` | Commands that demonstrate canary calibration, probing, grading, and evidence persistence | Demo  |
 | `run_market_supply_demo.how_to_guide.md` | Commands that show OpenRouter prices becoming asks and clearing against a bid     | Demo       |
 | `plan.md`                      | Roadmap (`PR_M*`, `PR_S*`, `PR_P*`) and MVP plan (claim, rules, criteria, risks, tasks) | Plans      |
 | `progress.md`                  | Live MVP status and history                                                           | Plans      |
