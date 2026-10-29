@@ -29,7 +29,8 @@
 | `devops/docker_run/run_docker_noesis.sh [VERSION]` | Run the API plus a Postgres sidecar via Docker Compose |
 
 - Environment: `NOESIS_DB_BACKEND` (`memory` default, or `postgres`),
-  `NOESIS_API_KEYS="key1:acct_1,key2:acct_2"` for `X-API-Key` auth, and the
+  `NOESIS_API_KEYS="key1:acct_1,key2:acct_2"` for `X-API-Key` auth,
+  `NOESIS_FREE_CREDIT` (free credit per account, default `1.0`), and the
   `POSTGRES_*` connection variables
 
 ## Description of Architecture

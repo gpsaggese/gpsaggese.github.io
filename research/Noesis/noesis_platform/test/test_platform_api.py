@@ -5,7 +5,7 @@ import research.Noesis.noesis_platform.test.test_platform_api as rnttplap
 """
 
 import logging
-from typing import Tuple
+from typing import Optional, Tuple
 
 import pytest
 
@@ -20,6 +20,7 @@ import helpers.hunit_test as hunitest
 import research.Noesis.gateway.passthrough_proxy as rnopapro
 import research.Noesis.market.batch_call_auction as rnbacaau
 import research.Noesis.market.contract_dispatch as rnocodis
+import research.Noesis.market.credit_ledger as rnmacrle
 import research.Noesis.noesis_platform.platform_api as rnoplapi
 
 _LOG = logging.getLogger(__name__)
@@ -44,6 +45,7 @@ def _echo_call_func(model: str, prompt: str) -> str:
 def _build_test_client(
     *,
     fulfillment_func: rnocodis.FulfillmentFunc = lambda _contract: True,
+    credit_ledger: Optional[rnmacrle.CreditLedger] = None,
 ) -> Tuple[fastapi.testclient.TestClient, rnbacaau.OrderBook, rnopapro.Gateway]:
     """
     Build a `fastapi.testclient.TestClient` over a fresh `create_app()`.
@@ -51,6 +53,8 @@ def _build_test_client(
     :param fulfillment_func: injected into `create_app()` so `POST
         /rounds/clear` dispatches deterministically
         - Default: report every contract as fulfilled
+    :param credit_ledger: injected into `create_app()` to gate `POST /bids`
+        - Default: `None`, no gating
     :return: `(test_client, order_book, gateway)`; `order_book`/`gateway`
         are returned so a test can inspect or register a provider on them
         directly, alongside driving the API
@@ -59,7 +63,11 @@ def _build_test_client(
     gateway = rnopapro.Gateway(clock_func=iter([0.0, 1.0] * 20).__next__)
     api_keys = {_TEST_API_KEY: _TEST_ACCOUNT_ID}
     app = rnoplapi.create_app(
-        order_book, gateway, api_keys, fulfillment_func=fulfillment_func
+        order_book,
+        gateway,
+        api_keys,
+        fulfillment_func=fulfillment_func,
+        credit_ledger=credit_ledger,
     )
     test_client = fastapi.testclient.TestClient(app)
     return test_client, order_book, gateway
@@ -727,6 +735,170 @@ class Test_require_api_key(hunitest.TestCase):
         }
         # Run test.
         self.helper(path, payload)
+
+
+# #############################################################################
+# Test_credit_gate
+# #############################################################################
+
+
+class Test_credit_gate(hunitest.TestCase):
+    """
+    Test `POST /bids` and `POST /rounds/clear` with a `CreditLedger`.
+    """
+
+    def helper(
+        self, ledger: rnmacrle.CreditLedger, n_tasks: int, p_max: float
+    ) -> Tuple[int, rnbacaau.OrderBook]:
+        """
+        Post one bid for `_TEST_ACCOUNT_ID` through an app gated by `ledger`.
+
+        :param ledger: credit ledger injected into the app
+        :param n_tasks: tasks in the bid
+        :param p_max: most the buyer pays per task
+        :return: `(status_code, order_book)`
+        """
+        test_client, order_book, _ = _build_test_client(credit_ledger=ledger)
+        bid_payload = {
+            "buyer_id": "buyer_1",
+            "n_tasks": n_tasks,
+            "c_level_min": "frontier",
+            "l_max": 2.0,
+            "r_min": 0.999,
+            "p_max": p_max,
+        }
+        response = test_client.post(
+            "/bids",
+            json=bid_payload,
+            headers={rnoplapi.API_KEY_HEADER: _TEST_API_KEY},
+        )
+        return response.status_code, order_book
+
+    def test1(self) -> None:
+        """
+        Test that a bid the account can afford is accepted and the balance is
+        untouched until the round clears.
+        """
+        # Prepare inputs.
+        ledger = rnmacrle.CreditLedger(free_credit=100.0)
+        n_tasks = 4
+        p_max = 20.0
+        # Prepare outputs.
+        expected = "status=201 balance=100.0"
+        # Run test.
+        status_code, _ = self.helper(ledger, n_tasks, p_max)
+        # Check outputs.
+        balance = ledger.get_balance(_TEST_ACCOUNT_ID)
+        actual = f"status={status_code} balance={balance}"
+        self.assert_equal(actual, expected)
+
+    def test2(self) -> None:
+        """
+        Test that a bid over the balance is rejected with an HTTP 400 before
+        reaching the order book.
+        """
+        # Prepare inputs.
+        ledger = rnmacrle.CreditLedger(free_credit=100.0)
+        n_tasks = 100
+        p_max = 20.0
+        # Prepare outputs.
+        expected = "status=400 pending_bids=[]"
+        # Run test.
+        status_code, order_book = self.helper(ledger, n_tasks, p_max)
+        # Check outputs.
+        pending = order_book.get_pending_bids()
+        actual = f"status={status_code} pending_bids={pending}"
+        self.assert_equal(actual, expected)
+
+    def test3(self) -> None:
+        """
+        Test that clearing debits only the filled tasks, at the clearing
+        price, and that a later empty clear leaves the balance unchanged.
+        """
+        # Prepare inputs.
+        ledger = rnmacrle.CreditLedger(free_credit=100.0)
+        test_client, _, _ = _build_test_client(credit_ledger=ledger)
+        headers = {rnoplapi.API_KEY_HEADER: _TEST_API_KEY}
+        test_client.post(
+            "/bids",
+            json={
+                "buyer_id": "buyer_1",
+                "n_tasks": 4,
+                "c_level_min": "frontier",
+                "l_max": 2.0,
+                "r_min": 0.999,
+                "p_max": 20.0,
+            },
+            headers=headers,
+        )
+        test_client.post(
+            "/asks",
+            json={
+                "seller_id": "seller_1",
+                "n_tasks": 3,
+                "c_level": "frontier",
+                "l_typical": 2.5,
+                "r_typical": 0.98,
+                "p_min": 16.0,
+            },
+            headers=headers,
+        )
+        # Prepare outputs.
+        # 3 of 4 tasks fill at the midpoint price 18.0: debit 54.0.
+        expected = "after_clear=46.0 after_second_clear=46.0"
+        # Run test.
+        test_client.post("/rounds/clear")
+        after_clear = ledger.get_balance(_TEST_ACCOUNT_ID)
+        test_client.post("/rounds/clear")
+        after_second_clear = ledger.get_balance(_TEST_ACCOUNT_ID)
+        # Check outputs.
+        actual = (
+            f"after_clear={after_clear} after_second_clear={after_second_clear}"
+        )
+        self.assert_equal(actual, expected)
+
+    def test4(self) -> None:
+        """
+        Test that a `buyer_id` already bound to another account in the round
+        is rejected with an HTTP 400.
+        """
+        # Prepare inputs.
+        ledger = rnmacrle.CreditLedger(free_credit=100.0)
+        order_book = rnbacaau.OrderBook()
+        gateway = rnopapro.Gateway()
+        api_keys = {"key_a": "acct_a", "key_b": "acct_b"}
+        app = rnoplapi.create_app(
+            order_book, gateway, api_keys, credit_ledger=ledger
+        )
+        test_client = fastapi.testclient.TestClient(app)
+        bid_payload = {
+            "buyer_id": "buyer_1",
+            "n_tasks": 1,
+            "c_level_min": "frontier",
+            "l_max": 2.0,
+            "r_min": 0.999,
+            "p_max": 1.0,
+        }
+        # Prepare outputs.
+        expected = "first=201 second=400 pending_bids=1"
+        # Run test.
+        first = test_client.post(
+            "/bids",
+            json=bid_payload,
+            headers={rnoplapi.API_KEY_HEADER: "key_a"},
+        )
+        second = test_client.post(
+            "/bids",
+            json=bid_payload,
+            headers={rnoplapi.API_KEY_HEADER: "key_b"},
+        )
+        # Check outputs.
+        pending = len(order_book.get_pending_bids())
+        actual = (
+            f"first={first.status_code} second={second.status_code}"
+            f" pending_bids={pending}"
+        )
+        self.assert_equal(actual, expected)
 
 
 # #############################################################################

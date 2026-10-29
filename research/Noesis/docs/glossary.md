@@ -38,4 +38,6 @@
 | Model swap | Serving a weaker model (Llama 3.1 8B) while claiming the contracted one (70B) |
 | Quantization (fp8 / bf16 / fp16) | Running a model at lower numeric precision: cheaper, sometimes lower quality |
 | p50 / p95 | Typical (median) and near-worst (95th percentile) latency |
+| Task-credit | The unit of a buyer's balance, the same unit as a bid's `p_max`; a bid costs up to `n_tasks * p_max` of it |
+| Free grant | The task-credit every account receives on its first bid (`NOESIS_FREE_CREDIT`); no real payment behind it in the MVP |
 | `PR_S7`, `PR_M3`, ... | Work items in GP's roadmap `research/Noesis/docs/plan.md` |

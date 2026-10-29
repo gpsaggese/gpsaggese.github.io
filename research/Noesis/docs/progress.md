@@ -73,3 +73,4 @@
 | 10/18 | PR_S9: supply adapter turns OpenRouter endpoint prices into one ask per seed seller before each round (`market/supply_adapter.py`, `noesis_platform/supply_feed.py`; D-25 to D-27) |
 | 10/23 | Split standalone model monitoring and nerfing detection into `PR_S13`-`PR_S16`; no runtime behavior changed |
 | 10/25 | PR_M10: extracted the Python-only market runner and contract store; API delegates without response changes; five M11 regimes validated through the runner (D-29) |
+| 10/28 | PR_P4: free credit ledger gates `POST /bids` on `n_tasks * p_max` and debits each cleared contract once (`market/credit_ledger.py`, `noesis_platform/platform_api.py`; D-30, D-31) |
