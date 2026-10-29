@@ -25,6 +25,7 @@
 | `docs/`             | All docs: architecture, plans, specs, notes, findings, onboarding   | Docs                |
 | `gateway/`          | OpenAI-compatible gateway and the legacy in-process proxy           | `NoesisServer`      |
 | `market/`           | Call auction and contract dispatch                                  | `NoesisMarket`      |
+| `monitor/`          | Standalone provider/model checks without market contracts           | `NoesisServer`      |
 | `noesis_platform/`  | HTTP service over the market and the proxy, Postgres stores         | `NoesisPlatform`    |
 | `prober/`           | Live calibration and hidden scheduled canary execution              | `NoesisServer`      |
 | `scripts/`          | One-off measurement scripts                                         | Tools               |
@@ -36,6 +37,7 @@
   | :----------------- | :------------------------------------------------ |
   | `common/`, `market/` | nothing in `research.Noesis`                    |
   | `gateway/`         | `common/`                                         |
+  | `monitor/`         | `checker/`, `common/`, provider modules in `gateway/` |
   | `checker/`         | `common/`, `gateway/gateway_providers.py`         |
   | `noesis_platform/` | `market/`, `gateway/passthrough_proxy.py`         |
   | `prober/`          | `checker/`, `common/`, `gateway/`                 |
@@ -63,6 +65,7 @@
 | `scripts/detection_math.py`                                                      | Print violation-rule false-alarm and detection rates         |
 | `python3 -m research.Noesis.prober.prober_cli calibrate ...`                     | Validate or execute live canary calibration                  |
 | `python3 -m research.Noesis.prober.prober_cli probe`                             | Run the scheduled canary worker                              |
+| `python3 -m research.Noesis.monitor.monitor_cli --target PROVIDER=MODEL`          | Validate a standalone monitoring run                         |
 | `devops/docker_run/run_docker_noesis.sh`                                         | Build and run the dockerized API plus a Postgres sidecar     |
 | `invoke run_fast_tests`                                                          | Run the fast unit test suite                                 |
 
