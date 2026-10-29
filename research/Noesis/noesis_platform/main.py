@@ -20,6 +20,7 @@ import helpers.hdbg as hdbg
 import helpers.hprint as hprint
 import research.Noesis.gateway.passthrough_proxy as rnopapro
 import research.Noesis.market.batch_call_auction as rnbacaau
+import research.Noesis.market.credit_ledger as rnmacrle
 import research.Noesis.noesis_platform.platform_api as rnoplapi
 
 hdbg.init_logger(verbosity=logging.INFO)
@@ -106,6 +107,15 @@ else:
     contract_store = None
 
 api_keys = _parse_api_keys(os.environ.get("NOESIS_API_KEYS", ""))
+# The credit ledger is in-memory on both backends until `PR_P2b`.
+free_credit = float(
+    os.environ.get("NOESIS_FREE_CREDIT", rnmacrle.DEFAULT_FREE_CREDIT)
+)
+credit_ledger = rnmacrle.CreditLedger(free_credit=free_credit)
 app = rnoplapi.create_app(
-    order_book, gateway, api_keys, contract_store=contract_store
+    order_book,
+    gateway,
+    api_keys,
+    contract_store=contract_store,
+    credit_ledger=credit_ledger,
 )

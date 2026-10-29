@@ -22,6 +22,7 @@
 | `scenarios.py` | Named and seeded bid/ask fixtures | Scenarios |
 | `contract_dispatch.py` | `Contract` schema, `build_contracts()`, and stubbed fulfillment dispatch | Dispatch |
 | `supply_adapter.py` | Pure adapter: OpenRouter endpoint prices -> one `Ask` per seed seller, posted once per round | Supply |
+| `credit_ledger.py` | Per-account free credit: balance check for a bid, idempotent debit per cleared contract | Credit |
 
 ## Description of Architecture
 
@@ -34,6 +35,10 @@
 - `supply_adapter.py` imports `batch_call_auction.py` (`Ask`, `OrderBook`) and takes
   the OpenRouter catalog as parsed JSON; the HTTP fetch and the seed file live in
   `noesis_platform/supply_feed.py` (`docs/decisions.md` D-25 to D-27)
+- `credit_ledger.py` imports `batch_call_auction.py` (`Bid`) and keeps balances
+  behind the `CreditLedgerStore` interface (in-memory by default); the gate and
+  the debit are wired in `noesis_platform/platform_api.py` (`docs/decisions.md`
+  D-30, D-31)
 
 ## Deterministic Scenario Families (PR_M11)
 
