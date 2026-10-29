@@ -3,8 +3,8 @@
 - Every non-obvious choice of the design, why it was made, and what else was
   considered
 - Newest at the bottom of each section
-- Requirements: `research/Estimate_academic_paper_quality/docs/prd.md`; design:
-  `research/Estimate_academic_paper_quality/docs/design.architecture.md`
+- Requirements: `research/Estimate_academic_paper_quality/docs/prd.md`
+- Design: `research/Estimate_academic_paper_quality/docs/design.architecture.md`
 
 ## Resolution
 
