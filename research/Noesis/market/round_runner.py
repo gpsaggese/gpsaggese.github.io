@@ -52,6 +52,8 @@ class RoundResult:
     contracts: List[rnocodis.Contract]
     unmatched_bids: List[rnbacaau.Bid]
     unmatched_asks: List[rnbacaau.Ask]
+    # Store-assigned ids, aligned with `contracts`.
+    contract_ids: List[int] = dataclasses.field(default_factory=list)
 
 
 # #############################################################################
@@ -239,8 +241,9 @@ def run_round(
     # Preserve the API's dispatch-before-save order and store-generated ids.
     contracts = rnocodis.build_contracts(bids, tier_results)
     rnocodis.dispatch_contracts(contracts, fulfillment_func=fulfillment_func)
-    for contract in contracts:
-        contract_store.save_contract(contract)
+    contract_ids = [
+        contract_store.save_contract(contract) for contract in contracts
+    ]
     # Publish even non-crossing and one-sided tiers, sharing one round id.
     summaries = {}
     matched_bids: Dict[Tuple[str, str], int] = {}
@@ -272,7 +275,12 @@ def run_round(
         lambda ask: (ask.c_level, ask.seller_id),
     )
     result = RoundResult(
-        round_id, summaries, contracts, unmatched_bids, unmatched_asks
+        round_id,
+        summaries,
+        contracts,
+        unmatched_bids,
+        unmatched_asks,
+        contract_ids,
     )
     _LOG.debug("round_id='%s' num_contracts='%s'", round_id, len(contracts))
     return result

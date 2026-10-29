@@ -44,7 +44,7 @@
   questions every healthy provider gets right and the weaker 8B model mostly misses
   are kept. Calibration runs every candidate three times per target, requires 100%
   healthy-target accuracy and at most 60% weak-target accuracy, and activates a bank
-  only when at least 150 candidates survive
+  only when at least 150 candidate canaries survive
 - **Why**: real buyers won't label their traffic; uncalibrated questions make the
   checker's own error rate unknown. Evidence: on 10/4 the 8B model answered an easy
   probe ("9.9 vs 9.11") correctly, so easy questions can't expose a model swap
@@ -365,3 +365,36 @@
   exception propagation, and the existing non-atomic sequence of clear, dispatch,
   and saves. This change does not add scheduling, rollback, requeueing, or real
   fulfillment, and retains `build_contracts()`'s buyer-id term assumption.
+
+## Credit Ledger (PR_P4)
+
+### D-30. A Bid Must Be Covered at Submission, but Credit Is Debited at Clearing
+
+- **Decision**: `POST /bids` is rejected (HTTP 400) unless the caller's balance
+  covers `n_tasks * p_max`; nothing is held. Credit is debited only when a
+  contract clears, for `n_tasks * price` at the clearing price, once per contract
+  id. Several bids from one account in the same round are each checked against
+  the full balance.
+- **Why**: `plan.md` PR_P4 asks for the PR_P3 gate ("balance >= n * p") with the
+  debit on match. The clearing price is at or below `p_max`, so the buyer is never
+  charged more than the bid allowed, and the contract id makes a repeated clear a
+  no-op. A hold would need an order-cancel path that the order book does not have
+  yet.
+- **Alternatives**: hold `n_tasks * p_max` at bid time and refund the difference
+  on clearing (needs cancels and refunds); debit at `p_max` (overcharges the
+  buyer).
+
+### D-31. The Free Grant Is a Setting, Not a Number in the Repo
+
+- **Decision**: every account receives the same free credit on its first bid,
+  read from `NOESIS_FREE_CREDIT` (default `1.0` in `market/credit_ledger.py`).
+  The ledger is in-memory on both backends until PR_P2b adds a Postgres store.
+  The ledger charges the account behind the API key, so a `buyer_id` is bound
+  to one account per round.
+- **Why**: the grant is a deployment parameter, not a market rule, so it lives
+  in configuration and the code only has to apply it. Contracts carry only
+  `buyer_id`, so the platform keeps the `buyer_id -> account` map for the round
+  to know whom to debit.
+- **Alternatives**: a grant per tier or per account type (nothing in the PRD
+  asks for it); store the account id on the contract (changes the `Contract`
+  schema that PR_P2b persists).

@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Calibrate the canary bank or run the scheduled-probe worker.
 
@@ -6,12 +7,12 @@ reviewing the printed provider-call count.
 
 Examples:
 
-> python3 -m research.Noesis.prober.prober_cli calibrate \
+> research/Noesis/prober/prober_cli.py calibrate \
     --healthy groq=meta-llama/llama-3.3-70b-instruct \
     --healthy together=meta-llama/llama-3.3-70b-instruct \
     --weak deepinfra=meta-llama/llama-3.1-8b-instruct
-> python3 -m research.Noesis.prober.prober_cli probe --once
-> python3 -m research.Noesis.prober.prober_cli probe
+> research/Noesis/prober/prober_cli.py probe --once
+> research/Noesis/prober/prober_cli.py probe
 """
 
 import argparse
@@ -20,7 +21,7 @@ import logging
 import os
 import signal
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Mapping, Optional, Sequence
 
 import research.Noesis.checker.checker_calibration_report as rnochcare
@@ -69,7 +70,7 @@ def _combined_environment() -> Mapping[str, str]:
 def _require_secret(environment: Mapping[str, str], name: str) -> str:
     value = environment.get(name, "")
     if not value:
-        raise ValueError("%s is required; see env.example" % name)
+        raise ValueError(f"{name} is required; see env.example")
     return value
 
 
@@ -99,9 +100,9 @@ async def _run_calibrate(args: argparse.Namespace) -> int:
         )
     call_count = len(canaries) * len(targets) * policy.repetitions
     print(
-        "Calibration plan: %s candidates x %s targets x %s repetitions"
-        " = %s paid provider calls"
-        % (len(canaries), len(targets), policy.repetitions, call_count)
+        f"Calibration plan: {len(canaries)} candidate canaries x"
+        f" {len(targets)} targets"
+        f" x {policy.repetitions} repetitions = {call_count} paid provider calls"
     )
     if not args.execute:
         print("Validation only: no database writes or provider calls were made.")
@@ -137,7 +138,7 @@ async def _run_calibrate(args: argparse.Namespace) -> int:
             )
             _write_report(args.report, report)
             print(report)
-            print("Wrote %r" % os.path.relpath(args.report))
+            print(f"Wrote {os.path.relpath(args.report)!r}")
             if not activated:
                 print("Calibration completed, but the bank was not activated.")
                 return 2
@@ -174,14 +175,14 @@ async def _run_probe(args: argparse.Namespace) -> int:
                     faults,
                     policy,
                     schedule_secret,
-                    datetime.now(timezone.utc),
+                    datetime.now(UTC),
                 )
                 print(
-                    "Probe cycle: executions=%s errors=%s"
-                    % (len(result.executions), len(result.errors))
+                    f"Probe cycle: executions={len(result.executions)}"
+                    f" errors={len(result.errors)}"
                 )
                 for error in result.errors:
-                    print("  %s" % error)
+                    print(f"  {error}")
                 return 1 if result.errors else 0
             stop_event = asyncio.Event()
             loop = asyncio.get_running_loop()
@@ -197,8 +198,8 @@ async def _run_probe(args: argparse.Namespace) -> int:
                 poll_interval_s=args.poll_interval,
             )
             print(
-                "Probe worker stopped: cycles=%s executions=%s errors=%s"
-                % (result.cycles, result.executions, result.errors)
+                f"Probe worker stopped: cycles={result.cycles}"
+                f" executions={result.executions} errors={result.errors}"
             )
             return 0
         finally:
@@ -253,7 +254,7 @@ async def _main(args: argparse.Namespace) -> int:
         return await _run_calibrate(args)
     if args.command == "probe":
         return await _run_probe(args)
-    raise ValueError("unknown command %r" % args.command)
+    raise ValueError(f"unknown command {args.command!r}")
 
 
 if __name__ == "__main__":

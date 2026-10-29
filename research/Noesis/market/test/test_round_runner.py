@@ -150,6 +150,7 @@ class Test_run_round(hunitest.TestCase):
             ],
             [],
             [],
+            [0],
         )
         # Run test.
         actual = rnmaroru.run_round(book, store, fulfill)
