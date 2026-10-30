@@ -4,7 +4,7 @@
 | ------------------------ | ------------------------------- | ---------------------------- | --------------- | -------------------------- |
 | Giles Greene             | gilesgreene20@gmail.com         | -                            | gilesgreene     | Noesis                     |
 | Dev Trusharkumar Shah    | -                               | dnts5203@umd.edu             | Delvitron1019   | Auto DS                    |
-| Ameer Shaik              | -                               | sohail08@umd.edu             | sohail-umd      | Auto DS                    |
+| Ameer Shaik              | -                               | sohail08@umd.edu             | Sohail-5678,sohail-umd      | Auto DS                    |
 | Simran Kharbanda         | simrank3574@gmail.com           | simrank@umd.edu              | Sim2200         | Noesis                     |
 | Lucas Caicedo            | -                               | lucas.caicedo@gwmail.gwu.edu | caicedoss       | Noesis                     |
 | Javin Ahuja              | -                               | jahuja@terpmail.umd.edu      | Jav359003       | Noesis                     |
@@ -22,7 +22,7 @@
 
 - [ ] @gilesgreene
 - [ ] @Delvitron1019
-- [ ] @sohail-umd
+- [ ] @sohail-umd, Sohail-5678
 - [ ] @Sim2200
 - [ ] @caicedoss
 - [ ] @Jav359003
@@ -75,7 +75,9 @@
 - **Google drive**:
 - **Research gdoc**:
 - **GitHub project**:
-- **GitHub code**: https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/Causal_Analysis_of_Age_and_Startup_Success
+- **GitHub code**:
+  - https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/Causal_Analysis_of_Age_and_Startup_Success
+  - https://github.com/gpsaggese/gpsaggese.github.io/blob/master/research/ideas/draft.Causal_Analysis_of_Age_and_Startup_Success.md
 - **Whitepaper**: `papers/Causal_Analysis_of_Age_and_Startup_Success/paper.md`
 
 ### Auto DS
@@ -87,7 +89,10 @@
 - **Google drive**:
 - **Research gdoc**:
 - **GitHub project**:
-- **GitHub code**: https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/agentic_data_science
+- **GitHub code**:
+  - https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/agentic_data_science
+  - https://github.com/gpsaggese/gpsaggese.github.io/blob/master/research/ideas/in_progress.RL_for_auto_EDA.md
+  - https://github.com/gpsaggese/gpsaggese.github.io/blob/master/research/ideas/in_progress.Comparison_of_Data_Science_Agents.md
 - **Whitepaper**: `papers/RL_for_Automated_EDA/paper.md`
 
 ### Blog tutorials
@@ -98,6 +103,8 @@
 - **Research gdoc**:
 - **GitHub project**: https://github.com/users/gpsaggese/projects/12/views/2
 - **GitHub code**:
+  - https://github.com/gpsaggese/gpsaggese.github.io/blob/master/research/ideas/draft.Blog_Cross_Posting_and_Engagement_System.md
+  - https://github.com/gpsaggese/gpsaggese.github.io/blob/master/research/ideas/draft.Complete_blogs.md
 - **Whitepaper**:
 
 ### CAASL (Causal Analysis of Agent Skill and Luck)
@@ -108,7 +115,10 @@
 - **Research gdoc**:
 - **GitHub project**: https://github.com/users/gpsaggese/projects/10/views/2
 - **GitHub code**:
-- **Whitepaper**:
+  - https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/Causal_Analysis_of_Agent_Skill_And_Luck
+  - https://github.com/gpsaggese/gpsaggese.github.io/blob/master/research/ideas/done.Causal_Analysis_of_Success_in_Modern_Society.md
+  - https://github.com/gpsaggese/gpsaggese.github.io/blob/master/research/ideas/draft.Skill_vs_Luck_in_Agent_Benchmarks.md
+- **Whitepaper**: `papers/Causal_Analysis_of_Agent_Skill_And_Luck/paper.tex`
 
 ### Class projects
 
@@ -141,9 +151,11 @@
 - **Asana board**:
 - **Google docs**:
 - **Google drive**:
-- **Research gdoc**: Research log: https://docs.google.com/document/d/1ttpZT3kWVXq5jMZn3nx1ijmtH97VfAclRmSa9Z2EYsc/edit?tab=t.0#heading=h.naclpfuqd2j
+- **Research gdoc**: https://docs.google.com/document/d/1ttpZT3kWVXq5jMZn3nx1ijmtH97VfAclRmSa9Z2EYsc/edit?tab=t.0#heading=h.naclpfuqd2j
 - **GitHub project**:
-- **GitHub code**: https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/Causal_Analysis_of_Financial_Tradability
+- **GitHub code**:
+  - https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/Causal_Analysis_of_Financial_Tradability
+  - https://github.com/gpsaggese/gpsaggese.github.io/blob/master/research/ideas/draft.Causal_Analysis_of_Financial_Tradability.md
 - **Whitepaper**:
 
 ### Growth hacking
@@ -153,7 +165,7 @@
 - **Google drive**:
 - **Research gdoc**:
 - **GitHub project**:
-- **GitHub code**: https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research
+- **GitHub code**:
 - **Whitepaper**:
 
 ### MCTS / AlphaZero
@@ -163,7 +175,10 @@
 - **Google drive**:
 - **Research gdoc**:
 - **GitHub project**:
-- **GitHub code**: https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/Implement_MonteCarlo_Tree_Search_and_Alpha_Zero
+- **GitHub code**:
+  - https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/Implement_MonteCarlo_Tree_Search_and_Alpha_Zero
+  - https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/Implement_AlphaZero
+  - https://github.com/gpsaggese/gpsaggese.github.io/blob/master/research/ideas/in_progress.Implement_MonteCarlo_Tree_Search_and_Alpha_Zero.md
 - **Whitepaper**: `papers/AlphaZero_MCTS_for_TSP/paper.md`
 
 ### Noesis
@@ -173,8 +188,14 @@
 - **Google drive**: https://drive.google.com/drive/folders/1cVza1sYIfG9xvSRSAE3T1cwn0BSr_jCr
 - **Research gdoc**:
 - **GitHub project**: https://github.com/users/gpsaggese/projects/2
-- **GitHub code**: https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/Noesis
-- **Whitepaper**: `papers/Noesis/paper.tex`
+- **GitHub code**:
+  - https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/Noesis
+  - https://github.com/gpsaggese/gpsaggese.github.io/blob/master/research/ideas/draft.Noesis_Hybrid_Auction_Latency.md
+  - https://github.com/gpsaggese/gpsaggese.github.io/blob/master/research/ideas/draft.Noesis_Reputation_Detection_Bound.md
+  - https://github.com/gpsaggese/gpsaggese.github.io/blob/master/research/ideas/draft.Noesis_Task_Unit_Definition.md
+- **Whitepaper**:
+  - `papers/Noesis/paper.tex`
+  - `papers/Noesis_Probing_Model_Quality/paper.tex`
 
 ### Process
 
@@ -195,7 +216,9 @@
   - Results: https://drive.google.com/drive/folders/1QPETTDAx9V2wo9PxCMrSV0R5KNyNTQRi
 - **Research gdoc**: https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8
 - **GitHub project**: https://github.com/users/gpsaggese/projects/4
-- **GitHub code**: https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/Optimal_strategy_for_racket_sports
+- **GitHub code**:
+  - https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/Optimal_strategy_for_racket_sports
+  - https://github.com/gpsaggese/gpsaggese.github.io/blob/master/research/ideas/in_progress.RL_for_pickleball.md
 - **Whitepaper**: `papers/Optimal_strategy_for_racket_sports/paper.md`
 
 ### Skill and luck
@@ -205,7 +228,10 @@
 - **Google drive**:
 - **Research gdoc**:
 - **GitHub project**:
-- **GitHub code**: https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/Causal_Analysis_of_Agent_Skill_And_Luck
+- **GitHub code**:
+  - https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/Causal_Analysis_of_Agent_Skill_And_Luck
+  - https://github.com/gpsaggese/gpsaggese.github.io/blob/master/research/ideas/done.Causal_Analysis_of_Success_in_Modern_Society.md
+  - https://github.com/gpsaggese/gpsaggese.github.io/blob/master/research/ideas/draft.Skill_vs_Luck_in_Agent_Benchmarks.md
 - **Whitepaper**: `papers/Causal_Analysis_of_Agent_Skill_And_Luck/paper.tex`
 
 ### Tymes
