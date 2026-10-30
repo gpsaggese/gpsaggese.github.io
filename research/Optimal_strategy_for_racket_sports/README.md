@@ -31,7 +31,7 @@ Modules are organized in layers, with each layer importing only from layers abov
 | `racket_params.py` | Sport, player, and error parameters; court geometry |
 | `racket_trajectory.py` | Closed-form 1D/2D ball flight and error propagation |
 | `racket_scoring.py` | Grid, Monte Carlo in-bounds probability, reachability, score |
-| `racket_game.py` | Zero-sum shot placement game |
+| `racket_game.py` | Zero-sum shot placement game (not built: PR4 closed without code) |
 | `racket_strategy_utils.py` | Plotting and experiment helpers for notebooks |
 
 ## Notebooks

@@ -19,8 +19,8 @@
     design was agreed in
     [#690](https://github.com/gpsaggese/gpsaggese.github.io/issues/690)
 - Dates are in UTC, as GitHub reports them
-- The plan of GP's initial implementation is `plan.racket_strategy.md`, with one
-  `spec.racket_strategy_PR*.md` file per planned PR
+- The plan of GP's initial implementation is `plan.racket_strategy.md`; its one
+  spec file per planned PR was deleted in #691, once PR1 to PR7 were done
 
 ## Open Work
 

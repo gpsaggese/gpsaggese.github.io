@@ -60,13 +60,15 @@
   evaluation exists
 - **Confidence in the fix**: medium
   - High for the physics (closed form) and the scoring (paper formulas)
-  - Medium for 3 choices the paper leaves open, decided in the specs:
+  - Medium for 3 choices the paper leaves open:
     - $P_{\mathrm{in}}$ counts in-bounds landings, not landings in cell $c$
-      (Section IV-B formula and text disagree): `spec.racket_strategy_PR3.md`
+      (Section IV-B formula and text disagree):
+      `racket_scoring.estimate_launch_table()`
     - The aim angle is the best feasible angle per cell (paper does not pick one
-      point of $\mathcal{F}(T)$): `spec.racket_strategy_PR2.md`
+      point of $\mathcal{F}(T)$): `racket_scoring.score_targets()`
     - Game payoff $u$ adds a continuation value to $S$ (paper calls $u$ a
-      point-win probability but only defines $S$): `spec.racket_strategy_PR4.md`
+      point-win probability but only defines $S$): not built, since PR4 closed
+      without code
 - **Fix complexity**: medium
 - **Verification plan**:
   - Unit tests reproduce the paper numbers:
@@ -83,39 +85,41 @@
   - `racket_params.py`: sport, player, error parameters and court geometry
   - `racket_trajectory.py`: closed-form 1D/2D ball flight and error propagation
   - `racket_scoring.py`: grid, Monte Carlo $P_{\mathrm{in}}$, reachability, score
-  - `racket_game.py`: zero-sum placement game
+  - `racket_game.py`: zero-sum placement game (not built, since PR4 closed
+    without code)
   - `racket_strategy_utils.py`: plots and experiment helpers for the notebooks
 
-- [x] PR1: Scaffold the project and encode the sport parameters (see
-      spec.racket_strategy_PR1.md)
+- PR1 to PR7 are done
+  ([GP on #691](https://github.com/gpsaggese/gpsaggese.github.io/issues/691#issuecomment-6309187106)):
+  we focus on the 2D model of the Milestones below and set the trajectory work
+  aside, so PR4 and PR7 close without code
+
+- [x] PR1: Scaffold the project and encode the sport parameters
   - Depends on: none
   - Copy the Docker files from `class_project/project_template/`
   - Add `racket_params.py` with Table I presets `TENNIS`, `PICKLEBALL`
   - Add `README.md` with quick start and the module table above
   - Add `test/test_racket_params.py`
 
-- [x] PR2: Implement the closed-form trajectory model of Section III-C (see
-      spec.racket_strategy_PR2.md)
+- [x] PR2: Implement the closed-form trajectory model of Section III-C
   - Depends on: PR1
   - Add `racket_trajectory.py`: launch speed solver, feasible set, error sampling,
     vectorized landing simulation
   - Add `test/test_racket_trajectory.py` reproducing the Figure 1 numbers
 
 - [x] PR3: Implement grid-based Monte Carlo scoring for rally and serve, Section IV
-      (see spec.racket_strategy_PR3.md)
   - Depends on: PR2
   - Add `racket_scoring.py`: target grid, opponent-independent launch table,
     reachability, composite score, argmax, serve situation
   - Add `test/test_racket_scoring.py` reproducing Table II
 
-- [ ] PR4: Implement the zero-sum placement game of Section V-A (see
-      spec.racket_strategy_PR4.md)
+- [x] PR4: Implement the zero-sum placement game of Section V-A (closed without
+      code, see the 2D focus above)
   - Depends on: PR3
   - Add `racket_game.py`: payoff matrix, LP solver, best-response value
   - Add `test/test_racket_game.py`
 
-- [ ] PR5: Add the plotting utils and the API notebook (see
-      spec.racket_strategy_PR5.md)
+- [x] PR5: Add the plotting utils and the API notebook
   - Depends on: PR2, PR3, PR4
   - Add `racket_strategy_utils.py` and `racket_strategy.API.ipynb` / `.py`
   - Add `test/test_racket_strategy_utils.py` and
@@ -124,10 +128,10 @@
     `plot_court_heatmap()`, `plot_launch_tradeoff()`, `build_score_widget()`,
     and the API notebook's Parts 1-7 (sport parameters through serve) are
     implemented, to unblock `PR6`; `plot_mixed_strategy()` and the
-    notebook's Part 8 (placement game) still need `PR4`'s `racket_game.py`
+    notebook's Part 8 (placement game) are not built, since `PR4` closed
+    without code
 
-- [x] PR6: Add an interactive shot-placement exploration notebook (see
-      spec.racket_strategy_PR6.md)
+- [x] PR6: Add an interactive shot-placement exploration notebook
   - Depends on: PR3, PR5
   - Add `racket_strategy.exploration.ipynb` / `.py`: click-to-run controls for
     ball speed, player move speed, shot std dev (`error_scale`), and both
@@ -136,8 +140,8 @@
   - Extend `test/test_racket_strategy_utils.py` and
     `test/test_docker_racket_strategy.py`
 
-- [ ] PR7: Add the example notebook with computational results for Sections VI-VIII
-      (see spec.racket_strategy_PR7.md)
+- [x] PR7: Add the example notebook with computational results for Sections VI-VIII
+      (closed without code, see the 2D focus above)
   - Depends on: PR5
   - Add `racket_strategy.example.ipynb` / `.py` and the experiment helpers
   - Export result figures and tables to `results/`
