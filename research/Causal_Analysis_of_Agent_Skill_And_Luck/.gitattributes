@@ -1,5 +1,0 @@
-# Keep Linux line endings for the files that run inside the container, also on
-# Windows checkouts with `core.autocrlf=true`.
-*.sh text eol=lf
-bashrc text eol=lf
-etc_sudoers text eol=lf
