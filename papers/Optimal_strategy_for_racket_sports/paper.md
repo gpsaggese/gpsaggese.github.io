@@ -645,6 +645,70 @@ Table I, rather than through additional equations. This supports treating
 "sport" as a parameter setting rather than a structural choice in future
 computational implementations of the framework.
 
+## Which Variables Matter
+
+The model of Section IV-H keeps $v_b$, $v_p$, $t_r$, and the spread
+$(\sigma_x, \sigma_y)$ as separate variables. To see which of them change the
+results, we measure each run by the highest $P_{\mathrm{win}}$ over the grid,
+with the grid, the $K$, and the common random numbers of Section IV-H. The base
+values are those of Section IV-H, with $v_b = 12$ m/s for pickleball and a
+spread of $(0.5, 1.0)$ m. We first vary one variable at a time: $v_b$ from 5 m/s
+to the fastest ball of the model (73.14 m/s for tennis and 24.59 m/s for
+pickleball), $v_p$ from 0 to 6 m/s, $t_r$ from 0 to 1 s, and each spread from 0.1
+to 3 m. We then cross nine serves with the ends and the base values of $v_b$ and
+$v_p$, for both service sides and both sports. The upper ends of $v_p$ and of the
+spread bound the ranges of the model; they are not measured values. The
+experiments are in `notebooks/racket_sports_05_variable_sensitivity.ipynb` of the
+accompanying code.
+
+**The error spread matters most.** With a spread of 3 m the highest
+$P_{\mathrm{win}}$ falls to 0.827 for tennis and 0.695 for pickleball in $\sigma_x$,
+and to 0.955 and 0.727 in $\sigma_y$ (Figure 3). By contrast, $v_b$ and $v_p$ leave
+tennis at 1.000 and pickleball between 0.948 and 0.998, and $t_r$ leaves pickleball
+between 0.996 and 0.998.
+
+![Highest $P_{\mathrm{win}}$ when one variable moves and the others stay at their base values.](figures/variable_sensitivity_sweeps.png)
+
+**Player speed and ball speed matter mainly in one corner.** The highest
+$P_{\mathrm{win}}$ is at least 0.99 in 146 of the 162 tennis corner runs and in
+108 of the 162 pickleball ones. The exception is a slow ball (5 m/s) with a fast
+server (6 m/s), where it falls to between 0.816 and 0.991 for tennis and between
+0.047 and 0.705 for pickleball, depending on the serve. There the serve matters,
+and deep serves help the server (Figure 4): a deep serve pushes the returner
+back, so the return flies farther and the server has more time to run. In
+pickleball the short serves leave 0.680 to 0.705 and the deep ones 0.047 to
+0.092, and the deep serve at the T is the lowest in both sports (on the tennis
+ad side, tied with the other deep serves). Outside that corner, pickleball still
+goes down to 0.904 at $v_p = 6$ m/s with the default ball. The mean of
+$P_{\mathrm{win}}$ over the server's half moves more than its highest value, from
+0.51 to 0.83 with $v_p$ in pickleball: the speeds change how much a poor aim costs
+more than what the best aim can get.
+
+![Highest $P_{\mathrm{win}}$ that the returner can get, by how deep the serve lands, for a slow ball and a fast server ($v_b = 5$ m/s, $v_p = 6$ m/s). A lower value is better for the server.](figures/variable_sensitivity_serve_depth.png)
+
+**Reaction time changes little at realistic values.** Compared with $t_r = 0$,
+a reaction time of 0.2 s at $v_p = 1.5$ m/s, within the ranges of Section III-B,
+moves the best region by at most 0.26 m for tennis and 0.45 m for pickleball,
+less than a grid cell, over ball speeds from 5 m/s to the fastest ball. The
+highest $P_{\mathrm{win}}$ moves by 0.00 and 0.82 percentage points, and its mean
+over the half by at most 2.34 and 3.95 points. A reaction time matters more for a
+fast server, who loses the distance $v_p t_r$ while reacting: up to 17.52 points
+on the highest $P_{\mathrm{win}}$ for pickleball at $v_p = 6$ m/s. It is not an
+important variable at realistic values, and we keep it in the model for
+completeness. Without it the two speeds are not separate variables:
+
+**Proposition 1.** With $t_r = 0$, $P_{\mathrm{win}}$ of every target depends on
+$v_p$ and $v_b$ only through the ratio $v_p / v_b$.
+
+A proof sketch is in the Appendix. In simulation, multiplying both speeds by the
+same factor gives identical maps, cell by cell, on 30 pairs of maps and on 500
+random settings. With $t_r > 0$ the same scaling changes the maps, since a second
+quantity enters, the reaction distance $v_p t_r$.
+
+Two limits apply to these results. The highest $P_{\mathrm{win}}$ is 1.000 for many
+tennis settings, so it cannot rank them. And the spread does not depend on the
+ball speed in this model (Section IV-H), so a faster ball always looks better.
+
 # Discussion and Limitations
 
 **Neglected aerodynamics.** Measured drag and lift coefficients for tennis
@@ -717,3 +781,25 @@ rather than a single-shot approximation; and (v) extending the geometric
 model to doubles court dimensions and to a validation of the
 minimax-equilibrium hypothesis of Section V-B directly on placement data,
 rather than only on serve-direction data.
+
+# Appendix: Proof Sketch of Proposition 1 {.unnumbered}
+
+Take the model of Section IV-H. The landing points $(X_k, Y_k)$ are drawn from the
+target and the spread, so their distribution does not depend on $v_b$ or $v_p$,
+and whether a sample lands in the server's half $H$ depends only on $(X_k, Y_k)$.
+With $d_k = \lVert (X_k, Y_k) - (x_1, y_1) \rVert$ the flight distance and
+$r = v_p / v_b$, the reach rule of Section IV-H reads
+
+$$
+\begin{aligned}
+\lVert (X_k, Y_k) - P \rVert
+&\le v_p \max\left(0, \, \frac{d_k}{v_b} - t_r\right) \\
+&= \max(0, \, r \, d_k - v_p t_r) .
+\end{aligned}
+$$
+
+So each event $W_k$ depends on the two speeds only through $r$ and the reaction
+distance $v_p t_r$. With $t_r = 0$ the reaction distance is 0 and only $r$ is left.
+$P_{\mathrm{win}}$ is the probability of this event, so it depends on $v_p$ and
+$v_b$ only through $r$, and so do the best region and the best target, which are
+functions of the map. With $t_r > 0$ the map depends on both $r$ and $v_p t_r$.
