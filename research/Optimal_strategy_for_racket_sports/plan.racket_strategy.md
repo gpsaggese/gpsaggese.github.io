@@ -371,7 +371,7 @@
         model the spread as a function of the ball speed
   - [ ] [#786](https://github.com/gpsaggese/gpsaggese.github.io/issues/786):
         model the spread as a function of player 2's movement
-  - [ ] [#714](https://github.com/gpsaggese/gpsaggese.github.io/issues/714):
+  - [x] [#714](https://github.com/gpsaggese/gpsaggese.github.io/issues/714):
         movement in the serving setup; its follow-ups are #786 and #787
   - [ ] [#713](https://github.com/gpsaggese/gpsaggese.github.io/issues/713):
         model the RL problem (phase 2)
