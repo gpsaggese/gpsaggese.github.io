@@ -236,3 +236,9 @@ uncertainty.
 - [DeepAR paper](https://arxiv.org/abs/1704.04110)
 - [GluonTS paper](https://arxiv.org/abs/1906.05264)
 - [Tutorial README and data notes](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/tutorials/GluonTS_COVID19_Prediction/README.md)
+
+## Acknowledgments
+
+[Ibrahim Ahmed Mohammed](https://github.com/Worldsoldure00) contributed
+editorial review, technical documentation improvements, and preparation for
+publication.
