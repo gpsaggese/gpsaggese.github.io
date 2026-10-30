@@ -174,11 +174,11 @@
     `notebooks/racket_sports_01_shot_probability_utils.py` and
     `notebooks/racket_sports_01_shot_probability.ipynb`
 
-- [-] Milestone 2: probability of a winning return
+- [x] Milestone 2: probability of a winning return
       ([#624](https://github.com/gpsaggese/gpsaggese.github.io/issues/624)), as
       agreed with GP in
-      [#690](https://github.com/gpsaggese/gpsaggese.github.io/issues/690); in
-      progress in [PR #715](https://github.com/gpsaggese/gpsaggese.github.io/pull/715)
+      [#690](https://github.com/gpsaggese/gpsaggese.github.io/issues/690); done
+      in [PR #715](https://github.com/gpsaggese/gpsaggese.github.io/pull/715)
   - Sources:
     [GP's answers on #624](https://github.com/gpsaggese/gpsaggese.github.io/issues/624#issuecomment-6186123404),
     [GP's answers on #690](https://github.com/gpsaggese/gpsaggese.github.io/issues/690#issuecomment-6252896405),
@@ -205,7 +205,7 @@
     1's half, with the best target marked, for tennis and pickleball
   - Code: new functions in
     `notebooks/racket_sports_01_shot_probability_utils.py` and a new Part 2 of
-    `notebooks/racket_sports_01_shot_probability.ipynb`, in the draft
+    `notebooks/racket_sports_01_shot_probability.ipynb`, in
     [PR #715](https://github.com/gpsaggese/gpsaggese.github.io/pull/715)
   - Decisions made while building it:
     - **Common random numbers**: every target of the heatmap gets
@@ -239,6 +239,15 @@
       0.6$ m
     - So $P(\text{winner})$ is almost $P_{\mathrm{in}}$, except in a small dip
       around player 1, and the middle keeps the most returns in
+  - Finding ([#789](https://github.com/gpsaggese/gpsaggese.github.io/issues/789),
+    simulation, waiting for GP's review): with $t_r = 0$ the map depends on the
+    two speeds only through the ratio $r = v_p / v_b$; with $t_r > 0$ also on the
+    reaction distance $v_p t_r$ (a conjecture with a short proof sketch)
+    - Same-seed maps are identical on 30 scaled pairs and 500 random settings
+    - At $t_r = 0.2$ s and $v_p = 1.5$ m/s, the reaction time does not move the
+      best target and changes the mean $P(\text{winner})$ by at most 3.95
+      points (pickleball, slow balls)
+    - Proposed: one speed control (ball speed over a fixed player speed)
 
 * Open Points
 - From
@@ -284,6 +293,20 @@
     probability of winning one step ahead instead of discounting the whole
     trajectory
 
+* Phases
+- GP's plan on
+  [#714](https://github.com/gpsaggese/gpsaggese.github.io/issues/714#issuecomment-6336481113),
+  tracked in [#787](https://github.com/gpsaggese/gpsaggese.github.io/issues/787):
+  1. One-shot experiments without RL, to understand the problem and its solution
+     in a simple setup: Milestone 2 and its follow-ups (#694, #723, #786, #788,
+     #789)
+  2. Brute-force RL that reproduces the results of phase 1; the game theory part
+     should just extend phase 1 (#713)
+  3. Combine: replace parts of phase 2 with the results of phase 1, for faster
+     sims and more understanding (maybe not needed)
+- Open question: how much the game theory part matters, only the next step or
+  planning for long rallies (GP: "Totally unknown")
+
 * Tasks
 - GP's rule
   ([#625](https://github.com/gpsaggese/gpsaggese.github.io/issues/625#issuecomment-6185837906)):
@@ -297,24 +320,45 @@
       Milestone 1 follow-ups (renames, diagonal serve, "Fault" label),
       [PR #654](https://github.com/gpsaggese/gpsaggese.github.io/pull/654)
   - Manual widget checks of the Milestone 1 notebook are still pending
-- [-] [#624](https://github.com/gpsaggese/gpsaggese.github.io/issues/624):
+- [x] [#624](https://github.com/gpsaggese/gpsaggese.github.io/issues/624):
       Milestone 2, winner probability heatmap,
       [PR #715](https://github.com/gpsaggese/gpsaggese.github.io/pull/715)
-- [-] [#625](https://github.com/gpsaggese/gpsaggese.github.io/issues/625):
+- [x] [#625](https://github.com/gpsaggese/gpsaggese.github.io/issues/625):
       project log `log.racket_strategy.md`,
       [PR #660](https://github.com/gpsaggese/gpsaggese.github.io/pull/660)
-- [ ] [#626](https://github.com/gpsaggese/gpsaggese.github.io/issues/626):
+- [x] [#626](https://github.com/gpsaggese/gpsaggese.github.io/issues/626):
       doc on creating a PR with the Claude Code skills
-- [-] [#627](https://github.com/gpsaggese/gpsaggese.github.io/issues/627):
+- [x] [#627](https://github.com/gpsaggese/gpsaggese.github.io/issues/627):
       paper, add the author and the Milestone 1 model,
       [PR #661](https://github.com/gpsaggese/gpsaggese.github.io/pull/661)
 - [ ] [#663](https://github.com/gpsaggese/gpsaggese.github.io/issues/663):
       research other papers about optimal tennis strategy
 - [ ] [#664](https://github.com/gpsaggese/gpsaggese.github.io/issues/664):
       brainstorm how to apply this research (see Vision)
-- [-] [#666](https://github.com/gpsaggese/gpsaggese.github.io/issues/666):
+- [x] [#666](https://github.com/gpsaggese/gpsaggese.github.io/issues/666):
       update this master plan with the Milestone 2 discussion
-- [ ] [#669](https://github.com/gpsaggese/gpsaggese.github.io/issues/669):
+- [x] [#669](https://github.com/gpsaggese/gpsaggese.github.io/issues/669):
       meta-doc on how we run the research project
 - [ ] [#670](https://github.com/gpsaggese/gpsaggese.github.io/issues/670):
       generate the paper figures from the notebooks
+- [-] [#691](https://github.com/gpsaggese/gpsaggese.github.io/issues/691):
+      clean up the docs (specs, notebook names), with
+      [#787](https://github.com/gpsaggese/gpsaggese.github.io/issues/787): the
+      phases in this plan, in one PR
+
+- Next steps (phase 1, then phase 2):
+  - [ ] [#694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694):
+        research Gdoc; the corner sims are done
+  - [-] [#788](https://github.com/gpsaggese/gpsaggese.github.io/issues/788):
+        red to green heatmaps,
+        [PR #804](https://github.com/gpsaggese/gpsaggese.github.io/pull/804)
+  - [ ] [#789](https://github.com/gpsaggese/gpsaggese.github.io/issues/789):
+        one speed control from the speed ratio (see the finding above)
+  - [ ] [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723):
+        model the spread as a function of the ball speed
+  - [ ] [#786](https://github.com/gpsaggese/gpsaggese.github.io/issues/786):
+        model the spread as a function of player 2's movement
+  - [ ] [#714](https://github.com/gpsaggese/gpsaggese.github.io/issues/714):
+        movement in the serving setup; its follow-ups are #786 and #787
+  - [ ] [#713](https://github.com/gpsaggese/gpsaggese.github.io/issues/713):
+        model the RL problem (phase 2)
