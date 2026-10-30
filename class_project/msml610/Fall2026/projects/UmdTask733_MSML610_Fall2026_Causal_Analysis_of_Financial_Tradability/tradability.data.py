@@ -17,8 +17,8 @@
 # %% [markdown]
 # # Description
 #
-# Step 1 of the plan on #733: load 5-minute OHLCV bars for BTC and ETH and
-# clean them.
+# Step 1 of the plan on #733: load 5-minute OHLCV bars for BTC and ETH, clean
+# them, and compute features and labels.
 #
 # - Load the bars from the Binance monthly files (cached as parquet)
 # - Put the bars on a regular 5-minute grid and find the gaps
@@ -26,6 +26,9 @@
 #   into segments at each one, so later features and labels never span a gap
 # - Flag zero-volume bars and extreme returns (kept, not dropped)
 # - Summarize the data quality per coin
+# - Compute features (past data only) and forward-return labels for each
+#   horizon, inside each segment
+# - Summarize the labels per horizon on non-overlapping decision times
 
 # %% [markdown]
 # ## Imports
@@ -38,6 +41,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 import data_utils as dutil
+import tradability_utils as tu
 
 # %% [markdown]
 # ## Config
@@ -52,6 +56,8 @@ MAX_FILL_BARS = 3
 # Flag a return if it is larger than 10 rolling stds over the past day.
 VOL_WINDOW_BARS = 288
 EXTREME_STD = 10.0
+# Holding periods for the labels.
+HORIZONS = ["5m", "15m", "1h", "4h", "1d"]
 
 # %% [markdown]
 # ## Load and clean
@@ -151,6 +157,82 @@ for ax, symbol in zip(axes, SYMBOLS):
 plt.tight_layout()
 
 # %% [markdown]
+# ## Features
+#
+# Each row is what is known at the close of the bar: lagged returns,
+# volatility, volume, range, momentum, time, and the other coin's returns.
+
+# %%
+other = {"BTCUSDT": "ETHUSDT", "ETHUSDT": "BTCUSDT"}
+features = {}
+for symbol in SYMBOLS:
+    features[symbol] = dutil.compute_features(
+        clean[symbol],
+        other=clean[other[symbol]],
+        other_name=other[symbol][:3].lower(),
+        interval=INTERVAL,
+    )
+features["BTCUSDT"].describe().T
+
+# %%
+# Share of missing values per feature: segment starts and long gaps.
+pd.DataFrame({symbol: features[symbol].isna().mean() for symbol in SYMBOLS})
+
+# %% [markdown]
+# ## Labels per horizon
+#
+# For each horizon, keep one decision time every horizon so the trades do
+# not overlap, then compare:
+# - `share_up`: share of up moves, i.e., the hit rate of always buying. It
+#   uses all decision times (the average over the possible start bars), since
+#   with one start bar it depends on the time of day at long horizons
+# - `p_star_eff`: hit rate needed for a 95% chance of profit, with N_eff as in
+#   Exercise 1
+
+# %%
+labels = {}
+for symbol in SYMBOLS:
+    labels[symbol] = dutil.compute_labels(
+        clean[symbol], HORIZONS, interval=INTERVAL
+    )
+rows = []
+for symbol in SYMBOLS:
+    for horizon in HORIZONS:
+        sample = dutil.sample_non_overlapping(
+            labels[symbol], horizon, interval=INTERVAL
+        )
+        sample = sample.dropna(subset=[f"label_{horizon}"])
+        fwd_ret = sample[f"fwd_ret_{horizon}"]
+        n_eff = tu.compute_effective_n(fwd_ret)
+        rows.append(
+            {
+                "symbol": symbol,
+                "horizon": horizon,
+                "n": len(sample),
+                "share_up": labels[symbol][f"label_{horizon}"].mean(),
+                "mean_abs_ret": fwd_ret.abs().mean(),
+                "n_eff": round(n_eff),
+                "p_star_eff": tu.compute_min_hit_rate(n_eff),
+            }
+        )
+label_stats = pd.DataFrame(rows).set_index(["symbol", "horizon"])
+label_stats.round(4)
+
+# %%
+# Plot the share of up moves and p* against the horizon.
+fig, axes = plt.subplots(1, 2, figsize=(12, 4), sharey=True)
+for ax, symbol in zip(axes, SYMBOLS):
+    stats = label_stats.loc[symbol]
+    ax.plot(stats.index, stats["share_up"], marker="o", label="share up")
+    ax.plot(stats.index, stats["p_star_eff"], marker="o", label="corrected p*")
+    ax.axhline(0.5, color="gray", linestyle=":")
+    ax.set_title(symbol)
+    ax.set_xlabel("horizon")
+    ax.set_ylabel("hit rate")
+    ax.legend()
+plt.tight_layout()
+
+# %% [markdown]
 # ## Observations
 #
 # - The data is clean overall: no duplicates, and only 462 of 709,920 bars
@@ -171,3 +253,18 @@ plt.tight_layout()
 #   rebounds: March 2020 (+18% in 5 minutes on 2020-03-13), the May 2021
 #   crash, and 2025-10-10. They are kept, since fat tails are part of what we
 #   study
+#
+# Features and labels:
+# - 17 features per bar. Less than 5% are missing, all at the start of a
+#   segment where the 7-day windows are not full yet
+# - Both lines in the last plot go up with the horizon. The share of up moves
+#   goes up because BTC and ETH rose a lot over 2020-2026, and the drift adds
+#   up over longer holds. p* goes up because there are fewer independent
+#   trades. This is the horizon tradeoff from the spec, in the real data
+# - Always buying is above p* at 1h and 4h for both coins, but below it at
+#   5m and 1d. This does not mean buying is a strategy: the drift is specific
+#   to this period, and p* assumes the hits do not depend on the size of the
+#   move. But it is the baseline any model in step 2 has to beat
+# - At 1d the share of up moves depends on the time of day we decide at:
+#   from 50.6% to 53.1% for BTC, since there are only 2,448 days. Results at
+#   1d will be noisy

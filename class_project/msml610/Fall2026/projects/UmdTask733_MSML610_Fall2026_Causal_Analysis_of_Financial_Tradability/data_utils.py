@@ -257,3 +257,172 @@ def compute_quality_table(
         "max_abs_ret": float(np.nanmax(clean["ret"].abs())),
     }
     return pd.Series(stats)
+
+
+# #############################################################################
+# Features
+# #############################################################################
+
+
+def _bars_in(duration: str, interval: str) -> int:
+    """
+    Compute how many bars of size `interval` fit in `duration`.
+
+    :param duration: length of time, e.g., "1h", "1d"
+    :param interval: bar size, e.g., "5m"
+    :return: number of bars, e.g., 12 for "1h" with "5m" bars
+    """
+    n_bars = _to_timedelta(duration) / _to_timedelta(interval)
+    if n_bars != int(n_bars) or n_bars < 1:
+        raise ValueError(f"'{duration}' is not a multiple of '{interval}'")
+    return int(n_bars)
+
+
+def _compute_return_features(
+    clean: pd.DataFrame, lags: list[int], *, prefix: str = ""
+) -> pd.DataFrame:
+    """
+    Compute the return over the last `lag` bars, within each segment.
+
+    :param clean: bars as returned by `clean_bars()`
+    :param lags: numbers of bars to look back, e.g., [1, 3, 12]
+    :param prefix: prefix for the column names, e.g., "eth_"
+    :return: one column `{prefix}ret_{lag}` per lag
+    """
+    by_segment = clean.groupby("segment_id")["close"]
+    features = pd.DataFrame(index=clean.index)
+    for lag in lags:
+        past_close = by_segment.shift(lag)
+        features[f"{prefix}ret_{lag}"] = clean["close"] / past_close - 1
+    return features
+
+
+def compute_features(
+    clean: pd.DataFrame,
+    *,
+    other: pd.DataFrame | None = None,
+    other_name: str = "other",
+    interval: str = "5m",
+) -> pd.DataFrame:
+    """
+    Compute the features for each bar, using only data up to that bar.
+
+    The row at time t uses the bars up to and including bar t, so it is what
+    is known at the close of bar t. All rolling windows stay inside one
+    segment, so no feature spans a long gap.
+
+    :param clean: bars as returned by `clean_bars()`
+    :param other: bars of another asset as returned by `clean_bars()`, for the
+        cross-asset features
+    :param other_name: prefix for the cross-asset columns, e.g., "eth"
+    :param interval: bar size, e.g., "5m"
+    :return: one row per bar with:
+        - `ret_{n}`: return over the last n bars, for n in 1, 3, 6, 12, 48
+        - `vol_{w}`: std of the 1-bar returns over the last 1h, 1d, 7d
+        - `volume_z`: z-score of log volume against the last day
+        - `range`: (high - low) / close of the bar
+        - `mom_{w}`: return over the last 1d and 7d
+        - `hour`, `day_of_week`: time of the bar (UTC)
+        - `{other_name}_ret_{n}`: the other asset's return over the last n
+          bars, for n in 1, 3, 12
+    """
+    lags = [1, 3, 6, 12, 48]
+    features = _compute_return_features(clean, lags)
+    by_segment = clean.groupby("segment_id")
+    # Realized volatility over the last 1h, 1d, and 7d.
+    for window in ["1h", "1d", "7d"]:
+        n_bars = _bars_in(window, interval)
+        features[f"vol_{window}"] = by_segment["ret"].transform(
+            lambda r, n=n_bars: r.rolling(n, min_periods=n).std()
+        )
+    # Volume compared with its last day, on a log scale.
+    n_bars = _bars_in("1d", interval)
+    log_volume = np.log1p(clean["volume"])
+    by_segment_volume = log_volume.groupby(clean["segment_id"])
+    mean = by_segment_volume.transform(
+        lambda v: v.rolling(n_bars, min_periods=n_bars).mean()
+    )
+    std = by_segment_volume.transform(
+        lambda v: v.rolling(n_bars, min_periods=n_bars).std()
+    )
+    features["volume_z"] = (log_volume - mean) / std
+    features["range"] = (clean["high"] - clean["low"]) / clean["close"]
+    # Momentum over the last 1d and 7d.
+    for window in ["1d", "7d"]:
+        n_bars = _bars_in(window, interval)
+        past_close = by_segment["close"].shift(n_bars)
+        features[f"mom_{window}"] = clean["close"] / past_close - 1
+    features["hour"] = clean.index.hour
+    features["day_of_week"] = clean.index.dayofweek
+    # Returns of the other asset, aligned on the same bar times.
+    if other is not None:
+        other_features = _compute_return_features(
+            other, [1, 3, 12], prefix=f"{other_name}_"
+        )
+        features = features.join(other_features, how="left")
+    # Inside a long gap there is no data, so no features.
+    features[clean["segment_id"].isna()] = np.nan
+    return features
+
+
+# #############################################################################
+# Labels
+# #############################################################################
+
+
+def compute_labels(
+    clean: pd.DataFrame,
+    horizons: list[str],
+    *,
+    interval: str = "5m",
+) -> pd.DataFrame:
+    """
+    Compute the forward return and its sign for each horizon.
+
+    The label at time t is the return from the close of bar t to the close of
+    bar t + h. It is NaN when t + h is past the end of the segment, so no
+    label spans a long gap.
+
+    :param clean: bars as returned by `clean_bars()`
+    :param horizons: holding periods, e.g., ["5m", "15m", "1h", "4h", "1d"]
+    :param interval: bar size, e.g., "5m"
+    :return: one row per bar with, for each horizon h:
+        - `fwd_ret_{h}`: return from t to t + h
+        - `label_{h}`: 1 if `fwd_ret_{h}` > 0, 0 if < 0, NaN if exactly 0 or
+          unknown
+    """
+    by_segment = clean.groupby("segment_id")["close"]
+    labels = pd.DataFrame(index=clean.index)
+    for horizon in horizons:
+        n_bars = _bars_in(horizon, interval)
+        future_close = by_segment.shift(-n_bars)
+        fwd_ret = future_close / clean["close"] - 1
+        labels[f"fwd_ret_{horizon}"] = fwd_ret
+        label = pd.Series(np.nan, index=clean.index)
+        label[fwd_ret > 0] = 1.0
+        label[fwd_ret < 0] = 0.0
+        labels[f"label_{horizon}"] = label
+    return labels
+
+
+def sample_non_overlapping(
+    df: pd.DataFrame, horizon: str, *, interval: str = "5m", offset: int = 0
+) -> pd.DataFrame:
+    """
+    Keep one decision time every `horizon`, so that trades do not overlap.
+
+    With 5-minute bars and a 1h horizon, the forward returns of consecutive
+    bars share 11 of their 12 bars, so they are not independent trades.
+    Keeping every 12th bar gives independent trades.
+
+    :param df: rows on a regular grid of `interval` bars, e.g., from
+        `compute_labels()`
+    :param horizon: holding period, e.g., "1h"
+    :param interval: bar size, e.g., "5m"
+    :param offset: which bar of each block to keep, from 0 to n_bars - 1
+    :return: every n-th row of `df`, starting at `offset`
+    """
+    n_bars = _bars_in(horizon, interval)
+    if not 0 <= offset < n_bars:
+        raise ValueError(f"Invalid offset={offset} for {n_bars} bars")
+    return df.iloc[offset::n_bars]

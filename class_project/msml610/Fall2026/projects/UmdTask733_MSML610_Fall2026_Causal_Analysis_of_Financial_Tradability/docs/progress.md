@@ -9,7 +9,8 @@
 | Milestone | Target date | Status | PR |
 | :-------- | :---------- | :----- | :- |
 | Step 0: Exercise 1 from #381 (PnL vs hit rate) | Oct 29 | Done | #794 |
-| Step 1: Data, cleaning, features, labels | Nov 5 | In progress | |
+| Step 0: Exercise 1 on SPY (asked on #733) | Oct 29 | In review | this PR |
+| Step 1: Data, cleaning, features, labels | Nov 5 | In review | this PR |
 | Step 2: Predictability vs horizon, hit rate and PnL with costs | Nov 5 | Not started | |
 | Step 3: Causal analysis and placebo tests | Nov 19 | Not started | |
 | Step 4: Best horizon per regime, walk-forward backtest | Nov 26 | Not started | |
@@ -20,6 +21,12 @@
 - `tradability_utils.py`: loads Binance prices, computes returns, simulates the
   PnL for a given hit rate, computes the effective number of trades
 - `exercise1.ipynb`: Exercise 1 with plots and observations
+- `exercise1_spy.ipynb`: Exercise 1 on SPY next to BTC (Yahoo Finance data)
+- `data_utils.py`: loads 5-minute OHLCV bars, cleans them, computes features
+  and labels per horizon
+- `test/test_data_utils.py`: unit tests, including no look-ahead and no
+  feature or label spanning a gap
+- `tradability.data.ipynb`: data quality, features, labels per horizon
 - Docker setup from `class_project/project_template`
 
 ## Findings
@@ -37,13 +44,26 @@
 3. Drawing a fixed number of hits (Exercise 1) and drawing each hit
    independently (spec) agree at 1h but not at 1d: about 0.52 vs 0.525 for a
    95% chance of profit
+4. The N_eff correction also works for SPY: in all 5 cases (SPY and BTC, 1h
+   and 1d) the corrected p* is where the simulation crosses 95%
+   - SPY needs a higher hit rate than BTC at the same bar size because it
+     trades fewer hours: about 52.5% for SPY 1h vs 51% for BTC 1h
+   - What matters is the number of trades, not the size of the moves: daily
+     SPY and daily BTC both need about 53%
+   - Data: Yahoo Finance and Binance, `exercise1_spy.ipynb`
+5. The 5-minute Binance data is clean: no duplicates, 0.07% missing bars. BTC
+   and ETH share the same 15 gaps (Binance outages), all at least 1 hour, so
+   the data is split into 16 segments
+   - Data: `tradability.data.ipynb`
+6. Both the share of up moves and p* go up with the horizon. Always buying is
+   above p* at 1h and 4h but below it at 5m and 1d, because of the 2020-2026
+   uptrend. This is the baseline step 2 has to beat
+   - Data: `tradability.data.ipynb`, section "Labels per horizon"
 
 ## Next
 
-1. Step 1: 5-minute OHLCV data, cleaning, features, and labels for horizons
-   5m, 15m, 1h, 4h, 1d
-2. Step 2: predictability vs horizon with baseline models, and the minimum hit
-   rate after costs
+1. Step 2: hit rate of baseline models (always buy, momentum, logistic
+   regression) per horizon, compared with p* after costs
 
 ## History
 
@@ -54,10 +74,13 @@
 | 2026-10-28 | Posted plan and related research on #733 |
 | 2026-10-28 | PR #794 merged: Exercise 1, Docker setup, effective-N correction |
 | 2026-10-28 | Started the research Google Doc, as GP asked on #794 |
+| 2026-10-29 | GP: results "very interesting", asked for SPY; PR #800 merged |
+| 2026-10-29 | Exercise 1 on SPY; step 1 data, features, labels |
 
 ## Open Work
 
-- Step 1 spec: agreed in the team, to be linked from PR 1
+- Zero-volume bars right before a gap: part of the gap or not?
+- Yahoo keeps only 730 days of hourly data: commit the SPY 1h CSV?
 
 ## 2026-10-28: UmdTask733_MSML610_Fall2026_Causal_Analysis_of_Financial_Tradability
 

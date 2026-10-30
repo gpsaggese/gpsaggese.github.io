@@ -249,3 +249,184 @@ class Test_compute_quality_table(hunitest.TestCase):
         self.assertEqual(stats["n_missing_bars"], 2)
         self.assertEqual(stats["n_long_gaps"], 1)
         self.assertEqual(stats["n_segments"], 2)
+
+
+def _get_gap_bars() -> pd.DataFrame:
+    """
+    Build 40 random 5-minute bars with a 1-hour gap after the first 20.
+
+    :return: bars as returned by `clean_bars()`, with 2 segments
+    """
+    bars = _get_random_bars(52)
+    # Drop bars 20 to 31, so that the gap is too long to fill.
+    bars = pd.concat([bars.iloc[:20], bars.iloc[32:]])
+    clean = dutil.clean_bars(bars)
+    return clean
+
+
+# #############################################################################
+# Test_compute_features
+# #############################################################################
+
+
+class Test_compute_features(hunitest.TestCase):
+    """
+    Test `data_utils.compute_features()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that changing the data after time t does not change the features
+        at or before t (no look-ahead).
+        """
+        # Prepare inputs.
+        rng = np.random.default_rng(1)
+        bars = _get_random_bars(2500)
+        bars["volume"] = rng.uniform(1, 10, len(bars))
+        other = _get_random_bars(2500, seed=2)
+        t = bars.index[2200]
+        changed = bars.copy()
+        changed.loc[changed.index > t, ["open", "high", "low", "close"]] *= 1.5
+        changed.loc[changed.index > t, "volume"] *= 3
+        other_changed = other.copy()
+        other_changed.loc[other_changed.index > t, "close"] *= 0.5
+        # Run test.
+        features = dutil.compute_features(
+            dutil.clean_bars(bars), other=dutil.clean_bars(other)
+        )
+        features_changed = dutil.compute_features(
+            dutil.clean_bars(changed), other=dutil.clean_bars(other_changed)
+        )
+        # Check outputs.
+        pd.testing.assert_frame_equal(features.loc[:t], features_changed.loc[:t])
+        # The 7-day features need 2016 bars, so they exist at t.
+        self.assertFalse(features.loc[t].isna().any())
+
+    def test2(self) -> None:
+        """
+        Test that the lagged returns use the right past bars.
+        """
+        # Prepare inputs.
+        clean = dutil.clean_bars(_get_random_bars(100))
+        # Run test.
+        features = dutil.compute_features(clean)
+        # Check outputs.
+        close = clean["close"]
+        self.assertAlmostEqual(
+            features["ret_12"].iloc[50], close.iloc[50] / close.iloc[38] - 1
+        )
+        self.assertAlmostEqual(features["ret_1"].iloc[50], clean["ret"].iloc[50])
+        self.assertTrue(np.isnan(features["ret_48"].iloc[47]))
+
+    def test3(self) -> None:
+        """
+        Test that no feature spans a long gap.
+        """
+        # Prepare inputs.
+        clean = _get_gap_bars()
+        # Run test.
+        features = dutil.compute_features(clean)
+        # Check outputs.
+        # The second segment starts at row 32.
+        self.assertTrue(features["ret_3"].iloc[32:35].isna().all())
+        self.assertFalse(np.isnan(features["ret_3"].iloc[35]))
+        # The 1h volatility needs 12 returns, so 13 bars of the segment.
+        self.assertTrue(features["vol_1h"].iloc[32:44].isna().all())
+        self.assertFalse(np.isnan(features["vol_1h"].iloc[44]))
+        # Inside the gap there are no features.
+        self.assertTrue(features.iloc[20:32].isna().all().all())
+
+
+# #############################################################################
+# Test_compute_labels
+# #############################################################################
+
+
+class Test_compute_labels(hunitest.TestCase):
+    """
+    Test `data_utils.compute_labels()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that the labels line up with the right future bars.
+        """
+        # Prepare inputs.
+        clean = dutil.clean_bars(_get_random_bars(100))
+        # Run test.
+        labels = dutil.compute_labels(clean, ["5m", "1h"])
+        # Check outputs.
+        close = clean["close"]
+        expected = close.iloc[62] / close.iloc[50] - 1
+        self.assertAlmostEqual(labels["fwd_ret_1h"].iloc[50], expected)
+        self.assertEqual(labels["label_1h"].iloc[50], float(expected > 0))
+        expected = close.iloc[51] / close.iloc[50] - 1
+        self.assertAlmostEqual(labels["fwd_ret_5m"].iloc[50], expected)
+        # The last 12 bars have no 1h label.
+        self.assertTrue(labels["fwd_ret_1h"].iloc[-12:].isna().all())
+        self.assertFalse(np.isnan(labels["fwd_ret_1h"].iloc[-13]))
+
+    def test2(self) -> None:
+        """
+        Test that no label spans a long gap.
+        """
+        # Prepare inputs.
+        clean = _get_gap_bars()
+        # Run test.
+        labels = dutil.compute_labels(clean, ["15m"])
+        # Check outputs.
+        # The first segment ends at row 19, so rows 17-19 have no 15m label.
+        self.assertFalse(np.isnan(labels["fwd_ret_15m"].iloc[16]))
+        self.assertTrue(labels["fwd_ret_15m"].iloc[17:20].isna().all())
+        self.assertFalse(np.isnan(labels["fwd_ret_15m"].iloc[32]))
+
+    def test3(self) -> None:
+        """
+        Test that a zero forward return has no label.
+        """
+        # Prepare inputs.
+        times = ["2024-01-01 00:00", "2024-01-01 00:05", "2024-01-01 00:10"]
+        clean = dutil.clean_bars(_get_bars(times, [1.0, 1.0, 2.0]))
+        # Run test.
+        labels = dutil.compute_labels(clean, ["5m"])
+        # Check outputs.
+        self.assertEqual(
+            labels["label_5m"].astype(str).tolist(), ["nan", "1.0", "nan"]
+        )
+
+
+# #############################################################################
+# Test_sample_non_overlapping
+# #############################################################################
+
+
+class Test_sample_non_overlapping(hunitest.TestCase):
+    """
+    Test `data_utils.sample_non_overlapping()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that the decision times are one horizon apart.
+        """
+        # Prepare inputs.
+        clean = dutil.clean_bars(_get_random_bars(100))
+        labels = dutil.compute_labels(clean, ["1h"])
+        # Run test.
+        sample = dutil.sample_non_overlapping(labels, "1h", offset=2)
+        # Check outputs.
+        # Rows 2, 14, ..., 98.
+        self.assertEqual(len(sample), 9)
+        self.assertEqual(sample.index[0], clean.index[2])
+        diffs = sample.index.to_series().diff().dropna().unique()
+        self.assertEqual(diffs.tolist(), [pd.Timedelta("1h")])
+
+    def test2(self) -> None:
+        """
+        Test that an offset outside the horizon is rejected.
+        """
+        # Prepare inputs.
+        clean = dutil.clean_bars(_get_random_bars(20))
+        # Run test and check outputs.
+        with self.assertRaises(ValueError):
+            dutil.sample_non_overlapping(clean, "15m", offset=3)
