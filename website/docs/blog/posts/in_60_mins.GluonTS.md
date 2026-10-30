@@ -240,5 +240,4 @@ uncertainty.
 ## Acknowledgments
 
 [Ibrahim Ahmed Mohammed](https://github.com/Worldsoldure00) contributed
-editorial review, technical documentation improvements, and preparation for
-publication.
+editorial review, technical improvements, and publication preparation.
