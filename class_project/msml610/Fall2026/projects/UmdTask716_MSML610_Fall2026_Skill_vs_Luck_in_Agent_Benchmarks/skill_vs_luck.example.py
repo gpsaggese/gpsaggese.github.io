@@ -32,6 +32,7 @@
 
 import logging
 
+import numpy as np
 import pandas as pd
 
 # %%
@@ -253,7 +254,96 @@ print("min_gap=", round(100 * min_gap, 1), "points")
 utils.plot_min_tasks_curve(adjacent["sd_diff"], figsize=(12, 5))
 
 # %% [markdown]
-# # Part 5: Takeaways and next steps
+# # Part 5: Ranking under uncertainty
+#
+# - Part 3 compared agents 2 at a time
+# - Here the whole leaderboard is bootstrapped at once
+#   - Resample the 500 tasks with replacement 2,000 times
+#   - Recompute all 173 scores and rank the agents in each sample
+#   - The samples are the same ones used for the score intervals in Cell 2.1
+# - Ties are split
+#   - Tied agents share the average of their ranks
+#   - An `n`-way tie for first gives each agent `1 / n` of the first place
+#   - This matters because the top 2 agents both solve exactly 396 tasks
+
+# %% [markdown]
+# ## Cell 5.1: Rank interval of every agent
+
+# %%
+# Bootstrap the ranks of all the agents.
+rank_intervals = utils.compute_rank_intervals(outcomes)
+# Add the labels and keep the leaderboard order.
+ranks = leaderboard[["label"]].join(rank_intervals)
+rank_width = ranks["rank_high"] - ranks["rank_low"]
+
+columns = ["label", "score", "rank", "median_rank", "rank_low", "rank_high"]
+display(ranks[columns].head(10).round(2))
+print("rank_width.head(25).median()=", rank_width.head(25).median())
+# Outcome: the leader's 95% rank interval goes from 1 to 6, and a typical
+# top-25 agent could land anywhere in a span of about 18 ranks.
+
+# %%
+# Plot the rank intervals of the top 25 agents.
+utils.plot_rank_intervals(rank_intervals, leaderboard, top_k=25, figsize=(14, 9))
+
+# %% [markdown]
+# ## Cell 5.2: Who would come out first?
+
+# %%
+# Count the agents with a real chance of coming out first.
+p_first = ranks["p_first"]
+
+display(ranks[["label", "score", "p_first"]].head(5).round(3))
+print("(p_first > 0).sum()=", int((p_first > 0).sum()))
+print("p_first.head(3).sum()=", round(p_first.head(3).sum(), 3))
+# Outcome: 14 agents come out first in at least 1 sample, and the top 3 share
+# about 94% of the first place, with no agent above 34%.
+
+# %%
+# Plot the chance of coming out first for the top 10.
+utils.plot_first_place_chance(
+    rank_intervals, leaderboard, top_k=10, figsize=(14, 5)
+)
+
+# %% [markdown]
+# ## Cell 5.3: Does the observed ranking find the true one?
+#
+# - On the real data the true ranking is unknown
+# - So we simulate benchmarks with the Rasch model, where it is known
+#   - 10 agents with evenly spaced abilities, centered at 0
+#   - 4 gap sizes between neighbors and 4 benchmark sizes
+#   - 200 simulated benchmarks for each setting
+# - For each setting we measure:
+#   - How often the truly best agent comes out first
+#   - The Spearman and Kendall correlation between the observed and true
+#     rankings
+
+# %%
+# Simulate every combination of gap and benchmark size.
+logit_gaps = [0.02, 0.05, 0.1, 0.25]
+n_tasks_list = [100, 500, 2000, 10000]
+rows = []
+for logit_gap in logit_gaps:
+    abilities = logit_gap * (np.arange(10) - 4.5)
+    # Express the gap as the difference in true score between the top 2.
+    true_scores = utils.compute_expected_scores(abilities)
+    gap_points = 100 * (true_scores.iloc[-1] - true_scores.iloc[-2])
+    for n_tasks in n_tasks_list:
+        recovery = utils.check_ranking_recovery(abilities, n_tasks)
+        rows.append({"gap_points": gap_points, "n_tasks": n_tasks, **recovery})
+recovery = pd.DataFrame(rows)
+
+display(recovery.round(3))
+# Outcome: with 500 tasks and a 1-point gap, the truly best agent comes out
+# first only about half the time, and it takes 10,000 tasks to get it right
+# more than 9 times out of 10.
+
+# %%
+# Plot the recovery against the number of tasks.
+utils.plot_ranking_recovery(recovery, figsize=(14, 5))
+
+# %% [markdown]
+# # Part 6: Takeaways and next steps
 
 # %% [markdown]
 # ## Takeaways
@@ -267,6 +357,12 @@ utils.plot_min_tasks_curve(adjacent["sd_diff"], figsize=(12, 5))
 # - The top is a statistical tie
 #   - 18 agents, down to rank 19 at 74.4%, cannot be separated from the leader
 #     at 79.2%
+# - The ranking itself is uncertain
+#   - The top 3 agents share about 94% of the first place, and none is above
+#     34%
+#   - A typical top-25 agent has a 95% rank interval about 18 ranks wide
+#   - In simulation, 500 tasks pick the truly best of 10 agents only about half
+#     the time when neighbors are 1 point apart
 # - 500 tasks are too few for the gaps on the leaderboard
 #   - Resolving a 1-point gap with 80% power needs about 14,700 tasks
 #   - With 500 tasks, the smallest resolvable gap is about 5.4 points

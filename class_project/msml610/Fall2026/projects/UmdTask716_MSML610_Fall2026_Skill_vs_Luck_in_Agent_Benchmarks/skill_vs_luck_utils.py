@@ -5,6 +5,7 @@ Used by the 2 notebooks and by `fetch_swebench_verified.py`:
 - Download and parse the SWE-bench Verified per-task results
 - Load the saved data
 - Bootstrap intervals for each score
+- Bootstrap intervals for each rank, and the chance of coming out first
 - Paired tests between 2 agents
 - How many tasks are needed to resolve a gap
 - Simulated benchmarks to check the tools
@@ -868,6 +869,88 @@ def compute_min_detectable_gap(
 
 
 # #############################################################################
+# Ranking under uncertainty
+# #############################################################################
+
+
+def _rank_scores(scores: np.ndarray) -> np.ndarray:
+    """
+    Rank the agents in each row of scores, best first.
+
+    Tied agents share the average of the ranks they span, e.g., 2 agents tied
+    for first both get rank 1.5.
+
+    :param scores: samples x agents matrix of scores
+    :return: samples x agents matrix of ranks, starting at 1
+    """
+    ranks = scipy.stats.rankdata(-scores, method="average", axis=1)
+    return ranks
+
+
+def _get_first_place_shares(scores: np.ndarray) -> np.ndarray:
+    """
+    Split the first place of each row among the agents tied for it.
+
+    E.g., if 2 agents share the top score, each gets 0.5 of the first place.
+
+    :param scores: samples x agents matrix of scores
+    :return: samples x agents matrix of shares, each row sums to 1
+    """
+    is_top = scores == scores.max(axis=1, keepdims=True)
+    shares = is_top / is_top.sum(axis=1, keepdims=True)
+    return shares
+
+
+def compute_rank_intervals(
+    outcomes: pd.DataFrame,
+    *,
+    n_boot: int = 2000,
+    alpha: float = 0.05,
+    seed: int = 0,
+) -> pd.DataFrame:
+    """
+    Compute how much the rank of each agent could change with other tasks.
+
+    Each bootstrap sample resamples the tasks with replacement, recomputes all
+    the scores, and ranks the agents. The samples are the same as in
+    `compute_score_cis()` for the same `seed`. Ties are split: tied agents
+    share the average of their ranks, and an `n`-way tie for first gives each
+    agent `1 / n` of the first place.
+
+    :param outcomes: agents x tasks matrix of 0/1
+    :param n_boot: number of bootstrap samples
+    :param alpha: the interval covers `1 - alpha`
+    :param seed: random seed
+    :return: one row per agent, best observed score first, with `score`,
+        `rank` (observed, ties share the best rank like the leaderboard),
+        `median_rank`, `rank_low`, `rank_high`, and `p_first` (chance of
+        coming out first)
+    """
+    _LOG.debug(hprint.to_str("n_boot alpha seed"))
+    hdbg.dassert_lt(1, outcomes.shape[0], "Ranking needs at least 2 agents")
+    n_tasks = outcomes.shape[1]
+    weights = _get_bootstrap_weights(n_tasks, n_boot, seed)
+    # Each row of `boot_scores` has the scores of all agents in 1 sample.
+    boot_scores = weights @ outcomes.to_numpy(dtype=float).T / n_tasks
+    boot_ranks = _rank_scores(boot_scores)
+    # Summarize the ranks of each agent across the samples.
+    scores = outcomes.mean(axis=1)
+    rank_intervals = pd.DataFrame(
+        {
+            "score": scores,
+            "rank": scores.rank(ascending=False, method="min").astype(int),
+            "median_rank": np.median(boot_ranks, axis=0),
+            "rank_low": np.quantile(boot_ranks, alpha / 2, axis=0),
+            "rank_high": np.quantile(boot_ranks, 1 - alpha / 2, axis=0),
+            "p_first": _get_first_place_shares(boot_scores).mean(axis=0),
+        },
+        index=outcomes.index,
+    )
+    rank_intervals = rank_intervals.sort_values("rank", kind="stable")
+    return rank_intervals
+
+
+# #############################################################################
 # Simulated benchmarks with known abilities
 # #############################################################################
 
@@ -1042,6 +1125,60 @@ def compare_test_power(
         }
     )
     return rejection_rates
+
+
+def check_ranking_recovery(
+    abilities: Sequence[float],
+    n_tasks: int,
+    *,
+    n_trials: int = 200,
+    difficulty_sd: float = 1.0,
+    seed: int = 0,
+) -> pd.Series:
+    """
+    Check how well the observed ranking matches the true one.
+
+    Each trial simulates a benchmark with `simulate_outcomes()`, ranks the
+    agents by score, and compares the ranking with the order of the true
+    abilities.
+
+    :param abilities: ability of each agent, all different
+    :param n_tasks: tasks per benchmark
+    :param n_trials: number of simulated benchmarks
+    :param difficulty_sd: std of the task difficulties
+    :param seed: seed of the first benchmark
+    :return: averages over the trials of `p_best_first` (share of first place
+        won by the truly best agent, split if tied), `spearman`, and `kendall`
+        (rank correlations between the scores and the true abilities)
+    """
+    abilities = np.asarray(abilities, dtype=float)
+    hdbg.dassert_lt(1, len(abilities), "Ranking needs at least 2 agents")
+    hdbg.dassert_no_duplicates(
+        abilities.tolist(), "The true ranking must have no ties"
+    )
+    best = int(np.argmax(abilities))
+    p_best_first = []
+    spearman = []
+    kendall = []
+    for trial in range(n_trials):
+        outcomes = simulate_outcomes(
+            abilities, n_tasks, difficulty_sd=difficulty_sd, seed=seed + trial
+        )
+        scores = outcomes.mean(axis=1).to_numpy()
+        # Share of the first place that goes to the truly best agent.
+        shares = _get_first_place_shares(scores[None, :])
+        p_best_first.append(shares[0, best])
+        # Rank correlations between the observed and the true order.
+        spearman.append(scipy.stats.spearmanr(scores, abilities).statistic)
+        kendall.append(scipy.stats.kendalltau(scores, abilities).statistic)
+    recovery = pd.Series(
+        {
+            "p_best_first": np.mean(p_best_first),
+            "spearman": np.mean(spearman),
+            "kendall": np.mean(kendall),
+        }
+    )
+    return recovery
 
 
 # #############################################################################
@@ -1222,5 +1359,124 @@ def plot_min_tasks_curve(
         f"Tasks needed to detect a gap (alpha = {alpha}, power = {power})"
     )
     ax.legend()
+    fig.tight_layout()
+    plt.show()
+
+
+def plot_rank_intervals(
+    rank_intervals: pd.DataFrame,
+    leaderboard: pd.DataFrame,
+    *,
+    top_k: int = 25,
+    figsize: Optional[Tuple[float, float]] = None,
+) -> None:
+    """
+    Plot the 95% bootstrap interval of the rank of the top agents.
+
+    :param rank_intervals: output of `compute_rank_intervals()`
+    :param leaderboard: output of `compute_leaderboard()`, for the labels
+    :param top_k: number of agents to show
+    :param figsize: figure size, default `plt.rcParams["figure.figsize"]`
+    """
+    if figsize is None:
+        figsize = plt.rcParams["figure.figsize"]
+    data = leaderboard[["label"]].head(top_k).join(rank_intervals)
+    # Put the best agent at the top.
+    data = data.iloc[::-1]
+    fig, ax = plt.subplots(figsize=figsize)
+    ax.errorbar(
+        data["median_rank"],
+        data["label"],
+        xerr=[
+            data["median_rank"] - data["rank_low"],
+            data["rank_high"] - data["median_rank"],
+        ],
+        fmt="o",
+        color="tab:blue",
+        ecolor="tab:gray",
+        capsize=3,
+        label="median rank, with 95% interval",
+    )
+    ax.scatter(
+        data["rank"],
+        data["label"],
+        marker="x",
+        color="tab:red",
+        zorder=3,
+        label="rank on the leaderboard",
+    )
+    ax.set_xlabel("Rank (1 = best), over bootstrap samples of the tasks")
+    ax.set_title(f"Rank intervals of the top {len(data)} agents")
+    ax.legend(loc="upper right")
+    fig.tight_layout()
+    plt.show()
+
+
+def plot_first_place_chance(
+    rank_intervals: pd.DataFrame,
+    leaderboard: pd.DataFrame,
+    *,
+    top_k: int = 10,
+    figsize: Optional[Tuple[float, float]] = None,
+) -> None:
+    """
+    Plot the chance of each top agent coming out first.
+
+    :param rank_intervals: output of `compute_rank_intervals()`
+    :param leaderboard: output of `compute_leaderboard()`, for the labels
+    :param top_k: number of agents to show
+    :param figsize: figure size, default `plt.rcParams["figure.figsize"]`
+    """
+    if figsize is None:
+        figsize = plt.rcParams["figure.figsize"]
+    data = leaderboard[["label"]].head(top_k).join(rank_intervals)
+    # Put the best agent at the top.
+    data = data.iloc[::-1]
+    fig, ax = plt.subplots(figsize=figsize)
+    ax.barh(data["label"], 100 * data["p_first"], color="tab:blue")
+    # Write the chance next to each bar.
+    for label, p_first in zip(data["label"], data["p_first"]):
+        ax.text(100 * p_first, label, f" {100 * p_first:.1f}%", va="center")
+    ax.set_xlabel("Chance of coming out first (%), ties split")
+    ax.set_title(
+        f"Who would win with another sample of tasks? (top {len(data)})"
+    )
+    fig.tight_layout()
+    plt.show()
+
+
+def plot_ranking_recovery(
+    recovery: pd.DataFrame,
+    *,
+    figsize: Optional[Tuple[float, float]] = None,
+) -> None:
+    """
+    Plot how well the observed ranking matches the true one, by benchmark size.
+
+    :param recovery: one row per simulation with `n_tasks`, `gap_points`,
+        `p_best_first`, and `kendall`
+    :param figsize: figure size, default `plt.rcParams["figure.figsize"]`
+    """
+    if figsize is None:
+        figsize = plt.rcParams["figure.figsize"]
+    fig, axes = plt.subplots(1, 2, figsize=figsize)
+    panels = [
+        ("p_best_first", "Chance the truly best agent comes out first"),
+        ("kendall", "Kendall tau, observed vs true ranking"),
+    ]
+    # 1 line per gap size in each panel.
+    for ax, (column, title) in zip(axes, panels):
+        for gap_points, group in recovery.groupby("gap_points"):
+            ax.plot(
+                group["n_tasks"],
+                group[column],
+                marker="o",
+                label=f"{gap_points:.1f} points between neighbors",
+            )
+        ax.set_xscale("log")
+        ax.set_ylim(0, 1.05)
+        ax.set_xlabel("Tasks in the benchmark")
+        ax.set_title(title)
+    axes[0].legend()
     fig.tight_layout()
     plt.show()

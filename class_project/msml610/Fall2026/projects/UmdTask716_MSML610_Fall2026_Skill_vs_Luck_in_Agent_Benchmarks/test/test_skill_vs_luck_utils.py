@@ -493,3 +493,106 @@ class Test_simulate_outcomes(hunitest.TestCase):
         outcomes_2 = utils.simulate_outcomes(abilities, 50, seed=7)
         # Check outputs.
         self.assertTrue(outcomes_1.equals(outcomes_2))
+
+
+# #############################################################################
+# Test_compute_rank_intervals
+# #############################################################################
+
+
+class Test_compute_rank_intervals(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils.compute_rank_intervals()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test 3 agents whose order never changes across the samples.
+        """
+        # Prepare inputs: `sub_a` solves every task and `sub_c` none, so no
+        # sample of tasks can change the order.
+        outcomes = pd.DataFrame(
+            [[1] * 20, [1, 0] * 10, [0] * 20],
+            index=["sub_a", "sub_b", "sub_c"],
+        )
+        # Prepare outputs.
+        expected = """
+               score  rank  median_rank  rank_low  rank_high  p_first
+        sub_a    1.0     1          1.0       1.0        1.0      1.0
+        sub_b    0.5     2          2.0       2.0        2.0      0.0
+        sub_c    0.0     3          3.0       3.0        3.0      0.0
+        """
+        # Run test.
+        rank_intervals = utils.compute_rank_intervals(
+            outcomes, n_boot=200, seed=1
+        )
+        # Check outputs.
+        actual = rank_intervals.to_string()
+        self.assert_equal(actual, expected, dedent=True)
+
+    def test2(self) -> None:
+        """
+        Test that 2 identical agents split the first place.
+        """
+        # Prepare inputs: the 2 agents solve the same tasks, so they are tied
+        # in every sample.
+        outcomes = pd.DataFrame(
+            [[1, 0, 1, 1] * 5, [1, 0, 1, 1] * 5, [0, 0, 1, 0] * 5],
+            index=["sub_a", "sub_b", "sub_c"],
+        )
+        # Prepare outputs.
+        expected = """
+               rank  median_rank  p_first
+        sub_a     1          1.5      0.5
+        sub_b     1          1.5      0.5
+        sub_c     3          3.0      0.0
+        """
+        # Run test.
+        rank_intervals = utils.compute_rank_intervals(
+            outcomes, n_boot=200, seed=1
+        )
+        # Check outputs.
+        actual = rank_intervals[["rank", "median_rank", "p_first"]].to_string()
+        self.assert_equal(actual, expected, dedent=True)
+
+
+# #############################################################################
+# Test_check_ranking_recovery
+# #############################################################################
+
+
+class Test_check_ranking_recovery(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils.check_ranking_recovery()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that abilities far apart are always ranked correctly.
+        """
+        # Prepare inputs: with gaps of 10 logits, an agent solves almost none,
+        # about half, or almost all of the tasks.
+        abilities = [-10.0, 0.0, 10.0]
+        # Prepare outputs.
+        expected = """
+        p_best_first    1.0
+        spearman        1.0
+        kendall         1.0
+        """
+        # Run test.
+        recovery = utils.check_ranking_recovery(
+            abilities, 50, n_trials=20, seed=2
+        )
+        # Check outputs.
+        actual = recovery.round(4).to_string()
+        self.assert_equal(actual, expected, dedent=True)
+
+    def test2(self) -> None:
+        """
+        Test that equal abilities are rejected.
+        """
+        # Prepare inputs.
+        abilities = [0.0, 0.0]
+        # Run test and check outputs.
+        with self.assertRaises(AssertionError):
+            utils.check_ranking_recovery(abilities, 10, n_trials=2)
