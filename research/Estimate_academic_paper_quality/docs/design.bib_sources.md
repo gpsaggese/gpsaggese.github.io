@@ -3,14 +3,14 @@
 ## Goal
 
 - Give the other components the bibliographic records, the open-access links, and
-  the citation counts of the lookup APIs (PRD `R3`, `R4`, `R16`)
+  the citation counts of the lookup APIs (PRD [`R3`](/research/Estimate_academic_paper_quality/docs/prd.md#r3-bibliographic-source), [`R4`](/research/Estimate_academic_paper_quality/docs/prd.md#r4-download-link), [`R16`](/research/Estimate_academic_paper_quality/docs/prd.md#r16-paper-quality-rating))
   - One client per API: Semantic Scholar, Crossref, arXiv, Unpaywall, plus the
     fetch of the page or PDF of a `url` line
   - Throttle and retry each API, and cache each response on disk, so a rerun makes
     no network call for a line already looked up
 - Where it fits: `resolver`, `pipeline` -> `bib_sources` -> lookup APIs
-- Overview: `research/Estimate_academic_paper_quality/docs/design.architecture.md`
-- Decisions: `research/Estimate_academic_paper_quality/docs/decisions.md`
+- Overview: [`research/Estimate_academic_paper_quality/docs/design.architecture.md`](/research/Estimate_academic_paper_quality/docs/design.architecture.md)
+- Decisions: [`research/Estimate_academic_paper_quality/docs/decisions.md`](/research/Estimate_academic_paper_quality/docs/decisions.md)
 
 ## Diagram
 
@@ -40,14 +40,14 @@ Rel(get, web, "GET <url>")
 
 ## Files and Import Graph
 
-- `research/Estimate_academic_paper_quality/epq_bib_sources.py`
-- Imports `epq_types`, `requests`, `feedparser`, `bs4`, `helpers.hretry`,
-  `helpers.hcache_simple`
+- [`research/Estimate_academic_paper_quality/epq_bib_sources.py`](/research/Estimate_academic_paper_quality/epq_bib_sources.py)
+- Imports `epq_types`, `requests`, `feedparser`, `bs4`, [`helpers.hretry`](/helpers_root/helpers/hretry.py),
+  [`helpers.hcache_simple`](/helpers_root/helpers/hcache_simple.py)
 - **Fact**: the download tool has private clients `_extract_arxiv_metadata()`,
   `_crossref_query()`, `_unpaywall_query()`, with `hretry.sync_retry()`; they
   return only year, authors, and title, with no DOI, no record type, no family
   names, and no citation count
-- **Decision**: write new clients here instead of importing the private ones (D-23)
+- **Decision**: write new clients here instead of importing the private ones ([D-23](/research/Estimate_academic_paper_quality/docs/decisions.md#d-23-new-api-clients-instead-of-the-private-ones-of-the-download-tool))
 - **Fact**: `hcache_simple.simple_cache(cache_type="json")` caches the return value
   of a function on disk, keyed by its arguments, and `set_global_cache_mode()`
   switches every cached function to `REFRESH_CACHE`, `DISABLE_CACHE`, or
@@ -70,7 +70,7 @@ Rel(get, web, "GET <url>")
   - Looks up Semantic Scholar by `paperId`, else by `DOI:` or `ARXIV:`
   - Returns `CitationCount(count, source="Semantic Scholar", fetched_at)`, where
     `fetched_at` comes from the cache entry, not from the clock of the run
-  - Returns `None` when Semantic Scholar does not have the paper (D-16)
+  - Returns `None` when Semantic Scholar does not have the paper ([D-16](/research/Estimate_academic_paper_quality/docs/decisions.md#d-16-citations-come-from-semantic-scholar-only))
 - `resolver` calls `sources.fetch_url_meta(url)` for a `url` line:
   - PDF answer (`%PDF` at the start): saves it to `state/cache/url_pdfs/<sha1>.pdf`
     and returns the path, so `resolver` reads its title
@@ -88,7 +88,7 @@ Rel(get, web, "GET <url>")
   | Throttle Crossref                | 1 request per second, `mailto=<email>` | Polite pool              |
   | `SEMANTIC_SCHOLAR_API_KEY`       | env var, optional        | Fewer `429` than the shared pool      |
   | `--email`                        | from `PipelineConfig`    | Unpaywall needs a real email          |
-  | Cache dir                        | `<output_dir>/state/cache/` | The state lives in the output dir (D-18) |
+  | Cache dir                        | `<output_dir>/state/cache/` | The state lives in the output dir ([D-18](/research/Estimate_academic_paper_quality/docs/decisions.md#d-18-all-the-state-lives-in-the-output-dir)) |
 
 - Interfaces:
   ```python
@@ -115,8 +115,8 @@ Rel(get, web, "GET <url>")
 
 ## Deliberately Not Built
 
-- Google Scholar: it has no API and blocks scripts (D-16)
-- OpenAlex, DBLP, or other sources: `R3` names arXiv, Crossref, and Semantic
+- Google Scholar: it has no API and blocks scripts ([D-16](/research/Estimate_academic_paper_quality/docs/decisions.md#d-16-citations-come-from-semantic-scholar-only))
+- OpenAlex, DBLP, or other sources: [`R3`](/research/Estimate_academic_paper_quality/docs/prd.md#r3-bibliographic-source) names arXiv, Crossref, and Semantic
   Scholar
 
 ## Open Questions

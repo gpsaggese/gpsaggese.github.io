@@ -3,16 +3,16 @@
 ## Goal
 
 - Turn the lines of the input file into one deduped, sorted list of papers
-  - Classify each line (PRD `R1`)
+  - Classify each line (PRD [`R1`](/research/Estimate_academic_paper_quality/docs/prd.md#r1-input-file-format))
   - Match each line to exactly one paper of a bibliographic source, or mark it
-    `unresolved` or `ambiguous` with its candidates (`R3`, `R5`)
-  - Merge the lines of the same paper (`R6`)
+    `unresolved` or `ambiguous` with its candidates ([`R3`](/research/Estimate_academic_paper_quality/docs/prd.md#r3-bibliographic-source), [`R5`](/research/Estimate_academic_paper_quality/docs/prd.md#r5-unresolved-or-ambiguous-line))
+  - Merge the lines of the same paper ([`R6`](/research/Estimate_academic_paper_quality/docs/prd.md#r6-duplicate-lines))
   - Build the reference, the base name, and the ordered download inputs of each
-    paper (`R2`, `R4`, `R9`)
-  - Sort the papers in reverse chronological order (`R7`)
+    paper ([`R2`](/research/Estimate_academic_paper_quality/docs/prd.md#r2-reference-format), [`R4`](/research/Estimate_academic_paper_quality/docs/prd.md#r4-download-link), [`R9`](/research/Estimate_academic_paper_quality/docs/prd.md#r9-file-base-name))
+  - Sort the papers in reverse chronological order ([`R7`](/research/Estimate_academic_paper_quality/docs/prd.md#r7-reverse-chronological-order))
 - Where it fits: `pipeline` -> `resolver` -> `bib_sources`
-- Overview: `research/Estimate_academic_paper_quality/docs/design.architecture.md`
-- Decisions: `research/Estimate_academic_paper_quality/docs/decisions.md`
+- Overview: [`research/Estimate_academic_paper_quality/docs/design.architecture.md`](/research/Estimate_academic_paper_quality/docs/design.architecture.md)
+- Decisions: [`research/Estimate_academic_paper_quality/docs/decisions.md`](/research/Estimate_academic_paper_quality/docs/decisions.md)
 
 ## Diagram
 
@@ -42,9 +42,9 @@ Rel(dedupe, sort, "papers")
 
 ## Files and Import Graph
 
-- `research/Estimate_academic_paper_quality/epq_resolver.py`
+- [`research/Estimate_academic_paper_quality/epq_resolver.py`](/research/Estimate_academic_paper_quality/epq_resolver.py)
 - Imports `epq_bib_sources`, `epq_fetcher` (only `read_pdf_title()`), `epq_types`,
-  and `dev_scripts_helpers.download.download_utils`
+  and [`dev_scripts_helpers.download.download_utils`](/helpers_root/dev_scripts_helpers/download/download_utils.py)
 - **Fact**: `download_utils.detect_doi()` matches a DOI URL or a bare DOI, and
   `download_utils.get_ssrn_id()` matches an SSRN URL or an SSRN DOI
   `10.2139/ssrn.<id>`
@@ -55,9 +55,9 @@ Rel(dedupe, sort, "papers")
   DOI (e.g., `10.1016/j.jfineco.2019.12345`): checking the DOI first avoids this
 - **Fact**: the tool names a file with the private `_format_base_filename()`, which
   takes the last word of the first author (`Jackson, Jr.` gives `Jr.`) and keeps
-  `.` and `,` in the title, against `.claude/skills/references.rules.md`
+  `.` and `,` in the title, against [`.claude/skills/references.rules.md`](/.claude/skills/references.rules.md)
 - **Decision**: move it to `download_utils.format_base_filename()`, take the family
-  name, drop suffixes like `Jr.` and `III`, and replace `.` `,` `'` with `_` (D-7)
+  name, drop suffixes like `Jr.` and `III`, and replace `.` `,` `'` with `_` ([D-7](/research/Estimate_academic_paper_quality/docs/decisions.md#d-7-the-pipeline-computes-the-base-name-with-a-public-helper))
 
 ## One Request End to End
 
@@ -75,7 +75,7 @@ Rel(dedupe, sort, "papers")
 
   - A `title` line ending with `(...)` gives the author hints: the text in the
     parentheses, split on `;` or `,` (format of
-    `research/Estimate_academic_paper_quality/paper_list.md`)
+    [`research/Estimate_academic_paper_quality/paper_list.md`](/research/Estimate_academic_paper_quality/paper_list.md))
 - `_lookup_candidates(input_line)`, by kind:
 
   | Kind        | Lookups                                                          |
@@ -87,7 +87,7 @@ Rel(dedupe, sort, "papers")
   | `local_pdf` | `epq_fetcher.read_pdf_title()`, then as `title`                  |
   | `title`     | Semantic Scholar search (top 5), Crossref `query.bibliographic` (top 5) |
 
-- `match_candidates(query, author_hints, candidates)` (D-3):
+- `match_candidates(query, author_hints, candidates)` ([D-3](/research/Estimate_academic_paper_quality/docs/decisions.md#d-3-a-line-matches-when-one-distinct-paper-passes-the-title-test)):
   - Normalize the titles: ASCII, lowercase, no punctuation, single spaces
   - Similarity: `1.0` if equal, `0.95` if one is a prefix of the other (a partial
     title, or a missing subtitle), else `difflib.SequenceMatcher.ratio()`
@@ -99,14 +99,14 @@ Rel(dedupe, sort, "papers")
   - An id lookup (`arxiv`, `doi`, `ssrn`) that returns a record is a match with no
     similarity test
   - An `Issue` lists up to 3 candidates as references
-- `paper_key(record)` (D-2):
+- `paper_key(record)` ([D-2](/research/Estimate_academic_paper_quality/docs/decisions.md#d-2-paper-identity-is-the-normalized-title-plus-the-first-author)):
   - The normalized title plus the last name of the first author
   - The DOI, the arXiv id, and the Semantic Scholar id are aliases of the key, so
     a preprint and its journal version merge
-- `build_paper(group, input_line)` (D-1, D-5, D-6):
+- `build_paper(group, input_line)` ([D-1](/research/Estimate_academic_paper_quality/docs/decisions.md#d-1-semantic-scholar-record-is-the-canonical-record), [D-5](/research/Estimate_academic_paper_quality/docs/decisions.md#d-5-each-paper-keeps-an-ordered-list-of-download-inputs), [D-6](/research/Estimate_academic_paper_quality/docs/decisions.md#d-6-a-reference-with-no-download-link-ends-with--)):
   - Canonical record: the Semantic Scholar record, else the Crossref record of type
     `journal-article`, else any Crossref record, else the arXiv record
-  - Year, first author, and title come only from the canonical record (`R3`)
+  - Year, first author, and title come only from the canonical record ([`R3`](/research/Estimate_academic_paper_quality/docs/prd.md#r3-bibliographic-source))
   - Download inputs, in order, each kept only if known:
     1. The local PDF of the line
     2. The URL of the line
@@ -116,11 +116,11 @@ Rel(dedupe, sort, "papers")
     6. The SSRN abstract URL, for a paper with an SSRN DOI
   - Reference: `<Year>, <Last name> [et al.], "<Title>" (<Link>)`, where the link is
     the first public download input
-  - With no public download input: `(<DOI URL> ???)`, or `(???)` with no DOI (`R4`)
+  - With no public download input: `(<DOI URL> ???)`, or `(???)` with no DOI ([`R4`](/research/Estimate_academic_paper_quality/docs/prd.md#r4-download-link))
 - `merge_papers(papers)`: lines with the same `paper_key()` give one `Paper` that
-  keeps all the line numbers and the union of the download inputs (`R6`)
+  keeps all the line numbers and the union of the download inputs ([`R6`](/research/Estimate_academic_paper_quality/docs/prd.md#r6-duplicate-lines))
 - `sort_papers(papers)`: year down, then last name of the first author, then title
-  (`R7`)
+  ([`R7`](/research/Estimate_academic_paper_quality/docs/prd.md#r7-reverse-chronological-order))
 
 ## Configuration, Interfaces, and Known Limits
 
@@ -149,11 +149,11 @@ Rel(dedupe, sort, "papers")
 
 - Search by authors only, or by a free-text description
 - An LLM to clean the lines: the lookup sources and the similarity test are enough,
-  and `R3` forbids the LLM as a source of facts
+  and [`R3`](/research/Estimate_academic_paper_quality/docs/prd.md#r3-bibliographic-source) forbids the LLM as a source of facts
 
 ## Open Questions
 
 1. Is `_MATCH_THRESHOLD = 0.9` right: tune it on the labeled list of the
    Resolution accuracy metric
 2. When a preprint and its journal version have different years, which year should
-   the reference show: the canonical record decides today (D-1)
+   the reference show: the canonical record decides today ([D-1](/research/Estimate_academic_paper_quality/docs/decisions.md#d-1-semantic-scholar-record-is-the-canonical-record))

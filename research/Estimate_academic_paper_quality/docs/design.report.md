@@ -3,17 +3,17 @@
 ## Goal
 
 - Write and read every file that the pipeline keeps in `<output_dir>`
-  - `references.md`: the normalized list of references (PRD `R2`, `R7`)
-  - `report.csv`: one row per paper with a features file (`R18`)
+  - `references.md`: the normalized list of references (PRD [`R2`](/research/Estimate_academic_paper_quality/docs/prd.md#r2-reference-format), [`R7`](/research/Estimate_academic_paper_quality/docs/prd.md#r7-reverse-chronological-order))
+  - `report.csv`: one row per paper with a features file ([`R18`](/research/Estimate_academic_paper_quality/docs/prd.md#r18-report-csv))
   - `issues.csv`: the unresolved lines and the failed papers, with the reason
-    (`R19`)
+    ([`R19`](/research/Estimate_academic_paper_quality/docs/prd.md#r19-issues-csv))
   - `papers/<BASE>.features.json`: the features, the evidence, the facts, and the
-    rating of one paper (`R20`), also the rerun cache of `extract` (`R17`)
+    rating of one paper ([`R20`](/research/Estimate_academic_paper_quality/docs/prd.md#r20-features-file)), also the rerun cache of `extract` ([`R17`](/research/Estimate_academic_paper_quality/docs/prd.md#r17-rerun-skips-extraction))
   - `state/papers.json` and `state/issues.<stage>.json`: the outputs of the stages,
     so that each stage can run alone
 - Where it fits: `pipeline` -> `report` -> files
-- Overview: `research/Estimate_academic_paper_quality/docs/design.architecture.md`
-- Decisions: `research/Estimate_academic_paper_quality/docs/decisions.md`
+- Overview: [`research/Estimate_academic_paper_quality/docs/design.architecture.md`](/research/Estimate_academic_paper_quality/docs/design.architecture.md)
+- Decisions: [`research/Estimate_academic_paper_quality/docs/decisions.md`](/research/Estimate_academic_paper_quality/docs/decisions.md)
 
 ## Diagram
 
@@ -37,24 +37,24 @@ Rel(out, dir, "references.md, report.csv, issues.csv")
 
 ## Files and Import Graph
 
-- `research/Estimate_academic_paper_quality/epq_report.py`: imports `epq_types`,
+- [`research/Estimate_academic_paper_quality/epq_report.py`](/research/Estimate_academic_paper_quality/epq_report.py): imports `epq_types`,
   `csv`, `json`, `dataclasses`
-- **Fact**: `.claude/skills/references.rules.md` `# Format for General Text` gives
+- **Fact**: [`.claude/skills/references.rules.md`](/.claude/skills/references.rules.md) `# Format for General Text` gives
   the format of a reference and the reverse chronological order
 - **Fact**: the download tool writes `<BASE>.short.md`, `<BASE>.structured.md`,
   `<BASE>.up_to_l<N>.md`, and `<BASE>.all.md`
-- **Fact**: `.claude/skills/paper.rate/SKILL.md` writes `<BASE>.rating.md`
+- **Fact**: [`.claude/skills/paper.rate/SKILL.md`](/.claude/skills/paper.rate/SKILL.md) writes `<BASE>.rating.md`
 - The suffix `.features.json` collides with none of them
 - **Decisions**:
-  - The features file is JSON, read back by the pipeline (D-14)
+  - The features file is JSON, read back by the pipeline ([D-14](/research/Estimate_academic_paper_quality/docs/decisions.md#d-14-the-features-file-is-json-and-is-the-rerun-cache-of-extract))
   - `report.csv` has one row per paper with a features file; the other papers are
-    in `issues.csv` (D-19)
-  - The normalized list also goes to `references.md` (D-20)
+    in `issues.csv` ([D-19](/research/Estimate_academic_paper_quality/docs/decisions.md#d-19-reportcsv-has-a-row-only-for-a-paper-with-a-features-file))
+  - The normalized list also goes to `references.md` ([D-20](/research/Estimate_academic_paper_quality/docs/decisions.md#d-20-the-normalized-list-also-goes-to-referencesmd))
 
 ## One Request End to End
 
 - `run_report()` of `pipeline` calls, in order:
-  - `read_papers(state_dir)`: the papers, already in `R7` order
+  - `read_papers(state_dir)`: the papers, already in [`R7`](/research/Estimate_academic_paper_quality/docs/prd.md#r7-reverse-chronological-order) order
   - `read_issues(state_dir)`: the issues of `resolve`, `download`, `extract`
   - `read_features_file()` for each paper that has one
   - `write_references(path, papers)`: one bullet per resolved paper, e.g.,
@@ -63,11 +63,11 @@ Rel(out, dir, "references.md, report.csv, issues.csv")
     ```
   - `write_report(path, build_report_rows(papers, features))`
   - `write_issues_csv(path, issues)`, by stage, then by line number
-- Columns of `report.csv` (`R18`):
+- Columns of `report.csv` ([`R18`](/research/Estimate_academic_paper_quality/docs/prd.md#r18-report-csv)):
 
   | Column               | Content                                               |
   | :------------------- | :---------------------------------------------------- |
-  | `reference`          | The reference of `R2`                                 |
+  | `reference`          | The reference of [`R2`](/research/Estimate_academic_paper_quality/docs/prd.md#r2-reference-format)                                 |
   | `paper_quality`      | Rating 1 to 5, or `unknown`                           |
   | `performance`        | Free text, or `unknown`                               |
   | `recency`            | Publication year                                      |
@@ -79,7 +79,7 @@ Rel(out, dir, "references.md, report.csv, issues.csv")
   | `citations_score`    | 1 to 5, or `unknown`                                  |
   | `base_name`          | `<BASE>`, to open the PDF and the features file       |
 
-- Columns of `issues.csv` (`R19`): `line_no`, `input`, `base_name`, `stage`,
+- Columns of `issues.csv` ([`R19`](/research/Estimate_academic_paper_quality/docs/prd.md#r19-issues-csv)): `line_no`, `input`, `base_name`, `stage`,
   `status`, `reason`, `candidates` (joined by ` | `)
   - `status` is one of `unresolved`, `ambiguous`, `no_download_link`,
     `download_failed`, `conversion_failed`, `extraction_failed`
@@ -132,7 +132,7 @@ Rel(out, dir, "references.md, report.csv, issues.csv")
 
 ## Deliberately Not Built
 
-- An HTML or spreadsheet view: the user sorts the CSV (PRD Non-Goals)
+- An HTML or spreadsheet view: the user sorts the CSV ([PRD Non-Goals](/research/Estimate_academic_paper_quality/docs/prd.md#non-goals))
 - A merge of user edits: the CSV is written again on each run
 
 ## Open Questions
