@@ -37,24 +37,39 @@ Chandrashekar), tracked in
     HumanEval+ and 73.5 on MBPP+, against the published 81.7 and 73.3
 - The predictions for the local runs are in `preregistration.md`, written before
   the full runs and committed before any of them was scored
+- On our own runs (3 models x 2 scaffolds, HumanEval+ and MBPP+, 5 runs per task
+  at temperature 0.8), in `skill_vs_luck.runs.ipynb`:
+  - The greedy scores are within 2 points of the published EvalPlus scores
+  - Run-to-run luck is 28% to 52% of the variance of a 1-run outcome
+  - Only 18.5% (HumanEval+) and 25.3% (MBPP+) of random 1-run leaderboards keep
+    the order of all 6 agents, mostly because a model with and without repair
+    is almost the same agent; with the 3 models alone, 76% to 96% do
+  - The close pair (CodeQwen 7B and OpenCoder 8B) cannot be told apart even with
+    5 runs per task; on HumanEval+ its gap in single runs goes from -2.4 to +6.1
+    points
+  - In the public EvalPlus samples, going from temperature 0.2 to 0.8 multiplies
+    the run variance by 1.8 to 3.0
+  - 4 of the 7 pre-registered predictions held (P1, P2, P4, P6), and P3, P5, and
+    P7 did not
 
 ## Status of the Milestones
 
-| Milestone                     | Status                                                         |
-| :---------------------------- | :------------------------------------------------------------- |
-| 1. Outcome matrix             | SWE-bench Verified done; HumanEval+ and MBPP+ runs in progress |
-| 2. Quantify luck              | Task-sampling part done; run-to-run part pre-registered        |
-| 3. Persistence, transfer, IRT | Planned                                                        |
-| 4. Selection effects          | Planned                                                        |
+| Milestone                     | Status                                             |
+| :---------------------------- | :------------------------------------------------- |
+| 1. Outcome matrix             | Done on SWE-bench Verified, HumanEval+, and MBPP+  |
+| 2. Quantify luck              | Done: task part on SWE-bench, run part on our runs |
+| 3. Persistence, transfer, IRT | Planned                                            |
+| 4. Selection effects          | Planned                                            |
 
 ## Structure of the Dir
 
-| Dir                 | Description                                                                        |
-| :------------------ | :--------------------------------------------------------------------------------- |
-| `data/`             | SWE-bench Verified snapshot, list of the EvalPlus downloads, and the coding scores |
-| `data/coding_runs/` | Scores of the coding-benchmark solutions, from `score_coding_runs.py`              |
-| `data/raw/`         | Downloads and raw model answers, rebuilt by the scripts and not committed          |
-| `test/`             | Unit tests                                                                         |
+| Dir                       | Description                                                                        |
+| :------------------------ | :--------------------------------------------------------------------------------- |
+| `data/`                   | SWE-bench Verified snapshot, list of the EvalPlus downloads, and the coding scores |
+| `data/coding_runs/`       | Scores of the coding-benchmark solutions, from `score_coding_runs.py`              |
+| `data/coding_runs_pilot/` | Scores of the 20-task pilot                                                        |
+| `data/raw/`               | Downloads and raw model answers, rebuilt by the scripts and not committed          |
+| `test/`                   | Unit tests                                                                         |
 
 ## Description of Files
 
@@ -77,6 +92,8 @@ Chandrashekar), tracked in
 | `skill_vs_luck.API.py`                  | Jupytext pair of `skill_vs_luck.API.ipynb`                                  | Notebooks |
 | `skill_vs_luck.example.ipynb`           | Milestones 1 and 2 on the SWE-bench Verified leaderboard                    | Notebooks |
 | `skill_vs_luck.example.py`              | Jupytext pair of `skill_vs_luck.example.ipynb`                              | Notebooks |
+| `skill_vs_luck.runs.ipynb`              | Run-to-run luck of the local agents on HumanEval+ and MBPP+                 | Notebooks |
+| `skill_vs_luck.runs.py`                 | Jupytext pair of `skill_vs_luck.runs.ipynb`                                 | Notebooks |
 | `skill_vs_luck_runs_utils.py`           | Prompts, Ollama client, scoring, and run-level analysis of the coding runs  | Library   |
 | `skill_vs_luck_utils.py`                | Data loading, intervals, paired tests, benchmark size, simulation, plots    | Library   |
 | `test/test_skill_vs_luck_runs_utils.py` | Unit tests for `skill_vs_luck_runs_utils.py`                                | Tests     |
@@ -165,8 +182,8 @@ Chandrashekar), tracked in
   - The seed of a cell depends only on the task and the run, so a cell can be
     generated again; the answer is often the same (8 of 9 replays in the pilot),
     but not always, since Ollama reuses its prompt cache between requests
-  - The model version and the settings are saved next to the answers, and are
-    checked when a job continues
+  - The script saves the model version and the settings next to the answers,
+    and checks them when a job continues
 
 ### Examples
 
@@ -207,8 +224,8 @@ Chandrashekar), tracked in
   - Then scores every answer twice, and the public EvalPlus samples once
 - Running it again continues the generation where it stopped, and scores
   everything again
-- It takes more than a day on a MacBook Air M5 (about 21 hours for the answers
-  alone), so keep the Mac awake and plugged in:
+- It took about 23 hours on a MacBook Air M5 (22 to generate the answers and 1
+  to score everything), so keep the Mac awake and plugged in:
   ```bash
   > caffeinate -dimsu ./run_coding_experiment.sh
   ```
@@ -229,7 +246,7 @@ Chandrashekar), tracked in
   `class_project/project_template/docker_scripts.README.md`
 - `docker_cmd_sandbox.sh` differs from `docker_cmd.sh` in these ways:
   - The container has no network, unless the first argument is `--ollama`,
-    which lets it reach the Ollama server on the host
+    which turns the network on so that it can reach the Ollama server on the host
   - The repo is read-only, except for this project's dir
   - It starts in this project's dir, and points EvalPlus to the datasets in
     `data/raw/`, so scoring works offline
@@ -244,8 +261,9 @@ Chandrashekar), tracked in
   > ./docker_jupyter.sh
   ```
 
-- Open `http://localhost:8888`, then run `skill_vs_luck.API.ipynb` first and
-  `skill_vs_luck.example.ipynb` second
+- Open `http://localhost:8888`, then run `skill_vs_luck.API.ipynb` first,
+  `skill_vs_luck.example.ipynb` second, and `skill_vs_luck.runs.ipynb` (the
+  local runs) third
 
 ## Run a Notebook as a Script
 
