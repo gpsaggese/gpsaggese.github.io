@@ -121,7 +121,8 @@
 
 - [x] PR5: Add the plotting utils and the API notebook
   - Depends on: PR2, PR3, PR4
-  - Add `racket_strategy_utils.py` and `racket_strategy.API.ipynb` / `.py`
+  - Add `racket_strategy_utils.py` and
+    `notebooks/racket_sports_02_strategy_API.ipynb` / `.py`
   - Add `test/test_racket_strategy_utils.py` and
     `test/test_docker_racket_strategy.py`
   - Partially done ahead of `PR4`: `draw_court()`, `plot_trajectory_fan()`,
@@ -133,9 +134,10 @@
 
 - [x] PR6: Add an interactive shot-placement exploration notebook
   - Depends on: PR3, PR5
-  - Add `racket_strategy.exploration.ipynb` / `.py`: click-to-run controls for
-    ball speed, player move speed, shot std dev (`error_scale`), and both
-    players' positions, driving `P_in`, `1 - R`, and `S` heatmaps
+  - Add `notebooks/racket_sports_03_strategy_exploration.ipynb` / `.py`:
+    click-to-run controls for ball speed, player move speed, shot std dev
+    (`error_scale`), and both players' positions, driving `P_in`, `1 - R`, and
+    `S` heatmaps
   - Add `build_exploration_widget()` to `racket_strategy_utils.py`
   - Extend `test/test_racket_strategy_utils.py` and
     `test/test_docker_racket_strategy.py`
@@ -169,8 +171,8 @@
     rules; player 2 moves there and returns toward (`x2`, `y2`) with a 2D Gaussian
     spread (`std_x2`, `std_y2`)
   - $P_{\mathrm{in}}$ in closed form, checked by Monte Carlo, in
-    `notebooks/racket_shot_probability_utils.py` and
-    `notebooks/racket_shot_probability.ipynb`
+    `notebooks/racket_sports_01_shot_probability_utils.py` and
+    `notebooks/racket_sports_01_shot_probability.ipynb`
 
 - [-] Milestone 2: probability of a winning return
       ([#624](https://github.com/gpsaggese/gpsaggese.github.io/issues/624)), as
@@ -201,8 +203,9 @@
     $t_r = 0.2$ s, $v_p = 1.5$ m/s, each with a slider
   - A heatmap of the winner probability over every target (`x2`, `y2`) on player
     1's half, with the best target marked, for tennis and pickleball
-  - Code: new functions in `notebooks/racket_shot_probability_utils.py` and a
-    new Part 2 of `notebooks/racket_shot_probability.ipynb`, in the draft
+  - Code: new functions in
+    `notebooks/racket_sports_01_shot_probability_utils.py` and a new Part 2 of
+    `notebooks/racket_sports_01_shot_probability.ipynb`, in the draft
     [PR #715](https://github.com/gpsaggese/gpsaggese.github.io/pull/715)
   - Decisions made while building it:
     - **Common random numbers**: every target of the heatmap gets
