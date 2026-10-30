@@ -15,6 +15,8 @@
 ## Ready for Review
 
 - 2026-10-19: `website/docs/blog/posts/in_60_mins.GluonTS.md`
+  - Prepared for publication (`draft: false`); GP approval, publication date
+    confirmation, and deployment are pending.
 - 2026-10-19: `website/docs/blog/posts/in_5_mins.helpers_render_images.md`
 
 Total: 2 posts ready for review

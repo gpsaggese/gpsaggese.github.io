@@ -1,6 +1,6 @@
 ---
 title: "Probabilistic Forecasting with GluonTS: A COVID-19 Data Tutorial"
-draft: true
+draft: false
 authors:
     - utkrisht nath
     - Harsh Yadav
