@@ -270,9 +270,11 @@ utils.plot_min_tasks_curve(adjacent["sd_diff"], figsize=(12, 5))
 # - 500 tasks are too few for the gaps on the leaderboard
 #   - Resolving a 1-point gap with 80% power needs about 14,700 tasks
 #   - With 500 tasks, the smallest resolvable gap is about 5.4 points
-# - These intervals only cover the luck of which tasks are in the benchmark
-#   - Each submission reports 1 run per task, so run-to-run luck is not included
-#   - The real uncertainty is larger
+# - With 1 run per task, these intervals cover the luck of the tasks and of the
+#   run together, since every 0/1 result already carries its run luck
+#   - They cannot tell how much of their width is run luck, i.e., whether running
+#     the same 500 tasks again would reorder the leaderboard
+#   - The luck of picking the best of several attempts is not in them at all
 
 # %% [markdown]
 # ## Next steps

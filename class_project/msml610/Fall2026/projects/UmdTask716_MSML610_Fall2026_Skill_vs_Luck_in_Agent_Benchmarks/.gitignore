@@ -5,3 +5,5 @@ tmp.*
 # Written by `docker_build.sh` on every build. The commit hook rejects `*.log`
 # files, so it stays local.
 docker_build.version.log
+# Raw downloads (large, untrusted code samples), rebuilt by the fetch scripts.
+data/raw/
