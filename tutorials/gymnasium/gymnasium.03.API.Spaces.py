@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.0
+#       jupytext_version: 1.19.3
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -135,6 +135,8 @@ display(pd.DataFrame(rows))
 # %%
 # Construct the simplest Discrete space.
 d = spaces.Discrete(4)
+# Seed the space so that reruns print the same samples, see Cell 4.1.
+d.seed(1)
 print("d=", d)
 print("type(d)=", type(d))
 
@@ -159,6 +161,7 @@ print("d.contains(5)=", d.contains(5))
 # %%
 # Non-zero start: set becomes {10, 11, 12}.
 d_offset = spaces.Discrete(3, start=10)
+d_offset.seed(0)
 print("d_offset=", d_offset)
 samples_offset = [int(d_offset.sample()) for _ in range(8)]
 print("samples_offset=", samples_offset)
@@ -179,6 +182,7 @@ print("masked_samples (only 0 or 2)=", masked_samples)
 # %%
 # Construct a 1-D Box with uniform bounds.
 b = spaces.Box(low=-1.0, high=1.0, shape=(3,), dtype=np.float32)
+b.seed(0)
 print("b=", b)
 print("type(b)=", type(b))
 
@@ -221,6 +225,7 @@ print("b_per_elem.is_bounded()=", b_per_elem.is_bounded())
 # %%
 # 2-D Box: shape (2, 3) - useful for image-like observations.
 b_2d = spaces.Box(low=0, high=255, shape=(2, 3), dtype=np.uint8)
+b_2d.seed(0)
 print("b_2d.shape=", b_2d.shape)
 print("b_2d.sample()=")
 print(b_2d.sample())
@@ -235,6 +240,7 @@ print(b_2d.sample())
 # %%
 # Construct a flat MultiBinary space of 5 bits.
 mb = spaces.MultiBinary(5)
+mb.seed(0)
 print("mb=", mb)
 print("mb.n=", mb.n)
 print("mb.shape=", mb.shape)
@@ -255,6 +261,7 @@ print("masked_sample=", list(map(int, masked)))
 # %%
 # 2-D MultiBinary: shape (2, 3) grid of binary values.
 mb_2d = spaces.MultiBinary([2, 3])
+mb_2d.seed(0)
 print("mb_2d.n=", mb_2d.n)
 print("mb_2d.shape=", mb_2d.shape)
 print("mb_2d.sample()=")
@@ -270,6 +277,7 @@ print(mb_2d.sample())
 # %%
 # 3 independent dimensions: first has 3 values, second has 4, third has 2.
 md = spaces.MultiDiscrete([3, 4, 2])
+md.seed(0)
 print("md=", md)
 print("md.nvec=", md.nvec)
 print("md.shape=", md.shape)
@@ -284,6 +292,7 @@ display(
 # %%
 # Non-zero start: each dimension starts at a different offset.
 md_offset = spaces.MultiDiscrete([3, 4], start=[10, 20])
+md_offset.seed(0)
 print("md_offset.nvec=", md_offset.nvec)
 print("md_offset.start=", md_offset.start)
 samples_offset = [list(map(int, md_offset.sample())) for _ in range(5)]
@@ -306,6 +315,7 @@ print("invalid in md=", md.contains(invalid))
 # %%
 # Default charset: alphanumeric (a-z, A-Z, 0-9).
 t = spaces.Text(max_length=8)
+t.seed(0)
 print("t=", t)
 print("t.max_length=", t.max_length)
 print("t.min_length=", t.min_length)
@@ -319,6 +329,7 @@ print("samples=", samples)
 # %%
 # Custom charset: only lowercase vowels.
 t_vowels = spaces.Text(max_length=5, min_length=2, charset="aeiou")
+t_vowels.seed(0)
 print("t_vowels charset=", t_vowels.characters)
 vowel_samples = [t_vowels.sample() for _ in range(6)]
 print("vowel_samples=", vowel_samples)
@@ -338,7 +349,7 @@ print('t.contains("TooLongStr")=', t.contains("TooLongStr"))
 # ## Cell 3.1: `Dict(spaces)`: named collection of spaces
 #
 # - Represents an ordered dictionary of heterogeneous spaces
-# - A sample is an `OrderedDict` with one value per key
+# - A sample is a `dict` with one value per key
 # - Typical use: structured observations (image + scalar sensors)
 
 # %%
@@ -349,6 +360,7 @@ ds = spaces.Dict(
         "speed": spaces.Discrete(5),
     }
 )
+ds.seed(0)
 print("ds=", ds)
 
 # %%
@@ -393,6 +405,7 @@ tup = spaces.Tuple(
         spaces.Box(low=0.0, high=1.0, shape=(2,), dtype=np.float32),
     )
 )
+tup.seed(0)
 print("tup=", tup)
 print("len(tup.spaces)=", len(tup.spaces))
 
@@ -420,6 +433,7 @@ print("masked_sample[0] (only 1)=", masked_sample[0])
 # %%
 # Each element is a Discrete(4); length varies per sample.
 seq = spaces.Sequence(spaces.Discrete(4))
+seq.seed(0)
 print("seq=", seq)
 print("seq.feature_space=", seq.feature_space)
 
@@ -458,6 +472,7 @@ g = spaces.Graph(
     node_space=spaces.Box(low=0.0, high=1.0, shape=(3,), dtype=np.float32),
     edge_space=spaces.Discrete(5),
 )
+g.seed(0)
 print("g=", g)
 print("g.node_space=", g.node_space)
 print("g.edge_space=", g.edge_space)
@@ -492,6 +507,7 @@ oo = spaces.OneOf(
         spaces.Box(low=0.0, high=1.0, shape=(2,), dtype=np.float32),
     )
 )
+oo.seed(0)
 print("oo=", oo)
 print("len(oo.spaces)=", len(oo.spaces))
 
@@ -509,6 +525,8 @@ for _ in range(6):
 #
 # - Every space has a PRNG (`np_random`) used for sampling
 # - `space.seed(n)` seeds it; subsequent `space.sample()` calls are deterministic
+# - Exception: `Text` with its default charset also depends on `PYTHONHASHSEED`,
+#   since that charset is a `frozenset`, whose order changes between processes
 # - For composite spaces, `seed()` returns a dict/tuple of seed values for
 #   each subspace
 
@@ -546,6 +564,7 @@ from gymnasium.spaces import utils as space_utils
 
 # Flatten Discrete(4): one-hot encode into a 4-D float vector.
 d_flat = spaces.Discrete(4)
+d_flat.seed(0)
 sample_d = d_flat.sample()
 flat_d = space_utils.flatten(d_flat, sample_d)
 print("sample_d=", sample_d)
@@ -555,6 +574,7 @@ print("space_utils.flatdim(d_flat)=", space_utils.flatdim(d_flat))
 # %%
 # Flatten a Box: already flat, returned as-is.
 b_flat = spaces.Box(low=-1.0, high=1.0, shape=(3,), dtype=np.float32)
+b_flat.seed(0)
 sample_b = b_flat.sample()
 flat_b = space_utils.flatten(b_flat, sample_b)
 print("sample_b=", sample_b)
@@ -568,6 +588,7 @@ ds_flat = spaces.Dict(
         "b": spaces.Box(0.0, 1.0, shape=(2,)),
     }
 )
+ds_flat.seed(0)
 sample_ds = ds_flat.sample()
 flat_ds = space_utils.flatten(ds_flat, sample_ds)
 print("sample_ds=", sample_ds)
@@ -656,6 +677,7 @@ nested = spaces.Dict(
         "flag": spaces.MultiBinary(3),
     }
 )
+nested.seed(0)
 nested_sample = nested.sample()
 print("nested_sample['inner']['x']=", nested_sample["inner"]["x"])
 print("nested_sample['inner']['y']=", nested_sample["inner"]["y"])
