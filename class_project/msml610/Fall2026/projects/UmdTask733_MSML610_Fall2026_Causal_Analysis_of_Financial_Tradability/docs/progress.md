@@ -95,7 +95,8 @@
 | 2026-10-28 | Started the research Google Doc, as GP asked on #794 |
 | 2026-10-29 | GP: results "very interesting", asked for SPY; PR #800 merged |
 | 2026-10-29 | Exercise 1 on SPY; step 1 data loading and cleaning |
-| 2026-10-30 | Step 1 features and labels; step 2 models per horizon |
+| 2026-10-30 | Step 1 features and labels |
+| 2026-10-31 | Step 2 models per horizon, with costs |
 
 ## Open Work
 
