@@ -124,7 +124,8 @@ print("isinstance(wrapper, gym.Env):", isinstance(wrapper, gym.Env))
 obs, info = wrapper.reset(seed=42)
 print("obs (delegated):", obs)
 
-# Step is delegated.
+# Step is delegated. Seed the action space so that reruns take the same action.
+wrapper.action_space.seed(0)
 obs2, reward, terminated, truncated, _info = wrapper.step(
     wrapper.action_space.sample()
 )
@@ -189,24 +190,28 @@ class FlipObservation(ObservationWrapper):
         return -observation
 
 
-# Build a wrapped env.
+# Build two separate envs, so that stepping one does not advance the other.
 base = gym.make("CartPole-v1")
-flip_env = FlipObservation(base)
+flip_env = FlipObservation(gym.make("CartPole-v1"))
 
-# Reset and inspect: the observation is negated.
+# Reset both with the same seed and inspect: the observation is negated.
 obs, _ = flip_env.reset(seed=42)
-print("original obs:", base.reset(seed=42)[0])
+obs_base, _ = base.reset(seed=42)
+print("original obs:", obs_base)
 print("flipped obs: ", obs)
+hdbg.dassert(np.array_equal(obs, -obs_base), "Reset obs must be negated")
 
 # %%
 # The observation() method is called on every step.
 base.reset(seed=42)
 flip_env.reset(seed=42)
+flip_env.action_space.seed(0)
 action = flip_env.action_space.sample()
 orig_obs, *_ = base.step(action)
 flip_obs, *_ = flip_env.step(action)
 print("original step obs:", orig_obs)
 print("flipped step obs: ", flip_obs)
+hdbg.dassert(np.array_equal(flip_obs, -orig_obs), "Step obs must be negated")
 
 # %% [markdown]
 # ## Primitive 3: `ActionWrapper`: Transform Actions
@@ -243,7 +248,7 @@ class SwapAction(ActionWrapper):
 # %%
 # Create a wrapped env and compare action behavior.
 base2 = gym.make("CartPole-v1")
-action_swap_env = SwapAction(base2)
+action_swap_env = SwapAction(gym.make("CartPole-v1"))
 
 base2.reset(seed=0)
 action_swap_env.reset(seed=0)
@@ -257,6 +262,7 @@ print(
     "Different because a different action was taken:",
     not np.array_equal(obs_a, obs_b),
 )
+hdbg.dassert(not np.array_equal(obs_a, obs_b), "The action must be swapped")
 
 # %% [markdown]
 # ## Primitive 4: `RewardWrapper`: Transform Rewards
@@ -292,7 +298,7 @@ class DoubleReward(RewardWrapper):
 # %%
 # Build the wrapped env and compare rewards.
 base3 = gym.make("CartPole-v1")
-reward_env = DoubleReward(base3, factor=3.0)
+reward_env = DoubleReward(gym.make("CartPole-v1"), factor=3.0)
 
 base3.reset(seed=0)
 reward_env.reset(seed=0)
@@ -302,8 +308,9 @@ action = 1
 # Compare step rewards.
 _, rew_a, *_ = base3.step(action)
 _, rew_b, *_ = reward_env.step(action)
-print(f"base reward: {rew_a}   doubled reward: {rew_b}")
+print(f"base reward: {rew_a}   scaled reward: {rew_b}")
 print(f"ratio: {rew_b / rew_a}")
+hdbg.dassert_eq(rew_b, 3.0 * rew_a, "The reward must be scaled by the factor")
 
 # %% [markdown]
 # ## Primitive 5: Lambda Wrappers (Function-Based)
@@ -324,9 +331,11 @@ from gymnasium.wrappers import (
 # %%
 # TransformObservation: add Gaussian noise to every observation.
 base4 = gym.make("CartPole-v1")
+# Create the generator once, so that each call draws new noise.
+noise_rng = np.random.default_rng(42)
 noisy_env = TransformObservation(
-    base4,
-    func=lambda obs: obs + 0.1 * np.random.default_rng(42).random(obs.shape),
+    gym.make("CartPole-v1"),
+    func=lambda obs: obs + 0.1 * noise_rng.normal(size=obs.shape),
     observation_space=base4.observation_space,
 )
 
@@ -338,20 +347,29 @@ data = {
 }
 display(pd.DataFrame(data))
 
+# Step both envs twice: the noise is their difference, and it changes each step.
+noise_1 = noisy_env.step(0)[0] - base4.step(0)[0]
+noise_2 = noisy_env.step(0)[0] - base4.step(0)[0]
+print("noise_1=", noise_1)
+print("noise_2=", noise_2)
+hdbg.dassert(
+    not np.array_equal(noise_1, noise_2), "Each step must draw new noise"
+)
+
 # %%
 # TransformAction: scale continuous actions for MountainCarContinuous.
 
 base5 = gym.make("MountainCarContinuous-v0")
 # Clip action magnitude to 50%.
 clipped_action_env = TransformAction(
-    base5,
+    gym.make("MountainCarContinuous-v0"),
     func=lambda a: np.clip(a, -0.5, 0.5),
     action_space=base5.action_space,
 )
 
 base5.reset(seed=0)
 clipped_action_env.reset(seed=0)
-# Send a large action and compare the trajectory.
+# Send 1.0, outside the clip range [-0.5, 0.5], and compare the trajectory.
 obs_base, *_ = base5.step(np.array([1.0]))
 obs_clipped, *_ = clipped_action_env.step(np.array([1.0]))
 data2 = {
@@ -359,6 +377,13 @@ data2 = {
     "next_obs": [str(obs_base), str(obs_clipped)],
 }
 display(pd.DataFrame(data2))
+hdbg.dassert(
+    not np.array_equal(obs_base, obs_clipped), "The action must be clipped"
+)
+# Check the exact value with the wrapper's own `action()` method.
+clipped = clipped_action_env.action(np.array([1.0]))
+print("clipped=", clipped)
+hdbg.dassert(np.array_equal(clipped, np.array([0.5])), "Action must clip to 0.5")
 
 base5.close()
 clipped_action_env.close()
@@ -366,13 +391,18 @@ clipped_action_env.close()
 # %%
 # TransformReward: scale and shift every reward.
 base6 = gym.make("CartPole-v1")
-scaled_reward_env = TransformReward(base6, func=lambda r: 2.0 * r + 1.0)
+scaled_reward_env = TransformReward(
+    gym.make("CartPole-v1"), func=lambda r: 2.0 * r + 1.0
+)
 
 base6.reset(seed=0)
 scaled_reward_env.reset(seed=0)
 _, rew_base, *_ = base6.step(1)
 _, rew_scaled, *_ = scaled_reward_env.step(1)
 print(f"base reward: {rew_base}   scaled reward: {rew_scaled}")
+hdbg.dassert_eq(
+    rew_scaled, 2.0 * rew_base + 1.0, "The reward must be transformed"
+)
 
 base6.close()
 scaled_reward_env.close()
@@ -440,12 +470,13 @@ from gymnasium.wrappers import TimeLimit, RecordEpisodeStatistics, Autoreset
 
 base7 = gym.make("CartPole-v1")
 
-# Layer 1 (outermost): double the reward.
+# Layer 1 (innermost): double the reward.
 w1 = DoubleReward(base7, factor=2.0)
 # Layer 2: flip the observation.
 w2 = FlipObservation(w1)
-# Layer 3 (innermost): swap the action.
+# Layer 3 (outermost): swap the action.
 w3 = SwapAction(w2)
+print("w3=", w3)
 
 # What is the actual action -> inner step action?
 w3.reset(seed=0)
@@ -552,28 +583,33 @@ mapped_env.close()
 #   the observation
 
 # %%
-class RewardFromObservation(RewardWrapper):
+class RewardFromObservation(Wrapper):
     """
     Penalize the agent based on the distance from the observation to the origin.
+
+    Override `step()` since `RewardWrapper.reward()` cannot see the observation.
     """
 
     def __init__(self, env, penalty_weight=0.01):
         super().__init__(env)
         self._penalty_weight = penalty_weight
 
-    def reward(self, reward):
-        return reward - self._penalty_weight
+    def step(self, action):
+        obs, reward, terminated, truncated, info = self.env.step(action)
+        reward -= self._penalty_weight * float(np.linalg.norm(obs))
+        return obs, reward, terminated, truncated, info
 
 
 # %%
 base8 = gym.make("CartPole-v1")
-penalty_env = RewardFromObservation(base8, penalty_weight=0.5)
+penalty_env = RewardFromObservation(gym.make("CartPole-v1"), penalty_weight=0.5)
 
 base8.reset(seed=0)
 penalty_env.reset(seed=0)
 _, rew_a, *_ = base8.step(1)
 _, rew_b, *_ = penalty_env.step(1)
 print(f"base reward: {rew_a}   penalty reward: {rew_b}  diff={rew_a - rew_b}")
+hdbg.dassert_lt(rew_b, rew_a, "The penalty must lower the reward")
 
 base8.close()
 penalty_env.close()
@@ -588,6 +624,7 @@ penalty_env.close()
 # %%
 base9 = gym.make("CartPole-v1")
 stats_env = RecordEpisodeStatistics(base9, buffer_length=10)
+stats_env.action_space.seed(0)
 
 # Run 3 episodes.
 for _ in range(3):
@@ -714,13 +751,14 @@ print("get_wrapper_attr('_factor'):", env_chain.get_wrapper_attr("_factor"))
 
 # %%
 # Question: does `wrapper.render()` work when the base env has render_mode=None?
-# (It fails because the base env can't render.)
-try:
-    no_render_env = gym.make("CartPole-v1", render_mode=None)
-    wrapper_no_render = DoubleReward(no_render_env)
-    wrapper_no_render.render()
-except Exception as e:
-    print(f"render() failed: {type(e).__name__}: {e}")
+# (It warns and returns None: with no render mode there is nothing to draw.)
+no_render_env = gym.make("CartPole-v1", render_mode=None)
+wrapper_no_render = DoubleReward(no_render_env)
+# Reset first: `OrderEnforcing` raises `ResetNeeded` if `render()` comes first.
+wrapper_no_render.reset(seed=0)
+frame = wrapper_no_render.render()
+print("frame=", frame)
+hdbg.dassert_is(frame, None, "Without a render mode there is no frame")
 
 # %%
 # Question: can you wrap a wrapped environment with the same wrapper type?
