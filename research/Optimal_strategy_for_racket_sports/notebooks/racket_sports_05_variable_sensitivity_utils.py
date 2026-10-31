@@ -967,13 +967,14 @@ def _draw_serve_map(ax: Axes, runs: pd.DataFrame, court: Any) -> Any:
     rosfrsnrs0spu.draw_center_service_line(ax, court)
     best = runs.loc[runs["max_p_winner"].idxmin()]
     worst = runs.loc[runs["max_p_winner"].idxmax()]
+    # The white edge keeps the marker visible on the dark cells of the map.
     ax.plot(
         best["x1"],
         best["y1"],
         "v",
         ms=12,
-        color="tab:red",
-        markeredgecolor="black",
+        color=rosfrsnrs0spu.HEATMAP_BEST_COLOR,
+        markeredgecolor="white",
         label="best serve for player 1",
     )
     ax.set_xlim(-court.width_m / 2 - 0.5, 0.5)
