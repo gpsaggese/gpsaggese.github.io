@@ -752,12 +752,6 @@ def find_best_serves(corners: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-# Colormap of the maps of this notebook: the one of `plot_winner_heatmap()`.
-# #804 adds the shared constant `HEATMAP_CMAP`; until then `viridis` is what
-# `plot_winner_heatmap()` uses.
-_HEATMAP_CMAP = getattr(rosfrsnrs0spu, "HEATMAP_CMAP", "viridis")
-
-
 def _get_text_color(rgba: Tuple[float, float, float, float]) -> str:
     """
     Pick the text color that reads best on a background color.
@@ -800,7 +794,7 @@ def _draw_serve_table(ax: Axes, runs: pd.DataFrame, title: str) -> None:
     ses = get_table("max_p_winner_se")
     means = get_table("mean_p_winner")
     norm = mcolors.Normalize(vmin=0.0, vmax=1.0)
-    cmap = plt.get_cmap(_HEATMAP_CMAP)
+    cmap = plt.get_cmap(rosfrsnrs0spu.HEATMAP_CMAP)
     ax.imshow(values, cmap=cmap, norm=norm, aspect="auto")
     ax.grid(False)
     for i in range(values.shape[0]):
@@ -963,7 +957,7 @@ def _draw_serve_map(ax: Axes, runs: pd.DataFrame, court: Any) -> Any:
         np.append(xs - half_dx, xs[-1] + half_dx),
         np.append(ys - half_dy, ys[-1] + half_dy),
         np.ma.masked_invalid(table.to_numpy()),
-        cmap=_HEATMAP_CMAP,
+        cmap=rosfrsnrs0spu.HEATMAP_CMAP,
         vmin=0.0,
         vmax=1.0,
         shading="flat",
