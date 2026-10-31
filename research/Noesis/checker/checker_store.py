@@ -30,6 +30,7 @@ def _contract_window(row: Tuple[Any, ...]) -> rnochmod.ContractWindow:
         checker_policy=row[5],
         window_start=row[6],
         window_end=row[10],
+        seller_id=row[11],
     )
 
 
@@ -43,7 +44,7 @@ async def list_active_contracts(
         cursor = await conn.execute(
             "SELECT contract_id, state, n_tasks, canaries_target,"
             " window_max_seconds, checker_policy, window_start, l_max, r_min,"
-            " q_min, window_end FROM contracts WHERE state = 'ACTIVE'"
+            " q_min, window_end, seller_id FROM contracts WHERE state = 'ACTIVE'"
             " ORDER BY contract_id"
         )
         rows = await cursor.fetchall()
@@ -60,7 +61,7 @@ async def get_contract(
         cursor = await conn.execute(
             "SELECT contract_id, state, n_tasks, canaries_target,"
             " window_max_seconds, checker_policy, window_start, l_max, r_min,"
-            " q_min, window_end FROM contracts WHERE contract_id = %s",
+            " q_min, window_end, seller_id FROM contracts WHERE contract_id = %s",
             (contract_id,),
         )
         row = await cursor.fetchone()

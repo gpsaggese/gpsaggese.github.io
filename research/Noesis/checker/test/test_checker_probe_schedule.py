@@ -6,7 +6,6 @@ import datetime
 from typing import Tuple
 
 import helpers.hunit_test as hunitest
-
 import research.Noesis.checker.checker_models as rnochmod
 import research.Noesis.checker.checker_probe_schedule as rnochprsc
 
@@ -52,6 +51,7 @@ def _contract(
         checker_policy="m2-v1",
         window_start=window_start,
         window_end=None,
+        seller_id="seller_1",
     )
 
 
@@ -100,9 +100,7 @@ class Test_build_probe_schedule(hunitest.TestCase):
         canaries = _canaries()
         first = rnochprsc.build_probe_schedule(contract, canaries, "secret-a")
         repeated = rnochprsc.build_probe_schedule(contract, canaries, "secret-a")
-        different = rnochprsc.build_probe_schedule(
-            contract, canaries, "secret-b"
-        )
+        different = rnochprsc.build_probe_schedule(contract, canaries, "secret-b")
         self.assertEqual(first, repeated)
         self.assertNotEqual(first, different)
 
@@ -133,9 +131,7 @@ class Test_get_due_probes(hunitest.TestCase):
         Test only elapsed and unclaimed slots become due.
         """
         contract = _contract(target_canaries=3)
-        schedule = rnochprsc.build_probe_schedule(
-            contract, _canaries(), "secret"
-        )
+        schedule = rnochprsc.build_probe_schedule(contract, _canaries(), "secret")
         before_first = schedule[0].due_at - datetime.timedelta(microseconds=1)
         self.assertEqual(
             rnochprsc.get_due_probes(schedule, before_first),

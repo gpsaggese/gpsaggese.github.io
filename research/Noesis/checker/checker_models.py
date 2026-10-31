@@ -214,6 +214,71 @@ class ContractWindow:
     checker_policy: str
     window_start: Optional[datetime]
     window_end: Optional[datetime]
+    seller_id: str
+
+    def __post_init__(self) -> None:
+        if not self.seller_id:
+            raise ValueError("seller_id must not be empty")
+
+
+@dataclasses.dataclass(frozen=True)
+class WindowEvidenceCounts:
+    """
+    Represent usable buyer and canary evidence in one contract window.
+    """
+
+    eligible_buyer_requests: int
+    eligible_canaries: int
+
+    def __post_init__(self) -> None:
+        if self.eligible_buyer_requests < 0:
+            raise ValueError("eligible_buyer_requests must not be negative")
+        if self.eligible_canaries < 0:
+            raise ValueError("eligible_canaries must not be negative")
+
+
+@dataclasses.dataclass(frozen=True)
+class WindowReadiness:
+    """
+    Represent whether evidence collection for one window should stop.
+    """
+
+    ready: bool
+    reason: WindowCloseReason
+    counts: WindowEvidenceCounts
+    deadline: datetime
+
+    def __post_init__(self) -> None:
+        if self.deadline.utcoffset() is None:
+            raise ValueError("deadline must be timezone-aware")
+        expected_ready = self.reason != WindowCloseReason.NOT_READY
+        if self.ready != expected_ready:
+            raise ValueError("ready and reason are inconsistent")
+
+
+@dataclasses.dataclass(frozen=True)
+class ContractEvaluation:
+    """
+    Represent one contract's result from a non-blocking checker pass.
+    """
+
+    contract_id: int
+    readiness: WindowReadiness
+    finalized: bool
+    report: Optional["VerdictReport"]
+
+    def __post_init__(self) -> None:
+        if self.contract_id <= 0:
+            raise ValueError("contract_id must be positive")
+        if not self.readiness.ready and self.finalized:
+            raise ValueError("a non-ready contract cannot be finalized")
+        if self.finalized != (self.report is not None):
+            raise ValueError("finalized and report are inconsistent")
+        if (
+            self.report is not None
+            and self.report.contract_id != self.contract_id
+        ):
+            raise ValueError("report belongs to another contract")
 
 
 @dataclasses.dataclass(frozen=True)

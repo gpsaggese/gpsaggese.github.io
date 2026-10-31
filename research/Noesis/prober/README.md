@@ -45,8 +45,10 @@
 - After reviewing the printed call count, add `--execute` to make paid calls.
   The command persists every observation, activates the bank only if at least
   150 canaries survive, and writes `docs/findings/calibration.md`.
-- Run one due-probe cycle with `probe --once`, or omit `--once` for a worker
-  that polls once per second until `SIGINT` or `SIGTERM`.
+- Run one combined probe/checker cycle with `probe --once`, or omit `--once` for
+  a worker that polls once per second until `SIGINT` or `SIGTERM`.
+- Run `research/Noesis/scripts/demo_contract_monitoring.py` to see the complete
+  probe-to-verdict flow without credentials, network access, or PostgreSQL.
 - Live modes require `OPENROUTER_API_KEY`, `NOESIS_DATABASE_URL`, and
   `NOESIS_CANARY_SCHEDULE_SECRET` in `.env` or the process environment.
 
@@ -55,6 +57,11 @@
 - A provider timeout or upstream error is persisted as seller evidence.
 - A gateway/configuration error is recorded but is not blamed on the seller.
 - An internal probe failure becomes `FAILED_INTERNAL`; later probes continue.
+- Each cycle runs due probes before evaluating ready contract windows.
+- `INSUFFICIENT` and checker-unhealthy verdicts persist but do not reach the
+  market-facing sink.
+- A sink failure does not roll back the finalized contract; it is reported as an
+  operational error and later contracts continue.
 - A database-level cycle failure is logged and retried by the worker.
 - PostgreSQL's unique `(contract_id, probe_slot)` constraint prevents two
   workers from executing the same scheduled slot.
