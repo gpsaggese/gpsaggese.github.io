@@ -1,8 +1,7 @@
 # Estimate Academic Paper Quality
 
 Planning docs for a pipeline that turns a list of academic papers into a CSV report
-of candidate trading strategies.
-
+of candidate trading strategies
 - Input: a text file with one paper per line, as a title, URL, DOI, or local PDF
 - Output: a reference list, paper markdown, and a CSV report of features per paper
 - Users: quant researchers, who sort the CSV to pick the next papers to replicate
