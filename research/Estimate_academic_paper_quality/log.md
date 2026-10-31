@@ -5,16 +5,16 @@
   - [x] Generate PRD and improve
     ```
     claude> /project.write_prd <project>/idea.md
-    claude> /text.criticize <project>/docs/prd.md
+    claude> /text.criticize <project>/docs/01-prd.md
     ```
-    - Generate `research/Estimate_academic_paper_quality/docs/prd.md`
+    - Generate `research/Estimate_academic_paper_quality/docs/01-prd.md`
 
 - Generate `research/Estimate_academic_paper_quality/README.md`
 
 - Generate architecture
   ```
-  claude> /architecture.write_design <project>/docs/prd.md
-  claude> /text.criticize <project>/docs/design.architecture.md
+  claude> /architecture.write_design <project>/docs/01-prd.md
+  claude> /text.criticize <project>/docs/02-design.architecture.md
   ```
 
 # Idea

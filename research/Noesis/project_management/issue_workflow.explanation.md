@@ -17,7 +17,7 @@
 
 - Noesis has one [project board](https://github.com/users/gpsaggese/projects/2)
   - Individual milestones and features do not each require a new board
-- Use the [MVP plan](../docs/plan.md#mvp-execution-plan) to connect the tasks to
+- Use the [MVP plan](../docs/04-plan.md#mvp-execution-plan) to connect the tasks to
   the intended product outcome
 - E.g., the verified-delivery milestone becomes separate issues for:
   - Calibration

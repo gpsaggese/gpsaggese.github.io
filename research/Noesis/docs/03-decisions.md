@@ -3,7 +3,7 @@
 - Every non-obvious choice in the MVP, why it was made, and what else was
   considered. Newest at the bottom of each section
 - Each PR adds its decisions here and links them in its description
-- Requirements and plan: `plan.md`
+- Requirements and plan: `04-plan.md`
 
 ## Measurement and Grading
 
@@ -74,7 +74,7 @@
   - Concentrate AI: fallback can't be disabled per request per its docs, and only one
     host serves our model, so no competing sellers to compare
   - Direct provider APIs: full control and verifiable attribution; planned as the
-    side track (`plan.md`, Side Track: Provider Independence) behind the same `Provider` interface
+    side track (`04-plan.md`, Side Track: Provider Independence) behind the same `Provider` interface
 - **Known limit**: attribution is OpenRouter's report until direct adapters exist
 
 ### D5. Blame a seller only for failures OpenRouter attributes to the provider
@@ -134,7 +134,7 @@
 - **Decision**: a task is one chat completion with at most 256 output tokens and a
   prompt of at most 1,000 input tokens; the gateway clamps larger requests
 - **Alternatives**: tokens, wall-clock compute, or a benchmark-normalized
-  task-equivalent (`plan.md`, NoesisMarket Open Questions 1)
+  task-equivalent (`04-plan.md`, NoesisMarket Open Questions 1)
 - **Status**: proposed
 
 ### D20. One open model: Llama 3.3 70B, weak model Llama 3.1 8B (formerly PRD D3)
@@ -145,7 +145,7 @@
   required at least 4 providers: 8 of 11 endpoints were usable
   (`findings/openrouter_spike.md`)
 - **Alternatives**: frontier models, whose vendors (OpenAI, Anthropic, Google) won't
-  bid, so the tier would be empty or collusion-prone (`plan.md`, Risks)
+  bid, so the tier would be empty or collusion-prone (`04-plan.md`, Risks)
 - **Status**: proposed
 
 ## Implementation
@@ -268,7 +268,7 @@
 
 - **Decision**: a bid/ask pair is accepted only if the interval of prices that all
   accepted parties allow stays non-empty; the clearing price is the midpoint of the
-  final interval (rule: `plan.md`, Market and Reputation Rules)
+  final interval (rule: `04-plan.md`, Market and Reputation Rules)
 - **Why**: the latency and reliability filter breaks GP's rule "midpoint of the last
   matched pair", so a matched party could trade at a price it refused
 - **Alternatives**: midpoint of the last matched pair
@@ -276,7 +276,7 @@
 ### D23. Reputation adds cooldown and probation
 
 - **Decision**: a blocked seller sits out a fixed number of rounds, then returns on
-  probation with its score reset to the block threshold (numbers: `plan.md`, Market
+  probation with its score reset to the block threshold (numbers: `04-plan.md`, Market
   and Reputation Rules)
 - **Why**: blocked sellers get no contracts, so under the paper's update formula
   their score can never recover; without this, one block lasts forever
@@ -291,7 +291,7 @@
   after its window closes. GP's `dispatch_contract()` returns a bool right away,
   which doesn't fit
 - **Alternatives**: the `random() < 0.9` coin flip of `mock_fulfill()`
-- **Status**: planned as `plan.md` T3.3 (`PR_M8`, redesigned); not built yet
+- **Status**: planned as `04-plan.md` T3.3 (`PR_M8`, redesigned); not built yet
 
 ## OpenRouter Supply Adapter (PR_S9)
 
@@ -375,7 +375,7 @@
   contract clears, for `n_tasks * price` at the clearing price, once per contract
   id. Several bids from one account in the same round are each checked against
   the full balance.
-- **Why**: `plan.md` PR_P4 asks for the PR_P3 gate ("balance >= n * p") with the
+- **Why**: `04-plan.md` PR_P4 asks for the PR_P3 gate ("balance >= n * p") with the
   debit on match. The clearing price is at or below `p_max`, so the buyer is never
   charged more than the bid allowed, and the contract id makes a repeated clear a
   no-op. A hold would need an order-cancel path that the order book does not have

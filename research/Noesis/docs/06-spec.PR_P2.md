@@ -1,7 +1,7 @@
 # `PR_P2`: Cloud Deployment - Implementation Spec
 
 - Specifies the Python code, Docker assets, and cloud deployment config for `PR_P2`
-  from `research/Noesis/docs/plan.md`
+  from `research/Noesis/docs/04-plan.md`
 - Scope: containerize `PR_P1`'s API into one Docker image; deploy to a single-node
   container service (AWS ECS, Fly.io, or Render); result is a
   `NoesisMarket`/`NoesisServer` instance reachable at a public URL; Kubernetes
@@ -19,7 +19,7 @@
 - `main.py` stays a flat file, not a nested `api/` subpackage: matches this dir's
   flat, `rn<abbrev>`-aliased modules
 - Add a real, `poetry`-managed `pyproject.toml`, not a `requirements.txt`: resolves
-  the gap `design.architecture.md` flags and matches every other runnable dir's convention
+  the gap `02-design.architecture.md` flags and matches every other runnable dir's convention
 - Cloud target: AWS ECS, task definition/service registered directly, not via this
   repo's `aws_create_prod_task_definition` automation, which reads a
   `shared_configs_bucket_name` unset in any `repo_config.yaml` here
@@ -36,7 +36,7 @@
 ## Out of Scope
 
 - Persistent datastore for order book/contract/request log: `PR_P2b`; state stays
-  in-memory `List`/`Dict` (`design.architecture.md` Weakness 6)
+  in-memory `List`/`Dict` (`02-design.architecture.md` Weakness 6)
 - Real payment/credit gating on `POST /bids`: `PR_P3`/`PR_P4`
 - Real fulfillment via `Gateway`: `PR_M8`; deployed instance keeps
   `contract_dispatch.mock_fulfill()` as the default `fulfillment_fn`
@@ -49,7 +49,7 @@
 - `platform_api.create_app(order_book, gateway, api_keys, *, fulfillment_fn=mock_fulfill) -> fastapi.FastAPI`
   is the only thing to containerize; wraps `OrderBook`/`Gateway` behind HTTP with
   `X-API-Key` auth on `POST /bids`, `POST /asks`, `POST /completions`
-- Gaps per `design.architecture.md`: no launch script hands `create_app()` to `uvicorn`
+- Gaps per `02-design.architecture.md`: no launch script hands `create_app()` to `uvicorn`
   (only `TestClient` does today); `api_keys` is a plain constructor arg, not
   env-sourced; no health-check endpoint; the dir has no `devops/`, `changelog.txt`,
   or `repo_config.yaml`
@@ -133,7 +133,7 @@
 - No persistence (`PR_P2b`): a redeploy/crash loses every pending bid/ask, contract,
   and request log
 - No rate limiting beyond `X-API-Key` on write endpoints; read endpoints stay
-  unauthenticated (`design.architecture.md` Weakness 9)
+  unauthenticated (`02-design.architecture.md` Weakness 9)
 - First `research/` dir made "runnable"; the only precedent has two known bugs
   (broken symlinks, missing `devops/env/`) this PR must not reproduce
 - ECS task-definition automation here is coupled to unconfigured org-wide infra; do
@@ -147,7 +147,7 @@
     `_parse_api_keys(raw) -> Dict[str, str]` exactly as specced (empty string ->
     `{}`, `hdbg.dassert_in(":", entry, ...)` on a malformed entry); written together
     with `PR_P2b`'s `NOESIS_DB_BACKEND` switch in the same session (see
-    `spec.PR_P2b.md`'s "Result"), since `main.py` did not exist on disk yet when that
+    `06-spec.PR_P2b.md`'s "Result"), since `main.py` did not exist on disk yet when that
     PR landed
   - `platform_api.py`: `GET /health -> {"status": "ok"}`, unauthenticated, reads no
     `order_book`/`gateway` state; module docstring's endpoint list updated
@@ -184,6 +184,6 @@
   the documented cloud target (direct task-definition/service registration, not the
   org-template automation); Fly.io/Render were not attempted, per "Trade-off and
   Alternative Design" above
-- Not yet reachable at a public URL: `plan.md`'s `PR_P2` Result line ("a
+- Not yet reachable at a public URL: `04-plan.md`'s `PR_P2` Result line ("a
   `NoesisMarket`/`NoesisServer` instance reachable at a public URL") is unmet until
   the ECS provisioning step above is actually carried out

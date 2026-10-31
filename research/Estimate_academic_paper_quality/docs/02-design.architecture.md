@@ -6,9 +6,9 @@
   with the full text and a set of extracted features per paper
 - Where it fits: text file of papers from the user -> this pipeline -> CSV report
   that the quant researcher sorts to pick the next papers to replicate
-- Requirements: [`research/Estimate_academic_paper_quality/docs/prd.md`](/research/Estimate_academic_paper_quality/docs/prd.md)
+- Requirements: [`research/Estimate_academic_paper_quality/docs/01-prd.md`](/research/Estimate_academic_paper_quality/docs/01-prd.md)
 - Decisions and alternatives, cited as `D<N>`:
-  [`research/Estimate_academic_paper_quality/docs/decisions.md`](/research/Estimate_academic_paper_quality/docs/decisions.md)
+  [`research/Estimate_academic_paper_quality/docs/03-decisions.md`](/research/Estimate_academic_paper_quality/docs/03-decisions.md)
 - Status: design only, no code exists yet
 - Convention in all the design docs:
   - **Fact**: a statement about code that exists today, with its path
@@ -20,7 +20,7 @@
 
 - The quant researcher runs one CLI script on a text file and reads the output dir
 - The pipeline reads bibliographic facts and citation counts only from the lookup
-  APIs, never from an LLM (PRD [`R3`](/research/Estimate_academic_paper_quality/docs/prd.md#r3-bibliographic-source), [`R16`](/research/Estimate_academic_paper_quality/docs/prd.md#r16-paper-quality-rating))
+  APIs, never from an LLM (PRD [`R3`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r3-bibliographic-source), [`R16`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r16-paper-quality-rating))
 - The LLM reads the markdown of each paper and returns the features, the facts, and
   the affiliations, each with a quote of the paper
 - Chrome downloads the SSRN PDFs, since SSRN blocks scripted clients
@@ -96,7 +96,7 @@ Rel(report, out, "JSON, CSV, markdown")
 ## Files and Import Graph
 
 - All code lives flat in [`research/Estimate_academic_paper_quality/`](/research/Estimate_academic_paper_quality/), tests in
-  [`research/Estimate_academic_paper_quality/test/`](/research/Estimate_academic_paper_quality/test/) ([D22](/research/Estimate_academic_paper_quality/docs/decisions.md#d22-flat-modules-with-the-epq_-prefix))
+  [`research/Estimate_academic_paper_quality/test/`](/research/Estimate_academic_paper_quality/test/) ([D22](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d22-flat-modules-with-the-epq_-prefix))
 
   | File                       | Component     | Layer                     |
   | :------------------------- | :------------ | :------------------------ |
@@ -132,7 +132,7 @@ Rel(report, out, "JSON, CSV, markdown")
   - **Fact**: [`helpers_root/helpers/hcache_simple.py`](/helpers_root/helpers/hcache_simple.py) has the `simple_cache()`
     decorator and the `--cache_mode` switch `add_cache_control_arg()`
   - **Decision**: move the private `_format_base_filename()` of the download tool to
-    a public `download_utils.format_base_filename()` ([D7](/research/Estimate_academic_paper_quality/docs/decisions.md#d7-the-pipeline-computes-the-base-name-with-a-public-helper))
+    a public `download_utils.format_base_filename()` ([D7](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d7-the-pipeline-computes-the-base-name-with-a-public-helper))
 
 ## Data Model
 
@@ -184,37 +184,37 @@ Rel(report, out, "JSON, CSV, markdown")
   state files and the features files
 - Rerun with 5 new lines: `resolve` hits the HTTP cache for the 22 old lines,
   `download` and `extract` skip the 20 old papers, so only the new papers cost
-  network time and LLM tokens ([`R11`](/research/Estimate_academic_paper_quality/docs/prd.md#r11-rerun-skips-converted-papers), [`R17`](/research/Estimate_academic_paper_quality/docs/prd.md#r17-rerun-skips-extraction))
+  network time and LLM tokens ([`R11`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r11-rerun-skips-converted-papers), [`R17`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r17-rerun-skips-extraction))
 
 ## Requirements Map
 
 | Req   | Component                       | How                                                       |
 | :---- | :------------------------------ | :-------------------------------------------------------- |
-| [`R1`](/research/Estimate_academic_paper_quality/docs/prd.md#r1-input-file-format)  | `resolver`                      | `parse_line()` classifies the 6 kinds of line             |
-| [`R2`](/research/Estimate_academic_paper_quality/docs/prd.md#r2-reference-format)  | `resolver`, `report`            | `format_reference()`, written to `references.md`          |
-| [`R3`](/research/Estimate_academic_paper_quality/docs/prd.md#r3-bibliographic-source)  | `resolver`, `bib_sources`       | Canonical record from Semantic Scholar, Crossref, arXiv   |
-| [`R4`](/research/Estimate_academic_paper_quality/docs/prd.md#r4-download-link)  | `resolver`, `bib_sources`       | Ordered download inputs, or the ` ???` mark               |
-| [`R5`](/research/Estimate_academic_paper_quality/docs/prd.md#r5-unresolved-or-ambiguous-line)  | `resolver`, `pipeline`          | `Issue` with status `unresolved` or `ambiguous` and candidates |
-| [`R6`](/research/Estimate_academic_paper_quality/docs/prd.md#r6-duplicate-lines)  | `resolver`                      | `paper_key()` merges lines of the same paper              |
-| [`R7`](/research/Estimate_academic_paper_quality/docs/prd.md#r7-reverse-chronological-order)  | `resolver`, `report`            | `sort_papers()`: year down, then author, then title       |
-| [`R8`](/research/Estimate_academic_paper_quality/docs/prd.md#r8-pdf-and-markdown-files)  | `fetcher`                       | Runs the download tool into `<output_dir>/papers/`        |
-| [`R9`](/research/Estimate_academic_paper_quality/docs/prd.md#r9-file-base-name)  | `resolver`, `fetcher`           | `format_base_filename()`, passed as `--output`            |
-| [`R10`](/research/Estimate_academic_paper_quality/docs/prd.md#r10-failed-download-or-conversion) | `fetcher`, `pipeline`           | `FetchResult` with the reason, the loop goes on           |
-| [`R11`](/research/Estimate_academic_paper_quality/docs/prd.md#r11-rerun-skips-converted-papers) | `fetcher`                       | `is_fetched()`: skip when `.pdf` and `.md` exist          |
-| [`R12`](/research/Estimate_academic_paper_quality/docs/prd.md#r12-feature-list) | `extractor`, `rater`            | Five features from the LLM and the record, plus the rating |
-| [`R13`](/research/Estimate_academic_paper_quality/docs/prd.md#r13-unknown-value) | `extractor`                     | `unknown` value, no score except the rating               |
-| [`R14`](/research/Estimate_academic_paper_quality/docs/prd.md#r14-evidence-for-each-value) | `extractor`                     | Quote, section from the LLM, page from the PDF text       |
-| [`R15`](/research/Estimate_academic_paper_quality/docs/prd.md#r15-extracted-facts) | `extractor`                     | `ExtractedFacts` with every labeled Sharpe ratio          |
-| [`R16`](/research/Estimate_academic_paper_quality/docs/prd.md#r16-paper-quality-rating) | `rater`, `bib_sources`, `fetcher` | Page count, affiliation tier, Semantic Scholar citations |
-| [`R17`](/research/Estimate_academic_paper_quality/docs/prd.md#r17-rerun-skips-extraction) | `pipeline`, `report`            | Skip when the features file exists, unless `--force_extract` |
-| [`R18`](/research/Estimate_academic_paper_quality/docs/prd.md#r18-report-csv) | `report`                        | `report.csv`, one row per paper with a features file      |
-| [`R19`](/research/Estimate_academic_paper_quality/docs/prd.md#r19-issues-csv) | `report`                        | `issues.csv` from the issues of every stage               |
-| [`R20`](/research/Estimate_academic_paper_quality/docs/prd.md#r20-features-file) | `report`                        | `<BASE>.features.json` next to the PDF                    |
+| [`R1`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r1-input-file-format)  | `resolver`                      | `parse_line()` classifies the 6 kinds of line             |
+| [`R2`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r2-reference-format)  | `resolver`, `report`            | `format_reference()`, written to `references.md`          |
+| [`R3`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r3-bibliographic-source)  | `resolver`, `bib_sources`       | Canonical record from Semantic Scholar, Crossref, arXiv   |
+| [`R4`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r4-download-link)  | `resolver`, `bib_sources`       | Ordered download inputs, or the ` ???` mark               |
+| [`R5`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r5-unresolved-or-ambiguous-line)  | `resolver`, `pipeline`          | `Issue` with status `unresolved` or `ambiguous` and candidates |
+| [`R6`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r6-duplicate-lines)  | `resolver`                      | `paper_key()` merges lines of the same paper              |
+| [`R7`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r7-reverse-chronological-order)  | `resolver`, `report`            | `sort_papers()`: year down, then author, then title       |
+| [`R8`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r8-pdf-and-markdown-files)  | `fetcher`                       | Runs the download tool into `<output_dir>/papers/`        |
+| [`R9`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r9-file-base-name)  | `resolver`, `fetcher`           | `format_base_filename()`, passed as `--output`            |
+| [`R10`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r10-failed-download-or-conversion) | `fetcher`, `pipeline`           | `FetchResult` with the reason, the loop goes on           |
+| [`R11`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r11-rerun-skips-converted-papers) | `fetcher`                       | `is_fetched()`: skip when `.pdf` and `.md` exist          |
+| [`R12`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r12-feature-list) | `extractor`, `rater`            | Five features from the LLM and the record, plus the rating |
+| [`R13`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r13-unknown-value) | `extractor`                     | `unknown` value, no score except the rating               |
+| [`R14`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r14-evidence-for-each-value) | `extractor`                     | Quote, section from the LLM, page from the PDF text       |
+| [`R15`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r15-extracted-facts) | `extractor`                     | `ExtractedFacts` with every labeled Sharpe ratio          |
+| [`R16`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r16-paper-quality-rating) | `rater`, `bib_sources`, `fetcher` | Page count, affiliation tier, Semantic Scholar citations |
+| [`R17`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r17-rerun-skips-extraction) | `pipeline`, `report`            | Skip when the features file exists, unless `--force_extract` |
+| [`R18`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r18-report-csv) | `report`                        | `report.csv`, one row per paper with a features file      |
+| [`R19`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r19-issues-csv) | `report`                        | `issues.csv` from the issues of every stage               |
+| [`R20`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r20-features-file) | `report`                        | `<BASE>.features.json` next to the PDF                    |
 
 ## Configuration, Interfaces, and Known Limits
 
 - Configuration: CLI flags of [`estimate_paper_quality.py`](/research/Estimate_academic_paper_quality/estimate_paper_quality.py), see
-  [`research/Estimate_academic_paper_quality/docs/design.pipeline.md`](/research/Estimate_academic_paper_quality/docs/design.pipeline.md)
+  [`research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md`](/research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md)
 - Interfaces: one CLI script, one output dir
   - Layout of the output dir:
     ```
@@ -232,21 +232,21 @@ Rel(report, out, "JSON, CSV, markdown")
         cache/                 HTTP response cache
     ```
 - Environment:
-  - Network access, and Chrome for SSRN ([PRD constraints](/research/Estimate_academic_paper_quality/docs/prd.md#constraints-and-assumptions))
+  - Network access, and Chrome for SSRN ([PRD constraints](/research/Estimate_academic_paper_quality/docs/01-prd.md#constraints-and-assumptions))
   - Docker, since the conversion runs a Dockerized prettier: the PRD does not list
-    it (see [`research/Estimate_academic_paper_quality/docs/design.fetcher.md`](/research/Estimate_academic_paper_quality/docs/design.fetcher.md))
+    it (see [`research/Estimate_academic_paper_quality/docs/02.4-design.fetcher.md`](/research/Estimate_academic_paper_quality/docs/02.4-design.fetcher.md))
   - The key of the LLM provider, as [`helpers.hllm`](/helpers_root/helpers/hllm.py) reads it
   - Optional `SEMANTIC_SCHOLAR_API_KEY`, for a higher rate limit
 - Known limits:
   - Stages run one paper at a time: about 100 papers take about an hour, mostly LLM
     and Chrome time
   - The user must pass the same `--output_dir` on a rerun, since the state lives
-    there ([D18](/research/Estimate_academic_paper_quality/docs/decisions.md#d18-all-the-state-lives-in-the-output-dir))
+    there ([D18](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d18-all-the-state-lives-in-the-output-dir))
 
 ## Deliberately Not Built
 
 - Search for papers outside the input list, backtests, a total score, a ranking
-  ([PRD Non-Goals](/research/Estimate_academic_paper_quality/docs/prd.md#non-goals))
+  ([PRD Non-Goals](/research/Estimate_academic_paper_quality/docs/01-prd.md#non-goals))
 - Parallel downloads or LLM calls: sequential is simple, and SSRN needs one Chrome
 - An evaluation harness for the success metrics: it needs labeled sets, see Open
   Questions

@@ -5,7 +5,7 @@ Every way of reaching a model (OpenRouter today, direct provider APIs later, a
 fake in tests) implements `Provider`. The rest of the gateway only sees
 `ProviderCall` and `ProviderResult`.
 
-For the overall design see `research/Noesis/docs/design.gateway.md`.
+For the overall design see `research/Noesis/docs/02.1-design.gateway.md`.
 
 Import as:
 

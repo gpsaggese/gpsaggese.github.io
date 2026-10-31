@@ -27,4 +27,4 @@
 - `COMMON_DIR` (this dir) anchors `migrations/` and `seed.yaml`; `NOESIS_DIR` is its
   parent, `research/Noesis`, which holds `.env`
 - Tests that need Postgres connect to `NOESIS_TEST_DATABASE_URL` and skip when it is
-  not reachable (see `docs/onboarding.md`)
+  not reachable (see `docs/09-onboarding.md`)

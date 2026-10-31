@@ -6,9 +6,12 @@
   trading strategies, with the full text and a set of extracted features per paper
 - Users: quant researchers, who use the table to pick the next papers to replicate
 - Background:
-  - Idea: [`research/Estimate_academic_paper_quality/idea.md`](/research/Estimate_academic_paper_quality/idea.md)
-  - Reference format: [`.claude/skills/references.rules.md`](/.claude/skills/references.rules.md)
-  - Paper rating rules, applied for Paper quality: [`.claude/skills/paper.rules.md`](/.claude/skills/paper.rules.md),
+  - Idea:
+    [`research/Estimate_academic_paper_quality/idea.md`](/research/Estimate_academic_paper_quality/idea.md)
+  - Reference format:
+    [`.claude/skills/references.rules.md`](/.claude/skills/references.rules.md)
+  - Paper rating rules, applied for Paper quality:
+    [`.claude/skills/paper.rules.md`](/.claude/skills/paper.rules.md),
     `# Paper Rating`
   - Download and conversion tool:
     [`helpers_root/dev_scripts_helpers/download/download_academic_paper_to_md.py`](/helpers_root/dev_scripts_helpers/download/download_academic_paper_to_md.py)
@@ -82,12 +85,12 @@
 
 - For each resolved paper with a download link or with a local PDF, the
   pipeline saves the PDF and its markdown conversion
-  - The PDFs are saved in the repo
+  - The PDFs are saved in a repo
 
 ### `R9` (File base name)
 
-- Both files use the base name of [`.claude/skills/references.rules.md`](/.claude/skills/references.rules.md), `#
-  Format to Use in File Names`
+- Both files use the base name of [`.claude/skills/references.rules.md`](/.claude/skills/references.rules.md),
+  `# Format to Use in File Names`
   - E.g., `2016.Ribeiro_et_al.Why_Should_I_Trust_You.pdf` and `.md`
 
 ### `R10` (Failed download or conversion)
@@ -207,21 +210,21 @@
 ## Constraints and Assumptions
 
 - Download and conversion reuse
-  [`helpers_root/dev_scripts_helpers/download/download_academic_paper_to_md.py`](/helpers_root/dev_scripts_helpers/download/download_academic_paper_to_md.py), as
-  the idea states
+  [`helpers_root/dev_scripts_helpers/download/download_academic_paper_to_md.py`](/helpers_root/dev_scripts_helpers/download/download_academic_paper_to_md.py),
+  as the idea states
 - Bibliographic facts and citation counts come from a lookup source, never from the
-  memory of an LLM, per [`.claude/skills/paper.rules.md`](/.claude/skills/paper.rules.md)
+  memory of an LLM, per
+  [`.claude/skills/paper.rules.md`](/.claude/skills/paper.rules.md)
 - An input list has about 100 papers: a first run processes all of them, and a rerun
-  does not pay again for the papers already processed (see [`R11`](#r11-rerun-skips-converted-papers) and [`R17`](#r17-rerun-skips-extraction))
+  does not pay again for the papers already processed (see
+  [`R11`](#r11-rerun-skips-converted-papers) and
+  [`R17`](#r17-rerun-skips-extraction))
 - Most papers describe trading strategies or return predictors, but a paper may not
   (e.g., a survey, a method paper)
   - The features Performance and Asset class can be `unknown` for such a paper (see
     [`R13`](#r13-unknown-value))
-- SSRN blocks scripted downloads: the download tool gets SSRN PDFs through a Chrome
-  that it starts and closes ([`download_with_chrome.py`](/helpers_root/dev_scripts_helpers/download/download_with_chrome.py)), so the pipeline needs
-  Chrome
 - The user runs the pipeline with network access
 
 ## Open Questions
 
-None.
+- None

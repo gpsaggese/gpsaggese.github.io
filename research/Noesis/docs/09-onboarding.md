@@ -3,9 +3,9 @@
 - Goal: from zero to running the gateway and its tests in about an hour, then
   picking a first task
 - Read next:
-  - `how_we_work.md` (process)
-  - `glossary.md` (terms)
-  - `design.gateway.md` (design)
+  - `08-how_we_work.md` (process)
+  - `10-glossary.md` (terms)
+  - `02.1-design.gateway.md` (design)
 
 ## 1. What Noesis Is (5 Minutes)
 
@@ -15,8 +15,8 @@
   request, test providers with known-answer questions, and lower the reputation of
   sellers that under-deliver
 - Background: the paper `papers/Noesis/Noesis.pdf` (by GP), GP's roadmap
-  `research/Noesis/docs/plan.md` (with the MVP claim and success criteria)
-- Status: `docs/progress.md`
+  `research/Noesis/docs/04-plan.md` (with the MVP claim and success criteria)
+- Status: `docs/07-progress.md`
 
 ## 2. Access You Need
 
@@ -152,7 +152,7 @@
 
 ## 7. Read the Code in This Order
 
-1. `docs/design.gateway.md`: the picture and the request flow
+1. `docs/02.1-design.gateway.md`: the picture and the request flow
 2. `gateway_providers.py`: the interface everything plugs into
 3. `gateway_api.py`: the main endpoint, top to bottom
 4. `gateway_routing.py`, `gateway_request_log.py`, `gateway_openrouter.py`
@@ -161,13 +161,13 @@
 
 ## 8. Pick a First Task
 
-- Open tasks with owners are in `docs/plan.md` (Task Breakdown); the next milestone is the
+- Open tasks with owners are in `docs/04-plan.md` (Task Breakdown); the next milestone is the
   checker (M2)
 - Good first tasks:
   - Add test questions to the canary bank (M2, T2.1): no prior code knowledge needed
   - Add a test for an edge case you find while reading
   - Improve a doc that confused you
-- Then follow `how_we_work.md`: plan -> approval -> issue -> feature branch in the
+- Then follow `08-how_we_work.md`: plan -> approval -> issue -> feature branch in the
   upstream repository -> PR to `master`
 
 ## 9. Common Problems
