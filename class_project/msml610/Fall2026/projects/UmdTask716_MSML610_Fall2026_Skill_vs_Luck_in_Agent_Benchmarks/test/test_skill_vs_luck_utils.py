@@ -596,3 +596,137 @@ class Test_check_ranking_recovery(hunitest.TestCase):
         # Run test and check outputs.
         with self.assertRaises(AssertionError):
             utils.check_ranking_recovery(abilities, 10, n_trials=2)
+
+
+# #############################################################################
+# Test_compute_split_half_correlation
+# #############################################################################
+
+
+class Test_compute_split_half_correlation(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils.compute_split_half_correlation()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test 3 agents whose order is the same on every half.
+        """
+        # Prepare inputs: `sub_a` solves every task and `sub_c` none, so on
+        # any half `sub_b` sits strictly between them.
+        outcomes = pd.DataFrame(
+            [[1] * 20, [1, 0] * 10, [0] * 20],
+            index=["sub_a", "sub_b", "sub_c"],
+        )
+        # Prepare outputs.
+        expected = """
+        spearman    1.0
+        kendall     1.0
+        """
+        # Run test.
+        correlations = utils.compute_split_half_correlation(
+            outcomes, n_splits=50, seed=1
+        )
+        # Check outputs.
+        actual = correlations.mean().round(4).to_string()
+        self.assert_equal(actual, expected, dedent=True)
+
+
+# #############################################################################
+# Test_compute_held_out_drop
+# #############################################################################
+
+
+class Test_compute_held_out_drop(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils.compute_held_out_drop()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test an agent that leads every half with no luck involved.
+        """
+        # Prepare inputs: `sub_a` solves every task, so it leads both halves
+        # with a score of 1.
+        outcomes = pd.DataFrame(
+            [[1] * 20, [1, 0] * 10],
+            index=["sub_a", "sub_b"],
+        )
+        # Prepare outputs.
+        expected = """
+        score_selected    1.0
+        score_held_out    1.0
+        drop              0.0
+        same_leader       1.0
+        """
+        # Run test.
+        held_out = utils.compute_held_out_drop(outcomes, n_splits=50, seed=1)
+        # Check outputs.
+        actual = held_out.mean().round(4).to_string()
+        self.assert_equal(actual, expected, dedent=True)
+
+    def test2(self) -> None:
+        """
+        Test that 2 identical agents split the lead and drop by the same
+        amount.
+        """
+        # Prepare inputs: the 2 agents solve the same tasks, so they are tied
+        # on every half.
+        outcomes = pd.DataFrame(
+            [[1, 0, 1, 1] * 5, [1, 0, 1, 1] * 5],
+            index=["sub_a", "sub_b"],
+        )
+        # Run test.
+        held_out = utils.compute_held_out_drop(outcomes, n_splits=50, seed=1)
+        # Check outputs: a tied leader is always the other half's leader too.
+        self.assertTrue((held_out["same_leader"] == 1.0).all())
+        drop = held_out["score_selected"] - held_out["score_held_out"]
+        self.assertTrue(np.allclose(held_out["drop"], drop))
+
+
+# #############################################################################
+# Test_simulate_winners_curse
+# #############################################################################
+
+
+class Test_simulate_winners_curse(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils.simulate_winners_curse()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test the true score, the standard error, and the correction.
+        """
+        # Prepare inputs: with ability 0 and symmetric difficulties, the true
+        # score is 0.5, so `sigma` = sqrt(0.25 / 100) = 0.05 and the correction
+        # for K = 2 is 0.05 * sqrt(2 ln 2) = 0.0589; the mean of the larger of 2
+        # standard normals is 1 / sqrt(pi) = 0.5642, so the exact one is 0.0282.
+        n_variants = 2
+        n_tasks = 100
+        # Prepare outputs.
+        expected = """
+        true_score          0.5000
+        sigma               0.0500
+        correction          0.0589
+        correction_exact    0.0282
+        """
+        # Run test.
+        curse = utils.simulate_winners_curse(
+            n_variants, n_tasks, n_trials=5, seed=1
+        )
+        # Check outputs.
+        columns = ["true_score", "sigma", "correction", "correction_exact"]
+        actual = curse[columns].round(4)
+        actual = actual.to_string()
+        self.assert_equal(actual, expected, dedent=True)
+
+    def test2(self) -> None:
+        """
+        Test that a single variant has no correction.
+        """
+        # Run test.
+        curse = utils.simulate_winners_curse(1, 50, n_trials=5, seed=1)
+        # Check outputs.
+        self.assertEqual(curse["correction"], 0.0)
+        self.assertAlmostEqual(curse["correction_exact"], 0.0)

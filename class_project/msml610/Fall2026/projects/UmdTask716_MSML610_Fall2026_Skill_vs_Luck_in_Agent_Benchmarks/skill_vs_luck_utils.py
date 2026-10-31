@@ -951,6 +951,133 @@ def compute_rank_intervals(
 
 
 # #############################################################################
+# Persistence across halves of the tasks
+# #############################################################################
+
+
+def _get_random_halves(n_tasks: int, n_splits: int, seed: int) -> np.ndarray:
+    """
+    Split the tasks into 2 random halves, several times.
+
+    :param n_tasks: number of tasks, at least 2
+    :param n_splits: number of random splits
+    :param seed: random seed
+    :return: `n_splits` x `n_tasks` boolean matrix, True for the tasks in the
+        first half; each row has `n_tasks // 2` True values
+    """
+    hdbg.dassert_lte(2, n_tasks, "Splitting needs at least 2 tasks")
+    rng = np.random.default_rng(seed)
+    in_first = np.zeros((n_splits, n_tasks), dtype=bool)
+    for split in range(n_splits):
+        first = rng.permutation(n_tasks)[: n_tasks // 2]
+        in_first[split, first] = True
+    return in_first
+
+
+def _get_half_scores(
+    outcomes: np.ndarray, in_first: np.ndarray
+) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Score every agent on each half of every split.
+
+    :param outcomes: agents x tasks matrix of 0/1
+    :param in_first: output of `_get_random_halves()`
+    :return: 2 `n_splits` x agents matrices, with the scores on the first and
+        on the second half
+    """
+    first = in_first.astype(float)
+    second = 1 - first
+    scores_first = first @ outcomes.T / first.sum(axis=1, keepdims=True)
+    scores_second = second @ outcomes.T / second.sum(axis=1, keepdims=True)
+    return scores_first, scores_second
+
+
+def compute_split_half_correlation(
+    outcomes: pd.DataFrame,
+    *,
+    n_splits: int = 1000,
+    seed: int = 0,
+) -> pd.DataFrame:
+    """
+    Check whether the ranking on half of the tasks holds on the other half.
+
+    Each split puts half of the tasks, at random, in each half, ranks the
+    agents on both halves, and correlates the 2 rankings. Low correlations
+    mean the ranking reflects which tasks were drawn more than the agents.
+
+    :param outcomes: agents x tasks matrix of 0/1
+    :param n_splits: number of random splits
+    :param seed: random seed
+    :return: one row per split with `spearman` and `kendall`
+    """
+    _LOG.debug(hprint.to_str("n_splits seed"))
+    hdbg.dassert_lt(2, outcomes.shape[0], "Correlations need at least 3 agents")
+    in_first = _get_random_halves(outcomes.shape[1], n_splits, seed)
+    scores_first, scores_second = _get_half_scores(
+        outcomes.to_numpy(dtype=float), in_first
+    )
+    # Correlate the 2 rankings of each split.
+    correlations = pd.DataFrame(
+        {
+            "spearman": [
+                scipy.stats.spearmanr(a, b).statistic
+                for a, b in zip(scores_first, scores_second)
+            ],
+            "kendall": [
+                scipy.stats.kendalltau(a, b).statistic
+                for a, b in zip(scores_first, scores_second)
+            ],
+        }
+    )
+    return correlations
+
+
+def compute_held_out_drop(
+    outcomes: pd.DataFrame,
+    *,
+    n_splits: int = 1000,
+    seed: int = 0,
+) -> pd.DataFrame:
+    """
+    Pick the leader on half of the tasks and score it on the other half.
+
+    The leader of the first half was picked for its high score there, so its
+    score on the second half is a fair estimate of its true score, and the
+    difference is the winner's curse. A tie for first is split: the tied
+    agents are averaged.
+
+    :param outcomes: agents x tasks matrix of 0/1
+    :param n_splits: number of random splits
+    :param seed: random seed
+    :return: one row per split with `score_selected` (the leader's score on
+        the first half), `score_held_out` (its score on the second half),
+        `drop` (the difference), and `same_leader` (share of the first-half
+        leaders that also lead the second half)
+    """
+    _LOG.debug(hprint.to_str("n_splits seed"))
+    in_first = _get_random_halves(outcomes.shape[1], n_splits, seed)
+    scores_first, scores_second = _get_half_scores(
+        outcomes.to_numpy(dtype=float), in_first
+    )
+    # Weight each leader of the first half, splitting ties.
+    leader_shares = _get_first_place_shares(scores_first)
+    score_selected = scores_first.max(axis=1)
+    score_held_out = (leader_shares * scores_second).sum(axis=1)
+    # Check whether the leaders of the first half also lead the second.
+    is_second_leader = scores_second == scores_second.max(axis=1, keepdims=True)
+    same_leader = (leader_shares * is_second_leader).sum(axis=1)
+    held_out = pd.DataFrame(
+        {
+            "score_selected": score_selected,
+            "score_held_out": score_held_out,
+            "drop": score_selected - score_held_out,
+            "same_leader": same_leader,
+        }
+    )
+    return held_out
+
+
+# #############################################################################
 # Simulated benchmarks with known abilities
 # #############################################################################
 
@@ -1179,6 +1306,95 @@ def check_ranking_recovery(
         }
     )
     return recovery
+
+
+def _get_expected_max_normal(n_draws: int) -> float:
+    r"""
+    Compute the mean of the largest of `n_draws` standard normal draws.
+
+    This is $\int x \, K \phi(x) \Phi(x)^{K - 1} dx$, computed with
+    Gauss-Hermite quadrature. It is 0 for 1 draw and about 0.56 for 2, while
+    $\sqrt{2 \ln K}$ gives 0 and 1.18.
+
+    :param n_draws: number of draws $K$
+    :return: expected maximum
+    """
+    hdbg.dassert_lte(1, n_draws, "There must be at least 1 draw")
+    # Hermite nodes integrate against a standard normal, up to $\sqrt{2 \pi}$.
+    nodes, node_weights = np.polynomial.hermite_e.hermegauss(120)
+    node_weights = node_weights / np.sqrt(2 * np.pi)
+    density_of_max = n_draws * scipy.stats.norm.cdf(nodes) ** (n_draws - 1)
+    expected_max = float(np.sum(node_weights * nodes * density_of_max))
+    return expected_max
+
+
+def simulate_winners_curse(
+    n_variants: int,
+    n_tasks: int,
+    *,
+    ability: float = 0.0,
+    n_trials: int = 500,
+    difficulty_sd: float = 1.0,
+    seed: int = 0,
+) -> pd.Series:
+    r"""
+    Measure how much picking the best of equal variants inflates its score.
+
+    Each trial simulates `n_variants` scaffolds with the same true ability on
+    the same tasks, like a lab trying several prompts. Any gap between them is
+    luck, so the best observed score overstates the true one. The spec
+    corrects for it with $\sigma \sqrt{2 \ln K}$, where $\sigma$ is the
+    standard error of 1 score.
+
+    Each trial also picks the best variant on a random half of the tasks and
+    scores it on the other half, which is what a held-out check measures.
+
+    :param n_variants: number of variants $K$ tried
+    :param n_tasks: tasks per benchmark
+    :param ability: true ability of every variant
+    :param n_trials: number of simulated benchmarks
+    :param difficulty_sd: std of the task difficulties
+    :param seed: seed of the first benchmark
+    :return: `true_score`, `inflation` (mean best score minus the true
+        score), `sigma` (binomial standard error of 1 score on all tasks),
+        `correction` ($\sigma \sqrt{2 \ln K}$), `correction_exact` ($\sigma$
+        times the mean of the largest of $K$ standard normals), and
+        `held_out_drop` (mean score of the best variant on the selection half
+        minus its score on the other half)
+    """
+    hdbg.dassert_lte(1, n_variants, "There must be at least 1 variant")
+    true_score = float(
+        compute_expected_scores([ability], difficulty_sd=difficulty_sd).iloc[0]
+    )
+    best_scores = []
+    held_out_drops = []
+    for trial in range(n_trials):
+        outcomes = simulate_outcomes(
+            [ability] * n_variants,
+            n_tasks,
+            difficulty_sd=difficulty_sd,
+            seed=seed + trial,
+        ).to_numpy(dtype=float)
+        best_scores.append(outcomes.mean(axis=1).max())
+        # Pick the best variant on half of the tasks, score it on the other.
+        in_first = _get_random_halves(n_tasks, 1, seed + trial)
+        scores_first, scores_second = _get_half_scores(outcomes, in_first)
+        shares = _get_first_place_shares(scores_first)
+        held_out_drops.append(
+            scores_first.max() - (shares * scores_second).sum()
+        )
+    sigma = np.sqrt(true_score * (1 - true_score) / n_tasks)
+    curse = pd.Series(
+        {
+            "true_score": true_score,
+            "inflation": np.mean(best_scores) - true_score,
+            "sigma": sigma,
+            "correction": sigma * np.sqrt(2 * np.log(n_variants)),
+            "correction_exact": sigma * _get_expected_max_normal(n_variants),
+            "held_out_drop": np.mean(held_out_drops),
+        }
+    )
+    return curse
 
 
 # #############################################################################
@@ -1478,5 +1694,99 @@ def plot_ranking_recovery(
         ax.set_xlabel("Tasks in the benchmark")
         ax.set_title(title)
     axes[0].legend()
+    fig.tight_layout()
+    plt.show()
+
+
+def plot_split_half_correlations(
+    correlations: Dict[str, pd.DataFrame],
+    *,
+    figsize: Optional[Tuple[float, float]] = None,
+) -> None:
+    """
+    Plot the Kendall tau between the rankings on 2 halves of the tasks.
+
+    :param correlations: outputs of `compute_split_half_correlation()`, by the
+        name of the group of agents
+    :param figsize: figure size, default `plt.rcParams["figure.figsize"]`
+    """
+    if figsize is None:
+        figsize = plt.rcParams["figure.figsize"]
+    fig, ax = plt.subplots(figsize=figsize)
+    bins = np.linspace(-0.2, 1, 61)
+    # 1 histogram per group of agents.
+    for name, group in correlations.items():
+        median = group["kendall"].median()
+        ax.hist(
+            group["kendall"],
+            bins=bins,
+            alpha=0.6,
+            label=f"{name} (median {median:.2f})",
+        )
+    ax.axvline(0, color="black", linewidth=1)
+    ax.set_xlabel("Kendall tau between the rankings on the 2 halves")
+    ax.set_ylabel("Random splits")
+    ax.set_title("Does the ranking on half of the tasks hold on the other half?")
+    ax.legend(loc="upper left")
+    fig.tight_layout()
+    plt.show()
+
+
+def plot_winners_curse(
+    curse: pd.DataFrame,
+    *,
+    figsize: Optional[Tuple[float, float]] = None,
+) -> None:
+    """
+    Plot the inflation of the best of K equal variants against K.
+
+    :param curse: one row per simulation with `n_tasks`, `n_variants`, and the
+        outputs of `simulate_winners_curse()`
+    :param figsize: figure size, default `plt.rcParams["figure.figsize"]`
+    """
+    if figsize is None:
+        figsize = plt.rcParams["figure.figsize"]
+    fig, axes = plt.subplots(1, 2, figsize=figsize, sharey=True)
+    # 1 color per benchmark size, in both panels.
+    for (n_tasks, group), color in zip(
+        curse.groupby("n_tasks"),
+        plt.rcParams["axes.prop_cycle"].by_key()["color"],
+    ):
+        axes[0].plot(
+            group["n_variants"],
+            100 * group["inflation"],
+            marker="o",
+            color=color,
+            label=f"{n_tasks} tasks: simulated",
+        )
+        axes[0].plot(
+            group["n_variants"],
+            100 * group["correction"],
+            linestyle="--",
+            color=color,
+            label=f"{n_tasks} tasks: sigma sqrt(2 ln K)",
+        )
+        axes[0].plot(
+            group["n_variants"],
+            100 * group["correction_exact"],
+            linestyle=":",
+            color=color,
+            label=f"{n_tasks} tasks: sigma E[max of K normals]",
+        )
+        axes[1].plot(
+            group["n_variants"],
+            100 * group["held_out_drop"],
+            marker="o",
+            color=color,
+            label=f"{n_tasks} tasks",
+        )
+    for ax in axes:
+        ax.set_xscale("log")
+        ax.set_xlabel("Variants tried (K)")
+    axes[0].set_ylabel("Points")
+    axes[0].set_title("Best score minus true score")
+    axes[1].set_title("Drop of the best variant on the held-out half")
+    axes[0].legend(fontsize="small")
+    axes[1].legend()
     fig.tight_layout()
     plt.show()

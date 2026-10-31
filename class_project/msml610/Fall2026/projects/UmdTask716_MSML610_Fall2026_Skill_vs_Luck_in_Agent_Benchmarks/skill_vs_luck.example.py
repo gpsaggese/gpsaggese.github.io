@@ -343,7 +343,131 @@ display(recovery.round(3))
 utils.plot_ranking_recovery(recovery, figsize=(14, 5))
 
 # %% [markdown]
-# # Part 6: Takeaways and next steps
+# # Part 6: Does the ranking hold on other tasks?
+#
+# - If the leaderboard measured the agents, the ranking on one half of the
+#   tasks would match the ranking on the other half
+# - Each split puts 250 random tasks in each half, and we repeat it 1,000 times
+
+# %% [markdown]
+# ## Cell 6.1: Split-half rank correlation
+#
+# - We correlate the 2 rankings for all 173 agents, the top 50, and the top 20
+#   - The top groups are picked on all 500 tasks, which, if anything, makes
+#     them look more stable than they are
+
+# %%
+# Correlate the rankings on the 2 halves, for 3 groups of agents.
+groups = {
+    "all 173 agents": outcomes,
+    "top 50": outcomes.loc[leaderboard.index[:50]],
+    "top 20": outcomes.loc[leaderboard.index[:20]],
+}
+split_half = {
+    name: utils.compute_split_half_correlation(group)
+    for name, group in groups.items()
+}
+summary = pd.DataFrame(
+    {name: corr.median() for name, corr in split_half.items()}
+).T
+
+display(summary.round(3))
+print(
+    "(split_half['top 20']['kendall'] < 0).mean()=",
+    (split_half["top 20"]["kendall"] < 0).mean(),
+)
+# Outcome: across all agents the ranking holds (Kendall 0.90), but among the
+# top 20 it mostly does not (Kendall 0.25), and some splits even reverse it.
+
+# %%
+# Plot the Kendall tau of the 3 groups.
+utils.plot_split_half_correlations(split_half, figsize=(12, 5))
+
+# %% [markdown]
+# ## Cell 6.2: The leader of one half on the other half
+#
+# - Pick the leader on one half of the tasks, then score it on the other half
+#   - This is the held-out check of Milestone 4, on the real leaderboard
+#   - A tie for first is split among the tied agents
+# - The 2 halves split a fixed set of 500 tasks
+#   - An agent that is lucky on one half is unlucky on the other, so this
+#     check is harsh on the leader
+
+# %%
+# Pick the leader on half of the tasks and score it on the other half.
+held_out = utils.compute_held_out_drop(outcomes)
+
+display(held_out.mean().round(4))
+print("(held_out['drop'] > 0).mean()=", (held_out["drop"] > 0).mean())
+# Outcome: the leader of one half scores 2.0 points less on the other half,
+# and is the leader there too only about 2% of the time.
+
+# %% [markdown]
+# # Part 7: The winner's curse of trying many variants
+#
+# - A lab tries $K$ scaffolds or prompts and reports the best
+#   - If they are all equally good, any gap between them is luck
+#   - So the best observed score overstates the true score
+# - The spec corrects for it with $\sigma \sqrt{2 \ln K}$
+#   - $\sigma$ is the standard error of 1 score
+# - The exact mean of the largest of $K$ normal draws is smaller
+#   - E.g., 0.56 instead of 1.18 for $K = 2$
+
+# %% [markdown]
+# ## Cell 7.1: Simulate the best of K equal variants
+#
+# - $K$ variants with the same true ability (true score 50%) on the same tasks
+# - $K$ = 1, 2, 5, 10, 20, 50 and 100, 500, 2,000 tasks, with 500 benchmarks
+#   each
+# - Each benchmark also picks the best variant on half of the tasks and scores
+#   it on the other half
+
+# %%
+# Simulate every combination of K and benchmark size.
+rows = []
+for n_tasks in [100, 500, 2000]:
+    for n_variants in [1, 2, 5, 10, 20, 50]:
+        curse = utils.simulate_winners_curse(n_variants, n_tasks)
+        rows.append({"n_tasks": n_tasks, "n_variants": n_variants, **curse})
+curse = pd.DataFrame(rows)
+curse["inflation_over_correction"] = curse["inflation"] / curse["correction"]
+
+columns = [
+    "n_tasks",
+    "n_variants",
+    "inflation",
+    "correction",
+    "correction_exact",
+    "held_out_drop",
+    "inflation_over_correction",
+]
+display(curse.loc[curse["n_variants"] > 1, columns].round(4))
+# Outcome: with 500 tasks, the best of 20 equal variants looks 3.7 points better
+# than it is; the spec's correction (5.5 points) is 1.4 to 2.5 times the real
+# inflation, while the exact one (4.2 points) is only 5% to 20% too high.
+
+# %%
+# Plot the inflation against K, with both corrections.
+utils.plot_winners_curse(curse, figsize=(14, 6))
+
+# %% [markdown]
+# ## Cell 7.2: The held-out drop
+#
+# - The drop on the held-out half is what a real prompt search can measure,
+#   since the true score is unknown
+# - It picks on half of the tasks, so it carries the inflation of a smaller
+#   benchmark: about $\sqrt{2}$ times the inflation on all the tasks
+
+# %%
+# Compare the held-out drop with the inflation on all the tasks.
+ratio = (curse["held_out_drop"] / curse["inflation"])[curse["n_variants"] > 1]
+
+print("ratio.median()=", round(ratio.median(), 2))
+# Outcome: the held-out drop is about 1.5 times the inflation on all the tasks,
+# close to sqrt(2), so a measured drop can be scaled back to the full benchmark.
+
+# %% [markdown]
+# # Part 8: Takeaways and next steps
 
 # %% [markdown]
 # ## Takeaways
@@ -363,6 +487,18 @@ utils.plot_ranking_recovery(recovery, figsize=(14, 5))
 #   - A typical top-25 agent has a 95% rank interval about 18 ranks wide
 #   - In simulation, 500 tasks pick the truly best of 10 agents only about half
 #     the time when neighbors are 1 point apart
+# - The top of the leaderboard does not persist
+#   - Over all 173 agents, the rankings on 2 halves of the tasks agree (Kendall
+#     0.90), but among the top 20 they barely do (Kendall 0.25)
+#   - The leader of one half scores 2.0 points less on the other half, and
+#     leads it only about 2% of the time
+# - Reporting the best of many variants inflates the score
+#   - The best of 20 equal variants on 500 tasks looks 3.7 points better than
+#     it is
+#   - The spec's $\sigma \sqrt{2 \ln K}$ is 1.4 to 2.5 times the real
+#     inflation for $K$ up to 50
+#   - $\sigma$ times the mean of the largest of $K$ normals is only 5% to 20%
+#     too high, since the variants share the same tasks
 # - 500 tasks are too few for the gaps on the leaderboard
 #   - Resolving a 1-point gap with 80% power needs about 14,700 tasks
 #   - With 500 tasks, the smallest resolvable gap is about 5.4 points
@@ -377,9 +513,9 @@ utils.plot_ranking_recovery(recovery, figsize=(14, 5))
 #   - Run small open models 5 times per task on HumanEval+ and MBPP+
 #   - Everything runs locally with Ollama
 # - Milestone 3:
-#   - Split-half rank correlation, to test whether rankings hold up
 #   - A Bayesian 2PL item response theory model in NumPyro, to estimate task
 #     difficulty and the effective size of the benchmark
-# - Milestone 4: the winner's curse of trying many scaffolds
+# - Milestone 4: compare the simulated held-out drop with the drop measured on
+#   real prompt variants
 #   - 82 of the 173 submissions allow 2 or more attempts per task (Cell 1.4)
 #   - The same EntroPO system scores 52.2% with 1 attempt and 60.4% with several
