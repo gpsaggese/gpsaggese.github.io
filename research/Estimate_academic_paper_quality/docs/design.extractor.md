@@ -4,51 +4,53 @@
 
 - Read the markdown of one paper and return, with one LLM call:
   - The features Performance, Asset class, Theoretical domain, and Mechanism, each
-    with a value or `unknown` (PRD `R12`, `R13`)
-  - The facts of `R15`: every labeled Sharpe ratio, annual return, volatility, max
+    with a value or `unknown` (PRD [`R12`](/research/Estimate_academic_paper_quality/docs/prd.md#r12-feature-list), [`R13`](/research/Estimate_academic_paper_quality/docs/prd.md#r13-unknown-value))
+  - The facts of [`R15`](/research/Estimate_academic_paper_quality/docs/prd.md#r15-extracted-facts): every labeled Sharpe ratio, annual return, volatility, max
     drawdown, sample period, universe, and data needs
-  - The affiliations of the authors, for the rating of `rater` (`R16`)
-  - A quote and a location for each value (`R14`)
+  - The affiliations of the authors, for the rating of `rater` ([`R16`](/research/Estimate_academic_paper_quality/docs/prd.md#r16-paper-quality-rating))
+  - A quote and a location for each value ([`R14`](/research/Estimate_academic_paper_quality/docs/prd.md#r14-evidence-for-each-value))
 - Check each quote against the text of the PDF and add the page number
 - Where it fits: `pipeline` -> `extractor` -> LLM through an injected function
-- Overview: `research/Estimate_academic_paper_quality/docs/design.architecture.md`
-- Decisions: `research/Estimate_academic_paper_quality/docs/decisions.md`
+- Overview: [`research/Estimate_academic_paper_quality/docs/design.architecture.md`](/research/Estimate_academic_paper_quality/docs/design.architecture.md)
+- Decisions: [`research/Estimate_academic_paper_quality/docs/decisions.md`](/research/Estimate_academic_paper_quality/docs/decisions.md)
 
 ## Diagram
 
-```mermaid
-C4Component
-  title Extractor: Components
-  Container_Boundary(e, "epq_extractor.py") {
-    Component(prep, "_prepare_text()", "Pure", "Drops the references, cuts to max_chars")
-    Component(call, "extract_features()", "Python", "Builds the prompt, calls llm_func, converts the answer")
-    Component(schema, "_LlmExtraction", "pydantic model", "Shape of the answer of the LLM")
-    Component(verify, "_locate_quote()", "Pure", "Finds the quote in the page texts, gives the page")
-  }
-  Component_Ext(prompt, "epq_extractor.prompt.md", "Markdown", "System prompt")
-  Component_Ext(llm, "llm_func", "helpers.hllm.get_structured_completion", "Injected by pipeline")
-  Rel(call, prep, "markdown")
-  Rel(call, prompt, "reads")
-  Rel(call, llm, "user prompt, _LlmExtraction")
-  Rel(call, verify, "each quote")
+```plantuml
+!pragma layout smetana
+!include <C4/C4_Component>
+LAYOUT_TOP_DOWN()
+title Extractor: Components
+Container_Boundary(e, "epq_extractor.py") {
+  Component(prep, "_prepare_text()", "Pure", "Drops the references, cuts to max_chars")
+  Component(call, "extract_features()", "Python", "Builds the prompt, calls llm_func, converts the answer")
+  Component(schema, "_LlmExtraction", "pydantic model", "Shape of the answer of the LLM")
+  Component(verify, "_locate_quote()", "Pure", "Finds the quote in the page texts, gives the page")
+}
+Component_Ext(prompt, "epq_extractor.prompt.md", "Markdown", "System prompt")
+Component_Ext(llm, "llm_func", "helpers.hllm.get_structured_completion", "Injected by pipeline")
+Rel(call, prep, "markdown")
+Rel(call, prompt, "reads")
+Rel(call, llm, "user prompt, _LlmExtraction")
+Rel(call, verify, "each quote")
 ```
 
 ## Files and Import Graph
 
-- `research/Estimate_academic_paper_quality/epq_extractor.py`
-- `research/Estimate_academic_paper_quality/epq_extractor.prompt.md`: the system
+- [`research/Estimate_academic_paper_quality/epq_extractor.py`](/research/Estimate_academic_paper_quality/epq_extractor.py)
+- [`research/Estimate_academic_paper_quality/epq_extractor.prompt.md`](/research/Estimate_academic_paper_quality/epq_extractor.prompt.md): the system
   prompt, in its own file so that a review sees each change
-- Imports `epq_types` and `pydantic`; it does not import `helpers.hllm`, since
+- Imports `epq_types` and `pydantic`; it does not import [`helpers.hllm`](/helpers_root/helpers/hllm.py), since
   `pipeline` injects the LLM function
-- **Fact**: `helpers_root/helpers/hllm.py` `get_structured_completion(user_prompt,
+- **Fact**: [`helpers_root/helpers/hllm.py`](/helpers_root/helpers/hllm.py) `get_structured_completion(user_prompt,
   response_format, *, system_prompt, model, cost_tracker, ...)` returns the answer
   parsed into `response_format`, through OpenAI or OpenRouter
 - **Fact**: the markdown of `fetcher` has no page markers (see
-  `research/Estimate_academic_paper_quality/docs/design.fetcher.md`)
+  [`research/Estimate_academic_paper_quality/docs/design.fetcher.md`](/research/Estimate_academic_paper_quality/docs/design.fetcher.md))
 - **Decisions**:
-  - One structured call per paper for all the values (D-11)
-  - Page from the PDF text, and an unverified quote is kept but flagged (D-12)
-  - Cut of a long paper (D-13)
+  - One structured call per paper for all the values ([D-11](/research/Estimate_academic_paper_quality/docs/decisions.md#d-11-one-structured-llm-call-per-paper))
+  - Page from the PDF text, and an unverified quote is kept but flagged ([D-12](/research/Estimate_academic_paper_quality/docs/decisions.md#d-12-the-page-of-a-quote-comes-from-the-pdf-text))
+  - Cut of a long paper ([D-13](/research/Estimate_academic_paper_quality/docs/decisions.md#d-13-a-long-paper-loses-its-references-then-its-middle))
 
 ## One Request End to End
 
@@ -156,7 +158,7 @@ C4Component
 
 - A second LLM call to check the first one: the quote check is cheaper and does not
   depend on the LLM
-- A score for any feature (`R13`)
+- A score for any feature ([`R13`](/research/Estimate_academic_paper_quality/docs/prd.md#r13-unknown-value))
 - A separate call per feature: it sends the paper many times, for no gain shown yet
 
 ## Open Questions
