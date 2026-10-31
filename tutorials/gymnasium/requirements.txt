@@ -1,8 +1,12 @@
-ipywidgets
-matplotlib
-numpy
-pandas
-seaborn
-
-#gymnasium==1.3.0
+# Core.
 gymnasium[classic-control]==1.3.0
+# `gymnasium` 1.3.0 renders with `pygame-ce`, which provides `import pygame`.
+# Do not also add `pygame`: both install the same `pygame/` package.
+pygame-ce==2.5.8
+
+# Notebook base, the packages of `class_project/project_template`.
+ipywidgets==8.1.8
+matplotlib==3.10.9
+numpy==2.4.6
+pandas==3.0.3
+seaborn==0.13.2
