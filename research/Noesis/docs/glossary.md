@@ -24,6 +24,7 @@
 | `r_min` | The contract's promised reliability (share of on-time successful requests) |
 | Window | The requests a contract covers: its task count or 60 s, whichever comes first |
 | Canary / test question | A question with one known answer, sent by our prober to grade quality |
+| Candidate canary | A canary before calibration; accepted candidate canaries enter the active canary bank |
 | Calibration | Keeping only canaries every healthy provider gets right and a weaker model misses |
 | Prober | The part of Noesis that sends canaries under each active contract |
 | Latency reliability | Share of a contract's requests that succeeded within `l_max` |
@@ -38,4 +39,6 @@
 | Model swap | Serving a weaker model (Llama 3.1 8B) while claiming the contracted one (70B) |
 | Quantization (fp8 / bf16 / fp16) | Running a model at lower numeric precision: cheaper, sometimes lower quality |
 | p50 / p95 | Typical (median) and near-worst (95th percentile) latency |
+| Task-credit | The unit of a buyer's balance, the same unit as a bid's `p_max`; a bid costs up to `n_tasks * p_max` of it |
+| Free grant | The task-credit every account receives on its first bid (`NOESIS_FREE_CREDIT`); no real payment behind it in the MVP |
 | `PR_S7`, `PR_M3`, ... | Work items in GP's roadmap `research/Noesis/docs/plan.md` |

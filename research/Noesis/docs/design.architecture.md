@@ -286,6 +286,31 @@ flowchart LR
     store --> clear["OrderBook.clear_round()"]
 ```
 
+### Credit gate flow (PR_P4)
+
+- `POST /bids` resolves the caller's account from its API key and asks the
+  `CreditLedger` for the balance, granting the free credit on the account's
+  first bid; the bid is rejected (HTTP 400) unless the balance covers
+  `n_tasks * p_max`, and nothing is held
+- `_MarketState` keeps a `buyer_id -> account` map for the round, since a
+  `Contract` only carries `buyer_id`; `clear_round()` saves each contract, then
+  debits `n_tasks * price` at the clearing price, keyed by `contract_id`, so a
+  repeated clear charges nothing
+- `market/credit_ledger.py` is pure and keeps balances behind a
+  `CreditLedgerStore` (in-memory until `PR_P2b`); the gate and the debit are
+  wired in `noesis_platform/platform_api.py`
+
+```mermaid
+flowchart LR
+    bid["POST /bids<br/>(X-API-Key -> account)"] --> gate["bid_cost() <= balance?"]
+    gate -- no --> reject["HTTP 400"]
+    gate -- yes --> book[("OrderBookStore")]
+    book --> clear["clear_round()"]
+    clear --> save["ContractStore.save_contract()<br/>-> contract_id"]
+    save --> debit["CreditLedger.debit()<br/>fill_cost() once per contract_id"]
+    debit --> ledger[("CreditLedgerStore")]
+```
+
 ### Scheduled capability-measurement flow
 
 - `prober_cli calibrate` validates the candidate bank before any provider call,
