@@ -401,7 +401,7 @@ def make_serve_situation(
     # the box center mirrored across the center line. A serve must go
     # cross-court, so the deuce box is at `x <= 0` and the deuce server at
     # `x > 0` (ad is the mirror image), as in `_get_server_xy()` and
-    # `_check_serve()` of `notebooks/racket_sports_01_shot_probability_utils.py`.
+    # `check_serve()` of `notebooks/racket_sports_01_shot_probability_utils.py`.
     x_mid = (legal_region.x_min + legal_region.x_max) / 2
     striker_xy = (-x_mid, -sport.court.length_m / 2)
     situation = ShotSituation(

@@ -240,14 +240,22 @@
     - So $P(\text{winner})$ is almost $P_{\mathrm{in}}$, except in a small dip
       around player 1, and the middle keeps the most returns in
   - Finding ([#789](https://github.com/gpsaggese/gpsaggese.github.io/issues/789),
-    simulation, waiting for GP's review): with $t_r = 0$ the map depends on the
-    two speeds only through the ratio $r = v_p / v_b$; with $t_r > 0$ also on the
-    reaction distance $v_p t_r$ (a conjecture with a short proof sketch)
+    simulation): with $t_r = 0$ the map depends on the two speeds only through
+    the ratio $r = v_p / v_b$; with $t_r > 0$ also on the reaction distance
+    $v_p t_r$ (a proposition, with a proof sketch in the paper's appendix)
     - Same-seed maps are identical on 30 scaled pairs and 500 random settings
     - At $t_r = 0.2$ s and $v_p = 1.5$ m/s, the reaction time does not move the
       best target and changes the mean $P(\text{winner})$ by at most 3.95
       points (pickleball, slow balls)
-    - Proposed: one speed control (ball speed over a fixed player speed)
+    - Decided ([GP on #789](https://github.com/gpsaggese/gpsaggese.github.io/issues/789#issuecomment-6528212968)): keep the
+      model with all the variables, with $v_b$, $v_p$, and $t_r$ as separate
+      controls and no ratio slider
+  - Finding ([#694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694),
+    corner sims): the error spread matters most; player speed and ball speed
+    matter mainly in one corner, a slow ball with a fast player 1, where deep
+    serves help player 1; reaction time changes little at realistic values
+    - In `notebooks/racket_sports_05_variable_sensitivity.ipynb`, and in Section
+      VII-A of the paper
 
 * Open Points
 - From
@@ -340,25 +348,30 @@
 - [x] [#669](https://github.com/gpsaggese/gpsaggese.github.io/issues/669):
       meta-doc on how we run the research project
 - [ ] [#670](https://github.com/gpsaggese/gpsaggese.github.io/issues/670):
-      generate the paper figures from the notebooks
+      generate the paper figures from the notebooks; Figures 3 and 4 come from
+      the CSV files that notebook 05 writes
 - [-] [#691](https://github.com/gpsaggese/gpsaggese.github.io/issues/691):
       clean up the docs (specs, notebook names), with
       [#787](https://github.com/gpsaggese/gpsaggese.github.io/issues/787): the
       phases in this plan, in one PR
 
 - Next steps (phase 1, then phase 2):
-  - [ ] [#694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694):
-        research Gdoc; the corner sims are done
-  - [-] [#788](https://github.com/gpsaggese/gpsaggese.github.io/issues/788):
+  - [-] [#694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694):
+        research Gdoc; the corner sims are done and in notebook 05, and the rules
+        for the research Gdoc are still open
+  - [x] [#788](https://github.com/gpsaggese/gpsaggese.github.io/issues/788):
         red to green heatmaps,
         [PR #804](https://github.com/gpsaggese/gpsaggese.github.io/pull/804)
-  - [ ] [#789](https://github.com/gpsaggese/gpsaggese.github.io/issues/789):
-        one speed control from the speed ratio (see the finding above)
+  - [-] [#789](https://github.com/gpsaggese/gpsaggese.github.io/issues/789):
+        which variables matter, keeping all of them (see the findings above),
+        in notebook 05
+  - [ ] [#790](https://github.com/gpsaggese/gpsaggese.github.io/issues/790):
+        symbolic regression, for a closed form of these relations
   - [ ] [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723):
         model the spread as a function of the ball speed
   - [ ] [#786](https://github.com/gpsaggese/gpsaggese.github.io/issues/786):
         model the spread as a function of player 2's movement
-  - [ ] [#714](https://github.com/gpsaggese/gpsaggese.github.io/issues/714):
+  - [x] [#714](https://github.com/gpsaggese/gpsaggese.github.io/issues/714):
         movement in the serving setup; its follow-ups are #786 and #787
   - [ ] [#713](https://github.com/gpsaggese/gpsaggese.github.io/issues/713):
         model the RL problem (phase 2)

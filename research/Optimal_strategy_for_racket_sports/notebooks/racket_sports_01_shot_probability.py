@@ -161,7 +161,7 @@ _ = utils.cell1_1_plot_shot_widget(SPORT)
 #   - Rounds the slider values to 6 decimals with `_round_slider_value()`, so
 #     the `+` / `-` buttons cannot drift past a line
 #   - Places the server with `_get_server_xy()`, and checks the serve with
-#     `_check_serve()` for the chosen side: only the diagonal box is legal, a
+#     `check_serve()` for the chosen side: only the diagonal box is legal, a
 #     serve on the kitchen line is out, and the box stops at the baseline
 #   - If the serve is a fault, draws it with `_draw_fault()` and stops there: no
 #     return, no dots, no $P_{in}$
@@ -316,9 +316,9 @@ _ = utils.cell2_1_plot_winner_widget(SPORT)
 #   with the serve controls of Cell 1.1
 # - On every control change:
 #   - Rounds the slider values with `_round_slider_value()`, and writes the
-#     settings string with `_build_settings_string()`, for the comments and the
+#     settings string with `build_settings_string()`, for the comments and the
 #     line under the figure
-#   - Checks the serve with `_check_serve()`; for a fault, draws it with
+#   - Checks the serve with `check_serve()`; for a fault, draws it with
 #     `_draw_fault()` and stops there: no map
 #   - Otherwise computes the map with `compute_winner_heatmap()`, which calls
 #     `compute_winner_probability()` for each cell center of

@@ -434,7 +434,7 @@ def compute_winner_probability(
     `P(reached)` come from the same samples, for display only.
 
     The serve is assumed legal: the caller (the widget) checks the serve rules
-    with `_check_serve()` and computes no return for a fault. Only the side of
+    with `check_serve()` and computes no return for a fault. Only the side of
     the court of `serve_xy` is checked here.
 
     :param serve_xy: where the serve lands and player 2 hits from, `(x1, y1)`
@@ -713,7 +713,7 @@ def find_best_target(heatmap: pd.DataFrame) -> Dict[str, float]:
 # #############################################################################
 
 
-def _draw_center_service_line(
+def draw_center_service_line(
     ax: Axes, court: racket_params.CourtGeometry
 ) -> None:
     """
@@ -858,7 +858,7 @@ def plot_winner_heatmap(
     )
     plt.colorbar(mesh, ax=ax, label="P(winner)")
     racket_strategy_utils.draw_court(ax, court)
-    _draw_center_service_line(ax, court)
+    draw_center_service_line(ax, court)
     # The outline of the best region, in the same cell order as `values`;
     # `find_best_region()` also checks the other columns.
     in_region = find_best_region(heatmap)[order].reshape(n_y, n_x)
@@ -912,7 +912,7 @@ def cell0_1_plot_courts(*, figsize: Tuple[float, float] = (10.0, 7.0)) -> None:
     # Same drawing for both sports, plus the center service line.
     for ax, sport in zip(axes, [racket_params.TENNIS, racket_params.PICKLEBALL]):
         racket_strategy_utils.draw_court(ax, sport.court)
-        _draw_center_service_line(ax, sport.court)
+        draw_center_service_line(ax, sport.court)
         ax.set_title(sport.name)
     plt.tight_layout()
     plt.show()
@@ -968,7 +968,7 @@ def _get_server_xy(
     return server_xy
 
 
-def _check_serve(
+def check_serve(
     side: str, x1: float, y1: float, court: racket_params.CourtGeometry
 ) -> Tuple[racket_params.CourtRegion, str]:
     """
@@ -1024,7 +1024,7 @@ def _draw_service_box(ax: Axes, box: racket_params.CourtRegion) -> None:
     Shade the legal service box: the one diagonal from the server.
 
     :param ax: court axes to draw on
-    :param box: legal service box, from `_check_serve()`
+    :param box: legal service box, from `check_serve()`
     """
     _LOG.debug(hprint.to_str("box"))
     box_rect = mpatches.Rectangle(
@@ -1233,7 +1233,7 @@ def _build_fault_text(
 
     :param serve_xy: where the serve lands, `(x1, y1)`
     :param side: "deuce" or "ad", the side the server serves from
-    :param fault: why the serve is a fault, from `_check_serve()`, e.g., "long"
+    :param fault: why the serve is a fault, from `check_serve()`, e.g., "long"
     :return: multi-line text, e.g., ending with "Fault: long"
     """
     _LOG.debug(hprint.to_str("serve_xy side fault"))
@@ -1382,11 +1382,11 @@ def cell1_1_plot_shot_widget(
             )
             # The side, not `x1`, decides the stance and the legal box.
             server_xy = _get_server_xy(side, court)
-            box, fault = _check_serve(side, x1, y1, court)
+            box, fault = check_serve(side, x1, y1, court)
             # Panel 1: the court and the legal box, shaded.
             fig, (ax_court, ax_text) = plt.subplots(1, 2, figsize=figsize)
             racket_strategy_utils.draw_court(ax_court, court)
-            _draw_center_service_line(ax_court, court)
+            draw_center_service_line(ax_court, court)
             _draw_service_box(ax_court, box)
             if fault:
                 # A fault ends the point: no return, so no dots, no ellipses,
@@ -1460,7 +1460,7 @@ def cell1_1_plot_shot_widget(
 WINNER_BALL_SPEED_MPS = {"Tennis": 25.0, "Pickleball": 12.0}
 
 
-def _build_settings_string(
+def build_settings_string(
     sport_name: str,
     side: str,
     serve_xy: Tuple[float, float],
@@ -1578,7 +1578,7 @@ def _build_winner_text(
     :param heatmap: the map from `compute_winner_heatmap()`
     :param best: the best target of `heatmap`, from `find_best_target()`
     :param n_samples: number of Monte Carlo samples per target
-    :param settings: settings string, from `_build_settings_string()`
+    :param settings: settings string, from `build_settings_string()`
     :return: multi-line text, e.g., starting with
         "Serve to (x1, y1) = (-2.10, 3.20)"
     """
@@ -1614,8 +1614,8 @@ def _build_winner_fault_text(
 
     :param serve_xy: where the serve lands, `(x1, y1)`
     :param side: "deuce" or "ad", the side the server serves from
-    :param fault: why the serve is a fault, from `_check_serve()`, e.g., "long"
-    :param settings: settings string, from `_build_settings_string()`
+    :param fault: why the serve is a fault, from `check_serve()`, e.g., "long"
+    :param settings: settings string, from `build_settings_string()`
     :return: multi-line text, e.g., with the line "Fault: long"
     """
     _LOG.debug(hprint.to_str("serve_xy side fault settings"))
@@ -1721,7 +1721,7 @@ def cell2_1_plot_winner_widget(
             reaction_time_s = _round_slider_value(t_r_slider.value)
             move_speed_mps = _round_slider_value(v_p_slider.value)
             seed = int(seed_slider.value)
-            settings = _build_settings_string(
+            settings = build_settings_string(
                 sport.name,
                 side,
                 serve_xy,
@@ -1737,7 +1737,7 @@ def cell2_1_plot_winner_widget(
                 f"settings: <code>{html.escape(settings)}</code>"
             )
             # The serve rules of Cell 1.1, for the chosen side.
-            box, fault = _check_serve(side, serve_xy[0], serve_xy[1], court)
+            box, fault = check_serve(side, serve_xy[0], serve_xy[1], court)
             # The comments panel is wider, so the settings string fits on one
             # line.
             fig, (ax_court, ax_text) = plt.subplots(
@@ -1746,7 +1746,7 @@ def cell2_1_plot_winner_widget(
             if fault:
                 # A fault ends the point: the fault of Cell 1.1, and no map.
                 racket_strategy_utils.draw_court(ax_court, court)
-                _draw_center_service_line(ax_court, court)
+                draw_center_service_line(ax_court, court)
                 _draw_service_box(ax_court, box)
                 server_xy = _get_server_xy(side, court)
                 _draw_fault(ax_court, server_xy, serve_xy, court)
