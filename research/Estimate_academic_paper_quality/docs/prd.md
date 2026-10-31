@@ -1,4 +1,4 @@
-# Estimate Paper Quality Product Requirements
+# Estimate Paper Quality - Product Requirement Description
 
 ## Goal
 

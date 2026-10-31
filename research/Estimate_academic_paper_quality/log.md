@@ -1,3 +1,22 @@
+# Log
+
+- Follow `docs/planning/all.plan_work.how_to_guide.md`
+  - [x] Write idea.md
+  - [x] Generate PRD and improve
+    ```
+    claude> /project.write_prd <project>/idea.md
+    claude> /text.criticize <project>/docs/prd.md
+    ```
+    - Generate `research/Estimate_academic_paper_quality/docs/prd.md`
+
+- Generate `research/Estimate_academic_paper_quality/README.md`
+
+- Generate architecture
+  ```
+  claude> /architecture.write_design <project>/docs/prd.md
+  claude> /text.criticize <project>/docs/design.architecture.md
+  ```
+
 # Idea
 
 Create a pipeline that accepts a list of links of papers in the form of partial
@@ -17,25 +36,3 @@ Target asset class (e.g., US equities)
 Theoretical domain (e.g., micro vs. macro)
 Availability of the required data in Atlas (e.g., asset coverage, eval vs prod data, ...)
 Nature of the reported mechanism (causal vs. associational)
-
-# Log
-
-- Following `docs/planning/all.plan_work.how_to_guide.md`
-
-- Write idea.md
-
-- Generate PRD and improve
-  ```
-  claude> /project.write_prd <project>/idea.md
-  claude> /text.criticize <project>/docs/prd.md
-  ```
-  - Generate `research/Estimate_academic_paper_quality/prd.md`
-
-- Generate `research/Estimate_academic_paper_quality/README.md`
-
-- Generate architecture
-  ```
-  claude> /architecture.write_design <project>/docs/prd.md
-  claude> /text.criticize <project>/docs/design.architecture.md
-  ```
-
