@@ -103,3 +103,32 @@
   12x too large
 - **Alternatives**: use every bar and correct the standard errors
 - **Status**: accepted
+
+## Models
+
+### D-12. Walk forward by year, with purging
+
+- **Decision**: for each test year from 2022, fit on all data before it and
+  leave out the last horizon before the test year
+- **Why**: a label at t uses prices up to t + h, so without the gap the last
+  training labels would use prices from the test year (López de Prado, Ch. 7)
+- **Alternatives**: one train/test split; purged k-fold cross-validation
+- **Status**: accepted
+
+### D-13. Assume a 10 bp cost per round trip
+
+- **Decision**: subtract 10 bp from each trade's return
+- **Why**: in the range of Binance spot fees for a round trip, and the value
+  used in the related work listed on #733
+- **Alternatives**: report the breakeven cost only (the PnL per trade before
+  costs, which is also in the results)
+- **Status**: proposed
+
+### D-14. Judge models by the weighted hit rate and PnL
+
+- **Decision**: report the share of |r| traded in the right direction next to
+  the plain hit rate
+- **Why**: the logistic regression beats p* on the plain hit rate but makes no
+  money, because it is right on small moves and wrong on big ones
+- **Alternatives**: plain hit rate only, as in the spec
+- **Status**: proposed

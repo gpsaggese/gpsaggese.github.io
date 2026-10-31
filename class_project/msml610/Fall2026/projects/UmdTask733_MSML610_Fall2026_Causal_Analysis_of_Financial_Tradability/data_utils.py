@@ -105,7 +105,7 @@ def load_ohlcv(
 # #############################################################################
 
 
-def _to_timedelta(interval: str) -> pd.Timedelta:
+def to_timedelta(interval: str) -> pd.Timedelta:
     """
     Convert a Binance interval to a timedelta.
 
@@ -130,7 +130,7 @@ def find_gaps(bars: pd.DataFrame, *, interval: str = "5m") -> pd.DataFrame:
         - `end`: open time of the last missing bar
         - `n_bars`: number of missing bars
     """
-    step = _to_timedelta(interval)
+    step = to_timedelta(interval)
     index = bars.index.drop_duplicates().sort_values()
     # A gap is a jump of more than one bar between consecutive bars.
     diffs = index.to_series().diff()
@@ -181,7 +181,7 @@ def clean_bars(
         - `segment_id`: id of the run of bars between long gaps, NaN inside a
           long gap
     """
-    step = _to_timedelta(interval)
+    step = to_timedelta(interval)
     bars = bars[_OHLCV_COLUMNS].sort_index()
     bars = bars[~bars.index.duplicated(keep="first")]
     # Put the bars on a regular grid: missing bars become NaN rows.
@@ -237,7 +237,7 @@ def compute_quality_table(
     :return: counts of bars, duplicates, gaps, and flagged bars
     """
     gaps = find_gaps(raw_bars, interval=interval)
-    step = _to_timedelta(interval)
+    step = to_timedelta(interval)
     longest_gap = gaps["n_bars"].max() * step if len(gaps) else pd.Timedelta(0)
     n_segments = int(clean["segment_id"].nunique())
     stats = {
@@ -264,7 +264,7 @@ def compute_quality_table(
 # #############################################################################
 
 
-def _bars_in(duration: str, interval: str) -> int:
+def get_n_bars(duration: str, interval: str) -> int:
     """
     Compute how many bars of size `interval` fit in `duration`.
 
@@ -272,7 +272,7 @@ def _bars_in(duration: str, interval: str) -> int:
     :param interval: bar size, e.g., "5m"
     :return: number of bars, e.g., 12 for "1h" with "5m" bars
     """
-    n_bars = _to_timedelta(duration) / _to_timedelta(interval)
+    n_bars = to_timedelta(duration) / to_timedelta(interval)
     if n_bars != int(n_bars) or n_bars < 1:
         raise ValueError(f"'{duration}' is not a multiple of '{interval}'")
     return int(n_bars)
@@ -331,12 +331,12 @@ def compute_features(
     by_segment = clean.groupby("segment_id")
     # Realized volatility over the last 1h, 1d, and 7d.
     for window in ["1h", "1d", "7d"]:
-        n_bars = _bars_in(window, interval)
+        n_bars = get_n_bars(window, interval)
         features[f"vol_{window}"] = by_segment["ret"].transform(
             lambda r, n=n_bars: r.rolling(n, min_periods=n).std()
         )
     # Volume compared with its last day, on a log scale.
-    n_bars = _bars_in("1d", interval)
+    n_bars = get_n_bars("1d", interval)
     log_volume = np.log1p(clean["volume"])
     by_segment_volume = log_volume.groupby(clean["segment_id"])
     mean = by_segment_volume.transform(
@@ -349,7 +349,7 @@ def compute_features(
     features["range"] = (clean["high"] - clean["low"]) / clean["close"]
     # Momentum over the last 1d and 7d.
     for window in ["1d", "7d"]:
-        n_bars = _bars_in(window, interval)
+        n_bars = get_n_bars(window, interval)
         past_close = by_segment["close"].shift(n_bars)
         features[f"mom_{window}"] = clean["close"] / past_close - 1
     features["hour"] = clean.index.hour
@@ -394,7 +394,7 @@ def compute_labels(
     by_segment = clean.groupby("segment_id")["close"]
     labels = pd.DataFrame(index=clean.index)
     for horizon in horizons:
-        n_bars = _bars_in(horizon, interval)
+        n_bars = get_n_bars(horizon, interval)
         future_close = by_segment.shift(-n_bars)
         fwd_ret = future_close / clean["close"] - 1
         labels[f"fwd_ret_{horizon}"] = fwd_ret
@@ -422,7 +422,7 @@ def sample_non_overlapping(
     :param offset: which bar of each block to keep, from 0 to n_bars - 1
     :return: every n-th row of `df`, starting at `offset`
     """
-    n_bars = _bars_in(horizon, interval)
+    n_bars = get_n_bars(horizon, interval)
     if not 0 <= offset < n_bars:
         raise ValueError(f"Invalid offset={offset} for {n_bars} bars")
     return df.iloc[offset::n_bars]
