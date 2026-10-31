@@ -14,9 +14,9 @@
 
 ## Ready for Review
 
-- 2026-10-19: `website/docs/blog/posts/in_60_mins.GluonTS.md`
-  - Prepared for publication (`draft: false`); GP approval, publication date
-    confirmation, and deployment are pending.
+- 2026-10-31: `website/docs/blog/posts/in_60_mins.GluonTS.md`
+  - Prepared for publication (`draft: false`); GP approval and deployment are
+    pending.
   - GP approved Ibrahim Ahmed Mohammed as an author; byline and acknowledgment
     added. Other coauthor profile details await GP.
 - 2026-10-19: `website/docs/blog/posts/in_5_mins.helpers_render_images.md`

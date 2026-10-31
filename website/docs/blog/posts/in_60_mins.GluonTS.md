@@ -6,7 +6,7 @@ authors:
     - Harsh Yadav
     - gpsaggese
     - Worldsoldure00
-date: 2026-10-19
+date: 2026-10-31
 description:
     "Learn GluonTS forecasting with synthetic data, prediction intervals, and a
     retrospective COVID-19 case study in Python."
