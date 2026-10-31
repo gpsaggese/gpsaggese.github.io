@@ -2,7 +2,7 @@
 
 ## Data
 
-### D-1. Use Binance's public market data endpoint
+### `D1` (Use Binance's public market data endpoint)
 
 - **Decision**: download prices from `data-api.binance.vision`
 - **Why**: `api.binance.com` returns HTTP 451. The public
@@ -12,7 +12,7 @@
   (used in #381, ends in 2021)
 - **Status**: proposed (asked on #733)
 
-### D-2. Fail loudly when data is missing
+### `D2` (Fail loudly when data is missing)
 
 - **Decision**: raise an error if the download fails or returns no data
 - **Why**: the code in #381 silently switched to synthetic data, so results
@@ -20,7 +20,7 @@
 - **Alternatives**: fall back to cached or synthetic data
 - **Status**: accepted
 
-### D-3. Separate bar size from trading horizon
+### `D3` (Separate bar size from trading horizon)
 
 - **Decision**: use 5-minute bars as the base data and define horizons (5m,
   15m, 1h, 4h, 1d) as multiples of it
@@ -31,7 +31,7 @@
 
 ## Simulation
 
-### D-4. A wrong call loses the move
+### `D4` (A wrong call loses the move)
 
 - **Decision**: PnL = sum((2 * hit - 1) * |r|)
 - **Why**: a plain dot product of 0/1 hits with returns treats a wrong call as
@@ -39,7 +39,7 @@
 - **Alternatives**: hit . r as written in Exercise 1
 - **Status**: proposed (asked on #733)
 
-### D-5. Report both ways of drawing hits
+### `D5` (Report both ways of drawing hits)
 
 - **Decision**: simulate "shuffle" (exactly round(p * N) hits, Exercise 1) and
   "bernoulli" (each hit independent, spec formula)
@@ -48,7 +48,7 @@
 - **Alternatives**: only one of them
 - **Status**: accepted
 
-### D-6. Use an effective number of trades in the p* formula
+### `D6` (Use an effective number of trades in the p* formula)
 
 - **Decision**: p* = 1/2 + z_q / (2 sqrt(N_eff)) with
   N_eff = (sum |r|)^2 / sum r^2

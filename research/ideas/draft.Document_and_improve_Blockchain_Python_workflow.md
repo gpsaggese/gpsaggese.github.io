@@ -10,7 +10,7 @@
   (packaging, error handling, developer experience)
 - Audit the toolchain end to end: what it does, how it's structured, what's
   missing (tests, docs, examples), and produce both a README (following the
-  `readme.create` skill conventions) and a prioritized list of concrete
+  `readme_dir.create` skill conventions) and a prioritized list of concrete
   improvements
 
 ## Formalization
@@ -61,7 +61,7 @@
     and external service the toolchain touches
 
 - Milestone 2: write the first-pass README
-  - Follow the `readme.create` skill conventions for structure, purpose, and
+  - Follow the `readme_dir.create` skill conventions for structure, purpose, and
     file/executable listing
   - For each entry point, document what problem it solves and how to invoke
     it, with example commands

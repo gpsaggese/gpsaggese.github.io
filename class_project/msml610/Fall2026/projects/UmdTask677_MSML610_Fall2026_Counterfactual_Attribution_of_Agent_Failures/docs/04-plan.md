@@ -166,7 +166,7 @@
 | PR | Content | Status |
 | :- | :------ | :----- |
 | PR 1 | Project template, Docker setup (Docker CLI and host socket for the task containers, pinned evaluator), and this plan | In review |
-| PR 2 | Runner ported into `caaf_*.py`, notebooks, unit tests, project README and docs (`progress.md`, `decisions.md`, `how_we_work.md`) | Next |
+| PR 2 | Runner ported into `caaf_*.py`, notebooks, unit tests, project README and docs (`07-progress.md`, `03-decisions.md`, `08-how_we_work.md`) | Next |
 | PR 3 | Scorer cache with verification, and one task end to end on the experiment machine | Planned |
 | PR 4 | Stage A: five-task pilot, manifests, replay checks | Planned |
 | PR 5 | Stage B: estimator checks and the A/A noise floor (Milestone 1 complete) | Planned |

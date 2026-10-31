@@ -50,7 +50,7 @@ class _NoesisDbHelper(hsqltest.TestImOmsDbHelper):
     Uses a real ephemeral Postgres (spun up by `TestDbHelper`'s
     `docker-compose`) rather than mocking `psycopg2`; a deliberate call
     against `.claude/skills/testing.rules.md`'s general "Mock Only External
-    Dependencies" guidance, flagged in `spec.PR_P2b.md`'s "Unit Test Plan":
+    Dependencies" guidance, flagged in `06-spec.PR_P2b.md`'s "Unit Test Plan":
     exercising the actual DDL/SQL in `postgres_store.py` against a mock
     would not catch a real SQL error.
     """

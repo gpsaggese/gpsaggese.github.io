@@ -2,7 +2,7 @@
 
 - Issue: #733
 - Research Google Doc: [Research Log](https://docs.google.com/document/d/1ttpZT3kWVXq5jMZn3nx1ijmtH97VfAclRmSa9Z2EYsc/edit)
-- Decisions: [decisions.md](decisions.md)
+- Decisions: [03-decisions.md](03-decisions.md)
 
 ## Status
 

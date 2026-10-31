@@ -3,11 +3,11 @@
 - Every non-obvious choice in the MVP, why it was made, and what else was
   considered. Newest at the bottom of each section
 - Each PR adds its decisions here and links them in its description
-- Requirements and plan: `plan.md`
+- Requirements and plan: `04-plan.md`
 
 ## Measurement and Grading
 
-### D-1. Flag a violation only when the upper confidence bound misses the promise
+### `D1` (Flag a violation only when the upper confidence bound misses the promise)
 
 - **Decision**: a contract measure (latency reliability, canary accuracy) is a
   violation only if the one-sided 95% Wilson **upper** bound is below the promised
@@ -29,7 +29,7 @@
   noise); a raw threshold `r_hat < R_min` (`PR_S4`; same problem on small windows)
 - **Status**: proposed to GP (changes paper Sec. 5 eq. `reliability_lower_bound`)
 
-### D-2. Score latency and quality separately
+### `D2` (Score latency and quality separately)
 
 - **Decision**: per contract, compute latency reliability over all requests and
   canary accuracy over canaries only; fail the contract if either is violated
@@ -38,7 +38,7 @@
   **83%** separated (`scripts/detection_math.py`)
 - **Alternatives**: `PR_S4`'s merged indicator `capability_ok AND latency_ok`
 
-### D-3. Canaries come from Noesis's own prober, and are calibrated
+### `D3` (Canaries come from Noesis's own prober, and are calibrated)
 
 - **Decision**: Noesis injects known-answer questions under each contract; only
   questions every healthy provider gets right and the weaker 8B model mostly misses
@@ -50,7 +50,7 @@
   probe ("9.9 vs 9.11") correctly, so easy questions can't expose a model swap
 - **Alternatives**: buyer-mixed canaries (PRD v0.1); LLM judge (later)
 
-### D-28. Canary schedules are secret, deterministic, and server-owned
+### `D28` (Canary schedules are secret, deterministic, and server-owned)
 
 - **Decision**: derive balanced canary choices and times from an HMAC secret plus
   contract identity. Send only the ordinary prompt to the provider; keep canary ID,
@@ -63,7 +63,7 @@
 
 ## Gateway
 
-### D-4. OpenRouter with the provider pinned, fallbacks off
+### `D4` (OpenRouter with the provider pinned, fallbacks off)
 
 - **Decision**: reach providers through OpenRouter (`PR_S7`) with
   `provider.only=[tag]`, `allow_fallbacks=false`, and verify the reported provider
@@ -74,10 +74,10 @@
   - Concentrate AI: fallback can't be disabled per request per its docs, and only one
     host serves our model, so no competing sellers to compare
   - Direct provider APIs: full control and verifiable attribution; planned as the
-    side track (`plan.md`, Side Track: Provider Independence) behind the same `Provider` interface
+    side track (`04-plan.md`, Side Track: Provider Independence) behind the same `Provider` interface
 - **Known limit**: attribution is OpenRouter's report until direct adapters exist
 
-### D-5. Blame a seller only for failures OpenRouter attributes to the provider
+### `D5` (Blame a seller only for failures OpenRouter attributes to the provider)
 
 - **Decision**: `classify_error()` marks a failure `upstream_error` (seller's fault)
   only if OpenRouter says the provider failed; OpenRouter's own 5xx/429, our
@@ -91,7 +91,7 @@
   delay may be OpenRouter's; latency limits are set from latency measured through
   OpenRouter, so healthy providers rarely time out
 
-### D-6. OpenAI-compatible API with the contract in a header
+### `D6` (OpenAI-compatible API with the contract in a header)
 
 - **Decision**: `POST /v1/chat/completions` in OpenAI's shape (`PR_S8`); the
   contract id travels in `X-Noesis-Contract`
@@ -99,14 +99,14 @@
   SDK); SDKs can add headers without touching the body
 - **Alternatives**: a body field (non-standard); `PR_P1`'s bespoke `/completions`
 
-### D-7. Someone else's contract is a 404, like a missing one
+### `D7` (Someone else's contract is a 404, like a missing one)
 
 - **Decision**: `resolve_route()` returns the same 404 for "doesn't exist" and
   "belongs to another buyer"
 - **Why**: a 403 would let anyone probe which contract ids exist
 - **Alternatives**: 403 (the first plan)
 
-### D-8. Log every provider call; flag unverifiable attribution
+### `D8` (Log every provider call; flag unverifiable attribution)
 
 - **Decision**: one `requests` row per provider call, including failures; an answer
   from a different or unnamed provider is `attribution_mismatch = true` and excluded
@@ -115,29 +115,29 @@
   failed calls (an exception skipped the log)
 - **Alternatives**: log only successes; trust unnamed answers
 
-### D-9. Spend cap deferred
+### `D9` (Spend cap deferred)
 
 - **Decision**: no gateway-side spend cap yet; the OpenRouter key's credit limit is
   the cap
 - **Why**: costs are tiny (220-call spike: $0.0026); the key limit is a hard stop
 - **Revisit**: with direct provider keys (no single limit) or the first paying buyer
 
-### D-10. Demo faults: real delay, same-provider model swap
+### `D10` (Demo faults: real delay, same-provider model swap)
 
 - **Decision**: per-seller `extra_latency_s` (a real delay the buyer feels) and
   `model_override` on the same provider
 - **Why**: a swap to a different provider would be flagged as an attribution
   mismatch and excluded, hiding the failure the demo must show
 
-### D-19. Task unit: one capped chat completion (formerly PRD D1)
+### `D19` (Task unit: one capped chat completion (formerly PRD D1))
 
 - **Decision**: a task is one chat completion with at most 256 output tokens and a
   prompt of at most 1,000 input tokens; the gateway clamps larger requests
 - **Alternatives**: tokens, wall-clock compute, or a benchmark-normalized
-  task-equivalent (`plan.md`, NoesisMarket Open Questions 1)
+  task-equivalent (`04-plan.md`, NoesisMarket Open Questions 1)
 - **Status**: proposed
 
-### D-20. One open model: Llama 3.3 70B, weak model Llama 3.1 8B (formerly PRD D3)
+### `D20` (One open model: Llama 3.3 70B, weak model Llama 3.1 8B (formerly PRD D3))
 
 - **Decision**: every seller serves Llama 3.3 70B Instruct; Llama 3.1 8B Instruct is
   the weaker model for calibration and for the model-swap fault
@@ -145,12 +145,12 @@
   required at least 4 providers: 8 of 11 endpoints were usable
   (`findings/openrouter_spike.md`)
 - **Alternatives**: frontier models, whose vendors (OpenAI, Anthropic, Google) won't
-  bid, so the tier would be empty or collusion-prone (`plan.md`, Risks)
+  bid, so the tier would be empty or collusion-prone (`04-plan.md`, Risks)
 - **Status**: proposed
 
 ## Implementation
 
-### D-11. Async `psycopg` 3 for the gateway, not `helpers.hsql`
+### `D11` (Async `psycopg` 3 for the gateway, not `helpers.hsql`)
 
 - **Decision**: `noesis_db.py` uses `psycopg` 3's async pool
 - **Why**: the gateway serves concurrent requests on one event loop; `helpers.hsql`
@@ -158,7 +158,7 @@
   `helpers.hsql`
 - **Alternatives**: `helpers.hsql` in a thread pool; an ORM
 
-### D-12. Flat modules next to GP's, original code untouched
+### `D12` (Flat modules next to GP's, original code untouched)
 
 - **Superseded**: one dir per component (`common/`, `gateway/`, `checker/`,
   `market/`, `noesis_platform/`). The file names stay unchanged
@@ -169,7 +169,7 @@
   in the monorepo; GP's prototype stays as the reference for the market milestone
 - **Alternatives**: a `noesis/` subpackage (the team's backup repo layout)
 
-### D-13. Test DB: connect to a running Postgres and skip if absent
+### `D13` (Test DB: connect to a running Postgres and skip if absent)
 
 - **Decision**: DB tests connect to `NOESIS_TEST_DATABASE_URL` and skip when it's
   unreachable, instead of `helpers.hsql_test`'s per-class docker-compose
@@ -178,7 +178,7 @@
 - **Alternatives**: `hsql_test.TestImOmsDbHelper` (sync `psycopg2`, needs
   `requires_docker_in_docker`)
 
-### D-14. Some `try/except` kept, each where failure is an outcome to report
+### `D14` (Some `try/except` kept, each where failure is an outcome to report)
 
 - **Decision**: `try/except` only where a failure is data, not a bug: network errors
   in `gateway_openrouter.py` become statuses; `/health` reports an unreachable DB as
@@ -187,7 +187,7 @@
   `AssertionError`
 - **Why**: the gateway must never crash or skip logging because a provider failed
 
-### D-21. Stack: Python 3.11, FastAPI, Postgres, Streamlit (formerly PRD D12)
+### `D21` (Stack: Python 3.11, FastAPI, Postgres, Streamlit (formerly PRD D12))
 
 - **Decision**: Python 3.11, FastAPI, Postgres, `httpx`, the `openai` SDK (in the
   simulator), and a Streamlit dashboard
@@ -196,7 +196,7 @@
 
 ## Market Scenario Families (PR_M11)
 
-### D-15. Seeded Named Families With Guaranteed Regimes
+### `D15` (Seeded Named Families With Guaranteed Regimes)
 
 - **Decision**: implement five scenario types as parameterized, seeded generators:
   balanced, excess demand, excess supply, multiple tiers, and non-crossing prices.
@@ -209,7 +209,7 @@
 - **Boundary**: generation returns fresh data only. It does not run an auction,
   touch a database, or establish parity between persistence backends.
 
-### D-16. Construct Quantities and Price Bands to Preserve Each Regime
+### `D16` (Construct Quantities and Price Bands to Preserve Each Regime)
 
 - **Decision**: draw positive quantities, balance totals by increasing the final
   order on the smaller side, and add a random positive excess for demand/supply
@@ -227,7 +227,7 @@
   or relax the regime guarantee. Construction is predictable and avoids unbounded
   retries. Performance-aware matching and real provider prices remain out of scope.
 
-### D-17. Local Randomness and Explicit Parameter Contracts
+### `D17` (Local Randomness and Explicit Parameter Contracts)
 
 - **Decision**: use a local `random.Random(seed)`; identical inputs and ordered
   tiers produce equal values without changing global randomness. Named families
@@ -245,7 +245,7 @@
 - **Boundary**: scales support representative large-value tests, not all numerical
   extremes. Arbitrarily large floats and fractional-price precision are not proven.
 
-### D-18. Validate Regimes Directly and Through the Market Runner
+### `D18` (Validate Regimes Directly and Through the Market Runner)
 
 - **Decision**: validate each named family across multiple seeds, counts, and
   numeric scales using `OrderBook.clear_round()` and deterministic mock dispatch.
@@ -264,25 +264,25 @@
 
 ## Market Mechanism (MVP)
 
-### D-22. Clearing price is a price no matched party refused
+### `D22` (Clearing price is a price no matched party refused)
 
 - **Decision**: a bid/ask pair is accepted only if the interval of prices that all
   accepted parties allow stays non-empty; the clearing price is the midpoint of the
-  final interval (rule: `plan.md`, Market and Reputation Rules)
+  final interval (rule: `04-plan.md`, Market and Reputation Rules)
 - **Why**: the latency and reliability filter breaks GP's rule "midpoint of the last
   matched pair", so a matched party could trade at a price it refused
 - **Alternatives**: midpoint of the last matched pair
 
-### D-23. Reputation adds cooldown and probation
+### `D23` (Reputation adds cooldown and probation)
 
 - **Decision**: a blocked seller sits out a fixed number of rounds, then returns on
-  probation with its score reset to the block threshold (numbers: `plan.md`, Market
+  probation with its score reset to the block threshold (numbers: `04-plan.md`, Market
   and Reputation Rules)
 - **Why**: blocked sellers get no contracts, so under the paper's update formula
   their score can never recover; without this, one block lasts forever
 - **Alternatives**: the paper's update formula alone
 
-### D-24. Contract result comes from a lifecycle, not a synchronous `fulfill()` call
+### `D24` (Contract result comes from a lifecycle, not a synchronous `fulfill()` call)
 
 - **Decision**: a contract moves `PENDING` -> `ACTIVE` -> `CLOSED` -> `PASSED`,
   `FAILED`, or `INSUFFICIENT`; the result is the checker's verdict after the window
@@ -291,11 +291,11 @@
   after its window closes. GP's `dispatch_contract()` returns a bool right away,
   which doesn't fit
 - **Alternatives**: the `random() < 0.9` coin flip of `mock_fulfill()`
-- **Status**: planned as `plan.md` T3.3 (`PR_M8`, redesigned); not built yet
+- **Status**: planned as `04-plan.md` T3.3 (`PR_M8`, redesigned); not built yet
 
 ## OpenRouter Supply Adapter (PR_S9)
 
-### D-25. Price an Ask at the Worst-Case Task Cost With Zero Margin
+### `D25` (Price an Ask at the Worst-Case Task Cost With Zero Margin)
 
 - **Decision**: `p_min` = `prompt_price * 1000 + completion_price * 256`, i.e., the
   OpenRouter per-token prices times the PRD D1 task caps (≤1,000 prompt and ≤256
@@ -310,7 +310,7 @@
   asks, but a long prompt would be served at a loss); keep a hardcoded price per
   seller (the status quo this PR removes).
 
-### D-26. Sellers, Latency, and Reliability Come From the Seed File
+### `D26` (Sellers, Latency, and Reliability Come From the Seed File)
 
 - **Decision**: the adapter builds asks only for the sellers in
   `common/seed.yaml`, matched to OpenRouter endpoints by `provider_slug` (the
@@ -327,7 +327,7 @@
   providers the gateway cannot pin or blame); take latency from OpenRouter's
   30-minute figures (wrong quantity).
 
-### D-27. Re-post One Ask per Seller Before Each Round
+### `D27` (Re-post One Ask per Seller Before Each Round)
 
 - **Decision**: each refresh posts one ask per seller for `n_tasks = 60` in the
   single `standard` tier; a seller that already has a pending ask in the current
@@ -344,7 +344,7 @@
 
 ## Library Market Rounds (PR_M10)
 
-### D-29. Own Round Orchestration and Storage Interfaces in the Market
+### `D29` (Own Round Orchestration and Storage Interfaces in the Market)
 
 - **Decision**: `market/round_runner.py` owns `run_round()`, `RoundResult`,
   `RoundSummary`, `ContractStore`, and `InMemoryContractStore`. The runner reuses
@@ -368,14 +368,14 @@
 
 ## Credit Ledger (PR_P4)
 
-### D-30. A Bid Must Be Covered at Submission, but Credit Is Debited at Clearing
+### `D30` (A Bid Must Be Covered at Submission, but Credit Is Debited at Clearing)
 
 - **Decision**: `POST /bids` is rejected (HTTP 400) unless the caller's balance
   covers `n_tasks * p_max`; nothing is held. Credit is debited only when a
   contract clears, for `n_tasks * price` at the clearing price, once per contract
   id. Several bids from one account in the same round are each checked against
   the full balance.
-- **Why**: `plan.md` PR_P4 asks for the PR_P3 gate ("balance >= n * p") with the
+- **Why**: `04-plan.md` PR_P4 asks for the PR_P3 gate ("balance >= n * p") with the
   debit on match. The clearing price is at or below `p_max`, so the buyer is never
   charged more than the bid allowed, and the contract id makes a repeated clear a
   no-op. A hold would need an order-cancel path that the order book does not have
@@ -384,7 +384,7 @@
   on clearing (needs cancels and refunds); debit at `p_max` (overcharges the
   buyer).
 
-### D-31. The Free Grant Is a Setting, Not a Number in the Repo
+### `D31` (The Free Grant Is a Setting, Not a Number in the Repo)
 
 - **Decision**: every account receives the same free credit on its first bid,
   read from `NOESIS_FREE_CREDIT` (default `1.0` in `market/credit_ledger.py`).
