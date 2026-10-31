@@ -10,7 +10,7 @@
 |---|---|---|
 | M0 Setup | 10/9 | ✅ 9/30 |
 | M1 Gateway | 10/30 | ✅ PR #597 merged 10/10 (spend cap deferred, `decisions.md` D-9) |
-| M2 Checker | 11/20 | 🟨 foundation merged in PR #604 on 10/11; candidate bank, calibration, probing, and window-closing runtime implemented; stacked PR_S4 review and paid calibration remain |
+| M2 Checker | 11/20 | 🟨 foundation merged in PR #604 on 10/11; candidate bank, calibration, probing, window-closing runtime, and offline replay implemented; stacked runtime review and paid calibration remain |
 | M3 Market loop | 11/20 | Library round runner implemented; scheduling and live integration remain |
 | M4 Demo | 12/11 | Not started |
 
@@ -29,6 +29,9 @@
   measurement, persisted calibration with an activation gate, secret scheduled
   probing, server-owned graded evidence, atomic window finalization, and a mocked
   market-facing verdict boundary
+- Offline replay: deterministic scenario generation, production-checker execution,
+  exact analytic predictions, and reproducible JSON/CSV/Markdown findings over
+  30,000 simulated contracts
 - `scripts/detection_math.py`: exact false-alarm / detection rates for the
   violation rules (`decisions.md` D-1, D-2)
 - `scripts/spike_openrouter.py` + `findings/openrouter_spike.md`: real provider
@@ -51,13 +54,17 @@
 6. **Graders must normalize**: Groq answered `Canberra.`, CoreWeave `Canberra`
 7. **Sync folders corrupt git repos**: iCloud duplicated files inside `.git`;
    clone outside synced folders (`onboarding.md`)
+8. **Offline checker replay matches the analytic model** (10/31): all six scenarios
+   passed; healthy produced 0/5,000 false alarms, weak-model detection was 81.76%
+   versus 82.81% predicted, and borderline latency was 31.84% versus 33.19%
 
 ## Next (M2 — Checker runtime and data)
 
 1. Run reviewed paid calibration: keep questions 70B always gets right and 8B misses; set
    `l_max` from measured latency
 2. Review and merge the stacked PR_S4 window, runtime, and worker integration
-3. Add offline replay for healthy, slowed, and weak-model traffic
+3. Merge the stacked offline replay PRs and use the checked-in findings in the
+   QoS paper/technical report
 
 ## History
 
@@ -75,3 +82,4 @@
 | 10/25 | PR_S4 stacked implementation adds eligible-evidence readiness, atomic window finalization, mocked verdict reporting, and probe-before-checker worker integration |
 | 10/25 | PR_M10: extracted the Python-only market runner and contract store; API delegates without response changes; five M11 regimes validated through the runner (D-29) |
 | 10/28 | PR_P4: free credit ledger gates `POST /bids` on `n_tasks * p_max` and debits each cleared contract once (`market/credit_ledger.py`, `noesis_platform/platform_api.py`; D-30, D-31) |
+| 10/31 | Offline replay runs six checker scenarios over five seeds and 30,000 contracts; all observed rates agree with exact analytic predictions and reproducible JSON/CSV/Markdown findings are generated |

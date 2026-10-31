@@ -27,6 +27,7 @@
 | `checker_models.py`     | Immutable inputs and outputs shared by the checker       | Models     |
 | `checker_probe_schedule.py` | Secret, balanced probe timing across a contract window | Canaries |
 | `checker_replay.py`     | Deterministic synthetic observations for offline replay | Evaluation |
+| `checker_replay_report.py` | Aggregate replay runs and render JSON/CSV/Markdown findings | Evaluation |
 | `checker_replay_runner.py` | Production-checker replay and analytic predictions | Evaluation |
 | `checker_runtime.py`    | Ready-window evaluation, finalization, and reporting   | Runtime    |
 | `checker_sink.py`       | Market-facing verdict protocol and recording mock      | Runtime    |
@@ -41,3 +42,16 @@
   the status constants of `gateway/gateway_providers.py`
 - `checker_models.py` is the base: every other module imports it, and it imports
   nothing from the checker
+
+## Offline Replay
+
+Run the complete deterministic experiment from the repository root:
+
+```bash
+research/Noesis/scripts/run_checker_replay.py
+```
+
+The command runs every frozen scenario for five seeds and 1,000 contracts per
+seed, exits nonzero if observed failure rates do not agree with the analytic
+predictions, and writes JSON, CSV, and Markdown artifacts under
+`research/Noesis/docs/findings/checker_replay/`.
