@@ -432,8 +432,8 @@ $(\sigma_x, \sigma_y)$, and $P_{\mathrm{in}}$ is the probability that the
 return lands in the server's half. The closed form is checked against a Monte
 Carlo estimate from samples of the same Gaussian, which agrees with it within
 sampling error. It is implemented, with an interactive notebook for both
-sports, in `notebooks/racket_shot_probability_utils.py` of the accompanying
-code.
+sports, in `notebooks/racket_sports_01_shot_probability_utils.py` of the
+accompanying code.
 
 ## Winner Probability of a Return
 
@@ -491,7 +491,8 @@ not depend on the ball speed in this model, a faster return never lowers
 $P_{\mathrm{win}}$, so hitting as fast as possible always looks best; a speed
 and accuracy trade-off is left to future work. The model is implemented, with
 a heatmap of $P_{\mathrm{win}}$ for both sports, in
-`notebooks/racket_shot_probability_utils.py` of the accompanying code.
+`notebooks/racket_sports_01_shot_probability_utils.py` of the accompanying
+code.
 
 # Game-Theoretic Placement
 

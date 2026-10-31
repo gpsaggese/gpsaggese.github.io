@@ -31,16 +31,19 @@ Modules are organized in layers, with each layer importing only from layers abov
 | `racket_params.py` | Sport, player, and error parameters; court geometry |
 | `racket_trajectory.py` | Closed-form 1D/2D ball flight and error propagation |
 | `racket_scoring.py` | Grid, Monte Carlo in-bounds probability, reachability, score |
-| `racket_game.py` | Zero-sum shot placement game |
+| `racket_game.py` | Zero-sum shot placement game (not built: PR4 closed without code) |
 | `racket_strategy_utils.py` | Plotting and experiment helpers for notebooks |
 
 ## Notebooks
 
+The notebooks are in `notebooks/`, numbered in their logical order.
+
 | Notebook | Purpose |
 |----------|---------|
-| `racket_strategy.API.ipynb` | Guided walkthrough of the package API, one layer at a time |
-| `racket_strategy.exploration.ipynb` | Click-to-run exploration of shot placement: ball speed, shot dispersion, player positions |
-| `racket_shot_probability.ipynb` | Serve and return widget: probability that a Gaussian return lands in, closed form vs Monte Carlo |
+| `racket_sports_01_shot_probability.ipynb` | Serve and return widget: probability that a Gaussian return lands in, closed form vs Monte Carlo |
+| `racket_sports_02_strategy_API.ipynb` | Guided walkthrough of the package API, one layer at a time |
+| `racket_sports_03_strategy_exploration.ipynb` | Click-to-run exploration of shot placement: ball speed, shot dispersion, player positions |
+| `racket_sports_04_trajectory_API.ipynb` | Guided walkthrough of `racket_trajectory.py`, the closed-form ball flight (set aside) |
 
 ## Development
 

@@ -19,21 +19,41 @@
     design was agreed in
     [#690](https://github.com/gpsaggese/gpsaggese.github.io/issues/690)
 - Dates are in UTC, as GitHub reports them
-- The plan of GP's initial implementation is `plan.racket_strategy.md`, with one
-  `spec.racket_strategy_PR*.md` file per planned PR
+- The plan of GP's initial implementation is `plan.racket_strategy.md`; its one
+  spec file per planned PR was deleted in #691, once PR1 to PR7 were done
 
 ## Open Work
 
-- [#624](https://github.com/gpsaggese/gpsaggese.github.io/issues/624): Milestone 2,
-  in the draft [PR #715](https://github.com/gpsaggese/gpsaggese.github.io/pull/715)
-  (see the entry below)
-- [#625](https://github.com/gpsaggese/gpsaggese.github.io/issues/625): this project
-  log
-- [#626](https://github.com/gpsaggese/gpsaggese.github.io/issues/626): a short doc
-  on how to create a PR with the Claude Code skills, for new students and RAs
-- [#627](https://github.com/gpsaggese/gpsaggese.github.io/issues/627): the paper,
-  adding Aahan Rembersu as an author and the Milestone 1 model
+- The open tasks and the next steps are in the Tasks section of
+  `plan.racket_strategy.md`
 - Manual widget checks of the Milestone 1 notebook, noted as in progress in #654
+
+## 2026-10-30: Docs Cleanup, Notebook Names, and Plan Phases
+
+- **Issues**: [#691](https://github.com/gpsaggese/gpsaggese.github.io/issues/691)
+  (clean up the docs, with
+  [GP's decisions](https://github.com/gpsaggese/gpsaggese.github.io/issues/691#issuecomment-6309187106))
+  and [#787](https://github.com/gpsaggese/gpsaggese.github.io/issues/787) (the 3
+  phases in the plan), in one PR
+- **What was done**:
+  - Deleted `spec.racket_strategy_PR1.md` to `spec.racket_strategy_PR7.md`; the
+    plan marks PR1 to PR7 as done, with PR4 and PR7 closed without code, since we
+    focus on the 2D model and set the trajectory work aside
+  - Renamed the notebooks with a number in their logical order, using
+    underscores as `notebook.rules.md` asks, with `git mv`:
+    - `racket_shot_probability` (and its utils and test) to
+      `racket_sports_01_shot_probability`
+    - `racket_strategy.API` to `racket_sports_02_strategy_API`
+    - `racket_strategy.exploration` to `racket_sports_03_strategy_exploration`
+    - `racket_trajectory.API` (and `racket_trajectory_utils.py`) to
+      `racket_sports_04_trajectory_API`
+    - `racket_strategy_utils.py` keeps its name, since notebooks 02 and 03 share
+      it
+  - Plan: the 3 phases of #714 with the open question on the game theory part,
+    the #789 finding on the speed ratio, the next steps as tasks, and the task
+    statuses
+- **Testing**: the full suite has only the 5 known Docker failures, every
+  renamed notebook runs top to bottom, and no old name is left outside this log
 
 ## 2026-10-23: Milestone 2, Probability of a Winning Return
 

@@ -38,7 +38,7 @@ import logging
 import helpers.hnotebook as hnotebook
 from research.Optimal_strategy_for_racket_sports import racket_params
 from research.Optimal_strategy_for_racket_sports.notebooks import (
-    racket_shot_probability_utils as utils,
+    racket_sports_01_shot_probability_utils as utils,
 )
 
 # Initialize notebook configuration and logging.

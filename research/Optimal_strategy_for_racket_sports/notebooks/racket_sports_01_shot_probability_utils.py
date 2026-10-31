@@ -1,5 +1,5 @@
 """
-Utilities for the `racket_shot_probability` notebook.
+Utilities for the `racket_sports_01_shot_probability` notebook.
 
 Player 1 serves to `(x1, y1)`, player 2 moves there and aims a return at
 `(x2, y2)` on player 1's half of the court. The return lands at a 2D Gaussian
@@ -13,7 +13,7 @@ estimated by Monte Carlo as one event.
 
 Import as:
 
-import research.Optimal_strategy_for_racket_sports.notebooks.racket_shot_probability_utils as rosfrsnrspu
+import research.Optimal_strategy_for_racket_sports.notebooks.racket_sports_01_shot_probability_utils as rosfrsnrs0spu
 """
 
 import dataclasses
