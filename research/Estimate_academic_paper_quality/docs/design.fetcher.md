@@ -3,42 +3,43 @@
 ## Goal
 
 - Own the files of each paper in `<output_dir>/papers/`
-  - Create `<BASE>.pdf` and `<BASE>.md` with the existing download tool (PRD `R8`,
-    `R9`)
-  - Record why a download or a conversion fails, and go on (`R10`)
-  - Skip a paper whose PDF and markdown exist (`R11`)
+  - Create `<BASE>.pdf` and `<BASE>.md` with the existing download tool (PRD [`R8`](/research/Estimate_academic_paper_quality/docs/prd.md#r8-pdf-and-markdown-files), [`R9`](/research/Estimate_academic_paper_quality/docs/prd.md#r9-file-base-name))
+  - Record why a download or a conversion fails, and go on ([`R10`](/research/Estimate_academic_paper_quality/docs/prd.md#r10-failed-download-or-conversion))
+  - Skip a paper whose PDF and markdown exist ([`R11`](/research/Estimate_academic_paper_quality/docs/prd.md#r11-rerun-skips-converted-papers))
   - Read the PDF for the other components: page texts, page count, title of page 1
-- Where it fits: `pipeline` -> `fetcher` -> `download_academic_paper_to_md.py`;
+- Where it fits: `pipeline` -> `fetcher` -> [`download_academic_paper_to_md.py`](/helpers_root/dev_scripts_helpers/download/download_academic_paper_to_md.py);
   `resolver` -> `fetcher` for the title of a local PDF
-- Overview: `research/Estimate_academic_paper_quality/docs/design.architecture.md`
-- Decisions: `research/Estimate_academic_paper_quality/docs/decisions.md`
+- Overview: [`research/Estimate_academic_paper_quality/docs/design.architecture.md`](/research/Estimate_academic_paper_quality/docs/design.architecture.md)
+- Decisions: [`research/Estimate_academic_paper_quality/docs/decisions.md`](/research/Estimate_academic_paper_quality/docs/decisions.md)
 
 ## Diagram
 
-```mermaid
-C4Component
-  title Fetcher: Components
-  Container_Boundary(f, "epq_fetcher.py") {
-    Component(done, "is_fetched()", "os.path", "PDF and markdown exist")
-    Component(fetch, "fetch_paper()", "hsystem", "Tries each download input until one gives a valid PDF and markdown")
-    Component(check, "_check_pdf() / _check_markdown()", "Pure", "%PDF header, non-empty text")
-    Component(read, "read_pdf_pages() / count_pages() / read_pdf_title() / read_markdown()", "pymupdf", "Reads the files")
-  }
-  Container_Ext(tool, "download_academic_paper_to_md.py", "uv script", "")
-  Container_Ext(chrome, "download_with_chrome.py", "uv script", "")
-  Container_Ext(conv, "convert_pdf_to_md.py", "uv script", "")
-  Rel(fetch, tool, "subprocess")
-  Rel(tool, chrome, "SSRN input")
-  Rel(tool, conv, "convert")
-  Rel(fetch, check, "after each run")
+```plantuml
+!pragma layout smetana
+!include <C4/C4_Component>
+LAYOUT_TOP_DOWN()
+title Fetcher: Components
+Container_Boundary(f, "epq_fetcher.py") {
+  Component(done, "is_fetched()", "os.path", "PDF and markdown exist")
+  Component(fetch, "fetch_paper()", "hsystem", "Tries each download input until one gives a valid PDF and markdown")
+  Component(check, "_check_pdf() / _check_markdown()", "Pure", "%PDF header, non-empty text")
+  Component(read, "read_pdf_pages() / count_pages() / read_pdf_title() / read_markdown()", "pymupdf", "Reads the files")
+}
+Container_Ext(tool, "download_academic_paper_to_md.py", "uv script", "")
+Container_Ext(chrome, "download_with_chrome.py", "uv script", "")
+Container_Ext(conv, "convert_pdf_to_md.py", "uv script", "")
+Rel(fetch, tool, "subprocess")
+Rel(tool, chrome, "SSRN input")
+Rel(tool, conv, "convert")
+Rel(fetch, check, "after each run")
 ```
 
 ## Files and Import Graph
 
-- `research/Estimate_academic_paper_quality/epq_fetcher.py`
-- Imports `epq_types`, `pymupdf`, `helpers.hsystem`, `helpers.hgit`
+- [`research/Estimate_academic_paper_quality/epq_fetcher.py`](/research/Estimate_academic_paper_quality/epq_fetcher.py)
+- Imports `epq_types`, `pymupdf`, [`helpers.hsystem`](/helpers_root/helpers/hsystem.py), [`helpers.hgit`](/helpers_root/helpers/hgit.py)
 - **Fact**: the download tool
-  `helpers_root/dev_scripts_helpers/download/download_academic_paper_to_md.py`:
+  [`helpers_root/dev_scripts_helpers/download/download_academic_paper_to_md.py`](/helpers_root/dev_scripts_helpers/download/download_academic_paper_to_md.py):
   - Takes `--input` (a local PDF, an SSRN URL, a DOI, an arXiv URL, or a URL) and
     `--output <base path>`, and writes `<base path>.pdf` and `<base path>.md`
   - Runs `summarize` by default, which calls an LLM through OpenRouter
@@ -46,15 +47,15 @@ C4Component
     --launch_chrome`
   - Saves the body of any `200` answer as the PDF, with no check of the content
     type: a publisher landing page is saved as an HTML file named `.pdf`
-  - Converts with `convert_pdf_to_md.py`, whose default actions are `convert`,
+  - Converts with [`convert_pdf_to_md.py`](/helpers_root/dev_scripts_helpers/documentation/convert_pdf_to_md.py), whose default actions are `convert`,
     `remove_junk`, and `lint`
 - **Fact**: `remove_junk` deletes the `<!-- Page N -->` markers, so the markdown has
   no page numbers
 - **Fact**: `lint` runs a Dockerized prettier, so the conversion needs Docker
 - **Decisions**:
-  - Run the tool as a subprocess, with `--skip_action summarize` (D-8)
-  - Pass `--output` with the base name of `resolver` (D-7)
-  - Check the `%PDF` header after a download (D-9)
+  - Run the tool as a subprocess, with `--skip_action summarize` ([D-8](/research/Estimate_academic_paper_quality/docs/decisions.md#d-8-run-the-download-tool-as-a-subprocess-without-summarize))
+  - Pass `--output` with the base name of `resolver` ([D-7](/research/Estimate_academic_paper_quality/docs/decisions.md#d-7-the-pipeline-computes-the-base-name-with-a-public-helper))
+  - Check the `%PDF` header after a download ([D-9](/research/Estimate_academic_paper_quality/docs/decisions.md#d-9-check-the-pdf-header-after-a-download))
 
 ## One Request End to End
 
@@ -83,9 +84,9 @@ C4Component
     - Success: returns `FetchResult(status="ok")`
   - All inputs fail: returns `download_failed`, with the reason of each input
 - `read_pdf_pages(pdf_path)`: the text of each page with `page.get_text("text")`;
-  `extractor` uses it to find the page of a quote (D-12)
+  `extractor` uses it to find the page of a quote ([D-12](/research/Estimate_academic_paper_quality/docs/decisions.md#d-12-the-page-of-a-quote-comes-from-the-pdf-text))
 - `count_pages(pdf_path)`: `len(pymupdf.open(pdf_path))`, all pages included, per
-  `.claude/skills/paper.rules.md` `### Page Length`
+  [`.claude/skills/paper.rules.md`](/.claude/skills/paper.rules.md) `### Page Length`
 - `read_pdf_title(pdf_path)`: the spans of page 1 with the largest font size,
   joined; else the `title` of the PDF metadata; else `""`
 
@@ -115,7 +116,7 @@ C4Component
 
 ## Deliberately Not Built
 
-- Bypass of paywalls or access controls (PRD Non-Goals)
+- Bypass of paywalls or access controls ([PRD Non-Goals](/research/Estimate_academic_paper_quality/docs/prd.md#non-goals))
 - A check that the PDF is the right paper, e.g., by comparing the title of page 1
   with the reference: see Open Questions
 

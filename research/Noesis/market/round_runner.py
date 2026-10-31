@@ -13,6 +13,7 @@ from typing import Callable, Dict, List, Optional, Tuple, TypeVar
 
 import helpers.hdbg as hdbg
 import helpers.hprint as hprint
+
 import research.Noesis.market.batch_call_auction as rnbacaau
 import research.Noesis.market.contract_dispatch as rnocodis
 

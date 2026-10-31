@@ -15,6 +15,7 @@ from typing import Dict, Optional
 
 import helpers.hdbg as hdbg
 import helpers.hprint as hprint
+
 import research.Noesis.market.batch_call_auction as rnbacaau
 
 _LOG = logging.getLogger(__name__)
