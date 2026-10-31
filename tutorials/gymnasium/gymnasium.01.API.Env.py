@@ -84,7 +84,10 @@ except ImportError:
 #   - `gymnasium.vector.VectorEnv`: run many envs in parallel
 
 # %% [markdown]
-# ## Primitive 1: `gymnasium.Env`: the Base Class
+# # Part 1: The `gymnasium.Env` base class
+
+# %% [markdown]
+# ## Cell 1.1: Inspect `gymnasium.Env`
 #
 # - **Mental model**: an object that holds the state of a world. You send it
 #   actions and it returns observations and rewards
@@ -96,7 +99,7 @@ except ImportError:
 hintros.print_obj_info(gym.Env)
 
 # %% [markdown]
-# ### Constructing an `Env` via `gym.make()`
+# ## Cell 1.2: Construct an `Env` with `gym.make()`
 #
 # - `gym.make(id)` is the standard factory: it looks up a registered environment
 #   by string ID and returns a fully wrapped `Env`
@@ -111,7 +114,7 @@ print("type(env):", type(env))
 print("env:", env)
 
 # %% [markdown]
-# ### Inspecting the env object
+# ## Cell 1.3: Inspect the env object
 #
 # - Two key attributes describe the interface contract:
 #   - `observation_space`: what the env returns
@@ -131,7 +134,10 @@ print("\nunwrapped type:", type(env.unwrapped))
 print("unwrapped:", env.unwrapped)
 
 # %% [markdown]
-# ## Primitive 2: `reset()`: Start an Episode
+# # Part 2: The episode loop
+
+# %% [markdown]
+# ## Cell 2.1: `reset()`: start an episode
 #
 # - **Mental model**: puts the environment into an initial state and returns the
 #   first observation. Must be called before the first `step()`
@@ -159,7 +165,7 @@ obs2, _ = env.reset(seed=0)
 print("Same seed -> same obs:", np.array_equal(obs1, obs2))
 
 # %% [markdown]
-# ## Primitive 3: `step()`: Advance One Timestep
+# ## Cell 2.2: `step()`: advance one timestep
 #
 # - **Mental model**: applies one action, advances the world by one timestep, and
 #   returns what the agent sees next
@@ -180,7 +186,7 @@ obs, reward, terminated, truncated, info = env.step(action)
 utils.print_step(obs, reward, terminated, truncated, info)
 
 # %% [markdown]
-# ### Running a Full Episode
+# ## Cell 2.3: Run a full episode
 #
 # - The canonical episode loop: reset once, then step until done
 
@@ -204,7 +210,7 @@ while not done:
 print(f"Steps: {step_count}  Total reward: {total_reward}")
 
 # %% [markdown]
-# ## Primitive 4: Spaces: Describing Valid Data
+# # Part 3: Spaces: describing valid data
 #
 # - **Mental model**:
 #     - A `Space` is a typed contract
@@ -216,7 +222,7 @@ print(f"Steps: {step_count}  Total reward: {total_reward}")
 #   - `env.action_space`: type of actions accepted by `step`
 
 # %% [markdown]
-# ### `Discrete(n)`: integers 0 ... n-1
+# ## Cell 3.1: `Discrete(n)`: integers 0...n-1
 
 # %%
 # `Discrete(n)` represents a set of n integer values 0, 1, ..., n-1.
@@ -241,7 +247,7 @@ print("2 in d:", d.contains(2))
 print("5 in d:", d.contains(5))
 
 # %% [markdown]
-# ### `Box(low, high, shape)`: continuous tensor
+# ## Cell 3.2: `Box(low, high, shape)`: continuous tensor
 
 # %%
 # `Box(low, high, shape)` represents a continuous tensor where each element is
@@ -266,7 +272,7 @@ print(
 )
 
 # %% [markdown]
-# ### Space comparison: CartPole vs MountainCar
+# ## Cell 3.3: Space comparison: CartPole vs MountainCar
 
 # %%
 cart = gym.make("CartPole-v1")
@@ -282,7 +288,7 @@ cart.close()
 mountain.close()
 
 # %% [markdown]
-# ### Other Space Types
+# ## Cell 3.4: Other space types
 
 # %%
 # MultiDiscrete: vector of independent discrete dims.
@@ -314,7 +320,10 @@ tup.seed(0)
 print("Tuple sample:", tup.sample())
 
 # %% [markdown]
-# ## Primitive 5: `render()` and `close()`
+# # Part 4: Rendering and the registry
+
+# %% [markdown]
+# ## Cell 4.1: `render()` and `close()`
 #
 # - `render()`: returns a visual representation of the current state
 #   - `render_mode="rgb_array"` -> numpy uint8 array `(H, W, 3)`
@@ -342,7 +351,7 @@ env.close()
 print("env closed")
 
 # %% [markdown]
-# ## Primitive 6: `gym.make()`: the Environment Registry
+# ## Cell 4.2: `gym.make()`: the environment registry
 #
 # - `gym.make(id, **kwargs)` looks up the ID in a global registry and wraps the
 #   result in standard wrappers (e.g. `TimeLimit`)
@@ -370,7 +379,10 @@ data = {
 display(pd.DataFrame(data))
 
 # %% [markdown]
-# ## Composition: Building a Custom `Env`
+# # Part 5: Composition
+
+# %% [markdown]
+# ## Cell 5.1: Build a custom `Env`
 #
 # - Subclass `gym.Env`, declare the two spaces, and implement `reset` and `step`
 # - Minimum required: `__init__`, `reset`, `step`
@@ -419,7 +431,7 @@ for idx, step in enumerate(steps):
     utils.print_step(*step, label=f"Step {idx}", compact=True)
 
 # %% [markdown]
-# ### Registering and using a custom env via `gym.make()`
+# ## Cell 5.2: Register and use a custom env with `gym.make()`
 
 # %%
 # Register the custom env so it can be created via gym.make().
@@ -436,7 +448,7 @@ print("obs after step right:", obs, "reward:", reward)
 env2.close()
 
 # %% [markdown]
-# ## Composition: Wrappers
+# ## Cell 5.3: Wrappers
 #
 # - **Mental model**:
 #     - A `Wrapper` wraps an `Env` and intercepts its calls
@@ -464,7 +476,7 @@ print("episode stats:", steps[-1].info["episode"])
 env_w.close()
 
 # %% [markdown]
-# ## Composition: Vectorized Environments
+# ## Cell 5.4: Vectorized environments
 #
 # - **Mental model**: a `VectorEnv` steps a batch of envs simultaneously.
 #   Observations, rewards, and flags become arrays with a leading batch dimension
@@ -494,7 +506,10 @@ display(pd.DataFrame(data))
 vec_env.close()
 
 # %% [markdown]
-# ## Interactive Exploration
+# # Part 6: Interactive exploration
+
+# %% [markdown]
+# ## Cell 6.1: Explore any env's interface
 
 # %%
 # Explore any env's interface.
