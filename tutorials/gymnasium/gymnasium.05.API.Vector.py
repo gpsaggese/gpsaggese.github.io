@@ -206,7 +206,7 @@ print("info:", info)
 vec_env.close()
 
 # %%
-# Show that reset seeds are auto-incremented across envs.
+# Show that resetting with the same seed reproduces the same batch of obs.
 vec_env2 = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
 
 obs0, _ = vec_env2.reset(seed=0)
@@ -228,13 +228,15 @@ vec_env2.close()
 #   (the default `AutoresetMode.NEXT_STEP`)
 #   - This means the batch never shrinks; the agent always gets `N`
 #     observations
-#   - The info dict contains the final observation from the completed episode
-#     under `"final_observation"` and `"final_info"`
+#   - The step that ends an episode returns its final observation as usual, and
+#     the reset observation arrives on the next step, so `info` has no final keys
 
 # %%
 # Step all 3 envs with random actions and inspect the batch returns.
 vec_env = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
 vec_env.reset(seed=42)
+# Seed the action space so that reruns take the same actions.
+vec_env.action_space.seed(0)
 
 # Sample one action per env.
 actions = vec_env.action_space.sample()
@@ -265,9 +267,10 @@ display(pd.DataFrame(data))
 vec_env.close()
 
 # %%
-# Run 10 steps and track per-env episode length.
+# Run up to 100 steps and track per-env episode length.
 vec_env = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
 vec_env.reset(seed=42)
+vec_env.action_space.seed(0)
 
 steps_to_done = [0, 0, 0]
 
@@ -297,7 +300,8 @@ vec_env.close()
 #     after `terminated or truncated`. The agent sees one extra transition with
 #     `reward=0, terminated=False, truncated=False` while the env resets
 #   - `SAME_STEP`: the sub-env is reset **immediately** in the same `step()`
-#     call. The info dict includes `"final_observation"` and `"final_info"`
+#     call. The step returns the reset observation, and the final one moves to
+#     `info["final_obs"]`, next to `info["final_info"]`
 #   - `DISABLED`: no autoreset; the agent must manually call `reset()` with a
 #     `reset_mask` option
 
@@ -324,19 +328,20 @@ class ShortFrozenLake(gym.Env):
     def __init__(self) -> None:
         super().__init__()
         self._step_count = 0
-        self.observation_space = gym.spaces.Discrete(1)
+        # The observation is the step count, so that the reset obs is visible.
+        self.observation_space = gym.spaces.Discrete(4)
         self.action_space = gym.spaces.Discrete(4)
 
     def reset(self, *, seed=None, options=None):
         super().reset(seed=seed)
         self._step_count = 0
-        return np.array(0, dtype=np.int64), {}
+        return self._step_count, {}
 
     def step(self, action):
         self._step_count += 1
         terminated = self._step_count >= 3  # always done after 3 steps
         return (
-            np.array(0, dtype=np.int64),
+            self._step_count,
             0.0,
             terminated,
             False,
@@ -347,15 +352,35 @@ class ShortFrozenLake(gym.Env):
 # Register the toy env.
 gym.register(id="ShortFL-v0", entry_point=ShortFrozenLake)
 
-# Test with NEXT_STEP.
+# Test with NEXT_STEP: the final obs is in `obs`, and `info` has no final keys.
+print("NEXT_STEP")
 vec_next = gym.make_vec("ShortFL-v0", num_envs=2, vectorization_mode="sync")
 vec_next.reset(seed=0)
 for t in range(6):
     obs, rewards, term, trunc, info = vec_next.step(
         vec_next.action_space.sample()
     )
-    print(f"  step={t}: term={term}, trunc={trunc}")
+    print(f"  step={t}: term={term}, obs={obs}, keys={sorted(info)}")
+    hdbg.dassert_not_in("final_obs", info, "NEXT_STEP must not set final keys")
 vec_next.close()
+
+# Test with SAME_STEP: `obs` is the reset obs, and the final obs is in `info`.
+print("SAME_STEP")
+vec_same = SyncVectorEnv(
+    [lambda: ShortFrozenLake() for _ in range(2)],
+    autoreset_mode=AutoresetMode.SAME_STEP,
+)
+vec_same.reset(seed=0)
+for t in range(6):
+    obs, rewards, term, trunc, info = vec_same.step(
+        vec_same.action_space.sample()
+    )
+    final_obs = info.get("final_obs", "N/A")
+    print(f"  step={t}: term={term}, obs={obs}, final_obs={final_obs}")
+    hdbg.dassert_eq(
+        "final_obs" in info, bool(term.any()), "Final keys appear when done"
+    )
+vec_same.close()
 
 # %%
 # With DISABLED, terminated envs stay terminated and must be manually reset.
@@ -378,19 +403,6 @@ for t in range(6):
         obs, info = vec_disabled.reset(seed=0, options={"reset_mask": mask})
         print(f"    -> obs after reset: {obs}")
 vec_disabled.close()
-vec_same = SyncVectorEnv(
-    [lambda: ShortFrozenLake() for _ in range(2)],
-    autoreset_mode=AutoresetMode.SAME_STEP,
-)
-vec_same.reset(seed=0)
-for t in range(6):
-    obs, rewards, term, trunc, info = vec_same.step(
-        vec_same.action_space.sample()
-    )
-    print(
-        f"  step={t}: term={term}, trunc={trunc}, final_obs={info.get('final_observation', 'N/A')}"
-    )
-vec_same.close()
 
 # %% [markdown]
 # ## Primitive 7: Spaces in Vector Environments
@@ -415,6 +427,7 @@ print("action_space:            ", vec_env.action_space)
 
 # %%
 # The batched action_space.sample() returns N actions in one call.
+vec_env.action_space.seed(0)
 sample = vec_env.action_space.sample()
 print("action_space.sample():", sample, "shape:", sample.shape)
 
@@ -427,11 +440,10 @@ invalid_actions = np.array([10, 20, 5], dtype=sample.dtype)
 valid2 = vec_env.action_space.contains(invalid_actions)
 print("batch contains(N invalid actions):", valid2)
 
-vec_env.close()
-
 # %%
 # MultiDiscrete action space: each env gets its own Discrete.
 # The batched action space becomes MultiDiscrete([2, 2, 2]) for 3 envs.
+hdbg.dassert(not vec_env.closed, "The env must still be open here")
 print("batched action space type:", type(vec_env.action_space).__name__)
 print("batched action space nvec:", vec_env.action_space.nvec)
 
@@ -514,7 +526,10 @@ single = gym.make("CartPole-v1")
 single.reset(seed=0)
 start = time.perf_counter()
 for _ in range(100):
-    single.step(single.action_space.sample())
+    _, _, terminated, truncated, _ = single.step(single.action_space.sample())
+    # Reset when an episode ends, as the vector envs do on their own.
+    if terminated or truncated:
+        single.reset()
 single_time = time.perf_counter() - start
 single.close()
 
@@ -563,11 +578,15 @@ class FlattenObsWrapper(VectorObservationWrapper):
         # Compute the flattened single-observation space.
         single_shape = env.single_observation_space.shape
         flat_size = int(np.prod(single_shape))
-        self._single_flat = Box(
+        self.single_observation_space = Box(
             low=-np.inf,
             high=np.inf,
             shape=(flat_size,),
             dtype=np.float32,
+        )
+        # Batch the flattened space too, so that both spaces match the output.
+        self.observation_space = batch_space(
+            self.single_observation_space, env.num_envs
         )
 
     def observations(self, obs):
@@ -575,8 +594,14 @@ class FlattenObsWrapper(VectorObservationWrapper):
         return obs.reshape(obs.shape[0], -1)
 
 
-# Test the wrapper.
-base_vec = gym.make_vec("CartPole-v1", num_envs=2, vectorization_mode="sync")
+# Test the wrapper. CartPole obs are already flat, so reshape them to (2, 2).
+base_vec = SyncVectorEnv(
+    [
+        lambda: gym.wrappers.ReshapeObservation(gym.make("CartPole-v1"), (2, 2))
+        for _ in range(2)
+    ]
+)
+print("base single_observation_space:", base_vec.single_observation_space)
 wrapped = FlattenObsWrapper(base_vec)
 print("single_observation_space (flattened):", wrapped.single_observation_space)
 print("observation_space (flattened):", wrapped.observation_space)
@@ -584,6 +609,8 @@ print("observation_space (flattened):", wrapped.observation_space)
 obs, _ = wrapped.reset(seed=42)
 print("obs.shape (flattened):", obs.shape)
 print("obs[0]:", obs[0])
+hdbg.dassert_eq(obs.shape, (2, 4), "Each (2, 2) obs must become 4 values")
+hdbg.dassert(wrapped.observation_space.contains(obs), "Obs must fit the space")
 
 wrapped.close()
 
@@ -653,6 +680,7 @@ for i, action in enumerate(iterate(batched_d, actions)):
 # Minimal vector env workflow.
 vec_env = gym.make_vec("CartPole-v1", num_envs=2, vectorization_mode="sync")
 obs, info = vec_env.reset(seed=0)
+vec_env.action_space.seed(0)
 print("Step  0 obs:\n", obs)
 for t in range(3):
     obs, rewards, term, trunc, info = vec_env.step(vec_env.action_space.sample())
@@ -680,19 +708,28 @@ class ScaleReward(VectorRewardWrapper):
         return rewards * self._scale
 
 
+# Build two separate envs, so that stepping one does not advance the other.
 vec_env = gym.make_vec("CartPole-v1", num_envs=2, vectorization_mode="sync")
-scaled = ScaleReward(vec_env, scale=0.1)
+scaled = ScaleReward(
+    gym.make_vec("CartPole-v1", num_envs=2, vectorization_mode="sync"), scale=0.1
+)
 
+# Reset both with the same seed and send both the same actions.
 scaled.reset(seed=0)
+vec_env.reset(seed=0)
+scaled.action_space.seed(0)
+actions = scaled.action_space.sample()
 obs_scaled, rewards_scaled, term_scaled, trunc_scaled, info_scaled = scaled.step(
-    scaled.action_space.sample()
+    actions
 )
 print("scaled rewards:", rewards_scaled)
 # Compare with the original (unscaled) rewards from the base env.
-obs_orig, rewards_orig, term_orig, trunc_orig, info_orig = vec_env.step(
-    vec_env.action_space.sample()
-)
+obs_orig, rewards_orig, term_orig, trunc_orig, info_orig = vec_env.step(actions)
 print("original rewards:", rewards_orig)
+hdbg.dassert(np.array_equal(obs_scaled, obs_orig), "Both envs must stay in step")
+hdbg.dassert(
+    np.array_equal(rewards_scaled, 0.1 * rewards_orig), "Rewards must be scaled"
+)
 scaled.close()
 vec_env.close()
 
@@ -736,6 +773,7 @@ except RuntimeError as exc:
 # Reset only env 0 and 2 out of 3.
 vec_env = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
 vec_env.reset(seed=0)
+vec_env.action_space.seed(0)
 # Step a few times to change state.
 for _ in range(5):
     vec_env.step(vec_env.action_space.sample())
@@ -770,6 +808,7 @@ def make_wrapped_cartpole():
 
 vec_env = SyncVectorEnv([make_wrapped_cartpole for _ in range(2)])
 obs, info = vec_env.reset(seed=0)
+vec_env.action_space.seed(0)
 done = False
 for t in range(60):
     obs, rewards, term, trunc, info = vec_env.step(vec_env.action_space.sample())
