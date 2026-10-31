@@ -48,9 +48,9 @@ Rel(call, verify, "each quote")
 - **Fact**: the markdown of `fetcher` has no page markers (see
   [`research/Estimate_academic_paper_quality/docs/design.fetcher.md`](/research/Estimate_academic_paper_quality/docs/design.fetcher.md))
 - **Decisions**:
-  - One structured call per paper for all the values ([D-11](/research/Estimate_academic_paper_quality/docs/decisions.md#d-11-one-structured-llm-call-per-paper))
-  - Page from the PDF text, and an unverified quote is kept but flagged ([D-12](/research/Estimate_academic_paper_quality/docs/decisions.md#d-12-the-page-of-a-quote-comes-from-the-pdf-text))
-  - Cut of a long paper ([D-13](/research/Estimate_academic_paper_quality/docs/decisions.md#d-13-a-long-paper-loses-its-references-then-its-middle))
+  - One structured call per paper for all the values ([D11](/research/Estimate_academic_paper_quality/docs/decisions.md#d11-one-structured-llm-call-per-paper))
+  - Page from the PDF text, and an unverified quote is kept but flagged ([D12](/research/Estimate_academic_paper_quality/docs/decisions.md#d12-the-page-of-a-quote-comes-from-the-pdf-text))
+  - Cut of a long paper ([D13](/research/Estimate_academic_paper_quality/docs/decisions.md#d13-a-long-paper-loses-its-references-then-its-middle))
 
 ## One Request End to End
 

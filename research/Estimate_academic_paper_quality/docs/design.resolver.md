@@ -57,7 +57,7 @@ Rel(dedupe, sort, "papers")
   takes the last word of the first author (`Jackson, Jr.` gives `Jr.`) and keeps
   `.` and `,` in the title, against [`.claude/skills/references.rules.md`](/.claude/skills/references.rules.md)
 - **Decision**: move it to `download_utils.format_base_filename()`, take the family
-  name, drop suffixes like `Jr.` and `III`, and replace `.` `,` `'` with `_` ([D-7](/research/Estimate_academic_paper_quality/docs/decisions.md#d-7-the-pipeline-computes-the-base-name-with-a-public-helper))
+  name, drop suffixes like `Jr.` and `III`, and replace `.` `,` `'` with `_` ([D7](/research/Estimate_academic_paper_quality/docs/decisions.md#d7-the-pipeline-computes-the-base-name-with-a-public-helper))
 
 ## One Request End to End
 
@@ -87,7 +87,7 @@ Rel(dedupe, sort, "papers")
   | `local_pdf` | `epq_fetcher.read_pdf_title()`, then as `title`                  |
   | `title`     | Semantic Scholar search (top 5), Crossref `query.bibliographic` (top 5) |
 
-- `match_candidates(query, author_hints, candidates)` ([D-3](/research/Estimate_academic_paper_quality/docs/decisions.md#d-3-a-line-matches-when-one-distinct-paper-passes-the-title-test)):
+- `match_candidates(query, author_hints, candidates)` ([D3](/research/Estimate_academic_paper_quality/docs/decisions.md#d3-a-line-matches-when-one-distinct-paper-passes-the-title-test)):
   - Normalize the titles: ASCII, lowercase, no punctuation, single spaces
   - Similarity: `1.0` if equal, `0.95` if one is a prefix of the other (a partial
     title, or a missing subtitle), else `difflib.SequenceMatcher.ratio()`
@@ -99,11 +99,11 @@ Rel(dedupe, sort, "papers")
   - An id lookup (`arxiv`, `doi`, `ssrn`) that returns a record is a match with no
     similarity test
   - An `Issue` lists up to 3 candidates as references
-- `paper_key(record)` ([D-2](/research/Estimate_academic_paper_quality/docs/decisions.md#d-2-paper-identity-is-the-normalized-title-plus-the-first-author)):
+- `paper_key(record)` ([D2](/research/Estimate_academic_paper_quality/docs/decisions.md#d2-paper-identity-is-the-normalized-title-plus-the-first-author)):
   - The normalized title plus the last name of the first author
   - The DOI, the arXiv id, and the Semantic Scholar id are aliases of the key, so
     a preprint and its journal version merge
-- `build_paper(group, input_line)` ([D-1](/research/Estimate_academic_paper_quality/docs/decisions.md#d-1-semantic-scholar-record-is-the-canonical-record), [D-5](/research/Estimate_academic_paper_quality/docs/decisions.md#d-5-each-paper-keeps-an-ordered-list-of-download-inputs), [D-6](/research/Estimate_academic_paper_quality/docs/decisions.md#d-6-a-reference-with-no-download-link-ends-with--)):
+- `build_paper(group, input_line)` ([D1](/research/Estimate_academic_paper_quality/docs/decisions.md#d1-semantic-scholar-record-is-the-canonical-record), [D5](/research/Estimate_academic_paper_quality/docs/decisions.md#d5-each-paper-keeps-an-ordered-list-of-download-inputs), [D6](/research/Estimate_academic_paper_quality/docs/decisions.md#d6-a-reference-with-no-download-link-ends-with--)):
   - Canonical record: the Semantic Scholar record, else the Crossref record of type
     `journal-article`, else any Crossref record, else the arXiv record
   - Year, first author, and title come only from the canonical record ([`R3`](/research/Estimate_academic_paper_quality/docs/prd.md#r3-bibliographic-source))
@@ -156,4 +156,4 @@ Rel(dedupe, sort, "papers")
 1. Is `_MATCH_THRESHOLD = 0.9` right: tune it on the labeled list of the
    Resolution accuracy metric
 2. When a preprint and its journal version have different years, which year should
-   the reference show: the canonical record decides today ([D-1](/research/Estimate_academic_paper_quality/docs/decisions.md#d-1-semantic-scholar-record-is-the-canonical-record))
+   the reference show: the canonical record decides today ([D1](/research/Estimate_academic_paper_quality/docs/decisions.md#d1-semantic-scholar-record-is-the-canonical-record))

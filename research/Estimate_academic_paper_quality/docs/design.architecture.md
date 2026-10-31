@@ -7,12 +7,12 @@
 - Where it fits: text file of papers from the user -> this pipeline -> CSV report
   that the quant researcher sorts to pick the next papers to replicate
 - Requirements: [`research/Estimate_academic_paper_quality/docs/prd.md`](/research/Estimate_academic_paper_quality/docs/prd.md)
-- Decisions and alternatives, cited as `D-<N>`:
+- Decisions and alternatives, cited as `D<N>`:
   [`research/Estimate_academic_paper_quality/docs/decisions.md`](/research/Estimate_academic_paper_quality/docs/decisions.md)
 - Status: design only, no code exists yet
 - Convention in all the design docs:
   - **Fact**: a statement about code that exists today, with its path
-  - **Decision**: a choice of this design, with its `D-<N>` entry
+  - **Decision**: a choice of this design, with its `D<N>` entry
 
 ## Diagram
 
@@ -96,7 +96,7 @@ Rel(report, out, "JSON, CSV, markdown")
 ## Files and Import Graph
 
 - All code lives flat in [`research/Estimate_academic_paper_quality/`](/research/Estimate_academic_paper_quality/), tests in
-  [`research/Estimate_academic_paper_quality/test/`](/research/Estimate_academic_paper_quality/test/) ([D-22](/research/Estimate_academic_paper_quality/docs/decisions.md#d-22-flat-modules-with-the-epq_-prefix))
+  [`research/Estimate_academic_paper_quality/test/`](/research/Estimate_academic_paper_quality/test/) ([D22](/research/Estimate_academic_paper_quality/docs/decisions.md#d22-flat-modules-with-the-epq_-prefix))
 
   | File                       | Component     | Layer                     |
   | :------------------------- | :------------ | :------------------------ |
@@ -132,7 +132,7 @@ Rel(report, out, "JSON, CSV, markdown")
   - **Fact**: [`helpers_root/helpers/hcache_simple.py`](/helpers_root/helpers/hcache_simple.py) has the `simple_cache()`
     decorator and the `--cache_mode` switch `add_cache_control_arg()`
   - **Decision**: move the private `_format_base_filename()` of the download tool to
-    a public `download_utils.format_base_filename()` ([D-7](/research/Estimate_academic_paper_quality/docs/decisions.md#d-7-the-pipeline-computes-the-base-name-with-a-public-helper))
+    a public `download_utils.format_base_filename()` ([D7](/research/Estimate_academic_paper_quality/docs/decisions.md#d7-the-pipeline-computes-the-base-name-with-a-public-helper))
 
 ## Data Model
 
@@ -241,7 +241,7 @@ Rel(report, out, "JSON, CSV, markdown")
   - Stages run one paper at a time: about 100 papers take about an hour, mostly LLM
     and Chrome time
   - The user must pass the same `--output_dir` on a rerun, since the state lives
-    there ([D-18](/research/Estimate_academic_paper_quality/docs/decisions.md#d-18-all-the-state-lives-in-the-output-dir))
+    there ([D18](/research/Estimate_academic_paper_quality/docs/decisions.md#d18-all-the-state-lives-in-the-output-dir))
 
 ## Deliberately Not Built
 

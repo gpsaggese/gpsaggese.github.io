@@ -34,11 +34,11 @@
   default); the Postgres implementation lives in `noesis_platform/postgres_store.py`
 - `supply_adapter.py` imports `batch_call_auction.py` (`Ask`, `OrderBook`) and takes
   the OpenRouter catalog as parsed JSON; the HTTP fetch and the seed file live in
-  `noesis_platform/supply_feed.py` (`docs/decisions.md` D-25 to D-27)
+  `noesis_platform/supply_feed.py` (`docs/decisions.md` D25 to D27)
 - `credit_ledger.py` imports `batch_call_auction.py` (`Bid`) and keeps balances
   behind the `CreditLedgerStore` interface (in-memory by default); the gate and
   the debit are wired in `noesis_platform/platform_api.py` (`docs/decisions.md`
-  D-30, D-31)
+  D30, D31)
 
 ## Deterministic Scenario Families (PR_M11)
 

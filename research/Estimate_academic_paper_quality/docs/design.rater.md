@@ -48,9 +48,9 @@ Rel(tiers, yaml, "loaded by pipeline")
   the rule "rounded half up"
 - **Decisions**:
   - Affiliation tiers from a checked-in dated list; the LLM only reads the names
-    ([D-15](/research/Estimate_academic_paper_quality/docs/decisions.md#d-15-affiliation-tiers-come-from-a-checked-in-dated-list))
-  - Citations from Semantic Scholar only, else `unknown` ([D-16](/research/Estimate_academic_paper_quality/docs/decisions.md#d-16-citations-come-from-semantic-scholar-only))
-  - Round half up with `math.floor(mean + 0.5)` ([D-17](/research/Estimate_academic_paper_quality/docs/decisions.md#d-17-round-half-up-with-mathfloormean--05))
+    ([D15](/research/Estimate_academic_paper_quality/docs/decisions.md#d15-affiliation-tiers-come-from-a-checked-in-dated-list))
+  - Citations from Semantic Scholar only, else `unknown` ([D16](/research/Estimate_academic_paper_quality/docs/decisions.md#d16-citations-come-from-semantic-scholar-only))
+  - Round half up with `math.floor(mean + 0.5)` ([D17](/research/Estimate_academic_paper_quality/docs/decisions.md#d17-round-half-up-with-mathfloormean--05))
 
 ## One Request End to End
 

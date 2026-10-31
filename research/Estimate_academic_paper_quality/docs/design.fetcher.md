@@ -53,9 +53,9 @@ Rel(fetch, check, "after each run")
   no page numbers
 - **Fact**: `lint` runs a Dockerized prettier, so the conversion needs Docker
 - **Decisions**:
-  - Run the tool as a subprocess, with `--skip_action summarize` ([D-8](/research/Estimate_academic_paper_quality/docs/decisions.md#d-8-run-the-download-tool-as-a-subprocess-without-summarize))
-  - Pass `--output` with the base name of `resolver` ([D-7](/research/Estimate_academic_paper_quality/docs/decisions.md#d-7-the-pipeline-computes-the-base-name-with-a-public-helper))
-  - Check the `%PDF` header after a download ([D-9](/research/Estimate_academic_paper_quality/docs/decisions.md#d-9-check-the-pdf-header-after-a-download))
+  - Run the tool as a subprocess, with `--skip_action summarize` ([D8](/research/Estimate_academic_paper_quality/docs/decisions.md#d8-run-the-download-tool-as-a-subprocess-without-summarize))
+  - Pass `--output` with the base name of `resolver` ([D7](/research/Estimate_academic_paper_quality/docs/decisions.md#d7-the-pipeline-computes-the-base-name-with-a-public-helper))
+  - Check the `%PDF` header after a download ([D9](/research/Estimate_academic_paper_quality/docs/decisions.md#d9-check-the-pdf-header-after-a-download))
 
 ## One Request End to End
 
@@ -84,7 +84,7 @@ Rel(fetch, check, "after each run")
     - Success: returns `FetchResult(status="ok")`
   - All inputs fail: returns `download_failed`, with the reason of each input
 - `read_pdf_pages(pdf_path)`: the text of each page with `page.get_text("text")`;
-  `extractor` uses it to find the page of a quote ([D-12](/research/Estimate_academic_paper_quality/docs/decisions.md#d-12-the-page-of-a-quote-comes-from-the-pdf-text))
+  `extractor` uses it to find the page of a quote ([D12](/research/Estimate_academic_paper_quality/docs/decisions.md#d12-the-page-of-a-quote-comes-from-the-pdf-text))
 - `count_pages(pdf_path)`: `len(pymupdf.open(pdf_path))`, all pages included, per
   [`.claude/skills/paper.rules.md`](/.claude/skills/paper.rules.md) `### Page Length`
 - `read_pdf_title(pdf_path)`: the spans of page 1 with the largest font size,

@@ -47,7 +47,7 @@ Rel(get, web, "GET <url>")
   `_crossref_query()`, `_unpaywall_query()`, with `hretry.sync_retry()`; they
   return only year, authors, and title, with no DOI, no record type, no family
   names, and no citation count
-- **Decision**: write new clients here instead of importing the private ones ([D-23](/research/Estimate_academic_paper_quality/docs/decisions.md#d-23-new-api-clients-instead-of-the-private-ones-of-the-download-tool))
+- **Decision**: write new clients here instead of importing the private ones ([D23](/research/Estimate_academic_paper_quality/docs/decisions.md#d23-new-api-clients-instead-of-the-private-ones-of-the-download-tool))
 - **Fact**: `hcache_simple.simple_cache(cache_type="json")` caches the return value
   of a function on disk, keyed by its arguments, and `set_global_cache_mode()`
   switches every cached function to `REFRESH_CACHE`, `DISABLE_CACHE`, or
@@ -70,7 +70,7 @@ Rel(get, web, "GET <url>")
   - Looks up Semantic Scholar by `paperId`, else by `DOI:` or `ARXIV:`
   - Returns `CitationCount(count, source="Semantic Scholar", fetched_at)`, where
     `fetched_at` comes from the cache entry, not from the clock of the run
-  - Returns `None` when Semantic Scholar does not have the paper ([D-16](/research/Estimate_academic_paper_quality/docs/decisions.md#d-16-citations-come-from-semantic-scholar-only))
+  - Returns `None` when Semantic Scholar does not have the paper ([D16](/research/Estimate_academic_paper_quality/docs/decisions.md#d16-citations-come-from-semantic-scholar-only))
 - `resolver` calls `sources.fetch_url_meta(url)` for a `url` line:
   - PDF answer (`%PDF` at the start): saves it to `state/cache/url_pdfs/<sha1>.pdf`
     and returns the path, so `resolver` reads its title
@@ -88,7 +88,7 @@ Rel(get, web, "GET <url>")
   | Throttle Crossref                | 1 request per second, `mailto=<email>` | Polite pool              |
   | `SEMANTIC_SCHOLAR_API_KEY`       | env var, optional        | Fewer `429` than the shared pool      |
   | `--email`                        | from `PipelineConfig`    | Unpaywall needs a real email          |
-  | Cache dir                        | `<output_dir>/state/cache/` | The state lives in the output dir ([D-18](/research/Estimate_academic_paper_quality/docs/decisions.md#d-18-all-the-state-lives-in-the-output-dir)) |
+  | Cache dir                        | `<output_dir>/state/cache/` | The state lives in the output dir ([D18](/research/Estimate_academic_paper_quality/docs/decisions.md#d18-all-the-state-lives-in-the-output-dir)) |
 
 - Interfaces:
   ```python
@@ -115,7 +115,7 @@ Rel(get, web, "GET <url>")
 
 ## Deliberately Not Built
 
-- Google Scholar: it has no API and blocks scripts ([D-16](/research/Estimate_academic_paper_quality/docs/decisions.md#d-16-citations-come-from-semantic-scholar-only))
+- Google Scholar: it has no API and blocks scripts ([D16](/research/Estimate_academic_paper_quality/docs/decisions.md#d16-citations-come-from-semantic-scholar-only))
 - OpenAlex, DBLP, or other sources: [`R3`](/research/Estimate_academic_paper_quality/docs/prd.md#r3-bibliographic-source) names arXiv, Crossref, and Semantic
   Scholar
 

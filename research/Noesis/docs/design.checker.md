@@ -36,7 +36,7 @@ hidden canary traffic through active contracts.
     buyer
   - `upper` is the one-sided 95% Wilson upper bound (z = 1.645), or the exact
     Clopper-Pearson bound when n < 10
-- Why the upper bound and why two measures: `decisions.md` D-1 and D-2
+- Why the upper bound and why two measures: `decisions.md` D1 and D2
 - An `INSUFFICIENT` verdict is not sent to reputation and is shown on the dashboard
 
 Default parameters for the demo:

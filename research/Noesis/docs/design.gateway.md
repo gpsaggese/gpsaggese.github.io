@@ -39,7 +39,7 @@ flowchart TD
 2. `parse_contract_id()` -> 42 (400); `resolve_route()` -> `Route` (404 unknown or
    someone else's, 409 not ACTIVE)
 3. Reject `stream=true` (400) and models other than the served one (404)
-4. Clamp `max_tokens` to `NOESIS_MAX_TOKENS_CAP` (task definition, `decisions.md` D-19);
+4. Clamp `max_tokens` to `NOESIS_MAX_TOKENS_CAP` (task definition, `decisions.md` D19);
    timeout = `NOESIS_TIMEOUT_MULTIPLIER` x contract `l_max`
 5. `call_with_fault()`: apply the seller's demo fault if any, then
    `provider.call(route.provider_slug, call)`
@@ -98,8 +98,8 @@ flowchart TD
 | `OPENROUTER_API_KEY` | — | Required for the real server |
 | `NOESIS_BUYER_1_KEY`, `NOESIS_OPERATOR_KEY` | — | Our API keys, hashed into `accounts` at startup |
 | `NOESIS_DATABASE_URL` | `postgresql://noesis:noesis@localhost:5433/noesis_dev` | Server DB |
-| `NOESIS_MODEL_ID` | `meta-llama/llama-3.3-70b-instruct` | The one served model (`decisions.md` D-20) |
-| `NOESIS_MAX_TOKENS_CAP` | 256 | Completion cap (`decisions.md` D-19) |
+| `NOESIS_MODEL_ID` | `meta-llama/llama-3.3-70b-instruct` | The one served model (`decisions.md` D20) |
+| `NOESIS_MAX_TOKENS_CAP` | 256 | Completion cap (`decisions.md` D19) |
 | `NOESIS_TIMEOUT_MULTIPLIER` | 2.0 | Timeout = this x contract `l_max` |
 | `NOESIS_SPEND_CAP_USD` | 50 | Read but not enforced yet (`decisions.md`) |
 | `NOESIS_TEST_DATABASE_URL` | `...:5433/noesis_test` | Test DB (tests skip if unreachable) |

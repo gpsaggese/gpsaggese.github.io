@@ -35,7 +35,7 @@ of candidate trading strategies.
 ## Description of Architecture
 
 - No code exists yet: the planned design is in `docs/design.architecture.md`
-- The planned code is flat in this dir, with the `epq_` prefix (`D-22` in
+- The planned code is flat in this dir, with the `epq_` prefix (`D22` in
   `docs/decisions.md`):
   - Script: `estimate_paper_quality.py` parses the CLI and calls `epq_pipeline.py`
   - Business logic: `epq_resolver.py`, `epq_extractor.py`, `epq_rater.py`

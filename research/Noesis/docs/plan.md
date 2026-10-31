@@ -230,7 +230,7 @@
   contracts and prices, with no HTTP layer in the import path
 
 - Implemented in `market/round_runner.py`; focused runner tests, unchanged API
-  tests, and component-boundary checks cover the extraction. See `decisions.md` D-29.
+  tests, and component-boundary checks cover the extraction. See `decisions.md` D29.
 
 ### `PR_M11`: [ ] Deterministic Scenario Fixtures for Bids and Asks
 
@@ -1084,7 +1084,7 @@
 
 ## Market and Reputation Rules
 
-- **Matching and pricing** (task `T3.2`; decision `decisions.md` D-22)
+- **Matching and pricing** (task `T3.2`; decision `decisions.md` D22)
   - Compatibility filter: bid `beta` and ask `alpha` can match only if
     - `alpha.c_level == beta.c_level_min`
     - `alpha.l_typical <= beta.l_max`
@@ -1096,7 +1096,7 @@
     of accepted bids]` stays non-empty
   - Clearing price `p*` is the midpoint of the final interval, the same for all
     fills in the tier. No party trades at a price it refused
-- **Reputation** (task `T3.4`; decision `decisions.md` D-23)
+- **Reputation** (task `T3.4`; decision `decisions.md` D23)
   - One score `rho` in [0, 1] per seller. New sellers start at `rho_0 = 0.8`
   - On each `PASSED` or `FAILED` verdict: `rho <- (1 - lambda) * rho + lambda *
     1[PASSED]` with `lambda = 0.3` (paper equation `reputation_update`)
@@ -1257,7 +1257,7 @@ might force a change of plan: model, provider count, canary design. Do them earl
 | Canary check too noisy | Can't tell good from slightly worse | Calibrated set (T2.2), clear-cut questions, publish the checker's own error rate. MVP targets gross failures (model swap, slowdown). Subtle quantization detection is a post-MVP research result |
 | Canaries distinguishable from real traffic | Provider games the prober | MVP: use buyer-style formatting. Later: generate canaries from the real prompt distribution, rotate the bank |
 | OpenRouter attribution breaks | Wrong seller blamed | `only` + `allow_fallbacks:false`, verify the reported provider, exclude mismatches |
-| Too few providers for the model | Fewer than 3 sellers | Week-1 check (done: `decisions.md` D-20). Otherwise pick the open model with the most providers |
+| Too few providers for the model | Fewer than 3 sellers | Week-1 check (done: `decisions.md` D20). Otherwise pick the open model with the most providers |
 | Top-tier supply is thin | OpenAI, Anthropic, and Google won't bid, so the frontier tier is empty or collusion-prone | MVP uses one open-weight model with many hosts. The frontier tier waits for real supply |
 | Gateway intermediary hides who served a request | Reputation assigned to the wrong seller | OpenRouter pinning now. Own the gateway (LiteLLM or direct APIs) before any real customers |
 | Competitors add metering | Wedge commoditized | Moat is the longitudinal, request-level verified-quality dataset. Study OpenRouter, Martian, Not Diamond, Artificial Analysis, Concentrate AI |

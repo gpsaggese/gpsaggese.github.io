@@ -67,7 +67,7 @@ Rel(rep, report, "write_references(), write_report(), write_issues()")
   - Builds `PipelineConfig`, then runs the selected stages in this order:
     `resolve`, `download`, `extract`, `report`
   - Passes the output of a stage to the next one; when a stage is not selected, the
-    next stage reads that output from `state/` ([D-18](/research/Estimate_academic_paper_quality/docs/decisions.md#d-18-all-the-state-lives-in-the-output-dir))
+    next stage reads that output from `state/` ([D18](/research/Estimate_academic_paper_quality/docs/decisions.md#d18-all-the-state-lives-in-the-output-dir))
 - `run_resolve(config)`:
   - Calls `epq_resolver.resolve_lines(lines, sources)` and gets papers and issues
   - Writes `state/papers.json` and `state/issues.resolve.json` with `epq_report`
@@ -93,7 +93,7 @@ Rel(rep, report, "write_references(), write_report(), write_issues()")
 - `run_report(config, papers, issues)`:
   - Reads the features files and the issues of every stage
   - Writes `references.md`, `report.csv`, and `issues.csv`
-- Error handling ([D-21](/research/Estimate_academic_paper_quality/docs/decisions.md#d-21-the-loop-of-each-stage-catches-errors-per-paper)):
+- Error handling ([D21](/research/Estimate_academic_paper_quality/docs/decisions.md#d21-the-loop-of-each-stage-catches-errors-per-paper)):
   - The inner modules assert with `hdbg.dassert_*` and raise
   - The loop of each stage catches `Exception` per paper and records an `Issue`
     with the last line of the message as the reason
@@ -112,7 +112,7 @@ Rel(rep, report, "write_references(), write_report(), write_issues()")
       # LLM of `extract`, "" for the default model of `helpers.hllm`.
       model: str
       force_extract: bool
-      # Max chars of markdown sent to the LLM (D-13).
+      # Max chars of markdown sent to the LLM (D13).
       max_chars: int
       # Date used to annualize the citations, injected for tests.
       today: datetime.date
@@ -122,7 +122,7 @@ Rel(rep, report, "write_references(), write_report(), write_issues()")
   | Flag                      | Default           | Meaning                                         |
   | :------------------------ | :---------------- | :---------------------------------------------- |
   | `--input`                 | required          | Text file, one paper per line ([`R1`](/research/Estimate_academic_paper_quality/docs/prd.md#r1-input-file-format))            |
-  | `--output_dir`            | required          | Dir of all outputs and state ([D-10](/research/Estimate_academic_paper_quality/docs/decisions.md#d-10-the-user-gives-the-output-dir))             |
+  | `--output_dir`            | required          | Dir of all outputs and state ([D10](/research/Estimate_academic_paper_quality/docs/decisions.md#d10-the-user-gives-the-output-dir))             |
   | `--email`                 | `""`              | Contact email for Unpaywall                     |
   | `--model`                 | `""`              | LLM for `extract`                               |
   | `--force_extract`         | off               | Extract again papers with a features file       |

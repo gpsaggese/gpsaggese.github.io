@@ -10,7 +10,7 @@
 - **PRD (G2)**: "Gateway rejects (HTTP 409) if the contract isn't ACTIVE or doesn't
   belong to the caller"
 - **Other docs**: `design.gateway.md` (One Request, End to End, step 2) and
-  `decisions.md` D-7: another buyer's contract returns 404, the same as a missing
+  `decisions.md` D7: another buyer's contract returns 404, the same as a missing
   one. 409 is only for a contract that is not `ACTIVE`
 - **Question**: keep 404? Then G2 loses the "doesn't belong to the caller" clause
 
@@ -23,7 +23,7 @@
 - **PRD (D9)**: "Us, $50/mo cap enforced in gateway (G8). Apply for
   OpenRouter/provider startup credits"
 - **Other docs**:
-  - `decisions.md` D-9: no gateway-side cap yet; the OpenRouter key's credit limit is
+  - `decisions.md` D9: no gateway-side cap yet; the OpenRouter key's credit limit is
     the cap
   - `design.gateway.md` (Configuration): `NOESIS_SPEND_CAP_USD` is "Read but not
     enforced yet"
@@ -70,6 +70,6 @@
   list says `dispatch_contract()` returns a bool right away, which doesn't fit
 - **Other docs**: `plan.md` `PR_M8` still says to replace `mock_fulfill()` with a
   real call through `Gateway.call()`, translating each `Contract` into Gateway
-  calls. Its task `T3.3` and `decisions.md` D-24 say the result is the checker's
+  calls. Its task `T3.3` and `decisions.md` D24 say the result is the checker's
   verdict after the window closes
-- **Question**: rewrite the `PR_M8` text to match D-24?
+- **Question**: rewrite the `PR_M8` text to match D24?
