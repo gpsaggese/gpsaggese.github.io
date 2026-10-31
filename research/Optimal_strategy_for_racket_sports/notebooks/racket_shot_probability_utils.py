@@ -785,6 +785,15 @@ def _get_region_outline(
     return segments
 
 
+# Colormap of the `P(winner)` map, from red (0, worst for player 2, who hits
+# the return) through yellow to green (1, best), as GP asks on #788.
+HEATMAP_CMAP = "RdYlGn"
+# Color of the outline of the best region and of the best target's star:
+# black stands out on every color of `HEATMAP_CMAP`, and is not read as the
+# red of a low `P(winner)` (#788).
+HEATMAP_BEST_COLOR = "black"
+
+
 def plot_winner_heatmap(
     ax: Axes,
     heatmap: pd.DataFrame,
@@ -798,9 +807,12 @@ def plot_winner_heatmap(
       1, so maps for different settings or sports compare by color; GP's
       `racket_strategy_utils.plot_court_heatmap()` scales to each map's own
       range instead
+    - The colors go from red (0, worst for player 2) to green (1, best), with
+      the colormap `HEATMAP_CMAP`
     - The court lines, with the center service line
-    - The best region (`find_best_region()`) outlined in red, and the best
-      target (`find_best_target()`), its middle, as a red star
+    - The best region (`find_best_region()`) outlined in black, and the best
+      target (`find_best_target()`), its middle, as a black star with a white
+      edge, both in `HEATMAP_BEST_COLOR`
     - Player 1 at `get_player1_xy()` and player 2 at `serve_xy`
 
     :param ax: axes to draw on
@@ -833,12 +845,12 @@ def plot_winner_heatmap(
     order = heatmap["cell_id"].to_numpy().argsort(kind="stable")
     values = heatmap["p_winner"].to_numpy()[order]
     values = values.reshape(n_y, n_x)
-    # Fixed color scale from 0 to 1, below the court lines.
+    # Fixed color scale from 0 (red) to 1 (green), below the court lines.
     mesh = ax.pcolormesh(
         x_edges,
         y_edges,
         values,
-        cmap="viridis",
+        cmap=HEATMAP_CMAP,
         vmin=0.0,
         vmax=1.0,
         shading="flat",
@@ -853,7 +865,7 @@ def plot_winner_heatmap(
     segments = _get_region_outline(in_region, x_edges, y_edges)
     outline = mcollections.LineCollection(
         segments,
-        colors="tab:red",
+        colors=HEATMAP_BEST_COLOR,
         linewidths=2.0,
         label=(
             f"best region: within {_BEST_REGION_N_SE:g} SE of the highest"
@@ -862,15 +874,17 @@ def plot_winner_heatmap(
         zorder=3,
     )
     ax.add_collection(outline)
-    # The best target and the two players, above the cells and the lines.
+    # The best target and the two players, above the cells and the lines. The
+    # white edge keeps the black star visible on the dark green of the best
+    # cells.
     best = find_best_target(heatmap)
     ax.plot(
         best["x_m"],
         best["y_m"],
         "*",
         markersize=18,
-        color="tab:red",
-        markeredgecolor="black",
+        color=HEATMAP_BEST_COLOR,
+        markeredgecolor="white",
         label=(
             f"best target (middle of the region), P(winner) ="
             f" {best['p_winner']:.3f} +- {best['p_winner_se']:.3f}"
