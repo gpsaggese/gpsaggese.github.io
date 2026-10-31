@@ -102,6 +102,8 @@ hintros.print_obj_info(gym.Env)
 # %%
 # Create the simplest classic-control environment.
 env = gym.make("CartPole-v1", render_mode=None)
+# `reset(seed=...)` does not seed the action space, so seed it here.
+env.action_space.seed(0)
 print("type(env):", type(env))
 print("env:", env)
 
@@ -185,8 +187,9 @@ gymutils.print_step(
 # - The canonical episode loop: reset once, then step until done
 
 # %%
-# Reset the env with a fixed seed for reproducibility.
+# Seed the env and the action space, so that a rerun repeats the episode.
 env.reset(seed=42)
+env.action_space.seed(42)
 total_reward = 0.0
 step_count = 0
 done = False
@@ -224,6 +227,8 @@ from gymnasium import spaces
 # It is used for action spaces with a finite number of discrete choices
 # (e.g., move left/right in CartPole has n=2).
 d = spaces.Discrete(3)
+# Seed the space so that reruns print the same samples.
+d.seed(0)
 print("type:", type(d))
 print("n:", d.n)
 print("dtype:", d.dtype)
@@ -247,6 +252,7 @@ print("5 in d:", d.contains(5))
 # bounded in [low, high]. It is used for observation spaces with continuous
 # values (e.g., position, velocity in CartPole has shape (4,) with bounds).
 b = spaces.Box(low=-1.0, high=1.0, shape=(3,), dtype=np.float32)
+b.seed(0)
 
 print("type:", type(b))
 print("low:", b.low)
@@ -285,10 +291,12 @@ mountain.close()
 # %%
 # MultiDiscrete: vector of independent discrete dims.
 md = spaces.MultiDiscrete([3, 4, 2])
+md.seed(0)
 print("MultiDiscrete sample:", md.sample())
 
 # MultiBinary: vector of n binary flags.
 mb = spaces.MultiBinary(5)
+mb.seed(0)
 print("MultiBinary sample:", mb.sample())
 
 # Dict: named collection of spaces.
@@ -298,10 +306,12 @@ dict_space = spaces.Dict(
         "speed": spaces.Discrete(5),
     }
 )
+dict_space.seed(0)
 print("Dict sample:", dict_space.sample())
 
 # Tuple: ordered collection of spaces.
 tup = spaces.Tuple((spaces.Discrete(3), spaces.Box(0.0, 1.0, shape=(2,))))
+tup.seed(0)
 print("Tuple sample:", tup.sample())
 
 # %% [markdown]
@@ -446,6 +456,7 @@ base_env = gym.make("CartPole-v1")
 # Stack two wrappers.
 env_w = TimeLimit(base_env, max_episode_steps=50)
 env_w = RecordEpisodeStatistics(env_w)
+env_w.action_space.seed(0)
 print("type of wrapped env:", type(env_w))
 print("is still Env?", isinstance(env_w, gym.Env))
 # unwrapped reaches through all wrapper layers.
@@ -483,6 +494,7 @@ env_w.close()
 # %%
 # Run 3 CartPole envs in parallel.
 vec_env = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
+vec_env.action_space.seed(0)
 print("type:", type(vec_env))
 obs_batch, info_batch = vec_env.reset(seed=0)
 print("obs_batch shape:", obs_batch.shape)  # (3, 4)
@@ -508,11 +520,12 @@ vec_env.close()
 # %%
 # Explore any env's interface.
 env6 = gym.make("MountainCar-v0")
+env6.action_space.seed(0)
 print("Public methods:", [m for m in dir(env6) if not m.startswith("_")])
 
 # %%
 # What does reset return?
-obs, info = env6.reset()
+obs, info = env6.reset(seed=0)
 print("obs:", obs, "  info:", info)
 
 # %%
