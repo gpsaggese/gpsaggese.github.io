@@ -10,7 +10,7 @@
 
 ## Resolution
 
-### D1. Semantic Scholar record is the canonical record
+### `D1` (Semantic Scholar record is the canonical record)
 
 - **Decision**: build the reference from the Semantic Scholar record; else from the
   Crossref record of type `journal-article`; else any Crossref record; else the arXiv
@@ -26,7 +26,7 @@
   year)
 - **Status**: proposed
 
-### D2. Paper identity is the normalized title plus the first author
+### `D2` (Paper identity is the normalized title plus the first author)
 
 - **Decision**: `paper_key()` is the normalized title plus the last name of the first
   author; the DOI, the arXiv id, and the Semantic Scholar id are aliases
@@ -37,7 +37,7 @@
   Crossref has)
 - **Status**: proposed
 
-### D3. A line matches when one distinct paper passes the title test
+### `D3` (A line matches when one distinct paper passes the title test)
 
 - **Decision**: keep the candidates with title similarity at least `0.9` that share a
   last name with the author hints, group them by `paper_key()`, and match only when
@@ -55,7 +55,7 @@
   forbids the LLM as a source)
 - **Status**: proposed
 
-### D4. The title of a PDF is the largest text of page 1
+### `D4` (The title of a PDF is the largest text of page 1)
 
 - **Decision**: for a local PDF or a direct PDF URL, read the title from the spans of
   page 1 with the largest font, else from the PDF metadata, then look it up as a
@@ -67,7 +67,7 @@
 - **Alternatives**: the file name (often `ssrn_5277078.pdf`); an LLM on page 1
 - **Status**: proposed
 
-### D5. Each paper keeps an ordered list of download inputs
+### `D5` (Each paper keeps an ordered list of download inputs)
 
 - **Decision**: the order is the local PDF, the URL of the line, arXiv, the
   `openAccessPdf` of Semantic Scholar, Unpaywall, then the SSRN page; `fetcher` tries
@@ -78,7 +78,7 @@
   from the DOI (it tries only Unpaywall)
 - **Status**: proposed
 
-### D6. A reference with no download link ends with ` ???`
+### `D6` (A reference with no download link ends with ` ???`)
 
 - **Decision**: with no public download input, the link is `<DOI URL> ???`, or `???`
   alone with no DOI
@@ -92,7 +92,7 @@
 
 ## Download and Files
 
-### D7. The pipeline computes the base name with a public helper
+### `D7` (The pipeline computes the base name with a public helper)
 
 - **Decision**: move `_format_base_filename()` of the download tool to
   `download_utils.format_base_filename()`; make it take the family name, drop
@@ -109,7 +109,7 @@
   rules)
 - **Status**: proposed (changes the names of new files of the tool too)
 
-### D8. Run the download tool as a subprocess, without `summarize`
+### `D8` (Run the download tool as a subprocess, without `summarize`)
 
 - **Decision**: run
   [`download_academic_paper_to_md.py`](/helpers_root/dev_scripts_helpers/download/download_academic_paper_to_md.py)
@@ -123,7 +123,7 @@
   `summarize` and use the summary (cost on every paper)
 - **Status**: proposed
 
-### D9. Check the `%PDF` header after a download
+### `D9` (Check the `%PDF` header after a download)
 
 - **Decision**: a downloaded file that does not start with `%PDF` is deleted and
   counts as a failed download input
@@ -134,7 +134,7 @@
   users; can come later)
 - **Status**: proposed
 
-### D10. The user gives the output dir
+### `D10` (The user gives the output dir)
 
 - **Decision**: `--output_dir` is required and has no default; the user decides if it
   is in the repo and if the files are committed
@@ -146,7 +146,7 @@
 
 ## Extraction
 
-### D11. One structured LLM call per paper
+### `D11` (One structured LLM call per paper)
 
 - **Decision**: one call of `hllm.get_structured_completion()` per paper returns all
   the features, the facts, and the affiliations, parsed into a pydantic model
@@ -156,7 +156,7 @@
   text (no schema check)
 - **Status**: proposed
 
-### D12. The page of a quote comes from the PDF text
+### `D12` (The page of a quote comes from the PDF text)
 
 - **Decision**: look for each quote in the text of each PDF page with `pymupdf`; when
   found, add `p. <N>` and mark `verified=True`; else keep the value with the section
@@ -170,7 +170,7 @@
   value into `unknown` (drops right values that the PDF text breaks)
 - **Status**: proposed
 
-### D13. A long paper loses its references, then its middle
+### `D13` (A long paper loses its references, then its middle)
 
 - **Decision**: drop the reference list; if the text is still over `--max_chars`,
   keep the first 60% and the last 40% of the budget
@@ -181,7 +181,7 @@
   limits)
 - **Status**: proposed
 
-### D14. The features file is JSON and is the rerun cache of `extract`
+### `D14` (The features file is JSON and is the rerun cache of `extract`)
 
 - **Decision**: write `<BASE>.features.json` with a `schema_version`; `pipeline`
   skips `extract` for a paper whose file exists
@@ -196,7 +196,7 @@
 
 ## Rating
 
-### D15. Affiliation tiers come from a checked-in dated list
+### `D15` (Affiliation tiers come from a checked-in dated list)
 
 - **Decision**:
   [`affiliation_tiers.yaml`](/research/Estimate_academic_paper_quality/affiliation_tiers.yaml)
@@ -210,7 +210,7 @@
   from memory)
 - **Status**: accepted
 
-### D16. Citations come from Semantic Scholar only
+### `D16` (Citations come from Semantic Scholar only)
 
 - **Decision**: when Semantic Scholar does not have the paper, the citation signal is
   `unknown` and is left out of the mean
@@ -220,7 +220,7 @@
   (both are sources that the rules do not name)
 - **Status**: accepted
 
-### D17. Round half up with `math.floor(mean + 0.5)`
+### `D17` (Round half up with `math.floor(mean + 0.5)`)
 
 - **Decision**: the rating is `math.floor(mean + 0.5)` of the known scores
 - **Why**: **Fact**: Python `round()` rounds half to even (`round(2.5) == 2`),
@@ -231,7 +231,7 @@
 
 ## Rerun and Output
 
-### D18. All the state lives in the output dir
+### `D18` (All the state lives in the output dir)
 
 - **Decision**: the outputs of the stages go to `<output_dir>/state/`, and every HTTP
   response of `bib_sources` is cached in `<output_dir>/state/cache/`
@@ -244,7 +244,7 @@
   runs)
 - **Status**: proposed
 
-### D19. `report.csv` has a row only for a paper with a features file
+### `D19` (`report.csv` has a row only for a paper with a features file)
 
 - **Decision**: a paper that failed to download, convert, or extract is only in
   `issues.csv` and `references.md`
@@ -256,7 +256,7 @@
 - **Alternatives**: one row per resolved paper, with `unknown` features
 - **Status**: proposed
 
-### D20. The normalized list also goes to `references.md`
+### `D20` (The normalized list also goes to `references.md`)
 
 - **Decision**: write the references of all resolved papers, in
   [`R7`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r7-reverse-chronological-order)
@@ -268,7 +268,7 @@
 
 ## Code Organization
 
-### D21. The loop of each stage catches errors per paper
+### `D21` (The loop of each stage catches errors per paper)
 
 - **Decision**: the inner modules assert and raise; each stage of `pipeline` catches
   `Exception` per paper and records an `Issue` with the last line of the message
@@ -281,7 +281,7 @@
 - **Alternatives**: return codes in every module
 - **Status**: proposed
 
-### D22. Flat modules with the `epq_` prefix
+### `D22` (Flat modules with the `epq_` prefix)
 
 - **Decision**: put the script and the `epq_*.py` modules flat in
   [`research/Estimate_academic_paper_quality/`](/research/Estimate_academic_paper_quality/),
@@ -292,7 +292,7 @@
   [`research/Noesis/`](/research/Noesis/)
 - **Status**: proposed
 
-### D23. New API clients instead of the private ones of the download tool
+### `D23` (New API clients instead of the private ones of the download tool)
 
 - **Decision**:
   [`epq_bib_sources.py`](/research/Estimate_academic_paper_quality/epq_bib_sources.py)
