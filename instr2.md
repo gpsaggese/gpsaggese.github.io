@@ -1,15 +1,19 @@
-`R3`, `D-7` -> D7
+- [x] `R3`, `D-7` -> D7
+  Write one `### D-<N>. <Decision title>` per decision
 
-Write one `### D-<N>. <Decision title>` per decision
+- [.] Update topics
 
-- Create a doc for open_md.py and simplify docstring
-src/umd_classes2/helpers_root/dev_scripts_helpers/documentation/open_md.py
+- [ ] In the docs (templates, skills, and updating the docs)
+  - Rename readme -> readme_dir for the README in a dir
+  - Rename / add readme_file for the README for a file (typically an executable)
+  - Come up with a plan before implementing
 
-- Fix the options
+- [ ] Create a readme_file for open_md.py and simplify docstring
+  helpers_root/dev_scripts_helpers/documentation/open_md.py
+  - [ ] Fix the options
 
-- Create a doc for summarize_md and simplify docstring
-src/umd_classes2/helpers_root/dev_scripts_helpers/documentation/summarize_md.py
-
+- Create a readme_file for summarize_md and simplify docstring
+  helpers_root/dev_scripts_helpers/documentation/summarize_md.py
 
 - Everything needs to be linkable in the documentation
 - Each software component needs to have clear API, responsibilities, design
@@ -18,7 +22,6 @@ src/umd_classes2/helpers_root/dev_scripts_helpers/documentation/summarize_md.py
 - Explain what is implemented so far and what is not
 
 - Allow to navigate the code easily
-
 
 - Make everything a link
   [`docs/planning/all.plan_work.how_to_guide.md`](/docs/planning/all.plan_work.how_to_guide.md#keep-a-progress-log)
@@ -34,11 +37,10 @@ Have a task that checks that all documentation follows the constraints
 - All the README
 - All the exec.README.
 
-- Review src/umd_classes2/helpers_root/docs/planning/all.plan_work.how_to_guide.md
-
-docs/work_organization/all.asana_process.how_to_guide.md
-docs/work_organization/all.team_collaboration.how_to_guide.md
-
+- Review
+  - [ ] helpers_root/docs/planning/all.plan_work.how_to_guide.md
+  - [ ] docs/work_organization/all.asana_process.how_to_guide.md
+  - [ ] docs/work_organization/all.team_collaboration.how_to_guide.md
 
 - People get paid in shares of the companies
   - You work and achieve goals, you get ownership
