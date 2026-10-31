@@ -5,6 +5,7 @@ authors:
     - utkrisht nath
     - Harsh Yadav
     - gpsaggese
+    - Worldsoldure00
 date: 2026-10-19
 description:
     "Learn GluonTS forecasting with synthetic data, prediction intervals, and a
