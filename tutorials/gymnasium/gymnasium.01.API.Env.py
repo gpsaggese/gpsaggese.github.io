@@ -14,39 +14,43 @@
 # ---
 
 # %% [markdown]
-# # Description
+# # Gymnasium Env API
 #
-# - Teach the `gymnasium.Env` API surface by building up from the smallest possible
-#   working example
-# - Focus on primitives: what they are, how they are created, what state they hold,
-#   and how they compose
-#
+# - This notebook explores the `gymnasium.Env` API, building up from the smallest
+#   working example on `CartPole-v1`
+# - The pedagogical arc:
+#   - `Env`, `reset()`, `step()`, and a full episode
+#   - `Space`: a first look, in depth in notebook 03
+#   - `render()`, `close()`, and the registry, in depth in notebook 02
+#   - A custom `Env`
+#   - Wrappers and vector envs: a first look, in depth in notebooks 04 and 05
 # - References:
 #   - API: https://gymnasium.farama.org/api/env
 #   - GitHub: https://github.com/Farama-Foundation/Gymnasium
-
-# %% [markdown]
-# ## Imports
 
 # %%
 # %load_ext autoreload
 # %autoreload 2
 
-# System libraries.
 import logging
 
-# Third-party libraries.
+import gymnasium as gym
 import numpy as np
 import pandas as pd
+from gymnasium import spaces
+from gymnasium.wrappers import RecordEpisodeStatistics, TimeLimit
 
 # %%
-import helpers.hdbg as hdbg
+import gymnasium_utils as utils
+import helpers.hintrospection as hintros
+import helpers.hnotebook as hnotebook
 
+# Initialize notebook configuration and logging.
+hnotebook.config_notebook()
 _LOG = logging.getLogger(__name__)
+utils.init_loggers(_LOG)
 
-hdbg.init_logger(verbosity=logging.INFO)
-# hnotebook.config_notebook()
-
+# Convert `display` into `print()` when running outside IPython.
 try:
     from IPython.display import display
 except ImportError:
@@ -63,13 +67,15 @@ except ImportError:
 #   implements. It exposes four methods (`reset`, `step`, `render`, `close`) and
 #   two attributes (`observation_space`, `action_space`)
 #
-# - **Mental model**:
-#   ```
-#   reset() → (observation, info)
-#   step(action) → (observation, reward, terminated, truncated, info)
-#   ```
-#   Agent calls `reset()` once, then loops calling `step()` until `terminated or
-#   truncated`
+# - **Mental model**: the agent calls `reset()` once, then loops calling `step()`
+#   until `terminated or truncated`
+#
+# | Object | Description | Comments |
+# |--------|-------------|----------|
+# | `gym.make(id)` | Build a registered env | Adds standard wrappers such as `TimeLimit` |
+# | `env.reset(seed=...)` | Start an episode | Returns `(observation, info)` |
+# | `env.step(action)` | Advance one timestep | Returns `(observation, reward, terminated, truncated, info)` |
+# | `env.observation_space`, `env.action_space` | Describe valid data | `Space` objects |
 #
 # - **Key classes**:
 #   - `gymnasium.Env`: base environment class
@@ -86,9 +92,6 @@ except ImportError:
 # - Every builtin and custom environment is a subclass of `gymnasium.Env`
 
 # %%
-import gymnasium as gym
-import helpers.hintrospection as hintros
-
 # Inspect what Env exposes as a markdown list.
 hintros.print_obj_info(gym.Env)
 
@@ -135,11 +138,11 @@ print("unwrapped:", env.unwrapped)
 #
 # - Signature:
 #   ```
-#   reset(*, seed=None, options=None) → (observation, info)
+#   reset(*, seed=None, options=None) -> (observation, info)
 #   ```
 #   - `seed`: optional integer for reproducible randomness
 #   - `options`: optional dict of env-specific configuration
-#   - Returns `(observation, info)` — always a 2-tuple
+#   - Returns `(observation, info)`: always a 2-tuple
 
 # %%
 # Reset and inspect the return values.
@@ -153,7 +156,7 @@ print("info:", info)
 # Show that reset is reproducible with the same seed.
 obs1, _ = env.reset(seed=0)
 obs2, _ = env.reset(seed=0)
-print("Same seed → same obs:", np.array_equal(obs1, obs2))
+print("Same seed -> same obs:", np.array_equal(obs1, obs2))
 
 # %% [markdown]
 # ## Primitive 3: `step()`: Advance One Timestep
@@ -163,23 +166,18 @@ print("Same seed → same obs:", np.array_equal(obs1, obs2))
 #
 # - Signature:
 #   ```
-#   step(action) → (observation, reward, terminated, truncated, info)
+#   step(action) -> (observation, reward, terminated, truncated, info)
 #   ```
 #   - `terminated`: episode ended naturally (goal / failure)
 #   - `truncated`: episode cut off externally (time limit)
 #   - The distinction matters for value bootstrapping in RL algorithms
 
 # %%
-import tutorials.gymnasium.gymnasium_utils as gymutils
-
-# %%
 env.reset(seed=42)
 # Take one random action and inspect all five return values.
 action = env.action_space.sample()
 obs, reward, terminated, truncated, info = env.step(action)
-gymutils.print_step(
-    obs=obs, reward=reward, terminated=terminated, truncated=truncated, info=info
-)
+utils.print_step(obs, reward, terminated, truncated, info)
 
 # %% [markdown]
 # ### Running a Full Episode
@@ -218,11 +216,9 @@ print(f"Steps: {step_count}  Total reward: {total_reward}")
 #   - `env.action_space`: type of actions accepted by `step`
 
 # %% [markdown]
-# ### `Discrete(n)`: integers 0 … n-1
+# ### `Discrete(n)`: integers 0 ... n-1
 
 # %%
-from gymnasium import spaces
-
 # `Discrete(n)` represents a set of n integer values 0, 1, ..., n-1.
 # It is used for action spaces with a finite number of discrete choices
 # (e.g., move left/right in CartPole has n=2).
@@ -294,11 +290,13 @@ md = spaces.MultiDiscrete([3, 4, 2])
 md.seed(0)
 print("MultiDiscrete sample:", md.sample())
 
+# %%
 # MultiBinary: vector of n binary flags.
 mb = spaces.MultiBinary(5)
 mb.seed(0)
 print("MultiBinary sample:", mb.sample())
 
+# %%
 # Dict: named collection of spaces.
 dict_space = spaces.Dict(
     {
@@ -309,6 +307,7 @@ dict_space = spaces.Dict(
 dict_space.seed(0)
 print("Dict sample:", dict_space.sample())
 
+# %%
 # Tuple: ordered collection of spaces.
 tup = spaces.Tuple((spaces.Discrete(3), spaces.Box(0.0, 1.0, shape=(2,))))
 tup.seed(0)
@@ -318,23 +317,24 @@ print("Tuple sample:", tup.sample())
 # ## Primitive 5: `render()` and `close()`
 #
 # - `render()`: returns a visual representation of the current state
-#   - `render_mode="rgb_array"` → numpy uint8 array `(H, W, 3)`
-#   - `render_mode="human"` → opens a display window
+#   - `render_mode="rgb_array"` -> numpy uint8 array `(H, W, 3)`
+#   - `render_mode="human"` -> opens a display window
 # - `close()`: releases resources (windows, file handles, networking)
 
 # %%
 # Use rgb_array mode to capture a frame without opening a window.
 # Note: requires `pip install "gymnasium[classic-control]"` (pygame).
-try:
-    env_rgb = gym.make("CartPole-v1", render_mode="rgb_array")
-    env_rgb.reset(seed=0)
-    frame = env_rgb.render()
-    print("frame type:", type(frame))
-    print("frame shape:", frame.shape)
-    print("frame dtype:", frame.dtype)
-    env_rgb.close()
-except Exception as exc:
-    print(f"render skipped ({exc})")
+env_rgb = gym.make("CartPole-v1", render_mode="rgb_array")
+env_rgb.reset(seed=0)
+frame = env_rgb.render()
+print("frame type:", type(frame))
+print("frame shape:", frame.shape)
+print("frame dtype:", frame.dtype)
+env_rgb.close()
+
+# %%
+# Show the frame: this is what `render_mode="rgb_array"` returns.
+utils.plot_frame(frame, "CartPole-v1 frame from render_mode='rgb_array'")
 
 # %%
 # Always close when finished.
@@ -376,6 +376,7 @@ display(pd.DataFrame(data))
 # - Minimum required: `__init__`, `reset`, `step`
 # - `action_space` / `observation_space` must be set in `__init__`
 
+
 # %%
 class OneDGridEnv(gym.Env):
     """
@@ -409,20 +410,13 @@ class OneDGridEnv(gym.Env):
         return self._pos, reward, terminated, False, {}
 
 
+# %%
 # Verify the custom env behaves like any other Gym env.
 custom_env = OneDGridEnv(size=5)
-obs, info = custom_env.reset(seed=7)
-print("initial obs:", obs)
 # Walk right until done.
-step_count = 0
-done = False
-while not done:
-    obs, reward, terminated, truncated, info = custom_env.step(1)
-    print(
-        f"Step {step_count}: obs={obs}, reward={reward}, terminated={terminated}"
-    )
-    done = terminated or truncated
-    step_count += 1
+steps, _ = utils.run_episode(custom_env, seed=7, policy=lambda _obs: 1)
+for idx, step in enumerate(steps):
+    utils.print_step(*step, label=f"Step {idx}", compact=True)
 
 # %% [markdown]
 # ### Registering and using a custom env via `gym.make()`
@@ -450,13 +444,10 @@ env2.close()
 #     - Wrappers avoid modifying environment code while adding behavior
 
 # %%
-from gymnasium.wrappers import RecordEpisodeStatistics, TimeLimit
-
 base_env = gym.make("CartPole-v1")
 # Stack two wrappers.
 env_w = TimeLimit(base_env, max_episode_steps=50)
 env_w = RecordEpisodeStatistics(env_w)
-env_w.action_space.seed(0)
 print("type of wrapped env:", type(env_w))
 print("is still Env?", isinstance(env_w, gym.Env))
 # unwrapped reaches through all wrapper layers.
@@ -464,24 +455,12 @@ print("unwrapped type:", type(env_w.unwrapped))
 
 # %%
 # Run an episode and inspect the statistics injected into `info`.
-obs, info = env_w.reset(seed=0)
-done = False
-while not done:
-    obs, reward, terminated, truncated, info = env_w.step(
-        env_w.action_space.sample()
-    )
+steps, _ = utils.run_episode(env_w, seed=0)
+for step in steps:
     # Use compact=True to print all five values on a single line.
-    gymutils.print_step(
-        obs=obs,
-        reward=reward,
-        terminated=terminated,
-        truncated=truncated,
-        info=info,
-        compact=True,
-    )
-    done = terminated or truncated
+    utils.print_step(*step, compact=True)
 # RecordEpisodeStatistics adds 'episode' key at episode end.
-print("episode stats:", info.get("episode"))
+print("episode stats:", steps[-1].info["episode"])
 env_w.close()
 
 # %% [markdown]
@@ -521,7 +500,7 @@ vec_env.close()
 # Explore any env's interface.
 env6 = gym.make("MountainCar-v0")
 env6.action_space.seed(0)
-print("Public methods:", [m for m in dir(env6) if not m.startswith("_")])
+hintros.print_obj_info(type(env6))
 
 # %%
 # What does reset return?

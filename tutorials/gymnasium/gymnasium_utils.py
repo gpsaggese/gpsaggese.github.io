@@ -19,6 +19,8 @@ from typing import (
 )
 
 import gymnasium as gym
+import matplotlib.pyplot as plt
+import numpy as np
 
 import helpers.hdbg as hdbg
 import helpers.hnotebook as hnotebo
@@ -163,3 +165,28 @@ def step_two_envs(
     step_a = Step(*env_a.step(action))
     step_b = Step(*env_b.step(action))
     return step_a, step_b
+
+
+# #############################################################################
+# Rendering
+# #############################################################################
+
+
+def plot_frame(
+    frame: np.ndarray,
+    title: str,
+    *,
+    figsize: Optional[Tuple[int, int]] = None,
+) -> None:
+    """
+    Show an RGB frame returned by `env.render()`.
+
+    :param frame: array of shape `(height, width, 3)`
+    :param title: title of the plot
+    :param figsize: size of the figure, None uses the notebook default
+    """
+    _, ax = plt.subplots(figsize=figsize)
+    ax.imshow(frame)
+    ax.set_title(title)
+    ax.axis("off")
+    plt.show()
