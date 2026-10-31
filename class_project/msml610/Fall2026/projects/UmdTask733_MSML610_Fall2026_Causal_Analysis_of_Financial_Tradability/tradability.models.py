@@ -238,7 +238,7 @@ plt.tight_layout()
 #   close prices
 # - The logistic regression has a 52% hit rate at every horizon from 5m to
 #   4h, above p*. But it makes almost no money before costs (0-2 bp per
-#   trade). The moves it gets wrong are 6-10% bigger than the ones it gets
+#   trade). The moves it gets wrong are 5-10% bigger than the ones it gets
 #   right (BTC 1h: 35 bp vs 32 bp), so its weighted hit rate is only about
 #   0.50. A hit rate above p* is not enough: p* assumes that being right does
 #   not depend on the size of the move

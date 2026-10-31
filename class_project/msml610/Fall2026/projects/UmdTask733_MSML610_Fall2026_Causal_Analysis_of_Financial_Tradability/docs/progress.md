@@ -65,7 +65,7 @@
    - Data: `tradability.data.ipynb`, section "Labels per horizon"
 7. A hit rate above p* does not mean a profit. The logistic regression is
    right 52% of the time from 5m to 4h (p* is 50.2-51.3%), but the moves it
-   gets wrong are 6-10% bigger, so it makes 0-2 bp per trade. The weighted hit
+   gets wrong are 5-10% bigger, so it makes 0-2 bp per trade. The weighted hit
    rate (share of |r| in the right direction) is the number to compare with
    0.5
    - Data: `tradability.models.ipynb`, test 2022-2026
