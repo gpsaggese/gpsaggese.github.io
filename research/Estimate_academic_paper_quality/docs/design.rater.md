@@ -3,7 +3,7 @@
 ## Goal
 
 - Compute the Paper quality rating of one paper from three signals, per
-  `.claude/skills/paper.rules.md` `# Paper Rating` (PRD `R16`)
+  [`.claude/skills/paper.rules.md`](/.claude/skills/paper.rules.md) `# Paper Rating` (PRD [`R16`](/research/Estimate_academic_paper_quality/docs/prd.md#r16-paper-quality-rating))
   - Score page length, best affiliation, and citations from 1 to 5, or `unknown`
   - Rate the paper with the mean of the known scores, rounded half up
   - Give the value, the score, and the evidence of each signal, and the source and
@@ -11,44 +11,46 @@
 - Pure code: no network, no LLM, no file I/O
 - Where it fits: `pipeline` -> `rater`; its inputs come from `fetcher` (page count),
   `extractor` (affiliations), and `bib_sources` (citation count)
-- Overview: `research/Estimate_academic_paper_quality/docs/design.architecture.md`
-- Decisions: `research/Estimate_academic_paper_quality/docs/decisions.md`
+- Overview: [`research/Estimate_academic_paper_quality/docs/design.architecture.md`](/research/Estimate_academic_paper_quality/docs/design.architecture.md)
+- Decisions: [`research/Estimate_academic_paper_quality/docs/decisions.md`](/research/Estimate_academic_paper_quality/docs/decisions.md)
 
 ## Diagram
 
-```mermaid
-C4Component
-  title Rater: Components
-  Container_Boundary(r, "epq_rater.py") {
-    Component(pages, "score_page_length()", "Pure", "Page count to score")
-    Component(aff, "score_affiliation()", "Pure", "Affiliations and tiers to best score")
-    Component(cit, "score_citations()", "Pure", "Count, year, today to score, annualized if young")
-    Component(rate, "rate_paper()", "Pure", "Mean of known scores, half up")
-    Component(tiers, "parse_tiers()", "Pure", "YAML dict to AffiliationTiers")
-  }
-  Component_Ext(yaml, "affiliation_tiers.yaml", "YAML", "Dated tier list")
-  Rel(rate, pages, "")
-  Rel(rate, aff, "")
-  Rel(rate, cit, "")
-  Rel(aff, tiers, "AffiliationTiers")
-  Rel(tiers, yaml, "loaded by pipeline")
+```plantuml
+!pragma layout smetana
+!include <C4/C4_Component>
+LAYOUT_TOP_DOWN()
+title Rater: Components
+Container_Boundary(r, "epq_rater.py") {
+  Component(pages, "score_page_length()", "Pure", "Page count to score")
+  Component(aff, "score_affiliation()", "Pure", "Affiliations and tiers to best score")
+  Component(cit, "score_citations()", "Pure", "Count, year, today to score, annualized if young")
+  Component(rate, "rate_paper()", "Pure", "Mean of known scores, half up")
+  Component(tiers, "parse_tiers()", "Pure", "YAML dict to AffiliationTiers")
+}
+Component_Ext(yaml, "affiliation_tiers.yaml", "YAML", "Dated tier list")
+Rel(rate, pages, "")
+Rel(rate, aff, "")
+Rel(rate, cit, "")
+Rel(aff, tiers, "AffiliationTiers")
+Rel(tiers, yaml, "loaded by pipeline")
 ```
 
 ## Files and Import Graph
 
-- `research/Estimate_academic_paper_quality/epq_rater.py`: imports only `epq_types`
+- [`research/Estimate_academic_paper_quality/epq_rater.py`](/research/Estimate_academic_paper_quality/epq_rater.py): imports only `epq_types`
   and the standard library
-- `research/Estimate_academic_paper_quality/affiliation_tiers.yaml`: the dated tier
+- [`research/Estimate_academic_paper_quality/affiliation_tiers.yaml`](/research/Estimate_academic_paper_quality/affiliation_tiers.yaml): the dated tier
   list, loaded by `pipeline` and passed to `parse_tiers()`
-- **Fact**: `.claude/skills/paper.rate/SKILL.md` rates one paper by hand with the
-  same rules; this component applies them to a list (PRD Non-Goals)
+- **Fact**: [`.claude/skills/paper.rate/SKILL.md`](/.claude/skills/paper.rate/SKILL.md) rates one paper by hand with the
+  same rules; this component applies them to a list ([PRD Non-Goals](/research/Estimate_academic_paper_quality/docs/prd.md#non-goals))
 - **Fact**: Python `round()` rounds half to even (`round(2.5) == 2`), so it breaks
   the rule "rounded half up"
 - **Decisions**:
   - Affiliation tiers from a checked-in dated list; the LLM only reads the names
-    (D-15)
-  - Citations from Semantic Scholar only, else `unknown` (D-16)
-  - Round half up with `math.floor(mean + 0.5)` (D-17)
+    ([D-15](/research/Estimate_academic_paper_quality/docs/decisions.md#d-15-affiliation-tiers-come-from-a-checked-in-dated-list))
+  - Citations from Semantic Scholar only, else `unknown` ([D-16](/research/Estimate_academic_paper_quality/docs/decisions.md#d-16-citations-come-from-semantic-scholar-only))
+  - Round half up with `math.floor(mean + 0.5)` ([D-17](/research/Estimate_academic_paper_quality/docs/decisions.md#d-17-round-half-up-with-mathfloormean--05))
 
 ## One Request End to End
 
@@ -101,7 +103,7 @@ C4Component
 ## Configuration, Interfaces, and Known Limits
 
 - Configuration: the score tables are constants copied from
-  `.claude/skills/paper.rules.md`; a test checks them against the rules file
+  [`.claude/skills/paper.rules.md`](/.claude/skills/paper.rules.md); a test checks them against the rules file
 - Interfaces:
   ```python
   @dataclasses.dataclass(frozen=True)
@@ -128,10 +130,10 @@ C4Component
 
 ## Deliberately Not Built
 
-- A total score or a ranking of the papers (PRD Non-Goals)
+- A total score or a ranking of the papers ([PRD Non-Goals](/research/Estimate_academic_paper_quality/docs/prd.md#non-goals))
 - A refresh of the tier list from the QS site: it is a yearly hand task
 
 ## Open Questions
 
-1. Who fills `affiliation_tiers.yaml` from the QS site, and which entries go in
+1. Who fills [`affiliation_tiers.yaml`](/research/Estimate_academic_paper_quality/affiliation_tiers.yaml) from the QS site, and which entries go in
    "established industry research group" (score 4)?

@@ -15,8 +15,8 @@ import pytest
 pytest.importorskip("fastapi")
 
 import fastapi.testclient  # noqa: E402 # pylint: disable=wrong-import-position
-
 import helpers.hunit_test as hunitest
+
 import research.Noesis.gateway.passthrough_proxy as rnopapro
 import research.Noesis.market.batch_call_auction as rnbacaau
 import research.Noesis.market.contract_dispatch as rnocodis

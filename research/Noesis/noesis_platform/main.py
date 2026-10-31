@@ -18,6 +18,7 @@ from typing import Dict
 
 import helpers.hdbg as hdbg
 import helpers.hprint as hprint
+
 import research.Noesis.gateway.passthrough_proxy as rnopapro
 import research.Noesis.market.batch_call_auction as rnbacaau
 import research.Noesis.market.credit_ledger as rnmacrle
@@ -79,6 +80,7 @@ _LOG.info("NOESIS_DB_BACKEND=%s", _DB_BACKEND)
 if _DB_BACKEND == "postgres":
     # Deferred imports.
     import helpers.hsql_implementation as hsqlimpl
+
     import research.Noesis.noesis_platform.postgres_store as rnoposto
 
     # Fixed env var names, same as `hsqlimpl.get_connection_from_env_vars()`
@@ -98,7 +100,9 @@ if _DB_BACKEND == "postgres":
     order_book = rnbacaau.OrderBook(
         store=rnoposto.PostgresOrderBookStore(_connection)
     )
-    gateway = rnopapro.Gateway(store=rnoposto.PostgresRequestLogStore(_connection))
+    gateway = rnopapro.Gateway(
+        store=rnoposto.PostgresRequestLogStore(_connection)
+    )
     contract_store = rnoposto.PostgresContractStore(_connection)
 else:
     # In-memory backedn.

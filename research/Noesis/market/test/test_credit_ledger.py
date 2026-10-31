@@ -7,6 +7,7 @@ import research.Noesis.market.test.test_credit_ledger as rnmtcrle
 import logging
 
 import helpers.hunit_test as hunitest
+
 import research.Noesis.market.batch_call_auction as rnbacaau
 import research.Noesis.market.credit_ledger as rnmacrle
 

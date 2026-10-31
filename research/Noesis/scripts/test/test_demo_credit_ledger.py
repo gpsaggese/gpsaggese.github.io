@@ -7,6 +7,7 @@ import research.Noesis.scripts.test.test_demo_credit_ledger as rnsttdcl
 import logging
 
 import helpers.hunit_test as hunitest
+
 import research.Noesis.scripts.demo_credit_ledger as rnscdecl
 
 _LOG = logging.getLogger(__name__)
