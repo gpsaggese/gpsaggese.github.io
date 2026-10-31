@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.0
+#       jupytext_version: 1.19.3
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -141,7 +141,7 @@ print("type(spec):", type(spec))
 print()
 
 # List all public methods.
-hintros.print_obj_info(spec)
+hintros.print_obj_info(gym.envs.registration.EnvSpec)
 
 # %%
 # Build a DataFrame comparing multiple EnvSpecs.
@@ -163,7 +163,7 @@ display(pd.DataFrame(data))
 
 # %%
 # EnvSpec has a .pprint() method for quick inspection.
-print(spec.pprint())
+spec.pprint()
 
 # %% [markdown]
 # ## Primitive 3: `gym.spec()`: Look Up by ID
@@ -341,7 +341,7 @@ print(gym.pprint_registry(print_registry=subset, num_cols=2, disable_print=True)
 #   `CartPole-v1`) with different reward thresholds, episode lengths, etc.
 
 # %%
-# Show all versions of CartPole and MountainCar.
+# Show all versions of CartPole.
 cartpole_specs = [
     gym.spec(k) for k in gym.envs.registry if "CartPole" in k and "/" not in k
 ]
@@ -531,7 +531,10 @@ while not done:
     total_reward += reward
     steps += 1
     done = terminated or truncated
-print(f"Reached goal in {steps} steps, total reward: {total_reward}")
+if terminated:
+    print(f"Reached goal in {steps} steps, total reward: {total_reward}")
+else:
+    print(f"Truncated after {steps} steps, total reward: {total_reward}")
 env.close()
 
 # %% [markdown]
@@ -584,13 +587,20 @@ display(ns_df.sort_values("count", ascending=False))
 
 # %%
 # Explore: what happens if you register an already-registered ID?
-try:
-    gym.register(
-        id="CartPole-v1",
-        entry_point="gymnasium.envs.classic_control.cartpole:CartPoleEnv",
-    )
-except gym.error.Error as e:
-    print("Error:", e)
+# Gymnasium does not raise: it warns and replaces the spec. Use a new ID so that
+# `CartPole-v1` stays intact for the next cells.
+gym.register(
+    id="ShortCartPole-v0",
+    entry_point="gymnasium.envs.classic_control.cartpole:CartPoleEnv",
+    max_episode_steps=50,
+)
+print("first register:", gym.spec("ShortCartPole-v0").max_episode_steps)
+# Register the same ID again without `max_episode_steps`: the old value is lost.
+gym.register(
+    id="ShortCartPole-v0",
+    entry_point="gymnasium.envs.classic_control.cartpole:CartPoleEnv",
+)
+print("second register:", gym.spec("ShortCartPole-v0").max_episode_steps)
 
 # %%
 # Explore: what fields does an EnvSpec of a toy-text env look like?
