@@ -239,8 +239,9 @@ _ = utils.cell1_1_plot_shot_widget(SPORT)
 #
 # - Panels
 #   - `Court`: $P(winner)$ of every aim point of player 1's half, on a fixed color
-#     scale from 0 to 1, with the best region (red outline), the best target (red
-#     star), player 1 (blue), and player 2 (orange)
+#     scale from 0 (red, worst for player 2) to 1 (green, best), with the best
+#     region (black outline), the best target (black star), player 1 (blue),
+#     and player 2 (orange)
 #     - If the serve is a fault: the fault as in Cell 1.1, and no map
 #   - `Comments`: whether the serve is in; the best target, its $P(winner)$ with
 #     the standard error, and its $P(in)$ and $P(reached)$; the size of the best
@@ -290,9 +291,10 @@ _ = utils.cell2_1_plot_winner_widget(SPORT)
 # %% [markdown]
 # **Guided usage**
 # - Raise `v_p` from 1.5 to 6 m/s
-#   - Observe the dark dip around player 1 grow: in tennis the lowest cell falls
-#     from about 0.5 to under 0.1, while the best target stays near the middle of
-#     the half; in pickleball the best target moves just past the kitchen line
+#   - Observe the dip around player 1 grow and turn red: in tennis the lowest cell
+#     falls from about 0.5 to under 0.1, while the best target stays near the
+#     middle of the half; in pickleball the best target moves just past the
+#     kitchen line
 # - Lower `ball_speed` to 5 m/s
 #   - Observe player 1 reach far more returns, about 1 in 5 on average instead of
 #     under 1 in 20, and $P(winner)$ fall around player 1

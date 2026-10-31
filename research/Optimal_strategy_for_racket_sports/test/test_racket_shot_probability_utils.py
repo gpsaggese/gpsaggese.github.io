@@ -16,6 +16,7 @@ from typing import Any, Dict, List, Tuple
 import ipywidgets
 import matplotlib
 import matplotlib.collections as mcollections
+import matplotlib.colors as mcolors
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import matplotlib.text as mtext
@@ -2360,6 +2361,60 @@ class Test_plot_winner_heatmap(hunitest.TestCase):
         actual = (
             f"label={outline[0].get_label()}\nsegments={segments}\n"
             f"star={star_xy}"
+        )
+        plt.close("all")
+        self.assert_equal(actual, expected)
+
+    def test6(self) -> None:
+        """
+        Test that the colors go from red at `P(winner) = 0`, the worst for
+        player 2, to green at `P(winner) = 1`, the best.
+        """
+        # Prepare inputs.
+        heatmap = self.helper()
+        p_winners = [0.0, 1.0]
+        # Prepare outputs.
+        expected = "[(0.0, 'red'), (1.0, 'green')]"
+        # Run test.
+        ax = self.helper2(heatmap)
+        # Check outputs.
+        # The color that the map gives to each probability, through its
+        # colormap and its color scale, named by its strongest channel: e.g.,
+        # `viridis` gives blue for 0 and red (a yellow) for 1.
+        mesh = [
+            c for c in ax.collections if isinstance(c, mcollections.QuadMesh)
+        ]
+        rgba = np.asarray(mesh[0].to_rgba(np.array(p_winners)))
+        channel_names = np.array(["red", "green", "blue"])
+        names = channel_names[np.argmax(rgba[:, :3], axis=1)].tolist()
+        actual = str(list(zip(p_winners, names)))
+        plt.close("all")
+        self.assert_equal(actual, expected)
+
+    def test7(self) -> None:
+        """
+        Test that the outline of the best region and the star are black, with a
+        white edge on the star, so they are not read as the red of a low
+        `P(winner)`.
+        """
+        # Prepare inputs.
+        heatmap = self.helper()
+        # Prepare outputs.
+        expected = "outline=['#000000'] star=#000000 star_edge=#ffffff"
+        # Run test.
+        ax = self.helper2(heatmap)
+        # Check outputs.
+        outline = [
+            c
+            for c in ax.collections
+            if isinstance(c, mcollections.LineCollection)
+        ]
+        outline_colors = [mcolors.to_hex(c) for c in outline[0].get_colors()]
+        star = [line for line in ax.get_lines() if line.get_marker() == "*"]
+        star_color = mcolors.to_hex(star[0].get_markerfacecolor())
+        star_edge = mcolors.to_hex(star[0].get_markeredgecolor())
+        actual = (
+            f"outline={outline_colors} star={star_color} star_edge={star_edge}"
         )
         plt.close("all")
         self.assert_equal(actual, expected)
