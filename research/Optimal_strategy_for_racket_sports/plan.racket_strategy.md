@@ -359,7 +359,7 @@
   - [-] [#694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694):
         research Gdoc; the corner sims are done and in notebook 05, and the rules
         for the research Gdoc are still open
-  - [-] [#788](https://github.com/gpsaggese/gpsaggese.github.io/issues/788):
+  - [x] [#788](https://github.com/gpsaggese/gpsaggese.github.io/issues/788):
         red to green heatmaps,
         [PR #804](https://github.com/gpsaggese/gpsaggese.github.io/pull/804)
   - [-] [#789](https://github.com/gpsaggese/gpsaggese.github.io/issues/789):
