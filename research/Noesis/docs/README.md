@@ -28,6 +28,7 @@ placeholder is committed until the reviewed paid run is executed.
 | `how_we_work.md`               | Branch, PR, test, and review conventions                                              | Onboarding |
 | `onboarding.md`                | Setup, run, test, and first tasks                                                     | Onboarding |
 | `run_contract_monitoring_demo.how_to_guide.md` | Reproducible offline demo of probe-to-verdict contract monitoring              | Demo       |
+| `run_checker_replay.how_to_guide.md` | Reproduce the deterministic 30,000-contract checker-validation experiment | Demo       |
 | `run_model_qos_demo.how_to_guide.md` | Commands that demonstrate canary calibration, probing, grading, and evidence persistence | Demo  |
 | `run_market_supply_demo.how_to_guide.md` | Commands that show OpenRouter prices becoming asks and clearing against a bid     | Demo       |
 | `plan.md`                      | Roadmap (`PR_M*`, `PR_S*`, `PR_P*`) and MVP plan (claim, rules, criteria, risks, tasks) | Plans      |
@@ -38,5 +39,6 @@ placeholder is committed until the reviewed paid run is executed.
 | `spec.PR_P2.md`                | Implementation spec: containerized cloud deployment                                   | Specs      |
 | `spec.PR_P2b.md`               | Implementation spec: Postgres backend                                                 | Specs      |
 | `spec.PR_S4.md`                | Implementation spec: contract-window runtime and market-reporting boundary             | Specs      |
+| `spec.PR_S6.md`                | Implementation spec: deterministic offline checker replay and analytic validation       | Specs      |
 | `dev_notes.md`                 | Build and OpenAPI-generation notes                                                    | Notes      |
 | `gp_todos.md`                  | Open TODOs                                                                            | Notes      |

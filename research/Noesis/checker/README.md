@@ -6,6 +6,7 @@
   verdict, with the evidence behind it
 - Decision logic is pure; database access sits in `checker_store.py`
 - Design, evaluation flow, and window policy: `docs/design.checker.md`
+- Replay specification, decisions, and review order: `docs/spec.PR_S6.md`
 
 ## Structure of the Dir
 
@@ -55,3 +56,7 @@ The command runs every frozen scenario for five seeds and 1,000 contracts per
 seed, exits nonzero if observed failure rates do not agree with the analytic
 predictions, and writes JSON, CSV, and Markdown artifacts under
 `research/Noesis/docs/findings/checker_replay/`.
+
+For a fast demo, focused test command, reproducibility check, and interpretation,
+see `docs/run_checker_replay.how_to_guide.md`. The architectural choices and
+alternatives are recorded in `docs/decisions.md` D-32 through D-35.

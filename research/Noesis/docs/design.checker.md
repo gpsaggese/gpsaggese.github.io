@@ -98,6 +98,9 @@ the same frozen evidence under the same policy version produces the same result.
 The replay harness validates the checker independently of the live market,
 gateway, providers, and database:
 
+The complete review specification and frozen protocol are in `spec.PR_S6.md`;
+the decisions and alternatives are in `decisions.md` D-32 through D-35.
+
 1. `checker_replay.py` generates deterministic buyer and canary observations for
    healthy, slow-only, weak-model-only, borderline, and insufficient-evidence
    scenarios.
