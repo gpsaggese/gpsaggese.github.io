@@ -6,7 +6,8 @@ This project develops a runnable tutorial, a small decision application, and
 then a blog about typed probabilistic decisions. Phase 1 checks the Liquid
 d1-3B decision API; Phase 2 teaches its typed questions in a paired notebook;
 Phase 3 applies a fixed routing policy to synthetic tickets; Phase 4 reports
-its held-out evaluation.
+its held-out evaluation. The [blog draft](../../website/docs/blog/posts/draft.in_60_mins.system_one_decision_models.md)
+walks through the executed tutorial and measured application.
 
 ## Structure of the Dir
 
