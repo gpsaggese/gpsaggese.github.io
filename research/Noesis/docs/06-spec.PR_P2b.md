@@ -1,20 +1,20 @@
 # `PR_P2b`: Use Postgres Backend - Implementation Spec
 
 - This document specifies the Python code, schema, and Docker changes needed to
-  implement `PR_P2b` from `research/Noesis/docs/plan.md`
+  implement `PR_P2b` from `research/Noesis/docs/04-plan.md`
 - Scope, as stated in the plan:
   - Externalize the in-memory state of `NoesisMarket` and `NoesisServer` (order book,
     contract log, request log) to a real datastore (e.g. Postgres or Redis)
   - Result: a `NoesisMarket`/`NoesisServer` instance backed by persistent storage
     instead of the current in-process `List`/`Dict` state
 - Roadmap position: `PR_P2b` is not listed under any `v0.x` roadmap bullet in
-  `plan.md`; it is sequenced directly after `PR_P2` (Cloud Deployment) in the
+  `04-plan.md`; it is sequenced directly after `PR_P2` (Cloud Deployment) in the
   `NoesisPlatform` PR list, and its own `TODO(gp)` note points at how to "inject a
   Postgres instance in the container", i.e. `PR_P2`'s Docker/devops scaffold. This
   spec therefore assumes `PR_P2` lands first and describes its own Docker/config
-  deltas on top of `spec.PR_P2.md`'s design (`main.py`, `devops/`,
+  deltas on top of `06-spec.PR_P2.md`'s design (`main.py`, `devops/`,
   `docker-compose.noesis.yml`, `GET /health`) rather than on top of the code actually
-  on disk today, since `spec.PR_P2.md` is itself still a specification only, per its
+  on disk today, since `06-spec.PR_P2.md` is itself still a specification only, per its
   own header, not implemented code
 - This is a specification only: no code in this document has been implemented; it
   describes what `PR_P2b` needs to add on top of the current `research/Noesis/*.py`
@@ -75,11 +75,11 @@
   schema; a real migration tool is a follow-up if the schema changes later
 - Connection pooling: one shared `psycopg2` connection per process, matching how
   `main.py` already builds one process-lifetime `OrderBook`/`Gateway` singleton
-  (`spec.PR_P2.md`); revisit if load testing shows a single connection is a
+  (`06-spec.PR_P2.md`); revisit if load testing shows a single connection is a
   bottleneck
 - Provisioning a managed Postgres instance (e.g. AWS RDS) for the `PR_P2` ECS
   deployment path: one-time AWS infra setup, out of scope for this PR's Python/schema
-  code, same caveat `spec.PR_P2.md`'s "Cloud Target" section raises for the ECS
+  code, same caveat `06-spec.PR_P2.md`'s "Cloud Target" section raises for the ECS
   cluster itself
 - Any change to the matching algorithm, contract schema shape, or HTTP surface: this
   PR only changes _where_ state lives, not what the state means or how
@@ -94,7 +94,7 @@
 ## Current State
 
 - Three separate in-memory state surfaces, matching the plan's "order book, contract
-  log, request log" list exactly, all lost on process exit (`design.architecture.md`
+  log, request log" list exactly, all lost on process exit (`02-design.architecture.md`
   Weakness 6):
   - `batch_call_auction.OrderBook.__init__` (`batch_call_auction.py:317-319`):
     `self._bids: List[Bid] = []` / `self._asks: List[Ask] = []`, appended to by
@@ -118,7 +118,7 @@
 
 ## Implementation
 
-- Follows this codebase's existing dependency-injection idiom (`design.architecture.md`'s
+- Follows this codebase's existing dependency-injection idiom (`02-design.architecture.md`'s
   "Key design decisions": "every side effect that would be non-deterministic in a
   test ... is injected as a callable"), extended from injected _callables_
   (`FulfillmentFunc`, `ProviderCallFunc`) to injected _storage objects_: one small
@@ -168,7 +168,7 @@ class OrderBookStore(abc.ABC):
     def clear(self) -> None:
         """
         Drop every stored bid/ask (`OrderBook.clear_round()`'s existing
-        drop-everything semantics; see `design.architecture.md` Weakness 4).
+        drop-everything semantics; see `02-design.architecture.md` Weakness 4).
         """
         ...
 
@@ -295,7 +295,7 @@ class _InMemoryRequestLogStore(RequestLogStore):
 
 ### `research/Noesis/noesis_platform/postgres_store.py` (new)
 
-- Module docstring: points back to this file (`spec.PR_P2b.md`) and to the three
+- Module docstring: points back to this file (`06-spec.PR_P2b.md`) and to the three
   `ABC`s it implements
 - Owns the DDL, run by `init_schema(connection)` (idempotent: every statement is
   `CREATE TABLE IF NOT EXISTS`, safe to call on every `main.py` startup, no migration
@@ -453,7 +453,7 @@ CREATE TABLE IF NOT EXISTS noesis_request_log (
 
 ### `research/Noesis/devops/compose/docker-compose.noesis.yml` (extends `PR_P2`'s Spec)
 
-- Extends `spec.PR_P2.md`'s compose file with one new service and one new volume,
+- Extends `06-spec.PR_P2.md`'s compose file with one new service and one new volume,
   modeled on `datapull/im_lib_tasks.py`'s `im_postgres` service and the ecosystem's
   standard `postgres:<version>` image usage
   (`helpers_root/dev_scripts_helpers/update_devops_packages/test/db_example/ docker-compose.yml`):
@@ -632,7 +632,7 @@ CREATE TABLE IF NOT EXISTS noesis_request_log (
   unspecified, which would make the auction's price-tie-breaking and the request
   log's "in call order" contract nondeterministic in a way the in-memory list never
   was
-- `GET /health` stays DB-agnostic (a liveness check per `spec.PR_P2.md`'s design, not
+- `GET /health` stays DB-agnostic (a liveness check per `06-spec.PR_P2.md`'s design, not
   extended into a readiness check here): a container can report `{"status": "ok"}`
   while `NOESIS_DB_BACKEND=postgres` and the DB connection is actually down, since
   `main.py` only calls `wait_db_connection()` once at startup, not on every health
@@ -643,7 +643,7 @@ CREATE TABLE IF NOT EXISTS noesis_request_log (
 - No connection pooling: a single shared `psycopg2` connection serves every request
   for the process lifetime; acceptable for this prototype's expected load, a
   bottleneck if concurrent request volume grows (see "Out of Scope")
-- This PR does not address `design.architecture.md`'s other open weaknesses (exact-tier-only
+- This PR does not address `02-design.architecture.md`'s other open weaknesses (exact-tier-only
   matching, at-most-one-bid-per-buyer assumption, no reputation filtering, no rate
   limiting): it only changes where the three state surfaces live, not the business
   logic operating on them
@@ -677,7 +677,7 @@ CREATE TABLE IF NOT EXISTS noesis_request_log (
     kept the spec's literal f-string form since `contract_id` is FastAPI-coerced to
     `int` before reaching this code
   - `main.py`: written from scratch (did not exist on disk), combining
-    `spec.PR_P2.md`'s baseline (`_parse_api_keys()`, `GET /health`, module-level
+    `06-spec.PR_P2.md`'s baseline (`_parse_api_keys()`, `GET /health`, module-level
     `app`) with this spec's `NOESIS_DB_BACKEND` switch; the Postgres branch does a
     deferred (`if`-scoped)
     `import research.Noesis. postgres_store`/`helpers.hsql_implementation`, so the
@@ -687,7 +687,7 @@ CREATE TABLE IF NOT EXISTS noesis_request_log (
     `contract_ store: Optional[ContractStore] = None` keyword parameter, threaded to
     `_MarketState(..., store=contract_store)`
   - `devops/compose/docker-compose.noesis.yml` and `devops/env/default.env`: added
-    under `research/Noesis/devops/`, combining `spec.PR_P2.md`'s `noesis_api` service
+    under `research/Noesis/devops/`, combining `06-spec.PR_P2.md`'s `noesis_api` service
     with this spec's `noesis_postgres` service/volume and env additions; validated as
     syntactically-valid YAML
   - Tests: `noesis_platform/test/test_postgres_store.py` (`TestPostgresOrderBookStore`,
@@ -715,7 +715,7 @@ CREATE TABLE IF NOT EXISTS noesis_request_log (
   `research/Noesis` making the full dev-system "runnable dir" scaffolding
   (`changelog.txt`, `repo_config.yaml`, `.dockerignore`, `devops/docker_build/`,
   `devops/docker_run/`, the `tasks.py`/`conftest.py`/ `invoke.yaml`/`pytest.ini`
-  symlinks) was `spec.PR_P2.md`'s own scope, not this PR's, and has since landed
-  there (see `spec.PR_P2.md`'s "Result"); `docker-compose.noesis.yml`'s
+  symlinks) was `06-spec.PR_P2.md`'s own scope, not this PR's, and has since landed
+  there (see `06-spec.PR_P2.md`'s "Result"); `docker-compose.noesis.yml`'s
   `extends: tmp.docker-compose.yml` now resolves against that scaffolding, though the
   ECS/RDS provisioning above remains outstanding

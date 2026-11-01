@@ -3,7 +3,7 @@ Shared helpers for the Noesis MVP tests that need Postgres.
 
 Tests connect to `NOESIS_TEST_DATABASE_URL` (default: the local test DB on
 port 5433) and skip cleanly when it isn't reachable, so they never fail on a
-machine or CI runner without a database. See `docs/onboarding.md` for starting
+machine or CI runner without a database. See `docs/09-onboarding.md` for starting
 the test DB.
 
 Import as:

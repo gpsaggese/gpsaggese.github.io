@@ -1,4 +1,4 @@
-# Estimate Paper Quality Product Requirements
+# Estimate Paper Quality - Product Requirement Description
 
 ## Goal
 
@@ -6,9 +6,12 @@
   trading strategies, with the full text and a set of extracted features per paper
 - Users: quant researchers, who use the table to pick the next papers to replicate
 - Background:
-  - Idea: [`research/Estimate_academic_paper_quality/idea.md`](/research/Estimate_academic_paper_quality/idea.md)
-  - Reference format: [`.claude/skills/references.rules.md`](/.claude/skills/references.rules.md)
-  - Paper rating rules, applied for Paper quality: [`.claude/skills/paper.rules.md`](/.claude/skills/paper.rules.md),
+  - Idea:
+    [`research/Estimate_academic_paper_quality/idea.md`](/research/Estimate_academic_paper_quality/idea.md)
+  - Reference format:
+    [`.claude/skills/references.rules.md`](/.claude/skills/references.rules.md)
+  - Paper rating rules, applied for Paper quality:
+    [`.claude/skills/paper.rules.md`](/.claude/skills/paper.rules.md),
     `# Paper Rating`
   - Download and conversion tool:
     [`helpers_root/dev_scripts_helpers/download/download_academic_paper_to_md.py`](/helpers_root/dev_scripts_helpers/download/download_academic_paper_to_md.py)
@@ -30,10 +33,9 @@
 
 ## Requirements: Input
 
-### `R1` (Input file format)
+### `R1` (Input File Format)
 
-- The pipeline accepts a text file with one paper per line, where a line is any
-  of:
+- The pipeline accepts a text file with one paper per line, where a line is any of:
   - A partial or full title, optionally followed by the authors in parentheses
   - An arXiv URL or arXiv ID
   - A DOI or DOI URL
@@ -43,110 +45,111 @@
 
 ## Requirements: Normalize the List
 
-### `R2` (Reference format)
+### `R2` (Reference Format)
 
 - For each resolved line, the pipeline outputs one reference in the format of
-  [`.claude/skills/references.rules.md`](/.claude/skills/references.rules.md), `# Format for General Text`
+  [`.claude/skills/references.rules.md`](/.claude/skills/references.rules.md),
+  `# Format for General Text`
   - E.g., `2009, Pearl, "Causality: Models, Reasoning, and Inference" (<Link>)`
 
-### `R3` (Bibliographic source)
+### `R3` (Bibliographic Source)
 
-- The year, the first author, and the title of each reference match a
-  bibliographic source (arXiv, Crossref, or Semantic Scholar), not the memory of an
-  LLM
+- The year, the first author, and the title of each reference match a bibliographic
+  source (arXiv, Crossref, or Semantic Scholar), not the memory of an LLM
 
-### `R4` (Download link)
+### `R4` (Download Link)
 
-- Each reference has a download link to the full text, or a mark that no
-  download link was found
+- Each reference has a download link to the full text, or a mark that no download
+  link was found
 
-### `R5` (Unresolved or ambiguous line)
+### `R5` (Unresolved or Ambiguous Line)
 
 - When a line matches no paper or more than one paper, the pipeline:
   - Marks the line as unresolved
   - Lists the candidate papers, if any
   - Goes on with the other lines
 
-### `R6` (Duplicate lines)
+### `R6` (Duplicate Lines)
 
 - Two input lines that resolve to the same paper produce one reference
 
-### `R7` (Reverse chronological order)
+### `R7` (Reverse Chronological Order)
 
 - The normalized list is in reverse chronological order, per
   [`.claude/skills/references.rules.md`](/.claude/skills/references.rules.md)
 
 ## Requirements: Download and Convert
 
-### `R8` (PDF and markdown files)
+### `R8` (PDF and Markdown Files)
 
-- For each resolved paper with a download link or with a local PDF, the
-  pipeline saves the PDF and its markdown conversion
-  - The PDFs are saved in the repo
+- For each resolved paper with a download link or with a local PDF, the pipeline
+  saves the PDF and its markdown conversion
+  - The PDFs are saved in a repo
 
-### `R9` (File base name)
+### `R9` (File Base Name)
 
-- Both files use the base name of [`.claude/skills/references.rules.md`](/.claude/skills/references.rules.md), `#
-  Format to Use in File Names`
+- Both files use the base name of
+  [`.claude/skills/references.rules.md`](/.claude/skills/references.rules.md),
+  `# Format to Use in File Names`
   - E.g., `2016.Ribeiro_et_al.Why_Should_I_Trust_You.pdf` and `.md`
 
-### `R10` (Failed download or conversion)
+### `R10` (Failed Download or Conversion)
 
-- When the download or the conversion of a paper fails, the pipeline records
-  the reason for that paper and goes on with the other papers
+- When the download or the conversion of a paper fails, the pipeline records the
+  reason for that paper and goes on with the other papers
 
-### `R11` (Rerun skips converted papers)
+### `R11` (Rerun Skips Converted Papers)
 
-- A rerun does not download or convert again a paper whose PDF and markdown
-  already exist
+- A rerun does not download or convert again a paper whose PDF and markdown already
+  exist
 
 ## Requirements: Extract Features
 
-### `R12` (Feature list)
+### `R12` (Feature List)
 
 - The pipeline reports each converted paper with these features:
-
-  | Feature            | What it reports                                              |
-  | :----------------- | :----------------------------------------------------------- |
+  | Feature            | What it reports                                                                                        |
+  | :----------------- | :----------------------------------------------------------------------------------------------------- |
   | Paper quality      | Rating from 1 to 5 of page length, affiliation, and citations (see [`R16`](#r16-paper-quality-rating)) |
-  | Performance        | Reported Sharpe ratio and other performance metrics, as free text |
-  | Recency            | Publication year                                             |
-  | Asset class        | Target asset class, e.g., US equities, as free text          |
-  | Theoretical domain | Domain of the theory, e.g., micro vs. macro, as free text    |
-  | Mechanism          | Nature of the reported mechanism: causal vs. associational, as free text |
+  | Performance        | Reported Sharpe ratio and other performance metrics, as free text                                      |
+  | Recency            | Publication year                                                                                       |
+  | Asset class        | Target asset class, e.g., US equities, as free text                                                    |
+  | Theoretical domain | Domain of the theory, e.g., micro vs. macro, as free text                                              |
+  | Mechanism          | Nature of the reported mechanism: causal vs. associational, as free text                               |
 
-### `R13` (Unknown value)
+### `R13` (Unknown Value)
 
-- Each feature has a value, or `unknown` when the paper and the lookup sources
-  do not give the information
+- Each feature has a value, or `unknown` when the paper and the lookup sources do not
+  give the information
   - The pipeline does not convert a feature into a score, except the Paper quality
     rating of [`R16`](#r16-paper-quality-rating)
   - E.g., a paper that describes no trading strategy (a survey, a method paper) has
     `unknown` for Performance, and stays in the report
 
-### `R14` (Evidence for each value)
+### `R14` (Evidence for Each Value)
 
 - Each feature value comes with its evidence:
   - The text that it is based on, e.g., `Sharpe 1.4, out of sample, 2005 to 2020`
   - Where the text comes from: section, table, or page of the paper, or the name of
     the external source
 
-### `R15` (Extracted facts)
+### `R15` (Extracted Facts)
 
-- The pipeline extracts these facts from each paper and reports them as free
-  text, as the paper states them:
+- The pipeline extracts these facts from each paper and reports them as free text, as
+  the paper states them:
   - Reported performance metrics: Sharpe ratio, annual return, volatility, max
     drawdown
     - When the paper gives several Sharpe ratios (e.g., gross and net of costs, in
-      sample and out of sample), the pipeline reports all of them with the label
-      that the paper gives
+      sample and out of sample), the pipeline reports all of them with the label that
+      the paper gives
   - Sample period, and in sample vs. out of sample
   - Target asset class and universe
   - Data the paper needs: assets, frequency, fields
 
-### `R16` (Paper quality rating)
+### `R16` (Paper Quality Rating)
 
-- The Paper quality rating follows [`.claude/skills/paper.rules.md`](/.claude/skills/paper.rules.md),
+- The Paper quality rating follows
+  [`.claude/skills/paper.rules.md`](/.claude/skills/paper.rules.md),
   `# Paper Rating`:
   - Three signals: page length, best affiliation of the authors, and citation count
   - Each signal scores from 1 to 5, and the rating is the mean of the known signals,
@@ -155,10 +158,10 @@
   - The report gives the rating, the score of each signal, and the source and the
     date of the citation count
 
-### `R17` (Rerun skips extraction)
+### `R17` (Rerun Skips Extraction)
 
-- A rerun does not extract again the features of a paper that already has
-  them, unless the user asks for it
+- A rerun does not extract again the features of a paper that already has them,
+  unless the user asks for it
 
 ## Requirements: Output
 
@@ -172,14 +175,15 @@
 
 ### `R19` (Issues CSV)
 
-- The pipeline lists the unresolved papers and the failed papers, with the
-  reason, in a CSV apart from the report of [`R18`](#r18-report-csv)
+- The pipeline lists the unresolved papers and the failed papers, with the reason, in
+  a CSV apart from the report of [`R18`](#r18-report-csv)
 
-### `R20` (Features file)
+### `R20` (Features File)
 
-- For each converted paper, the pipeline writes a features file with the
-  feature values, the evidence, and the extracted facts
-  - The features file uses the same base name as the PDF of the paper (see [`R9`](#r9-file-base-name))
+- For each converted paper, the pipeline writes a features file with the feature
+  values, the evidence, and the extracted facts
+  - The features file uses the same base name as the PDF of the paper (see
+    [`R9`](#r9-file-base-name))
 
 ## Non-Goals
 
@@ -192,8 +196,10 @@
     the download tool gets it through a Chrome that it starts and closes
 - Does not combine the features into a total score and does not rank the papers: the
   user sorts the CSV
-- Does not replace [`.claude/skills/paper.rate/SKILL.md`](/.claude/skills/paper.rate/SKILL.md), which rates one paper: the
-  pipeline applies the same rules to a list (see [`R16`](#r16-paper-quality-rating))
+- Does not replace
+  [`.claude/skills/paper.rate/SKILL.md`](/.claude/skills/paper.rate/SKILL.md), which
+  rates one paper: the pipeline applies the same rules to a list (see
+  [`R16`](#r16-paper-quality-rating))
 
 ## Success Metrics
 
@@ -207,21 +213,21 @@
 ## Constraints and Assumptions
 
 - Download and conversion reuse
-  [`helpers_root/dev_scripts_helpers/download/download_academic_paper_to_md.py`](/helpers_root/dev_scripts_helpers/download/download_academic_paper_to_md.py), as
-  the idea states
+  [`helpers_root/dev_scripts_helpers/download/download_academic_paper_to_md.py`](/helpers_root/dev_scripts_helpers/download/download_academic_paper_to_md.py),
+  as the idea states
 - Bibliographic facts and citation counts come from a lookup source, never from the
-  memory of an LLM, per [`.claude/skills/paper.rules.md`](/.claude/skills/paper.rules.md)
+  memory of an LLM, per
+  [`.claude/skills/paper.rules.md`](/.claude/skills/paper.rules.md)
 - An input list has about 100 papers: a first run processes all of them, and a rerun
-  does not pay again for the papers already processed (see [`R11`](#r11-rerun-skips-converted-papers) and [`R17`](#r17-rerun-skips-extraction))
+  does not pay again for the papers already processed (see
+  [`R11`](#r11-rerun-skips-converted-papers) and
+  [`R17`](#r17-rerun-skips-extraction))
 - Most papers describe trading strategies or return predictors, but a paper may not
   (e.g., a survey, a method paper)
   - The features Performance and Asset class can be `unknown` for such a paper (see
     [`R13`](#r13-unknown-value))
-- SSRN blocks scripted downloads: the download tool gets SSRN PDFs through a Chrome
-  that it starts and closes ([`download_with_chrome.py`](/helpers_root/dev_scripts_helpers/download/download_with_chrome.py)), so the pipeline needs
-  Chrome
 - The user runs the pipeline with network access
 
 ## Open Questions
 
-None.
+- None

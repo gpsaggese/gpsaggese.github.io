@@ -1,58 +1,41 @@
-# Contributors
+<!-- toc -->
 
-| Name                     | Personal email                  | School email                 | GitHub          | Project                    |
-| ------------------------ | ------------------------------- | ---------------------------- | --------------- | -------------------------- |
-| Giles Greene             | gilesgreene20@gmail.com         | -                            | gilesgreene     | Noesis                     |
-| Dev Trusharkumar Shah    | -                               | dnts5203@umd.edu             | Delvitron1019   | Auto DS                    |
-| Ameer Shaik              | -                               | sohail08@umd.edu             | Sohail-5678,sohail-umd      | Auto DS                    |
-| Simran Kharbanda         | simrank3574@gmail.com           | simrank@umd.edu              | Sim2200         | Noesis                     |
-| Lucas Caicedo            | -                               | lucas.caicedo@gwmail.gwu.edu | caicedoss       | Noesis                     |
-| Javin Ahuja              | -                               | jahuja@terpmail.umd.edu      | Jav359003       | Noesis                     |
-| Aahan Rembersu           | aahanrembersu07@gmail.com       | arembers@terpmail.umd.edu    | aahanrembersu07 | Racket sports              |
-| Niveda Jawahar           | -                               | nivedaj@umd.edu              | Niveda-227      | Skill and luck             |
-| Krishna Buddi            | -                               | kbuddi@umd.edu               | bkk8403         | Skill and luck             |
-| Ibrahim Ahmed            | ibrahim.iftaquar@gmail.com      | ibrahima@umd.edu             | Worldsoldure00  | Growth hacking             |
-| Mohammed Syed            | syed.mohammed0975@gmail.com     | syed@umd.edu                 | Eyepatch0       | MCTS / AlphaZero           |
-| Shobha Gupta             | s2002290902g@gmail.com          | gupta29@umd.edu              | Under-the-stars | Age and startup success    |
-| Vedanshu Joshi           | vedanshujoshi0@gmail.com        | -                            | Vedanshu7       | -                          |
-| Samarth KaPatel          | samarth.kapatel5@gmail.com      | -                            | samarth9008     | -                          |
-| Grisha Pomazkin          | pomazking@gmail.com             | -                            | PomazkinG       | -                          |
-| Linu Teresa              | -                               | lteresa@umd.edu              | -               | Counterfactual attribution |
-| Sri Ramm Sekar Sasirekha | srirammsekarsasirekha@gmail.com | ssramm69@umd.edu             | SriRammSS       | Counterfactual attribution |
+- [Resources](#resources)
+  * [Projects](#projects)
+    + [Template](#template)
+    + [Age and startup success](#age-and-startup-success)
+    + [Auto DS](#auto-ds)
+    + [Blog tutorials](#blog-tutorials)
+    + [CAASL (Causal Analysis of Agent Skill and Luck)](#caasl-causal-analysis-of-agent-skill-and-luck)
+    + [Class projects](#class-projects)
+    + [Counterfactual attribution](#counterfactual-attribution)
+    + [Financial tradability](#financial-tradability)
+    + [MCTS / AlphaZero](#mcts--alphazero)
+    + [Noesis](#noesis)
+    + [Process](#process)
+    + [Racket sports](#racket-sports)
+    + [Tymes](#tymes)
+    + [Tyrn](#tyrn)
+- [Contributors](#contributors)
 
-- [ ] @gilesgreene
-- [ ] @Delvitron1019
-- [ ] @sohail-umd, Sohail-5678
-- [ ] @Sim2200
-- [ ] @caicedoss
-- [ ] @Jav359003
-- [ ] @aahanrembersu07
-- [ ] @Niveda-227
-- [ ] @bkk8403
-- [ ] @Worldsoldure00
-- [ ] @Eyepatch0
-- [ ] @Under-the-stars
-- [ ] @Vedanshu7
-- [ ] @samarth9008
-- [ ] @PomazkinG
-- [ ] @SriRammSS
+<!-- tocstop -->
 
-## Resources
+# Resources
 
-- Office hours
+- **Office hours**
  - https://docs.google.com/spreadsheets/d/1DgeT_-vRLTkS7ui5kOT4Oas_IuKJjMXlfHhi0MlkUQg/edit?resourcekey=&gid=685711857#gid=685711857
 
-- Class projects
+- **Class projects**
   - https://github.com/gpsaggese/gpsaggese.github.io/blob/master/class_project/msml610/Fall2026/class_project.csv
   - https://github.com/gpsaggese/gpsaggese.github.io/blob/master/class_project/data605/Fall2026/class_project.csv
 
-- Old student mailing lists
-  - https://docs.google.com/spreadsheets/d/155YJ5fFBbNmt4nJydWeYmlX2jAwXhNDTuF_6F_Wq0XA/edit?gid=1253708660#gid=1253708660
+- **Old student mailing lists**
+  - https://docs.google.com/spreadsheets/d/155YJ5fFBbNmt4nJydWeYmlX2jAwXhNDTuF_6F_Wq0XA
 
-- GitHub
+- **GitHub**
   - https://github.com/gpsaggese/gpsaggese.github.io
 
-- Research team
+- **Research team**
   - GP's Research Team: https://docs.google.com/document/d/1tFUVk744hdhFjQhit-hiTzAafCtVTFttr4BR4_H-T5o/edit?tab=t.lht3e226j3g0#heading=h.brba9x13ukfh
   - Research projects Google Drive: https://drive.google.com/drive/folders/1NQB-LgY6Kn8Pw5Hbnp_1yCzN9HgoDIXe
 
@@ -98,14 +81,16 @@
 ### Blog tutorials
 
 - **Asana board**:
-- **Google docs**:
-- **Google drive**:
+- **Google docs**: Blog project: https://docs.google.com/document/d/1Oyyybi22VO5ZUmkKJxNEvKqzd4BfIPTavBVzz6iHYbA/edit?tab=t.0
+- **Google drive**: Blogs: https://drive.google.com/drive/folders/1-IuV3j-Bj3qP8OfQHiKVB6uQwenl7bVR
 - **Research gdoc**:
 - **GitHub project**: https://github.com/users/gpsaggese/projects/12/views/2
 - **GitHub code**:
   - https://github.com/gpsaggese/gpsaggese.github.io/blob/master/research/ideas/draft.Blog_Cross_Posting_and_Engagement_System.md
   - https://github.com/gpsaggese/gpsaggese.github.io/blob/master/research/ideas/draft.Complete_blogs.md
 - **Whitepaper**:
+- **Other**:
+  - Blog schedule: https://docs.google.com/spreadsheets/d/1EXprKVLcm6rkqaxM4GYhthGNq3YQwgMzr1ORf7c8C1I/edit?gid=0#gid=0
 
 ### CAASL (Causal Analysis of Agent Skill and Luck)
 
@@ -156,16 +141,6 @@
 - **GitHub code**:
   - https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/Causal_Analysis_of_Financial_Tradability
   - https://github.com/gpsaggese/gpsaggese.github.io/blob/master/research/ideas/draft.Causal_Analysis_of_Financial_Tradability.md
-- **Whitepaper**:
-
-### Growth hacking
-
-- **Asana board**:
-- **Google docs**:
-- **Google drive**:
-- **Research gdoc**:
-- **GitHub project**:
-- **GitHub code**:
 - **Whitepaper**:
 
 ### MCTS / AlphaZero
@@ -221,19 +196,6 @@
   - https://github.com/gpsaggese/gpsaggese.github.io/blob/master/research/ideas/in_progress.RL_for_pickleball.md
 - **Whitepaper**: `papers/Optimal_strategy_for_racket_sports/paper.md`
 
-### Skill and luck
-
-- **Asana board**:
-- **Google docs**:
-- **Google drive**:
-- **Research gdoc**:
-- **GitHub project**:
-- **GitHub code**:
-  - https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/Causal_Analysis_of_Agent_Skill_And_Luck
-  - https://github.com/gpsaggese/gpsaggese.github.io/blob/master/research/ideas/done.Causal_Analysis_of_Success_in_Modern_Society.md
-  - https://github.com/gpsaggese/gpsaggese.github.io/blob/master/research/ideas/draft.Skill_vs_Luck_in_Agent_Benchmarks.md
-- **Whitepaper**: `papers/Causal_Analysis_of_Agent_Skill_And_Luck/paper.tex`
-
 ### Tymes
 
 - **Asana board**: https://app.asana.com/1/1208279338421005/project/1219815724731424/task/1219815724917292
@@ -246,10 +208,49 @@
 
 ### Tyrn
 
-- **Asana board**:
+- **Asana board**: https://app.asana.com/1/1208279338421005/project/1219895247399606/list/1219895286332427
 - **Google docs**:
 - **Google drive**: Tyrn.dev: https://drive.google.com/drive/folders/1oEq-IqCax_hiUhijEReC4p-PhYIX8klI
 - **Research gdoc**:
 - **GitHub project**:
 - **GitHub code**:
 - **Whitepaper**:
+
+# Contributors
+
+| Name                     | Personal email                  | School email                 | GitHub          | Project                    |
+| ------------------------ | ------------------------------- | ---------------------------- | --------------- | -------------------------- |
+| Giles Greene             | gilesgreene20@gmail.com         | -                            | gilesgreene     | Noesis                     |
+| Dev Trusharkumar Shah    | -                               | dnts5203@umd.edu             | Delvitron1019   | Auto DS                    |
+| Ameer Shaik              | -                               | sohail08@umd.edu             | Sohail-5678,sohail-umd      | Auto DS                    |
+| Simran Kharbanda         | simrank3574@gmail.com           | simrank@umd.edu              | Sim2200         | Noesis                     |
+| Lucas Caicedo            | -                               | lucas.caicedo@gwmail.gwu.edu | caicedoss       | Noesis                     |
+| Javin Ahuja              | -                               | jahuja@terpmail.umd.edu      | Jav359003       | Noesis                     |
+| Aahan Rembersu           | aahanrembersu07@gmail.com       | arembers@terpmail.umd.edu    | aahanrembersu07 | Racket sports              |
+| Niveda Jawahar           | -                               | nivedaj@umd.edu              | Niveda-227      | CAASL                      |
+| Krishna Buddi            | -                               | kbuddi@umd.edu               | bkk8403         | CAASL                      |
+| Ibrahim Ahmed            | ibrahim.iftaquar@gmail.com      | ibrahima@umd.edu             | Worldsoldure00  | Blog tutorials             |
+| Mohammed Syed            | syed.mohammed0975@gmail.com     | syed@umd.edu                 | Eyepatch0       | MCTS / AlphaZero           |
+| Shobha Gupta             | s2002290902g@gmail.com          | gupta29@umd.edu              | Under-the-stars | Age and startup success    |
+| Vedanshu Joshi           | vedanshujoshi0@gmail.com        | -                            | Vedanshu7       | -                          |
+| Samarth KaPatel          | samarth.kapatel5@gmail.com      | -                            | samarth9008     | -                          |
+| Grisha Pomazkin          | pomazking@gmail.com             | -                            | PomazkinG       | -                          |
+| Linu Teresa              | -                               | lteresa@umd.edu              | -               | Counterfactual attribution |
+| Sri Ramm Sekar Sasirekha | srirammsekarsasirekha@gmail.com | ssramm69@umd.edu             | SriRammSS       | Counterfactual attribution |
+
+- [ ] @gilesgreene
+- [ ] @Delvitron1019
+- [ ] @sohail-umd, Sohail-5678
+- [ ] @Sim2200
+- [ ] @caicedoss
+- [ ] @Jav359003
+- [ ] @aahanrembersu07
+- [ ] @Niveda-227
+- [ ] @bkk8403
+- [ ] @Worldsoldure00
+- [ ] @Eyepatch0
+- [ ] @Under-the-stars
+- [ ] @Vedanshu7
+- [ ] @samarth9008
+- [ ] @PomazkinG
+- [ ] @SriRammSS

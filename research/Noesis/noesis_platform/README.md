@@ -4,7 +4,7 @@
   proxy, with an optional Postgres backend
 - `main.py` builds the module-level `app` that `uvicorn` serves
 - Imports `market/` and `gateway/passthrough_proxy.py`; nothing imports it back
-- Architecture: `docs/design.architecture.md`
+- Architecture: `docs/02-design.architecture.md`
 
 ## Structure of the Dir
 

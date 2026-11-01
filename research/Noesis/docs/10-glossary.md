@@ -19,7 +19,7 @@
 | Tier | Capability class (e.g., `standard`); the MVP has one |
 | Auction / clearing | Matching bids to asks every T seconds and setting one price per tier |
 | Contract | A matched deal we can check: tasks, tier, `l_max`, `r_min`, price, state |
-| Task | One chat completion, at most 256 output tokens (`decisions.md` D19) |
+| Task | One chat completion, at most 256 output tokens (`03-decisions.md` D19) |
 | `l_max` | The contract's latency limit in seconds; the request timeout is 2x this |
 | `r_min` | The contract's promised reliability (share of on-time successful requests) |
 | Window | The requests a contract covers: its task count or 60 s, whichever comes first |
@@ -41,4 +41,4 @@
 | p50 / p95 | Typical (median) and near-worst (95th percentile) latency |
 | Task-credit | The unit of a buyer's balance, the same unit as a bid's `p_max`; a bid costs up to `n_tasks * p_max` of it |
 | Free grant | The task-credit every account receives on its first bid (`NOESIS_FREE_CREDIT`); no real payment behind it in the MVP |
-| `PR_S7`, `PR_M3`, ... | Work items in GP's roadmap `research/Noesis/docs/plan.md` |
+| `PR_S7`, `PR_M3`, ... | Work items in GP's roadmap `research/Noesis/docs/04-plan.md` |

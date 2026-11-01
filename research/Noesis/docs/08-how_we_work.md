@@ -17,7 +17,7 @@
 - The steps are the ones in the section "The Loop" of
   `helpers_root/docs/planning/all.plan_work.how_to_guide.md`
 - Noesis details for each step:
-  - **Pick a task** from the Task Breakdown in `plan.md` (or propose one)
+  - **Pick a task** from the Task Breakdown in `04-plan.md` (or propose one)
   - **Open a GitHub issue** in `gpsaggese/gpsaggese.github.io`, title
     `Noesis: <what>`; note the number, e.g., `#612`
   - **Sync your fork** with upstream, then **branch** in your fork from `master`,
@@ -95,17 +95,17 @@
   `helpers_root/docs/planning/all.plan_work.how_to_guide.md`
 - Noesis details for each section:
   - First line: `Fixes gpsaggese/umd_classes#<issue_number>`
-  - What: name the plan task(s) the PR closes (e.g., `plan.md` T2.4)
-  - Why: link the requirement (`plan.md`, MVP Execution Plan)
-  - Decisions: add each one to `decisions.md` and link it
+  - What: name the plan task(s) the PR closes (e.g., `04-plan.md` T2.4)
+  - Why: link the requirement (`04-plan.md`, MVP Execution Plan)
+  - Decisions: add each one to `03-decisions.md` and link it
 
 ## Keeping Docs in Sync
 
 - The rules are in the section "Keep Docs in Sync" of
   `helpers_root/docs/planning/all.plan_work.how_to_guide.md`
 - Noesis files:
-  - Change a module -> update its section in `design.gateway.md` (or the README of
+  - Change a module -> update its section in `02.1-design.gateway.md` (or the README of
     the component you touched)
-  - Make a decision -> add it to `decisions.md`
-  - Finish a task -> tick it in `plan.md` and add a line to
-    `progress.md`
+  - Make a decision -> add it to `03-decisions.md`
+  - Finish a task -> tick it in `04-plan.md` and add a line to
+    `07-progress.md`

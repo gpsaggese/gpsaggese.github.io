@@ -25,8 +25,13 @@
   - Documentation
   - Tutorial
 
-- Edit `requirements.txt` to add the packages pinning down to the last version
-  of the important packages
+- Install the needed packages from the notebook with `!pip install -q pkg==x.y.z`
+  and keep using the same Docker image and `requirements.txt` as
+  `class_project/project_template`
+  - Edit `requirements.txt` only if the dependencies are hard to maintain (e.g.,
+    packages that depend on each other)
+  - See "Python Dependencies Policy" in
+    `class_project/project_template/docker_scripts.README.md`
 
 - Build the container
   ```bash
