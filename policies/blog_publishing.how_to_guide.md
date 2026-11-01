@@ -15,19 +15,50 @@
     [`FAQ.md`](FAQ.md): AI policy and authorship policy
   - Issue [#697](https://github.com/gpsaggese/gpsaggese.github.io/issues/697):
     how to contribute to blogs
+  - [`all.write_blog.how_to_guide.md`](../helpers_root/docs/blogging/all.write_blog.how_to_guide.md)
+    and
+    [`all.publish_blogs.how_to_guide.md`](../helpers_root/docs/blogging/all.publish_blogs.how_to_guide.md):
+    shared blog writing conventions, and the publishing setup of the Causify blog
+    (different from this website)
+  - [Blog Scripts](#blog-scripts): what each blog file in `website/` does
 
 ## Overview
 
-| Step | Who               | Output                                         |
-| :--- | :-------------    | :--------------------------------------------- |
-| 1    | Author            | Blog picked from `README.blog.md`              |
-| 2    | Author            | GitHub issue from the template below           |
-| 3    | Author            | Row in the publishing gsheet                   |
-| 4    | Author            | PR with the improvements                       |
-| 5    | GP + 2 reviewers  | PR reviewed and merged (still a `draft.`)      |
-| 7    | Author + GP       | Publication date set in the gsheet             |
-| 8    | Author            | Substack entry drafted                         |
-| 9    | GP                | Published on website, Substack, LinkedIn       |
+| Step | Who              | Output                                       |
+| :--- | :--------------- | :------------------------------------------- |
+| 1    | Author           | Blog picked from `README.blog.md`            |
+| 2    | Author           | GitHub issue from the template below         |
+| 3    | Author           | Row in the publishing gsheet                 |
+| 4    | Author           | PR with the improvements                     |
+| 5    | GP + 2 reviewers | PR reviewed and merged (still a `draft.`)    |
+| 6    | Author + GP      | Publication week set in the gsheet           |
+| 7    | Author           | Substack entry drafted                       |
+| 8    | Author + GP      | Published on website, Substack, LinkedIn     |
+
+## Blog Scripts
+
+- All the files are in `website/`; run them from the repo root
+- `README.blog.md`: the blog tracker, with published blogs, blogs ready for
+  review, and drafts ranked by readiness
+  - Read it in step 1 to pick a blog; it is refreshed in step 8
+- `format_blog.sh`: runs `prettier` on the given files, wrapping prose at 80
+  columns, in place
+  - Needs `prettier` (`npm install -g prettier`)
+  - Used in step 4
+- `mark_blog_as_ready.py`: publishes a draft with `git mv` (removes the `draft.`
+  prefix), sets `draft: false`, and sets `date:` to today
+  - `--undo` turns a published blog back into a draft
+  - The file must already be committed to git
+  - It overwrites `date:` with today, so run it on the publication day
+  - Used in step 8
+- `find_published_blogs.sh`: prints the blogs with `draft: false`, newest first,
+  as markdown bullets
+  - Used to refresh `## Published Blogs` in `README.blog.md`
+- `prompt.update_README_blog.md`: instructions for Claude Code to refresh
+  `README.blog.md`
+  - Checks the website builds, checks that `draft:` matches the file name,
+    reruns `find_published_blogs.sh`, and rebuilds the drafts table
+  - Used in step 8
 
 ## 1. Pick a Blog
 
@@ -42,7 +73,7 @@
   - Edit and improve the text
   - Make it visually appealing, e.g., add diagrams and plots
   - Run every command and notebook and fix what is broken
-  - Adding more examples to help convey ideas better
+  - Add more examples to explain the ideas
 - As always, no AI slop: you must be able to explain every line
 
 ## 2. Create an Issue
@@ -65,21 +96,23 @@
   - [ ] ETA: YYYY-MM-DD
   - [ ] Added myself as an author (`.authors.yml` and front matter)
   - [ ] Ran every command / notebook in the blog and they work
+  - [ ] Scratch notes at the end turned into content or removed
   - [ ] No TODOs left in the file
   - [ ] Formatted and linted
+  - [ ] `mkdocs build --strict` passes
   - [ ] Previewed on the local website
   - [ ] PR: #...
-  - [ ] PR merged
   - [ ] Reviewer 1: @...
   - [ ] Reviewer 2: @...
-  - [ ] Publication date set in the gsheet
+  - [ ] PR merged
+  - [ ] Publication week set in the gsheet
   - [ ] Substack entry created
   - [ ] Published on website / Substack / LinkedIn
   ```
 
 - Post an update in the issue every 2-3 days: done, next, blockers
 
-## 3. Add It to the Google sheet
+## 3. Add It to the Google Sheet
 
 - Add a row to the
   [publishing gsheet](https://docs.google.com/spreadsheets/d/1EXprKVLcm6rkqaxM4GYhthGNq3YQwgMzr1ORf7c8C1I/edit)
@@ -91,37 +124,31 @@
 - Follow [`pr_process.how_to_guide.md`](pr_process.how_to_guide.md) for
   branch, worktree, and commits
   - Branch name: `UmdTask<issue>_<Short_title>`
+- Set the file you work on:
+  ```bash
+  > FILE=website/docs/blog/posts/draft.<name>.md
+  ```
 - Keep the `draft.` prefix in the file name and `draft: true` in the front
   matter
-  - Do not rename the file to publish it: that happens in step 9 with
-    `mark_blog_as_ready.py`
+  - The blog is published in step 8 with `mark_blog_as_ready.py`
   - Draft files are excluded from the site by `exclude_docs` in
     `website/mkdocs.yml`
+- Check the front matter (the YAML block between `---` lines at the top of the
+  blog) against "Front Matter Fields" in
+  [`website/README.md`](../website/README.md), plus `draft: true`
 - Add yourself as an author
   - Add an entry in `website/docs/.authors.yml`
   - Add your id to `authors:` in the blog front matter
-- Check the front matter (see `website/README.md` for the allowed categories)
-
-  ```yaml
-  ---
-  title: "Your Blog Post Title"
-  draft: true
-  authors:
-    - gpsaggese
-    - <your_id>
-  date: YYYY-MM-DD
-  description: One sentence for SEO and social cards
-  categories:
-    - <Category>
-  ---
-
-  TL;DR: One-line summary.
-
-<!-- more -->
-  ```
-
+  - Do not leave `TBD` in `url:` or `avatar:`: it renders as a broken link
+  - Adding someone else as an author needs GP's approval
 - Before asking for review, run the content checks:
   - Run every command and notebook and paste the result if it changed
+  - Clean up the scratch notes: drafts often end with raw notes, links, or
+    command dumps from GP
+    - Turn the useful ones into content, e.g., a "Further reading" or "Other
+      tools to explore" section
+    - Remove the rest; ask GP in the issue if unsure whether a note is still
+      needed
   - No TODOs left
     ```bash
     > cc -p "/coding.todoai_gp $FILE"
@@ -142,41 +169,72 @@
     ```bash
     > render_images.py -i $FILE
     ```
+  - Check the site builds with no warnings
+    ```bash
+    > (cd website && mkdocs build --strict)
+    ```
   - Preview how it renders
     ```bash
     > open_md.py --input $FILE --mode github
     > website/preview_website.sh
     ```
-- In the PR description, under `Testing`, list what you ran and on what input,
-  e.g., "ran all 4 examples on a sample PDF, formatted with `format_blog.sh`,
-  previewed the website"
+- Open the PR
+  - Title: `Blog: <Title of the blog>`
+  - Add it to the `Blogs_Tutorials` project, with GP and the 2 reviewers as
+    reviewers
+  - Use the sections from
+    [`pr_process.how_to_guide.md`](pr_process.how_to_guide.md), with this blog
+    checklist:
+    ```markdown
+    Closes #<issue>
+
+    ## Summary
+    - Blog: `website/docs/blog/posts/draft.<name>.md`
+    - What changed: <text, examples, plots, fixed commands>
+    - Authors added: <ids> (in `.authors.yml` and front matter)
+
+    ## Testing
+    - [ ] Ran every command / notebook: <on what input>
+    - [ ] `website/format_blog.sh` and `pre-commit run --files <files>`
+    - [ ] `mkdocs build --strict` passes
+    - [ ] Previewed with `website/preview_website.sh`, including author profiles
+
+    ## Pending
+    - <What is still open, e.g., GP's review, publication date, a failing check>
+
+    ## Design choices
+    - <Non-obvious choices, and why>
+
+    I used Claude Code to help write and test this, and I reviewed every change.
+    ```
+  - If a GitHub check fails, find out whether your change caused it and say so
+    in the PR
+  - E.g., [#819](https://github.com/gpsaggese/gpsaggese.github.io/pull/819) for
+    a publish PR
 
 ## 5. Review and Merge
 
-- GP reviews the PR; address every comment and resolve the threads
-- The PR is merged as soon as it is a clear improvement, even if the blog is
-  not ready to publish yet
-- Update the issue checklist and the gsheet
-
-## 6. Content Review by 2 People
-
-- Ask 2 other people from the team to read the blog
-  - Tag them in the issue, and ask them to comment there or on a follow-up PR
+- GP and 2 other people from the team review the blog in the PR
 - What the reviewers check:
   - Is it correct? Do the commands and code actually work?
   - Is it clear to someone who does not know the topic?
   - Is the TL;DR accurate and is the title specific?
   - Is the tone sober and technical (no click-bait, no AI slop)?
   - Are the diagrams and plots readable?
-- Fix the comments in a follow-up PR
+- Address every comment with new commits on the same branch, and resolve the
+  threads
+- The PR is merged when it is a clear improvement, even if the blog is not
+  ready to publish yet
+- Update the issue checklist and the gsheet
 
-## 7. Schedule It
+## 6. Schedule It
 
-- Pick a publication date in the gsheet
-  - We publish about one blog per week, so check the calendar for a free slot
-- Set the same `date:` in the front matter
+- We publish one blog per week
+- Pick a free week in the gsheet, so two blogs do not go out the same week
+- The `date:` in the front matter is set on the publication day by
+  `mark_blog_as_ready.py` (step 8)
 
-## 8. Create the Substack Entry
+## 7. Create the Substack Entry
 
 - Create a draft on Substack with:
   - The title and TL;DR from the blog
@@ -184,20 +242,21 @@
   - A link back to the post on the website
 - Leave it as a draft and link it in the issue
 
-## 9. Publish
+## 8. Publish
 
-- Mark the blog as ready: this renames the file (removing `draft.`) and sets
-  `draft: false`
+- On the publication day, open a publish PR
   ```bash
   > website/mark_blog_as_ready.py --file $FILE
+  > (cd website && mkdocs build --strict)
   ```
-- Preview, fix problems, and publish the website
+  - Title: `Blog: Publish <Title of the blog>`
+  - The script renames the file with `git mv`, so commit the rename
+- After the PR is merged, deploy the website
   ```bash
-  > website/preview_website.sh
   > website/publish_website.sh
   ```
 - Publish the Substack entry and post on LinkedIn with a link to the blog
-- Update `website/README.blog.md`
+- Refresh `website/README.blog.md`
   ```bash
   > ccp "Execute website/prompt.update_README_blog.md"
   ```
@@ -206,5 +265,3 @@
   > uvx linkchecker https://gpsaggese.github.io/ 2>&1 | tee linkchecker.log
   ```
 - Close the issue and mark the row as published in the gsheet
-
-
