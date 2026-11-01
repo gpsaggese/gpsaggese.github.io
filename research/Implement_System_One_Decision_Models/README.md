@@ -4,12 +4,12 @@
 
 This project develops a runnable tutorial, a small decision application, and
 then a blog about typed probabilistic decisions. Phase 1 checks the Liquid
-d1-3B decision API with a small executable probe.
+d1-3B decision API; Phase 2 teaches its typed questions in a paired notebook.
 
 ## Structure of the Dir
 
-This phase has no subdirectories. Later phases will add the paired notebook,
-application, and evaluation files.
+This phase has no subdirectories. The application and evaluation will add
+their own files in later phases.
 
 ## Description of Files
 
@@ -18,7 +18,10 @@ application, and evaluation files.
 - `probe_results.json`: Captured requests, responses, and observations from the
   pinned Phase 1 run.
 - `requirements.txt`: Pinned Python packages needed to fetch the model and
-  build the server.
+  run the notebook.
+- `system-one.API.ipynb`: Guided API notebook with short live examples.
+- `system-one.API.py`: Jupytext percent-format pair for the notebook.
+- `system_one_API_utils.py`: Small HTTP client and probability displays.
 
 ## Pinned Model and API
 
@@ -54,6 +57,24 @@ order, repeats a request, and compares a choice asked alone with the same
 choice asked alongside other questions. It validates answer types, choice
 names, option probability keys and sums, score legends, and expected score.
 The optional JSON report contains every request and response.
+
+### `system-one.API.ipynb` and `system-one.API.py`
+
+The notebook walks through `noul`, `choice`, and `score`; a JSON state; several
+questions over one state; a new choice schema; and a top-probability action.
+The Python pair can be executed from the repository root while the server is
+running:
+
+```bash
+> python research/Implement_System_One_Decision_Models/system-one.API.py
+```
+
+Open `system-one.API.ipynb` in Jupyter for the cell-by-cell lesson. To sync
+edits to either paired file, run:
+
+```bash
+> jupytext --sync research/Implement_System_One_Decision_Models/system-one.API.ipynb
+```
 
 ### Setup and Run
 
