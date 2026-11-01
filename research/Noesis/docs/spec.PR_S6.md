@@ -1,6 +1,6 @@
 # PR_S6 — Offline Checker Replay Validation
 
-- Main review PR: `gpsaggese/gpsaggese.github.io#827`
+- Main review PR: `gpsaggese/gpsaggese.github.io#832`
 - Tracking issue: `gpsaggese/gpsaggese.github.io#641`
 - Paper-validation issue: `gpsaggese/gpsaggese.github.io#684`
 - Plan task: `plan.md` T2.6

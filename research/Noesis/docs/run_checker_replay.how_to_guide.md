@@ -4,6 +4,10 @@ This guide reproduces the offline checker-validation result used by PR_S6. The
 demo is deterministic and requires no API key, network call, provider, database,
 or market process.
 
+Complete the repository development setup first, including initialization of the
+`helpers_root` submodule. If `import helpers` fails, the repository checkout is
+incomplete and the experiment has not started.
+
 ## Run the Default Experiment
 
 From the repository root:
