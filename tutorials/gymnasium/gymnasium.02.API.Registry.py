@@ -87,7 +87,10 @@ except ImportError:
 #   - `gym.envs.registry`: the global registry dict
 
 # %% [markdown]
-# ## Primitive 1: `gym.envs.registry`: The Global Catalog
+# # Part 1: The registry and `EnvSpec`
+
+# %% [markdown]
+# ## Cell 1.1: `gym.envs.registry`: the global catalog
 #
 # - **Mental model**:
 #   - A plain Python `dict` that maps environment string IDs to `EnvSpec` objects
@@ -116,7 +119,7 @@ namespaced = [env_id for env_id in all_ids if "/" in env_id]
 display(pd.DataFrame({"namespaced_ids": namespaced}))
 
 # %% [markdown]
-# ## Primitive 2: `EnvSpec`: The Metadata Object
+# ## Cell 1.2: `EnvSpec`: the metadata object
 #
 # - **Mental model**:
 #   - Each entry in the registry is an `EnvSpec`, a container of metadata that
@@ -168,7 +171,7 @@ display(pd.DataFrame(data))
 spec.pprint()
 
 # %% [markdown]
-# ## Primitive 3: `gym.spec()`: Look Up by ID
+# ## Cell 1.3: `gym.spec()`: look up by ID
 #
 # - **Mental model**:
 #   - A convenience function that retrieves an `EnvSpec` from the registry by its
@@ -184,7 +187,10 @@ print("max_episode_steps:", spec.max_episode_steps)
 print("version:", spec.version)
 
 # %% [markdown]
-# ## Primitive 4: `gym.make()`: From Registry to Environment
+# # Part 2: Building and registering envs
+
+# %% [markdown]
+# ## Cell 2.1: `gym.make()`: from registry to environment
 #
 # - **Mental model**: `gym.make()` is the factory that:
 #   1. Looks up the ID in the registry (via `gym.spec()`)
@@ -236,7 +242,7 @@ print("env created via module prefix:", env)
 env.close()
 
 # %% [markdown]
-# ## Primitive 5: `gym.register()`: Add Your Own Environment
+# ## Cell 2.2: `gym.register()`: add your own environment
 #
 # - **Mental model**: registers a new environment in the global registry so it
 #   can be created with `gym.make()`
@@ -294,7 +300,10 @@ while not done:
 env.close()
 
 # %% [markdown]
-# ## Primitive 6: `gym.pprint_registry()`: Pretty-Print the Catalog
+# # Part 3: Browsing the registry
+
+# %% [markdown]
+# ## Cell 3.1: `gym.pprint_registry()`: pretty-print the catalog
 #
 # - **Mental model**: prints a formatted, columnar view of all registered
 #   environments, organized by namespace
@@ -329,7 +338,7 @@ subset_text = gym.pprint_registry(
 print("subset_text:\n", subset_text)
 
 # %% [markdown]
-# ## Primitive 7: Namespace and Versioning Convention
+# ## Cell 3.2: Namespace and versioning convention
 #
 # - **Mental model**: environment IDs follow the pattern
 #   `[namespace/]EnvName-v[version]`
@@ -365,7 +374,10 @@ data = {
 display(pd.DataFrame(data))
 
 # %% [markdown]
-# ## Composition 1: Register with Custom kwargs
+# # Part 4: Composition
+
+# %% [markdown]
+# ## Cell 4.1: Register with custom kwargs
 #
 # - The `kwargs` parameter in `gym.register()` sets default constructor
 #   arguments, merged with any kwargs passed to `gym.make()` (make kwargs take
@@ -430,7 +442,7 @@ print(f"Goal! obs={steps[-1].obs}, total_reward={total_reward}")
 env.close()
 
 # %% [markdown]
-# ## Composition 2: Multiple Versions of the Same Env
+# ## Cell 4.2: Multiple versions of the same env
 #
 # - Register two versions of the same environment with different settings,
 #   following the `-vN` convention
@@ -462,7 +474,7 @@ data = {
 display(pd.DataFrame(data))
 
 # %% [markdown]
-# ## Composition 3: Full Workflow: Register, List, Spec, Make, Use
+# ## Cell 4.3: Full workflow: register, list, spec, make, use
 #
 # - The complete lifecycle of an environment through the registry
 
@@ -526,7 +538,10 @@ print(f"{outcome} after {len(steps)} steps, total reward: {total_reward}")
 env.close()
 
 # %% [markdown]
-# ## API Patterns
+# # Part 5: API patterns
+
+# %% [markdown]
+# ## Cell 5.1: Factory and spec patterns
 #
 # - **Factory Pattern**: `gym.register()` / `gym.make()` follow classic factory:
 #   - Register associates a name with a construction recipe (entry_point + kwargs)
@@ -557,7 +572,10 @@ print("env.spec.id:", env.spec.id)
 env.close()
 
 # %% [markdown]
-# ## Interactive Exploration
+# # Part 6: Interactive exploration
+
+# %% [markdown]
+# ## Cell 6.1: Explore the registry
 #
 # - Try modifying the cells below to explore the registry
 
