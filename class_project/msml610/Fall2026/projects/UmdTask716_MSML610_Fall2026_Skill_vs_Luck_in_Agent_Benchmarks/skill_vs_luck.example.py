@@ -31,9 +31,11 @@
 # %autoreload 2
 
 import logging
+import os
 
 import numpy as np
 import pandas as pd
+import scipy.stats
 
 # %%
 import helpers.hnotebook as hnotebook
@@ -467,7 +469,165 @@ print("ratio.median()=", round(ratio.median(), 2))
 # close to sqrt(2), so a measured drop can be scaled back to the full benchmark.
 
 # %% [markdown]
-# # Part 8: Takeaways and next steps
+# # Part 8: Item response theory
+#
+# - The leaderboard scores every task the same, but tasks differ
+#   - Some are solved by every agent, some by none
+# - A Bayesian 2PL item response theory (IRT) model fits:
+#   - An ability $\theta_a$ for each agent
+#   - A difficulty $b_i$ and a discrimination $\alpha_i$ for each task
+#   - Agent $a$ solves task $i$ with probability
+#     $\sigma(\alpha_i (\theta_a - b_i))$
+# - We fit it in NumPyro with variational inference (SVI)
+
+# %% [markdown]
+# ## Cell 8.1: Fit the model
+
+# %%
+# Fit the 2PL model on the whole matrix.
+irt = utils.fit_irt_2pl(outcomes)
+
+display(irt["tasks"].describe().round(2))
+# Outcome: the difficulties span about 12 logits, and the discriminations sit
+# around 1.3.
+
+# %%
+# Check SVI against NUTS (MCMC) on a subset of the matrix, where NUTS is fast.
+subset = outcomes.loc[leaderboard.index[:40], outcomes.columns[:150]]
+irt_svi = utils.fit_irt_2pl(subset)
+irt_nuts = utils.fit_irt_2pl(subset, method="nuts", n_samples=500)
+ability_corr = np.corrcoef(
+    irt_svi["agents"]["ability"], irt_nuts["agents"]["ability"]
+)[0, 1]
+sd_ratio = (
+    irt_svi["agents"]["ability_sd"] / irt_nuts["agents"]["ability_sd"]
+).median()
+
+print("ability_corr=", round(ability_corr, 4))
+print("sd_ratio=", round(sd_ratio, 2))
+# Outcome: SVI and NUTS agree on the abilities (correlation 0.997) and on their
+# uncertainty (ratio of stds 0.98), so SVI is enough for the full matrix.
+
+# %% [markdown]
+# ## Cell 8.2: Ranking by ability against the leaderboard
+#
+# - The ability weighs a hard task more than an easy one
+
+# %%
+# Compare the ranking by ability with the leaderboard.
+agents = leaderboard[["label", "score", "rank"]].join(irt["agents"])
+agents["irt_rank"] = (
+    agents["ability"].rank(ascending=False, method="min").astype(int)
+)
+top_20 = agents.head(20)
+
+print(
+    "kendall_all=",
+    round(
+        scipy.stats.kendalltau(agents["ability"], agents["score"]).statistic, 3
+    ),
+)
+print(
+    "kendall_top_20=",
+    round(
+        scipy.stats.kendalltau(top_20["ability"], top_20["score"]).statistic, 3
+    ),
+)
+display(top_20[["label", "score", "rank", "ability", "irt_rank"]].round(3))
+# Outcome: the 2 rankings agree overall (Kendall 0.97) but less in the top 20
+# (Kendall 0.81), where ACoder drops from rank 9 to 19 since it solves easier
+# tasks.
+
+# %% [markdown]
+# ## Cell 8.3: Fitted difficulty against the human labels
+#
+# - Each task has a human estimate of the time an engineer needs to fix it
+
+# %%
+# Compare the fitted difficulties with the human labels.
+label_order = ["<15 min fix", "15 min - 1 hour", "1-4 hours", ">4 hours"]
+label_code = tasks["difficulty"].map(
+    {label: code for code, label in enumerate(label_order)}
+)
+label_corr = scipy.stats.spearmanr(
+    label_code.loc[irt["tasks"].index], irt["tasks"]["difficulty"]
+).statistic
+by_label = (
+    irt["tasks"].join(tasks["difficulty"].rename("label")).groupby("label")
+)
+
+display(
+    by_label[["difficulty", "discrimination"]].median().loc[label_order].round(2)
+)
+print("label_corr=", round(label_corr, 2))
+# Outcome: the median difficulty rises with the human label (-1.6, 0.0, 2.9,
+# 5.0 logits), but the labels explain only part of it (Spearman 0.45).
+
+# %%
+# Plot the difficulties by human label.
+utils.plot_difficulty_by_label(
+    irt["tasks"], tasks["difficulty"], label_order=label_order, figsize=(12, 5)
+)
+
+# %% [markdown]
+# ## Cell 8.4: The effective size of the benchmark
+#
+# - A task tells agents apart only if some solve it and some fail it
+# - The Fisher information of a task, averaged over a group of agents,
+#   measures how much it tells about them
+# - The effective size $(\sum_i I_i)^2 / \sum_i I_i^2$ is the number of equally
+#   informative tasks the benchmark is worth
+
+# %%
+# Count the tasks that tell the top 20 agents apart.
+top_20_outcomes = outcomes.loc[top_20.index]
+n_solved_top_20 = top_20_outcomes.sum(axis=0)
+
+print("(n_solved_top_20 == 20).sum()=", int((n_solved_top_20 == 20).sum()))
+print("(n_solved_top_20 == 0).sum()=", int((n_solved_top_20 == 0).sum()))
+print(
+    "utils.count_informative_tasks(top_20_outcomes)=",
+    utils.count_informative_tasks(top_20_outcomes),
+)
+# Outcome: the top 20 all solve 254 tasks and all fail 36, so only 210 of the 500
+# tasks can tell them apart.
+
+# %%
+# Compute the information of every task for 2 groups of agents.
+information = {
+    "all 173 agents": utils.compute_task_information(
+        agents["ability"], irt["tasks"]
+    ),
+    "top 20": utils.compute_task_information(top_20["ability"], irt["tasks"]),
+}
+effective_size = pd.Series(
+    {
+        name: utils.compute_effective_size(info)
+        for name, info in information.items()
+    }
+)
+
+display(effective_size.round(0))
+# Outcome: for the top 20 the benchmark is worth about 107 equally informative
+# tasks, and 39 tasks hold half of the information.
+
+# %%
+# Plot the share of the information held by the most informative tasks.
+utils.plot_task_information(information, figsize=(12, 5))
+
+# %% [markdown]
+# ## Cell 8.5: Save the fit
+#
+# - The abilities and difficulties are saved for the analysis of run luck,
+#   which needs task difficulties
+
+# %%
+# Save the fitted abilities and task parameters.
+irt["agents"].to_csv(os.path.join("data", "swebench_verified_irt_agents.csv"))
+irt["tasks"].to_csv(os.path.join("data", "swebench_verified_irt_tasks.csv"))
+
+# %% [markdown]
+# # Part 9: Takeaways and next steps
 
 # %% [markdown]
 # ## Takeaways
@@ -499,6 +659,14 @@ print("ratio.median()=", round(ratio.median(), 2))
 #     inflation for $K$ up to 50
 #   - $\sigma$ times the mean of the largest of $K$ normals is only 5% to 20%
 #     too high, since the variants share the same tasks
+# - Only a fraction of the benchmark tells the top agents apart
+#   - The top 20 all solve 254 tasks and all fail 36, leaving 210
+#   - Under a 2PL IRT fit, the 500 tasks are worth about 107 equally
+#     informative tasks for the top 20, and 39 tasks hold half the information
+#   - Ranking by IRT ability mostly matches the leaderboard (Kendall 0.97), but
+#     moves agents by up to 10 ranks in the top 20
+#   - The fitted difficulty rises with the human estimate of the time to fix
+#     (Spearman 0.45)
 # - 500 tasks are too few for the gaps on the leaderboard
 #   - Resolving a 1-point gap with 80% power needs about 14,700 tasks
 #   - With 500 tasks, the smallest resolvable gap is about 5.4 points
@@ -512,9 +680,8 @@ print("ratio.median()=", round(ratio.median(), 2))
 # - Milestone 2: measure run-to-run luck
 #   - Run small open models 5 times per task on HumanEval+ and MBPP+
 #   - Everything runs locally with Ollama
-# - Milestone 3:
-#   - A Bayesian 2PL item response theory model in NumPyro, to estimate task
-#     difficulty and the effective size of the benchmark
+# - Milestone 3: run the same analysis on HumanEval+ and MBPP+, and compare the
+#   rankings across benchmarks
 # - Milestone 4: compare the simulated held-out drop with the drop measured on
 #   real prompt variants
 #   - 82 of the 173 submissions allow 2 or more attempts per task (Cell 1.4)

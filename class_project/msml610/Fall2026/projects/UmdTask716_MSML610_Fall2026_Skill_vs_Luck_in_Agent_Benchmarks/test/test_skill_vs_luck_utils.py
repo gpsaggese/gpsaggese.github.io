@@ -9,6 +9,7 @@ import pprint
 
 import numpy as np
 import pandas as pd
+import pytest
 
 import helpers.hunit_test as hunitest
 
@@ -730,3 +731,123 @@ class Test_simulate_winners_curse(hunitest.TestCase):
         # Check outputs.
         self.assertEqual(curse["correction"], 0.0)
         self.assertAlmostEqual(curse["correction_exact"], 0.0)
+
+
+# #############################################################################
+# Test_fit_irt_2pl
+# #############################################################################
+
+
+class Test_fit_irt_2pl(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils.fit_irt_2pl()`.
+    """
+
+    @pytest.mark.slow
+    def test1(self) -> None:
+        """
+        Test that the fit recovers the order of 3 well separated agents.
+        """
+        # Prepare inputs: abilities 4 logits apart are easy to tell apart on
+        # 200 tasks.
+        outcomes = utils.simulate_outcomes([-2.0, 0.0, 2.0], 200, seed=4)
+        # Prepare outputs.
+        expected = "['agent_0', 'agent_1', 'agent_2']"
+        # Run test.
+        fit = utils.fit_irt_2pl(outcomes, n_steps=2000, n_samples=200)
+        # Check outputs.
+        actual = str(fit["agents"]["ability"].sort_values().index.tolist())
+        self.assert_equal(actual, expected)
+
+
+# #############################################################################
+# Test_compute_task_information
+# #############################################################################
+
+
+class Test_compute_task_information(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils.compute_task_information()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test a task at the ability of the agent and a task far from it.
+        """
+        # Prepare inputs: at ability 0, task `t1` (difficulty 0) is solved half
+        # of the time, so its information is 1^2 * 0.5 * 0.5 = 0.25, while
+        # task `t2` (difficulty 10) is almost never solved.
+        tasks = pd.DataFrame(
+            {"difficulty": [0.0, 10.0], "discrimination": [1.0, 1.0]},
+            index=["t1", "t2"],
+        )
+        # Prepare outputs.
+        expected = """
+        t1    0.25
+        t2    0.00
+        """
+        # Run test.
+        information = utils.compute_task_information([0.0], tasks)
+        # Check outputs.
+        actual = information.round(4).to_string()
+        self.assert_equal(actual, expected, dedent=True)
+
+
+# #############################################################################
+# Test_compute_effective_size
+# #############################################################################
+
+
+class Test_compute_effective_size(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils.compute_effective_size()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that 4 equally informative tasks are worth 4 tasks.
+        """
+        # Prepare inputs.
+        information = pd.Series([0.2, 0.2, 0.2, 0.2])
+        # Run test.
+        effective_size = utils.compute_effective_size(information)
+        # Check outputs.
+        self.assertAlmostEqual(effective_size, 4.0)
+
+    def test2(self) -> None:
+        """
+        Test that 1 task with all the information is worth 1 task.
+        """
+        # Prepare inputs.
+        information = pd.Series([0.0, 0.5, 0.0, 0.0])
+        # Run test.
+        effective_size = utils.compute_effective_size(information)
+        # Check outputs.
+        self.assertAlmostEqual(effective_size, 1.0)
+
+
+# #############################################################################
+# Test_count_informative_tasks
+# #############################################################################
+
+
+class Test_count_informative_tasks(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils.count_informative_tasks()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that tasks solved by all or by none are not counted.
+        """
+        # Prepare inputs: `t1` is solved by all, `t2` by none, and only `t3`
+        # tells the agents apart.
+        outcomes = pd.DataFrame(
+            [[1, 0, 1], [1, 0, 0]],
+            index=["sub_a", "sub_b"],
+            columns=["t1", "t2", "t3"],
+        )
+        # Run test.
+        n_informative = utils.count_informative_tasks(outcomes)
+        # Check outputs.
+        self.assertEqual(n_informative, 1)

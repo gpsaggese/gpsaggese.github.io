@@ -6,6 +6,7 @@ Used by the 2 notebooks and by `fetch_swebench_verified.py`:
 - Load the saved data
 - Bootstrap intervals for each score
 - Bootstrap intervals for each rank, and the chance of coming out first
+- Split-half rank correlation and a 2PL item response theory model
 - Paired tests between 2 agents
 - How many tasks are needed to resolve a gap
 - Simulated benchmarks to check the tools
@@ -23,8 +24,15 @@ import os
 import re
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
+import jax
+import jax.numpy as jnp
 import matplotlib.pyplot as plt
 import numpy as np
+import numpyro
+import numpyro.distributions as dist
+import numpyro.infer
+import numpyro.infer.autoguide
+import numpyro.optim
 import pandas as pd
 import requests
 import scipy.special
@@ -38,6 +46,9 @@ import helpers.hnotebook as hnotebo
 import helpers.hprint as hprint
 
 _LOG = logging.getLogger(__name__)
+
+# Run JAX on the CPU, without probing for accelerators that are not there.
+jax.config.update("jax_platforms", "cpu")
 
 # #############################################################################
 # Constants
@@ -1078,6 +1089,165 @@ def compute_held_out_drop(
 
 
 # #############################################################################
+# Item response theory
+# #############################################################################
+
+
+def _irt_2pl_model(outcomes: jnp.ndarray) -> None:
+    r"""
+    Define the Bayesian 2PL model for an agents x tasks matrix of 0/1.
+
+    Agent $a$ solves task $i$ with probability
+    $\sigma(\alpha_i (\theta_a - b_i))$, with ability
+    $\theta_a \sim N(0, 1)$, difficulty $b_i \sim N(0, 3^2)$, and
+    discrimination $\log \alpha_i \sim N(0, 0.5^2)$. The prior on the
+    abilities fixes the scale.
+
+    :param outcomes: agents x tasks matrix of 0/1
+    """
+    n_agents, n_tasks = outcomes.shape
+    ability = numpyro.sample("ability", dist.Normal(0, 1).expand([n_agents]))
+    difficulty = numpyro.sample(
+        "difficulty", dist.Normal(0, 3).expand([n_tasks])
+    )
+    log_discrimination = numpyro.sample(
+        "log_discrimination", dist.Normal(0, 0.5).expand([n_tasks])
+    )
+    logits = jnp.exp(log_discrimination)[None, :] * (
+        ability[:, None] - difficulty[None, :]
+    )
+    numpyro.sample("solved", dist.Bernoulli(logits=logits), obs=outcomes)
+
+
+def fit_irt_2pl(
+    outcomes: pd.DataFrame,
+    *,
+    method: str = "svi",
+    n_steps: int = 5000,
+    n_samples: int = 1000,
+    seed: int = 0,
+) -> Dict[str, pd.DataFrame]:
+    """
+    Fit the Bayesian 2PL model to an outcome matrix.
+
+    :param outcomes: agents x tasks matrix of 0/1
+    :param method: "svi" (variational, fast) or "nuts" (MCMC with 1 chain,
+        slow but exact)
+    :param n_steps: optimization steps, for "svi"
+    :param n_samples: posterior samples (and warmup steps for "nuts")
+    :param seed: random seed
+    :return: "agents" with `ability` and `ability_sd`, one row per agent, and
+        "tasks" with `difficulty`, `difficulty_sd`, `discrimination`, and
+        `discrimination_sd`, one row per task (posterior means and stds)
+    """
+    _LOG.debug(hprint.to_str("method n_steps n_samples seed"))
+    hdbg.dassert_in(method, ["svi", "nuts"])
+    data = jnp.asarray(outcomes.to_numpy(dtype=np.float32))
+    rng_fit, rng_sample = jax.random.split(jax.random.PRNGKey(seed))
+    # Draw posterior samples of every parameter.
+    if method == "svi":
+        guide = numpyro.infer.autoguide.AutoNormal(_irt_2pl_model)
+        svi = numpyro.infer.SVI(
+            _irt_2pl_model,
+            guide,
+            numpyro.optim.Adam(0.01),
+            numpyro.infer.Trace_ELBO(),
+        )
+        result = svi.run(rng_fit, n_steps, data, progress_bar=False)
+        samples = guide.sample_posterior(
+            rng_sample, result.params, sample_shape=(n_samples,)
+        )
+    else:
+        mcmc = numpyro.infer.MCMC(
+            numpyro.infer.NUTS(_irt_2pl_model),
+            num_warmup=n_samples,
+            num_samples=n_samples,
+            num_chains=1,
+            progress_bar=False,
+        )
+        mcmc.run(rng_fit, data)
+        samples = mcmc.get_samples()
+    # Summarize each parameter by its posterior mean and std.
+    ability = np.asarray(samples["ability"])
+    difficulty = np.asarray(samples["difficulty"])
+    discrimination = np.exp(np.asarray(samples["log_discrimination"]))
+    agents = pd.DataFrame(
+        {"ability": ability.mean(axis=0), "ability_sd": ability.std(axis=0)},
+        index=outcomes.index,
+    )
+    tasks = pd.DataFrame(
+        {
+            "difficulty": difficulty.mean(axis=0),
+            "difficulty_sd": difficulty.std(axis=0),
+            "discrimination": discrimination.mean(axis=0),
+            "discrimination_sd": discrimination.std(axis=0),
+        },
+        index=outcomes.columns,
+    )
+    fit = {"agents": agents, "tasks": tasks}
+    return fit
+
+
+def compute_task_information(
+    abilities: Sequence[float], tasks: pd.DataFrame
+) -> pd.Series:
+    r"""
+    Compute how much each task tells about agents of the given abilities.
+
+    The Fisher information of task $i$ at ability $\theta$ is
+    $\alpha_i^2 p (1 - p)$, with $p = \sigma(\alpha_i (\theta - b_i))$. It is
+    largest for a task that the agents solve half of the time, and near 0 for
+    a task they all solve or all fail.
+
+    :param abilities: abilities of the agents to tell apart
+    :param tasks: one row per task with `difficulty` and `discrimination`,
+        e.g., from `fit_irt_2pl()`
+    :return: information of each task, averaged over the abilities
+    """
+    abilities = np.asarray(abilities, dtype=float)
+    discrimination = tasks["discrimination"].to_numpy()
+    probabilities = scipy.special.expit(
+        discrimination[None, :]
+        * (abilities[:, None] - tasks["difficulty"].to_numpy()[None, :])
+    )
+    information = (
+        discrimination[None, :] ** 2 * probabilities * (1 - probabilities)
+    )
+    information = pd.Series(information.mean(axis=0), index=tasks.index)
+    return information
+
+
+def compute_effective_size(information: pd.Series) -> float:
+    r"""
+    Compute how many equally informative tasks a benchmark is worth.
+
+    This is $(\sum_i I_i)^2 / \sum_i I_i^2$: $N$ when all $N$ tasks carry the
+    same information, and 1 when a single task carries all of it.
+
+    :param information: information of each task, e.g., from
+        `compute_task_information()`
+    :return: effective number of tasks
+    """
+    hdbg.dassert_lt(0, information.sum(), "Some task must carry information")
+    effective_size = information.sum() ** 2 / (information**2).sum()
+    return float(effective_size)
+
+
+def count_informative_tasks(outcomes: pd.DataFrame) -> int:
+    """
+    Count the tasks that not all agents solve or all agents fail.
+
+    A task with the same outcome for every agent cannot tell them apart.
+
+    :param outcomes: agents x tasks matrix of 0/1
+    :return: number of tasks with at least 1 success and 1 failure
+    """
+    n_solved = outcomes.sum(axis=0)
+    n_informative = int(((n_solved > 0) & (n_solved < len(outcomes))).sum())
+    return n_informative
+
+
+# #############################################################################
 # Simulated benchmarks with known abilities
 # #############################################################################
 
@@ -1788,5 +1958,76 @@ def plot_winners_curse(
     axes[1].set_title("Drop of the best variant on the held-out half")
     axes[0].legend(fontsize="small")
     axes[1].legend()
+    fig.tight_layout()
+    plt.show()
+
+
+def plot_difficulty_by_label(
+    tasks: pd.DataFrame,
+    labels: pd.Series,
+    *,
+    label_order: List[str],
+    figsize: Optional[Tuple[float, float]] = None,
+) -> None:
+    """
+    Plot the fitted difficulty of the tasks against a human label.
+
+    :param tasks: output "tasks" of `fit_irt_2pl()`
+    :param labels: human label of each task, e.g., the estimated fix time
+    :param label_order: labels from easiest to hardest
+    :param figsize: figure size, default `plt.rcParams["figure.figsize"]`
+    """
+    if figsize is None:
+        figsize = plt.rcParams["figure.figsize"]
+    data = tasks[["difficulty"]].join(labels.rename("label"))
+    groups = [
+        data.loc[data["label"] == label, "difficulty"] for label in label_order
+    ]
+    fig, ax = plt.subplots(figsize=figsize)
+    ax.boxplot(groups)
+    # Show every task on top of the boxes.
+    for position, group in enumerate(groups, start=1):
+        jitter = np.random.default_rng(position).uniform(-0.15, 0.15, len(group))
+        ax.scatter(position + jitter, group, s=6, alpha=0.3, color="tab:blue")
+    counts = [
+        f"{label} ({len(group)})" for label, group in zip(label_order, groups)
+    ]
+    ax.set_xticks(range(1, len(label_order) + 1), counts)
+    ax.set_xlabel("Human estimate of the time to fix (tasks)")
+    ax.set_ylabel("Fitted difficulty (logits)")
+    ax.set_title("Fitted task difficulty against the human label")
+    fig.tight_layout()
+    plt.show()
+
+
+def plot_task_information(
+    information: Dict[str, pd.Series],
+    *,
+    figsize: Optional[Tuple[float, float]] = None,
+) -> None:
+    """
+    Plot the share of the information held by the most informative tasks.
+
+    :param information: outputs of `compute_task_information()`, by the name
+        of the group of agents
+    :param figsize: figure size, default `plt.rcParams["figure.figsize"]`
+    """
+    if figsize is None:
+        figsize = plt.rcParams["figure.figsize"]
+    fig, ax = plt.subplots(figsize=figsize)
+    # 1 curve per group of agents, tasks from most to least informative.
+    for name, info in information.items():
+        share = info.sort_values(ascending=False).cumsum() / info.sum()
+        effective_size = compute_effective_size(info)
+        ax.plot(
+            np.arange(1, len(share) + 1),
+            100 * share.to_numpy(),
+            label=f"{name} (effective size {effective_size:.0f} tasks)",
+        )
+    ax.axhline(50, color="tab:gray", linestyle=":")
+    ax.set_xlabel("Most informative tasks kept")
+    ax.set_ylabel("Share of the information (%)")
+    ax.set_title("How many tasks carry the information about the agents?")
+    ax.legend(loc="lower right")
     fig.tight_layout()
     plt.show()
