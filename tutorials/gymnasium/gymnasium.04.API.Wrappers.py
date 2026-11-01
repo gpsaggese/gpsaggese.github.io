@@ -14,41 +14,50 @@
 # ---
 
 # %% [markdown]
-# # Description
+# # Gymnasium Wrappers API
 #
-# - Teach the `gymnasium.Wrapper` API surface by progressively building up from the
-#   smallest possible working example
-# - Focus on primitives: what a wrapper is, how it intercepts environment calls,
-#   and how wrappers compose into layered transformations
-#
+# - This notebook explores the `gymnasium.Wrapper` API, building up from the smallest
+#   working example on `CartPole-v1`
+# - The pedagogical arc:
+#   - `Wrapper`: delegate every call to an inner env
+#   - `ObservationWrapper`, `ActionWrapper`, `RewardWrapper`: one hook each
+#   - Function-based wrappers
+#   - Stacked, custom, and builtin utility wrappers
 # - References:
 #   - API: https://gymnasium.farama.org/api/wrappers/
 #   - GitHub: https://github.com/Farama-Foundation/Gymnasium
-
-# %% [markdown]
-# ## Imports
 
 # %%
 # %load_ext autoreload
 # %autoreload 2
 
-# System libraries.
 import logging
 
-# Third-party libraries.
+import gymnasium as gym
 import numpy as np
 import pandas as pd
+from gymnasium import ActionWrapper, ObservationWrapper, RewardWrapper, Wrapper
+from gymnasium.wrappers import (
+    Autoreset,
+    RecordEpisodeStatistics,
+    TimeLimit,
+    TransformAction,
+    TransformObservation,
+    TransformReward,
+)
 
 # %%
+import gymnasium_utils as utils
 import helpers.hdbg as hdbg
+import helpers.hintrospection as hintros
+import helpers.hnotebook as hnotebook
 
+# Initialize notebook configuration and logging.
+hnotebook.config_notebook()
 _LOG = logging.getLogger(__name__)
+utils.init_loggers(_LOG)
 
-hdbg.init_logger(verbosity=logging.INFO)
-# hnotebook.config_notebook()
-
-import tutorials.gymnasium.gymnasium_utils as gymutils
-
+# Convert `display` into `print()` when running outside IPython.
 try:
     from IPython.display import display
 except ImportError:
@@ -67,16 +76,16 @@ except ImportError:
 #   delegates every method ( `reset` , `step` , `render` , `close` ) to it.
 #   Subclasses override specific methods to inject transformations
 #
-# - **Mental model**:
-#   ```
-#   Wrapper
-#     └── env (the inner Env, which may itself be a Wrapper)
-#           └── ... (further wrappers)
-#                 └── base Env (leaf)
-#   ```
-#   - Calling `wrapper.step(action)` flows through each wrapper layer from
-#     outermost to innermost, then the result flows back out
-#   - `wrapper.unwrapped` strips all layers and returns the bare `Env`
+# - **Mental model**: calling `wrapper.step(action)` flows through each wrapper layer
+#   from outermost to innermost, then the result flows back out
+#
+# | Object | Description | Comments |
+# |--------|-------------|----------|
+# | `Wrapper(env)` | Env that holds an inner env | Forwards every call to `self.env`, which may be a `Wrapper` |
+# | `ObservationWrapper.observation()` | Transform observations | Called from `reset()` and `step()` |
+# | `ActionWrapper.action()` | Transform actions | Called before the inner `step()` |
+# | `RewardWrapper.reward()` | Transform rewards | Called after the inner `step()` |
+# | `wrapper.unwrapped` | Strip all layers | Returns the bare `Env` |
 #
 # - **Key classes**:
 #   - `gymnasium.Wrapper`: base class, delegates everything to `self.env`
@@ -99,15 +108,11 @@ except ImportError:
 # - The constructor takes a single argument: the environment to wrap
 
 # %%
-import gymnasium as gym
-
 # Create a bare CartPole environment.
 base_env = gym.make("CartPole-v1", render_mode=None)
 print("base_env type:", type(base_env))
 
 # Wrap it with the base Wrapper class.
-from gymnasium import Wrapper
-
 wrapper = Wrapper(base_env)
 print("wrapper type:", type(wrapper))
 
@@ -126,17 +131,10 @@ print("obs (delegated):", obs)
 
 # Step is delegated. Seed the action space so that reruns take the same action.
 wrapper.action_space.seed(0)
-obs2, reward, terminated, truncated, _info = wrapper.step(
+obs2, reward, terminated, truncated, info = wrapper.step(
     wrapper.action_space.sample()
 )
-gymutils.print_step(
-    obs=obs2,
-    reward=reward,
-    terminated=terminated,
-    truncated=truncated,
-    info={},
-    compact=True,
-)
+utils.print_step(obs2, reward, terminated, truncated, info, compact=True)
 
 # %%
 # The wrapper exposes the same spaces as the base env.
@@ -172,15 +170,13 @@ wrapper.close()
 #   - Called on every observation: both from `reset()` and from `step()`
 # - The `step()` / `reset()` flow:
 #   ```
-#   inner_env.step(action) → (obs, reward, terminated, truncated, info)
-#   wrapper.observation(obs) → modified_obs
+#   inner_env.step(action) -> (obs, reward, terminated, truncated, info)
+#   wrapper.observation(obs) -> modified_obs
 #   return (modified_obs, reward, terminated, truncated, info)
 #   ```
 
+
 # %%
-from gymnasium import ObservationWrapper
-
-
 class FlipObservation(ObservationWrapper):
     """
     Negate every element of the observation vector.
@@ -203,12 +199,12 @@ hdbg.dassert(np.array_equal(obs, -obs_base), "Reset obs must be negated")
 
 # %%
 # The observation() method is called on every step.
-base.reset(seed=42)
-flip_env.reset(seed=42)
 flip_env.action_space.seed(0)
 action = flip_env.action_space.sample()
-orig_obs, *_ = base.step(action)
-flip_obs, *_ = flip_env.step(action)
+step_base, step_flip = utils.step_two_envs(
+    base, flip_env, action=action, seed=42
+)
+orig_obs, flip_obs = step_base.obs, step_flip.obs
 print("original step obs:", orig_obs)
 print("flipped step obs: ", flip_obs)
 hdbg.dassert(np.array_equal(flip_obs, -orig_obs), "Step obs must be negated")
@@ -224,18 +220,16 @@ hdbg.dassert(np.array_equal(flip_obs, -orig_obs), "Step obs must be negated")
 #   - Called on every action before `step()` on the inner env
 # - The `step()` flow:
 #   ```
-#   wrapper.action(action) → modified_action
-#   inner_env.step(modified_action) → (obs, reward, ...)
+#   wrapper.action(action) -> modified_action
+#   inner_env.step(modified_action) -> (obs, reward, ...)
 #   return (obs, reward, ...)
 #   ```
 
+
 # %%
-from gymnasium import ActionWrapper
-
-
 class SwapAction(ActionWrapper):
     """
-    Swap the two discrete actions: 0 ↔ 1.
+    Swap the two discrete actions: 0 and 1.
 
     A minimal action transformation on a 2-action env (CartPole).
     """
@@ -250,14 +244,11 @@ class SwapAction(ActionWrapper):
 base2 = gym.make("CartPole-v1")
 action_swap_env = SwapAction(gym.make("CartPole-v1"))
 
-base2.reset(seed=0)
-action_swap_env.reset(seed=0)
-
-# Step with action=0 → the wrapper swaps to action=1 before passing to inner env.
-obs_a, *_ = base2.step(0)
-obs_b, *_ = action_swap_env.step(0)
+# Step with action=0 -> the wrapper swaps to action=1 before passing to inner env.
+step_a, step_b = utils.step_two_envs(base2, action_swap_env, action=0, seed=0)
+obs_a, obs_b = step_a.obs, step_b.obs
 print("action=0 on base env -> obs:", obs_a)
-print("action=0 on swap wrapper (→ action=1) -> obs:", obs_b)
+print("action=0 on swap wrapper (-> action=1) -> obs:", obs_b)
 print(
     "Different because a different action was taken:",
     not np.array_equal(obs_a, obs_b),
@@ -273,21 +264,19 @@ hdbg.dassert(not np.array_equal(obs_a, obs_b), "The action must be swapped")
 # - The `reward()` method is the only method you need to override
 # - The `step()` flow:
 #   ```
-#   inner_env.step(action) → (obs, reward, terminated, truncated, info)
-#   wrapper.reward(reward) → modified_reward
+#   inner_env.step(action) -> (obs, reward, terminated, truncated, info)
+#   wrapper.reward(reward) -> modified_reward
 #   return (obs, modified_reward, terminated, truncated, info)
 #   ```
 
+
 # %%
-from gymnasium import RewardWrapper
-
-
-class DoubleReward(RewardWrapper):
+class ScaleReward(RewardWrapper):
     """
     Multiply every reward by a factor.
     """
 
-    def __init__(self, env, factor=2.0):
+    def __init__(self, env, factor):
         super().__init__(env)
         self._factor = factor
 
@@ -298,16 +287,11 @@ class DoubleReward(RewardWrapper):
 # %%
 # Build the wrapped env and compare rewards.
 base3 = gym.make("CartPole-v1")
-reward_env = DoubleReward(gym.make("CartPole-v1"), factor=3.0)
-
-base3.reset(seed=0)
-reward_env.reset(seed=0)
-
-action = 1
+reward_env = ScaleReward(gym.make("CartPole-v1"), factor=3.0)
 
 # Compare step rewards.
-_, rew_a, *_ = base3.step(action)
-_, rew_b, *_ = reward_env.step(action)
+step_a, step_b = utils.step_two_envs(base3, reward_env, action=1, seed=0)
+rew_a, rew_b = step_a.reward, step_b.reward
 print(f"base reward: {rew_a}   scaled reward: {rew_b}")
 print(f"ratio: {rew_b / rew_a}")
 hdbg.dassert_eq(rew_b, 3.0 * rew_a, "The reward must be scaled by the factor")
@@ -320,13 +304,6 @@ hdbg.dassert_eq(rew_b, 3.0 * rew_a, "The reward must be scaled by the factor")
 #   function is applied to every observation/action/reward
 #
 # - These are the "quick and clean" way for simple transformations
-
-# %%
-from gymnasium.wrappers import (
-    TransformObservation,
-    TransformAction,
-    TransformReward,
-)
 
 # %%
 # TransformObservation: add Gaussian noise to every observation.
@@ -367,11 +344,11 @@ clipped_action_env = TransformAction(
     action_space=base5.action_space,
 )
 
-base5.reset(seed=0)
-clipped_action_env.reset(seed=0)
 # Send 1.0, outside the clip range [-0.5, 0.5], and compare the trajectory.
-obs_base, *_ = base5.step(np.array([1.0]))
-obs_clipped, *_ = clipped_action_env.step(np.array([1.0]))
+step_base, step_clipped = utils.step_two_envs(
+    base5, clipped_action_env, action=np.array([1.0]), seed=0
+)
+obs_base, obs_clipped = step_base.obs, step_clipped.obs
 data2 = {
     "env_source": ["base", "clipped_action"],
     "next_obs": [str(obs_base), str(obs_clipped)],
@@ -395,10 +372,10 @@ scaled_reward_env = TransformReward(
     gym.make("CartPole-v1"), func=lambda r: 2.0 * r + 1.0
 )
 
-base6.reset(seed=0)
-scaled_reward_env.reset(seed=0)
-_, rew_base, *_ = base6.step(1)
-_, rew_scaled, *_ = scaled_reward_env.step(1)
+step_base, step_scaled = utils.step_two_envs(
+    base6, scaled_reward_env, action=1, seed=0
+)
+rew_base, rew_scaled = step_base.reward, step_scaled.reward
 print(f"base reward: {rew_base}   scaled reward: {rew_scaled}")
 hdbg.dassert_eq(
     rew_scaled, 2.0 * rew_base + 1.0, "The reward must be transformed"
@@ -408,15 +385,13 @@ base6.close()
 scaled_reward_env.close()
 
 # %% [markdown]
-# ## Composition Example 1: `TimeLimit` — Truncating Episodes
+# ## Composition Example 1: `TimeLimit`: Truncating Episodes
 #
 # - **Mental model**: A `TimeLimit` wrapper truncates an episode after a fixed
 #   number of steps, setting `truncated=True`  instead of `terminated=True`
 
+
 # %%
-from gymnasium.wrappers import TimeLimit
-
-
 # Make a custom env with no natural termination.
 class InfiniteCartPole(gym.Env):
     """
@@ -447,13 +422,10 @@ infinite_env = InfiniteCartPole()
 # With TimeLimit, the episode is truncated after 5 steps.
 limited_env = TimeLimit(infinite_env, max_episode_steps=5)
 
-limited_env.reset(seed=0)
-for i in range(6):
-    obs, reward, terminated, truncated, info = limited_env.step(1)
-    print(f"Step {i}: terminated={terminated} truncated={truncated}")
-    if terminated or truncated:
-        print(f"  Episode ended at step {i}")
-        break
+steps, _ = utils.run_episode(limited_env, seed=0, policy=lambda _obs: 1)
+for i, step in enumerate(steps):
+    print(f"Step {i}: terminated={step.terminated} truncated={step.truncated}")
+print(f"  Episode ended at step {len(steps) - 1}")
 
 limited_env.close()
 
@@ -466,12 +438,10 @@ limited_env.close()
 
 # %%
 # Stack three wrappers: one for each channel (observation, action, reward).
-from gymnasium.wrappers import TimeLimit, RecordEpisodeStatistics, Autoreset
-
 base7 = gym.make("CartPole-v1")
 
 # Layer 1 (innermost): double the reward.
-w1 = DoubleReward(base7, factor=2.0)
+w1 = ScaleReward(base7, factor=2.0)
 # Layer 2: flip the observation.
 w2 = FlipObservation(w1)
 # Layer 3 (outermost): swap the action.
@@ -486,10 +456,10 @@ print("w3.env.env type:", type(w3.env.env).__name__)
 print("w3.unwrapped type:", type(w3.unwrapped).__name__)
 
 # Flow: action=0
-#   → SwapAction.action(0) → 1
-#   → inner env step(1)
-#   → FlipObservation.observation(obs) → -obs
-#   → DoubleReward.reward(reward) → 2 * reward
+#   -> SwapAction.action(0) -> 1
+#   -> inner env step(1)
+#   -> FlipObservation.observation(obs) -> -obs
+#   -> ScaleReward.reward(reward) -> 2 * reward
 obs, reward, *_ = w3.step(0)
 print(f"  obs (negated): {obs}")
 print(f"  reward (doubled): {reward}")
@@ -501,6 +471,7 @@ w3.close()
 #
 # - **Problem**: a discrete observation space (e.g., frozen lake grid) is hard to
 #   visualize.  Wrap it to emit one-hot encoded observations
+
 
 # %%
 class OneHotObservation(ObservationWrapper):
@@ -544,6 +515,7 @@ onehot_env.close()
 # - **Problem**: discrete actions in {0, 1, 2, 3} need to be mapped to a smaller
 #   set of allowed actions
 
+
 # %%
 class DiscreteActionMap(ActionWrapper):
     """
@@ -582,6 +554,7 @@ mapped_env.close()
 # - **Problem**: you want to shape the reward with a penalty term that depends on
 #   the observation
 
+
 # %%
 class RewardFromObservation(Wrapper):
     """
@@ -604,10 +577,8 @@ class RewardFromObservation(Wrapper):
 base8 = gym.make("CartPole-v1")
 penalty_env = RewardFromObservation(gym.make("CartPole-v1"), penalty_weight=0.5)
 
-base8.reset(seed=0)
-penalty_env.reset(seed=0)
-_, rew_a, *_ = base8.step(1)
-_, rew_b, *_ = penalty_env.step(1)
+step_a, step_b = utils.step_two_envs(base8, penalty_env, action=1, seed=0)
+rew_a, rew_b = step_a.reward, step_b.reward
 print(f"base reward: {rew_a}   penalty reward: {rew_b}  diff={rew_a - rew_b}")
 hdbg.dassert_lt(rew_b, rew_a, "The penalty must lower the reward")
 
@@ -624,24 +595,17 @@ penalty_env.close()
 # %%
 base9 = gym.make("CartPole-v1")
 stats_env = RecordEpisodeStatistics(base9, buffer_length=10)
-stats_env.action_space.seed(0)
 
-# Run 3 episodes.
-for _ in range(3):
-    obs, info = stats_env.reset(seed=42)
-    terminated, truncated = False, False
-    while not (terminated or truncated):
-        obs, reward, terminated, truncated, info = stats_env.step(
-            stats_env.action_space.sample()
-        )
+# Run 3 episodes, one seed each: the same seed would repeat the episode.
+for seed in range(3):
+    steps, _ = utils.run_episode(stats_env, seed=seed)
     # At episode end, info contains the statistics.
-    ep_info = info.get("episode")
-    if ep_info:
-        print(
-            f"Episode return: {ep_info['r']:.1f}  "
-            f"length: {ep_info['l']}  "
-            f"time: {ep_info['t']:.3f}s"
-        )
+    ep_info = steps[-1].info["episode"]
+    print(
+        f"Episode return: {ep_info['r']:.1f}  "
+        f"length: {ep_info['l']}  "
+        f"time: {ep_info['t']:.3f}s"
+    )
 
 # Access the rolling buffers.
 print(f"Return buffer: {list(stats_env.return_queue)}")
@@ -650,7 +614,7 @@ print(f"Length buffer: {list(stats_env.length_queue)}")
 stats_env.close()
 
 # %% [markdown]
-# ## Composition Example 7: `Autoreset` — Never Manual Reset
+# ## Composition Example 7: `Autoreset`: Never Manual Reset
 #
 # - **Mental model**: `Autoreset` automatically resets the environment on the step
 #   AFTER an episode ends.  This simulates the behavior of vectorized
@@ -668,11 +632,9 @@ for i in range(12):
     obs, reward, terminated, truncated, info = auto_env.step(
         auto_env.action_space.sample()
     )
+    # On the step that ends, terminated/truncated is True.
+    # On the next step, the env has already been reset (autoreset).
     print(f"  Step {i:2d}: terminated={terminated} truncated={truncated}")
-    if terminated or truncated:
-        # On the step that ends, terminated/truncated is True.
-        # On the next step, the env has already been reset (autoreset).
-        pass
 
 auto_env.close()
 
@@ -709,9 +671,6 @@ auto_env.close()
 
 # %%
 # Inspect the Wrapper class interface.
-from gymnasium import Wrapper, ObservationWrapper, ActionWrapper, RewardWrapper
-import helpers.hintrospection as hintros
-
 for cls in [Wrapper, ObservationWrapper, ActionWrapper, RewardWrapper]:
     print(f"\n=== {cls.__name__} ===")
     hintros.print_obj_info(cls)
@@ -721,7 +680,7 @@ for cls in [Wrapper, ObservationWrapper, ActionWrapper, RewardWrapper]:
 base_for_order = gym.make("CartPole-v1")
 
 # Order A: flip obs first, then scale reward.
-env_a = DoubleReward(FlipObservation(base_for_order), factor=10.0)
+env_a = ScaleReward(FlipObservation(base_for_order), factor=10.0)
 env_a.reset(seed=0)
 obs_a, rew_a, *_ = env_a.step(1)
 print(
@@ -730,7 +689,7 @@ print(
 
 # Order B: scale reward first, then flip obs.
 base_for_order2 = gym.make("CartPole-v1")
-env_b = FlipObservation(DoubleReward(base_for_order2, factor=10.0))
+env_b = FlipObservation(ScaleReward(base_for_order2, factor=10.0))
 env_b.reset(seed=0)
 obs_b, rew_b, *_ = env_b.step(1)
 print(
@@ -743,7 +702,7 @@ base_for_order.close()
 
 # %%
 # Inspect the wrapper chain with `get_wrapper_attr`.
-env_chain = DoubleReward(
+env_chain = ScaleReward(
     FlipObservation(SwapAction(gym.make("CartPole-v1"))), factor=5.0
 )
 # `get_wrapper_attr` searches through the wrapper stack for an attribute.
@@ -753,7 +712,7 @@ print("get_wrapper_attr('_factor'):", env_chain.get_wrapper_attr("_factor"))
 # Question: does `wrapper.render()` work when the base env has render_mode=None?
 # (It warns and returns None: with no render mode there is nothing to draw.)
 no_render_env = gym.make("CartPole-v1", render_mode=None)
-wrapper_no_render = DoubleReward(no_render_env)
+wrapper_no_render = ScaleReward(no_render_env, factor=2.0)
 # Reset first: `OrderEnforcing` raises `ResetNeeded` if `render()` comes first.
 wrapper_no_render.reset(seed=0)
 frame = wrapper_no_render.render()
@@ -763,8 +722,8 @@ hdbg.dassert_is(frame, None, "Without a render mode there is no frame")
 # %%
 # Question: can you wrap a wrapped environment with the same wrapper type?
 # (Yes, nesting is the fundamental composition mechanism.)
-env_nested = DoubleReward(
-    DoubleReward(gym.make("CartPole-v1"), factor=2.0), factor=3.0
+env_nested = ScaleReward(
+    ScaleReward(gym.make("CartPole-v1"), factor=2.0), factor=3.0
 )
 env_nested.reset(seed=0)
 _, rew_nested, *_ = env_nested.step(1)
@@ -788,9 +747,9 @@ env_w_spec.close()
 #   environment code
 # - Three specialized subclasses provide clean hooks: `ObservationWrapper`
 #   (override `observation()`), `ActionWrapper` (override `action()`), and
-#   `RewardWrapper` (override `reward()`)
-# - Lambda wrappers (`TransformObservation`, `TransformAction`,
-#   `TransformReward`) let you apply a function without writing a class
+#   `RewardWrapper` (override `reward()`), and lambda wrappers
+#   (`TransformObservation`, `TransformAction`, `TransformReward`) apply a function
+#   without writing a class
 # - Wrappers compose by nesting: the outermost wrapper sees the action first and
 #   the observation/reward last.  The order of wrapping determines the pipeline
 # - Builtin utility wrappers (`TimeLimit`, `RecordEpisodeStatistics`,
