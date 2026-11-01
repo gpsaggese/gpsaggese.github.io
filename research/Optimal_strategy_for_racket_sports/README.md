@@ -44,6 +44,7 @@ The notebooks are in `notebooks/`, numbered in their logical order.
 | `racket_sports_02_strategy_API.ipynb` | Guided walkthrough of the package API, one layer at a time |
 | `racket_sports_03_strategy_exploration.ipynb` | Click-to-run exploration of shot placement: ball speed, shot dispersion, player positions |
 | `racket_sports_04_trajectory_API.ipynb` | Guided walkthrough of `racket_trajectory.py`, the closed-form ball flight (set aside) |
+| `racket_sports_05_variable_sensitivity.ipynb` | Which variables matter: one setting at a time, the corners and the best serve, the speed ratio check, and the reaction time comparison; reduced runs by default, `RUN_FULL_SIMS` for the full runs of the paper |
 
 ## Development
 
