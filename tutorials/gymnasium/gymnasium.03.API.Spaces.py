@@ -14,46 +14,48 @@
 # ---
 
 # %% [markdown]
-# # Description
+# # Gymnasium Spaces API
 #
-# - Teach the `gymnasium.spaces` API by exploring every `Space` class
-#   with small working example
-# - Focus on primitives: what they represent, how they are constructed, what
-#   attributes they hold, and how they compose
-#
+# - This notebook explores the `gymnasium.spaces` API through a small working
+#   example of every `Space` class
+# - The pedagogical arc:
+#   - The `Space` base class
+#   - Fundamental spaces: `Discrete`, `Box`, `MultiBinary`, `MultiDiscrete`, `Text`
+#   - Composite spaces: `Dict`, `Tuple`, `Sequence`, `Graph`, `OneOf`
+#   - Common patterns: seeding, flattening, and choosing a space
 # - References:
 #   - API: https://gymnasium.farama.org/api/spaces
 #   - GitHub: https://github.com/Farama-Foundation/Gymnasium
-
-# %% [markdown]
-# ## Imports
 
 # %%
 # %load_ext autoreload
 # %autoreload 2
 
-# System libraries.
 import logging
 
-# Third-party libraries.
 import numpy as np
 import pandas as pd
+from gymnasium import spaces
+from gymnasium.spaces import utils as space_utils
 
 # %%
-import helpers.hdbg as hdbg
+import gymnasium_utils as utils
 import helpers.hintrospection as hintros
+import helpers.hnotebook as hnotebook
 
+# Initialize notebook configuration and logging.
+hnotebook.config_notebook()
 _LOG = logging.getLogger(__name__)
+utils.init_loggers(_LOG)
 
-hdbg.init_logger(verbosity=logging.INFO)
-
+# Convert `display` into `print()` when running outside IPython.
 try:
     from IPython.display import display
 except ImportError:
     display = print  # type: ignore
 
 # %% [markdown]
-# ## Library overview
+# ## Library Overview
 #
 # - **What problem it solves**: every RL environment must declare the valid type
 #   of its observations and actions. `gymnasium.spaces` provides a typed contract
@@ -64,11 +66,12 @@ except ImportError:
 #   attributes (`shape`, `dtype`)
 #
 # - **Mental model**:
-#   ```
-#   space.sample()        -> one valid random value
-#   space.contains(x)     -> True if x is valid in this space
-#   x in space            -> equivalent to space.contains(x)
-#   ```
+#
+# | Object | Description | Comments |
+# |--------|-------------|----------|
+# | `space.sample()` | Draw one valid random value | Seed first with `space.seed(n)` |
+# | `space.contains(x)` | Check that `x` is valid | Same as `x in space` |
+# | `space.shape`, `space.dtype` | Describe the data | Attributes of every `Space` |
 #
 # - **Key classes**:
 #   - `Discrete(n)`: integers 0...n-1 (or start...start+n-1)
@@ -94,8 +97,6 @@ except ImportError:
 # - Every concrete space subclasses it
 
 # %%
-from gymnasium import spaces
-
 # Inspect the public interface of the base Space class.
 hintros.print_obj_info(spaces.Space)
 
@@ -135,7 +136,7 @@ display(pd.DataFrame(rows))
 # %%
 # Construct the simplest Discrete space.
 d = spaces.Discrete(4)
-# Seed the space so that reruns print the same samples, see Cell 4.1.
+# Seed the space so that reruns print the same samples.
 d.seed(1)
 print("d=", d)
 print("type(d)=", type(d))
@@ -556,12 +557,10 @@ print("type(seeds)=", type(seeds))
 # - `spaces.utils.flatten(space, x)` converts any sample to a 1-D float array
 # - `spaces.utils.flatten_space(space)` returns the equivalent `Box` space
 # - `spaces.utils.flatdim(space)` returns the dimension of the flattened array
-# - Useful for neural network inputs: the model sees a flat float vector regardless of
-#   the original space structure
+# - Useful for neural network inputs: the model sees a flat float vector regardless
+#   of the original space structure
 
 # %%
-from gymnasium.spaces import utils as space_utils
-
 # Flatten Discrete(4): one-hot encode into a 4-D float vector.
 d_flat = spaces.Discrete(4)
 d_flat.seed(0)
@@ -642,14 +641,13 @@ display(pd.DataFrame(rows))
 # %% [markdown]
 # ## Cell 5.1: Explore any space's interface
 #
-# - Use `dir()` to see all available attributes and methods
+# - Use `hintros.print_obj_info()` to list the public methods of a space
 # - Every space exposes the same base interface regardless of type
 
 # %%
-# All public attributes shared across any Space.
+# All public methods shared across any Space.
 d_explore = spaces.Discrete(3)
-public = [a for a in dir(d_explore) if not a.startswith("_")]
-print("public attributes of Discrete(3)=", public)
+hintros.print_obj_info(spaces.Discrete)
 
 # %%
 # Explore: what extra attributes does Box have that Discrete doesn't?
@@ -684,7 +682,7 @@ print("nested_sample['inner']['y']=", nested_sample["inner"]["y"])
 print("nested_sample['flag']=", nested_sample["flag"])
 
 # %% [markdown]
-# # Summary: the mental model
+# ## Summary: The Mental Model
 #
 # - A `Space` is a **typed contract**: it declares what values are valid and can
 #   sample random valid values via `sample()` and check membership via `contains()`
@@ -693,7 +691,8 @@ print("nested_sample['flag']=", nested_sample["flag"])
 #   - `Discrete(n)`: integers (categorical actions)
 #   - `Box(low, high, shape)`: real-valued tensors (continuous observations)
 #   - `MultiBinary(n)`: binary arrays (multi-label flags)
-#   - `MultiDiscrete(nvec)`: vector of independent categoricals (multi-axis controllers)
+#   - `MultiDiscrete(nvec)`: vector of independent categoricals (multi-axis
+#     controllers)
 #   - `Text(max_length)`: variable-length strings (NLP interfaces)
 #
 # - **Composite spaces** build richer structures from primitives:
