@@ -521,11 +521,13 @@
 
 ### `PR_S4`: [ ] Fulfillment Monitoring Wired to the Market (stubbed Both Sides)
 
-- Status (2026-10-24): partially implemented. PR #597 added contract binding,
-  request logging, and provider attribution. PR #604 added seller-attributable
-  evidence, separate latency/quality assessments, verdicts, and persistence. The
-  prober is implemented. `spec.PR_S4.md` defines the remaining window runtime,
-  market-facing `VerdictSink`, and three-PR implementation split.
+- Status (2026-10-25): implementation is under stacked review. PR #597 added
+  contract binding, request logging, and provider attribution; PR #604 added
+  seller-attributable evidence, separate latency/quality assessments, verdicts,
+  and persistence. PR #744 adds pure window-readiness and `VerdictSink` contracts;
+  PR #747 adds atomic evaluation and finalization orchestration; PR #749 integrates
+  that pass into the existing probe worker. Real reputation mutation remains in
+  `PR_M3`.
 - Background: `papers/Noesis/05_noesis_server.tex` sec:fulfillment_monitoring
   Equation~eq:success_indicator defines per-request success as the conjunction
   `capability_ok(x) and latency_ok(x)`, and `measured_reliability`
@@ -1214,8 +1216,8 @@ Every task: branch → PR → tests green in CI → one reviewer (another teamma
 | T2.1 | ✅ Versioned 300-question production candidate bank, validation, secret balanced selection, normalizers, and exact-match grader | Grader unit tests incl. number formats ("1,000" = "1000"); bank has ≥ 300 records | PR_S11 (simplified) |
 | T2.2 | 🟨 Live calibration runner, persistence, survivor gate, activation, and findings generator are implemented. The reviewed paid provider run remains | `docs/findings/calibration.md`: survivors ≥ 150, weak-model accuracy on survivors, per-provider p95, cost | PR_S11 |
 | T2.3 | ✅ For each ACTIVE contract, secret deterministic canaries are spread over its window, atomically claimed, sent as ordinary traffic, graded, and persisted server-side | Integration test with fake provider | new |
-| T2.4 | 🟨 PR #604: immutable evidence, seller-attribution rules, separate `r_lat`/`q` upper bounds, verdicts, and atomic persistence. Window-closing orchestration (n_tasks served or 60 s) remains | Unit tests reproduce `scripts/detection_math.py` cases. Property test: never FAILED when all requests pass | PR_S4, PR_S6 (corrected) |
-| T2.5 | `VerdictSink` interface → reputation (in-process) | Contract test shared with T3.4 | PR_S4 |
+| T2.4 | 🟨 PR #604 merged the evidence/verdict foundation; stacked PRs #744, #747, and #749 add target-or-deadline closing, atomic orchestration, and worker integration | Unit and PostgreSQL-backed tests cover readiness, idempotency, and failure isolation | PR_S4, PR_S6 (corrected) |
+| T2.5 | 🟨 `VerdictSink` interface and recording mock implemented; real reputation adapter remains in T3.4 | Complete payload and actionability tests; worker injects the sink | PR_S4 |
 | T2.6 | **Offline replay harness**: generate synthetic request streams (healthy / slowed / weak-model at measured accuracies), run metering, report flag rates | Rates within ±5 pts of analytic numbers over 1,000 simulated contracts | new |
 
 ### M3 — Loop closed (G, starts 10/12 in parallel)

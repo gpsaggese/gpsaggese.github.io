@@ -28,21 +28,21 @@ class Test_docker(hdoctest.DockerTestCase):
     @pytest.mark.slow
     def test1(self) -> None:
         """
-        Test that `racket_strategy.API.ipynb` runs without error inside
-        Docker.
+        Test that `racket_sports_02_strategy_API.ipynb` runs without error
+        inside Docker.
         """
         # Prepare inputs.
-        notebook_name = "racket_strategy.API.ipynb"
+        notebook_name = "racket_sports_02_strategy_API.ipynb"
         # Run test.
         self.helper(notebook_name)
 
     @pytest.mark.slow
     def test2(self) -> None:
         """
-        Test that `racket_strategy.exploration.ipynb` runs without error
-        inside Docker.
+        Test that `racket_sports_03_strategy_exploration.ipynb` runs without
+        error inside Docker.
         """
         # Prepare inputs.
-        notebook_name = "racket_strategy.exploration.ipynb"
+        notebook_name = "racket_sports_03_strategy_exploration.ipynb"
         # Run test.
         self.helper(notebook_name)

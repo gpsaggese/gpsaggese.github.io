@@ -316,9 +316,10 @@ flowchart LR
 - `prober_cli calibrate` validates the candidate bank before any provider call,
   executes reviewed live calibration only with `--execute`, and activates a bank
   only after the minimum-survivor gate passes.
-- `prober_worker.run_probe_worker()` repeatedly performs a non-blocking scheduler
-  pass. PostgreSQL atomically claims `(contract_id, probe_slot)`, making concurrent
-  workers safe.
+- `prober_worker.run_probe_worker()` repeatedly performs one non-blocking combined
+  pass: due probes run first, then the checker evaluates ready windows using the
+  same clock and retry boundary. PostgreSQL atomically claims probe slots and
+  finalizes contracts, making concurrent workers safe.
 - The model receives an ordinary user message. Canary identity, expected answer,
   grade, and grader version remain inside Noesis and are added only to persisted
   evidence.
@@ -336,4 +337,8 @@ flowchart LR
     route --> provider["Pinned provider call"]
     provider --> measure["CapabilityMeasurer"]
     measure --> evidence["Server-only graded request evidence"]
+    evidence --> checker["Window readiness + verdict"]
+    buyer["Buyer request evidence"] --> checker
+    checker --> finalization["Atomic contract finalization"]
+    finalization --> sink["Recording VerdictSink<br/>VALID PASS / FAIL only"]
 ```

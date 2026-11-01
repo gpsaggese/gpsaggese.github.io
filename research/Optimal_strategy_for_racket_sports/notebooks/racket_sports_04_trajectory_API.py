@@ -49,7 +49,7 @@ import helpers.hnotebook as hnotebook
 from research.Optimal_strategy_for_racket_sports import racket_params
 from research.Optimal_strategy_for_racket_sports import racket_trajectory
 from research.Optimal_strategy_for_racket_sports.notebooks import (
-    racket_trajectory_utils as utils,
+    racket_sports_04_trajectory_API_utils as utils,
 )
 
 hdbg.init_logger(verbosity=logging.INFO)
