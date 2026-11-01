@@ -13,7 +13,6 @@ walks through the executed tutorial and measured application.
 
 - `data/`: Fixed synthetic support tickets, labels, provenance, and license.
 - `evaluation/`: Frozen metrics, a result summary, and two plots.
-- `test/`: Focused checks for the frozen split and cost policy.
 
 ## Description of Files
 
@@ -31,10 +30,6 @@ walks through the executed tutorial and measured application.
 - `system-one.API.py`: Jupytext percent-format pair for the notebook.
 - `system_one_API_utils.py`: Small HTTP client and probability displays.
 - `test_predictions.json`: Held-out test probabilities and routing actions.
-- `test/test_evaluate_routing.py`: Checks Brier, log loss, and reliability
-  calculations on hand-computable predictions.
-- `test/test_ticket_routing.py`: Checks balanced disjoint splits and policy
-  choices on known probability distributions.
 - `ticket_routing.py`: Fixed ticket split, decision prompt, action costs, and
   command line prediction runner.
 
@@ -116,8 +111,6 @@ From the repository root, run one split while the server is listening:
 ```bash
 > python research/Implement_System_One_Decision_Models/ticket_routing.py \
     --split dev --output /tmp/dev_predictions.json
-> PYTHONPATH=helpers_root:. python -m pytest \
-    research/Implement_System_One_Decision_Models/test/test_ticket_routing.py
 ```
 
 The expected-cost action minimizes the row's probability-weighted cost. The

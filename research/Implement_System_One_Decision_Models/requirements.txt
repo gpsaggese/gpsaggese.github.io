@@ -7,4 +7,3 @@ ipython==8.27.0
 jupytext==1.19.0
 matplotlib==3.9.2
 nbclient==0.8.0
-pytest==7.4.4

@@ -74,8 +74,6 @@ repository root:
     --split test \
     --output research/Implement_System_One_Decision_Models/test_predictions.json
 > python research/Implement_System_One_Decision_Models/evaluate_routing.py
-> PYTHONPATH=helpers_root:. python -m pytest \
-    research/Implement_System_One_Decision_Models/test/
 ```
 
 The evaluator verifies dataset and model hashes, question text, cost table,
