@@ -4,24 +4,31 @@
 
 This project develops a runnable tutorial, a small decision application, and
 then a blog about typed probabilistic decisions. Phase 1 checks the Liquid
-d1-3B decision API; Phase 2 teaches its typed questions in a paired notebook.
+d1-3B decision API; Phase 2 teaches its typed questions in a paired notebook;
+Phase 3 applies a fixed routing policy to synthetic tickets.
 
 ## Structure of the Dir
 
-This phase has no subdirectories. The application and evaluation will add
-their own files in later phases.
+- `data/`: Fixed synthetic support tickets, labels, provenance, and license.
+- `test/`: Focused checks for the frozen split and cost policy.
 
 ## Description of Files
 
-- `README.md`: Setup, pinned versions, probe results, and API limits.
+- `dev_predictions.json`: Frozen development-split model probabilities and
+  routing actions.
 - `probe_decision_api.py`: Executable API contract and behavior probe.
 - `probe_results.json`: Captured requests, responses, and observations from the
   pinned Phase 1 run.
+- `README.md`: Setup, pinned versions, probe results, and API limits.
 - `requirements.txt`: Pinned Python packages needed to fetch the model and
   run the notebook.
 - `system-one.API.ipynb`: Guided API notebook with short live examples.
 - `system-one.API.py`: Jupytext percent-format pair for the notebook.
 - `system_one_API_utils.py`: Small HTTP client and probability displays.
+- `test/test_ticket_routing.py`: Checks balanced disjoint splits and policy
+  choices on known probability distributions.
+- `ticket_routing.py`: Fixed ticket split, decision prompt, action costs, and
+  command line prediction runner.
 
 ## Pinned Model and API
 
@@ -75,6 +82,47 @@ edits to either paired file, run:
 ```bash
 > jupytext --sync research/Implement_System_One_Decision_Models/system-one.API.ipynb
 ```
+
+### `ticket_routing.py`
+
+The application predicts a route for each case in the fixed `dev` or `test`
+split. It records the model's distribution, a top-probability route, and the
+action selected by an expected-cost policy. The `review` action has a fixed
+cost and sends a ticket to a human. The model estimates outcomes; the policy
+turns those estimates into actions.
+
+The 72 original synthetic cases are documented in [data/README.md](data/README.md).
+Each split contains 12 cases per route. The prompt, label space, and costs
+live as constants in `ticket_routing.py`; they were fixed before running the
+test split. The illustrative cost units are not measured business costs:
+
+| Action | True billing | True shipping | True technical |
+| :--- | ---: | ---: | ---: |
+| Route to billing | 0 | 5 | 7 |
+| Route to shipping | 8 | 0 | 6 |
+| Route to technical | 8 | 6 | 0 |
+| Human review | 1.5 | 1.5 | 1.5 |
+
+From the repository root, run one split while the server is listening:
+
+```bash
+> python research/Implement_System_One_Decision_Models/ticket_routing.py \
+    --split dev --output /tmp/dev_predictions.json
+> PYTHONPATH=helpers_root:. python -m pytest \
+    research/Implement_System_One_Decision_Models/test/test_ticket_routing.py
+```
+
+The expected-cost action minimizes the row's probability-weighted cost. The
+top-probability route is recorded separately for comparison. Do not change
+the prompt or costs after opening the test split if you want to compare the
+saved evaluation results.
+
+On the 36 development cases, the top-probability route matched 34 labels.
+The cost policy reviewed four cases and routed 31 of the remaining 32
+correctly. These observations are saved in [dev_predictions.json](dev_predictions.json).
+They are a prompt and integration check on synthetic data, not a held-out
+performance claim. The prompt and cost table above are now frozen for the
+test evaluation.
 
 ### Setup and Run
 
