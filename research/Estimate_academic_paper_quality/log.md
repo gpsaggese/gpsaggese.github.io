@@ -3,16 +3,13 @@
 - Follow `docs/planning/all.plan_work.how_to_guide.md`
   - [x] Write idea.md
   - [x] Generate PRD and improve
-
     ```
     claude> /project.write_prd <project>/idea.md
     claude> /text.criticize <project>/docs/01-prd.md
     ```
-
     - Generate `research/Estimate_academic_paper_quality/docs/01-prd.md`
 - Generate `research/Estimate_academic_paper_quality/README.md`
-- Generate architecture
-
+- [x] Generate architecture
   ```
   claude> /architecture.write_design <project>/docs/01-prd.md
   claude> /text.criticize <project>/docs/02-design.architecture.md

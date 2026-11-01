@@ -11,11 +11,28 @@
 - Decisions and alternatives, cited as `D<N>`:
   [`research/Estimate_academic_paper_quality/docs/03-decisions.md`](/research/Estimate_academic_paper_quality/docs/03-decisions.md)
 - Status: design only, no code exists yet
-- Convention in all the design docs:
-  - **Fact**: a statement about code that exists today, with its path
-  - **Decision**: a choice of this design, with its `D<N>` entry
 
 ## Diagram
+
+### C4 Refresher
+
+- C4 has four levels: each one zooms into one box of the level above
+  - C1 (Context): the system as one box, with its users and the external systems
+    around it
+    - Answers: who uses the system, and what does it depend on?
+  - C2 (Container): the parts of the system that run or store data on their own
+    (e.g., app, service, script, DB), and how they call each other
+    - Answers: what is the system made of, and with which technology?
+  - C3 (Component): the parts inside one container (e.g., modules, classes)
+    - Answers: how is one container organized?
+  - C4 (Code): the classes and functions inside one component
+    - Not drawn: the code is the diagram
+- Elements: `Person`, `System`, `Container`, `Component`
+  - `_Ext` marks what the team does not build (e.g., `System_Ext`)
+  - `Rel` is a labeled arrow: a call, an import, or a data flow
+  - `Boundary` groups elements (e.g., a layer)
+- This doc draws C1 and C2
+  - C3 is in the doc of each component, `02.<N>-design.<component>.md`
 
 ### C1 (Context)
 
@@ -96,13 +113,14 @@ Rel(fetcher, tool, "subprocess")
 Rel(report, out, "JSON, CSV, markdown")
 ```
 
-## Files and Import Graph
+## Files
 
 - All code lives flat in
   [`research/Estimate_academic_paper_quality/`](/research/Estimate_academic_paper_quality/),
   tests in
   [`research/Estimate_academic_paper_quality/test/`](/research/Estimate_academic_paper_quality/test/)
   ([`D22`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d22-flat-modules-with-the-epq_-prefix))
+
   | File                                                                                               | Component     | Layer                   |
   | :------------------------------------------------------------------------------------------------- | :------------ | :---------------------- |
   | [`estimate_paper_quality.py`](/research/Estimate_academic_paper_quality/estimate_paper_quality.py) | `pipeline`    | Script                  |
@@ -116,6 +134,9 @@ Rel(report, out, "JSON, CSV, markdown")
   | [`epq_fetcher.py`](/research/Estimate_academic_paper_quality/epq_fetcher.py)                       | `fetcher`     | Infrastructure          |
   | [`epq_report.py`](/research/Estimate_academic_paper_quality/epq_report.py)                         | `report`      | Infrastructure          |
   | [`epq_types.py`](/research/Estimate_academic_paper_quality/epq_types.py)                           | shared        | Data model, no logic    |
+
+## Import Graph
+
 - Allowed imports, checked by a test of the import graph:
   - [`estimate_paper_quality.py`](/research/Estimate_academic_paper_quality/estimate_paper_quality.py)
     imports `epq_pipeline`
@@ -124,30 +145,28 @@ Rel(report, out, "JSON, CSV, markdown")
   - `epq_extractor`, `epq_rater`, `epq_report` import only `epq_types`
   - `epq_bib_sources`, `epq_fetcher` import only `epq_types` and `helpers`
   - `epq_types` imports nothing of the project
-- External code that the design reuses:
-  - **Fact**:
-    [`helpers_root/dev_scripts_helpers/download/download_academic_paper_to_md.py`](/helpers_root/dev_scripts_helpers/download/download_academic_paper_to_md.py)
-    downloads from arXiv, DOI, SSRN (through Chrome), a URL, or a local PDF, and
-    converts the PDF to markdown with
-    [`convert_pdf_to_md.py`](/helpers_root/dev_scripts_helpers/documentation/convert_pdf_to_md.py)
-  - **Fact**:
-    [`helpers_root/dev_scripts_helpers/download/download_utils.py`](/helpers_root/dev_scripts_helpers/download/download_utils.py)
-    has `detect_doi()` and `get_ssrn_id()`
-  - **Fact**:
-    [`helpers_root/helpers/hselect_action.py`](/helpers_root/helpers/hselect_action.py)
-    selects the stages
-  - **Fact**: [`helpers_root/helpers/hllm.py`](/helpers_root/helpers/hllm.py) has
-    `get_structured_completion()`, which parses the answer of the LLM into a given
-    type, and
-    [`helpers_root/helpers/hllm_cost.py`](/helpers_root/helpers/hllm_cost.py) has
-    `LLMCostTracker`
-  - **Fact**:
-    [`helpers_root/helpers/hcache_simple.py`](/helpers_root/helpers/hcache_simple.py)
-    has the `simple_cache()` decorator and the `--cache_mode` switch
-    `add_cache_control_arg()`
-  - **Decision**: move the private `_format_base_filename()` of the download tool to
-    a public `download_utils.format_base_filename()`
-    ([`D7`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d7-the-pipeline-computes-the-base-name-with-a-public-helper))
+
+## External Code
+
+- [`helpers_root/dev_scripts_helpers/download/download_academic_paper_to_md.py`](/helpers_root/dev_scripts_helpers/download/download_academic_paper_to_md.py)
+  downloads from arXiv, DOI, SSRN (through Chrome), a URL, or a local PDF, and
+  converts the PDF to markdown with
+  [`convert_pdf_to_md.py`](/helpers_root/dev_scripts_helpers/documentation/convert_pdf_to_md.py)
+- [`helpers_root/dev_scripts_helpers/download/download_utils.py`](/helpers_root/dev_scripts_helpers/download/download_utils.py)
+  has `detect_doi()` and `get_ssrn_id()`
+- [`helpers_root/helpers/hselect_action.py`](/helpers_root/helpers/hselect_action.py)
+  selects the stages
+- [`helpers_root/helpers/hllm.py`](/helpers_root/helpers/hllm.py) has
+  `get_structured_completion()`, which parses the answer of the LLM into a given
+  type, and
+  [`helpers_root/helpers/hllm_cost.py`](/helpers_root/helpers/hllm_cost.py) has
+  `LLMCostTracker`
+- [`helpers_root/helpers/hcache_simple.py`](/helpers_root/helpers/hcache_simple.py)
+  has the `simple_cache()` decorator and the `--cache_mode` switch
+  `add_cache_control_arg()`
+- Move the private `_format_base_filename()` of the download tool to
+  a public `download_utils.format_base_filename()`
+  ([`D7`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d7-the-pipeline-computes-the-base-name-with-a-public-helper))
 
 ## Data Model
 
