@@ -5,17 +5,21 @@
 This project develops a runnable tutorial, a small decision application, and
 then a blog about typed probabilistic decisions. Phase 1 checks the Liquid
 d1-3B decision API; Phase 2 teaches its typed questions in a paired notebook;
-Phase 3 applies a fixed routing policy to synthetic tickets.
+Phase 3 applies a fixed routing policy to synthetic tickets; Phase 4 reports
+its held-out evaluation.
 
 ## Structure of the Dir
 
 - `data/`: Fixed synthetic support tickets, labels, provenance, and license.
+- `evaluation/`: Frozen metrics, a result summary, and two plots.
 - `test/`: Focused checks for the frozen split and cost policy.
 
 ## Description of Files
 
 - `dev_predictions.json`: Frozen development-split model probabilities and
   routing actions.
+- `evaluate_routing.py`: Validate frozen predictions, compute metrics, and
+  generate evaluation plots.
 - `probe_decision_api.py`: Executable API contract and behavior probe.
 - `probe_results.json`: Captured requests, responses, and observations from the
   pinned Phase 1 run.
@@ -25,6 +29,9 @@ Phase 3 applies a fixed routing policy to synthetic tickets.
 - `system-one.API.ipynb`: Guided API notebook with short live examples.
 - `system-one.API.py`: Jupytext percent-format pair for the notebook.
 - `system_one_API_utils.py`: Small HTTP client and probability displays.
+- `test_predictions.json`: Held-out test probabilities and routing actions.
+- `test/test_evaluate_routing.py`: Checks Brier, log loss, and reliability
+  calculations on hand-computable predictions.
 - `test/test_ticket_routing.py`: Checks balanced disjoint splits and policy
   choices on known probability distributions.
 - `ticket_routing.py`: Fixed ticket split, decision prompt, action costs, and
@@ -123,6 +130,24 @@ correctly. These observations are saved in [dev_predictions.json](dev_prediction
 They are a prompt and integration check on synthetic data, not a held-out
 performance claim. The prompt and cost table above are now frozen for the
 test evaluation.
+
+### `evaluate_routing.py`
+
+The evaluator validates both saved prediction files against the frozen
+dataset, prompt, model revision, and cost table. It computes top-route
+accuracy, multiclass Brier score, negative log likelihood, top-label
+reliability, confusion counts, review coverage, routed error, and realized
+illustrative cost. It writes `evaluation/results.json` and two plots:
+
+```bash
+> python research/Implement_System_One_Decision_Models/evaluate_routing.py
+```
+
+On the 36 held-out synthetic cases, the top route matched 33 labels. The
+cost policy reviewed six cases and made one mistake among 30 automatic
+routes. See the [evaluation summary](evaluation/README.md) for definitions,
+plots, examples, and limits. These numbers describe this frozen exercise;
+they do not establish general accuracy or calibration.
 
 ### Setup and Run
 
