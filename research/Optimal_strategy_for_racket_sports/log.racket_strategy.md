@@ -55,6 +55,76 @@
 - **Testing**: the full suite has only the 5 known Docker failures, every
   renamed notebook runs top to bottom, and no old name is left outside this log
 
+## 2026-10-29: Speed Ratio and Reaction Time Checks
+
+- **Issue**: [#789](https://github.com/gpsaggese/gpsaggese.github.io/issues/789) (can the two speeds be reduced to one
+  control?), with [GP's decision](https://github.com/gpsaggese/gpsaggese.github.io/issues/789#issuecomment-6528212968) of 2026-10-30
+- **Notebook**: `notebooks/racket_sports_05_variable_sensitivity.ipynb`, Part 3;
+  the checks ran as a local script and moved to the notebook on 2026-10-30
+- **Gdoc**: [research results](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit), the #789 entry of the Project section
+- **What was run**:
+  - Both speeds multiplied by $k$ = 0.5, 2, 4 at $t_r = 0$, same seed, on 5
+    settings per sport: 30 pairs of maps compared cell by cell
+  - 500 random settings at $t_r = 0$, with a random $k$ from 0.101 to 9.883
+  - A grid of 216 maps: 12 ratios $r = v_p / v_b$ x 3 values of $v_p$ x 3 values of
+    $t_r$ x 2 sports, for one curve per ratio and for the reaction time comparison
+- **Key numbers**:
+  - With $t_r = 0$ only the ratio matters: the largest cell difference is 0 on the
+    30 pairs and on the 500 random settings, and player 1 reaches more than 1% of
+    the landings in 401 of those
+  - With $t_r = 0.2$ s the 3 speed pairs of a ratio split, by up to 12.62 points on
+    the highest $P(\text{winner})$, since a second quantity enters, the reaction
+    distance $v_p t_r$
+  - $t_r$ of 0.2 s against 0, at $v_p = 1.5$ m/s, within the ball speeds of the
+    widget:
+
+| Largest change | Tennis | Pickleball |
+|---|---|---|
+| Highest $P(\text{winner})$ (points) | 0.00 | 0.82 |
+| Mean $P(\text{winner})$ over the half (points) | 2.34 | 3.95 |
+| Best region centroid (m) | 0.26 | 0.45 |
+| Highest $P(\text{winner})$ at $v_p = 6$ m/s (points) | 2.40 | 17.52 |
+
+- **GP's decision**: keep the model with all the variables, with $v_b$, $v_p$, and
+  $t_r$ as separate controls, no ratio slider, and $v_p$ = 1.5 m/s by default; state
+  the ratio result in the paper, with the proof sketch in an appendix
+- **Paper**: Section VII-A and the appendix
+
+## 2026-10-27: Corner Sims
+
+- **Issue**: [#694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694), with
+  [GP's plan](https://github.com/gpsaggese/gpsaggese.github.io/issues/694#issuecomment-6336301932): the corners of the settings,
+  then one setting at a time
+- **Notebook**: `notebooks/racket_sports_05_variable_sensitivity.ipynb`, Parts 1 and
+  2; the sims ran as a local script and moved to the notebook on 2026-10-30
+- **Gdoc**: [research results](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit), Experiment 3
+- **What was run**: 952 maps, with seed 1, the default grid, and 5000 samples per
+  target
+  - 324 corner runs: 9 serves x 3 ball speeds x 3 values of $v_p$ x 2 sides x 2
+    sports
+  - 178 sweeps: ball speed, $v_p$, $t_r$, `std_x2`, and `std_y2`, one at a time,
+    around the defaults and around $v_p$ = 6 m/s
+  - 450 serve map runs: a 0.5 m grid of legal deuce serves at 3 settings
+- **Key numbers**, as the highest cell of each map (`max_p_winner`):
+  - The error spread matters most: with a spread of 3 m the highest
+    $P(\text{winner})$ falls to 0.827 (tennis) and 0.695 (pickleball) for `std_x2`,
+    and to 0.955 and 0.727 for `std_y2`
+  - Around the defaults the speeds move it little: 1.000 in tennis; in pickleball
+    0.948 to 0.998 with $v_p$, and 0.979 to 0.998 with the ball speed
+  - The corners mostly do not matter: at least 0.99 in 146 of 162 tennis runs and
+    108 of 162 pickleball runs
+  - The exception is a slow ball (5 m/s) with a fast player 1 (6 m/s): 0.816 to
+    0.991 in tennis, and 0.047 to 0.705 in pickleball, depending on the serve
+  - There deep serves help player 1: in pickleball the short serves leave 0.680 to
+    0.705 and the deep ones 0.047 to 0.092, and the deep serve at the T is the
+    lowest in both sports (on the tennis ad side, tied with the other deep serves)
+  - Outside that corner, pickleball still goes down to 0.904 at $v_p$ = 6 m/s with
+    the default ball
+  - The mean over the half moves more: from 0.51 to 0.83 with $v_p$ in pickleball
+- **Limit of the metric**: the highest $P(\text{winner})$ is 1.000 for many tennis
+  settings, so it cannot rank them
+- **Paper**: Section VII-A, Figures 3 and 4
+
 ## 2026-10-23: Milestone 2, Probability of a Winning Return
 
 - **Issue**: [#624](https://github.com/gpsaggese/gpsaggese.github.io/issues/624),

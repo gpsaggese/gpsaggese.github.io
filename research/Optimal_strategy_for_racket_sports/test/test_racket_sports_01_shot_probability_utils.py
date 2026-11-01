@@ -2517,13 +2517,13 @@ class Test__round_slider_value(hunitest.TestCase):
 
 
 # #############################################################################
-# Test__check_serve
+# Test_check_serve
 # #############################################################################
 
 
-class Test__check_serve(hunitest.TestCase):
+class Test_check_serve(hunitest.TestCase):
     """
-    Test `racket_sports_01_shot_probability_utils._check_serve()`.
+    Test `racket_sports_01_shot_probability_utils.check_serve()`.
     """
 
     def helper(
@@ -2535,7 +2535,7 @@ class Test__check_serve(hunitest.TestCase):
         expected: str,
     ) -> None:
         """
-        Test helper for `_check_serve()`.
+        Test helper for `check_serve()`.
 
         :param court: court geometry of the serve
         :param side: "deuce" or "ad", the side the server serves from
@@ -2544,7 +2544,7 @@ class Test__check_serve(hunitest.TestCase):
         :param expected: expected fault, "" if the serve is in
         """
         # Run test.
-        _, actual = racket_sports_01_shot_probability_utils._check_serve(
+        _, actual = racket_sports_01_shot_probability_utils.check_serve(
             side, x1, y1, court
         )
         # Check outputs.
@@ -2730,7 +2730,7 @@ class Test__check_serve(hunitest.TestCase):
         # Prepare outputs.
         expected = "CourtRegion(x_min=-4.115, x_max=0, y_min=0.0, y_max=6.4)"
         # Run test.
-        actual, _ = racket_sports_01_shot_probability_utils._check_serve(
+        actual, _ = racket_sports_01_shot_probability_utils.check_serve(
             side, x1, y1, court
         )
         # Check outputs.
@@ -3198,13 +3198,13 @@ class Test_cell1_1_plot_shot_widget(hunitest.TestCase):
 
 
 # #############################################################################
-# Test__build_settings_string
+# Test_build_settings_string
 # #############################################################################
 
 
-class Test__build_settings_string(hunitest.TestCase):
+class Test_build_settings_string(hunitest.TestCase):
     """
-    Test `racket_sports_01_shot_probability_utils._build_settings_string()`.
+    Test `racket_sports_01_shot_probability_utils.build_settings_string()`.
     """
 
     def test1(self) -> None:
@@ -3230,7 +3230,7 @@ class Test__build_settings_string(hunitest.TestCase):
             "n_samples=5000"
         )
         # Run test.
-        actual = racket_sports_01_shot_probability_utils._build_settings_string(
+        actual = racket_sports_01_shot_probability_utils.build_settings_string(
             sport_name,
             side,
             serve_xy,
@@ -3266,19 +3266,17 @@ class Test__build_settings_string(hunitest.TestCase):
             "n_samples": 5000,
         }
         # Run test.
-        settings = (
-            racket_sports_01_shot_probability_utils._build_settings_string(
-                "Pickleball",
-                "ad",
-                (values["x1"], values["y1"]),
-                (values["std_x2"], values["std_y2"]),
-                values["ball_speed"],
-                values["t_r"],
-                values["v_p"],
-                int(values["seed"]),
-                (int(values["n_x"]), int(values["n_y"])),
-                int(values["n_samples"]),
-            )
+        settings = racket_sports_01_shot_probability_utils.build_settings_string(
+            "Pickleball",
+            "ad",
+            (values["x1"], values["y1"]),
+            (values["std_x2"], values["std_y2"]),
+            values["ball_speed"],
+            values["t_r"],
+            values["v_p"],
+            int(values["seed"]),
+            (int(values["n_x"]), int(values["n_y"])),
+            int(values["n_samples"]),
         )
         parsed = dict(item.split("=", 1) for item in settings.split(" "))
         # Check outputs.
