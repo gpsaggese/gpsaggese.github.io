@@ -70,8 +70,8 @@
    - 1,000 splits, ties split; `skill_vs_luck.example.ipynb` Cell 6.2
 10. The best of 20 equal variants on 500 tasks looks 3.7 points better than
     it is; the spec's `sigma * sqrt(2 ln K)` is 1.4 to 2.5 times the real
-    inflation for K = 2 to 50, while `sigma * E[max of K normals]` is 5% to
-    20% too high
+    inflation for K = 2 to 50, while `sigma * E[max of K normals]` is 6% to
+    22% too high
     - 500 simulated benchmarks per setting, `skill_vs_luck.example.ipynb`
       Cell 7.1
 11. The held-out drop of the best variant is about 1.5 times its inflation on

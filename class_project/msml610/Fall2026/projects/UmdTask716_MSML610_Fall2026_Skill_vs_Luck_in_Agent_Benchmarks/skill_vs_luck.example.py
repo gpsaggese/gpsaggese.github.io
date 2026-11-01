@@ -391,9 +391,10 @@ utils.plot_split_half_correlations(split_half, figsize=(12, 5))
 # - Pick the leader on one half of the tasks, then score it on the other half
 #   - This is the held-out check of Milestone 4, on the real leaderboard
 #   - A tie for first is split among the tied agents
-# - The 2 halves split a fixed set of 500 tasks
-#   - An agent that is lucky on one half is unlucky on the other, so this
-#     check is harsh on the leader
+# - The other half was not used to pick the leader, so its score there is a
+#   fair estimate of its true score
+#   - The drop is the winner's curse of picking on 250 tasks, about $\sqrt{2}$
+#     times the one of picking on all 500 (Cell 7.2)
 
 # %%
 # Pick the leader on half of the tasks and score it on the other half.
@@ -432,7 +433,10 @@ for n_tasks in [100, 500, 2000]:
         curse = utils.simulate_winners_curse(n_variants, n_tasks)
         rows.append({"n_tasks": n_tasks, "n_variants": n_variants, **curse})
 curse = pd.DataFrame(rows)
-curse["inflation_over_correction"] = curse["inflation"] / curse["correction"]
+# Compare each correction with the real inflation.
+curse["correction_ratio"] = curse["correction"] / curse["inflation"]
+curse["exact_ratio"] = curse["correction_exact"] / curse["inflation"]
+with_selection = curse[curse["n_variants"] > 1]
 
 columns = [
     "n_tasks",
@@ -441,12 +445,21 @@ columns = [
     "correction",
     "correction_exact",
     "held_out_drop",
-    "inflation_over_correction",
+    "correction_ratio",
+    "exact_ratio",
 ]
-display(curse.loc[curse["n_variants"] > 1, columns].round(4))
+display(with_selection[columns].round(4))
+print(
+    "correction_ratio range=",
+    with_selection["correction_ratio"].agg(["min", "max"]).round(2).tolist(),
+)
+print(
+    "exact_ratio range=",
+    with_selection["exact_ratio"].agg(["min", "max"]).round(2).tolist(),
+)
 # Outcome: with 500 tasks, the best of 20 equal variants looks 3.7 points better
 # than it is; the spec's correction (5.5 points) is 1.4 to 2.5 times the real
-# inflation, while the exact one (4.2 points) is only 5% to 20% too high.
+# inflation, while the exact one (4.2 points) is only 6% to 22% too high.
 
 # %%
 # Plot the inflation against K, with both corrections.
@@ -607,7 +620,15 @@ effective_size = pd.Series(
     }
 )
 
+# Count the most informative tasks that hold half of the information.
+top_20_share = (
+    information["top 20"].sort_values(ascending=False).cumsum()
+    / information["top 20"].sum()
+)
+n_tasks_half = int((top_20_share < 0.5).sum()) + 1
+
 display(effective_size.round(0))
+print("n_tasks_half=", n_tasks_half)
 # Outcome: for the top 20 the benchmark is worth about 107 equally informative
 # tasks, and 39 tasks hold half of the information.
 
@@ -657,7 +678,7 @@ irt["tasks"].to_csv(os.path.join("data", "swebench_verified_irt_tasks.csv"))
 #     it is
 #   - The spec's $\sigma \sqrt{2 \ln K}$ is 1.4 to 2.5 times the real
 #     inflation for $K$ up to 50
-#   - $\sigma$ times the mean of the largest of $K$ normals is only 5% to 20%
+#   - $\sigma$ times the mean of the largest of $K$ normals is only 6% to 22%
 #     too high, since the variants share the same tasks
 # - Only a fraction of the benchmark tells the top agents apart
 #   - The top 20 all solve 254 tasks and all fail 36, leaving 210
