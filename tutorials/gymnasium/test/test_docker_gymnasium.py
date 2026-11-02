@@ -2,8 +2,8 @@
 Run the Docker checks and each notebook of `tutorials/gymnasium`.
 
 - On the host, `Test_docker` builds the image and runs commands in it
-- Inside the image, with `docker_cmd.sh "pytest test"`, `Test_notebooks` runs each
-  notebook top to bottom
+- Inside the image, `Test_notebooks` runs each notebook top to bottom, with the
+  command in its skip reason
 
 Import as:
 
@@ -114,7 +114,11 @@ class Test_docker(hdoctest.DockerTestCase):
 
 
 @pytest.mark.skipif(
-    not hserver.is_inside_docker(), reason="Run with docker_cmd.sh 'pytest test'"
+    not hserver.is_inside_docker(),
+    reason=(
+        "Run with ./docker_cmd.sh 'pip install -q pytest"
+        " && cd /git_root/tutorials/gymnasium && python -m pytest test'"
+    ),
 )
 class Test_notebooks(hunitest.TestCase):
     """
