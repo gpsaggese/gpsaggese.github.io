@@ -5,6 +5,7 @@ Test PostgreSQL persistence for checker state and final evidence.
 import datetime
 
 import helpers.hunit_test as hunitest
+
 import research.Noesis.checker.checker_evidence as rnochevi
 import research.Noesis.checker.checker_models as rnochmod
 import research.Noesis.checker.checker_store as rnochsto
@@ -92,7 +93,9 @@ class Test_claim_probe_slot(hunitest.TestCase):
             self.assertFalse(await rnochsto.mark_probe_running(pool, probe_id))
             request_id = await _add_request(pool, contract_id, True, True)
             self.assertTrue(
-                await rnochsto.complete_probe(pool, probe_id, request_id, "m2-v1")
+                await rnochsto.complete_probe(
+                    pool, probe_id, request_id, "m2-v1"
+                )
             )
 
         rnctnteut.run_with_clean_db(self, _body)
@@ -126,7 +129,7 @@ class Test_finalize_contract(hunitest.TestCase):
             policy = rnochmod.WindowPolicy()
             evidence = rnochevi.build_evidence(observations, terms, policy)
             decision = rnochver.decide_verdict(evidence, terms, policy)
-            ended_at = datetime.datetime.now(datetime.timezone.utc)
+            ended_at = datetime.datetime.now(datetime.UTC)
             async with pool.connection() as conn:
                 await conn.execute(
                     "UPDATE contracts SET state = 'CLOSED' WHERE contract_id = %s",
