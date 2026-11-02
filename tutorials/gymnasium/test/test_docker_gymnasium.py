@@ -121,6 +121,7 @@ class Test_docker(hdoctest.DockerTestCase):
     not hserver.is_inside_docker(),
     reason=(
         "Run with ./docker_cmd.sh 'pip install -q pytest"
+        ' "gymnasium[classic-control]==1.3.0" pygame-ce==2.5.8'
         " && cd /git_root/tutorials/gymnasium && python -m pytest test'"
     ),
 )
