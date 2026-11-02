@@ -350,21 +350,24 @@
 - [ ] [#670](https://github.com/gpsaggese/gpsaggese.github.io/issues/670):
       generate the paper figures from the notebooks; Figures 3 and 4 come from
       the CSV files that notebook 05 writes
-- [-] [#691](https://github.com/gpsaggese/gpsaggese.github.io/issues/691):
+- [x] [#691](https://github.com/gpsaggese/gpsaggese.github.io/issues/691):
       clean up the docs (specs, notebook names), with
       [#787](https://github.com/gpsaggese/gpsaggese.github.io/issues/787): the
-      phases in this plan, in one PR
+      phases in this plan, in one PR,
+      [PR #809](https://github.com/gpsaggese/gpsaggese.github.io/pull/809)
 
 - Next steps (phase 1, then phase 2):
   - [-] [#694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694):
-        research Gdoc; the corner sims are done and in notebook 05, and the rules
-        for the research Gdoc are still open
+        research Gdoc; the corner sims are done and in notebook 05
+        ([PR #812](https://github.com/gpsaggese/gpsaggese.github.io/pull/812)),
+        and the rules for the research Gdoc are still open
   - [x] [#788](https://github.com/gpsaggese/gpsaggese.github.io/issues/788):
         red to green heatmaps,
         [PR #804](https://github.com/gpsaggese/gpsaggese.github.io/pull/804)
-  - [-] [#789](https://github.com/gpsaggese/gpsaggese.github.io/issues/789):
+  - [x] [#789](https://github.com/gpsaggese/gpsaggese.github.io/issues/789):
         which variables matter, keeping all of them (see the findings above),
-        in notebook 05
+        in notebook 05,
+        [PR #812](https://github.com/gpsaggese/gpsaggese.github.io/pull/812)
   - [ ] [#790](https://github.com/gpsaggese/gpsaggese.github.io/issues/790):
         symbolic regression, for a closed form of these relations
   - [ ] [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723):
@@ -373,5 +376,6 @@
         model the spread as a function of player 2's movement
   - [x] [#714](https://github.com/gpsaggese/gpsaggese.github.io/issues/714):
         movement in the serving setup; its follow-ups are #786 and #787
-  - [ ] [#713](https://github.com/gpsaggese/gpsaggese.github.io/issues/713):
-        model the RL problem (phase 2)
+  - [-] [#713](https://github.com/gpsaggese/gpsaggese.github.io/issues/713):
+        model the RL problem (phase 2); the Gymnasium tutorial cleanup is in
+        [PR #838](https://github.com/gpsaggese/gpsaggese.github.io/pull/838)
