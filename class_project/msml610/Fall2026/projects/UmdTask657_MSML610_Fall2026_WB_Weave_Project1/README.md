@@ -26,6 +26,7 @@ relates to the change in the 2-year Treasury yield on the announcement day.
 ```
 UmdTask657_MSML610_Fall2026_WB_Weave_Project1/
 ├── README.md                  # This file
+├── progress.md                # Experiment log: status, findings, and history
 ├── weave.API.ipynb / .py      # Tutorial on the Weave API with a toy classifier
 ├── weave.example.ipynb / .py  # The FOMC project, end to end
 ├── weave_utils.py             # Tone models, scorers, and evaluation helpers
@@ -62,7 +63,8 @@ merged as plain Python.
    [`gtfintechlab/FOMC-RoBERTa`](https://huggingface.co/gtfintechlab/FOMC-RoBERTa).**
    The model is gated: request access on the model page (approval is manual
    and can take time), then create a **read** token at
-   <https://huggingface.co/settings/tokens>.
+   <https://huggingface.co/settings/tokens>. A fine-grained token also needs
+   the permission to read public gated repos you have access to.
 
 ## 4. Setup
 
