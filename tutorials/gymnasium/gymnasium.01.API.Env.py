@@ -29,6 +29,16 @@
 #   - GitHub: https://github.com/Farama-Foundation/Gymnasium
 
 # %%
+# !pip install -q "gymnasium[classic-control]==1.3.0" pygame-ce==2.5.8
+
+import importlib.metadata
+
+import gymnasium
+
+print("gymnasium version: ", gymnasium.__version__)
+print("pygame-ce version: ", importlib.metadata.version("pygame-ce"))
+
+# %%
 # %load_ext autoreload
 # %autoreload 2
 
@@ -332,7 +342,7 @@ print("Tuple sample:", tup.sample())
 
 # %%
 # Use rgb_array mode to capture a frame without opening a window.
-# Note: requires `pip install "gymnasium[classic-control]"` (pygame).
+# Rendering needs the `classic-control` extra, installed by the first code cell.
 env_rgb = gym.make("CartPole-v1", render_mode="rgb_array")
 env_rgb.reset(seed=0)
 frame = env_rgb.render()

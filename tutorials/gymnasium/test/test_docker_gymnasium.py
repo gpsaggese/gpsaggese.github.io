@@ -37,6 +37,9 @@ _BLOCKED_BY_HELPERS = pytest.mark.xfail(
 # file name.
 _SETUP_CELL_MARKER = "utils.init_loggers"
 
+# The pip cell of every notebook prints a warning only when pip runs as root.
+_PIP_CELL_MARKER = "pip install -q"
+
 # Source text of the code cells whose output changes between runs, by notebook.
 # Use text, not indices, so that it survives adding cells.
 # - `Text` with its default charset depends on the hash seed
@@ -82,7 +85,8 @@ def _get_stable_outputs(notebook_name: str, path: str) -> str:
     :return: text with the output of each compared code cell
     """
     notebook = json.loads(hio.from_file(path))
-    markers = [_SETUP_CELL_MARKER] + _UNSTABLE_CELLS.get(notebook_name, [])
+    markers = [_SETUP_CELL_MARKER, _PIP_CELL_MARKER]
+    markers += _UNSTABLE_CELLS.get(notebook_name, [])
     texts = []
     for idx, cell in enumerate(notebook["cells"]):
         source = "".join(cell["source"])
@@ -152,8 +156,6 @@ class Test_notebooks(hunitest.TestCase):
 
         :param notebook_name: notebook base name
         """
-        # Prepare inputs.
-        pytest.importorskip("gymnasium")
         # Run test.
         path_1 = self._run_notebook(notebook_name, "run_1")
         path_2 = self._run_notebook(notebook_name, "run_2")

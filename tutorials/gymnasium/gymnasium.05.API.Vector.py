@@ -29,6 +29,16 @@
 #   - GitHub: https://github.com/Farama-Foundation/Gymnasium
 
 # %%
+# !pip install -q "gymnasium[classic-control]==1.3.0" pygame-ce==2.5.8
+
+import importlib.metadata
+
+import gymnasium
+
+print("gymnasium version: ", gymnasium.__version__)
+print("pygame-ce version: ", importlib.metadata.version("pygame-ce"))
+
+# %%
 # %load_ext autoreload
 # %autoreload 2
 
