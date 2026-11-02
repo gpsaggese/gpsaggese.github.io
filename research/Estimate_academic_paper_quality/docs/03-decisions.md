@@ -91,6 +91,23 @@
 - **Alternatives**: an empty link; a new mark such as `(no PDF)`
 - **Status**: proposed
 
+### `D25` (The Parser Joins the Lines of a Wrapped Bullet)
+
+- **Decision**: `parse_lines()` first joins a bullet that is wrapped on several
+  lines, with a marker `-` or `*` and an indented continuation, into one entry,
+  and numbers the entry with its first line
+- **Why**: **Fact**:
+  [`research/Estimate_academic_paper_quality/paper_list.md`](/research/Estimate_academic_paper_quality/paper_list.md)
+  is wrapped at 85 chars, so the authors in parentheses are on the line after
+  the title; parsed line by line, the authors are a `title` line that matches no
+  paper, and
+  [`R1`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r1-input-file-format)
+  would fail on the real input
+- **Alternatives**: require one paper per physical line (the user unwraps the
+  file by hand); join by a rule on the parentheses (breaks for titles with
+  parentheses)
+- **Status**: proposed
+
 ## Download and Files
 
 ### `D7` (The Pipeline Computes the Base Name with a Public Helper)
@@ -264,6 +281,22 @@
 - **Why**: the use case "gets one clean list of references" includes the papers that
   failed to download, which are not in `report.csv`
 - **Alternatives**: only the `reference` column of `report.csv`
+- **Status**: proposed
+
+### `D24` (BibSources Keeps Its Own Disk Cache)
+
+- **Decision**: `BibSources` stores each answer in
+  `<output_dir>/state/cache/http/<sha1>.json`, with its own code, and reads the
+  switch `--cache_mode` as `hcache_simple` does (`REFRESH_CACHE`,
+  `DISABLE_CACHE`, `HIT_CACHE_OR_ABORT`); it does not use `simple_cache()`
+- **Why**: **Fact**: `simple_cache()` keeps one process-wide dir and one in-memory
+  dict by function name, and it writes the whole file of a function on each new
+  answer; a client that takes its cache dir in the constructor has no global
+  state, and a test points it to the scratch space; the cache entry also needs the
+  date of the lookup, which `get_citation_count()` reports
+  ([`R16`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r16-paper-quality-rating))
+- **Alternatives**: `simple_cache()` on a module function (global state in the
+  tests, one JSON file for all the answers)
 - **Status**: proposed
 
 ## Code Organization
