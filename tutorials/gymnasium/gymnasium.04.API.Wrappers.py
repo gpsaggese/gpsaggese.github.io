@@ -99,7 +99,10 @@ except ImportError:
 #     `Autoreset`, etc.
 
 # %% [markdown]
-# ## Primitive 1: `Wrapper`: The Base Class
+# # Part 1: The `Wrapper` base class
+
+# %% [markdown]
+# ## Cell 1.1: Create a `Wrapper`
 #
 # - **Mental model**: a `Wrapper` is an environment that contains another
 #   environment.  Every method call is forwarded to the inner env by default, so a
@@ -120,7 +123,7 @@ print("wrapper type:", type(wrapper))
 print("isinstance(wrapper, gym.Env):", isinstance(wrapper, gym.Env))
 
 # %% [markdown]
-# ### Delegation: method calls pass through to the inner env
+# ## Cell 1.2: Delegation: method calls pass through to the inner env
 #
 # - By default, `Wrapper` does nothing: all calls fall through to `self.env`
 
@@ -142,7 +145,7 @@ print("action_space:", wrapper.action_space)
 print("observation_space:", wrapper.observation_space)
 
 # %% [markdown]
-# ### Inspecting the wrapper environment
+# ## Cell 1.3: Inspect the wrapper environment
 #
 # - `env.env`: the directly wrapped environment
 # - `env.unwrapped`: the innermost bare environment (recursively unwraps all layers)
@@ -160,7 +163,10 @@ print(
 wrapper.close()
 
 # %% [markdown]
-# ## Primitive 2: `ObservationWrapper`: Transform Observations
+# # Part 2: Transforming observations, actions, and rewards
+
+# %% [markdown]
+# ## Cell 2.1: `ObservationWrapper`: transform observations
 #
 # - **Mental model**: An `ObservationWrapper` intercepts the observation that
 #   `step()` and `reset()` return, passes it through `self.observation()`, and
@@ -210,7 +216,7 @@ print("flipped step obs: ", flip_obs)
 hdbg.dassert(np.array_equal(flip_obs, -orig_obs), "Step obs must be negated")
 
 # %% [markdown]
-# ## Primitive 3: `ActionWrapper`: Transform Actions
+# ## Cell 2.2: `ActionWrapper`: transform actions
 #
 # - **Mental model**: An `ActionWrapper` intercepts the action that `step()`
 #   receives and passes it through `self.action()` before forwarding it to the
@@ -256,7 +262,7 @@ print(
 hdbg.dassert(not np.array_equal(obs_a, obs_b), "The action must be swapped")
 
 # %% [markdown]
-# ## Primitive 4: `RewardWrapper`: Transform Rewards
+# ## Cell 2.3: `RewardWrapper`: transform rewards
 #
 # - **Mental model**: A `RewardWrapper` intercepts the reward that `step()` returns
 #   and passes it through `self.reward()` before returning it to the caller
@@ -297,7 +303,7 @@ print(f"ratio: {rew_b / rew_a}")
 hdbg.dassert_eq(rew_b, 3.0 * rew_a, "The reward must be scaled by the factor")
 
 # %% [markdown]
-# ## Primitive 5: Lambda Wrappers (Function-Based)
+# ## Cell 2.4: Lambda wrappers (function-based)
 #
 # - **Mental model**: Instead of writing a full subclass, you can pass a function
 #   to `TransformObservation`, `TransformAction`, or `TransformReward`.  The
@@ -385,7 +391,10 @@ base6.close()
 scaled_reward_env.close()
 
 # %% [markdown]
-# ## Composition Example 1: `TimeLimit`: Truncating Episodes
+# # Part 3: Composition
+
+# %% [markdown]
+# ## Cell 3.1: `TimeLimit`: truncate episodes
 #
 # - **Mental model**: A `TimeLimit` wrapper truncates an episode after a fixed
 #   number of steps, setting `truncated=True`  instead of `terminated=True`
@@ -430,7 +439,7 @@ print(f"  Episode ended at step {len(steps) - 1}")
 limited_env.close()
 
 # %% [markdown]
-# ## Composition Example 2: Multiple Wrappers Stacked
+# ## Cell 3.2: Multiple wrappers stacked
 #
 # - **Mental model**: wrappers compose by nesting.  Each layer transforms one
 #   aspect (actions, rewards, observations).  The outermost wrapper sees the final
@@ -467,7 +476,7 @@ print(f"  reward (doubled): {reward}")
 w3.close()
 
 # %% [markdown]
-# ## Composition Example 3: Custom Observation Wrapper
+# ## Cell 3.3: Custom observation wrapper
 #
 # - **Problem**: a discrete observation space (e.g., frozen lake grid) is hard to
 #   visualize.  Wrap it to emit one-hot encoded observations
@@ -510,7 +519,7 @@ print("Obs after step right:", obs2)
 onehot_env.close()
 
 # %% [markdown]
-# ## Composition Example 4: Custom Action Wrapper
+# ## Cell 3.4: Custom action wrapper
 #
 # - **Problem**: discrete actions in {0, 1, 2, 3} need to be mapped to a smaller
 #   set of allowed actions
@@ -549,7 +558,7 @@ print("Wrapper action space:", mapped_env.action_space)
 mapped_env.close()
 
 # %% [markdown]
-# ## Composition Example 5: Custom Reward Wrapper
+# ## Cell 3.5: Custom reward wrapper
 #
 # - **Problem**: you want to shape the reward with a penalty term that depends on
 #   the observation
@@ -586,7 +595,7 @@ base8.close()
 penalty_env.close()
 
 # %% [markdown]
-# ## Composition Example 6: `RecordEpisodeStatistics`
+# ## Cell 3.6: `RecordEpisodeStatistics`
 #
 # - **Mental model**: tracks cumulative reward, episode length, and wall-clock
 #   time for completed episodes.  Adds an `"episode"` key to the `info` dict at
@@ -614,7 +623,7 @@ print(f"Length buffer: {list(stats_env.length_queue)}")
 stats_env.close()
 
 # %% [markdown]
-# ## Composition Example 7: `Autoreset`: Never Manual Reset
+# ## Cell 3.7: `Autoreset`: never manual reset
 #
 # - **Mental model**: `Autoreset` automatically resets the environment on the step
 #   AFTER an episode ends.  This simulates the behavior of vectorized
@@ -639,7 +648,10 @@ for i in range(12):
 auto_env.close()
 
 # %% [markdown]
-# ## API Patterns
+# # Part 4: API patterns
+
+# %% [markdown]
+# ## Cell 4.1: Wrapper patterns
 #
 # - **Inheritance pattern**: subclass `Wrapper`, `ObservationWrapper`,
 #   `ActionWrapper`, or `RewardWrapper` and override the hook method
@@ -665,7 +677,10 @@ auto_env.close()
 #   `self.action_space` in `__init__()` so downstream code knows the new contract
 
 # %% [markdown]
-# ## Interactive Exploration
+# # Part 5: Interactive exploration
+
+# %% [markdown]
+# ## Cell 5.1: Experiment with wrappers
 #
 # - Experiment with the wrapper primitives
 
