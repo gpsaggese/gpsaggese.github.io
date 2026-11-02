@@ -317,10 +317,25 @@ import time
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
+import re
 
 # Directory for cached FOMC statements.
 FOMC_DIR = RAW_DIR / "fomc_statements"
 FOMC_DIR.mkdir(parents=True, exist_ok=True)
+
+def clean_fomc_statement(text):
+    """Normalize whitespace and clean extracted FOMC statement text."""
+    if not isinstance(text, str):
+        raise TypeError("FOMC statement text must be a string.")
+
+    # Normalize non-breaking spaces and common whitespace artifacts.
+    text = text.replace("\xa0", " ")
+    text = text.replace("\u200b", "")
+    text = re.sub(r"[ \t]+", " ", text)
+    text = re.sub(r"\s*\n\s*", "\n", text)
+    text = re.sub(r"\n{3,}", "\n\n", text)
+
+    return text.strip()
 
 def download_fomc_statement(date, url):
     """Download, clean, and cache an FOMC statement."""

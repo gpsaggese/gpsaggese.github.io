@@ -3,7 +3,7 @@
   - [ ] Write linters2/lint.py docs
   - [ ] Document the skills
 - [ ] Architecture docs and update cycle
-  - research/Noesis/docs/plan.md seems not updated?
+  - research/Noesis/docs/04-plan.md seems not updated?
   - Do not use the section sign since cumbersome: write `Sec. 2`
   - Some of the content https://github.com/gpsaggese/gpsaggese.github.io/pull/597
     should be captured in a README

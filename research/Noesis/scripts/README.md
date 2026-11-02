@@ -8,9 +8,11 @@
 | File                      | Description                                       |
 | :------------------------ | :------------------------------------------------ |
 | `detection_math.py`       | Exact false-alarm and detection probabilities     |
+| `demo_contract_monitoring.py` | Exercise probe-to-verdict monitoring with deterministic in-memory boundaries (`PR_S4`) |
 | `generate_canary_bank.py` | Reproducibly generate versioned canary candidates |
 | `spike_openrouter.py`     | Measure pinned OpenRouter providers for one model |
 | `demo_supply_asks.py`     | Show OpenRouter prices becoming one ask per seller and clearing against a bid (`PR_S9`) |
+| `demo_credit_ledger.py`   | Show the free credit ledger gating bids and charging cleared contracts (`PR_P4`) |
 
 ## Description of Executables
 
@@ -18,6 +20,12 @@
 
   ```bash
   > scripts/detection_math.py
+  ```
+
+- Contract-monitoring demo (no key, database, network, or spend):
+
+  ```bash
+  > research/Noesis/scripts/demo_contract_monitoring.py
   ```
 
 - Regenerate the v1 canary candidate bank:
@@ -46,4 +54,8 @@
   `OPENROUTER_API_KEY` from the env or `research/Noesis/.env`):
   ```bash
   > research/Noesis/scripts/demo_supply_asks.py --live
+  ```
+- Credit ledger demo over an in-process app (no key, no network):
+  ```bash
+  > research/Noesis/scripts/demo_credit_ledger.py
   ```

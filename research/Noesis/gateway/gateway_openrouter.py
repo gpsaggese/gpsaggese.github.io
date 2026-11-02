@@ -5,7 +5,7 @@ Every call is pinned (`provider.only=[slug]`, `allow_fallbacks=false`), so the
 answer can only come from the seller's provider. Failures are classified so
 that only real provider failures count against the seller.
 
-This replaces the `PR_S7` placeholder in `plan.md`.
+This replaces the `PR_S7` placeholder in `04-plan.md`.
 
 Import as:
 
@@ -16,10 +16,10 @@ import logging
 import time
 from typing import Any, Callable, Dict, Optional
 
-import httpx
-
 import helpers.hdbg as hdbg
 import helpers.hprint as hprint
+import httpx
+
 import research.Noesis.gateway.gateway_providers as rnogapro
 
 _LOG = logging.getLogger(__name__)
