@@ -28,13 +28,15 @@ milestone, newest first.
 
 - `rllib.API.ipynb` covers `register_env`, `PPOConfig`, `DQNConfig`,
   `Algorithm.train()`, `Algorithm.evaluate()`, the `RLModule`, and checkpoints
-- Runs end to end in ~9 minutes on CPU
+- Runs end to end in ~8 minutes on CPU
+- Results vary between runs, since the parallel env runners make training
+  nondeterministic
 
 | | PPO | DQN |
 |---|---|---|
 | Env steps sampled | 32,000 | 12,000 |
-| Best mean episode return | 500 (solved at 20,000 steps) | 262 |
-| Evaluation return (10 episodes) | 500 | n/a |
+| Best mean episode return | 500 (solved at 24,000 steps) | 235 |
+| Evaluation return (10 episodes) | 486 | n/a |
 
 ### M1: Calibration and Baselines
 

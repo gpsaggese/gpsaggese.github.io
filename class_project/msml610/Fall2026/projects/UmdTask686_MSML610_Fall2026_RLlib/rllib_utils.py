@@ -18,9 +18,19 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+import helpers.hnotebook as hnotebo
 import helpers.hprint as hprint
 
 _LOG = logging.getLogger(__name__)
+
+
+def init_loggers(notebook_log: logging.Logger) -> None:
+    """
+    Wire the notebook logger into the utils logger.
+
+    :param notebook_log: logger owned by the notebook
+    """
+    hnotebo.init_loggers(notebook_log, utils_log=_LOG)
 
 
 # #############################################################################
@@ -284,11 +294,6 @@ def run_baseline(
         shortfalls[i] = info["shortfall_bps"]
     _LOG.debug("return=%s", shortfalls[:5])
     return shortfalls
-
-
-# #############################################################################
-# Training
-# #############################################################################
 
 
 def train_algo(algo: Any, n_iters: int) -> pd.DataFrame:

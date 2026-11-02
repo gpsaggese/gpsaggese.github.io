@@ -45,15 +45,15 @@ import torch
 
 # %%
 # Project libraries.
-import helpers.hdbg as hdbg
+import helpers.hnotebook as hnotebook
 import helpers.hprint as hprint
 
 import class_project.msml610.Fall2026.projects.UmdTask686_MSML610_Fall2026_RLlib.rllib_utils as rlutils
 
+# Initialize notebook configuration and logging.
+hnotebook.config_notebook()
 _LOG = logging.getLogger(__name__)
-
-# Show INFO and above, so the `_LOG.debug()` calls stay hidden.
-hdbg.init_logger(verbosity=logging.INFO)
+rlutils.init_loggers(_LOG)
 
 # Use IPython `display()` in Jupyter and fall back to `print()` otherwise.
 try:
