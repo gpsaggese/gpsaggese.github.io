@@ -2,7 +2,9 @@
 Write and read every file that the pipeline keeps in the output dir.
 
 The files are:
-- `state/papers.json` and `state/issues.<stage>.json`: outputs of the stages
+- `<PAPERS>.csv`, `<PAPERS>.issues.csv`, and the input CSV: files that the
+  executable `resolve_papers.py` reads and writes
+- `state/issues.<stage>.json`: issues of the stages `download` and `extract`
 - `papers/<BASE>.features.json`: features of one paper, also the rerun cache of
   the `extract` stage
 - `references.md`, `report.csv`, and `issues.csv`: final outputs
@@ -19,7 +21,7 @@ import dataclasses
 import json
 import logging
 import os
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 import helpers.hdbg as hdbg
 import helpers.hio as hio
@@ -61,6 +63,29 @@ ISSUES_COLUMNS = [
     "reason",
     "candidates",
 ]
+
+# Name of the column of the input CSV of `resolve_papers.py`.
+INPUT_COLUMN = "input"
+
+# Columns of the papers CSV of `resolve_papers.py`, in order.
+PAPERS_COLUMNS = [
+    "reference",
+    "year",
+    "authors",
+    "title",
+    "doi",
+    "arxiv_id",
+    "s2_paper_id",
+    "source",
+    "base_name",
+    "download_inputs",
+    "line_nos",
+    "key",
+    "aliases",
+]
+
+# Separator of the items in a CSV cell that holds a list.
+_LIST_SEP = "|"
 
 # Order of the stages in `issues.csv`.
 _STAGE_ORDER = ["resolve", "download", "extract"]
@@ -217,31 +242,6 @@ def _quality_from_dict(data: Dict[str, Any]) -> epqtypes.QualityRating:
     return quality
 
 
-def _paper_from_dict(data: Dict[str, Any]) -> epqtypes.Paper:
-    """
-    Build a `Paper` from its JSON dict.
-
-    :param data: dict of the paper
-    :return: paper
-    """
-    paper = epqtypes.Paper(
-        key=data["key"],
-        aliases=tuple(data["aliases"]),
-        line_nos=tuple(data["line_nos"]),
-        source=data["source"],
-        year=data["year"],
-        authors=tuple(data["authors"]),
-        title=data["title"],
-        doi=data["doi"],
-        arxiv_id=data["arxiv_id"],
-        s2_paper_id=data["s2_paper_id"],
-        reference=data["reference"],
-        base_name=data["base_name"],
-        download_inputs=tuple(data["download_inputs"]),
-    )
-    return paper
-
-
 def _issue_from_dict(data: Dict[str, Any]) -> epqtypes.Issue:
     """
     Build an `Issue` from its JSON dict.
@@ -262,30 +262,8 @@ def _issue_from_dict(data: Dict[str, Any]) -> epqtypes.Issue:
 
 
 # #############################################################################
-# State files
+# Issues of the stages
 # #############################################################################
-
-
-def write_papers(path: str, papers: List[epqtypes.Paper]) -> None:
-    """
-    Write the output of the `resolve` stage.
-
-    :param path: path of `state/papers.json`
-    :param papers: papers, in reverse chronological order
-    """
-    _write_json(path, {"papers": [dataclasses.asdict(p) for p in papers]})
-
-
-def read_papers(path: str) -> List[epqtypes.Paper]:
-    """
-    Read the output of the `resolve` stage.
-
-    :param path: path of `state/papers.json`
-    :return: papers, in the order they were written
-    """
-    data = _read_json(path)
-    papers = [_paper_from_dict(item) for item in data["papers"]]
-    return papers
 
 
 def write_issues(path: str, issues: List[epqtypes.Issue]) -> None:
@@ -293,7 +271,7 @@ def write_issues(path: str, issues: List[epqtypes.Issue]) -> None:
     Write the issues of one stage.
 
     :param path: path of `state/issues.<stage>.json`
-    :param issues: issues of the stage
+    :param issues: issues of the stage `download` or `extract`
     """
     _write_json(path, {"issues": [dataclasses.asdict(i) for i in issues]})
 
@@ -451,7 +429,7 @@ def write_issues_csv(path: str, issues: List[epqtypes.Issue]) -> None:
             "stage": issue.stage,
             "status": issue.status,
             "reason": issue.reason,
-            "candidates": "|".join(issue.candidates),
+            "candidates": _join_items(issue.candidates),
         }
         for issue in ordered
     ]
@@ -468,3 +446,155 @@ def write_references(path: str, papers: List[epqtypes.Paper]) -> None:
     hio.create_dir(os.path.dirname(path) or ".", incremental=True)
     lines = [f"- {paper.reference}" for paper in papers]
     hio.to_file(path, "\n".join(lines) + "\n")
+
+
+# #############################################################################
+# CSV files of `resolve_papers.py`
+# #############################################################################
+
+
+def _read_csv(path: str, columns: List[str]) -> List[Dict[str, str]]:
+    """
+    Read the rows of a CSV file in UTF-8, and check that it has the columns.
+
+    A BOM written by a spreadsheet is skipped. The cell of a short row is `""`.
+
+    :param path: path of the file
+    :param columns: names of the columns that the file must have
+    :return: one dict per row, with the extra columns too
+    """
+    hdbg.dassert_file_exists(path)
+    with open(path, newline="", encoding="utf-8-sig") as f:
+        reader = csv.DictReader(f)
+        missing = [c for c in columns if c not in (reader.fieldnames or [])]
+        hdbg.dassert_eq(
+            len(missing),
+            0,
+            "File '%s' has no column %s: it has %s",
+            path,
+            missing,
+            reader.fieldnames,
+        )
+        rows = [
+            {key: value or "" for key, value in row.items() if key is not None}
+            for row in reader
+        ]
+    return rows
+
+
+def _join_items(items: Iterable[Any]) -> str:
+    """
+    Join the items of a list into the text of one CSV cell.
+
+    :param items: items, which must not hold the separator `|`
+    :return: text like `a|b`
+    """
+    return _LIST_SEP.join(str(item) for item in items)
+
+
+def _split_items(text: str) -> List[str]:
+    """
+    Split the text of a CSV cell into the items of a list.
+
+    :param text: text like `a|b`, or ""
+    :return: items, an empty list for ""
+    """
+    return text.split(_LIST_SEP) if text else []
+
+
+def read_input_csv(path: str) -> List[Tuple[int, str]]:
+    """
+    Read the input CSV of `resolve_papers.py`.
+
+    The column `input` holds a title (with the authors in parentheses), a link,
+    a DOI, or the path of a local PDF. The other columns are ignored.
+
+    :param path: path of the input CSV
+    :return: pairs `(row number, text)`, with the first row after the header
+        numbered 1
+    """
+    rows = _read_csv(path, [INPUT_COLUMN])
+    entries = [(i, row[INPUT_COLUMN]) for i, row in enumerate(rows, start=1)]
+    return entries
+
+
+def write_papers_csv(path: str, papers: List[epqtypes.Paper]) -> None:
+    """
+    Write the papers CSV, the output of `resolve_papers.py`.
+
+    A list (e.g., the authors) is one cell with the items joined by `|`.
+
+    :param path: path of the file, created with its dir
+    :param papers: papers, in reverse chronological order
+    """
+    rows = [
+        {
+            "reference": paper.reference,
+            "year": str(paper.year),
+            "authors": _join_items(paper.authors),
+            "title": paper.title,
+            "doi": paper.doi,
+            "arxiv_id": paper.arxiv_id,
+            "s2_paper_id": paper.s2_paper_id,
+            "source": paper.source,
+            "base_name": paper.base_name,
+            "download_inputs": _join_items(paper.download_inputs),
+            "line_nos": _join_items(paper.line_nos),
+            "key": paper.key,
+            "aliases": _join_items(paper.aliases),
+        }
+        for paper in papers
+    ]
+    _write_csv(path, PAPERS_COLUMNS, rows)
+
+
+def read_papers_csv(path: str) -> List[epqtypes.Paper]:
+    """
+    Read the papers CSV, the input of the stages `download` and `extract`.
+
+    :param path: path of the papers CSV
+    :return: papers, in the order of the rows
+    """
+    rows = _read_csv(path, PAPERS_COLUMNS)
+    papers = [
+        epqtypes.Paper(
+            key=row["key"],
+            aliases=tuple(_split_items(row["aliases"])),
+            line_nos=tuple(int(n) for n in _split_items(row["line_nos"])),
+            source=row["source"],
+            year=int(row["year"]),
+            authors=tuple(_split_items(row["authors"])),
+            title=row["title"],
+            doi=row["doi"],
+            arxiv_id=row["arxiv_id"],
+            s2_paper_id=row["s2_paper_id"],
+            reference=row["reference"],
+            base_name=row["base_name"],
+            download_inputs=tuple(_split_items(row["download_inputs"])),
+        )
+        for row in rows
+    ]
+    return papers
+
+
+def read_issues_csv(path: str) -> List[epqtypes.Issue]:
+    """
+    Read an issues CSV, e.g., the one that `resolve_papers.py` wrote.
+
+    :param path: path of the issues CSV
+    :return: issues, in the order of the rows
+    """
+    rows = _read_csv(path, ISSUES_COLUMNS)
+    issues = [
+        epqtypes.Issue(
+            line_no=int(row["line_no"]),
+            input=row["input"],
+            base_name=row["base_name"],
+            stage=row["stage"],
+            status=row["status"],
+            reason=row["reason"],
+            candidates=tuple(_split_items(row["candidates"])),
+        )
+        for row in rows
+    ]
+    return issues

@@ -38,7 +38,9 @@
 
 ### C1 (Context)
 
-- The quant researcher runs one CLI script on a text file and reads the output dir
+- The quant researcher runs two CLI scripts: `resolve_papers.py` turns a CSV of papers
+  into a papers CSV, and `estimate_paper_quality.py` turns the papers CSV into the
+  output dir
 - The pipeline reads bibliographic facts and citation counts only from the lookup
   APIs, never from an LLM (PRD
   [`R3`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r3-bibliographic-source),
@@ -58,7 +60,7 @@ System_Ext(bib, "Bibliographic APIs", "Semantic Scholar, Crossref, arXiv, Unpayw
 System_Ext(sites, "Paper hosts", "arXiv, SSRN, publisher sites, open-access mirrors")
 System_Ext(chrome, "Chrome", "Started and closed by download_with_chrome.py for SSRN")
 System_Ext(llm, "LLM provider", "OpenAI or OpenRouter, through helpers.hllm")
-Rel(user, epq, "Runs estimate_paper_quality.py", "CLI")
+Rel(user, epq, "Runs resolve_papers.py, then estimate_paper_quality.py", "CLI")
 Rel(epq, bib, "Looks up metadata, links, citations", "HTTPS JSON")
 Rel(epq, sites, "Downloads PDFs", "HTTPS")
 Rel(epq, chrome, "Downloads SSRN PDFs", "CDP")
@@ -67,7 +69,7 @@ Rel(epq, llm, "Extracts features with quotes", "HTTPS JSON")
 
 ### C2 (Container)
 
-- One script, six modules of the project, one shared module of types, and the
+- Two scripts, six modules of the project, one shared module of types, and the
   existing download tool
 - Arrows are imports or calls: each one points down a layer, never up
 
@@ -79,6 +81,7 @@ title Estimate Paper Quality: Containers
 Person(user, "Quant researcher")
 
 Container_Boundary(script, "Script and orchestration layer") {
+  Container(rcli, "resolve_papers.py", "", "Input CSV to papers CSV and issues CSV")
   Container(cli, "estimate_paper_quality.py", "", "Parses args, selects stages with hselect_action")
   Container(pipeline, "epq_pipeline.py", "", "Runs the stages, loops on papers, isolates failures, skips done work")
 }
@@ -101,9 +104,11 @@ Container_Boundary(ext, "Shared types, existing tool, outputs") {
   Container(types, "epq_types.py", "", "Dataclasses shared by all modules")
 }
 
+Rel(user, rcli, "~-~-input, ~-~-output")
 Rel(user, cli, "~-~-input, ~-~-output_dir")
-Rel(cli, pipeline, "run_pipeline(config)")
-Rel(pipeline, resolver, "resolve_lines()")
+Rel(rcli, pipeline, "run_resolve_csv()")
+Rel(cli, pipeline, "run_download(), run_extract(), run_report()")
+Rel(pipeline, resolver, "parse_line(), resolve_line()")
 Rel(pipeline, fetcher, "fetch_paper(), count_pages()")
 Rel(pipeline, extractor, "extract_features()")
 Rel(pipeline, rater, "rate_paper()")
@@ -125,6 +130,7 @@ Rel(report, out, "JSON, CSV, markdown")
 
   | File                                                                                               | Component     | Layer                   |
   | :------------------------------------------------------------------------------------------------- | :------------ | :---------------------- |
+  | [`resolve_papers.py`](/research/Estimate_academic_paper_quality/resolve_papers.py)                 | `pipeline`    | Script                  |
   | [`estimate_paper_quality.py`](/research/Estimate_academic_paper_quality/estimate_paper_quality.py) | `pipeline`    | Script                  |
   | [`epq_pipeline.py`](/research/Estimate_academic_paper_quality/epq_pipeline.py)                     | `pipeline`    | Orchestration           |
   | [`epq_resolver.py`](/research/Estimate_academic_paper_quality/epq_resolver.py)                     | `resolver`    | Business logic          |
@@ -140,8 +146,10 @@ Rel(report, out, "JSON, CSV, markdown")
 ## Import Graph
 
 - Allowed imports, checked by a test of the import graph:
-  - [`estimate_paper_quality.py`](/research/Estimate_academic_paper_quality/estimate_paper_quality.py)
-    imports `epq_pipeline`
+  - [`resolve_papers.py`](/research/Estimate_academic_paper_quality/resolve_papers.py)
+    and
+    [`estimate_paper_quality.py`](/research/Estimate_academic_paper_quality/estimate_paper_quality.py)
+    import `epq_pipeline`
   - `epq_pipeline` imports every `epq_*` module
   - `epq_resolver` imports `epq_bib_sources`, `epq_fetcher`, `epq_types`
   - `epq_extractor`, `epq_rater`, `epq_report` import only `epq_types`
@@ -207,14 +215,18 @@ Rel(report, out, "JSON, CSV, markdown")
 - The user runs:
 
   ```bash
-  > research/Estimate_academic_paper_quality/estimate_paper_quality.py \
-      --input research/Estimate_academic_paper_quality/paper_list.md \
-      --output_dir ~/papers/run_2026_10 \
+  > research/Estimate_academic_paper_quality/resolve_papers.py \
+      --input research/Estimate_academic_paper_quality/paper_list.csv \
+      --output ~/papers/run_2026_10/papers.csv \
       --email me@umd.edu
+  > research/Estimate_academic_paper_quality/estimate_paper_quality.py \
+      --input ~/papers/run_2026_10/papers.csv \
+      --output_dir ~/papers/run_2026_10
   ```
 
-- `resolve`: `resolver` parses 22 lines, looks up each one, writes 20 `Paper` and 2
-  `Issue` to `<output_dir>/state/`
+- `resolve_papers.py`: `resolver` parses 22 rows, looks up each one, writes 20 `Paper`
+  as the rows of `papers.csv` and 2 `Issue` as the rows of `papers.issues.csv`
+  ([`D26`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d26-the-resolver-is-a-separate-executable-that-reads-and-writes-csv))
 - `download`: `fetcher` runs the download tool for each paper with no PDF and no
   markdown yet, and records the failures
 - `extract`: for each converted paper with no features file yet, `extractor` calls
@@ -222,7 +234,7 @@ Rel(report, out, "JSON, CSV, markdown")
   `<output_dir>/papers/<BASE>.features.json`
 - `report`: `report` writes `references.md`, `report.csv`, and `issues.csv` from the
   state files and the features files
-- Rerun with 5 new lines: `resolve` hits the HTTP cache for the 22 old lines,
+- Rerun with 5 new rows: `resolve_papers.py` hits the HTTP cache for the 22 old rows,
   `download` and `extract` skip the 20 old papers, so only the new papers cost
   network time and LLM tokens
   ([`R11`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r11-rerun-skips-converted-papers),
@@ -256,10 +268,14 @@ Rel(report, out, "JSON, CSV, markdown")
 ## Configuration, Interfaces, and Known Limits
 
 - Configuration: CLI flags of
+  [`resolve_papers.py`](/research/Estimate_academic_paper_quality/resolve_papers.py),
+  see
+  [`resolve_papers.py.README.md`](/research/Estimate_academic_paper_quality/resolve_papers.py.README.md),
+  and of
   [`estimate_paper_quality.py`](/research/Estimate_academic_paper_quality/estimate_paper_quality.py),
   see
   [`research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md`](/research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md)
-- Interfaces: one CLI script, one output dir
+- Interfaces: two CLI scripts, a papers CSV between them, and one output dir
   - Layout of the output dir:
 
     ```
@@ -272,8 +288,7 @@ Rel(report, out, "JSON, CSV, markdown")
         <BASE>.md              R8
         <BASE>.features.json   R20
       state/
-        papers.json            output of resolve
-        issues.<stage>.json    issues of resolve, download, extract
+        issues.<stage>.json    issues of download, extract
         cache/                 HTTP response cache
     ```
 

@@ -108,6 +108,29 @@
   parentheses)
 - **Status**: proposed
 
+### `D26` (The Resolver Is a Separate Executable That Reads and Writes CSV)
+
+- **Decision**: `resolve_papers.py` reads an input CSV with a column `input` and
+  writes a papers CSV and an issues CSV; `estimate_paper_quality.py` has no `resolve`
+  stage, and reads the papers CSV with `--input` and the issues CSV with
+  `--resolve_issues`
+- **Why**: a person can open, sort, and fix the papers CSV before the costly stages
+  (download, LLM); the resolver can run alone on a new list; a CSV needs no state
+  dir, so [`D18`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d18-all-the-state-lives-in-the-output-dir)
+  now covers the stages `download`, `extract`, and `report` only
+- **Alternatives**: keep the stage `resolve` in the pipeline and add a second CLI that
+  calls it (two paths to the same code); write `state/papers.json` and read a CSV
+  only as an input (two formats for the same data)
+- **Consequences**:
+  - The input is not the markdown bullet list anymore: the joiner of
+    [`D25`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d25-the-parser-joins-the-lines-of-a-wrapped-bullet)
+    is not used by the executable, so a bullet list becomes a CSV first (e.g.,
+    [`paper_list.csv`](/research/Estimate_academic_paper_quality/paper_list.csv))
+  - The `line_no` of an issue is the row of the input CSV
+  - A list is one CSV cell with the items joined by `|`: an item that holds `|` breaks
+    on the read
+- **Status**: proposed
+
 ## Download and Files
 
 ### `D7` (The Pipeline Computes the Base Name with a Public Helper)

@@ -1,3 +1,4 @@
+import dataclasses
 import logging
 import os
 from typing import List
@@ -30,41 +31,28 @@ def _make_issue(
 
 
 # #############################################################################
-# Test_state_files
+# Test_issues_json
 # #############################################################################
 
 
-class Test_state_files(hunitest.TestCase):
+class Test_issues_json(hunitest.TestCase):
     """
-    Test `write_papers()`, `read_papers()`, `write_issues()`, `read_issues()`.
+    Test `write_issues()` and `read_issues()`.
     """
 
     def test1(self) -> None:
         """
-        Test papers are read back equal.
-        """
-        # Prepare inputs.
-        path = os.path.join(self.get_scratch_space(), "state", "papers.json")
-        papers = [epqteuti.make_paper(), epqteuti.make_paper(year=2019)]
-        # Run test.
-        epqrepor.write_papers(path, papers)
-        actual = epqrepor.read_papers(path)
-        # Check outputs.
-        self.assert_equal(str(actual), str(papers))
-
-    def test2(self) -> None:
-        """
         Test issues with candidates are read back equal.
         """
         # Prepare inputs.
-        path = os.path.join(self.get_scratch_space(), "issues.resolve.json")
+        path = os.path.join(self.get_scratch_space(), "issues.download.json")
         issue = epqtypes.Issue(
             line_no=3,
             input="Momentum",
             base_name="",
-            stage="resolve",
-            status="ambiguous",
-            reason="2 different papers match the title",
+            stage="download",
+            status="download_failed",
+            reason="HTTP 403 for the last input",
             candidates=('1993, Jegadeesh et al., "Momentum" (???)',),
         )
         # Run test.
@@ -73,18 +61,167 @@ class Test_state_files(hunitest.TestCase):
         # Check outputs.
         self.assert_equal(str(actual), str([issue]))
 
-    def test3(self) -> None:
+    def test2(self) -> None:
         """
         Test a file with another schema version is rejected.
         """
         # Prepare inputs.
-        path = os.path.join(self.get_scratch_space(), "papers.json")
-        hio.to_file(path, '{"schema_version": 0, "papers": []}')
+        path = os.path.join(self.get_scratch_space(), "issues.download.json")
+        hio.to_file(path, '{"schema_version": 0, "issues": []}')
         # Run test.
         with self.assertRaises(AssertionError) as cm:
-            epqrepor.read_papers(path)
+            epqrepor.read_issues(path)
         # Check outputs.
         self.assertIn("old schema", str(cm.exception))
+
+
+# #############################################################################
+# Test_read_input_csv
+# #############################################################################
+
+
+class Test_read_input_csv(hunitest.TestCase):
+    """
+    Test `epq_report.read_input_csv()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test rows are numbered from 1, and other columns and a BOM are ignored.
+        """
+        # Prepare inputs.
+        path = os.path.join(self.get_scratch_space(), "in.csv")
+        txt = (
+            "\ufeffnote,input\n"
+            'n1,"Lazy Prices (Cohen, Malloy)"\n'
+            "n2,2001.00001\n"
+            "n3,\n"
+        )
+        with open(path, "w", newline="", encoding="utf-8") as f:
+            f.write(txt)
+        # Prepare outputs.
+        expected = [
+            (1, "Lazy Prices (Cohen, Malloy)"),
+            (2, "2001.00001"),
+            (3, ""),
+        ]
+        # Run test.
+        actual = epqrepor.read_input_csv(path)
+        # Check outputs.
+        self.assertEqual(actual, expected)
+
+    def test2(self) -> None:
+        """
+        Test a file with no column `input` is rejected.
+        """
+        # Prepare inputs.
+        path = os.path.join(self.get_scratch_space(), "in.csv")
+        hio.to_file(path, "title\nLazy Prices\n")
+        # Run test.
+        with self.assertRaises(AssertionError) as cm:
+            epqrepor.read_input_csv(path)
+        # Check outputs.
+        self.assertIn("has no column ['input']", str(cm.exception))
+
+
+# #############################################################################
+# Test_papers_csv
+# #############################################################################
+
+
+class Test_papers_csv(hunitest.TestCase):
+    """
+    Test `epq_report.write_papers_csv()` and `epq_report.read_papers_csv()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test papers are read back equal, with the lists of different sizes.
+        """
+        # Prepare inputs.
+        path = os.path.join(self.get_scratch_space(), "papers.csv")
+        paper1 = epqteuti.make_paper(
+            line_nos=(3, 17),
+            reference='2020, Cohen et al., "Lazy, Prices" (???)',
+        )
+        paper2 = dataclasses.replace(
+            epqteuti.make_paper(year=2019, download_inputs=()),
+            aliases=(),
+            authors=(),
+            title='A "quoted", title',
+        )
+        papers = [paper1, paper2]
+        # Run test.
+        epqrepor.write_papers_csv(path, papers)
+        actual = epqrepor.read_papers_csv(path)
+        # Check outputs.
+        self.assert_equal(str(actual), str(papers))
+
+    def test2(self) -> None:
+        """
+        Test the content of the papers CSV.
+        """
+        # Prepare inputs.
+        path = os.path.join(self.get_scratch_space(), "papers.csv")
+        paper = epqteuti.make_paper(line_nos=(3, 17))
+        # Prepare outputs.
+        expected = """
+        reference,year,authors,title,doi,arxiv_id,s2_paper_id,source,base_name,download_inputs,line_nos,key,aliases
+        "2020, Cohen et al., ""Lazy Prices"" (https://arxiv.org/pdf/2001.00001)",2020,"Cohen, Lauren|Malloy, Christopher",Lazy Prices,10.1111/jofi.12885,2001.00001,s2lazy,semantic_scholar,2020.Cohen_et_al.Lazy_Prices,https://arxiv.org/pdf/2001.00001,3|17,lazy prices|cohen,doi:10.1111/jofi.12885
+        """
+        # Run test.
+        epqrepor.write_papers_csv(path, [paper])
+        # Check outputs.
+        actual = hio.from_file(path).replace("\r\n", "\n")
+        self.assert_equal(actual, expected, dedent=True)
+
+    def test3(self) -> None:
+        """
+        Test a CSV that is not a papers CSV is rejected.
+        """
+        # Prepare inputs.
+        path = os.path.join(self.get_scratch_space(), "papers.csv")
+        hio.to_file(path, "input\nLazy Prices\n")
+        # Run test.
+        with self.assertRaises(AssertionError) as cm:
+            epqrepor.read_papers_csv(path)
+        # Check outputs.
+        self.assertIn("has no column", str(cm.exception))
+
+
+# #############################################################################
+# Test_read_issues_csv
+# #############################################################################
+
+
+class Test_read_issues_csv(hunitest.TestCase):
+    """
+    Test `epq_report.read_issues_csv()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test issues with and without candidates are read back equal.
+        """
+        # Prepare inputs.
+        path = os.path.join(self.get_scratch_space(), "issues.csv")
+        issues = [
+            epqtypes.Issue(
+                line_no=1,
+                input="A title, with a comma",
+                base_name="",
+                stage="resolve",
+                status="ambiguous",
+                reason="2 different papers match the title",
+                candidates=("c1", "c2"),
+            ),
+            _make_issue(line_no=5, stage="resolve", status="unresolved"),
+        ]
+        epqrepor.write_issues_csv(path, issues)
+        # Run test.
+        actual = epqrepor.read_issues_csv(path)
+        # Check outputs.
+        self.assert_equal(str(actual), str(issues))
 
 
 # #############################################################################

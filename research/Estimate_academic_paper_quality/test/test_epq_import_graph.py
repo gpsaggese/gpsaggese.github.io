@@ -32,6 +32,7 @@ _ALLOWED: Dict[str, Set[str]] = {
     "epq_bib_sources": {"epq_types"},
     "epq_fetcher": {"epq_types"},
     "epq_types": set(),
+    "resolve_papers": {"epq_pipeline"},
 }
 
 

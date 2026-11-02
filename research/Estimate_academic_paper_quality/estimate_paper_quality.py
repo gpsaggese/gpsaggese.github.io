@@ -5,12 +5,12 @@
 # ///
 
 """
-Turn a loose list of papers into a CSV table of candidate trading strategies.
+Turn a CSV of resolved papers into a CSV table of candidate trading strategies.
 
-The input is a text file with one paper per line: a title (with the authors in
-parentheses), an arXiv or SSRN link, a DOI, a publisher link, or the path of a
-local PDF. The pipeline has four stages:
-- `resolve`: normalize the list into references, from bibliographic sources
+The input is the papers CSV that `resolve_papers.py` writes from a loose list of
+papers. Run `resolve_papers.py` first.
+
+The pipeline has three stages:
 - `download`: save the PDF and the markdown of each paper
 - `extract`: extract the features of each paper with an LLM, and rate its quality
 - `report`: write `references.md`, `report.csv`, and `issues.csv`
@@ -18,34 +18,10 @@ local PDF. The pipeline has four stages:
 All the outputs and the state of the run live in `--output_dir`. A rerun on the
 same dir does not pay again for the papers already processed.
 
-The design is in `docs/02-design.architecture.md`.
+The design is in `research/Estimate_academic_paper_quality/docs/02-design.architecture.md`.
 
-For a description of this file, see the file estimate_paper_quality.py.README.md
-
-# Usage Example
-
-- Run all the stages on a list of papers:
-> estimate_paper_quality.py \
-    --input research/Estimate_academic_paper_quality/paper_list.md \
-    --output_dir ~/papers/run_2026_10 \
-    --email me@umd.edu
-
-- Normalize the list only, without downloading or calling the LLM:
-> estimate_paper_quality.py \
-    --input paper_list.md \
-    --output_dir ~/papers/run_2026_10 \
-    --clear_actions --action resolve --action report
-
-- Extract again the features of all the papers:
-> estimate_paper_quality.py \
-    --input paper_list.md \
-    --output_dir ~/papers/run_2026_10 \
-    --clear_actions --action extract --action report \
-    --force_extract
-
-Import as:
-
-import research.Estimate_academic_paper_quality.estimate_paper_quality as repeqpaq
+For a description of this file, see the file
+`research/Estimate_academic_paper_quality/estimate_paper_quality.py.README.md`
 """
 
 import argparse
@@ -62,7 +38,7 @@ import research.Estimate_academic_paper_quality.epq_pipeline as epqpipel
 
 _LOG = logging.getLogger(__name__)
 
-_VALID_ACTIONS = ["resolve", "download", "extract", "report"]
+_VALID_ACTIONS = ["download", "extract", "report"]
 _DEFAULT_ACTIONS = _VALID_ACTIONS
 
 
@@ -71,25 +47,27 @@ def _parse() -> argparse.ArgumentParser:
         description=__doc__,
         formatter_class=hparser.CustomHelpFormatter,
     )
-    # The flags `--input` and `--output_dir` follow decision D10: the output dir
-    # is required and the user decides where it lives.
+    # The flag `--output_dir` follows decision D10: the output dir is required
+    # and the user decides where it lives.
     parser.add_argument(
+        "-i",
         "--input",
         action="store",
         required=True,
-        help="Text file with one paper per line",
+        help="Papers CSV that `resolve_papers.py` wrote",
+    )
+    parser.add_argument(
+        "--resolve_issues",
+        action="store",
+        default="",
+        help="Issues CSV that `resolve_papers.py` wrote; empty is the papers "
+        "CSV with `.issues.csv`, if that file exists",
     )
     parser.add_argument(
         "--output_dir",
         action="store",
         required=True,
         help="Dir of all the outputs and of the state of the run",
-    )
-    parser.add_argument(
-        "--email",
-        action="store",
-        default="",
-        help="Contact email for Unpaywall; empty skips Unpaywall",
     )
     parser.add_argument(
         "--model",
@@ -121,10 +99,22 @@ def _main(parser: argparse.ArgumentParser) -> None:
     hdbg.init_logger(verbosity=args.log_level, use_exec_path=True)
     hcacsimp.parse_cache_control_args(args)
     # Build the config and check the boundary of the system.
+    papers_file = os.path.abspath(os.path.expanduser(args.input))
+    resolve_issues_file = args.resolve_issues
+    if not resolve_issues_file:
+        default_issues_file = epqpipel.get_resolve_issues_path(papers_file)
+        if os.path.isfile(default_issues_file):
+            resolve_issues_file = default_issues_file
+        else:
+            _LOG.warning(
+                "No issues CSV of `resolve_papers.py` at '%s': `issues.csv` "
+                "lists no unresolved line",
+                default_issues_file,
+            )
     config = epqpipel.PipelineConfig(
-        input_file=os.path.expanduser(args.input),
+        papers_file=papers_file,
+        resolve_issues_file=resolve_issues_file,
         output_dir=os.path.abspath(os.path.expanduser(args.output_dir)),
-        email=args.email,
         model=args.model,
         force_extract=args.force_extract,
         max_chars=args.max_chars,
@@ -135,28 +125,29 @@ def _main(parser: argparse.ArgumentParser) -> None:
     epqpipel.make_dirs(config)
     # The cache of the helpers lives in the output dir with the other state.
     hcacsimp.set_cache_dir(epqpipel.get_cache_dir(config))
-    sources = epqpipel.make_sources(config)
+    # The stages only ask for citation counts, which need no contact email.
+    sources = epqpipel.make_sources(
+        email="",
+        s2_api_key=config.s2_api_key,
+        cache_dir=epqpipel.get_cache_dir(config),
+        cache_mode=config.cache_mode,
+    )
     # Select the stages to run.
     actions = hselacti.select_actions(args, _VALID_ACTIONS, _DEFAULT_ACTIONS)
     _LOG.info(
         "\n%s",
         hselacti.actions_to_string(actions, _VALID_ACTIONS, add_frame=True),
     )
-    # Run the stages. A stage that does not run reads its input from `state/`.
-    papers = None
+    # Run the stages on the papers of the papers CSV.
+    papers = epqpipel.read_papers(config)
     while actions:
         action = actions[0]
         to_execute, actions = hselacti.mark_action(action, actions)
         if not to_execute:
             continue
-        if action == "resolve":
-            result = epqpipel.run_resolve(config, sources)
-            papers = list(result.papers)
-        elif action == "download":
-            papers = papers or epqpipel.read_state_papers(config)
+        if action == "download":
             epqpipel.run_download(config, papers, log_level=args.log_level)
         elif action == "extract":
-            papers = papers or epqpipel.read_state_papers(config)
             llm_func, cost_tracker = epqpipel.make_llm_func(config)
             tiers = epqpipel.load_tiers(epqpipel.find_tiers_path())
             epqpipel.run_extract(
@@ -168,7 +159,6 @@ def _main(parser: argparse.ArgumentParser) -> None:
                 tiers=tiers,
             )
         elif action == "report":
-            papers = papers or epqpipel.read_state_papers(config)
             epqpipel.run_report(config, papers)
         else:
             raise ValueError(f"Invalid action='{action}'")

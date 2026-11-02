@@ -1,15 +1,16 @@
 """
-Run the four stages of the pipeline on one input file and one output dir.
+Run the stages of the pipeline on one papers CSV and one output dir.
 
-The stages are:
-- `resolve`: lines of the input file to papers and issues
+The stage `resolve` is a separate executable, `resolve_papers.py`, which turns
+an input CSV into a papers CSV and an issues CSV. This module runs it
+(`run_resolve_csv()`), and runs the stages that read the papers CSV:
 - `download`: PDF and markdown of each paper
 - `extract`: features file of each converted paper
 - `report`: `references.md`, `report.csv`, and `issues.csv`
 
-Each stage loops on the papers and turns the failure of one paper into an
-`Issue`, so the run goes on (decision D21). A rerun skips the work that a
-previous run did.
+Each stage loops on the lines or the papers and turns the failure of one of
+them into an `Issue`, so the run goes on (decision D21). A rerun skips the work
+that a previous run did.
 
 The design is in `docs/02.1-design.pipeline.md`.
 
@@ -53,10 +54,11 @@ class PipelineConfig:
     Settings of one run of the pipeline.
     """
 
-    input_file: str
+    # Papers CSV that `resolve_papers.py` wrote.
+    papers_file: str
+    # Issues CSV that `resolve_papers.py` wrote, "" if there is none.
+    resolve_issues_file: str
     output_dir: str
-    # Contact for Unpaywall, "" to skip Unpaywall.
-    email: str
     # LLM of `extract`, "" for the default model of `helpers.hllm`.
     model: str
     force_extract: bool
@@ -111,30 +113,52 @@ def get_features_path(config: PipelineConfig, base_name: str) -> str:
     return os.path.join(get_papers_dir(config), f"{base_name}.features.json")
 
 
+def get_resolve_issues_path(papers_file: str) -> str:
+    """
+    Get the default path of the issues CSV that goes with a papers CSV.
+
+    - `run/papers.csv` -> `run/papers.issues.csv`
+
+    :param papers_file: path of the papers CSV
+    :return: path of the issues CSV of `resolve_papers.py`
+    """
+    return os.path.splitext(papers_file)[0] + ".issues.csv"
+
+
 def make_dirs(config: PipelineConfig) -> None:
     """
     Check the input and create the dirs of the output.
 
     :param config: settings of the run
     """
-    hdbg.dassert_file_exists(config.input_file)
+    hdbg.dassert_file_exists(
+        config.papers_file, "Run resolve_papers.py to make the papers CSV"
+    )
+    if config.resolve_issues_file:
+        hdbg.dassert_file_exists(config.resolve_issues_file)
     hdbg.dassert_ne(config.output_dir, "", "The output dir is required")
     hio.create_dir(get_papers_dir(config), incremental=True)
     hio.create_dir(get_cache_dir(config), incremental=True)
 
 
-def make_sources(config: PipelineConfig) -> epqbibso.BibSources:
+def make_sources(
+    *, email: str, s2_api_key: str, cache_dir: str, cache_mode: str
+) -> epqbibso.BibSources:
     """
     Build the clients of the lookup APIs.
 
-    :param config: settings of the run
-    :return: clients with the cache in the output dir
+    :param email: contact for Unpaywall, "" to skip Unpaywall
+    :param s2_api_key: key of Semantic Scholar, "" for the shared pool
+    :param cache_dir: dir of the cache of the HTTP answers
+    :param cache_mode: one of "", `REFRESH_CACHE`, `DISABLE_CACHE`,
+        `HIT_CACHE_OR_ABORT`
+    :return: clients with the cache in `cache_dir`
     """
     sources = epqbibso.BibSources(
-        email=config.email,
-        s2_api_key=config.s2_api_key,
-        cache_dir=get_cache_dir(config),
-        cache_mode=config.cache_mode,
+        email=email,
+        s2_api_key=s2_api_key,
+        cache_dir=cache_dir,
+        cache_mode=cache_mode,
     )
     return sources
 
@@ -195,16 +219,14 @@ def find_tiers_path() -> str:
 # #############################################################################
 
 
-def read_state_papers(config: PipelineConfig) -> List[epqtypes.Paper]:
+def read_papers(config: PipelineConfig) -> List[epqtypes.Paper]:
     """
-    Read the papers that the `resolve` stage wrote.
+    Read the papers that `resolve_papers.py` wrote.
 
     :param config: settings of the run
-    :return: papers in reverse chronological order
+    :return: papers in the order of the papers CSV
     """
-    path = os.path.join(get_state_dir(config), "papers.json")
-    hdbg.dassert_file_exists(path, "Run the stage `resolve` first")
-    return epqrepor.read_papers(path)
+    return epqrepor.read_papers_csv(config.papers_file)
 
 
 def _read_state_issues(
@@ -214,7 +236,7 @@ def _read_state_issues(
     Read the issues that a stage wrote, if the stage ran.
 
     :param config: settings of the run
-    :param stage: one of `resolve`, `download`, `extract`
+    :param stage: one of `download`, `extract`
     :return: issues of the stage, empty if the stage did not run
     """
     path = os.path.join(get_state_dir(config), f"issues.{stage}.json")
@@ -265,18 +287,40 @@ def _make_paper_issue(
 # #############################################################################
 
 
-def run_resolve(
-    config: PipelineConfig, sources: epqbibso.BibSources
+def read_input_lines(input_csv: str) -> List[epqtypes.InputLine]:
+    """
+    Read and classify the rows of the input CSV of `resolve_papers.py`.
+
+    A blank row and a row that starts with `#` or `//` are skipped.
+
+    :param input_csv: path of the input CSV, with the column `input`
+    :return: classified lines, numbered by their row in the CSV
+    """
+    input_lines = []
+    for line_no, text in epqrepor.read_input_csv(input_csv):
+        input_line = epqresol.parse_line(line_no, text)
+        if input_line is not None:
+            input_lines.append(input_line)
+    _LOG.debug("return=%s lines", len(input_lines))
+    return input_lines
+
+
+def run_resolve_csv(
+    input_csv: str,
+    papers_csv: str,
+    issues_csv: str,
+    sources: epqbibso.BibSources,
 ) -> epqtypes.ResolveResult:
     """
-    Resolve the lines of the input file into papers and issues.
+    Resolve the rows of an input CSV into a papers CSV and an issues CSV.
 
-    :param config: settings of the run
+    :param input_csv: path of the input CSV, with the column `input`
+    :param papers_csv: path of the papers CSV to write
+    :param issues_csv: path of the issues CSV to write
     :param sources: clients of the lookup APIs
     :return: deduped papers in reverse chronological order, and the issues
     """
-    raw_lines = hio.from_file(config.input_file).split("\n")
-    input_lines = epqresol.parse_lines(raw_lines)
+    input_lines = read_input_lines(input_csv)
     _LOG.info("Resolving %s lines", len(input_lines))
     papers: List[epqtypes.Paper] = []
     issues: List[epqtypes.Issue] = []
@@ -299,9 +343,8 @@ def run_resolve(
         papers.extend(result.papers)
         issues.extend(result.issues)
     papers = epqresol.finalize_papers(papers)
-    state_dir = get_state_dir(config)
-    epqrepor.write_papers(os.path.join(state_dir, "papers.json"), papers)
-    epqrepor.write_issues(os.path.join(state_dir, "issues.resolve.json"), issues)
+    epqrepor.write_papers_csv(papers_csv, papers)
+    epqrepor.write_issues_csv(issues_csv, issues)
     _LOG.info("Resolved %s papers, %s issues", len(papers), len(issues))
     return epqtypes.ResolveResult(papers=tuple(papers), issues=tuple(issues))
 
@@ -317,7 +360,7 @@ def run_download(
     Download and convert the papers that are not converted yet.
 
     :param config: settings of the run
-    :param papers: papers from the `resolve` stage
+    :param papers: papers from the papers CSV
     :param tool_path: path of the download tool
         - Default: find it in the Git tree
     :param log_level: logging level to forward to the tool
@@ -462,7 +505,7 @@ def run_extract(
     Extract the features of the converted papers that have none yet.
 
     :param config: settings of the run
-    :param papers: papers from the `resolve` stage
+    :param papers: papers from the papers CSV
     :param llm_func: function that calls the LLM
     :param cost_tracker: tracker of the cost of `llm_func`
     :param sources: clients of the lookup APIs, for the citation count
@@ -514,16 +557,18 @@ def run_report(config: PipelineConfig, papers: List[epqtypes.Paper]) -> None:
     """
     Write `references.md`, `report.csv`, and `issues.csv`.
 
-    The issues of every stage are read from `state/`, so that this stage can run
-    alone.
+    The issues of `resolve_papers.py` come from its issues CSV, and the issues of
+    the other stages are read from `state/`, so that this stage can run alone.
 
     :param config: settings of the run
-    :param papers: papers from the `resolve` stage
+    :param papers: papers from the papers CSV
     """
     # Read the features file of each paper that has one.
     features: Dict[str, epqtypes.PaperFeatures] = {}
     issues: List[epqtypes.Issue] = []
-    for stage in ["resolve", "download", "extract"]:
+    if config.resolve_issues_file:
+        issues.extend(epqrepor.read_issues_csv(config.resolve_issues_file))
+    for stage in ["download", "extract"]:
         issues.extend(_read_state_issues(config, stage))
     for paper in papers:
         path = get_features_path(config, paper.base_name)

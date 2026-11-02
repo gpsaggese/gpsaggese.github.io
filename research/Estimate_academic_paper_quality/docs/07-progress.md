@@ -31,6 +31,11 @@
   [`02.1-design.pipeline.md`](/research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md)
 - Not built: `PR_Q2` (the tier list needs a person), `PR_V1` and `PR_V2` (they
   need the labeled sets), and the unscheduled PRs
+- Resolver as a separate executable (task 1 of `todos.md`, decision `D26`):
+  `resolve_papers.py` reads an input CSV and writes a papers CSV and an issues CSV;
+  `estimate_paper_quality.py` lost the stage `resolve` and the flag `--email`, and
+  reads the papers CSV with `--input`. 168 tests pass, and a live run of the
+  resolver on 3 rows worked with Semantic Scholar blocked (`429`)
 
 ## Findings
 
@@ -75,8 +80,8 @@
    [`affiliation_tiers.yaml`](/research/Estimate_academic_paper_quality/affiliation_tiers.yaml)
    by hand from the QS site (`PR_Q2`): until then each affiliation scores by its
    kind, and a university scores 3
-2. Run the full pipeline with `SEMANTIC_SCHOLAR_API_KEY`, `--email`, Docker, Chrome,
-   and an LLM key: the `download` stage on an SSRN paper and the `extract` stage
+2. Run `resolve_papers.py --email` and then the full pipeline with
+   `SEMANTIC_SCHOLAR_API_KEY`, Docker, Chrome, and an LLM key: the `download` stage on an SSRN paper and the `extract` stage
    have not run on live services
 3. Label an input list and 20 papers (`PR_V1`, `PR_V2`), then measure the three
    success metrics and pick the default LLM
@@ -90,6 +95,7 @@
 | 2026-11-01 | Wrote `04-plan.md` (4 versions, 24 scheduled PRs) and this progress log                                                    |
 | 2026-11-02 | Wrote the code of `v0.1` to `v0.3` and 156 tests in one pass; decisions `D24` and `D25`; ran `resolve` on the live APIs    |
 | 2026-11-02 | Added a `Status` line to each PR entry of `04-plan.md`: 21 PRs written on branch `gp`, none merged into `main`             |
+| 2026-11-02 | Split the resolver into `resolve_papers.py`, with CSV in and CSV out (`D26`); the pipeline reads the papers CSV             |
 
 ## Open Work
 

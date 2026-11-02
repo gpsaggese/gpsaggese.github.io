@@ -1,8 +1,10 @@
+import csv
+import dataclasses
 import datetime
 import logging
 import os
 import sys
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from unittest import mock
 
 import helpers.hcache_simple as hcacsimp
@@ -106,22 +108,25 @@ class _PipelineTestCase(hunitest.TestCase):
         hcacsimp.enable_caching(True)
 
     def make_config(
-        self, lines: List[str], *, force_extract: bool = False
+        self,
+        *,
+        papers: Optional[List[epqtypes.Paper]] = None,
+        force_extract: bool = False,
     ) -> epqpipel.PipelineConfig:
         """
-        Write an input file and build the config of a run.
+        Write a papers CSV and build the config of a run.
 
-        :param lines: lines of the input file
+        :param papers: papers of the CSV, by default none
         :param force_extract: if True, extract again
         :return: config with the output dir in the scratch space
         """
         scratch = self.get_scratch_space()
-        input_file = os.path.join(scratch, "list.md")
-        hio.to_file(input_file, "\n".join(lines) + "\n")
+        papers_file = os.path.join(scratch, "papers.csv")
+        epqrepor.write_papers_csv(papers_file, papers or [])
         config = epqpipel.PipelineConfig(
-            input_file=input_file,
+            papers_file=papers_file,
+            resolve_issues_file="",
             output_dir=os.path.join(scratch, "out"),
-            email="",
             model="test-model",
             force_extract=force_extract,
             max_chars=100000,
@@ -131,6 +136,20 @@ class _PipelineTestCase(hunitest.TestCase):
         )
         epqpipel.make_dirs(config)
         return config
+
+    def make_input_csv(self, inputs: List[str]) -> str:
+        """
+        Write an input CSV for `resolve_papers.py`.
+
+        :param inputs: values of the column `input`
+        :return: path of the CSV
+        """
+        path = os.path.join(self.get_scratch_space(), "papers_in.csv")
+        with open(path, "w", newline="", encoding="utf-8") as f:
+            writer = csv.writer(f)
+            writer.writerow(["input"])
+            writer.writerows([[text] for text in inputs])
+        return path
 
     def make_tiers(self) -> epqtypes.AffiliationTiers:
         """
@@ -146,7 +165,7 @@ class _PipelineTestCase(hunitest.TestCase):
 
 class Test_run_stages(_PipelineTestCase):
     """
-    Test the four stages on a local server, a stub tool, and a fake LLM.
+    Test the stages on a local server, a stub tool, and a fake LLM.
     """
 
     def test1(self) -> None:
@@ -166,7 +185,10 @@ class Test_run_stages(_PipelineTestCase):
         server = epqteuti.LocalServer(routes)
         self.addCleanup(server.stop)
         scratch = self.get_scratch_space()
-        config = self.make_config(["2001.00001", "Unknown Title"])
+        config = self.make_config()
+        input_csv = self.make_input_csv(["2001.00001", "Unknown Title"])
+        papers_csv = config.papers_file
+        issues_csv = epqpipel.get_resolve_issues_path(papers_csv)
         sources = epqbibso.BibSources(
             email="",
             s2_api_key="",
@@ -203,22 +225,27 @@ class Test_run_stages(_PipelineTestCase):
         2,Unknown Title,,resolve,unresolved,no source has a paper titled 'Unknown Title',
         """
         # Run test: the first run.
-        result = epqpipel.run_resolve(config, sources)
+        result = epqpipel.run_resolve_csv(
+            input_csv, papers_csv, issues_csv, sources
+        )
+        config = dataclasses.replace(config, resolve_issues_file=issues_csv)
+        papers = epqpipel.read_papers(config)
         with mock.patch.dict(os.environ, env):
             download_issues = epqpipel.run_download(
-                config, list(result.papers), tool_path=tool_path
+                config, papers, tool_path=tool_path
             )
         extract_issues = epqpipel.run_extract(
             config,
-            list(result.papers),
+            papers,
             llm_func=_llm_func,
             cost_tracker=tracker,
             sources=sources,
             tiers=self.make_tiers(),
         )
-        epqpipel.run_report(config, list(result.papers))
+        epqpipel.run_report(config, papers)
         # Check outputs.
         self.assertEqual((len(result.papers), len(result.issues)), (1, 1))
+        self.assertEqual(papers, list(result.papers))
         self.assertEqual((download_issues, extract_issues), ([], []))
         self.assert_equal(
             hio.from_file(os.path.join(out, "report.csv")).replace("\r\n", "\n"),
@@ -243,7 +270,9 @@ class Test_run_stages(_PipelineTestCase):
         # Run test: a rerun does not call the network, the tool, or the LLM.
         n_requests = len(server.requests)
         n_tool_calls = len(hio.from_file(env["EPQ_STUB_CALLS"]).split("\n"))
-        rerun = epqpipel.run_resolve(config, sources)
+        rerun = epqpipel.run_resolve_csv(
+            input_csv, papers_csv, issues_csv, sources
+        )
         with mock.patch.dict(os.environ, env):
             epqpipel.run_download(
                 config, list(rerun.papers), tool_path=tool_path
@@ -282,11 +311,18 @@ class Test_run_stages(_PipelineTestCase):
                 )
             }
         )
-        config = self.make_config(["1111.11111", "2001.00001"])
+        scratch = self.get_scratch_space()
+        input_csv = self.make_input_csv(["1111.11111", "2001.00001"])
+        papers_csv = os.path.join(scratch, "papers.csv")
+        issues_csv = os.path.join(scratch, "papers.issues.csv")
         # Run test.
-        result = epqpipel.run_resolve(config, sources)
+        result = epqpipel.run_resolve_csv(
+            input_csv, papers_csv, issues_csv, sources
+        )
         # Check outputs.
         self.assertEqual(len(result.papers), 1)
+        self.assertEqual(len(epqrepor.read_papers_csv(papers_csv)), 1)
+        self.assertEqual(len(epqrepor.read_issues_csv(issues_csv)), 1)
         actual = [(i.line_no, i.status, i.reason) for i in result.issues]
         reason = (
             "no record for arXiv id '1111.11111' "
@@ -300,7 +336,7 @@ class Test_run_stages(_PipelineTestCase):
         Test a download that fails is an issue and the run goes on.
         """
         # Prepare inputs.
-        config = self.make_config(["x"])
+        config = self.make_config()
         scratch = self.get_scratch_space()
         papers = [
             epqteuti.make_paper(
@@ -330,7 +366,7 @@ class Test_run_stages(_PipelineTestCase):
         Test a paper that fails to extract is an issue and the next one is done.
         """
         # Prepare inputs.
-        config = self.make_config(["x"])
+        config = self.make_config()
         papers_dir = epqpipel.get_papers_dir(config)
         papers = [
             epqteuti.make_paper(base_name="p1"),
@@ -372,7 +408,7 @@ class Test_run_stages(_PipelineTestCase):
         Test `--force_extract` extracts again a paper with a features file.
         """
         # Prepare inputs.
-        config = self.make_config(["x"], force_extract=True)
+        config = self.make_config(force_extract=True)
         papers_dir = epqpipel.get_papers_dir(config)
         epqteuti.create_pdf(
             os.path.join(papers_dir, "p1.pdf"), ["Sharpe ratio of 1.4"]
@@ -406,7 +442,7 @@ class Test_run_stages(_PipelineTestCase):
         Test a features file with an old schema is an issue in the report.
         """
         # Prepare inputs.
-        config = self.make_config(["x"])
+        config = self.make_config()
         paper = epqteuti.make_paper(base_name="p1")
         hio.to_file(
             epqpipel.get_features_path(config, "p1"), '{"schema_version": 99}'
@@ -422,11 +458,11 @@ class Test_run_stages(_PipelineTestCase):
 
 
 # #############################################################################
-# Test_estimate_paper_quality
+# Test_estimate_paper_quality_py
 # #############################################################################
 
 
-class Test_estimate_paper_quality(_PipelineTestCase):
+class Test_estimate_paper_quality_py(_PipelineTestCase):
     """
     Test the command line of `estimate_paper_quality.py`.
     """
@@ -449,29 +485,18 @@ class Test_estimate_paper_quality(_PipelineTestCase):
 
     def test1(self) -> None:
         """
-        Test the stages `resolve` and `report` write the reference list.
+        Test the stage `report` writes the reference list from the papers CSV.
         """
         # Prepare inputs.
-        config = self.make_config(["2001.00001"])
-        sources = epqteuti.FakeBibSources(
-            by_id={
-                "arxiv:2001.00001": epqteuti.make_record(
-                    source="arxiv",
-                    s2_paper_id="",
-                    arxiv_id="2001.00001",
-                    pdf_urls=("https://arxiv.org/pdf/2001.00001",),
-                )
-            }
-        )
+        config = self.make_config(papers=[epqteuti.make_paper()])
         argv = [
-            f"--input={config.input_file}",
+            f"--input={config.papers_file}",
             f"--output_dir={config.output_dir}",
             "--clear_actions",
-            "--action=resolve",
             "--action=report",
         ]
         # Run test.
-        self.run_main(argv, sources)
+        self.run_main(argv, epqteuti.FakeBibSources())
         # Check outputs.
         references = hio.from_file(
             os.path.join(config.output_dir, "references.md")
@@ -488,15 +513,66 @@ class Test_estimate_paper_quality(_PipelineTestCase):
 
     def test2(self) -> None:
         """
-        Test the stage `report` alone reads the state of the previous run.
+        Test the issues CSV next to the papers CSV goes to `issues.csv`.
         """
         # Prepare inputs.
-        config = self.make_config(["2001.00001"])
-        paper = epqteuti.make_paper()
-        state_dir = epqpipel.get_state_dir(config)
-        epqrepor.write_papers(os.path.join(state_dir, "papers.json"), [paper])
+        config = self.make_config(papers=[epqteuti.make_paper()])
+        issue = epqtypes.Issue(
+            line_no=2,
+            input="Unknown Title",
+            base_name="",
+            stage="resolve",
+            status="unresolved",
+            reason="no source has a paper titled 'Unknown Title'",
+            candidates=(),
+        )
+        epqrepor.write_issues_csv(
+            epqpipel.get_resolve_issues_path(config.papers_file), [issue]
+        )
         argv = [
-            f"--input={config.input_file}",
+            f"--input={config.papers_file}",
+            f"--output_dir={config.output_dir}",
+            "--clear_actions",
+            "--action=report",
+        ]
+        # Prepare outputs.
+        expected = """
+        line_no,input,base_name,stage,status,reason,candidates
+        2,Unknown Title,,resolve,unresolved,no source has a paper titled 'Unknown Title',
+        """
+        # Run test.
+        self.run_main(argv, epqteuti.FakeBibSources())
+        # Check outputs.
+        actual = hio.from_file(
+            os.path.join(config.output_dir, "issues.csv")
+        ).replace("\r\n", "\n")
+        self.assert_equal(actual, expected, dedent=True)
+
+    def test3(self) -> None:
+        """
+        Test `--resolve_issues` selects an issues CSV that has another name.
+        """
+        # Prepare inputs.
+        config = self.make_config(papers=[epqteuti.make_paper()])
+        scratch = self.get_scratch_space()
+        issues_file = os.path.join(scratch, "my_issues.csv")
+        epqrepor.write_issues_csv(
+            issues_file,
+            [
+                epqtypes.Issue(
+                    line_no=7,
+                    input="Momentum",
+                    base_name="",
+                    stage="resolve",
+                    status="ambiguous",
+                    reason="2 different papers match the title",
+                    candidates=("c1", "c2"),
+                )
+            ],
+        )
+        argv = [
+            f"--input={config.papers_file}",
+            f"--resolve_issues={issues_file}",
             f"--output_dir={config.output_dir}",
             "--clear_actions",
             "--action=report",
@@ -504,20 +580,36 @@ class Test_estimate_paper_quality(_PipelineTestCase):
         # Run test.
         self.run_main(argv, epqteuti.FakeBibSources())
         # Check outputs.
-        references = hio.from_file(
-            os.path.join(config.output_dir, "references.md")
-        )
-        self.assertIn("Lazy Prices", references)
+        actual = hio.from_file(os.path.join(config.output_dir, "issues.csv"))
+        self.assertIn("7,Momentum,,resolve,ambiguous", actual)
+        self.assertIn("c1|c2", actual)
 
-    def test3(self) -> None:
+    def test4(self) -> None:
         """
-        Test a missing input file stops the run before any lookup.
+        Test a missing papers CSV stops the run before any lookup.
         """
         # Prepare inputs.
         scratch = self.get_scratch_space()
         argv = [
-            f"--input={scratch}/missing.md",
+            f"--input={scratch}/missing.csv",
             f"--output_dir={scratch}/out",
+        ]
+        # Run test.
+        with self.assertRaises(AssertionError) as cm:
+            self.run_main(argv, epqteuti.FakeBibSources())
+        # Check outputs.
+        self.assertIn("Run resolve_papers.py", str(cm.exception))
+
+    def test5(self) -> None:
+        """
+        Test a missing file of `--resolve_issues` stops the run.
+        """
+        # Prepare inputs.
+        config = self.make_config(papers=[epqteuti.make_paper()])
+        argv = [
+            f"--input={config.papers_file}",
+            f"--resolve_issues={self.get_scratch_space()}/missing.csv",
+            f"--output_dir={config.output_dir}",
         ]
         # Run test.
         with self.assertRaises(AssertionError):
