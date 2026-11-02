@@ -113,7 +113,10 @@ except ImportError:
 #   - `observation_space` / `action_space`: the batched space
 
 # %% [markdown]
-# ## Primitive 1: `VectorEnv`: the Abstract Base Class
+# # Part 1: Creating vector envs
+
+# %% [markdown]
+# ## Cell 1.1: `VectorEnv`: the abstract base class
 #
 # - **Mental model**: an interface that wraps `N` independent `gym.Env`
 #   instances and exposes batch-oriented `reset()` and `step()` methods
@@ -126,7 +129,7 @@ except ImportError:
 print("VectorEnv MRO:", [c.__name__ for c in VectorEnv.__mro__])
 
 # %% [markdown]
-# ## Primitive 2: Creating a `SyncVectorEnv` Manually
+# ## Cell 1.2: Create a `SyncVectorEnv` manually
 #
 # - **Mental model**: `SyncVectorEnv` takes a sequence of callables (env
 #   factories), calls each one, and steps them all sequentially inside a single
@@ -154,7 +157,7 @@ print("action_space:", sync_env.action_space)
 sync_env.close()
 
 # %% [markdown]
-# ## Primitive 3: `gym.make_vec()`: The Standard Factory
+# ## Cell 1.3: `gym.make_vec()`: the standard factory
 #
 # - **Mental model**: `gym.make_vec()` is the vector equivalent of
 #   `gym.make()`: it creates `N` copies of a registered environment using a
@@ -183,7 +186,10 @@ display(pd.DataFrame(data))
 vec_env.close()
 
 # %% [markdown]
-# ## Primitive 4: `reset()`: Batch Reset
+# # Part 2: Batch reset and step
+
+# %% [markdown]
+# ## Cell 2.1: `reset()`: batch reset
 #
 # - **Mental model**: calls `reset()` on all sub-environments and concatenates
 #   the observations into a single array
@@ -218,7 +224,7 @@ print("Same seed -> all env obs identical:", np.array_equal(obs0, obs1))
 vec_env2.close()
 
 # %% [markdown]
-# ## Primitive 5: `step()`: Batch Step
+# ## Cell 2.2: `step()`: batch step
 #
 # - **Mental model**: takes a batch of `N` actions (one per sub-env) and
 #   returns `(observations, rewards, terminations, truncations, info)` where
@@ -291,7 +297,7 @@ print("Steps until done per env:", steps_to_done)
 vec_env.close()
 
 # %% [markdown]
-# ## Primitive 6: `AutoresetMode`: Controlling Auto-Reset Behaviour
+# ## Cell 2.3: `AutoresetMode`: controlling auto-reset behaviour
 #
 # - **Mental model**: the autoreset mode determines **when** a sub-env that
 #   finished an episode gets reset
@@ -406,7 +412,10 @@ for t in range(6):
 vec_disabled.close()
 
 # %% [markdown]
-# ## Primitive 7: Spaces in Vector Environments
+# # Part 3: Spaces and parallelism
+
+# %% [markdown]
+# ## Cell 3.1: Spaces in vector environments
 #
 # - **Mental model**: a vector environment has **four** space attributes:
 #   - `single_observation_space`: what one sub-env returns (e.g., `Box(4,)`)
@@ -451,7 +460,7 @@ print("batched action space nvec:", vec_env.action_space.nvec)
 vec_env.close()
 
 # %% [markdown]
-# ## Primitive 8: `AsyncVectorEnv`: Multiprocess Parallelism
+# ## Cell 3.2: `AsyncVectorEnv`: multiprocess parallelism
 #
 # - **Mental model**: each sub-env runs in its own `multiprocessing` process.
 #   Observations are communicated back via shared memory or pipes
@@ -537,7 +546,10 @@ data = {
 display(pd.DataFrame(data))
 
 # %% [markdown]
-# ## Primitive 9: `VectorWrapper`: Transforming Vector Environments
+# # Part 4: Wrappers and utilities
+
+# %% [markdown]
+# ## Cell 4.1: `VectorWrapper`: transforming vector environments
 #
 # - **Mental model**: mirrors `gym.Wrapper` but operates on batches
 #   - `VectorActionWrapper`: transforms the action batch before passing to
@@ -611,7 +623,7 @@ print("clipped rewards:", rewards)
 clipped.close()
 
 # %% [markdown]
-# ## Primitive 10: Utility Functions
+# ## Cell 4.2: Utility functions
 #
 # - The `gymnasium.vector.utils` module provides helpers for working with
 #   batched spaces
@@ -652,7 +664,10 @@ for i, action in enumerate(iterate(batched_d, actions)):
     print(f"  env {i}: action={action}")
 
 # %% [markdown]
-# ## Composition Example 1: Minimal Vector Environment
+# # Part 5: Composition
+
+# %% [markdown]
+# ## Cell 5.1: Minimal vector environment
 #
 # - Create 2 envs, reset once, step a few times, inspect all return values
 
@@ -670,7 +685,7 @@ for t in range(3):
 vec_env.close()
 
 # %% [markdown]
-# ## Composition Example 2: Using a Custom Wrapper
+# ## Cell 5.2: Use a custom wrapper
 #
 # - Apply a `VectorRewardWrapper` that scales rewards by a factor
 
@@ -715,7 +730,7 @@ scaled.close()
 vec_env.close()
 
 # %% [markdown]
-# ## Composition Example 3: Async with Custom Env Configurations
+# ## Cell 5.3: Async with custom env configurations
 #
 # - `AsyncVectorEnv` can create sub-envs with different parameters by passing
 #   different factories
@@ -742,7 +757,7 @@ print("obs:", obs)
 async_mixed.close()
 
 # %% [markdown]
-# ## Composition Example 4: `reset_mask`: Selective Reset
+# ## Cell 5.4: `reset_mask`: selective reset
 #
 # - When `AutoresetMode` is not what you need, pass `reset_mask` in `options`
 #   to selectively reset specific sub-envs
@@ -767,7 +782,7 @@ print("obs after selective reset:\n", obs)
 vec_env.close()
 
 # %% [markdown]
-# ## Composition Example 5: Nesting Single-Env Wrappers Inside a Vector Env
+# ## Cell 5.5: Nest single-env wrappers inside a vector env
 #
 # - Standard single-env wrappers can be applied **inside** each sub-env factory
 
@@ -794,7 +809,10 @@ for t in range(60):
 vec_env.close()
 
 # %% [markdown]
-# ## API Patterns
+# # Part 6: API patterns
+
+# %% [markdown]
+# ## Cell 6.1: Vector env patterns
 #
 # - **Factory pattern**: `gym.make_vec(id, num_envs, vectorization_mode)` is
 #   the standard way to create vector envs. Avoid constructing `SyncVectorEnv`
@@ -812,7 +830,10 @@ vec_env.close()
 #   subset of sub-envs without affecting the others
 
 # %% [markdown]
-# ## Interactive Exploration
+# # Part 7: Interactive exploration
+
+# %% [markdown]
+# ## Cell 7.1: Explore vector envs
 #
 # - Try modifying the examples above:
 #   - What shape does `batch_space` produce for a `Dict` space?
