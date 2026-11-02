@@ -28,17 +28,18 @@ import research.Noesis.checker.checker_calibration_report as rnochcare
 import research.Noesis.checker.checker_calibration_runtime as rnochcaru
 import research.Noesis.checker.checker_canaries as rnochcan
 import research.Noesis.checker.checker_models as rnochmod
+import research.Noesis.checker.checker_sink as rnochsink
 import research.Noesis.checker.checker_store as rnochsto
 import research.Noesis.common.noesis_db as rnonodb
 import research.Noesis.common.noesis_settings as rnonoset
 import research.Noesis.gateway.gateway_faults as rnogafau
 import research.Noesis.gateway.gateway_openrouter as rnogaope
-import research.Noesis.prober.prober_runtime as rnoprrun
 import research.Noesis.prober.prober_worker as rnoprwor
 
 _LOG = logging.getLogger(__name__)
 
 DEFAULT_BANK_VERSION = "v1"
+DEFAULT_CHECKER_VERSION = "m2-v1"
 DEFAULT_MINIMUM_SURVIVORS = 150
 DEFAULT_BANK_DIR = os.path.join(rnonoset.NOESIS_DIR, "data", "canaries")
 DEFAULT_REPORT_PATH = os.path.join(
@@ -57,9 +58,7 @@ def parse_target(
         raise argparse.ArgumentTypeError(
             "target must have the form provider_slug=model_id"
         )
-    return rnochmod.CalibrationTarget(
-        role, provider_slug.strip(), model_id.strip()
-    )
+    return rnochmod.CalibrationTarget(role, provider_slug.strip(), model_id.strip())
 
 
 def _combined_environment() -> Mapping[str, str]:
@@ -84,9 +83,10 @@ def _write_report(path: str, report: str) -> None:
 async def _run_calibrate(args: argparse.Namespace) -> int:
     canaries = rnochcan.load_canary_bank(args.bank_dir, args.bank_version)
     targets = tuple(
-        parse_target(value, rnochmod.CalibrationRole.HEALTHY)
-        for value in args.healthy
-    ) + (parse_target(args.weak, rnochmod.CalibrationRole.WEAK),)
+        parse_target(value, rnochmod.CalibrationRole.HEALTHY) for value in args.healthy
+    ) + (
+        parse_target(args.weak, rnochmod.CalibrationRole.WEAK),
+    )
     policy = rnochmod.CalibrationPolicy(
         repetitions=args.repetitions,
         max_tokens=args.max_tokens,
@@ -152,9 +152,7 @@ async def _run_calibrate(args: argparse.Namespace) -> int:
 async def _run_probe(args: argparse.Namespace) -> int:
     environment = _combined_environment()
     api_key = _require_secret(environment, "OPENROUTER_API_KEY")
-    schedule_secret = _require_secret(
-        environment, "NOESIS_CANARY_SCHEDULE_SECRET"
-    )
+    schedule_secret = _require_secret(environment, "NOESIS_CANARY_SCHEDULE_SECRET")
     settings = rnonoset.load_settings(environ=environment)
     policy = rnochmod.ProbePolicy(
         bank_version=args.bank_version,
@@ -162,6 +160,8 @@ async def _run_probe(args: argparse.Namespace) -> int:
         max_tokens=min(args.max_tokens, settings.max_tokens_cap),
         timeout_multiplier=settings.timeout_multiplier,
     )
+    checker_policy = rnochmod.WindowPolicy()
+    sink = rnochsink.RecordingVerdictSink()
     provider = rnogaope.OpenRouterProvider(api_key)
     faults = rnogafau.FaultRegistry()
     try:
@@ -169,21 +169,37 @@ async def _run_probe(args: argparse.Namespace) -> int:
         try:
             await rnonodb.apply_migrations(pool)
             if args.once:
-                result = await rnoprrun.run_due_probes(
+                result = await rnoprwor.run_probe_cycle(
                     pool,
                     provider,
                     faults,
                     policy,
                     schedule_secret,
                     datetime.now(UTC),
+                    sink=sink,
+                    checker_policy=checker_policy,
+                    checker_version=DEFAULT_CHECKER_VERSION,
                 )
+                finalized = sum(
+                    evaluation.finalized for evaluation in result.checker.evaluations
+                )
+                errors = result.probes.errors + result.checker.errors
                 print(
-                    f"Probe cycle: executions={len(result.executions)}"
-                    f" errors={len(result.errors)}"
+                    f"Probe/checker cycle:"
+                    f" executions={len(result.probes.executions)}"
+                    f" finalized={finalized}"
+                    f" published={len(result.checker.published_reports)}"
+                    f" errors={len(errors)}"
                 )
-                for error in result.errors:
+                for report in result.checker.published_reports:
+                    print(
+                        f"  contract={report.contract_id}"
+                        f" seller={report.seller_id}"
+                        f" verdict={report.verdict.value}"
+                    )
+                for error in errors:
                     print(f"  {error}")
-                return 1 if result.errors else 0
+                return 1 if errors else 0
             stop_event = asyncio.Event()
             loop = asyncio.get_running_loop()
             for signal_name in (signal.SIGINT, signal.SIGTERM):
@@ -195,11 +211,17 @@ async def _run_probe(args: argparse.Namespace) -> int:
                 policy,
                 schedule_secret,
                 stop_event,
+                sink=sink,
+                checker_policy=checker_policy,
+                checker_version=DEFAULT_CHECKER_VERSION,
                 poll_interval_s=args.poll_interval,
             )
             print(
                 f"Probe worker stopped: cycles={result.cycles}"
-                f" executions={result.executions} errors={result.errors}"
+                f" executions={result.executions}"
+                f" finalized={result.finalized_contracts}"
+                f" published={result.published_reports}"
+                f" errors={result.errors}"
             )
             return 0
         finally:
@@ -237,15 +259,11 @@ def _parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
         action="store_true",
         help="make paid provider calls and persist the run",
     )
-    probe = subparsers.add_parser(
-        "probe", help="run due probes once or until shutdown"
-    )
+    probe = subparsers.add_parser("probe", help="run due probes once or until shutdown")
     probe.add_argument("--bank-version", default=DEFAULT_BANK_VERSION)
     probe.add_argument("--max-tokens", type=int, default=64)
     probe.add_argument("--poll-interval", type=float, default=1.0)
-    probe.add_argument(
-        "--once", action="store_true", help="run one cycle and exit"
-    )
+    probe.add_argument("--once", action="store_true", help="run one cycle and exit")
     return parser.parse_args(argv)
 
 

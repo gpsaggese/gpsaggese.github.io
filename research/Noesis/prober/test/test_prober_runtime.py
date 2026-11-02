@@ -8,7 +8,6 @@ import datetime
 from unittest import mock
 
 import helpers.hunit_test as hunitest
-
 import research.Noesis.checker.checker_models as rnochmod
 import research.Noesis.checker.checker_store as rnochsto
 import research.Noesis.common.test.noesis_test_utils as rnctnteut
@@ -59,6 +58,7 @@ def _contract(
         "m2-v1",
         now - datetime.timedelta(seconds=61),
         None,
+        "seller_1",
     )
 
 

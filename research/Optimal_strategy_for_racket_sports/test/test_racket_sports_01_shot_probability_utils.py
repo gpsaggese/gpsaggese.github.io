@@ -1,9 +1,9 @@
 """
-Tests for racket_shot_probability_utils module.
+Tests for racket_sports_01_shot_probability_utils module.
 
 Import as:
 
-import research.Optimal_strategy_for_racket_sports.test.test_racket_shot_probability_utils as rosfrsttrspu
+import research.Optimal_strategy_for_racket_sports.test.test_racket_sports_01_shot_probability_utils as rosfrsttrs0spu
 """
 
 import dataclasses
@@ -16,6 +16,7 @@ from typing import Any, Dict, List, Tuple
 import ipywidgets
 import matplotlib
 import matplotlib.collections as mcollections
+import matplotlib.colors as mcolors
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import matplotlib.text as mtext
@@ -28,7 +29,7 @@ import helpers.hunit_test as hunitest
 from research.Optimal_strategy_for_racket_sports import racket_params
 from research.Optimal_strategy_for_racket_sports import racket_scoring
 from research.Optimal_strategy_for_racket_sports.notebooks import (
-    racket_shot_probability_utils,
+    racket_sports_01_shot_probability_utils,
 )
 
 _LOG = logging.getLogger(__name__)
@@ -44,7 +45,7 @@ matplotlib.use("Agg")
 
 class Test_get_striker_half_region(hunitest.TestCase):
     """
-    Test `racket_shot_probability_utils.get_striker_half_region()`.
+    Test `racket_sports_01_shot_probability_utils.get_striker_half_region()`.
     """
 
     def helper(self, court: racket_params.CourtGeometry, expected: str) -> None:
@@ -55,7 +56,9 @@ class Test_get_striker_half_region(hunitest.TestCase):
         :param expected: expected string representation of the region
         """
         # Run test.
-        actual = racket_shot_probability_utils.get_striker_half_region(court)
+        actual = racket_sports_01_shot_probability_utils.get_striker_half_region(
+            court
+        )
         # Check outputs.
         self.assert_equal(str(actual), expected)
 
@@ -116,7 +119,7 @@ class Test_get_striker_half_region(hunitest.TestCase):
         for bad_court in bad_courts:
             with self.subTest(court=bad_court):
                 with self.assertRaises(AssertionError):
-                    racket_shot_probability_utils.get_striker_half_region(
+                    racket_sports_01_shot_probability_utils.get_striker_half_region(
                         bad_court
                     )
 
@@ -128,7 +131,7 @@ class Test_get_striker_half_region(hunitest.TestCase):
 
 class Test_compute_p_in(hunitest.TestCase):
     """
-    Test `racket_shot_probability_utils.compute_p_in()`.
+    Test `racket_sports_01_shot_probability_utils.compute_p_in()`.
     """
 
     def helper(
@@ -147,9 +150,11 @@ class Test_compute_p_in(hunitest.TestCase):
         :param expected: expected probability, checked to 4 decimal places
         """
         # Prepare inputs.
-        region = racket_shot_probability_utils.get_striker_half_region(court)
+        region = racket_sports_01_shot_probability_utils.get_striker_half_region(
+            court
+        )
         # Run test.
-        actual = racket_shot_probability_utils.compute_p_in(
+        actual = racket_sports_01_shot_probability_utils.compute_p_in(
             target_xy, std_xy, region
         )
         # Check outputs.
@@ -251,7 +256,7 @@ class Test_compute_p_in(hunitest.TestCase):
         Test that a `nan` or `inf` target, or a bad std, raises an error.
         """
         # Prepare inputs.
-        region = racket_shot_probability_utils.get_striker_half_region(
+        region = racket_sports_01_shot_probability_utils.get_striker_half_region(
             racket_params.TENNIS.court
         )
         nan, inf = float("nan"), float("inf")
@@ -269,7 +274,7 @@ class Test_compute_p_in(hunitest.TestCase):
         for bad_target_xy, bad_std_xy in bad_inputs:
             with self.subTest(target_xy=bad_target_xy, std_xy=bad_std_xy):
                 with self.assertRaises(AssertionError):
-                    racket_shot_probability_utils.compute_p_in(
+                    racket_sports_01_shot_probability_utils.compute_p_in(
                         bad_target_xy, bad_std_xy, region
                     )
 
@@ -281,7 +286,7 @@ class Test_compute_p_in(hunitest.TestCase):
 
 class Test_sample_landings(hunitest.TestCase):
     """
-    Test `racket_shot_probability_utils.sample_landings()`.
+    Test `racket_sports_01_shot_probability_utils.sample_landings()`.
     """
 
     def helper(
@@ -298,17 +303,19 @@ class Test_sample_landings(hunitest.TestCase):
         :param std_xy: standard deviations `(std_x2, std_y2)` in meters
         """
         # Prepare inputs.
-        region = racket_shot_probability_utils.get_striker_half_region(court)
+        region = racket_sports_01_shot_probability_utils.get_striker_half_region(
+            court
+        )
         n_samples = 10000
         rng = np.random.default_rng(1)
         # Prepare outputs.
-        expected = racket_shot_probability_utils.compute_p_in(
+        expected = racket_sports_01_shot_probability_utils.compute_p_in(
             target_xy, std_xy, region
         )
         # Standard error of a fraction estimated from `n_samples` draws.
         std_err = np.sqrt(expected * (1 - expected) / n_samples)
         # Run test.
-        x, y = racket_shot_probability_utils.sample_landings(
+        x, y = racket_sports_01_shot_probability_utils.sample_landings(
             target_xy, std_xy, n_samples, rng
         )
         actual = region.contains(x, y).mean()
@@ -326,10 +333,10 @@ class Test_sample_landings(hunitest.TestCase):
         rng1 = np.random.default_rng(42)
         rng2 = np.random.default_rng(42)
         # Run test.
-        x1, y1 = racket_shot_probability_utils.sample_landings(
+        x1, y1 = racket_sports_01_shot_probability_utils.sample_landings(
             target_xy, std_xy, n_samples, rng1
         )
-        x2, y2 = racket_shot_probability_utils.sample_landings(
+        x2, y2 = racket_sports_01_shot_probability_utils.sample_landings(
             target_xy, std_xy, n_samples, rng2
         )
         # Check outputs.
@@ -351,7 +358,7 @@ class Test_sample_landings(hunitest.TestCase):
         delta_x = 0.01 * std_xy[0]
         delta_y = 0.01 * std_xy[1]
         # Run test.
-        x, y = racket_shot_probability_utils.sample_landings(
+        x, y = racket_sports_01_shot_probability_utils.sample_landings(
             target_xy, std_xy, n_samples, rng
         )
         # Check outputs.
@@ -430,7 +437,7 @@ class Test_sample_landings(hunitest.TestCase):
                 target_xy=bad_target_xy, std_xy=bad_std_xy, n=bad_n_samples
             ):
                 with self.assertRaises(AssertionError):
-                    racket_shot_probability_utils.sample_landings(
+                    racket_sports_01_shot_probability_utils.sample_landings(
                         bad_target_xy,
                         bad_std_xy,
                         bad_n_samples,
@@ -445,7 +452,7 @@ class Test_sample_landings(hunitest.TestCase):
 
 class Test_get_player1_xy(hunitest.TestCase):
     """
-    Test `racket_shot_probability_utils.get_player1_xy()`.
+    Test `racket_sports_01_shot_probability_utils.get_player1_xy()`.
     """
 
     def helper(self, court: racket_params.CourtGeometry, expected: str) -> None:
@@ -456,7 +463,7 @@ class Test_get_player1_xy(hunitest.TestCase):
         :param expected: expected string representation of the position
         """
         # Run test.
-        actual = racket_shot_probability_utils.get_player1_xy(court)
+        actual = racket_sports_01_shot_probability_utils.get_player1_xy(court)
         # Check outputs.
         self.assert_equal(str(actual), expected)
 
@@ -510,7 +517,9 @@ class Test_get_player1_xy(hunitest.TestCase):
         for bad_court, expected in bad_inputs:
             with self.subTest(court=bad_court):
                 with self.assertRaises(AssertionError) as cm:
-                    racket_shot_probability_utils.get_player1_xy(bad_court)
+                    racket_sports_01_shot_probability_utils.get_player1_xy(
+                        bad_court
+                    )
                 self.assertIn(expected, str(cm.exception))
 
 
@@ -521,7 +530,7 @@ class Test_get_player1_xy(hunitest.TestCase):
 
 class Test_compute_flight_time(hunitest.TestCase):
     """
-    Test `racket_shot_probability_utils.compute_flight_time()`.
+    Test `racket_sports_01_shot_probability_utils.compute_flight_time()`.
     """
 
     def helper(
@@ -543,7 +552,7 @@ class Test_compute_flight_time(hunitest.TestCase):
             decimals, as the string of a (nested) list
         """
         # Run test.
-        actual = racket_shot_probability_utils.compute_flight_time(
+        actual = racket_sports_01_shot_probability_utils.compute_flight_time(
             hitter_xy, x, y, ball_speed_mps
         )
         # Check outputs.
@@ -663,7 +672,7 @@ class Test_compute_flight_time(hunitest.TestCase):
         for bad_hitter_xy, bad_x, bad_y, bad_speed, expected in bad_inputs:
             with self.subTest(expected=expected):
                 with self.assertRaises(AssertionError) as cm:
-                    racket_shot_probability_utils.compute_flight_time(
+                    racket_sports_01_shot_probability_utils.compute_flight_time(
                         bad_hitter_xy, bad_x, bad_y, bad_speed
                     )
                 self.assertIn(expected, str(cm.exception))
@@ -676,7 +685,7 @@ class Test_compute_flight_time(hunitest.TestCase):
 
 class Test_compute_is_reached(hunitest.TestCase):
     """
-    Test `racket_shot_probability_utils.compute_is_reached()`.
+    Test `racket_sports_01_shot_probability_utils.compute_is_reached()`.
     """
 
     def helper(
@@ -702,7 +711,7 @@ class Test_compute_is_reached(hunitest.TestCase):
             list
         """
         # Run test.
-        actual = racket_shot_probability_utils.compute_is_reached(
+        actual = racket_sports_01_shot_probability_utils.compute_is_reached(
             player_xy, x, y, flight_time_s, reaction_time_s, move_speed_mps
         )
         # Check outputs.
@@ -877,8 +886,10 @@ class Test_compute_is_reached(hunitest.TestCase):
         x = np.array([0.05, 4.0, -4.0, 0.0])
         y = np.array([-11.885, -11.0, -1.0, -6.0])
         ball_speed_mps = 1000.0
-        flight_time_s = racket_shot_probability_utils.compute_flight_time(
-            hitter_xy, x, y, ball_speed_mps
+        flight_time_s = (
+            racket_sports_01_shot_probability_utils.compute_flight_time(
+                hitter_xy, x, y, ball_speed_mps
+            )
         )
         reaction_time_s = 0.2
         move_speed_mps = 1.5
@@ -909,8 +920,10 @@ class Test_compute_is_reached(hunitest.TestCase):
         x = np.array([-4.115, 4.115, -4.115, 4.115, 0.0])
         y = np.array([0.0, 0.0, -11.885, -11.885, -6.0])
         ball_speed_mps = 0.1
-        flight_time_s = racket_shot_probability_utils.compute_flight_time(
-            hitter_xy, x, y, ball_speed_mps
+        flight_time_s = (
+            racket_sports_01_shot_probability_utils.compute_flight_time(
+                hitter_xy, x, y, ball_speed_mps
+            )
         )
         reaction_time_s = 0.2
         move_speed_mps = 1.5
@@ -1060,7 +1073,7 @@ class Test_compute_is_reached(hunitest.TestCase):
         ) in bad_inputs:
             with self.subTest(expected=expected):
                 with self.assertRaises(AssertionError) as cm:
-                    racket_shot_probability_utils.compute_is_reached(
+                    racket_sports_01_shot_probability_utils.compute_is_reached(
                         bad_player_xy, bad_x, y, bad_t, bad_t_r, bad_v_p
                     )
                 self.assertIn(expected, str(cm.exception))
@@ -1073,7 +1086,7 @@ class Test_compute_is_reached(hunitest.TestCase):
 
 class Test_compute_winner_probability(hunitest.TestCase):
     """
-    Test `racket_shot_probability_utils.compute_winner_probability()`.
+    Test `racket_sports_01_shot_probability_utils.compute_winner_probability()`.
     """
 
     def helper(
@@ -1104,7 +1117,7 @@ class Test_compute_winner_probability(hunitest.TestCase):
         """
         rng = np.random.default_rng(seed)
         actual: Dict[str, float] = (
-            racket_shot_probability_utils.compute_winner_probability(
+            racket_sports_01_shot_probability_utils.compute_winner_probability(
                 serve_xy,
                 target_xy,
                 std_xy,
@@ -1142,16 +1155,22 @@ class Test_compute_winner_probability(hunitest.TestCase):
         # Prepare outputs.
         # Same seed, so the same landing points as inside the function.
         rng = np.random.default_rng(seed)
-        x, y = racket_shot_probability_utils.sample_landings(
+        x, y = racket_sports_01_shot_probability_utils.sample_landings(
             target_xy, std_xy, n_samples, rng
         )
-        region = racket_shot_probability_utils.get_striker_half_region(court)
-        is_in = region.contains(x, y)
-        flight_time_s = racket_shot_probability_utils.compute_flight_time(
-            serve_xy, x, y, ball_speed_mps
+        region = racket_sports_01_shot_probability_utils.get_striker_half_region(
+            court
         )
-        player1_xy = racket_shot_probability_utils.get_player1_xy(court)
-        is_reached = racket_shot_probability_utils.compute_is_reached(
+        is_in = region.contains(x, y)
+        flight_time_s = (
+            racket_sports_01_shot_probability_utils.compute_flight_time(
+                serve_xy, x, y, ball_speed_mps
+            )
+        )
+        player1_xy = racket_sports_01_shot_probability_utils.get_player1_xy(
+            court
+        )
+        is_reached = racket_sports_01_shot_probability_utils.compute_is_reached(
             player1_xy, x, y, flight_time_s, reaction_time_s, move_speed_mps
         )
         p_winner = float((is_in & ~is_reached).mean())
@@ -1203,12 +1222,18 @@ class Test_compute_winner_probability(hunitest.TestCase):
         # Direct check of the aim point alone, with the building blocks.
         x = np.array([target_xy[0]])
         y = np.array([target_xy[1]])
-        region = racket_shot_probability_utils.get_striker_half_region(court)
-        flight_time_s = racket_shot_probability_utils.compute_flight_time(
-            serve_xy, x, y, ball_speed_mps
+        region = racket_sports_01_shot_probability_utils.get_striker_half_region(
+            court
         )
-        player1_xy = racket_shot_probability_utils.get_player1_xy(court)
-        is_reached = racket_shot_probability_utils.compute_is_reached(
+        flight_time_s = (
+            racket_sports_01_shot_probability_utils.compute_flight_time(
+                serve_xy, x, y, ball_speed_mps
+            )
+        )
+        player1_xy = racket_sports_01_shot_probability_utils.get_player1_xy(
+            court
+        )
+        is_reached = racket_sports_01_shot_probability_utils.compute_is_reached(
             player1_xy, x, y, flight_time_s, reaction_time_s, move_speed_mps
         )
         direct = float((region.contains(x, y) & ~is_reached)[0])
@@ -1303,10 +1328,12 @@ class Test_compute_winner_probability(hunitest.TestCase):
         seed = 1
         # Prepare outputs.
         rng = np.random.default_rng(seed)
-        x, y = racket_shot_probability_utils.sample_landings(
+        x, y = racket_sports_01_shot_probability_utils.sample_landings(
             target_xy, std_xy, n_samples, rng
         )
-        region = racket_shot_probability_utils.get_striker_half_region(court)
+        region = racket_sports_01_shot_probability_utils.get_striker_half_region(
+            court
+        )
         p_in = float(region.contains(x, y).mean())
         expected = {"p_winner": p_in, "p_in": p_in, "p_reached": 0.0}
         # Run test.
@@ -1614,7 +1641,7 @@ class Test_compute_winner_probability(hunitest.TestCase):
             with self.subTest(name=name, value=bad_value):
                 kwargs = {**good, name: bad_value}
                 with self.assertRaises(AssertionError) as cm:
-                    racket_shot_probability_utils.compute_winner_probability(
+                    racket_sports_01_shot_probability_utils.compute_winner_probability(
                         *kwargs.values()
                     )
                 self.assertIn(expected, str(cm.exception))
@@ -1627,7 +1654,7 @@ class Test_compute_winner_probability(hunitest.TestCase):
 
 class Test_compute_winner_heatmap(hunitest.TestCase):
     """
-    Test `racket_shot_probability_utils.compute_winner_heatmap()`.
+    Test `racket_sports_01_shot_probability_utils.compute_winner_heatmap()`.
     """
 
     def helper(
@@ -1656,7 +1683,7 @@ class Test_compute_winner_heatmap(hunitest.TestCase):
         reaction_time_s = 0.2
         court = racket_params.TENNIS.court
         heatmap: pd.DataFrame = (
-            racket_shot_probability_utils.compute_winner_heatmap(
+            racket_sports_01_shot_probability_utils.compute_winner_heatmap(
                 serve_xy,
                 std_xy,
                 ball_speed_mps,
@@ -1690,13 +1717,15 @@ class Test_compute_winner_heatmap(hunitest.TestCase):
         std_xy = (1.0, 1.0)
         reaction_time_s = 0.2
         court = racket_params.TENNIS.court
-        region = racket_shot_probability_utils.get_striker_half_region(court)
+        region = racket_sports_01_shot_probability_utils.get_striker_half_region(
+            court
+        )
         grid = racket_scoring.make_target_grid(region, n_x, n_y)
         expected = []
         for target_xy in zip(grid["x_m"], grid["y_m"]):
             rng = np.random.default_rng(seed)
             expected.append(
-                racket_shot_probability_utils.compute_winner_probability(
+                racket_sports_01_shot_probability_utils.compute_winner_probability(
                     serve_xy,
                     target_xy,
                     std_xy,
@@ -1877,7 +1906,7 @@ class Test_compute_winner_heatmap(hunitest.TestCase):
 
 class Test_find_best_region(hunitest.TestCase):
     """
-    Test `racket_shot_probability_utils.find_best_region()`.
+    Test `racket_sports_01_shot_probability_utils.find_best_region()`.
     """
 
     def helper(
@@ -1901,7 +1930,9 @@ class Test_find_best_region(hunitest.TestCase):
             }
         )
         # Run test.
-        actual = racket_shot_probability_utils.find_best_region(heatmap)
+        actual = racket_sports_01_shot_probability_utils.find_best_region(
+            heatmap
+        )
         # Check outputs.
         self.assert_equal(str(actual.tolist()), expected)
 
@@ -1977,7 +2008,9 @@ class Test_find_best_region(hunitest.TestCase):
         for bad_heatmap, expected in bad_inputs:
             with self.subTest(expected=expected):
                 with self.assertRaises(AssertionError) as cm:
-                    racket_shot_probability_utils.find_best_region(bad_heatmap)
+                    racket_sports_01_shot_probability_utils.find_best_region(
+                        bad_heatmap
+                    )
                 self.assertIn(expected, str(cm.exception))
 
 
@@ -1988,7 +2021,7 @@ class Test_find_best_region(hunitest.TestCase):
 
 class Test_find_best_target(hunitest.TestCase):
     """
-    Test `racket_shot_probability_utils.find_best_target()`.
+    Test `racket_sports_01_shot_probability_utils.find_best_target()`.
     """
 
     def helper(
@@ -2012,7 +2045,9 @@ class Test_find_best_target(hunitest.TestCase):
             }
         )
         # Run test.
-        result = racket_shot_probability_utils.find_best_target(heatmap)
+        result = racket_sports_01_shot_probability_utils.find_best_target(
+            heatmap
+        )
         # Check outputs.
         actual = str({k: round(v, 6) for k, v in result.items()})
         self.assert_equal(actual, expected)
@@ -2109,7 +2144,9 @@ class Test_find_best_target(hunitest.TestCase):
         for bad_heatmap, expected in bad_inputs:
             with self.subTest(expected=expected):
                 with self.assertRaises(AssertionError) as cm:
-                    racket_shot_probability_utils.find_best_target(bad_heatmap)
+                    racket_sports_01_shot_probability_utils.find_best_target(
+                        bad_heatmap
+                    )
                 self.assertIn(expected, str(cm.exception))
 
 
@@ -2120,7 +2157,7 @@ class Test_find_best_target(hunitest.TestCase):
 
 class Test__get_region_outline(hunitest.TestCase):
     """
-    Test `racket_shot_probability_utils._get_region_outline()`.
+    Test `racket_sports_01_shot_probability_utils._get_region_outline()`.
     """
 
     def helper(self, in_region: List[List[bool]], expected: str) -> None:
@@ -2134,7 +2171,7 @@ class Test__get_region_outline(hunitest.TestCase):
         x_edges = np.array([0.0, 1.0, 2.0])
         y_edges = np.array([0.0, 1.0, 2.0])
         # Run test.
-        actual = racket_shot_probability_utils._get_region_outline(
+        actual = racket_sports_01_shot_probability_utils._get_region_outline(
             np.array(in_region), x_edges, y_edges
         )
         # Check outputs.
@@ -2198,7 +2235,7 @@ class Test__get_region_outline(hunitest.TestCase):
 
 class Test_plot_winner_heatmap(hunitest.TestCase):
     """
-    Test `racket_shot_probability_utils.plot_winner_heatmap()`.
+    Test `racket_sports_01_shot_probability_utils.plot_winner_heatmap()`.
     """
 
     def helper(self) -> pd.DataFrame:
@@ -2209,7 +2246,9 @@ class Test_plot_winner_heatmap(hunitest.TestCase):
         :return: the heatmap
         """
         court = racket_params.TENNIS.court
-        region = racket_shot_probability_utils.get_striker_half_region(court)
+        region = racket_sports_01_shot_probability_utils.get_striker_half_region(
+            court
+        )
         heatmap = racket_scoring.make_target_grid(region, 3, 4)
         heatmap["p_winner"] = np.linspace(0.2, 0.8, len(heatmap))
         heatmap["p_winner_se"] = 0.01
@@ -2225,7 +2264,7 @@ class Test_plot_winner_heatmap(hunitest.TestCase):
         court = racket_params.TENNIS.court
         serve_xy = (-2.1, 3.2)
         ax: Axes = plt.subplots()[1]
-        racket_shot_probability_utils.plot_winner_heatmap(
+        racket_sports_01_shot_probability_utils.plot_winner_heatmap(
             ax, heatmap, court, serve_xy
         )
         return ax
@@ -2364,6 +2403,60 @@ class Test_plot_winner_heatmap(hunitest.TestCase):
         plt.close("all")
         self.assert_equal(actual, expected)
 
+    def test6(self) -> None:
+        """
+        Test that the colors go from red at `P(winner) = 0`, the worst for
+        player 2, to green at `P(winner) = 1`, the best.
+        """
+        # Prepare inputs.
+        heatmap = self.helper()
+        p_winners = [0.0, 1.0]
+        # Prepare outputs.
+        expected = "[(0.0, 'red'), (1.0, 'green')]"
+        # Run test.
+        ax = self.helper2(heatmap)
+        # Check outputs.
+        # The color that the map gives to each probability, through its
+        # colormap and its color scale, named by its strongest channel: e.g.,
+        # `viridis` gives blue for 0 and red (a yellow) for 1.
+        mesh = [
+            c for c in ax.collections if isinstance(c, mcollections.QuadMesh)
+        ]
+        rgba = np.asarray(mesh[0].to_rgba(np.array(p_winners)))
+        channel_names = np.array(["red", "green", "blue"])
+        names = channel_names[np.argmax(rgba[:, :3], axis=1)].tolist()
+        actual = str(list(zip(p_winners, names)))
+        plt.close("all")
+        self.assert_equal(actual, expected)
+
+    def test7(self) -> None:
+        """
+        Test that the outline of the best region and the star are black, with a
+        white edge on the star, so they are not read as the red of a low
+        `P(winner)`.
+        """
+        # Prepare inputs.
+        heatmap = self.helper()
+        # Prepare outputs.
+        expected = "outline=['#000000'] star=#000000 star_edge=#ffffff"
+        # Run test.
+        ax = self.helper2(heatmap)
+        # Check outputs.
+        outline = [
+            c
+            for c in ax.collections
+            if isinstance(c, mcollections.LineCollection)
+        ]
+        outline_colors = [mcolors.to_hex(c) for c in outline[0].get_colors()]
+        star = [line for line in ax.get_lines() if line.get_marker() == "*"]
+        star_color = mcolors.to_hex(star[0].get_markerfacecolor())
+        star_edge = mcolors.to_hex(star[0].get_markeredgecolor())
+        actual = (
+            f"outline={outline_colors} star={star_color} star_edge={star_edge}"
+        )
+        plt.close("all")
+        self.assert_equal(actual, expected)
+
 
 # #############################################################################
 # Test__round_slider_value
@@ -2372,7 +2465,7 @@ class Test_plot_winner_heatmap(hunitest.TestCase):
 
 class Test__round_slider_value(hunitest.TestCase):
     """
-    Test `racket_shot_probability_utils._round_slider_value()`.
+    Test `racket_sports_01_shot_probability_utils._round_slider_value()`.
     """
 
     def helper(self, value: float, expected: str) -> None:
@@ -2383,7 +2476,9 @@ class Test__round_slider_value(hunitest.TestCase):
         :param expected: expected rounded value, as printed by `str()`
         """
         # Run test.
-        actual = str(racket_shot_probability_utils._round_slider_value(value))
+        actual = str(
+            racket_sports_01_shot_probability_utils._round_slider_value(value)
+        )
         # Check outputs.
         self.assert_equal(actual, expected)
 
@@ -2422,13 +2517,13 @@ class Test__round_slider_value(hunitest.TestCase):
 
 
 # #############################################################################
-# Test__check_serve
+# Test_check_serve
 # #############################################################################
 
 
-class Test__check_serve(hunitest.TestCase):
+class Test_check_serve(hunitest.TestCase):
     """
-    Test `racket_shot_probability_utils._check_serve()`.
+    Test `racket_sports_01_shot_probability_utils.check_serve()`.
     """
 
     def helper(
@@ -2440,7 +2535,7 @@ class Test__check_serve(hunitest.TestCase):
         expected: str,
     ) -> None:
         """
-        Test helper for `_check_serve()`.
+        Test helper for `check_serve()`.
 
         :param court: court geometry of the serve
         :param side: "deuce" or "ad", the side the server serves from
@@ -2449,7 +2544,7 @@ class Test__check_serve(hunitest.TestCase):
         :param expected: expected fault, "" if the serve is in
         """
         # Run test.
-        _, actual = racket_shot_probability_utils._check_serve(
+        _, actual = racket_sports_01_shot_probability_utils.check_serve(
             side, x1, y1, court
         )
         # Check outputs.
@@ -2635,7 +2730,7 @@ class Test__check_serve(hunitest.TestCase):
         # Prepare outputs.
         expected = "CourtRegion(x_min=-4.115, x_max=0, y_min=0.0, y_max=6.4)"
         # Run test.
-        actual, _ = racket_shot_probability_utils._check_serve(
+        actual, _ = racket_sports_01_shot_probability_utils.check_serve(
             side, x1, y1, court
         )
         # Check outputs.
@@ -2649,7 +2744,7 @@ class Test__check_serve(hunitest.TestCase):
 
 class Test__get_server_xy(hunitest.TestCase):
     """
-    Test `racket_shot_probability_utils._get_server_xy()`.
+    Test `racket_sports_01_shot_probability_utils._get_server_xy()`.
     """
 
     def helper(
@@ -2663,7 +2758,9 @@ class Test__get_server_xy(hunitest.TestCase):
         :param expected: expected position, with 3 decimals
         """
         # Run test.
-        x, y = racket_shot_probability_utils._get_server_xy(side, court)
+        x, y = racket_sports_01_shot_probability_utils._get_server_xy(
+            side, court
+        )
         actual = f"({x:.3f}, {y:.3f})"
         # Check outputs.
         self.assert_equal(actual, expected)
@@ -2712,7 +2809,7 @@ class Test__get_server_xy(hunitest.TestCase):
 
 class Test__draw_fault(hunitest.TestCase):
     """
-    Test `racket_shot_probability_utils._draw_fault()`.
+    Test `racket_sports_01_shot_probability_utils._draw_fault()`.
     """
 
     def helper(
@@ -2727,10 +2824,14 @@ class Test__draw_fault(hunitest.TestCase):
         """
         # Prepare inputs.
         court = racket_params.TENNIS.court
-        server_xy = racket_shot_probability_utils._get_server_xy(side, court)
+        server_xy = racket_sports_01_shot_probability_utils._get_server_xy(
+            side, court
+        )
         _, ax = plt.subplots()
         # Run test.
-        racket_shot_probability_utils._draw_fault(ax, server_xy, serve_xy, court)
+        racket_sports_01_shot_probability_utils._draw_fault(
+            ax, server_xy, serve_xy, court
+        )
         # The label is the only text that is not an arrow.
         label = [t for t in ax.texts if not isinstance(t, mtext.Annotation)][0]
         x, y = label.get_position()
@@ -2786,7 +2887,7 @@ class Test__draw_fault(hunitest.TestCase):
 
 class Test__build_comments_text(hunitest.TestCase):
     """
-    Test `racket_shot_probability_utils._build_comments_text()`.
+    Test `racket_sports_01_shot_probability_utils._build_comments_text()`.
     """
 
     def test1(self) -> None:
@@ -2815,7 +2916,7 @@ class Test__build_comments_text(hunitest.TestCase):
         P_hat (Monte Carlo, N = 1000) = 1.0000
           standard error = 0.0005"""
         # Run test.
-        actual = racket_shot_probability_utils._build_comments_text(
+        actual = racket_sports_01_shot_probability_utils._build_comments_text(
             serve_xy,
             side,
             target_xy,
@@ -2835,7 +2936,7 @@ class Test__build_comments_text(hunitest.TestCase):
 
 class Test__build_fault_text(hunitest.TestCase):
     """
-    Test `racket_shot_probability_utils._build_fault_text()`.
+    Test `racket_sports_01_shot_probability_utils._build_fault_text()`.
     """
 
     def test1(self) -> None:
@@ -2854,7 +2955,7 @@ class Test__build_fault_text(hunitest.TestCase):
         Fault: into the wrong box
           No return, so no P_in and no P_hat"""
         # Run test.
-        actual = racket_shot_probability_utils._build_fault_text(
+        actual = racket_sports_01_shot_probability_utils._build_fault_text(
             serve_xy, side, fault
         )
         # Check outputs.
@@ -2868,7 +2969,7 @@ class Test__build_fault_text(hunitest.TestCase):
 
 class Test__build_shared_controls(hunitest.TestCase):
     """
-    Test `racket_shot_probability_utils._build_shared_controls()`.
+    Test `racket_sports_01_shot_probability_utils._build_shared_controls()`.
     """
 
     def helper(self, sport: racket_params.SportParams, expected: str) -> None:
@@ -2880,8 +2981,10 @@ class Test__build_shared_controls(hunitest.TestCase):
             the type of each box
         """
         # Run test.
-        controls = racket_shot_probability_utils._build_shared_controls(
-            sport.court
+        controls = (
+            racket_sports_01_shot_probability_utils._build_shared_controls(
+                sport.court
+            )
         )
         # Check outputs.
         lines = []
@@ -2939,7 +3042,7 @@ class Test__build_shared_controls(hunitest.TestCase):
 
 class Test_cell1_1_plot_shot_widget(hunitest.TestCase):
     """
-    Test `racket_shot_probability_utils.cell1_1_plot_shot_widget()`.
+    Test `racket_sports_01_shot_probability_utils.cell1_1_plot_shot_widget()`.
     """
 
     def _build_and_record(
@@ -2983,12 +3086,16 @@ class Test_cell1_1_plot_shot_widget(hunitest.TestCase):
 
         self.enterContext(
             umock.patch.object(
-                racket_shot_probability_utils.plt,
+                racket_sports_01_shot_probability_utils.plt,
                 "show",
                 side_effect=_record_redraw,
             )
         )
-        widget = racket_shot_probability_utils.cell1_1_plot_shot_widget(sport)
+        widget = (
+            racket_sports_01_shot_probability_utils.cell1_1_plot_shot_widget(
+                sport
+            )
+        )
         return widget, texts, courts
 
     def helper(self, sport: racket_params.SportParams) -> None:
@@ -3002,7 +3109,11 @@ class Test_cell1_1_plot_shot_widget(hunitest.TestCase):
         # seed), then the plot.
         expected = str(["ToggleButtons"] + ["HBox"] * 7 + ["Output"])
         # Run test.
-        widget = racket_shot_probability_utils.cell1_1_plot_shot_widget(sport)
+        widget = (
+            racket_sports_01_shot_probability_utils.cell1_1_plot_shot_widget(
+                sport
+            )
+        )
         actual = str([type(child).__name__ for child in widget.children])
         # Check outputs.
         self.assert_equal(actual, expected)
@@ -3087,13 +3198,13 @@ class Test_cell1_1_plot_shot_widget(hunitest.TestCase):
 
 
 # #############################################################################
-# Test__build_settings_string
+# Test_build_settings_string
 # #############################################################################
 
 
-class Test__build_settings_string(hunitest.TestCase):
+class Test_build_settings_string(hunitest.TestCase):
     """
-    Test `racket_shot_probability_utils._build_settings_string()`.
+    Test `racket_sports_01_shot_probability_utils.build_settings_string()`.
     """
 
     def test1(self) -> None:
@@ -3119,7 +3230,7 @@ class Test__build_settings_string(hunitest.TestCase):
             "n_samples=5000"
         )
         # Run test.
-        actual = racket_shot_probability_utils._build_settings_string(
+        actual = racket_sports_01_shot_probability_utils.build_settings_string(
             sport_name,
             side,
             serve_xy,
@@ -3155,7 +3266,7 @@ class Test__build_settings_string(hunitest.TestCase):
             "n_samples": 5000,
         }
         # Run test.
-        settings = racket_shot_probability_utils._build_settings_string(
+        settings = racket_sports_01_shot_probability_utils.build_settings_string(
             "Pickleball",
             "ad",
             (values["x1"], values["y1"]),
@@ -3184,7 +3295,7 @@ class Test__build_settings_string(hunitest.TestCase):
 
 class Test__format_p_winner(hunitest.TestCase):
     """
-    Test `racket_shot_probability_utils._format_p_winner()`.
+    Test `racket_sports_01_shot_probability_utils._format_p_winner()`.
     """
 
     def helper(self, p_winner: float, p_winner_se: float, expected: str) -> None:
@@ -3198,7 +3309,7 @@ class Test__format_p_winner(hunitest.TestCase):
         # Prepare inputs.
         n_samples = 5000
         # Run test.
-        actual = racket_shot_probability_utils._format_p_winner(
+        actual = racket_sports_01_shot_probability_utils._format_p_winner(
             p_winner, p_winner_se, n_samples
         )
         # Check outputs.
@@ -3249,7 +3360,7 @@ class Test__format_p_winner(hunitest.TestCase):
 
 class Test__format_point(hunitest.TestCase):
     """
-    Test `racket_shot_probability_utils._format_point()`.
+    Test `racket_sports_01_shot_probability_utils._format_point()`.
     """
 
     def test1(self) -> None:
@@ -3263,7 +3374,7 @@ class Test__format_point(hunitest.TestCase):
         # Prepare outputs.
         expected = "(0.00, -3.02)"
         # Run test.
-        actual = racket_shot_probability_utils._format_point(xy)
+        actual = racket_sports_01_shot_probability_utils._format_point(xy)
         # Check outputs.
         self.assert_equal(actual, expected)
 
@@ -3275,7 +3386,7 @@ class Test__format_point(hunitest.TestCase):
 
 class Test__build_winner_text(hunitest.TestCase):
     """
-    Test `racket_shot_probability_utils._build_winner_text()`.
+    Test `racket_sports_01_shot_probability_utils._build_winner_text()`.
     """
 
     def test1(self) -> None:
@@ -3288,13 +3399,15 @@ class Test__build_winner_text(hunitest.TestCase):
         # so the last cell is the best and the only one of the best region;
         # `P(in)` and `P(reached)` differ in every row.
         court = racket_params.TENNIS.court
-        region = racket_shot_probability_utils.get_striker_half_region(court)
+        region = racket_sports_01_shot_probability_utils.get_striker_half_region(
+            court
+        )
         heatmap = racket_scoring.make_target_grid(region, 3, 4)
         heatmap["p_winner"] = np.linspace(0.2, 0.8, len(heatmap))
         heatmap["p_winner_se"] = 0.01
         heatmap["p_in"] = np.linspace(0.3, 0.9, len(heatmap))
         heatmap["p_reached"] = np.linspace(0.0, 0.11, len(heatmap))
-        best = racket_shot_probability_utils.find_best_target(heatmap)
+        best = racket_sports_01_shot_probability_utils.find_best_target(heatmap)
         serve_xy = (-2.1, 3.2)
         side = "deuce"
         n_samples = 5000
@@ -3313,7 +3426,7 @@ class Test__build_winner_text(hunitest.TestCase):
         Settings:
         sport=Tennis side=deuce"""
         # Run test.
-        actual = racket_shot_probability_utils._build_winner_text(
+        actual = racket_sports_01_shot_probability_utils._build_winner_text(
             serve_xy, side, heatmap, best, n_samples, settings
         )
         # Check outputs.
@@ -3327,7 +3440,7 @@ class Test__build_winner_text(hunitest.TestCase):
 
 class Test__build_winner_fault_text(hunitest.TestCase):
     """
-    Test `racket_shot_probability_utils._build_winner_fault_text()`.
+    Test `racket_sports_01_shot_probability_utils._build_winner_fault_text()`.
     """
 
     def test1(self) -> None:
@@ -3351,8 +3464,10 @@ class Test__build_winner_fault_text(hunitest.TestCase):
         Settings:
         sport=Tennis side=ad"""
         # Run test.
-        actual = racket_shot_probability_utils._build_winner_fault_text(
-            serve_xy, side, fault, settings
+        actual = (
+            racket_sports_01_shot_probability_utils._build_winner_fault_text(
+                serve_xy, side, fault, settings
+            )
         )
         # Check outputs.
         self.assert_equal(actual, expected, dedent=True)
@@ -3365,7 +3480,7 @@ class Test__build_winner_fault_text(hunitest.TestCase):
 
 class Test_cell2_1_plot_winner_widget(hunitest.TestCase):
     """
-    Test `racket_shot_probability_utils.cell2_1_plot_winner_widget()`.
+    Test `racket_sports_01_shot_probability_utils.cell2_1_plot_winner_widget()`.
     """
 
     def _build_and_record(
@@ -3431,12 +3546,16 @@ class Test_cell2_1_plot_winner_widget(hunitest.TestCase):
 
         self.enterContext(
             umock.patch.object(
-                racket_shot_probability_utils.plt,
+                racket_sports_01_shot_probability_utils.plt,
                 "show",
                 side_effect=_record_redraw,
             )
         )
-        widget = racket_shot_probability_utils.cell2_1_plot_winner_widget(sport)
+        widget = (
+            racket_sports_01_shot_probability_utils.cell2_1_plot_winner_widget(
+                sport
+            )
+        )
         # The side toggle, then one `[slider, -, text, +]` box per slider,
         # then the plot and the settings line.
         controls: Dict[str, Any] = {"side": widget.children[0]}
@@ -3455,9 +3574,11 @@ class Test_cell2_1_plot_winner_widget(hunitest.TestCase):
         :param controls: controls of the widget, by name
         :return: the heatmap
         """
-        n_x, n_y = racket_shot_probability_utils.HEATMAP_GRID_SIZE[sport.name]
+        n_x, n_y = racket_sports_01_shot_probability_utils.HEATMAP_GRID_SIZE[
+            sport.name
+        ]
         heatmap: pd.DataFrame = (
-            racket_shot_probability_utils.compute_winner_heatmap(
+            racket_sports_01_shot_probability_utils.compute_winner_heatmap(
                 (controls["x1"].value, controls["y1"].value),
                 (controls["std_x2"].value, controls["std_y2"].value),
                 controls["ball_speed"].value,
@@ -3466,7 +3587,7 @@ class Test_cell2_1_plot_winner_widget(hunitest.TestCase):
                 sport.court,
                 n_x,
                 n_y,
-                racket_shot_probability_utils.HEATMAP_N_SAMPLES,
+                racket_sports_01_shot_probability_utils.HEATMAP_N_SAMPLES,
                 controls["seed"].value,
             )
         )
@@ -3593,7 +3714,7 @@ class Test_cell2_1_plot_winner_widget(hunitest.TestCase):
         _, controls, redraws = self._build_and_record(sport)
         last = redraws[-1]
         heatmap = self._get_direct_heatmap(sport, controls)
-        best = racket_shot_probability_utils.find_best_target(heatmap)
+        best = racket_sports_01_shot_probability_utils.find_best_target(heatmap)
         plt.close("all")
         # Check outputs.
         # The map holds the direct `P(winner)` of every cell, in `cell_id`
@@ -3602,12 +3723,14 @@ class Test_cell2_1_plot_winner_widget(hunitest.TestCase):
         np.testing.assert_array_equal(last["values"], expected_values)
         # The star and the comments give the same best target.
         self.assertEqual(last["star"], (best["x_m"], best["y_m"]))
-        p_winner = racket_shot_probability_utils._format_p_winner(
+        p_winner = racket_sports_01_shot_probability_utils._format_p_winner(
             best["p_winner"],
             best["p_winner_se"],
-            racket_shot_probability_utils.HEATMAP_N_SAMPLES,
+            racket_sports_01_shot_probability_utils.HEATMAP_N_SAMPLES,
         )
-        star_xy = racket_shot_probability_utils._format_point(last["star"])
+        star_xy = racket_sports_01_shot_probability_utils._format_point(
+            last["star"]
+        )
         expected = (
             f"Best target (star) = {star_xy}\n  P(winner) = {p_winner}\n"
             f"legend=comments"

@@ -1,9 +1,9 @@
 """
-Plotting helpers for the `racket_trajectory.API` notebook.
+Plotting helpers for the `racket_sports_04_trajectory_API` notebook.
 
 Import as:
 
-import research.Optimal_strategy_for_racket_sports.notebooks.racket_trajectory_utils as rosfrsnrtu
+import research.Optimal_strategy_for_racket_sports.notebooks.racket_sports_04_trajectory_API_utils as rosfrsnrs0tau
 """
 
 import logging
