@@ -15,9 +15,9 @@
     [`FAQ.md`](FAQ.md): AI policy and authorship policy
   - Issue [#697](https://github.com/gpsaggese/gpsaggese.github.io/issues/697):
     how to contribute to blogs
-  - [`all.write_blog.how_to_guide.md`](../helpers_root/docs/blogging/all.write_blog.how_to_guide.md)
+  - [`all.write_blog.how_to_guide.md`](https://github.com/causify-ai/helpers/blob/master/docs/blogging/all.write_blog.how_to_guide.md)
     and
-    [`all.publish_blogs.how_to_guide.md`](../helpers_root/docs/blogging/all.publish_blogs.how_to_guide.md):
+    [`all.publish_blogs.how_to_guide.md`](https://github.com/causify-ai/helpers/blob/master/docs/blogging/all.publish_blogs.how_to_guide.md):
     shared blog writing conventions, and the publishing setup of the Causify blog
     (different from this website)
   - [Blog Scripts](#blog-scripts): what each blog file in `website/` does
@@ -255,6 +255,7 @@
 
 - On the publication day, open a publish PR
   ```bash
+  > FILE=website/docs/blog/posts/draft.<name>.md
   > website/mark_blog_as_ready.py --file $FILE
   > (cd website && mkdocs build --strict)
   ```
@@ -272,10 +273,14 @@
   ```bash
   > ccp "Execute website/prompt.update_README_blog.md"
   ```
-- Check for dead links, locally (while `preview_website.sh` runs) and on the
-  live site
-  ```bash
-  > uvx linkchecker http://127.0.0.1:8000/ 2>&1 | tee linkchecker.log
-  > uvx linkchecker https://gpsaggese.github.io/ 2>&1 | tee linkchecker.log
-  ```
+- Check for dead links, locally and on the live site
+  - Start the local site in one terminal
+    ```bash
+    > website/preview_website.sh
+    ```
+  - Run the checks in a second terminal
+    ```bash
+    > uvx linkchecker http://127.0.0.1:8000/ 2>&1 | tee linkchecker.log
+    > uvx linkchecker https://gpsaggese.github.io/ 2>&1 | tee linkchecker.log
+    ```
 - Close the issue and mark the row as published in the gsheet
