@@ -33,14 +33,17 @@ _BLOCKED_BY_HELPERS = pytest.mark.xfail(
     reason="`print_obj_info()` crashes on installed packages (helpers 11dd182e)",
 )
 
+# The setup cell of every notebook logs the kernel command line, which has a temp
+# file name.
+_SETUP_CELL_MARKER = "utils.init_loggers"
+
 # Source text of the code cells whose output changes between runs, by notebook.
 # Use text, not indices, so that it survives adding cells.
 # - `Text` with its default charset depends on the hash seed
-# - The `hdbg.init_logger` cell logs a temp file name
 # - `time_vector_env()` prints wall-clock times
 _UNSTABLE_CELLS = {
     "gymnasium.03.API.Spaces": ["[t.sample() for", "Text(max_length=5)"],
-    "gymnasium.05.API.Vector": ["hdbg.init_logger", "time_vector_env("],
+    "gymnasium.05.API.Vector": ["time_vector_env("],
 }
 
 # Wall-clock values of `RecordEpisodeStatistics`, replaced in the outputs.
@@ -79,7 +82,7 @@ def _get_stable_outputs(notebook_name: str, path: str) -> str:
     :return: text with the output of each compared code cell
     """
     notebook = json.loads(hio.from_file(path))
-    markers = _UNSTABLE_CELLS.get(notebook_name, [])
+    markers = [_SETUP_CELL_MARKER] + _UNSTABLE_CELLS.get(notebook_name, [])
     texts = []
     for idx, cell in enumerate(notebook["cells"]):
         source = "".join(cell["source"])
