@@ -260,11 +260,14 @@
   ```
   - Title: `Blog: Publish <Title of the blog>`
   - The script renames the file with `git mv`, so commit the rename
-- After the PR is merged, deploy the website
+- After the PR is merged, GP deploys the website once a week, as the last step
+  of the flow
   ```bash
   > website/publish_website.sh
   ```
-- Publish the Substack entry and post on LinkedIn with a link to the blog
+  - Authors do not run it
+- Once the blog is live, publish the Substack entry and post on LinkedIn with a
+  link to the blog
 - Refresh `website/README.blog.md`
   ```bash
   > ccp "Execute website/prompt.update_README_blog.md"
