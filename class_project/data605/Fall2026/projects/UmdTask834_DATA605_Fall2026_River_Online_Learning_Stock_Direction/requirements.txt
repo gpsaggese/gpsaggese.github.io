@@ -1,0 +1,12 @@
+ipywidgets
+matplotlib
+numpy
+pandas
+pyarrow
+river==0.26.1
+scikit-learn
+scipy
+seaborn
+statsmodels
+tqdm
+yfinance==1.7.0
