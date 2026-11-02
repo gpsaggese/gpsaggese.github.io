@@ -86,7 +86,7 @@ from helpers.lib_tasks import (  # isort: skip # noqa: F401  # pylint: disable=u
     git_fix_perms,
     git_pull,
     git_repo_copy,
-    git_roll_amp_forward,
+    git_roll_submodule_forward,
     git_reset_symlink_perms,
     git_set_symlink_perms,
     integrate_create_branch,
