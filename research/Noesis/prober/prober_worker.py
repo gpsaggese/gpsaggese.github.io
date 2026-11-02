@@ -9,7 +9,7 @@ import research.Noesis.prober.prober_worker as rnoprwor
 import asyncio
 import dataclasses
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Callable
 
 import psycopg_pool
@@ -22,6 +22,9 @@ import research.Noesis.gateway.gateway_providers as rnogapro
 import research.Noesis.prober.prober_runtime as rnoprrun
 
 _LOG = logging.getLogger(__name__)
+
+# `WindowPolicy` is a frozen dataclass, so sharing one default is safe.
+_DEFAULT_CHECKER_POLICY = rnochmod.WindowPolicy()
 
 
 @dataclasses.dataclass(frozen=True)
@@ -56,7 +59,7 @@ async def run_probe_cycle(
     now: datetime,
     *,
     sink: rnochsink.VerdictSink,
-    checker_policy: rnochmod.WindowPolicy = rnochmod.WindowPolicy(),
+    checker_policy: rnochmod.WindowPolicy = _DEFAULT_CHECKER_POLICY,
     checker_version: str = "m2-v1",
 ) -> ProbeCheckerCycleResult:
     """
@@ -89,7 +92,7 @@ async def _wait_for_stop(
     """
     try:
         await asyncio.wait_for(stop_event.wait(), timeout=poll_interval_s)
-    except asyncio.TimeoutError:
+    except TimeoutError:
         pass
 
 
@@ -102,10 +105,10 @@ async def run_probe_worker(
     stop_event: asyncio.Event,
     *,
     sink: rnochsink.VerdictSink,
-    checker_policy: rnochmod.WindowPolicy = rnochmod.WindowPolicy(),
+    checker_policy: rnochmod.WindowPolicy = _DEFAULT_CHECKER_POLICY,
     checker_version: str = "m2-v1",
     poll_interval_s: float = 1.0,
-    clock_func: Callable[[], datetime] = lambda: datetime.now(timezone.utc),
+    clock_func: Callable[[], datetime] = lambda: datetime.now(UTC),
 ) -> ProbeWorkerResult:
     """
     Run probe cycles until `stop_event` is set.
@@ -160,7 +163,8 @@ async def run_probe_worker(
                     len(result.checker.published_reports),
                     cycle_errors,
                 )
-        except Exception:
+        except Exception:  # noqa: BLE001
+            # Keep the worker alive: log the failed cycle and retry.
             error_count += 1
             _LOG.exception("Probe cycle %s failed; retrying", cycles)
         await _wait_for_stop(stop_event, poll_interval_s)
