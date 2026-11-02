@@ -10,7 +10,9 @@
   [`research/Estimate_academic_paper_quality/docs/01-prd.md`](/research/Estimate_academic_paper_quality/docs/01-prd.md)
 - Decisions and alternatives, cited as `D<N>`:
   [`research/Estimate_academic_paper_quality/docs/03-decisions.md`](/research/Estimate_academic_paper_quality/docs/03-decisions.md)
-- Status: design only, no code exists yet
+- Status: implemented, see
+  [`07-progress.md`](/research/Estimate_academic_paper_quality/docs/07-progress.md)
+  for the status of the PRs
 
 ## Diagram
 

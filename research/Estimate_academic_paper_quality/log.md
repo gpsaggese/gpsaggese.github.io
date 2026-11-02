@@ -1,5 +1,7 @@
 # Log
 
+## Define
+
 - Follow `docs/planning/all.plan_work.how_to_guide.md`
   - [x] Write idea.md
   - [x] Generate PRD and improve
@@ -13,6 +15,14 @@
   ```
   claude> /architecture.write_design <project>/docs/01-prd.md
   claude> /text.criticize <project>/docs/02-design.architecture.md
+  ```
+
+## Plan
+  ```text
+  claude> /project.create_plan research/Estimate_academic_paper_quality/docs/02-design.architecture.md
+  claude> /auto_task.criticize research/Estimate_academic_paper_quality/docs/04-plan.md
+  claude> /auto_task.create_plan_for_feature research/Estimate_academic_paper_quality/docs/04-plan.md PR_A1
+  claude> /auto_task.criticize research/Estimate_academic_paper_quality/docs/05-tasks.md
   ```
 
 # Idea
