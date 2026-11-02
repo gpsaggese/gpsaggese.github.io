@@ -33,9 +33,9 @@
 import logging
 
 # Outcome: edited modules reload on the next run, and `logging` is imported.
-
 # %%
 import helpers.hnotebook as hnotebook
+
 from research.Optimal_strategy_for_racket_sports.notebooks import (
     racket_sports_05_variable_sensitivity_utils as utils,
 )

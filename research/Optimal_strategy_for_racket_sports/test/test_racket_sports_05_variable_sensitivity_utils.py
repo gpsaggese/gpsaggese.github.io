@@ -11,18 +11,16 @@ import logging
 import os
 from typing import Any, Dict
 
+import helpers.hunit_test as hunitest
 import matplotlib
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-import helpers.hunit_test as hunitest
 from research.Optimal_strategy_for_racket_sports import racket_params
 from research.Optimal_strategy_for_racket_sports.notebooks import (
     racket_sports_01_shot_probability_utils,
-)
-from research.Optimal_strategy_for_racket_sports.notebooks import (
     racket_sports_05_variable_sensitivity_utils,
 )
 

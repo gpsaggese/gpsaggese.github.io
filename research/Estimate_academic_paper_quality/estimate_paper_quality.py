@@ -20,6 +20,8 @@ same dir does not pay again for the papers already processed.
 
 The design is in `docs/02-design.architecture.md`.
 
+For a description of this file, see the file estimate_paper_quality.py.README.md
+
 # Usage Example
 
 - Run all the stages on a list of papers:

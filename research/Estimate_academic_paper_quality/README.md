@@ -40,7 +40,8 @@ of candidate trading strategies
 - The design is in `docs/02-design.architecture.md`
 - The code is flat in this dir, with the `epq_` prefix (`D22` in
   `docs/03-decisions.md`), and the tests are in `test/`:
-  - Script: `estimate_paper_quality.py` parses the CLI and calls `epq_pipeline.py`
+  - Script: `estimate_paper_quality.py` parses the CLI and calls `epq_pipeline.py`,
+    see `estimate_paper_quality.py.README.md`
   - Business logic: `epq_resolver.py`, `epq_extractor.py`, `epq_rater.py`
   - Infrastructure: `epq_bib_sources.py`, `epq_fetcher.py`, `epq_report.py`
   - Shared types: `epq_types.py`, with no project imports

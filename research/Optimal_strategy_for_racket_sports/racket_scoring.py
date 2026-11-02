@@ -10,14 +10,16 @@ import dataclasses
 import logging
 from typing import Literal, Tuple
 
+import helpers.hdbg as hdbg
+import helpers.hprint as hprint
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-import helpers.hdbg as hdbg
-import helpers.hprint as hprint
-from research.Optimal_strategy_for_racket_sports import racket_params
-from research.Optimal_strategy_for_racket_sports import racket_trajectory
+from research.Optimal_strategy_for_racket_sports import (
+    racket_params,
+    racket_trajectory,
+)
 
 _LOG = logging.getLogger(__name__)
 

@@ -25,10 +25,19 @@
 - [`03-decisions.md`](/research/Estimate_academic_paper_quality/docs/03-decisions.md):
   why it is built this way
 - `- [ ]` is an unmerged PR and `- [x]` is a merged PR
-  - A partly done PR states its status in its entry
-  - The code of every PR is written, except `PR_Q2`, `PR_V1`, `PR_V2`, and the
-    unscheduled PRs, but none is merged: see
+  - A PR entry has a `Status` line once code for it exists
+  - `Status: written` means the code and the tests are committed on the branch `gp`
+    and the PR is not merged into `main`, so its box stays unchecked
+  - A `Status` line also lists what is missing from the entry (e.g., a live run)
+  - Every scheduled PR is written, except `PR_Q2`, `PR_V1`, and `PR_V2`, and no
+    unscheduled PR is started: see
     [`07-progress.md`](/research/Estimate_academic_paper_quality/docs/07-progress.md)
+  - The code was written in one pass from the design docs, so no `06-spec.<PR_ID>.md`
+    exists for the PRs marked `Spec: needed`: the design docs and
+    [`D24`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d24-bibsources-keeps-its-own-disk-cache)
+    and
+    [`D25`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d25-the-parser-joins-the-lines-of-a-wrapped-bullet)
+    hold what the specs would
 - A PR marked `Spec: needed` gets `06-spec.<PR_ID>.md` before the work starts, with
   [`.claude/skills/auto_task.create_plan_for_feature/SKILL.md`](/.claude/skills/auto_task.create_plan_for_feature/SKILL.md)
 - A PR id is `PR_<component letter><number>`:
@@ -52,39 +61,39 @@
   - `estimate_paper_quality.py --action resolve --action report` turns
     [`paper_list.md`](/research/Estimate_academic_paper_quality/paper_list.md) into
     `references.md` and into `issues.csv` with the unresolved and ambiguous lines
-  - [ ] `PR_H1`
-  - [ ] `PR_T1`
-  - [ ] `PR_R1`
-  - [ ] `PR_F1`
-  - [ ] `PR_O1`
-  - [ ] `PR_R2`
-  - [ ] `PR_B1`
-  - [ ] `PR_B2`
-  - [ ] `PR_B3`
-  - [ ] `PR_R3`
-  - [ ] `PR_R4`
-  - [ ] `PR_P1`
+  - [ ] `PR_H1`: written
+  - [ ] `PR_T1`: written
+  - [ ] `PR_R1`: written
+  - [ ] `PR_F1`: written
+  - [ ] `PR_O1`: written
+  - [ ] `PR_R2`: written
+  - [ ] `PR_B1`: written
+  - [ ] `PR_B2`: written
+  - [ ] `PR_B3`: written
+  - [ ] `PR_R3`: written
+  - [ ] `PR_R4`: written
+  - [ ] `PR_P1`: written
 - `v0.2`: Papers on disk
   - The `download` stage writes `papers/<BASE>.pdf` and `papers/<BASE>.md`, adds the
     failed papers to `issues.csv`, and a rerun skips the converted papers
-  - [ ] `PR_F2`
-  - [ ] `PR_F3`
-  - [ ] `PR_P2`
+  - [ ] `PR_F2`: written
+  - [ ] `PR_F3`: written
+  - [ ] `PR_P2`: written
 - `v0.3`: Report of candidate strategies
   - The `extract` stage writes `papers/<BASE>.features.json`, and `report.csv` gives
     the features and the Paper quality rating of each converted paper
-  - [ ] `PR_Q1`
-  - [ ] `PR_Q2`
-  - [ ] `PR_B4`
-  - [ ] `PR_E1`
-  - [ ] `PR_E2`
-  - [ ] `PR_O2`
-  - [ ] `PR_P3`
+  - [ ] `PR_Q1`: written
+  - [ ] `PR_Q2`: not started
+  - [ ] `PR_B4`: written
+  - [ ] `PR_E1`: written
+  - [ ] `PR_E2`: written
+  - [ ] `PR_O2`: written
+  - [ ] `PR_P3`: written
 - `v0.4`: Measured pipeline
   - The three success metrics of the PRD are measured on labeled sets, the default
     LLM is picked, and the numbers are in `07-progress.md`
-  - [ ] `PR_V1`
-  - [ ] `PR_V2`
+  - [ ] `PR_V1`: not started
+  - [ ] `PR_V2`: not started
 - Releases are cumulative: a version also needs the PRs of the versions before it
 
 # Component Specs
@@ -254,6 +263,10 @@
 
 ### `PR_H1`: [ ] Public `format_base_filename()` in `download_utils`
 
+- Status: written: `format_base_filename()` is in the helpers repo (commit `2f36c8ed`),
+  with 7 tests in `Test_format_base_filename`. The `helpers_root` pointer of this
+  repo is not moved yet, and the open question of the Download Tool section is
+  not answered
 - Background:
   - [`download_academic_paper_to_md.py`](/helpers_root/dev_scripts_helpers/download/download_academic_paper_to_md.py)
     names its files with the private `_format_base_filename(year, authors, title)`,
@@ -292,6 +305,8 @@
 
 ### `PR_T1`: [ ] Shared Types of the Resolve Stage and the Import Graph Test
 
+- Status: written: `epq_types.py` has all the types of the architecture doc, not only the
+  types of the resolve stage
 - Background:
   - No code exists
   - The architecture doc lists the types in "Data Model" and the allowed imports in
@@ -324,6 +339,8 @@
 
 ### `PR_R1`: [ ] `parse_line()`: Classify Each Input Line
 
+- Status: written: `parse_lines()` also joins the lines of a wrapped bullet before
+  `parse_line()` ([`D25`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d25-the-parser-joins-the-lines-of-a-wrapped-bullet))
 - Background:
   - `download_utils.detect_doi()` and `download_utils.get_ssrn_id()` exist
   - The download tool checks a local file, then SSRN, then a DOI, then an arXiv id,
@@ -351,6 +368,7 @@
 
 ### `PR_F1`: [ ] PDF Readers of `epq_fetcher`
 
+- Status: written
 - Background:
   - `resolver` needs the title of a local PDF
     ([`D4`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d4-the-title-of-a-pdf-is-the-largest-text-of-page-1))
@@ -378,6 +396,7 @@
 
 ### `PR_O1`: [ ] State Files, `references.md`, and `issues.csv`
 
+- Status: written
 - Background: each stage must run alone, and read the output of the stage before it
   from `state/`
   ([`D18`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d18-all-the-state-lives-in-the-output-dir))
@@ -407,6 +426,7 @@
 
 ### `PR_R2`: [ ] `match_candidates()` and `paper_key()`
 
+- Status: written
 - Background:
   - A title lookup returns up to 5 candidates per source
   - [`R5`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r5-unresolved-or-ambiguous-line)
@@ -442,6 +462,10 @@
 
 ### `PR_B1`: [ ] Throttled, Retried, Cached GET of `epq_bib_sources`
 
+- Status: written: the cache is in `BibSources`, per [`D24`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d24-bibsources-keeps-its-own-disk-cache). A host that
+  fails after its retries is skipped for the rest of the run. The published rate
+  limits (Bib Sources open question 1) were not checked: the `429` of Semantic
+  Scholar without a key is in Findings 2 of [`07-progress.md`](/research/Estimate_academic_paper_quality/docs/07-progress.md)
 - Background:
   - The private clients of the download tool retry, but have no disk cache
     ([`D23`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d23-new-api-clients-instead-of-the-private-ones-of-the-download-tool))
@@ -480,6 +504,7 @@
 
 ### `PR_B2`: [ ] Semantic Scholar, Crossref, and arXiv Clients
 
+- Status: written
 - Background: `resolver` needs the DOI, the arXiv id, the record type, the family
   names, and the open-access link; the clients of the tool give only the year, the
   authors, and the title
@@ -506,6 +531,7 @@
 
 ### `PR_B3`: [ ] Unpaywall Link and Metadata of a URL Line
 
+- Status: written
 - Background: a `url` line needs the DOI or the title of its page, and a paper with
   no arXiv or Semantic Scholar link can have an Unpaywall link
 - Changes:
@@ -529,6 +555,7 @@
 
 ### `PR_R3`: [ ] `build_paper()`, `merge_papers()`, and `sort_papers()`
 
+- Status: written
 - Background: a matched group of records must give one reference with facts from a
   lookup source only, a base name, and the ordered download inputs
 - Changes:
@@ -573,6 +600,10 @@
 
 ### `PR_R4`: [ ] `resolve_lines()`: Lookups by Kind, End to End
 
+- Status: written: `resolve` ran on
+  [`paper_list.md`](/research/Estimate_academic_paper_quality/paper_list.md) with
+  Crossref only, since Semantic Scholar answered `429`: 20 of 22 lines resolved,
+  see Findings 2 of [`07-progress.md`](/research/Estimate_academic_paper_quality/docs/07-progress.md)
 - Background: `PR_R1` to `PR_R3` are pure code; no code yet connects them to
   `BibSources` and to `read_pdf_title()`
 - Changes:
@@ -604,6 +635,8 @@
 
 ### `PR_P1`: [ ] CLI with the `resolve` and `report` Stages
 
+- Status: written: `_VALID_ACTIONS` has the four stages, since the code of `PR_P2` and
+  `PR_P3` is in the same files. The run on `paper_list.md` is the one of `PR_R4`
 - Background: `PR_R4` and `PR_O1` exist, but no entry point calls them
 - Changes:
   - Add
@@ -648,6 +681,7 @@
 
 ### `PR_F2`: [ ] `is_fetched()` and the File Checks
 
+- Status: written
 - `is_fetched()`: true when `<BASE>.pdf` and `<BASE>.md` exist
 - `_check_pdf()`: the file starts with `%PDF`
 - `_check_markdown()`: the file has at least `_MIN_MARKDOWN_CHARS = 500` chars
@@ -659,6 +693,9 @@
 
 ### `PR_F3`: [ ] `fetch_paper()` Through the Download Tool
 
+- Status: written: there is no `slow` test of the real tool. A manual run on the arXiv id
+  `1706.03762` saved the PDF and the markdown in about 6 s (Findings 7 of
+  [`07-progress.md`](/research/Estimate_academic_paper_quality/docs/07-progress.md)). A download of an SSRN paper did not run
 - Run the tool as a subprocess, one download input at a time, per
   [`02.4-design.fetcher.md`](/research/Estimate_academic_paper_quality/docs/02.4-design.fetcher.md#one-request-end-to-end)
 - Return a `FetchResult` with the status and the reason of each input
@@ -677,6 +714,9 @@
 
 ### `PR_P2`: [ ] `download` Stage
 
+- Status: written: it ran on one paper only (Findings 7 of [`07-progress.md`](/research/Estimate_academic_paper_quality/docs/07-progress.md)), not on
+  the whole list, so the numbers of PDFs, markdown files, and failures are not
+  logged
 - `run_download()`: skip a fetched paper, call `fetch_paper()`, turn a failed result
   into an `Issue`, and write `state/issues.download.json`
 - `issues.csv` lists the download issues
@@ -695,6 +735,8 @@
 
 ### `PR_Q1`: [ ] `epq_rater.py`: Score the Signals and Rate the Paper
 
+- Status: written: the score tables are checked against `paper.rules.md` in
+  `test_epq_rater.py`
 - Add `score_page_length()`, `score_affiliation()`, `score_citations()`,
   `rate_paper()`, and `parse_tiers()`, per
   [`02.6-design.rater.md`](/research/Estimate_academic_paper_quality/docs/02.6-design.rater.md)
@@ -712,7 +754,8 @@
 - Fill
   [`affiliation_tiers.yaml`](/research/Estimate_academic_paper_quality/affiliation_tiers.yaml)
   by hand, with `as_of` and `source`
-- Blocked by Rater open question 1
+- Blocked by Rater open question 1: until then `tier_5` and `tier_4` are empty, and
+  an affiliation scores by its kind, e.g., a university scores 3
 - Requirements:
   [`R16`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r16-paper-quality-rating)
 - Decisions:
@@ -721,6 +764,7 @@
 
 ### `PR_B4`: [ ] `get_citation_count()`
 
+- Status: written
 - Look up Semantic Scholar by `paperId`, else by `DOI:` or `ARXIV:`, with
   `fetched_at` from the cache entry; return `None` when the paper is missing
 - Requirements:
@@ -731,6 +775,7 @@
 
 ### `PR_E1`: [ ] `_prepare_text()` and `_locate_quote()`
 
+- Status: written
 - Pure functions of
   [`epq_extractor.py`](/research/Estimate_academic_paper_quality/epq_extractor.py):
   drop the reference list and cut a long paper; find a quote in the page texts and
@@ -744,6 +789,8 @@
 
 ### `PR_E2`: [ ] `extract_features()` with One LLM Call
 
+- Status: written: it ran only with a fake `llm_func`, not on a live LLM: no key, and the
+  venv has no `openai`
 - Add `_LlmExtraction`, the prompt
   [`epq_extractor.prompt.md`](/research/Estimate_academic_paper_quality/epq_extractor.prompt.md),
   and `extract_features()` with an injected `llm_func`
@@ -759,6 +806,7 @@
 
 ### `PR_O2`: [ ] Features File and `report.csv`
 
+- Status: written
 - Add `write_features_file()` and `read_features_file()` with `schema_version`, then
   `build_report_rows()` and `write_report()`
 - Requirements:
@@ -772,6 +820,8 @@
 
 ### `PR_P3`: [ ] `extract` Stage and `report.csv`
 
+- Status: written: it did not run on `paper_list.md`, so the LLM cost per paper is not
+  logged
 - `run_extract()`, per
   [`02.1-design.pipeline.md`](/research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md#one-request-end-to-end),
   with the flags `--model`, `--force_extract`, and `--max_chars`

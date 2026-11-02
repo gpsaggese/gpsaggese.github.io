@@ -166,7 +166,9 @@ async def run_checker_pass(
                 checker_version=checker_version,
                 bank_version=bank_version,
             )
-        except Exception as error:
+        except Exception as error:  # noqa: BLE001
+            # Isolate failures per contract so one bad contract does not stop
+            # the pass.
             message = "contract %s evaluation: %s" % (contract_id, error)
             _LOG.exception("Could not evaluate %s", message)
             errors.append(message)
@@ -177,7 +179,8 @@ async def run_checker_pass(
             continue
         try:
             await sink.publish(report)
-        except Exception as error:
+        except Exception as error:  # noqa: BLE001
+            # Isolate sink failures per contract so other reports still publish.
             message = "contract %s sink: %s" % (contract_id, error)
             _LOG.exception("Could not publish %s", message)
             errors.append(message)
