@@ -88,8 +88,11 @@
 | Date       | Done                                                                                                                       |
 | :--------- | :------------------------------------------------------------------------------------------------------------------------- |
 | 2026-11-01 | Wrote `04-plan.md` (4 versions, 24 scheduled PRs) and this progress log                                                    |
-| 2026-11-02 | Wrote the code of `v0.1` to `v0.3` and 156 tests in one pass; decisions `D24` and `D25`; ran `resolve` on the live APIs  |
+| 2026-11-02 | Wrote the code of `v0.1` to `v0.3` and 156 tests in one pass; decisions `D24` and `D25`; ran `resolve` on the live APIs    |
+| 2026-11-02 | Added a `Status` line to each PR entry of `04-plan.md`: 21 PRs written on branch `gp`, none merged into `main`             |
 
 ## Open Work
 
-- None: no issue or PR is open. The code is not committed
+- None: no issue or PR is open. The code is committed on the branch `gp` and pushed, and
+  it is not merged into `main`. `PR_H1` is in the helpers repo (commit `2f36c8ed`), and
+  the `helpers_root` pointer of this repo is not moved yet

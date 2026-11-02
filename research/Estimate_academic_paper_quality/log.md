@@ -25,6 +25,15 @@
   claude> /auto_task.criticize research/Estimate_academic_paper_quality/docs/05-tasks.md
   ```
 
+- [ ] Read open_md.py -i research/Estimate_academic_paper_quality/docs/02.*
+- [ ] Read open_md.py -i research/Estimate_academic_paper_quality/docs/03-decisions.md
+- [ ] ...
+- [ ] Read code top-to-bottom
+
+- What is missing
+  - [ ] A document that explains how to run the code
+    /readme_file.create
+
 # Idea
 
 - Create a pipeline that accepts a list of links of papers in the form of partial
