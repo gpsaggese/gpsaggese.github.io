@@ -21,6 +21,9 @@ import logging
 import os
 from typing import Any, Dict, List, Sequence, Tuple
 
+import helpers.hdbg as hdbg
+import helpers.hnotebook as hnotebo
+import helpers.hprint as hprint
 import matplotlib.colors as mcolors
 import matplotlib.patheffects as mpatheff
 import matplotlib.pyplot as plt
@@ -30,12 +33,11 @@ from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from tqdm.autonotebook import tqdm
 
-import helpers.hdbg as hdbg
-import helpers.hnotebook as hnotebo
-import helpers.hprint as hprint
 import research.Optimal_strategy_for_racket_sports.notebooks.racket_sports_01_shot_probability_utils as rosfrsnrs0spu
-from research.Optimal_strategy_for_racket_sports import racket_params
-from research.Optimal_strategy_for_racket_sports import racket_strategy_utils
+from research.Optimal_strategy_for_racket_sports import (
+    racket_params,
+    racket_strategy_utils,
+)
 
 _LOG = logging.getLogger(__name__)
 

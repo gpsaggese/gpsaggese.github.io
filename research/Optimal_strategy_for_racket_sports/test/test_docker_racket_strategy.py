@@ -6,9 +6,8 @@ import research.Optimal_strategy_for_racket_sports.test.test_docker_racket_strat
 
 import logging
 
-import pytest
-
 import helpers.hdocker_tests as hdoctest
+import pytest
 
 _LOG = logging.getLogger(__name__)
 
