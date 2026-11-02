@@ -74,6 +74,10 @@
   - Make it visually appealing, e.g., add diagrams and plots
   - Run every command and notebook and fix what is broken
   - Add more examples to explain the ideas
+- To start a new blog from notes instead of a draft:
+  ```bash
+  claude> /blog.create_from_notes <notes_file>
+  ```
 - As always, no AI slop: you must be able to explain every line
 
 ## 2. Create an Issue
@@ -141,6 +145,7 @@
   - Add your id to `authors:` in the blog front matter
   - Do not leave `TBD` in `url:` or `avatar:`: it renders as a broken link
   - Adding someone else as an author needs GP's approval
+- Follow the blog writing rules in `.claude/skills/blog.rules.md`
 - Before asking for review, run the content checks:
   - Run every command and notebook and paste the result if it changed
   - Clean up the scratch notes: drafts often end with raw notes, links, or
@@ -177,6 +182,10 @@
     ```bash
     > open_md.py --input $FILE --mode github
     > website/preview_website.sh
+    ```
+  - Fix the problems the preview shows
+    ```bash
+    > ccp "Run website/preview_website.sh and fix the problems following .claude/skills/blog.rules.md"
     ```
 - Open the PR
   - Title: `Blog: <Title of the blog>`
@@ -260,8 +269,10 @@
   ```bash
   > ccp "Execute website/prompt.update_README_blog.md"
   ```
-- Check for dead links
+- Check for dead links, locally (while `preview_website.sh` runs) and on the
+  live site
   ```bash
+  > uvx linkchecker http://127.0.0.1:8000/ 2>&1 | tee linkchecker.log
   > uvx linkchecker https://gpsaggese.github.io/ 2>&1 | tee linkchecker.log
   ```
 - Close the issue and mark the row as published in the gsheet
