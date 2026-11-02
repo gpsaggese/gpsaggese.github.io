@@ -7,6 +7,7 @@ import datetime
 from unittest import mock
 
 import helpers.hunit_test as hunitest
+
 import research.Noesis.checker.checker_models as rnochmod
 import research.Noesis.checker.checker_runtime as rnochrun
 import research.Noesis.checker.checker_sink as rnochsink
@@ -14,7 +15,7 @@ import research.Noesis.gateway.gateway_faults as rnogafau
 import research.Noesis.prober.prober_runtime as rnoprrun
 import research.Noesis.prober.prober_worker as rnoprwor
 
-_NOW = datetime.datetime(2026, 1, 1, tzinfo=datetime.timezone.utc)
+_NOW = datetime.datetime(2026, 1, 1, tzinfo=datetime.UTC)
 
 
 def _report() -> rnochmod.VerdictReport:
@@ -204,9 +205,7 @@ class Test_run_probe_worker(hunitest.TestCase):
                     stop_event,
                     sink=rnochsink.RecordingVerdictSink(),
                     poll_interval_s=0.001,
-                    clock_func=lambda: datetime.datetime.now(
-                        datetime.timezone.utc
-                    ),
+                    clock_func=lambda: datetime.datetime.now(datetime.UTC),
                 )
 
         actual = asyncio.run(_body())

@@ -163,6 +163,13 @@
 - **Important**: You should add files only under your project directory!
 - Follow the instructions (carefully!) in
   `class_project/project_template/docker_scripts.README.md`
+- Use the same `Dockerfile` and `requirements.txt` as the project template
+  - If the notebook needs one or a few extra packages, install them with
+    `!pip install -q pkg==x.y.z` in the notebook
+  - Change `requirements.txt` only when the dependencies are hard to maintain
+    (e.g., packages that depend on each other)
+  - See "Python Dependencies Policy" in
+    `class_project/project_template/docker_scripts.README.md`
 - Start working on the files
 
 ### Create a Pull Request (PR)

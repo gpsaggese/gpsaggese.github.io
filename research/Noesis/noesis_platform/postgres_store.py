@@ -23,11 +23,11 @@ import dataclasses
 import logging
 from typing import List
 
-import pandas as pd
-
 import helpers.hdbg as hdbg
 import helpers.hprint as hprint
 import helpers.hsql_implementation as hsqlimpl
+import pandas as pd
+
 import research.Noesis.gateway.passthrough_proxy as rnopapro
 import research.Noesis.market.batch_call_auction as rnbacaau
 import research.Noesis.market.contract_dispatch as rnocodis
@@ -149,7 +149,7 @@ class PostgresOrderBookStore(rnbacaau.OrderBookStore):
     def __init__(self, connection: hsqlimpl.DbConnection) -> None:
         """
         :param connection: Postgres connection, shared for the process
-            lifetime (see `spec.PR_P2b.md`'s "Out of Scope": no connection
+            lifetime (see `06-spec.PR_P2b.md`'s "Out of Scope": no connection
             pooling)
         """
         self._connection = connection

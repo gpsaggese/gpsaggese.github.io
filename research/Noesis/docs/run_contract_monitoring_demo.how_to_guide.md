@@ -27,7 +27,7 @@ The four contracts demonstrate:
 
 ## Run It
 
-After completing `onboarding.md` and activating the project virtual environment,
+After completing `09-onboarding.md` and activating the project virtual environment,
 run from the repository root:
 
 ```bash

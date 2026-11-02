@@ -1,0 +1,127 @@
+import ast
+import logging
+import os
+from typing import Dict, List, Set
+
+import helpers.hgit as hgit
+import helpers.hio as hio
+import helpers.hunit_test as hunitest
+
+_LOG = logging.getLogger(__name__)
+
+_PREFIX = "research.Estimate_academic_paper_quality."
+
+# Allowed imports of the modules of the project, from the architecture doc
+# `docs/02-design.architecture.md`, section "Import Graph". Each module points
+# down a layer, never up.
+_ALLOWED: Dict[str, Set[str]] = {
+    "estimate_paper_quality": {"epq_pipeline"},
+    "epq_pipeline": {
+        "epq_bib_sources",
+        "epq_extractor",
+        "epq_fetcher",
+        "epq_rater",
+        "epq_report",
+        "epq_resolver",
+        "epq_types",
+    },
+    "epq_resolver": {"epq_bib_sources", "epq_fetcher", "epq_types"},
+    "epq_extractor": {"epq_types"},
+    "epq_rater": {"epq_types"},
+    "epq_report": {"epq_types"},
+    "epq_bib_sources": {"epq_types"},
+    "epq_fetcher": {"epq_types"},
+    "epq_types": set(),
+}
+
+
+def _get_project_imports(path: str) -> Set[str]:
+    """
+    List the modules of the project that a file imports.
+
+    :param path: path of a Python file
+    :return: names of the modules, e.g., `epq_types`
+    """
+    tree = ast.parse(hio.from_file(path))
+    imported = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            names = [alias.name for alias in node.names]
+        elif isinstance(node, ast.ImportFrom):
+            names = [node.module or ""]
+        else:
+            continue
+        for name in names:
+            if name.startswith(_PREFIX):
+                imported.add(name[len(_PREFIX) :].split(".")[0])
+    return imported
+
+
+def _find_violations(project_dir: str) -> List[str]:
+    """
+    Find the imports that the architecture does not allow.
+
+    :param project_dir: dir of the modules of the project
+    :return: one text for each import that is not allowed
+    """
+    violations = []
+    for module, allowed in _ALLOWED.items():
+        path = os.path.join(project_dir, f"{module}.py")
+        if not os.path.isfile(path):
+            continue
+        for name in sorted(_get_project_imports(path) - allowed):
+            violations.append(f"{module} imports {name}")
+    return violations
+
+
+# #############################################################################
+# Test_import_graph
+# #############################################################################
+
+
+class Test_import_graph(hunitest.TestCase):
+    """
+    Test that the modules of the pipeline import only what the architecture
+    allows.
+    """
+
+    def test1(self) -> None:
+        """
+        Test the modules of the project follow the import graph.
+        """
+        # Prepare inputs.
+        project_dir = os.path.dirname(hgit.find_file_in_git_tree("epq_types.py"))
+        # Run test.
+        actual = _find_violations(project_dir)
+        # Check outputs.
+        self.assertEqual(actual, [])
+
+    def test2(self) -> None:
+        """
+        Test the check fails on a module that imports a layer above it.
+        """
+        # Prepare inputs.
+        scratch_dir = self.get_scratch_space()
+        hio.to_file(
+            os.path.join(scratch_dir, "epq_types.py"),
+            f"import {_PREFIX}epq_pipeline as epqpipel\n",
+        )
+        # Run test.
+        actual = _find_violations(scratch_dir)
+        # Check outputs.
+        self.assertEqual(actual, ["epq_types imports epq_pipeline"])
+
+    def test3(self) -> None:
+        """
+        Test every module of the project is in the table of allowed imports.
+        """
+        # Prepare inputs.
+        project_dir = os.path.dirname(hgit.find_file_in_git_tree("epq_types.py"))
+        # Run test.
+        modules = {
+            name[: -len(".py")]
+            for name in os.listdir(project_dir)
+            if name.endswith(".py")
+        }
+        # Check outputs.
+        self.assertEqual(modules, set(_ALLOWED))

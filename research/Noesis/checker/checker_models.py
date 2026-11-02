@@ -164,7 +164,9 @@ class CalibrationPolicy:
                 "healthy_required_accuracy must be between zero and one"
             )
         if not 0 <= self.weak_maximum_accuracy <= 1:
-            raise ValueError("weak_maximum_accuracy must be between zero and one")
+            raise ValueError(
+                "weak_maximum_accuracy must be between zero and one"
+            )
 
 
 @dataclasses.dataclass(frozen=True)

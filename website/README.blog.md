@@ -19,6 +19,14 @@
 
 Total: 2 posts ready for review
 
+## To Update
+- [ ] Update in_10_mins.helpers_open_md.md with
+  helpers_root/dev_scripts_helpers/documentation/open_md.README.md
+
+## To Create
+
+- [ ] helpers_root/dev_scripts_helpers/documentation/summarize_md.README.md
+
 ## Published Blogs
 
 - 2026-08-20: `website/docs/blog/posts/shortcuts.vim.md`
