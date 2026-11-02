@@ -35,7 +35,7 @@
   `data/`; later runs are offline
 - Run the unit tests (seconds, no network):
   ```bash
-  > ./docker_cmd.sh "python -m pytest test/test_river_utils.py"
+  > ./docker_cmd.sh "cd /git_root/class_project/data605/Fall2026/projects/UmdTask*River* && python -m pytest test/test_river_utils.py"
   ```
 - For details on the Docker scripts, see the
   [project template README](/class_project/project_template/docker_scripts.README.md)
