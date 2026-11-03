@@ -28,7 +28,6 @@ milestone, newest first.
 
 - `rllib.API.ipynb` covers `register_env`, `PPOConfig`, `DQNConfig`,
   `Algorithm.train()`, `Algorithm.evaluate()`, the `RLModule`, and checkpoints
-- Runs end to end in ~8 minutes on CPU
 - Results vary between runs, since the parallel env runners make training
   nondeterministic
 
