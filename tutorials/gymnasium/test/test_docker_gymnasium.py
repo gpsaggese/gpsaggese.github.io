@@ -218,3 +218,13 @@ class Test_notebooks(hunitest.TestCase):
         notebook_name = "gymnasium.05.API.Vector"
         # Run test.
         self.helper(notebook_name)
+
+    @pytest.mark.slow
+    def test6(self) -> None:
+        """
+        Test that the example notebook runs and repeats inside Docker.
+        """
+        # Prepare inputs.
+        notebook_name = "gymnasium.example"
+        # Run test.
+        self.helper(notebook_name)
