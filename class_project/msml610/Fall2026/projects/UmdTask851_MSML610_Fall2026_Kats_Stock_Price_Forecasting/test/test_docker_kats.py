@@ -1,7 +1,7 @@
 """
 Import as:
 
-import class_project.msml610.Fall2026.projects.UmdTaskXXX_MSML610_Fall2026_Kats_Stock_Price_Forecasting.test.test_docker_kats as tdkats
+import class_project.msml610.Fall2026.projects.UmdTask851_MSML610_Fall2026_Kats_Stock_Price_Forecasting.test.test_docker_kats as tdkats
 """
 
 import logging
