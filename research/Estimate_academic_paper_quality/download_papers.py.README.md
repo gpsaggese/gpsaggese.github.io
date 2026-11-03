@@ -95,6 +95,10 @@
   `research/Estimate_academic_paper_quality/report_papers.py`
 - `<output_dir>/state/logs/<BASE>.download.log`: the log of the download tool for
   each paper
+- `<output_dir>/02-download.summary.txt`: the summary of the stage, with the same text
+  as the end of the log (the counts of items, the output files, and the path of the
+  issues file). A rerun overwrites it. See the section "Summary of a Stage" in
+  [`research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md`](/research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md)
 - A paper that has a valid PDF and a markdown file is not downloaded or converted
   again. A paper that has only a valid PDF is only converted
 - With `--dry_run` the script writes nothing
@@ -113,7 +117,8 @@
 - Logs go to the console, at the level of `-v`, and to a file
   `research/Estimate_academic_paper_quality/download_papers.py.log`, which each run
   overwrites
-- The run logs a progress bar, and a warning for each failed paper
+- The run logs a progress bar, a warning for each failed paper, and the summary of
+  the stage
 - With `-v DEBUG` the run also logs each wait
 
 ## Software Architecture
@@ -132,7 +137,8 @@
 3. **Conversion**: the download tool converts the PDF to markdown. A failure at any
    step becomes an `Issue`
 4. **Output**: `epqrepor.write_issues()` writes `02-download.issues.json`, at the
-   path of `epqpaths.get_issues_path()`
+   path of `epqpaths.get_issues_path()`, then `epqsumm.emit_stage_summary()` logs the
+   summary of the stage and writes `02-download.summary.txt`
 
 ### Key Functions
 

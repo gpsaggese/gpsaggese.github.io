@@ -20,6 +20,8 @@ The outputs live in `--output_dir`:
 - `papers/<BASE>.features.json` for each paper: the features, the facts, the
   affiliations, the page count, and the cost of the call
 - `03-extract.issues.json`: the papers that failed, for `report_papers.py`
+- `03-extract.summary.txt`: the counts, the output files, the issues file, and the
+  cost of the run, the same text as the end of the log
 
 The script does not rate the paper: a change of the tier list or of the bands
 needs no new LLM call, see `report_papers.py`.
@@ -69,6 +71,7 @@ import research.Estimate_academic_paper_quality.epq_fetcher as epqfetch
 import research.Estimate_academic_paper_quality.epq_issues as epqissue
 import research.Estimate_academic_paper_quality.epq_paths as epqpaths
 import research.Estimate_academic_paper_quality.epq_report as epqrepor
+import research.Estimate_academic_paper_quality.epq_summary as epqsumm
 import research.Estimate_academic_paper_quality.epq_types as epqtypes
 
 _LOG = logging.getLogger(__name__)
@@ -571,6 +574,9 @@ def _extract(
     """
     issues: List[epqtypes.Issue] = []
     total_cost = 0.0
+    n_done_before = 0
+    n_no_input = 0
+    n_ok = 0
     for paper in tqdm.tqdm(papers):
         md_path = epqpaths.get_markdown_path(config.output_dir, paper.base_name)
         features_path = epqpaths.get_features_path(
@@ -578,15 +584,18 @@ def _extract(
         )
         if not os.path.isfile(md_path):
             # The download issue already says why.
+            n_no_input += 1
             continue
         if os.path.isfile(features_path) and not config.force_extract:
             _LOG.debug("Skip '%s': has a features file", paper.base_name)
+            n_done_before += 1
             continue
         if config.dry_run:
             _LOG.warning("[DRY_RUN] Would extract '%s'", paper.base_name)
             continue
         try:
             total_cost += _extract_paper(paper, config, llm_func=llm_func)
+            n_ok += 1
         except Exception as e:  # noqa: BLE001
             # Decision D21: an error of one paper must not stop the run.
             _LOG.warning("Paper '%s' failed: %s", paper.base_name, e)
@@ -598,17 +607,28 @@ def _extract(
                     epqissue.get_last_line(str(e)),
                 )
             )
+    issues_path = epqpaths.get_issues_path(config.output_dir, "extract")
     if config.dry_run:
         _LOG.warning("[DRY_RUN] Would write the issues of the stage `extract`")
     else:
-        path = epqpaths.get_issues_path(config.output_dir, "extract")
-        epqrepor.write_issues(path, issues)
-    _LOG.info(
-        "Extract: %s of %s papers failed, total LLM cost %.4f USD",
-        len(issues),
-        len(papers),
-        total_cost,
+        epqrepor.write_issues(issues_path, issues)
+    # Summarize the stage.
+    features_pattern = epqpaths.get_features_path(config.output_dir, "<BASE>")
+    summary = epqtypes.StageSummary(
+        stage="extract",
+        unit="paper",
+        n_total=len(papers),
+        n_done_before=n_done_before,
+        n_no_input=n_no_input,
+        n_ok=n_ok,
+        n_failed=len(issues),
+        outputs=((features_pattern, n_ok),),
+        issues_path=issues_path,
+        issue_counts=epqsumm.count_issues(issues, add_stage=False),
+        extra=(f"LLM cost in this run: {total_cost:.4f} USD",),
+        dry_run=config.dry_run,
     )
+    epqsumm.emit_stage_summary(summary, config.output_dir)
     return issues
 
 

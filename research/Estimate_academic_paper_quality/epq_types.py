@@ -587,3 +587,62 @@ class PaperFeatures:
     # Pages of the PDF, `None` when the PDF is missing or cannot be read.
     n_pages: Optional[int]
     provenance: Provenance
+
+
+# #############################################################################
+# Stage summary
+# #############################################################################
+
+
+@dataclasses.dataclass(frozen=True)
+class StageSummary:
+    """
+    The counts and the output files of one stage in one run.
+
+    Each item of the input of the stage is in exactly one of four groups:
+    `n_done_before`, `n_no_input`, `n_ok`, or `n_failed`. In a dry run the items
+    that the stage would process are in none of them.
+
+    Example, for the stage `download` with 20 papers:
+    ```
+    StageSummary(
+        stage="download",
+        unit="paper",
+        n_total=20,
+        n_done_before=12,
+        n_no_input=0,
+        n_ok=6,
+        n_failed=2,
+        outputs=(("run/papers/<BASE>.pdf", 6), ("run/papers/<BASE>.md", 6)),
+        issues_path="run/02-download.issues.json",
+        issue_counts=(("download_failed", 1), ("no_download_link", 1)),
+        extra=(),
+        dry_run=False,
+    )
+    ```
+    """
+
+    # One of `resolve`, `download`, `extract`, `rate`, `report`.
+    stage: str
+    # What the stage counts, `line` or `paper`.
+    unit: str
+    # Items in the input of the stage.
+    n_total: int
+    # Skipped since the output of an earlier run exists.
+    n_done_before: int
+    # Skipped since an earlier stage failed for the item.
+    n_no_input: int
+    # Processed in this run with no issue.
+    n_ok: int
+    # Processed in this run with an issue.
+    n_failed: int
+    # Pairs of a path (or a path with `<BASE>`) and the number of files that the
+    # run wrote there.
+    outputs: Tuple[Tuple[str, int], ...]
+    # Path of the file with the issues of the stage, empty in a dry run.
+    issues_path: str
+    # Pairs of a label and the number of issues with that label.
+    issue_counts: Tuple[Tuple[str, int], ...]
+    # Other lines to add to the summary, e.g., the cost of the LLM calls.
+    extra: Tuple[str, ...]
+    dry_run: bool

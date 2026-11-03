@@ -671,6 +671,21 @@ class Test__rate(hunitest.TestCase):
         # The issues go to a file, for the stage `report`.
         path = epqpaths.get_issues_path(output_dir, "rate")
         self.assertEqual(epqrepor.read_issues(path), issues)
+        expected_summary = """
+        Stage `rate` summary
+          Papers in input:        2
+          Processed in this run:  2
+          Completed successfully: 1
+          Failed:                 1
+          Completed in total:     1 of 2
+          Output files written in this run:
+            'out/papers/<BASE>.rating.json': 1 file
+          Issues file: 'out/04-rate.issues.json' (1 issue)
+            rating_failed: 1
+          Summary file: 'out/04-rate.summary.txt'
+        """
+        actual_summary = epqteuti.read_summary(output_dir, "rate")
+        self.assert_equal(actual_summary, expected_summary, dedent=True)
 
     def test4(self) -> None:
         """
@@ -703,6 +718,9 @@ class Test__rate(hunitest.TestCase):
         self.assertFalse(
             os.path.exists(epqpaths.get_rating_path(output_dir, "p1"))
         )
+        actual_summary = epqteuti.read_summary(output_dir, "rate")
+        self.assertIn("Skipped, no input:      1\n", actual_summary)
+        self.assertIn("Completed in total:     0 of 1\n", actual_summary)
 
     def test6(self) -> None:
         """
@@ -722,6 +740,9 @@ class Test__rate(hunitest.TestCase):
         )
         self.assertFalse(
             os.path.exists(epqpaths.get_issues_path(output_dir, "rate"))
+        )
+        self.assertFalse(
+            os.path.exists(epqpaths.get_summary_path(output_dir, "rate"))
         )
 
 
@@ -775,6 +796,24 @@ class Test__report(hunitest.TestCase):
         )
         actual = [(i.base_name, i.stage, i.status) for i in issues]
         self.assertEqual(actual, [("p2", "rate", "rating_missing")])
+        # The summary counts the paper with no rating as failed.
+        expected_summary = """
+        Stage `report` summary
+          Papers in input:        2
+          Processed in this run:  2
+          Completed successfully: 1
+          Failed:                 1
+          Completed in total:     1 of 2
+          Output files written in this run:
+            'out/04-report.references.md': 1 file
+            'out/04-report.report.csv': 1 file
+            'out/04-report.issues.csv': 1 file
+          Issues file: 'out/04-report.issues.csv' (1 issue)
+            rate.rating_missing: 1
+          Summary file: 'out/04-report.summary.txt'
+        """
+        actual_summary = epqteuti.read_summary(output_dir, "report")
+        self.assert_equal(actual_summary, expected_summary, dedent=True)
 
     def test2(self) -> None:
         """

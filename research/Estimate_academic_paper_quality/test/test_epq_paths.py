@@ -34,6 +34,11 @@ class Test_stage_files(hunitest.TestCase):
             epqpaths.get_report_path(out),
             epqpaths.get_all_issues_path(out),
             epqpaths.get_references_path(out),
+            epqpaths.get_summary_path(out, "resolve"),
+            epqpaths.get_summary_path(out, "download"),
+            epqpaths.get_summary_path(out, "extract"),
+            epqpaths.get_summary_path(out, "rate"),
+            epqpaths.get_summary_path(out, "report"),
         ]
         # Check outputs.
         expected = [
@@ -46,6 +51,11 @@ class Test_stage_files(hunitest.TestCase):
             "run/04-report.report.csv",
             "run/04-report.issues.csv",
             "run/04-report.references.md",
+            "run/01-resolve.summary.txt",
+            "run/02-download.summary.txt",
+            "run/03-extract.summary.txt",
+            "run/04-rate.summary.txt",
+            "run/04-report.summary.txt",
         ]
         self.assertEqual(actual, expected)
 

@@ -121,6 +121,10 @@
   `line_no`, `input`, `base_name`, `stage`, `status`, `reason`, and `candidates` (in
   a list)
   - `stage` is `resolve`, and `status` is `unresolved` or `ambiguous`
+- `<output_dir>/01-resolve.summary.txt`: the summary of the stage, with the same text
+  as the end of the log (the counts of items, the output files, and the path of the
+  issues file). A rerun overwrites it. See the section "Summary of a Stage" in
+  [`research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md`](/research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md)
 - The cache of the API answers, in `--cache_dir`
 - Both JSON files are written again on each run, and a paper that is not in the input
   CSV anymore leaves them
@@ -140,7 +144,7 @@
   `research/Estimate_academic_paper_quality/resolve_papers.py.log`, which each run
   overwrites
 - The run logs a progress bar, a warning for each failed row or failed API, and the
-  numbers of papers and issues
+  summary of the stage, with the counts of lines, issues, and papers
 
 ## Software Architecture
 

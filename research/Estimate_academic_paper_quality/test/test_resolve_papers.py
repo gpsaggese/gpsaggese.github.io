@@ -1060,8 +1060,26 @@ class Test_resolve_papers_py(hunitest.TestCase):
             "00-paper_list.csv",
             "01-resolve.issues.json",
             "01-resolve.paper_list.json",
+            "01-resolve.summary.txt",
         ]
         self.assertEqual(actual_files, expected_files)
+        # The summary counts lines: 3 lines, 2 resolved, 1 paper after the dedup.
+        expected_summary = """
+        Stage `resolve` summary
+          Lines in input:         3
+          Processed in this run:  3
+          Completed successfully: 2
+          Failed:                 1
+          Completed in total:     2 of 3
+          Output files written in this run:
+            'out/01-resolve.paper_list.json': 1 file
+          Issues file: 'out/01-resolve.issues.json' (1 issue)
+            unresolved: 1
+          Papers after the dedup: 1
+          Summary file: 'out/01-resolve.summary.txt'
+        """
+        actual_summary = epqteuti.read_summary(output_dir, "resolve")
+        self.assert_equal(actual_summary, expected_summary, dedent=True)
 
     def test2(self) -> None:
         """
@@ -1170,13 +1188,12 @@ class Test_resolve_papers_py(hunitest.TestCase):
             }
         )
         scratch = self.get_scratch_space()
+        output_dir = os.path.join(scratch, "out")
         input_csv = self.make_input_csv(["1111.11111", "2001.00001"])
-        papers_file = os.path.join(scratch, "papers.json")
-        issues_file = os.path.join(scratch, "issues.json")
+        papers_file = epqpaths.get_papers_path(output_dir)
+        issues_file = epqpaths.get_issues_path(output_dir, "resolve")
         # Run test.
-        result = resopapers._resolve(
-            input_csv, papers_file, issues_file, sources
-        )
+        result = resopapers._resolve(input_csv, output_dir, sources)
         # Check outputs.
         self.assertEqual(len(result.papers), 1)
         self.assertEqual(len(epqrepor.read_papers(papers_file)), 1)

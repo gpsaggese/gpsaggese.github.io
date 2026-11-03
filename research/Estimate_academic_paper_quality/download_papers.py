@@ -15,6 +15,8 @@ first one that works. SSRN blocks scripted clients: the tool uses Chrome for it.
 The outputs live in `--output_dir`:
 - `papers/<BASE>.pdf` and `papers/<BASE>.md` for each paper
 - `02-download.issues.json`: the papers that failed, for `report_papers.py`
+- `02-download.summary.txt`: the counts, the output files, and the issues file of
+  the run, the same text as the end of the log
 
 The script waits a random time between two downloads, so that the hosts do not
 take it for a bot. A rerun does not download or convert a paper that is already
@@ -55,6 +57,7 @@ import research.Estimate_academic_paper_quality.epq_fetcher as epqfetch
 import research.Estimate_academic_paper_quality.epq_issues as epqissue
 import research.Estimate_academic_paper_quality.epq_paths as epqpaths
 import research.Estimate_academic_paper_quality.epq_report as epqrepor
+import research.Estimate_academic_paper_quality.epq_summary as epqsumm
 import research.Estimate_academic_paper_quality.epq_types as epqtypes
 
 _LOG = logging.getLogger(__name__)
@@ -93,10 +96,14 @@ def _download(
     log_dir = epqpaths.get_log_dir(output_dir)
     issues: List[epqtypes.Issue] = []
     n_downloads = 0
+    n_done_before = 0
+    # Processed papers with a PDF: a failed conversion keeps the PDF.
+    n_pdfs = 0
     for paper in tqdm.tqdm(papers):
         if epqfetch.is_fetched(papers_dir, paper.base_name):
             # A rerun does not download or convert a converted paper.
             _LOG.debug("Skip '%s': already fetched", paper.base_name)
+            n_done_before += 1
             continue
         if dry_run:
             _LOG.warning("[DRY_RUN] Would download '%s'", paper.base_name)
@@ -119,6 +126,9 @@ def _download(
             result = epqtypes.FetchResult(
                 status="download_failed", reason=epqissue.get_last_line(str(e))
             )
+        pdf_path = epqpaths.get_pdf_path(output_dir, paper.base_name)
+        if os.path.isfile(pdf_path):
+            n_pdfs += 1
         if result.status != "ok":
             _LOG.warning(
                 "Paper '%s': %s: %s",
@@ -131,12 +141,31 @@ def _download(
                     paper, "download", result.status, result.reason
                 )
             )
+    issues_path = epqpaths.get_issues_path(output_dir, "download")
     if dry_run:
         _LOG.warning("[DRY_RUN] Would write the issues of the stage `download`")
     else:
-        path = epqpaths.get_issues_path(output_dir, "download")
-        epqrepor.write_issues(path, issues)
-    _LOG.info("Download: %s of %s papers failed", len(issues), len(papers))
+        epqrepor.write_issues(issues_path, issues)
+    # Summarize the stage.
+    n_ok = n_downloads - len(issues)
+    summary = epqtypes.StageSummary(
+        stage="download",
+        unit="paper",
+        n_total=len(papers),
+        n_done_before=n_done_before,
+        n_no_input=0,
+        n_ok=n_ok,
+        n_failed=len(issues),
+        outputs=(
+            (epqpaths.get_pdf_path(output_dir, "<BASE>"), n_pdfs),
+            (epqpaths.get_markdown_path(output_dir, "<BASE>"), n_ok),
+        ),
+        issues_path=issues_path,
+        issue_counts=epqsumm.count_issues(issues, add_stage=False),
+        extra=(),
+        dry_run=dry_run,
+    )
+    epqsumm.emit_stage_summary(summary, output_dir)
     return issues
 
 

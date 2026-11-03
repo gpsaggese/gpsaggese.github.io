@@ -79,7 +79,7 @@ Rel(epq, llm, "Extracts features with quotes", "HTTPS JSON")
 - The scripts do not import each other: they talk only through files in the
   `output_dir` ([`D26`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d26-the-resolver-is-a-separate-executable-that-reads-and-writes-csv),
   [`D27`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d27-the-pipeline-is-split-into-one-executable-per-stage))
-- Every script also uses `epq_paths` and `epq_issues`, which the diagram leaves out
+- Every script also uses `epq_paths`, `epq_issues`, and `epq_summary`, which the diagram leaves out
 
 ```plantuml
 !pragma layout smetana
@@ -159,23 +159,26 @@ Rel(report, out, "JSON, CSV, markdown")
   | [`epq_types.py`](/research/Estimate_academic_paper_quality/epq_types.py)                             | shared                  | Data model, no logic    |
   | [`epq_paths.py`](/research/Estimate_academic_paper_quality/epq_paths.py)                             | shared                  | Names of the files      |
   | [`epq_issues.py`](/research/Estimate_academic_paper_quality/epq_issues.py)                           | shared                  | Issue of a failed paper |
+  | [`epq_summary.py`](/research/Estimate_academic_paper_quality/epq_summary.py)                         | shared                  | Summary of a stage      |
 
 ## Import Graph
 
 - Allowed imports, checked by a test of the import graph:
   - A script imports only `epq_*` modules, never another script
     - [`resolve_papers.py`](/research/Estimate_academic_paper_quality/resolve_papers.py):
-      `epq_bib_sources`, `epq_fetcher`, `epq_report`, `epq_issues`, `epq_paths`,
-      `epq_types`
+      `epq_bib_sources`, `epq_fetcher`, `epq_report`, `epq_issues`, `epq_summary`,
+      `epq_paths`, `epq_types`
     - [`download_papers.py`](/research/Estimate_academic_paper_quality/download_papers.py):
-      `epq_fetcher`, `epq_report`, `epq_issues`, `epq_paths`, `epq_types`
+      `epq_fetcher`, `epq_report`, `epq_issues`, `epq_summary`, `epq_paths`, `epq_types`
     - [`extract_features.py`](/research/Estimate_academic_paper_quality/extract_features.py):
-      `epq_fetcher`, `epq_report`, `epq_issues`, `epq_paths`, `epq_types`
+      `epq_fetcher`, `epq_report`, `epq_issues`, `epq_summary`, `epq_paths`, `epq_types`
     - [`report_papers.py`](/research/Estimate_academic_paper_quality/report_papers.py):
-      `epq_bib_sources`, `epq_report`, `epq_issues`, `epq_paths`, `epq_types`
+      `epq_bib_sources`, `epq_report`, `epq_issues`, `epq_summary`, `epq_paths`,
+      `epq_types`
     - [`estimate_paper_quality.py`](/research/Estimate_academic_paper_quality/estimate_paper_quality.py):
       `epq_paths`. It runs the four scripts as subprocesses and imports none of them
   - `epq_report`, `epq_issues` import only `epq_types`
+  - `epq_summary` imports only `epq_paths` and `epq_types`
   - `epq_bib_sources`, `epq_fetcher` import only `epq_types` and `helpers`
   - `epq_types` and `epq_paths` import nothing of the project
 
@@ -330,12 +333,17 @@ Rel(report, out, "JSON, CSV, markdown")
       00-paper_list.csv            copy of the input
       01-resolve.paper_list.json   the papers, R7
       01-resolve.issues.json       issues of resolve, R5
+      01-resolve.summary.txt       counts and files of resolve
       02-download.issues.json      issues of download, R10
+      02-download.summary.txt      counts and files of download
       03-extract.issues.json       issues of extract
+      03-extract.summary.txt       counts and files of extract
       04-rate.issues.json          issues of rate
+      04-rate.summary.txt          counts and files of rate
       04-report.report.csv         R18
       04-report.issues.csv         R19
       04-report.references.md      R2, R7
+      04-report.summary.txt        counts and files of report
       papers/
         <BASE>.pdf                 R8
         <BASE>.md                  R8

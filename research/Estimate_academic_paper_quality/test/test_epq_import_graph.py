@@ -23,6 +23,7 @@ _ALLOWED: Dict[str, Set[str]] = {
         "epq_issues",
         "epq_paths",
         "epq_report",
+        "epq_summary",
         "epq_types",
     },
     "download_papers": {
@@ -30,6 +31,7 @@ _ALLOWED: Dict[str, Set[str]] = {
         "epq_issues",
         "epq_paths",
         "epq_report",
+        "epq_summary",
         "epq_types",
     },
     "extract_features": {
@@ -37,6 +39,7 @@ _ALLOWED: Dict[str, Set[str]] = {
         "epq_issues",
         "epq_paths",
         "epq_report",
+        "epq_summary",
         "epq_types",
     },
     "report_papers": {
@@ -44,12 +47,14 @@ _ALLOWED: Dict[str, Set[str]] = {
         "epq_issues",
         "epq_paths",
         "epq_report",
+        "epq_summary",
         "epq_types",
     },
     # The pipeline script runs the executables as subprocesses, so it imports
     # none of them.
     "estimate_paper_quality": {"epq_paths"},
     "epq_report": {"epq_types"},
+    "epq_summary": {"epq_paths", "epq_types"},
     "epq_bib_sources": {"epq_types"},
     "epq_fetcher": {"epq_types"},
     "epq_issues": {"epq_types"},

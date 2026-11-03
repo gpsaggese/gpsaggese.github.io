@@ -13,10 +13,13 @@ The input is the papers file that `resolve_papers.py` writes, by default
 
 The script has two stages, which talk through files:
 - `rate`: rate the quality of each paper from its page count, its affiliations,
-  and its citations, and write `papers/<BASE>.rating.json` and
-  `04-rate.issues.json`
-- `report`: write `04-report.references.md`, `04-report.report.csv`, and
-  `04-report.issues.csv`
+  and its citations, and write `papers/<BASE>.rating.json`,
+  `04-rate.issues.json`, and `04-rate.summary.txt`
+- `report`: write `04-report.references.md`, `04-report.report.csv`,
+  `04-report.issues.csv`, and `04-report.summary.txt`
+
+Each stage ends with a summary of its counts, its output files, and its issues
+file. The summary goes to the log and to the `summary.txt` file of the stage.
 
 The stage `rate` is free: it makes no LLM call, only a citation lookup. A change
 of the tier list `affiliation_tiers.yaml` or of the bands needs only a new run of
@@ -67,6 +70,7 @@ import research.Estimate_academic_paper_quality.epq_bib_sources as epqbibso
 import research.Estimate_academic_paper_quality.epq_issues as epqissue
 import research.Estimate_academic_paper_quality.epq_paths as epqpaths
 import research.Estimate_academic_paper_quality.epq_report as epqrepor
+import research.Estimate_academic_paper_quality.epq_summary as epqsumm
 import research.Estimate_academic_paper_quality.epq_types as epqtypes
 
 _LOG = logging.getLogger(__name__)
@@ -494,10 +498,13 @@ def _rate(
     :return: issues of the papers that failed
     """
     issues: List[epqtypes.Issue] = []
+    n_no_input = 0
+    n_ok = 0
     for paper in tqdm.tqdm(papers):
         features_path = epqpaths.get_features_path(output_dir, paper.base_name)
         if not os.path.isfile(features_path):
             # The extract issue already says why.
+            n_no_input += 1
             continue
         if dry_run:
             _LOG.warning("[DRY_RUN] Would rate '%s'", paper.base_name)
@@ -511,6 +518,7 @@ def _rate(
                 today=today,
                 refresh_citations=refresh_citations,
             )
+            n_ok += 1
         except Exception as e:  # noqa: BLE001
             # Decision D21: an error of one paper must not stop the run.
             _LOG.warning("Paper '%s' failed: %s", paper.base_name, e)
@@ -522,12 +530,27 @@ def _rate(
                     epqissue.get_last_line(str(e)),
                 )
             )
+    issues_path = epqpaths.get_issues_path(output_dir, "rate")
     if dry_run:
         _LOG.warning("[DRY_RUN] Would write the issues of the stage `rate`")
     else:
-        path = epqpaths.get_issues_path(output_dir, "rate")
-        epqrepor.write_issues(path, issues)
-    _LOG.info("Rate: %s of %s papers failed", len(issues), len(papers))
+        epqrepor.write_issues(issues_path, issues)
+    # Summarize the stage.
+    summary = epqtypes.StageSummary(
+        stage="rate",
+        unit="paper",
+        n_total=len(papers),
+        n_done_before=0,
+        n_no_input=n_no_input,
+        n_ok=n_ok,
+        n_failed=len(issues),
+        outputs=((epqpaths.get_rating_path(output_dir, "<BASE>"), n_ok),),
+        issues_path=issues_path,
+        issue_counts=epqsumm.count_issues(issues, add_stage=False),
+        extra=(),
+        dry_run=dry_run,
+    )
+    epqsumm.emit_stage_summary(summary, output_dir)
     return issues
 
 
@@ -677,12 +700,26 @@ def _report(
         epqrepor.write_issues_csv(
             epqpaths.get_all_issues_path(output_dir), issues
         )
-    _LOG.info(
-        "Report: %s papers, %s rows, %s issues",
-        len(papers),
-        len(rows),
-        len(issues),
+    # Summarize the stage: a paper with no row is only in `issues.csv`.
+    summary = epqtypes.StageSummary(
+        stage="report",
+        unit="paper",
+        n_total=len(papers),
+        n_done_before=0,
+        n_no_input=0,
+        n_ok=len(rows),
+        n_failed=len(papers) - len(rows),
+        outputs=(
+            (epqpaths.get_references_path(output_dir), 1),
+            (epqpaths.get_report_path(output_dir), 1),
+            (epqpaths.get_all_issues_path(output_dir), 1),
+        ),
+        issues_path=epqpaths.get_all_issues_path(output_dir),
+        issue_counts=epqsumm.count_issues(issues, add_stage=True),
+        extra=(),
+        dry_run=dry_run,
     )
+    epqsumm.emit_stage_summary(summary, output_dir)
 
 
 def _parse() -> argparse.ArgumentParser:

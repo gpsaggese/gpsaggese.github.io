@@ -6,8 +6,8 @@
   `01-resolve.paper_list.json` in `--output_dir`, and the features files that
   `research/Estimate_academic_paper_quality/extract_features.py` writes
 - Output: `papers/<BASE>.rating.json` for each paper, and `04-rate.issues.json`,
-  `04-report.report.csv`, `04-report.references.md`, and `04-report.issues.csv` in
-  `--output_dir`
+  `04-rate.summary.txt`, `04-report.report.csv`, `04-report.references.md`,
+  `04-report.issues.csv`, and `04-report.summary.txt` in `--output_dir`
 - Run it last. It has two stages, `rate` and `report`. The stage `rate` is free: it
   makes no LLM call, so a new tier list or a fresh citation count needs only a rerun
   of this script
@@ -95,6 +95,13 @@
   the rating from 1 to 5 and the three signals behind it (`page_length`, `affiliation`,
   `citations`), each with its value, score, and note
 - `<output_dir>/04-rate.issues.json`: the papers that failed to rate
+- `<output_dir>/04-rate.summary.txt` and `<output_dir>/04-report.summary.txt`: the
+  summary of each stage, with the same text as the end of the log (the counts of
+  papers, the output files, and the path of the issues file). A rerun overwrites
+  them. In the summary of `report`, `Completed successfully` is the number of papers
+  with a row in `04-report.report.csv`, and the issues are counted as
+  `<stage>.<status>`. See the section "Summary of a Stage" in
+  [`research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md`](/research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md)
 - In `<output_dir>`:
   - `04-report.references.md`: one bullet per paper, from the newest to the oldest
   - `04-report.report.csv`: one row per paper with a features file and a rating file,
@@ -135,7 +142,7 @@
   overwrites
 - The run logs the stages to run, a progress bar for the stage `rate`, a warning for
   each failed paper, a warning if `01-resolve.issues.json` is missing, and the
-  numbers of papers, rows, and issues
+  summary of each stage
 
 ## Software Architecture
 

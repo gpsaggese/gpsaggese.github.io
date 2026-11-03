@@ -24,6 +24,7 @@ import helpers.hio as hio
 import pymupdf
 
 import research.Estimate_academic_paper_quality.epq_bib_sources as epqbibso
+import research.Estimate_academic_paper_quality.epq_paths as epqpaths
 import research.Estimate_academic_paper_quality.epq_types as epqtypes
 
 _LOG = logging.getLogger(__name__)
@@ -120,6 +121,40 @@ def make_paper(
         base_name=base_name,
         download_inputs=download_inputs,
     )
+
+
+def make_issue(*, stage: str, status: str) -> epqtypes.Issue:
+    """
+    Build the issue of a paper, with no line and no candidate.
+
+    :param stage: stage of the issue, e.g., `download`
+    :param status: status of the issue, e.g., `download_failed`
+    :return: issue
+    """
+    return epqtypes.Issue(
+        line_no=1,
+        input="x",
+        base_name="p1",
+        stage=stage,
+        status=status,
+        reason="r",
+        candidates=(),
+    )
+
+
+def read_summary(output_dir: str, stage: str) -> str:
+    """
+    Read the summary file of a stage, with the output dir shortened to `out`.
+
+    The output dir is in the scratch space, which changes at each run.
+
+    :param output_dir: dir of all the outputs of the run
+    :param stage: one of `resolve`, `download`, `extract`, `rate`, `report`
+    :return: text of the summary, without the final newline
+    """
+    path = epqpaths.get_summary_path(output_dir, stage)
+    text = hio.from_file(path).replace(output_dir, "out")
+    return text.rstrip("\n")
 
 
 def make_facts() -> epqtypes.ExtractedFacts:

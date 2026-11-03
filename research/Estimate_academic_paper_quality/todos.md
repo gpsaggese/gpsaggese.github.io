@@ -1,3 +1,6 @@
+- For the code in research/Estimate_academic_paper_quality/
+
+# Task 1
 - [x] Task 1: Separate the code to perform the resolution into a single executable
   that take CSV as inputs and outputs
 
@@ -21,5 +24,24 @@
   delay to slow down the downloading and avoiding to be detected as a bot
 
 # Task 3
-- [ ] Use llm_cli
+- [x] Use llm_cli
+
+# Task 4
+- [ ] For each stage, improve output by writing:
+  - What output files were generated
+  - Where is the file with the issues generated
+  - How many papers were processed
+  - How many papers were completed successfully
+
+# Task 5
+- Print how many should be processed and how many are generated
+- [ ] Add a switch --max_num to control the maximum number of papers processed in a
+stage
+
+# Task 6
+- [ ] What is semanticscholar
+
+# Task 7
+- Populate /Users/saggese/src/umd_classes1/research/Estimate_academic_paper_quality/affiliation_tiers.yaml
+
 - [ ] Too many data structures

@@ -13,12 +13,17 @@ output dir:
     00-paper_list.csv
     01-resolve.paper_list.json
     01-resolve.issues.json
+    01-resolve.summary.txt
     02-download.issues.json
+    02-download.summary.txt
     03-extract.issues.json
+    03-extract.summary.txt
     04-rate.issues.json
+    04-rate.summary.txt
     04-report.report.csv
     04-report.issues.csv
     04-report.references.md
+    04-report.summary.txt
     papers/<BASE>.pdf
     papers/<BASE>.md
     papers/<BASE>.features.json
@@ -177,6 +182,17 @@ def get_issues_path(output_dir: str, stage: str) -> str:
     """
     hdbg.dassert_ne(stage, "report", "The stage `report` writes no stage issues")
     return get_stage_path(output_dir, stage, "issues.json")
+
+
+def get_summary_path(output_dir: str, stage: str) -> str:
+    """
+    Get the path of the summary that a stage wrote.
+
+    :param output_dir: dir of all the outputs of a run
+    :param stage: one of `resolve`, `download`, `extract`, `rate`, `report`
+    :return: `<output_dir>/NN-<stage>.summary.txt`
+    """
+    return get_stage_path(output_dir, stage, "summary.txt")
 
 
 def get_report_path(output_dir: str) -> str:

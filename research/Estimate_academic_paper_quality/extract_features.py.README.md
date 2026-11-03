@@ -78,6 +78,10 @@
   characters sent, cost in USD)
 - `<output_dir>/03-extract.issues.json`: the papers that failed, read by
   `research/Estimate_academic_paper_quality/report_papers.py`
+- `<output_dir>/03-extract.summary.txt`: the summary of the stage, with the same text
+  as the end of the log (the counts of items, the output files, and the path of the
+  issues file). A rerun overwrites it. See the section "Summary of a Stage" in
+  [`research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md`](/research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md)
 - The script does not rate the papers: the rating is the stage `rate` of
   `research/Estimate_academic_paper_quality/report_papers.py`, so that a new tier
   list needs no new LLM call
@@ -97,7 +101,7 @@
   `research/Estimate_academic_paper_quality/extract_features.py.log`, which each run
   overwrites
 - The run logs a progress bar, a warning for each failed paper, the cost of each paper,
-  and the total cost of the run
+  and the summary of the stage, which has the total cost of the run
 
 ## Software Architecture
 

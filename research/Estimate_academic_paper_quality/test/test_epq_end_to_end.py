@@ -95,7 +95,6 @@ class Test_end_to_end(hunitest.TestCase):
             writer.writerow(["input"])
             writer.writerows([["2001.00001"], ["Unknown Title"]])
         papers_file = epqpaths.get_papers_path(output_dir)
-        issues_file = epqpaths.get_issues_path(output_dir, "resolve")
         sources = epqbibso.BibSources(
             email="",
             s2_api_key="",
@@ -135,9 +134,7 @@ class Test_end_to_end(hunitest.TestCase):
             Run the four executables in order, as `estimate_paper_quality.py`.
             """
             resopapers._copy_input(input_csv, output_dir, dry_run=False)
-            result = resopapers._resolve(
-                input_csv, papers_file, issues_file, sources
-            )
+            result = resopapers._resolve(input_csv, output_dir, sources)
             # Each executable reads the papers file from the disk.
             papers = epqrepor.read_papers(papers_file)
             with mock.patch.dict(os.environ, env):
@@ -185,12 +182,17 @@ class Test_end_to_end(hunitest.TestCase):
             "00-paper_list.csv",
             "01-resolve.issues.json",
             "01-resolve.paper_list.json",
+            "01-resolve.summary.txt",
             "02-download.issues.json",
+            "02-download.summary.txt",
             "03-extract.issues.json",
+            "03-extract.summary.txt",
             "04-rate.issues.json",
+            "04-rate.summary.txt",
             "04-report.issues.csv",
             "04-report.references.md",
             "04-report.report.csv",
+            "04-report.summary.txt",
             "papers",
             "state",
         ]

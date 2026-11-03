@@ -66,6 +66,24 @@ class Test__download(hunitest.TestCase):
         # The issues go to a file, for `report_papers.py`.
         path = epqpaths.get_issues_path(output_dir, "download")
         self.assertEqual(epqrepor.read_issues(path), issues)
+        # The summary counts the two papers as failed.
+        expected_summary = """
+        Stage `download` summary
+          Papers in input:        2
+          Processed in this run:  2
+          Completed successfully: 0
+          Failed:                 2
+          Completed in total:     0 of 2
+          Output files written in this run:
+            'out/papers/<BASE>.pdf': 0 files
+            'out/papers/<BASE>.md': 0 files
+          Issues file: 'out/02-download.issues.json' (2 issues)
+            download_failed: 1
+            no_download_link: 1
+          Summary file: 'out/02-download.summary.txt'
+        """
+        actual_summary = epqteuti.read_summary(output_dir, "download")
+        self.assert_equal(actual_summary, expected_summary, dedent=True)
 
     def test2(self) -> None:
         """
@@ -100,6 +118,7 @@ class Test__download(hunitest.TestCase):
         # Run test: the first run downloads the paper.
         issues = _run()
         n_calls = len(hio.from_file(calls_path).split("\n"))
+        first_summary = epqteuti.read_summary(output_dir, "download")
         # Run test: the second run calls nothing.
         rerun_issues = _run()
         # Check outputs.
@@ -108,6 +127,25 @@ class Test__download(hunitest.TestCase):
             os.path.isfile(epqpaths.get_markdown_path(output_dir, "p1"))
         )
         self.assertEqual(len(hio.from_file(calls_path).split("\n")), n_calls)
+        # The first summary has the paper as completed, the second as done before.
+        self.assertIn("Completed successfully: 1", first_summary)
+        self.assertIn("'out/papers/<BASE>.md': 1 file\n", first_summary)
+        expected_rerun_summary = """
+        Stage `download` summary
+          Papers in input:        1
+          Skipped, done before:   1
+          Processed in this run:  0
+          Completed successfully: 0
+          Failed:                 0
+          Completed in total:     1 of 1
+          Output files written in this run:
+            'out/papers/<BASE>.pdf': 0 files
+            'out/papers/<BASE>.md': 0 files
+          Issues file: 'out/02-download.issues.json' (0 issues)
+          Summary file: 'out/02-download.summary.txt'
+        """
+        rerun_summary = epqteuti.read_summary(output_dir, "download")
+        self.assert_equal(rerun_summary, expected_rerun_summary, dedent=True)
 
     def test3(self) -> None:
         """

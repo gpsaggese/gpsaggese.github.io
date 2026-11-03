@@ -17,6 +17,8 @@ The files are written in `--output_dir`, with names that the script infers:
 - `01-resolve.paper_list.json`: one paper per item, from the newest to the oldest,
   with the reference, the base name, and the ordered download inputs
 - `01-resolve.issues.json`: one issue per input that did not give a paper
+- `01-resolve.summary.txt`: the counts, the output files, and the issues file of
+  the run, the same text as the end of the log
 
 The papers file is the input of `download_papers.py`, `extract_features.py`, and
 `report_papers.py`. The script `estimate_paper_quality.py` runs all the stages in
@@ -57,6 +59,7 @@ import research.Estimate_academic_paper_quality.epq_fetcher as epqfetch
 import research.Estimate_academic_paper_quality.epq_issues as epqissue
 import research.Estimate_academic_paper_quality.epq_paths as epqpaths
 import research.Estimate_academic_paper_quality.epq_report as epqrepor
+import research.Estimate_academic_paper_quality.epq_summary as epqsumm
 import research.Estimate_academic_paper_quality.epq_types as epqtypes
 
 _LOG = logging.getLogger(__name__)
@@ -969,16 +972,17 @@ def _copy_input(input_csv: str, output_dir: str, *, dry_run: bool) -> None:
 
 def _resolve(
     input_csv: str,
-    papers_file: str,
-    issues_file: str,
+    output_dir: str,
     sources: epqbibso.BibSources,
 ) -> epqtypes.ResolveResult:
     """
     Resolve the rows of an input CSV into a papers file and an issues file.
 
+    The stage writes the papers file, the issues file, and the summary in
+    `output_dir`.
+
     :param input_csv: path of the input CSV, one paper per row
-    :param papers_file: path of the papers JSON to write
-    :param issues_file: path of the issues JSON to write
+    :param output_dir: dir of all the outputs of the run
     :param sources: clients of the lookup APIs
     :return: deduped papers in reverse chronological order, and the issues
     """
@@ -1005,9 +1009,27 @@ def _resolve(
         papers.extend(result.papers)
         issues.extend(result.issues)
     papers = _finalize_papers(papers)
+    papers_file = epqpaths.get_papers_path(output_dir)
+    issues_file = epqpaths.get_issues_path(output_dir, "resolve")
     epqrepor.write_papers(papers_file, papers)
     epqrepor.write_issues(issues_file, issues)
-    _LOG.info("Resolved %s papers, %s issues", len(papers), len(issues))
+    # Summarize the stage: each line gives one paper or one issue, and the papers
+    # are deduped, so the count of papers can be lower than the count of lines.
+    summary = epqtypes.StageSummary(
+        stage="resolve",
+        unit="line",
+        n_total=len(input_lines),
+        n_done_before=0,
+        n_no_input=0,
+        n_ok=len(input_lines) - len(issues),
+        n_failed=len(issues),
+        outputs=((papers_file, 1),),
+        issues_path=issues_file,
+        issue_counts=epqsumm.count_issues(issues, add_stage=False),
+        extra=(f"Papers after the dedup: {len(papers)}",),
+        dry_run=False,
+    )
+    epqsumm.emit_stage_summary(summary, output_dir)
     return epqtypes.ResolveResult(papers=tuple(papers), issues=tuple(issues))
 
 
@@ -1063,8 +1085,6 @@ def _main(parser: argparse.ArgumentParser) -> None:
     hcacsimp.parse_cache_control_args(args)
     input_csv = os.path.abspath(os.path.expanduser(args.input))
     output_dir = os.path.abspath(os.path.expanduser(args.output_dir))
-    papers_file = epqpaths.get_papers_path(output_dir)
-    issues_file = epqpaths.get_issues_path(output_dir, "resolve")
     cache_dir = args.cache_dir or epqpaths.get_cache_dir(output_dir)
     cache_dir = os.path.abspath(os.path.expanduser(cache_dir))
     hdbg.dassert_file_exists(input_csv)
@@ -1087,8 +1107,7 @@ def _main(parser: argparse.ArgumentParser) -> None:
         cache_dir=cache_dir,
         cache_mode=args.cache_mode,
     )
-    _resolve(input_csv, papers_file, issues_file, sources)
-    _LOG.info("Papers are in '%s', issues in '%s'", papers_file, issues_file)
+    _resolve(input_csv, output_dir, sources)
 
 
 if __name__ == "__main__":

@@ -103,6 +103,8 @@
 - None of its own: every file comes from a stage. The layout of the output dir is in
   the section "Output Dir" of
   [`research/Estimate_academic_paper_quality/README.md`](/research/Estimate_academic_paper_quality/README.md#output-dir)
+- Each stage writes its own `NN-<stage>.summary.txt`: the counts of items, the output
+  files, and the path of the issues file of the stage
 - With `--dry_run` the script runs no stage, so it writes no file and makes no
   lookup or LLM call
 - A rerun on the same `--output_dir` does not download, convert, or extract again a
@@ -123,7 +125,8 @@
   `research/Estimate_academic_paper_quality/estimate_paper_quality.py.log`, which
   each run overwrites
 - The run logs the stages to run, a header for each stage, and the path of the report
-- The output of a stage goes to the console as it runs. The command of a stage shows
+- The output of a stage goes to the console as it runs, and each stage ends with its
+  summary. The command of a stage shows
   at the level `DEBUG`, or with `--dry_run`
 
 ## Software Architecture

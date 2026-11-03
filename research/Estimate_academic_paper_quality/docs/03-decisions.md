@@ -418,6 +418,38 @@
     [`D26`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d26-the-resolver-is-a-separate-executable-that-reads-and-writes-csv)
 - **Status**: accepted
 
+### `D33` (Each Stage Ends with a Summary in the Log and in a File)
+
+- **Decision**: each stage ends with a summary that goes to the log and, with the
+  same text, to `<output_dir>/NN-<stage>.summary.txt`
+  - The summary has the items in the input, the items skipped, the items processed
+    in the run, the items completed and failed, the items completed in total, the
+    output files with the number of files written in the run, and the path of the
+    issues file with the number of issues by status
+  - The items are lines for `resolve` and papers for the other stages
+  - A paper is in one group: done before (the output of an earlier run exists),
+    no input (an earlier stage failed for it), completed, or failed
+  - A dry run logs what it would process and writes no file
+  - `epq_summary.py` formats and writes the text from a `StageSummary`, and each
+    executable counts its items in its own loop
+- **Why**: the old end of a stage was one line, e.g., `Download: 2 of 20 papers
+  failed`, which did not say where the files and the issues are, or how many papers
+  the run processed versus skipped; the file keeps the answer after the terminal is
+  closed, and the stages run as subprocesses of `estimate_paper_quality.py`, so each
+  one needs its own summary
+- **Alternatives**: a JSON summary (the user reads this one, and no stage reads it);
+  compute the counts from the files of the output dir after the run (it cannot tell
+  the papers processed in the run from the papers done before); one summary at the
+  end of `estimate_paper_quality.py` (it would not exist when the user runs a single
+  executable)
+- **Consequences**:
+  - `_resolve()` takes `output_dir` and infers the papers file and the issues file,
+    like the other stages
+  - A rerun overwrites the summary of the stage, so the file describes the last run
+  - Extends
+    [`D29`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d29-numbered-stage-files-in-the-output-dir)
+- **Status**: accepted
+
 ## Code Organization
 
 ### `D21` (The Loop of Each Stage Catches Errors Per Paper)

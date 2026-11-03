@@ -43,6 +43,7 @@
 | `epq_issues.py`                       | Build the issue of a paper that failed in a stage, and keep the reason of an error                       | Shared       |
 | `epq_paths.py`                        | Names and paths of the files of the output dir, with no project imports                                  | Shared       |
 | `epq_report.py`                       | Write and read the papers file, the issues, the CSVs, `references.md`, and the features and rating files | Report       |
+| `epq_summary.py`                      | Format and write the summary of a stage: counts, output files, and issues file                           | Shared       |
 | `epq_types.py`                        | Frozen dataclasses shared by the modules, with no logic and no project imports                           | Shared types |
 | `estimate_paper_quality.py`           | CLI that runs the four executables in order on one input CSV and one output dir, with stage selection    | Entry point  |
 | `estimate_paper_quality.py.README.md` | Arguments, examples, outputs, and architecture of the pipeline CLI                                       | Entry point  |
@@ -64,6 +65,7 @@
 | `test/test_epq_import_graph.py`       | Each module imports only the layers that the design allows                                               | Tests        |
 | `test/test_epq_paths.py`              | The names of the files that each stage writes in the output dir                                          | Tests        |
 | `test/test_epq_report.py`             | Writers and readers of the issues, the features and rating files, and the CSVs                           | Tests        |
+| `test/test_epq_summary.py`            | Count of issues, text of the summary, and the summary file                                               | Tests        |
 | `test/test_extract_features.py`       | Quote location, text cut, extraction with a fake LLM, the extraction stage, and the command line         | Tests        |
 | `test/test_report_papers.py`          | Score tables vs the rules file, rating, the stages `rate` and `report`, and the command line             | Tests        |
 | `test/test_resolve_papers.py`         | Line parsing, title matching, paper building, merging, the resolve stage, and the command line           | Tests        |
@@ -113,12 +115,17 @@
       00-paper_list.csv
       01-resolve.paper_list.json
       01-resolve.issues.json
+      01-resolve.summary.txt
       02-download.issues.json
+      02-download.summary.txt
       03-extract.issues.json
+      03-extract.summary.txt
       04-rate.issues.json
+      04-rate.summary.txt
       04-report.report.csv
       04-report.issues.csv
       04-report.references.md
+      04-report.summary.txt
       papers/
           <BASE>.pdf
           <BASE>.md
@@ -138,6 +145,7 @@
   | `02-download.issues.json`     | `download_papers.py`  | The papers that failed to download or to convert            |
   | `03-extract.issues.json`      | `extract_features.py` | The papers that failed to extract                           |
   | `04-rate.issues.json`         | `report_papers.py`    | The papers that failed to rate                              |
+  | `NN-<stage>.summary.txt`      | Each stage            | Counts of items, output files, and issues file of the run   |
   | `04-report.report.csv`        | `report_papers.py`    | One row per rated paper: the table to sort in a spreadsheet |
   | `04-report.issues.csv`        | `report_papers.py`    | The issues of all the stages                                |
   | `04-report.references.md`     | `report_papers.py`    | The references of all the resolved papers                   |

@@ -672,6 +672,23 @@ class Test__extract(hunitest.TestCase):
         # The issues go to a file, for `report_papers.py`.
         path = epqpaths.get_issues_path(output_dir, "extract")
         self.assertEqual(epqrepor.read_issues(path), issues)
+        # The summary has the cost of the paper that was extracted.
+        expected_summary = """
+        Stage `extract` summary
+          Papers in input:        2
+          Processed in this run:  2
+          Completed successfully: 1
+          Failed:                 1
+          Completed in total:     1 of 2
+          Output files written in this run:
+            'out/papers/<BASE>.features.json': 1 file
+          Issues file: 'out/03-extract.issues.json' (1 issue)
+            extraction_failed: 1
+          LLM cost in this run: 0.0200 USD
+          Summary file: 'out/03-extract.summary.txt'
+        """
+        actual_summary = epqteuti.read_summary(output_dir, "extract")
+        self.assert_equal(actual_summary, expected_summary, dedent=True)
 
     def test3(self) -> None:
         """
@@ -693,6 +710,10 @@ class Test__extract(hunitest.TestCase):
         )
         # Check outputs.
         self.assertEqual(calls, [])
+        actual_summary = epqteuti.read_summary(output_dir, "extract")
+        self.assertIn("Skipped, done before:   1\n", actual_summary)
+        self.assertIn("Processed in this run:  0\n", actual_summary)
+        self.assertIn("Completed in total:     1 of 1\n", actual_summary)
 
     def test4(self) -> None:
         """
@@ -730,6 +751,22 @@ class Test__extract(hunitest.TestCase):
         )
         # Check outputs.
         self.assertEqual((issues, calls), ([], []))
+        expected_summary = """
+        Stage `extract` summary
+          Papers in input:        1
+          Skipped, no input:      1
+          Processed in this run:  0
+          Completed successfully: 0
+          Failed:                 0
+          Completed in total:     0 of 1
+          Output files written in this run:
+            'out/papers/<BASE>.features.json': 0 files
+          Issues file: 'out/03-extract.issues.json' (0 issues)
+          LLM cost in this run: 0.0000 USD
+          Summary file: 'out/03-extract.summary.txt'
+        """
+        actual_summary = epqteuti.read_summary(output_dir, "extract")
+        self.assert_equal(actual_summary, expected_summary, dedent=True)
 
     def test6(self) -> None:
         """
@@ -752,6 +789,9 @@ class Test__extract(hunitest.TestCase):
         )
         self.assertFalse(
             os.path.exists(epqpaths.get_issues_path(output_dir, "extract"))
+        )
+        self.assertFalse(
+            os.path.exists(epqpaths.get_summary_path(output_dir, "extract"))
         )
 
 
