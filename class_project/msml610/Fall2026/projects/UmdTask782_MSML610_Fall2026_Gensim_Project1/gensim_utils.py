@@ -41,6 +41,7 @@ def init_loggers(notebook_log: logging.Logger) -> None:
     Wire the notebook logger into the utils logger.
 
     :param notebook_log: logger owned by the notebook
+    :return: None, since the loggers are configured in place
     """
     hnotebo.init_loggers(notebook_log, utils_log=_LOG)
 

@@ -19,7 +19,7 @@
 # - This notebook classifies sentences from financial news as negative,
 #   neutral, or positive, using the Financial PhraseBank dataset
 #   (Malo et al., 2014)
-# - The pedagogical arc of Part 1:
+# - The pedagogical arc:
 #   - Download and load the 4,846 labeled sentences
 #   - Find and drop the duplicate sentences
 #   - Tokenize the sentences with `simple_preprocess()` and the stop words
