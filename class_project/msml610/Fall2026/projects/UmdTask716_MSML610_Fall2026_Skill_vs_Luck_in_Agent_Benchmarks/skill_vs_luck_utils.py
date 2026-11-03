@@ -1247,6 +1247,72 @@ def count_informative_tasks(outcomes: pd.DataFrame) -> int:
     return n_informative
 
 
+def compute_selection_effect(
+    fit: Dict[str, pd.DataFrame],
+    *,
+    top_k: int = 20,
+    n_trials: int = 300,
+    n_splits: int = 10,
+    seed: int = 0,
+) -> pd.DataFrame:
+    """
+    Check how picking the top agents on their score changes their split-half
+    correlation.
+
+    The 2 half scores of an agent add up to its total, so among agents picked
+    for a high total, a good half means a weak other half. Each trial simulates
+    a benchmark from the fit, where the true abilities are known, and compares
+    the top agents picked on the simulated score with the top agents picked on
+    the true ability. The fitted abilities stand in for the true ones.
+
+    :param fit: output of `fit_irt_2pl()`
+    :param top_k: number of top agents
+    :param n_trials: number of simulated benchmarks
+    :param n_splits: random splits of each benchmark
+    :param seed: random seed
+    :return: one row per way of picking, `score` and `ability`, with `kendall`
+        (median Kendall tau between the rankings on the 2 halves) and
+        `negative` (share of the splits with a negative tau)
+    """
+    _LOG.debug(hprint.to_str("top_k n_trials n_splits seed"))
+    abilities = fit["agents"]["ability"]
+    tasks = fit["tasks"]
+    hdbg.dassert_lt(2, top_k, "Correlations need at least 3 agents")
+    probabilities = scipy.special.expit(
+        tasks["discrimination"].to_numpy()[None, :]
+        * (
+            abilities.to_numpy()[:, None]
+            - tasks["difficulty"].to_numpy()[None, :]
+        )
+    )
+    top_on_ability = abilities.sort_values(ascending=False).index[:top_k]
+    rng = np.random.default_rng(seed)
+    kendalls = {"score": [], "ability": []}
+    for trial in range(n_trials):
+        solved = rng.random(probabilities.shape) < probabilities
+        outcomes = pd.DataFrame(
+            solved.astype("int8"), index=abilities.index, columns=tasks.index
+        )
+        scores = outcomes.mean(axis=1).sort_values(
+            ascending=False, kind="stable"
+        )
+        groups = {"score": scores.index[:top_k], "ability": top_on_ability}
+        for name, group in groups.items():
+            correlations = compute_split_half_correlation(
+                outcomes.loc[group], n_splits=n_splits, seed=seed + trial
+            )
+            kendalls[name].append(correlations["kendall"])
+    # Summarize the splits of all the benchmarks for each way of picking.
+    all_kendalls = {name: pd.concat(values) for name, values in kendalls.items()}
+    selection_effect = pd.DataFrame(
+        {
+            "kendall": {k: v.median() for k, v in all_kendalls.items()},
+            "negative": {k: (v < 0).mean() for k, v in all_kendalls.items()},
+        }
+    )
+    return selection_effect
+
+
 # #############################################################################
 # Simulated benchmarks with known abilities
 # #############################################################################
@@ -1273,6 +1339,30 @@ def simulate_outcomes(
     :return: agents x tasks matrix of 0/1, with rows `agent_0`, ... and
         columns `task_0`, ...
     """
+    outcomes, _ = _simulate_outcomes_with_probabilities(
+        abilities, n_tasks, difficulty_sd=difficulty_sd, seed=seed
+    )
+    return outcomes
+
+
+def _simulate_outcomes_with_probabilities(
+    abilities: Sequence[float],
+    n_tasks: int,
+    *,
+    difficulty_sd: float = 1.0,
+    seed: int = 0,
+) -> Tuple[pd.DataFrame, np.ndarray]:
+    """
+    Simulate a Rasch benchmark and return the probabilities behind it.
+
+    :param abilities: ability of each agent (logit scale)
+    :param n_tasks: number of tasks
+    :param difficulty_sd: std of the task difficulties
+    :param seed: random seed
+    :return: the outcomes of `simulate_outcomes()`, and the agents x tasks
+        matrix of the solve probabilities they were drawn from
+    """
+    # Draw the task difficulties, then the 0/1 outcomes, from the same seed.
     rng = np.random.default_rng(seed)
     difficulties = rng.normal(0, difficulty_sd, size=n_tasks)
     probabilities = scipy.special.expit(
@@ -1284,7 +1374,7 @@ def simulate_outcomes(
         index=[f"agent_{i}" for i in range(len(abilities))],
         columns=[f"task_{i}" for i in range(n_tasks)],
     )
-    return outcomes
+    return outcomes, probabilities
 
 
 def compute_expected_scores(
@@ -1528,6 +1618,10 @@ def simulate_winners_curse(
     :return: `true_score`, `inflation` (mean best score minus the true
         score), `sigma` (binomial standard error of 1 score on all tasks),
         `correction` ($\sigma \sqrt{2 \ln K}$), `correction_exact` ($\sigma$
+        times the mean of the largest of $K$ standard normals),
+        `sigma_given_tasks` (the noise of 1 score given the drawn tasks,
+        $\sqrt{\overline{p_i (1 - p_i)} / N}$ with $p_i$ the true solve
+        probabilities), `correction_given_tasks` ($\sigma_{\text{tasks}}$
         times the mean of the largest of $K$ standard normals), and
         `held_out_drop` (mean score of the best variant on the selection half
         minus its score on the other half)
@@ -1538,14 +1632,20 @@ def simulate_winners_curse(
     )
     best_scores = []
     held_out_drops = []
+    task_sds = []
     for trial in range(n_trials):
-        outcomes = simulate_outcomes(
+        outcomes, probabilities = _simulate_outcomes_with_probabilities(
             [ability] * n_variants,
             n_tasks,
             difficulty_sd=difficulty_sd,
             seed=seed + trial,
-        ).to_numpy(dtype=float)
+        )
+        outcomes = outcomes.to_numpy(dtype=float)
         best_scores.append(outcomes.mean(axis=1).max())
+        # Noise of 1 score given these tasks: only the run-to-run draws vary.
+        task_sds.append(
+            np.sqrt(np.mean(probabilities[0] * (1 - probabilities[0])) / n_tasks)
+        )
         # Pick the best variant on half of the tasks, score it on the other.
         in_first = _get_random_halves(n_tasks, 1, seed + trial)
         scores_first, scores_second = _get_half_scores(outcomes, in_first)
@@ -1554,6 +1654,7 @@ def simulate_winners_curse(
             scores_first.max() - (shares * scores_second).sum()
         )
     sigma = np.sqrt(true_score * (1 - true_score) / n_tasks)
+    sigma_given_tasks = np.mean(task_sds)
     curse = pd.Series(
         {
             "true_score": true_score,
@@ -1561,6 +1662,9 @@ def simulate_winners_curse(
             "sigma": sigma,
             "correction": sigma * np.sqrt(2 * np.log(n_variants)),
             "correction_exact": sigma * _get_expected_max_normal(n_variants),
+            "sigma_given_tasks": sigma_given_tasks,
+            "correction_given_tasks": sigma_given_tasks
+            * _get_expected_max_normal(n_variants),
             "held_out_drop": np.mean(held_out_drops),
         }
     )
@@ -1917,6 +2021,12 @@ def plot_winners_curse(
     if figsize is None:
         figsize = plt.rcParams["figure.figsize"]
     fig, axes = plt.subplots(1, 2, figsize=figsize, sharey=True)
+    # 1 line style per correction, in the left panel.
+    corrections = {
+        "correction": ("--", "sigma sqrt(2 ln K)"),
+        "correction_exact": (":", "sigma E[max of K normals]"),
+        "correction_given_tasks": ("-.", "sigma_tasks E[max of K normals]"),
+    }
     # 1 color per benchmark size, in both panels.
     for (n_tasks, group), color in zip(
         curse.groupby("n_tasks"),
@@ -1927,22 +2037,14 @@ def plot_winners_curse(
             100 * group["inflation"],
             marker="o",
             color=color,
-            label=f"{n_tasks} tasks: simulated",
         )
-        axes[0].plot(
-            group["n_variants"],
-            100 * group["correction"],
-            linestyle="--",
-            color=color,
-            label=f"{n_tasks} tasks: sigma sqrt(2 ln K)",
-        )
-        axes[0].plot(
-            group["n_variants"],
-            100 * group["correction_exact"],
-            linestyle=":",
-            color=color,
-            label=f"{n_tasks} tasks: sigma E[max of K normals]",
-        )
+        for column, (linestyle, _) in corrections.items():
+            axes[0].plot(
+                group["n_variants"],
+                100 * group[column],
+                linestyle=linestyle,
+                color=color,
+            )
         axes[1].plot(
             group["n_variants"],
             100 * group["held_out_drop"],
@@ -1950,14 +2052,21 @@ def plot_winners_curse(
             color=color,
             label=f"{n_tasks} tasks",
         )
+    # The left legend explains the line styles and the right one the colors.
+    axes[0].plot([], [], marker="o", color="gray", label="simulated")
+    for linestyle, label in corrections.values():
+        axes[0].plot([], [], linestyle=linestyle, color="gray", label=label)
+    n_variants = sorted(curse["n_variants"].unique())
     for ax in axes:
         ax.set_xscale("log")
+        ax.set_xticks(n_variants, labels=[str(k) for k in n_variants])
+        ax.minorticks_off()
         ax.set_xlabel("Variants tried (K)")
     axes[0].set_ylabel("Points")
     axes[0].set_title("Best score minus true score")
     axes[1].set_title("Drop of the best variant on the held-out half")
-    axes[0].legend(fontsize="small")
-    axes[1].legend()
+    axes[0].legend(fontsize="small", loc="upper left")
+    axes[1].legend(loc="upper left")
     fig.tight_layout()
     plt.show()
 

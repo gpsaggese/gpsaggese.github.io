@@ -33,6 +33,7 @@
 
 import logging
 
+import numpy as np
 import pandas as pd
 
 # %%
@@ -82,6 +83,7 @@ except ImportError:
 # | `simulate_winners_curse(n_variants, n_tasks)` | Inflation of the best of K equal variants | Against $\sigma \sqrt{2 \ln K}$ |
 # | `fit_irt_2pl(outcomes)` | Ability, difficulty, discrimination | Bayesian 2PL in NumPyro |
 # | `compute_effective_size(information)` | Equally informative tasks a benchmark is worth | From the task information |
+# | `compute_selection_effect(fit)` | Split-half correlation of the top agents, by how they are picked | Benchmarks simulated from the fit |
 #
 # - **Key functions**:
 #   - `compute_score_cis()`: how uncertain 1 score is
@@ -418,6 +420,30 @@ print(
 )
 # Outcome: the 500 simulated tasks are worth about 466 equally informative
 # tasks, and 124 are solved by all 3 agents or by none.
+
+# %% [markdown]
+# ## Cell 8.3: Picking the top agents on their score
+#
+# - `compute_selection_effect()` simulates benchmarks from a fit and compares
+#   the split-half correlation of the top agents picked on the score and on the
+#   true ability
+
+# %%
+# 30 agents with close abilities, on the tasks of the fit above.
+close_fit = {
+    "agents": pd.DataFrame(
+        {"ability": np.linspace(-0.5, 0.5, 30)},
+        index=[f"agent_{i}" for i in range(30)],
+    ),
+    "tasks": irt["tasks"],
+}
+selection_effect = utils.compute_selection_effect(
+    close_fit, top_k=5, n_trials=50, seed=0
+)
+
+display(selection_effect.round(3))
+# Outcome: among close agents, the median Kendall is -0.2 when they are picked
+# on the score, below the 0.0 when they are picked on the true ability.
 
 # %% [markdown]
 # ## Summary: The Mental Model

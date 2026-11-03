@@ -31,7 +31,6 @@
 # %autoreload 2
 
 import logging
-import os
 
 import numpy as np
 import pandas as pd
@@ -298,8 +297,9 @@ p_first = ranks["p_first"]
 display(ranks[["label", "score", "p_first"]].head(5).round(3))
 print("(p_first > 0).sum()=", int((p_first > 0).sum()))
 print("p_first.head(3).sum()=", round(p_first.head(3).sum(), 3))
-# Outcome: 14 agents come out first in at least 1 sample, and the top 3 share
-# about 94% of the first place, with no agent above 34%.
+# Outcome: about 15 agents come out first in at least 1 sample (14 to 16
+# depending on the seed), and the top 3 share about 94% of the first place, with
+# no agent above 34%.
 
 # %%
 # Plot the chance of coming out first for the top 10.
@@ -355,8 +355,10 @@ utils.plot_ranking_recovery(recovery, figsize=(14, 5))
 # ## Cell 6.1: Split-half rank correlation
 #
 # - We correlate the 2 rankings for all 173 agents, the top 50, and the top 20
-#   - The top groups are picked on all 500 tasks, which, if anything, makes
-#     them look more stable than they are
+#   - The 2 half scores of an agent add up to its total, so among agents with
+#     nearly the same total, a good half means a weak other half
+#   - So picking the top agents on the total pushes their correlation down
+#   - The top 20 also cuts through a 3-way tie at 74.4% (rank 19)
 
 # %%
 # Correlate the rankings on the 2 halves, for 3 groups of agents.
@@ -378,8 +380,10 @@ print(
     "(split_half['top 20']['kendall'] < 0).mean()=",
     (split_half["top 20"]["kendall"] < 0).mean(),
 )
-# Outcome: across all agents the ranking holds (Kendall 0.90), but among the
-# top 20 it mostly does not (Kendall 0.25), and some splits even reverse it.
+# Outcome: across all agents the ranking holds (Kendall 0.90). Among the top 20
+# it is weak (Kendall 0.25), and some splits even reverse it. Part of that comes
+# from picking them on the total: on simulated benchmarks (Cell 8.5), Kendall is
+# 0.29 picked on the score and 0.40 picked on the true ability.
 
 # %%
 # Plot the Kendall tau of the 3 groups.
@@ -400,10 +404,11 @@ utils.plot_split_half_correlations(split_half, figsize=(12, 5))
 # Pick the leader on half of the tasks and score it on the other half.
 held_out = utils.compute_held_out_drop(outcomes)
 
-display(held_out.mean().round(4))
+display(held_out[["score_selected", "score_held_out", "drop"]].mean().round(4))
 print("(held_out['drop'] > 0).mean()=", (held_out["drop"] > 0).mean())
-# Outcome: the leader of one half scores 2.0 points less on the other half,
-# and is the leader there too only about 2% of the time.
+# Outcome: the leader of one half scores 2.0 points less on the other half.
+# The chance of leading both halves is not reported: the 2 halves add up to a
+# fixed total, so only the 2 agents at 396 can lead both.
 
 # %% [markdown]
 # # Part 7: The winner's curse of trying many variants
@@ -415,12 +420,16 @@ print("(held_out['drop'] > 0).mean()=", (held_out["drop"] > 0).mean())
 #   - $\sigma$ is the standard error of 1 score
 # - The exact mean of the largest of $K$ normal draws is smaller
 #   - E.g., 0.56 instead of 1.18 for $K = 2$
+# - Variants on the same tasks only differ by the run noise, so $\sigma$ itself
+#   is too large
+#   - $\sigma_{\text{tasks}} = \sqrt{\overline{p_i (1 - p_i)} / N}$ is the noise
+#     of 1 score given the drawn tasks
 
 # %% [markdown]
 # ## Cell 7.1: Simulate the best of K equal variants
 #
 # - $K$ variants with the same true ability (true score 50%) on the same tasks
-# - $K$ = 1, 2, 5, 10, 20, 50 and 100, 500, 2,000 tasks, with 500 benchmarks
+# - $K$ = 1, 2, 5, 10, 20, 50 and 100, 500, 2,000 tasks, with 5,000 benchmarks
 #   each
 # - Each benchmark also picks the best variant on half of the tasks and scores
 #   it on the other half
@@ -430,12 +439,13 @@ print("(held_out['drop'] > 0).mean()=", (held_out["drop"] > 0).mean())
 rows = []
 for n_tasks in [100, 500, 2000]:
     for n_variants in [1, 2, 5, 10, 20, 50]:
-        curse = utils.simulate_winners_curse(n_variants, n_tasks)
+        curse = utils.simulate_winners_curse(n_variants, n_tasks, n_trials=5000)
         rows.append({"n_tasks": n_tasks, "n_variants": n_variants, **curse})
 curse = pd.DataFrame(rows)
 # Compare each correction with the real inflation.
 curse["correction_ratio"] = curse["correction"] / curse["inflation"]
 curse["exact_ratio"] = curse["correction_exact"] / curse["inflation"]
+curse["given_ratio"] = curse["correction_given_tasks"] / curse["inflation"]
 with_selection = curse[curse["n_variants"] > 1]
 
 columns = [
@@ -447,6 +457,8 @@ columns = [
     "held_out_drop",
     "correction_ratio",
     "exact_ratio",
+    "correction_given_tasks",
+    "given_ratio",
 ]
 display(with_selection[columns].round(4))
 print(
@@ -457,12 +469,20 @@ print(
     "exact_ratio range=",
     with_selection["exact_ratio"].agg(["min", "max"]).round(2).tolist(),
 )
-# Outcome: with 500 tasks, the best of 20 equal variants looks 3.7 points better
-# than it is; the spec's correction (5.5 points) is 1.4 to 2.5 times the real
-# inflation, while the exact one (4.2 points) is only 6% to 22% too high.
+print(
+    "given_ratio range=",
+    with_selection["given_ratio"].agg(["min", "max"]).round(2).tolist(),
+)
+# Outcome: with 500 tasks, the best of 20 equal variants looks 3.8 points better
+# than it is. The spec's correction (5.5 points) is 1.4 to 2.4 times the real
+# inflation. The exact one (4.2 points) is about 10% too high, because it uses
+# the binomial sigma. With the noise given the drawn tasks, the correction
+# matches the real inflation (ratio 1.00 on average, 0.97 to 1.05 across
+# settings, the spread being trial noise), since the variants share the same
+# tasks.
 
 # %%
-# Plot the inflation against K, with both corrections.
+# Plot the inflation against K, with the 3 corrections.
 utils.plot_winners_curse(curse, figsize=(14, 6))
 
 # %% [markdown]
@@ -478,7 +498,7 @@ utils.plot_winners_curse(curse, figsize=(14, 6))
 ratio = (curse["held_out_drop"] / curse["inflation"])[curse["n_variants"] > 1]
 
 print("ratio.median()=", round(ratio.median(), 2))
-# Outcome: the held-out drop is about 1.5 times the inflation on all the tasks,
+# Outcome: the held-out drop is about 1.4 times the inflation on all the tasks,
 # close to sqrt(2), so a measured drop can be scaled back to the full benchmark.
 
 # %% [markdown]
@@ -548,8 +568,8 @@ print(
 )
 display(top_20[["label", "score", "rank", "ability", "irt_rank"]].round(3))
 # Outcome: the 2 rankings agree overall (Kendall 0.97) but less in the top 20
-# (Kendall 0.81), where ACoder drops from rank 9 to 19 since it solves easier
-# tasks.
+# (Kendall about 0.8, depending on the seed), where ACoder drops from rank 9 to
+# about 20 since it solves easier tasks.
 
 # %% [markdown]
 # ## Cell 8.3: Fitted difficulty against the human labels
@@ -637,15 +657,22 @@ print("n_tasks_half=", n_tasks_half)
 utils.plot_task_information(information, figsize=(12, 5))
 
 # %% [markdown]
-# ## Cell 8.5: Save the fit
+# ## Cell 8.5: How much of the weak top 20 comes from how they are picked?
 #
-# - The abilities and difficulties are saved for the analysis of run luck,
-#   which needs task difficulties
+# - Cell 6.1 picks the top 20 on the total score, which pushes their split-half
+#   correlation down
+# - On benchmarks simulated from the fit the true abilities are known, so the top
+#   20 can also be picked on them
+#   - The fitted abilities stand in for the true ones, so this is a rough check
 
 # %%
-# Save the fitted abilities and task parameters.
-irt["agents"].to_csv(os.path.join("data", "swebench_verified_irt_agents.csv"))
-irt["tasks"].to_csv(os.path.join("data", "swebench_verified_irt_tasks.csv"))
+# Compare the 2 ways of picking the top 20 on simulated benchmarks.
+selection_effect = utils.compute_selection_effect(irt)
+
+display(selection_effect.round(3))
+# Outcome: picked on the score, as in Cell 6.1, the median Kendall is 0.29, close
+# to the real 0.25, and 1.8% of the splits reverse the order. Picked on the true
+# ability, it is 0.40, and 0.1% of the splits do.
 
 # %% [markdown]
 # # Part 9: Takeaways and next steps
@@ -670,16 +697,17 @@ irt["tasks"].to_csv(os.path.join("data", "swebench_verified_irt_tasks.csv"))
 #     the time when neighbors are 1 point apart
 # - The top of the leaderboard does not persist
 #   - Over all 173 agents, the rankings on 2 halves of the tasks agree (Kendall
-#     0.90), but among the top 20 they barely do (Kendall 0.25)
-#   - The leader of one half scores 2.0 points less on the other half, and
-#     leads it only about 2% of the time
+#     0.90), but among the top 20 they are weak (Kendall 0.25, and about 0.4 in
+#     simulation when they are picked on their true ability)
+#   - The leader of one half scores 2.0 points less on the other half
 # - Reporting the best of many variants inflates the score
-#   - The best of 20 equal variants on 500 tasks looks 3.7 points better than
+#   - The best of 20 equal variants on 500 tasks looks 3.8 points better than
 #     it is
-#   - The spec's $\sigma \sqrt{2 \ln K}$ is 1.4 to 2.5 times the real
+#   - The spec's $\sigma \sqrt{2 \ln K}$ is 1.4 to 2.4 times the real
 #     inflation for $K$ up to 50
-#   - $\sigma$ times the mean of the largest of $K$ normals is only 6% to 22%
-#     too high, since the variants share the same tasks
+#   - Since the variants share the same tasks, the noise given the drawn tasks
+#     is what matters: $\sigma_{\text{tasks}}$ times the mean of the largest
+#     of $K$ normals matches the real inflation
 # - Only a fraction of the benchmark tells the top agents apart
 #   - The top 20 all solve 254 tasks and all fail 36, leaving 210
 #   - Under a 2PL IRT fit, the 500 tasks are worth about 107 equally
@@ -691,16 +719,15 @@ irt["tasks"].to_csv(os.path.join("data", "swebench_verified_irt_tasks.csv"))
 # - 500 tasks are too few for the gaps on the leaderboard
 #   - Resolving a 1-point gap with 80% power needs about 14,700 tasks
 #   - With 500 tasks, the smallest resolvable gap is about 5.4 points
-# - These intervals only cover the luck of which tasks are in the benchmark
-#   - Each submission reports 1 run per task, so run-to-run luck is not included
-#   - The real uncertainty is larger
+# - With 1 run per task, these intervals cover the luck of the tasks and of the
+#   run together, since every 0/1 result already carries its run luck
+#   - They cannot tell how much of their width is run luck, i.e., whether running
+#     the same 500 tasks again would reorder the leaderboard
+#   - The luck of picking the best of several attempts is not in them at all
 
 # %% [markdown]
 # ## Next steps
 #
-# - Milestone 2: measure run-to-run luck
-#   - Run small open models 5 times per task on HumanEval+ and MBPP+
-#   - Everything runs locally with Ollama
 # - Milestone 3: run the same analysis on HumanEval+ and MBPP+, and compare the
 #   rankings across benchmarks
 # - Milestone 4: compare the simulated held-out drop with the drop measured on

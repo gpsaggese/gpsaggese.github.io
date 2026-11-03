@@ -28,8 +28,6 @@
   minimum-N, the Rasch simulations, split-half correlation, the winner's
   curse, and the 2PL IRT model
 - `skill_vs_luck.example.ipynb`: the SWE-bench analysis, Parts 1 to 9
-- `data/swebench_verified_irt_agents.csv`, `data/swebench_verified_irt_tasks.csv`:
-  the fitted IRT abilities, difficulties, and discriminations
 - `skill_vs_luck.API.ipynb`: a walk through each function
 - `fetch_swebench_verified.py`: rebuilds `data/` from `SWE-bench/experiments`
   at commit `40f164d`
@@ -47,7 +45,7 @@
    gap between neighbors is 0.2 points; a 1-point gap needs about 14,700 tasks
    - `skill_vs_luck.example.ipynb` Cells 4.1 and 4.2
 4. Over 2,000 resamples of the tasks, the top 3 agents share 94% of the first
-   place and none is above 34%; 14 agents win at least 1 resample
+   place and none is above 34%; about 15 agents win at least 1 resample
    - Ties split; `skill_vs_luck.example.ipynb` Cell 5.2
 5. A typical top-25 agent has a 95% rank interval about 18 ranks wide, and the
    2 co-leaders (396 tasks each) range from rank 1 to 6
@@ -62,19 +60,25 @@
    predictions held
    - PR #808, `preregistration.md`
 8. The ranking holds across random halves of the tasks for all 173 agents
-   (median Kendall 0.90), but not among the top 20 (median Kendall 0.25;
-   negative in 1.4% of 1,000 splits)
-   - `skill_vs_luck.example.ipynb` Cell 6.1
+   (median Kendall 0.90). Among the top 20 it is weak: Kendall 0.25, negative in
+   1.4% of 1,000 splits. Picking on the total pushes the correlation down, since
+   the 2 half scores add up to the total: on benchmarks simulated from the IRT
+   fit, Kendall is 0.29 picked on the score and 0.40 picked on the true ability
+   - `skill_vs_luck.example.ipynb` Cells 6.1 and 8.5
 9. The leader of one half of the tasks scores 2.0 points less on the other
-   half, and leads it only about 2% of the time
+   half. The chance of leading both halves is not reported, since the halves
+   add up to a fixed total
    - 1,000 splits, ties split; `skill_vs_luck.example.ipynb` Cell 6.2
-10. The best of 20 equal variants on 500 tasks looks 3.7 points better than
-    it is; the spec's `sigma * sqrt(2 ln K)` is 1.4 to 2.5 times the real
-    inflation for K = 2 to 50, while `sigma * E[max of K normals]` is 6% to
-    22% too high
-    - 500 simulated benchmarks per setting, `skill_vs_luck.example.ipynb`
+10. The best of 20 equal variants on 500 tasks looks 3.8 points better than
+    it is; the spec's `sigma * sqrt(2 ln K)` is 1.4 to 2.4 times the real
+    inflation for K = 2 to 50. `sigma * E[max of K normals]` is about 10% too
+    high, since `sigma` uses the binomial variance. With `sigma_tasks`, the
+    noise given the drawn tasks, the correction matches the real inflation
+    (ratio 1.00 on average, 0.97 to 1.05 across settings, the spread being
+    trial noise)
+    - 5,000 simulated benchmarks per setting, `skill_vs_luck.example.ipynb`
       Cell 7.1
-11. The held-out drop of the best variant is about 1.5 times its inflation on
+11. The held-out drop of the best variant is about 1.4 times its inflation on
     all the tasks, close to sqrt(2)
     - `skill_vs_luck.example.ipynb` Cell 7.2
 12. Under a 2PL IRT fit, the 500 tasks are worth about 107 equally
@@ -84,7 +88,8 @@
     - SVI fit, checked against NUTS on a 40 x 150 subset (ability correlation
       0.997); `skill_vs_luck.example.ipynb` Cells 8.1 and 8.4
 13. The ranking by IRT ability matches the leaderboard overall (Kendall 0.97)
-    but less in the top 20 (Kendall 0.81), where ACoder drops from rank 9 to 19
+    but less in the top 20 (Kendall about 0.8), where ACoder drops from rank 9 to
+    about 20
     - `skill_vs_luck.example.ipynb` Cell 8.2
 14. The fitted difficulty rises with the human estimate of the time to fix
     (medians -1.6, 0.0, 2.9, 5.0 logits), with Spearman 0.45
@@ -111,6 +116,7 @@
 | 2026-10-30 | Task 1 committed: bootstrap rank intervals and ranking recovery simulation; ties split, see [decisions.md](decisions.md) D-1 |
 | 2026-10-31 | Committed split-half rank correlation, held-out leader drop, and winner's curse simulation |
 | 2026-11-01 | Added the 2PL IRT model and the effective size; pinned `jax`, `jaxlib` 0.12.0.1 and `numpyro` 0.22.0; see D-2 and D-3 |
+| 2026-11-03 | Review fixes: how the top 20 are picked (Cell 8.5), the correction given the tasks, 5,000 trials in Cell 7.1 |
 
 ## Open Work
 

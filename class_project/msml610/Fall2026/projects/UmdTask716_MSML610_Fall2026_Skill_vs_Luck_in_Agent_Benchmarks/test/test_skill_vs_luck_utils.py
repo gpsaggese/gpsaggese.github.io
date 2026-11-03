@@ -732,6 +732,41 @@ class Test_simulate_winners_curse(hunitest.TestCase):
         self.assertEqual(curse["correction"], 0.0)
         self.assertAlmostEqual(curse["correction_exact"], 0.0)
 
+    def test3(self) -> None:
+        """
+        Test that the noise given the tasks is the binomial one on equal tasks.
+        """
+        # Prepare inputs: with no spread in the difficulties, every solve
+        # probability is 0.5, so both `sigma` are sqrt(0.25 / 100) = 0.05.
+        n_variants = 2
+        n_tasks = 100
+        # Run test.
+        curse = utils.simulate_winners_curse(
+            n_variants, n_tasks, n_trials=5, difficulty_sd=0.0, seed=1
+        )
+        # Check outputs.
+        self.assertAlmostEqual(curse["sigma_given_tasks"], 0.05)
+        self.assertAlmostEqual(
+            curse["correction_given_tasks"], curse["correction_exact"]
+        )
+
+    def test4(self) -> None:
+        """
+        Test that the noise given the tasks is below the binomial one when the
+        tasks differ.
+        """
+        # Prepare inputs: with difficulties of std 1, E[p (1 - p)] is about
+        # 0.207 instead of 0.25, so the noise is about 10% lower.
+        n_variants = 2
+        n_tasks = 400
+        # Run test.
+        curse = utils.simulate_winners_curse(
+            n_variants, n_tasks, n_trials=50, seed=1
+        )
+        # Check outputs.
+        ratio = curse["sigma"] / curse["sigma_given_tasks"]
+        self.assertAlmostEqual(ratio, 1.1, delta=0.01)
+
 
 # #############################################################################
 # Test_fit_irt_2pl
@@ -851,3 +886,105 @@ class Test_count_informative_tasks(hunitest.TestCase):
         n_informative = utils.count_informative_tasks(outcomes)
         # Check outputs.
         self.assertEqual(n_informative, 1)
+
+
+# #############################################################################
+# Test_compute_selection_effect
+# #############################################################################
+
+
+class Test_compute_selection_effect(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils.compute_selection_effect()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test agents so far apart that the 2 ways of picking give the same group.
+        """
+        # Prepare inputs: with sharp tasks between the abilities, `sub_a` solves
+        # all the tasks, `sub_b` 2 / 3, `sub_c` 1 / 3, and `sub_d` none, so the
+        # order of the top 3 is the same on any half.
+        fit = {
+            "agents": pd.DataFrame(
+                {"ability": [9.0, 3.0, -3.0, -9.0]},
+                index=["sub_a", "sub_b", "sub_c", "sub_d"],
+            ),
+            "tasks": pd.DataFrame(
+                {"difficulty": [-6.0, 0.0, 6.0] * 20, "discrimination": 5.0},
+                index=[f"task_{i}" for i in range(60)],
+            ),
+        }
+        # Prepare outputs.
+        expected = """
+                 kendall  negative
+        score        1.0       0.0
+        ability      1.0       0.0
+        """
+        # Run test.
+        selection_effect = utils.compute_selection_effect(
+            fit, top_k=3, n_trials=5, n_splits=5, seed=1
+        )
+        # Check outputs.
+        actual = selection_effect.to_string()
+        self.assert_equal(actual, expected, dedent=True)
+
+    def test2(self) -> None:
+        """
+        Test that picking close agents on their score lowers the correlation.
+        """
+        # Prepare inputs: 30 agents with close abilities, so the score of the
+        # top 5 depends a lot on luck.
+        n_agents = 30
+        n_tasks = 200
+        fit = {
+            "agents": pd.DataFrame(
+                {"ability": np.linspace(-0.5, 0.5, n_agents)},
+                index=[f"agent_{i}" for i in range(n_agents)],
+            ),
+            "tasks": pd.DataFrame(
+                {
+                    "difficulty": np.linspace(-2, 2, n_tasks),
+                    "discrimination": 1.0,
+                },
+                index=[f"task_{i}" for i in range(n_tasks)],
+            ),
+        }
+        # Run test.
+        selection_effect = utils.compute_selection_effect(
+            fit, top_k=5, n_trials=50, n_splits=5, seed=1
+        )
+        # Check outputs.
+        self.assertLess(
+            selection_effect.loc["score", "kendall"],
+            selection_effect.loc["ability", "kendall"],
+        )
+
+
+# #############################################################################
+# Test_simulate_outcomes_with_probabilities
+# #############################################################################
+
+
+class Test_simulate_outcomes_with_probabilities(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils._simulate_outcomes_with_probabilities()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that the outcomes match `simulate_outcomes()` and that the
+        probabilities are in (0, 1).
+        """
+        # Prepare inputs.
+        abilities = [-1.0, 0.5]
+        # Run test.
+        outcomes, probabilities = utils._simulate_outcomes_with_probabilities(
+            abilities, 40, seed=5
+        )
+        # Check outputs.
+        self.assertTrue(
+            outcomes.equals(utils.simulate_outcomes(abilities, 40, seed=5))
+        )
+        self.assertEqual(probabilities.shape, (2, 40))
+        self.assertTrue(((probabilities > 0) & (probabilities < 1)).all())
