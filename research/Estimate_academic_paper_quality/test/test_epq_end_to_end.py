@@ -113,7 +113,9 @@ class Test_end_to_end(hunitest.TestCase):
 
         def _llm_func(**kwargs: Any) -> Any:
             llm_calls.append(kwargs)
-            stats = hllmcli.TokenStats(model="test-model", cost_from_tokencost=0.02)
+            stats = hllmcli.TokenStats(
+                model="test-model", cost_from_tokencost=0.02
+            )
             return json.dumps(epqteuti.make_llm_payload()), stats
 
         config = extfeat._ExtractConfig(
@@ -130,7 +132,7 @@ class Test_end_to_end(hunitest.TestCase):
 
         def _run_stages() -> Any:
             """
-            Run the four executables in order, as `estimate_paper_quality.sh`.
+            Run the four executables in order, as `estimate_paper_quality.py`.
             """
             resopapers._copy_input(input_csv, output_dir, dry_run=False)
             result = resopapers._resolve(
@@ -148,9 +150,7 @@ class Test_end_to_end(hunitest.TestCase):
                     max_delay_sec=0.0,
                     dry_run=False,
                 )
-            extract_issues = extfeat._extract(
-                papers, config, llm_func=_llm_func
-            )
+            extract_issues = extfeat._extract(papers, config, llm_func=_llm_func)
             rate_issues = repopapers._rate(
                 papers,
                 output_dir,

@@ -467,7 +467,8 @@
   - `extract_features.py`: the features file of each paper, with one LLM call
   - `report_papers.py`: the actions `rate` and `report`, selected with
     `hselect_action`
-  - `estimate_paper_quality.sh`: runs the four executables in order
+  - `estimate_paper_quality.sh`: runs the four executables in order (a Python script
+    since [`D32`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d32-the-pipeline-script-is-python-and-runs-the-stages-as-subprocesses))
   - Move the rating out of the extraction: `extract_features.py` writes the
     affiliations and the page count in the features file, and the action `rate` reads
     them and writes `papers/<BASE>.rating.json`
@@ -488,7 +489,8 @@
   mixes stages with different dependencies and schedules); five executables, with
   `rate_papers.py` apart from `report_papers.py` (one more entry point for a stage of
   seconds with the dependencies of `report`); a Python script that calls the stages
-  (the `Bad` example of the rule, since the stages would share the process)
+  in one process (the `Bad` example of the rule, since the stages would share the
+  process; a driver that runs them as subprocesses is [`D32`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d32-the-pipeline-script-is-python-and-runs-the-stages-as-subprocesses))
 - **Consequences**:
   - `epq_pipeline.py` and `PipelineConfig` are gone: each script holds the loop of its
     stage and the checks at the boundary, and the catch of
@@ -508,7 +510,7 @@
   - `report.csv` has a row only for a paper with a features file and a rating file
     ([`D19`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d19-reportcsv-has-a-row-only-for-a-paper-with-a-features-file))
   - Every script has `--dry_run`; a dry run writes no file, so the next stage has no
-    input and the shell script has no dry run
+    input and the driver cannot forward the flag (see [`D32`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d32-the-pipeline-script-is-python-and-runs-the-stages-as-subprocesses))
   - A test of the import graph fails on a script that imports another script
   - Extends
     [`D26`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d26-the-resolver-is-a-separate-executable-that-reads-and-writes-csv),
@@ -553,5 +555,48 @@
     sections of their script, not files
   - Extends
     [`D22`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d22-flat-modules-with-the-epq_-prefix) and
+    [`D27`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d27-the-pipeline-is-split-into-one-executable-per-stage)
+- **Status**: accepted
+
+### `D32` (The Pipeline Script Is Python and Runs the Stages as Subprocesses)
+
+- **Decision**: replace `estimate_paper_quality.sh` with `estimate_paper_quality.py`, a
+  Python driver that runs the four executables with `hsystem.system()`
+  - One action per executable, named after it: `resolve_papers`, `download_papers`,
+    `extract_features`, and `report_papers`, selected with `hselect_action` and run
+    in this order
+  - The flags are the long flags of the executables: `--input`, `--output_dir`,
+    `--model`, `--force_extract`, `--refresh_citations`, `--dry_run`, and `-v`
+    replace the `-i`, `-o`, `-m`, `-f`, and `-r` of the shell script
+  - `--input` goes only to `resolve_papers.py`, `--output_dir` and `-v` go to every
+    executable, and `--model`, `--force_extract`, and `--refresh_citations` go to
+    the one that takes them
+  - `--dry_run` logs the command of each executable and runs none of them
+  - The script imports only `epq_paths`, and the test of the import graph allows
+    only that
+- **Why**: rule `ARCH3.5` in
+  [`.claude/skills/architecture.rules.md`](/.claude/skills/architecture.rules.md)
+  asks for a Python driver when users run only some of the steps or when the driver
+  forwards `-v` or `--dry_run`
+  - The shell script could not run a part of the pipeline, had no dry run, and had no
+    test; the user ran an executable by hand to rerun one stage
+  - Subprocesses keep the reason of
+    [`D27`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d27-the-pipeline-is-split-into-one-executable-per-stage):
+    each executable keeps its own `uv run` dependencies, runtime, and schedule, and
+    the driver needs only `helpers`
+- **Alternatives**: keep the shell script (no stage selection, no test); a Python
+  script that imports the stages (the stages would share the process and the
+  dependencies of `download`, `extract`, and `report` would meet in one environment);
+  forward `--dry_run` to each executable, as `ARCH3.5` says (on a new output dir
+  `resolve_papers.py --dry_run` writes no papers file, so `download_papers.py
+  --dry_run` fails on a missing input and the dry run stops at the second stage)
+- **Consequences**:
+  - A call with the old flags `-o`, `-m`, `-f`, or `-r` fails with an error of
+    `argparse`
+  - A flag of a single executable, e.g., `--email` or `--min_delay_sec`, is not
+    forwarded: the user calls that executable, then runs the others through the
+    driver with `--skip_action`
+  - `test_estimate_paper_quality.py` tests the command of each action and the dry run
+  - Extends
     [`D27`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d27-the-pipeline-is-split-into-one-executable-per-stage)
 - **Status**: accepted

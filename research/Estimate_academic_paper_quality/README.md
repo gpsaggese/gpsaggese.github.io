@@ -22,50 +22,51 @@
 
 - Python and Markdown files, alphabetical by path.
 
-| File                              | Description                                                                                           | Cluster      |
-| :-------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------ |
-| `docs/01-prd.md`                  | Product requirements: inputs, features, outputs, non-goals, and success metrics                       | Requirements |
-| `docs/02-design.architecture.md`  | Overall design: components, import graph, data model, and requirements map                            | Design       |
-| `docs/02.1-design.pipeline.md`    | The four executables, the files between them, the per-paper error loop, and the skip of finished work | Design       |
-| `docs/02.2-design.resolver.md`    | Line parsing, paper matching, dedup, reference building, and sorting                                  | Design       |
-| `docs/02.3-design.bib_sources.md` | Clients of the lookup APIs (Semantic Scholar, Crossref, arXiv, Unpaywall)                             | Design       |
-| `docs/02.4-design.fetcher.md`     | Download and convert each paper with the download tool, skipping finished papers                      | Design       |
-| `docs/02.5-design.extractor.md`   | One LLM call per paper that returns features, facts, affiliations, and quotes                         | Design       |
-| `docs/02.6-design.rater.md`       | Paper quality rating from page length, affiliation, and citation count                                | Design       |
-| `docs/02.7-design.report.md`      | Writers and readers of the output files: references, CSVs, and features files                         | Design       |
-| `docs/03-decisions.md`            | Log of each design decision, with its reason, alternatives, and status                                | Decisions    |
-| `docs/04-plan.md`                 | Versions and PRs to build, in order, with the open questions of each component                        | Plans        |
-| `docs/07-progress.md`             | What is done and learned: milestone status, findings, next tasks, and history                         | Plans        |
-| `download_papers.py`              | CLI that downloads the PDF of each paper of a papers file and converts it to markdown                  | Entry point  |
-| `download_papers.py.README.md`    | Arguments, examples, outputs, and architecture of the download CLI                                    | Entry point  |
-| `epq_bib_sources.py`              | Clients of Semantic Scholar, Crossref, arXiv, and Unpaywall, with a throttle                          | Lookup APIs  |
-| `epq_fetcher.py`                  | Run the download tool per paper, and read the PDF pages and the markdown                              | Download     |
-| `epq_issues.py`                   | Build the issue of a paper that failed in a stage, and keep the reason of an error                    | Shared       |
-| `epq_paths.py`                    | Names and paths of the files of the output dir, with no project imports                               | Shared       |
-| `epq_report.py`                   | Write and read the papers file, the issues, the CSVs, `references.md`, and the features and rating files | Report       |
-| `epq_types.py`                    | Frozen dataclasses shared by the modules, with no logic and no project imports                        | Shared types |
-| `estimate_paper_quality.sh`       | Shell script that runs the four executables in order on one input CSV and one output dir              | Entry point  |
-| `extract_features.prompt.md`      | System prompt of the LLM that extracts the features of a paper                                        | Extract      |
-| `extract_features.py`             | CLI that extracts the features of each downloaded paper with one LLM call and checks each quote       | Entry point  |
-| `extract_features.py.README.md`   | Arguments, examples, outputs, and architecture of the extraction CLI                                  | Entry point  |
-| `log.md`                          | Log of the steps that made the docs, and the original idea of the pipeline                            | Log          |
-| `paper_list.csv`                  | Input CSV of papers, one per row, with authors in parentheses                                         | Input        |
-| `README.md`                       | Summary, structure, files, executables, and architecture of this dir                                  | Overview     |
-| `report_papers.py`                | CLI that rates the papers from three signals, then writes the report and the issues CSV               | Entry point  |
-| `report_papers.py.README.md`      | Arguments, examples, outputs, and architecture of the rating and report CLI                           | Entry point  |
-| `resolve_papers.py`               | CLI that parses and matches the rows of an input CSV, and writes a papers file and an issues file       | Entry point  |
-| `resolve_papers.py.README.md`     | Arguments, examples, outputs, and architecture of the resolver CLI                                    | Entry point  |
-| `test/epq_test_utils.py`          | Builders, a fake of the lookup APIs, a local HTTP server, and a stub tool                             | Tests        |
-| `test/test_download_papers.py`    | The download stage with a stub tool, and the command line of the download CLI                         | Tests        |
-| `test/test_epq_bib_sources.py`    | Lookup clients against a local HTTP server, with no internet                                          | Tests        |
-| `test/test_epq_end_to_end.py`     | The four executables in order on a local server, a stub tool, and a fake LLM                          | Tests        |
-| `test/test_epq_fetcher.py`        | PDF readers, the skip of fetched papers, and the fetch through a stub tool                            | Tests        |
-| `test/test_epq_import_graph.py`   | Each module imports only the layers that the design allows                                            | Tests        |
-| `test/test_epq_paths.py`          | The names of the files that each stage writes in the output dir                                       | Tests        |
-| `test/test_epq_report.py`         | Writers and readers of the issues, the features and rating files, and the CSVs                        | Tests        |
-| `test/test_extract_features.py`   | Quote location, text cut, extraction with a fake LLM, the extraction stage, and the command line      | Tests        |
-| `test/test_report_papers.py`      | Score tables vs the rules file, rating, the stages `rate` and `report`, and the command line          | Tests        |
-| `test/test_resolve_papers.py`     | Line parsing, title matching, paper building, merging, the resolve stage, and the command line        | Tests        |
+| File                                  | Description                                                                                              | Cluster      |
+| :------------------------------------ | -------------------------------------------------------------------------------------------------------- | ------------ |
+| `docs/01-prd.md`                      | Product requirements: inputs, features, outputs, non-goals, and success metrics                          | Requirements |
+| `docs/02-design.architecture.md`      | Overall design: components, import graph, data model, and requirements map                               | Design       |
+| `docs/02.1-design.pipeline.md`        | The four executables, the files between them, the per-paper error loop, and the skip of finished work    | Design       |
+| `docs/02.2-design.resolver.md`        | Line parsing, paper matching, dedup, reference building, and sorting                                     | Design       |
+| `docs/02.3-design.bib_sources.md`     | Clients of the lookup APIs (Semantic Scholar, Crossref, arXiv, Unpaywall)                                | Design       |
+| `docs/02.4-design.fetcher.md`         | Download and convert each paper with the download tool, skipping finished papers                         | Design       |
+| `docs/02.5-design.extractor.md`       | One LLM call per paper that returns features, facts, affiliations, and quotes                            | Design       |
+| `docs/02.6-design.rater.md`           | Paper quality rating from page length, affiliation, and citation count                                   | Design       |
+| `docs/02.7-design.report.md`          | Writers and readers of the output files: references, CSVs, and features files                            | Design       |
+| `docs/03-decisions.md`                | Log of each design decision, with its reason, alternatives, and status                                   | Decisions    |
+| `docs/04-plan.md`                     | Versions and PRs to build, in order, with the open questions of each component                           | Plans        |
+| `docs/07-progress.md`                 | What is done and learned: milestone status, findings, next tasks, and history                            | Plans        |
+| `download_papers.py`                  | CLI that downloads the PDF of each paper of a papers file and converts it to markdown                    | Entry point  |
+| `download_papers.py.README.md`        | Arguments, examples, outputs, and architecture of the download CLI                                       | Entry point  |
+| `epq_bib_sources.py`                  | Clients of Semantic Scholar, Crossref, arXiv, and Unpaywall, with a throttle                             | Lookup APIs  |
+| `epq_fetcher.py`                      | Run the download tool per paper, and read the PDF pages and the markdown                                 | Download     |
+| `epq_issues.py`                       | Build the issue of a paper that failed in a stage, and keep the reason of an error                       | Shared       |
+| `epq_paths.py`                        | Names and paths of the files of the output dir, with no project imports                                  | Shared       |
+| `epq_report.py`                       | Write and read the papers file, the issues, the CSVs, `references.md`, and the features and rating files | Report       |
+| `epq_types.py`                        | Frozen dataclasses shared by the modules, with no logic and no project imports                           | Shared types |
+| `estimate_paper_quality.py`           | CLI that runs the four executables in order on one input CSV and one output dir, with stage selection    | Entry point  |
+| `estimate_paper_quality.py.README.md` | Arguments, examples, outputs, and architecture of the pipeline CLI                                       | Entry point  |
+| `extract_features.prompt.md`          | System prompt of the LLM that extracts the features of a paper                                           | Extract      |
+| `extract_features.py`                 | CLI that extracts the features of each downloaded paper with one LLM call and checks each quote          | Entry point  |
+| `extract_features.py.README.md`       | Arguments, examples, outputs, and architecture of the extraction CLI                                     | Entry point  |
+| `log.md`                              | Log of the steps that made the docs, and the original idea of the pipeline                               | Log          |
+| `paper_list.csv`                      | Input CSV of papers, one per row, with authors in parentheses                                            | Input        |
+| `README.md`                           | Summary, structure, files, executables, and architecture of this dir                                     | Overview     |
+| `report_papers.py`                    | CLI that rates the papers from three signals, then writes the report and the issues CSV                  | Entry point  |
+| `report_papers.py.README.md`          | Arguments, examples, outputs, and architecture of the rating and report CLI                              | Entry point  |
+| `resolve_papers.py`                   | CLI that parses and matches the rows of an input CSV, and writes a papers file and an issues file        | Entry point  |
+| `resolve_papers.py.README.md`         | Arguments, examples, outputs, and architecture of the resolver CLI                                       | Entry point  |
+| `test/epq_test_utils.py`              | Builders, a fake of the lookup APIs, a local HTTP server, and a stub tool                                | Tests        |
+| `test/test_download_papers.py`        | The download stage with a stub tool, and the command line of the download CLI                            | Tests        |
+| `test/test_epq_bib_sources.py`        | Lookup clients against a local HTTP server, with no internet                                             | Tests        |
+| `test/test_epq_end_to_end.py`         | The four executables in order on a local server, a stub tool, and a fake LLM                             | Tests        |
+| `test/test_epq_fetcher.py`            | PDF readers, the skip of fetched papers, and the fetch through a stub tool                               | Tests        |
+| `test/test_epq_import_graph.py`       | Each module imports only the layers that the design allows                                               | Tests        |
+| `test/test_epq_paths.py`              | The names of the files that each stage writes in the output dir                                          | Tests        |
+| `test/test_epq_report.py`             | Writers and readers of the issues, the features and rating files, and the CSVs                           | Tests        |
+| `test/test_extract_features.py`       | Quote location, text cut, extraction with a fake LLM, the extraction stage, and the command line         | Tests        |
+| `test/test_report_papers.py`          | Score tables vs the rules file, rating, the stages `rate` and `report`, and the command line             | Tests        |
+| `test/test_resolve_papers.py`         | Line parsing, title matching, paper building, merging, the resolve stage, and the command line           | Tests        |
 
 ## Description of Executables
 
@@ -92,9 +93,10 @@
       - Its arguments, its output files, and its exit codes are in
         `research/Estimate_academic_paper_quality/report_papers.py.README.md`.
 
-- The shell script
-  `research/Estimate_academic_paper_quality/estimate_paper_quality.sh` runs the four
-  executables in order.
+- The script `research/Estimate_academic_paper_quality/estimate_paper_quality.py`
+  runs the four executables in order, as subprocesses. Its arguments and its stage
+  selection are in
+  `research/Estimate_academic_paper_quality/estimate_paper_quality.py.README.md`.
 
 ## Output Dir
 
@@ -266,12 +268,16 @@
       --output_dir ~/papers/run_2026_10
   ```
 
-## `estimate_paper_quality.sh`
+## `estimate_paper_quality.py`
 
 ### What It Does
 
 - Runs `resolve_papers.py`, `download_papers.py`, `extract_features.py`, and
   `report_papers.py` in order, and stops at the first stage that fails
+- Selects the executables to run with `--action`, `--skip_action`, `--only_action`,
+  `--clear_actions`, and `--all_actions`. There is one action per executable, named
+  after it: `resolve_papers`, `download_papers`, `extract_features`, and
+  `report_papers`
 - Writes all the outputs in the output dir, with the names of "Output Dir"
 - A rerun on the same dir does not download, convert, or extract again a paper that
   is done
@@ -280,17 +286,33 @@
 
 - Run the whole pipeline:
   ```bash
-  > research/Estimate_academic_paper_quality/estimate_paper_quality.sh \
-      -i research/Estimate_academic_paper_quality/paper_list.csv \
-      -o ~/papers/run_2026_10
+  > research/Estimate_academic_paper_quality/estimate_paper_quality.py \
+      --input research/Estimate_academic_paper_quality/paper_list.csv \
+      --output_dir ~/papers/run_2026_10
   ```
 
 - Extract again with another model, and ask for fresh citation counts:
   ```bash
-  > research/Estimate_academic_paper_quality/estimate_paper_quality.sh \
-      -i research/Estimate_academic_paper_quality/paper_list.csv \
-      -o ~/papers/run_2026_10 \
-      -m <model> -f -r
+  > research/Estimate_academic_paper_quality/estimate_paper_quality.py \
+      --input research/Estimate_academic_paper_quality/paper_list.csv \
+      --output_dir ~/papers/run_2026_10 \
+      --model <model> --force_extract --refresh_citations
+  ```
+
+- Run only `extract_features.py` and `report_papers.py` on the output of an earlier
+  run:
+  ```bash
+  > research/Estimate_academic_paper_quality/estimate_paper_quality.py \
+      --output_dir ~/papers/run_2026_10 \
+      --only_action extract_features --only_action report_papers
+  ```
+
+- Show the command of each executable, with no execution:
+  ```bash
+  > research/Estimate_academic_paper_quality/estimate_paper_quality.py \
+      --input research/Estimate_academic_paper_quality/paper_list.csv \
+      --output_dir ~/papers/run_2026_10 \
+      --dry_run
   ```
 
 ## Description of Workflows
@@ -317,13 +339,14 @@ the examples above.
 3. Run all the stages. The stage `download` needs Docker, and the SSRN papers also
    need Chrome. The issues of step 1 go to `04-report.issues.csv`.
    ```bash
-   > research/Estimate_academic_paper_quality/estimate_paper_quality.sh \
-       -i research/Estimate_academic_paper_quality/paper_list.csv \
-       -o ~/papers/run_2026_10
+   > research/Estimate_academic_paper_quality/estimate_paper_quality.py \
+       --input research/Estimate_academic_paper_quality/paper_list.csv \
+       --output_dir ~/papers/run_2026_10
    ```
-   To run one stage alone, call its executable on the output dir of step 1, e.g.,
-   `download_papers.py --output_dir ~/papers/run_2026_10`. It reads
-   `01-resolve.paper_list.json` in that dir.
+   To run one stage alone, select its action, e.g., `estimate_paper_quality.py
+   --output_dir ~/papers/run_2026_10 --only_action download_papers`, or call its
+   executable on the output dir of step 1, e.g., `download_papers.py --output_dir
+   ~/papers/run_2026_10`. Both read `01-resolve.paper_list.json` in that dir.
 
 4. After a change of the LLM or of the prompt file, extract again and rewrite the
    reports:
@@ -360,8 +383,9 @@ the examples above.
     - `research/Estimate_academic_paper_quality/report_papers.py` rates the papers
       from their page count, affiliations, and citations, and writes the report,
       with the stages `rate` and `report`
-    - `research/Estimate_academic_paper_quality/estimate_paper_quality.sh` runs the
-      four executables in order
+    - `research/Estimate_academic_paper_quality/estimate_paper_quality.py` runs the
+      four executables in order, as subprocesses with `hsystem`, and imports none of
+      them
   - Infrastructure:
     - `research/Estimate_academic_paper_quality/epq_bib_sources.py` calls the lookup
       APIs, with a throttle, a retry, and a disk cache

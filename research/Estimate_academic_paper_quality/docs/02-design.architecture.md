@@ -38,8 +38,8 @@
 
 ### C1 (Context)
 
-- The quant researcher runs four CLI scripts, one per stage, or the shell script
-  `estimate_paper_quality.sh` that runs them in order
+- The quant researcher runs four CLI scripts, one per stage, or the script
+  `estimate_paper_quality.py` that runs them in order
   ([`D27`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d27-the-pipeline-is-split-into-one-executable-per-stage))
   - `resolve_papers.py` turns a CSV of papers into a papers file (JSON)
   - `download_papers.py` saves the PDF and the markdown of each paper
@@ -64,7 +64,7 @@ System_Ext(bib, "Bibliographic APIs", "Semantic Scholar, Crossref, arXiv, Unpayw
 System_Ext(sites, "Paper hosts", "arXiv, SSRN, publisher sites, open-access mirrors")
 System_Ext(chrome, "Chrome", "Started and closed by download_with_chrome.py for SSRN")
 System_Ext(llm, "LLM provider", "Any provider of the llm library, OpenRouter by default, through helpers.hllm_cli")
-Rel(user, epq, "Runs estimate_paper_quality.sh, or the four scripts one by one", "CLI")
+Rel(user, epq, "Runs estimate_paper_quality.py, or the four scripts one by one", "CLI")
 Rel(epq, bib, "Looks up metadata, links, citations", "HTTPS JSON")
 Rel(epq, sites, "Downloads PDFs", "HTTPS")
 Rel(epq, chrome, "Downloads SSRN PDFs", "CDP")
@@ -73,7 +73,7 @@ Rel(epq, llm, "Extracts features with quotes", "HTTPS JSON")
 
 ### C2 (Container)
 
-- Four scripts, a shell script that chains them, three infrastructure modules, three
+- Four scripts, a script that chains them, three infrastructure modules, three
   shared leaf modules, and the existing download tool
 - Arrows are imports or calls: each one points down a layer, never up
 - The scripts do not import each other: they talk only through files in the
@@ -89,7 +89,7 @@ title Estimate Paper Quality: Containers
 Person(user, "Quant researcher")
 
 Container_Boundary(script, "Script and orchestration layer") {
-  Container(sh, "estimate_paper_quality.sh", "bash", "Runs the four scripts in order")
+  Container(sh, "estimate_paper_quality.py", "", "Runs the four scripts in order, as subprocesses")
   Container(rcli, "resolve_papers.py", "", "Input CSV to papers file and issues file (JSON): parses lines, matches papers, dedupes, builds references")
   Container(dcli, "download_papers.py", "", "PDF and markdown of each paper")
   Container(ecli, "extract_features.py", "", "Features file of each paper: one LLM call, quotes checked against the PDF")
@@ -110,11 +110,12 @@ Container_Boundary(ext, "Shared leaf modules, existing tool, outputs") {
   Container(issues, "epq_issues.py", "", "Builds the issue of a failed paper")
 }
 
-Rel(user, sh, "~-i, ~-o")
+Rel(user, sh, "~--input, ~--output_dir")
 Rel(sh, rcli, "runs")
 Rel(sh, dcli, "runs")
 Rel(sh, ecli, "runs")
 Rel(sh, pcli, "runs")
+Rel(sh, paths, "get_report_path()")
 Rel(rcli, bib, "BibSources, lookup_*(), search_title()")
 Rel(rcli, fetcher, "read_pdf_title()")
 Rel(rcli, report, "read_input_csv(), write_papers(), write_issues()")
@@ -130,7 +131,7 @@ Rel(report, out, "JSON, CSV, markdown")
 
 ## Files
 
-- The component `pipeline` is the four scripts and the shell script: there is no
+- The component `pipeline` is the four scripts and the script that chains them: there is no
   module between the scripts and the other components, since each script holds the
   loop of its own stage
   ([`02.1-design.pipeline.md`](/research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md))
@@ -150,7 +151,7 @@ Rel(report, out, "JSON, CSV, markdown")
   | [`extract_features.py`](/research/Estimate_academic_paper_quality/extract_features.py)               | `pipeline`, `extractor` | Script, business logic  |
   | [`extract_features.prompt.md`](/research/Estimate_academic_paper_quality/extract_features.prompt.md) | `extractor`             | Data: the system prompt |
   | [`report_papers.py`](/research/Estimate_academic_paper_quality/report_papers.py)                     | `pipeline`, `rater`     | Script, business logic  |
-  | [`estimate_paper_quality.sh`](/research/Estimate_academic_paper_quality/estimate_paper_quality.sh)   | `pipeline`              | Shell script            |
+  | [`estimate_paper_quality.py`](/research/Estimate_academic_paper_quality/estimate_paper_quality.py)   | `pipeline`              | Script, orchestration   |
   | [`affiliation_tiers.yaml`](/research/Estimate_academic_paper_quality/affiliation_tiers.yaml)         | `rater`                 | Data: dated tier list   |
   | [`epq_bib_sources.py`](/research/Estimate_academic_paper_quality/epq_bib_sources.py)                 | `bib_sources`           | Infrastructure          |
   | [`epq_fetcher.py`](/research/Estimate_academic_paper_quality/epq_fetcher.py)                         | `fetcher`               | Infrastructure          |
@@ -172,6 +173,8 @@ Rel(report, out, "JSON, CSV, markdown")
       `epq_fetcher`, `epq_report`, `epq_issues`, `epq_paths`, `epq_types`
     - [`report_papers.py`](/research/Estimate_academic_paper_quality/report_papers.py):
       `epq_bib_sources`, `epq_report`, `epq_issues`, `epq_paths`, `epq_types`
+    - [`estimate_paper_quality.py`](/research/Estimate_academic_paper_quality/estimate_paper_quality.py):
+      `epq_paths`. It runs the four scripts as subprocesses and imports none of them
   - `epq_report`, `epq_issues` import only `epq_types`
   - `epq_bib_sources`, `epq_fetcher` import only `epq_types` and `helpers`
   - `epq_types` and `epq_paths` import nothing of the project
@@ -253,12 +256,13 @@ Rel(report, out, "JSON, CSV, markdown")
   - The three last commands read `01-resolve.paper_list.json` in the output dir, since
     `--input` defaults to it
 
-- The shell script runs the same four commands in order:
+- The script `estimate_paper_quality.py` runs the same four commands in order, and
+  selects the stages with `--action`, `--skip_action`, and `--only_action`:
 
   ```bash
-  > research/Estimate_academic_paper_quality/estimate_paper_quality.sh \
-      -i research/Estimate_academic_paper_quality/paper_list.csv \
-      -o ~/papers/run_2026_10
+  > research/Estimate_academic_paper_quality/estimate_paper_quality.py \
+      --input research/Estimate_academic_paper_quality/paper_list.csv \
+      --output_dir ~/papers/run_2026_10
   ```
 
 - `resolve_papers.py`: copies the input to `00-paper_list.csv`, then `resolver` parses
@@ -316,7 +320,7 @@ Rel(report, out, "JSON, CSV, markdown")
   [`research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md`](/research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md),
   and described in the README of each script, e.g.,
   [`resolve_papers.py.README.md`](/research/Estimate_academic_paper_quality/resolve_papers.py.README.md)
-- Interfaces: four CLI scripts and a shell script, a papers file (JSON) between the
+- Interfaces: five CLI scripts, a papers file (JSON) between the
   first and the others, and one output dir
   ([`D30`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d30-output_dir-for-several-files-and-output-for-one))
   - Layout of the output dir:

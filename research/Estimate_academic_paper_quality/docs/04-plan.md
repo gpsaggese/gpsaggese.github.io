@@ -8,8 +8,8 @@
   [`extract_features.py`](/research/Estimate_academic_paper_quality/extract_features.py),
   and
   [`report_papers.py`](/research/Estimate_academic_paper_quality/report_papers.py))
-  and the shell script
-  [`estimate_paper_quality.sh`](/research/Estimate_academic_paper_quality/estimate_paper_quality.sh)
+  and the script
+  [`estimate_paper_quality.py`](/research/Estimate_academic_paper_quality/estimate_paper_quality.py)
   that runs them in order, which turn a loose list of papers into:
   - A clean reference list
   - The PDF and the markdown of each paper
@@ -111,7 +111,7 @@
 ### Goal
 
 - Run one executable per stage on one input file and one output dir, and run all of
-  them in order with a shell script
+  them in order with a Python script that calls them as subprocesses
 - Turn the failure of one paper into an `Issue`, so the run goes on
 - Skip the work that a previous run did
 - Design:
@@ -857,11 +857,12 @@
   [`D21`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d21-the-loop-of-each-stage-catches-errors-per-paper)
 - Spec: needed: the inputs of `rater`, the refresh of the citations, and the cost log
 
-### `PR_P5`: [ ] One Executable per Stage and a Shell Script
+### `PR_P5`: [ ] One Executable per Stage and a Python Driver
 
-- Status: written: the 196 tests of the project pass; the four scripts run `--help`
-  through their `uv run` headers, and the shell script ran on stubs of the four
-  scripts. No live run of the full chain yet
+- Status: written: the 236 tests of the project pass; the four scripts run `--help`
+  through their `uv run` headers, and `estimate_paper_quality.py` runs `--dry_run`
+  on `paper_list.short.csv` and stops at a stage that fails. No live run of the full
+  chain yet
 - Replace `estimate_paper_quality.py` and `epq_pipeline.py` with
   `download_papers.py`, `extract_features.py`, and `report_papers.py`, next to the
   existing `resolve_papers.py`; each script has its own `uv run` header, `--dry_run`,
@@ -873,8 +874,11 @@
   and the schema version is 2
 - Add the issue stage `rate` (statuses `rating_failed` and `rating_missing`) and
   `--refresh_citations`
-- Add `estimate_paper_quality.sh`: runs the four executables in order, with `-i`, `-o`,
-  `-m`, `-v`, `-f`, and `-r`
+- Add `estimate_paper_quality.py`: a Python driver that runs the four executables in
+  order as subprocesses with `hsystem`, with one action per executable
+  (`hselect_action`), `--input`, `--output_dir`, `--model`, `--force_extract`,
+  `--refresh_citations`, `--dry_run`, and `-v` (it replaced a shell script with `-i`,
+  `-o`, `-m`, `-v`, `-f`, and `-r`)
 - Update the import graph test: the scripts import `epq_*` modules, never each other
 - Split `test_epq_pipeline.py` into one test file per script, plus
   `test_epq_end_to_end.py` that runs the four stages in order and a rerun that costs
@@ -936,18 +940,21 @@
   `--min_delay_sec` and `--max_delay_sec`
 - Add the rules `ARCH3.6`, `ARCH3.7`, and `ARCH3.8` to
   `.claude/skills/architecture.rules.md`
-- Update `estimate_paper_quality.sh`, the tests, the README of the project, the
+- Update `estimate_paper_quality.py`, the tests, the README of the project, the
   README of each script, and the design docs
 - Decisions:
   [`D29`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d29-numbered-stage-files-in-the-output-dir),
   [`D30`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d30-output_dir-for-several-files-and-output-for-one),
-  [`D31`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d31-json-for-the-intermediate-files)
+  [`D31`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d31-json-for-the-intermediate-files),
+  [`D32`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d32-the-pipeline-script-is-python-and-runs-the-stages-as-subprocesses)
 - Spec: not needed: the plan is in `research/Estimate_academic_paper_quality/tasks.md`
 - Unit tests:
   - `test_epq_paths.py` checks the name of each file
   - `test_epq_end_to_end.py` lists the output dir after a run
   - `test_download_papers.py` checks the count and the range of the waits, and that a
     skipped paper and a dry run do not wait
+  - `test_estimate_paper_quality.py` checks the command of each action, that a dry run
+    runs no command, and that an action can be skipped
   - `test_resolve_papers.py` checks the copy of the input and that `--output` fails
   - `test_epq_report.py` checks that the papers file keeps a list item that holds `|`
 - Result: a listing of the output dir reads in the order of the pipeline, the user

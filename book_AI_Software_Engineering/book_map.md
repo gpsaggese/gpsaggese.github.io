@@ -1,3 +1,31 @@
+# TODO
+
+- Code cosmetics
+  - `helpers_root/docs/coding/all.coding_style.how_to_guide.md`
+  - `helpers_root/docs/coding/all.coding_style_guidelines.reference.md`
+  - `helpers_root/docs/coding/all.type_hints.how_to_guide.md`
+  - `helpers_root/docs/tools/linter/all.developing_linter.how_to_guide.md`
+- Skills organization and management
+  - `helpers_root/docs/tools/ai/all.ai_workflows.how_to_guide.md`
+  - `helpers_root/docs/tools/ai/all.ai_review.how_to_guide.md`
+- Sw architecture guidelines
+  - `helpers_root/docs/coding/all.code_design.how_to_guide.md`
+  - `helpers_root/docs/documentation_meta/all.architecture_diagrams.explanation.md`
+- GitHub projects / workflows
+  - `helpers_root/docs/work_organization/all.github_projects_process.reference.md`
+  - `helpers_root/docs/work_organization/all.use_github.how_to_guide.md`
+  - `helpers_root/docs/tools/dev_system/all.sync_gh_projects.how_to_guide.md`
+  - `helpers_root/docs/tools/ai/all.auto_task.how_to_guide.md`
+  - `helpers_root/docs/tools/ai/all.create_pr_with_claude_code.how_to_guide.md`
+- Releasing and Docker
+  - `helpers_root/docs/work_organization/all.rollout.how_to_guide.md`
+  - `helpers_root/docs/tools/dev_system/all.devops_docker.how_to_guide.md`
+  - `helpers_root/docs/tools/dev_system/all.devops_docker.reference.md`
+  - `helpers_root/docs/tools/dev_system/all.devops_docker_auto_release.explanation.md`
+- Planning
+  - `helpers_root/docs/planning/all.plan_work.how_to_guide.md`
+  - `helpers_root/docs/planning/all.document_research.how_to_guide.md`
+
 # Summary
 
 ## Title

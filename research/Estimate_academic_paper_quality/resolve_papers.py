@@ -19,7 +19,7 @@ The files are written in `--output_dir`, with names that the script infers:
 - `01-resolve.issues.json`: one issue per input that did not give a paper
 
 The papers file is the input of `download_papers.py`, `extract_features.py`, and
-`report_papers.py`. The script `estimate_paper_quality.sh` runs all the stages in
+`report_papers.py`. The script `estimate_paper_quality.py` runs all the stages in
 order.
 
 # Usage Example

@@ -40,7 +40,8 @@
 - One executable per stage (`PR_P5`, decision `D27`): `download_papers.py`,
   `extract_features.py`, and `report_papers.py` (actions `rate` and `report`) replace
   `estimate_paper_quality.py` and `epq_pipeline.py`, and
-  `estimate_paper_quality.sh` runs the four executables in order. The rating moved
+  `estimate_paper_quality.sh` runs the four executables in order (replaced by the
+  entry below). The rating moved
   out of the extraction into `papers/<BASE>.rating.json`, so a new tier list needs no
   new LLM call. 196 tests pass, each script runs `--help` through its `uv run`
   header, and the shell script ran on stubs of the four scripts
@@ -48,6 +49,14 @@
   `epq_extractor.py`, and `epq_rater.py` are now code of `resolve_papers.py`,
   `extract_features.py`, and `report_papers.py`, and their tests are in the tests
   of the scripts. The prompt file is `extract_features.prompt.md`. 196 tests pass
+- Python driver instead of the shell script (`PR_P5`, decision `D32`):
+  `estimate_paper_quality.py` runs the four executables as subprocesses with
+  `hsystem`, with one action per executable (`hselect_action`), so a user can run or
+  skip one of them. `--dry_run` logs the command of each action and runs none, since
+  a dry run of a stage needs the files of the stage before. 236 tests pass. A dry run
+  on `paper_list.short.csv` printed the four commands, and a real run of
+  `download_papers` on an empty output dir failed on the missing papers file and
+  stopped with exit code 1. No live run of the full chain yet
 
 ## Findings
 
@@ -100,7 +109,7 @@
    [`affiliation_tiers.yaml`](/research/Estimate_academic_paper_quality/affiliation_tiers.yaml)
    by hand from the QS site (`PR_Q2`): until then each affiliation scores by its
    kind, and a university scores 3
-2. Run `resolve_papers.py --email` and then `estimate_paper_quality.sh` with
+2. Run `resolve_papers.py --email` and then `estimate_paper_quality.py` with
    `SEMANTIC_SCHOLAR_API_KEY`, Docker, Chrome, and an LLM key: the `download` stage on an SSRN paper and the `extract` stage
    have not run on live services, and the action `rate` has not run on live Semantic Scholar
 3. Label an input list and 20 papers (`PR_V1`, `PR_V2`), then measure the three
@@ -118,6 +127,7 @@
 | 2026-11-02 | Split the resolver into `resolve_papers.py`, with CSV in and CSV out (`D26`); the pipeline reads the papers CSV          |
 | 2026-11-02 | Split the pipeline into one executable per stage, with a rating file and a shell script (`D27`, `PR_P5`); 196 tests pass |
 | 2026-11-02 | Inlined the resolver, extractor, and rater modules into the script that calls each (`D28`, `PR_P6`); 196 tests pass      |
+| 2026-11-03 | Replaced the shell script with the Python driver `estimate_paper_quality.py` (`D32`, `PR_P5`); 236 tests pass            |
 
 ## Open Work
 

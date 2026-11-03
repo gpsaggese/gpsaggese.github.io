@@ -46,6 +46,9 @@ _ALLOWED: Dict[str, Set[str]] = {
         "epq_report",
         "epq_types",
     },
+    # The pipeline script runs the executables as subprocesses, so it imports
+    # none of them.
+    "estimate_paper_quality": {"epq_paths"},
     "epq_report": {"epq_types"},
     "epq_bib_sources": {"epq_types"},
     "epq_fetcher": {"epq_types"},

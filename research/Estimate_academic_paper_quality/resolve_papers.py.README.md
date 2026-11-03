@@ -11,7 +11,7 @@
   `research/Estimate_academic_paper_quality/download_papers.py`,
   `research/Estimate_academic_paper_quality/extract_features.py`, and
   `research/Estimate_academic_paper_quality/report_papers.py`. The script
-  `research/Estimate_academic_paper_quality/estimate_paper_quality.sh` runs all the
+  `research/Estimate_academic_paper_quality/estimate_paper_quality.py` runs all the
   stages in order
 
 ## Examples

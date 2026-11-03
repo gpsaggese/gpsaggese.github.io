@@ -146,8 +146,7 @@ def _read_last_line(log_path: str) -> str:
         lines = [
             line
             for line in lines
-            if line.strip("'\"")
-            and not line.startswith(_HSYSTEM_NOTE_PREFIXES)
+            if line.strip("'\"") and not line.startswith(_HSYSTEM_NOTE_PREFIXES)
         ]
         exception_lines = [line for line in lines if _EXCEPTION_RE.match(line)]
         if exception_lines:
