@@ -116,11 +116,11 @@ def run_episode(
     """
     Run one seeded episode until it terminates or is truncated.
 
-    With no `policy`, sample actions from the action space seeded with `seed`, so
+    With no `policy`, sample actions from the action space seeded from `seed`, so
     that a rerun repeats the episode. A passed `policy` owns its own randomness.
 
     :param env: single environment, not a vector one
-    :param seed: seed for `env.reset()` and the action space
+    :param seed: seed for `env.reset()`, and the source of the action seed
     :param policy: map the last observation to an action, None samples randomly
     :param max_steps: raise if the episode is still running after these steps
     :return: the steps in order, and the total reward
@@ -128,7 +128,9 @@ def run_episode(
     obs, _info = env.reset(seed=seed)
     # `reset(seed=...)` does not seed the action space.
     if policy is None:
-        env.action_space.seed(seed)
+        # Use a child seed: `seed` itself would make the actions copy env draws.
+        child_seed = np.random.SeedSequence(seed).spawn(1)[0]
+        env.action_space.seed(int(child_seed.generate_state(1)[0]))
     steps: List[Step] = []
     done = False
     while not done:

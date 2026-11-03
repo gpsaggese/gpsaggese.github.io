@@ -60,6 +60,40 @@ class _GridEnv(gym.Env):
 
 
 # #############################################################################
+# _GuessEnv
+# #############################################################################
+
+
+class _GuessEnv(gym.Env):
+    """
+    Guess a target drawn at reset in one step, with a reward of 1 for a hit.
+
+    The reset draws `integers(25)` from the env generator, the same call that
+    `Discrete(25).sample()` makes on the action space generator.
+    """
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._target = 0
+        self.observation_space = gym.spaces.Discrete(1)
+        self.action_space = gym.spaces.Discrete(25)
+
+    def reset(
+        self,
+        *,
+        seed: Optional[int] = None,
+        options: Optional[Dict[str, Any]] = None,
+    ) -> Tuple[int, Dict[str, Any]]:
+        super().reset(seed=seed)
+        self._target = int(self.np_random.integers(25))
+        return 0, {}
+
+    def step(self, action: int) -> Tuple[int, float, bool, bool, Dict[str, Any]]:
+        reward = 1.0 if action == self._target else 0.0
+        return 0, reward, True, False, {}
+
+
+# #############################################################################
 # Test_print_step
 # #############################################################################
 
@@ -210,6 +244,20 @@ class Test_run_episode(hunitest.TestCase):
             tgygyuti.run_episode(env, seed=0, policy=lambda _obs: 1, max_steps=1)
         # Check outputs.
         self.assertIn(expected, str(cm.exception))
+
+    def test5(self) -> None:
+        """
+        Test that random actions do not copy the draws of the env.
+        """
+        # Prepare inputs.
+        env = _GuessEnv()
+        # Run test.
+        hits = 0.0
+        for seed in range(10):
+            _, total_reward = tgygyuti.run_episode(env, seed=seed)
+            hits += total_reward
+        # Check outputs: copied draws hit all 10, independent ones about 0.4.
+        self.assertLessEqual(hits, 2)
 
 
 # #############################################################################
