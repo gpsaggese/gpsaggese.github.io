@@ -2,9 +2,15 @@
 
 ## Goal
 
-- Build the pipeline
-  [`estimate_paper_quality.py`](/research/Estimate_academic_paper_quality/estimate_paper_quality.py),
-  which turns a loose list of papers into:
+- Build the pipeline, one executable per stage
+  ([`resolve_papers.py`](/research/Estimate_academic_paper_quality/resolve_papers.py),
+  [`download_papers.py`](/research/Estimate_academic_paper_quality/download_papers.py),
+  [`extract_features.py`](/research/Estimate_academic_paper_quality/extract_features.py),
+  and
+  [`report_papers.py`](/research/Estimate_academic_paper_quality/report_papers.py))
+  and the shell script
+  [`estimate_paper_quality.sh`](/research/Estimate_academic_paper_quality/estimate_paper_quality.sh)
+  that runs them in order, which turn a loose list of papers into:
   - A clean reference list
   - The PDF and the markdown of each paper
   - A CSV report of the features of each paper
@@ -58,8 +64,8 @@
 ## Roadmap
 
 - `v0.1`: Normalized reference list
-  - `estimate_paper_quality.py --action resolve --action report` turns
-    [`paper_list.md`](/research/Estimate_academic_paper_quality/paper_list.md) into
+  - `resolve_papers.py`, then `report_papers.py --action report`, turns
+    [`paper_list.csv`](/research/Estimate_academic_paper_quality/paper_list.csv) into
     `references.md` and into `issues.csv` with the unresolved and ambiguous lines
   - [ ] `PR_H1`: written
   - [ ] `PR_T1`: written
@@ -89,6 +95,8 @@
   - [ ] `PR_E2`: written
   - [ ] `PR_O2`: written
   - [ ] `PR_P3`: written
+  - [ ] `PR_P5`: written
+  - [ ] `PR_P6`: written
 - `v0.4`: Measured pipeline
   - The three success metrics of the PRD are measured on labeled sets, the default
     LLM is picked, and the numbers are in `07-progress.md`
@@ -102,7 +110,8 @@
 
 ### Goal
 
-- Run the four stages on one input file and one output dir
+- Run one executable per stage on one input file and one output dir, and run all of
+  them in order with a shell script
 - Turn the failure of one paper into an `Issue`, so the run goes on
 - Skip the work that a previous run did
 - Design:
@@ -110,7 +119,7 @@
 
 ### Open Questions
 
-1. Should `run_extract()` stop the run when the total LLM cost passes a cap, e.g.,
+1. Should `extract_features.py` stop the run when the total LLM cost passes a cap, e.g.,
    `--max_cost_usd`? See `PR_P4`
 
 ## Resolver
@@ -134,9 +143,10 @@
 4. Where does the per-line catch of
    [`D21`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d21-the-loop-of-each-stage-catches-errors-per-paper)
    live for `resolve`?
-   - Settled in `PR_R4`: `run_resolve()` loops on `resolve_line()` with the catch,
-     then calls `finalize_papers()` for the merge and the sort
-   - `resolve_lines()` stays as a loop with no catch, for tests and for other callers
+   - Settled in `PR_R4`: `_resolve()` of `resolve_papers.py` (`run_resolve()` before
+     `PR_P5`) loops on `_resolve_line()` with the catch,
+     then calls `_finalize_papers()` for the merge and the sort
+   - `_resolve_lines()` stays as a loop with no catch, for tests
 
 ## Bib Sources
 
@@ -333,7 +343,7 @@
   - Each type is frozen: setting a field raises `dataclasses.FrozenInstanceError`
   - The import graph test passes on the tree
   - The import graph test fails on a module in the scratch space where `epq_types`
-    imports `epq_pipeline`
+    imports `report_papers`
 - Result: the modules of `v0.1` share one data model, and a wrong import fails the
   tests
 
@@ -347,8 +357,9 @@
     then a URL
 - Changes:
   - Add
-    [`epq_resolver.py`](/research/Estimate_academic_paper_quality/epq_resolver.py)
-    with `parse_line(line_no, text)`, which follows the table of kinds in
+    [`resolve_papers.py`](/research/Estimate_academic_paper_quality/resolve_papers.py)
+    (`epq_resolver.py` before `PR_P6`) with `_parse_line(line_no, text)`, which
+    follows the table of kinds in
     [`02.2-design.resolver.md`](/research/Estimate_academic_paper_quality/docs/02.2-design.resolver.md#one-request-end-to-end)
   - Read the author hints of a `title` line from its trailing `(...)`
   - Return `None` for an empty line and for a comment (`#`, `//`)
@@ -362,7 +373,7 @@
   - `Lazy Prices (Cohen; Malloy; Nguyen)` gives the title `Lazy Prices` and three
     author hints
   - A copy of
-    [`paper_list.md`](/research/Estimate_academic_paper_quality/paper_list.md)
+    [`paper_list.csv`](/research/Estimate_academic_paper_quality/paper_list.csv)
     parses with no exception, and each line gets a kind
 - Result: each line of the input file has a kind and a key, with no network call
 
@@ -601,7 +612,7 @@
 ### `PR_R4`: [ ] `resolve_lines()`: Lookups by Kind, End to End
 
 - Status: written: `resolve` ran on
-  [`paper_list.md`](/research/Estimate_academic_paper_quality/paper_list.md) with
+  [`paper_list.csv`](/research/Estimate_academic_paper_quality/paper_list.csv) with
   Crossref only, since Semantic Scholar answered `429`: 20 of 22 lines resolved,
   see Findings 2 of [`07-progress.md`](/research/Estimate_academic_paper_quality/docs/07-progress.md)
 - Background: `PR_R1` to `PR_R3` are pure code; no code yet connects them to
@@ -636,26 +647,25 @@
 ### `PR_P1`: [ ] CLI with the `resolve` and `report` Stages
 
 - Status: written: `_VALID_ACTIONS` has the four stages, since the code of `PR_P2` and
-  `PR_P3` is in the same files. The run on `paper_list.md` is the one of `PR_R4`
+  `PR_P3` is in the same files. The run on `paper_list.csv` is the one of `PR_R4`
+- Superseded by `PR_P5`: the script `estimate_paper_quality.py`, the module
+  `epq_pipeline.py`, and `PipelineConfig` named below are the design of that time, and
+  are gone
 - Background: `PR_R4` and `PR_O1` exist, but no entry point calls them
 - Changes:
-  - Add
-    [`estimate_paper_quality.py`](/research/Estimate_academic_paper_quality/estimate_paper_quality.py)
-    with `_parse()` and `_main()`, per
+  - Add `estimate_paper_quality.py` with `_parse()` and `_main()`, per
     [`.claude/skills/script.rules.md`](/.claude/skills/script.rules.md)
     - Flags: `--input`, `--output_dir`, `--email`, `--cache_mode`, the stage flags of
       `hselect_action`, and `-v`
     - `_VALID_ACTIONS = ["resolve", "report"]`: `download` and `extract` come in
       `PR_P2` and `PR_P3`
-  - Add
-    [`epq_pipeline.py`](/research/Estimate_academic_paper_quality/epq_pipeline.py)
-    with `PipelineConfig`, `run_resolve()`, and `run_report()`
+  - Add `epq_pipeline.py` with `PipelineConfig`, `run_resolve()`, and `run_report()`
   - `_main()` checks `--input`, creates `papers/` and `state/`, and sets the cache
     dir of `hcache_simple` to `state/cache/`
   - `run_report()` writes `references.md` and `issues.csv`: `report.csv` comes in
     `PR_P3`
   - Run on
-    [`paper_list.md`](/research/Estimate_academic_paper_quality/paper_list.md), and
+    [`paper_list.csv`](/research/Estimate_academic_paper_quality/paper_list.csv), and
     log the number of papers and of issues in `07-progress.md`
 - Requirements:
   [`R2`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r2-reference-format),
@@ -717,10 +727,11 @@
 - Status: written: it ran on one paper only (Findings 7 of [`07-progress.md`](/research/Estimate_academic_paper_quality/docs/07-progress.md)), not on
   the whole list, so the numbers of PDFs, markdown files, and failures are not
   logged
-- `run_download()`: skip a fetched paper, call `fetch_paper()`, turn a failed result
-  into an `Issue`, and write `state/issues.download.json`
+- `_download()` of `download_papers.py` (`run_download()` before `PR_P5`): skip a
+  fetched paper, call `fetch_paper()`, turn a failed result into an `Issue`, and write
+  `state/issues.download.json`
 - `issues.csv` lists the download issues
-- Run on `paper_list.md`, and log the number of PDFs, markdown files, and failures in
+- Run on `paper_list.csv`, and log the number of PDFs, markdown files, and failures in
   `07-progress.md`
 - Requirements:
   [`R8`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r8-pdf-and-markdown-files),
@@ -733,12 +744,14 @@
 
 ## v0.3: Report of Candidate Strategies
 
-### `PR_Q1`: [ ] `epq_rater.py`: Score the Signals and Rate the Paper
+### `PR_Q1`: [ ] Score the Signals and Rate the Paper
 
 - Status: written: the score tables are checked against `paper.rules.md` in
-  `test_epq_rater.py`
-- Add `score_page_length()`, `score_affiliation()`, `score_citations()`,
-  `rate_paper()`, and `parse_tiers()`, per
+  `test_report_papers.py` (`test_epq_rater.py` before `PR_P6`)
+- Superseded by `PR_P6`: the code is in `report_papers.py`, and `rate_paper()` is
+  `_compute_rating()`
+- Add `_score_page_length()`, `_score_affiliation()`, `_score_citations()`,
+  `_compute_rating()`, and `_parse_tiers()`, per
   [`02.6-design.rater.md`](/research/Estimate_academic_paper_quality/docs/02.6-design.rater.md)
 - A test checks the score tables against
   [`.claude/skills/paper.rules.md`](/.claude/skills/paper.rules.md)
@@ -777,7 +790,8 @@
 
 - Status: written
 - Pure functions of
-  [`epq_extractor.py`](/research/Estimate_academic_paper_quality/epq_extractor.py):
+  [`extract_features.py`](/research/Estimate_academic_paper_quality/extract_features.py)
+  (`epq_extractor.py` before `PR_P6`):
   drop the reference list and cut a long paper; find a quote in the page texts and
   give its page
 - Requirements:
@@ -787,13 +801,14 @@
   [`D13`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d13-a-long-paper-loses-its-references-then-its-middle)
 - Spec: not needed
 
-### `PR_E2`: [ ] `extract_features()` with One LLM Call
+### `PR_E2`: [ ] `_extract_features()` with One LLM Call
 
 - Status: written: it ran only with a fake `llm_func`, not on a live LLM: no key, and the
   venv has no `openai`
 - Add `_LlmExtraction`, the prompt
-  [`epq_extractor.prompt.md`](/research/Estimate_academic_paper_quality/epq_extractor.prompt.md),
-  and `extract_features()` with an injected `llm_func`
+  [`extract_features.prompt.md`](/research/Estimate_academic_paper_quality/extract_features.prompt.md)
+  (`epq_extractor.prompt.md` before `PR_P6`), and `_extract_features()` with an
+  injected `llm_func`
 - Unit tests use a fake `llm_func` that returns a fixed `_LlmExtraction`
 - Requirements:
   [`R12`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r12-feature-list),
@@ -820,13 +835,14 @@
 
 ### `PR_P3`: [ ] `extract` Stage and `report.csv`
 
-- Status: written: it did not run on `paper_list.md`, so the LLM cost per paper is not
+- Status: written: it did not run on `paper_list.csv`, so the LLM cost per paper is not
   logged
-- `run_extract()`, per
+- `_extract()` of `extract_features.py` and the actions `rate` and `report` of
+  `report_papers.py` (`run_extract()` and `run_report()` before `PR_P5`), per
   [`02.1-design.pipeline.md`](/research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md#one-request-end-to-end),
   with the flags `--model`, `--force_extract`, and `--max_chars`
-- `run_report()` also writes `report.csv`
-- Run on `paper_list.md`, and log the LLM cost per paper in `07-progress.md`
+- The action `report` also writes `report.csv`
+- Run on `paper_list.csv`, and log the LLM cost per paper in `07-progress.md`
 - Requirements:
   [`R12`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r12-feature-list),
   [`R13`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r13-unknown-value),
@@ -837,6 +853,64 @@
 - Decisions:
   [`D21`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d21-the-loop-of-each-stage-catches-errors-per-paper)
 - Spec: needed: the inputs of `rater`, the refresh of the citations, and the cost log
+
+### `PR_P5`: [ ] One Executable per Stage and a Shell Script
+
+- Status: written: the 196 tests of the project pass; the four scripts run `--help`
+  through their `uv run` headers, and the shell script ran on stubs of the four
+  scripts. No live run of the full chain yet
+- Replace `estimate_paper_quality.py` and `epq_pipeline.py` with
+  `download_papers.py`, `extract_features.py`, and `report_papers.py`, next to the
+  existing `resolve_papers.py`; each script has its own `uv run` header, `--dry_run`,
+  and the loop of its stage
+- Add `epq_paths.py` (names of the shared files) and `epq_issues.py` (issue of a
+  failed paper)
+- Split the rating from the extraction: the features file holds `affiliations` and
+  `n_pages` and no `quality`, the action `rate` writes `papers/<BASE>.rating.json`,
+  and the schema version is 2
+- Add the issue stage `rate` (statuses `rating_failed` and `rating_missing`) and
+  `--refresh_citations`
+- Add `estimate_paper_quality.sh`: runs the four executables in order, with `-i`, `-o`,
+  `-m`, `-v`, `-f`, and `-r`
+- Update the import graph test: the scripts import `epq_*` modules, never each other
+- Split `test_epq_pipeline.py` into one test file per script, plus
+  `test_epq_end_to_end.py` that runs the four stages in order and a rerun that costs
+  nothing
+- Requirements:
+  [`R16`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r16-paper-quality-rating),
+  [`R17`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r17-rerun-skips-extraction),
+  [`R20`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r20-features-file)
+- Decisions:
+  [`D26`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d26-the-resolver-is-a-separate-executable-that-reads-and-writes-csv),
+  [`D27`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d27-the-pipeline-is-split-into-one-executable-per-stage)
+- Spec: not needed: the design is in
+  [`02.1-design.pipeline.md`](/research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md)
+- Unit tests:
+  - Each script has tests of its stage function and of its `_main()`
+  - A new tier list changes the rating and leaves the features file unchanged
+  - A stage that fails for a paper writes an issue and the next paper is done
+  - `--dry_run` writes no file and makes no LLM call, no download, and no lookup
+- Result: a stage runs alone on the files of an earlier run, and a new tier list needs
+  no new LLM call
+
+### `PR_P6`: [ ] Inline the Modules With One Caller
+
+- Status: written: the 196 tests of the project pass
+- Move the code of `epq_resolver.py`, `epq_extractor.py`, and `epq_rater.py` into
+  `resolve_papers.py`, `extract_features.py`, and `report_papers.py`, and make the
+  functions private
+- Rename `epq_extractor.prompt.md` to `extract_features.prompt.md`
+- Rename `rate_paper()` to `_compute_rating()`, since `report_papers.py` has
+  `_rate_paper()`
+- Move the tests: `test_epq_resolver.py`, `test_epq_extractor.py`, and
+  `test_epq_rater.py` into `test_resolve_papers.py`, `test_extract_features.py`, and
+  `test_report_papers.py`
+- Update the test of the import graph, the README, and the design docs
+- Decisions:
+  [`D28`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d28-a-module-with-one-caller-lives-in-that-script)
+- Spec: not needed: the code moves and the behavior stays
+- Unit tests: the moved tests are the same, with the new names
+- Result: a stage is one file, plus the modules that two files share
 
 ## v0.4: Measured Pipeline
 
@@ -861,7 +935,8 @@
 
 ### `PR_P4`: [ ] Cap on the LLM Cost
 
-- Add `--max_cost_usd`: `run_extract()` stops when the total cost passes it
+- Add `--max_cost_usd`: `_extract()` of `extract_features.py` stops when the total
+  cost passes it
 - Answers Pipeline open question 1
 
 ## Unscheduled: Fetcher

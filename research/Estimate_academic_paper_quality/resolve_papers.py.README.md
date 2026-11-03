@@ -6,7 +6,9 @@
   PDF
 - Output: a papers CSV, one row per paper from the newest to the oldest, and an issues
   CSV, one row per input that gave no paper
-- Run it first: its papers CSV is the input of `estimate_paper_quality.py`
+- Run it first: its papers CSV is the input of `download_papers.py`,
+  `extract_features.py`, and `report_papers.py`. The script `estimate_paper_quality.sh`
+  runs all the stages in order
 
 ## Examples
 
@@ -126,18 +128,18 @@
 
 - The design of the resolver is in
   [`02.2-design.resolver.md`](/research/Estimate_academic_paper_quality/docs/02.2-design.resolver.md)
-- This file is only the entry point: the work is in `epq_pipeline.py` and
-  `epq_resolver.py`
+- This file is the entry point and the orchestration, and it also holds the matching:
+  no module of the project has the resolver code (decision `D28`)
 
 ### Data Flow
 
 1. **Input**: `_parse()` reads the flags, and `_main()` resolves the paths, then reads
    the rows of the input CSV
-2. **Classification**: `read_input_lines()` turns each row into an `InputLine`, with a
+2. **Classification**: `_read_input_lines()` turns each row into an `InputLine`, with a
    kind of `local_pdf`, `ssrn`, `doi`, `arxiv`, `url`, or `title`
-3. **Lookup and match**: `epq_resolver.resolve_line()` looks the row up in Semantic
+3. **Lookup and match**: `_resolve_line()` looks the row up in Semantic
    Scholar, Crossref, arXiv, and Unpaywall, and keeps one paper or makes an issue
-4. **Merge**: `finalize_papers()` merges the rows of one paper and sorts the papers
+4. **Merge**: `_finalize_papers()` merges the rows of one paper and sorts the papers
    from the newest to the oldest
 5. **Output**: `epq_report` writes the papers CSV and the issues CSV
 
@@ -146,23 +148,29 @@
 - `_parse() -> argparse.ArgumentParser`
   - Defines the flags, with the helpers for the cache mode and `-v`
 - `_main(parser) -> None`
-  - Resolves the paths, builds the API clients, and calls `run_resolve_csv()`: with
+  - Resolves the paths, builds the API clients, and calls `_resolve()`: with
     `--dry_run` it only logs the kind of each row
-- `epq_pipeline.read_input_lines(input_csv) -> List[InputLine]`
-  - Reads the column `input` and classifies each row
-- `epq_pipeline.run_resolve_csv(input_csv, papers_csv, issues_csv, sources) -> ResolveResult`
+- `_read_input_lines(input_csv) -> List[InputLine]`
+  - Reads the column `input` and classifies each row with `_parse_line()`
+- `_resolve_line(input_line, sources) -> ResolveResult`
+  - Looks one row up, matches it with `_match_candidates()`, and builds the `Paper`
+    with `_build_paper()`, or an `Issue`
+- `_finalize_papers(papers) -> List[Paper]`
+  - Merges the rows of one paper with `_merge_papers()` and sorts them with
+    `_sort_papers()`
+- `_resolve(input_csv, papers_csv, issues_csv, sources) -> ResolveResult`
   - Resolves each row with a catch per row, then merges and sorts the papers, and
     writes the two CSV files
 - `epq_report.write_papers_csv()`, `read_papers_csv()`, `read_issues_csv()`
-  - Write and read the two CSV files, so that `estimate_paper_quality.py` reads them
+  - Write and read the two CSV files, so that the next executables read them
 
 ### Design Patterns
 
 - **CSV in, CSV out**: the resolver shares no state dir with the other stages, so a
-  person can fix the papers CSV by hand before the download
+  person can fix the papers CSV by hand before the download (decision `D26`)
 - **Catch per item**: a failed row becomes a row of the issues CSV and the run goes on
   (decision `D26`)
-- **Injected dependencies**: `BibSources` is an argument of `run_resolve_csv()`, so the
+- **Injected dependencies**: `BibSources` is an argument of `_resolve()`, so the
   tests use a fake API
 - **Disk cache**: the API answers are cached in `--cache_dir`, so a rerun on the same
   list makes no request

@@ -38,9 +38,13 @@
 
 ### C1 (Context)
 
-- The quant researcher runs two CLI scripts: `resolve_papers.py` turns a CSV of papers
-  into a papers CSV, and `estimate_paper_quality.py` turns the papers CSV into the
-  output dir
+- The quant researcher runs four CLI scripts, one per stage, or the shell script
+  `estimate_paper_quality.sh` that runs them in order
+  ([`D27`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d27-the-pipeline-is-split-into-one-executable-per-stage))
+  - `resolve_papers.py` turns a CSV of papers into a papers CSV
+  - `download_papers.py` saves the PDF and the markdown of each paper
+  - `extract_features.py` extracts the features of each paper with the LLM
+  - `report_papers.py` rates the papers and writes the report
 - The pipeline reads bibliographic facts and citation counts only from the lookup
   APIs, never from an LLM (PRD
   [`R3`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r3-bibliographic-source),
@@ -60,7 +64,7 @@ System_Ext(bib, "Bibliographic APIs", "Semantic Scholar, Crossref, arXiv, Unpayw
 System_Ext(sites, "Paper hosts", "arXiv, SSRN, publisher sites, open-access mirrors")
 System_Ext(chrome, "Chrome", "Started and closed by download_with_chrome.py for SSRN")
 System_Ext(llm, "LLM provider", "OpenAI or OpenRouter, through helpers.hllm")
-Rel(user, epq, "Runs resolve_papers.py, then estimate_paper_quality.py", "CLI")
+Rel(user, epq, "Runs estimate_paper_quality.sh, or the four scripts one by one", "CLI")
 Rel(epq, bib, "Looks up metadata, links, citations", "HTTPS JSON")
 Rel(epq, sites, "Downloads PDFs", "HTTPS")
 Rel(epq, chrome, "Downloads SSRN PDFs", "CDP")
@@ -69,9 +73,13 @@ Rel(epq, llm, "Extracts features with quotes", "HTTPS JSON")
 
 ### C2 (Container)
 
-- Two scripts, six modules of the project, one shared module of types, and the
-  existing download tool
+- Four scripts, a shell script that chains them, six modules of the project, three
+  shared leaf modules, and the existing download tool
 - Arrows are imports or calls: each one points down a layer, never up
+- The scripts do not import each other: they talk only through files in the
+  `output_dir` ([`D26`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d26-the-resolver-is-a-separate-executable-that-reads-and-writes-csv),
+  [`D27`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d27-the-pipeline-is-split-into-one-executable-per-stage))
+- Every script also uses `epq_paths` and `epq_issues`, which the diagram leaves out
 
 ```plantuml
 !pragma layout smetana
@@ -81,15 +89,11 @@ title Estimate Paper Quality: Containers
 Person(user, "Quant researcher")
 
 Container_Boundary(script, "Script and orchestration layer") {
-  Container(rcli, "resolve_papers.py", "", "Input CSV to papers CSV and issues CSV")
-  Container(cli, "estimate_paper_quality.py", "", "Parses args, selects stages with hselect_action")
-  Container(pipeline, "epq_pipeline.py", "", "Runs the stages, loops on papers, isolates failures, skips done work")
-}
-
-Container_Boundary(logic, "Business logic layer") {
-  Container(resolver, "epq_resolver.py", "", "Parses lines, matches papers, dedupes, builds references")
-  Container(extractor, "epq_extractor.py", "", "LLM extraction of features, facts, affiliations, and quotes")
-  Container(rater, "epq_rater.py", "", "Pure Paper quality rating from three signals")
+  Container(sh, "estimate_paper_quality.sh", "bash", "Runs the four scripts in order")
+  Container(rcli, "resolve_papers.py", "", "Input CSV to papers CSV and issues CSV: parses lines, matches papers, dedupes, builds references")
+  Container(dcli, "download_papers.py", "", "PDF and markdown of each paper")
+  Container(ecli, "extract_features.py", "", "Features file of each paper: one LLM call, quotes checked against the PDF")
+  Container(pcli, "report_papers.py", "", "Stages rate and report, selected with hselect_action: Paper quality rating from three signals")
 }
 
 Container_Boundary(infra, "Infrastructure layer") {
@@ -98,63 +102,79 @@ Container_Boundary(infra, "Infrastructure layer") {
   Container(report, "epq_report.py", "", "Writes and reads all the output files")
 }
 
-Container_Boundary(ext, "Shared types, existing tool, outputs") {
+Container_Boundary(ext, "Shared leaf modules, existing tool, outputs") {
   Container_Ext(tool, "download_academic_paper_to_md.py", "", "Downloads a PDF and converts it to markdown")
   ContainerDb(out, "output_dir", "Files", "references.md, report.csv, issues.csv, papers/, state/")
   Container(types, "epq_types.py", "", "Dataclasses shared by all modules")
+  Container(paths, "epq_paths.py", "", "Paths of the files that the scripts share")
+  Container(issues, "epq_issues.py", "", "Builds the issue of a failed paper")
 }
 
-Rel(user, rcli, "~-~-input, ~-~-output")
-Rel(user, cli, "~-~-input, ~-~-output_dir")
-Rel(rcli, pipeline, "run_resolve_csv()")
-Rel(cli, pipeline, "run_download(), run_extract(), run_report()")
-Rel(pipeline, resolver, "parse_line(), resolve_line()")
-Rel(pipeline, fetcher, "fetch_paper(), count_pages()")
-Rel(pipeline, extractor, "extract_features()")
-Rel(pipeline, rater, "rate_paper()")
-Rel(pipeline, report, "write_*(), read_features_file()")
-Rel(pipeline, bib, "get_citation_count()")
-Rel(resolver, bib, "lookup_*(), search_title()")
-Rel(resolver, fetcher, "read_pdf_title()")
+Rel(user, sh, "~-i, ~-o")
+Rel(sh, rcli, "runs")
+Rel(sh, dcli, "runs")
+Rel(sh, ecli, "runs")
+Rel(sh, pcli, "runs")
+Rel(rcli, bib, "BibSources, lookup_*(), search_title()")
+Rel(rcli, fetcher, "read_pdf_title()")
+Rel(rcli, report, "read_input_csv(), write_papers_csv(), write_issues_csv()")
+Rel(dcli, fetcher, "is_fetched(), fetch_paper()")
+Rel(dcli, report, "read_papers_csv(), write_issues()")
+Rel(ecli, fetcher, "read_markdown(), read_pdf_pages(), count_pages()")
+Rel(ecli, report, "read_papers_csv(), write_features_file(), write_issues()")
+Rel(pcli, bib, "get_citation_count()")
+Rel(pcli, report, "read_features_file(), write_rating_file(), write_*()")
 Rel(fetcher, tool, "subprocess")
 Rel(report, out, "JSON, CSV, markdown")
 ```
 
 ## Files
 
+- The component `pipeline` is the four scripts and the shell script: there is no
+  module between the scripts and the other components, since each script holds the
+  loop of its own stage
+  ([`02.1-design.pipeline.md`](/research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md))
+- The components `resolver`, `extractor`, and `rater` are not files: their code
+  lives in the script of their stage, since each had one caller
+  ([`D28`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d28-a-module-with-one-caller-lives-in-that-script))
 - All code lives flat in
   [`research/Estimate_academic_paper_quality/`](/research/Estimate_academic_paper_quality/),
   tests in
   [`research/Estimate_academic_paper_quality/test/`](/research/Estimate_academic_paper_quality/test/)
   ([`D22`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d22-flat-modules-with-the-epq_-prefix))
 
-  | File                                                                                               | Component     | Layer                   |
-  | :------------------------------------------------------------------------------------------------- | :------------ | :---------------------- |
-  | [`resolve_papers.py`](/research/Estimate_academic_paper_quality/resolve_papers.py)                 | `pipeline`    | Script                  |
-  | [`estimate_paper_quality.py`](/research/Estimate_academic_paper_quality/estimate_paper_quality.py) | `pipeline`    | Script                  |
-  | [`epq_pipeline.py`](/research/Estimate_academic_paper_quality/epq_pipeline.py)                     | `pipeline`    | Orchestration           |
-  | [`epq_resolver.py`](/research/Estimate_academic_paper_quality/epq_resolver.py)                     | `resolver`    | Business logic          |
-  | [`epq_extractor.py`](/research/Estimate_academic_paper_quality/epq_extractor.py)                   | `extractor`   | Business logic          |
-  | [`epq_extractor.prompt.md`](/research/Estimate_academic_paper_quality/epq_extractor.prompt.md)     | `extractor`   | Data: the system prompt |
-  | [`epq_rater.py`](/research/Estimate_academic_paper_quality/epq_rater.py)                           | `rater`       | Business logic          |
-  | [`affiliation_tiers.yaml`](/research/Estimate_academic_paper_quality/affiliation_tiers.yaml)       | `rater`       | Data: dated tier list   |
-  | [`epq_bib_sources.py`](/research/Estimate_academic_paper_quality/epq_bib_sources.py)               | `bib_sources` | Infrastructure          |
-  | [`epq_fetcher.py`](/research/Estimate_academic_paper_quality/epq_fetcher.py)                       | `fetcher`     | Infrastructure          |
-  | [`epq_report.py`](/research/Estimate_academic_paper_quality/epq_report.py)                         | `report`      | Infrastructure          |
-  | [`epq_types.py`](/research/Estimate_academic_paper_quality/epq_types.py)                           | shared        | Data model, no logic    |
+  | File                                                                                                 | Component               | Layer                   |
+  | :--------------------------------------------------------------------------------------------------- | :---------------------- | :---------------------- |
+  | [`resolve_papers.py`](/research/Estimate_academic_paper_quality/resolve_papers.py)                   | `pipeline`, `resolver`  | Script, business logic  |
+  | [`download_papers.py`](/research/Estimate_academic_paper_quality/download_papers.py)                 | `pipeline`              | Script, orchestration   |
+  | [`extract_features.py`](/research/Estimate_academic_paper_quality/extract_features.py)               | `pipeline`, `extractor` | Script, business logic  |
+  | [`extract_features.prompt.md`](/research/Estimate_academic_paper_quality/extract_features.prompt.md) | `extractor`             | Data: the system prompt |
+  | [`report_papers.py`](/research/Estimate_academic_paper_quality/report_papers.py)                     | `pipeline`, `rater`     | Script, business logic  |
+  | [`estimate_paper_quality.sh`](/research/Estimate_academic_paper_quality/estimate_paper_quality.sh)   | `pipeline`              | Shell script            |
+  | [`affiliation_tiers.yaml`](/research/Estimate_academic_paper_quality/affiliation_tiers.yaml)         | `rater`                 | Data: dated tier list   |
+  | [`epq_bib_sources.py`](/research/Estimate_academic_paper_quality/epq_bib_sources.py)                 | `bib_sources`           | Infrastructure          |
+  | [`epq_fetcher.py`](/research/Estimate_academic_paper_quality/epq_fetcher.py)                         | `fetcher`               | Infrastructure          |
+  | [`epq_report.py`](/research/Estimate_academic_paper_quality/epq_report.py)                           | `report`                | Infrastructure          |
+  | [`epq_types.py`](/research/Estimate_academic_paper_quality/epq_types.py)                             | shared                  | Data model, no logic    |
+  | [`epq_paths.py`](/research/Estimate_academic_paper_quality/epq_paths.py)                             | shared                  | Names of the files      |
+  | [`epq_issues.py`](/research/Estimate_academic_paper_quality/epq_issues.py)                           | shared                  | Issue of a failed paper |
 
 ## Import Graph
 
 - Allowed imports, checked by a test of the import graph:
-  - [`resolve_papers.py`](/research/Estimate_academic_paper_quality/resolve_papers.py)
-    and
-    [`estimate_paper_quality.py`](/research/Estimate_academic_paper_quality/estimate_paper_quality.py)
-    import `epq_pipeline`
-  - `epq_pipeline` imports every `epq_*` module
-  - `epq_resolver` imports `epq_bib_sources`, `epq_fetcher`, `epq_types`
-  - `epq_extractor`, `epq_rater`, `epq_report` import only `epq_types`
+  - A script imports only `epq_*` modules, never another script
+    - [`resolve_papers.py`](/research/Estimate_academic_paper_quality/resolve_papers.py):
+      `epq_bib_sources`, `epq_fetcher`, `epq_report`, `epq_issues`, `epq_paths`,
+      `epq_types`
+    - [`download_papers.py`](/research/Estimate_academic_paper_quality/download_papers.py):
+      `epq_fetcher`, `epq_report`, `epq_issues`, `epq_paths`, `epq_types`
+    - [`extract_features.py`](/research/Estimate_academic_paper_quality/extract_features.py):
+      `epq_fetcher`, `epq_report`, `epq_issues`, `epq_paths`, `epq_types`
+    - [`report_papers.py`](/research/Estimate_academic_paper_quality/report_papers.py):
+      `epq_bib_sources`, `epq_report`, `epq_issues`, `epq_paths`, `epq_types`
+  - `epq_report`, `epq_issues` import only `epq_types`
   - `epq_bib_sources`, `epq_fetcher` import only `epq_types` and `helpers`
-  - `epq_types` imports nothing of the project
+  - `epq_types` and `epq_paths` import nothing of the project
 
 ## External Code
 
@@ -189,8 +209,10 @@ Rel(report, out, "JSON, CSV, markdown")
   - `Issue`: an unresolved line or a failed paper, with stage, status, and reason
   - `Evidence`, `FeatureValue`, `LabeledFact`, `ExtractedFacts`: the output of
     `extractor`
-  - `SignalScore`, `QualityRating`: the output of `rater`
-  - `PaperFeatures`: everything that goes into one features file
+  - `SignalScore`, `QualityRating`: the output of `rater`, written to the rating file
+  - `PaperFeatures`: everything that goes into one features file: the features, the
+    facts, the affiliations, the page count, and the provenance, but not the rating
+    ([`D27`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d27-the-pipeline-is-split-into-one-executable-per-stage))
 - Shape of the core types:
 
   ```python
@@ -219,24 +241,42 @@ Rel(report, out, "JSON, CSV, markdown")
       --input research/Estimate_academic_paper_quality/paper_list.csv \
       --output ~/papers/run_2026_10/papers.csv \
       --email me@umd.edu
-  > research/Estimate_academic_paper_quality/estimate_paper_quality.py \
+  > research/Estimate_academic_paper_quality/download_papers.py \
       --input ~/papers/run_2026_10/papers.csv \
       --output_dir ~/papers/run_2026_10
+  > research/Estimate_academic_paper_quality/extract_features.py \
+      --input ~/papers/run_2026_10/papers.csv \
+      --output_dir ~/papers/run_2026_10
+  > research/Estimate_academic_paper_quality/report_papers.py \
+      --input ~/papers/run_2026_10/papers.csv \
+      --output_dir ~/papers/run_2026_10
+  ```
+
+- The shell script runs the same four commands in order:
+
+  ```bash
+  > research/Estimate_academic_paper_quality/estimate_paper_quality.sh \
+      -i research/Estimate_academic_paper_quality/paper_list.csv \
+      -o ~/papers/run_2026_10
   ```
 
 - `resolve_papers.py`: `resolver` parses 22 rows, looks up each one, writes 20 `Paper`
   as the rows of `papers.csv` and 2 `Issue` as the rows of `papers.issues.csv`
   ([`D26`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d26-the-resolver-is-a-separate-executable-that-reads-and-writes-csv))
-- `download`: `fetcher` runs the download tool for each paper with no PDF and no
-  markdown yet, and records the failures
-- `extract`: for each converted paper with no features file yet, `extractor` calls
-  the LLM once, `rater` rates the paper, and `report` writes
-  `<output_dir>/papers/<BASE>.features.json`
-- `report`: `report` writes `references.md`, `report.csv`, and `issues.csv` from the
-  state files and the features files
+- `download_papers.py`: `fetcher` runs the download tool for each paper with no PDF
+  and no markdown yet, and records the failures
+- `extract_features.py`: for each converted paper with no features file yet,
+  `extractor` calls the LLM once, and `report` writes
+  `<output_dir>/papers/<BASE>.features.json` with the affiliations and the page count
+- `report_papers.py`, stage `rate`: for each paper with a features file, `bib_sources`
+  gives the citation count, `rater` rates the paper, and `report` writes
+  `<output_dir>/papers/<BASE>.rating.json`
+- `report_papers.py`, stage `report`: `report` writes `references.md`, `report.csv`,
+  and `issues.csv` from the state files, the features files, and the rating files
 - Rerun with 5 new rows: `resolve_papers.py` hits the HTTP cache for the 22 old rows,
-  `download` and `extract` skip the 20 old papers, so only the new papers cost
-  network time and LLM tokens
+  `download_papers.py` and `extract_features.py` skip the 20 old papers, so only the
+  new papers cost network time and LLM tokens; `report_papers.py` rates all the
+  papers again at no LLM cost, so a new tier list needs no new extraction
   ([`R11`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r11-rerun-skips-converted-papers),
   [`R17`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r17-rerun-skips-extraction))
 
@@ -244,13 +284,13 @@ Rel(report, out, "JSON, CSV, markdown")
 
 | Req                                                                                                 | Component                         | How                                                            |
 | :-------------------------------------------------------------------------------------------------- | :-------------------------------- | :------------------------------------------------------------- |
-| [`R1`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r1-input-file-format)               | `resolver`                        | `parse_line()` classifies the 6 kinds of line                  |
-| [`R2`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r2-reference-format)                | `resolver`, `report`              | `format_reference()`, written to `references.md`               |
+| [`R1`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r1-input-file-format)               | `resolver`                        | `_parse_line()` classifies the 6 kinds of line                  |
+| [`R2`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r2-reference-format)                | `resolver`, `report`              | `_format_reference()`, written to `references.md`               |
 | [`R3`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r3-bibliographic-source)            | `resolver`, `bib_sources`         | Canonical record from Semantic Scholar, Crossref, arXiv        |
 | [`R4`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r4-download-link)                   | `resolver`, `bib_sources`         | Ordered download inputs, or the ` ???` mark                    |
 | [`R5`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r5-unresolved-or-ambiguous-line)    | `resolver`, `pipeline`            | `Issue` with status `unresolved` or `ambiguous` and candidates |
-| [`R6`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r6-duplicate-lines)                 | `resolver`                        | `paper_key()` merges lines of the same paper                   |
-| [`R7`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r7-reverse-chronological-order)     | `resolver`, `report`              | `sort_papers()`: year down, then author, then title            |
+| [`R6`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r6-duplicate-lines)                 | `resolver`                        | `_paper_key()` merges lines of the same paper                   |
+| [`R7`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r7-reverse-chronological-order)     | `resolver`, `report`              | `_sort_papers()`: year down, then author, then title            |
 | [`R8`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r8-pdf-and-markdown-files)          | `fetcher`                         | Runs the download tool into `<output_dir>/papers/`             |
 | [`R9`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r9-file-base-name)                  | `resolver`, `fetcher`             | `format_base_filename()`, passed as `--output`                 |
 | [`R10`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r10-failed-download-or-conversion) | `fetcher`, `pipeline`             | `FetchResult` with the reason, the loop goes on                |
@@ -263,19 +303,16 @@ Rel(report, out, "JSON, CSV, markdown")
 | [`R17`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r17-rerun-skips-extraction)        | `pipeline`, `report`              | Skip when the features file exists, unless `--force_extract`   |
 | [`R18`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r18-report-csv)                    | `report`                          | `report.csv`, one row per paper with a features file           |
 | [`R19`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r19-issues-csv)                    | `report`                          | `issues.csv` from the issues of every stage                    |
-| [`R20`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r20-features-file)                 | `report`                          | `<BASE>.features.json` next to the PDF                         |
+| [`R20`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r20-features-file)                 | `report`                          | `<BASE>.features.json` next to the PDF, `<BASE>.rating.json`   |
 
 ## Configuration, Interfaces, and Known Limits
 
-- Configuration: CLI flags of
-  [`resolve_papers.py`](/research/Estimate_academic_paper_quality/resolve_papers.py),
-  see
-  [`resolve_papers.py.README.md`](/research/Estimate_academic_paper_quality/resolve_papers.py.README.md),
-  and of
-  [`estimate_paper_quality.py`](/research/Estimate_academic_paper_quality/estimate_paper_quality.py),
-  see
-  [`research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md`](/research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md)
-- Interfaces: two CLI scripts, a papers CSV between them, and one output dir
+- Configuration: CLI flags of each script, listed in
+  [`research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md`](/research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md),
+  and described in the README of each script, e.g.,
+  [`resolve_papers.py.README.md`](/research/Estimate_academic_paper_quality/resolve_papers.py.README.md)
+- Interfaces: four CLI scripts and a shell script, a papers CSV between the first
+  and the others, and one output dir
   - Layout of the output dir:
 
     ```
@@ -287,9 +324,11 @@ Rel(report, out, "JSON, CSV, markdown")
         <BASE>.pdf             R8
         <BASE>.md              R8
         <BASE>.features.json   R20
+        <BASE>.rating.json     R16, R20
       state/
-        issues.<stage>.json    issues of download, extract
+        issues.<stage>.json    issues of download, extract, rate
         cache/                 HTTP response cache
+        logs/                  logs of the download tool
     ```
 
 - Environment:

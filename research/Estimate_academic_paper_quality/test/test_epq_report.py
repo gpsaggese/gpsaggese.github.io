@@ -262,6 +262,43 @@ class Test_features_file(hunitest.TestCase):
 
 
 # #############################################################################
+# Test_rating_file
+# #############################################################################
+
+
+class Test_rating_file(hunitest.TestCase):
+    """
+    Test `write_rating_file()` and `read_rating_file()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test the rating of a paper is read back equal.
+        """
+        # Prepare inputs.
+        path = os.path.join(self.get_scratch_space(), "p.rating.json")
+        quality = epqteuti.make_quality()
+        # Run test.
+        epqrepor.write_rating_file(path, quality)
+        actual = epqrepor.read_rating_file(path)
+        # Check outputs.
+        self.assert_equal(str(actual), str(quality))
+
+    def test2(self) -> None:
+        """
+        Test a rating file with an old schema asks for a new rating.
+        """
+        # Prepare inputs.
+        path = os.path.join(self.get_scratch_space(), "p.rating.json")
+        hio.to_file(path, '{"schema_version": 99}')
+        # Run test.
+        with self.assertRaises(AssertionError) as cm:
+            epqrepor.read_rating_file(path)
+        # Check outputs.
+        self.assertIn("--action rate", str(cm.exception))
+
+
+# #############################################################################
 # Test_write_references
 # #############################################################################
 
@@ -316,11 +353,32 @@ class Test_report_csv(hunitest.TestCase):
             "b3": epqteuti.make_paper_features(base_name="b3"),
             "b1": epqteuti.make_paper_features(base_name="b1"),
         }
+        ratings = {"b3": epqteuti.make_quality(), "b1": epqteuti.make_quality()}
         # Run test.
-        rows = epqrepor.build_report_rows([paper1, paper2, paper3], features)
+        rows = epqrepor.build_report_rows(
+            [paper1, paper2, paper3], features, ratings
+        )
         # Check outputs.
         actual = [row["base_name"] for row in rows]
         self.assertEqual(actual, ["b1", "b3"])
+
+    def test3(self) -> None:
+        """
+        Test a paper with a features file and no rating file is not a row.
+        """
+        # Prepare inputs.
+        paper1 = epqteuti.make_paper(base_name="b1")
+        paper2 = epqteuti.make_paper(base_name="b2")
+        features = {
+            "b1": epqteuti.make_paper_features(base_name="b1"),
+            "b2": epqteuti.make_paper_features(base_name="b2"),
+        }
+        ratings = {"b2": epqteuti.make_quality()}
+        # Run test.
+        rows = epqrepor.build_report_rows([paper1, paper2], features, ratings)
+        # Check outputs.
+        actual = [row["base_name"] for row in rows]
+        self.assertEqual(actual, ["b2"])
 
     def test2(self) -> None:
         """
@@ -332,7 +390,8 @@ class Test_report_csv(hunitest.TestCase):
             reference='2020, Cohen et al., "Lazy, Prices" (???)'
         )
         features = {paper.base_name: epqteuti.make_paper_features()}
-        rows = epqrepor.build_report_rows([paper], features)
+        ratings = {paper.base_name: epqteuti.make_quality()}
+        rows = epqrepor.build_report_rows([paper], features, ratings)
         # Prepare outputs.
         expected = """
         reference,paper_quality,performance,recency,asset_class,theoretical_domain,mechanism,page_length_score,affiliation_score,citations_score,base_name

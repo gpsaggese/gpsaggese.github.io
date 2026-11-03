@@ -1,38 +1,73 @@
+#!/usr/bin/env -S uv run
+
+# /// script
+# dependencies = ["pymupdf", "pyyaml", "pydantic", "tqdm", "openai", "requests"]
+# ///
+
 """
-Read the markdown of one paper and return its features with one LLM call.
+Extract the features of each downloaded paper with an LLM.
 
-The call returns:
-- The features Performance, Asset class, Theoretical domain, and Mechanism
-- The facts of the PRD requirement `R15`: every labeled Sharpe ratio, annual
-  return, volatility, max drawdown, sample period, universe, and data needs
-- The affiliations of the authors, for the rating of `epq_rater`
-- A quote and a location for each value
+The input is the papers CSV that `resolve_papers.py` writes, and the markdown and
+PDF files that `download_papers.py` writes in `--output_dir`. The script calls
+the LLM once per paper, and checks every quote of the answer against the text of
+the PDF.
 
-Each quote is checked against the text of the PDF, which also gives its page.
-The LLM function is injected, so this module does not import `helpers.hllm`.
+The outputs live in `--output_dir`:
+- `papers/<BASE>.features.json` for each paper: the features, the facts, the
+  affiliations, the page count, and the cost of the call
+- `state/issues.extract.json`: the papers that failed, for `report_papers.py`
 
-The design is in `docs/02.5-design.extractor.md`.
+The script does not rate the paper: a change of the tier list or of the bands
+needs no new LLM call, see `report_papers.py`.
 
-Import as:
+A rerun does not pay again for the papers that have a features file.
 
-import research.Estimate_academic_paper_quality.epq_extractor as epqextra
+The next stage is `report_papers.py`.
+
+The design is in `research/Estimate_academic_paper_quality/docs/02-design.architecture.md`.
+
+# Usage Example
+
+- Extract the features of the downloaded papers:
+> extract_features.py --input papers.csv --output_dir out
+
+- Extract again the papers that have a features file, with another model:
+> extract_features.py --input papers.csv --output_dir out --force_extract --model gpt-5-mini
+
+- List the papers to extract, with no LLM call:
+> extract_features.py --input papers.csv --output_dir out --dry_run
+
+For a description of this file, see the file
+`research/Estimate_academic_paper_quality/extract_features.py.README.md`
 """
 
+import argparse
+import dataclasses
 import functools
 import hashlib
 import logging
+import os
 import re
 import unicodedata
 from typing import Any, Callable, List, Literal, Optional, Tuple
 
+import helpers.hdbg as hdbg
 import helpers.hgit as hgit
 import helpers.hio as hio
+import helpers.hllm_cost as hllmcost
+import helpers.hparser as hparser
 import helpers.hprint as hprint
 import pydantic
+import tqdm
 
+import research.Estimate_academic_paper_quality.epq_fetcher as epqfetch
+import research.Estimate_academic_paper_quality.epq_issues as epqissue
+import research.Estimate_academic_paper_quality.epq_paths as epqpaths
+import research.Estimate_academic_paper_quality.epq_report as epqrepor
 import research.Estimate_academic_paper_quality.epq_types as epqtypes
 
 _LOG = logging.getLogger(__name__)
+
 
 # #############################################################################
 # Constants
@@ -50,7 +85,15 @@ _REFERENCE_TITLES = ["references", "bibliography"]
 
 # Same signature as `hllm.get_structured_completion()` once `model` and
 # `cost_tracker` are bound.
-LlmFunc = Callable[..., Any]
+_LlmFunc = Callable[..., Any]
+
+# Names shown as the evidence of the year of a paper, by the source of the
+# record.
+_SOURCE_NAMES = {
+    "semantic_scholar": "Semantic Scholar",
+    "crossref": "Crossref",
+    "arxiv": "arXiv",
+}
 
 
 # #############################################################################
@@ -114,9 +157,9 @@ def _get_system_prompt() -> str:
     """
     Read the system prompt, which lives in its own file for review.
 
-    :return: text of `epq_extractor.prompt.md`
+    :return: text of `extract_features.prompt.md`
     """
-    path = hgit.find_file_in_git_tree("epq_extractor.prompt.md")
+    path = hgit.find_file_in_git_tree("extract_features.prompt.md")
     return hio.from_file(path)
 
 
@@ -278,11 +321,11 @@ def _to_facts(
     )
 
 
-def extract_features(
+def _extract_features(
     md_text: str,
     page_texts: List[str],
     *,
-    llm_func: LlmFunc,
+    llm_func: _LlmFunc,
     max_chars: int,
     model: str,
 ) -> epqtypes.ExtractionResult:
@@ -347,3 +390,253 @@ def extract_features(
         provenance=provenance,
     )
     return result
+
+
+# #############################################################################
+# Extract the papers
+# #############################################################################
+
+
+@dataclasses.dataclass(frozen=True)
+class _ExtractConfig:
+    """
+    Settings of one run of the extraction.
+    """
+
+    # Dir of all the outputs of the run.
+    output_dir: str
+    # LLM, "" for the default model of `helpers.hllm`.
+    model: str
+    force_extract: bool
+    # Max chars of markdown sent to the LLM (decision D13).
+    max_chars: int
+    dry_run: bool
+
+
+def _make_llm_func(
+    model: str,
+) -> Tuple[_LlmFunc, hllmcost.LLMCostTracker]:
+    """
+    Build the LLM function, with its cost tracker.
+
+    `helpers.hllm` is imported here because it pulls the LLM client libraries,
+    which the other modules do not need.
+
+    :param model: LLM, "" for the default model of `helpers.hllm`
+    :return: function with the model bound, and the tracker of its cost
+    """
+    import helpers.hllm as hllm
+
+    tracker = hllmcost.LLMCostTracker(model=model)
+    llm_func = functools.partial(
+        hllm.get_structured_completion,
+        model=model,
+        cost_tracker=tracker,
+    )
+    return llm_func, tracker
+
+
+def _extract_paper(
+    paper: epqtypes.Paper,
+    config: _ExtractConfig,
+    *,
+    llm_func: _LlmFunc,
+    cost_tracker: hllmcost.LLMCostTracker,
+) -> None:
+    """
+    Extract the features of one paper and write its features file.
+
+    :param paper: paper with a markdown file
+    :param config: settings of the run
+    :param llm_func: function that calls the LLM
+    :param cost_tracker: tracker of the cost of `llm_func`
+    """
+    md_path = epqpaths.get_markdown_path(config.output_dir, paper.base_name)
+    pdf_path = epqpaths.get_pdf_path(config.output_dir, paper.base_name)
+    md_text = epqfetch.read_markdown(md_path)
+    # Without the PDF the quotes stay unverified and the page count is unknown.
+    has_pdf = os.path.isfile(pdf_path)
+    page_texts = epqfetch.read_pdf_pages(pdf_path) if has_pdf else []
+    n_pages = epqfetch.count_pages(pdf_path) if has_pdf else None
+    # Extract the features with one LLM call.
+    cost_before = cost_tracker.get_current_cost()
+    extraction = _extract_features(
+        md_text,
+        page_texts,
+        llm_func=llm_func,
+        max_chars=config.max_chars,
+        model=config.model,
+    )
+    cost_usd = cost_tracker.get_current_cost() - cost_before
+    # The year comes from the record, with the name of its source as evidence.
+    year_text = str(paper.year) if paper.year else "unknown"
+    recency = epqtypes.FeatureValue(
+        value=year_text,
+        evidence=epqtypes.Evidence(
+            quote=year_text,
+            location=_SOURCE_NAMES.get(paper.source, paper.source),
+            verified=True,
+        ),
+    )
+    features = {
+        "performance": extraction.performance,
+        "recency": recency,
+        "asset_class": extraction.asset_class,
+        "theoretical_domain": extraction.theoretical_domain,
+        "mechanism": extraction.mechanism,
+    }
+    paper_features = epqtypes.PaperFeatures(
+        base_name=paper.base_name,
+        features=features,
+        facts=extraction.facts,
+        affiliations=extraction.affiliations,
+        n_pages=n_pages,
+        provenance=dataclasses.replace(extraction.provenance, cost_usd=cost_usd),
+    )
+    epqrepor.write_features_file(
+        epqpaths.get_features_path(config.output_dir, paper.base_name),
+        paper_features,
+    )
+    _LOG.info("Extracted '%s': cost %.4f USD", paper.base_name, cost_usd)
+
+
+def _extract(
+    papers: List[epqtypes.Paper],
+    config: _ExtractConfig,
+    *,
+    llm_func: _LlmFunc,
+    cost_tracker: hllmcost.LLMCostTracker,
+) -> List[epqtypes.Issue]:
+    """
+    Extract the features of the converted papers that have none yet.
+
+    :param papers: papers from the papers CSV
+    :param config: settings of the run
+    :param llm_func: function that calls the LLM
+    :param cost_tracker: tracker of the cost of `llm_func`
+    :return: issues of the papers that failed
+    """
+    issues: List[epqtypes.Issue] = []
+    cost_start = cost_tracker.get_current_cost()
+    for paper in tqdm.tqdm(papers):
+        md_path = epqpaths.get_markdown_path(config.output_dir, paper.base_name)
+        features_path = epqpaths.get_features_path(
+            config.output_dir, paper.base_name
+        )
+        if not os.path.isfile(md_path):
+            # The download issue already says why.
+            continue
+        if os.path.isfile(features_path) and not config.force_extract:
+            _LOG.debug("Skip '%s': has a features file", paper.base_name)
+            continue
+        if config.dry_run:
+            _LOG.warning("[DRY_RUN] Would extract '%s'", paper.base_name)
+            continue
+        try:
+            _extract_paper(
+                paper, config, llm_func=llm_func, cost_tracker=cost_tracker
+            )
+        except Exception as e:  # noqa: BLE001
+            # Decision D21: an error of one paper must not stop the run.
+            _LOG.warning("Paper '%s' failed: %s", paper.base_name, e)
+            issues.append(
+                epqissue.make_paper_issue(
+                    paper,
+                    "extract",
+                    "extraction_failed",
+                    epqissue.get_last_line(str(e)),
+                )
+            )
+    if config.dry_run:
+        _LOG.warning("[DRY_RUN] Would write the issues of the stage `extract`")
+    else:
+        path = epqpaths.get_issues_path(config.output_dir, "extract")
+        epqrepor.write_issues(path, issues)
+    total_cost = cost_tracker.get_current_cost() - cost_start
+    _LOG.info(
+        "Extract: %s of %s papers failed, total LLM cost %.4f USD",
+        len(issues),
+        len(papers),
+        total_cost,
+    )
+    return issues
+
+
+def _parse() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=hparser.CustomHelpFormatter,
+    )
+    # The flag `--output_dir` follows decision D10: the output dir is required
+    # and the user decides where it lives.
+    parser.add_argument(
+        "-i",
+        "--input",
+        action="store",
+        required=True,
+        help="Papers CSV that `resolve_papers.py` wrote",
+    )
+    parser.add_argument(
+        "--output_dir",
+        action="store",
+        required=True,
+        help="Dir of all the outputs and of the state of the run",
+    )
+    parser.add_argument(
+        "--model",
+        action="store",
+        default="",
+        help="LLM to call; empty is the default of `helpers.hllm`",
+    )
+    hparser.add_bool_arg(
+        parser,
+        "force_extract",
+        default_value=False,
+        help_="Extract again the papers that have a features file",
+    )
+    parser.add_argument(
+        "--max_chars",
+        action="store",
+        type=int,
+        default=300000,
+        help="Cap on the characters of markdown sent to the LLM",
+    )
+    parser.add_argument(
+        "--dry_run",
+        action="store_true",
+        help="Show the papers to extract, with no LLM call and no output file",
+    )
+    hparser.add_verbosity_arg(parser)
+    return parser
+
+
+def _main(parser: argparse.ArgumentParser) -> None:
+    args = parser.parse_args()
+    hdbg.init_logger(verbosity=args.log_level, use_exec_path=True)
+    # Check the boundary of the system.
+    papers_file = os.path.abspath(os.path.expanduser(args.input))
+    output_dir = os.path.abspath(os.path.expanduser(args.output_dir))
+    hdbg.dassert_file_exists(
+        papers_file, "Run resolve_papers.py to make the papers CSV"
+    )
+    hdbg.dassert_dir_exists(
+        epqpaths.get_papers_dir(output_dir),
+        "Run download_papers.py to make the papers",
+    )
+    hdbg.dassert_lt(0, args.max_chars)
+    config = _ExtractConfig(
+        output_dir=output_dir,
+        model=args.model,
+        force_extract=args.force_extract,
+        max_chars=args.max_chars,
+        dry_run=args.dry_run,
+    )
+    # Extract the features of the papers.
+    papers = epqrepor.read_papers_csv(papers_file)
+    llm_func, cost_tracker = _make_llm_func(config.model)
+    _extract(papers, config, llm_func=llm_func, cost_tracker=cost_tracker)
+    _LOG.info("Outputs are in '%s'", output_dir)
+
+
+if __name__ == "__main__":
+    _main(_parse())

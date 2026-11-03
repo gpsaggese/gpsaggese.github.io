@@ -36,7 +36,9 @@ _LOG = logging.getLogger(__name__)
 
 # Version of the layout of the JSON files. A file with another version is not
 # read: the user runs the stage again.
-_SCHEMA_VERSION = 1
+# - Version 2: the features file holds the affiliations and the page count, and
+#   the rating is in its own file.
+_SCHEMA_VERSION = 2
 
 # Columns of `report.csv`, in order.
 REPORT_COLUMNS = [
@@ -88,7 +90,7 @@ PAPERS_COLUMNS = [
 _LIST_SEP = "|"
 
 # Order of the stages in `issues.csv`.
-_STAGE_ORDER = ["resolve", "download", "extract"]
+_STAGE_ORDER = ["resolve", "download", "extract", "rate"]
 
 
 # #############################################################################
@@ -120,8 +122,9 @@ def _read_json(path: str) -> Dict[str, Any]:
     hdbg.dassert_eq(
         data.get("schema_version"),
         _SCHEMA_VERSION,
-        "File '%s' has an old schema: run the stage again with --force_extract "
-        "or delete the file",
+        "File '%s' has an old schema: run the stage again (`extract_features.py "
+        "--force_extract` for a features file, `report_papers.py --action rate` "
+        "for a rating file) or delete the file",
         path,
     )
     return data
@@ -209,6 +212,22 @@ def _facts_from_dict(data: Dict[str, Any]) -> epqtypes.ExtractedFacts:
     return facts
 
 
+def _affiliation_from_dict(data: Dict[str, Any]) -> epqtypes.Affiliation:
+    """
+    Build an `Affiliation` from its JSON dict.
+
+    :param data: dict of the affiliation
+    :return: affiliation
+    """
+    affiliation = epqtypes.Affiliation(
+        author=data["author"],
+        institution=data["institution"],
+        kind=data["kind"],
+        evidence=_evidence_from_dict(data["evidence"]),
+    )
+    return affiliation
+
+
 def _signal_from_dict(data: Dict[str, Any]) -> epqtypes.SignalScore:
     """
     Build a `SignalScore` from its JSON dict.
@@ -271,7 +290,7 @@ def write_issues(path: str, issues: List[epqtypes.Issue]) -> None:
     Write the issues of one stage.
 
     :param path: path of `state/issues.<stage>.json`
-    :param issues: issues of the stage `download` or `extract`
+    :param issues: issues of the stage `download`, `extract`, or `rate`
     """
     _write_json(path, {"issues": [dataclasses.asdict(i) for i in issues]})
 
@@ -298,7 +317,8 @@ def write_features_file(path: str, features: epqtypes.PaperFeatures) -> None:
     Write the features file of one paper.
 
     :param path: path of `papers/<BASE>.features.json`
-    :param features: features, facts, rating, and provenance of the paper
+    :param features: features, facts, affiliations, page count, and provenance
+        of the paper
     """
     _write_json(path, dataclasses.asdict(features))
 
@@ -308,7 +328,8 @@ def read_features_file(path: str) -> epqtypes.PaperFeatures:
     Read the features file of one paper.
 
     :param path: path of `papers/<BASE>.features.json`
-    :return: features, facts, rating, and provenance of the paper
+    :return: features, facts, affiliations, page count, and provenance of the
+        paper
     """
     data = _read_json(path)
     provenance = epqtypes.Provenance(**data["provenance"])
@@ -319,10 +340,40 @@ def read_features_file(path: str) -> epqtypes.PaperFeatures:
             for name, item in data["features"].items()
         },
         facts=_facts_from_dict(data["facts"]),
-        quality=_quality_from_dict(data["quality"]),
+        affiliations=tuple(
+            _affiliation_from_dict(item) for item in data["affiliations"]
+        ),
+        n_pages=data["n_pages"],
         provenance=provenance,
     )
     return features
+
+
+# #############################################################################
+# Rating file
+# #############################################################################
+
+
+def write_rating_file(path: str, quality: epqtypes.QualityRating) -> None:
+    """
+    Write the rating file of one paper.
+
+    :param path: path of `papers/<BASE>.rating.json`
+    :param quality: rating and the three signals behind it
+    """
+    _write_json(path, dataclasses.asdict(quality))
+
+
+def read_rating_file(path: str) -> epqtypes.QualityRating:
+    """
+    Read the rating file of one paper.
+
+    :param path: path of `papers/<BASE>.rating.json`
+    :return: rating and the three signals behind it
+    """
+    data = _read_json(path)
+    quality = _quality_from_dict(data)
+    return quality
 
 
 # #############################################################################
@@ -343,21 +394,25 @@ def _score_to_str(score: Optional[int]) -> str:
 def build_report_rows(
     papers: List[epqtypes.Paper],
     features: Dict[str, epqtypes.PaperFeatures],
+    ratings: Dict[str, epqtypes.QualityRating],
 ) -> List[Dict[str, str]]:
     """
-    Build the rows of `report.csv`, one per paper with a features file.
+    Build the rows of `report.csv`, one per paper with a features and a rating
+    file.
 
     :param papers: papers in reverse chronological order
     :param features: features of the papers, by base name
+    :param ratings: ratings of the papers, by base name
     :return: rows in the order of `papers`
     """
     rows = []
     for paper in papers:
-        if paper.base_name not in features:
-            # A paper with no features file is only in `issues.csv`.
+        if paper.base_name not in features or paper.base_name not in ratings:
+            # A paper with no features or no rating file is only in
+            # `issues.csv`.
             continue
         paper_features = features[paper.base_name]
-        quality = paper_features.quality
+        quality = ratings[paper.base_name]
         row = {
             "reference": paper.reference,
             "paper_quality": _score_to_str(quality.rating),

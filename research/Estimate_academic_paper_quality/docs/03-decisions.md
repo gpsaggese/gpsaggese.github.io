@@ -48,7 +48,7 @@
   needs a rule that a test can check; a prefix counts as `0.95`, so a partial title
   ([`R1`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r1-input-file-format))
   still matches; the author hints of
-  [`research/Estimate_academic_paper_quality/paper_list.md`](/research/Estimate_academic_paper_quality/paper_list.md)
+  [`research/Estimate_academic_paper_quality/paper_list.csv`](/research/Estimate_academic_paper_quality/paper_list.csv)
   split papers with the same title
 - **Alternatives**: take the top hit of Semantic Scholar (silent wrong matches); an
   LLM to pick the candidate
@@ -97,8 +97,9 @@
   lines, with a marker `-` or `*` and an indented continuation, into one entry,
   and numbers the entry with its first line
 - **Why**: **Fact**:
-  [`research/Estimate_academic_paper_quality/paper_list.md`](/research/Estimate_academic_paper_quality/paper_list.md)
-  is wrapped at 85 chars, so the authors in parentheses are on the line after
+  the former `research/Estimate_academic_paper_quality/paper_list.md` (now
+  [`paper_list.csv`](/research/Estimate_academic_paper_quality/paper_list.csv))
+  was wrapped at 85 chars, so the authors in parentheses are on the line after
   the title; parsed line by line, the authors are a `title` line that matches no
   paper, and
   [`R1`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r1-input-file-format)
@@ -111,8 +112,10 @@
 ### `D26` (The Resolver Is a Separate Executable That Reads and Writes CSV)
 
 - **Decision**: `resolve_papers.py` reads an input CSV with a column `input` and
-  writes a papers CSV and an issues CSV; `estimate_paper_quality.py` has no `resolve`
-  stage, and reads the papers CSV with `--input` and the issues CSV with
+  writes a papers CSV and an issues CSV; the pipeline script of that time
+  (`estimate_paper_quality.py`, replaced by the scripts of
+  [`D27`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d27-the-pipeline-is-split-into-one-executable-per-stage))
+  has no `resolve` stage, and reads the papers CSV with `--input` and the issues CSV with
   `--resolve_issues`
 - **Why**: a person can open, sort, and fix the papers CSV before the costly stages
   (download, LLM); the resolver can run alone on a new list; a CSV needs no state
@@ -359,3 +362,100 @@
 - **Alternatives**: make the clients of the tool public and extend them (a bigger
   change to a tool with other users)
 - **Status**: proposed
+
+### `D27` (The Pipeline Is Split Into One Executable Per Stage)
+
+- **Decision**: replace the script `estimate_paper_quality.py` and the module
+  `epq_pipeline.py` with one executable per stage, linked only by files on disk
+  - `resolve_papers.py`: the input CSV to the papers CSV
+  - `download_papers.py`: the PDF and the markdown of each paper
+  - `extract_features.py`: the features file of each paper, with one LLM call
+  - `report_papers.py`: the actions `rate` and `report`, selected with
+    `hselect_action`
+  - `estimate_paper_quality.sh`: runs the four executables in order
+  - Move the rating out of the extraction: `extract_features.py` writes the
+    affiliations and the page count in the features file, and the action `rate` reads
+    them and writes `papers/<BASE>.rating.json`
+- **Why**: the rule `## Split a Pipeline Into Executables` in
+  [`.claude/skills/architecture.rules.md`](/.claude/skills/architecture.rules.md)
+  asks for one executable per stage when the stages differ
+  - Dependencies: `download` needs `pymupdf`, Docker, and Chrome, `extract` needs the
+    LLM client, `rate` and `report` need only HTTP and YAML
+  - Runtimes: `download` and `extract` take minutes to hours, `rate` and `report` take
+    seconds
+  - Schedules: a paper is downloaded and extracted once, the citation counts grow, so
+    `rate` runs again every month, and `report` runs whenever the user wants
+  - The rating is pure code and costs no LLM call, but it was inside `extract`: a new
+    tier list or new bands needed `--force_extract`, which pays the LLM again
+  - `rate` and `report` are one executable because both are cheap and share their
+    dependencies; the files between the two actions let `rate` run alone
+- **Alternatives**: keep one script with the actions `download`, `extract`, `report` (it
+  mixes stages with different dependencies and schedules); five executables, with
+  `rate_papers.py` apart from `report_papers.py` (one more entry point for a stage of
+  seconds with the dependencies of `report`); a Python script that calls the stages
+  (the `Bad` example of the rule, since the stages would share the process)
+- **Consequences**:
+  - `epq_pipeline.py` and `PipelineConfig` are gone: each script holds the loop of its
+    stage and the checks at the boundary, and the catch of
+    [`D21`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d21-the-loop-of-each-stage-catches-errors-per-paper)
+    stays in each loop
+  - `epq_paths.py` names the shared files and `epq_issues.py` builds the issue of a
+    failed paper: both are leaf modules
+  - The schema of the JSON files is version 2: the features file has `affiliations`
+    and `n_pages` and has no `quality`; an old file fails to read with a message that
+    names the stage to run again
+  - New issue stage `rate`, with the statuses `rating_failed` and `rating_missing`, in
+    `state/issues.rate.json`
+  - The citation lookup moves from `extract` to `rate`: `--force_extract` does not
+    refresh the citations anymore, `--refresh_citations` does, and `extract_features.py`
+    needs no `BibSources`
+  - `report.csv` has a row only for a paper with a features file and a rating file
+    ([`D19`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d19-reportcsv-has-a-row-only-for-a-paper-with-a-features-file))
+  - Every script has `--dry_run`; a dry run writes no file, so the next stage has no
+    input and the shell script has no dry run
+  - A test of the import graph fails on a script that imports another script
+  - Extends
+    [`D26`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d26-the-resolver-is-a-separate-executable-that-reads-and-writes-csv),
+    which separated the resolver only
+- **Status**: accepted
+
+### `D28` (A Module With One Caller Lives in That Script)
+
+- **Decision**: inline the three modules that only one script imports, and move their
+  tests into the tests of that script
+  - `epq_resolver.py` into `resolve_papers.py`
+  - `epq_extractor.py` into `extract_features.py`, and `epq_extractor.prompt.md`
+    becomes `extract_features.prompt.md`
+  - `epq_rater.py` into `report_papers.py`
+  - Keep as modules the code that two or more files import: `epq_types`,
+    `epq_bib_sources`, `epq_fetcher`, `epq_report`, `epq_issues`, and `epq_paths`
+  - The functions become private (`_` prefix), since only their script calls them
+- **Why**: after
+  [`D27`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d27-the-pipeline-is-split-into-one-executable-per-stage)
+  each of the three modules had exactly one caller
+  - A module with one caller shares nothing: it adds a file, an import alias, a
+    layer in the import graph, and a doc, and a reader must open two files to follow
+    one stage
+  - The modules were inside the layer `Business logic` only to be below the
+    scripts; the import graph keeps the other layers
+- **Alternatives**: keep the modules, so that the pure logic (the rater has no I/O)
+  is apart from the loop of the stage; this keeps the files above for no sharing. If a
+  second file needs the code of one of the three, split that code out again
+- **Consequences**:
+  - `resolve_papers.py` has about 1,000 lines, `report_papers.py` about 800, and
+    `extract_features.py` about 640
+  - `rate_paper()` is `_compute_rating()`, since `report_papers.py` already has
+    `_rate_paper()`, which writes the rating file of one paper
+  - `extract_features()` is `_extract_features()`, and `LlmFunc` is `_LlmFunc`
+  - `resolve_papers.py` imports `epq_fetcher`, and the test of the import graph
+    allows it
+  - `_resolve_lines()` has no caller in the script, since `_resolve()` loops on
+    `_resolve_line()` with the catch of
+    [`D21`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d21-the-loop-of-each-stage-catches-errors-per-paper):
+    only the tests call it
+  - The components `resolver`, `extractor`, and `rater` of the design docs are
+    sections of their script, not files
+  - Extends
+    [`D22`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d22-flat-modules-with-the-epq_-prefix) and
+    [`D27`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d27-the-pipeline-is-split-into-one-executable-per-stage)
+- **Status**: accepted

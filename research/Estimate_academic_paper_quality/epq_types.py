@@ -567,10 +567,14 @@ class PaperFeatures:
             "mechanism": FeatureValue(value="unknown", evidence=None),
         },
         facts=ExtractedFacts(...),
-        quality=QualityRating(...),
+        affiliations=(Affiliation(...), ...),
+        n_pages=41,
         provenance=Provenance(...),
     )
     ```
+
+    The rating is not here: `report_papers.py` rates a paper from this file, so
+    that a change of the tier list or of the bands needs no new LLM call.
     """
 
     base_name: str
@@ -578,5 +582,8 @@ class PaperFeatures:
     # `mechanism`.
     features: Dict[str, FeatureValue]
     facts: ExtractedFacts
-    quality: QualityRating
+    # One per author, as the input of the rating.
+    affiliations: Tuple[Affiliation, ...]
+    # Pages of the PDF, `None` when the PDF is missing or cannot be read.
+    n_pages: Optional[int]
     provenance: Provenance
