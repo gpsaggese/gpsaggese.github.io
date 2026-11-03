@@ -14,6 +14,11 @@
 
 ## Ready for Review
 
+- 2026-11-03: `website/docs/blog/posts/pidev_vs_claude_code_comparison.md`
+  - Prepared for publication (`draft: false`); GP final review and deployment
+    are pending. Follow-up to merged PR #741; tracked in issue #814.
+  - After deployment, verify the canonical URL and RSS entry, record approved
+    distribution links, and review reach after 7 and 30 days.
 - 2026-10-31: `website/docs/blog/posts/in_60_mins.GluonTS.md`
   - Prepared for publication (`draft: false`); GP approval and deployment are
     pending.
@@ -21,7 +26,7 @@
     added. Other coauthor profile details await GP.
 - 2026-10-19: `website/docs/blog/posts/in_5_mins.helpers_render_images.md`
 
-Total: 2 posts ready for review
+Total: 3 posts ready for review
 
 ## To Update
 - [ ] Update in_10_mins.helpers_open_md.md with
@@ -176,7 +181,6 @@ python.invoke.txt
 
 | File | Words | Ready % | Comment |
 |------|-------|---------|---------|
-| `website/docs/blog/posts/draft.pidev_vs_claude_code_comparison.md` | 1930 | 90% | Nearly publish-ready |
 | `website/docs/blog/posts/draft.how_to.Automate_Coding_with_LLM.md` | 1746 | 90% | Needs final polish |
 | `website/docs/blog/posts/draft.Intro_to_Bayesian_Optimization.md` | 1553 | 90% | Nearly publish-ready |
 | `website/docs/blog/posts/draft.in_15_mins.FastAPI_and_Uvicorn.md` | 1499 | 90% | Nearly complete |
@@ -232,7 +236,7 @@ python.invoke.txt
 | `website/docs/blog/posts/draft.how_to.Use_tiny_docker_template.md` | 20 | 5% | Barely started, needs everything |
 | `website/docs/blog/posts/draft.how_to.Claude_Code_and_tmux.md` | 19 | 5% | Just a raw link |
 
-Total: 55 draft blogs
+Total: 54 draft blogs
 
 # Publishing Checklist
 
