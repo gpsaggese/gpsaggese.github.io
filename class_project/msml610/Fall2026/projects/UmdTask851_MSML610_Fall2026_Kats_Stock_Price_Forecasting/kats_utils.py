@@ -116,7 +116,8 @@ def to_business_day_series(
     The market is closed on holidays, so the raw file skips some business days.
     ARIMA needs a regular grid, so every missing business day gets the last
     close carried forward (the price did not change while the market was
-    closed).
+    closed). Observations dated on a weekend are dropped, since the grid only
+    holds business days.
 
     :param df: prices with a `Date` column, as returned by `load_prices()`
     :param column: price column to use
@@ -351,6 +352,10 @@ def forecast_arima(
     """
     Fit a Kats `ARIMAModel` and forecast the next `horizon` business days.
 
+    The point forecast comes from Kats. The prediction interval is recomputed
+    from the fitted statsmodels results because Kats ignores its `alpha`
+    argument and always returns a 95% interval.
+
     :param train: training series on a business-day grid
     :param horizon: number of days to forecast
     :param order: ARIMA order `(p, d, q)`
@@ -363,10 +368,15 @@ def forecast_arima(
     with _quiet_model_logs():
         model = ARIMAModel(ts, ARIMAParams(p=p, d=d, q=q))
         model.fit()
-        # Kats takes the tail probability, i.e., 0.05 for a 95% interval.
-        forecast = model.predict(
-            steps=horizon, freq=BUSINESS_DAY, alpha=1 - interval_level
-        )
+        forecast = model.predict(steps=horizon, freq=BUSINESS_DAY)
+    # `ARIMAModel.predict()` accepts `alpha` but never uses it: the interval it
+    # returns is always 95%. Rebuild the bounds from the fitted statsmodels
+    # results (`model.model`) so that `interval_level` is respected.
+    bounds = model.model.get_forecast(horizon, signal_only=False).summary_frame(
+        alpha=1 - interval_level
+    )
+    forecast["fcst_lower"] = bounds["mean_ci_lower"].to_numpy()
+    forecast["fcst_upper"] = bounds["mean_ci_upper"].to_numpy()
     return _check_forecast(forecast, train, horizon)
 
 

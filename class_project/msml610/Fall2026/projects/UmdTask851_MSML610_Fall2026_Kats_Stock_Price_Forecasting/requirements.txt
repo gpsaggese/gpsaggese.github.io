@@ -23,3 +23,5 @@ lightgbm
 numba
 python-dateutil
 typing-extensions
+# Development: unit tests.
+pytest==9.1.1
