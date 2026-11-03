@@ -29,17 +29,17 @@
 - **Alternatives**: one dataset per frequency, as in Exercise 1
 - **Status**: accepted (step 1)
 
-### D-7. Download 5-minute bars from the Binance monthly files
+### `D7` (Download 5-minute bars from the Binance monthly files)
 
 - **Decision**: use the monthly zip files on `data.binance.vision` and check
   each one against its published SHA-256 checksum
 - **Why**: the API returns 1000 bars per request at about 1.4 s each, so
   5-minute data takes about 15 minutes per coin. The monthly files take about
   1 minute
-- **Alternatives**: the API from D-1, which is still used for 1h and 1d
+- **Alternatives**: the API from `D1`, which is still used for 1h and 1d
 - **Status**: accepted
 
-### D-8. Do not fill long gaps; split the data into segments
+### `D8` (Do not fill long gaps; split the data into segments)
 
 - **Decision**: fill gaps of up to 3 bars with the last close, leave longer
   gaps empty, and start a new segment after each one. Features and labels are
@@ -50,15 +50,15 @@
   by n rows is no longer n bars)
 - **Status**: accepted
 
-### D-9. Flag extreme returns, do not drop them
+### `D9` (Flag extreme returns, do not drop them)
 
 - **Decision**: flag |r| > 10 times the past day's std, keep the bar
 - **Why**: all the flagged bars checked are real market events, and fat tails
-  are part of what we study (see D-6)
+  are part of what we study (see `D6`)
 - **Alternatives**: drop or winsorize them
 - **Status**: accepted
 
-### D-10. Use Yahoo Finance for SPY
+### `D10` (Use Yahoo Finance for SPY)
 
 - **Decision**: SPY prices from Yahoo Finance, adjusted for dividends and
   splits
@@ -95,7 +95,7 @@
 - **Alternatives**: the spec formula with N
 - **Status**: proposed. Also matches the simulation for SPY
 
-### D-11. Evaluate on non-overlapping decision times
+### `D11` (Evaluate on non-overlapping decision times)
 
 - **Decision**: for a horizon h, keep one decision time every h
 - **Why**: with 5-minute bars, the 1h forward returns of consecutive bars
@@ -106,7 +106,7 @@
 
 ## Models
 
-### D-12. Walk forward by year, with purging
+### `D12` (Walk forward by year, with purging)
 
 - **Decision**: for each test year from 2022, fit on all data before it and
   leave out the last horizon before the test year
@@ -115,7 +115,7 @@
 - **Alternatives**: one train/test split; purged k-fold cross-validation
 - **Status**: accepted
 
-### D-13. Assume a 10 bp cost per round trip
+### `D13` (Assume a 10 bp cost per round trip)
 
 - **Decision**: subtract 10 bp from each trade's return
 - **Why**: in the range of Binance spot fees for a round trip, and the value
@@ -124,7 +124,7 @@
   costs, which is also in the results)
 - **Status**: proposed
 
-### D-14. Judge models by the weighted hit rate and PnL
+### `D14` (Judge models by the weighted hit rate and PnL)
 
 - **Decision**: report the share of |r| traded in the right direction next to
   the plain hit rate
