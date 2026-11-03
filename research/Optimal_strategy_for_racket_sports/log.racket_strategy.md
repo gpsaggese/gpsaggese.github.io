@@ -28,6 +28,24 @@
   `plan.racket_strategy.md`
 - Manual widget checks of the Milestone 1 notebook, noted as in progress in #654
 
+## 2026-11-01: PRs #804, #809, and #812 Merged
+
+- [PR #804](https://github.com/gpsaggese/gpsaggese.github.io/pull/804), merged
+  2026-10-31: red to green heatmaps
+  ([#788](https://github.com/gpsaggese/gpsaggese.github.io/issues/788))
+- [PR #809](https://github.com/gpsaggese/gpsaggese.github.io/pull/809), merged
+  2026-10-31: docs cleanup, notebook names, and plan phases
+  ([#691](https://github.com/gpsaggese/gpsaggese.github.io/issues/691) and
+  [#787](https://github.com/gpsaggese/gpsaggese.github.io/issues/787)), see the
+  2026-10-30 entry
+- [PR #812](https://github.com/gpsaggese/gpsaggese.github.io/pull/812), merged
+  2026-11-01: notebook 05, variable sensitivity
+  ([#789](https://github.com/gpsaggese/gpsaggese.github.io/issues/789), with the
+  [#694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694) corner
+  sims), see the 2026-10-29 and 2026-10-27 entries
+- All 3 PRs are by Aahan Rembersu; the plan marks #691, #787, #788, and #789 as
+  done
+
 ## 2026-10-30: Docs Cleanup, Notebook Names, and Plan Phases
 
 - **Issues**: [#691](https://github.com/gpsaggese/gpsaggese.github.io/issues/691)
