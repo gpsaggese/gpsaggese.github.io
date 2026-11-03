@@ -1,6 +1,17 @@
+
 ipywidgets
 matplotlib
 numpy
 pandas
 seaborn
 tqdm
+
+# Machine learning
+scikit-learn
+scipy
+
+# UCI dataset
+ucimlrepo
+
+# Semantic Kernel
+semantic-kernel
