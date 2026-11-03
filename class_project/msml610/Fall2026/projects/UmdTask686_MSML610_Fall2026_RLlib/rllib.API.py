@@ -281,7 +281,6 @@ from ray.rllib.algorithms.algorithm import Algorithm
 ckpt_dir = os.path.join(tempfile.mkdtemp(), "ppo_cartpole")
 ppo.save_to_path(ckpt_dir)
 ppo.stop()
-# Restore the algorithm, which waits for free CPUs if the original still runs.
 restored = Algorithm.from_checkpoint(ckpt_dir)
 print("restored iteration:", restored.iteration)
 restored.stop()

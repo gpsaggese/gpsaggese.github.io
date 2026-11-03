@@ -165,7 +165,6 @@ class ExecutionEnv(gym.Env):
         :param shares: shares to sell, clipped to the remaining inventory
         :return: observation, reward, terminated, truncated, info
         """
-        # Use lazy formatting since this runs at every step of training.
         _LOG.debug("t=%s shares=%s inventory=%s", self.t, shares, self.inventory)
         # Never sell more than the remaining inventory.
         shares = float(np.clip(shares, 0.0, self.inventory))
@@ -209,7 +208,6 @@ class ExecutionEnv(gym.Env):
 
         :return: [time left, inventory left, log(S_t / s0) / daily_vol]
         """
-        # Use lazy formatting since this runs at every step of training.
         _LOG.debug(
             "t=%s inventory=%s price=%s", self.t, self.inventory, self.price
         )
