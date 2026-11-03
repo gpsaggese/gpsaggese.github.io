@@ -21,6 +21,10 @@ tutorials/gymnasium/gymnasium.03.API.Spaces.py
 tutorials/gymnasium/gymnasium.04.API.Wrappers.py
 tutorials/gymnasium/gymnasium.05.API.Vector.py
 
+# [x] Create the example notebook
+
+  - [x] `gymnasium.example.ipynb`: custom env, `check_env()`, `PPO` vs random
+
 # [ ] After `print_obj_info()` handles installed packages
 
   - [ ] Remove `_BLOCKED_BY_HELPERS` from `test/test_docker_gymnasium.py`
