@@ -283,7 +283,7 @@ Rel(report, out, "JSON, CSV, markdown")
   gives the citation count, `rater` rates the paper, and `report` writes
   `<output_dir>/papers/<BASE>.rating.json`
 - `report_papers.py`, stage `report`: `report` writes `04-report.references.md`,
-  `04-report.report.csv`, and `04-report.issues.csv` from the issues files, the
+  `04-report.report.csv`, and `04-report.issues.json` from the issues files, the
   features files, and the rating files
 - Rerun with 5 new rows: `resolve_papers.py` hits the HTTP cache for the 22 old rows,
   `download_papers.py` and `extract_features.py` skip the 20 old papers, so only the
@@ -314,7 +314,7 @@ Rel(report, out, "JSON, CSV, markdown")
 | [`R16`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r16-paper-quality-rating)          | `rater`, `bib_sources`, `fetcher` | Page count, affiliation tier, Semantic Scholar citations       |
 | [`R17`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r17-rerun-skips-extraction)        | `pipeline`, `report`              | Skip when the features file exists, unless `--force_extract`   |
 | [`R18`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r18-report-csv)                    | `report`                          | `report.csv`, one row per paper with a features file           |
-| [`R19`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r19-issues-csv)                    | `report`                          | `issues.csv` from the issues of every stage                    |
+| [`R19`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r19-issues-file)                    | `report`                          | `issues.json` from the issues of every stage                   |
 | [`R20`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r20-features-file)                 | `report`                          | `<BASE>.features.json` next to the PDF, `<BASE>.rating.json`   |
 
 ## Configuration, Interfaces, and Known Limits
@@ -341,7 +341,7 @@ Rel(report, out, "JSON, CSV, markdown")
       04-rate.issues.json          issues of rate
       04-rate.summary.txt          counts and files of rate
       04-report.report.csv         R18
-      04-report.issues.csv         R19
+      04-report.issues.json        R19
       04-report.references.md      R2, R7
       04-report.summary.txt        counts and files of report
       papers/

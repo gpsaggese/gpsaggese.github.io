@@ -1,4 +1,7 @@
 - For the code in research/Estimate_academic_paper_quality/
+  - implement the requested task
+  - update / add unit tests
+  - update the documentation in research/Estimate_academic_paper_quality/doc
 
 # Task 1
 - [x] Task 1: Separate the code to perform the resolution into a single executable
@@ -27,7 +30,7 @@
 - [x] Use llm_cli
 
 # Task 4
-- [ ] For each stage, improve output by writing:
+- [x] For each stage, improve output by writing:
   - What output files were generated
   - Where is the file with the issues generated
   - How many papers were processed
@@ -39,9 +42,19 @@
 stage
 
 # Task 6
-- [ ] What is semanticscholar
+- [x] What is semanticscholar
 
 # Task 7
 - Populate /Users/saggese/src/umd_classes1/research/Estimate_academic_paper_quality/affiliation_tiers.yaml
+
+# Task 8
+- [x] Convert /Users/saggese/papers/run_2026_10/04-report.issues.csv in a json like for
+  the other stages
+
+> ls /Users/saggese/papers/run_2026_10/*issues*
+/Users/saggese/papers/run_2026_10/01-resolve.issues.json  /Users/saggese/papers/run_2026_10/03-extract.issues.json  /Users/saggese/papers/run_2026_10/04-report.issues.csv
+/Users/saggese/papers/run_2026_10/02-download.issues.json /Users/saggese/papers/run_2026_10/04-rate.issues.json
+
+# Task 0
 
 - [ ] Too many data structures

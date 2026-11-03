@@ -166,8 +166,20 @@ class Test_end_to_end(hunitest.TestCase):
         "2020, Cohen et al., ""Lazy Prices"" (https://arxiv.org/pdf/2001.00001)",3,Sharpe 1.4,2020,US equities,unknown,associational,1,3,4,2020.Cohen_et_al.Lazy_Prices
         """
         expected_issues = """
-        line_no,input,base_name,stage,status,reason,candidates
-        2,Unknown Title,,resolve,unresolved,no source has a paper titled 'Unknown Title',
+        {
+          "schema_version": 2,
+          "issues": [
+            {
+              "line_no": 2,
+              "input": "Unknown Title",
+              "base_name": "",
+              "stage": "resolve",
+              "status": "unresolved",
+              "reason": "no source has a paper titled 'Unknown Title'",
+              "candidates": []
+            }
+          ]
+        }
         """
         # Run test: the first run.
         result, download_issues, extract_issues, rate_issues = _run_stages()
@@ -189,7 +201,7 @@ class Test_end_to_end(hunitest.TestCase):
             "03-extract.summary.txt",
             "04-rate.issues.json",
             "04-rate.summary.txt",
-            "04-report.issues.csv",
+            "04-report.issues.json",
             "04-report.references.md",
             "04-report.report.csv",
             "04-report.summary.txt",
@@ -205,9 +217,7 @@ class Test_end_to_end(hunitest.TestCase):
             dedent=True,
         )
         self.assert_equal(
-            hio.from_file(epqpaths.get_all_issues_path(output_dir)).replace(
-                "\r\n", "\n"
-            ),
+            hio.from_file(epqpaths.get_all_issues_path(output_dir)),
             expected_issues,
             dedent=True,
         )

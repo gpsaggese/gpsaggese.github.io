@@ -174,10 +174,10 @@
   - The value of each feature
   - The score of each signal of the Paper quality rating
 
-### `R19` (Issues CSV)
+### `R19` (Issues File)
 
 - The pipeline lists the unresolved papers and the failed papers, with the reason, in
-  a CSV apart from the report of [`R18`](#r18-report-csv)
+  a JSON file apart from the report of [`R18`](#r18-report-csv)
 
 ### `R20` (Features File)
 

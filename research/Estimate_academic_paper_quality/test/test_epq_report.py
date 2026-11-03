@@ -241,13 +241,13 @@ class Test_papers_json(hunitest.TestCase):
 
 
 # #############################################################################
-# Test_read_issues_csv
+# Test_all_issues_json
 # #############################################################################
 
 
-class Test_read_issues_csv(hunitest.TestCase):
+class Test_all_issues_json(hunitest.TestCase):
     """
-    Test `epq_report.read_issues_csv()`.
+    Test `write_all_issues()` and `read_issues()`.
     """
 
     def test1(self) -> None:
@@ -255,7 +255,7 @@ class Test_read_issues_csv(hunitest.TestCase):
         Test issues with and without candidates are read back equal.
         """
         # Prepare inputs.
-        path = os.path.join(self.get_scratch_space(), "issues.csv")
+        path = os.path.join(self.get_scratch_space(), "issues.json")
         issues = [
             epqtypes.Issue(
                 line_no=1,
@@ -268,9 +268,9 @@ class Test_read_issues_csv(hunitest.TestCase):
             ),
             _make_issue(line_no=5, stage="resolve", status="unresolved"),
         ]
-        epqrepor.write_issues_csv(path, issues)
+        epqrepor.write_all_issues(path, issues)
         # Run test.
-        actual = epqrepor.read_issues_csv(path)
+        actual = epqrepor.read_issues(path)
         # Check outputs.
         self.assert_equal(str(actual), str(issues))
 
@@ -456,21 +456,21 @@ class Test_report_csv(hunitest.TestCase):
 
 
 # #############################################################################
-# Test_write_issues_csv
+# Test_write_all_issues
 # #############################################################################
 
 
-class Test_write_issues_csv(hunitest.TestCase):
+class Test_write_all_issues(hunitest.TestCase):
     """
-    Test `epq_report.write_issues_csv()`.
+    Test `epq_report.write_all_issues()`.
     """
 
     def test1(self) -> None:
         """
-        Test issues are sorted by stage then line, and candidates are joined.
+        Test issues are sorted by stage then line, and candidates are a list.
         """
         # Prepare inputs.
-        path = os.path.join(self.get_scratch_space(), "issues.csv")
+        path = os.path.join(self.get_scratch_space(), "issues.json")
         issues: List[epqtypes.Issue] = [
             _make_issue(line_no=2, stage="download", status="download_failed"),
             _make_issue(
@@ -492,13 +492,44 @@ class Test_write_issues_csv(hunitest.TestCase):
         )
         # Prepare outputs.
         expected = """
-        line_no,input,base_name,stage,status,reason,candidates
-        1,x,,resolve,ambiguous,r,c1|c2
-        5,"A title, with a comma",,resolve,unresolved,r,
-        2,x,,download,download_failed,r,
+        {
+          "schema_version": 2,
+          "issues": [
+            {
+              "line_no": 1,
+              "input": "x",
+              "base_name": "",
+              "stage": "resolve",
+              "status": "ambiguous",
+              "reason": "r",
+              "candidates": [
+                "c1",
+                "c2"
+              ]
+            },
+            {
+              "line_no": 5,
+              "input": "A title, with a comma",
+              "base_name": "",
+              "stage": "resolve",
+              "status": "unresolved",
+              "reason": "r",
+              "candidates": []
+            },
+            {
+              "line_no": 2,
+              "input": "x",
+              "base_name": "",
+              "stage": "download",
+              "status": "download_failed",
+              "reason": "r",
+              "candidates": []
+            }
+          ]
+        }
         """
         # Run test.
-        epqrepor.write_issues_csv(path, issues)
+        epqrepor.write_all_issues(path, issues)
         # Check outputs.
-        actual = hio.from_file(path).replace("\r\n", "\n")
+        actual = hio.from_file(path)
         self.assert_equal(actual, expected, dedent=True)

@@ -425,7 +425,7 @@
 - Requirements:
   [`R2`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r2-reference-format),
   [`R7`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r7-reverse-chronological-order),
-  [`R19`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r19-issues-csv)
+  [`R19`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r19-issues-file)
 - Decisions:
   [`D18`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d18-all-the-state-lives-in-the-output-dir),
   [`D20`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d20-the-normalized-list-also-goes-to-referencesmd)
@@ -674,7 +674,7 @@
   [`R2`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r2-reference-format),
   [`R5`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r5-unresolved-or-ambiguous-line),
   [`R7`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r7-reverse-chronological-order),
-  [`R19`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r19-issues-csv)
+  [`R19`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r19-issues-file)
 - Decisions:
   [`D10`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d10-the-user-gives-the-output-dir),
   [`D18`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d18-all-the-state-lives-in-the-output-dir),
@@ -740,7 +740,7 @@
   [`R8`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r8-pdf-and-markdown-files),
   [`R10`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r10-failed-download-or-conversion),
   [`R11`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r11-rerun-skips-converted-papers),
-  [`R19`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r19-issues-csv)
+  [`R19`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r19-issues-file)
 - Decisions:
   [`D21`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d21-the-loop-of-each-stage-catches-errors-per-paper)
 - Spec: not needed
@@ -852,7 +852,7 @@
   [`R16`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r16-paper-quality-rating),
   [`R17`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r17-rerun-skips-extraction),
   [`R18`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r18-report-csv),
-  [`R19`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r19-issues-csv)
+  [`R19`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r19-issues-file)
 - Decisions:
   [`D21`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d21-the-loop-of-each-stage-catches-errors-per-paper)
 - Spec: needed: the inputs of `rater`, the refresh of the citations, and the cost log
@@ -931,8 +931,8 @@
   and `01-resolve.issues.json`; the parser has `allow_abbrev=False`
 - Write the papers list and the issues of every stage as JSON:
   `epq_report.write_papers()` and `read_papers()` replace the functions of the papers
-  CSV; the CSV stays for the input list, `04-report.report.csv`, and
-  `04-report.issues.csv`
+  CSV; the CSV stays for the input list and `04-report.report.csv`, and
+  `04-report.issues.json` is JSON too
 - `--input` of `download_papers.py`, `extract_features.py`, and `report_papers.py`
   defaults to `01-resolve.paper_list.json` in `--output_dir`; remove `--resolve_issues`
   (the stage `report` reads `01-resolve.issues.json`)

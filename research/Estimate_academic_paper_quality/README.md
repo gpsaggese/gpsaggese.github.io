@@ -6,7 +6,7 @@
 - **Input**: a CSV with one paper per row, as a title, link, DOI, or local PDF
 - **Output**:
   - A papers file and an issues file from `resolve_papers.py`, both JSON
-  - `04-report.references.md`, `04-report.report.csv`, and `04-report.issues.csv`
+  - `04-report.references.md`, `04-report.report.csv`, and `04-report.issues.json`
   - The PDF, markdown, features file, and rating file of each paper
   - All in one output dir, see "Output Dir" below
 - **Users**: quant researchers, who sort the CSV to pick the next papers to replicate
@@ -22,53 +22,56 @@
 
 - Python and Markdown files, alphabetical by path.
 
-| File                                  | Description                                                                                              | Cluster      |
-| :------------------------------------ | -------------------------------------------------------------------------------------------------------- | ------------ |
-| `docs/01-prd.md`                      | Product requirements: inputs, features, outputs, non-goals, and success metrics                          | Requirements |
-| `docs/02-design.architecture.md`      | Overall design: components, import graph, data model, and requirements map                               | Design       |
-| `docs/02.1-design.pipeline.md`        | The four executables, the files between them, the per-paper error loop, and the skip of finished work    | Design       |
-| `docs/02.2-design.resolver.md`        | Line parsing, paper matching, dedup, reference building, and sorting                                     | Design       |
-| `docs/02.3-design.bib_sources.md`     | Clients of the lookup APIs (Semantic Scholar, Crossref, arXiv, Unpaywall)                                | Design       |
-| `docs/02.4-design.fetcher.md`         | Download and convert each paper with the download tool, skipping finished papers                         | Design       |
-| `docs/02.5-design.extractor.md`       | One LLM call per paper that returns features, facts, affiliations, and quotes                            | Design       |
-| `docs/02.6-design.rater.md`           | Paper quality rating from page length, affiliation, and citation count                                   | Design       |
-| `docs/02.7-design.report.md`          | Writers and readers of the output files: references, CSVs, and features files                            | Design       |
-| `docs/03-decisions.md`                | Log of each design decision, with its reason, alternatives, and status                                   | Decisions    |
-| `docs/04-plan.md`                     | Versions and PRs to build, in order, with the open questions of each component                           | Plans        |
-| `docs/07-progress.md`                 | What is done and learned: milestone status, findings, next tasks, and history                            | Plans        |
-| `download_papers.py`                  | CLI that downloads the PDF of each paper of a papers file and converts it to markdown                    | Entry point  |
-| `download_papers.py.README.md`        | Arguments, examples, outputs, and architecture of the download CLI                                       | Entry point  |
-| `epq_bib_sources.py`                  | Clients of Semantic Scholar, Crossref, arXiv, and Unpaywall, with a throttle                             | Lookup APIs  |
-| `epq_fetcher.py`                      | Run the download tool per paper, and read the PDF pages and the markdown                                 | Download     |
-| `epq_issues.py`                       | Build the issue of a paper that failed in a stage, and keep the reason of an error                       | Shared       |
-| `epq_paths.py`                        | Names and paths of the files of the output dir, with no project imports                                  | Shared       |
-| `epq_report.py`                       | Write and read the papers file, the issues, the CSVs, `references.md`, and the features and rating files | Report       |
-| `epq_summary.py`                      | Format and write the summary of a stage: counts, output files, and issues file                           | Shared       |
-| `epq_types.py`                        | Frozen dataclasses shared by the modules, with no logic and no project imports                           | Shared types |
-| `estimate_paper_quality.py`           | CLI that runs the four executables in order on one input CSV and one output dir, with stage selection    | Entry point  |
-| `estimate_paper_quality.py.README.md` | Arguments, examples, outputs, and architecture of the pipeline CLI                                       | Entry point  |
-| `extract_features.prompt.md`          | System prompt of the LLM that extracts the features of a paper                                           | Extract      |
-| `extract_features.py`                 | CLI that extracts the features of each downloaded paper with one LLM call and checks each quote          | Entry point  |
-| `extract_features.py.README.md`       | Arguments, examples, outputs, and architecture of the extraction CLI                                     | Entry point  |
-| `log.md`                              | Log of the steps that made the docs, and the original idea of the pipeline                               | Log          |
-| `paper_list.csv`                      | Input CSV of papers, one per row, with authors in parentheses                                            | Input        |
-| `README.md`                           | Summary, structure, files, executables, and architecture of this dir                                     | Overview     |
-| `report_papers.py`                    | CLI that rates the papers from three signals, then writes the report and the issues CSV                  | Entry point  |
-| `report_papers.py.README.md`          | Arguments, examples, outputs, and architecture of the rating and report CLI                              | Entry point  |
-| `resolve_papers.py`                   | CLI that parses and matches the rows of an input CSV, and writes a papers file and an issues file        | Entry point  |
-| `resolve_papers.py.README.md`         | Arguments, examples, outputs, and architecture of the resolver CLI                                       | Entry point  |
-| `test/epq_test_utils.py`              | Builders, a fake of the lookup APIs, a local HTTP server, and a stub tool                                | Tests        |
-| `test/test_download_papers.py`        | The download stage with a stub tool, and the command line of the download CLI                            | Tests        |
-| `test/test_epq_bib_sources.py`        | Lookup clients against a local HTTP server, with no internet                                             | Tests        |
-| `test/test_epq_end_to_end.py`         | The four executables in order on a local server, a stub tool, and a fake LLM                             | Tests        |
-| `test/test_epq_fetcher.py`            | PDF readers, the skip of fetched papers, and the fetch through a stub tool                               | Tests        |
-| `test/test_epq_import_graph.py`       | Each module imports only the layers that the design allows                                               | Tests        |
-| `test/test_epq_paths.py`              | The names of the files that each stage writes in the output dir                                          | Tests        |
-| `test/test_epq_report.py`             | Writers and readers of the issues, the features and rating files, and the CSVs                           | Tests        |
-| `test/test_epq_summary.py`            | Count of issues, text of the summary, and the summary file                                               | Tests        |
-| `test/test_extract_features.py`       | Quote location, text cut, extraction with a fake LLM, the extraction stage, and the command line         | Tests        |
-| `test/test_report_papers.py`          | Score tables vs the rules file, rating, the stages `rate` and `report`, and the command line             | Tests        |
-| `test/test_resolve_papers.py`         | Line parsing, title matching, paper building, merging, the resolve stage, and the command line           | Tests        |
+| File                                      | Description                                                                                                | Cluster      |
+| :---------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ------------ |
+| `affiliation_tiers.yaml.README.md`        | What the tier list contains, how to fill it from a QS export with the populate script, and how to check it | Entry point  |
+| `docs/01-prd.md`                          | Product requirements: inputs, features, outputs, non-goals, and success metrics                            | Requirements |
+| `docs/02-design.architecture.md`          | Overall design: components, import graph, data model, and requirements map                                 | Design       |
+| `docs/02.1-design.pipeline.md`            | The four executables, the files between them, the per-paper error loop, and the skip of finished work      | Design       |
+| `docs/02.2-design.resolver.md`            | Line parsing, paper matching, dedup, reference building, and sorting                                       | Design       |
+| `docs/02.3-design.bib_sources.md`         | Clients of the lookup APIs (Semantic Scholar, Crossref, arXiv, Unpaywall)                                  | Design       |
+| `docs/02.4-design.fetcher.md`             | Download and convert each paper with the download tool, skipping finished papers                           | Design       |
+| `docs/02.5-design.extractor.md`           | One LLM call per paper that returns features, facts, affiliations, and quotes                              | Design       |
+| `docs/02.6-design.rater.md`               | Paper quality rating from page length, affiliation, and citation count                                     | Design       |
+| `docs/02.7-design.report.md`              | Writers and readers of the output files: references, CSVs, and features files                              | Design       |
+| `docs/03-decisions.md`                    | Log of each design decision, with its reason, alternatives, and status                                     | Decisions    |
+| `docs/04-plan.md`                         | Versions and PRs to build, in order, with the open questions of each component                             | Plans        |
+| `docs/07-progress.md`                     | What is done and learned: milestone status, findings, next tasks, and history                              | Plans        |
+| `download_papers.py`                      | CLI that downloads the PDF of each paper of a papers file and converts it to markdown                      | Entry point  |
+| `download_papers.py.README.md`            | Arguments, examples, outputs, and architecture of the download CLI                                         | Entry point  |
+| `epq_bib_sources.py`                      | Clients of Semantic Scholar, Crossref, arXiv, and Unpaywall, with a throttle                               | Lookup APIs  |
+| `epq_fetcher.py`                          | Run the download tool per paper, and read the PDF pages and the markdown                                   | Download     |
+| `epq_issues.py`                           | Build the issue of a paper that failed in a stage, and keep the reason of an error                         | Shared       |
+| `epq_paths.py`                            | Names and paths of the files of the output dir, with no project imports                                    | Shared       |
+| `epq_report.py`                           | Write and read the papers file, the issues, the CSVs, `references.md`, and the features and rating files   | Report       |
+| `epq_summary.py`                          | Format and write the summary of a stage: counts, output files, and issues file                             | Shared       |
+| `epq_types.py`                            | Frozen dataclasses shared by the modules, with no logic and no project imports                             | Shared types |
+| `estimate_paper_quality.py`               | CLI that runs the four executables in order on one input CSV and one output dir, with stage selection      | Entry point  |
+| `estimate_paper_quality.py.README.md`     | Arguments, examples, outputs, and architecture of the pipeline CLI                                         | Entry point  |
+| `extract_features.prompt.md`              | System prompt of the LLM that extracts the features of a paper                                             | Extract      |
+| `extract_features.py`                     | CLI that extracts the features of each downloaded paper with one LLM call and checks each quote            | Entry point  |
+| `extract_features.py.README.md`           | Arguments, examples, outputs, and architecture of the extraction CLI                                       | Entry point  |
+| `log.md`                                  | Log of the steps that made the docs, and the original idea of the pipeline                                 | Log          |
+| `paper_list.csv`                          | Input CSV of papers, one per row, with authors in parentheses                                              | Input        |
+| `populate_affiliation_tiers.py`           | CLI that fills `affiliation_tiers.yaml` from a CSV exported from the QS World University Rankings          | Entry point  |
+| `README.md`                               | Summary, structure, files, executables, and architecture of this dir                                       | Overview     |
+| `report_papers.py`                        | CLI that rates the papers from three signals, then writes the report and the issues file                   | Entry point  |
+| `report_papers.py.README.md`              | Arguments, examples, outputs, and architecture of the rating and report CLI                                | Entry point  |
+| `resolve_papers.py`                       | CLI that parses and matches the rows of an input CSV, and writes a papers file and an issues file          | Entry point  |
+| `resolve_papers.py.README.md`             | Arguments, examples, outputs, and architecture of the resolver CLI                                         | Entry point  |
+| `test/epq_test_utils.py`                  | Builders, a fake of the lookup APIs, a local HTTP server, and a stub tool                                  | Tests        |
+| `test/test_download_papers.py`            | The download stage with a stub tool, and the command line of the download CLI                              | Tests        |
+| `test/test_epq_bib_sources.py`            | Lookup clients against a local HTTP server, with no internet                                               | Tests        |
+| `test/test_epq_end_to_end.py`             | The four executables in order on a local server, a stub tool, and a fake LLM                               | Tests        |
+| `test/test_epq_fetcher.py`                | PDF readers, the skip of fetched papers, and the fetch through a stub tool                                 | Tests        |
+| `test/test_epq_import_graph.py`           | Each module imports only the layers that the design allows                                                 | Tests        |
+| `test/test_epq_paths.py`                  | The names of the files that each stage writes in the output dir                                            | Tests        |
+| `test/test_epq_report.py`                 | Writers and readers of the issues, the features and rating files, and the CSVs                             | Tests        |
+| `test/test_epq_summary.py`                | Count of issues, text of the summary, and the summary file                                                 | Tests        |
+| `test/test_extract_features.py`           | Quote location, text cut, extraction with a fake LLM, the extraction stage, and the command line           | Tests        |
+| `test/test_populate_affiliation_tiers.py` | The QS rank parsing, the column search, the merge with hand entries, and the read by `report_papers.py`    | Tests        |
+| `test/test_report_papers.py`              | Score tables vs the rules file, rating, the stages `rate` and `report`, and the command line               | Tests        |
+| `test/test_resolve_papers.py`             | Line parsing, title matching, paper building, merging, the resolve stage, and the command line             | Tests        |
 
 ## Description of Executables
 
@@ -91,7 +94,7 @@
         `research/Estimate_academic_paper_quality/extract_features.py.README.md`.
   4. `research/Estimate_academic_paper_quality/report_papers.py`
       - Rates each paper, and writes `04-report.references.md`, `04-report.report.csv`,
-        and `04-report.issues.csv`
+        and `04-report.issues.json`
       - Its arguments, its output files, and its exit codes are in
         `research/Estimate_academic_paper_quality/report_papers.py.README.md`.
 
@@ -99,6 +102,11 @@
   runs the four executables in order, as subprocesses. Its arguments and its stage
   selection are in
   `research/Estimate_academic_paper_quality/estimate_paper_quality.py.README.md`.
+
+- The helper `research/Estimate_academic_paper_quality/populate_affiliation_tiers.py`
+  is not a stage. It fills `affiliation_tiers.yaml` from a CSV exported from the QS
+  site. What the YAML contains and how to fill it are in
+  `research/Estimate_academic_paper_quality/affiliation_tiers.yaml.README.md`.
 
 ## Output Dir
 
@@ -123,7 +131,7 @@
       04-rate.issues.json
       04-rate.summary.txt
       04-report.report.csv
-      04-report.issues.csv
+      04-report.issues.json
       04-report.references.md
       04-report.summary.txt
       papers/
@@ -147,7 +155,7 @@
   | `04-rate.issues.json`         | `report_papers.py`    | The papers that failed to rate                              |
   | `NN-<stage>.summary.txt`      | Each stage            | Counts of items, output files, and issues file of the run   |
   | `04-report.report.csv`        | `report_papers.py`    | One row per rated paper: the table to sort in a spreadsheet |
-  | `04-report.issues.csv`        | `report_papers.py`    | The issues of all the stages                                |
+  | `04-report.issues.json`        | `report_papers.py`    | The issues of all the stages                                |
   | `04-report.references.md`     | `report_papers.py`    | The references of all the resolved papers                   |
   | `papers/<BASE>.pdf`, `.md`    | `download_papers.py`  | The paper and its markdown                                  |
   | `papers/<BASE>.features.json` | `extract_features.py` | The features, facts, affiliations, and page count           |
@@ -159,12 +167,12 @@
   - The number gives the order of the pipeline, so a listing of the dir reads from
     the input to the report
     ([`D29`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d29-numbered-stage-files-in-the-output-dir))
-  - The files that a program reads are JSON, and the files that a person sorts are
+  - The files that a program reads are JSON, and the file that a person sorts is
     CSV ([`D31`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d31-json-for-the-intermediate-files))
   - The files of one paper are in `papers/` with no number, since their suffix says
     the stage
   - `state/` holds only the cache and the logs, which are not results of a stage
-  - In the docs, `report.csv`, `issues.csv`, and `references.md` are the short names
+  - In the docs, `report.csv`, `issues.json`, and `references.md` are the short names
     of the three `04-report.*` files
 - The names are in `research/Estimate_academic_paper_quality/epq_paths.py`, and the
   rules are in `.claude/skills/architecture.rules.md` (`ARCH3.6`, `ARCH3.7`,
@@ -257,7 +265,7 @@
 - Runs the stage `rate`: rates each paper from its page count, affiliations, and
   citation count, and writes `papers/<BASE>.rating.json`
 - Runs the stage `report`: writes `04-report.references.md`,
-  `04-report.report.csv`, and `04-report.issues.csv`
+  `04-report.report.csv`, and `04-report.issues.json`
 - Makes no LLM call, and reads the Semantic Scholar key from
   `SEMANTIC_SCHOLAR_API_KEY`
 
@@ -345,7 +353,7 @@ the examples above.
    and do not run step 1 again, since it writes that file again.
 
 3. Run all the stages. The stage `download` needs Docker, and the SSRN papers also
-   need Chrome. The issues of step 1 go to `04-report.issues.csv`.
+   need Chrome. The issues of step 1 go to `04-report.issues.json`.
    ```bash
    > research/Estimate_academic_paper_quality/estimate_paper_quality.py \
        --input research/Estimate_academic_paper_quality/paper_list.csv \
@@ -367,12 +375,19 @@ the examples above.
        --output_dir ~/papers/run_2026_10
    ```
 
-5. After a change of `affiliation_tiers.yaml` or of the score bands, rate again and
-   rewrite the reports. This makes no LLM call:
+5. Fill or refresh the affiliation tier list, or change the score bands, then rate
+   again and rewrite the reports. The tier list needs a CSV that you export from the
+   QS World University Rankings site. The rating makes no LLM call:
    ```bash
+   > research/Estimate_academic_paper_quality/populate_affiliation_tiers.py \
+       --qs_file ~/Downloads/qs_2026.csv \
+       --edition "QS World University Rankings 2026" \
+       --source "https://www.topuniversities.com/world-university-rankings"
    > research/Estimate_academic_paper_quality/report_papers.py \
        --output_dir ~/papers/run_2026_10
    ```
+   The aliases, the hand entries (industry labs, NBER), the traps, and the checks are
+   in `research/Estimate_academic_paper_quality/affiliation_tiers.yaml.README.md`.
 
 ## Description of Architecture
 
@@ -414,7 +429,10 @@ the examples above.
   - `research/Estimate_academic_paper_quality/extract_features.prompt.md`: the
     system prompt of the LLM
   - `research/Estimate_academic_paper_quality/affiliation_tiers.yaml`: the dated tier
-    list of the affiliation signal, empty until a person fills it
+    list of the affiliation signal, empty until a person fills it with
+    `research/Estimate_academic_paper_quality/populate_affiliation_tiers.py`, as
+    `research/Estimate_academic_paper_quality/affiliation_tiers.yaml.README.md`
+    explains
 - `docs/` is numbered in reading order: 01 requirements, 02 design, 03 decisions,
   04 plan, and 07 progress. A `06-spec.<PR_ID>.md` file is added before the work of a
   PR that needs a spec.

@@ -49,7 +49,7 @@ class Test_stage_files(hunitest.TestCase):
             "run/03-extract.issues.json",
             "run/04-rate.issues.json",
             "run/04-report.report.csv",
-            "run/04-report.issues.csv",
+            "run/04-report.issues.json",
             "run/04-report.references.md",
             "run/01-resolve.summary.txt",
             "run/02-download.summary.txt",

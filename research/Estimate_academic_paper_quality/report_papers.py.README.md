@@ -7,7 +7,7 @@
   `research/Estimate_academic_paper_quality/extract_features.py` writes
 - Output: `papers/<BASE>.rating.json` for each paper, and `04-rate.issues.json`,
   `04-rate.summary.txt`, `04-report.report.csv`, `04-report.references.md`,
-  `04-report.issues.csv`, and `04-report.summary.txt` in `--output_dir`
+  `04-report.issues.json`, and `04-report.summary.txt` in `--output_dir`
 - Run it last. It has two stages, `rate` and `report`. The stage `rate` is free: it
   makes no LLM call, so a new tier list or a fresh citation count needs only a rerun
   of this script
@@ -118,10 +118,11 @@
       each from 1 to 5, or `unknown`
     - `base_name`: the base name of the paper files, e.g.,
       `2020.Cohen_et_al.Lazy_Prices`
-  - `04-report.issues.csv`: one row per line or paper to fix, with the columns
-    `line_no`, `input`, `base_name`, `stage`, `status`, `reason`, and `candidates`.
-    The stages are `resolve`, `download`, `extract`, and `rate`: the rows come from
-    the files `NN-<stage>.issues.json`
+  - `04-report.issues.json`: one item of `issues` per line or paper to fix, with the
+    keys `line_no`, `input`, `base_name`, `stage`, `status`, `reason`, and
+    `candidates` (a list), in the layout of the files `NN-<stage>.issues.json`. The
+    stages are `resolve`, `download`, `extract`, and `rate`: the items come from
+    those files, sorted by stage and then by line number
 - The stage `rate` rates all the papers at each run, since the tier list and the
   citation counts can change. The HTTP answers of the citation lookups are cached in
   `state/cache/`
@@ -129,8 +130,8 @@
 
 ### Exit Codes
 
-- `0`: Success. Papers that fail do not change it: they are rows of
-  `04-report.issues.csv`. A missing `01-resolve.issues.json` does not change it
+- `0`: Success. Papers that fail do not change it: they are items of
+  `04-report.issues.json`. A missing `01-resolve.issues.json` does not change it
 - `1`: An assertion or an exception stopped the run, e.g., the papers file is not an
   existing file
 - `2`: A missing required argument or an invalid flag
@@ -164,7 +165,7 @@
    the citations. A failure becomes an issue
 4. **`report`**: the script reads the features and rating files and the issues files
    `NN-<stage>.issues.json` of the other stages, then writes
-   `04-report.references.md`, `04-report.report.csv`, and `04-report.issues.csv`
+   `04-report.references.md`, `04-report.report.csv`, and `04-report.issues.json`
 
 ### Key Functions
 

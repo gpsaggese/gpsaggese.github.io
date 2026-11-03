@@ -304,12 +304,12 @@
 ### `D19` (`report.csv` Has a Row Only for a Paper with a Features File)
 
 - **Decision**: a paper that failed to download, convert, or extract is only in
-  `issues.csv` and `references.md`
+  `issues.json` and `references.md`
 - **Why**:
   [`R12`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r12-feature-list)
   reports each converted paper; a row of `unknown` values hides the reason, which
-  `issues.csv` gives
-  ([`R19`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r19-issues-csv))
+  `issues.json` gives
+  ([`R19`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r19-issues-file))
 - **Alternatives**: one row per resolved paper, with `unknown` features
 - **Status**: proposed
 
@@ -361,8 +361,8 @@
 - **Consequences**:
   - Old runs are not migrated: a rerun on an old dir writes the new files and does not
     read the old ones
-  - In the docs, `report.csv`, `issues.csv`, and `references.md` are the short names of
-    `04-report.report.csv`, `04-report.issues.csv`, and `04-report.references.md`
+  - In the docs, `report.csv`, `issues.json`, and `references.md` are the short names of
+    `04-report.report.csv`, `04-report.issues.json`, and `04-report.references.md`
   - Amends
     [`D18`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d18-all-the-state-lives-in-the-output-dir)
 - **Status**: accepted
@@ -398,10 +398,13 @@
 
 - **Decision**: the papers list and the issues of every stage, `resolve` too, are JSON
   files with a `schema_version`
-  - CSV stays for the files that a person opens in a spreadsheet: the input list,
-    `04-report.report.csv`, and `04-report.issues.csv`
+  - CSV stays for the files that a person opens in a spreadsheet: the input list and
+    `04-report.report.csv`
+  - `04-report.issues.json`, the issues of every stage, is JSON too (task 8): it has
+    the layout of the files `NN-<stage>.issues.json`, so `epq_report.read_issues()`
+    reads it and `write_all_issues()` writes it, sorted by stage and then by line
   - `epq_report.write_papers()` and `read_papers()` replace the functions of the papers
-    CSV; `read_issues_csv()` stays only to read the final issues CSV
+    CSV; `write_issues_csv()` and `read_issues_csv()` are removed
 - **Why**: a list (the authors, the aliases, the download inputs, the line numbers) is
   a JSON array, not a cell with items joined by `|` that breaks when an item holds
   `|`; the issues of all the stages have one format; people and programs both read
