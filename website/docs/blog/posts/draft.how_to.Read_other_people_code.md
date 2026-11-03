@@ -209,7 +209,7 @@ TL;DR: How To Read Other People Code.
 
 - You should have a nice diagram
 
-./.claude/skills/readme.write_architecture
+./.claude/skills/readme_file.write_architecture
 
 Reorganize the functions
 

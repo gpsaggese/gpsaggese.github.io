@@ -1,5 +1,9 @@
 """
-Generate the two figures used in `paper.md`.
+Generate the four figures used in `paper.md`.
+
+Figures 3 and 4 read the CSV files next to this script, which the
+`racket_sports_05_variable_sensitivity` notebook writes with
+`RUN_FULL_SIMS = True`.
 
 Run with:
 > python3 figures/make_figures.py
@@ -75,8 +79,19 @@ ax.annotate(
 
 # Landing-point spread (error footprint) near the target.
 lo, hi = min(spread_x + [d_target]), max(spread_x + [d_target])
-ax.plot([lo, hi], [-0.05, -0.05], color="#c0392b", linewidth=3.0, solid_capstyle="butt")
-ax.annotate("Landing\nspread", xy=((lo + hi) / 2, -0.05), xytext=((lo + hi) / 2 - 3.6, -1.1), fontsize=8)
+ax.plot(
+    [lo, hi],
+    [-0.05, -0.05],
+    color="#c0392b",
+    linewidth=3.0,
+    solid_capstyle="butt",
+)
+ax.annotate(
+    "Landing\nspread",
+    xy=((lo + hi) / 2, -0.05),
+    xytext=((lo + hi) / 2 - 3.6, -1.1),
+    fontsize=8,
+)
 
 # Source and target markers.
 ax.scatter([0], [h0], color="#000000", zorder=5, s=18)
@@ -100,7 +115,7 @@ plt.close(fig)
 
 cells = np.array([0.3, 0.7, 1.1, 1.5, 1.9])
 p_in = np.array([0.95, 0.91, 0.85, 0.77, 0.65])
-labels = [f"$c_{i+1}$\n({d:.1f} m)" for i, d in enumerate(cells)]
+labels = [f"$c_{i + 1}$\n({d:.1f} m)" for i, d in enumerate(cells)]
 
 scenarios = [
     ("Tennis groundstroke\n($T_f=0.8$ s)", 0.9, "#1a5276"),
@@ -116,16 +131,36 @@ for ax, (title, reach_radius, color) in zip(axes, scenarios):
     reachable = cells <= reach_radius
     score = p_in * (1 - reachable.astype(float))
 
-    bars1 = ax.bar(x_pos - width / 2, p_in, width, label=r"$P_{\mathrm{in}}$", color="#aeb6bf")
+    bars1 = ax.bar(
+        x_pos - width / 2,
+        p_in,
+        width,
+        label=r"$P_{\mathrm{in}}$",
+        color="#aeb6bf",
+    )
     bars2 = ax.bar(x_pos + width / 2, score, width, label=r"$S$", color=color)
     handles = [bars1, bars2]
 
     for i, r in enumerate(reachable):
         color_r = "#c0392b" if r else "#1e8449"
-        ax.text(x_pos[i], p_in[i] + 0.05, f"R={int(r)}", ha="center", fontsize=7, color=color_r)
+        ax.text(
+            x_pos[i],
+            p_in[i] + 0.05,
+            f"R={int(r)}",
+            ha="center",
+            fontsize=7,
+            color=color_r,
+        )
 
     best = int(np.argmax(score))
-    ax.scatter([x_pos[best] + width / 2], [score[best] + 0.12], marker="*", color="black", s=60, zorder=5)
+    ax.scatter(
+        [x_pos[best] + width / 2],
+        [score[best] + 0.12],
+        marker="*",
+        color="black",
+        s=60,
+        zorder=5,
+    )
 
     ax.set_title(title, fontsize=8.5)
     ax.set_xticks(x_pos)
@@ -134,9 +169,116 @@ for ax, (title, reach_radius, color) in zip(axes, scenarios):
     ax.spines[["top", "right"]].set_visible(False)
 
 axes[0].set_ylabel("Probability / score")
-fig.legend(handles, [r"$P_{\mathrm{in}}$", r"$S$"], loc="upper center", ncol=2, frameon=False, bbox_to_anchor=(0.5, 1.03))
+fig.legend(
+    handles,
+    [r"$P_{\mathrm{in}}$", r"$S$"],
+    loc="upper center",
+    ncol=2,
+    frameon=False,
+    bbox_to_anchor=(0.5, 1.03),
+)
 fig.tight_layout(rect=(0, 0, 1, 0.90))
 fig.savefig("figures/toy_example_scores.png", dpi=300)
 plt.close(fig)
 
-print("Wrote figures/trajectory_schematic.png and figures/toy_example_scores.png")
+print(
+    "Wrote figures/trajectory_schematic.png and figures/toy_example_scores.png"
+)
+
+# #############################################################################
+# Figure 3: Which variables matter, one at a time (Section VII-A).
+# #############################################################################
+
+# The CSV files come from the `racket_sports_05_variable_sensitivity` notebook.
+sweeps = np.genfromtxt(
+    "figures/variable_sensitivity_sweeps.csv",
+    delimiter=",",
+    names=True,
+    dtype=None,
+    encoding="utf-8",
+)
+sports = [("Tennis", "#1a5276", "o"), ("Pickleball", "#a04000", "s")]
+variables = [
+    ("ball_speed", r"$v_b$ (m/s)"),
+    ("v_p", r"$v_p$ (m/s)"),
+    ("t_r", r"$t_r$ (s)"),
+    ("std_x2", r"$\sigma_x$ (m)"),
+    ("std_y2", r"$\sigma_y$ (m)"),
+]
+
+fig, axes = plt.subplots(2, 3, figsize=(3.4, 2.5), sharey=True)
+for ax, (variable, label) in zip(axes.flat, variables):
+    for sport, color, marker in sports:
+        rows = sweeps[
+            (sweeps["setting"] == variable) & (sweeps["sport"] == sport)
+        ]
+        rows = rows[np.argsort(rows["value"])]
+        ax.plot(
+            rows["value"],
+            rows["max_p_winner"],
+            color=color,
+            marker=marker,
+            markersize=2,
+            linewidth=1.0,
+            label=sport,
+        )
+    ax.set_xlabel(label, labelpad=1)
+    ax.set_ylim(0.6, 1.03)
+    ax.spines[["top", "right"]].set_visible(False)
+for ax in axes[:, 0]:
+    ax.set_ylabel(r"Highest $P_{\mathrm{win}}$")
+# The sixth panel holds the legend.
+handles, labels = axes[0, 0].get_legend_handles_labels()
+axes[1, 2].axis("off")
+axes[1, 2].legend(handles, labels, loc="center", frameon=False)
+fig.tight_layout(pad=0.3)
+fig.savefig("figures/variable_sensitivity_sweeps.png", dpi=300)
+plt.close(fig)
+
+# #############################################################################
+# Figure 4: Serve depth, slow ball and fast server (Section VII-A).
+# #############################################################################
+
+depths = np.genfromtxt(
+    "figures/variable_sensitivity_serve_depth.csv",
+    delimiter=",",
+    names=True,
+    dtype=None,
+    encoding="utf-8",
+)
+
+fig, axes = plt.subplots(1, 2, figsize=(3.4, 1.9), sharey=True)
+for ax, (sport, color, _) in zip(axes, sports):
+    rows = depths[depths["sport"] == sport]
+    # The serve across the box: at the T, in the middle, and wide.
+    x1_values = np.unique(rows["x1"])
+    serves = [
+        (x1_values[-1], "T", "-"),
+        (x1_values[len(x1_values) // 2], "Middle", "--"),
+        (x1_values[0], "Wide", ":"),
+    ]
+    for x1, label, linestyle in serves:
+        line = rows[rows["x1"] == x1]
+        line = line[np.argsort(line["y1"])]
+        ax.plot(
+            line["y1"],
+            line["max_p_winner"],
+            color=color,
+            linestyle=linestyle,
+            linewidth=1.2,
+            label=label,
+        )
+    ax.set_title(sport)
+    ax.set_xlabel(r"Serve depth $y_1$ (m)")
+    ax.set_ylim(0, 1.05)
+    ax.spines[["top", "right"]].set_visible(False)
+    ax.legend(frameon=False, loc="lower left")
+axes[0].set_ylabel(r"Highest $P_{\mathrm{win}}$")
+fig.tight_layout(pad=0.6)
+fig.savefig("figures/variable_sensitivity_serve_depth.png", dpi=300)
+plt.close(fig)
+
+print(
+    "Wrote figures/variable_sensitivity_sweeps.png and"
+    " figures/variable_sensitivity_serve_depth.png"
+)

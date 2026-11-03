@@ -953,7 +953,7 @@ digraph AgenticLoop {
 
 * Generating and Maintaining READMEs with AI
 
-// From helpers_root/.claude/skills/readme.create
+// From helpers_root/.claude/skills/readme_dir.create
 // From helpers_root/docs/documentation_meta/all.markdown_tools.explanation.md
 
 - @Problem@: A `README` is written once and rots, because nothing fails when it goes

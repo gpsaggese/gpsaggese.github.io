@@ -28,17 +28,18 @@ import research.Noesis.checker.checker_calibration_report as rnochcare
 import research.Noesis.checker.checker_calibration_runtime as rnochcaru
 import research.Noesis.checker.checker_canaries as rnochcan
 import research.Noesis.checker.checker_models as rnochmod
+import research.Noesis.checker.checker_sink as rnochsink
 import research.Noesis.checker.checker_store as rnochsto
 import research.Noesis.common.noesis_db as rnonodb
 import research.Noesis.common.noesis_settings as rnonoset
 import research.Noesis.gateway.gateway_faults as rnogafau
 import research.Noesis.gateway.gateway_openrouter as rnogaope
-import research.Noesis.prober.prober_runtime as rnoprrun
 import research.Noesis.prober.prober_worker as rnoprwor
 
 _LOG = logging.getLogger(__name__)
 
 DEFAULT_BANK_VERSION = "v1"
+DEFAULT_CHECKER_VERSION = "m2-v1"
 DEFAULT_MINIMUM_SURVIVORS = 150
 DEFAULT_BANK_DIR = os.path.join(rnonoset.NOESIS_DIR, "data", "canaries")
 DEFAULT_REPORT_PATH = os.path.join(
@@ -162,6 +163,8 @@ async def _run_probe(args: argparse.Namespace) -> int:
         max_tokens=min(args.max_tokens, settings.max_tokens_cap),
         timeout_multiplier=settings.timeout_multiplier,
     )
+    checker_policy = rnochmod.WindowPolicy()
+    sink = rnochsink.RecordingVerdictSink()
     provider = rnogaope.OpenRouterProvider(api_key)
     faults = rnogafau.FaultRegistry()
     try:
@@ -169,21 +172,38 @@ async def _run_probe(args: argparse.Namespace) -> int:
         try:
             await rnonodb.apply_migrations(pool)
             if args.once:
-                result = await rnoprrun.run_due_probes(
+                result = await rnoprwor.run_probe_cycle(
                     pool,
                     provider,
                     faults,
                     policy,
                     schedule_secret,
                     datetime.now(UTC),
+                    sink=sink,
+                    checker_policy=checker_policy,
+                    checker_version=DEFAULT_CHECKER_VERSION,
                 )
+                finalized = sum(
+                    evaluation.finalized
+                    for evaluation in result.checker.evaluations
+                )
+                errors = result.probes.errors + result.checker.errors
                 print(
-                    f"Probe cycle: executions={len(result.executions)}"
-                    f" errors={len(result.errors)}"
+                    f"Probe/checker cycle:"
+                    f" executions={len(result.probes.executions)}"
+                    f" finalized={finalized}"
+                    f" published={len(result.checker.published_reports)}"
+                    f" errors={len(errors)}"
                 )
-                for error in result.errors:
+                for report in result.checker.published_reports:
+                    print(
+                        f"  contract={report.contract_id}"
+                        f" seller={report.seller_id}"
+                        f" verdict={report.verdict.value}"
+                    )
+                for error in errors:
                     print(f"  {error}")
-                return 1 if result.errors else 0
+                return 1 if errors else 0
             stop_event = asyncio.Event()
             loop = asyncio.get_running_loop()
             for signal_name in (signal.SIGINT, signal.SIGTERM):
@@ -195,11 +215,17 @@ async def _run_probe(args: argparse.Namespace) -> int:
                 policy,
                 schedule_secret,
                 stop_event,
+                sink=sink,
+                checker_policy=checker_policy,
+                checker_version=DEFAULT_CHECKER_VERSION,
                 poll_interval_s=args.poll_interval,
             )
             print(
                 f"Probe worker stopped: cycles={result.cycles}"
-                f" executions={result.executions} errors={result.errors}"
+                f" executions={result.executions}"
+                f" finalized={result.finalized_contracts}"
+                f" published={result.published_reports}"
+                f" errors={result.errors}"
             )
             return 0
         finally:

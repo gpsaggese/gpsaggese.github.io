@@ -14,10 +14,22 @@
 
 ## Ready for Review
 
-- 2026-10-19: `website/docs/blog/posts/in_60_mins.GluonTS.md`
+- 2026-10-31: `website/docs/blog/posts/in_60_mins.GluonTS.md`
+  - Prepared for publication (`draft: false`); GP approval and deployment are
+    pending.
+  - GP approved Ibrahim Ahmed Mohammed as an author; byline and acknowledgment
+    added. Other coauthor profile details await GP.
 - 2026-10-19: `website/docs/blog/posts/in_5_mins.helpers_render_images.md`
 
 Total: 2 posts ready for review
+
+## To Update
+- [ ] Update in_10_mins.helpers_open_md.md with
+  helpers_root/dev_scripts_helpers/documentation/open_md.README.md
+
+## To Create
+
+- [ ] helpers_root/dev_scripts_helpers/documentation/summarize_md.README.md
 
 ## Published Blogs
 
