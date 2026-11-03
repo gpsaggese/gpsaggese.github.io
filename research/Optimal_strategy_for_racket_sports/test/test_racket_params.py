@@ -294,7 +294,7 @@ class Test_get_service_box_region(hunitest.TestCase):
         """
         # Prepare inputs.
         court = racket_params.TENNIS.court
-        serve_side = "deuce"
+        serve_side: Literal["deuce", "ad"] = "deuce"
         # Prepare outputs.
         expected = "CourtRegion(x_min=-4.115, x_max=0, y_min=0.0, y_max=6.4)"
         # Run test and check outputs.
@@ -306,7 +306,7 @@ class Test_get_service_box_region(hunitest.TestCase):
         """
         # Prepare inputs.
         court = racket_params.TENNIS.court
-        serve_side = "ad"
+        serve_side: Literal["deuce", "ad"] = "ad"
         # Prepare outputs.
         expected = "CourtRegion(x_min=0, x_max=4.115, y_min=0.0, y_max=6.4)"
         # Run test and check outputs.
@@ -319,7 +319,7 @@ class Test_get_service_box_region(hunitest.TestCase):
         """
         # Prepare inputs.
         court = racket_params.PICKLEBALL.court
-        serve_side = "deuce"
+        serve_side: Literal["deuce", "ad"] = "deuce"
         # Prepare outputs.
         expected = "CourtRegion(x_min=-3.05, x_max=0, y_min=2.13, y_max=6.71)"
         # Run test and check outputs.

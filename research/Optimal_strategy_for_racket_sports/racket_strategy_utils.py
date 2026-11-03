@@ -365,7 +365,6 @@ def build_score_widget(
     def update(change: Optional[object] = None) -> None:
         """
         Re-score the cached launch table and redraw the heatmaps.
-
         """
         _ = change
         with output:
@@ -481,7 +480,6 @@ def build_exploration_widget(
     def run(_button: Optional[object] = None) -> None:
         """
         Resample the launch table for the current controls and redraw.
-
         """
         _ = _button
         with output:
