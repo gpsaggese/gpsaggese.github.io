@@ -5,6 +5,7 @@ numpy
 pandas
 seaborn
 tqdm
+pytest
 
 # Machine learning
 scikit-learn
