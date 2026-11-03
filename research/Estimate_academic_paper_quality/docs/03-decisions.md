@@ -132,7 +132,9 @@
   - The `line_no` of an issue is the row of the input CSV
   - A list is one CSV cell with the items joined by `|`: an item that holds `|` breaks
     on the read
-- **Status**: proposed
+- **Status**: superseded by
+  [`D31`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d31-json-for-the-intermediate-files): the papers and the issues are
+  JSON files, and the resolver writes them in an output dir
 
 ## Download and Files
 
@@ -186,19 +188,26 @@
   option over a git-ignored dir of the project
 - **Alternatives**: `research/Estimate_academic_paper_quality/runs/<input>/`,
   git-ignored; the same, committed
+- **Consequences**: refined by
+  [`D30`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d30-output_dir-for-several-files-and-output-for-one): all the
+  executables take `--output_dir`, including the resolver
 - **Status**: accepted
 
 ## Extraction
 
 ### `D11` (One Structured LLM Call Per Paper)
 
-- **Decision**: one call of `hllm.get_structured_completion()` per paper returns all
-  the features, the facts, and the affiliations, parsed into a pydantic model
+- **Decision**: one call of `hllm_cli.apply_llm()` per paper returns all the features,
+  the facts, and the affiliations as JSON. The system prompt has the JSON schema of
+  a pydantic model, and the script validates the answer with that model. The old
+  `helpers.hllm` is obsolete and the pipeline does not use it
 - **Why**: the paper text is most of the tokens, so one call costs about a quarter of
-  four calls; a parsed answer fails loud instead of giving bad JSON
-- **Alternatives**: one call per feature; `hllm_cli.apply_llm()` with JSON in free
-  text (no schema check)
-- **Status**: proposed
+  four calls; a validated answer fails loud instead of giving bad JSON, and
+  `hllm_cli` serves any provider of the `llm` library
+- **Alternatives**: one call per feature; `hllm.get_structured_completion()`, which
+  enforces the schema in the API but serves only OpenAI (decision of the user: use
+  only `hllm_cli`)
+- **Status**: accepted
 
 ### `D12` (The Page of a Quote Comes From the PDF Text)
 
@@ -276,8 +285,11 @@
 
 ### `D18` (All the State Lives in the Output Dir)
 
-- **Decision**: the outputs of the stages go to `<output_dir>/state/`, and every HTTP
+- **Decision**: the outputs of the stages go to `<output_dir>/`, with the names of
+  [`D29`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d29-numbered-stage-files-in-the-output-dir), and every HTTP
   response of `bib_sources` is cached in `<output_dir>/state/cache/`
+  - `state/` holds the cache and the logs of the download tool only: the issues of a
+    stage are in `<output_dir>/NN-<stage>.issues.json`
 - **Why**: a rerun on the same dir makes no network call for old lines and no LLM
   call for old papers
   ([`R11`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r11-rerun-skips-converted-papers),
@@ -285,7 +297,9 @@
   each stage can run alone; one dir holds one run, so nothing leaks between lists
 - **Alternatives**: a cache per stage (more code); a global cache in the repo (mixes
   runs)
-- **Status**: proposed
+- **Status**: proposed (amended by
+  [`D29`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d29-numbered-stage-files-in-the-output-dir): the stage issues left
+  `state/`)
 
 ### `D19` (`report.csv` Has a Row Only for a Paper with a Features File)
 
@@ -303,7 +317,7 @@
 
 - **Decision**: write the references of all resolved papers, in
   [`R7`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r7-reverse-chronological-order)
-  order, to `<output_dir>/references.md`
+  order, to `<output_dir>/04-report.references.md`
 - **Why**: the use case "gets one clean list of references" includes the papers that
   failed to download, which are not in `report.csv`
 - **Alternatives**: only the `reference` column of `report.csv`
@@ -324,6 +338,85 @@
 - **Alternatives**: `simple_cache()` on a module function (global state in the
   tests, one JSON file for all the answers)
 - **Status**: proposed
+
+### `D29` (Numbered Stage Files in the Output Dir)
+
+- **Decision**: every file that a stage writes in `<output_dir>` is named
+  `NN-<stage>.<what>.<ext>`
+  - `NN` is the order of the executable: `resolve` is `01`, `download` `02`,
+    `extract` `03`, and `rate` and `report` `04`, since both are stages of
+    `report_papers.py`
+  - `00-paper_list.csv` is the copy of the input CSV that `resolve_papers.py` makes
+  - The issues of a stage are in the output dir, not in `state/`
+  - The files of one paper stay in `papers/<BASE>.<ext>` with no number
+  - `epq_paths.py` is the only place that names the files
+- **Why**: a listing of the output dir reads in the order of the pipeline and shows
+  which executable wrote each file; the old names (`papers.csv`,
+  `state/issues.download.json`, `report.csv`) had no order and mixed the results with
+  the state; the writer and the reader of a file take the name from one getter
+  (rule `ARCH3.6` in `.claude/skills/architecture.rules.md`)
+- **Alternatives**: a subdir per stage (`02-download/`), which splits the files of one
+  paper across 3 dirs; a number on the files of `papers/`, which makes long names,
+  since the suffix (`.features.json`) already says the stage
+- **Consequences**:
+  - Old runs are not migrated: a rerun on an old dir writes the new files and does not
+    read the old ones
+  - In the docs, `report.csv`, `issues.csv`, and `references.md` are the short names of
+    `04-report.report.csv`, `04-report.issues.csv`, and `04-report.references.md`
+  - Amends
+    [`D18`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d18-all-the-state-lives-in-the-output-dir)
+- **Status**: accepted
+
+### `D30` (`--output_dir` for Several Files and `--output` for One)
+
+- **Decision**: an executable that writes several files takes `--output_dir` only, and
+  infers the names by
+  [`D29`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d29-numbered-stage-files-in-the-output-dir)
+  - An executable that writes one file takes either `--output_dir` (the name is
+    inferred) or `-o/--output` (the path of the file), and exactly one of them
+  - A later stage takes `--input`, and its default is the papers file in `--output_dir`
+  - The 4 executables write several files, so none takes `--output` today
+  - `resolve_papers.py` lost `--output` and `--issues_output`, and `report_papers.py`
+    lost `--resolve_issues`
+  - The parser of `resolve_papers.py` has `allow_abbrev=False`, so the old `--output`
+    is an error and not a short form of `--output_dir`
+- **Why**: the user decides where the files go
+  ([`D10`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d10-the-user-gives-the-output-dir)) and the executable decides the
+  names, so there is no file name to type or to get wrong; the stage `report` finds the
+  issues of `resolve` without a flag; this is rule `ARCH3.7` in
+  `.claude/skills/architecture.rules.md`
+- **Alternatives**: keep `--output` for the papers file of the resolver and derive the
+  issues file from it (the later stages need the same names, so they would need flags
+  too); keep `--input` required (the path is typed 3 times per run)
+- **Consequences**: the command
+  `resolve_papers.py --output ~/papers/run_2026_10/papers.csv` is now
+  `resolve_papers.py --output_dir ~/papers/run_2026_10`; refines
+  [`D10`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d10-the-user-gives-the-output-dir)
+- **Status**: accepted
+
+### `D31` (JSON for the Intermediate Files)
+
+- **Decision**: the papers list and the issues of every stage, `resolve` too, are JSON
+  files with a `schema_version`
+  - CSV stays for the files that a person opens in a spreadsheet: the input list,
+    `04-report.report.csv`, and `04-report.issues.csv`
+  - `epq_report.write_papers()` and `read_papers()` replace the functions of the papers
+    CSV; `read_issues_csv()` stays only to read the final issues CSV
+- **Why**: a list (the authors, the aliases, the download inputs, the line numbers) is
+  a JSON array, not a cell with items joined by `|` that breaks when an item holds
+  `|`; the issues of all the stages have one format; people and programs both read
+  JSON; this is rule `ARCH3.8` in `.claude/skills/architecture.rules.md`
+- **Alternatives**: keep the papers CSV, which a person can sort and fix in a
+  spreadsheet (the reason of
+  [`D26`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d26-the-resolver-is-a-separate-executable-that-reads-and-writes-csv));
+  write both (two formats for the same data)
+- **Consequences**:
+  - The papers file cannot be sorted in a spreadsheet, but it can be edited by hand
+  - A file with another `schema_version` is rejected with a message that names the
+    executable to run again
+  - Supersedes
+    [`D26`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d26-the-resolver-is-a-separate-executable-that-reads-and-writes-csv)
+- **Status**: accepted
 
 ## Code Organization
 
@@ -367,7 +460,9 @@
 
 - **Decision**: replace the script `estimate_paper_quality.py` and the module
   `epq_pipeline.py` with one executable per stage, linked only by files on disk
-  - `resolve_papers.py`: the input CSV to the papers CSV
+  - `resolve_papers.py`: the input CSV to the papers file (a CSV when this decision
+    was taken, JSON by
+    [`D31`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d31-json-for-the-intermediate-files))
   - `download_papers.py`: the PDF and the markdown of each paper
   - `extract_features.py`: the features file of each paper, with one LLM call
   - `report_papers.py`: the actions `rate` and `report`, selected with
@@ -405,7 +500,8 @@
     and `n_pages` and has no `quality`; an old file fails to read with a message that
     names the stage to run again
   - New issue stage `rate`, with the statuses `rating_failed` and `rating_missing`, in
-    `state/issues.rate.json`
+    `04-rate.issues.json` (`state/issues.rate.json` when this decision was taken, see
+    [`D29`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d29-numbered-stage-files-in-the-output-dir))
   - The citation lookup moves from `extract` to `rate`: `--force_extract` does not
     refresh the citations anymore, `--refresh_citations` does, and `extract_features.py`
     needs no `BibSources`

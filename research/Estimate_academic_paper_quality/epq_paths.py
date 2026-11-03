@@ -5,14 +5,24 @@ The executables talk to each other only through files on disk (decision D26).
 This module is the one place that names those files, so that the writer and the
 reader of a file always agree on its path.
 
-All the paths live under one output dir:
+A file of a stage is named `NN-<stage>.<what>.<ext>`, where `NN` is the order of
+the executable in the pipeline (decision D29). All the paths live under one
+output dir:
 ```
 <output_dir>/
+    00-paper_list.csv
+    01-resolve.paper_list.json
+    01-resolve.issues.json
+    02-download.issues.json
+    03-extract.issues.json
+    04-rate.issues.json
+    04-report.report.csv
+    04-report.issues.csv
+    04-report.references.md
     papers/<BASE>.pdf
     papers/<BASE>.md
     papers/<BASE>.features.json
     papers/<BASE>.rating.json
-    state/issues.<stage>.json
     state/cache/
     state/logs/
 ```
@@ -23,6 +33,18 @@ import research.Estimate_academic_paper_quality.epq_paths as epqpaths
 """
 
 import os
+
+import helpers.hdbg as hdbg
+
+# Order of the executable that runs each stage: `rate` and `report` are stages
+# of `report_papers.py`, so they share a number.
+_STAGE_NUMBERS = {
+    "resolve": 1,
+    "download": 2,
+    "extract": 3,
+    "rate": 4,
+    "report": 4,
+}
 
 
 def get_papers_dir(output_dir: str) -> str:
@@ -37,7 +59,7 @@ def get_papers_dir(output_dir: str) -> str:
 
 def get_state_dir(output_dir: str) -> str:
     """
-    Get the dir of the issues of the stages, the logs, and the HTTP cache.
+    Get the dir of the HTTP cache and the logs of the download tool.
 
     :param output_dir: dir of all the outputs of a run
     :return: `<output_dir>/state`
@@ -109,24 +131,79 @@ def get_rating_path(output_dir: str, base_name: str) -> str:
     return os.path.join(get_papers_dir(output_dir), f"{base_name}.rating.json")
 
 
+def get_stage_path(output_dir: str, stage: str, name: str) -> str:
+    """
+    Get the path of a file that a stage writes in the output dir.
+
+    - `("run", "download", "issues.json")` -> `run/02-download.issues.json`
+
+    :param output_dir: dir of all the outputs of a run
+    :param stage: one of `resolve`, `download`, `extract`, `rate`, `report`
+    :param name: what the file holds, with its extension, e.g., `issues.json`
+    :return: `<output_dir>/NN-<stage>.<name>`
+    """
+    hdbg.dassert_in(stage, _STAGE_NUMBERS)
+    number = _STAGE_NUMBERS[stage]
+    return os.path.join(output_dir, f"{number:02d}-{stage}.{name}")
+
+
+def get_input_copy_path(output_dir: str) -> str:
+    """
+    Get the path of the copy of the input CSV of the run.
+
+    :param output_dir: dir of all the outputs of a run
+    :return: `<output_dir>/00-paper_list.csv`
+    """
+    return os.path.join(output_dir, "00-paper_list.csv")
+
+
+def get_papers_path(output_dir: str) -> str:
+    """
+    Get the path of the papers that `resolve_papers.py` wrote.
+
+    :param output_dir: dir of all the outputs of a run
+    :return: `<output_dir>/01-resolve.paper_list.json`
+    """
+    return get_stage_path(output_dir, "resolve", "paper_list.json")
+
+
 def get_issues_path(output_dir: str, stage: str) -> str:
     """
     Get the path of the issues that a stage wrote.
 
     :param output_dir: dir of all the outputs of a run
-    :param stage: one of `download`, `extract`, `rate`
-    :return: `<output_dir>/state/issues.<stage>.json`
+    :param stage: one of `resolve`, `download`, `extract`, `rate`
+    :return: `<output_dir>/NN-<stage>.issues.json`
     """
-    return os.path.join(get_state_dir(output_dir), f"issues.{stage}.json")
+    hdbg.dassert_ne(stage, "report", "The stage `report` writes no stage issues")
+    return get_stage_path(output_dir, stage, "issues.json")
 
 
-def get_resolve_issues_path(papers_file: str) -> str:
+def get_report_path(output_dir: str) -> str:
     """
-    Get the default path of the issues CSV that goes with a papers CSV.
+    Get the path of `report.csv`.
 
-    - `run/papers.csv` -> `run/papers.issues.csv`
-
-    :param papers_file: path of the papers CSV
-    :return: path of the issues CSV of `resolve_papers.py`
+    :param output_dir: dir of all the outputs of a run
+    :return: `<output_dir>/04-report.report.csv`
     """
-    return os.path.splitext(papers_file)[0] + ".issues.csv"
+    return get_stage_path(output_dir, "report", "report.csv")
+
+
+def get_all_issues_path(output_dir: str) -> str:
+    """
+    Get the path of `issues.csv`, which holds the issues of every stage.
+
+    :param output_dir: dir of all the outputs of a run
+    :return: `<output_dir>/04-report.issues.csv`
+    """
+    return get_stage_path(output_dir, "report", "issues.csv")
+
+
+def get_references_path(output_dir: str) -> str:
+    """
+    Get the path of `references.md`.
+
+    :param output_dir: dir of all the outputs of a run
+    :return: `<output_dir>/04-report.references.md`
+    """
+    return get_stage_path(output_dir, "report", "references.md")

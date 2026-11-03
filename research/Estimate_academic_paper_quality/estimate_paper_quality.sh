@@ -5,11 +5,12 @@
 # Each stage is a separate executable. The executables talk to each other only
 # through files in the output dir, so a stage can also run alone on the output of
 # an earlier run:
-#   1. `resolve_papers.py`: loose list of papers -> `papers.csv`
-#   2. `download_papers.py`: `papers.csv` -> PDF and markdown of each paper
+#   1. `resolve_papers.py`: loose list of papers -> `01-resolve.paper_list.json`
+#   2. `download_papers.py`: the papers file -> PDF and markdown of each paper
 #   3. `extract_features.py`: markdown of each paper -> `*.features.json`
-#   4. `report_papers.py`: `*.features.json` -> `*.rating.json`, `report.csv`,
-#      `references.md`, and `issues.csv`
+#   4. `report_papers.py`: `*.features.json` -> `*.rating.json`,
+#      `04-report.report.csv`, `04-report.references.md`, and
+#      `04-report.issues.csv`
 #
 # A rerun on the same output dir does not download, convert, or extract again a
 # paper that is done. It rates every paper again, since the tier list and the
@@ -20,11 +21,11 @@
 #
 # # Usage Example
 #
-# - Run the pipeline on a CSV with a column `input`:
+# - Run the pipeline on a CSV with one paper per row:
 # > estimate_paper_quality.sh -i papers_in.csv -o out
 #
 # - Extract again with another model, and ask for fresh citation counts:
-# > estimate_paper_quality.sh -i papers_in.csv -o out -m gpt-5-mini -f -r
+# > estimate_paper_quality.sh -i papers_in.csv -o out -m gpt-4o-mini -f -r
 # """
 
 set -euo pipefail
@@ -44,9 +45,9 @@ Run resolve_papers.py, download_papers.py, extract_features.py, and
 report_papers.py in order.
 
 Options:
-  -i INPUT_CSV   CSV with a column 'input', one paper per row (required)
+  -i INPUT_CSV   CSV with one paper per row, no header needed (required)
   -o OUTPUT_DIR  Dir of all the outputs and of the state of the run (required)
-  -m MODEL       LLM of extract_features.py (default: the default of helpers.hllm)
+  -m MODEL       LLM of extract_features.py (default: DEFAULT_MODEL of helpers.hllm_cli)
   -v LOG_LEVEL   Logging level forwarded to every script (default: INFO)
   -f             Extract again the papers that have a features file
   -r             Ask for fresh citation counts
@@ -125,35 +126,30 @@ main() {
   if [[ "${refresh_citations}" -eq 1 ]]; then
     report_args+=(--refresh_citations)
   fi
-  # The papers CSV and its issues CSV are files of the output dir, so that the
-  # stages find them next to the other outputs.
+  # Every stage writes its files in the output dir with names that it infers, and
+  # reads the papers file of the stage `resolve` from there.
   mkdir -p "${output_dir}"
-  local papers_csv="${output_dir}/papers.csv"
-  # Stage 1: resolve the loose list into a papers CSV.
+  # Stage 1: resolve the loose list into a papers file.
   run_stage "resolve" "${SCRIPT_DIR}/resolve_papers.py" \
     --input "${input_csv}" \
-    --output "${papers_csv}" \
-    --cache_dir "${output_dir}/state/cache" \
+    --output_dir "${output_dir}" \
     -v "${log_level}"
   # Stage 2: download the PDF of each paper and convert it to markdown.
   run_stage "download" "${SCRIPT_DIR}/download_papers.py" \
-    --input "${papers_csv}" \
     --output_dir "${output_dir}" \
     -v "${log_level}"
   # Stage 3: extract the features of each paper with the LLM.
   run_stage "extract" "${SCRIPT_DIR}/extract_features.py" \
-    --input "${papers_csv}" \
     --output_dir "${output_dir}" \
     ${extract_args[@]+"${extract_args[@]}"} \
     -v "${log_level}"
   # Stage 4: rate the papers and write the report.
   run_stage "report" "${SCRIPT_DIR}/report_papers.py" \
-    --input "${papers_csv}" \
     --output_dir "${output_dir}" \
     ${report_args[@]+"${report_args[@]}"} \
     -v "${log_level}"
   echo
-  echo "Done: the report is '${output_dir}/report.csv'"
+  echo "Done: the report is '${output_dir}/04-report.report.csv'"
 }
 
 

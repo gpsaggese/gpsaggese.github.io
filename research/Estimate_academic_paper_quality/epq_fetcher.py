@@ -42,6 +42,12 @@ _MIN_MARKDOWN_CHARS = 500
 # Name of the download tool, found in the Git tree.
 _TOOL_NAME = "download_academic_paper_to_md.py"
 
+# Lines that `hsystem` prints after a failed command, with no error in them.
+_HSYSTEM_NOTE_PREFIXES = ("- Output saved in", "- Command saved in")
+
+# Last line of a Python traceback, e.g., `ValueError: bad` or `Error: bad`.
+_EXCEPTION_RE = re.compile(r"^[\w.]*(Error|Exception)\b")
+
 
 # #############################################################################
 # Paths and checks
@@ -120,16 +126,33 @@ def is_fetched(papers_dir: str, base_name: str) -> bool:
 
 def _read_last_line(log_path: str) -> str:
     """
-    Read the last non-empty line of a log file.
+    Read the line of a log file that tells why the tool failed.
+
+    The tool runs other commands with `hsystem`. When one of them fails,
+    `hsystem` prints lines that say where it saved the command and the output.
+    These lines come after the real error and are skipped. If the log has an
+    exception line, e.g., `playwright._impl._errors.Error: ...`, the last one is
+    the reason. Otherwise the reason is the last line that is not skipped.
 
     :param log_path: path of the log
-    :return: the line, or `no output` if the log is missing or empty
+    :return: the line, or `no output` if the log is missing or has no line to
+        show
     """
     last_line = "no output"
     if os.path.isfile(log_path):
         lines = [line.strip() for line in hio.from_file(log_path).split("\n")]
-        lines = [line for line in lines if line]
-        if lines:
+        # Skip the empty lines, the lines with only quotes, and the notes of
+        # `hsystem` on the files that it saved.
+        lines = [
+            line
+            for line in lines
+            if line.strip("'\"")
+            and not line.startswith(_HSYSTEM_NOTE_PREFIXES)
+        ]
+        exception_lines = [line for line in lines if _EXCEPTION_RE.match(line)]
+        if exception_lines:
+            last_line = exception_lines[-1]
+        elif lines:
             last_line = lines[-1]
     return last_line
 

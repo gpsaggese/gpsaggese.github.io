@@ -35,7 +35,7 @@
 
 ### `R1` (Input File Format)
 
-- The pipeline accepts a CSV with a column `input` and one paper per row, where a row
+- The pipeline accepts a CSV with one paper per row and no header needed, where a row
   is any of:
   - A partial or full title, optionally followed by the authors in parentheses
   - An arXiv URL or arXiv ID

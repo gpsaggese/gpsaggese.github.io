@@ -4,6 +4,7 @@ from typing import List
 from unittest import mock
 
 import helpers.hio as hio
+import helpers.hprint as hprint
 import helpers.hunit_test as hunitest
 
 import research.Estimate_academic_paper_quality.epq_fetcher as epqfetch
@@ -129,6 +130,76 @@ class Test_is_fetched(hunitest.TestCase):
         Test a markdown with almost no text is not fetched.
         """
         self.helper("%PDF-1.4", "short", False)
+
+
+# #############################################################################
+# Test__read_last_line
+# #############################################################################
+
+
+class Test__read_last_line(hunitest.TestCase):
+    """
+    Test `epq_fetcher._read_last_line()`.
+    """
+
+    def helper(self, log_text: str, expected: str) -> None:
+        """
+        Test helper for `_read_last_line()`.
+
+        :param log_text: content of the log, "" for no file
+        :param expected: expected reason
+        """
+        # Prepare inputs.
+        log_path = os.path.join(self.get_scratch_space(), "tool.log")
+        if log_text:
+            hio.to_file(log_path, log_text)
+        # Run test.
+        actual = epqfetch._read_last_line(log_path)
+        # Check outputs.
+        self.assert_equal(actual, expected)
+
+    def test1(self) -> None:
+        """
+        Test the notes of `hsystem` after a failed command are skipped, and the
+        last exception line of the traceback is the reason.
+        """
+        log_text = """
+        Traceback (most recent call last):
+          File "download_with_chrome.py", line 337, in _download
+        playwright._impl._errors.Error: BrowserType.connect_over_cdp: Protocol error
+        Call log:
+          - <ws preparing> retrieving websocket url from http://127.0.0.1:9222
+          - <ws disconnected> ws://127.0.0.1:9222/devtools/browser/x code=1000
+
+        '
+        - Output saved in 'tmp.system_output.txt'
+        - Command saved in 'tmp.system_cmd.sh'
+        """
+        expected = (
+            "playwright._impl._errors.Error: BrowserType.connect_over_cdp: "
+            "Protocol error"
+        )
+        self.helper(hprint.dedent(log_text), expected)
+
+    def test2(self) -> None:
+        """
+        Test a log with no exception line gives its last line.
+        """
+        log_text = "Start\nDownloading\nHTTP 404 for the input\n\n"
+        self.helper(log_text, "HTTP 404 for the input")
+
+    def test3(self) -> None:
+        """
+        Test a missing log.
+        """
+        self.helper("", "no output")
+
+    def test4(self) -> None:
+        """
+        Test a log with only the notes of `hsystem`.
+        """
+        log_text = "'\n- Output saved in 'o.txt'\n- Command saved in 'c.sh'\n"
+        self.helper(log_text, "no output")
 
 
 # #############################################################################

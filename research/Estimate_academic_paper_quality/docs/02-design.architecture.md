@@ -41,7 +41,7 @@
 - The quant researcher runs four CLI scripts, one per stage, or the shell script
   `estimate_paper_quality.sh` that runs them in order
   ([`D27`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d27-the-pipeline-is-split-into-one-executable-per-stage))
-  - `resolve_papers.py` turns a CSV of papers into a papers CSV
+  - `resolve_papers.py` turns a CSV of papers into a papers file (JSON)
   - `download_papers.py` saves the PDF and the markdown of each paper
   - `extract_features.py` extracts the features of each paper with the LLM
   - `report_papers.py` rates the papers and writes the report
@@ -63,7 +63,7 @@ System(epq, "Estimate Paper Quality pipeline", "Resolves, downloads, converts, e
 System_Ext(bib, "Bibliographic APIs", "Semantic Scholar, Crossref, arXiv, Unpaywall")
 System_Ext(sites, "Paper hosts", "arXiv, SSRN, publisher sites, open-access mirrors")
 System_Ext(chrome, "Chrome", "Started and closed by download_with_chrome.py for SSRN")
-System_Ext(llm, "LLM provider", "OpenAI or OpenRouter, through helpers.hllm")
+System_Ext(llm, "LLM provider", "Any provider of the llm library, OpenRouter by default, through helpers.hllm_cli")
 Rel(user, epq, "Runs estimate_paper_quality.sh, or the four scripts one by one", "CLI")
 Rel(epq, bib, "Looks up metadata, links, citations", "HTTPS JSON")
 Rel(epq, sites, "Downloads PDFs", "HTTPS")
@@ -73,7 +73,7 @@ Rel(epq, llm, "Extracts features with quotes", "HTTPS JSON")
 
 ### C2 (Container)
 
-- Four scripts, a shell script that chains them, six modules of the project, three
+- Four scripts, a shell script that chains them, three infrastructure modules, three
   shared leaf modules, and the existing download tool
 - Arrows are imports or calls: each one points down a layer, never up
 - The scripts do not import each other: they talk only through files in the
@@ -90,7 +90,7 @@ Person(user, "Quant researcher")
 
 Container_Boundary(script, "Script and orchestration layer") {
   Container(sh, "estimate_paper_quality.sh", "bash", "Runs the four scripts in order")
-  Container(rcli, "resolve_papers.py", "", "Input CSV to papers CSV and issues CSV: parses lines, matches papers, dedupes, builds references")
+  Container(rcli, "resolve_papers.py", "", "Input CSV to papers file and issues file (JSON): parses lines, matches papers, dedupes, builds references")
   Container(dcli, "download_papers.py", "", "PDF and markdown of each paper")
   Container(ecli, "extract_features.py", "", "Features file of each paper: one LLM call, quotes checked against the PDF")
   Container(pcli, "report_papers.py", "", "Stages rate and report, selected with hselect_action: Paper quality rating from three signals")
@@ -104,7 +104,7 @@ Container_Boundary(infra, "Infrastructure layer") {
 
 Container_Boundary(ext, "Shared leaf modules, existing tool, outputs") {
   Container_Ext(tool, "download_academic_paper_to_md.py", "", "Downloads a PDF and converts it to markdown")
-  ContainerDb(out, "output_dir", "Files", "references.md, report.csv, issues.csv, papers/, state/")
+  ContainerDb(out, "output_dir", "Files", "NN-<stage>.* files, papers/, state/")
   Container(types, "epq_types.py", "", "Dataclasses shared by all modules")
   Container(paths, "epq_paths.py", "", "Paths of the files that the scripts share")
   Container(issues, "epq_issues.py", "", "Builds the issue of a failed paper")
@@ -117,11 +117,11 @@ Rel(sh, ecli, "runs")
 Rel(sh, pcli, "runs")
 Rel(rcli, bib, "BibSources, lookup_*(), search_title()")
 Rel(rcli, fetcher, "read_pdf_title()")
-Rel(rcli, report, "read_input_csv(), write_papers_csv(), write_issues_csv()")
+Rel(rcli, report, "read_input_csv(), write_papers(), write_issues()")
 Rel(dcli, fetcher, "is_fetched(), fetch_paper()")
-Rel(dcli, report, "read_papers_csv(), write_issues()")
+Rel(dcli, report, "read_papers(), write_issues()")
 Rel(ecli, fetcher, "read_markdown(), read_pdf_pages(), count_pages()")
-Rel(ecli, report, "read_papers_csv(), write_features_file(), write_issues()")
+Rel(ecli, report, "read_papers(), write_features_file(), write_issues()")
 Rel(pcli, bib, "get_citation_count()")
 Rel(pcli, report, "read_features_file(), write_rating_file(), write_*()")
 Rel(fetcher, tool, "subprocess")
@@ -186,16 +186,17 @@ Rel(report, out, "JSON, CSV, markdown")
   has `detect_doi()` and `get_ssrn_id()`
 - [`helpers_root/helpers/hselect_action.py`](/helpers_root/helpers/hselect_action.py)
   selects the stages
-- [`helpers_root/helpers/hllm.py`](/helpers_root/helpers/hllm.py) has
-  `get_structured_completion()`, which parses the answer of the LLM into a given
-  type, and
-  [`helpers_root/helpers/hllm_cost.py`](/helpers_root/helpers/hllm_cost.py) has
-  `LLMCostTracker`
+- [`helpers_root/helpers/hllm_cli.py`](/helpers_root/helpers/hllm_cli.py) has
+  `apply_llm()`, which calls an LLM through the `llm` library and returns the text
+  of the answer with the `TokenStats` of the call (tokens and cost), and
+  `DEFAULT_MODEL`. The old `helpers.hllm` is obsolete and the pipeline does not use
+  it
 - [`helpers_root/helpers/hcache_simple.py`](/helpers_root/helpers/hcache_simple.py)
   has the `simple_cache()` decorator and the `--cache_mode` switch
   `add_cache_control_arg()`
-- Move the private `_format_base_filename()` of the download tool to
-  a public `download_utils.format_base_filename()`
+- `download_utils.format_base_filename()` is the public name of the former private
+  `_format_base_filename()` of the download tool, and `resolve_papers.py` calls it to
+  compute the base name of a paper
   ([`D7`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d7-the-pipeline-computes-the-base-name-with-a-public-helper))
 
 ## Data Model
@@ -239,18 +240,18 @@ Rel(report, out, "JSON, CSV, markdown")
   ```bash
   > research/Estimate_academic_paper_quality/resolve_papers.py \
       --input research/Estimate_academic_paper_quality/paper_list.csv \
-      --output ~/papers/run_2026_10/papers.csv \
+      --output_dir ~/papers/run_2026_10 \
       --email me@umd.edu
   > research/Estimate_academic_paper_quality/download_papers.py \
-      --input ~/papers/run_2026_10/papers.csv \
       --output_dir ~/papers/run_2026_10
   > research/Estimate_academic_paper_quality/extract_features.py \
-      --input ~/papers/run_2026_10/papers.csv \
       --output_dir ~/papers/run_2026_10
   > research/Estimate_academic_paper_quality/report_papers.py \
-      --input ~/papers/run_2026_10/papers.csv \
       --output_dir ~/papers/run_2026_10
   ```
+
+  - The three last commands read `01-resolve.paper_list.json` in the output dir, since
+    `--input` defaults to it
 
 - The shell script runs the same four commands in order:
 
@@ -260,9 +261,12 @@ Rel(report, out, "JSON, CSV, markdown")
       -o ~/papers/run_2026_10
   ```
 
-- `resolve_papers.py`: `resolver` parses 22 rows, looks up each one, writes 20 `Paper`
-  as the rows of `papers.csv` and 2 `Issue` as the rows of `papers.issues.csv`
-  ([`D26`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d26-the-resolver-is-a-separate-executable-that-reads-and-writes-csv))
+- `resolve_papers.py`: copies the input to `00-paper_list.csv`, then `resolver` parses
+  22 rows, looks up each one, writes 20 `Paper` to `01-resolve.paper_list.json` and 2
+  `Issue` to `01-resolve.issues.json`
+  ([`D26`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d26-the-resolver-is-a-separate-executable-that-reads-and-writes-csv),
+  superseded by
+  [`D31`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d31-json-for-the-intermediate-files))
 - `download_papers.py`: `fetcher` runs the download tool for each paper with no PDF
   and no markdown yet, and records the failures
 - `extract_features.py`: for each converted paper with no features file yet,
@@ -271,8 +275,9 @@ Rel(report, out, "JSON, CSV, markdown")
 - `report_papers.py`, stage `rate`: for each paper with a features file, `bib_sources`
   gives the citation count, `rater` rates the paper, and `report` writes
   `<output_dir>/papers/<BASE>.rating.json`
-- `report_papers.py`, stage `report`: `report` writes `references.md`, `report.csv`,
-  and `issues.csv` from the state files, the features files, and the rating files
+- `report_papers.py`, stage `report`: `report` writes `04-report.references.md`,
+  `04-report.report.csv`, and `04-report.issues.csv` from the issues files, the
+  features files, and the rating files
 - Rerun with 5 new rows: `resolve_papers.py` hits the HTTP cache for the 22 old rows,
   `download_papers.py` and `extract_features.py` skip the 20 old papers, so only the
   new papers cost network time and LLM tokens; `report_papers.py` rates all the
@@ -311,25 +316,36 @@ Rel(report, out, "JSON, CSV, markdown")
   [`research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md`](/research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md),
   and described in the README of each script, e.g.,
   [`resolve_papers.py.README.md`](/research/Estimate_academic_paper_quality/resolve_papers.py.README.md)
-- Interfaces: four CLI scripts and a shell script, a papers CSV between the first
-  and the others, and one output dir
+- Interfaces: four CLI scripts and a shell script, a papers file (JSON) between the
+  first and the others, and one output dir
+  ([`D30`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d30-output_dir-for-several-files-and-output-for-one))
   - Layout of the output dir:
 
     ```
     <output_dir>/
-      references.md            R2, R7
-      report.csv               R18
-      issues.csv               R19
+      00-paper_list.csv            copy of the input
+      01-resolve.paper_list.json   the papers, R7
+      01-resolve.issues.json       issues of resolve, R5
+      02-download.issues.json      issues of download, R10
+      03-extract.issues.json       issues of extract
+      04-rate.issues.json          issues of rate
+      04-report.report.csv         R18
+      04-report.issues.csv         R19
+      04-report.references.md      R2, R7
       papers/
-        <BASE>.pdf             R8
-        <BASE>.md              R8
-        <BASE>.features.json   R20
-        <BASE>.rating.json     R16, R20
+        <BASE>.pdf                 R8
+        <BASE>.md                  R8
+        <BASE>.features.json       R20
+        <BASE>.rating.json         R16, R20
       state/
-        issues.<stage>.json    issues of download, extract, rate
-        cache/                 HTTP response cache
-        logs/                  logs of the download tool
+        cache/                     HTTP response cache
+        logs/                      logs of the download tool
     ```
+
+  - The numbers are the order of the executables
+    ([`D29`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d29-numbered-stage-files-in-the-output-dir)), and the full
+    description is in
+    [`research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md`](/research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md)
 
 - Environment:
   - Network access, and Chrome for SSRN
@@ -337,8 +353,9 @@ Rel(report, out, "JSON, CSV, markdown")
   - Docker, since the conversion runs a Dockerized prettier: the PRD does not list it
     (see
     [`research/Estimate_academic_paper_quality/docs/02.4-design.fetcher.md`](/research/Estimate_academic_paper_quality/docs/02.4-design.fetcher.md))
-  - The key of the LLM provider, as [`helpers.hllm`](/helpers_root/helpers/hllm.py)
-    reads it
+  - The key of the LLM provider, as the `llm` library reads it, e.g.,
+    `OPENROUTER_KEY` for the default model of
+    [`helpers.hllm_cli`](/helpers_root/helpers/hllm_cli.py)
   - Optional `SEMANTIC_SCHOLAR_API_KEY`, for a higher rate limit
 - Known limits:
   - Stages run one paper at a time: about 100 papers take about an hour, mostly LLM

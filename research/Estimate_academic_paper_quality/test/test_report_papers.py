@@ -743,13 +743,13 @@ class Test__report(hunitest.TestCase):
         dry_run: bool = False,
     ) -> None:
         """
-        Run the stage `report` with no issues CSV of `resolve_papers.py`.
+        Run the stage `report`.
 
-        :param papers: papers of the papers CSV
+        :param papers: papers of the papers file
         :param output_dir: dir of all the outputs
         :param dry_run: if True, only log what the stage would do
         """
-        repopapers._report(papers, output_dir, "", dry_run=dry_run)
+        repopapers._report(papers, output_dir, dry_run=dry_run)
 
     def test1(self) -> None:
         """
@@ -768,9 +768,11 @@ class Test__report(hunitest.TestCase):
         # Run test.
         self.report(papers, output_dir)
         # Check outputs.
-        report = hio.from_file(os.path.join(output_dir, "report.csv"))
+        report = hio.from_file(epqpaths.get_report_path(output_dir))
         self.assertEqual(len(report.strip().split("\n")), 2)
-        issues = epqrepor.read_issues_csv(os.path.join(output_dir, "issues.csv"))
+        issues = epqrepor.read_issues_csv(
+            epqpaths.get_all_issues_path(output_dir)
+        )
         actual = [(i.base_name, i.stage, i.status) for i in issues]
         self.assertEqual(actual, [("p2", "rate", "rating_missing")])
 
@@ -788,10 +790,10 @@ class Test__report(hunitest.TestCase):
         # Run test.
         self.report([paper], output_dir)
         # Check outputs.
-        issues = hio.from_file(os.path.join(output_dir, "issues.csv"))
+        issues = hio.from_file(epqpaths.get_all_issues_path(output_dir))
         self.assertIn("extraction_failed", issues)
         self.assertIn("--force_extract", issues)
-        report = hio.from_file(os.path.join(output_dir, "report.csv"))
+        report = hio.from_file(epqpaths.get_report_path(output_dir))
         self.assertEqual(len(report.strip().split("\n")), 1)
 
     def test3(self) -> None:
@@ -819,13 +821,15 @@ class Test__report(hunitest.TestCase):
         # Run test.
         self.report([paper], output_dir)
         # Check outputs.
-        issues = epqrepor.read_issues_csv(os.path.join(output_dir, "issues.csv"))
+        issues = epqrepor.read_issues_csv(
+            epqpaths.get_all_issues_path(output_dir)
+        )
         actual = [(i.base_name, i.status) for i in issues]
         self.assertEqual(actual, [("p1", "rating_failed")])
 
     def test4(self) -> None:
         """
-        Test the references keep the order of the papers CSV.
+        Test the references keep the order of the papers file.
         """
         # Prepare inputs.
         output_dir = os.path.join(self.get_scratch_space(), "out")
@@ -836,7 +840,7 @@ class Test__report(hunitest.TestCase):
         # Run test.
         self.report(papers, output_dir)
         # Check outputs.
-        actual = hio.from_file(os.path.join(output_dir, "references.md"))
+        actual = hio.from_file(epqpaths.get_references_path(output_dir))
         self.assertEqual(actual, "- ref one\n- ref two\n")
 
     def test5(self) -> None:
@@ -878,15 +882,15 @@ class Test_report_papers_py(hunitest.TestCase):
         ):
             repopapers._main(parser)
 
-    def make_papers_csv(self, papers: List[epqtypes.Paper]) -> str:
+    def make_papers_file(self, papers: List[epqtypes.Paper]) -> str:
         """
-        Write a papers CSV in the scratch space.
+        Write a papers file in the scratch space.
 
-        :param papers: papers of the CSV
-        :return: path of the CSV
+        :param papers: papers of the file
+        :return: path of the file
         """
-        path = os.path.join(self.get_scratch_space(), "papers.csv")
-        epqrepor.write_papers_csv(path, papers)
+        path = os.path.join(self.get_scratch_space(), "papers.json")
+        epqrepor.write_papers(path, papers)
         return path
 
     def test1(self) -> None:
@@ -894,7 +898,9 @@ class Test_report_papers_py(hunitest.TestCase):
         Test the stage `rate` and the stage `report` write the report.
         """
         # Prepare inputs.
-        papers_file = self.make_papers_csv([epqteuti.make_paper(base_name="p1")])
+        papers_file = self.make_papers_file(
+            [epqteuti.make_paper(base_name="p1")]
+        )
         output_dir = os.path.join(self.get_scratch_space(), "out")
         _write_features(output_dir, ["p1"])
         sources = epqteuti.FakeBibSources(citations=_make_citations())
@@ -902,11 +908,11 @@ class Test_report_papers_py(hunitest.TestCase):
         # Run test.
         self.run_main(argv, sources)
         # Check outputs.
-        rows = hio.from_file(os.path.join(output_dir, "report.csv")).split("\n")
+        rows = hio.from_file(epqpaths.get_report_path(output_dir)).split("\n")
         self.assertEqual(len(rows), 3)
         self.assertIn(",3,4,p1", rows[1].replace("\r", ""))
         self.assertEqual(
-            hio.from_file(os.path.join(output_dir, "references.md")),
+            hio.from_file(epqpaths.get_references_path(output_dir)),
             '- 2020, Cohen et al., "Lazy Prices" (https://arxiv.org/pdf/2001.00001)\n',
         )
 
@@ -915,7 +921,7 @@ class Test_report_papers_py(hunitest.TestCase):
         Test the stage `report` alone writes the reference list.
         """
         # Prepare inputs.
-        papers_file = self.make_papers_csv([epqteuti.make_paper()])
+        papers_file = self.make_papers_file([epqteuti.make_paper()])
         output_dir = os.path.join(self.get_scratch_space(), "out")
         argv = [
             f"--input={papers_file}",
@@ -928,7 +934,7 @@ class Test_report_papers_py(hunitest.TestCase):
         self.run_main(argv, sources)
         # Check outputs.
         self.assert_equal(
-            hio.from_file(os.path.join(output_dir, "references.md")),
+            hio.from_file(epqpaths.get_references_path(output_dir)),
             '- 2020, Cohen et al., "Lazy Prices" (https://arxiv.org/pdf/2001.00001)\n',
         )
         self.assertEqual(sources.calls, [])
@@ -938,10 +944,10 @@ class Test_report_papers_py(hunitest.TestCase):
 
     def test3(self) -> None:
         """
-        Test the issues CSV next to the papers CSV goes to `issues.csv`.
+        Test the issues of `resolve_papers.py` go to the issues CSV.
         """
         # Prepare inputs.
-        papers_file = self.make_papers_csv([epqteuti.make_paper()])
+        papers_file = self.make_papers_file([epqteuti.make_paper()])
         output_dir = os.path.join(self.get_scratch_space(), "out")
         issue = epqtypes.Issue(
             line_no=2,
@@ -952,8 +958,8 @@ class Test_report_papers_py(hunitest.TestCase):
             reason="no source has a paper titled 'Unknown Title'",
             candidates=(),
         )
-        epqrepor.write_issues_csv(
-            epqpaths.get_resolve_issues_path(papers_file), [issue]
+        epqrepor.write_issues(
+            epqpaths.get_issues_path(output_dir, "resolve"), [issue]
         )
         argv = [
             f"--input={papers_file}",
@@ -969,21 +975,20 @@ class Test_report_papers_py(hunitest.TestCase):
         # Run test.
         self.run_main(argv, epqteuti.FakeBibSources())
         # Check outputs.
-        actual = hio.from_file(os.path.join(output_dir, "issues.csv")).replace(
+        actual = hio.from_file(epqpaths.get_all_issues_path(output_dir)).replace(
             "\r\n", "\n"
         )
         self.assert_equal(actual, expected, dedent=True)
 
     def test4(self) -> None:
         """
-        Test `--resolve_issues` selects an issues CSV that has another name.
+        Test the candidates of an issue are joined in one cell of the issues CSV.
         """
         # Prepare inputs.
-        papers_file = self.make_papers_csv([epqteuti.make_paper()])
+        papers_file = self.make_papers_file([epqteuti.make_paper()])
         output_dir = os.path.join(self.get_scratch_space(), "out")
-        issues_file = os.path.join(self.get_scratch_space(), "my_issues.csv")
-        epqrepor.write_issues_csv(
-            issues_file,
+        epqrepor.write_issues(
+            epqpaths.get_issues_path(output_dir, "resolve"),
             [
                 epqtypes.Issue(
                     line_no=7,
@@ -998,7 +1003,6 @@ class Test_report_papers_py(hunitest.TestCase):
         )
         argv = [
             f"--input={papers_file}",
-            f"--resolve_issues={issues_file}",
             f"--output_dir={output_dir}",
             "--clear_actions",
             "--action=report",
@@ -1006,13 +1010,13 @@ class Test_report_papers_py(hunitest.TestCase):
         # Run test.
         self.run_main(argv, epqteuti.FakeBibSources())
         # Check outputs.
-        actual = hio.from_file(os.path.join(output_dir, "issues.csv"))
+        actual = hio.from_file(epqpaths.get_all_issues_path(output_dir))
         self.assertIn("7,Momentum,,resolve,ambiguous", actual)
         self.assertIn("c1|c2", actual)
 
     def test5(self) -> None:
         """
-        Test a missing papers CSV stops the run before any lookup.
+        Test a missing papers file stops the run before any lookup.
         """
         # Prepare inputs.
         scratch = self.get_scratch_space()
@@ -1028,25 +1032,36 @@ class Test_report_papers_py(hunitest.TestCase):
 
     def test6(self) -> None:
         """
-        Test a missing file of `--resolve_issues` stops the run.
+        Test the default input is the papers file in the output dir.
         """
         # Prepare inputs.
-        papers_file = self.make_papers_csv([epqteuti.make_paper()])
+        output_dir = os.path.join(self.get_scratch_space(), "out")
+        epqrepor.write_papers(
+            epqpaths.get_papers_path(output_dir),
+            [epqteuti.make_paper(base_name="p1")],
+        )
         argv = [
-            f"--input={papers_file}",
-            f"--resolve_issues={self.get_scratch_space()}/missing.csv",
-            f"--output_dir={self.get_scratch_space()}/out",
+            f"--output_dir={output_dir}",
+            "--clear_actions",
+            "--action=report",
         ]
-        # Run test.
-        with self.assertRaises(AssertionError):
-            self.run_main(argv, epqteuti.FakeBibSources())
+        # Run test: there is no resolve issues file, which is only a warning.
+        self.run_main(argv, epqteuti.FakeBibSources())
+        # Check outputs.
+        actual = hio.from_file(epqpaths.get_references_path(output_dir))
+        self.assertIn("Lazy Prices", actual)
+        self.assertFalse(
+            os.path.exists(epqpaths.get_issues_path(output_dir, "resolve"))
+        )
 
     def test7(self) -> None:
         """
         Test `--dry_run` makes no lookup and writes no file.
         """
         # Prepare inputs.
-        papers_file = self.make_papers_csv([epqteuti.make_paper(base_name="p1")])
+        papers_file = self.make_papers_file(
+            [epqteuti.make_paper(base_name="p1")]
+        )
         output_dir = os.path.join(self.get_scratch_space(), "out")
         _write_features(output_dir, ["p1"])
         sources = epqteuti.FakeBibSources(citations=_make_citations())
@@ -1062,4 +1077,4 @@ class Test_report_papers_py(hunitest.TestCase):
         self.assertFalse(
             os.path.exists(epqpaths.get_rating_path(output_dir, "p1"))
         )
-        self.assertFalse(os.path.exists(os.path.join(output_dir, "report.csv")))
+        self.assertFalse(os.path.exists(epqpaths.get_report_path(output_dir)))

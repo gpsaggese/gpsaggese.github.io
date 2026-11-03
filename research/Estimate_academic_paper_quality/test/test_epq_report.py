@@ -1,4 +1,5 @@
 import dataclasses
+import json
 import logging
 import os
 from typing import List
@@ -112,26 +113,56 @@ class Test_read_input_csv(hunitest.TestCase):
 
     def test2(self) -> None:
         """
-        Test a file with no column `input` is rejected.
+        Test a file with no header: the first row is an entry, and a title with
+        commas stays whole, quoted or not.
         """
         # Prepare inputs.
         path = os.path.join(self.get_scratch_space(), "in.csv")
-        hio.to_file(path, "title\nLazy Prices\n")
+        txt = (
+            "Lazy Prices (John Campbell; Xin Zheng)\n"
+            "\n"
+            "Lazy Prices (Cohen, Malloy)\n"
+            '"Lazy Prices (Cohen, Malloy)"\n'
+            "2001.00001\n"
+        )
+        hio.to_file(path, txt)
+        # Prepare outputs.
+        expected = [
+            (1, "Lazy Prices (John Campbell; Xin Zheng)"),
+            (2, "Lazy Prices (Cohen, Malloy)"),
+            (3, "Lazy Prices (Cohen, Malloy)"),
+            (4, "2001.00001"),
+        ]
         # Run test.
-        with self.assertRaises(AssertionError) as cm:
-            epqrepor.read_input_csv(path)
+        actual = epqrepor.read_input_csv(path)
         # Check outputs.
-        self.assertIn("has no column ['input']", str(cm.exception))
+        self.assertEqual(actual, expected)
+
+    def test3(self) -> None:
+        """
+        Test a header `input` in any case is skipped, and an empty file is empty.
+        """
+        # Prepare inputs.
+        path = os.path.join(self.get_scratch_space(), "in.csv")
+        hio.to_file(path, "Input\nLazy Prices\n")
+        empty_path = os.path.join(self.get_scratch_space(), "empty.csv")
+        hio.to_file(empty_path, "")
+        # Run test.
+        actual = epqrepor.read_input_csv(path)
+        actual_empty = epqrepor.read_input_csv(empty_path)
+        # Check outputs.
+        self.assertEqual(actual, [(1, "Lazy Prices")])
+        self.assertEqual(actual_empty, [])
 
 
 # #############################################################################
-# Test_papers_csv
+# Test_papers_json
 # #############################################################################
 
 
-class Test_papers_csv(hunitest.TestCase):
+class Test_papers_json(hunitest.TestCase):
     """
-    Test `epq_report.write_papers_csv()` and `epq_report.read_papers_csv()`.
+    Test `epq_report.write_papers()` and `epq_report.read_papers()`.
     """
 
     def test1(self) -> None:
@@ -139,7 +170,7 @@ class Test_papers_csv(hunitest.TestCase):
         Test papers are read back equal, with the lists of different sizes.
         """
         # Prepare inputs.
-        path = os.path.join(self.get_scratch_space(), "papers.csv")
+        path = os.path.join(self.get_scratch_space(), "papers.json")
         paper1 = epqteuti.make_paper(
             line_nos=(3, 17),
             reference='2020, Cohen et al., "Lazy, Prices" (???)',
@@ -152,41 +183,61 @@ class Test_papers_csv(hunitest.TestCase):
         )
         papers = [paper1, paper2]
         # Run test.
-        epqrepor.write_papers_csv(path, papers)
-        actual = epqrepor.read_papers_csv(path)
+        epqrepor.write_papers(path, papers)
+        actual = epqrepor.read_papers(path)
         # Check outputs.
-        self.assert_equal(str(actual), str(papers))
+        self.assertEqual(actual, papers)
 
     def test2(self) -> None:
         """
-        Test the content of the papers CSV.
+        Test a separator, a quote, and a non-ASCII char in an item survive.
         """
         # Prepare inputs.
-        path = os.path.join(self.get_scratch_space(), "papers.csv")
-        paper = epqteuti.make_paper(line_nos=(3, 17))
-        # Prepare outputs.
-        expected = """
-        reference,year,authors,title,doi,arxiv_id,s2_paper_id,source,base_name,download_inputs,line_nos,key,aliases
-        "2020, Cohen et al., ""Lazy Prices"" (https://arxiv.org/pdf/2001.00001)",2020,"Cohen, Lauren|Malloy, Christopher",Lazy Prices,10.1111/jofi.12885,2001.00001,s2lazy,semantic_scholar,2020.Cohen_et_al.Lazy_Prices,https://arxiv.org/pdf/2001.00001,3|17,lazy prices|cohen,doi:10.1111/jofi.12885
-        """
+        path = os.path.join(self.get_scratch_space(), "papers.json")
+        paper = dataclasses.replace(
+            epqteuti.make_paper(),
+            authors=("Smith | Jones", 'O"Brien', "Gu\u00e9rin"),
+            aliases=("a|b",),
+        )
         # Run test.
-        epqrepor.write_papers_csv(path, [paper])
+        epqrepor.write_papers(path, [paper])
+        actual = epqrepor.read_papers(path)
         # Check outputs.
-        actual = hio.from_file(path).replace("\r\n", "\n")
-        self.assert_equal(actual, expected, dedent=True)
+        self.assertEqual(actual, [paper])
 
     def test3(self) -> None:
         """
-        Test a CSV that is not a papers CSV is rejected.
+        Test the content of the papers file: a list is a JSON array.
         """
         # Prepare inputs.
-        path = os.path.join(self.get_scratch_space(), "papers.csv")
-        hio.to_file(path, "input\nLazy Prices\n")
+        path = os.path.join(self.get_scratch_space(), "papers.json")
+        paper = epqteuti.make_paper(line_nos=(3, 17))
+        # Run test.
+        epqrepor.write_papers(path, [paper])
+        # Check outputs.
+        data = json.loads(hio.from_file(path))
+        self.assertEqual(data["schema_version"], 2)
+        self.assertEqual(len(data["papers"]), 1)
+        item = data["papers"][0]
+        self.assertEqual(item["line_nos"], [3, 17])
+        self.assertEqual(
+            item["authors"], ["Cohen, Lauren", "Malloy, Christopher"]
+        )
+        self.assertEqual(item["year"], 2020)
+
+    def test4(self) -> None:
+        """
+        Test a papers file with another schema version is rejected.
+        """
+        # Prepare inputs.
+        path = os.path.join(self.get_scratch_space(), "papers.json")
+        hio.to_file(path, '{"schema_version": 0, "papers": []}')
         # Run test.
         with self.assertRaises(AssertionError) as cm:
-            epqrepor.read_papers_csv(path)
+            epqrepor.read_papers(path)
         # Check outputs.
-        self.assertIn("has no column", str(cm.exception))
+        self.assertIn("old schema", str(cm.exception))
+        self.assertIn("resolve_papers.py", str(cm.exception))
 
 
 # #############################################################################

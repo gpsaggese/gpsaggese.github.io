@@ -48,6 +48,8 @@ class Test__download(hunitest.TestCase):
                 output_dir,
                 tool_path=tool_path,
                 log_level="INFO",
+                min_delay_sec=0.0,
+                max_delay_sec=0.0,
                 dry_run=False,
             )
         # Check outputs.
@@ -90,6 +92,8 @@ class Test__download(hunitest.TestCase):
                     output_dir,
                     tool_path=tool_path,
                     log_level="INFO",
+                    min_delay_sec=0.0,
+                    max_delay_sec=0.0,
                     dry_run=False,
                 )
 
@@ -120,6 +124,7 @@ class Test__download(hunitest.TestCase):
         tool_path = epqteuti.make_stub_tool(scratch)
         calls_path = os.path.join(scratch, "calls.txt")
         env = {"EPQ_STUB_CALLS": calls_path}
+        sleeps: List[float] = []
         # Run test.
         with mock.patch.dict(os.environ, env):
             issues = dowpapers._download(
@@ -127,12 +132,108 @@ class Test__download(hunitest.TestCase):
                 output_dir,
                 tool_path=tool_path,
                 log_level="INFO",
+                min_delay_sec=1.0,
+                max_delay_sec=2.0,
                 dry_run=True,
+                sleep_func=sleeps.append,
             )
         # Check outputs.
         self.assertEqual(issues, [])
         self.assertFalse(os.path.exists(calls_path))
         self.assertFalse(os.path.exists(output_dir))
+        self.assertEqual(sleeps, [])
+
+    def _download_failing(
+        self,
+        base_names: List[str],
+        *,
+        min_delay_sec: float,
+        max_delay_sec: float,
+        output_dir: str = "",
+    ) -> List[float]:
+        """
+        Download papers that fail and record the waits between the downloads.
+
+        :param base_names: base names of the papers, each with one input
+        :param min_delay_sec: shortest wait
+        :param max_delay_sec: longest wait
+        :param output_dir: output dir, empty is `out` in the scratch space
+        :return: the waits, in order
+        """
+        scratch = self.get_scratch_space()
+        output_dir = output_dir or os.path.join(scratch, "out")
+        papers = [
+            epqteuti.make_paper(
+                base_name=name, download_inputs=("https://x.example/fail",)
+            )
+            for name in base_names
+        ]
+        tool_path = epqteuti.make_stub_tool(scratch)
+        env = {"EPQ_STUB_CALLS": os.path.join(scratch, "calls.txt")}
+        sleeps: List[float] = []
+        with mock.patch.dict(os.environ, env):
+            dowpapers._download(
+                papers,
+                output_dir,
+                tool_path=tool_path,
+                log_level="INFO",
+                min_delay_sec=min_delay_sec,
+                max_delay_sec=max_delay_sec,
+                dry_run=False,
+                sleep_func=sleeps.append,
+            )
+        return sleeps
+
+    def test4(self) -> None:
+        """
+        Test n downloads wait n - 1 times, and never before the first one.
+        """
+        # Run test.
+        sleeps = self._download_failing(
+            ["p1", "p2", "p3"], min_delay_sec=2.5, max_delay_sec=2.5
+        )
+        # Check outputs.
+        self.assertEqual(sleeps, [2.5, 2.5])
+
+    def test5(self) -> None:
+        """
+        Test each wait is a random time in the range.
+        """
+        # Run test.
+        sleeps = self._download_failing(
+            ["p1", "p2", "p3", "p4", "p5"], min_delay_sec=1.0, max_delay_sec=3.0
+        )
+        # Check outputs.
+        self.assertEqual(len(sleeps), 4)
+        for sleep in sleeps:
+            self.assertGreaterEqual(sleep, 1.0)
+            self.assertLessEqual(sleep, 3.0)
+        # The waits are not all the same.
+        self.assertGreater(len(set(sleeps)), 1)
+
+    def test6(self) -> None:
+        """
+        Test a paper that is already converted causes no wait.
+        """
+        # Prepare inputs.
+        scratch = self.get_scratch_space()
+        output_dir = os.path.join(scratch, "out")
+        hio.create_dir(epqpaths.get_papers_dir(output_dir), incremental=True)
+        epqteuti.create_pdf(
+            epqpaths.get_pdf_path(output_dir, "p1"), ["Sharpe ratio of 1.4"]
+        )
+        hio.to_file(
+            epqpaths.get_markdown_path(output_dir, "p1"), "Sharpe ratio " * 50
+        )
+        # Run test: `p1` is skipped and `p2` is the first download.
+        sleeps = self._download_failing(
+            ["p1", "p2"],
+            min_delay_sec=1.0,
+            max_delay_sec=1.0,
+            output_dir=output_dir,
+        )
+        # Check outputs.
+        self.assertEqual(sleeps, [])
 
 
 # #############################################################################
@@ -157,7 +258,7 @@ class Test_download_papers_py(hunitest.TestCase):
 
     def test1(self) -> None:
         """
-        Test a missing papers CSV stops the run.
+        Test a missing papers file stops the run.
         """
         # Prepare inputs.
         scratch = self.get_scratch_space()
@@ -177,8 +278,8 @@ class Test_download_papers_py(hunitest.TestCase):
         """
         # Prepare inputs.
         scratch = self.get_scratch_space()
-        papers_file = os.path.join(scratch, "papers.csv")
-        epqrepor.write_papers_csv(papers_file, [epqteuti.make_paper()])
+        papers_file = os.path.join(scratch, "papers.json")
+        epqrepor.write_papers(papers_file, [epqteuti.make_paper()])
         output_dir = os.path.join(scratch, "out")
         argv = [
             f"--input={papers_file}",
@@ -189,3 +290,40 @@ class Test_download_papers_py(hunitest.TestCase):
         self.run_main(argv)
         # Check outputs.
         self.assertFalse(os.path.exists(output_dir))
+
+    def test3(self) -> None:
+        """
+        Test the default input is the papers file in the output dir.
+        """
+        # Prepare inputs.
+        output_dir = os.path.join(self.get_scratch_space(), "out")
+        argv = [f"--output_dir={output_dir}", "--dry_run"]
+        # Run test: there is no papers file in the output dir yet.
+        with self.assertRaises(AssertionError) as cm:
+            self.run_main(argv)
+        # Check outputs.
+        self.assertIn("01-resolve.paper_list.json", str(cm.exception))
+        # Run test: the dry run finds the papers file.
+        epqrepor.write_papers(
+            epqpaths.get_papers_path(output_dir), [epqteuti.make_paper()]
+        )
+        self.run_main(argv)
+
+    def test4(self) -> None:
+        """
+        Test a shortest wait that is longer than the longest wait stops the run.
+        """
+        # Prepare inputs.
+        scratch = self.get_scratch_space()
+        papers_file = os.path.join(scratch, "papers.json")
+        epqrepor.write_papers(papers_file, [epqteuti.make_paper()])
+        argv = [
+            f"--input={papers_file}",
+            f"--output_dir={scratch}/out",
+            "--min_delay_sec=5",
+            "--max_delay_sec=1",
+            "--dry_run",
+        ]
+        # Run test.
+        with self.assertRaises(AssertionError):
+            self.run_main(argv)

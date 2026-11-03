@@ -1001,14 +1001,14 @@ class Test_resolve_papers_py(hunitest.TestCase):
 
     def test1(self) -> None:
         """
-        Test the papers CSV and the issues CSV of a list with a bad row.
+        Test the papers file and the issues file of a list with a bad row.
         """
         # Prepare inputs.
         scratch = self.get_scratch_space()
         input_csv = self.make_input_csv(
             ["2001.00001", "Unknown Title", "", "# a comment", "2001.00001v2"]
         )
-        papers_csv = os.path.join(scratch, "out", "papers.csv")
+        output_dir = os.path.join(scratch, "out")
         sources = epqteuti.FakeBibSources(
             by_id={
                 "arxiv:2001.00001": epqteuti.make_record(
@@ -1019,46 +1019,65 @@ class Test_resolve_papers_py(hunitest.TestCase):
                 )
             }
         )
-        argv = [f"--input={input_csv}", f"--output={papers_csv}"]
+        argv = [f"--input={input_csv}", f"--output_dir={output_dir}"]
         # Prepare outputs.
-        expected_papers = """
-        reference,year,authors,title,doi,arxiv_id,s2_paper_id,source,base_name,download_inputs,line_nos,key,aliases
-        "2020, Cohen et al., ""Lazy Prices"" (https://arxiv.org/pdf/2001.00001)",2020,"Cohen, Lauren|Malloy, Christopher",Lazy Prices,10.1111/jofi.12885,2001.00001,,arxiv,2020.Cohen_et_al.Lazy_Prices,https://arxiv.org/pdf/2001.00001,1|5,lazy prices|cohen,doi:10.1111/jofi.12885|arxiv:2001.00001
-        """
-        expected_issues = """
-        line_no,input,base_name,stage,status,reason,candidates
-        2,Unknown Title,,resolve,unresolved,no source has a paper titled 'Unknown Title',
-        """
+        expected_papers = [
+            (
+                "2020.Cohen_et_al.Lazy_Prices",
+                (1, 5),
+                ("doi:10.1111/jofi.12885", "arxiv:2001.00001"),
+                ("https://arxiv.org/pdf/2001.00001",),
+            )
+        ]
+        expected_issues = [
+            (
+                2,
+                "Unknown Title",
+                "resolve",
+                "unresolved",
+                "no source has a paper titled 'Unknown Title'",
+            )
+        ]
         # Run test.
         self.run_main(argv, sources)
         # Check outputs.
-        actual_papers = hio.from_file(papers_csv).replace("\r\n", "\n")
-        self.assert_equal(actual_papers, expected_papers, dedent=True)
-        issues_csv = os.path.join(scratch, "out", "papers.issues.csv")
-        actual_issues = hio.from_file(issues_csv).replace("\r\n", "\n")
-        self.assert_equal(actual_issues, expected_issues, dedent=True)
+        papers = epqrepor.read_papers(epqpaths.get_papers_path(output_dir))
+        actual_papers = [
+            (p.base_name, p.line_nos, p.aliases, p.download_inputs)
+            for p in papers
+        ]
+        self.assertEqual(actual_papers, expected_papers)
+        issues = epqrepor.read_issues(
+            epqpaths.get_issues_path(output_dir, "resolve")
+        )
+        actual_issues = [
+            (i.line_no, i.input, i.stage, i.status, i.reason) for i in issues
+        ]
+        self.assertEqual(actual_issues, expected_issues)
+        # The names of the files are inferred from the output dir.
+        actual_files = sorted(f for f in os.listdir(output_dir) if f != "state")
+        expected_files = [
+            "00-paper_list.csv",
+            "01-resolve.issues.json",
+            "01-resolve.paper_list.json",
+        ]
+        self.assertEqual(actual_files, expected_files)
 
     def test2(self) -> None:
         """
-        Test `--issues_output` selects the path of the issues CSV.
+        Test the input CSV is copied to the output dir as `00-paper_list.csv`.
         """
         # Prepare inputs.
         scratch = self.get_scratch_space()
         input_csv = self.make_input_csv(["Unknown Title"])
-        papers_csv = os.path.join(scratch, "papers.csv")
-        issues_csv = os.path.join(scratch, "bad_rows.csv")
-        argv = [
-            f"--input={input_csv}",
-            f"--output={papers_csv}",
-            f"--issues_output={issues_csv}",
-        ]
+        output_dir = os.path.join(scratch, "out")
+        argv = [f"--input={input_csv}", f"--output_dir={output_dir}"]
         # Run test.
         self.run_main(argv, epqteuti.FakeBibSources())
         # Check outputs.
-        self.assertEqual(len(epqrepor.read_issues_csv(issues_csv)), 1)
-        self.assertFalse(
-            os.path.exists(epqpaths.get_resolve_issues_path(papers_csv))
-        )
+        copy_path = epqpaths.get_input_copy_path(output_dir)
+        self.assertEqual(os.path.basename(copy_path), "00-paper_list.csv")
+        self.assertEqual(hio.from_file(copy_path), hio.from_file(input_csv))
 
     def test3(self) -> None:
         """
@@ -1067,32 +1086,34 @@ class Test_resolve_papers_py(hunitest.TestCase):
         # Prepare inputs.
         scratch = self.get_scratch_space()
         input_csv = self.make_input_csv(["2001.00001", "Unknown Title"])
-        papers_csv = os.path.join(scratch, "out", "papers.csv")
+        output_dir = os.path.join(scratch, "out")
         sources = epqteuti.FakeBibSources()
-        argv = [f"--input={input_csv}", f"--output={papers_csv}", "--dry_run"]
+        argv = [
+            f"--input={input_csv}",
+            f"--output_dir={output_dir}",
+            "--dry_run",
+        ]
         # Run test.
         self.run_main(argv, sources)
-        # Check outputs.
+        # Check outputs: no lookup, no dir, and so no copy of the input.
         self.assertEqual(sources.calls, [])
-        self.assertFalse(os.path.exists(os.path.dirname(papers_csv)))
+        self.assertFalse(os.path.exists(output_dir))
 
     def test4(self) -> None:
         """
-        Test an input CSV with no column `input` stops the run.
+        Test an input CSV with no header: the first row is a paper.
         """
         # Prepare inputs.
         scratch = self.get_scratch_space()
         input_csv = os.path.join(scratch, "papers_in.csv")
-        hio.to_file(input_csv, "title\nLazy Prices\n")
-        argv = [
-            f"--input={input_csv}",
-            f"--output={os.path.join(scratch, 'papers.csv')}",
-        ]
+        hio.to_file(input_csv, "2001.00001\n")
         # Run test.
-        with self.assertRaises(AssertionError) as cm:
-            self.run_main(argv, epqteuti.FakeBibSources())
+        input_lines = resopapers._read_input_lines(input_csv)
         # Check outputs.
-        self.assertIn("has no column ['input']", str(cm.exception))
+        self.assertEqual(
+            [(x.line_no, x.kind, x.key) for x in input_lines],
+            [(1, "arxiv", "2001.00001")],
+        )
 
     def test5(self) -> None:
         """
@@ -1102,7 +1123,7 @@ class Test_resolve_papers_py(hunitest.TestCase):
         scratch = self.get_scratch_space()
         argv = [
             f"--input={scratch}/missing.csv",
-            f"--output={scratch}/papers.csv",
+            f"--output_dir={scratch}/out",
         ]
         # Run test.
         with self.assertRaises(AssertionError):
@@ -1150,14 +1171,16 @@ class Test_resolve_papers_py(hunitest.TestCase):
         )
         scratch = self.get_scratch_space()
         input_csv = self.make_input_csv(["1111.11111", "2001.00001"])
-        papers_csv = os.path.join(scratch, "papers.csv")
-        issues_csv = os.path.join(scratch, "papers.issues.csv")
+        papers_file = os.path.join(scratch, "papers.json")
+        issues_file = os.path.join(scratch, "issues.json")
         # Run test.
-        result = resopapers._resolve(input_csv, papers_csv, issues_csv, sources)
+        result = resopapers._resolve(
+            input_csv, papers_file, issues_file, sources
+        )
         # Check outputs.
         self.assertEqual(len(result.papers), 1)
-        self.assertEqual(len(epqrepor.read_papers_csv(papers_csv)), 1)
-        self.assertEqual(len(epqrepor.read_issues_csv(issues_csv)), 1)
+        self.assertEqual(len(epqrepor.read_papers(papers_file)), 1)
+        self.assertEqual(len(epqrepor.read_issues(issues_file)), 1)
         actual = [(i.line_no, i.status, i.reason) for i in result.issues]
         reason = (
             "no record for arXiv id '1111.11111' "
@@ -1165,3 +1188,38 @@ class Test_resolve_papers_py(hunitest.TestCase):
         )
         expected = [(1, "unresolved", reason)]
         self.assertEqual(actual, expected)
+
+    def test8(self) -> None:
+        """
+        Test an input that is already the copy in the output dir is not an error.
+        """
+        # Prepare inputs.
+        scratch = self.get_scratch_space()
+        output_dir = os.path.join(scratch, "out")
+        input_csv = self.make_input_csv(["Unknown Title"])
+        hio.create_dir(output_dir, incremental=True)
+        copy_path = epqpaths.get_input_copy_path(output_dir)
+        hio.to_file(copy_path, hio.from_file(input_csv))
+        argv = [f"--input={copy_path}", f"--output_dir={output_dir}"]
+        # Run test.
+        self.run_main(argv, epqteuti.FakeBibSources())
+        # Check outputs.
+        self.assertEqual(hio.from_file(copy_path), hio.from_file(input_csv))
+        issues = epqrepor.read_issues(
+            epqpaths.get_issues_path(output_dir, "resolve")
+        )
+        self.assertEqual(len(issues), 1)
+
+    def test9(self) -> None:
+        """
+        Test the old flag `--output` is rejected, not read as `--output_dir`.
+        """
+        # Prepare inputs.
+        scratch = self.get_scratch_space()
+        input_csv = self.make_input_csv(["Unknown Title"])
+        argv = [f"--input={input_csv}", f"--output={scratch}/papers.csv"]
+        # Run test.
+        with self.assertRaises(SystemExit):
+            self.run_main(argv, epqteuti.FakeBibSources())
+        # Check outputs.
+        self.assertFalse(os.path.exists(os.path.join(scratch, "papers.csv")))

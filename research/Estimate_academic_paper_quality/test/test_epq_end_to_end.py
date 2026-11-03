@@ -8,7 +8,7 @@ from unittest import mock
 
 import helpers.hcache_simple as hcacsimp
 import helpers.hio as hio
-import helpers.hllm_cost as hllmcost
+import helpers.hllm_cli as hllmcli
 import helpers.hunit_test as hunitest
 import pytest
 
@@ -94,8 +94,8 @@ class Test_end_to_end(hunitest.TestCase):
             writer = csv.writer(f)
             writer.writerow(["input"])
             writer.writerows([["2001.00001"], ["Unknown Title"]])
-        papers_csv = os.path.join(scratch, "papers.csv")
-        issues_csv = epqpaths.get_resolve_issues_path(papers_csv)
+        papers_file = epqpaths.get_papers_path(output_dir)
+        issues_file = epqpaths.get_issues_path(output_dir, "resolve")
         sources = epqbibso.BibSources(
             email="",
             s2_api_key="",
@@ -109,13 +109,12 @@ class Test_end_to_end(hunitest.TestCase):
             ["Harvard University CRSP stocks. Sharpe ratio of 1.4 in table"],
             title_text="Lazy Prices",
         )
-        tracker = hllmcost.LLMCostTracker(model="test-model")
         llm_calls: List[Any] = []
 
         def _llm_func(**kwargs: Any) -> Any:
             llm_calls.append(kwargs)
-            tracker.accumulate_cost(0.02)
-            return kwargs["response_format"](**epqteuti.make_llm_payload())
+            stats = hllmcli.TokenStats(model="test-model", cost_from_tokencost=0.02)
+            return json.dumps(epqteuti.make_llm_payload()), stats
 
         config = extfeat._ExtractConfig(
             output_dir=output_dir,
@@ -133,21 +132,24 @@ class Test_end_to_end(hunitest.TestCase):
             """
             Run the four executables in order, as `estimate_paper_quality.sh`.
             """
+            resopapers._copy_input(input_csv, output_dir, dry_run=False)
             result = resopapers._resolve(
-                input_csv, papers_csv, issues_csv, sources
+                input_csv, papers_file, issues_file, sources
             )
-            # Each executable reads the papers CSV from the disk.
-            papers = epqrepor.read_papers_csv(papers_csv)
+            # Each executable reads the papers file from the disk.
+            papers = epqrepor.read_papers(papers_file)
             with mock.patch.dict(os.environ, env):
                 download_issues = dowpapers._download(
                     papers,
                     output_dir,
                     tool_path=tool_path,
                     log_level="INFO",
+                    min_delay_sec=0.0,
+                    max_delay_sec=0.0,
                     dry_run=False,
                 )
             extract_issues = extfeat._extract(
-                papers, config, llm_func=_llm_func, cost_tracker=tracker
+                papers, config, llm_func=_llm_func
             )
             rate_issues = repopapers._rate(
                 papers,
@@ -158,7 +160,7 @@ class Test_end_to_end(hunitest.TestCase):
                 refresh_citations=False,
                 dry_run=False,
             )
-            repopapers._report(papers, output_dir, issues_csv, dry_run=False)
+            repopapers._report(papers, output_dir, dry_run=False)
             return result, download_issues, extract_issues, rate_issues
 
         # Prepare outputs.
@@ -177,22 +179,38 @@ class Test_end_to_end(hunitest.TestCase):
         self.assertEqual(
             (download_issues, extract_issues, rate_issues), ([], [], [])
         )
+        # The output dir lists the files of the stages in the order of the
+        # pipeline.
+        expected_files = [
+            "00-paper_list.csv",
+            "01-resolve.issues.json",
+            "01-resolve.paper_list.json",
+            "02-download.issues.json",
+            "03-extract.issues.json",
+            "04-rate.issues.json",
+            "04-report.issues.csv",
+            "04-report.references.md",
+            "04-report.report.csv",
+            "papers",
+            "state",
+        ]
+        self.assertEqual(sorted(os.listdir(output_dir)), expected_files)
         self.assert_equal(
-            hio.from_file(os.path.join(output_dir, "report.csv")).replace(
+            hio.from_file(epqpaths.get_report_path(output_dir)).replace(
                 "\r\n", "\n"
             ),
             expected_report,
             dedent=True,
         )
         self.assert_equal(
-            hio.from_file(os.path.join(output_dir, "issues.csv")).replace(
+            hio.from_file(epqpaths.get_all_issues_path(output_dir)).replace(
                 "\r\n", "\n"
             ),
             expected_issues,
             dedent=True,
         )
         self.assert_equal(
-            hio.from_file(os.path.join(output_dir, "references.md")),
+            hio.from_file(epqpaths.get_references_path(output_dir)),
             '- 2020, Cohen et al., "Lazy Prices" (https://arxiv.org/pdf/2001.00001)\n',
         )
         features = epqrepor.read_features_file(

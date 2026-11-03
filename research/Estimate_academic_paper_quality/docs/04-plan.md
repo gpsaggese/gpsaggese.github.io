@@ -411,6 +411,9 @@
 - Background: each stage must run alone, and read the output of the stage before it
   from `state/`
   ([`D18`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d18-all-the-state-lives-in-the-output-dir))
+- Superseded by `D26`: the papers file is the CSV of `resolve_papers.py`, written and
+  read by `write_papers_csv()` and `read_papers_csv()`, and `state/papers.json` is
+  gone
 - Changes: add
   [`epq_report.py`](/research/Estimate_academic_paper_quality/epq_report.py) with:
   - `write_papers()` and `read_papers()`, for `state/papers.json`
@@ -911,6 +914,44 @@
 - Spec: not needed: the code moves and the behavior stays
 - Unit tests: the moved tests are the same, with the new names
 - Result: a stage is one file, plus the modules that two files share
+
+### `PR_P7`: [ ] Numbered Files, `--output_dir`, JSON, and a Delay
+
+- Status: written: the 214 tests of the project pass; the four scripts run `--help`
+  through their `uv run` headers. No live run of the full chain yet
+- Name each file of a stage `NN-<stage>.<what>.<ext>` in the output dir, from
+  `epq_paths.py` (`get_stage_path()` and one getter per file); the issues of a stage
+  leave `state/`, which holds the cache and the logs only
+- `resolve_papers.py`: replace `--output` and `--issues_output` with `--output_dir`,
+  copy the input CSV to `00-paper_list.csv`, and write `01-resolve.paper_list.json`
+  and `01-resolve.issues.json`; the parser has `allow_abbrev=False`
+- Write the papers list and the issues of every stage as JSON:
+  `epq_report.write_papers()` and `read_papers()` replace the functions of the papers
+  CSV; the CSV stays for the input list, `04-report.report.csv`, and
+  `04-report.issues.csv`
+- `--input` of `download_papers.py`, `extract_features.py`, and `report_papers.py`
+  defaults to `01-resolve.paper_list.json` in `--output_dir`; remove `--resolve_issues`
+  (the stage `report` reads `01-resolve.issues.json`)
+- `download_papers.py`: wait a random time between two downloads, with
+  `--min_delay_sec` and `--max_delay_sec`
+- Add the rules `ARCH3.6`, `ARCH3.7`, and `ARCH3.8` to
+  `.claude/skills/architecture.rules.md`
+- Update `estimate_paper_quality.sh`, the tests, the README of the project, the
+  README of each script, and the design docs
+- Decisions:
+  [`D29`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d29-numbered-stage-files-in-the-output-dir),
+  [`D30`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d30-output_dir-for-several-files-and-output-for-one),
+  [`D31`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d31-json-for-the-intermediate-files)
+- Spec: not needed: the plan is in `research/Estimate_academic_paper_quality/tasks.md`
+- Unit tests:
+  - `test_epq_paths.py` checks the name of each file
+  - `test_epq_end_to_end.py` lists the output dir after a run
+  - `test_download_papers.py` checks the count and the range of the waits, and that a
+    skipped paper and a dry run do not wait
+  - `test_resolve_papers.py` checks the copy of the input and that `--output` fails
+  - `test_epq_report.py` checks that the papers file keeps a list item that holds `|`
+- Result: a listing of the output dir reads in the order of the pipeline, the user
+  types no file name, and the downloads do not look like a bot
 
 ## v0.4: Measured Pipeline
 

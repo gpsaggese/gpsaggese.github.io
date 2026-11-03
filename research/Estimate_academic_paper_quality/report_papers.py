@@ -7,34 +7,38 @@
 """
 Rate the extracted papers and write the final report.
 
-The input is the papers CSV that `resolve_papers.py` writes, and the features
-files that `extract_features.py` writes in `--output_dir`.
+The input is the papers file that `resolve_papers.py` writes, by default
+`01-resolve.paper_list.json` in `--output_dir`, and the features files that
+`extract_features.py` writes there.
 
 The script has two stages, which talk through files:
 - `rate`: rate the quality of each paper from its page count, its affiliations,
-  and its citations, and write `papers/<BASE>.rating.json`
-- `report`: write `references.md`, `report.csv`, and `issues.csv`
+  and its citations, and write `papers/<BASE>.rating.json` and
+  `04-rate.issues.json`
+- `report`: write `04-report.references.md`, `04-report.report.csv`, and
+  `04-report.issues.csv`
 
 The stage `rate` is free: it makes no LLM call, only a citation lookup. A change
 of the tier list `affiliation_tiers.yaml` or of the bands needs only a new run of
 this stage. The citation counts grow with time: use `--refresh_citations` to ask
 for fresh counts.
 
-The stage `report` also lists the issues of `resolve_papers.py` (from its issues
-CSV) and of the other stages (from `state/`).
+The stage `report` also lists the issues of the other stages, which it reads from
+`01-resolve.issues.json`, `02-download.issues.json`, and `03-extract.issues.json`
+in `--output_dir`.
 
 The design is in `research/Estimate_academic_paper_quality/docs/02-design.architecture.md`.
 
 # Usage Example
 
 - Rate the papers and write the report:
-> report_papers.py --input papers.csv --output_dir out
+> report_papers.py --output_dir out
 
 - Rate the papers again with fresh citation counts:
-> report_papers.py --input papers.csv --output_dir out --action rate --refresh_citations
+> report_papers.py --output_dir out --action rate --refresh_citations
 
 - Write the report from the existing rating files:
-> report_papers.py --input papers.csv --output_dir out --clear_actions --action report
+> report_papers.py --output_dir out --clear_actions --action report
 
 For a description of this file, see the file
 `research/Estimate_academic_paper_quality/report_papers.py.README.md`
@@ -480,7 +484,7 @@ def _rate(
     The stage rates every paper at each run, since a new tier list or a new
     citation count changes the rating.
 
-    :param papers: papers from the papers CSV
+    :param papers: papers from the papers file
     :param output_dir: dir of all the outputs of the run
     :param sources: clients of the lookup APIs, for the citation count
     :param tiers: dated affiliation tier list
@@ -537,7 +541,7 @@ def _read_state_issues(output_dir: str, stage: str) -> List[epqtypes.Issue]:
     Read the issues that a stage wrote, if the stage ran.
 
     :param output_dir: dir of all the outputs of the run
-    :param stage: one of `download`, `extract`, `rate`
+    :param stage: one of `resolve`, `download`, `extract`, `rate`
     :return: issues of the stage, empty if the stage did not run
     """
     path = epqpaths.get_issues_path(output_dir, stage)
@@ -567,7 +571,7 @@ def _read_paper_files(
     """
     Read the features file and the rating file of each paper that has them.
 
-    :param papers: papers from the papers CSV
+    :param papers: papers from the papers file
     :param output_dir: dir of all the outputs of the run
     :param rate_issues: issues of the stage `rate`
     :return: features, ratings, and the issues of the files that cannot be read
@@ -629,26 +633,29 @@ def _read_paper_files(
 def _report(
     papers: List[epqtypes.Paper],
     output_dir: str,
-    resolve_issues_file: str,
     *,
     dry_run: bool,
 ) -> None:
     """
     Write `references.md`, `report.csv`, and `issues.csv`.
 
-    The issues of `resolve_papers.py` come from its issues CSV, and the issues of
-    the other stages are read from `state/`, so that this stage can run alone.
+    The issues of every stage are read from the files in the output dir, so that
+    this stage can run alone.
 
-    :param papers: papers from the papers CSV
+    :param papers: papers from the papers file
     :param output_dir: dir of all the outputs of the run
-    :param resolve_issues_file: issues CSV of `resolve_papers.py`, "" if none
     :param dry_run: if True, only log the files to write
     """
     # Collect the issues of the previous stages.
     issues: List[epqtypes.Issue] = []
-    if resolve_issues_file:
-        issues.extend(epqrepor.read_issues_csv(resolve_issues_file))
-    for stage in ["download", "extract"]:
+    resolve_issues_path = epqpaths.get_issues_path(output_dir, "resolve")
+    if not os.path.isfile(resolve_issues_path):
+        _LOG.warning(
+            "No issues file of `resolve_papers.py` at '%s': the issues file "
+            "lists no unresolved line",
+            resolve_issues_path,
+        )
+    for stage in ["resolve", "download", "extract"]:
         issues.extend(_read_state_issues(output_dir, stage))
     rate_issues = _read_state_issues(output_dir, "rate")
     issues.extend(rate_issues)
@@ -664,10 +671,12 @@ def _report(
         )
     else:
         epqrepor.write_references(
-            os.path.join(output_dir, "references.md"), papers
+            epqpaths.get_references_path(output_dir), papers
         )
-        epqrepor.write_report(os.path.join(output_dir, "report.csv"), rows)
-        epqrepor.write_issues_csv(os.path.join(output_dir, "issues.csv"), issues)
+        epqrepor.write_report(epqpaths.get_report_path(output_dir), rows)
+        epqrepor.write_issues_csv(
+            epqpaths.get_all_issues_path(output_dir), issues
+        )
     _LOG.info(
         "Report: %s papers, %s rows, %s issues",
         len(papers),
@@ -687,15 +696,9 @@ def _parse() -> argparse.ArgumentParser:
         "-i",
         "--input",
         action="store",
-        required=True,
-        help="Papers CSV that `resolve_papers.py` wrote",
-    )
-    parser.add_argument(
-        "--resolve_issues",
-        action="store",
         default="",
-        help="Issues CSV that `resolve_papers.py` wrote; empty is the papers "
-        "CSV with `.issues.csv`, if that file exists",
+        help="Papers file that `resolve_papers.py` wrote; empty is "
+        "`01-resolve.paper_list.json` in the output dir",
     )
     parser.add_argument(
         "--output_dir",
@@ -726,32 +729,20 @@ def _main(parser: argparse.ArgumentParser) -> None:
     hdbg.init_logger(verbosity=args.log_level, use_exec_path=True)
     hcacsimp.parse_cache_control_args(args)
     # Check the boundary of the system.
-    papers_file = os.path.abspath(os.path.expanduser(args.input))
     output_dir = os.path.abspath(os.path.expanduser(args.output_dir))
+    papers_file = args.input or epqpaths.get_papers_path(output_dir)
+    papers_file = os.path.abspath(os.path.expanduser(papers_file))
     hdbg.dassert_file_exists(
-        papers_file, "Run resolve_papers.py to make the papers CSV"
+        papers_file, "Run resolve_papers.py to make the papers file"
     )
-    resolve_issues_file = args.resolve_issues
-    if resolve_issues_file:
-        hdbg.dassert_file_exists(resolve_issues_file)
-    else:
-        default_issues_file = epqpaths.get_resolve_issues_path(papers_file)
-        if os.path.isfile(default_issues_file):
-            resolve_issues_file = default_issues_file
-        else:
-            _LOG.warning(
-                "No issues CSV of `resolve_papers.py` at '%s': `issues.csv` "
-                "lists no unresolved line",
-                default_issues_file,
-            )
     # Select the stages to run.
     actions = hselacti.select_actions(args, _VALID_ACTIONS, _DEFAULT_ACTIONS)
     _LOG.info(
         "\n%s",
         hselacti.actions_to_string(actions, _VALID_ACTIONS, add_frame=True),
     )
-    # Run the stages on the papers of the papers CSV.
-    papers = epqrepor.read_papers_csv(papers_file)
+    # Run the stages on the papers of the papers file.
+    papers = epqrepor.read_papers(papers_file)
     if not args.dry_run:
         hio.create_dir(epqpaths.get_cache_dir(output_dir), incremental=True)
     while actions:
@@ -784,9 +775,7 @@ def _main(parser: argparse.ArgumentParser) -> None:
                 dry_run=args.dry_run,
             )
         elif action == "report":
-            _report(
-                papers, output_dir, resolve_issues_file, dry_run=args.dry_run
-            )
+            _report(papers, output_dir, dry_run=args.dry_run)
         else:
             raise ValueError(f"Invalid action='{action}'")
     hdbg.dassert_eq(len(actions), 0, "Unprocessed actions: %s", str(actions))

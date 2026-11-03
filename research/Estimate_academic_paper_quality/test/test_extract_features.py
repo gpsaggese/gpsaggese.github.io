@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import sys
@@ -5,7 +6,7 @@ from typing import Any, Callable, Dict, List, Tuple
 from unittest import mock
 
 import helpers.hio as hio
-import helpers.hllm_cost as hllmcost
+import helpers.hllm_cli as hllmcli
 import helpers.hprint as hprint
 import helpers.hunit_test as hunitest
 
@@ -36,26 +37,40 @@ def _fact(label: str, value: str, quote: str, section: str) -> Dict[str, Any]:
     }
 
 
+def _make_answer(
+    payload: Dict[str, Any], *, text_before: str = "", text_after: str = ""
+) -> Tuple[str, hllmcli.TokenStats]:
+    """
+    Build what the LLM function returns: the text of the answer and the stats.
+
+    :param payload: answer in the shape of the output format
+    :param text_before: text before the JSON object, e.g., a code fence
+    :param text_after: text after the JSON object
+    :return: text of the answer, and the stats of a call that costs 0.02 USD
+    """
+    stats = hllmcli.TokenStats(model="test-model", cost_from_tokencost=0.02)
+    answer = f"{text_before}{json.dumps(payload)}{text_after}"
+    return answer, stats
+
+
 def _make_llm(
     *, fail_first: bool = False
-) -> Tuple[Callable[..., Any], hllmcost.LLMCostTracker, List[int]]:
+) -> Tuple[Callable[..., Any], List[int]]:
     """
     Build a fake LLM function that costs 0.02 USD for each call.
 
     :param fail_first: if True, the first call raises
-    :return: function, its cost tracker, and a list with one item per call
+    :return: function, and a list with one item per call
     """
-    tracker = hllmcost.LLMCostTracker(model="test-model")
     calls: List[int] = []
 
     def _llm_func(**kwargs: Any) -> Any:
         calls.append(1)
         if fail_first and len(calls) == 1:
             raise RuntimeError("Rate limit\nlast line of the error")
-        tracker.accumulate_cost(0.02)
-        return kwargs["response_format"](**epqteuti.make_llm_payload())
+        return _make_answer(epqteuti.make_llm_payload())
 
-    return _llm_func, tracker, calls
+    return _llm_func, calls
 
 
 def _make_config(
@@ -338,7 +353,7 @@ class Test__extract_features(hunitest.TestCase):
 
         def _llm_func(**kwargs: Any) -> Any:
             calls.append(kwargs)
-            return kwargs["response_format"](**payload)
+            return _make_answer(payload)
 
         md_text = "# Paper\nCRSP stocks.\n## References\n[1] Smith."
         page_texts = [
@@ -434,7 +449,7 @@ class Test__extract_features(hunitest.TestCase):
         payload = self.make_payload()
 
         def _llm_func(**kwargs: Any) -> Any:
-            return kwargs["response_format"](**payload)
+            return _make_answer(payload)
 
         # Run test.
         result = extfeat._extract_features(
@@ -445,6 +460,146 @@ class Test__extract_features(hunitest.TestCase):
         self.assertIsNotNone(evidence)
         self.assertFalse(evidence.verified)
         self.assertEqual(evidence.location, "Table 4")
+
+
+# #############################################################################
+# Test__parse_llm_answer
+# #############################################################################
+
+
+class Test__parse_llm_answer(hunitest.TestCase):
+    """
+    Test `extract_features._parse_llm_answer()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test an answer that is only a JSON object.
+        """
+        # Prepare inputs.
+        answer, _ = _make_answer(epqteuti.make_llm_payload())
+        # Run test.
+        actual = extfeat._parse_llm_answer(answer)
+        # Check outputs.
+        self.assertEqual(actual.performance.value, "Sharpe 1.4")
+        self.assertEqual(len(actual.affiliations), 1)
+
+    def test2(self) -> None:
+        """
+        Test a JSON object in a code block, with a sentence after it.
+        """
+        # Prepare inputs.
+        answer, _ = _make_answer(
+            epqteuti.make_llm_payload(),
+            text_before="```json\n",
+            text_after="\n```\nHere is the form.",
+        )
+        # Run test.
+        actual = extfeat._parse_llm_answer(answer)
+        # Check outputs.
+        self.assertEqual(actual.asset_class.value, "US equities")
+
+    def test3(self) -> None:
+        """
+        Test an answer with no JSON object stops with an assertion.
+        """
+        # Prepare inputs.
+        answer = "I can not read this paper."
+        # Run test.
+        with self.assertRaises(AssertionError) as cm:
+            extfeat._parse_llm_answer(answer)
+        # Check outputs.
+        self.assertIn("has no JSON object", str(cm.exception))
+
+    def test4(self) -> None:
+        """
+        Test a JSON object that lacks a field is not valid.
+        """
+        # Prepare inputs.
+        payload = epqteuti.make_llm_payload()
+        del payload["affiliations"]
+        answer, _ = _make_answer(payload)
+        # Run test.
+        with self.assertRaises(Exception) as cm:
+            extfeat._parse_llm_answer(answer)
+        # Check outputs.
+        self.assertIn("affiliations", str(cm.exception))
+
+
+# #############################################################################
+# Test__get_system_prompt
+# #############################################################################
+
+
+class Test__get_system_prompt(hunitest.TestCase):
+    """
+    Test `extract_features._get_system_prompt()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test the prompt has the rules, the output format, and the schema.
+        """
+        # Run test.
+        actual = extfeat._get_system_prompt()
+        # Check outputs.
+        self.assertIn("# Features", actual)
+        self.assertIn("# Output Format", actual)
+        self.assertIn('"sharpe_ratios"', actual)
+        self.assertIn('"affiliations"', actual)
+
+
+# #############################################################################
+# Test__make_llm_func
+# #############################################################################
+
+
+class Test__make_llm_func(hunitest.TestCase):
+    """
+    Test `extract_features._make_llm_func()` with a fake `apply_llm()`.
+    """
+
+    def helper(self, force_refresh: bool) -> Any:
+        """
+        Call the LLM function and return the arguments that `apply_llm()` got.
+
+        :param force_refresh: if True, ignore the cached answers
+        :return: mock of `hllmcli.apply_llm()`
+        """
+        stats = hllmcli.TokenStats(model="test-model")
+        with mock.patch.object(
+            hllmcli, "apply_llm", return_value=("answer", stats)
+        ) as apply_llm:
+            llm_func = extfeat._make_llm_func(
+                "test-model", force_refresh=force_refresh
+            )
+            actual = llm_func(user_prompt="paper", system_prompt="rules")
+        self.assertEqual(actual, ("answer", stats))
+        return apply_llm
+
+    def test1(self) -> None:
+        """
+        Test the model, the prompts, and the library backend are passed.
+        """
+        # Run test.
+        apply_llm = self.helper(force_refresh=False)
+        # Check outputs.
+        apply_llm.assert_called_once_with(
+            "paper",
+            "test-model",
+            system_prompt="rules",
+            backend="library",
+            force_refresh=False,
+        )
+
+    def test2(self) -> None:
+        """
+        Test `force_refresh` is passed to ignore the cached answers.
+        """
+        # Run test.
+        apply_llm = self.helper(force_refresh=True)
+        # Check outputs.
+        self.assertTrue(apply_llm.call_args.kwargs["force_refresh"])
 
 
 # #############################################################################
@@ -464,13 +619,12 @@ class Test__extract(hunitest.TestCase):
         # Prepare inputs.
         output_dir = os.path.join(self.get_scratch_space(), "out")
         _write_converted_papers(output_dir, ["p1"])
-        llm_func, tracker, calls = _make_llm()
+        llm_func, calls = _make_llm()
         # Run test.
         issues = extfeat._extract(
             [epqteuti.make_paper(base_name="p1")],
             _make_config(output_dir),
             llm_func=llm_func,
-            cost_tracker=tracker,
         )
         # Check outputs.
         self.assertEqual(issues, [])
@@ -496,7 +650,7 @@ class Test__extract(hunitest.TestCase):
         # Prepare inputs.
         output_dir = os.path.join(self.get_scratch_space(), "out")
         _write_converted_papers(output_dir, ["p1", "p2"])
-        llm_func, tracker, _ = _make_llm(fail_first=True)
+        llm_func, _ = _make_llm(fail_first=True)
         papers = [
             epqteuti.make_paper(base_name="p1"),
             epqteuti.make_paper(base_name="p2"),
@@ -506,7 +660,6 @@ class Test__extract(hunitest.TestCase):
             papers,
             _make_config(output_dir),
             llm_func=llm_func,
-            cost_tracker=tracker,
         )
         # Check outputs.
         actual = [(i.base_name, i.status, i.reason) for i in issues]
@@ -531,13 +684,12 @@ class Test__extract(hunitest.TestCase):
             epqpaths.get_features_path(output_dir, "p1"),
             epqteuti.make_paper_features(base_name="p1"),
         )
-        llm_func, tracker, calls = _make_llm()
+        llm_func, calls = _make_llm()
         # Run test.
         extfeat._extract(
             [epqteuti.make_paper(base_name="p1")],
             _make_config(output_dir),
             llm_func=llm_func,
-            cost_tracker=tracker,
         )
         # Check outputs.
         self.assertEqual(calls, [])
@@ -553,13 +705,12 @@ class Test__extract(hunitest.TestCase):
             epqpaths.get_features_path(output_dir, "p1"),
             epqteuti.make_paper_features(base_name="p1"),
         )
-        llm_func, tracker, calls = _make_llm()
+        llm_func, calls = _make_llm()
         # Run test.
         extfeat._extract(
             [epqteuti.make_paper(base_name="p1")],
             _make_config(output_dir, force_extract=True),
             llm_func=llm_func,
-            cost_tracker=tracker,
         )
         # Check outputs.
         self.assertEqual(len(calls), 1)
@@ -570,13 +721,12 @@ class Test__extract(hunitest.TestCase):
         """
         # Prepare inputs.
         output_dir = os.path.join(self.get_scratch_space(), "out")
-        llm_func, tracker, calls = _make_llm()
+        llm_func, calls = _make_llm()
         # Run test.
         issues = extfeat._extract(
             [epqteuti.make_paper(base_name="p1")],
             _make_config(output_dir),
             llm_func=llm_func,
-            cost_tracker=tracker,
         )
         # Check outputs.
         self.assertEqual((issues, calls), ([], []))
@@ -588,13 +738,12 @@ class Test__extract(hunitest.TestCase):
         # Prepare inputs.
         output_dir = os.path.join(self.get_scratch_space(), "out")
         _write_converted_papers(output_dir, ["p1"])
-        llm_func, tracker, calls = _make_llm()
+        llm_func, calls = _make_llm()
         # Run test.
         extfeat._extract(
             [epqteuti.make_paper(base_name="p1")],
             _make_config(output_dir, dry_run=True),
             llm_func=llm_func,
-            cost_tracker=tracker,
         )
         # Check outputs.
         self.assertEqual(calls, [])
@@ -616,7 +765,7 @@ class Test_extract_features_py(hunitest.TestCase):
     Test the command line of `extract_features.py`.
     """
 
-    def run_main(self, argv: List[str], llm: Tuple[Any, Any, Any]) -> None:
+    def run_main(self, argv: List[str], llm: Tuple[Any, Any]) -> None:
         """
         Run `_main()` with the given flags and a fake LLM.
 
@@ -626,7 +775,7 @@ class Test_extract_features_py(hunitest.TestCase):
         parser = extfeat._parse()
         with (
             mock.patch.object(sys, "argv", ["extract_features.py"] + argv),
-            mock.patch.object(extfeat, "_make_llm_func", return_value=llm[:2]),
+            mock.patch.object(extfeat, "_make_llm_func", return_value=llm[0]),
         ):
             extfeat._main(parser)
 
@@ -636,9 +785,9 @@ class Test_extract_features_py(hunitest.TestCase):
         """
         # Prepare inputs.
         scratch = self.get_scratch_space()
-        papers_file = os.path.join(scratch, "papers.csv")
+        papers_file = os.path.join(scratch, "papers.json")
         paper = epqteuti.make_paper(base_name="p1")
-        epqrepor.write_papers_csv(papers_file, [paper])
+        epqrepor.write_papers(papers_file, [paper])
         output_dir = os.path.join(scratch, "out")
         _write_converted_papers(output_dir, ["p1"])
         llm = _make_llm()
@@ -646,7 +795,7 @@ class Test_extract_features_py(hunitest.TestCase):
         # Run test.
         self.run_main(argv, llm)
         # Check outputs.
-        self.assertEqual(len(llm[2]), 1)
+        self.assertEqual(len(llm[1]), 1)
         self.assertTrue(
             os.path.isfile(epqpaths.get_features_path(output_dir, "p1"))
         )
@@ -655,7 +804,7 @@ class Test_extract_features_py(hunitest.TestCase):
 
     def test2(self) -> None:
         """
-        Test a missing papers CSV stops the run.
+        Test a missing papers file stops the run.
         """
         # Prepare inputs.
         scratch = self.get_scratch_space()
@@ -675,8 +824,8 @@ class Test_extract_features_py(hunitest.TestCase):
         """
         # Prepare inputs.
         scratch = self.get_scratch_space()
-        papers_file = os.path.join(scratch, "papers.csv")
-        epqrepor.write_papers_csv(papers_file, [epqteuti.make_paper()])
+        papers_file = os.path.join(scratch, "papers.json")
+        epqrepor.write_papers(papers_file, [epqteuti.make_paper()])
         argv = [f"--input={papers_file}", f"--output_dir={scratch}/out"]
         # Run test.
         with self.assertRaises(AssertionError) as cm:
@@ -690,10 +839,8 @@ class Test_extract_features_py(hunitest.TestCase):
         """
         # Prepare inputs.
         scratch = self.get_scratch_space()
-        papers_file = os.path.join(scratch, "papers.csv")
-        epqrepor.write_papers_csv(
-            papers_file, [epqteuti.make_paper(base_name="p1")]
-        )
+        papers_file = os.path.join(scratch, "papers.json")
+        epqrepor.write_papers(papers_file, [epqteuti.make_paper(base_name="p1")])
         output_dir = os.path.join(scratch, "out")
         _write_converted_papers(output_dir, ["p1"])
         llm = _make_llm()
@@ -705,7 +852,28 @@ class Test_extract_features_py(hunitest.TestCase):
         # Run test.
         self.run_main(argv, llm)
         # Check outputs.
-        self.assertEqual(llm[2], [])
+        self.assertEqual(llm[1], [])
         self.assertFalse(
             os.path.exists(epqpaths.get_features_path(output_dir, "p1"))
+        )
+
+    def test5(self) -> None:
+        """
+        Test the default input is the papers file in the output dir.
+        """
+        # Prepare inputs.
+        output_dir = os.path.join(self.get_scratch_space(), "out")
+        epqrepor.write_papers(
+            epqpaths.get_papers_path(output_dir),
+            [epqteuti.make_paper(base_name="p1")],
+        )
+        _write_converted_papers(output_dir, ["p1"])
+        llm = _make_llm()
+        argv = [f"--output_dir={output_dir}"]
+        # Run test.
+        self.run_main(argv, llm)
+        # Check outputs.
+        self.assertEqual(len(llm[1]), 1)
+        self.assertTrue(
+            os.path.isfile(epqpaths.get_features_path(output_dir, "p1"))
         )

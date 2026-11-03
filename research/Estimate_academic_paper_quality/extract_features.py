@@ -1,21 +1,25 @@
 #!/usr/bin/env -S uv run
 
 # /// script
-# dependencies = ["pymupdf", "pyyaml", "pydantic", "tqdm", "openai", "requests"]
+# dependencies = ["pymupdf", "pyyaml", "pydantic", "tqdm", "llm", "llm-openrouter", "tokencost", "requests"]
 # ///
 
 """
 Extract the features of each downloaded paper with an LLM.
 
-The input is the papers CSV that `resolve_papers.py` writes, and the markdown and
-PDF files that `download_papers.py` writes in `--output_dir`. The script calls
-the LLM once per paper, and checks every quote of the answer against the text of
-the PDF.
+The input is the papers file that `resolve_papers.py` writes, by default
+`01-resolve.paper_list.json` in `--output_dir`, and the markdown and PDF files
+that `download_papers.py` writes there. The script calls the LLM once per paper,
+and checks every quote of the answer against the text of the PDF.
+
+The LLM is called with `helpers.hllm_cli.apply_llm()`, which uses the `llm`
+library. The system prompt asks for a JSON answer in the shape of the pydantic
+class `_LlmExtraction`, and the script validates the answer with that class.
 
 The outputs live in `--output_dir`:
 - `papers/<BASE>.features.json` for each paper: the features, the facts, the
   affiliations, the page count, and the cost of the call
-- `state/issues.extract.json`: the papers that failed, for `report_papers.py`
+- `03-extract.issues.json`: the papers that failed, for `report_papers.py`
 
 The script does not rate the paper: a change of the tier list or of the bands
 needs no new LLM call, see `report_papers.py`.
@@ -29,13 +33,13 @@ The design is in `research/Estimate_academic_paper_quality/docs/02-design.archit
 # Usage Example
 
 - Extract the features of the downloaded papers:
-> extract_features.py --input papers.csv --output_dir out
+> extract_features.py --output_dir out
 
 - Extract again the papers that have a features file, with another model:
-> extract_features.py --input papers.csv --output_dir out --force_extract --model gpt-5-mini
+> extract_features.py --output_dir out --force_extract --model gpt-4o-mini
 
 - List the papers to extract, with no LLM call:
-> extract_features.py --input papers.csv --output_dir out --dry_run
+> extract_features.py --output_dir out --dry_run
 
 For a description of this file, see the file
 `research/Estimate_academic_paper_quality/extract_features.py.README.md`
@@ -45,16 +49,17 @@ import argparse
 import dataclasses
 import functools
 import hashlib
+import json
 import logging
 import os
 import re
 import unicodedata
-from typing import Any, Callable, List, Literal, Optional, Tuple
+from typing import Callable, List, Literal, Optional, Tuple
 
 import helpers.hdbg as hdbg
 import helpers.hgit as hgit
 import helpers.hio as hio
-import helpers.hllm_cost as hllmcost
+import helpers.hllm_cli as hllmcli
 import helpers.hparser as hparser
 import helpers.hprint as hprint
 import pydantic
@@ -83,9 +88,10 @@ _HEAD_SHARE = 0.6
 # Titles of the headings that start the reference list.
 _REFERENCE_TITLES = ["references", "bibliography"]
 
-# Same signature as `hllm.get_structured_completion()` once `model` and
-# `cost_tracker` are bound.
-_LlmFunc = Callable[..., Any]
+# Function that calls the LLM with the model already bound: it takes
+# `user_prompt` and `system_prompt` and returns the text of the answer with the
+# `hllmcli.TokenStats` of the call.
+_LlmFunc = Callable[..., Tuple[str, hllmcli.TokenStats]]
 
 # Names shown as the evidence of the year of a paper, by the source of the
 # record.
@@ -155,12 +161,46 @@ class _LlmExtraction(pydantic.BaseModel):
 @functools.cache
 def _get_system_prompt() -> str:
     """
-    Read the system prompt, which lives in its own file for review.
+    Build the system prompt: the rules of the file and the JSON schema.
 
-    :return: text of `extract_features.prompt.md`
+    The rules live in their own file for review. The schema is added here, so
+    that it always matches the class `_LlmExtraction` that checks the answer.
+
+    :return: text of `extract_features.prompt.md` followed by the output format
     """
     path = hgit.find_file_in_git_tree("extract_features.prompt.md")
-    return hio.from_file(path)
+    rules = hio.from_file(path)
+    schema = json.dumps(_LlmExtraction.model_json_schema(), indent=2)
+    system_prompt = (
+        f"{rules.rstrip()}\n\n"
+        "# Output Format\n\n"
+        "- Answer with one JSON object and nothing else\n"
+        "  - Do not add text before or after it\n"
+        "  - Do not wrap it in a markdown code block\n"
+        "- The JSON object must follow this JSON schema:\n\n"
+        f"{schema}\n"
+    )
+    return system_prompt
+
+
+def _parse_llm_answer(answer: str) -> _LlmExtraction:
+    """
+    Parse the text of the answer of the LLM into the expected shape.
+
+    A model can wrap the JSON in a markdown code block or add a sentence around
+    it, so the text from the first `{` to the last `}` is parsed.
+
+    :param answer: text that the LLM returned
+    :return: validated answer
+    """
+    start = answer.find("{")
+    end = answer.rfind("}")
+    hdbg.dassert_lt(
+        -1, start, "The answer of the LLM has no JSON object:", answer[:200]
+    )
+    hdbg.dassert_lt(start, end, "The JSON object is not closed:", answer[:200])
+    llm_answer = _LlmExtraction.model_validate_json(answer[start : end + 1])
+    return llm_answer
 
 
 def _drop_references(md_text: str) -> str:
@@ -335,8 +375,7 @@ def _extract_features(
     :param md_text: markdown of the paper
     :param page_texts: text of each page of the PDF, to check the quotes
         - An empty list leaves every quote unverified
-    :param llm_func: function with the signature of
-        `hllm.get_structured_completion()`, with the model already bound
+    :param llm_func: function that calls the LLM, see `_LlmFunc`
     :param max_chars: budget of characters to send to the LLM
     :param model: name of the model, recorded in the provenance
     :return: features, facts, affiliations, and provenance (model, SHA-1 of the
@@ -345,11 +384,8 @@ def _extract_features(
     _LOG.debug(hprint.to_str("max_chars model"))
     text, was_cut = _prepare_text(md_text, max_chars)
     system_prompt = _get_system_prompt()
-    llm_answer = llm_func(
-        user_prompt=text,
-        response_format=_LlmExtraction,
-        system_prompt=system_prompt,
-    )
+    answer, token_stats = llm_func(user_prompt=text, system_prompt=system_prompt)
+    llm_answer = _parse_llm_answer(answer)
     # Convert the answer and check each quote against the PDF.
     facts = epqtypes.ExtractedFacts(
         sharpe_ratios=_to_facts(llm_answer.sharpe_ratios, page_texts),
@@ -376,7 +412,7 @@ def _extract_features(
         prompt_sha1=hashlib.sha1(system_prompt.encode("utf-8")).hexdigest(),
         chars_sent=len(text),
         text_was_cut=was_cut,
-        cost_usd=0.0,
+        cost_usd=token_stats.to_float(),
     )
     result = epqtypes.ExtractionResult(
         performance=_to_feature(llm_answer.performance, page_texts),
@@ -405,7 +441,7 @@ class _ExtractConfig:
 
     # Dir of all the outputs of the run.
     output_dir: str
-    # LLM, "" for the default model of `helpers.hllm`.
+    # LLM for the `llm` library, e.g., `hllmcli.DEFAULT_MODEL`.
     model: str
     force_extract: bool
     # Max chars of markdown sent to the LLM (decision D13).
@@ -413,27 +449,47 @@ class _ExtractConfig:
     dry_run: bool
 
 
-def _make_llm_func(
+def _call_llm(
+    user_prompt: str,
+    system_prompt: str,
+    *,
     model: str,
-) -> Tuple[_LlmFunc, hllmcost.LLMCostTracker]:
+    force_refresh: bool,
+) -> Tuple[str, hllmcli.TokenStats]:
     """
-    Build the LLM function, with its cost tracker.
+    Call the LLM with `hllmcli.apply_llm()`.
 
-    `helpers.hllm` is imported here because it pulls the LLM client libraries,
-    which the other modules do not need.
+    `apply_llm()` caches the answer on disk by prompts and model, so a rerun with
+    the same inputs does not call the LLM again.
 
-    :param model: LLM, "" for the default model of `helpers.hllm`
-    :return: function with the model bound, and the tracker of its cost
+    :param user_prompt: text of the paper
+    :param system_prompt: rules of the extraction and the output format
+    :param model: LLM for the `llm` library
+    :param force_refresh: if True, call the LLM even if the answer is cached
+    :return: text of the answer and the stats of the call
     """
-    import helpers.hllm as hllm
-
-    tracker = hllmcost.LLMCostTracker(model=model)
-    llm_func = functools.partial(
-        hllm.get_structured_completion,
-        model=model,
-        cost_tracker=tracker,
+    answer, token_stats = hllmcli.apply_llm(
+        user_prompt,
+        model,
+        system_prompt=system_prompt,
+        backend="library",
+        force_refresh=force_refresh,
     )
-    return llm_func, tracker
+    return answer, token_stats
+
+
+def _make_llm_func(model: str, *, force_refresh: bool) -> _LlmFunc:
+    """
+    Build the LLM function, with the model bound.
+
+    :param model: LLM for the `llm` library
+    :param force_refresh: if True, ignore the cached answers
+    :return: function that takes `user_prompt` and `system_prompt`
+    """
+    llm_func = functools.partial(
+        _call_llm, model=model, force_refresh=force_refresh
+    )
+    return llm_func
 
 
 def _extract_paper(
@@ -441,15 +497,14 @@ def _extract_paper(
     config: _ExtractConfig,
     *,
     llm_func: _LlmFunc,
-    cost_tracker: hllmcost.LLMCostTracker,
-) -> None:
+) -> float:
     """
     Extract the features of one paper and write its features file.
 
     :param paper: paper with a markdown file
     :param config: settings of the run
     :param llm_func: function that calls the LLM
-    :param cost_tracker: tracker of the cost of `llm_func`
+    :return: cost of the LLM call, in USD
     """
     md_path = epqpaths.get_markdown_path(config.output_dir, paper.base_name)
     pdf_path = epqpaths.get_pdf_path(config.output_dir, paper.base_name)
@@ -459,7 +514,6 @@ def _extract_paper(
     page_texts = epqfetch.read_pdf_pages(pdf_path) if has_pdf else []
     n_pages = epqfetch.count_pages(pdf_path) if has_pdf else None
     # Extract the features with one LLM call.
-    cost_before = cost_tracker.get_current_cost()
     extraction = _extract_features(
         md_text,
         page_texts,
@@ -467,7 +521,7 @@ def _extract_paper(
         max_chars=config.max_chars,
         model=config.model,
     )
-    cost_usd = cost_tracker.get_current_cost() - cost_before
+    cost_usd = extraction.provenance.cost_usd
     # The year comes from the record, with the name of its source as evidence.
     year_text = str(paper.year) if paper.year else "unknown"
     recency = epqtypes.FeatureValue(
@@ -491,13 +545,14 @@ def _extract_paper(
         facts=extraction.facts,
         affiliations=extraction.affiliations,
         n_pages=n_pages,
-        provenance=dataclasses.replace(extraction.provenance, cost_usd=cost_usd),
+        provenance=extraction.provenance,
     )
     epqrepor.write_features_file(
         epqpaths.get_features_path(config.output_dir, paper.base_name),
         paper_features,
     )
     _LOG.info("Extracted '%s': cost %.4f USD", paper.base_name, cost_usd)
+    return cost_usd
 
 
 def _extract(
@@ -505,19 +560,17 @@ def _extract(
     config: _ExtractConfig,
     *,
     llm_func: _LlmFunc,
-    cost_tracker: hllmcost.LLMCostTracker,
 ) -> List[epqtypes.Issue]:
     """
     Extract the features of the converted papers that have none yet.
 
-    :param papers: papers from the papers CSV
+    :param papers: papers from the papers file
     :param config: settings of the run
     :param llm_func: function that calls the LLM
-    :param cost_tracker: tracker of the cost of `llm_func`
     :return: issues of the papers that failed
     """
     issues: List[epqtypes.Issue] = []
-    cost_start = cost_tracker.get_current_cost()
+    total_cost = 0.0
     for paper in tqdm.tqdm(papers):
         md_path = epqpaths.get_markdown_path(config.output_dir, paper.base_name)
         features_path = epqpaths.get_features_path(
@@ -533,9 +586,7 @@ def _extract(
             _LOG.warning("[DRY_RUN] Would extract '%s'", paper.base_name)
             continue
         try:
-            _extract_paper(
-                paper, config, llm_func=llm_func, cost_tracker=cost_tracker
-            )
+            total_cost += _extract_paper(paper, config, llm_func=llm_func)
         except Exception as e:  # noqa: BLE001
             # Decision D21: an error of one paper must not stop the run.
             _LOG.warning("Paper '%s' failed: %s", paper.base_name, e)
@@ -552,7 +603,6 @@ def _extract(
     else:
         path = epqpaths.get_issues_path(config.output_dir, "extract")
         epqrepor.write_issues(path, issues)
-    total_cost = cost_tracker.get_current_cost() - cost_start
     _LOG.info(
         "Extract: %s of %s papers failed, total LLM cost %.4f USD",
         len(issues),
@@ -573,8 +623,9 @@ def _parse() -> argparse.ArgumentParser:
         "-i",
         "--input",
         action="store",
-        required=True,
-        help="Papers CSV that `resolve_papers.py` wrote",
+        default="",
+        help="Papers file that `resolve_papers.py` wrote; empty is "
+        "`01-resolve.paper_list.json` in the output dir",
     )
     parser.add_argument(
         "--output_dir",
@@ -585,8 +636,8 @@ def _parse() -> argparse.ArgumentParser:
     parser.add_argument(
         "--model",
         action="store",
-        default="",
-        help="LLM to call; empty is the default of `helpers.hllm`",
+        default=hllmcli.DEFAULT_MODEL,
+        help="LLM to call with the `llm` library, e.g., `gpt-4o-mini`",
     )
     hparser.add_bool_arg(
         parser,
@@ -614,10 +665,11 @@ def _main(parser: argparse.ArgumentParser) -> None:
     args = parser.parse_args()
     hdbg.init_logger(verbosity=args.log_level, use_exec_path=True)
     # Check the boundary of the system.
-    papers_file = os.path.abspath(os.path.expanduser(args.input))
     output_dir = os.path.abspath(os.path.expanduser(args.output_dir))
+    papers_file = args.input or epqpaths.get_papers_path(output_dir)
+    papers_file = os.path.abspath(os.path.expanduser(papers_file))
     hdbg.dassert_file_exists(
-        papers_file, "Run resolve_papers.py to make the papers CSV"
+        papers_file, "Run resolve_papers.py to make the papers file"
     )
     hdbg.dassert_dir_exists(
         epqpaths.get_papers_dir(output_dir),
@@ -632,9 +684,9 @@ def _main(parser: argparse.ArgumentParser) -> None:
         dry_run=args.dry_run,
     )
     # Extract the features of the papers.
-    papers = epqrepor.read_papers_csv(papers_file)
-    llm_func, cost_tracker = _make_llm_func(config.model)
-    _extract(papers, config, llm_func=llm_func, cost_tracker=cost_tracker)
+    papers = epqrepor.read_papers(papers_file)
+    llm_func = _make_llm_func(config.model, force_refresh=config.force_extract)
+    _extract(papers, config, llm_func=llm_func)
     _LOG.info("Outputs are in '%s'", output_dir)
 
 

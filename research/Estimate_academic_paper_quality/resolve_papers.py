@@ -5,28 +5,30 @@
 # ///
 
 """
-Turn a CSV of loose paper names into a CSV of resolved, deduped papers.
+Turn a CSV of loose paper names into a list of resolved, deduped papers.
 
-The input CSV has a column `input`. Each row is one paper:
+The input CSV has one paper per row, with no header needed (a header with a
+column `input` is also accepted):
 - a title (with the authors in parentheses)
 - an arXiv or SSRN link, a DOI, a publisher link, or the path of a local PDF
 
-The output is two CSV files:
-- The papers CSV (`--output`): one row per paper, from the newest to the oldest,
+The files are written in `--output_dir`, with names that the script infers:
+- `00-paper_list.csv`: a copy of the input CSV
+- `01-resolve.paper_list.json`: one paper per item, from the newest to the oldest,
   with the reference, the base name, and the ordered download inputs
-- The issues CSV (`--issues_output`): one row per input that did not give a paper
+- `01-resolve.issues.json`: one issue per input that did not give a paper
 
-The papers CSV is the input of `download_papers.py`, `extract_features.py`, and
+The papers file is the input of `download_papers.py`, `extract_features.py`, and
 `report_papers.py`. The script `estimate_paper_quality.sh` runs all the stages in
 order.
 
 # Usage Example
 
 - Resolve a list of papers:
-> resolve_papers.py --input papers_in.csv --output papers.csv
+> resolve_papers.py --input papers_in.csv --output_dir out
 
 - Show how each row is classified, with no lookup and no output file:
-> resolve_papers.py --input papers_in.csv --output papers.csv --dry_run
+> resolve_papers.py --input papers_in.csv --output_dir out --dry_run
 
 For a description of this file, see the file
 `research/Estimate_academic_paper_quality/resolve_papers.py.README.md`
@@ -38,11 +40,13 @@ import difflib
 import logging
 import os
 import re
+import shutil
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import dev_scripts_helpers.download.download_utils as dshddut
 import helpers.hcache_simple as hcacsimp
 import helpers.hdbg as hdbg
+import helpers.hio as hio
 import helpers.hparser as hparser
 import helpers.hprint as hprint
 import helpers.hstring as hstring
@@ -928,7 +932,7 @@ def _read_input_lines(input_csv: str) -> List[epqtypes.InputLine]:
 
     A blank row and a row that starts with `#` or `//` are skipped.
 
-    :param input_csv: path of the input CSV, with the column `input`
+    :param input_csv: path of the input CSV, one paper per row
     :return: classified lines, numbered by their row in the CSV
     """
     input_lines = []
@@ -940,18 +944,41 @@ def _read_input_lines(input_csv: str) -> List[epqtypes.InputLine]:
     return input_lines
 
 
+def _copy_input(input_csv: str, output_dir: str, *, dry_run: bool) -> None:
+    """
+    Copy the input CSV to the output dir, so the run keeps the list it used.
+
+    An earlier copy is overwritten, since a rerun can use a new list. The copy is
+    skipped if the input is already that file.
+
+    :param input_csv: path of the input CSV
+    :param output_dir: dir of all the outputs of the run
+    :param dry_run: if True, only log the copy
+    """
+    copy_path = epqpaths.get_input_copy_path(output_dir)
+    if dry_run:
+        _LOG.warning("[DRY_RUN] Would copy '%s' to '%s'", input_csv, copy_path)
+        return
+    if os.path.exists(copy_path) and os.path.samefile(input_csv, copy_path):
+        _LOG.debug("The input is already '%s'", copy_path)
+        return
+    hio.create_dir(output_dir, incremental=True)
+    shutil.copyfile(input_csv, copy_path)
+    _LOG.info("Copied the input to '%s'", copy_path)
+
+
 def _resolve(
     input_csv: str,
-    papers_csv: str,
-    issues_csv: str,
+    papers_file: str,
+    issues_file: str,
     sources: epqbibso.BibSources,
 ) -> epqtypes.ResolveResult:
     """
-    Resolve the rows of an input CSV into a papers CSV and an issues CSV.
+    Resolve the rows of an input CSV into a papers file and an issues file.
 
-    :param input_csv: path of the input CSV, with the column `input`
-    :param papers_csv: path of the papers CSV to write
-    :param issues_csv: path of the issues CSV to write
+    :param input_csv: path of the input CSV, one paper per row
+    :param papers_file: path of the papers JSON to write
+    :param issues_file: path of the issues JSON to write
     :param sources: clients of the lookup APIs
     :return: deduped papers in reverse chronological order, and the issues
     """
@@ -978,16 +1005,19 @@ def _resolve(
         papers.extend(result.papers)
         issues.extend(result.issues)
     papers = _finalize_papers(papers)
-    epqrepor.write_papers_csv(papers_csv, papers)
-    epqrepor.write_issues_csv(issues_csv, issues)
+    epqrepor.write_papers(papers_file, papers)
+    epqrepor.write_issues(issues_file, issues)
     _LOG.info("Resolved %s papers, %s issues", len(papers), len(issues))
     return epqtypes.ResolveResult(papers=tuple(papers), issues=tuple(issues))
 
 
 def _parse() -> argparse.ArgumentParser:
+    # No abbreviation of a flag: the old flag `--output` would otherwise be read
+    # as `--output_dir` and make a dir with the name of the old papers CSV.
     parser = argparse.ArgumentParser(
         description=__doc__,
         formatter_class=hparser.CustomHelpFormatter,
+        allow_abbrev=False,
     )
     parser.add_argument(
         "-i",
@@ -996,25 +1026,20 @@ def _parse() -> argparse.ArgumentParser:
         required=True,
         help="Input CSV with a column `input`, one paper per row",
     )
+    # The script writes several files, so it takes a dir and infers the names
+    # (rule `ARCH3.7`).
     parser.add_argument(
-        "-o",
-        "--output",
+        "--output_dir",
         action="store",
         required=True,
-        help="Papers CSV to write",
-    )
-    parser.add_argument(
-        "--issues_output",
-        action="store",
-        default="",
-        help="Issues CSV to write; empty is the papers CSV with `.issues.csv`",
+        help="Dir of all the outputs and of the state of the run",
     )
     parser.add_argument(
         "--cache_dir",
         action="store",
         default="",
-        help="Dir of the cache of the API answers; empty is `cache/` next to "
-        "the papers CSV",
+        help="Dir of the cache of the API answers; empty is `state/cache/` in "
+        "the output dir",
     )
     parser.add_argument(
         "--email",
@@ -1037,16 +1062,13 @@ def _main(parser: argparse.ArgumentParser) -> None:
     hdbg.init_logger(verbosity=args.log_level, use_exec_path=True)
     hcacsimp.parse_cache_control_args(args)
     input_csv = os.path.abspath(os.path.expanduser(args.input))
-    papers_csv = os.path.abspath(os.path.expanduser(args.output))
-    issues_csv = args.issues_output or epqpaths.get_resolve_issues_path(
-        papers_csv
-    )
-    issues_csv = os.path.abspath(os.path.expanduser(issues_csv))
-    cache_dir = args.cache_dir or os.path.join(
-        os.path.dirname(papers_csv), "cache"
-    )
+    output_dir = os.path.abspath(os.path.expanduser(args.output_dir))
+    papers_file = epqpaths.get_papers_path(output_dir)
+    issues_file = epqpaths.get_issues_path(output_dir, "resolve")
+    cache_dir = args.cache_dir or epqpaths.get_cache_dir(output_dir)
     cache_dir = os.path.abspath(os.path.expanduser(cache_dir))
     hdbg.dassert_file_exists(input_csv)
+    _copy_input(input_csv, output_dir, dry_run=args.dry_run)
     if args.dry_run:
         # Classify the rows only: no lookup, no cache dir, no output file.
         for input_line in _read_input_lines(input_csv):
@@ -1065,8 +1087,8 @@ def _main(parser: argparse.ArgumentParser) -> None:
         cache_dir=cache_dir,
         cache_mode=args.cache_mode,
     )
-    _resolve(input_csv, papers_csv, issues_csv, sources)
-    _LOG.info("Papers are in '%s', issues in '%s'", papers_csv, issues_csv)
+    _resolve(input_csv, papers_file, issues_file, sources)
+    _LOG.info("Papers are in '%s', issues in '%s'", papers_file, issues_file)
 
 
 if __name__ == "__main__":
