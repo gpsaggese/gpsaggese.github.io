@@ -8,6 +8,7 @@ import contextlib
 import io
 import logging
 import pprint
+import warnings
 from typing import Any, Dict, Optional, Tuple
 
 import pytest
@@ -16,6 +17,7 @@ import pytest
 pytest.importorskip("gymnasium")
 
 import gymnasium as gym
+import gymnasium.utils.env_checker
 import numpy as np
 
 import helpers.hunit_test as hunitest
@@ -299,3 +301,121 @@ class Test_step_two_envs(hunitest.TestCase):
             tgygyuti.step_two_envs(base, wrapped, action=0, seed=0)
         # Check outputs.
         self.assertIn(expected, str(cm.exception))
+
+
+# #############################################################################
+# Test_get_episode_returns
+# #############################################################################
+
+
+class Test_get_episode_returns(hunitest.TestCase):
+    """
+    Test `gymnasium_utils.get_episode_returns()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that a policy that aims at every target hits every shot.
+        """
+        # Prepare inputs.
+        grid_size = 3
+        n_shots = 4
+        n_episodes = 3
+        env = tgygyuti.HitTargetEnv(grid_size, n_shots)
+        # Prepare outputs.
+        expected = "[4.0, 4.0, 4.0]"
+        # Run test.
+        actual = tgygyuti.get_episode_returns(
+            env, n_episodes, seed=0, policy=lambda obs: obs
+        )
+        # Check outputs.
+        self.assert_equal(str(actual), expected)
+
+    def test2(self) -> None:
+        """
+        Test that episode `i` of random actions runs with seed `seed + i`.
+        """
+        # Prepare inputs.
+        env = gym.make("CartPole-v1")
+        seed = 7
+        n_episodes = 3
+        # Prepare outputs: the return of each seed, one episode at a time.
+        expected = [
+            tgygyuti.run_episode(env, seed=seed + idx)[1]
+            for idx in range(n_episodes)
+        ]
+        # The returns must differ, or reusing one seed for every episode would
+        # also pass.
+        self.assertEqual(len(set(expected)), n_episodes)
+        # Run test.
+        actual = tgygyuti.get_episode_returns(env, n_episodes, seed=seed)
+        # Check outputs.
+        self.assert_equal(str(actual), str(expected))
+
+
+# #############################################################################
+# TestHitTargetEnv
+# #############################################################################
+
+
+class TestHitTargetEnv(hunitest.TestCase):
+    """
+    Test `gymnasium_utils.HitTargetEnv`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that the env passes the Gymnasium env checker with no warning.
+        """
+        # Prepare inputs.
+        grid_size = 5
+        n_shots = 10
+        env = tgygyuti.HitTargetEnv(grid_size, n_shots)
+        # Run test and check outputs: `check_env()` raises on a failed check,
+        # and every warning becomes an error.
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            gymnasium.utils.env_checker.check_env(env, skip_render_check=True)
+
+    def test2(self) -> None:
+        """
+        Test that only the shot at the target scores, and that it scores 1.
+        """
+        # Prepare inputs.
+        grid_size = 5
+        n_shots = 10
+        seeds = [0, 1, 2]
+        env = tgygyuti.HitTargetEnv(grid_size, n_shots)
+        # Run test: from each seeded reset, shoot once at every cell, and keep
+        # the cells that score with their reward.
+        actual = []
+        expected = []
+        for seed in seeds:
+            target, _ = env.reset(seed=seed)
+            scoring_cells = []
+            for action in range(grid_size**2):
+                env.reset(seed=seed)
+                _, reward, _, _, _ = env.step(action)
+                if reward != 0.0:
+                    scoring_cells.append((action, reward))
+            actual.append(scoring_cells)
+            # Prepare outputs: the target is the only scoring cell.
+            expected.append([(target, 1.0)])
+        # Check outputs.
+        self.assert_equal(str(actual), str(expected))
+
+    def test3(self) -> None:
+        """
+        Test that a round of 3 shots ends as truncated, never as terminated.
+        """
+        # Prepare inputs.
+        grid_size = 5
+        n_shots = 3
+        env = tgygyuti.HitTargetEnv(grid_size, n_shots)
+        # Prepare outputs: `(terminated, truncated)` of each step.
+        expected = "[(False, False), (False, False), (False, True)]"
+        # Run test.
+        steps, _ = tgygyuti.run_episode(env, seed=0, policy=lambda obs: obs)
+        # Check outputs.
+        actual = str([(step.terminated, step.truncated) for step in steps])
+        self.assert_equal(actual, expected)
