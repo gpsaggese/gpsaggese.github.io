@@ -46,6 +46,12 @@
 - `helpers_root/docs/` (tools, coding, planning, work_organization,
   documentation_meta, and dev_system guides)
 - `helpers_root/papers/AIgentic_Development_System/part*.tex`
+- `.claude/skills/*/SKILL.md` and `.claude/skills/*.rules.md` (skills and rules)
+- `.claude/templates/`, `.claude/rules.md`, and `.claude/agents/`
+- `website/docs/blog/posts/*.md` (blog posts and drafts)
+- `research/ideas/*.md` (research ideas)
+- `research/agentic_sw_eng/resources.md` (index of AI development resources)
+- `.github/workflows/*.yml` (CI workflows of this repo)
 - `book_AI_Software_Engineering/resources.md`
 - `book_AI_Software_Engineering/lectures_source/claude_code.md`
 - `book_Agentic_AI/lectures_source/*.smd`
@@ -129,13 +135,23 @@
 - `book_AI_Software_Engineering/lectures_source/Lesson01.1_LLM_Assisted_Code_Generation.smd`
 
 ### Lesson Materials
+- `website/docs/blog/posts/how_to.Compare_LLM_models.md`
+  - [40%]: LLM evaluation landscape, reliable benchmarks, comparison by category
 - `book_Agentic_AI/lectures_source/Lesson02.1-LLM_Building_Blocks.smd`
   - [30%]: tokenization, attention, context window, KV cache, decoding
+- `website/docs/blog/posts/how_to.LLM_effort.md`
+  - [20%]: reasoning effort, token billing, a code generation example
+- `research/ideas/draft.Create_LLM_Benchmark_for_thoroughness.md`
+  - [15%]: benchmark design for multi-site tasks
 - `book_Agentic_AI/lectures_source/Lesson04.1-LLM_Reasoning.smd`
   - [15%]: chain-of-thought as serial computation, limits of self-correction
+- `website/docs/blog/posts/draft.LLM_issues.md`
+  - [10%]: LLMs as interpolators, correction loops
+- `research/ideas/draft.Skill_vs_Luck_in_Agent_Benchmarks.md`
+  - [10%]: noise in agent benchmark scores
 - _Not covered_
-  - [55%]: code model families, code-specific training data, HumanEval and
-    SWE-bench benchmarks, hallucination taxonomy for code
+  - [45%]: code model families, code-specific training data, SWE-bench results,
+    hallucination taxonomy for code
 
 ## 02: Skills Organization and Management
 
@@ -171,15 +187,43 @@
 ### Lesson Materials
 - `helpers_root/docs/tools/ai/all.ai_workflows.how_to_guide.md`
   - [70%]: topics, skills, rules, templates, running a skill, adding rules
+- `.claude/skills/skill.rules.md`
+  - [50%]: SKILL.md format, frontmatter, naming, directory structure, rule files
+- `website/docs/blog/posts/draft.how_to.Claude_skills.md`
+  - [45%]: what skills are, progressive disclosure, a first skill, guidelines
+- `research/agentic_sw_eng/resources.md`
+  - [35%]: index of rules, skills, templates, and agent configuration
 - `book_AI_Software_Engineering/resources.md`
   - [30%]: agent instruction manifests, CLAUDE.md as a manual, self-documenting
     workflows
+- `.claude/rules.md`
+  - [30%]: mapping from file type to rules and templates
+- `.claude/skills/skill.auto_add/SKILL.md`
+  - [25%]: update a skill from lessons learned in Git history
+- `research/ideas/draft.Unit_Testing_LLM_Skills.md`
+  - [25%]: unit tests for LLM skills
+- `.claude/skills/skill.check_refs/SKILL.md`
+  - [20%]: check the references between skills and rules
+- `research/ideas/draft.Measuring_Quality_of_Skills_and_Prompts.md`
+  - [20%]: quality metrics for skills
+- `website/docs/blog/posts/draft.how_to.Enforce_rules_in_Claude_Code.md`
+  - [20%]: hooks that force the agent to load the rules for a file type
+- `.claude/skills/skill.consolidate_skills/SKILL.md`
+  - [15%]: merge and rename skills by topic
+- `.claude/skills/skill.reorganize_rules/SKILL.md`
+  - [15%]: reorganize the rules in a rules file
+- `.claude/skills/skill.check_against_rules/SKILL.md`
+  - [15%]: check a file against the rules that apply to it
+- `.claude/skills/rules.add/SKILL.md`
+  - [15%]: add a rule to the set of rules
 - `helpers_root/docs/tools/ai/all.ai_review.how_to_guide.md`
   - [15%]: tools that apply rules to files, improving the tools while reviewing
+- `website/docs/blog/posts/draft.ideas.Deterministic_skills.md`
+  - [10%]: skills that call deterministic code
 - `book_Agentic_AI/lectures_source/Lesson07.1-Tool_use_and_retrieval.smd`
   - [10%]: tool calls and their failure modes
 - _Not covered_
-  - [20%]: testing agent skills, skill evaluation, sharing skills across repos
+  - [15%]: skill evaluation in production, sharing skills across repos
 
 ## 03: AI Harness
 
@@ -213,17 +257,43 @@
   (sections `## Pair Programming Tool Landscape` and `## Where to Run the Assistant`)
 
 ### Lesson Materials
+- `website/docs/blog/posts/draft.how_to.Coding_Agents.md`
+  - [70%]: Claude Code, GitHub Copilot, ChatGPT, Cursor, Devin
 - `book_AI_Software_Engineering/lectures_source/claude_code.md`
   - [70%]: Claude Code surfaces, integrations, and working away from a terminal
+- `website/docs/blog/posts/draft.pidev_vs_claude_code_comparison.md`
+  - [55%]: pi.dev versus Claude Code: core concepts and workflows
+- `research/ideas/in_progress.Comparison_of_Coding_Agents.md`
+  - [50%]: comparison of coding agents
+- `website/docs/blog/posts/draft.survey.tools_to_generate_sw_with_agents.md`
+  - [40%]: orchestrators, managed platforms, spec-driven tools
+- `website/docs/blog/posts/draft.in_30_mins.pi_dev.md`
+  - [35%]: a second harness: setup, concepts, examples
+- `website/docs/blog/posts/draft.how_to.Use_Claude_Code.md`
+  - [35%]: Claude Code features and usage
+- `website/docs/blog/posts/draft.how_to.Automate_Coding_with_LLM.md`
+  - [30%]: tool overview, when to use each tool, cost tracking
 - `helpers_root/docs/tools/ai/all.create_pr_with_claude_code.how_to_guide.md`
   - [25%]: a Claude Code PR workflow with worktrees and small steps
+- `research/ideas/draft.Tutorial_claude_agent_sdk.md`
+  - [25%]: building agents with the Claude Agent SDK
 - `helpers_root/docs/tools/ai/all.auto_task.how_to_guide.md`
   - [20%]: running Claude Code tasks on GitHub and choosing an execution mode
+- `website/docs/blog/posts/how_to.Use_Claude_Code_with_Openrouter.md`
+  - [20%]: running the Claude Code harness with other models
+- `research/ideas/draft.Document_MCP.md`
+  - [20%]: Model Context Protocol
 - `book_Agentic_AI/lectures_source/Lesson03.1-History_of_LLM_Agents.smd`
   - [15%]: ReAct, acting on the world, early agent failures
+- `website/docs/blog/posts/draft.how_to.Parse_Claude_logs.md`
+  - [15%]: record types in a harness session log
+- `website/docs/blog/posts/draft.in_5_mins.helpers_cc.md`
+  - [15%]: the `cc` wrapper that switches the model behind Claude Code
+- `website/docs/blog/posts/how_to.Count_cost.md`
+  - [15%]: cost tracking of agent sessions with `ccusage` and OpenRouter
 - _Not covered_
-  - [40%]: Copilot and Cursor internals, a harness comparison matrix,
-    permission models, cost comparison
+  - [25%]: permission models, Copilot and Cursor internals, a harness test on
+    the same task
 
 ## 04: AI Pair Programming Workflows
 
@@ -252,15 +322,37 @@
 ### Lesson Materials
 - `helpers_root/docs/tools/ai/all.create_pr_with_claude_code.how_to_guide.md`
   - [60%]: investigate before changing, worktrees, small steps, layered tests
+- `website/docs/blog/posts/draft.how_to.Use_Claude_Code.md`
+  - [55%]: create and edit code, run and test, debug, larger projects, prompting
+    tips
+- `website/docs/blog/posts/draft.how_to.My_agentic_engineering_flow.md`
+  - [50%]: unit of work, spec before code, criticize first, keep the PR
+    mergeable
+- `website/docs/blog/posts/draft.how_to.Automate_Coding_with_LLM.md`
+  - [40%]: workflow patterns and advanced features
 - `helpers_root/docs/tools/ai/all.ai_workflows.how_to_guide.md`
   - [40%]: coding workflows such as implementing TODOs and cleaning up a file
+- `.claude/skills/auto_task.execute_interactively/SKILL.md`
+  - [35%]: execute, review, commit loop over a task list
+- `website/docs/blog/posts/draft.how_to.A_queue_of_AI_coding_agents.md`
+  - [30%]: a task queue that feeds agents asynchronously
 - `helpers_root/docs/tools/ai/all.auto_task.how_to_guide.md`
   - [30%]: task lists, criticizing the plan, execution modes
+- `website/docs/blog/posts/draft.how_to.How_to_run_Claude_on_GitHub.md`
+  - [30%]: `@claude` on issues and PRs as asynchronous help
+- `website/docs/blog/posts/draft.how_to.Use_Claude_Code_Workflows.md`
+  - [25%]: creating a script from scratch with Claude Code
+- `website/docs/blog/posts/draft.how_to.Apply_Coding_AI_to_ML_Data_Science.md`
+  - [20%]: coding assistants in ML and data science work
+- `.claude/skills/coding.todoai_gp/SKILL.md`
+  - [20%]: implement the TODO items left in a file
+- `.claude/skills/coding.annotate_with_todoai/SKILL.md`
+  - [15%]: let the rules write TODOs that the agent implements
 - `book_Agentic_AI/lectures_source/Lesson06.1-Inference_time_techniques.smd`
   - [10%]: iterative refinement with grounded feedback
 - _Not covered_
-  - [35%]: pair-programming evidence and metrics, dispatch and remote control,
-    channels and scheduled tasks
+  - [25%]: pair-programming metrics and evidence, dispatch and remote control,
+    scheduled tasks
 
 ## 05: Prompt Engineering for Code
 
@@ -291,16 +383,38 @@
 
 ### Lesson Materials
 - `book_Agentic_AI/lectures_source/Lesson04.1-LLM_Reasoning.smd`
-  - [45%]: chain-of-thought variants, self-consistency, tree of thought,
-    premise order
+  - [45%]: chain-of-thought variants, self-consistency, tree of thought, premise
+    order
+- `research/ideas/draft.Prompt_fine_tuning.md`
+  - [40%]: automated input/output loop to tune a prompt
 - `book_Agentic_AI/lectures_source/Lesson06.1-Inference_time_techniques.smd`
   - [30%]: LLMs as optimizers, prompt optimization against a grounded score
+- `.claude/templates/ai.instruction_template.md`
+  - [30%]: patterns for writing an AI instruction file
+- `research/ideas/draft.Measuring_Quality_of_Skills_and_Prompts.md`
+  - [30%]: measuring the quality of a prompt
+- `website/docs/blog/posts/draft.how_to.Compress_LLM_in_out_tokens.md`
+  - [25%]: terse prompts and terse output to cut tokens
+- `research/ideas/draft.How_to_measure_LLM_compliance.md`
+  - [25%]: measuring instruction-following compliance
 - `book_Agentic_AI/lectures_source/Lesson03.1-History_of_LLM_Agents.smd`
   - [25%]: in-context learning, from prompting to acting, ReAct traces
+- `website/docs/blog/posts/draft.in_30_mins.helpers_hllm_decorator.md`
+  - [20%]: prompts as decorated functions: classification and extraction
+- `helpers_root/docs/tools/helpers/all.hllm.explanation.md`
+  - [20%]: LLM calls with caching, cost, and testing
+- `research/ideas/draft.Create_script_to_apply_prompt_in_chunks.md`
+  - [15%]: apply one prompt to a file in chunks
+- `website/docs/blog/posts/in_30_mins.helpers_llm_cli.md`
+  - [15%]: prompting from the command line
+- `website/docs/blog/posts/in_30_mins.simonw_llm_cli.md`
+  - [15%]: the `llm` CLI: prompts, keys, and templates
 - `helpers_root/docs/tools/ai/all.ai_workflows.how_to_guide.md`
   - [15%]: templates and prompt-driven rule workflows
+- `website/docs/blog/posts/draft.LLM_issues.md`
+  - [10%]: correction loops for imprecise output
 - _Not covered_
-  - [40%]: acceptance-criteria specs, negative examples, test-first prompting,
+  - [30%]: acceptance-criteria specs, negative examples, test-first prompting,
     style transfer from a codebase
 
 ## 06: Human-AI Collaboration Patterns
@@ -330,15 +444,36 @@
 ### Lesson Materials
 - `helpers_root/docs/tools/ai/all.ai_review.how_to_guide.md`
   - [35%]: reviewer workflow and human review of AI transforms
+- `helpers_root/docs/work_organization/all.team_collaboration.how_to_guide.md`
+  - [35%]: rules of collaboration: asking for help, problem solving
+- `website/docs/blog/posts/My_AI_Policy.md`
+  - [35%]: LLMs as team members, no AI slop
+- `website/docs/blog/posts/draft.A_proposal_for_AI_based_software_engineering.md`
+  - [35%]: principles and team setup for agentic AI development
+- `website/docs/blog/posts/draft.how_to.My_agentic_engineering_flow.md`
+  - [30%]: criticize first, agents do not commit on their own
 - `helpers_root/docs/tools/ai/all.auto_task.how_to_guide.md`
   - [30%]: the human criticizes the plan before execution
+- `helpers_root/docs/coding/all.submit_code_for_review.how_to_guide.md`
+  - [25%]: edit code written by AI, test in layers
+- `research/ideas/draft.How_to_measure_LLM_compliance.md`
+  - [20%]: measuring how well an LLM follows instructions
+- `.claude/skills/auto_task.criticize/SKILL.md`
+  - [20%]: criticize a plan before execution
 - `helpers_root/papers/AIgentic_Development_System/part4.AI_optimized_development.tex`
   - [20%]: guardrails and provenance for autonomous changes
+- `helpers_root/docs/coding/all.code_review.how_to_guide.md`
+  - [20%]: author and reviewer points of view
+- `website/docs/blog/posts/draft.article.2026.Ribeiro_et_al.Why_Should_I_Trust_You.md`
+  - [15%]: when to trust a model prediction
+- `research/ideas/draft.Counterfactual_Attribution_of_Agent_Failures.md`
+  - [15%]: attributing failures to agent steps
 - `helpers_root/docs/work_organization/all.use_github.how_to_guide.md`
   - [15%]: PR review and addressing review comments
+- `.claude/agents/code.reviewer.md`
+  - [10%]: a code reviewer agent
 - _Not covered_
-  - [40%]: task-risk matrix, adaptive autonomy, calibrating trust, team-level
-    metrics
+  - [30%]: task-risk matrix, adaptive autonomy, team-level metrics
 
 # Part II: Writing and Reviewing Code
 
@@ -378,16 +513,58 @@
     files
 - `helpers_root/docs/coding/all.coding_style.how_to_guide.md`
   - [80%]: naming, comments, docstrings, imports, logging, assertions, tests
+- `.claude/skills/coding.rules.md`
+  - [75%]: Python rules for naming, docstrings, imports, and functions
+- `.claude/skills/testing.rules.md`
+  - [65%]: unit test rules
 - `helpers_root/docs/coding/all.coding_style_guidelines.reference.md`
   - [60%]: per-language rules for naming, docstrings, imports, and tests
 - `helpers_root/docs/tools/linter/all.developing_linter.how_to_guide.md`
   - [60%]: linter scripts, modifying and non-modifying steps
+- `helpers_root/docs/tools/testing_profiling/all.codecov.how_to_guide.md`
+  - [55%]: Codecov setup, coverage configuration, GitHub Actions workflow
+- `website/docs/blog/posts/in_30_mins.Python_Code_Coverage.md`
+  - [55%]: coverage reports and `pytest` options
+- `website/docs/blog/posts/draft.in_15_mins.helpers_hunit_test.md`
+  - [50%]: golden file tests and `--update_outcomes`
 - `helpers_root/docs/coding/all.type_hints.how_to_guide.md`
   - [50%]: type hints, mypy workarounds, typing conventions
+- `helpers_root/docs/coding/all.submit_code_for_review.how_to_guide.md`
+  - [45%]: style guide, linter, example code, layered tests
+- `helpers_root/docs/tools/testing_profiling/all.code_coverage_subprocess.how_to_guide.md`
+  - [40%]: coverage for subprocesses and Docker
+- `.claude/skills/testing.write_unit_tests/SKILL.md`
+  - [40%]: plan and write unit tests for a file
 - `book_AI_Software_Engineering/resources.md`
   - [40%]: code quality, unit testing, and coverage (section outline)
+- `.claude/skills/testing.reach_coverage/SKILL.md`
+  - [35%]: raise unit test coverage toward 100 percent
+- `research/ideas/draft.Use_agents_for_unit_test_coverage.md`
+  - [35%]: agents that raise unit test coverage
+- `helpers_root/docs/tools/git/all.git_hooks.how_to_guide.md`
+  - [35%]: install pre-commit hooks and skip the checks
+- `helpers_root/docs/build_system/all.linter_gh_workflow.explanation.md`
+  - [30%]: the linter as a GitHub workflow
+- `helpers_root/docs/tools/codebase/all.imports_and_packages.how_to_guide.md`
+  - [30%]: package goals, hierarchy, cycle prevention
+- `research/ideas/draft.Comparison_of_Testing_Agents.md`
+  - [30%]: comparison of AI testing agents
+- `.claude/skills/coding.fix_type_hints/SKILL.md`
+  - [30%]: fix type hints to follow the typing conventions
+- `.claude/skills/coding.fix_pyright/SKILL.md`
+  - [25%]: run pyright and fix the reported lints
+- `.claude/skills/testing.fix_unit_tests/SKILL.md`
+  - [25%]: apply the unit test conventions
+- `website/docs/blog/posts/draft.how_to.Create_Hook_To_Run_Ruff_In_Claude_Code.md`
+  - [25%]: a hook that runs Ruff after every edit
+- `.claude/skills/coding.fix_docstring/SKILL.md`
+  - [20%]: fix Python docstrings
+- `research/ideas/draft.Codebase_autocleanup.md`
+  - [20%]: TODO-driven codebase cleanup by agents
+- `website/docs/blog/posts/draft.how_to.VS_Code_Quick_Fix.md`
+  - [15%]: linter output as quickfix entries
 - _Not covered_
-  - [10%]: mutation testing, flaky test handling, security gates
+  - [10%]: mutation testing, flaky test handling
 
 ## 08: Documenting Code
 
@@ -417,18 +594,56 @@
   (section `# Automating Documentation`)
 
 ### Lesson Materials
+- `helpers_root/docs/documentation_meta/all.writing_docs.how_to_guide.md`
+  - [55%]: conventions for writing docs
+- `helpers_root/docs/documentation_meta/all.diataxis.explanation.md`
+  - [50%]: tutorial, how-to guide, reference, explanation
+- `research/ideas/draft.Comparison_of_Documentation_Agents.md`
+  - [45%]: comparison of AI code documentation agents
 - `helpers_root/docs/documentation_meta/all.architecture_diagrams.explanation.md`
   - [40%]: C4 levels, PlantUML conventions, class diagrams
+- `research/ideas/draft.Use_agents_to_update_repo_doc.md`
+  - [40%]: agents that keep repo docs up to date
+- `.claude/skills/readme_dir.rules.md`
+  - [40%]: README for a directory with executables
+- `helpers_root/docs/documentation_meta/all.where_to_add_material.explanation.md`
+  - [35%]: where new material belongs in the docs
+- `helpers_root/docs/documentation_meta/all.google_technical_writing.how_to_guide.md`
+  - [35%]: technical writing rules
 - `helpers_root/docs/coding/all.coding_style.how_to_guide.md`
   - [35%]: comments and docstring conventions, stale TODOs
 - `helpers_root/docs/planning/all.plan_work.how_to_guide.md`
   - [35%]: keeping docs in sync, organizing project docs
+- `.claude/skills/docs.add_content/SKILL.md`
+  - [35%]: add content to the docs without redundancy
+- `.claude/skills/readme_file.rules.md`
+  - [35%]: README for a single script
+- `.claude/skills/coding.fix_docstring/SKILL.md`
+  - [30%]: fix Python docstrings
+- `website/docs/blog/posts/draft.Writing_Books_For_Humans_and_AI.md`
+  - [30%]: writing technical content for humans and AI
+- `.claude/skills/readme_file.explain_code/SKILL.md`
+  - [25%]: document classes, functions, and relationships
+- `helpers_root/docs/documentation_meta/all.how_to_guide_template.md`
+  - [25%]: doc templates
+- `website/docs/blog/posts/in_30_mins.mdm_unified_markdown_manager.md`
+  - [25%]: managing scattered content with `mdm`
+- `.claude/skills/coding.fix_comments/SKILL.md`
+  - [25%]: update docstrings and comments without changing logic
+- `.claude/skills/markdown.rules.md`
+  - [25%]: markdown conventions
 - `helpers_root/papers/AIgentic_Development_System/part4.AI_optimized_development.tex`
   - [20%]: self-documenting executable workflows, agent instruction manifests
 - `book_AI_Software_Engineering/resources.md`
   - [20%]: CLAUDE.md as a machine-consumable manual
+- `helpers_root/docs/blogging/all.write_blog.how_to_guide.md`
+  - [20%]: blogs in the docs ecosystem
+- `.claude/skills/C4.rules.md`
+  - [20%]: C4 diagrams with PlantUML
+- `website/docs/blog/posts/draft.how_to.Codebase_local_kg.md`
+  - [10%]: a local knowledge graph of the codebase
 - _Not covered_
-  - [35%]: docstring generation pipelines, doc-drift checks in CI
+  - [25%]: doc-drift checks in CI, measured doc quality
 
 ## 09: Reviewing Pull Requests
 
@@ -459,17 +674,38 @@
 ### Lesson Materials
 - `helpers_root/docs/tools/ai/all.ai_review.how_to_guide.md`
   - [75%]: the `ai_review` tool, reviewer workflow, improving the reviewer
+- `helpers_root/docs/coding/all.code_review.how_to_guide.md`
+  - [70%]: general rules, author and reviewer points of view, workflows
 - `helpers_root/docs/tools/ai/all.code_review_tools.reference.md`
   - [60%]: Copilot, Graphite, CodeRabbit, and Deepcode: features and prices
+- `.claude/skills/github.describe_pr_for_review/SKILL.md`
+  - [50%]: describe a PR in a fixed format, score it, suggest a review order
 - `helpers_root/docs/work_organization/all.use_github.how_to_guide.md`
   - [50%]: PR filing, review, and addressing comments
+- `website/docs/blog/posts/draft.how_to.Github_Copilot_Review.md`
+  - [45%]: request a Copilot review as a first line of defense
+- `helpers_root/docs/coding/all.submit_code_for_review.how_to_guide.md`
+  - [40%]: first review process: style, linter, example code
+- `.claude/skills/coding_qa.review/SKILL.md`
+  - [35%]: review Python files for bugs and suggest fixes
+- `.claude/skills/skill.check_against_rules/SKILL.md`
+  - [30%]: check a file against the rules that apply to it
+- `.claude/agents/code.reviewer.md`
+  - [30%]: a code reviewer agent
 - `helpers_root/docs/tools/ai/all.create_pr_with_claude_code.how_to_guide.md`
   - [25%]: opening and following up on a PR
+- `website/docs/blog/posts/draft.how_to.How_to_run_Claude_on_GitHub.md`
+  - [25%]: `@claude` on PRs for review help
+- `.claude/skills/github.get_pr_ready_to_merge/SKILL.md`
+  - [20%]: get the PR to a state that can be reviewed and merged
 - `helpers_root/docs/planning/all.plan_work.how_to_guide.md`
   - [20%]: from idea to merged PR, review and merge
+- `research/ideas/draft.Codebase_automerge.md`
+  - [15%]: automated sequential merging of PRs
+- `.github/workflows/claude.yml`
+  - [15%]: the workflow that runs Claude on issues and PRs
 - _Not covered_
-  - [25%]: review as a CI gate, measured review quality, reviewing AI-written
-    PRs at scale
+  - [15%]: measured review quality, reviewing AI-written PRs at scale
 
 ## 10: Reviewing Existing Code
 
@@ -501,19 +737,38 @@
 - N/A: no dedicated deck yet
 
 ### Lesson Materials
+- `website/docs/blog/posts/draft.how_to.Read_other_people_code.md`
+  - [55%]: what to do and what not to do when reading unfamiliar code
+- `.claude/skills/readme_file.explain_code/SKILL.md`
+  - [45%]: document classes, functions, and relationships of a file
+- `.claude/skills/coding.find_doc/SKILL.md`
+  - [40%]: find and summarize docs for a dir, file, class, or function
+- `research/ideas/draft.Code_Visualization.md`
+  - [40%]: visualizing Python codebases
 - `helpers_root/docs/coding/all.code_design.how_to_guide.md`
   - [35%]: design philosophy, invariants, pure functions, and roles
 - `helpers_root/docs/documentation_meta/all.architecture_diagrams.explanation.md`
   - [35%]: C4 component and code views, class diagrams
+- `.claude/skills/readme_file.write_architecture/SKILL.md`
+  - [35%]: write architecture docs for a Python file
+- `helpers_root/docs/tools/codebase/all.import_check.reference.md`
+  - [35%]: visualize directory, external, and cyclic dependencies
 - `helpers_root/docs/tools/ai/all.ai_workflows.how_to_guide.md`
   - [30%]: finding rules for a file, running a skill on a file
+- `website/docs/blog/posts/draft.how_to.Codebase_local_kg.md`
+  - [30%]: a local knowledge graph of the codebase for the agent
+- `helpers_root/docs/tools/codebase/all.imports_and_packages.how_to_guide.md`
+  - [25%]: package hierarchy and anatomy of a package
+- `.claude/skills/coding_qa.review/SKILL.md`
+  - [20%]: review Python files for bugs
 - `helpers_root/docs/planning/all.document_research.how_to_guide.md`
   - [15%]: research logs and reproducible notes
+- `.claude/skills/coding.improve_code_for_humans/SKILL.md`
+  - [10%]: readability and debuggability changes
 - `helpers_root/papers/AIgentic_Development_System/part2.runnable_directory.tex`
   - [10%]: runnable directories as bounded units of code
 - _Not covered_
-  - [60%]: reading unfamiliar code with AI, tracing call graphs, onboarding
-    walkthroughs
+  - [35%]: onboarding walkthroughs, tracing call graphs with AI
 
 ## 11: Debugging with AI
 
@@ -546,13 +801,44 @@
 ### Lesson Materials
 - `book_Agentic_AI/lectures_source/Lesson06.1-Inference_time_techniques.smd`
   - [55%]: self-debugging, grounded versus self-judged feedback, verifier design
+- `.claude/skills/pytest.rules.md`
+  - [45%]: root-cause diagnosis, fix plan, verification of a fix
+- `research/ideas/draft.Comparison_of_Debugging_Agents.md`
+  - [45%]: comparison of AI code debugging agents
+- `.claude/skills/pytest.fix_local_tests/SKILL.md`
+  - [40%]: analyze and fix failing local tests
+- `.claude/skills/pytest.fix_ci_tests/SKILL.md`
+  - [35%]: analyze and fix failing tests in GitHub CI
+- `.claude/skills/github.get_pr_to_pass_ci_tests/SKILL.md`
+  - [30%]: monitor CI checks and fix failures until they pass
+- `helpers_root/docs/tools/testing_profiling/all.profiling.how_to_guide.md`
+  - [30%]: profiling a command, Python code, and notebooks
+- `website/docs/blog/posts/draft.debug.md`
+  - [30%]: run tests inside the container, pytest logs
+- `helpers_root/docs/build_system/all.pytest_allure.how_to_guide.md`
+  - [25%]: test reports for finding failures
+- `.claude/skills/github.get_pr_to_pass_local_tests/SKILL.md`
+  - [25%]: make the local tests pass for a PR
 - `helpers_root/docs/coding/all.coding_style.how_to_guide.md`
   - [25%]: logging levels, assertions, and reporting warnings
+- `research/ideas/draft.Counterfactual_Attribution_of_Agent_Failures.md`
+  - [25%]: attributing agent failures to steps
+- `website/docs/blog/posts/draft.TIL.Apple_container_running_notebook.md`
+  - [20%]: a worked debugging story: problem, root cause, fix
 - `book_Agentic_AI/lectures_source/Lesson04.1-LLM_Reasoning.smd`
   - [20%]: limits of self-correction, when self-correction helps
+- `.claude/skills/testing.update_test_outcomes/SKILL.md`
+  - [20%]: update the expected outcome of failing tests
+- `.claude/skills/coding.fix_pyright/SKILL.md`
+  - [15%]: fix type-checker findings
+- `helpers_root/docs/work_organization/all.buildmeister.how_to_guide.md`
+  - [15%]: build break triage and escalation
+- `website/docs/blog/posts/draft.how_to.Parse_Claude_logs.md`
+  - [15%]: reading agent session logs
+- `.claude/skills/cfile.rules.md`
+  - [10%]: a quickfix file to jump to errors
 - _Not covered_
-  - [50%]: reproducing production failures, debugging workflows in a repo,
-    trace inspection
+  - [30%]: reproducing production failures, trace inspection
 
 # Part III: Planning and Architecture
 
@@ -588,17 +874,46 @@
 ### Lesson Materials
 - `helpers_root/docs/planning/all.plan_work.how_to_guide.md`
   - [85%]: planning hierarchy, plan docs, end-to-end plan, progress log
+- `.claude/skills/project.rules.md`
+  - [70%]: rules for the PRD, design, plan, progress, and decisions docs
+- `.claude/skills/project.create_plan/SKILL.md`
+  - [60%]: end-to-end plan of a project from its design docs
+- `.claude/skills/auto_task.create_plan_for_feature/SKILL.md`
+  - [55%]: break a feature into an ordered PR plan
+- `.claude/skills/project.write_prd/SKILL.md`
+  - [50%]: turn an idea into a PRD
+- `.claude/skills/auto_task.rules.md`
+  - [50%]: plan format and executing a task list
 - `helpers_root/docs/planning/all.document_research.how_to_guide.md`
   - [45%]: research log, reproducible research, daily entries
 - `helpers_root/docs/tools/ai/all.auto_task.how_to_guide.md`
   - [45%]: task lists, criticizing the plan, execution modes
+- `website/docs/blog/posts/draft.how_to.A_queue_of_AI_coding_agents.md`
+  - [45%]: a task queue, the unit of work, specs
+- `.claude/skills/architecture.write_design/SKILL.md`
+  - [40%]: write design docs from the PRD, before the code
+- `.claude/skills/project.update_progress/SKILL.md`
+  - [40%]: update plan, log, and decisions after a merge
 - `helpers_root/docs/work_organization/all.github_projects_process.reference.md`
   - [40%]: sprint process, weekly summary, carryover of unfinished issues
+- `website/docs/blog/posts/draft.how_to.My_agentic_engineering_flow.md`
+  - [40%]: spec before code, criticize first, then execute
+- `.claude/skills/auto_task.create_specs_from_todos/SKILL.md`
+  - [40%]: turn a list of TODOs into a plan
+- `.claude/skills/auto_task.criticize/SKILL.md`
+  - [35%]: review a plan or issue before execution
+- `helpers_root/docs/work_organization/all.organize_your_work.how_to_guide.md`
+  - [35%]: golden rules, roles, starting work, organizing research
+- `website/docs/blog/posts/draft.survey.tools_to_generate_sw_with_agents.md`
+  - [35%]: spec-driven planning and task tracking tools
+- `helpers_root/docs/work_organization/all.scrum.explanation.md`
+  - [30%]: Scrum roles and goals
+- `website/docs/blog/posts/draft.A_proposal_for_AI_based_software_engineering.md`
+  - [30%]: a staged plan for agentic AI development
 - `book_Agentic_AI/lectures_source/Lesson05.1-Reasoning_Memory_and_Planning.smd`
   - [15%]: planning as a loop, world models for planning
 - _Not covered_
-  - [15%]: effort estimation, roadmapping across quarters, requirements
-    interviews
+  - [10%]: effort estimation, roadmapping across quarters
 
 ## 13: Software Architecture Guidelines
 
@@ -629,18 +944,51 @@
   (section `# Code Modularization and Repo Structure`)
 
 ### Lesson Materials
-- `helpers_root/papers/AIgentic_Development_System/part2.runnable_directory.tex`
-  - [80%]: monorepo versus multi-repo, runnable directory architecture
 - `helpers_root/docs/documentation_meta/all.architecture_diagrams.explanation.md`
   - [80%]: C4 levels, PlantUML conventions, class diagrams
+- `helpers_root/papers/AIgentic_Development_System/part2.runnable_directory.tex`
+  - [80%]: monorepo versus multi-repo, runnable directory architecture
+- `.claude/skills/architecture.rules.md`
+  - [75%]: layers, dependency direction, data flow, interfaces
 - `helpers_root/docs/coding/all.code_design.how_to_guide.md`
   - [70%]: design philosophy, architecture, invariants, and roles
+- `helpers_root/docs/tools/dev_system/all.runnable_repo.reference.md`
+  - [65%]: design goals, helper sub-repo, runnable dir
+- `.claude/skills/C4.rules.md`
+  - [50%]: C4 diagrams with PlantUML
+- `helpers_root/docs/tools/codebase/all.imports_and_packages.how_to_guide.md`
+  - [50%]: package goals, hierarchy, cycle prevention, anatomy of a package
+- `.claude/skills/architecture.write_design/SKILL.md`
+  - [45%]: write design docs before the code
+- `research/ideas/draft.AI_Architecture_Decision_Support.md`
+  - [45%]: AI support for architecture decisions
+- `helpers_root/docs/tools/dev_system/all.create_a_runnable_dir.how_to_guide.md`
+  - [40%]: create a runnable dir as a sub-directory under a super-repo
 - `book_AI_Software_Engineering/resources.md`
-  - [40%]: package structure, import cycle detection, single versus multiple repo
+  - [40%]: package structure, import cycle detection, single versus multiple
+    repo
+- `helpers_root/docs/tools/dev_system/all.create_a_super_repo_with_helpers.how_to_guide.md`
+  - [35%]: create a super-repo with the helpers sub-repo
+- `research/ideas/draft.AI_Technical_Debt_Management.md`
+  - [35%]: quantifying and remediating technical debt with AI
+- `website/docs/blog/posts/draft.monorepo_vs_multirepo.md`
+  - [30%]: monorepo versus multirepo trade-offs
 - `helpers_root/docs/coding/all.coding_style.how_to_guide.md`
   - [30%]: architecture and design patterns, import conventions
+- `helpers_root/docs/tools/codebase/all.import_check.reference.md`
+  - [30%]: dependency and cycle visualization
+- `.claude/skills/coding.factor_common_code/SKILL.md`
+  - [30%]: refactor duplicated code into shared functions
+- `helpers_root/docs/tools/thin_environment/all.thin_environment.reference.md`
+  - [25%]: thin environment shared across repos
+- `.claude/skills/skill.add_architecture/SKILL.md`
+  - [25%]: add a rule to the architecture rules
+- `research/ideas/draft.Code_Visualization.md`
+  - [20%]: visualizing Python codebases
+- `.claude/skills/coding.make_function_private/SKILL.md`
+  - [15%]: mark functions private or public
 - _Not covered_
-  - [20%]: service boundaries, scalability trade-offs
+  - [15%]: service boundaries, scalability trade-offs
 
 # Part IV: Delivery and Automation
 
@@ -680,14 +1028,44 @@
   - [85%]: project structure, board, sprints, automation, sub-issues
 - `helpers_root/docs/work_organization/all.use_github.how_to_guide.md`
   - [85%]: concepts, issue and PR workflows, labels
+- `helpers_root/docs/tools/git/all.git.how_to_guide.md`
+  - [70%]: Git workflow, best practices, troubleshooting
 - `helpers_root/docs/tools/dev_system/all.sync_gh_projects.how_to_guide.md`
   - [60%]: syncing project templates, previewing and applying changes
+- `helpers_root/docs/tools/dev_system/all.synchronize_gh_issue_labels.how_to_guide.md`
+  - [50%]: synchronize issue labels across repos
+- `website/docs/blog/posts/draft.how_to.Use_GitHub_Stacked_PR_workflow.md`
+  - [50%]: build a stack of branches and publish it as PRs
+- `helpers_root/docs/tools/git/all.manual_flow.how_to_guide.md`
+  - [45%]: tools for Git branch and GitHub workflow management
 - `data605/lectures_source/Lesson02.2-Git_Branching.smd`
   - [45%]: branching, merging, rebase, centralized and forking workflows
+- `website/docs/blog/posts/draft.how_to.Stacked_PRs_for_agentic_developent.md`
+  - [45%]: interactive flows, task lists, and stacked PRs
+- `helpers_root/docs/tools/dev_system/all.synchronize_gh_settings.how_to_guide.md`
+  - [40%]: synchronize repository settings
+- `.claude/skills/github.split_branch_in_PRs/SKILL.md`
+  - [40%]: split Git changes into small cohesive PRs
+- `.claude/skills/auto_task.execute_with_stacked_prs/SKILL.md`
+  - [40%]: execute tasks as a stack of branches and PRs
+- `website/docs/blog/posts/draft.how_to.i_git_merge_master.md`
+  - [35%]: three flows for catching up with master
+- `research/ideas/draft.Codebase_automerge.md`
+  - [35%]: automate stacked-PR splitting and sequential merging
+- `.claude/skills/auto_task.restack/SKILL.md`
+  - [30%]: propagate reviewed changes down a PR stack
 - `data605/lectures_source/Lesson02.1-Git.smd`
   - [30%]: version control basics, Git remotes, GitHub
+- `website/docs/blog/posts/draft.how_to.How_to_run_Claude_on_GitHub.md`
+  - [25%]: `@claude` on issues and PRs
+- `helpers_root/docs/tools/invoke/all.invoke_git_branch_copy.how_to_guide.md`
+  - [25%]: copy a Git branch with invoke
+- `.claude/skills/github.create_child_pr/SKILL.md`
+  - [25%]: build a child PR from the current branch
+- `.claude/skills/git.merge_conflicts/SKILL.md`
+  - [20%]: resolve merge, rebase, and cherry-pick conflicts
 - _Not covered_
-  - [15%]: branch protection, code ownership
+  - [10%]: branch protection, code ownership
 
 ## 15: Releasing and Docker
 
@@ -727,12 +1105,36 @@
   - [85%]: stages, release flows, invoke targets, QA
 - `helpers_root/docs/tools/dev_system/all.devops_docker.reference.md`
   - [75%]: devops layout, build and run files, OS package install
+- `helpers_root/docs/tools/docker/all.dind_and_sibling_containers.how_to_guide.md`
+  - [55%]: sibling containers versus Docker-in-Docker
 - `helpers_root/docs/work_organization/all.rollout.how_to_guide.md`
   - [50%]: roll-out process and announcement email
+- `helpers_root/docs/tools/thin_environment/all.thin_environment.reference.md`
+  - [50%]: thin environment: concepts and files
+- `helpers_root/docs/tools/docker/all.docker.tutorial.md`
+  - [45%]: concepts, building an image, multi-container applications
 - `data605/lectures_source/Lesson03.2-Docker.smd`
   - [40%]: Dockerfile, building and running containers
+- `.claude/skills/docker.use_standard_style/SKILL.md`
+  - [35%]: align Docker files to the standard project template
+- `research/ideas/draft.Improve_dockerized_executables.md`
+  - [35%]: make dockerized executables more transparent
+- `.claude/skills/docker.shrink_container/SKILL.md`
+  - [35%]: shrink and speed up a Docker container
+- `website/docs/blog/posts/draft.how_to.Apple_Container.md`
+  - [30%]: run containers with Apple Container: install, configure, list
+- `helpers_root/docs/tools/dev_system/all.docker_optimizer_container.how_to_guide.md`
+  - [30%]: the optimizer container: build, invariants, ECR flow
+- `helpers_root/docs/tools/docker/all.dockerhub.how_to_guide.md`
+  - [25%]: publishing images to a registry
 - `data605/lectures_source/Lesson03.3-Docker_Compose.smd`
   - [25%]: multi-container applications and compose commands
+- `.claude/skills/docker.shrink_requirements/SKILL.md`
+  - [25%]: find unused packages in requirements.txt
+- `website/docs/blog/posts/draft.TIL.Apple_container_running_notebook.md`
+  - [20%]: running a notebook in a container: port forwarding fix
+- `.claude/skills/tutorial_in_60_mins.propagate_docker_changes/SKILL.md`
+  - [15%]: sync tutorial Docker files to the project template
 - _Not covered_
   - [15%]: production monitoring and rollback
 
@@ -768,13 +1170,41 @@
 ### Lesson Materials
 - `helpers_root/papers/AIgentic_Development_System/part1.code_quality.tex`
   - [60%]: CI/CD automation section, CI integration, enforced thresholds
+- `helpers_root/docs/work_organization/all.buildmeister.how_to_guide.md`
+  - [60%]: buildmeister process, notifications, daily reporting and handover
+- `helpers_root/docs/tools/invoke/all.invoke_workflows.how_to_guide.md`
+  - [55%]: task categories and common workflows with invoke
 - `book_AI_Software_Engineering/resources.md`
   - [50%]: CI/CD automation and the buildmeister role, invoke workflows
+- `.github/workflows/fast_tests.no_docker.yml`
+  - [45%]: the fast-test CI job of this repo
 - `helpers_root/docs/tools/dev_system/all.devops_docker_auto_release.explanation.md`
   - [40%]: automated build and test, release workflow file
+- `helpers_root/docs/tools/testing_profiling/all.codecov.how_to_guide.md`
+  - [40%]: coverage upload from the GitHub Actions workflow
+- `.claude/skills/github.get_pr_to_pass_ci_tests/SKILL.md`
+  - [40%]: monitor CI checks and fix failures until they pass
+- `.claude/skills/pytest.fix_ci_tests/SKILL.md`
+  - [35%]: analyze and fix failing tests in GitHub CI
+- `helpers_root/docs/build_system/all.linter_gh_workflow.explanation.md`
+  - [35%]: the linter as a GitHub workflow
+- `helpers_root/docs/build_system/all.pytest_allure.explanation.md`
+  - [35%]: test reports with historical trends
+- `website/docs/blog/posts/draft.how_to.How_to_run_Claude_on_GitHub.md`
+  - [35%]: an AI step in GitHub Actions: workflow and secret
+- `.github/workflows/claude.yml`
+  - [30%]: the workflow that runs Claude on issues and PRs
 - `helpers_root/papers/AIgentic_Development_System/part3.containerized_development.tex`
   - [30%]: integration with CI/CD and quality gates, buildmeister dashboard
+- `.claude/skills/github.get_pr_ready_to_merge/SKILL.md`
+  - [30%]: get the PR to a state that can be reviewed and merged
+- `helpers_root/docs/build_system/all.semgrep_workflow.explanation.md`
+  - [25%]: Semgrep as a GitHub Actions security gate
+- `helpers_root/docs/build_system/all.gitleaks_workflow.explanation.md`
+  - [20%]: Gitleaks as a GitHub Actions secrets gate
+- `.github/workflows/update_helpers_submodule.yml`
+  - [15%]: the workflow that updates the helpers submodule
 - `helpers_root/docs/work_organization/all.github_projects_process.reference.md`
   - [15%]: GitHub Actions automations
 - _Not covered_
-  - [35%]: canary analysis, automated rollback, production incident loops
+  - [25%]: canary analysis, automated rollback, production incident loops
