@@ -1,13 +1,36 @@
 # TODO
 
+- Assumptions
+  - Human attention is limited
+  - Avoid spaghetti code
+  - The craft of Software Development
+
 - Code cosmetics
+  - Goal: generate code that follows a style, is unit tested, 
   - `helpers_root/docs/coding/all.coding_style.how_to_guide.md`
   - `helpers_root/docs/coding/all.coding_style_guidelines.reference.md`
   - `helpers_root/docs/coding/all.type_hints.how_to_guide.md`
   - `helpers_root/docs/tools/linter/all.developing_linter.how_to_guide.md`
-- Skills organization and management
+  - Code unit testing
+  - Code coverage
+- Coding Models
+  - Goal: describe coding models, benchmarks
+- AI Harness
+  - Goal: describe coding harness, compare them
+- Chap 2: Skills organization and management
+  - Goal: how to develop, organize, test Agent skills
   - `helpers_root/docs/tools/ai/all.ai_workflows.how_to_guide.md`
   - `helpers_root/docs/tools/ai/all.ai_review.how_to_guide.md`
+- Documenting code
+  - Goal: How to document code for humans and / or AI
+  - Mantaining the documentation up to date
+- Review PRs
+  - Goal: How to review a PR from human and / or AI
+- Review existing code
+  - Goal: Review / understand an existing piece of code
+- Planning
+  - `helpers_root/docs/planning/all.plan_work.how_to_guide.md`
+  - `helpers_root/docs/planning/all.document_research.how_to_guide.md`
 - Sw architecture guidelines
   - `helpers_root/docs/coding/all.code_design.how_to_guide.md`
   - `helpers_root/docs/documentation_meta/all.architecture_diagrams.explanation.md`
@@ -22,9 +45,6 @@
   - `helpers_root/docs/tools/dev_system/all.devops_docker.how_to_guide.md`
   - `helpers_root/docs/tools/dev_system/all.devops_docker.reference.md`
   - `helpers_root/docs/tools/dev_system/all.devops_docker_auto_release.explanation.md`
-- Planning
-  - `helpers_root/docs/planning/all.plan_work.how_to_guide.md`
-  - `helpers_root/docs/planning/all.document_research.how_to_guide.md`
 
 # Summary
 

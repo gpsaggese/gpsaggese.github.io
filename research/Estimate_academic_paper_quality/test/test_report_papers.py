@@ -1,5 +1,6 @@
 import dataclasses
 import datetime
+import json
 import logging
 import os
 import re
@@ -789,8 +790,8 @@ class Test__report(hunitest.TestCase):
         # Run test.
         self.report(papers, output_dir)
         # Check outputs.
-        report = hio.from_file(epqpaths.get_report_path(output_dir))
-        self.assertEqual(len(report.strip().split("\n")), 2)
+        report = json.loads(hio.from_file(epqpaths.get_report_path(output_dir)))
+        self.assertEqual([p["base_name"] for p in report["papers"]], ["p1"])
         issues = epqrepor.read_issues(epqpaths.get_all_issues_path(output_dir))
         actual = [(i.base_name, i.stage, i.status) for i in issues]
         self.assertEqual(actual, [("p2", "rate", "rating_missing")])
@@ -804,7 +805,7 @@ class Test__report(hunitest.TestCase):
           Completed in total:     1 of 2
           Output files written in this run:
             'out/04-report.references.md': 1 file
-            'out/04-report.report.csv': 1 file
+            'out/04-report.report.json': 1 file
             'out/04-report.issues.json': 1 file
           Issues file: 'out/04-report.issues.json' (1 issue)
             rate.rating_missing: 1
@@ -830,8 +831,8 @@ class Test__report(hunitest.TestCase):
         issues = hio.from_file(epqpaths.get_all_issues_path(output_dir))
         self.assertIn("extraction_failed", issues)
         self.assertIn("--force_extract", issues)
-        report = hio.from_file(epqpaths.get_report_path(output_dir))
-        self.assertEqual(len(report.strip().split("\n")), 1)
+        report = json.loads(hio.from_file(epqpaths.get_report_path(output_dir)))
+        self.assertEqual(report["papers"], [])
 
     def test3(self) -> None:
         """
@@ -911,9 +912,18 @@ class Test_report_papers_py(hunitest.TestCase):
         old_cache_dir = hcacsimp.get_cache_dir()
         self.addCleanup(hcacsimp.set_cache_dir, old_cache_dir)
         parser = repopapers._parse()
+        # Use an empty tier list, so that a score does not change when the user
+        # edits `affiliation_tiers.yaml`.
+        empty_tiers = repopapers._parse_tiers({})
         with (
             mock.patch.object(sys, "argv", ["report_papers.py"] + argv),
             mock.patch.object(epqbibso, "BibSources", return_value=sources),
+            mock.patch.object(
+                repopapers, "_load_tiers", return_value=empty_tiers
+            ),
+            mock.patch.object(
+                hgit, "find_file_in_git_tree", return_value="tiers.yaml"
+            ),
         ):
             repopapers._main(parser)
 
@@ -943,9 +953,13 @@ class Test_report_papers_py(hunitest.TestCase):
         # Run test.
         self.run_main(argv, sources)
         # Check outputs.
-        rows = hio.from_file(epqpaths.get_report_path(output_dir)).split("\n")
-        self.assertEqual(len(rows), 3)
-        self.assertIn(",3,4,p1", rows[1].replace("\r", ""))
+        report = json.loads(hio.from_file(epqpaths.get_report_path(output_dir)))
+        self.assertEqual(len(report["papers"]), 1)
+        row = report["papers"][0]
+        self.assertEqual(row["base_name"], "p1")
+        self.assertEqual(
+            (row["affiliation_score"], row["citations_score"]), (3, 4)
+        )
         self.assertEqual(
             hio.from_file(epqpaths.get_references_path(output_dir)),
             '- 2020, Cohen et al., "Lazy Prices" (https://arxiv.org/pdf/2001.00001)\n',

@@ -14,7 +14,9 @@ universities of the top ranks into the tier list of the affiliation signal:
 - Rank `--tier_5_max_rank` + 1 to `--tier_4_max_rank` go in `tier_4`
 
 The script never reads a rank from memory and never fetches the QS site, which
-blocks scripts. The names and the ranks come from the CSV only.
+blocks scripts with a Cloudflare challenge. A person downloads the table by hand
+from https://www.topuniversities.com/world-university-rankings and saves it in
+this dir. The names and the ranks come from the CSV only.
 
 The script rewrites the whole YAML file and keeps what a person added by hand:
 - An entry with no `qs_rank` key is a hand entry (an industry lab, a central
@@ -26,23 +28,23 @@ Review the result with `git diff` before you rate again.
 
 # Usage Example
 
-- Fill the tiers from a CSV exported from the QS site:
+- Fill the tiers from the CSV downloaded from the QS site:
 > populate_affiliation_tiers.py \
-    --qs_file ~/Downloads/qs_2026.csv \
-    --edition "QS World University Rankings 2026" \
+    --qs_file research/Estimate_academic_paper_quality/qs_2027.csv \
+    --edition "QS World University Rankings 2027" \
     --source "https://www.topuniversities.com/world-university-rankings"
 
 - Show the new file without writing it:
 > populate_affiliation_tiers.py \
-    --qs_file ~/Downloads/qs_2026.csv \
-    --edition "QS World University Rankings 2026" \
+    --qs_file research/Estimate_academic_paper_quality/qs_2027.csv \
+    --edition "QS World University Rankings 2027" \
     --source "https://www.topuniversities.com/world-university-rankings" \
     --dry_run
 
 - Name the columns of the CSV when the script cannot find them:
 > populate_affiliation_tiers.py \
-    --qs_file ~/Downloads/qs_2026.csv \
-    --edition "QS World University Rankings 2026" \
+    --qs_file research/Estimate_academic_paper_quality/qs_2027.csv \
+    --edition "QS World University Rankings 2027" \
     --source "https://www.topuniversities.com/world-university-rankings" \
     --rank_col "2026 Rank" \
     --name_col "Institution Name"
@@ -500,7 +502,7 @@ def _parse() -> argparse.ArgumentParser:
         "--edition",
         action="store",
         required=True,
-        help="Edition of the ranking, e.g., 'QS World University Rankings 2026'",
+        help="Edition of the ranking, e.g., 'QS World University Rankings 2027'",
     )
     parser.add_argument(
         "--source",

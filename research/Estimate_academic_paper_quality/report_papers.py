@@ -15,7 +15,7 @@ The script has two stages, which talk through files:
 - `rate`: rate the quality of each paper from its page count, its affiliations,
   and its citations, and write `papers/<BASE>.rating.json`,
   `04-rate.issues.json`, and `04-rate.summary.txt`
-- `report`: write `04-report.references.md`, `04-report.report.csv`,
+- `report`: write `04-report.references.md`, `04-report.report.json`,
   `04-report.issues.json`, and `04-report.summary.txt`
 
 Each stage ends with a summary of its counts, its output files, and its issues
@@ -660,7 +660,7 @@ def _report(
     dry_run: bool,
 ) -> None:
     """
-    Write `references.md`, `report.csv`, and `issues.json`.
+    Write `references.md`, `report.json`, and `issues.json`.
 
     The issues of every stage are read from the files in the output dir, so that
     this stage can run alone.
@@ -688,7 +688,7 @@ def _report(
     rows = epqrepor.build_report_rows(papers, files.features, files.ratings)
     if dry_run:
         _LOG.warning(
-            "[DRY_RUN] Would write `references.md`, `report.csv`, and "
+            "[DRY_RUN] Would write `references.md`, `report.json`, and "
             "`issues.json` in '%s'",
             output_dir,
         )

@@ -128,6 +128,7 @@
 | 2026-11-02 | Split the pipeline into one executable per stage, with a rating file and a shell script (`D27`, `PR_P5`); 196 tests pass |
 | 2026-11-02 | Inlined the resolver, extractor, and rater modules into the script that calls each (`D28`, `PR_P6`); 196 tests pass      |
 | 2026-11-03 | Replaced the shell script with the Python driver `estimate_paper_quality.py` (`D32`, `PR_P5`); 236 tests pass            |
+| 2026-11-04 | Wrote the report as JSON, `04-report.report.json`, so no output is a CSV (`D34`); 261 tests pass                         |
 
 ## Open Work
 

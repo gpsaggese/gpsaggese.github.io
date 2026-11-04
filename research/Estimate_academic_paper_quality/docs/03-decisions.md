@@ -301,7 +301,7 @@
   [`D29`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d29-numbered-stage-files-in-the-output-dir): the stage issues left
   `state/`)
 
-### `D19` (`report.csv` Has a Row Only for a Paper with a Features File)
+### `D19` (`report.json` Has a Row Only for a Paper with a Features File)
 
 - **Decision**: a paper that failed to download, convert, or extract is only in
   `issues.json` and `references.md`
@@ -319,8 +319,8 @@
   [`R7`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r7-reverse-chronological-order)
   order, to `<output_dir>/04-report.references.md`
 - **Why**: the use case "gets one clean list of references" includes the papers that
-  failed to download, which are not in `report.csv`
-- **Alternatives**: only the `reference` column of `report.csv`
+  failed to download, which are not in `report.json`
+- **Alternatives**: only the `reference` column of `report.json`
 - **Status**: proposed
 
 ### `D24` (BibSources Keeps Its Own Disk Cache)
@@ -352,7 +352,7 @@
   - `epq_paths.py` is the only place that names the files
 - **Why**: a listing of the output dir reads in the order of the pipeline and shows
   which executable wrote each file; the old names (`papers.csv`,
-  `state/issues.download.json`, `report.csv`) had no order and mixed the results with
+  `state/issues.download.json`, `report.json`) had no order and mixed the results with
   the state; the writer and the reader of a file take the name from one getter
   (rule `ARCH3.6` in `.claude/skills/architecture.rules.md`)
 - **Alternatives**: a subdir per stage (`02-download/`), which splits the files of one
@@ -361,8 +361,8 @@
 - **Consequences**:
   - Old runs are not migrated: a rerun on an old dir writes the new files and does not
     read the old ones
-  - In the docs, `report.csv`, `issues.json`, and `references.md` are the short names of
-    `04-report.report.csv`, `04-report.issues.json`, and `04-report.references.md`
+  - In the docs, `report.json`, `issues.json`, and `references.md` are the short names of
+    `04-report.report.json`, `04-report.issues.json`, and `04-report.references.md`
   - Amends
     [`D18`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d18-all-the-state-lives-in-the-output-dir)
 - **Status**: accepted
@@ -398,8 +398,9 @@
 
 - **Decision**: the papers list and the issues of every stage, `resolve` too, are JSON
   files with a `schema_version`
-  - CSV stays for the files that a person opens in a spreadsheet: the input list and
-    `04-report.report.csv`
+  - CSV stays for the input list that the user writes (amended by
+    [`D34`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d34-the-report-is-json):
+    `04-report.report.json` was a CSV when this decision was made)
   - `04-report.issues.json`, the issues of every stage, is JSON too (task 8): it has
     the layout of the files `NN-<stage>.issues.json`, so `epq_report.read_issues()`
     reads it and `write_all_issues()` writes it, sorted by stage and then by line
@@ -451,6 +452,38 @@
   - A rerun overwrites the summary of the stage, so the file describes the last run
   - Extends
     [`D29`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d29-numbered-stage-files-in-the-output-dir)
+- **Status**: accepted
+
+### `D34` (The Report Is JSON)
+
+- **Decision**: `04-report.report.json` replaces `04-report.report.csv`: a JSON file
+  with a `schema_version` and the key `papers`, which holds one entry per paper with a
+  features file and a rating file
+  - An entry has the keys that were the columns of the CSV, in the same order
+  - An unknown rating or score is `null`, not the text `unknown`; a feature keeps its
+    text, `unknown` included
+  - The pipeline writes no CSV: `00-paper_list.csv` is a verbatim copy of the input
+    that the user writes, so it stays CSV
+  - The other files are not data tables and stay as they are: `NN-<stage>.summary.txt`
+    (text for a person), `04-report.references.md`, and the PDF and the markdown of
+    each paper; the HTTP cache is JSON already
+- **Why**: a feature such as `performance` or `mechanism` is a long free text with
+  commas and quotes, which a CSV shows as one hard-to-read line with doubled quotes; a
+  score is a number, and JSON keeps it a number; every other output of the pipeline is
+  JSON, so one format serves all (task 9)
+- **Alternatives**: keep the CSV (the spreadsheet use is the reason of
+  [`D31`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d31-json-for-the-intermediate-files)
+  for the CSV report, which a person reads better as JSON); write both (two formats
+  for the same data); also convert `00-paper_list.csv` (it is a copy of what the user
+  wrote, and `resolve_papers.py` reads a CSV)
+- **Consequences**:
+  - The report is not a table in a spreadsheet: the user sorts it with `jq` or
+    `pandas.read_json()`
+  - A run dir made before this decision holds `04-report.report.csv`: run
+    `report_papers.py --action report` to write the JSON file, and delete the CSV by
+    hand, since the pipeline never deletes a file
+  - Amends
+    [`D31`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d31-json-for-the-intermediate-files)
 - **Status**: accepted
 
 ## Code Organization
@@ -542,8 +575,8 @@
   - The citation lookup moves from `extract` to `rate`: `--force_extract` does not
     refresh the citations anymore, `--refresh_citations` does, and `extract_features.py`
     needs no `BibSources`
-  - `report.csv` has a row only for a paper with a features file and a rating file
-    ([`D19`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d19-reportcsv-has-a-row-only-for-a-paper-with-a-features-file))
+  - `report.json` has a row only for a paper with a features file and a rating file
+    ([`D19`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d19-reportjson-has-a-row-only-for-a-paper-with-a-features-file))
   - Every script has `--dry_run`; a dry run writes no file, so the next stage has no
     input and the driver cannot forward the flag (see [`D32`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d32-the-pipeline-script-is-python-and-runs-the-stages-as-subprocesses))
   - A test of the import graph fails on a script that imports another script

@@ -13,7 +13,7 @@
   that runs them in order, which turn a loose list of papers into:
   - A clean reference list
   - The PDF and the markdown of each paper
-  - A CSV report of the features of each paper
+  - A JSON report of the features of each paper
 - Background:
   - Requirements:
     [`docs/01-prd.md`](/research/Estimate_academic_paper_quality/docs/01-prd.md)
@@ -86,7 +86,7 @@
   - [ ] `PR_F3`: written
   - [ ] `PR_P2`: written
 - `v0.3`: Report of candidate strategies
-  - The `extract` stage writes `papers/<BASE>.features.json`, and `report.csv` gives
+  - The `extract` stage writes `papers/<BASE>.features.json`, and `report.json` gives
     the features and the Paper quality rating of each converted paper
   - [ ] `PR_Q1`: written
   - [ ] `PR_Q2`: not started
@@ -191,7 +191,7 @@
 
 1. What share of the quotes stays `verified=False` on the 20 labeled papers? If it is
    high, see `PR_E3`
-2. Should `report.csv` mark a value whose quote is `verified=False`? See `PR_O3`
+2. Should `report.json` mark a value whose quote is `verified=False`? See `PR_O3`
 
 ## Rater
 
@@ -665,7 +665,7 @@
   - Add `epq_pipeline.py` with `PipelineConfig`, `run_resolve()`, and `run_report()`
   - `_main()` checks `--input`, creates `papers/` and `state/`, and sets the cache
     dir of `hcache_simple` to `state/cache/`
-  - `run_report()` writes `references.md` and `issues.csv`: `report.csv` comes in
+  - `run_report()` writes `references.md` and `issues.csv`: `report.json` comes in
     `PR_P3`
   - Run on
     [`paper_list.csv`](/research/Estimate_academic_paper_quality/paper_list.csv), and
@@ -822,21 +822,21 @@
   [`D11`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d11-one-structured-llm-call-per-paper)
 - Spec: needed: the prompt and the conversion of the answer into `epq_types`
 
-### `PR_O2`: [ ] Features File and `report.csv`
+### `PR_O2`: [ ] Features File and `report.json`
 
 - Status: written
 - Add `write_features_file()` and `read_features_file()` with `schema_version`, then
   `build_report_rows()` and `write_report()`
 - Requirements:
   [`R17`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r17-rerun-skips-extraction),
-  [`R18`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r18-report-csv),
+  [`R18`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r18-report-file),
   [`R20`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r20-features-file)
 - Decisions:
   [`D14`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d14-the-features-file-is-json-and-is-the-rerun-cache-of-extract),
-  [`D19`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d19-reportcsv-has-a-row-only-for-a-paper-with-a-features-file)
+  [`D19`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d19-reportjson-has-a-row-only-for-a-paper-with-a-features-file)
 - Spec: needed: the JSON schema is the rerun cache, so it must stay stable
 
-### `PR_P3`: [ ] `extract` Stage and `report.csv`
+### `PR_P3`: [ ] `extract` Stage and `report.json`
 
 - Status: written: it did not run on `paper_list.csv`, so the LLM cost per paper is not
   logged
@@ -844,14 +844,14 @@
   `report_papers.py` (`run_extract()` and `run_report()` before `PR_P5`), per
   [`02.1-design.pipeline.md`](/research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md#one-request-end-to-end),
   with the flags `--model`, `--force_extract`, and `--max_chars`
-- The action `report` also writes `report.csv`
+- The action `report` also writes `report.json`
 - Run on `paper_list.csv`, and log the LLM cost per paper in `07-progress.md`
 - Requirements:
   [`R12`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r12-feature-list),
   [`R13`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r13-unknown-value),
   [`R16`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r16-paper-quality-rating),
   [`R17`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r17-rerun-skips-extraction),
-  [`R18`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r18-report-csv),
+  [`R18`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r18-report-file),
   [`R19`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r19-issues-file)
 - Decisions:
   [`D21`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d21-the-loop-of-each-stage-catches-errors-per-paper)
@@ -931,8 +931,8 @@
   and `01-resolve.issues.json`; the parser has `allow_abbrev=False`
 - Write the papers list and the issues of every stage as JSON:
   `epq_report.write_papers()` and `read_papers()` replace the functions of the papers
-  CSV; the CSV stays for the input list and `04-report.report.csv`, and
-  `04-report.issues.json` is JSON too
+  CSV; the CSV stays for the input list and `04-report.report.json`, and
+  `04-report.issues.json` is JSON too (`D34` makes `04-report.report.json` JSON too)
 - `--input` of `download_papers.py`, `extract_features.py`, and `report_papers.py`
   defaults to `01-resolve.paper_list.json` in `--output_dir`; remove `--resolve_issues`
   (the stage `report` reads `01-resolve.issues.json`)
@@ -1003,7 +1003,7 @@
 
 ## Unscheduled: Report
 
-### `PR_O3`: [ ] Mark an Unverified Value in `report.csv`
+### `PR_O3`: [ ] Mark an Unverified Value in `report.json`
 
 - Answers Extractor open question 2
 

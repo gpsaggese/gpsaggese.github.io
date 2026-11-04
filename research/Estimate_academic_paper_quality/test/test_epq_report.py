@@ -383,11 +383,11 @@ class Test_write_references(hunitest.TestCase):
 
 
 # #############################################################################
-# Test_report_csv
+# Test_report_json
 # #############################################################################
 
 
-class Test_report_csv(hunitest.TestCase):
+class Test_report_json(hunitest.TestCase):
     """
     Test `build_report_rows()` and `write_report()`.
     """
@@ -433,10 +433,11 @@ class Test_report_csv(hunitest.TestCase):
 
     def test2(self) -> None:
         """
-        Test the content of `report.csv`, with `unknown` for a missing score.
+        Test the content of `report.json`, with `null` for a missing score and
+        a quote in the reference that JSON escapes.
         """
         # Prepare inputs.
-        path = os.path.join(self.get_scratch_space(), "report.csv")
+        path = os.path.join(self.get_scratch_space(), "report.json")
         paper = epqteuti.make_paper(
             reference='2020, Cohen et al., "Lazy, Prices" (???)'
         )
@@ -444,15 +445,35 @@ class Test_report_csv(hunitest.TestCase):
         ratings = {paper.base_name: epqteuti.make_quality()}
         rows = epqrepor.build_report_rows([paper], features, ratings)
         # Prepare outputs.
-        expected = """
-        reference,paper_quality,performance,recency,asset_class,theoretical_domain,mechanism,page_length_score,affiliation_score,citations_score,base_name
-        "2020, Cohen et al., ""Lazy, Prices"" (???)",4,"Sharpe 1.4, out of sample",2020,US equities,unknown,associational,3,5,unknown,2020.Cohen_et_al.Lazy_Prices
+        expected = r"""
+        {
+          "schema_version": 2,
+          "papers": [
+            {
+              "reference": "2020, Cohen et al., \"Lazy, Prices\" (???)",
+              "paper_quality": 4,
+              "performance": "Sharpe 1.4, out of sample",
+              "recency": "2020",
+              "asset_class": "US equities",
+              "theoretical_domain": "unknown",
+              "mechanism": "associational",
+              "page_length_score": 3,
+              "affiliation_score": 5,
+              "citations_score": null,
+              "base_name": "2020.Cohen_et_al.Lazy_Prices"
+            }
+          ]
+        }
         """
         # Run test.
         epqrepor.write_report(path, rows)
         # Check outputs.
-        actual = hio.from_file(path).replace("\r\n", "\n")
+        actual = hio.from_file(path)
         self.assert_equal(actual, expected, dedent=True)
+        # The file is valid JSON and a score is a number, not a string.
+        data = json.loads(actual)
+        self.assertEqual(data["papers"][0]["paper_quality"], 4)
+        self.assertIsNone(data["papers"][0]["citations_score"])
 
 
 # #############################################################################

@@ -161,9 +161,25 @@ class Test_end_to_end(hunitest.TestCase):
             return result, download_issues, extract_issues, rate_issues
 
         # Prepare outputs.
-        expected_report = """
-        reference,paper_quality,performance,recency,asset_class,theoretical_domain,mechanism,page_length_score,affiliation_score,citations_score,base_name
-        "2020, Cohen et al., ""Lazy Prices"" (https://arxiv.org/pdf/2001.00001)",3,Sharpe 1.4,2020,US equities,unknown,associational,1,3,4,2020.Cohen_et_al.Lazy_Prices
+        expected_report = r"""
+        {
+          "schema_version": 2,
+          "papers": [
+            {
+              "reference": "2020, Cohen et al., \"Lazy Prices\" (https://arxiv.org/pdf/2001.00001)",
+              "paper_quality": 3,
+              "performance": "Sharpe 1.4",
+              "recency": "2020",
+              "asset_class": "US equities",
+              "theoretical_domain": "unknown",
+              "mechanism": "associational",
+              "page_length_score": 1,
+              "affiliation_score": 3,
+              "citations_score": 4,
+              "base_name": "2020.Cohen_et_al.Lazy_Prices"
+            }
+          ]
+        }
         """
         expected_issues = """
         {
@@ -203,16 +219,14 @@ class Test_end_to_end(hunitest.TestCase):
             "04-rate.summary.txt",
             "04-report.issues.json",
             "04-report.references.md",
-            "04-report.report.csv",
+            "04-report.report.json",
             "04-report.summary.txt",
             "papers",
             "state",
         ]
         self.assertEqual(sorted(os.listdir(output_dir)), expected_files)
         self.assert_equal(
-            hio.from_file(epqpaths.get_report_path(output_dir)).replace(
-                "\r\n", "\n"
-            ),
+            hio.from_file(epqpaths.get_report_path(output_dir)),
             expected_report,
             dedent=True,
         )

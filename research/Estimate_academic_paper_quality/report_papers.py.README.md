@@ -6,7 +6,7 @@
   `01-resolve.paper_list.json` in `--output_dir`, and the features files that
   `research/Estimate_academic_paper_quality/extract_features.py` writes
 - Output: `papers/<BASE>.rating.json` for each paper, and `04-rate.issues.json`,
-  `04-rate.summary.txt`, `04-report.report.csv`, `04-report.references.md`,
+  `04-rate.summary.txt`, `04-report.report.json`, `04-report.references.md`,
   `04-report.issues.json`, and `04-report.summary.txt` in `--output_dir`
 - Run it last. It has two stages, `rate` and `report`. The stage `rate` is free: it
   makes no LLM call, so a new tier list or a fresh citation count needs only a rerun
@@ -99,23 +99,24 @@
   summary of each stage, with the same text as the end of the log (the counts of
   papers, the output files, and the path of the issues file). A rerun overwrites
   them. In the summary of `report`, `Completed successfully` is the number of papers
-  with a row in `04-report.report.csv`, and the issues are counted as
+  with an entry in `04-report.report.json`, and the issues are counted as
   `<stage>.<status>`. See the section "Summary of a Stage" in
   [`research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md`](/research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md)
 - In `<output_dir>`:
   - `04-report.references.md`: one bullet per paper, from the newest to the oldest
-  - `04-report.report.csv`: one row per paper with a features file and a rating file,
-    with the columns:
+  - `04-report.report.json`: the key `papers` is a list with one entry per paper with a
+    features file and a rating file, and the file has a `schema_version`. An entry
+    has the keys:
     - `reference`: the reference of the paper, e.g.,
       `2020, Cohen et al., "Lazy Prices" (https://arxiv.org/pdf/2001.00001)`
-    - `paper_quality`: the rating from 1 to 5, or `unknown`
+    - `paper_quality`: the rating from 1 to 5, or `null` if it is unknown
     - `performance`: the reported performance, e.g., `Sharpe 1.4`
     - `recency`: the year of the paper, e.g., `2020`
     - `asset_class`: the asset class, e.g., `US equities`
     - `theoretical_domain`: the theoretical domain, or `unknown`
     - `mechanism`: the mechanism, e.g., `associational`
     - `page_length_score`, `affiliation_score`, `citations_score`: the three signals,
-      each from 1 to 5, or `unknown`
+      each a number from 1 to 5, or `null` if it is unknown
     - `base_name`: the base name of the paper files, e.g.,
       `2020.Cohen_et_al.Lazy_Prices`
   - `04-report.issues.json`: one item of `issues` per line or paper to fix, with the
@@ -165,7 +166,7 @@
    the citations. A failure becomes an issue
 4. **`report`**: the script reads the features and rating files and the issues files
    `NN-<stage>.issues.json` of the other stages, then writes
-   `04-report.references.md`, `04-report.report.csv`, and `04-report.issues.json`
+   `04-report.references.md`, `04-report.report.json`, and `04-report.issues.json`
 
 ### Key Functions
 

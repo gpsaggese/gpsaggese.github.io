@@ -2,9 +2,9 @@
 
 ## Goal
 
-- Turn a loose list of papers into a CSV table of candidate trading strategies, with
+- Turn a loose list of papers into a JSON report of candidate trading strategies, with
   the full text and a set of extracted features per paper
-- Where it fits: text file of papers from the user -> this pipeline -> CSV report
+- Where it fits: text file of papers from the user -> this pipeline -> JSON report
   that the quant researcher sorts to pick the next papers to replicate
 - Requirements:
   [`research/Estimate_academic_paper_quality/docs/01-prd.md`](/research/Estimate_academic_paper_quality/docs/01-prd.md)
@@ -58,7 +58,7 @@
 !include <C4/C4_Context>
 LAYOUT_LEFT_RIGHT()
 title Estimate Paper Quality: Context
-Person(user, "Quant researcher", "Gives a list of papers, reads the CSV report")
+Person(user, "Quant researcher", "Gives a list of papers, reads the JSON report")
 System(epq, "Estimate Paper Quality pipeline", "Resolves, downloads, converts, extracts, rates, reports")
 System_Ext(bib, "Bibliographic APIs", "Semantic Scholar, Crossref, arXiv, Unpaywall")
 System_Ext(sites, "Paper hosts", "arXiv, SSRN, publisher sites, open-access mirrors")
@@ -126,7 +126,7 @@ Rel(ecli, report, "read_papers(), write_features_file(), write_issues()")
 Rel(pcli, bib, "get_citation_count()")
 Rel(pcli, report, "read_features_file(), write_rating_file(), write_*()")
 Rel(fetcher, tool, "subprocess")
-Rel(report, out, "JSON, CSV, markdown")
+Rel(report, out, "JSON, markdown")
 ```
 
 ## Files
@@ -283,7 +283,7 @@ Rel(report, out, "JSON, CSV, markdown")
   gives the citation count, `rater` rates the paper, and `report` writes
   `<output_dir>/papers/<BASE>.rating.json`
 - `report_papers.py`, stage `report`: `report` writes `04-report.references.md`,
-  `04-report.report.csv`, and `04-report.issues.json` from the issues files, the
+  `04-report.report.json`, and `04-report.issues.json` from the issues files, the
   features files, and the rating files
 - Rerun with 5 new rows: `resolve_papers.py` hits the HTTP cache for the 22 old rows,
   `download_papers.py` and `extract_features.py` skip the 20 old papers, so only the
@@ -313,7 +313,7 @@ Rel(report, out, "JSON, CSV, markdown")
 | [`R15`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r15-extracted-facts)               | `extractor`                       | `ExtractedFacts` with every labeled Sharpe ratio               |
 | [`R16`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r16-paper-quality-rating)          | `rater`, `bib_sources`, `fetcher` | Page count, affiliation tier, Semantic Scholar citations       |
 | [`R17`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r17-rerun-skips-extraction)        | `pipeline`, `report`              | Skip when the features file exists, unless `--force_extract`   |
-| [`R18`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r18-report-csv)                    | `report`                          | `report.csv`, one row per paper with a features file           |
+| [`R18`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r18-report-file)                    | `report`                          | `report.json`, one row per paper with a features file           |
 | [`R19`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r19-issues-file)                    | `report`                          | `issues.json` from the issues of every stage                   |
 | [`R20`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r20-features-file)                 | `report`                          | `<BASE>.features.json` next to the PDF, `<BASE>.rating.json`   |
 
@@ -340,7 +340,7 @@ Rel(report, out, "JSON, CSV, markdown")
       03-extract.summary.txt       counts and files of extract
       04-rate.issues.json          issues of rate
       04-rate.summary.txt          counts and files of rate
-      04-report.report.csv         R18
+      04-report.report.json        R18
       04-report.issues.json        R19
       04-report.references.md      R2, R7
       04-report.summary.txt        counts and files of report

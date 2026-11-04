@@ -1,5 +1,28 @@
 # Log
 
+- [x] Build EAPQ pipeline end-to-end
+  - One shotting it is a terrible idea, since the same problem is everywhere
+  - Much better to build / debug one chunk at the time
+- [ ] Rename all files as EAPQ
+- [ ] Debug the process docs/planning/all.plan_work.how_to_guide.md
+- [.] Debug pipeline
+- [ ] Read all the code top to bottom
+- [ ] Get QS key
+- [ ] Get Semantic Scholar key
+- [.] Understand / build tutorial Semantic Scholar
+  - tutorials/semantic_scholar/
+- [ ] Write paper papers/Causal_Analysis_for_Finance/paper.pdf
+- [ ] Extract important claim using LLM
+
+- [ ] Extract graph using DCDS?
+  - Move DataMap out, run it according to the paper, clean it up
+  - Extract single relationship and build graph
+  - How is it different than Theory Store
+- [ ] Update slides
+  - papers/Causal_Analysis_for_Finance/notes.slides.pdf
+
+# Implement Pipeline
+
 ## Define
 
 - Follow `docs/planning/all.plan_work.how_to_guide.md`

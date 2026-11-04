@@ -2,18 +2,19 @@
 Write and read every file that the pipeline keeps in the output dir.
 
 The files are:
-- The input CSV: the list that the user writes, which `resolve_papers.py` reads
+- The input CSV: the list that the user writes, which `resolve_papers.py` reads: it
+  is the only CSV, and the pipeline never writes a CSV
 - `01-resolve.paper_list.json`: the papers that `resolve_papers.py` wrote
 - `NN-<stage>.issues.json`: issues of the stages `resolve`, `download`, `extract`,
   and `rate`
 - `04-report.issues.json`: issues of every stage, in the same layout
 - `papers/<BASE>.features.json`: features of one paper, also the rerun cache of
   the `extract` stage
-- `04-report.references.md` and `04-report.report.csv`: final outputs
+- `04-report.report.json`: one entry per rated paper
+- `04-report.references.md`: the references of all the resolved papers
 
 The names of the files are in `epq_paths.py`. Every JSON file holds a
-`schema_version`, and `report.csv` is the one that a person opens in a
-spreadsheet (decision D31).
+`schema_version` (decisions D31 and D34).
 
 The design is in `docs/02.7-design.report.md`.
 
@@ -45,21 +46,6 @@ _LOG = logging.getLogger(__name__)
 # - Version 2: the features file holds the affiliations and the page count, and
 #   the rating is in its own file.
 _SCHEMA_VERSION = 2
-
-# Columns of `report.csv`, in order.
-REPORT_COLUMNS = [
-    "reference",
-    "paper_quality",
-    "performance",
-    "recency",
-    "asset_class",
-    "theoretical_domain",
-    "mechanism",
-    "page_length_score",
-    "affiliation_score",
-    "citations_score",
-    "base_name",
-]
 
 # Name of the optional header column of the input CSV of `resolve_papers.py`.
 INPUT_COLUMN = "input"
@@ -432,29 +418,37 @@ def read_rating_file(path: str) -> epqtypes.QualityRating:
 # #############################################################################
 
 
-def _score_to_str(score: Optional[int]) -> str:
-    """
-    Convert a score or a rating to the text of a CSV cell.
-
-    :param score: whole number, or `None` if unknown
-    :return: the number, or `unknown`
-    """
-    return "unknown" if score is None else str(score)
-
-
 def build_report_rows(
     papers: List[epqtypes.Paper],
     features: Dict[str, epqtypes.PaperFeatures],
     ratings: Dict[str, epqtypes.QualityRating],
-) -> List[Dict[str, str]]:
-    """
-    Build the rows of `report.csv`, one per paper with a features and a rating
-    file.
+) -> List[Dict[str, Any]]:
+    r"""
+    Build the entries of `report.json`, one per paper with a features and a
+    rating file.
+
+    A rating or a score that is unknown is `None`, which `write_report()` writes
+    as `null`. The other values are the text of the features.
 
     :param papers: papers in reverse chronological order
     :param features: features of the papers, by base name
     :param ratings: ratings of the papers, by base name
-    :return: rows in the order of `papers`
+    :return: entries in the order of `papers`, with the keys in this order
+        ```
+        {
+          "reference": "2020, Cohen et al., \"Lazy Prices\" (https://...)",
+          "paper_quality": 3,
+          "performance": "Sharpe 1.4",
+          "recency": "2020",
+          "asset_class": "US equities",
+          "theoretical_domain": "unknown",
+          "mechanism": "associational",
+          "page_length_score": 1,
+          "affiliation_score": 3,
+          "citations_score": null,
+          "base_name": "2020.Cohen_et_al.Lazy_Prices"
+        }
+        ```
     """
     rows = []
     for paper in papers:
@@ -466,7 +460,7 @@ def build_report_rows(
         quality = ratings[paper.base_name]
         row = {
             "reference": paper.reference,
-            "paper_quality": _score_to_str(quality.rating),
+            "paper_quality": quality.rating,
             "performance": paper_features.features["performance"].value,
             "recency": paper_features.features["recency"].value,
             "asset_class": paper_features.features["asset_class"].value,
@@ -474,40 +468,23 @@ def build_report_rows(
                 "theoretical_domain"
             ].value,
             "mechanism": paper_features.features["mechanism"].value,
-            "page_length_score": _score_to_str(quality.page_length.score),
-            "affiliation_score": _score_to_str(quality.affiliation.score),
-            "citations_score": _score_to_str(quality.citations.score),
+            "page_length_score": quality.page_length.score,
+            "affiliation_score": quality.affiliation.score,
+            "citations_score": quality.citations.score,
             "base_name": paper.base_name,
         }
         rows.append(row)
     return rows
 
 
-def _write_csv(
-    path: str, columns: List[str], rows: List[Dict[str, str]]
-) -> None:
+def write_report(path: str, rows: List[Dict[str, Any]]) -> None:
     """
-    Write rows to a CSV file in UTF-8.
+    Write `report.json`.
 
-    :param path: path of the file, created with its dir
-    :param columns: names of the columns, in order
-    :param rows: rows with one value per column
+    :param path: path of `04-report.report.json`
+    :param rows: entries from `build_report_rows()`
     """
-    hio.create_dir(os.path.dirname(path) or ".", incremental=True)
-    with open(path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=columns, quoting=csv.QUOTE_MINIMAL)
-        writer.writeheader()
-        writer.writerows(rows)
-
-
-def write_report(path: str, rows: List[Dict[str, str]]) -> None:
-    """
-    Write `report.csv`.
-
-    :param path: path of the file
-    :param rows: rows from `build_report_rows()`
-    """
-    _write_csv(path, REPORT_COLUMNS, rows)
+    _write_json(path, {"papers": rows})
 
 
 def write_references(path: str, papers: List[epqtypes.Paper]) -> None:

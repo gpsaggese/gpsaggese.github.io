@@ -1,20 +1,322 @@
 # Dated list of the institutions that score 5 and 4 in the affiliation signal.
 #
-# Fill it by hand from the QS World University Rankings site, never from the
-# memory of an LLM (`docs/03-decisions.md`, D15). Set `as_of` and `source` when
-# you fill it.
+# The script `populate_affiliation_tiers.py` writes the entries that have a
+# `qs_rank` key, from a CSV exported from the QS World University Rankings site.
+# Never fill them from the memory of an LLM (`docs/03-decisions.md`, D15).
+# An entry with no `qs_rank` key is a hand entry (an industry lab, a central
+# bank, NBER): the script keeps it. Add the `aliases` of an entry by hand: the
+# script keeps them.
 #
-# TODO(gp): Fill the tiers. Until then no institution matches, and each
-# affiliation scores by the kind that the paper gives (`university` scores 3).
-#
-# Shape of an entry (the names below are only an example of the shape):
-#
-#   tier_5:
-#     - name: "<Full name of the institution>"
-#       aliases: ["<Short name>"]
-as_of: ""
-source: ""
-# Top 20 universities (QS), leading industry research labs, central banks, NBER.
-tier_5: []
-# Universities ranked 21 to 100, established industry research groups.
-tier_4: []
+# How to fill the file: `affiliation_tiers.yaml.README.md`.
+as_of: "QS World University Rankings 2027, accessed 2026-11-04"
+source: "https://www.topuniversities.com/world-university-rankings"
+# QS rank 1 to 20, plus leading industry research labs, central banks, NBER.
+tier_5:
+  - name: "Massachusetts Institute of Technology"
+    aliases: ["MIT"]
+    qs_rank: 1
+  - name: "Imperial College London"
+    aliases: []
+    qs_rank: 2
+  - name: "Stanford University"
+    aliases: []
+    qs_rank: 2
+  - name: "University of Oxford"
+    aliases: []
+    qs_rank: 4
+  - name: "Harvard University"
+    aliases: []
+    qs_rank: 5
+  - name: "University of Cambridge"
+    aliases: []
+    qs_rank: 6
+  - name: "California Institute of Technology"
+    aliases: ["Caltech"]
+    qs_rank: 7
+  - name: "ETH Zurich"
+    aliases: []
+    qs_rank: 8
+  - name: "UCL"
+    aliases: []
+    qs_rank: 8
+  - name: "National University of Singapore"
+    aliases: ["NUS"]
+    qs_rank: 10
+  - name: "The University of Hong Kong"
+    aliases: []
+    qs_rank: 11
+  - name: "Nanyang Technological University, Singapore"
+    aliases: ["NTU Singapore"]
+    qs_rank: 12
+  - name: "Peking University"
+    aliases: []
+    qs_rank: 13
+  - name: "Tsinghua University"
+    aliases: []
+    qs_rank: 14
+  - name: "University of Pennsylvania"
+    aliases: []
+    qs_rank: 15
+  - name: "Cornell University"
+    aliases: []
+    qs_rank: 16
+  - name: "Yale University"
+    aliases: []
+    qs_rank: 16
+  - name: "The Chinese University of Hong Kong"
+    aliases: ["CUHK"]
+    qs_rank: 18
+  - name: "The University of New South Wales"
+    aliases: ["UNSW Sydney"]
+    qs_rank: 19
+  - name: "Johns Hopkins University"
+    aliases: []
+    qs_rank: 20
+  - name: "University of California, Berkeley"
+    aliases: ["UCB"]
+    qs_rank: 20
+# QS rank 21 to 100, plus established industry research groups.
+tier_4:
+  - name: "EPFL – École polytechnique fédérale de Lausanne"
+    aliases: []
+    qs_rank: 22
+  - name: "The University of Melbourne"
+    aliases: []
+    qs_rank: 22
+  - name: "University of Chicago"
+    aliases: []
+    qs_rank: 24
+  - name: "Technical University of Munich"
+    aliases: []
+    qs_rank: 25
+  - name: "Fudan University"
+    aliases: []
+    qs_rank: 26
+  - name: "Princeton University"
+    aliases: []
+    qs_rank: 27
+  - name: "The University of Sydney"
+    aliases: []
+    qs_rank: 28
+  - name: "Australian National University"
+    aliases: ["ANU"]
+    qs_rank: 29
+  - name: "McGill University"
+    aliases: []
+    qs_rank: 30
+  - name: "Monash University"
+    aliases: []
+    qs_rank: 31
+  - name: "University of Toronto"
+    aliases: []
+    qs_rank: 32
+  - name: "The Hong Kong University of Science and Technology"
+    aliases: []
+    qs_rank: 33
+  - name: "Université PSL"
+    aliases: []
+    qs_rank: 34
+  - name: "The University of Edinburgh"
+    aliases: []
+    qs_rank: 35
+  - name: "Shanghai Jiao Tong University"
+    aliases: []
+    qs_rank: 36
+  - name: "King's College London"
+    aliases: []
+    qs_rank: 37
+  - name: "Seoul National University"
+    aliases: []
+    qs_rank: 38
+  - name: "The University of Tokyo"
+    aliases: []
+    qs_rank: 39
+  - name: "The University of Manchester"
+    aliases: []
+    qs_rank: 40
+  - name: "The University of Queensland"
+    aliases: []
+    qs_rank: 40
+  - name: "Yonsei University"
+    aliases: []
+    qs_rank: 42
+  - name: "Columbia University"
+    aliases: []
+    qs_rank: 43
+  - name: "Institut Polytechnique de Paris"
+    aliases: []
+    qs_rank: 43
+  - name: "Northwestern University"
+    aliases: []
+    qs_rank: 45
+  - name: "University of British Columbia"
+    aliases: []
+    qs_rank: 45
+  - name: "Zhejiang University"
+    aliases: []
+    qs_rank: 47
+  - name: "Delft University of Technology"
+    aliases: []
+    qs_rank: 48
+  - name: "University of California, Los Angeles"
+    aliases: ["UCLA"]
+    qs_rank: 49
+  - name: "The Hong Kong Polytechnic University"
+    aliases: []
+    qs_rank: 50
+  - name: "University of Michigan-Ann Arbor"
+    aliases: []
+    qs_rank: 51
+  - name: "City University of Hong Kong"
+    aliases: ["CityUHK"]
+    qs_rank: 52
+  - name: "Korea University"
+    aliases: []
+    qs_rank: 52
+  - name: "National Taiwan University"
+    aliases: ["NTU"]
+    qs_rank: 54
+  - name: "Carnegie Mellon University"
+    aliases: []
+    qs_rank: 55
+  - name: "Universiti Malaya"
+    aliases: ["UM"]
+    qs_rank: 56
+  - name: "University of Bristol"
+    aliases: []
+    qs_rank: 57
+  - name: "New York University"
+    aliases: ["NYU"]
+    qs_rank: 58
+  - name: "KU Leuven"
+    aliases: []
+    qs_rank: 59
+  - name: "University of Amsterdam"
+    aliases: []
+    qs_rank: 60
+  - name: "Ludwig-Maximilians-Universität München"
+    aliases: []
+    qs_rank: 61
+  - name: "The London School of Economics and Political Science"
+    aliases: ["LSE"]
+    qs_rank: 62
+  - name: "KFUPM"
+    aliases: []
+    qs_rank: 63
+  - name: "Kyoto University"
+    aliases: []
+    qs_rank: 64
+  - name: "KAIST"
+    aliases: []
+    qs_rank: 65
+  - name: "Brown University"
+    aliases: []
+    qs_rank: 66
+  - name: "The University of Auckland"
+    aliases: []
+    qs_rank: 67
+  - name: "The University of Warwick"
+    aliases: []
+    qs_rank: 68
+  - name: "University of Birmingham"
+    aliases: []
+    qs_rank: 68
+  - name: "Duke University"
+    aliases: []
+    qs_rank: 70
+  - name: "Lund University"
+    aliases: []
+    qs_rank: 71
+  - name: "University of Texas at Austin"
+    aliases: []
+    qs_rank: 72
+  - name: "Sorbonne University"
+    aliases: []
+    qs_rank: 73
+  - name: "University of Illinois Urbana-Champaign"
+    aliases: []
+    qs_rank: 74
+  - name: "Trinity College Dublin, The University of Dublin"
+    aliases: []
+    qs_rank: 75
+  - name: "Université Paris-Saclay"
+    aliases: []
+    qs_rank: 76
+  - name: "The University of Western Australia"
+    aliases: []
+    qs_rank: 77
+  - name: "University of Leeds"
+    aliases: []
+    qs_rank: 77
+  - name: "Adelaide University"
+    aliases: []
+    qs_rank: 79
+  - name: "University of Glasgow"
+    aliases: []
+    qs_rank: 80
+  - name: "University of California, San Diego"
+    aliases: ["UCSD"]
+    qs_rank: 81
+  - name: "KTH Royal Institute of Technology"
+    aliases: []
+    qs_rank: 82
+  - name: "The University of Sheffield"
+    aliases: []
+    qs_rank: 82
+  - name: "Universidad de Buenos Aires"
+    aliases: ["UBA"]
+    qs_rank: 84
+  - name: "Durham University"
+    aliases: []
+    qs_rank: 85
+  - name: "Universität Heidelberg"
+    aliases: []
+    qs_rank: 86
+  - name: "Politecnico di Milano"
+    aliases: []
+    qs_rank: 87
+  - name: "University of Technology Sydney"
+    aliases: []
+    qs_rank: 87
+  - name: "Uppsala University"
+    aliases: []
+    qs_rank: 87
+  - name: "Nanjing University"
+    aliases: []
+    qs_rank: 90
+  - name: "University of Copenhagen"
+    aliases: []
+    qs_rank: 90
+  - name: "Pennsylvania State University"
+    aliases: []
+    qs_rank: 92
+  - name: "University of Washington"
+    aliases: []
+    qs_rank: 92
+  - name: "Boston University"
+    aliases: []
+    qs_rank: 94
+  - name: "The University of Osaka"
+    aliases: []
+    qs_rank: 95
+  - name: "University of Alberta"
+    aliases: []
+    qs_rank: 96
+  - name: "Institute of Science Tokyo"
+    aliases: []
+    qs_rank: 97
+  - name: "University of Nottingham"
+    aliases: []
+    qs_rank: 97
+  - name: "Freie Universitaet Berlin"
+    aliases: []
+    qs_rank: 98
+  - name: "University of Zurich"
+    aliases: []
+    qs_rank: 98
+  - name: "Purdue University"
+    aliases: []
+    qs_rank: 100
+  - name: "University College Dublin"
+    aliases: []
+    qs_rank: 100

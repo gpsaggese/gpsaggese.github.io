@@ -4,7 +4,7 @@
   `download_papers.py`, `extract_features.py`, and `report_papers.py`
 - Input: a CSV with one paper per row, as a title, link, DOI, or local PDF
 - Output: all the files of the stages, in one `--output_dir`. The final result is
-  `04-report.report.csv`
+  `04-report.report.json`
 - Use it to run the whole pipeline with one command, or to rerun a part of it. Each
   executable is an action, named after it, so `--only_action` and `--skip_action`
   select the executables to run
@@ -148,7 +148,7 @@
 4. **Run**: `_run_action()` calls `hsystem.system()`, which raises on a failed stage and
    so stops the pipeline. With `--dry_run` it only logs the command
 5. **Output**: the executables write their files in `--output_dir`. The script logs
-   the path of `04-report.report.csv`
+   the path of `04-report.report.json`
 
 ### Key Functions
 

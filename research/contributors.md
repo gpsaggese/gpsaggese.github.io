@@ -238,6 +238,7 @@
 | Grisha Pomazkin          | pomazking@gmail.com             | -                            | PomazkinG       | -                          |
 | Linu Teresa              | -                               | lteresa@umd.edu              | -               | Counterfactual attribution |
 | Sri Ramm Sekar Sasirekha | srirammsekarsasirekha@gmail.com | ssramm69@umd.edu             | SriRammSS       | Counterfactual attribution |
+| Heanh Sok                | heanhsok@gmail.com              | -                            | heanhsok        | Noesis                     |
 
 - [ ] @gilesgreene
 - [ ] @Delvitron1019
@@ -255,3 +256,4 @@
 - [ ] @samarth9008
 - [ ] @PomazkinG
 - [ ] @SriRammSS
+- [ ] @heanhsok

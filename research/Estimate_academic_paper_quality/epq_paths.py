@@ -20,7 +20,7 @@ output dir:
     03-extract.summary.txt
     04-rate.issues.json
     04-rate.summary.txt
-    04-report.report.csv
+    04-report.report.json
     04-report.issues.json
     04-report.references.md
     04-report.summary.txt
@@ -197,12 +197,12 @@ def get_summary_path(output_dir: str, stage: str) -> str:
 
 def get_report_path(output_dir: str) -> str:
     """
-    Get the path of `report.csv`.
+    Get the path of `report.json`.
 
     :param output_dir: dir of all the outputs of a run
-    :return: `<output_dir>/04-report.report.csv`
+    :return: `<output_dir>/04-report.report.json`
     """
-    return get_stage_path(output_dir, "report", "report.csv")
+    return get_stage_path(output_dir, "report", "report.json")
 
 
 def get_all_issues_path(output_dir: str) -> str:

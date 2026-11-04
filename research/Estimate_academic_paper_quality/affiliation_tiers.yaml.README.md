@@ -79,22 +79,31 @@
 
 ## How to Fill the File
 
-1. **Export the QS table**
-   - Open the QS World University Rankings page and pick one edition
-   - Save the table as a CSV with at least a rank column and an institution name
-     column. The rank may be `=20` for a tie
+1. **Download the QS table** into the dir `research/Estimate_academic_paper_quality/`
+   - Open https://www.topuniversities.com/world-university-rankings in a browser and
+     pick the latest edition, e.g., 2027
+   - Save the table as the CSV
+     `research/Estimate_academic_paper_quality/qs_2027.csv`, with at least a rank
+     column and an institution name column. The rank may be `=20` for a tie
+   - If the page has no CSV export, use the official results table of the edition on
+     `qs.com`, e.g., "QS World University Rankings 2027 Results Table (Excel)". QS
+     emails the Excel file after a short form. Open it and save it as CSV
    - Write down the edition and the URL of the page for the next step
-   - The script does not fetch the page: the QS site returned `403` to a script
-     when this was tried
-   - Note: the layout of the QS export was not checked when this document was
-     written. If the script cannot find the columns, pass `--rank_col` and
-     `--name_col`
+   - A script cannot do this step: the QS site answers `403` with a Cloudflare
+     challenge (`cf-mitigated: challenge`) to `curl` and to a fetch tool, checked on
+     2026-11-04. Do not work around the challenge
+   - Layout of `research/Estimate_academic_paper_quality/qs_2027.csv` (checked on
+     2026-11-04): 1504 rows, with the columns `Index`, `Rank`, `Previous Rank`,
+     `Name`, `Country/Territory`, and others. The script finds `Rank` and `Name`
+     with no flag. For another layout, pass `--rank_col` and `--name_col`
+   - Check with `git status` if the CSV should be committed, since the QS terms of
+     use may limit sharing the table
 
 2. **Run the script**
    ```bash
    > research/Estimate_academic_paper_quality/populate_affiliation_tiers.py \
-       --qs_file ~/Downloads/qs_2026.csv \
-       --edition "QS World University Rankings 2026" \
+       --qs_file research/Estimate_academic_paper_quality/qs_2027.csv \
+       --edition "QS World University Rankings 2027" \
        --source "https://www.topuniversities.com/world-university-rankings"
    ```
    - Add `--dry_run` to see the file without writing it
@@ -142,7 +151,7 @@
   > grep -rhoE '"institution": *"[^"]+"' ~/papers/run_2026_10 --include='*.features.json' \
       | sort | uniq -c | sort -rn
   ```
-- Compare with the column `affiliation_score` of `04-report.report.csv`: a 3 for a
+- Compare with the column `affiliation_score` of `04-report.report.json`: a 3 for a
   top 100 university means a missing alias
 - Typical misses: a business school, a law school, or an institute of a university,
   since the name of the school does not contain the name of the university
@@ -150,7 +159,8 @@
 ## Refresh Each Year
 
 - QS publishes a new edition each year
-- Export the new CSV and run the script again with the new `--edition` and `--source`
+- Download the new CSV (step 1 of "How to Fill the File") and run the script again
+  with the new `--edition` and `--source`
 - The script keeps the aliases and the hand entries. It drops a QS entry that left
   the top 100 and moves an entry whose rank crossed the limit of 20
 - Rate again, since the scores can change
