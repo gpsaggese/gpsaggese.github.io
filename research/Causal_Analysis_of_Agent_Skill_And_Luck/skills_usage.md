@@ -7,6 +7,9 @@
 - [Coding Skills](#coding-skills)
 - [Notebook Skills](#notebook-skills)
 - [Testing Skills](#testing-skills)
+- [Cleaning Up `causal_success_utils.py`](#cleaning-up-causal_success_utilspy)
+- [The Causal Success API Notebook](#the-causal-success-api-notebook)
+- [The Workflow](#the-workflow)
 - [Docs From Issue 683](#docs-from-issue-683)
 - [Where a Rule Was Not Followed, and Why](#where-a-rule-was-not-followed-and-why)
 - [How It Was Checked](#how-it-was-checked)
@@ -19,10 +22,15 @@
 ## Summary
 
 - This file records which rules and skills from `.claude/skills` were applied
-  to the agent benchmark code and notebooks in this folder, and how
+  to the code and notebooks in this folder, and how
 - It also lists where a rule was not followed and why
-- It covers the agent benchmark files (PR 1); the `causal_success_*` files will
-  be added in a later PR
+- It covers:
+  - The agent benchmark files (#695)
+  - `causal_success_utils.py` and its tests (#709)
+  - The causal success API notebook (#738)
+- `causal_success_example` has not been cleaned up yet (see #707)
+- [The Workflow](#the-workflow) sums up the steps that were followed, so that
+  they can be reused on other folders
 
 ## Rules and Docs That Were Followed
 
@@ -50,6 +58,10 @@
 | `agent_benchmark_example.py` / `.ipynb` | Example notebook: the full sweep, figures, limits  |
 | `agent_benchmark_results/`              | The two CSV files of the full sweep (seed 0)       |
 | `test/test_agent_benchmark_utils.py`    | Unit tests for `agent_benchmark_utils.py`          |
+| `causal_success_utils.py`               | The talent and luck simulation (#709, #738)        |
+| `causal_success_API.py` / `.ipynb`      | API notebook: the building blocks, step by step    |
+| `test/test_causal_success_utils.py`     | Unit tests for `causal_success_utils.py`           |
+| `test/test_docker_all.py`               | Runs the notebooks and unit tests inside Docker    |
 
 ## Merging `skill_luck_sim/`
 
@@ -178,6 +190,107 @@
   `Test_run_replications` and `Test_summarize_replications`, to follow the
   `Test_<function>` naming
 
+## Cleaning Up `causal_success_utils.py`
+
+- #709 applied the coding skills to `causal_success_utils.py`, one skill per
+  commit, in the order of the "Clean Up a Python File With a Sequence of Skills"
+  workflow, so that the effect of each skill can be reviewed on its own
+- Before the skills, the tests imported the old folder name and could not run;
+  the first commit fixed the import paths, so that every later step could be
+  checked by the tests
+- The commits, in order:
+  - `coding.todoai_gp`: Implemented 11 of the 14 `TODO(ai_gp)` items; the other
+    3 stay in the code with a note on why (see below)
+  - `coding.reorg_functions`: Split the file into sections, from low level to
+    high level: agent, population, results and metrics, simulation, Bayesian
+    model
+  - `coding.factor_common_code`: The lucky and the unlucky events picked the
+    exposed agent with the same code, now `_select_exposed_agent()`
+  - `coding.fix_bloated_imports`: PyMC and ArviZ are imported only inside the
+    Bayesian functions, so the simulation runs without them
+  - `coding.fix_type_hints`: Added the missing type hints
+  - `coding.fix_dasserts`: Replaced the generic checks with `hdbg.dassert_lt()`,
+    `hdbg.dassert_lte()`, and `hdbg.dassert_is_subset()`
+  - `coding.fix_pyright`: Fixed the `pyright` errors, e.g., `az.summary()` is
+    wrapped in `cast()` since its type hint also allows an xarray `Dataset`
+  - `coding.fix_empty_lines`: Removed the empty lines inside the functions
+  - `coding.fix_docstring` and `coding.fix_comments`: REST docstrings and full
+    sentence comments
+  - `coding.rules.md`, logging: Every function logs its main arguments with
+    `_LOG.debug()`, except `get_event_probability()`, which runs for every
+    agent at every event
+  - `testing.rules.md` and `testing.template.py`: Rewrote the tests with the
+    same structure as the agent benchmark tests (74 tests)
+- The results did not change
+  - Both notebooks print line-identical output with the old and the new code
+  - The old and the new tests catch the same 10 bugs planted in the code
+    (mutation testing)
+
+## The Causal Success API Notebook
+
+- #738 applied the notebook skills to `causal_success_API`, and implemented the
+  14 `TODO(ai_gp)` items in it with `coding.todoai_gp`
+- `notebook.template.py` and `notebook.fix_logging`: The setup cells follow the
+  template, with `import causal_success_utils as utils` and
+  `utils.init_loggers(_LOG)`
+- `notebook.create_api_intro`: `## Library Overview` after the setup and
+  `## Summary: The Mental Model` at the end
+- `notebook.rules.md`, contextual background: A code cell with a comment block
+  explains what an agent is before the first use
+- `notebook.split_cells`: One outcome per cell, with an `# Outcome:` comment
+  checked against the actual output
+  - E.g., the policy cell is now 2 cells, one per policy
+- `notebook.rules.md`, DataFrames: The printed tables are now DataFrames shown
+  with `display()`
+- `notebook.format_md_cells`: `**Key observations**:` bullets after the code
+  cells, nested bullets instead of inline lists, ASCII only
+- `notebook.refactor_to_utils`: The 3 panel plot is now
+  `plot_talent_capital_luck()` in the utils, with `seaborn`, a `figsize`
+  parameter, and the Gini, skewness, and correlation in the titles
+- `notebook.format_interactive_cells`: The plot cell has a Goal, a description
+  of each panel, and Guided usage
+- `notebook.lint_numbered_cells`: Parts 1 to 6, with cells numbered without
+  gaps
+- The Bayesian part is now cells that run, instead of formulas and function
+  signatures in markdown
+- The numbers did not change: every value the old notebook printed is the same
+  with the same seeds
+- 3 statements in the text were wrong and were fixed
+  - The Gini after 80 periods: a new cell runs it and gets 0.566
+  - An `except ValueError` around a check that raises `AssertionError`
+  - A link to a file that does not exist
+
+## The Workflow
+
+- These are the steps followed in #695, #709, and #738
+- Before changing anything
+  - Make the tests run, so that every later step can be checked
+  - Run the notebooks and save their output, to compare against after each step
+  - Read the `TODO(ai_gp)` items and implement them first with
+    `coding.todoai_gp`
+- Apply one skill per commit
+  - Follow the order of "Clean Up a Python File With a Sequence of Skills":
+    structure, duplication, imports, types and lints, then docstrings and
+    comments last
+  - After each skill, run the tests and the notebooks, and check that the
+    output is the same as before
+  - Write the commit message about the change, not the file (e.g., "Use
+    specialized dasserts in the causal success utils")
+- When a rule does not fit, do not force it
+  - Leave the `TODO(ai_gp)` in the code with a `Not done:` note on why
+  - List it in the section
+    [Where a Rule Was Not Followed, and Why](#where-a-rule-was-not-followed-and-why)
+- Check the tests themselves
+  - Plant a few bugs in the code and check that the tests fail, before and
+    after rewriting them
+- Check the text against the output
+  - Every number written in markdown is compared with what the notebook
+    actually prints
+- Run `ruff` with `--no-fix`
+  - Its auto-fix rewrites the type hints and the imports against
+    `coding.rules.md`
+  - `ruff format` is fine to run
+
 ## Docs From Issue 683
 
 - The code was also checked against the docs that issue 683 lists
@@ -224,6 +337,15 @@
     bars directly
 - "Guided usage" is written for static plots ("Look at ... Observe ..."),
   since the notebooks have no widgets
+- In `causal_success_utils.py`, 3 `TODO(ai_gp)` items are not done, and each
+  has a note in the code
+  - `calculate_gini()` and `get_results_dataframe()` stay public, since both
+    notebooks call them
+  - `cate_values` keeps its `None` default, since only the `cate_optimal`
+    policy uses it, and an empty array would hide a missing input instead of
+    failing on it
+- The causal success tests keep `pytest.importorskip("pymc")`, so that they
+  are skipped and not failed when PyMC is not installed
 - `tqdm` is called with `ascii=True`, because the default bar uses non-ASCII
   block characters, which the notebook rules do not allow in output
 - `ruff` 0.16 with this repo's `pyproject.toml` (`fix = true`) rewrites
@@ -236,16 +358,20 @@
 
 ## How It Was Checked
 
-- Tests: All 21 pass, and 18 pass when skipping the slow ones with
+- Tests: All 96 pass, and 93 pass when skipping the slow ones with
   `-m "not slow"`
   ```bash
   > python -m pytest \
-      research/Causal_Analysis_of_Agent_Skill_And_Luck/test/test_agent_benchmark_utils.py
+      research/Causal_Analysis_of_Agent_Skill_And_Luck/test/test_agent_benchmark_utils.py \
+      research/Causal_Analysis_of_Agent_Skill_And_Luck/test/test_causal_success_utils.py
   ```
-- Notebooks: Both were run top to bottom with `jupyter nbconvert --execute`,
-  and the saved outputs have no errors and no non-ASCII characters
+- Notebooks: The 2 agent benchmark notebooks and the causal success API
+  notebook were run top to bottom with `jupyter nbconvert --execute`, and the
+  saved outputs have no errors and no non-ASCII characters
 - Formatting: `ruff format --check` passes on all Python files
+- Docker: `test/test_docker_all.py` (#734) builds the image, runs the 4
+  notebooks, and runs the unit tests of this folder inside `docker_cmd.sh`
 
 ## Last Review
 
-- Niveda on 2026-10-19
+- Niveda on 2026-11-04
