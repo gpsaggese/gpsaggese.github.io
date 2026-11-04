@@ -35,11 +35,11 @@ The comparison measures **relative representation-space affinity**, not event pr
 | Semantic probe | Three headlines compared with four event prompts; cosine-similarity matrix has shape **3 × 4** and contains finite entries. |
 | Forecasting | **Not yet implemented or evaluated.** |
 
-![Import validation and recorded package versions](assets/readme/01_environment.png)
+<img width="1451" height="591" alt="Libraries" src="https://github.com/user-attachments/assets/d6e37bcb-df1d-413e-9805-8648a9e43cce" />
 
 *Figure 1. Runtime and dependency smoke test. Package imports complete and the observed versions are printed; this establishes the executed environment, not a benchmark result.*
 
-![CLIP checkpoint loading and frozen text encoding](assets/readme/02_clip_encoding.png)
+<img width="1385" height="457" alt="LOADING_CLIP" src="https://github.com/user-attachments/assets/a5b0c04f-dc73-4b9b-8241-6562040e5e12" />
 
 *Figure 2. Loading the pretrained CLIP ViT-L/14 checkpoint and extracting three 768-dimensional headline vectors without gradient computation. The image-processor notice concerns a future default and does not indicate an error in this text-only test.*
 
@@ -53,7 +53,8 @@ The following values are cosine similarities between **illustrative** headlines 
 | Oil demand weakens as economic activity slows. | 0.804 | **0.877** | 0.761 | 0.811 |
 | Cold weather increases demand for natural gas. | 0.724 | 0.741 | **0.958** | 0.749 |
 
-![Headline-to-event prompt cosine similarities](assets/readme/03_prompt_similarity.png)
+<img width="1301" height="212" alt="Prompt-with-clip" src="https://github.com/user-attachments/assets/2ea047a1-4462-4022-b568-831d06f661f4" />
+
 
 *Figure 3. Text–text cosine similarities for three hand-written headlines and four event descriptions. The intended event is top-ranked in each row; substantial similarity to other prompts and lexical overlap between examples limit the strength of this sanity check.*
 
