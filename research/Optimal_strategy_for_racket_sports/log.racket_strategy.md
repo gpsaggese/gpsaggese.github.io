@@ -28,6 +28,24 @@
   `plan.racket_strategy.md`
 - Manual widget checks of the Milestone 1 notebook, noted as in progress in #654
 
+## 2026-11-04: Design Principles
+
+- **Issue**: [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723)
+  (model the spread as a function of the ball speed), part 1, from
+  [GP's answer](https://github.com/gpsaggese/gpsaggese.github.io/issues/723#issuecomment-6602349966)
+  of 2026-11-03 to the proposal to scale the spread with the ball speed
+- **What was done**: `design_principles.explanation.md`, 15 principles, each with
+  why, an example from this project, and its source
+  - P1 to P3 are GP's from #723: independent variables with separate coupling
+    models, notebooks for intuition and code for sweeps, and sweeping to find what
+    is robust to what
+  - P4 to P15 are the principles we already follow, each checked against the plan,
+    this log, the paper, and the GitHub discussions, with a link to where it was
+    decided
+- **Name**: `.explanation.md`, as the file name convention of
+  `all.writing_docs.how_to_guide.md` asks and as `project_management.explanation.md`
+  does, instead of the `design_principles.md` of GP's comment
+
 ## 2026-11-01: PRs #804, #809, and #812 Merged
 
 - [PR #804](https://github.com/gpsaggese/gpsaggese.github.io/pull/804), merged
