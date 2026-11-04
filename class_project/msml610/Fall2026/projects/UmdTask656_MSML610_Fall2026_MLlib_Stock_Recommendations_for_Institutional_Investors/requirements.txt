@@ -1,0 +1,7 @@
+ipywidgets
+matplotlib
+numpy
+pandas
+pyspark==3.5.9
+seaborn
+tqdm
