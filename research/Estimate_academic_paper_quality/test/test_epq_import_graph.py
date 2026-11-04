@@ -15,22 +15,53 @@ _PREFIX = "research.Estimate_academic_paper_quality."
 # `docs/02-design.architecture.md`, section "Import Graph". Each module points
 # down a layer, never up.
 _ALLOWED: Dict[str, Set[str]] = {
-    "estimate_paper_quality": {"epq_pipeline"},
-    "epq_pipeline": {
+    # The executables import only modules, never another executable: they talk
+    # to each other through files.
+    "resolve_papers": {
         "epq_bib_sources",
-        "epq_extractor",
         "epq_fetcher",
-        "epq_rater",
+        "epq_issues",
+        "epq_paths",
         "epq_report",
-        "epq_resolver",
+        "epq_summary",
         "epq_types",
     },
-    "epq_resolver": {"epq_bib_sources", "epq_fetcher", "epq_types"},
-    "epq_extractor": {"epq_types"},
-    "epq_rater": {"epq_types"},
+    "download_papers": {
+        "epq_fetcher",
+        "epq_issues",
+        "epq_paths",
+        "epq_report",
+        "epq_summary",
+        "epq_types",
+    },
+    "extract_features": {
+        "epq_fetcher",
+        "epq_issues",
+        "epq_paths",
+        "epq_report",
+        "epq_summary",
+        "epq_types",
+    },
+    "report_papers": {
+        "epq_bib_sources",
+        "epq_issues",
+        "epq_paths",
+        "epq_report",
+        "epq_summary",
+        "epq_types",
+    },
+    # The pipeline script runs the executables as subprocesses, so it imports
+    # none of them.
+    "estimate_paper_quality": {"epq_paths"},
+    # The helper script fills the tier list by hand, outside the pipeline, and
+    # imports no module of the project.
+    "populate_affiliation_tiers": set(),
     "epq_report": {"epq_types"},
+    "epq_summary": {"epq_paths", "epq_types"},
     "epq_bib_sources": {"epq_types"},
     "epq_fetcher": {"epq_types"},
+    "epq_issues": {"epq_types"},
+    "epq_paths": set(),
     "epq_types": set(),
 }
 
@@ -104,12 +135,12 @@ class Test_import_graph(hunitest.TestCase):
         scratch_dir = self.get_scratch_space()
         hio.to_file(
             os.path.join(scratch_dir, "epq_types.py"),
-            f"import {_PREFIX}epq_pipeline as epqpipel\n",
+            f"import {_PREFIX}report_papers as repopapers\n",
         )
         # Run test.
         actual = _find_violations(scratch_dir)
         # Check outputs.
-        self.assertEqual(actual, ["epq_types imports epq_pipeline"])
+        self.assertEqual(actual, ["epq_types imports report_papers"])
 
     def test3(self) -> None:
         """
@@ -125,3 +156,18 @@ class Test_import_graph(hunitest.TestCase):
         }
         # Check outputs.
         self.assertEqual(modules, set(_ALLOWED))
+
+    def test4(self) -> None:
+        """
+        Test the check fails on an executable that imports another executable.
+        """
+        # Prepare inputs.
+        scratch_dir = self.get_scratch_space()
+        hio.to_file(
+            os.path.join(scratch_dir, "download_papers.py"),
+            f"import {_PREFIX}extract_features as exfeat\n",
+        )
+        # Run test.
+        actual = _find_violations(scratch_dir)
+        # Check outputs.
+        self.assertEqual(actual, ["download_papers imports extract_features"])

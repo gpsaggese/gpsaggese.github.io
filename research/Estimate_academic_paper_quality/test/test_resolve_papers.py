@@ -1,14 +1,20 @@
+import csv
 import logging
 import os
-from typing import List, Tuple
+import sys
+from typing import Any, List, Tuple
+from unittest import mock
 
 import helpers.hcache_simple as hcacsimp
 import helpers.hio as hio
 import helpers.hunit_test as hunitest
 import pytest
 
-import research.Estimate_academic_paper_quality.epq_resolver as epqresol
+import research.Estimate_academic_paper_quality.epq_bib_sources as epqbibso
+import research.Estimate_academic_paper_quality.epq_paths as epqpaths
+import research.Estimate_academic_paper_quality.epq_report as epqrepor
 import research.Estimate_academic_paper_quality.epq_types as epqtypes
+import research.Estimate_academic_paper_quality.resolve_papers as resopapers
 import research.Estimate_academic_paper_quality.test.epq_test_utils as epqteuti
 
 _LOG = logging.getLogger(__name__)
@@ -31,7 +37,7 @@ def _make_input_line(
 
 class _NoCacheTestCase(hunitest.TestCase):
     """
-    Base of the tests that call `parse_line()`.
+    Base of the tests that call `_parse_line()`.
 
     `download_utils.detect_doi()` caches its answers on disk: the cache is off,
     so that the tests write nothing outside the scratch space.
@@ -48,13 +54,13 @@ class _NoCacheTestCase(hunitest.TestCase):
 
 
 # #############################################################################
-# Test_join_wrapped_lines
+# Test__join_wrapped_lines
 # #############################################################################
 
 
-class Test_join_wrapped_lines(hunitest.TestCase):
+class Test__join_wrapped_lines(hunitest.TestCase):
     """
-    Test `epq_resolver.join_wrapped_lines()`.
+    Test `resolve_papers._join_wrapped_lines()`.
     """
 
     def test1(self) -> None:
@@ -73,7 +79,7 @@ class Test_join_wrapped_lines(hunitest.TestCase):
             (3, "Momentum"),
         ]
         # Run test.
-        actual = epqresol.join_wrapped_lines(raw_lines)
+        actual = resopapers._join_wrapped_lines(raw_lines)
         # Check outputs.
         self.assertEqual(actual, expected)
 
@@ -86,7 +92,7 @@ class Test_join_wrapped_lines(hunitest.TestCase):
         # Prepare outputs.
         expected = [(2, "A"), (4, "stray indent"), (6, "B")]
         # Run test.
-        actual = epqresol.join_wrapped_lines(raw_lines)
+        actual = resopapers._join_wrapped_lines(raw_lines)
         # Check outputs.
         self.assertEqual(actual, expected)
 
@@ -99,30 +105,30 @@ class Test_join_wrapped_lines(hunitest.TestCase):
         # Prepare outputs.
         expected = [(1, "1706.03762"), (2, "10.1111/jofi.12885")]
         # Run test.
-        actual = epqresol.join_wrapped_lines(raw_lines)
+        actual = resopapers._join_wrapped_lines(raw_lines)
         # Check outputs.
         self.assertEqual(actual, expected)
 
 
 # #############################################################################
-# Test_parse_line
+# Test__parse_line
 # #############################################################################
 
 
-class Test_parse_line(_NoCacheTestCase):
+class Test__parse_line(_NoCacheTestCase):
     """
-    Test `epq_resolver.parse_line()`.
+    Test `resolve_papers._parse_line()`.
     """
 
     def helper(self, text: str, expected: str) -> None:
         """
-        Test helper for `parse_line()`.
+        Test helper for `_parse_line()`.
 
         :param text: text of the line
         :param expected: expected `kind|key|hints`
         """
         # Run test.
-        input_line = epqresol.parse_line(3, text)
+        input_line = resopapers._parse_line(3, text)
         # Check outputs.
         assert input_line is not None
         actual = f"{input_line.kind}|{input_line.key}|{input_line.author_hints}"
@@ -140,7 +146,7 @@ class Test_parse_line(_NoCacheTestCase):
         """
         # Run test.
         kinds = [
-            epqresol.parse_line(1, text).key  # type: ignore[union-attr]
+            resopapers._parse_line(1, text).key  # type: ignore[union-attr]
             for text in [
                 "https://arxiv.org/pdf/1706.03762.pdf",
                 "arXiv:1706.03762",
@@ -171,7 +177,7 @@ class Test_parse_line(_NoCacheTestCase):
         """
         # Run test.
         keys = [
-            epqresol.parse_line(1, text)
+            resopapers._parse_line(1, text)
             for text in [
                 "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5277078",
                 "10.2139/ssrn.5277078",
@@ -223,7 +229,7 @@ class Test_parse_line(_NoCacheTestCase):
         path = os.path.join(self.get_scratch_space(), "paper.pdf")
         epqteuti.create_pdf(path, ["x"])
         # Run test.
-        input_line = epqresol.parse_line(1, path)
+        input_line = resopapers._parse_line(1, path)
         # Check outputs.
         assert input_line is not None
         self.assertEqual((input_line.kind, input_line.key), ("local_pdf", path))
@@ -239,41 +245,21 @@ class Test_parse_line(_NoCacheTestCase):
         Test an empty line and the two kinds of comment give `None`.
         """
         # Run test.
-        actual = [epqresol.parse_line(1, t) for t in ["", "   ", "# a", "// b"]]
+        actual = [
+            resopapers._parse_line(1, t) for t in ["", "   ", "# a", "// b"]
+        ]
         # Check outputs.
         self.assertEqual(actual, [None] * 4)
 
-    def test13(self) -> None:
-        """
-        Test the real input file parses with no exception and one kind per line.
-        """
-        # Prepare inputs.
-        path = os.path.join(
-            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-            "paper_list.md",
-        )
-        raw_lines = hio.from_file(path).split("\n")
-        # Run test.
-        input_lines = epqresol.parse_lines(raw_lines)
-        # Check outputs.
-        kinds = {line.kind for line in input_lines}
-        self.assertEqual(kinds, {"title"})
-        self.assertGreater(len(input_lines), 10)
-        # A wrapped bullet is one line with its authors.
-        first = input_lines[0]
-        self.assertEqual(
-            first.author_hints, ("John Campbell", "Xin Zheng", "Dexin Zhou")
-        )
-
 
 # #############################################################################
-# Test_title_similarity
+# Test__title_similarity
 # #############################################################################
 
 
-class Test_title_similarity(hunitest.TestCase):
+class Test__title_similarity(hunitest.TestCase):
     """
-    Test `epq_resolver.title_similarity()`.
+    Test `resolve_papers._title_similarity()`.
     """
 
     def test1(self) -> None:
@@ -281,7 +267,7 @@ class Test_title_similarity(hunitest.TestCase):
         Test titles that differ by case, accents, and punctuation are equal.
         """
         # Run test.
-        actual = epqresol.title_similarity(
+        actual = resopapers._title_similarity(
             "Schölkopf: A Test!", "scholkopf a test"
         )
         # Check outputs.
@@ -292,7 +278,7 @@ class Test_title_similarity(hunitest.TestCase):
         Test a partial title is a prefix at a word boundary.
         """
         # Run test.
-        actual = epqresol.title_similarity("Lazy", "Lazy Prices")
+        actual = resopapers._title_similarity("Lazy", "Lazy Prices")
         # Check outputs.
         self.assertEqual(actual, 0.95)
 
@@ -301,7 +287,7 @@ class Test_title_similarity(hunitest.TestCase):
         Test a prefix inside a word is not a prefix.
         """
         # Run test.
-        actual = epqresol.title_similarity("Lazy Pri", "Lazy Prices")
+        actual = resopapers._title_similarity("Lazy Pri", "Lazy Prices")
         # Check outputs.
         self.assertLess(actual, 0.95)
         self.assertGreater(actual, 0.8)
@@ -310,17 +296,17 @@ class Test_title_similarity(hunitest.TestCase):
         """
         Test an empty title has no similarity.
         """
-        self.assertEqual(epqresol.title_similarity("", "Lazy Prices"), 0.0)
+        self.assertEqual(resopapers._title_similarity("", "Lazy Prices"), 0.0)
 
 
 # #############################################################################
-# Test_match_candidates
+# Test__match_candidates
 # #############################################################################
 
 
-class Test_match_candidates(hunitest.TestCase):
+class Test__match_candidates(hunitest.TestCase):
     """
-    Test `epq_resolver.match_candidates()`.
+    Test `resolve_papers._match_candidates()`.
     """
 
     def helper(
@@ -331,7 +317,7 @@ class Test_match_candidates(hunitest.TestCase):
         expected: str,
     ) -> None:
         """
-        Test helper for `match_candidates()`.
+        Test helper for `_match_candidates()`.
 
         :param query: title of the line
         :param hints: authors in parentheses
@@ -339,7 +325,7 @@ class Test_match_candidates(hunitest.TestCase):
         :param expected: expected `status|n records in group|n candidates`
         """
         # Run test.
-        match = epqresol.match_candidates(query, hints, candidates)
+        match = resopapers._match_candidates(query, hints, candidates)
         # Check outputs.
         actual = f"{match.status}|{len(match.group)}|{len(match.candidates)}"
         self.assert_equal(actual, expected)
@@ -484,13 +470,13 @@ class Test_match_candidates(hunitest.TestCase):
 
 
 # #############################################################################
-# Test_build_paper
+# Test__build_paper
 # #############################################################################
 
 
-class Test_build_paper(hunitest.TestCase):
+class Test__build_paper(hunitest.TestCase):
     """
-    Test `epq_resolver.build_paper()`.
+    Test `resolve_papers._build_paper()`.
     """
 
     def test1(self) -> None:
@@ -519,7 +505,7 @@ class Test_build_paper(hunitest.TestCase):
             "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=123"
         )
         # Run test.
-        paper = epqresol.build_paper(
+        paper = resopapers._build_paper(
             group, input_line, unpaywall_url="https://unpaywall.example/lazy.pdf"
         )
         # Check outputs.
@@ -539,7 +525,7 @@ class Test_build_paper(hunitest.TestCase):
             kind="local_pdf", text="/data/lazy.pdf", key="/data/lazy.pdf"
         )
         # Run test.
-        paper = epqresol.build_paper(group, input_line, unpaywall_url="")
+        paper = resopapers._build_paper(group, input_line, unpaywall_url="")
         # Check outputs.
         self.assertEqual(paper.download_inputs[0], "/data/lazy.pdf")
         self.assertIn("(https://arxiv.org/pdf/2001.00001)", paper.reference)
@@ -558,7 +544,7 @@ class Test_build_paper(hunitest.TestCase):
         )
         # Run test.
         actual = "|".join(
-            epqresol.build_paper(
+            resopapers._build_paper(
                 g, _make_input_line(), unpaywall_url=""
             ).reference
             for g in [with_doi, no_doi]
@@ -578,7 +564,9 @@ class Test_build_paper(hunitest.TestCase):
             epqteuti.make_record(),
         )
         # Run test.
-        paper = epqresol.build_paper(group, _make_input_line(), unpaywall_url="")
+        paper = resopapers._build_paper(
+            group, _make_input_line(), unpaywall_url=""
+        )
         # Check outputs.
         self.assert_equal(paper.base_name, "2020.Cohen_et_al.Lazy_Prices")
         self.assertEqual((paper.source, paper.year), ("semantic_scholar", 2020))
@@ -596,7 +584,7 @@ class Test_build_paper(hunitest.TestCase):
         arxiv = epqteuti.make_record(source="arxiv", year=2019, title="A")
         # Run test.
         actual = [
-            epqresol.build_paper(
+            resopapers._build_paper(
                 group, _make_input_line(), unpaywall_url=""
             ).year
             for group in [(arxiv, posted, journal), (arxiv, posted), (arxiv,)]
@@ -606,13 +594,13 @@ class Test_build_paper(hunitest.TestCase):
 
 
 # #############################################################################
-# Test_merge_papers_and_sort_papers
+# Test__merge_papers_and_sort_papers
 # #############################################################################
 
 
-class Test_merge_papers_and_sort_papers(hunitest.TestCase):
+class Test__merge_papers_and_sort_papers(hunitest.TestCase):
     """
-    Test `merge_papers()`, `sort_papers()`, and `finalize_papers()`.
+    Test `_merge_papers()`, `_sort_papers()`, and `_finalize_papers()`.
     """
 
     def test1(self) -> None:
@@ -626,7 +614,7 @@ class Test_merge_papers_and_sort_papers(hunitest.TestCase):
             download_inputs=("/data/lazy.pdf", "https://x.example/y.pdf"),
         )
         # Run test.
-        merged = epqresol.merge_papers([paper1, paper2])
+        merged = resopapers._merge_papers([paper1, paper2])
         # Check outputs.
         self.assertEqual(len(merged), 1)
         self.assertEqual(merged[0].line_nos, (1, 4))
@@ -651,7 +639,7 @@ class Test_merge_papers_and_sort_papers(hunitest.TestCase):
             **{**paper2.__dict__, "key": "other title|cohen"}
         )
         # Run test.
-        merged = epqresol.merge_papers([paper1, paper2])
+        merged = resopapers._merge_papers([paper1, paper2])
         # Check outputs.
         self.assertEqual(len(merged), 1)
 
@@ -666,7 +654,7 @@ class Test_merge_papers_and_sort_papers(hunitest.TestCase):
             **{**paper2.__dict__, "key": "other|doe", "aliases": ()}
         )
         # Run test.
-        merged = epqresol.merge_papers([paper1, paper2])
+        merged = resopapers._merge_papers([paper1, paper2])
         # Check outputs.
         self.assertEqual(len(merged), 2)
 
@@ -690,7 +678,8 @@ class Test_merge_papers_and_sort_papers(hunitest.TestCase):
         ]
         # Run test.
         actual = [
-            (p.year, p.authors[0], p.title) for p in epqresol.sort_papers(papers)
+            (p.year, p.authors[0], p.title)
+            for p in resopapers._sort_papers(papers)
         ]
         # Check outputs.
         expected = [
@@ -703,13 +692,13 @@ class Test_merge_papers_and_sort_papers(hunitest.TestCase):
 
 
 # #############################################################################
-# Test_resolve_lines
+# Test__resolve_lines
 # #############################################################################
 
 
-class Test_resolve_lines(_NoCacheTestCase):
+class Test__resolve_lines(_NoCacheTestCase):
     """
-    Test `epq_resolver.resolve_lines()` with canned records.
+    Test `resolve_papers._resolve_lines()` with canned records.
     """
 
     def test1(self) -> None:
@@ -782,7 +771,7 @@ class Test_resolve_lines(_NoCacheTestCase):
         7 ambiguous 2 different papers match the title ['1993, Jegadeesh, "Momentum" (???)', '1997, Carhart, "Momentum" (???)']
         """
         # Run test.
-        result = epqresol.resolve_lines(raw_lines, sources)
+        result = resopapers._resolve_lines(raw_lines, sources)
         # Check outputs.
         lines = [f"{p.reference} lines={p.line_nos}" for p in result.papers]
         lines += [
@@ -805,7 +794,7 @@ class Test_resolve_lines(_NoCacheTestCase):
             url_meta={url: meta},
         )
         # Run test.
-        result = epqresol.resolve_lines([url], sources)
+        result = resopapers._resolve_lines([url], sources)
         # Check outputs.
         self.assertEqual(len(result.papers), 1)
         self.assertEqual(result.papers[0].download_inputs[0], url)
@@ -824,7 +813,7 @@ class Test_resolve_lines(_NoCacheTestCase):
             url_meta={url: meta},
         )
         # Run test.
-        result = epqresol.resolve_lines([url], sources)
+        result = resopapers._resolve_lines([url], sources)
         # Check outputs.
         self.assertEqual(len(result.papers), 1)
 
@@ -835,7 +824,9 @@ class Test_resolve_lines(_NoCacheTestCase):
         # Prepare inputs.
         sources = epqteuti.FakeBibSources()
         # Run test.
-        result = epqresol.resolve_lines(["https://nowhere.example/x"], sources)
+        result = resopapers._resolve_lines(
+            ["https://nowhere.example/x"], sources
+        )
         # Check outputs.
         self.assertEqual(
             [(i.status, i.reason) for i in result.issues],
@@ -853,7 +844,7 @@ class Test_resolve_lines(_NoCacheTestCase):
             by_title={"s2:Lazy Prices": [epqteuti.make_record()]}
         )
         # Run test.
-        result = epqresol.resolve_lines([path], sources)
+        result = resopapers._resolve_lines([path], sources)
         # Check outputs.
         self.assertEqual(len(result.papers), 1)
         self.assertEqual(result.papers[0].download_inputs[0], path)
@@ -868,7 +859,7 @@ class Test_resolve_lines(_NoCacheTestCase):
             unpaywall={"10.1111/jofi.12885": "https://oa.example/lazy.pdf"},
         )
         # Run test.
-        result = epqresol.resolve_lines(["10.1111/jofi.12885"], sources)
+        result = resopapers._resolve_lines(["10.1111/jofi.12885"], sources)
         # Check outputs.
         self.assertEqual(
             result.papers[0].download_inputs, ("https://oa.example/lazy.pdf",)
@@ -881,7 +872,7 @@ class Test_resolve_lines(_NoCacheTestCase):
         # Prepare inputs.
         sources = epqteuti.FakeBibSources()
         # Run test.
-        result = epqresol.resolve_lines(["/no/such/file.pdf"], sources)
+        result = resopapers._resolve_lines(["/no/such/file.pdf"], sources)
         # Check outputs.
         actual = [(i.status, i.reason) for i in result.issues]
         expected = [
@@ -910,7 +901,7 @@ class Test_resolve_lines(_NoCacheTestCase):
             }
         )
         # Run test.
-        result = epqresol.resolve_lines(["Lazy Prices"], sources)
+        result = resopapers._resolve_lines(["Lazy Prices"], sources)
         # Check outputs.
         self.assertEqual(len(result.papers), 1)
         self.assertEqual(result.papers[0].source, "crossref")
@@ -934,7 +925,7 @@ class Test_resolve_lines(_NoCacheTestCase):
 
         # Run test.
         with self.assertRaises(RuntimeError) as cm:
-            epqresol.resolve_lines(["Lazy Prices"], _Sources())
+            resopapers._resolve_lines(["Lazy Prices"], _Sources())
         # Check outputs.
         self.assertIn("HTTP 503", str(cm.exception))
 
@@ -945,7 +936,7 @@ class Test_resolve_lines(_NoCacheTestCase):
         # Prepare inputs.
         sources = epqteuti.FakeBibSources()
         # Run test.
-        epqresol.resolve_lines(
+        resopapers._resolve_lines(
             ["Lazy Prices (Lauren Cohen; Chris Malloy)"], sources
         )
         # Check outputs.
@@ -954,3 +945,298 @@ class Test_resolve_lines(_NoCacheTestCase):
             "search_crossref Lazy Prices Lauren Cohen Chris Malloy",
         ]
         self.assertEqual(sources.calls, expected)
+
+
+# #############################################################################
+# Test_resolve_papers_py
+# #############################################################################
+
+
+class Test_resolve_papers_py(hunitest.TestCase):
+    """
+    Test the command line of `resolve_papers.py`.
+    """
+
+    @pytest.fixture(autouse=True)
+    def setup_teardown_test(self):
+        """
+        Disable the cache of the helpers during each test.
+
+        `download_utils.detect_doi()` caches its answers on disk: the cache is
+        off, so that the tests write nothing outside the scratch space.
+        """
+        hcacsimp.enable_caching(False)
+        yield
+        hcacsimp.enable_caching(True)
+
+    def make_input_csv(self, inputs: List[str]) -> str:
+        """
+        Write an input CSV in the scratch space.
+
+        :param inputs: values of the column `input`
+        :return: path of the CSV
+        """
+        path = os.path.join(self.get_scratch_space(), "papers_in.csv")
+        with open(path, "w", newline="", encoding="utf-8") as f:
+            writer = csv.writer(f)
+            writer.writerow(["input"])
+            writer.writerows([[text] for text in inputs])
+        return path
+
+    def run_main(self, argv: List[str], sources: Any) -> None:
+        """
+        Run `_main()` with the given flags and a fake client of the APIs.
+
+        :param argv: flags of the script
+        :param sources: client of the APIs that replaces the real one
+        """
+        old_cache_dir = hcacsimp.get_cache_dir()
+        self.addCleanup(hcacsimp.set_cache_dir, old_cache_dir)
+        parser = resopapers._parse()
+        with (
+            mock.patch.object(sys, "argv", ["resolve_papers.py"] + argv),
+            mock.patch.object(epqbibso, "BibSources", return_value=sources),
+        ):
+            resopapers._main(parser)
+
+    def test1(self) -> None:
+        """
+        Test the papers file and the issues file of a list with a bad row.
+        """
+        # Prepare inputs.
+        scratch = self.get_scratch_space()
+        input_csv = self.make_input_csv(
+            ["2001.00001", "Unknown Title", "", "# a comment", "2001.00001v2"]
+        )
+        output_dir = os.path.join(scratch, "out")
+        sources = epqteuti.FakeBibSources(
+            by_id={
+                "arxiv:2001.00001": epqteuti.make_record(
+                    source="arxiv",
+                    s2_paper_id="",
+                    arxiv_id="2001.00001",
+                    pdf_urls=("https://arxiv.org/pdf/2001.00001",),
+                )
+            }
+        )
+        argv = [f"--input={input_csv}", f"--output_dir={output_dir}"]
+        # Prepare outputs.
+        expected_papers = [
+            (
+                "2020.Cohen_et_al.Lazy_Prices",
+                (1, 5),
+                ("doi:10.1111/jofi.12885", "arxiv:2001.00001"),
+                ("https://arxiv.org/pdf/2001.00001",),
+            )
+        ]
+        expected_issues = [
+            (
+                2,
+                "Unknown Title",
+                "resolve",
+                "unresolved",
+                "no source has a paper titled 'Unknown Title'",
+            )
+        ]
+        # Run test.
+        self.run_main(argv, sources)
+        # Check outputs.
+        papers = epqrepor.read_papers(epqpaths.get_papers_path(output_dir))
+        actual_papers = [
+            (p.base_name, p.line_nos, p.aliases, p.download_inputs)
+            for p in papers
+        ]
+        self.assertEqual(actual_papers, expected_papers)
+        issues = epqrepor.read_issues(
+            epqpaths.get_issues_path(output_dir, "resolve")
+        )
+        actual_issues = [
+            (i.line_no, i.input, i.stage, i.status, i.reason) for i in issues
+        ]
+        self.assertEqual(actual_issues, expected_issues)
+        # The names of the files are inferred from the output dir.
+        actual_files = sorted(f for f in os.listdir(output_dir) if f != "state")
+        expected_files = [
+            "00-paper_list.csv",
+            "01-resolve.issues.json",
+            "01-resolve.paper_list.json",
+            "01-resolve.summary.txt",
+        ]
+        self.assertEqual(actual_files, expected_files)
+        # The summary counts lines: 3 lines, 2 resolved, 1 paper after the dedup.
+        expected_summary = """
+        Stage `resolve` summary
+          Lines in input:         3
+          Processed in this run:  3
+          Completed successfully: 2
+          Failed:                 1
+          Completed in total:     2 of 3
+          Output files written in this run:
+            'out/01-resolve.paper_list.json': 1 file
+          Issues file: 'out/01-resolve.issues.json' (1 issue)
+            unresolved: 1
+          Papers after the dedup: 1
+          Summary file: 'out/01-resolve.summary.txt'
+        """
+        actual_summary = epqteuti.read_summary(output_dir, "resolve")
+        self.assert_equal(actual_summary, expected_summary, dedent=True)
+
+    def test2(self) -> None:
+        """
+        Test the input CSV is copied to the output dir as `00-paper_list.csv`.
+        """
+        # Prepare inputs.
+        scratch = self.get_scratch_space()
+        input_csv = self.make_input_csv(["Unknown Title"])
+        output_dir = os.path.join(scratch, "out")
+        argv = [f"--input={input_csv}", f"--output_dir={output_dir}"]
+        # Run test.
+        self.run_main(argv, epqteuti.FakeBibSources())
+        # Check outputs.
+        copy_path = epqpaths.get_input_copy_path(output_dir)
+        self.assertEqual(os.path.basename(copy_path), "00-paper_list.csv")
+        self.assertEqual(hio.from_file(copy_path), hio.from_file(input_csv))
+
+    def test3(self) -> None:
+        """
+        Test `--dry_run` makes no lookup and writes no file.
+        """
+        # Prepare inputs.
+        scratch = self.get_scratch_space()
+        input_csv = self.make_input_csv(["2001.00001", "Unknown Title"])
+        output_dir = os.path.join(scratch, "out")
+        sources = epqteuti.FakeBibSources()
+        argv = [
+            f"--input={input_csv}",
+            f"--output_dir={output_dir}",
+            "--dry_run",
+        ]
+        # Run test.
+        self.run_main(argv, sources)
+        # Check outputs: no lookup, no dir, and so no copy of the input.
+        self.assertEqual(sources.calls, [])
+        self.assertFalse(os.path.exists(output_dir))
+
+    def test4(self) -> None:
+        """
+        Test an input CSV with no header: the first row is a paper.
+        """
+        # Prepare inputs.
+        scratch = self.get_scratch_space()
+        input_csv = os.path.join(scratch, "papers_in.csv")
+        hio.to_file(input_csv, "2001.00001\n")
+        # Run test.
+        input_lines = resopapers._read_input_lines(input_csv)
+        # Check outputs.
+        self.assertEqual(
+            [(x.line_no, x.kind, x.key) for x in input_lines],
+            [(1, "arxiv", "2001.00001")],
+        )
+
+    def test5(self) -> None:
+        """
+        Test a missing input CSV stops the run.
+        """
+        # Prepare inputs.
+        scratch = self.get_scratch_space()
+        argv = [
+            f"--input={scratch}/missing.csv",
+            f"--output_dir={scratch}/out",
+        ]
+        # Run test.
+        with self.assertRaises(AssertionError):
+            self.run_main(argv, epqteuti.FakeBibSources())
+
+    def test6(self) -> None:
+        """
+        Test the real input CSV parses with no exception and one kind per row.
+        """
+        # Prepare inputs.
+        path = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "paper_list.csv",
+        )
+        # Run test.
+        input_lines = resopapers._read_input_lines(path)
+        # Check outputs.
+        kinds = {line.kind for line in input_lines}
+        self.assertEqual(kinds, {"title"})
+        self.assertGreater(len(input_lines), 10)
+        # The authors in parentheses are the hints of the first row.
+        first = input_lines[0]
+        self.assertEqual(
+            first.author_hints, ("John Campbell", "Xin Zheng", "Dexin Zhou")
+        )
+
+    def test7(self) -> None:
+        """
+        Test the error of a lookup for one line does not stop the other lines.
+        """
+
+        # Prepare inputs.
+        class _Sources(epqteuti.FakeBibSources):
+            def lookup_arxiv(self, arxiv_id: str) -> Any:
+                if arxiv_id == "1111.11111":
+                    raise RuntimeError("Request to 'x' failed: HTTP 500")
+                return super().lookup_arxiv(arxiv_id)
+
+        sources = _Sources(
+            by_id={
+                "arxiv:2001.00001": epqteuti.make_record(
+                    source="arxiv", s2_paper_id="", arxiv_id="2001.00001"
+                )
+            }
+        )
+        scratch = self.get_scratch_space()
+        output_dir = os.path.join(scratch, "out")
+        input_csv = self.make_input_csv(["1111.11111", "2001.00001"])
+        papers_file = epqpaths.get_papers_path(output_dir)
+        issues_file = epqpaths.get_issues_path(output_dir, "resolve")
+        # Run test.
+        result = resopapers._resolve(input_csv, output_dir, sources)
+        # Check outputs.
+        self.assertEqual(len(result.papers), 1)
+        self.assertEqual(len(epqrepor.read_papers(papers_file)), 1)
+        self.assertEqual(len(epqrepor.read_issues(issues_file)), 1)
+        actual = [(i.line_no, i.status, i.reason) for i in result.issues]
+        reason = (
+            "no record for arXiv id '1111.11111' "
+            "(a source failed: Request to 'x' failed: HTTP 500)"
+        )
+        expected = [(1, "unresolved", reason)]
+        self.assertEqual(actual, expected)
+
+    def test8(self) -> None:
+        """
+        Test an input that is already the copy in the output dir is not an error.
+        """
+        # Prepare inputs.
+        scratch = self.get_scratch_space()
+        output_dir = os.path.join(scratch, "out")
+        input_csv = self.make_input_csv(["Unknown Title"])
+        hio.create_dir(output_dir, incremental=True)
+        copy_path = epqpaths.get_input_copy_path(output_dir)
+        hio.to_file(copy_path, hio.from_file(input_csv))
+        argv = [f"--input={copy_path}", f"--output_dir={output_dir}"]
+        # Run test.
+        self.run_main(argv, epqteuti.FakeBibSources())
+        # Check outputs.
+        self.assertEqual(hio.from_file(copy_path), hio.from_file(input_csv))
+        issues = epqrepor.read_issues(
+            epqpaths.get_issues_path(output_dir, "resolve")
+        )
+        self.assertEqual(len(issues), 1)
+
+    def test9(self) -> None:
+        """
+        Test the old flag `--output` is rejected, not read as `--output_dir`.
+        """
+        # Prepare inputs.
+        scratch = self.get_scratch_space()
+        input_csv = self.make_input_csv(["Unknown Title"])
+        argv = [f"--input={input_csv}", f"--output={scratch}/papers.csv"]
+        # Run test.
+        with self.assertRaises(SystemExit):
+            self.run_main(argv, epqteuti.FakeBibSources())
+        # Check outputs.
+        self.assertFalse(os.path.exists(os.path.join(scratch, "papers.csv")))

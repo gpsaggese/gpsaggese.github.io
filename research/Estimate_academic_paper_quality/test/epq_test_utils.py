@@ -18,12 +18,13 @@ import os
 import stat
 import sys
 import threading
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import helpers.hio as hio
 import pymupdf
 
 import research.Estimate_academic_paper_quality.epq_bib_sources as epqbibso
+import research.Estimate_academic_paper_quality.epq_paths as epqpaths
 import research.Estimate_academic_paper_quality.epq_types as epqtypes
 
 _LOG = logging.getLogger(__name__)
@@ -122,6 +123,40 @@ def make_paper(
     )
 
 
+def make_issue(*, stage: str, status: str) -> epqtypes.Issue:
+    """
+    Build the issue of a paper, with no line and no candidate.
+
+    :param stage: stage of the issue, e.g., `download`
+    :param status: status of the issue, e.g., `download_failed`
+    :return: issue
+    """
+    return epqtypes.Issue(
+        line_no=1,
+        input="x",
+        base_name="p1",
+        stage=stage,
+        status=status,
+        reason="r",
+        candidates=(),
+    )
+
+
+def read_summary(output_dir: str, stage: str) -> str:
+    """
+    Read the summary file of a stage, with the output dir shortened to `out`.
+
+    The output dir is in the scratch space, which changes at each run.
+
+    :param output_dir: dir of all the outputs of the run
+    :param stage: one of `resolve`, `download`, `extract`, `rate`, `report`
+    :return: text of the summary, without the final newline
+    """
+    path = epqpaths.get_summary_path(output_dir, stage)
+    text = hio.from_file(path).replace(output_dir, "out")
+    return text.rstrip("\n")
+
+
 def make_facts() -> epqtypes.ExtractedFacts:
     """
     Build the facts of a paper with one Sharpe ratio.
@@ -168,11 +203,29 @@ def make_quality(*, rating: Optional[int] = 4) -> epqtypes.QualityRating:
     )
 
 
+def make_affiliation(
+    *, institution: str = "Harvard University", kind: str = "university"
+) -> epqtypes.Affiliation:
+    """
+    Build the affiliation of one author.
+
+    :param institution: top-level institution as written in the paper
+    :param kind: kind of institution
+    :return: affiliation, with verified evidence
+    """
+    return epqtypes.Affiliation(
+        author="Lauren Cohen",
+        institution=institution,
+        kind=kind,
+        evidence=make_evidence(quote=institution, location="byline"),
+    )
+
+
 def make_paper_features(
     *, base_name: str = "2020.Cohen_et_al.Lazy_Prices"
 ) -> epqtypes.PaperFeatures:
     """
-    Build the features of a paper.
+    Build the features of a paper, with one affiliation and 12 pages.
 
     :return: features
     """
@@ -186,7 +239,8 @@ def make_paper_features(
             "mechanism": make_feature("associational"),
         },
         facts=make_facts(),
-        quality=make_quality(),
+        affiliations=(make_affiliation(),),
+        n_pages=12,
         provenance=epqtypes.Provenance(
             model="test-model",
             prompt_sha1="abc",
@@ -195,6 +249,49 @@ def make_paper_features(
             cost_usd=0.04,
         ),
     )
+
+
+def make_llm_payload() -> Dict[str, Any]:
+    """
+    Build the answer of the fake LLM for the paper `Lazy Prices`.
+
+    The quote of `mechanism` is not in the PDF, so it stays unverified.
+
+    :return: dict that the structured answer of the extractor accepts
+    """
+    unknown: Dict[str, Any] = {"value": "unknown", "evidence": None}
+    evidence = {"quote": "Sharpe ratio of 1.4", "section": "Table 4"}
+    return {
+        "performance": {"value": "Sharpe 1.4", "evidence": evidence},
+        "asset_class": {
+            "value": "US equities",
+            "evidence": {"quote": "CRSP stocks", "section": "Sec. 2"},
+        },
+        "theoretical_domain": unknown,
+        "mechanism": {
+            "value": "associational",
+            "evidence": {"quote": "made up quote", "section": "Sec. 5"},
+        },
+        "sharpe_ratios": [
+            {"label": "out of sample", "value": "1.4", "evidence": evidence}
+        ],
+        "annual_returns": [],
+        "volatilities": [],
+        "max_drawdowns": [],
+        "sample_periods": [],
+        "universe": unknown,
+        "data_assets": unknown,
+        "data_frequency": unknown,
+        "data_fields": unknown,
+        "affiliations": [
+            {
+                "author": "Lauren Cohen",
+                "institution": "Harvard University",
+                "kind": "university",
+                "evidence": {"quote": "Harvard University", "section": "byline"},
+            }
+        ],
+    }
 
 
 # #############################################################################

@@ -2,10 +2,19 @@
 Write and read every file that the pipeline keeps in the output dir.
 
 The files are:
-- `state/papers.json` and `state/issues.<stage>.json`: outputs of the stages
+- The input CSV: the list that the user writes, which `resolve_papers.py` reads: it
+  is the only CSV, and the pipeline never writes a CSV
+- `01-resolve.paper_list.json`: the papers that `resolve_papers.py` wrote
+- `NN-<stage>.issues.json`: issues of the stages `resolve`, `download`, `extract`,
+  and `rate`
+- `04-report.issues.json`: issues of every stage, in the same layout
 - `papers/<BASE>.features.json`: features of one paper, also the rerun cache of
   the `extract` stage
-- `references.md`, `report.csv`, and `issues.csv`: final outputs
+- `04-report.report.json`: one entry per rated paper
+- `04-report.references.md`: the references of all the resolved papers
+
+The names of the files are in `epq_paths.py`. Every JSON file holds a
+`schema_version` (decisions D31 and D34).
 
 The design is in `docs/02.7-design.report.md`.
 
@@ -34,36 +43,15 @@ _LOG = logging.getLogger(__name__)
 
 # Version of the layout of the JSON files. A file with another version is not
 # read: the user runs the stage again.
-_SCHEMA_VERSION = 1
+# - Version 2: the features file holds the affiliations and the page count, and
+#   the rating is in its own file.
+_SCHEMA_VERSION = 2
 
-# Columns of `report.csv`, in order.
-REPORT_COLUMNS = [
-    "reference",
-    "paper_quality",
-    "performance",
-    "recency",
-    "asset_class",
-    "theoretical_domain",
-    "mechanism",
-    "page_length_score",
-    "affiliation_score",
-    "citations_score",
-    "base_name",
-]
+# Name of the optional header column of the input CSV of `resolve_papers.py`.
+INPUT_COLUMN = "input"
 
-# Columns of `issues.csv`, in order.
-ISSUES_COLUMNS = [
-    "line_no",
-    "input",
-    "base_name",
-    "stage",
-    "status",
-    "reason",
-    "candidates",
-]
-
-# Order of the stages in `issues.csv`.
-_STAGE_ORDER = ["resolve", "download", "extract"]
+# Order of the stages in `04-report.issues.json`.
+_STAGE_ORDER = ["resolve", "download", "extract", "rate"]
 
 
 # #############################################################################
@@ -95,8 +83,10 @@ def _read_json(path: str) -> Dict[str, Any]:
     hdbg.dassert_eq(
         data.get("schema_version"),
         _SCHEMA_VERSION,
-        "File '%s' has an old schema: run the stage again with --force_extract "
-        "or delete the file",
+        "File '%s' has an old schema: run the stage again (`resolve_papers.py` "
+        "for the papers or the resolve issues, `extract_features.py "
+        "--force_extract` for a features file, `report_papers.py --action rate` "
+        "for a rating file) or delete the file",
         path,
     )
     return data
@@ -184,6 +174,22 @@ def _facts_from_dict(data: Dict[str, Any]) -> epqtypes.ExtractedFacts:
     return facts
 
 
+def _affiliation_from_dict(data: Dict[str, Any]) -> epqtypes.Affiliation:
+    """
+    Build an `Affiliation` from its JSON dict.
+
+    :param data: dict of the affiliation
+    :return: affiliation
+    """
+    affiliation = epqtypes.Affiliation(
+        author=data["author"],
+        institution=data["institution"],
+        kind=data["kind"],
+        evidence=_evidence_from_dict(data["evidence"]),
+    )
+    return affiliation
+
+
 def _signal_from_dict(data: Dict[str, Any]) -> epqtypes.SignalScore:
     """
     Build a `SignalScore` from its JSON dict.
@@ -217,31 +223,6 @@ def _quality_from_dict(data: Dict[str, Any]) -> epqtypes.QualityRating:
     return quality
 
 
-def _paper_from_dict(data: Dict[str, Any]) -> epqtypes.Paper:
-    """
-    Build a `Paper` from its JSON dict.
-
-    :param data: dict of the paper
-    :return: paper
-    """
-    paper = epqtypes.Paper(
-        key=data["key"],
-        aliases=tuple(data["aliases"]),
-        line_nos=tuple(data["line_nos"]),
-        source=data["source"],
-        year=data["year"],
-        authors=tuple(data["authors"]),
-        title=data["title"],
-        doi=data["doi"],
-        arxiv_id=data["arxiv_id"],
-        s2_paper_id=data["s2_paper_id"],
-        reference=data["reference"],
-        base_name=data["base_name"],
-        download_inputs=tuple(data["download_inputs"]),
-    )
-    return paper
-
-
 def _issue_from_dict(data: Dict[str, Any]) -> epqtypes.Issue:
     """
     Build an `Issue` from its JSON dict.
@@ -262,38 +243,17 @@ def _issue_from_dict(data: Dict[str, Any]) -> epqtypes.Issue:
 
 
 # #############################################################################
-# State files
+# Issues of the stages
 # #############################################################################
-
-
-def write_papers(path: str, papers: List[epqtypes.Paper]) -> None:
-    """
-    Write the output of the `resolve` stage.
-
-    :param path: path of `state/papers.json`
-    :param papers: papers, in reverse chronological order
-    """
-    _write_json(path, {"papers": [dataclasses.asdict(p) for p in papers]})
-
-
-def read_papers(path: str) -> List[epqtypes.Paper]:
-    """
-    Read the output of the `resolve` stage.
-
-    :param path: path of `state/papers.json`
-    :return: papers, in the order they were written
-    """
-    data = _read_json(path)
-    papers = [_paper_from_dict(item) for item in data["papers"]]
-    return papers
 
 
 def write_issues(path: str, issues: List[epqtypes.Issue]) -> None:
     """
     Write the issues of one stage.
 
-    :param path: path of `state/issues.<stage>.json`
-    :param issues: issues of the stage
+    :param path: path of `NN-<stage>.issues.json`
+    :param issues: issues of the stage `resolve`, `download`, `extract`, or
+        `rate`
     """
     _write_json(path, {"issues": [dataclasses.asdict(i) for i in issues]})
 
@@ -302,7 +262,7 @@ def read_issues(path: str) -> List[epqtypes.Issue]:
     """
     Read the issues of one stage.
 
-    :param path: path of `state/issues.<stage>.json`
+    :param path: path of `NN-<stage>.issues.json`
     :return: issues of the stage
     """
     data = _read_json(path)
@@ -310,127 +270,13 @@ def read_issues(path: str) -> List[epqtypes.Issue]:
     return issues
 
 
-# #############################################################################
-# Features file
-# #############################################################################
-
-
-def write_features_file(path: str, features: epqtypes.PaperFeatures) -> None:
+def write_all_issues(path: str, issues: List[epqtypes.Issue]) -> None:
     """
-    Write the features file of one paper.
+    Write the issues of every stage, by stage and then by line number.
 
-    :param path: path of `papers/<BASE>.features.json`
-    :param features: features, facts, rating, and provenance of the paper
-    """
-    _write_json(path, dataclasses.asdict(features))
+    The layout is the one of `write_issues()`, so `read_issues()` reads the file.
 
-
-def read_features_file(path: str) -> epqtypes.PaperFeatures:
-    """
-    Read the features file of one paper.
-
-    :param path: path of `papers/<BASE>.features.json`
-    :return: features, facts, rating, and provenance of the paper
-    """
-    data = _read_json(path)
-    provenance = epqtypes.Provenance(**data["provenance"])
-    features = epqtypes.PaperFeatures(
-        base_name=data["base_name"],
-        features={
-            name: _feature_from_dict(item)
-            for name, item in data["features"].items()
-        },
-        facts=_facts_from_dict(data["facts"]),
-        quality=_quality_from_dict(data["quality"]),
-        provenance=provenance,
-    )
-    return features
-
-
-# #############################################################################
-# Final outputs
-# #############################################################################
-
-
-def _score_to_str(score: Optional[int]) -> str:
-    """
-    Convert a score or a rating to the text of a CSV cell.
-
-    :param score: whole number, or `None` if unknown
-    :return: the number, or `unknown`
-    """
-    return "unknown" if score is None else str(score)
-
-
-def build_report_rows(
-    papers: List[epqtypes.Paper],
-    features: Dict[str, epqtypes.PaperFeatures],
-) -> List[Dict[str, str]]:
-    """
-    Build the rows of `report.csv`, one per paper with a features file.
-
-    :param papers: papers in reverse chronological order
-    :param features: features of the papers, by base name
-    :return: rows in the order of `papers`
-    """
-    rows = []
-    for paper in papers:
-        if paper.base_name not in features:
-            # A paper with no features file is only in `issues.csv`.
-            continue
-        paper_features = features[paper.base_name]
-        quality = paper_features.quality
-        row = {
-            "reference": paper.reference,
-            "paper_quality": _score_to_str(quality.rating),
-            "performance": paper_features.features["performance"].value,
-            "recency": paper_features.features["recency"].value,
-            "asset_class": paper_features.features["asset_class"].value,
-            "theoretical_domain": paper_features.features[
-                "theoretical_domain"
-            ].value,
-            "mechanism": paper_features.features["mechanism"].value,
-            "page_length_score": _score_to_str(quality.page_length.score),
-            "affiliation_score": _score_to_str(quality.affiliation.score),
-            "citations_score": _score_to_str(quality.citations.score),
-            "base_name": paper.base_name,
-        }
-        rows.append(row)
-    return rows
-
-
-def _write_csv(
-    path: str, columns: List[str], rows: List[Dict[str, str]]
-) -> None:
-    """
-    Write rows to a CSV file in UTF-8.
-
-    :param path: path of the file, created with its dir
-    :param columns: names of the columns, in order
-    :param rows: rows with one value per column
-    """
-    hio.create_dir(os.path.dirname(path) or ".", incremental=True)
-    with open(path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=columns, quoting=csv.QUOTE_MINIMAL)
-        writer.writeheader()
-        writer.writerows(rows)
-
-
-def write_report(path: str, rows: List[Dict[str, str]]) -> None:
-    """
-    Write `report.csv`.
-
-    :param path: path of the file
-    :param rows: rows from `build_report_rows()`
-    """
-    _write_csv(path, REPORT_COLUMNS, rows)
-
-
-def write_issues_csv(path: str, issues: List[epqtypes.Issue]) -> None:
-    """
-    Write `issues.csv`, by stage and then by line number.
-
-    :param path: path of the file
+    :param path: path of `04-report.issues.json`
     :param issues: issues of every stage
     """
     ordered = sorted(
@@ -443,19 +289,202 @@ def write_issues_csv(path: str, issues: List[epqtypes.Issue]) -> None:
             i.base_name,
         ),
     )
-    rows = [
+    write_issues(path, ordered)
+
+
+# #############################################################################
+# Papers file
+# #############################################################################
+
+
+def _paper_from_dict(data: Dict[str, Any]) -> epqtypes.Paper:
+    """
+    Build a `Paper` from its JSON dict.
+
+    :param data: dict of the paper
+    :return: paper, with a tuple for each list
+    """
+    paper = epqtypes.Paper(
+        key=data["key"],
+        aliases=tuple(data["aliases"]),
+        line_nos=tuple(data["line_nos"]),
+        source=data["source"],
+        year=data["year"],
+        authors=tuple(data["authors"]),
+        title=data["title"],
+        doi=data["doi"],
+        arxiv_id=data["arxiv_id"],
+        s2_paper_id=data["s2_paper_id"],
+        reference=data["reference"],
+        base_name=data["base_name"],
+        download_inputs=tuple(data["download_inputs"]),
+    )
+    return paper
+
+
+def write_papers(path: str, papers: List[epqtypes.Paper]) -> None:
+    """
+    Write the papers file, the output of `resolve_papers.py`.
+
+    :param path: path of `01-resolve.paper_list.json`, created with its dir
+    :param papers: papers, in reverse chronological order
+    """
+    _write_json(path, {"papers": [dataclasses.asdict(p) for p in papers]})
+
+
+def read_papers(path: str) -> List[epqtypes.Paper]:
+    """
+    Read the papers file, the input of the stages after `resolve`.
+
+    :param path: path of `01-resolve.paper_list.json`
+    :return: papers, in the order of the file
+    """
+    data = _read_json(path)
+    papers = [_paper_from_dict(item) for item in data["papers"]]
+    return papers
+
+
+# #############################################################################
+# Features file
+# #############################################################################
+
+
+def write_features_file(path: str, features: epqtypes.PaperFeatures) -> None:
+    """
+    Write the features file of one paper.
+
+    :param path: path of `papers/<BASE>.features.json`
+    :param features: features, facts, affiliations, page count, and provenance
+        of the paper
+    """
+    _write_json(path, dataclasses.asdict(features))
+
+
+def read_features_file(path: str) -> epqtypes.PaperFeatures:
+    """
+    Read the features file of one paper.
+
+    :param path: path of `papers/<BASE>.features.json`
+    :return: features, facts, affiliations, page count, and provenance of the
+        paper
+    """
+    data = _read_json(path)
+    provenance = epqtypes.Provenance(**data["provenance"])
+    features = epqtypes.PaperFeatures(
+        base_name=data["base_name"],
+        features={
+            name: _feature_from_dict(item)
+            for name, item in data["features"].items()
+        },
+        facts=_facts_from_dict(data["facts"]),
+        affiliations=tuple(
+            _affiliation_from_dict(item) for item in data["affiliations"]
+        ),
+        n_pages=data["n_pages"],
+        provenance=provenance,
+    )
+    return features
+
+
+# #############################################################################
+# Rating file
+# #############################################################################
+
+
+def write_rating_file(path: str, quality: epqtypes.QualityRating) -> None:
+    """
+    Write the rating file of one paper.
+
+    :param path: path of `papers/<BASE>.rating.json`
+    :param quality: rating and the three signals behind it
+    """
+    _write_json(path, dataclasses.asdict(quality))
+
+
+def read_rating_file(path: str) -> epqtypes.QualityRating:
+    """
+    Read the rating file of one paper.
+
+    :param path: path of `papers/<BASE>.rating.json`
+    :return: rating and the three signals behind it
+    """
+    data = _read_json(path)
+    quality = _quality_from_dict(data)
+    return quality
+
+
+# #############################################################################
+# Final outputs
+# #############################################################################
+
+
+def build_report_rows(
+    papers: List[epqtypes.Paper],
+    features: Dict[str, epqtypes.PaperFeatures],
+    ratings: Dict[str, epqtypes.QualityRating],
+) -> List[Dict[str, Any]]:
+    r"""
+    Build the entries of `report.json`, one per paper with a features and a
+    rating file.
+
+    A rating or a score that is unknown is `None`, which `write_report()` writes
+    as `null`. The other values are the text of the features.
+
+    :param papers: papers in reverse chronological order
+    :param features: features of the papers, by base name
+    :param ratings: ratings of the papers, by base name
+    :return: entries in the order of `papers`, with the keys in this order
+        ```
         {
-            "line_no": str(issue.line_no),
-            "input": issue.input,
-            "base_name": issue.base_name,
-            "stage": issue.stage,
-            "status": issue.status,
-            "reason": issue.reason,
-            "candidates": "|".join(issue.candidates),
+          "reference": "2020, Cohen et al., \"Lazy Prices\" (https://...)",
+          "paper_quality": 3,
+          "performance": "Sharpe 1.4",
+          "recency": "2020",
+          "asset_class": "US equities",
+          "theoretical_domain": "unknown",
+          "mechanism": "associational",
+          "page_length_score": 1,
+          "affiliation_score": 3,
+          "citations_score": null,
+          "base_name": "2020.Cohen_et_al.Lazy_Prices"
         }
-        for issue in ordered
-    ]
-    _write_csv(path, ISSUES_COLUMNS, rows)
+        ```
+    """
+    rows = []
+    for paper in papers:
+        if paper.base_name not in features or paper.base_name not in ratings:
+            # A paper with no features or no rating file is only in
+            # `04-report.issues.json`.
+            continue
+        paper_features = features[paper.base_name]
+        quality = ratings[paper.base_name]
+        row = {
+            "reference": paper.reference,
+            "paper_quality": quality.rating,
+            "performance": paper_features.features["performance"].value,
+            "recency": paper_features.features["recency"].value,
+            "asset_class": paper_features.features["asset_class"].value,
+            "theoretical_domain": paper_features.features[
+                "theoretical_domain"
+            ].value,
+            "mechanism": paper_features.features["mechanism"].value,
+            "page_length_score": quality.page_length.score,
+            "affiliation_score": quality.affiliation.score,
+            "citations_score": quality.citations.score,
+            "base_name": paper.base_name,
+        }
+        rows.append(row)
+    return rows
+
+
+def write_report(path: str, rows: List[Dict[str, Any]]) -> None:
+    """
+    Write `report.json`.
+
+    :param path: path of `04-report.report.json`
+    :param rows: entries from `build_report_rows()`
+    """
+    _write_json(path, {"papers": rows})
 
 
 def write_references(path: str, papers: List[epqtypes.Paper]) -> None:
@@ -468,3 +497,39 @@ def write_references(path: str, papers: List[epqtypes.Paper]) -> None:
     hio.create_dir(os.path.dirname(path) or ".", incremental=True)
     lines = [f"- {paper.reference}" for paper in papers]
     hio.to_file(path, "\n".join(lines) + "\n")
+
+
+# #############################################################################
+# Input CSV written by the user
+# #############################################################################
+
+
+def read_input_csv(path: str) -> List[Tuple[int, str]]:
+    """
+    Read the input CSV of `resolve_papers.py`.
+
+    Each row is a title (with the authors in parentheses), a link, a DOI, or the
+    path of a local PDF. The header is optional:
+    - With no header, the text of the row is the entry. The cells of the row are
+      joined back with `,`, so a title with a comma stays whole.
+    - With a header that has a column `input`, the entry is that column. The
+      other columns are ignored.
+
+    A BOM written by a spreadsheet is skipped. An empty row is skipped.
+
+    :param path: path of the input CSV
+    :return: pairs `(row number, text)`, with the first row after the header (or
+        the first row, with no header) numbered 1
+    """
+    hdbg.dassert_file_exists(path)
+    with open(path, newline="", encoding="utf-8-sig") as f:
+        rows = [row for row in csv.reader(f) if row]
+    # Find the column `input` in the header, if there is one.
+    header = [cell.strip().lower() for cell in rows[0]] if rows else []
+    if INPUT_COLUMN in header:
+        col = header.index(INPUT_COLUMN)
+        texts = [row[col] if col < len(row) else "" for row in rows[1:]]
+    else:
+        texts = [",".join(row) for row in rows]
+    entries = list(enumerate(texts, start=1))
+    return entries

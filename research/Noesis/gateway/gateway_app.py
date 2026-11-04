@@ -20,10 +20,10 @@ from collections.abc import AsyncIterator, Mapping
 from typing import Optional
 
 import fastapi
-import helpers.hdbg as hdbg
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
+import helpers.hdbg as hdbg
 import research.Noesis.common.noesis_db as rnonodb
 import research.Noesis.common.noesis_seed as rnonosee
 import research.Noesis.common.noesis_settings as rnonoset
