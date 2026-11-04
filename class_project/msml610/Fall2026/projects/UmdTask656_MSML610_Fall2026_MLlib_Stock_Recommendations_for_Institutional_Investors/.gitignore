@@ -1,0 +1,4 @@
+# SEC 13F zips, extracted TSVs, and the holdings Parquet.
+# The notebook downloads these when they are missing.
+data/*
+!data/.gitkeep
