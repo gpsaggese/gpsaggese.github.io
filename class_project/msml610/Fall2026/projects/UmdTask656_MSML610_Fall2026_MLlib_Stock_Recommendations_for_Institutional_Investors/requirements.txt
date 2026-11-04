@@ -3,5 +3,8 @@ matplotlib
 numpy
 pandas
 pyspark==3.5.9
+# PySpark 3.5 still imports distutils. Python 3.12 does not ship it.
+# setuptools provides that module.
+setuptools==80.9.0
 seaborn
 tqdm

@@ -121,6 +121,7 @@ rfc3987-syntax            1.1.0
 rpds-py                   2026.9.1
 seaborn                   0.13.2
 Send2Trash                2.1.0
+setuptools                80.9.0
 six                       1.17.0
 soupsieve                 4.0.1
 stack-data                0.6.3
