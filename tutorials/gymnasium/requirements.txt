@@ -1,8 +1,1 @@
-ipywidgets
-matplotlib
-numpy
-pandas
-seaborn
-
-#gymnasium==1.3.0
-gymnasium[classic-control]==1.3.0
+../../class_project/project_template/requirements.txt
