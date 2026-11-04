@@ -60,8 +60,8 @@ import pandas as pd
 import sklearn
 import torch
 import transformers
-from transformers import CLIPModel, CLIPProcessor
 from IPython.display import display
+from transformers import CLIPModel, CLIPProcessor
 
 print("PyTorch:", torch.__version__)
 print("Transformers:", transformers.__version__)

@@ -21,7 +21,7 @@ _LOG = logging.getLogger(__name__)
 
 
 def init_loggers(notebook_log: logging.Logger) -> None:
-    #global _LOG
+    # global _LOG
     hnotebo.init_loggers(notebook_log, utils_log=_LOG)
 
 

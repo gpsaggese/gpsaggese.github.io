@@ -20,7 +20,7 @@ result = subprocess.run(
     [sys.executable, "-m", "pip", "check"],
     capture_output=True,
     text=True,
-    check=False
+    check=False,
 )
 print(result.stdout or result.stderr)
 if result.returncode != 0:
