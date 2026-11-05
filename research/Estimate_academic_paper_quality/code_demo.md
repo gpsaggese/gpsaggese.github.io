@@ -52,10 +52,13 @@
       04-report.report.json
       04-report.references.md
       04-report.summary.txt
-      papers/
+      paper_pdf/
           <BASE>.pdf
+      paper_md/
           <BASE>.md
+      paper_features/
           <BASE>.features.json
+      paper_rating/
           <BASE>.rating.json
       state/
           cache/
@@ -69,9 +72,10 @@
   | `01-resolve.paper_list.json`  | `resolve`             | The resolved papers, each with authors, DOI, `reference`, `links` |
   | `*.issues.json`               | each stage            | The papers that failed in the stage, with status, reason |
   | `*.summary.txt`               | each stage            | Counts and time of the stage, and the output files that it wrote |
-  | `papers/<BASE>.pdf`, `.md`    | `download`            | The paper and its markdown                               |
-  | `papers/<BASE>.features.json` | `extract`             | The features of the paper, each with a quote as evidence |
-  | `papers/<BASE>.rating.json`   | `rate`                | The rating from 1 to 5, and the signals behind it        |
+  | `paper_pdf/<BASE>.pdf`        | `download`            | The paper                                                |
+  | `paper_md/<BASE>.md`          | `download`            | The markdown of the paper                                |
+  | `paper_features/<BASE>.features.json` | `extract`     | The features of the paper, each with a quote as evidence |
+  | `paper_rating/<BASE>.rating.json` | `rate`            | The rating from 1 to 5, and the signals behind it        |
   | `04-report.report.json`       | `report`              | One row per paper or unresolved line, with its issue     |
   | `04-report.references.md`     | `report`              | One reference line per resolved paper                    |
   | `state/cache/`                | `resolve`, `report`   | The cache of the lookup answers                          |
@@ -96,7 +100,7 @@
   | `report`   |         5 |    3 |      2 | 2 `download.no_download_link` |
 
 - The 3 rated papers got the ratings 3, 4, and 5, e.g.,
-  `papers/2018.Bekaert_et_al.Good_Carry_Bad_Carry.rating.json` has the rating 5, from
+  `paper_rating/2018.Bekaert_et_al.Good_Carry_Bad_Carry.rating.json` has the rating 5, from
   the page length score 5 (77 pages), the affiliation score 4, and no citations
 - The numbers can change with the internet and the LLM, but the files do not
 

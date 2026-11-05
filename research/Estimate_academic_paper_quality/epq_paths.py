@@ -23,10 +23,10 @@ output dir:
     04-report.report.json
     04-report.references.md
     04-report.summary.txt
-    papers/<BASE>.pdf
-    papers/<BASE>.md
-    papers/<BASE>.features.json
-    papers/<BASE>.rating.json
+    paper_pdf/<BASE>.pdf
+    paper_md/<BASE>.md
+    paper_features/<BASE>.features.json
+    paper_rating/<BASE>.rating.json
     state/cache/
     state/logs/
 ```
@@ -51,14 +51,44 @@ _STAGE_NUMBERS = {
 }
 
 
-def get_papers_dir(output_dir: str) -> str:
+def get_pdf_dir(output_dir: str) -> str:
     """
-    Get the dir of the PDF, markdown, features, and rating files of the papers.
+    Get the dir of the PDF files of the papers.
 
     :param output_dir: dir of all the outputs of a run
-    :return: `<output_dir>/papers`
+    :return: `<output_dir>/paper_pdf`
     """
-    return os.path.join(output_dir, "papers")
+    return os.path.join(output_dir, "paper_pdf")
+
+
+def get_markdown_dir(output_dir: str) -> str:
+    """
+    Get the dir of the markdown files of the papers.
+
+    :param output_dir: dir of all the outputs of a run
+    :return: `<output_dir>/paper_md`
+    """
+    return os.path.join(output_dir, "paper_md")
+
+
+def get_features_dir(output_dir: str) -> str:
+    """
+    Get the dir of the features files of the papers.
+
+    :param output_dir: dir of all the outputs of a run
+    :return: `<output_dir>/paper_features`
+    """
+    return os.path.join(output_dir, "paper_features")
+
+
+def get_rating_dir(output_dir: str) -> str:
+    """
+    Get the dir of the rating files of the papers.
+
+    :param output_dir: dir of all the outputs of a run
+    :return: `<output_dir>/paper_rating`
+    """
+    return os.path.join(output_dir, "paper_rating")
 
 
 def get_state_dir(output_dir: str) -> str:
@@ -97,9 +127,9 @@ def get_markdown_path(output_dir: str, base_name: str) -> str:
 
     :param output_dir: dir of all the outputs of a run
     :param base_name: base name of the paper
-    :return: `<output_dir>/papers/<BASE>.md`
+    :return: `<output_dir>/paper_md/<BASE>.md`
     """
-    return os.path.join(get_papers_dir(output_dir), f"{base_name}.md")
+    return os.path.join(get_markdown_dir(output_dir), f"{base_name}.md")
 
 
 def get_pdf_path(output_dir: str, base_name: str) -> str:
@@ -108,9 +138,9 @@ def get_pdf_path(output_dir: str, base_name: str) -> str:
 
     :param output_dir: dir of all the outputs of a run
     :param base_name: base name of the paper
-    :return: `<output_dir>/papers/<BASE>.pdf`
+    :return: `<output_dir>/paper_pdf/<BASE>.pdf`
     """
-    return os.path.join(get_papers_dir(output_dir), f"{base_name}.pdf")
+    return os.path.join(get_pdf_dir(output_dir), f"{base_name}.pdf")
 
 
 def get_features_path(output_dir: str, base_name: str) -> str:
@@ -119,9 +149,11 @@ def get_features_path(output_dir: str, base_name: str) -> str:
 
     :param output_dir: dir of all the outputs of a run
     :param base_name: base name of the paper
-    :return: `<output_dir>/papers/<BASE>.features.json`
+    :return: `<output_dir>/paper_features/<BASE>.features.json`
     """
-    return os.path.join(get_papers_dir(output_dir), f"{base_name}.features.json")
+    return os.path.join(
+        get_features_dir(output_dir), f"{base_name}.features.json"
+    )
 
 
 def get_rating_path(output_dir: str, base_name: str) -> str:
@@ -130,9 +162,9 @@ def get_rating_path(output_dir: str, base_name: str) -> str:
 
     :param output_dir: dir of all the outputs of a run
     :param base_name: base name of the paper
-    :return: `<output_dir>/papers/<BASE>.rating.json`
+    :return: `<output_dir>/paper_rating/<BASE>.rating.json`
     """
-    return os.path.join(get_papers_dir(output_dir), f"{base_name}.rating.json")
+    return os.path.join(get_rating_dir(output_dir), f"{base_name}.rating.json")
 
 
 def get_stage_path(output_dir: str, stage: str, name: str) -> str:

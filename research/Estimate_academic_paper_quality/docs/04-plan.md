@@ -80,13 +80,13 @@
   - [ ] `PR_R4`: written
   - [ ] `PR_P1`: written
 - `v0.2`: Papers on disk
-  - The `download` stage writes `papers/<BASE>.pdf` and `papers/<BASE>.md`, adds the
+  - The `download` stage writes `paper_pdf/<BASE>.pdf` and `paper_md/<BASE>.md`, adds the
     failed papers to `issues.csv`, and a rerun skips the converted papers
   - [ ] `PR_F2`: written
   - [ ] `PR_F3`: written
   - [ ] `PR_P2`: written
 - `v0.3`: Report of candidate strategies
-  - The `extract` stage writes `papers/<BASE>.features.json`, and `report.json` gives
+  - The `extract` stage writes `paper_features/<BASE>.features.json`, and `report.json` gives
     the features and the Paper quality rating of each converted paper
   - [ ] `PR_Q1`: written
   - [ ] `PR_Q2`: not started
@@ -166,7 +166,8 @@
 
 ### Goal
 
-- Own the files of each paper in `<output_dir>/papers/`, and read the PDF for the
+- Own the PDF and markdown files of each paper in `<output_dir>/paper_pdf/` and
+  `<output_dir>/paper_md/`, and read the PDF for the
   other components
 - Design:
   [`02.4-design.fetcher.md`](/research/Estimate_academic_paper_quality/docs/02.4-design.fetcher.md)

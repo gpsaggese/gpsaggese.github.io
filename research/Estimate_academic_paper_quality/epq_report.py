@@ -7,8 +7,8 @@ The files are:
 - `01-resolve.paper_list.json`: the papers that `resolve_papers.py` wrote
 - `NN-<stage>.issues.json`: issues of the stages `resolve`, `download`, `extract`,
   and `rate`
-- `papers/<BASE>.features.json`: features of one paper, also the rerun cache of
-  the `extract` stage
+- `paper_features/<BASE>.features.json`: features of one paper, also the rerun
+  cache of the `extract` stage
 - `04-report.report.json`: one row per paper or unresolved input line, with the
   issue of the row if there is one (decision D35)
 - `04-report.references.md`: the references of all the resolved papers
@@ -370,7 +370,7 @@ def write_features_file(path: str, features: epqtypes.PaperFeatures) -> None:
     """
     Write the features file of one paper.
 
-    :param path: path of `papers/<BASE>.features.json`
+    :param path: path of `paper_features/<BASE>.features.json`
     :param features: features, facts, affiliations, page count, and provenance
         of the paper
     """
@@ -381,7 +381,7 @@ def read_features_file(path: str) -> epqtypes.PaperFeatures:
     """
     Read the features file of one paper.
 
-    :param path: path of `papers/<BASE>.features.json`
+    :param path: path of `paper_features/<BASE>.features.json`
     :return: features, facts, affiliations, page count, and provenance of the
         paper
     """
@@ -412,7 +412,7 @@ def write_rating_file(path: str, quality: epqtypes.QualityRating) -> None:
     """
     Write the rating file of one paper.
 
-    :param path: path of `papers/<BASE>.rating.json`
+    :param path: path of `paper_rating/<BASE>.rating.json`
     :param quality: rating and the three signals behind it
     """
     _write_json(path, dataclasses.asdict(quality))
@@ -422,7 +422,7 @@ def read_rating_file(path: str) -> epqtypes.QualityRating:
     """
     Read the rating file of one paper.
 
-    :param path: path of `papers/<BASE>.rating.json`
+    :param path: path of `paper_rating/<BASE>.rating.json`
     :return: rating and the three signals behind it
     """
     data = _read_json(path)

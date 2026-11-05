@@ -101,7 +101,8 @@ def _write_converted_papers(output_dir: str, base_names: List[str]) -> None:
     :param output_dir: dir of all the outputs
     :param base_names: base names of the papers
     """
-    hio.create_dir(epqpaths.get_papers_dir(output_dir), incremental=True)
+    hio.create_dir(epqpaths.get_pdf_dir(output_dir), incremental=True)
+    hio.create_dir(epqpaths.get_markdown_dir(output_dir), incremental=True)
     for name in base_names:
         epqteuti.create_pdf(
             epqpaths.get_pdf_path(output_dir, name),
@@ -682,7 +683,7 @@ class Test__extract(hunitest.TestCase):
           Completed in total:     1 of 2
           Elapsed time: <TIME>
           Output files written in this run:
-            'out/papers/<BASE>.features.json': 1 file
+            'out/paper_features/<BASE>.features.json': 1 file
           Issues file: 'out/03-extract.issues.json' (1 issue)
             extraction_failed: 1
           LLM cost in this run: 0.0200 USD
@@ -762,7 +763,7 @@ class Test__extract(hunitest.TestCase):
           Completed in total:     0 of 1
           Elapsed time: <TIME>
           Output files written in this run:
-            'out/papers/<BASE>.features.json': 0 files
+            'out/paper_features/<BASE>.features.json': 0 files
           Issues file: 'out/03-extract.issues.json' (0 issues)
           LLM cost in this run: 0.0000 USD
           Summary file: 'out/03-extract.summary.txt'

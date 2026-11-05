@@ -13,7 +13,7 @@ the download inputs in order, and calls `download_academic_paper_to_md.py` on th
 first one that works. SSRN blocks scripted clients: the tool uses Chrome for it.
 
 The outputs live in `--output_dir`:
-- `papers/<BASE>.pdf` and `papers/<BASE>.md` for each paper
+- `paper_pdf/<BASE>.pdf` and `paper_md/<BASE>.md` for each paper
 - `02-download.issues.json`: the papers that failed, for `report_papers.py`
 - `02-download.summary.txt`: the counts, the output files, and the issues file of
   the run, the same text as the end of the log
@@ -94,7 +94,8 @@ def _download(
     :return: issues of the papers that failed
     """
     timer = htimer.Timer()
-    papers_dir = epqpaths.get_papers_dir(output_dir)
+    pdf_dir = epqpaths.get_pdf_dir(output_dir)
+    md_dir = epqpaths.get_markdown_dir(output_dir)
     log_dir = epqpaths.get_log_dir(output_dir)
     issues: List[epqtypes.Issue] = []
     n_downloads = 0
@@ -102,7 +103,7 @@ def _download(
     # Processed papers with a PDF: a failed conversion keeps the PDF.
     n_pdfs = 0
     for paper in tqdm.tqdm(papers):
-        if epqfetch.is_fetched(papers_dir, paper.base_name):
+        if epqfetch.is_fetched(pdf_dir, md_dir, paper.base_name):
             # A rerun does not download or convert a converted paper.
             _LOG.debug("Skip '%s': already fetched", paper.base_name)
             n_done_before += 1
@@ -118,7 +119,8 @@ def _download(
         try:
             result = epqfetch.fetch_paper(
                 paper,
-                papers_dir,
+                pdf_dir,
+                md_dir,
                 log_dir=log_dir,
                 tool_path=tool_path,
                 log_level=log_level,
@@ -231,7 +233,8 @@ def _main(parser: argparse.ArgumentParser) -> None:
     # Download the papers.
     papers = epqrepor.read_papers(papers_file)
     if not args.dry_run:
-        hio.create_dir(epqpaths.get_papers_dir(output_dir), incremental=True)
+        hio.create_dir(epqpaths.get_pdf_dir(output_dir), incremental=True)
+        hio.create_dir(epqpaths.get_markdown_dir(output_dir), incremental=True)
     _download(
         papers,
         output_dir,

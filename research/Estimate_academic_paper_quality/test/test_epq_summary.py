@@ -39,7 +39,7 @@ def _make_summary(
         n_no_input=n_no_input,
         n_ok=n_ok,
         n_failed=n_failed,
-        outputs=(("out/papers/<BASE>.pdf", 6), ("out/papers/<BASE>.md", 6)),
+        outputs=(("out/paper_pdf/<BASE>.pdf", 6), ("out/paper_md/<BASE>.md", 6)),
         issues_path="out/02-download.issues.json",
         issue_counts=issue_counts,
         extra=(),
@@ -205,8 +205,8 @@ class Test_format_stage_summary(hunitest.TestCase):
           Completed in total:     18 of 20
           Elapsed time: 1 min 15.3 sec
           Output files written in this run:
-            'out/papers/<BASE>.pdf': 6 files
-            'out/papers/<BASE>.md': 6 files
+            'out/paper_pdf/<BASE>.pdf': 6 files
+            'out/paper_md/<BASE>.md': 6 files
           Issues file: 'out/02-download.issues.json' (2 issues)
             download_failed: 1
             no_download_link: 1
@@ -227,7 +227,7 @@ class Test_format_stage_summary(hunitest.TestCase):
             n_no_input=2,
             n_ok=3,
             n_failed=0,
-            outputs=(("out/papers/<BASE>.features.json", 1),),
+            outputs=(("out/paper_features/<BASE>.features.json", 1),),
             issues_path="out/03-extract.issues.json",
             issue_counts=(),
             extra=("LLM cost in this run: 0.0600 USD",),
@@ -248,7 +248,7 @@ class Test_format_stage_summary(hunitest.TestCase):
           Completed in total:     3 of 5
           Elapsed time: 3.2 sec
           Output files written in this run:
-            'out/papers/<BASE>.features.json': 1 file
+            'out/paper_features/<BASE>.features.json': 1 file
           Issues file: 'out/03-extract.issues.json' (0 issues)
           LLM cost in this run: 0.0600 USD
           Summary file: 'out/03-extract.summary.txt'

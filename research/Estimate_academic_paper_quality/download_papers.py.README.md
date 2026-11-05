@@ -4,7 +4,7 @@
 - Input: the papers file that
   `research/Estimate_academic_paper_quality/resolve_papers.py` writes, by default
   `01-resolve.paper_list.json` in `--output_dir`
-- Output: `papers/<BASE>.pdf` and `papers/<BASE>.md` for each paper, and
+- Output: `paper_pdf/<BASE>.pdf` and `paper_md/<BASE>.md` for each paper, and
   `02-download.issues.json` with the papers that failed, in `--output_dir`
 - Run it after `research/Estimate_academic_paper_quality/resolve_papers.py` and
   before `research/Estimate_academic_paper_quality/extract_features.py`. A rerun
@@ -89,8 +89,9 @@
 
 - The layout of the whole output dir is in the section "Output Dir" of
   [`research/Estimate_academic_paper_quality/README.md`](/research/Estimate_academic_paper_quality/README.md#output-dir)
-- In `<output_dir>/papers/`: `<BASE>.pdf` and `<BASE>.md`, where `<BASE>` is
+- In `<output_dir>/paper_pdf/`: `<BASE>.pdf`, where `<BASE>` is
   `<Year>.<Author>.<Title>`
+- In `<output_dir>/paper_md/`: `<BASE>.md`, with the same `<BASE>`
 - `<output_dir>/02-download.issues.json`: the papers that failed, read by
   `research/Estimate_academic_paper_quality/report_papers.py`
 - `<output_dir>/state/logs/<BASE>.download.log`: the log of the download tool for

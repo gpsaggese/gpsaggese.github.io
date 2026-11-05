@@ -21,8 +21,8 @@ Stage `download` summary
   Completed in total:      18 of 20
   Elapsed time: 1 min 15.3 sec
   Output files written in this run:
-    '/out/papers/<BASE>.pdf': 6 files
-    '/out/papers/<BASE>.md': 6 files
+    '/out/paper_pdf/<BASE>.pdf': 6 files
+    '/out/paper_md/<BASE>.md': 6 files
   Issues file: '/out/02-download.issues.json' (2 issues)
     download_failed: 1
     no_download_link: 1

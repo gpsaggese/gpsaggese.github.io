@@ -616,7 +616,7 @@ class StageSummary:
         n_no_input=0,
         n_ok=6,
         n_failed=2,
-        outputs=(("run/papers/<BASE>.pdf", 6), ("run/papers/<BASE>.md", 6)),
+        outputs=(("run/paper_pdf/<BASE>.pdf", 6), ("run/paper_md/<BASE>.md", 6)),
         issues_path="run/02-download.issues.json",
         issue_counts=(("download_failed", 1), ("no_download_link", 1)),
         extra=(),

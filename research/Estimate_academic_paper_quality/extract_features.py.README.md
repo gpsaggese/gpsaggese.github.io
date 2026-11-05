@@ -5,7 +5,7 @@
   `research/Estimate_academic_paper_quality/resolve_papers.py` writes, by default
   `01-resolve.paper_list.json` in `--output_dir`, and the PDF and markdown files that
   `research/Estimate_academic_paper_quality/download_papers.py` writes
-- Output: `papers/<BASE>.features.json` for each paper, with the features, the facts,
+- Output: `paper_features/<BASE>.features.json` for each paper, with the features, the facts,
   the affiliations, the page count, and the cost of the call, and
   `03-extract.issues.json` with the papers that failed, in `--output_dir`
 - Run it after `research/Estimate_academic_paper_quality/download_papers.py` and
@@ -72,7 +72,7 @@
 
 - The layout of the whole output dir is in the section "Output Dir" of
   [`research/Estimate_academic_paper_quality/README.md`](/research/Estimate_academic_paper_quality/README.md#output-dir)
-- In `<output_dir>/papers/`: `<BASE>.features.json`, with a `schema_version`, the five
+- In `<output_dir>/paper_features/`: `<BASE>.features.json`, with a `schema_version`, the five
   features (`performance`, `recency`, `asset_class`, `theoretical_domain`, `mechanism`),
   the facts, the affiliations, `n_pages`, and the provenance (model, prompt hash,
   characters sent, cost in USD)
@@ -93,7 +93,7 @@
 - `0`: Success. Papers that fail do not change it: they are issues for
   `research/Estimate_academic_paper_quality/report_papers.py`
 - `1`: An assertion or an exception stopped the run, e.g., the papers file is not an
-  existing file, or `--output_dir` has no `papers/` dir
+  existing file, or `--output_dir` has no `paper_md/` dir
 - `2`: A missing required argument or an invalid flag
 
 ### Logging

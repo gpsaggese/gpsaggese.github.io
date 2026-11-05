@@ -51,9 +51,16 @@ in two keys "reference" and "urls"
 "links": "(https://doi.org/10.3905/jpm.2026.059 ???)"
 ```
 
-# [ ] Task13
+# [x] Task13
 
-Separate the pdfs and the features in dirs right below the output dir
+- [x] Separate the pdfs and the features in dirs right below the output dir
+  - Done: `paper_pdf/`, `paper_md/`, `paper_features/`, and `paper_rating/`, one
+    dir for each type of file (decision `D38`). The rating files have their own dir,
+    since the task did not name them
+  - The download tool writes the PDF and the markdown with the same base path, so
+    `epq_fetcher` runs it in `paper_pdf/` and moves the markdown to `paper_md/`
+  - A run dir made before has the files in `papers/`: move them as in `D38`, or the
+    stages `download` and `extract` do the work again
 
 Right now
 
@@ -66,6 +73,10 @@ After
     '/Users/saggese/src/umd_classes1/run_demo/paper_features/<BASE>.features.json': 0 files
     '/Users/saggese/src/umd_classes1/run_demo/paper_pdf/<BASE>.pdf': 0 files
     '/Users/saggese/src/umd_classes1/run_demo/paper_md/<BASE>.md': 0 files
+
+# [ ] Task14
+- In research/Estimate_academic_paper_quality rename epq -> eapq everywhere in files
+  and code
 
 # [x] Task 1
 - [x] Task 1: Separate the code to perform the resolution into a single executable

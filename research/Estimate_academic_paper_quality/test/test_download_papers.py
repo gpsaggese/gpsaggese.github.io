@@ -78,8 +78,8 @@ class Test__download(hunitest.TestCase):
           Completed in total:     0 of 2
           Elapsed time: <TIME>
           Output files written in this run:
-            'out/papers/<BASE>.pdf': 0 files
-            'out/papers/<BASE>.md': 0 files
+            'out/paper_pdf/<BASE>.pdf': 0 files
+            'out/paper_md/<BASE>.md': 0 files
           Issues file: 'out/02-download.issues.json' (2 issues)
             download_failed: 1
             no_download_link: 1
@@ -132,7 +132,7 @@ class Test__download(hunitest.TestCase):
         self.assertEqual(len(hio.from_file(calls_path).split("\n")), n_calls)
         # The first summary has the paper as completed, the second as done before.
         self.assertIn("Completed successfully: 1", first_summary)
-        self.assertIn("'out/papers/<BASE>.md': 1 file\n", first_summary)
+        self.assertIn("'out/paper_md/<BASE>.md': 1 file\n", first_summary)
         expected_rerun_summary = """
         Stage `download` summary
           Papers in input:        1
@@ -143,8 +143,8 @@ class Test__download(hunitest.TestCase):
           Completed in total:     1 of 1
           Elapsed time: <TIME>
           Output files written in this run:
-            'out/papers/<BASE>.pdf': 0 files
-            'out/papers/<BASE>.md': 0 files
+            'out/paper_pdf/<BASE>.pdf': 0 files
+            'out/paper_md/<BASE>.md': 0 files
           Issues file: 'out/02-download.issues.json' (0 issues)
           Summary file: 'out/02-download.summary.txt'
         """
@@ -260,7 +260,8 @@ class Test__download(hunitest.TestCase):
         # Prepare inputs.
         scratch = self.get_scratch_space()
         output_dir = os.path.join(scratch, "out")
-        hio.create_dir(epqpaths.get_papers_dir(output_dir), incremental=True)
+        hio.create_dir(epqpaths.get_pdf_dir(output_dir), incremental=True)
+        hio.create_dir(epqpaths.get_markdown_dir(output_dir), incremental=True)
         epqteuti.create_pdf(
             epqpaths.get_pdf_path(output_dir, "p1"), ["Sharpe ratio of 1.4"]
         )

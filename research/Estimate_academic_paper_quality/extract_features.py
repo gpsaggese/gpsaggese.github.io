@@ -17,7 +17,7 @@ library. The system prompt asks for a JSON answer in the shape of the pydantic
 class `_LlmExtraction`, and the script validates the answer with that class.
 
 The outputs live in `--output_dir`:
-- `papers/<BASE>.features.json` for each paper: the features, the facts, the
+- `paper_features/<BASE>.features.json` for each paper: the features, the facts, the
   affiliations, the page count, and the cost of the call
 - `03-extract.issues.json`: the papers that failed, for `report_papers.py`
 - `03-extract.summary.txt`: the counts, the output files, the issues file, and the
@@ -695,7 +695,7 @@ def _main(parser: argparse.ArgumentParser) -> None:
         papers_file, "Run resolve_papers.py to make the papers file"
     )
     hdbg.dassert_dir_exists(
-        epqpaths.get_papers_dir(output_dir),
+        epqpaths.get_markdown_dir(output_dir),
         "Run download_papers.py to make the papers",
     )
     hdbg.dassert_lt(0, args.max_chars)

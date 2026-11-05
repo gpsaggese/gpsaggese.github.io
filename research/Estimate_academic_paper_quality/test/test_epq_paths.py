@@ -87,7 +87,7 @@ class Test_stage_files(hunitest.TestCase):
     def test5(self) -> None:
         """
         Test the cache and the logs are in `state/`, and the files of a paper
-        are in `papers/` with no number.
+        are in one dir for each file type with no number.
         """
         # Run test.
         actual = [
@@ -102,9 +102,9 @@ class Test_stage_files(hunitest.TestCase):
         expected = [
             "run/state/cache",
             "run/state/logs",
-            "run/papers/p1.pdf",
-            "run/papers/p1.md",
-            "run/papers/p1.features.json",
-            "run/papers/p1.rating.json",
+            "run/paper_pdf/p1.pdf",
+            "run/paper_md/p1.md",
+            "run/paper_features/p1.features.json",
+            "run/paper_rating/p1.rating.json",
         ]
         self.assertEqual(actual, expected)

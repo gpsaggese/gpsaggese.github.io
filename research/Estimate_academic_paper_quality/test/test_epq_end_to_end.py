@@ -234,7 +234,10 @@ class Test_end_to_end(hunitest.TestCase):
             "04-report.references.md",
             "04-report.report.json",
             "04-report.summary.txt",
-            "papers",
+            "paper_features",
+            "paper_md",
+            "paper_pdf",
+            "paper_rating",
             "state",
         ]
         self.assertEqual(sorted(os.listdir(output_dir)), expected_files)

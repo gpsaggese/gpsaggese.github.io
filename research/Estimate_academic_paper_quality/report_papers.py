@@ -13,7 +13,7 @@ The input is the papers file that `resolve_papers.py` writes, by default
 
 The script has two stages, which talk through files:
 - `rate`: rate the quality of each paper from its page count, its affiliations,
-  and its citations, and write `papers/<BASE>.rating.json`,
+  and its citations, and write `paper_rating/<BASE>.rating.json`,
   `04-rate.issues.json`, and `04-rate.summary.txt`
 - `report`: write `04-report.references.md`, `04-report.report.json`, and
   `04-report.summary.txt`

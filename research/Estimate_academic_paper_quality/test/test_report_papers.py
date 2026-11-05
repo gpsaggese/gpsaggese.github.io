@@ -681,7 +681,7 @@ class Test__rate(hunitest.TestCase):
           Completed in total:     1 of 2
           Elapsed time: <TIME>
           Output files written in this run:
-            'out/papers/<BASE>.rating.json': 1 file
+            'out/paper_rating/<BASE>.rating.json': 1 file
           Issues file: 'out/04-rate.issues.json' (1 issue)
             rating_failed: 1
           Summary file: 'out/04-rate.summary.txt'

@@ -131,10 +131,13 @@
       04-report.report.json
       04-report.references.md
       04-report.summary.txt
-      papers/
+      paper_pdf/
           <BASE>.pdf
+      paper_md/
           <BASE>.md
+      paper_features/
           <BASE>.features.json
+      paper_rating/
           <BASE>.rating.json
       state/
           cache/
@@ -153,9 +156,10 @@
   | `NN-<stage>.summary.txt`      | Each stage                              | Counts of items, time, output files, and issues file of the run |
   | `04-report.report.json`       | `report_papers.py`                      | One row per paper or unresolved line, with its issue        |
   | `04-report.references.md`     | `report_papers.py`                      | The references of all the resolved papers                   |
-  | `papers/<BASE>.pdf`, `.md`    | `download_papers.py`                    | The paper and its markdown                                  |
-  | `papers/<BASE>.features.json` | `extract_features.py`                   | The features, facts, affiliations, and page count           |
-  | `papers/<BASE>.rating.json`   | `report_papers.py`                      | The rating and the three signals behind it                  |
+  | `paper_pdf/<BASE>.pdf`        | `download_papers.py`                    | The paper                                                   |
+  | `paper_md/<BASE>.md`          | `download_papers.py`                    | The markdown of the paper                                   |
+  | `paper_features/<BASE>.features.json` | `extract_features.py`           | The features, facts, affiliations, and page count           |
+  | `paper_rating/<BASE>.rating.json` | `report_papers.py`                  | The rating and the three signals behind it                  |
   | `state/cache/`                | `resolve_papers.py`, `report_papers.py` | The cache of the lookup answers                             |
   | `state/logs/`                 | `download_papers.py`                    | The log of the download tool for each paper                 |
 
@@ -166,8 +170,10 @@
   - Every file with data that the pipeline writes is JSON; the only CSV is the input
     list that the user writes, and `00-paper_list.csv` is a verbatim copy of it
     ([`D31`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d31-json-for-the-intermediate-files))
-  - The files of one paper are in `papers/` with no number, since their suffix says
-    the stage
+  - The files of one paper are in one dir for each type of file: `paper_pdf/`,
+    `paper_md/`, `paper_features/`, and `paper_rating/`. They have no number, since
+    the dir and the suffix say the stage
+    ([`D38`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d38-one-dir-for-each-type-of-file-of-a-paper))
   - `state/` holds only the cache and the logs, which are not results of a stage
   - In the docs, `report.json`, `issues.json`, and `references.md` are the short names
     of the three `04-report.*` files
@@ -233,7 +239,7 @@
 ### What It Does
 
 - Calls the LLM once per paper that has a markdown file and no features file, and
-  writes `papers/<BASE>.features.json`
+  writes `paper_features/<BASE>.features.json`
 - Checks every quote of the answer against the text of the PDF
 - Does not rate the paper, so a new tier list needs no new LLM call
 
@@ -257,7 +263,7 @@
 ### What It Does
 
 - Runs the stage `rate`: rates each paper from its page count, affiliations, and
-  citation count, and writes `papers/<BASE>.rating.json`
+  citation count, and writes `paper_rating/<BASE>.rating.json`
 - Runs the stage `report`: writes `04-report.references.md` and
   `04-report.report.json`
 - Makes no LLM call, and reads the Semantic Scholar key from

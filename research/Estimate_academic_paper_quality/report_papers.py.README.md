@@ -5,7 +5,7 @@
   `research/Estimate_academic_paper_quality/resolve_papers.py` writes, by default
   `01-resolve.paper_list.json` in `--output_dir`, and the features files that
   `research/Estimate_academic_paper_quality/extract_features.py` writes
-- Output: `papers/<BASE>.rating.json` for each paper, and `04-rate.issues.json`,
+- Output: `paper_rating/<BASE>.rating.json` for each paper, and `04-rate.issues.json`,
   `04-rate.summary.txt`, `04-report.report.json`, `04-report.references.md`, and
   `04-report.summary.txt` in `--output_dir`
 - Run it last. It has two stages, `rate` and `report`. The stage `rate` is free: it
@@ -91,7 +91,7 @@
 
 - The layout of the whole output dir is in the section "Output Dir" of
   [`research/Estimate_academic_paper_quality/README.md`](/research/Estimate_academic_paper_quality/README.md#output-dir)
-- In `<output_dir>/papers/`: `<BASE>.rating.json` for each paper with a features file:
+- In `<output_dir>/paper_rating/`: `<BASE>.rating.json` for each paper with a features file:
   the rating from 1 to 5 and the three signals behind it (`page_length`, `affiliation`,
   `citations`), each with its value, score, and note
 - `<output_dir>/04-rate.issues.json`: the papers that failed to rate

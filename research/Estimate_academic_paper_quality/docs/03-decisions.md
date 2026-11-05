@@ -368,6 +368,7 @@
     `NN-<stage>.issues.json`)
   - Amends
     [`D18`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d18-all-the-state-lives-in-the-output-dir)
+  - [`D38`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d38-one-dir-for-each-type-of-file-of-a-paper) replaced the one dir `papers/` with one dir for each type of file
 - **Status**: accepted
 
 ### `D30` (`--output_dir` for Several Files and `--output` for One)
@@ -619,6 +620,46 @@
     read with the message to run `resolve_papers.py` again. Run it on the same
     `--output_dir`: the stages `download` and `extract` skip the papers that are done.
     Then run `report_papers.py --action report` to write the new report
+- **Status**: accepted
+
+### `D38` (One Dir for Each Type of File of a Paper)
+
+- **Decision**: the files of the papers are in four dirs right below
+  `<output_dir>`, one for each type of file (task 13)
+  - `paper_pdf/<BASE>.pdf`
+  - `paper_md/<BASE>.md`
+  - `paper_features/<BASE>.features.json`
+  - `paper_rating/<BASE>.rating.json`
+  - The dir `papers/` is gone, and `epq_paths.get_papers_dir()` is replaced by
+    `get_pdf_dir()`, `get_markdown_dir()`, `get_features_dir()`, and
+    `get_rating_dir()`
+  - The task names the first three dirs. The rating file has its own dir
+    `paper_rating/` by the same rule, since it is a result of another stage
+  - `epq_fetcher.fetch_paper()` and `is_fetched()` take `pdf_dir` and `md_dir`.
+    The download tool writes `<BASE>.pdf` and `<BASE>.md` with the same base path, so
+    the fetcher runs it in `paper_pdf/` and moves the markdown to `paper_md/`
+- **Why**: a person who looks for the PDFs, or for the features of all the papers,
+  finds them in one dir and does not need to filter a mix of 4 file types by suffix;
+  a tool that reads one type of file takes the whole dir
+- **Alternatives**: keep `papers/` (the mix of 4 types); a dir for each paper (it
+  splits a type of file across many dirs); a dir `paper_features/` that also holds
+  the rating files (the rating is a result of the stage `rate`, and the features are
+  the cache of the stage `extract`)
+- **Consequences**:
+  - Amends
+    [`D29`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d29-numbered-stage-files-in-the-output-dir)
+  - A run dir made before this decision has the files in `papers/`, and a rerun does
+    not read them: the stages `download` and `extract` do the work again. To keep the
+    files, move them before the rerun:
+    ```bash
+    > cd <output_dir>
+    > mkdir paper_pdf paper_md paper_features paper_rating
+    > mv papers/*.pdf paper_pdf/
+    > mv papers/*.md paper_md/
+    > mv papers/*.features.json paper_features/
+    > mv papers/*.rating.json paper_rating/
+    ```
+  - The stage `extract` needs `paper_md/` and not `papers/`
 - **Status**: accepted
 
 ## Code Organization

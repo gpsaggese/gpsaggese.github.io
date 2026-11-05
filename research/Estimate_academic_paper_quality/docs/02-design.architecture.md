@@ -104,7 +104,7 @@ Container_Boundary(infra, "Infrastructure layer") {
 
 Container_Boundary(ext, "Shared leaf modules, existing tool, outputs") {
   Container_Ext(tool, "download_academic_paper_to_md.py", "", "Downloads a PDF and converts it to markdown")
-  ContainerDb(out, "output_dir", "Files", "NN-<stage>.* files, papers/, state/")
+  ContainerDb(out, "output_dir", "Files", "NN-<stage>.* files, paper_*/ dirs, state/")
   Container(types, "epq_types.py", "", "Dataclasses shared by all modules")
   Container(paths, "epq_paths.py", "", "Paths of the files that the scripts share")
   Container(issues, "epq_issues.py", "", "Builds the issue of a failed paper")
@@ -279,10 +279,10 @@ Rel(report, out, "JSON, markdown")
   and no markdown yet, and records the failures
 - `extract_features.py`: for each converted paper with no features file yet,
   `extractor` calls the LLM once, and `report` writes
-  `<output_dir>/papers/<BASE>.features.json` with the affiliations and the page count
+  `<output_dir>/paper_features/<BASE>.features.json` with the affiliations and the page count
 - `report_papers.py`, stage `rate`: for each paper with a features file, `bib_sources`
   gives the citation count, `rater` rates the paper, and `report` writes
-  `<output_dir>/papers/<BASE>.rating.json`
+  `<output_dir>/paper_rating/<BASE>.rating.json`
 - `report_papers.py`, stage `report`: `report` writes `04-report.references.md` and
   `04-report.report.json` from the issues files, the features files, and the rating
   files; the report has one row for each of the 20 papers and for each of the 2
@@ -305,7 +305,7 @@ Rel(report, out, "JSON, markdown")
 | [`R5`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r5-unresolved-or-ambiguous-line)    | `resolver`, `pipeline`            | `Issue` with status `unresolved` or `ambiguous` and candidates |
 | [`R6`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r6-duplicate-lines)                 | `resolver`                        | `_paper_key()` merges lines of the same paper                   |
 | [`R7`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r7-reverse-chronological-order)     | `resolver`, `report`              | `_sort_papers()`: year down, then author, then title            |
-| [`R8`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r8-pdf-and-markdown-files)          | `fetcher`                         | Runs the download tool into `<output_dir>/papers/`             |
+| [`R8`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r8-pdf-and-markdown-files)          | `fetcher`                         | Runs the download tool into `<output_dir>/paper_pdf/` and `<output_dir>/paper_md/` |
 | [`R9`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r9-file-base-name)                  | `resolver`, `fetcher`             | `format_base_filename()`, passed as `--output`                 |
 | [`R10`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r10-failed-download-or-conversion) | `fetcher`, `pipeline`             | `FetchResult` with the reason, the loop goes on                |
 | [`R11`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r11-rerun-skips-converted-papers)  | `fetcher`                         | `is_fetched()`: skip when `.pdf` and `.md` exist               |
@@ -345,10 +345,13 @@ Rel(report, out, "JSON, markdown")
       04-report.report.json        R18, R19
       04-report.references.md      R2, R7
       04-report.summary.txt        counts and files of report
-      papers/
+      paper_pdf/
         <BASE>.pdf                 R8
+      paper_md/
         <BASE>.md                  R8
+      paper_features/
         <BASE>.features.json       R20
+      paper_rating/
         <BASE>.rating.json         R16, R20
       state/
         cache/                     HTTP response cache
