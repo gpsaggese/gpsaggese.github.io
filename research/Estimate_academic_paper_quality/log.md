@@ -4,11 +4,12 @@
   - One shotting it is a terrible idea, since the same problem is everywhere
   - Much better to build / debug one chunk at the time
 - [ ] Rename all files as EAPQ
-- [ ] Debug the process docs/planning/all.plan_work.how_to_guide.md
+- [.] Debug the process docs/planning/all.plan_work.how_to_guide.md
 - [.] Debug pipeline
 - [ ] Read all the code top to bottom
-- [ ] Get QS key
-- [ ] Get Semantic Scholar key
+  - research/Estimate_academic_paper_quality/checklist-coding.review_code_dir.md
+- [x] Get QS key
+- [x] Get Semantic Scholar key
 - [.] Understand / build tutorial Semantic Scholar
   - tutorials/semantic_scholar/
 - [ ] Write paper papers/Causal_Analysis_for_Finance/paper.pdf

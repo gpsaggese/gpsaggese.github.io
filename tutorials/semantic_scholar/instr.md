@@ -141,12 +141,37 @@ Execute them in this order. Each skill follows its own `SKILL.md`.
   - [x] Pinned `!pip install -q requests==2.34.2 graphviz==0.21` cell
 - [x] Skill 3: `notebook.fix_logging` (`utils.init_loggers(_LOG)` in the last
       setup cell)
-- [.] Skill 4: `notebook.split_cells`
-- [ ] Verification
-  - [ ] Notebook and `.py` in sync
-  - [ ] Run in container without key
-  - [ ] Run in container with key (pass it with `docker run -e
-        SEMANTIC_SCHOLAR_API_KEY`, name only, so the value is never printed)
-  - [ ] Lint touched files per `.claude/rules.md`
-  - [ ] No key, no exact count, no `tmp.*` file in the output
-- [ ] `git add` the new files, do not commit
+- [x] Skill 4: `notebook.split_cells`
+- [x] Verification
+  - [x] Notebook and `.py` in sync (`jupytext --test` passes in the container)
+  - [x] Run in container without key: exit 0, 10 calls ended on `429` with a
+        clear warning and no crash
+  - [x] Run in container with key (`container run -e SEMANTIC_SCHOLAR_API_KEY`,
+        name only, so the value is never printed): exit 0
+    - [x] Also ran the `.ipynb` with `jupyter nbconvert --execute`: exit 0
+  - [x] Lint the Python files with `ruff format` and `ruff check`
+  - [x] No key, no exact count, and no `tmp.*` file in the output
+- [x] `git add` the new files, do not commit
+
+## Result
+
+### Done
+- Created `tutorials/semantic_scholar/` with the notebook, the paired `.py`, and
+  `semantic_scholar_utils.py`
+  - The Docker files come from `tutorials/project_template`, with
+    `IMAGE_NAME=umd_project_semantic_scholar`
+  - Parts 1 to 9 cover every endpoint of the task, each with a mental model
+    table, a runnable example, and a link to the official docs
+  - 18 live calls by design, 1 second apart, and a retry of 2, 4, 8, 16 seconds
+- Verified the endpoints against the official OpenAPI specs, since the docs page
+  answered `429`: `/graph/v1/swagger.json` and `/recommendations/v1/swagger.json`
+
+### Not done
+- `docker_bash.sh` and `docker_jupyter.sh` do **not** pass
+  `SEMANTIC_SCHOLAR_API_KEY` into the container, and I did not edit them
+  - The with-key run used `container run -e SEMANTIC_SCHOLAR_API_KEY` directly
+- Not verified against the docs page: the anchors of the doc links, the limits per
+  endpoint of a key and of the shared pool, and the key `citingPaperInfo` in the
+  answer of `/references` (all marked `TODO(gp): Check`)
+- Out of scope, so not added: the example notebook, the README, the blog post, and
+  unit tests

@@ -456,8 +456,8 @@ reference_items = references.get("data", [])
 print("keys=", sorted(references))
 print("item keys=", [sorted(item) for item in reference_items[:1]])
 display(pd.DataFrame([item["citedPaper"] for item in reference_items]))
-# Outcome: keys `data`, `next`, `offset`. Each item has the single key
-# `citedPaper`, and the table has 3 papers.
+# Outcome: keys `citingPaperInfo`, `data`, `next`, `offset`. Each item has the
+# single key `citedPaper`, and the table has 3 papers.
 
 # %% [markdown]
 # - Official docs of this endpoint:
