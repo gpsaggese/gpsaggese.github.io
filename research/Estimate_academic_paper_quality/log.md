@@ -7,7 +7,7 @@
 - [.] Debug the process docs/planning/all.plan_work.how_to_guide.md
 - [.] Debug pipeline
 - [ ] Read all the code top to bottom
-  - research/Estimate_academic_paper_quality/checklist-coding.review_code_dir.md
+  - research/Estimate_academic_paper_quality/code_tour.md
 - [x] Get QS key
 - [x] Get Semantic Scholar key
 - [.] Understand / build tutorial Semantic Scholar
