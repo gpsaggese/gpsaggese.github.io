@@ -14,8 +14,7 @@ import it. There is one action per executable, named after it:
 - `extract_features`: `extract_features.py` turns the markdown of each paper into
   `*.features.json`
 - `report_papers`: `report_papers.py` turns `*.features.json` into
-  `*.rating.json`, `04-report.report.json`, `04-report.references.md`, and
-  `04-report.issues.json`
+  `*.rating.json`, `04-report.report.json`, and `04-report.references.md`
 
 The actions are selected with `--action`, `--skip_action`, `--only_action`,
 `--clear_actions`, and `--all_actions`. The default is to run all of them, in the

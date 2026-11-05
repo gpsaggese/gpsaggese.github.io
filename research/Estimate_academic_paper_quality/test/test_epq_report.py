@@ -2,7 +2,6 @@ import dataclasses
 import json
 import logging
 import os
-from typing import List
 
 import helpers.hio as hio
 import helpers.hunit_test as hunitest
@@ -27,6 +26,21 @@ def _make_issue(
         stage=stage,
         status=status,
         reason=reason,
+        candidates=(),
+    )
+
+
+def _make_paper_issue(base_name: str, stage: str, status: str) -> epqtypes.Issue:
+    """
+    Build the issue of a paper on line 1.
+    """
+    return epqtypes.Issue(
+        line_no=1,
+        input="x",
+        base_name=base_name,
+        stage=stage,
+        status=status,
+        reason="r",
         candidates=(),
     )
 
@@ -241,41 +255,6 @@ class Test_papers_json(hunitest.TestCase):
 
 
 # #############################################################################
-# Test_all_issues_json
-# #############################################################################
-
-
-class Test_all_issues_json(hunitest.TestCase):
-    """
-    Test `write_all_issues()` and `read_issues()`.
-    """
-
-    def test1(self) -> None:
-        """
-        Test issues with and without candidates are read back equal.
-        """
-        # Prepare inputs.
-        path = os.path.join(self.get_scratch_space(), "issues.json")
-        issues = [
-            epqtypes.Issue(
-                line_no=1,
-                input="A title, with a comma",
-                base_name="",
-                stage="resolve",
-                status="ambiguous",
-                reason="2 different papers match the title",
-                candidates=("c1", "c2"),
-            ),
-            _make_issue(line_no=5, stage="resolve", status="unresolved"),
-        ]
-        epqrepor.write_all_issues(path, issues)
-        # Run test.
-        actual = epqrepor.read_issues(path)
-        # Check outputs.
-        self.assert_equal(str(actual), str(issues))
-
-
-# #############################################################################
 # Test_features_file
 # #############################################################################
 
@@ -394,7 +373,8 @@ class Test_report_json(hunitest.TestCase):
 
     def test1(self) -> None:
         """
-        Test a paper with no features file is not a row, and the order is kept.
+        Test a paper with no features file is a failed row, and the order is
+        kept.
         """
         # Prepare inputs.
         paper1 = epqteuti.make_paper(base_name="b1", year=2021)
@@ -407,29 +387,13 @@ class Test_report_json(hunitest.TestCase):
         ratings = {"b3": epqteuti.make_quality(), "b1": epqteuti.make_quality()}
         # Run test.
         rows = epqrepor.build_report_rows(
-            [paper1, paper2, paper3], features, ratings
+            [paper1, paper2, paper3], features, ratings, []
         )
         # Check outputs.
-        actual = [row["base_name"] for row in rows]
-        self.assertEqual(actual, ["b1", "b3"])
-
-    def test3(self) -> None:
-        """
-        Test a paper with a features file and no rating file is not a row.
-        """
-        # Prepare inputs.
-        paper1 = epqteuti.make_paper(base_name="b1")
-        paper2 = epqteuti.make_paper(base_name="b2")
-        features = {
-            "b1": epqteuti.make_paper_features(base_name="b1"),
-            "b2": epqteuti.make_paper_features(base_name="b2"),
-        }
-        ratings = {"b2": epqteuti.make_quality()}
-        # Run test.
-        rows = epqrepor.build_report_rows([paper1, paper2], features, ratings)
-        # Check outputs.
-        actual = [row["base_name"] for row in rows]
-        self.assertEqual(actual, ["b2"])
+        actual = [(row["base_name"], row["status"]) for row in rows]
+        self.assertEqual(actual, [("b1", "ok"), ("b2", "failed"), ("b3", "ok")])
+        self.assertIsNone(rows[1]["paper_quality"])
+        self.assertIsNone(rows[1]["issue"])
 
     def test2(self) -> None:
         """
@@ -439,17 +403,23 @@ class Test_report_json(hunitest.TestCase):
         # Prepare inputs.
         path = os.path.join(self.get_scratch_space(), "report.json")
         paper = epqteuti.make_paper(
-            reference='2020, Cohen et al., "Lazy, Prices" (???)'
+            reference='2020, Cohen et al., "Lazy, Prices" (???)',
+            line_nos=(3, 17),
         )
         features = {paper.base_name: epqteuti.make_paper_features()}
         ratings = {paper.base_name: epqteuti.make_quality()}
-        rows = epqrepor.build_report_rows([paper], features, ratings)
+        rows = epqrepor.build_report_rows([paper], features, ratings, [])
         # Prepare outputs.
         expected = r"""
         {
-          "schema_version": 2,
-          "papers": [
+          "schema_version": 3,
+          "rows": [
             {
+              "line_nos": [
+                3,
+                17
+              ],
+              "status": "ok",
               "reference": "2020, Cohen et al., \"Lazy, Prices\" (???)",
               "paper_quality": 4,
               "performance": "Sharpe 1.4, out of sample",
@@ -460,7 +430,8 @@ class Test_report_json(hunitest.TestCase):
               "page_length_score": 3,
               "affiliation_score": 5,
               "citations_score": null,
-              "base_name": "2020.Cohen_et_al.Lazy_Prices"
+              "base_name": "2020.Cohen_et_al.Lazy_Prices",
+              "issue": null
             }
           ]
         }
@@ -472,85 +443,124 @@ class Test_report_json(hunitest.TestCase):
         self.assert_equal(actual, expected, dedent=True)
         # The file is valid JSON and a score is a number, not a string.
         data = json.loads(actual)
-        self.assertEqual(data["papers"][0]["paper_quality"], 4)
-        self.assertIsNone(data["papers"][0]["citations_score"])
+        self.assertEqual(data["rows"][0]["paper_quality"], 4)
+        self.assertIsNone(data["rows"][0]["citations_score"])
 
-
-# #############################################################################
-# Test_write_all_issues
-# #############################################################################
-
-
-class Test_write_all_issues(hunitest.TestCase):
-    """
-    Test `epq_report.write_all_issues()`.
-    """
-
-    def test1(self) -> None:
+    def test3(self) -> None:
         """
-        Test issues are sorted by stage then line, and candidates are a list.
+        Test a paper with a features file and no rating file is a failed row
+        with the issue and no values.
         """
         # Prepare inputs.
-        path = os.path.join(self.get_scratch_space(), "issues.json")
-        issues: List[epqtypes.Issue] = [
-            _make_issue(line_no=2, stage="download", status="download_failed"),
+        paper1 = epqteuti.make_paper(base_name="b1")
+        paper2 = epqteuti.make_paper(base_name="b2")
+        features = {
+            "b1": epqteuti.make_paper_features(base_name="b1"),
+            "b2": epqteuti.make_paper_features(base_name="b2"),
+        }
+        ratings = {"b2": epqteuti.make_quality()}
+        issues = [_make_paper_issue("b1", "rate", "rating_missing")]
+        # Run test.
+        rows = epqrepor.build_report_rows(
+            [paper1, paper2], features, ratings, issues
+        )
+        # Check outputs.
+        actual = [(row["base_name"], row["status"]) for row in rows]
+        self.assertEqual(actual, [("b1", "failed"), ("b2", "ok")])
+        self.assertIsNone(rows[0]["performance"])
+        self.assertEqual(rows[0]["issue"]["status"], "rating_missing")
+
+    def test4(self) -> None:
+        """
+        Test an unresolved line is a row with no paper, after the papers.
+        """
+        # Prepare inputs.
+        paper = epqteuti.make_paper(base_name="b1")
+        features = {"b1": epqteuti.make_paper_features(base_name="b1")}
+        ratings = {"b1": epqteuti.make_quality()}
+        issues = [
             _make_issue(
-                line_no=5,
+                line_no=9,
                 stage="resolve",
                 status="unresolved",
-                input="A title, with a comma",
+                input="B title, with a comma",
             ),
-            _make_issue(line_no=1, stage="resolve", status="ambiguous"),
+            epqtypes.Issue(
+                line_no=4,
+                input="A title",
+                base_name="",
+                stage="resolve",
+                status="ambiguous",
+                reason="2 different papers match the title",
+                candidates=("c1", "c2"),
+            ),
         ]
-        issues[2] = epqtypes.Issue(
-            line_no=1,
-            input="x",
-            base_name="",
-            stage="resolve",
-            status="ambiguous",
-            reason="r",
-            candidates=("c1", "c2"),
-        )
-        # Prepare outputs.
-        expected = """
-        {
-          "schema_version": 2,
-          "issues": [
-            {
-              "line_no": 1,
-              "input": "x",
-              "base_name": "",
-              "stage": "resolve",
-              "status": "ambiguous",
-              "reason": "r",
-              "candidates": [
-                "c1",
-                "c2"
-              ]
-            },
-            {
-              "line_no": 5,
-              "input": "A title, with a comma",
-              "base_name": "",
-              "stage": "resolve",
-              "status": "unresolved",
-              "reason": "r",
-              "candidates": []
-            },
-            {
-              "line_no": 2,
-              "input": "x",
-              "base_name": "",
-              "stage": "download",
-              "status": "download_failed",
-              "reason": "r",
-              "candidates": []
-            }
-          ]
-        }
-        """
         # Run test.
-        epqrepor.write_all_issues(path, issues)
+        rows = epqrepor.build_report_rows([paper], features, ratings, issues)
         # Check outputs.
-        actual = hio.from_file(path)
-        self.assert_equal(actual, expected, dedent=True)
+        actual = [
+            (row["line_nos"], row["status"], row["reference"], row["base_name"])
+            for row in rows
+        ]
+        expected = [
+            ([1], "ok", paper.reference, "b1"),
+            ([4], "failed", "A title", None),
+            ([9], "failed", "B title, with a comma", None),
+        ]
+        self.assertEqual(actual, expected)
+        # The row has no value and has the issue, with the candidates as a list.
+        self.assertIsNone(rows[1]["paper_quality"])
+        expected_issue = {
+            "stage": "resolve",
+            "status": "ambiguous",
+            "reason": "2 different papers match the title",
+            "candidates": ["c1", "c2"],
+        }
+        self.assertEqual(rows[1]["issue"], expected_issue)
+
+    def test5(self) -> None:
+        """
+        Test a paper with values and an issue is a failed row with both.
+        """
+        # Prepare inputs.
+        paper = epqteuti.make_paper(base_name="b1")
+        features = {"b1": epqteuti.make_paper_features(base_name="b1")}
+        ratings = {"b1": epqteuti.make_quality()}
+        issues = [_make_paper_issue("b1", "download", "download_failed")]
+        # Run test.
+        rows = epqrepor.build_report_rows([paper], features, ratings, issues)
+        # Check outputs.
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["status"], "failed")
+        self.assertEqual(rows[0]["paper_quality"], 4)
+        self.assertEqual(rows[0]["issue"]["stage"], "download")
+
+    def test6(self) -> None:
+        """
+        Test the issue of the earliest stage is the one in the row of a paper.
+        """
+        # Prepare inputs.
+        paper = epqteuti.make_paper(base_name="b1")
+        issues = [
+            _make_paper_issue("b1", "rate", "rating_failed"),
+            _make_paper_issue("b1", "download", "download_failed"),
+        ]
+        # Run test.
+        rows = epqrepor.build_report_rows([paper], {}, {}, issues)
+        # Check outputs.
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["issue"]["status"], "download_failed")
+
+    def test7(self) -> None:
+        """
+        Test an issue of a paper that is not in the papers file is its own row.
+        """
+        # Prepare inputs.
+        issues = [_make_paper_issue("gone", "download", "download_failed")]
+        # Run test.
+        rows = epqrepor.build_report_rows([], {}, {}, issues)
+        # Check outputs.
+        actual = [
+            (row["line_nos"], row["status"], row["base_name"]) for row in rows
+        ]
+        self.assertEqual(actual, [([1], "failed", "gone")])

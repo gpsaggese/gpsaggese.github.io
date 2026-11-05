@@ -15,8 +15,8 @@ The script has two stages, which talk through files:
 - `rate`: rate the quality of each paper from its page count, its affiliations,
   and its citations, and write `papers/<BASE>.rating.json`,
   `04-rate.issues.json`, and `04-rate.summary.txt`
-- `report`: write `04-report.references.md`, `04-report.report.json`,
-  `04-report.issues.json`, and `04-report.summary.txt`
+- `report`: write `04-report.references.md`, `04-report.report.json`, and
+  `04-report.summary.txt`
 
 Each stage ends with a summary of its counts, its output files, and its issues
 file. The summary goes to the log and to the `summary.txt` file of the stage.
@@ -26,9 +26,10 @@ of the tier list `affiliation_tiers.yaml` or of the bands needs only a new run o
 this stage. The citation counts grow with time: use `--refresh_citations` to ask
 for fresh counts.
 
-The stage `report` also lists the issues of the other stages, which it reads from
-`01-resolve.issues.json`, `02-download.issues.json`, and `03-extract.issues.json`
-in `--output_dir`.
+The report has one row for each paper and for each unresolved input line, with the
+issue of the row if there is one. The stage `report` reads the issues of the other
+stages from `01-resolve.issues.json`, `02-download.issues.json`,
+`03-extract.issues.json`, and `04-rate.issues.json` in `--output_dir`.
 
 The design is in `research/Estimate_academic_paper_quality/docs/02-design.architecture.md`.
 
@@ -660,10 +661,11 @@ def _report(
     dry_run: bool,
 ) -> None:
     """
-    Write `references.md`, `report.json`, and `issues.json`.
+    Write `references.md` and `report.json`.
 
     The issues of every stage are read from the files in the output dir, so that
-    this stage can run alone.
+    this stage can run alone. `report.json` has one row for each paper and for
+    each unresolved line, with the issue of the row (decision D35).
 
     :param papers: papers from the papers file
     :param output_dir: dir of all the outputs of the run
@@ -674,8 +676,8 @@ def _report(
     resolve_issues_path = epqpaths.get_issues_path(output_dir, "resolve")
     if not os.path.isfile(resolve_issues_path):
         _LOG.warning(
-            "No issues file of `resolve_papers.py` at '%s': the issues file "
-            "lists no unresolved line",
+            "No issues file of `resolve_papers.py` at '%s': the report lists "
+            "no unresolved line",
             resolve_issues_path,
         )
     for stage in ["resolve", "download", "extract"]:
@@ -685,11 +687,12 @@ def _report(
     # Read the files of each paper that has them.
     files = _read_paper_files(papers, output_dir, rate_issues)
     issues.extend(files.issues)
-    rows = epqrepor.build_report_rows(papers, files.features, files.ratings)
+    rows = epqrepor.build_report_rows(
+        papers, files.features, files.ratings, issues
+    )
     if dry_run:
         _LOG.warning(
-            "[DRY_RUN] Would write `references.md`, `report.json`, and "
-            "`issues.json` in '%s'",
+            "[DRY_RUN] Would write `references.md` and `report.json` in '%s'",
             output_dir,
         )
     else:
@@ -697,24 +700,21 @@ def _report(
             epqpaths.get_references_path(output_dir), papers
         )
         epqrepor.write_report(epqpaths.get_report_path(output_dir), rows)
-        epqrepor.write_all_issues(
-            epqpaths.get_all_issues_path(output_dir), issues
-        )
-    # Summarize the stage: a paper with no row is only in `issues.json`.
+    # Summarize the stage: the issues are in the rows of `report.json`.
+    n_ok = sum(1 for row in rows if row["status"] == "ok")
     summary = epqtypes.StageSummary(
         stage="report",
-        unit="paper",
-        n_total=len(papers),
+        unit="row",
+        n_total=len(rows),
         n_done_before=0,
         n_no_input=0,
-        n_ok=len(rows),
-        n_failed=len(papers) - len(rows),
+        n_ok=n_ok,
+        n_failed=len(rows) - n_ok,
         outputs=(
             (epqpaths.get_references_path(output_dir), 1),
             (epqpaths.get_report_path(output_dir), 1),
-            (epqpaths.get_all_issues_path(output_dir), 1),
         ),
-        issues_path=epqpaths.get_all_issues_path(output_dir),
+        issues_path=epqpaths.get_report_path(output_dir),
         issue_counts=epqsumm.count_issues(issues, add_stage=True),
         extra=(),
         dry_run=dry_run,

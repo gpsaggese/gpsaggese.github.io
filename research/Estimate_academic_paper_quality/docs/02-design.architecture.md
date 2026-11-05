@@ -282,9 +282,10 @@ Rel(report, out, "JSON, markdown")
 - `report_papers.py`, stage `rate`: for each paper with a features file, `bib_sources`
   gives the citation count, `rater` rates the paper, and `report` writes
   `<output_dir>/papers/<BASE>.rating.json`
-- `report_papers.py`, stage `report`: `report` writes `04-report.references.md`,
-  `04-report.report.json`, and `04-report.issues.json` from the issues files, the
-  features files, and the rating files
+- `report_papers.py`, stage `report`: `report` writes `04-report.references.md` and
+  `04-report.report.json` from the issues files, the features files, and the rating
+  files; the report has one row for each of the 20 papers and for each of the 2
+  unresolved lines, with the issue of each failed row
 - Rerun with 5 new rows: `resolve_papers.py` hits the HTTP cache for the 22 old rows,
   `download_papers.py` and `extract_features.py` skip the 20 old papers, so only the
   new papers cost network time and LLM tokens; `report_papers.py` rates all the
@@ -313,8 +314,8 @@ Rel(report, out, "JSON, markdown")
 | [`R15`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r15-extracted-facts)               | `extractor`                       | `ExtractedFacts` with every labeled Sharpe ratio               |
 | [`R16`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r16-paper-quality-rating)          | `rater`, `bib_sources`, `fetcher` | Page count, affiliation tier, Semantic Scholar citations       |
 | [`R17`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r17-rerun-skips-extraction)        | `pipeline`, `report`              | Skip when the features file exists, unless `--force_extract`   |
-| [`R18`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r18-report-file)                    | `report`                          | `report.json`, one row per paper with a features file           |
-| [`R19`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r19-issues-file)                    | `report`                          | `issues.json` from the issues of every stage                   |
+| [`R18`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r18-report-file)                    | `report`                          | `report.json`, one row per paper or unresolved line            |
+| [`R19`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r19-issues-file)                    | `report`                          | the `issue` of each failed row of `report.json`                |
 | [`R20`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r20-features-file)                 | `report`                          | `<BASE>.features.json` next to the PDF, `<BASE>.rating.json`   |
 
 ## Configuration, Interfaces, and Known Limits
@@ -340,8 +341,7 @@ Rel(report, out, "JSON, markdown")
       03-extract.summary.txt       counts and files of extract
       04-rate.issues.json          issues of rate
       04-rate.summary.txt          counts and files of rate
-      04-report.report.json        R18
-      04-report.issues.json        R19
+      04-report.report.json        R18, R19
       04-report.references.md      R2, R7
       04-report.summary.txt        counts and files of report
       papers/

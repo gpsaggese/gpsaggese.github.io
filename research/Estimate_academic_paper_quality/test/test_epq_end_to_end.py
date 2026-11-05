@@ -163,9 +163,13 @@ class Test_end_to_end(hunitest.TestCase):
         # Prepare outputs.
         expected_report = r"""
         {
-          "schema_version": 2,
-          "papers": [
+          "schema_version": 3,
+          "rows": [
             {
+              "line_nos": [
+                1
+              ],
+              "status": "ok",
               "reference": "2020, Cohen et al., \"Lazy Prices\" (https://arxiv.org/pdf/2001.00001)",
               "paper_quality": 3,
               "performance": "Sharpe 1.4",
@@ -176,23 +180,31 @@ class Test_end_to_end(hunitest.TestCase):
               "page_length_score": 1,
               "affiliation_score": 3,
               "citations_score": 4,
-              "base_name": "2020.Cohen_et_al.Lazy_Prices"
-            }
-          ]
-        }
-        """
-        expected_issues = """
-        {
-          "schema_version": 2,
-          "issues": [
+              "base_name": "2020.Cohen_et_al.Lazy_Prices",
+              "issue": null
+            },
             {
-              "line_no": 2,
-              "input": "Unknown Title",
-              "base_name": "",
-              "stage": "resolve",
-              "status": "unresolved",
-              "reason": "no source has a paper titled 'Unknown Title'",
-              "candidates": []
+              "line_nos": [
+                2
+              ],
+              "status": "failed",
+              "reference": "Unknown Title",
+              "paper_quality": null,
+              "performance": null,
+              "recency": null,
+              "asset_class": null,
+              "theoretical_domain": null,
+              "mechanism": null,
+              "page_length_score": null,
+              "affiliation_score": null,
+              "citations_score": null,
+              "base_name": null,
+              "issue": {
+                "stage": "resolve",
+                "status": "unresolved",
+                "reason": "no source has a paper titled 'Unknown Title'",
+                "candidates": []
+              }
             }
           ]
         }
@@ -217,7 +229,6 @@ class Test_end_to_end(hunitest.TestCase):
             "03-extract.summary.txt",
             "04-rate.issues.json",
             "04-rate.summary.txt",
-            "04-report.issues.json",
             "04-report.references.md",
             "04-report.report.json",
             "04-report.summary.txt",
@@ -228,11 +239,6 @@ class Test_end_to_end(hunitest.TestCase):
         self.assert_equal(
             hio.from_file(epqpaths.get_report_path(output_dir)),
             expected_report,
-            dedent=True,
-        )
-        self.assert_equal(
-            hio.from_file(epqpaths.get_all_issues_path(output_dir)),
-            expected_issues,
             dedent=True,
         )
         self.assert_equal(

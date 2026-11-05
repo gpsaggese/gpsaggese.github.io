@@ -41,6 +41,8 @@
   claude> /text.criticize <project>/docs/02-design.architecture.md
   ```
 
+- `./helpers_root/.claude/skills/architecture.rules.md`
+
 ## Plan
   ```text
   claude> /project.create_plan research/Estimate_academic_paper_quality/docs/02-design.architecture.md

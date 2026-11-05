@@ -50,7 +50,6 @@
       04-rate.issues.json
       04-rate.summary.txt
       04-report.report.json
-      04-report.issues.json
       04-report.references.md
       04-report.summary.txt
       papers/
@@ -73,9 +72,8 @@
   | `papers/<BASE>.pdf`, `.md`    | `download`            | The paper and its markdown                               |
   | `papers/<BASE>.features.json` | `extract`             | The features of the paper, each with a quote as evidence |
   | `papers/<BASE>.rating.json`   | `rate`                | The rating from 1 to 5, and the signals behind it        |
-  | `04-report.report.json`       | `report`              | One entry per rated paper, with its features and scores  |
+  | `04-report.report.json`       | `report`              | One row per paper or unresolved line, with its issue     |
   | `04-report.references.md`     | `report`              | One reference line per resolved paper                    |
-  | `04-report.issues.json`       | `report`              | The issues of all the stages                             |
   | `state/cache/`                | `resolve`, `report`   | The cache of the lookup answers                          |
   | `state/logs/`                 | `download`            | The log of the download tool for each paper              |
 

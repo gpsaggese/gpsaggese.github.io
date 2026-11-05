@@ -624,7 +624,7 @@ class StageSummary:
 
     # One of `resolve`, `download`, `extract`, `rate`, `report`.
     stage: str
-    # What the stage counts, `line` or `paper`.
+    # What the stage counts, `line`, `paper`, or `row` (of the report).
     unit: str
     # Items in the input of the stage.
     n_total: int

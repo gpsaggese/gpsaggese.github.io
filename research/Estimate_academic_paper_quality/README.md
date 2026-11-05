@@ -6,7 +6,8 @@
 - **Input**: a CSV with one paper per row, as a title, link, DOI, or local PDF
 - **Output**:
   - A papers file and an issues file from `resolve_papers.py`, both JSON
-  - `04-report.references.md`, `04-report.report.json`, and `04-report.issues.json`
+  - `04-report.references.md` and `04-report.report.json`, which has one row for each
+    paper and for each unresolved line, with the issue of a failed row
   - The PDF, markdown, features file, and rating file of each paper
   - All in one output dir, see "Output Dir" below
 - **Users**: quant researchers, who sort the JSON report to pick the next papers to replicate
@@ -92,8 +93,8 @@
      - Its arguments, its output files, and its exit codes are in
        `research/Estimate_academic_paper_quality/extract_features.py.README.md`
   4. `research/Estimate_academic_paper_quality/report_papers.py`
-     - Rates each paper, and writes `04-report.references.md`,
-       `04-report.report.json`, and `04-report.issues.json`
+     - Rates each paper, and writes `04-report.references.md` and
+       `04-report.report.json`
      - Its arguments, its output files, and its exit codes are in
        `research/Estimate_academic_paper_quality/report_papers.py.README.md`
 - The script `research/Estimate_academic_paper_quality/estimate_paper_quality.py`
@@ -128,7 +129,6 @@
       04-rate.issues.json
       04-rate.summary.txt
       04-report.report.json
-      04-report.issues.json
       04-report.references.md
       04-report.summary.txt
       papers/
@@ -151,8 +151,7 @@
   | `03-extract.issues.json`      | `extract_features.py`                   | The papers that failed to extract                           |
   | `04-rate.issues.json`         | `report_papers.py`                      | The papers that failed to rate                              |
   | `NN-<stage>.summary.txt`      | Each stage                              | Counts of items, output files, and issues file of the run   |
-  | `04-report.report.json`       | `report_papers.py`                      | One entry per rated paper, with its features and scores     |
-  | `04-report.issues.json`       | `report_papers.py`                      | The issues of all the stages                                |
+  | `04-report.report.json`       | `report_papers.py`                      | One row per paper or unresolved line, with its issue        |
   | `04-report.references.md`     | `report_papers.py`                      | The references of all the resolved papers                   |
   | `papers/<BASE>.pdf`, `.md`    | `download_papers.py`                    | The paper and its markdown                                  |
   | `papers/<BASE>.features.json` | `extract_features.py`                   | The features, facts, affiliations, and page count           |
@@ -259,8 +258,8 @@
 
 - Runs the stage `rate`: rates each paper from its page count, affiliations, and
   citation count, and writes `papers/<BASE>.rating.json`
-- Runs the stage `report`: writes `04-report.references.md`, `04-report.report.json`,
-  and `04-report.issues.json`
+- Runs the stage `report`: writes `04-report.references.md` and
+  `04-report.report.json`
 - Makes no LLM call, and reads the Semantic Scholar key from
   `SEMANTIC_SCHOLAR_API_KEY`
 
@@ -341,7 +340,7 @@ the examples above
    local PDF to a paper, edit its `download_inputs` in `01-resolve.paper_list.json`,
    and do not run step 1 again, since it writes that file again
 3. Run all the stages. The stage `download` needs Docker, and the SSRN papers also
-   need Chrome. The issues of step 1 go to `04-report.issues.json`
+   need Chrome. The issues of step 1 are failed rows of `04-report.report.json`
    ```bash
    > research/Estimate_academic_paper_quality/estimate_paper_quality.py \
        --input research/Estimate_academic_paper_quality/paper_list.csv \

@@ -7,14 +7,14 @@ The files are:
 - `01-resolve.paper_list.json`: the papers that `resolve_papers.py` wrote
 - `NN-<stage>.issues.json`: issues of the stages `resolve`, `download`, `extract`,
   and `rate`
-- `04-report.issues.json`: issues of every stage, in the same layout
 - `papers/<BASE>.features.json`: features of one paper, also the rerun cache of
   the `extract` stage
-- `04-report.report.json`: one entry per rated paper
+- `04-report.report.json`: one row per paper or unresolved input line, with the
+  issue of the row if there is one (decision D35)
 - `04-report.references.md`: the references of all the resolved papers
 
 The names of the files are in `epq_paths.py`. Every JSON file holds a
-`schema_version` (decisions D31 and D34).
+`schema_version` (decisions D31, D34, and D35).
 
 The design is in `docs/02.7-design.report.md`.
 
@@ -50,8 +50,28 @@ _SCHEMA_VERSION = 2
 # Name of the optional header column of the input CSV of `resolve_papers.py`.
 INPUT_COLUMN = "input"
 
-# Order of the stages in `04-report.issues.json`.
+# Version of the layout of `04-report.report.json`, which no stage reads. Decision
+# D35 changed it with no change to the other files, so that the features files
+# are not extracted again.
+# - Version 3: one row per paper or unresolved line, under the key `rows`, with
+#   the issue of the row.
+_REPORT_SCHEMA_VERSION = 3
+
+# Order of the stages, to choose the issue of a row that has many.
 _STAGE_ORDER = ["resolve", "download", "extract", "rate"]
+
+# Keys of a row with the values of the features and of the rating, in this order.
+_VALUE_KEYS = (
+    "paper_quality",
+    "performance",
+    "recency",
+    "asset_class",
+    "theoretical_domain",
+    "mechanism",
+    "page_length_score",
+    "affiliation_score",
+    "citations_score",
+)
 
 
 # #############################################################################
@@ -59,15 +79,18 @@ _STAGE_ORDER = ["resolve", "download", "extract", "rate"]
 # #############################################################################
 
 
-def _write_json(path: str, data: Dict[str, Any]) -> None:
+def _write_json(
+    path: str, data: Dict[str, Any], *, schema_version: int = _SCHEMA_VERSION
+) -> None:
     """
     Write a dict to a JSON file, with the schema version.
 
     :param path: path of the file, created with its dir
     :param data: content of the file
+    :param schema_version: version of the layout of the file
     """
     hio.create_dir(os.path.dirname(path) or ".", incremental=True)
-    data = {"schema_version": _SCHEMA_VERSION, **data}
+    data = {"schema_version": schema_version, **data}
     hio.to_file(path, json.dumps(data, indent=2, ensure_ascii=False) + "\n")
 
 
@@ -270,28 +293,6 @@ def read_issues(path: str) -> List[epqtypes.Issue]:
     return issues
 
 
-def write_all_issues(path: str, issues: List[epqtypes.Issue]) -> None:
-    """
-    Write the issues of every stage, by stage and then by line number.
-
-    The layout is the one of `write_issues()`, so `read_issues()` reads the file.
-
-    :param path: path of `04-report.issues.json`
-    :param issues: issues of every stage
-    """
-    ordered = sorted(
-        issues,
-        key=lambda i: (
-            _STAGE_ORDER.index(i.stage)
-            if i.stage in _STAGE_ORDER
-            else len(_STAGE_ORDER),
-            i.line_no,
-            i.base_name,
-        ),
-    )
-    write_issues(path, ordered)
-
-
 # #############################################################################
 # Papers file
 # #############################################################################
@@ -418,48 +419,64 @@ def read_rating_file(path: str) -> epqtypes.QualityRating:
 # #############################################################################
 
 
-def build_report_rows(
-    papers: List[epqtypes.Paper],
-    features: Dict[str, epqtypes.PaperFeatures],
-    ratings: Dict[str, epqtypes.QualityRating],
-) -> List[Dict[str, Any]]:
-    r"""
-    Build the entries of `report.json`, one per paper with a features and a
-    rating file.
-
-    A rating or a score that is unknown is `None`, which `write_report()` writes
-    as `null`. The other values are the text of the features.
-
-    :param papers: papers in reverse chronological order
-    :param features: features of the papers, by base name
-    :param ratings: ratings of the papers, by base name
-    :return: entries in the order of `papers`, with the keys in this order
-        ```
-        {
-          "reference": "2020, Cohen et al., \"Lazy Prices\" (https://...)",
-          "paper_quality": 3,
-          "performance": "Sharpe 1.4",
-          "recency": "2020",
-          "asset_class": "US equities",
-          "theoretical_domain": "unknown",
-          "mechanism": "associational",
-          "page_length_score": 1,
-          "affiliation_score": 3,
-          "citations_score": null,
-          "base_name": "2020.Cohen_et_al.Lazy_Prices"
-        }
-        ```
+def _get_stage_rank(stage: str) -> int:
     """
-    rows = []
-    for paper in papers:
-        if paper.base_name not in features or paper.base_name not in ratings:
-            # A paper with no features or no rating file is only in
-            # `04-report.issues.json`.
-            continue
-        paper_features = features[paper.base_name]
-        quality = ratings[paper.base_name]
-        row = {
-            "reference": paper.reference,
+    Get the position of a stage in the pipeline.
+
+    :param stage: one of `resolve`, `download`, `extract`, `rate`
+    :return: position, after the last stage if the stage is unknown
+    """
+    rank = (
+        _STAGE_ORDER.index(stage) if stage in _STAGE_ORDER else len(_STAGE_ORDER)
+    )
+    return rank
+
+
+def _pick_issue(
+    base_name: str, paper_issues: List[epqtypes.Issue]
+) -> Optional[epqtypes.Issue]:
+    """
+    Pick the issue to show in the row of a paper.
+
+    The row holds the issue of the earliest stage: the later stages often fail
+    because of it. The files `NN-<stage>.issues.json` keep all the issues.
+
+    :param base_name: base name of the paper, for the warning
+    :param paper_issues: issues of the paper, from all the stages
+    :return: issue of the earliest stage, `None` if the paper has no issue
+    """
+    issue = None
+    if paper_issues:
+        ordered = sorted(paper_issues, key=lambda i: _get_stage_rank(i.stage))
+        issue = ordered[0]
+        if len(ordered) > 1:
+            _LOG.warning(
+                "Paper '%s' has %s issues: the report shows only the one of the "
+                "stage `%s`",
+                base_name,
+                len(ordered),
+                issue.stage,
+            )
+    return issue
+
+
+def _get_values(
+    paper_features: Optional[epqtypes.PaperFeatures],
+    quality: Optional[epqtypes.QualityRating],
+) -> Optional[Dict[str, Any]]:
+    """
+    Get the values of the features and of the rating of a paper.
+
+    A score can be `None`, e.g., a paper with no citation count.
+
+    :param paper_features: features of the paper, `None` if it has none
+    :param quality: rating of the paper, `None` if it has none
+    :return: values by key of `_VALUE_KEYS`, `None` if the paper lacks the
+        features or the rating
+    """
+    values = None
+    if paper_features is not None and quality is not None:
+        values = {
             "paper_quality": quality.rating,
             "performance": paper_features.features["performance"].value,
             "recency": paper_features.features["recency"].value,
@@ -471,8 +488,146 @@ def build_report_rows(
             "page_length_score": quality.page_length.score,
             "affiliation_score": quality.affiliation.score,
             "citations_score": quality.citations.score,
-            "base_name": paper.base_name,
         }
+    return values
+
+
+def _make_row(
+    *,
+    line_nos: List[int],
+    reference: str,
+    base_name: Optional[str],
+    values: Optional[Dict[str, Any]],
+    issue: Optional[epqtypes.Issue],
+) -> Dict[str, Any]:
+    """
+    Build one row of `report.json`.
+
+    The row is `ok` if the paper has the values and no issue.
+
+    :param line_nos: lines of the input list that gave the row
+    :param reference: reference of the paper, or text of the unresolved line
+    :param base_name: base name of the paper, `None` if the line has no paper
+    :param values: values from `_get_values()`, `None` if the row has none
+    :param issue: issue of the row, `None` if there is none
+    :return: row, with the keys in the order of `build_report_rows()`
+    """
+    status = "ok" if values is not None and issue is None else "failed"
+    if values is None:
+        values = dict.fromkeys(_VALUE_KEYS)
+    issue_dict = None
+    if issue is not None:
+        issue_dict = {
+            "stage": issue.stage,
+            "status": issue.status,
+            "reason": issue.reason,
+            "candidates": list(issue.candidates),
+        }
+    row = {
+        "line_nos": line_nos,
+        "status": status,
+        "reference": reference,
+        **values,
+        "base_name": base_name,
+        "issue": issue_dict,
+    }
+    return row
+
+
+def build_report_rows(
+    papers: List[epqtypes.Paper],
+    features: Dict[str, epqtypes.PaperFeatures],
+    ratings: Dict[str, epqtypes.QualityRating],
+    issues: List[epqtypes.Issue],
+) -> List[Dict[str, Any]]:
+    r"""
+    Build the rows of `report.json`: one for each paper and one for each issue
+    that no paper owns, e.g., an unresolved line.
+
+    A row is `ok` if the paper has a features file, a rating file, and no issue.
+    Any other row is `failed`: it has the issue, and the values if the paper has
+    the two files. A rating or a score that is unknown is `None`, which
+    `write_report()` writes as `null`. The other values are the text of the
+    features.
+
+    :param papers: papers in reverse chronological order
+    :param features: features of the papers, by base name
+    :param ratings: ratings of the papers, by base name
+    :param issues: issues of all the stages
+    :return: rows of the papers in the order of `papers`, then the rows of the
+        other issues by line number, with the keys in this order
+        ```
+        {
+          "line_nos": [16],
+          "status": "ok",
+          "reference": "2020, Cohen et al., \"Lazy Prices\" (https://...)",
+          "paper_quality": 3,
+          "performance": "Sharpe 1.4",
+          "recency": "2020",
+          "asset_class": "US equities",
+          "theoretical_domain": "unknown",
+          "mechanism": "associational",
+          "page_length_score": 1,
+          "affiliation_score": 3,
+          "citations_score": null,
+          "base_name": "2020.Cohen_et_al.Lazy_Prices",
+          "issue": null
+        }
+        ```
+        and the row of an unresolved line
+        ```
+        {
+          "line_nos": [10],
+          "status": "failed",
+          "reference": "Monetary Policy Transmission",
+          "paper_quality": null,
+          "...": "...",
+          "citations_score": null,
+          "base_name": null,
+          "issue": {
+            "stage": "resolve",
+            "status": "unresolved",
+            "reason": "no candidate has a title like ...",
+            "candidates": []
+          }
+        }
+        ```
+    """
+    # Give each issue to the paper that it names, if the papers file has it.
+    paper_names = {paper.base_name for paper in papers}
+    issues_by_paper: Dict[str, List[epqtypes.Issue]] = {}
+    other_issues: List[epqtypes.Issue] = []
+    for issue in issues:
+        if issue.base_name in paper_names:
+            issues_by_paper.setdefault(issue.base_name, []).append(issue)
+        else:
+            other_issues.append(issue)
+    rows = []
+    for paper in papers:
+        row = _make_row(
+            line_nos=list(paper.line_nos),
+            reference=paper.reference,
+            base_name=paper.base_name,
+            values=_get_values(
+                features.get(paper.base_name), ratings.get(paper.base_name)
+            ),
+            issue=_pick_issue(
+                paper.base_name, issues_by_paper.get(paper.base_name, [])
+            ),
+        )
+        rows.append(row)
+    # Add a row for each issue that has no paper, e.g., an unresolved line.
+    other_issues = sorted(
+        other_issues, key=lambda i: (i.line_no, _get_stage_rank(i.stage))
+    )
+    for issue in other_issues:
+        row = _make_row(
+            line_nos=[issue.line_no],
+            reference=issue.input,
+            base_name=issue.base_name or None,
+            values=_get_values(None, None),
+            issue=issue,
+        )
         rows.append(row)
     return rows
 
@@ -482,9 +637,9 @@ def write_report(path: str, rows: List[Dict[str, Any]]) -> None:
     Write `report.json`.
 
     :param path: path of `04-report.report.json`
-    :param rows: entries from `build_report_rows()`
+    :param rows: rows from `build_report_rows()`
     """
-    _write_json(path, {"papers": rows})
+    _write_json(path, {"rows": rows}, schema_version=_REPORT_SCHEMA_VERSION)
 
 
 def write_references(path: str, papers: List[epqtypes.Paper]) -> None:

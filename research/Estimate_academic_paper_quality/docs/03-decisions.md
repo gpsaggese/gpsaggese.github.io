@@ -311,7 +311,8 @@
   `issues.json` gives
   ([`R19`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r19-issues-file))
 - **Alternatives**: one row per resolved paper, with `unknown` features
-- **Status**: proposed
+- **Status**: superseded by
+  [`D35`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d35-the-report-has-one-row-per-paper-or-unresolved-line-with-its-issue): a failed paper has a row, with its issue
 
 ### `D20` (The Normalized List Also Goes to `references.md`)
 
@@ -363,6 +364,8 @@
     read the old ones
   - In the docs, `report.json`, `issues.json`, and `references.md` are the short names of
     `04-report.report.json`, `04-report.issues.json`, and `04-report.references.md`
+    ([`D35`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d35-the-report-has-one-row-per-paper-or-unresolved-line-with-its-issue) removed `04-report.issues.json`: `issues.json` now names the files
+    `NN-<stage>.issues.json`)
   - Amends
     [`D18`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d18-all-the-state-lives-in-the-output-dir)
 - **Status**: accepted
@@ -401,9 +404,10 @@
   - CSV stays for the input list that the user writes (amended by
     [`D34`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d34-the-report-is-json):
     `04-report.report.json` was a CSV when this decision was made)
-  - `04-report.issues.json`, the issues of every stage, is JSON too (task 8): it has
+  - `04-report.issues.json`, the issues of every stage, was JSON too (task 8): it had
     the layout of the files `NN-<stage>.issues.json`, so `epq_report.read_issues()`
-    reads it and `write_all_issues()` writes it, sorted by stage and then by line
+    read it and `write_all_issues()` wrote it, sorted by stage and then by line
+    (removed by [`D35`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d35-the-report-has-one-row-per-paper-or-unresolved-line-with-its-issue): the issues are in the rows of `04-report.report.json`)
   - `epq_report.write_papers()` and `read_papers()` replace the functions of the papers
     CSV; `write_issues_csv()` and `read_issues_csv()` are removed
 - **Why**: a list (the authors, the aliases, the download inputs, the line numbers) is
@@ -458,7 +462,8 @@
 
 - **Decision**: `04-report.report.json` replaces `04-report.report.csv`: a JSON file
   with a `schema_version` and the key `papers`, which holds one entry per paper with a
-  features file and a rating file
+  features file and a rating file (the key and the rows changed with
+  [`D35`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d35-the-report-has-one-row-per-paper-or-unresolved-line-with-its-issue))
   - An entry has the keys that were the columns of the CSV, in the same order
   - An unknown rating or score is `null`, not the text `unknown`; a feature keeps its
     text, `unknown` included
@@ -484,6 +489,60 @@
     hand, since the pipeline never deletes a file
   - Amends
     [`D31`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d31-json-for-the-intermediate-files)
+- **Status**: accepted
+
+### `D35` (The Report Has One Row per Paper or Unresolved Line, with Its Issue)
+
+- **Decision**: `04-report.report.json` has one row for each paper and one row for
+  each issue that no paper owns, e.g., an unresolved line, under the key `rows`; the
+  file `04-report.issues.json` is removed (task 10)
+  - A row has the keys `line_nos`, `status`, `reference`, the nine values of
+    [`D34`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d34-the-report-is-json)
+    (`paper_quality` to `citations_score`), `base_name`, and `issue`
+  - `status` is `ok` for a paper with a features file, a rating file, and no issue;
+    any other row is `failed`. A failed row keeps the values if the paper has the
+    features file and the rating file, and the values are `null` if not
+  - `issue` has the keys `stage`, `status`, `reason`, and `candidates`, and is `null`
+    if no stage reported the row. A row that is `failed` with `issue: null` and no
+    value means that an earlier stage did not run for the paper
+  - `reference` is the reference of the paper, or, for a line that gave no paper, the
+    text of the line; `base_name` is `null` for such a line
+  - The rows of the papers come first, in the order of
+    [`R7`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r7-reverse-chronological-order),
+    then the rows of the other issues, by line number and stage
+  - A paper that the resolver merged from many input lines is one row, and
+    `line_nos` lists all the lines. So the rows cover every line of the input list
+  - A paper with many issues has the issue of the earliest stage in its row, and a
+    warning in the log; the files `NN-<stage>.issues.json` keep all of them
+  - The files `NN-<stage>.issues.json` stay: they are how the stages talk to `report`
+    ([`D26`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d26-the-resolver-is-a-separate-executable-that-reads-and-writes-csv))
+  - Only `04-report.report.json` has `schema_version` 3: the other files stay at 2, so
+    no features file needs a new LLM extraction
+  - The summary of the stage `report` counts rows, not papers, and its issues file is
+    `04-report.report.json`
+- **Why**: to learn what happened to a line of the input list, the user read two
+  files and joined them by hand; the counts did not match either (20 papers and 12
+  issues, since 2 issues are lines that are no paper); one file with one row per input
+  line answers "did this line work, and if not, why"
+- **Alternatives**: objects `rating` and `features` inside a row (the flat keys keep
+  the `jq` and `pandas.read_json()` use of
+  [`D34`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d34-the-report-is-json));
+  one row for each input line even when two lines are the same paper (the same data
+  twice, and a sum over the rows counts a paper twice); a `status` column in the old
+  report while `issues.json` stays (two files to join); a new `schema_version` for
+  every file (it forces the user to extract again with the LLM)
+- **Consequences**:
+  - Supersedes
+    [`D19`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d19-reportjson-has-a-row-only-for-a-paper-with-a-features-file),
+    and amends
+    [`D31`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d31-json-for-the-intermediate-files)
+    and
+    [`D34`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d34-the-report-is-json)
+  - `epq_report.write_all_issues()` and `epq_paths.get_all_issues_path()` are removed,
+    and `build_report_rows()` takes the issues
+  - A run dir made before this decision holds `04-report.issues.json` and a report
+    with the key `papers`: run `report_papers.py --action report` to write the new
+    report, and delete the old file by hand, since the pipeline never deletes a file
 - **Status**: accepted
 
 ## Code Organization

@@ -1208,3 +1208,66 @@
   - [15%]: GitHub Actions automations
 - _Not covered_
   - [25%]: canary analysis, automated rollback, production incident loops
+
+# Appendix
+
+## Skills to Chapters
+
+- Each row lists a skill from `.claude/skills/*/SKILL.md` that a chapter cites in
+  its `### Lesson Materials`
+- The percentage after each chapter is the coverage figure given in that chapter
+- Skills are sorted by name, so skills of one family sit together
+
+| Skill                                          | Chapters           | Description                                                                                          |
+| ---------------------------------------------- | ------------------ | ---------------------------------------------------------------------------------------------------- |
+| `architecture.write_design`                    | 12 (40%), 13 (45%) | Write the design docs of a project from its PRD, before the code                                     |
+| `auto_task.create_plan_for_feature`            | 12 (55%)           | Break a complex feature into an ordered PR plan, with a spec per complex PR                          |
+| `auto_task.create_specs_from_todos`            | 12 (40%)           | Create a plan for fixing a list of TODOs                                                             |
+| `auto_task.criticize`                          | 06 (20%), 12 (35%) | Review a plan or GitHub issue for an `auto_task` before execution                                    |
+| `auto_task.execute_interactively`              | 04 (35%)           | Execute a sequence of tasks in a loop "execute, review, commit"                                      |
+| `auto_task.execute_with_stacked_prs`           | 14 (40%)           | Execute a sequence of tasks as one stack of branches and PRs                                         |
+| `auto_task.restack`                            | 14 (30%)           | Propagate reviewed changes down an existing PR stack, keeping every PR mergeable                     |
+| `coding.annotate_with_todoai`                  | 04 (15%)           | Annotate file with TODOs based on the convention and rule violations                                 |
+| `coding.factor_common_code`                    | 13 (30%)           | Identify and refactor duplicated code into shared functions across Python files                      |
+| `coding.find_doc`                              | 10 (40%)           | Find and summarize documentation for a dir, file, class, or function                                 |
+| `coding.fix_comments`                          | 08 (25%)           | Update docstrings and comments in a Python file without changing logic                               |
+| `coding.fix_docstring`                         | 07 (20%), 08 (30%) | Fix Python Docstrings                                                                                |
+| `coding.fix_pyright`                           | 07 (25%), 11 (15%) | Run pyright on Python files and fix the reported lints                                               |
+| `coding.fix_type_hints`                        | 07 (30%)           | Fix type hints in a file to follow the typing module conventions                                     |
+| `coding.improve_code_for_humans`               | 10 (10%)           | Make the code more readable and debuggable                                                           |
+| `coding.make_function_private`                 | 13 (15%)           | Identify private or public functions in a file and rename with underscore                            |
+| `coding.todoai_gp`                             | 04 (20%)           | Implement TODO(ai_gp) items in a file: renames, code updates, references                             |
+| `coding_qa.review`                             | 09 (35%), 10 (20%) | Review Python files for bugs, suggest fixes, and provide test cases                                  |
+| `docker.shrink_container`                      | 15 (35%)           | Propose ways to shrink and speed up a Docker container, same behavior                                |
+| `docker.shrink_requirements`                   | 15 (25%)           | Find unused packages in requirements.txt not needed by the project code                              |
+| `docker.use_standard_style`                    | 15 (35%)           | Align Docker files in a project to the standard project template style                               |
+| `docs.add_content`                             | 08 (35%)           | Add content to the docs without redundancy and report skipped parts                                  |
+| `git.merge_conflicts`                          | 14 (20%)           | Resolve git merge, rebase, or cherry-pick conflicts and finalize the operation                       |
+| `github.create_child_pr`                       | 14 (25%)           | Write instructions to build a child PR from the current branch                                       |
+| `github.describe_pr_for_review`                | 09 (50%)           | Describe one or more PRs in a fixed format, score complexity and quality, and suggest a review order |
+| `github.get_pr_ready_to_merge`                 | 09 (20%), 16 (30%) | Get the current PR to a state where it can be reviewed and merged                                    |
+| `github.get_pr_to_pass_ci_tests`               | 11 (30%), 16 (40%) | Monitor GitHub CI checks for the current PR and fix any failures until they pass                     |
+| `github.get_pr_to_pass_local_tests`            | 11 (25%)           | Make the local unit tests pass for the current PR                                                    |
+| `github.split_branch_in_PRs`                   | 14 (40%)           | Split current Git changes into small, cohesive PRs to simplify merging                               |
+| `project.create_plan`                          | 12 (60%)           | Write the end-to-end plan of a project from its design docs                                          |
+| `project.update_progress`                      | 12 (40%)           | Update the plan, the log, and the decisions after a PR is merged                                     |
+| `project.write_prd`                            | 12 (50%)           | Turn an idea into a product requirements doc (PRD) for a project                                     |
+| `pytest.fix_ci_tests`                          | 11 (35%), 16 (35%) | Analyze and fix failure of tests in GitHub CI                                                        |
+| `pytest.fix_local_tests`                       | 11 (40%)           | Analyze and fix failure of local tests                                                               |
+| `readme_file.explain_code`                     | 08 (25%), 10 (45%) | Document a Python file's classes, functions, and relationships in markdown                           |
+| `readme_file.write_architecture`               | 10 (35%)           | Write architecture documentation for a Python file                                                   |
+| `rules.add`                                    | 02 (15%)           | Add a rule to the set of rules                                                                       |
+| `skill.add_architecture`                       | 13 (25%)           | Add a rule to the set of architecture rules                                                          |
+| `skill.auto_add`                               | 02 (25%)           | Update a skill or prompt using lessons learned from a file's Git history                             |
+| `skill.check_against_rules`                    | 02 (15%), 09 (30%) | Check a file against applicable convention rules and list violations                                 |
+| `skill.check_refs`                             | 02 (20%)           | Check the references in all the skill files                                                          |
+| `skill.consolidate_skills`                     | 02 (15%)           | Consolidate and rename skills by topic to remove redundancy                                          |
+| `skill.reorganize_rules`                       | 02 (15%)           | Reorganize the rules in a skill rules file                                                           |
+| `testing.fix_unit_tests`                       | 07 (25%)           | Apply the conventions usually not followed in the unit test                                          |
+| `testing.reach_coverage`                       | 07 (35%)           | Increase unit test coverage toward 100 percent for a function or file                                |
+| `testing.update_test_outcomes`                 | 11 (20%)           | Update the expected outcome of failing unit tests                                                    |
+| `testing.write_unit_tests`                     | 07 (40%)           | Propose a plan for unit testing a file and then implement it                                         |
+| `tutorial_in_60_mins.propagate_docker_changes` | 15 (15%)           | Sync tutorial and class-project Docker files to match project_template                               |
+
+- 48 of 165 skills map to a chapter (58 skill and chapter pairs)
+- The other skills are not cited by any chapter yet

@@ -6,8 +6,8 @@
   `01-resolve.paper_list.json` in `--output_dir`, and the features files that
   `research/Estimate_academic_paper_quality/extract_features.py` writes
 - Output: `papers/<BASE>.rating.json` for each paper, and `04-rate.issues.json`,
-  `04-rate.summary.txt`, `04-report.report.json`, `04-report.references.md`,
-  `04-report.issues.json`, and `04-report.summary.txt` in `--output_dir`
+  `04-rate.summary.txt`, `04-report.report.json`, `04-report.references.md`, and
+  `04-report.summary.txt` in `--output_dir`
 - Run it last. It has two stages, `rate` and `report`. The stage `rate` is free: it
   makes no LLM call, so a new tier list or a fresh citation count needs only a rerun
   of this script
@@ -98,17 +98,23 @@
 - `<output_dir>/04-rate.summary.txt` and `<output_dir>/04-report.summary.txt`: the
   summary of each stage, with the same text as the end of the log (the counts of
   papers, the output files, and the path of the issues file). A rerun overwrites
-  them. In the summary of `report`, `Completed successfully` is the number of papers
-  with an entry in `04-report.report.json`, and the issues are counted as
-  `<stage>.<status>`. See the section "Summary of a Stage" in
+  them. In the summary of `report`, the unit is the row of `04-report.report.json`:
+  `Completed successfully` is the number of `ok` rows, `Failed` is the number of
+  `failed` rows, and the issues are counted as `<stage>.<status>`. See the section "Summary of a Stage" in
   [`research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md`](/research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md)
 - In `<output_dir>`:
   - `04-report.references.md`: one bullet per paper, from the newest to the oldest
-  - `04-report.report.json`: the key `papers` is a list with one entry per paper with a
-    features file and a rating file, and the file has a `schema_version`. An entry
-    has the keys:
+  - `04-report.report.json`: the key `rows` is a list with one row per paper and one row
+    per input line that gave no paper, and the file has a `schema_version`. The rows
+    of the papers come first, from the newest to the oldest, then the other rows by
+    line number. A row has the keys:
+    - `line_nos`: the lines of the input list that gave the row, e.g., `[3, 17]` for a
+      paper that two lines name
+    - `status`: `ok` for a paper with a features file, a rating file, and no issue,
+      and `failed` for any other row
     - `reference`: the reference of the paper, e.g.,
-      `2020, Cohen et al., "Lazy Prices" (https://arxiv.org/pdf/2001.00001)`
+      `2020, Cohen et al., "Lazy Prices" (https://arxiv.org/pdf/2001.00001)`, or the
+      text of the line that gave no paper
     - `paper_quality`: the rating from 1 to 5, or `null` if it is unknown
     - `performance`: the reported performance, e.g., `Sharpe 1.4`
     - `recency`: the year of the paper, e.g., `2020`
@@ -118,12 +124,14 @@
     - `page_length_score`, `affiliation_score`, `citations_score`: the three signals,
       each a number from 1 to 5, or `null` if it is unknown
     - `base_name`: the base name of the paper files, e.g.,
-      `2020.Cohen_et_al.Lazy_Prices`
-  - `04-report.issues.json`: one item of `issues` per line or paper to fix, with the
-    keys `line_no`, `input`, `base_name`, `stage`, `status`, `reason`, and
-    `candidates` (a list), in the layout of the files `NN-<stage>.issues.json`. The
-    stages are `resolve`, `download`, `extract`, and `rate`: the items come from
-    those files, sorted by stage and then by line number
+      `2020.Cohen_et_al.Lazy_Prices`, or `null` for a line that gave no paper
+    - `issue`: `null` if the row has none, or an object with the keys `stage`
+      (`resolve`, `download`, `extract`, or `rate`), `status`, `reason`, and
+      `candidates` (a list). It comes from the files `NN-<stage>.issues.json`. A paper
+      with many issues has the one of the earliest stage, and the log has a warning
+    - The values from `paper_quality` to `citations_score` are `null` if the paper has
+      no features file or no rating file. A `failed` row with `issue` `null` and no
+      values means that an earlier stage did not run for the paper
 - The stage `rate` rates all the papers at each run, since the tier list and the
   citation counts can change. The HTTP answers of the citation lookups are cached in
   `state/cache/`
@@ -131,8 +139,9 @@
 
 ### Exit Codes
 
-- `0`: Success. Papers that fail do not change it: they are items of
-  `04-report.issues.json`. A missing `01-resolve.issues.json` does not change it
+- `0`: Success. Papers that fail do not change it: they are rows of
+  `04-report.report.json` with `status` `failed`. A missing `01-resolve.issues.json`
+  does not change it
 - `1`: An assertion or an exception stopped the run, e.g., the papers file is not an
   existing file
 - `2`: A missing required argument or an invalid flag
@@ -166,7 +175,8 @@
    the citations. A failure becomes an issue
 4. **`report`**: the script reads the features and rating files and the issues files
    `NN-<stage>.issues.json` of the other stages, then writes
-   `04-report.references.md`, `04-report.report.json`, and `04-report.issues.json`
+   `04-report.references.md` and `04-report.report.json`, with one row for each
+   paper and for each unresolved line
 
 ### Key Functions
 
@@ -184,9 +194,9 @@
     stage did not run
 - `_report(papers, output_dir, *, dry_run) -> None`
   - Collects the issues of the four stages with `_read_state_issues()`, reads the
-    files of each paper, and writes the three outputs
-- `epqpaths.get_issues_path()`, `get_references_path()`, `get_report_path()`,
-  `get_all_issues_path()`
+    files of each paper, builds the rows with `epqrepor.build_report_rows()`, and
+    writes the two outputs
+- `epqpaths.get_issues_path()`, `get_references_path()`, `get_report_path()`
   - Name the files of the stages, so that the writer and the reader of a file agree
     on the path
 - `_load_tiers(path) -> AffiliationTiers`

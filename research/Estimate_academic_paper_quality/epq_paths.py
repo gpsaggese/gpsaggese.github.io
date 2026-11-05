@@ -21,7 +21,6 @@ output dir:
     04-rate.issues.json
     04-rate.summary.txt
     04-report.report.json
-    04-report.issues.json
     04-report.references.md
     04-report.summary.txt
     papers/<BASE>.pdf
@@ -203,17 +202,6 @@ def get_report_path(output_dir: str) -> str:
     :return: `<output_dir>/04-report.report.json`
     """
     return get_stage_path(output_dir, "report", "report.json")
-
-
-def get_all_issues_path(output_dir: str) -> str:
-    """
-    Get the path of `issues.json` of the stage `report`, which holds the issues
-    of every stage.
-
-    :param output_dir: dir of all the outputs of a run
-    :return: `<output_dir>/04-report.issues.json`
-    """
-    return get_stage_path(output_dir, "report", "issues.json")
 
 
 def get_references_path(output_dir: str) -> str:

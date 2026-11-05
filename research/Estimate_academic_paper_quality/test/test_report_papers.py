@@ -775,7 +775,8 @@ class Test__report(hunitest.TestCase):
 
     def test1(self) -> None:
         """
-        Test a paper with a rating is a row and a paper without one is an issue.
+        Test a paper with a rating is an ok row and a paper without one is a
+        failed row with its issue.
         """
         # Prepare inputs.
         output_dir = os.path.join(self.get_scratch_space(), "out")
@@ -791,14 +792,16 @@ class Test__report(hunitest.TestCase):
         self.report(papers, output_dir)
         # Check outputs.
         report = json.loads(hio.from_file(epqpaths.get_report_path(output_dir)))
-        self.assertEqual([p["base_name"] for p in report["papers"]], ["p1"])
-        issues = epqrepor.read_issues(epqpaths.get_all_issues_path(output_dir))
-        actual = [(i.base_name, i.stage, i.status) for i in issues]
-        self.assertEqual(actual, [("p2", "rate", "rating_missing")])
+        actual = [(r["base_name"], r["status"]) for r in report["rows"]]
+        self.assertEqual(actual, [("p1", "ok"), ("p2", "failed")])
+        issue = report["rows"][1]["issue"]
+        self.assertEqual(
+            (issue["stage"], issue["status"]), ("rate", "rating_missing")
+        )
         # The summary counts the paper with no rating as failed.
         expected_summary = """
         Stage `report` summary
-          Papers in input:        2
+          Rows in input:          2
           Processed in this run:  2
           Completed successfully: 1
           Failed:                 1
@@ -806,8 +809,7 @@ class Test__report(hunitest.TestCase):
           Output files written in this run:
             'out/04-report.references.md': 1 file
             'out/04-report.report.json': 1 file
-            'out/04-report.issues.json': 1 file
-          Issues file: 'out/04-report.issues.json' (1 issue)
+          Issues file: 'out/04-report.report.json' (1 issue)
             rate.rating_missing: 1
           Summary file: 'out/04-report.summary.txt'
         """
@@ -816,7 +818,7 @@ class Test__report(hunitest.TestCase):
 
     def test2(self) -> None:
         """
-        Test a features file with an old schema is an issue in the report.
+        Test a features file with an old schema is a failed row in the report.
         """
         # Prepare inputs.
         output_dir = os.path.join(self.get_scratch_space(), "out")
@@ -828,15 +830,17 @@ class Test__report(hunitest.TestCase):
         # Run test.
         self.report([paper], output_dir)
         # Check outputs.
-        issues = hio.from_file(epqpaths.get_all_issues_path(output_dir))
-        self.assertIn("extraction_failed", issues)
-        self.assertIn("--force_extract", issues)
         report = json.loads(hio.from_file(epqpaths.get_report_path(output_dir)))
-        self.assertEqual(report["papers"], [])
+        self.assertEqual(len(report["rows"]), 1)
+        row = report["rows"][0]
+        self.assertEqual(row["status"], "failed")
+        self.assertIsNone(row["paper_quality"])
+        self.assertEqual(row["issue"]["status"], "extraction_failed")
+        self.assertIn("--force_extract", row["issue"]["reason"])
 
     def test3(self) -> None:
         """
-        Test a paper that failed to rate is one issue, not two.
+        Test a paper that failed to rate has one issue in its row, not two.
         """
         # Prepare inputs.
         output_dir = os.path.join(self.get_scratch_space(), "out")
@@ -859,9 +863,14 @@ class Test__report(hunitest.TestCase):
         # Run test.
         self.report([paper], output_dir)
         # Check outputs.
-        issues = epqrepor.read_issues(epqpaths.get_all_issues_path(output_dir))
-        actual = [(i.base_name, i.status) for i in issues]
+        report = json.loads(hio.from_file(epqpaths.get_report_path(output_dir)))
+        actual = [(r["base_name"], r["issue"]["status"]) for r in report["rows"]]
         self.assertEqual(actual, [("p1", "rating_failed")])
+        # The summary counts the issue once.
+        self.assertIn(
+            "Issues file: 'out/04-report.report.json' (1 issue)",
+            epqteuti.read_summary(output_dir, "report"),
+        )
 
     def test4(self) -> None:
         """
@@ -954,8 +963,8 @@ class Test_report_papers_py(hunitest.TestCase):
         self.run_main(argv, sources)
         # Check outputs.
         report = json.loads(hio.from_file(epqpaths.get_report_path(output_dir)))
-        self.assertEqual(len(report["papers"]), 1)
-        row = report["papers"][0]
+        self.assertEqual(len(report["rows"]), 1)
+        row = report["rows"][0]
         self.assertEqual(row["base_name"], "p1")
         self.assertEqual(
             (row["affiliation_score"], row["citations_score"]), (3, 4)
@@ -993,7 +1002,7 @@ class Test_report_papers_py(hunitest.TestCase):
 
     def test3(self) -> None:
         """
-        Test the issues of `resolve_papers.py` go to the issues JSON.
+        Test the issues of `resolve_papers.py` are failed rows in the report.
         """
         # Prepare inputs.
         papers_file = self.make_papers_file([epqteuti.make_paper()])
@@ -1016,32 +1025,44 @@ class Test_report_papers_py(hunitest.TestCase):
             "--clear_actions",
             "--action=report",
         ]
-        # Prepare outputs.
-        expected = """
-        {
-          "schema_version": 2,
-          "issues": [
+        # Prepare outputs: the paper has no features file, so it is a failed
+        # row with no issue, and the unresolved line is the row after it.
+        expected = [
             {
-              "line_no": 2,
-              "input": "Unknown Title",
-              "base_name": "",
-              "stage": "resolve",
-              "status": "unresolved",
-              "reason": "no source has a paper titled 'Unknown Title'",
-              "candidates": []
-            }
-          ]
-        }
-        """
+                "line_nos": [1],
+                "status": "failed",
+                "reference": epqteuti.make_paper().reference,
+                "base_name": "2020.Cohen_et_al.Lazy_Prices",
+                "issue": None,
+            },
+            {
+                "line_nos": [2],
+                "status": "failed",
+                "reference": "Unknown Title",
+                "base_name": None,
+                "issue": {
+                    "stage": "resolve",
+                    "status": "unresolved",
+                    "reason": "no source has a paper titled 'Unknown Title'",
+                    "candidates": [],
+                },
+            },
+        ]
         # Run test.
         self.run_main(argv, epqteuti.FakeBibSources())
         # Check outputs.
-        actual = hio.from_file(epqpaths.get_all_issues_path(output_dir))
-        self.assert_equal(actual, expected, dedent=True)
+        report = json.loads(hio.from_file(epqpaths.get_report_path(output_dir)))
+        keys = ["line_nos", "status", "reference", "base_name", "issue"]
+        actual = [{k: row[k] for k in keys} for row in report["rows"]]
+        self.assertEqual(actual, expected)
+        # The pipeline writes no separate issues file for the report.
+        self.assertFalse(
+            os.path.exists(os.path.join(output_dir, "04-report.issues.json"))
+        )
 
     def test4(self) -> None:
         """
-        Test the candidates of an issue are a list in the issues JSON.
+        Test the candidates of an issue are a list in the report.
         """
         # Prepare inputs.
         papers_file = self.make_papers_file([epqteuti.make_paper()])
@@ -1069,11 +1090,13 @@ class Test_report_papers_py(hunitest.TestCase):
         # Run test.
         self.run_main(argv, epqteuti.FakeBibSources())
         # Check outputs.
-        actual = epqrepor.read_issues(epqpaths.get_all_issues_path(output_dir))
+        report = json.loads(hio.from_file(epqpaths.get_report_path(output_dir)))
+        row = report["rows"][-1]
         self.assertEqual(
-            [(i.line_no, i.input, i.status, i.candidates) for i in actual],
-            [(7, "Momentum", "ambiguous", ("c1", "c2"))],
+            (row["line_nos"], row["reference"], row["issue"]["status"]),
+            ([7], "Momentum", "ambiguous"),
         )
+        self.assertEqual(row["issue"]["candidates"], ["c1", "c2"])
 
     def test5(self) -> None:
         """

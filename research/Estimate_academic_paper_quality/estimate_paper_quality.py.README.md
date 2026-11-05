@@ -112,8 +112,8 @@
 
 ### Exit Codes
 
-- `0`: Success. A paper that fails does not change it: it is an item of
-  `04-report.issues.json`
+- `0`: Success. A paper that fails does not change it: it is a row of
+  `04-report.report.json` with `status` `failed`
 - `1`: An assertion stopped the run, e.g., `--input` is missing while the action
   `resolve_papers` runs, or a stage failed. The script stops at the first stage that fails
   and does not run the later ones

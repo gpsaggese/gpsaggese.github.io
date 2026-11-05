@@ -168,17 +168,26 @@
 
 ### `R18` (Report File)
 
-- The pipeline writes one JSON report, `04-report.report.json`, with one entry per
-  paper, in the order of [`R7`](#r7-reverse-chronological-order), with these keys:
-  - The reference
-  - The value of each feature
-  - The score of each signal of the Paper quality rating
+- The pipeline writes one JSON report, `04-report.report.json`, with one row per
+  paper and one row per input line that gave no paper
+  - The rows of the papers come first, in the order of
+    [`R7`](#r7-reverse-chronological-order), then the other rows by line number
+  - A row has these keys:
+    - The lines of the input list that gave the row
+    - The status of the row: `ok` or `failed`
+    - The reference, or the text of the line that gave no paper
+    - The value of each feature
+    - The score of each signal of the Paper quality rating
+    - The issue, with the stage, the status, and the reason, or `null` if the row
+      has none
 - A rating or a score that is unknown is `null`, not a text
 
 ### `R19` (Issues File)
 
-- The pipeline lists the unresolved papers and the failed papers, with the reason, in
-  a JSON file apart from the report of [`R18`](#r18-report-file)
+- Each stage writes the unresolved lines or the failed papers, with the reason, in a
+  JSON issues file, `NN-<stage>.issues.json`, so that each stage can run alone
+- The report of [`R18`](#r18-report-file) gathers them: a failed row holds its issue,
+  so the user reads no other file to learn why a paper or a line failed
 
 ### `R20` (Features File)
 
