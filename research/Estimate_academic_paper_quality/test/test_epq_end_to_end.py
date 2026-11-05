@@ -163,14 +163,15 @@ class Test_end_to_end(hunitest.TestCase):
         # Prepare outputs.
         expected_report = r"""
         {
-          "schema_version": 3,
+          "schema_version": 4,
           "rows": [
             {
               "line_nos": [
                 1
               ],
               "status": "ok",
-              "reference": "2020, Cohen et al., \"Lazy Prices\" (https://arxiv.org/pdf/2001.00001)",
+              "reference": "2020, Cohen et al., \"Lazy Prices\"",
+              "links": "(https://arxiv.org/pdf/2001.00001)",
               "paper_quality": 3,
               "performance": "Sharpe 1.4",
               "recency": "2020",
@@ -189,6 +190,7 @@ class Test_end_to_end(hunitest.TestCase):
               ],
               "status": "failed",
               "reference": "Unknown Title",
+              "links": null,
               "paper_quality": null,
               "performance": null,
               "recency": null,

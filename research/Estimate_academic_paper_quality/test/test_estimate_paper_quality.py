@@ -146,6 +146,58 @@ class Test_build_command(hunitest.TestCase):
 
 
 # #############################################################################
+# Test_format_timings
+# #############################################################################
+
+
+class Test_format_timings(hunitest.TestCase):
+    """
+    Test the table with the time of each action.
+    """
+
+    def test1(self) -> None:
+        """
+        Test one row per action in order, then the total, with aligned values.
+        """
+        # Prepare inputs.
+        timings = [("resolve_papers", 12.34), ("download_papers", 65.0)]
+        # Run test.
+        actual = estpaqua._format_timings(timings)
+        # Check outputs.
+        expected = """
+        Time of each action
+          resolve_papers:  12.3 sec
+          download_papers: 1 min 5.0 sec
+          Total:           1 min 17.3 sec
+        """
+        self.assert_equal(actual, expected, dedent=True)
+
+    def test2(self) -> None:
+        """
+        Test the total of one action is the time of that action.
+        """
+        # Prepare inputs.
+        timings = [("report_papers", 3725.0)]
+        # Run test.
+        actual = estpaqua._format_timings(timings)
+        # Check outputs.
+        expected = """
+        Time of each action
+          report_papers: 1 h 2 min 5.0 sec
+          Total:         1 h 2 min 5.0 sec
+        """
+        self.assert_equal(actual, expected, dedent=True)
+
+    def test3(self) -> None:
+        """
+        Test that no action is an error, since there is nothing to report.
+        """
+        # Run test.
+        with self.assertRaises(AssertionError):
+            estpaqua._format_timings([])
+
+
+# #############################################################################
 # Test_run_action
 # #############################################################################
 
@@ -162,9 +214,12 @@ class Test_run_action(hunitest.TestCase):
         # Prepare inputs.
         path = os.path.join(self.get_scratch_space(), "done.txt")
         # Run test.
-        estpaqua._run_action("resolve_papers", f"touch {path}", dry_run=False)
+        elapsed_sec = estpaqua._run_action(
+            "resolve_papers", f"touch {path}", dry_run=False
+        )
         # Check outputs.
         self.assertTrue(os.path.exists(path))
+        self.assertGreater(elapsed_sec, 0.0)
 
     def test2(self) -> None:
         """
@@ -173,9 +228,12 @@ class Test_run_action(hunitest.TestCase):
         # Prepare inputs.
         path = os.path.join(self.get_scratch_space(), "done.txt")
         # Run test.
-        estpaqua._run_action("resolve_papers", f"touch {path}", dry_run=True)
+        elapsed_sec = estpaqua._run_action(
+            "resolve_papers", f"touch {path}", dry_run=True
+        )
         # Check outputs.
         self.assertFalse(os.path.exists(path))
+        self.assertEqual(elapsed_sec, 0.0)
 
 
 # #############################################################################

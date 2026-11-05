@@ -187,7 +187,8 @@ class Test_papers_json(hunitest.TestCase):
         path = os.path.join(self.get_scratch_space(), "papers.json")
         paper1 = epqteuti.make_paper(
             line_nos=(3, 17),
-            reference='2020, Cohen et al., "Lazy, Prices" (???)',
+            reference='2020, Cohen et al., "Lazy, Prices"',
+            links="(???)",
         )
         paper2 = dataclasses.replace(
             epqteuti.make_paper(year=2019, download_inputs=()),
@@ -230,10 +231,13 @@ class Test_papers_json(hunitest.TestCase):
         epqrepor.write_papers(path, [paper])
         # Check outputs.
         data = json.loads(hio.from_file(path))
-        self.assertEqual(data["schema_version"], 2)
+        self.assertEqual(data["schema_version"], 3)
         self.assertEqual(len(data["papers"]), 1)
         item = data["papers"][0]
         self.assertEqual(item["line_nos"], [3, 17])
+        # The reference and its links are two keys.
+        self.assertEqual(item["reference"], '2020, Cohen et al., "Lazy Prices"')
+        self.assertEqual(item["links"], "(https://arxiv.org/pdf/2001.00001)")
         self.assertEqual(
             item["authors"], ["Cohen, Lauren", "Malloy, Christopher"]
         )
@@ -252,6 +256,34 @@ class Test_papers_json(hunitest.TestCase):
         # Check outputs.
         self.assertIn("old schema", str(cm.exception))
         self.assertIn("resolve_papers.py", str(cm.exception))
+
+    def test5(self) -> None:
+        """
+        Test a papers file of version 2, with no key `links`, is rejected.
+
+        The other files stay at version 2: only the papers file changed
+        (decision D37).
+        """
+        # Prepare inputs.
+        path = os.path.join(self.get_scratch_space(), "papers.json")
+        hio.to_file(path, '{"schema_version": 2, "papers": []}')
+        # Run test.
+        with self.assertRaises(AssertionError) as cm:
+            epqrepor.read_papers(path)
+        # Check outputs.
+        self.assertIn("old schema", str(cm.exception))
+
+    def test6(self) -> None:
+        """
+        Test the files that did not change are still read at version 2.
+        """
+        # Prepare inputs.
+        path = os.path.join(self.get_scratch_space(), "issues.json")
+        hio.to_file(path, '{"schema_version": 2, "issues": []}')
+        # Run test.
+        actual = epqrepor.read_issues(path)
+        # Check outputs.
+        self.assertEqual(actual, [])
 
 
 # #############################################################################
@@ -329,6 +361,42 @@ class Test_rating_file(hunitest.TestCase):
 
 
 # #############################################################################
+# Test_join_reference
+# #############################################################################
+
+
+class Test_join_reference(hunitest.TestCase):
+    """
+    Test `epq_report.join_reference()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test the reference and the links are joined by one space.
+        """
+        # Prepare inputs.
+        reference = '2020, Cohen et al., "Lazy Prices"'
+        links = "(https://doi.org/10.1111/jofi.12885 ???)"
+        # Run test.
+        actual = epqrepor.join_reference(reference, links)
+        # Check outputs.
+        expected = (
+            '2020, Cohen et al., "Lazy Prices" '
+            "(https://doi.org/10.1111/jofi.12885 ???)"
+        )
+        self.assert_equal(actual, expected)
+
+    def test2(self) -> None:
+        """
+        Test empty links give the reference alone, with no trailing space.
+        """
+        # Run test.
+        actual = epqrepor.join_reference("Monetary Policy Transmission", "")
+        # Check outputs.
+        self.assert_equal(actual, "Monetary Policy Transmission")
+
+
+# #############################################################################
 # Test_write_references
 # #############################################################################
 
@@ -346,9 +414,11 @@ class Test_write_references(hunitest.TestCase):
         path = os.path.join(self.get_scratch_space(), "references.md")
         papers = [
             epqteuti.make_paper(
-                reference='2020, Cohen et al., "Lazy Prices" (???)'
+                reference='2020, Cohen et al., "Lazy Prices"', links="(???)"
             ),
-            epqteuti.make_paper(reference='2009, Pearl, "Causality" (???)'),
+            epqteuti.make_paper(
+                reference='2009, Pearl, "Causality"', links="(???)"
+            ),
         ]
         # Prepare outputs.
         expected = """
@@ -403,7 +473,8 @@ class Test_report_json(hunitest.TestCase):
         # Prepare inputs.
         path = os.path.join(self.get_scratch_space(), "report.json")
         paper = epqteuti.make_paper(
-            reference='2020, Cohen et al., "Lazy, Prices" (???)',
+            reference='2020, Cohen et al., "Lazy, Prices"',
+            links="(???)",
             line_nos=(3, 17),
         )
         features = {paper.base_name: epqteuti.make_paper_features()}
@@ -412,7 +483,7 @@ class Test_report_json(hunitest.TestCase):
         # Prepare outputs.
         expected = r"""
         {
-          "schema_version": 3,
+          "schema_version": 4,
           "rows": [
             {
               "line_nos": [
@@ -420,7 +491,8 @@ class Test_report_json(hunitest.TestCase):
                 17
               ],
               "status": "ok",
-              "reference": "2020, Cohen et al., \"Lazy, Prices\" (???)",
+              "reference": "2020, Cohen et al., \"Lazy, Prices\"",
+              "links": "(???)",
               "paper_quality": 4,
               "performance": "Sharpe 1.4, out of sample",
               "recency": "2020",
@@ -508,6 +580,10 @@ class Test_report_json(hunitest.TestCase):
             ([9], "failed", "B title, with a comma", None),
         ]
         self.assertEqual(actual, expected)
+        # A paper has its links, and a line that gave no paper has none.
+        self.assertEqual(rows[0]["links"], paper.links)
+        self.assertIsNone(rows[1]["links"])
+        self.assertIsNone(rows[2]["links"])
         # The row has no value and has the issue, with the candidates as a list.
         self.assertIsNone(rows[1]["paper_quality"])
         expected_issue = {

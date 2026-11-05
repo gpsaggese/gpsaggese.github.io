@@ -176,7 +176,8 @@ Rel(report, out, "JSON, markdown")
       `epq_bib_sources`, `epq_report`, `epq_issues`, `epq_summary`, `epq_paths`,
       `epq_types`
     - [`estimate_paper_quality.py`](/research/Estimate_academic_paper_quality/estimate_paper_quality.py):
-      `epq_paths`. It runs the four scripts as subprocesses and imports none of them
+      `epq_paths`, `epq_summary` (for `format_elapsed()`). It runs the four scripts as
+      subprocesses and imports none of them
   - `epq_report`, `epq_issues` import only `epq_types`
   - `epq_summary` imports only `epq_paths` and `epq_types`
   - `epq_bib_sources`, `epq_fetcher` import only `epq_types` and `helpers`

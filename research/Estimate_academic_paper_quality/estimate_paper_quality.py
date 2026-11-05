@@ -20,6 +20,9 @@ The actions are selected with `--action`, `--skip_action`, `--only_action`,
 `--clear_actions`, and `--all_actions`. The default is to run all of them, in the
 order above. The script stops at the first action that fails.
 
+Each stage logs how long it took in its summary. At the end the script logs the
+time of each action and the total.
+
 A rerun on the same `--output_dir` does not download, convert, or extract again a
 paper that is done. It rates every paper again, since the tier list and the
 citation counts can change.
@@ -50,6 +53,7 @@ import argparse
 import logging
 import os
 import shlex
+from typing import List, Tuple
 
 import helpers.hdbg as hdbg
 import helpers.hgit as hgit
@@ -57,8 +61,10 @@ import helpers.hparser as hparser
 import helpers.hprint as hprint
 import helpers.hselect_action as hselacti
 import helpers.hsystem as hsystem
+import helpers.htimer as htimer
 
 import research.Estimate_academic_paper_quality.epq_paths as epqpaths
+import research.Estimate_academic_paper_quality.epq_summary as epqsumm
 
 _LOG = logging.getLogger(__name__)
 
@@ -159,22 +165,55 @@ def _build_command(
     return cmd_str
 
 
-def _run_action(action: str, cmd: str, *, dry_run: bool) -> None:
+def _run_action(action: str, cmd: str, *, dry_run: bool) -> float:
     """
     Run the command of one action and stop the pipeline if it fails.
 
     :param action: action to run, for the log
     :param cmd: command line of the action
     :param dry_run: if True, only log the command
+    :return: time that the command took, in seconds, 0 in a dry run
     """
     _LOG.debug(hprint.to_str("action cmd dry_run"))
+    elapsed_sec = 0.0
     if dry_run:
         _LOG.warning("[DRY_RUN] Would run the action '%s': %s", action, cmd)
     else:
         _LOG.info("Running the action '%s'", action)
+        timer = htimer.Timer()
         # Show the output of the executable, which `hsystem` hides by default.
         # An error of the executable raises and stops the pipeline.
         hsystem.system(cmd, suppress_output=False)
+        elapsed_sec = timer.get_elapsed()
+    return elapsed_sec
+
+
+def _format_timings(timings: List[Tuple[str, float]]) -> str:
+    """
+    Format the time of each action and the total, for the log.
+
+    Example:
+    ```
+    Time of each action
+      resolve_papers:   12.3 sec
+      download_papers:  1 min 5.0 sec
+      Total:            1 min 17.3 sec
+    ```
+
+    :param timings: pairs of an action and the seconds that it took, in the order
+        that the actions ran
+    :return: text with no final newline
+    """
+    hdbg.dassert_lt(0, len(timings))
+    total_sec = sum(elapsed_sec for _, elapsed_sec in timings)
+    rows = [*timings, ("Total", total_sec)]
+    label_width = max(len(label) for label, _ in rows) + 1
+    lines = ["Time of each action"]
+    for label, elapsed_sec in rows:
+        label = f"{label}:".ljust(label_width)
+        lines.append(f"  {label} {epqsumm.format_elapsed(elapsed_sec)}")
+    text = "\n".join(lines)
+    return text
 
 
 # #############################################################################
@@ -259,6 +298,7 @@ def _main(parser: argparse.ArgumentParser) -> None:
         )
     _add_repo_to_python_path()
     # Run the actions in order.
+    timings: List[Tuple[str, float]] = []
     while actions:
         action = actions[0]
         to_execute, actions = hselacti.mark_action(action, actions)
@@ -275,8 +315,11 @@ def _main(parser: argparse.ArgumentParser) -> None:
             refresh_citations=args.refresh_citations,
             log_level=args.log_level,
         )
-        _run_action(action, cmd, dry_run=args.dry_run)
+        elapsed_sec = _run_action(action, cmd, dry_run=args.dry_run)
+        timings.append((action, elapsed_sec))
     hdbg.dassert_eq(actions, [], "Unprocessed actions: %s", str(actions))
+    if timings and not args.dry_run:
+        _LOG.info("\n%s", _format_timings(timings))
     if "report_papers" in selected_actions and not args.dry_run:
         _LOG.info("The report is '%s'", epqpaths.get_report_path(output_dir))
     _LOG.info("Outputs are in '%s'", output_dir)

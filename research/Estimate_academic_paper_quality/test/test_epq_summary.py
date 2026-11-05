@@ -20,6 +20,7 @@ def _make_summary(
     n_no_input: int = 0,
     n_ok: int = 6,
     n_failed: int = 2,
+    elapsed_sec: float = 75.3,
     dry_run: bool = False,
 ) -> epqtypes.StageSummary:
     """
@@ -42,6 +43,7 @@ def _make_summary(
         issues_path="out/02-download.issues.json",
         issue_counts=issue_counts,
         extra=(),
+        elapsed_sec=elapsed_sec,
         dry_run=dry_run,
     )
     return summary
@@ -107,6 +109,73 @@ class Test_count_issues(hunitest.TestCase):
 
 
 # #############################################################################
+# Test_format_elapsed
+# #############################################################################
+
+
+class Test_format_elapsed(hunitest.TestCase):
+    """
+    Test `epq_summary.format_elapsed()`.
+    """
+
+    def helper(self, elapsed_sec: float, expected: str) -> None:
+        """
+        Test helper for `format_elapsed()`.
+
+        :param elapsed_sec: time span in seconds
+        :param expected: expected text
+        """
+        # Run test.
+        actual = epqsumm.format_elapsed(elapsed_sec)
+        # Check outputs.
+        self.assert_equal(actual, expected)
+
+    def test1(self) -> None:
+        """
+        Test a time under one minute has only seconds.
+        """
+        self.helper(12.34, "12.3 sec")
+
+    def test2(self) -> None:
+        """
+        Test a time of one minute or more has minutes and seconds.
+        """
+        self.helper(75.3, "1 min 15.3 sec")
+
+    def test3(self) -> None:
+        """
+        Test a time of one hour or more has hours, minutes, and seconds.
+        """
+        self.helper(3725.0, "1 h 2 min 5.0 sec")
+
+    def test4(self) -> None:
+        """
+        Test zero gives `0.0 sec`.
+        """
+        self.helper(0.0, "0.0 sec")
+
+    def test5(self) -> None:
+        """
+        Test the rounding carries to the minute and not to `60.0 sec`.
+        """
+        self.helper(59.96, "1 min 0.0 sec")
+
+    def test6(self) -> None:
+        """
+        Test a whole hour keeps the zero minutes, so the unit is clear.
+        """
+        self.helper(7200.0, "2 h 0 min 0.0 sec")
+
+    def test7(self) -> None:
+        """
+        Test a negative time is an error.
+        """
+        # Run test.
+        with self.assertRaises(AssertionError):
+            epqsumm.format_elapsed(-1.0)
+
+
+# #############################################################################
 # Test_format_stage_summary
 # #############################################################################
 
@@ -134,6 +203,7 @@ class Test_format_stage_summary(hunitest.TestCase):
           Completed successfully:  6
           Failed:                  2
           Completed in total:     18 of 20
+          Elapsed time: 1 min 15.3 sec
           Output files written in this run:
             'out/papers/<BASE>.pdf': 6 files
             'out/papers/<BASE>.md': 6 files
@@ -161,6 +231,7 @@ class Test_format_stage_summary(hunitest.TestCase):
             issues_path="out/03-extract.issues.json",
             issue_counts=(),
             extra=("LLM cost in this run: 0.0600 USD",),
+            elapsed_sec=3.2,
             dry_run=False,
         )
         summary_path = "out/03-extract.summary.txt"
@@ -175,6 +246,7 @@ class Test_format_stage_summary(hunitest.TestCase):
           Completed successfully: 3
           Failed:                 0
           Completed in total:     3 of 5
+          Elapsed time: 3.2 sec
           Output files written in this run:
             'out/papers/<BASE>.features.json': 1 file
           Issues file: 'out/03-extract.issues.json' (0 issues)
@@ -219,6 +291,7 @@ class Test_format_stage_summary(hunitest.TestCase):
             issues_path="out/01-resolve.issues.json",
             issue_counts=(("unresolved", 1),),
             extra=("Papers after the dedup: 1",),
+            elapsed_sec=3725.0,
             dry_run=False,
         )
         summary_path = "out/01-resolve.summary.txt"
@@ -232,6 +305,7 @@ class Test_format_stage_summary(hunitest.TestCase):
           Completed successfully: 2
           Failed:                 1
           Completed in total:     2 of 3
+          Elapsed time: 1 h 2 min 5.0 sec
           Output files written in this run:
             'out/01-resolve.paper_list.json': 1 file
           Issues file: 'out/01-resolve.issues.json' (1 issue)

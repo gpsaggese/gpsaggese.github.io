@@ -1,6 +1,8 @@
 import logging
 import os
+import re
 import sys
+import time
 from typing import List
 from unittest import mock
 
@@ -74,6 +76,7 @@ class Test__download(hunitest.TestCase):
           Completed successfully: 0
           Failed:                 2
           Completed in total:     0 of 2
+          Elapsed time: <TIME>
           Output files written in this run:
             'out/papers/<BASE>.pdf': 0 files
             'out/papers/<BASE>.md': 0 files
@@ -138,6 +141,7 @@ class Test__download(hunitest.TestCase):
           Completed successfully: 0
           Failed:                 0
           Completed in total:     1 of 1
+          Elapsed time: <TIME>
           Output files written in this run:
             'out/papers/<BASE>.pdf': 0 files
             'out/papers/<BASE>.md': 0 files
@@ -272,6 +276,42 @@ class Test__download(hunitest.TestCase):
         )
         # Check outputs.
         self.assertEqual(sleeps, [])
+
+    def test7(self) -> None:
+        """
+        Test the elapsed time of the summary includes the wait between downloads.
+        """
+        # Prepare inputs.
+        scratch = self.get_scratch_space()
+        output_dir = os.path.join(scratch, "out")
+        papers = [
+            epqteuti.make_paper(
+                base_name=name, download_inputs=("https://x.example/fail",)
+            )
+            for name in ["p1", "p2"]
+        ]
+        tool_path = epqteuti.make_stub_tool(scratch)
+        env = {"EPQ_STUB_CALLS": os.path.join(scratch, "calls.txt")}
+        wait_sec = 0.3
+        # Run test: the wait is real, so the stage takes at least `wait_sec`.
+        with mock.patch.dict(os.environ, env):
+            dowpapers._download(
+                papers,
+                output_dir,
+                tool_path=tool_path,
+                log_level="INFO",
+                min_delay_sec=wait_sec,
+                max_delay_sec=wait_sec,
+                dry_run=False,
+                sleep_func=time.sleep,
+            )
+        # Check outputs.
+        text = hio.from_file(epqpaths.get_summary_path(output_dir, "download"))
+        match = re.search(r"Elapsed time: ([\d.]+) sec", text)
+        self.assertIsNotNone(match)
+        elapsed_sec = float(match.group(1))  # type: ignore[union-attr]
+        self.assertGreaterEqual(elapsed_sec, wait_sec - 0.05)
+        self.assertLess(elapsed_sec, 30.0)
 
 
 # #############################################################################

@@ -130,6 +130,8 @@
 | 2026-11-03 | Replaced the shell script with the Python driver `estimate_paper_quality.py` (`D32`, `PR_P5`); 236 tests pass            |
 | 2026-11-04 | Wrote the report as JSON, `04-report.report.json`, so no output is a CSV (`D34`); 261 tests pass                         |
 | 2026-11-05 | Merged `04-report.issues.json` into `04-report.report.json`: one row per paper or unresolved line (`D35`); 263 tests pass |
+| 2026-11-05 | Added the time of each stage to its summary, and the time of each action to the driver (`D36`, rule `ARCH3.10`); 270 tests pass |
+| 2026-11-05 | Split the key `reference` into `reference` and `links` in the papers file and the report (`D37`); 278 tests pass          |
 
 ## Open Work
 

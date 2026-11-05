@@ -15,6 +15,7 @@ import research.Estimate_academic_paper_quality.test.epq_test_utils as epqteuti
 import http.server
 import logging
 import os
+import re
 import stat
 import sys
 import threading
@@ -97,9 +98,8 @@ def make_paper(
     year: int = 2020,
     line_nos: Tuple[int, ...] = (1,),
     download_inputs: Tuple[str, ...] = ("https://arxiv.org/pdf/2001.00001",),
-    reference: str = (
-        '2020, Cohen et al., "Lazy Prices" (https://arxiv.org/pdf/2001.00001)'
-    ),
+    reference: str = '2020, Cohen et al., "Lazy Prices"',
+    links: str = "(https://arxiv.org/pdf/2001.00001)",
 ) -> epqtypes.Paper:
     """
     Build a paper, by default `Lazy Prices`.
@@ -118,6 +118,7 @@ def make_paper(
         arxiv_id="2001.00001",
         s2_paper_id="s2lazy",
         reference=reference,
+        links=links,
         base_name=base_name,
         download_inputs=download_inputs,
     )
@@ -144,9 +145,11 @@ def make_issue(*, stage: str, status: str) -> epqtypes.Issue:
 
 def read_summary(output_dir: str, stage: str) -> str:
     """
-    Read the summary file of a stage, with the output dir shortened to `out`.
+    Read the summary file of a stage, with the output dir shortened to `out`
+    and the elapsed time replaced by `<TIME>`.
 
-    The output dir is in the scratch space, which changes at each run.
+    The output dir is in the scratch space, which changes at each run, and the
+    elapsed time changes at each run too.
 
     :param output_dir: dir of all the outputs of the run
     :param stage: one of `resolve`, `download`, `extract`, `rate`, `report`
@@ -154,6 +157,7 @@ def read_summary(output_dir: str, stage: str) -> str:
     """
     path = epqpaths.get_summary_path(output_dir, stage)
     text = hio.from_file(path).replace(output_dir, "out")
+    text = re.sub(r"(?m)^(  Elapsed time:) .*$", r"\1 <TIME>", text)
     return text.rstrip("\n")
 
 

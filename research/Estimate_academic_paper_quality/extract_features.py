@@ -64,6 +64,7 @@ import helpers.hio as hio
 import helpers.hllm_cli as hllmcli
 import helpers.hparser as hparser
 import helpers.hprint as hprint
+import helpers.htimer as htimer
 import pydantic
 import tqdm
 
@@ -572,6 +573,7 @@ def _extract(
     :param llm_func: function that calls the LLM
     :return: issues of the papers that failed
     """
+    timer = htimer.Timer()
     issues: List[epqtypes.Issue] = []
     total_cost = 0.0
     n_done_before = 0
@@ -626,6 +628,7 @@ def _extract(
         issues_path=issues_path,
         issue_counts=epqsumm.count_issues(issues, add_stage=False),
         extra=(f"LLM cost in this run: {total_cost:.4f} USD",),
+        elapsed_sec=timer.get_elapsed(),
         dry_run=config.dry_run,
     )
     epqsumm.emit_stage_summary(summary, config.output_dir)

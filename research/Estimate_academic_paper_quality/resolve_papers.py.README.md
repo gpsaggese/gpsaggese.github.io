@@ -105,7 +105,11 @@
   - The copy is skipped if `--input` is already that file, e.g., a rerun on the copy
 - `<output_dir>/01-resolve.paper_list.json`: the papers file, with a `schema_version`
   and a list `papers`, one object per paper, newest first, with the fields:
-  - `reference`: the reference in the format of `.claude/skills/references.rules.md`
+  - `reference`: the reference in the format of `.claude/skills/references.rules.md`,
+    with no link: `<Year>, <Last name> [et al.], "<Title>"`
+  - `links`: the link of the reference, in parentheses, e.g.,
+    `(https://doi.org/10.3905/jpm.2026.059 ???)`. The mark `???` says that the link is
+    not a public download link
   - `year`: publication year, `0` if unknown
   - `authors`: authors as `Family, Given`, in a list
   - `title`: title of the canonical record
@@ -122,7 +126,8 @@
   a list)
   - `stage` is `resolve`, and `status` is `unresolved` or `ambiguous`
 - `<output_dir>/01-resolve.summary.txt`: the summary of the stage, with the same text
-  as the end of the log (the counts of items, the output files, and the path of the
+  as the end of the log (the counts of items, the time of the stage, the output files,
+  and the path of the
   issues file). A rerun overwrites it. See the section "Summary of a Stage" in
   [`research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md`](/research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md)
 - The cache of the API answers, in `--cache_dir`

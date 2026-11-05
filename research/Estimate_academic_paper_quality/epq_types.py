@@ -149,10 +149,8 @@ class Paper:
         doi="10.1111/jofi.12885",
         arxiv_id="",
         s2_paper_id="0123456789abcdef0123456789abcdef01234567",
-        reference=(
-            '2020, Cohen et al., "Lazy Prices" '
-            "(https://doi.org/10.1111/jofi.12885)"
-        ),
+        reference='2020, Cohen et al., "Lazy Prices"',
+        links="(https://doi.org/10.1111/jofi.12885)",
         base_name="2020.Cohen_et_al.Lazy_Prices",
         download_inputs=("https://example.org/lazy_prices.pdf",),
     )
@@ -173,8 +171,13 @@ class Paper:
     doi: str
     arxiv_id: str
     s2_paper_id: str
-    # Reference in the format of `.claude/skills/references.rules.md`.
+    # Reference in the format of `.claude/skills/references.rules.md`, without
+    # the links: `<Year>, <Last name> [et al.], "<Title>"`.
     reference: str
+    # Links of the reference, in parentheses: `(<Link>)`, where `<Link>` is the
+    # first public download input, the DOI URL followed by ` ???` if there is
+    # none, or `???` if there is no DOI either (decision D37).
+    links: str
     # Base name of the files of the paper, without extension.
     base_name: str
     # Ordered inputs to try with the download tool.
@@ -617,6 +620,7 @@ class StageSummary:
         issues_path="run/02-download.issues.json",
         issue_counts=(("download_failed", 1), ("no_download_link", 1)),
         extra=(),
+        elapsed_sec=75.3,
         dry_run=False,
     )
     ```
@@ -645,4 +649,6 @@ class StageSummary:
     issue_counts: Tuple[Tuple[str, int], ...]
     # Other lines to add to the summary, e.g., the cost of the LLM calls.
     extra: Tuple[str, ...]
+    # Wall-clock time of the stage in this run, in seconds (decision D36).
+    elapsed_sec: float
     dry_run: bool

@@ -64,6 +64,7 @@ import helpers.hgit as hgit
 import helpers.hio as hio
 import helpers.hparser as hparser
 import helpers.hselect_action as hselacti
+import helpers.htimer as htimer
 import tqdm
 import yaml
 
@@ -498,6 +499,7 @@ def _rate(
     :param dry_run: if True, only log the papers to rate
     :return: issues of the papers that failed
     """
+    timer = htimer.Timer()
     issues: List[epqtypes.Issue] = []
     n_no_input = 0
     n_ok = 0
@@ -549,6 +551,7 @@ def _rate(
         issues_path=issues_path,
         issue_counts=epqsumm.count_issues(issues, add_stage=False),
         extra=(),
+        elapsed_sec=timer.get_elapsed(),
         dry_run=dry_run,
     )
     epqsumm.emit_stage_summary(summary, output_dir)
@@ -671,6 +674,7 @@ def _report(
     :param output_dir: dir of all the outputs of the run
     :param dry_run: if True, only log the files to write
     """
+    timer = htimer.Timer()
     # Collect the issues of the previous stages.
     issues: List[epqtypes.Issue] = []
     resolve_issues_path = epqpaths.get_issues_path(output_dir, "resolve")
@@ -717,6 +721,7 @@ def _report(
         issues_path=epqpaths.get_report_path(output_dir),
         issue_counts=epqsumm.count_issues(issues, add_stage=True),
         extra=(),
+        elapsed_sec=timer.get_elapsed(),
         dry_run=dry_run,
     )
     epqsumm.emit_stage_summary(summary, output_dir)

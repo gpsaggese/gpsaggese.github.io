@@ -50,12 +50,20 @@ _SCHEMA_VERSION = 2
 # Name of the optional header column of the input CSV of `resolve_papers.py`.
 INPUT_COLUMN = "input"
 
-# Version of the layout of `04-report.report.json`, which no stage reads. Decision
-# D35 changed it with no change to the other files, so that the features files
-# are not extracted again.
+# Version of the layout of `01-resolve.paper_list.json`. Decision D37 changed it
+# with no change to the other files, so that the features files are not
+# extracted again.
+# - Version 3: the key `links` holds the links of the reference, and `reference`
+#   no longer has them.
+_PAPERS_SCHEMA_VERSION = 3
+
+# Version of the layout of `04-report.report.json`, which no stage reads. Decisions
+# D35 and D37 changed it with no change to the other files, so that the features
+# files are not extracted again.
 # - Version 3: one row per paper or unresolved line, under the key `rows`, with
 #   the issue of the row.
-_REPORT_SCHEMA_VERSION = 3
+# - Version 4: the key `links` follows the key `reference`.
+_REPORT_SCHEMA_VERSION = 4
 
 # Order of the stages, to choose the issue of a row that has many.
 _STAGE_ORDER = ["resolve", "download", "extract", "rate"]
@@ -94,18 +102,21 @@ def _write_json(
     hio.to_file(path, json.dumps(data, indent=2, ensure_ascii=False) + "\n")
 
 
-def _read_json(path: str) -> Dict[str, Any]:
+def _read_json(
+    path: str, *, schema_version: int = _SCHEMA_VERSION
+) -> Dict[str, Any]:
     """
     Read a JSON file and check its schema version.
 
     :param path: path of the file
+    :param schema_version: version of the layout that the file must have
     :return: content of the file
     """
     hdbg.dassert_file_exists(path)
     data: Dict[str, Any] = json.loads(hio.from_file(path))
     hdbg.dassert_eq(
         data.get("schema_version"),
-        _SCHEMA_VERSION,
+        schema_version,
         "File '%s' has an old schema: run the stage again (`resolve_papers.py` "
         "for the papers or the resolve issues, `extract_features.py "
         "--force_extract` for a features file, `report_papers.py --action rate` "
@@ -317,6 +328,7 @@ def _paper_from_dict(data: Dict[str, Any]) -> epqtypes.Paper:
         arxiv_id=data["arxiv_id"],
         s2_paper_id=data["s2_paper_id"],
         reference=data["reference"],
+        links=data["links"],
         base_name=data["base_name"],
         download_inputs=tuple(data["download_inputs"]),
     )
@@ -330,7 +342,11 @@ def write_papers(path: str, papers: List[epqtypes.Paper]) -> None:
     :param path: path of `01-resolve.paper_list.json`, created with its dir
     :param papers: papers, in reverse chronological order
     """
-    _write_json(path, {"papers": [dataclasses.asdict(p) for p in papers]})
+    _write_json(
+        path,
+        {"papers": [dataclasses.asdict(p) for p in papers]},
+        schema_version=_PAPERS_SCHEMA_VERSION,
+    )
 
 
 def read_papers(path: str) -> List[epqtypes.Paper]:
@@ -340,7 +356,7 @@ def read_papers(path: str) -> List[epqtypes.Paper]:
     :param path: path of `01-resolve.paper_list.json`
     :return: papers, in the order of the file
     """
-    data = _read_json(path)
+    data = _read_json(path, schema_version=_PAPERS_SCHEMA_VERSION)
     papers = [_paper_from_dict(item) for item in data["papers"]]
     return papers
 
@@ -496,6 +512,7 @@ def _make_row(
     *,
     line_nos: List[int],
     reference: str,
+    links: Optional[str],
     base_name: Optional[str],
     values: Optional[Dict[str, Any]],
     issue: Optional[epqtypes.Issue],
@@ -506,7 +523,9 @@ def _make_row(
     The row is `ok` if the paper has the values and no issue.
 
     :param line_nos: lines of the input list that gave the row
-    :param reference: reference of the paper, or text of the unresolved line
+    :param reference: reference of the paper, without the links, or text of the
+        unresolved line
+    :param links: links of the reference, `None` if the line has no paper
     :param base_name: base name of the paper, `None` if the line has no paper
     :param values: values from `_get_values()`, `None` if the row has none
     :param issue: issue of the row, `None` if there is none
@@ -527,6 +546,7 @@ def _make_row(
         "line_nos": line_nos,
         "status": status,
         "reference": reference,
+        "links": links,
         **values,
         "base_name": base_name,
         "issue": issue_dict,
@@ -560,7 +580,8 @@ def build_report_rows(
         {
           "line_nos": [16],
           "status": "ok",
-          "reference": "2020, Cohen et al., \"Lazy Prices\" (https://...)",
+          "reference": "2020, Cohen et al., \"Lazy Prices\"",
+          "links": "(https://...)",
           "paper_quality": 3,
           "performance": "Sharpe 1.4",
           "recency": "2020",
@@ -580,6 +601,7 @@ def build_report_rows(
           "line_nos": [10],
           "status": "failed",
           "reference": "Monetary Policy Transmission",
+          "links": null,
           "paper_quality": null,
           "...": "...",
           "citations_score": null,
@@ -607,6 +629,7 @@ def build_report_rows(
         row = _make_row(
             line_nos=list(paper.line_nos),
             reference=paper.reference,
+            links=paper.links,
             base_name=paper.base_name,
             values=_get_values(
                 features.get(paper.base_name), ratings.get(paper.base_name)
@@ -624,6 +647,7 @@ def build_report_rows(
         row = _make_row(
             line_nos=[issue.line_no],
             reference=issue.input,
+            links=None,
             base_name=issue.base_name or None,
             values=_get_values(None, None),
             issue=issue,
@@ -642,15 +666,37 @@ def write_report(path: str, rows: List[Dict[str, Any]]) -> None:
     _write_json(path, {"rows": rows}, schema_version=_REPORT_SCHEMA_VERSION)
 
 
+def join_reference(reference: str, links: str) -> str:
+    """
+    Join a reference and its links in the format of
+    `.claude/skills/references.rules.md`.
+
+    The JSON files keep the two apart (decision D37), and the text for a person
+    has them together: `references.md` and the candidates of an issue.
+
+    - `('2020, Cohen et al., "Lazy Prices"', "(https://x.org/p.pdf)")` ->
+      `2020, Cohen et al., "Lazy Prices" (https://x.org/p.pdf)`
+
+    :param reference: reference without the links
+    :param links: links in parentheses, "" if there are none
+    :return: reference, a space, and the links
+    """
+    return " ".join(part for part in (reference, links) if part)
+
+
 def write_references(path: str, papers: List[epqtypes.Paper]) -> None:
     """
     Write `references.md`, one bullet per resolved paper.
+
+    Each bullet has the reference followed by its links.
 
     :param path: path of the file
     :param papers: papers in reverse chronological order
     """
     hio.create_dir(os.path.dirname(path) or ".", incremental=True)
-    lines = [f"- {paper.reference}" for paper in papers]
+    lines = [
+        f"- {join_reference(paper.reference, paper.links)}" for paper in papers
+    ]
     hio.to_file(path, "\n".join(lines) + "\n")
 
 

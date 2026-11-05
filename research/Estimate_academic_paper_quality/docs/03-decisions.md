@@ -496,7 +496,8 @@
 - **Decision**: `04-report.report.json` has one row for each paper and one row for
   each issue that no paper owns, e.g., an unresolved line, under the key `rows`; the
   file `04-report.issues.json` is removed (task 10)
-  - A row has the keys `line_nos`, `status`, `reference`, the nine values of
+  - A row has the keys `line_nos`, `status`, `reference`, `links` (added by
+    [`D37`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d37-the-reference-and-its-links-are-two-keys)), the nine values of
     [`D34`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d34-the-report-is-json)
     (`paper_quality` to `citations_score`), `base_name`, and `issue`
   - `status` is `ok` for a paper with a features file, a rating file, and no issue;
@@ -543,6 +544,81 @@
   - A run dir made before this decision holds `04-report.issues.json` and a report
     with the key `papers`: run `report_papers.py --action report` to write the new
     report, and delete the old file by hand, since the pipeline never deletes a file
+- **Status**: accepted
+
+### `D36` (Each Stage Reports How Long It Took)
+
+- **Decision**: the summary of each stage has the time that the stage took, and the
+  driver logs the time of each action and the total (task 11)
+  - `StageSummary` has the field `elapsed_sec`. The function of each stage starts an
+    `htimer.Timer()` at its top and reads it when it builds the summary
+  - The summary shows the line `Elapsed time: 1 min 15.3 sec` after the counts, in
+    the log and in `NN-<stage>.summary.txt`. A dry run shows no time, since it
+    processes nothing
+  - `epq_summary.format_elapsed()` writes the time: one decimal digit for the
+    seconds, and no leading unit that is zero (`12.3 sec`, `1 min 15.3 sec`,
+    `1 h 2 min 5.0 sec`)
+  - `estimate_paper_quality.py` times the subprocess of each action, and at the end
+    logs the table `Time of each action` with a `Total` row. It logs no table in a
+    dry run, and none if an action fails, since the run stops there
+  - The convention is the rule `ARCH3.10` in
+    [`.claude/skills/architecture.rules.md`](/.claude/skills/architecture.rules.md)
+- **Why**: the stages wait on the network (a random wait of 3 to 10 sec between two
+  downloads) and on the LLM, and the summary of
+  [`D33`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d33-each-stage-ends-with-a-summary-in-the-log-and-in-a-file)
+  did not say which stage was slow, or how much a rerun saved
+- **Alternatives**: a timing file that only the driver writes (a stage that runs
+  alone would have no time); a JSON field of seconds (the user reads this summary,
+  and nobody reads the time with a program); the timer inside `emit_stage_summary()`
+  (it runs after the work and cannot know when the stage started)
+- **Consequences**:
+  - `StageSummary` has a new field, and the five stage functions fill it
+  - The tests replace the time in a summary file with `<TIME>`, since it changes at
+    each run, and test the format on fixed values
+  - `estimate_paper_quality.py` imports `epq_summary`, which the import graph allows
+    since this decision
+  - Extends
+    [`D33`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d33-each-stage-ends-with-a-summary-in-the-log-and-in-a-file)
+- **Status**: accepted
+
+### `D37` (The Reference and Its Links Are Two Keys)
+
+- **Decision**: in every JSON file with a reference, the key `reference` holds the
+  reference with no link, and the new key `links` holds the link (task 12)
+  - `reference` is `<Year>, <Last name> [et al.], "<Title>"`, e.g.,
+    `2026, Masturzo et al., "Adaptive Macro Regimes for Dynamic Equity Allocation"`
+  - `links` is `(<Link>)`, with the parentheses, e.g.,
+    `(https://doi.org/10.3905/jpm.2026.059 ???)`. The link is the first public
+    download input. With none, it is the DOI URL followed by ` ???`, or `???` with
+    no DOI
+  - The files are the papers file `01-resolve.paper_list.json`, where each paper
+    has both keys, and `04-report.report.json`, where `links` follows `reference`.
+    A row of a line that gave no paper has `links` set to `null`, like `base_name`
+  - `references.md` keeps the format of
+    [`R2`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r2-reference-format):
+    each bullet is the reference, a space, and the links, joined by
+    `epq_report.join_reference()`. The candidates of an issue are joined the same
+    way, since they are text for a person to choose from
+  - `Issue.input` of the issue of a paper is the reference with no link
+  - The papers file has `schema_version` 3 and the report has 4. All the other
+    files stay at 2, so no features file needs a new LLM extraction
+- **Why**: the link changes with the download inputs and carries the mark `???` for
+  an unknown link, so a program that groups, sorts, or shows the reference had to
+  cut the link out of the text; two keys give the short label and the link without
+  parsing
+- **Alternatives**: the key `urls` as a JSON array (the field also holds the mark
+  `???` and the parentheses, and has one link); links with no parentheses (the
+  parentheses are in the example of the task, and `references.md` needs them); a new
+  `schema_version` for every file (it forces the user to extract again with the LLM)
+- **Consequences**:
+  - Extends
+    [`D31`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d31-json-for-the-intermediate-files)
+    and
+    [`D35`](/research/Estimate_academic_paper_quality/docs/03-decisions.md#d35-the-report-has-one-row-per-paper-or-unresolved-line-with-its-issue)
+  - A run dir made before this decision has a papers file of version 2, which fails to
+    read with the message to run `resolve_papers.py` again. Run it on the same
+    `--output_dir`: the stages `download` and `extract` skip the papers that are done.
+    Then run `report_papers.py --action report` to write the new report
 - **Status**: accepted
 
 ## Code Organization

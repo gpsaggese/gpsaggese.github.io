@@ -45,7 +45,7 @@
 | `epq_issues.py`                           | Build the issue of a paper that failed in a stage, and keep the reason of an error                         | Shared       |
 | `epq_paths.py`                            | Names and paths of the files of the output dir, with no project imports                                    | Shared       |
 | `epq_report.py`                           | Write and read the papers file, issues, the report, `references.md`  , and the features and rating files   | Report       |
-| `epq_summary.py`                          | Format and write the summary of a stage: counts, output files, and issues file                             | Shared       |
+| `epq_summary.py`                          | Format and write the summary of a stage: counts, time, output files, and issues file                       | Shared       |
 | `epq_types.py`                            | Frozen dataclasses shared by the modules, with no logic and no project imports                             | Shared types |
 | `estimate_paper_quality.py`               | CLI that runs the four executables in order on one input CSV and one output dir, with stage selection      | Entry point  |
 | `estimate_paper_quality.py.README.md`     | Arguments, examples, outputs, and architecture of the pipeline CLI                                         | Entry point  |
@@ -150,7 +150,7 @@
   | `02-download.issues.json`     | `download_papers.py`                    | The papers that failed to download or to convert            |
   | `03-extract.issues.json`      | `extract_features.py`                   | The papers that failed to extract                           |
   | `04-rate.issues.json`         | `report_papers.py`                      | The papers that failed to rate                              |
-  | `NN-<stage>.summary.txt`      | Each stage                              | Counts of items, output files, and issues file of the run   |
+  | `NN-<stage>.summary.txt`      | Each stage                              | Counts of items, time, output files, and issues file of the run |
   | `04-report.report.json`       | `report_papers.py`                      | One row per paper or unresolved line, with its issue        |
   | `04-report.references.md`     | `report_papers.py`                      | The references of all the resolved papers                   |
   | `papers/<BASE>.pdf`, `.md`    | `download_papers.py`                    | The paper and its markdown                                  |

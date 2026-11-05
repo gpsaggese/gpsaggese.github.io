@@ -680,6 +680,7 @@ class Test__extract(hunitest.TestCase):
           Completed successfully: 1
           Failed:                 1
           Completed in total:     1 of 2
+          Elapsed time: <TIME>
           Output files written in this run:
             'out/papers/<BASE>.features.json': 1 file
           Issues file: 'out/03-extract.issues.json' (1 issue)
@@ -759,6 +760,7 @@ class Test__extract(hunitest.TestCase):
           Completed successfully: 0
           Failed:                 0
           Completed in total:     0 of 1
+          Elapsed time: <TIME>
           Output files written in this run:
             'out/papers/<BASE>.features.json': 0 files
           Issues file: 'out/03-extract.issues.json' (0 issues)

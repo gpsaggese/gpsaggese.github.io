@@ -679,6 +679,7 @@ class Test__rate(hunitest.TestCase):
           Completed successfully: 1
           Failed:                 1
           Completed in total:     1 of 2
+          Elapsed time: <TIME>
           Output files written in this run:
             'out/papers/<BASE>.rating.json': 1 file
           Issues file: 'out/04-rate.issues.json' (1 issue)
@@ -806,6 +807,7 @@ class Test__report(hunitest.TestCase):
           Completed successfully: 1
           Failed:                 1
           Completed in total:     1 of 2
+          Elapsed time: <TIME>
           Output files written in this run:
             'out/04-report.references.md': 1 file
             'out/04-report.report.json': 1 file
@@ -879,14 +881,18 @@ class Test__report(hunitest.TestCase):
         # Prepare inputs.
         output_dir = os.path.join(self.get_scratch_space(), "out")
         papers = [
-            epqteuti.make_paper(base_name="p1", reference="ref one"),
-            epqteuti.make_paper(base_name="p2", reference="ref two"),
+            epqteuti.make_paper(
+                base_name="p1", reference="ref one", links="(link one)"
+            ),
+            epqteuti.make_paper(
+                base_name="p2", reference="ref two", links="(link two)"
+            ),
         ]
         # Run test.
         self.report(papers, output_dir)
-        # Check outputs.
+        # Check outputs: each bullet has the reference and then its links.
         actual = hio.from_file(epqpaths.get_references_path(output_dir))
-        self.assertEqual(actual, "- ref one\n- ref two\n")
+        self.assertEqual(actual, "- ref one (link one)\n- ref two (link two)\n")
 
     def test5(self) -> None:
         """
@@ -1032,6 +1038,7 @@ class Test_report_papers_py(hunitest.TestCase):
                 "line_nos": [1],
                 "status": "failed",
                 "reference": epqteuti.make_paper().reference,
+                "links": epqteuti.make_paper().links,
                 "base_name": "2020.Cohen_et_al.Lazy_Prices",
                 "issue": None,
             },
@@ -1039,6 +1046,7 @@ class Test_report_papers_py(hunitest.TestCase):
                 "line_nos": [2],
                 "status": "failed",
                 "reference": "Unknown Title",
+                "links": None,
                 "base_name": None,
                 "issue": {
                     "stage": "resolve",
@@ -1052,7 +1060,14 @@ class Test_report_papers_py(hunitest.TestCase):
         self.run_main(argv, epqteuti.FakeBibSources())
         # Check outputs.
         report = json.loads(hio.from_file(epqpaths.get_report_path(output_dir)))
-        keys = ["line_nos", "status", "reference", "base_name", "issue"]
+        keys = [
+            "line_nos",
+            "status",
+            "reference",
+            "links",
+            "base_name",
+            "issue",
+        ]
         actual = [{k: row[k] for k in keys} for row in report["rows"]]
         self.assertEqual(actual, expected)
         # The pipeline writes no separate issues file for the report.

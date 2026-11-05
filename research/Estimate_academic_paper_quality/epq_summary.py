@@ -3,11 +3,12 @@ Write the summary of a stage: the counts, the output files, and the issues file.
 
 Each executable ends its stage with a summary. The summary goes to the log and to
 `<output_dir>/NN-<stage>.summary.txt`, with the same text (decision D33). The
-text answers four questions:
+text answers five questions:
 - Which output files did the stage write?
 - Where is the file with the issues?
 - How many items did the stage process?
 - How many items did it complete successfully?
+- How long did the stage take (decision D36)?
 
 Example, for the stage `download`:
 ```
@@ -18,6 +19,7 @@ Stage `download` summary
   Completed successfully:   6
   Failed:                   2
   Completed in total:      18 of 20
+  Elapsed time: 1 min 15.3 sec
   Output files written in this run:
     '/out/papers/<BASE>.pdf': 6 files
     '/out/papers/<BASE>.md': 6 files
@@ -67,6 +69,35 @@ def count_issues(
     labels = [f"{i.stage}.{i.status}" if add_stage else i.status for i in issues]
     counts = tuple(sorted(collections.Counter(labels).items()))
     return counts
+
+
+def format_elapsed(elapsed_sec: float) -> str:
+    """
+    Format a time span for the summary of a stage.
+
+    - `12.34` -> `12.3 sec`
+    - `75.3` -> `1 min 15.3 sec`
+    - `3725.0` -> `1 h 2 min 5.0 sec`
+
+    The seconds always have one decimal digit, so the lines of different stages
+    align when the user reads them one under the other.
+
+    :param elapsed_sec: time span in seconds, not negative
+    :return: text with the units `h`, `min`, and `sec`, with no zero leading unit
+    """
+    hdbg.dassert_lte(0.0, elapsed_sec)
+    # Round first, so that 59.96 sec is `1 min 0.0 sec` and not `60.0 sec`.
+    total_tenths = round(elapsed_sec * 10)
+    minutes_total, tenths = divmod(total_tenths, 600)
+    hours, minutes = divmod(minutes_total, 60)
+    parts = []
+    if hours > 0:
+        parts.append(f"{hours} h")
+    if hours > 0 or minutes > 0:
+        parts.append(f"{minutes} min")
+    parts.append(f"{tenths / 10:.1f} sec")
+    text = " ".join(parts)
+    return text
 
 
 def _plural(count: int, word: str) -> str:
@@ -142,10 +173,11 @@ def format_stage_summary(
         label = f"{label}:".ljust(label_width)
         line = f"  {label} {str(count).rjust(value_width)} {note}"
         lines.append(line.rstrip())
-    # List the files.
+    # List the time and the files.
     if summary.dry_run:
         lines.append("  No file is written")
     else:
+        lines.append(f"  Elapsed time: {format_elapsed(summary.elapsed_sec)}")
         lines.append("  Output files written in this run:")
         for path, n_files in summary.outputs:
             lines.append(f"    '{path}': {_plural(n_files, 'file')}")

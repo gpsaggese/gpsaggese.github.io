@@ -51,6 +51,7 @@ from typing import Callable, List
 import helpers.hdbg as hdbg
 import helpers.hio as hio
 import helpers.hparser as hparser
+import helpers.htimer as htimer
 import tqdm
 
 import research.Estimate_academic_paper_quality.epq_fetcher as epqfetch
@@ -92,6 +93,7 @@ def _download(
     :param sleep_func: function that waits, replaced in the tests
     :return: issues of the papers that failed
     """
+    timer = htimer.Timer()
     papers_dir = epqpaths.get_papers_dir(output_dir)
     log_dir = epqpaths.get_log_dir(output_dir)
     issues: List[epqtypes.Issue] = []
@@ -163,6 +165,7 @@ def _download(
         issues_path=issues_path,
         issue_counts=epqsumm.count_issues(issues, add_stage=False),
         extra=(),
+        elapsed_sec=timer.get_elapsed(),
         dry_run=dry_run,
     )
     epqsumm.emit_stage_summary(summary, output_dir)

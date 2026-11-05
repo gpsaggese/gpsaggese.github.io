@@ -66,9 +66,9 @@
   | File                          | Written by (stage)    | Content                                                  |
   | :---------------------------- | :-------------------- | :------------------------------------------------------- |
   | `00-paper_list.csv`           | `resolve`             | Copy of the input CSV                                    |
-  | `01-resolve.paper_list.json`  | `resolve`             | The resolved papers, each with authors, DOI, `reference` |
+  | `01-resolve.paper_list.json`  | `resolve`             | The resolved papers, each with authors, DOI, `reference`, `links` |
   | `*.issues.json`               | each stage            | The papers that failed in the stage, with status, reason |
-  | `*.summary.txt`               | each stage            | Counts of the stage, and the output files that it wrote  |
+  | `*.summary.txt`               | each stage            | Counts and time of the stage, and the output files that it wrote |
   | `papers/<BASE>.pdf`, `.md`    | `download`            | The paper and its markdown                               |
   | `papers/<BASE>.features.json` | `extract`             | The features of the paper, each with a quote as evidence |
   | `papers/<BASE>.rating.json`   | `rate`                | The rating from 1 to 5, and the signals behind it        |

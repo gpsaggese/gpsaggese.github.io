@@ -510,10 +510,9 @@ class Test__build_paper(hunitest.TestCase):
         )
         # Check outputs.
         self.assert_equal("|".join(paper.download_inputs), expected)
-        self.assert_equal(
-            paper.reference,
-            '2020, Cohen et al., "Lazy Prices" (https://publisher.example/lazy)',
-        )
+        # The reference has no link: the link is in its own field.
+        self.assert_equal(paper.reference, '2020, Cohen et al., "Lazy Prices"')
+        self.assert_equal(paper.links, "(https://publisher.example/lazy)")
 
     def test2(self) -> None:
         """
@@ -528,7 +527,7 @@ class Test__build_paper(hunitest.TestCase):
         paper = resopapers._build_paper(group, input_line, unpaywall_url="")
         # Check outputs.
         self.assertEqual(paper.download_inputs[0], "/data/lazy.pdf")
-        self.assertIn("(https://arxiv.org/pdf/2001.00001)", paper.reference)
+        self.assertEqual(paper.links, "(https://arxiv.org/pdf/2001.00001)")
 
     def test3(self) -> None:
         """
@@ -538,15 +537,12 @@ class Test__build_paper(hunitest.TestCase):
         with_doi = (epqteuti.make_record(),)
         no_doi = (epqteuti.make_record(doi=""),)
         # Prepare outputs.
-        expected = (
-            '2020, Cohen et al., "Lazy Prices" (https://doi.org/10.1111/jofi.12885 ???)|'
-            '2020, Cohen et al., "Lazy Prices" (???)'
-        )
+        expected = "(https://doi.org/10.1111/jofi.12885 ???)|(???)"
         # Run test.
         actual = "|".join(
             resopapers._build_paper(
                 g, _make_input_line(), unpaywall_url=""
-            ).reference
+            ).links
             for g in [with_doi, no_doi]
         )
         # Check outputs.
@@ -773,7 +769,9 @@ class Test__resolve_lines(_NoCacheTestCase):
         # Run test.
         result = resopapers._resolve_lines(raw_lines, sources)
         # Check outputs.
-        lines = [f"{p.reference} lines={p.line_nos}" for p in result.papers]
+        lines = [
+            f"{p.reference} {p.links} lines={p.line_nos}" for p in result.papers
+        ]
         lines += [
             f"{i.line_no} {i.status} {i.reason} {list(i.candidates)}"
             for i in result.issues
@@ -1071,6 +1069,7 @@ class Test_resolve_papers_py(hunitest.TestCase):
           Completed successfully: 2
           Failed:                 1
           Completed in total:     2 of 3
+          Elapsed time: <TIME>
           Output files written in this run:
             'out/01-resolve.paper_list.json': 1 file
           Issues file: 'out/01-resolve.issues.json' (1 issue)

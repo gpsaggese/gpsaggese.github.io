@@ -52,7 +52,7 @@ _ALLOWED: Dict[str, Set[str]] = {
     },
     # The pipeline script runs the executables as subprocesses, so it imports
     # none of them.
-    "estimate_paper_quality": {"epq_paths"},
+    "estimate_paper_quality": {"epq_paths", "epq_summary"},
     # The helper script fills the tier list by hand, outside the pipeline, and
     # imports no module of the project.
     "populate_affiliation_tiers": set(),

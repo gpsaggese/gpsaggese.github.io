@@ -52,6 +52,7 @@ import helpers.hio as hio
 import helpers.hparser as hparser
 import helpers.hprint as hprint
 import helpers.hstring as hstring
+import helpers.htimer as htimer
 import tqdm
 
 import research.Estimate_academic_paper_quality.epq_bib_sources as epqbibso
@@ -463,29 +464,36 @@ def _pick_canonical(
     raise ValueError("A group of records needs at least one known source")
 
 
-def _format_reference(
-    year: int,
-    authors: Tuple[str, ...],
-    title: str,
-    doi: str,
-    download_inputs: Tuple[str, ...],
-) -> str:
+def _format_reference(year: int, authors: Tuple[str, ...], title: str) -> str:
     """
-    Format a reference as in `.claude/skills/references.rules.md`.
+    Format a reference as in `.claude/skills/references.rules.md`, without the
+    links.
 
-    The format is `<Year>, <Last name> [et al.], "<Title>" (<Link>)`. The link
-    is the first public download input. With none, the link is the DOI URL
-    followed by ` ???`, or just `???` with no DOI.
+    The format is `<Year>, <Last name> [et al.], "<Title>"`. The links go in
+    their own field, see `_format_links()`.
 
     :param year: publication year, 0 if unknown
     :param authors: authors as `Family, Given`
     :param title: title
-    :param doi: DOI, "" if unknown
-    :param download_inputs: ordered download inputs
     :return: reference
     """
     first = epqbibso.get_family_name(authors[0]) if authors else "Unknown"
     author_text = f"{first} et al." if len(authors) > 1 else first
+    year_text = str(year) if year else "n.d."
+    return f'{year_text}, {author_text}, "{title}"'
+
+
+def _format_links(doi: str, download_inputs: Tuple[str, ...]) -> str:
+    """
+    Format the links of a reference, as in `.claude/skills/references.rules.md`.
+
+    The format is `(<Link>)`. The link is the first public download input. With
+    none, the link is the DOI URL followed by ` ???`, or just `???` with no DOI.
+
+    :param doi: DOI, "" if unknown
+    :param download_inputs: ordered download inputs
+    :return: links, with the parentheses
+    """
     public = [x for x in download_inputs if re.match(r"^https?://", x)]
     if public:
         link = public[0]
@@ -493,8 +501,7 @@ def _format_reference(
         link = f"https://doi.org/{doi} ???"
     else:
         link = "???"
-    year_text = str(year) if year else "n.d."
-    return f'{year_text}, {author_text}, "{title}" ({link})'
+    return f"({link})"
 
 
 def _unique(items: List[str]) -> Tuple[str, ...]:
@@ -553,8 +560,9 @@ def _build_paper(
         )
     download_inputs = _unique(inputs)
     reference = _format_reference(
-        canonical.year, canonical.authors, canonical.title, doi, download_inputs
+        canonical.year, canonical.authors, canonical.title
     )
+    links = _format_links(doi, download_inputs)
     base_name = dshddut.format_base_filename(
         str(canonical.year) if canonical.year else "",
         list(canonical.authors),
@@ -574,6 +582,7 @@ def _build_paper(
         arxiv_id=arxiv_id,
         s2_paper_id=s2_id,
         reference=reference,
+        links=links,
         base_name=base_name,
         download_inputs=download_inputs,
     )
@@ -611,9 +620,8 @@ def _merge_papers(papers: List[epqtypes.Paper]) -> List[epqtypes.Paper]:
                 (p.s2_paper_id for p in members if p.s2_paper_id), ""
             ),
             download_inputs=download_inputs,
-            reference=_format_reference(
-                first.year, first.authors, first.title, doi, download_inputs
-            ),
+            reference=_format_reference(first.year, first.authors, first.title),
+            links=_format_links(doi, download_inputs),
         )
         merged.append(merged_paper)
     return merged
@@ -823,11 +831,11 @@ def _record_to_reference(record: epqtypes.BibRecord) -> str:
     Format a candidate record as a reference, for an issue.
 
     :param record: record of a bibliographic source
-    :return: reference
+    :return: reference followed by its links
     """
-    return _format_reference(
-        record.year, record.authors, record.title, record.doi, record.pdf_urls
-    )
+    reference = _format_reference(record.year, record.authors, record.title)
+    links = _format_links(record.doi, record.pdf_urls)
+    return epqrepor.join_reference(reference, links)
 
 
 def _make_issue(
@@ -986,6 +994,7 @@ def _resolve(
     :param sources: clients of the lookup APIs
     :return: deduped papers in reverse chronological order, and the issues
     """
+    timer = htimer.Timer()
     input_lines = _read_input_lines(input_csv)
     _LOG.info("Resolving %s lines", len(input_lines))
     papers: List[epqtypes.Paper] = []
@@ -1027,6 +1036,7 @@ def _resolve(
         issues_path=issues_file,
         issue_counts=epqsumm.count_issues(issues, add_stage=False),
         extra=(f"Papers after the dedup: {len(papers)}",),
+        elapsed_sec=timer.get_elapsed(),
         dry_run=False,
     )
     epqsumm.emit_stage_summary(summary, output_dir)

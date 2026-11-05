@@ -97,7 +97,7 @@
 - `<output_dir>/04-rate.issues.json`: the papers that failed to rate
 - `<output_dir>/04-rate.summary.txt` and `<output_dir>/04-report.summary.txt`: the
   summary of each stage, with the same text as the end of the log (the counts of
-  papers, the output files, and the path of the issues file). A rerun overwrites
+  papers, the time of the stage, the output files, and the path of the issues file). A rerun overwrites
   them. In the summary of `report`, the unit is the row of `04-report.report.json`:
   `Completed successfully` is the number of `ok` rows, `Failed` is the number of
   `failed` rows, and the issues are counted as `<stage>.<status>`. See the section "Summary of a Stage" in
@@ -112,9 +112,10 @@
       paper that two lines name
     - `status`: `ok` for a paper with a features file, a rating file, and no issue,
       and `failed` for any other row
-    - `reference`: the reference of the paper, e.g.,
-      `2020, Cohen et al., "Lazy Prices" (https://arxiv.org/pdf/2001.00001)`, or the
-      text of the line that gave no paper
+    - `reference`: the reference of the paper with no link, e.g.,
+      `2020, Cohen et al., "Lazy Prices"`, or the text of the line that gave no paper
+    - `links`: the link of the reference, in parentheses, e.g.,
+      `(https://arxiv.org/pdf/2001.00001)`, or `null` for a line that gave no paper
     - `paper_quality`: the rating from 1 to 5, or `null` if it is unknown
     - `performance`: the reported performance, e.g., `Sharpe 1.4`
     - `recency`: the year of the paper, e.g., `2020`

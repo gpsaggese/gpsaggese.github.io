@@ -23,13 +23,21 @@
     `rows`
   - A paper that two input lines name is one row, with both lines in `line_nos`
 
-# [ ] Task11
-- Add a timer to report how long it took each stage
-- Add this as a rule also to the
+# [x] Task11
+- [x] Add a timer to report how long it took each stage
+  - Done: `StageSummary.elapsed_sec` and a line `Elapsed time: 1 min 15.3 sec` in
+    the summary of each stage; the driver logs the time of each action and the total
+    (decision `D36`)
+- [x] Add this as a rule also to the
   `./helpers_root/.claude/skills/architecture.rules.md`
+  - Done: rule `ARCH3.10`, and a pointer in `ARCH3.9`
 
-# [ ] Task12
-- In all the files *.json
+# [x] Task12
+- [x] In all the files *.json
+  - Done: the papers file and the report have the keys `reference` and `links`
+    (decision `D37`). The key is `links`, as in the example below, and not `urls`
+  - The papers file is now `schema_version` 3 and the report is 4: rerun
+    `resolve_papers.py` on an old run dir, then `report_papers.py --action report`
 
 split the key "reference"
 
@@ -42,6 +50,22 @@ in two keys "reference" and "urls"
 "reference": "2026, Masturzo et al., \"Adaptive Macro Regimes for Dynamic Equity Allocation\",
 "links": "(https://doi.org/10.3905/jpm.2026.059 ???)"
 ```
+
+# [ ] Task13
+
+Separate the pdfs and the features in dirs right below the output dir
+
+Right now
+
+    '/Users/saggese/src/umd_classes1/run_demo/papers/<BASE>.features.json': 0 files
+    '/Users/saggese/src/umd_classes1/run_demo/papers/<BASE>.pdf': 0 files
+    '/Users/saggese/src/umd_classes1/run_demo/papers/<BASE>.md': 0 files
+
+After
+
+    '/Users/saggese/src/umd_classes1/run_demo/paper_features/<BASE>.features.json': 0 files
+    '/Users/saggese/src/umd_classes1/run_demo/paper_pdf/<BASE>.pdf': 0 files
+    '/Users/saggese/src/umd_classes1/run_demo/paper_md/<BASE>.md': 0 files
 
 # [x] Task 1
 - [x] Task 1: Separate the code to perform the resolution into a single executable

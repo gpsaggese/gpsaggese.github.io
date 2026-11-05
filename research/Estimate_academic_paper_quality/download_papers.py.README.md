@@ -96,7 +96,8 @@
 - `<output_dir>/state/logs/<BASE>.download.log`: the log of the download tool for
   each paper
 - `<output_dir>/02-download.summary.txt`: the summary of the stage, with the same text
-  as the end of the log (the counts of items, the output files, and the path of the
+  as the end of the log (the counts of items, the time of the stage, the output files,
+  and the path of the
   issues file). A rerun overwrites it. See the section "Summary of a Stage" in
   [`research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md`](/research/Estimate_academic_paper_quality/docs/02.1-design.pipeline.md)
 - A paper that has a valid PDF and a markdown file is not downloaded or converted
