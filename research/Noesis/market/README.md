@@ -181,3 +181,8 @@ print(result.round_id, summary.clearing_price, summary.matched_volume)
   outcomes; the demo's fulfillment is mocked
 - Empty tables retain the same columns and nullable types as populated tables
 - Helpers return new DataFrames without modifying inputs or performing I/O
+- `tier_summary_df(result)` reports price, matched volume, reconstructed submitted
+  totals, and separate unmatched bid/ask totals; tiers are sorted by name
+- `unmatched_to_df(result)` reuses the order schema with residual quantities
+- Summary totals are matched plus residual volume, independently checked against
+  original submitted orders in tests; input objects are never mutated
