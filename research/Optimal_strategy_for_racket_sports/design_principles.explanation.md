@@ -134,6 +134,36 @@
     [RL spec](https://github.com/gpsaggese/gpsaggese.github.io/issues/713#issuecomment-6434360767)
     with the binary reward and the grid actions
 
+### P16: Base the Assumptions on Evidence
+
+- **Principle**: when a value or a shape of the model cannot be calibrated, take its
+  base from a study or a domain expert, cite the source, and try a few simple
+  alternatives next to it
+  - A value with no source is marked as an assumption
+- **Why**:
+  - P3 sweeps under reasonable assumptions: a cited source is what makes an
+    assumption reasonable, and lets a reader check it
+  - When both the coefficient and the shape of a coupling are unknown, the result
+    says how much it depends on them, instead of resting on one guess
+- **Example**: the spread vs ball speed of #723
+  - Linear is the base, and a knee, a parabola, and a one-sided parabola are tried
+    next to it; which one wins is part of the result
+  - A factor per direction, $a_y = a$ for the depth and $a_x = a / 2$ for the width:
+    [Sudo et al. (2024)](https://doi.org/10.1080/14763141.2024.2381105) found the
+    speed-accuracy trade-off of a forehand only in the hitting direction
+    - $a_x = a / 2$ is our assumption, between Sudo et al. ($a_x = 0$) and
+      $a_x = a_y$
+  - The base spread at $v_0$, (0.5, 1.0) m, is larger in depth than in width, as in
+    [Delgado-García et al. (2019)](https://doi.org/10.1080/24748668.2019.1647733),
+    where the long axis of the error ellipse is almost parallel to the sideline
+  - Realistic player profiles from an expert who has researched this will replace
+    the variants of the sweeps
+  - The variant $v_p = 3.0$ m/s of the plan is marked as an assumption, with no
+    source for the number
+- **Source**:
+  [GP in our meeting, recorded on #723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723#issuecomment-6677605768),
+  decisions 2 to 4
+
 ## Simulation and Results
 
 ### P6: Reproducible from a Settings String and a Seed
