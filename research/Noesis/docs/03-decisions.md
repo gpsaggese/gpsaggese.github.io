@@ -405,3 +405,5 @@
 - Keep buyer limits separate from seller expectations; missing opposite-side terms
   are null rather than zero. Normalize capability field names to `tier`.
 - Table helpers perform no I/O; scripts own rendering and exported artifacts
+- Summary totals are reconstructed from M10's matched and residual quantities;
+  tests independently compare them with the original submitted books

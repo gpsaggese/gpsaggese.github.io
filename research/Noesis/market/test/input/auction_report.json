@@ -1,7 +1,9 @@
 {
   "balanced": {
     "orders": "side,participant_id,tier,n_tasks,l_max,r_min,l_typical,r_typical,limit_price\nbid,buyer_0,standard,98,2.0,0.9,,,9.0\nask,seller_0,standard,98,,,1.0,0.95,1.0\n",
-    "contracts": "buyer_id,seller_id,n_tasks,tier,l_max,r_min,price,fulfilled\nbuyer_0,seller_0,98,standard,2.0,0.9,5.0,True\n"
+    "contracts": "buyer_id,seller_id,n_tasks,tier,l_max,r_min,price,fulfilled\nbuyer_0,seller_0,98,standard,2.0,0.9,5.0,True\n",
+    "summary": "tier,round_id,clearing_price,matched_volume,total_bid_volume,total_ask_volume,unmatched_bid_volume,unmatched_ask_volume\nstandard,0,5.0,98,98,98,0,0\n",
+    "unmatched": "side,participant_id,tier,n_tasks,l_max,r_min,l_typical,r_typical,limit_price\n"
   },
   "types": {
     "orders": [
@@ -24,22 +26,51 @@
       "Float64",
       "Float64",
       "boolean"
+    ],
+    "summary": [
+      "string",
+      "Int64",
+      "Float64",
+      "Int64",
+      "Int64",
+      "Int64",
+      "Int64",
+      "Int64"
+    ],
+    "unmatched": [
+      "string",
+      "string",
+      "string",
+      "Int64",
+      "Float64",
+      "Float64",
+      "Float64",
+      "Float64",
+      "Float64"
     ]
   },
   "excess_demand": {
     "orders": "side,participant_id,tier,n_tasks,l_max,r_min,l_typical,r_typical,limit_price\nbid,buyer_0,standard,104,2.0,0.9,,,8.0\nask,seller_0,standard,98,,,1.0,0.95,4.0\n",
-    "contracts": "buyer_id,seller_id,n_tasks,tier,l_max,r_min,price,fulfilled\nbuyer_0,seller_0,98,standard,2.0,0.9,6.0,True\n"
+    "contracts": "buyer_id,seller_id,n_tasks,tier,l_max,r_min,price,fulfilled\nbuyer_0,seller_0,98,standard,2.0,0.9,6.0,True\n",
+    "summary": "tier,round_id,clearing_price,matched_volume,total_bid_volume,total_ask_volume,unmatched_bid_volume,unmatched_ask_volume\nstandard,0,6.0,98,104,98,6,0\n",
+    "unmatched": "side,participant_id,tier,n_tasks,l_max,r_min,l_typical,r_typical,limit_price\nbid,buyer_0,standard,6,2.0,0.9,,,8.0\n"
   },
   "excess_supply": {
     "orders": "side,participant_id,tier,n_tasks,l_max,r_min,l_typical,r_typical,limit_price\nbid,buyer_0,standard,98,2.0,0.9,,,8.0\nask,seller_0,standard,104,,,1.0,0.95,4.0\n",
-    "contracts": "buyer_id,seller_id,n_tasks,tier,l_max,r_min,price,fulfilled\nbuyer_0,seller_0,98,standard,2.0,0.9,6.0,True\n"
+    "contracts": "buyer_id,seller_id,n_tasks,tier,l_max,r_min,price,fulfilled\nbuyer_0,seller_0,98,standard,2.0,0.9,6.0,True\n",
+    "summary": "tier,round_id,clearing_price,matched_volume,total_bid_volume,total_ask_volume,unmatched_bid_volume,unmatched_ask_volume\nstandard,0,6.0,98,98,104,0,6\n",
+    "unmatched": "side,participant_id,tier,n_tasks,l_max,r_min,l_typical,r_typical,limit_price\nask,seller_0,standard,6,,,1.0,0.95,4.0\n"
   },
   "multi_tier": {
     "orders": "side,participant_id,tier,n_tasks,l_max,r_min,l_typical,r_typical,limit_price\nbid,buyer_0,standard,98,2.0,0.9,,,9.0\nbid,buyer_1,frontier,66,2.0,0.9,,,29.0\nask,seller_0,standard,98,,,1.0,0.95,1.0\nask,seller_1,frontier,66,,,1.0,0.95,24.0\n",
-    "contracts": "buyer_id,seller_id,n_tasks,tier,l_max,r_min,price,fulfilled\nbuyer_1,seller_1,66,frontier,2.0,0.9,26.5,True\nbuyer_0,seller_0,98,standard,2.0,0.9,5.0,True\n"
+    "contracts": "buyer_id,seller_id,n_tasks,tier,l_max,r_min,price,fulfilled\nbuyer_1,seller_1,66,frontier,2.0,0.9,26.5,True\nbuyer_0,seller_0,98,standard,2.0,0.9,5.0,True\n",
+    "summary": "tier,round_id,clearing_price,matched_volume,total_bid_volume,total_ask_volume,unmatched_bid_volume,unmatched_ask_volume\nfrontier,0,26.5,66,66,66,0,0\nstandard,0,5.0,98,98,98,0,0\n",
+    "unmatched": "side,participant_id,tier,n_tasks,l_max,r_min,l_typical,r_typical,limit_price\n"
   },
   "no_cross": {
     "orders": "side,participant_id,tier,n_tasks,l_max,r_min,l_typical,r_typical,limit_price\nbid,buyer_0,standard,98,2.0,0.9,,,4.0\nask,seller_0,standard,98,,,1.0,0.95,6.0\n",
-    "contracts": "buyer_id,seller_id,n_tasks,tier,l_max,r_min,price,fulfilled\n"
+    "contracts": "buyer_id,seller_id,n_tasks,tier,l_max,r_min,price,fulfilled\n",
+    "summary": "tier,round_id,clearing_price,matched_volume,total_bid_volume,total_ask_volume,unmatched_bid_volume,unmatched_ask_volume\nstandard,0,,0,98,98,98,98\n",
+    "unmatched": "side,participant_id,tier,n_tasks,l_max,r_min,l_typical,r_typical,limit_price\nbid,buyer_0,standard,98,2.0,0.9,,,4.0\nask,seller_0,standard,98,,,1.0,0.95,6.0\n"
   }
 }
