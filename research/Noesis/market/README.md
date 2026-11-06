@@ -186,3 +186,7 @@ print(result.round_id, summary.clearing_price, summary.matched_volume)
 - `unmatched_to_df(result)` reuses the order schema with residual quantities
 - Summary totals are matched plus residual volume, independently checked against
   original submitted orders in tests; input objects are never mutated
+- `auction_plot.plot_supply_demand(tier, bids, asks, clearing_price)` returns a
+  figure with cumulative task quantities and sorted step prices for one tier
+- Pass the corresponding round summary's price, or `None` when nothing traded;
+  no clearing marker is drawn for a no-trade round. The caller owns file output.

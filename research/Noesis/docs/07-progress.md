@@ -76,3 +76,6 @@
 | 10/25 | PR_S4 stacked implementation adds eligible-evidence readiness, atomic window finalization, mocked verdict reporting, and probe-before-checker worker integration |
 | 10/25 | PR_M10: extracted the Python-only market runner and contract store; API delegates without response changes; five M11 regimes validated through the runner (D29) |
 | 10/28 | PR_P4: free credit ledger gates `POST /bids` on `n_tasks * p_max` and debits each cleared contract once (`market/credit_ledger.py`, `noesis_platform/platform_api.py`; D30, D31) |
+
+- 11/5: M12 tables, volume summaries, plotting helpers, and an offline reviewer
+  demo implemented locally; four small review units prepared (issue #631).
