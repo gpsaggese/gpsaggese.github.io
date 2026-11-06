@@ -9,7 +9,7 @@ import research.Optimal_strategy_for_racket_sports.test.test_racket_sports_06_rl
 import logging
 import pprint
 import warnings
-from typing import Any, Tuple
+from typing import Tuple
 
 import pytest
 
@@ -19,6 +19,8 @@ pytest.importorskip("gymnasium")
 
 import gymnasium.utils.env_checker  # noqa: E402
 import helpers.hunit_test as hunitest  # noqa: E402
+import matplotlib  # noqa: E402
+import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
@@ -33,28 +35,11 @@ from research.Optimal_strategy_for_racket_sports.notebooks import (  # noqa: E40
 
 _LOG = logging.getLogger(__name__)
 
+# Use the non-interactive backend so the figures render without a display.
+matplotlib.use("Agg")
+
 # A legal tennis deuce serve, near the middle of the box.
 _SERVE_XY = (-2.0, 3.0)
-
-
-def _make_env(
-    sport: racket_params.SportParams, **kwargs: Any
-) -> racket_sports_06_rl_return_utils.ReturnEnv:
-    """
-    Build the env of a sport with its default grid step and ball speed.
-
-    :param sport: e.g., `racket_params.TENNIS`
-    :param kwargs: keyword arguments of `ReturnEnv`, e.g., `move_speed_mps`
-    :return: the env
-    """
-    grid_step_m = racket_sports_06_rl_return_utils.GRID_STEP_M[sport.name]
-    ball_speed_mps = (
-        racket_sports_01_shot_probability_utils.WINNER_BALL_SPEED_MPS[sport.name]
-    )
-    env = racket_sports_06_rl_return_utils.ReturnEnv(
-        sport, grid_step_m, ball_speed_mps, **kwargs
-    )
-    return env
 
 
 def _make_mixed_env() -> Tuple[racket_sports_06_rl_return_utils.ReturnEnv, int]:
@@ -68,14 +53,12 @@ def _make_mixed_env() -> Tuple[racket_sports_06_rl_return_utils.ReturnEnv, int]:
     """
     std_xy = (2.0, 2.0)
     move_speed_mps = 5.0
-    env = _make_env(
+    env = racket_sports_06_rl_return_utils.build_env(
         racket_params.TENNIS, std_xy=std_xy, move_speed_mps=move_speed_mps
     )
-    dist_m = np.hypot(
-        env.targets["x_m"] - env.player1_xy[0],
-        env.targets["y_m"] - env.player1_xy[1],
+    action = racket_sports_06_rl_return_utils.get_nearest_action(
+        env, env.player1_xy
     )
-    action = int(np.argmin(dist_m))
     return env, action
 
 
@@ -132,8 +115,8 @@ class TestReturnEnv(hunitest.TestCase):
         """
         # Prepare inputs.
         envs = [
-            _make_env(racket_params.TENNIS),
-            _make_env(racket_params.PICKLEBALL),
+            racket_sports_06_rl_return_utils.build_env(racket_params.TENNIS),
+            racket_sports_06_rl_return_utils.build_env(racket_params.PICKLEBALL),
         ]
         # Run test and check outputs.
         for env in envs:
@@ -200,7 +183,7 @@ class TestReturnEnv(hunitest.TestCase):
         the action.
         """
         # Prepare inputs.
-        env = _make_env(racket_params.TENNIS)
+        env = racket_sports_06_rl_return_utils.build_env(racket_params.TENNIS)
         # Prepare outputs.
         # The Milestone 2 grid of tennis, built without the env.
         region = racket_sports_01_shot_probability_utils.get_striker_half_region(
@@ -229,7 +212,7 @@ class TestReturnEnv(hunitest.TestCase):
         at the center of the baseline, player 2 and the serve at `serve_xy`.
         """
         # Prepare inputs.
-        env = _make_env(racket_params.TENNIS)
+        env = racket_sports_06_rl_return_utils.build_env(racket_params.TENNIS)
         # Prepare outputs.
         expected = str(([0.0, -11.885, -2.0, 3.0, -2.0, 3.0], {}))
         # Run test.
@@ -238,6 +221,36 @@ class TestReturnEnv(hunitest.TestCase):
         # Round away the float32 digits, e.g., -11.885 is -11.88500023.
         actual = str(([round(float(value), 6) for value in obs], info))
         self.assert_equal(actual, expected)
+
+
+# #############################################################################
+# Test_get_nearest_action
+# #############################################################################
+
+
+class Test_get_nearest_action(hunitest.TestCase):
+    """
+    Test `get_nearest_action()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that the center of a cell gives that cell.
+        """
+        # Prepare inputs.
+        env = racket_sports_06_rl_return_utils.build_env(racket_params.TENNIS)
+        actions = [0, 7, 149]
+        # Prepare outputs.
+        expected = str(actions)
+        # Run test.
+        actual = [
+            racket_sports_06_rl_return_utils.get_nearest_action(
+                env, (env.targets["x_m"][a], env.targets["y_m"][a])
+            )
+            for a in actions
+        ]
+        # Check outputs.
+        self.assert_equal(str(actual), expected)
 
 
 # #############################################################################
@@ -311,7 +324,9 @@ class Test_compute_m2_heatmap(hunitest.TestCase):
         """
         # Prepare inputs.
         move_speed_mps = 3.0
-        env = _make_env(racket_params.PICKLEBALL, move_speed_mps=move_speed_mps)
+        env = racket_sports_06_rl_return_utils.build_env(
+            racket_params.PICKLEBALL, move_speed_mps=move_speed_mps
+        )
         serve_xy = (-1.5, 4.4)
         n_samples = 1100
         seed = 2
@@ -359,7 +374,9 @@ class Test_get_eval_serves(hunitest.TestCase):
         capped at the baseline.
         """
         # Prepare inputs.
-        env = _make_env(racket_params.PICKLEBALL)
+        env = racket_sports_06_rl_return_utils.build_env(
+            racket_params.PICKLEBALL
+        )
         n_x = 3
         n_y = 3
         court = racket_params.PICKLEBALL.court
@@ -375,50 +392,6 @@ class Test_get_eval_serves(hunitest.TestCase):
             for x1, y1 in serves
         ]
         self.assert_equal(str(actual), str(expected))
-
-
-# #############################################################################
-# Test_get_greedy_targets
-# #############################################################################
-
-
-class Test_get_greedy_targets(hunitest.TestCase):
-    """
-    Test `get_greedy_targets()`.
-    """
-
-    def test1(self) -> None:
-        """
-        Test that each serve gets the target of the policy, and the policy
-        sees the serve in its observation.
-        """
-        # Prepare inputs.
-        env = _make_env(racket_params.TENNIS)
-        serves = [(-2.0, 3.0), (-1.0, 5.0)]
-        action = 7
-        observations = []
-
-        def _policy(obs: np.ndarray) -> int:
-            observations.append(obs.tolist())
-            return action
-
-        # Prepare outputs.
-        # Cell 7 is in the first row, from the baseline.
-        expected = """
-            x1   y1  action     x_m        y_m
-        0 -2.0  3.0       7  2.0575 -11.488833
-        1 -1.0  5.0       7  2.0575 -11.488833
-        """
-        # The last 2 values of an observation are the serve.
-        expected_serves = [[-2.0, 3.0], [-1.0, 5.0]]
-        # Run test.
-        actual = racket_sports_06_rl_return_utils.get_greedy_targets(
-            env, _policy, serves
-        )
-        # Check outputs.
-        self.assert_equal(str(actual), expected, dedent=True)
-        actual_serves = [obs[4:] for obs in observations]
-        self.assert_equal(str(actual_serves), str(expected_serves))
 
 
 # #############################################################################
@@ -488,3 +461,174 @@ class Test_score_target(hunitest.TestCase):
         )
         # Check outputs.
         self.assert_equal(pprint.pformat(actual), pprint.pformat(expected))
+
+
+# #############################################################################
+# Test_evaluate_policy
+# #############################################################################
+
+
+class Test_evaluate_policy(hunitest.TestCase):
+    """
+    Test `evaluate_policy()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test the greedy cell and the expected regret of a policy on hand-made
+        maps, and that the policy sees the serve.
+        """
+        # Prepare inputs.
+        env = racket_sports_06_rl_return_utils.build_env(racket_params.TENNIS)
+        env_heatmap, m2_heatmap = _make_heatmap_pair()
+        serves = [_SERVE_XY]
+        observations = []
+
+        def _get_probs(obs: np.ndarray) -> np.ndarray:
+            observations.append(obs.tolist())
+            probs: np.ndarray = np.array([0.25, 0.5, 0.25, 0.0])
+            return probs
+
+        # Prepare outputs.
+        # The greedy cell is 1; the expected P(winner) on the M2 map is
+        # 0.25 * 0.5 + 0.5 * 0.75 + 0.25 * 0.875 = 0.71875.
+        expected = {
+            "x1": -2.0,
+            "y1": 3.0,
+            "action": 1,
+            "x_m": 1.0,
+            "y_m": -3.0,
+            "in_env_region": True,
+            "in_m2_region": False,
+            "regret_points": 12.5,
+            "random_regret_points": 31.25,
+            "top_prob": 0.5,
+            "expected_p_winner": 0.71875,
+            "expected_regret_points": 15.625,
+        }
+        # The last 2 values of an observation are the serve.
+        expected_serves = [[-2.0, 3.0]]
+        # Run test.
+        actual = racket_sports_06_rl_return_utils.evaluate_policy(
+            env, _get_probs, serves, [env_heatmap], [m2_heatmap]
+        )
+        # Check outputs.
+        self.assert_equal(
+            pprint.pformat(actual.to_dict("records")), pprint.pformat([expected])
+        )
+        actual_serves = [obs[4:] for obs in observations]
+        self.assert_equal(str(actual_serves), str(expected_serves))
+
+
+# #############################################################################
+# Test_summarize_pass_rule
+# #############################################################################
+
+
+class Test_summarize_pass_rule(hunitest.TestCase):
+    """
+    Test `summarize_pass_rule()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test a run that passes, one that passes with the 1-point tolerance
+        only, and one that fails both.
+        """
+        # Prepare inputs.
+        results = pd.DataFrame(
+            {
+                "sport": ["Tennis"] * 5,
+                "seed": [3, 3, 4, 4, 5],
+                "in_m2_region": [True, True, True, False, False],
+                "regret_points": [0.0, 0.02, 0.0, 0.62, 2.72],
+                "expected_regret_points": [0.2, 0.25, 0.3, 0.5, 1.5],
+            }
+        )
+        # Prepare outputs.
+        expected = [
+            {
+                "sport": "Tennis",
+                "seed": 3,
+                "n_serves": 2,
+                "n_in_m2_region": 2,
+                "max_regret_points": 0.02,
+                "max_expected_regret_points": 0.25,
+                "strict_pass": True,
+                "pass_1_point": True,
+            },
+            {
+                "sport": "Tennis",
+                "seed": 4,
+                "n_serves": 2,
+                "n_in_m2_region": 1,
+                "max_regret_points": 0.62,
+                "max_expected_regret_points": 0.5,
+                "strict_pass": False,
+                "pass_1_point": True,
+            },
+            {
+                "sport": "Tennis",
+                "seed": 5,
+                "n_serves": 1,
+                "n_in_m2_region": 0,
+                "max_regret_points": 2.72,
+                "max_expected_regret_points": 1.5,
+                "strict_pass": False,
+                "pass_1_point": False,
+            },
+        ]
+        # Run test.
+        actual = racket_sports_06_rl_return_utils.summarize_pass_rule(results)
+        # Check outputs.
+        self.assert_equal(
+            pprint.pformat(actual.to_dict("records")), pprint.pformat(expected)
+        )
+
+
+# #############################################################################
+# Test_plot_heatmaps
+# #############################################################################
+
+
+class Test_plot_heatmaps(hunitest.TestCase):
+    """
+    Test `plot_heatmaps()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test one map and one colorbar per panel, cropped to player 1's half,
+        with the target in the legend.
+        """
+        # Prepare inputs.
+        env = racket_sports_06_rl_return_utils.build_env(racket_params.TENNIS)
+        n_samples = 1100
+        seed = 2
+        m2_heatmap = racket_sports_06_rl_return_utils.compute_m2_heatmap(
+            env, _SERVE_XY, n_samples, seed
+        )
+        heatmaps = {"Brute force": m2_heatmap, "Milestone 2": m2_heatmap}
+        targets_xy = ((0.0, -5.0),)
+        # Prepare outputs.
+        expected = str((4, ["Brute force", "Milestone 2"], 1.0, True))
+        # Run test.
+        fig = racket_sports_06_rl_return_utils.plot_heatmaps(
+            heatmaps,
+            racket_params.TENNIS.court,
+            _SERVE_XY,
+            targets_xy=targets_xy,
+        )
+        # Check outputs.
+        # The labels that the legend of the first panel lists.
+        _, legend = fig.axes[0].get_legend_handles_labels()
+        actual = str(
+            (
+                len(fig.axes),
+                [ax.get_title() for ax in fig.axes[:2]],
+                float(fig.axes[0].get_ylim()[1]),
+                "PPO target" in legend,
+            )
+        )
+        plt.close("all")
+        self.assert_equal(actual, expected)
