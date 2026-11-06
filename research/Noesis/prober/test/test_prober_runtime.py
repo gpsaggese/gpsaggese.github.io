@@ -59,6 +59,7 @@ def _contract(
         "m2-v1",
         now - datetime.timedelta(seconds=61),
         None,
+        "seller_1",
     )
 
 
@@ -202,7 +203,7 @@ class Test_run_due_probes(hunitest.TestCase):
         """
         Test one internal failure does not stop a later due probe.
         """
-        now = datetime.datetime.now(datetime.timezone.utc)
+        now = datetime.datetime.now(datetime.UTC)
         second_canary = dataclasses.replace(_canary(), canary_id="math-v1-002")
         successful = rnochmod.ProbeExecution(
             probe_id=8,
@@ -266,7 +267,7 @@ class Test_run_due_probes(hunitest.TestCase):
             contract_id = await rnctnteut.add_contract(
                 pool, "buyer_1", "seller_1"
             )
-            now = datetime.datetime.now(datetime.timezone.utc)
+            now = datetime.datetime.now(datetime.UTC)
             async with pool.connection() as conn:
                 await conn.execute(
                     "UPDATE contracts SET window_start = %s,"

@@ -1,0 +1,608 @@
+{
+  "checker_config": {
+    "confidence": 0.95,
+    "exact_bound_below": 10,
+    "l_max_s": 1.5,
+    "maximum_seconds": 60,
+    "minimum_canaries": 8,
+    "minimum_requests": 20,
+    "q_min": 0.85,
+    "r_min": 0.9,
+    "target_canaries": 10,
+    "target_requests": 50
+  },
+  "contracts_per_seed": 1000,
+  "passed": true,
+  "scenarios": [
+    {
+      "aggregate": {
+        "absolute_difference": 4.666837223643583e-05,
+        "analytic_failure_rate": 4.666837223643583e-05,
+        "analytic_latency_failure_rate": 1.6163097270023478e-05,
+        "analytic_quality_failure_rate": 3.0505768034140267e-05,
+        "both_failure_count": 0,
+        "latency_failure_count": 0,
+        "observed_failure_rate": 0.0,
+        "passed": true,
+        "quality_failure_count": 0,
+        "statistical_agreement": true,
+        "statistical_tolerance": 0.005,
+        "total_contracts": 5000,
+        "verdict_counts": {
+          "FAILED": 0,
+          "INSUFFICIENT": 0,
+          "PASSED": 5000
+        },
+        "within_five_points": true
+      },
+      "inputs": {
+        "buyer_requests": 50,
+        "canaries": 10,
+        "latency_compliance_probability": 0.97,
+        "name": "healthy",
+        "quality_probability": 0.98
+      },
+      "name": "healthy",
+      "runs": [
+        {
+          "both_failure_count": 0,
+          "contracts": 1000,
+          "latency_failure_count": 0,
+          "observed_failure_rate": 0.0,
+          "quality_failure_count": 0,
+          "seed": 0,
+          "verdict_counts": {
+            "FAILED": 0,
+            "INSUFFICIENT": 0,
+            "PASSED": 1000
+          }
+        },
+        {
+          "both_failure_count": 0,
+          "contracts": 1000,
+          "latency_failure_count": 0,
+          "observed_failure_rate": 0.0,
+          "quality_failure_count": 0,
+          "seed": 1,
+          "verdict_counts": {
+            "FAILED": 0,
+            "INSUFFICIENT": 0,
+            "PASSED": 1000
+          }
+        },
+        {
+          "both_failure_count": 0,
+          "contracts": 1000,
+          "latency_failure_count": 0,
+          "observed_failure_rate": 0.0,
+          "quality_failure_count": 0,
+          "seed": 2,
+          "verdict_counts": {
+            "FAILED": 0,
+            "INSUFFICIENT": 0,
+            "PASSED": 1000
+          }
+        },
+        {
+          "both_failure_count": 0,
+          "contracts": 1000,
+          "latency_failure_count": 0,
+          "observed_failure_rate": 0.0,
+          "quality_failure_count": 0,
+          "seed": 3,
+          "verdict_counts": {
+            "FAILED": 0,
+            "INSUFFICIENT": 0,
+            "PASSED": 1000
+          }
+        },
+        {
+          "both_failure_count": 0,
+          "contracts": 1000,
+          "latency_failure_count": 0,
+          "observed_failure_rate": 0.0,
+          "quality_failure_count": 0,
+          "seed": 4,
+          "verdict_counts": {
+            "FAILED": 0,
+            "INSUFFICIENT": 0,
+            "PASSED": 1000
+          }
+        }
+      ]
+    },
+    {
+      "aggregate": {
+        "absolute_difference": 3.0515828314814364e-05,
+        "analytic_failure_rate": 0.9997694841716852,
+        "analytic_latency_failure_rate": 0.9997694771394083,
+        "analytic_quality_failure_rate": 3.0505768034140267e-05,
+        "both_failure_count": 0,
+        "latency_failure_count": 4999,
+        "observed_failure_rate": 0.9998,
+        "passed": true,
+        "quality_failure_count": 0,
+        "statistical_agreement": true,
+        "statistical_tolerance": 0.005,
+        "total_contracts": 5000,
+        "verdict_counts": {
+          "FAILED": 4999,
+          "INSUFFICIENT": 0,
+          "PASSED": 1
+        },
+        "within_five_points": true
+      },
+      "inputs": {
+        "buyer_requests": 50,
+        "canaries": 10,
+        "latency_compliance_probability": 0.6,
+        "name": "slow_only",
+        "quality_probability": 0.98
+      },
+      "name": "slow_only",
+      "runs": [
+        {
+          "both_failure_count": 0,
+          "contracts": 1000,
+          "latency_failure_count": 1000,
+          "observed_failure_rate": 1.0,
+          "quality_failure_count": 0,
+          "seed": 0,
+          "verdict_counts": {
+            "FAILED": 1000,
+            "INSUFFICIENT": 0,
+            "PASSED": 0
+          }
+        },
+        {
+          "both_failure_count": 0,
+          "contracts": 1000,
+          "latency_failure_count": 1000,
+          "observed_failure_rate": 1.0,
+          "quality_failure_count": 0,
+          "seed": 1,
+          "verdict_counts": {
+            "FAILED": 1000,
+            "INSUFFICIENT": 0,
+            "PASSED": 0
+          }
+        },
+        {
+          "both_failure_count": 0,
+          "contracts": 1000,
+          "latency_failure_count": 1000,
+          "observed_failure_rate": 1.0,
+          "quality_failure_count": 0,
+          "seed": 2,
+          "verdict_counts": {
+            "FAILED": 1000,
+            "INSUFFICIENT": 0,
+            "PASSED": 0
+          }
+        },
+        {
+          "both_failure_count": 0,
+          "contracts": 1000,
+          "latency_failure_count": 999,
+          "observed_failure_rate": 0.999,
+          "quality_failure_count": 0,
+          "seed": 3,
+          "verdict_counts": {
+            "FAILED": 999,
+            "INSUFFICIENT": 0,
+            "PASSED": 1
+          }
+        },
+        {
+          "both_failure_count": 0,
+          "contracts": 1000,
+          "latency_failure_count": 1000,
+          "observed_failure_rate": 1.0,
+          "quality_failure_count": 0,
+          "seed": 4,
+          "verdict_counts": {
+            "FAILED": 1000,
+            "INSUFFICIENT": 0,
+            "PASSED": 0
+          }
+        }
+      ]
+    },
+    {
+      "aggregate": {
+        "absolute_difference": 0.010527778032343282,
+        "analytic_failure_rate": 0.8281277780323433,
+        "analytic_latency_failure_rate": 1.6163097270023478e-05,
+        "analytic_quality_failure_rate": 0.828125,
+        "both_failure_count": 0,
+        "latency_failure_count": 0,
+        "observed_failure_rate": 0.8176,
+        "passed": true,
+        "quality_failure_count": 4088,
+        "statistical_agreement": true,
+        "statistical_tolerance": 0.021341577170101166,
+        "total_contracts": 5000,
+        "verdict_counts": {
+          "FAILED": 4088,
+          "INSUFFICIENT": 0,
+          "PASSED": 912
+        },
+        "within_five_points": true
+      },
+      "inputs": {
+        "buyer_requests": 50,
+        "canaries": 10,
+        "latency_compliance_probability": 0.97,
+        "name": "weak_model_only",
+        "quality_probability": 0.5
+      },
+      "name": "weak_model_only",
+      "runs": [
+        {
+          "both_failure_count": 0,
+          "contracts": 1000,
+          "latency_failure_count": 0,
+          "observed_failure_rate": 0.829,
+          "quality_failure_count": 829,
+          "seed": 0,
+          "verdict_counts": {
+            "FAILED": 829,
+            "INSUFFICIENT": 0,
+            "PASSED": 171
+          }
+        },
+        {
+          "both_failure_count": 0,
+          "contracts": 1000,
+          "latency_failure_count": 0,
+          "observed_failure_rate": 0.828,
+          "quality_failure_count": 828,
+          "seed": 1,
+          "verdict_counts": {
+            "FAILED": 828,
+            "INSUFFICIENT": 0,
+            "PASSED": 172
+          }
+        },
+        {
+          "both_failure_count": 0,
+          "contracts": 1000,
+          "latency_failure_count": 0,
+          "observed_failure_rate": 0.808,
+          "quality_failure_count": 808,
+          "seed": 2,
+          "verdict_counts": {
+            "FAILED": 808,
+            "INSUFFICIENT": 0,
+            "PASSED": 192
+          }
+        },
+        {
+          "both_failure_count": 0,
+          "contracts": 1000,
+          "latency_failure_count": 0,
+          "observed_failure_rate": 0.808,
+          "quality_failure_count": 808,
+          "seed": 3,
+          "verdict_counts": {
+            "FAILED": 808,
+            "INSUFFICIENT": 0,
+            "PASSED": 192
+          }
+        },
+        {
+          "both_failure_count": 0,
+          "contracts": 1000,
+          "latency_failure_count": 0,
+          "observed_failure_rate": 0.815,
+          "quality_failure_count": 815,
+          "seed": 4,
+          "verdict_counts": {
+            "FAILED": 815,
+            "INSUFFICIENT": 0,
+            "PASSED": 185
+          }
+        }
+      ]
+    },
+    {
+      "aggregate": {
+        "absolute_difference": 0.002088091000964201,
+        "analytic_failure_rate": 0.1208880910009642,
+        "analytic_latency_failure_rate": 1.6163097270023478e-05,
+        "analytic_quality_failure_rate": 0.12087388159999993,
+        "both_failure_count": 0,
+        "latency_failure_count": 0,
+        "observed_failure_rate": 0.1188,
+        "passed": true,
+        "quality_failure_count": 594,
+        "statistical_agreement": true,
+        "statistical_tolerance": 0.01844118525085472,
+        "total_contracts": 5000,
+        "verdict_counts": {
+          "FAILED": 594,
+          "INSUFFICIENT": 0,
+          "PASSED": 4406
+        },
+        "within_five_points": true
+      },
+      "inputs": {
+        "buyer_requests": 50,
+        "canaries": 10,
+        "latency_compliance_probability": 0.97,
+        "name": "borderline_quality",
+        "quality_probability": 0.8
+      },
+      "name": "borderline_quality",
+      "runs": [
+        {
+          "both_failure_count": 0,
+          "contracts": 1000,
+          "latency_failure_count": 0,
+          "observed_failure_rate": 0.113,
+          "quality_failure_count": 113,
+          "seed": 0,
+          "verdict_counts": {
+            "FAILED": 113,
+            "INSUFFICIENT": 0,
+            "PASSED": 887
+          }
+        },
+        {
+          "both_failure_count": 0,
+          "contracts": 1000,
+          "latency_failure_count": 0,
+          "observed_failure_rate": 0.124,
+          "quality_failure_count": 124,
+          "seed": 1,
+          "verdict_counts": {
+            "FAILED": 124,
+            "INSUFFICIENT": 0,
+            "PASSED": 876
+          }
+        },
+        {
+          "both_failure_count": 0,
+          "contracts": 1000,
+          "latency_failure_count": 0,
+          "observed_failure_rate": 0.1,
+          "quality_failure_count": 100,
+          "seed": 2,
+          "verdict_counts": {
+            "FAILED": 100,
+            "INSUFFICIENT": 0,
+            "PASSED": 900
+          }
+        },
+        {
+          "both_failure_count": 0,
+          "contracts": 1000,
+          "latency_failure_count": 0,
+          "observed_failure_rate": 0.135,
+          "quality_failure_count": 135,
+          "seed": 3,
+          "verdict_counts": {
+            "FAILED": 135,
+            "INSUFFICIENT": 0,
+            "PASSED": 865
+          }
+        },
+        {
+          "both_failure_count": 0,
+          "contracts": 1000,
+          "latency_failure_count": 0,
+          "observed_failure_rate": 0.122,
+          "quality_failure_count": 122,
+          "seed": 4,
+          "verdict_counts": {
+            "FAILED": 122,
+            "INSUFFICIENT": 0,
+            "PASSED": 878
+          }
+        }
+      ]
+    },
+    {
+      "aggregate": {
+        "absolute_difference": 0.01351965623649709,
+        "analytic_failure_rate": 0.3319196562364971,
+        "analytic_latency_failure_rate": 0.3318992753107663,
+        "analytic_quality_failure_rate": 3.0505768034140267e-05,
+        "both_failure_count": 0,
+        "latency_failure_count": 1592,
+        "observed_failure_rate": 0.3184,
+        "passed": true,
+        "quality_failure_count": 0,
+        "statistical_agreement": true,
+        "statistical_tolerance": 0.02663825808361156,
+        "total_contracts": 5000,
+        "verdict_counts": {
+          "FAILED": 1592,
+          "INSUFFICIENT": 0,
+          "PASSED": 3408
+        },
+        "within_five_points": true
+      },
+      "inputs": {
+        "buyer_requests": 50,
+        "canaries": 10,
+        "latency_compliance_probability": 0.85,
+        "name": "borderline_latency",
+        "quality_probability": 0.98
+      },
+      "name": "borderline_latency",
+      "runs": [
+        {
+          "both_failure_count": 0,
+          "contracts": 1000,
+          "latency_failure_count": 333,
+          "observed_failure_rate": 0.333,
+          "quality_failure_count": 0,
+          "seed": 0,
+          "verdict_counts": {
+            "FAILED": 333,
+            "INSUFFICIENT": 0,
+            "PASSED": 667
+          }
+        },
+        {
+          "both_failure_count": 0,
+          "contracts": 1000,
+          "latency_failure_count": 332,
+          "observed_failure_rate": 0.332,
+          "quality_failure_count": 0,
+          "seed": 1,
+          "verdict_counts": {
+            "FAILED": 332,
+            "INSUFFICIENT": 0,
+            "PASSED": 668
+          }
+        },
+        {
+          "both_failure_count": 0,
+          "contracts": 1000,
+          "latency_failure_count": 300,
+          "observed_failure_rate": 0.3,
+          "quality_failure_count": 0,
+          "seed": 2,
+          "verdict_counts": {
+            "FAILED": 300,
+            "INSUFFICIENT": 0,
+            "PASSED": 700
+          }
+        },
+        {
+          "both_failure_count": 0,
+          "contracts": 1000,
+          "latency_failure_count": 298,
+          "observed_failure_rate": 0.298,
+          "quality_failure_count": 0,
+          "seed": 3,
+          "verdict_counts": {
+            "FAILED": 298,
+            "INSUFFICIENT": 0,
+            "PASSED": 702
+          }
+        },
+        {
+          "both_failure_count": 0,
+          "contracts": 1000,
+          "latency_failure_count": 329,
+          "observed_failure_rate": 0.329,
+          "quality_failure_count": 0,
+          "seed": 4,
+          "verdict_counts": {
+            "FAILED": 329,
+            "INSUFFICIENT": 0,
+            "PASSED": 671
+          }
+        }
+      ]
+    },
+    {
+      "aggregate": {
+        "absolute_difference": 0.0,
+        "analytic_failure_rate": 0.0,
+        "analytic_latency_failure_rate": 0.0,
+        "analytic_quality_failure_rate": 0.0,
+        "both_failure_count": 0,
+        "latency_failure_count": 0,
+        "observed_failure_rate": 0.0,
+        "passed": true,
+        "quality_failure_count": 0,
+        "statistical_agreement": true,
+        "statistical_tolerance": 0.005,
+        "total_contracts": 5000,
+        "verdict_counts": {
+          "FAILED": 0,
+          "INSUFFICIENT": 5000,
+          "PASSED": 0
+        },
+        "within_five_points": true
+      },
+      "inputs": {
+        "buyer_requests": 19,
+        "canaries": 7,
+        "latency_compliance_probability": 1.0,
+        "name": "insufficient_evidence",
+        "quality_probability": 1.0
+      },
+      "name": "insufficient_evidence",
+      "runs": [
+        {
+          "both_failure_count": 0,
+          "contracts": 1000,
+          "latency_failure_count": 0,
+          "observed_failure_rate": 0.0,
+          "quality_failure_count": 0,
+          "seed": 0,
+          "verdict_counts": {
+            "FAILED": 0,
+            "INSUFFICIENT": 1000,
+            "PASSED": 0
+          }
+        },
+        {
+          "both_failure_count": 0,
+          "contracts": 1000,
+          "latency_failure_count": 0,
+          "observed_failure_rate": 0.0,
+          "quality_failure_count": 0,
+          "seed": 1,
+          "verdict_counts": {
+            "FAILED": 0,
+            "INSUFFICIENT": 1000,
+            "PASSED": 0
+          }
+        },
+        {
+          "both_failure_count": 0,
+          "contracts": 1000,
+          "latency_failure_count": 0,
+          "observed_failure_rate": 0.0,
+          "quality_failure_count": 0,
+          "seed": 2,
+          "verdict_counts": {
+            "FAILED": 0,
+            "INSUFFICIENT": 1000,
+            "PASSED": 0
+          }
+        },
+        {
+          "both_failure_count": 0,
+          "contracts": 1000,
+          "latency_failure_count": 0,
+          "observed_failure_rate": 0.0,
+          "quality_failure_count": 0,
+          "seed": 3,
+          "verdict_counts": {
+            "FAILED": 0,
+            "INSUFFICIENT": 1000,
+            "PASSED": 0
+          }
+        },
+        {
+          "both_failure_count": 0,
+          "contracts": 1000,
+          "latency_failure_count": 0,
+          "observed_failure_rate": 0.0,
+          "quality_failure_count": 0,
+          "seed": 4,
+          "verdict_counts": {
+            "FAILED": 0,
+            "INSUFFICIENT": 1000,
+            "PASSED": 0
+          }
+        }
+      ]
+    }
+  ],
+  "schema_version": "noesis-checker-replay-v1",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ]
+}

@@ -60,13 +60,15 @@
   evaluation exists
 - **Confidence in the fix**: medium
   - High for the physics (closed form) and the scoring (paper formulas)
-  - Medium for 3 choices the paper leaves open, decided in the specs:
+  - Medium for 3 choices the paper leaves open:
     - $P_{\mathrm{in}}$ counts in-bounds landings, not landings in cell $c$
-      (Section IV-B formula and text disagree): `spec.racket_strategy_PR3.md`
+      (Section IV-B formula and text disagree):
+      `racket_scoring.estimate_launch_table()`
     - The aim angle is the best feasible angle per cell (paper does not pick one
-      point of $\mathcal{F}(T)$): `spec.racket_strategy_PR2.md`
+      point of $\mathcal{F}(T)$): `racket_scoring.score_targets()`
     - Game payoff $u$ adds a continuation value to $S$ (paper calls $u$ a
-      point-win probability but only defines $S$): `spec.racket_strategy_PR4.md`
+      point-win probability but only defines $S$): not built, since PR4 closed
+      without code
 - **Fix complexity**: medium
 - **Verification plan**:
   - Unit tests reproduce the paper numbers:
@@ -83,61 +85,65 @@
   - `racket_params.py`: sport, player, error parameters and court geometry
   - `racket_trajectory.py`: closed-form 1D/2D ball flight and error propagation
   - `racket_scoring.py`: grid, Monte Carlo $P_{\mathrm{in}}$, reachability, score
-  - `racket_game.py`: zero-sum placement game
+  - `racket_game.py`: zero-sum placement game (not built, since PR4 closed
+    without code)
   - `racket_strategy_utils.py`: plots and experiment helpers for the notebooks
 
-- [x] PR1: Scaffold the project and encode the sport parameters (see
-      spec.racket_strategy_PR1.md)
+- PR1 to PR7 are done
+  ([GP on #691](https://github.com/gpsaggese/gpsaggese.github.io/issues/691#issuecomment-6309187106)):
+  we focus on the 2D model of the Milestones below and set the trajectory work
+  aside, so PR4 and PR7 close without code
+
+- [x] PR1: Scaffold the project and encode the sport parameters
   - Depends on: none
   - Copy the Docker files from `class_project/project_template/`
   - Add `racket_params.py` with Table I presets `TENNIS`, `PICKLEBALL`
   - Add `README.md` with quick start and the module table above
   - Add `test/test_racket_params.py`
 
-- [x] PR2: Implement the closed-form trajectory model of Section III-C (see
-      spec.racket_strategy_PR2.md)
+- [x] PR2: Implement the closed-form trajectory model of Section III-C
   - Depends on: PR1
   - Add `racket_trajectory.py`: launch speed solver, feasible set, error sampling,
     vectorized landing simulation
   - Add `test/test_racket_trajectory.py` reproducing the Figure 1 numbers
 
 - [x] PR3: Implement grid-based Monte Carlo scoring for rally and serve, Section IV
-      (see spec.racket_strategy_PR3.md)
   - Depends on: PR2
   - Add `racket_scoring.py`: target grid, opponent-independent launch table,
     reachability, composite score, argmax, serve situation
   - Add `test/test_racket_scoring.py` reproducing Table II
 
-- [ ] PR4: Implement the zero-sum placement game of Section V-A (see
-      spec.racket_strategy_PR4.md)
+- [x] PR4: Implement the zero-sum placement game of Section V-A (closed without
+      code, see the 2D focus above)
   - Depends on: PR3
   - Add `racket_game.py`: payoff matrix, LP solver, best-response value
   - Add `test/test_racket_game.py`
 
-- [ ] PR5: Add the plotting utils and the API notebook (see
-      spec.racket_strategy_PR5.md)
+- [x] PR5: Add the plotting utils and the API notebook
   - Depends on: PR2, PR3, PR4
-  - Add `racket_strategy_utils.py` and `racket_strategy.API.ipynb` / `.py`
+  - Add `racket_strategy_utils.py` and
+    `notebooks/racket_sports_02_strategy_API.ipynb` / `.py`
   - Add `test/test_racket_strategy_utils.py` and
     `test/test_docker_racket_strategy.py`
   - Partially done ahead of `PR4`: `draw_court()`, `plot_trajectory_fan()`,
     `plot_court_heatmap()`, `plot_launch_tradeoff()`, `build_score_widget()`,
     and the API notebook's Parts 1-7 (sport parameters through serve) are
     implemented, to unblock `PR6`; `plot_mixed_strategy()` and the
-    notebook's Part 8 (placement game) still need `PR4`'s `racket_game.py`
+    notebook's Part 8 (placement game) are not built, since `PR4` closed
+    without code
 
-- [x] PR6: Add an interactive shot-placement exploration notebook (see
-      spec.racket_strategy_PR6.md)
+- [x] PR6: Add an interactive shot-placement exploration notebook
   - Depends on: PR3, PR5
-  - Add `racket_strategy.exploration.ipynb` / `.py`: click-to-run controls for
-    ball speed, player move speed, shot std dev (`error_scale`), and both
-    players' positions, driving `P_in`, `1 - R`, and `S` heatmaps
+  - Add `notebooks/racket_sports_03_strategy_exploration.ipynb` / `.py`:
+    click-to-run controls for ball speed, player move speed, shot std dev
+    (`error_scale`), and both players' positions, driving `P_in`, `1 - R`, and
+    `S` heatmaps
   - Add `build_exploration_widget()` to `racket_strategy_utils.py`
   - Extend `test/test_racket_strategy_utils.py` and
     `test/test_docker_racket_strategy.py`
 
-- [ ] PR7: Add the example notebook with computational results for Sections VI-VIII
-      (see spec.racket_strategy_PR7.md)
+- [x] PR7: Add the example notebook with computational results for Sections VI-VIII
+      (closed without code, see the 2D focus above)
   - Depends on: PR5
   - Add `racket_strategy.example.ipynb` / `.py` and the experiment helpers
   - Export result figures and tables to `results/`
@@ -165,37 +171,91 @@
     rules; player 2 moves there and returns toward (`x2`, `y2`) with a 2D Gaussian
     spread (`std_x2`, `std_y2`)
   - $P_{\mathrm{in}}$ in closed form, checked by Monte Carlo, in
-    `notebooks/racket_shot_probability_utils.py` and
-    `notebooks/racket_shot_probability.ipynb`
+    `notebooks/racket_sports_01_shot_probability_utils.py` and
+    `notebooks/racket_sports_01_shot_probability.ipynb`
 
-- [ ] Milestone 2: probability of a winning return
+- [x] Milestone 2: probability of a winning return
       ([#624](https://github.com/gpsaggese/gpsaggese.github.io/issues/624)), as
-      agreed with GP in #624
+      agreed with GP in
+      [#690](https://github.com/gpsaggese/gpsaggese.github.io/issues/690); done
+      in [PR #715](https://github.com/gpsaggese/gpsaggese.github.io/pull/715)
   - Sources:
-    [GP's answers](https://github.com/gpsaggese/gpsaggese.github.io/issues/624#issuecomment-6186123404)
+    [GP's answers on #624](https://github.com/gpsaggese/gpsaggese.github.io/issues/624#issuecomment-6186123404),
+    [GP's answers on #690](https://github.com/gpsaggese/gpsaggese.github.io/issues/690#issuecomment-6252896405),
     and
-    [the agreed summary](https://github.com/gpsaggese/gpsaggese.github.io/issues/624#issuecomment-6194651093)
+    [the agreed plan](https://github.com/gpsaggese/gpsaggese.github.io/issues/690#issuecomment-6260766491)
   - One-shot setting: player 1 serves, player 2 returns
-  - Player 1 serves and then stays at the center of the baseline, `(0, -L/2)`
+  - Player 1 serves with the Milestone 1 rules (a fault means no return), then
+    stays at the center of the baseline, `(0, -L/2)`
   - Player 2 stands at the serve landing point (`x1`, `y1`) and aims at
     (`x2`, `y2`); the return lands with the same 2D Gaussian as Milestone 1
-  - Time available to player 1: the ball's flight time $T_f$, from the ball speed
-    (a widget) and the distance, minus a constant reaction time $t_r$
-    - The reaction time stands for the time player 1 needs to decide where the
-      ball will land
-    - $T_f$ uses the distance from player 2 at (`x1`, `y1`) to the aim point
-      (`x2`, `y2`), so it is fixed for each target
-    - Why: the landing error changes the actual distance only by about the
-      spread, small next to the length of the shot, and a fixed $T_f$ keeps the
-      region player 1 can reach a disk around them
-  - Player 1 then moves at a constant speed $v_p$ and reaches the ball if the
-    distance from `(0, -L/2)` to the landing point is at most $v_p (T_f - t_r)$
-  - Winner: the return lands in and player 1 cannot reach it
-    - Computed jointly, since both events depend on the same landing point
-    - Also compute $P_{\mathrm{in}} \cdot P(\text{not reached})$, to show when this
-      factorization holds
+  - Flight time: for each sampled landing point $(X, Y)$, $T_f$ is the distance
+    from (`x1`, `y1`) to $(X, Y)$ divided by the ball speed (a widget)
+    - Why: the aim point is a latent variable, while the landing point is where
+      the ball actually goes (GP on #690)
+  - Player 1 reacts for a constant time $t_r$, the time to decide where the ball
+    will land, then moves at a constant speed $v_p$, and reaches the ball if the
+    distance from `(0, -L/2)` to $(X, Y)$ is at most $v_p \max(0, T_f - t_r)$
+  - Winner: the return lands in AND player 1 does not reach it, computed by
+    Monte Carlo as one event on the same samples, with no product of
+    probabilities (GP on #690)
+  - Defaults: ball speed 25 m/s for tennis and 12 m/s for pickleball,
+    $t_r = 0.2$ s, $v_p = 1.5$ m/s, each with a slider
   - A heatmap of the winner probability over every target (`x2`, `y2`) on player
     1's half, with the best target marked, for tennis and pickleball
+  - Code: new functions in
+    `notebooks/racket_sports_01_shot_probability_utils.py` and a new Part 2 of
+    `notebooks/racket_sports_01_shot_probability.ipynb`, in
+    [PR #715](https://github.com/gpsaggese/gpsaggese.github.io/pull/715)
+  - Decisions made while building it:
+    - **Common random numbers**: every target of the heatmap gets
+      `np.random.default_rng(seed)` with the same seed, so all targets use the
+      same standard normal draws, shifted to their own aim point
+      - Two targets differ because of where they aim, not because of sampling
+        noise, so comparing them to find the best one is fair
+    - **Best region and star**: many targets can tie at the top (e.g., every
+      sample a winner, $P(\text{winner}) = 1$), so the best is a region
+      - The region holds every target within 2 standard errors of the highest
+        $P(\text{winner})$, and is outlined on the map
+      - The star is the cell of the region closest to its centroid
+    - **Grid and samples**: 10 x 15 cells for tennis and 9 x 10 for pickleball,
+      with 5000 samples per target, chosen so one map takes under 2 s
+    - **Settings string**: the comments panel and a copyable line under the
+      figure list every setting, e.g., `sport=Tennis side=deuce x1=-2.1 y1=3.2
+      std_x2=0.5 std_y2=1.0 ball_speed=25.0 t_r=0.2 v_p=1.5 seed=1 n_x=10 n_y=15
+      n_samples=5000`, so a result in the Gdoc can be reproduced exactly
+      ([GP on #694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694#issuecomment-6336301932))
+    - **Bounce ignored**: player 1 must reach the landing point by the time the
+      ball lands; the bounce is a 3D effect, and the 2D approximation is good
+      enough for the first and second order effects
+      ([GP on #690](https://github.com/gpsaggese/gpsaggese.github.io/issues/690#issuecomment-6336175829))
+    - **Spread independent of ball speed**: kept as a first approximation, so in
+      this model hitting as fast as possible always looks best; GP filed
+      [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723)
+  - Finding: with the defaults, the best return is the middle of player 1's half,
+    not a spot near the lines
+    - Player 1 covers only about 0.6 m in tennis: a return landing next to them
+      flies about 15 m in 0.61 s at 25 m/s, and $1.5 \cdot (0.61 - 0.2) \approx
+      0.6$ m
+    - So $P(\text{winner})$ is almost $P_{\mathrm{in}}$, except in a small dip
+      around player 1, and the middle keeps the most returns in
+  - Finding ([#789](https://github.com/gpsaggese/gpsaggese.github.io/issues/789),
+    simulation): with $t_r = 0$ the map depends on the two speeds only through
+    the ratio $r = v_p / v_b$; with $t_r > 0$ also on the reaction distance
+    $v_p t_r$ (a proposition, with a proof sketch in the paper's appendix)
+    - Same-seed maps are identical on 30 scaled pairs and 500 random settings
+    - At $t_r = 0.2$ s and $v_p = 1.5$ m/s, the reaction time does not move the
+      best target and changes the mean $P(\text{winner})$ by at most 3.95
+      points (pickleball, slow balls)
+    - Decided ([GP on #789](https://github.com/gpsaggese/gpsaggese.github.io/issues/789#issuecomment-6528212968)): keep the
+      model with all the variables, with $v_b$, $v_p$, and $t_r$ as separate
+      controls and no ratio slider
+  - Finding ([#694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694),
+    corner sims): the error spread matters most; player speed and ball speed
+    matter mainly in one corner, a slow ball with a fast player 1, where deep
+    serves help player 1; reaction time changes little at realistic values
+    - In `notebooks/racket_sports_05_variable_sensitivity.ipynb`, and in Section
+      VII-A of the paper
 
 * Open Points
 - From
@@ -205,6 +265,8 @@
     least time
     - There is no clear model: ideally it is estimated by experiments, and it
       differs with the player's level
+    - GP filed [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723)
+      for it; Milestone 2 keeps the spread independent of the ball speed
   - **Optimal positioning**: where each player should stand, as a function of the
     ball and of the other player, is left to the RL algorithm later
     - GP was taught to gravitate toward the center, but does not believe it is
@@ -214,7 +276,20 @@
       and compared with what RL finds by brute force
   - **Factorization**: whether the winner probability factorizes as
     $P_{\mathrm{in}} \cdot P(\text{not reached})$; GP believes some factorization
-    may hold but is not sure, so Milestone 2 computes both
+    may hold but is not sure
+    - Resolved in
+      [#690](https://github.com/gpsaggese/gpsaggese.github.io/issues/690#issuecomment-6252896405):
+      Milestone 2 computes the winner probability as one event, with no product
+- From
+  [#690](https://github.com/gpsaggese/gpsaggese.github.io/issues/690#issuecomment-6322544771):
+  - **Reaching after the bounce**: player 1 must reach the landing point by the
+    time the ball lands; in real play they can also take the ball after the
+    bounce, which gives them more time
+    - Resolved in
+      [#690](https://github.com/gpsaggese/gpsaggese.github.io/issues/690#issuecomment-6336175829):
+      ignore the bounce, since it is a 3D effect
+    - The reach rule lives only in `compute_is_reached()`, so a change stays
+      there
 
 * Long-Term Goal
 - From
@@ -225,6 +300,20 @@
     iterative solution built from the same blocks, e.g., optimizing the
     probability of winning one step ahead instead of discounting the whole
     trajectory
+
+* Phases
+- GP's plan on
+  [#714](https://github.com/gpsaggese/gpsaggese.github.io/issues/714#issuecomment-6336481113),
+  tracked in [#787](https://github.com/gpsaggese/gpsaggese.github.io/issues/787):
+  1. One-shot experiments without RL, to understand the problem and its solution
+     in a simple setup: Milestone 2 and its follow-ups (#694, #723, #786, #788,
+     #789)
+  2. Brute-force RL that reproduces the results of phase 1; the game theory part
+     should just extend phase 1 (#713)
+  3. Combine: replace parts of phase 2 with the results of phase 1, for faster
+     sims and more understanding (maybe not needed)
+- Open question: how much the game theory part matters, only the next step or
+  planning for long rallies (GP: "Totally unknown")
 
 * Tasks
 - GP's rule
@@ -239,23 +328,54 @@
       Milestone 1 follow-ups (renames, diagonal serve, "Fault" label),
       [PR #654](https://github.com/gpsaggese/gpsaggese.github.io/pull/654)
   - Manual widget checks of the Milestone 1 notebook are still pending
-- [ ] [#624](https://github.com/gpsaggese/gpsaggese.github.io/issues/624):
-      Milestone 2, winner probability heatmap
-- [-] [#625](https://github.com/gpsaggese/gpsaggese.github.io/issues/625):
+- [x] [#624](https://github.com/gpsaggese/gpsaggese.github.io/issues/624):
+      Milestone 2, winner probability heatmap,
+      [PR #715](https://github.com/gpsaggese/gpsaggese.github.io/pull/715)
+- [x] [#625](https://github.com/gpsaggese/gpsaggese.github.io/issues/625):
       project log `log.racket_strategy.md`,
       [PR #660](https://github.com/gpsaggese/gpsaggese.github.io/pull/660)
-- [ ] [#626](https://github.com/gpsaggese/gpsaggese.github.io/issues/626):
+- [x] [#626](https://github.com/gpsaggese/gpsaggese.github.io/issues/626):
       doc on creating a PR with the Claude Code skills
-- [-] [#627](https://github.com/gpsaggese/gpsaggese.github.io/issues/627):
+- [x] [#627](https://github.com/gpsaggese/gpsaggese.github.io/issues/627):
       paper, add the author and the Milestone 1 model,
       [PR #661](https://github.com/gpsaggese/gpsaggese.github.io/pull/661)
 - [ ] [#663](https://github.com/gpsaggese/gpsaggese.github.io/issues/663):
       research other papers about optimal tennis strategy
 - [ ] [#664](https://github.com/gpsaggese/gpsaggese.github.io/issues/664):
       brainstorm how to apply this research (see Vision)
-- [-] [#666](https://github.com/gpsaggese/gpsaggese.github.io/issues/666):
+- [x] [#666](https://github.com/gpsaggese/gpsaggese.github.io/issues/666):
       update this master plan with the Milestone 2 discussion
-- [ ] [#669](https://github.com/gpsaggese/gpsaggese.github.io/issues/669):
+- [x] [#669](https://github.com/gpsaggese/gpsaggese.github.io/issues/669):
       meta-doc on how we run the research project
 - [ ] [#670](https://github.com/gpsaggese/gpsaggese.github.io/issues/670):
-      generate the paper figures from the notebooks
+      generate the paper figures from the notebooks; Figures 3 and 4 come from
+      the CSV files that notebook 05 writes
+- [x] [#691](https://github.com/gpsaggese/gpsaggese.github.io/issues/691):
+      clean up the docs (specs, notebook names), with
+      [#787](https://github.com/gpsaggese/gpsaggese.github.io/issues/787): the
+      phases in this plan, in one PR,
+      [PR #809](https://github.com/gpsaggese/gpsaggese.github.io/pull/809)
+
+- Next steps (phase 1, then phase 2):
+  - [-] [#694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694):
+        research Gdoc; the corner sims are done and in notebook 05
+        ([PR #812](https://github.com/gpsaggese/gpsaggese.github.io/pull/812)),
+        and the rules for the research Gdoc are still open
+  - [x] [#788](https://github.com/gpsaggese/gpsaggese.github.io/issues/788):
+        red to green heatmaps,
+        [PR #804](https://github.com/gpsaggese/gpsaggese.github.io/pull/804)
+  - [x] [#789](https://github.com/gpsaggese/gpsaggese.github.io/issues/789):
+        which variables matter, keeping all of them (see the findings above),
+        in notebook 05,
+        [PR #812](https://github.com/gpsaggese/gpsaggese.github.io/pull/812)
+  - [ ] [#790](https://github.com/gpsaggese/gpsaggese.github.io/issues/790):
+        symbolic regression, for a closed form of these relations
+  - [ ] [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723):
+        model the spread as a function of the ball speed
+  - [ ] [#786](https://github.com/gpsaggese/gpsaggese.github.io/issues/786):
+        model the spread as a function of player 2's movement
+  - [x] [#714](https://github.com/gpsaggese/gpsaggese.github.io/issues/714):
+        movement in the serving setup; its follow-ups are #786 and #787
+  - [-] [#713](https://github.com/gpsaggese/gpsaggese.github.io/issues/713):
+        model the RL problem (phase 2); the Gymnasium tutorial cleanup is in
+        [PR #838](https://github.com/gpsaggese/gpsaggese.github.io/pull/838)

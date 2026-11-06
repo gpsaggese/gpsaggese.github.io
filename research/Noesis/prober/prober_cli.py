@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Calibrate the canary bank or run the scheduled-probe worker.
 
@@ -6,12 +7,12 @@ reviewing the printed provider-call count.
 
 Examples:
 
-> python3 -m research.Noesis.prober.prober_cli calibrate \
+> research/Noesis/prober/prober_cli.py calibrate \
     --healthy groq=meta-llama/llama-3.3-70b-instruct \
     --healthy together=meta-llama/llama-3.3-70b-instruct \
     --weak deepinfra=meta-llama/llama-3.1-8b-instruct
-> python3 -m research.Noesis.prober.prober_cli probe --once
-> python3 -m research.Noesis.prober.prober_cli probe
+> research/Noesis/prober/prober_cli.py probe --once
+> research/Noesis/prober/prober_cli.py probe
 """
 
 import argparse
@@ -20,24 +21,25 @@ import logging
 import os
 import signal
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Mapping, Optional, Sequence
 
 import research.Noesis.checker.checker_calibration_report as rnochcare
 import research.Noesis.checker.checker_calibration_runtime as rnochcaru
 import research.Noesis.checker.checker_canaries as rnochcan
 import research.Noesis.checker.checker_models as rnochmod
+import research.Noesis.checker.checker_sink as rnochsink
 import research.Noesis.checker.checker_store as rnochsto
 import research.Noesis.common.noesis_db as rnonodb
 import research.Noesis.common.noesis_settings as rnonoset
 import research.Noesis.gateway.gateway_faults as rnogafau
 import research.Noesis.gateway.gateway_openrouter as rnogaope
-import research.Noesis.prober.prober_runtime as rnoprrun
 import research.Noesis.prober.prober_worker as rnoprwor
 
 _LOG = logging.getLogger(__name__)
 
 DEFAULT_BANK_VERSION = "v1"
+DEFAULT_CHECKER_VERSION = "m2-v1"
 DEFAULT_MINIMUM_SURVIVORS = 150
 DEFAULT_BANK_DIR = os.path.join(rnonoset.NOESIS_DIR, "data", "canaries")
 DEFAULT_REPORT_PATH = os.path.join(
@@ -69,7 +71,7 @@ def _combined_environment() -> Mapping[str, str]:
 def _require_secret(environment: Mapping[str, str], name: str) -> str:
     value = environment.get(name, "")
     if not value:
-        raise ValueError("%s is required; see env.example" % name)
+        raise ValueError(f"{name} is required; see env.example")
     return value
 
 
@@ -99,9 +101,9 @@ async def _run_calibrate(args: argparse.Namespace) -> int:
         )
     call_count = len(canaries) * len(targets) * policy.repetitions
     print(
-        "Calibration plan: %s candidates x %s targets x %s repetitions"
-        " = %s paid provider calls"
-        % (len(canaries), len(targets), policy.repetitions, call_count)
+        f"Calibration plan: {len(canaries)} candidate canaries x"
+        f" {len(targets)} targets"
+        f" x {policy.repetitions} repetitions = {call_count} paid provider calls"
     )
     if not args.execute:
         print("Validation only: no database writes or provider calls were made.")
@@ -137,7 +139,7 @@ async def _run_calibrate(args: argparse.Namespace) -> int:
             )
             _write_report(args.report, report)
             print(report)
-            print("Wrote %r" % os.path.relpath(args.report))
+            print(f"Wrote {os.path.relpath(args.report)!r}")
             if not activated:
                 print("Calibration completed, but the bank was not activated.")
                 return 2
@@ -161,6 +163,8 @@ async def _run_probe(args: argparse.Namespace) -> int:
         max_tokens=min(args.max_tokens, settings.max_tokens_cap),
         timeout_multiplier=settings.timeout_multiplier,
     )
+    checker_policy = rnochmod.WindowPolicy()
+    sink = rnochsink.RecordingVerdictSink()
     provider = rnogaope.OpenRouterProvider(api_key)
     faults = rnogafau.FaultRegistry()
     try:
@@ -168,21 +172,38 @@ async def _run_probe(args: argparse.Namespace) -> int:
         try:
             await rnonodb.apply_migrations(pool)
             if args.once:
-                result = await rnoprrun.run_due_probes(
+                result = await rnoprwor.run_probe_cycle(
                     pool,
                     provider,
                     faults,
                     policy,
                     schedule_secret,
-                    datetime.now(timezone.utc),
+                    datetime.now(UTC),
+                    sink=sink,
+                    checker_policy=checker_policy,
+                    checker_version=DEFAULT_CHECKER_VERSION,
                 )
+                finalized = sum(
+                    evaluation.finalized
+                    for evaluation in result.checker.evaluations
+                )
+                errors = result.probes.errors + result.checker.errors
                 print(
-                    "Probe cycle: executions=%s errors=%s"
-                    % (len(result.executions), len(result.errors))
+                    f"Probe/checker cycle:"
+                    f" executions={len(result.probes.executions)}"
+                    f" finalized={finalized}"
+                    f" published={len(result.checker.published_reports)}"
+                    f" errors={len(errors)}"
                 )
-                for error in result.errors:
-                    print("  %s" % error)
-                return 1 if result.errors else 0
+                for report in result.checker.published_reports:
+                    print(
+                        f"  contract={report.contract_id}"
+                        f" seller={report.seller_id}"
+                        f" verdict={report.verdict.value}"
+                    )
+                for error in errors:
+                    print(f"  {error}")
+                return 1 if errors else 0
             stop_event = asyncio.Event()
             loop = asyncio.get_running_loop()
             for signal_name in (signal.SIGINT, signal.SIGTERM):
@@ -194,11 +215,17 @@ async def _run_probe(args: argparse.Namespace) -> int:
                 policy,
                 schedule_secret,
                 stop_event,
+                sink=sink,
+                checker_policy=checker_policy,
+                checker_version=DEFAULT_CHECKER_VERSION,
                 poll_interval_s=args.poll_interval,
             )
             print(
-                "Probe worker stopped: cycles=%s executions=%s errors=%s"
-                % (result.cycles, result.executions, result.errors)
+                f"Probe worker stopped: cycles={result.cycles}"
+                f" executions={result.executions}"
+                f" finalized={result.finalized_contracts}"
+                f" published={result.published_reports}"
+                f" errors={result.errors}"
             )
             return 0
         finally:
@@ -253,7 +280,7 @@ async def _main(args: argparse.Namespace) -> int:
         return await _run_calibrate(args)
     if args.command == "probe":
         return await _run_probe(args)
-    raise ValueError("unknown command %r" % args.command)
+    raise ValueError(f"unknown command {args.command!r}")
 
 
 if __name__ == "__main__":
