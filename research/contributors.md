@@ -34,6 +34,7 @@
 
 - **GitHub**
   - https://github.com/gpsaggese/gpsaggese.github.io
+  - https://github.com/gpsaggese/helpers
 
 - **Research team**
   - GP's Research Team: https://docs.google.com/document/d/1tFUVk744hdhFjQhit-hiTzAafCtVTFttr4BR4_H-T5o/edit?tab=t.lht3e226j3g0#heading=h.brba9x13ukfh
@@ -196,21 +197,21 @@
   - https://github.com/gpsaggese/gpsaggese.github.io/blob/master/research/ideas/in_progress.RL_for_pickleball.md
 - **Whitepaper**: `papers/Optimal_strategy_for_racket_sports/paper.md`
 
-### Tymes
+### Tymes.ai
 
 - **Asana board**: https://app.asana.com/1/1208279338421005/project/1219815724731424/task/1219815724917292
-- **Google docs**: Tyrn gdoc: https://docs.google.com/document/d/1zob3eTICOFyweGa6yEP-Cp57W7VwXSTSLywvLjmgBgA/edit?tab=t.0
+- **Google docs**: https://docs.google.com/document/d/14a0cGAyI0oFh6Wm4_PjjtQ7Hb9CxltHltA59WMjIh28/edit?tab=t.9ltqvxyaodth
 - **Google drive**: https://drive.google.com/drive/folders/1lKgMLzN-OvWFzepqLXO_zJzkyM-Yp0tZ
 - **Research gdoc**:
 - **GitHub project**:
-- **GitHub code**: GitHub org: https://github.com/tymes-ai/
+- **GitHub code**: https://github.com/tymes-ai/
 - **Whitepaper**:
 
-### Tyrn
+### Tyrn.dev
 
 - **Asana board**: https://app.asana.com/1/1208279338421005/project/1219895247399606/list/1219895286332427
-- **Google docs**:
-- **Google drive**: Tyrn.dev: https://drive.google.com/drive/folders/1oEq-IqCax_hiUhijEReC4p-PhYIX8klI
+- **Google docs**: https://docs.google.com/document/d/1zob3eTICOFyweGa6yEP-Cp57W7VwXSTSLywvLjmgBgA
+- **Google drive**: https://drive.google.com/drive/folders/1oEq-IqCax_hiUhijEReC4p-PhYIX8klI
 - **Research gdoc**:
 - **GitHub project**:
 - **GitHub code**:
@@ -237,6 +238,7 @@
 | Grisha Pomazkin          | pomazking@gmail.com             | -                            | PomazkinG       | -                          |
 | Linu Teresa              | -                               | lteresa@umd.edu              | -               | Counterfactual attribution |
 | Sri Ramm Sekar Sasirekha | srirammsekarsasirekha@gmail.com | ssramm69@umd.edu             | SriRammSS       | Counterfactual attribution |
+| Heanh Sok                | heanhsok@gmail.com              | -                            | heanhsok        | Noesis                     |
 
 - [ ] @gilesgreene
 - [ ] @Delvitron1019
@@ -254,3 +256,4 @@
 - [ ] @samarth9008
 - [ ] @PomazkinG
 - [ ] @SriRammSS
+- [ ] @heanhsok
