@@ -1,0 +1,941 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-28T22:47:17.528501+00:00",
+  "status": "complete",
+  "evaluation_kind": "retrospective_development",
+  "model": "price_label_bert",
+  "model_label": "Price-label BERT (final encoder layer + regression head)",
+  "checkpoint_repository": "google-bert/bert-base-uncased",
+  "checkpoint_revision": "86b5e0934494bd15c9632b12f734a8a67f723594",
+  "checkpoint_license": "apache-2.0",
+  "registration_sha256": "d6601821be8b47f07234b6fc6757aab814dddfc98b4647d664bc8eaa34e6823e",
+  "actual_optimizer_steps": 272,
+  "planned_optimizer_steps": 272,
+  "completed_companies": [
+    "A",
+    "AMZN",
+    "MSFT"
+  ],
+  "heldout_predictions_completed": true,
+  "heldout_outcomes_opened": true,
+  "training_rows": 272,
+  "heldout_rows": 154,
+  "horizon_sessions": 10,
+  "test_start": "2023-09-01",
+  "target": "company minus SPY split-adjusted price return",
+  "cases": [
+    {
+      "company": "A",
+      "training_rows": 52,
+      "test_rows": 28,
+      "metrics": {
+        "train_mean": {
+          "samples": 28,
+          "mae": 0.056557220832130016,
+          "rmse": 0.07445992184798082,
+          "direction_accuracy": 0.32142857142857145,
+          "price_class_balanced_accuracy": 0.3333333333333333,
+          "price_class_macro_f1": 0.14814814814814814,
+          "mae_relative_to_train_mean": 1.0
+        },
+        "price_ridge": {
+          "samples": 28,
+          "mae": 0.05355600215401734,
+          "rmse": 0.06944746060912811,
+          "direction_accuracy": 0.4642857142857143,
+          "price_class_balanced_accuracy": 0.39999999999999997,
+          "price_class_macro_f1": 0.2719298245614035,
+          "mae_relative_to_train_mean": 0.9469348275259011
+        },
+        "text_tfidf_ridge": {
+          "samples": 28,
+          "mae": 0.055323570918884575,
+          "rmse": 0.07362175718894835,
+          "direction_accuracy": 0.32142857142857145,
+          "price_class_balanced_accuracy": 0.3333333333333333,
+          "price_class_macro_f1": 0.14814814814814814,
+          "mae_relative_to_train_mean": 0.9781875789670237
+        },
+        "price_text_ridge": {
+          "samples": 28,
+          "mae": 0.05287466353490039,
+          "rmse": 0.06895243290143023,
+          "direction_accuracy": 0.4642857142857143,
+          "price_class_balanced_accuracy": 0.39999999999999997,
+          "price_class_macro_f1": 0.2719298245614035,
+          "mae_relative_to_train_mean": 0.9348879375073965
+        },
+        "finbert_tone_ridge": {
+          "samples": 28,
+          "mae": 0.05583557988124348,
+          "rmse": 0.07368927028798804,
+          "direction_accuracy": 0.32142857142857145,
+          "price_class_balanced_accuracy": 0.3333333333333333,
+          "price_class_macro_f1": 0.14814814814814814,
+          "mae_relative_to_train_mean": 0.9872405160602132
+        },
+        "price_finbert_ridge": {
+          "samples": 28,
+          "mae": 0.0542226422556953,
+          "rmse": 0.07020479031687643,
+          "direction_accuracy": 0.4642857142857143,
+          "price_class_balanced_accuracy": 0.39999999999999997,
+          "price_class_macro_f1": 0.2719298245614035,
+          "mae_relative_to_train_mean": 0.95872182999649
+        },
+        "lm_tone_ridge": {
+          "samples": 28,
+          "mae": 0.056397275547688294,
+          "rmse": 0.07414427806202128,
+          "direction_accuracy": 0.32142857142857145,
+          "price_class_balanced_accuracy": 0.3333333333333333,
+          "price_class_macro_f1": 0.14814814814814814,
+          "mae_relative_to_train_mean": 0.997171974115976
+        },
+        "price_lm_ridge": {
+          "samples": 28,
+          "mae": 0.05408490919196982,
+          "rmse": 0.06982164757865565,
+          "direction_accuracy": 0.4642857142857143,
+          "price_class_balanced_accuracy": 0.39999999999999997,
+          "price_class_macro_f1": 0.2719298245614035,
+          "mae_relative_to_train_mean": 0.9562865430128122
+        },
+        "price_label_bert": {
+          "samples": 28,
+          "mae": 0.05683185304437439,
+          "rmse": 0.07402726111280304,
+          "direction_accuracy": 0.32142857142857145,
+          "price_class_balanced_accuracy": 0.3333333333333333,
+          "price_class_macro_f1": 0.14814814814814814,
+          "mae_relative_to_train_mean": 1.004855829338919
+        }
+      },
+      "illustrative_cost_scenarios": {
+        "mode": "retrospective_non_overlapping_long_cash_price_return",
+        "eligible_nonoverlapping_intervals": 6,
+        "models": {
+          "train_mean": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            }
+          ],
+          "price_ridge": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            }
+          ],
+          "text_tfidf_ridge": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            }
+          ],
+          "price_text_ridge": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            }
+          ],
+          "finbert_tone_ridge": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            }
+          ],
+          "price_finbert_ridge": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            }
+          ],
+          "lm_tone_ridge": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            }
+          ],
+          "price_lm_ridge": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            }
+          ],
+          "price_label_bert": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            }
+          ],
+          "always_company": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.05500448861742302,
+              "roundtrip_trades": 6
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.04869184027977114,
+              "roundtrip_trades": 6
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.04241383347066807,
+              "roundtrip_trades": 6
+            }
+          ],
+          "always_spy": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.015546167906185682,
+              "roundtrip_trades": 6
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.009469619514393512,
+              "roundtrip_trades": 6
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.0034264170201285804,
+              "roundtrip_trades": 6
+            }
+          ],
+          "cash": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            }
+          ]
+        },
+        "is_executable_strategy_evidence": false
+      }
+    },
+    {
+      "company": "AMZN",
+      "training_rows": 110,
+      "test_rows": 61,
+      "metrics": {
+        "train_mean": {
+          "samples": 61,
+          "mae": 0.03237134418384277,
+          "rmse": 0.04115909551940608,
+          "direction_accuracy": 0.5081967213114754,
+          "price_class_balanced_accuracy": 0.3333333333333333,
+          "price_class_macro_f1": 0.1992337164750958,
+          "mae_relative_to_train_mean": 1.0
+        },
+        "price_ridge": {
+          "samples": 61,
+          "mae": 0.03531622338958147,
+          "rmse": 0.04323968180051725,
+          "direction_accuracy": 0.5081967213114754,
+          "price_class_balanced_accuracy": 0.3333333333333333,
+          "price_class_macro_f1": 0.22957084068195177,
+          "mae_relative_to_train_mean": 1.090971792490735
+        },
+        "text_tfidf_ridge": {
+          "samples": 61,
+          "mae": 0.03199423523425503,
+          "rmse": 0.040440930006004454,
+          "direction_accuracy": 0.5081967213114754,
+          "price_class_balanced_accuracy": 0.3333333333333333,
+          "price_class_macro_f1": 0.1992337164750958,
+          "mae_relative_to_train_mean": 0.9883505316478033
+        },
+        "price_text_ridge": {
+          "samples": 61,
+          "mae": 0.03472834468809622,
+          "rmse": 0.04228329501581093,
+          "direction_accuracy": 0.5245901639344263,
+          "price_class_balanced_accuracy": 0.3333333333333333,
+          "price_class_macro_f1": 0.22957084068195177,
+          "mae_relative_to_train_mean": 1.0728113263035237
+        },
+        "finbert_tone_ridge": {
+          "samples": 61,
+          "mae": 0.033010793074501395,
+          "rmse": 0.04241662383671924,
+          "direction_accuracy": 0.5081967213114754,
+          "price_class_balanced_accuracy": 0.3333333333333333,
+          "price_class_macro_f1": 0.1992337164750958,
+          "mae_relative_to_train_mean": 1.0197535476755948
+        },
+        "price_finbert_ridge": {
+          "samples": 61,
+          "mae": 0.03750661976029863,
+          "rmse": 0.045301443930433456,
+          "direction_accuracy": 0.5573770491803278,
+          "price_class_balanced_accuracy": 0.32051282051282054,
+          "price_class_macro_f1": 0.2238095238095238,
+          "mae_relative_to_train_mean": 1.158636464006304
+        },
+        "lm_tone_ridge": {
+          "samples": 61,
+          "mae": 0.03269952596801859,
+          "rmse": 0.041347602796053436,
+          "direction_accuracy": 0.5081967213114754,
+          "price_class_balanced_accuracy": 0.3333333333333333,
+          "price_class_macro_f1": 0.1992337164750958,
+          "mae_relative_to_train_mean": 1.0101380338830546
+        },
+        "price_lm_ridge": {
+          "samples": 61,
+          "mae": 0.03556228110283783,
+          "rmse": 0.0432294532095191,
+          "direction_accuracy": 0.5245901639344263,
+          "price_class_balanced_accuracy": 0.3333333333333333,
+          "price_class_macro_f1": 0.227061556329849,
+          "mae_relative_to_train_mean": 1.0985728890611755
+        },
+        "price_label_bert": {
+          "samples": 61,
+          "mae": 0.02711480898238,
+          "rmse": 0.03633289439688964,
+          "direction_accuracy": 0.39344262295081966,
+          "price_class_balanced_accuracy": 0.3333333333333333,
+          "price_class_macro_f1": 0.0857142857142857,
+          "mae_relative_to_train_mean": 0.8376176419610522
+        }
+      },
+      "illustrative_cost_scenarios": {
+        "mode": "retrospective_non_overlapping_long_cash_price_return",
+        "eligible_nonoverlapping_intervals": 7,
+        "models": {
+          "train_mean": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.043490731777275915,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.036209988655373726,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.028976440400807713,
+              "roundtrip_trades": 7
+            }
+          ],
+          "price_ridge": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.043490731777275915,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.036209988655373726,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.028976440400807713,
+              "roundtrip_trades": 7
+            }
+          ],
+          "text_tfidf_ridge": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.043490731777275915,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.036209988655373726,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.028976440400807713,
+              "roundtrip_trades": 7
+            }
+          ],
+          "price_text_ridge": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.043490731777275915,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.036209988655373726,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.028976440400807713,
+              "roundtrip_trades": 7
+            }
+          ],
+          "finbert_tone_ridge": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.043490731777275915,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.036209988655373726,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.028976440400807713,
+              "roundtrip_trades": 7
+            }
+          ],
+          "price_finbert_ridge": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.043490731777275915,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.036209988655373726,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.028976440400807713,
+              "roundtrip_trades": 7
+            }
+          ],
+          "lm_tone_ridge": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.043490731777275915,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.036209988655373726,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.028976440400807713,
+              "roundtrip_trades": 7
+            }
+          ],
+          "price_lm_ridge": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.043490731777275915,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.036209988655373726,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.028976440400807713,
+              "roundtrip_trades": 7
+            }
+          ],
+          "price_label_bert": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.04209113921924468,
+              "roundtrip_trades": 2
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.04000851955653473,
+              "roundtrip_trades": 2
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.03792902304188073,
+              "roundtrip_trades": 2
+            }
+          ],
+          "always_company": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.043490731777275915,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.036209988655373726,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.028976440400807713,
+              "roundtrip_trades": 7
+            }
+          ],
+          "always_spy": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.018668490853321895,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.011560939839767137,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.004499461036363339,
+              "roundtrip_trades": 7
+            }
+          ],
+          "cash": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            }
+          ]
+        },
+        "is_executable_strategy_evidence": false
+      }
+    },
+    {
+      "company": "MSFT",
+      "training_rows": 110,
+      "test_rows": 65,
+      "metrics": {
+        "train_mean": {
+          "samples": 65,
+          "mae": 0.02528141066820155,
+          "rmse": 0.031010791181541236,
+          "direction_accuracy": 0.6923076923076923,
+          "price_class_balanced_accuracy": 0.3333333333333333,
+          "price_class_macro_f1": 0.25396825396825395,
+          "mae_relative_to_train_mean": 1.0
+        },
+        "price_ridge": {
+          "samples": 65,
+          "mae": 0.024826227229500984,
+          "rmse": 0.03066760132588473,
+          "direction_accuracy": 0.6307692307692307,
+          "price_class_balanced_accuracy": 0.3428571428571428,
+          "price_class_macro_f1": 0.26313770617568083,
+          "mae_relative_to_train_mean": 0.9819953306927969
+        },
+        "text_tfidf_ridge": {
+          "samples": 65,
+          "mae": 0.025195298497682747,
+          "rmse": 0.03093965671348951,
+          "direction_accuracy": 0.6923076923076923,
+          "price_class_balanced_accuracy": 0.30833333333333335,
+          "price_class_macro_f1": 0.24666666666666667,
+          "mae_relative_to_train_mean": 0.9965938542097608
+        },
+        "price_text_ridge": {
+          "samples": 65,
+          "mae": 0.024740080744954273,
+          "rmse": 0.030530479857159808,
+          "direction_accuracy": 0.6461538461538462,
+          "price_class_balanced_accuracy": 0.3345238095238095,
+          "price_class_macro_f1": 0.25627705627705627,
+          "mae_relative_to_train_mean": 0.9785878276195975
+        },
+        "finbert_tone_ridge": {
+          "samples": 65,
+          "mae": 0.024791324305131788,
+          "rmse": 0.03061452368858646,
+          "direction_accuracy": 0.6923076923076923,
+          "price_class_balanced_accuracy": 0.3226190476190476,
+          "price_class_macro_f1": 0.2710795902285264,
+          "mae_relative_to_train_mean": 0.9806147540775412
+        },
+        "price_finbert_ridge": {
+          "samples": 65,
+          "mae": 0.024563668333567944,
+          "rmse": 0.030380320694376284,
+          "direction_accuracy": 0.6,
+          "price_class_balanced_accuracy": 0.3595238095238095,
+          "price_class_macro_f1": 0.28104575163398693,
+          "mae_relative_to_train_mean": 0.9716098779433867
+        },
+        "lm_tone_ridge": {
+          "samples": 65,
+          "mae": 0.025029664897972707,
+          "rmse": 0.03067112927168992,
+          "direction_accuracy": 0.6923076923076923,
+          "price_class_balanced_accuracy": 0.4321428571428571,
+          "price_class_macro_f1": 0.3246612466124661,
+          "mae_relative_to_train_mean": 0.99004225778645
+        },
+        "price_lm_ridge": {
+          "samples": 65,
+          "mae": 0.02453495139127948,
+          "rmse": 0.030158350799749857,
+          "direction_accuracy": 0.6153846153846154,
+          "price_class_balanced_accuracy": 0.3511904761904762,
+          "price_class_macro_f1": 0.28236808236808236,
+          "mae_relative_to_train_mean": 0.9704739863325368
+        },
+        "price_label_bert": {
+          "samples": 65,
+          "mae": 0.025896344256862852,
+          "rmse": 0.03161958752268707,
+          "direction_accuracy": 0.6923076923076923,
+          "price_class_balanced_accuracy": 0.24047619047619048,
+          "price_class_macro_f1": 0.12005108556832694,
+          "mae_relative_to_train_mean": 1.024323547318297
+        }
+      },
+      "illustrative_cost_scenarios": {
+        "mode": "retrospective_non_overlapping_long_cash_price_return",
+        "eligible_nonoverlapping_intervals": 7,
+        "models": {
+          "train_mean": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.11934442063324391,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.11153442391416934,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.10377505276351306,
+              "roundtrip_trades": 7
+            }
+          ],
+          "price_ridge": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.11934442063324391,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.11153442391416934,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.10377505276351306,
+              "roundtrip_trades": 7
+            }
+          ],
+          "text_tfidf_ridge": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.11934442063324391,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.11153442391416934,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.10377505276351306,
+              "roundtrip_trades": 7
+            }
+          ],
+          "price_text_ridge": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.11934442063324391,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.11153442391416934,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.10377505276351306,
+              "roundtrip_trades": 7
+            }
+          ],
+          "finbert_tone_ridge": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.11934442063324391,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.11153442391416934,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.10377505276351306,
+              "roundtrip_trades": 7
+            }
+          ],
+          "price_finbert_ridge": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.11934442063324391,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.11153442391416934,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.10377505276351306,
+              "roundtrip_trades": 7
+            }
+          ],
+          "lm_tone_ridge": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.11934442063324391,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.11153442391416934,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.10377505276351306,
+              "roundtrip_trades": 7
+            }
+          ],
+          "price_lm_ridge": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.08937492418547133,
+              "roundtrip_trades": 6
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.08285661940247335,
+              "roundtrip_trades": 6
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.07637408471613738,
+              "roundtrip_trades": 6
+            }
+          ],
+          "price_label_bert": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.11934442063324391,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.11153442391416934,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.10377505276351306,
+              "roundtrip_trades": 7
+            }
+          ],
+          "always_company": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.11934442063324391,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.11153442391416934,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.10377505276351306,
+              "roundtrip_trades": 7
+            }
+          ],
+          "always_spy": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.018668490853321895,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.011560939839767137,
+              "roundtrip_trades": 7
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.004499461036363339,
+              "roundtrip_trades": 7
+            }
+          ],
+          "cash": [
+            {
+              "assumed_roundtrip_cost_bps": 0,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            },
+            {
+              "assumed_roundtrip_cost_bps": 10,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            },
+            {
+              "assumed_roundtrip_cost_bps": 20,
+              "cumulative_simulated_price_return": 0.0,
+              "roundtrip_trades": 0
+            }
+          ]
+        },
+        "is_executable_strategy_evidence": false
+      }
+    }
+  ],
+  "promoted": false,
+  "alpha_established": false,
+  "failure_types": [],
+  "elapsed_seconds": 1211.1904100229985,
+  "limitations": [
+    "This is one fixed retrospective development run, not a fresh prospective test.",
+    "2023 headlines were retrieved later; historical receipt availability is not verified.",
+    "Only A, AMZN and MSFT are included; this does not establish general stock selection skill.",
+    "Targets are 10-session SPY-excess split-adjusted price returns, not human sentiment labels.",
+    "Cash dividends, realistic fills, borrow, portfolio constraints and taxes are excluded.",
+    "Illustrative long/cash interval returns are not the live Quant.ai trading strategy or realized profit.",
+    "Only the final BERT encoder layer and scalar head are updated; this is not full-model fine-tuning.",
+    "Frozen FinBERT and previously saved controls are separate comparators; their parameters were not refitted.",
+    "LM dictionary comparator has separate research-use and historical-version limitations.",
+    "No hyperparameter search or deployment promotion was performed."
+  ]
+}
