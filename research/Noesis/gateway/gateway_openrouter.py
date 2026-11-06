@@ -16,10 +16,10 @@ import logging
 import time
 from typing import Any, Callable, Dict, Optional
 
-import helpers.hdbg as hdbg
-import helpers.hprint as hprint
 import httpx
 
+import helpers.hdbg as hdbg
+import helpers.hprint as hprint
 import research.Noesis.gateway.gateway_providers as rnogapro
 
 _LOG = logging.getLogger(__name__)
