@@ -398,3 +398,10 @@
 - **Alternatives**: a grant per tier or per account type (nothing in the PRD
   asks for it); store the account id on the contract (changes the `Contract`
   schema that PR_P2b persists).
+
+## M12 Report Tables
+
+- Use explicit nullable column types and stable order for notebook-friendly tables
+- Keep buyer limits separate from seller expectations; missing opposite-side terms
+  are null rather than zero. Normalize capability field names to `tier`.
+- Table helpers perform no I/O; scripts own rendering and exported artifacts
