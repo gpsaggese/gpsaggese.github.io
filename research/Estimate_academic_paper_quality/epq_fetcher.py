@@ -1,9 +1,12 @@
 """
-Own the files of each paper in `<output_dir>/papers/`.
+Own the PDF and markdown files of each paper in `<output_dir>/paper_pdf/` and
+`<output_dir>/paper_md/`.
 
 This module:
 - Creates `<BASE>.pdf` and `<BASE>.md` with the existing download tool
   `download_academic_paper_to_md.py`
+  - The tool writes both files with the same base path, so the tool runs in the
+    dir of the PDFs and the module moves the markdown to the dir of the markdown
 - Records why a download or a conversion fails
 - Reads the PDF for the other components: page texts, page count, and title of
   the first page
@@ -42,6 +45,12 @@ _MIN_MARKDOWN_CHARS = 500
 # Name of the download tool, found in the Git tree.
 _TOOL_NAME = "download_academic_paper_to_md.py"
 
+# Lines that `hsystem` prints after a failed command, with no error in them.
+_HSYSTEM_NOTE_PREFIXES = ("- Output saved in", "- Command saved in")
+
+# Last line of a Python traceback, e.g., `ValueError: bad` or `Error: bad`.
+_EXCEPTION_RE = re.compile(r"^[\w.]*(Error|Exception)\b")
+
 
 # #############################################################################
 # Paths and checks
@@ -57,16 +66,17 @@ def get_tool_path() -> str:
     return hgit.find_file_in_git_tree(_TOOL_NAME)
 
 
-def _get_paths(papers_dir: str, base_name: str) -> Tuple[str, str]:
+def _get_paths(pdf_dir: str, md_dir: str, base_name: str) -> Tuple[str, str]:
     """
     Build the paths of the PDF and of the markdown of a paper.
 
-    :param papers_dir: dir of the files of the papers
+    :param pdf_dir: dir of the PDF files of the papers
+    :param md_dir: dir of the markdown files of the papers
     :param base_name: base name of the paper
     :return: paths of the PDF and of the markdown
     """
-    pdf_path = os.path.join(papers_dir, f"{base_name}.pdf")
-    md_path = os.path.join(papers_dir, f"{base_name}.md")
+    pdf_path = os.path.join(pdf_dir, f"{base_name}.pdf")
+    md_path = os.path.join(md_dir, f"{base_name}.md")
     return pdf_path, md_path
 
 
@@ -101,15 +111,16 @@ def _check_markdown(md_path: str) -> bool:
     return has_text
 
 
-def is_fetched(papers_dir: str, base_name: str) -> bool:
+def is_fetched(pdf_dir: str, md_dir: str, base_name: str) -> bool:
     """
     Check if a paper has a valid PDF and a markdown file.
 
-    :param papers_dir: dir of the files of the papers
+    :param pdf_dir: dir of the PDF files of the papers
+    :param md_dir: dir of the markdown files of the papers
     :param base_name: base name of the paper
     :return: True if the download and the conversion can be skipped
     """
-    pdf_path, md_path = _get_paths(papers_dir, base_name)
+    pdf_path, md_path = _get_paths(pdf_dir, md_dir, base_name)
     return _check_pdf(pdf_path) and _check_markdown(md_path)
 
 
@@ -120,16 +131,32 @@ def is_fetched(papers_dir: str, base_name: str) -> bool:
 
 def _read_last_line(log_path: str) -> str:
     """
-    Read the last non-empty line of a log file.
+    Read the line of a log file that tells why the tool failed.
+
+    The tool runs other commands with `hsystem`. When one of them fails,
+    `hsystem` prints lines that say where it saved the command and the output.
+    These lines come after the real error and are skipped. If the log has an
+    exception line, e.g., `playwright._impl._errors.Error: ...`, the last one is
+    the reason. Otherwise the reason is the last line that is not skipped.
 
     :param log_path: path of the log
-    :return: the line, or `no output` if the log is missing or empty
+    :return: the line, or `no output` if the log is missing or has no line to
+        show
     """
     last_line = "no output"
     if os.path.isfile(log_path):
         lines = [line.strip() for line in hio.from_file(log_path).split("\n")]
-        lines = [line for line in lines if line]
-        if lines:
+        # Skip the empty lines, the lines with only quotes, and the notes of
+        # `hsystem` on the files that it saved.
+        lines = [
+            line
+            for line in lines
+            if line.strip("'\"") and not line.startswith(_HSYSTEM_NOTE_PREFIXES)
+        ]
+        exception_lines = [line for line in lines if _EXCEPTION_RE.match(line)]
+        if exception_lines:
+            last_line = exception_lines[-1]
+        elif lines:
             last_line = lines[-1]
     return last_line
 
@@ -175,9 +202,24 @@ def _run_tool(
     return rc
 
 
+def _move_markdown(pdf_path: str, md_path: str) -> None:
+    """
+    Move the markdown that the tool wrote next to the PDF to the markdown dir.
+
+    :param pdf_path: path of the PDF, whose base path the tool used
+    :param md_path: path of the markdown in the markdown dir
+    """
+    tool_md_path = os.path.splitext(pdf_path)[0] + ".md"
+    if os.path.isfile(tool_md_path):
+        hio.create_dir(os.path.dirname(md_path), incremental=True)
+        # Replace the markdown of an earlier run.
+        os.replace(tool_md_path, md_path)
+
+
 def _convert_existing_pdf(
     paper: epqtypes.Paper,
-    papers_dir: str,
+    pdf_dir: str,
+    md_dir: str,
     log_path: str,
     *,
     tool_path: str,
@@ -186,14 +228,15 @@ def _convert_existing_pdf(
     """
     Convert a valid PDF that has no markdown.
 
-    :param paper: paper with a PDF in `papers_dir`
-    :param papers_dir: dir of the files of the papers
+    :param paper: paper with a PDF in `pdf_dir`
+    :param pdf_dir: dir of the PDF files of the papers
+    :param md_dir: dir of the markdown files of the papers
     :param log_path: file that gets the output of the tool
     :param tool_path: path of the download tool
     :param log_level: logging level to forward to the tool
     :return: result of the conversion
     """
-    pdf_path, md_path = _get_paths(papers_dir, paper.base_name)
+    pdf_path, md_path = _get_paths(pdf_dir, md_dir, paper.base_name)
     base_path = os.path.splitext(pdf_path)[0]
     rc = _run_tool(
         tool_path,
@@ -203,6 +246,7 @@ def _convert_existing_pdf(
         only_convert=True,
         log_level=log_level,
     )
+    _move_markdown(pdf_path, md_path)
     if rc == 0 and _check_markdown(md_path):
         result = epqtypes.FetchResult(status="ok", reason="")
     else:
@@ -213,7 +257,8 @@ def _convert_existing_pdf(
 
 def fetch_paper(
     paper: epqtypes.Paper,
-    papers_dir: str,
+    pdf_dir: str,
+    md_dir: str,
     *,
     log_dir: str,
     tool_path: str = "",
@@ -227,7 +272,8 @@ def fetch_paper(
     goes on with the other papers.
 
     :param paper: paper with its ordered download inputs
-    :param papers_dir: dir of the files of the papers
+    :param pdf_dir: dir of the PDF files of the papers
+    :param md_dir: dir of the markdown files of the papers
     :param log_dir: dir of the logs of the tool
     :param tool_path: path of the download tool
         - Default: find `download_academic_paper_to_md.py` in the Git tree
@@ -235,18 +281,24 @@ def fetch_paper(
     :return: status `ok`, `no_download_link`, `download_failed`, or
         `conversion_failed`, with the reason
     """
-    _LOG.debug(hprint.to_str("paper.base_name papers_dir log_dir"))
+    _LOG.debug(hprint.to_str("paper.base_name pdf_dir md_dir log_dir"))
     hdbg.dassert_ne(paper.base_name, "", "A paper needs a base name")
-    hio.create_dir(papers_dir, incremental=True)
+    hio.create_dir(pdf_dir, incremental=True)
+    hio.create_dir(md_dir, incremental=True)
     tool_path = tool_path or get_tool_path()
-    pdf_path, md_path = _get_paths(papers_dir, paper.base_name)
+    pdf_path, md_path = _get_paths(pdf_dir, md_dir, paper.base_name)
     base_path = os.path.splitext(pdf_path)[0]
     log_path = os.path.join(log_dir, f"{paper.base_name}.download.log")
     if _check_pdf(pdf_path):
         # A valid PDF is there, e.g., from an earlier run that failed to
         # convert: only the conversion is missing.
         result = _convert_existing_pdf(
-            paper, papers_dir, log_path, tool_path=tool_path, log_level=log_level
+            paper,
+            pdf_dir,
+            md_dir,
+            log_path,
+            tool_path=tool_path,
+            log_level=log_level,
         )
         return result
     if not paper.download_inputs:
@@ -268,6 +320,7 @@ def fetch_paper(
             only_convert=False,
             log_level=log_level,
         )
+        _move_markdown(pdf_path, md_path)
         if _check_pdf(pdf_path):
             # The download worked: the markdown tells if the conversion did.
             if rc == 0 and _check_markdown(md_path):
