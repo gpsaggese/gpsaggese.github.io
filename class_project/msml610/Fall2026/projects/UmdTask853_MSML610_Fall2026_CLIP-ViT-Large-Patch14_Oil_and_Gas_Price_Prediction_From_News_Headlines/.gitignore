@@ -1,0 +1,5 @@
+.cache/
+__pycache__/
+.ipynb_checkpoints/
+
+docker_build.version.log
