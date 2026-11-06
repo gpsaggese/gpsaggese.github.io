@@ -1,4 +1,4 @@
-- The format of a book map is described here
+- Definitions and the format of a book map is described in
   `.claude/skills/book_map.rules.md`
 
 # All prompts
@@ -19,52 +19,65 @@ book_scripts/prompt.update_book_chap_from_lesson_slides.md
 
 # Prompts
 
-## Create `lesson_slides` from a chapter toc
+## Create `lesson_slides` from a chapter TOC
+- Reads th chapter TOC, `### Topics`, and `### Lesson Materials` from
+  `book_map.md`
+- Collect the material, then runs the common steps below
+  ```
+  claude> Execute book_scripts/prompt.create_lesson_slides_from_chap_toc.md
+  ```
 - E.g., for the agentic AI book, there is a `chap_toc` and we need to create
   `lesson_slides`
-- Reads the chapter TOC, `### Topics`, and `### Lesson Materials` from
-  `book_map.md`
-- Collects the material, then runs the common steps below
-- `book_scripts/prompt.create_lesson_slides_from_chap_toc.md`
 
 ## Create `lesson_slides` from a topic list (no book map yet)
-- Same goal and workflow as the prompt above, but topics are given as an ad
-  hoc list inline in the prompt instead of being read from a chapter's
-  `### Topics` in `book_map.md`
+- Same goal and workflow as the prompt above, but topics are given as an ad-hoc list
+  inline in the prompt instead of being read from a chapter's `### Topics` in
+  `book_map.md`
 - Useful when the book map does not have that chapter yet, or for a course
   such as `msml610`
-- `book_scripts/prompt.create_lesson_slides_from_topic.md`
+  ```
+  claude> Execute book_scripts/prompt.create_lesson_slides_from_topic.md
+  ```
 
 ## Common steps to create `lesson_slides`
 - Steps shared by the two prompts above, executed after the material is read
-- Creates a skeleton of titles, asks the user for approval, then calls
-  `slides.write` for 30-35 slides
-- Creates a notebook for the figures that need data or code, saved with
-  `hmatplo.save_fig()`
-- Saves a new `lectures_source/Lesson<CHAP_NUM>.<ID>_<Title>.smd`
-- `book_scripts/prompt.create_lesson_slides.common.md`
+  - Create a skeleton of titles
+  - Ask the user for approval
+  - Call `/slides.write` for 30-35 slides
+  - Create a notebook for the figures that need data or code, saved with
+    `hmatplo.save_fig()`
+  - Save a new `lectures_source/Lesson<CHAP_NUM>.<ID>_<Title>.smd`
+  ```
+  claude> Execute book_scripts/prompt.create_lesson_slides.common.md
+  ```
 
 ## Find material
 - Complete the pointers and add references to `resources.md`
-  `book_scripts/prompt.find_references_to_chap_toc.md`
+  ```
+  claude> Execute book_scripts/prompt.find_references_to_chap_toc.md
+  ```
 
 ## Create `skeleton_slides` from `book_map` and `slides_tutorials`
-- In practice we read the TOC for a chapter in the `book_map.md` and find the
-  material already available for it
-- `book_scripts/prompt.extract_skeleton_slides_from_lesson_slides.md`
+- Read the TOC for a chapter in the `book_map.md`
+- Find the material already available for it
+  ```
+  claude> Execute book_scripts/prompt.extract_skeleton_slides_from_lesson_slides.md
+  ```
 
 ## Inline slides in a skeleton slide
-- `book_scripts/prompt.inline_lesson_slides_from_skeleton_slides.md`
-- Mechanically copies existing slide content into a skeleton, following each
-  slide's `// From: <file>:<line num> '<title>'` pointer
-- This is also implemented as Python script since it's a mechanical operation
+- Mechanically copies existing slide content into a skeleton, following each slide's
+  `// From: <file>:<line num> '<title>'` pointer
+  ```
+  claude> book_scripts/prompt.inline_lesson_slides_from_skeleton_slides.md
+  ```
+  - E.g.,
+    ```
+    claude> Execute /Users/saggese/src/notes1/book_scripts/prompt.inline_lesson_slides_from_skeleton_slides.md on book_springer/lectures_source/Lesson05.1_Probabilistic_ML.txt
+    ```
+- This is also implemented as Python script (since it's a mechanical operation)
   ```
   > class_scripts/inline_content_in_skeleton_slides.py
   > vi $(grep -riL "Score:" *.md | while IFS= read -r f; do stat -f "%m%t%N" "$f"; done | sort -n | head -10 | cut -f2- | tr '\n' '\0' | xargs -0)
-  ```
-- E.g.,
-  ```
-  claude> Execute /Users/saggese/src/notes1/book_scripts/prompt.inline_lesson_slides_from_skeleton_slides.md on book_springer/lectures_source/Lesson05.1_Probabilistic_ML.txt
   ```
 
 - Check that the result is correct with:
@@ -77,7 +90,9 @@ book_scripts/prompt.update_book_chap_from_lesson_slides.md
   slide's `// From: <file>` pointer names a whole background file (e.g. a
   rules doc) rather than a specific source slide/line, so the content must be
   generated from that background reading instead of copied verbatim
-- `book_scripts/prompt.expand_skeleton_slides.md`
+  ```
+  claude> Execute book_scripts/prompt.expand_skeleton_slides.md
+  ```
 
 // TODO(gp): Likely a near-duplicate of "Inline slides in a skeleton slide"
 // above (same skeleton -> full-slides direction, different `// From:`
@@ -111,7 +126,7 @@ book_scripts/prompt.update_book_chap_from_lesson_slides.md
 
 - Execute
   ```
-  claude> Execute book_scripts/prompt.create_latex_book_chap_from_lesson_slides.md on 
+  claude> Execute book_scripts/prompt.create_latex_book_chap_from_lesson_slides.md
   ```
 
   ```

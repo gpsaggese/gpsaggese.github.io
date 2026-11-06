@@ -16,7 +16,6 @@ import pytest
 pytest.importorskip("psycopg2")
 
 import helpers.hsql_test as hsqltest  # noqa: E402 # pylint: disable=wrong-import-position
-
 import research.Noesis.market.batch_call_auction as rnbacaau  # noqa: E402 # pylint: disable=wrong-import-position
 import research.Noesis.market.contract_dispatch as rnocodis  # noqa: E402 # pylint: disable=wrong-import-position
 import research.Noesis.market.round_runner as rnmaroru  # noqa: E402 # pylint: disable=wrong-import-position

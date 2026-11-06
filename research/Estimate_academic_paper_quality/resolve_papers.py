@@ -1,35 +1,66 @@
+#!/usr/bin/env -S uv run
+
+# /// script
+# dependencies = ["feedparser", "pymupdf", "requests", "pyyaml", "beautifulsoup4", "pydantic", "tqdm"]
+# ///
+
 """
-Turn the lines of the input file into one deduped, sorted list of papers.
+Turn a CSV of loose paper names into a list of resolved, deduped papers.
 
-This module:
-- Classifies each line: local PDF, SSRN, DOI, arXiv, URL, or title
-- Matches each line to exactly one paper of a bibliographic source, or marks it
-  `unresolved` or `ambiguous` with its candidates
-- Merges the lines of the same paper
-- Builds the reference, the base name, and the ordered download inputs
-- Sorts the papers in reverse chronological order
+The input CSV has one paper per row, with no header needed (a header with a
+column `input` is also accepted):
+- a title (with the authors in parentheses)
+- an arXiv or SSRN link, a DOI, a publisher link, or the path of a local PDF
 
-The design is in `docs/02.2-design.resolver.md`.
+The files are written in `--output_dir`, with names that the script infers:
+- `00-paper_list.csv`: a copy of the input CSV
+- `01-resolve.paper_list.json`: one paper per item, from the newest to the oldest,
+  with the reference, the base name, and the ordered download inputs
+- `01-resolve.issues.json`: one issue per input that did not give a paper
+- `01-resolve.summary.txt`: the counts, the output files, and the issues file of
+  the run, the same text as the end of the log
 
-Import as:
+The papers file is the input of `download_papers.py`, `extract_features.py`, and
+`report_papers.py`. The script `estimate_paper_quality.py` runs all the stages in
+order.
 
-import research.Estimate_academic_paper_quality.epq_resolver as epqresol
+# Usage Example
+
+- Resolve a list of papers:
+> resolve_papers.py --input papers_in.csv --output_dir out
+
+- Show how each row is classified, with no lookup and no output file:
+> resolve_papers.py --input papers_in.csv --output_dir out --dry_run
+
+For a description of this file, see the file
+`research/Estimate_academic_paper_quality/resolve_papers.py.README.md`
 """
 
+import argparse
 import dataclasses
 import difflib
 import logging
 import os
 import re
+import shutil
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import dev_scripts_helpers.download.download_utils as dshddut
+import helpers.hcache_simple as hcacsimp
 import helpers.hdbg as hdbg
+import helpers.hio as hio
+import helpers.hparser as hparser
 import helpers.hprint as hprint
 import helpers.hstring as hstring
+import helpers.htimer as htimer
+import tqdm
 
 import research.Estimate_academic_paper_quality.epq_bib_sources as epqbibso
 import research.Estimate_academic_paper_quality.epq_fetcher as epqfetch
+import research.Estimate_academic_paper_quality.epq_issues as epqissue
+import research.Estimate_academic_paper_quality.epq_paths as epqpaths
+import research.Estimate_academic_paper_quality.epq_report as epqrepor
+import research.Estimate_academic_paper_quality.epq_summary as epqsumm
 import research.Estimate_academic_paper_quality.epq_types as epqtypes
 
 _LOG = logging.getLogger(__name__)
@@ -57,7 +88,7 @@ _ARXIV_ID = r"\d{4}\.\d{4,5}(?:v\d+)?"
 # #############################################################################
 
 
-def normalize_title(title: str) -> str:
+def _normalize_title(title: str) -> str:
     """
     Normalize a title to compare it with another title.
 
@@ -72,7 +103,7 @@ def normalize_title(title: str) -> str:
     return title.strip()
 
 
-def join_wrapped_lines(raw_lines: List[str]) -> List[Tuple[int, str]]:
+def _join_wrapped_lines(raw_lines: List[str]) -> List[Tuple[int, str]]:
     """
     Join the lines of a markdown bullet that was wrapped on several lines.
 
@@ -127,7 +158,7 @@ def _split_title_and_hints(text: str) -> Tuple[str, Tuple[str, ...]]:
     return title, hints
 
 
-def parse_line(line_no: int, text: str) -> Optional[epqtypes.InputLine]:
+def _parse_line(line_no: int, text: str) -> Optional[epqtypes.InputLine]:
     """
     Classify one line of the input file.
 
@@ -176,7 +207,7 @@ def parse_line(line_no: int, text: str) -> Optional[epqtypes.InputLine]:
     return input_line
 
 
-def parse_lines(raw_lines: List[str]) -> List[epqtypes.InputLine]:
+def _parse_lines(raw_lines: List[str]) -> List[epqtypes.InputLine]:
     """
     Classify the lines of the input file.
 
@@ -184,8 +215,8 @@ def parse_lines(raw_lines: List[str]) -> List[epqtypes.InputLine]:
     :return: classified lines, with wrapped bullets joined
     """
     input_lines = []
-    for line_no, text in join_wrapped_lines(raw_lines):
-        input_line = parse_line(line_no, text)
+    for line_no, text in _join_wrapped_lines(raw_lines):
+        input_line = _parse_line(line_no, text)
         if input_line is not None:
             input_lines.append(input_line)
     return input_lines
@@ -206,11 +237,11 @@ def _family_key(author: str) -> str:
     :return: lowercase ASCII word, "" if the name is empty
     """
     family = epqbibso.get_family_name(epqbibso.name_to_family_first(author))
-    words = normalize_title(family).split()
+    words = _normalize_title(family).split()
     return words[-1] if words else ""
 
 
-def paper_key(record: epqtypes.BibRecord) -> str:
+def _paper_key(record: epqtypes.BibRecord) -> str:
     """
     Compute the identity of a paper: the normalized title plus the first author.
 
@@ -218,10 +249,10 @@ def paper_key(record: epqtypes.BibRecord) -> str:
     :return: key, the same for a preprint and its journal version
     """
     first_author = _family_key(record.authors[0]) if record.authors else "none"
-    return f"{normalize_title(record.title)}|{first_author}"
+    return f"{_normalize_title(record.title)}|{first_author}"
 
 
-def paper_aliases(record: epqtypes.BibRecord) -> Tuple[str, ...]:
+def _paper_aliases(record: epqtypes.BibRecord) -> Tuple[str, ...]:
     """
     List the identifiers that name the same paper as the key.
 
@@ -240,7 +271,7 @@ def paper_aliases(record: epqtypes.BibRecord) -> Tuple[str, ...]:
     return tuple(aliases)
 
 
-def title_similarity(title1: str, title2: str) -> float:
+def _title_similarity(title1: str, title2: str) -> float:
     """
     Compute the similarity of two titles, from 0 to 1.
 
@@ -253,8 +284,8 @@ def title_similarity(title1: str, title2: str) -> float:
     :param title2: second title
     :return: similarity
     """
-    norm1 = normalize_title(title1)
-    norm2 = normalize_title(title2)
+    norm1 = _normalize_title(title1)
+    norm2 = _normalize_title(title2)
     if not norm1 or not norm2:
         similarity = 0.0
     elif norm1 == norm2:
@@ -320,7 +351,7 @@ def _group_by_identifiers(
 
 
 @dataclasses.dataclass(frozen=True)
-class MatchResult:
+class _MatchResult:
     """
     Outcome of the match of a title with the candidates.
     """
@@ -334,11 +365,11 @@ class MatchResult:
     reason: str
 
 
-def match_candidates(
+def _match_candidates(
     query: str,
     author_hints: Tuple[str, ...],
     candidates: List[epqtypes.BibRecord],
-) -> MatchResult:
+) -> _MatchResult:
     """
     Match a title with the candidates of the bibliographic sources.
 
@@ -358,7 +389,7 @@ def match_candidates(
     # Keep the candidates with a close title.
     close = []
     for record in candidates:
-        similarity = title_similarity(query, record.title)
+        similarity = _title_similarity(query, record.title)
         if similarity >= _MATCH_THRESHOLD:
             close.append((similarity, record))
     reason = f"no candidate has a title like '{query}'"
@@ -378,7 +409,7 @@ def match_candidates(
         close = with_author
     # Group the candidates that are the same paper.
     identifiers = [
-        (f"key:{paper_key(record)}",) + paper_aliases(record)
+        (f"key:{_paper_key(record)}",) + _paper_aliases(record)
         for _, record in close
     ]
     groups = _group_by_identifiers(identifiers)
@@ -386,15 +417,15 @@ def match_candidates(
     group_similarity = [max(close[i][0] for i in group) for group in groups]
     exact = [i for i, s in enumerate(group_similarity) if s == 1.0]
     if len(groups) == 1:
-        result = MatchResult("matched", group_records[0], (), "")
+        result = _MatchResult("matched", group_records[0], (), "")
     elif len(groups) > 1 and len(exact) == 1:
-        result = MatchResult("matched", group_records[exact[0]], (), "")
+        result = _MatchResult("matched", group_records[exact[0]], (), "")
     elif len(groups) > 1:
         representatives = tuple(records[0] for records in group_records)
         reason = f"{len(groups)} different papers match the title"
-        result = MatchResult("ambiguous", (), representatives, reason)
+        result = _MatchResult("ambiguous", (), representatives, reason)
     else:
-        result = MatchResult("unresolved", (), (), reason)
+        result = _MatchResult("unresolved", (), (), reason)
     return result
 
 
@@ -433,29 +464,36 @@ def _pick_canonical(
     raise ValueError("A group of records needs at least one known source")
 
 
-def format_reference(
-    year: int,
-    authors: Tuple[str, ...],
-    title: str,
-    doi: str,
-    download_inputs: Tuple[str, ...],
-) -> str:
+def _format_reference(year: int, authors: Tuple[str, ...], title: str) -> str:
     """
-    Format a reference as in `.claude/skills/references.rules.md`.
+    Format a reference as in `.claude/skills/references.rules.md`, without the
+    links.
 
-    The format is `<Year>, <Last name> [et al.], "<Title>" (<Link>)`. The link
-    is the first public download input. With none, the link is the DOI URL
-    followed by ` ???`, or just `???` with no DOI.
+    The format is `<Year>, <Last name> [et al.], "<Title>"`. The links go in
+    their own field, see `_format_links()`.
 
     :param year: publication year, 0 if unknown
     :param authors: authors as `Family, Given`
     :param title: title
-    :param doi: DOI, "" if unknown
-    :param download_inputs: ordered download inputs
     :return: reference
     """
     first = epqbibso.get_family_name(authors[0]) if authors else "Unknown"
     author_text = f"{first} et al." if len(authors) > 1 else first
+    year_text = str(year) if year else "n.d."
+    return f'{year_text}, {author_text}, "{title}"'
+
+
+def _format_links(doi: str, download_inputs: Tuple[str, ...]) -> str:
+    """
+    Format the links of a reference, as in `.claude/skills/references.rules.md`.
+
+    The format is `(<Link>)`. The link is the first public download input. With
+    none, the link is the DOI URL followed by ` ???`, or just `???` with no DOI.
+
+    :param doi: DOI, "" if unknown
+    :param download_inputs: ordered download inputs
+    :return: links, with the parentheses
+    """
     public = [x for x in download_inputs if re.match(r"^https?://", x)]
     if public:
         link = public[0]
@@ -463,8 +501,7 @@ def format_reference(
         link = f"https://doi.org/{doi} ???"
     else:
         link = "???"
-    year_text = str(year) if year else "n.d."
-    return f'{year_text}, {author_text}, "{title}" ({link})'
+    return f"({link})"
 
 
 def _unique(items: List[str]) -> Tuple[str, ...]:
@@ -481,7 +518,7 @@ def _unique(items: List[str]) -> Tuple[str, ...]:
     return tuple(seen)
 
 
-def build_paper(
+def _build_paper(
     group: Tuple[epqtypes.BibRecord, ...],
     input_line: epqtypes.InputLine,
     *,
@@ -522,16 +559,17 @@ def build_paper(
             f"https://papers.ssrn.com/sol3/papers.cfm?abstract_id={ssrn_id}"
         )
     download_inputs = _unique(inputs)
-    reference = format_reference(
-        canonical.year, canonical.authors, canonical.title, doi, download_inputs
+    reference = _format_reference(
+        canonical.year, canonical.authors, canonical.title
     )
+    links = _format_links(doi, download_inputs)
     base_name = dshddut.format_base_filename(
         str(canonical.year) if canonical.year else "",
         list(canonical.authors),
         canonical.title,
     )
-    key = paper_key(canonical)
-    aliases = _unique([a for r in group for a in paper_aliases(r)])
+    key = _paper_key(canonical)
+    aliases = _unique([a for r in group for a in _paper_aliases(r)])
     paper = epqtypes.Paper(
         key=key,
         aliases=aliases,
@@ -544,13 +582,14 @@ def build_paper(
         arxiv_id=arxiv_id,
         s2_paper_id=s2_id,
         reference=reference,
+        links=links,
         base_name=base_name,
         download_inputs=download_inputs,
     )
     return paper
 
 
-def merge_papers(papers: List[epqtypes.Paper]) -> List[epqtypes.Paper]:
+def _merge_papers(papers: List[epqtypes.Paper]) -> List[epqtypes.Paper]:
     """
     Merge the papers that are the same paper, e.g., two lines for one paper.
 
@@ -581,15 +620,14 @@ def merge_papers(papers: List[epqtypes.Paper]) -> List[epqtypes.Paper]:
                 (p.s2_paper_id for p in members if p.s2_paper_id), ""
             ),
             download_inputs=download_inputs,
-            reference=format_reference(
-                first.year, first.authors, first.title, doi, download_inputs
-            ),
+            reference=_format_reference(first.year, first.authors, first.title),
+            links=_format_links(doi, download_inputs),
         )
         merged.append(merged_paper)
     return merged
 
 
-def sort_papers(papers: List[epqtypes.Paper]) -> List[epqtypes.Paper]:
+def _sort_papers(papers: List[epqtypes.Paper]) -> List[epqtypes.Paper]:
     """
     Sort papers in reverse chronological order.
 
@@ -601,19 +639,19 @@ def sort_papers(papers: List[epqtypes.Paper]) -> List[epqtypes.Paper]:
 
     def _sort_key(paper: epqtypes.Paper) -> Tuple[int, str, str]:
         first = _family_key(paper.authors[0]) if paper.authors else ""
-        return (-paper.year, first, normalize_title(paper.title))
+        return (-paper.year, first, _normalize_title(paper.title))
 
     return sorted(papers, key=_sort_key)
 
 
-def finalize_papers(papers: List[epqtypes.Paper]) -> List[epqtypes.Paper]:
+def _finalize_papers(papers: List[epqtypes.Paper]) -> List[epqtypes.Paper]:
     """
     Merge the papers of the lines and sort them.
 
     :param papers: papers from the lines
     :return: deduped papers in reverse chronological order
     """
-    return sort_papers(merge_papers(papers))
+    return _sort_papers(_merge_papers(papers))
 
 
 # #############################################################################
@@ -720,7 +758,7 @@ def _lookup_title(
     if title:
         # The authors in the query rank the right work first in Crossref, where
         # a title alone often lists other works with similar words. The title test
-        # of `match_candidates()` still checks every candidate.
+        # of `_match_candidates()` still checks every candidate.
         crossref_query = " ".join([title, *author_hints])
         result = _call_sources(
             [
@@ -793,11 +831,11 @@ def _record_to_reference(record: epqtypes.BibRecord) -> str:
     Format a candidate record as a reference, for an issue.
 
     :param record: record of a bibliographic source
-    :return: reference
+    :return: reference followed by its links
     """
-    return format_reference(
-        record.year, record.authors, record.title, record.doi, record.pdf_urls
-    )
+    reference = _format_reference(record.year, record.authors, record.title)
+    links = _format_links(record.doi, record.pdf_urls)
+    return epqrepor.join_reference(reference, links)
 
 
 def _make_issue(
@@ -828,7 +866,7 @@ def _make_issue(
     )
 
 
-def resolve_line(
+def _resolve_line(
     input_line: epqtypes.InputLine, sources: epqbibso.BibSources
 ) -> epqtypes.ResolveResult:
     """
@@ -846,19 +884,21 @@ def resolve_line(
     if lookup.by_id:
         # The id names the paper: no title test is needed.
         if lookup.candidates:
-            match = MatchResult("matched", lookup.candidates, (), "")
+            match = _MatchResult("matched", lookup.candidates, (), "")
         else:
-            match = MatchResult("unresolved", (), (), lookup.note)
+            match = _MatchResult("unresolved", (), (), lookup.note)
     elif lookup.candidates:
-        match = match_candidates(
+        match = _match_candidates(
             lookup.query, lookup.author_hints, list(lookup.candidates)
         )
     else:
-        match = MatchResult("unresolved", (), (), lookup.note)
+        match = _MatchResult("unresolved", (), (), lookup.note)
     if match.status == "matched":
         doi = next((r.doi for r in match.group if r.doi), "")
         unpaywall_url = (sources.lookup_unpaywall(doi) if doi else None) or ""
-        paper = build_paper(match.group, input_line, unpaywall_url=unpaywall_url)
+        paper = _build_paper(
+            match.group, input_line, unpaywall_url=unpaywall_url
+        )
         result = epqtypes.ResolveResult(papers=(paper,), issues=())
     else:
         issue = _make_issue(
@@ -868,13 +908,13 @@ def resolve_line(
     return result
 
 
-def resolve_lines(
+def _resolve_lines(
     raw_lines: List[str], sources: epqbibso.BibSources
 ) -> epqtypes.ResolveResult:
     """
     Resolve all the lines of the input file.
 
-    An error of a lookup stops the call: the pipeline calls `resolve_line()`
+    An error of a lookup stops the call: the pipeline calls `_resolve_line()`
     per line instead, to isolate the failures.
 
     :param raw_lines: lines of the input file
@@ -883,10 +923,202 @@ def resolve_lines(
     """
     papers: List[epqtypes.Paper] = []
     issues: List[epqtypes.Issue] = []
-    for input_line in parse_lines(raw_lines):
-        result = resolve_line(input_line, sources)
+    for input_line in _parse_lines(raw_lines):
+        result = _resolve_line(input_line, sources)
         papers.extend(result.papers)
         issues.extend(result.issues)
     return epqtypes.ResolveResult(
-        papers=tuple(finalize_papers(papers)), issues=tuple(issues)
+        papers=tuple(_finalize_papers(papers)), issues=tuple(issues)
     )
+
+
+# #############################################################################
+# Resolve the CSV
+# #############################################################################
+
+
+def _read_input_lines(input_csv: str) -> List[epqtypes.InputLine]:
+    """
+    Read and classify the rows of the input CSV.
+
+    A blank row and a row that starts with `#` or `//` are skipped.
+
+    :param input_csv: path of the input CSV, one paper per row
+    :return: classified lines, numbered by their row in the CSV
+    """
+    input_lines = []
+    for line_no, text in epqrepor.read_input_csv(input_csv):
+        input_line = _parse_line(line_no, text)
+        if input_line is not None:
+            input_lines.append(input_line)
+    _LOG.debug("return=%s lines", len(input_lines))
+    return input_lines
+
+
+def _copy_input(input_csv: str, output_dir: str, *, dry_run: bool) -> None:
+    """
+    Copy the input CSV to the output dir, so the run keeps the list it used.
+
+    An earlier copy is overwritten, since a rerun can use a new list. The copy is
+    skipped if the input is already that file.
+
+    :param input_csv: path of the input CSV
+    :param output_dir: dir of all the outputs of the run
+    :param dry_run: if True, only log the copy
+    """
+    copy_path = epqpaths.get_input_copy_path(output_dir)
+    if dry_run:
+        _LOG.warning("[DRY_RUN] Would copy '%s' to '%s'", input_csv, copy_path)
+        return
+    if os.path.exists(copy_path) and os.path.samefile(input_csv, copy_path):
+        _LOG.debug("The input is already '%s'", copy_path)
+        return
+    hio.create_dir(output_dir, incremental=True)
+    shutil.copyfile(input_csv, copy_path)
+    _LOG.info("Copied the input to '%s'", copy_path)
+
+
+def _resolve(
+    input_csv: str,
+    output_dir: str,
+    sources: epqbibso.BibSources,
+) -> epqtypes.ResolveResult:
+    """
+    Resolve the rows of an input CSV into a papers file and an issues file.
+
+    The stage writes the papers file, the issues file, and the summary in
+    `output_dir`.
+
+    :param input_csv: path of the input CSV, one paper per row
+    :param output_dir: dir of all the outputs of the run
+    :param sources: clients of the lookup APIs
+    :return: deduped papers in reverse chronological order, and the issues
+    """
+    timer = htimer.Timer()
+    input_lines = _read_input_lines(input_csv)
+    _LOG.info("Resolving %s lines", len(input_lines))
+    papers: List[epqtypes.Paper] = []
+    issues: List[epqtypes.Issue] = []
+    for input_line in tqdm.tqdm(input_lines):
+        try:
+            result = _resolve_line(input_line, sources)
+        except Exception as e:  # noqa: BLE001
+            # Decision D21: an error of one line must not stop the run.
+            _LOG.warning("Line %s failed: %s", input_line.line_no, e)
+            issue = epqtypes.Issue(
+                line_no=input_line.line_no,
+                input=input_line.text,
+                base_name="",
+                stage="resolve",
+                status="unresolved",
+                reason=epqissue.get_last_line(str(e)),
+                candidates=(),
+            )
+            result = epqtypes.ResolveResult(papers=(), issues=(issue,))
+        papers.extend(result.papers)
+        issues.extend(result.issues)
+    papers = _finalize_papers(papers)
+    papers_file = epqpaths.get_papers_path(output_dir)
+    issues_file = epqpaths.get_issues_path(output_dir, "resolve")
+    epqrepor.write_papers(papers_file, papers)
+    epqrepor.write_issues(issues_file, issues)
+    # Summarize the stage: each line gives one paper or one issue, and the papers
+    # are deduped, so the count of papers can be lower than the count of lines.
+    summary = epqtypes.StageSummary(
+        stage="resolve",
+        unit="line",
+        n_total=len(input_lines),
+        n_done_before=0,
+        n_no_input=0,
+        n_ok=len(input_lines) - len(issues),
+        n_failed=len(issues),
+        outputs=((papers_file, 1),),
+        issues_path=issues_file,
+        issue_counts=epqsumm.count_issues(issues, add_stage=False),
+        extra=(f"Papers after the dedup: {len(papers)}",),
+        elapsed_sec=timer.get_elapsed(),
+        dry_run=False,
+    )
+    epqsumm.emit_stage_summary(summary, output_dir)
+    return epqtypes.ResolveResult(papers=tuple(papers), issues=tuple(issues))
+
+
+def _parse() -> argparse.ArgumentParser:
+    # No abbreviation of a flag: the old flag `--output` would otherwise be read
+    # as `--output_dir` and make a dir with the name of the old papers CSV.
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=hparser.CustomHelpFormatter,
+        allow_abbrev=False,
+    )
+    parser.add_argument(
+        "-i",
+        "--input",
+        action="store",
+        required=True,
+        help="Input CSV with a column `input`, one paper per row",
+    )
+    # The script writes several files, so it takes a dir and infers the names
+    # (rule `ARCH3.7`).
+    parser.add_argument(
+        "--output_dir",
+        action="store",
+        required=True,
+        help="Dir of all the outputs and of the state of the run",
+    )
+    parser.add_argument(
+        "--cache_dir",
+        action="store",
+        default="",
+        help="Dir of the cache of the API answers; empty is `state/cache/` in "
+        "the output dir",
+    )
+    parser.add_argument(
+        "--email",
+        action="store",
+        default="",
+        help="Contact email for Unpaywall; empty skips Unpaywall",
+    )
+    parser.add_argument(
+        "--dry_run",
+        action="store_true",
+        help="Show how each row is classified, with no lookup and no output",
+    )
+    hcacsimp.add_cache_control_arg(parser)
+    hparser.add_verbosity_arg(parser)
+    return parser
+
+
+def _main(parser: argparse.ArgumentParser) -> None:
+    args = parser.parse_args()
+    hdbg.init_logger(verbosity=args.log_level, use_exec_path=True)
+    hcacsimp.parse_cache_control_args(args)
+    input_csv = os.path.abspath(os.path.expanduser(args.input))
+    output_dir = os.path.abspath(os.path.expanduser(args.output_dir))
+    cache_dir = args.cache_dir or epqpaths.get_cache_dir(output_dir)
+    cache_dir = os.path.abspath(os.path.expanduser(cache_dir))
+    hdbg.dassert_file_exists(input_csv)
+    _copy_input(input_csv, output_dir, dry_run=args.dry_run)
+    if args.dry_run:
+        # Classify the rows only: no lookup, no cache dir, no output file.
+        for input_line in _read_input_lines(input_csv):
+            _LOG.warning(
+                "[DRY_RUN] Would resolve row %s as %s: '%s'",
+                input_line.line_no,
+                input_line.kind,
+                input_line.key,
+            )
+        return
+    # The cache of the helpers lives with the cache of the API answers.
+    hcacsimp.set_cache_dir(cache_dir)
+    sources = epqbibso.BibSources(
+        email=args.email,
+        s2_api_key=os.environ.get("SEMANTIC_SCHOLAR_API_KEY", ""),
+        cache_dir=cache_dir,
+        cache_mode=args.cache_mode,
+    )
+    _resolve(input_csv, output_dir, sources)
+
+
+if __name__ == "__main__":
+    _main(_parse())
