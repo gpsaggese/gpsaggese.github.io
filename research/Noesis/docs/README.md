@@ -33,10 +33,12 @@ placeholder is committed until the reviewed paid run is executed.
 | `06-spec.PR_P2.md`                       | Implementation spec: containerized cloud deployment                                      | Specs      |
 | `06-spec.PR_P2b.md`                      | Implementation spec: Postgres backend                                                    | Specs      |
 | `06-spec.PR_S4.md`                       | Implementation spec: contract-window runtime and market-reporting boundary               | Specs      |
+| `06-spec.PR_S6.md`                       | Implementation spec: deterministic offline checker replay and analytic validation        | Specs      |
 | `07-progress.md`                         | Live MVP status and history                                                              | Plans      |
 | `08-how_we_work.md`                      | Branch, PR, test, and review conventions                                                 | Onboarding |
 | `09-onboarding.md`                       | Setup, run, test, and first tasks                                                        | Onboarding |
 | `10-glossary.md`                         | Terms used across the code and docs                                                      | Onboarding |
+| `run_checker_replay.how_to_guide.md`     | Reproduce the deterministic 30,000-contract checker-validation experiment                | Demo       |
 | `run_contract_monitoring_demo.how_to_guide.md` | Reproducible offline demo of probe-to-verdict contract monitoring                    | Demo       |
 | `run_model_qos_demo.how_to_guide.md`     | Commands that demonstrate canary calibration, probing, grading, and evidence persistence | Demo       |
 | `run_market_supply_demo.how_to_guide.md` | Commands that show OpenRouter prices becoming asks and clearing against a bid            | Demo       |

@@ -1153,7 +1153,7 @@ Live status and history: `07-progress.md`.
 |---|---|---|---|---|---|
 | M0 | Setup + facts | Tue 9/29 – Fri 10/9 | J+G+L | GP's tests pass locally and in CI with no `helpers` monorepo. OpenRouter spike confirms ≥ 3 pinnable providers for the model. Schema frozen. Decisions signed | ✅ 9/30 (GP email pending) |
 | M1 | Real server | Mon 10/12 – Fri 10/30 | J (+L: T1.5, T2.1 starts) | Unmodified `openai` Python SDK → our gateway → 3 pinned providers. Every log row has `contract_id` + verified `actual_provider` | ✅ 10/4 (spend cap deferred) |
-| M2 | Checker | Mon 11/2 – Fri 11/20 | J + L | Calibrated canary set ≥ 150. Offline replay: injected slowdown and model swap flagged, healthy traffic not flagged, rates within ±5 pts of `detection_math.py` | 🟨 foundation merged 10/11; runtime and data remain |
+| M2 | Checker | Mon 11/2 – Fri 11/20 | J + L | Calibrated canary set ≥ 150. Offline replay: injected slowdown and model swap flagged, healthy traffic not flagged, rates within ±5 pts of `detection_math.py` | 🟨 offline replay complete 10/31; paid calibration and runtime review remain |
 | M3 | Loop closed (parallel with M1–M2) | Mon 10/12 – Fri 11/20 | G | With fake gateway: auction on timer, filter works, contracts go ACTIVE→verdict, a failing seller is blocked, cooled down, put on probation, reinstated | ⬜ |
 | M4 | Integrated demo | Mon 11/23 – Fri 12/11 | J+G+L | Success Criteria 1–8 in one recorded 60-min run | ⬜ |
 
@@ -1221,7 +1221,7 @@ Every task: branch → PR → tests green in CI → one reviewer (another teamma
 | T2.3 | ✅ For each ACTIVE contract, secret deterministic canaries are spread over its window, atomically claimed, sent as ordinary traffic, graded, and persisted server-side | Integration test with fake provider | new |
 | T2.4 | 🟨 PR #604 merged the evidence/verdict foundation; stacked PRs #744, #747, and #749 add target-or-deadline closing, atomic orchestration, and worker integration | Unit and PostgreSQL-backed tests cover readiness, idempotency, and failure isolation | PR_S4, PR_S6 (corrected) |
 | T2.5 | 🟨 `VerdictSink` interface and recording mock implemented; real reputation adapter remains in T3.4 | Complete payload and actionability tests; worker injects the sink | PR_S4 |
-| T2.6 | **Offline replay harness**: generate synthetic request streams (healthy / slowed / weak-model at measured accuracies), run metering, report flag rates | Rates within ±5 pts of analytic numbers over 1,000 simulated contracts | new |
+| T2.6 | ✅ **Offline replay harness**: deterministic healthy, slowed, weak-model, borderline, and insufficient-evidence streams run through production checker logic; JSON/CSV/Markdown findings generated over 5 seeds × 1,000 contracts per scenario | All six aggregate rates pass statistical agreement and remain within ±5 pts of analytic numbers; healthy has 0/5,000 false alarms | new |
 
 ### M3 — Loop closed (G, starts 10/12 in parallel)
 
