@@ -1,17 +1,21 @@
 ---
 title: "Pi.dev vs Claude Code: AI Coding Agent"
-draft: true
+draft: false
 authors:
-  - gpsaggese
-date: 2026-05-23
+    - gpsaggese
+    - Worldsoldure00
+date: 2026-11-03
+description: >-
+    Compare Pi.dev and Claude Code installation, model providers, extensions,
+    permissions, and team workflows through four illustrative coding scenarios.
 categories:
-  - AI Tools
-  - Developer Tools
+    - AI Tools
+    - Developer Tools
 ---
 
-TL;DR: Claude Code offers integrated coding workflows across several
-interfaces, while pi.dev offers a customizable terminal agent with a choice of
-model providers.
+TL;DR: Claude Code offers integrated coding workflows across several interfaces,
+while pi.dev offers a customizable terminal agent with a choice of model
+providers.
 
 <!-- more -->
 
@@ -25,20 +29,19 @@ different workflows.
 **Claude Code** is Anthropic's commercial coding agent. It runs through a
 command-line interface (CLI) in your terminal, integrations with an integrated
 development environment (IDE) such as VS Code or JetBrains, the Claude desktop
-app, and a browser. Features and account requirements vary by interface; see
-the [official overview](https://code.claude.com/docs/en/overview).
+app, and a browser. Features and account requirements vary by interface; see the
+[official overview](https://code.claude.com/docs/en/overview).
 
-**pi.dev** is an open-source, terminal-first agent created by Mario Zechner.
-You configure its model connection and can extend its behavior with TypeScript.
-The agent runs locally, but inference, the process of generating model
-responses, happens wherever your chosen model runs. A cloud connection sends
-context to that provider; a local model server processes requests on your
-infrastructure.
+**pi.dev** is an open-source, terminal-first agent created by Mario Zechner. You
+configure its model connection and can extend its behavior with TypeScript. The
+agent runs locally, but inference, the process of generating model responses,
+happens wherever your chosen model runs. A cloud connection sends context to
+that provider; a local model server processes requests on your infrastructure.
 
 This is a **documentation-based comparison, not a hands-on benchmark**. The four
 scenarios illustrate possible workflows rather than recorded results. The
 technical descriptions follow the linked official documentation checked on
-October 23, 2026.
+November 3, 2026.
 
 ### When to Use Claude Code
 
@@ -120,11 +123,11 @@ Follow the first-use login prompts. Alternatively, on macOS:
 > brew install --cask claude-code
 ```
 
-For browser access, open [claude.ai/code](https://claude.ai/code) with an eligible
-account. IDE users install the VS Code extension or JetBrains plugin; JetBrains
-also requires the CLI. Desktop users open the Code tab in the Claude app. The
-[overview](https://code.claude.com/docs/en/overview) links to interface-specific
-instructions, including native Windows setup.
+For browser access, open [claude.ai/code](https://claude.ai/code) with an
+eligible account. IDE users install the VS Code extension or JetBrains plugin;
+JetBrains also requires the CLI. Desktop users open the Code tab in the Claude
+app. The [overview](https://code.claude.com/docs/en/overview) links to
+interface-specific instructions, including native Windows setup.
 
 ### Pi.dev Installation
 
@@ -151,9 +154,10 @@ Alternatively, use a supported provider's environment variable:
 > pi --provider openai
 ```
 
-For Anthropic, use `ANTHROPIC_API_KEY` and `--provider anthropic` instead.
-Pi's [quickstart](https://pi.dev/docs/latest/quickstart) documents other install
-methods; its [model guide](https://pi.dev/docs/latest/models) covers connections.
+For Anthropic, use `ANTHROPIC_API_KEY` and `--provider anthropic` instead. Pi's
+[quickstart](https://pi.dev/docs/latest/quickstart) documents other install
+methods; its [model guide](https://pi.dev/docs/latest/models) covers
+connections.
 
 ## Core Concepts
 
@@ -176,8 +180,8 @@ such as files and network services. See the
 ### Pi.dev's Model
 
 Pi starts with `read`, `write`, `edit`, and `bash` enabled, with additional
-built-in tools available. It saves sessions without requiring an extension.
-See the [CLI reference](https://pi.dev/docs/latest/cli).
+built-in tools available. It saves sessions without requiring an extension. See
+the [CLI reference](https://pi.dev/docs/latest/cli).
 
 - **Connections**: Use supported providers or compatible endpoints, the server
   addresses and API formats used for model requests
@@ -187,8 +191,9 @@ See the [CLI reference](https://pi.dev/docs/latest/cli).
   ask before every tool call
 
 Local sessions can contain sensitive material, and connected providers or tools
-may receive code and prompts. Read [how Pi works](https://pi.dev/docs/latest/how-pi-works)
-and its [security guidance](https://pi.dev/docs/latest/security).
+may receive code and prompts. Read
+[how Pi works](https://pi.dev/docs/latest/how-pi-works) and its
+[security guidance](https://pi.dev/docs/latest/security).
 
 ## Illustrative Workflows
 
@@ -206,14 +211,14 @@ prompt> Debug test_utils.py: expected 10, got 5.
         Investigate the cause, fix it, and run the relevant tests.
 ```
 
-The agent could read the test and implementation, investigate the mismatch,
-edit the code subject to permissions, and present the result. IDE integrations
+The agent could read the test and implementation, investigate the mismatch, edit
+the code subject to permissions, and present the result. IDE integrations
 provide visual diffs; the terminal also supports the coding workflow.
 
 **Pros:** Code exploration, editing, and checks fit one conversation.
 
-**Limitations:** Hosted inference needs connectivity, and usage limits depend
-on your account. Pi can perform the same read-edit-test loop; this scenario
+**Limitations:** Hosted inference needs connectivity, and usage limits depend on
+your account. Pi can perform the same read-edit-test loop; this scenario
 establishes no speed or correctness advantage.
 
 ### Example 2: Migrating to Self-Hosted Models (pi.dev)
@@ -249,7 +254,8 @@ Merge this provider into `~/.pi/agent/models.json`:
 
 This follows Pi's [endpoint example](https://pi.dev/docs/latest/models), not a
 model-quality recommendation. The placeholder key is ignored by local Ollama.
-See [configuration](https://pi.dev/docs/latest/configuration) for file locations.
+See [configuration](https://pi.dev/docs/latest/configuration) for file
+locations.
 
 ```bash
 > cd healthcare-project
@@ -318,10 +324,11 @@ action. Extension discovery is covered in the
 [extension guide](https://pi.dev/docs/latest/extensions).
 
 **With Claude Code:** Expose custom tools through the Model Context Protocol
-([MCP](https://code.claude.com/docs/en/mcp)), a standard for connecting agents to
-tools and data. Skills package reusable instructions; hooks run automation in
+([MCP](https://code.claude.com/docs/en/mcp)), a standard for connecting agents
+to tools and data. Skills package reusable instructions; hooks run automation in
 response to events. Plugins distribute integrations. Both agents are extensible,
-using different [integration mechanisms](https://code.claude.com/docs/en/features-overview).
+using different
+[integration mechanisms](https://code.claude.com/docs/en/features-overview).
 
 ### Example 4: Collaborative Debugging (Claude Code)
 
@@ -334,7 +341,8 @@ branches be checked out simultaneously, for concurrent tasks.
 - Share project instructions through `CLAUDE.md` and reusable skills
 - Investigate the bug, run checks, and review the diff
 - Commit reviewed changes and share a pull request for team review
-- Optionally use the [GitHub Actions integration](https://code.claude.com/docs/en/github-actions)
+- Optionally use the
+  [GitHub Actions integration](https://code.claude.com/docs/en/github-actions)
 
 **With pi.dev:**
 
@@ -371,8 +379,9 @@ Git records committed changes; neither agent replaces coordination or review.
 
 ### Learning More
 
-- **Claude Code**: Read [best practices](https://code.claude.com/docs/en/best-practices)
-  or take [Claude Code in Action](https://academy.claude.com/courses/claude-code-in-action)
+- **Claude Code**: Read
+  [best practices](https://code.claude.com/docs/en/best-practices) or take
+  [Claude Code in Action](https://academy.claude.com/courses/claude-code-in-action)
 - **Pi.dev**: Explore the [repository](https://github.com/earendil-works/pi) and
   extension documentation
 
@@ -386,7 +395,8 @@ agent for everything.
 
 - **Local models**: Ollama, vLLM, and llama.cpp
 - **Custom agents**: LangChain and agent integration APIs
-- **Prompt caching**: Learn [how Claude Code reuses cached context](https://code.claude.com/docs/en/prompt-caching)
+- **Prompt caching**: Learn
+  [how Claude Code reuses cached context](https://code.claude.com/docs/en/prompt-caching)
 
 ## Conclusion
 
