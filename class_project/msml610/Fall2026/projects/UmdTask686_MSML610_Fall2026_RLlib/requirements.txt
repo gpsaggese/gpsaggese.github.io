@@ -1,3 +1,7 @@
+# Project requirements instead of the template ones, since the dependencies are
+# hard to maintain from the notebook: Ray pins `gymnasium`, `torch` comes from
+# the CPU-only index, and installing both at every notebook run is slow.
+
 # CPU-only PyTorch wheels (no CUDA), used by RLlib's torch backend.
 --extra-index-url https://download.pytorch.org/whl/cpu
 
@@ -5,8 +9,7 @@
 ray[rllib]==2.59.0
 torch==2.14.1
 
-# Data: SPY prices from Yahoo Finance; VIX from FRED via CSV download.
-yfinance==1.7.0
+# Data: Alpaca bars and the FRED VIX are downloaded with `requests`.
 pandas==2.3.3
 numpy==2.5.3
 
