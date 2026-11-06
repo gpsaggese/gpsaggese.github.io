@@ -172,3 +172,12 @@ print(result.round_id, summary.clearing_price, summary.matched_volume)
   supplies contract terms; repeated buyer ids use the last bid's terms
 - PostgreSQL implements the same market-owned `ContractStore` interface in
   `noesis_platform/postgres_store.py`; the runner never imports that backend
+
+## Auction Report Tables (PR_M12)
+
+- `auction_report.orders_to_df(bids, asks)` returns bids then asks in input order,
+  with participant, tier, quantity, limit price, and separate buyer/seller terms
+- `contracts_to_df(contracts)` preserves dispatch order and nullable fulfillment
+  outcomes; the demo's fulfillment is mocked
+- Empty tables retain the same columns and nullable types as populated tables
+- Helpers return new DataFrames without modifying inputs or performing I/O
