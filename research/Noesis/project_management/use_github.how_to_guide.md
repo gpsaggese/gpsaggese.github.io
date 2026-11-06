@@ -69,5 +69,5 @@
 - The repo workflows live under `.github/workflows`
   - See
     [GH Actions](../../../helpers_root/docs/work_organization/all.use_github.how_to_guide.md#gh-actions)
-- Follow the [Noesis onboarding guide](../docs/onboarding.md) for local
+- Follow the [Noesis onboarding guide](../docs/09-onboarding.md) for local
   validation

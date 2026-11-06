@@ -1,0 +1,20 @@
+# Dated list of the institutions that score 5 and 4 in the affiliation signal.
+#
+# Fill it by hand from the QS World University Rankings site, never from the
+# memory of an LLM (`docs/03-decisions.md`, D15). Set `as_of` and `source` when
+# you fill it.
+#
+# TODO(gp): Fill the tiers. Until then no institution matches, and each
+# affiliation scores by the kind that the paper gives (`university` scores 3).
+#
+# Shape of an entry (the names below are only an example of the shape):
+#
+#   tier_5:
+#     - name: "<Full name of the institution>"
+#       aliases: ["<Short name>"]
+as_of: ""
+source: ""
+# Top 20 universities (QS), leading industry research labs, central banks, NBER.
+tier_5: []
+# Universities ranked 21 to 100, established industry research groups.
+tier_4: []

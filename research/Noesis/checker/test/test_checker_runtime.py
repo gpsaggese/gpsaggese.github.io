@@ -8,6 +8,7 @@ from typing import Optional
 from unittest import mock
 
 import helpers.hunit_test as hunitest
+
 import research.Noesis.checker.checker_models as rnochmod
 import research.Noesis.checker.checker_runtime as rnochrun
 import research.Noesis.checker.checker_sink as rnochsink
@@ -15,7 +16,7 @@ import research.Noesis.checker.checker_store as rnochsto
 import research.Noesis.common.test.noesis_test_utils as rnctnteut
 import research.Noesis.gateway.gateway_providers as rnogapro
 
-_START = datetime.datetime(2026, 1, 1, tzinfo=datetime.timezone.utc)
+_START = datetime.datetime(2026, 1, 1, tzinfo=datetime.UTC)
 _POLICY = rnochmod.WindowPolicy(
     minimum_requests=1,
     minimum_canaries=1,
@@ -336,7 +337,9 @@ class Test_run_checker_pass(hunitest.TestCase):
         contracts = (_contract(1), _contract(2), _contract(3))
         second_report = _report(2, seller_id="seller_2")
         third_report = _report(3, seller_id="seller_3")
-        second = rnochmod.ContractEvaluation(2, _readiness(), True, second_report)
+        second = rnochmod.ContractEvaluation(
+            2, _readiness(), True, second_report
+        )
         third = rnochmod.ContractEvaluation(3, _readiness(), True, third_report)
         sink = mock.Mock()
         sink.publish = mock.AsyncMock(
@@ -403,7 +406,7 @@ class Test_run_checker_pass_postgres(hunitest.TestCase):
                 "buyer_1",
                 "seller_1",
             )
-            now = datetime.datetime.now(datetime.timezone.utc)
+            now = datetime.datetime.now(datetime.UTC)
             async with pool.connection() as conn:
                 await conn.execute(
                     "UPDATE contracts SET n_tasks = 1, canaries_target = 1,"
@@ -455,8 +458,7 @@ class Test_run_checker_pass_postgres(hunitest.TestCase):
             self.assertEqual(rows[0][0], "PASSED")
             rows = await rnctnteut.fetch_all(
                 pool,
-                "SELECT count(*) FROM contract_verdicts"
-                " WHERE contract_id = %s",
+                "SELECT count(*) FROM contract_verdicts WHERE contract_id = %s",
                 contract_id,
             )
             self.assertEqual(rows[0][0], 1)

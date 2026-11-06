@@ -58,7 +58,9 @@ def parse_target(
         raise argparse.ArgumentTypeError(
             "target must have the form provider_slug=model_id"
         )
-    return rnochmod.CalibrationTarget(role, provider_slug.strip(), model_id.strip())
+    return rnochmod.CalibrationTarget(
+        role, provider_slug.strip(), model_id.strip()
+    )
 
 
 def _combined_environment() -> Mapping[str, str]:
@@ -83,10 +85,9 @@ def _write_report(path: str, report: str) -> None:
 async def _run_calibrate(args: argparse.Namespace) -> int:
     canaries = rnochcan.load_canary_bank(args.bank_dir, args.bank_version)
     targets = tuple(
-        parse_target(value, rnochmod.CalibrationRole.HEALTHY) for value in args.healthy
-    ) + (
-        parse_target(args.weak, rnochmod.CalibrationRole.WEAK),
-    )
+        parse_target(value, rnochmod.CalibrationRole.HEALTHY)
+        for value in args.healthy
+    ) + (parse_target(args.weak, rnochmod.CalibrationRole.WEAK),)
     policy = rnochmod.CalibrationPolicy(
         repetitions=args.repetitions,
         max_tokens=args.max_tokens,
@@ -152,7 +153,9 @@ async def _run_calibrate(args: argparse.Namespace) -> int:
 async def _run_probe(args: argparse.Namespace) -> int:
     environment = _combined_environment()
     api_key = _require_secret(environment, "OPENROUTER_API_KEY")
-    schedule_secret = _require_secret(environment, "NOESIS_CANARY_SCHEDULE_SECRET")
+    schedule_secret = _require_secret(
+        environment, "NOESIS_CANARY_SCHEDULE_SECRET"
+    )
     settings = rnonoset.load_settings(environ=environment)
     policy = rnochmod.ProbePolicy(
         bank_version=args.bank_version,
@@ -181,7 +184,8 @@ async def _run_probe(args: argparse.Namespace) -> int:
                     checker_version=DEFAULT_CHECKER_VERSION,
                 )
                 finalized = sum(
-                    evaluation.finalized for evaluation in result.checker.evaluations
+                    evaluation.finalized
+                    for evaluation in result.checker.evaluations
                 )
                 errors = result.probes.errors + result.checker.errors
                 print(
@@ -259,11 +263,15 @@ def _parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
         action="store_true",
         help="make paid provider calls and persist the run",
     )
-    probe = subparsers.add_parser("probe", help="run due probes once or until shutdown")
+    probe = subparsers.add_parser(
+        "probe", help="run due probes once or until shutdown"
+    )
     probe.add_argument("--bank-version", default=DEFAULT_BANK_VERSION)
     probe.add_argument("--max-tokens", type=int, default=64)
     probe.add_argument("--poll-interval", type=float, default=1.0)
-    probe.add_argument("--once", action="store_true", help="run one cycle and exit")
+    probe.add_argument(
+        "--once", action="store_true", help="run one cycle and exit"
+    )
     return parser.parse_args(argv)
 
 

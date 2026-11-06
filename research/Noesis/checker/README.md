@@ -5,8 +5,8 @@
 - Turns immutable request records into a `PASSED`, `FAILED`, or `INSUFFICIENT`
   verdict, with the evidence behind it
 - Decision logic is pure; database access sits in `checker_store.py`
-- Design, evaluation flow, and window policy: `docs/design.checker.md`
-- Replay specification, decisions, and review order: `docs/spec.PR_S6.md`
+- Design, evaluation flow, and window policy: `docs/02.2-design.checker.md`
+- Replay specification, decisions, and review order: `docs/06-spec.PR_S6.md`
 
 ## Structure of the Dir
 
@@ -59,4 +59,4 @@ predictions, and writes JSON, CSV, and Markdown artifacts under
 
 For a fast demo, focused test command, reproducibility check, and interpretation,
 see `docs/run_checker_replay.how_to_guide.md`. The architectural choices and
-alternatives are recorded in `docs/decisions.md` D-32 through D-35.
+alternatives are recorded in `docs/03-decisions.md` D32 through D35.

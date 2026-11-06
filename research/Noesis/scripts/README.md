@@ -64,3 +64,22 @@
   ```bash
   > research/Noesis/scripts/run_checker_replay.py
   ```
+
+## Auction Report Demo (PR_M12)
+
+- From the repository root, display a reproducible auction (mocked fulfillment):
+  ```bash
+  > PYTHONPATH="$PWD/helpers_root:$PWD" python -m research.Noesis.scripts.demo_auction_report --scenario excess_demand
+  ```
+- Export a supply/demand plot without opening a window:
+  ```bash
+  > MPLBACKEND=Agg PYTHONPATH="$PWD/helpers_root:$PWD" python -m research.Noesis.scripts.demo_auction_report --scenario multi_tier --plot /tmp/noesis-auction.png
+  ```
+- Choose `balanced`, `excess_demand`, `excess_supply`, `multi_tier`, or `no_cross`;
+  `--seed` changes values reproducibly. Multi-tier exports its first cleared tier.
+- Displays inputs, mocked contracts, per-tier volumes, and residual orders.
+  No credentials, services, database, payments, or provider calls are required.
+- Run the new tests headlessly:
+  ```bash
+  > MPLBACKEND=Agg PYTHONPATH="$PWD/helpers_root:$PWD" python -m pytest research/Noesis/market/test/test_auction_report.py research/Noesis/market/test/test_auction_plot.py research/Noesis/scripts/test/test_demo_auction_report.py
+  ```
