@@ -3,6 +3,7 @@ Utility functions for the RLlib Optimal Trade Execution notebooks.
 
 - `ExecutionEnv`: Gymnasium environment that liquidates a block of shares.
 - TWAP and sell-all baselines.
+- Training loop and learning-curve plot for RLlib algorithms.
 
 Import as:
 
@@ -13,11 +14,23 @@ import logging
 from typing import Any, Callable, Dict, Optional, Tuple
 
 import gymnasium as gym
+import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
+import helpers.hnotebook as hnotebo
 import helpers.hprint as hprint
 
 _LOG = logging.getLogger(__name__)
+
+
+def init_loggers(notebook_log: logging.Logger) -> None:
+    """
+    Wire the notebook logger into the utils logger.
+
+    :param notebook_log: logger owned by the notebook
+    """
+    hnotebo.init_loggers(notebook_log, utils_log=_LOG)
 
 
 # #############################################################################
@@ -136,7 +149,10 @@ class ExecutionEnv(gym.Env):
         _LOG.debug("action=%s", action)
         # Convert the action index into shares of the remaining inventory.
         shares = self.action_fractions[int(action)] * self.inventory
-        return self.step_shares(shares)
+        # Delegate the trade to `step_shares()` and log the result it returns.
+        result = self.step_shares(shares)
+        _LOG.debug("return=%s", result)
+        return result
 
     def step_shares(
         self, shares: float
@@ -149,7 +165,6 @@ class ExecutionEnv(gym.Env):
         :param shares: shares to sell, clipped to the remaining inventory
         :return: observation, reward, terminated, truncated, info
         """
-        # Use lazy formatting since this runs at every step of training.
         _LOG.debug("t=%s shares=%s inventory=%s", self.t, shares, self.inventory)
         # Never sell more than the remaining inventory.
         shares = float(np.clip(shares, 0.0, self.inventory))
@@ -174,9 +189,11 @@ class ExecutionEnv(gym.Env):
         self.price *= (1.0 - self.gamma * frac) * np.exp(
             self.step_vol * shock - 0.5 * self.step_vol**2
         )
+        # Advance the time index before checking whether the episode ended.
         self.t += 1
         # Episodes end by termination only, never by truncation.
         terminated = self.t >= self.n_steps
+        # Report the outcome; `run_baseline()` reads `shortfall_bps` from it.
         info = {
             "shares": shares,
             "exec_price": exec_price,
@@ -191,6 +208,9 @@ class ExecutionEnv(gym.Env):
 
         :return: [time left, inventory left, log(S_t / s0) / daily_vol]
         """
+        _LOG.debug(
+            "t=%s inventory=%s price=%s", self.t, self.inventory, self.price
+        )
         # Normalize time and inventory to [0, 1], as in `observation_space`.
         obs = np.array(
             [
@@ -272,3 +292,56 @@ def run_baseline(
         shortfalls[i] = info["shortfall_bps"]
     _LOG.debug("return=%s", shortfalls[:5])
     return shortfalls
+
+
+def train_algo(algo: Any, n_iters: int) -> pd.DataFrame:
+    """
+    Call `algo.train()` `n_iters` times and collect the learning curve.
+
+    :param algo: RLlib `Algorithm` built with `config.build_algo()`
+    :param n_iters: number of training iterations
+    :return: one row per iteration with the mean episode return, the env
+        steps sampled so far, and the wall-clock time
+    """
+    _LOG.debug(hprint.to_str("n_iters"))
+    # Accumulate one metrics row per training iteration.
+    rows = []
+    for _ in range(n_iters):
+        result = algo.train()
+        # The sampling metrics of the new API stack live under `env_runners`.
+        rows.append(
+            {
+                "iteration": result["training_iteration"],
+                "episode_return_mean": result["env_runners"].get(
+                    "episode_return_mean", np.nan
+                ),
+                "env_steps": result["num_env_steps_sampled_lifetime"],
+                "time_s": result["time_total_s"],
+            }
+        )
+        _LOG.info("%s", rows[-1])
+    # Index the learning curve by iteration.
+    df = pd.DataFrame(rows).set_index("iteration")
+    _LOG.debug("return=%s", df.shape)
+    return df
+
+
+def plot_learning_curves(curves: Dict[str, pd.DataFrame]) -> None:
+    """
+    Plot the mean episode return against the env steps sampled.
+
+    :param curves: algorithm name to the output of `train_algo()`
+    """
+    _LOG.debug(hprint.to_str("list(curves)"))
+    # Create one axis shared by all the curves.
+    _, ax = plt.subplots(figsize=(7, 4))
+    # Use env steps on the x-axis, since iterations differ across algorithms.
+    for name, df in curves.items():
+        ax.plot(df["env_steps"], df["episode_return_mean"], marker="o", label=name)
+    # Label the axes and add the legend.
+    ax.set_xlabel("Env steps sampled")
+    ax.set_ylabel("Mean episode return")
+    ax.legend()
+    ax.grid(alpha=0.3)
+    # Display the figure.
+    plt.show()
