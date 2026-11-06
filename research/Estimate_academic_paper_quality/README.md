@@ -199,13 +199,13 @@
   ```bash
   > research/Estimate_academic_paper_quality/resolve_papers.py \
       --input research/Estimate_academic_paper_quality/paper_list.csv \
-      --output_dir ~/papers/run_2026_10
+      --output_dir ./run_epq
   ```
 - Show how each row is classified, with no lookup:
   ```bash
   > research/Estimate_academic_paper_quality/resolve_papers.py \
       --input research/Estimate_academic_paper_quality/paper_list.csv \
-      --output_dir ~/papers/run_2026_10 \
+      --output_dir ./run_epq \
       --dry_run
   ```
 
@@ -225,12 +225,12 @@
 - Download the papers that `resolve_papers.py` wrote in the dir:
   ```bash
   > research/Estimate_academic_paper_quality/download_papers.py \
-      --output_dir ~/papers/run_2026_10
+      --output_dir ./run_epq
   ```
 - Wait 5 to 20 seconds between two downloads:
   ```bash
   > research/Estimate_academic_paper_quality/download_papers.py \
-      --output_dir ~/papers/run_2026_10 \
+      --output_dir ./run_epq \
       --min_delay_sec 5 --max_delay_sec 20
   ```
 
@@ -248,12 +248,12 @@
 - Extract the features of the downloaded papers:
   ```bash
   > research/Estimate_academic_paper_quality/extract_features.py \
-      --output_dir ~/papers/run_2026_10
+      --output_dir ./run_epq
   ```
 - Extract again the features of all the papers, with another model:
   ```bash
   > research/Estimate_academic_paper_quality/extract_features.py \
-      --output_dir ~/papers/run_2026_10 \
+      --output_dir ./run_epq \
       --force_extract \
       --model <model>
   ```
@@ -274,13 +274,13 @@
 - Write the reference list only, with no lookup:
   ```bash
   > research/Estimate_academic_paper_quality/report_papers.py \
-      --output_dir ~/papers/run_2026_10 \
+      --output_dir ./run_epq \
       --clear_actions --action report
   ```
 - Rate and report:
   ```bash
   > research/Estimate_academic_paper_quality/report_papers.py \
-      --output_dir ~/papers/run_2026_10
+      --output_dir ./run_epq
   ```
 
 ## `estimate_paper_quality.py`
@@ -303,27 +303,27 @@
   ```bash
   > research/Estimate_academic_paper_quality/estimate_paper_quality.py \
       --input research/Estimate_academic_paper_quality/paper_list.csv \
-      --output_dir ~/papers/run_2026_10
+      --output_dir ./run_epq
   ```
 - Extract again with another model, and ask for fresh citation counts:
   ```bash
   > research/Estimate_academic_paper_quality/estimate_paper_quality.py \
       --input research/Estimate_academic_paper_quality/paper_list.csv \
-      --output_dir ~/papers/run_2026_10 \
+      --output_dir ./run_epq \
       --model <model> --force_extract --refresh_citations
   ```
 - Run only `extract_features.py` and `report_papers.py` on the output of an earlier
   run:
   ```bash
   > research/Estimate_academic_paper_quality/estimate_paper_quality.py \
-      --output_dir ~/papers/run_2026_10 \
+      --output_dir ./run_epq \
       --only_action extract_features --only_action report_papers
   ```
 - Show the command of each executable, with no execution:
   ```bash
   > research/Estimate_academic_paper_quality/estimate_paper_quality.py \
       --input research/Estimate_academic_paper_quality/paper_list.csv \
-      --output_dir ~/papers/run_2026_10 \
+      --output_dir ./run_epq \
       --dry_run
   ```
 
@@ -335,10 +335,10 @@ the examples above
    ```bash
    > research/Estimate_academic_paper_quality/resolve_papers.py \
        --input research/Estimate_academic_paper_quality/paper_list.csv \
-       --output_dir ~/papers/run_2026_10 \
+       --output_dir ./run_epq \
        --email me@umd.edu
    ```
-   Open `~/papers/run_2026_10/01-resolve.issues.json`. Each item is an input that was
+   Open `./run_epq/01-resolve.issues.json`. Each item is an input that was
    not resolved or that matched more than one paper, with its candidates
 2. Fix the rows that `01-resolve.issues.json` names in
    `research/Estimate_academic_paper_quality/paper_list.csv`, then run step 1 again
@@ -350,22 +350,22 @@ the examples above
    ```bash
    > research/Estimate_academic_paper_quality/estimate_paper_quality.py \
        --input research/Estimate_academic_paper_quality/paper_list.csv \
-       --output_dir ~/papers/run_2026_10
+       --output_dir ./run_epq
    ```
    To run one stage alone, select its action, e.g.,
-   `estimate_paper_quality.py --output_dir ~/papers/run_2026_10 --only_action download_papers`,
+   `estimate_paper_quality.py --output_dir ./run_epq --only_action download_papers`,
    or call its executable on the output dir of step 1, e.g.,
-   `download_papers.py --output_dir ~/papers/run_2026_10`. Both read
+   `download_papers.py --output_dir ./run_epq`. Both read
    `01-resolve.paper_list.json` in that dir
 4. After a change of the LLM or of the prompt file, extract again and rewrite the
    reports:
    ```bash
    > research/Estimate_academic_paper_quality/extract_features.py \
-       --output_dir ~/papers/run_2026_10 \
+       --output_dir ./run_epq \
        --force_extract \
        --model <model>
    > research/Estimate_academic_paper_quality/report_papers.py \
-       --output_dir ~/papers/run_2026_10
+       --output_dir ./run_epq
    ```
 5. Fill or refresh the affiliation tier list, or change the score bands, then rate
    again and rewrite the reports. The tier list needs a CSV that you download by hand
@@ -378,7 +378,7 @@ the examples above
        --edition "QS World University Rankings 2027" \
        --source "https://www.topuniversities.com/world-university-rankings"
    > research/Estimate_academic_paper_quality/report_papers.py \
-       --output_dir ~/papers/run_2026_10
+       --output_dir ./run_epq
    ```
    The aliases, the hand entries (industry labs, NBER), the traps, and the checks are
    in `research/Estimate_academic_paper_quality/affiliation_tiers.yaml.README.md`
