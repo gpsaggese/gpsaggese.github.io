@@ -43,5 +43,7 @@ placeholder is committed until the reviewed paid run is executed.
 | `run_model_qos_demo.how_to_guide.md`     | Commands that demonstrate canary calibration, probing, grading, and evidence persistence | Demo       |
 | `run_market_supply_demo.how_to_guide.md` | Commands that show OpenRouter prices becoming asks and clearing against a bid            | Demo       |
 | `marketing_plan.md`                      | Bootstrapping supply and demand liquidity                                                | Plans      |
+| `spec.PR_S13.md`                         | Implementation spec: standalone monitoring and model-nerfing detection                   | Specs      |
+| `research.model_quality.md`              | Open research questions and candidate model-quality monitoring experiments               | Research   |
 | `dev_notes.md`                           | Build and OpenAPI-generation notes                                                       | Notes      |
 | `gp_todos.md`                            | Open TODOs                                                                               | Notes      |
