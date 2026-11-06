@@ -258,6 +258,9 @@
 
 ### `PR_M12`: [ ] Auction Result Report and Plot Helpers
 
+- Implementation is split into four review units: tables, round summaries, plots,
+  and the offline demo. Keep this item open until all four changes are merged.
+
 - Background: `TierClearResult`, `Fill`, and `Contract` objects are not readable in
   a notebook cell; the input requests and the auction result need tables and a plot
 - Add pure helpers in `market/` (no I/O) that return `pandas.DataFrame`:

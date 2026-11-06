@@ -407,3 +407,6 @@
 - Table helpers perform no I/O; scripts own rendering and exported artifacts
 - Summary totals are reconstructed from M10's matched and residual quantities;
   tests independently compare them with the original submitted books
+- Plot helpers use original orders, stable price priority, cumulative tasks, and
+  post steps. They return standalone figures without changing global backends;
+  headless test commands select `MPLBACKEND=Agg`.
