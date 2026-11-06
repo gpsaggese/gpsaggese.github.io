@@ -20,6 +20,13 @@ COPY requirements.txt /install/requirements.txt
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir jupyterlab jupyterlab_vim "ipykernel<7" jupytext==1.19.3 -r /install/requirements.txt
 
+# Install the EvalPlus scorer in its own layer, so that changing it does not
+# reinstall the packages above. `requirements.eval.txt` explains the
+# `--no-deps`.
+COPY requirements.eval.txt /install/requirements.eval.txt
+RUN pip install --no-cache-dir -r /install/requirements.eval.txt && \
+    pip install --no-cache-dir --no-deps evalplus==0.3.1
+
 # Config.
 COPY etc_sudoers /install/
 COPY etc_sudoers /etc/sudoers
