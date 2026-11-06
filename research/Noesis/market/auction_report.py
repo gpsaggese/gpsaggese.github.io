@@ -14,6 +14,7 @@ import pandas as pd
 
 import research.Noesis.market.batch_call_auction as rnbacaau
 import research.Noesis.market.contract_dispatch as rnocodis
+import research.Noesis.market.round_runner as rnmaroru
 
 _LOG = logging.getLogger(__name__)
 
@@ -104,4 +105,67 @@ def contracts_to_df(contracts: List[rnocodis.Contract]) -> pd.DataFrame:
         rows.append(row)
     result = pd.DataFrame(rows, columns=list(types)).astype(types)
     _LOG.debug("num_rows='%s'", len(result))
+    return result
+
+
+# #############################################################################
+# Round tables
+# #############################################################################
+
+
+def unmatched_to_df(round_result: rnmaroru.RoundResult) -> pd.DataFrame:
+    """
+    Return residual orders using the same columns as submitted-order tables.
+
+    :param round_result: completed round with residual quantities, not full orders
+    :return: bids followed by asks; quantities are not requeued or recomputed
+    """
+    _LOG.debug("round_id='%s'", round_result.round_id)
+    return orders_to_df(round_result.unmatched_bids, round_result.unmatched_asks)
+
+
+def tier_summary_df(round_result: rnmaroru.RoundResult) -> pd.DataFrame:
+    """
+    Report per-tier clearing and volume, including zero-volume tiers.
+
+    Submitted totals are reconstructed as matched plus residual quantities because
+    `RoundResult` does not retain the original input book. Tests compare them with
+    independently summed submitted orders.
+
+    :param round_result: complete market round
+    :return: typed table ordered by tier, including both sides' unmatched volume
+    """
+    _LOG.debug("round_id='%s'", round_result.round_id)
+    types = {
+        "tier": "string",
+        "round_id": "Int64",
+        "clearing_price": "Float64",
+        "matched_volume": "Int64",
+        "total_bid_volume": "Int64",
+        "total_ask_volume": "Int64",
+        "unmatched_bid_volume": "Int64",
+        "unmatched_ask_volume": "Int64",
+    }
+    # Aggregate residuals once, using the shared order schema for both sides.
+    residuals = (
+        unmatched_to_df(round_result).groupby(["tier", "side"])["n_tasks"].sum()
+    )
+    rows = []
+    for tier, summary in sorted(round_result.tier_results.items()):
+        bid_volume = int(residuals.get((tier, "bid"), 0))
+        ask_volume = int(residuals.get((tier, "ask"), 0))
+        rows.append(
+            {
+                "tier": tier,
+                "round_id": round_result.round_id,
+                "clearing_price": summary.clearing_price,
+                "matched_volume": summary.matched_volume,
+                "total_bid_volume": summary.matched_volume + bid_volume,
+                "total_ask_volume": summary.matched_volume + ask_volume,
+                "unmatched_bid_volume": bid_volume,
+                "unmatched_ask_volume": ask_volume,
+            }
+        )
+    result = pd.DataFrame(rows, columns=list(types)).astype(types)
+    _LOG.debug("num_tiers='%s'", len(result))
     return result
