@@ -45,6 +45,7 @@ The notebooks are in `notebooks/`, numbered in their logical order.
 | `racket_sports_03_strategy_exploration.ipynb` | Click-to-run exploration of shot placement: ball speed, shot dispersion, player positions |
 | `racket_sports_04_trajectory_API.ipynb` | Guided walkthrough of `racket_trajectory.py`, the closed-form ball flight (set aside) |
 | `racket_sports_05_variable_sensitivity.ipynb` | Which variables matter: one setting at a time, the corners and the best serve, the speed ratio check, and the reaction time comparison; reduced runs by default, `RUN_FULL_SIMS` for the full runs of the paper |
+| `racket_sports_06_rl_return.ipynb` | A one-shot RL env for the return of serve: the brute force through the env, Milestone 2 recomputed, and PPO learning the target; a reduced run by default (about 10 minutes), `RUN_FULL_SIMS` for the full run (about 1 hour); its pip cell installs `gymnasium`, `stable-baselines3`, and the CPU `torch` |
 
 ## Development
 
