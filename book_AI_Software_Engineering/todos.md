@@ -16,9 +16,9 @@ claude> Execute book_scripts/prompt.create_lesson_slides_from_chap_toc.md withou
 
 > lint_text.py -i book_AI_Software_Engineering/lectures_source/Lesson02.1*.smd --check
 
-claude> /slides.review <SMD_FILE>
-claude> /slides.add_visuals <SMD_FILE>
-claude> /slides.add_references <SMD_FILE>
+claude> /slides.review Lesson01.01_LLM_Assisted_Code_Generation.smd
+claude> /slides.add_visuals Lesson01.01_LLM_Assisted_Code_Generation.smd
+claude> /slides.add_references Lesson01.01_LLM_Assisted_Code_Generation.smd
 ```
 
 ```
@@ -36,4 +36,32 @@ run_typst.py --compress_pdf .
 > compress_pdf.py --input msml610/book/Lesson01.3*.pdf
 ```
 
+###
+
+- [ ] Template
+  - [ ] book_scripts/prompt.create_lesson_slides_from_chap_toc.md
+  - [ ] /slides.review
+  - [ ] /slides.add_visuals
+  - [ ] /slides.add_references
+  - [ ] msml610/book/prompt.slides_and_book_flow.md
+
+- [ ] Lesson01.01_LLM_Assisted_Code_Generation.smd
+  - [x] book_scripts/prompt.create_lesson_slides_from_chap_toc.md
+  - [ ] /slides.review
+  - [ ] /slides.add_visuals
+  - [.] /slides.add_references
+  - [x] msml610/book/prompt.slides_and_book_flow.md
+
+- [ ] Lesson02.01_Skills_Organization_and_Management.smd
+  - [ ] book_scripts/prompt.create_lesson_slides_from_chap_toc.md
+  - [ ] /slides.review
+  - [ ] /slides.add_visuals
+  - [ ] /slides.add_references
+  - [ ] msml610/book/prompt.slides_and_book_flow.md
+
 ### [ ] Rename book_AI_Software_Engineering -> book_AI_Sw_Eng
+
+### [ ] Merge into the TOC
+
+book_AI_Software_Engineering/resources.md
+paper.tex
