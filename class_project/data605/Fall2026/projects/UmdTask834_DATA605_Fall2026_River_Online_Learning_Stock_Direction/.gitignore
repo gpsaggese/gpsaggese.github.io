@@ -11,3 +11,11 @@ __pycache__/
 # Build logs.
 docker_build.version.log
 .ruff_cache/
+
+# Test and build logs.
+tmp.pytest*
+docker_build.log
+
+# Test and build logs.
+tmp.pytest*
+docker_build.log
