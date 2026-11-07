@@ -88,6 +88,7 @@ except ImportError:
 #     PPO runs of 75k steps with the fresh seeds 3, 4, and 5
 # - Both use the Milestone 2 defaults, its grid, and a fresh Milestone 2 map with
 #   5000 samples per target and seed 2 (Milestone 2 used seed 1)
+# - The saved outputs of this notebook are from the full run
 
 # %%
 # Set to `True` for the full run.
@@ -389,11 +390,10 @@ for sport in sports:
 # - Compare the 2 region sizes
 #   - Observe a larger region for the brute force, which has fewer samples per cell
 # - Read `env_best_in_m2_region` and `m2_best_in_env_region`
-#   - Observe `True` for both: the highest cell of each map is in the best region
-#     of the other
-#   - With 200 points per target, many cells tie at a winner probability of 1, and
-#     the first of the tie fell outside the narrow region of Milestone 2 (#713,
-#     Phase 3), so both runs use 1000 points
+#   - Observe `True` for both, except `env_best_in_m2_region` on the 3 short
+#     pickleball serves: there the highest cell of the brute force ties with the
+#     best of Milestone 2, and is 0.2 points (2.1 to 2.3 standard errors) below it in
+#     Milestone 2, just outside its 2 standard error region
 
 # %% [markdown]
 # **Implementation** `utils.compare_heatmaps(env_heatmap, m2_heatmap)`
@@ -515,9 +515,9 @@ display(results.round(4))
 
 # %% [markdown]
 # **Guided usage**
-# - Compare `regret_points` with `random_regret_points`
-#   - Observe a regret of a fraction of a point, against 10 to 20 points for a
-#     random target
+# - Compare `expected_regret_points` with `random_regret_points`
+#   - Observe less than 1 point for every run, against 11 to 21 points for a random
+#     target
 # - Read `top_prob`
 #   - Observe that the policy is still spread: its greedy cell gets a fraction of
 #     the probability, so `expected_regret_points` is the fairer summary
@@ -611,10 +611,12 @@ for sport in sports:
 # %% [markdown]
 # ## Conclusion
 #
-# - The env scores every target from its own points, and PPO learns a target from
-#   the reward alone; neither reads a Milestone 2 result
-# - Part 3 compares the env with a fresh Milestone 2 map, and Cell 4.4 applies the
-#   pass rule to PPO
-# - Results of the full run: to be written after Phase 4 of #713
-# - Next: cut the search space with closed-form results, the ad side, rallies,
-#   then self-play with `PettingZoo`
+# - The env matches Milestone 2 on 9 serves per sport: Spearman 0.98 in tennis and
+#   0.99 in pickleball, and each map's best cell is in the other's best region on 15
+#   of 18 serves; the 3 misses are ties within sampling noise (0.2 points)
+# - PPO's expected regret is under 0.8 points on all 6 runs, against 11 to 21 points
+#   for a random target
+# - The strict rule, every greedy cell in the Milestone 2 region, passed 4 of 6 runs;
+#   seed 5 failed in both sports
+# - Why: on the flat plateau the policy spreads over tied cells, so its top cell is
+#   fragile
