@@ -1,15 +1,18 @@
 # Summary
 
 ## Title
+
 - Software Engineering with AI: Practical Workflows for AI-Assisted Development
 - Building Software with AI
 
 ## Target Audience
-- Advanced undergraduate/graduate CS students and working software engineers
-  who already know git, testing, and CI/CD basics
+
+- Advanced undergraduate/graduate CS students and working software engineers who
+  already know git, testing, and CI/CD basics
 - Assumes working familiarity with LLMs (prompting, context windows)
 
 ## Approach of the Book
+
 - Focus on:
   - Making AI-assisted development operational in a real codebase
   - Practical workflows over theory
@@ -18,6 +21,7 @@
   - References to benchmarks (SWE-bench), papers, and vendor docs
 
 ## Short TOC
+
 - Foundations of AI-Assisted Coding
   - 01, Coding Models
   - 02, Skills Organization and Management
@@ -40,6 +44,7 @@
   - 16, Setting CI/CD for AI
 
 ## All Lesson Materials
+
 - `helpers_root/docs/` (tools, coding, planning, work_organization,
   documentation_meta, and dev_system guides)
 - `helpers_root/papers/AIgentic_Development_System/part*.tex`
@@ -52,46 +57,50 @@
 - `book_AI_Software_Engineering/resources.md`
 - `book_AI_Software_Engineering/lectures_source/claude_code.md`
 - `book_Agentic_AI/lectures_source/*.smd`
-- The book's own decks (`book_AI_Software_Engineering/lectures_source/*.smd`)
-  are chapter `### Slides`, not Lesson Materials
+- The book's own decks (`book_AI_Software_Engineering/lectures_source/*.smd`) are
+  chapter `### Slides`, not Lesson Materials
 
 ## Chapter Templates and Invariants
 
-- Follow `.claude/skills/book_map.rules.md` for the Chapter Template (Goals,
-  Topics, TODO, Slides, Lesson Materials, Notes) and Roadmap section conventions
-  used throughout this file
+- Follow `.claude/skills/book_map.rules.md` for the Chapter Template (Goals, Topics,
+  TODO, Slides, Lesson Materials, Notes) and Roadmap section conventions used
+  throughout this file
 
 # Roadmap
 
-| Chap                                    | Slides                                          | Slides % | Criticize | Tutorial | Book |
-| --------------------------------------- | ----------------------------------------------- | -------- | --------- | -------- | ---- |
-| **Part I: Foundations of AI-Assisted Coding** |                                           |          |           |          |      |
-| 01: Coding Models                       | Lesson01.1_LLM_Assisted_Code_Generation.smd     | 100%     |           |          |      |
-| 02: Skills Organization and Management  | Lesson05.1_Tools.smd                            |          |           |          |      |
-| 03: AI Harness                          | Lesson02.1_AI_Pair_Programming_Workflows.smd    |          |           |          |      |
-| 04: AI Pair Programming Workflows       | Lesson02.1_AI_Pair_Programming_Workflows.smd    | 100%     |           |          |      |
-| 05: Prompt Engineering for Code         | Lesson03.1_Prompt_Engineering_for_Code.smd      | 100%     |           |          |      |
-| 06: Human-AI Collaboration Patterns     | Lesson14.1_Human_AI_Collaboration_Patterns.smd  | 100%     |           |          |      |
-| **Part II: Writing and Reviewing Code** |                                                 |          |           |          |      |
-| 07: Code Cosmetics                      | Lesson05.1_Tools.smd                            |          |           |          |      |
-| 08: Documenting Code                    | Lesson05.1_Tools.smd                            |          |           |          |      |
-| 09: Reviewing Pull Requests             | Lesson05.1_Tools.smd                            |          |           |          |      |
-| 10: Reviewing Existing Code             |                                                 |          |           |          |      |
-| 11: Debugging with AI                   | Lesson05.1_Tools.smd                            |          |           |          |      |
-| **Part III: Planning and Architecture** |                                                 |          |           |          |      |
-| 12: Planning                            | Lesson05.1_Tools.smd                            |          |           |          |      |
-| 13: Software Architecture Guidelines    | Lesson05.1_Tools.smd                            |          |           |          |      |
-| **Part IV: Delivery and Automation**    |                                                 |          |           |          |      |
-| 14: GitHub Projects and Workflows       |                                                 |          |           |          |      |
-| 15: Releasing and Docker                | Lesson05.1_Tools.smd                            |          |           |          |      |
-| 16: Setting CI/CD                       | Lesson05.1_Tools.smd                            |          |           |          |      |
+// TODO(ai_gp): Update this table with the files in
+book_AI_Software_Engineering/lectures_source/ and book_AI_Software_Engineering/book
+
+| Chap                                          | Slides                                          | Slides % | Criticize | Tutorial | Book |
+| --------------------------------------------- | ----------------------------------------------- | -------- | --------- | -------- | ---- |
+| **Part I: Foundations of AI-Assisted Coding** |                                                 |          |           |          |      |
+| 01: Coding Models                             | Lesson01.01_LLM_Assisted_Code_Generation.smd    | 100%     |           |          |      |
+| 02: Skills Organization and Management        | Tools_source.smd                                |          |           |          |      |
+| 03: AI Harness                                | Lesson04.01_AI_Pair_Programming_Workflows.smd   |          |           |          |      |
+| 04: AI Pair Programming Workflows             | Lesson04.01_AI_Pair_Programming_Workflows.smd   | 100%     |           |          |      |
+| 05: Prompt Engineering for Code               | Lesson05.01_Prompt_Engineering_for_Code.smd     | 100%     |           |          |      |
+| 06: Human-AI Collaboration Patterns           | Lesson06.01_Human_AI_Collaboration_Patterns.smd | 100%     |           |          |      |
+| **Part II: Writing and Reviewing Code**       |                                                 |          |           |          |      |
+| 07: Code Cosmetics                            | Tools_source.smd                                |          |           |          |      |
+| 08: Documenting Code                          | Tools_source.smd                                |          |           |          |      |
+| 09: Reviewing Pull Requests                   | Tools_source.smd                                |          |           |          |      |
+| 10: Reviewing Existing Code                   |                                                 |          |           |          |      |
+| 11: Debugging with AI                         | Tools_source.smd                                |          |           |          |      |
+| **Part III: Planning and Architecture**       |                                                 |          |           |          |      |
+| 12: Planning                                  | Tools_source.smd                                |          |           |          |      |
+| 13: Software Architecture Guidelines          | Tools_source.smd                                |          |           |          |      |
+| **Part IV: Delivery and Automation**          |                                                 |          |           |          |      |
+| 14: GitHub Projects and Workflows             |                                                 |          |           |          |      |
+| 15: Releasing and Docker                      | Tools_source.smd                                |          |           |          |      |
+| 16: Setting CI/CD                             | Tools_source.smd                                |          |           |          |      |
 
 ## TODOs
-- Split the shared deck `Lesson05.1_Tools.smd` into per-chapter decks, or keep
-  it as the shared deck for chapters 02, 07-09, 11-13, 15, and 16
+
+- Split the shared deck `Tools_source.smd` into per-chapter decks, or keep it as the
+  shared deck for chapters 02, 07-09, 11-13, 15, and 16
 - Write a dedicated deck for chapters 03, 10, and 14
-- Confirm that Skills is chapter 02 and that Human-AI Collaboration Patterns
-  belongs in Part I
+- Confirm that Skills is chapter 02 and that Human-AI Collaboration Patterns belongs
+  in Part I
 
 # Detailed TOC
 
@@ -101,16 +110,18 @@
   - Human attention is limited
   - Avoid spaghetti code
   - The craft of Software Development
-- Part I explains how models write code and how humans steer them.
+- Part I explains how models write code and how humans steer them
 
 ## 01: Coding Models
 
 ### Goals
+
 - Describe how LLMs generate code and where they fail
 - Compare coding models by benchmark, such as HumanEval and SWE-bench
 - Recognize context-window and hallucination limits in generated code
 
 ### Topics
+
 - How LLMs Generate Code
   - Autoregressive token prediction
   - Training data: public repos, documentation, and synthetic code
@@ -125,12 +136,15 @@
   - Benchmarks: HumanEval, SWE-bench, and their limits
 
 ### TODO
+
 - [ ] Add a slide on SWE-bench results
 
 ### Slides
-- `book_AI_Software_Engineering/lectures_source/Lesson01.1_LLM_Assisted_Code_Generation.smd`
+
+- `book_AI_Software_Engineering/lectures_source/Lesson01.01_LLM_Assisted_Code_Generation.smd`
 
 ### Lesson Materials
+
 - `website/docs/blog/posts/how_to.Compare_LLM_models.md`
   - [40%]: LLM evaluation landscape, reliable benchmarks, comparison by category
 - `book_Agentic_AI/lectures_source/Lesson02.1-LLM_Building_Blocks.smd`
@@ -152,11 +166,13 @@
 ## 02: Skills Organization and Management
 
 ### Goals
+
 - Organize agent skills, rules, and templates in a repo
 - Write a skill from a workflow that the team repeats
 - Keep skills in sync with the rules and files they reference
 
 ### Topics
+
 - Definitions: Topics, Skills, Rules, and Templates
   - Why each kind of file has its own role
   - Pointers from CLAUDE.md to rules and templates
@@ -174,11 +190,13 @@
   - Detecting regressions after rule changes
 
 ### TODO
+
 - [ ] Add a deck section on testing skills
 
 ### Slides
 
 ### Lesson Materials
+
 - `helpers_root/docs/tools/ai/all.ai_workflows.how_to_guide.md`
   - [70%]: topics, skills, rules, templates, running a skill, adding rules
 - `.claude/skills/skill.rules.md`
@@ -218,11 +236,13 @@
 ## 03: AI Harness
 
 ### Goals
+
 - Describe the parts of a coding harness: model, tool loop, and permissions
 - Compare Claude Code, GitHub Copilot, and Cursor by surface and integration
 - Choose a harness by work style and project location
 
 ### Topics
+
 - Harness Anatomy
   - Model, tool loop, context management, and permissions
   - Instructions and skills loaded at session start
@@ -240,13 +260,16 @@
   - Moving work between harnesses
 
 ### TODO
+
 - [ ] Compare the Copilot and Cursor internals, not only their surfaces
 
 ### Slides
-- `book_AI_Software_Engineering/lectures_source/Lesson02.1_AI_Pair_Programming_Workflows.smd`
+
+- `book_AI_Software_Engineering/lectures_source/Lesson04.01_AI_Pair_Programming_Workflows.smd`
   (sections `## Pair Programming Tool Landscape` and `## Where to Run the Assistant`)
 
 ### Lesson Materials
+
 - `website/docs/blog/posts/draft.how_to.Coding_Agents.md`
   - [70%]: Claude Code, GitHub Copilot, ChatGPT, Cursor, Devin
 - `book_AI_Software_Engineering/lectures_source/claude_code.md`
@@ -282,17 +305,19 @@
 - `website/docs/blog/posts/how_to.Count_cost.md`
   - [15%]: cost tracking of agent sessions with `ccusage` and OpenRouter
 - _Not covered_
-  - [25%]: permission models, Copilot and Cursor internals, a harness test on
-    the same task
+  - [25%]: permission models, Copilot and Cursor internals, a harness test on the
+    same task
 
 ## 04: AI Pair Programming Workflows
 
 ### Goals
+
 - Choose autocomplete, chat, or agentic assistance for a given task
 - Run a pair-programming loop with an agent on a real change
 - Use CI, PR review, and asynchronous sessions within one working day
 
 ### Topics
+
 - Three Interaction Models
   - Autocomplete, chat, and agentic assistance
   - Vibe coding versus agentic coding
@@ -307,17 +332,17 @@
   - Dispatch, remote control, background sessions, and isolated workspaces
 
 ### Slides
-- `book_AI_Software_Engineering/lectures_source/Lesson02.1_AI_Pair_Programming_Workflows.smd`
+
+- `book_AI_Software_Engineering/lectures_source/Lesson04.01_AI_Pair_Programming_Workflows.smd`
 
 ### Lesson Materials
+
 - `helpers_root/docs/tools/ai/all.create_pr_with_claude_code.how_to_guide.md`
   - [60%]: investigate before changing, worktrees, small steps, layered tests
 - `website/docs/blog/posts/draft.how_to.Use_Claude_Code.md`
-  - [55%]: create and edit code, run and test, debug, larger projects, prompting
-    tips
+  - [55%]: create and edit code, run and test, debug, larger projects, prompting tips
 - `website/docs/blog/posts/draft.how_to.My_agentic_engineering_flow.md`
-  - [50%]: unit of work, spec before code, criticize first, keep the PR
-    mergeable
+  - [50%]: unit of work, spec before code, criticize first, keep the PR mergeable
 - `website/docs/blog/posts/draft.how_to.Automate_Coding_with_LLM.md`
   - [40%]: workflow patterns and advanced features
 - `helpers_root/docs/tools/ai/all.ai_workflows.how_to_guide.md`
@@ -347,11 +372,13 @@
 ## 05: Prompt Engineering for Code
 
 ### Goals
+
 - Write a code spec with acceptance criteria and explicit constraints
 - Choose few-shot, chain-of-thought, or decomposition prompts per task
 - Treat prompts as versioned artifacts that the team reviews
 
 ### Topics
+
 - Writing Specs for AI
   - Anatomy of a code spec, acceptance criteria, and non-goals
   - Ambiguous versus unambiguous requests
@@ -369,9 +396,11 @@
   - Review and reuse across the team
 
 ### Slides
-- `book_AI_Software_Engineering/lectures_source/Lesson03.1_Prompt_Engineering_for_Code.smd`
+
+- `book_AI_Software_Engineering/lectures_source/Lesson05.01_Prompt_Engineering_for_Code.smd`
 
 ### Lesson Materials
+
 - `book_Agentic_AI/lectures_source/Lesson04.1-LLM_Reasoning.smd`
   - [45%]: chain-of-thought variants, self-consistency, tree of thought, premise
     order
@@ -404,17 +433,19 @@
 - `website/docs/blog/posts/draft.LLM_issues.md`
   - [10%]: correction loops for imprecise output
 - _Not covered_
-  - [30%]: acceptance-criteria specs, negative examples, test-first prompting,
-    style transfer from a codebase
+  - [30%]: acceptance-criteria specs, negative examples, test-first prompting, style
+    transfer from a codebase
 
 ## 06: Human-AI Collaboration Patterns
 
 ### Goals
+
 - Pick pair, review-loop, or autonomous collaboration for each task
 - Design handoffs with explicit confirmation points
 - Match the level of oversight to the risk of the task
 
 ### Topics
+
 - Collaboration Modes
   - Pair, review-loop, and autonomous collaboration
   - Comparing the three modes
@@ -429,9 +460,11 @@
   - Evidence and provenance for team trust
 
 ### Slides
-- `book_AI_Software_Engineering/lectures_source/Lesson14.1_Human_AI_Collaboration_Patterns.smd`
+
+- `book_AI_Software_Engineering/lectures_source/Lesson06.01_Human_AI_Collaboration_Patterns.smd`
 
 ### Lesson Materials
+
 - `helpers_root/docs/tools/ai/all.ai_review.how_to_guide.md`
   - [35%]: reviewer workflow and human review of AI transforms
 - `helpers_root/docs/work_organization/all.team_collaboration.how_to_guide.md`
@@ -467,16 +500,18 @@
 
 # Part II: Writing and Reviewing Code
 
-- Part II covers the code that humans and AI write, check, and document.
+- Part II covers the code that humans and AI write, check, and document
 
 ## 07: Code Cosmetics
 
 ### Goals
+
 - Make generated code follow the repo style guide
 - Write fast unit tests and check output with golden files
 - Enforce coverage thresholds in CI
 
 ### Topics
+
 - Style and Naming
   - Naming conventions, spelling, and avoiding code stutter
   - Comments and docstrings
@@ -494,13 +529,14 @@
   - Mutation testing and quarantine of flaky tests
 
 ### Slides
-- `book_AI_Software_Engineering/lectures_source/Lesson05.1_Tools.smd`
-  (sections `# Automating Code Quality` and `# Automating Unit Testing`)
+
+- `book_AI_Software_Engineering/lectures_source/Tools_source.smd` (sections
+  `# Automating Code Quality` and `# Automating Unit Testing`)
 
 ### Lesson Materials
+
 - `helpers_root/papers/AIgentic_Development_System/part1.code_quality.tex`
-  - [85%]: linter framework, pre-commit, coverage, unit test framework, golden
-    files
+  - [85%]: linter framework, pre-commit, coverage, unit test framework, golden files
 - `helpers_root/docs/coding/all.coding_style.how_to_guide.md`
   - [80%]: naming, comments, docstrings, imports, logging, assertions, tests
 - `.claude/skills/coding.rules.md`
@@ -559,11 +595,13 @@
 ## 08: Documenting Code
 
 ### Goals
+
 - Write docstrings and comments that serve both humans and AI tools
 - Keep architecture diagrams in sync with the code they describe
 - Update docs in the same PR as the code change
 
 ### Topics
+
 - Docstrings and Comments
   - Descriptive versus imperative style, and what a docstring contains
   - Avoiding distracting comments and stale TODOs
@@ -580,10 +618,12 @@
   - Project docs: PRD, design, plan, progress, and decisions
 
 ### Slides
-- `book_AI_Software_Engineering/lectures_source/Lesson05.1_Tools.smd`
-  (section `# Automating Documentation`)
+
+- `book_AI_Software_Engineering/lectures_source/Tools_source.smd` (section
+  `# Automating Documentation`)
 
 ### Lesson Materials
+
 - `helpers_root/docs/documentation_meta/all.writing_docs.how_to_guide.md`
   - [55%]: conventions for writing docs
 - `helpers_root/docs/documentation_meta/all.diataxis.explanation.md`
@@ -638,11 +678,13 @@
 ## 09: Reviewing Pull Requests
 
 ### Goals
+
 - Review a PR with an AI reviewer and then with a human reviewer
 - Compare AI code review tools by features, price, and fit
 - Address review comments with small follow-up commits
 
 ### Topics
+
 - Review Workflow
   - Filing and reviewing a PR, labels, and review states
   - Addressing a review comment
@@ -658,10 +700,12 @@
   - What a human must still check in an AI-reviewed PR
 
 ### Slides
-- `book_AI_Software_Engineering/lectures_source/Lesson05.1_Tools.smd`
-  (section `# Automating the Pull Request Lifecycle`, slides on PR review)
+
+- `book_AI_Software_Engineering/lectures_source/Tools_source.smd` (section
+  `# Automating the Pull Request Lifecycle`, slides on PR review)
 
 ### Lesson Materials
+
 - `helpers_root/docs/tools/ai/all.ai_review.how_to_guide.md`
   - [75%]: the `ai_review` tool, reviewer workflow, improving the reviewer
 - `helpers_root/docs/coding/all.code_review.how_to_guide.md`
@@ -700,11 +744,13 @@
 ## 10: Reviewing Existing Code
 
 ### Goals
+
 - Build a mental model of an unfamiliar module in one session
 - Map dependencies and call paths before editing
 - Record findings as notes that a teammate can reuse
 
 ### Topics
+
 - Reading a Module
   - Public functions, invariants, and the role of each file
   - Pure functions and design philosophy
@@ -721,12 +767,15 @@
   - Research logs and reproducible notes
 
 ### TODO
+
 - [ ] Write a deck on reading unfamiliar code with AI
 
 ### Slides
+
 - N/A: no dedicated deck yet
 
 ### Lesson Materials
+
 - `website/docs/blog/posts/draft.how_to.Read_other_people_code.md`
   - [55%]: what to do and what not to do when reading unfamiliar code
 - `.claude/skills/readme_file.explain_code/SKILL.md`
@@ -763,11 +812,13 @@
 ## 11: Debugging with AI
 
 ### Goals
+
 - Reproduce a failure before asking the AI to fix it
 - Use test failures and runtime output as grounded feedback
 - Stop refinement loops that do not converge
 
 ### Topics
+
 - Reproducing Failures
   - Minimal reproducers and golden outputs
   - Logging and assertions as debugging aids
@@ -785,10 +836,12 @@
   - When retries do not help
 
 ### Slides
-- `book_AI_Software_Engineering/lectures_source/Lesson05.1_Tools.smd`
-  (slide `Automating Root-Cause Analysis When a Gate Fails`)
+
+- `book_AI_Software_Engineering/lectures_source/Tools_source.smd` (slide
+  `Automating Root-Cause Analysis When a Gate Fails`)
 
 ### Lesson Materials
+
 - `book_Agentic_AI/lectures_source/Lesson06.1-Inference_time_techniques.smd`
   - [55%]: self-debugging, grounded versus self-judged feedback, verifier design
 - `.claude/skills/pytest.rules.md`
@@ -832,16 +885,18 @@
 
 # Part III: Planning and Architecture
 
-- Part III covers how work is planned and how the code is structured.
+- Part III covers how work is planned and how the code is structured
 
 ## 12: Planning
 
 ### Goals
+
 - Turn an idea into a plan with milestones and PRs
 - Keep a progress log and a decisions log for each project
 - Criticize a task list before the AI executes it
 
 ### Topics
+
 - Planning Hierarchy
   - Ideas, plans, PRs, and tasks
   - Capturing an idea
@@ -858,10 +913,12 @@
   - Task lists, criticizing the plan, and executing in a loop
 
 ### Slides
-- `book_AI_Software_Engineering/lectures_source/Lesson05.1_Tools.smd`
-  (section `# Requirements and Planning`)
+
+- `book_AI_Software_Engineering/lectures_source/Tools_source.smd` (section
+  `# Requirements and Planning`)
 
 ### Lesson Materials
+
 - `helpers_root/docs/planning/all.plan_work.how_to_guide.md`
   - [85%]: planning hierarchy, plan docs, end-to-end plan, progress log
 - `.claude/skills/project.rules.md`
@@ -908,11 +965,13 @@
 ## 13: Software Architecture Guidelines
 
 ### Goals
+
 - Apply design rules that keep modules independent and cohesive
 - Choose a monorepo or multiple repos with explicit trade-offs
 - Draw architecture diagrams that match the code structure
 
 ### Topics
+
 - Design Philosophy
   - Keep it simple and separate what changes from what stays the same
   - Pure functions and invariants by default
@@ -930,10 +989,12 @@
   - Modularizing code with AI
 
 ### Slides
-- `book_AI_Software_Engineering/lectures_source/Lesson05.1_Tools.smd`
-  (section `# Code Modularization and Repo Structure`)
+
+- `book_AI_Software_Engineering/lectures_source/Tools_source.smd` (section
+  `# Code Modularization and Repo Structure`)
 
 ### Lesson Materials
+
 - `helpers_root/docs/documentation_meta/all.architecture_diagrams.explanation.md`
   - [80%]: C4 levels, PlantUML conventions, class diagrams
 - `helpers_root/papers/AIgentic_Development_System/part2.runnable_directory.tex`
@@ -955,8 +1016,7 @@
 - `helpers_root/docs/tools/dev_system/all.create_a_runnable_dir.how_to_guide.md`
   - [40%]: create a runnable dir as a sub-directory under a super-repo
 - `book_AI_Software_Engineering/resources.md`
-  - [40%]: package structure, import cycle detection, single versus multiple
-    repo
+  - [40%]: package structure, import cycle detection, single versus multiple repo
 - `helpers_root/docs/tools/dev_system/all.create_a_super_repo_with_helpers.how_to_guide.md`
   - [35%]: create a super-repo with the helpers sub-repo
 - `research/ideas/draft.AI_Technical_Debt_Management.md`
@@ -982,16 +1042,18 @@
 
 # Part IV: Delivery and Automation
 
-- Part IV covers how code moves from a GitHub project to a released container.
+- Part IV covers how code moves from a GitHub project to a released container
 
 ## 14: GitHub Projects and Workflows
 
 ### Goals
+
 - Set up a GitHub project with a lean four-status board
 - Name, file, and close issues with consistent conventions
 - Keep a clean PR history with Git branching and rebasing
 
 ### Topics
+
 - GitHub Project Structure
   - Issue fields and the lean four-status board
   - Sprints, cadence, and carryover
@@ -1008,12 +1070,15 @@
   - Splitting work across issues
 
 ### TODO
+
 - [ ] Write a deck on branch protection and code ownership
 
 ### Slides
+
 - N/A: no dedicated deck yet (PR lifecycle is covered in chapter 09)
 
 ### Lesson Materials
+
 - `helpers_root/docs/work_organization/all.github_projects_process.reference.md`
   - [85%]: project structure, board, sprints, automation, sub-issues
 - `helpers_root/docs/work_organization/all.use_github.how_to_guide.md`
@@ -1060,11 +1125,13 @@
 ## 15: Releasing and Docker
 
 ### Goals
+
 - Build dev and prod images through one documented release flow
 - Ship executables that run the same way in any container
 - Release a multi-architecture image through a checklist
 
 ### Topics
+
 - Container Stages
   - Local, dev, and prod stages
   - Pre-built versus build-on-the-fly containers
@@ -1082,11 +1149,13 @@
   - Post-release checks
 
 ### Slides
-- `book_AI_Software_Engineering/lectures_source/Lesson05.1_Tools.smd`
-  (sections `# Dockerization and Dockerized Executables` and the container
-  release slides in `# Automating Build, Release, and CI/CD`)
+
+- `book_AI_Software_Engineering/lectures_source/Tools_source.smd` (sections
+  `# Dockerization and Dockerized Executables` and the container release slides in
+  `# Automating Build, Release, and CI/CD`)
 
 ### Lesson Materials
+
 - `helpers_root/docs/tools/dev_system/all.devops_docker_auto_release.explanation.md`
   - [90%]: automated build and test, manual review, automated release
 - `helpers_root/papers/AIgentic_Development_System/part3.containerized_development.tex`
@@ -1131,11 +1200,13 @@
 ## 16: Setting CI/CD
 
 ### Goals
+
 - Set up a CI pipeline that runs fast and slow test tiers
 - Make a failing gate report its root cause
 - Release containers only after the gates pass
 
 ### Topics
+
 - Build Automation
   - Centralized task registry with invoke
   - Build health monitoring and the buildmeister role
@@ -1153,11 +1224,13 @@
   - Feeding production incidents back to the agent
 
 ### Slides
-- `book_AI_Software_Engineering/lectures_source/Lesson05.1_Tools.smd`
-  (sections `# Automating Build, Release, and CI/CD` and
+
+- `book_AI_Software_Engineering/lectures_source/Tools_source.smd` (sections
+  `# Automating Build, Release, and CI/CD` and
   `# Production Feedback and Release Monitoring`)
 
 ### Lesson Materials
+
 - `helpers_root/papers/AIgentic_Development_System/part1.code_quality.tex`
   - [60%]: CI/CD automation section, CI integration, enforced thresholds
 - `helpers_root/docs/work_organization/all.buildmeister.how_to_guide.md`
@@ -1203,8 +1276,8 @@
 
 ## Skills to Chapters
 
-- Each row lists a skill from `.claude/skills/*/SKILL.md` that a chapter cites in
-  its `### Lesson Materials`
+- Each row lists a skill from `.claude/skills/*/SKILL.md` that a chapter cites in its
+  `### Lesson Materials`
 - The percentage after each chapter is the coverage figure given in that chapter
 - Skills are sorted by name, so skills of one family sit together
 

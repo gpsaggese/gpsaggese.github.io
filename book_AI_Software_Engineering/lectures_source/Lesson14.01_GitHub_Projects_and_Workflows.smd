@@ -26,7 +26,7 @@
 * Agents Multiply the Work in Flight
 // From: website/docs/blog/posts/draft.how_to.Stacked_PRs_for_agentic_developent.md:23 '## The Challenge'
 // From: helpers_root/docs/tools/git/all.manual_flow.how_to_guide.md:1 '# Goals'
-// From: book_AI_Software_Engineering/lectures_source/Lesson05.1_Tools.smd:658 '* From Manual PRs to Agent-Driven PR Creation'
+// From: book_AI_Software_Engineering/lectures_source/Tools_source.smd:658 '* From Manual PRs to Agent-Driven PR Creation'
 
 - @Problem@: an agent writes code faster than a human reviews it
   - Several agent sessions run in parallel, each on its own branch
@@ -1002,7 +1002,7 @@ caption=Issue #123 as a stack: each PR (orange) targets the branch below it, and
   sequences are stable and well understood
 
 * Splitting a Large Branch Into PRs
-// From: book_AI_Software_Engineering/lectures_source/Lesson05.1_Tools.smd:684 '* Splitting Work: Child PRs and Branch Splitting'
+// From: book_AI_Software_Engineering/lectures_source/Tools_source.smd:684 '* Splitting Work: Child PRs and Branch Splitting'
 // From: .claude/skills/github.split_branch_in_PRs/SKILL.md:41 '## Propose PRs'
 // From: .claude/skills/github.split_branch_in_PRs/SKILL.md:53 '## Order the PRs'
 // From: helpers_root/docs/tools/git/all.manual_flow.how_to_guide.md:537 '### How to Split Large PRs'

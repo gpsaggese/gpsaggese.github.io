@@ -8,8 +8,8 @@
 
 - Code models complete patterns, so a repository must **state its conventions**
   in files that both engineers and agents can find
-- The four kinds of agent files: **topics, rules, templates, and skills**, each
-  answering one question, with one home for each fact
+- A **topic** groups three kinds of agent files: **rules, templates, and
+  skills**, each answering one question, with one home for each fact
 - **Agent instruction manifests** (`CLAUDE.md`, `AGENTS.md`) are the entry
   point that every session loads and that points the agent to the rules
 - **Writing a skill**: from a workflow that the team repeats to a `SKILL.md`
@@ -22,8 +22,8 @@
 # Why Repositories Need Agent Conventions
 
 * Why Agents Need Explicit Conventions
-// From: book_AI_Software_Engineering/lectures_source/Lesson05.1_Tools.smd:120 '* Why AI Agents Need Explicit Rules'
-// From: book_AI_Software_Engineering/lectures_source/Lesson05.1_Tools.smd:13 '* From Model Capability to Repo Infrastructure'
+// From: book_AI_Software_Engineering/lectures_source/Tools_source.smd:120 '* Why AI Agents Need Explicit Rules'
+// From: book_AI_Software_Engineering/lectures_source/Tools_source.smd:13 '* From Model Capability to Repo Infrastructure'
 
 - @Problem@: a model completes patterns, so with no stated convention it
   invents plausible but inconsistent code
@@ -42,8 +42,10 @@
     agent
 
 * Restating Conventions per Session Does Not Scale
-// From: book_AI_Software_Engineering/lectures_source/Lesson05.1_Tools.smd:120 '* Why AI Agents Need Explicit Rules'
+// From: book_AI_Software_Engineering/lectures_source/Tools_source.smd:120 '* Why AI Agents Need Explicit Rules'
 
+::: columns
+:::: {.column width=66%}
 - @Naive Solution@: restate the conventions in the prompt of every session
   - Cons:
     - Burns context on every run
@@ -56,12 +58,80 @@
   - A **manifest** (e.g., `CLAUDE.md`) that every session loads
   - **Rule files** with the conventions of each topic
   - **Skills** with the procedures that the team repeats
+::::
+:::: {.column width=34%}
+
+```graphviz
+digraph PerSessionVsRepo {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.25;
+    ranksep=0.35;
+    rankdir=TB;
+
+    node [shape=box, style="rounded,filled", penwidth=1.6,
+          fontname="Helvetica", fontsize=12, margin="0.16,0.08",
+          height=0.40];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    // prompt : orange | session : blue | repo files : violet note
+    // drift : red
+
+    subgraph cluster_naive {
+        label="Pasted per session"; labelloc="t";
+        fontname="Helvetica-Bold"; fontsize=12; fontcolor="#3A4A5C";
+        style="rounded,filled"; fillcolor="#F7F9FB"; color="#C7D0DA";
+        penwidth=1.0; margin=12;
+
+        PA [label="Prompt v1",
+            fillcolor="#FFC98A", color="#D98E2B", fontcolor="#6B4517"];
+        PB [label="Prompt v2",
+            fillcolor="#FFC98A", color="#D98E2B", fontcolor="#6B4517"];
+        SA [label="Session A",
+            fillcolor="#9CC4F2", color="#3C6FB0", fontcolor="#1F4E79"];
+        SB [label="Session B",
+            fillcolor="#9CC4F2", color="#3C6FB0", fontcolor="#1F4E79"];
+        { rank=same; PA; PB; }
+        { rank=same; SA; SB; }
+    }
+
+    PA -> SA;
+    PB -> SB;
+    PA -> PB [style=bold, penwidth=2.0, color="#B23A48",
+              fontcolor="#B23A48", label="  Drift", constraint=false];
+
+    subgraph cluster_repo {
+        label="Checked into the repo"; labelloc="t";
+        fontname="Helvetica-Bold"; fontsize=12; fontcolor="#3A4A5C";
+        style="rounded,filled"; fillcolor="#F7F9FB"; color="#C7D0DA";
+        penwidth=1.0; margin=12;
+
+        PR [label="Pull request",
+            fillcolor="#FFC98A", color="#D98E2B", fontcolor="#6B4517"];
+        Files [label="CLAUDE.md, rules, skills", shape=note, style=filled,
+               fillcolor="#E9E1F7", color="#A88FD9", fontcolor="#45296B"];
+        Every [label="Every session",
+               fillcolor="#9CC4F2", color="#3C6FB0", fontcolor="#1F4E79"];
+    }
+
+    SA -> PR [style=invis];
+    PR -> Files [label="  Reviewed"];
+    Files -> Every [label="  Loaded"];
+}
+```
+label=fig:per-session-vs-repo
+caption=Pasted prompts drift apart, while files in the repo reach every session
+
+::::
+:::
 
 - @Key idea@: conventions stored in the repo are reviewed, diffed, and versioned
   like code, so agent behavior changes through a pull request
 
 * Consistency as a Reliability Property
-// From: book_AI_Software_Engineering/lectures_source/Lesson05.1_Tools.smd:89 '* Consistency and Reproducibility Is Key'
+// From: book_AI_Software_Engineering/lectures_source/Tools_source.smd:89 '* Consistency and Reproducibility Is Key'
 
 - @Definition@:
   - **Consistency**: the same kind of problem is solved the same way everywhere
@@ -74,18 +144,18 @@
     for it
 
 - @Example@: site reliability engineering treats consistency as a reliability
-  property, not a style preference
+  property, not a style preference _(Beyer et al., 2016)_
   - A **runbook** turns a procedure in one engineer's head into exact steps that
     anyone on call can execute under pressure
   - A **checklist** for a deploy catches the step that a tired engineer would
-    skip
+    skip _(Gawande, 2009)_
 
 - @Key idea@: rules, skills, and manifests are the runbooks and checklists of a
   coding agent
 
 # Topics, Rules, Templates, and Skills
 
-* Four Kinds of Agent Files
+* Topics Group Three Kinds of Files
 // From: helpers_root/docs/tools/ai/all.ai_workflows.how_to_guide.md:13 '## Definitions'
 // From: helpers_root/docs/tools/ai/all.ai_workflows.how_to_guide.md:15 '### Topics'
 
@@ -220,7 +290,7 @@ caption=A topic groups skills (teal), a rule file (blue), and a template (orange
 
 * Skills: How, Step by Step
 // From: helpers_root/docs/tools/ai/all.ai_workflows.how_to_guide.md:78 '### Skills'
-// From: book_AI_Software_Engineering/lectures_source/Lesson05.1_Tools.smd:199 '* Skill Files: Packaging Repeatable Workflows as Rules'
+// From: book_AI_Software_Engineering/lectures_source/Tools_source.smd:199 '* Skill Files: Packaging Repeatable Workflows as Rules'
 
 - @Definition@: a **skill** is a named, versioned procedure for one task,
   stored at `.claude/skills/<TOPIC>.<ACTION>/SKILL.md`
@@ -243,7 +313,7 @@ caption=A topic groups skills (teal), a rule file (blue), and a template (orange
   knowledge, so many skills can share one rule
 
 * Rules, Templates, and Skills Compared
-// From: book_AI_Software_Engineering/lectures_source/Lesson05.1_Tools.smd:199 '* Skill Files: Packaging Repeatable Workflows as Rules'
+// From: book_AI_Software_Engineering/lectures_source/Tools_source.smd:199 '* Skill Files: Packaging Repeatable Workflows as Rules'
 // From: .claude/skills/skill.rules.md:399 '## Rules vs Skills'
 
 ```{=typst}
@@ -278,6 +348,7 @@ caption=A topic groups skills (teal), a rule file (blue), and a template (orange
   - Two copies that contradict make the agent choose at random
 
 - @Solution@: each fact has exactly one home, and every other place links to it
+  - The "don't repeat yourself" principle applied to docs _(Hunt et al., 1999)_
 
 - @Algorithm@: find the home, and stop at the first yes
   1. A convention shared by several skills of a topic $\to$ `<TOPIC>.rules.md`
@@ -293,9 +364,9 @@ caption=A topic groups skills (teal), a rule file (blue), and a template (orange
 # Agent Instruction Manifests
 
 * Agent Instruction Manifest: Definition
-// From: book_AI_Software_Engineering/lectures_source/Lesson05.1_Tools.smd:146 '* AGENTS.md as a Machine-Readable Instruction Manifest'
+// From: book_AI_Software_Engineering/lectures_source/Tools_source.smd:146 '* AGENTS.md as a Machine-Readable Instruction Manifest'
 // From: helpers_root/papers/AIgentic_Development_System/part4.AI_optimized_development.tex:53 '\subsection{Agent Instruction Manifests: Making the Repository Speak to AI}'
-// From: book_AI_Software_Engineering/lectures_source/Lesson14.1_Human_AI_Collaboration_Patterns.smd:496 '* Shared Conventions: Instruction Manifests'
+// From: book_AI_Software_Engineering/lectures_source/Lesson06.01_Human_AI_Collaboration_Patterns.smd:496 '* Shared Conventions: Instruction Manifests'
 
 - @Definition@: an **agent instruction manifest** is a versioned file in the
   repository that describes architecture, conventions, and canonical commands,
@@ -316,7 +387,7 @@ caption=A topic groups skills (teal), a rule file (blue), and a template (orange
   - It is an operating manual whose first reader is a machine
 
 * What Goes in a Manifest
-// From: book_AI_Software_Engineering/lectures_source/Lesson05.1_Tools.smd:146 '* AGENTS.md as a Machine-Readable Instruction Manifest'
+// From: book_AI_Software_Engineering/lectures_source/Tools_source.smd:146 '* AGENTS.md as a Machine-Readable Instruction Manifest'
 // From: helpers_root/papers/AIgentic_Development_System/part4.AI_optimized_development.tex:53 '\subsection{Agent Instruction Manifests: Making the Repository Speak to AI}'
 
 - @Components@:
@@ -337,7 +408,7 @@ caption=A topic groups skills (teal), a rule file (blue), and a template (orange
   - Leave out what changes often (e.g., open tasks) and what a tool already
     enforces (e.g., formatting checked by a linter)
 
-* Layered Manifests: User, Repo, Submodule
+* Layered Manifests: User, Repo, Directory
 // From: CLAUDE.md:1 '# CLAUDE.md'
 // From: helpers_root/CLAUDE.md:1 '# CLAUDE.md'
 
@@ -363,6 +434,28 @@ caption=A topic groups skills (teal), a rule file (blue), and a template (orange
   - `.claude` is a symlink to `helpers_root/.claude`, so every repo that embeds
     `helpers` shares one set of rules and skills
 
+* Context Budget: Why Not One Big Manifest
+// From: book_AI_Software_Engineering/lectures_source/Tools_source.smd:177 '* Scaling Context Retrieval Beyond a Static Manifest'
+
+- @Problem@: a manifest works while it fits in context
+  - This repo has 33 rule files with about 12,000 lines
+  - Loading all of them in every session wastes context and buries the one
+    instruction that matters
+
+- @Naive Solution@: one long `CLAUDE.md` with every convention
+  - Cons:
+    - Costs tokens on every request, even for a one-line change
+    - Instructions in the middle of a long context are followed less reliably
+      _(Liu et al., 2024)_
+
+- @Solution@: load the instructions in layers, on demand
+  - _Manifest_: always loaded, short, made of pointers
+  - _Rule file_: loaded when the agent edits a file of that type
+  - _Skill_: loaded when a task matches its description
+
+- @Key idea@: a manifest is a whiteboard, not a library
+  - Past a certain size, an agent needs an index, not a longer document
+
 * Pointers From CLAUDE.md to Rules and Templates
 // From: CLAUDE.md:95 '# Important'
 // From: .claude/rules.md:1 'This file contains a mapping between "file type" and files containing rule /'
@@ -370,8 +463,8 @@ caption=A topic groups skills (teal), a rule file (blue), and a template (orange
 
 ::: columns
 :::: {.column width=50%}
-- @Problem@: 33 rule files with about 12,000 lines do not fit in a manifest
-  that every session loads
+- @Problem@: the manifest must stay short, but it must still lead the agent
+  to every rule file
 
 - @Solution@: a chain of pointers, each one more specific
   1. `CLAUDE.md`: _"You MUST read and strictly follow `.claude/rules.md`"_
@@ -433,10 +526,12 @@ caption=Manifest and index (violet) lead to rule file (blue) and template (orang
 // From: helpers_root/docs/tools/ai/all.ai_workflows.how_to_guide.md:101 '### Rules'
 // From: .claude/hooks/check_file_rules.sh:2 '# PreToolUse hook: remind Claude to follow the right `.claude/rules.md` rules'
 
+::: columns
+:::: {.column width=70%}
 - @Problem@: a pointer is only a request
   - `CLAUDE.md` is read at session start, but a long session pushes it far back
     in the context
-  - A skill runs only when the model decides that it matches the task
+  - A skill runs only if the model selects it
 
 - @Solution@: a **hook** is a command that the harness runs on a fixed event,
   not when the model decides to
@@ -444,19 +539,59 @@ caption=Manifest and index (violet) lead to rule file (blue) and template (orang
   - It matches the file path against a table and injects a reminder, e.g.,
     _"This is a Python file. Before proceeding, read and follow
     `coding.rules.md`"_
+::::
+:::: {.column width=30%}
+
+```graphviz
+digraph HookFlow {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.30;
+    ranksep=0.35;
+    rankdir=TB;
+
+    node [shape=box, style="rounded,filled", penwidth=1.6,
+          fontname="Helvetica", fontsize=12, margin="0.16,0.08",
+          height=0.40];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    // agent action : orange | hook : teal | reminder : violet note
+    // edit : blue
+
+    Call [label="Agent calls Edit(x.py)",
+          fillcolor="#FFC98A", color="#D98E2B", fontcolor="#6B4517"];
+    Hook [label="check_file_rules.sh",
+          fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    Note [label="Reminder:\nfollow coding.rules.md", shape=note, style=filled,
+          fillcolor="#E9E1F7", color="#A88FD9", fontcolor="#45296B"];
+    Edit [label="Edit runs",
+          fillcolor="#9CC4F2", color="#3C6FB0", fontcolor="#1F4E79"];
+
+    Call -> Hook [label="  PreToolUse"];
+    Hook -> Note [label="  Path matches"];
+    Note -> Edit;
+    Hook -> Edit [style=dashed, color="#8C8C8C", label="  No match"];
+}
+```
+label=fig:hook-flow
+caption=The harness runs the hook (teal) before every edit (blue)
+
+::::
+:::
 
 - @Limitations@:
   - Covers only the types that a path identifies (`.py`, `test_*.py`, `.sh`,
     `.ipynb`, `.typ`)
-  - A blog and a README are both `.md`, so rules based on purpose stay a manual
-    lookup
+  - A blog and a README are both `.md`, so purpose-based rules stay manual
   - Informs and never blocks the edit
 
 - @Key idea@: put a check that must not be forgotten on a deterministic trigger
 
 * Machine-Readable Contracts: `repo_config.yaml`
-// From: book_AI_Software_Engineering/lectures_source/Lesson05.1_Tools.smd:233 '* Repo_config.yaml: Machine-Readable Repository Contracts'
-// From: book_AI_Software_Engineering/lectures_source/Lesson14.1_Human_AI_Collaboration_Patterns.smd:513 '* Machine-Readable Contracts'
+// From: book_AI_Software_Engineering/lectures_source/Tools_source.smd:233 '* Repo_config.yaml: Machine-Readable Repository Contracts'
+// From: book_AI_Software_Engineering/lectures_source/Lesson06.01_Human_AI_Collaboration_Patterns.smd:513 '* Machine-Readable Contracts'
 
 ::: columns
 :::: {.column width=55%}
@@ -489,28 +624,6 @@ container_registry_info:
 - @Key idea@: a release task reads the registry and the image name from the
   contract, and does not guess them
 
-* Context Budget: Why Not One Big Manifest
-// From: book_AI_Software_Engineering/lectures_source/Lesson05.1_Tools.smd:177 '* Scaling Context Retrieval Beyond a Static Manifest'
-
-- @Problem@: a manifest works while it fits in context
-  - This repo has 33 rule files with about 12,000 lines
-  - Loading all of them in every session wastes context and buries the one
-    instruction that matters
-
-- @Naive Solution@: one long `CLAUDE.md` with every convention
-  - Cons:
-    - Costs tokens on every request, even for a one-line change
-    - Instructions in the middle of a long context are followed less reliably
-      _(Liu et al., 2024)_
-
-- @Solution@: load the instructions in layers, on demand
-  - _Manifest_: always loaded, short, made of pointers
-  - _Rule file_: loaded when the agent edits a file of that type
-  - _Skill_: loaded when a task matches its description
-
-- @Key idea@: a manifest is a whiteboard, not a library
-  - Past a certain size, an agent needs an index, not a longer document
-
 # Writing a Skill
 
 * From a Repeated Workflow to a Skill
@@ -536,38 +649,6 @@ container_registry_info:
   - `mdm skill edit <topic>.<action>` scaffolds a new skill
   - The `skill-creator` skill asks about the workflow and writes the folder
 
-* Progressive Disclosure
-// From: website/docs/blog/posts/draft.how_to.Claude_skills.md:33 '## How Skills Work: Progressive Disclosure'
-// From: website/docs/blog/posts/draft.how_to.Claude_skills.md:58 '### Token Efficiency vs MCP'
-// From: website/docs/blog/posts/draft.how_to.Claude_skills.md:164 '#'
-
-- @Definition@: **progressive disclosure** loads a skill in three levels, each
-  one only when it is needed
-
-```{=typst}
-#styled-table(
-  headers: ("Level", "Content", "Loaded"),
-  rows: (
-    ("1. Frontmatter", "Name and description", "Always, at session start"),
-    ("2. SKILL.md body", "Goal, workflow, verification", "When the skill matches the task"),
-    ("3. Bundled files", "scripts/, references/, assets/", "When a step needs them"),
-  ),
-  col-widths: (1fr, 1.4fr, 1.6fr),
-)
-```
-
-// TODO(gp): Check the 30-50 tokens per skill for this repo: the number comes
-// from the blog, and the total is computed from it
-- @Fact@: the frontmatter costs about 30-50 tokens per skill
-  - 165 skills $\approx$ 5,000-8,000 tokens, instead of the full text of every
-    skill
-
-- @Comparison@: an MCP server front-loads a description of every tool, while a
-  skill front-loads one sentence
-
-- @Key idea@: the `description` is the only part the model sees when it
-  chooses, so it decides whether the skill runs at all
-
 * Anatomy of a SKILL.md
 // From: .claude/skills/skill.rules.md:179 '## Content Structure'
 // From: .claude/skills/skill.auto_add/SKILL.md:19 '# Inputs'
@@ -575,7 +656,8 @@ container_registry_info:
 ::: columns
 :::: {.column width=55%}
 - @Components@:
-  - _Frontmatter_: `description` and `model`
+  - _Frontmatter_: `description` and `model`, with no `name`, since the name
+    is the directory name `<TOPIC>.<ACTION>`
   - _Goal_: what the skill does, in 1-2 sentences
   - _Inputs_: the arguments as `<VAR>`, and what to do if one is missing
   - _Workflow_: the steps, one `##` header per step
@@ -608,6 +690,38 @@ container_registry_info:
   ```
 ::::
 :::
+
+* Progressive Disclosure
+// From: website/docs/blog/posts/draft.how_to.Claude_skills.md:33 '## How Skills Work: Progressive Disclosure'
+// From: website/docs/blog/posts/draft.how_to.Claude_skills.md:58 '### Token Efficiency vs MCP'
+// From: website/docs/blog/posts/draft.how_to.Claude_skills.md:164 '#'
+
+- @Definition@: **progressive disclosure** loads a skill in three levels, each
+  one only when it is needed
+
+```{=typst}
+#styled-table(
+  headers: ("Level", "Content", "Loaded"),
+  rows: (
+    ("1. Frontmatter", "Directory name and description", "Always, at session start"),
+    ("2. SKILL.md body", "Goal, workflow, verification", "When the skill matches the task"),
+    ("3. Bundled files", "scripts/, references/, assets/", "When a step needs them"),
+  ),
+  col-widths: (1fr, 1.4fr, 1.6fr),
+)
+```
+
+// TODO(gp): Check the 30-50 tokens per skill for this repo: the number comes
+// from the blog, and the total is computed from it
+- @Fact@: the frontmatter costs about 30-50 tokens per skill
+  - 165 skills $\approx$ 5,000-8,000 tokens, instead of the full text of every
+    skill
+
+- @Comparison@: an MCP server front-loads a description of every tool, while a
+  skill front-loads one sentence
+
+- @Key idea@: the `description` is the only part the model sees when it
+  chooses, so it decides whether the skill runs at all
 
 * Frontmatter: Description and Model
 // From: .claude/skills/skill.rules.md:16 '## Frontmatter'
@@ -689,7 +803,7 @@ container_registry_info:
 ::: columns
 :::: {.column width=45%}
 - @Characteristics@:
-  - 12 lines: frontmatter, one input, one step, and two checks
+  - 13 lines: frontmatter, one input, one step, and two checks
   - The convention is one header away, in `coding.rules.md`
   - `haiku` is enough, since the rule makes the decisions
 
@@ -755,6 +869,8 @@ container_registry_info:
 // From: .claude/skills/skill.rules.md:383 '### Header References'
 // From: research/ideas/draft.Measuring_Quality_of_Skills_and_Prompts.md:44 '## Research Topics'
 
+::: columns
+:::: {.column width=70%}
 - @Problem@: a skill depends on files that it does not own
   - A rule header is renamed, or a section moves
   - A script or a template moves to another directory
@@ -765,6 +881,43 @@ container_registry_info:
     `## Use REST Style for Docstrings`
   - The skill still points to `## Use REST Style for Comments`
   - _2026-08-03_: the reference is fixed, almost three months later
+::::
+:::: {.column width=30%}
+
+```graphviz
+digraph SkillDrift {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.30;
+    ranksep=0.40;
+    rankdir=TB;
+
+    node [shape=box, style="rounded,filled", penwidth=1.6,
+          fontname="Helvetica", fontsize=12, margin="0.16,0.08",
+          height=0.40];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    // change : orange | stale state : red | fix : blue
+
+    Rename [label="2026-05-12\nRule header renamed",
+            fillcolor="#FFC98A", color="#D98E2B", fontcolor="#6B4517"];
+    Stale [label="Skill cites the old header\nNo error raised",
+           fillcolor="#FFB3B3", color="#D64545", fontcolor="#6B1F1F"];
+    Fix [label="2026-08-03\nReference fixed",
+         fillcolor="#9CC4F2", color="#3C6FB0", fontcolor="#1F4E79"];
+
+    Rename -> Stale;
+    Stale -> Fix [style=bold, penwidth=2.0, color="#B23A48",
+                  fontcolor="#B23A48", label="  12 weeks"];
+}
+```
+label=fig:skill-drift-timeline
+caption=A renamed header leaves the skill stale (red) for 12 weeks
+
+::::
+:::
 
 // TODO(gp): Check what the agent did with the missing header in that window:
 // the session logs were not read
@@ -779,8 +932,10 @@ container_registry_info:
 // From: .claude/skills/skill.auto_add/SKILL.md:54 '## Infer the Rules'
 // From: helpers_root/docs/tools/ai/all.ai_review.how_to_guide.md:257 '## How to improve the reviewing tools while reviewing'
 
+::: columns
+:::: {.column width=70%}
 - @Intuition@: every manual fix of an agent output is a lesson
-  - Someone fixed by hand what the skill should have done the first time
+  - A hand fix is what the skill should have done
 
 - @Algorithm@: `/skill.auto_add <FILE> <PROMPT>`
   1. Diff `<FILE>` from its first to its last commit
@@ -789,10 +944,50 @@ container_registry_info:
   3. Drop one-off edits (e.g., a typo, a date), and merge restated rules
   4. Propose the smallest edit to `<PROMPT>`, and apply it with `rules.add`
      after approval
+::::
+:::: {.column width=30%}
+
+```graphviz
+digraph AutoAddLoop {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.30;
+    ranksep=0.35;
+    rankdir=TB;
+
+    node [shape=box, style="rounded,filled", penwidth=1.6,
+          fontname="Helvetica", fontsize=12, margin="0.16,0.08",
+          height=0.40];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    // skill run : teal | manual fix : orange | updated prompt : blue
+
+    Run [label="Skill run",
+         fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    Fix [label="Manual fix, committed",
+         fillcolor="#FFC98A", color="#D98E2B", fontcolor="#6B4517"];
+    Infer [label="skill.auto_add\ninfers the rule",
+           fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    Prompt [label="Prompt updated",
+            fillcolor="#9CC4F2", color="#3C6FB0", fontcolor="#1F4E79"];
+
+    Run -> Fix -> Infer -> Prompt;
+    Prompt -> Run [style=bold, penwidth=2.0, color="#B23A48",
+                   fontcolor="#B23A48", label="  Next run",
+                   constraint=false];
+}
+```
+label=fig:auto-add-loop
+caption=Each manual fix (orange) becomes a prompt rule (blue)
+
+::::
+:::
 
 - @Example@: the prompt that generates the lessons of this book
-  - _2026-10-13_: `TODO(gp)` comments were added by hand to a generated deck
-  - The same commit added the rule _"when you have a doubt about a claim, add a
+  - _2026-10-13_: one commit adds `TODO(gp)` comments by hand to a generated
+    deck, and the rule _"when you have a doubt about a claim, add a
     `// TODO(gp): Check ...` comment"_ to the prompt
 
 - @Key idea@: generalize the rule behind the diff, not the strings of one file,
@@ -913,7 +1108,7 @@ container_registry_info:
   - Same idea as the `check_string()` golden files for code
 
 - @Techniques@: property-based inputs probe the boundaries (e.g., an empty
-  file, a very long file, adversarial text)
+  file, a very long file, adversarial text) _(Claessen et al., 2000)_
 
 - @Remark@: version the fixtures next to the skill, so a change to `SKILL.md`
   and to its tests is one diff
@@ -1015,10 +1210,11 @@ caption=A rule edit reruns the checks (teal) before the merge (blue)
 - @Problem@: pass or fail hides how close a skill is to failing
 
 - @Definition@: quality dimensions of a skill
-  - _Consistency_: the variance of the score across repeated runs
-  - _Robustness_: the change of the score under a paraphrased input
-  - _Context sensitivity_: the change of the score after adding irrelevant
-    context
+  - _Consistency_: the score variance across repeated runs
+  - _Robustness_: the score change under a paraphrased input
+    _(Sclar et al., 2024)_
+  - _Context sensitivity_: the score change after adding irrelevant context
+    _(Shi et al., 2023)_
   - _Instruction-following fidelity_: the fraction of the skill's rules that
     the output satisfies, judged by an LLM _(Liu et al., 2023)_
 
@@ -1028,7 +1224,7 @@ caption=A rule edit reruns the checks (teal) before the merge (blue)
   - Reward automated prompt optimization _(Khattab et al., 2024)_
 
 - @Challenges@: optimizing against a judge invites **reward hacking**: outputs
-  that please the judge without doing the task
+  that please the judge without doing the task _(Amodei et al., 2016)_
 
 - @Remark@: Promptfoo, DeepEval, and OpenAI Evals run these evaluations
 
@@ -1036,10 +1232,10 @@ caption=A rule edit reruns the checks (teal) before the merge (blue)
 
 - @Key idea@: a repository teaches an agent its conventions through files, the
   same way it teaches a new engineer
-- Each kind of file answers one question: a rule file (why and when), a
-  template (what to copy), a skill (how), and a manifest (where to start)
-- A short manifest points to the rules, and progressive disclosure loads a
-  skill only when a task needs it
+- A topic groups three kinds of files, each answering one question: a rule
+  file (why and when), a template (what to copy), and a skill (how)
+- A short manifest says where to start and points to the rules, and
+  progressive disclosure loads a skill only when a task needs it
 - A skill is a short procedure that points to rules, declares its inputs, and
   verifies its own work
 - Skills drift when the files they cite change, so check their references and
@@ -1048,6 +1244,10 @@ caption=A rule edit reruns the checks (teal) before the merge (blue)
   invariants, and an LLM judge
 
 * References
+
+```{=typst}
+#set text(size: 0.75em)
+```
 
 // TODO(gp): Check the year of the Anthropic skill docs and of the guide: the
 // blog gives the links but no dates
@@ -1070,8 +1270,28 @@ caption=A rule edit reruns the checks (teal) before the merge (blue)
 - **Khattab et al.**: _"DSPy: Compiling Declarative Language Model Calls into
   Self-Improving Pipelines"_, ICLR (2024)
 
+- **Sclar et al.**: _"Quantifying Language Models' Sensitivity to Spurious
+  Features in Prompt Design"_, ICLR (2024)
+
 - **Zheng et al.**: _"Judging LLM-as-a-Judge with MT-Bench and Chatbot
   Arena"_, NeurIPS (2023)
 
 - **Liu et al.**: _"G-Eval: NLG Evaluation Using GPT-4 with Better Human
   Alignment"_, EMNLP (2023)
+
+- **Shi et al.**: _"Large Language Models Can Be Easily Distracted by
+  Irrelevant Context"_, ICML (2023)
+
+- **Amodei et al.**: _"Concrete Problems in AI Safety"_, arXiv (2016)
+
+- **Beyer et al.**: _"Site Reliability Engineering: How Google Runs Production
+  Systems"_, O'Reilly (2016)
+
+- **Gawande**: _"The Checklist Manifesto: How to Get Things Right"_,
+  Metropolitan Books (2009)
+
+- **Claessen et al.**: _"QuickCheck: A Lightweight Tool for Random Testing of
+  Haskell Programs"_, ICFP (2000)
+
+- **Hunt et al.**: _"The Pragmatic Programmer: From Journeyman to Master"_,
+  Addison-Wesley (1999)

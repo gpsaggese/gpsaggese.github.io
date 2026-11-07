@@ -3,109 +3,177 @@
 
 # All prompts
 
-// TODO(ai_gp): Add a table for each prompt and a short comment
+// TODO(ai_gp): Add book_scripts/ to the path
 
-```
-> ls -1 book_scripts/*prompt*
-book_scripts/prompt.create_lesson_slides.common.md
-book_scripts/prompt.create_lesson_slides_from_chap_toc.md
-book_scripts/prompt.create_lesson_slides_from_topic.md
-book_scripts/prompt.create_latex_book_chap_from_lesson_slides.md
-book_scripts/prompt.create_typst_book_chap_from_lesson_slides.md
-book_scripts/prompt.expand_skeleton_slides.md
-book_scripts/prompt.extract_skeleton_slides_from_lesson_slides.md
-book_scripts/prompt.find_references_to_chap_toc.md
-book_scripts/prompt.inline_lesson_slides_from_skeleton_slides.md
-book_scripts/prompt.update_book_chap_from_lesson_slides.md
-```
+| **Prompt** | **Comment** |
+| :--------- | :---------- |
+| `prompt.create_lesson_slides.common.md` | Steps shared by the two lesson prompts |
+| `prompt.create_lesson_slides_from_chap_toc.md` | Lesson slides from a chapter TOC |
+| `prompt.create_lesson_slides_from_topic.md` | Lesson slides from an ad-hoc topic list |
+| `prompt.create_latex_book_chap_from_lesson_slides.md` | LaTeX book chapter from lesson slides |
+| `prompt.create_typst_book_chap_from_lesson_slides.md` | Typst book chapter from lesson slides |
+| `prompt.expand_skeleton_slides.md` | Skeleton slides expanded from background files |
+| `prompt.extract_skeleton_slides_from_lesson_slides.md` | Skeleton slides and TOC from lesson slides |
+| `prompt.find_references_to_chap_toc.md` | References for a chapter in `map.md` |
+| `prompt.inline_lesson_slides_from_skeleton_slides.md` | Slide content copied into a skeleton |
+| `prompt.update_book_chap_from_lesson_slides.md` | Typst chapter updated after its slides change |
+| `msml610/book/prompt.slides_and_book_flow.md` | Slides reviewed and book chapter generated |
 
 # Prompts
 
-// TODO(ai_gp): For each prompt use the format below
-// ## <Description>
-// **Prompt**: 
-// ```
-// claude> Execute book_scripts/prompt.create_lesson_slides_from_chap_toc.md
-// ```
-// **Input**: What is the input
-// **Output**: What is genereated / updated
-// **Workflow**: the workflow in terms of what is done
-// **Examples**: examples, uses, etc
-
 ## Create `lesson_slides` from a chapter TOC
-- Reads th chapter TOC, `### Topics`, and `### Lesson Materials` from
-  `book_map.md`
-- Collect the material, then runs the common steps below
-  ```
+
+- **Prompt**:
+  ```text
   claude> Execute book_scripts/prompt.create_lesson_slides_from_chap_toc.md
   ```
-- E.g., for the agentic AI book, there is a `chap_toc` and we need to create
-  `lesson_slides`
+- **Input**:
+  - Chapter `CHAP` (H2) in `<DIR>/<BOOK>/book_map.md`
+  - Its `### Goals`, `### Topics`, and `### Lesson Materials`
+  - Its `### Papers` and `### Books`
+  - `<DIR>/<BOOK>/resources.md`, if present
+- **Output**: `<DIR>/<BOOK>/lectures_source/Lesson<CHAP_NUM>.<ID>_<TITLE>.smd`
+- **Workflow**:
+  - Read the book map and the chapter `CHAP`
+  - Read the material in `### Lesson Materials`, `### Papers`, and `### Books`
+  - Read the existing lessons in `<BOOK>/lectures_source/` to avoid repetition
+  - Execute `book_scripts/prompt.create_lesson_slides.common.md`
+- **Examples**:
+  - For the agentic AI book, a chapter TOC exists, so its `lesson_slides` are
+    created with this prompt
+  - E.g., `CHAP="## 14, GitHub Projects and Workflows"` in
+    `book_AI_Software_Engineering`
 
 ## Create `lesson_slides` from a topic list (no book map yet)
-- Same goal and workflow as the prompt above, but topics are given as an ad-hoc list
-  inline in the prompt instead of being read from a chapter's `### Topics` in
-  `book_map.md`
-- Useful when the book map does not have that chapter yet, or for a course
-  such as `msml610`
-  ```
+
+- **Prompt**:
+  ```text
   claude> Execute book_scripts/prompt.create_lesson_slides_from_topic.md
   ```
+- **Input**:
+  - Ad-hoc list of topics in the `## Topics` section of the prompt
+  - Optional file to align the content with
+- **Output**: `<DIR>/<BOOK>/lectures_source/Lesson<CHAP_NUM>.<ID>_<TITLE>.smd`
+- **Workflow**:
+  - Read the topics and the optional alignment file
+  - Read the existing lessons in `<DIR>/<BOOK>/lectures_source/`
+  - Execute `book_scripts/prompt.create_lesson_slides.common.md`
+- **Examples**:
+  - Useful when the book map does not have the chapter yet
+  - Useful for a course such as `msml610`
+  - E.g., `BOOK="msml610"`, `CHAP_NUM="09"`, `TITLE="Classical_Search_Algorithms"`
 
 ## Common steps to create `lesson_slides`
-- Steps shared by the two prompts above, executed after the material is read
-  - Create a skeleton of titles
-  - Ask the user for approval
-  - Call `/slides.write` for 30-35 slides
-  - Create a notebook for the figures that need data or code, saved with
-    `hmatplo.save_fig()`
-  - Save a new `lectures_source/Lesson<CHAP_NUM>.<ID>_<Title>.smd`
-  ```
+
+- **Prompt**:
+  ```text
   claude> Execute book_scripts/prompt.create_lesson_slides.common.md
   ```
+- **Input**:
+  - Topics and material read by the calling prompt
+  - Variables `<DIR>`, `<BOOK>`, `<CHAP_NUM>`, `<ID>`, and `<TITLE>`
+- **Output**:
+  - Slides: `<DIR>/<BOOK>/lectures_source/Lesson<CHAP_NUM>.<ID>_<TITLE>.smd`
+  - Notebook and figures: `<DIR>/<BOOK>/tutorials/`, if a figure needs data or code
+- **Workflow**:
+  - Create a skeleton of 30-35 slide titles
+  - Get user approval of the skeleton
+  - Call `/slides.write` for 30-35 slides
+  - Create a notebook for the figures that need data or code
+    - Save each figure with `hmatplo.save_fig()`
+  - Save the slides as `Lesson<CHAP_NUM>.<ID>_<TITLE>.smd`
+- **Examples**:
+  - Not run alone: the two lesson prompts above call it
 
 ## Find material
-- Complete the pointers and add references to `resources.md`
-  ```
+
+- **Prompt**:
+  ```text
   claude> Execute book_scripts/prompt.find_references_to_chap_toc.md
   ```
+- **Input**: Chapter `CHAP` (H2) in `<DIR>/<BOOK>/map.md`
+- **Output**: Updated `### Local Material`, `### Books`, `### Papers`, and
+  `### Internet resources` in `map.md`
+- **Workflow**:
+  - Read the chapter `CHAP` and find related books, papers, and web resources
+  - Prefer recent sources and free-access versions, e.g., arXiv
+  - Add a working URL for each reference when possible
+  - Format books and papers following `.claude/skills/references.rules.md`
+- **Examples**:
+  - E.g., `CHAP="## 02: AI Pair Programming Workflows"` in
+    `book_AI_Software_Engineering`
 
 ## Create `skeleton_slides` from `book_map` and `slides_tutorials`
-- Read the TOC for a chapter in the `book_map.md`
-- Find the material already available for it
-  ```
+
+- **Prompt**:
+  ```text
   claude> Execute book_scripts/prompt.extract_skeleton_slides_from_lesson_slides.md
   ```
+- **Input**:
+  - Chapter `CHAP` in `<DIR>/<BOOK>/map.md`, with its `### Goals` and `### Topics`
+  - Lesson slides listed in `### Lesson Materials` of `CHAP`
+- **Output**:
+  - Skeleton slides in `<BOOK>/lectures_source/Lesson0<num>.01_<name>.txt`
+  - Updated `### Topics` and `### Goals` of `CHAP`
+- **Workflow**:
+  - Extract the TOC of each lesson file with `extract_toc_from_text.py`
+  - Write the skeleton with `#` H1, `##` H2, and one `* <slide title>` per slide
+  - Add a `// From:` line after each slide with its source file, line, and title
+  - Update `### Topics` with the H1 and H2 headers
+  - Update `### Goals` with 3 short bullets, each under 100 characters
+- **Examples**:
+  - E.g., `CHAP="## 08: Causal Data Pipelines"` in `book_springer`
+  - The skeleton has around 30-35 slides
 
 ## Inline slides in a skeleton slide
-- Mechanically copies existing slide content into a skeleton, following each slide's
-  `// From: <file>:<line num> '<title>'` pointer
+
+- **Prompt**:
+  ```text
+  claude> Execute book_scripts/prompt.inline_lesson_slides_from_skeleton_slides.md
   ```
-  claude> book_scripts/prompt.inline_lesson_slides_from_skeleton_slides.md
-  ```
+- **Input**: Skeleton file `<FILE>` whose `// From: <file>:<line num> '<title>'`
+  lines point to source slides
+- **Output**: The same `<FILE>`, with the source slide content inlined under each
+  slide
+- **Workflow**:
+  - Find the source slide for each `// From:` line
+  - Copy its content under the slide title
+  - Keep the `// From:` line in place
+  - Leave a bare `// From:` and report an error if the title is missing
+- **Examples**:
   - E.g.,
-    ```
+    ```text
     claude> Execute /Users/saggese/src/notes1/book_scripts/prompt.inline_lesson_slides_from_skeleton_slides.md on book_springer/lectures_source/Lesson05.1_Probabilistic_ML.txt
     ```
-- This is also implemented as Python script (since it's a mechanical operation)
-  ```
-  > class_scripts/inline_content_in_skeleton_slides.py
-  > vi $(grep -riL "Score:" *.md | while IFS= read -r f; do stat -f "%m%t%N" "$f"; done | sort -n | head -10 | cut -f2- | tr '\n' '\0' | xargs -0)
-  ```
-
-- Check that the result is correct with:
-  ```
-  > gen_slides.py book_springer/05.1
-  ```
+  - Mechanical copy in a Python script, since it is a mechanical operation:
+    ```bash
+    > class_scripts/inline_content_in_skeleton_slides.py
+    > vi $(grep -riL "Score:" *.md | while IFS= read -r f; do stat -f "%m%t%N" "$f"; done | sort -n | head -10 | cut -f2- | tr '\n' '\0' | xargs -0)
+    ```
+  - Check that the result is correct:
+    ```bash
+    > gen_slides.py book_springer/05.1
+    ```
 
 ## Expand a skeleton whose slides point to background files
-- Same shape as "Inline slides in a skeleton slide" above, but each skeleton
-  slide's `// From: <file>` pointer names a whole background file (e.g. a
-  rules doc) rather than a specific source slide/line, so the content must be
-  generated from that background reading instead of copied verbatim
-  ```
+
+- **Prompt**:
+  ```text
   claude> Execute book_scripts/prompt.expand_skeleton_slides.md
   ```
+- **Input**: Skeleton file in `$DIR/$BOOK/CHAP`, whose `// From:` names a whole
+  background file (e.g., a rules doc)
+- **Output**: Slides for each skeleton section, generated from the background files
+- **Workflow**:
+  - Read each background file named by a `// From:` line
+  - Write the slides from that reading instead of copying verbatim
+  - Follow `.claude/skills/text.rules.md`, `.claude/skills/markdown.rules.md`, and
+    `.claude/skills/slides.rules.md`
+  - Ask questions instead of writing the slides if there are doubts
+- **Examples**:
+  - Same shape as "Inline slides in a skeleton slide" above, but the `// From:`
+    names a whole file, not one slide
+  - E.g., `// From: helpers_root/.claude/skills/coding.rules.md`
 
 // TODO(gp): Likely a near-duplicate of "Inline slides in a skeleton slide"
 // above (same skeleton -> full-slides direction, different `// From:`
@@ -133,37 +201,106 @@ book_scripts/prompt.update_book_chap_from_lesson_slides.md
   book_springer/lectures_commentary/Lesson05.1_Probabilistic_ML.book_chapter.md
   ```
 
-## Convert slides to typst or Latex text for a book chapter
-  `book_scripts/prompt.create_typst_book_chap_from_lesson_slides.md`
-  `book_scripts/prompt.create_latex_book_chap_from_lesson_slides.md`
+## Convert Slides to a Typst Book Chapter
 
-- Execute
+- **Prompt**:
+  ```text
+  claude> Execute book_scripts/prompt.create_typst_book_chap_from_lesson_slides.md
   ```
+- **Input**: Lesson slides in `<BOOK>/lectures_source/`, e.g.,
+  `msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.txt`
+- **Output**: Typst file `<BOOK>/book/<FILE>.typ`, with the same name as the slides
+- **Workflow**:
+  - Map each slide level to the document structure:
+    - H1 to a chapter with `#chapter`
+    - H2 to a section with `==`
+    - H3 and deeper to a subsection with `===`
+  - Expand each slide into prose for undergraduate and early graduate students
+  - Start the file with the `aima-style` template
+  - Add `// git_hash=<GIT_HASH>, timestamp=<TIMESTAMP>` as the first line
+- **Examples**:
+  - E.g., `msml610/book/Lesson10.2-Causal_Inference_for_Time_Series.typ`
+  - Keep it in sync with `book_scripts/prompt.update_book_chap_from_lesson_slides.md`
+
+## Convert Slides to a LaTeX Book Chapter
+
+- **Prompt**:
+  ```text
   claude> Execute book_scripts/prompt.create_latex_book_chap_from_lesson_slides.md
   ```
+- **Input**: Lesson slides in `<BOOK>/lectures_source/`
+- **Output**: LaTeX file `<BOOK>/book/<FILE>.tex`, with the same name as the slides
+- **Workflow**:
+  - Map each slide level to the document structure:
+    - H1 to a chapter with `\chapter`
+    - H2 to a section with `\section`
+    - H3 and deeper to a subsection with `\subsection`
+  - Expand each slide into prose for a textbook chapter
+  - Use the Springer SNmono `\documentclass` to match `book_springer/book`
+- **Examples**:
+  - Check the output:
+    ```bash
+    > ls -1 book_springer/book/Lesson*.tex
+    book_springer/book/Lesson02.01_From_Data_Science_To_Decision_Science.tex
+    book_springer/book/Lesson02.02_Integrating_Causality_And_Probability_in_ML.tex
+    book_springer/book/Lesson04.01_Knowledge_Representation.tex
+    ```
 
-  ```
-  > ls -1 book_springer/book/Lesson*.tex
-  book_springer/book/Lesson02.01_From_Data_Science_To_Decision_Science.tex
-  book_springer/book/Lesson02.02_Integrating_Causality_And_Probability_in_ML.tex
-  book_springer/book/Lesson04.01_Knowledge_Representation.tex
-  ```
+## Update a Typst Book Chapter When the Corresponding `lesson_slides` Are Updated
 
-## Update the a Typst book chapter when the corresponding `lesson_slides` are updated
-- `book_scripts/prompt.update_book_chap_from_lesson_slides.md`
-- `book_scripts/prompt.springer.add_references.md`
+- **Prompt**:
+  ```text
+  claude> Execute book_scripts/prompt.update_book_chap_from_lesson_slides.md
+  ```
+- **Input**:
+  - File name `<FILE>`, e.g., `Lesson10.2-Causal_Inference_for_Time_Series`
+  - Typst chapter `msml610/book/<FILE>.typ`
+  - Lesson slides `msml610/lectures_source/<FILE>.txt`
+- **Output**: Updated `msml610/book/<FILE>.typ`
+- **Workflow**:
+  - Read `<GIT_HASH>` from the first line of the `.typ` file
+  - Save the slide changes since that commit in `changes.txt` with `git diff`
+  - Apply `changes.txt` to the `.typ` file following
+    `book_scripts/prompt.create_typst_book_chap_from_lesson_slides.md`
+- **Examples**:
+  - E.g.,
+    ```bash
+    > git diff 382e0cdf HEAD -- msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.txt >changes.txt
+    ```
+  - Related prompt: `book_scripts/prompt.springer.add_references.md`
 
 // TODO(gp): This prompt currently only follows the Typst variant of the
-// "Convert slides to typst or Latex" prompt above; update it to branch on
+// "Convert Slides to a Typst Book Chapter" prompt above; update it to branch on
 // the chapter file's extension (`.typ` -> typst prompt, `.tex` -> latex
 // prompt) now that a LaTeX variant also exists.
 
 ## Review / Update Slides and Generate book
 
+- **Prompt**:
+  ```text
+  claude> Execute msml610/book/prompt.slides_and_book_flow.md msml610/lectures_source/Lesson05.2-Overfitting.smd
+  ```
+- **Input**: Lesson slides `<SMD_FILE>`, e.g.,
+  `msml610/lectures_source/Lesson05.2-Overfitting.smd`
+- **Output**:
+  - Reviewed slides `<SMD_FILE>`
+  - Book chapter `msml610/book/<NAME>.typ`
+- **Workflow**:
+  - Create a plan file to track the steps
+  - Read the conventions for books, slides, and Typst code
+  - Review and improve the slides with `/slides.review`
+  - Render the slides with `gen_slides.py -i <SMD_FILE>` and fix any problem
+  - Add visuals and references with `/slides.add_visuals` and
+    `/slides.add_references`
+  - Generate the book chapter with `gen_book_chapter.py`
+  - Humanize the chapter with `/text.humanize`
+  - Check that the Typst code compiles with `run_typst.py`
+- **Examples**:
+  - The lesson checklist below records the commands run for each lesson
+
+### Checklist
+
 // From msml610/book_map.md
-
-msml610/book/prompt.slides_and_book_flow.md
-
 ```
 claude> Execute msml610/book/prompt.slides_and_book_flow.md msml610/lectures_source/Lesson05.2-Overfitting.smd
 ```
@@ -218,4 +355,3 @@ Edit book chapter
 
 run_typst.py --compress_pdf .
 > compress_pdf.py --input msml610/book/Lesson01.3*.pdf
-
