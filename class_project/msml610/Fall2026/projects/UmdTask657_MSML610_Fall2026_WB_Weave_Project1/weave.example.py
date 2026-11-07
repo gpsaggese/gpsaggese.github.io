@@ -317,10 +317,25 @@ import time
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
+import re
 
 # Directory for cached FOMC statements.
 FOMC_DIR = RAW_DIR / "fomc_statements"
 FOMC_DIR.mkdir(parents=True, exist_ok=True)
+
+def clean_fomc_statement(text):
+    """Normalize whitespace and clean extracted FOMC statement text."""
+    if not isinstance(text, str):
+        raise TypeError("FOMC statement text must be a string.")
+
+    # Normalize non-breaking spaces and common whitespace artifacts.
+    text = text.replace("\xa0", " ")
+    text = text.replace("\u200b", "")
+    text = re.sub(r"[ \t]+", " ", text)
+    text = re.sub(r"\s*\n\s*", "\n", text)
+    text = re.sub(r"\n{3,}", "\n\n", text)
+
+    return text.strip()
 
 def download_fomc_statement(date, url):
     """Download, clean, and cache an FOMC statement."""
@@ -1156,3 +1171,142 @@ assert abs(example_tone - 0.15) < 1e-10
 print(f"Example statement tone: {example_tone:+.2f}")
 
 # %%
+
+# %% [markdown]
+# ## Tracing the Models with Weave
+#
+# In this section I turn the three tone classifiers into `weave.Model`
+# classes:
+#
+# - the TF-IDF + logistic regression baseline from the previous section
+# - `FOMC-RoBERTa`, a RoBERTa-large model that the Trillion Dollar Words
+#   authors fine-tuned on FOMC sentences
+# - a zero-shot classifier (`facebook/bart-large-mnli`) that never sees our
+#   labeled data
+#
+# The model code lives in `weave_utils.py`. Each model's `predict` method is
+# decorated with `@weave.op`, so after `weave.init` runs, every prediction is
+# logged as a trace with its input sentence, output label, confidence, and
+# latency.
+#
+# `FOMC-RoBERTa` is gated on Hugging Face. To run it, I requested access on
+# the model page and saved my access token in `.env` as `HF_TOKEN`.
+
+# %%
+import weave_utils as wutils
+
+# Start tracing: record every @weave.op call after this line in the W&B project.
+weave_client = wutils.init_weave("msml610-weave-fomc")
+
+# %% [markdown]
+# ### Baseline as a `weave.Model`
+#
+# I refit the same TF-IDF + logistic regression setup as above, this time
+# inside a Weave model. The hyperparameters are attributes of the model, so
+# Weave keeps a separate version for every configuration I try.
+
+# %%
+baseline_weave = wutils.TfidfLogRegModel().fit(
+    train_data["sentence"],
+    train_data["label"],
+)
+
+# Run one traced prediction as a quick check before the other models.
+baseline_weave.predict(test_data["sentence"].iloc[0])
+
+# %% [markdown]
+# ### FOMC-RoBERTa and the zero-shot model
+#
+# Both models are downloaded from Hugging Face the first time they predict,
+# and cached in `data/hf_cache` after that. The first call is slow because it
+# includes the download and loading the weights.
+
+# %%
+roberta_model = wutils.FomcRobertaModel()
+zero_shot_model = wutils.ZeroShotModel()
+
+# %% [markdown]
+# ### Comparing the three models on the same sentences
+#
+# I take two test sentences from each class, so every label shows up, and
+# run all three models on them. Each prediction becomes its own trace in
+# Weave.
+
+# %%
+sample_df = test_data.groupby("label").sample(n=2, random_state=42)
+
+tone_models = {
+    "baseline": baseline_weave,
+    "fomc_roberta": roberta_model,
+    "zero_shot": zero_shot_model,
+}
+
+comparison_df = wutils.predict_sample(tone_models, sample_df)
+display(comparison_df)
+
+# %% [markdown]
+# ### Inspecting the traces
+#
+# `weave.init` prints a link to the project. On the **Traces** page, each row
+# is one `predict` call. Clicking a row shows:
+#
+# - the input sentence and the model object, with its attributes (for the
+#   baseline, the TF-IDF and logistic regression settings)
+# - the output: label, label name, and confidence
+# - the latency of the call
+#
+# Filtering by op name separates the three models. The first `fomc_roberta`
+# and `zero_shot` calls are much slower than the rest, because they include
+# loading the model. This sample is only a sanity check. The full comparison
+# on all 496 test sentences comes in the next section with `weave.Evaluation`.
+
+# %% [markdown]
+# ## Evaluating the Models with Weave
+#
+# Spot checks on a few sentences are not enough to compare the models, so
+# here I evaluate all three on the full test set (496 sentences) with
+# `weave.Evaluation`:
+#
+# - **Dataset**: I publish the test sentences as a `weave.Dataset`, so every
+#   evaluation points to the same versioned copy of the data
+# - **Accuracy scorer**: an `@weave.op` that checks whether each prediction
+#   matches the true label; Weave averages it into the accuracy
+# - **Macro-F1 scorer**: a custom `weave.Scorer`. F1 can't be computed one
+#   sentence at a time, so `score()` only records the true and predicted label
+#   for each row, and `summarize()` computes macro-F1 over all of them
+#
+# Macro-F1 is the main metric because it weighs the three classes equally.
+# About half of the test sentences are neutral, so a model that leans towards
+# "neutral" can have decent accuracy while being poor at what we care about:
+# telling hawkish from dovish.
+
+# %%
+test_dataset = wutils.make_test_dataset(test_data)
+tone_evaluation = wutils.make_evaluation(test_dataset)
+
+print("Sentences in the evaluation dataset:", len(test_dataset.rows))
+
+# %% [markdown]
+# ### Running the evaluations
+#
+# Each model gets one evaluation run, named after the model. The zero-shot
+# model is the slowest, at roughly 1 second per sentence on CPU, so this cell
+# takes several minutes.
+
+# %%
+evaluation_results = await wutils.run_evaluations(tone_evaluation, tone_models)
+display(evaluation_results)
+
+# %% [markdown]
+# ### Comparing the evaluations in the Weave UI
+#
+# On the **Evals** page of the Weave project, I select the three runs and
+# click **Compare**. The comparison view shows:
+#
+# - the summary metrics side by side (accuracy, macro-F1, per-class F1,
+#   latency)
+# - every test sentence with each model's prediction, so I can filter to the
+#   sentences where the models disagree and read them
+#
+# This is where the per-class F1 scores are most useful: a low `f1_hawkish`
+# or `f1_dovish` shows which kind of sentence a model struggles with.
