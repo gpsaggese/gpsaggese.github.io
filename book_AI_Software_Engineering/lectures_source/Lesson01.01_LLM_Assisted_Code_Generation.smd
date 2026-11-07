@@ -38,7 +38,7 @@
     then re-reads everything so far to pick the next one
 ::::
 :::: {.column width=40%}
-```graphviz
+```graphviz[width=50%]
 digraph TokenStrip {
     // orange: prefix tokens | blue: token to predict
     bgcolor="transparent";
@@ -81,7 +81,7 @@ caption=An illustrative split of the prompt into tokens (orange), with the next 
   common after similar signatures in training
 ::::
 :::: {.column width=30%}
-```graphviz
+```graphviz[width=75%]
 digraph TokenLoop {
   rankdir=TB;
   node [shape=box, style="rounded,filled", fontname="Helvetica",
@@ -117,7 +117,7 @@ caption=The generation loop: prompt tokens (orange) go to the model (teal), whic
 * Training Data: Filtering and Synthetic Code
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=70%}
 // From paper Lozhkov et al., "StarCoder 2 and The Stack v2" (2024)
 - @Example@: **StarCoder 2** trains on a large multi-language corpus (The Stack
   v2), with license filtering, deduplication, and quality filtering applied
@@ -132,7 +132,7 @@ caption=The generation loop: prompt tokens (orange) go to the model (teal), whic
   programmatically and added back into training data
   - _Goal_: cover patterns that are rare or absent in scraped repositories
 ::::
-:::: {.column width=40%}
+:::: {.column width=30%}
 ```graphviz
 digraph FilteringPipeline {
     // orange: source | teal: filter step | blue: result
@@ -188,16 +188,16 @@ caption=Scraped repositories (orange) pass license, deduplication, and quality f
     notion of "correctness" during training
 ::::
 :::: {.column width=40%}
-```graphviz
+```graphviz[width=85%]
 digraph SampleAndTest {
     // orange: input | teal: model | blue: output | green: test execution
     bgcolor="transparent";
     pad="0.1";
     splines=spline;
-    nodesep=0.3;
-    ranksep=0.25;
+    nodesep=0.15;
+    ranksep=0.2;
     node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Helvetica",
-          fontsize=11, margin="0.16,0.08", height=0.4];
+          fontsize=11, margin="0.14,0.05", height=0.34];
     edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
           fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
 
@@ -221,7 +221,8 @@ digraph SampleAndTest {
     subgraph cluster_legend {
         style="rounded,filled"; fillcolor="#FBFBFD"; color="#C7D0DA";
         penwidth=1.0; margin=10;
-        node [fontsize=9, height=0.26, margin="0.08,0.04", penwidth=1.2];
+        node [fontsize=9, height=0.26, width=0.5, margin="0.08,0.04",
+              penwidth=1.2];
         L1 [label="Input", fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
         L2 [label="Model", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
         L3 [label="Output", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
@@ -261,10 +262,9 @@ digraph ProductionPrompt {
     // orange: context source | teal: assembled prompt | blue: completion
     bgcolor="transparent";
     pad="0.1";
-    rankdir=LR;
     splines=spline;
-    nodesep=0.2;
-    ranksep=0.45;
+    nodesep=0.15;
+    ranksep=0.4;
     node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Helvetica",
           fontsize=11, margin="0.14,0.08", height=0.4];
     edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
@@ -281,6 +281,7 @@ digraph ProductionPrompt {
     node [fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
     Completion [label="Completion\nat cursor"];
 
+    { rank=same; S1; S2; S3; }
     S1 -> Prompt;
     S2 -> Prompt;
     S3 -> Prompt;
@@ -455,7 +456,7 @@ caption=A direct prompt jumps to code, while a reasoning-first prompt puts plan 
 * Plan-Then-Implement Prompting
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 // From book Taulli, "AI-Assisted Programming" (2024)
 - @Definition@: **plan-then-implement prompting** decomposes a coding
   request into an explicit planning stage and a separate implementation
@@ -471,17 +472,17 @@ caption=A direct prompt jumps to code, while a reasoning-first prompt puts plan 
   - _Plan-then-implement_: a checkpoint between "what to build" and "how
     it's built", catching a wrong approach before code is written
 ::::
-:::: {.column width=40%}
-```graphviz
+:::: {.column width=35%}
+```graphviz[width=90%]
 digraph PlanThenImplement {
     // orange: input | teal: model step | rose: human | blue: output
     bgcolor="transparent";
     pad="0.1";
     splines=spline;
-    nodesep=0.3;
-    ranksep=0.22;
+    nodesep=0.15;
+    ranksep=0.16;
     node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Helvetica",
-          fontsize=11, margin="0.16,0.08", height=0.4];
+          fontsize=11, margin="0.14,0.05", height=0.32];
     edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
           fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
 
@@ -509,7 +510,8 @@ digraph PlanThenImplement {
     subgraph cluster_legend {
         style="rounded,filled"; fillcolor="#FBFBFD"; color="#C7D0DA";
         penwidth=1.0; margin=10;
-        node [fontsize=9, height=0.26, margin="0.08,0.04", penwidth=1.2];
+        node [fontsize=9, height=0.26, width=0.5, margin="0.08,0.04",
+              penwidth=1.2];
         L1 [label="Input", fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
         L2 [label="Model", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
         L3 [label="Human", fillcolor="#F6E1E8", color="#D98CA8", fontcolor="#6B2A44"];
@@ -616,22 +618,22 @@ caption=Everything the model sees, the prompt parts (orange) and the generated o
 ::::
 :::: {.column width=40%}
 ```tikz
-\tikzset{every node/.style={font=\sffamily\small}}
+\tikzset{every node/.style={font=\sffamily\normalsize}, x=0.7cm, y=0.7cm}
 \definecolor{LostPink}{RGB}{244,166,166}
 \draw[->, line width=0.4pt] (0,0) -- (9.4,0);
-\draw[->, line width=0.4pt] (0,0) -- (0,4.6);
-\fill[LostPink!35] (3.3,0) rectangle (6.1,4.3);
-\node[align=center, text=red!60!black] at (4.7,3.6) {lost in the\\middle};
+\draw[->, line width=0.4pt] (0,0) -- (0,6.2);
+\fill[LostPink!35] (3.3,0) rectangle (6.1,5.8);
+\node[align=center, text=red!60!black] at (4.7,4.9) {lost in the\\middle};
 \draw[blue!70!black, line width=0.8pt, smooth]
-  plot coordinates {(0.4,4.0) (1.4,3.1) (2.6,1.9) (4.7,1.2) (6.8,1.9) (8.0,3.1) (9.0,4.0)};
+  plot coordinates {(0.4,5.3) (1.4,4.0) (2.6,2.5) (4.7,1.5) (6.8,2.5) (8.0,4.0) (9.0,5.3)};
 \node[below] at (0.6,0) {start};
 \node[below] at (4.7,0) {middle};
 \node[below] at (8.8,0) {end};
-\node[below] at (4.7,-0.7) {Position of relevant text in the context};
-\node[rotate=90] at (-0.5,2.3) {Retrieval accuracy};
+\node[below] at (4.7,-0.8) {Position of relevant text};
+\node[rotate=90] at (-0.6,3.1) {Retrieval accuracy};
 ```
-
-\footnotesize _Schematic: accuracy is highest near the start and end of the context._
+label=fig:lost-in-the-middle
+caption=Schematic: accuracy is highest near the start and end of the context.
 ::::
 :::
 
@@ -652,7 +654,7 @@ caption=Everything the model sees, the prompt parts (orange) and the generated o
     training data alone cannot provide
 ::::
 :::: {.column width=40%}
-```graphviz
+```graphviz[width=45%]
 digraph PromptAnatomy {
   rankdir=TB;
   node [shape=box, style="rounded,filled", fontname="Helvetica",
@@ -892,7 +894,7 @@ caption=Generated code (blue) is run on test inputs (green) and compared with th
 * Context Budget on Large Codebases
 
 ::: columns
-:::: {.column width=40%}
+:::: {.column width=50%}
 - @Problem@: even the largest available context window is finite, while a
   real codebase can be orders of magnitude larger
 
@@ -903,7 +905,7 @@ caption=Generated code (blue) is run on test inputs (green) and compared with th
   whole codebase" in one prompt silently limits "whole codebase" to whatever
   fit in the context window, not the literal whole codebase
 ::::
-:::: {.column width=60%}
+:::: {.column width=50%}
 ```graphviz
 digraph CodebaseSubset {
     // gray dashed: unseen files | orange: selected | blue: window | teal: model
@@ -979,7 +981,7 @@ caption=Retrieval selects a few files (orange) from the codebase into the contex
 * When Generation Degrades: Ambiguous Specs
 
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=50%}
 - @Problem@: an **ambiguous natural-language spec** has multiple plausible
   continuations, and the model picks one without asking for clarification unless
   explicitly prompted to, e.g.,
@@ -991,7 +993,7 @@ caption=Retrieval selects a few files (orange) from the codebase into the contex
 - @Remark@: writing specs that eliminate this ambiguity replaces the model's
   freedom to guess with a deliberate, reviewable design choice instead
 ::::
-:::: {.column width=40%}
+:::: {.column width=50%}
 ```graphviz
 digraph AmbiguousSpec {
     // orange: request | teal dashed: model default | blue: spec decision
