@@ -75,8 +75,8 @@
 
 - **GitHub project**: [Agentic_Data_Science](https://github.com/users/gpsaggese/projects/9)
 - **Google docs**:
-  - [AgenticDS - Project](https://docs.google.com/document/d/12W5HbAlpj_r0DE7mwtEkDFExL_ufapGzECJJ9MJ4axM/edit?tab=t.0)
-  - [RL_for_AutoEDA](https://docs.google.com/document/d/10jHugxaXnLuMr0b7nZN6oI7uri3mkgghWn4dSrKbCoA/edit?tab=t.0)
+  - [AgenticDS - Project](https://docs.google.com/document/d/12W5HbAlpj_r0DE7mwtEkDFExL_ufapGzECJJ9MJ4axM)
+  - [RL_for_AutoEDA](https://docs.google.com/document/d/10jHugxaXnLuMr0b7nZN6oI7uri3mkgghWn4dSrKbCoA)
 - **Asana board**:
 - **Google drive**: [Agentic_DS](https://drive.google.com/drive/folders/1fGFRAybX-bH1RNlSngS-1IA2Yx_sJfo2)
 - **GitHub code**:
@@ -88,7 +88,7 @@
 ### Blog tutorials
 
 - **GitHub project**: [Blogs_Tutorials](https://github.com/users/gpsaggese/projects/12/views/2)
-- **Google docs**: [Blog - Project](https://docs.google.com/document/d/1Oyyybi22VO5ZUmkKJxNEvKqzd4BfIPTavBVzz6iHYbA/edit?tab=t.0)
+- **Google docs**: [Blog - Project](https://docs.google.com/document/d/1Oyyybi22VO5ZUmkKJxNEvKqzd4BfIPTavBVzz6iHYbA)
 - **Asana board**:
 - **Google drive**: [Blogs](https://drive.google.com/drive/folders/1-IuV3j-Bj3qP8OfQHiKVB6uQwenl7bVR)
 - **GitHub code**:
@@ -137,7 +137,7 @@
 ### Financial tradability
 
 - **GitHub project**:
-- **Google docs**: [Causal Analysis of Financial Tradability - Research Log](https://docs.google.com/document/d/1ttpZT3kWVXq5jMZn3nx1ijmtH97VfAclRmSa9Z2EYsc/edit?tab=t.0#heading=h.naclpfuqd2j)
+- **Google docs**: [Causal Analysis of Financial Tradability - Research Log](https://docs.google.com/document/d/1ttpZT3kWVXq5jMZn3nx1ijmtH97VfAclRmSa9Z2EYsc#heading=h.naclpfuqd2j)
 - **Asana board**:
 - **Google drive**:
 - **GitHub code**:
@@ -160,7 +160,7 @@
 ### Noesis
 
 - **GitHub project**: [Noesis](https://github.com/users/gpsaggese/projects/2)
-- **Google docs**: [Noesis - Project](https://docs.google.com/document/d/1L8Zywk2OSbHLD8pcJlPY7olqvzPp0CdG2SolJy_vS2M/edit?tab=t.0)
+- **Google docs**: [Noesis - Project](https://docs.google.com/document/d/1L8Zywk2OSbHLD8pcJlPY7olqvzPp0CdG2SolJy_vS2M)
 - **Asana board**: [Noesis Asana board](https://app.asana.com/1/1208279338421005/project/1219347388864440/list/1219347504500588)
 - **Google drive**: [Noesis](https://drive.google.com/drive/folders/1cVza1sYIfG9xvSRSAE3T1cwn0BSr_jCr)
 - **GitHub code**:
