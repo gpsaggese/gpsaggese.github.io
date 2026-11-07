@@ -3,7 +3,7 @@
 - [Resources](#resources)
   * [Projects](#projects)
     + [Template](#template)
-    + [Age and startup success](#age-and-startup-success)
+    + [Causal Analysis of Age and Startup Success (CAASS)](#causal-analysis-of-age-and-startup-success-caass)
     + [AI Sw Eng Book](#ai-sw-eng-book)
     + [Auto DS](#auto-ds)
     + [Blog tutorials](#blog-tutorials)
@@ -53,12 +53,12 @@
 - **GitHub code**:
 - **Whitepaper**: 
 
-### Age and startup success
+### Causal Analysis of Age and Startup Success (CAASS)
 
-- **GitHub project**:
+- **GitHub project**: [Causal_Analysis_of_Age_and_Startup_Success](https://github.com/users/gpsaggese/projects/3)
 - **Google docs**:
 - **Asana board**:
-- **Google drive**:
+- **Google drive**: [Causal_Analysis_of_Age_and_Startup_Success](https://drive.google.com/drive/folders/1H2pZTVsonaG4oHSR_tHSZtK5xFeGtZBw)
 - **GitHub code**: [Causal_Analysis_of_Age_and_Startup_Success](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/Causal_Analysis_of_Age_and_Startup_Success)
 - **Whitepaper**: [PDF](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/papers/Causal_Analysis_of_Age_and_Startup_Success/paper.pdf)
 
@@ -73,12 +73,12 @@
 
 ### Auto DS
 
-- **GitHub project**:
+- **GitHub project**: [Agentic_Data_Science](https://github.com/users/gpsaggese/projects/9)
 - **Google docs**:
   - [AgenticDS - Project](https://docs.google.com/document/d/12W5HbAlpj_r0DE7mwtEkDFExL_ufapGzECJJ9MJ4axM/edit?tab=t.0)
   - [RL_for_AutoEDA](https://docs.google.com/document/d/10jHugxaXnLuMr0b7nZN6oI7uri3mkgghWn4dSrKbCoA/edit?tab=t.0)
 - **Asana board**:
-- **Google drive**: [AutoDS](https://drive.google.com/drive/folders/1fGFRAybX-bH1RNlSngS-1IA2Yx_sJfo2)
+- **Google drive**: [Agentic_DS](https://drive.google.com/drive/folders/1fGFRAybX-bH1RNlSngS-1IA2Yx_sJfo2)
 - **GitHub code**:
   - [agentic_data_science](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/agentic_data_science)
   - [Reinforcement Learning for Automated Exploratory Data Analysis](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/research/ideas/in_progress.RL_for_auto_EDA.md)
@@ -147,10 +147,10 @@
 
 ### MCTS / AlphaZero
 
-- **GitHub project**:
+- **GitHub project**: [MCTS_and_Alpha_Zero](https://github.com/users/gpsaggese/projects/7)
 - **Google docs**: [AlphaZero_MCTS_for_TSP](https://docs.google.com/document/d/1msuSbMiAS681EBD8UomuIfZ_a0AobNXn-aWDorNG_TI/edit?tab=t.veaazu3qubjd)
 - **Asana board**:
-- **Google drive**:
+- **Google drive**: [AlphaZero_MCTS_for_TSP](https://drive.google.com/drive/folders/13Q6om-IjFiBLHYS_aHwO9lROOsHhwRNn)
 - **GitHub code**:
   - [Implement_MonteCarlo_Tree_Search_and_Alpha_Zero](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/Implement_MonteCarlo_Tree_Search_and_Alpha_Zero)
   - [Implement_AlphaZero](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/Implement_AlphaZero)
