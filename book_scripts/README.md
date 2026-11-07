@@ -3,6 +3,8 @@
 
 # All prompts
 
+// TODO(ai_gp): Add a table for each prompt and a short comment
+
 ```
 > ls -1 book_scripts/*prompt*
 book_scripts/prompt.create_lesson_slides.common.md
@@ -18,6 +20,17 @@ book_scripts/prompt.update_book_chap_from_lesson_slides.md
 ```
 
 # Prompts
+
+// TODO(ai_gp): For each prompt use the format below
+// ## <Description>
+// **Prompt**: 
+// ```
+// claude> Execute book_scripts/prompt.create_lesson_slides_from_chap_toc.md
+// ```
+// **Input**: What is the input
+// **Output**: What is genereated / updated
+// **Workflow**: the workflow in terms of what is done
+// **Examples**: examples, uses, etc
 
 ## Create `lesson_slides` from a chapter TOC
 - Reads th chapter TOC, `### Topics`, and `### Lesson Materials` from
@@ -144,3 +157,65 @@ book_scripts/prompt.update_book_chap_from_lesson_slides.md
 // "Convert slides to typst or Latex" prompt above; update it to branch on
 // the chapter file's extension (`.typ` -> typst prompt, `.tex` -> latex
 // prompt) now that a LaTeX variant also exists.
+
+## Review / Update Slides and Generate book
+
+// From msml610/book_map.md
+
+msml610/book/prompt.slides_and_book_flow.md
+
+```
+claude> Execute msml610/book/prompt.slides_and_book_flow.md msml610/lectures_source/Lesson05.2-Overfitting.smd
+```
+
+- [x] 5.1
+- [x] 5.2
+- [x] 5.3
+
+- [x] 6.1
+- [x] 6.2
+
+- [ ] 7.1
+- [ ] 7.2
+
+LID=06.2; gen_slides.py -i msml610/$LID --daemon
+LID=06.2; render_book_chapter.py -i msml610/$LID --daemon
+
+/slides.review            05.1
+/slides.add_visuals       .
+/slides.add_references    .
+/slides.lint              .
+/slides.fix_rendered_pdf  .
+
+Edit slides               .
+
+Not needed
+/slides.fix_errors
+/slides.reduce_text
+/slides.fix_formatting
+/slides.add_tutorial_links
+
+lint_text.py              .
+> lint_text.py -i msml610/lectures_source/Lesson02.1*.smd
+
+gen_slides.py             .
+> gen_slides.py -i msml610/01.3
+> grep "^* " msml610/lectures_source/*.smd | wc -l
+
+tutorials
+
+gen_book_chapter          .
+gen_book_chapter.py -i msml610/01.2 --mode typst_aima --llm_backend hllm_cli_exec --model openrouter/anthropic/claude-opus-4.6 --no_incremental
+
+run_typst.py              .
+> run_typst.py --input msml610/book/Lesson01.2-AI_and_Machine_Learning.typ
+
+> /text.humanize          .
+> /book_chapter.fix_headings      .
+> /book_chapter.improve_text_tags .
+
+Edit book chapter
+
+run_typst.py --compress_pdf .
+> compress_pdf.py --input msml610/book/Lesson01.3*.pdf
+

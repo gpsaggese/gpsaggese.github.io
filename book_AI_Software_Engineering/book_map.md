@@ -2,22 +2,19 @@
 
 ## Title
 - Software Engineering with AI: Practical Workflows for AI-Assisted Development
-- Building Software with AI: From Code Generation to Autonomous Agents
+- Building Software with AI
 
 ## Target Audience
 - Advanced undergraduate/graduate CS students and working software engineers
   who already know git, testing, and CI/CD basics
-- Assumes working familiarity with LLMs (prompting, context windows) but no
-  prior AI/ML coursework
+- Assumes working familiarity with LLMs (prompting, context windows)
 
 ## Approach of the Book
 - Focus on:
+  - Making AI-assisted development operational in a real codebase
   - Practical workflows over theory
   - Concrete tool walkthroughs (Claude Code, Copilot, Cursor, CI integrations)
   - Worked examples: real prompts, real diffs, real PR/CI workflows
-  - Making AI-assisted development operational in a real codebase
-- Provide resources to go one level deep
-  - Related classes (`msml610`, `data605`)
   - References to benchmarks (SWE-bench), papers, and vendor docs
 
 ## Short TOC
@@ -40,7 +37,7 @@
 - Delivery and Automation
   - 14, GitHub Projects and Workflows
   - 15, Releasing and Docker
-  - 16, Setting CI/CD
+  - 16, Setting CI/CD for AI
 
 ## All Lesson Materials
 - `helpers_root/docs/` (tools, coding, planning, work_organization,
@@ -55,7 +52,6 @@
 - `book_AI_Software_Engineering/resources.md`
 - `book_AI_Software_Engineering/lectures_source/claude_code.md`
 - `book_Agentic_AI/lectures_source/*.smd`
-- `data605/lectures_source/*.smd`
 - The book's own decks (`book_AI_Software_Engineering/lectures_source/*.smd`)
   are chapter `### Slides`, not Lesson Materials
 
@@ -181,8 +177,6 @@
 - [ ] Add a deck section on testing skills
 
 ### Slides
-- `book_AI_Software_Engineering/lectures_source/Lesson05.1_Tools.smd`
-  (section `# Rules, Skills, and Agent Instruction Manifests`)
 
 ### Lesson Materials
 - `helpers_root/docs/tools/ai/all.ai_workflows.how_to_guide.md`
@@ -218,10 +212,6 @@
   - [15%]: add a rule to the set of rules
 - `helpers_root/docs/tools/ai/all.ai_review.how_to_guide.md`
   - [15%]: tools that apply rules to files, improving the tools while reviewing
-- `website/docs/blog/posts/draft.ideas.Deterministic_skills.md`
-  - [10%]: skills that call deterministic code
-- `book_Agentic_AI/lectures_source/Lesson07.1-Tool_use_and_retrieval.smd`
-  - [10%]: tool calls and their failure modes
 - _Not covered_
   - [15%]: skill evaluation in production, sharing skills across repos
 
