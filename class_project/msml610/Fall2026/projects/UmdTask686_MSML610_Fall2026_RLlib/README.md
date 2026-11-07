@@ -18,11 +18,24 @@ milestone, newest first.
 | Milestone | Content | Status |
 |---|---|---|
 | M1 | Container, environment, SPY calibration, TWAP and sell-all baselines | Done |
-| M2 | `rllib.API.ipynb`: RLlib API on CartPole | Not started |
+| M2 | `rllib.API.ipynb`: RLlib API on CartPole | Done |
 | M3 | `rllib.example.ipynb`: DQN and PPO agents, evaluation, plots | Not started |
 | Bonus | PPO vs DQN, Almgren-Chriss variance penalty and schedule | Not started |
 
 ## Results
+
+### M2: RLlib API on CartPole
+
+- `rllib.API.ipynb` covers `register_env`, `PPOConfig`, `DQNConfig`,
+  `Algorithm.train()`, `Algorithm.evaluate()`, the `RLModule`, and checkpoints
+- Results vary between runs, since the parallel env runners make training
+  nondeterministic
+
+| | PPO | DQN |
+|---|---|---|
+| Env steps sampled | 32,000 | 12,000 |
+| Best mean episode return | 500 (solved at 24,000 steps) | 235 |
+| Evaluation return (10 episodes) | 486 | n/a |
 
 ### M1: Calibration and Baselines
 

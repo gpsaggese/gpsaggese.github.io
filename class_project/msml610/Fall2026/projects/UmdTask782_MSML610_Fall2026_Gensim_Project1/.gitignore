@@ -1,0 +1,3 @@
+# The Financial PhraseBank dataset is licensed CC BY-NC-SA 3.0: it is
+# downloaded into `data/` by `gensim_utils.py` and never committed.
+data/

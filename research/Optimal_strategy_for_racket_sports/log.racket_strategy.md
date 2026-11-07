@@ -65,6 +65,50 @@
   greedy cell or the expected regret; and whether to try a fix for the late drift,
   tested again with a pass rule written in advance on fresh seeds
 
+## 2026-11-04: Design Principles
+
+- **Issue**: [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723)
+  (model the spread as a function of the ball speed), part 1, from
+  [GP's answer](https://github.com/gpsaggese/gpsaggese.github.io/issues/723#issuecomment-6602349966)
+  of 2026-11-03 to the proposal to scale the spread with the ball speed
+- **What was done**: `design_principles.explanation.md`, 15 principles, each with
+  why, an example from this project, and its source
+  - P1 to P3 are GP's from #723: independent variables with separate coupling
+    models, notebooks for intuition and code for sweeps, and sweeping to find what
+    is robust to what
+  - P4 to P15 are the principles we already follow, each checked against the plan,
+    this log, the paper, and the GitHub discussions, with a link to where it was
+    decided
+- **Name**: `.explanation.md`, as the file name convention of
+  `all.writing_docs.how_to_guide.md` asks and as `project_management.explanation.md`
+  does, instead of the `design_principles.md` of GP's comment
+
+## 2026-11-03: Remove Repetition in the Code and the Tests
+
+- **Issue**: [#823](https://github.com/gpsaggese/gpsaggese.github.io/issues/823)
+  (remove redundancy in code and tests, from GP's review of #804), with
+  [the plan](https://github.com/gpsaggese/gpsaggese.github.io/issues/823#issuecomment-6591281381)
+- **What was done**:
+  - Code, with no behavior change: `_show_figure()` in the notebook 01 utils
+    ends the redraws of Cell 1.1 and Cell 2.1, and `_build_returner_controls()`
+    builds the returner sliders of both widgets of `racket_strategy_utils.py`
+  - Tests: each failing check is tested once, in the test of the function that
+    owns it; 14 tests that repeated another test are removed; copied setup is
+    in shared helpers; the "Tests cover" lists and the `# Expected:` comments
+    that repeated the asserts are removed
+- **Numbers**: 244 tests to 230; test lines 7,092 to 6,558; source lines 5,230
+  to 5,256, since the 2 new helpers replace 2 copied blocks
+- **Testing**:
+  - Full suite: only the 5 known Docker failures, before and after
+  - The same 52 source lines raise a failing check in some test, before and
+    after; 13 of them were tested from 2 or 3 test classes, now none
+  - Source line coverage: 98.86% before and after, with the same lines missed
+  - Notebooks 01 to 05 run top to bottom, 05 in reduced mode
+  - The 12 Cell 1.1 and 6 Cell 2.1 widget images are byte identical to master
+- **Possible follow-up**: the notebook 05 tests check their outputs piece by
+  piece; the "compare whole output" rule of `testing.rules.md` would rewrite
+  about 60 asserts without removing any repetition
+
 ## 2026-11-01: PRs #804, #809, and #812 Merged
 
 - [PR #804](https://github.com/gpsaggese/gpsaggese.github.io/pull/804), merged

@@ -21,6 +21,8 @@ from typing import (
 import gymnasium as gym
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+import seaborn as sns
 
 import helpers.hdbg as hdbg
 import helpers.hnotebook as hnotebo
@@ -169,6 +171,34 @@ def step_two_envs(
     return step_a, step_b
 
 
+def get_episode_returns(
+    env: gym.Env,
+    n_episodes: int,
+    *,
+    seed: int,
+    policy: Optional[Callable[[Any], Any]] = None,
+) -> List[float]:
+    """
+    Run seeded episodes and return the total reward of each.
+
+    Episode `i` runs with seed `seed + i`, so that a rerun repeats every episode,
+    and two policies run with the same `seed` start each episode from the same
+    reset.
+
+    :param env: single environment, not a vector one
+    :param n_episodes: number of episodes to run
+    :param seed: seed of the first episode
+    :param policy: map the last observation to an action, None samples randomly
+    :return: the total reward of each episode, in order
+    """
+    hdbg.dassert_lte(1, n_episodes, "Run at least one episode")
+    returns = []
+    for idx in range(n_episodes):
+        _, total_reward = run_episode(env, seed=seed + idx, policy=policy)
+        returns.append(total_reward)
+    return returns
+
+
 # #############################################################################
 # Rendering
 # #############################################################################
@@ -192,3 +222,118 @@ def plot_frame(
     ax.set_title(title)
     ax.axis("off")
     plt.show()
+
+
+# #############################################################################
+# Comparing policies
+# #############################################################################
+
+
+def plot_returns(
+    returns_by_policy: Dict[str, List[float]],
+    max_return: int,
+    title: str,
+    *,
+    figsize: Optional[Tuple[int, int]] = None,
+) -> None:
+    """
+    Plot a histogram of the episode returns of each policy, side by side.
+
+    :param returns_by_policy: episode returns by policy name
+    :param max_return: largest possible return, the right end of the x-axis
+    :param title: title of the plot
+    :param figsize: size of the figure, None uses the notebook default
+    """
+    # Build one row per episode, labeled with its policy and the mean of that
+    # policy, so that the legend shows the means.
+    rows = []
+    for name, returns in returns_by_policy.items():
+        label = f"{name} (mean {np.mean(returns):.2f})"
+        rows += [{"policy": label, "return": ret} for ret in returns]
+    df = pd.DataFrame(rows)
+    # Draw one bin per integer return, with the policies side by side.
+    _, ax = plt.subplots(figsize=figsize)
+    sns.histplot(
+        data=df, x="return", hue="policy", discrete=True, multiple="dodge", ax=ax
+    )
+    ax.set_xlim(-0.5, max_return + 0.5)
+    ax.set_xticks(range(max_return + 1))
+    ax.set_xlabel("return per episode")
+    ax.set_ylabel("episodes")
+    ax.set_title(title)
+    plt.show()
+
+
+# #############################################################################
+# HitTargetEnv
+# #############################################################################
+
+
+class HitTargetEnv(gym.Env):
+    """
+    Aim at a target that appears on a random cell of a square grid.
+
+    - Observation: the index of the target cell, in `[0, grid_size**2)`
+    - Action: the index of the aimed cell
+    - Reward: 1 on a hit, 0 on a miss
+    - Each shot draws the next target, so the shots are independent
+    - A round is truncated after `n_shots` shots, never terminated: its length is
+      a time limit, not a terminal state of the task
+    """
+
+    def __init__(self, grid_size: int, n_shots: int) -> None:
+        """
+        Build an env with `grid_size**2` cells.
+
+        :param grid_size: number of cells on each side of the grid
+        :param n_shots: number of shots in a round
+        """
+        super().__init__()
+        hdbg.dassert_lte(1, grid_size, "The grid needs at least one cell")
+        hdbg.dassert_lte(1, n_shots, "A round needs at least one shot")
+        self._n_cells = grid_size**2
+        self._n_shots = n_shots
+        self.observation_space = gym.spaces.Discrete(self._n_cells)
+        self.action_space = gym.spaces.Discrete(self._n_cells)
+        # `reset()` sets the target and the shot count of a round.
+        self._target = 0
+        self._shot = 0
+
+    def reset(
+        self,
+        *,
+        seed: Optional[int] = None,
+        options: Optional[Dict[str, Any]] = None,
+    ) -> Tuple[int, Dict[str, Any]]:
+        """
+        Start a round and draw its first target.
+
+        :param seed: seed of `self.np_random`, None continues its stream
+        :param options: unused
+        :return: the first target cell, and an empty info dict
+        """
+        # Seed `self.np_random`, the only source of randomness of the env.
+        super().reset(seed=seed)
+        self._shot = 0
+        self._target = int(self.np_random.integers(self._n_cells))
+        return self._target, {}
+
+    def step(self, action: int) -> Tuple[int, float, bool, bool, Dict[str, Any]]:
+        """
+        Score a shot at a cell, then draw the next target.
+
+        :param action: index of the aimed cell
+        :return: the next target cell, the reward, `terminated`, `truncated`,
+            and an empty info dict
+        """
+        hdbg.dassert(
+            self.action_space.contains(action),
+            "The action must be a cell of the grid: %s",
+            action,
+        )
+        # Score the shot against the current target, before drawing the next one.
+        reward = 1.0 if action == self._target else 0.0
+        self._shot += 1
+        truncated = self._shot == self._n_shots
+        self._target = int(self.np_random.integers(self._n_cells))
+        return self._target, reward, False, truncated, {}
