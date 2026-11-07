@@ -81,7 +81,8 @@ def expected_costs(probabilities: Dict[str, float]) -> Dict[str, float]:
         raise ValueError("Probabilities must sum to one")
     return {
         action: sum(
-            probabilities[true_route] * costs[true_route] for true_route in ROUTES
+            probabilities[true_route] * costs[true_route]
+            for true_route in ROUTES
         )
         for action, costs in ACTION_COSTS.items()
     }
@@ -133,7 +134,8 @@ def run_split(
             }
         )
         print(
-            f"{split}: {index}/{len(cases)} {case['id']} -> {policy_action}", flush=True
+            f"{split}: {index}/{len(cases)} {case['id']} -> {policy_action}",
+            flush=True,
         )
     return {
         "split": split,

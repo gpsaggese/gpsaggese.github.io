@@ -6,11 +6,9 @@ import test.test_predict_utils as ttprut
 
 import logging
 
+import helpers.hunit_test as hunitest
 import numpy as np
 import pandas as pd
-
-import helpers.hunit_test as hunitest
-
 import predict_utils as putil
 
 _LOG = logging.getLogger(__name__)

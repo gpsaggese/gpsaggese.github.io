@@ -10,6 +10,9 @@ import dataclasses
 import logging
 from typing import Any, Dict, Optional, Tuple
 
+import helpers.hdbg as hdbg
+import helpers.hprint as hprint
+import helpers.htutorial as htutori
 import ipywidgets
 import matplotlib.colors as mcolors
 import matplotlib.patches as mpatches
@@ -19,12 +22,11 @@ import pandas as pd
 from IPython.display import clear_output, display
 from matplotlib.axes import Axes
 
-import helpers.hdbg as hdbg
-import helpers.hprint as hprint
-import helpers.htutorial as htutori
-from research.Optimal_strategy_for_racket_sports import racket_params
-from research.Optimal_strategy_for_racket_sports import racket_scoring
-from research.Optimal_strategy_for_racket_sports import racket_trajectory
+from research.Optimal_strategy_for_racket_sports import (
+    racket_params,
+    racket_scoring,
+    racket_trajectory,
+)
 
 _LOG = logging.getLogger(__name__)
 

@@ -51,7 +51,9 @@ print(client.url)
 # We need labeled cases before interpreting it as calibrated probability.
 
 # %%
-state = "Customer: My card was charged twice. Please refund the second charge today."
+state = (
+    "Customer: My card was charged twice. Please refund the second charge today."
+)
 refund_question = {
     "refund_requested": {
         "type": "noul",
@@ -92,7 +94,9 @@ display(route_answer)
 route_probabilities = soau.choice_probabilities(
     route_answer, list(route_question["route"]["criteria"])
 )
-display(soau.plot_probabilities(route_probabilities, "Where should this ticket go?"))
+display(
+    soau.plot_probabilities(route_probabilities, "Where should this ticket go?")
+)
 
 # %% [markdown]
 # `choice` is the most probable option. `confidence` is a separate API field

@@ -11,7 +11,7 @@ import json
 import math
 import os
 import statistics
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Tuple
 
 import matplotlib
 
@@ -59,16 +59,24 @@ def _load_report(path: str, split: str) -> Dict[str, Any]:
             case["label"],
             case["text"],
         ):
-            raise ValueError(f"Prediction and source case differ at {case['id']}")
+            raise ValueError(
+                f"Prediction and source case differ at {case['id']}"
+            )
         probabilities = record["probabilities"]
         if set(probabilities) != set(troute.ROUTES) or not math.isclose(
             sum(probabilities.values()), 1.0, abs_tol=1e-3
         ):
             raise ValueError(f"Invalid probabilities for {case['id']}")
         if record["top_route"] != max(probabilities, key=probabilities.get):
-            raise ValueError(f"Top route differs from probabilities for {case['id']}")
-        if record["policy_action"] != troute.choose_min_cost_action(probabilities):
-            raise ValueError(f"Policy action differs from costs for {case['id']}")
+            raise ValueError(
+                f"Top route differs from probabilities for {case['id']}"
+            )
+        if record["policy_action"] != troute.choose_min_cost_action(
+            probabilities
+        ):
+            raise ValueError(
+                f"Policy action differs from costs for {case['id']}"
+            )
     return report
 
 
@@ -83,12 +91,17 @@ def classification_metrics(records: List[Dict[str, Any]]) -> Dict[str, Any]:
     if n_cases == 0:
         raise ValueError("No predictions to evaluate")
     accuracy = (
-        sum(record["top_route"] == record["true_route"] for record in records) / n_cases
+        sum(record["top_route"] == record["true_route"] for record in records)
+        / n_cases
     )
     brier = (
         sum(
             sum(
-                (record["probabilities"][route] - (route == record["true_route"])) ** 2
+                (
+                    record["probabilities"][route]
+                    - (route == record["true_route"])
+                )
+                ** 2
                 for route in troute.ROUTES
             )
             for record in records
@@ -119,16 +132,23 @@ def reliability_bins(
             record
             for record in records
             if lower <= max(record["probabilities"].values()) < upper
-            or (index == n_bins - 1 and max(record["probabilities"].values()) == 1.0)
+            or (
+                index == n_bins - 1
+                and max(record["probabilities"].values()) == 1.0
+            )
         ]
         count = len(members)
         mean_confidence = (
-            statistics.mean(max(record["probabilities"].values()) for record in members)
+            statistics.mean(
+                max(record["probabilities"].values()) for record in members
+            )
             if members
             else None
         )
         accuracy = (
-            sum(record["top_route"] == record["true_route"] for record in members)
+            sum(
+                record["top_route"] == record["true_route"] for record in members
+            )
             / count
             if members
             else None
@@ -150,7 +170,8 @@ def reliability_bins(
 def confusion_table(records: List[Dict[str, Any]]) -> Dict[str, Dict[str, int]]:
     """Count top-route predictions by true route."""
     table = {
-        route: {predicted: 0 for predicted in troute.ROUTES} for route in troute.ROUTES
+        route: {predicted: 0 for predicted in troute.ROUTES}
+        for route in troute.ROUTES
     }
     for record in records:
         table[record["true_route"]][record["top_route"]] += 1
@@ -159,13 +180,18 @@ def confusion_table(records: List[Dict[str, Any]]) -> Dict[str, Dict[str, int]]:
 
 def policy_metrics(records: List[Dict[str, Any]]) -> Dict[str, Any]:
     """Measure review coverage, routed error, and realized illustrative cost."""
-    routed = [record for record in records if record["policy_action"] != "review"]
+    routed = [
+        record for record in records if record["policy_action"] != "review"
+    ]
     return {
         "coverage": len(routed) / len(records),
         "routed_count": len(routed),
         "review_count": len(records) - len(routed),
         "routed_error_rate": (
-            sum(record["policy_action"] != record["true_route"] for record in routed)
+            sum(
+                record["policy_action"] != record["true_route"]
+                for record in routed
+            )
             / len(routed)
             if routed
             else None
@@ -282,7 +308,9 @@ def evaluate(dev_path: str, test_path: str, output_dir: str) -> Dict[str, Any]:
     test_records = test["records"]
     majority_route = max(
         troute.ROUTES,
-        key=lambda route: sum(record["true_route"] == route for record in dev_records),
+        key=lambda route: sum(
+            record["true_route"] == route for record in dev_records
+        ),
     )
     bins, ece = reliability_bins(test_records)
     policy = policy_metrics(test_records)
@@ -341,7 +369,11 @@ def main() -> None:
     parser.add_argument("--output-dir", default=OUTPUT_DIR)
     args = parser.parse_args()
     results = evaluate(args.dev, args.test, args.output_dir)
-    print(json.dumps({"test": results["test"], "policy": results["policy"]}, indent=2))
+    print(
+        json.dumps(
+            {"test": results["test"], "policy": results["policy"]}, indent=2
+        )
+    )
 
 
 if __name__ == "__main__":

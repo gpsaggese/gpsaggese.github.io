@@ -55,13 +55,13 @@ from typing import Any, Dict, List
 
 # Third-party libraries.
 import dotenv
-import pandas as pd
-import weave
 
 # %%
 # Use this for most notebooks.
 import helpers.hdbg as hdbg
 import helpers.hnotebook as hnotebook
+import pandas as pd
+import weave
 
 _LOG = logging.getLogger(__name__)
 
@@ -158,13 +158,19 @@ def keyword_tone(sentence: str) -> Dict[str, Any]:
         label = "dovish"
     else:
         label = "neutral"
-    return {"label": label, "hawkish_hits": hawkish_hits, "dovish_hits": dovish_hits}
+    return {
+        "label": label,
+        "hawkish_hits": hawkish_hits,
+        "dovish_hits": dovish_hits,
+    }
 
 
 # %%
 # Call the op like any Python function. This call and the two
 # `count_keyword_hits` calls inside it now appear on the Traces page.
-keyword_tone("The Committee decided to raise the target range to curb inflation.")
+keyword_tone(
+    "The Committee decided to raise the target range to curb inflation."
+)
 
 # %% [markdown]
 # ## 3. Storing evaluation data with `weave.Dataset`
@@ -179,18 +185,54 @@ keyword_tone("The Committee decided to raise the target range to curb inflation.
 
 # %%
 toy_rows = [
-    {"sentence": "The Committee decided to raise the target range to curb inflation.", "label": "hawkish"},
-    {"sentence": "Further rate increases may be appropriate to bring inflation down.", "label": "hawkish"},
-    {"sentence": "Inflation remains elevated and the labor market is tight.", "label": "hawkish"},
-    {"sentence": "Tighter policy is needed to keep inflation expectations anchored.", "label": "hawkish"},
-    {"sentence": "The Committee decided to lower the target range to support employment.", "label": "dovish"},
-    {"sentence": "Rate cuts may be needed if unemployment keeps rising.", "label": "dovish"},
-    {"sentence": "Economic activity has weakened and inflation pressures have eased.", "label": "dovish"},
-    {"sentence": "Accommodative policy will remain in place to support the recovery.", "label": "dovish"},
-    {"sentence": "The Committee will continue to monitor incoming data.", "label": "neutral"},
-    {"sentence": "The meeting was held in Washington on Tuesday.", "label": "neutral"},
-    {"sentence": "Household spending grew at a moderate pace.", "label": "neutral"},
-    {"sentence": "The Committee will keep the target range unchanged.", "label": "neutral"},
+    {
+        "sentence": "The Committee decided to raise the target range to curb inflation.",
+        "label": "hawkish",
+    },
+    {
+        "sentence": "Further rate increases may be appropriate to bring inflation down.",
+        "label": "hawkish",
+    },
+    {
+        "sentence": "Inflation remains elevated and the labor market is tight.",
+        "label": "hawkish",
+    },
+    {
+        "sentence": "Tighter policy is needed to keep inflation expectations anchored.",
+        "label": "hawkish",
+    },
+    {
+        "sentence": "The Committee decided to lower the target range to support employment.",
+        "label": "dovish",
+    },
+    {
+        "sentence": "Rate cuts may be needed if unemployment keeps rising.",
+        "label": "dovish",
+    },
+    {
+        "sentence": "Economic activity has weakened and inflation pressures have eased.",
+        "label": "dovish",
+    },
+    {
+        "sentence": "Accommodative policy will remain in place to support the recovery.",
+        "label": "dovish",
+    },
+    {
+        "sentence": "The Committee will continue to monitor incoming data.",
+        "label": "neutral",
+    },
+    {
+        "sentence": "The meeting was held in Washington on Tuesday.",
+        "label": "neutral",
+    },
+    {
+        "sentence": "Household spending grew at a moderate pace.",
+        "label": "neutral",
+    },
+    {
+        "sentence": "The Committee will keep the target range unchanged.",
+        "label": "neutral",
+    },
 ]
 
 toy_dataset = weave.Dataset(name="toy-tone-sentences", rows=toy_rows)
@@ -213,6 +255,7 @@ display(pd.DataFrame(list(loaded_dataset.rows)))
 # trace and evaluation points to the exact version that produced it.
 #
 # Below, the keyword rule becomes a model whose keyword lists are attributes.
+
 
 # %%
 class KeywordToneModel(weave.Model):
@@ -272,7 +315,9 @@ print("Version 2:", model_v2_ref.uri())
 # %%
 # Compare the two versions on one dovish sentence: version 1 is misled by
 # "inflation", while version 2 picks up "weakened" and "eased".
-example_sentence = "Economic activity has weakened and inflation pressures have eased."
+example_sentence = (
+    "Economic activity has weakened and inflation pressures have eased."
+)
 print("Version 1:", model_v1.predict(example_sentence))
 print("Version 2:", model_v2.predict(example_sentence))
 
@@ -296,6 +341,7 @@ print("Version 2:", model_v2.predict(example_sentence))
 #
 # I use one of each: exact match (which gives the accuracy) and recall per
 # class, which tells me which kind of sentence the model gets wrong.
+
 
 # %%
 @weave.op
@@ -336,7 +382,9 @@ class PerClassRecall(weave.Scorer):
         """
         scores = pd.DataFrame([row for row in score_rows if row])
         recall = scores.groupby("label")["correct"].mean()
-        return {f"recall_{label}": float(value) for label, value in recall.items()}
+        return {
+            f"recall_{label}": float(value) for label, value in recall.items()
+        }
 
 
 toy_evaluation = weave.Evaluation(

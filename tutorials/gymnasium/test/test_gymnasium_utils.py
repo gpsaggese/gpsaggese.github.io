@@ -18,9 +18,9 @@ pytest.importorskip("gymnasium")
 
 import gymnasium as gym
 import gymnasium.utils.env_checker
+import helpers.hunit_test as hunitest
 import numpy as np
 
-import helpers.hunit_test as hunitest
 import tutorials.gymnasium.gymnasium_utils as tgygyuti
 
 _LOG = logging.getLogger(__name__)

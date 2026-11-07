@@ -28,6 +28,43 @@
   `plan.racket_strategy.md`
 - Manual widget checks of the Milestone 1 notebook, noted as in progress in #654
 
+## 2026-11-07: Racket RL Env and Notebook 06 (#713, Layer 3)
+
+- **Issue**: [#713](https://github.com/gpsaggese/gpsaggese.github.io/issues/713),
+  layer 3, after the Gymnasium tutorial (layer 1)
+  - GP's decisions on #713: brute force first, with the target learned by RL;
+    reuse the Milestone 2 code but not its results; a reward of 1 for a winner; a
+    discrete target grid with a programmable step
+- **What was done**:
+  - `notebooks/racket_sports_06_rl_return_utils.py`: `ReturnEnv`, a one-shot
+    Gymnasium env (a contextual bandit) whose step is one call of
+    `compute_winner_probability()` with 1 sample; the brute force through the env;
+    the comparison with a fresh Milestone 2 map; the pass rule
+  - `notebooks/racket_sports_06_rl_return.ipynb`: the env, the brute force,
+    Milestone 2 recomputed on the same grid, PPO (`stable-baselines3`) on
+    rescaled observations, and the pass rule; the saved outputs are from the full
+    run
+  - Tests: 14 unit tests, with 3 planted bugs caught, and a notebook test of about
+    10 minutes
+- **Findings**:
+  - SB3 feeds the raw meters to the network, and the constant input of player 1
+    at $y = -11.885$ m saturated a quarter to a third of the first layer;
+    rescaling the observation to $[-1, 1]$ removed the slow start
+  - PPO drifts after about 100k steps on a reward that is almost always 1 (tennis,
+    2 of 3 seeds), so the full run uses 75k steps
+  - Full run, 9 serves per sport, 1000 points per target, fresh seeds 3, 4, 5:
+    - The brute force matches Milestone 2: Spearman 0.98 in tennis and 0.99 in
+      pickleball, and each best cell is in the other's region on 15 of 18 serves;
+      the 3 misses are ties within sampling noise (0.2 points)
+    - The expected regret of PPO is under 0.8 points on all 6 runs, against 11 to
+      21 points for a random target
+    - The strict rule, every greedy cell in the Milestone 2 region, written before
+      the run, passed 4 of 6 runs; seed 5 failed in both sports, since on the flat
+      tennis plateau the policy spreads over tied cells and its top cell is fragile
+- **Open questions for GP**: which success metric matters for the next step, the
+  greedy cell or the expected regret; and whether to try a fix for the late drift,
+  tested again with a pass rule written in advance on fresh seeds
+
 ## 2026-11-04: Design Principles
 
 - **Issue**: [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723)

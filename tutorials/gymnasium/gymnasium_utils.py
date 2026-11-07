@@ -19,13 +19,12 @@ from typing import (
 )
 
 import gymnasium as gym
+import helpers.hdbg as hdbg
+import helpers.hnotebook as hnotebo
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-
-import helpers.hdbg as hdbg
-import helpers.hnotebook as hnotebo
 
 _LOG = logging.getLogger(__name__)
 

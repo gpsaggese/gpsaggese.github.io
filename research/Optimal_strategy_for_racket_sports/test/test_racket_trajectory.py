@@ -5,11 +5,13 @@ Tests for racket_trajectory module.
 import logging
 from typing import Tuple
 
+import helpers.hunit_test as hunitest
 import numpy as np
 
-import helpers.hunit_test as hunitest
-from research.Optimal_strategy_for_racket_sports import racket_params
-from research.Optimal_strategy_for_racket_sports import racket_trajectory
+from research.Optimal_strategy_for_racket_sports import (
+    racket_params,
+    racket_trajectory,
+)
 
 _LOG = logging.getLogger(__name__)
 

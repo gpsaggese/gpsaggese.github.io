@@ -13,6 +13,7 @@ import types
 import unittest.mock as umock
 from typing import Any, Dict, List, Tuple
 
+import helpers.hunit_test as hunitest
 import ipywidgets
 import matplotlib
 import matplotlib.collections as mcollections
@@ -25,9 +26,10 @@ import pandas as pd
 import pytest
 from matplotlib.axes import Axes
 
-import helpers.hunit_test as hunitest
-from research.Optimal_strategy_for_racket_sports import racket_params
-from research.Optimal_strategy_for_racket_sports import racket_scoring
+from research.Optimal_strategy_for_racket_sports import (
+    racket_params,
+    racket_scoring,
+)
 from research.Optimal_strategy_for_racket_sports.notebooks import (
     racket_sports_01_shot_probability_utils,
 )

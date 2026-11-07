@@ -5,9 +5,9 @@ Tests for racket_params module.
 import logging
 from typing import List, Literal
 
+import helpers.hunit_test as hunitest
 import numpy as np
 
-import helpers.hunit_test as hunitest
 from research.Optimal_strategy_for_racket_sports import racket_params
 
 _LOG = logging.getLogger(__name__)

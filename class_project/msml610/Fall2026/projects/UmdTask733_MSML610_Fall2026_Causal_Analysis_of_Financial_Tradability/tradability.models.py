@@ -38,10 +38,9 @@
 # %load_ext autoreload
 # %autoreload 2
 
+import data_utils as dutil
 import matplotlib.pyplot as plt
 import pandas as pd
-
-import data_utils as dutil
 import predict_utils as putil
 
 # %% [markdown]

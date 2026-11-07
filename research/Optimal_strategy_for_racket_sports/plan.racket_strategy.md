@@ -382,5 +382,9 @@
   - [x] [#714](https://github.com/gpsaggese/gpsaggese.github.io/issues/714):
         movement in the serving setup; its follow-ups are #786 and #787
   - [-] [#713](https://github.com/gpsaggese/gpsaggese.github.io/issues/713):
-        model the RL problem (phase 2); the Gymnasium tutorial cleanup is in
+        model the RL problem (phase 2); the Gymnasium tutorial is in
         [PR #838](https://github.com/gpsaggese/gpsaggese.github.io/pull/838)
+        (merged) and [PR #846](https://github.com/gpsaggese/gpsaggese.github.io/pull/846);
+        the racket RL env is in notebook 06,
+        `notebooks/racket_sports_06_rl_return.ipynb`, see the 2026-11-07 entry
+        of the log

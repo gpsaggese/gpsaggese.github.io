@@ -25,6 +25,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import dotenv
+import helpers.hnotebook as hnotebo
 import pandas as pd
 import pydantic
 import weave
@@ -32,8 +33,6 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score
 from sklearn.pipeline import Pipeline
-
-import helpers.hnotebook as hnotebo
 
 _LOG = logging.getLogger(__name__)
 
@@ -162,7 +161,9 @@ class TfidfLogRegModel(weave.Model):
         :return: dict with `label`, `label_name`, and `confidence`
         """
         if self._pipeline is None:
-            raise RuntimeError("Call fit() on the training data before predict().")
+            raise RuntimeError(
+                "Call fit() on the training data before predict()."
+            )
         probabilities = self._pipeline.predict_proba([sentence])[0]
         classes = self._pipeline.classes_
         best = probabilities.argmax()
@@ -227,8 +228,12 @@ class FomcRobertaModel(weave.Model):
         """
         with self._lock:
             pipe = self._load()
-            output = pipe(sentence, truncation=True, max_length=self.max_length)[0]
-        return _format_prediction(_label_id_from_hf(output["label"]), output["score"])
+            output = pipe(sentence, truncation=True, max_length=self.max_length)[
+                0
+            ]
+        return _format_prediction(
+            _label_id_from_hf(output["label"]), output["score"]
+        )
 
 
 # #############################################################################
@@ -252,7 +257,9 @@ class ZeroShotModel(weave.Model):
         "hawkish": "hawkish, favoring higher interest rates or tighter monetary policy",
         "neutral": "neutral, with no clear monetary policy stance",
     }
-    hypothesis_template: str = "The monetary policy stance of this sentence is {}."
+    hypothesis_template: str = (
+        "The monetary policy stance of this sentence is {}."
+    )
     _pipe: Any = pydantic.PrivateAttr(default=None)
     # Serialize calls with a lock, since Weave evaluates rows in parallel
     # threads and Hugging Face fast tokenizers fail with "Already borrowed" when
@@ -389,10 +396,15 @@ class MacroF1Scorer(weave.Scorer):
 
     @weave.op
     def score(self, *, output: Dict[str, Any], label: int) -> Dict[str, int]:
-        return {"true_label": int(label), "predicted_label": int(output["label"])}
+        return {
+            "true_label": int(label),
+            "predicted_label": int(output["label"]),
+        }
 
     @weave.op
-    def summarize(self, score_rows: List[Optional[Dict[str, int]]]) -> Dict[str, Any]:
+    def summarize(
+        self, score_rows: List[Optional[Dict[str, int]]]
+    ) -> Dict[str, Any]:
         rows = [row for row in score_rows if row]
         y_true = [row["true_label"] for row in rows]
         y_pred = [row["predicted_label"] for row in rows]
@@ -467,7 +479,9 @@ async def run_evaluations(
     return pd.DataFrame(results).set_index("model").round(4)
 
 
-def _summary_row(name: str, summary: Dict[str, Any], n_rows: int) -> Dict[str, Any]:
+def _summary_row(
+    name: str, summary: Dict[str, Any], n_rows: int
+) -> Dict[str, Any]:
     """
     Pick out the reported numbers from one `evaluate()` summary.
     """
