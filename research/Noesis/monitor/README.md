@@ -16,10 +16,14 @@
 
 | File                 | Description                                      |
 | :------------------- | :----------------------------------------------- |
-| `monitor_cli.py`     | No-spend validation and explicit live execution |
-| `monitor_models.py`  | Immutable targets, policies, and observations   |
-| `monitor_runtime.py` | One bounded, sequential monitoring pass          |
-| `monitor_store.py`   | Monitoring-only PostgreSQL persistence           |
+| `monitor_capability_experiment.py` | Offline capability scenarios and trials |
+| `monitor_capability_report.py` | Experiment artifacts and plots             |
+| `monitor_cli.py`     | No-spend validation and explicit live execution   |
+| `monitor_detection.py` | Capability baselines and degradation decisions |
+| `monitor_metrics.py` | Per-window and per-family evidence aggregation    |
+| `monitor_models.py`  | Immutable targets, policies, and observations     |
+| `monitor_runtime.py` | One bounded, sequential monitoring pass           |
+| `monitor_store.py`   | Monitoring-only PostgreSQL persistence            |
 
 ## Architecture
 
@@ -46,10 +50,19 @@
   the run
 - Live execution requires `OPENROUTER_API_KEY`, `NOESIS_DATABASE_URL`, and
   `NOESIS_CANARY_SCHEDULE_SECRET`
+- Run the offline capability-drift experiment without provider or database access:
+
+  ```bash
+  > python3 research/Noesis/scripts/run_model_drift_capability_experiment.py \
+      --trials_per_scenario 1000 \
+      --power_trials 100 \
+      --dst_dir research/Noesis/docs/findings/model_drift_capability
+  ```
 
 ## Deferred Work
 
 - Recurring schedules, bounded concurrency, retries, heartbeats, and stale-run
   cleanup
-- Window aggregation, baselines, nerfing detection, charts, and alerts
+- Recurring live windows, stored baselines, dashboards, and alerts
+- CUSUM, MMD, and fingerprint-based model-identity experiments
 - Any market, contract-verdict, or seller-reputation integration

@@ -1,0 +1,11 @@
+{
+  "alpha": 0.01,
+  "baseline_windows": 5,
+  "confirmation_windows": 2,
+  "healthy_accuracy": 0.95,
+  "minimum_quality_drop": 0.1,
+  "observations_per_window": 60,
+  "post_windows": 15,
+  "trials_per_scenario": 1000,
+  "weak_accuracy": 0.6
+}
