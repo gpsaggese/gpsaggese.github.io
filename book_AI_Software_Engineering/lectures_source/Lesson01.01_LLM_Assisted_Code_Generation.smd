@@ -43,11 +43,10 @@ digraph TokenStrip {
     // orange: prefix tokens | blue: token to predict
     bgcolor="transparent";
     pad="0.1";
-    rankdir=LR;
     nodesep=0.1;
     ranksep=0.2;
     node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Courier",
-          fontsize=12, margin="0.1,0.06", height=0.4,
+          fontsize=12, margin="0.1,0.06", height=0.36, width=1.5,
           fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
     edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.6];
 
@@ -196,7 +195,7 @@ digraph SampleAndTest {
     pad="0.1";
     splines=spline;
     nodesep=0.3;
-    ranksep=0.35;
+    ranksep=0.25;
     node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Helvetica",
           fontsize=11, margin="0.16,0.08", height=0.4];
     edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
@@ -272,8 +271,8 @@ digraph ProductionPrompt {
           fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
 
     node [fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
-    S1 [label="Code before and\nafter the cursor"];
-    S2 [label="Recently viewed\nor edited files"];
+    S1 [label="Code around\nthe cursor"];
+    S2 [label="Recent files\nin the editor"];
     S3 [label="File path\nand language"];
 
     node [fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
@@ -381,7 +380,7 @@ digraph FewShotPrompt {
         E2 [label="Example 2\ninput -> output"];
         E3 [label="New task\ninput -> ?"];
         { rank=same; E1; E2; E3; }
-        E1 -> E2 -> E3 [style=invis];
+        E3 -> E2 -> E1 [style=invis];
     }
 
     node [fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
@@ -480,7 +479,7 @@ digraph PlanThenImplement {
     pad="0.1";
     splines=spline;
     nodesep=0.3;
-    ranksep=0.3;
+    ranksep=0.22;
     node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Helvetica",
           fontsize=11, margin="0.16,0.08", height=0.4];
     edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
@@ -787,6 +786,7 @@ digraph KnowledgeConflict {
     // orange: input | teal: model memory | blue: output
     bgcolor="transparent";
     pad="0.1";
+    newrank=true;
     splines=spline;
     nodesep=0.3;
     ranksep=0.4;
@@ -823,6 +823,8 @@ digraph KnowledgeConflict {
 
     { rank=same; Train; Change; }
     { rank=same; Memory; Prompt; }
+    Train -> Change [style=invis];
+    Memory -> Prompt [style=invis];
     Memory -> Out [penwidth=2.0];
     Prompt -> Out [style=dashed, color="#8C8C8C",
                    label="  Not enough\l  to override\l"];
