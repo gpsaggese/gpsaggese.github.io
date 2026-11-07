@@ -4,33 +4,6 @@
 
 ### [ ] Generate Slides
 
-// TODO(ai_gp): Update this table with the files in book_AI_Software_Engineering/lectures_source/ and book_AI_Software_Engineering/book
-
-| Chap                                          | Generate slides | Review slides | Generate book |
-| :-------------------------------------------- | :-------------- | :------------ | :------------ |
-| **Part I: Foundations of AI-Assisted Coding** |                 |               |               |
-| 01, Coding Models                             | yes             |               |               |
-| 02, Skills Organization and Management        | yes             |               |               |
-| 03, AI Harness                                |                 |               |               |
-| 04, AI Pair Programming Workflows             | yes             |               |               |
-| 05, Prompt Engineering for Code               | yes             |               |               |
-| 06, Human-AI Collaboration Patterns           | yes             |               |               |
-| **Part II: Writing and Reviewing Code**       |                 |               |               |
-| 07, Code Cosmetics                            |                 |               |               |
-| 08, Documenting Code                          |                 |               |               |
-| 09, Reviewing Pull Requests                   |                 |               |               |
-| 10, Reviewing Existing Code                   |                 |               |               |
-| 11, Debugging with AI                         |                 |               |               |
-| **Part III: Planning and Architecture**       |                 |               |               |
-| 12, Planning                                  |                 |               |               |
-| 13, Software Architecture Guidelines          |                 |               |               |
-| **Part IV: Delivery and Automation**          |                 |               |               |
-| 14, GitHub Projects and Workflows with AI     | yes             |               |               |
-| 15, Releasing and Docker with AI              |                 |               |               |
-| 16, Setting CI/CD for AI                      |                 |               |               |
-
-### [ ]
-
 // From book_scripts/README.md
 ```
 claude> /model opus
@@ -43,6 +16,12 @@ claude> Execute book_scripts/prompt.create_lesson_slides_from_chap_toc.md withou
 
 > lint_text.py -i book_AI_Software_Engineering/lectures_source/Lesson02.1*.smd --check
 
+claude> /slides.review <SMD_FILE>
+claude> /slides.add_visuals <SMD_FILE>
+claude> /slides.add_references <SMD_FILE>
+```
+
+```
 claude> Execute msml610/book/prompt.slides_and_book_flow.md book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd
 
 > run_typst.py --input msml610/book/Lesson01.2-AI_and_Machine_Learning.typ

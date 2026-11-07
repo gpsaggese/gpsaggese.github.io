@@ -68,37 +68,39 @@
 
 # Roadmap
 
-// TODO(ai_gp): Update this table with the files in
-book_AI_Software_Engineering/lectures_source/ and book_AI_Software_Engineering/book
+- The slides are in `book_AI_Software_Engineering/lectures_source/*.smd`
+- The book chapters are in `book_AI_Software_Engineering/book/*.typ`
 
-| Chap                                          | Slides                                          | Slides % | Criticize | Tutorial | Book |
-| --------------------------------------------- | ----------------------------------------------- | -------- | --------- | -------- | ---- |
-| **Part I: Foundations of AI-Assisted Coding** |                                                 |          |           |          |      |
-| 01: Coding Models                             | Lesson01.01_LLM_Assisted_Code_Generation.smd    | 100%     |           |          |      |
-| 02: Skills Organization and Management        | Tools_source.smd                                |          |           |          |      |
-| 03: AI Harness                                | Lesson04.01_AI_Pair_Programming_Workflows.smd   |          |           |          |      |
-| 04: AI Pair Programming Workflows             | Lesson04.01_AI_Pair_Programming_Workflows.smd   | 100%     |           |          |      |
-| 05: Prompt Engineering for Code               | Lesson05.01_Prompt_Engineering_for_Code.smd     | 100%     |           |          |      |
-| 06: Human-AI Collaboration Patterns           | Lesson06.01_Human_AI_Collaboration_Patterns.smd | 100%     |           |          |      |
-| **Part II: Writing and Reviewing Code**       |                                                 |          |           |          |      |
-| 07: Code Cosmetics                            | Tools_source.smd                                |          |           |          |      |
-| 08: Documenting Code                          | Tools_source.smd                                |          |           |          |      |
-| 09: Reviewing Pull Requests                   | Tools_source.smd                                |          |           |          |      |
-| 10: Reviewing Existing Code                   |                                                 |          |           |          |      |
-| 11: Debugging with AI                         | Tools_source.smd                                |          |           |          |      |
-| **Part III: Planning and Architecture**       |                                                 |          |           |          |      |
-| 12: Planning                                  | Tools_source.smd                                |          |           |          |      |
-| 13: Software Architecture Guidelines          | Tools_source.smd                                |          |           |          |      |
-| **Part IV: Delivery and Automation**          |                                                 |          |           |          |      |
-| 14: GitHub Projects and Workflows             |                                                 |          |           |          |      |
-| 15: Releasing and Docker                      | Tools_source.smd                                |          |           |          |      |
-| 16: Setting CI/CD                             | Tools_source.smd                                |          |           |          |      |
+| Chap                                          | Slides                                             | Slides % | Criticize | Tutorial | Book |
+| --------------------------------------------- | -------------------------------------------------- | -------- | --------- | -------- | ---- |
+| **Part I: Foundations of AI-Assisted Coding** |                                                    |          |           |          |      |
+| 01: Coding Models                             | Lesson01.01_LLM_Assisted_Code_Generation.smd       | 100%     |           |          |      |
+| 02: Skills Organization and Management        | Lesson02.01_Skills_Organization_and_Management.smd |          |           |          | yes  |
+| 03: AI Harness                                | Lesson03.01_AI_Harness.smd                         |          |           |          |      |
+| 04: AI Pair Programming Workflows             | Lesson04.01_AI_Pair_Programming_Workflows.smd      | 100%     |           |          |      |
+| 05: Prompt Engineering for Code               | Lesson05.01_Prompt_Engineering_for_Code.smd        | 100%     |           |          |      |
+| 06: Human-AI Collaboration Patterns           | Lesson06.01_Human_AI_Collaboration_Patterns.smd    | 100%     |           |          |      |
+| **Part II: Writing and Reviewing Code**       |                                                    |          |           |          |      |
+| 07: Code Cosmetics                            | Lesson07.01_Code_Cosmetics.smd                     |          |           |          |      |
+| 08: Documenting Code                          | Lesson08.01_Documenting_Code.smd                   |          |           |          |      |
+| 09: Reviewing Pull Requests                   |                                                    |          |           |          |      |
+| 10: Reviewing Existing Code                   |                                                    |          |           |          |      |
+| 11: Debugging with AI                         |                                                    |          |           |          |      |
+| **Part III: Planning and Architecture**       |                                                    |          |           |          |      |
+| 12: Planning                                  |                                                    |          |           |          |      |
+| 13: Software Architecture Guidelines          |                                                    |          |           |          |      |
+| **Part IV: Delivery and Automation**          |                                                    |          |           |          |      |
+| 14: GitHub Projects and Workflows             | Lesson14.01_GitHub_Projects_and_Workflows.smd      |          |           |          |      |
+| 15: Releasing and Docker                      |                                                    |          |           |          |      |
+| 16: Setting CI/CD                             |                                                    |          |           |          |      |
 
 ## TODOs
 
 - Split the shared deck `Tools_source.smd` into per-chapter decks, or keep it as the
-  shared deck for chapters 02, 07-09, 11-13, 15, and 16
-- Write a dedicated deck for chapters 03, 10, and 14
+  shared deck for chapters 09, 11-13, 15, and 16
+- Write a dedicated deck for chapter 10
+- Resolve the `TODO(gp): Check` notes in the decks of chapters 02, 03, 07, 08, and
+  14, then fill their `Slides %`
 - Confirm that Skills is chapter 02 and that Human-AI Collaboration Patterns belongs
   in Part I
 
