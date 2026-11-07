@@ -2,7 +2,7 @@
 
 ## Goal
 
-- Build a pipeline that turns a loose list of papers into a CSV table of candidate
+- Build a pipeline that turns a loose list of papers into a JSON report of candidate
   trading strategies, with the full text and a set of extracted features per paper
 - Users: quant researchers, who use the table to pick the next papers to replicate
 - Background:
@@ -35,7 +35,8 @@
 
 ### `R1` (Input File Format)
 
-- The pipeline accepts a text file with one paper per line, where a line is any of:
+- The pipeline accepts a CSV with one paper per row and no header needed, where a row
+  is any of:
   - A partial or full title, optionally followed by the authors in parentheses
   - An arXiv URL or arXiv ID
   - A DOI or DOI URL
@@ -165,18 +166,28 @@
 
 ## Requirements: Output
 
-### `R18` (Report CSV)
+### `R18` (Report File)
 
-- The pipeline writes one CSV report with one row per paper, in the order of
-  [`R7`](#r7-reverse-chronological-order), with these columns:
-  - The reference
-  - The value of each feature
-  - The score of each signal of the Paper quality rating
+- The pipeline writes one JSON report, `04-report.report.json`, with one row per
+  paper and one row per input line that gave no paper
+  - The rows of the papers come first, in the order of
+    [`R7`](#r7-reverse-chronological-order), then the other rows by line number
+  - A row has these keys:
+    - The lines of the input list that gave the row
+    - The status of the row: `ok` or `failed`
+    - The reference, or the text of the line that gave no paper
+    - The value of each feature
+    - The score of each signal of the Paper quality rating
+    - The issue, with the stage, the status, and the reason, or `null` if the row
+      has none
+- A rating or a score that is unknown is `null`, not a text
 
-### `R19` (Issues CSV)
+### `R19` (Issues File)
 
-- The pipeline lists the unresolved papers and the failed papers, with the reason, in
-  a CSV apart from the report of [`R18`](#r18-report-csv)
+- Each stage writes the unresolved lines or the failed papers, with the reason, in a
+  JSON issues file, `NN-<stage>.issues.json`, so that each stage can run alone
+- The report of [`R18`](#r18-report-file) gathers them: a failed row holds its issue,
+  so the user reads no other file to learn why a paper or a line failed
 
 ### `R20` (Features File)
 
@@ -195,7 +206,7 @@
   - SSRN papers are in scope: a public SSRN PDF is not behind an access control, so
     the download tool gets it through a Chrome that it starts and closes
 - Does not combine the features into a total score and does not rank the papers: the
-  user sorts the CSV
+  user sorts the report
 - Does not replace
   [`.claude/skills/paper.rate/SKILL.md`](/.claude/skills/paper.rate/SKILL.md), which
   rates one paper: the pipeline applies the same rules to a list (see

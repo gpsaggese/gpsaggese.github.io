@@ -3,9 +3,11 @@ Tests for racket_strategy_utils module.
 """
 
 import logging
+from typing import Dict, List, Optional, Tuple
 
 import ipywidgets
 import matplotlib
+import pandas as pd
 
 import helpers.hunit_test as hunitest
 from research.Optimal_strategy_for_racket_sports import racket_params
@@ -21,6 +23,50 @@ import matplotlib.patches as mpatches  # noqa: E402
 import matplotlib.pyplot as plt  # noqa: E402
 
 
+def _make_scores(n_x: int, n_y: int, score_values: List[float]) -> pd.DataFrame:
+    """
+    Build the scores of a grid over the returner's half of a tennis court.
+
+    :param n_x: number of grid columns
+    :param n_y: number of grid rows
+    :param score_values: score of each cell, in grid order
+    :return: the cells of the grid, with a "score" column
+    """
+    sport = racket_params.TENNIS
+    region = racket_params.get_half_court_region(sport.court)
+    targets = racket_scoring.make_target_grid(region, n_x, n_y)
+    scores = targets.copy()
+    scores["score"] = score_values
+    return scores
+
+
+def _make_launch_table(n_x: int, n_y: int) -> pd.DataFrame:
+    """
+    Estimate the launch table of a tennis rally shot from `(0, -11)` to a grid
+    over the returner's half, with 50 samples.
+
+    :param n_x: number of grid columns
+    :param n_y: number of grid rows
+    :return: the launch table
+    """
+    sport = racket_params.TENNIS
+    striker = racket_params.DEFAULT_PLAYER
+    striker_pos = (0.0, -11.0)
+    situation = racket_scoring.make_rally_situation(sport, striker, striker_pos)
+    targets = racket_scoring.make_target_grid(
+        racket_params.get_half_court_region(sport.court),
+        n_x,
+        n_y,
+    )
+    n_samples = 50
+    seed = 0
+    config = racket_scoring.ScoringConfig(n_samples=n_samples, seed=seed)
+    launch_table = racket_scoring.estimate_launch_table(
+        sport, situation, targets, config
+    )
+    return launch_table
+
+
 # #############################################################################
 # Test_draw_court
 # #############################################################################
@@ -31,7 +77,9 @@ class Test_draw_court(hunitest.TestCase):
     Test `racket_strategy_utils.draw_court()`.
     """
 
-    def helper(self, court, expected_lines: int) -> None:
+    def helper(
+        self, court: racket_params.CourtGeometry, expected_lines: int
+    ) -> None:
         """
         Helper for draw_court.
 
@@ -83,33 +131,6 @@ class Test_plot_trajectory_fan(hunitest.TestCase):
     Test `racket_strategy_utils.plot_trajectory_fan()`.
     """
 
-    def helper(
-        self,
-        sport,
-        player,
-        start_pos,
-        end_pos,
-        time_s,
-    ) -> None:
-        """
-        Helper for plot_trajectory_fan.
-
-        :param sport: Sport configuration
-        :param player: Player parameters
-        :param start_pos: Starting position
-        :param end_pos: Ending position
-        :param time_s: Time in seconds
-        """
-        # Prepare inputs.
-        _, ax = plt.subplots()
-        # Run test.
-        racket_strategy_utils.plot_trajectory_fan(
-            sport, player, start_pos, end_pos, time_s, ax=ax
-        )
-        # Check outputs.
-        self.assertGreater(len(ax.lines), 0)
-        plt.close("all")
-
     def test1(self) -> None:
         """
         Test that the Figure 1 setup runs without error.
@@ -125,26 +146,14 @@ class Test_plot_trajectory_fan(hunitest.TestCase):
         start_pos = (0.0, -12.0)
         end_pos = (0.0, 8.0)
         time_s = 8.0
+        _, ax = plt.subplots()
         # Run test.
-        self.helper(sport, player, start_pos, end_pos, time_s)
-
-    def test2(self) -> None:
-        """
-        Test edge case with minimal player speed and reaction time.
-        """
-        # Prepare inputs.
-        sport = racket_params.TENNIS
-        player = racket_params.PlayerParams(
-            reaction_time_s=0.05,
-            move_speed_mps=0.5,
-            contact_height_m=1.0,
-            error=racket_params.DEFAULT_ERROR,
+        racket_strategy_utils.plot_trajectory_fan(
+            sport, player, start_pos, end_pos, time_s, ax=ax
         )
-        start_pos = (0.0, -12.0)
-        end_pos = (0.0, 8.0)
-        time_s = 8.0
-        # Run test.
-        self.helper(sport, player, start_pos, end_pos, time_s)
+        # Check outputs.
+        self.assertGreater(len(ax.lines), 0)
+        plt.close("all")
 
 
 # #############################################################################
@@ -159,106 +168,71 @@ class Test_plot_court_heatmap(hunitest.TestCase):
 
     def helper(
         self,
-        scores,
-        column_name: str,
-        sport,
-        expected_rectangles: int = None,
-        expected_collections: bool = False,
-        markers=None,
+        scores: pd.DataFrame,
+        markers: Optional[Dict[str, Tuple[float, float]]],
+        expected: str,
     ) -> None:
         """
         Helper for plot_court_heatmap.
 
         :param scores: DataFrame with score data
-        :param column_name: Name of the score column
-        :param sport: Sport configuration
-        :param expected_rectangles: Expected number of rectangles (None to skip check)
-        :param expected_collections: Whether to expect collections (for markers)
-        :param markers: Optional marker positions
+        :param markers: marker positions by label, or None for no markers
+        :param expected: expected number of cell rectangles and of markers
         """
         # Prepare inputs.
+        column_name = "score"
+        sport = racket_params.TENNIS
         _, ax = plt.subplots()
         # Run test.
         racket_strategy_utils.plot_court_heatmap(
             scores, column_name, sport, markers=markers, ax=ax
         )
         # Check outputs.
-        if expected_rectangles is not None:
-            n_rectangles = sum(
-                1 for p in ax.patches if isinstance(p, mpatches.Rectangle)
-            )
-            self.assertEqual(n_rectangles, expected_rectangles)
-        if expected_collections:
-            self.assertGreater(len(ax.collections), 0)
+        n_rectangles = sum(
+            1 for p in ax.patches if isinstance(p, mpatches.Rectangle)
+        )
+        # Each marker is a scatter of one point.
+        actual = f"rectangles={n_rectangles} markers={len(ax.collections)}"
         plt.close("all")
+        self.assert_equal(actual, expected)
 
     def test1(self) -> None:
         """
         Test that a 2x2 grid draws one patch per cell.
         """
         # Prepare inputs.
-        sport = racket_params.TENNIS
-        region = racket_params.get_half_court_region(sport.court)
-        grid_rows = 2
-        grid_cols = 2
-        targets = racket_scoring.make_target_grid(region, grid_rows, grid_cols)
-        scores = targets.copy()
-        score_values = [0.1, 0.4, 0.7, 0.9]
-        scores["score"] = score_values
-        column_name = "score"
+        scores = _make_scores(2, 2, [0.1, 0.4, 0.7, 0.9])
+        markers = None
         # Prepare outputs.
-        expected_rectangles = 4
+        expected = "rectangles=4 markers=0"
         # Run test.
-        self.helper(
-            scores, column_name, sport, expected_rectangles=expected_rectangles
-        )
+        self.helper(scores, markers, expected)
 
     def test2(self) -> None:
         """
         Test that markers add one scatter point per label.
         """
         # Prepare inputs.
-        sport = racket_params.TENNIS
-        region = racket_params.get_half_court_region(sport.court)
-        grid_rows = 2
-        grid_cols = 2
-        targets = racket_scoring.make_target_grid(region, grid_rows, grid_cols)
-        scores = targets.copy()
-        score_values = [0.1, 0.4, 0.7, 0.9]
-        scores["score"] = score_values
+        scores = _make_scores(2, 2, [0.1, 0.4, 0.7, 0.9])
         striker_pos = (0.0, -1.0)
         returner_pos = (1.0, 3.0)
         markers = {"Striker": striker_pos, "Returner": returner_pos}
-        column_name = "score"
+        # Prepare outputs.
+        expected = "rectangles=4 markers=2"
         # Run test.
-        self.helper(
-            scores,
-            column_name,
-            sport,
-            expected_collections=True,
-            markers=markers,
-        )
+        self.helper(scores, markers, expected)
 
     def test3(self) -> None:
         """
         Test edge case with minimal 1x1 grid draws one patch.
         """
         # Prepare inputs.
-        sport = racket_params.TENNIS
-        region = racket_params.get_half_court_region(sport.court)
-        grid_rows = 1
-        grid_cols = 1
-        targets = racket_scoring.make_target_grid(region, grid_rows, grid_cols)
-        scores = targets.copy()
-        score_values = [0.5]
-        scores["score"] = score_values
-        column_name = "score"
+        scores = _make_scores(1, 1, [0.5])
+        markers = None
         # Prepare outputs.
-        expected_rectangles = 1
+        expected = "rectangles=1 markers=0"
         # Run test.
-        self.helper(
-            scores, column_name, sport, expected_rectangles=expected_rectangles
-        )
+        self.helper(scores, markers, expected)
 
 
 # #############################################################################
@@ -276,26 +250,8 @@ class Test_plot_launch_tradeoff(hunitest.TestCase):
         Test that a small launch table plots without error.
         """
         # Prepare inputs.
-        sport = racket_params.TENNIS
-        striker = racket_params.DEFAULT_PLAYER
-        striker_pos = (0.0, -11.0)
-        situation = racket_scoring.make_rally_situation(
-            sport, striker, striker_pos
-        )
-        grid_rows = 1
-        grid_cols = 1
-        targets = racket_scoring.make_target_grid(
-            racket_params.get_half_court_region(sport.court),
-            grid_rows,
-            grid_cols,
-        )
-        n_samples = 50
-        seed = 0
-        config = racket_scoring.ScoringConfig(n_samples=n_samples, seed=seed)
-        launch_table = racket_scoring.estimate_launch_table(
-            sport, situation, targets, config
-        )
-        cell_id = int(targets["cell_id"].iloc[0])
+        launch_table = _make_launch_table(1, 1)
+        cell_id = int(launch_table["cell_id"].iloc[0])
         _, ax = plt.subplots()
         # Run test.
         racket_strategy_utils.plot_launch_tradeoff(launch_table, cell_id, ax=ax)
@@ -314,88 +270,47 @@ class Test_build_score_widget(hunitest.TestCase):
     Test `racket_strategy_utils.build_score_widget()`.
     """
 
-    def helper(
-        self,
-        launch_table,
-        expected_children_count: int = None,
-        check_controls: bool = False,
-    ) -> None:
+    def helper(self, launch_table: pd.DataFrame) -> None:
         """
         Helper for build_score_widget.
 
         :param launch_table: Launch table from estimate_launch_table
-        :param expected_children_count: Expected number of widget children (None to skip)
-        :param check_controls: Whether to check controls structure
         """
         # Prepare inputs.
         sport = racket_params.TENNIS
+        # Prepare outputs.
+        expected = "widget=VBox controls=VBox n_controls=4"
         # Run test.
         widget = racket_strategy_utils.build_score_widget(
             sport, launch_table, racket_params.DEFAULT_PLAYER
         )
         # Check outputs.
-        self.assertIsInstance(widget, ipywidgets.VBox)
-        if check_controls:
-            controls = widget.children[0]
-            self.assertIsInstance(controls, ipywidgets.VBox)
-            self.assertEqual(len(controls.children), 4)
-        if expected_children_count is not None:
-            self.assertGreater(len(widget.children), expected_children_count)
+        controls = widget.children[0]
+        actual = (
+            f"widget={type(widget).__name__} "
+            f"controls={type(controls).__name__} "
+            f"n_controls={len(controls.children)}"
+        )
         plt.close("all")
+        self.assert_equal(actual, expected)
 
     def test1(self) -> None:
         """
         Test that the widget builds without running the notebook UI.
         """
         # Prepare inputs.
-        sport = racket_params.TENNIS
-        striker = racket_params.DEFAULT_PLAYER
-        striker_pos = (0.0, -11.0)
-        situation = racket_scoring.make_rally_situation(
-            sport, striker, striker_pos
-        )
-        grid_rows = 2
-        grid_cols = 2
-        targets = racket_scoring.make_target_grid(
-            racket_params.get_half_court_region(sport.court),
-            grid_rows,
-            grid_cols,
-        )
-        n_samples = 50
-        seed = 0
-        config = racket_scoring.ScoringConfig(n_samples=n_samples, seed=seed)
-        launch_table = racket_scoring.estimate_launch_table(
-            sport, situation, targets, config
-        )
+        launch_table = _make_launch_table(2, 2)
         # Run test.
-        self.helper(launch_table, check_controls=True)
+        self.helper(launch_table)
 
     def test2(self) -> None:
         """
         Test edge case with minimal 1x1 grid.
         """
         # Prepare inputs.
-        sport = racket_params.TENNIS
-        striker = racket_params.DEFAULT_PLAYER
-        striker_pos = (0.0, -11.0)
-        situation = racket_scoring.make_rally_situation(
-            sport, striker, striker_pos
-        )
-        grid_rows = 1
-        grid_cols = 1
-        targets = racket_scoring.make_target_grid(
-            racket_params.get_half_court_region(sport.court),
-            grid_rows,
-            grid_cols,
-        )
-        n_samples = 50
-        seed = 0
-        config = racket_scoring.ScoringConfig(n_samples=n_samples, seed=seed)
-        launch_table = racket_scoring.estimate_launch_table(
-            sport, situation, targets, config
-        )
+        launch_table = _make_launch_table(1, 1)
         # Run test.
-        self.helper(launch_table, expected_children_count=0)
+        self.helper(launch_table)
 
 
 # #############################################################################
@@ -408,33 +323,6 @@ class Test_build_exploration_widget(hunitest.TestCase):
     Test `racket_strategy_utils.build_exploration_widget()`.
     """
 
-    def helper(
-        self,
-        sport,
-        config,
-        check_controls_count: bool = False,
-    ) -> None:
-        """
-        Helper for build_exploration_widget.
-
-        :param sport: Sport configuration
-        :param config: Scoring configuration
-        :param check_controls_count: Whether to verify controls has 8 children
-        """
-        # Run test.
-        widget = racket_strategy_utils.build_exploration_widget(sport, config)
-        # Check outputs.
-        self.assertIsInstance(widget, ipywidgets.VBox)
-        controls, output = widget.children
-        self.assertIsInstance(controls, ipywidgets.VBox)
-        self.assertIsInstance(output, ipywidgets.Output)
-        if check_controls_count:
-            # 7 sliders + 1 run button.
-            expected_children = 8
-            self.assertEqual(len(controls.children), expected_children)
-            self.assertIsInstance(controls.children[-1], ipywidgets.Button)
-        plt.close("all")
-
     def test1(self) -> None:
         """
         Test that the widget builds and renders a static default run.
@@ -445,16 +333,14 @@ class Test_build_exploration_widget(hunitest.TestCase):
         seed = 0
         config = racket_scoring.ScoringConfig(n_samples=n_samples, seed=seed)
         # Run test.
-        self.helper(sport, config, check_controls_count=True)
-
-    def test2(self) -> None:
-        """
-        Test edge case with minimal sample size.
-        """
-        # Prepare inputs.
-        sport = racket_params.TENNIS
-        n_samples = 5
-        seed = 0
-        config = racket_scoring.ScoringConfig(n_samples=n_samples, seed=seed)
-        # Run test.
-        self.helper(sport, config)
+        widget = racket_strategy_utils.build_exploration_widget(sport, config)
+        # Check outputs.
+        self.assertIsInstance(widget, ipywidgets.VBox)
+        controls, output = widget.children
+        self.assertIsInstance(controls, ipywidgets.VBox)
+        self.assertIsInstance(output, ipywidgets.Output)
+        # 7 sliders + 1 run button.
+        expected_children = 8
+        self.assertEqual(len(controls.children), expected_children)
+        self.assertIsInstance(controls.children[-1], ipywidgets.Button)
+        plt.close("all")

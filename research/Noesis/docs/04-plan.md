@@ -58,6 +58,9 @@
   and what a correct task costs: a per-model quality and price-per-task time series,
   with a nerfing flag fed to the market
   - [ ] `PR_S13`
+  - [ ] `PR_S14`
+  - [ ] `PR_S15`
+  - [ ] `PR_S16`
 - Releases are cumulative: each version also requires every PR listed under the
   versions before it (e.g. `v0.4` also needs `v0.1`-`v0.3`'s PRs)
 
@@ -257,6 +260,9 @@
   that the notebooks and later tests share
 
 ### `PR_M12`: [ ] Auction Result Report and Plot Helpers
+
+- Implementation is split into four review units: tables, round summaries, plots,
+  and the offline demo. Keep this item open until all four changes are merged.
 
 - Background: `TierClearResult`, `Fill`, and `Contract` objects are not readable in
   a notebook cell; the input requests and the auction result need tables and a plot
@@ -630,72 +636,56 @@
 
 ## v0.7: Model-nerfing Detection and Cost per Task
 
-### `PR_S13`: [ ] Model-nerfing Detection and Cost-per-task Tracking
+### `PR_S13`: [ ] Standalone Monitoring Design and Boundaries
 
-- Background: `papers/Noesis/01_introduction.tex` motivates `NoesisServer` with the
-  buyer having "no standard way to detect that a model has been quietly downgraded
-  (model nerfing)": two providers, or one provider on two days, can charge the same
-  per-token rate while delivering different capability
-- Background: no other PR covers this:
-  - `PR_S4`/`PR_S6` judge one contract's window against `R_min`, so they have no
-    memory of a `(provider, model_id)` across contracts or across weeks
-  - `PR_S11` scores a single response, not a time series
-  - `PR_S2` measures cost and quality once, on logged data, not over time
-  - Market open question 1 (the task unit) is open, so there is no "price per task"
-    number anywhere
-- Reuse what `research/Noesis/checker/` already has: the secret balanced canary
-  selection (`checker_canaries.py`), deterministic grading (`checker_grading.py`),
-  and one-sided bounds (`checker_statistics.py`); this PR adds the longitudinal view
-  per model, not a new grader
-- Define the unit of tracking as `(provider, model_id, probe_set_version)` over
-  non-overlapping windows `W_t` of fixed wall-clock length (e.g., 1 day), with a
-  fixed canary subset per window drawn from the versioned probe set
-- Per window, compute and store:
-  - Quality $\hat q_t$: pass rate of graded canaries (errors and timeouts are
-    excluded from the denominator and counted in availability, consistent with the
-    checker's seller-attributable evidence rule)
-  - Availability: fraction of canary requests that returned a non-error response
-  - Latency: p50 and p95 of canary latency
-  - Tokens per task (prompt and completion): a nerfed model often gets cheaper
-    per request by answering shorter, so cost alone can hide a downgrade
-  - `cost_per_task`: mean billed cost per canary request, using `PR_S7`'s real
-    per-token price (`PR_S7` is in `v0.5`, before this PR)
-  - `cost_per_correct_task = cost_per_task / q_hat_t`: the price of one *passed*
-    task; this is the "price per task" figure that a quality drop at constant token
-    price makes go up
-- Baseline: the first `K_base` windows after a model is first seen, or a pinned
-  onboarding run, stored with `probe_set_version`; a change of `probe_set_version`
-  or of `model_id` starts a new series and is never compared across the boundary
-- Nerfing test per window: one-sided Fisher exact test (normal approximation when
-  both counts are large) of $H_0: q_t \ge q_{\text{base}}$; flag `NERFED` only when
-  both hold: `p < delta` and `q_base - q_hat_t >= Delta_min` (a practical effect
-  size, so a huge sample cannot flag a trivial drop); require `k_consecutive`
-  flagged windows before raising the flag, to control repeated-testing false alarms
-- Verdicts mirror the checker: `OK`, `NERFED`, or `INSUFFICIENT` when the window has
-  fewer than `n_min` graded canaries (never flagged on thin data)
-- Surface the series through a CLI report (one row per model per window: quality,
-  baseline, drop, p-value, availability, p95 latency, `cost_per_task`,
-  `cost_per_correct_task`, verdict) and a store table; emit a `NERFED` event
-  through `PR_S4`'s market-facing report interface at model scope, so `PR_M3` can
-  later discount every contract that routes to that model
-- Unit tests (fake provider using `gateway_faults.py`'s `model_override`, with fixed
-  seeds):
-  - A healthy provider over many windows is never flagged, and the simulated
-    false-flag rate stays at or below `delta`
-  - A mid-series swap to a weaker model is flagged within `k_consecutive` windows of
-    the swap and not before it
-  - A true drop smaller than `Delta_min` is not flagged even at large `n`
-  - Same token price and a quality drop: `cost_per_task` is unchanged and
-    `cost_per_correct_task` rises by the factor $q_{\text{base}} / \hat q_t$
-  - A price increase at constant quality: `cost_per_task` rises and no `NERFED`
-    flag is raised
-  - A window with fewer than `n_min` graded canaries yields `INSUFFICIENT`
-  - A `probe_set_version` change starts a new baseline and never compares across it
-- Result: a per-model time series of quality, availability, latency, and
-  `cost_per_correct_task` for each provider `NoesisServer` routes to, with a nerfing
-  flag that fires on an injected model swap and stays quiet on a healthy provider;
-  gives `NoesisMarket` a model-level (not only contract-level) signal and a first
-  concrete "price per task" number for open question 1 -> Project
+- Specify the model-quality monitor before implementation
+- Map the existing `PR_S11` bank, grader, capability measurer, provider interface,
+  and calibration runtime to the reusable monitoring path
+- Keep the monitoring path independent of market orders, contracts, verdicts, and
+  reputation writes
+- Split implementation into `PR_S14`-`PR_S16`, with acceptance criteria and
+  non-overlapping ownership in `spec.PR_S13.md`
+- Result: an approved, reviewable implementation plan for issue #684 with no runtime
+  behavior change
+
+### `PR_S14`: [ ] Standalone Model Monitor MVP
+
+- Add an explicit one-shot command that probes a configured `(provider, model_id)`
+  without creating a market contract
+- Reuse `PR_S11`'s versioned canary bank, deterministic grader,
+  `CapabilityMeasurer`, and `Provider` interface instead of duplicating them
+- Store monitoring runs and observations separately from contract evidence
+- Default to a no-spend validation mode; require an explicit flag for live calls
+- Unit tests: a fake provider produces reproducible persisted observations, and no
+  market, contract, verdict, or reputation API is called
+- Result: one model can be checked on demand, independently of `NoesisMarket`
+
+### `PR_S15`: [ ] Recurring Monitoring Windows and Metrics
+
+- Schedule repeated standalone runs into non-overlapping windows for each
+  `(provider, model_id, probe_set_version)` series
+- Add bounded retries, a per-window call budget, idempotent claims, and graceful
+  worker shutdown
+- Aggregate quality, availability, p50/p95 latency, token use, `cost_per_task`, and
+  `cost_per_correct_task` for each closed window
+- Unit tests: duplicate workers cannot execute one slot twice; insufficient windows
+  remain explicit; provider errors do not stop later windows
+- Result: a queryable longitudinal record of model performance and cost
+
+### `PR_S16`: [ ] Nerfing Detection, Reports, and Paper Evidence
+
+- Compare each closed window with a baseline from the same
+  `(provider, model_id, probe_set_version)` series
+- Require statistical significance, a minimum practical quality drop, and
+  consecutive flagged windows before returning `NERFED`
+- Report `OK`, `NERFED`, or `INSUFFICIENT` through a CLI table and reproducible
+  plots
+- Run healthy, latency-fault, price-change, and weaker-model-swap experiments with
+  fixed seeds; add measured results and limitations to the probing paper
+- Keep market-facing events, reputation changes, dashboards, and alert delivery out
+  of this PR until monitoring behavior is validated
+- Result: evidence that the standalone monitor detects an injected model downgrade
+  without flagging a healthy provider
 
 ## Unscheduled: NoesisMarket
 
@@ -1150,7 +1140,7 @@ Live status and history: `07-progress.md`.
 |---|---|---|---|---|---|
 | M0 | Setup + facts | Tue 9/29 – Fri 10/9 | J+G+L | GP's tests pass locally and in CI with no `helpers` monorepo. OpenRouter spike confirms ≥ 3 pinnable providers for the model. Schema frozen. Decisions signed | ✅ 9/30 (GP email pending) |
 | M1 | Real server | Mon 10/12 – Fri 10/30 | J (+L: T1.5, T2.1 starts) | Unmodified `openai` Python SDK → our gateway → 3 pinned providers. Every log row has `contract_id` + verified `actual_provider` | ✅ 10/4 (spend cap deferred) |
-| M2 | Checker | Mon 11/2 – Fri 11/20 | J + L | Calibrated canary set ≥ 150. Offline replay: injected slowdown and model swap flagged, healthy traffic not flagged, rates within ±5 pts of `detection_math.py` | 🟨 foundation merged 10/11; runtime and data remain |
+| M2 | Checker | Mon 11/2 – Fri 11/20 | J + L | Calibrated canary set ≥ 150. Offline replay: injected slowdown and model swap flagged, healthy traffic not flagged, rates within ±5 pts of `detection_math.py` | 🟨 offline replay complete 10/31; paid calibration and runtime review remain |
 | M3 | Loop closed (parallel with M1–M2) | Mon 10/12 – Fri 11/20 | G | With fake gateway: auction on timer, filter works, contracts go ACTIVE→verdict, a failing seller is blocked, cooled down, put on probation, reinstated | ⬜ |
 | M4 | Integrated demo | Mon 11/23 – Fri 12/11 | J+G+L | Success Criteria 1–8 in one recorded 60-min run | ⬜ |
 
@@ -1218,7 +1208,7 @@ Every task: branch → PR → tests green in CI → one reviewer (another teamma
 | T2.3 | ✅ For each ACTIVE contract, secret deterministic canaries are spread over its window, atomically claimed, sent as ordinary traffic, graded, and persisted server-side | Integration test with fake provider | new |
 | T2.4 | 🟨 PR #604 merged the evidence/verdict foundation; stacked PRs #744, #747, and #749 add target-or-deadline closing, atomic orchestration, and worker integration | Unit and PostgreSQL-backed tests cover readiness, idempotency, and failure isolation | PR_S4, PR_S6 (corrected) |
 | T2.5 | 🟨 `VerdictSink` interface and recording mock implemented; real reputation adapter remains in T3.4 | Complete payload and actionability tests; worker injects the sink | PR_S4 |
-| T2.6 | **Offline replay harness**: generate synthetic request streams (healthy / slowed / weak-model at measured accuracies), run metering, report flag rates | Rates within ±5 pts of analytic numbers over 1,000 simulated contracts | new |
+| T2.6 | ✅ **Offline replay harness**: deterministic healthy, slowed, weak-model, borderline, and insufficient-evidence streams run through production checker logic; JSON/CSV/Markdown findings generated over 5 seeds × 1,000 contracts per scenario | All six aggregate rates pass statistical agreement and remain within ±5 pts of analytic numbers; healthy has 0/5,000 false alarms | new |
 
 ### M3 — Loop closed (G, starts 10/12 in parallel)
 

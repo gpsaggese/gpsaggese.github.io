@@ -12,27 +12,24 @@ import time
 import numpy as np
 import pandas as pd
 import requests
+import yfinance as yf
 
 _BINANCE_URL = "https://data-api.binance.vision/api/v3/klines"
 _DATA_DIR = "data"
 
 
-def load_prices(symbol: str, interval: str, start: str, end: str) -> pd.Series:
+def _download_binance(
+    symbol: str, interval: str, start: str, end: str
+) -> pd.DataFrame:
     """
-    Load close prices from Binance, using a local CSV cache.
+    Download close prices from the Binance API.
 
     :param symbol: trading pair, e.g., "BTCUSDT"
     :param interval: bar size, e.g., "1h", "1d"
-    :param start: start date (inclusive), e.g., "2020-01-01"
-    :param end: end date (exclusive), e.g., "2026-10-01"
+    :param start: start date (inclusive)
+    :param end: end date (exclusive)
     :return: close prices indexed by bar open time (UTC)
     """
-    file_name = f"{symbol}_{interval}_{start}_{end}.csv"
-    file_path = os.path.join(_DATA_DIR, file_name)
-    # Use the cached file if we already downloaded this data.
-    if os.path.exists(file_path):
-        prices = pd.read_csv(file_path, index_col=0, parse_dates=True)
-        return prices["close"]
     # Binance returns at most 1000 bars per request, so download in pages.
     start_ms = int(pd.Timestamp(start, tz="UTC").timestamp() * 1000)
     # End is exclusive: do not include the bar that opens exactly at `end`.
@@ -57,14 +54,74 @@ def load_prices(symbol: str, interval: str, start: str, end: str) -> pd.Series:
         start_ms = bars[-1][0] + 1
         # Stay well under the Binance rate limit.
         time.sleep(0.2)
-    if not rows:
-        msg = f"No data for {symbol} {interval} from {start} to {end}"
-        raise ValueError(msg)
     prices = pd.DataFrame(rows, columns=["open_time", "close"])
     prices["open_time"] = pd.to_datetime(
         prices["open_time"], unit="ms", utc=True
     )
     prices = prices.drop_duplicates("open_time").set_index("open_time")
+    return prices
+
+
+def _download_yahoo(
+    symbol: str, interval: str, start: str, end: str
+) -> pd.DataFrame:
+    """
+    Download close prices from Yahoo Finance.
+
+    Prices are adjusted for dividends and splits. Yahoo only has hourly
+    bars for the last 730 days.
+
+    :param symbol: ticker, e.g., "SPY"
+    :param interval: bar size, e.g., "1h", "1d"
+    :param start: start date (inclusive)
+    :param end: end date (exclusive)
+    :return: close prices indexed by bar open time (UTC)
+    """
+    df = yf.Ticker(symbol).history(
+        start=start, end=end, interval=interval, auto_adjust=True
+    )
+    prices = df[["Close"]].rename(columns={"Close": "close"})
+    prices.index = prices.index.tz_convert("UTC")
+    prices.index.name = "open_time"
+    return prices
+
+
+def load_prices(
+    symbol: str,
+    interval: str,
+    start: str,
+    end: str,
+    *,
+    source: str = "binance",
+) -> pd.Series:
+    """
+    Load close prices, using a local CSV cache.
+
+    :param symbol: trading pair or ticker, e.g., "BTCUSDT", "SPY"
+    :param interval: bar size, e.g., "1h", "1d"
+    :param start: start date (inclusive), e.g., "2020-01-01"
+    :param end: end date (exclusive), e.g., "2026-10-01"
+    :param source: where to get the data
+        - "binance": crypto, from the Binance API
+        - "yahoo": equities, from Yahoo Finance
+    :return: close prices indexed by bar open time (UTC)
+    """
+    file_name = f"{symbol}_{interval}_{start}_{end}.csv"
+    file_path = os.path.join(_DATA_DIR, file_name)
+    # Use the cached file if we already downloaded this data.
+    if os.path.exists(file_path):
+        prices = pd.read_csv(file_path, index_col=0, parse_dates=True)
+        return prices["close"]
+    if source == "binance":
+        prices = _download_binance(symbol, interval, start, end)
+    elif source == "yahoo":
+        prices = _download_yahoo(symbol, interval, start, end)
+    else:
+        raise ValueError(f"Invalid source='{source}'")
+    # Fail loudly instead of silently using fake data.
+    if prices.empty:
+        msg = f"No data for {symbol} {interval} from {start} to {end}"
+        raise ValueError(msg)
     os.makedirs(_DATA_DIR, exist_ok=True)
     prices.to_csv(file_path)
     return prices["close"]
@@ -133,20 +190,22 @@ def run_experiment(
     n_sims: int,
     *,
     mode: str = "shuffle",
+    source: str = "binance",
 ) -> pd.DataFrame:
     """
     Simulate the PnL distribution for each hit rate on one asset / frequency.
 
-    :param symbol: trading pair, e.g., "BTCUSDT"
+    :param symbol: trading pair or ticker, e.g., "BTCUSDT", "SPY"
     :param interval: bar size, e.g., "1h", "1d"
     :param start: start date (inclusive)
     :param end: end date (exclusive)
     :param hit_rates: hit rates to simulate, e.g., [0.50, 0.51]
     :param n_sims: number of simulations per hit rate
     :param mode: "shuffle" or "bernoulli" (see `simulate_pnl()`)
+    :param source: "binance" or "yahoo" (see `load_prices()`)
     :return: one row per (hit_rate, simulation) with the PnL
     """
-    prices = load_prices(symbol, interval, start, end)
+    prices = load_prices(symbol, interval, start, end, source=source)
     rets = compute_returns(prices)
     results = []
     for hit_rate in hit_rates:

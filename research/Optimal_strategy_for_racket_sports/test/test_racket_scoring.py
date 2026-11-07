@@ -3,7 +3,7 @@ Tests for racket_scoring module.
 """
 
 import logging
-from typing import Tuple
+from typing import List, Tuple
 
 import numpy as np
 import pandas as pd
@@ -231,7 +231,6 @@ class Test_estimate_launch_table(hunitest.TestCase):
         # Prepare outputs.
         expected_p_in_inside = 1.0
         expected_p_in_outside = 0.0
-        min_rows_required = 0
         # Run test.
         actual = racket_scoring.estimate_launch_table(
             sport, situation, targets, config
@@ -241,12 +240,11 @@ class Test_estimate_launch_table(hunitest.TestCase):
         outside_cell_id = targets.loc[targets["y_m"] > 5.0, "cell_id"].iloc[0]
         inside_rows = actual[actual["cell_id"] == inside_cell_id]
         outside_rows = actual[actual["cell_id"] == outside_cell_id]
-        self.assertGreater(len(inside_rows), min_rows_required)
+        # Both cells have feasible launches, so neither check below is empty.
+        self.assertGreater(len(inside_rows), 0)
+        self.assertGreater(len(outside_rows), 0)
         self.assertTrue((inside_rows["p_in"] == expected_p_in_inside).all())
-        if len(outside_rows) > 0:
-            self.assertTrue(
-                (outside_rows["p_in"] == expected_p_in_outside).all()
-            )
+        self.assertTrue((outside_rows["p_in"] == expected_p_in_outside).all())
 
     def test2(self) -> None:
         """
@@ -333,9 +331,13 @@ class Test_score_targets(hunitest.TestCase):
     Test `racket_scoring.score_targets()`.
     """
 
-    def test1(self) -> None:
+    def helper(self, n_x: int, n_y: int) -> None:
         """
-        Test a tiny grid with a fixed seed against the whole output frame.
+        Test helper for `score_targets()`: one score per cell of a grid over
+        the returner's half, between 0 and `p_in`.
+
+        :param n_x: number of grid columns
+        :param n_y: number of grid rows
         """
         # Prepare inputs.
         sport = racket_params.TENNIS
@@ -344,7 +346,7 @@ class Test_score_targets(hunitest.TestCase):
             sport, striker, (0.0, -11.0)
         )
         region = racket_params.get_half_court_region(sport.court)
-        targets = racket_scoring.make_target_grid(region, 2, 2)
+        targets = racket_scoring.make_target_grid(region, n_x, n_y)
         config = racket_scoring.ScoringConfig(n_samples=200, seed=1)
         launch_table = racket_scoring.estimate_launch_table(
             sport, situation, targets, config
@@ -368,39 +370,25 @@ class Test_score_targets(hunitest.TestCase):
             (actual["score"] <= actual["p_in"] + max_score_tolerance).all()
         )
 
+    def test1(self) -> None:
+        """
+        Test that a 2x2 grid gets one score per cell, between 0 and `p_in`.
+        """
+        # Prepare inputs.
+        n_x = 2
+        n_y = 2
+        # Run test and check outputs.
+        self.helper(n_x, n_y)
+
     def test2(self) -> None:
         """
         Test edge case with a single target cell.
         """
         # Prepare inputs.
-        sport = racket_params.TENNIS
-        striker = racket_params.DEFAULT_PLAYER
-        situation = racket_scoring.make_rally_situation(
-            sport, striker, (0.0, -11.0)
-        )
-        region = racket_params.get_half_court_region(sport.court)
-        targets = racket_scoring.make_target_grid(region, 1, 1)
-        config = racket_scoring.ScoringConfig(n_samples=200, seed=1)
-        launch_table = racket_scoring.estimate_launch_table(
-            sport, situation, targets, config
-        )
-        returner = racket_params.DEFAULT_PLAYER
-        returner_xy = (0.0, 6.0)
-        # Prepare outputs.
-        expected_len = 1
-        min_score = 0
-        max_score_tolerance = 1e-9
-        # Run test.
-        actual = racket_scoring.score_targets(
-            launch_table, returner, returner_xy
-        )
-        # Check outputs.
-        self.assertEqual(len(actual), expected_len)
-        self.assertTrue(actual["score"].iloc[0] >= min_score)
-        self.assertTrue(
-            actual["score"].iloc[0]
-            <= actual["p_in"].iloc[0] + max_score_tolerance
-        )
+        n_x = 1
+        n_y = 1
+        # Run test and check outputs.
+        self.helper(n_x, n_y)
 
 
 # #############################################################################
@@ -413,65 +401,68 @@ class Test_select_best_cell(hunitest.TestCase):
     Test `racket_scoring.select_best_cell()`.
     """
 
-    def test1(self) -> None:
+    def helper(
+        self,
+        cell_ids: List[int],
+        score_values: List[float],
+        expected_cell_id: int,
+        expected_score: float,
+    ) -> None:
         """
-        Test that the row with the highest score is selected.
+        Test helper for `select_best_cell()`.
+
+        :param cell_ids: id of each row
+        :param score_values: score of each row
+        :param expected_cell_id: id of the expected best row
+        :param expected_score: score of the expected best row
         """
         # Prepare inputs.
-        scores = pd.DataFrame(
-            {
-                "cell_id": [0, 1, 2],
-                "score": [0.1, 0.9, 0.5],
-            }
-        )
-        # Prepare outputs.
-        expected_cell_id = 1
-        expected_score = 0.9
+        scores = pd.DataFrame({"cell_id": cell_ids, "score": score_values})
         # Run test.
         actual = racket_scoring.select_best_cell(scores)
         # Check outputs.
         self.assertEqual(int(actual["cell_id"]), expected_cell_id)
         self.assertAlmostEqual(float(actual["score"]), expected_score)
+
+    def test1(self) -> None:
+        """
+        Test that the row with the highest score is selected.
+        """
+        # Prepare inputs.
+        cell_ids = [0, 1, 2]
+        score_values = [0.1, 0.9, 0.5]
+        # Prepare outputs.
+        expected_cell_id = 1
+        expected_score = 0.9
+        # Run test and check outputs.
+        self.helper(cell_ids, score_values, expected_cell_id, expected_score)
 
     def test2(self) -> None:
         """
         Test edge case with a single row.
         """
         # Prepare inputs.
-        scores = pd.DataFrame(
-            {
-                "cell_id": [42],
-                "score": [0.7],
-            }
-        )
+        cell_ids = [42]
+        score_values = [0.7]
         # Prepare outputs.
         expected_cell_id = 42
         expected_score = 0.7
-        # Run test.
-        actual = racket_scoring.select_best_cell(scores)
-        # Check outputs.
-        self.assertEqual(int(actual["cell_id"]), expected_cell_id)
-        self.assertAlmostEqual(float(actual["score"]), expected_score)
+        # Run test and check outputs.
+        self.helper(cell_ids, score_values, expected_cell_id, expected_score)
 
     def test3(self) -> None:
         """
         Test edge case with tied scores: returns first occurrence.
         """
         # Prepare inputs.
-        scores = pd.DataFrame(
-            {
-                "cell_id": [0, 1, 2],
-                "score": [0.5, 0.8, 0.8],
-            }
-        )
+        cell_ids = [0, 1, 2]
+        score_values = [0.5, 0.8, 0.8]
         # Prepare outputs.
+        # The first of the 2 rows with the highest score.
         expected_cell_id = 1
         expected_score = 0.8
-        # Run test.
-        actual = racket_scoring.select_best_cell(scores)
-        # Check outputs: should return first row with max score
-        self.assertAlmostEqual(float(actual["score"]), expected_score)
-        self.assertEqual(int(actual["cell_id"]), expected_cell_id)
+        # Run test and check outputs.
+        self.helper(cell_ids, score_values, expected_cell_id, expected_score)
 
 
 # #############################################################################

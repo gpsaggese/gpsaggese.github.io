@@ -61,6 +61,18 @@
 - **Alternatives**: fresh process-local randomness (hard to replay); public seeded
   schedules (predictable); marking probes in provider requests (easy to game)
 
+### D-29. Standalone monitoring cannot mutate market state
+
+- **Decision**: run longitudinal provider/model monitoring without market orders or
+  contracts, and store its observations separately from contract evidence
+- **Why**: monitoring must run without buyer traffic, while experimental thresholds
+  and monitor failures must not affect fulfillment, verdicts, or seller reputation
+- **Boundary**: the monitor can reuse the canary bank, capability measurer, and
+  provider interface; it cannot write contracts, contract verdicts, or reputation
+- **Alternatives**: synthetic contracts for monitoring (couples research traffic to
+  market state); reuse contract evidence tables (risks accidental seller penalties)
+- **Status**: proposed in `spec.PR_S13.md`; implementation starts in `PR_S14`
+
 ## Gateway
 
 ### `D4` (OpenRouter with the provider pinned, fallbacks off)
@@ -398,3 +410,69 @@
 - **Alternatives**: a grant per tier or per account type (nothing in the PRD
   asks for it); store the account id on the contract (changes the `Contract`
   schema that PR_P2b persists).
+
+## Offline Checker Replay (PR_S6)
+
+### `D32` (Exercise the Production Checker, Not an Experiment-only Copy)
+
+- **Decision**: synthetic observations pass through `build_evidence()`,
+  `assess_window_readiness()`, and `decide_verdict()`, the same pure functions used
+  by the runtime. Replay code owns only input generation, orchestration, analytic
+  prediction, and reporting.
+- **Why**: agreement from a second checker implementation would not establish that
+  the deployed decision path is correct. Pure production boundaries let the
+  experiment test real logic without requiring a database, gateway, or provider.
+- **Alternatives**: implement a simplified replay-specific verdict function
+  (smaller but capable of agreeing with itself); run the entire service stack
+  (adds unrelated I/O failures to a checker-logic experiment).
+
+### `D33` (Make Replay Deterministic and Keep Metric Streams Independent)
+
+- **Decision**: derive versioned latency and quality seeds from SHA-256 over the
+  base seed, scenario, and metric. Generate latency and quality with separate
+  `random.Random` instances.
+- **Why**: Python's `hash()` is process-randomized, and one shared stream would let
+  an added latency draw silently change every later canary outcome. Stable,
+  independent streams make failures reproducible and separately attributable.
+- **Alternatives**: process-global randomness (order-dependent); one seeded stream
+  (reproducible but couples the two measures); checked-in observation fixtures
+  (large and less useful for varying the protocol).
+
+### `D34` (Compare Monte Carlo Outcomes With an Exact Analytic Oracle)
+
+- **Decision**: enumerate binomial success counts, apply the production confidence
+  rule to each count, and sum the exact probability of all failing outcomes. A
+  scenario passes only within four standard errors, with a 0.5 percentage-point
+  floor, and within the roadmap's five-percentage-point limit.
+- **Why**: fixed expected snapshots can preserve an incorrect implementation.
+  Exact probabilities provide an independent prediction, while the statistical
+  tolerance accounts for finite simulation and the roadmap limit remains easy to
+  communicate.
+- **Alternatives**: compare only with hard-coded counts (brittle); use only the
+  five-point limit (too loose for 5,000 samples); require exact equality
+  (incorrect for stochastic simulation).
+
+### `D35` (Publish Reviewable, Reproducible Findings Without Live-I/O Claims)
+
+- **Decision**: the executable experiment writes stable Markdown, CSV, and JSON,
+  returns a nonzero exit code on acceptance failure, and checks in the full default
+  run. Reports explicitly separate latency, quality, and insufficient-evidence
+  outcomes.
+- **Why**: reviewers need a concise result, researchers need flat data, and CI
+  needs structured output and an exit status. Checked-in artifacts preserve the
+  exact evidence behind the technical-report claim.
+- **Alternatives**: console output only (not durable); notebooks (harder to test and
+  automate); interpret synthetic replay as live nerfing evidence (unsupported).
+
+## M12 Report Tables
+
+- Use explicit nullable column types and stable order for notebook-friendly tables
+- Keep buyer limits separate from seller expectations; missing opposite-side terms
+  are null rather than zero. Normalize capability field names to `tier`.
+- Table helpers perform no I/O; scripts own rendering and exported artifacts
+- Summary totals are reconstructed from M10's matched and residual quantities;
+  tests independently compare them with the original submitted books
+- Plot helpers use original orders, stable price priority, cumulative tasks, and
+  post steps. They return standalone figures without changing global backends;
+  headless test commands select `MPLBACKEND=Agg`.
+>
