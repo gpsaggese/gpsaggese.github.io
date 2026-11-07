@@ -14,12 +14,11 @@ import logging
 from typing import Any, Callable, Dict, Optional, Tuple
 
 import gymnasium as gym
+import helpers.hnotebook as hnotebo
+import helpers.hprint as hprint
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-
-import helpers.hnotebook as hnotebo
-import helpers.hprint as hprint
 
 _LOG = logging.getLogger(__name__)
 
@@ -337,7 +336,9 @@ def plot_learning_curves(curves: Dict[str, pd.DataFrame]) -> None:
     _, ax = plt.subplots(figsize=(7, 4))
     # Use env steps on the x-axis, since iterations differ across algorithms.
     for name, df in curves.items():
-        ax.plot(df["env_steps"], df["episode_return_mean"], marker="o", label=name)
+        ax.plot(
+            df["env_steps"], df["episode_return_mean"], marker="o", label=name
+        )
     # Label the axes and add the legend.
     ax.set_xlabel("Env steps sampled")
     ax.set_ylabel("Mean episode return")

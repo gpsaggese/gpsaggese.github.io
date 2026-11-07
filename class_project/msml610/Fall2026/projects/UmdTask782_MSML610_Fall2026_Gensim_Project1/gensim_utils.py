@@ -22,13 +22,12 @@ from typing import Any, Dict, List, Tuple
 
 import gensim.parsing.preprocessing
 import gensim.utils
-import pandas as pd
-import sklearn.model_selection
-
 import helpers.hdbg as hdbg
 import helpers.hio as hio
 import helpers.hnotebook as hnotebo
 import helpers.hprint as hprint
+import pandas as pd
+import sklearn.model_selection
 
 _LOG = logging.getLogger(__name__)
 

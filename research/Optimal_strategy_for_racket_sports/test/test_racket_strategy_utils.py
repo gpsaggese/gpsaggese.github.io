@@ -5,14 +5,16 @@ Tests for racket_strategy_utils module.
 import logging
 from typing import Dict, List, Optional, Tuple
 
+import helpers.hunit_test as hunitest
 import ipywidgets
 import matplotlib
 import pandas as pd
 
-import helpers.hunit_test as hunitest
-from research.Optimal_strategy_for_racket_sports import racket_params
-from research.Optimal_strategy_for_racket_sports import racket_scoring
-from research.Optimal_strategy_for_racket_sports import racket_strategy_utils
+from research.Optimal_strategy_for_racket_sports import (
+    racket_params,
+    racket_scoring,
+    racket_strategy_utils,
+)
 
 _LOG = logging.getLogger(__name__)
 

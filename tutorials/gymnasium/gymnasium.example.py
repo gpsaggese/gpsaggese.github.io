@@ -50,13 +50,12 @@ print("stable-baselines3 version: ", stable_baselines3.__version__)
 import inspect
 import logging
 
-import numpy as np
-import stable_baselines3 as sb3
-from gymnasium.utils.env_checker import check_env
-
 # %%
 import gymnasium_utils as utils
 import helpers.hnotebook as hnotebook
+import numpy as np
+import stable_baselines3 as sb3
+from gymnasium.utils.env_checker import check_env
 
 # Initialize notebook configuration and logging.
 hnotebook.config_notebook()

@@ -7,13 +7,12 @@ Import as:
 import predict_utils as putil
 """
 
+import data_utils as dutil
 import numpy as np
 import pandas as pd
 import sklearn.linear_model as sklm
 import sklearn.pipeline as skpipe
 import sklearn.preprocessing as skprep
-
-import data_utils as dutil
 import tradability_utils as tu
 
 # #############################################################################

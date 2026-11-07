@@ -21,6 +21,10 @@ import html
 import logging
 from typing import Any, Dict, List, Optional, Tuple
 
+import helpers.hdbg as hdbg
+import helpers.hnotebook as hnotebo
+import helpers.hprint as hprint
+import helpers.htutorial as htutori
 import ipywidgets
 import matplotlib.collections as mcollections
 import matplotlib.patches as mpatches
@@ -31,13 +35,11 @@ import scipy.stats
 from IPython.display import clear_output, display
 from matplotlib.axes import Axes
 
-import helpers.hdbg as hdbg
-import helpers.hnotebook as hnotebo
-import helpers.hprint as hprint
-import helpers.htutorial as htutori
-from research.Optimal_strategy_for_racket_sports import racket_params
-from research.Optimal_strategy_for_racket_sports import racket_scoring
-from research.Optimal_strategy_for_racket_sports import racket_strategy_utils
+from research.Optimal_strategy_for_racket_sports import (
+    racket_params,
+    racket_scoring,
+    racket_strategy_utils,
+)
 
 _LOG = logging.getLogger(__name__)
 

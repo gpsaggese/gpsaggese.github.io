@@ -5,12 +5,14 @@ Tests for racket_scoring module.
 import logging
 from typing import List, Tuple
 
+import helpers.hunit_test as hunitest
 import numpy as np
 import pandas as pd
 
-import helpers.hunit_test as hunitest
-from research.Optimal_strategy_for_racket_sports import racket_params
-from research.Optimal_strategy_for_racket_sports import racket_scoring
+from research.Optimal_strategy_for_racket_sports import (
+    racket_params,
+    racket_scoring,
+)
 
 _LOG = logging.getLogger(__name__)
 

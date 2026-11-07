@@ -6,12 +6,10 @@ import test.test_data_utils as ttdaut
 
 import logging
 
+import data_utils as dutil
+import helpers.hunit_test as hunitest
 import numpy as np
 import pandas as pd
-
-import helpers.hunit_test as hunitest
-
-import data_utils as dutil
 
 _LOG = logging.getLogger(__name__)
 

@@ -42,10 +42,10 @@ print("scikit-learn version: ", sklearn.__version__)
 
 import logging
 
+import gensim_utils as utils
+
 # %%
 import helpers.hnotebook as hnotebook
-
-import gensim_utils as utils
 
 # Initialize notebook configuration and logging.
 hnotebook.config_notebook()

@@ -135,7 +135,7 @@ async def observe_canary(
             provider.call(target.provider_slug, call),
             timeout=policy.timeout_s,
         )
-    except asyncio.TimeoutError:
+    except TimeoutError:
         latency_ms = max(0.0, (clock_func() - started_at) * 1000)
         error = RuntimeError(
             "runtime timeout after %s seconds" % policy.timeout_s

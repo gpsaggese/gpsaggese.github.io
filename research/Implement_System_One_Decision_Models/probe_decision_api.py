@@ -11,7 +11,7 @@ import math
 import time
 import urllib.error
 import urllib.request
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Tuple
 
 # #############################################################################
 # Constants
@@ -60,7 +60,9 @@ def _distribution(value: Any, keys: List[str], label: str) -> Dict[str, float]:
     """Check option identities, probability bounds, and normalization."""
     if not isinstance(value, dict) or set(value) != set(keys):
         raise ValueError(f"{label} must have exactly these keys: {keys}")
-    probabilities = {key: _probability(value[key], f"{label}.{key}") for key in keys}
+    probabilities = {
+        key: _probability(value[key], f"{label}.{key}") for key in keys
+    }
     if not math.isclose(sum(probabilities.values()), 1.0, abs_tol=1e-3):
         raise ValueError(f"{label} does not sum to one: {probabilities}")
     return probabilities
@@ -70,10 +72,15 @@ def _validate(response: Dict[str, Any], questions: Dict[str, Any]) -> None:
     """Check the response contract against the request's declared schema."""
     answers = response.get("answers")
     if not isinstance(answers, dict) or set(answers) != set(questions):
-        raise ValueError("Response answer names differ from request question names")
+        raise ValueError(
+            "Response answer names differ from request question names"
+        )
     for name, question in questions.items():
         answer = answers[name]
-        if not isinstance(answer, dict) or answer.get("type") != question["type"]:
+        if (
+            not isinstance(answer, dict)
+            or answer.get("type") != question["type"]
+        ):
             raise ValueError(f"{name} has the wrong answer type")
         if question["type"] == "noul":
             _probability(answer.get("noul"), f"{name}.noul")
@@ -88,7 +95,9 @@ def _validate(response: Dict[str, Any], questions: Dict[str, Any]) -> None:
                 choice not in keys
                 or probabilities[choice] < max(probabilities.values()) - 1e-6
             ):
-                raise ValueError(f"{name}.choice does not match the probabilities")
+                raise ValueError(
+                    f"{name}.choice does not match the probabilities"
+                )
         elif question["type"] == "score":
             keys = [str(index) for index in range(len(question["criteria"]))]
             probabilities = _distribution(
@@ -97,10 +106,13 @@ def _validate(response: Dict[str, Any], questions: Dict[str, Any]) -> None:
             legend = answer.get("legend")
             expected_legend = dict(zip(keys, question["criteria"]))
             if legend != expected_legend:
-                raise ValueError(f"{name}.legend does not match the level descriptions")
+                raise ValueError(
+                    f"{name}.legend does not match the level descriptions"
+                )
             score = answer.get("score")
             expected_score = sum(
-                int(index) * probability for index, probability in probabilities.items()
+                int(index) * probability
+                for index, probability in probabilities.items()
             )
             if isinstance(score, bool) or not isinstance(score, (int, float)):
                 raise ValueError(f"{name}.score must be numeric")
@@ -155,7 +167,9 @@ def _run_case(
     }
 
 
-def _max_probability_change(first: Dict[str, Any], second: Dict[str, Any]) -> float:
+def _max_probability_change(
+    first: Dict[str, Any], second: Dict[str, Any]
+) -> float:
     """Compare the probabilities of equivalent choice questions."""
     left = first["response"]["answers"]["route"]["probabilities"]
     right = second["response"]["answers"]["route"]["probabilities"]
@@ -164,9 +178,7 @@ def _max_probability_change(first: Dict[str, Any], second: Dict[str, Any]) -> fl
 
 def run_probe(url: str) -> Dict[str, Any]:
     """Exercise text, JSON, all three types, new schema, and call behavior."""
-    state = (
-        "Customer: My card was charged twice. Please refund the second charge today."
-    )
+    state = "Customer: My card was charged twice. Please refund the second charge today."
     questions = _base_questions()
     text_multi = _run_case(url, "text_multi", state, questions)
     json_multi = _run_case(
@@ -200,7 +212,9 @@ def run_probe(url: str) -> Dict[str, Any]:
     reordered_questions["route"] = reversed_question
     reordered = _run_case(url, "reordered_choice", state, reordered_questions)
     repeated = _run_case(url, "repeated_text_multi", state, questions)
-    single = _run_case(url, "single_choice", state, {"route": questions["route"]})
+    single = _run_case(
+        url, "single_choice", state, {"route": questions["route"]}
+    )
     cases = [text_multi, json_multi, unseen_choice, reordered, repeated, single]
     return {
         "endpoint": url,
@@ -211,7 +225,8 @@ def run_probe(url: str) -> Dict[str, Any]:
                 text_multi, reordered
             ),
             "repeat_identical_answers": (
-                text_multi["response"]["answers"] == repeated["response"]["answers"]
+                text_multi["response"]["answers"]
+                == repeated["response"]["answers"]
             ),
             "single_vs_multi_route_identical": (
                 text_multi["response"]["answers"]["route"]

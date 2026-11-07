@@ -66,10 +66,13 @@ def choice_probabilities(
     """Return a choice distribution with its declared option names intact."""
     probabilities = answer["probabilities"]
     if answer.get("type") != "choice" or set(probabilities) != set(option_names):
-        raise ValueError("Choice probabilities do not match the declared options")
+        raise ValueError(
+            "Choice probabilities do not match the declared options"
+        )
     values = {name: float(probabilities[name]) for name in option_names}
     if any(
-        not math.isfinite(value) or value < 0 or value > 1 for value in values.values()
+        not math.isfinite(value) or value < 0 or value > 1
+        for value in values.values()
     ):
         raise ValueError("Choice probabilities must be finite and within [0, 1]")
     if not math.isclose(sum(values.values()), 1.0, abs_tol=1e-3):
@@ -84,7 +87,9 @@ def choose_top_option(probabilities: Dict[str, float]) -> str:
     return max(probabilities, key=probabilities.get)
 
 
-def plot_probabilities(probabilities: Dict[str, float], title: str) -> plt.Figure:
+def plot_probabilities(
+    probabilities: Dict[str, float], title: str
+) -> plt.Figure:
     """Plot a small categorical distribution without changing its values."""
     labels = list(probabilities)
     values = [probabilities[label] for label in labels]
