@@ -221,7 +221,3 @@ python.invoke.txt
 | `website/docs/blog/posts/draft.how_to.Claude_Code_and_tmux.md` | 19 | 5% | Just a raw link |
 
 Total: 55 draft blogs
-
-# Publishing Checklist
-
-- See [`policies/blog_publishing.how_to_guide.md`](../policies/blog_publishing.how_to_guide.md)

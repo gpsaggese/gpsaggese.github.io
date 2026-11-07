@@ -106,6 +106,8 @@
   - https://github.com/gpsaggese/gpsaggese.github.io/blob/master/research/ideas/draft.Blog_Cross_Posting_and_Engagement_System.md
   - https://github.com/gpsaggese/gpsaggese.github.io/blob/master/research/ideas/draft.Complete_blogs.md
 - **Whitepaper**:
+- **Other**:
+  - Blog schedule (list of blogs): https://docs.google.com/spreadsheets/d/1EXprKVLcm6rkqaxM4GYhthGNq3YQwgMzr1ORf7c8C1I
 
 ### CAASL (Causal Analysis of Agent Skill and Luck)
 

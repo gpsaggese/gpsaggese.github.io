@@ -1,28 +1,10 @@
 # How to Review and Publish a Blog or Tutorial
 
 - This is the end-to-end flow to take a draft blog from
-  `website/docs/blog/posts/draft.*` to a published post on the website,
-  Substack, and LinkedIn
-- Without a process, drafts stay at 90% forever; this doc exists so they ship
-- Related docs:
-  - [`website/README.blog.md`](../website/README.blog.md): list of published
-    blogs, blogs ready for review, and drafts ranked by readiness
-  - [`website/README.md`](../website/README.md): how the website is built, front
-    matter fields, categories, formatting rules
-  - [`pr_process.how_to_guide.md`](pr_process.how_to_guide.md): how to create a
-    PR (branches, commits, testing section)
-  - [`My_AI_Policy.md`](../website/docs/blog/posts/My_AI_Policy.md) and
-    [`FAQ.md`](FAQ.md): AI policy and authorship policy
-  - Issue [#697](https://github.com/gpsaggese/gpsaggese.github.io/issues/697):
-    how to contribute to blogs
-  - [`all.write_blog.how_to_guide.md`](https://github.com/causify-ai/helpers/blob/master/docs/blogging/all.write_blog.how_to_guide.md)
-    and
-    [`all.publish_blogs.how_to_guide.md`](https://github.com/causify-ai/helpers/blob/master/docs/blogging/all.publish_blogs.how_to_guide.md):
-    shared blog writing conventions, and the publishing setup of the Causify blog
-    (different from this website)
-  - [Blog Scripts](#blog-scripts): what each blog file in `website/` does
+  `website/docs/blog/posts/draft.*` to a published post on the website, Substack, and
+  LinkedIn
 
-## Overview
+# Workflow
 
 | Step | Who              | Output                                       |
 | :--- | :--------------- | :------------------------------------------- |
@@ -38,11 +20,11 @@
 ## Blog Scripts
 
 - All the files are in `website/`; run them from the repo root
-- `README.blog.md`: the blog tracker, with published blogs, blogs ready for
-  review, and drafts ranked by readiness
+- `README.blog.md`: the blog tracker, with published blogs, blogs ready for review,
+  and drafts ranked by readiness
   - Read it in step 1 to pick a blog; it is refreshed in step 8
-- `format_blog.sh`: runs `prettier` on the given files, wrapping prose at 80
-  columns, in place
+- `format_blog.sh`: runs `prettier` on the given files, wrapping prose at 80 columns,
+  in place
   - Needs `prettier` (`npm install -g prettier`)
   - Used in step 4
 - `mark_blog_as_ready.py`: publishes a draft with `git mv` (removes the `draft.`
@@ -51,13 +33,13 @@
   - The file must already be committed to git
   - It overwrites `date:` with today, so run it on the publication day
   - Used in step 8
-- `find_published_blogs.sh`: prints the blogs with `draft: false`, newest first,
-  as markdown bullets
+- `find_published_blogs.sh`: prints the blogs with `draft: false`, newest first, as
+  markdown bullets
   - Used to refresh `## Published Blogs` in `README.blog.md`
 - `prompt.update_README_blog.md`: instructions for Claude Code to refresh
   `README.blog.md`
-  - Checks the website builds, checks that `draft:` matches the file name,
-    reruns `find_published_blogs.sh`, and rebuilds the drafts table
+  - Checks the website builds, checks that `draft:` matches the file name, reruns
+    `find_published_blogs.sh`, and rebuilds the drafts table
   - Used in step 8
 
 ## 1. Pick a Blog
@@ -65,10 +47,10 @@
 - Open the `# Drafts` table in `website/README.blog.md`
   - Start from the top: blogs at 80-90% are the fastest to ship
   - Pick a topic you know or can test end-to-end
-- Check the gsheet and the
+- Check the [Blog gsheet](https://docs.google.com/spreadsheets/d/1EXprKVLcm6rkqaxM4GYhthGNq3YQwgMzr1ORf7c8C1I) and the
   [Blogs_Tutorials project](https://github.com/users/gpsaggese/projects/12) that
   nobody else is already working on it
-- What "improve it" means (from #697):
+- What "improve it" means:
   - Propose more ideas and fill the gaps
   - Edit and improve the text
   - Make it visually appealing, e.g., add diagrams and plots
@@ -236,7 +218,7 @@
   ready to publish yet
 - Update the issue checklist and the gsheet
 
-## 6. Schedule It
+## 6. Schedule the Blog for Publication
 
 - We publish one blog per week
 - Pick a free week in the gsheet, so two blogs do not go out the same week
@@ -284,3 +266,22 @@
     > uvx linkchecker https://gpsaggese.github.io/ 2>&1 | tee linkchecker.log
     ```
 - Close the issue and mark the row as published in the gsheet
+
+# Related docs
+- [Blog gsheet](https://docs.google.com/spreadsheets/d/1EXprKVLcm6rkqaxM4GYhthGNq3YQwgMzr1ORf7c8C1I)
+- [`website/README.blog.md`](../website/README.blog.md): list of published blogs,
+  blogs ready for review, and drafts ranked by readiness
+- [`website/README.md`](../website/README.md): how the website is built, front matter
+  fields, categories, formatting rules
+- [`pr_process.how_to_guide.md`](pr_process.how_to_guide.md): how to create a PR
+  (branches, commits, testing section)
+- [`My_AI_Policy.md`](../website/docs/blog/posts/My_AI_Policy.md) and
+  [`FAQ.md`](FAQ.md): AI policy and authorship policy
+- Issue [#697](https://github.com/gpsaggese/gpsaggese.github.io/issues/697): how to
+  contribute to blogs
+- [`all.write_blog.how_to_guide.md`](https://github.com/causify-ai/helpers/blob/master/docs/blogging/all.write_blog.how_to_guide.md)
+  and
+  [`all.publish_blogs.how_to_guide.md`](https://github.com/causify-ai/helpers/blob/master/docs/blogging/all.publish_blogs.how_to_guide.md):
+  shared blog writing conventions, and the publishing setup of the Causify blog
+  (different from this website)
+- [Blog Scripts](#blog-scripts): what each blog file in `website/` does
