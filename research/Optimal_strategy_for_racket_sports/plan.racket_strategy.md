@@ -372,8 +372,11 @@
         symbolic regression, for a closed form of these relations
   - [-] [#823](https://github.com/gpsaggese/gpsaggese.github.io/issues/823):
         remove repetition in the code and the tests (GP's review of #804)
-  - [ ] [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723):
+  - [-] [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723):
         model the spread as a function of the ball speed
+    - [-] The design principles of the model, from
+          [GP on #723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723#issuecomment-6602349966):
+          `design_principles.explanation.md`
   - [ ] [#786](https://github.com/gpsaggese/gpsaggese.github.io/issues/786):
         model the spread as a function of player 2's movement
   - [x] [#714](https://github.com/gpsaggese/gpsaggese.github.io/issues/714):
