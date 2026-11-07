@@ -36,6 +36,10 @@
 - `find_published_blogs.sh`: prints the blogs with `draft: false`, newest first, as
   markdown bullets
   - Used to refresh `## Published Blogs` in `README.blog.md`
+- `blog_to_substack.py`: converts a blog into HTML ready to paste into the
+  Substack editor, and copies it to the clipboard
+  - See [`blog_to_substack.how_to_guide.md`](blog_to_substack.how_to_guide.md)
+  - Used in step 7
 - `prompt.update_README_blog.md`: instructions for Claude Code to refresh
   `README.blog.md`
   - Checks the website builds, checks that `draft:` matches the file name, reruns
@@ -231,6 +235,8 @@
   - The title and TL;DR from the blog
   - The body, adapted to Substack (check code blocks, images, and links)
   - A link back to the post on the website
+- Convert the blog with `website/blog_to_substack.py`, following
+  [`blog_to_substack.how_to_guide.md`](blog_to_substack.how_to_guide.md)
 - Leave it as a draft and link it in the issue
 
 ## 8. Publish
