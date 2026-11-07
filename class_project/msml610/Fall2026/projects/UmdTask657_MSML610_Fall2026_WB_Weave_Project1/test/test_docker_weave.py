@@ -1,7 +1,7 @@
 """
 Import as:
 
-import class_project.project_template.test.test_docker_all as tptdal
+import class_project.msml610.Fall2026.projects.UmdTask657_MSML610_Fall2026_WB_Weave_Project1.test.test_docker_weave as tdweave
 """
 
 import logging
@@ -20,7 +20,7 @@ _LOG = logging.getLogger(__name__)
 
 class Test_docker(hdoctest.DockerTestCase):
     """
-    Run all Docker tests for `class_project/project_template`.
+    Run the Docker tests for the Weave FOMC tone project.
     """
 
     _test_file = __file__
@@ -28,10 +28,10 @@ class Test_docker(hdoctest.DockerTestCase):
     @pytest.mark.slow
     def test1(self) -> None:
         """
-        Test that `template.example.ipynb` runs without error inside Docker.
+        Test that `weave.example.ipynb` runs without error inside Docker.
         """
         # Prepare inputs.
-        notebook_name = "template.example.ipynb"
+        notebook_name = "weave.example.ipynb"
         # Run test.
         self.run_notebook(
             notebook_name, use_docker_cmd=True, generate_html=False
@@ -40,10 +40,10 @@ class Test_docker(hdoctest.DockerTestCase):
     @pytest.mark.slow
     def test2(self) -> None:
         """
-        Test that `template.API.ipynb` runs without error inside Docker.
+        Test that `weave.API.ipynb` runs without error inside Docker.
         """
         # Prepare inputs.
-        notebook_name = "template.API.ipynb"
+        notebook_name = "weave.API.ipynb"
         # Run test.
         self.run_notebook(
             notebook_name, use_docker_cmd=True, generate_html=False
