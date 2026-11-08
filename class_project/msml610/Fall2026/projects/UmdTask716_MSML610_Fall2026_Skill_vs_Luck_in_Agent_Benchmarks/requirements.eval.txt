@@ -1,0 +1,14 @@
+# Packages that the EvalPlus scorer imports when it checks HumanEval+ and MBPP+
+# solutions. `evalplus==0.3.1` itself is installed with `--no-deps` in the
+# `Dockerfile`, since its default dependencies add model clients and
+# `transformers`, which scoring does not use.
+appdirs==1.4.4
+datasets==5.1.0
+fire==0.7.1
+psutil==7.2.2
+rich==15.0.0
+tempdir==0.7.1
+termcolor==3.3.0
+tree-sitter==0.23.2
+tree-sitter-python==0.23.6
+wget==3.2
