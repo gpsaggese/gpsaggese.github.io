@@ -175,6 +175,9 @@ print(result.round_id, summary.clearing_price, summary.matched_volume)
 
 ## Auction Report Tables (PR_M12)
 
+- For all five scenarios with tables and curves, see the
+  [in-memory notebook](../notebooks/README.md) (PR_M13)
+
 - `auction_report.orders_to_df(bids, asks)` returns bids then asks in input order,
   with participant, tier, quantity, limit price, and separate buyer/seller terms
 - `contracts_to_df(contracts)` preserves dispatch order and nullable fulfillment
