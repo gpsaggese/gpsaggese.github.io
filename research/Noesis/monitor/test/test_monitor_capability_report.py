@@ -5,10 +5,10 @@ Test reproducible capability-drift reports.
 import dataclasses
 import os
 
+import helpers.hunit_test as hunitest
+
 import research.Noesis.monitor.monitor_capability_experiment as rnmoncaex
 import research.Noesis.monitor.monitor_capability_report as rnmoncare
-
-import helpers.hunit_test as hunitest
 
 # #############################################################################
 # Test_write_capability_artifacts

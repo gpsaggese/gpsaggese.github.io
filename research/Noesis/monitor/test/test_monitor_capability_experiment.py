@@ -2,9 +2,9 @@
 Test deterministic, blinded capability-drift experiments.
 """
 
-import research.Noesis.monitor.monitor_capability_experiment as rnmoncaex
-
 import helpers.hunit_test as hunitest
+
+import research.Noesis.monitor.monitor_capability_experiment as rnmoncaex
 
 # #############################################################################
 # Test_generate_capability_trial

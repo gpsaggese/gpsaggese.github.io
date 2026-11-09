@@ -257,7 +257,9 @@ def render_capability_markdown(
         accepted = (
             "MEASURE"
             if scenario.accepted is None
-            else "PASS" if scenario.accepted else "FAIL"
+            else "PASS"
+            if scenario.accepted
+            else "FAIL"
         )
         lines.append(
             "| `%s` | `%s` | %.3f | %.3f | %s | `%s` |"
@@ -277,16 +279,20 @@ def render_capability_markdown(
             "",
             "- A failed gate is a research result, not a runtime failure",
             "- The detector sees observations and a frozen baseline only",
-            "- Scenario labels and intervention timing remain "
-            "evaluator-only data",
+            (
+                "- Scenario labels and intervention timing remain "
+                "evaluator-only data"
+            ),
             "- Fingerprint and market decisions remain outside this experiment",
             "",
             "## Power Analysis",
             "",
             "- Sensitivity points evaluated: `%s`" % len(power_points),
             "- See `power_analysis.csv` for the sample-size and baseline sweep",
-            "- See the SVG plots for detection, false-alarm, and query "
-            "trade-offs",
+            (
+                "- See the SVG plots for detection, false-alarm, and query "
+                "trade-offs"
+            ),
             "",
         ]
     )
@@ -325,7 +331,7 @@ def _render_bar_svg(
             html.escape(y_label),
         ),
     ]
-    for tick in range(0, 6):
+    for tick in range(6):
         value = tick / 5
         y_value = top + plot_height * (1 - value)
         elements.append(
