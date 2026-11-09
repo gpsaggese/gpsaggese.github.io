@@ -1,0 +1,269 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-28T20:01:12.209920+00:00",
+  "evaluation_kind": "retrospective_development",
+  "requested_start": "2026-09-14",
+  "requested_end": "2026-10-27",
+  "evaluated_start": "2026-09-14",
+  "evaluated_end": "2026-10-27",
+  "sessions": 32,
+  "starting_capital": 50000.0,
+  "currency": "USD",
+  "models": [
+    {
+      "id": "A",
+      "name": "Old model A",
+      "description": "Frozen five-minute price model",
+      "net_pnl": -2509.9847407555135,
+      "net_return": -0.05019969481511022,
+      "max_drawdown": -0.08605965652138892,
+      "costs": 4520.577651522817,
+      "fill_count": 2930,
+      "mean_gross_exposure": 0.7185874488654588,
+      "mean_daily_turnover": 14.504212802925593
+    },
+    {
+      "id": "B",
+      "name": "New candidate B",
+      "description": "Improved price model plus time-audited text residual adapter",
+      "net_pnl": -51.46040557856759,
+      "net_return": -0.001029208111571367,
+      "max_drawdown": -0.02753291936962765,
+      "costs": 740.2130300903316,
+      "fill_count": 890,
+      "mean_gross_exposure": 0.22483671022312543,
+      "mean_daily_turnover": 2.3396257870157706
+    },
+    {
+      "id": "C",
+      "name": "Price-only control C",
+      "description": "Daily refreshed 30-minute model with prior-window shrinkage",
+      "net_pnl": 32.61149726566509,
+      "net_return": 0.0006522299453133318,
+      "max_drawdown": -0.02753291936962765,
+      "costs": 729.060377734375,
+      "fill_count": 879,
+      "mean_gross_exposure": 0.21206584851199936,
+      "mean_daily_turnover": 2.304017608027993
+    }
+  ],
+  "curves": [
+    {
+      "date": "2026-09-14",
+      "A": 49958.121744116266,
+      "B": 49680.783071392834,
+      "C": 49680.783071392834
+    },
+    {
+      "date": "2026-09-15",
+      "A": 49131.96208328566,
+      "B": 49519.24837894594,
+      "C": 49519.24837894594
+    },
+    {
+      "date": "2026-09-16",
+      "A": 48866.026289419744,
+      "B": 49519.24837894594,
+      "C": 49519.24837894594
+    },
+    {
+      "date": "2026-09-17",
+      "A": 49101.0337187563,
+      "B": 49519.24837894594,
+      "C": 49519.24837894594
+    },
+    {
+      "date": "2026-09-18",
+      "A": 49010.16588822045,
+      "B": 49519.24837894594,
+      "C": 49519.24837894594
+    },
+    {
+      "date": "2026-09-21",
+      "A": 49373.305710187036,
+      "B": 49499.72590528261,
+      "C": 49499.72590528261
+    },
+    {
+      "date": "2026-09-22",
+      "A": 49819.50446435269,
+      "B": 49499.72590528261,
+      "C": 49499.72590528261
+    },
+    {
+      "date": "2026-09-23",
+      "A": 50053.59594871857,
+      "B": 49499.72590528261,
+      "C": 49499.72590528261
+    },
+    {
+      "date": "2026-09-24",
+      "A": 49316.97200573462,
+      "B": 49499.72590528261,
+      "C": 49499.72590528261
+    },
+    {
+      "date": "2026-09-25",
+      "A": 49132.76744535862,
+      "B": 49499.72590528261,
+      "C": 49499.72590528261
+    },
+    {
+      "date": "2026-09-28",
+      "A": 49225.66507707562,
+      "B": 49499.72590528261,
+      "C": 49499.72590528261
+    },
+    {
+      "date": "2026-09-29",
+      "A": 49428.09446009563,
+      "B": 49499.72590528261,
+      "C": 49499.72590528261
+    },
+    {
+      "date": "2026-09-30",
+      "A": 49158.71113216289,
+      "B": 49499.72590528261,
+      "C": 49499.72590528261
+    },
+    {
+      "date": "2026-10-01",
+      "A": 48723.35509236799,
+      "B": 49499.72590528261,
+      "C": 49499.72590528261
+    },
+    {
+      "date": "2026-10-02",
+      "A": 49211.91341851851,
+      "B": 49499.72590528261,
+      "C": 49499.72590528261
+    },
+    {
+      "date": "2026-10-05",
+      "A": 49079.740099521354,
+      "B": 49614.21208283388,
+      "C": 49614.21208283388
+    },
+    {
+      "date": "2026-10-06",
+      "A": 48861.85832808583,
+      "B": 49569.54849874575,
+      "C": 49569.54849874575
+    },
+    {
+      "date": "2026-10-07",
+      "A": 48460.891610880026,
+      "B": 49164.551802819886,
+      "C": 49164.551802819886
+    },
+    {
+      "date": "2026-10-08",
+      "A": 48667.350093381276,
+      "B": 49132.58854834601,
+      "C": 49132.58854834601
+    },
+    {
+      "date": "2026-10-09",
+      "A": 48833.25351900077,
+      "B": 49369.07507924205,
+      "C": 49369.07507924205
+    },
+    {
+      "date": "2026-10-12",
+      "A": 48887.15826256157,
+      "B": 49197.79706538397,
+      "C": 49197.79706538397
+    },
+    {
+      "date": "2026-10-13",
+      "A": 49431.87132128959,
+      "B": 49275.737912503115,
+      "C": 49275.737912503115
+    },
+    {
+      "date": "2026-10-14",
+      "A": 49743.046221350625,
+      "B": 49621.09451340645,
+      "C": 49621.09451340645
+    },
+    {
+      "date": "2026-10-15",
+      "A": 48308.423588309306,
+      "B": 49921.66650511177,
+      "C": 49921.66650511177
+    },
+    {
+      "date": "2026-10-16",
+      "A": 46590.76210187438,
+      "B": 49234.237957629455,
+      "C": 49234.237957629455
+    },
+    {
+      "date": "2026-10-19",
+      "A": 46364.53593765321,
+      "B": 49234.237957629455,
+      "C": 49234.237957629455
+    },
+    {
+      "date": "2026-10-20",
+      "A": 46423.87426526862,
+      "B": 49326.16619412542,
+      "C": 49326.16619412542
+    },
+    {
+      "date": "2026-10-21",
+      "A": 47492.9494999244,
+      "B": 49384.23639511419,
+      "C": 49384.23639511419
+    },
+    {
+      "date": "2026-10-22",
+      "A": 47223.33721732246,
+      "B": 49551.99702393498,
+      "C": 49551.99702393498
+    },
+    {
+      "date": "2026-10-23",
+      "A": 46713.163127469576,
+      "B": 49473.46300549933,
+      "C": 49551.99702393498
+    },
+    {
+      "date": "2026-10-26",
+      "A": 47057.824690171,
+      "B": 49544.247208645684,
+      "C": 49631.57986804508
+    },
+    {
+      "date": "2026-10-27",
+      "A": 47490.01525924449,
+      "B": 49948.53959442143,
+      "C": 50032.611497265665
+    }
+  ],
+  "text": {
+    "source_records": 631,
+    "usable_decisions": 417,
+    "changed_decisions": 25,
+    "calibration_status": "fitted_development_only",
+    "fallback_reason": null
+  },
+  "coverage": {
+    "complete_requested_period": true,
+    "missing_sessions": []
+  },
+  "limitations": [
+    "Not a complete reconstruction of actual brokerage performance.",
+    "Yahoo historical OHLCV revisions, simulated arrival/processing and next-open fills; no verified live latency.",
+    "Execution costs are assumptions; actual spreads, impact, borrow and financing are not reconstructed.",
+    "Current three-stock universe; no claim of point-in-time universe selection.",
+    "A and C differ in horizon, refresh and shrinkage; only B minus C isolates the text adapter.",
+    "Price forecast gates and text sample gates are engineering rules, not proof of statistical significance.",
+    "This interval includes previously inspected data; no blind-test or guaranteed-profit claim.",
+    "Main chart assumes 2 bps execution friction per side. Full 5 bps replays are in the local report.",
+    "September 1-11 is excluded because old A was trained through September 11.",
+    "Complete replay coverage does not mean complete two-month brokerage records.",
+    "Two-week company prediction remains a separate task; no ten-day return is added to the intraday forecast."
+  ],
+  "promoted": false
+}

@@ -1,0 +1,5 @@
+# Review the paired Python notebook sources; generated outputs stay expandable.
+*.ipynb linguist-generated=true
+data/*.json linguist-generated=true
+public_results/*.json linguist-generated=true
+source_manifest.json linguist-generated=true
