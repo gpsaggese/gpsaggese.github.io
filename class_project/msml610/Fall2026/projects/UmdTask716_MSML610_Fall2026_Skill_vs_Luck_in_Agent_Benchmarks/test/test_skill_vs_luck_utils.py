@@ -9,6 +9,7 @@ import pprint
 
 import numpy as np
 import pandas as pd
+import pytest
 
 import helpers.hunit_test as hunitest
 
@@ -493,3 +494,497 @@ class Test_simulate_outcomes(hunitest.TestCase):
         outcomes_2 = utils.simulate_outcomes(abilities, 50, seed=7)
         # Check outputs.
         self.assertTrue(outcomes_1.equals(outcomes_2))
+
+
+# #############################################################################
+# Test_compute_rank_intervals
+# #############################################################################
+
+
+class Test_compute_rank_intervals(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils.compute_rank_intervals()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test 3 agents whose order never changes across the samples.
+        """
+        # Prepare inputs: `sub_a` solves every task and `sub_c` none, so no
+        # sample of tasks can change the order.
+        outcomes = pd.DataFrame(
+            [[1] * 20, [1, 0] * 10, [0] * 20],
+            index=["sub_a", "sub_b", "sub_c"],
+        )
+        # Prepare outputs.
+        expected = """
+               score  rank  median_rank  rank_low  rank_high  p_first
+        sub_a    1.0     1          1.0       1.0        1.0      1.0
+        sub_b    0.5     2          2.0       2.0        2.0      0.0
+        sub_c    0.0     3          3.0       3.0        3.0      0.0
+        """
+        # Run test.
+        rank_intervals = utils.compute_rank_intervals(
+            outcomes, n_boot=200, seed=1
+        )
+        # Check outputs.
+        actual = rank_intervals.to_string()
+        self.assert_equal(actual, expected, dedent=True)
+
+    def test2(self) -> None:
+        """
+        Test that 2 identical agents split the first place.
+        """
+        # Prepare inputs: the 2 agents solve the same tasks, so they are tied
+        # in every sample.
+        outcomes = pd.DataFrame(
+            [[1, 0, 1, 1] * 5, [1, 0, 1, 1] * 5, [0, 0, 1, 0] * 5],
+            index=["sub_a", "sub_b", "sub_c"],
+        )
+        # Prepare outputs.
+        expected = """
+               rank  median_rank  p_first
+        sub_a     1          1.5      0.5
+        sub_b     1          1.5      0.5
+        sub_c     3          3.0      0.0
+        """
+        # Run test.
+        rank_intervals = utils.compute_rank_intervals(
+            outcomes, n_boot=200, seed=1
+        )
+        # Check outputs.
+        actual = rank_intervals[["rank", "median_rank", "p_first"]].to_string()
+        self.assert_equal(actual, expected, dedent=True)
+
+
+# #############################################################################
+# Test_check_ranking_recovery
+# #############################################################################
+
+
+class Test_check_ranking_recovery(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils.check_ranking_recovery()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that abilities far apart are always ranked correctly.
+        """
+        # Prepare inputs: with gaps of 10 logits, an agent solves almost none,
+        # about half, or almost all of the tasks.
+        abilities = [-10.0, 0.0, 10.0]
+        # Prepare outputs.
+        expected = """
+        p_best_first    1.0
+        spearman        1.0
+        kendall         1.0
+        """
+        # Run test.
+        recovery = utils.check_ranking_recovery(
+            abilities, 50, n_trials=20, seed=2
+        )
+        # Check outputs.
+        actual = recovery.round(4).to_string()
+        self.assert_equal(actual, expected, dedent=True)
+
+    def test2(self) -> None:
+        """
+        Test that equal abilities are rejected.
+        """
+        # Prepare inputs.
+        abilities = [0.0, 0.0]
+        # Run test and check outputs.
+        with self.assertRaises(AssertionError):
+            utils.check_ranking_recovery(abilities, 10, n_trials=2)
+
+
+# #############################################################################
+# Test_compute_split_half_correlation
+# #############################################################################
+
+
+class Test_compute_split_half_correlation(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils.compute_split_half_correlation()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test 3 agents whose order is the same on every half.
+        """
+        # Prepare inputs: `sub_a` solves every task and `sub_c` none, so on
+        # any half `sub_b` sits strictly between them.
+        outcomes = pd.DataFrame(
+            [[1] * 20, [1, 0] * 10, [0] * 20],
+            index=["sub_a", "sub_b", "sub_c"],
+        )
+        # Prepare outputs.
+        expected = """
+        spearman    1.0
+        kendall     1.0
+        """
+        # Run test.
+        correlations = utils.compute_split_half_correlation(
+            outcomes, n_splits=50, seed=1
+        )
+        # Check outputs.
+        actual = correlations.mean().round(4).to_string()
+        self.assert_equal(actual, expected, dedent=True)
+
+
+# #############################################################################
+# Test_compute_held_out_drop
+# #############################################################################
+
+
+class Test_compute_held_out_drop(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils.compute_held_out_drop()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test an agent that leads every half with no luck involved.
+        """
+        # Prepare inputs: `sub_a` solves every task, so it leads both halves
+        # with a score of 1.
+        outcomes = pd.DataFrame(
+            [[1] * 20, [1, 0] * 10],
+            index=["sub_a", "sub_b"],
+        )
+        # Prepare outputs.
+        expected = """
+        score_selected    1.0
+        score_held_out    1.0
+        drop              0.0
+        same_leader       1.0
+        """
+        # Run test.
+        held_out = utils.compute_held_out_drop(outcomes, n_splits=50, seed=1)
+        # Check outputs.
+        actual = held_out.mean().round(4).to_string()
+        self.assert_equal(actual, expected, dedent=True)
+
+    def test2(self) -> None:
+        """
+        Test that 2 identical agents split the lead and drop by the same
+        amount.
+        """
+        # Prepare inputs: the 2 agents solve the same tasks, so they are tied
+        # on every half.
+        outcomes = pd.DataFrame(
+            [[1, 0, 1, 1] * 5, [1, 0, 1, 1] * 5],
+            index=["sub_a", "sub_b"],
+        )
+        # Run test.
+        held_out = utils.compute_held_out_drop(outcomes, n_splits=50, seed=1)
+        # Check outputs: a tied leader is always the other half's leader too.
+        self.assertTrue((held_out["same_leader"] == 1.0).all())
+        drop = held_out["score_selected"] - held_out["score_held_out"]
+        self.assertTrue(np.allclose(held_out["drop"], drop))
+
+
+# #############################################################################
+# Test_simulate_winners_curse
+# #############################################################################
+
+
+class Test_simulate_winners_curse(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils.simulate_winners_curse()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test the true score, the standard error, and the correction.
+        """
+        # Prepare inputs: with ability 0 and symmetric difficulties, the true
+        # score is 0.5, so `sigma` = sqrt(0.25 / 100) = 0.05 and the correction
+        # for K = 2 is 0.05 * sqrt(2 ln 2) = 0.0589; the mean of the larger of 2
+        # standard normals is 1 / sqrt(pi) = 0.5642, so the exact one is 0.0282.
+        n_variants = 2
+        n_tasks = 100
+        # Prepare outputs.
+        expected = """
+        true_score          0.5000
+        sigma               0.0500
+        correction          0.0589
+        correction_exact    0.0282
+        """
+        # Run test.
+        curse = utils.simulate_winners_curse(
+            n_variants, n_tasks, n_trials=5, seed=1
+        )
+        # Check outputs.
+        columns = ["true_score", "sigma", "correction", "correction_exact"]
+        actual = curse[columns].round(4)
+        actual = actual.to_string()
+        self.assert_equal(actual, expected, dedent=True)
+
+    def test2(self) -> None:
+        """
+        Test that a single variant has no correction.
+        """
+        # Run test.
+        curse = utils.simulate_winners_curse(1, 50, n_trials=5, seed=1)
+        # Check outputs.
+        self.assertEqual(curse["correction"], 0.0)
+        self.assertAlmostEqual(curse["correction_exact"], 0.0)
+
+    def test3(self) -> None:
+        """
+        Test that the noise given the tasks is the binomial one on equal tasks.
+        """
+        # Prepare inputs: with no spread in the difficulties, every solve
+        # probability is 0.5, so both `sigma` are sqrt(0.25 / 100) = 0.05.
+        n_variants = 2
+        n_tasks = 100
+        # Run test.
+        curse = utils.simulate_winners_curse(
+            n_variants, n_tasks, n_trials=5, difficulty_sd=0.0, seed=1
+        )
+        # Check outputs.
+        self.assertAlmostEqual(curse["sigma_given_tasks"], 0.05)
+        self.assertAlmostEqual(
+            curse["correction_given_tasks"], curse["correction_exact"]
+        )
+
+    def test4(self) -> None:
+        """
+        Test that the noise given the tasks is below the binomial one when the
+        tasks differ.
+        """
+        # Prepare inputs: with difficulties of std 1, E[p (1 - p)] is about
+        # 0.207 instead of 0.25, so the noise is about 10% lower.
+        n_variants = 2
+        n_tasks = 400
+        # Run test.
+        curse = utils.simulate_winners_curse(
+            n_variants, n_tasks, n_trials=50, seed=1
+        )
+        # Check outputs.
+        ratio = curse["sigma"] / curse["sigma_given_tasks"]
+        self.assertAlmostEqual(ratio, 1.1, delta=0.01)
+
+
+# #############################################################################
+# Test_fit_irt_2pl
+# #############################################################################
+
+
+class Test_fit_irt_2pl(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils.fit_irt_2pl()`.
+    """
+
+    @pytest.mark.slow
+    def test1(self) -> None:
+        """
+        Test that the fit recovers the order of 3 well separated agents.
+        """
+        # Prepare inputs: abilities 4 logits apart are easy to tell apart on
+        # 200 tasks.
+        outcomes = utils.simulate_outcomes([-2.0, 0.0, 2.0], 200, seed=4)
+        # Prepare outputs.
+        expected = "['agent_0', 'agent_1', 'agent_2']"
+        # Run test.
+        fit = utils.fit_irt_2pl(outcomes, n_steps=2000, n_samples=200)
+        # Check outputs.
+        actual = str(fit["agents"]["ability"].sort_values().index.tolist())
+        self.assert_equal(actual, expected)
+
+
+# #############################################################################
+# Test_compute_task_information
+# #############################################################################
+
+
+class Test_compute_task_information(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils.compute_task_information()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test a task at the ability of the agent and a task far from it.
+        """
+        # Prepare inputs: at ability 0, task `t1` (difficulty 0) is solved half
+        # of the time, so its information is 1^2 * 0.5 * 0.5 = 0.25, while
+        # task `t2` (difficulty 10) is almost never solved.
+        tasks = pd.DataFrame(
+            {"difficulty": [0.0, 10.0], "discrimination": [1.0, 1.0]},
+            index=["t1", "t2"],
+        )
+        # Prepare outputs.
+        expected = """
+        t1    0.25
+        t2    0.00
+        """
+        # Run test.
+        information = utils.compute_task_information([0.0], tasks)
+        # Check outputs.
+        actual = information.round(4).to_string()
+        self.assert_equal(actual, expected, dedent=True)
+
+
+# #############################################################################
+# Test_compute_effective_size
+# #############################################################################
+
+
+class Test_compute_effective_size(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils.compute_effective_size()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that 4 equally informative tasks are worth 4 tasks.
+        """
+        # Prepare inputs.
+        information = pd.Series([0.2, 0.2, 0.2, 0.2])
+        # Run test.
+        effective_size = utils.compute_effective_size(information)
+        # Check outputs.
+        self.assertAlmostEqual(effective_size, 4.0)
+
+    def test2(self) -> None:
+        """
+        Test that 1 task with all the information is worth 1 task.
+        """
+        # Prepare inputs.
+        information = pd.Series([0.0, 0.5, 0.0, 0.0])
+        # Run test.
+        effective_size = utils.compute_effective_size(information)
+        # Check outputs.
+        self.assertAlmostEqual(effective_size, 1.0)
+
+
+# #############################################################################
+# Test_count_informative_tasks
+# #############################################################################
+
+
+class Test_count_informative_tasks(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils.count_informative_tasks()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that tasks solved by all or by none are not counted.
+        """
+        # Prepare inputs: `t1` is solved by all, `t2` by none, and only `t3`
+        # tells the agents apart.
+        outcomes = pd.DataFrame(
+            [[1, 0, 1], [1, 0, 0]],
+            index=["sub_a", "sub_b"],
+            columns=["t1", "t2", "t3"],
+        )
+        # Run test.
+        n_informative = utils.count_informative_tasks(outcomes)
+        # Check outputs.
+        self.assertEqual(n_informative, 1)
+
+
+# #############################################################################
+# Test_compute_selection_effect
+# #############################################################################
+
+
+class Test_compute_selection_effect(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils.compute_selection_effect()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test agents so far apart that the 2 ways of picking give the same group.
+        """
+        # Prepare inputs: with sharp tasks between the abilities, `sub_a` solves
+        # all the tasks, `sub_b` 2 / 3, `sub_c` 1 / 3, and `sub_d` none, so the
+        # order of the top 3 is the same on any half.
+        fit = {
+            "agents": pd.DataFrame(
+                {"ability": [9.0, 3.0, -3.0, -9.0]},
+                index=["sub_a", "sub_b", "sub_c", "sub_d"],
+            ),
+            "tasks": pd.DataFrame(
+                {"difficulty": [-6.0, 0.0, 6.0] * 20, "discrimination": 5.0},
+                index=[f"task_{i}" for i in range(60)],
+            ),
+        }
+        # Prepare outputs.
+        expected = """
+                 kendall  negative
+        score        1.0       0.0
+        ability      1.0       0.0
+        """
+        # Run test.
+        selection_effect = utils.compute_selection_effect(
+            fit, top_k=3, n_trials=5, n_splits=5, seed=1
+        )
+        # Check outputs.
+        actual = selection_effect.to_string()
+        self.assert_equal(actual, expected, dedent=True)
+
+    def test2(self) -> None:
+        """
+        Test that picking close agents on their score lowers the correlation.
+        """
+        # Prepare inputs: 30 agents with close abilities, so the score of the
+        # top 5 depends a lot on luck.
+        n_agents = 30
+        n_tasks = 200
+        fit = {
+            "agents": pd.DataFrame(
+                {"ability": np.linspace(-0.5, 0.5, n_agents)},
+                index=[f"agent_{i}" for i in range(n_agents)],
+            ),
+            "tasks": pd.DataFrame(
+                {
+                    "difficulty": np.linspace(-2, 2, n_tasks),
+                    "discrimination": 1.0,
+                },
+                index=[f"task_{i}" for i in range(n_tasks)],
+            ),
+        }
+        # Run test.
+        selection_effect = utils.compute_selection_effect(
+            fit, top_k=5, n_trials=50, n_splits=5, seed=1
+        )
+        # Check outputs.
+        self.assertLess(
+            selection_effect.loc["score", "kendall"],
+            selection_effect.loc["ability", "kendall"],
+        )
+
+
+# #############################################################################
+# Test_simulate_outcomes_with_probabilities
+# #############################################################################
+
+
+class Test_simulate_outcomes_with_probabilities(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils._simulate_outcomes_with_probabilities()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that the outcomes match `simulate_outcomes()` and that the
+        probabilities are in (0, 1).
+        """
+        # Prepare inputs.
+        abilities = [-1.0, 0.5]
+        # Run test.
+        outcomes, probabilities = utils._simulate_outcomes_with_probabilities(
+            abilities, 40, seed=5
+        )
+        # Check outputs.
+        self.assertTrue(
+            outcomes.equals(utils.simulate_outcomes(abilities, 40, seed=5))
+        )
+        self.assertEqual(probabilities.shape, (2, 40))
+        self.assertTrue(((probabilities > 0) & (probabilities < 1)).all())
