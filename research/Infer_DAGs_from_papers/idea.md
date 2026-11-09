@@ -18,8 +18,12 @@
 - Build the DAG of each paper with the workflow in
   `papers/Causal_Analysis_for_Finance/notes.slides.md` (Theory Store): extract
   claims, normalize variables, create the DAG, merge DAGs, reduce the DAG
-- Implement the workflow in `research/Estimate_academic_paper_quality/`, next to
-  the existing pipeline that fetches, extracts features from, and rates papers
+- Implement the workflow in the separate project `research/Infer_DAGs_from_papers/`
+  - Reuse the pipeline in `research/Estimate_academic_paper_quality/` that fetches,
+    extracts features from, and rates papers
+  - Read the markdown of each paper from the output dir of that pipeline
+  - Import only its low-level modules (`epq_paths`, `epq_fetcher`, `epq_types`),
+    never its executables, and never import back
 - The open point is how much of the DMCD machinery transfers when the input is
   prose and not a table of variables with metadata
 
