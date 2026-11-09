@@ -370,12 +370,21 @@
         [PR #812](https://github.com/gpsaggese/gpsaggese.github.io/pull/812)
   - [ ] [#790](https://github.com/gpsaggese/gpsaggese.github.io/issues/790):
         symbolic regression, for a closed form of these relations
-  - [ ] [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723):
+  - [-] [#823](https://github.com/gpsaggese/gpsaggese.github.io/issues/823):
+        remove repetition in the code and the tests (GP's review of #804)
+  - [-] [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723):
         model the spread as a function of the ball speed
+    - [-] The design principles of the model, from
+          [GP on #723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723#issuecomment-6602349966):
+          `design_principles.explanation.md`
   - [ ] [#786](https://github.com/gpsaggese/gpsaggese.github.io/issues/786):
         model the spread as a function of player 2's movement
   - [x] [#714](https://github.com/gpsaggese/gpsaggese.github.io/issues/714):
         movement in the serving setup; its follow-ups are #786 and #787
   - [-] [#713](https://github.com/gpsaggese/gpsaggese.github.io/issues/713):
-        model the RL problem (phase 2); the Gymnasium tutorial cleanup is in
+        model the RL problem (phase 2); the Gymnasium tutorial is in
         [PR #838](https://github.com/gpsaggese/gpsaggese.github.io/pull/838)
+        (merged) and [PR #846](https://github.com/gpsaggese/gpsaggese.github.io/pull/846);
+        the racket RL env is in notebook 06,
+        `notebooks/racket_sports_06_rl_return.ipynb`, see the 2026-11-07 entry
+        of the log

@@ -39,9 +39,13 @@ placeholder is committed until the reviewed paid run is executed.
 | `09-onboarding.md`                       | Setup, run, test, and first tasks                                                        | Onboarding |
 | `10-glossary.md`                         | Terms used across the code and docs                                                      | Onboarding |
 | `run_checker_replay.how_to_guide.md`     | Reproduce the deterministic 30,000-contract checker-validation experiment                | Demo       |
+| `run_checker_live_test.how_to_guide.md`  | Prepare the checker demo and controlled paid-provider warm-up                             | Demo       |
 | `run_contract_monitoring_demo.how_to_guide.md` | Reproducible offline demo of probe-to-verdict contract monitoring                    | Demo       |
+| `run_model_drift_capability_experiment.how_to_guide.md` | Reproduce the offline model capability-drift experiment                   | Research   |
 | `run_model_qos_demo.how_to_guide.md`     | Commands that demonstrate canary calibration, probing, grading, and evidence persistence | Demo       |
 | `run_market_supply_demo.how_to_guide.md` | Commands that show OpenRouter prices becoming asks and clearing against a bid            | Demo       |
 | `marketing_plan.md`                      | Bootstrapping supply and demand liquidity                                                | Plans      |
+| `spec.PR_S13.md`                         | Implementation spec: standalone monitoring and model-nerfing detection                   | Specs      |
+| `research.model_quality.md`              | Open research questions and candidate model-quality monitoring experiments               | Research   |
 | `dev_notes.md`                           | Build and OpenAPI-generation notes                                                       | Notes      |
 | `gp_todos.md`                            | Open TODOs                                                                               | Notes      |

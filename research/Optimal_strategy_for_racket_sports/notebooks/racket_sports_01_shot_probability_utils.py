@@ -21,6 +21,10 @@ import html
 import logging
 from typing import Any, Dict, List, Optional, Tuple
 
+import helpers.hdbg as hdbg
+import helpers.hnotebook as hnotebo
+import helpers.hprint as hprint
+import helpers.htutorial as htutori
 import ipywidgets
 import matplotlib.collections as mcollections
 import matplotlib.patches as mpatches
@@ -31,13 +35,11 @@ import scipy.stats
 from IPython.display import clear_output, display
 from matplotlib.axes import Axes
 
-import helpers.hdbg as hdbg
-import helpers.hnotebook as hnotebo
-import helpers.hprint as hprint
-import helpers.htutorial as htutori
-from research.Optimal_strategy_for_racket_sports import racket_params
-from research.Optimal_strategy_for_racket_sports import racket_scoring
-from research.Optimal_strategy_for_racket_sports import racket_strategy_utils
+from research.Optimal_strategy_for_racket_sports import (
+    racket_params,
+    racket_scoring,
+    racket_strategy_utils,
+)
 
 _LOG = logging.getLogger(__name__)
 
@@ -1308,6 +1310,44 @@ def _build_shared_controls(
     return controls
 
 
+def _show_figure(
+    fig: plt.Figure,
+    ax_court: Axes,
+    ax_text: Axes,
+    text: str,
+    max_fontsize: int,
+    min_fontsize: int,
+) -> None:
+    """
+    Fill the comments panel of a widget figure, show the figure, and close it.
+
+    Cell 1.1 and Cell 2.1 end every redraw this way; only the font sizes of
+    the comments differ.
+
+    :param fig: figure with the court panel and the comments panel
+    :param ax_court: court panel, whose legend moves to the comments panel
+    :param ax_text: comments panel
+    :param text: text of the comments panel
+    :param max_fontsize: largest font size of the text, in points
+    :param min_fontsize: smallest font size of the text, in points
+    """
+    _LOG.debug(hprint.to_str("max_fontsize min_fontsize"))
+    ax_text.axis("off")
+    ax_text.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
+    htutori.add_fitted_text_box(
+        ax_text, text, max_fontsize=max_fontsize, min_fontsize=min_fontsize
+    )
+    # Legend in the free lower part of the comments panel, so it never
+    # covers the court.
+    handles, labels = ax_court.get_legend_handles_labels()
+    ax_text.legend(handles, labels, loc="lower left", fontsize=10)
+    plt.tight_layout()
+    plt.show()
+    # A figure left open inside an `Output` widget can stall the kernel
+    # on rerun, so close it once shown.
+    plt.close(fig)
+
+
 def cell1_1_plot_shot_widget(
     sport: racket_params.SportParams,
     *,
@@ -1413,20 +1453,7 @@ def cell1_1_plot_shot_widget(
                 )
             ax_court.set_title(sport.name)
             # Panel 2: comments with the current state only.
-            ax_text.axis("off")
-            ax_text.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
-            htutori.add_fitted_text_box(
-                ax_text, text, max_fontsize=13, min_fontsize=9
-            )
-            # Legend in the free lower part of the comments panel, so it never
-            # covers the court.
-            handles, labels = ax_court.get_legend_handles_labels()
-            ax_text.legend(handles, labels, loc="lower left", fontsize=10)
-            plt.tight_layout()
-            plt.show()
-            # A figure left open inside an `Output` widget can stall the kernel
-            # on rerun, so close it once shown.
-            plt.close(fig)
+            _show_figure(fig, ax_court, ax_text, text, 13, 9)
 
     # Redraw on every control change: no Run button.
     controls = [
@@ -1783,20 +1810,7 @@ def cell2_1_plot_winner_widget(
             ax_court.set_title(sport.name)
             # Panel 2: comments with the current state only. At most 9 pt, so
             # the longest settings string stays on one line at any DPI.
-            ax_text.axis("off")
-            ax_text.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
-            htutori.add_fitted_text_box(
-                ax_text, text, max_fontsize=9, min_fontsize=8
-            )
-            # Legend in the free lower part of the comments panel, so it never
-            # covers the court.
-            handles, labels = ax_court.get_legend_handles_labels()
-            ax_text.legend(handles, labels, loc="lower left", fontsize=10)
-            plt.tight_layout()
-            plt.show()
-            # A figure left open inside an `Output` widget can stall the kernel
-            # on rerun, so close it once shown.
-            plt.close(fig)
+            _show_figure(fig, ax_court, ax_text, text, 9, 8)
 
     # Redraw on every control change: no Run button.
     controls = [
