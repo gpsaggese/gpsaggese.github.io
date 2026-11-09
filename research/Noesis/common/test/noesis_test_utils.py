@@ -17,10 +17,10 @@ import logging
 import os
 from typing import Any, Awaitable, Callable, List
 
-import helpers.hunit_test as hunitest
 import psycopg
 import psycopg_pool
 
+import helpers.hunit_test as hunitest
 import research.Noesis.common.noesis_db as rnonodb
 import research.Noesis.common.noesis_seed as rnonosee
 import research.Noesis.common.noesis_settings as rnonoset

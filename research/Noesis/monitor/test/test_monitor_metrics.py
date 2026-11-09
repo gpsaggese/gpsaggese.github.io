@@ -4,11 +4,11 @@ Test source-independent monitoring-window metrics.
 
 from typing import Optional
 
+import helpers.hunit_test as hunitest
+
 import research.Noesis.gateway.gateway_providers as rnogapro
 import research.Noesis.monitor.monitor_metrics as rnmonmet
 import research.Noesis.monitor.monitor_models as rnmonmod
-
-import helpers.hunit_test as hunitest
 
 
 def _observation(

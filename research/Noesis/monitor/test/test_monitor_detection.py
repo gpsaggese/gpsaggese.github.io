@@ -2,10 +2,10 @@
 Test capability baselines and exact degradation decisions.
 """
 
+import helpers.hunit_test as hunitest
+
 import research.Noesis.monitor.monitor_detection as rnmondet
 import research.Noesis.monitor.monitor_metrics as rnmonmet
-
-import helpers.hunit_test as hunitest
 
 
 def _window(
