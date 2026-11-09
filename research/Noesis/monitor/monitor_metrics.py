@@ -11,10 +11,10 @@ import math
 import statistics
 from typing import Mapping, Optional, Sequence, Tuple
 
+import helpers.hdbg as hdbg
+
 import research.Noesis.gateway.gateway_providers as rnogapro
 import research.Noesis.monitor.monitor_models as rnmonmod
-
-import helpers.hdbg as hdbg
 
 # #############################################################################
 # Metric models

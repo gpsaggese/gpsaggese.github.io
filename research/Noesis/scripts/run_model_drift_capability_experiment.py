@@ -18,12 +18,12 @@ import argparse
 import dataclasses
 import logging
 
-import research.Noesis.monitor.monitor_capability_experiment as rnmoncaex
-import research.Noesis.monitor.monitor_capability_report as rnmoncare
-
 import helpers.hdbg as hdbg
 import helpers.hparser as hparser
 import helpers.hselect_input_output as hselsio
+
+import research.Noesis.monitor.monitor_capability_experiment as rnmoncaex
+import research.Noesis.monitor.monitor_capability_report as rnmoncare
 
 _LOG = logging.getLogger(__name__)
 

@@ -14,12 +14,12 @@ import random
 import statistics
 from typing import Mapping, Optional, Sequence, Tuple
 
+import helpers.hdbg as hdbg
+
 import research.Noesis.gateway.gateway_providers as rnogapro
 import research.Noesis.monitor.monitor_detection as rnmondet
 import research.Noesis.monitor.monitor_metrics as rnmonmet
 import research.Noesis.monitor.monitor_models as rnmonmod
-
-import helpers.hdbg as hdbg
 
 _SEED_VERSION = "capability-drift-v1"
 _BASE_LATENCY_MS = 100.0

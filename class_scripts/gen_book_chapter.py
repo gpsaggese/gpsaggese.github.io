@@ -1,4 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env -S uv run
+
+# /// script
+# dependencies = ["llm", "llm-openrouter", "tokencost", "tqdm"]
+# ///
 
 r"""
 Generate a book chapter from lecture slides using an LLM.
