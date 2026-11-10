@@ -16,7 +16,7 @@
 
 ## Goals and backlog
 
-- Product goal: see the [execution plan](../docs/plan.md#mvp-execution-plan)
+- Product goal: see the [execution plan](../docs/04-plan.md#mvp-execution-plan)
 - E.g., sprint goal: "Evaluate a contract automatically using saved request
   evidence"
 - Plan against the actual availability

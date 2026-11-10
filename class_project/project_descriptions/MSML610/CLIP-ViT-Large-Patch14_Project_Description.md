@@ -162,3 +162,57 @@ CLIP-ViT-Large-Patch14
 - **Bonus Ideas (Optional)**: Test whether a zero-shot "luxury" score explains the
   residual of the tabular baseline; compare the frozen embeddings with a fine-tune of
   the last layer of the vision encoder
+
+## Project 4: Oil and Gas Price Prediction From News Headlines
+
+- **Project Objective**: Test whether CLIP text embeddings of energy news headlines
+  improve the prediction of next-day WTI crude oil and Henry Hub natural gas returns
+  beyond a model that uses only past prices, and minimize the out-of-sample RMSE on a
+  chronological test set
+  - Expect the price-only baseline to be hard to beat, because daily returns are
+    close to unpredictable, and report the result either way
+  - Use CLIP only as a frozen text encoder, and note that its text tower is trained on
+    image captions and not on financial news
+- **Dataset Suggestions**:
+  - Daily spot prices from FRED, based on EIA data:
+    [WTI](https://fred.stlouisfed.org/series/DCOILWTICO),
+    [Brent](https://fred.stlouisfed.org/series/DCOILBRENTEU), and
+    [Henry Hub natural gas](https://fred.stlouisfed.org/series/DHHNGSP)
+  - Headlines from
+    [A Million News Headlines](https://www.kaggle.com/datasets/therohk/million-headlines),
+    ABC News (Australia) headlines from 2003 on, filtered with energy keywords (e.g.,
+    `oil`, `crude`, `OPEC`, `petrol`, `gas`, `pipeline`, `refinery`)
+    - The download needs a Kaggle account, and the headlines are general news and not
+      energy news, so report how many headlines are left per day after the filter
+  - Optionally add short blog excerpts, such as the
+    [EIA Today in Energy](https://www.eia.gov/todayinenergy/) articles, as a second
+    text source
+  - Optionally compare with the headline sentiment model
+    [CrudeBERT](https://huggingface.co/Captain-1337/CrudeBERT)
+- **Tasks**:
+  - **Preprocess the Data**: Download the prices, compute daily log returns, filter
+    the headlines with the energy keywords, and group them by date, aligning each
+    headline with the next trading day so that no future price is used
+  - **Define the Target and the Split**: Use the next-day log return of WTI (and of
+    Henry Hub as a second target), split by date into train, validation, and test
+    with a 5-day gap between the sets, and tune on expanding-window folds
+  - **Fit the Price-Only Baselines**: Predict a zero return, the train mean, and a
+    `Ridge` regression on the lagged returns, the 5-day momentum, and the trailing
+    20-day volatility
+  - **Extract CLIP Text Features**: Embed each headline with `CLIPModel` and
+    `CLIPProcessor`, average the embeddings of each day, reduce them to about 20
+    components with `PCA` fit on the train set only, and compute zero-shot scores from
+    prompts (e.g., "oil supply disruption", "weak oil demand", "OPEC production cut")
+  - **Fit the Combined Models**: Fit a `Ridge` regression on the price features plus
+    the PCA components or the zero-shot scores, and a control that shuffles the
+    headline features across dates to check that any gain comes from the content
+  - **Evaluate Against Baselines**: Compute RMSE, out-of-sample R^2 against the train
+    mean, and directional accuracy, with bootstrap 95% confidence intervals of the
+    RMSE gain over the price-only baseline
+  - **Interpret the Results**: Plot the cumulative squared error of each model over
+    the test period, show the headlines with the largest predicted moves, and
+    discuss whether the news adds information beyond past prices
+- **Bonus Ideas (Optional)**: Compare the CLIP text embeddings with a finance
+  sentence encoder (e.g., FinBERT) on the same task; predict the direction of the
+  next-week move with a `LogisticRegression`; test whether the gain is larger on days
+  with large price moves

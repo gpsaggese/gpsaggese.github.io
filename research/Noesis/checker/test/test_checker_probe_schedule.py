@@ -40,7 +40,7 @@ def _contract(
     maximum_seconds: int = 60,
     state: str = "ACTIVE",
     window_start: datetime.datetime = datetime.datetime(
-        2026, 1, 1, tzinfo=datetime.timezone.utc
+        2026, 1, 1, tzinfo=datetime.UTC
     ),
 ) -> rnochmod.ContractWindow:
     return rnochmod.ContractWindow(
@@ -52,6 +52,7 @@ def _contract(
         checker_policy="m2-v1",
         window_start=window_start,
         window_end=None,
+        seller_id="seller_1",
     )
 
 

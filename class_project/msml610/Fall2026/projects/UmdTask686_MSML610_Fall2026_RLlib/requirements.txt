@@ -1,0 +1,20 @@
+# CPU-only PyTorch wheels (no CUDA), used by RLlib's torch backend.
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+# RLlib (pulls in gymnasium==1.2.2, pinned by Ray).
+ray[rllib]==2.59.0
+torch==2.14.1
+
+# Data: SPY prices from Yahoo Finance; VIX from FRED via CSV download.
+yfinance==1.7.0
+pandas==2.3.3
+numpy==2.5.3
+
+# Plotting and notebook helpers (from the project template).
+matplotlib==3.11.2
+seaborn
+ipywidgets
+tqdm
+
+# Unit tests.
+pytest==9.1.1

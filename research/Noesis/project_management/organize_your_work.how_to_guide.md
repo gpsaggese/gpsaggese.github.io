@@ -25,8 +25,8 @@
 
 - Follow
   [Starting work](../../../helpers_root/docs/work_organization/all.organize_your_work.how_to_guide.md#starting-work)
-- Read the [onboarding guide](../docs/onboarding.md), the
-  [MVP plan](../docs/plan.md#mvp-execution-plan), and the acceptance criteria of the issue
+- Read the [onboarding guide](../docs/09-onboarding.md), the
+  [MVP plan](../docs/04-plan.md#mvp-execution-plan), and the acceptance criteria of the issue
 
 ## Recording research and progress
 

@@ -31,6 +31,16 @@ class CheckerDisposition(str, enum.Enum):
     CHECKER_UNHEALTHY = "CHECKER_UNHEALTHY"
 
 
+class WindowCloseReason(str, enum.Enum):
+    """
+    Represent why a contract window is or is not ready to close.
+    """
+
+    NOT_READY = "NOT_READY"
+    TARGETS_REACHED = "TARGETS_REACHED"
+    DEADLINE_REACHED = "DEADLINE_REACHED"
+
+
 class CalibrationRole(str, enum.Enum):
     """
     Represent how a model/provider target is used during calibration.
@@ -206,6 +216,106 @@ class ContractWindow:
     checker_policy: str
     window_start: Optional[datetime]
     window_end: Optional[datetime]
+    seller_id: str
+
+    def __post_init__(self) -> None:
+        if not self.seller_id:
+            raise ValueError("seller_id must not be empty")
+
+
+@dataclasses.dataclass(frozen=True)
+class WindowEvidenceCounts:
+    """
+    Represent usable buyer and canary evidence in one contract window.
+    """
+
+    eligible_buyer_requests: int
+    eligible_canaries: int
+
+    def __post_init__(self) -> None:
+        if self.eligible_buyer_requests < 0:
+            raise ValueError("eligible_buyer_requests must not be negative")
+        if self.eligible_canaries < 0:
+            raise ValueError("eligible_canaries must not be negative")
+
+
+@dataclasses.dataclass(frozen=True)
+class WindowReadiness:
+    """
+    Represent whether evidence collection for one window should stop.
+    """
+
+    ready: bool
+    reason: WindowCloseReason
+    counts: WindowEvidenceCounts
+    deadline: datetime
+
+    def __post_init__(self) -> None:
+        if self.deadline.utcoffset() is None:
+            raise ValueError("deadline must be timezone-aware")
+        expected_ready = self.reason != WindowCloseReason.NOT_READY
+        if self.ready != expected_ready:
+            raise ValueError("ready and reason are inconsistent")
+
+
+@dataclasses.dataclass(frozen=True)
+class ContractEvaluation:
+    """
+    Represent one contract's result from a non-blocking checker pass.
+    """
+
+    contract_id: int
+    readiness: WindowReadiness
+    finalized: bool
+    report: Optional["VerdictReport"]
+
+    def __post_init__(self) -> None:
+        if self.contract_id <= 0:
+            raise ValueError("contract_id must be positive")
+        if not self.readiness.ready and self.finalized:
+            raise ValueError("a non-ready contract cannot be finalized")
+        if self.finalized != (self.report is not None):
+            raise ValueError("finalized and report are inconsistent")
+        if (
+            self.report is not None
+            and self.report.contract_id != self.contract_id
+        ):
+            raise ValueError("report belongs to another contract")
+
+
+@dataclasses.dataclass(frozen=True)
+class WindowEvidenceCounts:
+    """
+    Represent usable buyer and canary evidence in one contract window.
+    """
+
+    eligible_buyer_requests: int
+    eligible_canaries: int
+
+    def __post_init__(self) -> None:
+        if self.eligible_buyer_requests < 0:
+            raise ValueError("eligible_buyer_requests must not be negative")
+        if self.eligible_canaries < 0:
+            raise ValueError("eligible_canaries must not be negative")
+
+
+@dataclasses.dataclass(frozen=True)
+class WindowReadiness:
+    """
+    Represent whether evidence collection for one window should stop.
+    """
+
+    ready: bool
+    reason: WindowCloseReason
+    counts: WindowEvidenceCounts
+    deadline: datetime
+
+    def __post_init__(self) -> None:
+        if self.deadline.utcoffset() is None:
+            raise ValueError("deadline must be timezone-aware")
+        expected_ready = self.reason != WindowCloseReason.NOT_READY
+        if self.ready != expected_ready:
+            raise ValueError("ready and reason are inconsistent")
 
 
 @dataclasses.dataclass(frozen=True)
@@ -372,3 +482,39 @@ class VerdictDecision:
     quality: MetricAssessment
     reason_codes: Tuple[str, ...]
     excluded_counts: Dict[str, int]
+
+
+@dataclasses.dataclass(frozen=True)
+class VerdictReport:
+    """
+    Represent the stable checker result published through a verdict sink.
+    """
+
+    contract_id: int
+    seller_id: str
+    verdict: Verdict
+    disposition: CheckerDisposition
+    latency: MetricAssessment
+    quality: MetricAssessment
+    reason_codes: Tuple[str, ...]
+    excluded_counts: Dict[str, int]
+    window_start: datetime
+    window_end: datetime
+    checker_version: str
+    bank_version: str
+
+    def __post_init__(self) -> None:
+        if self.contract_id <= 0:
+            raise ValueError("contract_id must be positive")
+        if not self.seller_id:
+            raise ValueError("seller_id must not be empty")
+        if self.window_start.utcoffset() is None:
+            raise ValueError("window_start must be timezone-aware")
+        if self.window_end.utcoffset() is None:
+            raise ValueError("window_end must be timezone-aware")
+        if self.window_end < self.window_start:
+            raise ValueError("window_end must not precede window_start")
+        if not self.checker_version:
+            raise ValueError("checker_version must not be empty")
+        if not self.bank_version:
+            raise ValueError("bank_version must not be empty")

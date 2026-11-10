@@ -5,9 +5,9 @@ Tests for racket_params module.
 import logging
 from typing import List, Literal
 
+import helpers.hunit_test as hunitest
 import numpy as np
 
-import helpers.hunit_test as hunitest
 from research.Optimal_strategy_for_racket_sports import racket_params
 
 _LOG = logging.getLogger(__name__)
@@ -81,23 +81,6 @@ class TestCourtRegion(hunitest.TestCase):
 
     def test1(self) -> None:
         """
-        Test that a region with valid bounds is created successfully.
-        """
-        # Prepare inputs.
-        x_min = -1
-        x_max = 1
-        y_min = 0
-        y_max = 2
-        # Run test.
-        region = racket_params.CourtRegion(
-            x_min=x_min, x_max=x_max, y_min=y_min, y_max=y_max
-        )
-        # Check outputs.
-        self.assertEqual(region.x_min, x_min)
-        self.assertEqual(region.x_max, x_max)
-
-    def test2(self) -> None:
-        """
         Test that a point strictly inside the region is contained.
         """
         # Prepare inputs.
@@ -107,7 +90,7 @@ class TestCourtRegion(hunitest.TestCase):
         # Run test and check outputs.
         self.helper(x, y, expected)
 
-    def test3(self) -> None:
+    def test2(self) -> None:
         """
         Test that points on the region boundary are contained.
         """
@@ -118,7 +101,7 @@ class TestCourtRegion(hunitest.TestCase):
         # Run test and check outputs.
         self.helper(x, y, expected)
 
-    def test4(self) -> None:
+    def test3(self) -> None:
         """
         Test that points outside the region are not contained.
         """
@@ -129,7 +112,7 @@ class TestCourtRegion(hunitest.TestCase):
         # Run test and check outputs.
         self.helper(x, y, expected)
 
-    def test5(self) -> None:
+    def test4(self) -> None:
         """
         Test that contains() evaluates correctly over an array of points.
         """
@@ -258,15 +241,9 @@ class Test_get_half_court_region(hunitest.TestCase):
         """
         # Prepare inputs.
         court = racket_params.TENNIS.court
-        x_min = -4.115
-        x_max = 4.115
-        y_min = 0
-        y_max = 11.885
         # Prepare outputs.
-        expected = str(
-            racket_params.CourtRegion(
-                x_min=x_min, x_max=x_max, y_min=y_min, y_max=y_max
-            )
+        expected = (
+            "CourtRegion(x_min=-4.115, x_max=4.115, y_min=0, y_max=11.885)"
         )
         # Run test and check outputs.
         self.helper(court, expected)
@@ -277,16 +254,8 @@ class Test_get_half_court_region(hunitest.TestCase):
         """
         # Prepare inputs.
         court = racket_params.PICKLEBALL.court
-        x_min = -3.05
-        x_max = 3.05
-        y_min = 0
-        y_max = 6.705
         # Prepare outputs.
-        expected = str(
-            racket_params.CourtRegion(
-                x_min=x_min, x_max=x_max, y_min=y_min, y_max=y_max
-            )
-        )
+        expected = "CourtRegion(x_min=-3.05, x_max=3.05, y_min=0, y_max=6.705)"
         # Run test and check outputs.
         self.helper(court, expected)
 
@@ -325,17 +294,9 @@ class Test_get_service_box_region(hunitest.TestCase):
         """
         # Prepare inputs.
         court = racket_params.TENNIS.court
-        serve_side = "deuce"
-        x_min = -4.115
-        x_max = 0
-        y_min = 0.0
-        y_max = 6.40
+        serve_side: Literal["deuce", "ad"] = "deuce"
         # Prepare outputs.
-        expected = str(
-            racket_params.CourtRegion(
-                x_min=x_min, x_max=x_max, y_min=y_min, y_max=y_max
-            )
-        )
+        expected = "CourtRegion(x_min=-4.115, x_max=0, y_min=0.0, y_max=6.4)"
         # Run test and check outputs.
         self.helper(court, serve_side, expected)
 
@@ -345,17 +306,9 @@ class Test_get_service_box_region(hunitest.TestCase):
         """
         # Prepare inputs.
         court = racket_params.TENNIS.court
-        serve_side = "ad"
-        x_min = 0
-        x_max = 4.115
-        y_min = 0.0
-        y_max = 6.40
+        serve_side: Literal["deuce", "ad"] = "ad"
         # Prepare outputs.
-        expected = str(
-            racket_params.CourtRegion(
-                x_min=x_min, x_max=x_max, y_min=y_min, y_max=y_max
-            )
-        )
+        expected = "CourtRegion(x_min=0, x_max=4.115, y_min=0.0, y_max=6.4)"
         # Run test and check outputs.
         self.helper(court, serve_side, expected)
 
@@ -366,17 +319,9 @@ class Test_get_service_box_region(hunitest.TestCase):
         """
         # Prepare inputs.
         court = racket_params.PICKLEBALL.court
-        serve_side = "deuce"
-        x_min = -3.05
-        x_max = 0
-        y_min = 2.13
-        y_max = 6.71
+        serve_side: Literal["deuce", "ad"] = "deuce"
         # Prepare outputs.
-        expected = str(
-            racket_params.CourtRegion(
-                x_min=x_min, x_max=x_max, y_min=y_min, y_max=y_max
-            )
-        )
+        expected = "CourtRegion(x_min=-3.05, x_max=0, y_min=2.13, y_max=6.71)"
         # Run test and check outputs.
         self.helper(court, serve_side, expected)
 
@@ -395,21 +340,18 @@ class TestTENNIS(hunitest.TestCase):
         """
         Test the preset TENNIS sport parameters.
         """
+        # Prepare inputs.
+        sport = racket_params.TENNIS
         # Prepare outputs.
-        expected_name = "Tennis"
-        expected_length_m = 23.77
-        expected_width_m = 8.23
-        expected_service_line_m = 6.40
+        expected = "name=Tennis length_m=23.77 width_m=8.23 service_line_m=6.4"
         # Run test.
-        actual_name = racket_params.TENNIS.name
-        actual_length_m = racket_params.TENNIS.court.length_m
-        actual_width_m = racket_params.TENNIS.court.width_m
-        actual_service_line_m = racket_params.TENNIS.court.service_line_m
+        actual = (
+            f"name={sport.name} length_m={sport.court.length_m} "
+            f"width_m={sport.court.width_m} "
+            f"service_line_m={sport.court.service_line_m}"
+        )
         # Check outputs.
-        self.assert_equal(actual_name, expected_name)
-        self.assertEqual(actual_length_m, expected_length_m)
-        self.assertEqual(actual_width_m, expected_width_m)
-        self.assertEqual(actual_service_line_m, expected_service_line_m)
+        self.assert_equal(actual, expected)
 
 
 # #############################################################################
@@ -426,20 +368,17 @@ class TestPICKLEBALL(hunitest.TestCase):
         """
         Test the preset PICKLEBALL sport parameters.
         """
+        # Prepare inputs.
+        sport = racket_params.PICKLEBALL
         # Prepare outputs.
-        expected_name = "Pickleball"
-        expected_length_m = 13.41
-        expected_non_volley_zone_m = 2.13
+        expected = "name=Pickleball length_m=13.41 non_volley_zone_m=2.13"
         # Run test.
-        actual_name = racket_params.PICKLEBALL.name
-        actual_length_m = racket_params.PICKLEBALL.court.length_m
-        actual_non_volley_zone_m = (
-            racket_params.PICKLEBALL.court.non_volley_zone_m
+        actual = (
+            f"name={sport.name} length_m={sport.court.length_m} "
+            f"non_volley_zone_m={sport.court.non_volley_zone_m}"
         )
         # Check outputs.
-        self.assert_equal(actual_name, expected_name)
-        self.assertEqual(actual_length_m, expected_length_m)
-        self.assertEqual(actual_non_volley_zone_m, expected_non_volley_zone_m)
+        self.assert_equal(actual, expected)
 
 
 # #############################################################################
@@ -456,18 +395,18 @@ class TestDEFAULT_PLAYER(hunitest.TestCase):
         """
         Test the preset DEFAULT_PLAYER parameters.
         """
+        # Prepare inputs.
+        player = racket_params.DEFAULT_PLAYER
         # Prepare outputs.
-        expected_reaction_time_s = 0.2
-        expected_move_speed_mps = 1.5
-        expected_contact_height_m = 1.0
+        expected = "reaction_time_s=0.2 move_speed_mps=1.5 contact_height_m=1.0"
         # Run test.
-        actual_reaction_time_s = racket_params.DEFAULT_PLAYER.reaction_time_s
-        actual_move_speed_mps = racket_params.DEFAULT_PLAYER.move_speed_mps
-        actual_contact_height_m = racket_params.DEFAULT_PLAYER.contact_height_m
+        actual = (
+            f"reaction_time_s={player.reaction_time_s} "
+            f"move_speed_mps={player.move_speed_mps} "
+            f"contact_height_m={player.contact_height_m}"
+        )
         # Check outputs.
-        self.assertEqual(actual_reaction_time_s, expected_reaction_time_s)
-        self.assertEqual(actual_move_speed_mps, expected_move_speed_mps)
-        self.assertEqual(actual_contact_height_m, expected_contact_height_m)
+        self.assert_equal(actual, expected)
 
 
 # #############################################################################

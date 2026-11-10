@@ -26,6 +26,7 @@ _COMPONENTS = [
     "common",
     "gateway",
     "market",
+    "monitor",
     "noesis_platform",
     "prober",
 ]
@@ -40,6 +41,12 @@ _ALLOWED: Dict[str, List[str]] = {
     "market": [],
     "gateway": ["common"],
     "checker": ["common", "gateway.gateway_providers"],
+    "monitor": [
+        "checker",
+        "common",
+        "gateway.gateway_openrouter",
+        "gateway.gateway_providers",
+    ],
     "noesis_platform": ["market", "gateway.passthrough_proxy"],
     "prober": ["checker", "common", "gateway"],
 }
