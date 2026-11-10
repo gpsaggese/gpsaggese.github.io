@@ -53,7 +53,8 @@
     code
 - **Docs**:
   - `project_management.explanation.md`: the research Gdoc, GP's rules, the life of a
-    research question, and the paper as the way to review a research PR
+    research question, and the paper as the way to review a research PR, with a Paper
+    and Gdoc checklist for its description
   - `design_principles.explanation.md`: P13 rewritten for the Gdoc (it replaced the
     GitHub rule on 2026-11-07), P12 updated, and links to the Gdoc in P4, P10, P14,
     and P16
@@ -66,7 +67,8 @@
 - **Pending GP**
   ([Research process](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.21d3arlkot6c)):
   Q1, one log or two; Q2, the Drive folder of the research Gdocs; Q3, how the general
-  rules reach the research guide of helpers
+  rules reach the research guide of helpers; the paper checklist lives in
+  `project_management.explanation.md` for now
 
 ## 2026-11-07: Racket RL Env and Notebook 06 (#713, Layer 3)
 

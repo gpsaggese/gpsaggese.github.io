@@ -143,15 +143,28 @@
   ([GP on #694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694#issuecomment-6712939277)):
   a PR is hard to review by itself, so GP compares what it means with the paper or
   the Gdoc
-  - Every research PR names the paper section or the Gdoc heading that it adds or
-    changes, and updates it: the paper in the PR itself, the Gdoc when the PR is
-    opened
+  - Every PR that changes a result, a model, or an assumption names the paper section
+    or the Gdoc heading that it changes, and updates it: the paper in the PR itself,
+    the Gdoc when the PR is opened
   - So GP reviews the change of the paper or of the Gdoc, more than the code, as in
     [P14](design_principles.explanation.md#p14-the-plan-and-the-paper-control-the-code)
+  - Such a PR has this section in its description, with each item ticked once it is
+    answered:
+    ```markdown
+    ## Paper and Gdoc
+
+    - [ ] Affected: <paper section and Gdoc heading, with links>
+    - [ ] Results: <each result, figure, or number that changes, old -> new>, or none
+    - [ ] Updated to match: <the paper in this PR; the Gdoc heading, with the date>
+    - [ ] Assumptions: <each new or changed one, with its source (P16)>, or none
+    ```
+  - Any other PR says so in one line, e.g., "Paper and Gdoc: no change, tests only"
   - A PR that changes results with no change to the paper, the log, or the Gdoc is a
-    red flag; the general rule, with a skill or a check that flags such a PR
-    ([P15](design_principles.explanation.md#p15-put-the-smarts-in-the-skills)), goes
-    to the research guide of helpers, pending GP:
+    red flag, and the checklist makes it visible
+  - The checklist lives here for now: it can move to the research guide of helpers,
+    or into a skill
+    ([P15](design_principles.explanation.md#p15-put-the-smarts-in-the-skills)), if GP
+    prefers:
     [Q3](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.21d3arlkot6c)
 
 ## Getting Started

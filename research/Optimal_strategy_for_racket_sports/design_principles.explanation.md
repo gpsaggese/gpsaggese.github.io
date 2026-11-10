@@ -346,8 +346,9 @@
   - The #789 result went to the paper as Proposition 1, and the #694 corner sims as
     Sec. VII-A
 - **Details**: the Paper section of
-  [`project_management.explanation.md`](project_management.explanation.md#paper):
-  every research PR names the paper section or the Gdoc heading that it changes
+  [`project_management.explanation.md`](project_management.explanation.md#paper): a
+  PR that changes a result, a model, or an assumption fills the Paper and Gdoc
+  checklist in its description
 - **Source**:
   [GP on #812](https://github.com/gpsaggese/gpsaggese.github.io/issues/812#issuecomment-6545315777)
   and

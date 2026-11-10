@@ -365,9 +365,9 @@
         research Gdoc; the corner sims are done and in notebook 05
         ([PR #812](https://github.com/gpsaggese/gpsaggese.github.io/pull/812));
         the research questions and results that lived in GitHub comments are in
-        the Gdoc, and `project_management.explanation.md` follows GP's rules;
-        the general rules for the research guide of helpers wait for GP's
-        answers to
+        the Gdoc, and `project_management.explanation.md` follows GP's rules,
+        with a Paper and Gdoc checklist for research PRs; the general rules for
+        the research guide of helpers wait for GP's answers to
         [Q1 to Q3](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.21d3arlkot6c)
   - [x] [#788](https://github.com/gpsaggese/gpsaggese.github.io/issues/788):
         red to green heatmaps,
