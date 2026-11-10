@@ -105,7 +105,7 @@
 - [x] Validation, cleaning, leakage-safe features and labels
 - [x] Prequential evaluation with one-day label delay, significance tests
 - [x] Unit tests (leakage, delay, noise/signal sanity checks)
-- [ ] Baselines: majority class, persistence, walk-forward batch models
+- [x] Baselines: majority class, persistence, walk-forward batch models
 - [ ] River model comparison: Hoeffding (adaptive) trees, adaptive random
       forest, ensembles
 - [ ] Drift detection with ADWIN and adaptation across regimes
@@ -116,3 +116,4 @@
 
 ## Changelog
 - 2026-11-01: Project scaffold, data pipeline, evaluation framework
+- 2026-11-09: Baselines (online majority class, persistence, monthly walk-forward logistic regression and gradient boosting) and model comparison table
