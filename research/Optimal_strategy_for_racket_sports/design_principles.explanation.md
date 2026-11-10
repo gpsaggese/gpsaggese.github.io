@@ -8,7 +8,8 @@
 - GP asked for this doc on
   [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723#issuecomment-6602349966)
   - Keep it updated: when a discussion gives a new principle, add it in a PR, with a
-    link to that discussion
+    link to that discussion: for a research discussion, its Gdoc heading or comment
+    (P13)
 - How we work day to day is in
   [`project_management.explanation.md`](project_management.explanation.md)
   - The plan is [`plan.racket_strategy.md`](plan.racket_strategy.md), and the log is
@@ -100,6 +101,8 @@
     slider
   - The ratio breaks with $t_r > 0$, since the reaction distance $v_p t_r$ enters,
     and with a spread that grows with the ball speed (#723)
+  - Results and figures: the Gdoc,
+    [Experiment 4](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.xvdn4n7zo860)
 - **Source**:
   [GP on #789](https://github.com/gpsaggese/gpsaggese.github.io/issues/789#issuecomment-6528212968)
 
@@ -162,7 +165,9 @@
     source for the number
 - **Source**:
   [GP in our meeting, recorded on #723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723#issuecomment-6677605768),
-  decisions 2 to 4
+  decisions 2 to 4; now in the Gdoc,
+  [Experiment 5](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.qrto9so35bnx),
+  Decisions
 
 ## Simulation and Results
 
@@ -241,15 +246,18 @@
   - RL finding the same best region on its own checks both the RL and the one-shot
     results
   - Starting the RL from the one-shot answer would make that check circular
-- **Example**: the planned racket env of #713
+- **Example**: the racket env of #713, in notebook 06
   - Its transitions reuse the Milestone 2 sampling and reach functions
-  - The target is random and learned by the RL loop, and brute-force RL should
-    find the Milestone 2 best region
-  - Only phase 3 of #714 may replace parts of the RL with the one-shot results,
-    after phase 2 has reproduced them
+  - The target is random and learned by the RL loop, and the brute force through the
+    env matches a fresh Milestone 2 map: the Gdoc,
+    [Experiment 6](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.kntokyu5w697)
+  - Only phase 3 of #714 may replace parts of the RL with the one-shot results, after
+    phase 2 has reproduced them; until then PPO searches the full grid, with no
+    pruning
 - **Source**:
   [GP on #713](https://github.com/gpsaggese/gpsaggese.github.io/issues/713#issuecomment-6446476291);
-  the phases in the plan
+  [GP on #713](https://github.com/gpsaggese/gpsaggese.github.io/issues/713#issuecomment-6751589012):
+  the full grid, with no pruning, for now; the phases in the plan
 
 ## Process
 
@@ -275,28 +283,50 @@
 
 ### P12: One Issue per Task
 
-- **Principle**: every task, question, or problem gets its own GitHub issue, on the
-  plan
-- **Why**: each task keeps its discussion, decision, and PR in one place
-- **Example**: GP filed the spread vs ball speed question of #690 as #723
+- **Principle**: every task or problem gets its own GitHub issue, on the plan; a
+  research question about it is asked in the Gdoc, and the issue gets only a link
+  (P13)
+- **Why**: each task keeps its PR, and the link to its research discussion, in one
+  place
+- **Example**: GP filed the spread vs ball speed question of #690 as #723; the open
+  questions of #723 are in the Gdoc, under
+  [Questions for GP](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.xfydadrg3lvc),
+  and #723 has one line with the link
 - **Details**: the Tasks section of
   [`project_management.explanation.md`](project_management.explanation.md#tasks)
 - **Source**:
   [GP on #690](https://github.com/gpsaggese/gpsaggese.github.io/issues/690#issuecomment-6336175829):
-  "Again every problem -> GH issue"
+  "Again every problem -> GH issue";
+  [GP on #694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694#issuecomment-6712939277):
+  the research questions go in the Gdoc
 
-### P13: Decisions on GitHub or in the Repo
+### P13: Research Discussions and Decisions in the Gdoc
 
-- **Principle**: every decision is written on GitHub or in the repo, never only in
-  Slack or in a meeting
-- **Why**: a newcomer, or we later, can see what was decided and why
-- **Example**: the Milestone 2 questions asked on Slack were copied to #624 and
-  answered there
-- **Details**: the Communication section of
+- **Principle**: the research questions, their discussion, and the research decisions
+  live in the research Gdoc, with comments and suggestion mode; GitHub gets only a
+  link
+  - Coding questions stay on GitHub, and no decision lives only in Slack or in a
+    meeting
+- **Why**:
+  - GP: "stuff in GitHub and in Slack are meant to be lost"
+  - In the Gdoc a question sits next to the result it is about, and its answer and
+    its decision stay with it
+  - A newcomer, or we later, can see what was decided and why
+- **Example**: the open questions of #713 and #881 are comments under
+  [Questions for GP](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.xfydadrg3lvc)
+  in the Gdoc, and each issue has one line with the link
+  - GP answered Q7 and Q8 on #713, and both decisions are recorded under
+    [Experiment 6](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.kntokyu5w697),
+    Decisions
+- **Details**: the Communication and Research Questions sections of
   [`project_management.explanation.md`](project_management.explanation.md#communication)
 - **Source**:
-  [GP on #625](https://github.com/gpsaggese/gpsaggese.github.io/issues/625#issuecomment-6185837906),
-  item 8
+  [GP on #694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694#issuecomment-6712939277),
+  rules 1 to 3
+  - On 2026-11-07 this replaced the rule "every decision is written on GitHub or in
+    the repo", from
+    [GP on #625](https://github.com/gpsaggese/gpsaggese.github.io/issues/625#issuecomment-6185837906),
+    item 8
 
 ### P14: The Plan and the Paper Control the Code
 
@@ -304,6 +334,9 @@
   than every line of the code
   - The notebooks contain all the details, the log all the experiments, and the
     paper the interesting experiments
+  - Where the experiments are logged, in the log, in the Gdoc, or in both, is pending
+    GP:
+    [Q1](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.21d3arlkot6c)
 - **Why**:
   - Reviewing the plan and the paper scales better than reviewing every line
   - It keeps the code in sync with what the paper claims
@@ -312,10 +345,15 @@
     plan and the paper to control it
   - The #789 result went to the paper as Proposition 1, and the #694 corner sims as
     Sec. VII-A
+- **Details**: the Paper section of
+  [`project_management.explanation.md`](project_management.explanation.md#paper):
+  every research PR names the paper section or the Gdoc heading that it changes
 - **Source**:
   [GP on #812](https://github.com/gpsaggese/gpsaggese.github.io/issues/812#issuecomment-6545315777)
   and
-  [GP on #789](https://github.com/gpsaggese/gpsaggese.github.io/issues/789#issuecomment-6528212968)
+  [GP on #789](https://github.com/gpsaggese/gpsaggese.github.io/issues/789#issuecomment-6528212968);
+  [GP on #694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694#issuecomment-6712939277):
+  control the research through the paper
 
 ### P15: Put the Smarts in the Skills
 

@@ -27,6 +27,46 @@
 - The open tasks and the next steps are in the Tasks section of
   `plan.racket_strategy.md`
 - Manual widget checks of the Milestone 1 notebook, noted as in progress in #654
+- The open research questions are in the Gdoc, under
+  [Questions for GP](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.xfydadrg3lvc)
+
+## 2026-11-10: Research Questions and Results in the Gdoc (#694)
+
+- **Issue**: [#694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694),
+  from GP's rules for the research process
+  ([comment](https://github.com/gpsaggese/gpsaggese.github.io/issues/694#issuecomment-6712939277),
+  2026-11-07) and his follow-up: "pls put all the questions / content in the gdoc and
+  then you can post links from GH to there"
+- **Gdoc**: the research content that lived only in GitHub comments moved there
+  - [Experiment 4](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.xvdn4n7zo860):
+    the speed ratio and the reaction time (#789); its 3 figures are from a full run
+    of Part 3 of notebook 05 on master `80efe9d9`, which gave the same numbers as the
+    notebook
+  - [Experiment 5](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.qrto9so35bnx):
+    the plan of #723, part 2, with the decisions of 2026-11-03 and 2026-11-06
+  - [Experiment 6](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.kntokyu5w697):
+    the racket RL env of #713, layer 3 (#881), with the figures saved in notebook 06
+  - [Questions for GP](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.xfydadrg3lvc):
+    12 questions, one comment each with our recommendation, linked with one line from
+    #694, #713, #723, #789, #846, #857, and #881
+  - The `inspect.getsource()` question of #846 stays on GitHub, since it is about
+    code
+- **Docs**:
+  - `project_management.explanation.md`: the research Gdoc, GP's rules, the life of a
+    research question, and the paper as the way to review a research PR
+  - `design_principles.explanation.md`: P13 rewritten for the Gdoc (it replaced the
+    GitHub rule on 2026-11-07), P12 updated, and links to the Gdoc in P4, P10, P14,
+    and P16
+  - `plan.racket_strategy.md`: links to the Gdoc, and the status of #823, #857, and
+    #881, all merged
+- **Decided**
+  ([GP on #713](https://github.com/gpsaggese/gpsaggese.github.io/issues/713#issuecomment-6751589012),
+  2026-11-09, recorded under Experiment 6): the layer 3 success criterion is good
+  enough (Q7), and PPO stays on the full grid, with no pruning for now (Q8)
+- **Pending GP**
+  ([Research process](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.21d3arlkot6c)):
+  Q1, one log or two; Q2, the Drive folder of the research Gdocs; Q3, how the general
+  rules reach the research guide of helpers
 
 ## 2026-11-07: Racket RL Env and Notebook 06 (#713, Layer 3)
 
