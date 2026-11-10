@@ -14,7 +14,7 @@
 # ---
 
 # %% [markdown]
-# # AutoGluon Tabular API
+# # AutoGluon API Overview
 #
 # - This notebook explores `autogluon.tabular` on a synthetic customer-churn table
 #   whose label depends on known features, so every output can be checked against
