@@ -1,3 +1,11 @@
+# This project needs its own requirements file (see "Python Dependencies Policy"
+# in `docker_scripts.README.md`). Kats is unmaintained and only works with an
+# old, interlocking set of versions: Python 3.11, pandas 1.5.3, and matching
+# numpy, scipy, statsmodels, prophet, and cmdstanpy. These pins are hard to
+# keep consistent by hand, so they live here and the image is built with
+# `docker_build.sh`. Kats itself is installed from a pinned commit in the
+# `Dockerfile`, since pip cannot resolve it.
+
 # Core: notebook, plotting, and data handling.
 ipywidgets
 matplotlib==3.8.4
