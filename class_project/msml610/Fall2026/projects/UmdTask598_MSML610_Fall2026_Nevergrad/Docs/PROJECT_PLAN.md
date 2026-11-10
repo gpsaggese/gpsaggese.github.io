@@ -74,10 +74,10 @@ Four ideas up front make every task fall into place and make the tutorial defens
 
 ## 4. Environment & Setup
 
-This project runs inside the **course Docker project template** (`class_project/project_template`). All work happens *in the container*, driven by the provided `docker_*.sh` helper scripts; nothing is installed on the host beyond a container engine. The template's guiding principle is **change only what's necessary** — here that means `requirements.txt` and (if needed) the base-image choice; everything else inherits from the template.
+This project runs inside the **course Docker project template** (`class_project/project_template`). All work happens *in the container*, driven by the provided `docker_*.sh` helper scripts; nothing is installed on the host beyond a container engine. The template's guiding principle is **change only what's necessary**. Under the course's dependency policy of Nov 2 2026 (§4.4), that leaves only `docker_name.sh`: the `Dockerfile` and `requirements.txt` stay identical to the template, and each notebook installs its own extra packages.
 
 ### 4.1 — Prerequisites
-- A container engine: **Docker** (Linux, or Docker Desktop on macOS) or **Apple's `container`** tool (macOS default). Scripts pick the engine from `DOCKER_ENGINE` — `docker` on Linux, `apple` on macOS by default. Force Docker on macOS with `DOCKER_ENGINE=docker ./docker_build.sh`.
+- A container engine: **Docker** (Linux, or Docker Desktop on macOS) or **Apple's `container`** tool (macOS default). Scripts pick the engine from `DOCKER_ENGINE`; the template defaults to `docker` on every machine except the instructor's laptop, so this project uses Docker Desktop on macOS. Start it before running any `docker_*.sh` script.
 - On Windows, use VMware or dual-boot Linux (or a UMD lab machine) since Docker is expected to run natively.
 - Multi-architecture builds are not needed; if ever used they require `docker buildx` (`DOCKER_BUILD_MULTI_ARCH=1`).
 
@@ -100,15 +100,14 @@ The single `Dockerfile` ships three base-image sections; exactly one is active.
 - **Recommendation:** keep the **Python 3.12-slim default** — this project needs only wheel-available packages, so no system toolchain is required. Fall back to **Ubuntu 24.04 + pip** only if a dependency fails to build on slim.
 - Uncomment the chosen section; comment out the other two.
 
-### 4.4 — Declare project dependencies (`requirements.txt`)
-List **only project libraries, with pinned versions**:
-- `yfinance==1.7.0` (data; latest release, confirmed current Oct 2026), `nevergrad==1.0.12` (optimization; latest release, Apr 23 2025), `numpy==2.5.3`, `pandas==2.3.3`, `matplotlib==3.11.2`, and `scipy==1.18.1` (closed-form minimum-variance baseline and the optional CVaR bonus). Versions are the latest stable on PyPI as of Oct 7 2026, except `pandas` — see the next bullet. All four require Python ≥ 3.12 or lower, so they build on the Python 3.12-slim base image (§4.3); none of them, `yfinance`, or `nevergrad` declares an upper-bound cap that conflicts with these pins.
-- **`pandas` is deliberately pinned to the latest 2.x (`2.3.3`), not 3.x (`3.0.6`).** pandas 3.0 is a major release (Copy-on-Write by default, new default string dtype); this project uses pandas only as the I/O boundary (yfinance fetch → CSV cache → date alignment), while the numeric core is NumPy, so 3.0 buys nothing here. The one real risk is `yfinance==1.7.0`'s internal DataFrame handling under 3.0 — it declares no cap (`pandas>=1.3.0`), but "no declared cap" is not "tested on 3.0," and this is a must-run-cleanly-in-Docker tutorial (§4.7, §12). 2.3.3 needs `numpy>=1.26.0` with no upper cap, so it stays compatible with `numpy==2.5.3`. Revisit 3.x only after a full headless container run confirms yfinance behaves.
-- *(Optional)* `pandas-datareader` only if you automate the Ken French fallback fetch (§4.8); otherwise download that CSV once and cache it.
-- **Test dependencies:** `pytest==9.1.1` and `pytest-cov==7.1.0`, so the unit tests run in the container (`helpers.hunit_test` imports `pytest`, which the base image lacks) and coverage can be measured with `--cov=nevergrad_utils`. Name the test file explicitly — `class_project/msml610/conftest.py` makes pytest skip directory collection under `class_project/msml610/`, so `pytest test/` collects nothing: `./docker_cmd.sh "cd /git_root/class_project/msml610/Fall2026/projects/UmdTask598_MSML610_Fall2026_Nevergrad && pytest test/test_nevergrad_utils.py --cov=nevergrad_utils --cov-branch --cov-report=term-missing"`.
-- **Do NOT** add `jupyterlab`, `jupyterlab_vim`, or `ipywidgets` — installed by the Dockerfile (Stage 5) as infrastructure.
-- For clean pinning, optionally keep a `requirements.in` and generate `requirements.txt` with `pip-compile` (pip-tools) for full transitive pinning.
-- **Pin `nevergrad==1.0.12`** — every API idiom in this plan is confirmed against it (verified against the live docs so the notebook doesn't copy a stale example):
+### 4.4 — Declare project dependencies (`!pip install` cells, not `requirements.txt`)
+- **Policy (course rule since Nov 2 2026):** keep `Dockerfile` and `requirements.txt` identical to the template, so every class project shares one image with only the basic packages (`ipywidgets`, `matplotlib`, `numpy`, `pandas`, `seaborn`, `tqdm`, unpinned). Source: `class_project/README.md` and "Python Dependencies Policy" in the template's `docker_scripts.README.md`. A project `requirements.txt` is allowed only when dependencies are hard to maintain by hand (inter-dependent pins), which is not the case here.
+- **Each notebook installs its extra packages**, pinned, in its first code cell, then prints their versions: `!pip install -q nevergrad==1.0.12 scipy==1.18.1 yfinance==1.7.0`. The cell comes before the autoreload cell, so pip never replaces a package the kernel has already imported. In the paired `.py` the line reads `# !pip install ...` (Jupytext comments it out). `nevergrad.API.ipynb` adds the same kind of cell once it imports `nevergrad` (M4-3). `scipy` serves the minimum-variance baseline and the optional CVaR bonus.
+- **Versions in the image** (build of Nov 9 2026, `docker_build.version.log`): Python 3.12.16, `numpy` 2.5.4, `pandas` 3.1.1, `matplotlib` 3.11.2. The three pins install on top without changing `numpy` or `pandas`.
+- **`pandas` is no longer pinned to 2.3.3.** The earlier pin guarded against `yfinance` misbehaving under pandas 3. The template now installs pandas 3.1.1, and on Nov 9 2026 all 70 unit tests passed and every real-data number of the example notebook's Parts 1–2 reproduced exactly on it. `yfinance` runs only when the cache is missing, so the cached CSV keeps results independent of it (§4.7).
+- *(Optional)* `pandas-datareader` only if you automate the Ken French fallback fetch (§4.8), installed in the same pip cell; otherwise download that CSV once and cache it.
+- **Unit tests:** the image has no `pytest` (`helpers.hunit_test` imports it), so install it with the pins in the same call. Name the test file explicitly — `class_project/msml610/conftest.py` makes pytest skip directory collection under `class_project/msml610/`, so `pytest test/` collects nothing: `./docker_cmd.sh "pip install -q nevergrad==1.0.12 scipy==1.18.1 yfinance==1.7.0 pytest==9.1.1 pytest-cov==7.1.0 && cd /git_root/class_project/msml610/Fall2026/projects/UmdTask598_MSML610_Fall2026_Nevergrad && pytest test/test_nevergrad_utils.py --cov=nevergrad_utils --cov-branch --cov-report=term-missing"`.
+- **Pin `nevergrad==1.0.12`** (in the pip cell) — every API idiom in this plan is confirmed against it (verified against the live docs so the notebook doesn't copy a stale example):
   - **Compose the search space with `ng.p.Dict`** of named parts, e.g. `ng.p.Dict(weights=ng.p.Array(shape=(n,)), rebal=ng.p.Choice([...]))`. A candidate's `.value` is the dict `{"weights": np.ndarray, "rebal": <chosen item>}`.
   - **`ng.p.Array(shape=(n,))`** supports `.set_bounds(lower, upper)` and `.set_integer_casting()`; **`ng.p.Choice([...])`** is an unordered categorical whose selected item is read from `.value`.
   - **Constraints go through `parametrization.register_cheap_constraint(fn)`**, where `fn` receives the parameter value and returns a **float that is ≤ 0 when the constraint is satisfied** (docs idiom: a constraint `x[0] >= 1` is written `lambda x: x[0] - 1`). For the 40% cap: `lambda d: float(np.max(to_weights(d["weights"])) - 0.40)`.
@@ -122,12 +121,12 @@ Keep the template's exclusions and add project-specific ones. Critically, **do n
 ### 4.6 — Build, run, and work in the container
 - **Build:** `./docker_build.sh` (add `--no-cache` for a clean rebuild). Smoke-test with `./docker_bash.sh ls`.
 - **Interactive shell:** `./docker_bash.sh` — mounts the current directory as `/data` inside the container.
-- **Run a script / command:** `./docker_cmd.sh python <script>.py ...`, or `./docker_cmd.sh pytest test/`.
+- **Run a script / command:** `./docker_cmd.sh python <script>.py ...`; for the unit tests, use the command in §4.4, which installs the extra packages and `pytest` first.
 - **JupyterLab:** `./docker_jupyter.sh`, then open `http://localhost:8888`. Use `-p <port>` for a custom port and `-u` for vim keybindings.
 - Every script accepts `-h` (help) and `-v` (verbose/trace).
 
 ### 4.7 — Reproducibility
-- **Pinned `requirements.txt`** fixes package versions.
+- **Pinned `!pip install` cells** fix the versions of the extra packages (§4.4). The basic packages (`numpy`, `pandas`, `matplotlib`) come unpinned from the template image, so `version.log` is the record of the versions actually used.
 - **`version.log`** is auto-generated at build time (Dockerfile Stage 8 via `version.sh`), recording Python/pip/Jupyter and every installed package — review after each build and keep it with the submission.
 - **Fix random seeds** for Nevergrad and any Monte-Carlo sampling. Call `np.random.seed(...)` **before the parametrization's first use** — Nevergrad's parametrization pulls its random state from numpy's global seed at that moment, so getting the order wrong means the "fixed seed" won't actually fix the run. The robustness sweep (§6.6) deliberately varies this seed across five values.
 - **Fix the data window** with explicit `start`/`end` dates so results don't drift as new prices arrive.

@@ -29,6 +29,19 @@
 #   - Bonus objectives, and the comparison with Optuna and Ax
 
 # %%
+# !pip install -q nevergrad==1.0.12 scipy==1.18.1 yfinance==1.7.0
+
+import nevergrad
+
+print("nevergrad version: ", nevergrad.__version__)
+import scipy
+
+print("scipy version: ", scipy.__version__)
+import yfinance
+
+print("yfinance version: ", yfinance.__version__)
+
+# %%
 # %load_ext autoreload
 # %autoreload 2
 
