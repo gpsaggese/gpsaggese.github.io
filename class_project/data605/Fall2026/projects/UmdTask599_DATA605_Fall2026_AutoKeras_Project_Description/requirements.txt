@@ -7,9 +7,6 @@
 tensorflow==2.10.1
 keras-tuner==1.1.0
 autokeras==1.1.0
-# Pin versions for Tensorflow 2.10 Compatibility:
-keras-nlp==0.3.0
-tensorflow-text==2.10.0
 
 # --- Supporting Core Infrastructure and Utilities ---
 packaging>=20.0
