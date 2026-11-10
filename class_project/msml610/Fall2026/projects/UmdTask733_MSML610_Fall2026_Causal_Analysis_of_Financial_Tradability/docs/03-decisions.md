@@ -10,7 +10,8 @@
   is about 500x smaller (about 0.6 BTC vs 290 BTC per hour)
 - **Alternatives**: Binance.US; Kaggle `mczielinski/bitcoin-historical-data`
   (used in #381, ends in 2021)
-- **Status**: proposed (asked on #733)
+- **Status**: accepted (GP in the research gdoc, 2026-11-07: Binance and
+  Yahoo are fine)
 
 ### `D2` (Fail loudly when data is missing)
 
@@ -64,7 +65,32 @@
   splits
 - **Why**: free, no API key. Daily data goes back to 1993
 - **Alternatives**: paid data (Polygon, Alpaca) for longer hourly history
-- **Status**: proposed. Yahoo only has hourly bars for the last 730 days
+- **Status**: accepted (GP, 2026-11-07). Yahoo only has hourly bars for the
+  last 730 days, so the SPY 1h file is saved in the project Drive folder (see
+  `data_sources.reference.md`)
+
+### `D15` (Treat zero-volume bars right before a gap as part of the gap)
+
+- **Decision**: in `clean_bars()`, a run of zero-volume bars that ends right
+  before a missing bar is marked `is_stale` and treated as missing
+- **Why**: 41 of the 42 zero-volume bars come right before a Binance outage.
+  Trading had already stopped, so their prices are stale
+- **Alternatives**: only flag them (before this change)
+- **Note**: whether a bar is stale depends on the next bars being missing. It
+  only affects the bars around the 3 outages, not the features or the models
+  elsewhere
+- **Status**: accepted (GP, 2026-11-07). A separate gap analysis is in #904
+
+### `D16` (Drop the first hourly bar of each day for SPY)
+
+- **Decision**: for hourly SPY, drop the return of the first bar of each New
+  York trading day
+- **Why**: that bar goes from the previous close, so it includes the overnight
+  move, and the overnight dynamics are very different from the intraday ones.
+  It is 14% of the bars but 54% of the sum of r^2
+- **Alternatives**: keep it; treat it as its own horizon; split the day into
+  regimes (opening, mid-day, closing), maybe later
+- **Status**: accepted (GP, 2026-11-07)
 
 ## Simulation
 
@@ -74,7 +100,7 @@
 - **Why**: a plain dot product of 0/1 hits with returns treats a wrong call as
   zero instead of a loss, and matches the spec's E[r] = (2p - 1) g
 - **Alternatives**: hit . r as written in Exercise 1
-- **Status**: proposed (asked on #733)
+- **Status**: proposed (GP is double-checking, 2026-11-07)
 
 ### `D5` (Report both ways of drawing hits)
 
@@ -115,14 +141,17 @@
 - **Alternatives**: one train/test split; purged k-fold cross-validation
 - **Status**: accepted
 
-### `D13` (Assume a 10 bp cost per round trip)
+### `D13` (Assume a 10 bp cost per round trip, and sweep it)
 
-- **Decision**: subtract 10 bp from each trade's return
+- **Decision**: subtract 10 bp from each trade's return by default, and also
+  report the results for 0, 2, 5, 10, and 20 bp
 - **Why**: in the range of Binance spot fees for a round trip, and the value
-  used in the related work listed on #733
+  used in the related work listed on #733. GP: 10 bp is on the expensive
+  side, and the real cost depends on how aggressive the orders are, the
+  quality of execution, and the time frame
 - **Alternatives**: report the breakeven cost only (the PnL per trade before
   costs, which is also in the results)
-- **Status**: proposed
+- **Status**: accepted (GP, 2026-11-07)
 
 ### `D14` (Judge models by the weighted hit rate and PnL)
 
@@ -131,4 +160,17 @@
 - **Why**: the logistic regression beats p* on the plain hit rate but makes no
   money, because it is right on small moves and wrong on big ones
 - **Alternatives**: plain hit rate only, as in the spec
-- **Status**: proposed
+- **Status**: proposed. Whether the results hold with a different target is
+  checked in #905
+
+## Scope
+
+### `D17` (Describe what happens before asking why)
+
+- **Decision**: for now, measure how tradability changes with the horizon,
+  the cost, and the market conditions, without a causal analysis
+- **Why**: GP (2026-11-07): focus on the "what" first, then investigate the
+  "why" later
+- **Alternatives**: causal analysis of the horizon effect by regime, with
+  placebo tests (the original step 3)
+- **Status**: accepted (GP, 2026-11-07)

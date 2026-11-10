@@ -179,3 +179,30 @@ class Test_evaluate_positions(hunitest.TestCase):
         self.assertAlmostEqual(
             stats["p_star_cost"] - stats["p_star"], 0.001 / (2 * 0.02)
         )
+
+
+# #############################################################################
+# Test_sweep_costs
+# #############################################################################
+
+
+class Test_sweep_costs(hunitest.TestCase):
+    """
+    Test `predict_utils.sweep_costs()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that each cost lowers the PnL per trade by the cost.
+        """
+        # Prepare inputs.
+        pos = pd.Series([1.0, -1.0, 1.0])
+        fwd_ret = pd.Series([0.01, -0.02, 0.03])
+        costs = [0.0, 0.0005, 0.001]
+        # Run test.
+        df = putil.sweep_costs(pos, fwd_ret, costs)
+        # Check outputs.
+        self.assertEqual(df["cost_bps"].tolist(), [0.0, 5.0, 10.0])
+        # The PnL before costs is 0.02 per trade at every cost.
+        self.assertEqual(df["gross_bps"].round(6).tolist(), [200.0] * 3)
+        self.assertEqual(df["net_bps"].round(6).tolist(), [200.0, 195.0, 190.0])

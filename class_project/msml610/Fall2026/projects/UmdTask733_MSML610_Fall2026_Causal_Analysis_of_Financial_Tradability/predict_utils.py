@@ -170,3 +170,20 @@ def evaluate_positions(
         "total_net": (pnl - cost).sum(),
     }
     return pd.Series(stats)
+
+
+def sweep_costs(
+    pos: pd.Series, fwd_ret: pd.Series, costs: list[float]
+) -> pd.DataFrame:
+    """
+    Measure the trades at several costs per round trip.
+
+    :param pos: position for each trade, +1 or -1
+    :param fwd_ret: return over the holding period of each trade
+    :param costs: costs of a round trip, as returns (0.001 = 10 bp)
+    :return: one row per cost with the metrics of `evaluate_positions()`
+    """
+    rows = [evaluate_positions(pos, fwd_ret, cost=cost) for cost in costs]
+    df = pd.DataFrame(rows)
+    df.insert(0, "cost_bps", [cost * 1e4 for cost in costs])
+    return df

@@ -9,28 +9,37 @@
 | Milestone | Target date | Status | PR |
 | :-------- | :---------- | :----- | :- |
 | Step 0: Exercise 1 from #381 (PnL vs hit rate) | Oct 29 | Done | #794 |
-| Step 0: Exercise 1 on SPY (asked on #733) | Oct 29 | In review | #820 |
-| Step 1: Data, cleaning, features, labels | Nov 5 | In review | #820 |
-| Step 2: Predictability vs horizon, hit rate and PnL with costs | Nov 5 | In review | #820 |
-| Step 3: Causal analysis and placebo tests | Nov 19 | Not started | |
+| Step 0: Exercise 1 on SPY (asked on #733) | Oct 29 | Done | #820 |
+| Step 1: Data, cleaning, features, labels | Nov 5 | Done | #820 |
+| Step 2: Predictability vs horizon, hit rate and PnL with costs | Nov 5 | Done | #820 |
+| Follow-ups from GP's answers: stale bars, SPY overnight bar, cost sweep, data sources | Nov 12 | In review | |
+| Gap analysis | Nov 19 | Not started | #904 |
+| Step 3: What happens per horizon in different market conditions (no causal analysis yet, `D17`) | Nov 19 | Not started | |
+| Robustness: do the results hold with a different target? | Nov 26 | Not started | #905 |
 | Step 4: Best horizon per regime, walk-forward backtest | Nov 26 | Not started | |
 | Step 5: Write-up, video, final PR | Dec 3 | Not started | |
 
 ## Built
 
-- `tradability_utils.py`: loads Binance prices, computes returns, simulates the
-  PnL for a given hit rate, computes the effective number of trades
+- `tradability_utils.py`: loads Binance and Yahoo prices, computes returns,
+  drops the overnight bar, simulates the PnL for a given hit rate, computes
+  the effective number of trades
 - `exercise1.ipynb`: Exercise 1 with plots and observations
 - `exercise1_spy.ipynb`: Exercise 1 on SPY next to BTC (Yahoo Finance data)
 - `data_utils.py`: loads 5-minute OHLCV bars, cleans them, computes features
   and labels per horizon
 - `test/test_data_utils.py`: unit tests, including no look-ahead and no
   feature or label spanning a gap
+- `test/test_predict_utils.py`, `test/test_tradability_utils.py`: unit tests
+  for the models, the metrics, the cost sweep, and the overnight bar
 - `tradability.data.ipynb`: data quality, features, labels per horizon
 - `predict_utils.py`: walk-forward split, always buy, momentum, and logistic
-  regression, and the hit rate and PnL of a set of trades
+  regression, and the hit rate and PnL of a set of trades at one or several
+  costs
 - `tradability.models.ipynb`: the three models per horizon, tested on
-  2022-2026, with and without costs
+  2022-2026, with costs from 0 to 20 bp
+- `data_sources.reference.md`: where each dataset comes from and how it is
+  made
 - Docker setup from `class_project/project_template`
 
 ## Findings
@@ -54,10 +63,13 @@
      trades fewer hours: about 52.5% for SPY 1h vs 51% for BTC 1h
    - What matters is the number of trades, not the size of the moves: daily
      SPY and daily BTC both need about 53%
+   - Without the first hourly bar of each day (the overnight move, `D16`),
+     the corrected p* for SPY 1h barely changes: 0.5246 to 0.5250
    - Data: Yahoo Finance and Binance, `exercise1_spy.ipynb`
 5. The 5-minute Binance data is clean: no duplicates, 0.07% missing bars. BTC
    and ETH share the same 15 gaps (Binance outages), all at least 1 hour, so
-   the data is split into 16 segments
+   the data is split into 16 segments. 41 of the 42 zero-volume bars are
+   right before an outage and are now treated as part of the gap (`D15`)
    - Data: `tradability.data.ipynb`
 6. Both the share of up moves and p* go up with the horizon. Always buying is
    above p* at 1h and 4h but below it at 5m and 1d, because of the 2020-2026
@@ -71,18 +83,24 @@
    - Data: `tradability.models.ipynb`, test 2022-2026
 8. With a 10 bp cost per trade, no model makes money at any horizon. The hit
    rate needed goes from over 100% at 5m to 55-56% at 1d, and the best PnL
-   before costs is 9.5 bp per trade (ETH, 1d). Costs push the best horizon
+   before costs is 9.4 bp per trade (ETH, 1d). Costs push the best horizon
    to the longest one
    - Data: `tradability.models.ipynb`, section "Costs"
 9. Short moves tend to reverse: momentum is right only 46-49% of the time
    from 5m to 4h
+10. Even a small cost decides the best horizon. From 5m to 1h every model
+    breaks even at 0.3 bp per trade or less, so at 2 bp all of them lose
+    money; at 4h the best break-even cost is 1.6 bp. Only 1d survives: at
+    5 bp, always buying on BTC (2.1 bp per trade, from the uptrend) and the
+    logistic regression on ETH (4.4 bp) still make money
+    - Data: `tradability.models.ipynb`, section "Cost sweep"
 
 ## Next
 
-1. Step 3: causal analysis of the horizon effect by regime (volatility,
-   trend), with placebo tests
-2. Use the weighted hit rate and PnL, not the plain hit rate, to judge
-   models
+1. Step 3: what happens per horizon in different market conditions (calm vs
+   volatile, rising vs falling), without a causal analysis for now (`D17`)
+2. Gap analysis notebook (#904)
+3. Robustness: do the results hold with a different target? (#905)
 
 ## History
 
@@ -97,11 +115,14 @@
 | 2026-10-29 | Exercise 1 on SPY; step 1 data loading and cleaning |
 | 2026-10-30 | Step 1 features and labels |
 | 2026-10-31 | Step 2 models per horizon, with costs |
+| 2026-11-07 | PR #820 merged. GP answered the open questions in the gdoc, and on #733: "worth a publication if we can keep working a bit on it after class" |
+| 2026-11-10 | To-do tab in the gdoc; filed #904 and #905; SPY 1h file saved in the project Drive folder |
+| 2026-11-10 | Follow-ups from GP's answers: stale bars, SPY overnight bar, cost sweep, data sources |
 
 ## Open Work
 
-- Zero-volume bars right before a gap: part of the gap or not?
-- Yahoo keeps only 730 days of hourly data: commit the SPY 1h CSV?
+- A wrong call loses the move, or counts as zero? (`D4`, GP is
+  double-checking)
 
 ## 2026-10-28: UmdTask733_MSML610_Fall2026_Causal_Analysis_of_Financial_Tradability
 
