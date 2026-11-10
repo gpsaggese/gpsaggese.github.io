@@ -1,0 +1,113 @@
+{
+ "version": "2.1.0",
+ "$schema": "https://docs.oasis-open.org/sarif/sarif/v2.1.0/os/schemas/sarif-schema-2.1.0.json",
+ "runs": [
+  {
+   "tool": {
+    "driver": {
+     "name": "Semgrep OSS",
+     "rules": [
+      {
+       "defaultConfiguration": {
+        "level": "warning"
+       },
+       "helpUri": "https://semgrep.dev/r/python.django.security.injection.raw-html-format.raw-html-format",
+       "id": "python.django.security.injection.raw-html-format.raw-html-format",
+       "name": "python.django.security.injection.raw-html-format.raw-html-format",
+       "properties": {
+        "precision": "very-high",
+        "tags": [
+         "CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')",
+         "MEDIUM CONFIDENCE",
+         "OWASP-A03:2021 - Injection",
+         "OWASP-A05:2025 - Injection",
+         "OWASP-A07:2017 - Cross-Site Scripting (XSS)",
+         "security"
+        ]
+       },
+       "shortDescription": {
+        "text": "Semgrep Finding: python.django.security.injection.raw-html-format.raw-html-format"
+       }
+      },
+      {
+       "defaultConfiguration": {
+        "level": "error"
+       },
+       "helpUri": "https://semgrep.dev/r/python.flask.security.injection.tainted-sql-string.tainted-sql-string",
+       "id": "python.flask.security.injection.tainted-sql-string.tainted-sql-string",
+       "name": "python.flask.security.injection.tainted-sql-string.tainted-sql-string",
+       "properties": {
+        "precision": "very-high",
+        "tags": [
+         "CWE-704: Incorrect Type Conversion or Cast",
+         "MEDIUM CONFIDENCE",
+         "OWASP-A01:2017 - Injection",
+         "OWASP-A03:2021 - Injection",
+         "OWASP-A05:2025 - Injection",
+         "security"
+        ]
+       },
+       "shortDescription": {
+        "text": "Semgrep Finding: python.flask.security.injection.tainted-sql-string.tainted-sql-string"
+       }
+      }
+     ]
+    }
+   },
+   "results": [
+    {
+     "locations": [
+      {
+       "physicalLocation": {
+        "artifactLocation": {
+         "uri": "cases/case_f90c5e6a.py",
+         "uriBaseId": "%SRCROOT%"
+        },
+        "region": {
+         "endColumn": 66,
+         "endLine": 21,
+         "snippet": {
+          "text": "    sql = f\"SELECT id, name FROM members WHERE email = '{email}'\""
+         },
+         "startColumn": 11,
+         "startLine": 21
+        }
+       }
+      }
+     ],
+     "message": {
+      "text": "Detected user input used to manually construct a SQL string. This is usually bad practice because manual construction could accidentally result in a SQL injection. An attacker could use a SQL injection to steal or modify contents of the database. Instead, use a parameterized query which is available by default in most database engines. Alternatively, consider using an object-relational mapper (ORM) such as SQLAlchemy which will protect your queries."
+     },
+     "properties": {},
+     "ruleId": "python.flask.security.injection.tainted-sql-string.tainted-sql-string"
+    },
+    {
+     "locations": [
+      {
+       "physicalLocation": {
+        "artifactLocation": {
+         "uri": "cases/case_07a81681.py",
+         "uriBaseId": "%SRCROOT%"
+        },
+        "region": {
+         "endColumn": 55,
+         "endLine": 23,
+         "snippet": {
+          "text": "    return PAGE.format(greeting=greeting, count=count)"
+         },
+         "startColumn": 12,
+         "startLine": 23
+        }
+       }
+      }
+     ],
+     "message": {
+      "text": "Detected user input flowing into a manually constructed HTML string. You may be accidentally bypassing secure methods of rendering HTML by manually constructing HTML and this could create a cross-site scripting vulnerability, which could let attackers steal sensitive user data. To be sure this is safe, check that the HTML is rendered safely. Otherwise, use templates (`django.shortcuts.render`) which will safely render HTML instead."
+     },
+     "properties": {},
+     "ruleId": "python.django.security.injection.raw-html-format.raw-html-format"
+    }
+   ]
+  }
+ ]
+}
