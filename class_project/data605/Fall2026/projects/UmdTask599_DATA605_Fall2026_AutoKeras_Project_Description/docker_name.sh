@@ -8,5 +8,5 @@
 
 REPO_NAME=gpsaggese
 # The file should be all lower case.
-IMAGE_NAME=umd_project_UmdTask599_DATA605_Fall2026_AutoKeras_Project_Description
+IMAGE_NAME=umd_project_umdtask599_data605_fall2026_autokeras_project_description
 FULL_IMAGE_NAME=$REPO_NAME/$IMAGE_NAME
