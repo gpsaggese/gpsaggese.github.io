@@ -3,12 +3,6 @@
 // lesson_title=Lesson 01.01: What Is an Agentic AI?
 // slides_engine=typst
 
-// References:
-//- ReAct: Synergizing Reasoning and Acting in Language Models:
-//  https://arxiv.org/abs/2210.03629
-//- WebShop: Towards Scalable Real-World Web Interaction with Grounded
-//  Language Agents: https://arxiv.org/abs/2207.01206
-
 # What Is an Agentic AI?
 
 ## Motivation: From Generation to Action
@@ -98,7 +92,7 @@
 
 // TODO(ai_gp): Convert it into a table
 ::: columns
-:::: {.column width=48%}
+:::: {.column width=52%}
 **Chatbot**
 
 - Output: text only
@@ -566,3 +560,11 @@ mindmap
   - How did the field get from prompting to acting agents like ReAct and
     WebShop?
   - How do we evaluate and trust an agent's behavior before deployment?
+
+* References
+
+- ReAct: Synergizing Reasoning and Acting in Language Models:
+  https://arxiv.org/abs/2210.03629
+
+- WebShop: Towards Scalable Real-World Web Interaction with Grounded Language
+  Agents: https://arxiv.org/abs/2207.01206

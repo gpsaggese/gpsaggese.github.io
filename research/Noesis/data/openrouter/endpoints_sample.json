@@ -1,0 +1,106 @@
+{
+  "data": {
+    "id": "meta-llama/llama-3.3-70b-instruct",
+    "endpoints": [
+      {
+        "tag": "deepinfra/turbo",
+        "provider_name": "DeepInfra",
+        "quantization": "fp8",
+        "pricing": {
+          "prompt": "0.0000001",
+          "completion": "0.00000032"
+        }
+      },
+      {
+        "tag": "novita/bf16",
+        "provider_name": "Novita",
+        "quantization": "bf16",
+        "pricing": {
+          "prompt": "0.000000135",
+          "completion": "0.0000004"
+        }
+      },
+      {
+        "tag": "akashml/fp8",
+        "provider_name": "AkashML",
+        "quantization": "fp8",
+        "pricing": {
+          "prompt": "0.0000002",
+          "completion": "0.00000052"
+        }
+      },
+      {
+        "tag": "parasail/fp8",
+        "provider_name": "Parasail",
+        "quantization": "fp8",
+        "pricing": {
+          "prompt": "0.00000022",
+          "completion": "0.0000005"
+        }
+      },
+      {
+        "tag": "cloudflare/fp8",
+        "provider_name": "Cloudflare",
+        "quantization": "fp8",
+        "pricing": {
+          "prompt": "0.000000293",
+          "completion": "0.000002253"
+        }
+      },
+      {
+        "tag": "sambanova-turbo",
+        "provider_name": "SambaNova",
+        "quantization": "unknown",
+        "pricing": {
+          "prompt": "0.00000045",
+          "completion": "0.0000009"
+        }
+      },
+      {
+        "tag": "groq",
+        "provider_name": "Groq",
+        "quantization": "unknown",
+        "pricing": {
+          "prompt": "0.00000059",
+          "completion": "0.00000079"
+        }
+      },
+      {
+        "tag": "coreweave/fp16",
+        "provider_name": "CoreWeave",
+        "quantization": "fp16",
+        "pricing": {
+          "prompt": "0.00000071",
+          "completion": "0.00000071"
+        }
+      },
+      {
+        "tag": "google-vertex/us-central1",
+        "provider_name": "Google",
+        "quantization": "unknown",
+        "pricing": {
+          "prompt": "0.00000072",
+          "completion": "0.00000072"
+        }
+      },
+      {
+        "tag": "google-vertex",
+        "provider_name": "Google",
+        "quantization": "unknown",
+        "pricing": {
+          "prompt": "0.00000072",
+          "completion": "0.00000072"
+        }
+      },
+      {
+        "tag": "together",
+        "provider_name": "Together",
+        "quantization": "unknown",
+        "pricing": {
+          "prompt": "0.00000104",
+          "completion": "0.00000104"
+        }
+      }
+    ]
+  }
+}

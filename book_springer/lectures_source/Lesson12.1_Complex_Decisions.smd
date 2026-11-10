@@ -136,7 +136,7 @@
 * Actor-Critic: Combining Value and Policy
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - **Definition**: an _actor-critic_ method learns two functions together
   - The _actor_ $\pi_\vtheta(a|s)$: selects actions
   - The _critic_ $V_\vphi(s)$: estimates state value, supplying the
@@ -346,7 +346,7 @@ digraph ActorCritic {
 * Neural-Guided Tree Search: AlphaGo
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - **Problem**: Go has roughly $250$ legal moves per position, too wide for
   a hand-built evaluation function or exhaustive rollouts to evaluate
   reliably
@@ -616,7 +616,7 @@ digraph AlphaGo {
 // From: msml610/lectures_source/Lesson12.1-Reinforcement_learning.smd:1805 '* Confounding in Sequential Decision Making'
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - **Problem**: a logging policy chosen by a human often depends on factors
   the offline dataset never recorded (a doctor's private read of patient
   severity, a driver's fatigue)

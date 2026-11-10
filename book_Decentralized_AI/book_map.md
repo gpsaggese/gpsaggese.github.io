@@ -29,45 +29,45 @@
 ## Short TOC
 - The sequence of the parts in the book is:
   - Foundations and Infrastructure
-    - 01, Blockchain Consensus Foundations
-    - 02, Distributed Ledger Fundamentals
-    - 03, Smart Contract Platforms and Security
-    - 04, Layer 2 and Scaling Architectures
-    - 05, Cross-Chain Interoperability and Bridges
-    - 06, Cryptographic Primitives for Web3
-    - 07, Web3 Infrastructure and Node Economics
+    - 01: Blockchain Consensus Foundations
+    - 02: Distributed Ledger Fundamentals
+    - 03: Smart Contract Platforms and Security
+    - 04: Layer 2 and Scaling Architectures
+    - 05: Cross-Chain Interoperability and Bridges
+    - 06: Cryptographic Primitives for Web3
+    - 07: Web3 Infrastructure and Node Economics
   - Decentralized AI
-    - 08, Federated Learning
-    - 09, Decentralized Training
-    - 10, Decentralized Compute and Inference Markets
-    - 11, Blockchain-AI Integration
-    - 12, Zero-Knowledge ML (ZKML)
-    - 13, Differential Privacy
-    - 14, Secure Multiparty Computation and Homomorphic Encryption
-    - 15, Model and Data Provenance
-    - 16, Decentralized Data Marketplaces
-    - 17, Multi-Agent Systems and Mechanism Design
-    - 18, Open-Source vs Closed-Source Ecosystems
+    - 08: Federated Learning
+    - 09: Decentralized Training
+    - 10: Decentralized Compute and Inference Markets
+    - 11: Blockchain-AI Integration
+    - 12: Zero-Knowledge ML (ZKML)
+    - 13: Differential Privacy
+    - 14: Secure Multiparty Computation and Homomorphic Encryption
+    - 15: Model and Data Provenance
+    - 16: Decentralized Data Marketplaces
+    - 17: Multi-Agent Systems and Mechanism Design
+    - 18: Open-Source vs Closed-Source Ecosystems
   - Decentralized Finance
-    - 19, Automated Market Makers (AMMs)
-    - 20, Decentralized Exchanges and Order Flow
-    - 21, Lending and Borrowing Protocols
-    - 22, Stablecoins and Monetary Design
-    - 23, Derivatives and Synthetic Assets
-    - 24, MEV and Transaction Ordering
-    - 25, Oracle Design and Data Integrity
+    - 19: Automated Market Makers (AMMs)
+    - 20: Decentralized Exchanges and Order Flow
+    - 21: Lending and Borrowing Protocols
+    - 22: Stablecoins and Monetary Design
+    - 23: Derivatives and Synthetic Assets
+    - 24: MEV and Transaction Ordering
+    - 25: Oracle Design and Data Integrity
   - Web3 and Digital Ownership
-    - 26, Decentralized Identity and Credentials
-    - 27, NFTs and Digital Ownership
-    - 28, Decentralized Storage and Data Availability
-    - 29, Privacy-Preserving Web3
+    - 26: Decentralized Identity and Credentials
+    - 27: NFTs and Digital Ownership
+    - 28: Decentralized Storage and Data Availability
+    - 29: Privacy-Preserving Web3
   - Cross-Cutting: Governance, Incentives, Security, Regulation
-    - 30, Governance and DAOs
-    - 31, Tokenomics and Incentive Design
-    - 32, Robustness and Security in AI Networks
-    - 33, Security and Auditing
-    - 34, Risk Management and Systemic Risk
-    - 35, Regulation
+    - 30: Governance and DAOs
+    - 31: Tokenomics and Incentive Design
+    - 32: Robustness and Security in AI Networks
+    - 33: Security and Auditing
+    - 34: Risk Management and Systemic Risk
+    - 35: Regulation
 
 ## All Lesson Materials
 - `data605/all_tocs.md`
@@ -87,45 +87,45 @@
 | ------------------------------------------------------| ---------| ----------| ---------| -----|
 |                                                       |          |           |          |      |
 | **Foundations and Infrastructure**                    |          |           |          |      |
-| 01. Blockchain Consensus Foundations                  | 100% |           |          |      |
-| 02. Distributed Ledger Fundamentals                   |            |          |           |          |
-| 03. Smart Contract Platforms and Security             |            |          |           |          |
-| 04. Layer 2 and Scaling Architectures                 |            |          |           |          |
-| 05. Cross-Chain Interoperability and Bridges          |            |          |           |          |
-| 06. Cryptographic Primitives for Web3                 |            |          |           |          |
-| 07. Web3 Infrastructure and Node Economics            |            |          |           |          |
+| 01: Blockchain Consensus Foundations                  | 100% |           |          |      |
+| 02: Distributed Ledger Fundamentals                   |            |          |           |          |
+| 03: Smart Contract Platforms and Security             |            |          |           |          |
+| 04: Layer 2 and Scaling Architectures                 |            |          |           |          |
+| 05: Cross-Chain Interoperability and Bridges          |            |          |           |          |
+| 06: Cryptographic Primitives for Web3                 |            |          |           |          |
+| 07: Web3 Infrastructure and Node Economics            |            |          |           |          |
 | **Decentralized AI**                                  |            |          |           |          |
-| 08. Federated Learning                                |            |          |           |          |
-| 09. Decentralized Training                            |            |          |           |          |
-| 10. Decentralized Compute and Inference Markets       |            |          |           |          |
-| 11. Blockchain-AI Integration                         |            |          |           |          |
-| 12. Zero-Knowledge ML (ZKML)                          |            |          |           |          |
-| 13. Differential Privacy                              |            |          |           |          |
-| 14. Secure Multiparty Computation and HE              |            |          |           |          |
-| 15. Model and Data Provenance                         |            |          |           |          |
-| 16. Decentralized Data Marketplaces                   |            |          |           |          |
-| 17. Multi-Agent Systems and Mechanism Design          |            |          |           |          |
-| 18. Open-Source vs Closed-Source Ecosystems           |            |          |           |          |
+| 08: Federated Learning                                |            |          |           |          |
+| 09: Decentralized Training                            |            |          |           |          |
+| 10: Decentralized Compute and Inference Markets       |            |          |           |          |
+| 11: Blockchain-AI Integration                         |            |          |           |          |
+| 12: Zero-Knowledge ML (ZKML)                          |            |          |           |          |
+| 13: Differential Privacy                              |            |          |           |          |
+| 14: Secure Multiparty Computation and HE              |            |          |           |          |
+| 15: Model and Data Provenance                         |            |          |           |          |
+| 16: Decentralized Data Marketplaces                   |            |          |           |          |
+| 17: Multi-Agent Systems and Mechanism Design          |            |          |           |          |
+| 18: Open-Source vs Closed-Source Ecosystems           |            |          |           |          |
 | **Decentralized Finance**                             |            |          |           |          |
-| 19. Automated Market Makers (AMMs)                    |            |          |           |          |
-| 20. Decentralized Exchanges and Order Flow            |            |          |           |          |
-| 21. Lending and Borrowing Protocols                   |            |          |           |          |
-| 22. Stablecoins and Monetary Design                   |            |          |           |          |
-| 23. Derivatives and Synthetic Assets                  |            |          |           |          |
-| 24. MEV and Transaction Ordering                      |            |          |           |          |
-| 25. Oracle Design and Data Integrity                  |            |          |           |          |
+| 19: Automated Market Makers (AMMs)                    |            |          |           |          |
+| 20: Decentralized Exchanges and Order Flow            |            |          |           |          |
+| 21: Lending and Borrowing Protocols                   |            |          |           |          |
+| 22: Stablecoins and Monetary Design                   |            |          |           |          |
+| 23: Derivatives and Synthetic Assets                  |            |          |           |          |
+| 24: MEV and Transaction Ordering                      |            |          |           |          |
+| 25: Oracle Design and Data Integrity                  |            |          |           |          |
 | **Web3 and Digital Ownership**                        |            |          |           |          |
-| 26. Decentralized Identity and Credentials            |            |          |           |          |
-| 27. NFTs and Digital Ownership                        |            |          |           |          |
-| 28. Decentralized Storage and Data Availability       |            |          |           |          |
-| 29. Privacy-Preserving Web3                           |            |          |           |          |
+| 26: Decentralized Identity and Credentials            |            |          |           |          |
+| 27: NFTs and Digital Ownership                        |            |          |           |          |
+| 28: Decentralized Storage and Data Availability       |            |          |           |          |
+| 29: Privacy-Preserving Web3                           |            |          |           |          |
 | **Cross-Cutting: Governance, Incentives, Security, Regulation** | |          |           |          |
-| 30. Governance and DAOs                               |            |          |           |          |
-| 31. Tokenomics and Incentive Design                   |            |          |           |          |
-| 32. Robustness and Security in AI Networks            |            |          |           |          |
-| 33. Security and Auditing                             |            |          |           |          |
-| 34. Risk Management and Systemic Risk                 |            |          |           |          |
-| 35. Regulation                                        |            |          |           |          |
+| 30: Governance and DAOs                               |            |          |           |          |
+| 31: Tokenomics and Incentive Design                   |            |          |           |          |
+| 32: Robustness and Security in AI Networks            |            |          |           |          |
+| 33: Security and Auditing                             |            |          |           |          |
+| 34: Risk Management and Systemic Risk                 |            |          |           |          |
+| 35: Regulation                                        |            |          |           |          |
 
 ## TODOs
 - Build `book_Decentralized_AI/lectures_source/` slide decks per chapter

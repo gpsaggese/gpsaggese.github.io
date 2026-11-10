@@ -3,15 +3,6 @@
 // lesson_title=Lesson 01.07: Tool Use and Retrieval
 // slides_engine=typst
 
-// References:
-//- Google Cloud expands grounding capabilities on Vertex AI:
-//  https://cloud.google.com/blog/products/ai-machine-learning/rag-and-grounding-on-vertex-ai
-//- The Needle In a Haystack Test: Evaluating the performance of RAG systems:
-//  https://towardsdatascience.com/the-needle-in-a-haystack-test-a94974c1ad38
-//- The AI detective: The Needle in a Haystack test and how Gemini 1.5 Pro
-//  solves it:
-//  https://cloud.google.com/blog/products/ai-machine-learning/the-needle-in-the-haystack-test-and-how-gemini-pro-solves-it
-
 # Tool Use and Retrieval
 
 ## Motivation: Two Failure Modes and a Roadmap
@@ -203,7 +194,7 @@
 * Vector Database Pipeline: Worked Example
 
 ::: columns
-:::: {.column width=65%}
+:::: {.column width=70%}
 - @Solution@: an end-to-end pipeline separates a one-time offline stage
   from a per-query online stage
   1. (Offline) Chunk documents, embed each chunk, insert into an ANN index
@@ -498,3 +489,15 @@ digraph VectorDB {
     pass, so retrieval and verification share one mechanism?
   - How should a compute-optimal inference budget be split between
     retrieving more passages and reasoning longer over fewer of them?
+
+* References
+
+- Google Cloud expands grounding capabilities on Vertex AI:
+  https://cloud.google.com/blog/products/ai-machine-learning/rag-and-grounding-on-vertex-ai
+
+- The Needle In a Haystack Test: Evaluating the performance of RAG systems:
+  https://towardsdatascience.com/the-needle-in-a-haystack-test-a94974c1ad38
+
+- The AI detective: The Needle in a Haystack test and how Gemini 1.5 Pro solves
+  it:
+  https://cloud.google.com/blog/products/ai-machine-learning/the-needle-in-the-haystack-test-and-how-gemini-pro-solves-it

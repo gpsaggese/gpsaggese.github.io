@@ -3,11 +3,24 @@
 // lesson_title=L07.1: Introduction to Probabilistic Programming
 // version=v1.0 (2026-09-03)
 // slides_engine=typst
-// references=
-// - AIMA (Artificial Intelligence: a Modern Approach), Chap 15: Probabilistic
-// - Martin, Bayesian Analysis with Python, 2018 (2e)
+* Roadmap
 
-# Concepts
+- This lesson starts with **thinking probabilistically**: why Bayesian inference
+  beats a bag of statistical recipes, and how Bayes' theorem turns data into
+  updated beliefs about model parameters
+
+- It then works through the **coin example analytically**: a binomial
+  likelihood, a beta prior, and conjugacy give a closed-form posterior for the
+  coin bias
+
+- It continues with **priors and credible intervals**: why explicit priors
+  help, how to choose them, and how to read Bayesian intervals compared to
+  frequentist ones
+
+- It ends with **probabilistic programming**: when no closed form exists, code
+  the model and solve it numerically with `PyMC`
+
+# Thinking Probabilistically
 
 // From Martin.Bayesian_Analysis_with_Python.2e.txt
 
@@ -21,9 +34,15 @@
 // From notes/_IN_PROGRESS/book.2018.Martin.Bayesian_Analysis_with_Python.2e.txt
 // 1, Thinking probabilistically
 
-* EDA vs Inference
+## Statistics and Data
 
-- @Definition@: **Exploratory data analysis (EDA)** includes:
+* EDA vs Inferential Statistics
+
+::: columns
+:::: {.column width=55%}
+
+- @Definition@: **Exploratory data analysis (EDA)**
+  `#cite("tukey1977eda")`{=typst} includes:
   - Visually inspect the data
   - Summarize, interpret, check data
   - Compute descriptive statistics
@@ -35,115 +54,221 @@
   - Understand a phenomenon
   - Choose among competing explanations for the same observations
 
+::::
+:::: {.column width=40%}
+
+```graphviz
+digraph EDAvsInference {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.4;
+    ranksep=0.55;
+    rankdir=TB;
+
+    // source : orange | core process : blue | output : sage green
+    node [shape=box,
+          style="rounded,filled",
+          penwidth=1.8,
+          fontname="Helvetica",
+          fontsize=12,
+          margin="0.22,0.14",
+          height=0.50];
+
+    edge [color="#A3B1C0",
+          penwidth=1.3,
+          arrowhead=vee,
+          arrowsize=0.75,
+          fontname="Helvetica",
+          fontsize=10,
+          fontcolor="#7B8794"];
+
+    data  [label="Limited sample\nof data", fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+    eda   [label="EDA", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+    inf   [label="Inferential\nstatistics", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+    desc  [label="Describe\nthe sample", fillcolor="#DFEDE0", color="#8FB79A", fontcolor="#2E5A3D"];
+    gen   [label="Generalize to\nunobserved data", fillcolor="#DFEDE0", color="#8FB79A", fontcolor="#2E5A3D"];
+
+    { rank=same; eda; inf; }
+    { rank=same; desc; gen; }
+
+    data -> eda  [label="  Summarize  "];
+    data -> inf  [label="  Generalize  "];
+    eda  -> desc;
+    inf  -> gen;
+}
+```
+
+::::
+:::
+
 // TODO(gp): Add figure
 // TODO(gp): Move this to Techniques?
 
-* Good vs Bad Way to Do Statistics / ML
+* Statistical Recipes vs Bayesian Inference
 
-- @Bad@
-  - Learn a collection of "statistical recipes"
-    - Make assumption / approximate to make math workable
-  - Given data and problem
+- @Naive Solution@: learn a collection of "statistical recipes"
+  - Make assumptions / approximate to make the math workable
+  - Given data and a problem
     - Pick one recipe
     - Try until you get a "low" p-value (p-hacking)
-    - For machine learning: Iterate until you get a "good" fit on out-of-sample data
+    - For machine learning: iterate until you get a "good" fit on out-of-sample
+      data
+  - Cons: the result depends on which recipe happened to be tried, not on the
+    problem
 
-- @Good@
-  - Bayesian statistics as a general approach to statistical inference
-    - Remove limitations from closed analytical form
+- @Solution@: Bayesian statistics as a general approach to statistical inference
+  `#cite("martin2018bayesian")`{=typst}
+  - Remove limitations from closed analytical form
   - Probabilistic approach unifies seemingly disparate methods in statistics and
     machine learning
     - E.g., `statsmodels` linear regression vs `sklearn` decision tree
     - Deep unity of different recipes
-  - Modern tools (e.g., `PyMC3`) solve previously unsolvable models
+  - Modern tools (e.g., `PyMC`) solve previously unsolvable models
 
 // ## 1.2, Working with data
 
 * Characteristics of Data
 
-- @Data@ is crucial for machine learning and has **several characteristics**:
-  - **Source**: Data comes from:
+- @Motivation@: data is crucial for machine learning
+
+- @Characteristics@
+  - **Source**: data comes from:
     - Experiments
     - Simulations
     - Surveys
     - Field observations
-  - **Uncertainty**: Data is stochastic due to:
-    - Ontological: System is intrinsically stochastic
-    - Technical: Measurement precision is limited or noisy
-    - Epistemic: Conceptual limitations in understanding
-  - **Cost**: Collecting data is costly
+  - **Uncertainty**: data is stochastic due to:
+    - Ontological: system is intrinsically stochastic
+    - Technical: measurement precision is limited or noisy
+    - Epistemic: lack of knowledge about the system
+  - **Cost**: collecting data is costly
     - Consider questions before collecting data
     - Experiment design is a branch of statistics for data collection
-  - **Cleanliness**: Data is rarely clean and tidy
-  - **Interpretation**: Data needs to be interpreted through mental and formal models
+  - **Cleanliness**: data is rarely clean and tidy
+  - **Interpretation**: data needs to be interpreted through mental and formal
+    models
+
+## Bayesian Modeling
 
 // ## 1.3, Bayesian modeling
 
-* Models
+* What Is a Model
 
 - @Definition@: **Models** are simplified descriptions of a given system/process
   - A more complex model is not always a better one
-  - VC dimension makes it mathematical precise
-    - E.g., _"You need at least 10 data points per effective degree of freedom of the
-      hypothesis set"_
+  - The VC dimension measures the capacity of a model
+    - E.g., rule of thumb: _"You need at least 10 data points per effective
+      degree of freedom of the hypothesis set"_
+      `#cite("abumostafa2012learning")`{=typst}
 
-- @Goals@ of modeling are:
-  - Capture the most relevant aspects of the system (abstraction)
+- @Goal@: capture the most relevant aspects of the system
+  - Abstract the system
   - Ignore minor details
 
-* Bayes' Theorem: Recap
-- @Definition@: **Bayes' theorem** posits that for model parameters $\theta$ and
+* Bayes' Theorem
+
+- @Definition@: **Bayes' theorem** states that for model parameters $\theta$ and
   data $X$
-
-/*
   $$
-  \red{\Pr(\theta | X)}
-  = \frac{\teal{\Pr(X | \theta)} \cdot \blue{\Pr(\theta)}}{\violet{\Pr(X)}}
+  \textcolor{red}{\Pr(\theta | X)}
+  = \frac{
+      \textcolor{teal}{\Pr(X | \theta)} \cdot \textcolor{blue}{\Pr(\theta)}
+    }{
+      \textcolor{purple}{\Pr(X)}
+    }
   $$
-  where:
-  - $\red{\Pr(\theta | X)}$
-    - **Posterior**: probability for parameters $\theta$ after seeing
-      data $X$
-  - $\teal{\Pr(X | \theta)}$
-    - **Likelihood** (aka "statistical model"): plausibility of data
-      $X$ given parameters $\theta$
-  - $\blue{\Pr(\theta)}$
-    - **Prior**: knowledge about parameter $\theta$ before any data
-  - $\violet{\Pr(X)}$
-    - **Evidence** ("marginal likelihood"): probability of observing data $X$
+  - $\textcolor{red}{\Pr(\theta | X)}$ is the **posterior**: probability for
+    parameters $\theta$ after seeing data $X$
+  - $\textcolor{teal}{\Pr(X | \theta)}$ is the **likelihood** (aka "statistical
+    model"): plausibility of data $X$ given parameters $\theta$
+  - $\textcolor{blue}{\Pr(\theta)}$ is the **prior**: knowledge about parameter
+    $\theta$ before any data
+  - $\textcolor{purple}{\Pr(X)}$ is the **evidence** (aka "marginal likelihood"):
+    probability of observing data $X$
     - "Marginal" as it averages over all possible parameter values
-  - In other words:
-    $$
-    \red{Posterior}
-    = \frac{\teal{Likelihood} \cdot \blue{Prior}}{\violet{Evidence}}
-    $$
-*/
 
-* Bayesian Models
+- @Key idea@: the posterior combines what was believed before with what the data
+  says
+  $$
+  \textcolor{red}{Posterior}
+  = \frac{
+      \textcolor{teal}{Likelihood} \cdot \textcolor{blue}{Prior}
+    }{
+      \textcolor{purple}{Evidence}
+    }
+  $$
+
+* Bayesian Modeling Workflow
+
+::: columns
+:::: {.column width=60%}
 
 - @Recap@
   - **Probability** measures uncertainty about parameters
   - **Bayes' theorem** updates probabilities with new data, reducing uncertainty
     (hopefully)
-    $$
-    \Pr(hyp | data) = \frac{\Pr(data | hyp) \Pr(hyp)}{\Pr(data)}
-    $$
 
 - @Algorithm@: **Bayesian modeling workflow**
+  `#cite("gelman2020workflow")`{=typst}
   1. Design a model using probabilities based on data and assumptions on data
      generation
   2. Apply Bayes' theorem to _condition_ the model on data
   3. Validate model against data, subject expertise, related models
-  4. Loop and backtracking, e.g.,
-  - Correct coding errors
-  - Improve model
-  - Gather more or different data
+  4. Loop and backtrack, e.g.,
+     - Correct coding errors
+     - Improve model
+     - Gather more or different data
 
-# Coin Example
+::::
+:::: {.column width=35%}
 
-## Analytical Approach
+```graphviz
+digraph BayesianWorkflow {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.5;
+    ranksep=0.45;
+    rankdir=TB;
 
-* Binomial Distribution: Definition
+    // source : orange | core process : blue | verification : sage green
+    node [shape=box,
+          style="rounded,filled",
+          penwidth=1.8,
+          fontname="Helvetica",
+          fontsize=12,
+          margin="0.22,0.14",
+          height=0.50];
+
+    edge [color="#A3B1C0",
+          penwidth=1.3,
+          arrowhead=vee,
+          arrowsize=0.75,
+          fontname="Helvetica",
+          fontsize=10,
+          fontcolor="#7B8794"];
+
+    inputs   [label="Data and\nassumptions", fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+    design   [label=<<b>1. Design</b><br/>probabilistic model>, fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+    condition [label=<<b>2. Condition</b><br/>on data (Bayes)>, fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+    validate [label=<<b>3. Validate</b><br/>the model>, fillcolor="#DFEDE0", color="#8FB79A", fontcolor="#2E5A3D"];
+
+    inputs -> design;
+    design -> condition;
+    condition -> validate;
+    validate -> design [style=dashed, color="#C0455B", fontcolor="#C0455B", label="  Iterate  ", constraint=false];
+}
+```
+
+::::
+:::
+
+# Coin Example: Analytical Approach
+
+## Distributions
+
+* Binomial Distribution
 
 ::: columns
 :::: {.column width=40%}
@@ -170,7 +295,7 @@ PDF (function of $k$) varying the parameters $n$, $p$
 ::::
 :::
 
-* Beta Distribution: Definition
+* Beta Distribution
 
 ::: columns
 :::: {.column width=40%}
@@ -204,7 +329,7 @@ PDF varying $\alpha, \beta$
 * Beta Distribution: Properties
 
 ::: columns
-:::: {.column width=40%}
+:::: {.column width=45%}
 
 - **Support**: Continuous PDF in [0, 1]
 
@@ -220,7 +345,7 @@ PDF varying $\alpha, \beta$
 - **Conjugacy**: Beta is the conjugate prior of the binomial distribution
 
 ::::
-:::: {.column width=60%}
+:::: {.column width=52%}
 
 ![](msml610/lectures_source/figures/L07.1.Beta_distribution.png)
 
@@ -230,8 +355,6 @@ PDF varying $\alpha, \beta$
 
 :::
 
-\endgroup
-
 ::::
 :::
 
@@ -239,7 +362,7 @@ PDF varying $\alpha, \beta$
 
 - @Definition@: **Conjugate prior** of likelihood $F$ is a _prior_ that, when
   combined with a _likelihood_ $F$, returns a _posterior_ with the same functional
-  form as the prior
+  form as the prior `#cite("bishop2006prml")`{=typst}
   - E.g.,
   ```{=typst}
   #styled-table(
@@ -257,7 +380,9 @@ PDF varying $\alpha, \beta$
     - Update parameters from the prior using data in multiple iterations
   - Ensures tractability of the posterior
 
-* Coin Example: Problem
+## Analytical Solution
+
+* Coin Example: Estimating the Bias
 
 - @Problem@
   - Toss a coin $N$ times
@@ -273,14 +398,15 @@ PDF varying $\alpha, \beta$
 
 * Coin Example: Assumptions
 
-1. Independent Identically Distributed (IID)
-   - _Independence_: Coin tosses don't affect each other
-   - _Identically distributed_: Coin's bias is constant
-2. Likelihood $Y | \theta$ is a _binomial distribution_
-   - I.e., probability of $Y$ heads out of $N$ tosses, given $\theta$
-3. Prior $\theta$ is a _beta distribution_
-   - Adopts several shapes
-   - Beta is the conjugate prior of the binomial distribution
+- @Assumptions@
+  1. Independent Identically Distributed (IID)
+     - _Independence_: Coin tosses don't affect each other
+     - _Identically distributed_: Coin's bias is constant
+  2. Likelihood $Y | \theta$ is a _binomial distribution_
+     - I.e., probability of $Y$ heads out of $N$ tosses, given $\theta$
+  3. Prior $\theta$ is a _beta distribution_
+     - Adopts several shapes
+     - Beta is the conjugate prior of the binomial distribution
 
 * Coin Example: Analytical Solution
 
@@ -316,6 +442,61 @@ PDF varying $\alpha, \beta$
 - @Key idea@: This formula is how the posterior is updated given the data
   - In case of conjugate prior, the Bayesian update becomes an update of parameters,
     without changing the functional form
+
+* Coin Example: Updating the Beta Prior
+
+::: columns
+:::: {.column width=55%}
+
+- @Example@: uniform prior $\alpha = \beta = 1$, and $N = 4$ tosses with $y = 1$
+  head
+  - The posterior is $Beta(1 + 1, 1 + 4 - 1) = Beta(2, 4)$
+  - The posterior mean is $\EE[\theta] = \frac{2}{2 + 4} \approx 0.33$
+  - A 94% credible interval is about $[0.03, 0.65]$
+
+- @Remark@: sampling the same model with `PyMC` approximates this exact
+  posterior
+
+::::
+:::: {.column width=40%}
+
+```graphviz
+digraph BetaUpdate {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.5;
+    ranksep=0.45;
+    rankdir=LR;
+
+    // prior : orange | data : orange | process : blue | posterior : sage green
+    node [shape=box,
+          style="rounded,filled",
+          penwidth=1.8,
+          fontname="Helvetica",
+          fontsize=12,
+          margin="0.22,0.14",
+          height=0.50];
+
+    edge [color="#A3B1C0",
+          penwidth=1.3,
+          arrowhead=vee,
+          arrowsize=0.75,
+          fontname="Helvetica",
+          fontsize=10,
+          fontcolor="#7B8794"];
+
+    prior [label=<<b>Prior</b><br/>Beta(α, β)>, fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+    data  [label=<<b>Data</b><br/>y heads,<br/>N − y tails>, fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+    post  [label=<<b>Posterior</b><br/>Beta(α + y,<br/>β + N − y)>, fillcolor="#DFEDE0", color="#8FB79A", fontcolor="#2E5A3D"];
+
+    prior -> post;
+    data  -> post;
+}
+```
+
+::::
+:::
 
 * Coin Example: Effect of Priors (1/2)
 
@@ -354,6 +535,7 @@ PDF varying $\alpha, \beta$
     - Decreases with more data
     - Decreases faster if data aligned with prior
     - With enough data, models with different priors converge to same result
+  - _Order invariance_: Applying posterior sequentially or at once yields same result
 
 ::::
 :::: {.column width=55%}
@@ -363,11 +545,11 @@ PDF varying $\alpha, \beta$
 ::::
 :::
 
-- _Order invariance_: Applying posterior sequentially or at once yields same result
+# Priors and Credible Intervals
 
 ## Frequentist vs Bayesian
 
-* Frequentist Approach vs Bayesian Priors
+* Do Priors Bias the Analysis?
 
 - @Problem@: Detractors of the Bayesian approach complain that:
   - _"One should let the data speak!"_
@@ -385,20 +567,21 @@ PDF varying $\alpha, \beta$
      - E.g., maximum likelihood estimate (MLE) in frequentist approach corresponds to
        a uniform prior and choosing the mode of the posterior
 
-* Advantages of Using Prior
+* Advantages of Priors
 
 - @Pros@
   - _Explicit assumptions_: Instead of hidden by frequentist or hacker ML approach
   - _Deeper understanding_
     - Encourages deeper analysis of problem and data
     - Forces understanding before seeing data
-  - _Less overfitting_: Posterior averaged over priors is less prone to overfitting
+  - _Less overfitting_: The prior shrinks estimates toward plausible values,
+    acting as a regularizer
   - _Uncertainty measure_: Spread of distribution measures uncertainty
   - _Faster inference_: Well-chosen prior simplifies and speeds up inference
     - _"When you encounter computational problems, there's often an issue with your
-      model"_ (Gelman, 2008)
+      model"_ (Gelman, 2008) `#cite("gelman2008folk")`{=typst}
 
-* How to Choose Priors
+* How to Choose Priors (1/2)
 
 - @Variants@
   - _Weakly-informative priors_ (aka "flat", "vague", "diffuse priors")
@@ -408,19 +591,27 @@ PDF varying $\alpha, \beta$
   - _Regularizing priors_
     - Known information about the parameter, e.g.,
       - Parameter is positive: $\sigma \sim HalfCauchy(0, 5)$
+        `#cite("gelman2006prior")`{=typst}
       - Parameter close to zero, above/below a number, or in a range
       - $\beta \sim Laplace(0, 1)$ (lasso prior) encourages sparsity
+        `#cite("parkcasella2008lasso")`{=typst}
       - $\beta \sim Normal(0, 1)$ discourages extreme values
+
+* How to Choose Priors (2/2)
+
+- @Variants@
   - _Informative priors_
     - Strong priors from previous knowledge (expert opinion, studies), e.g.,
-      - From experimental data: $\beta_1 \sim Normal(2.5, 0.5^2)$
+      - From experimental data: $\beta_1 \sim Normal(2.5, 0.5)$
       - From previous data, about 5% of cases positive: $p \sim Beta(2, 38)$
   - _Prior elicitation_
     - Compute least informative distribution given constraints, e.g.,
       - Estimate distribution using maximum entropy to satisfy constraints
       - E.g., beta distribution with 90% of mass between 0.1 and 0.7
 
-* Communicating the Model of a Bayesian Analysis
+## Communicating Results
+
+* Communicating a Bayesian Analysis
 
 ::: columns
 :::: {.column width=65%}
@@ -442,7 +633,7 @@ PDF varying $\alpha, \beta$
      - Summarize location and dispersion
        - Mean (or mode, median)
        - Std dev (although misleading for skewed distributions)
-     - Highest-posterior density (HPD)
+     - Highest density interval (HDI) `#cite("kruschke2015doing")`{=typst}
        - Shortest interval containing a portion of probability density (e.g., 95% or
          50%)
        - Amount is arbitrary (e.g., `ArviZ` defaults to 94%)
@@ -450,8 +641,7 @@ PDF varying $\alpha, \beta$
 ::::
 :::: {.column width=35%}
 
-Kruschke diagram
-![](msml610/lectures_source/figures/L07.1.Kruschke_diagram.png){height=50%}
+![Kruschke diagram of the coin model](msml610/lectures_source/figures/L07.1.Kruschke_diagram.png){height=50%}
 
 ::::
 :::
@@ -459,7 +649,7 @@ Kruschke diagram
 * Confidence Intervals vs Credible Intervals
 
 - @Remark@: People confuse _frequentist confidence intervals_ with _Bayesian credible
-  intervals_
+  intervals_ `#cite("morey2016fallacy")`{=typst}
 
 - @Comparison@
   - **Frequentist**: In the frequentist framework, there is a true (unknown)
@@ -475,7 +665,7 @@ Kruschke diagram
         interval, given the observed data"_
       - Bayesian _credible interval_ is intuitive
 
-* Confidence Intervals vs Credible Intervals: ELI5
+* Confidence vs Credible Intervals: Fishing Analogy
 
 // TODO(ai_gp): Add an image somehow
 
@@ -496,9 +686,11 @@ Kruschke diagram
 
 // 2, Programming probabilistically
 
-## Probabilistic Programming
+# Probabilistic Programming
 
-* Bayesian Statistics
+## Probabilistic Programming Languages
+
+* Knowns and Unknowns
 
 ::: columns
 :::: {.column width=65%}
@@ -552,13 +744,18 @@ digraph BayesTheorem {
 
 * Probabilistic Programming Languages
 
+- @Components@
+  - `PyMC`: Flexible Python library for probabilistic programming
+    `#cite("abrilpla2023pymc")`{=typst}
+  - `PyTensor`: Library to define, optimize, evaluate mathematical expressions
+    using tensors, the computational backend of `PyMC`
+  - `ArviZ`: Library to interpret probabilistic model results
+    `#cite("kumar2019arviz")`{=typst}
+
 - @Procedure@
   1. Specify models using code
-  2. Numerical models solve inference problems without need of user to understand how
-     - `PyMC3`: Flexible Python library for probabilistic programming
-     - `Theano`: Library to define, optimize, evaluate mathematical expressions using
-       tensors
-     - `ArviZ`: Library to interpret probabilistic model results
+  2. Numerical methods solve inference problems without need of user to
+     understand how
 
 - @Pros@
   - Compute results without analytical closed form
@@ -568,6 +765,8 @@ digraph BayesTheorem {
 - @Remark@: Probabilistic programming languages
   - Have a similar impact as Fortran on scientific computing
   - Build algorithms but ignore computational details
+
+## Coin Example: Numerical Solution
 
 * Coin Example: Numerical Solution (1/3)
 
@@ -589,28 +788,26 @@ digraph BayesTheorem {
   3. Run inference
   4. Generate samples of the posterior
   5. Summarize posterior
-     - E.g., Highest-Posterior Density (HPD)
-  -
+     - E.g., Highest Density Interval (HDI)
 
 * Coin Example: Numerical Solution (2/3)
 
 ::: columns
-:::: {.column width=40%}
+:::: {.column width=45%}
 
 - @Procedure@
   - Generate data from ground truth model
   - Build `PyMC` model matching mathematical model
-  - `PyMC` uses NUTS sampler, computes 4 chains
-  - No trace diverges
-  - Kernel density estimation (KDE) for posterior
-    - Should be Beta
-  - Traces appear "noisy" and non-diverging (good)
+  - `PyMC` uses NUTS sampler `#cite("hoffman2014nuts")`{=typst}, computes 4
+    chains
+  - Kernel density estimation (KDE) of the posterior looks like a Beta
+  - Traces appear "noisy" and no trace diverges (good)
   - Numerical summary of posterior: Mean, std dev, HDI
     - $\EE[\hat{\theta}] \approx 0.324$
     - $\Pr(\hat{\theta} \in [0.031, 0.653]) = 0.94$
 
 ::::
-:::: {.column width=60%}
+:::: {.column width=52%}
 
 ![](msml610/lectures_source/figures/L07.1.Coin_example_numerical_solution.png)
 
@@ -636,3 +833,28 @@ digraph BayesTheorem {
 
 ::::
 :::
+
+* Summary
+
+- @Key idea@: Bayesian inference updates a prior with data through Bayes'
+  theorem, and probabilistic programming solves the posterior numerically when
+  no closed form exists
+
+- @Recap@
+  - _Thinking probabilistically_: Bayesian modeling replaces statistical recipes
+    with one workflow: model, condition on data, validate, iterate
+  - _Conjugacy_: a beta prior with a binomial likelihood gives a beta posterior,
+    so the coin bias update reduces to adding counts to the parameters
+  - _Priors_: explicit priors state assumptions, regularize estimates, and
+    measure uncertainty through the spread of the posterior
+  - _Credible intervals_: a 95% Bayesian credible interval states the
+    probability that the parameter lies inside it, unlike a confidence interval
+  - _Probabilistic programming_: `PyMC` specifies the model in code and
+    samples the posterior, and `ArviZ` summarizes and checks the result
+
+* References
+
+```{=typst}
+#set text(size: 0.75em)
+#references("/msml610/lectures_source/refs.bib")
+```

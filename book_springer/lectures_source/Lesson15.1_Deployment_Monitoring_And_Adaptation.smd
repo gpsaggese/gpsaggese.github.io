@@ -3,13 +3,6 @@
 // lesson_title=Lesson 15.1: Deployment, Monitoring, and Adaptation
 // slides_engine=typst
 
-// References:
-//- Kohavi, Tang, Xu: "Trustworthy Online Controlled Experiments" (2020)
-//- Sculley et al.: "Hidden Technical Debt in Machine Learning Systems" (2015)
-//- VanderWeele, Ding: "Sensitivity Analysis in Observational Research: Introducing the E-value" (2017)
-//- Perdomo, Zrnic, Mendler-Dunner, Hardt: "Performative Prediction" (2020)
-//- Pearl, Glymour, Jewell: "Causal Inference in Statistics: A Primer" (2016)
-
 # Overview
 
 * Deployment, Monitoring, and Adaptation
@@ -35,7 +28,7 @@
 * The Production Lifecycle of a Decision System
 
 ::: columns
-:::: {.column width=70%}
+:::: {.column width=75%}
 - **Definition**: the operational loop that keeps a decision system healthy has
   four repeating phases
   1. _Deploy_: ship the policy behind a rollout guard
@@ -109,7 +102,7 @@ digraph Lifecycle {
 * Serving a Causal Decision
 
 ::: columns
-:::: {.column width=54%}
+:::: {.column width=58%}
 - **Definition**: at serve time the system does not return $\EE[Y | \vx]$; it
   returns the action that maximizes _interventional_ expected utility
   $$
@@ -454,7 +447,7 @@ digraph Serve {
 // From: msml610/lectures_source/Lesson08.9-Effect_heterogeneity_and_Metalearners.smd:184 '* Cumulative Gain'
 
 ::: columns
-:::: {.column width=54%}
+:::: {.column width=58%}
 - **Definition**: deploy the action _only where the estimated effect is
   positive_, using the conditional effect $\tau(\vx)$ instead of the average
   $\EE[\tau]$
@@ -698,3 +691,16 @@ digraph Gain {
 
 - **Key idea**: the hardest part of a causal decision system is not building it,
   but keeping its _causal justification_ true after it ships
+
+* References
+
+- Kohavi, Tang, Xu: "Trustworthy Online Controlled Experiments" (2020)
+
+- Sculley et al.: "Hidden Technical Debt in Machine Learning Systems" (2015)
+
+- VanderWeele, Ding: "Sensitivity Analysis in Observational Research:
+  Introducing the E-value" (2017)
+
+- Perdomo, Zrnic, Mendler-Dunner, Hardt: "Performative Prediction" (2020)
+
+- Pearl, Glymour, Jewell: "Causal Inference in Statistics: A Primer" (2016)

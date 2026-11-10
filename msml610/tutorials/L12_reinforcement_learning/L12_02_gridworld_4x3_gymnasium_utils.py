@@ -23,6 +23,7 @@ import pandas as pd
 import seaborn as sns
 from IPython.display import clear_output, display
 
+import helpers.hnotebook as hnotebo
 import helpers.hprint as hprint
 import helpers.htutorial as htutori
 
@@ -32,7 +33,12 @@ _LOG = logging.getLogger(__name__)
 
 
 def init_loggers(notebook_log: logging.Logger) -> None:
-    mtlrll0ut.init_loggers(notebook_log)
+    """
+    Wire the notebook logger into the utils logger.
+
+    :param notebook_log: logger owned by the notebook
+    """
+    hnotebo.init_loggers(notebook_log, utils_log=_LOG)
 
 
 # #############################################################################
@@ -1709,8 +1715,6 @@ def cell4_2_q_update_rule(
             alpha = alpha_slider.value
             # Illustrative tuple from gymnasium env.step().
             cell, a_cell, s2_cell = (3, 1), "Up", (3, 2)
-            s_id = env.cell_to_id(cell)
-            a_id = mtlrll0ut.NAME_TO_ACTION_ID[a_cell]
             s2_id = env.cell_to_id(s2_cell)
             r = env.r_step  # living reward since s2 is non-terminal
             snapshots, _ = value_iteration(env)

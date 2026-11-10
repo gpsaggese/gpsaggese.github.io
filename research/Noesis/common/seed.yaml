@@ -1,0 +1,16 @@
+# Demo sellers chosen from docs/findings/openrouter_spike.md.
+# provider_slug = OpenRouter endpoint tag we pin; provider_name = what OpenRouter reports back.
+# l_typical (seconds) and r_typical are the p95 latency and ok/calls rate measured
+# in docs/findings/openrouter_spike.md; the supply adapter (PR_S9) posts them on
+# each seller's ask until the calibration run (PR_S11) replaces them.
+sellers:
+  - {seller_id: coreweave, provider_slug: coreweave/fp16,  provider_name: CoreWeave, l_typical: 0.26, r_typical: 1.0}
+  - {seller_id: groq,      provider_slug: groq,            provider_name: Groq,      l_typical: 0.57, r_typical: 1.0}
+  - {seller_id: deepinfra, provider_slug: deepinfra/turbo, provider_name: DeepInfra, l_typical: 1.04, r_typical: 1.0}
+  - {seller_id: together,  provider_slug: together,        provider_name: Together,  l_typical: 1.30, r_typical: 1.0}
+  - {seller_id: novita,    provider_slug: novita/bf16,     provider_name: Novita,    l_typical: 2.39, r_typical: 1.0}
+
+# API keys are NOT stored here: each account names the env var (.env) holding its key.
+accounts:
+  - {account_id: buyer_1,  kind: buyer,    api_key_env: NOESIS_BUYER_1_KEY}
+  - {account_id: operator, kind: operator, api_key_env: NOESIS_OPERATOR_KEY}

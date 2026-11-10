@@ -1,0 +1,67 @@
+# Optimal Shot Placement Framework for Racket Sports
+
+Implementation of the reduced-order framework for shot placement in tennis and pickleball from the paper "Optimal Strategy for Racket Sports."
+
+## Quick Start
+
+### Build Docker Image
+
+```bash
+> docker_build.sh
+```
+
+### Run Jupyter Lab
+
+```bash
+> docker_jupyter.sh
+```
+
+### Run Tests
+
+```bash
+> docker_exec.sh pytest test/
+```
+
+## Module Structure
+
+Modules are organized in layers, with each layer importing only from layers above it:
+
+| Module | Purpose |
+|--------|---------|
+| `racket_params.py` | Sport, player, and error parameters; court geometry |
+| `racket_trajectory.py` | Closed-form 1D/2D ball flight and error propagation |
+| `racket_scoring.py` | Grid, Monte Carlo in-bounds probability, reachability, score |
+| `racket_game.py` | Zero-sum shot placement game (not built: PR4 closed without code) |
+| `racket_strategy_utils.py` | Plotting and experiment helpers for notebooks |
+
+## Notebooks
+
+The notebooks are in `notebooks/`, numbered in their logical order.
+
+| Notebook | Purpose |
+|----------|---------|
+| `racket_sports_01_shot_probability.ipynb` | Serve and return widget: probability that a Gaussian return lands in, closed form vs Monte Carlo |
+| `racket_sports_02_strategy_API.ipynb` | Guided walkthrough of the package API, one layer at a time |
+| `racket_sports_03_strategy_exploration.ipynb` | Click-to-run exploration of shot placement: ball speed, shot dispersion, player positions |
+| `racket_sports_04_trajectory_API.ipynb` | Guided walkthrough of `racket_trajectory.py`, the closed-form ball flight (set aside) |
+| `racket_sports_05_variable_sensitivity.ipynb` | Which variables matter: one setting at a time, the corners and the best serve, the speed ratio check, and the reaction time comparison; reduced runs by default, `RUN_FULL_SIMS` for the full runs of the paper |
+| `racket_sports_06_rl_return.ipynb` | A one-shot RL env for the return of serve: the brute force through the env, Milestone 2 recomputed, and PPO learning the target; a reduced run by default (about 10 minutes), `RUN_FULL_SIMS` for the full run (about 1 hour); its pip cell installs `gymnasium`, `stable-baselines3`, and the CPU `torch` |
+
+## Development
+
+Requirements are in `requirements.txt`. Add scipy for optimization and numerical integration.
+
+```bash
+> pip install -r requirements.txt
+```
+
+Run tests locally:
+
+```bash
+> pytest test/
+```
+
+## References
+
+- Paper: "Optimal Strategy for Racket Sports" (Sections III-VII)
+- Data: Table I (sport parameters), Figure 1 (trajectory validation)

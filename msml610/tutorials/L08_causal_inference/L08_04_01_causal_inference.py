@@ -15,9 +15,17 @@
 
 # %% [markdown]
 # # Causal inference
-
-# %% [markdown]
-# ## Imports
+#
+# - This notebook uses Christmas sales and email A/B test data to show how
+#   observational data can mislead about causal effects, and how randomized
+#   experiments and statistical inference quantify a treatment effect
+# - The pedagogical arc:
+#   - Sales example: potential outcomes, confounding bias, and Simpson's
+#     paradox
+#   - A/B testing: covariate balance, regression to the mean, and the standard
+#     error of an estimate
+#   - Confidence intervals, hypothesis testing, test statistic, p-value, and
+#     power
 
 # %%
 # %load_ext autoreload
@@ -28,26 +36,27 @@ import logging
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
-from IPython.display import display
-
-# Set plotting style.
-sns.set_style("whitegrid")
-plt.rcParams["figure.figsize"] = (12, 6)
+from scipy import stats
 
 # %%
 import helpers.hmatplotlib as hmatplo
+import helpers.hnotebook as hnotebook
 import helpers.hpandas_display as hpandisp
 
-import helpers.htutorial as ut
-import L08_04_01_causal_inference_utils as mtl0cireout
+import L08_04_01_causal_inference_utils as utils
 
-ut.config_notebook()
-
-# Initialize logger.
-logging.basicConfig(level=logging.INFO)
+# Initialize notebook configuration and logging.
+hnotebook.config_notebook()
 _LOG = logging.getLogger(__name__)
+utils.init_loggers(_LOG)
 
+# Convert `display` into `print()` when running outside IPython.
+try:
+    from IPython.display import display
+except ImportError:
+    display = print  # type: ignore
+
+# %%
 dir_name = "L08_data"
 # !ls $dir_name
 
@@ -60,14 +69,14 @@ markdown_path_prefix = "msml610/lectures_source"
 # %% [markdown]
 # ## Cell 1.1: Loading the sales data
 #
-# **Goal**:
+# **Goal**
 # - Analyze real-world sales data to illustrate the challenge of causal
 #   inference: observational data can be misleading due to confounding
 #
-# **Implementation**: `mtl0cireout.load_xmas_sales_data(dir_name)`
+# **Implementation** `utils.load_xmas_sales_data(dir_name)`
 
 # %%
-data = mtl0cireout.load_xmas_sales_data(dir_name)
+data = utils.load_xmas_sales_data(dir_name)
 print("data.shape=", data.shape)
 display(data.head(6))
 
@@ -84,17 +93,17 @@ hpandisp.convert_df_to_png(
 # %% [markdown]
 # ## Cell 1.2: Visualizing sales by treatment status
 #
-# **Goal**:
+# **Goal**
 # - Compare sales outcomes between stores with and without price cuts
 #
-# **Implementation**: `mtl0cireout.plot_xmas_sales_boxplot(data)`
+# **Implementation** `utils.plot_xmas_sales_boxplot(data)`
 # - Box plots of weekly sales for treated (cut prices) and control (no
 #   price cut) groups: visual evidence suggests price cuts increase
 #   sales, but this may reflect confounding rather than a true causal
 #   effect
 
 # %%
-fig = mtl0cireout.plot_xmas_sales_boxplot(data)
+fig = utils.plot_xmas_sales_boxplot(data)
 xmas_boxplot_png = f"{out_dir_name}/L08.4.xmas_boxplot.png"
 hmatplo.save_fig(
     fig, xmas_boxplot_png, print_markdown=True, path_prefix=markdown_path_prefix
@@ -103,7 +112,7 @@ hmatplo.save_fig(
 # %% [markdown]
 # ## Cell 1.3: Conceptual example: potential outcomes
 #
-# **Goal**:
+# **Goal**
 # - Illustrate the fundamental problem of causal inference using
 #   potential outcomes: each unit `i` has 2 potential outcomes, `y0`
 #   (under control) and `y1` (under treatment), but only one is ever
@@ -158,18 +167,18 @@ hmatplo.save_fig(
 # %% [markdown]
 # ## Cell 1.4: Visualizing bias from pooling treated/control stores
 #
-# **Goal**:
+# **Goal**
 # - Visualize scatter points and regression lines for treated and
 #   control stores
 #
-# **Implementation**: `mtl0cireout.plot_sales_bias_analysis(data)`
+# **Implementation** `utils.plot_sales_bias_analysis(data)`
 # - Treated stores (red) and control stores (blue), each with its own
 #   regression trend: within each group, the relationship between
 #   baseline sales and treatment appears similar, but the overall pooled
 #   relationship is different
 
 # %%
-fig = mtl0cireout.plot_sales_bias_analysis(data)
+fig = utils.plot_sales_bias_analysis(data)
 bias_analysis0_png = f"{out_dir_name}/L08.4.Association_Causation_Bias0.png"
 hmatplo.save_fig(
     fig,
@@ -181,17 +190,17 @@ hmatplo.save_fig(
 # %% [markdown]
 # ## Cell 1.5: Comparing pooled vs stratified trends
 #
-# **Goal**:
+# **Goal**
 # - Compare pooled vs stratified regression models on synthetic data
 #
-# **Implementation**: `mtl0cireout.plot_single_vs_separate_trends()`
+# **Implementation** `utils.plot_single_vs_separate_trends()`
 # - Left panel: single trend line across all data. Right panel: separate
 #   trend lines for large and small businesses. Simpson's paradox
 #   emerges when aggregation obscures group-level trends, and
 #   stratification reveals the true relationships
 
 # %%
-fig = mtl0cireout.plot_single_vs_separate_trends()
+fig = utils.plot_single_vs_separate_trends()
 bias_analysis1_png = f"{out_dir_name}/L08.4.Association_Causation_Bias1.png"
 hmatplo.save_fig(
     fig,
@@ -203,17 +212,17 @@ hmatplo.save_fig(
 # %% [markdown]
 # ## Cell 1.6: Simpson's paradox
 #
-# **Goal**:
+# **Goal**
 # - Illustrate Simpson's paradox, where the aggregate and group-level
 #   trends contradict each other
 #
-# **Implementation**: `mtl0cireout.plot_simpsons_paradox()`
+# **Implementation** `utils.plot_simpsons_paradox()`
 # - 2 groups (blue and red), each with a positive within-group trend,
 #   but a negative overall trend: ignoring a confounding variable (like
 #   business size) leads to contradictory causal conclusions
 
 # %%
-fig = mtl0cireout.plot_simpsons_paradox()
+fig = utils.plot_simpsons_paradox()
 simpsons_paradox_png = f"{out_dir_name}/L08.4.Simpson_Paradox.png"
 hmatplo.save_fig(
     fig,
@@ -225,18 +234,18 @@ hmatplo.save_fig(
 # %% [markdown]
 # ## Cell 1.7: University Simpson's paradox
 #
-# **Goal**:
+# **Goal**
 # - Demonstrate Simpson's paradox in a university-admissions context
 #   with 2 different groups
 #
-# **Implementation**: `mtl0cireout.plot_university_simpsons_paradox()`
+# **Implementation** `utils.plot_university_simpsons_paradox()`
 # - Left panel: groups A and B each with a positive admission trend.
 #   Right panel: the aggregated data shows a reversed, negative overall
 #   trend. Ignoring group differences (e.g., selectivity, baseline
 #   rates) leads to reversed causal conclusions in aggregate data
 
 # %%
-fig = mtl0cireout.plot_university_simpsons_paradox()
+fig = utils.plot_university_simpsons_paradox()
 
 # %% [markdown]
 # # Part 2: A/B Testing
@@ -244,7 +253,7 @@ fig = mtl0cireout.plot_university_simpsons_paradox()
 # %% [markdown]
 # ## Cell 2.1: Loading the email A/B test data
 #
-# **Goal**:
+# **Goal**
 # - Apply causal inference concepts to A/B testing with email marketing
 #   data, to measure treatment effects and quantify their uncertainty
 
@@ -256,7 +265,7 @@ display(data.head(3))
 # %% [markdown]
 # ## Cell 2.2: Checking covariate balance across groups
 #
-# **Goal**:
+# **Goal**
 # - Check that the treatment groups are balanced on observed covariates,
 #   a precondition for a clean treatment-effect comparison
 
@@ -274,12 +283,12 @@ display(norm_diff)
 # %% [markdown]
 # ## Cell 2.3: Regression to the mean in school scores
 #
-# **Goal**:
+# **Goal**
 # - Illustrate regression to the mean using school-score data, showing
 #   how selection effects can mislead causal conclusions
 #
-# **Implementation**: `mtl0cireout.plot_top_school_size_boxplot(df)`,
-# `mtl0cireout.plot_score_by_school_size_scatter(df)`
+# **Implementation** `utils.plot_top_school_size_boxplot(df)`,
+# `utils.plot_score_by_school_size_scatter(df)`
 # - Top-scoring schools skew smaller: a school's small size (and hence
 #   noisier average score) can push it into the "top 1%" by chance,
 #   which is why the top and bottom of the score distribution both have
@@ -294,7 +303,7 @@ display(df.head(3))
 display(df.sort_values(by="avg_score", ascending=False).head(5))
 
 # %%
-fig = mtl0cireout.plot_top_school_size_boxplot(df)
+fig = utils.plot_top_school_size_boxplot(df)
 top_school_size_png = f"{out_dir_name}/L08.4.top_school_size.png"
 hmatplo.save_fig(
     fig,
@@ -304,7 +313,7 @@ hmatplo.save_fig(
 )
 
 # %%
-fig = mtl0cireout.plot_score_by_school_size_scatter(df)
+fig = utils.plot_score_by_school_size_scatter(df)
 score_by_school_size_png = (
     f"{out_dir_name}/L08.4.School_score_by_number_students.png"
 )
@@ -318,7 +327,7 @@ hmatplo.save_fig(
 # %% [markdown]
 # ## Cell 2.4: Standard error of the estimate
 #
-# **Goal**:
+# **Goal**
 # - Compute the standard error of the mean (SEM) for each email group,
 #   which measures the precision of the sample mean as an estimate of
 #   the population mean
@@ -397,8 +406,6 @@ ci = (exp_mu - 1.96 * exp_se, exp_mu + 1.96 * exp_se)
 print("95% CI for short email:", ci)
 
 # %%
-from scipy import stats
-
 conf = 0.95
 z = np.abs(stats.norm.ppf((1 - conf) / 2))
 print("z=", z)

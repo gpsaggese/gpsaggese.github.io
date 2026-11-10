@@ -6,6 +6,10 @@ Generate lecture slides PDF.
 This script:
 - generates a PDF from lecture source files using `notes_to_pdf.py`. The PDF is
   built in the staging dir `{DIR}/lectures_pdf.tmp/`
+- generates a PDF from a standalone `.md` file outside of any course
+  `lectures_source` dir (e.g., the slides of a paper). The PDF is written next
+  to the input file, since there is no staging dir; the `release` action is not
+  available for these files
 - uses the `release` action to copy the built PDF from
   `{DIR}/lectures_pdf.tmp/` to the published dir `{DIR}/lectures_pdf/` and
   compress it in place via `compress_pdf.py`; a plain `generate` run is left
@@ -27,6 +31,12 @@ This script:
   directly:
 > gen_slides.py -i msml610/lectures_source/Lesson10.2-Causal_Discovery.smd
 
+- Generate the slides PDF from a markdown file outside of any course
+  `lectures_source` dir, e.g., the slides of a paper. The PDF is written next
+  to the input file, i.e., `papers/Causal_Analysis_for_Finance/notes.slides.pdf`:
+> gen_slides.py -i papers/Causal_Analysis_for_Finance/notes.slides.md \
+      --slides_engine typst
+
 - Release the slides PDF already built for msml610 lesson 08.1, i.e., copy
   it from `msml610/lectures_pdf.tmp/` to `msml610/lectures_pdf/` and
   compress it (without rebuilding it):
@@ -46,17 +56,14 @@ This script:
 
 import argparse
 import logging
+import os
 import shlex
 import shutil
-from typing import List
+
+import helpers.hselect_action as hselacti
+from helpers import hdbg, hgit, hparser, hprint, hsystem
 
 import class_scripts.common_utils as csccouti
-import helpers.hdbg as hdbg
-import helpers.hgit as hgit
-import helpers.hparser as hparser
-import helpers.hprint as hprint
-import helpers.hselect_action as hselacti
-import helpers.hsystem as hsystem
 
 _LOG = logging.getLogger(__name__)
 
@@ -81,7 +88,9 @@ def _parse() -> argparse.ArgumentParser:
         "--input",
         type=str,
         help="Lecture specification: 'data605/08.1', 'msml610/08.1', "
-        "or file path 'msml610/lectures_source/Lesson10.2-Name.smd'",
+        "file path 'msml610/lectures_source/Lesson10.2-Name.smd', or a "
+        "standalone markdown file outside of `lectures_source`, e.g., "
+        "'papers/Causal_Analysis_for_Finance/notes.slides.md'",
     )
     input_group.add_argument(
         "-f",
@@ -144,6 +153,28 @@ def _extra_opts_mention_open_pdf(notes_to_pdf_args: str) -> bool:
     return bool(notes_to_pdf_args) and "open_pdf" in notes_to_pdf_args
 
 
+def _is_standalone_file(input_spec: str) -> bool:
+    """
+    Check if `input_spec` is a markdown file outside of a course lecture dir.
+
+    A course lecture is specified as 'msml610/08.1' or as a path under
+    `lectures_source`. Anything else ending in `.md` is a standalone file, e.g.,
+    the slides of a paper. The existence of the file is checked later, so a typo
+    in the path gets a clear "file not found" error instead of a confusing
+    "Expected dir/lesson format" one.
+
+    :param input_spec: input specification, e.g.,
+        "papers/Causal_Analysis_for_Finance/notes.slides.md"
+    :return: whether `input_spec` is a standalone markdown file
+    """
+    _LOG.debug(hprint.to_str("input_spec"))
+    is_standalone = "lectures_source" not in input_spec and input_spec.endswith(
+        ".md"
+    )
+    _LOG.debug("return=%s", is_standalone)
+    return is_standalone
+
+
 def _compress_pdf(pdf_file: str, log_level: str) -> None:
     """
     Compress a PDF in place via `compress_pdf.py`.
@@ -180,22 +211,21 @@ def _release(dir_arg: str, dst_name: str, log_level: str) -> None:
 
 
 def _generate(
-    dir_arg: str, src_name: str, dst_name: str, args: argparse.Namespace
+    input_file: str, output_file: str, args: argparse.Namespace
 ) -> None:
     """
-    Build the slides PDF in the staging dir via `notes_to_pdf.py`.
+    Build the slides PDF via `notes_to_pdf.py`.
 
-    :param dir_arg: course directory, e.g. "msml610"
-    :param src_name: lecture source file name, e.g.
-        "Lesson08.1-Causal_AI_intro.smd"
-    :param dst_name: PDF file name, e.g. "Lesson08.1-Causal_AI_intro.pdf"
+    :param input_file: slides source file, e.g.
+        "msml610/lectures_source/Lesson08.1-Causal_AI_intro.smd"
+    :param output_file: PDF file to build, e.g.
+        "msml610/lectures_pdf.tmp/Lesson08.1-Causal_AI_intro.pdf"
     :param args: parsed command-line arguments
     """
-    # Build paths.
-    input_file = f"{dir_arg}/lectures_source/{src_name}"
-    output_file = f"{dir_arg}/lectures_pdf.tmp/{dst_name}"
-    # Ensure output directory exists.
-    csccouti.ensure_dir_exists(f"{dir_arg}/lectures_pdf.tmp")
+    # Ensure output directory exists. A bare file name (e.g., "notes.pdf")
+    # has an empty dir name, which stands for the current dir.
+    output_dir = os.path.dirname(output_file) or "."
+    csccouti.ensure_dir_exists(output_dir)
     # Build the command with debug options.
     cmd_parts = [
         "notes_to_pdf.py",
@@ -249,12 +279,49 @@ def _generate(
     hsystem.system(cmd, suppress_output=False)
 
 
-def _process_lesson_spec(
-    input_spec: str, args: argparse.Namespace, actions: List[str]
+def _process_standalone_file(
+    input_file: str, args: argparse.Namespace, actions: list[str]
 ) -> None:
     """
-    Generate and/or release the slides PDF for a single lecture
-    specification.
+    Generate the slides PDF for a markdown file outside of any course dir.
+
+    There is no staging dir nor published dir, so the PDF is written next to
+    the input file and the `release` action is not supported.
+
+    :param input_file: markdown file, e.g.
+        "papers/Causal_Analysis_for_Finance/notes.slides.md"
+    :param args: parsed command-line arguments
+    :param actions: actions to execute, e.g. ["generate"]
+    """
+    _LOG.debug(hprint.to_str("input_file actions"))
+    hdbg.dassert_file_exists(input_file, "Standalone slides file not found")
+    hdbg.dassert_not_in(
+        "release",
+        actions,
+        "A standalone file has no published dir to release to: "
+        "use a course lesson spec, e.g., 'msml610/08.1'",
+    )
+    # E.g., "papers/foo/notes.slides.md" -> "papers/foo/notes.slides.pdf".
+    output_file = os.path.splitext(input_file)[0] + ".pdf"
+    remaining_actions = list(actions)
+    to_execute, remaining_actions = hselacti.mark_action(
+        "generate", remaining_actions
+    )
+    if to_execute:
+        _generate(input_file, output_file, args)
+    hdbg.dassert_eq(
+        len(remaining_actions or []),
+        0,
+        "There are unprocessed actions: %s",
+        remaining_actions,
+    )
+
+
+def _process_course_lesson(
+    input_spec: str, args: argparse.Namespace, actions: list[str]
+) -> None:
+    """
+    Generate and/or release the slides PDF for a course lecture.
 
     :param input_spec: lecture specification, e.g. 'msml610/08.1' or a
         lecture source file path
@@ -276,7 +343,9 @@ def _process_lesson_spec(
     if to_execute:
         # `_generate()` handles `args.dry_run` itself, since it needs to
         # print the exact `notes_to_pdf.py` command it would run.
-        _generate(dir_arg, src_name, dst_name, args)
+        input_file = f"{dir_arg}/lectures_source/{src_name}"
+        output_file = f"{dir_arg}/lectures_pdf.tmp/{dst_name}"
+        _generate(input_file, output_file, args)
     to_execute, remaining_actions = hselacti.mark_action(
         "release", remaining_actions
     )
@@ -299,6 +368,25 @@ def _process_lesson_spec(
         "There are unprocessed actions: %s",
         remaining_actions,
     )
+
+
+def _process_lesson_spec(
+    input_spec: str, args: argparse.Namespace, actions: list[str]
+) -> None:
+    """
+    Generate and/or release the slides PDF for a single input specification.
+
+    :param input_spec: course lecture specification (e.g. 'msml610/08.1' or a
+        lecture source file path) or a standalone markdown file outside of
+        `lectures_source`
+    :param args: parsed command-line arguments
+    :param actions: actions to execute, e.g. ["generate"], ["release"], or
+        ["generate", "release"]
+    """
+    if _is_standalone_file(input_spec):
+        _process_standalone_file(input_spec, args, actions)
+    else:
+        _process_course_lesson(input_spec, args, actions)
 
 
 def _main(parser: argparse.ArgumentParser) -> None:

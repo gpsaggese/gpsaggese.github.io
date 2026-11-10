@@ -38,7 +38,9 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "mcts.03.example.ipynb"
         # Run test.
-        self.helper(notebook_name)
+        self.run_notebook(
+            notebook_name, use_docker_cmd=True, generate_html=False
+        )
 
     @pytest.mark.slow
     def test2(self) -> None:
@@ -48,7 +50,9 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "mcts.03.API.ipynb"
         # Run test.
-        self.helper(notebook_name)
+        self.run_notebook(
+            notebook_name, use_docker_cmd=True, generate_html=False
+        )
 
     @pytest.mark.slow
     def test3(self) -> None:
@@ -59,7 +63,9 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "search_algorithms.02.example.ipynb"
         # Run test.
-        self.helper(notebook_name)
+        self.run_notebook(
+            notebook_name, use_docker_cmd=True, generate_html=False
+        )
 
     @pytest.mark.slow
     def test4(self) -> None:
@@ -69,7 +75,9 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "game.01.API.ipynb"
         # Run test.
-        self.helper(notebook_name)
+        self.run_notebook(
+            notebook_name, use_docker_cmd=True, generate_html=False
+        )
 
     @pytest.mark.slow
     def test5(self) -> None:
@@ -80,4 +88,6 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "search_algorithms.02.API.ipynb"
         # Run test.
-        self.helper(notebook_name)
+        self.run_notebook(
+            notebook_name, use_docker_cmd=True, generate_html=False
+        )

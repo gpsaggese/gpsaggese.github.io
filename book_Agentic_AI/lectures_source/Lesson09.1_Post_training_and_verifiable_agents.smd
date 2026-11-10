@@ -3,12 +3,6 @@
 // lesson_title=Lesson 01.09: Post-Training and Verifiable Agents
 // slides_engine=typst
 
-// References:
-//- Introducing SWE-bench Verified:
-//  https://openai.com/index/introducing-swe-bench-verified/
-//- BrowseComp: a benchmark for browsing agents:
-//  https://openai.com/index/browsecomp/
-
 # Post-Training and Verifiable Agents
 
 ## Motivation: The Verification Problem
@@ -587,3 +581,11 @@
   - Tulu 3: open alternative to proprietary post-training
   - How to set up RL from verifiable rewards
   - Best practices for collecting and weighting training data
+
+* References
+
+- Introducing SWE-bench Verified:
+  https://openai.com/index/introducing-swe-bench-verified/
+
+- BrowseComp: a benchmark for browsing agents:
+  https://openai.com/index/browsecomp/

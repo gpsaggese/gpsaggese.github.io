@@ -53,6 +53,42 @@ group
   just by putting time in every single day
 - School always has priority, so we take breaks during final periods
 
+## Rules of the Game
+- This is the deal between you and GP:
+  - GP does his best to get you what you came for: a job, help starting a
+    company, advice, mentorship
+  - GP always delivers his side of the deal
+  - In return, you commit to what you said you would do and you get it done
+
+- Everything is planned and executed according to the rules:
+  - Only work tracked on GitHub or Asana counts
+  - Write the spec in advance, so GP and you agree on what you will deliver
+  - Work that skips this process is a waste of everybody's time
+  - See "Always Create an Issue Before Starting to Work" below
+
+- Progress decides priority:
+  - GP prioritizes the people who make the most progress
+  - If GP is slow to reply, the most likely reason is that you are not moving
+    fast enough or are not committed enough, and you sit at the bottom of the
+    list
+
+- If GP is slow to review a PR or to reply, ping him:
+  - GP will take care of it
+  - A ping gives you another chance to surprise him
+  - Make sure you do
+
+- GP's time is limited:
+  - GP supports 2-3 student startups, teaches 2 classes, runs many research
+    projects, and is traveling to get jobs and funding for students
+  - Do not waste his time
+  - If working with GP is not what you expected, say so and move on: no hard
+    feelings
+
+- What works:
+  - Students who follow all the rules and get things done with minimal
+    intervention surprise GP positively
+  - Be one of them
+
 ## When to Contribute
 - We don't care when you find time to contribute (at night or over the weekend),
   but be reliable about delivering.
@@ -79,8 +115,18 @@ group
 ## Always Create an Issue Before Starting to Work
 - Create a GitHub issue describing what you want to do and how you plan to do it
 - Create a PR for that issue and commit code regularly to show progress
+- Add every PR to the right GitHub project, e.g.,
+  [PR 622](https://github.com/gpsaggese/gpsaggese.github.io/pull/622) goes to
+  [project 2](https://github.com/users/gpsaggese/projects/2)
 - Post an update on the GitHub issue every 2-3 days with what's done, what's
   next, and any blockers
+
+## Never Start a New Document: Update an Existing One
+- Before writing a document, search the repo for one that already covers the
+  topic
+- If one exists, update it instead of creating a new one
+- Create a new document only when you have confirmed that no existing one fits
+- Duplicate documents drift apart and waste everybody's time
 
 ## Will I Work on a Specific Project I Choose?
 

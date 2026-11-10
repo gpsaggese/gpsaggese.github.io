@@ -110,7 +110,7 @@
     prediction themselves will change the world
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - @Example@: ice cream sales and drowning deaths are highly correlated
   - Prediction: _"more ice cream $\to$ more drownings"_ (which is accurate)
   - Decision built on it: _"ban ice cream to cut drownings"_ (which is disastrous)
@@ -324,7 +324,7 @@ digraph SimpsonsParadox {
   - No principled way to inject constraints or priors
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - @Example@: a wolf-vs-husky classifier with high test accuracy keys on
   _snow_ in the background, not on the animal [@ribeiro2016why]
   - Accurate for the wrong reason, and worthless once conditions change

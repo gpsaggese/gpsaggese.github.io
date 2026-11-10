@@ -1,0 +1,15 @@
+{
+  "baseline": {
+    "images": 2212,
+    "per_task": {
+      "color_attr": 0.0775,
+      "colors": 0.7367021276595744,
+      "counting": 0.371875,
+      "position": 0.045,
+      "single_object": 0.959375,
+      "two_object": 0.3434343434343434
+    },
+    "overall_macro": 0.4223144118489863,
+    "image_micro": 0.4014466546112116
+  }
+}

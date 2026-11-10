@@ -3,14 +3,6 @@
 // lesson_title=Lesson 01.10: Open Training Recipes for Reasoning
 // slides_engine=typst
 
-// References:
-//- Tulu 3: Pushing Frontiers in Open Language Model Post-Training:
-//  https://arxiv.org/abs/2411.15124
-//- Unpacking DPO and PPO: Disentangling Best Practices for Learning from
-//  Preference Feedback: https://arxiv.org/abs/2406.09279
-//- OpenScholar: Synthesizing Scientific Literature with Retrieval-augmented LMs:
-//  https://arxiv.org/abs/2411.14199
-
 # Open Training Recipes for Reasoning
 
 ## Motivation: From Proprietary to Open Post-Training
@@ -601,3 +593,14 @@
 
 - @Key idea@: open training recipes are the bridge between research insights
   and deployed agentic systems
+
+* References
+
+- Tulu 3: Pushing Frontiers in Open Language Model Post-Training:
+  https://arxiv.org/abs/2411.15124
+
+- Unpacking DPO and PPO: Disentangling Best Practices for Learning from
+  Preference Feedback: https://arxiv.org/abs/2406.09279
+
+- OpenScholar: Synthesizing Scientific Literature with Retrieval-augmented LMs:
+  https://arxiv.org/abs/2411.14199

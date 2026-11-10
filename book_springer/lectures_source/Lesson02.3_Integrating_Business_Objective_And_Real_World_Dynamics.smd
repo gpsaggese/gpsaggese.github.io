@@ -3,16 +3,6 @@
 // lesson_title=Lesson 02.3: Integrating Business Objective and Real-World Dynamics
 // slides_engine=typst
 
-// References:
-//- [B028] Kochenderfer, "Decision Making Under Uncertainty", 2015
-//- [B030] Sutton et al., "Reinforcement Learning: An Introduction", 2018
-//- [P036] Bottou et al., "Counterfactual Reasoning and Learning Systems: The
-//  Example of Computational Advertising", 2013 https://arxiv.org/abs/1209.0467
-//- [P042] Hafner et al., "Mastering Atari, Go, Chess and Shogi by Planning with
-//  a Learned World Model", 2023 https://arxiv.org/abs/2104.06294
-//- [P100] Kahneman & Tversky, "Prospect Theory: An Analysis of Decision under
-//  Risk", 1979 https://doi.org/10.2307/1914185
-
 # From Objectives to Actions
 
 ## Recap and Transition
@@ -154,7 +144,7 @@
 // From: msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.smd:526 '* Decision Networks: Motivation'
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - @Definition@: a _decision network_ extends a causal DAG with three node
   types
   - _Chance nodes_: random variables, as in a Bayesian network
@@ -299,7 +289,7 @@ digraph DecisionNet {
 // From: msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.smd:137 '* Feedback Loops and Simultaneity'
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - @Problem@: in time series, cause and effect often influence each other,
   creating _simultaneity_: $Y_t$ and $T_t$ are jointly determined
   - Ordinary regression coefficients become inconsistent and cannot be read
@@ -406,7 +396,7 @@ digraph Feedback {
 // From: msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.smd:919 '* Exploration vs Exploitation'
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - @Problem@: a sequential decision-maker must both exploit the best
   action found so far and explore uncertain actions to learn whether
   something better exists
@@ -506,7 +496,7 @@ digraph ExploreExploit {
 // From: book_springer/related_papers.md:92 '- [P042] Hafner et al., "Mastering Atari, Go, Chess and Shogi by Planning with a Learned World Model", 2023'
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - @Problem@: a standard Markov decision process describes transitions as
   $\Pr(s'|a,s)$, hiding whether the relationship is a mechanism or a
   coincidence of the logged data
@@ -584,3 +574,18 @@ digraph SCM_MDP {
 - @Key idea@: every technique in the rest of the book, Gaussian
   processes, policy learning, causal reinforcement learning, deployment and
   monitoring, refines one arrow in this pipeline; none of them replace it
+
+* References
+
+- Kochenderfer, "Decision Making Under Uncertainty", 2015
+
+- Sutton et al., "Reinforcement Learning: An Introduction", 2018
+
+- Bottou et al., "Counterfactual Reasoning and Learning Systems: The
+  Example of Computational Advertising", 2013 https://arxiv.org/abs/1209.0467
+
+- Hafner et al., "Mastering Atari, Go, Chess and Shogi by Planning with a
+  Learned World Model", 2023 https://arxiv.org/abs/2104.06294
+
+- Kahneman & Tversky, "Prospect Theory: An Analysis of Decision under
+  Risk", 1979 https://doi.org/10.2307/1914185

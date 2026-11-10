@@ -14,44 +14,56 @@
 # ---
 
 # %% [markdown]
-# # Description
+# # Gymnasium Registry API
 #
-# - Teach the `gymnasium` Registry API by building up from the smallest
-#   possible working example
-# - Focus on primitives:
-#   - `gym.make`, `gym.register`, `gym.spec`, `gym.pprint_registry`
-#   - `gym.envs.registry`, `EnvSpec`
-#
+# - This notebook explores the `gymnasium` registry, from the global catalog of env
+#   IDs to registering custom envs
+# - The pedagogical arc:
+#   - `gym.envs.registry` and `EnvSpec`: what the catalog stores
+#   - `gym.spec()`, `gym.make()`, and `gym.register()`: read, build, and add
+#   - `gym.pprint_registry()` and the ID naming convention
+#   - Custom `kwargs`, versions, and the full lifecycle of an env
 # - References:
 #   - API: https://gymnasium.farama.org/api/registry
 #   - GitHub: https://github.com/Farama-Foundation/Gymnasium
 
-# %% [markdown]
-# ## Imports
+# %%
+# !pip install -q "gymnasium[classic-control]==1.3.0" pygame-ce==2.5.8
+
+import importlib.metadata
+
+import gymnasium
+
+print("gymnasium version: ", gymnasium.__version__)
+print("pygame-ce version: ", importlib.metadata.version("pygame-ce"))
 
 # %%
 # %load_ext autoreload
 # %autoreload 2
 
-# System libraries.
 import logging
 
-# Third-party libraries.
+import gymnasium as gym
 import numpy as np
 import pandas as pd
+from gymnasium import Env
+from gymnasium.spaces import Discrete
 
 # %%
-import helpers.hdbg as hdbg
+import gymnasium_utils as utils
 import helpers.hintrospection as hintros
+import helpers.hnotebook as hnotebook
 
+# Initialize notebook configuration and logging.
+hnotebook.config_notebook()
 _LOG = logging.getLogger(__name__)
+utils.init_loggers(_LOG)
 
-hdbg.init_logger(verbosity=logging.INFO)
-
+# Convert `display` into `print()` when running outside IPython.
 try:
     from IPython.display import display
 except ImportError:
-    display = print
+    display = print  # type: ignore
 
 # %% [markdown]
 # ## Library Overview
@@ -71,11 +83,13 @@ except ImportError:
 #   - `gym.register()`: the function that adds a new entry to the registry
 #
 # - **Mental model**:
-#   ```
-#   gym.register("id") -> registry["id"] = EnvSpec(...)
-#   gym.make("id")     -> registry["id"].entry_point(**kwargs) + wrappers
-#   gym.spec("id")     -> registry["id"]
-#   ```
+#
+# | Object | Description | Comments |
+# |--------|-------------|----------|
+# | `gym.register("id")` | Add an env to the catalog | Stores `registry["id"] = EnvSpec(...)` |
+# | `gym.make("id")` | Build an env from its spec | Calls `entry_point(**kwargs)`, then adds wrappers |
+# | `gym.spec("id")` | Look up a spec | Returns `registry["id"]` |
+# | `gym.envs.registry` | Global catalog | `dict[str, EnvSpec]` |
 #
 # - **Key classes**:
 #   - `EnvSpec`: holds id, entry_point, version, kwargs, and metadata
@@ -83,7 +97,10 @@ except ImportError:
 #   - `gym.envs.registry`: the global registry dict
 
 # %% [markdown]
-# ## Primitive 1: `gym.envs.registry`: The Global Catalog
+# # Part 1: The registry and `EnvSpec`
+
+# %% [markdown]
+# ## Cell 1.1: `gym.envs.registry`: the global catalog
 #
 # - **Mental model**:
 #   - A plain Python `dict` that maps environment string IDs to `EnvSpec` objects
@@ -93,8 +110,6 @@ except ImportError:
 #   - This is the single source of truth for available environments
 
 # %%
-import gymnasium as gym
-
 # The registry is a regular dict[str, EnvSpec].
 reg = gym.envs.registry
 print("type(reg):", type(reg))
@@ -114,7 +129,7 @@ namespaced = [env_id for env_id in all_ids if "/" in env_id]
 display(pd.DataFrame({"namespaced_ids": namespaced}))
 
 # %% [markdown]
-# ## Primitive 2: `EnvSpec`: The Metadata Object
+# ## Cell 1.2: `EnvSpec`: the metadata object
 #
 # - **Mental model**:
 #   - Each entry in the registry is an `EnvSpec`, a container of metadata that
@@ -141,7 +156,7 @@ print("type(spec):", type(spec))
 print()
 
 # List all public methods.
-hintros.print_obj_info(spec)
+hintros.print_obj_info(gym.envs.registration.EnvSpec)
 
 # %%
 # Build a DataFrame comparing multiple EnvSpecs.
@@ -163,10 +178,10 @@ display(pd.DataFrame(data))
 
 # %%
 # EnvSpec has a .pprint() method for quick inspection.
-print(spec.pprint())
+spec.pprint()
 
 # %% [markdown]
-# ## Primitive 3: `gym.spec()`: Look Up by ID
+# ## Cell 1.3: `gym.spec()`: look up by ID
 #
 # - **Mental model**:
 #   - A convenience function that retrieves an `EnvSpec` from the registry by its
@@ -182,7 +197,10 @@ print("max_episode_steps:", spec.max_episode_steps)
 print("version:", spec.version)
 
 # %% [markdown]
-# ## Primitive 4: `gym.make()`: From Registry to Environment
+# # Part 2: Building and registering envs
+
+# %% [markdown]
+# ## Cell 2.1: `gym.make()`: from registry to environment
 #
 # - **Mental model**: `gym.make()` is the factory that:
 #   1. Looks up the ID in the registry (via `gym.spec()`)
@@ -229,15 +247,12 @@ env.close()
 # This is useful for environments defined in external packages.
 # The module is imported first, then the env is created.
 # (Example with a built-in module to demonstrate the syntax.)
-try:
-    env = gym.make("gymnasium.envs.classic_control.cartpole:CartPole-v1")
-    print("env created via module prefix:", env)
-    env.close()
-except Exception as e:
-    print("Error:", e)
+env = gym.make("gymnasium.envs.classic_control.cartpole:CartPole-v1")
+print("env created via module prefix:", env)
+env.close()
 
 # %% [markdown]
-# ## Primitive 5: `gym.register()`: Add Your Own Environment
+# ## Cell 2.2: `gym.register()`: add your own environment
 #
 # - **Mental model**: registers a new environment in the global registry so it
 #   can be created with `gym.make()`
@@ -245,12 +260,9 @@ except Exception as e:
 # - Required: `id` (string) and `entry_point` (class or string path)
 # - Optional: `max_episode_steps`, `reward_threshold`, `kwargs`, etc.
 
+
 # %%
 # Define a minimal custom environment.
-from gymnasium import Env
-from gymnasium.spaces import Discrete
-
-
 class SimpleGrid(Env):
     """
     A 1D grid where the agent must reach the rightmost cell.
@@ -277,11 +289,12 @@ class SimpleGrid(Env):
         return self._pos, reward, terminated, False, {}
 
 
+# %%
 # Register the custom environment.
 gym.register(id="SimpleGrid-v0", entry_point=SimpleGrid, max_episode_steps=20)
 
 # Verify it appears in the registry.
-print("SimpleGrid-v0" in gym.envs.registry)
+print("SimpleGrid-v0 in registry:", "SimpleGrid-v0" in gym.envs.registry)
 
 # %%
 # Create the registered env via gym.make().
@@ -297,7 +310,10 @@ while not done:
 env.close()
 
 # %% [markdown]
-# ## Primitive 6: `gym.pprint_registry()`: Pretty-Print the Catalog
+# # Part 3: Browsing the registry
+
+# %% [markdown]
+# ## Cell 3.1: `gym.pprint_registry()`: pretty-print the catalog
 #
 # - **Mental model**: prints a formatted, columnar view of all registered
 #   environments, organized by namespace
@@ -312,7 +328,7 @@ print("return value:", result)
 registry_text = gym.pprint_registry(num_cols=4, disable_print=True)
 print("type(registry_text):", type(registry_text))
 # Show the first 1000 characters.
-print(registry_text[:1000])
+print("registry_text[:1000]:\n", registry_text[:1000])
 
 # %%
 # Exclude specific namespaces (e.g., phys2d, tabular) to focus on core envs.
@@ -321,15 +337,18 @@ registry_text = gym.pprint_registry(
     exclude_namespaces=["phys2d", "tabular"],
     disable_print=True,
 )
-print(registry_text)
+print("registry_text:\n", registry_text)
 
 # %%
 # Print a custom subset of the registry.
 subset = {k: v for k, v in gym.envs.registry.items() if "CartPole" in k}
-print(gym.pprint_registry(print_registry=subset, num_cols=2, disable_print=True))
+subset_text = gym.pprint_registry(
+    print_registry=subset, num_cols=2, disable_print=True
+)
+print("subset_text:\n", subset_text)
 
 # %% [markdown]
-# ## Primitive 7: Namespace and Versioning Convention
+# ## Cell 3.2: Namespace and versioning convention
 #
 # - **Mental model**: environment IDs follow the pattern
 #   `[namespace/]EnvName-v[version]`
@@ -341,7 +360,7 @@ print(gym.pprint_registry(print_registry=subset, num_cols=2, disable_print=True)
 #   `CartPole-v1`) with different reward thresholds, episode lengths, etc.
 
 # %%
-# Show all versions of CartPole and MountainCar.
+# Show all versions of CartPole.
 cartpole_specs = [
     gym.spec(k) for k in gym.envs.registry if "CartPole" in k and "/" not in k
 ]
@@ -365,11 +384,15 @@ data = {
 display(pd.DataFrame(data))
 
 # %% [markdown]
-# ## Composition 1: Register with Custom kwargs
+# # Part 4: Composition
+
+# %% [markdown]
+# ## Cell 4.1: Register with custom kwargs
 #
 # - The `kwargs` parameter in `gym.register()` sets default constructor
 #   arguments, merged with any kwargs passed to `gym.make()` (make kwargs take
 #   precedence)
+
 
 # %%
 class ConfigurableGrid(Env):
@@ -424,16 +447,12 @@ env.close()
 # Override kwargs at make() time.
 env = gym.make("ConfigurableGrid-v0", size=3, goal_reward=5.0)
 print("spec.kwargs:", env.spec.kwargs)
-obs, _ = env.reset(seed=0)
-for _ in range(5):
-    obs, reward, terminated, truncated, _ = env.step(1)
-    if terminated:
-        print(f"Goal! obs={obs}, reward={reward}")
-        break
+steps, total_reward = utils.run_episode(env, seed=0, policy=lambda _obs: 1)
+print(f"Goal! obs={steps[-1].obs}, total_reward={total_reward}")
 env.close()
 
 # %% [markdown]
-# ## Composition 2: Multiple Versions of the Same Env
+# ## Cell 4.2: Multiple versions of the same env
 #
 # - Register two versions of the same environment with different settings,
 #   following the `-vN` convention
@@ -465,9 +484,10 @@ data = {
 display(pd.DataFrame(data))
 
 # %% [markdown]
-# ## Composition 3: Full Workflow — Register, List, Spec, Make, Use
+# ## Cell 4.3: Full workflow: register, list, spec, make, use
 #
 # - The complete lifecycle of an environment through the registry
+
 
 # %%
 class WindyGrid(Env):
@@ -500,6 +520,7 @@ class WindyGrid(Env):
         return self._pos, reward, terminated, False, {}
 
 
+# %%
 # Step 1: Register.
 gym.register(
     id="WindyGrid-v0",
@@ -510,7 +531,7 @@ gym.register(
 )
 
 # Step 2: Verify it appears in the list.
-print("WindyGrid-v0" in gym.envs.registry)
+print("WindyGrid-v0 in registry:", "WindyGrid-v0" in gym.envs.registry)
 
 # Step 3: Inspect the spec.
 spec = gym.spec("WindyGrid-v0")
@@ -519,23 +540,18 @@ print("spec.nondeterministic:", spec.nondeterministic)
 
 # Step 4: Make the env.
 env = gym.make("WindyGrid-v0", size=6)
-obs, _ = env.reset(seed=42)
-print("initial obs:", obs)
 
 # Step 5: Use the env.
-done = False
-total_reward = 0.0
-steps = 0
-while not done:
-    obs, reward, terminated, truncated, _ = env.step(1)
-    total_reward += reward
-    steps += 1
-    done = terminated or truncated
-print(f"Reached goal in {steps} steps, total reward: {total_reward}")
+steps, total_reward = utils.run_episode(env, seed=42, policy=lambda _obs: 1)
+outcome = "Reached goal" if steps[-1].terminated else "Truncated"
+print(f"{outcome} after {len(steps)} steps, total reward: {total_reward}")
 env.close()
 
 # %% [markdown]
-# ## API Patterns
+# # Part 5: API patterns
+
+# %% [markdown]
+# ## Cell 5.1: Factory and spec patterns
 #
 # - **Factory Pattern**: `gym.register()` / `gym.make()` follow classic factory:
 #   - Register associates a name with a construction recipe (entry_point + kwargs)
@@ -566,7 +582,10 @@ print("env.spec.id:", env.spec.id)
 env.close()
 
 # %% [markdown]
-# ## Interactive Exploration
+# # Part 6: Interactive exploration
+
+# %% [markdown]
+# ## Cell 6.1: Explore the registry
 #
 # - Try modifying the cells below to explore the registry
 
@@ -584,21 +603,26 @@ display(ns_df.sort_values("count", ascending=False))
 
 # %%
 # Explore: what happens if you register an already-registered ID?
-try:
-    gym.register(
-        id="CartPole-v1",
-        entry_point="gymnasium.envs.classic_control.cartpole:CartPoleEnv",
-    )
-except gym.error.Error as e:
-    print("Error:", e)
+# Gymnasium does not raise: it warns and replaces the spec. Use a new ID so that
+# `CartPole-v1` stays intact for the next cells.
+gym.register(
+    id="ShortCartPole-v0",
+    entry_point="gymnasium.envs.classic_control.cartpole:CartPoleEnv",
+    max_episode_steps=50,
+)
+print("first register:", gym.spec("ShortCartPole-v0").max_episode_steps)
+# Register the same ID again without `max_episode_steps`: the old value is lost.
+gym.register(
+    id="ShortCartPole-v0",
+    entry_point="gymnasium.envs.classic_control.cartpole:CartPoleEnv",
+)
+print("second register:", gym.spec("ShortCartPole-v0").max_episode_steps)
 
 # %%
 # Explore: what fields does an EnvSpec of a toy-text env look like?
 spec = gym.spec("FrozenLake-v1")
-for attr_name in dir(spec):
-    if not attr_name.startswith("_") and not callable(getattr(spec, attr_name)):
-        val = getattr(spec, attr_name)
-        print(f"  {attr_name}: {val}")
+spec.pprint(print_all=True)
+print("spec.kwargs:", spec.kwargs)
 
 # %%
 # Explore: what is the difference between CartPole-v0 and CartPole-v1?

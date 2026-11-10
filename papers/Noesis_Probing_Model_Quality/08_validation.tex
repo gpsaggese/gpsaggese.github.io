@@ -1,0 +1,108 @@
+% ##############################################################################
+\section{Implementation and validation status}
+\label{sec:validation}
+
+% ==============================================================================
+\subsection{Implementation}
+\label{sec:implementation}
+
+The checker consists of 12 Python modules with about 2,500 lines, and the
+prober of 3 modules with about 550 lines. The bank generator is a separate
+256-line script. The code is written in Python with \texttt{asyncio} and
+\texttt{psycopg}, and the provider boundary is the \texttt{Provider} interface
+of the gateway, which a fake provider implements in tests. Two commands drive
+the subsystem, both invoked as \texttt{python3 -m research.Noesis.prober.\allowbreak prober\_\allowbreak cli}:
+\begin{itemize}
+  \item \texttt{calibrate}, with one \texttt{--healthy provider=model} option
+    per healthy target and one \texttt{--weak provider=model} option, which
+    validates the plan and, with \texttt{--execute}, runs and persists a
+    calibration;
+  \item \texttt{probe}, which runs one scheduler pass with \texttt{--once} or a
+    worker until shutdown.
+\end{itemize}
+Live modes require an OpenRouter API key, a database URL, and the schedule
+secret, which are read from the environment or from a \texttt{.env} file.
+
+% ==============================================================================
+\subsection{Unit-level validation}
+\label{sec:tests}
+
+The repository contains 55 test methods for the subsystem, 45 under
+\texttt{checker/test} and 10 under \texttt{prober/test}. Table~\ref{tab:tests}
+groups them by what they exercise. When run for this paper with
+\texttt{python3 -m pytest} on the two test directories
+(\texttt{research/\allowbreak Noesis/\allowbreak checker/\allowbreak test} and
+\texttt{research/\allowbreak Noesis/\allowbreak prober/\allowbreak test}),
+51 tests passed and 4 were skipped. The four skipped tests need a reachable
+PostgreSQL instance, which was not available in the environment; they cover
+guarded probe transitions and the idempotent finalization of frozen evidence in
+the store, the persistence of a calibration run, and a full scheduler pass
+against a database. Consequently the concurrency and constraint
+properties of Section~\ref{sec:failure} are validated here only by code
+inspection and by the tests that ran against fakes, and not by a database run.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabularx}{\linewidth}{@{}p{0.3\linewidth}rX@{}}
+    \toprule
+    Area & Tests & What is checked \\
+    \midrule
+    Bank and selection & 6 & The committed bank has 300 candidates, 50 per
+      family, every canary grades its own answer as correct, and the committed
+      records equal the generator output; selection is balanced and repeatable
+      \\
+    Grading, capability & 6 & Normalizers, reason codes, and the measurer
+      interface \\
+    Calibration & 10 & Acceptance, rejection reasons, incomplete observations,
+      runtime summaries, and the report \\
+    Schedule & 4 & Window bounds, determinism, and due-slot selection \\
+    Evidence and verdicts & 10 & Classification of latency and quality rows and
+      the verdict precedence \\
+    Statistics & 7 & Wilson and Clopper--Pearson bounds \\
+    Store (PostgreSQL) & 2 & Guarded probe transitions; idempotent
+      finalization of frozen evidence \\
+    Prober runtime and worker & 7 & One probe with fake providers, including a
+      model-swap fault that is applied, graded, and logged; isolation of an
+      internal failure; worker loop and shutdown \\
+    Prober command line & 3 & Target parsing and command behavior \\
+    \bottomrule
+  \end{tabularx}
+  \caption{Test methods of the canary subsystem by area. Counts follow the test
+  files, and the grouping is approximate where a file spans areas. The
+  PostgreSQL-backed tests are included in the counts.}
+  \label{tab:tests}
+\end{table}
+
+\subsection{Reproducibility of the analysis}
+\label{sec:reproducibility}
+
+The probabilities in Sections~\ref{sec:calibration_analysis} and
+\ref{sec:verdict} are computed by \texttt{figures/\allowbreak make\_\allowbreak figures.py}, which calls
+the checker's own \texttt{upper\_\allowbreak confidence\_\allowbreak bound} and
+\texttt{is\_\allowbreak conclusive\_\allowbreak failure} functions and enumerates the binomial
+distribution. The script uses no random numbers and no provider calls.
+
+\subsection{Status of live evaluation}
+\label{sec:status}
+
+The paid calibration run has not been executed in the code base described
+here. The calibration findings file is a placeholder that explicitly contains
+no measurements. Therefore this paper reports no accuracy of any model on the
+bank, no survivor count, and no measured detection rate. The window-closing
+worker that freezes evidence and writes the verdict row, and the reputation
+update that consumes verdicts, are also listed as remaining integration work in
+the design notes.
+
+A minimal evaluation that would close this gap has four parts.
+\begin{enumerate}
+  \item Execute the planned calibration (2,700 calls) and report, per target
+    and per family, the accuracy, the survivor count against $m = 150$, the
+    95th-percentile latency, and the cost.
+  \item Inject the model-swap fault of the gateway for one seller and report
+    the fraction of contracts that receive a failing quality verdict, with
+    several seeds for the key, against the prediction of \eqref{eq:power}.
+  \item Measure the false-flag rate for healthy sellers over many contracts.
+  \item Test whether a classifier trained on canary prompts separates them from
+    buyer prompts, as a first measurement of property P3.
+\end{enumerate}

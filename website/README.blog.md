@@ -12,6 +12,25 @@
   > website/find_published_blogs.sh
   ```
 
+## Ready for Review
+
+- 2026-10-31: `website/docs/blog/posts/in_60_mins.GluonTS.md`
+  - Prepared for publication (`draft: false`); GP approval and deployment are
+    pending.
+  - GP approved Ibrahim Ahmed Mohammed as an author; byline and acknowledgment
+    added. Other coauthor profile details await GP.
+- 2026-10-19: `website/docs/blog/posts/in_5_mins.helpers_render_images.md`
+
+Total: 2 posts ready for review
+
+## To Update
+- [ ] Update in_10_mins.helpers_open_md.md with
+  helpers_root/dev_scripts_helpers/documentation/open_md.README.md
+
+## To Create
+
+- [ ] helpers_root/dev_scripts_helpers/documentation/summarize_md.README.md
+
 ## Published Blogs
 
 - 2026-08-20: `website/docs/blog/posts/shortcuts.vim.md`
@@ -71,17 +90,12 @@ Total: 28 published blogs
 - helpers/hcheck_types.py + dassert
 
 - `helpers_root/import_check/detect_import_cycles.py`
-  - `helpers_root/docs/tools/all.import_check.reference.md`
+  - `helpers_root/docs/tools/codebase/all.import_check.reference.md`
 
 - `linters2/normalize_import.py`
 
 - `helpers_root/dev_scripts_helpers/system_tools/create_links.py`
-  - `docs/tools/dev_system/all.replace_common_files_with_script_links.md`
-
-- `website/docs/blog/posts/draft.in_5_mins.helpers_render_images.md`
-  - `helpers_root/dev_scripts_helpers/documentation/render_images.py`
-  - `helpers_root/dev_scripts_helpers/documentation/test/test_render_images.py`
-  - `dev_scripts_helpers/documentation/render_images.README.md`
+  - `docs/tools/dev_system/all.replace_common_files_with_script_links.how_to_guide.md`
 
 - `website/docs/blog/posts/draft.how_to.Render_md_from_terminal.md`
 
@@ -110,10 +124,10 @@ Total: 28 published blogs
   dev_scripts_helpers/documentation/README.notes_to_pdf.md
 
 - Invoke bash_print_tree
-  - `helpers_root/docs/tools/all.invoke_git_branch_copy.how_to_guide.md`
+  - `helpers_root/docs/tools/invoke/all.invoke_git_branch_copy.how_to_guide.md`
 
 - Invoke workflow
-  - `helpers_root/docs/tools/all.invoke_workflows.how_to_guide.md`
+  - `helpers_root/docs/tools/invoke/all.invoke_workflows.how_to_guide.md`
 
 - Linter
   - `helpers_root/docs/tools/linter/all.developing_linter.how_to_guide.md`
@@ -122,13 +136,13 @@ Total: 28 published blogs
 - Pre-commit
   - `helpers_root/linters2/lint.README.md`
 
-- `helpers_root/docs/tools/all.invoke_git_branch_copy.how_to_guide.md`
+- `helpers_root/docs/tools/invoke/all.invoke_git_branch_copy.how_to_guide.md`
 
 - https://docs.google.com/spreadsheets/d/1FpBI4tysk2kMSNeTc3WTGOw8KZkr4yG85nfDwqu8Fdo/edit?gid=1995318049#gid=1995318049
 - https://docs.google.com/document/d/1_G5bgSSxrC1EMA1eOx3KXNifj6XFSdZ6cebeZJKpywY/edit?tab=t.ihrvh5211a4x#heading=h.tdzvl3alcciy
 - /Users/saggese/src/csfy1/blog/docs/posts
 
-- Profiling ./helpers_root/docs/tools/all.profiling.how_to_guide.md
+- Profiling ./helpers_root/docs/tools/testing_profiling/all.profiling.how_to_guide.md
 
 - Pre-commit hooks helpers_root/dev_scripts_helpers/git/git_hooks/pre-commit.py
 
@@ -162,8 +176,6 @@ python.invoke.txt
 
 | File | Words | Ready % | Comment |
 |------|-------|---------|---------|
-| `website/docs/blog/posts/draft.in_60_mins.GluonTS.md` | 2564 | 95% | Nearly complete |
-| `website/docs/blog/posts/draft.in_5_mins.helpers_render_images.md` | 1082 | 95% | Nearly complete |
 | `website/docs/blog/posts/draft.pidev_vs_claude_code_comparison.md` | 1930 | 90% | Nearly publish-ready |
 | `website/docs/blog/posts/draft.how_to.Automate_Coding_with_LLM.md` | 1746 | 90% | Needs final polish |
 | `website/docs/blog/posts/draft.Intro_to_Bayesian_Optimization.md` | 1553 | 90% | Nearly publish-ready |
@@ -220,81 +232,4 @@ python.invoke.txt
 | `website/docs/blog/posts/draft.how_to.Use_tiny_docker_template.md` | 20 | 5% | Barely started, needs everything |
 | `website/docs/blog/posts/draft.how_to.Claude_Code_and_tmux.md` | 19 | 5% | Just a raw link |
 
-Total: 57 draft blogs
-
-# Publishing Checklist
-
-- Create
-  ```bash
-  claude> /blog.create_from_notes XYZ
-  ```
-
-- Set the target
-  ```bash
-  FILE="..."
-  echo "Processing $FILE ..."
-  MODEL="--model deepseek/deepseek-v4-flash"
-  MODEL=""
-  ```
-
-- Make sure there are no TODOs
-  ```bash
-  > cc -p "/coding.todoai_gp $FILE"
-  ```
-
-- Detect and remove AI slop, if any
-  ```bash
-  > cc -p "/blog.humanize $FILE"
-  ```
-
-- Add links to rest of the blogs
-  ```bash
-  > cc -p "/blog.add_links $FILE"
-  ```
-
-- To lint the text use
-  ```
-  > website/format_blog.sh <FILE>
-  ```
-
-- Render
-  ```
-  > render_images.py -i website/docs/blog/posts/$FILE
-  > git add ...
-  ```
-
-- Check how it's rendered
-  ```bash
-  > open_md.py --input website/docs/blog/posts/how_to.Render_md_from_terminal.md --mode github
-  ```
-
-- Mark ready for publishing
-  ```bash
-  > website/mark_blog_as_ready.py --file $FILE
-  ```
-
-- Preview the website
-  ```bash
-  > website/preview_website.sh
-  ```
-
-- Fix all the problematic blogs, if any
-  ```
-  > ccp "Run website/preview_website.sh and fix the problems following .claude/skills/blog.rules.md"
-  ```
-
-- Publish the website
-  ```bash
-  > website/publish_website.sh
-  ```
-
-- Update the readme:
-  ```bash
-  > ccp "Execute website/prompt.update_README_blog.md"
-  ```
-
-- Check for dead links
-  ```bash
-  > uvx linkchecker http://127.0.0.1:8000/ 2>&1 | tee linkchecker.log
-  > uvx linkchecker https://gpsaggese.github.io/ 2>&1 | tee linkchecker.log
-  ```
+Total: 55 draft blogs

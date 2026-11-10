@@ -1,0 +1,13 @@
+# I point pip at the CPU-only PyTorch index so x86 machines do not pull the multi-GB CUDA build.
+--extra-index-url https://download.pytorch.org/whl/cpu
+ipywidgets
+matplotlib
+numpy
+pandas
+seaborn
+tqdm
+weave
+scikit-learn
+python-dotenv
+torch
+transformers

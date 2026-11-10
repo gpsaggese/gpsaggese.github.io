@@ -6,6 +6,7 @@ Import as:
 import L08_04_01_causal_inference_utils as mtl0cireout
 """
 
+import logging
 import os
 
 import matplotlib.figure as mfigure
@@ -15,6 +16,19 @@ import pandas as pd
 import seaborn as sns
 from matplotlib.lines import Line2D
 from sklearn.linear_model import LinearRegression
+
+import helpers.hnotebook as hnotebo
+
+_LOG = logging.getLogger(__name__)
+
+
+def init_loggers(notebook_log: logging.Logger) -> None:
+    """
+    Wire the notebook logger into the utils logger.
+
+    :param notebook_log: logger owned by the notebook
+    """
+    hnotebo.init_loggers(notebook_log, utils_log=_LOG)
 
 
 # #############################################################################

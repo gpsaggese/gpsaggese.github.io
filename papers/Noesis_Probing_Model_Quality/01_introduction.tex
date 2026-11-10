@@ -1,0 +1,136 @@
+\title{Probing Model Quality in an Intelligence Market: Calibrated Canaries in Noesis}
+
+\author{Giacinto Paolo (GP) Saggese$^{1}$}
+\author{Javin Ahuja$^{1}$}
+% TODO(*): Fill in the affiliation of Giles Greene.
+\author{Giles Greene}
+\author{Lucas Caicedo$^{2}$}
+\thanks{$^{1}$ University of Maryland, College Park, MD 20742, USA.
+$^{2}$ The George Washington University, Washington, DC, USA}
+
+\date{\today}
+
+\begin{abstract}
+A buyer of machine intelligence cannot observe which model actually served a
+request, and a seller can lower its cost by serving a weaker model under the
+name of the contracted one. The \Noesis{} protocol addresses this gap with
+fulfillment monitoring, which requires a per-request estimate of the capability
+a seller delivered. This paper describes the canary subsystem that implements
+that estimate in the \Noesis{} prototype. A canary is a known-answer question
+that the platform sends to a seller as ordinary buyer traffic and grades
+deterministically. The subsystem comprises a versioned bank of 300 generated
+candidate questions in six task families; a deterministic grader with
+three-valued outcomes; a calibration procedure that keeps a question only if
+every healthy provider answers it correctly in every attempt and a weaker model
+answers it correctly in at most 60\% of attempts; keyed, family-balanced
+selection and scheduling of probes; a prober that persists graded evidence; and
+a verdict rule that flags a seller only when a one-sided confidence upper bound
+on its canary accuracy falls below the promise. An exact binomial analysis
+indicates that, with ten canaries and a promised accuracy of 0.85, a seller
+whose true accuracy is 0.5 receives a failing quality verdict with probability
+0.83, whereas a seller at 0.95 does so with probability 0.001. At the time of
+writing, the live provider calibration has not been executed, so the paper
+reports the design, its analytical properties, and its unit-level validation,
+and no measured model accuracies.
+\end{abstract}
+
+\maketitle
+
+\setcounter{tocdepth}{2}
+\tableofcontents
+
+% ##############################################################################
+\section{Introduction}
+\label{sec:introduction}
+
+Applications and agents buy large language model (LLM) inference as a named
+product, such as a specific model served by a specific provider. The buyer
+observes the text of a response and its latency, but not the model weights, the
+numerical precision, or the serving stack that produced it. Two lines of
+evidence suggest that this opacity has consequences. First, the behavior of a
+model served under a fixed name has been shown to change over time on
+well-defined tasks \cite{chen2023drift}. Second, recent work audits whether
+endpoints serve the model they advertise and reports endpoints whose output
+distributions differ from the reference weights \cite{gao2025equality}, and
+discusses the incentive for providers to substitute cheaper or compressed
+models while charging the advertised price \cite{cai2025substitution}.
+
+The \Noesis{} white paper \cite{noesis_whitepaper} proposes to trade machine
+intelligence as a commodity through two components. \NoesisMarket{} clears
+bids and asks into intelligence contracts. \NoesisServer{} executes those
+contracts against real providers and meters whether the delivered capability,
+latency, and reliability matched the contract. The metering step needs a
+per-request estimate $\hat c(x)$ of the capability tier delivered. The white
+paper deliberately leaves the estimator pluggable and names ``a verifier model,
+a benchmark probe, or agreement with a stronger reference model'' as candidate
+implementations. It also lists the reliability of the per-request estimates
+among its open questions, because the reputation mechanism of the market is
+only as trustworthy as the monitoring that feeds it.
+
+This paper documents the first concrete instantiation of that estimator, the
+\emph{canary subsystem} of the \Noesis{} prototype. The term follows the
+engineering usage of a small, controlled probe whose outcome is known in
+advance; it is unrelated to the use of canary strings for measuring
+memorization in training data \cite{carlini2019secret}. The subsystem lives in
+the \texttt{checker/} and \texttt{prober/} directories of the \texttt{Noesis}
+research code base, and this paper describes the state of that code at commit
+\texttt{e5f730c3}.
+
+\subsection{Contributions}
+\label{sec:contributions}
+
+\begin{enumerate}
+  \item \textbf{Placement in the protocol.} The paper states how known-answer
+    probes instantiate the capability-measurement component of the white
+    paper and how their outcomes enter the contract verdict, including the
+    separation of the white paper's joint success indicator into a latency
+    metric and a quality metric (Section~\ref{sec:background}).
+
+  \item \textbf{Calibrated canaries.} The paper specifies the canary bank, the
+    deterministic grader, and a calibration protocol that measures, before use,
+    which candidate questions are answered reliably by healthy providers and
+    unreliably by a weaker model. It derives closed-form survival
+    probabilities for a candidate (Sections~\ref{sec:bank} and
+    \ref{sec:calibration}).
+
+  \item \textbf{Hidden, balanced probing.} The paper describes keyed
+    selection and scheduling of probes, proves bounds on family balance and on
+    probe spacing, and describes how the prober makes probes indistinguishable
+    from buyer traffic at the provider boundary while remaining safe under
+    concurrent workers and partial failure (Section~\ref{sec:probing}).
+
+  \item \textbf{Verdict statistics.} The paper defines the evidence rules and
+    the one-sided upper-bound test, quantifies detection power and false-alarm
+    probability by exact enumeration, and compares the rule with the lower-bound
+    rule of the white paper (Section~\ref{sec:verdict}).
+
+  \item \textbf{Status and limits.} The paper reports which parts of the
+    system are validated by tests, states that the paid live calibration is
+    pending, and lists the known limitations of the design
+    (Sections~\ref{sec:validation} and \ref{sec:limitations}).
+\end{enumerate}
+
+\subsection{Scope}
+\label{sec:scope}
+
+The paper covers the production of quality evidence and its use in the quality
+half of the verdict. It does not cover the auction, the reputation update, the
+gateway's buyer-facing path, or the window-closing worker that freezes evidence
+and writes a verdict row, which the code base lists as remaining integration
+work. Quantities in tables and in the text come from the source code, from the
+design documents in \texttt{research/Noesis/docs}, or from the exact
+computations in \texttt{figures/make\_figures.py}; none comes from a live
+provider run.
+
+\subsection{Organization}
+
+Section~\ref{sec:background} recalls the white paper's contract and monitoring
+notation, and states the problem and the threat model.
+Section~\ref{sec:architecture} gives the architecture and the persisted data
+model. Section~\ref{sec:bank} describes the bank and the grader.
+Section~\ref{sec:calibration} describes calibration.
+Section~\ref{sec:probing} describes selection, scheduling, and the prober.
+Section~\ref{sec:verdict} turns probe outcomes into verdicts and analyzes
+detection power. Section~\ref{sec:validation} reports validation status,
+Section~\ref{sec:related_work} discusses related work, and
+Section~\ref{sec:limitations} lists limitations and future work.

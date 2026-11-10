@@ -15,9 +15,15 @@
 
 # %% [markdown]
 # # Growth Function
-
-# %% [markdown]
-# ## Imports
+#
+# - This notebook computes the growth function $m_H(N)$ by enumerating the
+#   dichotomies on $N$ points and testing which ones a hypothesis set can
+#   realize
+# - The pedagogical arc:
+#   - Growth functions of positive rays, positive intervals, the perceptron, and
+#     convex sets
+#   - Estimating the VC dimension and comparing growth curves
+#   - Realizable dichotomies and edge cases
 
 # %%
 # %load_ext autoreload
@@ -25,26 +31,24 @@
 
 import logging
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
-
-# Set plotting style.
-sns.set_style("whitegrid")
-plt.rcParams["figure.figsize"] = (12, 6)
 
 # %%
-from IPython.display import display
+import helpers.hnotebook as hnotebook
 
-import L05_01_04_growth_function_utils as mtugrowf
-import helpers.htutorial as ut
+import L05_01_04_growth_function_utils as utils
 
-ut.config_notebook()
-
-# Initialize logger.
-logging.basicConfig(level=logging.INFO)
+# Initialize notebook configuration and logging.
+hnotebook.config_notebook()
 _LOG = logging.getLogger(__name__)
+utils.init_loggers(_LOG)
+
+# Convert `display` into `print()` when running outside IPython.
+try:
+    from IPython.display import display
+except ImportError:
+    display = print  # type: ignore
 
 # %% [markdown]
 # # Part 1: Growth Functions for Specific Hypothesis Sets
@@ -58,15 +62,15 @@ _LOG = logging.getLogger(__name__)
 #
 # **VC Dimension**: 1
 #
-# **Goal**:
+# **Goal**
 # - Compute the growth function empirically for positive rays
 # - Verify the computed growth function matches the theoretical prediction
 
 # %%
 # Create point generator and hypothesis tester for positive rays.
-generator = mtugrowf.PointGenerator(seed=42)
-tester = mtugrowf.PositiveRaysTester()
-calculator = mtugrowf.GrowthFunctionCalculator(
+generator = utils.PointGenerator(seed=42)
+tester = utils.PositiveRaysTester()
+calculator = utils.GrowthFunctionCalculator(
     tester, verbose=True, show_progress=False
 )
 
@@ -104,15 +108,15 @@ print(f"Points shattered: {result['is_shattered']}")
 #
 # **VC Dimension**: 2
 #
-# **Goal**:
+# **Goal**
 # - Verify the quadratic growth pattern for positive intervals
 # - Compare empirical results with theoretical predictions across
 #   multiple values of $N$
 
 # %%
 # Create tester for positive intervals.
-tester = mtugrowf.PositiveIntervalsTester()
-calculator = mtugrowf.GrowthFunctionCalculator(
+tester = utils.PositiveIntervalsTester()
+calculator = utils.GrowthFunctionCalculator(
     tester, verbose=False, show_progress=False
 )
 
@@ -123,7 +127,7 @@ results_df = calculator.compute_growth_curve(
 )
 
 # Compare with theory.
-compared = mtugrowf.compare_with_theory(results_df, "Positive Intervals")
+compared = utils.compare_with_theory(results_df, "Positive Intervals")
 
 # Growth function for positive intervals.
 display(compared[["n", "m_h_n_mean", "theoretical", "max_dichotomies"]])
@@ -146,14 +150,14 @@ display(compared[["n", "m_h_n_mean", "theoretical", "max_dichotomies"]])
 #
 # **Break Point**: 4
 #
-# **Goal**:
+# **Goal**
 # - Compare the empirical growth function of the 2D perceptron against its
 #   theoretical prediction, across a range of $N$
 
 # %%
 # Create perceptron tester.
-tester = mtugrowf.PerceptronTester(random_state=42)
-calculator = mtugrowf.GrowthFunctionCalculator(
+tester = utils.PerceptronTester(random_state=42)
+calculator = utils.GrowthFunctionCalculator(
     tester, verbose=False, show_progress=False
 )
 
@@ -164,7 +168,7 @@ results_df = calculator.compute_growth_curve(
 )
 
 # Compare with theory.
-compared = mtugrowf.compare_with_theory(results_df, "Perceptron")
+compared = utils.compare_with_theory(results_df, "Perceptron")
 
 # Growth function for 2D perceptron.
 display(
@@ -182,7 +186,7 @@ display(
 # %% [markdown]
 # ## Cell 1.4: Perceptron break point
 #
-# **Goal**:
+# **Goal**
 # - Demonstrate the transition from exponential to polynomial growth in the
 #   perceptron, and identify the break point where shattering stops
 
@@ -202,14 +206,14 @@ print("break_point=", break_point)
 # %% [markdown]
 # ## Cell 1.5: Demonstrating the XOR problem
 #
-# **Goal**:
+# **Goal**
 # - Explicitly test that the XOR pattern is not realizable by a perceptron
 # - Demonstrate why the perceptron cannot shatter 4 points
 # - Compare XOR pattern with a linearly separable pattern
 
 # %%
 # Create XOR configuration.
-tester = mtugrowf.PerceptronTester(random_state=42)
+tester = utils.PerceptronTester(random_state=42)
 
 # Four points in a square.
 points_xor = np.array([[-1, -1], [1, -1], [-1, 1], [1, 1]])
@@ -244,14 +248,14 @@ print(f"Linearly separable pattern realizable: {is_realizable_sep}")
 #
 # **VC Dimension**: Infinite (no break point)
 #
-# **Goal**:
+# **Goal**
 # - Demonstrate a hypothesis set with unlimited expressiveness
 # - Verify that all dichotomies are realizable (no break point)
 
 # %%
 # Create convex sets tester.
-tester = mtugrowf.ConvexSetsTester()
-calculator = mtugrowf.GrowthFunctionCalculator(
+tester = utils.ConvexSetsTester()
+calculator = utils.GrowthFunctionCalculator(
     tester, verbose=False, show_progress=False
 )
 
@@ -283,15 +287,15 @@ print("all_shattered=", all_shattered)
 # %% [markdown]
 # ## Cell 2.1: Estimating VC dimension
 #
-# **Goal**:
+# **Goal**
 # - Estimate the VC dimension for the 2D perceptron
 # - Determine the largest $N$ for which some configuration can be shattered
 # - Identify the break point where shattering becomes impossible
 
 # %%
 # Estimate VC dimension for 2D perceptron.
-tester = mtugrowf.PerceptronTester(random_state=42)
-calculator = mtugrowf.GrowthFunctionCalculator(
+tester = utils.PerceptronTester(random_state=42)
+calculator = utils.GrowthFunctionCalculator(
     tester, verbose=False, show_progress=False
 )
 
@@ -316,27 +320,27 @@ for n, shattered in vc_result["results_by_n"].items():
 # %% [markdown]
 # ## Cell 2.2: Visualizing growth curves
 #
-# **Goal**:
+# **Goal**
 # - Compare growth functions across multiple hypothesis sets
 # - Visualize the difference between linear, quadratic, and exponential growth
 # - Illustrate which hypothesis sets enable feasible learning
 
 # %%
 # Create visualizer.
-visualizer = mtugrowf.GrowthFunctionVisualizer(figsize=(14, 6))
+visualizer = utils.GrowthFunctionVisualizer(figsize=(14, 6))
 
 # Compute growth curves for all hypothesis sets.
-generator = mtugrowf.PointGenerator(seed=42)
+generator = utils.PointGenerator(seed=42)
 n_range = list(range(1, 8))
 
 results = {}
 for name, tester_class in [
-    ("Positive Rays", mtugrowf.PositiveRaysTester),
-    ("Positive Intervals", mtugrowf.PositiveIntervalsTester),
-    ("Perceptron", lambda: mtugrowf.PerceptronTester(random_state=42)),
+    ("Positive Rays", utils.PositiveRaysTester),
+    ("Positive Intervals", utils.PositiveIntervalsTester),
+    ("Perceptron", lambda: utils.PerceptronTester(random_state=42)),
 ]:
     tester = tester_class()
-    calculator = mtugrowf.GrowthFunctionCalculator(
+    calculator = utils.GrowthFunctionCalculator(
         tester, verbose=False, show_progress=False
     )
     results[name] = calculator.compute_growth_curve(
@@ -364,18 +368,18 @@ visualizer.plot_multiple_growth_curves(
 # %% [markdown]
 # ## Cell 3.1: Computing realizable dichotomies
 #
-# **Goal**:
+# **Goal**
 # - Examine which specific dichotomies are realizable for a small example
 # - Test all possible labelings for 3 points with a perceptron
 # - Verify the shattering property empirically
 
 # %%
 # Create 3 points and test all 8 dichotomies with perceptron.
-generator = mtugrowf.PointGenerator(seed=42)
-tester = mtugrowf.PerceptronTester(random_state=42)
+generator = utils.PointGenerator(seed=42)
+tester = utils.PerceptronTester(random_state=42)
 
 points = generator.generate_random(n=3, d=2)
-enumerator = mtugrowf.DichotomyEnumerator(n=3)
+enumerator = utils.DichotomyEnumerator(n=3)
 print("points=\n", points)
 
 # Build a table of every dichotomy and whether the perceptron realizes it.
@@ -407,14 +411,14 @@ print("is_shattered=", realizable_count == enumerator.count_dichotomies())
 # %% [markdown]
 # ## Cell 3.2: Finding a hypothesis for positive rays
 #
-# **Goal**:
+# **Goal**
 # - Find the actual threshold that realizes a given labeling for positive
 #   rays, not just whether one exists
 
 # %%
 # Find threshold for a positive ray pattern.
-tester = mtugrowf.PositiveRaysTester()
-generator = mtugrowf.PointGenerator(seed=42)
+tester = utils.PositiveRaysTester()
+generator = utils.PointGenerator(seed=42)
 
 points = generator.generate_line_1d(n=5)
 labels = np.array([-1, -1, 1, 1, 1])
@@ -429,13 +433,13 @@ if hypothesis:
 # %% [markdown]
 # ## Cell 3.3: Finding a hypothesis for perceptron
 #
-# **Goal**:
+# **Goal**
 # - Find the actual weights and intercept that realize a given labeling for
 #   a 2D perceptron
 
 # %%
 # Find perceptron weights for a linearly separable pattern.
-tester_p = mtugrowf.PerceptronTester(random_state=42)
+tester_p = utils.PerceptronTester(random_state=42)
 points_2d = np.array([[0, 0], [1, 0], [0, 1], [1, 1]])
 labels_2d = np.array([-1, -1, 1, 1])
 print("points_2d=\n", points_2d)
@@ -462,19 +466,19 @@ if hypothesis_p:
 # %% [markdown]
 # ## Cell 3.4: Edge case: N=1
 #
-# **Goal**:
+# **Goal**
 # - Check that the growth function calculator behaves sensibly at the
 #   smallest possible $N$
 
 # %%
 # Test with N=1 point.
-generator = mtugrowf.PointGenerator(seed=42)
+generator = utils.PointGenerator(seed=42)
 
 for name, tester in [
-    ("Positive Rays", mtugrowf.PositiveRaysTester()),
-    ("Perceptron", mtugrowf.PerceptronTester(random_state=42)),
+    ("Positive Rays", utils.PositiveRaysTester()),
+    ("Perceptron", utils.PerceptronTester(random_state=42)),
 ]:
-    calculator = mtugrowf.GrowthFunctionCalculator(
+    calculator = utils.GrowthFunctionCalculator(
         tester, verbose=False, show_progress=False
     )
     if "Rays" in name:
@@ -487,14 +491,14 @@ for name, tester in [
 # %% [markdown]
 # ## Cell 3.5: Edge case: collinear points
 #
-# **Goal**:
+# **Goal**
 # - Check how a degenerate point configuration, 3 collinear points, affects
 #   whether the perceptron can shatter them
 
 # %%
 # Test with collinear points (edge case for perceptron).
-tester = mtugrowf.PerceptronTester(random_state=42)
-calculator = mtugrowf.GrowthFunctionCalculator(
+tester = utils.PerceptronTester(random_state=42)
+calculator = utils.GrowthFunctionCalculator(
     tester, verbose=False, show_progress=False
 )
 

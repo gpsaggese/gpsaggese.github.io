@@ -13,7 +13,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy.stats
 
+import helpers.hnotebook as hnotebo
+
 _LOG = logging.getLogger(__name__)
+
+
+def init_loggers(notebook_log: logging.Logger) -> None:
+    """
+    Wire the notebook logger into the utils logger.
+
+    :param notebook_log: logger owned by the notebook
+    """
+    hnotebo.init_loggers(notebook_log, utils_log=_LOG)
 
 
 # #############################################################################
@@ -134,7 +145,7 @@ def plot_nonlinear_func(
         out_lim = [y - std * 3, y + std * 3]
     # Plot output.
     h = np.histogram(ys, num_bins, density=False)
-    fig = plt.figure(figsize=(8, 6))
+    plt.figure(figsize=(8, 6))
     plt.subplot(221)
     plt.plot(h[1][1:], h[0], lw=2, alpha=0.8)
     if out_lim is not None:

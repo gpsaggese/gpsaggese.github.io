@@ -6,6 +6,7 @@ Import as:
 import msml610.tutorials.L08_causal_inference.L08_04_07_metalearners_utils as mtlcil00mu
 """
 
+import logging
 from typing import List, Tuple
 import warnings
 
@@ -19,12 +20,31 @@ import fklearn.causal.validation.curves
 import fklearn.causal.validation.auc
 
 import helpers.hdbg as hdbg
+import helpers.hnotebook as hnotebo
 
+_LOG = logging.getLogger(__name__)
+
+
+def init_loggers(notebook_log: logging.Logger) -> None:
+    """
+    Wire the notebook logger into the utils logger.
+
+    :param notebook_log: logger owned by the notebook
+    """
+    hnotebo.init_loggers(
+        notebook_log, utils_log=_LOG, set_all_loggers_to_print=True
+    )
+    # Silence the verbose `lightgbm` logger.
+    logging.getLogger("lightgbm").setLevel(logging.ERROR)
+
+
+warnings.filterwarnings("ignore", category=UserWarning, module="lightgbm")
 warnings.filterwarnings(
     "ignore",
     message="X does not have valid feature names",
     category=UserWarning,
 )
+
 
 # Plot styling constants.
 MARKER = ["o", "s"]  # Circle for T=0, Square for T=1.

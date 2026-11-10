@@ -1,6 +1,6 @@
 """
 Run each notebook in msml610/tutorials/L03_knowledge_representation/ inside
-Docker using docker_cmd.sh.
+Docker using run_nbconvert.py.
 
 Import as:
 
@@ -37,7 +37,9 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "L03_01_entailment_implication_inference.ipynb"
         # Run test.
-        self.helper(notebook_name, generate_html=True)
+        self.run_notebook(
+            notebook_name, use_docker_cmd=False, generate_html=True
+        )
 
     @pytest.mark.slow
     def test2(self) -> None:
@@ -47,7 +49,9 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "L03_02_wumpus_world.ipynb"
         # Run test.
-        self.helper(notebook_name, generate_html=True)
+        self.run_notebook(
+            notebook_name, use_docker_cmd=False, generate_html=True
+        )
 
     @pytest.mark.slow
     def test3(self) -> None:
@@ -57,7 +61,9 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "L03_03_rule_based_expert_systems.ipynb"
         # Run test.
-        self.helper(notebook_name, generate_html=True)
+        self.run_notebook(
+            notebook_name, use_docker_cmd=False, generate_html=True
+        )
 
     @pytest.mark.slow
     def test4(self) -> None:
@@ -67,7 +73,9 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "L03_04_ontology_reasoning.ipynb"
         # Run test.
-        self.helper(notebook_name, generate_html=True)
+        self.run_notebook(
+            notebook_name, use_docker_cmd=False, generate_html=True
+        )
 
     @pytest.mark.slow
     def test5(self) -> None:
@@ -77,4 +85,6 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "L03_06_logic_solvers.ipynb"
         # Run test.
-        self.helper(notebook_name, generate_html=True)
+        self.run_notebook(
+            notebook_name, use_docker_cmd=False, generate_html=True
+        )

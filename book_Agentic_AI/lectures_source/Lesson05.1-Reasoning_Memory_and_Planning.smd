@@ -172,7 +172,7 @@
 * HippoRAG: Architecture Overview
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - @Solution@ (Gutiérrez et al., 2024): _HippoRAG_ builds an offline
   knowledge graph once, then answers queries with a _single_ graph-based
   retrieval pass
@@ -444,7 +444,7 @@ digraph HippoRAG {
 * WebDreamer: Simulate Before You Act
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=60%}
 - @Algorithm@ (_WebDreamer_):
   1. At each step, propose $k$ candidate actions
   2. For each candidate, ask the world model to _imagine_ the resulting state

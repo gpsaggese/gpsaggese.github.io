@@ -1,0 +1,1133 @@
+// type=UMD_slides
+// course_title=Modern AI for Finance
+// lesson_title=Lesson 11.01: Agents: Automating the Research Loop
+// slides_engine=typst
+
+* Roadmap
+
+- This lesson covers @tool-using agents@: Function calling with finance tools,
+  retrieval over filings, and the architecture of planner, tools, sandbox, critic,
+  and memory
+
+- It then @automates the research loop@: Hypothesis, data, code, backtest, and
+  report, with one agent or a team of agents, and autonomy set per step
+
+- It surveys the @data science agent landscape@: Research systems, skill libraries,
+  and agents as search systems over analyses
+
+- It continues with @evaluating agents@: Benchmarks, a scorecard, cost, repeated
+  runs, and the limits of leaderboards
+
+- It closes with @verification@ and @security and provenance@: Fact checks,
+  validators, silent failures, automated p-hacking, sandboxes, prompt injection, and
+  agent traces
+
+# Tool-Using Agents
+
+* From Chat Model to Research Agent
+
+// From: book_Agentic_AI/lectures_source/Lesson01.1-What_Is_An_Agentic_AI.smd:16 '* From Language Models to Agents'
+// From: book_Agentic_AI/lectures_source/Lesson01.1-What_Is_An_Agentic_AI.smd:32 '* The Limits of Pure Text Generation'
+// From: research/agentic_data_science/agentic_data_science.report.md:13 '# 1. What Is Agentic Data Science?'
+
+- @Problem@: A quant researcher reaches market data, filings, and the backtester by
+  hand
+  - Each hypothesis costs hours of glue code before the first number
+  - A chat model can describe a backtest, but cannot fetch a price or run one
+
+- @Definition@: A **research agent** is an LLM that controls a loop:
+  - It plans the next step
+  - Calls a tool
+  - Reads the result
+  - Repeats until the goal is met
+  - The output is a changed state: Data pulled, code run, a report written
+
+- @Comparison@
+  - _Analytics assistant_: Answers a question
+  - _Research agent_: Conducts an investigation
+
+- @Key idea@: The LLM becomes a controller of tools, so its errors become wrong
+  actions, not only wrong words
+
+* Running Example: A Momentum Research Request
+
+// From: book_Modern_AI_for_Finance/lectures_source/Lesson01.01_Why_Finance_Is_Different.smd:60 '* Running Example: A Momentum Strategy'
+// From: book_Modern_AI_for_Finance/lectures_source/Lesson02.01_Strategy_Backtesting.smd:68 '* Running Example: Backtesting Momentum'
+
+- @Example@: A portfolio manager asks the agent
+  - _"Does 12-1 momentum still earn a positive net Sharpe ratio in small caps after
+    2015, with 10 bps of costs?"_
+
+- @Components@: What the agent needs
+  - Point-in-time prices and delisting returns of small caps
+  - Market caps to define the universe at each date
+  - The momentum signal, and a backtester with a cost model
+  - A report with the net Sharpe ratio, the drawdown, and the caveats
+
+- @Problem@: Every step can fail silently
+  - A universe built from today's survivors
+  - Costs left out of the backtest
+  - Many variants tried, and only the best one reported
+
+- @Remark@: The rest of the lesson builds, evaluates, verifies, and secures the agent
+  that answers this request
+
+* Function Calling: Tools as Typed Schemas
+
+// From: book_Agentic_AI/lectures_source/Lesson01.1-What_Is_An_Agentic_AI.smd:313 '* What Is a Tool? Definition'
+// From: book_Agentic_AI/lectures_source/Lesson01.1-What_Is_An_Agentic_AI.smd:331 '* Tool Use: From Function Calls to APIs'
+// From: book_Agentic_AI/lectures_source/Lesson01.1-What_Is_An_Agentic_AI.smd:455 '* Grounding via Tool Schemas and APIs'
+
+- @Definition@: A **tool** is a function with a name, an input schema, and an output
+  schema, which the agent calls to query or change something outside its context
+
+- @Algorithm@: One function call
+  1. The runtime gives the model the list of tool schemas
+  2. The model emits a structured call, e.g., JSON with a tool name and arguments
+  3. The runtime validates the arguments against the schema and runs the function
+  4. The result returns to the model as the next observation
+
+- @Example@: The schema of a price tool
+  ```
+  {"name": "get_prices",
+   "parameters": {"tickers": "list[str]", "start": "date", "end": "date",
+                  "as_of": "date", "adjusted": "bool"}}
+  ```
+
+- @Key idea@: The schema, not the prose of the model, decides what happens
+
+* A Finance Tool Set
+
+// From: //notes1/notes/IN_PROGRESS.finance.Machine_trading.Chan.2017.txt:7 '* Algorithmic trading strategy'
+// From: //notes1/notes/IN_PROGRESS.finance.Machine_trading.Chan.2017.txt:20 '## Historical market data'
+// From: //notes1/notes/IN_PROGRESS.finance.IB_TWS_API.txt:7 '* TWS API'
+// From: research/agentic_data_science/sota_eda.md:976 '3\) **Tool ecosystems will standardize via protocols like MCP,'
+
+// TODO(gp): Check the tool names and signatures: they are illustrations, not
+// taken from a source
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Tool", "Input", "Output", "Backed by"),
+  rows: (
+    ("get_prices", "Tickers, dates, as-of", "Prices, delisting returns", "CRSP, vendor, or broker API"),
+    ("get_fundamentals", "Tickers, fields, as-of", "Values known at the as-of date", "Compustat snapshots"),
+    ("search_filings", "Query, as-of", "Passages, filing time, source", "EDGAR index"),
+    ("run_backtest", "Signal, universe, costs", "Net returns, statistics", "Event-driven backtester"),
+    ("log_trial", "Configuration, returns", "Trial id", "Experiment tracker"),
+  ),
+  col-widths: (1.6fr, 1.3fr, 1.6fr, 1.5fr),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Remark@: The **Model Context Protocol** (MCP) is an open standard that exposes
+  data sources and tools to an agent through one interface
+
+- @Key idea@: Each tool encodes a rule of finance data (point in time, delistings,
+  costs, trial count), so the agent follows the rule by calling it
+
+* Designing Finance Tools
+
+// From: book_Agentic_AI/lectures_source/Lesson01.1-What_Is_An_Agentic_AI.smd:438 '* From Tokens to Actions: Action Spaces'
+// From: book_Agentic_AI/lectures_source/Lesson01.1-What_Is_An_Agentic_AI.smd:233 '* Perceive: Observations and State'
+// From: //notes1/notes/IN_PROGRESS.finance.IB_TWS_API.txt:81 '* Historical data limitations'
+
+- @Techniques@
+  - _Mandatory as-of argument_: No tool returns data without a knowledge time
+  - _Explicit units_: Adjusted or not, simple or log, annualized or not, currency
+  - _Read-only by default_: Data tools cannot write, and the research tool set has no
+    order tool
+  - _Small observations_: Summaries and file paths, not 10 years of prices in the
+    context
+  - _Errors as observations_: A typed error message that the agent can act on
+
+- @Example@: A broker API limits the requests for historical data
+  - E.g., more than 60 requests in 10 minutes trigger a pacing violation
+  - The tool layer caches and throttles, so the agent does not learn to work around
+    the limit
+
+- @Key idea@: A narrow, typed action space is also a safety mechanism, since the
+  agent cannot take an action outside the set
+
+* Retrieval Pipelines for Financial Data
+
+// From: book_Agentic_AI/lectures_source/Lesson07.1-Tool_use_and_retrieval.smd:80 '* RAG as a Special Case of Tool Use'
+// From: book_Agentic_AI/lectures_source/Lesson07.1-Tool_use_and_retrieval.smd:188 '* Hybrid Search: Semantic Plus Keyword'
+// From: book_Agentic_AI/lectures_source/Lesson07.1-Tool_use_and_retrieval.smd:286 '* High-Fidelity Grounding for Regulated Domains'
+
+- @Definition@: **Retrieval** is a tool that takes a query and returns ranked
+  passages, inside the same loop as any other tool call
+
+- @Problem@: A plain vector index over filings breaks the rules of finance
+  - It returns a 10-K filed after the decision date, i.e., look-ahead
+  - It misses exact terms, e.g., a ticker, a CUSIP, or "Item 1A"
+  - It returns text without its source, so a claim cannot be checked
+
+- @Techniques@
+  - Store the filing time with each chunk, and filter on `filed_at <= as_of` before
+    ranking
+  - Combine dense similarity with keyword scores (hybrid search)
+  - Return the source, the section, and the timestamp of each passage
+  - Generate from the retrieved context only, with a citation per sentence
+
+- @Key idea@: The as-of filter belongs inside the retrieval tool, not in the prompt
+
+* Agent Architecture
+
+// From: research/agentic_data_science/agentic_data_science.report.md:63 '# 3. Research Architecture of Agentic Systems'
+// From: research/agentic_data_science/sota_eda.md:518 '### Typical architecture diagram'
+
+- @Components@
+  - _Planner_: Splits the request into steps and revises the plan
+  - _Tool layer_: Data APIs, retrieval, Python, SQL, and the backtester
+  - _Sandbox_: Runs the generated code in isolation
+  - _Critic_: Checks errors, leakage, costs, and metrics
+  - _Memory_: Past queries, results, and failures
+  - _Report generator_: Tables, charts, and narrative
+
+- @Key idea@: The critic and the sandbox, not the planner, make the agent safe to run
+  without supervision
+
+```graphviz
+digraph AgentArchitecture {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.3;
+    ranksep=0.35;
+    rankdir=TB;
+    // input : orange | agent : coral | tool : teal | memory : green
+    // output : blue
+    node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Helvetica",
+          fontsize=11, margin="0.16,0.08", height=0.38];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    Request [label="Research request", fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+    Planner [label="Planner", fillcolor="#F6C6C6", color="#D98C8C", fontcolor="#6B2A2A"];
+    Memory  [label="Memory", fillcolor="#DFEDE0", color="#8FB79A", fontcolor="#2E5A3D"];
+
+    subgraph cluster_sandbox {
+        label="Sandbox"; labelloc="t"; fontname="Helvetica-Bold"; fontsize=11;
+        fontcolor="#3A4A5C"; style="rounded,filled"; fillcolor="#F7F9FB";
+        color="#C7D0DA"; penwidth=1.0; margin=10;
+        Data     [label="Data APIs", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+        Python   [label="Python", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+        Backtest [label="Backtester", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    }
+
+    Critic  [label="Critic", fillcolor="#F6C6C6", color="#D98C8C", fontcolor="#6B2A2A"];
+    Report  [label="Report", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+
+    Request -> Planner;
+    Planner -> Memory [dir=both];
+    Planner -> Data;
+    Planner -> Python;
+    Planner -> Backtest;
+    Data -> Critic;
+    Python -> Critic;
+    Backtest -> Critic;
+    Critic -> Planner [style=dashed, color="#C0455B", fontcolor="#C0455B", constraint=false, label="  revise  "];
+    Critic -> Report [label="  pass  "];
+}
+```
+
+* Semantic Layers and Data Catalogs
+
+// From: research/agentic_data_science/sota_eda.md:446 '### Industry pattern: semantic grounding as "anti-hallucination infrastructure"'
+// From: research/agentic_data_science/agentic_data_science.report.md:148 '# 9. Emerging Architecture Pattern (Very Important)'
+
+- @Problem@: One word has many definitions, and the agent can pick any one silently
+  - _Return_: Price or total return, simple or log, local currency or USD
+  - _Small cap_: A fixed dollar threshold, or a percentile of the market caps at each
+    date
+  - _Sharpe ratio_: Daily or annualized, gross or net, with or without the risk-free
+    rate
+
+- @Definition@
+  - A **semantic layer** stores the definition of each metric and dimension once
+  - A **data catalog** maps the names to tables, owners, and versions
+
+- @Examples@: LookML in Looker, semantic models in Snowflake Cortex Analyst, and
+  Unity Catalog in Databricks
+
+- @Intuition@: The layer removes degrees of freedom from the agent: It chooses which
+  metric to compute, not how to define it
+
+- @Key idea@: A fixed definition also removes a trial dimension, since the agent
+  cannot search over arbitrary definitions of "return" until one looks good
+
+# Automating the Research Loop
+
+* The Research Loop: Hypothesis to Report
+
+// From: msml610/lectures_source/Lesson02.6-ML_Techniques_How_To_Do_Research.smd:268 '* Right and Wrong Approach to Research'
+// From: //notes1/notes/papers.finance.misc.txt:1157 '### Hypothesis driven development'
+
+// TODO(gp): Make sure this is correct according to our approach. E.g., "fix" is
+// dangerous
+
+- @Definition@: The **research loop** turns a hypothesis into evidence: Hypothesis,
+  data, code, backtest, and report
+```graphviz
+digraph ResearchLoop {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.3;
+    ranksep=0.35;
+    rankdir=LR;
+    // input : orange | process : teal | output : blue
+    node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Helvetica",
+          fontsize=11, margin="0.18,0.08", height=0.38];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    Hyp      [label="Hypothesis", fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+    Data     [label="Data", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    Code     [label="Code", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    Backtest [label="Backtest", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    Report   [label="Report", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+
+    Hyp -> Data -> Code -> Backtest -> Report;
+    Backtest -> Code [style=dashed, constraint=false, label="  fix  "];
+    Report -> Hyp [style=dashed, color="#C0455B", fontcolor="#C0455B", constraint=false, label="  next idea  "];
+}
+```
+
+- @Techniques@: Hypothesis-driven development (Peterson, 2017)
+  - State a hypothesis that can be rejected, with its expected outcome and its test
+  - Confirm ideas quickly, and reject failures cheaply
+  - Avoid hypothesizing after the results are known (HARK)
+
+- @Key idea@: An agent makes each pass cheap, so the risk moves from the cost of one
+  pass to the number of passes
+
+* Agents Per Pipeline Step
+
+// From: research/agentic_data_science/agentic_data_science.report.md:37 '# 2. The Data Science Lifecycle and Agents'
+// From: research/agentic_data_science/agentic_data_science.report.md:107 '# 6. Current Capabilities of Agentic Data Science'
+
+// TODO(gp): Check the table: the mapping of steps, tools, and checks is an
+// illustration, not taken from a source
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Step", "What the agent does", "Tools", "Check before the next step"),
+  rows: (
+    ("Cleaning", "Aligns prices and identifiers", "Data APIs", "Coverage, delistings"),
+    ("Features", "Writes the signal code", "Python", "Leakage tests"),
+    ("Modeling", "Fits under purged CV", "AutoML", "Contract, trial log"),
+    ("Backtest", "Simulates fills and costs", "Backtester", "Cost model present"),
+    ("Report", "Writes tables and text", "Notebook", "Numbers traced to cells"),
+  ),
+  col-widths: (0.8fr, 1.6fr, 0.9fr, 1.4fr),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Key idea@: A pipeline of narrow steps with checks between them is easier to verify
+  than one agent that does everything
+
+//- @Remark@: The checks of each step are covered in detail in Lessons 02.01, 06.01,
+//  and 10.01
+
+* Running Example: One Pass of the Loop
+
+// From: book_Agentic_AI/lectures_source/Lesson01.1-What_Is_An_Agentic_AI.smd:298 '* Preview: ReAct and the Loop in Practice'
+// From: book_Agentic_AI/lectures_source/Lesson01.1-What_Is_An_Agentic_AI.smd:280 '* Closing the Loop: Feedback and Iteration'
+
+// TODO(gp): Check the trace: the tool calls and the numbers are an
+// illustration, not the output of a real run
+
+- @Example@: A ReAct trace (Yao et al., 2023) interleaves `Thought`, `Action`, and
+  `Observation` for the momentum request
+  ```
+  Thought: I need the small-cap universe at each month end
+  Action:  get_universe(size="small", as_of="month_end", start="2015-01")
+  Obs:     1,800 stocks on average, 210 delisted during the period
+  Thought: compute 12-1 momentum and backtest it with 10 bps of costs
+  Action:  run_backtest(signal="mom_12_1", universe=u, cost_bps=10)
+  Obs:     gross Sharpe 0.6, net Sharpe 0.2, turnover 90% per month
+  Thought: costs eat the edge, so try a 3-month holding period
+  Action:  run_backtest(..., hold=3)
+  Obs:     net Sharpe 0.35
+  ```
+
+- @Problem@: The second backtest is a new trial, chosen after seeing the first result
+  - An honest report says two trials, not one
+
+- @Key idea@: The trace is the trial log, since every action that changes the
+  strategy is a trial
+
+* Single-Agent Vs. Multi-Agent Workflows
+
+// From: book_Agentic_AI/lectures_source/Lesson01.1-What_Is_An_Agentic_AI.smd:514 '* Single-Agent vs. Multi-Agent Systems'
+// From: book_Agentic_AI/lectures_source/Lesson04.1-LLM_Reasoning.smd:414 '* Can Models Fix Their Own Mistakes?'
+// From: research/ideas/in_progress.Comparison_of_Data_Science_Agents.md:69 '## Key Examples'
+
+- @Definition@
+  - **Single agent**: One controller plans and calls every tool
+  - **Multi-agent**: Several agents with separate roles, prompts, and tools exchange
+    messages
+
+- @Pros@: Of a multi-agent workflow
+  - Each role has a short prompt and a small tool set
+  - A reviewer agent does not see the reasoning of the author, so it is less anchored
+    on it
+  - Roles map to permissions, e.g., only the data agent reads the vendor API
+
+- @Cons@
+  - More tokens and more latency for each answer
+  - Errors pass between agents as confident messages
+  - Debate between agents mostly recovers the gain of sampling and voting, not a new
+    ability to correct mistakes
+
+- @Key idea@: Start with one agent and narrow tools, and split a role off only where
+  an independent check or a permission boundary is needed
+
+* Multi-Agent Frameworks: AutoGen, CrewAI, LangGraph
+
+// From: research/ideas/in_progress.Comparison_of_Data_Science_Agents.md:54 '### Candidate Agents'
+// From: research/ideas/in_progress.Comparison_of_Data_Science_Agents.md:92 '## Research Topics'
+// From: book_Modern_AI_for_Finance/paper_list.md:234 '### [ ] 2025, Li et al., "R&D-Agent-Quant: A Multi-Agent Framework for'
+
+// TODO(gp): Check the descriptions of CrewAI and LangGraph against their
+// documentation: the notes only give a one-line description of each
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Framework", "Abstraction", "Fit for research"),
+  rows: (
+    ("AutoGen", "Agents that converse with each other, with LLMs, humans, and tools, e.g., a code executor", "Open-ended analysis that writes and runs code"),
+    ("CrewAI", "A crew of agents with roles and tasks, run in sequence or under a manager", "Fixed analyst roles"),
+    ("LangGraph", "A stateful graph of nodes and edges, with loops and checkpoints", "Long pipelines with human interrupts"),
+  ),
+  col-widths: (0.8fr, 2fr, 1.4fr),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Example@: An analyst team for the momentum request
+  - _Data agent_: Builds the point-in-time universe
+  - _Quant agent_: Writes the signal and runs the backtest
+  - _Reviewer agent_: Runs the checks and writes the caveats
+
+- @Example@: **RD-Agent(Q)** (Li et al., 2025) links a research stage and a
+  development stage through a feedback stage, and a multi-armed bandit schedules them
+
+* Reasoning and Planning in the Loop
+
+// From: book_Agentic_AI/lectures_source/Lesson01.1-What_Is_An_Agentic_AI.smd:498 '* Reactive vs. Deliberative Agents'
+// From: book_Agentic_AI/lectures_source/Lesson04.1-LLM_Reasoning.smd:121 '* Self-Consistency'
+// From: book_Agentic_AI/lectures_source/Lesson04.1-LLM_Reasoning.smd:339 '* Brittleness Beyond Order'
+// From: research/agentic_data_science/sota_eda.md:821 '### Common failure modes observed in benchmarks and deployments'
+
+- @Variants@: Planning styles
+  - **Reactive**: One step at a time from the last observation, e.g., ReAct
+  - **Plan then execute**: Write the plan first, e.g., a graph of tasks
+  - **Hybrid**: Plan, act, and re-plan when an observation diverges
+
+- @Techniques@: Spend compute to buy reliability
+  - A chain of thought before each action
+  - Self-consistency: Sample several plans and keep the majority
+
+- @Problem@: A plan can fail in ways that a run does not reveal
+  - The plan answers a narrower question than the one asked
+  - Reasoning is brittle to irrelevant changes, e.g., the order of the premises
+
+- @Example@: **DS-STAR** asks an LLM judge whether the plan is sufficient, and
+  extends the plan until it is
+
+- @Key idea@: "the code ran" says nothing about "the plan answered the question"
+
+* Memory: Working Vs. Long-Term
+
+// From: book_Agentic_AI/lectures_source/Lesson05.1-Reasoning_Memory_and_Planning.smd:99 '* Working vs. Long-Term Memory: Comparison'
+// From: book_Agentic_AI/lectures_source/Lesson05.1-Reasoning_Memory_and_Planning.smd:117 '* The Core Problem: Retrieval, Not Storage'
+
+- @Definition@
+  - **Working memory**: The context window of one episode, fast, bounded, and volatile
+  - **Long-term memory**: An external store that persists across episodes and is
+    retrieved when needed
+
+- @Examples@: The long-term memory of a research agent
+  - _Trial log_: Every configuration and its returns
+  - _Notebook store_: Past analyses and their code
+  - _Failure log_: Rejected hypotheses and known data bugs
+
+- @Problem@: Retrieval, not storage, is the hard part
+  - The agent must find the relevant runs among thousands
+
+- @Remark@: Memory is also a channel for snooping
+  - A memory that holds holdout scores lets the next run tune on the holdout
+  - Partition the memory by data split, and keep holdout results out of reach of the
+    agent
+
+- @Key idea@: Memory turns repeated runs into a learning process, so it must follow
+  the same split rules as the data
+
+* Autonomy Per Step: Who Does What
+
+// From: book_Agentic_AI/lectures_source/Lesson01.1-What_Is_An_Agentic_AI.smd:124 '* The Spectrum of Autonomy'
+// From: book_Agentic_AI/lectures_source/Lesson01.1-What_Is_An_Agentic_AI.smd:176 '* Human-in-the-Loop vs. Full Autonomy'
+// From: research/agentic_data_science/agentic_data_science.report.md:121 '# 7. Where Agents Still Fail'
+// From: research/agentic_data_science/agentic_data_science.report.md:195 '# 12. Key Insight: the Role of Humans Will Change'
+
+- @Definition@: **Autonomy** is the number of decisions that a system makes without a
+  human approving each step
+
+// TODO(gp): Check the strong and weak steps: they come from the unverified
+// report agentic_data_science.report.md
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Step", "Agents today", "Autonomy"),
+  rows: (
+    ("Frame the question", "Weak", "Human writes it"),
+    ("Access and clean data", "Strong", "Agent, with automated data checks"),
+    ("Explore and build features", "Strong", "Agent, with a count of the looks"),
+    ("Model and iterate", "Strong", "Agent, under the objective contract"),
+    ("Choose the metric", "Weak", "Human, frozen before the search"),
+    ("Read the results causally", "Weak", "Human"),
+    ("Decide to trade", "Not delegated", "Human"),
+  ),
+  col-widths: (1.3fr, 0.9fr, 1.8fr),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Key idea@: Set the autonomy per step, not per agent: High where the checks are
+  automatic, low where judgment is needed
+  - Errors compound silently across unsupervised steps
+
+# Data Science Agent Landscape
+
+* Data Science Agent Systems
+
+// From: research/agentic_data_science/sota_eda.md:118 '### Systems comparison table'
+// From: research/agentic_data_science/sota_eda.md:336 '### Additional notes on "state of the art" claims'
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("System", "Design choice", "Caveat"),
+  rows: (
+    ("LIDA (2023)", "Fixed pipeline from summary to charts", "Brittle on ambiguous schemas"),
+    ("Data Interpreter (2025)", "Graph of tasks with verification nodes", "Hard to reproduce"),
+    ("DS-STAR (2026)", "Plan refined until a judge finds it sufficient", "Cost, reliance on the judge"),
+    ("RAGvis (2025)", "EDA operations retrieved from a graph of notebooks", "Runs generated code locally"),
+  ),
+  col-widths: (1.2fr, 2fr, 1.5fr),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Comparison@: Two tracks
+  - **Model-centric**: Train one model to run the whole analysis, e.g.,
+    _DeepAnalyze-8B_ (2025)
+  - **System-centric**: Smaller models inside retrieval, semantic layers, and
+    verifiers, e.g., _RAGvis_ and _DS-STAR_
+
+- @Key idea@: State-of-the-art claims depend on the benchmark, so compare the design
+  choices, not the leaderboard positions
+
+* Reusing Prior Solutions
+
+// From: research/agentic_data_science/sota_eda.md:118 '### Systems comparison table'
+// From: research/agentic_data_science/sota_eda.md:907 '### Prioritized short-term research agenda (concrete projects/experiments)'
+
+- @Problem@: A free-form agent writes each analysis from scratch, and repeats the
+  same mistakes
+
+- @Definition@
+  - A **skill library** is a set of documented routines that the agent selects
+  - **Case-based reasoning** adapts the solution of a similar solved case
+
+- @Examples@
+  - _AgentAda_ (Abaskohi et al., 2025) matches skills with hybrid RAG, and human
+    evaluators preferred its analyses 48.78% vs. 27.67% without skills
+  - _DS-Agent_ (Guo et al., 2024) adapts past Kaggle solutions
+
+- @Applications@:
+  - A quant skill library, reviewed and tested once
+  - A point-in-time universe, IC by date, purged CV, and a cost-aware backtest
+
+- @Cons@: The library limits coverage, and the agent repeats its patterns
+
+* Agents as Search Systems
+
+// From: research/agentic_data_science/agentic_data_science.report.md:76 '# 4. Research Trend: Agents as Search Systems'
+
+- @Definition@: A data science agent is a **search system** over possible analyses:
+  metrics, hypotheses, models, features, transformations, hyperparameters
+
+- @Comparison@: An agent is closer to AutoML, Bayesian optimization, and scientific
+  discovery systems than to a chatbot
+  - AutoML searches a fixed space
+  - An agent also writes new points of the space
+
+- @Problem@: The search space of an agent is open, so its size is unknown
+  - The trial count must come from the trace of tool calls, not from a configuration
+    grid
+
+- @Key idea@: The best result of a search is biased upward, more by the size of the
+  search than by the skill of the searcher
+
+# Evaluating Agents
+
+* Benchmarks for Data Science Tasks
+
+// From: research/ideas/draft.Benchmarking_Data_Science_Agents.md:40 '### Benchmark Landscape'
+// From: research/agentic_data_science/agentic_data_science.report.md:94 '# 5. Benchmark Landscape (Important)'
+// From: research/agentic_data_science/sota_eda.md:617 '### Benchmarks table'
+
+// TODO(gp): Check that DSBench scores the analysis tasks by accuracy and the
+// modeling tasks by the relative performance gap: recalled from memory, the
+// notes only name the gap
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Benchmark", "Tasks", "How it scores"),
+  rows: (
+    ("DSBench (Jing et al., 2025)", "466 analysis and 74 modeling tasks from Eloquence and Kaggle", "Accuracy, and a relative performance gap for the modeling tasks"),
+    ("MLE-bench (Chan et al., 2024)", "75 Kaggle competitions with public human leaderboards", "Share of competitions with a medal-level score"),
+    ("DataSciBench (Zhang et al., 2025)", "Curated prompts with semi-automated ground truth", "Programmatic rules on each output, in a Task-Function-Code framework"),
+  ),
+  col-widths: (1.2fr, 1.7fr, 1.7fr),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Example@: On MLE-bench, the best setup, o1-preview with the AIDE scaffold, reaches
+  at least a bronze medal in 16.9% of the competitions
+
+- @Fact@: DataSciBench compares 6 API models with 17 open models, and the API models
+  lead on all its metrics
+
+- @Key idea@: These benchmarks score tasks with one right answer or one leaderboard
+  metric, which is closest to the modeling step of the loop
+
+* Benchmarks for Analysis and Insight
+
+// From: research/agentic_data_science/sota_eda.md:585 '## Benchmarks and evaluation datasets'
+// From: research/agentic_data_science/sota_eda.md:617 '### Benchmarks table'
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Benchmark", "Tasks", "How it scores"),
+  rows: (
+    ("DA-Code (Huang et al., 2024)", "500 executable tasks: wrangling, ML, EDA", "Exact match of outputs"),
+    ("DABstep (Egg et al., 2025)", "450+ multi-step tasks from a financial platform", "Factoid answers, checked in code"),
+    ("InsightBench (Sahu et al., 2025)", "100 business datasets with planted insights", "LLM judge (LLaMA-3)"),
+    ("BLADE (Gu et al., 2024)", "12 datasets and questions from science papers", "Match to expert analyses"),
+  ),
+  col-widths: (1.5fr, 2fr, 1.4fr),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Comparison@: From closed answers, scored in code, to open analyses with many valid
+  paths, scored by a judge or by matching
+
+- @Key idea@: A research agent in finance is closest to DABstep and BLADE:
+  multi-step, heavy on documentation, with many defensible analyses
+
+* An Agent Scorecard
+
+// From: research/ideas/in_progress.Comparison_of_Data_Science_Agents.md:8 '## Core Idea'
+// From: research/ideas/in_progress.Comparison_of_Data_Science_Agents.md:92 '## Research Topics'
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Dimension", "Measure", "Weight"),
+  rows: (
+    ("Performance", "Out-of-sample metric, e.g., net Sharpe ratio or IC", "40%"),
+    ("Code quality", "Readable code that reruns without the agent", "30%"),
+    ("Explainability", "Feature importance, assumptions, and caveats", "20%"),
+    ("Runtime", "Wall-clock time and compute per task", "10%"),
+  ),
+  col-widths: (1fr, 2.6fr, 0.6fr),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Techniques@: Finance additions to the scorecard
+  - _Data hygiene_: Point-in-time universe, delisting returns, and costs
+  - _Trial honesty_: The reported trial count matches the trace
+  - _Leak detection_: The agent flags a leak planted in a test dataset
+
+- @Key idea@: Score the agent on the failures that cost money, not only on the metric
+  that it optimizes
+
+* Cost: Accuracy Vs. Tokens Vs. Latency
+
+// From: research/agentic_data_science/sota_eda.md:907 '### Prioritized short-term research agenda (concrete projects/experiments)'
+// From: research/ideas/draft.Benchmarking_Data_Science_Agents.md:73 '## Research Topics'
+// From: research/ideas/in_progress.Comparison_of_Data_Science_Agents.md:81 '## Questions'
+
+- @Problem@: Verification loops, agent debate, and self-consistency raise the
+  accuracy and multiply the number of model calls
+
+- @Definition@: Compare agents on the **Pareto frontier** of accuracy against cost
+  (tokens or dollars) and latency
+  - An agent is dominated if another one is at least as accurate, cheaper, and faster
+
+- @Examples@
+  - DS-Agent reports \$1.60 per run in development and \$0.13 per run in deployment,
+    with GPT-4
+  - A score per dollar combines benchmark scores with public model prices
+
+- @Question@: If an AutoML tool matches an LLM agent at a fraction of the cost, is
+  the value of the agent only in the explanation and the report?
+
+- @Key idea@: Report accuracy together with its cost, and decide whether a 2-point
+  gain is worth 10x the tokens in a daily research loop
+
+* Agents Are Stochastic: Evaluate Repeated Runs
+
+// From: research/agentic_data_science/sota_eda.md:769 '### Evaluation toolchains and reproducibility infrastructure'
+
+::: columns
+:::: {.column width=55%}
+
+// TODO(gp): Check the attribution of `pass@k` to Chen et al. (2021): it is
+// recalled from memory, while `pass^k` is in the abstract of Yao et al. (2024)
+
+- @Definition@: With $k$ runs of each task, the share of tasks where
+  - `pass@k`: At least one run succeeds (Chen et al., 2021)
+  - `pass^k`: All the runs succeed (Yao et al., 2024)
+
+- @Example@: A simulated agent with `pass@1` = 0.62
+  - `pass@8` = 0.94, while `pass^8` = 0.21
+
+- @Interpretation@
+  - `pass@k` scores a best-of-$k$ search
+  - `pass^k` scores the reliability that an unattended agent needs
+
+- @Fact@: Gpt-4o has `pass^8` below 25% on the retail tasks of $\tau$-bench
+
+::::
+:::: {.column width=45%}
+
+![](book_Modern_AI_for_Finance/lectures_source/figures/L11.01.Pass_At_K.png)
+\footnotesize _Share of 400 simulated tasks solved by at least one of $k$ runs (blue)
+and by all $k$ runs (red)_
+
+::::
+:::
+
+* Programmatic Metrics Vs. LLM-as-Judge
+
+// From: research/agentic_data_science/sota_eda.md:865 '### Reproducibility, safety, and evaluation recommendations'
+// From: research/agentic_data_science/sota_eda.md:821 '### Common failure modes observed in benchmarks and deployments'
+// From: book_Modern_AI_for_Finance/paper_list.md:252 '### [ ] 2025, Starace et al., "PaperBench: Evaluating AI's Ability to Replicate'
+
+- @Definition@
+  - A **programmatic metric** compares the output with the ground truth in code,
+    e.g., the exact match of a number
+  - An **LLM-as-judge** scores an open output against a rubric, e.g., the quality of
+    an insight
+
+- @Comparison@
+  - _Programmatic_: Cheap, stable, and reproducible, but needs a closed answer
+  - _LLM judge_: Scores open analyses, but drifts with the judge model, the prompt,
+    and the order of the answers
+
+- @Example@: **PaperBench** (Starace et al., 2025) grades 8,316 rubric items with an
+  LLM judge, and the best agent scores 21.0%
+
+- @Techniques@
+  - Use a programmatic metric wherever a number can be recomputed
+  - Calibrate the judge on human labels, and use several judges
+  - Never let the agent grade itself with the same model and context
+
+* Benchmark Limits: Saturation and Kaggle-Style Tasks
+
+// From: research/ideas/draft.Benchmarking_Data_Science_Agents.md:54 '## Key Examples'
+// From: research/agentic_data_science/agentic_data_science.report.md:162 '# 10. Risks in Agentic Data Science'
+
+::: columns
+:::: {.column width=60%}
+
+- @Problem@: Scores transfer poorly to a research desk
+  - _Saturation_: Top scores within 1-2 points
+  - _Incomparable_: `pass@1` vs. best-of-$k$, different scaffolds
+  - _Contamination_: Tasks may be in the pretraining data
+  - _Kaggle-style_: IID splits, given metric, clean labels
+
+- @Example@: 5 agents 1 point apart on 500 shared tasks
+  - The winner is the true best 54% of the time, and 88% with a 3-point gap
+
+- @Key idea@: Build a private benchmark on your own data and failure modes, and treat
+  leaderboards as a prior
+
+::::
+:::: {.column width=40%}
+
+![](book_Modern_AI_for_Finance/lectures_source/figures/L11.01.Benchmark_Rank_Noise.png)
+\footnotesize _Probability that the true best of 5 simulated agents ranks first_
+
+::::
+:::
+
+# Verification
+
+* Fact-Checking Agent Outputs
+
+// From: book_Agentic_AI/lectures_source/Lesson07.1-Tool_use_and_retrieval.smd:296 '* Fact-Checking Grounded Answers'
+// From: book_Agentic_AI/lectures_source/Lesson08.1-Learning_to_reason.smd:420 '* Chain-of-Verification: The Core Idea'
+// From: book_Agentic_AI/lectures_source/Lesson08.1-Learning_to_reason.smd:408 '* Why Holistic Self-Review Failed'
+
+- @Problem@: An agent report mixes computed numbers, retrieved facts, and text that
+  the model made up
+  - E.g., _"momentum is weaker in small caps after 2015, in line with the
+    literature"_: Which part was computed, and which literature?
+
+- @Techniques@: Verify each type of claim in its own way
+  - _Numbers_: Recompute them from the cell that produced them, and flag the numbers
+    that no cell produced
+  - _Facts from documents_: Compare each claim with the retrieved passage
+  - _Facts from memory_: Check them with independent questions
+
+- @Definition@: **Chain-of-Verification** (Dhuliawala et al., 2023) drafts an answer,
+  plans verification questions, answers each one in a fresh context without the
+  draft, and revises the contradicted claims
+
+- @Key idea@: Verification works when it is independent of generation, since a model
+  that reviews its own draft tends to defend it
+
+* Critic Loops and Programmatic Validators
+
+// From: book_Agentic_AI/lectures_source/Lesson04.1-LLM_Reasoning.smd:414 '* Can Models Fix Their Own Mistakes?'
+// From: book_Agentic_AI/lectures_source/Lesson04.1-LLM_Reasoning.smd:441 '* When Self-Correction Does Help'
+// From: book_Modern_AI_for_Finance/lectures_source/Lesson02.01_Strategy_Backtesting.smd:381 '* Automating Backtest Correctness'
+
+- @Fact@: Without external feedback, LLMs do not reliably fix their own reasoning,
+  and sometimes get worse (Huang et al., 2024)
+
+- @Solution@: Feed the critic external signals from programmatic validators, i.e.,
+  tests that return pass or fail
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Validator", "What it catches"),
+  rows: (
+    ("Truncation test", "Data used after the decision time"),
+    ("Universe check", "Survivors only, missing delisting returns"),
+    ("Cost check", "No costs, or costs that ignore turnover"),
+    ("Plausibility ceiling", "Net Sharpe ratio or IC far above the market"),
+    ("Trial-count check", "Fewer trials reported than the trace shows"),
+  ),
+  col-widths: (1.2fr, 2.6fr),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Key idea@: The validators decide pass or fail, and the LLM critic explains the
+  failure and proposes a fix
+
+* Silent Failures: Leaked Features and Corrupted Labels
+
+// From: research/ideas/in_progress.Comparison_of_Data_Science_Agents.md:69 '## Key Examples'
+// From: research/ideas/in_progress.Comparison_of_Data_Science_Agents.md:92 '## Research Topics'
+// From: research/agentic_data_science/agentic_data_science.report.md:162 '# 10. Risks in Agentic Data Science'
+
+- @Definition@: A **silent failure** is a wrong result that raises no error and looks
+  like a success
+
+- @Examples@
+  - _Leaked feature_: The agent reports an AUC of 0.99 without any warning
+  - _Corrupted labels_: Returns shifted by one day, or computed on survivors only
+  - _Corrupted prices_: An unadjusted split that looks like a crash
+
+- @Problem@: A silent failure looks like a discovery, so the search of the agent
+  rewards it
+
+- @Techniques@: A planted-defect test suite for agents
+  1. Plant a known defect in a copy of the data, e.g., a leaked column, shifted
+     labels, or a survivors-only universe
+  2. Run the agent on the task
+  3. Score whether the agent flags the defect, not only its final metric
+
+- @Key idea@: An agent that never reports a problem has not been tested on data with
+  problems
+
+* Multiple Testing in Automated Research
+
+// From: //notes1/notes/papers.finance.misc.txt:464 '## 2018, de Prado, A practical solution to the multiple-testing crisis in financial research'
+// From: //notes1/notes/papers.finance.misc.txt:1157 '### Hypothesis driven development'
+// From: msml610/lectures_source/Lesson02.6-ML_Techniques_How_To_Do_Research.smd:104 '* Data Snooping (1/2)'
+
+- @Problem@: An agent p-hacks without intent
+  - It retries until a test passes, and reports the passing run
+  - It writes the hypothesis after seeing the result (HARK)
+  - It tries many universes, horizons, and cost assumptions in one session
+
+- @Fact@: With enough trials, any Sharpe ratio is reachable on a false theory (Lopez
+  de Prado, 2018)
+
+- @Techniques@
+  - Register the hypothesis and the test in the objective contract before the run
+  - Count every `run_backtest` call of the trace as a trial
+  - Apply the corrections per session and per project, e.g., the deflated Sharpe
+    ratio
+  - Validate the surviving hypotheses on data that the agent never saw
+
+- @Key idea@: The faster the agent, the higher the hurdle, so the trial log must be
+  part of the tool, not a habit of the agent
+
+//- @Remark@: Multiple-testing corrections are covered in detail in Lesson 02.01
+
+# Security and Provenance
+
+* Threats to a Research Agent
+
+// From: research/agentic_data_science/sota_eda.md:882 '**Safety: sandboxing, least privilege, and prompt-injection'
+// From: research/agentic_data_science/agentic_data_science.report.md:162 '# 10. Risks in Agentic Data Science'
+
+// TODO(gp): Check the examples of the table: they are illustrations, not
+// taken from a source
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Threat", "Entry point", "Example"),
+  rows: (
+    ("Prompt injection", "Filings, news, data fields", "A press release says: drop the costs"),
+    ("Tool hijacking", "A malicious tool description", "The agent picks the tool of the attacker"),
+    ("Exfiltration", "Code with network access", "Code posts the positions to a URL"),
+    ("Harmful actions", "Tools that write or trade", "Deletes a dataset, sends a live order"),
+    ("Unauthorized data", "Broad credentials", "Reads a restricted dataset"),
+  ),
+  col-widths: (1.2fr, 1.5fr, 2fr),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Fact@: LLM applications blur data and instructions, so retrieved text can act as
+  an instruction (Greshake et al., 2023)
+
+- @Fact@: Over 90% of 45 surveyed data science agents lack explicit trust and safety
+  mechanisms (Rahman et al., 2025)
+
+* Sandboxing and Least Privilege
+
+// From: research/agentic_data_science/sota_eda.md:882 '**Safety: sandboxing, least privilege, and prompt-injection'
+// From: //notes1/notes/IN_PROGRESS.finance.IB_TWS_API.txt:28 '* Paper trading'
+// From: //notes1/notes/IN_PROGRESS.finance.IB_TWS_API.txt:71 '* Read only API'
+
+::: columns
+:::: {.column width=62%}
+
+- @Definition@
+  - A **sandbox** isolates generated code from the host, secrets, and network
+  - **Least privilege** gives each tool only the permissions of its task
+
+- @Techniques@
+  - No secrets in the sandbox, only short-lived, task-scoped credentials
+  - Data read through the tool layer, network open to the vendor only
+  - Limits on CPU, memory, time, and tool calls
+  - No order tools in research
+
+- @Example@: A broker API offers a paper-trading account and a read-only mode that
+  rejects API orders
+
+::::
+:::: {.column width=38%}
+
+```graphviz
+digraph Sandbox {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.3;
+    ranksep=0.35;
+    rankdir=TB;
+    // untrusted input : orange | agent : coral | tool : teal | output : blue
+    node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Helvetica",
+          fontsize=11, margin="0.16,0.08", height=0.38];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    Docs   [label="Filings, news", fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+    Agent  [label="Agent", fillcolor="#F6C6C6", color="#D98C8C", fontcolor="#6B2A2A"];
+    Policy [label="Tool layer\n(allowlist, checks)", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+
+    subgraph cluster_sandbox {
+        label="Sandbox: no secrets, no network"; labelloc="b";
+        fontname="Helvetica-Bold"; fontsize=10; fontcolor="#3A4A5C";
+        style="rounded,filled"; fillcolor="#F7F9FB"; color="#C7D0DA";
+        penwidth=1.0; margin=10;
+        Code [label="Generated code", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    }
+
+    Data   [label="Data, read-only", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+    Paper  [label="Paper account", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+
+    Docs -> Agent [style=dashed, color="#C0455B", fontcolor="#C0455B", label="  untrusted  "];
+    Agent -> Policy;
+    Policy -> Code;
+    Policy -> Data;
+    Policy -> Paper;
+}
+```
+
+::::
+:::
+
+* Prompt-Injection Defenses
+
+// From: research/agentic_data_science/sota_eda.md:882 '**Safety: sandboxing, least privilege, and prompt-injection'
+// From: research/agentic_data_science/sota_eda.md:907 '### Prioritized short-term research agenda (concrete projects/experiments)'
+
+- @Problem@: No single filter stops prompt injection, the top risk of LLM
+  applications for OWASP (LLM01)
+  - Against **ToolHijacker**, the tested defenses were insufficient (Shi et
+    al., 2025)
+
+- @Techniques@: Layered defenses
+  - _Retrieved content is data_: Mark it, and never follow instructions in it
+  - _Tool allowlists_: Fixed per role, with descriptions from a reviewed registry
+    only
+  - _Context isolation_: The agent that reads untrusted text has no tools with side
+    effects
+  - _Output validation_: Check actions and reports before they take effect
+  - _Human approval_: For every action with effects outside the sandbox
+
+- @Example@: Red-team the agent with instructions hidden in documentation, tool
+  descriptions, and field names, and count the policy violations
+
+- @Key idea@: Assume that an injection sometimes succeeds, and limit what a
+  compromised agent can do
+
+* Provenance: Prompts, Tool Calls, and Traces
+
+// From: research/agentic_data_science/sota_eda.md:865 '### Reproducibility, safety, and evaluation recommendations'
+// From: research/agentic_data_science/sota_eda.md:557 '### Agent loop diagram'
+// From: book_Modern_AI_for_Finance/lectures_source/Lesson10.01_Auto_DS.smd:645 '* What a Tracker Logs'
+
+- @Definition@: **Provenance** records how each result was produced, so that it can
+  be replayed, audited, and counted
+
+- @Components@: The trace of one agent run
+  - Prompts and model versions
+  - Every tool call, with its arguments, result, and timestamp
+  - Code, dataset hashes and as-of dates, seeds, and environment
+  - Artifacts: Tables, charts, and the claims of the report linked to them
+
+- @Techniques@
+  - Write the trace from the tool layer, so that the agent cannot skip or edit it
+  - Keep it append-only, and replay a run from it
+  - Derive the trial log from the trace
+
+- @Applications@: Model validation and audit, since a reviewer sees what the agent
+  tried, not only what it reported
+
+- @Key idea@: The trace is at once the audit trail, the trial log, and the debugger
+
+* Summary
+
+- @Key idea@: An agent turns the research loop into a fast, cheap search, so the
+  controls must move into the tools
+
+- @Components@: Building the agent
+  - Typed finance tools with as-of arguments, retrieval with time filters, and a
+    semantic layer
+  - Planner, sandbox, critic, and memory, with autonomy set per step
+
+- @Components@: Trusting the agent
+  - Evaluate on repeated runs, on cost, and on a private benchmark with planted
+    defects
+  - Verify numbers with code, facts with sources, and decisions with humans
+  - Count every tool call that changes the strategy as a trial
+
+- @Components@: Securing the agent
+  - A sandbox, least privilege, layered injection defenses, and an append-only trace
+
+* References
+
+- **Yao et al.**: _"ReAct: Synergizing Reasoning and Acting in Language Models"_,
+  ICLR (2023)
+
+- **Wu et al.**: _"AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent
+  Conversation"_, arXiv (2023)
+
+- **Huang et al.**: _"Large Language Models Cannot Self-Correct Reasoning Yet"_, ICLR
+  (2024)
+
+- **Dhuliawala et al.**: _"Chain-of-Verification Reduces Hallucination in Large
+  Language Models"_, arXiv (2023)
+
+- **Guo et al.**: _"DS-Agent: Automated Data Science by Empowering Large Language
+  Models with Case-Based Reasoning"_, ICML (2024)
+
+- **Abaskohi et al.**: _"AgentAda: Skill-Adaptive Data Analytics for Tailored Insight
+  Discovery"_, arXiv (2025)
+
+- **Li et al.**: _"R&D-Agent-Quant: A Multi-Agent Framework for Data-Centric Factors
+  and Model Joint Optimization"_, arXiv (2025)
+
+- **Jing et al.**: _"DSBench: How Far Are Data Science Agents from Becoming Data
+  Science Experts?"_, ICLR (2025)
+
+- **Chan et al.**: _"MLE-bench: Evaluating Machine Learning Agents on Machine
+  Learning Engineering"_, arXiv (2024)
+
+- **Zhang et al.**: _"DataSciBench: An LLM Agent Benchmark for Data Science"_, arXiv
+  (2025)
+
+- **Huang et al.**: _"DA-Code: Agent Data Science Code Generation Benchmark for Large
+  Language Models"_, EMNLP (2024)
+
+- **Egg et al.**: _"DABstep: Data Agent Benchmark for Multi-step Reasoning"_, arXiv
+  (2025)
+
+- **Sahu et al.**: _"InsightBench: Evaluating Business Analytics Agents Through
+  Multi-Step Insight Generation"_, ICLR (2025)
+
+- **Gu et al.**: _"BLADE: Benchmarking Language Model Agents for Data-Driven
+  Science"_, EMNLP (2024)
+
+- **Chen et al.**: _"Evaluating Large Language Models Trained on Code"_, arXiv (2021)
+
+- **Yao et al.**: _"tau-bench: A Benchmark for Tool-Agent-User Interaction in
+  Real-World Domains"_, arXiv (2024)
+
+- **Starace et al.**: _"PaperBench: Evaluating AI's Ability to Replicate AI
+  Research"_, arXiv (2025)
+
+- **Greshake et al.**: _"Not What You've Signed Up For: Compromising Real-World
+  LLM-Integrated Applications with Indirect Prompt Injection"_, arXiv (2023)
+
+- **Shi et al.**: _"Prompt Injection Attack to Tool Selection in LLM Agents"_, arXiv
+  (2025)
+
+- **Rahman et al.**: _"LLM-Based Data Science Agents: A Survey of Capabilities,
+  Challenges, and Future Directions"_, arXiv (2025)
+
+- **Peterson**: _"Developing and Backtesting Systematic Trading Strategies"_ (2017)
+
+// TODO(gp): Check the year: the notes date the paper 2018, and the journal
+// version may be in the Journal of Financial Data Science (2019)
+
+- **Lopez de Prado**: _"A Practical Solution to the Multiple-Testing Crisis in
+  Financial Research"_ (2018)

@@ -1,6 +1,6 @@
 """
 Run each notebook in msml610/tutorials/L09_kalman_filter/ inside Docker
-using docker_cmd.sh.
+using run_nbconvert.py.
 
 Import as:
 
@@ -36,7 +36,9 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "L09_04_gh_filter.ipynb"
         # Run test.
-        self.helper(notebook_name, generate_html=True)
+        self.run_notebook(
+            notebook_name, use_docker_cmd=False, generate_html=True
+        )
 
     @pytest.mark.slow
     def test2(self) -> None:
@@ -46,7 +48,9 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "L09_05_01_discrete_bayes_dog.ipynb"
         # Run test.
-        self.helper(notebook_name, generate_html=True)
+        self.run_notebook(
+            notebook_name, use_docker_cmd=False, generate_html=True
+        )
 
     @pytest.mark.slow
     def test3(self) -> None:
@@ -56,7 +60,9 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "L09_05_02_univariate_kalman_filter.ipynb"
         # Run test.
-        self.helper(notebook_name, generate_html=True)
+        self.run_notebook(
+            notebook_name, use_docker_cmd=False, generate_html=True
+        )
 
     @pytest.mark.slow
     def test4(self) -> None:
@@ -67,7 +73,9 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "L09_05_03_multivariate_kalman_filter.ipynb"
         # Run test.
-        self.helper(notebook_name, generate_html=True)
+        self.run_notebook(
+            notebook_name, use_docker_cmd=False, generate_html=True
+        )
 
     @pytest.mark.slow
     def test5(self) -> None:
@@ -77,4 +85,6 @@ class Test_docker(hdoctest.DockerTestCase):
         # Prepare inputs.
         notebook_name = "L09_05_04_non_linear_kalman_filter.ipynb"
         # Run test.
-        self.helper(notebook_name, generate_html=True)
+        self.run_notebook(
+            notebook_name, use_docker_cmd=False, generate_html=True
+        )

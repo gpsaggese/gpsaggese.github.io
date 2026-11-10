@@ -3,12 +3,6 @@
 // lesson_title=Lesson 01.03: A Brief History of LLM Agents
 // slides_engine=typst
 
-// References:
-//- ReAct: Synergizing Reasoning and Acting in Language Models:
-//  https://arxiv.org/abs/2210.03629
-//- WebShop: Towards Scalable Real-World Web Interaction with Grounded
-//  Language Agents: https://arxiv.org/abs/2207.01206
-
 # A Brief History of LLM Agents
 
 ## Motivation: Why the History Matters
@@ -499,3 +493,11 @@ digraph GeneralAgent {
   - How do reasoning, memory, and planning combine to fix long-horizon
     reliability?
   - How do we evaluate and trust these agents before deployment?
+
+* References
+
+- ReAct: Synergizing Reasoning and Acting in Language Models:
+  https://arxiv.org/abs/2210.03629
+
+- WebShop: Towards Scalable Real-World Web Interaction with Grounded Language
+  Agents: https://arxiv.org/abs/2207.01206

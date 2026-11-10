@@ -1,7 +1,7 @@
 // notes_to_pdf.py --input lectures_source/Lesson2-Refresher_of_probability.txt --output tmp.pdf --type slides --skip_action cleanup_after --debug_on_error --toc_type navigation
 
 ::: columns
-:::: {.column width=15%}
+:::: {.column width=25%}
 ![](msml610/lectures_source/figures/UMD_Logo.png)
 ::::
 :::: {.column width=75%}
@@ -132,7 +132,7 @@ MSML610: Advanced Machine Learning
 
 * Mutually vs pairwise exclusive
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 - Two exclusive events can't happen at the same time
 - It's not obvious what it means that _several_ events are _exclusive_
 
@@ -189,7 +189,7 @@ Mutually but not pairwise exclusive events.
 
 * Mutually exclusive as Venn diagrams
 ::: columns
-:::: {.column width=60%}
+:::: {.column width=65%}
 - Pairwise exclusive is a stronger property than mutually exclusive:
   - Any pair of events has no intersection (pairwise exclusive) implies all
     events have no intersection (mutually exclusive)

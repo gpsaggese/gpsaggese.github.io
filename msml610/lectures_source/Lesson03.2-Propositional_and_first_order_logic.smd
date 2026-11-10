@@ -654,10 +654,10 @@ $$
 #styled-table(
   headers: ("Category", "Example"),
   rows: (
-    ("General rules", $forall x (Bird(x) implies CanFly(x))$),
-    ("Specific facts", $Bird(Tweety)$),
-    ("Relations", $Loves(Romeo, Juliet), GreaterThan(3, 2)$),
-    ("Functions", $FatherOf(John)$),
+    ("General rules", $forall x (op("Bird")(x) arrow.r.double op("CanFly")(x))$),
+    ("Specific facts", $op("Bird")("Tweety")$),
+    ("Relations", [$op("Loves")("Romeo", "Juliet")$, $op("GreaterThan")(3, 2)$]),
+    ("Functions", $op("FatherOf")("John")$),
   ),
   bold-first-col: true,
 )

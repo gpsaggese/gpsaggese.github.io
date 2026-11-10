@@ -20,7 +20,7 @@ i git_files
 
 i git_branch_copy
 
-i git_branch_next_name
+i git_branch_get_next_name
 
 i git_branch_diff
 

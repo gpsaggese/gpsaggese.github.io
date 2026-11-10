@@ -1,0 +1,23 @@
+% ##############################################################################
+\section{Conclusion}
+\label{sec:conclusion}
+
+This paper described the canary subsystem of the \Noesis{} prototype, which
+instantiates the white paper's pluggable capability measurement with
+known-answer probes. The design combines a deterministic bank and grader, a
+calibration step that measures each candidate against healthy and weak targets,
+keyed selection and scheduling with provable balance and spacing, a prober that
+sends probes as ordinary user messages through the gateway, and a verdict rule
+that flags a seller only when an upper confidence bound falls below the
+promise. Exact binomial analysis indicates that, with the prototype defaults of
+ten canaries and a promised accuracy of 0.85, the rule rarely flags a compliant
+seller and flags a seller with canary accuracy 0.5 in about 83\% of contracts,
+while shortfalls near the promise need hundreds of probes.
+
+The evidence is analytical and unit-level. The live calibration is pending, the
+database-backed tests were not run in the reviewed environment, and the main
+threats to validity, namely recognizable prompts, a single weak reference
+model, and strict exact-match grading, have not been measured. The next step is
+the reviewed calibration run and an end-to-end fault-injection experiment, which
+would replace the assumptions of this paper with measured accuracies and
+detection rates.

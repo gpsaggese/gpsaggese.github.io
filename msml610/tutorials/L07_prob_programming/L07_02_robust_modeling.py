@@ -15,27 +15,52 @@
 
 # %% [markdown]
 # # Robust modeling
+#
+# - This notebook models chemical-shift data that looks Gaussian but has a
+#   couple of outliers, to show how a Student-t likelihood makes the fit more
+#   robust than a Gaussian one
+# - The pedagogical arc:
+#   - Loading and visualizing the data
+#   - Fitting a Gaussian model, inspecting it, and checking it with a
+#     posterior predictive check
+#   - The tails of the Student-t distribution
+#   - Fitting a Student-t model and checking it the same way
 
-# %% [markdown]
-# ## Imports
+# %%
+# !pip install -q graphviz==0.21
+
+import graphviz
+
+print("graphviz version: ", graphviz.__version__)
 
 # %%
 # %load_ext autoreload
 # %autoreload 2
 
-# !sudo /bin/bash -c "(source /venv/bin/activate; pip install --quiet graphviz)"
+import logging
 
 import arviz as az
-import pymc as pm
 import numpy as np
-from IPython.display import display
+import pymc as pm
 
 # %%
+import helpers.hnotebook as hnotebook
 import helpers.htutorial as ut
-import L07_02_robust_modeling_utils as putils
 
-ut.config_notebook()
+import L07_02_robust_modeling_utils as utils
 
+# Initialize notebook configuration and logging.
+hnotebook.config_notebook()
+_LOG = logging.getLogger(__name__)
+utils.init_loggers(_LOG)
+
+# Convert `display` into `print()` when running outside IPython.
+try:
+    from IPython.display import display
+except ImportError:
+    display = print  # type: ignore
+
+# %%
 dir_name = "./L07_data"
 # !ls $dir_name
 
@@ -45,7 +70,7 @@ dir_name = "./L07_data"
 # %% [markdown]
 # ## Cell 1.1: Loading the data
 #
-# **Goal**:
+# **Goal**
 # - Load the chemical-shift measurements used throughout this notebook
 
 # %%
@@ -56,7 +81,7 @@ print("data=", data)
 # %% [markdown]
 # ## Cell 1.2: Visualizing the raw distribution
 #
-# **Goal**:
+# **Goal**
 # - Look at the data's shape before fitting anything: it looks Gaussian,
 #   but with a couple of outliers
 
@@ -67,12 +92,12 @@ ut.process_figure("Chemical shift")
 # %% [markdown]
 # ## Cell 1.3: Fitting a Gaussian model
 #
-# **Goal**:
+# **Goal**
 # - Fit the data with the simplest reasonable model, a single Gaussian,
 #   as the baseline the Student-t model in Cell 1.7 will be compared
 #   against
 #
-# **Implementation**:
+# **Implementation**
 # - `mu ~ Uniform(40, 70)` (wider than the data), `sigma ~ HalfNormal(10)`,
 #   `y ~ Normal(mu, sigma)` observing `data`
 
@@ -93,11 +118,11 @@ pm.model_to_graphviz(model_g)
 # %% [markdown]
 # ## Cell 1.4: Inspecting the Gaussian fit
 #
-# **Goal**:
+# **Goal**
 # - Check the sampling trace, the joint posterior of `mu`/`sigma`, and the
 #   numerical summary for the Gaussian fit
 #
-# **Implementation**: `az.plot_trace()`, `az.plot_pair()`, `az.summary()`
+# **Implementation** `az.plot_trace()`, `az.plot_pair()`, `az.summary()`
 
 # %%
 # There are 4 traces for 2 variables.
@@ -114,11 +139,11 @@ display(az.summary(idata_g, kind="stats").round(2))
 # %% [markdown]
 # ## Cell 1.5: Posterior predictive check for the Gaussian model
 #
-# **Goal**:
+# **Goal**
 # - Compare the observed data's density against the Gaussian model's
 #   posterior-predictive samples
 #
-# **Implementation**: `pm.sample_posterior_predictive()`, `az.plot_ppc()`
+# **Implementation** `pm.sample_posterior_predictive()`, `az.plot_ppc()`
 # - Black: KDE of the observed data
 # - Blue: KDEs of the posterior predictive samples
 # - Orange: KDE of the posterior predictive mean
@@ -133,27 +158,27 @@ az.plot_ppc(y_pred_g, mean=True, num_pp_samples=100)
 # %% [markdown]
 # ## Cell 1.6: The Student-t distribution's tails
 #
-# **Goal**:
+# **Goal**
 # - Show that the Student-t distribution approaches a Gaussian as its
 #   degrees of freedom `nu` grow, but keeps much heavier tails for small
 #   `nu`, which is what makes it robust to outliers
 #
-# **Implementation**: `plot_student_t_sweep(dfs, figsize=None)`
+# **Implementation** `plot_student_t_sweep(dfs, figsize=None)`
 # - Plots the Student-t PDF for `nu` in `{0.1, 0.5, 1, 2, 5, 10, 30}` next
 #   to the Gaussian (the `nu -> infinity` limit)
 
 # %%
-putils.plot_student_t_sweep()
+utils.plot_student_t_sweep()
 ut.process_figure("Chap7: Student-t")
 
 # %% [markdown]
 # ## Cell 1.7: Fitting a Student-t model
 #
-# **Goal**:
+# **Goal**
 # - Refit the same data with a Student-t likelihood instead of a Gaussian,
 #   letting the model learn how heavy-tailed the noise should be
 #
-# **Implementation**:
+# **Implementation**
 # - Same `mu`/`sigma` priors as `model_g`, plus `nu ~ Exponential(1/30)`
 #   (a `nu` around 30 is close to Gaussian); `y ~ StudentT(mu, sigma, nu)`
 
@@ -171,7 +196,7 @@ with pm.Model() as model_t:
 # %% [markdown]
 # ## Cell 1.8: Inspecting the Student-t fit
 #
-# **Goal**:
+# **Goal**
 # - Check the sampling trace and numerical summary for the Student-t fit,
 #   the same diagnostics run on the Gaussian fit in Cell 1.4
 
@@ -184,11 +209,11 @@ display(az.summary(idata_t, kind="stats").round(2))
 # %% [markdown]
 # ## Cell 1.9: Posterior predictive check for the Student-t model
 #
-# **Goal**:
+# **Goal**
 # - Compare the Student-t model's posterior-predictive fit against the
 #   data, and against the Gaussian model's fit from Cell 1.5
 #
-# **Implementation**: `pm.sample_posterior_predictive()`, `az.plot_ppc()`
+# **Implementation** `pm.sample_posterior_predictive()`, `az.plot_ppc()`
 
 # %%
 # Compute 100 posterior predictive samples.
