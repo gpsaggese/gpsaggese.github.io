@@ -1,7 +1,7 @@
 # River: Online Prediction of Next-Day Stock Direction
 
 - Course: DATA605, Fall 2026
-- Author: Brandon Wilson (@bzwilson)
+- Author: Brandon Wilson (@BrandonWilsonProjects)
 - Tool: [River](https://riverml.xyz/), a Python library for online machine
   learning on data streams
 - Project description:
