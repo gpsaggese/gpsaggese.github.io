@@ -30,7 +30,11 @@ RUN apt-get update && apt-get install -y \
 RUN mkdir -p /install
 COPY requirements.txt /install/requirements.txt
 RUN pip install --upgrade pip && \
-    pip install --no-cache-dir jupyterlab jupyterlab_vim "ipykernel<7" jupytext==1.19.3 -r /install/requirements.txt
+# Replace line below with 2 lines below it to avoid pip errors in resolving conflicting dependencies
+#    pip install --no-cache-dir jupyterlab jupyterlab_vim "ipykernel<7" jupytext==1.19.3 -r /install/requirements.txt
+    pip install --no-cache-dir jupyterlab jupyterlab_vim "ipykernel<7" jupytext==1.19.3 && \
+    pip install --no-cache-dir -r /install/requirements.txt
+
 
 # Config.
 COPY etc_sudoers /install/
