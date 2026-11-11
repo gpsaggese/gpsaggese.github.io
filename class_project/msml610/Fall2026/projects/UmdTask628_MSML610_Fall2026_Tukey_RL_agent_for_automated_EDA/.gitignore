@@ -1,0 +1,19 @@
+# Python artifacts.
+__pycache__/
+*.pyc
+
+# Logs written by scripts (`<script>.py.log`), pytest and helpers.
+*.log
+!docker_build.version.log
+tmp.*
+
+# Test scratch space created by `hunitest.TestCase`.
+test/outcomes/
+
+# Notebook execution artifacts.
+.ipynb_checkpoints/
+*.html
+
+# Run directories: source snapshots, provenance and raw outputs of every job.
+# Small final artifacts are copied into `results/` with their run id.
+runs/
