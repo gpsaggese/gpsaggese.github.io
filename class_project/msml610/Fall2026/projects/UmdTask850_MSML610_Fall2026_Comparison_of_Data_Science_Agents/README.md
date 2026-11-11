@@ -39,6 +39,11 @@ UmdTask850_MSML610_Fall2026_Comparison_of_Data_Science_Agents/
 
 - Prerequisites: Docker installed and running, repo cloned locally
 
+- Download Data
+  - Download heart_disease_cleveland.csv and heart_disease_combined.csv from https://www.kaggle.com/datasets/hamnawaseem112222222/uci-heart-disease-dataset 
+  - Download yellow_tripdata_2026-09.parquet from https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page
+  - Put data in the datasets directory
+
 - Go to the project directory
   ```bash
   > cd class_project/msml610/Fall2026/projects/UmdTask850_MSML610_Fall2026_Comparison_of_Data_Science_Agents
