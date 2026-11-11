@@ -38,8 +38,9 @@
 - This project analyzes housing prices from the UCI Real Estate Valuation
   dataset by combining a scikit-learn machine-learning pipeline with Microsoft
   Semantic Kernel
-- The machine-learning layer loads the data, trains Linear Regression and
-  Random Forest regressors, and evaluates them with MAE, RMSE, and R²
+- The machine-learning layer loads and validates the data, trains Linear
+  Regression and Random Forest regressors, and evaluates them with MAE, RMSE,
+  and R²
 - A Semantic Kernel agent answers natural-language requests: the language
   model chooses which plugin functions to call, Semantic Kernel runs them,
   and the model explains the results
@@ -125,17 +126,28 @@
 - Verified properties of the downloaded data:
   - 414 rows, 6 numeric features, 1 numeric target
   - No missing values in the features or the target
+  - 20 rows repeat another row's feature values with a different price. No
+    record is fully duplicated
 
 ## Implemented Functionality
 
 ### Data Loading
 
-- `housing_data.load_housing_data()` downloads the dataset and returns the
-  features `X` as a `pandas.DataFrame` and the target `y` as a
+- `housing_data.load_housing_data()` downloads the dataset, removes the
+  transaction identifier column if present, validates the data, and returns
+  the features `X` as a `pandas.DataFrame` and the target `y` as a
   `pandas.Series`
-- The function removes the transaction identifier column if present and
-  raises a `ValueError` if the data is empty or if the feature and target row
-  counts differ
+- `validate_housing_data(X, y, required_features=None)` raises a `TypeError`
+  if `X` is not a DataFrame or `y` is not a Series, and a `ValueError` if the
+  data is empty, the rows or indexes do not match, column names repeat,
+  required features are missing, or any value is non-numeric, missing, or
+  infinite. It returns a report with the row and feature counts, missing
+  values per column, and duplicate counts
+- `preprocess_housing_data(X, y, missing_strategy="error",
+  duplicate_strategy="keep")` validates the data and can optionally drop
+  rows with missing values (`missing_strategy="drop"`) and fully duplicated
+  records (`duplicate_strategy="drop"`)
+- Preprocessing is not yet used by the model pipeline or the agent
 
 ### Model Training and Evaluation
 
@@ -263,7 +275,7 @@
 
   | File                                | Purpose                                                     |
   | ----------------------------------- | ----------------------------------------------------------- |
-  | `housing_data.py`                   | Dataset download and basic validation                       |
+  | `housing_data.py`                   | Dataset download, validation, and preprocessing             |
   | `housing_models.py`                 | Model definitions, training, and evaluation                 |
   | `housing_plugins/housing_plugin.py` | Semantic Kernel plugin exposing the analysis, with caching  |
   | `housing_kernel.py`                 | Kernel creation and fixed-order demonstration               |
@@ -273,6 +285,7 @@
   | `housing_verify.py`                 | Check of labeled metrics in agent answers                   |
   | `.env.example`                      | Template for the local LLM configuration                    |
   | `.gitignore`                        | Keeps `.env`, caches, and generated test files out of Git   |
+  | `test/test_housing_data.py`         | Tests for dataset validation and preprocessing              |
   | `test/test_housing_models.py`       | Tests for model training and reproducibility                |
   | `test/test_housing_kernel.py`       | Tests for plugin registration and invocation                |
   | `test/test_housing_llm.py`          | Tests for the LLM configuration and Groq request format     |
@@ -368,6 +381,14 @@
   > cd /git_root/class_project/msml610/Fall2026/projects/UmdTask668_MSML610_Fall2026_SemanticKernel_Housing_Price_Analyzer
   ```
 
+- Load and validate the dataset:
+
+  ```bash
+  > python housing_data.py
+  ```
+
+  - Expected: the row, feature, missing-value, and duplicate counts
+
 - Train and compare the models without a language model:
 
   ```bash
@@ -407,10 +428,10 @@
 - Run the project tests from the project directory inside the container:
 
   ```bash
-  > python -m pytest test/test_housing_models.py test/test_housing_kernel.py test/test_housing_llm.py test/test_housing_agent.py test/test_housing_verify.py
+  > python -m pytest test/test_housing_data.py test/test_housing_models.py test/test_housing_kernel.py test/test_housing_llm.py test/test_housing_agent.py test/test_housing_verify.py
   ```
 
-- Expected result: `61 passed`
+- Expected result: `71 passed`
 - No test calls a language model, and no test needs an API key or an Ollama
   server:
   - The agent tests replace the language model with a scripted chat service
@@ -420,11 +441,12 @@
   - The Groq request format is checked with a mock HTTP transport, so no
     request is sent
 - Only `test_kernel_invocation` downloads the UCI dataset and requires
-  internet access. The other 60 tests also pass without network access
+  internet access. The other 70 tests also pass without network access
 - Test coverage:
 
   | Test file               | Tests | Verifies                                                                                     |
   | ----------------------- | ----: | -------------------------------------------------------------------------------------------- |
+  | `test_housing_data.py`   |   10 | Dataset validation, missing values, duplicates, preprocessing strategies, invalid inputs      |
   | `test_housing_models.py` |    2 | Model training, metric validity, reproducibility with the fixed seed                          |
   | `test_housing_kernel.py` |    2 | Plugin registration and invocation through the kernel                                         |
   | `test_housing_llm.py`    |   17 | Provider configuration, required credentials, hidden API keys, Groq request without `name`    |
@@ -495,8 +517,9 @@
 
 ### Live Agent Runs
 
-- The agent was run against live language models with three prompts. Each
-  prompt was run once with Groq and twice with Ollama
+- The agent was run against live language models with three prompts, before
+  the data validation was merged. Each prompt was run once with Groq and
+  twice with Ollama
 
   | Prompt                                                                    | Expected functions                    | Groq `openai/gpt-oss-120b` | Ollama `qwen3:4b` |
   | ------------------------------------------------------------------------- | ------------------------------------- | -------------------------- | ----------------- |
@@ -576,10 +599,8 @@
 
 ## Team
 
-| Member            | Contributions to the current implementation                                                                                                                                        |
-| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Tejarsha Chappidi | Project template and Docker setup, dataset loader, Linear Regression and Random Forest pipeline, Semantic Kernel plugin, kernel, and agent, LLM configuration, execution trace, metric check, automated tests |
-| Syed Muazuddin    | Data validation and preprocessing (under review, not yet included in this version)                                                                                                 |
+- Tejarsha Chappidi
+- Syed Muazuddin
 
 ## References
 
