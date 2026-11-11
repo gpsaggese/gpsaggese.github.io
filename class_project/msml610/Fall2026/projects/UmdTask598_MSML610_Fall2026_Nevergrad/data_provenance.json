@@ -1,0 +1,22 @@
+{
+    "source": "yfinance",
+    "fetch_date": "2026-10-22",
+    "tickers": [
+        "SPY",
+        "EFA",
+        "EEM",
+        "TLT",
+        "IEF",
+        "LQD",
+        "GLD",
+        "VNQ",
+        "DBC"
+    ],
+    "start_date": "2006-01-01",
+    "end_date": "2026-01-01",
+    "first_date": "2006-02-06",
+    "last_date": "2025-12-31",
+    "num_rows": 5008,
+    "file": "data/etf_prices.csv",
+    "sha256": "820659a03087a6bda1d6333ca722dca1da387d9cc033ee7faf5766eadf43b1a8"
+}
