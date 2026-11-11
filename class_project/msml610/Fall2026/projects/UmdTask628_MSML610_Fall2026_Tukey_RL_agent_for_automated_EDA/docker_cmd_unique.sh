@@ -10,8 +10,7 @@
 #
 # Usage:
 # > REL=$(git rev-parse --show-prefix)
-# > ./docker_cmd_unique.sh "cd /git_root/$REL && python tukey_evidence.py \
-#     check_artifacts --project_dir . --base 10f4d19 --out tmp.checks.json"
+# > ./docker_cmd_unique.sh "cd /git_root/$REL && python -m pytest test/test_tukey_env.py"
 # """
 
 # Exit immediately if any command exits with a non-zero status.

@@ -16,10 +16,10 @@
 # %% [markdown]
 # # Tukey: learning to explore data with verifiable rewards
 #
-# - This notebook runs the project end to end: synthetic causal worlds with a
-#   known answer, a statistical toolbox with a scripted baseline, a policy
-#   trained by reinforcement learning to choose tools, and the tests of how far
-#   that policy generalizes, including real data
+# - This notebook shows the project's results: synthetic causal worlds with a
+#   known answer and a statistical toolbox with a scripted baseline (this
+#   version); the trained policy and its generalization tests come with the next
+#   PRs
 # - The pedagogical arc:
 #   - Part 1: the synthetic environment and what its data leak (Milestone 1)
 #   - Part 2: the toolbox, the scripted agent and the baseline table

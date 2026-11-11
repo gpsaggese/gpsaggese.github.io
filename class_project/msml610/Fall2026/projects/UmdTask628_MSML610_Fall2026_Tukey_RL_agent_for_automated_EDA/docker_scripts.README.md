@@ -367,18 +367,75 @@ are commented out for reference. Choose the one that best fits your project:
   > vim Dockerfile
   ```
 
-- Add your dependencies
+- Add your dependencies following the "Python Dependencies Policy" below
+  - In most cases do nothing here: install the packages from the notebook
+  - Only if the dependencies are hard to maintain by hand, use
+    `requirements.in` and `pip-compile`
   ```bash
-  > echo "numpy\npandas\nscikit-learn" > requirements.in
+  > echo "tensorflow\nprotobuf\nnumpy" > requirements.in
   > pip-compile requirements.in > requirements.txt
   ```
 
 ### Step 4: Keep Customization Minimal
 - Only modify what's necessary for your project
-- Use `requirements.txt` for all Python packages (don't edit Dockerfile for
-  this)
+- Keep `Dockerfile` and `requirements.txt` identical to the template unless the
+  "Python Dependencies Policy" below says otherwise
 - Keep `bashrc` and `etc_sudoers` as-is unless you need custom shell setup
 - Keep base image and Python version unless you have specific requirements
+
+## Python Dependencies Policy
+
+### Goal
+- Use always the same single Docker image, built from this template, with only
+  the basic dependencies, for all the tutorials and class projects
+  - Basic dependencies are the packages in the template `requirements.txt`
+    (e.g., `numpy`, `pandas`, `matplotlib`, `seaborn`, `tqdm`, `ipywidgets`)
+- A single image avoids building, storing, and maintaining one image per
+  project, and keeps the container identical across projects
+
+### Notebook Needs One or a Few Extra Packages
+- This is the default case: install the packages directly in the notebook with
+  `pip install`
+  - Do not modify `requirements.txt` or `Dockerfile`
+  - Pin the versions so that the notebook is reproducible
+- Add a cell near the top of the notebook, after the `autoreload` cell, such as:
+  ```python
+  !pip install -q sympy==1.14.0
+
+  import sympy
+  print("sympy version: ", sympy.__version__)
+  ```
+- Install every third-party package imported by the notebook and by its paired
+  `*_utils.py` file
+- To automate this, use the Claude skill `notebook.fix_packages`
+
+### Dependencies Are Hard to Maintain
+- Use a project specific `requirements.txt` only when the dependencies are
+  difficult to maintain by hand, e.g.,
+  - Packages depend on each other and need compatible versions (e.g.,
+    `tensorflow` with `numpy` and `protobuf`)
+  - Many packages need to be installed together so that the `pip` resolver finds
+    a consistent set
+  - A long list of pinned transitive dependencies is needed
+- In this case:
+  - Write the direct dependencies in `requirements.in` and generate
+    `requirements.txt` with `pip-compile`
+  - Add a comment at the top of `requirements.txt` explaining why the file is
+    needed
+  - Build a dedicated image with `docker_build.sh`
+
+### Dockerfile Changes
+- Modify `Dockerfile` only for what `pip` cannot install (e.g., system tools
+  installed with `apt-get`)
+- Comment clearly why each addition is needed
+
+### Summary
+| Case                                            | Where to put the packages           |
+| :---------------------------------------------- | :---------------------------------- |
+| Basic dependencies (`numpy`, `pandas`, ...)     | Template `requirements.txt`, as is  |
+| One or a few extra packages                     | `!pip install` cell in the notebook |
+| Dependencies hard to maintain (inter-dependent) | Project `requirements.txt`          |
+| System tools not installable with `pip`         | `Dockerfile` with a comment         |
 
 ## Understanding the Dockerfile Flow
 Each Dockerfile follows the same structure. Here are the key stages:
@@ -479,10 +536,11 @@ COPY requirements.txt /install/requirements.txt
 RUN pip install --no-cache-dir -r /install/requirements.txt
 ```
 
-- **Purpose**: Install your project-specific Python packages
+- **Purpose**: Install the basic Python packages shared by all projects
 
-- **When to customize**: This is the primary place to customize. Define all your
-  dependencies in `requirements.txt`
+- **When to customize**: Rarely. Install one or a few extra packages from the
+  notebook with `pip install`. Add them to `requirements.txt` only when the
+  dependencies are hard to maintain (see "Python Dependencies Policy" above)
 
 - **Best practice**:
   - **Pin all versions**: `numpy==1.24.0` (not `numpy>=1.20.0`)
@@ -569,7 +627,8 @@ This approach:
 ### How to Do It Right
 | What                         | Where                        | Example                         |
 | :--------------------------- | :--------------------------- | :------------------------------ |
-| Project Python packages      | `requirements.txt`           | `numpy==1.24.0`                 |
+| Few extra Python packages    | `pip install` in notebook    | `!pip install -q sympy==1.14.0` |
+| Hard-to-maintain Python deps | `requirements.txt`           | `tensorflow==2.13.0`            |
 | Jupyter + Vim (always there) | Dockerfile Stage 5           | `jupyterlab jupyterlab_vim`     |
 | System tools                 | Dockerfile `apt-get` section | `postgresql-client`             |
 | Shell aliases                | `bashrc`                     | `alias jlab="jupyter lab"`      |
@@ -713,7 +772,9 @@ Docker build context:
   > vim Dockerfile
   ```
 
-- Add your dependencies
+- Add your dependencies: install them from the notebook with `pip install`
+  and edit `requirements.txt` only if they are hard to maintain (see "Python
+  Dependencies Policy")
   ```bash
   > pip freeze > requirements.txt
   ```

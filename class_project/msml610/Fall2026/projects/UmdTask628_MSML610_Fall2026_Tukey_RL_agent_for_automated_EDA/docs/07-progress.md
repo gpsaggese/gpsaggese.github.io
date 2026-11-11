@@ -20,7 +20,9 @@
 - A tool policy and graph decoder trained per
   [`D8`](03-decisions.md#d8-behaviour-cloning-then-reinforce); the curriculum,
   noise and real-data studies
-- Last full check: Oct 16, fresh clone, 371 tests passed, notebooks ran
+- Last full check of all four milestones: Oct 16, fresh clone, 371 tests
+  passed, notebooks ran; Milestones 1-2 rechecked Nov 11 for `PR_B1` (144 tests,
+  both notebooks)
 
 ## Findings
 
@@ -61,7 +63,7 @@
 
 ## Next
 
-1. `PR_B1`, with the full tests and the Docker build rerun
+1. `PR_R1` (Milestone 3), with its tests and the Docker build rerun
 2. Reviewers' answer on `D1` and `D2`; team roles confirmed
 3. Research Google Doc, linked from #628
 
