@@ -30,6 +30,25 @@
 - The open research questions are in the Gdoc, under
   [Questions for GP](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.xfydadrg3lvc)
 
+## 2026-11-11: Spread Model for Speed vs Accuracy (#723)
+
+- **Issue**: [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723),
+  part 2: the spread of the return as a function of the ball speed; the plan, its
+  decisions, and GP's answers to Q4 to Q6 are in the Gdoc,
+  [Experiment 5](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.qrto9so35bnx)
+- **What was done**: `notebooks/racket_sports_07_speed_vs_accuracy_utils.py`
+  - `compute_speed_factor()`: the factor of the spread, with 4 shapes (linear,
+    knee, parabola, one-sided parabola)
+  - `build_spread_from_ball_speed()`: `std_x2` and `std_y2` from the ball speed,
+    with a factor per direction, `a_x` for the width and `a_y` for the depth
+  - The model and the notebooks do not change: the builder is for the sweeps only
+    (P1)
+  - Any coefficient of at least 0 is allowed, so a sweep can perturb it (GP, Q4);
+    a factor that is not positive raises, which only the linear shape with `a > 1`
+    can reach
+- **Next**: the sweeps, notebook 07, and Section VII-B of the paper, in one PR that
+  closes #723
+
 ## 2026-11-10: Research Questions and Results in the Gdoc (#694)
 
 - **Issue**: [#694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694),
