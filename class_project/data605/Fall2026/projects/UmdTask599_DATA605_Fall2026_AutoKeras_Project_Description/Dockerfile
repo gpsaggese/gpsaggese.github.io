@@ -33,7 +33,7 @@ RUN pip install --upgrade pip && \
 # Replace line below with 2 lines below it to avoid pip errors in resolving conflicting dependencies
 #    pip install --no-cache-dir jupyterlab jupyterlab_vim "ipykernel<7" jupytext==1.19.3 -r /install/requirements.txt
     pip install --no-cache-dir jupyterlab jupyterlab_vim "ipykernel<7" jupytext==1.19.3 && \
-    pip install --no-cache-dir -r /install/requirements.txt
+    pip install --no-cache-dir --no-deps -r /install/requirements.txt
 
 
 # Config.
