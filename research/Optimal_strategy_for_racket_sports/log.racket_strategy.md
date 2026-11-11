@@ -30,6 +30,28 @@
 - The open research questions are in the Gdoc, under
   [Questions for GP](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.xfydadrg3lvc)
 
+## 2026-11-11: GP's Answers on the Research Process (#694)
+
+- **Issue**: [#694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694),
+  last part: GP answered Q1 to Q3 in the Gdoc, under
+  [Research process](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.21d3arlkot6c)
+  - Q1: one Gdoc with several tabs, a raw log with everything and a distilled
+    executive summary, then the paper
+  - Q2: the research Gdocs are in the
+    [`Research projects`](https://drive.google.com/drive/folders/1NQB-LgY6Kn8Pw5Hbnp_1yCzN9HgoDIXe)
+    Drive folder
+  - Q3: a fork PR is fine for the helpers change,
+    [gpsaggese/helpers#1455](https://github.com/gpsaggese/helpers/pull/1455)
+  - In his reply on Q1 (2026-11-10): a new question goes in the Questions for GP
+    list itself, not only in a comment
+- **Docs**:
+  - `project_management.explanation.md`: the Gdoc tabs and the Drive folder; this
+    log keeps one short entry per merged PR, with a link to the Gdoc and no
+    findings; the life of a research question starts in the question list
+  - `design_principles.explanation.md`: P14 names the `Raw log` tab as the log of
+    the experiments
+  - `plan.racket_strategy.md`: #694 done
+
 ## 2026-11-10: Research Questions and Results in the Gdoc (#694)
 
 - **Issue**: [#694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694),
@@ -64,11 +86,10 @@
   ([GP on #713](https://github.com/gpsaggese/gpsaggese.github.io/issues/713#issuecomment-6751589012),
   2026-11-09, recorded under Experiment 6): the layer 3 success criterion is good
   enough (Q7), and PPO stays on the full grid, with no pruning for now (Q8)
-- **Pending GP**
+- **Asked GP**
   ([Research process](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.21d3arlkot6c)):
   Q1, one log or two; Q2, the Drive folder of the research Gdocs; Q3, how the general
-  rules reach the research guide of helpers; the paper checklist lives in
-  `project_management.explanation.md` for now
+  rules reach the research guide of helpers; answered, see the 2026-11-11 entry
 
 ## 2026-11-07: Racket RL Env and Notebook 06 (#713, Layer 3)
 
