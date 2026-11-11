@@ -29,12 +29,13 @@ RUN apt-get update && apt-get install -y \
 # --execute` forever.
 RUN mkdir -p /install
 COPY requirements.txt /install/requirements.txt
-RUN pip install --upgrade pip && \
-# Replace line below with 2 lines below it to avoid pip errors in resolving conflicting dependencies
-#    pip install --no-cache-dir jupyterlab jupyterlab_vim "ipykernel<7" jupytext==1.19.3 -r /install/requirements.txt
-    pip install --no-cache-dir jupyterlab jupyterlab_vim "ipykernel<7" jupytext==1.19.3 && \
-    pip install --no-cache-dir --no-deps -r /install/requirements.txt
 
+# Install core Jupyter tools, requirements, and autokeras 1.1.0 (stub keras_nlp.models for ARM64 Linux)
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir jupyterlab jupyterlab_vim "ipykernel<7" jupytext==1.19.3 && \
+    pip install --no-cache-dir -r /install/requirements.txt && \
+    pip install --no-cache-dir --no-deps autokeras==1.1.0 && \
+    printf "class _Stub:\n    def __getattr__(self, name):\n        return None\ndef __getattr__(name):\n    return _Stub()\n" > /usr/local/lib/python3.10/site-packages/keras_nlp.py
 
 # Config.
 COPY etc_sudoers /install/

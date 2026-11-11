@@ -1,18 +1,17 @@
-# --- ENvironmnet Constraints ---
+# --- Environment Constraints ---
 # Python Compatibility: Python 3.9 or 3.10 is required.
 # DO NOT use Python 3.11+ due to legacy TensorFlow constraints.
 
-# --- Core Machine Learning Stack ---
-# Autokeras version 1.1.0 last stable version with TimeSeriesForecaster
-tensorflow==2.10.1
+# --- Core Machine Learning Stack (ARM64 Linux TF 2.10) ---
+# Autokeras 1.1.0 installed in Dockerfile with no-deps
+tensorflow-cpu-aws==2.10.1
 keras==2.10.0
 keras-tuner==1.1.0
-autokeras==1.1.0
 
 # --- Supporting Core Infrastructure and Utilities ---
 packaging>=20.0
-numpy==1.22.4    # Required for TensorFlow 2.10 stability
-scipy==1.7.3     # Required for compatibility with older numpy/tf hooks
+numpy==1.23.5    # Compatible with TensorFlow 2.10
+scipy==1.9.3     # Compatible with older numpy/TensorFlow
 tqdm   # Iterative progress bar wrapper
 
 # --- Financial Data and Interoperability ---
@@ -20,6 +19,6 @@ yfinance
 pandas==1.5.3
 
 # --- Visualization and Interactive Widgets ---
-matplotlib
-seaborn
+matplotlib==3.6.3    # Compatible with numpy 1.22.4
+seaborn==0.12.2     # Compatible with numpy 1.22.4
 ipywidgets
