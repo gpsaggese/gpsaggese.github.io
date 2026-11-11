@@ -212,6 +212,40 @@ class Test_clean_bars(hunitest.TestCase):
         # Check outputs.
         pd.testing.assert_frame_equal(clean.loc[:t], clean_changed.loc[:t])
 
+    def test7(self) -> None:
+        """
+        Test that zero-volume bars right before a gap become part of the gap.
+        """
+        # Prepare inputs.
+        times = [
+            "2024-01-01 00:00",
+            "2024-01-01 00:05",
+            "2024-01-01 00:10",
+            "2024-01-01 00:15",
+            "2024-01-01 00:30",
+            "2024-01-01 00:35",
+        ]
+        bars = _get_bars(times, [1.0, 2.0, 3.0, 3.0, 4.0, 5.0])
+        # Bars 1 and 3 have zero volume. Only bar 3 is right before the gap.
+        bars.iloc[[1, 3], bars.columns.get_loc("volume")] = 0.0
+        # Run test.
+        clean = dutil.clean_bars(bars, max_fill_bars=2)
+        # Check outputs.
+        self.assertEqual(
+            clean["is_stale"].tolist(),
+            [False, False, False, True, False, False, False, False],
+        )
+        self.assertEqual(
+            clean["is_zero_volume"].tolist(),
+            [False, True, False, False, False, False, False, False],
+        )
+        # The stale bar makes the gap 3 bars long, too long to fill.
+        self.assertEqual(clean["is_filled"].sum(), 0)
+        self.assertEqual(
+            clean["segment_id"].astype(str).tolist(),
+            ["0", "0", "0", "<NA>", "<NA>", "<NA>", "1", "1"],
+        )
+
 
 # #############################################################################
 # Test_compute_quality_table
