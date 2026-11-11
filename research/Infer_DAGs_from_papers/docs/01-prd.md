@@ -5,10 +5,13 @@
 ## Goal
 
 - Build a pipeline that turns a list of academic papers into a causal DAG for each
-  paper, one merged DAG of the literature, and a report of the edges that
-  observational data supports or rejects
-- Users: quant researchers, who use the literature graph to pick the hypotheses and
-  the features to test
+  paper, and a report of the edges that observational data supports or rejects
+- Users: quant researchers, who use the DAG of a paper to pick the hypotheses and the
+  features to test
+- The pipeline builds the DAG with no step where it waits for the user: it takes every
+  decision by itself, and writes a review report with all the information that the user
+  needs to decide which nodes and edges to keep or remove, see
+  [`R8`](#r8-review-report)
 - The pipeline adapts the two phase workflow of DMCD (LLM semantic drafting, then
   statistical audit on data) to the text of papers, instead of the metadata of a
   dataset
@@ -19,26 +22,46 @@
     [`papers/Causal_Analysis_for_Finance/notes.slides.md`](/papers/Causal_Analysis_for_Finance/notes.slides.md)
   - Papers to process come from the pipeline described in
     [`research/Estimate_academic_paper_quality/docs/01-prd.md`](/research/Estimate_academic_paper_quality/docs/01-prd.md)
-  - DMCD paper, in the `csfy1` repo:
+  - DMCD paper, in the `csfy1` repo `/Users/saggese/src/csfy1`
     `papers/DMCD_Semantic_Statistical_Framework_for_Causal_Discovery/main.tex`
-  - DMCD code (graph builder, validator, refiner), in the `csfy1` repo: `datamap/`
+  - DMCD code (graph builder, validator, refiner), in the `csfy1` repo:
+    `/Users/saggese/src/csfy1/datamap/`
+
+## Scope by Version
+
+- Releases are cumulative: a version also has the features of the versions before it
+- **v1.0**: the DAG built from a single paper
+  - It covers all the requirements, except those of the group
+    [Merge the DAGs (v2.0)](#requirements-merge-the-dags-v20)
+  - The DAG of each paper is built with no wait for the user, and the review report
+    lets the user keep or remove its nodes and edges
+  - The audit with data runs on the DAG of each paper
+- **v2.0**: merge the DAGs of many papers into one literature graph, with the papers
+  behind each edge and the conflicts between papers
+  - See the requirements [`R12`](#r12-literature-graph),
+    [`R13`](#r13-conflict-between-papers), and
+    [`R14`](#r14-opposite-directions)
+- **v3.0**: use the knowledge of an LLM and the metadata of a dataset, as DMCD does,
+  in addition to the text of the papers
+  - The requirements are not written yet: they come after v2.0
 
 ## Users and Use Cases
 
 - **Quant researcher, first run**:
   - Points the pipeline to the papers already fetched and converted to markdown
-  - Reads the relationships that each paper suggests, and checks each one in the
-    paper through its provenance pointer
-  - Approves the names of the variables and the relationships that the LLM only
-    inferred
-  - Gets the merged DAG of the literature, with the papers behind each edge and the
-    conflicts between papers
+  - Gets the DAG of each paper, with the provenance pointer of each edge, with no
+    approval step
+  - Reads the review report of a paper: the new variable ids, the relationships that
+    the LLM only inferred, and the other automatic decisions
+  - Checks each node and edge in the paper through its provenance pointer, and marks
+    the ones to remove
+  - Gets the reviewed DAG of each paper, without the nodes and edges removed
   - Gives a dataset and a mapping from the variables to its columns, and gets the
-    edges that the data supports or rejects
+    edges of each DAG that the data supports or rejects
 - **Quant researcher, rerun**:
   - Adds new papers to a list that was already processed
-  - Gets an updated literature graph without paying again for the papers already
-    processed and without approving the same names again
+  - Gets the DAGs of the new papers without paying again for the papers already
+    processed and without losing the marks on the papers already reviewed
 
 ## Requirements: Input
 
@@ -83,8 +106,8 @@
   - E.g. (illustrative): _"high-accrual firms earn low returns"_ is `stated`, while
     _"accruals cause low returns"_ is `inferred`
 - Every output that contains a record shows its status
-- No stage uses an `inferred` record without the user seeing it, see
-  [`R8`](#r8-human-approval)
+- An `inferred` record enters the DAG of the paper, marked `inferred`, and the review
+  report lists it, see [`R8`](#r8-review-report)
 
 ### `R5` (Paper Without Relationships)
 
@@ -97,26 +120,47 @@
 
 - Each variable of a record maps to a canonical id and, when the paper describes a
   change of the variable, to an operator (e.g., increase, delay)
-- Two phrases that name the same variable get the same canonical id, so that DAGs of
-  different papers can merge
+- Two phrases that name the same variable get the same canonical id, so that the DAG
+  of a paper has one node for each variable, and so that the user maps one id to one
+  column of the data
   - E.g.: _"monetary tightening"_, _"policy rate hike"_, and _"increase in the
     federal funds rate"_ map to one canonical id
+- The ids come from one vocabulary shared by all the papers, so that the DAGs of
+  different papers can merge in v2.0
 
 ### `R7` (Unknown Variable)
 
-- A variable that matches no existing canonical id is listed with a proposed new id
+- A variable that matches no existing canonical id gets a new id that the pipeline
+  proposes, marked `new` in the vocabulary and in the review report, see
+  [`R8`](#r8-review-report)
   - It is not dropped, and it is not merged with another variable by guess
 
-### `R8` (Human Approval)
+### `R8` (Review Report)
 
-- Before the DAGs are merged, the user approves:
+- The pipeline does not wait for the user before it builds the DAG of a paper: it
+  takes these decisions by itself
   - The mapping from variables to canonical ids and operators, including each new id
     of [`R7`](#r7-unknown-variable)
-  - Each `inferred` record that enters a DAG
-- Nothing that the user did not approve enters the literature graph
-- The pipeline logs every decision with the paper, the proposal, the decision, and
-  the date, and reports the acceptance rate of the proposals
-- A rerun reuses the logged decisions and does not ask again
+  - The `inferred` records that enter the DAG
+  - The orientation of the unoriented relationships, see
+    [`R10`](#r10-unoriented-relationship)
+- For each paper, the pipeline writes a review report with all the information that
+  the user needs to decide which nodes and edges to keep or remove
+  - For each node: the canonical id, whether it is `new`, the operators, the phrases
+    of the paper that map to it, and the edges that touch it
+  - For each edge: the two nodes, the direction, the sign, the lag, the conditions,
+    the status, and every record behind it with its provenance pointer
+  - For each node and edge: the automatic decisions that created it (e.g., a `new`
+    id, an orientation marked `inferred`)
+  - For each edge: the verdict of [`R17`](#r17-edge-verdict) and its evidence, once
+    the audit has run
+  - The items that are not in the DAG, each with its reason: the invalid records
+    ([`R3`](#r3-provenance-pointer)), the unoriented associations
+    ([`R10`](#r10-unoriented-relationship)), and the cycle of a paper that is
+    `not a DAG` ([`R11`](#r11-feedback-loop))
+  - A `decision` field for each node and edge, with the value `keep` by default, that
+    the user changes to `remove`
+- The pipeline reports the share of nodes and edges that the user marks `remove`
 
 ## Requirements: Build the DAG of a Paper
 
@@ -126,6 +170,10 @@
   - The nodes are canonical variables
   - Each edge is oriented and keeps its records, with sign, lag, conditions, status,
     and provenance pointer
+- The DAG of a paper is built from the valid records of that paper alone: no other
+  paper, no knowledge of an LLM, and no metadata of a dataset
+- The pipeline builds the DAG with no approval by the user, see
+  [`R8`](#r8-review-report)
 - The DAG has no cycle: the pipeline checks every DAG that it outputs
 
 ### `R10` (Unoriented Relationship)
@@ -141,13 +189,107 @@
   affects X at time t+1) is represented so that the DAG has no cycle
 - A paper whose relationships form a contemporaneous feedback loop (an equilibrium)
   is not forced into a DAG: the pipeline reports it as `not a DAG` with the cycle,
-  and leaves it out of the merge
+  and outputs no DAG for it
 
-## Requirements: Merge the DAGs
+### `R25` (Reviewed DAG)
+
+- The pipeline reads the `decision` marks that the user sets in the review report of a
+  paper, see [`R8`](#r8-review-report), and outputs the reviewed DAG as a separate
+  output: it never modifies the DAG of the paper, see [`R9`](#r9-paper-dag)
+- The reviewed DAG has the nodes and edges marked `keep`, and also those with no mark
+- A node marked `remove` takes its edges with it
+- A rerun keeps the marks of the papers already reviewed, see
+  [`R24`](#r24-rerun-skips-processed-papers)
+
+## Requirements: Audit with Data
+
+### `R15` (Data Input)
+
+- The user gives a dataset of observational data and a mapping from canonical ids to
+  its columns
+- The pipeline reports the quality of the data of each mapped node of a paper DAG:
+  coverage, time span, and gaps
+- A node with no column is listed as `no data` and is not tested
+
+### `R16` (Conditional Independence Audit)
+
+- For the nodes with data, the pipeline tests with the data the conditional
+  independence relations that the DAG of a paper implies
+- The pipeline controls the false discovery rate over all the tests, and reports for
+  each test the p-value and the adjusted q-value
+- The tests are statistical procedures only: an LLM does not compute or change a
+  p-value
+
+### `R17` (Edge Verdict)
+
+- Each edge of the DAG of a paper gets a verdict with its evidence (the q-values of
+  the tests behind it):
+  - `supported`: the data is consistent with the edge
+  - `rejected`: the data gives weak or inconsistent evidence of dependence
+  - `untested`: a node of the edge has no data
+- The pipeline lists the pairs of variables that look dependent in the data and are
+  separated in the DAG of the paper, as potentially missing edges
+
+### `R18` (Collider Bias)
+
+- A dependence that appears only after conditioning on a common effect does not add a
+  direct edge between the two variables
+
+### `R19` (Final Graph)
+
+- For each paper, the pipeline outputs a final graph as a separate output: it never
+  modifies the DAG of the paper
+- Each difference between the final graph and the DAG of the paper (an added, a
+  removed, or a retained edge) comes with its reason and its verdict
+
+## Requirements: Output
+
+### `R20` (Files for Each Paper)
+
+- For each paper, the pipeline writes a file with the records, a file with the DAG,
+  and the review report of [`R8`](#r8-review-report), all with the base name of the
+  paper (see [`R1`](#r1-input-papers))
+- When the user has marked the review report, the pipeline also writes the reviewed
+  DAG of [`R25`](#r25-reviewed-dag) with the same base name
+
+### `R21` (Graph and Report Files)
+
+- For each paper, the pipeline writes the final graph and the audit report as JSON
+  files
+
+### `R22` (Picture of a Graph)
+
+- The user can render the DAG of a paper, its reviewed DAG, or its final graph as an
+  image
+- The image shows the `inferred` edges in a way that is different from the other
+  edges
+
+### `R23` (Issues File)
+
+- When a stage fails for a paper (e.g., a missing or unreadable markdown file, a
+  failed extraction), the pipeline records the reason for that paper and goes on with
+  the other papers
+- Each stage writes these failures in an issues file, so that each stage can run
+  alone
+
+### `R24` (Rerun Skips Processed Papers)
+
+- A rerun does not extract again the records of a paper that already has them,
+  unless the user asks for it
+- A rerun on a list with new papers processes only the new papers
+- A rerun does not overwrite the `decision` marks of a review report
+
+## Requirements: Merge the DAGs (v2.0)
+
+- These requirements are not in v1.0, see [Scope by Version](#scope-by-version)
+- In v2.0 the audit of [`R15`](#r15-data-input) to [`R19`](#r19-final-graph) also
+  runs on the literature graph, and the picture of
+  [`R22`](#r22-picture-of-a-graph) also marks the conflicting edges
 
 ### `R12` (Literature Graph)
 
-- The pipeline merges the approved DAGs over canonical ids into one literature graph
+- The pipeline merges the reviewed DAGs of [`R25`](#r25-reviewed-dag) over canonical
+  ids into one literature graph
 - Each edge of the literature graph lists the papers that support it, each with sign,
   lag, conditions, status, and provenance pointer
 
@@ -166,86 +308,15 @@
   literature graph has no cycle, and the pipeline lists the conflict with the papers
   involved
 
-## Requirements: Audit with Data
-
-### `R15` (Data Input)
-
-- The user gives a dataset of observational data and a mapping from canonical ids to
-  its columns
-- The pipeline reports the quality of the data of each mapped node: coverage, time
-  span, and gaps
-- A node with no column is listed as `no data` and is not tested
-
-### `R16` (Conditional Independence Audit)
-
-- For the nodes with data, the pipeline tests with the data the conditional
-  independence relations that the literature graph implies
-- The pipeline controls the false discovery rate over all the tests, and reports for
-  each test the p-value and the adjusted q-value
-- The tests are statistical procedures only: an LLM does not compute or change a
-  p-value
-
-### `R17` (Edge Verdict)
-
-- Each edge of the literature graph gets a verdict with its evidence (the q-values of
-  the tests behind it):
-  - `supported`: the data is consistent with the edge
-  - `rejected`: the data gives weak or inconsistent evidence of dependence
-  - `untested`: a node of the edge has no data
-- The pipeline lists the pairs of variables that look dependent in the data and are
-  separated in the graph, as potentially missing edges
-
-### `R18` (Collider Bias)
-
-- A dependence that appears only after conditioning on a common effect does not add a
-  direct edge between the two variables
-
-### `R19` (Final Graph)
-
-- The pipeline outputs a final graph as a separate output: it never modifies the
-  literature graph
-- Each difference between the final graph and the literature graph (an added, a
-  removed, or a retained edge) comes with its reason and its verdict
-
-## Requirements: Output
-
-### `R20` (Files for Each Paper)
-
-- For each paper, the pipeline writes a file with the records and a file with the
-  DAG, both with the base name of the paper (see
-  [`R1`](#r1-input-papers))
-
-### `R21` (Graph and Report Files)
-
-- The pipeline writes the literature graph, the final graph, and the audit report as
-  JSON files
-
-### `R22` (Picture of a Graph)
-
-- The user can render the DAG of a paper, the literature graph, or the final graph as
-  an image
-- The image shows the `inferred` edges and the conflicting edges in a way that is
-  different from the other edges
-
-### `R23` (Issues File)
-
-- When a stage fails for a paper (e.g., a missing or unreadable markdown file, a
-  failed extraction), the pipeline records the reason for that paper and goes on with
-  the other papers
-- Each stage writes these failures in an issues file, so that each stage can run
-  alone
-
-### `R24` (Rerun Skips Processed Papers)
-
-- A rerun does not extract again the records of a paper that already has them,
-  unless the user asks for it
-- A rerun on a list with new papers updates the literature graph with them
-
 ## Non-Goals
 
 - Does not search, download, or convert papers: it uses the markdown files of the
   pipeline of
   [`research/Estimate_academic_paper_quality/docs/01-prd.md`](/research/Estimate_academic_paper_quality/docs/01-prd.md)
+- Does not merge the DAGs of different papers in v1.0: this is v2.0, see
+  [`R12`](#r12-literature-graph)
+- Does not use the knowledge of an LLM or the metadata of a dataset to propose
+  variables or edges: this is v3.0
 - Does not mine data for relationships: it audits the relationships that papers
   suggest
 - Does not prove that a relationship is true: the verdict of
@@ -255,6 +326,8 @@
 - Does not solve contemporaneous feedback: it only reports the papers that have it
   (see [`R11`](#r11-feedback-loop))
 - Does not generate trading code and does not backtest a strategy
+- Does not ask the user to approve anything before it builds the DAG of a paper: the
+  user reviews the result after, see [`R8`](#r8-review-report)
 - Does not rate or rank papers from their graphs, see Open Questions
 - Does not change the output of the pipeline of
   [`research/Estimate_academic_paper_quality/docs/01-prd.md`](/research/Estimate_academic_paper_quality/docs/01-prd.md)
@@ -270,11 +343,14 @@
   most 5% of the pairs that name different variables get the same id
 - **Acyclicity**: 100% of the DAGs that the pipeline outputs have no cycle
 - **Audit on synthetic data**: on data generated from a known DAG, with one edge
-  added to the graph and one edge removed from it, the audit marks the added edge as
+  added to the DAG and one edge removed from it, the audit marks the added edge as
   `rejected` and lists the removed edge as potentially missing, at the significance
   level 0.05 after false discovery rate control
-- **Approval load**: the acceptance rate of the proposals of
-  [`R8`](#r8-human-approval) is reported, with no target for now
+- **Review completeness**: 100% of the nodes and edges of each DAG appear in the
+  review report of [`R8`](#r8-review-report), each with its status and its provenance
+  pointer (automatic check)
+- **Review load**: the share of nodes and edges that the user marks `remove` in the
+  review report of [`R8`](#r8-review-report) is reported, with no target for now
 - **Rerun cost**: a rerun on a list with no new paper makes no LLM call
 
 ## Constraints and Assumptions
@@ -282,10 +358,12 @@
 - The papers are the output of the pipeline of
   [`research/Estimate_academic_paper_quality/docs/01-prd.md`](/research/Estimate_academic_paper_quality/docs/01-prd.md),
   which runs first: that pipeline does not depend on this one
-- The relationships come from the text of the paper, never from the memory of an LLM
-  about the paper: this is the reason for [`R3`](#r3-provenance-pointer)
+- In v1.0 and v2.0 the relationships come from the text of the paper, never from the
+  memory of an LLM about the paper: this is the reason for
+  [`R3`](#r3-provenance-pointer)
+  - v3.0 relaxes this constraint, see [Scope by Version](#scope-by-version)
 - The outputs of an LLM can differ between two runs on the same paper: this is the
-  reason for [`R8`](#r8-human-approval) and
+  reason for [`R8`](#r8-review-report) and
   [`R24`](#r24-rerun-skips-processed-papers)
 - A paper does not provide the data of its variables: the audit needs a dataset from
   the user, see [`R15`](#r15-data-input)
@@ -302,16 +380,22 @@
    shared?
 2. Can the `datamap` code of the `csfy1` repo (graph builder, validator, refiner) run
    on variables derived from text, or only on a dataset with metadata?
-3. Which data validates the edges of a literature graph, and how is it mapped to the
+3. Which data validates the edges of the DAG of a paper, and how is it mapped to the
    nodes without look-ahead and survivorship bias? -> Project
 4. If the DAGs are reliable, does the graph of a paper say something about the
    quality of the paper, and how to measure it? -> Project
 5. Where does the first vocabulary of canonical ids come from, who owns it, and is it
    shared with the Theory Store?
-6. Does the user approve each difference between the final graph and the literature
-   graph (see [`R19`](#r19-final-graph)), or does the pipeline apply them and report
+6. Does the user approve each difference between the final graph and the DAG of a
+   paper (see [`R19`](#r19-final-graph)), or does the pipeline apply them and report
    them?
 7. For a relationship without direction, which default does the pipeline use: orient
    it from the context, or keep it unoriented (see
    [`R10`](#r10-unoriented-relationship))?
 8. Are the targets of the success metrics right? They are proposals.
+9. Does the audit of [`R15`](#r15-data-input) to [`R19`](#r19-final-graph) run on the
+   DAG of a paper, as now, or on its reviewed DAG (see
+   [`R25`](#r25-reviewed-dag))?
+10. The user can only keep or remove a node or an edge (see
+    [`R8`](#r8-review-report)). Can the user also rename or merge nodes, and what
+    happens to a `new` id of the vocabulary when the user removes its node?
