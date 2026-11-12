@@ -8,8 +8,11 @@ import research.Optimal_strategy_for_racket_sports.racket_strategy_utils as rosf
 
 import dataclasses
 import logging
-from typing import Dict, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 
+import helpers.hdbg as hdbg
+import helpers.hprint as hprint
+import helpers.htutorial as htutori
 import ipywidgets
 import matplotlib.colors as mcolors
 import matplotlib.patches as mpatches
@@ -19,12 +22,11 @@ import pandas as pd
 from IPython.display import clear_output, display
 from matplotlib.axes import Axes
 
-import helpers.hdbg as hdbg
-import helpers.hprint as hprint
-import helpers.htutorial as htutori
-from research.Optimal_strategy_for_racket_sports import racket_params
-from research.Optimal_strategy_for_racket_sports import racket_scoring
-from research.Optimal_strategy_for_racket_sports import racket_trajectory
+from research.Optimal_strategy_for_racket_sports import (
+    racket_params,
+    racket_scoring,
+    racket_trajectory,
+)
 
 _LOG = logging.getLogger(__name__)
 
@@ -277,6 +279,47 @@ def plot_launch_tradeoff(
 
 
 # #############################################################################
+# Widget controls shared by the score and exploration widgets
+# #############################################################################
+
+
+def _build_returner_controls(
+    sport: racket_params.SportParams, y_init: float
+) -> Dict[str, Tuple[Any, Any]]:
+    """
+    Build the sliders of the returner position, on the returner's half.
+
+    :param sport: sport parameters, for the court size
+    :param y_init: starting returner `y`, in meters
+    :return: `(slider, box)` of "returner_x" and of "returner_y"
+    """
+    _LOG.debug(hprint.to_str("y_init"))
+    x_max = sport.court.width_m / 2
+    y_max = sport.court.length_m / 2
+    returner_x_slider, returner_x_box = htutori.build_widget_control(
+        name="returner_x",
+        description="Returner x (m)",
+        min_val=-x_max,
+        max_val=x_max,
+        step=0.1,
+        initial_value=0.0,
+    )
+    returner_y_slider, returner_y_box = htutori.build_widget_control(
+        name="returner_y",
+        description="Returner y (m)",
+        min_val=0.5,
+        max_val=y_max,
+        step=0.1,
+        initial_value=y_init,
+    )
+    controls: Dict[str, Tuple[Any, Any]] = {
+        "returner_x": (returner_x_slider, returner_x_box),
+        "returner_y": (returner_y_slider, returner_y_box),
+    }
+    return controls
+
+
+# #############################################################################
 # Score widget (cheap re-score over a cached launch table)
 # #############################################################################
 
@@ -299,24 +342,10 @@ def build_score_widget(
     :return: the displayed widget container
     """
     _LOG.debug(hprint.to_str("returner"))
-    x_max = sport.court.width_m / 2
     y_max = sport.court.length_m / 2
-    returner_x_slider, returner_x_box = htutori.build_widget_control(
-        name="returner_x",
-        description="Returner x (m)",
-        min_val=-x_max,
-        max_val=x_max,
-        step=0.1,
-        initial_value=0.0,
-    )
-    returner_y_slider, returner_y_box = htutori.build_widget_control(
-        name="returner_y",
-        description="Returner y (m)",
-        min_val=0.5,
-        max_val=y_max,
-        step=0.1,
-        initial_value=y_max / 2,
-    )
+    returner_controls = _build_returner_controls(sport, y_max / 2)
+    returner_x_slider, returner_x_box = returner_controls["returner_x"]
+    returner_y_slider, returner_y_box = returner_controls["returner_y"]
     t_r_slider, t_r_box = htutori.build_widget_control(
         name="t_r",
         description="Reaction time (s)",
@@ -338,7 +367,6 @@ def build_score_widget(
     def update(change: Optional[object] = None) -> None:
         """
         Re-score the cached launch table and redraw the heatmaps.
-
         """
         _ = change
         with output:
@@ -445,29 +473,15 @@ def build_exploration_widget(
         step=0.1,
         initial_value=-(y_max - 1.0),
     )
-    returner_x_slider, returner_x_box = htutori.build_widget_control(
-        name="returner_x",
-        description="Returner x (m)",
-        min_val=-x_max,
-        max_val=x_max,
-        step=0.1,
-        initial_value=0.0,
-    )
-    returner_y_slider, returner_y_box = htutori.build_widget_control(
-        name="returner_y",
-        description="Returner y (m)",
-        min_val=0.5,
-        max_val=y_max,
-        step=0.1,
-        initial_value=y_max - 1.0,
-    )
+    returner_controls = _build_returner_controls(sport, y_max - 1.0)
+    returner_x_slider, returner_x_box = returner_controls["returner_x"]
+    returner_y_slider, returner_y_box = returner_controls["returner_y"]
     run_button = ipywidgets.Button(description="Run", button_style="primary")
     output = ipywidgets.Output()
 
     def run(_button: Optional[object] = None) -> None:
         """
         Resample the launch table for the current controls and redraw.
-
         """
         _ = _button
         with output:

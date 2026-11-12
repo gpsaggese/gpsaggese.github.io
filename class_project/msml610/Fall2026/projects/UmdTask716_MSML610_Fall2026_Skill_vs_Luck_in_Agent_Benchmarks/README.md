@@ -27,41 +27,54 @@ Chandrashekar), tracked in
   - The benchmark is too small for the gaps it shows
     - Resolving a 1-point gap would take about 14,700 tasks
     - 500 tasks only resolve gaps of about 5.4 points or more
+  - The ranking itself is uncertain
+    - The top 3 agents share about 94% of the first place, and a typical top-25
+      agent has a 95% rank interval about 18 ranks wide
+  - Rankings on 2 halves of the tasks agree over all 173 agents (Kendall 0.90)
+    but are weak among the top 20 (Kendall 0.25)
+  - The leader of one half scores 2.0 points less on the other half
+  - The best of 20 equal variants on 500 tasks looks 3.8 points better than it
+    is
+  - Under a 2PL IRT fit, the 500 tasks are worth about 107 equally informative
+    tasks for the top 20
 - The analysis and the plots are in `skill_vs_luck.example.ipynb`
 
 ## Status of the Milestones
 
-| Milestone                     | Status                                                        |
-| :---------------------------- | :------------------------------------------------------------ |
-| 1. Outcome matrix             | SWE-bench Verified done; local HumanEval+ and MBPP+ runs next |
-| 2. Quantify luck              | Task-sampling part done; run-to-run part needs the local runs |
-| 3. Persistence, transfer, IRT | Planned                                                       |
-| 4. Selection effects          | Planned                                                       |
+| Milestone                     | Status                                                              |
+| :---------------------------- | :------------------------------------------------------------------ |
+| 1. Outcome matrix             | SWE-bench Verified done; local HumanEval+ and MBPP+ runs next       |
+| 2. Quantify luck              | Task-sampling part done; run-to-run part needs the local runs       |
+| 3. Persistence, transfer, IRT | SWE-bench split-half and IRT done; cross-benchmark correlation next |
+| 4. Selection effects          | Simulated and held-out curse done; real prompt variants next        |
 
 ## Structure of the Dir
 
 | Dir     | Description                                                                       |
 | :------ | :-------------------------------------------------------------------------------- |
 | `data/` | Snapshot of the SWE-bench Verified results, built by `fetch_swebench_verified.py` |
+| `docs/` | Progress log (`progress.md`) and decisions (`decisions.md`)                       |
 | `test/` | Unit tests for `skill_vs_luck_utils.py`                                           |
 
 ## Description of Files
 
-| File                               | Description                                                              | Cluster   |
-| :--------------------------------- | :----------------------------------------------------------------------- | :-------- |
-| `bashrc`, `etc_sudoers`            | Shell and sudo configuration copied into the image                       | Docker    |
-| `docker_*.sh`, `run_jupyter.sh`    | Docker scripts, copied unchanged from `class_project/project_template`   | Docker    |
-| `Dockerfile`                       | Python 3.12 slim image with the packages in `requirements.txt`           | Docker    |
-| `fetch_swebench_verified.py`       | Download the public SWE-bench Verified results into `data/`              | Data      |
-| `README.md`                        | This file                                                                | Docs      |
-| `requirements.txt`                 | Pinned Python packages installed in the image                            | Docker    |
-| `skill_vs_luck.API.ipynb`          | Walkthrough of every function in `skill_vs_luck_utils.py`                | Notebooks |
-| `skill_vs_luck.API.py`             | Jupytext pair of `skill_vs_luck.API.ipynb`                               | Notebooks |
-| `skill_vs_luck.example.ipynb`      | Milestones 1 and 2 on the SWE-bench Verified leaderboard                 | Notebooks |
-| `skill_vs_luck.example.py`         | Jupytext pair of `skill_vs_luck.example.ipynb`                           | Notebooks |
-| `skill_vs_luck_utils.py`           | Data loading, intervals, paired tests, benchmark size, simulation, plots | Library   |
-| `test/test_skill_vs_luck_utils.py` | Unit tests for `skill_vs_luck_utils.py`                                  | Tests     |
-| `version.sh`                       | Print the package versions inside the image                              | Docker    |
+| File                               | Description                                                                                                               | Cluster   |
+| :--------------------------------- | :------------------------------------------------------------------------------------------------------------------------ | :-------- |
+| `bashrc`, `etc_sudoers`            | Shell and sudo configuration copied into the image                                                                        | Docker    |
+| `docker_*.sh`, `run_jupyter.sh`    | Docker scripts, copied unchanged from `class_project/project_template`                                                    | Docker    |
+| `Dockerfile`                       | Python 3.12 slim image with the packages in `requirements.txt`                                                            | Docker    |
+| `docs/decisions.md`                | Non-obvious choices, one entry per decision                                                                               | Docs      |
+| `docs/progress.md`                 | Status, built pieces, findings with their evidence, and history                                                           | Docs      |
+| `fetch_swebench_verified.py`       | Download the public SWE-bench Verified results into `data/`                                                               | Data      |
+| `README.md`                        | This file                                                                                                                 | Docs      |
+| `requirements.txt`                 | Pinned Python packages installed in the image, including `jax` and `numpyro`                                              | Docker    |
+| `skill_vs_luck.API.ipynb`          | Walkthrough of every function in `skill_vs_luck_utils.py`                                                                 | Notebooks |
+| `skill_vs_luck.API.py`             | Jupytext pair of `skill_vs_luck.API.ipynb`                                                                                | Notebooks |
+| `skill_vs_luck.example.ipynb`      | Milestones 1 to 4 on the SWE-bench Verified leaderboard                                                                   | Notebooks |
+| `skill_vs_luck.example.py`         | Jupytext pair of `skill_vs_luck.example.ipynb`                                                                            | Notebooks |
+| `skill_vs_luck_utils.py`           | Data loading, intervals, rank intervals, paired tests, benchmark size, simulation, split-half, winner's curse, IRT, plots | Library   |
+| `test/test_skill_vs_luck_utils.py` | Unit tests for `skill_vs_luck_utils.py`                                                                                   | Tests     |
+| `version.sh`                       | Print the package versions inside the image                                                                               | Docker    |
 
 - The files in `data/`:
 

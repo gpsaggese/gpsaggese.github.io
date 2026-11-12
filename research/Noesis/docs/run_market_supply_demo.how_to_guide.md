@@ -17,11 +17,11 @@ flowchart LR
     book --> clear["clear_round()<br/>fills at one price"]
 ```
 
-The component diagram is in `design.architecture.md`, under **Supply refresh flow**.
+The component diagram is in `02-design.architecture.md`, under **Supply refresh flow**.
 
 ## 1. Prepare the Shell
 
-Follow `onboarding.md` (environment and `PYTHONPATH`). Run the commands below
+Follow `09-onboarding.md` (environment and `PYTHONPATH`). Run the commands below
 from the repository root.
 
 ## 2. Run on the Catalog Sample
@@ -107,7 +107,7 @@ A bid larger than one ask fills across sellers, cheapest first:
 ```
 
 Reads `OPENROUTER_API_KEY` from the environment or `research/Noesis/.env` (see
-`onboarding.md`). The call is `GET /models/{model}/endpoints`: read-only, no
+`09-onboarding.md`). The call is `GET /models/{model}/endpoints`: read-only, no
 charge. The output has the same four sections; the first log line reads
 `Catalog source: 'live'`, and prices reflect the current catalog.
 

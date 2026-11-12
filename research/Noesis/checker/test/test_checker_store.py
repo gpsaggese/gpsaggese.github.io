@@ -74,10 +74,13 @@ class Test_claim_probe_slot(hunitest.TestCase):
             contracts = await rnochsto.list_active_contracts(pool)
             self.assertEqual(len(contracts), 1)
             self.assertEqual(contracts[0].terms.contract_id, contract_id)
+            self.assertEqual(contracts[0].seller_id, "groq")
             self.assertEqual(contracts[0].target_canaries, 10)
             self.assertEqual(contracts[0].maximum_seconds, 300)
             canaries = await rnochsto.load_active_canaries(pool, "v1")
-            self.assertEqual([item.canary_id for item in canaries], ["math-v1-001"])
+            self.assertEqual(
+                [item.canary_id for item in canaries], ["math-v1-001"]
+            )
             probe_id = await rnochsto.claim_probe_slot(
                 pool, contract_id, 1, "math-v1-001"
             )
@@ -90,7 +93,9 @@ class Test_claim_probe_slot(hunitest.TestCase):
             self.assertFalse(await rnochsto.mark_probe_running(pool, probe_id))
             request_id = await _add_request(pool, contract_id, True, True)
             self.assertTrue(
-                await rnochsto.complete_probe(pool, probe_id, request_id, "m2-v1")
+                await rnochsto.complete_probe(
+                    pool, probe_id, request_id, "m2-v1"
+                )
             )
 
         rnctnteut.run_with_clean_db(self, _body)
@@ -117,12 +122,14 @@ class Test_finalize_contract(hunitest.TestCase):
                 await _add_request(pool, contract_id)
             for _ in range(8):
                 await _add_request(pool, contract_id, True, True)
-            observations = await rnochsto.list_request_observations(pool, contract_id)
+            observations = await rnochsto.list_request_observations(
+                pool, contract_id
+            )
             terms = rnochmod.ContractTerms(contract_id, 2.0, 0.9, 0.85)
             policy = rnochmod.WindowPolicy()
             evidence = rnochevi.build_evidence(observations, terms, policy)
             decision = rnochver.decide_verdict(evidence, terms, policy)
-            ended_at = datetime.datetime.now(datetime.timezone.utc)
+            ended_at = datetime.datetime.now(datetime.UTC)
             async with pool.connection() as conn:
                 await conn.execute(
                     "UPDATE contracts SET state = 'CLOSED' WHERE contract_id = %s",
