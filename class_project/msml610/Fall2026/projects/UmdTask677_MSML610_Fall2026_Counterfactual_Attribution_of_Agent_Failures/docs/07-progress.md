@@ -52,7 +52,7 @@
 ## Next
 
 1. Get PR 2 (#917) reviewed and merged
-2. Move the Drive folder to the class folder and create the research Google Doc
+2. Create the research Google Doc
 3. Stage B: `V` curves on the pilot failures and the direct-arm check of the
    shortcut (`04-plan.md`)
 4. Stage C: the remaining 15 tasks
@@ -68,10 +68,9 @@
 | 2026-11-11 | Docs renamed to the class layout (`04-plan.md`); `03-decisions.md` and this log added; SWE-based Milestone 1 handoff deleted |
 | 2026-11-11 | Docker setup changed for chess: Docker CLI, host-socket mount, SWE evaluator and `requirements.eval.txt` removed; the image builds natively on arm64 and the 11 unit tests pass inside it |
 | 2026-11-11 | Reproduction notes added to `milestone1.md` (environment, tablebase hashes, seeds and positions, model settings, commands, ledger by phase in `results/ledger_summary.json`); checked: tasks regenerate byte-identically from the seeds and the 62 replay checks pass again on a copy of the store with no API calls |
-| 2026-11-11 | PR 2 opened (#917) and merged with upstream master; `docker_jupyter.sh` tested on the new image; checkpoint stores and ledger uploaded to Google Drive (10 parts, checksum verified), with instructions in `milestone1.md` for getting them and for running with your own API key |
+| 2026-11-11 | PR 2 opened (#917) and merged with upstream master; `docker_jupyter.sh` tested on the new image; checkpoint stores and ledger archived (66 MB, sha256 recorded) and put on the project's UMD Google Drive folder, one subfolder per run, with instructions in `milestone1.md` for getting them and for running with your own API key |
 
 ## Open Work
 
 - PR #917: waiting for review
-- Drive folder: in a personal Drive for now, to move to the class folder
 - Research Google Doc: not started (PR 3)

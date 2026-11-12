@@ -298,30 +298,28 @@
 
 ### Original Runs on Google Drive
 
-- Folder:
-  [MSML610_Fall2026_Counterfactual_Attribution_of_Agent_Failures](https://drive.google.com/drive/folders/15c2YBv6f9FU5enMjIqUqoKwgKxpwcG6T)
-  (view access on request; to move to the class folder)
-- It holds one archive of `runs/` (both stores and the spending ledger) split
-  into 10 parts, `part00` to `part09`, and a `README.txt`
-  - Joined archive: 68,983,596 bytes (66 MB), 218 MB unpacked, sha256
+- Folder (UMD Google Drive, anyone with the link can view):
+  [Counterfactual_Attribution_of_Agent_Failures](https://drive.google.com/drive/folders/1LUvrqmsK3RAW-YqEDqNxw_61YBbmCBMZ)
+- One subfolder per run, named after its run name (`CAAF_RUN`), matching
+  `results/<run name>/` in git; Milestone 1 is in `m1_think/`:
+  - `MSML610_Fall2026_Counterfactual_Attribution_of_Agent_Failures.M1_runs.tar.gz`:
+    `runs/` with both stores and the spending ledger; 68,983,596 bytes (66 MB),
+    218 MB unpacked, sha256
     `d63ef2d94a695280cffa1896bbe201e0f2d3f79def9b90751801c6f09e3a7172`
-- To get the original runs, download the 10 parts into this project folder and
+  - the same sha256 in a `.sha256` file, and a `README.txt`
+- To get the original runs, download the archive into this project folder and
   run each step from there:
 
-1. Join the parts:
-   ```bash
-   cat MSML610_Fall2026_Counterfactual_Attribution_of_Agent_Failures.M1_runs.tar.gz.part* > MSML610_Fall2026_Counterfactual_Attribution_of_Agent_Failures.M1_runs.tar.gz
-   ```
-2. Check the archive (the output must start with `d63ef2d9`):
+1. Check the archive (the output must start with `d63ef2d9`):
    ```bash
    shasum -a 256 MSML610_Fall2026_Counterfactual_Attribution_of_Agent_Failures.M1_runs.tar.gz
    ```
-3. Unpack it, which recreates `runs/` (git-ignored, so it cannot be committed by
+2. Unpack it, which recreates `runs/` (git-ignored, so it cannot be committed by
    accident):
    ```bash
    tar -xzf MSML610_Fall2026_Counterfactual_Attribution_of_Agent_Failures.M1_runs.tar.gz
    ```
-4. Rerun the 62 replay checks on the original games (no API calls, free):
+3. Rerun the 62 replay checks on the original games (no API calls, free):
    ```bash
    CAAF_CONFIG=chess_haiku_think.yaml CAAF_RUN=m1_think .venv/bin/python caaf_m1.py replay
    ```
@@ -352,9 +350,9 @@
   the config and the tablebase hashes recorded in your checkpoints against the
   ones here. If they all match, the remaining explanation is a change on the
   model provider's side
-- To share your runs, commit `results/<run name>/` on a branch, and upload
-  `runs/<run name>/` to Drive the same way (one archive, split into parts of
-  about 7 MB if the upload is capped at 10 MB)
+- To share your runs, commit `results/<run name>/` on a branch, and upload an
+  archive of `runs/<run name>/` with a short `README.txt` to a new subfolder
+  named after the run in the Drive folder above (ask for Editor access)
 - For Milestone 2, analyse the shared stores rather than fresh pilots, so that
   everyone works on the same games
 
