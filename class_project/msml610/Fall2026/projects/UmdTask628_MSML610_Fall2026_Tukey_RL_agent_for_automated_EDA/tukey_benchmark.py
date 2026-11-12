@@ -66,22 +66,6 @@ _KEYS = (
 _UNLIMITED_BUDGET = 1_000_000
 
 
-def _check_hash(inst: tenv.Instance, expected_hash: str) -> None:
-    """
-    Check that an instance is the one its set manifest recorded.
-
-    :param inst: instance a method is about to see
-    :param expected_hash: hash in the manifest
-    """
-    hdbg.dassert_eq(
-        tsets.instance_hash(inst),
-        expected_hash,
-        "Instance %s differs from its manifest",
-        inst.seed,
-    )
-    tsets.check_semantics(inst, expected_hash)
-
-
 # #############################################################################
 # One method on one instance
 # #############################################################################
@@ -116,7 +100,7 @@ def run_method(
         env = tenv.TukeyEnv(cfg, budget=_UNLIMITED_BUDGET)
         evidence, _ = env.reset(seed=seed)
         if expected_hash is not None:
-            _check_hash(env.instance, expected_hash)
+            tsets.check_instance(env.instance, expected_hash)
         while True:
             action = agent.next_action(evidence)
             evidence, _, terminated, truncated, _ = env.step(action)
@@ -133,7 +117,7 @@ def run_method(
         name = method.removesuffix("_tuned")
         inst = tenv.sample_instance(cfg, seed)
         if expected_hash is not None:
-            _check_hash(inst, expected_hash)
+            tsets.check_instance(inst, expected_hash)
         output = tbasel.run_baseline(
             name, inst.d_train.to_numpy(), seed=seed, params=params
         )

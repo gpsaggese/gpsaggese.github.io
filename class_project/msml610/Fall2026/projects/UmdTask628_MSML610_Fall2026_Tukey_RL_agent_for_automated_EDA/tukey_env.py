@@ -582,6 +582,21 @@ def _sample_proto(cfg: GraphConfig, seed: int) -> Dict[str, Any]:
     return sample
 
 
+def _spawn_rngs(seed: int, n_streams: int) -> List[np.random.Generator]:
+    """
+    Create independent random streams from one instance seed.
+
+    :param seed: instance seed
+    :param n_streams: number of streams
+    :return: one generator per stream, in spawn order
+    """
+    rngs = [
+        np.random.default_rng(s)
+        for s in np.random.SeedSequence(seed).spawn(n_streams)
+    ]
+    return rngs
+
+
 def _sample_linear(cfg: GraphConfig, seed: int) -> Dict[str, Any]:
     """
     Sample a linear-SEM instance that meets the family contracts.
@@ -598,9 +613,7 @@ def _sample_linear(cfg: GraphConfig, seed: int) -> Dict[str, Any]:
         hdbg.dassert_eq(cfg.noise_scale, "equal", "Use EQVAR_RAW_CONFIG")
     # The same seed gives the same graph and weights in every linear family,
     # so families can be compared on paired instances.
-    rng_graph, rng_weights, rng_noise, rng_split, rng_perm = [
-        np.random.default_rng(s) for s in np.random.SeedSequence(seed).spawn(5)
-    ]
+    rng_graph, rng_weights, rng_noise, rng_split, rng_perm = _spawn_rngs(seed, 5)
     B = _sample_dag(rng_graph, cfg)
     if cfg.family == "mixed_node":
         draws = rng_graph.integers(len(_MIXED_NOISES), size=cfg.n_nodes)
@@ -615,12 +628,7 @@ def _sample_linear(cfg: GraphConfig, seed: int) -> Dict[str, Any]:
     # every edge passes the margin.
     n_rejected = 0
     for _ in range(_MAX_TRIES):
-        signs = rng_weights.choice([-1.0, 1.0], size=B.shape)
-        W = B * signs * rng_weights.uniform(*cfg.w_range, size=B.shape)
-        if cfg.noise_scale == "equal":
-            noise_std = np.ones(cfg.n_nodes)
-        else:
-            noise_std = rng_weights.uniform(0.5, 1.5, size=cfg.n_nodes)
+        W, noise_std = _random_weights(rng_weights, B, cfg)
         W = cap_signal_share(W, noise_std**2)
         if passes_edge_margin(W, noise_std**2):
             break
@@ -629,20 +637,13 @@ def _sample_linear(cfg: GraphConfig, seed: int) -> Dict[str, Any]:
         raise RuntimeError(f"No weights passed the margin in {_MAX_TRIES} tries")
     x = _simulate_linear(rng_noise, W, families, noise_std, cfg.n_samples)
     # Permute the columns so that column order cannot leak the causal order.
-    perm = rng_perm.permutation(cfg.n_nodes)
-    x = x[:, perm]
-    x_train, x_test = _split_and_scale(x, cfg, rng_split)
+    sample = _permuted_sample(
+        x, W, noise_std, families, cfg, rng_perm, rng_split
+    )
     target_class, target_reason = _target_for_linear(families, cfg)
-    sample = {
-        "W": W[np.ix_(perm, perm)],
-        "x_train": x_train,
-        "x_test": x_test,
-        "noise_std": noise_std[perm],
-        "noise_families": tuple(families[k] for k in perm),
-        "target_class": target_class,
-        "target_reason": target_reason,
-        "n_rejected": n_rejected,
-    }
+    sample["target_class"] = target_class
+    sample["target_reason"] = target_reason
+    sample["n_rejected"] = n_rejected
     return sample
 
 
@@ -816,9 +817,7 @@ def _sample_nonlinear(cfg: GraphConfig, seed: int) -> Dict[str, Any]:
     :param seed: instance seed
     :return: fields of `Instance` besides `cfg`, `seed`, data and `truth`
     """
-    rng_graph, rng_weights, rng_noise, rng_split, rng_perm, rng_pilot = [
-        np.random.default_rng(s) for s in np.random.SeedSequence(seed).spawn(6)
-    ]
+    rng_graph, rng_weights, rng_noise, rng_split, rng_perm, rng_pilot = _spawn_rngs(seed, 6)
     B = _sample_dag(rng_graph, cfg)
     family = _MIXED_NOISES[rng_graph.integers(len(_MIXED_NOISES))]
     mechanism = _NONLINEAR_MECHANISMS[rng_graph.integers(2)]
@@ -910,9 +909,7 @@ def _sample_iscm_noise_share(cfg: GraphConfig, seed: int) -> Dict[str, Any]:
         # Above the 10% floor, so the cap of the other families never binds.
         hdbg.dassert_lt(_MIN_NOISE_SHARE, level)
         hdbg.dassert_lt(level, 1.0)
-    rng_graph, rng_weights, rng_noise, rng_split, rng_perm = [
-        np.random.default_rng(s) for s in np.random.SeedSequence(seed).spawn(5)
-    ]
+    rng_graph, rng_weights, rng_noise, rng_split, rng_perm = _spawn_rngs(seed, 5)
     B = _sample_dag(rng_graph, cfg)
     family = _MIXED_NOISES[rng_graph.integers(len(_MIXED_NOISES))]
     families = (family,) * cfg.n_nodes
@@ -962,9 +959,7 @@ def _sample_iscm(cfg: GraphConfig, seed: int) -> Dict[str, Any]:
     """
     if cfg.noise_share is not None:
         return _sample_iscm_noise_share(cfg, seed)
-    rng_graph, rng_weights, rng_noise, rng_split, rng_perm = [
-        np.random.default_rng(s) for s in np.random.SeedSequence(seed).spawn(5)
-    ]
+    rng_graph, rng_weights, rng_noise, rng_split, rng_perm = _spawn_rngs(seed, 5)
     B = _sample_dag(rng_graph, cfg)
     family = _MIXED_NOISES[rng_graph.integers(len(_MIXED_NOISES))]
     families = (family,) * cfg.n_nodes
@@ -1020,9 +1015,7 @@ def _sample_pgmpy(cfg: GraphConfig, seed: int) -> Dict[str, Any]:
     :param seed: instance seed
     :return: fields of `Instance` besides `cfg`, `seed`, data and `truth`
     """
-    rng_graph, rng_split, rng_perm = [
-        np.random.default_rng(s) for s in np.random.SeedSequence(seed).spawn(3)
-    ]
+    rng_graph, rng_split, rng_perm = _spawn_rngs(seed, 3)
     n_nodes = cfg.n_nodes
     names = [f"X_{k}" for k in range(n_nodes)]
     n_rejected = 0
@@ -1101,9 +1094,7 @@ def _sample_sklearn_reg(cfg: GraphConfig, seed: int) -> Dict[str, Any]:
     n_features = cfg.n_nodes - 1
     hdbg.dassert_lte(2, cfg.n_edges)
     hdbg.dassert_lte(cfg.n_edges, n_features)
-    rng_graph, rng_noise, rng_split, rng_perm = [
-        np.random.default_rng(s) for s in np.random.SeedSequence(seed).spawn(4)
-    ]
+    rng_graph, rng_noise, rng_split, rng_perm = _spawn_rngs(seed, 4)
     n_rejected = 0
     for _ in range(_MAX_TRIES):
         features, y, coef = skdata.make_regression(
@@ -1155,9 +1146,7 @@ def _sample_sklearn_confounder(cfg: GraphConfig, seed: int) -> Dict[str, Any]:
     hdbg.dassert_eq(cfg.n_edges, 2, "U -> T1 and U -> T2")
     n_features = cfg.n_nodes - 2
     hdbg.dassert_lte(1, n_features)
-    rng_graph, rng_noise, rng_split, rng_perm = [
-        np.random.default_rng(s) for s in np.random.SeedSequence(seed).spawn(4)
-    ]
+    rng_graph, rng_noise, rng_split, rng_perm = _spawn_rngs(seed, 4)
     features, targets, coef = skdata.make_regression(
         n_samples=cfg.n_samples,
         n_features=n_features,
@@ -1219,9 +1208,7 @@ def _sample_hidden_confounder(cfg: GraphConfig, seed: int) -> Dict[str, Any]:
     hdbg.dassert_eq(cfg.n_edges, 2 + n_private)
     n_isolated = cfg.n_nodes - 2 - n_private
     hdbg.dassert_lte(0, n_isolated)
-    rng_graph, rng_noise, rng_split, rng_perm = [
-        np.random.default_rng(s) for s in np.random.SeedSequence(seed).spawn(4)
-    ]
+    rng_graph, rng_noise, rng_split, rng_perm = _spawn_rngs(seed, 4)
     family = "gaussian"
     if variant == "hidden_c":
         family = str(rng_graph.choice(["exponential", "uniform"]))

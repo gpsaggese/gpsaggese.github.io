@@ -52,7 +52,6 @@ SEED_RANGES = {
     "noise_v1": 7_000_000_000,
     "llm_v1": 8_000_000_000,
 }
-_RANGE_WIDTH = 1_000_000_000
 # Seed-stream tag of the size draw, separate from the instance's own streams.
 _SIZE_STREAM = 17
 # Seed-stream tag of a curriculum stage's draws (size, density, family).
@@ -763,11 +762,21 @@ def sample_checked(
     :return: the instance
     """
     inst = tenv.sample_instance(cfg, seed)
+    check_instance(inst, expected_hash)
+    return inst
+
+
+def check_instance(inst: tenv.Instance, expected_hash: str) -> None:
+    """
+    Check that an instance is the one its set manifest recorded.
+
+    :param inst: sampled instance
+    :param expected_hash: hash recorded in the manifest
+    """
     hdbg.dassert_eq(
         instance_hash(inst),
         expected_hash,
         "Instance %s differs from its manifest: the generator changed",
-        seed,
+        inst.seed,
     )
     check_semantics(inst, expected_hash)
-    return inst

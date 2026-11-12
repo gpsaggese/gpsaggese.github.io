@@ -231,9 +231,14 @@ def fallback_score(
     :param lam: weight of the structural term
     :return: combined score
     """
-    shd_norm = shd_target / max(1, n_true_edges)
-    score = -lam * shd_norm - (1 - lam) if informative else -shd_norm
-    return float(score) + 0.0
+    score = tscore.combined_score(
+        shd_target,
+        n_true_edges,
+        pred_frac=0.0,
+        informative=informative,
+        lam=lam,
+    )
+    return score
 
 
 def fallback_score_legacy(

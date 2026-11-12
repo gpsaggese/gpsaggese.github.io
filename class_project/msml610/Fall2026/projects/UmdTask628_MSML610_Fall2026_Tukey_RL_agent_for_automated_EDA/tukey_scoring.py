@@ -802,6 +802,36 @@ def _score_against_pag(
     return scores
 
 
+def combined_score(
+    shd_target: float,
+    n_true_edges: int,
+    *,
+    pred_frac: float,
+    informative: bool,
+    lam: float,
+) -> float:
+    """
+    Combine the structural distance and the prediction term into one score.
+
+    When the instance's prediction term is uninformative the score is
+    structural only.
+
+    :param shd_target: structural distance to the identifiable target
+    :param n_true_edges: number of true edges (normalizes the distance)
+    :param pred_frac: share of the true graph's held-out gain recovered
+    :param informative: whether the instance's prediction term is informative
+    :param lam: weight of the structural term
+    :return: combined score
+    """
+    shd_norm = shd_target / max(1, n_true_edges)
+    if informative:
+        score = -lam * shd_norm - (1 - lam) * (1 - pred_frac)
+    else:
+        score = -shd_norm
+    # Adding 0.0 turns a negative zero (e.g., -0.5 * 0) into 0.0.
+    return float(score) + 0.0
+
+
 def score_pdag(
     A_hat: np.ndarray,
     truth: Truth,
@@ -871,13 +901,13 @@ def score_pdag(
     scores.update(pdag_agreement(marks_hat, truth.B))
     if extendable:
         scores.update(_get_prediction_terms(B_ext, truth))
-        shd_norm = scores["shd_target"] / max(1, n_true_edges)
-        if scores["prediction_informative"]:
-            score = -lam * shd_norm - (1 - lam) * (1 - scores["pred_frac"])
-        else:
-            score = -shd_norm
-        # Adding 0.0 turns a negative zero (e.g., -0.5 * 0) into 0.0.
-        scores["score"] = float(score) + 0.0
+        scores["score"] = combined_score(
+            scores["shd_target"],
+            n_true_edges,
+            pred_frac=scores["pred_frac"],
+            informative=scores["prediction_informative"],
+            lam=lam,
+        )
     else:
         scores["score"] = float("nan")
     scores["lam"] = lam
@@ -945,13 +975,13 @@ def score_graph(
     scores.update(pdag_agreement(marks_hat_dag, truth.B))
     if acyclic:
         scores.update(_get_prediction_terms(B_hat, truth))
-        shd_norm = scores["shd_target"] / max(1, n_true_edges)
-        if scores["prediction_informative"]:
-            score = -lam * shd_norm - (1 - lam) * (1 - scores["pred_frac"])
-        else:
-            score = -shd_norm
-        # Adding 0.0 turns a negative zero (e.g., -0.5 * 0) into 0.0.
-        scores["score"] = float(score) + 0.0
+        scores["score"] = combined_score(
+            scores["shd_target"],
+            n_true_edges,
+            pred_frac=scores["pred_frac"],
+            informative=scores["prediction_informative"],
+            lam=lam,
+        )
     else:
         scores["score"] = float("nan")
     scores["lam"] = lam

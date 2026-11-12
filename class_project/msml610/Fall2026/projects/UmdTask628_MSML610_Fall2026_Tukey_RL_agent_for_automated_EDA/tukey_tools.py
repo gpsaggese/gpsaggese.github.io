@@ -46,7 +46,6 @@ TOOLSETS = {
     "m3": (CI_TEST, REGRESS, LINGAM_DIR, NONGAUSS, VARIANCE),
     "m4": (CI_TEST, REGRESS, LINGAM_DIR, NONGAUSS, VARIANCE, MUTUAL_INFO),
 }
-TOOLS = TOOLSETS["m3"]
 
 # Training-only cost of one call; evaluation scores are cost-free.
 TOOL_COSTS = {

@@ -129,7 +129,7 @@ class Test_enumerate_tool_actions(hunitest.TestCase):
             actions = ttools.enumerate_tool_actions(n_nodes)
             counts = {
                 tool: sum(a.kind == tool for a in actions)
-                for tool in ttools.TOOLS
+                for tool in ttools.TOOLSETS["m3"]
             }
             lines.append(f"{n_nodes}: {len(actions)} {counts}")
             self.assertEqual(len(set(actions)), len(actions))
