@@ -219,24 +219,52 @@
 
 ### Commands
 
-- Setup (once):
-  ```bash
-  > cd class_project/msml610/Fall2026/projects/UmdTask677_MSML610_Fall2026_Counterfactual_Attribution_of_Agent_Failures
-  > python3.12 -m venv .venv && .venv/bin/pip install -r requirements.txt
-  > bash data/fetch_tablebases.sh
-  > .venv/bin/python -m pytest -q -c /dev/null test/test_caaf.py
-  > set -a; source ~/.cf-m1.env; set +a
-  ```
-- Thinking on (the results in `results/m1_think/`), with the defaults written
-  out:
-  ```bash
-  > export CAAF_CONFIG=chess_haiku_think.yaml CAAF_RUN=m1_think
-  > .venv/bin/python caaf_m1.py pilot --tasks 5 --runs 2 --workers 8
-  > .venv/bin/python caaf_m1.py replay --workers 8
-  > .venv/bin/python caaf_m1.py screen --per-run 4 --n 10 --workers 8
-  > .venv/bin/python caaf_m1.py aa --checkpoints 2 --n 50 --workers 8
-  > .venv/bin/python caaf_m1.py report
-  ```
+- Run each step from the repo root, in order; every block is one command to
+  copy and run. Only steps 6, 8 and 9 call the API (about $2.50 and about an
+  hour in total); every other step is free
+
+1. Go to the project folder:
+   ```bash
+   cd class_project/msml610/Fall2026/projects/UmdTask677_MSML610_Fall2026_Counterfactual_Attribution_of_Agent_Failures
+   ```
+2. Create a Python 3.12 environment with the pinned packages:
+   ```bash
+   python3.12 -m venv .venv && .venv/bin/pip install -r requirements.txt
+   ```
+3. Download and check the tablebase files:
+   ```bash
+   bash data/fetch_tablebases.sh
+   ```
+4. Run the unit tests (11 tests, free, no API):
+   ```bash
+   .venv/bin/python -m pytest -q -c /dev/null test/test_caaf.py
+   ```
+5. Load the API key and pick the thinking-on setup (results go to
+   `results/m1_think/`):
+   ```bash
+   set -a; source ~/.cf-m1.env; set +a; export CAAF_CONFIG=chess_haiku_think.yaml CAAF_RUN=m1_think
+   ```
+6. Play the 10 pilot games (5 tasks x 2):
+   ```bash
+   .venv/bin/python caaf_m1.py pilot --tasks 5 --runs 2 --workers 8
+   ```
+7. Run the replay checks (no API calls, free):
+   ```bash
+   .venv/bin/python caaf_m1.py replay --workers 8
+   ```
+8. Screen: 30 checkpoints x 10 = 300 restarts:
+   ```bash
+   .venv/bin/python caaf_m1.py screen --per-run 4 --n 10 --workers 8
+   ```
+9. Run the A/A test: 2 checkpoints x 50 vs 50:
+   ```bash
+   .venv/bin/python caaf_m1.py aa --checkpoints 2 --n 50 --workers 8
+   ```
+10. Write the summary:
+    ```bash
+    .venv/bin/python caaf_m1.py report
+    ```
+
 - Thinking off (`results/m1/`): the same with
   `CAAF_CONFIG=chess_haiku.yaml CAAF_RUN=m1`; `aa` stops there with "only 0
   mixed checkpoints"
