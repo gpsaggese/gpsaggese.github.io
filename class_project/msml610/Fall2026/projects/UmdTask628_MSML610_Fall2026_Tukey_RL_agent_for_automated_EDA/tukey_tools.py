@@ -19,6 +19,7 @@ import tukey_tools as ttools
 """
 
 import dataclasses
+import functools
 import itertools
 import logging
 from typing import Dict, List, Tuple
@@ -142,6 +143,19 @@ def enumerate_tool_actions(n_nodes: int, *, toolset: str = "m3") -> List[Action]
         # Appended, so the Milestone 3 calls keep their order.
         for i, j in itertools.combinations(nodes, 2):
             actions.append(Action(MUTUAL_INFO, (i, j)))
+    return actions
+
+
+@functools.lru_cache(maxsize=None)
+def _canonical_actions(n_nodes: int, toolset: str) -> frozenset:
+    """
+    Return every canonical tool action of a graph size, as a set.
+
+    :param n_nodes: number of variables
+    :param toolset: key of `TOOLSETS`
+    :return: the actions of `enumerate_tool_actions()`
+    """
+    actions = frozenset(enumerate_tool_actions(n_nodes, toolset=toolset))
     return actions
 
 
@@ -401,12 +415,20 @@ class Evidence:
         """
         Run a tool call and add its result to the evidence.
 
-        :param action: tool action not yet taken, within budget
+        :param action: canonical tool action (e.g., from `ci_test_action()`)
+            not yet taken, within budget
         :return: the tool's result
         """
         hdbg.dassert_lt(0, self.budget_left, "Tool budget exhausted")
         hdbg.dassert_not_in(action, self.results, "Repeated tool call")
-        hdbg.dassert_in(action.kind, TOOLSETS[self.toolset])
+        # Only canonical calls of this toolset on existing variables run, so a
+        # reordered call cannot pass as a new one.
+        hdbg.dassert(
+            action in _canonical_actions(self.n_nodes, self.toolset),
+            "Not a canonical tool call of toolset '%s': %s",
+            self.toolset,
+            action,
+        )
         result = self._cache.run(action)
         self.results[action] = result
         self.history.append(action)

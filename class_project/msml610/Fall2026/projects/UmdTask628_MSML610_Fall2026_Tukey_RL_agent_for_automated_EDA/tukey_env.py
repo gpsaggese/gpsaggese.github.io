@@ -1378,6 +1378,7 @@ class TukeyEnv:
             cfg.n_nodes, toolset=toolset
         )
         self._done = True
+        self._submitted = False
 
     @property
     def d_train(self) -> pd.DataFrame:
@@ -1417,6 +1418,7 @@ class TukeyEnv:
             cache, self.budget, toolset=self.toolset
         )
         self._done = False
+        self._submitted = False
         info = {
             "n_nodes": self.cfg.n_nodes,
             "n_train": cache.n_train,
@@ -1491,9 +1493,12 @@ class TukeyEnv:
             number of tool calls used and of dropped edges
         """
         hdbg.dassert_is_not(self._instance, None, "Call reset() first")
+        # One submission per episode: repeated scores would leak the graph.
+        hdbg.dassert(not self._submitted, "Graph already submitted: call reset()")
         B_hat, n_dropped = tscore.edges_to_adjacency(edges, self.cfg.n_nodes)
         scores = tscore.score_graph(B_hat, self._instance.truth)
         scores["n_dropped_edges"] = n_dropped
         scores["calls_used"] = self._evidence.calls_used
         self._done = True
+        self._submitted = True
         return scores

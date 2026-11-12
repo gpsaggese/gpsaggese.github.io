@@ -405,6 +405,19 @@ class Test_TukeyEnv(hunitest.TestCase):
         """
         self.assert_equal(actual, expected, dedent=True)
 
+    def test5(self) -> None:
+        """
+        A second submission in one episode is refused until the next reset.
+        """
+        env = tenv.TukeyEnv(_LINEAR_CONFIGS["linear_exp"])
+        env.reset(seed=6)
+        env.submit_graph([])
+        with self.assertRaises(AssertionError):
+            env.submit_graph([(0, 1)])
+        env.reset(seed=6)
+        scores = env.submit_graph([])
+        self.assertEqual(scores["score"], -1.0)
+
 
 # #############################################################################
 # Test_more_families

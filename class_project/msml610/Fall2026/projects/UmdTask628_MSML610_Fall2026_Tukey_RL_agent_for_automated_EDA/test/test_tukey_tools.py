@@ -465,6 +465,28 @@ class Test_Evidence(hunitest.TestCase):
         self.assertEqual(len(legal), 55)
         self.assertNotIn(all_actions[0], legal)
 
+    def test3(self) -> None:
+        """
+        Non-canonical and out-of-range calls are refused and cost nothing.
+        """
+        cache = ttools.ToolCache(_simulate(seed=9))
+        evidence = ttools.Evidence(cache, budget=5)
+        evidence.record(ttools.ci_test_action(0, 1, (2,)))
+        refused = [
+            # The same test with the pair reversed.
+            ttools.Action(ttools.CI_TEST, (1, 0, 2)),
+            # A conditioning variable equal to a tested one.
+            ttools.Action(ttools.CI_TEST, (0, 1, 1)),
+            ttools.Action(ttools.REGRESS, (0, 0)),
+            ttools.Action(ttools.LINGAM_DIR, (2, 2)),
+            # A variable that does not exist.
+            ttools.Action(ttools.NONGAUSS, (cache.n_nodes,)),
+        ]
+        for action in refused:
+            with self.assertRaises(AssertionError, msg=str(action)):
+                evidence.record(action)
+        self.assertEqual(evidence.calls_used, 1)
+
 
 class Test_mutual_info(hunitest.TestCase):
     """
