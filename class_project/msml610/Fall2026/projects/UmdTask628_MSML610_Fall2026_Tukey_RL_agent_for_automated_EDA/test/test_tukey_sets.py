@@ -20,6 +20,13 @@ import tukey_sets as tsets
 
 _LOG = logging.getLogger(__name__)
 
+# The committed manifests, found from this file so the tests run from any
+# directory.
+_MANIFEST_DIR = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+    "configs/sets",
+)
+
 # The open sets whose manifests Milestones 1-2 commit: the main and prototype
 # validation sets and the 20 sets of the Milestone 2 benchmark. Later
 # milestones add the manifests of the sets they use.
@@ -176,13 +183,21 @@ class Test_manifests(hunitest.TestCase):
     def test3(self) -> None:
         """
         Sealed sets refuse to load unless the caller is the confirmatory run.
+
+        A small stand-in set is sealed, so no real test graph is generated.
         """
         manifest_dir = self.get_scratch_space()
-        with self.assertRaises(AssertionError):
-            tsets.load_set("T_main", manifest_dir)
-        self.assertFalse(
-            os.path.exists(tsets.manifest_path(manifest_dir, "T_main"))
+        name = "T_stand_in"
+        eval_set = dataclasses.replace(
+            tsets.EVAL_SETS["V_proto"], name=name, sealed=True, n_instances=2
         )
+        with umock.patch.dict(tsets.EVAL_SETS, {name: eval_set}):
+            with open(tsets.manifest_path(manifest_dir, name), "w") as file:
+                json.dump(tsets.build_manifest(eval_set), file)
+            with self.assertRaises(AssertionError):
+                tsets.load_set(name, manifest_dir)
+            items = tsets.load_set(name, manifest_dir, allow_sealed=True)
+        self.assertEqual([seed for seed, _, _ in items], eval_set.seeds)
 
 
 def _tampered_manifest(manifest_dir: str, name: str, change: str) -> None:
@@ -195,7 +210,7 @@ def _tampered_manifest(manifest_dir: str, name: str, change: str) -> None:
         `duplicate` (a seed listed twice), `count` (one instance missing) or
         `size` (an instance's recorded size)
     """
-    with open(tsets.manifest_path("configs/sets", name)) as file:
+    with open(tsets.manifest_path(_MANIFEST_DIR, name)) as file:
         manifest = json.load(file)
     instances = manifest["instances"]
     if change == "header":
@@ -227,11 +242,11 @@ class Test_load_set_checks(hunitest.TestCase):
             name
             for name, eval_set in tsets.EVAL_SETS.items()
             if not eval_set.sealed
-            and os.path.exists(tsets.manifest_path("configs/sets", name))
+            and os.path.exists(tsets.manifest_path(_MANIFEST_DIR, name))
         ]
         self.assertEqual(sorted(names), _COMMITTED_SETS)
         for name in names:
-            items = tsets.load_set(name, "configs/sets")
+            items = tsets.load_set(name, _MANIFEST_DIR)
             self.assertEqual(
                 [seed for seed, _, _ in items], tsets.EVAL_SETS[name].seeds
             )
@@ -476,10 +491,7 @@ class Test_manifest_semantics(hunitest.TestCase):
         """
         The first instance of every committed open set matches its metadata.
         """
-        manifest_dir = os.path.join(
-            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-            "configs/sets",
-        )
+        manifest_dir = _MANIFEST_DIR
         checked = 0
         for name, eval_set in sorted(tsets.EVAL_SETS.items()):
             path = tsets.manifest_path(manifest_dir, name)

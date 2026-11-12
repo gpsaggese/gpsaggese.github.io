@@ -8,6 +8,7 @@ import test.test_tukey_benchmark as ttetuben
 
 import json
 import logging
+import os
 import unittest.mock as umock
 
 import numpy as np
@@ -17,6 +18,13 @@ import tukey_benchmark as tbench
 import tukey_sets as tsets
 
 _LOG = logging.getLogger(__name__)
+
+# The committed manifests, found from this file so the tests run from any
+# directory.
+_MANIFEST_DIR = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+    "configs/sets",
+)
 
 
 class Test_statistics(hunitest.TestCase):
@@ -117,7 +125,7 @@ class Test_run_method(hunitest.TestCase):
         Checked tasks give the same results as unchecked runs.
         """
         tasks = tbench.make_tasks(
-            "V_m2_A0", "pc", {"alpha": 0.05}, "configs/sets"
+            "V_m2_A0", "pc", {"alpha": 0.05}, _MANIFEST_DIR
         )
         results = tbench.run_tasks(tasks[:3], n_workers=1)
         for task, result in zip(tasks[:3], results):
@@ -134,7 +142,7 @@ class Test_run_method(hunitest.TestCase):
         manifest_dir = self.get_scratch_space()
         # Each set's own manifest with its first seed changed.
         for name in ("V_m2_A0", "B_m2_A0"):
-            with open(tsets.manifest_path("configs/sets", name)) as file:
+            with open(tsets.manifest_path(_MANIFEST_DIR, name)) as file:
                 manifest = json.load(file)
             manifest["instances"][0]["seed"] += 1
             with open(tsets.manifest_path(manifest_dir, name), "w") as file:
@@ -151,10 +159,38 @@ class Test_run_method(hunitest.TestCase):
         A hash mismatch inside a worker stops the run.
         """
         tasks = tbench.make_tasks(
-            "V_m2_A0", "pc", {"alpha": 0.05}, "configs/sets"
+            "V_m2_A0", "pc", {"alpha": 0.05}, _MANIFEST_DIR
         )
         set_name, method, params, seed, _ = tasks[0]
         with self.assertRaises(AssertionError):
             tbench.run_tasks(
                 [(set_name, method, params, seed, "0")], n_workers=1
             )
+
+    def test6(self) -> None:
+        """
+        The stored Milestone 2 rows of two setting-D graphs are reproduced.
+        """
+        project_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        with open(os.path.join(project_dir, "results/m2/per_graph.json")) as file:
+            stored = json.load(file)["settings"]["D"]
+        with open(
+            os.path.join(project_dir, "results/m2/table_summary.json")
+        ) as file:
+            tuned = json.load(file)["tuned"]["D"]
+        items = tsets.load_set("B_m2_D", _MANIFEST_DIR)[:2]
+        mismatches = []
+        for method, values in sorted(stored["methods"].items()):
+            params = tbench.FIXED.get(method, None)
+            if params is None:
+                params = tuned[method]["params"]
+            for k, (seed, cfg, expected_hash) in enumerate(items):
+                self.assertEqual(seed, stored["seeds"][k])
+                result = tbench.run_method(
+                    method, params, cfg, seed, expected_hash=expected_hash
+                )
+                actual = (round(result["score"], 4), int(result["shd_target"]))
+                wanted = (values["score"][k], values["shd_target"][k])
+                if actual != wanted:
+                    mismatches.append((method, seed, actual, wanted))
+        self.assertEqual(mismatches, [])

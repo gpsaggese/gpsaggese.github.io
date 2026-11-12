@@ -119,8 +119,15 @@ class Test_causal_disco_api(hunitest.TestCase):
         Test the sortability and sort-regress functions exist.
         """
         # Prepare inputs.
-        analytics = ["var_sortability", "r2_sortability"]
+        analytics = [
+            "var_sortability",
+            "r2_sortability",
+            "relatives_sortability",
+            "true_relatives_sortability",
+            "rel_count_emp_hard",
+        ]
         baselines = [
+            "sort_regress",
             "var_sort_regress",
             "r2_sort_regress",
             "random_sort_regress",

@@ -353,6 +353,9 @@ class Test_TukeyEnv(hunitest.TestCase):
         ]
         for array in arrays:
             self.assertNotEqual(array.shape, env.d_test.shape)
+            # No array holds more rows than the training split (e.g., all
+            # 3,000 rows with the test rows inside).
+            self.assertLessEqual(array.shape[0], max(len(x_train), 1))
         self.assertTrue(np.array_equal(evidence._cache._x, x_train))
 
     def test2(self) -> None:

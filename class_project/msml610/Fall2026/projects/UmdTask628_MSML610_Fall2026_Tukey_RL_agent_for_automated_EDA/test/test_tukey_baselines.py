@@ -123,6 +123,52 @@ class Test_run_baseline(hunitest.TestCase):
         actual = [output.n_ci_tests, output.n_ci_tests_legacy]
         self.assert_equal(str(actual), "[1, 4]")
 
+    def test5(self) -> None:
+        """
+        GES on a clean collider returns its CPDAG (no reversed edge).
+        """
+        rng = np.random.default_rng(1)
+        x = np.zeros((6000, 3))
+        x[:, 0] = rng.normal(size=6000)
+        x[:, 1] = rng.normal(size=6000)
+        x[:, 2] = 0.8 * x[:, 0] + 0.8 * x[:, 1] + rng.normal(size=6000)
+        B = np.zeros((3, 3), dtype=int)
+        B[0, 2] = B[1, 2] = 1
+        truth = tscore.make_truth(
+            B, tscore.TARGET_CPDAG, np.zeros(3, bool), x[:4000], x[4000:]
+        )
+        scores = tbasel.score_output(tbasel.run_baseline("ges", x[:4000]), truth)
+        self.assertEqual((scores["shd_target"], scores["score"]), (0, 0.0))
+
+    def test6(self) -> None:
+        """
+        Every baseline returns a well-formed graph that scores on a main graph.
+        """
+        cfg = tenv.GraphConfig(family="linear_exp", n_nodes=5, n_edges=6)
+        inst = tenv.sample_instance(cfg, 3)
+        x = inst.d_train.to_numpy()
+        for name in tbasel.BASELINES:
+            output = tbasel.run_baseline(name, x)
+            self.assertEqual(output.adjacency.shape, (5, 5), msg=name)
+            if output.kind == "dag":
+                self.assertTrue(tscore.is_dag(output.adjacency), msg=name)
+            scores = tbasel.score_output(output, inst.truth)
+            self.assertIn("shd_target", scores, msg=name)
+
+    def test7(self) -> None:
+        """
+        On raw prototype data the R2 and relatives sorts recover most edges.
+        """
+        for name in ("r2_sort_regress", "rel_sort_regress"):
+            shd, n_edges = [], []
+            for seed in range(5):
+                inst = tenv.sample_instance(tenv.PROTO_CONFIG, seed)
+                output = tbasel.run_baseline(name, inst.d_train.to_numpy())
+                shd.append(tbasel.score_output(output, inst.truth)["shd_dag"])
+                n_edges.append(int(inst.truth.B.sum()))
+            # A transposed output would reverse every edge.
+            self.assertLess(sum(shd), sum(n_edges), msg=name)
+
 
 class Test_score_output(hunitest.TestCase):
     """
