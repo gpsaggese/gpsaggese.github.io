@@ -8,10 +8,9 @@ written before any training; evaluation refuses an instance whose hash no
 longer matches (the generator changed). Sealed sets (the confirmatory test
 sets) can only be loaded by the confirmatory evaluation.
 
-The Milestone 2 table checked no manifest until commit `933f565`: the stored
-table (run `wp3_m2_table`) rebuilt its instances from the seeds alone. The
-checked re-run after the audit (`results/post_audit/m2_pdag_rerun.json`)
-reproduced its PC and GES values exactly. Since that commit `load_set` also
+The stored Milestone 2 table (run `wp3_m2_table`) rebuilt its instances from
+the seeds alone, before manifests were checked; a later re-run that checked
+every manifest reproduced its PC and GES values exactly. `load_set` now also
 checks a manifest's header, its ordered seeds and each instance's size and
 family against the code.
 
@@ -56,15 +55,14 @@ SEED_RANGES = {
 _SIZE_STREAM = 17
 # Seed-stream tag of a curriculum stage's draws (size, density, family).
 _CURRICULUM_STREAM = 23
-# Noise-level study v1 (`configs/noise_v1_plan.json`): the noise shares of the
-# four levels, and the fallback grid that the generator check
-# (`tukey_noise.py check`) selects if the primary one fails its rule.
+# Noise-level study v1 (its plan, generator check and results arrive with
+# Milestone 4): the noise shares of the four levels, and the fallback grid that
+# the generator check selects if the primary one fails its rule.
 NOISE_GRIDS_V1 = {
     "primary": (0.2, 0.4, 0.6, 0.8),
     "fallback": (0.15, 0.35, 0.55, 0.75),
 }
-# The grid the generator check selected (`results/noise_v1/
-# generator_check.json`: the primary grid passed its rule).
+# The grid the generator check selected (the primary grid passed its rule).
 NOISE_GRID_V1 = NOISE_GRIDS_V1["primary"]
 
 

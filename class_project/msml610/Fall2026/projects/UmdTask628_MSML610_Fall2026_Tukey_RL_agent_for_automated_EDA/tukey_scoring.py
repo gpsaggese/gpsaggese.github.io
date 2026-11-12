@@ -733,7 +733,7 @@ def skeleton_scores_extension_legacy(
     A_hat: np.ndarray, B: np.ndarray
 ) -> Dict[str, float]:
     """
-    Compute the skeleton and orientation keys as code up to `10f4d19` did.
+    Compute the skeleton and orientation keys as code before the audit did.
 
     Kept only to reproduce stored values: those runs scored a PDAG through one
     DAG extension (`dag_extension()`), which picks arbitrary directions for

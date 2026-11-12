@@ -21,7 +21,7 @@
   [`D8`](03-decisions.md#d8-behaviour-cloning-then-reinforce); the curriculum,
   noise and real-data studies
 - Last full check of all four milestones: Oct 16, fresh clone, 371 tests
-  passed, notebooks ran; Milestones 1-2 rechecked Nov 11 for `PR_B1` (144 tests,
+  passed, notebooks ran; Milestones 1-2 rechecked Nov 12 for `PR_B1` (145 tests,
   both notebooks)
 
 ## Findings
@@ -77,6 +77,9 @@
 | 2026-11-09 | `PR_P1` merged (#865)                                      |
 | 2026-11-11 | `PR_B1` revalidated on current master: 144 tests passed,   |
 |            | both notebooks ran in a fresh image                        |
+| 2026-11-12 | `PR_B1` trimmed after a code review: 145 tests passed,     |
+|            | both notebooks ran; torch and later-milestone manifests    |
+|            | move to the PRs that use them                              |
 
 - Note: the docs were drafted with AI assistance; the authors check and explain
   every line

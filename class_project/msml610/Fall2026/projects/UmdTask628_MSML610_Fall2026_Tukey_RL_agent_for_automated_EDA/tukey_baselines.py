@@ -73,9 +73,9 @@ class BaselineOutput:
     seconds: float
     # PC only: number of distinct CI tests run.
     n_ci_tests: int = 0
-    # PC only: the count stored by every run made with code up to `10f4d19`
-    # (the audited commit), i.e., every entry of causal-learn's p-value cache,
-    # including its 3 metadata entries; kept to reproduce those values.
+    # PC only: the count stored by every run made before the PC-count audit,
+    # i.e., every entry of causal-learn's p-value cache, including its 3
+    # metadata entries; kept to reproduce those values.
     n_ci_tests_legacy: int = 0
 
 
@@ -245,7 +245,7 @@ def fallback_score_legacy(
     shd_target: float, n_true_edges: int, *, lam: float
 ) -> float:
     """
-    Score a graph that predicts nothing as code up to `10f4d19` did.
+    Score a graph that predicts nothing as code before the audit did.
 
     Kept only to reproduce stored values: it always applied the prediction
     penalty, also on instances whose prediction term is uninformative.

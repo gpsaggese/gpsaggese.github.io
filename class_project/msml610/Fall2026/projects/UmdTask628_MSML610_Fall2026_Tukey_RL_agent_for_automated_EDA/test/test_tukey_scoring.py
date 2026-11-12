@@ -573,7 +573,7 @@ class Test_score_pdag(hunitest.TestCase):
         """
         Test that an undirected edge is never scored as an orientation.
 
-        The extension-based keys of code up to `10f4d19` scored it 1.0 or
+        The extension-based keys of code before the audit scored it 1.0 or
         0.0 depending only on the variables' order.
         """
         A_hat = np.array([[0, 1], [1, 0]])

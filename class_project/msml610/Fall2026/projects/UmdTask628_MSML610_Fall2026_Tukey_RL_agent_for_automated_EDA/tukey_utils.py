@@ -34,6 +34,8 @@ _LOG = logging.getLogger(__name__)
 # Resolution of the notebook figures: small enough for the repository's file
 # size limit (500 KB) with every figure embedded.
 _DPI = 60
+# The generator gallery uses less, to keep the example notebook under 500 KB.
+_GALLERY_DPI = 52
 
 
 def init_loggers(notebook_log: logging.Logger) -> None:
@@ -114,6 +116,19 @@ def cell2_1_describe_instance(inst: tenv.Instance) -> pd.DataFrame:
 # #############################################################################
 
 
+def _to_digraph(B: np.ndarray) -> nx.DiGraph:
+    """
+    Convert an adjacency matrix to a graph with nodes `x0`, `x1`, ...
+
+    :param B: adjacency, `B[i, j] = 1` for x_i -> x_j
+    :return: directed graph
+    """
+    graph = nx.DiGraph()
+    graph.add_nodes_from(f"x{k}" for k in range(B.shape[0]))
+    graph.add_edges_from((f"x{i}", f"x{j}") for i, j in np.argwhere(B != 0))
+    return graph
+
+
 def cell2_2_plot_graph(
     B: np.ndarray, title: str, *, figsize: Tuple[int, int] = (4, 4)
 ) -> None:
@@ -124,10 +139,7 @@ def cell2_2_plot_graph(
     :param title: plot title
     :param figsize: figure size in inches
     """
-    graph = nx.DiGraph()
-    graph.add_nodes_from(f"x{k}" for k in range(B.shape[0]))
-    graph.add_edges_from((f"x{i}", f"x{j}") for i, j in np.argwhere(B != 0))
-    hgraphv.plot_causal_dag(graph, title, figsize=figsize)
+    hgraphv.plot_causal_dag(_to_digraph(B), title, figsize=figsize)
     plt.show()
 
 
@@ -280,22 +292,12 @@ def example_cell1_2_plot_gallery(*, seed: int = 0) -> None:
         "layered": tenv.GraphConfig(n_nodes=9, n_edges=10, topology="layered"),
     }
     _, axes = plt.subplots(
-        # A lower resolution keeps the example notebook under the 500 KB
-        # file limit.
-        1,
-        len(configs),
-        figsize=(3.5 * len(configs), 3.5),
-        dpi=52,
+        1, len(configs), figsize=(3.5 * len(configs), 3.5), dpi=_GALLERY_DPI
     )
     for ax, (name, cfg) in zip(axes, configs.items()):
         inst = tenv.sample_instance(cfg, seed)
-        graph = nx.DiGraph()
-        graph.add_nodes_from(f"x{k}" for k in range(cfg.n_nodes))
-        graph.add_edges_from(
-            (f"x{i}", f"x{j}") for i, j in np.argwhere(inst.truth.B != 0)
-        )
         title = f"{name}\ntarget: {inst.truth.target_class}"
-        hgraphv.plot_causal_dag(graph, title, ax=ax)
+        hgraphv.plot_causal_dag(_to_digraph(inst.truth.B), title, ax=ax)
     plt.tight_layout()
     plt.show()
 
@@ -315,8 +317,7 @@ def example_cell1_3_load_sortability(
     :return: edge-definition sortabilities on raw and standardized data, and
         the var-sort-regress minus random-order SHD on standardized data
     """
-    with open(path) as file:
-        report = json.load(file)
+    report = _load_json(path)
     rows = []
     for family, values in report.items():
         test = values["var_minus_random_shd"]
@@ -386,7 +387,7 @@ def _corrected_pc_calls(
     Read the corrected PC test counts of one result file.
 
     The stored counts include 3 metadata entries of causal-learn's p-value
-    cache (`results/post_audit/README.md`).
+    cache (field `definitions` of the corrections file).
 
     :param path: result file as named in the corrections
     :param corrections: post-audit corrections of the PC counts
@@ -409,8 +410,7 @@ def example_cell2_1_load_m2_table(
     :param path: committed result file
     :return: one row per method
     """
-    with open(path) as file:
-        table = json.load(file)["table"][setting]
+    table = _load_json(path)["table"][setting]
     corrected = _corrected_pc_calls(path)
     rows = []
     for method, summary in table.items():
@@ -438,8 +438,7 @@ def example_cell2_2_plot_m2_heatmap(
 
     :param path: committed result file
     """
-    with open(path) as file:
-        table = json.load(file)["table"]
+    table = _load_json(path)["table"]
     scores = pd.DataFrame(
         {
             setting: {method: s["score"] for method, s in methods.items()}

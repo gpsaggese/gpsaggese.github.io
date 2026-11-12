@@ -20,7 +20,7 @@
 
 - A first version of all four milestones is built locally; its last full check
   was on Oct 16 (fresh clone: 371 tests passed, both notebooks ran). This PR
-  brings Milestones 1-2, rechecked on Nov 11 (144 tests, both notebooks)
+  brings Milestones 1-2, rechecked on Nov 12 (145 tests, both notebooks)
 - We submit it one milestone per PR; each code PR reruns the full tests and the
   Docker build. This replaces
   [#629](https://github.com/gpsaggese/gpsaggese.github.io/pull/629) (one 93-file PR)
@@ -41,8 +41,8 @@
 | `tukey_sortability.py` | How much simulated data leak about the causal order |
 | `tukey_utils.py`, `tukey.API.*`, `tukey.example.*` | Notebook helpers and the two notebooks (Milestones 1-2) |
 | `test/` | Unit tests for the eight modules above; `test_docker_tukey.py` runs both notebooks |
-| `configs/sets/` | Manifests of the unsealed sets (sealed test sets arrive with the PRs that use them) |
-| `results/m1`, `results/m2` | Stored Milestone 1-2 results the example notebook reads |
+| `configs/sets/` | Manifests of the 22 sets Milestones 1-2 use: `V_main`, `V_proto` and the 20 sets of the Milestone 2 table (later milestones add theirs) |
+| `results/m1`, `results/m2`, `results/post_audit` | Stored Milestone 1-2 results: the example notebook reads `sortability.json`, `table_summary.json` and the corrected PC counts; `generators.json` (per-family generator summary) and `per_graph.json` (per-graph rows behind the Milestone 2 table) are kept as evidence |
 
 ## Quick Start
 
