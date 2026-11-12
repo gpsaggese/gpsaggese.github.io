@@ -187,3 +187,39 @@ def sweep_costs(
     df = pd.DataFrame(rows)
     df.insert(0, "cost_bps", [cost * 1e4 for cost in costs])
     return df
+
+
+def evaluate_by_group(
+    pos: pd.Series,
+    fwd_ret: pd.Series,
+    groups: pd.Series,
+    *,
+    cost: float = 0.0,
+) -> pd.DataFrame:
+    """
+    Measure the trades separately for each group, e.g., each market regime.
+
+    :param pos: position for each trade, +1 or -1
+    :param fwd_ret: return over the holding period of each trade
+    :param groups: group of each trade; trades with no group are left out
+    :param cost: cost of a round trip, as a return (0.001 = 10 bp)
+    :return: one row per group with the metrics of `evaluate_positions()`
+        and:
+        - `share`: share of the trades in the group
+        - `mean_abs_bps`: average |r| of the trades, in basis points
+        - `se_bps`: standard error of the PnL per trade, in basis points
+    """
+    df = pd.DataFrame({"pos": pos, "fwd_ret": fwd_ret, "group": groups})
+    df = df.dropna()
+    df = df[df["fwd_ret"] != 0]
+    rows = {}
+    for group, sub in df.groupby("group", observed=True):
+        stats = evaluate_positions(sub["pos"], sub["fwd_ret"], cost=cost)
+        pnl = sub["pos"] * sub["fwd_ret"]
+        stats["share"] = len(sub) / len(df)
+        stats["mean_abs_bps"] = sub["fwd_ret"].abs().mean() * 1e4
+        stats["se_bps"] = pnl.std() / np.sqrt(len(sub)) * 1e4
+        rows[group] = stats
+    results = pd.DataFrame(rows).T
+    results.index.name = "group"
+    return results
