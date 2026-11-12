@@ -54,11 +54,16 @@ def _move_legend_below(ax: Axes, fontsize: float) -> None:
     """
     Move the legend of a map below the court, with the names of the paper.
 
+    The players are the server and the returner, and "SE" is spelled out.
+
     :param ax: axes drawn by `plot_winner_heatmap()`
     :param fontsize: font size of the legend
     """
     handles, labels = ax.get_legend_handles_labels()
-    labels = [_PLAYER_NAMES.get(label, label) for label in labels]
+    labels = [
+        _PLAYER_NAMES.get(label, label).replace(" SE ", " standard errors ")
+        for label in labels
+    ]
     ax.legend(
         handles,
         labels,
@@ -80,7 +85,7 @@ def _add_shared_legend(fig: Figure, ax: Axes) -> None:
     :param ax: one of the maps, drawn by `plot_winner_heatmap()`
     """
     labels_by_prefix = {
-        "best region": "best region: within 2 SE of the highest",
+        "best region": "best region: within 2 standard errors of the highest",
         "best target": "best target: middle of the region",
         "player 1": "server",
     }
