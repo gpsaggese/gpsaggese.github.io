@@ -3,3 +3,21 @@ __pycache__/
 .ipynb_checkpoints/
 
 docker_build.version.log
+.venv/
+data/
+results/benchmark/
+.pytest_cache/
+__pycache__/
+*.pyc
+
+# Local data and generated experiment outputs
+data/
+results/
+.venv/
+.pytest_cache/
+*.npz
+*.parquet
+*.safetensors
+*.pt
+*.pth
+*.log
