@@ -1,0 +1,107 @@
+// type=UMD_slides
+// course_title=From Data to Decisions: Building Decision Systems with Probabilistic Causal Reasoning
+// lesson_title=Lesson 06.1: Causal ML
+// slides_engine=typst
+
+# Causal Graphical Models
+
+## Structural Causal Models and DAGs
+* Structural Causal Model
+// From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:366 '* Structural Causal Model'
+* Causal DAG
+// From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:91 '* Causal DAG'
+* Building a Causal DAG
+// From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:660 '* Building a Causal DAG'
+
+## Confounders, Mediators, and Colliders
+* Confounder Variable
+// From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:900 '* Confounder Variable'
+* Mediator Variable
+// From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:741 '* Mediator Variable'
+* Collider
+// From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:1089 '* Collider'
+
+## The Ladder of Causation
+* Example: Tornado Warning
+// From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:159 '* Example: Tornado Warning'
+* Tornado Warning: Level 2 (Intervention)
+// From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:256 '* Tornado Warning: Level 2 (Intervention)'
+* Tornado Warning: Level 3 (Counterfactual)
+// From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:312 '* Tornado Warning: Level 3 (Counterfactual)'
+
+# Do-Calculus and Interventional Reasoning
+
+## Intervention vs. Observation
+* Interventions in Causal Networks
+// From: msml610/lectures_source/Lesson08.5-Do_calculus.smd:11 '* Interventions in Causal Networks'
+* Intervention
+// From: msml610/lectures_source/Lesson08.5-Do_calculus.smd:79 '* The Do-Operator'
+* Conditioning vs Intervention
+// From: msml610/lectures_source/Lesson08.6-Causal_inference_intro.smd:247 '* Sales Example: Conditioning vs Intervention'
+
+## The Rules of Do-Calculus
+* Do-Calculus
+// From: msml610/lectures_source/Lesson08.5-Do_calculus.smd:769 '* Do-Calculus: Formal Framework'
+* The Rules of Do-Calculus
+// From: msml610/lectures_source/Lesson08.5-Do_calculus.smd:782 '* Do-Calculus: Three Rules'
+* Back/Frontdoor Adjustments and Do-calculus
+// From: msml610/lectures_source/Lesson08.5-Do_calculus.smd:800 '* Back/Front-Door as Applications of Do-Calculus'
+
+## From Interventions to Treatment Effects
+* Individual Treatment Effect
+// From: msml610/lectures_source/Lesson08.6-Causal_inference_intro.smd:268 '* Individual Treatment Effect'
+* Average Treatment Effect
+// From: msml610/lectures_source/Lesson08.6-Causal_inference_intro.smd:326 '* Average Treatment Effect'
+* Conditional Average Treatment Effects (CATE)
+// From: msml610/lectures_source/Lesson08.6-Causal_inference_intro.smd:354 '* Conditional Average Treatment Effects'
+
+# Identification Criteria
+
+## Back-Door and Front-Door Adjustment
+* The Back-Door Adjustment
+// From: msml610/lectures_source/Lesson08.5-Do_calculus.smd:280 '* The Back-Door Adjustment'
+* Back-Door Criterion: Overview
+// From: msml610/lectures_source/Lesson08.5-Do_calculus.smd:368 '* Backdoor Criteria'
+* Front-Door Adjustment in Causal Inference
+// From: msml610/lectures_source/Lesson08.5-Do_calculus.smd:563 '* Front-Door Adjustment: Definition'
+
+## Reading Independence from the Graph
+* Chains, Forks, and Colliders
+// From: msml610/lectures_source/Lesson08.5-Do_calculus.smd:440 '* Chains, Forks, and Colliders'
+* D-separation
+// From: msml610/lectures_source/Lesson08.6-Causal_inference_intro.smd:973 '* D-separation'
+* Identification
+// From: msml610/lectures_source/Lesson08.6-Causal_inference_intro.smd:988 '* Identification'
+
+## Adjustment in Practice
+* Confounding Bias
+// From: msml610/lectures_source/Lesson08.6-Causal_inference_intro.smd:1100 '* Confounding Bias'
+* Backdoor Adjustment
+// From: msml610/lectures_source/Lesson08.6-Causal_inference_intro.smd:1071 '* Backdoor Adjustment'
+* Propensity score
+// From: msml610/lectures_source/Lesson08.8.Causal_Linear_Regression.smd:387 '* Propensity Score'
+
+// TODO(gp): Move to Chap on Data
+# Advanced Identification Methods
+
+## Instrumental Variables and Natural Experiments
+* Instrumental Variables (IV)
+// From: msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.smd:198 '* Instrumental Variables (IV)'
+* Natural Experiments
+// From: msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.smd:216 '* Natural Experiments'
+* Unobserved Confounders That Vary Over Time
+// From: msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.smd:233 '* Unobserved Confounders That Vary Over Time'
+
+## Sensitivity to Unmeasured Confounding
+* IPW Sensitivity
+// From: msml610/lectures_source/Lesson08.8.Causal_Linear_Regression.smd:530 '* Stabilized Propensity Weights'
+* Positivity-Bias Trade-Off
+// From: msml610/lectures_source/Lesson08.8.Causal_Linear_Regression.smd:610 '* Positivity-Bias Trade-Off'
+
+## The Limits of Identifiability
+* Causal Discovery: Motivation
+// From: msml610/lectures_source/Lesson12.2-Causal_Discovery.smd:13 '* Causal Discovery: Motivation'
+* Identifiability
+// From: msml610/lectures_source/Lesson12.2-Causal_Discovery.smd:156 '* Identifiability'
+* Faithfulness
+// From: msml610/lectures_source/Lesson12.2-Causal_Discovery.smd:174 '* Faithfulness'

@@ -1,0 +1,108 @@
+// type=UMD_slides
+// course_title=From Data to Decisions: Building Decision Systems with Probabilistic Causal Reasoning
+// lesson_title=Lesson 08.1: Causal Data Pipelines
+// slides_engine=typst
+
+# Data Collection and Its Biases
+
+## Collection Design and Measurement Choices
+* Step 5: Data Acquisition and Integration
+// From: msml610/lectures_source/Lesson08.3-Causal_AI_in_business.smd:201 '* Step 5: Data Acquisition and Integration'
+* Data Ingestion
+// From: data605/lectures_source/Lesson02.3-Data_Pipelines.smd:150 '* Data Ingestion'
+* Data Pipeline Paradigms
+// From: data605/lectures_source/Lesson02.3-Data_Pipelines.smd:178 '* Data Pipeline Paradigms'
+
+## Selection Mechanisms in Acquisition
+* Sampling Bias (1/2)
+// From: msml610/lectures_source/Lesson02.6-ML_Techniques_How_To_Do_Research.smd:78 '* Sampling Bias (1/2)'
+* Sampling Bias (2/2)
+// From: msml610/lectures_source/Lesson02.6-ML_Techniques_How_To_Do_Research.smd:96 '* Sampling Bias (2/2)'
+
+## Confounders Introduced by Acquisition
+* Confounding Bias
+// From: msml610/lectures_source/Lesson08.6-Causal_inference_intro.smd:1100 '* Confounding Bias'
+* Surrogate Confounding
+// From: msml610/lectures_source/Lesson08.6-Causal_inference_intro.smd:1124 '* Surrogate Confounding'
+
+# Selection Bias and Incomplete Populations
+
+## Missing Data Mechanisms
+* Handling Outliers and Missing Data
+// From: msml610/lectures_source/Lesson02.3-ML_Techniques_Input_Processing.smd:57 '* Handling Outliers and Missing Data'
+* Single-Source Problems
+// From: data605/lectures_source/Lesson07.2-Data_Wrangling.smd:275 '* Single-Source Problems'
+
+## Subgroup Representation Gaps
+* Selection bias
+// From: msml610/lectures_source/Lesson08.6-Causal_inference_intro.smd:1133 '* Selection Bias'
+* Selection bias: Example
+// From: msml610/lectures_source/Lesson08.6-Causal_inference_intro.smd:1164 '* Selection Bias: Example'
+* Selection bias through the collider: Example
+// From: msml610/lectures_source/Lesson08.6-Causal_inference_intro.smd:1204 '* Selection Bias Through the Collider: Example'
+
+## Impact on Identifiability
+* Positivity
+// From: msml610/lectures_source/Lesson08.8.Causal_Linear_Regression.smd:583 '* Positivity'
+* Positivity-Bias Trade-Off
+// From: msml610/lectures_source/Lesson08.8.Causal_Linear_Regression.smd:610 '* Positivity-Bias Trade-Off'
+
+# Distribution Shift and Covariate Mismatch
+
+## Training vs. Production Environments
+* Problem 6: Distribution Shift
+// From: msml610/lectures_source/Lesson08.1-Causal_AI_intro.smd:274 '* Problem 6: Distribution Shift'
+* When Temporal Structure Misleads
+// From: msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.smd:286 '* When Temporal Structure Misleads'
+
+## Concept Drift and Non-Stationarity
+* Non-Stationarity and Trends
+// From: msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.smd:120 '* Non-Stationarity and Trends'
+* Unobserved Confounders That Vary Over Time
+// From: msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.smd:233 '* Unobserved Confounders That Vary Over Time'
+
+## Detecting Shift in Production
+* Why Assumptions Break in Production
+// From: book_springer/lectures_source/Lesson15.1_Deployment_Monitoring_And_Adaptation.smd:237 '* Why Assumptions Break in Production'
+* A Taxonomy of Assumptions to Monitor
+// From: book_springer/lectures_source/Lesson15.1_Deployment_Monitoring_And_Adaptation.smd:254 '* A Taxonomy of Assumptions to Monitor'
+
+# Measurement Error and Proxy Validity
+
+## Proxy Quality and Construct Validity
+* Directly Testable Assumptions
+// From: book_springer/lectures_source/Lesson15.1_Deployment_Monitoring_And_Adaptation.smd:276 '* Directly Testable Assumptions'
+* Single-Source Problems: Example
+// From: data605/lectures_source/Lesson07.2-Data_Wrangling.smd:292 '* Single-Source Problems: Example'
+
+## Attenuation from Measurement Error
+* Monitoring Directly Testable Assumptions
+// From: book_springer/lectures_source/Lesson15.1_Deployment_Monitoring_And_Adaptation.smd:298 '* Monitoring Directly Testable Assumptions'
+* Noise Removal
+// From: msml610/lectures_source/Lesson02.3-ML_Techniques_Input_Processing.smd:160 '* Noise Removal'
+
+## Correction Methods Under Known Error
+* Instrumental Variables (IV)
+// From: msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.smd:198 '* Instrumental Variables (IV)'
+* Natural Experiments
+// From: msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.smd:216 '* Natural Experiments'
+
+# Pre-Flight Data Quality Checks
+
+## Confounder Balance Checks
+* IPW Sensitivity
+// From: msml610/lectures_source/Lesson08.8.Causal_Linear_Regression.smd:597 '* IPW Diagnostics'
+* Comparison with Regression
+// From: msml610/lectures_source/Lesson08.8.Causal_Linear_Regression.smd:602 '* Comparison with Regression'
+
+## Missingness and Outlier Detection
+* Univariate Outlier Detection
+// From: data605/lectures_source/Lesson07.2-Data_Wrangling.smd:322 '* Univariate Outlier Detection'
+* Outlier Detection
+// From: data605/lectures_source/Lesson07.2-Data_Wrangling.smd:345 '* Outlier Detection'
+
+## Robust Inference Under Imperfect Data
+* Multivariate Outliers
+// From: data605/lectures_source/Lesson07.2-Data_Wrangling.smd:371 '* Multivariate Outliers'
+* Time Series Outliers
+// From: data605/lectures_source/Lesson07.2-Data_Wrangling.smd:400 '* Time Series Outliers'

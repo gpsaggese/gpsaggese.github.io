@@ -8,10 +8,9 @@ import class_scripts.gen_slides_test_utils as csgsteut
 
 import logging
 import os
-import re
 import shlex
 import sys
-from typing import Dict, List
+from typing import List
 
 import pytest
 
@@ -27,82 +26,6 @@ import helpers.hsystem as hsystem
 import helpers.hunit_test as hunitest
 
 _LOG = logging.getLogger(__name__)
-
-
-# #############################################################################
-# Utils
-# #############################################################################
-
-
-def _get_lesson_numbers(course_dir: str) -> List[str]:
-    """
-    Get all lesson numbers in a course.
-
-    :param course_dir: Course directory (data605 or msml610)
-    :return: Sorted list of lesson numbers like
-        ```
-        ["01.1", "01.2", "02", "03", "04.1"]
-        ```
-    """
-    _LOG.debug(hprint.to_str("course_dir"))
-    lectures_source_dir = os.path.join(course_dir, "lectures_source")
-    hdbg.dassert_dir_exists(lectures_source_dir)
-    lessons = []
-    for file in os.listdir(lectures_source_dir):
-        # Match lesson numbers from filenames like "Lesson01.1-BigData.txt"
-        # -> "01.1".
-        match = re.match(r"Lesson(\d+(?:\.[0-9A-Za-z]+)?)", file)
-        if match:
-            lesson_num = match.group(1)
-            lessons.append(lesson_num)
-    # De-dup since e.g. both "Lesson01.1-*.txt" and "Lesson01.1-*.pdf" match.
-    lessons = sorted(set(lessons))
-    _LOG.debug("return=%s", lessons)
-    return lessons
-
-
-def get_lesson_files(course_dir: str) -> List[str]:
-    """
-    Discover all lesson files in a course directory.
-
-    :param course_dir: Course directory (data605 or msml610)
-    :return: Sorted list of lesson file paths, e.g.,
-        ```
-        ["data605/lectures_source/Lesson01.1-BigData.txt",
-        "data605/lectures_source/Lesson01.2-History.txt"]
-        ```
-    """
-    _LOG.debug(hprint.to_str("course_dir"))
-    lectures_source_dir = os.path.join(course_dir, "lectures_source")
-    hdbg.dassert_dir_exists(lectures_source_dir)
-    lesson_files = []
-    for file in os.listdir(lectures_source_dir):
-        # Match files like "Lesson01.1-BigData.txt" or
-        # "Lesson02-Introduction.txt".
-        if re.match(r"^Lesson\d+", file):
-            file_path = os.path.join(lectures_source_dir, file)
-            lesson_files.append(file_path)
-    lesson_files = sorted(lesson_files)
-    _LOG.debug("return=%s", lesson_files)
-    return lesson_files
-
-
-def collect_all_lessons() -> Dict[str, List[str]]:
-    """
-    Collect all lessons organized by course.
-
-    :return: Dict with course dirs as keys and lesson lists as values, e.g.,
-        ```
-        {"data605": ["01.1", "01.2", "02"], "msml610": ["01", "02.1"]}
-        ```
-    """
-    all_lessons = {}
-    # TODO(ai_gp): Look for all dirs that have a lectures_source.
-    valid_dirs = ["data605", "msml610", "book_springer"]
-    for course_dir in valid_dirs:
-        all_lessons[course_dir] = _get_lesson_numbers(course_dir)
-    _LOG.debug("return=%s", all_lessons)
-    return all_lessons
 
 
 # #############################################################################
@@ -133,7 +56,7 @@ class LessonDiscovery_TestCase(hunitest.TestCase):
         _LOG.debug(hprint.to_str("self.COURSE_DIR self.FIRST_LESSON_FILENAME"))
         hdbg.dassert_ne(self.COURSE_DIR, "")
         hdbg.dassert_ne(self.FIRST_LESSON_FILENAME, "")
-        lesson_files = get_lesson_files(self.COURSE_DIR)
+        lesson_files = csccouti.get_lesson_files(self.COURSE_DIR)
         self.assertGreater(len(lesson_files), 0)
         # Compare only basenames since discovered paths are full file paths.
         basenames = [os.path.basename(f) for f in lesson_files]
@@ -147,7 +70,7 @@ class LessonDiscovery_TestCase(hunitest.TestCase):
         _LOG.debug(hprint.to_str("self.COURSE_DIR"))
         hdbg.dassert_ne(self.COURSE_DIR, "")
         min_expected_lessons = 35
-        lessons = _get_lesson_numbers(self.COURSE_DIR)
+        lessons = csccouti.get_lesson_numbers(self.COURSE_DIR)
         self.assertGreaterEqual(
             len(lessons),
             min_expected_lessons,
@@ -163,7 +86,7 @@ class LessonDiscovery_TestCase(hunitest.TestCase):
         _LOG.debug(hprint.to_str("self.COURSE_DIR"))
         hdbg.dassert_ne(self.COURSE_DIR, "")
         valid_lesson_pattern = r"^\d+(\.[0-9A-Za-z]+)?$"
-        lessons = _get_lesson_numbers(self.COURSE_DIR)
+        lessons = csccouti.get_lesson_numbers(self.COURSE_DIR)
         for lesson in lessons:
             self.assertRegex(
                 lesson,
@@ -177,7 +100,7 @@ class LessonDiscovery_TestCase(hunitest.TestCase):
         """
         _LOG.debug(hprint.to_str("self.COURSE_DIR"))
         hdbg.dassert_ne(self.COURSE_DIR, "")
-        files = get_lesson_files(self.COURSE_DIR)
+        files = csccouti.get_lesson_files(self.COURSE_DIR)
         self.assertGreater(len(files), 0)
         _LOG.debug("Found %d lesson files", len(files))
 
@@ -187,7 +110,7 @@ class LessonDiscovery_TestCase(hunitest.TestCase):
         """
         _LOG.debug(hprint.to_str("self.COURSE_DIR"))
         hdbg.dassert_ne(self.COURSE_DIR, "")
-        numbers = _get_lesson_numbers(self.COURSE_DIR)
+        numbers = csccouti.get_lesson_numbers(self.COURSE_DIR)
         self.assertGreater(len(numbers), 0)
         _LOG.debug("Found %d lesson numbers", len(numbers))
 
@@ -197,7 +120,7 @@ class LessonDiscovery_TestCase(hunitest.TestCase):
         """
         _LOG.debug(hprint.to_str("self.COURSE_DIR"))
         hdbg.dassert_ne(self.COURSE_DIR, "")
-        all_lessons = collect_all_lessons()
+        all_lessons = csccouti.collect_all_lessons()
         self.assertIn(self.COURSE_DIR, all_lessons)
 
 
@@ -297,7 +220,7 @@ class Run_preprocess_notes_py_TestCase(hunitest.TestCase):
         """
         _LOG.debug(hprint.to_str("self.COURSE_DIR"))
         hdbg.dassert_ne(self.COURSE_DIR, "")
-        lessons = _get_lesson_numbers(self.COURSE_DIR)
+        lessons = csccouti.get_lesson_numbers(self.COURSE_DIR)
         # Test PDF output type.
         output_type = "pdf"
         self._run_preprocess_notes_py(self.COURSE_DIR, lessons, output_type)
@@ -309,7 +232,7 @@ class Run_preprocess_notes_py_TestCase(hunitest.TestCase):
         """
         _LOG.debug(hprint.to_str("self.COURSE_DIR"))
         hdbg.dassert_ne(self.COURSE_DIR, "")
-        lessons = _get_lesson_numbers(self.COURSE_DIR)
+        lessons = csccouti.get_lesson_numbers(self.COURSE_DIR)
         # Test HTML output type.
         output_type = "html"
         self._run_preprocess_notes_py(self.COURSE_DIR, lessons, output_type)
@@ -321,7 +244,7 @@ class Run_preprocess_notes_py_TestCase(hunitest.TestCase):
         """
         _LOG.debug(hprint.to_str("self.COURSE_DIR"))
         hdbg.dassert_ne(self.COURSE_DIR, "")
-        lessons = _get_lesson_numbers(self.COURSE_DIR)
+        lessons = csccouti.get_lesson_numbers(self.COURSE_DIR)
         # Test slides output type.
         output_type = "slides"
         self._run_preprocess_notes_py(self.COURSE_DIR, lessons, output_type)
@@ -355,7 +278,7 @@ class Run_notes_to_pdf_py_TestCase(hunitest.TestCase):
         """
         _LOG.debug(hprint.to_str("self.COURSE_DIR"))
         hdbg.dassert_ne(self.COURSE_DIR, "")
-        lessons = _get_lesson_numbers(self.COURSE_DIR)
+        lessons = csccouti.get_lesson_numbers(self.COURSE_DIR)
         typst_lessons = []
         beamer_lessons = []
         for lesson in tqdm(
@@ -518,7 +441,7 @@ class Run_notes_to_pdf_py_TestCase(hunitest.TestCase):
         Test converting and saving notes to TeX.
 
         > notes_to_pdf.py \
-            --input=msml610/lectures_source/Lesson00-Class.txt
+            --input=msml610/lectures_source/Lesson00-Class.smd
             --output=.../tmp.scratch/lesson_00/output.tex \
             --type=slides \
             --toc_type=navigation \
@@ -528,7 +451,7 @@ class Run_notes_to_pdf_py_TestCase(hunitest.TestCase):
         """
         _LOG.debug(hprint.to_str("self.COURSE_DIR"))
         hdbg.dassert_ne(self.COURSE_DIR, "")
-        lessons = _get_lesson_numbers(self.COURSE_DIR)
+        lessons = csccouti.get_lesson_numbers(self.COURSE_DIR)
         output_type = "tex"
         self._run_notes_to_pdf_py(self.COURSE_DIR, lessons, output_type)
 
@@ -539,7 +462,7 @@ class Run_notes_to_pdf_py_TestCase(hunitest.TestCase):
         """
         _LOG.debug(hprint.to_str("self.COURSE_DIR"))
         hdbg.dassert_ne(self.COURSE_DIR, "")
-        lessons = _get_lesson_numbers(self.COURSE_DIR)
+        lessons = csccouti.get_lesson_numbers(self.COURSE_DIR)
         output_type = "typ"
         self._run_notes_to_pdf_py(self.COURSE_DIR, lessons, output_type)
 
@@ -550,7 +473,7 @@ class Run_notes_to_pdf_py_TestCase(hunitest.TestCase):
         check that the PDF is generated.
 
         > notes_to_pdf.py \
-            --input=msml610/lectures_source/Lesson00-Class.txt
+            --input=msml610/lectures_source/Lesson00-Class.smd
             --output=...tmp.scratch/lesson_00/output.pdf
             --type=slides \
             --toc_type=navigation \
@@ -559,7 +482,7 @@ class Run_notes_to_pdf_py_TestCase(hunitest.TestCase):
         """
         _LOG.debug(hprint.to_str("self.COURSE_DIR"))
         hdbg.dassert_ne(self.COURSE_DIR, "")
-        lessons = _get_lesson_numbers(self.COURSE_DIR)
+        lessons = csccouti.get_lesson_numbers(self.COURSE_DIR)
         output_type = "tex_pdf"
         self._run_notes_to_pdf_py(
             self.COURSE_DIR,
@@ -574,7 +497,7 @@ class Run_notes_to_pdf_py_TestCase(hunitest.TestCase):
         check that the PDF is generated.
 
         > notes_to_pdf.py \
-            --input=msml610/lectures_source/Lesson00-Class.txt
+            --input=msml610/lectures_source/Lesson00-Class.smd
             --output=...tmp.scratch/lesson_00/output.pdf
             --type=slides \
             --toc_type=navigation \
@@ -583,7 +506,7 @@ class Run_notes_to_pdf_py_TestCase(hunitest.TestCase):
         """
         _LOG.debug(hprint.to_str("self.COURSE_DIR"))
         hdbg.dassert_ne(self.COURSE_DIR, "")
-        lessons = _get_lesson_numbers(self.COURSE_DIR)
+        lessons = csccouti.get_lesson_numbers(self.COURSE_DIR)
         output_type = "typ_pdf"
         self._run_notes_to_pdf_py(
             self.COURSE_DIR,
@@ -617,7 +540,10 @@ class Run_gen_slides_py_TestCase(hunitest.TestCase):
         Run gen_slides for a lesson, generating only TeX output.
         """
         _LOG.debug(hprint.to_str("course_dir lesson"))
-        cmd = f"gen_slides.py {course_dir}/{lesson} --skip_action open_pdf --no_pdf"
+        cmd = (
+            f"gen_slides.py -i {course_dir}/{lesson} "
+            '--notes_to_pdf_args="--skip_action open_pdf --no_pdf"'
+        )
         hsystem.system(cmd)
 
     @pytest.mark.slow

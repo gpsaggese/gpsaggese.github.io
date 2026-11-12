@@ -164,4 +164,4 @@ CMD ["python3", "-m", "flask", "run", "--host=0.0.0.0"]
   \endgroup
 
 #### Docker Tutorial
-- [Docker tutorial](https://github.com/gpsaggese/umd_classes/blob/main/data605/tutorials/tutorial_docker/tutorial_docker.md)
+- [Docker tutorial](https://github.com/gpsaggese/gpsaggese.github.io/blob/main/data605/tutorials/tutorial_docker/tutorial_docker.md)

@@ -1,0 +1,158 @@
+% ##############################################################################
+\section{Canary bank and deterministic grading}
+\label{sec:bank}
+
+% ==============================================================================
+\subsection{The candidate bank}
+\label{sec:bank_content}
+
+A \emph{canary} is a tuple $c = (\mathit{id}, v, f, p, a, \nu, \sigma)$ of a
+stable identifier, a bank version $v$, a task family $f$, a prompt $p$, a
+canonical answer $a$, the name of a normalizer $\nu$, and the seed $\sigma$ of
+the generator that produced it. A \emph{bank} $\bank_v$ is a set of canaries of
+one version. The checked-in bank \texttt{v1} contains $|\bank_1| = 300$
+canaries, 50 in each of six families $\family$, stored as one JSONL file per
+family. The script \texttt{generate\_canary\_bank.py} produces the bank
+deterministically: record $i$ of the family with index $j \in \{0,\dots,5\}$
+uses the seed $100000\,(j+1) + i$, and the generator computes the answer from
+the same random parameters that it renders into the prompt. The answer is
+therefore correct by construction, with no model in the loop, which supports
+property P1 of Problem~\ref{prob:probing}.
+
+Table~\ref{tab:families} describes the families. Every prompt ends with an
+output-format instruction, such as ``Return only the final integer''.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabularx}{\linewidth}{@{}p{0.14\linewidth}Xp{0.16\linewidth}@{}}
+    \toprule
+    Family & Task & Normalizer \\
+    \midrule
+    \texttt{arithmetic} & Evaluate a nested integer expression of the form
+      $((a \cdot b) + c) \cdot (d - e) - f$ & \texttt{integer} \\
+    \texttt{code-trace} & Report the integer printed by a seven-element Python
+      loop with a modular condition & \texttt{integer} \\
+    \texttt{modular} & Apply four updates $x \leftarrow (m x + b) \bmod q$ in
+      order and report the final $x$ & \texttt{integer} \\
+    \texttt{ordering} & Move one item of an eight-word list to the front,
+      reverse a range, and rotate the list right & \texttt{alnum\_lower} \\
+    \texttt{string} & Rotate a 14-letter string, reverse a range, and read six
+      positions & \texttt{alnum\_lower} \\
+    \texttt{table} & Filter six rows by an odd-$x$ and a threshold condition and
+      sum $xy - p$ over the kept rows & \texttt{integer} \\
+    \bottomrule
+  \end{tabularx}
+  \caption{Task families of the \texttt{v1} candidate bank. Each family has 50
+  candidates with identifiers of the form \texttt{<family>-v1-NNN}.}
+  \label{tab:families}
+\end{table}
+
+The loader \texttt{load\_canary\_bank} rejects a bank with a malformed JSON
+line, an identifier outside \texttt{[a-z0-9][a-z0-9.\_-]\{2,79\}}, a duplicate
+identifier, an unknown normalizer, an empty field, or more than one bank
+version. The storage layer adds two further rules. It refuses to insert new
+canaries into a bank version that already has a calibration run, and it
+refuses to register a canary whose stored definition differs from the supplied
+one. Together these rules make a bank version immutable once it has produced
+evidence.
+
+The bank is a set of \emph{candidates}. Section~\ref{sec:calibration} describes
+the measurement that decides which candidates the prober may use.
+
+% ==============================================================================
+\subsection{Normalizers and grading}
+\label{sec:grading}
+
+The grader compares a response with the canonical answer after both pass
+through the canary's normalizer. Table~\ref{tab:normalizers} lists the
+normalizers. The \texttt{v1} bank uses \texttt{integer} for 200 canaries and
+\texttt{alnum\_lower} for 100 canaries; the remaining normalizers support
+future banks.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabularx}{\linewidth}{@{}p{0.2\linewidth}X@{}}
+    \toprule
+    Normalizer & Operation \\
+    \midrule
+    \texttt{exact} & Trim surrounding whitespace \\
+    \texttt{alnum\_lower} & Lowercase and drop every non-alphanumeric
+      character \\
+    \texttt{integer} & Trim whitespace, remove commas, accept exactly one
+      integer with an optional sign and an optional all-zero fraction, and emit
+      its canonical form; any other text is rejected \\
+    \texttt{decimal} & Parse one finite decimal and emit a canonical form \\
+    \texttt{json\_canonical} & Parse JSON, reject non-finite constants, and
+      serialize with sorted keys and compact separators \\
+    \texttt{code\_output} & Normalize line endings and trailing whitespace of
+      program output \\
+    \bottomrule
+  \end{tabularx}
+  \caption{Normalizers of version \texttt{m2-v1} of the grader.}
+  \label{tab:normalizers}
+\end{table}
+
+For a canary $c$ with normalizer $\nu$ and a response $y$, the grade is
+\begin{equation}
+  \label{eq:grade}
+  \grade(c, y) =
+  \begin{cases}
+    \bot & \text{if } \nu \text{ is unknown, or } \nu(a) \text{ is undefined or
+      empty},\\
+    0 & \text{if } y \text{ is empty, or } \nu(y) \text{ is undefined},\\
+    \mathbb{1}\!\left[\nu(y) = \nu(a)\right] & \text{otherwise.}
+  \end{cases}
+\end{equation}
+The value $\bot$ signals that the \emph{checker}, rather than the seller,
+failed to produce a grade. It is never converted to $0$: the evidence rules of
+Section~\ref{sec:evidence} classify a $\bot$ grade on a successful response as
+a checker error, and the verdict then carries the disposition
+\texttt{CHECKER\_UNHEALTHY} instead of penalizing the seller.
+Table~\ref{tab:reasons} lists the reason code that accompanies each grade.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabularx}{\linewidth}{@{}p{0.3\linewidth}p{0.08\linewidth}X@{}}
+    \toprule
+    Reason code & Grade & Condition \\
+    \midrule
+    \texttt{MATCH} & 1 & Normalized response equals normalized answer \\
+    \texttt{VALUE\_MISMATCH} & 0 & Normalized values differ \\
+    \texttt{EMPTY\_RESPONSE} & 0 & Response is absent or only whitespace \\
+    \texttt{INVALID\_RESPONSE} & 0 & Response has the wrong shape for the
+      normalizer, for example prose around an integer \\
+    \texttt{INVALID\_EXPECTED\_ANSWER} & $\bot$ & The stored answer cannot be
+      normalized or is empty \\
+    \texttt{UNKNOWN\_NORMALIZER} & $\bot$ & The canary names a normalizer that
+      the grader does not implement \\
+    \bottomrule
+  \end{tabularx}
+  \caption{Reason codes returned by the grader.}
+  \label{tab:reasons}
+\end{table}
+
+Two properties of this grader follow from the definition. First, grading is
+strict about shape: a correct integer embedded in a sentence is graded $0$
+under \texttt{integer}, so the measurement couples correctness with
+instruction following. Second, \texttt{alnum\_lower} ignores whitespace, so a
+space-separated word list and the same words concatenated compare equal. The
+eight words of an \texttt{ordering} answer are distinct, and the effect of this
+equivalence on those answers was not analyzed.
+
+% ==============================================================================
+\subsection{A pluggable measurer}
+\label{sec:measurer}
+
+The white paper treats capability measurement as an interchangeable component
+(Section~\ref{sec:background_whitepaper}). The code mirrors this with a
+\texttt{CapabilityMeasurer} protocol that exposes a \texttt{version} string and
+a \texttt{measure} method from a canary and a response to a grade. The default
+implementation, \texttt{DeterministicBenchmarkMeasurer}, delegates to
+\eqref{eq:grade}. Calibration, probing, and persistence receive the measurer as
+an argument and store its version with every probe request, so a verifier model
+or a hosted evaluator could replace the default without changing those layers.
+No such alternative measurer exists in the code base, and none is evaluated in
+this paper.

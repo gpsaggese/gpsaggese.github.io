@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""
+r"""
 Generate an HTML page with links to lesson materials for a class or book.
 
 For each lesson source file found in `{DIR}/lectures_source/`, builds an HTML
@@ -23,13 +23,22 @@ lesson without the missing link, and keep going.
 # Usage Example
 
 - Generate the links page for a class, failing on the first missing artifact:
-> publish_class_links.py --dir data605 --out_file data605/class_links.html
+> publish_class_links.py \
+        --dir data605 \
+        --out_file data605/class_links.html
 
-- Generate the links page while tolerating missing artifacts, linking to the `master` branch instead of the current branch:
-> publish_class_links.py --dir msml610 --out_file /tmp/links.html --do_not_fail_on_warnings --use_master
+- Generate the links page while tolerating missing artifacts, linking to the
+  `master` branch instead of the current branch:
+> publish_class_links.py \
+        --dir msml610 \
+        --out_file /tmp/links.html \
+        --do_not_fail_on_warnings --use_master
 
 - Generate the links page and open it in the default browser:
-> publish_class_links.py --dir data605 --out_file data605/class_links.html --open_html
+> publish_class_links.py \
+        --dir data605 \
+        --out_file data605/class_links.html \
+        --open_html
 
 Import as:
 
@@ -101,6 +110,29 @@ class LessonPage(NamedTuple):
 # #############################################################################
 
 
+def _to_media_github_url(github_blob_url: str) -> str:
+    """
+    Convert a GitHub blob URL to its LFS-aware `media.githubusercontent.com`
+    equivalent.
+
+    GitHub's raw-content endpoints (`raw.githubusercontent.com`, and anything
+    built on top of them like `htmlpreview.github.io`) serve Git-LFS-tracked
+    files as their small pointer text instead of the real content.
+    `media.githubusercontent.com` is the GitHub endpoint that resolves LFS
+    pointers to the actual file content, so links to `*.html` files (which
+    `.gitattributes` tracks via LFS) must go through it instead.
+
+    :param github_blob_url: GitHub URL of the form
+        `https://github.com/<owner>/<repo>/blob/<branch>/<path>`
+    :return: equivalent `https://media.githubusercontent.com/media/<owner>/
+        <repo>/<branch>/<path>` URL
+    """
+    media_url = github_blob_url.replace(
+        "https://github.com/", "https://media.githubusercontent.com/media/"
+    ).replace("/blob/", "/")
+    return media_url
+
+
 def _get_short_label(label: str) -> str:
     """
     Strip the trailing "(TYPE)" qualifier from an artifact label.
@@ -126,7 +158,7 @@ def _find_lesson_names(dir_: str) -> List[str]:
     """
     lectures_source_dir = os.path.join(dir_, _LECTURES_SOURCE_SUBDIR)
     hdbg.dassert_dir_exists(lectures_source_dir)
-    pattern = os.path.join(lectures_source_dir, "Lesson*.txt")
+    pattern = os.path.join(lectures_source_dir, "Lesson*.smd")
     source_files = sorted(glob.glob(pattern))
     hdbg.dassert_lt(
         0,
@@ -237,9 +269,12 @@ def _generate_html_page(
                 )
                 if artifact.label == _LABEL_COMMENTARY_HTML:
                     # GitHub serves `.html` files as raw source rather than
-                    # rendering them: preview via htmlpreview.github.io.
+                    # rendering them, and `.html` is Git-LFS tracked (see
+                    # `.gitattributes`): route through the LFS-aware media
+                    # endpoint first, then preview via htmlpreview.github.io.
+                    media_href = _to_media_github_url(href)
                     htmlpreview_prefix = "https://htmlpreview.github.io/?"
-                    href = f"{htmlpreview_prefix}{href}"
+                    href = f"{htmlpreview_prefix}{media_href}"
                 cell = f'    <td><a href="{href}">{short_label}</a></td>'
             else:
                 cell = f'    <td class="missing">{short_label}</td>'

@@ -1,0 +1,684 @@
+// type=UMD_slides
+// course_title=From Data to Decisions: Building Decision Systems with Probabilistic Causal Reasoning
+// lesson_title=Lesson 1.1: From Prediction Pipelines to Decision Pipelines
+// slides_engine=typst
+
+// References:
+//- [P005] Pearl, "Simpson's Paradox, Confounding, and Collapsibility", 1999
+//  https://bayes.cs.ucla.edu/BOOK-2K
+//- [P007] Yao et al., "A Survey on Causal Inference", 2020
+//  https://arxiv.org/abs/2002.02770
+//- [P009] Pearl, "The Seven Pillars of Causal Reasoning with Reflections on
+//  Machine Learning", 2019
+//  https://cacm.acm.org/research/seven-pillars-of-causal-reasoning-with-reflections-on-machine-learning/
+//- [P001] Ribeiro et al., "Why Should I Trust You? Explaining the Predictions of
+//  Any Classifier", 2016 https://arxiv.org/abs/1602.04938
+//- [B001] Agrawal et al., "Prediction Machines", 2018
+//- [B002] Pearl & Mackenzie, "The Book of Why", 2018
+//- [B039] Hurwitz & Thompson, "Causal Artificial Intelligence", 2024
+
+# From Predictions to Decisions
+
+## Motivation
+
+* The Path From Prediction to Decision
+// From Lesson 08.1
+
+- **Goal**: turn data into _actions_, not just forecasts
+  - A prediction says _"what will happen"_
+  - A decision says _"what to do"_ and answers for the outcome
+
+- This book walks one end-to-end pipeline:
+  $$data \to causal\ model \to effect \to policy \to action \to feedback$$
+
+- Organized in five parts:
+  - Part I: why businesses need decisions, not predictions
+  - Part II: probabilistic and causal foundations
+  - Part III: single-step decisions
+  - Part IV: multi-step and dynamic decisions
+  - Part V: deploying, monitoring, and governing decision systems
+
+- **Key idea**: this lesson frames the whole book by contrasting the
+  _prediction pipeline_ with the _decision pipeline_
+
+* Businesses Need Decisions, Not Predictions
+// From Lesson 08.1
+// From paper [B001] Prediction Machines
+
+- **Question**: if a model predicts churn with 95% accuracy, what should we _do_
+  about it?
+  - Accuracy alone names no lever and guarantees no better outcome
+
+- A prediction is an _input_ to a decision, never the decision itself
+  - Cheap prediction makes judgment about actions and payoffs more valuable, not
+    less
+
+- **Example**: questions a forecast cannot answer
+  - _"If we cut price 10%, how do units sold and revenue change?"_
+  - _"Does tutoring raise exam scores, or do strong students self-select in?"_
+  - _"Build a library or hand out tablets to lift test scores?"_
+
+- **Key idea**: the gap between _"what will happen"_ and _"what should we do"_ is
+  bridged by causal reasoning, not by more accuracy
+
+## Prediction vs Decision
+
+* Two Different Questions
+// From Lesson 08.1, 11.1
+
+- **Prediction** answers _"what will happen?"_
+  - Input: features $X$
+  - Output: estimate $\hat{y} = \EE[Y | X]$
+  - Optimized for accuracy on a _fixed_ distribution
+
+- **Decision** answers _"what should I do?"_
+  - Input: current state, action set $\mathcal{A}$
+  - Output: action $a^* \in \mathcal{A}$ maximizing expected utility
+  - Requires reasoning about _what would change_ under each action
+
+- **Question**: given a highly accurate predictor, isn't the best action obvious?
+  - No: a predictor says what _correlates_ with good outcomes, not what _causes_
+    them
+
+* The Prediction Pipeline
+// From Lesson 11.1
+
+- **Standard supervised learning** is optimized end-to-end for accuracy:
+  1. Collect observational data $(X_i, Y_i)$
+  2. Fit $\hat{f}(X) \approx \EE[Y | X]$
+  3. Deploy to score new units
+
+- **Assumption**: the joint $\Pr(X, Y)$ at deployment equals the one at training
+  - No intervention changes how $X$ is generated
+  - No agent _acts_ on the prediction
+
+- **Example**: a spam filter predicting $\Pr(spam | X)$
+  - Useful only as long as spammers do not adapt to it
+
+- **Limitations**: the pipeline is blind to interventions, so it cannot say what
+  happens once someone acts on its scores
+
+* The Decision Pipeline
+// From Lesson 11.1
+
+- A **decision pipeline** represents explicitly:
+  - The action set $\mathcal{A}$
+  - A utility $U(y, a)$ over outcomes $y$ and actions $a$
+  - A causal model $\Pr(Y | do(a))$ of how actions change outcomes
+
+- **Key distinction**:
+  - $\Pr(Y | X = x)$ is _observational_ (seeing $x$)
+  - $\Pr(Y | do(X = x))$ is _interventional_ (setting $x$)
+  - The two differ sharply when confounders are present
+
+- **Example**: prescribe drug A?
+  - Observational $\Pr(recovery | took\ A)$ is biased by _who chose_ to take it
+  - Decisions need the interventional $\Pr(recovery | do(give\ A))$
+
+* Prediction vs Decision: Side-by-Side
+// From Lesson 11.1
+
+- Prediction and decision live in different mathematical settings
+  - Collapsing them is a common source of costly errors
+
+```{=typst}
+#styled-table(
+  headers: ("Aspect", "Prediction", "Decision"),
+  rows: (
+    ("Target", "E[Y | X]", "argmax_a E[U(Y) | do(a)]"),
+    ("Data", "Observational only", "Observational + experimental"),
+    ("Metric", "Accuracy, AUC, MSE", "Regret, expected utility"),
+    ("Assumption", "i.i.d., stable world", "Models the intervention"),
+    ("Loss from", "Miscalibration", "Policy harm"),
+    ("World", "No feedback", "Actions change the world"),
+  ),
+  bold-first-col: true,
+)
+```
+
+- **Key idea**: a decision target contains a $do(\cdot)$ that a predictive target
+  never does
+
+# The Ladder of Causation
+
+## Three Rungs
+
+* Association, Correlation, Causation
+// From Lesson 08.1
+
+::: columns
+:::: {.column width=65%}
+- **Association**: variables co-occur or are statistically dependent
+  - E.g., _"buyers of diapers also buy beer"_
+  - Says nothing about direction or mechanism
+
+- **Correlation**: a (linear) statistical relationship
+  - E.g., _"ice cream sales and drownings move together"_ (both seasonal)
+
+- **Causation**: changing one variable _directly_ changes another
+  - E.g., _"asbestos causes cancer"_
+  - Requires a causal model or an experiment
+::::
+:::: {.column width=35%}
+```latex
+\begin{tikzpicture}[
+    box/.style={
+        draw=black, ultra thick, rounded corners=12pt,
+        minimum height=#1, minimum width=#1*1.8,
+        align=center, font=\large\bfseries}]
+  \node[box=4.2cm, fill=blue!15] (a) {};
+  \node[font=\large\bfseries, anchor=north] at ([yshift=-8pt]a.north) {Association};
+  \node[box=2.8cm, fill=orange!20] (c) at ([yshift=-8pt]a.center) {};
+  \node[font=\large\bfseries, anchor=north] at ([yshift=-6pt]c.north) {Correlation};
+  \node[box=1.4cm, fill=red!25] (u) at ([yshift=-6pt]c.center) {};
+  \node[font=\large\bfseries] at (u.center) {Causation};
+\end{tikzpicture}
+```
+::::
+:::
+
+- **Key idea**: high correlation _feels like_ understanding, but only causation
+  tells you what happens when you _intervene_
+
+* The Ladder of Causation
+// From Lesson 08.1
+// From paper [P009] Seven Pillars
+
+- Pearl organizes causal reasoning into three rungs of increasing power
+
+```{=typst}
+#styled-table(
+  headers: ("Rung", "Symbol", "Activity", "Question"),
+  rows: (
+    ("1. Association", "Pr(Y | X)", "Seeing", "What is?"),
+    ("2. Intervention", "Pr(Y | do(X), Z)", "Doing", "What if?"),
+    ("3. Counterfactual", "Pr(Y_x | x', y')", "Imagining", "Why?"),
+  ),
+  bold-first-col: true,
+)
+```
+
+- **Key idea**: a model that only fits $\Pr(Y | X)$ lives on rung 1
+  - No amount of rung-1 data answers a rung-2 or rung-3 question
+  - _"Data are profoundly dumb about causal relationships"_
+
+* Rung 1: Association
+// From Lesson 08.1
+
+- **Question**: _"how would seeing $X$ change my belief in $Y$?"_
+
+- **Math**: $\Pr(Y | X)$
+
+- **Activity**: passive observation of whether $X$ and $Y$ relate
+  - Traditional ML lives here
+
+- **Example**:
+  - _"What does a symptom tell me about the disease?"_
+  - _"What does a poll tell me about the election?"_
+
+- **Limitations**: cannot distinguish a true cause from a confounder or reverse
+  causation
+
+* Rung 2: Intervention
+// From Lesson 08.1
+
+- **Question**: _"what happens to $Y$ if I _do_ $X$?"_
+
+- **Math**: $\Pr(Y | do(X), Z)$
+
+- **Activity**: set $X$ by external action, not by observation
+  - Requires a causal model or a controlled experiment
+
+- **Example**:
+  - _"If we ban sodas, what happens to obesity?"_
+  - _"If we cut price 10%, what happens to units sold?"_
+
+- **Key idea**: $do(X)$ severs $X$ from its usual causes, so the answer can differ
+  from what observation suggests
+
+* Rung 3: Counterfactuals
+// From Lesson 08.1
+
+- **Question**: _"was it $X$ that caused $Y$, for this specific unit?"_
+
+- **Math**: $\Pr(Y_x | x', y')$
+  - _"the outcome had $X$ been $x$, given we observed $x', y'$"_
+
+- **Activity**: imagine an alternative to what actually happened
+  - The highest rung, requiring a full structural model
+
+- **Example**:
+  - _"Would this customer have churned _had_ we offered a discount?"_
+  - _"Why did the campaign fail?"_
+
+- **Interpretation**: attribution, blame, and credit all live on rung 3
+
+* Seeing vs Doing: Tornado Warning
+// From Lesson 08.2
+
+::: columns
+:::: {.column width=55%}
+- **Example**: a tornado warning chain
+  - $T$: tornado forms; $W$: warning issued
+  - $A, B$: radio and TV broadcast; $R$: residents warned
+  - Channels broadcast only on official order; $R = A \lor B$
+
+- **Rung 1 (seeing)**: observe radio $A$ broadcast $\implies$ TV $B$ also
+  broadcast
+  - Correlated through the common cause $W$
+
+- **Rung 2 (doing)**: force $do(A = 1)$ $\implies$ expect $B$ did _not_ broadcast
+  - Setting $A$ removes the edge $W \to A$; nothing links $A$ to $B$
+
+- **Key idea**: _seeing_ $A$ and _doing_ $A$ give opposite conclusions about $B$
+::::
+:::: {.column width=45%}
+```graphviz
+digraph Tornado_Warning {
+    splines=true; nodesep=0.5; ranksep=0.5;
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+    edge [penwidth=1.2, color="#555555", arrowsize=0.9];
+
+    T [label="Tornado forms (T)", fillcolor="#FFB3BA"];
+    W [label="Warning issued (W)", fillcolor="#FFD1A6"];
+    A [label="Radio broadcasts (A)", fillcolor="#FFF4A3"];
+    B [label="TV broadcasts (B)", fillcolor="#CFECCF"];
+    R [label="Residents warned (R)", fillcolor="#A6C8F4"];
+
+    { rank=min;  T; }
+    { rank=same; W; }
+    { rank=same; A; B; }
+    { rank=max;  R; }
+
+    T -> W;
+    W -> A;
+    W -> B;
+    A -> R;
+    B -> R;
+}
+```
+::::
+:::
+
+# Why Correlation Misleads
+
+## Confounding
+
+* Correlation Encodes Confounding as Causation
+// From Lesson 11.1
+// From paper [P007] A Survey on Causal Inference
+
+- **Problem**: a purely predictive model absorbs any association in the data,
+  including the spurious ones
+  - It cannot tell a causal link from a confounded one
+
+- **Example**: ice cream sales and drowning deaths are highly correlated
+  - Predictor: _"more ice cream $\to$ predict more drownings"_ (accurate)
+  - Decision: _"ban ice cream to cut drownings"_ (disastrous)
+  - Confounder: hot weather drives both
+
+- **Key idea**: the observational and interventional quantities disagree
+  $$\Pr(Y | X) \neq \Pr(Y | do(X))$$
+  - Acting on $\Pr(Y | X)$ is what makes correlation-based decisions backfire
+
+* Confounding: The Root Cause
+// From Lesson 11.1
+
+- **Definition**: a _confounder_ $Z$ is a common cause of both the action $X$ and
+  the outcome $Y$
+  - Induces a non-causal association $X \leftrightarrow Y$ through $Z$
+  - So $\Pr(Y | X) \neq \Pr(Y | do(X))$
+
+- Without adjusting for $Z$, a predictive model _bakes in_ the spurious
+  association
+
+- **Question**: can we escape this by collecting more features?
+  - Only if the missing confounder is _among_ the features _and_ correctly
+    adjusted for
+  - More data at rung 1 does not climb the ladder
+
+* Acting on Correlation Backfires
+// From Lesson 08.1
+
+- **Problem**: intervening on a correlate, rather than a cause, produces the wrong
+  action
+
+- **Example**: hospitals with more staff show higher patient mortality
+  - Confounded by severity: sicker patients are assigned more staff
+  - Naive intervention _"cut staff to lower mortality"_ would be catastrophic
+
+- **Example**: a fraud model with 95% accuracy that blocks 50% of legitimate
+  transactions is still a bad _decision_ system
+
+- **Key idea**: distinguish a causal effect from a correlation _before_ acting,
+  or the intervention can invert the outcome it targets
+
+## When Prediction Fails
+
+* Simpson's Paradox
+// From Lesson 11.1
+// From paper [P005] Simpson's Paradox, Confounding, and Collapsibility
+
+- **Definition**: a trend within every subgroup _reverses_ once the groups are
+  pooled
+  - Caused by a confounder unevenly distributed across the groups
+
+- **Example**: recovery rates for a drug
+
+```{=typst}
+#styled-table(
+  headers: ("Group", "Recovery w/ drug", "Recovery w/o drug"),
+  rows: (
+    ("Male", "81 / 87 = 93%", "234 / 270 = 87%"),
+    ("Female", "192 / 263 = 73%", "55 / 80 = 69%"),
+    ("Combined", "273 / 350 = 78%", "289 / 350 = 83%"),
+  ),
+  bold-first-col: true,
+)
+```
+
+- The drug helps _each_ subgroup, yet appears to hurt when pooled
+  - Gender correlates with both treatment choice and baseline recovery
+
+* Simpson's Paradox: Causal Resolution
+// From Lesson 11.1
+// From paper [P005] Simpson's Paradox, Confounding, and Collapsibility
+
+::: columns
+:::: {.column width=60%}
+- The numbers alone cannot say whether to prescribe the drug
+  - The causal graph decides
+
+- **Case A**: $Gender \to Drug$ and $Gender \to Recovery$
+  - $Gender$ is a _confounder_
+  - Read the _subgroup_ table: the drug helps
+
+- **Case B**: $Drug \to BloodPressure \to Recovery$
+  - $BloodPressure$ is a _mediator_ (post-treatment)
+  - Read the _aggregate_ table: the drug hurts
+
+- **Key idea**: same data, opposite decisions, decided by whether $Z$ is a
+  confounder or a mediator
+::::
+:::: {.column width=40%}
+Case A (confounder):
+```graphviz
+digraph SimpsonCaseA {
+    splines=true; nodesep=0.6; ranksep=0.5;
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11, penwidth=1.4];
+    Gender [label="Gender", fillcolor="#A6E7F4"];
+    Drug [label="Drug", fillcolor="#F4A6A6"];
+    Rec [label="Recovery", fillcolor="#A6C8F4"];
+    Gender -> Drug;
+    Gender -> Rec;
+    Drug -> Rec;
+}
+```
+
+Case B (mediator):
+```graphviz
+digraph SimpsonCaseB {
+    splines=true; nodesep=0.6; ranksep=0.5;
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11, penwidth=1.4];
+    Drug [label="Drug", fillcolor="#F4A6A6"];
+    BP [label="Blood\nPressure", fillcolor="#FFD1A6"];
+    Rec [label="Recovery", fillcolor="#A6C8F4"];
+    Drug -> BP;
+    BP -> Rec;
+}
+```
+::::
+:::
+
+* Policy Reversal
+// From Lesson 11.1
+
+- **Definition**: a _policy reversal_ is an action that looks optimal under
+  predictions but turns harmful once enacted
+
+- **Mechanism**: acting on $X$ breaks its correlation with an unobserved
+  confounder $Z$, so the historical pattern no longer holds
+
+- **Example**: emergency-room triage
+  - Predictor: patients with asthma _and_ pneumonia have lower mortality
+  - Naive policy: send them home first as low-risk
+  - Reality: they survived _because_ they received aggressive care
+  - Removing the care removes the protection
+
+- **Key idea**: patterns in historical data reflect the _policy that generated
+  them_, not what happens when we change the policy
+
+* Accuracy Is Not Decision Quality
+// From Lesson 11.1, 13.1
+// From paper [P001] Why Should I Trust You? (LIME)
+
+- **Problem**: accuracy rewards fitting the _logged_ distribution, but a decision
+  _changes_ that distribution
+  - A model can be right about $\Pr(Y | X)$ yet wrong about $\Pr(Y | do(X))$
+
+- **Example**: a wolf-vs-husky classifier with high test accuracy
+  - It keys on _snow_ in the background, not on the animal
+  - Accurate for the wrong reason, and worthless the moment we act on it
+
+- **Question**: why not just pick the most accurate model and act on its scores?
+  - Because the quantity that governs the outcome, $\Pr(Y | do(X))$, is not the
+    one accuracy rewards
+
+- **Key idea**: predictive accuracy and decision quality are distinct objectives
+
+# From Scores to Actions
+
+## Predictions Are Not Recommendations
+
+* A Score Is Not a Decision
+// From Lesson 08.1, 13.1
+
+- **Problem**: a black-box score ranks units but names no _lever_ and gives no
+  _why_
+  - A churn score does not say _which_ action prevents churn
+  - A risk score does not say _what to change_ to lower the risk
+
+- **Example**: high-stakes settings demand more than a number
+  - Credit, hiring, and healthcare must _justify_ decisions to regulators and
+    stakeholders
+  - Opaque models invite fines, backlash, and loss of trust
+
+- **Key idea**: a recommendation needs an actionable lever and an explanation,
+  neither of which a bare prediction provides
+
+* From Scores to Actionable Levers
+// From Lesson 08.1, 13.1
+// From paper [P001] Why Should I Trust You? (LIME)
+
+- A useful recommendation answers three questions:
+  1. _Which_ action, out of $\mathcal{A}$
+  2. _Why_ that action (the causal mechanism)
+  3. _What if_ we chose differently (the counterfactual lever)
+
+- **Example**: instead of _"this customer has churn score 0.8"_
+  - _"Offering a discount lowers this customer's churn probability by 12 points"_
+  - Names the lever, the effect, and the unit it acts on
+
+- **Key idea**: moving from scores to levers is exactly the move from rung 1 to
+  rungs 2 and 3
+
+## The Decision Pipeline
+
+* Causal Models as the Foundation
+// From Lesson 11.1
+
+- A **causal model** specifies, for each variable $X_i$:
+  - Its direct causes (parents) $Parents(X_i)$
+  - A structural mechanism $X_i = f_i(Parents(X_i), U_i)$ with noise $U_i$
+
+- It answers all three rungs from one object:
+  - _Observation_: $\Pr(Y | X = x)$
+  - _Intervention_: $\Pr(Y | do(X = x))$
+  - _Counterfactual_: $\Pr(Y_{X=x} | X = x')$
+
+- **Example**: a marketing team can _observe_ that email-openers buy more
+  - Only a causal model says whether _sending_ the email causes purchases
+
+- **Key idea**: for decisions we primarily need the interventional layer, which
+  prediction alone cannot supply
+
+* The Decision Loop
+// From Lesson 11.1
+
+```graphviz
+digraph DecisionLoop {
+    splines=true; nodesep=0.7; ranksep=0.6; rankdir=LR;
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    World [label="World / Data", fillcolor="#FFD1A6"];
+    Model [label="Causal\nModel", fillcolor="#A0D6D1"];
+    Post [label="Interventional\nEffects", fillcolor="#A6E7F4"];
+    Util [label="Utility\nU(y, a)", fillcolor="#B2E2B2"];
+    Action [label="Action a*", fillcolor="#F4A6A6"];
+
+    World -> Model [label="  infer"];
+    Model -> Post [label="  do(a)"];
+    Post -> Action [label="  argmax EU"];
+    Util -> Action;
+    Action -> World [label="  intervene"];
+}
+```
+
+- **Key idea**: the causal model sits _between_ data and action
+  - Pure prediction skips the middle and jumps from data to action
+  - Interventions generate new data that updates the model, closing the loop
+
+* From Causal Effect to Best Action
+// From Lesson 11.1
+
+- Given a causal model and a utility $U$, the best action solves:
+  $$
+  a^*
+    = \argmax_{a \in \mathcal{A}}
+        \EE_{Y \sim \Pr(Y | do(a))}\big[ U(Y, a) \big]
+  $$
+
+- **Input**: action set $\mathcal{A}$, utility $U(y, a)$, interventional
+  distribution $\Pr(Y | do(a))$
+
+- **Output**: the utility-maximizing action $a^*$
+
+- Contrast with prediction, which stops at $\hat{y} = \EE[Y | X]$ and leaves the
+  $\argmax$ to a human
+
+- **Key idea**: the decision pipeline replaces _predict-then-guess_ with
+  _model-then-optimize_
+
+* Model-First vs Data-First
+// From Lesson 08.1
+
+- **Correlation-based ML is _data-first_**:
+  - Acquire and clean data $\to$ engineer features $\to$ fit $\to$ deploy
+  - Rarely articulates _"what is the business goal?"_
+  - Fails via spurious correlations and opaque models
+
+- **Causal AI is _model-first_**:
+  1. What is the intended outcome?
+  2. What is the proposed intervention?
+  3. What are the confounders and driving factors?
+  4. Build the causal DAG, then acquire data to fit it
+
+- **Key idea**: the decision pipeline starts from the business question and the
+  causal structure, not from whatever data happens to exist
+
+# Why Organizations Fail
+
+## The Analytics Maturity Gap
+
+* Analytics Maturity: From Descriptive to Decision
+// From Lesson 08.1
+
+```{=typst}
+#styled-table(
+  headers: ("Level", "Question", "Tools"),
+  rows: (
+    ("0. Descriptive", "What happened?", "Dashboards, reports"),
+    ("1. Predictive", "What will happen?", "ML, forecasting"),
+    ("2. Causal", "Why? What if we act?", "DAGs, do-calculus"),
+    ("3. Decision", "What should we do?", "Causal models + utility"),
+  ),
+  bold-first-col: true,
+)
+```
+
+- **Problem**: most organizations are stuck at Level 1
+  - They predict well but cannot say what to _do_
+
+- **Key idea**: climbing to Levels 2 and 3 is the jump from prediction pipelines
+  to decision pipelines
+
+* Data Science vs Decision Science
+// From Lesson 08.1
+
+```{=typst}
+#styled-table(
+  headers: ("Dimension", "Data Science", "Decision Science"),
+  rows: (
+    ("Goal", "Predict outcomes", "Choose best actions"),
+    ("Question", "What will happen?", "What should we do?"),
+    ("Method", "Statistical models, ML", "Causal models, decision theory"),
+    ("Output", "Score, forecast", "Action + expected outcome"),
+    ("Metric", "Accuracy, AUC, RMSE", "Business outcome, ROI"),
+    ("Data", "Observations", "Observations + causal structure"),
+  ),
+  bold-first-col: true,
+)
+```
+
+- **Key idea**: teams that ship predictions while the business needs decisions
+  leave the causal step, and the value, on the table
+
+* Why AI Projects Fail
+// From Lesson 08.1
+
+- Most failures are not modeling failures but _framing_ failures:
+  - **Misalignment**: the model optimizes a proxy, not the business goal
+  - **Black boxes**: outputs cannot be explained, so they are not trusted or
+    adopted
+  - **No lever**: a score is delivered where an action was needed
+  - **No feedback**: performance is never monitored after deployment
+
+- Data scientists optimize accuracy in isolation from domain experts and
+  decision-makers
+
+- **Key idea**: an accurate model answering the wrong question is a failed
+  project, however good its metrics
+
+* The Cost of Ignoring Causality
+// From Lesson 08.1
+
+- Ignoring causality turns confident predictions into wrong actions:
+  - **Simpson's paradox**: subgroup-correct models harm the aggregate
+  - **Confounding**: acting on a correlate, not a cause, backfires
+  - **Policy reversal**: the optimal-looking action inverts once enacted
+
+- Each was demonstrated in this lesson as a _decision_ failure, not a fitting
+  error
+
+- **Remark**: the full catalog of failure modes, including selection bias,
+  interference, feedback loops, and distribution shift, is treated across the
+  next lessons
+
+## Roadmap
+
+* Roadmap: Building Decision Systems
+
+- We reframed the core problem: a prediction is not a decision
+  - Prediction answers $\EE[Y | X]$; decision answers
+    $\argmax_a \EE[U(Y) | do(a)]$
+  - The ladder of causation separates seeing, doing, and imagining
+  - Causal models supply the interventional layer that decisions depend on
+
+- The rest of the book builds out this pipeline:
+  - Part II: probabilistic and causal foundations to fit the model
+  - Part III: single-step decisions under a causal model
+  - Part IV: multi-step and dynamic decisions with feedback
+  - Part V: deploying, monitoring, and governing decision systems
+
+- **Key idea**: every later technique plugs into one loop:
+  $$data \to causal\ model \to effect \to policy \to action \to feedback$$

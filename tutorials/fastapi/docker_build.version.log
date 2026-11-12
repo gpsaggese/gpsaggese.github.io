@@ -1,8 +1,1 @@
-[0/6] [0s]
-[1/6] Fetching image [0s]
-[2/6] Unpacking image [0s]
-[3/6] Fetching kernel [0s]
-[4/6] Fetching init image [0s]
-[5/6] Unpacking init image [0s]
-[6/6] Starting container [0s]
-Error: failed to run container: Error Domain=NSPOSIXErrorDomain Code=19 "Operation not supported by device"
+../../class_project/project_template/docker_build.version.log

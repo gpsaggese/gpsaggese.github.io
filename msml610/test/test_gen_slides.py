@@ -16,7 +16,7 @@ import class_scripts.gen_slides_test_utils as csgsteut
 
 class Test_Msml610_LessonDiscovery(csgsteut.LessonDiscovery_TestCase):
     COURSE_DIR = "msml610"
-    FIRST_LESSON_FILENAME = "Lesson01.1-AI_and_Machine_Learning.txt"
+    FIRST_LESSON_FILENAME = "Lesson01.1-AI_and_Machine_Learning.smd"
 
 
 # #############################################################################

@@ -1,149 +1,184 @@
 # Causal Analysis of Success in Modern Society
 
-## 1. Core Thesis
-- Conventional meritocracy assumes **talent ⇒ success**
-- Empirical observation:
-  - Talent \~ Normal distribution
-  - Success (e.g., wealth, publications) \~ Pareto (power-law) distribution
-- Hypothesis: **Randomness (luck)** is a critical, underappreciated driver of
-  success
-- Goal: Formalize and simulate a **causal, Bayesian model** of talent vs. luck
+## Status
 
-## 2. Model Setup
+- **Status**: done
+- **Complete Specs**: TBD
 
-### 2.1 Agents
-- Population: $N \= 100$ agents
-- Each agent $i$ is represented by a **talent vector**:
-  $$
-  \\mathbf{T}\_i \= \\big( t^{(1)}\_i, t^{(2)}\_i, \\ldots, t^{(d)}\_i \\big), \\quad d \\in {3,4}
-  $$
+## Core Idea
+
+- Conventional meritocracy assumes talent leads to success, but observed
+  talent is normally distributed while observed success (wealth,
+  publications) follows a Pareto (power-law) distribution
+- Hypothesis: randomness (luck) is a critical, underappreciated driver of
+  success, not just talent
+- Goal: formalize and simulate a causal, Bayesian model of talent versus
+  luck, to test whether luck alone can explain the mismatch between the two
+  distributions
+
+## Formalization
+
+### Agents
+
+- Population of $N = 100$ agents
+- Each agent $i$ has a talent vector $\mathbf{T}_i = (t^{(1)}_i, t^{(2)}_i,
+  \ldots, t^{(d)}_i)$, with $d \in \{3, 4\}$
 - Dimensions:
-  - $t^{(1)}\_i$: **Intensity** (effort, grit, hours worked)
-  - $t^{(2)}\_i$: **IQ** (cognitive skill)
-  - $t^{(3)}\_i$: **Networking** (social capital)
-  - $t^{(4)}\_i$: **Initial capital**
+  - **Intensity** ($t^{(1)}_i$): effort, grit, hours worked
+  - **IQ** ($t^{(2)}_i$): cognitive skill
+  - **Networking** ($t^{(3)}_i$): social capital
+  - **Initial capital** ($t^{(4)}_i$)
 
-### 2.2 Events
-- There are $M$ events, fixed in number, split into:
-  - **Positive (lucky)** and **Negative (unlucky)** events
-- Each event is modeled as a Bernoulli trial:
-  $$
-  E\_{ij} \\sim \\text{Bernoulli}(q\_i)
-  $$
-  where $E\_{ij}=1$ if event $j$ hits agent $i$
+### Events
+
+- $M$ fixed events, split into positive (lucky) and negative (unlucky)
+- Each event is a Bernoulli trial: $E_{ij} \sim \text{Bernoulli}(q_i)$,
+  where $E_{ij} = 1$ if event $j$ hits agent $i$
 - Impact distribution:
-  - Positive events: $\\Delta C \\sim \\mathcal{N}(\\mu\_+, \\sigma^2)$ or
-    $\\sim \\text{Exp}(\\lambda)$
-  - Negative events: $\\Delta C \\sim \\mathcal{N}(\\mu\_-, \\sigma^2)$ or
-    $\\sim \\text{Exp}(\\lambda)$
+  - Positive events: $\Delta C \sim \mathcal{N}(\mu_+, \sigma^2)$ or $\sim
+    \text{Exp}(\lambda)$
+  - Negative events: $\Delta C \sim \mathcal{N}(\mu_-, \sigma^2)$ or $\sim
+    \text{Exp}(\lambda)$
 
-### 2.3 Event Modifiers
-- **Intensity**: increases surface area of luck
-  $$
-  q\_i \= \\sigma(\\alpha t^{(1)}\_i)
-  $$
-- **IQ**: affects probability of exploiting an event
-  $$
-  p\_i \= \\sigma(\\beta t^{(2)}\_i)
-  $$
-- **Networking**: probability of capturing another's event
-  $$
-  \\Pr(\\text{inherit event}) \\propto t^{(3)}\_i
-  $$
-- **Initial capital**: baseline wealth $C\_{i,0}$, no direct effect in the model
-  (but see dependency note)
+### Event Modifiers
 
-### 2.4 Dynamics
+- **Intensity** increases the surface area of luck: $q_i = \sigma(\alpha
+  t^{(1)}_i)$
+- **IQ** affects the probability of exploiting an event: $p_i =
+  \sigma(\beta t^{(2)}_i)$
+- **Networking** gives the probability of capturing another agent's event:
+  $\Pr(\text{inherit event}) \propto t^{(3)}_i$
+- **Initial capital** sets baseline wealth $C_{i,0}$, with no direct effect
+  in the base model (see the dependency note under Assumptions)
+
+### Dynamics
+
 - Each agent has the same lifespan of $T$ rounds
-- Capital evolves as:
-  $$
-   C\_{i,t+1} \= \\begin{cases} C\_{i,t}(1 \+ \\Delta C\_{i,t}) & \\text{if lucky event}\\ C\_{i,t}(1 \- \\Delta C\_{i,t}) & \\text{if unlucky event}\\ C\_{i,t} & \\text{otherwise} \\end{cases}
-  $$
+- Capital evolves multiplicatively:
+  - $C_{i,t+1} = C_{i,t}(1 + \Delta C_{i,t})$ on a lucky event
+  - $C_{i,t+1} = C_{i,t}(1 - \Delta C_{i,t})$ on an unlucky event
+  - $C_{i,t+1} = C_{i,t}$ otherwise
 
-## 3. Assumptions
-- Independence between attributes (though unrealistic)
-  - In reality:
-    - Wealth increases networking ($t^{(4)} \\to t^{(3)}$)
-    - Wealth improves education ($t^{(4)} \\to t^{(2)}$)
-    - Wealth enables outsourcing, enhancing intensity ($t^{(4)} \\to t^{(1)}$)
-- Number of events $M$ is fixed
+### Assumptions
+
+- Attributes are independent, though this is unrealistic in practice
+  - In reality, wealth increases networking ($t^{(4)} \to t^{(3)}$),
+    improves education ($t^{(4)} \to t^{(2)}$), and enables outsourcing
+    that raises intensity ($t^{(4)} \to t^{(1)}$)
+- The number of events $M$ is fixed
 - Capital effects are multiplicative, not additive
 
-## 4. Findings (Expected Simulation Outcomes)
-1. **Inequality Emerges**: despite normal distribution of talent, final capital
-   $C$ follows a Pareto distribution
-   $$
-   P(C \> x) \\sim x^{-\\alpha}
-   $$
-2. **Top success ≠ top talent**: most successful agents typically have **average
-   talent** plus many lucky events; exceptionally talented agents may remain
-   unsuccessful without luck
-3. **Luck dominates correlations**:
-   $$
-   \\text{corr}(\#\\text{lucky events}, C\_T) \\gg \\text{corr}(|\\mathbf{T}\_i|, C\_T)
-   $$
-4. **Interplay of luck and talent**: success is not linear in talent but
-   requires both favorable randomness and capability
+### Model Improvements
 
-## 5. Model Improvements
-- **Talent evolution**:
-  $$
-  t^{(k)}*{i,t+1} \= t^{(k)}*{i,t} \+ f(\\Delta C\_{i,t}) \- g(\\text{burnout})
-  $$
-- **Variable event magnitude**: continuous distributions for small vs.
+- **Talent evolution**: $t^{(k)}_{i,t+1} = t^{(k)}_{i,t} + f(\Delta
+  C_{i,t}) - g(\text{burnout})$
+- **Variable event magnitude**: continuous distributions for small versus
   transformative opportunities
-- **Path dependence**: one event unlocks/block others
-- **Feedback loops**: reputation and visibility amplify probability of future
-  events
-- **Reputation function**:
-  $$
-  q\_{i,t+1} \= q\_{i,t} \+ \\gamma \\log(1 \+ C\_{i,t})
-  $$
-- **Externalities**: allow negative spillovers from monopolies or exploitation
+- **Path dependence**: one event unlocks or blocks others
+- **Feedback loops**: reputation and visibility amplify the probability of
+  future events, via $q_{i,t+1} = q_{i,t} + \gamma \log(1 + C_{i,t})$
+- **Externalities**: allow negative spillovers from monopolies or
+  exploitation
 
-## 6. Policy Implications
-- **Egalitarian allocation**: distributing small funds broadly maximizes
-  aggregate returns
-- **Meritocratic allocation**: rewarding past winners reinforces inequality,
-  least efficient
-- **Random allocation**: randomized funding yields surprisingly strong outcomes
-- **Education & opportunity density**: raising baseline talent distribution and
-  increasing event frequency both improve outcomes, though structural inequality
-  persists
+## Key Examples
 
-## 7. Empirical Calibration
-- Current model \= stylized. Needs calibration with real-world data:
-  - Wealth & income distributions
-  - Startup funding rounds
-  - Scientific career trajectories (citations, grants)
-- Validate whether simulated power-law exponents align with observed data
+- **Inequality emerges from luck alone**: despite talent being normally
+  distributed, final capital $C$ follows a Pareto distribution, $P(C > x)
+  \sim x^{-\alpha}$
+- **Top success does not mean top talent**: the most successful agents
+  typically have average talent plus many lucky events, while
+  exceptionally talented agents can remain unsuccessful without luck
+- **Luck dominates the correlation with success**: $\text{corr}(\#
+  \text{lucky events}, C_T) \gg \text{corr}(|\mathbf{T}_i|, C_T)$
+- **Talent and luck interact**: success is not linear in talent, it
+  requires both favorable randomness and capability
 
-## 8. Causal ML Integration
+## Questions
 
-### Causal Forests
-- Estimate heterogeneous treatment effects (HTEs)
-- Treatment: number of lucky events
-- Outcome: final capital
-- Moderator: talent vector
-- Estimator: Conditional Average Treatment Effects (CATEs)
+1. [Open question 1: what remains unknown?]
+2. [Open question 2: what would a proof or counterexample look like?]
+3. [Provocative implication: if true, what does this change?]
 
-### Double Machine Learning (DML)
-- Controls for confounders in high dimensions
-- Uses ML (e.g., Lasso) to partial out nuisance terms
-- Example: estimate causal effect of opportunities on income
+## Research Topics
 
-### Instrumental Variables \+ ML
-- Needed when luck is not random
-- Example instrument: exogenous shocks (weather, lotteries)
-- Tools: Deep IV, Orthogonal Random Forests
+- **Causal ML estimation**: use causal forests (treatment: number of lucky
+  events, outcome: final capital, moderator: talent vector) to estimate
+  conditional average treatment effects (CATEs)
+- **Double machine learning**: use ML (e.g., Lasso) to partial out
+  confounders in high dimensions, e.g., the causal effect of opportunities
+  on income
+- **Instrumental variables**: needed when luck is not random, using
+  exogenous shocks (weather, lotteries) as instruments, via Deep IV or
+  Orthogonal Random Forests
+- **Uplift modeling**: estimate individual-level treatment effects to
+  identify which agents gain most from additional opportunities or funding
+- **Empirical calibration**: calibrate the stylized model against real
+  wealth and income distributions, startup funding rounds, and scientific
+  career trajectories (citations, grants), and check whether the simulated
+  power-law exponents match observed data
+- **Data requirements**: talent proxies (education, test scores, skills),
+  opportunity data (funding, life events, network shocks), outcome data
+  (income, patents, career milestones), and exogenous variation (lotteries,
+  policy changes, weather shocks)
+- **Policy implications**: compare egalitarian (broad small grants),
+  meritocratic (reward past winners), and random allocation strategies, and
+  measure how raising baseline talent or opportunity density affects
+  outcome inequality
 
-### Uplift Modeling
-- Estimates **individual-level treatment effect**
-- Application: identify which agents gain most from additional opportunities or
-  funding
+## Next steps
 
-## 9. Data Requirements (Optional)
-- **Talent proxies**: education, test scores, skills
-- **Opportunities**: funding, random life events, network shocks
-- **Outcomes**: income, patents, career milestones
-- **Exogenous variation**: lotteries, policy changes, weather shocks
+- [ ] Look for related research (what has already been done)
+- [ ] Finalize the implementation plan
+- [ ] GP to review / approve the plan
+- [ ] Hack a quick end-to-end prototype (e.g., in 1-2 days) to show that you
+      understood the problem and can make progress
+- [ ] Break the problem down in phases and milestones
+- [ ] Execute one step at the time
+
+## Implementation plan
+
+- **Milestone 1: build the agent-based talent/luck simulator**
+  - Implement the population of $N = 100$ agents with independent talent
+    vectors $\mathbf{T}_i$, the Bernoulli event process, and the
+    multiplicative capital update from the Formalization
+  - Verify the base model reproduces the target stylized fact: talent
+    normally distributed but final capital $C_T$ following a Pareto tail
+  - This is the result: a working simulator whose output distribution can be
+    inspected (histograms, log-log rank plots) to confirm Pareto-shaped
+    inequality emerges from luck alone
+
+- **Milestone 2: validate causal ML estimation on synthetic ground truth**
+  - Apply causal forests (treatment: number of lucky events, outcome:
+    $C_T$, moderator: $\mathbf{T}_i$) to estimate CATEs, and double machine
+    learning to partial out talent confounders
+  - Compare recovered luck/talent effects against the simulator's known
+    true parameters to check estimator bias and variance
+  - This is the result: a validated causal-estimation pipeline that
+    recovers the simulator's known ground-truth effects within a measured
+    error bound
+
+- **Milestone 3: add model improvements and test the luck-dominance claim**
+  - Extend the simulator with talent evolution, path dependence, and the
+    reputation feedback loop $q_{i,t+1} = q_{i,t} + \gamma \log(1 +
+    C_{i,t})$
+  - Rerun the causal estimators from Milestone 2 on the richer model and
+    track $\text{corr}(\#\text{lucky events}, C_T)$ versus
+    $\text{corr}(|\mathbf{T}_i|, C_T)$ as complexity increases
+  - This is the result: a report on whether luck's dominance over talent
+    persists, weakens, or strengthens as feedback loops and path
+    dependence are added
+
+- **Milestone 4: calibrate against real data and compare policies**
+  - Gather talent proxies, opportunity data, and outcome data (wealth or
+    income distributions, startup funding rounds, or scientific career
+    citations/grants), and fit simulator parameters so its Pareto exponent
+    matches the empirical one
+  - Simulate egalitarian, meritocratic, and random allocation policies on
+    the calibrated model and measure resulting inequality
+  - This is the result: a calibrated model matching an observed real-world
+    Pareto exponent, plus a comparison table of how each allocation policy
+    changes outcome inequality
+
+## References
+
+- Author(s), _Title_. (Year)

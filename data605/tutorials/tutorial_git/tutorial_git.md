@@ -32,10 +32,10 @@
 ## Clone class project
 
 - Clone a project, e.g., the class project from
-  `https://github.com/gpsaggese/umd_classes`
+  `https://github.com/gpsaggese/gpsaggese.github.io`
   - The tutorial uses SSH (`git@github.com:...`): this requires an SSH key
     pair set up with GitHub; if you only have HTTPS access use
-    `https://github.com/gpsaggese/umd_classes.git` instead
+    `https://github.com/gpsaggese/gpsaggese.github.io.git` instead
   ```bash
   > cd /tmp
   > git clone git@github.com:gpsaggese/umd_classes.git /tmp/umd_classes_tmp

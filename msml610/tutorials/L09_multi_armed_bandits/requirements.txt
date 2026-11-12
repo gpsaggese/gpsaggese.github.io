@@ -1,6 +1,1 @@
-ipywidgets
-matplotlib
-numpy
-pandas
-seaborn
-tqdm
+../../../class_project/project_template/requirements.txt

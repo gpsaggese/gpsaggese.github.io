@@ -1,9 +1,8 @@
 # Solve the Traveling Salesman Problem with an LLM
 
 ## Status
-- **Status**: draft
-- **Complete Specs**: 15%
-- **Assignee**: TBD
+- **Status:**: draft
+- **Complete Specs:**: 15%
 
 ## Core Idea
 - Test whether an LLM (prompted directly, or fine-tuned on
@@ -13,8 +12,8 @@
 - The interesting question isn't "can an LLM solve TSP optimally" (it can't,
   at any interesting scale) but **what kind of combinatorial-structure signal
   can an LLM extract from problem instances without a hand-coded algorithm**
-- Related to [[draft.Implement_MonteCarlo_Tree_Search_and_Alpha_Zero]] and
-  [[draft.LLM_for_Symbolic_Regression]] — same family of "can an LLM replace
+- Related to `draft.Implement_MonteCarlo_Tree_Search_and_Alpha_Zero.md` and
+  `draft.LLM_for_Symbolic_Regression.md`: same family of "can an LLM replace
   or augment a classical search/optimization algorithm" questions
 
 ## Formalization
@@ -43,7 +42,7 @@
 2. Does a fine-tuned LLM learn generalizable spatial-reasoning heuristics, or
    does it just memorize patterns from the training distribution of
    instances?
-3. Is there value in using the LLM as a *heuristic proposer* feeding into a
+3. Is there value in using the LLM as a _heuristic proposer_ feeding into a
    classical local-search improver (2-opt), rather than as the end-to-end
    solver?
 

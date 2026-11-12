@@ -125,8 +125,8 @@ UMD DATA605 - Big Data Systems
 ::: columns
 :::: {.column width=55%}
 - Tutorials
-  - [Work on main](https://github.com/gpsaggese/umd_classes/blob/master/data605/tutorials/tutorial_git/tutorial_git.md#work-on-main)
-  - [Hot fix](https://github.com/gpsaggese/umd_classes/blob/master/data605/tutorials/tutorial_git/tutorial_git.md#hot-fix)
+  - [Work on main](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/tutorials/tutorial_git/tutorial_git.md#work-on-main)
+  - [Hot fix](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/tutorials/tutorial_git/tutorial_git.md#hot-fix)
 
 - Start from a project with some commits
 
@@ -250,7 +250,7 @@ UMD DATA605 - Big Data Systems
 ::: columns
 :::: {.column width=55%}
 - Tutorial:
-  - [Merging conflicts](https://github.com/gpsaggese/umd_classes/blob/master/data605/tutorials/tutorial_git/tutorial_git.md#merging-conflicts)
+  - [Merging conflicts](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/data605/tutorials/tutorial_git/tutorial_git.md#merging-conflicts)
 
 - Sometimes **\textcolor{red}{Git can't merge}**, e.g.,
   - The same file has been modified by both branches

@@ -370,10 +370,10 @@ The same templates have multiple applications:
 ### Available Tools
 
 - `llm_transform.py`
-- `transform_notes.py`: Some transformations don't need LLMs and are implemented
+- `transform_text.py`: Some transformations don't need LLMs and are implemented
   as code.
 - `ai_review.py`: The rules for AI are saved in
-  `./docs/code_guidelines/all.coding_style_guidelines.reference.md`. This file
+  `./docs/coding/all.coding_style_guidelines.reference.md`. This file
   has a special structure:
   - First level represents the target language (e.g., `General`, `Python`)
   - Second level represents a rule topic (e.g., `Imports`, `Functions`)

@@ -1,0 +1,983 @@
+// type=UMD_slides
+// course_title=MSML610: Advanced Machine Learning
+// lesson_title=L02.5: ML Techniques - Model Evaluation
+// version=v1.0 (2026-09-03)
+// slides_engine=typst
+
+# Model Evaluation
+
+## Why Evaluate
+
+* How to Make Progress in ML Research
+
+- In ML there are @many possible directions for research@, e.g.,
+  - Different data preprocessing methods
+  - Different features
+  - Different models
+  - Different training algorithms
+  - Different evaluation techniques
+
+- @Question@: What to do?
+
+- @Solution@: Evaluate models **systematically using a single number**
+  - Implement _metrics_ (e.g., accuracy, F1 score) for insight
+  - Use _cross-validation_ `#cite("kohavi1995crossvalidation")`{=typst} for model
+    validation
+  - Use _statistical tests_ to ensure differences are not random
+    - Utilize hypothesis testing
+    - Conduct A/B testing in real-world
+
+* In-Sample vs Out-Of-Sample Error Expressions
+
+- @Goal@: Find a function $h$ that approximates $h \approx f$ the unknown function
+  $f$ over the space of inputs $\vx \in \calX$ ("script X")
+  `#cite("abumostafa2012learning")`{=typst}
+
+- Usually the **error is point-wise**:
+  $$
+  e(h(\vx_i), f(\vx_i))
+  $$
+  - E.g.,
+    - Squared error: $e(\vx) \triangleq (h(\vx) - f(\vx))^2$
+    - 0-1 binary error: $e(\vx) \triangleq I[h(\vx) \ne f(\vx)]$
+    - Log probability: $e(\vx) \triangleq - \log( \Pr(h(\vx) == f(\vx)) )$
+
+- @Definition@: **In-sample error** computed using all points in the training set:
+  $$
+  E_{in}{(h)} \triangleq \frac{1}{N} \sum_{i=1}^N e(h(\vx_i), f(\vx_i))
+  $$
+
+- @Definition@: **Out-of-sample error** computed on the entire space of inputs
+  $\calX$:
+  $$
+  E_{out}(h) \triangleq \EE_{\vx \in \calX}[e(h(\vx), f(\vx))]
+  $$
+
+* Training vs Test Set
+
+- @Problem@: Performance on the train set $E_{in}$ is an **optimistic estimate** of
+  $E_{out}$
+  - A model can have:
+    - 0\% error rate on training data (e.g., memorizing responses for training set)
+    - 50\% error rate on test set (e.g., answering randomly)
+
+- @Solution@: To **properly evaluate model performance**:
+  - Use test set not involved in training
+  - Training and test sets should be representative samples
+  - E.g., credit risk problem
+    - Cannot use data from a Florida bank branch to assess a model built with New
+      York data
+    - Populations have different characteristics
+
+## Data Splitting
+
+* Lots of Data Scenario vs Scarce Data Scenario
+
+- @Lots of data scenario@
+  - It's ideal to have lots of data (ideally infinite)
+  - You can
+    - Learn on lots of data $\to$ fit all degrees of freedom of a complex model
+    - Predict on lots of data $\to$ assess precise out-of-sample performance
+
+- @Scarce data scenario@
+  - Often data is _scarce_
+    - E.g., facial recognition datasets with limited annotated data
+  - Cannot use all data as a training set
+  - Hold out data to estimate performance metrics and bounds
+    - Split into train and test sets (sizing heuristics)
+    - Use cross-validation to maximize data usage
+  - Other approaches:
+    - Augment data artificially, like in image processing
+    - Use transfer learning with pre-trained models on related tasks
+
+* Splitting Data Into Training, Validation, Test Sets
+
+- @Assumptions@: Training, validation, and test sets **must be**:
+  - _Distinct_
+  - _Representative_ of the problem
+    - E.g., each class in all sets represented according to original data
+  - _Sized_ based on data and problem needs
+
+- @Techniques@ to ensure sets have the **same distribution**:
+  - _Stratified sampling_
+    - E.g., each class label proportionally represented in each set
+  - _Shuffle and sample_
+    - Achieves randomization, maintains distribution
+  - _Sample and check statistics of variables_
+    - E.g., mean, std dev, PDF
+    - Compare statistics to ensure each set mirrors broader dataset
+
+* Rule of Thumbs for Data Set Splits
+
+- If $n$ is @large@ $\to$ use a 60-20-20 split
+  - Training: 60%
+  - Validation: 20%
+  - Test: 20%
+
+- If $n$ is @medium@ $\to$ use a 60-40 split
+  - Training: 60%
+  - Test: 40%
+  - Not possible to learn hyperparameters, so no validation set
+
+- If $n$ is @small@ $\to$ use cross-validation and report "small data size"
+  - Use K-fold cross-validation
+  - Be cautious of the increased chance of high accuracy by chance
+  - Is machine learning even suitable for this problem?
+
+- Of course $n$ "large" / "medium" / "small" is relative
+
+* Training Data
+
+- @Question@: How much data is _enough data_?
+
+::: columns
+:::: {.column width=50%}
+
+- @Solution@: More data is generally better, though returns diminish after a certain
+  volume
+  - Initially, increasing data size significantly improves performance
+  - Eventually, adding more data results in smaller accuracy gains and may not
+    justify increased computational cost
+
+- You should use _learning curves_ to track this effect
+
+::::
+:::: {.column width=50%}
+
+![](msml610/lectures_source/figures/L02.5.Learning_Curves_Example.png)
+
+::::
+:::
+
+* Using Test Data
+
+- @Question@: Can you _ever_ use test set for training?
+
+- @Solution@: Only after the test set has been used for the single, final performance
+  estimate, reuse all data (including the test set) for deployment
+  - Ensures the model benefits from all information
+  - The reported $E_{test}$ now estimates the **procedure**, not the exact deployed
+    model, since the deployed model was retrained on more data
+
+::: columns
+:::: {.column width=70%}
+
+// TODO(ai_gp): Make the font bigger
+
+```mermaid
+timeline
+  section Training
+    60% data : Training : Model selection
+  section Validation
+    20% data : Validation : Model selection
+  section Testing
+    20% data : Testing : Final evaluation
+  section Deployment
+    100% data : Deploy (Retrain) : Production
+```
+
+::::
+:::: {.column width=30%}
+
+![](msml610/lectures_source/figures/L02.5.Testing_Data_For_Training.png)
+
+::::
+:::
+
+## Choosing an Error Measure
+
+* How to Choose an Error Measure?
+
+- @Remark@: Error measure depends on **application** and **"customer"** should define
+  acceptable _error level_ for their use case, e.g.,
+  - Medical applications have low error tolerance
+  - Recommendation systems have higher tolerance
+
+- @Techniques@: Customize evaluation with a **utility function** to prioritize errors
+  and success, e.g.,
+  - True/false positives/negatives
+  - In medical diagnosis, prioritize minimizing false negatives
+
+- @Characteristics@ of a **good error measure**:
+  - _Plausible_:
+    - E.g., squared error for Gaussian noise
+  - _Friendly_:
+    - E.g., measures allowing closed-form solutions simplify calculations
+    - Convex optimization-friendly measures ensure algorithms find global minimum
+      easily
+
+// ### Regression Metrics
+
+* Mean Squared Error (MSE)
+
+- @Definition@: MSE is the **average squared difference of error**
+  `#cite("hastie2009elements")`{=typst}:
+  $$
+  \text{MSE}
+  \triangleq \frac{1}{N} \sum_{i=1}^N (h(\vx_i) - f(\vx_i))^2
+  $$
+  - Quantify difference between estimated and actual values
+  - E.g., in house price prediction, determines how close predicted prices are to
+    actual prices
+
+- @Pros@
+  - Related to Gaussian error
+  - Optimization friendly
+
+- @Cons@
+  - Doesn't share unit of measure with output $\to$ distorts error interpretation
+  - Not suitable for skewed distributions
+  - Sensitive to outliers
+    - Single large error can disproportionately affect MSE
+    - Use median absolute deviation (MAD), median of squared error for robustness
+
+* Root Mean Squared Error (RMSE)
+
+- @Definition@: RMSE is the **square root of Mean Squared Error** (MSE):
+  $$
+  \text{RMSE} \triangleq \sqrt{\text{MSE}}
+  = \sqrt{\frac{1}{N} \sum_{i=1}^N (h(\vx_i) - f(\vx_i))^2}
+  $$
+
+- @Pros@
+  - Same units as output, allowing intuition of magnitude compared to mean
+  - Facilitates comparison between data sets or models since metric is normalized to
+    output's scale
+
+- @Cons@
+  - Same as MSE (not robust to outliers, skewed distribution)
+
+* Median-Based Metrics
+
+- @Idea@: Use metrics based on median (i.e., the 0.5 quantile of absolute error)
+  instead of square of distance
+  - I.e., use $L_1$ metric instead of $L_2$
+
+- @Definition@: **Median absolute deviation**:
+  $$
+  \text{MAD} \triangleq \text{median}_i(|h(\vx_i) - f(\vx_i)|)
+  $$
+
+- @Definition@: **Median squared error**:
+  $$
+  \triangleq \text{median}_i(|h(\vx_i) - f(\vx_i)|^2)
+  $$
+
+- @Pros@
+  - Robust to outliers
+
+- @Cons@
+  - More difficult to evaluate
+
+* How to Measure Classifier's Performance?
+
+- @Success/hit/win rate@ (or error/miss rate)
+  - Measures correct predictions proportion
+    $$
+  \text{accuracy} \triangleq \frac{\text{TP} + \text{TN}}{\text{TP} + \text{TN} + \text{FP} + \text{FN}}
+    $$
+  - Important for overall accuracy
+  - E.g., 80 correct out of 100 = 80% success rate
+
+- @Log probability/cross-entropy error@
+  - Evaluates classification with probabilities 0 to 1
+    $$
+  \text{cross-entropy} \triangleq -\frac{1}{N} \sum_{i=1}^N [y_i \log(p_i) + (1 - y_i) \log(1 - p_i)]
+    $$
+  - Lower cross-entropy loss = better performance
+
+* How to Measure Classifier's Performance?
+
+- @Precision/recall/F-score@
+  - Useful for imbalanced data
+  - _Precision_: Correctly predicted positives / total predicted positives
+    $$
+    \text{precision} \triangleq \frac{\text{TP}}{\text{TP} + \text{FP}}
+    $$
+    - E.g., 0.75 precision = 75% true positives identified
+  - _Recall_: Correctly predicted positives / actual positives
+    $$
+    \text{recall} \triangleq \frac{\text{TP}}{\text{TP} + \text{FN}}
+    $$
+    - E.g., 0.60 recall = 60% actual positives identified
+  - _F-score_: Weighted harmonic mean of precision and recall
+
+// ### Classification Metrics
+
+* Error Metrics for Skewed Classes
+
+- @Question@
+  - Accuracy can be misleading
+  - Use metrics like confusion matrix, precision, and recall
+
+- @Example@
+  - Train a classifier to distinguish tumors as:
+    - $y = 1$: Malignant
+    - $y = 0$: Benign
+  - Classifier's error rate is 1% (i.e., guess correctly 99% of the time)
+    - 1% error rate seems good!
+  - But only 0.5% of patients have cancer
+    - A trivial classifier that always outputs $y = 0$ has a 0.5% error rate!
+    - Now a 1% error rate does not look good anymore
+
+* Error Measures: Fingerprint Verification Example
+
+- @Example@: In **fingerprint verification**:
+  - Recognizing a valid fingerprint $\to$ no error
+  - Otherwise $\to$ false positive or false negative
+
+- @Remark@: Error weight depends on the application
+```{=typst}
+#styled-table(
+  headers: ("Application", "False Positive", "False Negative"),
+  rows: (
+    ("Supermarket", "Minor issue\n(One extra discount)", "Costly\n(Annoyed customer, delays)"),
+    ("CIA Building", "Critical\n(Security breach)", "Acceptable\n(Triggers further checks)"),
+  ),
+  col-widths: (2fr, 3.2fr, 3.2fr),
+  bold-first-col: true,
+)
+```
+
+- Same outcome but the error measure is the _opposite_ in two set-ups!
+
+* Confusion Matrix
+
+- @Assumptions@
+  - Actual/predicted class $\in \{0, 1\}$
+  - Typically $y = 1$ encodes the rare class to predict
+
+::: columns
+:::: {.column width=70%}
+
+- @Components@: You have 4 possible cases:
+  - $act = 1$, $pred = 1$ $\to$ true positive (TP)
+  - $act = 0$, $pred = 0$ $\to$ true negative (TN)
+  - $act = 1$, $pred = 0$ $\to$ false negative (FN)
+    - Model outputs $pred = 0$, but it is wrong
+  - $act = 0$, $pred = 1$ $\to$ false positive (FP)
+    - Model outputs $pred = 1$, but it is wrong
+
+::::
+:::: {.column width=30%}
+
+```tikz
+\bfseries
+% Draw matrix
+\draw[thick] (0,0) rectangle (4,4);
+\draw[thick] (0,2) -- (4,2); % horizontal middle
+\draw[thick] (2,0) -- (2,4); % vertical middle
+
+% Labels for actual class
+\node[rotate=90] at (-0.8,3) {act = 1};
+\node[rotate=90] at (-0.8,1) {act = 0};
+
+% Labels for predicted class
+\node at (1,4.3) {pred = 1};
+\node at (3,4.3) {pred = 0};
+
+% Cell labels
+\node at (1,3) {\textbf{TP}};
+\node at (3,3) {\textbf{FN}};
+\node at (1,1) {\textbf{FP}};
+\node at (3,1) {\textbf{TN}};
+```
+
+::::
+:::
+
+- @Remark@: You can aggregate confusion matrix in **precision** and **recall**
+
+* Precision vs Recall: Definition
+
+- @Assumptions@: $y = 1$ encodes the rare event `#cite("vanrijsbergen1979ir")`{=typst}
+
+- @Definition@: **Precision** measures how often there is a true positive _given that
+  pred = 1_ \begingroup \small \vspace{-0.2cm}
+  $$
+  \text{precision}
+  \triangleq \Pr(\text{TP} | \text{pred = 1})
+  = \frac{|\text{pred = 1} \land \text{act = 1}|}{|\text{pred = 1}|}
+  = \frac{\text{TP}}{\text{TP} + \text{FP}}
+  $$
+  \endgroup
+
+- @Definition@: **Recall** measures how often there is a true positive _given that
+  act = 1_ \begingroup \small \vspace{-0.2cm}
+  $$
+  \text{recall}
+  \triangleq \Pr(\text{TP} | \text{act = 1})
+  = \frac{\text{TP}}{|\text{act = 1}|}
+  = \frac{\text{TP}}{\text{TP} + \text{FN}}
+  $$
+  \endgroup
+
+- @Remark@: Both are conditional probability measuring the fraction of TP under
+  different circumstances:
+  - (Pre)cision: Pred = 1
+  - Rec(a)ll: Act = 1
+
+* Precision / Recall as Quality / Quantity
+
+- @Applications@: Precision/recall are widely used in information retrieval
+  - E.g., a search engine
+    - Returns 30 pages; only 20 are relevant $\to$ precision =
+      $\frac{20}{30} = \frac{2}{3}$
+    - Fails to return other 40 relevant pages $\to$ recall =
+      $\frac{20}{(40 + 20)} = \frac{20}{60} = \frac{1}{3}$
+
+- @Interpretation@: **"increasing precision"** means when you predict 1, you are more
+  likely to be right
+  - A higher precision indicates fewer false positives
+    - E.g., in a spam email detection system, _"precision is 90%"_ means 90% of the
+      emails marked as spam are actually spam
+  - Measures _"quality"_ of prediction
+
+- @Interpretation@: **"increasing recall"** means you predict more instances when the
+  outcome is 1
+  - A higher recall means fewer false negatives
+    - E.g., in a spam email detection system, _"recall is 80%"_ indicates 80% of all
+      actual spam emails were correctly identified as spam
+  - Measures _"quantity"_ of prediction (coverage)
+
+* Precision / Recall for Trivial Classifiers
+
+- @Example@: A classifier that **outputs always most common class** has:
+  $$
+  \begin{alignat*}{3}
+  \text{precision}
+    & \triangleq \Pr(\text{TP} | \text{pred = 1}) = 0
+    & \text{(since TP = 0)} \\
+  \text{recall}
+    & \triangleq \Pr(\text{TP} | \text{act = 1}) = 0
+    & \text{(since TP = 0)} \\
+  \end{alignat*}
+  $$
+
+- @Example@: A classifier that **outputs always rare class** has:
+  $$
+  \begin{alignat*}{3}
+  \text{recall}
+    & = 1
+    & \text{(since FN = 0)} \\
+  \text{precision}
+    & \triangleq \Pr(\text{TP} | \text{pred = 1})
+    & \text{(by definition)} \\
+  &= \frac{\text{TP}}{\text{TP + FP}}
+    & \text{($TP + FP = n$ because} \\
+  &= \frac{\#(y = 1)}{n}
+    & \text{classifier always emits 1)} \\
+  &= \Pr(\text{pos}) \approx 0
+    & \text{(the positive class is very rare)} \\
+  \end{alignat*}
+  $$
+
+- @Key idea@: A trivial classifier has precision or recall close to 0
+
+* F-Score
+
+- @Definition@: The **F-score** is defined as the _harmonic mean of precision and
+  recall_:
+  $$
+  \text{F-score}
+  \triangleq \frac{2}{\frac{1}{P} + \frac{1}{R}}
+  = 2 \frac{P \cdot R}{P + R}
+  $$
+
+- @Interpretation@
+  - Trivial classifiers: $P = 0$ or $R = 0$ $\implies$ F-score = 0
+  - Perfect classifiers: $P = R = 1$ $\implies$ F-score = 1
+  - For F-score to be large, both $P$ and $R$ must be high
+
+- @Question@: Why not just average precision and recall?
+  - A classifier that always outputs 1 has $R = 1$ and $P \approx 0$ (the positive
+    class is rare)
+  - The _arithmetic mean_ $\frac{P + R}{2} \approx \frac{1}{2}$ looks fine
+  - But this is a trivial classifier: We want a score close to 0 to detect this
+  - The F-score (harmonic mean) correctly gives a value close to 0
+
+* Trading Off Precision and Recall
+
+- @Remark@
+  - In theory, you want to increase **both precision and recall**
+  - In practice, modify the threshold $\theta$ of a probabilistic classifier to
+    **trade off precision and recall**
+    - Precision = $\frac{\text{TP}}{|\text{pred = 1}|}$
+    - Recall = $\frac{\text{TP}}{|\text{act = 1}|}$
+  - Increase threshold $\theta$
+    - Output 1 only if more confident $\to$ increase precision
+  - Decrease threshold $\theta$
+    - Output 1 more often $\to$ decrease chance of missing the rare event $\to$
+      increase recall
+
+- @Pros@
+  - Give insight on the behavior of a classifier (e.g., confusion matrix)
+  - Avoid mistaking a trivial classifier for a good classifier
+
+- @Cons@
+  - You have two different numbers $\to$ difficult to compare classifiers
+    - Solutions: F-score, AUC
+
+* Precision-Recall Curves
+
+- @Definition@: **Precision-recall curves** show _precision vs recall trade-off_ for
+  a classifier as its threshold $\theta$ varies
+  - Plot the curve on a precision-recall plane ($x =$ recall, $y =$ 1 - precision)
+  - E.g., changing threshold of logistic regression
+
+::: columns
+:::: {.column width=50%}
+
+- @Remark@: On a precision-recall plane
+  - **Best classifier** (precision = recall = 1) is in the top-right corner
+  - A curve **higher** than another one means a better classifier
+  - The baseline "random classifier" is a horizontal line at the fraction of positive
+    examples, and a curve above it is better than random guessing
+
+::::
+:::: {.column width=50%}
+
+```tikz
+\bfseries
+% Precision-Recall curve
+\draw[thick, ->] (0,0) -- (8,0);
+\draw[thick, ->] (0,0) -- (0,6);
+
+\node[below] at (4,-0.3) {Recall};
+\node[left] at (-0.3,3) {Precision};
+
+% Axis labels
+\node[below] at (0,-0.5) {0};
+\node[below] at (8,-0.5) {1};
+\node[left] at (-0.4,0) {0};
+\node[left] at (-0.4,6) {1};
+
+% Baseline (random classifier)
+\draw[dashed, gray] (0,1.5) -- (8,1.5);
+\node[gray, right] at (8,1.5) {Baseline (random)};
+
+% Good classifier curve
+\draw[thick, blue, smooth] (0.5,5.8) to (1.5,5.5) to (3,4.8) to (5,3.5) to (7,2.2) to (8,1.6);
+\node[blue] at (3,2.5) {\small Good classifier};
+
+% Excellent classifier curve
+\draw[thick, green, smooth] (0.2,5.9) to (1,5.95) to (2,5.9) to (4,5.5) to (6,4.2) to (7.8,2.8);
+\node[green] at (6.5,5.5) {\small Excellent classifier};
+
+% Best point
+\draw[fill=red] (0.3,5.95) circle (0.15);
+\node[red, above] at (0.3,6.3) {Best};
+```
+
+::::
+:::
+
+* ROC Curves
+
+- @Definition@: A **ROC curve** ("Receiver Operating Characteristic") plots _true
+  positive rate vs false positive rate_ as the classification threshold $\theta$
+  varies `#cite("fawcett2006roc")`{=typst}
+  - True positive rate: $\text{TPR} \triangleq \text{recall} = \frac{\text{TP}}{\text{TP} + \text{FN}}$
+  - False positive rate: $\text{FPR} \triangleq \frac{\text{FP}}{\text{FP} + \text{TN}}$
+
+- @Algorithm@: Plot the curve on the ROC plane ($x =$ FPR, $y =$ TPR)
+  - Best classifier (TPR = 1, FPR = 0) is in the top-left corner
+  - A curve above the diagonal is better than random
+  - The diagonal $y = x$ is the performance of random guessing
+
+- @Comparison@
+  - ROC curves are insensitive to class imbalance, since TPR and FPR are normalized
+    by their own class (actual positives, actual negatives)
+  - Precision-recall curves are more informative than ROC curves when the positive
+    class is rare
+
+* Area Under the Curve
+
+::: columns
+:::: {.column width=60%}
+
+- @Definition@: **AUC** is the _area under the ROC curve_
+  - Provides a robust metric by integrating over all thresholds
+  - AUC near the positive-class **prevalence** suggests no discriminative power,
+    since that is the score of a random classifier
+  - AUC closer to 1.0 indicates high performance
+
+::::
+:::: {.column width=40%}
+
+![](msml610/lectures_source/figures/L02.5.AUC_ROC_Curve.png)
+
+::::
+:::
+
+- @Pros@
+  - Single number summarizing classifier behavior, useful for comparing models
+  - Does not require selecting a threshold for performance calculation
+  - Handles imbalanced datasets effectively
+
+- @Example@
+  - Helps understand a model's ability to distinguish between patients with and
+    without a disease
+
+## Model Selection
+
+* The Problem of Model Selection
+
+- @Definition@: **Model selection** chooses the best model from candidates based on
+  performance, when multiple hypotheses explain the same data
+
+- @Components@: Across models, certain parameters are fixed, others need selection,
+  e.g.,
+  - Set of features
+    - E.g., select a subset from 100 variables
+  - Learning algorithms
+    - E.g., decide how to train a neural network
+  - Model types
+    - E.g., linear regression vs. SVM
+  - Model complexity
+    - E.g., polynomials of degree $d < 10$
+  - Values of regularization parameter
+    - E.g., try values like 0.01, 0.1, 1.0
+
+- @Techniques@: Evaluate metrics (e.g., model accuracy, precision, recall) with
+  cross-validation
+
+* Model Selection Process
+
+::: columns
+:::: {.column width=50%}
+
+- @Algorithm@
+  1. Split data into $D_{train}, D_{val}, D_{test}$
+     - Commonly: 60\% training, 20\% validation, 20\% test
+     - Like splitting 80\% training between two learning phases
+  2. Given $N$ hypotheses, learn on $D_{train}$ to get $g_1, ..., g_N$
+  3. Evaluate hypotheses on $D_{val}$ estimating errors
+     $E_{val}^{(1)}, ..., E_{val}^{(N)}$
+  4. Pick model $g_m$ with minimum $E_{val}^{(m)}$
+  5. Use test set $D_{test}$ to estimate fair performance of model $g_m$, i.e.,
+     $E_{test} \approx E_{out}$
+  6. Retrain model with entire $D = D_{train} \cup D_{val} \cup D_{test}$ to get
+     final $g_m^{*}$
+
+::::
+:::: {.column width=50%}
+
+![](msml610/lectures_source/figures/L02.5.Model_Selection.png)
+
+::::
+:::
+
+* Model Selection as Learning
+
+::: columns
+:::: {.column width=62%}
+
+- @Interpretation@: _"picking the model with smallest $E_{val}$"\_ is a **form of
+  learning**:
+  - Hypothesis set: $\{g_1, ... , g_N\}$
+  - Training set: $D_{val}$
+  - Pick the best model $g_m$
+
+- @Remark@: After model selection, you need to **assess the true performance** on
+  $D_{test}$
+  - _Experimentally_: $E_{val}(g_m)$ is a optimistically biased estimate of
+    $E_{out}(g_m)$
+    $$
+    E_{val}(g_m) < E_{out}(g_m)
+    $$
+  - _Theoretically_: The penalty for model complexity with a finite set of hypotheses
+    is:
+    $$
+      E_{out}(g_m) \le E_{val}(g_m) + O(\sqrt{\log(N) / K})
+    $$
+    - Use VC dimension for an infinite number of hypotheses (e.g., choice of
+      $\lambda$ for regularization)
+
+::::
+:::: {.column width=38%}
+
+```tikz
+\bfseries
+% Bias in model selection: E_val vs E_out relationship
+\draw[thick, ->] (0,0) -- (10,0);
+\draw[thick, ->] (0,0) -- (0,7);
+
+\node[below] at (5,-0.3) {Model Complexity};
+\node[left] at (-0.3,3.5) {Error};
+
+% Axis labels
+\node[below] at (0,-0.5) {0};
+\node[below] at (10,-0.5) {$\lambda$ (regularization)};
+\node[left] at (-0.4,0) {0};
+
+% E_out curve (true error)
+\draw[thick, red, smooth] (1,3) to (3,2.2) to (5,2) to (7,2.5) to (9,4);
+\node[red, above] at (5,2) {$E_{out}(g_m)$};
+
+% E_val curve (validation error - lower due to bias)
+\draw[thick, blue, smooth] (1,2) to (3,1.2) to (5,1) to (7,1.5) to (9,3);
+\node[blue, above] at (5,1) {$E_{val}(g_m)$};
+
+% Gap between curves
+\draw[dashed, gray] (5,1) -- (5,2);
+\node[gray, right] at (5.3,1.5) {Bias from};
+\node[gray, right] at (5.3,1.3) {model selection};
+
+% Optimal point
+\draw[fill=red] (5,2) circle (0.2);
+\node[red, above] at (5,2.5) {Optimal $\lambda$};
+```
+
+::::
+:::
+
+## Ensemble Learning
+
+* Ensemble Learning: Intuition
+
+- @Intuition@
+  - A group of weak learners can form a strong learner
+
+- @Definition@: **Ensemble learning** combines outputs of models $X_i$ to build a
+  model $X^*$ better than any $X_i$
+  - Utilize diversity in model predictions to improve accuracy
+  - Each model contributes its unique perspective, reducing variance and overfitting
+  - E.g., like a panel of voting experts
+
+- @Example@: In computer vision detecting a face is difficult task (at least <2010)
+  - Look for different features:
+    - Are there eyes?
+    - Is there a nose?
+    - Are eyes and nose in the correct position?
+  - Each feature is weak by itself, but together they become reliable
+
+* Ensemble Learning: Different Techniques
+
+- @Bagging@
+  - Reduces variance by averaging predictions from different models
+  - E.g., decision trees + bagging = random forest
+    `#cite("breiman2001randomforest")`{=typst}
+    - Creates multiple versions of a decision tree
+    - Each tree is trained on a random sample of data
+    - Averages predictions to improve accuracy
+
+- @Boosting@
+  - Reduces bias by focusing on errors made by previous models
+  - Sequentially adds models, each correcting its predecessor
+  - E.g., `adaBoost` increases weights of incorrectly classified data points to learn
+    the next model
+
+- @Stacking@
+  - Uses a meta-model to combine separate models using weights
+  - E.g., a stacking ensemble
+    - Uses logistic regression as a meta-model
+    - Combines predictions of other models (e.g., decision trees, support vector
+      machines, neural networks)
+
+* When Ensemble Learning Works
+
+- @Fact@: Combining multiple models with ensemble learning works when models:
+  - Are very different from each other
+  - Treat a reasonable percentage of the data correctly
+    - E.g., you cannot do much if all classifiers have 50% accuracy
+  - Complement each other
+    - I.e., They are specialists in a part of the domain where the others don't
+      perform well
+
+* How to Combine Outputs in Ensemble Learning
+
+- @Techniques@
+  - **Regression**
+    - Weighted average of prediction
+    - E.g., by accuracy of each model or by a prior
+  - **Classification**
+    - Weighted vote of predicted classes
+    - It needs an odd number of models to break ties
+  - **Probabilistic classification**
+    - Weighted average of class probabilities
+  - **Learn a meta-learner** (i.e., stacking) to combine multiple models
+
+- @Example@: Majority voting improves accuracy when errors are independent
+  - If 3 independent classifiers each have $\Pr(\text{correct}) = 0.7$
+    $$
+    \begin{alignat*}{2}
+    \Pr(\text{majority correct})
+    &= \Pr(\text{at least 2 classifiers correct}) \\
+    &= {3 \choose 2} 0.7^2 0.3 + 0.7^3 \\
+    &= 3 \times 0.7^2 \times 0.3 + 0.7^3 \\ 
+    &\approx 0.78 > 0.7
+    \end{alignat*}
+    $$
+
+* Ensemble Learning: Pros and Cons
+
+- @Pros@
+  - Hypothesis set $\calH$ is increased by combining hypotheses from different models
+
+- @Cons@
+  - More computationally intensive to train and evaluate
+  - Loss of interpretability
+  - Risk of overfitting (model complexity is increased)
+  - Ensemble learning contradicts Occam's razor, which advocates simplicity
+
+### Bagging
+
+* Bagging
+
+::: columns
+:::: {.column width=50%}
+
+- @Definition@: Bagging (from "Bootstrap AGGregation") `#cite("breiman1996bagging")`{=typst}
+  consists of
+  - Several training datasets are extracted randomly by sampling with replacement
+    from the original dataset (i.e., bootstrap)
+  - Learn multiple models, one for each training set
+  - Combine outputs using various methods (e.g., averaging)
+
+::::
+:::: {.column width=50%}
+
+![](msml610/lectures_source/figures/L02.5.Bagging_Classifier.png)
+
+::::
+:::
+
+- @Intuition@: Why bagging works?
+  - From the bias-variance decomposition view, combining multiple models:
+    - Reduces the variance component
+    - Without compromising the bias (bagged models are typically unbiased)
+  - Bagging mimics extracting more training sets (though not independent) from the
+    unknown distribution
+
+* Bagging and Instability in Learning Algorithms
+
+- @Fact@: Bagging works best with highly different models, especially non-linear
+  models
+  - You can introduce randomization in the learning algorithm intentionally
+
+- @Examples@
+  - **Decision Trees**
+    - Disable pruning
+    - Break ties randomly when selecting the best attribute to split
+    - E.g., bagging trees results in random forests
+  - **Multilayer Perceptrons**
+    - Use different initial weights in backpropagation to reach different local
+      minima
+  - **Nearest Neighbor Classifier**
+    - Use a random subset of features
+    - Resampling the training set has limited impact, as it is equivalent to changing
+      example weights
+
+### Boosting
+
+* Boosting
+
+::: columns
+:::: {.column width=50%}
+
+- @Definition@: **Boosting** builds models that complement each other
+  - Typically use homogeneous models, i.e., parametrized models from $\calH$
+
+- @Remark@: Strong classifiers can be built from weak classifiers
+  - E.g., a tree is built out of decision stumps (i.e., decision trees with one
+    level)
+
+::::
+:::: {.column width=50%}
+
+![](msml610/lectures_source/figures/L02.5.Boosting_Concept.png)
+
+::::
+:::
+
+- @Intuition@: Why boosting works?
+  - Boosting implements forward stagewise additive modeling
+  - Use another model to learn residuals (difference between predicted and true
+    values)
+
+- @Limitations@: Boosting does not work for _linear regression_:
+  - Combination of linear models is still a linear model
+  - OLS finds optimal weights in one step
+
+* Adaboost.M1
+
+::: columns
+:::: {.column width=60%}
+
+- @Definition@: **AdaBoost** (from Adaptive Boosting) `#cite("freundschapire1997boosting")`{=typst}
+  is an ensemble method, widely used for classification
+  - Assumes examples can be weighted in the cost function used to learn (otherwise
+    use resampling)
+
+::::
+:::: {.column width=40%}
+
+![](msml610/lectures_source/figures/L02.5.AdaBoost_Diagram.png)
+
+::::
+:::
+
+- @Algorithm@: Learning procedure
+  - Start with equal weights for all examples
+  - Iterate:
+    - Learn a classifier based on current weights for examples
+    - Weight the answer of each model by overall score (e.g., accuracy) or
+      probability
+    - Evaluate the ensemble
+    - Adjust weights for examples classified correctly/incorrectly
+
+### Stacking
+
+* Stacking
+
+::: columns
+:::: {.column width=60%}
+
+- @Definition@: **Stacking** `#cite("wolpert1992stacking")`{=typst} is about learning
+  how to combine models (not necessarily of the same type)
+
+- @Problem@: With voting / averaging we don't know which model to trust
+
+::::
+:::: {.column width=40%}
+
+![](msml610/lectures_source/figures/L02.5.Stacking_Ensemble.png)
+
+::::
+:::
+
+- @Solution@: Instead of voting or weighting we can use a meta-learner (level 1) to
+  learn how to pick / mix models (level 0)
+
+- @Techniques@: Learning procedure
+  - Learn "level 0" models
+  - Learn "level 1" model using hold-out data from learning of level 0 models (like
+    in model selection)
+    - Build training data with predicted values from level 0 models
+    - Then learn level 1
+    - Use a simple model for level 1 (e.g., linear models or trees) to avoid
+      overfitting
+    - Use probabilities from level 0, so level 1 can assess the confidence of each
+      model
+
+* Boosting vs Bagging vs Stacking
+
+```{=typst}
+#styled-table(
+  headers: ("Aspect", "Bagging", "Boosting", "Stacking"),
+  rows: (
+    ("Combines", "Models of same type", "Models of same type", "Different types"),
+    ("Learning", "Independent", "Iterative", "Independent"),
+    ("Predicting", "Uniform or data-driven weights", "Learned weights", "Learned weights/confidence"),
+    ("Main Objective", "Reduce variance", "Reduce bias", "Improve generalization via diversity"),
+    ("Base Learners", "Often strong", "Often weak", "Any type (heterogeneous)"),
+    ("Sensitivity to Noise", "Low", "High", "Medium"),
+    ("Parallelizable", "Yes", "No (sequential)", "Partially (base models)"),
+    ("Meta-model", "Not used", "Not used", "Required"),
+    ("Examples", "Random Forest", "AdaBoost, Gradient Boosting", "Stacked Generalization, Blending"),
+  ),
+  col-widths: (1.7fr, 1.7fr, 1.7fr, 1.7fr),
+  bold-first-col: true,
+)
+```

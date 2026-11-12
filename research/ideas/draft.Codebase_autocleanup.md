@@ -1,10 +1,8 @@
 # Agentic Codebase Auto-Cleanup Driven by TODOs
 
 ## Status
-
-- **Status**: draft
-- **Complete Specs**: 30%
-- **Assignee**: TBD
+**Status:**: draft
+**Complete Specs:**: 30%
 
 ## Core Idea
 
@@ -35,19 +33,19 @@
   - $r(t)$: risk, i.e., blast radius if the fix is wrong (public API, test
     coverage of the touched lines, criticality of the module)
 - Priority orders cheap and safe work first:
-  ```
+  ```text
   score(t) = b(t) / (c(t) + eps) * (1 - r(t))
   ```
   - $b(t)$ is the estimated benefit (e.g., unblocks other TODOs, removes a
     known bug)
 - Routing policy by risk band:
-  ```
+  ```text
   r(t) < r_lo         -> auto-fix, human reviews the PR
   r_lo <= r < r_hi    -> agent proposes a plan, human approves, then fix
   r(t) >= r_hi        -> file an issue only, do not attempt
   ```
 - Acceptance gate for any generated PR:
-  ```
+  ```text
   accept iff (tests pass) and (lint clean) and (diff touches only planned files)
   ```
 - Dependency ordering: TODOs referencing the same symbol form a cluster and
@@ -99,13 +97,13 @@
   bot-authored PRs at scale
 
 ## Next steps
-[ ] Look for related research (what has already been done)
-[ ] Finalize the implementation plan
-[ ] GP to review / approve the plan
-[ ] Hack a quick end-to-end prototype (e.g., in 1-2 days) to show that you
-    understood the problem and can make progress
-[ ] Break the problem down in phases and milestones
-[ ] Execute one step at the time
+- [ ] Look for related research (what has already been done)
+- [ ] Finalize the implementation plan
+- [ ] GP to review / approve the plan
+- [ ] Hack a quick end-to-end prototype (e.g., in 1-2 days) to show that you
+      understood the problem and can make progress
+- [ ] Break the problem down in phases and milestones
+- [ ] Execute one step at the time
 
 ## Implementation plan
 

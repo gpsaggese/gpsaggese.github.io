@@ -37,7 +37,7 @@ Before starting, understand these non-negotiable principles:
 
 ### 1. Understand the Core Documentation
 
-- [ ] Read `class_project/project_template/README.md`
+- [ ] Read `class_project/project_template/docker_scripts.README.md`
   - Is there anything unclear, incorrect, or that can be improved?
 
 ### 2. Study Code Examples
@@ -56,7 +56,7 @@ Before starting, understand these non-negotiable principles:
   > mdm skill describe coding
   > mdm skill describe notebooks
   > mdm skill describe testing
-  > mdm skill describe tool_X_in_60_mins
+  > mdm skill describe tutorial_in_60_mins
   ```
 
 - [ ] Review key skills relevant to tutorials:

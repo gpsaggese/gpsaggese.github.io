@@ -40,7 +40,6 @@ OpenRefine is a powerful tool for working with messy data: cleaning it, transfor
 - Train a regression model (e.g., Random Forest, XGBoost) in Python to predict vaccination rates.
 - Evaluate model using appropriate metrics.
 
-
 **Bonus Ideas (Optional)**:  
 - Extend the analysis by comparing vaccination rates with COVID-19 infection rates using external datasets.  
 - Explore temporal trends in vaccination rates over time.

@@ -7,7 +7,7 @@ Bayesian network.
 
 Import as:
 
-import approximate_inference_utils as utils
+import msml610.tutorials.L06_bayesian_networks.L06_02_approximate_inference_utils as mtlbnl0aiu
 """
 
 import itertools
@@ -298,8 +298,8 @@ def _build_query_controls(
     """
     Build the shared query-and-evidence control widgets.
 
-    Creates a dropdown to pick the query variable and, for every node, a
-    checkbox marking it as observed plus a True/False value selector.
+    Creates a dropdown to pick the query variable and, for every node, a checkbox
+    marking it as observed plus a True/False value selector.
 
     :param default_query: Query variable selected initially
     :param default_evidence: Initial evidence assignment
@@ -361,7 +361,7 @@ def _read_query(
 
 def _add_seed_control() -> Tuple[Any, Any]:
     """
-    Build the standard seed slider, placed last in every widget.
+    Build the standard seed slider, placed first in every widget.
 
     :return: Tuple of (seed slider, seed box)
     """
@@ -377,32 +377,242 @@ def _add_seed_control() -> Tuple[Any, Any]:
 
 
 # #############################################################################
-# Cell 1.1: Turning Uniform Randomness into Any Distribution
+# Cell 1.1: Turning Uniform Randomness into a Discrete Distribution
 # #############################################################################
 
 
-def cell1_1_inverse_transform_widget(
+def _plot_inverse_transform(
+    dist: str,
+    lam: float,
+    n: int,
+    seed: int,
+    figsize: Tuple[float, float],
+) -> None:
+    """
+    Draw the target, the CDF with one inverse-transform sample, and a sample
+    histogram vs the target, shared by the discrete and continuous inverse-
+    transform cells.
+
+    :param dist: "biased die (discrete)" or "exponential (continuous)"
+    :param lam: exponential rate, used only when `dist` is exponential
+    :param n: number of samples to draw
+    :param seed: random seed
+    :param figsize: figure size for the 1x4 panel layout
+    """
+    rng = np.random.default_rng(seed)
+    # Every sampler starts from a stream of uniform numbers.
+    u = rng.random(n)
+    _, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, figsize=figsize)
+    if dist == "biased die (discrete)":
+        # A six-faced die with probabilities proportional to face value.
+        faces = np.arange(1, 7)
+        probs = faces / faces.sum()
+        cdf = np.cumsum(probs)
+        # Inverse transform: smallest face whose CDF exceeds r.
+        samples = np.searchsorted(cdf, u, side="right") + 1
+        # Panel 1: the target probability mass function.
+        ax1.bar(
+            faces,
+            probs,
+            color=_EMPIRICAL_COLOR,
+            edgecolor="black",
+            alpha=0.85,
+        )
+        ax1.set_title("Target: biased die", fontsize=13, fontweight="bold")
+        ax1.set_xlabel("face")
+        ax1.set_ylabel("P(face)")
+        # Panel 2: the staircase CDF with one r mapped to its x.
+        ax2.step(
+            np.concatenate([[0.5], faces, [6.5]]),
+            np.concatenate([[0.0], cdf, [1.0]]),
+            where="post",
+            color="black",
+            linewidth=2,
+            label="CDF F(x)",
+        )
+        r0 = float(u[0])
+        x0 = int(samples[0])
+        # Horizontal line at the sampled r and vertical drop to its x.
+        ax2.axhline(r0, color=_REFERENCE_COLOR, linestyle=":", linewidth=2)
+        ax2.plot(
+            [x0, x0], [0, r0], color=_REFERENCE_COLOR, linestyle=":", linewidth=2
+        )
+        ax2.scatter([x0], [r0], color=_REFERENCE_COLOR, zorder=5)
+        ax2.text(0.55, r0 + 0.02, f"r={r0:.2f}", color=_REFERENCE_COLOR)
+        ax2.text(x0 + 0.05, 0.02, f"x={x0}", color=_REFERENCE_COLOR)
+        ax2.set_title("CDF and inverse map", fontsize=13, fontweight="bold")
+        ax2.set_xlabel("face")
+        ax2.set_ylabel("F(x) = P(X <= x)")
+        ax2.legend(fontsize=9, loc="lower right")
+        # Panel 3: sample histogram (solid) vs target pmf (dotted).
+        counts = np.bincount(samples, minlength=7)[1:] / n
+        ax3.bar(
+            faces,
+            counts,
+            color=_EMPIRICAL_COLOR,
+            edgecolor="black",
+            alpha=0.85,
+            label=f"samples (N={n})",
+        )
+        ax3.bar(
+            faces,
+            probs,
+            color="none",
+            edgecolor=_REFERENCE_COLOR,
+            linestyle=":",
+            linewidth=2,
+            label="target",
+        )
+        ax3.set_title("Sample histogram", fontsize=13, fontweight="bold")
+        ax3.set_xlabel("face")
+        ax3.set_ylabel("frequency")
+        ax3.legend(fontsize=9)
+        max_err = float(np.max(np.abs(counts - probs)))
+        detail = (
+            f"Target: biased die\n"
+            f"P(face) ~ face value\n\n"
+            f"Inverse transform:\n"
+            f"  find smallest x with\n"
+            f"  F(x) > r\n\n"
+            f"r = {r0:.3f} -> x = {x0}\n\n"
+            f"N = {n}\n"
+            f"max |freq - P| = {max_err:.3f}"
+        )
+    else:
+        # Exponential target with closed-form inverse CDF.
+        samples = -np.log(1 - u) / lam
+        grid = np.linspace(0, np.max(samples) + 1e-9, 400)
+        pdf = lam * np.exp(-lam * grid)
+        cdf = 1 - np.exp(-lam * grid)
+        # Panel 1: the target density.
+        ax1.plot(grid, pdf, color=_EMPIRICAL_COLOR, linewidth=2.5)
+        ax1.fill_between(grid, pdf, alpha=0.2, color=_EMPIRICAL_COLOR)
+        ax1.set_title("Target: exponential", fontsize=13, fontweight="bold")
+        ax1.set_xlabel("x")
+        ax1.set_ylabel("density f(x)")
+        # Panel 2: the smooth CDF with one r mapped to its x.
+        ax2.plot(grid, cdf, color="black", linewidth=2, label="CDF F(x)")
+        r0 = float(u[0])
+        x0 = -np.log(1 - r0) / lam
+        ax2.axhline(r0, color=_REFERENCE_COLOR, linestyle=":", linewidth=2)
+        ax2.plot(
+            [x0, x0], [0, r0], color=_REFERENCE_COLOR, linestyle=":", linewidth=2
+        )
+        ax2.scatter([x0], [r0], color=_REFERENCE_COLOR, zorder=5)
+        ax2.text(grid[1], r0 + 0.02, f"r={r0:.2f}", color=_REFERENCE_COLOR)
+        ax2.text(x0, 0.03, f"x={x0:.2f}", color=_REFERENCE_COLOR)
+        ax2.set_title("CDF and inverse map", fontsize=13, fontweight="bold")
+        ax2.set_xlabel("x")
+        ax2.set_ylabel("F(x) = P(X <= x)")
+        ax2.legend(fontsize=9, loc="lower right")
+        # Panel 3: sample histogram (solid) vs target density (dotted).
+        sns.histplot(
+            samples,
+            bins=40,
+            stat="density",
+            color=_EMPIRICAL_COLOR,
+            alpha=0.6,
+            ax=ax3,
+            label=f"samples (N={n})",
+        )
+        ax3.plot(
+            grid,
+            pdf,
+            color=_REFERENCE_COLOR,
+            linestyle=":",
+            linewidth=2.5,
+            label="target",
+        )
+        ax3.set_title("Sample histogram", fontsize=13, fontweight="bold")
+        ax3.set_xlabel("x")
+        ax3.set_ylabel("density")
+        ax3.legend(fontsize=9)
+        mean_emp = float(np.mean(samples))
+        detail = (
+            f"Target: exponential\n"
+            f"rate lambda = {lam:.2f}\n\n"
+            f"Inverse CDF (closed form):\n"
+            f"  x = -ln(1 - r) / lambda\n\n"
+            f"r = {r0:.3f} -> x = {x0:.3f}\n\n"
+            f"N = {n}\n"
+            f"sample mean = {mean_emp:.3f}\n"
+            f"theory mean = {1 / lam:.3f}"
+        )
+    # Panel 4: comments tying the construction together.
+    ax4.axis("off")
+    ax4.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
+    htutori.add_fitted_text_box(ax4, detail, max_fontsize=12, min_fontsize=9)
+    plt.tight_layout()
+    plt.show()
+
+
+def cell1_1_inverse_transform_discrete_widget(
     *,
     figsize: Optional[Tuple[float, float]] = None,
 ) -> None:
     """
-    Show how a uniform stream is reshaped into any distribution by the CDF.
+    Show how a uniform stream is reshaped into a discrete distribution.
 
-    Draws the target distribution, the CDF with a sampled `r` mapped through
-    the inverse CDF to an `x`, and a histogram of generated samples that fills
-    in the target as the sample count grows.
+    Draws a biased die, its CDF with a sampled `r` mapped through the
+    inverse CDF to a face `x`, and a histogram of generated samples that
+    fills in the target as the sample count grows.
 
     :param figsize: Optional figure size for the 1x4 panel layout
     """
     if figsize is None:
         figsize = (22, 5)
-    # Dropdown selects a discrete or continuous target distribution.
-    dist_dd = ipywidgets.Dropdown(
-        options=["biased die (discrete)", "exponential (continuous)"],
-        value="biased die (discrete)",
-        description="Target:",
-        style={"description_width": "initial"},
+    seed_slider, seed_box = _add_seed_control()
+    # N spans orders of magnitude, so it uses a logarithmic slider.
+    n_exp_slider, n_box = htutori.build_log_widget_control(
+        name="log(N)",
+        description="N (samples)",
+        min_exp=1,
+        max_exp=14,
+        initial_exp=8,
+        base=2,
     )
+    output = ipywidgets.Output()
+
+    def update_plot(change: Optional[Any] = None) -> None:
+        """
+        Regenerate die samples by inverse transform and redraw all panels.
+        """
+        _ = change
+        with output:
+            clear_output(wait=True)
+            n = 2**n_exp_slider.value
+            _plot_inverse_transform(
+                "biased die (discrete)", 1.0, n, seed_slider.value, figsize
+            )
+
+    # Keep the plot in sync with every control.
+    seed_slider.observe(update_plot, names="value")
+    n_exp_slider.observe(update_plot, names="value")
+    update_plot()
+    display(ipywidgets.VBox([seed_box, n_box, output]))
+
+
+# #############################################################################
+# Cell 1.2: Turning Uniform Randomness into a Continuous Distribution
+# #############################################################################
+
+
+def cell1_2_inverse_transform_continuous_widget(
+    *,
+    figsize: Optional[Tuple[float, float]] = None,
+) -> None:
+    """
+    Show how a uniform stream is reshaped into a continuous distribution.
+
+    Draws an exponential density, its CDF with a sampled `r` mapped through
+    the closed-form inverse CDF to an `x`, and a histogram of generated
+    samples that fills in the target as the sample count grows.
+
+    :param figsize: Optional figure size for the 1x4 panel layout
+    """
+    if figsize is None:
+        figsize = (22, 5)
+    seed_slider, seed_box = _add_seed_control()
     lam_slider, lam_box = htutori.build_widget_control(
         name="lambda",
         description="exponential rate",
@@ -421,203 +631,38 @@ def cell1_1_inverse_transform_widget(
         initial_exp=8,
         base=2,
     )
-    seed_slider, seed_box = _add_seed_control()
     output = ipywidgets.Output()
 
     def update_plot(change: Optional[Any] = None) -> None:
         """
-        Regenerate samples by inverse transform and redraw all panels.
+        Regenerate exponential samples by inverse transform and redraw.
         """
         _ = change
         with output:
             clear_output(wait=True)
-            dist = dist_dd.value
-            lam = lam_slider.value
             n = 2**n_exp_slider.value
-            rng = np.random.default_rng(seed_slider.value)
-            # Every sampler starts from a stream of uniform numbers.
-            u = rng.random(n)
-            _, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, figsize=figsize)
-            if dist == "biased die (discrete)":
-                # A six-faced die with probabilities proportional to face value.
-                faces = np.arange(1, 7)
-                probs = faces / faces.sum()
-                cdf = np.cumsum(probs)
-                # Inverse transform: smallest face whose CDF exceeds r.
-                samples = np.searchsorted(cdf, u, side="right") + 1
-                # Panel 1: the target probability mass function.
-                ax1.bar(
-                    faces,
-                    probs,
-                    color=_EMPIRICAL_COLOR,
-                    edgecolor="black",
-                    alpha=0.85,
-                )
-                ax1.set_title(
-                    "Target: biased die", fontsize=13, fontweight="bold"
-                )
-                ax1.set_xlabel("face")
-                ax1.set_ylabel("P(face)")
-                # Panel 2: the staircase CDF with one r mapped to its x.
-                ax2.step(
-                    np.concatenate([[0.5], faces, [6.5]]),
-                    np.concatenate([[0.0], cdf, [1.0]]),
-                    where="post",
-                    color="black",
-                    linewidth=2,
-                    label="CDF F(x)",
-                )
-                r0 = float(u[0])
-                x0 = int(samples[0])
-                # Horizontal line at the sampled r and vertical drop to its x.
-                ax2.axhline(r0, color=_REFERENCE_COLOR, linestyle=":", linewidth=2)
-                ax2.plot([x0, x0], [0, r0], color=_REFERENCE_COLOR, linestyle=":",
-                         linewidth=2)
-                ax2.scatter([x0], [r0], color=_REFERENCE_COLOR, zorder=5)
-                ax2.text(0.55, r0 + 0.02, f"r={r0:.2f}", color=_REFERENCE_COLOR)
-                ax2.text(x0 + 0.05, 0.02, f"x={x0}", color=_REFERENCE_COLOR)
-                ax2.set_title("CDF and inverse map", fontsize=13,
-                              fontweight="bold")
-                ax2.set_xlabel("face")
-                ax2.set_ylabel("F(x) = P(X <= x)")
-                ax2.legend(fontsize=9, loc="lower right")
-                # Panel 3: sample histogram (solid) vs target pmf (dotted).
-                counts = np.bincount(samples, minlength=7)[1:] / n
-                ax3.bar(
-                    faces,
-                    counts,
-                    color=_EMPIRICAL_COLOR,
-                    edgecolor="black",
-                    alpha=0.85,
-                    label=f"samples (N={n})",
-                )
-                ax3.bar(
-                    faces,
-                    probs,
-                    color="none",
-                    edgecolor=_REFERENCE_COLOR,
-                    linestyle=":",
-                    linewidth=2,
-                    label="target",
-                )
-                ax3.set_title("Sample histogram", fontsize=13,
-                              fontweight="bold")
-                ax3.set_xlabel("face")
-                ax3.set_ylabel("frequency")
-                ax3.legend(fontsize=9)
-                max_err = float(np.max(np.abs(counts - probs)))
-                detail = (
-                    f"Target: biased die\n"
-                    f"P(face) ~ face value\n\n"
-                    f"Inverse transform:\n"
-                    f"  find smallest x with\n"
-                    f"  F(x) > r\n\n"
-                    f"r = {r0:.3f} -> x = {x0}\n\n"
-                    f"N = {n}\n"
-                    f"max |freq - P| = {max_err:.3f}"
-                )
-            else:
-                # Exponential target with closed-form inverse CDF.
-                samples = -np.log(1 - u) / lam
-                grid = np.linspace(0, np.max(samples) + 1e-9, 400)
-                pdf = lam * np.exp(-lam * grid)
-                cdf = 1 - np.exp(-lam * grid)
-                # Panel 1: the target density.
-                ax1.plot(grid, pdf, color=_EMPIRICAL_COLOR, linewidth=2.5)
-                ax1.fill_between(grid, pdf, alpha=0.2, color=_EMPIRICAL_COLOR)
-                ax1.set_title(
-                    "Target: exponential", fontsize=13, fontweight="bold"
-                )
-                ax1.set_xlabel("x")
-                ax1.set_ylabel("density f(x)")
-                # Panel 2: the smooth CDF with one r mapped to its x.
-                ax2.plot(grid, cdf, color="black", linewidth=2, label="CDF F(x)")
-                r0 = float(u[0])
-                x0 = -np.log(1 - r0) / lam
-                ax2.axhline(r0, color=_REFERENCE_COLOR, linestyle=":", linewidth=2)
-                ax2.plot([x0, x0], [0, r0], color=_REFERENCE_COLOR, linestyle=":",
-                         linewidth=2)
-                ax2.scatter([x0], [r0], color=_REFERENCE_COLOR, zorder=5)
-                ax2.text(grid[1], r0 + 0.02, f"r={r0:.2f}",
-                         color=_REFERENCE_COLOR)
-                ax2.text(x0, 0.03, f"x={x0:.2f}", color=_REFERENCE_COLOR)
-                ax2.set_title("CDF and inverse map", fontsize=13,
-                              fontweight="bold")
-                ax2.set_xlabel("x")
-                ax2.set_ylabel("F(x) = P(X <= x)")
-                ax2.legend(fontsize=9, loc="lower right")
-                # Panel 3: sample histogram (solid) vs target density (dotted).
-                sns.histplot(
-                    samples,
-                    bins=40,
-                    stat="density",
-                    color=_EMPIRICAL_COLOR,
-                    alpha=0.6,
-                    ax=ax3,
-                    label=f"samples (N={n})",
-                )
-                ax3.plot(
-                    grid,
-                    pdf,
-                    color=_REFERENCE_COLOR,
-                    linestyle=":",
-                    linewidth=2.5,
-                    label="target",
-                )
-                ax3.set_title("Sample histogram", fontsize=13,
-                              fontweight="bold")
-                ax3.set_xlabel("x")
-                ax3.set_ylabel("density")
-                ax3.legend(fontsize=9)
-                mean_emp = float(np.mean(samples))
-                detail = (
-                    f"Target: exponential\n"
-                    f"rate lambda = {lam:.2f}\n\n"
-                    f"Inverse CDF (closed form):\n"
-                    f"  x = -ln(1 - r) / lambda\n\n"
-                    f"r = {r0:.3f} -> x = {x0:.3f}\n\n"
-                    f"N = {n}\n"
-                    f"sample mean = {mean_emp:.3f}\n"
-                    f"theory mean = {1 / lam:.3f}"
-                )
-            # Panel 4: comments tying the construction together.
-            ax4.axis("off")
-            ax4.set_title("Comments", fontsize=14, fontweight="bold", pad=20)
-            htutori.add_fitted_text_box(
-                ax4, detail, max_fontsize=12, min_fontsize=9
+            _plot_inverse_transform(
+                "exponential (continuous)",
+                lam_slider.value,
+                n,
+                seed_slider.value,
+                figsize,
             )
-            plt.tight_layout()
-            plt.show()
 
     # Keep the plot in sync with every control.
-    dist_dd.observe(update_plot, names="value")
+    seed_slider.observe(update_plot, names="value")
     lam_slider.observe(update_plot, names="value")
     n_exp_slider.observe(update_plot, names="value")
-    seed_slider.observe(update_plot, names="value")
     update_plot()
-    display(
-        ipywidgets.VBox(
-            [
-                ipywidgets.Label(
-                    "Pick a target, then watch a uniform r map through the CDF "
-                    "into a sample:"
-                ),
-                dist_dd,
-                lam_box,
-                n_box,
-                seed_box,
-                output,
-            ]
-        )
-    )
+    display(ipywidgets.VBox([seed_box, lam_box, n_box, output]))
 
 
 # #############################################################################
-# Cell 1.2: Prior Sampling from the Sprinkler Network
+# Cell 1.3: Prior Sampling from the Sprinkler Network
 # #############################################################################
 
 
-def cell1_2_prior_sampling_widget(
+def cell1_3_prior_sampling_widget(
     *,
     figsize: Optional[Tuple[float, float]] = None,
 ) -> None:
@@ -634,6 +679,7 @@ def cell1_2_prior_sampling_widget(
         figsize = (22, 5)
     model = _build_sprinkler_network()
     graph = nx.DiGraph(_EDGES)
+    seed_slider, seed_box = _add_seed_control()
     n_exp_slider, n_box = htutori.build_log_widget_control(
         name="log(N)",
         description="N (full events)",
@@ -649,7 +695,6 @@ def cell1_2_prior_sampling_widget(
         description="Track marginal:",
         style={"description_width": "initial"},
     )
-    seed_slider, seed_box = _add_seed_control()
     output = ipywidgets.Output()
 
     def update_plot(change: Optional[Any] = None) -> None:
@@ -698,9 +743,7 @@ def cell1_2_prior_sampling_widget(
             ax2.set_xticklabels([f"{_SHORT[track]}=F", f"{_SHORT[track]}=T"])
             ax2.set_ylim([0, 1.05])
             ax2.set_ylabel(f"P({_SHORT[track]})")
-            ax2.set_title(
-                f"Marginal of {track}", fontsize=13, fontweight="bold"
-            )
+            ax2.set_title(f"Marginal of {track}", fontsize=13, fontweight="bold")
             ax2.legend(fontsize=9)
             # Panel 3: estimated joint frequencies vs the exact joint.
             combos = list(itertools.product([0, 1], repeat=4))
@@ -721,10 +764,7 @@ def cell1_2_prior_sampling_widget(
             emp = np.bincount(keys, minlength=16) / n
             # Exact joint probability of every configuration.
             exact_joint = np.array(
-                [
-                    _joint_product(dict(zip(_NODES, combo)))
-                    for combo in combos
-                ]
+                [_joint_product(dict(zip(_NODES, combo))) for combo in combos]
             )
             pos = np.arange(16)
             ax3.bar(
@@ -775,28 +815,15 @@ def cell1_2_prior_sampling_widget(
     var_dd.observe(update_plot, names="value")
     seed_slider.observe(update_plot, names="value")
     update_plot()
-    display(
-        ipywidgets.VBox(
-            [
-                ipywidgets.Label(
-                    "Generate N complete worlds and watch the frequencies "
-                    "approach the true joint:"
-                ),
-                n_box,
-                var_dd,
-                seed_box,
-                output,
-            ]
-        )
-    )
+    display(ipywidgets.VBox([seed_box, n_box, var_dd, output]))
 
 
 # #############################################################################
-# Cell 1.3: Consistency and the 1/sqrt(N) Convergence Rate
+# Cell 1.4: Consistency and the 1/sqrt(N) Convergence Rate
 # #############################################################################
 
 
-def cell1_3_convergence_widget(
+def cell1_4_convergence_widget(
     *,
     figsize: Optional[Tuple[float, float]] = None,
 ) -> None:
@@ -812,6 +839,7 @@ def cell1_3_convergence_widget(
     if figsize is None:
         figsize = (22, 5)
     model = _build_sprinkler_network()
+    seed_slider, seed_box = _add_seed_control()
     n_exp_slider, n_box = htutori.build_log_widget_control(
         name="log(N)",
         description="max N",
@@ -841,7 +869,6 @@ def cell1_3_convergence_widget(
         description="Estimate:",
         style={"description_width": "initial"},
     )
-    seed_slider, seed_box = _add_seed_control()
     output = ipywidgets.Output()
 
     def update_plot(change: Optional[Any] = None) -> None:
@@ -890,10 +917,20 @@ def cell1_3_convergence_widget(
             ax1.legend(fontsize=9)
             # Panel 2: the fan of all chains narrowing toward the exact value.
             for chain in chains:
-                ax2.plot(steps, chain, color=_EMPIRICAL_COLOR, alpha=0.3,
-                         linewidth=0.8)
-            ax2.axhline(exact, color=_REFERENCE_COLOR, linestyle=":",
-                        linewidth=2, label="exact")
+                ax2.plot(
+                    steps,
+                    chain,
+                    color=_EMPIRICAL_COLOR,
+                    alpha=0.3,
+                    linewidth=0.8,
+                )
+            ax2.axhline(
+                exact,
+                color=_REFERENCE_COLOR,
+                linestyle=":",
+                linewidth=2,
+                label="exact",
+            )
             ax2.set_xscale("log")
             ax2.set_xlabel("N (log scale)")
             ax2.set_ylabel("estimate")
@@ -952,21 +989,7 @@ def cell1_3_convergence_widget(
     event_dd.observe(update_plot, names="value")
     seed_slider.observe(update_plot, names="value")
     update_plot()
-    display(
-        ipywidgets.VBox(
-            [
-                ipywidgets.Label(
-                    "Watch estimates settle toward the truth, but only as "
-                    "1/sqrt(N):"
-                ),
-                n_box,
-                reps_box,
-                event_dd,
-                seed_box,
-                output,
-            ]
-        )
-    )
+    display(ipywidgets.VBox([seed_box, n_box, reps_box, event_dd, output]))
 
 
 # #############################################################################
@@ -990,6 +1013,7 @@ def cell2_1_rejection_sampling_widget(
     if figsize is None:
         figsize = (22, 5)
     model = _build_sprinkler_network()
+    seed_slider, seed_box = _add_seed_control()
     n_exp_slider, n_box = htutori.build_log_widget_control(
         name="log(N)",
         description="N (prior samples)",
@@ -999,12 +1023,11 @@ def cell2_1_rejection_sampling_widget(
         base=2,
     )
     query_dd, checks, valdds, rows = _build_query_controls()
-    seed_slider, seed_box = _add_seed_control()
     output = ipywidgets.Output()
 
     def update_plot(change: Optional[Any] = None) -> None:
-        """
-        Generate prior samples, filter by evidence, and estimate the posterior.
+        """Generate prior samples, filter by evidence, and estimate the
+        posterior.
         """
         _ = change
         with output:
@@ -1122,20 +1145,7 @@ def cell2_1_rejection_sampling_widget(
         valdds[n].observe(update_plot, names="value")
     seed_slider.observe(update_plot, names="value")
     update_plot()
-    display(
-        ipywidgets.VBox(
-            [
-                ipywidgets.Label(
-                    "Add evidence and watch how many samples survive:"
-                ),
-                n_box,
-                query_dd,
-                *rows,
-                seed_box,
-                output,
-            ]
-        )
-    )
+    display(ipywidgets.VBox([seed_box, n_box, query_dd, *rows, output]))
 
 
 # #############################################################################
@@ -1159,6 +1169,7 @@ def cell2_2_likelihood_weighting_widget(
     if figsize is None:
         figsize = (22, 5)
     model = _build_sprinkler_network()
+    seed_slider, seed_box = _add_seed_control()
     n_exp_slider, n_box = htutori.build_log_widget_control(
         name="log(N)",
         description="N (weighted samples)",
@@ -1168,7 +1179,6 @@ def cell2_2_likelihood_weighting_widget(
         base=2,
     )
     query_dd, checks, valdds, rows = _build_query_controls()
-    seed_slider, seed_box = _add_seed_control()
     output = ipywidgets.Output()
 
     def update_plot(change: Optional[Any] = None) -> None:
@@ -1192,8 +1202,9 @@ def cell2_2_likelihood_weighting_widget(
             # Scale dot area by weight relative to the largest shown weight.
             sizes = 10 + 120 * (w_show / (w_show.max() + 1e-12))
             colors = np.where(q_show == 1, _EMPIRICAL_COLOR, "#AED6F1")
-            ax1.scatter(xs, ys, s=sizes, c=colors, edgecolor="black",
-                        linewidth=0.3)
+            ax1.scatter(
+                xs, ys, s=sizes, c=colors, edgecolor="black", linewidth=0.3
+            )
             ax1.set_title(
                 f"Weighted samples (first {show})",
                 fontsize=13,
@@ -1232,7 +1243,9 @@ def cell2_2_likelihood_weighting_widget(
             est_true = float(w_true / (weights.sum() + 1e-12))
             estimate = [1 - est_true, est_true]
             # Rejection estimate on the same prior draw for a fair comparison.
-            prior = _prior_sample_array(np.random.default_rng(seed_slider.value), n)
+            prior = _prior_sample_array(
+                np.random.default_rng(seed_slider.value), n
+            )
             keep = np.ones(n, dtype=bool)
             for var, val in evidence.items():
                 keep &= prior[var] == val
@@ -1306,21 +1319,7 @@ def cell2_2_likelihood_weighting_widget(
         valdds[n].observe(update_plot, names="value")
     seed_slider.observe(update_plot, names="value")
     update_plot()
-    display(
-        ipywidgets.VBox(
-            [
-                ipywidgets.Label(
-                    "Every sample is kept and reweighted; compare the effective "
-                    "sample size to rejection:"
-                ),
-                n_box,
-                query_dd,
-                *rows,
-                seed_box,
-                output,
-            ]
-        )
-    )
+    display(ipywidgets.VBox([seed_box, n_box, query_dd, *rows, output]))
 
 
 # #############################################################################
@@ -1372,6 +1371,7 @@ def cell3_1_markov_chain_widget(
     if figsize is None:
         figsize = (22, 5)
     stationary = _stationary_distribution(_MC_TRANSITION)
+    seed_slider, seed_box = _add_seed_control()
     t_slider, t_box = htutori.build_widget_control(
         name="t",
         description="number of steps",
@@ -1388,7 +1388,6 @@ def cell3_1_markov_chain_widget(
         description="Initial state:",
         style={"description_width": "initial"},
     )
-    seed_slider, seed_box = _add_seed_control()
     output = ipywidgets.Output()
 
     def update_plot(change: Optional[Any] = None) -> None:
@@ -1435,9 +1434,7 @@ def cell3_1_markov_chain_widget(
                 arrows=True,
                 edge_color="#85929E",
             )
-            ax1.set_title(
-                "Transition diagram", fontsize=13, fontweight="bold"
-            )
+            ax1.set_title("Transition diagram", fontsize=13, fontweight="bold")
             # Panel 2: evolving distribution (solid) vs stationary (dotted).
             x = np.arange(len(_MC_STATES))
             ax2.bar(
@@ -1486,8 +1483,7 @@ def cell3_1_markov_chain_widget(
                 f"  {tv[t]:.4f}\n\n"
                 f"Stationary distribution:\n"
                 + "".join(
-                    f"  {s}: {p:.3f}\n"
-                    for s, p in zip(_MC_STATES, stationary)
+                    f"  {s}: {p:.3f}\n" for s, p in zip(_MC_STATES, stationary)
                 )
                 + "\nThe limit is the same for\n"
                 "any starting state."
@@ -1505,13 +1501,9 @@ def cell3_1_markov_chain_widget(
     display(
         ipywidgets.VBox(
             [
-                ipywidgets.Label(
-                    "Step the chain and watch the distribution settle to a "
-                    "fixed shape:"
-                ),
+                seed_box,
                 t_box,
                 init_dd,
-                seed_box,
                 output,
             ]
         )
@@ -1538,9 +1530,7 @@ def _bimodal_density(x: np.ndarray) -> np.ndarray:
     return 0.5 * (left + right)
 
 
-def _metropolis_1d(
-    rng: np.random.Generator, n: int, step: float
-) -> np.ndarray:
+def _metropolis_1d(rng: np.random.Generator, n: int, step: float) -> np.ndarray:
     """
     Run a 1-D random-walk Metropolis sampler on the bimodal target.
 
@@ -1598,6 +1588,7 @@ def cell3_2_mixing_burnin_widget(
     """
     if figsize is None:
         figsize = (22, 5)
+    seed_slider, seed_box = _add_seed_control()
     step_slider, step_box = htutori.build_widget_control(
         name="step",
         description="proposal step size",
@@ -1624,7 +1615,6 @@ def cell3_2_mixing_burnin_widget(
         initial_exp=12,
         base=2,
     )
-    seed_slider, seed_box = _add_seed_control()
     output = ipywidgets.Output()
 
     def update_plot(change: Optional[Any] = None) -> None:
@@ -1650,8 +1640,13 @@ def cell3_2_mixing_burnin_widget(
                 linewidth=0.7,
             )
             if burnin > 0:
-                ax1.axvspan(0, min(burnin, show), color="#F5B7B1", alpha=0.4,
-                            label="burn-in")
+                ax1.axvspan(
+                    0,
+                    min(burnin, show),
+                    color="#F5B7B1",
+                    alpha=0.4,
+                    label="burn-in",
+                )
                 ax1.legend(fontsize=9)
             ax1.set_title(
                 f"Trace (first {show})", fontsize=13, fontweight="bold"
@@ -1729,14 +1724,10 @@ def cell3_2_mixing_burnin_widget(
     display(
         ipywidgets.VBox(
             [
-                ipywidgets.Label(
-                    "Tune the step size between poor and good mixing, and set "
-                    "the burn-in:"
-                ),
+                seed_box,
                 step_box,
                 burnin_box,
                 n_box,
-                seed_box,
                 output,
             ]
         )
@@ -1766,9 +1757,7 @@ def _markov_blanket(graph: nx.DiGraph, node: str) -> List[str]:
     return sorted(blanket)
 
 
-def _gibbs_full_conditional(
-    var: str, state: Dict[str, int]
-) -> np.ndarray:
+def _gibbs_full_conditional(var: str, state: Dict[str, int]) -> np.ndarray:
     """
     Compute the full conditional P(var | everything else) for a binary node.
 
@@ -1839,6 +1828,7 @@ def cell3_3_gibbs_sampling_widget(
         figsize = (22, 5)
     model = _build_sprinkler_network()
     graph = nx.DiGraph(_EDGES)
+    seed_slider, seed_box = _add_seed_control()
     sweeps_slider, sweeps_box = htutori.build_log_widget_control(
         name="log(sweeps)",
         description="Gibbs sweeps",
@@ -1861,12 +1851,11 @@ def cell3_3_gibbs_sampling_widget(
         default_query="Rain",
         default_evidence={"Sprinkler": 1, "WetGrass": 1},
     )
-    seed_slider, seed_box = _add_seed_control()
     output = ipywidgets.Output()
 
     def update_plot(change: Optional[Any] = None) -> None:
-        """
-        Run the Gibbs sampler and compare its estimate with the exact value.
+        """Run the Gibbs sampler and compare its estimate with the exact
+        value.
         """
         _ = change
         with output:
@@ -1948,9 +1937,7 @@ def cell3_3_gibbs_sampling_widget(
             ax3.set_ylim([0, 1.05])
             ax3.set_xlabel("sweep (after burn-in)")
             ax3.set_ylabel(f"P({_SHORT[query_var]}=T | e)")
-            ax3.set_title(
-                "Running estimate", fontsize=13, fontweight="bold"
-            )
+            ax3.set_title("Running estimate", fontsize=13, fontweight="bold")
             ax3.legend(fontsize=9)
             # Panel 4: comments.
             ax4.axis("off")
@@ -1985,15 +1972,11 @@ def cell3_3_gibbs_sampling_widget(
     display(
         ipywidgets.VBox(
             [
-                ipywidgets.Label(
-                    "Hold the evidence fixed and resample each hidden variable "
-                    "from its Markov blanket:"
-                ),
+                seed_box,
                 sweeps_box,
                 burnin_box,
                 query_dd,
                 *rows,
-                seed_box,
                 output,
             ]
         )
@@ -2033,8 +2016,8 @@ def _mh_chain(
     # Initialize hidden variables; evidence stays clamped throughout.
     state = {}
     for node in _NODES:
-        state[node] = evidence[node] if node in evidence else int(
-            rng.random() < 0.5
+        state[node] = (
+            evidence[node] if node in evidence else int(rng.random() < 0.5)
         )
     history = {node: np.empty(n_iters, dtype=int) for node in _NODES}
     n_accept = 0
@@ -2084,6 +2067,7 @@ def cell3_4_metropolis_hastings_widget(
     # Fix the canonical query P(Rain | Sprinkler=T).
     query_var = "Rain"
     evidence = {"Sprinkler": 1}
+    seed_slider, seed_box = _add_seed_control()
     mix_slider, mix_box = htutori.build_widget_control(
         name="p_local",
         description="prob of local move",
@@ -2110,12 +2094,11 @@ def cell3_4_metropolis_hastings_widget(
         initial_value=100,
         is_float=False,
     )
-    seed_slider, seed_box = _add_seed_control()
     output = ipywidgets.Output()
 
     def update_plot(change: Optional[Any] = None) -> None:
-        """
-        Run Metropolis-Hastings and visualize proposals, trace, and estimate.
+        """Run Metropolis-Hastings and visualize proposals, trace, and
+        estimate.
         """
         _ = change
         with output:
@@ -2130,23 +2113,45 @@ def cell3_4_metropolis_hastings_widget(
             _, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, figsize=figsize)
             # Panel 1: current vs proposed state with the acceptance prob.
             ax1.axis("off")
-            ax1.set_title(
-                "Last proposed move", fontsize=13, fontweight="bold"
-            )
+            ax1.set_title("Last proposed move", fontsize=13, fontweight="bold")
             cur_str = ", ".join(
                 f"{_SHORT[n]}={'T' if cur[n] else 'F'}" for n in _NODES
             )
             prop_str = ", ".join(
                 f"{_SHORT[n]}={'T' if prop[n] else 'F'}" for n in _NODES
             )
-            ax1.text(0.05, 0.75, "current:", fontsize=11, fontweight="bold",
-                     transform=ax1.transAxes)
-            ax1.text(0.05, 0.66, cur_str, fontsize=11, transform=ax1.transAxes,
-                     family="monospace")
-            ax1.text(0.05, 0.48, "proposed:", fontsize=11, fontweight="bold",
-                     transform=ax1.transAxes)
-            ax1.text(0.05, 0.39, prop_str, fontsize=11, transform=ax1.transAxes,
-                     family="monospace")
+            ax1.text(
+                0.05,
+                0.75,
+                "current:",
+                fontsize=11,
+                fontweight="bold",
+                transform=ax1.transAxes,
+            )
+            ax1.text(
+                0.05,
+                0.66,
+                cur_str,
+                fontsize=11,
+                transform=ax1.transAxes,
+                family="monospace",
+            )
+            ax1.text(
+                0.05,
+                0.48,
+                "proposed:",
+                fontsize=11,
+                fontweight="bold",
+                transform=ax1.transAxes,
+            )
+            ax1.text(
+                0.05,
+                0.39,
+                prop_str,
+                fontsize=11,
+                transform=ax1.transAxes,
+                family="monospace",
+            )
             ax1.text(
                 0.05,
                 0.18,
@@ -2159,7 +2164,7 @@ def cell3_4_metropolis_hastings_widget(
             q_series = history[query_var]
             show = min(n_iters, 1500)
             # A lightly jittered trace makes the 0/1 path readable.
-            jitter = (history[query_var][:show] + rng.normal(0, 0.04, show))
+            jitter = history[query_var][:show] + rng.normal(0, 0.04, show)
             ax2.plot(
                 np.arange(show),
                 jitter,
@@ -2167,8 +2172,9 @@ def cell3_4_metropolis_hastings_widget(
                 linewidth=0.5,
             )
             ax2.set_yticks([0, 1])
-            ax2.set_yticklabels([f"{_SHORT[query_var]}=F",
-                                 f"{_SHORT[query_var]}=T"])
+            ax2.set_yticklabels(
+                [f"{_SHORT[query_var]}=F", f"{_SHORT[query_var]}=T"]
+            )
             ax2.set_title(
                 f"Trace (accept rate {accept_rate:.2f})",
                 fontsize=12,
@@ -2228,14 +2234,10 @@ def cell3_4_metropolis_hastings_widget(
     display(
         ipywidgets.VBox(
             [
-                ipywidgets.Label(
-                    "Propose a move, then accept or reject it by the Hastings "
-                    "ratio:"
-                ),
+                seed_box,
                 mix_box,
                 n_box,
                 burnin_box,
-                seed_box,
                 output,
             ]
         )

@@ -1,18 +1,24 @@
-- Managing Code
-  - Coding while you sleep
-    https://code.claude.com/docs/en/remote-control
-    https://code.claude.com/docs/en/web-quickstart
-    https://code.claude.com/docs/en/desktop-quickstart
-    https://code.claude.com/docs/en/security-guidance
-    /install-github-app
-
-- Automating PR creation
-
-- Automating PR review
-
-- Automating Documentation
-
+# Topics
 - Rules and AI skills
+- Automating PR creation
+- Automating PR review
+- Automating Documentation
+- Automating code coverage
+- Automating build
+- Automating releasing containers
+- Automating unit testing
+- Automating code linting for code quality and standards
+- Automating code modularization
+- Single vs multiple repo
+- Dockerization and Dockerized Executables
+
+# Managing Code
+- Coding while you sleep
+  https://code.claude.com/docs/en/remote-control
+  https://code.claude.com/docs/en/web-quickstart
+  https://code.claude.com/docs/en/desktop-quickstart
+  https://code.claude.com/docs/en/security-guidance
+  /install-github-app
 
 # /Users/saggese/src/umd_classes1/helpers_root/papers/AIgentic_Development_System
 

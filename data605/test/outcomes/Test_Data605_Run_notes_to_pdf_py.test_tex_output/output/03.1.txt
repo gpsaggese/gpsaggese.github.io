@@ -557,9 +557,9 @@ UMD DATA605 - Big Data Systems \endgroup
   \begin{itemize}
   \tightlist
   \item
-    \href{https://github.com/gpsaggese/umd_classes/tree/master/data605/tutorials/tutorial_docker}{tutorial\_docker}
+    \href{https://github.com/gpsaggese/gpsaggese.github.io/tree/master/data605/tutorials/tutorial_docker}{tutorial\_docker}
   \item
-    \href{https://github.com/gpsaggese/umd_classes/tree/master/data605/tutorials/tutorial_docker_compose}{tutorial\_docker\_compose}
+    \href{https://github.com/gpsaggese/gpsaggese.github.io/tree/master/data605/tutorials/tutorial_docker_compose}{tutorial\_docker\_compose}
   \end{itemize}
 \end{itemize}
 \end{column}

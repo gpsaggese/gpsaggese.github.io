@@ -1,0 +1,971 @@
+// type=UMD_slides
+// course_title=MSML610: Advanced Machine Learning
+// lesson_title=L09.3: Multi-armed Bandits
+// version=v1.0 (2026-09-03)
+// slides_engine=typst
+// references=
+
+# Introduction
+
+// TODO: Check the other material and merge it, if needed
+// ./msml610/lectures_source/Lesson08.7-Causal_experiments.txt
+// ./msml610/lectures_source/Lesson12.1-Reinforcement_learning.txt
+
+// https://raw.githack.com/gpsaggese/gpsaggese.github.io/gp_scratch/msml610/tutorials/L09_multi_armed_bandits/L09_03_02_multi_armed_bandits.html#Cell-1:-Introduction---Casino-Slot-Machines
+
+* What are Multi-Armed Bandits?
+
+- @Definition@: **Multi-Armed Bandit** is a sequential decision-making problem
+  where:
+  - At each time step $t = 1, 2, \ldots, T$:
+    1. Choose one action (arm) from $K$ options
+    2. Receive a random reward $r_t \sim P_i$ based on chosen $i$
+  - Reward distributions $P_1, \ldots, P_K$ are _unknown_ and _fixed_
+  - _Goal_: Learn which arms are best while collecting rewards
+
+- @Key idea@: Need to balance:
+  - _Exploration_: Try different arms to learn their reward distributions
+  - _Exploitation_: Play the arm you believe is best
+
+- @Example@: in a casino there are $K$ slot machines (aka "one-armed bandits")
+  - Each machine $i \in \{1, ..., K\}$ has an unknown probability of winning
+    $p_i$
+  - _Goal_: Maximize total winnings given a budget of plays
+
+- @Remark@: the "fixed" assumption is strong
+  - Distributions that drift over time are _non-stationary bandits_, covered in
+    L09.7
+
+* Why Study Bandits?
+
+- @Fundamental Problem in Sequential Decision-Making@
+  - Simple but non-trivial reinforcement learning setting
+  - Rich theoretical framework with practical algorithms
+
+- @Tractable Analysis@
+  - _Stateless_: No long-term consequences of actions
+  - Clean mathematical formulation
+  - Provable regret bounds and optimality results
+  - Serves as building block for more complex RL problems
+
+* Applications of Bandits (1/2)
+
+- @Online Advertising@
+  - Platform must choose which ad to display
+  - Each ad click generates revenue
+  - Must learn which ads perform best
+  - Trade-off between showing _proven ads_ vs. testing _new ones_
+
+- @Clinical Trials@
+  - Allocate patients to treatment
+  - Each treatment has unknown efficacy
+  - _Ethical imperative_: Minimize patients receiving inferior treatments
+  - _Exploration-exploitation_ is life-or-death
+
+- @A/B Testing@
+  - Test website designs, features, UI changes
+  - Each variant has unknown conversion rate
+  - Need to identify best variant quickly to minimize opportunity cost during
+    testing
+
+* Applications of Bandits (2/2)
+
+- @Recommendation Systems@
+  - E.g., Netflix/Spotify/...
+  - Which content to recommend?
+  - Each item has unknown appeal to user
+  - Must balance popular items vs. discovery
+  - Learn user preferences over time
+
+- @Network Routing@
+  - Choose which server/path to route request
+  - Each option has variable latency/reliability
+  - Conditions change over time
+  - Need fast, adaptive decisions
+
+- @Financial Portfolio Allocation@
+  - Allocate capital among investment options
+  - Each asset has unknown future returns
+  - Balance risk and reward
+  - Market conditions are non-stationary
+
+// https://raw.githack.com/gpsaggese/gpsaggese.github.io/gp_scratch/msml610/tutorials/L09_multi_armed_bandits/L09_03_02_multi_armed_bandits.html#Cell-2:-Exploration-vs-Exploitation-Dilemma
+
+* The Exploration-Exploitation Tradeoff
+
+- @Fact@: The **Exploration-Exploitation Tradeoff** is the _unavoidable dilemma_
+  of sequential learning
+
+::: columns
+:::: {.column width=40%}
+- @Comparison@
+  - **Pure exploitation**:
+    - Never try suboptimal-looking arms
+    - May stick with suboptimal choice forever
+  - **Pure exploration**:
+    - Always try random arms
+    - Collect lots of information, but low total reward
+  - **Must do both**:
+    - Explore enough to find good arms
+    - Exploit enough to gain high reward
+::::
+:::: {.column width=60%}
+
+```graphviz
+digraph ExploitationExploration {
+    bgcolor  = "white";
+    rankdir  = TB;
+    splines  = spline;
+    nodesep  = 0.30;
+    ranksep  = 0.45;
+    pad      = 0.30;
+    node [shape=box, style="rounded,filled", fontname="Helvetica",
+          fontsize=13, penwidth=1.2, margin="0.20,0.12", height=0.50,
+          color="#7B8794"];
+    edge [color="#9AA5B1", penwidth=1.1, arrowsize=0.75];
+
+    Decision [label="At each time step:\nwhich arm to pull?",
+              fillcolor="#F4A6A6"];
+    Exploit  [label="EXPLOITATION\nPlay best known arm",
+              fillcolor="#B2E2B2"];
+    Explore  [label="EXPLORATION\nTry uncertain arms",
+              fillcolor="#A6C8F4"];
+    ExploitPro [label="+ High reward now\n- May miss a better arm",
+                shape=note, fillcolor="#E6FFE6"];
+    ExplorePro [label="+ Learns alternatives\n- Low reward now",
+                shape=note, fillcolor="#E6F0FF"];
+
+    Decision -> Exploit;
+    Decision -> Explore;
+    Exploit -> ExploitPro [style=dashed];
+    Explore -> ExplorePro [style=dashed];
+    { rank=same; Exploit; Explore; }
+}
+```
+::::
+:::
+
+* The K-Armed Bandit Problem: Formal Definition
+
+- @Definition@: The **K-Armed Bandit** problem is defined as:
+  - There are $K$ actions (aka "arms"), indexed $i = 1, \ldots, K$
+  - Time horizon: $T$ rounds (sometimes $T = \infty$)
+  - At each round $t$
+    1. Agent selects arm $A_t \in \{1, \ldots, K\}$
+    2. Environment reveals reward $R_t \sim P_{A_t}$
+    3. Agent observes only $R_t$ (not rewards from other arms)
+
+- @Assumptions@: **Stochastic bandit** model
+  - Each arm $i$ has a fixed reward distribution $P_i$ with mean
+    $\mu_i = \EE[R | A = i]$
+  - Rewards drawn from a _given_ arm are iid across the rounds that arm is
+    pulled, and independent across arms
+    - Note that $R_1, R_2, \ldots$ is _not_ an iid sequence, since the law of
+      $R_t$ depends on which arm $A_t$ was chosen
+  - The distributions $P_i$ and their means $\mu_1, \ldots, \mu_K$ are unknown
+    to the agent
+
+- @Goal@: Design a policy (algorithm) that selects $A_1, A_2, \ldots, A_T$ to
+  maximize the total reward $\sum_{t=1}^{T} R_t$
+
+* Reward Distributions
+
+- @Definition@: Each arm $i$ has an associated **reward distribution** $P_i$
+  - Common choices for $P_i$ are Bernoulli, Gaussian, or any distribution with
+    bounded support
+  - When arm $i$ is pulled, reward $R \sim P_i$ is sampled
+
+- @Definition@: The **expected reward** for an arm is $\mu_i = \EE[R | A = i]$
+  - This is the quantity we care about for maximizing total reward
+
+- @Example@: **Bernoulli Bandits**
+  - Each arm $i$ returns reward $R_t = 1$ with probability $\mu_i$, else
+    $R_t = 0$
+  - $\mu_i$ is the "success probability" or "conversion rate"
+  - E.g., in A/B testing $\mu_i$ is click-through rate of ad $i$
+
+- @Challenges@: Parameters of the arms are **unknown**
+  - The means $\mu_1, \ldots, \mu_K$ are unknown
+  - Also variance and shape of distribution are typically unknown
+  - Agent must estimate these from observed rewards
+  - Must balance learning (exploration) and earning (exploitation)
+
+// https://raw.githack.com/gpsaggese/gpsaggese.github.io/gp_scratch/msml610/tutorials/L09_multi_armed_bandits/L09_03_02_multi_armed_bandits.html#Cell-10:-Regret-Accumulation
+
+* Performance Metrics
+
+- @Question@: How do we measure algorithm performance when rewards are random?
+
+- @Definition@: The **optimal arm** is the arm with highest expected reward
+  $$i^* = \argmax_i \mu_i, \qquad \mu^* \defeq \mu_{i^*} = \max_i \mu_i$$
+  - If we knew $\mu_1, \ldots, \mu_K$, we would always pull arm $i^*$
+
+- @Definition@: The **instantaneous regret** at time $t$ is the difference
+  between optimal mean and mean of chosen arm
+  $$\ell_t = \mu^* - \mu_{A_t} \geq 0$$
+  - _Intuition_: How much expected reward we "lose" by not playing $i^*$
+
+- @Definition@: The **cumulative pseudo-regret** over $T$ rounds:
+  $$L_T = \sum_{t=1}^{T} \ell_t = T \mu^* - \sum_{t=1}^{T} \mu_{A_t}$$
+  - "Pseudo" because it uses the _means_ $\mu_{A_t}$, not the realized rewards
+    $R_t$
+  - $L_T$ is still random, since the arms $A_t$ the policy picks are random
+  - _Goal_: Design an algorithm with low $\EE[L_T]$
+
+* Performance Metrics: Intuition
+
+- @Question@: Why regret? Why expectation?
+  - Cannot maximize _reward with certainty_ due to randomness in rewards
+    - One arm can look better than its $\mu_i$ due to luck
+    - Even optimal policy can get unlucky low reward on a pull
+  - But can minimize _expected loss_ relative to optimal strategy
+    - "Expected" is the key word (vs actual)
+  - Averaging out the reward noise isolates the only thing the policy controls,
+    which is _which arm it pulls_
+
+- @Properties@: Pseudo-regret depends only on how many times we pull each arm
+  - Let $N_i(T) = \sum_{t=1}^{T} I[A_t = i]$ = "number of times arm $i$ pulled",
+    then
+    $$
+    L_T
+      = \sum_{i=1}^{K} (\mu^* - \mu_i) N_i(T)
+      = \sum_{i=1}^{K} \Delta_i \, N_i(T)
+    $$
+    where $\Delta_i = \mu^* - \mu_i$ is the "suboptimality gap" of arm $i$
+
+- @Implications@
+  - To minimize regret, pull suboptimal arms as few times as possible
+    - But we don't know which arms are suboptimal initially!
+    - Must explore to identify $i^*$, but exploration increases regret
+  - Regret is the "opportunity cost" of learning
+
+* Regret in Practice
+
+- @Problem@: Regret cannot be computed on a deployed system
+  - $L_T$ depends on $\mu^*$ and on the gaps $\Delta_i$, which are unknown
+  - Knowing them would make the bandit problem trivial
+
+- @Key idea@: Regret is an _analysis_ tool, not a _monitoring_ tool
+  - Use it to compare algorithms in theory and in simulation
+  - Use proxies in production
+
+- @Techniques@: what practitioners monitor instead
+  - _Realized reward rate_: $\frac{1}{t}\sum_{\tau \le t} R_\tau$, compared to a
+    held-out uniform control slice
+  - _Arm share_: fraction of traffic each arm receives over time
+    - A healthy run concentrates on few arms, but never to exactly 0%
+  - _Off-policy estimates_: replay logged data under a candidate policy
+  - _Simulation_: replay with synthetic arms whose $\mu_i$ you set, so that
+    $L_T$ _is_ computable
+
+- @Remark@: keeping a small uniform-random slice of traffic is common
+  - Costs a little regret, buys unbiased data for offline evaluation
+
+# Algorithms
+
+// https://raw.githack.com/gpsaggese/gpsaggese.github.io/gp_scratch/msml610/tutorials/L09_multi_armed_bandits/L09_03_02_multi_armed_bandits.html#Cell-3:-Greedy-Algorithm-Failure
+
+* Greedy Algorithm
+
+- @Definition@: **Greedy Algorithm**
+  1. _Initialization_: pull each arm once, for $t = 1, \ldots, K$
+  2. For $t > K$, compute the empirical mean reward for each arm
+     $$\hat{\mu}_i(t) = \frac{1}{N_i(t)} \sum_{\tau < t: A_\tau = i} R_\tau$$
+  3. Pull arm with highest empirical mean: $A_t = \argmax_i \hat{\mu}_i(t)$
+  - _Pure exploitation_: always pull current best arm
+
+- @Remark@: the initialization step is not optional
+  - Without it $\hat{\mu}_i(t) = 0/0$ for an arm that was never pulled
+  - Equivalent conventions: set $\hat{\mu}_i = +\infty$ until arm $i$ is pulled
+
+- @Limitations@
+  - _Problem_: May get "stuck" on suboptimal arm
+  - _Example_:
+    - Suppose arm 1 has $\mu_1 = 0.6$, arm 2 has $\mu_2 = 0.7$
+    - Initialization gives arm 1 reward 1 and arm 2 reward 0
+    - Then $\hat{\mu}_1 = 1 > 0 = \hat{\mu}_2$, and we keep pulling arm 1
+    - Never revisit arm 2, which is actually better
+  - _Regret_: $L_T = \Omega(T)$, linear regret (very bad!)
+
+* Uniform Exploration
+
+- @Definition@: **Uniform Exploration** (aka "random selection"), at each time
+  $t$ choose $A_t$ uniformly at random from $\{1, \ldots, K\}$
+  - _Pure exploration_: no use of observed rewards
+
+- @Limitations@:
+  - _Problem_: Never uses information from rewards
+    - Pulls all arms equally, even after learning which are bad
+  - _Regret_: expected instantaneous regret is the constant
+    $\frac{1}{K}\sum_{i=1}^{K} \Delta_i$ in _every_ round, so
+    $$L_T = \Theta(T)$$
+    which is linear, as bad as greedy
+
+- @Remark@: greedy and uniform exploration fail for _opposite_ reasons
+  - Greedy commits too early on too little data
+  - Uniform exploration never commits at all
+  - Both give linear regret, so a good algorithm must interpolate between them
+
+* Explore-Then-Commit
+
+- @Definition@: **Explore-Then-Commit (ETC)** with exploration budget $n$
+  1. _Explore_: pull each arm exactly $n$ times ($nK$ rounds total)
+  2. _Commit_: play $\argmax_i \hat{\mu}_i$ for all remaining $T - nK$ rounds
+
+- @Remark@: ETC _is_ a classic A/B test
+  - Run a fixed-size experiment, then ship the winner
+  - The exploration phase is the "test", the commit phase is the "rollout"
+
+- @Properties@: regret has two competing terms
+  $$
+  \EE[L_T]
+    \le \underbrace{n \sum_{i} \Delta_i}_{\text{cost of exploring}}
+      + \underbrace{T \sum_{i} \Delta_i \exp(-n \Delta_i^2 / 4)}_
+        {\text{cost of committing to the wrong arm}}
+  $$
+  - Small $n$: cheap exploration, high chance of committing to a bad arm
+  - Large $n$: safe commitment, but exploration itself costs a lot
+
+- @Limitations@
+  - With $n$ fixed and $T$ growing, the second term makes $L_T = \Omega(T)$
+  - Tuning $n \approx (4/\Delta^2)\log(T\Delta^2/4)$ needs the unknown $\Delta$
+  - Best _gap-free_ tuning gives only $\EE[L_T] = \Theta(T^{2/3} K^{1/3})$
+  - The split into "learn" then "earn" is exactly what adaptive algorithms avoid
+
+// https://raw.githack.com/gpsaggese/gpsaggese.github.io/gp_scratch/msml610/tutorials/L09_multi_armed_bandits/L09_03_02_multi_armed_bandits.html#Cell-5:-Epsilon-Greedy-Algorithm
+
+* $\epsilon$-Greedy Algorithm
+
+- @Key idea@: Need adaptive strategy that interleaves exploration and
+  exploitation instead of separating them like ETC
+  - Greedy algorithm: too much exploitation
+  - Uniform exploration: too much exploration
+
+- @Definition@: **$\epsilon$-Greedy Algorithm** explores with small probability
+  $\epsilon$, otherwise exploits
+
+- @Algorithm@: at each time $t$:
+    1. Compute empirical means:
+       $$
+       \hat{\mu}_i(t)
+       = \frac{1}{N_i(t)} \sum_{\tau < t: A_\tau = i} R_\tau
+       $$
+    2. With probability $\epsilon$: Choose arm uniformly at random (explore)
+    3. With probability $1 - \epsilon$: Choose arm $\argmax_i \hat{\mu}_i(t)$
+       (exploit)
+  - $\epsilon \in (0, 1)$ is a hyperparameter
+    - Small $\epsilon$ (e.g., 0.01): mostly exploit, little exploration
+    - Large $\epsilon$ (e.g., 0.5): explore half the time
+    - Typical choice: $\epsilon = 0.1$
+
+* $\epsilon$-Greedy: Exploration Schedules
+
+- @Variants@: two families of exploration schedules
+
+- **Fixed schedule**: use the same $\epsilon$ for all $t$
+  - _Problem_: Keeps exploring at a constant rate forever, even after the best
+    arm is identified
+  - _Regret_: $L_T = \Theta(T)$, linear, since each round pays an expected
+    $\frac{\epsilon}{K}\sum_i \Delta_i$
+
+- **Decaying schedule**: use a time-varying $\epsilon_t$ that decreases with $t$
+  - _Intuition_: Explore a lot early, less over time
+  - _Schedule_ $\epsilon_t = O(t^{-1/3})$: gives $L_T = O(T^{2/3})$
+    - Gap-free, i.e., needs no knowledge of the $\Delta_i$
+  - _Schedule_ $\epsilon_t = \min(1, cK / (d^2 t))$: gives $L_T = O(\log T)$
+    - Auer, Cesa-Bianchi, Fischer (2002), Theorem 3
+    - Requires a known lower bound $d \leq \min_{i: \Delta_i > 0} \Delta_i$
+  - If the decay is too slow: too much exploration $\to$ higher regret
+  - If the decay is too fast: may never correct an early mistake
+
+- @Pros@
+  - Simple, easy to implement, works reasonably well in practice
+
+- @Cons@
+  - The $O(\log T)$ schedule needs the unknown gap $d$, so it is not adaptive
+  - Explores uniformly over arms, wasting pulls on clearly bad arms
+  - UCB and Thompson Sampling get $O(\log T)$ with no such knowledge
+
+* Other Simple Exploration Heuristics
+
+- @Optimistic Initialization@: initialize $\hat{\mu}_i(0)$ to a value above any
+  achievable reward, then run pure greedy
+  - E.g., for rewards in $[0, 1]$ pretend each arm already returned $m$ rewards
+    equal to 1
+  - Every pull _lowers_ an optimistic estimate, so greedy is forced to cycle
+    through all arms before settling
+  - _Pros_: one line of code, no randomization
+  - _Cons_: exploration stops permanently once estimates drop, so it fails
+    under non-stationarity
+  - Same "optimism" idea that UCB makes rigorous, see next section
+
+- @Softmax / Boltzmann Exploration@: sample arm $i$ with probability
+  $$
+  \Pr(A_t = i)
+    = \frac{\exp(\hat{\mu}_i(t) / \tau)}
+           {\sum_{j=1}^{K} \exp(\hat{\mu}_j(t) / \tau)}
+  $$
+  where $\tau > 0$ is a "temperature"
+  - $\tau \to 0$: greedy, $\tau \to \infty$: uniform exploration
+  - _Pros_: explores in proportion to how good an arm looks, unlike
+    $\epsilon$-greedy which explores uniformly
+  - _Cons_: ignores _uncertainty_, only uses the point estimate, and $\tau$ must
+    be tuned or annealed
+  - Same softmax that reappears as the policy parameterization in RL (L12.1)
+
+# Regret Lower Bounds
+
+* Regret Lower Bounds: Why They Matter
+
+- @Question@: Why do lower bounds for algorithms matter?
+
+- @Answers@
+  - Lower bounds show fundamental limits of _any_ algorithm
+    - No algorithm can do better (up to constants)
+  - Tells us if an algorithm is near-optimal
+  - Guides algorithm design: what's achievable?
+
+- @Remark@: we have seen 3 algorithms with linear regret (greedy, uniform, fixed
+  $\epsilon$) and 1 with $O(T^{2/3})$ (ETC, decaying $\epsilon$)
+  - Natural question: how low can regret go?
+
+* Regret Lower Bounds: Can Regret Be Constant?
+
+- @Question@: Can regret be constant, i.e., can
+  $$
+  L_T \defeq \sum_{t=1}^{T} \ell_t = \sum_{i=1}^{K} \Delta_i N_i(T)
+  $$
+  stop growing as $T$ grows?
+
+- @Answer@: No, the intuition is
+  - Need to distinguish between arms with close means
+    - If $\mu_1 \approx \mu_2$, need many samples to tell which is better
+  - Must pull suboptimal arms enough to be confident they're suboptimal
+  - Any algorithm that stops pulling an arm after finitely many pulls can be
+    fooled by a problem instance where that arm is secretly the best
+  - Trade-off: confidence vs regret
+
+* Regret Lower Bounds: Lai-Robbins Bound
+
+- @Theorem@: **Lai and Robbins (1985)**:
+  - For any "consistent" algorithm (i.e., one whose regret is sub-polynomial on
+    every instance)
+  - The expected cumulative regret must satisfy
+    $$
+    \liminf_{T \to \infty} \frac{\EE[L_T]}{\log T} \geq
+    \sum_{i: \Delta_i > 0} \frac{\Delta_i}{D(P_i \| P^*)}
+    $$
+    where $D(P_i \| P^*)$ is the KL divergence between the reward distribution
+    of arm $i$ and that of the optimal arm
+
+- @Remark@: for Bernoulli arms the distributions are indexed by their means, so
+  $D(P_i \| P^*)$ is often written $D(\mu_i \| \mu^*)$
+  - This is an abuse of notation that only makes sense for one-parameter
+    families
+
+- @Corollary@: simplified version for bounded rewards:
+  $$
+  \EE[L_T] = \Omega\left( \sum_{i: \Delta_i > 0} \frac{\log T}{\Delta_i} \right)
+  $$
+  - Regret must grow at least logarithmically with $T$ ($\Omega$ is a lower
+    bound)
+
+- @Interpretation@: cannot achieve constant regret, must pay $\Omega(\log T)$
+
+* Two Regimes: Gap-Dependent vs Minimax Regret
+
+- @Problem@: the bound $\log T / \Delta_i$ blows up as $\Delta_i \to 0$, but
+  regret clearly cannot, since $\Delta_i \to 0$ means arm $i$ is _harmless_
+
+- @Key idea@: per-arm regret is capped by the smaller of two terms
+  $$\Delta_i \, \EE[N_i(T)] = O\left(\min\left(\Delta_i T,
+    \frac{\log T}{\Delta_i}\right)\right)$$
+  - Easy arms (large $\Delta_i$): identified fast, cost $\log T / \Delta_i$
+  - Hard arms (small $\Delta_i$): never identified, but cost $\Delta_i T$ is
+    small anyway
+  - Worst case at $\Delta_i \approx \sqrt{K / T}$, where both terms are
+    $\approx \sqrt{KT}$
+
+- @Comparison@: two ways to state a regret bound
+  - _Gap-dependent (instance-dependent)_: $O(\sum_i \log T / \Delta_i)$
+    - Sharp for a _fixed_ instance, vacuous as $\Delta_i \to 0$
+  - _Gap-free (minimax, worst-case)_: $\sup_{P_1, \ldots, P_K} \EE[L_T]$
+    - UCB1 achieves $O(\sqrt{KT \log T})$, MOSS achieves $O(\sqrt{KT})$
+
+- @Theorem@: **minimax lower bound**: for any algorithm there is a $K$-armed
+  instance with $\EE[L_T] = \Omega(\sqrt{KT})$
+  - Both bounds are real, they answer different questions
+  - _Warning_: $\sqrt{KT}$ is the _best possible_ worst-case rate, not the rate
+    of a naive algorithm
+
+* Regret Lower Bounds: Implications for Algorithm Design
+
+- @Goal@: Achieve $O(\log T)$ gap-dependent regret
+  - Matches the Lai-Robbins lower bound (up to constants)
+  - Called "order-optimal" or "asymptotically optimal"
+
+- @Key idea@: Must pull each suboptimal arm $i$ roughly
+  $O\left(\frac{\log T}{\Delta_i^2}\right)$ times
+  - This is how many samples are needed to separate $\mu_i$ from $\mu^*$
+  - Arms with smaller gaps $\Delta_i$ need more exploration
+  - Total regret:
+    $$
+    \sum_{i: \Delta_i > 0}
+      \Delta_i \cdot O\left(\frac{\log T}{\Delta_i^2}\right)
+      = O\left( \sum_{i: \Delta_i > 0} \frac{\log T}{\Delta_i} \right)
+    $$
+
+- @Limitations@: what won't work
+  - _Fixed exploration budget_ (ETC with fixed $n$): commits to the wrong arm
+    with constant probability, so $\Omega(T)$
+  - _Uniform exploration_: constant per-round regret, so $\Theta(T)$
+  - _Fixed $\epsilon$_: constant exploration rate forever, so $\Theta(T)$
+  - Need _adaptive_ exploration that concentrates on plausibly-optimal arms
+
+# Optimism and UCB
+
+// https://raw.githack.com/gpsaggese/gpsaggese.github.io/gp_scratch/msml610/tutorials/L09_multi_armed_bandits/L09_03_02_multi_armed_bandits.html#Cell-6:-Confidence-Intervals-for-Each-Arm
+
+* Optimism in the Face of Uncertainty
+
+::: columns
+:::: {.column width=60%}
+- @Key Idea@: **"Be optimistic about uncertain options"**
+  - If unsure about arm's value, assume it could be the best
+  - Optimism drives exploration of uncertain arms
+  - As arms are explored, uncertainty shrinks
+
+- @Definition@: the **upper confidence bound** for arm $i$ after $n$ pulls is
+  $$U_i = \hat{\mu}_i + c_i(n), \quad c_i(n) = \sqrt{\frac{2 \log t}{n}}$$
+  - $c_i(n)$ is the _uncertainty radius_, chosen so that $\mu_i \le U_i$ with
+    high probability
+  - Fewer samples $n$ $\to$ larger $c_i(n)$ $\to$ more optimistic
+  - More samples $n$ $\to$ smaller $c_i(n)$ $\to$ less optimistic
+
+- @Intuition@: **Why optimism works**
+  - If an arm _is_ optimal: optimism ensures we keep trying it
+  - If an arm _is not_ optimal: we learn this and stop pulling it
+  - Balances exploration and exploitation with no explicit randomization
+
+- @Comparison@
+  - $\epsilon$-greedy: random exploration, ignores uncertainty
+  - Optimism: directed exploration toward uncertain arms
+::::
+:::: {.column width=40%}
+
+```graphviz
+digraph OptimismConcept {
+    bgcolor    = "white";
+    rankdir    = TB;
+    splines    = spline;
+    nodesep    = 0.28;
+    ranksep    = 0.34;
+    pad        = 0.30;
+    fontname   = "Helvetica-Bold";
+    fontsize   = 15;
+    fontcolor  = "#1F2933";
+    labelloc   = t;
+    node [shape=box, style="rounded,filled", fontname="Helvetica",
+          fontsize=13, fontcolor="#1F2933", penwidth=1.2,
+          margin="0.20,0.11", height=0.50];
+    edge [fontname="Helvetica-Oblique", fontsize=11, fontcolor="#7B8794",
+          color="#9AA5B1", penwidth=1.1, arrowsize=0.75];
+    Uncertain  [label="Arm with high uncertainty",
+                fillcolor="#FFD1A6", color="#D9A441"];
+    HighUCB    [label="High UCB\nOptimistic estimate",
+                fillcolor="#A6E7F4", color="#9AA5B1"];
+    Explore    [label="Arm gets pulled\nExploration",
+                fillcolor="#A6C8F4", color="#9AA5B1"];
+    Learn      [label="Uncertainty decreases\nLearning",
+                fillcolor="#A0D6D1", color="#9AA5B1"];
+    Optimal    [label="Truly good\nKeep pulling",
+                fillcolor="#B2E2B2", color="#4E9A6B"];
+    Suboptimal [label="Truly bad\nStop pulling",
+                fillcolor="#F4A6A6", color="#C0736F"];
+    Uncertain -> HighUCB [label="  Inflates estimate"];
+    HighUCB   -> Explore [label="  Selected by policy"];
+    Explore   -> Learn   [label="  Observation"];
+    Learn -> Optimal    [label="  Good arm", color="#4E9A6B",
+                         fontcolor="#4E9A6B"];
+    Learn -> Suboptimal [label="  Bad arm",  color="#C0736F",
+                         fontcolor="#C0736F"];
+    { rank=same; Optimal; Suboptimal; }
+}
+```
+::::
+:::
+
+// https://raw.githack.com/gpsaggese/gpsaggese.github.io/gp_scratch/msml610/tutorials/L09_multi_armed_bandits/L09_03_02_multi_armed_bandits.html#Cell-7:-Upper-Confidence-Bound-(UCB)-Intuition
+
+* Upper Confidence Bound (UCB1)
+
+- @Definition@: **UCB1 Algorithm** (Auer, Cesa-Bianchi, Fischer, 2002)
+  - For the first $K$ rounds, pull each arm once
+  - For round $t > K$:
+    1. For each arm $i$, compute the **UCB index**
+       $$
+       U_i(t)
+       = \underbrace{\hat{\mu}_i(t)}_{\text{exploitation}}
+       + \underbrace{\sqrt{\frac{2 \log t}{N_i(t)}}}_{\text{exploration bonus}}
+       $$
+       where
+       - $\hat{\mu}_i(t)$: empirical mean of arm $i$ before round $t$
+       - $N_i(t)$: number of times arm $i$ was pulled before round $t$
+    2. Pull arm $A_t = \argmax_i U_i(t)$, breaking ties by lowest index
+
+- @Remark@: the bonus uses the _current round_ $t$, not the horizon $T$
+  - So UCB1 is _anytime_: it needs no knowledge of when the run stops
+  - A variant uses $\log T$ instead, but then $T$ must be known in advance
+
+// https://raw.githack.com/gpsaggese/gpsaggese.github.io/gp_scratch/msml610/tutorials/L09_multi_armed_bandits/L09_03_02_multi_armed_bandits.html#Cell-8:-UCB-Algorithm-Simulation
+// https://raw.githack.com/gpsaggese/gpsaggese.github.io/gp_scratch/msml610/tutorials/L09_multi_armed_bandits/L09_03_02_multi_armed_bandits.html#Cell-9:-UCB-Exploration-Bonus-Decay
+
+* UCB: Why It Works
+
+- @Intuition@: the bonus $\sqrt{2 \log t / N_i(t)}$ is carefully calibrated
+  - Derived from Hoeffding's concentration inequality
+  - Ensures $\mu_i \leq U_i(t)$ with probability at least $1 - t^{-4}$
+  - "Optimism": we act as if each arm is as good as its UCB
+
+- @Properties@: how the two terms behave
+  - Bonus $\propto 1/\sqrt{N_i}$: shrinks as an arm is pulled
+  - Bonus $\propto \sqrt{\log t}$: grows slowly with time for _all_ arms
+  - _Early_: all arms have few pulls $\to$ large bonuses $\to$ explores
+  - _Middle_: focuses on promising arms, occasionally revisits uncertain ones
+  - _Late_: mostly pulls optimal arm, bonus becomes negligible
+
+- @Self-Correcting@
+  - Pull a suboptimal arm too much: its $N_i$ grows, its UCB decreases
+  - Neglect the optimal arm: $\log t$ grows while its $N_i$ stays fixed, so its
+    UCB increases until it is pulled again
+  - No arm can be abandoned forever
+
+- @Remark@: UCB1 needs no tuning to be _order-optimal_
+  - Unlike $\epsilon$-greedy, no schedule and no knowledge of $\Delta_i$
+  - In practice the constant 2 in the bonus is often lowered (e.g., to 0.5),
+    which reduces over-exploration at the cost of the theoretical guarantee
+
+// https://raw.githack.com/gpsaggese/gpsaggese.github.io/gp_scratch/msml610/tutorials/L09_multi_armed_bandits/L09_03_02_multi_armed_bandits.html#Cell-8:-UCB-Algorithm-Simulation
+
+* UCB: Worked Example
+
+- @Example@: $K = 3$ Bernoulli arms with (unknown) $\mu = (0.3, 0.5, 0.7)$
+  - Rounds $t = 1, 2, 3$ pull each arm once, giving rewards $1$, $1$, $0$
+  - So after initialization $\hat{\mu} = (1.00, 1.00, 0.00)$
+
+\begingroup \footnotesize
+```{=typst}
+#styled-table(
+  headers: (
+    [$t$], [$U_1(t)$], [$U_2(t)$], [$U_3(t)$], [Pull], [$R_t$],
+    [$hat(mu)$ after the pull]
+  ),
+  rows: (
+    ([4], [2.67], [2.67], [1.67], [arm 1], [0], [(0.50, 1.00, 0.00)]),
+    ([5], [1.77], [2.79], [1.79], [arm 2], [0], [(0.50, 0.50, 0.00)]),
+    ([6], [1.84], [1.84], [1.89], [arm 3], [1], [(0.50, 0.50, 0.50)]),
+    ([7], [1.89], [1.89], [1.89], [arm 1], [0], [(0.33, 0.50, 0.50)]),
+    ([8], [1.51], [1.94], [1.94], [arm 2], [1], [(0.33, 0.67, 0.50)]),
+    ([9], [1.54], [1.88], [1.98], [arm 3], [1], [(0.33, 0.67, 0.67)]),
+  ),
+  caption: "UCB1 trace, ties broken by lowest index",
+  col-widths: (0.4fr, 0.8fr, 0.8fr, 0.8fr, 0.8fr, 0.5fr, 2.2fr),
+  width: 100%,
+  bold-first-col: true
+)
+```
+\endgroup
+
+- @Remark@: look at round $t = 6$
+  - Arm 3 has the _worst_ empirical mean ($0.00$ vs $0.50$)
+  - It is pulled anyway, because it has the largest bonus ($1.89$ vs $1.34$)
+  - This single pull rescues the truly best arm from an unlucky start
+  - By $t = 9$ arm 3 leads on the UCB index, which is the correct answer
+
+* Regret Analysis of UCB
+
+- @Theorem@ (Auer et al., 2002):
+  - For UCB1 with rewards in $[0, 1]$, the expected cumulative regret satisfies
+    $$\EE[L_T] \leq
+    8 \sum_{i: \Delta_i > 0} \frac{\log T}{\Delta_i} +
+    \left( 1 + \frac{\pi^2}{3} \right) \sum_{i=1}^{K} \Delta_i$$
+  - Simplified expression:
+    $$
+    \EE[L_T] = O\left( \sum_{i: \Delta_i > 0} \frac{\log T}{\Delta_i} \right)
+    $$
+
+- @Interpretation@
+  - Logarithmic regret: $\EE[L_T] = O(\log T)$
+  - Matches the Lai-Robbins lower bound up to constants, so UCB1 is
+    order-optimal
+  - Cannot do better asymptotically in the gap-dependent sense
+
+- @Remark@: the bound _looks_ unbounded as $\Delta_i \to 0$, but the true regret
+  is not
+  - Arm $i$ can never contribute more than $\Delta_i T$
+  - Combining the two, UCB1 also satisfies the gap-free bound
+    $\EE[L_T] = O(\sqrt{K T \log T})$
+  - This is within $\sqrt{\log T}$ of the $\Omega(\sqrt{KT})$ minimax lower
+    bound
+
+* Variants of UCB
+
+- @UCB1@: Original algorithm
+  - Assumes bounded rewards in $[0, 1]$ and uses the same bonus for all arms
+
+- @UCB-V@: Variance-Aware UCB (Audibert, Munos, Szepesvari, 2009)
+  - Incorporates empirical variance of rewards
+    $$
+    U^{V}_i(t)
+    = \hat{\mu}_i(t) + \sqrt{\frac{2 \hat{\sigma}_i^2(t) \log t}{N_i(t)}}
+      + \frac{3 \log t}{N_i(t)}
+    $$
+    where $\hat{\sigma}_i^2(t)$ is sample variance of arm $i$
+  - E.g., some ads have consistent CTR, others highly variable
+  - **Benefit**: Better for arms with low variance (tighter bounds)
+
+- @KL-UCB@ (Garivier and Cappe, 2011)
+  - Uses Kullback-Leibler divergence for tighter confidence bounds
+    $$
+    U^{KL}_i(t)
+    = \max \left\{ q : N_i(t) \, D(\hat{\mu}_i(t) \| q)
+      \leq \log t + c \log \log t \right\}
+    $$
+    where $D(p \| q)$ is KL divergence
+  - **Benefit**: matches the Lai-Robbins constant exactly, unlike UCB1
+
+- @MOSS@ (Audibert and Bubeck, 2009)
+  - Replaces $\log t$ with $\log(T / (K N_i(t)))$
+  - **Benefit**: minimax-optimal $O(\sqrt{KT})$ gap-free regret
+
+# Bayesian Approaches
+
+// https://raw.githack.com/gpsaggese/gpsaggese.github.io/gp_scratch/msml610/tutorials/L09_multi_armed_bandits/L09_03_02_multi_armed_bandits.html#Cell-12:-Bayesian-Bandits:-Prior-and-Posterior
+
+* Bayesian Bandits
+
+- @Recap@: so far **frequentist** approach (e.g., UCB, $\epsilon$-greedy)
+  - Treat $\mu_i$ as fixed unknown constants
+  - Use confidence bounds and empirical means
+
+- @Definition@: **Bayesian Approach** for multi-armed bandits:
+  - Treat $\mu_i$ as random variables
+  - Start with prior distribution $p(\mu_i)$ for each arm
+  - Update beliefs using Bayes' rule after each observation
+  - Make decisions based on posterior distributions
+
+- @Components@: the Bayesian framework
+  - Prior: $p(\mu_i)$
+    - E.g., $\mu_i \sim Beta(1, 1)$ for Bernoulli arm
+  - Likelihood: $p(R | \mu_i)$
+    - E.g., $R \sim Bernoulli(\mu_i)$
+  - Posterior (by Bayes' rule):
+    $p(\mu_i | R_{1:t}) \propto p(R_{1:t} | \mu_i) \, p(\mu_i)$
+
+// https://raw.githack.com/gpsaggese/gpsaggese.github.io/gp_scratch/msml610/tutorials/L09_multi_armed_bandits/L09_03_02_multi_armed_bandits.html#Cell-12:-Bayesian-Bandits:-Prior-and-Posterior
+
+* Bayesian Bandits: Priors and Posteriors
+
+- We can use the usual framework for Bayesian inference and decision making
+
+- @Prior Distribution@: Encodes initial beliefs about $\mu_i$
+  - Uniform prior: e.g., $\mu_i \sim Beta(1, 1)$ (no prior knowledge)
+  - Informative prior: e.g., $\mu_i \sim Beta(\alpha, \beta)$ (domain knowledge)
+
+- @Posterior Update@: After observing rewards from arm $i$
+  - Suppose arm $i$ has been pulled $n$ times, with $s$ successes, $f$ failures
+  - Posterior (for Bernoulli arm with Beta prior):
+    $$p(\mu_i | \mathcal{D}) = Beta(\alpha + s, \beta + f)$$
+  - Conjugate prior: Posterior has same form as prior (easy to update)
+
+- @Bayesian Inference@: Posterior encodes all information about $\mu_i$
+  - Mean:
+    $\EE[\mu_i | \mathcal{D}] = \frac{\alpha + s}{\alpha + \beta + n}$
+  - Uncertainty:
+    $$
+    \VV[\mu_i | \mathcal{D}]
+      = \frac{(\alpha + s)(\beta + f)}
+             {(\alpha + \beta + n)^2 (\alpha + \beta + n + 1)}
+    $$
+  - More data $\to$ sharper posterior (less uncertainty)
+
+* Bayesian Decision-Making
+
+- Several strategies on how to choose arm from the posteriors
+
+- @Greedy Bayesian@: Choose arm with highest posterior mean
+  $$A_t = \argmax_i \EE[\mu_i | \mathcal{D}_t]$$
+  - _Problem_: No exploration $\to$ same issue as frequentist greedy
+
+- @Bayes-UCB@ (Kaufmann, Cappe, Garivier, 2012): Use posterior quantile as UCB
+  $$A_t = \argmax_i Q_i\left(1 - \frac{1}{t (\log T)^c}\right)$$
+  where $Q_i(p)$ is the $p$-th quantile of posterior $p(\mu_i | \mathcal{D}_t)$
+  - Similar to UCB, but uses Bayesian uncertainty
+
+- @Probability of Best Arm@: Choose the arm most likely to be optimal
+  $$
+  A_t
+    = \argmax_i \Pr\left(\mu_i = \max_j \mu_j \,\middle|\, \mathcal{D}_t\right)
+  $$
+  - _Problem_: this is a _deterministic_ rule, so it can lock in like greedy
+  - Contrast with Thompson Sampling, which _samples_ arm $i$ with that same
+    probability instead of always taking the $\argmax$
+
+- @Thompson Sampling@: Sample from posteriors and play best sample (next slide)
+
+// https://raw.githack.com/gpsaggese/gpsaggese.github.io/gp_scratch/msml610/tutorials/L09_multi_armed_bandits/L09_03_02_multi_armed_bandits.html#Cell-13:-Thompson-Sampling-Algorithm
+// https://raw.githack.com/gpsaggese/gpsaggese.github.io/gp_scratch/msml610/tutorials/L09_multi_armed_bandits/L09_03_02_multi_armed_bandits.html#Cell-14:-Thompson-Sampling:-Probability-Matching
+
+* Thompson Sampling
+
+- @Definition@: **Thompson Sampling** (Thompson, 1933)
+  - At each time $t$:
+    1. Sample $\tilde{\mu}_i \sim p(\mu_i | \mathcal{D}_t)$ for each arm $i$
+    2. Pull arm $A_t = \argmax_i \tilde{\mu}_i$
+    3. Observe reward $R_t$
+    4. Update posterior for arm $A_t$
+
+- @Intuition@: "Probability matching"
+  - Pull arm $i$ with probability exactly $\Pr(i = i^* | \mathcal{D}_t)$
+  - If arm likely to be best, sample will often be highest
+  - If arm uncertain, its posterior is wide, so it might still win a draw
+    (exploration)
+
+- @Example@: Bernoulli Bandits with Beta Priors
+  - Posterior: $p(\mu_i | \mathcal{D}) = Beta(\alpha_i, \beta_i)$
+  - Algorithm:
+    1. Sample $\tilde{\mu}_i \sim Beta(\alpha_i, \beta_i)$ for each $i$
+    2. Pull $A_t = \argmax_i \tilde{\mu}_i$
+    3. If reward $R_t = 1$: $\alpha_{A_t} \gets \alpha_{A_t} + 1$;
+       else $\beta_{A_t} \gets \beta_{A_t} + 1$
+
+* Thompson Sampling: Posterior Evolution
+
+- @Example@: 3 Bernoulli arms with $\mu = (0.30, 0.50, 0.55)$, Beta$(1,1)$
+  priors
+
+![](msml610/lectures_source/figures/L09.3.beta_posteriors.png){width=100%}
+
+- @Interpretation@
+  - _0 pulls_: flat priors, so every arm wins a draw equally often
+  - _10 pulls_: the empirically best arm (arm 2) is _not_ the truly best one
+    (arm 3), but sampling still picks arm 3 often, so the mistake is recoverable
+  - _100 pulls_: arm 1 separates cleanly and stops being sampled
+  - _1000 pulls_: almost all draws go to arm 3
+
+- @Key idea@: the width of the posterior _is_ the exploration bonus
+  - UCB adds it explicitly, Thompson Sampling gets it from the posterior draw
+
+// https://raw.githack.com/gpsaggese/gpsaggese.github.io/gp_scratch/msml610/tutorials/L09_multi_armed_bandits/L09_03_02_multi_armed_bandits.html#Cell-15:-UCB-vs-Thompson-Sampling-Comparison
+
+* Thompson Sampling: Practical Performance
+
+- @Theoretical Guarantees@
+  - Achieves $\EE[L_T] = O(\log T)$ gap-dependent regret (optimal)
+  - Achieves $O(\sqrt{KT \log T})$ gap-free regret, matching UCB1
+  - Proofs more involved than UCB (Agrawal and Goyal, 2012)
+
+- @Empirical Performance@
+  - Often _outperforms_ UCB in practice (better constants)
+  - Faster convergence to optimal arm in many problems
+  - More robust to model misspecification
+
+- @Pros@
+  - Naturally incorporates prior knowledge via priors
+  - Flexible: Works with any reward distribution (if conjugate prior available)
+  - Simple randomized algorithm (no complex optimization)
+  - Randomization also makes it natural for _batched_ or _delayed_ feedback,
+    where UCB would pull the same arm for the whole batch
+  - _De facto_ standard in practice, especially industry
+
+- @Cons@
+  - Requires choosing prior (though often uniform prior works well)
+  - Posterior updates may be non-trivial for complex distributions
+  - Randomized, so runs are not reproducible without fixing a seed
+
+# Putting It Together
+
+// https://raw.githack.com/gpsaggese/gpsaggese.github.io/gp_scratch/msml610/tutorials/L09_multi_armed_bandits/L09_03_02_multi_armed_bandits.html#Cell-11:-Comparing-Algorithms:-Regret-Curves
+
+* Regret Comparison: Empirical
+
+- @Example@: 5 Bernoulli arms with $\mu = (0.9, 0.7, 0.5, 0.3, 0.1)$, regret
+  averaged over 150 runs
+
+![](msml610/lectures_source/figures/L09.3.regret_curves.png){width=100%}
+
+- @Interpretation@
+  - _Left_: greedy and fixed-$\epsilon$ are straight lines, i.e., $\Theta(T)$
+  - _Right_: on a log-$t$ axis, UCB1, decaying $\epsilon_t$-greedy and Thompson
+    Sampling are close to straight lines, i.e., $O(\log t)$
+
+- @Remark@: greedy is _worse_ than fixed-$\epsilon$, even though it "wastes"
+  nothing on exploration
+  - A permanent commitment to a wrong arm costs more than 10% random pulls
+
+// https://raw.githack.com/gpsaggese/gpsaggese.github.io/gp_scratch/msml610/tutorials/L09_multi_armed_bandits/L09_03_02_multi_armed_bandits.html#Cell-11:-Comparing-Algorithms:-Regret-Curves
+// https://raw.githack.com/gpsaggese/gpsaggese.github.io/gp_scratch/msml610/tutorials/L09_multi_armed_bandits/L09_03_02_multi_armed_bandits.html#Cell-15:-UCB-vs-Thompson-Sampling-Comparison
+
+* Regret Comparison: Summary Table
+
+\begingroup \footnotesize
+```{=typst}
+#styled-table(
+  headers: ([Algorithm], [Gap-dependent regret], [Exploration], [Tuning]),
+  rows: (
+    ([Greedy], [$Theta(T)$], [None], [None]),
+    ([Uniform exploration], [$Theta(T)$], [Uniform, forever], [None]),
+    ([Explore-then-commit], [$Theta(T^(2\/3))$, tuned],
+     [Fixed budget, up front], [Budget $n$]),
+    ([$epsilon$-greedy, fixed], [$Theta(T)$], [Uniform, forever],
+     [$epsilon$]),
+    ([$epsilon$-greedy, decaying], [$O(log T)$ if gap known],
+     [Uniform, shrinking], [Schedule]),
+    ([UCB1], [$O(log T)$], [Directed by uncertainty], [None]),
+    ([KL-UCB], [$O(log T)$, optimal constant], [Directed by uncertainty],
+     [None]),
+    ([Thompson sampling], [$O(log T)$], [Posterior sampling], [Prior]),
+    ([Lower bound], [$Omega(log T)$], [-], [-]),
+  ),
+  caption: [Minimax lower bound is $Omega(sqrt(K T))$; UCB1 and Thompson
+    achieve $O(sqrt(K T log T))$],
+  col-widths: (1.3fr, 1.4fr, 1.3fr, 0.8fr),
+  width: 100%,
+  bold-first-col: true
+)
+```
+\endgroup
+
+- @Practical Takeaway@: UCB and Thompson Sampling dominate the simpler
+  heuristics for stationary problems
+  - Between the two, Thompson Sampling usually wins empirically, UCB is easier
+    to analyze and is deterministic
+
+// https://raw.githack.com/gpsaggese/gpsaggese.github.io/gp_scratch/msml610/tutorials/L09_multi_armed_bandits/L09_03_02_multi_armed_bandits.html#Cell-15:-UCB-vs-Thompson-Sampling-Comparison
+
+* Which Algorithm Should I Use?
+
+- @Stationary, few arms, Bernoulli or bounded rewards@
+  - Start with **Thompson Sampling** with $Beta(1,1)$ priors
+  - Best empirical performance, trivial to implement, handles batching
+
+- @You need determinism or auditability@
+  - Use **UCB1** or **KL-UCB**
+  - No randomness, so decisions are reproducible and explainable
+  - Required in some regulated settings (e.g., clinical trials)
+
+- @Rewards depend on user or item features@
+  - Use a **contextual bandit** (LinUCB, contextual Thompson Sampling), L09.7
+
+- @Reward distributions drift over time@
+  - Use a **non-stationary** method (sliding-window UCB, discounted UCB),
+    L09.7
+
+- @No stochastic model is credible (prices, adversaries, spam)@
+  - Use an **adversarial** algorithm (EXP3), L09.7
+
+- @You only care about finding the best arm, not about reward during the test@
+  - This is **best-arm identification**, not regret minimization, L09.7
+
+- @Remark@: if you cannot adapt traffic at all, a classic A/B test (ETC) is
+  still a valid, if suboptimal, choice

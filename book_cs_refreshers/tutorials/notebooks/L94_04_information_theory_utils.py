@@ -3,7 +3,7 @@ Utility functions for Information Theory lesson.
 
 Import as:
 
-import msml610.tutorials.L9x_refreshers.L94_04_information_theory_utils as mtlrl0itu
+import book_cs_refreshers.tutorials.notebooks.L94_04_information_theory_utils as bcrtnl0itu
 """
 
 import logging

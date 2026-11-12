@@ -1,0 +1,112 @@
+// type=UMD_slides
+// course_title=From Data to Decisions: Building Decision Systems with Probabilistic Causal Reasoning
+// lesson_title=Lesson 07.1: Building Probabilistic and Causal Knowledge
+// slides_engine=typst
+
+# Eliciting Causal Knowledge from Experts
+
+## Structured Elicitation from Stakeholders
+* Step 1: What Are the Intended Outcomes?
+// From: msml610/lectures_source/Lesson08.3-Causal_AI_in_business.smd:117 '* Step 1: What Are the Intended Outcomes?'
+* Step 2: What Are the Proposed Interventions?
+// From: msml610/lectures_source/Lesson08.3-Causal_AI_in_business.smd:130 '* Step 2: What Are the Proposed Interventions?'
+* Step 3: What Factors Create Changes?
+// From: msml610/lectures_source/Lesson08.3-Causal_AI_in_business.smd:141 '* Step 3: What Factors Create Changes?'
+
+## Handling Disagreement in Hybrid Teams
+* Roles in Hybrid Teams
+// From: msml610/lectures_source/Lesson08.3-Causal_AI_in_business.smd:249 '* Roles in Hybrid Teams'
+* Executing for a Hybrid Team Project
+// From: msml610/lectures_source/Lesson08.3-Causal_AI_in_business.smd:270 '* Executing for a Hybrid Team Project'
+
+## Eliciting and Validating Priors
+* Prior Elicitation: What and Why
+// From: msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.smd:797 '* Prior Elicitation: What and Why'
+* Methods for Eliciting Priors
+// From: msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.smd:814 '* Methods for Eliciting Priors'
+* Pitfalls and Best Practices
+// From: msml610/lectures_source/Lesson11.1-Decision_Making_with_Causal_Models.smd:833 '* Pitfalls and Best Practices'
+
+# Building Causal DAGs
+
+## From Business Questions to Graph Structure
+* Step 4: Build Causal DAG
+// From: msml610/lectures_source/Lesson08.3-Causal_AI_in_business.smd:150 '* Step 4: Build Causal DAG'
+* Marketing Example: Price Intervention
+// From: msml610/lectures_source/Lesson08.3-Causal_AI_in_business.smd:165 '* Marketing Example: Price Intervention'
+
+## Specifying and Validating the Graph
+* Causal DAG: Example
+// From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:123 '* Causal DAG: Example'
+* Causal Edges are Stable
+// From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:106 '* Causal Edges are Stable'
+* Heart Attack: Example
+// From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:660 '* Building a Causal DAG'
+
+# Variable Types and Relationships
+
+## Observed, Unobserved, Endogenous, Exogenous
+* Observed Vs. Unobserved Variables
+// From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:444 '* Observed Vs. Unobserved Variables'
+* Endogenous Vs. Exogenous Variables
+// From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:513 '* Endogenous Vs. Exogenous Variables'
+
+## Confounders and Moderators
+* Confounder Variable: Example
+// From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:932 '* Confounder Variable: Example'
+* Moderator Variable
+// From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:841 '* Moderator Variable'
+* Moderator Variable: Example
+// From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:841 '* Moderator Variable'
+
+## Colliders and Path Structures
+* Collider: Examples
+// From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:1089 '* Collider'
+* Collider Bias
+// From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:1147 '* Collider Bias'
+* Fork Structure
+// From: msml610/lectures_source/Lesson08.4-Causal_networks.smd:1250 '* Fork'
+
+# Causal Discovery from Data
+
+## The Discovery Problem
+* Causal Discovery: Formal Definition
+// From: msml610/lectures_source/Lesson12.2-Causal_Discovery.smd:32 '* Causal Discovery: Formal Definition'
+* Observational vs Interventional Data
+// From: msml610/lectures_source/Lesson12.2-Causal_Discovery.smd:48 '* Observational vs Interventional Data'
+
+## Discovery Algorithm Families
+* Discovery Algorithm Families: Overview
+// From: msml610/lectures_source/Lesson12.2-Causal_Discovery.smd:440 '* Discovery Algorithm Families: Overview'
+* Constraint-Based Discovery
+// From: msml610/lectures_source/Lesson12.2-Causal_Discovery.smd:472 '* Constraint-Based Discovery'
+* Score-Based Discovery
+// From: msml610/lectures_source/Lesson12.2-Causal_Discovery.smd:492 '* Score-Based Discovery'
+
+## Combining Discovery with Domain Knowledge
+* Discovery vs Domain Knowledge
+// From: msml610/lectures_source/Lesson12.2-Causal_Discovery.smd:272 '* Discovery vs Domain Knowledge'
+* Combining Automated Discovery with Expert Judgment
+// From: msml610/lectures_source/Lesson12.2-Causal_Discovery.smd:328 '* Combining Automated Discovery with Expert Judgment'
+* Validating a Discovered DAG
+// From: msml610/lectures_source/Lesson12.2-Causal_Discovery.smd:580 '* Validating a Discovered DAG'
+
+# Temporal Structure in Causal Models
+
+## Why Time Matters for Causal Structure
+* Why Time Series Causality Is Different
+// From: msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.smd:11 '* Why Time Series Causality Is Different'
+* Temporal Causal Structures: Basic Setup
+// From: msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.smd:35 '* Temporal Causal Structures: Basic Setup'
+
+## Feedback, Dynamics, and Non-Stationarity
+* Feedback Loops and Simultaneity
+// From: msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.smd:137 '* Feedback Loops and Simultaneity'
+* Non-Stationarity and Trends
+// From: msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.smd:120 '* Non-Stationarity and Trends'
+
+## When Temporal Structure Helps or Misleads
+* When Temporal Structure Helps
+// From: msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.smd:268 '* When Temporal Structure Helps'
+* When Temporal Structure Misleads
+// From: msml610/lectures_source/Lesson10.2-Causal_Inference_for_Time_Series.smd:286 '* When Temporal Structure Misleads'

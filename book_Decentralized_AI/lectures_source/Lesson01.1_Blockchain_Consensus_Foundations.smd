@@ -3,35 +3,6 @@
 // lesson_title=Lesson 01.01: Blockchain Consensus Foundations
 // slides_engine=typst
 
-// References:
-// - 2024, Lewis-Pye et al., "Permissionless Consensus":
-//   https://arxiv.org/abs/2304.14701
-// - 2023, Xu et al., "Exploring Blockchain Technology through a Modular
-//   Lens: A Survey": https://arxiv.org/abs/2304.08283
-// - 2021, Neu et al., "Ebb-and-Flow Protocols: A Resolution of the
-//   Availability-Finality Dilemma": https://arxiv.org/abs/2009.04987
-// - 2019, Yin et al., "HotStuff: BFT Consensus with Linearity and
-//   Responsiveness": https://arxiv.org/abs/1803.05069
-// - 2019, Bano et al., "SoK: Consensus in the Age of Blockchains":
-//   https://arxiv.org/abs/1711.03936
-// - 2018, Antonopoulos et al., "Mastering Ethereum":
-//   https://github.com/ethereumbook/ethereumbook
-// - 2017, Antonopoulos, "Mastering Bitcoin":
-//   https://github.com/bitcoinbook/bitcoinbook
-// - 2017, Buterin et al., "Casper the Friendly Finality Gadget":
-//   https://arxiv.org/abs/1710.09437
-// - 2017, Kiayias et al., "Ouroboros: A Provably Secure Proof-of-Stake
-//   Blockchain Protocol": https://eprint.iacr.org/2016/889
-// - 2016, Buchman, "Tendermint: Byzantine Fault Tolerance in the Age of
-//   Blockchains":
-//   https://atrium.lib.uoguelph.ca/items/5459099e-67aa-4a23-83ae-d3471d8d8336
-// - 2015, Garay et al., "The Bitcoin Backbone Protocol: Analysis and
-//   Applications": https://eprint.iacr.org/2014/765
-// - 2008, Nakamoto, "Bitcoin: A Peer-to-Peer Electronic Cash System":
-//   https://bitcoin.org/bitcoin.pdf
-// - 1999, Castro et al., "Practical Byzantine Fault Tolerance":
-//   http://pmg.csail.mit.edu/papers/osdi99.pdf
-
 # Blockchain Consensus Foundations
 
 ## Agreement Without a Trusted Party
@@ -240,7 +211,7 @@ digraph ConsensusLoop {
 * Finality and Chain Reorganizations
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=58%}
 
 - @Definition@: **Finality** is the point at which a block is considered
   permanent and can no longer be removed from the canonical chain
@@ -557,7 +528,7 @@ digraph PBFT {
 * HotStuff: Linear BFT
 
 ::: columns
-:::: {.column width=55%}
+:::: {.column width=58%}
 
 // From paper Yin et al., "HotStuff: BFT Consensus with Linearity and
 // Responsiveness" (2019)
@@ -756,3 +727,45 @@ mindmap
 
 - How much of this consensus machinery still matters once AI agents, not only
   humans, are the ones proposing and validating transactions?
+
+* References
+
+- 2024, Lewis-Pye et al., "Permissionless Consensus":
+  https://arxiv.org/abs/2304.14701
+
+- 2023, Xu et al., "Exploring Blockchain Technology through a Modular Lens: A
+  Survey": https://arxiv.org/abs/2304.08283
+
+- 2021, Neu et al., "Ebb-and-Flow Protocols: A Resolution of the
+  Availability-Finality Dilemma": https://arxiv.org/abs/2009.04987
+
+- 2019, Yin et al., "HotStuff: BFT Consensus with Linearity and Responsiveness":
+  https://arxiv.org/abs/1803.05069
+
+- 2019, Bano et al., "SoK: Consensus in the Age of Blockchains":
+  https://arxiv.org/abs/1711.03936
+
+- 2018, Antonopoulos et al., "Mastering Ethereum":
+  https://github.com/ethereumbook/ethereumbook
+
+- 2017, Antonopoulos, "Mastering Bitcoin":
+  https://github.com/bitcoinbook/bitcoinbook
+
+- 2017, Buterin et al., "Casper the Friendly Finality Gadget":
+  https://arxiv.org/abs/1710.09437
+
+- 2017, Kiayias et al., "Ouroboros: A Provably Secure Proof-of-Stake Blockchain
+  Protocol": https://eprint.iacr.org/2016/889
+
+- 2016, Buchman, "Tendermint: Byzantine Fault Tolerance in the Age of
+  Blockchains":
+  https://atrium.lib.uoguelph.ca/items/5459099e-67aa-4a23-83ae-d3471d8d8336
+
+- 2015, Garay et al., "The Bitcoin Backbone Protocol: Analysis and
+  Applications": https://eprint.iacr.org/2014/765
+
+- 2008, Nakamoto, "Bitcoin: A Peer-to-Peer Electronic Cash System":
+  https://bitcoin.org/bitcoin.pdf
+
+- 1999, Castro et al., "Practical Byzantine Fault Tolerance":
+  http://pmg.csail.mit.edu/papers/osdi99.pdf

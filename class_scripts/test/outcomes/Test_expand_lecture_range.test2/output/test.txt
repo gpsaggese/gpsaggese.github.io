@@ -1,1 +1,1 @@
-[('/data605/lectures_source/Lesson01.1-Intro.txt', 'Lesson01.1-Intro.txt')]
+[('/data605/lectures_source/Lesson01.1-Intro.smd', 'Lesson01.1-Intro.smd')]

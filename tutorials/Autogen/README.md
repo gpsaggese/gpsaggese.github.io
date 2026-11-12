@@ -25,7 +25,7 @@
 - Once the `./docker_jupyter.sh` script is running, you can execute the tutorials
 
 - For more informations on the Docker build system refer to [Project template
-  readme](/class_project/project_template/README.md)
+  readme](/class_project/project_template/docker_scripts.README.md)
 
 ## Tutorial Notebooks
 

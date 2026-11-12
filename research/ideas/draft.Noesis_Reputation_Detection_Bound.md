@@ -3,13 +3,12 @@
 ## Status
 - **Status**: draft
 - **Complete Specs**: 15%
-- **Assignee**: TBD
 
 ## Core Idea
 - The Noesis paper's mechanism-design-risks section
   (`papers/Noesis/04_noesis_market.tex`, `sec:mechanism_design_risks`) lists
   capability misrepresentation, bid shading, and collusion, cites the
-  general auction-theory literature (Myerson, McAfee, McAfee & McMillan),
+  general auction-theory literature (Myerson, McAfee, McAfee and McMillan),
   and concludes: "we do not claim to resolve these problems in this paper"
 - This is a citation-only treatment with no result specific to Noesis. The
   paper already has the ingredients for one: the one-sided reliability test
@@ -28,7 +27,7 @@
   `05_noesis_server.tex` notation: measured reliability
   `r_hat(kappa, W) = (1/|W|) * sum_{x in W} s(x)`, and the one-sided lower
   confidence bound
-  ```
+  ```text
   r_lower(kappa, W) = r_hat(kappa, W)
                      - z_{1-delta} * sqrt(r_hat*(1-r_hat) / |W|)
   ```
@@ -38,7 +37,7 @@
   that the test rejects `H_0` (compliance) with probability at least
   `1 - power` (a standard power-analysis calculation for a one-sided
   proportion test):
-  ```
+  ```text
   min_detectable_shortfall(|W|, delta, power) = ...
   ```
   Expected shape: `epsilon` shrinks roughly as `1/sqrt(|W|)`, so the bound
@@ -89,13 +88,13 @@
   what that implies for choosing `lambda` and `rho_min`
 
 ## Next steps
-[ ] Look for related research (what has already been done)
-[ ] Finalize the implementation plan
-[ ] GP to review / approve the plan
-[ ] Hack a quick end-to-end prototype (e.g., in 1-2 days) to show that you
-    understood the problem and can make progress
-[ ] Break the problem down in phases and milestones
-[ ] Execute one step at the time
+- [ ] Look for related research (what has already been done)
+- [ ] Finalize the implementation plan
+- [ ] GP to review / approve the plan
+- [ ] Hack a quick end-to-end prototype (e.g., in 1-2 days) to show that you
+      understood the problem and can make progress
+- [ ] Break the problem down in phases and milestones
+- [ ] Execute one step at the time
 
 ## Implementation plan
 - Milestone 1: derive the single-window bound

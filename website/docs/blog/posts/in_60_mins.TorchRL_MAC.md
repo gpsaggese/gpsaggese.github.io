@@ -70,9 +70,9 @@ focuses on measurable coordination.
 
 ## Tutorial Content
 This tutorial includes all the code, notebooks, and Docker containers in
-[tutorials/TorchRL_Multi_Agent_Cooperation](https://github.com/gpsaggese/umd_classes/tree/master/tutorials/TorchRL_Multi_Agent_Cooperation)
+[tutorials/TorchRL_Multi_Agent_Cooperation](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/tutorials/TorchRL_Multi_Agent_Cooperation)
 
-- [`README.md`](https://github.com/gpsaggese/umd_classes/blob/master/tutorials/TorchRL_Multi_Agent_Cooperation/README.md):
+- [`README.md`](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/tutorials/TorchRL_Multi_Agent_Cooperation/README.md):
   Instructions and setup for the tutorial environment
 - A Docker system to build and run the environment using our standardized
   approach

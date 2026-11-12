@@ -80,7 +80,6 @@ Apply BoTorch to optimize the selection of chemical compounds from a ChEMBL-deri
   - Visualize the Pareto front (potency vs cost).  
   - Show chemical structures (SMILES) of selected compounds and discuss trade-offs.  
 
-
 **Bonus Ideas (Optional)**:  
 - Project 1: Extend comparison to random forest vs. gradient boosting models.  
 - Project 2: Add multi-fidelity optimization (e.g., low-res vs. high-res time series data).  

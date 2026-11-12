@@ -1,98 +1,188 @@
 ---
-title: "How to Write Books for Humans and AI"
+title: "How to Write Book and Technical Content for Humans (and AI)"
 draft: true
 authors:
-  - gpsaggese
+    - gpsaggese
 date: 2026-06-09
-description: Guide on writing books optimized for both human readers and AI consumption
+description:
 categories:
-  - AI Research
-  - Developer Tools
+    - AI Research
+    - Developer Tools
 ---
 
-# How to write books for humans and AI
+TL;DR: AI can already teach any topic on demand, so a technical book only earns
+its place if it teaches judgment, hard-won lessons, and structure that AI slop
+does not provide.
 
-- Writing a textbook optimized for learning using notes means prioritizing
-  clarity, brevity
-  - For humans visual structure and active recall
-- Organize information in a hierarchical, bullet-point format
-  - Starting with the main topic, then indenting subtopics and details underneath
+<!-- more -->
+
+# How to Write Book and Technical Content for Humans (and AI)
+
+- AI can already answer almost any question with depth and proficiency
+    - It writes a book on any topic, tailored to the reader's level, from ELI5
+      to PhD
+    - It acts as a patient tutor that answers follow-up questions instantly and
+      at near-zero cost
+
+- This raises two questions:
+    - Why write technical content at all, if AI can generate it on demand
+    - What happens to the old idea of a "book" as a fixed, authored artifact
+
+## Why Human-Written Books Still Matter
+
+- AI optimizes for consensus and average, since it is trained to predict the
+  most likely next token
+    - It underrepresents edge cases and non-linear paths to success
+    - A human author can add hard-won lessons from the field that AI cannot
+      reconstruct on its own
+
+- Content that used to be foundational is now often a distraction
+    - E.g., deriving backpropagation from scratch or working through linear
+      algebra by hand
+    - This is exactly the kind of standard content a reader can already get from
+      AI on request
+    - A book should spend its limited attention budget on what AI cannot easily
+      supply
+
+- What is worth teaching is judgment, not syntax
+    - When to apply a technique
+    - What to do when results do not match expectations
+    - How to critique a result or an approach
+    - How to hold a mental model of competing approaches
+
+## Write for the Era of Limited Attention
+
+- Readers face constant pressure toward shortcuts and clickbait
+    - E.g., "a little-known secret", "the 1-hour trick billionaires use"
+
+- A technical book should resist this pressure while still respecting limited
+  attention
+    - Avoid (actually abhor) anything that is or resembles AI slop
+    - Optimize for human learning: visual structure and active recall
+    - Organize information hierarchically, in bullet-point form
+
+- Embrace AI as a tool rather than ignoring it
+    - Share the prompts and automation that made the work easier
+    - Let readers reuse the same shortcuts the author used
+
+## Structure Content Around Questions
+
+- Think of a book as a hybrid between a textbook and a student's notebook
+- Start each section with the key question it answers
+    - E.g., _Why does this matter?_
+- Start with the main topic, then indent subtopics and details underneath it
+
+### Bullet Everything Possible
+
+- Use nested bullet points to show the hierarchy of concepts
+- Keep each bullet to one idea
+- Group bullets under a clear heading
+    - E.g.:
+
+        ```markdown
+        ### Causes of X
+
+        - Environmental
+            - Pollution
+            - Resource scarcity
+        - Economic
+            - Inflation
+            - Market failures
+        ```
+
+### Chunk by One Concept per Section
+
+- Treat each section or page as exactly one concept
+- Support the concept with a boxed summary, a figure, or a formula
+
+### Use Note-Like Formatting
+
+- Checklists for processes
+- Questions for reflection
+- Insights and mnemonics
+- Recap points that link back to earlier topics
+
+### Write Like You Are Explaining to Yourself
+
+- Avoid long prose
+- Use a first-person note voice
+    - E.g.:
+        ```text
+        Key thing to remember: entropy increases.
+        ```
+- Prefer plain language over academic jargon
 
 ## Pedagogical Progression
-- **Start with motivation**: Explain why the topic matters before diving into
+
+- **Start with motivation**: explain why the topic matters before diving into
   details
-- **Intuition before formalism**: Explain the concept intuitively, then provide
+- **Intuition before formalism**: explain the concept intuitively, then give the
   mathematical formalism
-- **Build incrementally**: Progress from simple to complex, referencing earlier
+- **Build incrementally**: progress from simple to complex, referencing earlier
   concepts
-- **Use multiple representations**: Combine text, equations, diagrams, and
+- **Use multiple representations**: combine text, equations, diagrams, and
   real-world examples
-- **Concrete examples**: Always include practical examples labeled
-- **Reference context**: Connect new concepts to previously introduced material
+- **Concrete examples**: always include a practical example, explicitly labeled
+- **Reference context**: connect new concepts back to material introduced
+  earlier
 
 ## Engagement Strategies
-- **Open with motivation**: "Why does this matter?"
-- **Use questions**: Mark rhetorical questions with `**Question**:`
-- **Ground in examples**: Always include `**Example**:` with concrete scenarios
-- **Reference prior knowledge**: "As we saw in [previous topic]..."
-- **Contrast approaches**: Show what doesn't work vs what does
 
-- Think of it as a hybrid between a textbook and a student’s notebook
+- **Open with motivation**: ask _why does this matter?_ before explaining what
+  something is
+- **Use questions**: mark a rhetorical question with `**Question**:`
+- **Ground in examples**: always include an `**Example**:` with a concrete
+  scenario
+- **Reference prior knowledge**: connect back with a phrase such as "as we saw
+  in [previous topic]"
+- **Contrast approaches**: show what does not work next to what does
 
-- Structure Everything Around Questions
-  - Begin each section with a key question the content aims to answer
-  - "Why does this matter?"
+## Use Diagrams Over Text
 
-- Bullet Everything Possible
-  - Use nested bullet points to show hierarchy of concepts
-  - Keep each bullet to 1 idea
-  - Group bullets under clear headings.
-    ```
-    ### Causes of X:
-    - Environmental
-      - Pollution
-      - Resource scarcity
-    - Economic
-      - Inflation
-      - Market failures
-    ```
+- Summarize systems and relationships with Graphviz, Mermaid, or TikZ-style
+  charts instead of long text descriptions
+- Add annotation arrows and layered explanations to diagrams
+- Mark core ideas with dedicated tags so they are easy to scan, e.g.:
+    - **Key Insight**
+    - **Common Mistake**
+    - **Rule of Thumb**
 
-- Chunking: One Section = One Concept
-  - Use 1 idea per page/section
-  - Use boxed summaries, figures, or formulas
+- The overall structure of a book chapter can be summarized as its own
+  hierarchy:
 
-- Use Note-Like Formatting
-  * Checklists for processes
-  * Questions for reflection
-  * Insights and mnemonics
-  * Recap points or links to earlier topics
+```mermaid
+mindmap
+  root((**Chapter**))
+    (**Motivation**)
+      Why it matters
+      Prior knowledge link
+    (**Concept**)
+      Intuition
+      Formalism
+      Example
+    (**Practice**)
+      Checklist
+      Common mistakes
+      Recap
+```
 
-- Write Like You’re Explaining to Yourself
+- Structure content the way a math book structures a proof
+    - Definition
+    - Theorem
+    - Claim
 
-  - Avoid long prose.
-  - Use first-person note voice:
-     “Key thing to remember: entropy increases.”
-  - Prefer plain language over academic jargon
+## Recommended Layout Conventions
 
-- Use Diagrams Over Text
-  - Summarize systems or relationships in graphviz, mermaid, or tikz style charts.
-  - Add annotation arrows and layered explanations.
+| **Element**     | **Format Example**              |
+| :-------------- | :------------------------------ |
+| Section headers | `## Concept Name`               |
+| Sub-concepts    | `### Why It Matters`            |
+| Definitions     | `**Term:** definition`          |
+| Equations       | Displayed in LaTeX with context |
+| Diagrams        | Centered with labels            |
+| Summaries       | Boxed bullets with takeaways    |
 
-- Mark core ideas with tags such as
-
-- Recommended Layout Conventions
-
-| Element | Format Example |
-| :---- | :---- |
-| Section headers | \#\# Concept Name |
-| Sub-concepts | \#\#\# Why it matters |
-| Definitions | \*\*Term:\*\* definition |
-| Equations | Displayed in LaTeX with context |
-| Diagrams | Centered with labels |
-| Summaries | Boxed bullets with takeaways |
-
-- Structure as a math book
-  - Definition, theorem, claim
-
-// See .claude/skills/slides.rules.md
-// [https://developers.google.com/style/highlights](https://developers.google.com/style/highlights)
+- A book written this way serves two readers at once
+    - A human skimming for structure and active recall
+    - An AI parsing hierarchy and definitions to answer follow-up questions
+      accurately

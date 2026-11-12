@@ -1,0 +1,150 @@
+// type=UMD_slides
+// course_title=DATA605: Big Data Systems
+// lesson_title=L01.1: Introduction
+// slides_engine=typst
+// references=
+
+# Who
+
+* Yours Truly
+
+// include:msml610/lectures_source/Class_Mechanics.aux.md "Yours Truly"
+
+# What
+
+* Learning Outcomes
+::: columns
+:::: {.column width=65%}
+- @Model and reason about data@
+- @Process and manipulate data@
+  - E.g., Python, Pandas
+- @Introduce a variety of data models@
+  - E.g., relational, NoSQL, graph DBs
+  - Decide appropriate data model for different applications
+- @Use data management systems@
+  - E.g., PostgreSQL, MongoDB, HBase
+  - Decide appropriate system for scenarios
+- @Build data processing pipelines@
+  - E.g., Docker, Airflow
+- @Build a big-data system end-to-end@
+  - Class project
+  - Contribute to an open-source project
+::::
+:::: {.column width=30%}
+
+![](data605/lectures_source/images/lecture_1/lec_1_slide_4_image_1.png){ height=1cm }
+
+![](data605/lectures_source/images/lecture_1/lec_1_slide_4_image_2.png){ height=1cm }
+
+![](data605/lectures_source/images/lecture_1/lec_1_slide_4_image_3.png){ height=1cm }
+
+![](data605/lectures_source/images/lecture_1/lec_1_slide_4_image_4.png){ height=1cm }
+
+![](data605/lectures_source/images/lecture_1/lec_1_slide_4_image_5.png){ height=1cm }
+::::
+:::
+
+* Syllabus
+
+- [Syllabus](https://docs.google.com/document/d/1LYd7QqGOU2_JR5QOWaAxWCwBB2cy16n57dSaVV6A3tc)
+  - Big Data, Data Models
+  - ETL and basic dev tools
+    - Git / GitHub, Docker / Docker Compose
+    - Data pipelines and ETL flavors
+  - Relational DBs
+  - NoSQL
+    - E.g., HBase MongoDB
+  - Data wrangling
+    - E.g., Pandas, Parquet, Airflow
+  - Computing frameworks
+    - MapReduce, Spark, Dask
+  - Parallel DBs
+  - Cloud computing and AWS ecosystem
+  - Graph DBs
+    - E.g., Neo4j, Graph data processing
+  - Streaming analytics
+    - E.g., Apache Storm, Spark Streaming
+
+* Tools We Will Learn To Use
+- @Programming languages@
+  - Python
+
+- @Development tools@
+  - Bash/Linux OS
+  - Git: data model, branching
+  - GitHub: Pull Requests (PR), issues
+  - Jupyter notebooks
+  - Docker
+
+- @Big data tools@
+  - Extract-Transform-Load (ETL) pipelines
+  - Relational DBs (PostgreSQL)
+  - NoSQL DBs (HBase, MongoDB, Couchbase, Redis)
+  - Graph DBs (Neo4j, GraphX, Giraph)
+  - Computing framework (Hadoop, Spark, Dask)
+  - Workflow manager (Airflow)
+  - Cloud services (AWS)
+
+- @Tutorials@ for tools used in the class projects
+
+* Soft Skills to Succeeed in the Workplace
+
+// include:msml610/lectures_source/Class_Mechanics.aux.md "Soft Skills to Succeed in the Workplace"
+
+* Class Links
+
+// include:msml610/lectures_source/Class_Mechanics.aux.md "Class Links"
+
+# How
+
+* College in the Age of AI (1/2)
+
+// include:msml610/lectures_source/Class_Mechanics.aux.md "College in the Age of AI (1/2)"
+
+* College in the Age of AI (2/2)
+
+// include:msml610/lectures_source/Class_Mechanics.aux.md "College in the Age of AI (2/2)"
+
+* Invariants of a Class Lecture
+
+// include:msml610/lectures_source/Class_Mechanics.aux.md "Invariants of a Class Lecture"
+
+* Class Project Intro
+
+* Grading
+
+// include:msml610/lectures_source/Class_Mechanics.aux.md "Grading"
+
+* Class Projects: Tutorials
+
+// include:msml610/lectures_source/Class_Mechanics.aux.md "Class Project: Tutorials"
+
+* Class Projects: Small Research
+
+// include:msml610/lectures_source/Class_Mechanics.aux.md "Class Project: Small Research"
+
+* AI Policy
+
+// include:msml610/lectures_source/Class_Mechanics.aux.md "AI Policy"
+
+* Books of the Class
+::: columns
+:::: {.column width=50%}
+- @Goal@: slides are self-sufficient
+  - PDF lectures, commentary, book
+
+- @Books to go deepear@
+::::
+:::: {.column width=45%}
+
+![](data605/lectures_source/images/Silberschatz_book.png){width=40%}
+![](data605/lectures_source/images/lecture_2/lec_2_slide_37_image_1.png){width=40%}
+![](data605/lectures_source/images/lecture_3/lec_3_slide_3_image_1.png){width=40%}
+![](data605/lectures_source/images/lecture_5_0/lec_5_0_slide_4_image_1.png){width=40%}
+
+::::
+:::
+
+* Todos
+
+// include:msml610/lectures_source/Class_Mechanics.aux.md "Todos"

@@ -1,0 +1,8 @@
+# Match the existing Quant research environment for the data packages.
+numpy==2.4.6
+pandas==2.3.3
+# Notebook infrastructure; these ranges are not a cross-platform lock file.
+jupyterlab>=4.4,<5
+jupytext>=1.19,<2
+nbconvert>=7.16,<8
+ipykernel>=6.29,<8

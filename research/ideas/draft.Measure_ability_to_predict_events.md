@@ -2,9 +2,8 @@
 
 ## Status
 
-- **Status**: draft
-- **Complete Specs**: 30%
-- **Assignee**: TBD
+- **Status:**: draft
+- **Complete Specs:**: 90%
 
 ## Core Idea
 
@@ -32,19 +31,19 @@
 - Let forecaster $j$ issue probabilistic predictions $p_{j,i}$ on events $i$
   with binary outcomes $y_i$
 - Scoring uses a proper scoring rule, so honest reporting is optimal:
-  ```
+  ```text
   Brier_j = (1/n) * sum_i (p_{j,i} - y_i)^2
   ```
 - Decompose the score into calibration, resolution, and irreducible
   uncertainty (Murphy decomposition):
-  ```
+  ```text
   Brier = reliability - resolution + uncertainty
   ```
   - Resolution is the part that measures discrimination, i.e., actual
     forecasting ability
   - Calibration alone can be achieved by always predicting the base rate
 - Selection-adjusted skill, in the spirit of an effective VC dimension:
-  ```
+  ```text
   skill_eff = observed_skill - penalty(N_candidates, n_events)
   penalty ~ sqrt(log(N_candidates) / n_events)
   ```
@@ -54,7 +53,7 @@
   adjusting for the number of candidates examined, as done for the deflated
   Sharpe ratio in finance
 - Persistence test, which is the strongest evidence and needs no penalty:
-  ```
+  ```text
   corr(rank in period 1, rank in period 2)
   ```
   - Skill implies persistence across independent periods
@@ -116,13 +115,14 @@
   claim of skill must beat
 
 ## Next steps
-[ ] Look for related research (what has already been done)
-[ ] Finalize the implementation plan
-[ ] GP to review / approve the plan
-[ ] Hack a quick end-to-end prototype (e.g., in 1-2 days) to show that you
-    understood the problem and can make progress
-[ ] Break the problem down in phases and milestones
-[ ] Execute one step at the time
+
+- [ ] Look for related research (what has already been done)
+- [ ] Finalize the implementation plan
+- [ ] GP to review / approve the plan
+- [ ] Hack a quick end-to-end prototype (e.g., in 1-2 days) to show that you
+      understood the problem and can make progress
+- [ ] Break the problem down in phases and milestones
+- [ ] Execute one step at the time
 
 ## Implementation plan
 

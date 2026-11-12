@@ -1,0 +1,11 @@
+ipywidgets
+matplotlib
+numpy
+pandas
+seaborn
+tqdm
+# Agent harness and model client, pinned: every checkpoint records the
+# `mini-swe-agent` version, and the agent's prompts come from it.
+mini-swe-agent==2.4.6
+litellm==1.104.2
+pyyaml==6.0.3

@@ -1,0 +1,821 @@
+// type=UMD_slides
+// course_title=MSML610: Advanced Machine Learning
+// lesson_title=L08.3: Do Calculus
+// version=v1.0 (2026-09-03)
+// slides_engine=typst
+// references=
+// - AIMA (Artificial Intelligence: a Modern Approach)
+// - Pearl et al., The Book of Why, 2017
+
+# Intervention and Counterfactuals
+
+* Interventions in Causal Networks
+
+- @Recap@: **Causal Bayesian Networks** represent cause–effect relations
+  between variables
+  - E.g., $Sprinkler \to WetGrass$
+
+::: columns
+:::: {.column width=50%}
+- @Definition@: **Intervention** means setting a variable to a fixed value,
+  overriding its causal mechanism
+
+- @Example@: _"Turning the sprinkler on manually"_ regardless of cloudiness
+  - Replace equation $S = f_S(C, U_S)$ with $S = 1$ (set to true)
+  - Causal link from $Cloudy \to Sprinkler$ is _cut_, forming a new
+    "mutilated" model
+::::
+:::: {.column width=25%}
+```graphviz
+digraph BayesianFlow {
+    splines=true;
+    nodesep=1.0;
+    ranksep=0.75;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    Weather [label="Weather", fillcolor="#A6E7F4", xlabel="P(W)"];
+    Rain [label="Rain", fillcolor="#A6C8F4", xlabel="P(R | W)"];
+    Sprinkler [label="Sprinkler", fillcolor="#FFD1A6", xlabel="P(S | W)"];
+    WetGrass [label="WetGrass", fillcolor="#B2E2B2", xlabel="P(G | R, S)"];
+
+    { rank = same; Rain; Sprinkler; }
+
+    Weather -> Rain;
+    Weather -> Sprinkler;
+    Rain -> WetGrass;
+    Sprinkler -> WetGrass;
+}
+```
+\scriptsize \center
+_Original graph_
+::::
+:::: {.column width=25%}
+```graphviz
+digraph BayesianFlow {
+    splines=true;
+    nodesep=1.0;
+    ranksep=0.75;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    Weather [label="Weather", fillcolor="#A6E7F4", xlabel="P(W)"];
+    Rain [label="Rain", fillcolor="#A6C8F4", xlabel="P(R | W)"];
+    Sprinkler [label="Sprinkler", fillcolor="#FF8888", xlabel="P(S | W) = True"];
+    WetGrass [label="WetGrass", fillcolor="#B2E2B2", xlabel="P(G | R, S)"];
+
+    { rank = same; Rain; Sprinkler; }
+
+    Weather -> Rain;
+    Rain -> WetGrass;
+    Sprinkler -> WetGrass;
+}
+
+```
+\scriptsize \center
+_Mutilated graph_
+::::
+:::
+
+* The Do-Operator
+
+- @Definition@: The **do-operator** $do(X = x)$ represents performing an _action
+  that sets_ $X$ to $x$ (which is different than _observing_ $X = x$)
+  - $do(X_j = x_j^k)$ removes $\Pr(x_j | Parents(X_j))$ from the product
+    and gives a new joint distribution:
+    $$
+    P_{X_j = x_j^k}(x_1, \ldots, x_n) =
+    \begin{cases}
+    \prod_{i \ne j} \Pr(x_i | Parents(X_i))
+      & \text{if } X_j = x_j^k \\
+    0 & \text{otherwise}
+    \end{cases}
+    $$
+
+- @Remark@: Difference between **observation and intervention**
+  $$\Pr(Y | do(X=x)) \ne \Pr(Y | X)$$
+  - Observing $S = 1$ _provides information_ about its causes (e.g., weather,
+    Markov blanket)
+  - Intervening with $do(S = 1)$ _breaks_ those causal dependencies: it doesn't
+    yield information about anything
+
+* Causal Effect Estimation with Do-Operator
+
+- @Definition@: the **adjustment formula** estimate causal effects of $X_j$ on $X_i$
+  $$
+  \Pr(X_i = x_i | do(X_j = x_j^k))
+    = \sum_{Parents(X_j)}
+        \Pr(x_i | x_j^k, Parents(X_j))
+        \Pr(Parents(X_j))
+  $$
+
+- @Example@: In the Sprinkler model, $do(S=1)$ gives the new distribution:
+  $$
+  \Pr(c, r, w, g | do(S=1))
+    = \Pr(c) \Pr(r|c) \Pr(w|r, S=1) \Pr(g|w)
+  $$
+  - Only descendants of $Sprinkler$ (i.e., $WetGrass$) change
+  - $Weather$ and $Rain$ remain unaffected
+
+- @Intuition@: The do-operator isolates _causal effects_ by simulating external
+  manipulation, essential for answering _"what if"_ questions
+
+* Counterfactuals
+
+- @Definition@: A **counterfactual** describes what would have happened in the
+  past under a different scenario
+  - _"What would the outcome have been, if X had been different?"_
+
+- @Examples@: Business applications
+  - _"What if we had two suppliers instead of one? Would we have fewer
+    delays?"_
+  - _"Would customers be more satisfied if we shipped products in one week
+    instead of three?"_
+  - Businesses want answers to this type of questions, but correlation-based
+    models can't provide them
+
+- @Fact@: Causal reasoning goes **beyond correlation and association**
+  - Requires a causal model to simulate alternate realities
+  - E.g., actual: _"student received tutoring, scored 85%"_; counterfactual:
+    _"without tutoring, score would be 70%"_
+  - Requires strong assumptions and accurate models
+  - Difficult to validate directly since counterfactuals are unobservable
+
+* Causal Discovery
+
+- @Definition@: **Causal discovery** learns causal network structure from data
+  by identifying which variables directly cause others (i.e., causal directions,
+  not just correlations)
+
+- @Approaches@
+  - _Search-based methods_: Start with empty/initial model, iteratively modify
+    (add/reverse/delete links), evaluate fit to data, ensure acyclicity
+  - _Constraint-based methods_: Infer causal directions from conditional
+    independence tests
+    - E.g., if $X \perp Y | Z$, this constrains possible arrows
+
+- @Key idea@: Causal discovery bridges Bayesian learning and causal inference
+  - Under certain assumptions, infer causality from observational data, not just
+    experiments
+
+- @Challenges@
+  - Possible network structures grow super-exponentially with number of
+    variables
+  - Need complexity penalties to avoid overfitting
+
+# Randomized Controlled Trial
+
+* Randomized Controlled Trials
+
+- @Definition@: **Randomized Controlled Trials** (RCTs) estimate causal effects
+  by comparing treatment and control groups via _random assignment_ and not subject
+  choice
+  - E.g., assign drug or placebo, based on coin flip
+
+- @Goal@: Estimate $\Pr(Y | do(X))$
+  - Randomization simulates do-operator by removing incoming arrows to $X$
+  - Eliminates known and unknown confounding paths
+  - Enables causal inference without knowing causal graph
+  - Ensure groups statistically equivalent except for treatment
+  - Isolate treatment effect
+  - Turns observational data into experimental data: $\Pr(Y | X) = \Pr(Y |
+    do(X))$
+
+- @Pros@
+  - Implements intervention in principled, unbiased way
+  - Foundation for scientific experimentation and evidence-based policy
+  - _Gold standard_ of causal inference (when feasible)
+
+* RCT Example: After-School Tutoring
+
+- @Question@: Does offering after-school tutoring increase probability student
+  passes end-of-term exam?
+
+- @Algorithm@
+  - Population: eligible students with proper sample size $n$
+    - Treatment: $X = 1$ (tutoring offered)
+    - Control: $X = 0$ (no tutoring)
+  - Students randomly assigned to $X \in \{0, 1\}$
+    - Randomization ensures balance on GPA, motivation, parental income, etc
+  - Define $Y = 1$ if student passes exam, 0 otherwise
+  - After randomization: $\Pr(Y | do(X)) = \Pr(Y | X)$ so we can measure it by
+    observation
+  - Report causal effect: $Y_{X=1} - Y_{X=0}$
+
+* Randomized Controlled Trial: Limitations
+
+- @Limitation@: There are several cases where RCTs are not possible
+  1. **Practical constraints**
+     - Can be expensive or logistically difficult
+
+  2. **Ethical constraints**
+     - _Harmful treatments_
+       - E.g., testing if asbestos causes cancer
+
+  3. **Implementation challenges**
+     - _Non-compliance_: participants may not follow assignment
+     - _Attrition_: dropout rates differ between groups
+     - Limited generalization to broader populations
+     - Requires careful monitoring
+
+- @Variants@
+  - _Blind RCT_: participants unaware of group assignment (e.g., placebo)
+  - _Double-blind RCT_: both participants and investigators unaware of
+    assignment
+
+# Backdoor Adjustment
+
+* Backdoor Paths: Example
+
+::: columns
+:::: {.column width=70%}
+- @Example@: Estimating price effect on sales
+
+- @Naive Solution@:
+  - Microeconomics suggests to compute the $Quantity$ sold as function of $Price$
+  - This experiment is difficult to perform
+
+::::
+:::: {.column width=30%}
+
+![](msml610/lectures_source/figures/L08.3_Lesson09-Price_Quantity.png){height=30%}
+::::
+:::
+
+::: columns
+:::: {.column width=70%}
+- @Solution@: Vary the $Quantity$ using incentives
+  - $AdSpend$ is a **confounder** since it affects both price and sales
+    - Higher ad budgets increase product value perception $\to$ higher price
+    - Ad spend directly increases sales
+    - Backdoor path: $Price \leftarrow AdSpend \to Sales$
+  - Company needs to control for $AdSpend$ to isolate price effect via:
+    1. Regression with $AdSpend$ as covariate
+    2. Backdoor criterion
+
+::::
+:::: {.column width=30%}
+
+```graphviz[width=70%]
+digraph CausalDAG {
+    splines=true;
+    nodesep=0.5;
+    ranksep=0.5;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    Price [label="Price", fillcolor="#F4A6A6"];
+    Sales [label="Sales", fillcolor="#B2E2B2"];
+    AdSpend [label="Ad Spend", fillcolor="#A6E7F4", style="rounded,filled,dashed"];
+
+    {rank=same; Price; Sales;}
+
+    Price -> Sales;
+    AdSpend -> Price;
+    AdSpend -> Sales;
+}
+```
+::::
+:::
+
+* The Back-Door Adjustment
+
+- @Theorem@:
+  - Assume:
+    - Correct causal graph available
+    - Can identify variables blocking backdoor paths (exact definition later)
+  - The **adjustment formula** enables causal inference from observational data
+    $$\Pr(Y | do(X)) = \sum_z \Pr(Y | X, Z=z) \Pr(Z=z)$$
+
+- @Implications@
+  - Enables intervention-level inference (causality ladder level 2)
+    using only observational data (level 1)
+  - Alternative to randomized experiments
+  - _"Correlation does imply causation"_ under specific graph conditions
+
+* Back-Door Path
+
+::: columns
+:::: {.column width=60%}
+- @Definition@: **Frontdoor path** is a direct causal effect $X \to Y$
+  - No arrows into $X$, (so no backdoor path, no confounders)
+  - Clean causal pathway
+::::
+:::: {.column width=40%}
+\vspace{1cm}
+
+```graphviz
+digraph NoBackdoorExample {
+    splines=true;
+    nodesep=0.5;
+    ranksep=0.5;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    X [label="X\n(Treatment)", fillcolor="#F4A6A6"];
+    Y [label="Y\n(Outcome)", fillcolor="#B2E2B2"];
+
+    { rank=same; X; Y; }
+
+    X -> Y [label="causal"];
+}
+```
+::::
+:::
+
+\vspace{0.5cm}
+
+- @Definition@: A **backdoor path** is any path from $X$ to $Y$ starting with
+  an arrow into $X
+  - It must be into $X$ since otherwise it will be a causal path
+  - The rest of the path can be against the direction of DAG edges
+  - E.g., $X \leftarrow \cdots \leftrightarrow Y$
+  - E.g., $IceCreamSales \leftarrow Season \rightarrow DrowningDeaths$
+  - It creates spurious associations between $X$ and $Y$ (even if changing $X$
+    doesn't affect $Y$)
+
+::: columns
+:::: {.column width=60%}
+
+- @Example@:
+  - Confounder $Z$ creates backdoor path between $X$ and $Y$ (even if there was
+    no direct path between $X$ and $Y$)
+  - Path: $X \leftarrow Z \to Y$ is a backdoor path
+  - Conditioning on $Z$ blocks this path
+::::
+:::: {.column width=40%}
+```graphviz
+digraph BackdoorExample {
+    splines=true;
+    nodesep=0.5;
+    ranksep=0.5;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    Z [label="Z\n(Confounder)", fillcolor="#A6E7F4"];
+    X [label="X\n(Treatment)", fillcolor="#F4A6A6"];
+    Y [label="Y\n(Outcome)", fillcolor="#B2E2B2"];
+
+    { rank=same; X; Y; }
+
+    Z -> X [color="red", penwidth=2.5];
+    Z -> Y [color="red", penwidth=2.5, label="Backdoor path", fontcolor="red"];
+    X -> Y [label="causal", style="dotted"];
+}
+```
+::::
+:::
+
+* Backdoor Criteria
+
+- @Definition@: A set $\mathcal{Z} = {Z_1, ..., Z_n}$ satisfies the **backdoor
+  criterion** relative to $X \to Y$ if:
+  1. No variable in $\mathcal{Z}$ is a descendant of $X$
+  2. $\mathcal{Z}$ blocks all backdoor paths from $X$ to $Y$
+
+- @Intuition@: A set for the backdoor criteria removes spurious paths by
+  controlling for common causes
+
+::: columns
+:::: {.column width=60%}
+- @Example@: Backdoor criterion with $\mathcal{Z} = \{Z\}$
+  - No element in $\mathcal{Z}$ is a descendant of $X$
+::::
+:::: {.column width=40%}
+
+```graphviz[width=60%]
+digraph SatisfiesBD {
+    splines=true;
+    nodesep=0.5;
+    ranksep=0.5;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11, penwidth=1.4];
+
+    Z [label="Z", fillcolor="#A6E7F4", style="rounded,filled,dashed"];
+    X [label="X", fillcolor="#F4A6A6"];
+    Y [label="Y", fillcolor="#B2E2B2"];
+
+    { rank=same; X; Y; }
+
+    Z -> X [color="red", penwidth=2.5];
+    Z -> Y [color="red", penwidth=2.5];
+    X -> Y;
+}
+```
+::::
+:::
+
+::: columns
+:::: {.column width=60%}
+- @Counterexample@: $\mathcal{Z} = \{M\}$ violates backdoor criterion
+  - $M$ is a descendant of $X$ ✗
+  - Violates criterion 1 (descendants of $X$ cannot be in $\mathcal{Z}$)
+
+::::
+:::: {.column width=40%}
+
+```graphviz[width=80%]
+digraph FailsBD {
+    splines=true;
+    nodesep=0.5;
+    ranksep=0.5;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11, penwidth=1.4];
+
+    Z [label="Z", fillcolor="#A6E7F4"];
+    X [label="X", fillcolor="#F4A6A6"];
+    M [label="M", fillcolor="#FFD1A6"];
+    Y [label="Y", fillcolor="#B2E2B2"];
+
+    { rank=same; X; M; Y; }
+
+    Z -> X [color="red", penwidth=2.5];
+    Z -> Y [color="red", penwidth=2.5];
+    X -> M;
+    M -> Y;
+}
+```
+::::
+:::
+
+* Chains, Forks, and Colliders
+
+::: columns
+:::: {.column width=65%}
+- @Chain@: $X \to M \to Y$
+  - Conditioning on $M$ blocks causal effect
+  - Keep mediators unconditioned
+  - **Do not condition**
+::::
+:::: {.column width=35%}
+```graphviz
+digraph CausalFlow {
+    splines=true;
+    nodesep=0.5;
+    ranksep=0.5;
+    rankdir=LR;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    X [fillcolor="#A6C8F4", label="X"];
+    M [fillcolor="#F4A6A6", label="M"];
+    Y [fillcolor="#A6C8F4", label="Y"];
+
+    X -> M;
+    M -> Y;
+}
+```
+::::
+:::
+
+\vspace{1.0cm}
+
+::: columns
+:::: {.column width=65%}
+- @Fork@: $X \leftarrow Z \to Y$ (confounder)
+  - Conditioning on $Z$ removes confounding
+  - **Must condition**
+::::
+:::: {.column width=35%}
+```graphviz[width=60%]
+digraph CausalDAG {
+    splines=true;
+    nodesep=0.5;
+    ranksep=0.5;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    X [fillcolor="#F4A6A6"];
+    C [fillcolor="#A6C8F4"];
+    D [fillcolor="#A6C8F4"];
+
+    {rank=same; C; D;}
+
+    X -> C;
+    X -> D;
+}
+```
+::::
+:::
+
+\vspace{0.5cm}
+
+::: columns
+:::: {.column width=65%}
+- @Collider@: $X \to M \leftarrow Y$
+  - Conditioning on $M$ introduces bias
+  - Keep colliders unconditioned
+  - **Do not condition**
+::::
+:::: {.column width=35%}
+```graphviz[width=60%]
+digraph ColliderExample {
+    splines=true;
+    nodesep=0.5;
+    ranksep=0.5;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    X [label="X", fillcolor="#A6C8F4"];
+    Y [label="Y", fillcolor="#A6C8F4"];
+    Z [label="Z", fillcolor="#F4A6A6"];
+
+    {rank=same; X; Y;}
+
+    X -> Z;
+    Y -> Z;
+}
+```
+::::
+:::
+
+* Common Mistakes in Back-Door Adjustment
+
+- @Key idea@: Backdoor criterion specifies _exactly_ which variables to
+  condition on and not condition on to transform observation into intervention
+
+- @Error@: Before the backdoor criterion was formalized, researchers
+  "conditioned on everything"
+  - **Conditioning on everything is wrong!**
+
+- @Consequence@: Thousands of published papers across medicine, economics, social
+  science use _incorrect observational methods_
+
+- Other **common errors** are:
+  - Conditioning on descendant of $X$ biases estimate
+  - Controlling too many variables opens colliders, introduces bias
+  - Missing backdoor paths creates spurious confounding
+  - Conditioning on mediators blocks causal effect
+  - Ignoring unobserved confounders makes effect unidentifiable
+
+* When Back-Door Adjustment Fails
+
+- @Limitations@: Backdoor criterion not universally applicable
+  - No observable set satisfies criterion if unobserved confounders exist
+  - Requires accurate causal graph, but it is easy to omit variables
+
+- @Alternatives@
+  - _Frontdoor criterion_: uses mediators, handles unobserved confounders
+  - _Instrumental variables_: uses external variation
+  - _Do-calculus_: symbolic transformations to eliminate $do()$
+
+# Frontdoor Adjustment
+
+* Front-Door Adjustment: Definition
+
+- @Definition@: **Frontdoor criterion** identifies causal effects when
+  unobserved confounders exist, but a _mediator_ transmits all influence from
+  treatment to outcome
+
+::: columns
+:::: {.column width=65%}
+- Graph structure:
+  - $X$: treatment
+  - $M$: mediator
+  - $Y$: outcome
+  - $U$: unobserved confounder
+::::
+:::: {.column width=35%}
+```graphviz
+digraph CerealAds {
+    splines=true;
+    nodesep=0.5;
+    ranksep=0.5;
+    rankdir=TB;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    U [label="U", fillcolor="#B2E2B2", style="rounded,filled,dashed"];
+    X [label="X", fillcolor="#A6C8F4"];
+    M [label="M", fillcolor="#C6A6F4"];
+    Y [label="Y", fillcolor="#FFD1A6"];
+
+    { rank=same; X; Y; M }
+
+    U -> X;
+    U -> Y;
+    X -> M;
+    M -> Y;
+}
+```
+::::
+:::
+
+- @Assumptions@
+  1. All directed paths from $X$ to $Y$ pass through $M$
+  2. No unobserved confounder affects both $X$ and $M$
+  3. All backdoor paths from $M$ to $Y$ blocked by $X$
+
+- @Formula@: Estimate $\Pr(Y | do(X))$ despite unobserved $U$
+  $$\Pr(Y | do(X)) = \sum_m \Pr(M | X) \sum_{x'} \Pr(Y | M, X') \Pr(X')$$
+
+* Cereal and Ads: Does Advertising Cause Sales?
+
+- @Question@: Does watching ads $(X)$ cause cereal purchases $(Y)$?
+  - Naïve answer: yes, obviously!
+  - **But wait...**
+
+::: columns
+:::: {.column width=60%}
+
+- @Hidden confounder@: _"Parents who care about breakfast"_ $(U)$
+  - Enable more TV time (increases ad exposure)
+  - Buy more cereal regardless
+  - Creates spurious correlation
+
+- Observing $X$ and $Y$ without controlling $U$ yields spurious association
+  - Same phenomenon: ice cream sales and drowning deaths
+
+::::
+:::: {.column width=40%}
+```graphviz
+digraph CerealAds {
+    splines=true;
+    nodesep=0.5;
+    ranksep=0.5;
+    rankdir=TB;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    X [label="X\n(Watch ads)", fillcolor="#A6C8F4"];
+    U [label="U\n(Care about breakfast)", fillcolor="#B2E2B2", style="rounded,filled,dashed"];
+    Y [label="Y\n(Buy cereal)", fillcolor="#FFD1A6"];
+
+    { rank=same; X; Y; }
+
+    U -> X;
+    U -> Y;
+    X -> Y;
+}
+```
+::::
+:::
+
+- @Problem@: businesses spend on ads that don't actually drive sales
+
+* Cereal and Ads: Three Solution Strategies
+
+- @Strategy 1: Backdoor adjustment@
+  - If can observe and measure $U$ (parent breakfast attitudes), control for it
+  - Compare families with identical attitudes, see if ads change buying
+  - Requires knowing and measuring the confounder
+
+- @Strategy 2: Randomization@
+  - Randomized experiments break $U \to X$ link
+  - Random ad assignment removes selection bias
+  - Differences in purchase arise purely from ads
+  - Gold standard for causal inference
+
+- @Strategy 3: Frontdoor adjustment@
+  - Works without observing $U$, using only observable mediator
+
+* Front-Door Mediator: Kids Nagging
+
+::: columns
+:::: {.column width=65%}
+- @Mechanism@: Ads work by making kids nag for cereal $(M)$
+  - Real advertising strategy: kids see ads, ask parents for product
+  - Retail displays kids at eye level (e.g., candy at checkout)
+::::
+:::: {.column width=35%}
+![](msml610/lectures_source/figures/L08.3.Nagging_kids.png)
+::::
+:::
+
+\vspace{0.5cm}
+
+::: columns
+:::: {.column width=60%}
+- @Causal chain@:
+  - Ads $(X)$ $\to$ Kids nag $(M)$ $\to$ Parents buy cereal $(Y)$
+
+- @Structure satisfies frontdoor@
+  - Unobserved $U$ affects $Y$ but _not_ $M$
+  - Hidden breakfast-caring attitude doesn't cause nagging: only ads do
+  - Can estimate $\Pr(Y | do(X))$ without observing $U$
+::::
+:::: {.column width=40%}
+```graphviz
+digraph CerealAds {
+    splines=true;
+    nodesep=0.5;
+    ranksep=0.5;
+    rankdir=TB;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    U [label="U\n(Care about breakfast)", fillcolor="#B2E2B2", style="rounded,filled,dashed"];
+    X [label="X\n(Watch ads)", fillcolor="#A6C8F4"];
+    M [label="M\n(Kids nag)", fillcolor="#C6A6F4"];
+    Y [label="Y\n(Buy cereal)", fillcolor="#FFD1A6"];
+
+    { rank=same; X; Y; M }
+
+    U -> X;
+    U -> Y;
+    X -> M;
+    M -> Y;
+}
+```
+::::
+:::
+
+* Applying Front-Door: Does It Work?
+
+::: columns
+:::: {.column width=60%}
+- @Question@: Does kids' nagging satisfy frontdoor?
+
+- @Answer@
+  - All ads influence flows through nagging ($X \to M \to Y$)
+  - No confounder affects both ads and nagging (TV schedule random)
+  - All confounding between nagging and buying blocked by controlling ads
+  - **Yes, frontdoor criterion holds**
+
+::::
+:::: {.column width=40%}
+```graphviz
+digraph CerealAds {
+    splines=true;
+    nodesep=0.5;
+    ranksep=0.5;
+    rankdir=TB;
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    U [label="U\n(Care about breakfast)", fillcolor="#B2E2B2", style="rounded,filled,dashed"];
+    X [label="X\n(Watch ads)", fillcolor="#A6C8F4"];
+    M [label="M\n(Kids nag)", fillcolor="#C6A6F4"];
+    Y [label="Y\n(Buy cereal)", fillcolor="#FFD1A6"];
+
+    { rank=same; X; Y; M }
+
+    U -> X;
+    U -> Y;
+    X -> M;
+    M -> Y;
+}
+```
+::::
+:::
+
+- @Solution@: Estimate $\Pr(Y | do(X))$ from observational data alone
+  1. Observe: How often ads cause nagging $\Pr(M | X)$
+  2. Observe: How nagging changes buying $\Pr(Y | M, X')$
+  3. Combine:
+     $$\Pr(Y | do(X)) = \sum_m \Pr(M | X) \sum_{x'} \Pr(Y | M, X') \Pr(X')$$
+
+# Do-Calculus
+
+* Do-Calculus: Formal Framework
+
+- @Definition@: **Do-calculus** provides formal rules for reasoning about causal
+  effects in graphical models (Pearl, 2000)
+
+- @Problem@
+  - **We want**: Causal effects $\Pr(Y | do(X = x))$ (intervention distribution)
+  - **We have**: Observational data $\Pr(Y | X = x)$ (conditional distribution)
+  - **Gap**: Generally $\Pr(Y | X) \ne \Pr(Y | do(X))$ due to confounding
+
+- @Solution@: Do-calculus transforms intervention expressions into observational
+  terms computable from data, given graph structure
+
+* Do-Calculus: Three Rules
+- @Goal@: Systematically reduce $do()$ expressions to observable terms when graph
+  structure permits
+
+- @Rule 1: Insertion/Deletion of Observations@
+  - If $Y \perp Z | X, W$ in $G_{\overline{X}}$ (remove incoming edges to $X$):
+  $$\Pr(Y | do(X), Z, W) = \Pr(Y | do(X), W)$$
+
+- @Rule 2: Action/Observation Exchange@
+  - If $Y \perp Z | X, W$ in $G_{\overline{X}, \underline{Z}}$ (remove incoming
+    to $X$, outgoing from $Z$):
+  $$\Pr(Y | do(X), do(Z), W) = \Pr(Y | do(X), Z, W)$$
+
+- @Rule 3: Insertion/Deletion of Actions@
+  - If $Y \perp Z | X, W$ in $G_{\overline{X}, \overline{Z(W)}}$ (remove
+    incoming to $X$ and to $Z$ except from $W$):
+  $$\Pr(Y | do(X), do(Z), W) = \Pr(Y | do(X), W)$$
+
+* Back/Front-Door as Applications of Do-Calculus
+
+- @Relationship@: Backdoor and frontdoor are **special cases** of do-calculus
+  - Simpler graphical conditions allowing $\Pr(Y | do(X))$ from observational
+    data
+
+- @Backdoor adjustment@: If $\mathcal{Z}$ blocks all backdoor paths $X \to Y$
+  (paths into $X$), then:
+  $$
+  \Pr(Y | do(X)) = \sum_z \Pr(Y | X, Z) \Pr(Z)
+  $$
+
+- @Frontdoor adjustment@: If mediator $Z$ satisfies:
+  1. $X \to Z \to Y$ (all influence through $Z$)
+  2. No confounder affects $X$ and $Z$
+  3. Backdoor paths $Z \to Y$ blocked by $X$
+
+  then:
+  $$
+  \Pr(Y | do(X)) = \sum_z \Pr(Z | X) \sum_{x'} \Pr(Y | Z, X') \Pr(X')
+  $$

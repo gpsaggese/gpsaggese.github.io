@@ -15,7 +15,7 @@ creation to student assignment and onboarding.
 ## Description Generation
 
 - TAs run the
-  [generate_class_project_description.py](https://github.com/gpsaggese/umd_classes/blob/master/class_project/ta.class_project_gen/generate_class_project_description.py)
+  [generate_class_project_description.py](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/class_project/ta.class_project_gen/generate_class_project_description.py)
   script to generate descriptions for all tools in the list:
   ```bash
   > python class_project/ta/generate_class_project_description.py \
@@ -52,7 +52,7 @@ creation to student assignment and onboarding.
 - TAs release a small assignment to push students to set up Git and Docker
   environments on their system
 - TAs use the
-  [invite_github_collaborators.py](https://github.com/gpsaggese/umd_classes/blob/UmdTask89_Update_Github_Invite_Collaborators_script/class_project/ta.class_project_gen/invite_github_collaborators.py)
+  [invite_github_collaborators.py](https://github.com/gpsaggese/gpsaggese.github.io/blob/UmdTask89_Update_Github_Invite_Collaborators_script/class_project/ta.class_project_gen/invite_github_collaborators.py)
   script to send out GitHub collaborator invites to all students
   - To create a token for the repo, two options are available:
     - **Option A (recommended)**: fine-grained PAT

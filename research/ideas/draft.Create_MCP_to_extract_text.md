@@ -4,7 +4,6 @@
 
 - **Status**: draft
 - **Complete Specs**: 30%
-- **Assignee**: TBD
 
 ## Core Idea
 
@@ -30,7 +29,7 @@
 
 - A chunk is addressed by (`file`, `anchor`), where the anchor is a header
   path or an explicit named marker in the source:
-  ```
+  ```text
   markdown.rules.md#Lists and Items/Bullet Lists
   ```
 - The injected block in the destination is delimited and carries the source
@@ -41,11 +40,11 @@
   <!-- END INCLUDE -->
   ```
 - The update operation must be idempotent:
-  ```
+  ```text
   update(update(D)) == update(D)
   ```
 - Staleness is detected by comparing hashes, without rewriting the file:
-  ```
+  ```text
   stale(block) = sha(current_source_text) != block.sha
   ```
 - The MCP surface is three tools:
@@ -102,13 +101,13 @@
   tokens saved per agent task
 
 ## Next steps
-[ ] Look for related research (what has already been done)
-[ ] Finalize the implementation plan
-[ ] GP to review / approve the plan
-[ ] Hack a quick end-to-end prototype (e.g., in 1-2 days) to show that you
-    understood the problem and can make progress
-[ ] Break the problem down in phases and milestones
-[ ] Execute one step at the time
+- [ ] Look for related research (what has already been done)
+- [ ] Finalize the implementation plan
+- [ ] GP to review / approve the plan
+- [ ] Hack a quick end-to-end prototype (e.g., in 1-2 days) to show that you
+      understood the problem and can make progress
+- [ ] Break the problem down in phases and milestones
+- [ ] Execute one step at the time
 
 ## Implementation plan
 

@@ -16,7 +16,7 @@ import class_scripts.gen_slides_test_utils as csgsteut
 
 class Test_Data605_LessonDiscovery(csgsteut.LessonDiscovery_TestCase):
     COURSE_DIR = "data605"
-    FIRST_LESSON_FILENAME = "Lesson01.1-Intro.txt"
+    FIRST_LESSON_FILENAME = "Lesson01.1-Intro.smd"
 
 
 # #############################################################################

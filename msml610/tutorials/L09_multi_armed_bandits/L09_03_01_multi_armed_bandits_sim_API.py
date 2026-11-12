@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.5
+#       jupytext_version: 1.19.0
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -16,47 +16,44 @@
 # %% [markdown]
 # # Multi-Armed Bandit Simulation Classes API
 #
-# An exploration of the simulation classes used in the Multi-Armed
-# Bandits lesson (`L09_03_multi_armed_bandits_sim.py`):
-# - **Environment**: `MultiArmedBandit`, a K-armed casino with hidden reward
-#   means
-# - **Policy**: `Strategy` and its concrete subclasses, deciding which arm to
-#   pull next
-# - **Orchestration**: `BanditExperiment`, `BanditSimulation`, and
-#   `BanditEnsemble`, running one, many, or many-times-many trials
-
-# %% [markdown]
-# # Multi Armed Bandits Sim API
-
-# %% [markdown]
-# ## Imports and Setup
+# - This notebook explores the simulation classes used in the Multi-Armed
+#   Bandits lesson (`L09_03_multi_armed_bandits_sim.py`): `MultiArmedBandit`
+#   (a K-armed casino with hidden reward means), `Strategy` and its concrete
+#   subclasses (which decide the next arm to pull), and `BanditExperiment`,
+#   `BanditSimulation`, and `BanditEnsemble` (which run one, many, or
+#   many-times-many trials)
+# - The pedagogical arc:
+#   - The environment: `MultiArmedBandit`
+#   - The `Strategy` hierarchy
+#   - A single run, many runs, and many simulations: `BanditExperiment`,
+#     `BanditSimulation`, and `BanditEnsemble`
+#   - Composition examples and API patterns
+#   - Interactive exploration and a summary of the mental model
 
 # %%
 # %load_ext autoreload
 # %autoreload 2
 
 import logging
-import warnings
 
-warnings.filterwarnings("ignore")
 
 # %%
-import L09_03_multi_armed_bandits_sim as sim
-import L09_03_multi_armed_bandits_utils as utils
-
-import helpers.hdbg as hdbg
-import helpers.hnotebook as hnotebo
 import helpers.hintrospection as hintros
+import helpers.hnotebook as hnotebook
 
-hdbg.init_logger(verbosity=logging.INFO)
+import L09_03_multi_armed_bandits_utils as utils
+import L09_03_multi_armed_bandits_sim as sim
+
+# Initialize notebook configuration and logging.
+hnotebook.config_notebook()
 _LOG = logging.getLogger(__name__)
-hnotebo.config_notebook()
+utils.init_loggers(_LOG)
 
+# Convert `display` into `print()` when running outside IPython.
 try:
-    from IPython.display import display, Markdown
+    from IPython.display import display
 except ImportError:
     display = print  # type: ignore
-    Markdown = lambda x: x
 
 # %% [markdown]
 # ## Library Overview
@@ -97,7 +94,7 @@ except ImportError:
 # %% [markdown]
 # ## Cell 1.1: Mental Model and Smallest Construction
 #
-# **Goal**:
+# **Goal**
 # - Understand what state a `MultiArmedBandit` holds
 # - Construct the smallest possible bandit
 #
@@ -124,7 +121,7 @@ print("bandit.mu_values=", bandit.mu_values)
 # %% [markdown]
 # ## Cell 1.3: Pulling Machines
 #
-# **Goal**:
+# **Goal**
 # - See that `.pull()` returns a random reward and mutates internal state
 
 # %%
@@ -137,7 +134,7 @@ print("bandit.machine_pulls=", bandit.machine_pulls)
 # %% [markdown]
 # ## Cell 1.4: Empirical Means and Reset
 #
-# **Goal**:
+# **Goal**
 # - Compare the true hidden means to what has been observed so far
 # - Confirm that `.reset()` clears statistics but keeps `mu_values`
 
@@ -153,7 +150,7 @@ print("mu_values still=", bandit.mu_values)
 # %% [markdown]
 # ## Cell 2.1: `Strategy` is Abstract
 #
-# **Goal**:
+# **Goal**
 # - Confirm `Strategy` cannot be instantiated directly
 #
 # | Member | Description | Signature |
@@ -173,7 +170,7 @@ except TypeError as e:
 # %% [markdown]
 # ## Cell 2.2: `ExplorationStrategy`: Pure Random
 #
-# **Goal**:
+# **Goal**
 # - See that exploration ignores the bandit's statistics entirely
 
 # %%
@@ -188,7 +185,7 @@ print("random picks=", picks)
 # %% [markdown]
 # ## Cell 2.3: `ExploitationStrategy`: Pure Greedy
 #
-# **Goal**:
+# **Goal**
 # - See the mandatory warm-up (one pull per machine)
 # - See that afterward, the current best empirical machine is always picked
 
@@ -208,7 +205,7 @@ print("picks=", picks, "(first 3 are the warm-up pulls 0, 1, 2)")
 # %% [markdown]
 # ## Cell 2.4: `EpsilonGreedyStrategy`: Balanced
 #
-# **Goal**:
+# **Goal**
 # - See that `epsilon` controls how often a random (exploratory) pull happens
 
 # %%
@@ -230,7 +227,7 @@ print("picks=", picks)
 # %% [markdown]
 # ## Cell 3.1: Mental Model and Construction
 #
-# **Goal**:
+# **Goal**
 # - Wrap a bandit and a strategy into a single, runnable experiment
 #
 # | Member | Description | Signature |
@@ -250,7 +247,7 @@ print("type(experiment)=", type(experiment))
 # %% [markdown]
 # ## Cell 3.2: Running the Experiment
 #
-# **Goal**:
+# **Goal**
 # - Observe the three outputs of `.run()`: per-pull rewards, running total,
 #   and the final total
 
@@ -266,7 +263,7 @@ print("final_total=", final_total)
 # %% [markdown]
 # ## Cell 4.1: Mental Model and Construction
 #
-# **Goal**:
+# **Goal**
 # - Fix the environment (`k_machines`, `mu_values`, `n_coins`) once, then run
 #   many independent experiments against it
 #
@@ -288,7 +285,7 @@ print("type(simulation)=", type(simulation))
 # %% [markdown]
 # ## Cell 4.2: `.run_trials()`: Statistics Over Many Experiments
 #
-# **Goal**:
+# **Goal**
 # - See that `.run_trials()` returns aggregated statistics, not a single
 #   anecdote
 #
@@ -311,7 +308,7 @@ print("std_final=", trial_results["std_final"])
 # %% [markdown]
 # ## Cell 4.3: `.epsilon_sweep()`: Comparing Policies
 #
-# **Goal**:
+# **Goal**
 # - Compare pure exploration, pure exploitation, and epsilon-greedy across a
 #   range of $\epsilon$ values
 #
@@ -339,7 +336,7 @@ utils.plot_epsilon_sweep(sweep_results=sweep_results, n_coins=50)
 # %% [markdown]
 # ## Cell 5.1: Mental Model and Construction
 #
-# **Goal**:
+# **Goal**
 # - Go one level higher: average results over many *random* hidden-mean
 #   configurations, not just one fixed `mu_values`
 #
@@ -388,7 +385,7 @@ ensemble.plot_ensemble_comparison(ensemble_results=ensemble_results, epsilon=0.2
 # # Part 6: Composition Examples
 
 # %% [markdown]
-# ## Example 1: Smallest Meaningful Object
+# ## Cell 6.1: Smallest Meaningful Object
 #
 # Just the environment, pulled a few times.
 
@@ -397,7 +394,7 @@ mini_bandit = sim.MultiArmedBandit(k_machines=2, mu_values=[0.1, 0.3], seed=7)
 print([mini_bandit.pull(0) for _ in range(3)])
 
 # %% [markdown]
-# ## Example 2: Add a Policy, Manually
+# ## Cell 6.2: Add a Policy, Manually
 #
 # Drive the environment with a policy's decisions, without `BanditExperiment`.
 # This is exactly what `BanditExperiment.run()` automates.
@@ -412,7 +409,7 @@ for _ in range(10):
 print("manual total=", total)
 
 # %% [markdown]
-# ## Example 3: Combine Into a `BanditExperiment`
+# ## Cell 6.3: Combine Into a `BanditExperiment`
 #
 # Same environment and policy shape, now expressed with the library's own
 # orchestration class.
@@ -426,7 +423,7 @@ _, _, mini_total = mini_experiment.run()
 print("BanditExperiment total=", mini_total)
 
 # %% [markdown]
-# ## Example 4: End-to-End: `BanditSimulation`
+# ## Cell 6.4: End-to-End: `BanditSimulation`
 #
 # Repeat Example 3's shape 20 times with varying seeds, to get a statistic
 # instead of one anecdote.
@@ -451,7 +448,7 @@ print(
 # # Part 7: API Patterns
 
 # %% [markdown]
-# ## Pattern 1: Strategy Pattern
+# ## Cell 7.1: Strategy Pattern
 #
 # Any `Strategy` subclass plugs into the same `BanditExperiment` unchanged.
 
@@ -469,7 +466,7 @@ for strategy_obj in [
     print(type(strategy_obj).__name__, "-> total=", total)
 
 # %% [markdown]
-# ## Pattern 2: Keyword-Only Configuration
+# ## Cell 7.2: Keyword-Only Configuration
 #
 # Every constructor uses `*,` to force keyword arguments: readable call sites,
 # no positional-order bugs.
@@ -481,7 +478,7 @@ except TypeError as e:
     print("TypeError=", e)
 
 # %% [markdown]
-# ## Pattern 3: Class-as-Parameter
+# ## Cell 7.3: Class-as-Parameter
 #
 # `.run_trials()` and `.run_ensemble()` take a strategy *class* plus a
 # parameter dict, not an instance: a fresh strategy is built per trial so
@@ -497,7 +494,7 @@ print("strategy_params={'epsilon': 0.2}")
 # %% [markdown]
 # ## Cell 8.1: Introspect the Objects
 #
-# **Goal**:
+# **Goal**
 # - Practice discovering an unfamiliar API with `dir()` and `help()`
 #
 # Questions to explore:

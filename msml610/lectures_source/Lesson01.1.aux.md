@@ -874,16 +874,9 @@ digraph G {
     {rank=same; Repr1; Reason; Repr2}
 
     // Process flow
-    R1 -> Repr1 [label="perceives"];
-    Repr1 -> Reason [label="informs"];
-    Reason -> Repr2 [label="produces"];
-    Repr2 -> R2 [label="validates"];
-
-    // Styling
-    label="Perception & Reasoning Cycle";
-    labelloc=top;
-    labelfontsize=24;
-    labelfontcolor="#1a1a1a";
-    margin="0.3";
+    R1 -> Repr1 [label="  Perceives"];
+    Repr1 -> Reason [label="Informs"];
+    Reason -> Repr2 [label="Produces"];
+    Repr2 -> R2 [label="  Validates"];
 }
 ```

@@ -1,0 +1,5 @@
+jax[cuda12]==0.10.1
+matplotlib
+mctx==0.0.71
+numpy
+tqdm

@@ -1,0 +1,178 @@
+// type=UMD_slides
+// course_title=MSML610: Advanced Machine Learning
+// lesson_title=L08.X: Causal Inference
+// version=v1.0 (2026-09-03)
+// slides_engine=typst
+// references=
+// - Facure, Causal Inference in Python, 2023
+
+// Chap 8
+# Difference-in-differences
+
+## Canonical Difference-in-Differences
+
+* Data Structures: Definition
+
+- Data can have different temporal and cross-sectional patterns
+  - Causal relationships can be estimated depending on the data structure
+
+- **Definition**:
+  - _Cross-sectional data_: multiple units observed at a single point in time
+    - E.g., snapshot of sales across restaurants with/without discounts
+    - E.g., student test scores across schools in a single academic year
+  - _Panel data_ (aka _longitudinal data_): same units observed repeatedly over
+    time
+    - E.g., same restaurants before/after discount implementation
+    - E.g., same students' test scores tracked across multiple year
+  - _Repeated cross-sectional data_: different units observed at multiple time
+    points
+    - E.g., different restaurant samples in year 1 and year 2
+    - E.g., different student samples from schools surveyed in 2020 and 2025
+  - _Pooled cross-section_: multiple independent cross-sections combined and
+    analyzed as a single dataset
+    - E.g., multiple cross-sections treated as one large cross-section
+    - E.g., combining student test score data from 2020, 2022, and 2024 into one
+      regression
+
+* Panel
+- **Motivation**:
+  - Most real-world interventions (policy, marketing, etc.) are difficult to
+    randomize
+    - E.g., in marketing it's difficult to control who receives the treatment
+      (i.e., see your advertisement)
+  - Panel data offers two sources of variation
+    - _Across units_: compare treated and control cities (spatial variation)
+    - _Across time_: compare pre- and post-treatment periods (temporal variation)
+
+- **Key insight**: By tracking units over time, we can remove confounders that
+  are fixed at the unit level
+  - Even with unmeasured confounders, we can identify causal effects
+  - This makes panel data _as good as it gets_ for observational causal
+    inference
+
+// TODO: Use inline
+```tikz
+[scale=0.8]
+
+% Draw axes
+\draw[->, line width=1.5pt] (0,0) -- (0,6);
+\draw[->, line width=1.5pt] (0,0) -- (6.5,0);
+
+% Axis labels
+\node[font=\small\bfseries] at (-0.8, 1) {Control};
+\node[font=\small\bfseries] at (-0.8, 4.5) {Treated};
+\node[font=\small\bfseries] at (1.5, -0.8) {Pre};
+\node[font=\small\bfseries] at (4.5, -0.8) {Post};
+
+% Y-axis label
+\node[font=\small\bfseries] at (-0.5, 6.2) {Units};
+% X-axis label
+\node[font=\small\bfseries] at (6.8, -0.3) {Time};
+
+% Grid cells with outcomes
+% Control-Pre: Y(0)
+\node[font=\bfseries\Large] at (1.5,1) {Y(0)};
+\draw (0.5,0.2) rectangle (2.5,1.8);
+
+% Control-Post: Y(0)
+\node[font=\bfseries\Large] at (4.5,1) {Y(0)};
+\draw (3.5,0.2) rectangle (5.5,1.8);
+
+% Treated-Pre: Y(0)
+\node[font=\bfseries\Large] at (1.5,4.5) {Y(0)};
+\draw (0.5,3.7) rectangle (2.5,5.3);
+
+% Treated-Post: Y(1)
+\node[font=\bfseries\Large] at (4.5,4.5) {Y(1)};
+\draw (3.5,3.7) rectangle (5.5,5.3);
+
+% Horizontal dashed line separating Pre and Post
+\draw[dashed, line width=1pt] (0.2,3) -- (6,3);
+
+% Vertical dashed line separating units
+\draw[dashed, line width=1pt] (3,0.2) -- (3,5.8);
+
+% Annotation: "Time correlations"
+\draw[->, line width=2pt] (2.8,5.9) to[bend left=30] (4.2,5.9);
+\node[font=\small\bfseries] at (3.5, 6.4) {Time correlations};
+
+% Annotation: "Unit correlations"
+\draw[->, line width=2pt] (5.8,2.2) to[bend right=30] (5.8,4.3);
+\node[font=\small\bfseries] at (6.3, 3.25) {Unit correlations};
+```
+
+* Canonical Difference-in-Differences: The Setup
+
+- **Notation**:
+  - $D_i = 1$ if unit $i$ is treated, $0$ otherwise
+  - $t \leq T_{pre}$ is pre-intervention period
+  - $t > T_{pre}$ is post-intervention
+  - $\text{Post}_t = 1$ if $t > T_{pre}$, otherwise $0$
+
+- **Definition**:
+  - The treatment indicator is $W_{it} = D_i \cdot \text{Post}_t$
+    - Equals 1 only for treated units in post-treatment period
+
+  - The outcome variable is $Y_{it}$ (e.g., number of downloads)
+    - Observable for all unit-time combinations
+
+  - The target is the Average Treatment Effect on the Treated (ATT), i.e., the
+    effect of treatment on units that received it, after treatment takes place:
+    $$
+    \text{ATT} = \EE[Y_{it}(1) - Y_{it}(0) | D_i = 1, t > T_{pre}]
+    $$
+
+* DiD: Imputing the Counterfactual
+
+- The missing piece is the treated counterfactual
+  $$\EE[Y(0) | D = 1, \text{Post} = 1]$$
+  which we estimate with:
+  $$
+  \begin{aligned}
+    \EE[Y(0) | D = 1, Post = 1]
+    &= \EE[Y | D = 1, Post = 0] \\
+    &\quad + \left(
+      \EE[Y | D = 0, Post = 1]
+      - \EE[Y | D = 0, Post = 0]
+    \right)
+  \end{aligned}
+  $$
+
+- **Intuition**: Start with the treated baseline, add the control growth
+  - _Treated baseline_: average outcome of treated units before treatment
+  - _Control growth_: how much control units changed from pre to post
+  - Assumption: This growth rate applies to treated units under the counterfactual
+
+* Why Difference-in-Difference?
+
+- Replacing the estimate in ATT:
+  $$
+  \begin{aligned}
+    \text{ATT}
+    &= \big[
+      \EE[Y | D = 1, \text{Post} = 1]
+      - \EE[Y | D = 1, \text{Post} = 0]
+      \big] \\
+    &\quad - \big[
+      \EE[Y | D = 0, \text{Post} = 1]
+      - \EE[Y | D = 0, \text{Post} = 0]
+      \big]
+  \end{aligned}
+  $$
+  - _First bracket_: treated group's change (pre to post)
+  - _Second bracket_: control group's change (pre to post)
+  - Difference of these two changes is the treatment effect
+
+## Identification Assumption
+
+// Chap 9
+# Synthetic control
+
+// Chap 10
+# Geo and switchback experiments
+
+// Chap 11
+# Non-compliance and instruments
+
+// Chap 12
+# Next steps

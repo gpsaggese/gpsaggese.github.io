@@ -211,21 +211,6 @@ deep Bayesian approximation)
 
 ## 4. Planning and Search Algorithms
 
-### MCTS (Monte Carlo Tree Search)
-- **Short description**: Best-first planning algorithm using random tree
-  exploration; foundation for AlphaGo and game AI
-- **Key papers:**
-  - Kocsis & Szepesvári, "Bandit based Monte-Carlo Tree Search" (2006) -
-    doi.org/10.1007/11871842_29
-  - Coulom, "Efficient Selectivity and Backup Operators in Monte-Carlo Tree
-    Search" (2006)
-- **Key Authors:** Rémi Coulom, Levente Kocsis, Csaba Szepesvári
-- **Python Packages:**
-  - `pommerman` (with MCTS agents)
-  - `mcts` (Pure Python implementation)
-  - `alphago-zero-pytorch` (custom)
-  - `gym-chess` (chess with MCTS)
-
 ### Minimax / Alpha-Beta Pruning
 - **Short description**: Classical game tree search with pruning for two-player
   zero-sum games; foundation of game AI
@@ -250,6 +235,21 @@ deep Bayesian approximation)
   - `astar` (Pure Python)
   - `networkx` (Graph algorithms)
   - `prm` (Probabilistic Roadmaps)
+
+### MCTS (Monte Carlo Tree Search)
+- **Short description**: Best-first planning algorithm using random tree
+  exploration; foundation for AlphaGo and game AI
+- **Key papers:**
+  - Kocsis & Szepesvári, "Bandit based Monte-Carlo Tree Search" (2006) -
+    doi.org/10.1007/11871842_29
+  - Coulom, "Efficient Selectivity and Backup Operators in Monte-Carlo Tree
+    Search" (2006)
+- **Key Authors:** Rémi Coulom, Levente Kocsis, Csaba Szepesvári
+- **Python Packages:**
+  - `pommerman` (with MCTS agents)
+  - `mcts` (Pure Python implementation)
+  - `alphago-zero-pytorch` (custom)
+  - `gym-chess` (chess with MCTS)
 
 ### MPC (Model Predictive Control)
 - **Short description**: Receding horizon control predicting future states;

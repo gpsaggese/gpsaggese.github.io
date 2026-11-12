@@ -50,17 +50,17 @@ This tutorial's goal is to show you in 60 minutes:
 ## Tutorial Content
 
 This tutorial includes all the code, notebooks, and Docker containers in
-[tutorials/CausalML_Diabetes_Study](https://github.com/gpsaggese/umd_classes/tree/master/tutorials/CausalML_Diabetes_Study)
+[tutorials/CausalML_Diabetes_Study](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/tutorials/CausalML_Diabetes_Study)
 
-- [`README.md`](https://github.com/gpsaggese/umd_classes/blob/master/tutorials/CausalML_Diabetes_Study/README.md): Instructions and setup for the tutorial environment
+- [`README.md`](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/tutorials/CausalML_Diabetes_Study/README.md): Instructions and setup for the tutorial environment
 - A Docker system to build and run the environment using our standardized
   approach
-- [`CausalML.API.ipynb`](https://github.com/gpsaggese/umd_classes/blob/master/tutorials/CausalML_Diabetes_Study/CausalML.API.ipynb): Tutorial notebook focusing on the CausalNavigator API and meta-learner configurations
-- [`CausalML.example.ipynb`](https://github.com/gpsaggese/umd_classes/blob/master/tutorials/CausalML_Diabetes_Study/CausalML.example.ipynb): Advanced end-to-end causal inference example
+- [`CausalML.API.ipynb`](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/tutorials/CausalML_Diabetes_Study/CausalML.API.ipynb): Tutorial notebook focusing on the CausalNavigator API and meta-learner configurations
+- [`CausalML.example.ipynb`](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/tutorials/CausalML_Diabetes_Study/CausalML.example.ipynb): Advanced end-to-end causal inference example
     - Loads and preprocesses the CDC BRFSS diabetes dataset (250,000+ respondents)
     - Checks causal assumptions (overlap/positivity) using propensity score analysis
     - Estimates individualized treatment effects (CATE) using the X-Learner
     - Visualizes heterogeneity across age, income, and health status subgroups
     - Validates results with placebo tests, estimator comparisons, and sensitivity
       analysis
-- [`causalml_utils.py`](https://github.com/gpsaggese/umd_classes/blob/master/tutorials/CausalML_Diabetes_Study/causalml_utils.py): Utility functions and the `CausalNavigator` wrapper class
+- [`causalml_utils.py`](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/tutorials/CausalML_Diabetes_Study/causalml_utils.py): Utility functions and the `CausalNavigator` wrapper class

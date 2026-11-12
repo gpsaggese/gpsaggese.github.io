@@ -15,7 +15,16 @@
 ## Read the Policies
 
 - Read the [policies](/policies)
+- Follow [How to Create a PR With Claude Code](pr_process.how_to_guide.md) for
+  every task
 - Make sure you can dedicate time to the projects
+
+## Read the Must-Read Docs
+
+- Read all the docs in the
+  [must-read checklist](/helpers_root/docs/onboarding/all.dev_must_read_checklist.reference.md)
+  before you start working
+- Read the "Team leaders" section only if you lead a project
 
 ## Join the Team
 
@@ -37,7 +46,6 @@
 - Work on a blog / tutorial to show you can do a good job:
   - [Tutorial links](/tutorials)
   - [Blog examples](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/website/docs/blog/posts)
-
 
 ## Complete the Form to be Added
 

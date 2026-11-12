@@ -1,0 +1,60 @@
+\input{papers/template/style.tex}
+
+% ##############################################################################
+% Notation shared with the Noesis white paper (`papers/Noesis`).
+% ##############################################################################
+
+% Protocol names.
+\newcommand{\Noesis}{\textsc{Noesis}}
+\newcommand{\NoesisMarket}{\textsc{NoesisMarket}}
+\newcommand{\NoesisServer}{\textsc{NoesisServer}}
+
+\newtheorem{problem}{Problem}[section]
+\newtheorem{example}{Example}[section]
+
+% Contract attributes, as in the intelligence-contract definition of the white paper.
+\newcommand{\ntasksattr}{\textnormal{\texttt{n\_tasks}}}
+\newcommand{\clevelattr}{\textnormal{\texttt{c\_level}}}
+\newcommand{\lmaxattr}{\textnormal{\texttt{L\_max}}}
+\newcommand{\rminattr}{\textnormal{\texttt{R\_min}}}
+\newcommand{\priceattr}{\textnormal{\texttt{P}}}
+
+% Quality attributes introduced by the MVP implementation.
+\newcommand{\qminattr}{\textnormal{\texttt{Q\_min}}}
+
+% Notation specific to this paper.
+\newcommand{\bank}{\mathcal{B}}
+\newcommand{\family}{\mathcal{F}}
+\newcommand{\grade}{\mathrm{grade}}
+\newcommand{\acc}{\mathrm{acc}}
+
+% Table icons for the comparison tables.
+\newcommand{\ngood}{\textbf{\textcolor{green!50!black}{+}}}
+\newcommand{\npartial}{\textbf{\textcolor{yellow!85!black}{o}}}
+\newcommand{\nbad}{\textbf{\textcolor{red!70!black}{-}}}
+
+\begin{document}
+  \input{papers/Noesis_Probing_Model_Quality/01_introduction.tex}
+
+  \input{papers/Noesis_Probing_Model_Quality/02_background.tex}
+
+  \input{papers/Noesis_Probing_Model_Quality/03_architecture.tex}
+
+  \input{papers/Noesis_Probing_Model_Quality/04_bank_and_grading.tex}
+
+  \input{papers/Noesis_Probing_Model_Quality/05_calibration.tex}
+
+  \input{papers/Noesis_Probing_Model_Quality/06_probing.tex}
+
+  \input{papers/Noesis_Probing_Model_Quality/07_verdict.tex}
+
+  \input{papers/Noesis_Probing_Model_Quality/08_validation.tex}
+
+  \input{papers/Noesis_Probing_Model_Quality/09_related_work.tex}
+
+  \input{papers/Noesis_Probing_Model_Quality/10_limitations.tex}
+
+  \input{papers/Noesis_Probing_Model_Quality/11_conclusion.tex}
+
+  \input{papers/Noesis_Probing_Model_Quality/reference.tex}
+\end{document}

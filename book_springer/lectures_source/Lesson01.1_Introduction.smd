@@ -1,0 +1,99 @@
+// type=UMD_slides
+// course_title=From Data to Decisions: Building Decision Systems with Probabilistic Causal Reasoning
+// lesson_title=Lesson 01.1: Introduction
+// slides_engine=typst
+
+# Introduction
+
+* Decision Pipeline
+- The Decision Pipeline Framework
+  - From raw data to prediction to causal effect estimation to
+    utility-maximizing policy
+  - Feedback loops and learning from outcomes
+  - Why each stage matters and what breaks when stages are skipped
+
+* Audience and Approach
+- Explain the audience and the philosophy of the book
+
+- Target Audience
+  - Senior ML engineers and data scientists with a statistics and probabilistic ML
+    background who build production decision systems
+  - Working knowledge of causal basics (DAGs, SCMs, do-calculus) assumed
+  - The needed theory and background is assumed already understood and summarized
+    surveyed to level set
+
+- Approach of the book
+  - Focus on:
+    - The minimal mathematics to understand the problem and the solutions
+    - Intuition
+    - Toy examples
+    - How to make the theory operational
+      - Referring to packages in the Python ecosystem
+    - Jupyter notebooks to back up the intuition with toy and complex examples
+
+  - Provide resources to go one level deep
+    - More detailed technical slides on the topics
+    - References to books and papers
+
+* A book in the age of AI
+
+- What matters is "taste", reviewing for clarity, creating a path for learning based
+  on what research and industry requires, tutorials that bridge the theory with the
+  intuition
+- Trying to explain concepts to make it easy for a human to understand
+- Took me 12 months to put this together
+
+- Book is a subset of content
+  - Each content is available in the form of slides (without all the chit-chat)
+  - Each slide set is around 30 slides which corresponds to a chapter of
+    a technical book (~1000 words)
+  - Tutorials are available for each slide set
+  - Book makes reference to examples in the slides
+
+// TODO: See website/docs/blog/posts/draft.Writing_Books_For_Humans_and_AI.md
+
+* Book Roadmap
+
+- How This Book Is Organized
+  - Five-part structure: motivation, theory, data, algorithms, deployment/governance
+  - Intended audience and prerequisites
+  - How chapters build on each other and fit into the decision pipeline
+
+- **Key idea**: this book walks a single pipeline end-to-end, from data to action
+  $$data \to model \to policy \to action \to feedback$$
+  - The model is both causal and probabilistic
+- The book is organized in five parts:
+  - **Part I**: why businesses need decisions, not predictions
+  - **Part II**: probabilistic and causal foundations, including Gaussian
+    processes, variational inference, normalizing flows, and causal discovery
+  - **Part III**: single-step decisions, including decision theory, policy
+    learning, and partial identification
+  - **Part IV**: multi-step and dynamic decisions, including causal world
+    models, causal reinforcement learning, and feedback loops
+  - **Part V**: deploying, monitoring, and governing decision systems in
+    production
+- This lesson opens Part I by cataloging what traditional machine learning
+  leaves out
+
+- The sequence of the parts in the books are:
+  - Motivation
+    - 01, Introduction
+    - 02, Why Decisions, Not Predictions
+    - 03, the Cost of Ignoring Causality, Uncertainty and Dynamics
+  - Advanced Modeling Theory & Tools
+    - 04, Knowledge Representation
+    - 05, Probabilistic ML
+    - 06, Causal ML
+  - Data
+    - 07, Building Causal Knowledge
+    - 08, Causal data pipelines
+  - Decision-Making Theory & Tools
+    - 09, Decision Theory Foundations
+    - 10, Taxonomy of Decision-Making Problems and Algorithms
+    - 11, Simple Decisions
+    - 12, Complex Decisions
+    - 13, Agentic Causal Reasoning
+  - Implementation, Deployment, & Governance
+    - 14, Building Stakeholder Alignment
+    - 15, Deployment, Monitoring, and Adaptation
+    - 16, Trust, Explainability, Fairness, and Governance

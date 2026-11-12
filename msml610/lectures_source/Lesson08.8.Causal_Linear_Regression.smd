@@ -1,0 +1,619 @@
+// type=UMD_slides
+// course_title=MSML610: Advanced Machine Learning
+// lesson_title=L08.8: Causal Linear Regression
+// version=v1.0 (2026-09-03)
+// slides_engine=typst
+// references=
+// - Facure, Causal Inference in Python, 2023
+
+// Chap 4
+
+# Causal Linear Regression
+
+// TODO(gp): Maybe move it to the previous section
+
+* Lending Industry: Problem Setup
+
+- @Example@: banking and lending industry
+  - Business goal: offer more credit to customers with lower default risk
+  - What is the causal impact of credit limits on default?
+
+- @Intuition@: theory suggests higher credit limits increase default risk
+  - More available credit $\to$ higher spending $\to$ higher balances $\to$ more
+    interest paid $\to$ harder to repay debt
+
+- @Data@: bank historical data shows unexpected pattern
+  - Customers with higher credit limits have _lower_ default rates
+  - Customers with lower credit limits have _higher_ default rates
+  - Negative correlation between credit limit and default
+
+- @Problem@: this contradicts theory
+  - _Naive interpretation_ (association ML)
+    - Increase credit limits to reduce defaults
+    - Give riskiest customers the most credit
+  - This would be disastrous in practice
+
+- @Question@: why does observed data contradict causal intuition?
+
+* Lending Industry: Confounding
+
+- @Reality@: the bank's underwriting process introduces selection bias
+  - Bank estimates customer risk (hard to measure) using proxy variable $X$
+    (e.g., credit score, income, employment history)
+
+- @Causal mechanism@:
+  - Risk $\to$ bank's credit decision
+  - Risk $\to$ default rate
+  - Bank gives high limits to _low-risk_ customers only
+
+- @Result@: the negative correlation is _spurious_
+  - Observed correlation is driven by who _got_ the high limits
+  - Not by the causal effect of limits on default
+  - Confounded by unobserved or imperfectly measured risk
+
+* Lending Industry: The Causal Graph
+
+- @Components@:
+  - _Risk_: true underlying customer risk (latent)
+  - _Proxy_: observed proxy (credit score, income)
+  - _CreditLimit_: decision made by bank
+  - _Default_: outcome we want to predict
+
+::: columns
+:::: {.column width=50%}
+
+- @Causal paths@:
+  - _Risk_ $\to$ _Proxy_ $\to$ _CreditLimit_ (bank's logic)
+  - _Risk_ $\to$ _Default_ (causation)
+  - _CreditLimit_ $\to$ _Default_ (true causal effect)
+  - All confounded through _Risk_
+
+::::
+:::: {.column width=50%}
+```graphviz
+digraph CausalGraph {
+    rankdir=LR;
+    bgcolor=white;
+    fontname="Helvetica";
+    node [fontname="Helvetica", fontsize=12];
+    edge [fontname="Helvetica", fontsize=10];
+
+    Risk [
+        shape=ellipse,
+        penwidth=2,
+        style="filled,solid",
+        color="#408AB0",
+        fillcolor="#EAF3F8",
+        fontcolor=black,
+        label="Risk"
+    ];
+
+    Proxy [
+        shape="box",
+        style="filled,solid,rounded",
+        penwidth=1,
+        color="#62D4A4",
+        fillcolor="#EAF9F3",
+        fontcolor=black,
+        label="Proxy"
+    ];
+
+    CreditLimit [
+        shape="box",
+        style="filled,solid,rounded",
+        penwidth=1,
+        color="#62D4A4",
+        fillcolor="#EAF9F3",
+        fontcolor=black,
+        label="Credit limit"
+    ];
+
+    Default [
+        shape=box,
+        penwidth=2,
+        style="filled,solid",
+        color="#F8D476",
+        fillcolor="#FFF6DA",
+        fontcolor=black,
+        label="Default"
+    ];
+
+    Risk -> Proxy [style=solid, color=black];
+    Proxy -> CreditLimit [style=solid, color=black];
+    Proxy -> Default [style=solid, color=black];
+    CreditLimit -> Default [style=solid, color=black];
+}
+```
+::::
+:::
+
+- @Key insight@: controlling for _Proxy_ blocks bias
+  - Among customers with _same_ _Proxy_, higher limits reveal true causal effect
+
+* Lending Industry: Key Insight
+
+- @Recap@: **selection bias** occurs when the treatment assignment itself depends
+  on the confounder
+  - Bank's decision to increase limits depends on risk assessment
+  - This creates spurious correlation in the observed data
+
+- @Lesson@: correlation $\neq$ causation when confounders present
+  - Negative observed correlation hides positive true causal effect
+  - A decision based on observed data would backfire
+
+- @Solution@: recover causal effect using
+  1. Randomized experiments (e.g., random limit assignments)
+  2. Causal inference adjusting for confounding (e.g., regression)
+  3. Causal graphs to identify confounding paths and use adjustment formula
+
+* Lending Industry: Adjustment Formula
+- @Assumption@: assume conditional independence $(Y_0, Y_1) \perp T | X$, use
+  the adjustment formula
+  $$
+  ATE = \EE_X [
+    \EE[Y | T=1, X=x] - \EE[Y | T=0, X=x]
+  ]
+  $$
+
+- @Problem@
+  - Need partition data into segments defined by feature $X$
+  - If $X$ has many values (e.g., a large vector of variables)
+    - Need data points with same characteristics and different treatments
+    - Face curse of dimensionality (sparsity issues)
+
+- @Solution@
+  - Model potential outcome $Y$ as linear regression on $X$
+    - Require treatment and control to be comparable "on average"
+    - Functions as dimensionality reduction algorithm
+
+* Using Regression to Estimate Causal Effects
+
+- @Thesis@: Under appropriate hypotheses (e.g., randomization, all relevant
+  confounders are known), **linear regression** solves many problems of
+  causal inference:
+  - Estimates treatment effects (e.g., ATE)
+  - Matches adjustment formula from causal theory
+  - Has causal interpretation (not only association)
+  - Computes statistics (e.g., confidence intervals, p-values)
+
+- @Hypothesis@: **Confounders are known and observed**:
+  - Include them as additional regressors (predictors) in your model
+  - The model "adjusts for" their influence, isolating the causal effect of
+    treatment from their distorting effects
+  - E.g., estimating wage effect of job training, adjusted for education level (a
+    confounder)
+
+- @Hypothesis@: **Randomized Experiments**
+  - Random assignment guarantees treatment isn't correlated with confounders
+  - No adjustment needed: a simple regression of outcome on treatment alone gives
+    unbiased causal estimate
+  - Confounders balance themselves across treatment groups by chance
+
+* Regression Theory
+- @Definition@: in a **linear regression problem**, the optimal vector $\beta^*$
+  minimizes mean squared error:
+  $$
+  \beta^* = \argmin_{\beta} \EE[(Y - \beta^T X)^2]
+  $$
+  - Optimal vector is estimated as $\hat{\beta} = (X^T X)^{-1} X^T Y$ (normal
+  equations)
+
+- @Comparison@:
+  - **Single variable regression** estimates how treatment and outcome move together,
+    scaling by variance of treatment
+
+  - **Multivariate regression** control for ("regress against") confounders and
+    extract residual
+    - Each coefficient is the regressor's coefficient accounting for other
+      variables
+
+- @Limitations@: **extrapolating** model outside data region is risky since we
+  don't know what happens without data points
+
+* FWL Theorem
+- @Theorem@: **Frisch–Waugh–Lovell** (FWL) theorem explains how to interpret
+  coefficients in a multiple regression by "partialling out" other variables
+  (i.e., removing the effect of other variables on both outcome and predictors)
+
+- @Example@
+  - Consider $y = X_1 \beta_1 + X_2 \beta_2 + \varepsilon$
+  - The coefficient $\hat{\beta}_1$ from the full multivariate regression is
+    equal to the coefficient obtained by:
+    1. Regressing $y$ on $X_2$, getting residuals $r_y$ (i.e., remove part of $y$
+       explained by $X_2$)
+    2. Regressing each column of $X_1$ on $X_2$, getting residuals $r_{x_1}$
+       (i.e., remove part of $X_1$ explained by $X_2$)
+    3. Regressing $r_y$ on $r_{x_1}$
+
+- @Intuition@
+  - $\beta_1$ measures the effect of $X_1$ on $y$, holding $X_2$ constant
+
+* FWL Theorem for Causal Inference
+- @Fact@: FWL theorem makes non-experimental data $T \to Y$ look as if the
+  treatment was randomized
+
+// TODO(ai_gp): Add a picture of a confounder T -> Y, X -> Y, X -> T
+
+- @Algorithm@: Estimating a multi-variate regression with FWL theorem is
+  equivalent to the 3 steps:
+  1. **Denoising**: Regress outcome $Y$ on the confounder variables to obtain the
+     outcome residuals $\tilde{Y}$
+  2. **Debiasing**: Regress the treatment $T$ on confounders $X$ to obtain the
+     treatment residuals $\tilde{T}$
+     - Version of the treatment that is uncorrelated with the variables used in
+       debiasing the model
+  3. **Regresssion**: Regress outcome residuals $\tilde{Y}$ on treatment
+     residuals $\tilde{T}$ to obtain estimate of causal effect of $T$ on $Y$
+
+- @Example@: We want to estimate the causal effect of _credit limit_ on _credit card
+  spend_, using _wage_ as (only) confounder
+
+- @Extension@: FWL Theorem and regression applies also to cases where the
+  relationship is not linear
+  - E.g., the effect of credit lines on spend diminishes as you increase credit
+    lines
+  - You can apply some transform to $X$ (e.g., square root, log)
+  - Then you can apply the usual flow (adding confounders, FWL theorem)
+
+* Conditionally Random Experiments
+
+- @Definition@: **Conditionally Random Experiments** (aka stratified random
+  experiments) create "local experiments" from different groups based on
+  covariates (not across everyone)
+
+- @Example@: Sort customers by credit risk (covariate)
+  - _High-risk_ group: randomize credit lines from low average distribution
+  - _Neutral_ group: randomize credit lines from medium average distribution
+  - _Low-risk_ group: randomize credit lines from high average distribution
+
+- @Characteristics@
+  - best alternative to a randomized controlled trial
+  - Cheaper than completely random experiments
+  - More complex than completely random experiments
+  - Useful when treatment effects might differ by group (heterogeneous effects)
+
+- @Techniques@:
+  - Linear regression with **one-hot encoding** (dummy variables)
+    - Model estimates _one intercept per group_
+    - Shared slope across all gropus is is _variance-weighted average_ of
+      regression slopes within each group
+
+  - **Saturated regression model**
+    - Includes interaction terms between treatment and dummy variables
+    - Enables estimation of _separate effects for each group_
+
+* Which Controls to Include in the Regression?
+- @Definition@: **controls** are variables we include in the model to account for
+  confounding or reduce noise in the estimate
+
+- @Problem@: _What controls to include_ in the regression model?
+  - Some variables are confounders and must include to eliminate bias
+  - Some variables should not be included (e.g., the ones that open backdoor
+    paths)
+  - Some variables don't cause either treatment or outcome
+
+- @Key insight@: Regression coefficient $\hat{\beta}$ stays same regardless of
+  controls
+  - Some variables can induce or reduce noise $\to$ reduce or increase precision
+    / standard error
+
+* Noise-Reducing vs Noise-Inducing Controls
+
+- @Definition@: **Noise-Reducing Controls** are variables that _predict the
+  outcome well_ but aren't confounders
+  - _Example_: `default ~ credit_limit + credit_score + account_age`
+    - `credit_score`: confounder (must include)
+    - `account_age`: predicts `default` but not `credit_limit` (the treatment)
+  - _Effect_: Reduces variance in $\varepsilon_i$ through FWL denoising step
+  - _Result_: Same $\hat{\beta}$, but:
+    - Standard error shrinks (tighter confidence intervals)
+    - More statistical power
+  - _Strategy_: Always include strong outcome predictors
+
+- @Definition@: **Noise-Inducing Controls** are variables that _predict the
+  treatment well_ but not the outcome
+  - _Example_: Conditionally random credit-limit experiment (`* Conditionally
+    Random Experiments` above)
+    - `lottery_draw`: random number used to set the limit within each risk
+      stratum — drives `credit_limit` by design, but $\perp$ `default`
+  - _Effect_: Reduces treatment variance by explaining away $\text{Var}(T)$
+  - _Result_: Same $\hat{\beta}$, but:
+    - Standard error increases (wider confidence intervals)
+    - Less statistical power
+  - _Strategy_: Avoid including strong treatment predictors
+
+- @Rule of thumb@: does candidate control predict $Y$ or $T$?
+  - Predicts $Y$, not $T$ $\to$ include (tighter estimate)
+  - Predicts $T$, not $Y$ $\to$ exclude (unless needed for identification)
+  - Most real variables mix both roles to some degree (see next section)
+
+* Feature Selection Dilemma
+
+- @Problem@: Most variables are imperfect confounders
+  - Strong cause of $T$, weak cause of $Y$ (like noise-inducing)
+  - Strong cause of $Y$, weak cause of $T$ (like noise-reducing)
+
+- @Trade-off@: Including all confounders decreases bias but increases variance
+  $$\text{MSE} = \text{Bias}^2 + \text{Variance}$$
+
+- @Question@: Is a small amount of bias worth a large reduction in variance?
+  - No universal answer, it depends on context, sample size, and precision needs
+  - Research shows it's often worth accepting small bias for large variance
+    reduction
+
+// Chap 5
+
+# Propensity score
+
+* Example: The problem of non-compliance
+- @Problem@: In tech companies often talented individual contributors (ICs)
+  transition to management tracks (e.g., to increase salary)
+  - This transition often requires very different skill sets
+  - High negative cost for the new managers and their teams
+
+- @Solution@: Tech companies
+  - Invest in manager _training programs for new managers_ to ease this
+    transition
+  - Select managers randomly for the training program to measure its
+    effectiveness
+  - Compare employee engagement scores between teams whose managers received
+    training vs those who didn't
+  - Estimate the average treatment effect (ATE)
+
+- @Example@
+  - Some assigned managers don't show up for training
+  - Other managers obtained the training without being assigned to it
+  - The study is likely biased upward because managers with already-engaged teams
+    are more likely to self-select into training
+
+- @Remark@: this is a classic instrumental-variables (encouragement design)
+  setup, where random assignment is the instrument for actual training uptake
+  - If self-selection is driven by unobserved factors (e.g., motivation), no
+    amount of conditioning on observed covariates removes the bias
+  - The propensity-score methods in this section adjust for confounding on
+    _observed_ covariates; the instrument-based fix is covered later (see
+    "Non-compliance and instruments")
+
+* Non-compliance
+
+- @Definition@: **non-compliance** is when people do not receive the treatment
+  as assigned
+
+- @Consequences@:
+  - Non-compliance introduces bias into the causal estimates
+  - Requires adjustment for confounders
+
+// msml610/tutorials/L08_causal_inference/L08_04_05_propensity_score.ipynb
+
+* Propensity Score
+- @Definition@: **propensity score** is the conditional probability of a unit
+  with covariates $x$ to receive the treatment:
+  $$
+  e(x) = \Pr(T=1 | X=x)
+  $$
+
+- @Example@: manager training
+  - Model: `intervention ~ tenure + last_engagement_score + department_score`
+  - Covariates are $X$ = `tenure`, `last_engagement_score`, `department_score`
+
+- @Property@ (Rosenbaum-Rubin balancing result)
+  - Treatment should become "as good as random" after controlling for propensity
+    score
+  - If two entities have the same propensity score but different treatment
+    status, the difference is due to chance
+
+- @Applications@
+  - Propensity score can be used as dimensionality reduction technique
+  - Instead of conditioning on high-dimensional $X$, condition on single
+    propensity score
+
+* Propensity Score Estimation
+
+- @Fact@: We can use ML models to estimate propensity score $e(x)$
+  - As always, we need out-of-fold accuracy to avoid overfitting
+  - Replace true (unknown) propensity score with estimated version
+  - Apply in observational data where assignment mechanism unknown
+
+- @Example@: Binary treatment
+  - Use logistic regression $\Pr(T=1 | X)$ to estimate $e(x)$ from covariates $X$
+
+* FWL Orthogonalization and Propensity Score
+- @Comparison@: Both FWL approach and propensity score orthogonalize treatment
+  $T$ from confounders $X$ but use different models for $T$
+  - **FWL theorem**
+    - Fit $\EE[T | X]$ with linear regression
+    - Take residual $\tilde{T} = T - \EE[T | X]$
+    - Do the same for outcome: $\tilde{Y}$
+    - Regress $\tilde{Y}$ on $\tilde{T}$
+    - Needs $T$-$X$ relationship to actually be linear
+    - Works best with low-dimensional $X$
+
+  - **Propensity score estimation**
+    - Estimate $\hat{e}(X) = \Pr(T=1 | X)$ with any model (logistic regression,
+      ML, etc.)
+    - Add $\hat{e}(X)$ directly as a regressor alongside $T$
+      - E.g., `engagement_score ~ intervention + propensity_score`
+    - No explicit residualization step putting $\hat{e}(X)$ in the regression
+      partials it out automatically (just folded into one model)
+    - Since $\hat{e}(X)$ can be any flexible function of $X$, this handles
+      high-dimensional, nonlinear $T$-$X$ relationships
+    - Caveat: this only makes the _treatment-assignment_ model flexible; the
+      outcome regression itself still assumes a linear relationship between
+      $Y$ and $\hat{e}(X)$
+
+* Propensity Score Matching
+
+- @Recall@: the **fundamental problem of causal inference**: for each unit you
+  observe only $Y_1$ or $Y_0$, never both
+  - Thus ATE can't be computed directly
+
+- @Naive Solution@: for a treated unit $Y_{1i}$, find a control unit with the
+  exact same covariates $X = \vx$ to stand in for its missing $Y_{0i}$ (and vice versa)
+  - In practice with many covariates, almost no two units share the same $X$
+    (curse of dimensionality)
+
+- @Solution@: **Propensity Score Matching**
+  - Impute the missing potential outcome for every unit
+  - Matches treated and control units based on propensity score similarity $e(X)$
+    instead of $X$
+
+- @Algorithm@: 
+  - Fit $e(\vx)$ on training data
+  - Use K-Nearest Neighbors with K=1 on propensity score $e(\vx)$
+    - Run KNN on treated units to impute $Y_1$ for controls
+    - Run KNN on control units to impute $Y_0$ for treated
+// TODO(ai_gp): Explain, correct this formula
+  - Matched value is outcome of nearest unit
+    $$
+    \hat{ATE}
+    = \frac{1}{N}\sum (
+      ( {Y_{i} - Y_{jm}(i)} )T_{i} + 
+      ( {Y_{jm}(i) - Y_{i}} )( 1 - T_{i} )
+    )
+    $$
+
+- @Limitations@
+  - KNN inefficient in high dimensions
+  - Difficult to derive variance
+
+* Inverse Propensity Weighting (IPW)
+
+- @Question@: Can we recover an unbiased $\EE[Y_t]$ (and ATE) from observational
+  data where treatment isn't random?
+  - $\Pr(T | X) \neq \Pr(T)$
+  - Treated and control groups differ systematically in their covariates $X$
+
+- @Key idea@: Inverse Propensity Weighting (Horvitz-Thompson 1952)
+  - Apply the same approach as importance weighting
+  - Reweight samples drawn from one distribution (observed treatment assignment)
+    to estimate an expectation under another distribution (random assignment)
+  - Create pseudo-population where treatment appears randomly assigned
+
+- @Definition@: the IPW estimator of the mean potential outcome
+  $$
+  \EE[Y_t]
+    = \EE\left[
+        \frac{\mathbb{1}(T=t)Y}{\Pr(T=t|X)}
+      \right]
+  $$
+
+- @Algorithm@: weight each unit by its inverse propensity so treatment looks
+  randomly assigned
+  - For treated units:
+    - Up-weight those unlikely to be treated (low $e(x)$)
+      - They look like control units but got treated anyway, so they reveal
+        what would happen to control-like units if they were treated
+    - Down-weight those likely to be treated (high $e(x)$)
+      - Common case, unsurprising, less informative
+  - For control units:
+    - Up-weight those likely to be treated (high $e(x)$)
+      - They look like treated units but weren't treated, so they reveal
+        what would happen to treated-like units if they were left untreated
+    - Down-weight those unlikely to be treated (low $e(x)$)
+      - Common case, unsurprising, less informative
+
+- @Formula@: the same scaling recovers the ATE
+  $$
+  ATE
+  = \EE\left[
+      \frac{\mathbb{1}(T=1)Y}{\Pr(T=1|X)}
+    \right]
+    - \EE\left[
+      \frac{\mathbb{1}(T=0)Y}{\Pr(T=0|X)}
+      \right]
+  $$
+
+- @Estimation@: use bootstrap to estimate variance (resample with replacement
+  multiple times)
+  - Fit IPW estimator on each sample
+  - Calculate 2.5th and 97.5th percentiles for 95% CI
+
+* Stabilized Propensity Weights
+
+- @Problem@: with Inverse Propensity Weights
+  - Raw inverse propensity weights can be very large
+  - Treatment with low probability $\Pr(T | X)$ creates extreme weights
+  - Computational stability issue
+
+- @Solution@: Stabilized propensity weights
+  $$
+  w = \frac{\Pr(T = t)}{\Pr(T = t | X)}
+  $$
+  - Balances small denominator with also small numerator
+  - Produces more stable weights without changing balancing properties
+  - Sum of weights in each group matches original group sizes
+
+- Trim propensity scores to avoid extreme weights
+  - E.g., keep between 1% and 99%
+  - Trade-off: slight bias increase for substantial variance reduction
+
+- @Intuition@
+  - Plot propensity score distributions by treatment status
+  - Before weighting: distributions shifted (confounding)
+  - After weighting: distributions overlap (treatment appears random)
+  - Overlapping distributions essential for IPW validity
+
+* Propensity Score for Selection Bias
+- @Applications@: IPW can:
+  - Adjust for non-response in surveys
+  - Handle both confounding and selection together
+
+- @Example@
+  - You send a survey asking people to rate your product on a 1-to-5 scale
+  - Survey respondents may differ from non-respondents
+    - E.g., non-respondents are often unsatisfied customers and vice versa
+  - Estimate probability of responding given customer's covariates (e.g., 
+    age, income, app usage) $\Pr(R = 1 | X)$
+  - Re-weight respondents by $1/\hat{\Pr}(R = 1)$ to account for who didn't
+    respond
+  - Creates pseudo-population representing full population
+
+- @Formula@: compute the weights for both selection and confounding by
+  multiplying the two re-weightings, and stabilize using the marginal
+  probability
+  $$
+  W = \frac{
+    \hat{\Pr}(T = t)
+  }{
+    \hat{\Pr}(R = 1 | X)\hat{\Pr}(T = t | X)
+  }
+  $$
+
+// TODO: Bias-Variance Trade-off
+
+* Positivity
+- @Definition@: **Positivity** is a property implying that every unit has
+  non-zero probability of receiving each treatment level
+  $$
+  \Pr(T = t | X) > 0 \text{ for all } t, X
+  $$
+
+- Positivity is essential for IPW validity
+
+- @Problems@
+  - IPW fails when positivity violated: cannot reweight units that don't exist
+  - Some subgroups have almost no treated or control units
+  - Cannot estimate counterfactual outcomes in those regions
+
+* IPW Diagnostics
+- @Techniques@
+  - Propensity score distribution easy to visualize
+  - Can directly check if treatment groups overlap
+
+* Comparison with Regression
+- @Comparison@
+  - Regression can extrapolate beyond region with data
+  - Assumes linear (or specified) functional form for $E[Y | T, X]$
+  - Can recover ATE even with positivity violation if model specification
+    correct
+  - IPW makes no functional form assumptions $\to$ fails without positivity
+
+* Positivity-Bias Trade-Off
+- @Comparison@
+  - More covariates in propensity model $\to$
+    - Stronger unconfoundedness / conditional independence assumption
+    - Weaker positivity
+  - Fewer covariates
+    - Better positivity
+    - More potential confounding bias
+  - Balance is contextual and requires judgment

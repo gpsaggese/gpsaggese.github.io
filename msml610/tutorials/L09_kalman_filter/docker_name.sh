@@ -8,5 +8,5 @@
 
 REPO_NAME=gpsaggese
 # The file should be all lower case.
-IMAGE_NAME=umd_msml610_l09_kalman_filter
+IMAGE_NAME=msml610_l09_kalman_filter
 FULL_IMAGE_NAME=$REPO_NAME/$IMAGE_NAME

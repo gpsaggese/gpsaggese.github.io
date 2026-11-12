@@ -1,0 +1,1048 @@
+// type=UMD_slides
+// course_title=Modern AI for Finance
+// lesson_title=Lesson 06.01: Auto EDA
+// slides_engine=typst
+
+* Roadmap
+
+- This lesson covers the **levels of EDA automation**: rule-based profilers,
+  AutoML, and LLM agents, and how each level widens the search over analyses
+
+- It then builds **automated checks** for a financial panel: profiling of the
+  panel structure, finance-specific data bugs, time-aware summaries, and
+  stylized facts as tests of the data
+  - The running example is the price panel behind the momentum strategy of
+    Lessons 01.01 and 02.01
+
+- It closes with **EDA as snooping** and **agent-driven EDA**: every look is a
+  trial, agents look a lot, and their reports need logs and human review
+
+# Levels of Automation
+
+## Motivation
+
+* What EDA Is For
+// From: msml610/lectures_source/Lesson07.1-Intro_to_Probabilistic_Programming.smd:39 '* EDA vs Inferential Statistics'
+// From: data605/lectures_source/Lesson01.3-Is_Data_Science_Just_Hype.smd:151 '* Where Data Scientist Spends Most Time'
+// From: msml610/lectures_source/Lesson02.6-ML_Techniques_How_To_Do_Research.smd:268 '* Right and Wrong Approach to Research'
+
+- @Definition@: **exploratory data analysis** (EDA) inspects, summarizes, and
+  checks data before any model is fit (Tukey, 1977)
+  - _Inferential statistics_ then draws conclusions and predictions from it
+
+// TODO(gp): Check the 80-90% share: it comes from a data605 slide that shows
+// it on an image without a source
+- @Fact@: 80-90% of data science work is cleaning and wrangling data
+
+- @Problem@: in finance the first job of EDA is to find **data bugs**, not
+  signals
+  - A stale price, an unadjusted split, or a missing delisting looks like
+    alpha to a model
+  - A backtest built on such data is wrong before any modeling choice
+
+- @Key idea@: EDA in finance has two jobs that pull in opposite directions
+  - _Check the data_: look at everything, as often as needed
+  - _Search for signals_: every look is a trial, so count every look
+
+* Running Example: A Daily Equity Panel
+// From: book_Modern_AI_for_Finance/lectures_source/Lesson01.01_Why_Finance_Is_Different.smd:60 '* Running Example: A Momentum Strategy'
+// From: book_Modern_AI_for_Finance/lectures_source/Lesson02.01_Strategy_Backtesting.smd:68 '* Running Example: Backtesting Momentum'
+
+- @Example@: the input of the cross-sectional momentum book, simulated so that
+  every defect is known
+  - Daily prices of 200 stocks over 10 years, with a GARCH market factor
+  - IPOs, delistings after large falls, and prices rounded to the cent
+
+- @Problem@: the panel hides defects that a momentum ranking would trade on
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Planted defect", "What happens", "Check that finds it"),
+  rows: (
+    ("Vendor outage", "25% of the stocks lose 20 days of prices", "Coverage by asset and date"),
+    ("Survivor-only copy", "40 delisted stocks vanish", "Exits over time"),
+    ("Stale prices", "40 stocks repeat the last price on 40% of days", "Zero returns and flat runs"),
+    ("Unadjusted split", "One stock halves its price", "Robust z-score and split ratios"),
+    ("Alpha decay", "A strategy loses its edge after year 6", "CUSUM tests and regime summaries"),
+  ),
+  col-widths: (1fr, 1.6fr, 1.4fr),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+## Three Levels
+
+* Three Levels of EDA Automation
+// From: research/agentic_data_science/RL_for_auto_EDA_sota_review.md:25 '### 1. Descriptive report generators (the bulk of the list) — heuristic'
+// From: research/agentic_data_science/RL_for_auto_EDA_sota_review.md:40 '### 3. Pipeline search / cleaning / feature engineering — search-based'
+// From: research/agentic_data_science/agentic_data_science.report.md:76 '# 4. Research Trend: Agents as Search Systems'
+// From: book_springer/lectures_source/Lesson02.1_From_Data_Science_To_Decision_Science.smd:72 '* The Analytics Maturity Ladder'
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Level", "Search space", "Objective", "Output", "Examples"),
+  rows: (
+    ("Profilers and rules", "None: fixed checks", "None", "Report on every column", "ydata-profiling, Sweetviz, skimr"),
+    ("AutoML", "Predefined: cleaning steps, features, models", "Fixed score chosen by a human", "Best pipeline", "AlphaClean, featuretools, TPOT"),
+    ("LLM agents", "Open: any analysis that code can express", "Implicit, often unstated", "Notebook, charts, claims", "LIDA, Data Interpreter, DS-STAR"),
+  ),
+  col-widths: (1fr, 1.4fr, 1.1fr, 1fr, 1.3fr),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Comparison@: each level trades control for coverage
+  - _Profilers_: cheap and reproducible, but blind to anything outside the rule
+    set
+  - _AutoML_: searches hard, but only inside the space and objective that a
+    human chose
+  - _LLM agents_: choose what to look at, write the code, and interpret the
+    result
+
+- @Key idea@: data science agents are search systems over possible analyses,
+  closer to AutoML than to chatbots
+
+* Automation Widens the Search
+// From: research/agentic_data_science/agentic_data_science.report.md:76 '# 4. Research Trend: Agents as Search Systems'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1536 '* The most pervasive mistake in financial research'
+
+::: columns
+:::: {.column width=60%}
+- @Intuition@: each level runs more analyses on the same history
+  - _Profiler_: one fixed report, the same for any dataset
+  - _AutoML_: hundreds to thousands of scored configurations
+  - _Agent_: an open-ended chain of plots, tests, transforms, and subsets
+
+- @Problem@: in finance every analysis of the same history is a trial
+  - About 20 rounds of _"take data, run ML, backtest, repeat"_ produce a
+    false discovery at 5% confidence
+
+- @Key idea@: automation is safe for _checking_ data and dangerous for
+  _searching_ it
+  - The same agent should run every check, but count every hypothesis it
+    tests
+::::
+:::: {.column width=40%}
+
+```graphviz
+digraph Levels {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.3;
+    ranksep=0.35;
+    rankdir=TB;
+    // rules : teal | search : blue | open search : coral
+    node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Helvetica",
+          fontsize=11, margin="0.18,0.08", height=0.5];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    Prof  [label="Profiler\nfixed checks: 1 report", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    Auto  [label="AutoML\npredefined space: 100s of configs", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+    Agent [label="LLM agent\nopen space: unbounded analyses", fillcolor="#F6C6C6", color="#D98C8C", fontcolor="#6B2A2A"];
+
+    Prof -> Auto [label="  wider search  "];
+    Auto -> Agent [label="  more trials  "];
+}
+```
+::::
+:::
+
+# Automated Profiling
+
+* Rule-Based Profilers
+// From: research/agentic_data_science/RL_for_auto_EDA_sota_review.md:25 '### 1. Descriptive report generators (the bulk of the list) — heuristic'
+// From: data605/lectures_source/Lesson07.2-Data_Wrangling.smd:69 '* Typical Data Wrangling Workflow'
+
+- @Definition@: a **rule-based profiler** runs a fixed set of checks on every
+  column and writes a report
+  - _Schema_: types, cardinality, constant and duplicated columns
+  - _Missing values_: count and pattern per column
+  - _Distributions_: histograms, quantiles, skewness, and kurtosis
+  - _Outliers and correlations_: rule-based alerts and correlation matrices
+
+- @Examples@:
+// TODO(gp): Check the rename to fg-data-profiling: it comes from the
+// project README only
+  - **ydata-profiling** (formerly pandas-profiling, now fg-data-profiling):
+    one HTML report per dataframe, with alerts on suspicious columns
+  - **Sweetviz**: compares two datasets side by side, e.g., train vs. test
+  - **skimr** and **DataExplorer** in R: compact summaries by column type
+
+- @Pros@: cheap, deterministic, and reproducible
+  - No search, so no snooping
+
+- @Cons@: a profiler answers _"what does the data look like?"_, never _"what
+  process generated it?"_
+  - A human chose every rule in advance
+
+* What a Profiler Checks
+// From: data605/lectures_source/Lesson07.2-Data_Wrangling.smd:196 '* Classification of Data Problems'
+// From: data605/lectures_source/Lesson07.2-Data_Wrangling.smd:275 '* Single-Source Problems'
+// From: msml610/lectures_source/Lesson02.3-ML_Techniques_Input_Processing.smd:55 '* Data Cleaning'
+
+// TODO(gp): Check the finance column: the examples are illustrations, not
+// taken from a source
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Problem", "Generic example", "Finance example"),
+  rows: (
+    ("Schema", "Wrong type, evolving schema", "Ticker reused by a new company after a delisting"),
+    ("Illegal values", "Negative age", "Price at or below 0, high below low, negative volume"),
+    ("Duplicates", "Repeated records", "Two rows for the same date and asset"),
+    ("Unclear missing codes", "0 or -999 for missing", "Price 0 for a halted stock"),
+    ("Referential integrity", "Key with no match", "Identifier missing from the security master"),
+    ("Outliers", "Data entry error", "Bad tick, unadjusted split"),
+  ),
+  col-widths: (1fr, 1.1fr, 1.8fr),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Example@: `01/02/2024` is ambiguous between `MM/DD` and `DD/MM`, so the
+  bug is invisible on any single row
+  - In a time series, a day-month swap silently reorders the history
+
+- @Key idea@: most finance bugs show up only across rows, over time or across
+  assets, so a column-by-column profile misses them
+
+* Robust Outlier Rules
+// From: msml610/lectures_source/Lesson02.3-ML_Techniques_Input_Processing.smd:90 '* Outliers'
+// From: data605/lectures_source/Lesson07.2-Data_Wrangling.smd:322 '* Univariate Outlier Detection'
+// From: data605/lectures_source/Lesson07.2-Data_Wrangling.smd:400 '* Time Series Outliers'
+
+- @Definition@: classic rules flag a value outside
+  $[Q_1 - 1.5 \cdot IQR, Q_3 + 1.5 \cdot IQR]$ or with $|z| > 3$
+
+- @Problem@: the outliers inflate the mean and standard deviation that the
+  z-score uses, which hides them (masking)
+  - Heavy tails make $|z| > 3$ days far more common than the Gaussian 0.27%
+
+- @Solution@: a **robust z-score** with the median and the median absolute
+  deviation (MAD)
+  $$
+  z_i^{rob} \triangleq \frac{x_i - median(x)}{1.4826 \cdot MAD(x)}
+  \qquad
+  MAD(x) \triangleq median(|x_i - median(x)|)
+  $$
+  - The factor 1.4826 makes $1.4826 \cdot MAD$ estimate $\sigma$ for a
+    Gaussian
+  - Compute it on returns, per asset, not on prices
+
+- @Remark@: in finance an outlier is either a bad tick or the most important
+  day of the year
+  - Flag, do not delete: removing a crash as an outlier erases the tail risk
+
+* Missing Data in Panels
+// From: msml610/lectures_source/Lesson02.3-ML_Techniques_Input_Processing.smd:109 '* Missing Data and Imputation'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1841 '* Survivorship bias'
+
+- @Definition@: three mechanisms explain why a value is missing, after
+  Rubin (1976), who introduced the missing-at-random condition
+  - _MCAR_ (missing completely at random): unrelated to any variable
+  - _MAR_ (missing at random): depends only on observed variables
+  - _MNAR_ (missing not at random): depends on the missing value itself
+
+- @Problem@: in a price panel, missing values are rarely MCAR
+  - _Not yet listed_ (IPO) or _no longer listed_: structural, not missing
+  - _Trading halt_ before news: depends on the price that would have printed
+  - _Delisting after a collapse_: the missing return is the worst one
+  - _Vendor outage_: close to MCAR
+
+- @Problem@: filling the gaps hides the mechanism
+  - _Forward fill_ creates zero returns, i.e., stale prices
+  - _Linear interpolation_ uses a future price, i.e., look-ahead
+
+- @Key idea@: classify every gap by cause (not listed, halted, delisted,
+  vendor) instead of counting NaNs
+
+* Panel Coverage by Asset and Date
+// From:
+
+::: columns
+:::: {.column width=58%}
+- @Definition@: **coverage** is the fraction of days with a price, per asset
+  and month
+
+- @Example@: the running example
+  - _Staircase_: IPOs enter, delisted stocks exit
+  - _Vertical band_: a vendor outage hits 25% of the stocks
+  - _Survivor-only copy_: the count only rises
+
+- @Techniques@:
+  - Assets per date: a sudden drop is a vendor gap
+  - Exits per year: zero exits means survivorship bias
+
+- @Key idea@: profile the panel structure first, since every later statistic
+  averages over it
+::::
+:::: {.column width=42%}
+
+![](book_Modern_AI_for_Finance/lectures_source/figures/L06.01.Panel_Coverage.png)
+
+\footnotesize _Coverage of the simulated panel by stock and month (top), and
+stocks with a price in the full and in the survivor-only database (bottom)_
+::::
+:::
+
+* Why Generic Profilers Miss Finance Bugs
+// From: research/agentic_data_science/agentic_eda.notes.md:58 '## Analysis Templates by Data Type'
+// From: msml610/lectures_source/Lesson10.1-Timeseries_forecasting.smd:1164 '* Time Series Machine Learning: Problems'
+
+- @Problem@: a generic profiler treats rows as IID and columns as independent
+  - It summarizes a column over all dates and all assets at once
+  - It has no notion of a (date, asset) key, of a knowledge time, or of a
+    corporate action
+
+// TODO(gp): Check the table: the pairs are illustrations, not taken from a
+// source
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("What the profiler reports", "Finance bug behind it"),
+  rows: (
+    ("Price column with a plausible distribution", "Unadjusted split: two price levels for one stock"),
+    ("3% missing values", "All gaps come from delisted stocks, which a survivor-only copy drops"),
+    ("No missing values at all", "Gaps filled forward, or a survivor-only database"),
+    ("Spike at exactly 0 in returns", "Stale prices"),
+    ("High correlation of a feature with the target", "The feature is computed with future data"),
+  ),
+  col-widths: (1fr, 1.4fr),
+  bold-first-col: false,
+)
+```
+\endgroup
+
+- @Key idea@: finance checks need the panel structure: group by asset, sort by
+  time, and compare every value with the time it became known
+
+# Finance-Specific Checks
+
+* A Checklist of Finance Data Bugs
+// From: book_Modern_AI_for_Finance/lectures_source/Lesson02.01_Strategy_Backtesting.smd:287 '* Subtle Sources of Leakage'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1845 '* Look-ahead bias'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:907 '* Modeling complex trading as synthetic instrument'
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Bug", "Symptom in the data", "Automated check"),
+  rows: (
+    ("Look-ahead", "A value known only after the decision time", "Knowledge time before decision time, IC too good to be true"),
+    ("Survivorship", "No exits, no delisting returns", "Exits per year, a final return for every exit"),
+    ("Stale prices", "Runs of unchanged prices", "Fraction of zero returns, longest flat run"),
+    ("Corporate actions", "Jumps at split ratios, gaps on dividend dates", "Robust z-score matched to 1/k - 1"),
+    ("Futures rolls", "Jumps at contract expiry", "Jumps on roll dates"),
+    ("Restatements", "Past values change between snapshots", "Compare first-reported and current values"),
+  ),
+  col-widths: (0.9fr, 1.5fr, 1.6fr),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Key idea@: each check is a unit test on the data, and it runs before any
+  EDA plot
+
+- @Remark@: point-in-time data engineering is covered in detail in Lesson
+  04.01
+
+* Detecting Look-Ahead
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:562 '* Fundamental data: release data vs report data'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:580 '* Point-in-time'
+// From: book_Modern_AI_for_Finance/paper_list.md:842 '### [ ] 2006, Federal Reserve Bank of St. Louis, "ALFRED: Archival Federal Reserve'
+// From: msml610/lectures_source/Lesson02.3-ML_Techniques_Input_Processing.smd:335 '* Fit on Train, Apply to Validation and Test'
+
+- @Problem@: look-ahead is invisible in the values, since it lives in the
+  timestamps
+  - E.g., quarterly earnings stamped with the fiscal quarter end, but released
+    weeks later
+  - E.g., a GDP value revised twice after its first release
+
+- @Techniques@:
+  1. _Knowledge time_: store when each value became known, and assert that it
+     precedes the decision time
+  2. _Too-good test_: flag a feature whose IC with the next return is far
+     above the 0.05 of a good signal
+// TODO(gp): Check the shift test: it is a practitioner heuristic, not taken
+// from a source
+  3. _Shift test_: lag the feature by one more bar; if the IC collapses, the
+     edge lives in the timestamp
+  4. _Perturbation test_: change the data after $t$ and assert that the
+     features up to $t$ do not change
+
+- @Example@: vintage databases store every release of a series, e.g.,
+  **ALFRED** for US macro data (_"economic data time travel"_)
+
+* Detecting Survivorship
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1841 '* Survivorship bias'
+// From: book_Modern_AI_for_Finance/lectures_source/Lesson02.01_Strategy_Backtesting.smd:319 '* Survivorship Bias'
+
+- @Problem@: a survivor-only database looks clean: no gaps, no exits, no
+  extreme losses
+
+- @Techniques@: checks on the universe over time
+  - _Exits_: count the assets whose last price comes before the end of the
+    sample
+  - _Delisting returns_: every exit needs a final return, often large and
+    negative
+  - _Universe size_: compare the assets per date with an external count, e.g.,
+    historical index membership
+  - _Identifiers_: a ticker that reappears for a different company
+
+- @Fact@: **Shumway** (1997) finds that CRSP lacks the correct delisting
+  return for most stocks delisted for negative reasons, and the omitted
+  returns are large
+
+- @Example@: the full database of the running example has 40 exits, and the
+  survivor-only copy has none
+
+- @Key idea@: survivorship is detected by what is missing, so the check needs
+  an expected number of exits
+
+* Stale Prices
+// From:
+
+::: columns
+:::: {.column width=58%}
+- @Definition@: a **stale price** repeats the last price because the asset
+  did not trade
+
+- @Techniques@: per asset, the fraction of zero returns and the longest flat
+  run
+  - E.g., 40 stale stocks: about 40% zero returns, runs of 5-11 days
+  - Stocks that trade daily: under 4%, from rounding to the cent
+
+- @Problem@: stale stocks catch up with yesterday's market move
+  - Lag-1 autocorrelation of an equal-weighted index: 0.02 $\to$ 0.07
+  - Lo and MacKinlay (1990) derive this effect, but find it small for real
+    indexes
+::::
+:::: {.column width=42%}
+
+![](book_Modern_AI_for_Finance/lectures_source/figures/L06.01.Stale_Prices.png)
+
+\footnotesize _One stale stock with its true price (top), and fraction of zero
+returns against the longest flat run for every stock (bottom)_
+::::
+:::
+
+* Corporate Action Breaks
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:904 '* Structural breaks'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:907 '* Modeling complex trading as synthetic instrument'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:927 '* ETF trick'
+
+::: columns
+:::: {.column width=58%}
+- @Problem@: splits and dividends change the price, not the value of a
+  holding
+  - An unadjusted 2-for-1 split shows a -50% return
+
+- @Techniques@:
+  - Flag returns with a robust z-score above 8
+  - Match each flag to a split ratio $k$: within 1% of $1/k - 1$
+
+- @Example@: the panel has 176 flags, and one matches a ratio
+  - The planted split, with $z \approx -38$
+  - The other 175 are genuine heavy-tailed returns
+
+- @Remark@: the fix is a total-return series, the value of \$1 invested
+::::
+:::: {.column width=42%}
+
+![](book_Modern_AI_for_Finance/lectures_source/figures/L06.01.Split_Detection.png)
+
+\footnotesize _Adjusted and raw price of a stock with an unadjusted 2-for-1
+split (top), and daily raw returns with a robust band of 8 (bottom)_
+::::
+:::
+
+* Leakage: A Weak Spot of Agents
+// From: research/ideas/in_progress.Comparison_of_Data_Science_Agents.md:69 '## Key Examples'
+// From: research/agentic_data_science/agentic_data_science.report.md:121 '# 7. Where Agents Still Fail'
+// From: msml610/lectures_source/Lesson02.3-ML_Techniques_Input_Processing.smd:335 '* Fit on Train, Apply to Validation and Test'
+
+- @Definition@: **leakage** is information about the target that would not
+  be legitimately available at prediction time (Kaufman et al., 2012)
+
+// TODO(gp): Check that agents are weak at leakage detection: the claim comes
+// from the unverified report agentic_data_science.report.md, without a
+// measured source
+- @Problem@: an agent optimizes the score it can see, and leakage raises the
+  score
+  - Nothing fails: the notebook runs and the metric looks excellent
+// TODO(gp): Check the 0.99 AUC example: it is a hypothetical case from a
+// research idea, not a measured result
+  - E.g., an agent reports 0.99 AUC on data with a leaked feature and gives
+    no warning
+
+- @Examples@: leaks that EDA code introduces in finance
+  - Z-scoring or winsorizing with full-sample statistics
+  - Centered rolling windows, e.g., `rolling(window, center=True)`
+  - Back-filling or interpolating missing prices, e.g., `bfill()`
+  - Random splits of labels built from overlapping forward returns
+  - Today's index constituents applied to the past
+
+- @Key idea@: give the agent leakage checks as tools (as-of assertions, shift
+  tests), not as instructions in a prompt
+
+# Time-Aware EDA
+
+* Split by Time First
+// From: msml610/lectures_source/Lesson10.1-Timeseries_forecasting.smd:1193 '* Cross-Validation for Time Series'
+// From: msml610/lectures_source/Lesson02.6-ML_Techniques_How_To_Do_Research.smd:137 '* "Burning the Test Set"'
+// From: research/agentic_data_science/AutoEDA_Plan.md:561 '### Issue 9.6: Out-of-Sample Validation System'
+
+::: columns
+:::: {.column width=60%}
+- @Problem@: EDA on the full history is already a fit
+  - Choosing features, transforms, and filters after seeing 2023 makes 2023
+    in-sample
+
+- @Solution@: split by time before the first plot
+  - _Explore_: hypotheses on the earliest period only
+  - _Validate_: test the surviving hypotheses on the next period
+  - _Holdout_: the most recent period, touched once at the end
+
+- @Key idea@: lock the holdout before the agent starts, since an agent cannot
+  forget what it has seen
+::::
+:::: {.column width=40%}
+
+```graphviz
+digraph TimeSplit {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.3;
+    ranksep=0.3;
+    rankdir=TB;
+    // checks : lavender | explore : teal | validate : blue | holdout : coral
+    node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Helvetica",
+          fontsize=11, margin="0.18,0.08", height=0.45];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    Checks   [label="Data-quality checks\nall dates", fillcolor="#E9E1F7", color="#A88FD9", fontcolor="#45296B"];
+    Explore  [label="Explore\n2015-2020", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    Validate [label="Validate\n2021-2022", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+    Holdout  [label="Holdout\n2023-2024, touched once", fillcolor="#F6C6C6", color="#D98C8C", fontcolor="#6B2A2A"];
+
+    Checks -> Explore -> Validate -> Holdout;
+}
+```
+::::
+:::
+
+* Stationarity Tests
+// From: msml610/lectures_source/Lesson10.1-Timeseries_forecasting.smd:83 '* Stationarity: Intuition'
+// From: //notes1/notes/finance.time_series.txt:563 '* ADF test'
+// From: //notes1/notes/finance.time_series.txt:622 '* Ljung-Box test'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1274 '* Stationarity with maximum memory preservation'
+
+- @Motivation@: a summary of a non-stationary series, such as a mean or a
+  correlation, describes one sample path, not a stable property
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Test", "Null hypothesis", "Use in EDA"),
+  rows: (
+    ("Augmented Dickey-Fuller", "Unit root: non-stationary", "Rejection: the series is stable enough to summarize"),
+    ("KPSS", "Stationary", "Rejection: summaries drift over time"),
+    ("Ljung-Box", "No autocorrelation up to lag h", "Rejection on returns: look for stale prices or interpolation"),
+  ),
+  col-widths: (1fr, 1.2fr, 1.8fr),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Techniques@: run ADF and KPSS together, since their nulls are opposite
+  - ADF rejects and KPSS does not: stationary
+  - Both reject or neither rejects: inconclusive, so look at the plot
+
+- @Example@: fractional differencing searches the smallest order $d$ whose ADF
+  p-value is below 5%
+  - $d \approx 0.35$ is often enough, while returns use $d = 1$ and discard
+    memory
+
+- @Remark@: the tests have low power near a unit root and assume a single
+  regime
+
+* Structural Breaks
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:2369 '* Structural break'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:2383 '* Cumsum tests'
+// From: msml610/lectures_source/Lesson10.1-Timeseries_forecasting.smd:1376 '* Change Point Detection in Time Series'
+
+::: columns
+:::: {.column width=61%}
+- @Definition@: a **structural break** changes the data-generating process at
+  an unknown date
+
+- @Techniques@: reject at 5% when $\max |CUSUM| > 1.358$
+  - _CUSUM_ of returns, for the mean (Ploberger and Kramer, 1992)
+  - _CUSUM of squares_, for the volatility (Inclan and Tiao, 1994)
+
+- @Example@: a volatility spike in years 3-4.5, no edge after year 6
+  - Variance: $\max = 6.18$, detected
+  - Mean, Sharpe ratio 1.0 $\to$ 0: $\max = 0.98$, missed
+
+- @Key idea@: _"no break detected"_ is not _"stable edge"_
+::::
+:::: {.column width=39%}
+
+![](book_Modern_AI_for_Finance/lectures_source/figures/L06.01.Structural_Breaks.png)
+
+\footnotesize _Cumulative return of a strategy with three true breaks (top),
+and the absolute CUSUM statistics with the 5% critical value (bottom)_
+::::
+:::
+
+* Regime-Aware Summaries
+// From: msml610/lectures_source/Lesson10.1-Timeseries_forecasting.smd:1405 '* Markov-Switching Models'
+// From: book_Modern_AI_for_Finance/paper_list.md:486 '### [ ] 1989, Hamilton, "A New Approach to the Economic Analysis of Nonstationary'
+
+- @Problem@: a full-sample summary averages regimes that never coexist
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Period", "Years", "True Sharpe", "Return", "Volatility", "Sharpe"),
+  rows: (
+    ("Full sample", "10.0", "", "10%", "12%", "0.84"),
+    ("Calm", "3.0", "1.0", "7%", "10%", "0.76"),
+    ("Crisis", "1.5", "1.0", "23%", "21%", "1.10"),
+    ("Calm again", "1.5", "1.0", "23%", "10%", "2.26"),
+    ("Edge gone", "4.0", "0.0", "3%", "10%", "0.28"),
+  ),
+  caption: "Annualized summaries of the strategy of the previous slide",
+  col-widths: (1.4fr, 0.7fr, 0.9fr, 0.8fr, 0.9fr, 0.8fr),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Interpretation@: the full-sample Sharpe ratio of 0.84 describes no period
+  - Estimates over 1.5 years scatter widely (0.76 to 2.26) around the same
+    true value
+
+- @Techniques@: summarize by regime, with regimes fixed in advance by the
+  calendar or by a Markov-switching model (Hamilton, 1989)
+
+- @Key idea@: a regime split chosen after seeing the signal is one more look
+
+# Stylized Facts
+
+* Stylized Facts as Data Tests
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:2544 '* Empirical observations about financial time-series'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:724 '* Time bars: poor statistical properties'
+// From: book_Modern_AI_for_Finance/lectures_source/Lesson01.01_Why_Finance_Is_Different.smd:1061 '* Stylized Facts and ML Failure Modes'
+
+- @Definition@: **stylized facts** are statistical properties that returns
+  share across assets, markets, and periods
+  - Cont (2001) lists 11 of them, including:
+    - _Absence of autocorrelation_: linear autocorrelation of returns near 0
+    - _Heavy tails_: excess kurtosis well above 0
+    - _Volatility clustering_: absolute returns stay autocorrelated over many
+      lags
+    - _Aggregational Gaussianity_: tails get thinner as the horizon grows
+    - _Leverage effect_: volatility rises after losses
+
+- @Intuition@: stylized facts are the unit tests of a returns database
+  - A data bug moves a specific statistic in a specific direction
+
+- @Key idea@: a dataset that violates a stylized fact is more likely broken
+  than special
+
+- @Remark@: the stylized facts themselves are covered in detail in Lesson
+  01.01
+
+* A Stylized-Facts Test Suite
+// From:
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Statistic", "Clean", "Stale", "Interpolated", "Shuffled", "Unadjusted split"),
+  rows: (
+    ("Kurtosis, daily", "8.7", "23.4", "12.8", "8.7", "653"),
+    ("Kurtosis, monthly", "2.0", "1.7", "2.2", "-0.1", "35.2"),
+    ("ACF(1) of returns", "0.02", "-0.02", "0.17", "-0.02", "0.01"),
+    ("ACF of |returns|", "0.19", "0.08", "0.18", "0.00", "0.06"),
+    ("Zero returns", "0%", "31%", "0%", "0%", "0%"),
+  ),
+  caption: "Excess kurtosis and mean ACF of absolute returns over lags 1-10, for a clean GARCH index and four corrupted copies",
+  col-widths: (2.4fr, 0.8fr, 0.8fr, 1.5fr, 1.3fr, 1.5fr),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Interpretation@: each defect breaks a different fact
+  - _Stale_: zero returns appear, catch-up returns fatten the tails
+  - _Interpolated_: future prices spread a move, so returns autocorrelate
+  - _Shuffled_ (e.g., a wrong date format): volatility clustering vanishes
+  - _Unadjusted split_: one return dominates the kurtosis
+
+- @Key idea@: flag assets that deviate from the cross-section, not from fixed
+  thresholds
+
+# EDA as Snooping
+
+* Every Look Is a Trial
+// From: msml610/lectures_source/Lesson05.1-Learning_Theory.smd:1191 '* Data Snooping Voids the VC Guarantee'
+// From: msml610/lectures_source/Lesson02.6-ML_Techniques_How_To_Do_Research.smd:104 '* Data Snooping (1/2)'
+// From: book_cs_refreshers/lectures_source/Lesson91.Refresher_probability.smd:2854 '* P-hacking'
+
+- @Problem@: EDA choices depend on the data, so more hypotheses are tested
+  than reported
+  - Which assets, which period, which transform, which lag, which plot to
+    keep
+
+- @Definition@: the **garden of forking paths** is a multiple-comparisons
+  problem without explicit fishing: the analysis would have differed with
+  different data (Gelman and Loken, 2014)
+
+// TODO(gp): Check the 61% figure against Table 1 of Simmons et al. (2011):
+// the paper is closed access and the number comes from secondary sources
+- @Fact@: **Simmons, Nelson, and Simonsohn** (2011) show that combining four
+  flexible analysis choices raises the false-positive rate from 5% to about
+  61%
+
+- @Example@: choosing the feature $x_1^2 + x_2^2$ after a scatter plot
+  - The final model has one parameter, but its effective complexity includes
+    every feature considered by eye
+
+- @Key idea@: a plot that changed a decision is a hypothesis test, whether or
+  not a p-value was computed
+
+* Automation Multiplies Trials
+// From: book_Modern_AI_for_Finance/lectures_source/Lesson02.01_Strategy_Backtesting.smd:472 '* The False Strategy Theorem'
+
+::: columns
+:::: {.column width=58%}
+- @Example@: keep the best of $N$ noise features against noise returns, with
+  5 years in-sample and 5 years of holdout
+  - _10 looks_: best IC 0.05, at the single-test 5% threshold
+  - _1,000 looks_: best IC 0.10, twice a good real signal
+  - _Holdout_: IC about 0 for any number of looks
+
+- @Fact@: the best of $N$ noise ICs over $T$ days grows like
+  $\sqrt{2 \ln N / T}$
+
+- @Key idea@: an agent that runs hundreds of analyses per hour finds false
+  signals, unless it counts every look
+::::
+:::: {.column width=42%}
+
+![](book_Modern_AI_for_Finance/lectures_source/figures/L06.01.Snooping_Looks.png)
+
+\footnotesize _In-sample IC of the best of N noise features (blue) and its IC
+on the holdout (red), with the 10%-90% band over 50 simulations_
+::::
+:::
+
+* Logging Looks and Holding Out Data
+// From: //notes1/notes/papers.finance.misc.txt:464 '## 2018, de Prado, A practical solution to the multiple-testing crisis in financial research'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1902 '* Multiple testing'
+// From: research/agentic_data_science/sota_eda.md:865 '### Reproducibility, safety, and evaluation recommendations'
+
+- @Solution@: treat EDA as an experiment with a log
+  - Log every query, transform, plot, and test, with the data and code
+    versions
+  - Count the hypotheses about the target, not the data-quality checks
+  - Keep the log append-only, so that failed looks cannot be deleted
+
+- @Techniques@: use the count
+  - Raise the significance bar with the number of looks, e.g., Bonferroni or
+    the deflated Sharpe ratio
+  - Cluster correlated looks to estimate the number of independent trials
+  - Test only the final hypotheses, once, on a holdout that EDA never touched
+
+- @Key idea@: an agent makes the log cheap, since every tool call is already a
+  record
+
+- @Remark@: multiple-testing corrections and the deflated Sharpe ratio are
+  covered in detail in Lesson 02.01
+
+# Agent-Driven EDA
+
+* From Profiler to Agent
+// From: research/agentic_data_science/sota_eda.md:60 '## Definitions and scope of agentic EDA'
+// From: research/agentic_data_science/sota_eda.md:118 '### Systems comparison table'
+// From: research/agentic_data_science/sota_eda.md:557 '### Agent loop diagram'
+
+::: columns
+:::: {.column width=60%}
+- @Definition@: an **agentic EDA** system chooses what to analyze without a
+  precise specification
+  - It plans, writes code, runs it, reads the output, and picks the next step
+
+- @Examples@:
+  - **LIDA** (Dibia, 2023): a summarizer, a goal explorer, a chart
+    generator, and an infographer
+  - **Data Interpreter** (Hong et al., 2025): plans an analysis as a
+    hierarchical graph of tasks
+  - **DS-STAR** (Nam et al., 2026): refines a plan until an LLM judge finds it
+    sufficient
+
+- @Key idea@: the agent chooses the next analysis from the result of the last
+  one, which is exactly a forking path
+::::
+:::: {.column width=40%}
+
+```graphviz
+digraph AgentLoop {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.5;
+    ranksep=0.45;
+    rankdir=TB;
+    // input : orange | agent : coral | process : teal | output : blue
+    node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Helvetica",
+          fontsize=11, margin="0.18,0.08", height=0.4];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    Goal    [label="Question, data", fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+    Plan    [label="Plan", fillcolor="#F6C6C6", color="#D98C8C", fontcolor="#6B2A2A"];
+    Code    [label="Write code", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    Run     [label="Run in sandbox", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    Observe [label="Read output", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    Report  [label="Notebook", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+
+    { rank=same; Plan; Code; }
+    { rank=same; Observe; Run; }
+    Goal -> Plan;
+    Plan -> Code;
+    Code -> Run;
+    Run -> Observe;
+    Observe -> Plan [label="  next look  "];
+    Observe -> Report [label="  done  "];
+}
+```
+::::
+:::
+
+* Agents as Hypothesis Generators
+// From: msml610/lectures_source/Lesson12.2-Causal_Discovery.smd:290 '* Discovery as Hypothesis Generation'
+// From: book_Modern_AI_for_Finance/paper_list.md:234 '### [ ] 2025, Li et al., "R&D-Agent-Quant: A Multi-Agent Framework for'
+// From: book_Modern_AI_for_Finance/paper_list.md:223 '### [ ] 2026, Lin et al., "FactorEngine: A Program-level Knowledge-Infused'
+
+// TODO(gp): Check the three examples: they are illustrations, not taken from a
+// source
+- @Applications@: what an agent proposes from a price panel
+  - _Hypotheses_: e.g., the momentum signal decays faster for small stocks
+  - _Features_: e.g., rolling volatility, volume shocks, distance to the
+    52-week high
+  - _Candidate signals_: factor programs with code and a backtest
+
+- @Example@: **RD-Agent(Q)** (Li et al., 2025) automates quant research and
+  development
+  - A research stage forms hypotheses, a development stage writes and
+    backtests code, and a feedback stage links the two
+  - It reports up to 2x higher annualized returns than classical factor
+    libraries, with 70% fewer factors
+
+- @Example@: **FactorEngine** (Lin et al., 2026) mines factors as programs, and
+  separates LLM-guided search over logic from Bayesian search over parameters
+
+- @Key idea@: use an agent as a hypothesis generator, not as a truth finder
+  - Every proposal is a trial and enters the look count
+  - Decisions need a holdout and a human
+
+* Chart Selection: Semantics vs. Code That Runs
+// From: research/agentic_data_science/sota_eda.md:821 '### Common failure modes observed in benchmarks and deployments'
+// From: msml610/lectures_source/Lesson10.1-Timeseries_forecasting.smd:47 '* Time Series: Visualization and Exploration'
+
+- @Problem@: a chart that renders is not a chart that answers the question
+  - E.g., on VisEval, **LIDA** code runs 95%+ of the time, but recalls only
+    43-52% of the right EDA operations (Helali et al., 2025)
+
+// TODO(gp): Check the table: the pairs are illustrations, not taken from a
+// source
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Question", "Chart that runs", "Chart that answers"),
+  rows: (
+    ("Are two stocks related?", "Correlation of prices", "Correlation of returns"),
+    ("Is the strategy profitable?", "Cumulative return on today's survivors", "Cumulative net return on the point-in-time universe"),
+    ("Is volatility clustered?", "Histogram of returns", "ACF of absolute returns"),
+    ("Did the signal decay?", "Full-sample scatter of signal and return", "Rolling IC by year"),
+    ("Are returns heavy-tailed?", "Histogram on a linear scale", "Log density or QQ plot against a Gaussian"),
+  ),
+  col-widths: (1fr, 1.2fr, 1.5fr),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Key idea@: check chart semantics with rules (returns, time order,
+  point-in-time universe), not with the absence of errors
+
+* Where Agents Fail
+// From: research/agentic_data_science/sota_eda.md:821 '### Common failure modes observed in benchmarks and deployments'
+// From: research/agentic_data_science/agentic_data_science.report.md:121 '# 7. Where Agents Still Fail'
+// From: research/ideas/draft.Benchmarking_Data_Science_Agents.md:40 '### Benchmark Landscape'
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Benchmark", "Tasks", "Best reported result"),
+  rows: (
+    ("DSBench (2025)", "466 data analysis and 74 data modeling tasks", "34.12% of the analysis tasks solved"),
+    ("DA-Code (2024)", "Agentic data science tasks that need code", "30.5% accuracy"),
+    ("DABstep (2025)", "450+ multi-step tasks from the payments platform Adyen", "14.55% on the hard tasks"),
+  ),
+  col-widths: (0.8fr, 1.8fr, 1.4fr),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+// TODO(gp): Check the strong and weak steps: they come from the unverified
+// report agentic_data_science.report.md
+- @Comparison@:
+  - _Strong steps_: summary statistics, plots, feature code, and iteration on
+    errors
+  - _Weak steps_: problem framing, causal reasoning, metric choice, and
+    leakage detection
+
+- @Key idea@: an agent is a fast junior analyst, productive on well-posed
+  steps and unreliable on judgment
+
+- @Remark@: agent architecture, benchmarks, and verification are covered in
+  detail in Lesson 11.01
+
+# Reproducible EDA Reports
+
+* Generated EDA Notebooks
+// From: research/agentic_data_science/agentic_eda.notes.md:3 '## Goals'
+// From: research/agentic_data_science/sota_eda.md:865 '### Reproducibility, safety, and evaluation recommendations'
+// From: research/ideas/in_progress.Comparison_of_Data_Science_Agents.md:126 '## Implementation plan'
+// From: book_springer/lectures_source/Lesson15.1_Deployment_Monitoring_And_Adaptation.smd:69 '* From Notebook to Production: The Gap'
+
+- @Goal@: the output of an EDA agent is a notebook that runs without the agent
+  - A chat transcript cannot be rerun, reviewed, or compared
+
+- @Components@: what makes a generated report reproducible
+  - _Code_: every number and chart comes from a cell, not from model text
+  - _Data_: dataset version or hash, and the as-of date of the snapshot
+  - _Environment_: package versions and random seeds
+  - _Provenance_: prompts, tool calls, and the look log
+
+- @Techniques@: test the report like code
+  - Rerun from scratch and compare the outputs
+  - Rerun on a new data snapshot, and check that the data checks still pass
+  - Link every claim in the text to the cell that computes it
+
+- @Key idea@: a number in the report that no cell computes was invented by the
+  agent
+
+* Human Review Gates
+// From: research/agentic_data_science/agentic_eda.notes.md:33 '### 3. Propose EDA Plan'
+// From: research/agentic_data_science/AutoEDA_Plan.md:213 '### Issue 3.6: User Interaction System for EDA Approval'
+// From: book_Agentic_AI/lectures_source/Lesson01.1-What_Is_An_Agentic_AI.smd:176 '* Human-in-the-Loop vs. Full Autonomy'
+// From: research/agentic_data_science/agentic_data_science.report.md:195 '# 12. Key Insight: the Role of Humans Will Change'
+
+- @Problem@: an agent can run a whole EDA without asking, and nobody checks the
+  plan or the claims
+
+- @Solution@: put a gate where judgment matters
+  1. _Plan_: approve the questions, the data, and the time splits before any
+     code runs
+  2. _Data checks_: review failed checks before signal exploration starts
+  3. _Hypotheses_: approve which hypotheses reach the holdout, with the look
+     count
+  4. _Report_: sign off on claims, charts, and caveats
+
+- @Techniques@: a reviewer checklist
+  - Do all data checks pass, and is the holdout untouched?
+  - How many looks produced the final hypotheses?
+  - Does every chart answer its question?
+
+- @Key idea@: agents explore and build, humans frame and decide
+
+* An Auto EDA Protocol
+// From: book_Modern_AI_for_Finance/lectures_source/Lesson02.01_Strategy_Backtesting.smd:858 '* A Backtest Protocol'
+
+- @Techniques@:
+  1. Freeze the time splits: explore, validate, and holdout
+  2. Profile the panel: schema, coverage by asset and date, gaps by cause
+  3. Run the finance checks: knowledge times, exits and delisting returns,
+     stale prices, corporate actions
+  4. Run the stylized-facts suite per asset and flag outlying assets
+  5. Test stationarity and breaks, and summarize by regime
+  6. Explore hypotheses on the explore period only, and log every look
+  7. Validate the surviving hypotheses, with a bar that rises with the looks
+  8. Generate a notebook that reruns without the agent, and pass the human
+     gates
+
+- @Key idea@: steps 1-5 are safe to automate fully, steps 6-7 need a look
+  count, and step 8 needs a human
+
+* Summary
+
+- @Key idea@: EDA in finance has two jobs: checking the data, which should be
+  fully automated, and searching for signals, which must count every look
+
+- @Components@: automated checks
+  - Profile the panel structure: coverage by asset and date, gaps by cause
+  - Detect look-ahead, survivorship, stale prices, and corporate action breaks
+    with explicit tests
+  - Split by time first, test for stationarity and breaks, and summarize by
+    regime
+  - Use stylized facts as unit tests of the returns
+
+- @Components@: automation and snooping
+  - Profilers, AutoML, and agents widen the search, so they multiply the
+    trials
+  - Agents write code that runs, but can choose the wrong chart and miss
+    leakage
+  - Reports must rerun without the agent, log every look, and pass human
+    review
+
+* References
+
+- **Tukey**: _"Exploratory Data Analysis"_ (1977)
+- **Rubin**: _"Inference and Missing Data"_, Biometrika (1976)
+- **Cont**: _"Empirical Properties of Asset Returns: Stylized Facts and
+  Statistical Issues"_, Quantitative Finance (2001)
+- **Lo and MacKinlay**: _"An Econometric Analysis of Nonsynchronous Trading"_,
+  Journal of Econometrics (1990)
+- **Shumway**: _"The Delisting Bias in CRSP Data"_, Journal of Finance (1997)
+- **Kaufman, Rosset, Perlich, and Stitelman**: _"Leakage in Data Mining:
+  Formulation, Detection, and Avoidance"_, ACM TKDD (2012)
+- **Ploberger and Kramer**: _"The CUSUM Test with OLS Residuals"_,
+  Econometrica (1992)
+- **Inclan and Tiao**: _"Use of Cumulative Sums of Squares for Retrospective
+  Detection of Changes of Variance"_, JASA (1994)
+- **Hamilton**: _"A New Approach to the Economic Analysis of Nonstationary
+  Time Series and the Business Cycle"_, Econometrica (1989)
+- **Simmons, Nelson, and Simonsohn**: _"False-Positive Psychology"_,
+  Psychological Science (2011)
+- **Gelman and Loken**: _"The Statistical Crisis in Science"_, American
+  Scientist (2014)
+- **Lopez de Prado**: _"Advances in Financial Machine Learning"_ (2018)
+- **Dibia**: _"LIDA"_, ACL System Demonstrations (2023)
+- **Hong et al.**: _"Data Interpreter: An LLM Agent for Data Science"_,
+  Findings of ACL (2025)
+- **Nam et al.**: _"DS-STAR: Data Science Agent ..."_, TMLR (2026)
+- **Helali et al.**: _"Reliable and Cost-Effective Exploratory Data Analysis
+  via Graph-Guided RAG"_, EMNLP (2025)
+- **Jing et al.**: _"DSBench"_, ICLR (2025)
+- **Huang et al.**: _"DA-Code"_, EMNLP (2024)
+- **Egg et al.**: _"DABstep"_, arXiv (2025)
+- **Li et al.**: _"R&D-Agent-Quant"_, NeurIPS Datasets and Benchmarks
+  (2025)
+- **Lin et al.**: _"FactorEngine"_, arXiv (2026)

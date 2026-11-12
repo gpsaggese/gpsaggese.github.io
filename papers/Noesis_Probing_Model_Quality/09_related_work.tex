@@ -1,0 +1,42 @@
+% ##############################################################################
+\section{Related work}
+\label{sec:related_work}
+
+\paragraph{Auditing which model an API serves.} Gao, Liang, and Guestrin
+\cite{gao2025equality} cast the question of whether an endpoint serves the
+claimed model as a two-sample test between the endpoint's output distribution
+and that of reference weights. They report that a test based on a maximum mean
+discrepancy with a string kernel has substantial power with about ten samples
+per prompt, and that in an audit of commercial endpoints for four Llama models
+a number of endpoints produced distributions that differed from the reference.
+Cai et al.\ \cite{cai2025substitution} study model substitution in LLM APIs,
+argue that software-only statistical checks need many queries and can miss
+subtle substitutions, and propose hardware-based attestation. The canary
+approach in this paper tests a different property. It checks a known-answer
+functional property, so a probe needs no reference weights and no distribution
+sample, and its grade is interpretable per query. In exchange, it detects a
+substitution only to the extent that the substitute errs on the tested tasks,
+and it does not test equality of distributions. The two approaches are
+complementary rather than competing.
+
+\paragraph{Behavioral drift.} Chen, Zaharia, and Zou \cite{chen2023drift} report
+that the behavior of two widely used chat models changed between versions on
+tasks such as prime-number identification and code generation, which motivates
+continuous measurement of a named model. Known-answer probes of the kind
+described here are a simple form of such measurement, with the difference that
+the platform repeats them per contract and uses them in a verdict.
+
+\paragraph{Alternative measurers.} A model-based judge is a common way to grade
+open-ended responses \cite{zheng2023judging}. The prototype uses exact-match
+grading, which avoids the variance and bias of a judge but restricts canaries to
+questions with one canonical answer. The \texttt{CapabilityMeasurer} interface
+(Section~\ref{sec:measurer}) is where a judge could be introduced.
+
+\paragraph{Terminology.} ``Canary'' also names synthetic sequences inserted into
+training data to measure memorization \cite{carlini2019secret}. The probes here
+are unrelated to training data. They are test inputs sent at serving time.
+
+\paragraph{Statistics.} The verdict rule uses standard binomial confidence
+bounds \cite{wilson1927,clopper1934}, selected according to the comparison of
+Brown, Cai, and DasGupta \cite{brown2001}, and keyed hashing for unpredictable
+selection and timing \cite{rfc2104}.

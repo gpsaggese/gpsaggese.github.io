@@ -60,7 +60,7 @@ No additional setup is required beyond the steps below.
 ## Dependency Management
 
 - For more information on the Docker build system refer to
-  [Project template readme](/class_project/project_template/README.md)
+  [Project template readme](/class_project/project_template/docker_scripts.README.md)
 
 ## Tutorial Notebooks
 

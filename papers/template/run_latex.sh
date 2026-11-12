@@ -1,1 +1,0 @@
-../../helpers_root/dev_scripts_helpers/documentation/run_latex.sh

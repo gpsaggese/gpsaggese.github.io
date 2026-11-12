@@ -968,7 +968,7 @@ MSML610: Advanced Machine Learning \endgroup
 \begin{itemize}
 \tightlist
 \item
-  \href{https://github.com/gpsaggese/umd_classes/blob/master/msml610/tutorials/notebooks/Lesson07.03_Hierarchical_Models.ipynb}{\textcolor{blue}{\underline{Hierarchical Models}}}
+  \href{https://github.com/gpsaggese/gpsaggese.github.io/blob/master/msml610/tutorials/notebooks/Lesson07.03_Hierarchical_Models.ipynb}{\textcolor{blue}{\underline{Hierarchical Models}}}
 \end{itemize}
 \end{frame}
 

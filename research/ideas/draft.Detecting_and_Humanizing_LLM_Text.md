@@ -1,9 +1,8 @@
 # Detecting LLM-Generated Text and Humanizing It
 
 ## Status
-- **Status**: draft
-- **Complete Specs**: 10%
-- **Assignee**: TBD
+- **Status:**: draft
+- **Complete Specs:**: 10%
 
 ## Core Idea
 - Train a classifier (e.g., a fine-tuned encoder, or a small NN on top of
@@ -21,10 +20,12 @@
   side has a concrete starting baseline
 
 ## Formalization
-- Detector `d_θ(x) -> P(LLM)`, humanizer `g_φ: x -> x'` with a semantic
-  constraint `sim(g_φ(x), x) >= τ`
-- Adversarial objective: `g_φ` minimizes `d_θ(g_φ(x))` subject to the semantic
-  constraint; `d_θ` is retrained on `{human} ∪ {LLM} ∪ {g_φ(LLM)}`
+- Detector $d_\theta(x) \to P(\text{LLM})$, humanizer $g_\phi: x \to x'$ with a
+  semantic constraint $\text{sim}(g_\phi(x), x) \ge \tau$
+- Adversarial objective:
+  - $g_\phi$ minimizes $d_\theta(g_\phi(x))$ subject to the semantic constraint
+  - $d_\theta$ is retrained on
+    $\{\text{human}\} \cup \{\text{LLM}\} \cup \{g_\phi(\text{LLM})\}$
 - Report detector AUC at a fixed false-positive rate (false accusations are the
   costly error), not raw accuracy
 
@@ -36,8 +37,8 @@
 - **Failure mode**: the detector is really a topic/formatting classifier (em
   dashes, bullet lists, "delve") and collapses once those surface cues are
   stripped by the humanizer
-- **Failure mode**: humanizing degrades content — the text passes as human but
-  loses facts or coherence, so semantic fidelity must be scored, not assumed
+- **Failure mode**: humanizing degrades content (the text passes as human but
+  loses facts or coherence), so semantic fidelity must be scored, not assumed
 
 ## Questions
 1. Does detection accuracy survive an adaptive adversary, or is any fixed
@@ -48,11 +49,11 @@
    the known fairness failure of existing detectors?
 
 ## Research Topics
-- Zero-shot detection baselines (DetectGPT-style curvature, log-likelihood +
-  entropy features) vs. supervised fine-tuned detectors
-- Watermarking as an alternative to post-hoc detection, and its robustness to
-  paraphrase
-- Style transfer with semantic constraints, connecting to
+- **Zero-shot vs supervised detection**: DetectGPT-style curvature and
+  log-likelihood/entropy features vs. supervised fine-tuned detectors
+- **Watermarking**: an alternative to post-hoc detection, and its robustness
+  to paraphrase
+- **Style transfer with semantic constraints**: connects to
   [[draft.Compression_as_Proxy_for_Understanding]] for the fidelity metric
 
 ## Next steps
@@ -60,6 +61,51 @@
 - [ ] Assemble a paired human/LLM corpus with topic and length controlled
 - [ ] Train a baseline detector and report AUC at a fixed false-positive rate
 - [ ] Add the humanizer loop and measure the adversarial equilibrium
+
+## Implementation plan
+
+- Milestone 1: build the paired human/LLM corpus
+  - Collect human text on a fixed set of prompts (e.g. student essays or
+    articles), controlling topic and length per prompt
+  - Generate matched completions on the same prompts from 2-3 model families
+    (e.g. Claude, GPT, Llama) to enable cross-family testing later
+  - Split into train/val/test, tagging each example with topic, length, and
+    model family
+  - This is the result: a labeled paired corpus ready for detector training
+    and transfer evaluation
+
+- Milestone 2: train and evaluate baseline detectors $d_\theta$
+  - Implement a zero-shot detector using DetectGPT-style curvature and
+    log-likelihood/entropy features (no training needed)
+  - Implement a supervised detector: a fine-tuned encoder classifier trained
+    on the Milestone 1 corpus
+  - Evaluate both in-domain and cross-family (train on one model family, test
+    on another), reporting AUC at a fixed false-positive rate
+  - This is the result: an AUC-at-fixed-FPR table comparing zero-shot vs
+    supervised detection, in-domain and cross-family
+
+- Milestone 3: build the humanizer $g_\phi$ and close the adversarial loop
+  - Start from `.claude/skills/blog.humanize` as the prompting-based baseline
+    humanizer
+  - Define the semantic constraint $\text{sim}(g_\phi(x), x) \ge \tau$ with an
+    embedding similarity metric, and score content fidelity (fact
+    preservation) separately
+  - Retrain $d_\theta$ on
+    $\{\text{human}\} \cup \{\text{LLM}\} \cup \{g_\phi(\text{LLM})\}$,
+    alternating detector retraining and humanizer refinement for several
+    rounds
+  - This is the result: an AUC-at-fixed-FPR curve across adversarial rounds,
+    with fidelity scores per round, showing whether detection holds an edge or
+    converges to chance
+
+- Milestone 4: check fairness and generalization
+  - Measure the final detector's false-positive rate on non-native-English
+    human writing samples
+  - Hold out one model family from detector training to test whether the
+    signal is a model-specific fingerprint or a general "machine register"
+  - This is the result: a fairness report (false-positive rate by writer
+    population) and a cross-family transfer table, answering the Questions
+    section's three open points
 
 ## References
 - Mitchell, E., et al., _DetectGPT: Zero-Shot Machine-Generated Text Detection

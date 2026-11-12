@@ -1,0 +1,1090 @@
+// type=UMD_slides
+// course_title=Modern AI for Finance
+// lesson_title=Lesson 02.01: Strategy Backtesting
+// slides_engine=typst
+
+* Roadmap
+
+- This lesson covers **backtest mechanics**: how to turn a signal into
+  positions, fills, costs, and PnL, and how look-ahead and survivorship bias
+  leak the future into the past
+  - It reuses the momentum strategy and the cost vocabulary of Lesson 01.01
+
+- It then covers **backtest discipline**: why many trials on one history make
+  luck look like skill, and how multiple-testing corrections, purged
+  cross-validation, and the deflated Sharpe ratio correct for it
+
+- It closes with **causal vs. predictive** reasoning: why a factor that
+  predicts in-sample can be spurious, and how confounders and colliders create
+  factors that fail out of sample
+
+# Backtest Mechanics
+
+## Motivation
+
+* What a Backtest Is and Is Not
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1826 '* Purpose of backtesting'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1819 '* Backtest is not a research tool'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:261 '* Backtesting'
+// From: //notes1/notes/IN_PROGRESS.finance.Machine_learning_for_asset_managers.de_Prado.2020.md:92 '* You need a theory'
+
+- @Definition@: a **backtest** is a historical simulation of how a fully
+  specified strategy would have performed over a past period
+
+- @Applications@:
+  - Verify that the implementation matches the idea
+  - Sanity-check bet sizing, turnover, and resilience to costs
+  - Discard strategies that fail even on the data that inspired them
+
+- @Key idea@: a backtest can show that a strategy is a false positive, but it
+  cannot prove that a strategy is a true positive
+  - Only a theory of why the edge exists can do that
+
+- @Remark@: the observed history is one path of a stochastic process, and it
+  is not necessarily likely to repeat
+
+- @Remark@: a backtest is not a research tool
+  - Do not research under the influence of a backtest
+
+* Running Example: Backtesting Momentum
+// From: book_Modern_AI_for_Finance/lectures_source/Lesson01.01_Why_Finance_Is_Different.smd:60 '* Running Example: A Momentum Strategy'
+// From: //notes1/notes/IN_PROGRESS.finance.Algorithmic_trading.Chan.2013.txt:148 '* Common pitfalls of backtesting'
+
+- @Example@: the cross-sectional momentum book
+  - Rank stocks on the return from month $t-12$ to $t-1$
+  - Buy the top decile, sell the bottom decile, hold for one month
+
+- @Problem@: every stage of the pipeline can inflate the backtest
+  - _Data_: survivorship bias, revised values
+  - _Signal_: look-ahead bias
+  - _Fills and costs_: prices that were not tradable, costs that were not paid
+  - _Statistics_: the best of many trials, reported as if it were the only
+    one
+
+```graphviz
+digraph Backtest {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.3;
+    ranksep=0.3;
+    rankdir=LR;
+    // input : orange | process : teal | output : blue
+    node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Helvetica",
+          fontsize=11, margin="0.18,0.08", height=0.36];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    Data   [label="Point-in-time data", fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+    Signal [label="Signal", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    Pos    [label="Target positions", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    Fills  [label="Fills and costs", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    PnL    [label="Net PnL", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+    Stats  [label="Statistics", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+
+    Data -> Signal -> Pos -> Fills -> PnL -> Stats;
+}
+```
+
+## Simulating a Strategy
+
+* From Signals to Positions
+// From: //notes1/notes/IN_PROGRESS.finance.Algorithmic_trading.Chan.2013.txt:110 '* Backtesting: definition'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1958 '* Walk-forward method'
+
+- @Definition@: a backtest maps a **signal** $s_{i,t}$ for asset $i$ to a
+  **target weight** $w_{i,t}$, then charges the return that follows
+  $$
+  PnL_{t+1}
+    \triangleq \sum_i w_{i,t} \, r_{i,t+1}
+      - c \sum_i |w_{i,t} - w_{i,t-1}|
+  $$
+  - $c$ is the cost per unit traded, and $\sum_i |w_{i,t} - w_{i,t-1}|$ is
+    the turnover
+
+- @Assumptions@: $w_{i,t}$ uses only the information available at the
+  decision time $t$
+  - The return $r_{i,t+1}$ comes strictly after the decision
+
+- @Example@: the momentum book at the end of month $t$
+  - $s_{i,t}$ is the 12-1 month return, and the weights are $\pm 1/n$ on the
+    top and bottom deciles
+  - The book is dollar neutral: $\sum_i w_{i,t} = 0$, with gross exposure
+    $\sum_i |w_{i,t}| = 2$
+
+- @Key idea@: one wrong time index, such as $r_{i,t}$ instead of
+  $r_{i,t+1}$, turns a backtest into a forecast of the past
+
+* Fills and Execution Assumptions
+// From: //notes1/notes/IN_PROGRESS.finance.Algorithmic_trading.Chan.2013.txt:124 '* Profitability of strategy depends on details of implementation'
+// From: //notes1/notes/IN_PROGRESS.finance.Algorithmic_trading.Chan.2013.txt:316 '* Primary vs consolidated stock prices'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1863 '* Transaction cost effects'
+
+- @Problem@: the PnL depends on details of execution that a simple backtest
+  ignores
+  - Market-on-open order or market order just after the open?
+  - Stock close at 4:00 pm or futures close at 4:15 pm?
+  - Trigger on the last trade price or on the bid and ask?
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Fill model", "Assumption", "Typical error"),
+  rows: (
+    ("Signal-bar price", "Trade at the price that produced the signal", "Look-ahead and bid-ask bounce"),
+    ("Next-bar price", "Trade one bar after the signal", "Ignores the spread"),
+    ("Mid plus half spread", "Pay half the spread to cross", "Ignores impact of large orders"),
+    ("Impact model", "Cost grows with participation rate", "Needs calibration on own fills"),
+    ("Limit order with queue", "Fill only when the price trades through", "Optimistic if the queue is ignored"),
+  ),
+  col-widths: (1fr, 1.5fr, 1.3fr),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Remark@: consolidated open and close prices, highs, and lows may come from
+  venues where the order could not have executed
+
+* Costs Inside the Backtest
+// From: //notes1/notes/IN_PROGRESS.finance.Quantitative_trading.Chan.2009.txt:333 '* Backtest needs to incorporate costs'
+// From: book_Modern_AI_for_Finance/lectures_source/Lesson01.01_Why_Finance_Is_Different.smd:554 '* Transaction Costs'
+
+::: columns
+:::: {.column width=55%}
+- @Fact@: net return is gross return minus turnover times cost per unit
+  traded, so the **breakeven cost** is
+  $$
+  c^* \triangleq \frac{\mu_{gross}}{turnover}
+  $$
+
+- @Example@: an 8% gross edge breaks even at
+  - 67 bps when rebalanced monthly (12x)
+  - 15 bps weekly (52x), 3 bps daily (252x)
+
+- @Key idea@: a high Sharpe ratio before costs can turn negative after costs,
+  so faster strategies need more precise cost models
+::::
+:::: {.column width=45%}
+
+![](book_Modern_AI_for_Finance/lectures_source/figures/L02.01.Cost_Sensitivity.png)
+
+\footnotesize _Net Sharpe ratio against cost per unit traded for the same gross
+edge at three rebalancing frequencies_
+::::
+:::
+
+* Vectorized vs. Event-Driven Backtesters
+// From: //notes1/notes/IN_PROGRESS.finance.Algorithmic_trading.Chan.2013.txt:626 '* Backtesting vs execution platforms'
+// From: //notes1/notes/IN_PROGRESS.finance.Algorithmic_trading.Chan.2013.txt:135 '* Backtesting and automated execution'
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Aspect", "Vectorized", "Event-driven"),
+  rows: (
+    ("Core idea", "Array operations on the full panel of data", "Loop over bars, quotes, and fills in time order"),
+    ("Speed", "Fast: sweeps over many variants", "Slower: one pass per simulation"),
+    ("Look-ahead risk", "High: one wrong shift leaks the future", "Low: only past events are visible"),
+    ("Orders and fills", "Approximated by a fill price", "Modeled: queues, partial fills, latency"),
+    ("Live trading", "Separate code to maintain", "Same code switches to live trading"),
+  ),
+  col-widths: (0.9fr, 1.4fr, 1.4fr),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Key idea@: screen ideas with a vectorized backtester, and validate the
+  survivors with an event-driven one
+
+- @Remark@: the backtester should become the execution system by flipping a
+  switch
+  - One code path avoids, or at least detects, look-ahead bias
+  - It removes the drift between the backtested and the traded strategy
+
+* Backtest Statistics to Report
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:2108 '* Time range'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:2147 '* Annualized turnover'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:2150 '* Correlation to underlying'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:2217 '* Return on execution costs'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:2272 '* Sharpe Ratio as function of hit ratio'
+
+- @Problem@: a single return number hides how the PnL was produced
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Group", "Statistics", "What it reveals"),
+  rows: (
+    ("General", "Time range, leverage, capacity, ratio of longs", "Regimes covered, borrowing, scalability, hidden bias"),
+    ("Bets", "Frequency of bets, holding period, turnover", "Number of independent bets and cost exposure"),
+    ("Exposure", "Correlation to the underlying universe", "Beta sold as alpha"),
+    ("Performance", "PnL by long and short side, hit ratio", "Which side and which trades earn the PnL"),
+    ("Risk", "Maximum drawdown, time under water", "Pain an investor must tolerate"),
+    ("Costs", "Return on execution costs", "Margin of safety against worse execution"),
+  ),
+  col-widths: (0.8fr, 1.5fr, 1.5fr),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Example@: a strategy with $n$ independent bets per year and hit ratio $p$
+  on symmetric payoffs has
+  $SR = \frac{2p - 1}{2 \sqrt{p (1 - p)}} \sqrt{n}$
+  - $p = 52\%$ with $n = 252$ bets gives $SR \approx 0.64$
+
+## Look-Ahead Bias
+
+* Look-Ahead Bias
+// From: //notes1/notes/IN_PROGRESS.finance.Algorithmic_trading.Chan.2013.txt:172 '* Look-ahead bias'
+// From: //notes1/notes/IN_PROGRESS.finance.Quantitative_trading.Chan.2009.txt:287 '* Look-ahead bias'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1845 '* Look-ahead bias'
+
+::: columns
+:::: {.column width=55%}
+- @Definition@: **look-ahead bias** is the use of information that was not
+  available at the time of the simulated decision
+
+- @Example@: _"buy within 1% of the day's low"_ uses a low known only at the
+  close
+
+- @Example@: a trend rule on a random walk
+  - Trading the next day gives $SR = 0.0$
+  - Earning the signal day's return gives $SR = 5.2$
+
+- @Key idea@: a daily $SR > 3$ is a bug until proven otherwise
+::::
+:::: {.column width=45%}
+
+![](book_Modern_AI_for_Finance/lectures_source/figures/L02.01.Look_Ahead_Bias.png)
+
+\footnotesize _Cumulative PnL of a moving-average rule on a random walk, traded
+the next day (blue) and on the signal day (red)_
+::::
+:::
+
+* Subtle Sources of Leakage
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1845 '* Look-ahead bias'
+// From: msml610/lectures_source/Lesson02.6-ML_Techniques_How_To_Do_Research.smd:125 '* Data Snooping (2/2)'
+
+- @Problem@: most look-ahead bugs do not look like a shifted index
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Source", "Example", "Fix"),
+  rows: (
+    ("Release dates", "Earnings dated by fiscal quarter end, released weeks later", "Use the time the data became public"),
+    ("Revisions", "Database stores restated fundamentals or revised GDP", "Use values as first reported"),
+    ("Backfill", "Vendor adds history when a fund or stock enters coverage", "Use data as of its collection date"),
+    ("Universe", "Today's index constituents used for the past", "Use historical membership"),
+    ("Preprocessing", "Z-score features with the full-sample mean and variance", "Fit transforms on the training window only"),
+    ("Model selection", "Hyperparameters tuned on all the data", "Select inside each training window"),
+  ),
+  col-widths: (0.8fr, 1.7fr, 1.4fr),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Key idea@: every input needs a knowledge timestamp, and the backtest must
+  check it against the decision time
+
+- @Remark@: point-in-time data engineering is covered in detail in Lesson
+  04.01
+
+## Survivorship Bias
+
+* Survivorship Bias
+// From: //notes1/notes/IN_PROGRESS.finance.Algorithmic_trading.Chan.2013.txt:266 '* Survivorship bias: example'
+// From: //notes1/notes/IN_PROGRESS.finance.Algorithmic_trading.Chan.2013.txt:288 '* Survivorship bias for mean-reverting strategy'
+// From: //notes1/notes/IN_PROGRESS.finance.Algorithmic_trading.Chan.2013.txt:306 '* Survivorship bias for momentum strategy'
+// From: //notes1/notes/IN_PROGRESS.finance.Quantitative_trading.Chan.2009.txt:130 '* Does data suffer from survivorship bias?'
+
+::: columns
+:::: {.column width=55%}
+- @Definition@: **survivorship bias** occurs when the data omit assets that
+  went bankrupt, merged, or delisted
+
+- @Example@: buy last month's worst stocks
+  - A survivor-only database keeps only the losers that recovered
+  - 4.1% per year on all stocks, 11.8% on survivors
+
+- @Characteristics@: the sign depends on the strategy
+  - _Long losers_: inflated
+  - _Short losers_: deflated
+::::
+:::: {.column width=45%}
+
+![](book_Modern_AI_for_Finance/lectures_source/figures/L02.01.Survivorship_Bias.png)
+
+\footnotesize _Buy-the-losers strategy on a simulated universe in which 108 of
+500 stocks delist_
+::::
+:::
+
+* Other Backtest Pitfalls
+// From: //notes1/notes/IN_PROGRESS.finance.Algorithmic_trading.Chan.2013.txt:363 '* Hard-to-borrow stocks'
+// From: //notes1/notes/IN_PROGRESS.finance.Algorithmic_trading.Chan.2013.txt:371 '* Short-sale constraints'
+// From: //notes1/notes/IN_PROGRESS.finance.Algorithmic_trading.Chan.2013.txt:426 '* Continuous contract data'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1856 '* Storytelling'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1868 '* Betting on outliers'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1879 '* Other common errors in backtesting'
+// From: //notes1/notes/IN_PROGRESS.finance.Quantitative_trading.Chan.2009.txt:147 '* How did the performance of the strategy change over the years?'
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Pitfall", "What goes wrong"),
+  rows: (
+    ("Short-sale constraints", "Hard-to-borrow stocks, uptick rules, and short bans (e.g., 2008) block simulated shorts"),
+    ("Financing", "Borrowing costs, margin calls, and stop-losses are left out"),
+    ("Futures rolls", "Back-adjusted continuous contracts create prices that never traded"),
+    ("Betting on outliers", "A few extreme events produce most of the PnL"),
+    ("Storytelling", "A story is invented after the fact to explain a random pattern"),
+    ("Unrepresentative period", "The sample covers one regime, or an older era with wider spreads"),
+  ),
+  col-widths: (1fr, 2.6fr),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Remark@: storytelling is also called HARKing (hypothesizing after the
+  results are known)
+
+- @Key idea@: each pitfall makes the simulated world friendlier than the market
+
+## Why AI
+
+* Automating Backtest Correctness
+// From: //notes1/notes/IN_PROGRESS.finance.Quantitative_trading.Chan.2009.txt:484 '* Testing by paper trading'
+// From: //notes1/notes/IN_PROGRESS.finance.Quantitative_trading.Chan.2009.txt:501 '* Why does actual performance diverge from expectation'
+
+- @Problem@: unrealistic fills and leaked data are software bugs, not
+  statistical noise
+  - They inflate the backtest silently, and no statistic flags them
+
+- @Solution@: treat the backtester as tested production code
+  - _Event-driven engine_: one code path for the backtest and live trading
+  - _Unit-tested fill and cost models_: known orders produce known fills and
+    known costs
+  - _As-of assertions_: every data access checks its knowledge time against
+    the decision time
+  - _Generated tests_: perturb data after time $t$ and assert that positions
+    up to $t$ do not change
+
+- @Applications@: coding assistants generate as-of tests, perturbation tests,
+  and fill-model tests from a written specification of the strategy
+
+- @Remark@: paper trading is the final check
+  - The gap between paper and backtest PnL should come only from costs
+
+# Backtest Discipline
+
+## Overfitting and Data Snooping
+
+* Two Types of Overfitting
+// From: //notes1/notes/IN_PROGRESS.finance.Machine_learning_for_asset_managers.de_Prado.2020.md:171 '* Effect of Overfitting'
+// From: //notes1/notes/IN_PROGRESS.finance.Machine_learning_for_asset_managers.de_Prado.2020.md:176 '* Train set overfitting'
+// From: //notes1/notes/IN_PROGRESS.finance.Machine_learning_for_asset_managers.de_Prado.2020.md:190 '* Test set overfitting'
+// From: //notes1/notes/IN_PROGRESS.finance.Machine_learning_for_asset_managers.de_Prado.2020.md:198 '* Test set overfitting: possible solutions'
+// From: msml610/lectures_source/Lesson02.6-ML_Techniques_How_To_Do_Research.smd:137 '* "Burning the Test Set"'
+
+- @Comparison@:
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("", "Train-set overfitting", "Test-set overfitting"),
+  rows: (
+    ("Cause", "A model flexible enough to fit signal and noise", "Many tests on the same test data"),
+    ("Finance form", "Too many parameters for few independent bets", "Backtest, tweak, backtest again"),
+    ("Symptom", "In-sample fit far above out-of-sample fit", "A selected backtest far above its live result"),
+    ("Remedies", "Cross-validation, regularization, ensembles", "Count trials, use many test sets, simulate data"),
+  ),
+  col-widths: (0.7fr, 1.5fr, 1.5fr),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Key idea@: standard ML practice guards against train-set overfitting, but
+  backtest research mostly suffers from test-set overfitting
+
+// TODO(gp): Check the source and year of the Coase quote: the msml610 slide
+// cites it as (Coase, 1982) without a reference
+- @Remark@: _"If you torture the data long enough, it will confess whatever
+  you want"_ (Coase)
+
+* Backtest Overfitting
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1912 '* Backtest overfitting'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1909 '* Selection bias'
+// From: //notes1/notes/IN_PROGRESS.finance.Algorithmic_trading.Chan.2013.txt:186 '* Research haircut'
+// From: //notes1/notes/IN_PROGRESS.finance.Algorithmic_trading.Chan.2013.txt:190 '* Data-snooping bias'
+
+::: columns
+:::: {.column width=55%}
+- @Definition@: **backtest overfitting** selects a strategy that monetizes
+  random historical patterns, which are unlikely to recur
+
+- @Example@: 200 strategies with no skill, 2 years in-sample and 2 years
+  out-of-sample
+  - The best in-sample Sharpe ratio is 2.14
+  - Its out-of-sample Sharpe ratio is 0.04
+
+- @Definition@: **selection bias** reports only the backtests that look like
+  winners
+
+- @Fact@: a research haircut of 50% on the Sharpe ratio from in-sample to
+  out-of-sample is considered a good result
+::::
+:::: {.column width=45%}
+
+![](book_Modern_AI_for_Finance/lectures_source/figures/L02.01.IS_vs_OOS_Sharpe.png)
+
+\footnotesize _In-sample against out-of-sample Sharpe ratio of 200 zero-skill
+strategies, with the in-sample winner in red_
+::::
+:::
+
+* The False Strategy Theorem
+// From: //notes1/notes/IN_PROGRESS.finance.Machine_learning_for_asset_managers.de_Prado.2020.md:700 '# 8, Testing set overfitting'
+// From: //notes1/notes/IN_PROGRESS.finance.Machine_learning_for_asset_managers.de_Prado.2020.md:704 '# B, Proof of the false strategy theorem'
+
+::: columns
+:::: {.column width=60%}
+- @Fact@: the expected maximum Sharpe ratio of $N$ independent zero-skill
+  trials is
+  $$
+  \EE\left[\max_n \widehat{SR}_n\right]
+    \approx \sqrt{\VV[\widehat{SR}_n]} \, z_N
+  $$
+  $$
+  z_N \triangleq
+    (1 - \gamma) Z^{-1}\left[1 - \frac{1}{N}\right]
+    + \gamma Z^{-1}\left[1 - \frac{1}{N e}\right]
+  $$
+  - $Z^{-1}$ is the inverse standard Gaussian CDF and $\gamma \approx 0.5772$
+    is the Euler-Mascheroni constant
+
+- @Example@: 5-year backtests have $\sqrt{\VV[\widehat{SR}_n]} \approx 0.45$,
+  so the expected best $SR$ is 1.13 for 100 trials and 1.46 for 1,000
+
+- @Key idea@: the Sharpe ratio hurdle must rise with the number of trials
+::::
+:::: {.column width=40%}
+
+![](book_Modern_AI_for_Finance/lectures_source/figures/L02.01.Expected_Max_Sharpe.png)
+
+\footnotesize _Expected maximum Sharpe ratio against the number of zero-skill
+trials: closed form (blue) and Monte Carlo (red)_
+::::
+:::
+
+## Multiple Testing and False Discoveries
+
+* Multiple Testing in Finance
+// From: //notes1/notes/papers.finance.misc.txt:650 '## 2019, Harvey, An Evaluation of Alternative Multiple Testing Methods for Finance Applications'
+// From: //notes1/notes/papers.finance.misc.txt:464 '## 2018, de Prado, A practical solution to the multiple-testing crisis in financial research'
+// From: book_cs_refreshers/lectures_source/Lesson91.Refresher_probability.smd:2857 '* Example of data mining (jelly beans and acne)'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1902 '* Multiple testing'
+
+- @Question@: a manager beats the market 10 years in a row, with
+  $p \approx 0.001$ under no skill; is the manager skilled?
+  - Among 10,000 unskilled managers, about 10 do the same by luck
+
+- @Definition@: the **family-wise error rate** (FWER) is the probability of
+  at least one false discovery among $m$ tests at level $\alpha$
+  $$
+  FWER \triangleq \Pr(V \ge 1) = 1 - (1 - \alpha)^m
+  $$
+  - The formula holds for $m$ independent tests of true null hypotheses
+  - E.g., $m = 20$ tests at $\alpha = 5\%$ give $FWER \approx 64\%$
+
+- @Problem@: papers and pitch books report the final p-value, not the number
+  of trials behind it
+  - Any Sharpe ratio is achievable on a false theory with enough trials
+
+- @Key idea@: a p-value is meaningful only together with the number of tests
+  that produced it
+
+* Controlling FWER: Bonferroni and Holm
+// From: book_cs_refreshers/lectures_source/Lesson91.Refresher_probability.smd:2973 '* Bonferroni correction to control FWER'
+// From: //notes1/notes/papers.finance.misc.txt:792 '* Controlling FWER'
+// From: //notes1/notes/papers.finance.misc.txt:807 '* Bonferroni method'
+
+- @Definition@: **Bonferroni** declares test $i$ significant when
+  $$
+  p_i \le \frac{\alpha}{m}
+  $$
+  - It guarantees $FWER \le \alpha$ for any dependence between tests
+
+- @Example@: $m = 100$ strategies at $\alpha = 5\%$ need $p \le 0.0005$,
+  i.e., a one-sided $t \ge 3.29$
+  - With $m = 1000$, the hurdle rises to $t \ge 3.89$
+
+- @Definition@: **Holm** sorts the p-values $p_{(1)} \le \dots \le p_{(m)}$
+  and rejects in order while
+  $$
+  p_{(i)} \le \frac{\alpha}{m - i + 1}
+  $$
+  - It stops at the first failure
+
+- @Pros@: both control FWER, and Holm rejects at least as much as Bonferroni
+
+- @Cons@: in finance, where most strategies are near the noise level, FWER
+  control is so strict that it misses most true signals
+
+* Controlling FDR: Benjamini-Hochberg
+// From: book_cs_refreshers/lectures_source/Lesson91.Refresher_probability.smd:3011 '* False Discovery Rate'
+// From: book_cs_refreshers/lectures_source/Lesson91.Refresher_probability.smd:3043 '* BH to control FDR'
+// From: book_cs_refreshers/lectures_source/Lesson91.Refresher_probability.smd:3064 '* BY to control FDR'
+// From: //notes1/notes/papers.finance.misc.txt:841 '#### Controlling FDR'
+
+::: columns
+:::: {.column width=55%}
+- @Definition@: the **false discovery rate** is the expected fraction of
+  false discoveries $V$ among the discoveries $R$
+  $$
+  FDR \triangleq \EE\left[\frac{V}{R}\right]
+  $$
+
+- @Definition@: **Benjamini-Hochberg** (BH) finds the largest $k$ with
+  $p_{(k)} \le \alpha k / m$ and rejects the $k$ smallest
+
+- @Example@: 100 strategies, 10 with skill, $\alpha = 5\%$
+  - _No correction_: 14 picks, 4 false
+  - _Bonferroni_: 4 picks, all true
+  - _BH_: 9 picks, 1 false
+
+- @Remark@: BH assumes independent or positively dependent tests
+::::
+:::: {.column width=45%}
+
+![](book_Modern_AI_for_Finance/lectures_source/figures/L02.01.BH_Procedure.png)
+
+\footnotesize _Sorted p-values of 100 strategies against the uncorrected,
+Bonferroni, and BH thresholds_
+::::
+:::
+
+* The t > 3 Hurdle
+// From: book_Modern_AI_for_Finance/paper_list.md:138 '### [ ] 2016, Harvey et al., "...and the Cross-Section of Expected Returns"'
+// From: book_Modern_AI_for_Finance/paper_list.md:129 '### [ ] 2020, Hou et al., "Replicating Anomalies"'
+// From: book_Modern_AI_for_Finance/paper_list.md:111 '### [ ] 2023, Jensen et al., "Is There a Replication Crisis in Finance?"'
+
+- @Problem@: hundreds of published factors claim to explain the cross-section
+  of expected returns
+  - With this much data mining, the usual $t > 2$ is too weak
+
+- @Fact@: **Harvey, Liu, and Zhu** (2016) model correlated tests and
+  publication bias, and estimate that a new factor needs $t > 3.0$
+
+- @Fact@: **Hou, Xue, and Zhang** (2020) replicate 452 anomalies
+  - 65% fail the single-test hurdle $|t| \ge 1.96$
+  - 82% fail the multiple-test hurdle $|t| \ge 2.78$
+
+- @Comparison@: **Jensen, Kelly, and Pedersen** (2023) find that most factors
+  replicate
+  - With a Bayesian model, factors cluster into 13 themes and work out of
+    sample across 93 countries
+
+- @Key idea@: whether a factor is real depends on the number of factors tried,
+  the dependence between them, and the prior plausibility of each
+
+## Cross-Validation for Finance
+
+* Why K-Fold CV Fails in Finance
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1498 '* Why CV fails in finance?'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1505 '* Leakage'
+// From: msml610/lectures_source/Lesson05.3-Learn_Validation.smd:173 '* Cross-validation: Algorithm'
+
+- @Definition@: **k-fold cross-validation** splits the data into $k$ folds,
+  trains on $k - 1$ of them, and tests on the remaining one
+  - It assumes that observations are IID
+
+- @Problem@: financial observations break this assumption
+  1. _Overlapping labels_: a label at $t$ uses returns from $t + 1$ to
+     $t + h$, so neighbors share outcomes
+  2. _Serial correlation_: features close in time carry the same information
+  3. _Reuse_: the same data is used many times while developing a model
+
+- @Example@: monthly observations labeled with the next 3-month return
+  - Consecutive labels share 2 of 3 months
+  - A training row next to the test fold already knows most of the test
+    label
+
+- @Key idea@: **leakage** is training data that contains information about
+  the test data, and it inflates CV scores as look-ahead inflates backtests
+
+* Walk-Forward Validation
+// From: msml610/lectures_source/Lesson10.1-Timeseries_forecasting.smd:1193 '* Cross-Validation for Time Series'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1963 '* Walk-forward method: cons'
+// From: //notes1/notes/IN_PROGRESS.finance.Quantitative_trading.Chan.2009.txt:310 '* Out-of-sample testing'
+
+- @Definition@: **walk-forward validation** trains on the past and tests on the
+  next period, then rolls the window forward
+  - _Rolling window_: fixed length, forgets old regimes
+  - _Expanding window_: keeps all history, adapts slowly
+
+- @Pros@:
+  - Mimics live trading: every decision uses only earlier data
+  - Gives a performance estimate for each period
+
+- @Cons@:
+  - Tests a single path, which can be retried until a false positive appears
+  - The past sequence of regimes is one draw (e.g., 2007, 2008, and 2012 are
+    very different markets)
+  - Early decisions use little data, and a warm-up period shortens the test
+  - Mixes generalization error with non-stationarity
+
+- @Key idea@: walk-forward is the most realistic single test, and the easiest
+  one to overfit by repetition
+
+* Purging Overlapping Labels
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1511 '* Purging the training set'
+
+- @Problem@: the leakage comes from the labels $Y$, not from the features $X$
+
+- @Definition@: **purging** removes from the training set every observation
+  whose label window overlaps the label window of any test observation
+  - Observation $i$ has label window $[t_{i,0}, t_{i,1}]$
+  - Training observation $i$ is purged if, for some test observation $j$
+    $$
+    [t_{i,0}, t_{i,1}] \cap [t_{j,0}, t_{j,1}] \neq \emptyset
+    $$
+
+- @Example@: daily rows labeled with the 5-day forward return
+  - Purge the 5 training rows before the test block, whose labels end inside
+    it
+  - Purge the training rows after the test block whose labels overlap the
+    last test labels
+
+- @Key idea@: purging costs a few training rows per fold and removes the
+  shared outcomes between train and test
+
+* Embargo
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1518 '* Embargo process'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1523 '* Purging / embargo of cross-validation'
+
+::: columns
+:::: {.column width=45%}
+- @Problem@: serially correlated features leak information from the test
+  block into the training rows right after it
+
+- @Definition@: an **embargo** drops $h_e$ further observations after each
+  test block, beyond the purged ones
+// TODO(gp): Check that de Prado (2018, ch. 7) suggests h_e = 0.01T: it is
+// recalled from memory and is not in the notes
+  - A small value such as $h_e \approx 0.01 T$ often suffices
+
+- @Remark@: leave-one-out CV leaks the most, since every test point borders
+  the training set
+::::
+:::: {.column width=55%}
+
+![](book_Modern_AI_for_Finance/lectures_source/figures/L02.01.Purged_KFold.png)
+
+\footnotesize _Purged and embargoed 5-fold CV with 3-step labels and a 2-step
+embargo_
+::::
+:::
+
+* Combinatorial Purged CV
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:2069 '* Combinatorial purged CV method'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:2064 '* Backtesting through cross-validation'
+
+- @Problem@: one walk-forward path yields one Sharpe ratio, which is easy to
+  overfit
+
+- @Definition@: **combinatorial purged CV** (CPCV) splits the data into $N$
+  groups and tests on every combination of $k$ groups, with purging and
+  embargo
+  - Number of train-test splits: $\binom{N}{k}$
+  - Number of complete backtest paths:
+    $$
+    \varphi[N, k] \triangleq \frac{k}{N} \binom{N}{k}
+    $$
+
+- @Example@: $N = 6$ and $k = 2$ give 15 splits and 5 paths
+
+- @Intuition@: each path tests the strategy on history it did not see, e.g.,
+  a strategy trained without 2008 is tested on 2008
+
+- @Key idea@: CPCV returns a distribution of Sharpe ratios, and many paths are
+  harder to overfit than one
+
+## Deflated Sharpe Ratio
+
+* The Sharpe Ratio Is an Estimate
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:2226 '* Sharpe Ratio'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:2236 '* Probabilistic SR'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:2244 '* Annualized SR'
+
+- @Fact@: $\widehat{SR}$ is estimated from $T$ returns, and its standard error
+  grows with negative skew $\gamma_3$ and high kurtosis $\gamma_4$
+  $$
+  \sigma(\widehat{SR})
+    \approx \sqrt{
+      \frac{1 - \gamma_3 \widehat{SR} + \frac{\gamma_4 - 1}{4} \widehat{SR}^2}
+           {T - 1}
+    }
+  $$
+
+- @Definition@: the **probabilistic Sharpe ratio** is the probability that
+  the true Sharpe ratio exceeds a benchmark $SR^*$
+  $$
+  PSR(SR^*)
+    \triangleq Z\left[
+      \frac{(\widehat{SR} - SR^*) \sqrt{T - 1}}
+           {\sqrt{1 - \gamma_3 \widehat{SR} + \frac{\gamma_4 - 1}{4}
+             \widehat{SR}^2}}
+    \right]
+  $$
+
+- @Example@: 5 years of monthly returns with annual $SR = 1.0$
+  - Gaussian returns: standard error 0.46, $PSR(0) = 0.985$
+  - Skew $-2$ and kurtosis 9 (e.g., option selling): standard error 0.60,
+    $PSR(0) = 0.953$
+
+- @Remark@: annualizing with $\sqrt{periods}$ assumes IID returns
+
+* Deflated Sharpe Ratio
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:2240 '* Deflated SR'
+
+::: columns
+:::: {.column width=55%}
+- @Definition@: the **deflated Sharpe ratio** is the PSR against the expected
+  maximum Sharpe ratio of the trials
+  $$
+  DSR \triangleq PSR(SR_0)
+  $$
+  - $SR_0$ comes from the false strategy theorem with the number of trials
+    $N$ and the variance of their Sharpe ratios
+
+- @Example@: 5 years of daily returns, skew $-0.5$, kurtosis 5
+  - $SR = 1.0$ loses 95% confidence after 3 trials
+  - $SR = 1.5$ after 12 trials
+  - $SR = 2.0$ after about 200 trials
+
+- @Key idea@: always report the number of trials together with the Sharpe
+  ratio
+::::
+:::: {.column width=45%}
+
+![](book_Modern_AI_for_Finance/lectures_source/figures/L02.01.Deflated_Sharpe.png)
+
+\footnotesize _Deflated Sharpe ratio of the selected strategy against the number
+of trials, with the 95% level dashed_
+::::
+:::
+
+* Other Corrections: Reality Check and PBO
+// From: //notes1/notes/papers.finance.data_mining_bias.txt:41 '## White's reality check'
+// From: //notes1/notes/papers.finance.data_mining_bias.txt:115 '#### Hansen test for SPA'
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1951 '* Probability of Backtest Overfitting (PBO)'
+// From: //notes1/notes/IN_PROGRESS.finance.Algorithmic_trading.Chan.2013.txt:553 '* Computing distribution of the null hypothesis'
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Method", "Question it answers", "Procedure"),
+  rows: (
+    ("Monte Carlo null", "Does the strategy beat random strategies like it?", "Simulate random strategies with the same long-short ratio and holding period"),
+    ("White's reality check", "Does the best variant beat a benchmark after the search?", "Bootstrap the maximum performance over all variants ever tested"),
+    ("Hansen's SPA test", "Same question, with more power", "Studentize the statistic and limit the effect of poor variants"),
+    ("PBO", "How often is the in-sample winner below median out-of-sample?", "Split the trial returns into blocks and test every in-sample and out-of-sample combination"),
+  ),
+  col-widths: (0.9fr, 1.5fr, 1.8fr),
+  bold-first-col: true,
+)
+```
+\endgroup
+
+- @Remark@: **PBO** is the probability of backtest overfitting, estimated by
+  combinatorially symmetric cross-validation
+  - A PBO near 50% means that the selection process adds no information
+
+- @Key idea@: every method needs the full set of trials, not only the winner
+
+## Why AI
+
+* Experiment Tracking Counts the Trials
+// From: //notes1/notes/papers.finance.misc.txt:464 '## 2018, de Prado, A practical solution to the multiple-testing crisis in financial research'
+// From: //notes1/notes/work.trading_ideas.txt:346 '## Measuring overfitting'
+
+- @Problem@: DSR, BH, and PBO need the number of trials, which researchers
+  rarely record
+  - Many trials on the same data make luck look like skill
+
+- @Solution@: experiment tracking logs every trial automatically
+  - Strategy configuration, data version, code version, and metrics
+  - The log is append-only, so no failed trial can be deleted
+// TODO(gp): Check the 6,385 trials: they come from the reporting template
+// in the de Prado (2018) multiple-testing paper, not from a live strategy
+  - E.g., a proposed reporting template for a corporate-bond strategy
+    discloses the 6,385 trials behind it
+
+- @Techniques@: ML turns the trial log into the inputs of the corrections
+  - Cluster the trials by the correlation of their returns to estimate the
+    number of effectively independent trials
+  - Use the variance of Sharpe ratios across clusters in the DSR
+
+- @Remark@: research agents can run thousands of backtests per hour
+  - Automated research multiplies $N$, so the trial log must be mandatory
+
+* A Backtest Protocol
+// From: //notes1/notes/IN_PROGRESS.finance.Advances_in_Financial_ML.de_Prado.2018.md:1917 '* Steps to reduce overfitting'
+// From: //notes1/notes/IN_PROGRESS.finance.Quantitative_trading.Chan.2009.txt:319 '* Sensitivity analysis'
+// From: //notes1/notes/IN_PROGRESS.finance.Quantitative_trading.Chan.2009.txt:346 '* Strategy refinement'
+
+- @Techniques@:
+  1. State the hypothesis and its economic mechanism before touching data
+  2. Specify the strategy fully, then backtest it
+  3. Simulate realistically: point-in-time data, survivorship-free universe,
+     next-bar fills, calibrated costs
+  4. Log every trial, including the failures
+  5. Validate with purged and embargoed CV or CPCV
+  6. Report DSR and PBO with the number of trials
+  7. Run a sensitivity analysis: small parameter changes should not change
+     the result much
+  8. Paper trade before committing capital
+
+- @Key idea@: if a backtest fails, start from scratch instead of tweaking the
+  model until it passes
+
+- @Remark@: prefer models that work across many instruments and asset
+  classes, since many markets are harder to overfit than one security
+
+# Causal vs. Predictive
+
+* Predictive vs. Causal Questions
+// From: book_springer/lectures_source/Lesson02.1_From_Data_Science_To_Decision_Science.smd:48 '* Causal vs Predictive Questions'
+// From: //notes1/notes/IN_PROGRESS.finance.Causal_Factor_Investing.de_Prado.2023.md:94 '* Data-generating process'
+
+- @Comparison@: each investment question has a predictive form and a causal
+  form
+
+\begingroup \scriptsize
+```{=typst}
+#styled-table(
+  headers: ("Predictive question", "Causal question"),
+  rows: (
+    ("Which stocks will outperform next month?", "Does exposure to value earn a premium, or does it proxy for another variable?"),
+    ("Will volatility rise tomorrow?", "How much will my order move the price?"),
+    ("Does positive news precede returns?", "Will trading on news still pay once others trade on it?"),
+    ("Which loans will default?", "Does a lower interest rate reduce defaults?"),
+  ),
+  bold-first-col: false,
+)
+```
+\endgroup
+
+- @Definition@: $X$ **causes** $Y$ when _setting_ $X$ changes the distribution
+  of $Y$
+  $$
+  \Pr(Y = y | do(X = x)) \neq \Pr(Y = y)
+  $$
+  - Setting is different from observing: $\Pr(Y | do(X)) \neq \Pr(Y | X)$
+    in general
+
+- @Key idea@: a backtest is a causal question, _"what would the PnL have been
+  if I had traded?"_, answered with observational data and a cost model
+
+* Spurious Factors and Confounding
+// From: //notes1/notes/IN_PROGRESS.finance.Causal_Factor_Investing.de_Prado.2023.md:76 '# 2. Association vs Causation'
+// From: book_springer/lectures_source/Lesson02.1_From_Data_Science_To_Decision_Science.smd:100 '* Correlation Encodes Confounding as Causation'
+// From: book_Modern_AI_for_Finance/paper_list.md:83 '### [ ] 2025, López de Prado et al., "Causality and Factor Investing: A Primer"'
+
+::: columns
+:::: {.column width=60%}
+- @Definition@: a **confounder** $Z$ causes both the characteristic $X$ and the
+  return $Y$, which creates an association between $X$ and $Y$ with no causal
+  link
+
+// TODO(gp): Check the analyst coverage example: it is an illustration not
+// taken from a source, so consider a documented confounded factor instead
+- @Example@: analyst coverage and returns
+  - Large firms attract more analysts, and size is associated with returns
+  - Regressing returns on coverage alone credits coverage with part of the
+    size effect
+
+- @Key idea@: omitting a confounder biases the factor premium and can flip
+  its sign
+::::
+:::: {.column width=40%}
+
+```graphviz
+digraph Confounder {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.6;
+    ranksep=0.6;
+    rankdir=TB;
+    // confounder : violet | characteristic : orange | return : blue
+    node [shape=box, style="rounded,filled", penwidth=1.8, fontname="Helvetica",
+          fontsize=12, margin="0.22,0.12", height=0.45];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    Z [label="Firm size Z", fillcolor="#E9E1F7", color="#A88FD9", fontcolor="#45296B"];
+    X [label="Analyst coverage X", fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+    Y [label="Return Y", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+
+    Z -> X;
+    Z -> Y;
+    X -> Y [style=dashed, color="#D98C8C", arrowhead=none, label="  association only  "];
+    { rank=same; X; Y; }
+}
+```
+::::
+:::
+
+* Collider Bias and the Factor Mirage
+// From: book_springer/lectures_source/Lesson02.1_From_Data_Science_To_Decision_Science.smd:297 '* Berkson's Paradox'
+// From: book_Modern_AI_for_Finance/paper_list.md:83 '### [ ] 2025, López de Prado et al., "Causality and Factor Investing: A Primer"'
+// From: book_Modern_AI_for_Finance/paper_list.md:73 '### [ ] 2026, López de Prado et al., "Correcting the Factor Mirage: A Research'
+
+::: columns
+:::: {.column width=60%}
+- @Definition@: a **collider** $C$ is caused by both $X$ and $Y$, and
+  conditioning on it creates an association between $X$ and $Y$
+
+// TODO(gp): Check the leverage collider example: it is a constructed
+// illustration, not an empirical result from a paper
+- @Example@: survivorship bias is collider bias
+  - High leverage and low returns both cause delisting
+  - Levered survivors must have had high returns, so a spurious leverage
+    premium appears
+
+- @Definition@: a **factor mirage** is a factor model that looks
+  statistically valid but is causally misspecified
+  - It can lose money even when every premium has the correct sign
+::::
+:::: {.column width=40%}
+
+```graphviz
+digraph Collider {
+    bgcolor="transparent";
+    pad="0.15";
+    splines=spline;
+    nodesep=0.6;
+    ranksep=0.6;
+    rankdir=TB;
+    // characteristic : orange | return : blue | collider : coral
+    node [shape=box, style="rounded,filled", penwidth=1.8, fontname="Helvetica",
+          fontsize=12, margin="0.22,0.12", height=0.45];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    X [label="Leverage X", fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+    Y [label="Return Y", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+    C [label="Survival C\n(conditioned on)", fillcolor="#F6C6C6", color="#D98C8C", fontcolor="#6B2A2A"];
+
+    X -> C;
+    Y -> C;
+    X -> Y [style=dashed, color="#D98C8C", arrowhead=none, label="  spurious  "];
+    { rank=same; X; Y; }
+}
+```
+::::
+:::
+
+* Falsification and Causal Mechanisms
+// From: //notes1/notes/IN_PROGRESS.finance.Causal_Factor_Investing.de_Prado.2023.md:160 '* The Three Steps of Scientific Discovery'
+// From: //notes1/notes/IN_PROGRESS.finance.Causal_Factor_Investing.de_Prado.2023.md:195 '* Probability of informed trading (PIN) theory'
+// From: //notes1/notes/IN_PROGRESS.finance.Causal_Factor_Investing.de_Prado.2023.md:243 '* Falsification Through "Risky Forecasts"'
+// From: //notes1/notes/papers.finance.misc.txt:412 '### Problem #2: Finance is an adaptive system'
+
+- @Components@: the three steps of scientific discovery
+  1. _Phenomenological_: observe a recurrent association
+  2. _Theoretical_: propose a testable causal mechanism
+  3. _Falsification_: deduce implications and try to prove them false
+
+- @Example@: the probability of informed trading theory
+  - Order flow imbalance $\to$ market maker losses $\to$ wider spread
+    $\to$ less liquidity $\to$ higher volatility
+  - Each link involves measurable variables and is testable on its own
+
+- @Techniques@: falsify through _risky forecasts_
+  - Predict the outcome of an intervention not yet observed, then wait for
+    it, as in an out-of-sample test
+
+- @Key idea@: most factor research stops at step 1, and a backtest alone
+  cannot go beyond it
+
+- @Remark@: finance is adaptive, so the discovery of an effect can erase the
+  effect
+
+## Why AI
+
+* Causal ML for Factors
+// From: //notes1/notes/IN_PROGRESS.finance.Causal_Factor_Investing.de_Prado.2023.md:182 '* Theoretical Step'
+// From: book_Modern_AI_for_Finance/paper_list.md:197 '### [ ] 2023, Kiciman et al., "Causal Reasoning and Large Language Models:'
+// From: book_Modern_AI_for_Finance/paper_list.md:183 '### [ ] 2023, Zecevic et al., "Causal Parrots: Large Language Models May Talk'
+
+- @Problem@: predictive patterns without causal links fail out of sample, and
+  the factor zoo hides which links are causal
+
+- @Techniques@:
+  - _Causal discovery_: search for graphs consistent with the data and with
+    known constraints (e.g., returns cannot cause past characteristics)
+  - _Causal effect estimation_: estimate a premium while adjusting for the
+    confounders in the graph, with flexible ML models for the adjustment
+  - _LLMs_: propose candidate mechanisms and confounders from papers and
+    filings
+
+- @Limitations@:
+  - Causal discovery needs assumptions that the data cannot test
+  - LLMs can repeat causal claims from their training text without causal
+    reasoning (_"causal parrots"_)
+  - ML cannot create signal or identification that the data do not contain
+
+- @Key idea@: AI speeds up the theoretical step, but falsification still
+  needs out-of-sample evidence
+
+* Summary
+
+- @Key idea@: a backtest is a simulation of one historical path, and it can
+  reject a strategy but cannot prove it
+
+- @Components@: backtest mechanics
+  - Lag every decision, fill at tradable prices, and charge realistic costs
+  - Use point-in-time, survivorship-free data, since leaks inflate silently
+  - Test the backtester like production code, and paper trade at the end
+
+- @Components@: backtest discipline
+  - The best of $N$ zero-skill trials has a high Sharpe ratio by luck
+  - Correct for multiple testing with FWER or FDR control and the $t > 3$
+    hurdle
+  - Validate with purged, embargoed, and combinatorial CV, and report the DSR
+    with the number of trials
+
+- @Components@: causal vs. predictive
+  - Confounders and colliders create factors that predict in-sample and fail
+    out of sample
+  - A factor needs a falsifiable mechanism, not only a backtest
+
+* References
+
+- **Chan**: _"Quantitative Trading"_ (2009), _"Algorithmic Trading"_ (2013)
+- **Lopez de Prado**: _"Advances in Financial Machine Learning"_ (2018),
+  _"Machine Learning for Asset Managers"_ (2020),
+  _"Causal Factor Investing"_ (2023)
+- **White**: _"A Reality Check for Data Snooping"_, Econometrica (2000)
+- **Bailey and Lopez de Prado**: _"The Deflated Sharpe Ratio"_, Journal of
+  Portfolio Management (2014)
+// TODO(gp): Check the year of the PBO paper: Crossref lists it online in 2016
+// without a volume, and the print issue may be 2017
+- **Bailey, Borwein, Lopez de Prado, and Zhu**: _"The Probability of Backtest
+  Overfitting"_, Journal of Computational Finance (2016)
+- **Harvey, Liu, and Zhu**: _"... and the Cross-Section of Expected Returns"_,
+  Review of Financial Studies (2016)
+- **Hou, Xue, and Zhang**: _"Replicating Anomalies"_, Review of Financial
+  Studies (2020)
+- **Jensen, Kelly, and Pedersen**: _"Is There a Replication Crisis in
+  Finance?"_, Journal of Finance (2023)

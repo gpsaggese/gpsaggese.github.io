@@ -1,0 +1,183 @@
+submission,name,date,agent,model,org,attempts,reported_score,source,excluded_reason,score
+20231010_rag_claude2,RAG + Claude 2,2023-10-10,RAG baseline,claude-2,,1,,results.json,,4.3999999999999995
+20231010_rag_gpt35,RAG + ChatGPT 3.5,2023-10-10,RAG baseline,,SWE-agent,1,,results.json,,0.4
+20231010_rag_swellama13b,RAG + SWE-Llama 13B,2023-10-10,RAG baseline,,SWE-agent,1,,results.json,,1.2
+20231010_rag_swellama7b,RAG + SWE-Llama 7B,2023-10-10,RAG baseline,SWE-Llama,SWE-agent,1,,results.json,,1.4000000000000001
+20240402_rag_claude3opus,RAG + Claude 3 Opus,2024-04-02,RAG baseline,claude-3-opus-20240229,,2+,,results.json,,7.000000000000001
+20240402_rag_gpt4,RAG + GPT 4 (1106),2024-04-02,RAG baseline,gpt-4-1106-preview,,2+,,results.json,,2.8000000000000003
+20240402_sweagent_claude3opus,SWE-agent + Claude 3 Opus,2024-04-02,SWE-agent,claude-3-opus-20240229,SWE-agent,1,,results.json,,15.8
+20240402_sweagent_gpt4,SWE-agent + GPT 4 (1106),2024-04-02,SWE-agent,gpt-4-1106-preview,SWE-agent,1,,results.json,,22.400000000000002
+20240509_amazon-q-developer-agent-20240430-dev,Amazon Q Developer Agent (v20240430-dev),2024-05-09,Amazon Q Developer Agent,,AWS,2+,,results.json,,25.6
+20240612_MASAI_gpt4o,MASAI + GPT 4o (2024-06-12),2024-06-12,MASAI,gpt-4o-2024-08-06,,2+,,results.json,,32.6
+20240615_appmap-navie_gpt4o,AppMap Navie + GPT 4o (2024-05-13),2024-06-15,AppMap Navie,gpt-4o-2024-05-13,,2+,,results.json,,26.200000000000003
+20240617_factory_code_droid,Factory Code Droid,2024-06-17,Factory Code Droid,,,2+,,results.json,,37.0
+20240620_sweagent_claude3.5sonnet,SWE-agent + Claude 3.5 Sonnet,2024-06-20,SWE-agent,claude-3-5-sonnet-20241022,SWE-agent,1,,results.json,,33.6
+20240628_autocoderover-v20240620,AutoCodeRover (v20240620) + GPT 4o (2024-05-13),2024-06-28,AutoCodeRover,gpt-4o-2024-05-13,,2+,,results.json,,38.4
+20240721_amazon-q-developer-agent-20240719-dev,Amazon Q Developer Agent (v20240719-dev),2024-07-21,Amazon Q Developer Agent,,AWS,2+,,results.json,,38.800000000000004
+20240728_sweagent_gpt4o,SWE-agent + GPT 4o (2024-05-13),2024-07-28,SWE-agent,gpt-4o-2024-05-13,SWE-agent,1,,results.json,,23.200000000000003
+20240820_epam-ai-run-gpt-4o,EPAM AI/Run Developer Agent + GPT4o,2024-08-20,EPAM AI/Run Developer Agent,gpt-4o-2024-08-06,,2+,,results.json,,24.0
+20240820_honeycomb,Honeycomb,2024-08-20,Honeycomb,,,2+,,results.json,,40.6
+20240824_gru,Gru(2024-08-24),2024-08-24,Gru,,,2+,,results.json,,45.2
+20240918_lingma-agent_lingma-swe-gpt-72b,Lingma Agent + Lingma SWE-GPT 72b (v0918),2024-09-18,Lingma Agent,,Alibaba,2+,,results.json,,25.0
+20240918_lingma-agent_lingma-swe-gpt-7b,Lingma Agent + Lingma SWE-GPT 7b (v0918),2024-09-18,Lingma Agent,,Alibaba,2+,,results.json,,10.2
+20240920_solver,Solver (2024-09-12),2024-09-20,Solver,,,2+,,results.json,,43.6
+20240924_solver,Solver (2024-09-12),2024-09-24,Solver,,,2+,,results.json,,45.4
+20241001_nfactorial,nFactorial (2024-10-01),2024-10-01,nFactorial,,,2+,,results.json,,25.8
+20241002_lingma-agent_lingma-swe-gpt-72b,Lingma Agent + Lingma SWE-GPT 72b (v0925),2024-10-02,Lingma Agent,,Alibaba,2+,,results.json,,28.799999999999997
+20241002_lingma-agent_lingma-swe-gpt-7b,Lingma Agent + Lingma SWE-GPT 7b (v0925),2024-10-02,Lingma Agent,,Alibaba,2+,,results.json,,18.2
+20241007_nfactorial,nFactorial (2024-10-07),2024-10-07,nFactorial,,,2+,,results.json,,31.6
+20241016_composio_swekit,Composio SWEkit + Claude 3.5 Sonnet (2024-10-16),2024-10-16,Composio SWEkit,"claude-3-5-sonnet-20241022, claude-3.5-sonnet-20241022",,2+,,results.json,,40.6
+20241016_epam-ai-run-gpt-4o,EPAM AI/Run Developer Agent + GPT4o,2024-10-16,EPAM AI/Run Developer Agent,gpt-4o-2024-08-06,,2+,,results.json,,27.0
+20241022_tools_claude-3-5-haiku,Tools + Claude 3.5 Haiku,2024-10-22,Tools,claude-3-haiku-20240307,Anthropic,2+,,results.json,,40.6
+20241022_tools_claude-3-5-sonnet-updated,Tools + Claude 3.5 Sonnet (2024-10-22),2024-10-22,Tools,"claude-3-5-sonnet-20241022, claude-3.5-sonnet-20241022",Anthropic,2+,,results.json,,49.0
+20241023_emergent,Emergent E1 (v2024-10-12),2024-10-23,Emergent E1,"claude-3-5-sonnet-20241022, gpt-4o-2024-08-06",,2+,,results.json,,46.6
+20241025_composio_swekit,Composio SWE-Kit (2024-10-25),2024-10-25,Composio SWE-Kit,"claude-3-5-sonnet-20241022, o1-mini",,2+,,results.json,,48.6
+20241028_agentless-1.5_gpt4o,Agentless-1.5 + GPT 4o (2024-05-13),2024-10-28,Agentless-1.5,gpt-4o-2024-05-13,Agentless,1,,results.json,,38.800000000000004
+20241028_solver,Solver (2024-10-28),2024-10-28,Solver,,,2+,,results.json,,50.0
+20241029_OpenHands-CodeAct-2.1-sonnet-20241022,OpenHands + CodeAct v2.1 (claude-3-5-sonnet-20241022),2024-10-29,OpenHands,,OpenHands,2+,,results.json,,53.0
+20241029_epam-ai-run-claude-3-5-sonnet,EPAM AI/Run Developer Agent v20241029 + Anthopic Claude 3.5 Sonnet,2024-10-29,EPAM AI/Run Developer Agent,claude-3-5-sonnet-20241022,,2+,,results.json,,39.6
+20241030_nfactorial,nFactorial (2024-10-30),2024-10-30,nFactorial,"claude-3-5-sonnet-20241022, gpt-4o-2024-08-06, o1-preview",,2+,,results.json,,41.6
+20241105_nfactorial,nFactorial (2024-11-05),2024-11-05,nFactorial,"claude-3-5-sonnet-20241022, gpt-4o-2024-08-06",,2+,,results.json,,49.2
+20241106_navie-2-gpt4o-sonnet,AppMap Navie v2,2024-11-06,AppMap Navie v2,"claude-3-5-sonnet-20241022, gpt-4o-2024-08-06",,2+,,results.json,,47.199999999999996
+20241108_autocoderover-v2.0-claude-3-5-sonnet-20241022,AutoCodeRover-v2.0 (Claude-3.5-Sonnet-20241022),2024-11-08,AutoCodeRover-v2.0,claude-3-5-sonnet-20241022,,2+,,results.json,,46.2
+20241108_devlo,devlo,2024-11-08,devlo,claude-3-5-sonnet-20241022,,2+,,results.json,,54.2
+20241113_nebius-search-open-weight-models-11-24,Nebius AI Qwen 2.5 72B Generator + LLama 3.1 70B Critic,2024-11-13,Nebius AI,"Llama 3.1, Qwen 2.5",,2+,,results.json,,40.6
+20241120_artemis_agent,Artemis Agent v1 (2024-11-20),2024-11-20,Artemis Agent v1,,,2+,,results.json,,32.0
+20241125_enginelabs,Engine Labs (2024-11-25),2024-11-25,Engine Labs,claude-3-5-sonnet-20241022,Engine Labs,1,,results.json,,51.800000000000004
+20241125_marscode-agent-dev,Bytedance MarsCode Agent,2024-11-25,Bytedance MarsCode Agent,,Bytedance,2+,,results.json,,50.0
+20241128_SWE-Fixer_Qwen2.5-7b-retriever_Qwen2.5-72b-editor_20241128,SWE-Fixer (Qwen2.5-7b retriever + Qwen2.5-72b editor) 20241128,2024-11-28,SWE-Fixer,Qwen 2.5,,2+,,results.json,,30.2
+20241202_agentless-1.5_claude-3.5-sonnet-20241022,Agentless-1.5 + Claude-3.5 Sonnet (20241022),2024-12-02,Agentless-1.5,claude-3-5-sonnet-20241022,Agentless,2+,,results.json,,50.8
+20241202_amazon-q-developer-agent-20241202-dev,Amazon Q Developer Agent (v20241202-dev),2024-12-02,Amazon Q Developer Agent,,AWS,2+,,results.json,,55.00000000000001
+20241208_gru,Gru(2024-12-08),2024-12-08,Gru,,,2+,,results.json,,56.99999999999999
+20241212_epam-ai-run-claude-3-5-sonnet,EPAM AI/Run Developer Agent v20241212 + Anthopic Claude 3.5 Sonnet,2024-12-12,EPAM AI/Run Developer Agent,claude-3-5-sonnet-20241022,,2+,,results.json,,55.400000000000006
+20241212_google_jules_gemini_2.0_flash_experimental,Google Jules + Gemini 2.0 Flash (v20241212-experimental),2024-12-12,Google Jules,,Google,2+,,results.json,,52.2
+20241213_devlo,devlo,2024-12-13,devlo,,,2+,,results.json,,58.199999999999996
+20241221_codestory_midwit_claude-3-5-sonnet_swe-search,CodeStory Midwit Agent + swe-search,2024-12-21,CodeStory Midwit Agent,claude-3-5-sonnet-20241022,,2+,,results.json,,62.2
+20241223_emergent,Emergent E1 (v2024-12-23),2024-12-23,Emergent E1,"claude-3-5-sonnet-20241022, gpt-4o-2024-08-06",,2+,,results.json,,57.199999999999996
+20250110_blackboxai_agent_v1.1,Blackbox AI Agent,2025-01-10,Blackbox AI Agent,,,2+,,results.json,,62.8
+20250110_learn_by_interact_claude3.5,Learn-by-interact,2025-01-10,Learn-by-interact,claude-3-5-sonnet-20241022,Google,2+,,results.json,,60.199999999999996
+20250112_ugaiforge,ugaiforge,2025-01-12,ugaiforge,,,2+,,results.json,,41.6
+20250117_wandb_programmer_o1_crosscheck5,W&B Programmer O1 crosscheck5,2025-01-17,W&B Programmer O1 crosscheck5,o1-preview,,2+,,results.json,,64.60000000000001
+20250118_codeshellagent_gemini_2.0_flash_experimental,CodeShellAgent + Gemini 2.0 Flash (Experimental),2025-01-18,CodeShellAgent,gemini-2.0-flash-exp,,2+,,results.json,,44.2
+20250120_Bracket,Bracket.sh,2025-01-20,Bracket.sh,,,2+,,results.json,,53.2
+20250122_autocoderover-v2.1-claude-3-5-sonnet-20241022,AutoCodeRover-v2.1 (Claude-3.5-Sonnet-20241022),2025-01-22,AutoCodeRover-v2.1,claude-3-5-sonnet-20241022,,2+,,results.json,,51.6
+20250203_openhands_4x_scaled,OpenHands + 4x Scaled (2024-02-03),2025-02-03,OpenHands,,OpenHands,2+,,results.json,,60.8
+20250206_agentscope,AgentScope,2025-02-06,AgentScope,claude-3-5-sonnet-20241022,Alibaba,2+,,results.json,,63.4
+20250214_agentless_lite_o3_mini,Agentless Lite + O3 Mini (20250214),2025-02-14,Agentless Lite,o3-mini,Agentless,2+,,results.json,,42.4
+20250224_tools_claude-3-7-sonnet,Tools + Claude 3.7 Sonnet (2025-02-24),2025-02-24,Tools,,Anthropic,2+,,results.json,,63.2
+20250225_sweagent_claude-3-7-sonnet,SWE-agent + Claude 3.7 Sonnet w/ Review Heavy,2025-02-25,SWE-agent,claude-3-7-sonnet-20250219,SWE-agent,2+,,results.json,,62.4
+20250226_swerl_llama3_70b,SWE-RL (Llama3-SWE-RL-70B + Agentless Mini) (20250226),2025-02-26,Agentless Mini,Llama3-SWE-RL-70B,Agentless,2+,,results.json,,41.199999999999996
+20250228_epam-ai-run-claude-3-5-sonnet,EPAM AI/Run Developer Agent v20250219 + Anthopic Claude 3.5 Sonnet,2025-02-28,EPAM AI/Run Developer Agent,claude-3-5-sonnet-20241022,,2+,,results.json,,62.8
+20250306_SWE-Fixer_Qwen2.5-7b-retriever_Qwen2.5-72b-editor,SWE-Fixer (Qwen2.5-7b retriever + Qwen2.5-72b editor),2025-03-06,SWE-Fixer,Qwen 2.5,,1,,results.json,,32.800000000000004
+20250316_augment_agent_v0,Augment Agent v0,2025-03-16,Augment Agent v0,,,2+,,results.json,,65.4
+20250405_amazon-q-developer-agent-20250405-dev,Amazon Q Developer Agent (v20250405-dev),2025-04-05,Amazon Q Developer Agent,,AWS,2+,,results.json,,65.4
+20250405_swe-rizzo_claude37,SWE-Rizzo,2025-04-05,SWE-Rizzo,,,2+,,results.json,,56.599999999999994
+20250410_cortexa,Nemotron-CORTEXA,2025-04-10,Nemotron-CORTEXA,"NV-EmbedCode, claude-3-5-sonnet-20241022, deepseek-v3, o3-mini, gpt-4o-2024-05-13, gpt-4-turbo-2024-04-09, Qwen/Qwen2.5-72B-Instruct, meta-llama/Llama-3.1-405B-Instruct, meta-llama/Llama-3.3-70B-Instruct",NVIDIA,2+,,results.json,,58.199999999999996
+20250415_openhands,OpenHands,2025-04-15,OpenHands,,OpenHands,2+,,results.json,,65.8
+20250430_zencoder_ai,Zencoder (2025-04-30),2025-04-30,Zencoder,"claude-3-7-sonnet-20250219, o4-mini",,2+,,results.json,,70.0
+20250503_patchpilot-v1.1-o4-mini,PatchPilot-v1.1,2025-05-03,PatchPilot-v1.1,o4-mini,,2+,,results.json,,64.60000000000001
+20250511_sweagent_lm_32b,SWE-agent + SWE-agent-LM-32B,2025-05-11,SWE-agent,Qwen 2.5,SWE-agent,1,,results.json,,40.2
+20250514_aime_coder,Aime-coder v1 + Anthopic Claude 3.7 Sonnet,2025-05-14,Aime-coder v1,claude-3-7-sonnet-20250219,ByteDance DevInfra,2+,,results.json,,66.4
+20250515_Refact_Agent,Refact.ai Agent,2025-05-15,Refact.ai Agent,"claude-3-7-sonnet-20250219, o3, o4-mini",Refact.ai,1,,results.json,,70.39999999999999
+20250516_cortexa_o3,Nemotron-CORTEXA,2025-05-16,Nemotron-CORTEXA,"NV-EmbedCode, o3, o3-mini, o1, gpt-4.1, gpt-4o-2024-05-13, gpt-4-turbo-2024-04-09, claude-3-7-sonnet-20250219, deepseek-v3, Qwen/Qwen2.5-72B-Instruct, meta-llama/Llama-3.1-405B-Instruct, meta-llama/Llama-3.3-70B-Instruct",NVIDIA,2+,,results.json,,68.2
+20250519_devlo,devlo,2025-05-19,devlo,"claude-3-7-sonnet-20250219, o3, gemini-2.5-pro",devlo,1,,results.json,,70.19999999999999
+20250519_trae,TRAE,2025-05-19,TRAE,,,2+,,results.json,,70.6
+20250520_openhands_devstral_small,OpenHands + DevStral Small 2505,2025-05-20,OpenHands,mistralai/Devstral-Small-2505,"OpenHands, Mistral",1,,results.json,,46.800000000000004
+20250522_sweagent_claude-4-sonnet-20250514,SWE-agent + Claude 4 Sonnet,2025-05-22,SWE-agent,claude-4-sonnet-20250514,SWE-agent,1,,results.json,,66.60000000000001
+20250522_tools_claude-4-opus,Tools + Claude 4 Opus (2025-05-22),2025-05-22,Tools,claude-4-opus-20250514,,1,,results.json,,73.2
+20250522_tools_claude-4-sonnet,Tools + Claude 4 Sonnet (2025-05-22),2025-05-22,Tools,claude-4-sonnet-20250514,,1,,results.json,,72.39999999999999
+20250524_openhands_claude_4_sonnet,OpenHands + Claude 4 Sonnet,2025-05-24,OpenHands,claude-4-sonnet-20250514,OpenHands,1,,results.json,,70.39999999999999
+20250527_amazon.nova-premier-v1.0,Amazon Nova Premier 1.0 (2025-04-30),2025-05-27,Amazon Nova Premier 1.0,amazon.nova-premier-v1:0,Amazon Nova,2+,,results.json,,42.4
+20250528_patchpilot_Co-PatcheR,PatchPilot + Co-PatcheR,2025-05-28,PatchPilot,,,2+,,results.json,,46.0
+20250603_Refact_Agent_claude-4-sonnet,Refact.ai Agent + Claude 4 Sonnet + o4-mini,2025-06-03,Refact.ai Agent,"claude-4-sonnet, o4-mini",Refact.ai,1,,results.json,,74.4
+20250610_augment_agent_v1,Augment Agent v1,2025-06-10,Augment Agent v1,,,1,,results.json,,70.39999999999999
+20250611_moatless_claude-4-sonnet-20250514,Moatless Tools + Claude 4 Sonnet,2025-06-11,Moatless Tools,claude-4-sonnet-20250514,Moatless AI,1,,results.json,,70.8
+20250612_trae,TRAE + Claude Sonnet 4 + Opus 4 + Sonnet 3.7 + Gemini 2.5 Pro,2025-06-12,TRAE,"claude-4-sonnet-20250522, claude-4-opus-20250522, claude-3-7-sonnet-20250219, gemini-2.5-pro-preview-06-05",TRAE,2+,,results.json,,75.2
+20250616_Skywork-SWE-32B,Skywork-SWE-32B,2025-06-16,Skywork-SWE-32B,Qwen2.5-Coder-32B-Instruct,Skywork AI,1,,results.json,,38.0
+20250616_Skywork-SWE-32B+TTS_Bo8,Skywork-SWE-32B + TTS(Bo8),2025-06-16,Skywork-SWE-32B,Qwen2.5-Coder-32B-Instruct,Skywork AI,2+,,results.json,,47.0
+20250623_warp,Warp,2025-06-23,Warp,"claude-sonnet-4-20250514, claude-3-7-sonnet-20250219, gemini-2.5-pro, gpt-4.1-2025-04-14",Warp,1,,results.json,,71.0
+20250627_agentless_MCTS-Refine-7B,MCTS-Refine-7B,2025-06-27,MCTS-Refine-7B,MCTS-Refine-7B,,1,,results.json,,23.200000000000003
+20250629_deepswerl_r2eagent,DeepSWE-Preview,2025-06-29,R2E-Gym,https://huggingface.co/agentica-org/DeepSWE-Preview,Agentica,1,,results.json,,42.199999999999996
+20250629_deepswerl_r2eagent_tts,DeepSWE-Preview + TTS(Bo16),2025-06-29,DeepSWE-Preview,https://huggingface.co/agentica-org/DeepSWE-Preview,Agentica,2+,,results.json,,58.8
+20250710_bloop,Bloop,2025-07-10,Bloop,claude-4-sonnet-20250514,Bloop AI,1,,results.json,,71.2
+20250715_qodo_command,Qodo Command,2025-07-15,Qodo Command,"claude-sonnet-4-20250514, gpt-4o",Qodo,1,,results.json,,71.2
+20250716_openhands_kimi_k2,OpenHands + Kimi K2,2025-07-16,OpenHands,moonshot/kimi-k2-0711-preview,OpenHands,1,,results.json,,65.4
+20250720_Lingxi-v1.5_claude-4-sonnet-20250514,Lingxi-v1.5_claude-4-sonnet-20250514,2025-07-20,Lingxi-v1.5,claude-4-sonnet-20250514,Lingxi,1,,results.json,,74.6
+20250720_mini-v0.0.0-Llama-4-Maverick-17B-Instruct,Llama 4 Maverick Instruct,2025-07-20,mini-SWE-agent,llama-4-maverick-instruct,Meta,1,21.04,per_instance_details.json,,21.0
+20250720_mini-v0.0.0-Llama-4-Scout-17B-Instruct,Llama 4 Scout Instruct,2025-07-20,mini-SWE-agent,llama-4-scout-instruct,Meta,1,9.06,,no per-task results,
+20250720_mini-v0.0.0-claude-3-7-sonnet-20250219,Claude 3.7 Sonnet (20250219),2025-07-20,mini-SWE-agent,claude-3-7-sonnet-20250219,Anthropic,1,52.8,per_instance_details.json,per-task score 10.2% disagrees with the reported 52.8%,10.2
+20250720_mini-v0.0.0-gpt-4o-2024-11-20,GPT 4o (2024-11-20),2025-07-20,mini-SWE-agent,gpt-4o-20241120,OpenAI,1,21.62,,no per-task results,
+20250720_mini-v0.0.0_gpt-4.1-mini-2025-04-14,GPT 4.1 mini (2025-04-14),2025-07-20,mini-SWE-agent,gpt-4.1-mini-20250414,OpenAI,1,23.94,,no per-task results,
+20250725_sweagent_devstral_small_2507,SWE-agent + DevStral Small 2507,2025-07-25,SWE-agent,devstral-small-2507,SWE-agent,1,,results.json,,38.0
+20250726_mini-v1.0.0_claude-sonnet-4-20250514,Claude 4 Sonnet (20250514),2025-07-26,mini-SWE-agent,claude-4-sonnet-20250514,Anthropic,1,64.93,per_instance_details.json,,64.8
+20250726_mini-v1.0.0_gemini-2.0-flash,Gemini 2.0 Flash,2025-07-26,mini-SWE-agent,gemini-2.0-flash,Google DeepMind,1,13.52,,no per-task results,
+20250726_mini-v1.0.0_gemini-2.5-flash,Gemini 2.5 Flash (2025-04-17),2025-07-26,mini-SWE-agent,gemini-2.5-flash,Google DeepMind,1,28.73,,no per-task results,
+20250726_mini-v1.0.0_gemini-2.5-pro,Gemini 2.5 Pro (2025-05-06),2025-07-26,mini-SWE-agent,gemini-2.5-pro,Google DeepMind,1,53.6,per_instance_details.json,,53.6
+20250726_mini-v1.0.0_gpt-4.1-2025-04-14,GPT 4.1 (2025-04-14),2025-07-26,mini-SWE-agent,gpt-4.1-20250414,OpenAI,1,39.58,,no per-task results,
+20250726_mini-v1.0.0_o3-2025-04-16,o3 (2025-04-16),2025-07-26,mini-SWE-agent,o3-20250416,OpenAI,1,58.4,per_instance_details.json,,58.4
+20250726_mini-v1.0.0_o4-mini-2025-04-16,o4-mini (2025-04-16),2025-07-26,mini-SWE-agent,o4-mini-20250416,OpenAI,1,45.0,per_instance_details.json,,45.0
+20250728_zai_glm4-5,20250728_zai_glm4-5,2025-07-28,,,,,,results.json,,64.2
+20250731_harness_ai,Harness AI,2025-07-31,Harness AI,claude-sonnet-4-20250514,Harness,1,,results.json,,74.8
+20250802_mini-v1.0.0_claude-4-opus-20250514,Claude 4 Opus (20250514),2025-08-02,mini-SWE-agent,claude-4-opus-20250514,Anthropic,1,67.6,per_instance_details.json,,67.60000000000001
+20250802_mini-v1.0.0_qwen3-coder-480b-a35b-instruct,Qwen3-Coder 480B/A35B Instruct,2025-08-02,mini-SWE-agent,Qwen3-Coder-480B-A35B-Instruct,Qwen,1,55.4,per_instance_details.json,,55.400000000000006
+20250803_mini-v1.0.0_qwen2-5-coder-32b-instruct,Qwen2.5-Coder 32B Instruct,2025-08-03,mini-SWE-agent,Qwen2.5-Coder-32B-Instruct,Qwen,1,9.0,per_instance_details.json,,9.0
+20250804_codesweep_sweagent_kimi_k2_instruct,CodeSweep - SWE-agent - Kimi K2 Instruct,2025-08-04,CodeSweep - SWE-agent,kimi-k2-instruct,CodeSweep Inc.,1,,results.json,,53.400000000000006
+20250804_epam-ai-run-claude-4-sonnet,EPAM AI/Run Developer Agent v20250719 + Claude 4 Sonnet,2025-08-04,EPAM AI/Run Developer Agent,claude-sonnet-4-20250514,"EPAM Systems, Inc.",2+,,results.json,,76.8
+20250805_openhands-Qwen3-Coder-30B-A3B-Instruct,20250805_openhands-Qwen3-Coder-30B-A3B-Instruct,2025-08-05,,,,,,results.json,,51.6
+20250805_openhands-Qwen3-Coder-480B-A35B-Instruct,20250805_openhands-Qwen3-Coder-480B-A35B-Instruct,2025-08-05,,,,,,results.json,,69.6
+20250806_SWE-Exp_DeepSeek-V3,20250806_SWE-Exp_DeepSeek-V3,2025-08-06,,,,,,results.json,,42.0
+20250807_mini-v1.7.0_gpt-5,GPT 5 (2025-08-07) (medium),2025-08-07,mini-SWE-agent,gpt-5-2025-08-07,OpenAI,1,65.0,per_instance_details.json,,65.0
+20250807_mini-v1.7.0_gpt-5-mini,GPT 5 mini (2025-08-07) (medium),2025-08-07,mini-SWE-agent,gpt-5-mini-2025-08-07,OpenAI,1,59.8,per_instance_details.json,,59.8
+20250807_mini-v1.7.0_gpt-5-nano,GPT 5 nano (2025-08-07) (medium),2025-08-07,mini-SWE-agent,gpt-5-nano-2025-08-07,OpenAI,1,34.8,per_instance_details.json,,34.8
+20250807_mini-v1.7.0_gpt-oss-120b,gpt-oss-120b,2025-08-07,mini-SWE-agent,gpt-oss-120b,OpenAI,1,26.0,per_instance_details.json,,26.0
+20250807_mini-v1.7.0_kimi-k2-instruct,Kimi K2 Instruct,2025-08-07,mini-SWE-agent,Kimi-K2-Instruct,Moonshot AI,1,43.8,per_instance_details.json,,43.8
+20250807_openhands_gpt5,OpenHands + GPT-5,2025-08-07,OpenHands,openai/gpt-5-2025-08-07,OpenHands,1,,results.json,,71.8
+20250819_ACoder,ACoder,2025-08-19,ACoder,"claude-4-sonnet, claude-4.1-opus, gpt-5-0807-global, gemini-2.5-pro-06-17",ACoder,2+,,results.json,,76.4
+20250822_mini-v1.9.1_glm-4.5,GLM 4.5 (2025-08-22),2025-08-22,mini-SWE-agent,GLM-4.5,Z.ai,1,54.2,per_instance_details.json,,54.2
+20250901_entroPO_R2E_QwenCoder30BA3B,EntroPO + R2E + Qwen3-Coder-30B-A3B-Instruct,2025-09-01,EntroPO + R2E,Qwen3-Coder-30B-A3B-Instruct,42-b3yond-6ug,1,,results.json,,52.2
+20250901_entroPO_R2E_QwenCoder30BA3B_tts,EntroPO + R2E + Qwen3-Coder-30B-A3B-Instruct,2025-09-01,EntroPO + R2E,Qwen3-Coder-30B-A3B-Instruct,42-b3yond-6ug,2+,,results.json,,60.4
+20250901_warp,Warp,2025-09-01,Warp,"gpt-5, claude-sonnet-4-20250514",Warp,2+,,results.json,,75.6
+20250902_atlassian-rovo-dev,Atlassian Rovo Dev (2025-09-02),2025-09-02,Atlassian Rovo Dev,"claude-sonnet-4-20250514, gpt-5",Atlassian,2,,results.json,,76.8
+20250915_JoyCode,JoyCode + Claude 4 Sonnet + GPT-4.1,2025-09-15,JoyCode,"claude-4-sonnet, gpt-4.1",JoyCode,1,,results.json,,74.6
+20250924_artemis_agent_v2,Artemis Agent v2 (2025-09-24),2025-09-24,Artemis Agent v2,claude-sonnet-4-20250514,Turintech,1,,results.json,,56.99999999999999
+20250928_trae_doubao_seed_code,TRAE + Doubao-Seed-Code,2025-09-28,TRAE,"Doubao-Seed-Code, Doubao-Seed-1.6",ByteDance,2+,,results.json,,78.8
+20250929_Prometheus_v1.2_gpt5,20250929_Prometheus_v1.2_gpt5,2025-09-29,,,,,,results.json,,71.2
+20250929_mini-v1.13.3_sonnet-4-5-20250929,Claude 4.5 Sonnet (20250929),2025-09-29,mini-SWE-agent,claude-sonnet-4-5-20250929,Anthropic,1,70.6,per_instance_details.json,,70.6
+20250930_zai_glm4-6,20250930_zai_glm4-6,2025-09-30,,,,,,results.json,,68.2
+20251014_Lingxi_kimi_k2,Lingxi v1.5 x Kimi K2,2025-10-14,Lingxi v1.5,kimi-k2-0905-preview,Huawei,1,,results.json,,71.2
+20251015_Prometheus_v1.2.1_gpt5,20251015_Prometheus_v1.2.1_gpt5,2025-10-15,,,,,,results.json,,74.4
+20251021_SalesforceAIResearch_SAGE_bash_only,Salesforce AI Research SAGE (bash-only),2025-10-21,Salesforce AI Research SAGE,"claude-sonnet-4.5, gpt-5",Salesforce AI Research,2+,,results.json,,73.0
+20251103_SalesforceAIResearch_SAGE_OpenHands,Salesforce AI Research SAGE (OpenHands),2025-11-03,Salesforce AI Research SAGE,"claude-sonnet-4.5, gpt-5",Salesforce AI Research,2+,,results.json,,73.8
+20251103_sonar-foundation-agent_claude-sonnet-4-5,Sonar Foundation Agent + Claude 4.5 Sonnet,2025-11-03,Sonar Foundation Agent,claude-sonnet-4-5,Sonar,1,,results.json,,74.8
+20251110_frogboss-32b,FrogBoss-32B-2510,2025-11-10,FrogBoss-32B-2510,FrogBoss-32B-2510,Microsoft,1,,results.json,,53.6
+20251110_frogmini-14b,FrogMini-14B-2510,2025-11-10,FrogMini-14B-2510,FrogMini-14B-2510,Microsoft,1,,results.json,,45.0
+20251118_mini-v1.15.0_gemini-3-pro-preview-20251118,Gemini 3 Pro Preview (2025-11-18),2025-11-18,mini-SWE-agent,gemini-3-pro-preview,Google DeepMind,1,74.2,per_instance_details.json,,74.2
+20251120_livesweagent_gemini-3-pro-preview,live-SWE-agent + Gemini 3 Pro Preview (2025-11-18),2025-11-20,live-SWE-agent,gemini-3-pro-preview,UIUC,1,,results.json,,77.4
+20251120_mini-v1.15.0_gpt-5.1-2025-11-13,GPT 5.1 (2025-11-13) (medium),2025-11-20,mini-SWE-agent,gpt-5.1-2025-11-13,OpenAI,1,66.0,per_instance_details.json,,66.0
+20251124_mini-v1.16.0_claude-opus-4-5-20251101,Claude 4.5 Opus (20251101) (medium),2025-11-24,mini-SWE-agent,claude-opus-4-5-20251101,Anthropic,1,74.4,per_instance_details.json,,74.4
+20251124_mini-v1.16.0_gpt-5.1-codex,GPT 5.1 Codex (medium),2025-11-24,mini-SWE-agent,gpt-5.1-codex,OpenAI,1,66.0,per_instance_details.json,,66.0
+20251124_mini-v1.17.0_minimax-m2,MiniMax M2,2025-11-24,mini-SWE-agent,minimax-m2,Minimax,1,61.0,per_instance_details.json,,61.0
+20251127_openhands_claude-opus-4-5,OpenHands + Claude Opus 4.5,2025-11-27,OpenHands,,OpenHands,,,results.json,,77.60000000000001
+20251201_mini-v1.17.1_deepseek-v3.2-reasoner,DeepSeek V3.2 Reasoner,2025-12-01,mini-SWE-agent,deepseek-v3.2-reasoner,deepseek,1,60.0,per_instance_details.json,,60.0
+20251201_mini-v1.17.1_glm-4.6,GLM 4.6 (T=1),2025-12-01,mini-SWE-agent,glm-4.6,Z.ai,1,55.4,per_instance_details.json,,55.400000000000006
+20251205_sonar-foundation-agent_claude-opus-4-5,Sonar Foundation Agent + Claude 4.5 Opus,2025-12-05,Sonar Foundation Agent,claude-opus-4-5,Sonar,1,,results.json,,79.2
+20251209_mini-v1.17.2_devstral-2512,Devstral (2512),2025-12-09,mini-SWE-agent,devstral-2512,mistral,1,53.8,per_instance_details.json,,53.800000000000004
+20251209_mini-v1.17.2_devstral-small-2512,Devstral Small (2512),2025-12-09,mini-SWE-agent,devstral-small-2512,mistral,1,56.4,per_instance_details.json,,56.39999999999999
+20251210_mini-v1.17.2_kimi-k2-thinking,Kimi K2 Thinking,2025-12-10,mini-SWE-agent,Kimi-K2-Thinking,Moonshot AI,1,63.4,per_instance_details.json,,63.4
+20251211_mini-v1.17.2_gpt-5.2-2025-12-11,GPT 5.2 (2025-12-11),2025-12-11,mini-SWE-agent,gpt-5.2-2025-12-11,OpenAI,1,69.0,per_instance_details.json,,69.0
+20251211_mini-v1.17.2_gpt-5.2-2025-12-11-high,GPT 5.2 (2025-12-11) (high),2025-12-11,mini-SWE-agent,gpt-5.2-2025-12-11,OpenAI,1,71.8,per_instance_details.json,,71.8
+20251215_livesweagent_claude-opus-4-5,live-SWE-agent + Claude 4.5 Opus medium (20251101),2025-12-15,live-SWE-agent,claude-opus-4-5-20251101,UIUC,1,,results.json,,79.2
+20260217_mini-v2.0.0_claude-4-5-haiku-high,Claude 4.5 Haiku (high),2026-02-17,mini-SWE-agent,claude-haiku-4-5-20251001,Anthropic,1,66.6,per_instance_details.json,,66.60000000000001
+20260217_mini-v2.0.0_claude-4-5-opus-high,Claude 4.5 Opus (high),2026-02-17,mini-SWE-agent,claude-4-5-opus,Anthropic,1,76.8,per_instance_details.json,,76.8
+20260217_mini-v2.0.0_claude-4-5-sonnet-high,Claude 4.5 Sonnet (high),2026-02-17,mini-SWE-agent,claude-sonnet-4-5-20250929,Anthropic,1,71.4,per_instance_details.json,,71.39999999999999
+20260217_mini-v2.0.0_claude-4-6-opus,Claude 4.6 Opus,2026-02-17,mini-SWE-agent,claude-opus-4-6,Anthropic,1,75.6,per_instance_details.json,,75.6
+20260217_mini-v2.0.0_deepseek-3-2-high,DeepSeek V3.2 (high),2026-02-17,mini-SWE-agent,deepseek-v3.2,DeepSeek,1,70.0,per_instance_details.json,,70.0
+20260217_mini-v2.0.0_gemini-3-flash-high,Gemini 3 Flash (high),2026-02-17,mini-SWE-agent,gemini-3-flash-preview,Google DeepMind,1,75.8,per_instance_details.json,,75.8
+20260217_mini-v2.0.0_glm-5-high,GLM 5 (high),2026-02-17,mini-SWE-agent,glm-5,Z-AI,1,72.8,per_instance_details.json,,72.8
+20260217_mini-v2.0.0_gpt-5-2-high,GPT 5.2 (high),2026-02-17,mini-SWE-agent,gpt-5-2,OpenAI,1,72.8,per_instance_details.json,,72.8
+20260217_mini-v2.0.0_gpt-5-mini,GPT 5 mini,2026-02-17,mini-SWE-agent,gpt-5-mini-2025-08-07,OpenAI,1,56.2,per_instance_details.json,,56.2
+20260217_mini-v2.0.0_kimi-k2-5-high,Kimi K2.5 (high),2026-02-17,mini-SWE-agent,kimi-k2.5,Moonshot AI,1,70.8,per_instance_details.json,,70.8
+20260217_mini-v2.0.0_minimax-2-5-high,MiniMax M2.5 (high),2026-02-17,mini-SWE-agent,minimax-m2.5,Minimax,1,75.8,per_instance_details.json,,75.8
+20260219_mini-v2.0.0_gpt-5-2-codex,GPT 5.2 Codex,2026-02-19,mini-SWE-agent,gpt-5-2-codex,OpenAI,1,72.8,,no per-task results,
+20260226_mini-v2.0.0_gemini-3-pro-high,Gemini 3 Pro,2026-02-26,mini-SWE-agent,gemini-3-pro-preview,Google DeepMind,1,69.6,per_instance_details.json,per-task score 0.0% disagrees with the reported 69.6%,0.0
+20260901_mini-v2.4.2_gemini-3-5-flash,Gemini 3.5 Flash,2026-09-01,mini-SWE-agent,gemini-3-5-flash,Google DeepMind,1,71.8,results.json,,71.8

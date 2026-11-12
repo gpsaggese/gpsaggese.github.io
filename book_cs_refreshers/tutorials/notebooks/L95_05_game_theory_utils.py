@@ -8,7 +8,7 @@ on it.
 
 Import as:
 
-import L95_05_game_theory_utils as utils
+import book_cs_refreshers.tutorials.notebooks.L95_05_game_theory_utils as bcrtnl0gtu
 """
 
 import logging

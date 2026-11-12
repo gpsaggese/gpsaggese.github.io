@@ -3,7 +3,6 @@
 ## Status
 - **Status**: draft
 - **Complete Specs**: 10%
-- **Assignee**: TBD
 
 ## Core Idea
 - `NoesisMarket` clears every `T` minutes (default 5), but a large share of
@@ -33,7 +32,7 @@
   at a posted overage price `P_overage >= P` (analogous to real-time prices
   exceeding day-ahead prices in electricity markets, paper
   `sec:related_commodity_markets`)
-  ```
+  ```text
   spot_price(t) = P              if balance(contract, t) > 0
                 = P_overage      otherwise
   ```
@@ -79,13 +78,13 @@
   markets (electricity, bandwidth)
 
 ## Next steps
-[ ] Look for related research (what has already been done)
-[ ] Finalize the implementation plan
-[ ] GP to review / approve the plan
-[ ] Hack a quick end-to-end prototype (e.g., in 1-2 days) to show that you
-    understood the problem and can make progress
-[ ] Break the problem down in phases and milestones
-[ ] Execute one step at the time
+- [ ] Look for related research (what has already been done)
+- [ ] Finalize the implementation plan
+- [ ] GP to review / approve the plan
+- [ ] Hack a quick end-to-end prototype (e.g., in 1-2 days) to show that you
+      understood the problem and can make progress
+- [ ] Break the problem down in phases and milestones
+- [ ] Execute one step at the time
 
 ## Implementation plan
 - Milestone 1: specify the spot layer and overage rule

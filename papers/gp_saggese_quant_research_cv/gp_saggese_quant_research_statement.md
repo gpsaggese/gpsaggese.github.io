@@ -26,7 +26,7 @@ a high-throughput research process where models are discovered,
 validated, and deployed at a predictable rate while accounting for their
 limited lifespan in competitive markets.
 
-My full CV is [here](https://github.com/gpsaggese/umd_classes)
+My full CV is [here](https://github.com/gpsaggese/gpsaggese.github.io)
 
 - [Education](https://gpsaggese.github.io/03_education/)
 

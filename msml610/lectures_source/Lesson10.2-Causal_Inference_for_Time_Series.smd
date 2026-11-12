@@ -1,0 +1,831 @@
+// type=UMD_slides
+// course_title=MSML610: Advanced Machine Learning
+// lesson_title=L10.2: Causal Inference for Time Series
+// version=v1.0 (2026-09-03)
+// slides_engine=typst
+// references=
+
+# Time Series vs. Cross-Sectional Causality
+
+## Temporal Causal Structures
+
+* Why Time Series Causality Is Different
+
+- Time series provide structure to exploit
+  - The _arrow of time_ (causes precede effects) eliminates backward arrows
+  - Information from cohorts of related data
+
+- **Univariate Time series causal inference** compares a unit to _itself_ over time
+  - E.g., compare a city's crime rate _before_ vs _after_ a new policy
+  - Unit is its own control, but observations are _not_ independent
+
+- **Cross-sectional causal inference** compares units at a single point in time
+  - E.g., compare outcomes for treated vs untreated patients in one cohort
+  - Assumes units are (conditionally) exchangeable
+
+- **Challenges**
+  - Observations are correlated across time (autocorrelation)
+  - Treatments and confounders may drift or trend
+  - Often impossible to run experiments
+
+- **Example**:
+  - Did the Federal Reserve rate cut in 2020 cause the stock market rebound?
+  - Cannot rerun 2020 with a different policy $\to$ must use temporal structure
+    to reason counterfactually
+
+* Temporal Causal Structures: Basic Setup
+
+- Observe a sequence of variables over time:
+  - Treatment: $T_t$ (continuous, binary)
+  - Outcome: $Y_t$
+  - Covariates: $\vX_t$
+
+::: columns
+:::: {.column width=55%}
+- A simple **temporal causal graph** (first-order)
+
+- **Key principle**: _effects cannot precede causes_
+  - $T_t$ can affect $Y_{t}, Y_{t+1}, ...$ but never $Y_{t-1}$
+  - Eliminates half of the arrows a-priori
+
+::::
+:::: {.column width=45%}
+
+```graphviz
+digraph TemporalCausal {
+    rankdir=LR;
+    splines=true;
+    nodesep=0.6;
+    ranksep=0.6;
+    node [shape=ellipse, style="filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+    T_tm1 [label=<T<SUB>t-1</SUB>>, fillcolor="#A6E7F4"];
+    T_t   [label=<T<SUB>t</SUB>>,     fillcolor="#A6E7F4"];
+    T_tp1 [label=<T<SUB>t+1</SUB>>, fillcolor="#A6E7F4"];
+    Y_tm1 [label=<Y<SUB>t-1</SUB>>, fillcolor="#A6C8F4"];
+    Y_t   [label=<Y<SUB>t</SUB>>,     fillcolor="#A6C8F4"];
+    Y_tp1 [label=<Y<SUB>t+1</SUB>>, fillcolor="#A6C8F4"];
+    T_tm1 -> T_t -> T_tp1;
+    Y_tm1 -> Y_t -> Y_tp1;
+    T_tm1 -> Y_t;
+    T_t   -> Y_tp1;
+    Y_tm1 -> T_t [style=dashed];
+}
+```
+::::
+:::
+
+* Temporal Causal Structures: Key Quantities
+
+// TODO(ai_gp): Add plot
+
+- **Definition**: The causal effect of a _sustained intervention_ starting at
+  time $t^*$:
+  $$
+  \tau = \EE[Y_t | do(T_{t^*:t} = 1)]
+       - \EE[Y_t | do(T_{t^*:t} = 0)]
+  $$
+
+- **Intuition**: average effect when we _force_ the treatment from $t^*$ onward
+
+- **Definition** _Dynamic treatment_ is when treatment at time $t$ depends on
+  history
+  $(\vX_{1:t}, Y_{1:t-1}, T_{1:t-1})$
+  - Common in medicine: dosing depends on patient response so far
+
+- Two common special cases:
+  1. _Contemporaneous effect: $T_t \to Y_t$
+  2. _Lagged effect_: $T_t \to Y_{t+k}$ for some lag $k > 0$
+
+- **Example**: monetary policy
+  - Rate cut _this quarter_ affects GDP _over several quarters_ (lagged effect)
+  - Fed adjusts rates based on past GDP $\to$ feedback loop
+
+## Challenges Specific to Time Series
+
+* Autocorrelation
+
+- **Autocorrelation**: $Y_t$ is correlated with $Y_{t-1}, Y_{t-2}, ...$
+  - Standard errors computed assuming i.i.d. data are _too small_
+  - Significance tests reject the null far more than their nominal rate
+
+- **Intuition**: autocorrelated data carries less _independent_ information than
+  the number of observations suggests
+
+- **Solution**:
+  - If quantities are autocorrelated, naive OLS standard errors mislead us
+  - Fix: Newey-West or HAC (heteroskedasticity- and autocorrelation-consistent)
+    standard errors
+
+- **Example**: regressing daily stock returns on a dummy for "news day"
+
+* Non-Stationarity and Trends
+
+- **Definition**: a _stationary_ process has constant mean, variance, and
+  autocovariance over time
+  - Many real-world series are _not_ stationary (e.g., GDP, prices, populations
+    grow)
+
+- **Spurious regression** 
+  - Two series trending upward over time look correlated even if unrelated
+  - E.g., number of pirates vs global temperature (both trend over
+    decades) but correlation $\neq$ causation
+
+- **Solutions**:
+  - Difference the series: work with $\Delta Y_t = Y_t - Y_{t-1}$
+  - Detrend: remove a fitted trend before analysis
+  - Use cointegration methods if two series share a common trend
+
+* Feedback Loops and Simultaneity
+
+- **Fact**: in time series, cause and effect often influence each other creating
+  _feedback loops_
+
+- **Problem**: this creates _simultaneity bias_ in regression
+  - $Y_t$ and $T_t$ are jointly determined
+  - OLS estimates are inconsistent
+  - Cannot interpret coefficients as causal effects
+
+::: columns
+:::: {.column width=55%}
+- **Example**
+  - Monetary policy $\to$ inflation $\to$ monetary policy
+  - Advertising $\to$ sales $\to$ advertising budget
+::::
+:::: {.column width=45%}
+
+```graphviz
+digraph Feedback {
+    rankdir=LR;
+    splines=true;
+    nodesep=0.8;
+    node [shape=ellipse, style="filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+    T_t   [label=<T<SUB>t</SUB> (Policy)>,    fillcolor="#A6E7F4"];
+    Y_t   [label=<Y<SUB>t</SUB> (Outcome)>,   fillcolor="#A6C8F4"];
+    T_tp1 [label=<T<SUB>t+1</SUB>>,         fillcolor="#A6E7F4"];
+    Y_tp1 [label=<Y<SUB>t+1</SUB>>,         fillcolor="#A6C8F4"];
+    T_t -> Y_t;
+    Y_t -> T_tp1;
+    T_tp1 -> Y_tp1;
+    T_t -> T_tp1;
+    Y_t -> Y_tp1;
+}
+```
+
+::::
+:::
+
+* Structural Vector Autoregressions (VARs)
+
+- **Definition**: Model variables together, allowing simultaneous influence
+
+- **Key idea**
+  - Treat policy $T_t$ and outcome $Y_t$ symmetrically
+  - Estimate response to shocks (i.e., unexpected, exogenous changes)
+
+- **Mathematical formulation**: VAR(p) model with $k$ variables
+  $$
+  \vY_t = \vc + A_1 \vY_{t-1} + A_2 \vY_{t-2} + ... + A_p \vY_{t-p} + \vv{\varepsilon}_t
+  $$
+  where:
+  - $\vY_t$ = vector of $k$ time series
+  - $A_i$ = coefficient matrices (dependence on lagged values)
+  - $\vv{\varepsilon}_t$ = structural shocks (uncorrelated across equations)
+
+- **Identification challenge**: How do you determine causality direction?
+  - Impose _structural assumptions_
+    - E.g., monetary policy reacts to inflation _within_ quarter; inflation
+      reacts _next_ quarter
+
+* Instrumental Variables (IV)
+
+// TODO(ai_gp): Add picture
+- **Key idea**:
+  - Find a variable $Z$ that affects treatment $T$ but not outcome $Y$ directly
+  - Use $Z$ to predict $T$, then measure how predicted $\hat{T}$ correlates
+    with $Y$
+
+- **Advantage**: breaks the feedback loop by providing exogenous variation in
+  treatment
+
+- **Problem**: must find a credible instrument
+  - E.g., studying effect of schooling on earnings, use distance to nearest
+    college (affects schooling access, not earnings directly)
+
+- **Limitation**: only estimates the effect on "compliers": units whose
+  treatment changes with the instrument
+
+* Natural Experiments
+
+- **Key idea**: exploit an unexpected, external event that randomly assigns
+  treatment to some units but not others
+  - E.g., lottery, policy rollout, shock, discontinuity in time
+
+- **Advantage**: randomization eliminates confounding without requiring an
+  instrument
+
+- **Example**
+  - Vietnam War draft lottery randomly assigns military service
+  - Compare drafted vs non-drafted on lifetime earnings
+
+- **Limitation**
+  - Only valid when the shock is truly exogenous and affects treatment assignment
+  - Cannot replicate in observational data
+
+* Unobserved Confounders That Vary Over Time
+
+- **Problem**
+  - Time-varying confounders make identification harder
+  - $U_t$ may affect _both_ $T_t$ and $Y_t$ and change slowly
+
+- **Example**: evaluating a diet on weight loss
+  - Season (winter vs summer), stress, and motivation all change over time
+  - Hard to measure but drive both adherence and outcome
+
+- **Solution**
+  - If a confounder is _time-invariant_ simple before-after comparisons
+    difference it out
+    - E.g., a person's genetics
+    - This is the core idea behind DiD and fixed-effects models
+  - If the confounder is _time-varying_ it contaminates the comparison even after
+    differencing
+    - E.g., mood, weather
+
+* Other Common Challenges
+
+- **Anticipation effects**: units change behavior _before_ treatment if they
+  expect it
+  - E.g., consumers delay purchases before a known tax cut
+
+- **Spillovers / SUTVA violations**: treatment on one unit affects another
+  - E.g., advertising in one region spills to neighboring regions
+
+- **Structural breaks**: the data-generating process changes mid-sample
+  - E.g., 2008 financial crisis, COVID-19 shock
+
+- **Missing data and irregular sampling**: standard time series tools assume
+  equispaced observations
+  - E.g., sensor dropouts, holidays, weekends
+
+* When Temporal Structure Helps
+
+- **Time orders causes before effects**: rules out many causal directions a
+  priori
+  - Future cannot cause past $\to$ prunes the graph
+
+- **Pre-treatment history as a control**: unit is its own baseline
+  - Time-invariant confounders are automatically controlled for
+  - E.g., genes, geography, institutional features
+
+- **Natural experiments are easier to spot**: policy changes, shocks, and
+  discontinuities give quasi-experimental variation
+  -  Interrupted Time Series (ITS), DiD, and synthetic control all exploit this
+
+  - **Example**: studying the effect of a sugary-drink ban
+    - Compare the same city before and after
+    - Genes, climate, culture are held fixed
+
+* When Temporal Structure Misleads
+
+- **Trends fake causation** (spurious regression)
+  - Two series both trending upward look causally linked even if unrelated
+
+- **Seasonality hides effects**: a holiday bump can mask a policy effect
+
+- **Lagged effects confuse attribution**: today's outcome may reflect yesterday's
+  treatment
+  - Wrong lag specification $\to$ wrong effect estimate
+
+- **Feedback inflates correlations**: if $Y_t$ drives $T_{t+1}$, regressing
+  $Y_t$ on $T_t$ also picks up the reverse effect
+
+- **Regime changes invalidate models**: a model fit before COVID may not hold
+  after
+
+- **Key takeaway**: temporal data is informative, but blindly applying
+  cross-sectional tools to it creates more problems than it solves
+
+# Granger Causality
+
+* Granger Causality: Intuition
+
+- **Intuition**: Granger Causality (Nobel 2003)
+  _"Does knowing the past of $X$ help me predict $Y$ beyond what $Y$'s own past
+  already tells me?"_
+  - Causes must come before effects, and effects should carry information about
+    their causes
+
+- "Granger-causing" (a bit of a misnomer)
+  - Is _not_ causation in Pearl's do-calculus sense
+  - Is a _predictive_ notion based on temporal precedence
+  - Answers _"does X help predict Y?"_ not _"does changing X change Y?"_
+  - $X \to Y$ and $Y \to X$ can both hold (common in economic feedback systems)
+
+- **Example**:
+  - _Ice cream sales_ does not Granger-cause _drowning_
+  - _Temperature_ Granger-causes both _ice cream sales_ and _drowning_
+
+* Granger Causality: Formal Definition
+
+- Consider two stationary time series $X_t$ and $Y_t$
+
+- Compare two predictors of $Y_t$:
+  1. _Restricted model_: uses only past $Y$
+     $$
+     Y_t = \alpha + \sum_{i=1}^p \phi_i Y_{t-i} + \varepsilon_t
+     $$
+  2. _Unrestricted model_: adds past $X$
+     $$
+     Y_t = \alpha + \sum_{i=1}^p \phi_i Y_{t-i}
+                  + \sum_{j=1}^p \beta_j X_{t-j} + \eta_t
+     $$
+
+- **Definition**: $X$ _Granger-causes_ $Y$ iff the unrestricted model has
+  _strictly smaller_ forecast error than the restricted one
+  - Equivalently: F-test on $H_0: \beta_1 = \beta_2 = ... = \beta_p = 0$
+
+* Granger Causality: Key Assumptions
+
+1. **Stationarity**: both series have time-invariant statistical properties
+   - Non-stationary series can produce spurious Granger causality
+   - Pre-test with ADF / KPSS; difference if needed
+
+2. **Correct lag order $p$**: too few lags miss the effect; too many overfit
+   - Choose via AIC, BIC, or cross-validation
+
+3. **Linearity** (in the basic formulation)
+   - Non-linear Granger causality extensions exist (e.g., transfer entropy)
+
+4. **No omitted common causes** (the big one)
+   - If $Z$ drives both $X$ and $Y$ with different lags, $X$ appears to
+     Granger-cause $Y$
+
+5. **Correct sampling frequency**
+   - If the true effect operates faster than the sampling interval, Granger
+     causality may fail to detect or reverse direction
+
+* Granger Causality: Limitations
+
+- **Granger causality $\neq$ causation**
+  - It tests **predictive** relationships, not **interventional** ones
+  - A Granger-causal relationship can be entirely due to a common driver
+
+- **Example of spurious Granger causality**:
+  - Barometer reading $X_t$ Granger-causes storms $Y_{t+1}$
+  - But raising the barometer manually does _not_ cause a storm
+  - Atmospheric pressure is the actual common cause
+
+- **Aggregation problems**:
+  - Monthly data may miss daily Granger effects
+  - Sampling slower than the process $\to$ spurious bidirectional causality
+
+- **Cannot handle contemporaneous effects** in the basic form
+  - If $X_t$ affects $Y_t$ instantly, lag-based tests miss it
+
+- **Requires long time series** for reliable inference
+  - Typically $T \gg p$ (e.g., 100+ observations for 4 lags)
+
+* Granger Causality: Practical Example 1
+
+- **Question**: does advertising spend Granger-cause sales?
+  - $X_t$: weekly ad spend
+  - $Y_t$: weekly sales
+
+- **Caveat**: this does _not_ mean "if we spend more on ads, sales will rise"
+  - Both could be driven by seasonal demand $\to$ need an experiment or a causal
+    design to get an interventional answer
+
+- **Question**: do Twitter sentiment scores Granger-cause stock returns?
+  - A widely-studied question; results are mixed
+  - Twitter sentiment _does_ Granger-cause short-horizon returns for some stocks
+    and horizons, but effect sizes are small
+
+# Interrupted Time Series (ITS)
+
+## Design and Estimation
+
+* Interrupted Time Series: Motivation
+
+- **Scenario**: suppose a policy is implemented at a single known date $t^*$
+  across all units
+  - E.g., new speed limit enforced from January 1st
+  - E.g., a website redesign launched on a specific day
+
+- **Problem**
+  - No control group is available: the whole population is treated
+
+- **Solution**:
+  - Use the _pre-intervention_ trajectory of the series to forecast what would
+    have happened _without_ the intervention
+  - Compare the forecast (_counterfactual_) to what actually happened
+  - The gap is the estimated causal effect
+
+- **Example**: 
+  - Seatbelt law: ~15-20% reduction in fatalities
+  - Netflix password ban: 
+    - Expected: subscriber growth from monetizing shared accounts
+    - Actual: mixed results (growth in certain regions, churn in others)
+  - iOS privacy changes:
+    - Apps must ask permission to track
+    - 60-70% opt-in to tracking $\to$ 15-25% opt-in
+    - ad-targeting effectiveness tanked, Meta reported billions in revenue losses
+
+```graphviz
+digraph ITS {
+    rankdir=LR;
+    splines=true;
+    nodesep=0.6;
+    ranksep=0.8;
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    PrePeriod  [label=<Pre-period<BR/>(t &lt; t*)>,      fillcolor="#FFD1A6"];
+    Event      [label=<Intervention<BR/>at t = t*>,   fillcolor="#F4A6A6"];
+    PostPeriod [label=<Post-period<BR/>(t &gt;= t*)>,    fillcolor="#B2E2B2"];
+    Forecast   [label=<Counterfactual<BR/>forecast>,  fillcolor="#A6E7F4"];
+    Effect     [label=<Causal effect<BR/>= Actual - Forecast>, fillcolor="#A6C8F4"];
+
+    PrePeriod -> Event -> PostPeriod;
+    PrePeriod -> Forecast [label="  fit model"];
+    Forecast -> Effect;
+    PostPeriod -> Effect;
+}
+```
+
+* ITS: Segmented Regression Formulation
+
+- _Segmented regression_ model:
+  $$
+  Y_t = \beta_0 + \beta_1 t + \beta_2 D_t + \beta_3 (t - t^*) D_t + \varepsilon_t
+  $$
+  where $D_t = I(t \ge t^*)$
+
+- **Interpretation**
+  - $\beta_0$: pre-intervention intercept
+  - $\beta_1$: pre-intervention slope (trend)
+  - $\beta_2$: _level change_ at the intervention (immediate jump)
+  - $\beta_3$: _slope change_ after the intervention (trend shift)
+
+- **Questions**:
+  1. Is there a jump at $t^*$?
+     - Test $\beta_2 = 0$
+  2. Does the trajectory change?
+     - Test $\beta_3 = 0$
+
+* ITS: Details
+
+- _Autocorrelation_ is almost always present
+  - Fit with autocorrelation robust methods (Newey-West, ARIMA)
+
+- _Robustness checks_:
+  - Vary the window size (use 1, 2, 5 years pre-period)
+  - Try placebo intervention dates: do you find fake effects?
+  - Check for seasonality, holidays, co-occurring events
+
+- _Visual diagnostic_:
+  - Always plot the series with the fitted model and the intervention date marked
+  - Does ITS result survives?
+
+* ITS: Applications
+
+- **Public health**
+  - Effect of soda taxes on sugar-sweetened beverage purchases
+
+- **Policy evaluation**
+  - Effect of congestion pricing in London (2003) on traffic volumes
+  - Effect of a minimum wage increase on employment (comparing pre/post)
+
+- **Tech and product**
+  - Effect of a website redesign on conversion rate (before/after)
+  - Effect of a new recommendation algorithm on engagement
+
+- **Safety interventions**
+  - Did installing speed cameras reduce accidents?
+
+* ITS: Strengths and Weaknesses
+
+- **Pros**
+  - Works when _no control group exists_ (universal policy changes)
+  - Uses the unit as its own control $\to$ time-invariant confounders cancel
+
+- **Cons**
+  - Relies on _extrapolation_ of the pre-period trend
+  - Vulnerable to _co-occurring events_ (_"was it the policy or the
+    recession?"_)
+  - Autocorrelation inflates errors if ignored
+  - Needs a long, stable pre-period (rare in practice)
+
+- **Rule of thumb**: ITS is most credible when:
+  1. The intervention is sharply timed
+  2. No other major events occur near $t^*$
+  3. The pre-period is long and stable
+  4. The outcome has low noise relative to the effect size
+
+# Difference-in-Differences (DiD)
+
+## Parallel Trends Assumption
+
+// TODO(ai_gp): Check if it overlaps with 08.4
+* DiD: Motivation and Setup
+
+- **Motivating Example**
+  - Suppose a policy is rolled out in _some_ units but not others
+    - E.g., New Jersey raises its minimum wage in 1992; Pennsylvania does not
+    - Two groups: treated (NJ) and control (PA); two periods: before and after
+
+- **Definition**: Difference-in-Differences (DiD) estimates a causal effect by
+  comparing the change in outcomes over time between a group that received
+  treatment and a group that didn't
+  - Assume both groups would have followed the same trend in the absence of
+    treatment
+
+- **Procedure**
+  - Subtracts out time-invariant differences between groups
+  - Subtracts out common time trends across groups
+  - What's left is attributed to the policy
+
+- **Example**: Card & Krueger (1994) studied the NJ vs PA minimum wage
+  - Standard economic theory predicted that raising the minimum wage would reduce
+    employment (since labor becomes more costly)
+  - DiD estimate: essentially no employment effect (a surprising result)
+
+* DiD: The Core Idea
+
+// TODO(ai_gp): T_post -> T<SUB>post</SUB> and align with formula
+```graphviz
+digraph DiD {
+    rankdir=LR;
+    splines=true;
+    nodesep=0.8;
+    ranksep=0.8;
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+
+    TreatPre   [label=<Treated<BR/>Pre>,   fillcolor="#FFD1A6"];
+    TreatPost  [label=<Treated<BR/>Post>,  fillcolor="#F4A6A6"];
+    CtrlPre    [label=<Control<BR/>Pre>,   fillcolor="#B2E2B2"];
+    CtrlPost   [label=<Control<BR/>Post>,  fillcolor="#A0D6D1"];
+    Effect     [label=<DiD =<BR/>(T_post - T_pre)<BR/>- (C_post - C_pre)>, fillcolor="#A6C8F4"];
+
+    TreatPre -> TreatPost [label="  change in treated"];
+    CtrlPre -> CtrlPost  [label="  change in control"];
+    TreatPost -> Effect;
+    CtrlPost -> Effect;
+}
+```
+
+- _DiD estimator_ (with 2 groups, 2 periods):
+  $$
+  \hat{\tau}_{DiD}
+    = (\bar{Y}^{T}_{\text{post}} - \bar{Y}^{T}_{\text{pre}})
+      - (\bar{Y}^{C}_{\text{post}} - \bar{Y}^{C}_{\text{pre}})
+  $$
+
+* DiD: Regression Formulation
+
+- Equivalent regression form (with unit $i$ and time $t$):
+  $$
+  Y_{it} = \alpha + \beta \cdot \text{Treat}_i
+         + \gamma \cdot \text{Post}_t
+         + \tau \cdot (\text{Treat}_i \cdot \text{Post}_t) + \varepsilon_{it}
+  $$
+  - $\beta$: time-invariant difference between groups
+  - $\gamma$: common time trend
+  - $\tau$: _the DiD causal effect_ (coefficient on the interaction)
+
+// TODO(ai_gp): Improve
+
+* Parallel Trends Assumption
+
+- **Assumption**: in the absence of treatment, the treated and control units
+  would have followed the _same trend_ over time
+  $$
+  \EE[Y^{(0)}_{it} - Y^{(0)}_{i,t-1} | \text{Treat}_i = 1]
+  = \EE[Y^{(0)}_{it} - Y^{(0)}_{i,t-1} | \text{Treat}_i = 0]
+  $$
+  where $Y^{(0)}$ denotes the untreated potential outcome
+
+- **Intuition**: levels can differ, but _changes_ should match
+  - E.g., NJ may always have higher wages than PA, but both move together
+    absent the policy
+
+- **Question**: how do we test it?
+  - We cannot test it: it is a _counterfactual_ statement
+  - But we can check the _pre-treatment_ trends as a proxy
+  - If they are parallel _before_ treatment, we gain confidence (but no proof)
+
+- **Visual check**: plot the two group means over time; do they move in
+  lockstep before treatment?
+
+- **Red flags**:
+  - Significant pre-trends with opposite sign of the effect
+  - Divergence starting _before_ the policy (anticipation or selection)
+  - Using too short a pre-period $\to$ can't check parallel trends
+
+// TODO(ai_gp): Add plot
+
+* DiD: Robustness Checks
+
+- **Placebo treatments in time**: pretend the treatment happened earlier
+  - Should get no effect if the design is sound
+
+- **Placebo outcomes**: apply DiD to unrelated outcomes that _shouldn't_ change
+  - E.g., if studying minimum wage on employment, check it has no effect on
+    commodity prices
+
+- **Alternative control groups**: use different comparison units
+  - Results should be stable across reasonable choices
+
+- **Sensitivity to functional form**: levels vs. logs, linear vs. trend
+  adjustment
+
+- **Falsification tests**: subset the data in ways that should _not_ yield an
+  effect
+  - If they do, your design picks up something other than the treatment
+
+* DiD: Summary of Strengths and Limits
+
+- **Pros**
+  - Removes time-invariant confounders with unit fixed effects
+  - Removes common shocks with time fixed effects
+  - Uses both treated and control units, making it more credible than ITS alone
+  - Flexible: extends to multiple periods, staggered adoption, covariates
+
+- **Cons**
+  - Parallel trends assumption is _untestable_: can only check pre-trends
+  - Time-varying confounders still bias the estimate
+  - Staggered adoption with heterogeneous effects breaks naive TWFE
+  - Standard errors require clustering — easy to get wrong
+
+- **Rule of thumb**: DiD is credible when:
+  1. Pre-trends are visually parallel
+  2. No co-occurring shocks hit treated and controls differently
+  3. Staggered timing is handled with modern estimators
+
+# Synthetic Control Methods
+
+## Constructing a Counterfactual from Donor Series
+
+* Synthetic Control: Motivation
+
+- **Problem**: DiD works when a credible control unit exists
+  - But what if _no single control unit_ matches the treated one?
+
+- **Example**: studying the effect of German reunification (1990) on West
+  Germany's per-capita GDP
+  - No other single country matches West Germany's pre-1990 size, growth path,
+    and economic structure
+  - Synthetic Control instead builds a weighted combination of other OECD
+    countries that closely tracks West Germany's pre-reunification GDP, then uses
+    that as the counterfactual
+
+- **Key idea**
+  - Construct a _weighted average_ of control units that best matches the
+    treated unit's pre-treatment characteristics
+  - This weighted average is the synthetic control
+  - Compare treated unit to the synthetic control in the post-period
+  - The gap is the estimated causal effect
+
+// (Abadie & Gardeazabal 2003; Abadie, Diamond, Hainmueller 2010):
+
+* Synthetic Control: Construction
+
+```graphviz
+digraph SC {
+    rankdir=LR;
+    splines=true;
+    nodesep=0.8;
+    ranksep=0.8;
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+    Treated [label=<Treated unit<BR/>(e.g., West Germany)>,
+      fillcolor="#F4A6A6"];
+    Donors  [label=<Donor pool<BR/>(other countries)>,
+      fillcolor="#FFD1A6"];
+    Weights [label=<Optimal weights<BR/>w<SUB>1</SUB>, w<SUB>2</SUB>, ..., w_<SUB>J</SUB>>,
+      fillcolor="#A6E7F4"];
+    Synth   [label=<Synthetic<BR/>counterfactual>, fillcolor="#B2E2B2"];
+    Effect  [label=<Causal effect =<BR/>Treated - Synthetic>,fillcolor="#A6C8F4"];
+    Donors -> Weights;
+    Treated -> Weights [label="  pre-treatment fit"];
+    Weights -> Synth;
+    Synth -> Effect;
+    Treated -> Effect;
+}
+```
+
+- **Definition**: _Donor pool_ are untreated units eligible for inclusion in the
+  weighted combination
+  - Should exclude units treated by the same or similar interventions
+
+## Weighted Combinations and Optimal Weights
+
+* Synthetic Control: Formal Setup
+
+- There are $J+1$ units:
+  - Unit 1 is treated at time $t^*$
+  - Units $2, ..., J+1$ are untreated (donors)
+
+- $\vX_1$ be a vector of pre-treatment predictors for the treated unit
+- $\vX_0$ the matrix of the same predictors for donors (size $k \times J$)
+
+- Pick _weights_ $\vw = (w_2, ..., w_{J+1})$ satisfy:
+  $$
+  w_j \ge 0, \quad \sum_{j=2}^{J+1} w_j = 1
+  $$
+  - Non-negativity and unit-sum $\to$ weights are a _convex combination_ of
+    donors
+  - Ensures the synthetic control is in the _convex hull_ of the donor pool
+    $\to$ no extrapolation
+
+* Synthetic Control: Optimization
+
+- Choose $\vw^*$ to minimize pre-treatment mismatch:
+  $$
+  \vw^* = \arg\min_{\vw} (\vX_1 - \vX_0 \vw)^\top \vV (\vX_1 - \vX_0 \vw)
+  $$
+  subject to $w_j \ge 0, \sum w_j = 1$
+
+- $\vV$ is a $k \times k$ diagonal matrix of _predictor importance weights_
+  - Chosen to minimize mean-squared prediction error on pre-treatment outcomes
+  - Nested optimization (inner: find $\vw$; outer: find $\vV$)
+
+- The _estimated causal effect_ at time $t \ge t^*$:
+  $$
+  \hat{\tau}_t = Y_{1t} - \sum_{j=2}^{J+1} w^*_j Y_{jt}
+  $$
+  - Gap between treated unit's outcome and the weighted donor outcome
+
+* Synthetic Control: Inference via Placebos
+
+- **Problem**: there is only _one_ treated unit, so standard inference doesn't
+  apply
+
+- **Solution**: _placebo tests_ by permutation
+  1. Pretend each donor was the treated unit
+  2. Compute the synthetic control and causal-effect trajectory for each
+  3. Compare the _actual_ treated unit's effect against this "null distribution"
+
+- If the treated unit's effect is _larger in magnitude_ than most placebo
+  effects $\to$ evidence of a real effect
+  - Compute an empirical $p$-value from the placebos
+
+- **Variant**: filter placebos to keep only those with good pre-treatment fit
+  - A donor with bad pre-fit produces noise, not a legitimate null
+
+* Synthetic Control: When It Works Well
+
+- **Long pre-treatment period**: many time points to match on
+  - Rule of thumb: at least 10+ pre-treatment observations
+
+- **Rich donor pool**: many untreated units with diverse characteristics
+  - Enables good pre-treatment fit via convex combinations
+
+- **Small number of treated units** (usually one)
+  - Designed for aggregated units: countries, states, cities, firms
+
+- **Outcome with moderate noise**: low enough to detect the signal
+
+* Synthetic Control: When It Fails
+
+- **Poor pre-treatment fit**: no convex combination matches the treated unit
+  - The treated unit is an _outlier_ in the donor space
+  - Reported effects are unreliable
+
+- **Treatment contaminates donors** (spillovers)
+  - E.g., neighboring states also affected by a policy violate the design
+
+- **Short pre-period or noisy outcome** $\to$ fit is unreliable or overfits
+  noise
+
+- **Confounding unobserved events**: a co-occurring shock to the treated unit
+  near $t^*$ masquerades as the treatment effect
+
+- **Diagnostic**: always plot the pre-treatment fit
+  - A poor pre-fit $\to$ don't trust the post-period gap
+
+# Summary
+
+* Synthetic Control vs. Other Methods: Summary
+
+\begingroup \scriptsize
+| **Method**        | **Control Group**       | **Strength**                         | **Key Assumption**                  |
+| ----------------- | ----------------------- | ------------------------------------ | ----------------------------------- |
+| Granger           | Own history             | Predictive screen                    | Stationarity, no common causes      |
+| Interrupted Time Series (ITS) | Pre-period of same unit | Works without controls               | Stable pre-trend, no co-events      |
+| DiD               | Untreated comparison    | Removes time-invariant confounders   | Parallel trends                     |
+| Synthetic Control | Weighted donor pool     | Data-driven counterfactual           | Good pre-fit, no spillovers         |
+\endgroup
+
+- Use **Granger causality** when:
+  - You want a fast predictive screen on two long time series
+  - Intervention / experiment is not available
+
+- Use **Interrupted Time Series (ITS)** when:
+  - A single intervention has a sharp date and no comparison units exist
+  - Pre-period is long and stable
+
+- Use **Difference-in-Differences (DiD)** when:
+  - Some units are treated and others are not
+  - Parallel pre-trends are plausible
+  - You have panel data with units and time
+
+- Use **Synthetic Control** when:
+  - One (or few) treated units with a rich donor pool
+  t- No single donor is a credible match, but a weighted combination is

@@ -1,0 +1,143 @@
+# Exclude files from Docker build context. This prevents unnecessary files from
+# being sent to Docker daemon, reducing build time and image size.
+
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env
+.envrc
+client_venv.helpers/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+.jupyter/
+
+# Build artifacts
+build/
+dist/
+*.eggs/
+.eggs/
+
+# Cache and temporary files
+*.log
+*.tmp
+*.cache
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Git and version control
+.git/
+.gitignore
+.gitattributes
+.github/
+
+# Docker build scripts (not needed at runtime)
+docker_build.sh
+docker_push.sh
+docker_clean.sh
+docker_exec.sh
+docker_cmd.sh
+docker_bash.sh
+docker_jupyter.sh
+docker_name.sh
+run_jupyter.sh
+Dockerfile.*
+.dockerignore
+
+# Documentation
+README.md
+README.admin.md
+docs/
+*.md
+CHANGELOG.md
+LICENSE
+
+# Configuration and secrets
+.env.*
+.env.local
+.env.development
+.env.production
+.DS_Store
+Thumbs.db
+
+# Shell configuration
+.bashrc
+.bash_history
+.zshrc
+
+# Large data files (mount via volume instead)
+data/
+*.csv
+*.pkl
+*.h5
+*.parquet
+*.feather
+*.arrow
+*.npy
+*.npz
+
+# Generated images
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.pdf
+
+# Test files and examples
+tests/
+test_*
+*_test.py
+tutorials/
+examples/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+*.iml
+.sublime-project
+.sublime-workspace
+
+# Node and frontend (if applicable)
+node_modules/
+npm-debug.log
+yarn-error.log
+.npm
+
+# Requirements management
+requirements.in
+Pipfile
+Pipfile.lock
+poetry.lock
+setup.py
+setup.cfg
+
+# CI/CD configuration
+.gitlab-ci.yml
+.travis.yml
+Jenkinsfile
+.circleci/
+
+# Miscellaneous
+*.bak
+.venv.bak/
+*.whl
+*.tar.gz
+*.zip

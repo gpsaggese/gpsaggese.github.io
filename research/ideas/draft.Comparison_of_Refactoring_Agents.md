@@ -1,225 +1,246 @@
 # Comparison of AI Code Refactoring Agents
 
-## Description
+## Status
+**Status:**: draft
+**Complete Specs:**: 0-100%
 
-- **AI Refactoring Agents** are systems that automatically improve code quality by
-  eliminating duplication, reducing cyclomatic complexity, improving variable
-  naming, restructuring modules, and applying design patterns with minimal manual
-  intervention
-- They range from rule-based linters with AI enhancement (e.g., `pylint` + LLM
-  backends, `Semgrep` with explanations) to full autonomous refactoring engines
-  (e.g., `Cognition AI's Devin`, `Copilot refactoring`, `Tuple`—experimental
-  Databricks tools)
-- Key capabilities include identifying code smells (dead code, long methods,
+## Core Idea
+
+- AI refactoring agents are systems that automatically improve code quality
+  by eliminating duplication, reducing cyclomatic complexity, improving
+  variable naming, restructuring modules, and applying design patterns with
+  minimal manual intervention
+- They range from rule-based linters with AI enhancement (e.g., `pylint` +
+  LLM backends, Semgrep with explanations) to full autonomous refactoring
+  engines
+- Key capabilities: identifying code smells (dead code, long methods,
   complex conditionals), suggesting refactoring operations (extract method,
-  consolidate duplicates, rename for clarity, replace magic numbers), estimating
-  refactoring impact (will tests still pass?), preserving behavior (all tests
-  pass after refactoring), and explaining rationale for changes in natural
+  consolidate duplicates, rename for clarity, replace magic numbers),
+  estimating refactoring impact, preserving behavior (all tests pass after
+  refactoring), and explaining the rationale for changes in natural
   language
 - Agents differ in refactoring ambition (cosmetic cleanup vs. architectural
-  redesign), safety (does refactored code have identical behavior?), code review
-  compatibility (can humans easily understand and approve the changes?), and
-  runtime performance impact (does refactoring improve efficiency?)
-- This project develops critical skills in measuring non-functional code quality
-  improvements and trade-offs—good refactoring is hard to measure and easy to get
-  wrong
+  redesign), safety (does refactored code have identical behavior?), code
+  review compatibility, and runtime performance impact
+- This project develops critical skills in measuring non-functional code
+  quality improvements and trade-offs: good refactoring is hard to measure
+  and easy to get wrong
+- Project objective: design a controlled empirical study that benchmarks at
+  least three AI refactoring agents on a curated set of Python codebases
+  with intentional quality issues, comparing code smell detection accuracy,
+  correctness of refactoring (behavior preservation), code quality
+  improvements, review-ability of generated changes, and performance impact
 
-## Comparison of Refactoring Agents
+## Formalization
 
-| Type             | Name              | Description                                                                            | Website                                | Strength                      |
-| ---------------- | ----------------- | -------------------------------------------------------------------------------------- | -------------------------------------- | ----------------------------- |
-| IDE-integrated   | GitHub Copilot    | AI-powered refactoring suggestions within IDEs with one-click application               | https://github.com/features/copilot    | Seamless workflow             |
-| Rule-based + LLM | Semgrep           | Static analysis with LLM-powered explanations and automated fix suggestions            | https://semgrep.dev                    | Rule-driven precision         |
-| Autonomous agent | Devin             | Fully autonomous refactoring, including complex multi-file restructuring                | https://cognition.ai                   | End-to-end transformation     |
-| Specialized tool | Rope (Python)     | Python refactoring library with AST-based transformations, LLM-enhanced discovery      | https://github.com/python-rope/rope    | Language-specific safety      |
-| IDE tool         | Cursor            | AI IDE with refactoring suggestions and one-click application                          | https://www.cursor.com                 | Integrated debugging          |
-| Experimental     | Tuple (Databricks)| Experimental multi-agent system for code improvement and refactoring                   | https://databricks.com                 | Research-grade autonomy       |
+- Refactoring agent capability ladder:
+  - **L0, suggest**: highlight code smells, e.g., "this method is 150
+    lines, consider extracting"
+  - **L1, suggest fix**: propose a single refactoring, e.g., "extract
+    method `_validate_input()` from line 20-45"
+  - **L2, apply refactoring**: execute the refactoring operation, e.g.,
+    automatically rename variable `x` to `user_id` across the file
+  - **L3, multi-file refactoring**: coordinate refactoring across files,
+    e.g., consolidate duplicate classes into a shared base class
+  - **L4, autonomous redesign**: plan and execute architectural changes,
+    e.g., redesign the module structure and move classes to new files
+- Code quality metrics and tools used to measure before/after state:
+  - **Cyclomatic complexity** (`radon cc`): number of decision points,
+    lower is better; good target is under 10
+  - **Maintainability index** (`radon mi`): composite metric based on
+    complexity and lines of code; good target is above 80
+  - **Code duplication** (`pylint` `dupdup`): percentage of duplicated
+    code, lower is better; good target is under 5%
+  - **Lines of code per function** (`radon metrics`): average function
+    length, lower is better; good target is under 30 lines
+  - **Code coverage** (`coverage.py`): percentage of code executed by
+    tests, higher is better; good target is above 80%
 
-## Refactoring Agent Capabilities
+## Key Examples
 
-| Level                      | Capability                    | Example behaviors                                          |
-| -------------------------- | ----------------------------- | ---------------------------------------------------------- |
-| L0 -- Suggest              | Highlight code smells         | "This method is 150 lines, consider extracting"            |
-| L1 -- Suggest fix           | Propose a single refactoring  | "Extract method `_validate_input()` from line 20–45"       |
-| L2 -- Apply refactoring     | Execute refactoring operation | Automatically rename variable `x` → `user_id` across file  |
-| L3 -- Multi-file refactoring| Coordinate refactoring across files | Consolidate duplicate classes into shared base class        |
-| L4 -- Autonomous redesign   | Plan & execute architectural changes | Redesign module structure, move classes to new files        |
+- Refactoring agents compared:
+  - **GitHub Copilot** (IDE-integrated): AI-powered refactoring suggestions
+    within IDEs with one-click application; strength is seamless workflow
+    (https://github.com/features/copilot)
+  - **Semgrep** (rule-based + LLM): static analysis with LLM-powered
+    explanations and automated fix suggestions; strength is rule-driven
+    precision (https://semgrep.dev)
+  - **Devin** (autonomous agent): fully autonomous refactoring, including
+    complex multi-file restructuring; strength is end-to-end transformation
+    (https://cognition.ai)
+  - **Rope** (Python-specific tool): Python refactoring library with
+    AST-based transformations, LLM-enhanced discovery; strength is
+    language-specific safety (https://github.com/python-rope/rope)
+  - **Cursor** (IDE tool): AI IDE with refactoring suggestions and
+    one-click application; strength is integrated debugging
+    (https://www.cursor.com)
+  - **Tuple** (Databricks, experimental): experimental multi-agent system
+    for code improvement and refactoring; strength is research-grade
+    autonomy (https://databricks.com)
+- Intentionally seeded quality issues used to test the agents:
+  - **Method too long** (more than 50 lines, multiple concerns):
+    ```python
+    def process_user_data(user_input):
+        # Validation logic (10 lines)
+        # Database query (5 lines)
+        # Data transformation (15 lines)
+        # Email notification (10 lines)
+        # Logging (5 lines)
+        # Ideal refactoring: extract into _validate(), _transform(),
+        # _notify_user(), etc.
+    ```
+  - **Code duplication** (same logic in multiple functions):
+    ```python
+    def validate_email(email): ...
+    def validate_email_v2(email): ...  # Almost identical
+    # Ideal refactoring: consolidate to a single function
+    ```
+  - **High cyclomatic complexity** (deeply nested conditionals):
+    ```python
+    def check_access(user, resource, action):
+        if user is not None:
+            if user.is_active:
+                if user.has_role('admin'):
+                    return True
+                elif user.has_role('editor'):
+                    if resource.is_editable:
+                        return True
+        return False
+        # Ideal refactoring: guard clauses, extract logic
+    ```
+  - **Poor naming** (unclear variable names):
+    ```python
+    def f(x, y):
+        z = x * 0.15
+        return y - z
+        # Ideal refactoring: rename to calculate_discount(), apply_tax()
+    ```
+  - **Dead code** (unused imports, variables, functions):
+    ```python
+    import unused_module  # Ideal: remove
+    def old_function():  # Ideal: remove or deprecate
+        pass
+    ```
 
-## Project Objective
+## Questions
 
-Design a controlled empirical study that benchmarks at least three AI refactoring
-agents on a curated set of Python codebases with intentional quality issues. The
-project aims to answer: _Which agents identify the most impactful refactoring
-opportunities, execute them safely (tests still pass), produce readable changes,
-and improve code quality metrics?_ Students will select agents from different
-categories (IDE, rule-based, autonomous), apply each to the same set of
-codebases, and systematically compare: code smell detection accuracy, correctness
-of refactoring (behavior preservation), code quality improvements (measured by
-cyclomatic complexity, duplication, maintainability index), review-ability of
-generated changes, and performance impact.
+1. Which agents identify the most impactful refactoring opportunities,
+   execute them safely (tests still pass), produce readable changes, and
+   improve code quality metrics?
 
-## Tasks
+## Research Topics
 
-- **Agent Setup & Configuration**: Install and configure at least three chosen
-  refactoring agents (e.g., GitHub Copilot, Semgrep, Devin/Cursor) in isolated
-  environments; document version, dependencies, and cost/API limits
+- **Refactoring impact analysis**: for each refactoring, measure the impact
+  on performance (runtime, memory), test execution time, build time, and
+  deployment risk
+- **Multi-layer refactoring**: create codebases with issues spanning
+  multiple layers (API, business logic, database), and measure which
+  agents can identify and refactor across layers
+- **Style guide conformance**: test whether refactorings maintain project
+  style (indentation, naming conventions, code organization) or introduce
+  inconsistency
+- **Incremental refactoring**: measure which agents prefer small,
+  incremental refactorings (easier to review) vs. large rewrites (higher
+  risk but more impact)
+- **Performance optimization**: introduce intentionally slow code (O(n^2)
+  algorithm, inefficient data structures), and measure whether agents
+  detect and optimize it
+- **Architectural patterns**: test whether agents can refactor code to
+  follow design patterns (Factory, Observer, Strategy) without changing
+  behavior
+- **Automated refactoring chains**: test whether agents can chain multiple
+  refactorings (e.g., extract method, then introduce strategy pattern, then
+  consolidate classes)
+- **Rollback analysis**: introduce refactorings, break functionality, and
+  measure which agents can diagnose and revert the issue
 
-- **Codebase Selection & Baseline**: Select 3–5 Python codebases with known
-  quality issues (high complexity, duplication, poor naming); measure baseline
-  metrics: cyclomatic complexity, code duplication ratio (via `radon`, `pylint`,
-  `SonarQube`), maintainability index (via `lizard`, `mi`), lines of code,
-  number of violations
+## Next steps
 
-- **Code Smell Detection**: For each agent, identify and document all code smells
-  detected (long methods, high complexity, duplication, dead code, unclear
-  naming); measure: (a) sensitivity (did agent find real smells?), (b)
-  specificity (how many false positives?)
+- [ ] Look for related research (what has already been done)
+- [ ] Finalize the implementation plan
+- [ ] GP to review / approve the plan
+- [ ] Hack a quick end-to-end prototype (e.g., in 1-2 days) to show that you
+      understood the problem and can make progress
+- [ ] Break the problem down in phases and milestones
+- [ ] Execute one step at the time
 
-- **Refactoring Suggestion & Execution**: For each detected code smell, have the
-  agent suggest and apply a refactoring; record: (a) type of refactoring
-  (extract method, rename, consolidate, etc.), (b) lines of code changed, (c)
-  number of files affected
+## Implementation plan
 
-- **Behavior Preservation Testing**: After each refactoring, run the full test
-  suite; measure: (a) do all tests pass? (b) are there any new test failures
-  (regressions)? (c) does performance degrade (runtime, memory)?
+- Milestone 1: agent setup and configuration
+  - Install and configure at least three chosen refactoring agents (e.g.,
+    GitHub Copilot, Semgrep, Devin/Cursor) in isolated environments
+  - Document version, dependencies, and cost/API limits
 
-- **Code Quality Metrics**: After refactoring, re-measure code quality metrics;
-  calculate improvement in: cyclomatic complexity, duplication ratio,
-  maintainability index, readability (using `readability` libraries)
+- Milestone 2: codebase selection and baseline
+  - Select 3-5 Python codebases with known quality issues (high complexity,
+    duplication, poor naming); small open-source projects work well, e.g.,
+    `pallets/click`, `psf/requests`, `encode/httpx` (typically 5k-20k
+    lines, well-tested, moderate complexity)
+  - Measure baseline metrics: cyclomatic complexity, code duplication ratio
+    (via `radon`, `pylint`, SonarQube), maintainability index (via
+    `lizard`, `mi`), lines of code, number of violations
 
-- **Change Review-ability**: Assess how easy the refactored code is to review:
-  (a) are changes logical and incremental? (b) can a human understand the intent
-  without seeing the original code? (c) are there unnecessary changes?
+- Milestone 3: code smell detection
+  - For each agent, identify and document all code smells detected (long
+    methods, high complexity, duplication, dead code, unclear naming)
+  - Measure sensitivity (did the agent find real smells?) and specificity
+    (how many false positives?)
 
-- **Correctness of Reasoning**: For each refactoring, extract agent's explanation
-  of why the change improves code quality; score on technical accuracy and
-  clarity
+- Milestone 4: refactoring suggestion and execution
+  - For each detected code smell, have the agent suggest and apply a
+    refactoring
+  - Record the type of refactoring, lines of code changed, and number of
+    files affected
 
-- **Comparative Scorecard**: Build a rubric weighing: code smell detection
-  accuracy, refactoring correctness, quality improvement, change review-ability,
-  and performance impact; rank agents and identify specialization
+- Milestone 5: behavior preservation testing
+  - After each refactoring, run the full test suite
+  - Measure whether all tests pass, whether there are regressions, and
+    whether performance degrades (runtime, memory)
 
-## Codebase Selection Strategies
+- Milestone 6: code quality metrics
+  - After refactoring, re-measure code quality metrics
+  - Calculate the improvement in cyclomatic complexity, duplication ratio,
+    maintainability index, and readability
 
-### Create Intentional Quality Issues
+- Milestone 7: change review-ability
+  - Assess how easy the refactored code is to review: are changes logical
+    and incremental, can a human understand the intent without seeing the
+    original code, and are there unnecessary changes
 
-- **Method Too Long** (>50 lines, multiple concerns)
-  ```python
-  def process_user_data(user_input):
-      # Validation logic (10 lines)
-      # Database query (5 lines)
-      # Data transformation (15 lines)
-      # Email notification (10 lines)
-      # Logging (5 lines)
-      # Ideal refactoring: extract into _validate(), _transform(), _notify_user(), etc.
-  ```
+- Milestone 8: correctness of reasoning
+  - For each refactoring, extract the agent's explanation of why the change
+    improves code quality
+  - Score it on technical accuracy and clarity
 
-- **Code Duplication** (same logic in multiple functions)
-  ```python
-  def validate_email(email): ...
-  def validate_email_v2(email): ...  # Almost identical
-  # Ideal refactoring: consolidate to single function
-  ```
+- Milestone 9: comparative scorecard
+  - Build a rubric weighing code smell detection accuracy, refactoring
+    correctness, quality improvement, change review-ability, and
+    performance impact
+  - Rank agents and identify specialization
 
-- **High Cyclomatic Complexity** (deeply nested conditionals)
-  ```python
-  def check_access(user, resource, action):
-      if user is not None:
-          if user.is_active:
-              if user.has_role('admin'):
-                  return True
-              elif user.has_role('editor'):
-                  if resource.is_editable:
-                      return True
-      return False
-      # Ideal refactoring: guard clauses, extract logic
-  ```
+## References
 
-- **Poor Naming** (unclear variable names)
-  ```python
-  def f(x, y):
-      z = x * 0.15
-      return y - z
-      # Ideal refactoring: rename to calculate_discount(), apply_tax(), etc.
-  ```
-
-- **Dead Code** (unused imports, variables, functions)
-  ```python
-  import unused_module  # Ideal: remove
-  def old_function():  # Ideal: remove or deprecate
-      pass
-  ```
-
-### Use Real Codebases
-
-- **Small open-source projects** with known issues:
-  - https://github.com/pallets/click (CLI framework)
-  - https://github.com/psf/requests (HTTP client)
-  - https://github.com/encode/httpx
-  - Typically 5k–20k lines, well-tested, moderate complexity
-
-## Code Quality Metrics & Tools
-
-| Metric                   | Tool               | Description                                     | Good Target |
-| ------------------------ | ------------------ | ----------------------------------------------- | ----------- |
-| Cyclomatic Complexity    | `radon cc`         | Number of decision points; lower is better      | < 10        |
-| Maintainability Index    | `radon mi`         | Composite metric based on complexity, LOC       | > 80        |
-| Code Duplication         | `pylint` `dupdup`  | Percentage of duplicated code; lower is better  | < 5%        |
-| Lines of Code (per func) | `radon metrics`    | Average function length; lower is better        | < 30 LOC    |
-| Code Coverage           | `coverage.py`      | % of code executed by tests; higher is better   | > 80%       |
-
-## Bonus Ideas
-
-- **Refactoring Impact Analysis**: For each refactoring, measure impact on:
-  performance (runtime, memory), test execution time, build time, deployment risk
-
-- **Multi-Layer Refactoring**: Create codebases with issues spanning multiple
-  layers (API → business logic → database) and measure which agents can identify
-  and refactor across layers
-
-- **Style Guide Conformance**: Test whether refactorings maintain project style
-  (indentation, naming conventions, code organization) or introduce inconsistency
-
-- **Incremental Refactoring**: Measure which agents prefer small, incremental
-  refactorings (easier to review) vs. large rewrites (higher risk but more impact)
-
-- **Performance Optimization**: Introduce intentionally slow code (O(n²) algorithm,
-  inefficient data structures) and measure whether agents detect and optimize
-
-- **Architectural Patterns**: Test whether agents can refactor code to follow
-  design patterns (Factory, Observer, Strategy) without changing behavior
-
-- **Automated Refactoring Chains**: Test whether agents can chain multiple
-  refactorings (e.g., extract method → introduce strategy pattern → consolidate
-  classes)
-
-- **Rollback Analysis**: Introduce refactorings, break functionality, and measure
-  which agents can diagnose and revert the issue
-
-## Useful Resources
-
-- **Code Quality Tools**:
-  - `radon`: Cyclomatic complexity & maintainability index: https://radon.readthedocs.io
-  - `pylint`: Code analysis for Python: https://pylint.pycqa.org
-  - `SonarQube`: Full code quality platform: https://www.sonarqube.org
-  - `Code Climate`: Web-based quality metrics: https://codeclimate.com
-
-- **Refactoring Reference**:
-  - *Refactoring* by Martin Fowler: https://refactoring.com
-  - Refactoring Guru Patterns: https://refactoring.guru/refactoring
-
-- **AST & Code Transformation**:
-  - `libcst` (Concrete Syntax Tree for Python): https://github.com/Instagram/LibCST
-  - `ast` (Python's Abstract Syntax Tree): https://docs.python.org/3/library/ast.html
-  - `tree-sitter` (Language-agnostic parser): https://tree-sitter.github.io
-
-- **Agent Resources**:
+- Code quality tools:
+  - `radon` (cyclomatic complexity and maintainability index):
+    https://radon.readthedocs.io
+  - `pylint` (code analysis for Python): https://pylint.pycqa.org
+  - SonarQube (full code quality platform): https://www.sonarqube.org
+  - Code Climate (web-based quality metrics): https://codeclimate.com
+- Refactoring reference:
+  - _Refactoring_ by Martin Fowler: https://refactoring.com
+  - Refactoring Guru patterns: https://refactoring.guru/refactoring
+- AST and code transformation:
+  - `libcst` (concrete syntax tree for Python):
+    https://github.com/Instagram/LibCST
+  - `ast` (Python's abstract syntax tree):
+    https://docs.python.org/3/library/ast.html
+  - `tree-sitter` (language-agnostic parser): https://tree-sitter.github.io
+- Agent resources:
   - GitHub Copilot API: https://docs.github.com/en/copilot/quickstart
-  - Semgrep Documentation: https://semgrep.dev/docs
-  - Devin/Cursor Documentation: https://docs.cognition.ai
-
-- **Testing & Behavior Preservation**:
+  - Semgrep documentation: https://semgrep.dev/docs
+  - Devin/Cursor documentation: https://docs.cognition.ai
+- Testing and behavior preservation:
   - pytest: https://docs.pytest.org
   - `coverage.py`: https://coverage.readthedocs.io
-  - `pytest-benchmark`: Performance testing: https://pytest-benchmark.readthedocs.io
+  - `pytest-benchmark` (performance testing):
+    https://pytest-benchmark.readthedocs.io

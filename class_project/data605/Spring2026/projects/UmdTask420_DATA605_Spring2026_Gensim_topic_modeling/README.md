@@ -13,4 +13,4 @@ Open the following notebooks in order:
 1. `tutorial.ipynb` — Gensim LDA API overview covering preprocessing, dictionary and corpus construction, model training, coherence evaluation, topic inspection and pyLDAvis visualization using a sample Reuters dataset
 2. `data_exploration.ipynb` — Full LDA topic modelling and RoBERTa sentiment analysis pipeline on the BBC News dataset including topic labelling, confidence distribution, inter-topic entropy, sentiment variance and polarity analysis
 3. For Docker setup and configuration details see the
-[project template README](../../class_project/project_template/README.md). 
+[project template README](../../class_project/project_template/docker_scripts.README.md). 

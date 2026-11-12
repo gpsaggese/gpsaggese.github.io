@@ -14,7 +14,7 @@ Learn tsfresh — automated time series feature extraction — in 60 minutes.
      the UCI HAR dataset using tsfresh + RandomForest.
 
 For Docker build system details see the
-[project template README](../../class_project/project_template/README.md).
+[project template README](../../class_project/project_template/docker_scripts.README.md).
 
 ## Changelog
 

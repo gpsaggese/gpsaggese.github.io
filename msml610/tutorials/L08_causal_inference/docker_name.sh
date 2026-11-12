@@ -8,5 +8,5 @@
 
 REPO_NAME=gpsaggese
 # The file should be all lower case.
-IMAGE_NAME=umd_msml610_l08_causal_inference
+IMAGE_NAME=msml610_l08_causal_inference
 FULL_IMAGE_NAME=$REPO_NAME/$IMAGE_NAME

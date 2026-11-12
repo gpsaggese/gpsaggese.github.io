@@ -1,0 +1,719 @@
+// type=UMD_slides
+// course_title=MSML610: Advanced Machine Learning
+// lesson_title=L09.7: Contextual, Adversarial, and Non-stationary Bandits
+// version=v1.0 (2026-09-03)
+// slides_engine=typst
+// references=
+
+# Introduction
+
+* Recap: The Stochastic Bandit Model
+
+- @Recap@: We studied the **stochastic $K$-armed bandit**
+  - $K$ arms, each with a fixed unknown reward distribution $P_i$
+  - At round $t$: pull $A_t$, observe only $R_t \sim P_{A_t}$
+  - Minimize regret $L_T = \sum_{i} \Delta_i N_i(T)$
+
+- @Results@: what we established
+  - Lower bounds: $\Omega(\log T)$ and gap-dependent
+  - Greedy, uniform exploration, fixed $\epsilon$: all $\Theta(T)$
+  - UCB1 and Thompson Sampling: $O(\log T)$, order-optimal
+
+- @Problem@: that model rests on three assumptions that real systems break
+  1. Every user looks the same to the algorithm (_no context_)
+  2. Rewards come from fixed distributions (_stochastic_)
+  3. Those distributions never change (_stationary_)
+
+* Three Assumptions to Lift
+
+- @Goal@: this lecture removes one assumption at a time
+
+```{=typst}
+#styled-table(
+  headers: ([Assumption removed], [Setting], [Algorithm], [Regret]),
+  rows: (
+    ([None], [Stochastic $K$-armed], [UCB1, Thompson], [$O(log T)$]),
+    ([No context], [Contextual bandit], [LinUCB, Lin-TS],
+     [$tilde(O)(d sqrt(T))$]),
+    ([Stochastic rewards], [Adversarial bandit], [EXP3],
+     [$O(sqrt(T K log K))$]),
+    ([Stationarity], [Non-stationary bandit], [SW-UCB, D-UCB],
+     [$tilde(O)(sqrt(Gamma_T T))$]),
+  ),
+  col-widths: (1.1fr, 1.1fr, 1fr, 1fr),
+  width: 100%,
+  bold-first-col: true
+)
+```
+
+- @Key idea@: each relaxation costs something
+  - Context: regret scales with the _dimension_ $d$, not with $K$
+  - Adversarial: $\log T$ becomes impossible, best is $\Theta(\sqrt{KT})$
+  - Non-stationary: regret becomes _linear_ in $T$ unless change is bounded
+
+* A Map of Bandit Problems
+
+```mermaid
+mindmap
+  root((**Bandits**))
+    (**Stochastic**)
+      UCB1
+      KL-UCB
+      Thompson sampling
+    (**Contextual**)
+      LinUCB
+      Contextual Thompson
+      Neural bandits
+    (**Adversarial**)
+      EXP3
+      EXP3-IX
+      Tsallis-INF
+    (**Non-stationary**)
+      Sliding-window UCB
+      Discounted UCB
+      Change detection
+    (**Structured**)
+      Linear
+      Combinatorial
+      Dueling
+    (**Pure exploration**)
+      Successive elimination
+      LUCB
+      Sequential halving
+```
+
+# Contextual Bandits
+
+* Contextual Bandits: Motivation
+
+- @Problem@: the stochastic model must answer _"which arm is best?"_, but real
+  systems must answer _"which arm is best **for this user**?"_
+  - E.g., a news headline that works for a finance reader fails for a sports fam
+  - A single global "best arm" averages away the thing we care about
+
+- @Example@: personalized news
+  - _Context_: user's prior clicks, time of day, device, location
+  - _Arms_: candidate articles
+  - _Reward_: click (0/1)
+  - The best article changes with every request
+
+- @Naive Solution@: run one independent bandit per user segment
+  - Cons:
+    - With $d$ binary features there are $2^d$ segments
+    - Each segment gets too little traffic to ever learn
+    - No sharing of what was learned across similar users
+
+- @Solution@: **generalize across contexts** by learning a reward _function_ of
+  the context, not a reward _value_ per arm
+
+* Contextual Bandits: Formal Definition
+
+- @Definition@: In a **contextual bandit**, at each round $t$:
+  1. Environment reveals a context $x_t \in \mathcal{X}$
+  2. Agent selects arm $A_t \in \{1, \ldots, K\}$
+  3. Agent observes the reward of the chosen arm only (as before),
+     $R_t$ with $\EE[R_t | x_t, A_t = a] = f(x_t, a)$
+
+- @Definition@: a **policy** is a map $\pi: \mathcal{X} \to \{1, \ldots, K\}$
+  - The optimal policy is $\pi^*(x) = \argmax_a f(x, a)$
+  - Regret is measured against $\pi^*$, not against a single fixed arm
+    $$
+    L_T
+      = \sum_{t=1}^{T} \left( f(x_t, \pi^*(x_t)) - f(x_t, A_t) \right)
+    $$
+
+- @Assumptions@
+  - Contexts $x_t$ are drawn iid
+  - _Crucially_: the action $A_t$ does not influence the next context $x_{t+1}$
+    - This is what keeps it a bandit and not a full RL problem
+
+- @Remark@: with a single constant context this reduces to the $K$-armed bandit
+
+* Linear Contextual Bandits
+
+- @Problem@: $f(x, a)$ is an arbitrary unknown function, so it cannot be learned
+  from bandit feedback without structure
+
+- @Definition@: the **linear contextual bandit** assumes the reward is linear in
+  a known feature map $x_{t,a} \in \mathbb{R}^d$
+  $$\EE[R_t | x_{t, A_t}] = \langle x_{t, A_t}, \theta^* \rangle$$
+  where
+  - $\langle x, y \rangle$ is dot product of vectors
+  - $\theta^* \in \mathbb{R}^d$ is unknown
+
+- @Variants@: how features and parameters are shared
+  - _Disjoint model_: one $\theta_a^*$ per arm, features $x_t$ describe the user
+    - Good when arms are few and stable (e.g., 5 fixed layouts)
+  - _Hybrid / shared model_: one global $\theta^*$, features $x_{t,a}$ describe
+    the (user, arm) pair
+    - Good when arms churn (e.g., new articles every hour), since a brand-new
+      arm inherits the shared $\theta^*$
+
+- @Key idea@: regret now scales with $d$ instead of $K$
+  - We can handle infinitely many arms, as long as $d$ is small
+  - Cost: the linear model must be approximately right, otherwise regret is
+    linear no matter the algorithm
+
+* Estimating the Parameter
+
+- @Definition@: **ridge regression** estimate after $t$ rounds
+  $$
+  V_t = \lambda I_d + \sum_{s=1}^{t} x_{s, A_s} x_{s, A_s}^\top,
+  \qquad
+  \hat{\theta}_t = V_t^{-1} \sum_{s=1}^{t} x_{s, A_s} R_s
+  $$
+  - $V_t$ is the (regularized) design matrix, i.e., the "information matrix"
+  - $\lambda > 0$ keeps $V_t$ invertible before enough data arrives
+
+- @Intuition@: $V_t$ records _which directions_ of the feature space were
+  explored
+  - Directions never played stay at $\lambda$, so uncertainty in them stays high
+  - This is the multi-dimensional version of "arm $i$ pulled $N_i$ times"
+
+- @Definition@: the **confidence ellipsoid** is
+  $$
+  \mathcal{C}_t
+    = \left\{ \theta : \|\theta - \hat{\theta}_t\|_{V_t} \le \beta_t \right\},
+  \qquad
+  \|z\|_{V} \defeq \sqrt{z^\top V z}
+  $$
+  - Contains $\theta^*$ with probability at least $1 - \delta$ for a suitable
+    $\beta_t = O(\sqrt{d \log(t/\delta)})$ (Abbasi-Yadkori et al., 2011)
+  - Replaces the confidence _interval_ of UCB1 by a confidence _region_
+
+* LinUCB
+
+- @Definition@: **LinUCB** (Li, Chu, Langford, Schapire, 2010) applies optimism
+  over the confidence ellipsoid
+  - At round $t$, given context features $x_{t,a}$ for each arm $a$:
+    $$
+    A_t = \argmax_{a}
+      \left(
+        \underbrace{\langle x_{t,a}, \hat{\theta}_t \rangle}_{\text{estimate}}
+        + \underbrace{\alpha \sqrt{x_{t,a}^\top V_t^{-1} x_{t,a}}}_
+          {\text{exploration bonus}}
+      \right)
+    $$
+  - Then update $V_{t+1} \gets V_t + x_{t,A_t} x_{t,A_t}^\top$ and
+    $\hat{\theta}_{t+1}$
+
+- @Intuition@: the bonus is the width of the ellipsoid _in the direction of the
+  candidate feature vector_
+  - Large bonus for a context direction rarely seen before
+  - Small bonus for a direction already well covered by past data
+  - Same "optimism in the face of uncertainty" as UCB1, lifted to $d$ dimensions
+
+- @Theorem@: with $\alpha = O(\sqrt{d \log T})$, LinUCB-type algorithms achieve
+  $$\EE[L_T] = \tilde{O}\left( d \sqrt{T} \right)$$
+  - Independent of $K$, so it works with very many arms
+  - The $\tilde{O}$ hides logarithmic factors
+
+* LinUCB: Practical Notes
+
+- @Pros@
+  - $O(d^2)$ update per round using the Sherman-Morrison formula for $V_t^{-1}$
+  - Deterministic, so decisions are reproducible and auditable
+  - Handles arms appearing and disappearing (shared model)
+
+- @Cons@
+  - $\alpha$ is a real tuning parameter, unlike UCB1
+    - Theory-driven values are far too conservative in practice
+    - Usually tuned offline by replay on logged data
+  - $O(d^2)$ memory and $O(d^3)$ for the initial inverse, so $d$ in the
+    thousands is already problematic
+  - Model misspecification is not detected
+
+- @Extensions@
+  - _Generalized linear bandits_: $\EE[R] = g(\langle x, \theta \rangle)$ with a
+    link function $g$
+    - E.g., logistic for click-through rate
+  - _Kernel and neural bandits_: replace the linear model by a kernel or a neural
+    network, keeping an uncertainty estimate
+    - E.g., NeuralUCB, or last-layer Bayesian linear regression on a deep net
+
+* Contextual Thompson Sampling
+
+- @Definition@: **Contextual Thompson Sampling** (Agrawal and Goyal, 2013)
+  - Maintain a Gaussian posterior over $\theta^*$
+    $p(\theta | \mathcal{D}_t) = N(\hat{\theta}_t, v^2 V_t^{-1})$
+  - At round $t$:
+    1. Sample $\tilde{\theta}_t \sim N(\hat{\theta}_t, v^2 V_t^{-1})$
+    2. Play $A_t = \argmax_a \langle x_{t,a}, \tilde{\theta}_t \rangle$
+    3. Observe $R_t$ and update $V_t$, $\hat{\theta}_t$
+
+- @Intuition@: sample a plausible world, then act optimally in it
+  - Same as Thompson Sampling, with the posterior now over a parameter vector
+    instead of over $K$ independent means
+
+- @Theorem@: regret is $\tilde{O}(d^{3/2}\sqrt{T})$
+  - A factor $\sqrt{d}$ worse than LinUCB in theory
+
+- @Comparison@: LinUCB vs contextual Thompson Sampling
+  - _Theory_: LinUCB has the better bound
+  - _Practice_: Thompson Sampling usually wins, as in the stochastic case
+  - _Randomization_: Thompson Sampling produces the randomized logging that
+    offline evaluation needs, LinUCB does not
+  - _Batching_: LinUCB repeats one arm for a whole batch, Thompson Sampling
+    naturally spreads a batch across arms
+
+# Adversarial Bandits
+
+* Why Adversarial Bandits?
+
+- @Problem@: the stochastic model assumes rewards are iid draws from a fixed
+  distribution, which is sometimes indefensible
+  - _Competitors react_: a rival re-prices whenever you change your price
+  - _Users adapt_: ad fatigue makes a creative decay the more it is shown
+  - _Attackers optimize_: spam filters face traffic designed to defeat them
+  - _Markets_: returns are not iid in any useful sense
+
+- @Key idea@: give up on modeling the reward process at all
+  - Let an **adversary** pick the rewards, possibly knowing your algorithm
+  - Ask only: did we do as well as the best _fixed_ arm in hindsight?
+
+- @Remark@: this is a worst-case guarantee, so it is robust but pessimistic
+  - No distribution to be wrong about, hence no model misspecification
+  - Price: cannot exploit benign structure, so no $O(\log T)$
+
+* The Adversarial Model
+
+- @Definition@: In the **adversarial (non-stochastic) bandit**:
+  - Before round $t$, an adversary fixes rewards
+    $r_{t,1}, \ldots, r_{t,K} \in [0,1]$
+  - Agent picks $A_t$, observes _only_ $r_{t, A_t}$
+  - No probabilistic assumption on how $r_{t,i}$ is generated
+
+- @Definition@: **regret against the best fixed arm in hindsight**
+  $$
+  L_T
+    = \max_{i \in \{1, \ldots, K\}} \sum_{t=1}^{T} r_{t,i}
+      - \sum_{t=1}^{T} r_{t, A_t}
+  $$
+
+- @Variants@: how much the adversary knows
+  - _Oblivious_: fixes the whole reward table before round 1
+  - _Adaptive_: chooses $r_{t,\cdot}$ after seeing $A_1, \ldots, A_{t-1}$
+
+- @Fact@: any **deterministic** algorithm has $L_T = \Omega(T)$
+  - An adaptive adversary simulates the algorithm, predicts $A_t$, and sets
+    $r_{t, A_t} = 0$ and every other reward to 1
+  - So randomization is _necessary_
+
+* Importance-Weighted Estimates
+
+- @Problem@: we need an estimate of $r_{t,i}$ for _every_ arm, but we observe
+  only the arm we played
+
+- @Definition@: the **importance-weighted estimator**, when arm $i$ is played
+  with probability $p_{t,i}$, is
+  $$
+  \hat{r}_{t,i} = \frac{r_{t,i}}{p_{t,i}} \, I[A_t = i]
+  $$
+
+- @Properties@: it is unbiased
+  $$
+  \EE[\hat{r}_{t,i}]
+    = p_{t,i} \cdot \frac{r_{t,i}}{p_{t,i}} + (1 - p_{t,i}) \cdot 0
+    = r_{t,i}
+  $$
+  - Every arm gets an unbiased reward estimate, even the ones not played
+  - This is the same inverse-propensity weighting used in causal inference for
+    observational data
+
+- @Limitations@: the variance is $O(1/p_{t,i})$, which explodes for rarely
+  played arms
+  - Forces the algorithm to keep every $p_{t,i}$ bounded away from 0
+  - This "forced exploration floor" is where the $\sqrt{K}$ in the regret comes
+    from
+
+* EXP3 Algorithm
+
+- @Definition@: **EXP3** = "Exponential-weight algorithm for Exploration and
+  Exploitation" (Auer, Cesa-Bianchi, Freund, Schapire, 2002)
+  - _Initialize_: $w_{1,i} = 1$ for all $i$
+  - At round $t$:
+    1. Play arm $i$ with probability
+       $$
+       p_{t,i}
+         = (1 - \gamma) \frac{w_{t,i}}{\sum_{j=1}^{K} w_{t,j}}
+           + \frac{\gamma}{K}
+       $$
+    2. Observe $r_{t, A_t}$, form $\hat{r}_{t,i}$ as on the previous slide
+    3. Update weights multiplicatively:
+       $w_{t+1,i} = w_{t,i} \exp\left(\frac{\gamma}{K}\hat{r}_{t,i}\right)$
+
+- @Components@: the two pieces of $p_{t,i}$
+  - _Exponential weights_: exploit arms that did well so far
+  - _Uniform floor_ $\gamma / K$: guarantees every arm keeps some probability,
+    which bounds the variance of $\hat{r}_{t,i}$
+
+- @Intuition@: an arm whose (estimated) reward is high gets exponentially more
+  probability, but never all of it
+
+* EXP3: Regret Guarantee
+
+- @Theorem@ (Auer et al., 2002): with
+  $\gamma = \min\left(1, \sqrt{K \log K / ((e-1)T)}\right)$
+  $$\EE[L_T] \le 2\sqrt{e - 1}\sqrt{T K \log K} = O(\sqrt{T K \log K})$$
+  - Holds for _every_ reward sequence, with no distributional assumption
+
+- @Theorem@: **lower bound** $\EE[L_T] = \Omega(\sqrt{KT})$ for any algorithm
+  - So EXP3 is optimal up to the $\sqrt{\log K}$ factor
+  - Refinements (e.g., EXP3-IX, Tsallis-INF) remove it
+
+- @Interpretation@: $\sqrt{T}$, not $\log T$
+  - Logarithmic regret is _impossible_ against an adversary
+  - The gain of the stochastic assumption is exactly the gap between
+    $\log T$ and $\sqrt{KT}$
+
+- @Remark@: the tuned $\gamma$ needs the horizon $T$
+  - The "doubling trick" or a time-varying $\gamma_t \propto 1/\sqrt{t}$ makes
+    EXP3 anytime
+
+* Stochastic vs. Adversarial: Comparison
+
+\begingroup \footnotesize
+```{=typst}
+#styled-table(
+  headers: ([], [Stochastic], [Adversarial]),
+  rows: (
+    ([Reward model], [iid from fixed $P_i$], [Arbitrary, set by adversary]),
+    ([Benchmark], [Best arm in expectation], [Best fixed arm in hindsight]),
+    ([Best regret], [$Theta(log T)$ gap-dependent], [$Theta(sqrt(K T))$]),
+    ([Minimax regret], [$Theta(sqrt(K T))$], [$Theta(sqrt(K T))$]),
+    ([Randomization], [Optional], [Required]),
+    ([Typical algorithm], [UCB1, Thompson], [EXP3]),
+    ([Fails when], [Model is wrong], [Never, but is pessimistic]),
+  ),
+  col-widths: (1fr, 1.2fr, 1.4fr),
+  width: 100%,
+  bold-first-col: true
+)
+```
+\endgroup
+
+- @Remark@: the two minimax rates coincide
+  - The adversarial assumption costs nothing in the _worst case_
+  - It costs a lot on _benign_ instances, where stochastic algorithms get
+    $\log T$
+
+- @Techniques@: **best-of-both-worlds** algorithms
+  - Achieve $O(\log T)$ if the data happens to be stochastic, and
+    $O(\sqrt{KT})$ if it is adversarial, without being told which
+  - E.g., Tsallis-INF (Zimmert and Seldin, 2019)
+  - A good default when you cannot justify either assumption
+
+# Non-Stationary Bandits
+
+* Non-Stationary Bandits: Motivation
+
+- @Problem@: in the stochastic model the means $\mu_i$ never change, but real
+  reward rates drift
+  - _Seasonality_: a coat converts in November, not in July
+  - _Content decay_: a news article is stale after a day
+  - _Population shift_: a marketing campaign brings a different user mix
+  - _Interventions_: a competitor launches, a price changes, a bug ships
+
+- @Limitations@: UCB1 and Thompson Sampling fail badly here
+  - Both average over _all_ history, so old data never expires
+  - After $t$ rounds an arm's estimate has inertia proportional to $N_i(t)$
+  - The exploration bonus $\sqrt{2\log t/N_i(t)}$ shrinks to nothing, so the
+    algorithm cannot notice that a discarded arm became good again
+  - _Result_: regret is $\Theta(T)$ after a single change point
+
+- @Key idea@: forget the past at a controlled rate
+  - Enough memory to average out noise, short enough to track change
+
+* Measuring Regret Under Change
+
+- @Problem@: "regret against the best fixed arm" is the wrong benchmark when the
+  best arm changes over time
+
+- @Definition@: **dynamic regret** compares against the best arm _per round_
+  $$
+  L_T^{dyn}
+    = \sum_{t=1}^{T}\left( \max_i \mu_{i}(t) - \mu_{A_t}(t) \right)
+  $$
+
+- @Fact@: without restrictions on how $\mu_i(t)$ moves, $L_T^{dyn} = \Omega(T)$
+  - If the best arm can change every round, nothing is learnable
+  - So we must _limit_ the amount of change
+
+- @Variants@: two standard budgets of change
+  - _Piecewise-stationary_: means are constant except at $\Gamma_T$ change
+    points
+  - _Total variation budget_:
+    $V_T = \sum_{t=1}^{T-1} \sum_i |\mu_i(t+1) - \mu_i(t)|$
+
+- @Interpretation@: regret is now _sublinear only relative to the budget_
+  - More change $\to$ more regret, unavoidably
+
+* Algorithms: Discounting and Sliding Windows
+
+- @Definition@: **Discounted UCB (D-UCB)** (Kocsis and Szepesvari, 2006)
+  - Weight observation from round $s$ by $\gamma^{t-s}$, with $\gamma \in (0,1)$
+    // TODO(ai_gp): Split them in two chunks
+    $$
+    N_i(\gamma, t) = \sum_{s \le t} \gamma^{t-s} I[A_s = i],
+    \quad
+    \hat{\mu}_i(\gamma, t)
+      = \frac{1}{N_i(\gamma, t)}\sum_{s \le t}\gamma^{t-s} R_s I[A_s = i]
+    $$
+  - Index: $\hat{\mu}_i(\gamma,t) + \sqrt{\xi \log n_t / N_i(\gamma,t)}$
+  - Effective memory is $\approx 1/(1-\gamma)$ rounds
+
+- @Definition@: **Sliding-Window UCB (SW-UCB)** (Garivier and Moulines, 2011)
+  - Use only the last $\tau$ observations, discard everything older
+  - Same index, with counts and means restricted to the window
+
+- @Theorem@: with $\tau = O(\sqrt{T \log T / \Gamma_T})$, SW-UCB achieves
+  $$\EE[L_T^{dyn}] = \tilde{O}\left(\sqrt{\Gamma_T T}\right)$$
+  - Matches the $\Omega(\sqrt{\Gamma_T T})$ lower bound up to logarithms
+
+- @Limitations@: both need a tuning parameter ($\gamma$ or $\tau$) that depends
+  on the unknown amount of change
+  - Too short: noisy estimates, over-exploration
+  - Too long: slow to react
+
+* Algorithms: Change Detection and Restarts
+
+- @Key idea@: instead of forgetting continuously, detect a change and reset
+
+- @Techniques@
+  - _CUSUM-UCB_ and _M-UCB_: run a change-point detector per arm
+    - On alarm, discard that arm's history and restart its statistics
+  - _Restart on schedule_: reset everything every $\Delta$ rounds
+    - Crude, but needs no detector and is trivially correct to implement
+  - _Rexp3_: run EXP3 in batches of length $\Delta$, restarting each batch
+
+- @Comparison@: detection vs discounting
+  - _Detection_ is better when change is abrupt and rare (e.g., deploys,
+    launches)
+  - _Discounting_ is better when change is gradual (e.g., drift, decay)
+  - _Detection_ needs enough post-change data to fire, so it lags
+
+- @Remark@: a Bayesian shortcut that works well in practice
+  - Run Thompson Sampling but _inflate_ the posterior variance each round, or
+    cap $\alpha_i + \beta_i$ at some maximum
+  - Keeps posteriors from collapsing, so arms stay revisitable
+
+# Structured and Pure-Exploration Bandits
+
+* Structured Bandits
+
+- @Problem@: plain $K$-armed regret grows with $K$, but many problems have
+  millions of arms with strong structure
+
+- @Variants@
+  - _Linear bandits_: arms are vectors in a set
+    $\mathcal{A} \subset \mathbb{R}^d$, reward is
+    $\langle a, \theta^* \rangle$
+    - Regret $\tilde{O}(d\sqrt{T})$, independent of $|\mathcal{A}|$
+  - _Combinatorial bandits_: an arm is a _subset_ (a route, a slate, a ranking)
+    - _Semi-bandit feedback_: observe the reward of each chosen component
+    - Regret scales with the number of components, not the number of subsets
+  - _Low-rank / rank-one bandits_: reward matrix over (user, item) is low rank
+    - Basis of matrix-factorization recommenders with exploration
+  - _Lipschitz / continuum-armed_: arms in a metric space, $f$ is Lipschitz
+    - Regret $\tilde{O}(T^{(d_z+1)/(d_z+2)})$ with zooming dimension $d_z$
+  - _Dueling bandits_: feedback is a _pairwise preference_, not a reward
+    - Natural for human raters, and the basis of preference-based LLM tuning
+
+- @Key idea@: structure converts "learn $K$ numbers" into "learn $d$ parameters"
+  - Same optimism or posterior-sampling recipe, different confidence set
+
+* Best-Arm Identification
+
+- @Problem@: sometimes we do not care about reward _during_ the experiment
+  - E.g.,
+    - Pick the best of 5 drug candidates, then run a large trial
+    - Choose one model to ship, after which the test traffic is thrown away
+  - This is **pure exploration**, not regret minimization
+
+- @Definition@: **simple regret** of the arm $\hat{i}_n$ recommended after $n$
+  pulls
+  $$r_n = \mu^* - \mu_{\hat{i}_n}$$
+  - Contrast with cumulative regret $L_n$, which charges for _every_ pull
+
+- @Fact@: the two objectives are in _conflict_ (Bubeck, Munos, Stoltz, 2009)
+  - The smaller the cumulative regret an algorithm has, the _larger_ its simple
+    regret must be
+  - Intuition: to identify the best arm you must sample the near-best arms a
+    lot, which is exactly what a regret-minimizer refuses to do
+  - _Do not_ use UCB or Thompson Sampling to pick a winner and then declare it
+
+- @Remark@: uniform allocation is a surprisingly strong pure-exploration
+  baseline, and a terrible regret-minimizer
+
+* Fixed-Confidence vs Fixed-Budget
+
+- @Variants@: two ways to pose best-arm identification
+  - _Fixed confidence_: given $\delta$, stop as early as possible and return
+    $i^*$ with probability $\ge 1 - \delta$
+    - Objective: minimize the expected number of samples
+    - Sample complexity
+      $\Theta\left(\sum_{i \ne i^*} \Delta_i^{-2} \log(1/\delta)\right)$
+  - _Fixed budget_: given $n$ samples, minimize the probability of returning the
+    wrong arm
+
+- @Techniques@: fixed-confidence
+  - _Successive Elimination_: pull all surviving arms in round-robin, drop an
+    arm once its confidence interval is entirely below another's
+  - _LUCB_: at each step pull the empirical best and its strongest challenger
+  - _Track-and-Stop_: solve for the optimal sampling proportions and track them,
+    asymptotically optimal (Garivier and Kaufmann, 2016)
+
+- @Techniques@: fixed budget
+  - _Sequential Halving_: split the budget into $\log_2 K$ phases, and drop the
+    worst half of the arms at the end of each phase
+    - Simple, parameter-free, and near-optimal
+
+- @Remark@: fixed-confidence maps to "run the test until significant", fixed
+  budget maps to "we have 2 weeks of traffic, do your best"
+
+# Bandits and Reinforcement Learning
+
+* Bandits vs. Reinforcement Learning
+
+- @Comparison@: the dividing line is whether actions change the future
+  - **Bandit**: the environment is stateless, so an action affects only the
+    immediate reward
+  - **Contextual bandit**: there is a state $x_t$, but it is _exogenous_, i.e.,
+    the agent's action does not influence $x_{t+1}$
+  - **Reinforcement learning**: the action changes the state, so it affects all
+    future rewards
+
+- @Fact@: A $K$-armed bandit is an MDP with a single state
+  - A contextual bandit is an MDP with horizon 1 and iid initial states
+
+- @Key idea@: RL adds the **credit assignment** problem
+  - In a bandit, the reward observed is the reward of the action taken
+  - In RL, a reward at time $t$ may be due to an action at time $t - 50$
+  - This is why RL needs value functions, TD learning, and discounting
+
+- @Remark@: use the simplest problem formulation that is still correct
+  - If actions do not change the state distribution, an _RL algorithm_ is
+    strictly more sample-hungry than a _bandit_ for the same problem
+
+* When Do You Actually Need RL?
+
+// TODO(ai_gp): Make it vertical
+
+// TODO(ai_gp): Remove the examples, leave only the problem?
+
+```graphviz
+digraph BanditVsRL {
+    bgcolor  = "white";
+    rankdir  = LR;
+    splines  = spline;
+    nodesep  = 0.18;
+    ranksep  = 0.55;
+    pad      = 0.20;
+    size     = "7.5,2.6!";
+    node [shape=box, style="rounded,filled", fontname="Helvetica",
+          fontsize=12, penwidth=1.1, margin="0.14,0.08", color="#7B8794"];
+    edge [fontname="Helvetica-Oblique", fontsize=10, fontcolor="#7B8794",
+          color="#9AA5B1", penwidth=1.0, arrowsize=0.6];
+
+    Q1 [label="Reward depends on\nside information?",
+        shape=diamond, fillcolor="#FFD1A6"];
+    Q2 [label="Action changes\nwhat you see next?",
+        shape=diamond, fillcolor="#FFD1A6"];
+    MAB  [label="K-armed bandit\nUCB1, Thompson",
+          fillcolor="#B2E2B2"];
+    CB   [label="Contextual bandit\nLinUCB, Lin-TS",
+          fillcolor="#A6C8F4"];
+    RL   [label="Reinforcement learning\nQ-learning, policy search",
+          fillcolor="#C6A6F4"];
+
+    Q1 -> MAB [label="  no"];
+    Q1 -> Q2  [label="  yes"];
+    Q2 -> CB  [label="  no"];
+    Q2 -> RL  [label="  yes"];
+}
+```
+
+- @Examples@
+  - _Bandit_: which of 5 checkout button colors converts best
+  - _Contextual bandit_: which article to show _this_ reader now
+  - _RL_: which lesson to teach a student next, where the choice changes what
+    the student knows tomorrow
+
+# Practical Issues
+
+* Delayed Feedback
+
+- @Problem@: bandit theory assumes $R_t$ arrives before round $t+1$, but rewards
+  in the real world lag
+  - E.g., a click arrives in seconds, a conversion in days, a churn signal in
+    months
+  - Meanwhile the algorithm must keep serving traffic on stale statistics
+
+- @Properties@: with a delay of $d$ rounds
+  - Up to $d$ decisions are made with no feedback, so the algorithm behaves as
+    if it had a smaller effective sample
+    - For stochastic bandits, regret grows additively by $O(K d)$
+    - For adversarial bandits, regret grows multiplicatively by $\sqrt{d}$
+
+- @Techniques@
+  - _Batching_: update once per batch, accept the delay explicitly
+    - Thompson Sampling degrades gracefully, since it randomizes within a batch
+    - UCB repeats the same arm for the whole batch, wasting it
+  - _Optimistic imputation_: assume a pending reward is 0 (for conversions this
+    is usually the truth), and correct on arrival
+  - _Attribution window_: define a fixed horizon after which a non-conversion is
+    a 0, so rewards stop being pending
+
+- @Remark@: reward that is _fast and correlated_ is better than the one that is
+  _slow and exact_
+
+* Offline Evaluation
+
+- @Problem@: we cannot A/B test every candidate bandit policy in production
+  - Need to estimate the value of a new policy $\pi$ from logs generated by an
+    old policy $\pi_0$
+
+- @Key idea@: this is **off-policy evaluation**, the same problem as causal
+  inference from observational data
+  - The logging policy is the "treatment assignment mechanism"
+
+- @Techniques@
+  - _Replay / rejection sampling_ (Li et al., 2011): if $\pi_0$ was uniform,
+    step through the log and keep only the records where $\pi$ picked the same
+    arm as was logged
+    - Unbiased, trivially simple, but discards a fraction $1 - 1/K$ of the data
+  - _Inverse propensity scoring (IPS)_: weight each logged reward by
+    $\pi(a_t|x_t) / \pi_0(a_t|x_t)$
+    - Unbiased, but high variance when the two policies disagree
+  - _Doubly robust_: combine IPS with a learned reward model
+    - Unbiased if _either_ the propensities or the reward model is correct
+
+- @Assumptions@: all of these need **logged propensities**
+  - $\pi_0(a|x) > 0$ for every arm you want to evaluate
+  - _Practical rule_: log the propensity at serving time, always
+  - A deterministic logging policy makes offline evaluation impossible
+
+* Safety, Fairness, and Other Constraints
+
+- @Problem@: minimizing regret is rarely the only objective in production
+
+- @Challenges@
+  - _Safety_: a bandit is allowed to explore a catastrophic arm exactly once,
+    which may be once too many
+  - _Guardrails_: revenue may improve while latency or complaints degrade
+  - _Fairness_: arms may represent sellers or creators, so allocation is a
+    resource-distribution decision, not only an optimization
+  - _Interference_: in a marketplace, showing an item to one user removes it for
+    another, breaking the independence assumption
+
+- @Techniques@
+  - _Conservative bandits_: constrain cumulative reward to stay within a
+    fraction of a known baseline arm at all times
+  - _Constrained / knapsack bandits_: maximize reward subject to budget or
+    resource constraints
+  - _Allocation floors_: force $p_{t,i} \ge \eta$ for every arm
+    - Costs a little regret, buys fairness and unbiased logs at once
+  - _Human gating_: require approval before a new arm enters the pool
+
+- @Remark@: most production incidents come from these constraints, not from
+  picking the wrong index formula

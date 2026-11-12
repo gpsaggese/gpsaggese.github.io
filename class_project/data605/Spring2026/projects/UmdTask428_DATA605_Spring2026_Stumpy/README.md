@@ -30,7 +30,7 @@ to detect market-stress regimes.
       a vol-targeted risk-off backtest. About 25 minutes.
 
 For Docker details (architecture, scripts, helpers), see
-[`class_project/project_template/README.md`](../../../../project_template/README.md).
+[`class_project/project_template/docker_scripts.README.md`](../../../../project_template/docker_scripts.README.md).
 
 ## A note from the author
 

@@ -29,7 +29,7 @@ print_docker_vars
 setup_jupyter_environment
 
 # Initialize Jupyter Lab command with base configuration.
-JUPYTER_ARGS=$(get_jupyter_args)
+JUPYTER_ARGS=$(get_jupyter_args "$JUPYTER_DEFAULT_DIR")
 
 # Start Jupyter Lab with development-friendly settings.
 run "jupyter lab $JUPYTER_ARGS"

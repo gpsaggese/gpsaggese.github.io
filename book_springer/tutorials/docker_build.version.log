@@ -5,4 +5,5 @@
 [4/6] Fetching init image [0s]
 [5/6] Unpacking init image [0s]
 [6/6] Starting container [0s]
+[6/6] Starting container [0s]
 Error: failed to run container: Error Domain=NSPOSIXErrorDomain Code=19 "Operation not supported by device"
