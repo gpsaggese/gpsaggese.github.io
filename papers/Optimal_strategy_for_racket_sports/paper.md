@@ -192,11 +192,11 @@ which we use as an upper bound on the maximum ball speed parameter $v_{\max}$.
 | Court (singles), length x width | 23.77 m x 8.23 m | 13.41 m x 6.10 m |
 | Net height, center / post | 0.914 m / 1.07 m | 0.86 m / 0.91 m |
 | Non-volley zone (from net) | n/a | 2.13 m |
-| Fastest recorded shot | 263.4 km/h (73.2 m/s) | 99.8 km/h (27.7 m/s) |
+| Fastest recorded shot | 263 km/h (73.1 m/s) | 99.8 km/h (27.7 m/s) |
 
 Tennis dimensions and net heights are from the ITF Rules of Tennis
 [@itf2024rules]; pickleball dimensions are from the USA Pickleball official
-rulebook [@usap2024rulebook]; the fastest-shot figures are the certified
+rulebook [@usap2025rulebook]; the fastest-shot figures are the certified
 records for a men's serve [@guinness2012serve] and for a hard-hit shot in
 pickleball [@guinness2025pickleball], respectively.
 
@@ -653,9 +653,10 @@ to data: reaction time $t_r = 0.2$ s and movement speed $v_p = 1.5$ m/s.
 
 ## Two Regimes
 
-**Tennis groundstroke exchange.** With $T_f = 0.8$ s (consistent with
-[@fig-trajectory]), the available movement time after reacting is $T_f - t_r = 0.6$
-s, giving a reach radius $v_p (T_f - t_r) = 0.9$ m. Cells $c_1$ and $c_2$
+**Tennis groundstroke exchange.** With $T_f = 0.88$ s, the flight time of
+[@fig-trajectory], the available movement time after reacting is
+$T_f - t_r = 0.68$ s, giving a reach radius $v_p (T_f - t_r) = 1.02$ m. Cells
+$c_1$ and $c_2$
 fall within this radius ($R = 1$); cells $c_3$-$c_5$ do not ($R = 0$).
 Table II reports $P_{\mathrm{in}}$, $R$, and the composite score $S$ for
 each cell; [@fig-toy] (left panel) shows the same values graphically. The
@@ -838,7 +839,9 @@ action uses the same reset seed, so the actions share common random numbers as
 in Section IV-H. The second is a fresh map of Section IV-H, with 5000 samples per
 cell and a seed not used before. The environment reproduces Section IV-H if the
 two maps have a Spearman rank correlation of at least 0.95, and the best cell of
-each map lies in the best region of the other. The serves are 9 per sport, the
+each map lies in the best region of the other, up to ties: where the top cells
+of a map differ by less than their sampling error, its best cell is not well
+defined, and a miss among tied cells is not counted as a failure. The serves are 9 per sport, the
 centers of a $3 \times 3$ grid over the deuce box.
 
 ## PPO Setup
@@ -896,14 +899,16 @@ nothing, even when its single most likely cell changes from seed to seed.
 and the fresh map have a Spearman rank correlation of 0.980 to 0.982 for tennis
 and 0.990 to 0.994 for pickleball, and the best cell of each map lies in the
 best region of the other on 15 of 18 serves. The 3 misses are the short
-pickleball serves, whose top cells tie within 0.2 points ([@fig-rl-maps]).
+pickleball serves, whose top cells tie within 0.2 points, the sampling error of
+1000 points per cell, so the criterion holds on all 18 serves up to ties
+([@fig-rl-maps]).
 
 ```{=typst}
 #figure(
   image("figures/rl_env_vs_m2_pickleball.png", width: 100%),
   placement: top,
   scope: "parent",
-  caption: [Pickleball, middle serve of the deuce box: P(winner) of every aim point from the brute force through the environment (left, 1000 points per cell) and from a fresh map of Section IV-H (right, 5000 samples per cell). Both put the best region, outlined in black, in the middle of the server's half behind the non-volley zone. Pickleball is the sharper test: its regions have 2 to 8 cells, against 40 to 45 of 150 in tennis. Player 1 is the server and player 2 the returner. The tennis maps are in the research log (Appendix B).],
+  caption: [Pickleball, middle serve of the deuce box: P(winner) of every aim point from the brute force through the environment (left, 1000 points per cell, best region of 7 cells) and from a fresh Monte Carlo map of Section IV-H (right, 5000 samples per cell, best region of 4 cells). Both put the best region, outlined in black, in the middle of the server's half behind the non-volley zone. Pickleball is the sharper test: its regions have 2 to 8 cells, against 40 to 45 of 150 in tennis. The tennis maps are in the research log (Appendix B).],
 ) <fig-rl-maps>
 ```
 
@@ -1074,4 +1079,5 @@ Notebook $NN$ is `notebooks/racket_sports_NN_*.ipynb` of the accompanying code.
 | IV-H | Winner probability map | 01, Part 2 | [Experiment 2](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0) |
 | VII-A | Sweeps and serves | 05 | [Experiment 3](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0) |
 | VII-A | Speed ratio, reaction time | 05, Part 3 | [Experiment 4](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.xvdn4n7zo860) |
+| VII-B | Speed vs accuracy, coming with #723 | 07 | [Experiment 5](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.qrto9so35bnx) |
 | VIII | Reinforcement learning | 06 | [Experiment 6](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.kntokyu5w697) |

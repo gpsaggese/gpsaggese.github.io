@@ -118,7 +118,7 @@ p_in = np.array([0.95, 0.91, 0.85, 0.77, 0.65])
 labels = [f"$c_{i + 1}$\n({d:.1f} m)" for i, d in enumerate(cells)]
 
 scenarios = [
-    ("Tennis groundstroke\n($T_f=0.8$ s)", 0.9, "#1a5276"),
+    ("Tennis groundstroke\n($T_f=0.88$ s)", 1.02, "#1a5276"),
     ("Pickleball net exchange\n($T_f=0.2$ s)", 0.0, "#a04000"),
 ]
 
