@@ -24,7 +24,6 @@ import causallearn.utils.DAG2PAG as cudpag
 import lingam
 import pgmpy.models as pgmodel
 import sklearn.datasets as skdata
-import torch
 
 import helpers.hunit_test as hunitest
 
@@ -159,28 +158,6 @@ class Test_pgmpy_api(hunitest.TestCase):
         ]
         # Check outputs.
         self.assert_equal(str(actual), "['[]', '[]']")
-
-
-# #############################################################################
-# Test_torch_build
-# #############################################################################
-
-
-class Test_torch_build(hunitest.TestCase):
-    """
-    Test that the image runs the CPU-only torch build.
-    """
-
-    def test1(self) -> None:
-        """
-        Test the torch version is a `+cpu` build and CUDA is unavailable.
-        """
-        # Prepare inputs.
-        version = torch.__version__
-        # Run test.
-        actual = str([version.endswith("+cpu"), torch.cuda.is_available()])
-        # Check outputs.
-        self.assert_equal(actual, "[True, False]")
 
 
 # #############################################################################

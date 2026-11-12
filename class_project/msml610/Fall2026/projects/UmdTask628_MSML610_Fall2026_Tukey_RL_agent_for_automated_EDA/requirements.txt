@@ -1,7 +1,8 @@
 # Why this file exists: Tukey's packages depend on each other and need
 # compatible versions (lingam 1.12.2 is pinned because lingam 1.13.0 caps
-# scipy at 1.13.1; causal-learn, CausalDisco, pgmpy and the CPU build of torch
-# must resolve together), so the template's requirements are not enough.
+# scipy at 1.13.1; causal-learn, CausalDisco and pgmpy must resolve together),
+# so the template's requirements are not enough. torch, which training needs,
+# is added with Milestone 3.
 # Direct dependencies are in `requirements.in`. This file was generated with
 # pip-compile, constrained to the `pip freeze` of the image that produced every
 # stored result, so each version below equals that image's version.
@@ -12,7 +13,6 @@
 #
 #    pip-compile --constraint=frozen_image_pip_freeze.txt --output-file=requirements.txt --strip-extras requirements.in
 #
---extra-index-url https://download.pytorch.org/whl/cpu
 
 anyio==4.15.1
     # via
@@ -50,7 +50,6 @@ filelock==4.1.1
     # via
     #   -c frozen_image_pip_freeze.txt
     #   huggingface-hub
-    #   torch
 fonttools==4.66.1
     # via
     #   -c frozen_image_pip_freeze.txt
@@ -63,7 +62,6 @@ fsspec==2026.9.0
     # via
     #   -c frozen_image_pip_freeze.txt
     #   huggingface-hub
-    #   torch
 future==1.0.0
     # via
     #   -c frozen_image_pip_freeze.txt
@@ -106,10 +104,6 @@ interface-meta==2.0.1
     # via
     #   -c frozen_image_pip_freeze.txt
     #   formulaic
-jinja2==3.1.6
-    # via
-    #   -c frozen_image_pip_freeze.txt
-    #   torch
 joblib==1.6.0
     # via
     #   -c frozen_image_pip_freeze.txt
@@ -124,10 +118,6 @@ lingam==1.12.2
     # via
     #   -c frozen_image_pip_freeze.txt
     #   -r requirements.in
-markupsafe==3.0.4
-    # via
-    #   -c frozen_image_pip_freeze.txt
-    #   jinja2
 matplotlib==3.11.2
     # via
     #   -c frozen_image_pip_freeze.txt
@@ -155,7 +145,6 @@ networkx==3.7
     #   causal-learn
     #   lingam
     #   pgmpy
-    #   torch
 numdifftools==0.11.1
     # via
     #   -c frozen_image_pip_freeze.txt
@@ -318,19 +307,13 @@ sympy==1.14.0
     # via
     #   -c frozen_image_pip_freeze.txt
     #   semopy
-    #   torch
 threadpoolctl==3.7.0
     # via
     #   -c frozen_image_pip_freeze.txt
     #   scikit-learn
-torch==2.14.0+cpu
-    # via
-    #   -c frozen_image_pip_freeze.txt
-    #   -r requirements.in
 tqdm==4.70.1
     # via
     #   -c frozen_image_pip_freeze.txt
-    #   -r requirements.in
     #   causal-learn
     #   huggingface-hub
     #   pgmpy
@@ -347,7 +330,6 @@ typing-extensions==4.16.0
     #   httpx2
     #   huggingface-hub
     #   python-utils
-    #   torch
 wrapt==2.5.0
     # via
     #   -c frozen_image_pip_freeze.txt

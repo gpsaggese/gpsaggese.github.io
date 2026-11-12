@@ -2,7 +2,6 @@
 # result was produced in. `requirements.txt` is generated from this file:
 # > pip-compile --strip-extras --constraint=frozen_image_pip_freeze.txt \
 #     --output-file=requirements.txt requirements.in
---extra-index-url https://download.pytorch.org/whl/cpu
 CausalDisco==0.2.4
 causal-learn==0.1.4.8
 lingam==1.12.2
@@ -15,5 +14,3 @@ pytest==9.1.1
 scikit-learn==1.9.1
 scipy==1.18.1
 seaborn==0.13.2
-torch==2.14.0+cpu
-tqdm==4.70.1

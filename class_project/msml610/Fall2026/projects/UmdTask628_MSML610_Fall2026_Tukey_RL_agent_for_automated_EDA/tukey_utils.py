@@ -61,7 +61,6 @@ _REPORTED_PACKAGES = (
     "lingam",
     "CausalDisco",
     "pgmpy",
-    "torch",
 )
 
 
