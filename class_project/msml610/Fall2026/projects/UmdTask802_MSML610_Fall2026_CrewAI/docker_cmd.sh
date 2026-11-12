@@ -37,8 +37,13 @@ run "$DOCKER_CMD image ls | grep '$FULL_IMAGE_NAME' || true"
 CONTAINER_NAME="${IMAGE_NAME}.cmd"
 DOCKER_CMD=$(get_docker_cmd_command)
 PORT=""
-DOCKER_RUN_OPTS=""
-DOCKER_CMD_OPTS=$(get_docker_bash_options $CONTAINER_NAME $PORT $DOCKER_RUN_OPTS)
+DOCKER_RUN_OPTS="-e GEMINI_API_KEY -e CREWAI_MODEL"
+DOCKER_CMD_OPTS=$(
+    get_docker_bash_options \
+        "$CONTAINER_NAME" \
+        "$PORT" \
+        "$DOCKER_RUN_OPTS"
+)
 # Remove a stale container from an interrupted run and clean up on exit.
 kill_existing_container
 cleanup_container_on_exit
