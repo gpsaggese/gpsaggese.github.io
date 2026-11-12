@@ -62,7 +62,8 @@ except ImportError:
 # Report the version of every package the project depends on.
 versions = utils.cell1_1_get_package_versions()
 display(versions)
-# Outcome: one row per package, matching `requirements.txt`.
+# Outcome: one row per core package, each at the version pinned in
+# `requirements.txt`.
 
 # %% [markdown]
 # ## Cell 1.2: A gallery of hidden graphs
@@ -111,12 +112,14 @@ utils.example_cell1_3_plot_sortability(sortability)
 # **Guided usage**
 # - Compare the blue and orange bars: standardizing removes the variance leak
 #   (0.5 everywhere) while the prototype's raw data stay at 0.94
-# - Look at the green bars: the number of relatives stays above 0.5 in every
-#   random-graph family, including iSCM data, because it depends on the graph,
-#   not on the weights
+# - Look at the green bars: the number of relatives stays above 0.5 (0.67 to
+#   1.00) in every random-graph family, including iSCM data, because it depends
+#   on the graph, not on the weights; the exception is `sklearn_confounder`
+#   (0.50 with the true graph, 0.49 estimated: no order signal)
 #
 # **Implementation** `example_cell1_3_load_sortability()`
-# - Reads `results/m1/sortability.json` (run `wp2_m1_sortability_b`); the edge
+# - Reads `results/m1/sortability.json` (written by
+#   `tukey_results.py sortability`); the edge
 #   definition (Reisach et al. 2026, Eq. 4) counts each edge once, ties 1/2
 
 # %% [markdown]
@@ -162,10 +165,12 @@ utils.example_cell2_2_plot_m2_heatmap()
 # **Guided usage**
 # - Read the `direct_lingam` row: near 0 on non-Gaussian data (`A0`, `A1`, `C`),
 #   poor on Gaussian data (`B`, `Braw`)
-# - Read the `var_sort_regress` row: strong only where variance is a real or
-#   leaked signal (`A0` raw prototype data, `Braw` equal variances)
+# - Read the `var_sort_regress` row: strong where variance is a real or leaked
+#   signal (`A0` raw prototype data, `Braw` equal variances); setting `F` is
+#   easy for every method (a random order scores -0.095 there)
 # - Read the `ges` and `pc` rows: best on Gaussian data, where the target is the
 #   equivalence class
 #
 # **Implementation** `example_cell2_2_plot_m2_heatmap()`
-# - Reads `results/m2/table_summary.json` (runs `wp3_m2_table`, `wp3_m2_split`)
+# - Reads `results/m2/table_summary.json` (written by `tukey_results.py
+#   m2_table` and `m2_split`)

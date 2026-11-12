@@ -34,6 +34,7 @@
 import logging
 
 import numpy as np
+import pandas as pd
 
 # %%
 import helpers.hintrospection as hintros
@@ -68,8 +69,8 @@ except ImportError:
 # |--------|-------------|----------|
 # | `GraphConfig` | Generator settings | Size, family, noise, topology, scaling |
 # | `sample_instance(cfg, seed)` | Hidden graph, data, split | Reproducible |
-# | `TukeyEnv.reset(seed=...)` | Starts an episode | Returns `Evidence` |
-# | `TukeyEnv.step(action)` | Runs one tool call or STOP | Reward = call cost |
+# | `TukeyEnv.reset(seed=...)` | Starts an episode | Returns `(Evidence, info)` |
+# | `TukeyEnv.step(action)` | Runs one tool call or STOP | Reward = minus the call cost |
 # | `TukeyEnv.submit_graph(edges)` | Scores an emitted graph | Ends the episode |
 # | `score_graph(B, truth)` | Verifiable score | Structure + prediction |
 #
@@ -223,7 +224,9 @@ hintros.print_obj_info(tenv.TukeyEnv)
 # %%
 # A fresh episode, then one call of each tool on x0, x1 (given x2).
 evidence, _ = env.reset(seed=3)
-display(utils.cell3_1_call_each_tool(evidence, 0, 1, 2))
+# Show each tool's full result (pandas would cut the long rows).
+with pd.option_context("display.max_colwidth", None):
+    display(utils.cell3_1_call_each_tool(evidence, 0, 1, 2))
 # Outcome: correlations and regressions are scale-free; only `variance` sees
 # the raw scale (0 here, since the data are standardized).
 

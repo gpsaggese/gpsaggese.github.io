@@ -22,6 +22,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
+import helpers.hdbg as hdbg
 import helpers.hgraphviz as hgraphv
 import helpers.hnotebook as hnotebo
 import tukey_baselines as tbasel
@@ -158,7 +159,7 @@ def _reverse_edge(B: np.ndarray, *, covered: bool) -> np.ndarray:
 
     :param B: DAG adjacency
     :param covered: reverse a covered edge (True) or an uncovered one (False)
-    :return: DAG with one edge reversed (a copy of `B` if none qualifies)
+    :return: DAG with one edge reversed
     """
     for i, j in np.argwhere(B != 0):
         parents_i = set(np.flatnonzero(B[:, i]))
@@ -169,7 +170,9 @@ def _reverse_edge(B: np.ndarray, *, covered: bool) -> np.ndarray:
         candidate[i, j], candidate[j, i] = 0, 1
         if tscore.is_dag(candidate):
             return candidate
-    return B.copy()
+    # Returning `B` unchanged would mislabel the true graph as a reversal.
+    kind = "covered" if covered else "uncovered"
+    raise ValueError(f"No {kind} edge of this graph can be reversed")
 
 
 def cell2_3_score_candidates(inst: tenv.Instance) -> pd.DataFrame:
@@ -395,6 +398,9 @@ def _corrected_pc_calls(
     """
     values = _load_json(corrections)["values"]
     corrected = {v["path"]: v["new"] for v in values if v["file"] == path}
+    # The corrections name files by their path in the project; any other
+    # spelling would silently show the uncorrected counts.
+    hdbg.dassert(corrected, "No PC-count correction recorded for '%s'", path)
     return corrected
 
 

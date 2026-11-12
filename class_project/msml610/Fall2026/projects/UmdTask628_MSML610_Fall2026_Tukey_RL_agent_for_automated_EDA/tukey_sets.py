@@ -15,7 +15,9 @@ checks a manifest's header, its ordered seeds and each instance's size and
 family against the code.
 
 Hashes are computed inside the project's Docker image; numbers are rounded to
-10 decimals first so that last-bit differences cannot change them.
+10 decimals first, so last-bit differences rarely change them (a value within
+about 1e-10 of a rounding boundary still can). The committed hashes were
+computed on arm64 (Apple silicon); no x86-64 run has checked them yet.
 
 Import as:
 
