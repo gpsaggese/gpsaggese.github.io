@@ -78,7 +78,7 @@
   ```
 
   Every file's command is in the docstring of `tukey_results.py`; the
-  Milestone 2 table takes about one CPU-hour
+  Milestone 2 table takes about 1.5 minutes with 10 workers
 
 ## Preliminary Results
 

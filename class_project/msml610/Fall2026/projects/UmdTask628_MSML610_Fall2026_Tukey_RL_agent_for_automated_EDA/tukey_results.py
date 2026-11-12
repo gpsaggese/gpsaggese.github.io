@@ -17,7 +17,7 @@ directory, e.g. through `./docker_cmd.sh "cd /git_root/<project dir> && ..."`.
 - Reproduce the Oct 10 numbers on the prototype's seeds 0-19 (M2):
 > tukey_results.py proto_check --out results/m2/proto_check.json
 - Tune the non-learned methods on validation and run the M2 table, then split
-  it into the two committed files (about 1 CPU-hour):
+  it into the two committed files (about 1.5 minutes with 8-10 workers):
 > tukey_results.py m2_table --out table.json --n_workers 8
 > tukey_results.py m2_split --table table.json --out results/m2
 

@@ -171,6 +171,27 @@ class ScriptedExpert:
         hdbg.dassert_in(order, ("index", "strength"))
         self.threshold = threshold
         self.order = order
+        # Lists that depend only on the episode's evidence (see `_memo()`).
+        self._memo_evidence: Optional[ttools.Evidence] = None
+        self._memo_store: Dict[Any, Any] = {}
+
+    def _memo(self, evidence: ttools.Evidence) -> Dict[Any, Any]:
+        """
+        Return the memo of the current episode, starting a new one if needed.
+
+        Within an episode the pair order and each pair's call lists never
+        change, and a finished pair stays finished, so they are built once and
+        the scan resumes at the first unfinished pair. The memo keeps a
+        reference to the evidence it belongs to, so a new episode's evidence
+        can never be mistaken for the old one.
+
+        :param evidence: evidence so far
+        :return: memo dict of this episode
+        """
+        if self._memo_evidence is not evidence:
+            self._memo_evidence = evidence
+            self._memo_store = {}
+        return self._memo_store
 
     def _pairs(self, evidence: ttools.Evidence) -> List[Tuple[int, int]]:
         """
@@ -179,10 +200,13 @@ class ScriptedExpert:
         :param evidence: evidence so far
         :return: pairs
         """
-        pairs = list(itertools.combinations(range(evidence.n_nodes), 2))
-        if self.order == "strength":
-            pairs.sort(key=lambda p: (-abs(evidence.corr[p[0], p[1]]), p))
-        return pairs
+        memo = self._memo(evidence)
+        if "pairs" not in memo:
+            pairs = list(itertools.combinations(range(evidence.n_nodes), 2))
+            if self.order == "strength":
+                pairs.sort(key=lambda p: (-abs(evidence.corr[p[0], p[1]]), p))
+            memo["pairs"] = pairs
+        return memo["pairs"]
 
     def _ci_actions(
         self, evidence: ttools.Evidence, i: int, j: int
@@ -195,12 +219,15 @@ class ScriptedExpert:
         :param j: second variable
         :return: `ci_test` actions with each single other variable
         """
-        others = [k for k in range(evidence.n_nodes) if k not in (i, j)]
-        if self.order == "strength":
-            corr = np.abs(evidence.corr)
-            others.sort(key=lambda k: (-max(corr[i, k], corr[j, k]), k))
-        actions = [ttools.ci_test_action(i, j, (k,)) for k in others]
-        return actions
+        memo = self._memo(evidence)
+        key = ("ci", i, j)
+        if key not in memo:
+            others = [k for k in range(evidence.n_nodes) if k not in (i, j)]
+            if self.order == "strength":
+                corr = np.abs(evidence.corr)
+                others.sort(key=lambda k: (-max(corr[i, k], corr[j, k]), k))
+            memo[key] = [ttools.ci_test_action(i, j, (k,)) for k in others]
+        return memo[key]
 
     def _regress_actions(
         self, evidence: ttools.Evidence, i: int, j: int
@@ -213,18 +240,25 @@ class ScriptedExpert:
         :param j: higher-index variable
         :return: `regress` actions (j on i, i on j, in the prototype's order)
         """
-        actions = [
-            ttools.regress_action(j, (i,)),
-            ttools.regress_action(i, (j,)),
-        ]
-        if self.order == "strength":
-            # First regress the endpoint with the larger mean |r| to the other
-            # variables (the node feature `mean_abs_r`; the pair's own |r| is
-            # shared, so this compares the endpoints' links to third variables).
-            corr = np.abs(evidence.corr)
-            mean_abs_r = (corr.sum(axis=1) - 1.0) / max(1, evidence.n_nodes - 1)
-            actions.sort(key=lambda a: (-mean_abs_r[a.args[0]], a.args[0]))
-        return actions
+        memo = self._memo(evidence)
+        key = ("regress", i, j)
+        if key not in memo:
+            actions = [
+                ttools.regress_action(j, (i,)),
+                ttools.regress_action(i, (j,)),
+            ]
+            if self.order == "strength":
+                # First regress the endpoint with the larger mean |r| to the
+                # other variables (the node feature `mean_abs_r`; the pair's
+                # own |r| is shared, so this compares the endpoints' links to
+                # third variables).
+                corr = np.abs(evidence.corr)
+                mean_abs_r = (corr.sum(axis=1) - 1.0) / max(
+                    1, evidence.n_nodes - 1
+                )
+                actions.sort(key=lambda a: (-mean_abs_r[a.args[0]], a.args[0]))
+            memo[key] = actions
+        return memo[key]
 
     def _next_pair_action(
         self, evidence: ttools.Evidence, i: int, j: int
@@ -259,12 +293,18 @@ class ScriptedExpert:
         stop = ttools.Action(ttools.STOP)
         if evidence.budget_left <= 0:
             return stop
-        for i, j in self._pairs(evidence):
+        pairs = self._pairs(evidence)
+        memo = self._memo(evidence)
+        # Every pair before the cursor is screened out or finished.
+        for index in range(memo.get("cursor", 0), len(pairs)):
+            i, j = pairs[index]
             if abs(evidence.corr[i, j]) < self.threshold:
                 continue
             action = self._next_pair_action(evidence, i, j)
             if action is not None:
+                memo["cursor"] = index
                 return action
+        memo["cursor"] = len(pairs)
         return stop
 
     def _is_removed(self, evidence: ttools.Evidence, i: int, j: int) -> bool:
@@ -394,13 +434,17 @@ class ScriptedPlus(ScriptedExpert):
         :param j: second variable
         :return: `ci_test` actions
         """
-        others = [k for k in range(evidence.n_nodes) if k not in (i, j)]
-        actions = [ttools.ci_test_action(i, j, (k,)) for k in others]
-        actions += [
-            ttools.ci_test_action(i, j, cond)
-            for cond in itertools.combinations(others, 2)
-        ]
-        return actions
+        memo = self._memo(evidence)
+        key = ("ci", i, j)
+        if key not in memo:
+            others = [k for k in range(evidence.n_nodes) if k not in (i, j)]
+            actions = [ttools.ci_test_action(i, j, (k,)) for k in others]
+            actions += [
+                ttools.ci_test_action(i, j, cond)
+                for cond in itertools.combinations(others, 2)
+            ]
+            memo[key] = actions
+        return memo[key]
 
     def _non_gaussian(self, evidence: ttools.Evidence, i: int, j: int) -> bool:
         """
