@@ -27,7 +27,8 @@
 - **Decision**: score = -`lam` x (target SHD / true edges) - (1 - `lam`) x
   (prediction shortfall on the test rows)
 - **Why**: prediction alone rewards dense graphs (`lam = 0` collapses to them);
-  structure alone (`lam = 1`) ended within 0.003 (not tested)
+  structure alone (`lam = 1`) scored -0.278 against -0.274 on development
+  graphs, with no significance test (results arrive with `PR_R1`)
 - **Alternatives**: structure only
 - **Status**: proposed
 
