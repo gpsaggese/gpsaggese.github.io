@@ -27,6 +27,7 @@ import tukey_scoring as tscore
 """
 
 import dataclasses
+import functools
 import itertools
 import logging
 import types
@@ -588,6 +589,42 @@ class Truth:
     pag: Optional[np.ndarray] = None
     confounded: Tuple[Tuple[int, int], ...] = ()
 
+    # The truth's endpoint marks, computed on first use and kept: training
+    # scores many graphs against one truth. They are read-only, and not
+    # fields, so equality, hashing and the manifests ignore them.
+
+    @functools.cached_property
+    def marks_dag(self) -> np.ndarray:
+        """
+        Endpoint marks of the true DAG.
+        """
+        return _read_only(marks_from_pdag(self.B))
+
+    @functools.cached_property
+    def marks_cpdag(self) -> np.ndarray:
+        """
+        Endpoint marks of the true graph's CPDAG.
+        """
+        return _read_only(marks_from_pdag(cpdag_from_dag(self.B)))
+
+    @functools.cached_property
+    def marks_target(self) -> np.ndarray:
+        """
+        Endpoint marks of the identifiable target (`target_marks()`).
+        """
+        return _read_only(target_marks(self.B, self.target_class, self.nongauss))
+
+
+def _read_only(array: np.ndarray) -> np.ndarray:
+    """
+    Make an array read-only, so a cached value cannot be changed by a caller.
+
+    :param array: array to protect
+    :return: the same array
+    """
+    array.setflags(write=False)
+    return array
+
 
 def make_truth(
     B: np.ndarray,
@@ -890,7 +927,7 @@ def score_pdag(
         upper = np.triu(np.asarray(bidirected, dtype=bool), 1)
         marks_hat[upper] = MARK_BIDIRECTED
         n_bidirected = int(upper.sum())
-    marks_true_target = target_marks(truth.B, truth.target_class, truth.nongauss)
+    marks_true_target = truth.marks_target
     B_ext, extendable = dag_extension(A_hat)
     scores: Dict[str, Any] = {
         "is_dag": False,
@@ -898,10 +935,8 @@ def score_pdag(
         "n_bidirected": n_bidirected,
         "target_class": truth.target_class,
         "n_true_edges": n_true_edges,
-        "shd_dag": shd_marks(marks_hat, marks_from_pdag(truth.B)),
-        "shd_cpdag": shd_marks(
-            marks_hat, marks_from_pdag(cpdag_from_dag(truth.B))
-        ),
+        "shd_dag": shd_marks(marks_hat, truth.marks_dag),
+        "shd_cpdag": shd_marks(marks_hat, truth.marks_cpdag),
         "shd_target": shd_marks(marks_hat, marks_true_target),
     }
     scores.update(pdag_agreement(marks_hat, truth.B))
@@ -956,9 +991,9 @@ def score_graph(
         )
         return scores
     n_true_edges = int(truth.B.sum())
-    marks_true_dag = marks_from_pdag(truth.B)
-    marks_true_cpdag = marks_from_pdag(cpdag_from_dag(truth.B))
-    marks_true_target = target_marks(truth.B, truth.target_class, truth.nongauss)
+    marks_true_dag = truth.marks_dag
+    marks_true_cpdag = truth.marks_cpdag
+    marks_true_target = truth.marks_target
     marks_hat_dag = marks_from_pdag(B_hat)
     if acyclic:
         marks_hat_cpdag = marks_from_pdag(cpdag_from_dag(B_hat))
