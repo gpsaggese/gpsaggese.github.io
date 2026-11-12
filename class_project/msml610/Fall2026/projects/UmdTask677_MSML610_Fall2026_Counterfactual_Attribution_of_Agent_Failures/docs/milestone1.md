@@ -293,8 +293,70 @@
   within the noise measured here (about +/-0.19 at 50 continuations per group,
   +/-0.37 at 10)
 - The checkpoint stores (`runs/m1`, `runs/m1_think`, 218 MB) are not in git;
-  they go to the project's Google Drive dir, so the replay checks can be rerun
+  they are on Google Drive (next section), so the replay checks can be rerun
   on the original runs
+
+### Original Runs on Google Drive
+
+- Folder:
+  [MSML610_Fall2026_Counterfactual_Attribution_of_Agent_Failures](https://drive.google.com/drive/folders/15c2YBv6f9FU5enMjIqUqoKwgKxpwcG6T)
+  (view access on request; to move to the class folder)
+- It holds one archive of `runs/` (both stores and the spending ledger) split
+  into 10 parts, `part00` to `part09`, and a `README.txt`
+  - Joined archive: 68,983,596 bytes (66 MB), 218 MB unpacked, sha256
+    `d63ef2d94a695280cffa1896bbe201e0f2d3f79def9b90751801c6f09e3a7172`
+- To get the original runs, download the 10 parts into this project folder and
+  run each step from there:
+
+1. Join the parts:
+   ```bash
+   cat MSML610_Fall2026_Counterfactual_Attribution_of_Agent_Failures.M1_runs.tar.gz.part* > MSML610_Fall2026_Counterfactual_Attribution_of_Agent_Failures.M1_runs.tar.gz
+   ```
+2. Check the archive (the output must start with `d63ef2d9`):
+   ```bash
+   shasum -a 256 MSML610_Fall2026_Counterfactual_Attribution_of_Agent_Failures.M1_runs.tar.gz
+   ```
+3. Unpack it, which recreates `runs/` (git-ignored, so it cannot be committed by
+   accident):
+   ```bash
+   tar -xzf MSML610_Fall2026_Counterfactual_Attribution_of_Agent_Failures.M1_runs.tar.gz
+   ```
+4. Rerun the 62 replay checks on the original games (no API calls, free):
+   ```bash
+   CAAF_CONFIG=chess_haiku_think.yaml CAAF_RUN=m1_think .venv/bin/python caaf_m1.py replay
+   ```
+
+### Running It With Your Own API Key
+
+- Everything a run writes stays in your clone: the stores in `runs/<run name>/`
+  and the ledger in `runs/api_usage.jsonl` (both git-ignored), and the summaries
+  in `results/<run name>/` (in git once you commit them)
+- Use your own run name, e.g. `CAAF_RUN=m1_think_<your name>`: with
+  `CAAF_RUN=m1_think` a run overwrites the published `results/m1_think/` in your
+  clone
+- The cap in the config ($20) guards the ledger on one machine, so each person
+  has their own cap; it is not a shared team budget
+- Your API key does not change the experiment: the model, its settings, the
+  prompts, the tasks and the tablebase are fixed by the config, the seeds and
+  the checksums, and every checkpoint records them
+- Your games will still differ from ours, because Haiku is sampled without a
+  seed: every run, by anyone, plays new games. Expect:
+  - **The same** replay checks (62/62 on our stores, and every check passing on
+    your own) and the same task positions
+  - **Different** individual games, moves and checkpoints, so different
+    screening candidates and A/A checkpoints
+  - **Statistically the same** win rates: pilot, screening and A/A numbers
+    should agree with ours within the noise above (about +/-0.19 at 50
+    continuations per group, +/-0.37 at 10)
+- A gap larger than the noise means something changed: check the model id,
+  the config and the tablebase hashes recorded in your checkpoints against the
+  ones here. If they all match, the remaining explanation is a change on the
+  model provider's side
+- To share your runs, commit `results/<run name>/` on a branch, and upload
+  `runs/<run name>/` to Drive the same way (one archive, split into parts of
+  about 7 MB if the upload is capped at 10 MB)
+- For Milestone 2, analyse the shared stores rather than fresh pilots, so that
+  everyone works on the same games
 
 ### Spending Ledger
 
@@ -304,8 +366,8 @@
   margin
 - Cap $20 (both configs); prices $0.10 input and $0.50 output per million tokens,
   cache writes x1.25 and cache reads x0.1 the input price
-- Per-phase totals, also in `results/ledger_summary.json` (the ledger itself goes
-  to Google Drive with the stores):
+- Per-phase totals, also in `results/ledger_summary.json` (the ledger itself is
+  on Google Drive with the stores):
 
 | Phase | Calls | Input tokens | Output tokens | Cost |
 | :---- | :---- | :----------- | :------------ | :--- |

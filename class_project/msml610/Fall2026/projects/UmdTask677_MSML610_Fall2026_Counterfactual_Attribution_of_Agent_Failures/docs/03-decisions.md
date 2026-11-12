@@ -81,4 +81,5 @@
   `results/` are committed; the stores go to the project's Google Drive dir
 - **Why**: the class rules forbid binary and large files in the repo
 - **Alternatives**: none
-- **Status**: accepted (2026-11-11); upload to Google Drive pending
+- **Status**: accepted (2026-11-11); uploaded to Google Drive on 2026-11-11
+  (`docs/milestone1.md`, "Original Runs on Google Drive")
