@@ -346,6 +346,10 @@ PYTHONPATH=price_only_benchmarks:. python -m pytest -q --noconftest \
 
 The next stage is to stop treating the news stream as a fixed historical CSV. A practical system would monitor **permitted feeds/APIs or licensed access** every day, retain precise timestamps and source provenance, and extract text alongside **image-based information** such as commodity charts and infographics. This is where CLIP's **joint image–text representation** could be used more fully. The crawler/scheduler collects content; **CLIP embeds it**; a separately trained forecasting model predicts returns.
 
+### 8.0 Dataset for Energy headlines Extending energy-news coverage with GDELT and domain-specific sources:
+
+Future experiments will incorporate GDELT to recover geopolitical and energy-related events that may be underrepresented in ABC News and FNSPID, including armed conflicts, sanctions, OPEC production decisions, supply-chain disruptions, refinery outages, and natural gas shortages. This will be complemented by energy-focused reporting from OilPrice.com and other authorized news sources. Unlike keyword-only filtering, the proposed pipeline will extract event entities, affected commodities, geographic context, temporal relationships, and asset-specific bullish, bearish, or neutral impact signals. These structured representations will be fused with frozen CLIP text and visual embeddings and historical price features, enabling future evaluation of event-aware forecasting across different market regimes and prediction horizons. All news will be aligned using verified publication timestamps to prevent look-ahead bias.
+
 ### 8.1 Candidate news sources
 
 These are **planned sources, not currently ingested feeds**. Access, copyright, robots policies, paywalls, licensing, and rate limits must be checked for each provider; a public webpage is not permission to scrape and republish its contents.
@@ -388,12 +392,25 @@ This extension is motivated by **Zhong et al., [*Time-VLM: Exploring Multimodal 
 The proposed asset- and horizon-conditional system can be summarized as:
 
 $$
-\mathbf u_t^{(a)} = \operatorname{Fuse}\left(\mathbf x_t^{(a)},\mathbf z_{t,\mathrm{text}}^{(a)},\mathbf z_{t,\mathrm{vision}}^{(a)},\mathbf m_t^{(a)}\right),
+\mathbf{u}_t^{(a)} =
+\mathrm{Fuse}\left(
+\mathbf{x}_t^{(a)},
+\mathbf{z}_{t,\mathrm{text}}^{(a)},
+\mathbf{z}_{t,\mathrm{vision}}^{(a)},
+\mathbf{m}_t^{(a)}
+\right)
 $$
 
 $$
-\hat r_{t+h}^{(a)} = g_{\mathrm{return},h}\left(\mathbf u_t^{(a)}\right),\qquad
-\hat p_{t+h}^{(a)} = P\!\left(r_{t+h}^{(a)} > 0\mid\mathbf u_t^{(a)}\right).
+\hat{r}_{t+h}^{(a)} =
+g_{\mathrm{return},h}\left(\mathbf{u}_t^{(a)}\right),
+\qquad
+\hat{p}_{t+h}^{(a)} =
+P\left(
+r_{t+h}^{(a)} > 0
+\mid
+\mathbf{u}_t^{(a)}
+\right)
 $$
 
 Here $a$ specifies the commodity (e.g., WTI or Henry Hub), $h$ the forecasting horizon, $\mathbf z_{t,\mathrm{text}}$ CLIP news features, $\mathbf z_{t,\mathrm{vision}}$ chart/image features, and $\mathbf m_t$ a strictly historical retrieved context. The *directional probability* is a proposed trained output, **not** a calibrated probability inferred directly from CLIP's cosine similarity. The sign model and return model would be evaluated independently.
