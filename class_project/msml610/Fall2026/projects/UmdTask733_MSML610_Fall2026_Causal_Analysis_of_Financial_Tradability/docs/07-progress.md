@@ -139,7 +139,8 @@
 | 2026-11-10 | To-do tab in the gdoc; filed #904 and #905; SPY 1h file saved in the project Drive folder |
 | 2026-11-10 | Follow-ups from GP's answers: stale bars, SPY overnight bar, cost sweep, data sources |
 | 2026-11-11 | Gap analysis (#904) |
-| 2026-11-11 | PR #908 merged ("Very well done"). Step 3: results by regime |
+| 2026-11-11 | PR #908 merged ("Very well done") |
+| 2026-11-12 | Step 3: results by regime |
 
 ## Open Work
 
