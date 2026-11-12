@@ -21,7 +21,7 @@
 
 - A first version of all four milestones is built locally; its last full check
   was on Oct 16 (fresh clone: 371 tests passed, both notebooks ran). This PR
-  brings Milestones 1-2, rechecked on Nov 12 (145 tests, both notebooks)
+  brings Milestones 1-2, rechecked on Nov 12 (151 tests, both notebooks)
 - We submit it one milestone per PR; each code PR reruns the full tests and the
   Docker build. This replaces
   [#629](https://github.com/gpsaggese/gpsaggese.github.io/pull/629) (one 93-file PR)
