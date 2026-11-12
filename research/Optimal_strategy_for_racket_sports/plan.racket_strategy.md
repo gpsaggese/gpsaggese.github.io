@@ -148,7 +148,8 @@
   - Add `racket_strategy.example.ipynb` / `.py` and the experiment helpers
   - Export result figures and tables to `results/`
 
-- [ ] PR8: Report the computational results in the paper
+- [x] PR8: Report the computational results in the paper, done in
+      [#921](https://github.com/gpsaggese/gpsaggese.github.io/issues/921) with the 2D model, since PR7 closed without code
   - Depends on: PR7
   - No spec: prose update whose content is fixed by the PR7 outputs
   - Add a "Computational Results" section to `paper.md` with the PR7 figures
@@ -404,3 +405,7 @@
         [Experiment 6](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.kntokyu5w697),
         and its open questions under
         [Questions for GP](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.l217ky1fe8b4)
+  - [-] [#921](https://github.com/gpsaggese/gpsaggese.github.io/issues/921):
+        formalize the research in the paper (GP, 2026-11-12): the 2D model as
+        the main method, Section VIII on the RL env of #713, and an index that
+        links each result to its Gdoc experiment

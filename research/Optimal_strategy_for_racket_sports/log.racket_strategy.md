@@ -30,6 +30,26 @@
 - The open research questions are in the Gdoc, under
   [Questions for GP](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.xfydadrg3lvc)
 
+## 2026-11-12: Formalize the Research in the Paper (#921)
+
+- **Issue**: [#921](https://github.com/gpsaggese/gpsaggese.github.io/issues/921), from GP's meeting of
+  2026-11-12: formalize the research in the paper for his printed, line by line
+  review
+- **What was done** in `papers/Optimal_strategy_for_racket_sports/`:
+  - `paper.md`: the 2D model as the main method, with the headline result (the
+    best return is the middle, not the lines) in the abstract and the
+    introduction; Section VIII on the RL env of #713; the open PR8 items of the
+    plan; Appendix B, which links each result to its
+    [Gdoc](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0) experiment
+  - Figures 1 and 6 from `figures/make_code_figures.py`: the tennis map of Gdoc
+    Experiment 2.1, computed with the notebook 01 utils, and the pickleball maps
+    of Experiment 6.1, from the saved outputs of the full run of notebook 06
+  - The figures are referenced by label, so their numbers follow their order in
+    the paper
+  - 4 references for Section VIII: PPO, Stable-Baselines3, Gymnasium, and a book
+    on bandits
+- **Results**: none new; every number comes from the Gdoc or the notebooks
+
 ## 2026-11-10: Research Questions and Results in the Gdoc (#694)
 
 - **Issue**: [#694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694),
