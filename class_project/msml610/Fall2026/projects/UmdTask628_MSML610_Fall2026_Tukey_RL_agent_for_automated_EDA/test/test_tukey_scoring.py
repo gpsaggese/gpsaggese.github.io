@@ -423,6 +423,38 @@ class Test_score_graph(hunitest.TestCase):
 
 
 # #############################################################################
+# Test_edges_to_adjacency
+# #############################################################################
+
+
+class Test_edges_to_adjacency(hunitest.TestCase):
+    """
+    Check how an emitted edge list becomes an adjacency.
+    """
+
+    def test1(self) -> None:
+        """
+        Invalid entries are dropped and counted; valid ones are kept once.
+        """
+        edges = [
+            (0, 1),
+            # Duplicate, self-loop and out-of-range entries.
+            (0, 1),
+            (1, 1),
+            (2, 3),
+            # Indices that are not integers (a bool is not an index).
+            (1.0, 2),
+            ("0", 2),
+            (True, 2),
+            # numpy integers, as `np.argwhere()` returns them, are kept.
+            (np.int64(1), np.int64(2)),
+        ]
+        B, n_dropped = tscore.edges_to_adjacency(edges, 3)
+        self.assertEqual(B.tolist(), [[0, 1, 0], [0, 0, 1], [0, 0, 0]])
+        self.assertEqual(n_dropped, 6)
+
+
+# #############################################################################
 # Test_cpdag_from_dag
 # #############################################################################
 

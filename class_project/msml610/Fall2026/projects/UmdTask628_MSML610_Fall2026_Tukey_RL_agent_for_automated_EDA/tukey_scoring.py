@@ -79,7 +79,8 @@ def edges_to_adjacency(
     Convert an edge list into a binary adjacency, as the prototype reads it.
 
     Self-loops, out-of-range indices and duplicates are dropped, as in the
-    prototype's `read_graph()`.
+    prototype's `read_graph()`; so are indices that are not integers (e.g.,
+    `1.0` from a JSON reply), on which the prototype crashes.
 
     :param edges: `[(parent, child), ...]`
     :param n_nodes: number of nodes
@@ -88,7 +89,12 @@ def edges_to_adjacency(
     B = np.zeros((n_nodes, n_nodes), dtype=int)
     n_dropped = 0
     for parent, child in edges:
-        valid = 0 <= parent < n_nodes and 0 <= child < n_nodes
+        valid = all(
+            isinstance(k, (int, np.integer))
+            and not isinstance(k, bool)
+            and 0 <= k < n_nodes
+            for k in (parent, child)
+        )
         if not valid or parent == child or B[parent, child]:
             n_dropped += 1
             continue

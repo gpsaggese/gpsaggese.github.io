@@ -418,6 +418,23 @@ class Test_TukeyEnv(hunitest.TestCase):
         scores = env.submit_graph([])
         self.assertEqual(scores["score"], -1.0)
 
+    def test6(self) -> None:
+        """
+        The reward oracle scores any DAG without ending the episode.
+        """
+        env = tenv.TukeyEnv(_LINEAR_CONFIGS["linear_exp"])
+        env.reset(seed=6)
+        oracle = env.reward_oracle()
+        B_true = env.instance.truth.B
+        empty = np.zeros_like(B_true)
+        # G* scores 0 and the empty graph -1 (as in `test4`); a repeated graph
+        # comes from the cache with the same score.
+        actual = [oracle(B_true), oracle(empty), oracle(empty)]
+        # The episode goes on: a tool call and the submission still run.
+        env.step(ttools.Action(ttools.NONGAUSS, (0,)))
+        actual.append(env.submit_graph([])["score"])
+        self.assertEqual(actual, [0.0, -1.0, -1.0, -1.0])
+
 
 # #############################################################################
 # Test_more_families
