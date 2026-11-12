@@ -20,6 +20,14 @@ import tukey_sets as tsets
 
 _LOG = logging.getLogger(__name__)
 
+# The open sets whose manifests Milestones 1-2 commit: the main and prototype
+# validation sets and the 20 sets of the Milestone 2 benchmark. Later
+# milestones add the manifests of the sets they use.
+_COMMITTED_SETS = sorted(
+    ["V_main", "V_proto"]
+    + [n for n in tsets.EVAL_SETS if n.startswith(("B_m2_", "V_m2_"))]
+)
+
 
 class Test_eval_sets(hunitest.TestCase):
     """
@@ -221,7 +229,7 @@ class Test_load_set_checks(hunitest.TestCase):
             if not eval_set.sealed
             and os.path.exists(tsets.manifest_path("configs/sets", name))
         ]
-        self.assertGreater(len(names), 40)
+        self.assertEqual(sorted(names), _COMMITTED_SETS)
         for name in names:
             items = tsets.load_set(name, "configs/sets")
             self.assertEqual(
@@ -480,4 +488,4 @@ class Test_manifest_semantics(hunitest.TestCase):
             seed, cfg, expected = tsets.load_set(name, manifest_dir)[0]
             tsets.sample_checked(seed, cfg, expected)
             checked += 1
-        self.assertGreater(checked, 50)
+        self.assertEqual(checked, len(_COMMITTED_SETS))
