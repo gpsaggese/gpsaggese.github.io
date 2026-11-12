@@ -4,9 +4,9 @@
 #
 # The tests are passed as explicit file paths: the repo-level
 # `class_project/msml610/conftest.py` ignores test collection under that tree
-# when pytest is given a directory. `TUKEY_RUN_TESTS=1` marks an intentional
-# run. pytest exits with code 5 when it collects nothing, which fails this
-# script. Extra arguments are passed to pytest, e.g. `./run_tests.sh -k scoring`.
+# when pytest is given a directory. pytest exits with code 5 when it collects
+# nothing, which fails this script. Extra arguments are passed to pytest, e.g.
+# `./run_tests.sh -k scoring`.
 #
 # Usage:
 # > ./run_tests.sh
@@ -24,6 +24,11 @@ REL_DIR=${PROJECT_DIR#"$GIT_ROOT"/}
 # Run the unit tests in a container with a unique name (`docker_cmd.sh` reuses
 # one name and kills any running container with it), re-quoting the extra
 # arguments so that e.g. `-k "env or sets"` reaches pytest as two arguments.
+# With no extra arguments pass none: `printf '%q '` of nothing is `''`, which
+# would reach pytest as an empty path and make it collect no test.
 cd "$PROJECT_DIR"
-PYTEST_ARGS=$(printf '%q ' "$@")
-./docker_cmd_unique.sh "cd /git_root/$REL_DIR && TUKEY_RUN_TESTS=1 python -m pytest test/test_tukey_*.py $PYTEST_ARGS"
+PYTEST_ARGS=""
+if [[ $# -gt 0 ]]; then
+    PYTEST_ARGS=$(printf '%q ' "$@")
+fi
+./docker_cmd_unique.sh "cd /git_root/$REL_DIR && python -m pytest test/test_tukey_*.py $PYTEST_ARGS"
