@@ -279,6 +279,44 @@ def compute_quality_table(
 # #############################################################################
 
 
+def compute_gap_table(
+    clean: pd.DataFrame, *, interval: str = "5m"
+) -> pd.DataFrame:
+    """
+    List the runs of missing bars after cleaning.
+
+    Unlike `find_gaps()`, this works on the cleaned bars, so a gap includes
+    the stale bars right before it.
+
+    :param clean: bars as returned by `clean_bars()`
+    :param interval: bar size, e.g., "5m"
+    :return: one row per run of missing bars with:
+        - `start`, `end`: open time of the first and last missing bar
+        - `n_bars`: number of missing bars, stale ones included
+        - `n_stale`: number of stale bars (zero volume, right before the gap)
+        - `duration`: length of the gap
+        - `is_filled`: the gap was short enough to be filled
+    """
+    step = to_timedelta(interval)
+    is_missing = clean["is_missing"]
+    run_id = (is_missing != is_missing.shift()).cumsum()
+    missing = clean[is_missing]
+    times = missing.index.to_series()
+    grouped = missing.groupby(run_id[is_missing])
+    gaps = pd.DataFrame(
+        {
+            "start": times.groupby(run_id[is_missing]).min(),
+            "end": times.groupby(run_id[is_missing]).max(),
+            "n_bars": grouped.size(),
+            "n_stale": grouped["is_stale"].sum().astype(int),
+            "is_filled": grouped["is_filled"].all(),
+        }
+    ).reset_index(drop=True)
+    gaps["duration"] = gaps["n_bars"] * step
+    cols = ["start", "end", "n_bars", "n_stale", "duration", "is_filled"]
+    return gaps[cols]
+
+
 def get_n_bars(duration: str, interval: str) -> int:
     """
     Compute how many bars of size `interval` fit in `duration`.
