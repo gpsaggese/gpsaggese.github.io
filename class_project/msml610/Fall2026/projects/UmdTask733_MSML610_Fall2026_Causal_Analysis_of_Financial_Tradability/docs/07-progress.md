@@ -16,7 +16,7 @@
 | Gap analysis (#904) | Nov 19 | In review | |
 | Step 3: What happens per horizon in different market conditions (no causal analysis yet, `D17`) | Nov 19 | In review | |
 | Robustness: do the results hold with a different target? | Nov 26 | In review | #905 |
-| Step 4: Best horizon per regime, walk-forward backtest | Nov 26 | Not started | |
+| Step 4: Trade only in volatile markets, walk-forward backtest with costs | Nov 26 | In review | |
 | Step 5: Write-up, video, final PR | Dec 3 | Not started | |
 
 ## Built
@@ -31,8 +31,9 @@
 - `test/test_data_utils.py`: unit tests, including no look-ahead and no
   feature or label spanning a gap
 - `test/test_predict_utils.py`, `test/test_tradability_utils.py`,
-  `test/test_regime_utils.py`: unit tests for the models, the metrics, the
-  cost sweep, the overnight bar, and the regimes (including no look-ahead)
+  `test/test_regime_utils.py`, `test/test_backtest_utils.py`: unit tests for
+  the models, the metrics, the cost sweep, the overnight bar, the regimes,
+  and the backtest (including no look-ahead)
 - `tradability.data.ipynb`: data quality, features, labels per horizon
 - `tradability.gaps.ipynb`: gap analysis (#904): when the gaps happen, and
   how many bars, labels, and features they cost
@@ -45,6 +46,10 @@
   rate and PnL of a set of trades at one or several costs
 - `tradability.targets.ipynb`: robustness (#905), the step 2 model trained on
   four targets, overall and in volatile markets
+- `backtest_utils.py`: chooses the regimes to trade from earlier years only,
+  and measures a strategy (PnL per trade, Sharpe ratio, drawdown)
+- `tradability.backtest.ipynb`: step 4, trading only in volatile markets,
+  with costs from 0 to 20 bp
 - `tradability.models.ipynb`: the three models per horizon, tested on
   2022-2026, with costs from 0 to 20 bp
 - `data_sources.reference.md`: where each dataset comes from and how it is
@@ -132,10 +137,20 @@
     on ETH); the weighted and return targets give less, and on ETH it is
     within the noise
     - Data: `tradability.targets.ipynb`, "Part 2" sections
+16. Trading only in volatile markets makes the 1d model profitable after a
+    10 bp cost on both coins: 25.4 bp per trade on BTC and 18.4 bp on ETH
+    (Sharpe 0.78 and 0.47). Choosing the regimes from earlier years only
+    keeps it on BTC (27.4 bp per trade) and less on ETH (7.4 bp). 4h breaks
+    even at 10 bp but makes money at 5 bp; 1h loses at any cost of 2 bp or
+    more. Only about 100 daily trades a year, so no t-stat is above 1.7, and
+    2026 is negative on both coins
+    - Data: `tradability.backtest.ipynb`
 
 ## Next
 
-1. Step 4: trade only in volatile markets, walk forward, with costs
+1. Step 5: write-up, video, final PR
+2. Check the 1d volatile-market strategy on other coins or earlier years,
+   to get more trades (after class)
 
 ## History
 
@@ -158,6 +173,7 @@
 | 2026-11-12 | Step 3: results by regime |
 | 2026-11-12 | Robustness: the step 2 model trained on other targets (#905) |
 | 2026-11-12 | Robustness: the volatile-market result with the other targets (#905) |
+| 2026-11-12 | Step 4: walk-forward backtest, trading only in volatile markets |
 
 ## Open Work
 

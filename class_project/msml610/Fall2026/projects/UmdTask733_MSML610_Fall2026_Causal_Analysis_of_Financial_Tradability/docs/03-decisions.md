@@ -201,6 +201,33 @@
 - **Alternatives**: one model per regime; the regime as a feature
 - **Status**: proposed
 
+## Backtest
+
+### `D21` (Choose when to trade without looking at the test years)
+
+- **Decision**: in each test year, trade a volatility regime only if its
+  trades in the earlier years made money after costs (at least 100 trades).
+  2021 is predicted too (fit on 2020), only to choose the regimes for 2022.
+  Also report the fixed rule "trade only in volatile markets"
+- **Why**: the volatile-market result was found on 2022-2026 in step 3, so a
+  rule that trades only in volatile markets is chosen with hindsight. The
+  walk-forward rule is what could have been done at the time
+- **Alternatives**: the fixed rule only; choose the regime and the horizon
+  together; a minimum t-stat instead of a positive average
+- **Status**: proposed
+
+### `D22` (Backtest one unit per trade, without compounding)
+
+- **Decision**: each trade holds one unit for one horizon, with no
+  overlapping trades; PnLs are added, not compounded; the cost is charged
+  on every trade; out of the market the PnL is 0. The Sharpe ratio is
+  annualized with 365 days, since crypto trades every day
+- **Why**: keeps the backtest comparable with the PnL per trade of steps 2
+  and 3, and makes the cost per trade the only execution assumption
+- **Alternatives**: compounding; position size from the model's
+  probability; overlapping trades at every bar
+- **Status**: proposed
+
 ## Scope
 
 ### `D17` (Describe what happens before asking why)
