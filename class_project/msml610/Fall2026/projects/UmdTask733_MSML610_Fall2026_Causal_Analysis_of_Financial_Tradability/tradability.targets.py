@@ -33,6 +33,10 @@
 #
 # For each one: hit rate and weighted hit rate, PnL per trade, which horizon
 # looks best, and whether it makes money after costs.
+#
+# Part 2 checks the main result of step 3 (`tradability.regimes.ipynb`): the
+# `sign` model makes money before costs only in volatile markets. Does this
+# hold with the other targets?
 
 # %% [markdown]
 # ## Imports
@@ -46,6 +50,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import predict_utils as putil
+import regime_utils as rutil
 
 # %% [markdown]
 # ## Config
@@ -248,6 +253,92 @@ best = sweep[mask].pivot_table(
 best.round(2)
 
 # %% [markdown]
+# ## Part 2: volatile markets
+#
+# The same trades, split by the volatility regime of `D18` (calm, normal,
+# volatile, from past data only), as in step 3. For each target, regime, and
+# horizon: PnL per trade before costs, its standard error, and the t-stat.
+
+# %%
+regimes = {
+    symbol: rutil.compute_regimes(features[symbol], interval=INTERVAL)
+    for symbol in SYMBOLS
+}
+rows = []
+for (symbol, horizon, target), df in trades.items():
+    vol_regime = regimes[symbol]["vol_regime"].reindex(df.index)
+    stats = putil.evaluate_by_group(df["pos"], df["fwd_ret"], vol_regime)
+    stats["symbol"] = symbol
+    stats["horizon"] = horizon
+    stats["target"] = target
+    rows.append(stats.reset_index(names="regime"))
+by_regime = pd.concat(rows, ignore_index=True)
+by_regime["t_stat"] = by_regime["gross_bps"] / by_regime["se_bps"]
+by_regime = by_regime.set_index(["symbol", "regime", "target", "horizon"])
+by_regime = by_regime.sort_index()
+# PnL per trade before costs (bp), one column per horizon.
+gross = by_regime["gross_bps"].unstack("horizon")[HORIZONS]
+gross.round(2)
+
+# %%
+# The same, as t-stats.
+t_stat = by_regime["t_stat"].unstack("horizon")[HORIZONS]
+t_stat.round(2)
+
+# %% [markdown]
+# PnL per trade before costs in volatile markets, with 2 standard error bars.
+
+# %%
+fig, axes = plt.subplots(1, 2, figsize=(13, 4.5))
+for ax, symbol in zip(axes, SYMBOLS):
+    for i, target in enumerate(TARGETS):
+        sub = by_regime.loc[(symbol, "volatile", target)].reindex(HORIZONS)
+        ax.errorbar(
+            x + (i - 1.5) * width,
+            sub["gross_bps"],
+            yerr=2 * sub["se_bps"],
+            fmt="o",
+            capsize=3,
+            label=target,
+        )
+    ax.axhline(0, color="gray", linestyle=":")
+    ax.axhline(COST * 1e4, color="red", linestyle="--", label="10 bp cost")
+    ax.set_xticks(x, HORIZONS)
+    ax.set_title(f"{symbol}: PnL per trade in volatile markets")
+    ax.set_xlabel("horizon")
+    ax.set_ylabel("bp per trade")
+    ax.legend(fontsize=8)
+plt.tight_layout()
+
+# %% [markdown]
+# ## Part 2: volatile markets, year by year at 4h
+#
+# PnL per trade before costs (bp) at 4h in volatile markets, for each test
+# year. In step 3 the `sign` model was positive in 9 of 10 coin-years.
+
+# %%
+rows = []
+for symbol in SYMBOLS:
+    for target in TARGETS:
+        df = trades[(symbol, "4h", target)]
+        vol_regime = regimes[symbol]["vol_regime"].reindex(df.index)
+        df = df[vol_regime == "volatile"]
+        years = pd.Series(df.index.year, index=df.index)
+        stats = putil.evaluate_by_group(df["pos"], df["fwd_ret"], years)
+        stats["symbol"] = symbol
+        stats["target"] = target
+        rows.append(stats.reset_index(names="year"))
+by_year = pd.concat(rows, ignore_index=True)
+by_year = by_year.pivot_table(
+    index=["symbol", "year"], columns="target", values="gross_bps"
+)[TARGETS]
+by_year.round(2)
+
+# %%
+# Number of coin-years with a positive PnL per trade, out of 10.
+(by_year > 0).sum()
+
+# %% [markdown]
 # ## Observations
 #
 # - No target fixes the step 2 problem. From 5m to 1h the weighted hit rate
@@ -270,3 +361,19 @@ best.round(2)
 #   but on 1,725 trades with a standard error of 8.6 bp
 # - So the step 2 conclusion holds with all four targets: it does not depend
 #   on training on the sign of the move
+#
+# Part 2, volatile markets:
+# - The step 3 pattern holds for every target. In calm markets all four lose
+#   money before costs at 1h, 4h, and 1d on both coins. In volatile markets
+#   all four make money from 15m to 1d on BTC (t-stat 1.3 to 3.3)
+# - How much depends on the target. `large_moves` is the same as `sign` (4h:
+#   8.1 bp on BTC and 11.1 bp on ETH, 3.2-3.6 standard errors).
+#   `weighted_sign` and `return` make less: 4.7-6.0 bp on BTC and 2.0-3.9 bp on
+#   ETH at 4h, and on ETH they are within 1.4 standard errors of zero from
+#   15m to 1d
+# - At 4h in volatile markets every target is positive in 9 of the 10
+#   coin-years, but the losing year is different: ETH 2026 for `sign` and
+#   `large_moves`, ETH 2025 for `weighted_sign`, ETH 2023 for `return`
+# - So the volatile-market result does not depend on the target either. The
+#   targets that weight the big moves are noisier, as in part 1. Only `sign`
+#   and `large_moves` reach the 10 bp cost at 4h, and only on ETH
