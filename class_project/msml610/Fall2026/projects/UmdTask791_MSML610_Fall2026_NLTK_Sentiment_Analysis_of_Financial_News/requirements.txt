@@ -1,0 +1,9 @@
+nltk
+scikit-learn
+kagglehub
+ipywidgets
+matplotlib
+numpy
+pandas
+seaborn
+tqdm
