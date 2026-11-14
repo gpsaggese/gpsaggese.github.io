@@ -15,7 +15,7 @@
 | Follow-ups from GP's answers: stale bars, SPY overnight bar, cost sweep, data sources | Nov 12 | In review | |
 | Gap analysis (#904) | Nov 19 | In review | |
 | Step 3: What happens per horizon in different market conditions (no causal analysis yet, `D17`) | Nov 19 | In review | |
-| Robustness: do the results hold with a different target? | Nov 26 | Not started | #905 |
+| Robustness: do the results hold with a different target? | Nov 26 | In progress: other targets in review, volatile markets next | #905 |
 | Step 4: Best horizon per regime, walk-forward backtest | Nov 26 | Not started | |
 | Step 5: Write-up, video, final PR | Dec 3 | Not started | |
 
@@ -41,8 +41,10 @@
 - `tradability.regimes.ipynb`: step 3, the step 2 models and trades split by
   regime
 - `predict_utils.py`: walk-forward split, always buy, momentum, and logistic
-  regression, and the hit rate and PnL of a set of trades at one or several
-  costs
+  regression, the same linear model trained on other targets, and the hit
+  rate and PnL of a set of trades at one or several costs
+- `tradability.targets.ipynb`: robustness (#905), the step 2 model trained on
+  four targets
 - `tradability.models.ipynb`: the three models per horizon, tested on
   2022-2026, with costs from 0 to 20 bp
 - `data_sources.reference.md`: where each dataset comes from and how it is
@@ -115,11 +117,18 @@
     - Data: `tradability.regimes.ipynb`
 13. After a rising week, always buying makes a little more at every horizon,
     and short moves reverse in every regime
+14. The step 2 conclusion does not depend on the target. Trained on the
+    sign weighted by |r|, on the moves bigger than 10 bp only, or on the
+    return itself, the model still has a weighted hit rate of 0.50 +/- 0.01
+    from 5m to 1h, the best horizon is still 1d, and nothing makes money at
+    10 bp. Training on the large moves only gives almost the same trades;
+    the weighted and return targets are worse at 4h and 1d
+    - Data: `tradability.targets.ipynb`
 
 ## Next
 
-1. Robustness: do the results hold with a different target? (#905),
-   including the volatile-market result
+1. Robustness, part 2: does the volatile-market result hold with the other
+   targets? (#905)
 2. Step 4: trade only in volatile markets, walk forward, with costs
 
 ## History
@@ -141,6 +150,7 @@
 | 2026-11-11 | Gap analysis (#904) |
 | 2026-11-11 | PR #908 merged ("Very well done") |
 | 2026-11-12 | Step 3: results by regime |
+| 2026-11-12 | Robustness: the step 2 model trained on other targets (#905) |
 
 ## Open Work
 
