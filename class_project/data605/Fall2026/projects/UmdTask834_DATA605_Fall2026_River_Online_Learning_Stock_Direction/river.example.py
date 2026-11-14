@@ -171,6 +171,21 @@ ax.legend(fontsize=8)
 plt.show()
 
 # %% [markdown]
+# **Findings (baselines)**
+# - No model beats always predicting "up" (52.75%, 95% block-bootstrap CI
+#   51.97-53.61%); every model that tries to predict is significantly worse
+#   (McNemar).
+# - Accuracy falls in the same order as the share of "down" calls (100% up:
+#   52.8%, 76%: 52.0%, 67%: 51.5%, 61%: 50.3%, 53%: 49.4%). The models' "down"
+#   calls are right less often than the base rate, so each one costs accuracy.
+# - Only always-up has a log loss below ln(2) = 0.693: the learning models'
+#   probabilities are worse than predicting 50/50 every day.
+# - Persistence scores 49.35%, so a reversal rule would score about 50.65%: a
+#   small short-term reversal effect, still below always-up.
+# - Retraining monthly in batch beat the untuned online logistic regression
+#   (52.0% vs. 50.3%); section 6 tests whether tuning closes this gap.
+
+# %% [markdown]
 # ## 6. River model comparison (next milestone)
 #
 # - Hoeffding tree and Hoeffding adaptive tree
