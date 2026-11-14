@@ -6,8 +6,9 @@ Import as:
 import research.Causal_Analysis_of_Agent_Skill_And_Luck.test.test_causal_success_utils as rcaoasalttcsu
 """
 
+import inspect
 import logging
-from typing import Any, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -1240,6 +1241,108 @@ class Test_run_simulation(hunitest.TestCase):
         total_lucky = sum(agent.lucky_events for agent in agents)
         self.assertGreater(total_lucky, 0)
 
+    def test10(self) -> None:
+        """
+        Test that lucky events the agents do not capitalize on are not counted.
+        """
+        # Prepare inputs.
+        n_agents = 10
+        intensity = 0.5
+        iq = 0.0
+        networking = 0.5
+        agents = [
+            rcaoasalcsu.Agent(agent_id, intensity, iq, networking)
+            for agent_id in range(n_agents)
+        ]
+        n_periods = 20
+        n_lucky_events_per_period = 5
+        n_unlucky_events_per_period = 0
+        seed = 42
+        # Prepare outputs.
+        expected_lucky_events = 0
+        expected_capital = 1.0
+        # Run test.
+        rcaoasalcsu.run_simulation(
+            agents,
+            n_periods=n_periods,
+            n_lucky_events_per_period=n_lucky_events_per_period,
+            n_unlucky_events_per_period=n_unlucky_events_per_period,
+            seed=seed,
+        )
+        # Check outputs.
+        # With `iq=0`, no lucky event and no spillover is capitalized on.
+        total_lucky = sum(agent.lucky_events for agent in agents)
+        self.assertEqual(total_lucky, expected_lucky_events)
+        for agent in agents:
+            self.assertEqual(agent.capital, expected_capital)
+
+    def test11(self) -> None:
+        """
+        Test that the lucky events count both the direct events and the
+        spillovers.
+        """
+        # Prepare inputs.
+        n_agents = 10
+        intensity = 0.5
+        iq = 1.0
+        networking = 0.5
+        agents = [
+            rcaoasalcsu.Agent(agent_id, intensity, iq, networking)
+            for agent_id in range(n_agents)
+        ]
+        n_periods = 20
+        n_lucky_events_per_period = 5
+        n_unlucky_events_per_period = 0
+        seed = 42
+        # Prepare outputs.
+        # With `iq=1`, every direct lucky event is capitalized on.
+        n_direct_events = n_periods * n_lucky_events_per_period
+        # Each direct event gives at most one spillover.
+        max_lucky_events = 2 * n_direct_events
+        # Run test.
+        rcaoasalcsu.run_simulation(
+            agents,
+            n_periods=n_periods,
+            n_lucky_events_per_period=n_lucky_events_per_period,
+            n_unlucky_events_per_period=n_unlucky_events_per_period,
+            seed=seed,
+        )
+        # Check outputs.
+        total_lucky = sum(agent.lucky_events for agent in agents)
+        self.assertGreater(total_lucky, n_direct_events)
+        self.assertLessEqual(total_lucky, max_lucky_events)
+
+    @pytest.mark.slow
+    def test12(self) -> None:
+        """
+        Freeze the results of the baseline run: 100 agents, 80 periods, and
+        the default parameters.
+        """
+        # Prepare inputs.
+        n_agents = 100
+        n_periods = 80
+        seed = 42
+        agents = rcaoasalcsu.create_population(n_agents=n_agents, seed=seed)
+        n_digits = 6
+        # Prepare outputs.
+        expected = (
+            "{'n_agents': 100.0, 'mean_capital': 0.888435, "
+            "'median_capital': 0.816072, 'std_capital': 0.365407, "
+            "'min_capital': 0.330285, 'max_capital': 2.573136, "
+            "'capital_range': 7.790659, 'gini_coefficient': 0.217086, "
+            "'top_10_pct_share': 0.18412, 'top_20_pct_share': 0.320693, "
+            "'bottom_50_pct_share': 0.34502, 'mean_lucky_events': 2.32, "
+            "'mean_unlucky_events': 4.0, 'mean_talent_norm': 1.334035}"
+        )
+        # Run test.
+        rcaoasalcsu.run_simulation(agents, n_periods=n_periods, seed=seed)
+        # Check outputs.
+        stats = rcaoasalcsu.generate_summary_statistics(agents)
+        actual = str(
+            {key: round(value, n_digits) for key, value in stats.items()}
+        )
+        self.assert_equal(actual, expected)
+
 
 # #############################################################################
 # Test_run_policy_simulation
@@ -1448,6 +1551,278 @@ class Test_run_policy_simulation(hunitest.TestCase):
         # Check outputs.
         # Agents with negative CATE should get 0 allocation.
         self.assertTrue(rcaoasalcsu.validate_simulation_results(agents))
+
+    def test11(self) -> None:
+        """
+        Test that the performance policy gives the same result as the
+        egalitarian one when all agents start with the same capital.
+        """
+        # Prepare inputs.
+        n_agents = 10
+        seed = 7
+        resource_amount = 10.0
+        n_periods = 10
+        agents_egalitarian = rcaoasalcsu.create_population(
+            n_agents=n_agents, seed=seed
+        )
+        agents_performance = rcaoasalcsu.create_population(
+            n_agents=n_agents, seed=seed
+        )
+        # Run test.
+        rcaoasalcsu.run_policy_simulation(
+            agents_egalitarian,
+            policy="egalitarian",
+            resource_amount=resource_amount,
+            n_periods=n_periods,
+            seed=seed,
+        )
+        rcaoasalcsu.run_policy_simulation(
+            agents_performance,
+            policy="performance",
+            resource_amount=resource_amount,
+            n_periods=n_periods,
+            seed=seed,
+        )
+        # Check outputs.
+        # The capital-weighted shares are equal when all the capitals are 1.0.
+        actual = [_agent_to_str(agent) for agent in agents_performance]
+        expected = [_agent_to_str(agent) for agent in agents_egalitarian]
+        self.assertEqual(actual, expected)
+
+
+# #############################################################################
+# Test_get_default_config
+# #############################################################################
+
+
+def _get_default(func: Any, param_name: str) -> Any:
+    """
+    Get the default value of a parameter of a function.
+
+    :param func: function or method
+    :param param_name: name of the parameter
+    :return: default value of the parameter
+    """
+    default = inspect.signature(func).parameters[param_name].default
+    return default
+
+
+class Test_get_default_config(hunitest.TestCase):
+    """
+    Test the `get_default_config()` function.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that each default of the config is the default of the function
+        that uses it.
+        """
+        # Prepare inputs.
+        pop = rcaoasalcsu.create_population
+        sim = rcaoasalcsu.run_simulation
+        policy = rcaoasalcsu.run_policy_simulation
+        # Prepare outputs.
+        expected = {
+            "seed": _get_default(pop, "seed"),
+            "population": {
+                "n_agents": _get_default(pop, "n_agents"),
+                "talent_mean": _get_default(pop, "talent_mean"),
+                "talent_std": _get_default(pop, "talent_std"),
+                "talent_clip": _get_default(pop, "talent_clip"),
+                "initial_capital": _get_default(pop, "initial_capital"),
+            },
+            "events": {
+                "n_periods": _get_default(sim, "n_periods"),
+                "n_lucky_per_period": _get_default(
+                    sim, "n_lucky_events_per_period"
+                ),
+                "n_unlucky_per_period": _get_default(
+                    sim, "n_unlucky_events_per_period"
+                ),
+                "lucky_mean": _get_default(sim, "lucky_mean"),
+                "lucky_std": _get_default(sim, "lucky_std"),
+                "lucky_clip": _get_default(sim, "lucky_clip"),
+                "unlucky_mean": _get_default(sim, "unlucky_mean"),
+                "unlucky_std": _get_default(sim, "unlucky_std"),
+                "unlucky_clip": _get_default(sim, "unlucky_clip"),
+                "capital_floor": _get_default(pop, "capital_floor"),
+            },
+            "exposure": {
+                "sigmoid_slope": _get_default(pop, "exposure_slope"),
+                "sigmoid_center": _get_default(pop, "exposure_center"),
+            },
+            "spillover": {
+                "probability": _get_default(sim, "spillover_probability"),
+                "impact_factor": _get_default(sim, "spillover_impact_factor"),
+            },
+            "policy": {
+                "name": None,
+                "resource_amount": _get_default(policy, "resource_amount"),
+            },
+        }
+        # Run test.
+        actual = rcaoasalcsu.get_default_config()
+        # Check outputs.
+        self.assertEqual(actual, expected)
+        # The population and the simulation use the same seed.
+        self.assertEqual(_get_default(sim, "seed"), actual["seed"])
+
+
+# #############################################################################
+# Test_run_experiment
+# #############################################################################
+
+
+class Test_run_experiment(hunitest.TestCase):
+    """
+    Test the `run_experiment()` function.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that the default config gives the same agents as the functions
+        with their defaults.
+        """
+        # Prepare inputs.
+        config = rcaoasalcsu.get_default_config()
+        # Prepare outputs.
+        agents = rcaoasalcsu.create_population()
+        agents = rcaoasalcsu.run_simulation(agents)
+        expected = [_agent_to_str(agent) for agent in agents]
+        # Run test.
+        results = rcaoasalcsu.run_experiment(config)
+        # Check outputs.
+        actual = [_agent_to_str(agent) for agent in results["agents"]]
+        self.assertEqual(actual, expected)
+
+    def test2(self) -> None:
+        """
+        Test that every value of the config reaches the function that uses it.
+        """
+        # Prepare inputs.
+        # Every value differs from its default, so a value passed to the wrong
+        # parameter changes the result.
+        config: Dict[str, Any] = {
+            "seed": 3,
+            "population": {
+                "n_agents": 12,
+                "talent_mean": 0.45,
+                "talent_std": 0.2,
+                "talent_clip": (0.1, 0.9),
+                "initial_capital": 2.0,
+            },
+            "events": {
+                "n_periods": 6,
+                "n_lucky_per_period": 4,
+                "n_unlucky_per_period": 3,
+                "lucky_mean": 0.3,
+                "lucky_std": 0.1,
+                "lucky_clip": (0.1, 0.6),
+                "unlucky_mean": 0.2,
+                "unlucky_std": 0.06,
+                "unlucky_clip": (0.1, 0.4),
+                "capital_floor": 0.05,
+            },
+            "exposure": {
+                "sigmoid_slope": 3.0,
+                "sigmoid_center": 0.4,
+            },
+            "spillover": {
+                "probability": 0.3,
+                "impact_factor": 0.25,
+            },
+            "policy": {
+                "name": None,
+                "resource_amount": 100.0,
+            },
+        }
+        # Prepare outputs.
+        agents = rcaoasalcsu.create_population(
+            n_agents=12,
+            seed=3,
+            talent_mean=0.45,
+            talent_std=0.2,
+            talent_clip=(0.1, 0.9),
+            initial_capital=2.0,
+            capital_floor=0.05,
+            exposure_slope=3.0,
+            exposure_center=0.4,
+        )
+        agents = rcaoasalcsu.run_simulation(
+            agents,
+            n_periods=6,
+            n_lucky_events_per_period=4,
+            n_unlucky_events_per_period=3,
+            lucky_mean=0.3,
+            lucky_std=0.1,
+            unlucky_mean=0.2,
+            unlucky_std=0.06,
+            lucky_clip=(0.1, 0.6),
+            unlucky_clip=(0.1, 0.4),
+            spillover_probability=0.3,
+            spillover_impact_factor=0.25,
+            seed=3,
+        )
+        expected = [_agent_to_str(agent) for agent in agents]
+        # Run test.
+        results = rcaoasalcsu.run_experiment(config)
+        # Check outputs.
+        actual = [_agent_to_str(agent) for agent in results["agents"]]
+        self.assertEqual(actual, expected)
+
+    def test3(self) -> None:
+        """
+        Test that a policy in the config gives the same agents as
+        `run_policy_simulation()`.
+        """
+        # Prepare inputs.
+        config = rcaoasalcsu.get_default_config()
+        config["population"]["n_agents"] = 10
+        config["events"]["n_periods"] = 5
+        config["policy"]["name"] = "egalitarian"
+        config["policy"]["resource_amount"] = 20.0
+        # Prepare outputs.
+        agents = rcaoasalcsu.create_population(n_agents=10)
+        agents = rcaoasalcsu.run_policy_simulation(
+            agents, policy="egalitarian", resource_amount=20.0, n_periods=5
+        )
+        expected = [_agent_to_str(agent) for agent in agents]
+        # Run test.
+        results = rcaoasalcsu.run_experiment(config)
+        # Check outputs.
+        actual = [_agent_to_str(agent) for agent in results["agents"]]
+        self.assertEqual(actual, expected)
+
+    def test4(self) -> None:
+        """
+        Test that the results table and the statistics describe the agents.
+        """
+        # Prepare inputs.
+        config = rcaoasalcsu.get_default_config()
+        config["population"]["n_agents"] = 10
+        config["events"]["n_periods"] = 5
+        # Prepare outputs.
+        expected_n_agents = 10
+        # Run test.
+        results = rcaoasalcsu.run_experiment(config)
+        # Check outputs.
+        self.assertEqual(len(results["agents"]), expected_n_agents)
+        self.assertEqual(len(results["df"]), expected_n_agents)
+        self.assertEqual(results["stats"]["n_agents"], expected_n_agents)
+        self.assertTrue(
+            rcaoasalcsu.validate_simulation_results(results["agents"])
+        )
+
+    def test5(self) -> None:
+        """
+        Test that a misspelled key fails instead of being ignored.
+        """
+        # Prepare inputs.
+        config = rcaoasalcsu.get_default_config()
+        config["events"]["n_period"] = config["events"].pop("n_periods")
+        # Run test and check output.
+        with self.assertRaises(AssertionError):
+            rcaoasalcsu.run_experiment(config)
 
 
 # #############################################################################

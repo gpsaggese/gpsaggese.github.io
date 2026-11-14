@@ -84,14 +84,16 @@ class Agent:
 
     3. Networking (0-1): Social connectivity and spillover.
        - Represents social connections and access to network effects.
-       - When an agent benefits from a lucky event, there's a chance (10%) that
-         a connected agent also benefits (at reduced impact: 50% of original).
+       - When an agent benefits from a lucky event, there's a chance that a
+         connected agent also benefits at a reduced impact (by default 10% and
+         50% of the impact, see `run_simulation()`).
        - Spillover amount weighted by networking score.
 
     4. Initial Capital: Starting wealth.
        - Set to 1.0 for all agents in baseline simulation.
        - This ensures inequality EMERGES from dynamics, not inherited advantages.
-       - Minimum enforced: 0.01 (prevent collapse to zero).
+       - Never below `capital_floor` (by default 0.01), to prevent collapse to
+         zero.
     """
 
     def __init__(
@@ -102,6 +104,9 @@ class Agent:
         networking: float,
         *,
         initial_capital: float = 1.0,
+        capital_floor: float = 0.01,
+        exposure_slope: float = 2.0,
+        exposure_center: float = 0.5,
     ) -> None:
         """
         Initialize the Agent with talents and initial capital.
@@ -112,22 +117,33 @@ class Agent:
         :param networking: Networking talent, affects spillover effects (0-1)
         :param initial_capital: Starting wealth level
             - Default: 1.0
+        :param capital_floor: lowest capital an agent can have, so that capital
+            never collapses to zero
+            - Default: 0.01
+        :param exposure_slope: slope of the sigmoid that maps intensity to the
+            event exposure probability
+            - Default: 2.0
+        :param exposure_center: intensity at which the exposure probability is
+            0.5
+            - Default: 0.5
         """
         _LOG.debug(
-            "agent_id=%s intensity=%s iq=%s networking=%s initial_capital=%s",
-            agent_id,
-            intensity,
-            iq,
-            networking,
-            initial_capital,
+            hprint.to_str(
+                "agent_id intensity iq networking initial_capital capital_floor"
+                " exposure_slope exposure_center"
+            )
         )
+        hdbg.dassert_lt(0.0, capital_floor, "capital_floor must be positive")
         self.id = int(agent_id)
+        self.capital_floor = float(capital_floor)
+        self.exposure_slope = float(exposure_slope)
+        self.exposure_center = float(exposure_center)
         # Enforce bounds and safe floor for capital.
         self.talent = {
             "intensity": float(np.clip(intensity, 0.0, 1.0)),
             "iq": float(np.clip(iq, 0.0, 1.0)),
             "networking": float(np.clip(networking, 0.0, 1.0)),
-            "initial_capital": float(max(0.01, initial_capital)),
+            "initial_capital": float(max(self.capital_floor, initial_capital)),
         }
         self.capital = float(self.talent["initial_capital"])
         self.capital_history: List[float] = [self.capital]
@@ -158,15 +174,16 @@ class Agent:
         """
         Probability of encountering an event based on intensity.
 
-        Uses a sigmoid centered at 0.5. Higher intensity = higher exposure.
+        Uses a sigmoid of slope `exposure_slope` centered at `exposure_center`.
+        Higher intensity = higher exposure.
 
         :return: Event probability in [0, 1]
         """
-        alpha = 2.0
         # No debug log here: this runs for every agent at every event, and a
         # log call would slow the simulation down noticeably.
+        distance = self.talent["intensity"] - self.exposure_center
         probability = float(
-            1.0 / (1.0 + np.exp(-alpha * (self.talent["intensity"] - 0.5)))
+            1.0 / (1.0 + np.exp(-self.exposure_slope * distance))
         )
         return probability
 
@@ -176,7 +193,8 @@ class Agent:
 
         :param event_type: kind of event
             - `"lucky"`: multiply capital by `1 + impact`
-            - `"unlucky"`: multiply capital by `1 - impact`, floored at 0.01
+            - `"unlucky"`: multiply capital by `1 - impact`, floored at
+              `capital_floor`
         :param impact: magnitude as a decimal (e.g., 0.25 = 25%)
         """
         _LOG.debug("event_type=%s impact=%s", event_type, impact)
@@ -186,7 +204,7 @@ class Agent:
             self.lucky_events += 1
         elif event_type == "unlucky":
             self.capital *= 1.0 - impact
-            self.capital = max(0.01, self.capital)
+            self.capital = max(self.capital_floor, self.capital)
             self.unlucky_events += 1
         else:
             raise ValueError(f"Unknown event type: {event_type}")
@@ -198,7 +216,18 @@ class Agent:
 # #############################################################################
 
 
-def create_population(*, n_agents: int = 100, seed: int = 42) -> List[Agent]:
+def create_population(
+    *,
+    n_agents: int = 100,
+    seed: int = 42,
+    talent_mean: float = 0.5,
+    talent_std: float = 0.15,
+    talent_clip: Tuple[float, float] = (0.0, 1.0),
+    initial_capital: float = 1.0,
+    capital_floor: float = 0.01,
+    exposure_slope: float = 2.0,
+    exposure_center: float = 0.5,
+) -> List[Agent]:
     """
     Create a population of agents with normally distributed talents.
 
@@ -206,18 +235,61 @@ def create_population(*, n_agents: int = 100, seed: int = 42) -> List[Agent]:
         - Default: 100
     :param seed: RNG seed for reproducibility
         - Default: 42
-    :return: `Agent` objects, each with random talents and capital 1.0
+    :param talent_mean: mean of the normal distribution of each talent
+        - Default: 0.5
+    :param talent_std: standard deviation of the normal distribution of each
+        talent
+        - Default: 0.15
+    :param talent_clip: range each drawn talent is clipped to
+        - Default: `(0.0, 1.0)`
+    :param initial_capital: starting capital of every agent
+        - Default: 1.0
+    :param capital_floor: see `Agent`
+        - Default: 0.01
+    :param exposure_slope: see `Agent`
+        - Default: 2.0
+    :param exposure_center: see `Agent`
+        - Default: 0.5
+    :return: `Agent` objects, each with random talents and the same capital
     """
-    _LOG.debug(hprint.to_str("n_agents seed"))
+    _LOG.debug(
+        hprint.to_str(
+            "n_agents seed talent_mean talent_std talent_clip initial_capital"
+        )
+    )
     hdbg.dassert_lt(0, n_agents, "n_agents must be positive")
+    hdbg.dassert_lte(0.0, talent_std, "talent_std must be non-negative")
+    # Talents are probabilities (e.g., `iq` gates a lucky event), so `Agent`
+    # clips them to [0, 1]: a wider range would be silently narrowed.
+    hdbg.dassert_lte(0.0, talent_clip[0], "talent_clip must be within [0, 1]")
+    hdbg.dassert_lte(
+        talent_clip[0], talent_clip[1], "talent_clip must be (low, high)"
+    )
+    hdbg.dassert_lte(talent_clip[1], 1.0, "talent_clip must be within [0, 1]")
     rng = np.random.default_rng(seed)
-    # Draw the three talents of each agent, clipped to [0, 1].
+    # Draw the three talents of each agent in this order, so that the same seed
+    # gives the same population.
     agents: List[Agent] = []
     for i in range(n_agents):
-        intensity = float(np.clip(rng.normal(0.5, 0.15), 0.0, 1.0))
-        iq = float(np.clip(rng.normal(0.5, 0.15), 0.0, 1.0))
-        networking = float(np.clip(rng.normal(0.5, 0.15), 0.0, 1.0))
-        agents.append(Agent(i, intensity, iq, networking, initial_capital=1.0))
+        intensity = float(
+            np.clip(rng.normal(talent_mean, talent_std), *talent_clip)
+        )
+        iq = float(np.clip(rng.normal(talent_mean, talent_std), *talent_clip))
+        networking = float(
+            np.clip(rng.normal(talent_mean, talent_std), *talent_clip)
+        )
+        agents.append(
+            Agent(
+                i,
+                intensity,
+                iq,
+                networking,
+                initial_capital=initial_capital,
+                capital_floor=capital_floor,
+                exposure_slope=exposure_slope,
+                exposure_center=exposure_center,
+            )
+        )
     return agents
 
 
@@ -443,6 +515,10 @@ def run_simulation(
     lucky_std: float = 0.08,
     unlucky_mean: float = 0.15,
     unlucky_std: float = 0.05,
+    lucky_clip: Tuple[float, float] = (0.05, 0.50),
+    unlucky_clip: Tuple[float, float] = (0.05, 0.30),
+    spillover_probability: float = 0.1,
+    spillover_impact_factor: float = 0.5,
     seed: int = 42,
     verbose: bool = False,
 ) -> List[Agent]:
@@ -464,6 +540,16 @@ def run_simulation(
         - Default: 0.15, i.e., 15%
     :param unlucky_std: Std dev of unlucky event impacts
         - Default: 0.05
+    :param lucky_clip: range each lucky impact is clipped to
+        - Default: `(0.05, 0.50)`
+    :param unlucky_clip: range each unlucky impact is clipped to
+        - Default: `(0.05, 0.30)`
+    :param spillover_probability: probability that a lucky event also gives a
+        spillover to another agent
+        - Default: 0.1
+    :param spillover_impact_factor: impact of a spillover, as a fraction of the
+        impact of the lucky event
+        - Default: 0.5
     :param seed: RNG seed for reproducibility
         - Default: 42
     :param verbose: Show a progress bar if True
@@ -473,7 +559,9 @@ def run_simulation(
     _LOG.debug(
         hprint.to_str(
             "n_periods n_lucky_events_per_period n_unlucky_events_per_period"
-            " lucky_mean lucky_std unlucky_mean unlucky_std seed verbose"
+            " lucky_mean lucky_std unlucky_mean unlucky_std lucky_clip"
+            " unlucky_clip spillover_probability spillover_impact_factor seed"
+            " verbose"
         )
     )
     hdbg.dassert_lt(0, n_periods, "n_periods must be positive")
@@ -487,6 +575,27 @@ def run_simulation(
         0,
         n_unlucky_events_per_period,
         "event counts per period must be non-negative",
+    )
+    # `Agent.apply_event()` takes the absolute value of the impact, so a negative
+    # bound would silently become a positive one.
+    hdbg.dassert_lte(0.0, lucky_clip[0], "lucky impacts must be non-negative")
+    hdbg.dassert_lte(
+        lucky_clip[0], lucky_clip[1], "lucky_clip must be (low, high)"
+    )
+    hdbg.dassert_lte(
+        0.0, unlucky_clip[0], "unlucky impacts must be non-negative"
+    )
+    hdbg.dassert_lte(
+        unlucky_clip[0], unlucky_clip[1], "unlucky_clip must be (low, high)"
+    )
+    # An unlucky impact of 1 or more would make the capital zero or negative
+    # before the floor.
+    hdbg.dassert_lt(unlucky_clip[1], 1.0, "unlucky impacts must be below 1")
+    hdbg.dassert_lte(
+        0.0, spillover_probability, "spillover_probability must be in [0, 1]"
+    )
+    hdbg.dassert_lte(
+        spillover_probability, 1.0, "spillover_probability must be in [0, 1]"
     )
     # Set up the random generator and the optional progress bar.
     rng = np.random.default_rng(seed)
@@ -503,13 +612,14 @@ def run_simulation(
             selected_idx = _select_exposed_agent(agents, rng)
             selected = agents[selected_idx]
             impact = float(
-                np.clip(rng.normal(lucky_mean, lucky_std), 0.05, 0.50)
+                np.clip(rng.normal(lucky_mean, lucky_std), *lucky_clip)
             )
             # IQ gates whether a lucky event can be capitalized on.
             if rng.random() < selected.talent["iq"]:
                 selected.apply_event("lucky", impact)
-            # Networking spillover (10%).
-            if rng.random() < 0.1:
+            # Networking spillover. The check runs for every lucky event, also
+            # when the selected agent did not capitalize on it.
+            if rng.random() < spillover_probability:
                 net = np.array(
                     [a.talent["networking"] for a in agents], dtype=float
                 )
@@ -520,13 +630,15 @@ def run_simulation(
                         inherited_idx != selected_idx
                         and rng.random() < agents[inherited_idx].talent["iq"]
                     ):
-                        agents[inherited_idx].apply_event("lucky", impact * 0.5)
+                        agents[inherited_idx].apply_event(
+                            "lucky", impact * spillover_impact_factor
+                        )
         # Unlucky events.
         for _ in range(n_unlucky_events_per_period):
             selected_idx = _select_exposed_agent(agents, rng)
             selected = agents[selected_idx]
             impact = float(
-                np.clip(rng.normal(unlucky_mean, unlucky_std), 0.05, 0.30)
+                np.clip(rng.normal(unlucky_mean, unlucky_std), *unlucky_clip)
             )
             selected.apply_event("unlucky", impact)
     _LOG.debug("len(agents)=%s", len(agents))
@@ -648,6 +760,175 @@ def run_policy_simulation(
     # Run the standard simulation from the allocated capital.
     agents = run_simulation(agents, **simulation_kwargs)
     return agents
+
+
+# #############################################################################
+# Experiment
+# #############################################################################
+
+
+# Policies accepted in `config["policy"]["name"]`, besides `None` (no
+# allocation).
+_POLICIES = (
+    "egalitarian",
+    "meritocratic",
+    "performance",
+    "random",
+    "cate_optimal",
+)
+
+
+def get_default_config() -> Dict[str, Any]:
+    """
+    Get the config with all the parameters of one experiment.
+
+    Each value is the default of the function that uses it, so that
+    `run_experiment(get_default_config())` gives the same result as calling
+    `create_population()` and `run_simulation()` with their defaults.
+
+    :return: nested dict with the groups `population`, `events`, `exposure`,
+        `spillover`, and `policy`, plus the `seed` used by every random
+        generator
+    """
+    config = {
+        "seed": 42,
+        "population": {
+            "n_agents": 100,
+            "talent_mean": 0.5,
+            "talent_std": 0.15,
+            "talent_clip": (0.0, 1.0),
+            "initial_capital": 1.0,
+        },
+        "events": {
+            "n_periods": 80,
+            "n_lucky_per_period": 5,
+            "n_unlucky_per_period": 5,
+            "lucky_mean": 0.25,
+            "lucky_std": 0.08,
+            "lucky_clip": (0.05, 0.50),
+            "unlucky_mean": 0.15,
+            "unlucky_std": 0.05,
+            "unlucky_clip": (0.05, 0.30),
+            "capital_floor": 0.01,
+        },
+        "exposure": {
+            "sigmoid_slope": 2.0,
+            "sigmoid_center": 0.5,
+        },
+        "spillover": {
+            "probability": 0.1,
+            "impact_factor": 0.5,
+        },
+        "policy": {
+            # `None` means no allocation before the simulation.
+            "name": None,
+            "resource_amount": 100.0,
+        },
+    }
+    return config
+
+
+def _check_config(config: Dict[str, Any]) -> None:
+    """
+    Check that a config has exactly the keys of the default config.
+
+    A missing or misspelled key fails here, instead of being silently ignored.
+
+    :param config: config to check
+    """
+    default_config = get_default_config()
+    hdbg.dassert_set_eq(
+        config.keys(), default_config.keys(), "Config has wrong groups"
+    )
+    for group, default_values in default_config.items():
+        if isinstance(default_values, dict):
+            hdbg.dassert_isinstance(config[group], dict)
+            hdbg.dassert_set_eq(
+                config[group].keys(),
+                default_values.keys(),
+                "Config group '%s' has wrong keys",
+                group,
+            )
+    policy_name = config["policy"]["name"]
+    if policy_name is not None:
+        hdbg.dassert_in(policy_name, _POLICIES, "Unknown policy")
+
+
+def run_experiment(
+    config: Dict[str, Any],
+    *,
+    cate_values: Optional[np.ndarray] = None,
+) -> Dict[str, Any]:
+    """
+    Create a population and simulate it with all the parameters in `config`.
+
+    The same `config["seed"]` is used for the population, the simulation, and
+    the policy allocation, as the notebooks do.
+
+    :param config: parameters of the experiment, e.g., from
+        `get_default_config()`
+    :param cate_values: CATE estimate of each agent, needed only by the
+        `cate_optimal` policy; it is not part of `config`, since it comes from
+        the CATE step and not from the settings
+    :return: dict with:
+        - `"agents"`: the agents after the simulation
+        - `"df"`: the output of `get_results_dataframe()`
+        - `"stats"`: the output of `generate_summary_statistics()`
+    """
+    _LOG.debug("config=%s", config)
+    _check_config(config)
+    population = config["population"]
+    events = config["events"]
+    exposure = config["exposure"]
+    spillover = config["spillover"]
+    policy = config["policy"]
+    if policy["name"] != "cate_optimal":
+        hdbg.dassert(
+            cate_values is None, "cate_values is used only by 'cate_optimal'"
+        )
+    # Create the population.
+    agents = create_population(
+        n_agents=population["n_agents"],
+        seed=config["seed"],
+        talent_mean=population["talent_mean"],
+        talent_std=population["talent_std"],
+        talent_clip=population["talent_clip"],
+        initial_capital=population["initial_capital"],
+        capital_floor=events["capital_floor"],
+        exposure_slope=exposure["sigmoid_slope"],
+        exposure_center=exposure["sigmoid_center"],
+    )
+    # Simulate, with or without a policy that allocates resources first.
+    simulation_kwargs = {
+        "n_periods": events["n_periods"],
+        "n_lucky_events_per_period": events["n_lucky_per_period"],
+        "n_unlucky_events_per_period": events["n_unlucky_per_period"],
+        "lucky_mean": events["lucky_mean"],
+        "lucky_std": events["lucky_std"],
+        "unlucky_mean": events["unlucky_mean"],
+        "unlucky_std": events["unlucky_std"],
+        "lucky_clip": events["lucky_clip"],
+        "unlucky_clip": events["unlucky_clip"],
+        "spillover_probability": spillover["probability"],
+        "spillover_impact_factor": spillover["impact_factor"],
+        "seed": config["seed"],
+    }
+    if policy["name"] is None:
+        agents = run_simulation(agents, **simulation_kwargs)
+    else:
+        agents = run_policy_simulation(
+            agents,
+            policy=policy["name"],
+            resource_amount=policy["resource_amount"],
+            cate_values=cate_values,
+            **simulation_kwargs,
+        )
+    results = {
+        "agents": agents,
+        "df": get_results_dataframe(agents),
+        "stats": generate_summary_statistics(agents),
+    }
+    return results
 
 
 # #############################################################################
