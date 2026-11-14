@@ -5,7 +5,7 @@
 - Start with `how_we_work.md`, then `plan.md`
 - The code has its own READMEs:
   - `../schema_agent/README.md`
-  - `agentic_eda/bakeoff/README.md` in `gpsaggese/tutorials`
+  - `../bakeoff/README.md`
 
 ## Structure of the Dir
 

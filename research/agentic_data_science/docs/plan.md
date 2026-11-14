@@ -27,8 +27,8 @@
 - `progress.md`: what is done and learned
 - `decisions.md`: why it is built this way
 - `- [ ]` is an unmerged PR and `- [x]` is a merged PR
-- PR ids of the Bake-off live in `tutorials` and the others in
-  `gpsaggese.github.io`; each entry names its repo
+- PR ids are in `gpsaggese.github.io`, except `PR_B1`, which was merged in
+  `gpsaggese/tutorials` before that repo was archived
 
 ## Roadmap
 
@@ -63,14 +63,13 @@
 
 - Run every registered agent on every registered dataset, time it, record
   failures without stopping, and write one scorecard
-- Code: `tutorials/agentic_eda/bakeoff/` (`datasets.py`, `agents.py`,
+- Code: `research/agentic_data_science/bakeoff/` (`datasets.py`, `agents.py`,
   `scoring.py`, `run_bakeoff.py`)
 
 ### Open Questions
 
-1. Should the Bake-off move to `research/agentic_data_science/bakeoff/`, next to
-   `schema_agent/`? Most entrants live in `gpsaggese.github.io`, so running them
-   from `tutorials` needs a path to a second checkout
+1. Resolved: the Bake-off moved to `research/agentic_data_science/bakeoff/`, see
+   `decisions.md` D-3
 2. Is the class project
    `UmdTask850_MSML610_Fall2026_Comparison_of_Data_Science_Agents` (PR #859)
    building the same comparison? If so, its team should add entrants
