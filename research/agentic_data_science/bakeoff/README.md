@@ -30,6 +30,10 @@ pytest research/agentic_data_science/bakeoff/test
 | `agents.py` | `Agent` interface, `AgentResult`, `DummyAgent` |
 | `scoring.py` | `Scorecard` / `ScoreRow`, CSV output |
 | `run_bakeoff.py` | CLI |
+| `benchmarks.py` | Benchmark loaders and scorers |
+| `dabstep_scorer.py` | Official DABstep scorer (vendored) |
+| `download_benchmarks.py` | Download, sample and check the benchmarks |
+| `benchmark_sample.json` | Fixed task sample used by every run |
 | `data/` | local cache for real datasets (not committed) |
 | `results/` | run outputs (not committed) |
 
@@ -50,6 +54,40 @@ The four datasets are `uci_heart` (classification), `nyc_taxi` (regression),
 synthetic sample with the real schema, so everything runs offline.
 `load(real=True)` reads `data/<name>.csv` or a wired `real_loader`. If neither
 exists it raises, naming the source.
+
+## Benchmarks
+
+The datasets above have no answer key. For Milestone 1 we score agents on four
+public benchmarks with known answers, using each benchmark's own scoring rules
+(`benchmarks.py`):
+
+| Name    | Benchmark         | Tasks we use               | Data source                     |
+| :------ | :---------------- | :------------------------- | :------------------------------ |
+| dabench | InfiAgent-DABench | 256 dev questions          | GitHub                          |
+| qrdata  | QRData            | 411 questions              | GitHub                          |
+| dacode  | DA-Code           | 71 tasks with text answers | GitHub + Google Drive (`gdown`) |
+| dabstep | DABstep           | 10 dev tasks               | Hugging Face                    |
+
+Every agent runs on the same 50 tasks per benchmark, listed in
+`benchmark_sample.json` (seed 0). DABstep has only 10 tasks with public answers,
+so all 10 are used.
+
+```bash
+pip install gdown huggingface_hub
+python research/agentic_data_science/bakeoff/download_benchmarks.py --download
+python research/agentic_data_science/bakeoff/download_benchmarks.py --check
+```
+
+`--check` confirms, for every sampled task, that its data files exist, that the
+gold answer scores 1, and that an empty answer scores 0.
+
+Limits to keep in mind when reading results:
+- DA-Code: 429 of its 500 tasks are scored on files the agent writes (CSV, plots,
+  models). They are not used here
+- DABstep: its 450 test answers are hidden; scoring them needs a leaderboard
+  submission
+- InfiAgent-DABench: question 734 is skipped because its label repeats an answer
+  name with different values
 
 ## Adding an agent
 
