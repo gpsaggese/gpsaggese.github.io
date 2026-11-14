@@ -4,11 +4,10 @@
 # Python 3.12 slim (already has Python and pip).
 # #############################################################################
 
-# Build for x86-64 on every host. The official evaluator depends on
-# `ytsaurus-yson`, which ships Linux wheels only for x86-64, and the SWE-rebench
-# task images are x86-64 too. On an Apple Silicon Mac this image runs under
-# emulation.
-FROM --platform=linux/amd64 python:3.12-slim
+# The chess runner is pure Python, so the image builds natively on x86-64 and
+# arm64 (no emulation on an Apple Silicon Mac). It needs no Docker inside: the
+# board runs in the agent's process (`caaf_chess.py`).
+FROM python:3.12-slim
 
 # Avoid interactive prompts during apt operations.
 ENV DEBIAN_FRONTEND=noninteractive
@@ -22,13 +21,6 @@ RUN apt-get update && apt-get install -y \
     graphviz \
     && rm -rf /var/lib/apt/lists/*
 
-# Install the Docker CLI only, without a daemon. The agent runner starts each
-# task's container through the host's Docker daemon, whose socket the
-# `docker_*.sh` scripts mount into this container.
-ARG DOCKER_CLI_VERSION=27.5.1
-RUN curl -fsSL "https://download.docker.com/linux/static/stable/$(uname -m)/docker-${DOCKER_CLI_VERSION}.tgz" \
-    | tar -xz -C /usr/local/bin --strip-components=1 docker/docker
-
 # Install project specific packages. Pin jupytext to avoid jitter in the
 # notebook files due to changing version. Pin ipykernel below 7 since 7.3.0
 # randomly stops answering execute requests, which hangs `jupyter nbconvert
@@ -38,17 +30,9 @@ COPY requirements.txt /install/requirements.txt
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir jupyterlab jupyterlab_vim "ipykernel<7" jupytext==1.19.3 -r /install/requirements.txt
 
-# Install the official SWE-rebench evaluator (the SWE-bench fork used by
-# SWE-rebench) in its own virtual environment, so its dependencies cannot clash
-# with the runner's. Pin the commit and the dependency versions that scored all
-# the results so far.
-ARG SWEBENCH_FORK_COMMIT=e4907b7a90eafaa1f0a6428fd04fe31cdd8b4284
-COPY requirements.eval.txt /install/requirements.eval.txt
-RUN python -m venv /opt/swebench && \
-    /opt/swebench/bin/pip install --no-cache-dir \
-      -c /install/requirements.eval.txt \
-      "swebench @ git+https://github.com/SWE-rebench/SWE-bench-fork.git@${SWEBENCH_FORK_COMMIT}"
-ENV CAAF_EVAL_PYTHON=/opt/swebench/bin/python
+# The KRvK tablebase files (8 KB) are not baked into the image: run
+# `data/fetch_tablebases.sh` once in the project dir, which the `docker_*.sh`
+# scripts mount into the container.
 
 # Config.
 COPY etc_sudoers /install/

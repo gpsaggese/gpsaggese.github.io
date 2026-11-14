@@ -1,0 +1,289 @@
+{
+ "runs": [
+  {
+   "branch_id": "br-0984f507f491",
+   "cost_usd": 0.000576,
+   "end": "insufficient_material",
+   "exit_status": "GameOver",
+   "infra_error": null,
+   "last_snapshot": "dba2028fc341085a807bd21d914bfddde2f309c23d8949f2e51fc9de1d29660a",
+   "moves_san": [
+    "Re1+",
+    "Kg2",
+    "Kg4",
+    "Kf2",
+    "Re2+",
+    "Kxe2"
+   ],
+   "n_calls": 3,
+   "pivot_white_move": 1,
+   "run": 0,
+   "run_id": "run-dc7f27b08834",
+   "start_fen": "4R3/8/8/8/7K/8/8/7k w - - 89 1",
+   "status": "insufficient_material",
+   "task": "krk-m2-1",
+   "won": false
+  },
+  {
+   "branch_id": "br-8e9a641b2e4b",
+   "cost_usd": 0.000482,
+   "end": "insufficient_material",
+   "exit_status": "GameOver",
+   "infra_error": null,
+   "last_snapshot": "d8bde16660a40507b6f186275928bae0f46a45e18be6041f507ce37f01d353aa",
+   "moves_san": [
+    "Rb1+",
+    "Ke2",
+    "Rb2+",
+    "Kf3",
+    "Rf2+",
+    "Kxf2"
+   ],
+   "n_calls": 3,
+   "pivot_white_move": 1,
+   "run": 0,
+   "run_id": "run-4fc4b94294bc",
+   "start_fen": "8/8/8/8/1R1K4/8/8/3k4 w - - 87 1",
+   "status": "insufficient_material",
+   "task": "krk-m3-1",
+   "won": false
+  },
+  {
+   "branch_id": "br-32b6f20cde93",
+   "cost_usd": 0.000164,
+   "end": "insufficient_material",
+   "exit_status": "GameOver",
+   "infra_error": null,
+   "last_snapshot": "c16affd2966be7fa667e141489861da384abd898fe58ee6e27f575b74e018a78",
+   "moves_san": [
+    "Rg3+",
+    "Kxg3"
+   ],
+   "n_calls": 1,
+   "pivot_white_move": 1,
+   "run": 0,
+   "run_id": "run-bc57cbd8428b",
+   "start_fen": "8/8/8/8/8/3R4/4K1k1/8 w - - 85 1",
+   "status": "insufficient_material",
+   "task": "krk-m4-1",
+   "won": false
+  },
+  {
+   "branch_id": "br-7305506d32af",
+   "cost_usd": 0.001439,
+   "end": "fifty_move_rule",
+   "exit_status": "GameOver",
+   "infra_error": null,
+   "last_snapshot": "796fabc0231f0c0efc056f780462c703381a0d38991d65ebed37cd9ba4f9366d",
+   "moves_san": [
+    "Rg7+",
+    "Kb6",
+    "Kd7",
+    "Kc5",
+    "Ke6",
+    "Kc4",
+    "Rc7+",
+    "Kd3",
+    "Rd7+",
+    "Kc3",
+    "Kd5",
+    "Kd3",
+    "Rh7",
+    "Ke3",
+    "Rh3+",
+    "Kf4",
+    "Rh4+",
+    "Ke3",
+    "Re4+"
+   ],
+   "n_calls": 10,
+   "pivot_white_move": 2,
+   "run": 0,
+   "run_id": "run-473e6c3b6e81",
+   "start_fen": "4K3/k7/8/6R1/8/8/8/8 w - - 81 1",
+   "status": "fifty_move_rule",
+   "task": "krk-m6-1",
+   "won": false
+  },
+  {
+   "branch_id": "br-7a7c8d36a630",
+   "cost_usd": 0.00046,
+   "end": "insufficient_material",
+   "exit_status": "GameOver",
+   "infra_error": null,
+   "last_snapshot": "987f7315b4c7041be0c2ab580b24ff2cf75db49b0e15fa049ca7ac2d26a23a16",
+   "moves_san": [
+    "Rh3+",
+    "Ka4",
+    "Kd4",
+    "Kb4",
+    "Rb3+",
+    "Kxb3"
+   ],
+   "n_calls": 3,
+   "pivot_white_move": 3,
+   "run": 0,
+   "run_id": "run-ba9cbfc5849b",
+   "start_fen": "8/8/8/8/4K3/k7/8/7R w - - 77 1",
+   "status": "insufficient_material",
+   "task": "krk-m8-1",
+   "won": false
+  },
+  {
+   "branch_id": "br-86b1a012da24",
+   "cost_usd": 0.000468,
+   "end": "insufficient_material",
+   "exit_status": "GameOver",
+   "infra_error": null,
+   "last_snapshot": "f5d18968cebed40918b1ab7eedce23f8128f4c14654672fb70fb912b3eeb14f7",
+   "moves_san": [
+    "Re1+",
+    "Kg2",
+    "Kg4",
+    "Kf2",
+    "Kf4",
+    "Kxe1"
+   ],
+   "n_calls": 3,
+   "pivot_white_move": 1,
+   "run": 1,
+   "run_id": "run-8c397705721a",
+   "start_fen": "4R3/8/8/8/7K/8/8/7k w - - 89 1",
+   "status": "insufficient_material",
+   "task": "krk-m2-1",
+   "won": false
+  },
+  {
+   "branch_id": "br-297c090d4a07",
+   "cost_usd": 0.001193,
+   "end": "insufficient_material",
+   "exit_status": "GameOver",
+   "infra_error": null,
+   "last_snapshot": "3e714547482cb7fb8e92ad610687d632f9dc303f6276dd00cff113d49e2681c8",
+   "moves_san": [
+    "Rb1+",
+    "Ke2",
+    "Rb2+",
+    "Kf3",
+    "Ke5",
+    "Ke3",
+    "Rb3+",
+    "Kd2",
+    "Ke4",
+    "Kc2",
+    "Rb2+",
+    "Kxb2"
+   ],
+   "n_calls": 6,
+   "pivot_white_move": 1,
+   "run": 1,
+   "run_id": "run-bdb98f101c7b",
+   "start_fen": "8/8/8/8/1R1K4/8/8/3k4 w - - 87 1",
+   "status": "insufficient_material",
+   "task": "krk-m3-1",
+   "won": false
+  },
+  {
+   "branch_id": "br-3147b512000a",
+   "cost_usd": 0.000134,
+   "end": "insufficient_material",
+   "exit_status": "GameOver",
+   "infra_error": null,
+   "last_snapshot": "7ecb7b46a457b8d4657a01f4acc4f2cb79c73c21ebb6a23d316616bc4b0f8da3",
+   "moves_san": [
+    "Rg3+",
+    "Kxg3"
+   ],
+   "n_calls": 1,
+   "pivot_white_move": 1,
+   "run": 1,
+   "run_id": "run-c35186de47d1",
+   "start_fen": "8/8/8/8/8/3R4/4K1k1/8 w - - 85 1",
+   "status": "insufficient_material",
+   "task": "krk-m4-1",
+   "won": false
+  },
+  {
+   "branch_id": "br-936248d3c029",
+   "cost_usd": 0.000473,
+   "end": "insufficient_material",
+   "exit_status": "GameOver",
+   "infra_error": null,
+   "last_snapshot": "515b0e6f1dcb38932cd204d1f2e1114cbd5bbeb13d98d29eb8c38cf3276fd370",
+   "moves_san": [
+    "Rg7+",
+    "Kb6",
+    "Kd7",
+    "Kc5",
+    "Rg5+",
+    "Kc4",
+    "Rc5+",
+    "Kxc5"
+   ],
+   "n_calls": 4,
+   "pivot_white_move": 2,
+   "run": 1,
+   "run_id": "run-6dca757d0e02",
+   "start_fen": "4K3/k7/8/6R1/8/8/8/8 w - - 81 1",
+   "status": "insufficient_material",
+   "task": "krk-m6-1",
+   "won": false
+  },
+  {
+   "branch_id": "br-5167dea9f362",
+   "cost_usd": 0.000571,
+   "end": "insufficient_material",
+   "exit_status": "GameOver",
+   "infra_error": null,
+   "last_snapshot": "a4d525e059d85382b9d7af29854a4f70405381f9505bf586ef87dcc832c00e7b",
+   "moves_san": [
+    "Rh3+",
+    "Ka4",
+    "Kd4",
+    "Kb4",
+    "Ra3",
+    "Kxa3"
+   ],
+   "n_calls": 3,
+   "pivot_white_move": 3,
+   "run": 1,
+   "run_id": "run-e069e812d0cb",
+   "start_fen": "8/8/8/8/4K3/k7/8/7R w - - 77 1",
+   "status": "insufficient_material",
+   "task": "krk-m8-1",
+   "won": false
+  }
+ ],
+ "summary": {
+  "by_task": {
+   "krk-m2-1": [
+    "insufficient_material",
+    "insufficient_material"
+   ],
+   "krk-m3-1": [
+    "insufficient_material",
+    "insufficient_material"
+   ],
+   "krk-m4-1": [
+    "insufficient_material",
+    "insufficient_material"
+   ],
+   "krk-m6-1": [
+    "fifty_move_rule",
+    "insufficient_material"
+   ],
+   "krk-m8-1": [
+    "insufficient_material",
+    "insufficient_material"
+   ]
+  },
+  "cost": {
+   "phase_usd": 0.006,
+   "total_usd": 0.006
+  },
+  "infra_errors": 0,
+  "not_won": 10,
+  "runs": 10,
+  "won": 0
+ }
+}
