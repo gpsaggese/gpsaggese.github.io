@@ -763,6 +763,175 @@ def run_policy_simulation(
 
 
 # #############################################################################
+# Experiment
+# #############################################################################
+
+
+# Policies accepted in `config["policy"]["name"]`, besides `None` (no
+# allocation).
+_POLICIES = (
+    "egalitarian",
+    "meritocratic",
+    "performance",
+    "random",
+    "cate_optimal",
+)
+
+
+def get_default_config() -> Dict[str, Any]:
+    """
+    Get the config with all the parameters of one experiment.
+
+    Each value is the default of the function that uses it, so that
+    `run_experiment(get_default_config())` gives the same result as calling
+    `create_population()` and `run_simulation()` with their defaults.
+
+    :return: nested dict with the groups `population`, `events`, `exposure`,
+        `spillover`, and `policy`, plus the `seed` used by every random
+        generator
+    """
+    config = {
+        "seed": 42,
+        "population": {
+            "n_agents": 100,
+            "talent_mean": 0.5,
+            "talent_std": 0.15,
+            "talent_clip": (0.0, 1.0),
+            "initial_capital": 1.0,
+        },
+        "events": {
+            "n_periods": 80,
+            "n_lucky_per_period": 5,
+            "n_unlucky_per_period": 5,
+            "lucky_mean": 0.25,
+            "lucky_std": 0.08,
+            "lucky_clip": (0.05, 0.50),
+            "unlucky_mean": 0.15,
+            "unlucky_std": 0.05,
+            "unlucky_clip": (0.05, 0.30),
+            "capital_floor": 0.01,
+        },
+        "exposure": {
+            "sigmoid_slope": 2.0,
+            "sigmoid_center": 0.5,
+        },
+        "spillover": {
+            "probability": 0.1,
+            "impact_factor": 0.5,
+        },
+        "policy": {
+            # `None` means no allocation before the simulation.
+            "name": None,
+            "resource_amount": 100.0,
+        },
+    }
+    return config
+
+
+def _check_config(config: Dict[str, Any]) -> None:
+    """
+    Check that a config has exactly the keys of the default config.
+
+    A missing or misspelled key fails here, instead of being silently ignored.
+
+    :param config: config to check
+    """
+    default_config = get_default_config()
+    hdbg.dassert_set_eq(
+        config.keys(), default_config.keys(), "Config has wrong groups"
+    )
+    for group, default_values in default_config.items():
+        if isinstance(default_values, dict):
+            hdbg.dassert_isinstance(config[group], dict)
+            hdbg.dassert_set_eq(
+                config[group].keys(),
+                default_values.keys(),
+                "Config group '%s' has wrong keys",
+                group,
+            )
+    policy_name = config["policy"]["name"]
+    if policy_name is not None:
+        hdbg.dassert_in(policy_name, _POLICIES, "Unknown policy")
+
+
+def run_experiment(
+    config: Dict[str, Any],
+    *,
+    cate_values: Optional[np.ndarray] = None,
+) -> Dict[str, Any]:
+    """
+    Create a population and simulate it with all the parameters in `config`.
+
+    The same `config["seed"]` is used for the population, the simulation, and
+    the policy allocation, as the notebooks do.
+
+    :param config: parameters of the experiment, e.g., from
+        `get_default_config()`
+    :param cate_values: CATE estimate of each agent, needed only by the
+        `cate_optimal` policy; it is not part of `config`, since it comes from
+        the CATE step and not from the settings
+    :return: dict with:
+        - `"agents"`: the agents after the simulation
+        - `"df"`: the output of `get_results_dataframe()`
+        - `"stats"`: the output of `generate_summary_statistics()`
+    """
+    _LOG.debug("config=%s", config)
+    _check_config(config)
+    population = config["population"]
+    events = config["events"]
+    exposure = config["exposure"]
+    spillover = config["spillover"]
+    policy = config["policy"]
+    if policy["name"] != "cate_optimal":
+        hdbg.dassert(
+            cate_values is None, "cate_values is used only by 'cate_optimal'"
+        )
+    # Create the population.
+    agents = create_population(
+        n_agents=population["n_agents"],
+        seed=config["seed"],
+        talent_mean=population["talent_mean"],
+        talent_std=population["talent_std"],
+        talent_clip=population["talent_clip"],
+        initial_capital=population["initial_capital"],
+        capital_floor=events["capital_floor"],
+        exposure_slope=exposure["sigmoid_slope"],
+        exposure_center=exposure["sigmoid_center"],
+    )
+    # Simulate, with or without a policy that allocates resources first.
+    simulation_kwargs = {
+        "n_periods": events["n_periods"],
+        "n_lucky_events_per_period": events["n_lucky_per_period"],
+        "n_unlucky_events_per_period": events["n_unlucky_per_period"],
+        "lucky_mean": events["lucky_mean"],
+        "lucky_std": events["lucky_std"],
+        "unlucky_mean": events["unlucky_mean"],
+        "unlucky_std": events["unlucky_std"],
+        "lucky_clip": events["lucky_clip"],
+        "unlucky_clip": events["unlucky_clip"],
+        "spillover_probability": spillover["probability"],
+        "spillover_impact_factor": spillover["impact_factor"],
+        "seed": config["seed"],
+    }
+    if policy["name"] is None:
+        agents = run_simulation(agents, **simulation_kwargs)
+    else:
+        agents = run_policy_simulation(
+            agents,
+            policy=policy["name"],
+            resource_amount=policy["resource_amount"],
+            cate_values=cate_values,
+            **simulation_kwargs,
+        )
+    results = {
+        "agents": agents,
+        "df": get_results_dataframe(agents),
+        "stats": generate_summary_statistics(agents),
+    }
+    return results
+
+
+# #############################################################################
 # Bayesian model
 # #############################################################################
 
