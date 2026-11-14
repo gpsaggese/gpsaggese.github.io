@@ -36,8 +36,9 @@
   - 10, Reviewing Existing Code
   - 11, Debugging with AI
 - Planning and Architecture
-  - 12, Planning
+  - 12, Planning Software
   - 13, Software Architecture Guidelines
+  - 14, Writing software
 - Delivery and Automation
   - 14, GitHub Projects and Workflows
   - 15, Releasing and Docker
@@ -87,7 +88,7 @@
 | 10: Reviewing Existing Code                   |                                                    |          |           |          |      |
 | 11: Debugging with AI                         |                                                    |          |           |          |      |
 | **Part III: Planning and Architecture**       |                                                    |          |           |          |      |
-| 12: Planning                                  |                                                    |          |           |          |      |
+| 12: Planning Software                         |                                                    |          |           |          |      |
 | 13: Software Architecture Guidelines          |                                                    |          |           |          |      |
 | **Part IV: Delivery and Automation**          |                                                    |          |           |          |      |
 | 14: GitHub Projects and Workflows             | Lesson14.01_GitHub_Projects_and_Workflows.smd      |          |           |          |      |
@@ -889,7 +890,7 @@
 
 - Part III covers how work is planned and how the code is structured
 
-## 12: Planning
+## 12: Planning Software
 
 ### Goals
 
@@ -915,9 +916,6 @@
   - Task lists, criticizing the plan, and executing in a loop
 
 ### Slides
-
-- `book_AI_Software_Engineering/lectures_source/Tools_source.smd` (section
-  `# Requirements and Planning`)
 
 ### Lesson Materials
 
