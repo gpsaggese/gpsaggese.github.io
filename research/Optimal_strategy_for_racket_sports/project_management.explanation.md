@@ -18,18 +18,14 @@
 - **Slack channel**: `#rl_for_racketsports`
 - **Research Gdoc**:
   [Racket sports: research results](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit),
-  with 2 tabs
-  - `Research results`: one Heading 1 per experiment, with its setup, settings
-    string, figures, decisions, and takeaways
-  - `Project`: the agenda of our meetings and the
-    [Questions for GP](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.xfydadrg3lvc)
+  one Gdoc with several tabs, see [Master Plan and Log](#master-plan-and-log)
 - **Google Drive**:
-  [root folder](https://drive.google.com/drive/folders/1NQB-LgY6Kn8Pw5Hbnp_1yCzN9HgoDIXe);
-  the Gdoc is in its
+  [`Research projects`](https://drive.google.com/drive/folders/1NQB-LgY6Kn8Pw5Hbnp_1yCzN9HgoDIXe),
+  the folder of all the research Gdocs
+  ([GP, Q2](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.21d3arlkot6c));
+  our Gdoc is in its
   [`Optimal_strategy_for_racket_sports`](https://drive.google.com/drive/folders/1QPETTDAx9V2wo9PxCMrSV0R5KNyNTQRi)
-  folder
-  - Which folder holds the research Gdocs is pending GP:
-    [Q2](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.21d3arlkot6c)
+  subfolder
 - **Paper**:
   [`paper.md`](../../papers/Optimal_strategy_for_racket_sports/paper.md)
 - **Joining the research team**: Slack invite and weekly team sync in the
@@ -39,11 +35,23 @@
 
 - [`plan.racket_strategy.md`](plan.racket_strategy.md): the master plan, with the
   roadmap, the milestones, the open points, and the task list
-- [`log.racket_strategy.md`](log.racket_strategy.md): what was done, newest entry
-  first, with dates and links to issues, PRs, and milestones
-- Whether the experiments are logged in the log, in the Gdoc, or in both is pending
-  GP:
-  [Q1](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.21d3arlkot6c)
+- The research is logged in one Gdoc with several tabs, and then distilled in the
+  paper
+  ([GP, Q1](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.21d3arlkot6c)):
+  splitting things too much creates extra work
+  - `Raw log`: everything we run, see, ask, and decide, newest entry first, with
+    dates and links to the notebooks and PRs
+  - `Research results`: the distilled tab, an executive summary on top, then one
+    Heading 1 per experiment, with its setup, settings string, figures, decisions,
+    and takeaways
+  - `Project`: the agenda of our meetings and the
+    [Questions for GP](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.xfydadrg3lvc)
+  - The [paper](../../papers/Optimal_strategy_for_racket_sports/paper.md) distills
+    the results further, to the interesting experiments
+- [`log.racket_strategy.md`](log.racket_strategy.md): one short entry per merged PR,
+  newest first, with what changed in the code, tests, and docs, and a link to its
+  entry in the Gdoc
+  - The findings, figures, and numbers go in the Gdoc only, never in both
 
 ## Tasks
 
@@ -104,26 +112,27 @@
 ## Research Questions
 
 - The life of a research question:
-  1. Ask it in the Gdoc, as a comment with an @mention of GP: on the result it is
-     about, or on its line under
+  1. Write it in the
      [Questions for GP](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.xfydadrg3lvc)
-     - One comment per question: the context in one line, the question, the options,
+     list of the Gdoc, under its topic, and not only in a comment, so that it reads
+     on its own (GP's reply on Q1, 2026-11-10)
+     - One item per question: the question, the context in one line, the options,
        and our recommendation
+     - A comment with an @mention of GP can point him to it, but never replaces the
+       item
      - Propose a change of the text in suggestion mode
-  2. Link it from GitHub: one line in the issue, with the link to the Gdoc heading or
-     comment, and no discussion
-  3. Answer it in the comment thread
+  2. Link it from GitHub: one line in the issue, with the link to the Gdoc heading,
+     and no discussion
+  3. Answer it under its item in the list
   4. Decide: a "Decided" bullet under the experiment, with who and when, then resolve
-     the thread
+     its comment thread, if any
   5. Record it in the repo: the log entry of the PR that acts on it links to the
-     decision, a new principle goes in
+     decision in the Gdoc, a new principle goes in
      [`design_principles.explanation.md`](design_principles.explanation.md) with the
      link as its source, and a change of scope goes in the plan
-     - The log part is pending GP:
-       [Q1](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.21d3arlkot6c)
 - Do not write code that depends on an open research question
-- When GP answers on GitHub or in a meeting, reply in the Gdoc thread with the answer
-  and its link, record the decision, and resolve the thread
+- When GP answers on GitHub or in a meeting, add the answer and its link under the
+  item, record the decision, and resolve its comment thread, if any
   - E.g., GP answered Q7 and Q8 on
     [#713](https://github.com/gpsaggese/gpsaggese.github.io/issues/713#issuecomment-6751589012),
     and both decisions are under
@@ -159,13 +168,13 @@
     - [ ] Assumptions: <each new or changed one, with its source (P16)>, or none
     ```
   - Any other PR says so in one line, e.g., "Paper and Gdoc: no change, tests only"
-  - A PR that changes results with no change to the paper, the log, or the Gdoc is a
-    red flag, and the checklist makes it visible
-  - The checklist lives here for now: it can move to the research guide of helpers,
-    or into a skill
-    ([P15](design_principles.explanation.md#p15-put-the-smarts-in-the-skills)), if GP
-    prefers:
-    [Q3](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.21d3arlkot6c)
+  - A PR that changes results with no change to the paper or the Gdoc is a red flag,
+    and the checklist makes it visible
+  - Its general version is in the research guide of helpers, through the fork PR
+    [gpsaggese/helpers#1455](https://github.com/gpsaggese/helpers/pull/1455)
+    ([GP, Q3](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.21d3arlkot6c));
+    it can also become a skill
+    ([P15](design_principles.explanation.md#p15-put-the-smarts-in-the-skills))
 
 ## Getting Started
 
@@ -178,8 +187,8 @@
   - Get familiar with the Claude skills in `.claude/skills/coding*` and
     `.claude/skills/notebook.*`
   - Read all the markdown files in `research/Optimal_strategy_for_racket_sports/`
-- Then read the research Gdoc: the `Research results` tab, then the Questions for GP
-  in the `Project` tab
+- Then read the research Gdoc: the executive summary and the experiments in the
+  `Research results` tab, then the Questions for GP in the `Project` tab
 
 ## GP's Musts
 
