@@ -1240,6 +1240,108 @@ class Test_run_simulation(hunitest.TestCase):
         total_lucky = sum(agent.lucky_events for agent in agents)
         self.assertGreater(total_lucky, 0)
 
+    def test10(self) -> None:
+        """
+        Test that lucky events the agents do not capitalize on are not counted.
+        """
+        # Prepare inputs.
+        n_agents = 10
+        intensity = 0.5
+        iq = 0.0
+        networking = 0.5
+        agents = [
+            rcaoasalcsu.Agent(agent_id, intensity, iq, networking)
+            for agent_id in range(n_agents)
+        ]
+        n_periods = 20
+        n_lucky_events_per_period = 5
+        n_unlucky_events_per_period = 0
+        seed = 42
+        # Prepare outputs.
+        expected_lucky_events = 0
+        expected_capital = 1.0
+        # Run test.
+        rcaoasalcsu.run_simulation(
+            agents,
+            n_periods=n_periods,
+            n_lucky_events_per_period=n_lucky_events_per_period,
+            n_unlucky_events_per_period=n_unlucky_events_per_period,
+            seed=seed,
+        )
+        # Check outputs.
+        # With `iq=0`, no lucky event and no spillover is capitalized on.
+        total_lucky = sum(agent.lucky_events for agent in agents)
+        self.assertEqual(total_lucky, expected_lucky_events)
+        for agent in agents:
+            self.assertEqual(agent.capital, expected_capital)
+
+    def test11(self) -> None:
+        """
+        Test that the lucky events count both the direct events and the
+        spillovers.
+        """
+        # Prepare inputs.
+        n_agents = 10
+        intensity = 0.5
+        iq = 1.0
+        networking = 0.5
+        agents = [
+            rcaoasalcsu.Agent(agent_id, intensity, iq, networking)
+            for agent_id in range(n_agents)
+        ]
+        n_periods = 20
+        n_lucky_events_per_period = 5
+        n_unlucky_events_per_period = 0
+        seed = 42
+        # Prepare outputs.
+        # With `iq=1`, every direct lucky event is capitalized on.
+        n_direct_events = n_periods * n_lucky_events_per_period
+        # Each direct event gives at most one spillover.
+        max_lucky_events = 2 * n_direct_events
+        # Run test.
+        rcaoasalcsu.run_simulation(
+            agents,
+            n_periods=n_periods,
+            n_lucky_events_per_period=n_lucky_events_per_period,
+            n_unlucky_events_per_period=n_unlucky_events_per_period,
+            seed=seed,
+        )
+        # Check outputs.
+        total_lucky = sum(agent.lucky_events for agent in agents)
+        self.assertGreater(total_lucky, n_direct_events)
+        self.assertLessEqual(total_lucky, max_lucky_events)
+
+    @pytest.mark.slow
+    def test12(self) -> None:
+        """
+        Freeze the results of the baseline run: 100 agents, 80 periods, and
+        the default parameters.
+        """
+        # Prepare inputs.
+        n_agents = 100
+        n_periods = 80
+        seed = 42
+        agents = rcaoasalcsu.create_population(n_agents=n_agents, seed=seed)
+        n_digits = 6
+        # Prepare outputs.
+        expected = (
+            "{'n_agents': 100.0, 'mean_capital': 0.888435, "
+            "'median_capital': 0.816072, 'std_capital': 0.365407, "
+            "'min_capital': 0.330285, 'max_capital': 2.573136, "
+            "'capital_range': 7.790659, 'gini_coefficient': 0.217086, "
+            "'top_10_pct_share': 0.18412, 'top_20_pct_share': 0.320693, "
+            "'bottom_50_pct_share': 0.34502, 'mean_lucky_events': 2.32, "
+            "'mean_unlucky_events': 4.0, 'mean_talent_norm': 1.334035}"
+        )
+        # Run test.
+        rcaoasalcsu.run_simulation(agents, n_periods=n_periods, seed=seed)
+        # Check outputs.
+        stats = rcaoasalcsu.generate_summary_statistics(agents)
+        actual = str(
+            {key: round(value, n_digits) for key, value in stats.items()}
+        )
+        self.assert_equal(actual, expected)
+
 
 # #############################################################################
 # Test_run_policy_simulation
@@ -1448,6 +1550,43 @@ class Test_run_policy_simulation(hunitest.TestCase):
         # Check outputs.
         # Agents with negative CATE should get 0 allocation.
         self.assertTrue(rcaoasalcsu.validate_simulation_results(agents))
+
+    def test11(self) -> None:
+        """
+        Test that the performance policy gives the same result as the
+        egalitarian one when all agents start with the same capital.
+        """
+        # Prepare inputs.
+        n_agents = 10
+        seed = 7
+        resource_amount = 10.0
+        n_periods = 10
+        agents_egalitarian = rcaoasalcsu.create_population(
+            n_agents=n_agents, seed=seed
+        )
+        agents_performance = rcaoasalcsu.create_population(
+            n_agents=n_agents, seed=seed
+        )
+        # Run test.
+        rcaoasalcsu.run_policy_simulation(
+            agents_egalitarian,
+            policy="egalitarian",
+            resource_amount=resource_amount,
+            n_periods=n_periods,
+            seed=seed,
+        )
+        rcaoasalcsu.run_policy_simulation(
+            agents_performance,
+            policy="performance",
+            resource_amount=resource_amount,
+            n_periods=n_periods,
+            seed=seed,
+        )
+        # Check outputs.
+        # The capital-weighted shares are equal when all the capitals are 1.0.
+        actual = [_agent_to_str(agent) for agent in agents_performance]
+        expected = [_agent_to_str(agent) for agent in agents_egalitarian]
+        self.assertEqual(actual, expected)
 
 
 # #############################################################################
