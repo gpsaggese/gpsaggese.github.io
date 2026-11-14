@@ -10,3 +10,4 @@ seaborn
 statsmodels
 tqdm
 yfinance==1.7.0
+pytest

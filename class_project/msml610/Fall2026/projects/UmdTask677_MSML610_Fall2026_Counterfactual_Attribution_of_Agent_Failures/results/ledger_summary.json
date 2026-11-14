@@ -1,0 +1,17 @@
+{
+ "source": "runs/api_usage.jsonl (one row per model call; not in git, 3345 rows, 635 KB)",
+ "model": "anthropic/claude-haiku-5-5",
+ "cap_usd": 20.0,
+ "margin_usd": 0.25,
+ "prices_usd_per_mtok": {"input": 0.10, "output": 0.50, "cache_write": "1.25 x input", "cache_read": "0.1 x input"},
+ "phases": {
+  "m1/pilot": {"calls": 37, "prompt_tokens": 63965, "completion_tokens": 6303, "cost_usd": 0.006},
+  "m1/replay": {"calls": 0, "cost_usd": 0.0},
+  "m1/screen": {"calls": 757, "prompt_tokens": 1795379, "completion_tokens": 122012, "cost_usd": 0.1141},
+  "m1_think/pilot": {"calls": 62, "prompt_tokens": 135429, "completion_tokens": 96186, "cost_usd": 0.0525},
+  "m1_think/replay": {"calls": 0, "cost_usd": 0.0},
+  "m1_think/screen": {"calls": 1661, "prompt_tokens": 4315756, "completion_tokens": 2709000, "cost_usd": 1.467},
+  "m1_think/aa": {"calls": 828, "prompt_tokens": 1945858, "completion_tokens": 1809714, "cost_usd": 0.9554}
+ },
+ "total": {"calls": 3345, "prompt_tokens": 8256387, "completion_tokens": 4743215, "cost_usd": 2.5949}
+}
