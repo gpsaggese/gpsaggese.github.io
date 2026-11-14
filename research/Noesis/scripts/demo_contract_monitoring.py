@@ -29,7 +29,7 @@ import research.Noesis.gateway.gateway_providers as rnogapro
 import research.Noesis.prober.prober_runtime as rnoprrun
 import research.Noesis.prober.prober_worker as rnoprwor
 
-_START = datetime.datetime(2026, 1, 1, tzinfo=datetime.timezone.utc)
+_START = datetime.datetime(2026, 1, 1, tzinfo=datetime.UTC)
 _NOW = _START + datetime.timedelta(seconds=60)
 _CHECKER_VERSION = "m2-v1"
 _BANK_VERSION = "v1"
@@ -202,12 +202,15 @@ async def build_report() -> str:
             checker_policy=checker_policy,
             checker_version=_CHECKER_VERSION,
         )
-    published_ids = {report.contract_id for report in result.checker.published_reports}
+    published_ids = {
+        report.contract_id for report in result.checker.published_reports
+    }
     lines = [
         "1) Seeded 4 ACTIVE contracts with buyer evidence.",
         "2) Prober persisted %s scheduled canaries before checker evaluation."
         % len(result.probes.executions),
-        "3) Checker evaluated %s ready windows:" % len(result.checker.evaluations),
+        "3) Checker evaluated %s ready windows:"
+        % len(result.checker.evaluations),
     ]
     for evaluation in result.checker.evaluations:
         report = evaluation.report
@@ -227,7 +230,8 @@ async def build_report() -> str:
             )
         )
     published = ", ".join(
-        "%s:%s" % (report.contract_id, report.verdict.value) for report in sink.reports
+        "%s:%s" % (report.contract_id, report.verdict.value)
+        for report in sink.reports
     )
     lines.extend(
         [
@@ -235,8 +239,10 @@ async def build_report() -> str:
             % len(finalized),
             "5) RecordingVerdictSink received %s actionable reports: %s"
             % (len(sink.reports), published),
-            "   Contract 4 stayed sink-silent because INSUFFICIENT is"
-            " non-actionable.",
+            (
+                "   Contract 4 stayed sink-silent because INSUFFICIENT is"
+                " non-actionable."
+            ),
         ]
     )
     return "\n".join(lines)

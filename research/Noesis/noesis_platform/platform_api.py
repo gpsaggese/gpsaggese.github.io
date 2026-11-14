@@ -8,7 +8,7 @@ caller (`NoesisPlatform`)
     - A per-tier "latest cleared round" cache, standing in for `NoesisMarket`'s
       pricing-dissemination feed (not implemented yet);
       - `GET /rounds/{tier}/latest` reads this cache instead of that pub/sub
-    - A `POST /rounds/clear` endpoint not in `plan.md`'s illustrative
+    - A `POST /rounds/clear` endpoint not in `04-plan.md`'s illustrative
       endpoint list: without it, `GET /contracts/{contract_id}` and `GET
       /rounds/{tier}/latest` could never be populated by an external caller,
       since `OrderBook.clear_round()` is the only thing that produces a
@@ -417,7 +417,7 @@ def create_app(
         - Default: `None`, threaded through to `_MarketState()` which
           resolves it to `round_runner.InMemoryContractStore()`; `main.py` passes
           `postgres_store.PostgresContractStore(connection)` here when
-          `NOESIS_DB_BACKEND=postgres` (see `spec.PR_P2b.md`)
+          `NOESIS_DB_BACKEND=postgres` (see `06-spec.PR_P2b.md`)
     :param credit_ledger: per-account free-credit balances; `POST /bids`
         rejects a bid with an HTTP 400 unless the caller's account can
         cover `n_tasks * p_max`, and `POST /rounds/clear` debits each

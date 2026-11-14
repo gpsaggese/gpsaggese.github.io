@@ -1,0 +1,73 @@
+id,split,label,text
+B-D-01,dev,billing,My card was charged twice for the same order. Please refund the extra charge.
+B-D-02,dev,billing,I need a copy of the invoice for last month's subscription.
+B-D-03,dev,billing,The discount code was accepted but the full amount appeared on my receipt.
+B-D-04,dev,billing,Can you change the payment method on my upcoming renewal?
+B-D-05,dev,billing,I cancelled before renewal yet a new subscription fee posted.
+B-D-06,dev,billing,Please explain the tax line on my latest invoice.
+B-D-07,dev,billing,My refund says completed but the money is not back on my card.
+B-D-08,dev,billing,The annual plan was billed even though I selected monthly billing.
+B-D-09,dev,billing,I need a receipt with my company name for accounting.
+B-D-10,dev,billing,The parcel arrived but I was charged for two items instead of one. Fix the charge.
+B-D-11,dev,billing,My account works but the payment failed and I want to try another card.
+B-D-12,dev,billing,The price at checkout was higher than the quoted price. Please adjust the bill.
+S-D-01,dev,shipping,Where is my parcel? The tracking page has not moved since Monday.
+S-D-02,dev,shipping,The package was marked delivered but I cannot find it at my address.
+S-D-03,dev,shipping,Can I change the delivery address before the box leaves the warehouse?
+S-D-04,dev,shipping,My order has been in transit for two weeks. Please locate it.
+S-D-05,dev,shipping,I received only one of the two boxes in my shipment.
+S-D-06,dev,shipping,Please send the courier tracking number for my replacement item.
+S-D-07,dev,shipping,The delivery date passed and there is no new estimate.
+S-D-08,dev,shipping,I need to arrange a different delivery time with the courier.
+S-D-09,dev,shipping,The tracking number on the dispatch email is invalid.
+S-D-10,dev,shipping,I paid for express delivery but need to know when the package will arrive.
+S-D-11,dev,shipping,The invoice is fine but the parcel went to the wrong building. Please redirect it.
+S-D-12,dev,shipping,The box arrived damaged and I need help with the delivery claim.
+T-D-01,dev,technical,I cannot sign in because the app rejects my password.
+T-D-02,dev,technical,The website shows an error whenever I upload a document.
+T-D-03,dev,technical,Please help me reset two factor authentication on my account.
+T-D-04,dev,technical,The mobile app closes as soon as I open settings.
+T-D-05,dev,technical,My dashboard is blank after the latest update.
+T-D-06,dev,technical,The password reset link opens an expired token page.
+T-D-07,dev,technical,I cannot connect the product to my home network.
+T-D-08,dev,technical,Notifications stopped working after I changed phones.
+T-D-09,dev,technical,The checkout page freezes before I can enter payment details.
+T-D-10,dev,technical,My delivery is fine but the tracking feature in the app crashes. Fix the app.
+T-D-11,dev,technical,The invoice loads as a blank PDF in my browser. Please fix the download.
+T-D-12,dev,technical,The device says software update failed and will not restart.
+B-T-01,test,billing,I see two pending charges for one purchase and need the duplicate reversed.
+B-T-02,test,billing,Please send an itemized bill for the equipment I bought last week.
+B-T-03,test,billing,My trial ended early and I was billed before the date shown in my account.
+B-T-04,test,billing,I returned the item but have not received the promised refund.
+B-T-05,test,billing,Can you apply my credit balance to the next invoice?
+B-T-06,test,billing,The receipt lists the wrong currency for this payment.
+B-T-07,test,billing,Please update the business address printed on future invoices.
+B-T-08,test,billing,My subscription fee went up unexpectedly. Explain the new charge.
+B-T-09,test,billing,I need to dispute a purchase that I did not authorize.
+B-T-10,test,billing,The shipment is delayed but my main request is a refund for the delivery fee.
+B-T-11,test,billing,The app works now. Please correct the amount charged during the outage.
+B-T-12,test,billing,Why was my card billed after the cancellation confirmation?
+S-T-01,test,shipping,The courier says my address is incomplete. How can I correct it?
+S-T-02,test,shipping,When will the second parcel in my order be delivered?
+S-T-03,test,shipping,Tracking shows the box stuck at a sorting center for four days.
+S-T-04,test,shipping,The driver left the package at another apartment. Please help locate it.
+S-T-05,test,shipping,Can you hold my delivery at a pickup point instead?
+S-T-06,test,shipping,I need proof of delivery for the parcel sent yesterday.
+S-T-07,test,shipping,The package was returned to sender before I could receive it.
+S-T-08,test,shipping,Please tell me which carrier has my order now.
+S-T-09,test,shipping,The box came with a broken seal. How do I file a shipping damage report?
+S-T-10,test,shipping,The price is correct but the item was sent to my old address. Redirect it.
+S-T-11,test,shipping,The app shows no delivery updates. I need the actual courier status.
+S-T-12,test,shipping,I need to schedule the delivery for a day when someone is home.
+T-T-01,test,technical,The app keeps logging me out after a few seconds.
+T-T-02,test,technical,I get a server error when I try to save my profile.
+T-T-03,test,technical,My account is locked even after I enter the correct recovery code.
+T-T-04,test,technical,The device will not pair with Bluetooth after the update.
+T-T-05,test,technical,Please fix the broken link in the account activation email.
+T-T-06,test,technical,The desktop client cannot sync my files anymore.
+T-T-07,test,technical,I cannot see any images in the product dashboard.
+T-T-08,test,technical,My verification code never arrives when I try to log in.
+T-T-09,test,technical,The order page is stuck on a spinning icon before payment.
+T-T-10,test,technical,The delivery arrived but the setup wizard fails at step three.
+T-T-11,test,technical,The billing page crashes when I try to download my invoice.
+T-T-12,test,technical,The firmware update repeats forever and never finishes.

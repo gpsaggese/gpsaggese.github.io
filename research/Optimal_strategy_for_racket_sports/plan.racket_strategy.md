@@ -250,6 +250,8 @@
     - Decided ([GP on #789](https://github.com/gpsaggese/gpsaggese.github.io/issues/789#issuecomment-6528212968)): keep the
       model with all the variables, with $v_b$, $v_p$, and $t_r$ as separate
       controls and no ratio slider
+    - Results and figures: the Gdoc,
+      [Experiment 4](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.xvdn4n7zo860)
   - Finding ([#694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694),
     corner sims): the error spread matters most; player speed and ball speed
     matter mainly in one corner, a slow ball with a fast player 1, where deep
@@ -267,6 +269,8 @@
       differs with the player's level
     - GP filed [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723)
       for it; Milestone 2 keeps the spread independent of the ball speed
+    - The plan of #723 and its decisions: the Gdoc,
+      [Experiment 5](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.qrto9so35bnx)
   - **Optimal positioning**: where each player should stand, as a function of the
     ball and of the other player, is left to the RL algorithm later
     - GP was taught to gravitate toward the center, but does not believe it is
@@ -350,28 +354,53 @@
 - [ ] [#670](https://github.com/gpsaggese/gpsaggese.github.io/issues/670):
       generate the paper figures from the notebooks; Figures 3 and 4 come from
       the CSV files that notebook 05 writes
-- [-] [#691](https://github.com/gpsaggese/gpsaggese.github.io/issues/691):
+- [x] [#691](https://github.com/gpsaggese/gpsaggese.github.io/issues/691):
       clean up the docs (specs, notebook names), with
       [#787](https://github.com/gpsaggese/gpsaggese.github.io/issues/787): the
-      phases in this plan, in one PR
+      phases in this plan, in one PR,
+      [PR #809](https://github.com/gpsaggese/gpsaggese.github.io/pull/809)
 
 - Next steps (phase 1, then phase 2):
   - [-] [#694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694):
-        research Gdoc; the corner sims are done and in notebook 05, and the rules
-        for the research Gdoc are still open
+        research Gdoc; the corner sims are done and in notebook 05
+        ([PR #812](https://github.com/gpsaggese/gpsaggese.github.io/pull/812));
+        the research questions and results that lived in GitHub comments are in
+        the Gdoc, and `project_management.explanation.md` follows GP's rules,
+        with a Paper and Gdoc checklist for research PRs; the general rules for
+        the research guide of helpers wait for GP's answers to
+        [Q1 to Q3](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.21d3arlkot6c)
   - [x] [#788](https://github.com/gpsaggese/gpsaggese.github.io/issues/788):
         red to green heatmaps,
         [PR #804](https://github.com/gpsaggese/gpsaggese.github.io/pull/804)
-  - [-] [#789](https://github.com/gpsaggese/gpsaggese.github.io/issues/789):
+  - [x] [#789](https://github.com/gpsaggese/gpsaggese.github.io/issues/789):
         which variables matter, keeping all of them (see the findings above),
-        in notebook 05
+        in notebook 05,
+        [PR #812](https://github.com/gpsaggese/gpsaggese.github.io/pull/812)
   - [ ] [#790](https://github.com/gpsaggese/gpsaggese.github.io/issues/790):
         symbolic regression, for a closed form of these relations
-  - [ ] [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723):
-        model the spread as a function of the ball speed
+  - [x] [#823](https://github.com/gpsaggese/gpsaggese.github.io/issues/823):
+        remove repetition in the code and the tests (GP's review of #804),
+        [PR #844](https://github.com/gpsaggese/gpsaggese.github.io/pull/844)
+  - [-] [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723):
+        model the spread as a function of the ball speed; the plan, its
+        decisions, and its open questions are in the Gdoc,
+        [Experiment 5](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.qrto9so35bnx)
+    - [x] The design principles of the model, from
+          [GP on #723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723#issuecomment-6602349966):
+          `design_principles.explanation.md`,
+          [PR #857](https://github.com/gpsaggese/gpsaggese.github.io/pull/857)
   - [ ] [#786](https://github.com/gpsaggese/gpsaggese.github.io/issues/786):
         model the spread as a function of player 2's movement
   - [x] [#714](https://github.com/gpsaggese/gpsaggese.github.io/issues/714):
         movement in the serving setup; its follow-ups are #786 and #787
-  - [ ] [#713](https://github.com/gpsaggese/gpsaggese.github.io/issues/713):
-        model the RL problem (phase 2)
+  - [-] [#713](https://github.com/gpsaggese/gpsaggese.github.io/issues/713):
+        model the RL problem (phase 2); the Gymnasium tutorial is in
+        [PR #838](https://github.com/gpsaggese/gpsaggese.github.io/pull/838)
+        and [PR #846](https://github.com/gpsaggese/gpsaggese.github.io/pull/846)
+        (both merged); the racket RL env is in notebook 06,
+        `notebooks/racket_sports_06_rl_return.ipynb`
+        ([PR #881](https://github.com/gpsaggese/gpsaggese.github.io/pull/881),
+        merged); its results and decisions are in the Gdoc,
+        [Experiment 6](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.kntokyu5w697),
+        and its open questions under
+        [Questions for GP](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.l217ky1fe8b4)

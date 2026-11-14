@@ -20,12 +20,12 @@ flowchart LR
     grade --> evidence["Server-owned evidence"]
 ```
 
-The complete component diagram is in `design.architecture.md`, under
+The complete component diagram is in `02-design.architecture.md`, under
 **Scheduled capability-measurement flow**.
 
 ## 1. Complete the Noesis Setup
 
-Complete the setup in [`onboarding.md`](onboarding.md), then run the commands
+Complete the setup in [`09-onboarding.md`](09-onboarding.md), then run the commands
 below from the repository root with the Noesis Python environment activated.
 
 ## 2. Run the Automated Model QoS Demo
@@ -85,7 +85,7 @@ examples and require review before execution.
 ## 4. Exercise PostgreSQL Persistence With Fake Providers
 
 Start the local test database as described in
-[`onboarding.md`](onboarding.md#3-setup-macos--linux), then run:
+[`09-onboarding.md`](09-onboarding.md#3-setup-macos--linux), then run:
 
 ```bash
 > pytest -q \

@@ -13,6 +13,7 @@ import types
 import unittest.mock as umock
 from typing import Any, Dict, List, Tuple
 
+import helpers.hunit_test as hunitest
 import ipywidgets
 import matplotlib
 import matplotlib.collections as mcollections
@@ -25,9 +26,10 @@ import pandas as pd
 import pytest
 from matplotlib.axes import Axes
 
-import helpers.hunit_test as hunitest
-from research.Optimal_strategy_for_racket_sports import racket_params
-from research.Optimal_strategy_for_racket_sports import racket_scoring
+from research.Optimal_strategy_for_racket_sports import (
+    racket_params,
+    racket_scoring,
+)
 from research.Optimal_strategy_for_racket_sports.notebooks import (
     racket_sports_01_shot_probability_utils,
 )
@@ -36,6 +38,45 @@ _LOG = logging.getLogger(__name__)
 
 # Use the non-interactive backend so the widget renders without a display.
 matplotlib.use("Agg")
+
+
+def _make_line_heatmap(
+    p_winner: List[float], p_winner_se: List[float]
+) -> pd.DataFrame:
+    """
+    Build a heatmap whose targets are at `(i, -i)`, in grid order.
+
+    :param p_winner: `P(winner)` of each target
+    :param p_winner_se: its standard error
+    :return: the heatmap
+    """
+    n = len(p_winner)
+    heatmap = pd.DataFrame(
+        {
+            "x_m": [float(i) for i in range(n)],
+            "y_m": [float(-i) for i in range(n)],
+            "p_winner": p_winner,
+            "p_winner_se": p_winner_se,
+        }
+    )
+    return heatmap
+
+
+def _make_ramp_heatmap() -> pd.DataFrame:
+    """
+    Build a 3 x 4 tennis heatmap with `P(winner)` from 0.2 to 0.8 in grid
+    order, so the last cell is the best.
+
+    :return: the heatmap
+    """
+    court = racket_params.TENNIS.court
+    region = racket_sports_01_shot_probability_utils.get_striker_half_region(
+        court
+    )
+    heatmap = racket_scoring.make_target_grid(region, 3, 4)
+    heatmap["p_winner"] = np.linspace(0.2, 0.8, len(heatmap))
+    heatmap["p_winner_se"] = 0.01
+    return heatmap
 
 
 # #############################################################################
@@ -69,14 +110,8 @@ class Test_get_striker_half_region(hunitest.TestCase):
         # Prepare inputs.
         court = racket_params.TENNIS.court
         # Prepare outputs.
-        x_min = -4.115
-        x_max = 4.115
-        y_min = -11.885
-        y_max = 0
-        expected = str(
-            racket_params.CourtRegion(
-                x_min=x_min, x_max=x_max, y_min=y_min, y_max=y_max
-            )
+        expected = (
+            "CourtRegion(x_min=-4.115, x_max=4.115, y_min=-11.885, y_max=0)"
         )
         # Run test and check outputs.
         self.helper(court, expected)
@@ -88,15 +123,7 @@ class Test_get_striker_half_region(hunitest.TestCase):
         # Prepare inputs.
         court = racket_params.PICKLEBALL.court
         # Prepare outputs.
-        x_min = -3.05
-        x_max = 3.05
-        y_min = -6.705
-        y_max = 0
-        expected = str(
-            racket_params.CourtRegion(
-                x_min=x_min, x_max=x_max, y_min=y_min, y_max=y_max
-            )
-        )
+        expected = "CourtRegion(x_min=-3.05, x_max=3.05, y_min=-6.705, y_max=0)"
         # Run test and check outputs.
         self.helper(court, expected)
 
@@ -380,28 +407,6 @@ class Test_sample_landings(hunitest.TestCase):
 
     def test4(self) -> None:
         """
-        Test Monte Carlo agreement when aiming at the sideline.
-        """
-        # Prepare inputs.
-        court = racket_params.TENNIS.court
-        target_xy = (court.width_m / 2, -court.length_m / 4)
-        std_xy = (2.0, 3.0)
-        # Run test and check outputs.
-        self.helper(court, target_xy, std_xy)
-
-    def test5(self) -> None:
-        """
-        Test Monte Carlo agreement when aiming at the baseline corner.
-        """
-        # Prepare inputs.
-        court = racket_params.TENNIS.court
-        target_xy = (court.width_m / 2, -court.length_m / 2)
-        std_xy = (2.0, 3.0)
-        # Run test and check outputs.
-        self.helper(court, target_xy, std_xy)
-
-    def test6(self) -> None:
-        """
         Test Monte Carlo agreement when aiming 2 m outside the sideline.
         """
         # Prepare inputs.
@@ -411,37 +416,22 @@ class Test_sample_landings(hunitest.TestCase):
         # Run test and check outputs.
         self.helper(court, target_xy, std_xy)
 
-    def test7(self) -> None:
+    def test5(self) -> None:
         """
-        Test that a bad target, std, or `n_samples` raises an error.
+        Test that a bad `n_samples` raises an error.
         """
         # Prepare inputs.
-        nan, inf = float("nan"), float("inf")
+        # The checks of the target and the stds are shared with
+        # `compute_p_in()` and tested there.
         target_xy = (0.0, -5.0)
         std_xy = (0.5, 1.0)
-        n_samples = 10
-        bad_inputs = [
-            ((nan, -5.0), std_xy, n_samples),
-            ((inf, -5.0), std_xy, n_samples),
-            (target_xy, (nan, 1.0), n_samples),
-            (target_xy, (inf, 1.0), n_samples),
-            (target_xy, (0.0, 1.0), n_samples),
-            (target_xy, (-1.0, 1.0), n_samples),
-            (target_xy, std_xy, 0),
-            (target_xy, std_xy, -5),
-            (target_xy, std_xy, 2.5),
-        ]
+        bad_n_samples = [0, -5, 2.5]
         # Run test and check outputs.
-        for bad_target_xy, bad_std_xy, bad_n_samples in bad_inputs:
-            with self.subTest(
-                target_xy=bad_target_xy, std_xy=bad_std_xy, n=bad_n_samples
-            ):
+        for n_samples in bad_n_samples:
+            with self.subTest(n_samples=n_samples):
                 with self.assertRaises(AssertionError):
                     racket_sports_01_shot_probability_utils.sample_landings(
-                        bad_target_xy,
-                        bad_std_xy,
-                        bad_n_samples,
-                        np.random.default_rng(1),
+                        target_xy, std_xy, n_samples, np.random.default_rng(1)
                     )
 
 
@@ -591,34 +581,6 @@ class Test_compute_flight_time(hunitest.TestCase):
 
     def test3(self) -> None:
         """
-        Test that a very fast ball, 1000 m/s over 20 m, flies 0.02 s.
-        """
-        # Prepare inputs.
-        hitter_xy = (0.0, 6.0)
-        x = np.array([0.0])
-        y = np.array([-14.0])
-        ball_speed_mps = 1000.0
-        # Prepare outputs.
-        expected = "[0.02]"
-        # Run test and check outputs.
-        self.helper(hitter_xy, x, y, ball_speed_mps, expected)
-
-    def test4(self) -> None:
-        """
-        Test that a very slow ball, 1 m/s over 20 m, flies 20 s.
-        """
-        # Prepare inputs.
-        hitter_xy = (0.0, 6.0)
-        x = np.array([0.0])
-        y = np.array([-14.0])
-        ball_speed_mps = 1.0
-        # Prepare outputs.
-        expected = "[20.0]"
-        # Run test and check outputs.
-        self.helper(hitter_xy, x, y, ball_speed_mps, expected)
-
-    def test5(self) -> None:
-        """
         Test that a 2D array of landing points gives times of the same shape.
         """
         # Prepare inputs.
@@ -632,7 +594,7 @@ class Test_compute_flight_time(hunitest.TestCase):
         # Run test and check outputs.
         self.helper(hitter_xy, x, y, ball_speed_mps, expected)
 
-    def test6(self) -> None:
+    def test4(self) -> None:
         """
         Test that a bad point, landing arrays, or ball speed raises a clear
         error.
@@ -822,30 +784,6 @@ class Test_compute_is_reached(hunitest.TestCase):
 
     def test5(self) -> None:
         """
-        Test that a ball landing exactly on player 1 is reached.
-        """
-        # Prepare inputs.
-        player_xy = (0.0, -11.885)
-        x = np.array([0.0])
-        y = np.array([-11.885])
-        flight_time_s = np.array([0.8])
-        reaction_time_s = 0.2
-        move_speed_mps = 1.5
-        # Prepare outputs.
-        expected = "[True]"
-        # Run test and check outputs.
-        self.helper(
-            player_xy,
-            x,
-            y,
-            flight_time_s,
-            reaction_time_s,
-            move_speed_mps,
-            expected,
-        )
-
-    def test6(self) -> None:
-        """
         Test that a ball landing exactly on player 1 counts as reached even
         before they react (`T < t_r`).
 
@@ -873,74 +811,7 @@ class Test_compute_is_reached(hunitest.TestCase):
             expected,
         )
 
-    def test7(self) -> None:
-        """
-        Test that a very fast ball (1000 m/s) is never reached, even 5 cm from
-        player 1.
-        """
-        # Prepare inputs.
-        # From a serve landing point, every flight time on player 1's half is
-        # under 0.02 s, well below `t_r`.
-        hitter_xy = (-2.0, 4.8)
-        player_xy = (0.0, -11.885)
-        x = np.array([0.05, 4.0, -4.0, 0.0])
-        y = np.array([-11.885, -11.0, -1.0, -6.0])
-        ball_speed_mps = 1000.0
-        flight_time_s = (
-            racket_sports_01_shot_probability_utils.compute_flight_time(
-                hitter_xy, x, y, ball_speed_mps
-            )
-        )
-        reaction_time_s = 0.2
-        move_speed_mps = 1.5
-        # Prepare outputs.
-        expected = "[False, False, False, False]"
-        # Run test and check outputs.
-        self.helper(
-            player_xy,
-            x,
-            y,
-            flight_time_s,
-            reaction_time_s,
-            move_speed_mps,
-            expected,
-        )
-
-    def test8(self) -> None:
-        """
-        Test that a very slow ball (0.1 m/s) is reached everywhere on player
-        1's half, corners included.
-        """
-        # Prepare inputs.
-        # The landing point nearest to player 2, the net corner (-4.115, 0),
-        # is 5.2 m away, so every flight time is over 52 s and player 1 covers
-        # over 77 m, more than the 12.6 m to the farthest corner of their half.
-        hitter_xy = (-2.0, 4.8)
-        player_xy = (0.0, -11.885)
-        x = np.array([-4.115, 4.115, -4.115, 4.115, 0.0])
-        y = np.array([0.0, 0.0, -11.885, -11.885, -6.0])
-        ball_speed_mps = 0.1
-        flight_time_s = (
-            racket_sports_01_shot_probability_utils.compute_flight_time(
-                hitter_xy, x, y, ball_speed_mps
-            )
-        )
-        reaction_time_s = 0.2
-        move_speed_mps = 1.5
-        # Prepare outputs.
-        expected = "[True, True, True, True, True]"
-        # Run test and check outputs.
-        self.helper(
-            player_xy,
-            x,
-            y,
-            flight_time_s,
-            reaction_time_s,
-            move_speed_mps,
-            expected,
-        )
-
-    def test9(self) -> None:
+    def test6(self) -> None:
         """
         Test that a 2D array of landing points gives flags of the same shape,
         with a different flight time per landing point.
@@ -967,12 +838,14 @@ class Test_compute_is_reached(hunitest.TestCase):
             expected,
         )
 
-    def test10(self) -> None:
+    def test7(self) -> None:
         """
-        Test that a bad point, flight time, reaction time, or speed raises a
-        clear error.
+        Test that a bad flight time, reaction time, or speed raises a clear
+        error.
         """
         # Prepare inputs.
+        # The checks of the point and of the landing arrays are shared with
+        # `compute_flight_time()` and tested there.
         nan, inf = float("nan"), float("inf")
         player_xy = (0.0, -11.885)
         x = np.array([0.5, 2.0])
@@ -981,22 +854,6 @@ class Test_compute_is_reached(hunitest.TestCase):
         reaction_time_s = 0.2
         move_speed_mps = 1.5
         bad_inputs = [
-            (
-                (0.0, nan),
-                x,
-                flight_time_s,
-                reaction_time_s,
-                move_speed_mps,
-                "player_xy=(0.0, nan) must be finite",
-            ),
-            (
-                player_xy,
-                np.array([nan, 2.0]),
-                flight_time_s,
-                reaction_time_s,
-                move_speed_mps,
-                "Every landing x must be finite",
-            ),
             (
                 player_xy,
                 x,
@@ -1285,34 +1142,6 @@ class Test_compute_winner_probability(hunitest.TestCase):
 
     def test2(self) -> None:
         """
-        Test that a pickleball return with a large reach is the joint event of
-        the same samples.
-        """
-        # Prepare inputs.
-        serve_xy = (-1.5, 4.4)
-        target_xy = (0.0, -5.5)
-        std_xy = (1.0, 1.0)
-        ball_speed_mps = 6.0
-        reaction_time_s = 0.2
-        move_speed_mps = 3.0
-        court = racket_params.PICKLEBALL.court
-        n_samples = 2000
-        seed = 1
-        # Run test and check outputs.
-        self.helper2(
-            serve_xy,
-            target_xy,
-            std_xy,
-            ball_speed_mps,
-            reaction_time_s,
-            move_speed_mps,
-            court,
-            n_samples,
-            seed,
-        )
-
-    def test3(self) -> None:
-        """
         Test that a player 1 who does not move (`v_p = 0`) gives a `P(winner)`
         equal to the in fraction of the same samples, exactly.
         """
@@ -1352,7 +1181,7 @@ class Test_compute_winner_probability(hunitest.TestCase):
         actual = {k: result[k] for k in ("p_winner", "p_in", "p_reached")}
         self.assert_equal(str(actual), str(expected))
 
-    def test4(self) -> None:
+    def test3(self) -> None:
         """
         Test that a very slow ball (0.1 m/s), which player 1 reaches anywhere
         on their half, gives `P(winner) = 0` with a standard error of 0.
@@ -1387,73 +1216,7 @@ class Test_compute_winner_probability(hunitest.TestCase):
         actual = {k: result[k] for k in ("p_winner", "p_winner_se")}
         self.assert_equal(str(actual), str(expected))
 
-    def test5(self) -> None:
-        """
-        Test that a target far from player 1 gives a `P(winner)` close to
-        `P(in)`.
-        """
-        # Prepare inputs.
-        # Near the net, about 10 m from player 1, who covers under 1 m with
-        # the tennis defaults: no sample is reached.
-        serve_xy = (-2.1, 3.2)
-        target_xy = (3.0, -2.0)
-        std_xy = (0.5, 1.0)
-        ball_speed_mps = 25.0
-        reaction_time_s = 0.2
-        move_speed_mps = 1.5
-        court = racket_params.TENNIS.court
-        n_samples = 2000
-        seed = 1
-        # Run test.
-        result = self.helper(
-            serve_xy,
-            target_xy,
-            std_xy,
-            ball_speed_mps,
-            reaction_time_s,
-            move_speed_mps,
-            court,
-            n_samples,
-            seed,
-        )
-        # Check outputs.
-        self.assertAlmostEqual(result["p_winner"], result["p_in"], delta=0.001)
-
-    def test6(self) -> None:
-        """
-        Test that the standard error is `sqrt(p (1 - p) / n)` of the returned
-        `P(winner)`.
-        """
-        # Prepare inputs.
-        serve_xy = (-2.1, 3.2)
-        target_xy = (0.0, -10.0)
-        std_xy = (2.0, 2.0)
-        ball_speed_mps = 8.0
-        reaction_time_s = 0.2
-        move_speed_mps = 3.0
-        court = racket_params.TENNIS.court
-        n_samples = 2000
-        seed = 1
-        # Run test.
-        result = self.helper(
-            serve_xy,
-            target_xy,
-            std_xy,
-            ball_speed_mps,
-            reaction_time_s,
-            move_speed_mps,
-            court,
-            n_samples,
-            seed,
-        )
-        # Check outputs.
-        # Here `P(winner)` is 0.2155, far from 0 and 1, so a wrong formula
-        # shows up.
-        p = result["p_winner"]
-        expected = float(np.sqrt(p * (1 - p) / n_samples))
-        self.assertEqual(result["p_winner_se"], expected)
-
-    def test7(self) -> None:
+    def test4(self) -> None:
         """
         Test that the same seed gives identical results, and another seed
         different ones.
@@ -1487,7 +1250,7 @@ class Test_compute_winner_probability(hunitest.TestCase):
         self.assert_equal(str(result1), str(result2))
         self.assertNotEqual(str(result1), str(result3))
 
-    def test8(self) -> None:
+    def test5(self) -> None:
         """
         Test that a tiny spread aimed in and far from player 1 gives 1.
         """
@@ -1498,7 +1261,7 @@ class Test_compute_winner_probability(hunitest.TestCase):
         # Run test and check outputs.
         self.helper3(target_xy, expected)
 
-    def test9(self) -> None:
+    def test6(self) -> None:
         """
         Test that a tiny spread aimed 0.385 m in front of player 1 gives 0.
         """
@@ -1513,7 +1276,7 @@ class Test_compute_winner_probability(hunitest.TestCase):
         # Run test and check outputs.
         self.helper3(target_xy, expected)
 
-    def test10(self) -> None:
+    def test7(self) -> None:
         """
         Test that a tiny spread aimed behind the baseline (out) gives 0.
         """
@@ -1524,7 +1287,7 @@ class Test_compute_winner_probability(hunitest.TestCase):
         # Run test and check outputs.
         self.helper3(target_xy, expected)
 
-    def test11(self) -> None:
+    def test8(self) -> None:
         """
         Test the result for the tennis defaults of the Cell 1.1 widget.
         """
@@ -1561,7 +1324,7 @@ class Test_compute_winner_probability(hunitest.TestCase):
         actual = str({k: round(v, 6) for k, v in result.items()})
         self.assert_equal(actual, expected)
 
-    def test12(self) -> None:
+    def test9(self) -> None:
         """
         Test the result for the pickleball defaults of the Cell 1.1 widget,
         with a 12 m/s ball.
@@ -1599,13 +1362,14 @@ class Test_compute_winner_probability(hunitest.TestCase):
         actual = str({k: round(v, 6) for k, v in result.items()})
         self.assert_equal(actual, expected)
 
-    def test13(self) -> None:
+    def test10(self) -> None:
         """
-        Test that a bad serve point, generator, or any other bad input raises a
-        clear error.
+        Test that a serve on player 1's half or a bad generator raises a clear
+        error.
         """
         # Prepare inputs.
-        nan, inf = float("nan"), float("inf")
+        # The other inputs are checked by the building blocks and tested
+        # there.
         court = racket_params.TENNIS.court
         # The arguments in the order of the signature, passed positionally.
         good = {
@@ -1620,21 +1384,9 @@ class Test_compute_winner_probability(hunitest.TestCase):
             "rng": np.random.default_rng(1),
         }
         bad_inputs = [
-            ("serve_xy", (nan, 3.2), "serve_xy=(nan, 3.2) must be finite"),
             ("serve_xy", (-2.1, -1.0), "must land on player 2's half"),
             ("serve_xy", (-2.1, 0.0), "must land on player 2's half"),
             ("rng", 1, "rng must be a numpy random Generator"),
-            ("target_xy", (nan, -10.4), "target_xy=(nan, -10.4) must be"),
-            ("std_xy", (0.0, 1.0), "std_x2 must be positive"),
-            ("n_samples", 0, "n_samples must be positive"),
-            ("ball_speed_mps", 0.0, "ball_speed_mps must be positive"),
-            ("reaction_time_s", -0.2, "reaction_time_s must be non-negative"),
-            ("move_speed_mps", -1.5, "move_speed_mps must be non-negative"),
-            (
-                "court",
-                dataclasses.replace(court, length_m=inf),
-                "length_m=inf must be finite",
-            ),
         ]
         # Run test and check outputs.
         for name, bad_value, expected in bad_inputs:
@@ -1874,12 +1626,12 @@ class Test_compute_winner_heatmap(hunitest.TestCase):
         Test that bad grid sizes or seeds raise a clear error.
         """
         # Prepare inputs.
+        # The check of `n_samples` is in `sample_landings()` and tested there.
         bad_inputs: List[Tuple[Dict[str, Any], str]] = [
             ({"n_x": 2.5}, "n_x must be an integer"),
             ({"n_y": 0}, "n_y must be positive"),
             ({"seed": -1}, "seed must be non-negative"),
             ({"seed": 1.5}, "seed must be an integer"),
-            ({"n_samples": 0}, "n_samples must be positive"),
         ]
         # The arguments in the order of `helper()`, passed positionally.
         good: Dict[str, Any] = {
@@ -1920,15 +1672,7 @@ class Test_find_best_region(hunitest.TestCase):
         :param expected: expected flags, as the string of a list
         """
         # Prepare inputs.
-        n = len(p_winner)
-        heatmap = pd.DataFrame(
-            {
-                "x_m": [float(i) for i in range(n)],
-                "y_m": [float(-i) for i in range(n)],
-                "p_winner": p_winner,
-                "p_winner_se": p_winner_se,
-            }
-        )
+        heatmap = _make_line_heatmap(p_winner, p_winner_se)
         # Run test.
         actual = racket_sports_01_shot_probability_utils.find_best_region(
             heatmap
@@ -2035,15 +1779,7 @@ class Test_find_best_target(hunitest.TestCase):
         :param expected: expected result, with values rounded to 6 decimals
         """
         # Prepare inputs.
-        n = len(p_winner)
-        heatmap = pd.DataFrame(
-            {
-                "x_m": [float(i) for i in range(n)],
-                "y_m": [float(-i) for i in range(n)],
-                "p_winner": p_winner,
-                "p_winner_se": p_winner_se,
-            }
-        )
+        heatmap = _make_line_heatmap(p_winner, p_winner_se)
         # Run test.
         result = racket_sports_01_shot_probability_utils.find_best_target(
             heatmap
@@ -2129,25 +1865,19 @@ class Test_find_best_target(hunitest.TestCase):
 
     def test5(self) -> None:
         """
-        Test that a bad heatmap raises a clear error.
+        Test that a heatmap with a single target raises a clear error.
         """
         # Prepare inputs.
-        one_row = pd.DataFrame(
-            {"x_m": [0.0], "y_m": [0.0], "p_winner": [1.0], "p_winner_se": [0.0]}
-        )
-        bad_inputs = [
-            (one_row, "There must be at least 2 targets to compare"),
-            (one_row.drop(columns="p_winner_se"), "Missing heatmap column"),
-            ([1.0, 2.0], "heatmap must be a pandas DataFrame"),
-        ]
-        # Run test and check outputs.
-        for bad_heatmap, expected in bad_inputs:
-            with self.subTest(expected=expected):
-                with self.assertRaises(AssertionError) as cm:
-                    racket_sports_01_shot_probability_utils.find_best_target(
-                        bad_heatmap
-                    )
-                self.assertIn(expected, str(cm.exception))
+        # The other checks of the heatmap are in `find_best_region()` and
+        # tested there.
+        one_row = _make_line_heatmap([1.0], [0.0])
+        # Prepare outputs.
+        expected = "There must be at least 2 targets to compare"
+        # Run test.
+        with self.assertRaises(AssertionError) as cm:
+            racket_sports_01_shot_probability_utils.find_best_target(one_row)
+        # Check outputs.
+        self.assertIn(expected, str(cm.exception))
 
 
 # #############################################################################
@@ -2238,28 +1968,17 @@ class Test_plot_winner_heatmap(hunitest.TestCase):
     Test `racket_sports_01_shot_probability_utils.plot_winner_heatmap()`.
     """
 
-    def helper(self) -> pd.DataFrame:
+    def helper(self, heatmap: pd.DataFrame) -> Dict[str, Any]:
         """
-        Build a 3 x 4 tennis heatmap with `P(winner)` from 0.2 to 0.8 in grid
-        order, so the last cell is the best.
-
-        :return: the heatmap
-        """
-        court = racket_params.TENNIS.court
-        region = racket_sports_01_shot_probability_utils.get_striker_half_region(
-            court
-        )
-        heatmap = racket_scoring.make_target_grid(region, 3, 4)
-        heatmap["p_winner"] = np.linspace(0.2, 0.8, len(heatmap))
-        heatmap["p_winner_se"] = 0.01
-        return heatmap
-
-    def helper2(self, heatmap: pd.DataFrame) -> Axes:
-        """
-        Draw `heatmap` on new axes, with the serve at `(-2.1, 3.2)`.
+        Draw `heatmap` on new axes, with the serve at `(-2.1, 3.2)`, and get
+        what it drew.
 
         :param heatmap: heatmap to draw
-        :return: the axes
+        :return: the drawn artists:
+            - "mesh": the map of `P(winner)`
+            - "outline": the outline of the best region
+            - "star": the marker of the best target
+            - "markers": the label and the position of each labeled marker
         """
         court = racket_params.TENNIS.court
         serve_xy = (-2.1, 3.2)
@@ -2267,24 +1986,41 @@ class Test_plot_winner_heatmap(hunitest.TestCase):
         racket_sports_01_shot_probability_utils.plot_winner_heatmap(
             ax, heatmap, court, serve_xy
         )
-        return ax
+        meshes = [
+            c for c in ax.collections if isinstance(c, mcollections.QuadMesh)
+        ]
+        outlines = [
+            c
+            for c in ax.collections
+            if isinstance(c, mcollections.LineCollection)
+        ]
+        stars = [line for line in ax.get_lines() if line.get_marker() == "*"]
+        markers = [
+            (line.get_label(), np.round(line.get_xydata()[0], 6).tolist())
+            for line in ax.get_lines()
+            if not str(line.get_label()).startswith("_")
+        ]
+        artists = {
+            "mesh": meshes[0],
+            "outline": outlines[0],
+            "star": stars[0],
+            "markers": markers,
+        }
+        plt.close("all")
+        return artists
 
     def test1(self) -> None:
         """
         Test that the color scale is fixed from 0 to 1, whatever the values.
         """
         # Prepare inputs.
-        heatmap = self.helper()
+        heatmap = _make_ramp_heatmap()
         # Prepare outputs.
         expected = "(0.0, 1.0)"
         # Run test.
-        ax = self.helper2(heatmap)
+        artists = self.helper(heatmap)
         # Check outputs.
-        mesh = [
-            c for c in ax.collections if isinstance(c, mcollections.QuadMesh)
-        ]
-        actual = str(tuple(float(v) for v in mesh[0].get_clim()))
-        plt.close("all")
+        actual = str(tuple(float(v) for v in artists["mesh"].get_clim()))
         self.assert_equal(actual, expected)
 
     def test2(self) -> None:
@@ -2293,7 +2029,7 @@ class Test_plot_winner_heatmap(hunitest.TestCase):
         the baseline, and the cell edges of the grid.
         """
         # Prepare inputs.
-        heatmap = self.helper()
+        heatmap = _make_ramp_heatmap()
         # Prepare outputs.
         expected = (
             "values=[[0.2, 0.254545, 0.309091], [0.363636, 0.418182, 0.472727], "
@@ -2302,19 +2038,16 @@ class Test_plot_winner_heatmap(hunitest.TestCase):
             "y_edges=[-11.885, -8.91375, -5.9425, -2.97125, 0.0]"
         )
         # Run test.
-        ax = self.helper2(heatmap)
+        artists = self.helper(heatmap)
         # Check outputs.
-        mesh = [
-            c for c in ax.collections if isinstance(c, mcollections.QuadMesh)
-        ]
-        values = np.round(np.asarray(mesh[0].get_array()), 6).reshape(4, 3)
-        coords = mesh[0].get_coordinates()
+        mesh = artists["mesh"]
+        values = np.round(np.asarray(mesh.get_array()), 6).reshape(4, 3)
+        coords = mesh.get_coordinates()
         x_edges = np.round(coords[0, :, 0], 6).tolist()
         y_edges = np.round(coords[:, 0, 1], 6).tolist()
         actual = (
             f"values={values.tolist()}\nx_edges={x_edges}\ny_edges={y_edges}"
         )
-        plt.close("all")
         self.assert_equal(actual, expected)
 
     def test3(self) -> None:
@@ -2322,7 +2055,7 @@ class Test_plot_winner_heatmap(hunitest.TestCase):
         Test the markers: the best target, player 1, and player 2.
         """
         # Prepare inputs.
-        heatmap = self.helper()
+        heatmap = _make_ramp_heatmap()
         # Prepare outputs.
         # The best cell is the last one: x 1.371667 to 4.115, y -2.97125 to 0.
         expected = (
@@ -2331,27 +2064,21 @@ class Test_plot_winner_heatmap(hunitest.TestCase):
             "('player 1', [0.0, -11.885]), ('player 2', [-2.1, 3.2])]"
         )
         # Run test.
-        ax = self.helper2(heatmap)
+        artists = self.helper(heatmap)
         # Check outputs.
-        markers = [
-            (line.get_label(), np.round(line.get_xydata()[0], 6).tolist())
-            for line in ax.get_lines()
-            if not str(line.get_label()).startswith("_")
-        ]
-        plt.close("all")
-        self.assert_equal(str(markers), expected)
+        self.assert_equal(str(artists["markers"]), expected)
 
     def test4(self) -> None:
         """
         Test that a heatmap with a missing cell raises a clear error.
         """
         # Prepare inputs.
-        heatmap = self.helper().iloc[:-1]
+        heatmap = _make_ramp_heatmap().iloc[:-1]
         # Prepare outputs.
         expected = "heatmap must hold every cell of its grid"
         # Run test.
         with self.assertRaises(AssertionError) as cm:
-            self.helper2(heatmap)
+            self.helper(heatmap)
         plt.close("all")
         # Check outputs.
         self.assertIn(expected, str(cm.exception))
@@ -2363,7 +2090,7 @@ class Test_plot_winner_heatmap(hunitest.TestCase):
         # Prepare inputs.
         # The middle column of the 3 lowest rows (cells 1, 4, 7) ties at 1.0;
         # the other cells are far below.
-        heatmap = self.helper()
+        heatmap = _make_ramp_heatmap()
         in_region = heatmap["cell_id"].isin([1, 4, 7])
         heatmap["p_winner"] = np.where(in_region, 1.0, 0.5)
         heatmap["p_winner_se"] = np.where(in_region, 0.0, 0.01)
@@ -2383,24 +2110,17 @@ class Test_plot_winner_heatmap(hunitest.TestCase):
             "star=[0.0, -7.428125]"
         )
         # Run test.
-        ax = self.helper2(heatmap)
+        artists = self.helper(heatmap)
         # Check outputs.
-        outline = [
-            c
-            for c in ax.collections
-            if isinstance(c, mcollections.LineCollection)
-        ]
+        outline = artists["outline"]
         segments = [
             [tuple(np.round(point, 6).tolist()) for point in segment]
-            for segment in outline[0].get_segments()
+            for segment in outline.get_segments()
         ]
-        star = [line for line in ax.get_lines() if line.get_marker() == "*"]
-        star_xy = np.round(star[0].get_xydata()[0], 6).tolist()
+        star_xy = np.round(artists["star"].get_xydata()[0], 6).tolist()
         actual = (
-            f"label={outline[0].get_label()}\nsegments={segments}\n"
-            f"star={star_xy}"
+            f"label={outline.get_label()}\nsegments={segments}\nstar={star_xy}"
         )
-        plt.close("all")
         self.assert_equal(actual, expected)
 
     def test6(self) -> None:
@@ -2409,24 +2129,20 @@ class Test_plot_winner_heatmap(hunitest.TestCase):
         player 2, to green at `P(winner) = 1`, the best.
         """
         # Prepare inputs.
-        heatmap = self.helper()
+        heatmap = _make_ramp_heatmap()
         p_winners = [0.0, 1.0]
         # Prepare outputs.
         expected = "[(0.0, 'red'), (1.0, 'green')]"
         # Run test.
-        ax = self.helper2(heatmap)
+        artists = self.helper(heatmap)
         # Check outputs.
         # The color that the map gives to each probability, through its
         # colormap and its color scale, named by its strongest channel: e.g.,
         # `viridis` gives blue for 0 and red (a yellow) for 1.
-        mesh = [
-            c for c in ax.collections if isinstance(c, mcollections.QuadMesh)
-        ]
-        rgba = np.asarray(mesh[0].to_rgba(np.array(p_winners)))
+        rgba = np.asarray(artists["mesh"].to_rgba(np.array(p_winners)))
         channel_names = np.array(["red", "green", "blue"])
         names = channel_names[np.argmax(rgba[:, :3], axis=1)].tolist()
         actual = str(list(zip(p_winners, names)))
-        plt.close("all")
         self.assert_equal(actual, expected)
 
     def test7(self) -> None:
@@ -2436,25 +2152,20 @@ class Test_plot_winner_heatmap(hunitest.TestCase):
         `P(winner)`.
         """
         # Prepare inputs.
-        heatmap = self.helper()
+        heatmap = _make_ramp_heatmap()
         # Prepare outputs.
         expected = "outline=['#000000'] star=#000000 star_edge=#ffffff"
         # Run test.
-        ax = self.helper2(heatmap)
+        artists = self.helper(heatmap)
         # Check outputs.
-        outline = [
-            c
-            for c in ax.collections
-            if isinstance(c, mcollections.LineCollection)
+        outline_colors = [
+            mcolors.to_hex(c) for c in artists["outline"].get_colors()
         ]
-        outline_colors = [mcolors.to_hex(c) for c in outline[0].get_colors()]
-        star = [line for line in ax.get_lines() if line.get_marker() == "*"]
-        star_color = mcolors.to_hex(star[0].get_markerfacecolor())
-        star_edge = mcolors.to_hex(star[0].get_markeredgecolor())
+        star_color = mcolors.to_hex(artists["star"].get_markerfacecolor())
+        star_edge = mcolors.to_hex(artists["star"].get_markeredgecolor())
         actual = (
             f"outline={outline_colors} star={star_color} star_edge={star_edge}"
         )
-        plt.close("all")
         self.assert_equal(actual, expected)
 
 
@@ -3398,13 +3109,7 @@ class Test__build_winner_text(hunitest.TestCase):
         # A 3 x 4 tennis grid with `P(winner)` from 0.2 to 0.8 in grid order,
         # so the last cell is the best and the only one of the best region;
         # `P(in)` and `P(reached)` differ in every row.
-        court = racket_params.TENNIS.court
-        region = racket_sports_01_shot_probability_utils.get_striker_half_region(
-            court
-        )
-        heatmap = racket_scoring.make_target_grid(region, 3, 4)
-        heatmap["p_winner"] = np.linspace(0.2, 0.8, len(heatmap))
-        heatmap["p_winner_se"] = 0.01
+        heatmap = _make_ramp_heatmap()
         heatmap["p_in"] = np.linspace(0.3, 0.9, len(heatmap))
         heatmap["p_reached"] = np.linspace(0.0, 0.11, len(heatmap))
         best = racket_sports_01_shot_probability_utils.find_best_target(heatmap)

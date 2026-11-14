@@ -1,8 +1,7 @@
-Modify docs/planning/all.plan_work.how_to_guide.md and 
-the files in 
-
-When creating the files (e.g., `PRD R3, R4, R16`, or
-`research/Estimate_academic_paper_quality/docs/design.architecture.md` make that
-clickable using GitHub links to master, to the branch or to the local files)
-
-Propose a solution before implementing it
+./book_cs_refreshers/lectures_source/Lesson95.packages.md
+./book_springer/package_list.md
+./book_springer/packages.md
+./book_springer/related_packages.md
+./helpers_root/.claude/templates/package.template.md
+./msml610/tutorials/L03_knowledge_representation/packages.md
+./msml610/tutorials/package.template.md

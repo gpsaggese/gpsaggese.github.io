@@ -34,11 +34,11 @@
   default); the Postgres implementation lives in `noesis_platform/postgres_store.py`
 - `supply_adapter.py` imports `batch_call_auction.py` (`Ask`, `OrderBook`) and takes
   the OpenRouter catalog as parsed JSON; the HTTP fetch and the seed file live in
-  `noesis_platform/supply_feed.py` (`docs/decisions.md` D-25 to D-27)
+  `noesis_platform/supply_feed.py` (`docs/03-decisions.md` D25 to D27)
 - `credit_ledger.py` imports `batch_call_auction.py` (`Bid`) and keeps balances
   behind the `CreditLedgerStore` interface (in-memory by default); the gate and
-  the debit are wired in `noesis_platform/platform_api.py` (`docs/decisions.md`
-  D-30, D-31)
+  the debit are wired in `noesis_platform/platform_api.py` (`docs/03-decisions.md`
+  D30, D31)
 
 ## Deterministic Scenario Families (PR_M11)
 
@@ -172,3 +172,24 @@ print(result.round_id, summary.clearing_price, summary.matched_volume)
   supplies contract terms; repeated buyer ids use the last bid's terms
 - PostgreSQL implements the same market-owned `ContractStore` interface in
   `noesis_platform/postgres_store.py`; the runner never imports that backend
+
+## Auction Report Tables (PR_M12)
+
+- For all five scenarios with tables and curves, see the
+  [in-memory notebook](../notebooks/README.md) (PR_M13)
+
+- `auction_report.orders_to_df(bids, asks)` returns bids then asks in input order,
+  with participant, tier, quantity, limit price, and separate buyer/seller terms
+- `contracts_to_df(contracts)` preserves dispatch order and nullable fulfillment
+  outcomes; the demo's fulfillment is mocked
+- Empty tables retain the same columns and nullable types as populated tables
+- Helpers return new DataFrames without modifying inputs or performing I/O
+- `tier_summary_df(result)` reports price, matched volume, reconstructed submitted
+  totals, and separate unmatched bid/ask totals; tiers are sorted by name
+- `unmatched_to_df(result)` reuses the order schema with residual quantities
+- Summary totals are matched plus residual volume, independently checked against
+  original submitted orders in tests; input objects are never mutated
+- `auction_plot.plot_supply_demand(tier, bids, asks, clearing_price)` returns a
+  figure with cumulative task quantities and sorted step prices for one tier
+- Pass the corresponding round summary's price, or `None` when nothing traded;
+  no clearing marker is drawn for a no-trade round. The caller owns file output.

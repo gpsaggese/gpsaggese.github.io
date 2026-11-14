@@ -14,60 +14,70 @@
 # ---
 
 # %% [markdown]
-# # Description
+# # Gymnasium Vector API
 #
-# - Teach the `gymnasium.vector` API surface for running multiple environments in
-#   parallel
-# - Focus on primitives: what they are, how they are created, what state they hold,
-#   and how they compose
-#
+# - This notebook explores the `gymnasium.vector` API for running many copies of an
+#   env as one batch
+# - The pedagogical arc:
+#   - `VectorEnv`, `SyncVectorEnv`, and `gym.make_vec()`
+#   - Batched `reset()` and `step()`, and the autoreset modes
+#   - Batched spaces and `AsyncVectorEnv`
+#   - Vector wrappers and utility functions
+#   - Composition examples: custom wrappers, mixed envs, and selective reset
 # - References:
 #   - API: https://gymnasium.farama.org/api/vector
 #   - GitHub: https://github.com/Farama-Foundation/Gymnasium
 
-# %% [markdown]
-# ## Imports
+# %%
+# !pip install -q "gymnasium[classic-control]==1.3.0" pygame-ce==2.5.8
+
+import importlib.metadata
+
+import gymnasium
+
+print("gymnasium version: ", gymnasium.__version__)
+print("pygame-ce version: ", importlib.metadata.version("pygame-ce"))
 
 # %%
 # %load_ext autoreload
 # %autoreload 2
 
 import logging
-
 import multiprocessing as mp
+import time
+
+import gymnasium as gym
+import numpy as np
+import pandas as pd
+from gymnasium.spaces import Box, Dict, Discrete
+from gymnasium.vector import (
+    AsyncVectorEnv,
+    AutoresetMode,
+    SyncVectorEnv,
+    VectorEnv,
+    VectorObservationWrapper,
+    VectorRewardWrapper,
+)
+from gymnasium.vector.utils import batch_space, create_empty_array, iterate
+from gymnasium.wrappers import RecordEpisodeStatistics, TimeLimit
+from gymnasium.wrappers.vector import ClipReward
 
 # On macOS, the default spawn start method prevents AsyncVectorEnv from working
 # when run as a script. Force fork to make it work in both script and notebook
 # contexts.
-try:
-    mp.set_start_method("fork", force=True)
-except RuntimeError:
-    pass
-
-import numpy as np
-import pandas as pd
-
-import gymnasium as gym
-from gymnasium.vector import (
-    VectorEnv,
-    SyncVectorEnv,
-    AsyncVectorEnv,
-    AutoresetMode,
-    VectorObservationWrapper,
-    VectorRewardWrapper,
-)
-from gymnasium.vector.utils import (
-    batch_space,
-    create_empty_array,
-    iterate,
-)
+mp.set_start_method("fork", force=True)
 
 # %%
+import gymnasium_utils as utils
 import helpers.hdbg as hdbg
+import helpers.hnotebook as hnotebook
 
+# Initialize notebook configuration and logging.
+hnotebook.config_notebook()
 _LOG = logging.getLogger(__name__)
-hdbg.init_logger(verbosity=logging.INFO)
+utils.init_loggers(_LOG)
 
+# Convert `display` into `print()` when running outside IPython.
 try:
     from IPython.display import display
 except ImportError:
@@ -84,7 +94,7 @@ except ImportError:
 #   - RL algorithms sample a batch of transitions per step, making vector envs
 #     essential for efficient training
 #
-# - **Key abstraction**: `gymnasium.vector.VectorEnv` — the abstract base class
+# - **Key abstraction**: `gymnasium.vector.VectorEnv`: the abstract base class
 #   for all vector environments. It mirrors the single-env API (`reset`, `step`,
 #   `render`, `close`) but operates on batches
 #
@@ -95,13 +105,16 @@ except ImportError:
 #     parallelism, useful for I/O-bound envs)
 #
 # - **Mental model**:
-#   ```
-#   reset(seed) → (observations[N], info)
-#   step(actions[N]) → (observations[N], rewards[N], terminations[N], truncations[N], info)
-#   ```
 #   - Every value gains a batch dimension of size `N = num_envs`
 #   - Sub-envs that finish an episode are **auto-reset** on the next step,
 #     keeping the batch full without manual intervention
+#
+# | Object | Description | Comments |
+# |--------|-------------|----------|
+# | `reset(seed)` | Reset every sub-env | Returns `(observations[N], info)` |
+# | `step(actions[N])` | Step every sub-env | Returns `(observations[N], rewards[N], terminations[N], truncations[N], info)` |
+# | `num_envs` | Batch size | `N` |
+# | `single_observation_space`, `observation_space` | Space of one sub-env, and of the batch | Same pair for actions |
 #
 # - **Key additional attributes**:
 #   - `num_envs`: the batch size
@@ -110,7 +123,10 @@ except ImportError:
 #   - `observation_space` / `action_space`: the batched space
 
 # %% [markdown]
-# ## Primitive 1: `VectorEnv`: the Abstract Base Class
+# # Part 1: Creating vector envs
+
+# %% [markdown]
+# ## Cell 1.1: `VectorEnv`: the abstract base class
 #
 # - **Mental model**: an interface that wraps `N` independent `gym.Env`
 #   instances and exposes batch-oriented `reset()` and `step()` methods
@@ -119,11 +135,11 @@ except ImportError:
 #   `AsyncVectorEnv`
 
 # %%
-# VectorEnv is the abstract base class — all methods raise NotImplementedError.
+# VectorEnv is the abstract base class: all methods raise NotImplementedError.
 print("VectorEnv MRO:", [c.__name__ for c in VectorEnv.__mro__])
 
 # %% [markdown]
-# ## Primitive 2: Creating a `SyncVectorEnv` Manually
+# ## Cell 1.2: Create a `SyncVectorEnv` manually
 #
 # - **Mental model**: `SyncVectorEnv` takes a sequence of callables (env
 #   factories), calls each one, and steps them all sequentially inside a single
@@ -151,14 +167,14 @@ print("action_space:", sync_env.action_space)
 sync_env.close()
 
 # %% [markdown]
-# ## Primitive 3: `gym.make_vec()` — The Standard Factory
+# ## Cell 1.3: `gym.make_vec()`: the standard factory
 #
 # - **Mental model**: `gym.make_vec()` is the vector equivalent of
 #   `gym.make()`: it creates `N` copies of a registered environment using a
 #   single ID string and returns a vector environment
-#   - `vectorization_mode="sync"` → `SyncVectorEnv`
-#   - `vectorization_mode="async"` → `AsyncVectorEnv`
-#   - `vectorization_mode=None` (default) → uses `vector_entry_point` if
+#   - `vectorization_mode="sync"` -> `SyncVectorEnv`
+#   - `vectorization_mode="async"` -> `AsyncVectorEnv`
+#   - `vectorization_mode=None` (default) -> uses `vector_entry_point` if
 #     available, otherwise falls back to `"sync"`
 
 # %%
@@ -168,9 +184,7 @@ print("type:", type(vec_env).__name__)
 print("num_envs:", vec_env.num_envs)
 print("action_space:", vec_env.action_space)
 
-# ═══════════════════════════════════════════════════════════════════════════════
 # Single vs batched shape.
-# ═══════════════════════════════════════════════════════════════════════════════
 obs_shape = vec_env.single_observation_space.shape  # one env
 batch_obs_shape = vec_env.observation_space.shape  # batched
 data = {
@@ -182,7 +196,10 @@ display(pd.DataFrame(data))
 vec_env.close()
 
 # %% [markdown]
-# ## Primitive 4: `reset()` — Batch Reset
+# # Part 2: Batch reset and step
+
+# %% [markdown]
+# ## Cell 2.1: `reset()`: batch reset
 #
 # - **Mental model**: calls `reset()` on all sub-environments and concatenates
 #   the observations into a single array
@@ -206,18 +223,18 @@ print("info:", info)
 vec_env.close()
 
 # %%
-# Show that reset seeds are auto-incremented across envs.
+# Show that resetting with the same seed reproduces the same batch of obs.
 vec_env2 = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
 
 obs0, _ = vec_env2.reset(seed=0)
 obs1, _ = vec_env2.reset(seed=0)
-print("Same seed → same first env obs:", np.array_equal(obs0[0], obs1[0]))
-print("Same seed → all env obs identical:", np.array_equal(obs0, obs1))
+print("Same seed -> same first env obs:", np.array_equal(obs0[0], obs1[0]))
+print("Same seed -> all env obs identical:", np.array_equal(obs0, obs1))
 
 vec_env2.close()
 
 # %% [markdown]
-# ## Primitive 5: `step()` — Batch Step
+# ## Cell 2.2: `step()`: batch step
 #
 # - **Mental model**: takes a batch of `N` actions (one per sub-env) and
 #   returns `(observations, rewards, terminations, truncations, info)` where
@@ -228,13 +245,15 @@ vec_env2.close()
 #   (the default `AutoresetMode.NEXT_STEP`)
 #   - This means the batch never shrinks; the agent always gets `N`
 #     observations
-#   - The info dict contains the final observation from the completed episode
-#     under `"final_observation"` and `"final_info"`
+#   - The step that ends an episode returns its final observation as usual, and
+#     the reset observation arrives on the next step, so `info` has no final keys
 
 # %%
 # Step all 3 envs with random actions and inspect the batch returns.
 vec_env = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
 vec_env.reset(seed=42)
+# Seed the action space so that reruns take the same actions.
+vec_env.action_space.seed(0)
 
 # Sample one action per env.
 actions = vec_env.action_space.sample()
@@ -265,9 +284,10 @@ display(pd.DataFrame(data))
 vec_env.close()
 
 # %%
-# Run 10 steps and track per-env episode length.
+# Run up to 100 steps and track per-env episode length.
 vec_env = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
 vec_env.reset(seed=42)
+vec_env.action_space.seed(0)
 
 steps_to_done = [0, 0, 0]
 
@@ -287,7 +307,7 @@ print("Steps until done per env:", steps_to_done)
 vec_env.close()
 
 # %% [markdown]
-# ## Primitive 6: `AutoresetMode` — Controlling Auto-Reset Behaviour
+# ## Cell 2.3: `AutoresetMode`: controlling auto-reset behaviour
 #
 # - **Mental model**: the autoreset mode determines **when** a sub-env that
 #   finished an episode gets reset
@@ -297,7 +317,8 @@ vec_env.close()
 #     after `terminated or truncated`. The agent sees one extra transition with
 #     `reward=0, terminated=False, truncated=False` while the env resets
 #   - `SAME_STEP`: the sub-env is reset **immediately** in the same `step()`
-#     call. The info dict includes `"final_observation"` and `"final_info"`
+#     call. The step returns the reset observation, and the final one moves to
+#     `info["final_obs"]`, next to `info["final_info"]`
 #   - `DISABLED`: no autoreset; the agent must manually call `reset()` with a
 #     `reset_mask` option
 
@@ -324,19 +345,20 @@ class ShortFrozenLake(gym.Env):
     def __init__(self) -> None:
         super().__init__()
         self._step_count = 0
-        self.observation_space = gym.spaces.Discrete(1)
+        # The observation is the step count, so that the reset obs is visible.
+        self.observation_space = gym.spaces.Discrete(4)
         self.action_space = gym.spaces.Discrete(4)
 
     def reset(self, *, seed=None, options=None):
         super().reset(seed=seed)
         self._step_count = 0
-        return np.array(0, dtype=np.int64), {}
+        return self._step_count, {}
 
     def step(self, action):
         self._step_count += 1
         terminated = self._step_count >= 3  # always done after 3 steps
         return (
-            np.array(0, dtype=np.int64),
+            self._step_count,
             0.0,
             terminated,
             False,
@@ -347,15 +369,35 @@ class ShortFrozenLake(gym.Env):
 # Register the toy env.
 gym.register(id="ShortFL-v0", entry_point=ShortFrozenLake)
 
-# Test with NEXT_STEP.
+# Test with NEXT_STEP: the final obs is in `obs`, and `info` has no final keys.
+print("NEXT_STEP")
 vec_next = gym.make_vec("ShortFL-v0", num_envs=2, vectorization_mode="sync")
 vec_next.reset(seed=0)
 for t in range(6):
     obs, rewards, term, trunc, info = vec_next.step(
         vec_next.action_space.sample()
     )
-    print(f"  step={t}: term={term}, trunc={trunc}")
+    print(f"  step={t}: term={term}, obs={obs}, keys={sorted(info)}")
+    hdbg.dassert_not_in("final_obs", info, "NEXT_STEP must not set final keys")
 vec_next.close()
+
+# Test with SAME_STEP: `obs` is the reset obs, and the final obs is in `info`.
+print("SAME_STEP")
+vec_same = SyncVectorEnv(
+    [lambda: ShortFrozenLake() for _ in range(2)],
+    autoreset_mode=AutoresetMode.SAME_STEP,
+)
+vec_same.reset(seed=0)
+for t in range(6):
+    obs, rewards, term, trunc, info = vec_same.step(
+        vec_same.action_space.sample()
+    )
+    final_obs = info.get("final_obs", "N/A")
+    print(f"  step={t}: term={term}, obs={obs}, final_obs={final_obs}")
+    hdbg.dassert_eq(
+        "final_obs" in info, bool(term.any()), "Final keys appear when done"
+    )
+vec_same.close()
 
 # %%
 # With DISABLED, terminated envs stay terminated and must be manually reset.
@@ -378,22 +420,12 @@ for t in range(6):
         obs, info = vec_disabled.reset(seed=0, options={"reset_mask": mask})
         print(f"    -> obs after reset: {obs}")
 vec_disabled.close()
-vec_same = SyncVectorEnv(
-    [lambda: ShortFrozenLake() for _ in range(2)],
-    autoreset_mode=AutoresetMode.SAME_STEP,
-)
-vec_same.reset(seed=0)
-for t in range(6):
-    obs, rewards, term, trunc, info = vec_same.step(
-        vec_same.action_space.sample()
-    )
-    print(
-        f"  step={t}: term={term}, trunc={trunc}, final_obs={info.get('final_observation', 'N/A')}"
-    )
-vec_same.close()
 
 # %% [markdown]
-# ## Primitive 7: Spaces in Vector Environments
+# # Part 3: Spaces and parallelism
+
+# %% [markdown]
+# ## Cell 3.1: Spaces in vector environments
 #
 # - **Mental model**: a vector environment has **four** space attributes:
 #   - `single_observation_space`: what one sub-env returns (e.g., `Box(4,)`)
@@ -415,6 +447,7 @@ print("action_space:            ", vec_env.action_space)
 
 # %%
 # The batched action_space.sample() returns N actions in one call.
+vec_env.action_space.seed(0)
 sample = vec_env.action_space.sample()
 print("action_space.sample():", sample, "shape:", sample.shape)
 
@@ -427,22 +460,21 @@ invalid_actions = np.array([10, 20, 5], dtype=sample.dtype)
 valid2 = vec_env.action_space.contains(invalid_actions)
 print("batch contains(N invalid actions):", valid2)
 
-vec_env.close()
-
 # %%
 # MultiDiscrete action space: each env gets its own Discrete.
 # The batched action space becomes MultiDiscrete([2, 2, 2]) for 3 envs.
+hdbg.dassert(not vec_env.closed, "The env must still be open here")
 print("batched action space type:", type(vec_env.action_space).__name__)
 print("batched action space nvec:", vec_env.action_space.nvec)
 
 vec_env.close()
 
 # %% [markdown]
-# ## Primitive 8: `AsyncVectorEnv` — Multiprocess Parallelism
+# ## Cell 3.2: `AsyncVectorEnv`: multiprocess parallelism
 #
 # - **Mental model**: each sub-env runs in its own `multiprocessing` process.
 #   Observations are communicated back via shared memory or pipes
-#   - True parallelism: wall-clock time ≈ `max(step_time_per_env)` not `sum`
+#   - True parallelism: wall-clock time ~= `max(step_time_per_env)` not `sum`
 #   - Use when envs are I/O-bound or CPU-heavy (e.g., image rendering, physics
 #     simulators)
 #   - Use `shared_memory=True` (default) for large observations (e.g., images)
@@ -450,60 +482,45 @@ vec_env.close()
 
 # %%
 # Create an AsyncVectorEnv with 4 envs.
-# Note: on macOS with spawn start method, AsyncVectorEnv may fail when run as a
-# script. It works correctly inside Jupyter.
-try:
-    async_env = AsyncVectorEnv(
-        [lambda: gym.make("CartPole-v1") for _ in range(4)],
-        shared_memory=True,
-        daemon=True,
-    )
+async_env = AsyncVectorEnv(
+    [lambda: gym.make("CartPole-v1") for _ in range(4)],
+    shared_memory=True,
+    daemon=True,
+)
 
-    print("type:", type(async_env).__name__)
-    print("num_envs:", async_env.num_envs)
-    print("single_observation_space:", async_env.single_observation_space)
+print("type:", type(async_env).__name__)
+print("num_envs:", async_env.num_envs)
+print("single_observation_space:", async_env.single_observation_space)
 
-    # Reset and step work identically to SyncVectorEnv.
-    obs, info = async_env.reset(seed=42)
-    print("obs.shape:", obs.shape)
+# Reset and step work identically to SyncVectorEnv.
+obs, info = async_env.reset(seed=42)
+print("obs.shape:", obs.shape)
 
-    actions = async_env.action_space.sample()
-    obs, rewards, term, trunc, info = async_env.step(actions)
-    print("rewards:", rewards)
+actions = async_env.action_space.sample()
+obs, rewards, term, trunc, info = async_env.step(actions)
+print("rewards:", rewards)
 
-    async_env.close()
-except RuntimeError as exc:
-    print(f"AsyncVectorEnv not available in this context ({exc})")
+async_env.close()
+
 
 # %%
 # Compare sync vs async wall-clock time (3 envs, 100 steps each).
-import time
-
-
 def time_vector_env(vec_env_class, num_envs=3, num_steps=100):
     """
-    Benchmark 100 steps of random actions.
+    Return the seconds taken by `num_steps` steps of random actions.
 
-    :param vec_env_class: SyncVectorEnv or AsyncVectorEnv
+    :param vec_env_class: `SyncVectorEnv` or `AsyncVectorEnv`
+    :param num_envs: number of sub-envs
+    :param num_steps: number of steps
+    :return: elapsed wall-clock seconds
     """
-    if vec_env_class == AsyncVectorEnv:
-        try:
-            env = AsyncVectorEnv(
-                [lambda: gym.make("CartPole-v1") for _ in range(num_envs)],
-                shared_memory=False,
-                daemon=True,
-            )
-        except RuntimeError as exc:
-            print(f"AsyncVectorEnv not available ({exc})")
-            return float("nan")
-    else:
-        env = SyncVectorEnv(
-            [lambda: gym.make("CartPole-v1") for _ in range(num_envs)]
-        )
+    env = vec_env_class(
+        [lambda: gym.make("CartPole-v1") for _ in range(num_envs)]
+    )
     env.reset(seed=0)
     start = time.perf_counter()
     for _ in range(num_steps):
-        obs, rewards, term, trunc, info = env.step(env.action_space.sample())
+        env.step(env.action_space.sample())
     elapsed = time.perf_counter() - start
     env.close()
     return elapsed
@@ -514,7 +531,10 @@ single = gym.make("CartPole-v1")
 single.reset(seed=0)
 start = time.perf_counter()
 for _ in range(100):
-    single.step(single.action_space.sample())
+    _, _, terminated, truncated, _ = single.step(single.action_space.sample())
+    # Reset when an episode ends, as the vector envs do on their own.
+    if terminated or truncated:
+        single.reset()
 single_time = time.perf_counter() - start
 single.close()
 
@@ -536,7 +556,10 @@ data = {
 display(pd.DataFrame(data))
 
 # %% [markdown]
-# ## Primitive 9: `VectorWrapper` — Transforming Vector Environments
+# # Part 4: Wrappers and utilities
+
+# %% [markdown]
+# ## Cell 4.1: `VectorWrapper`: transforming vector environments
 #
 # - **Mental model**: mirrors `gym.Wrapper` but operates on batches
 #   - `VectorActionWrapper`: transforms the action batch before passing to
@@ -548,11 +571,9 @@ display(pd.DataFrame(data))
 # - Pre-built vector wrappers like `ClipReward`, `NormalizeObservation`,
 #   `RecordEpisodeStatistics` exist in `gymnasium.wrappers.vector`
 
+
 # %%
 # Build a custom VectorObservationWrapper that flattens observations.
-from gymnasium.spaces import Box
-
-
 class FlattenObsWrapper(VectorObservationWrapper):
     """
     Flatten batched observations into a 2D array.
@@ -563,20 +584,30 @@ class FlattenObsWrapper(VectorObservationWrapper):
         # Compute the flattened single-observation space.
         single_shape = env.single_observation_space.shape
         flat_size = int(np.prod(single_shape))
-        self._single_flat = Box(
+        self.single_observation_space = Box(
             low=-np.inf,
             high=np.inf,
             shape=(flat_size,),
             dtype=np.float32,
         )
+        # Batch the flattened space too, so that both spaces match the output.
+        self.observation_space = batch_space(
+            self.single_observation_space, env.num_envs
+        )
 
     def observations(self, obs):
-        # obs shape: (N, *single_shape) → (N, flat_size)
+        # obs shape: (N, *single_shape) -> (N, flat_size)
         return obs.reshape(obs.shape[0], -1)
 
 
-# Test the wrapper.
-base_vec = gym.make_vec("CartPole-v1", num_envs=2, vectorization_mode="sync")
+# Test the wrapper. CartPole obs are already flat, so reshape them to (2, 2).
+base_vec = SyncVectorEnv(
+    [
+        lambda: gym.wrappers.ReshapeObservation(gym.make("CartPole-v1"), (2, 2))
+        for _ in range(2)
+    ]
+)
+print("base single_observation_space:", base_vec.single_observation_space)
 wrapped = FlattenObsWrapper(base_vec)
 print("single_observation_space (flattened):", wrapped.single_observation_space)
 print("observation_space (flattened):", wrapped.observation_space)
@@ -584,13 +615,13 @@ print("observation_space (flattened):", wrapped.observation_space)
 obs, _ = wrapped.reset(seed=42)
 print("obs.shape (flattened):", obs.shape)
 print("obs[0]:", obs[0])
+hdbg.dassert_eq(obs.shape, (2, 4), "Each (2, 2) obs must become 4 values")
+hdbg.dassert(wrapped.observation_space.contains(obs), "Obs must fit the space")
 
 wrapped.close()
 
 # %%
 # Use a pre-built vector wrapper (ClipReward).
-from gymnasium.wrappers.vector import ClipReward
-
 vec_env = gym.make_vec("CartPole-v1", num_envs=2, vectorization_mode="sync")
 clipped = ClipReward(vec_env, min_reward=-1.0, max_reward=1.0)
 print("wrapped type:", type(clipped).__name__)
@@ -602,7 +633,7 @@ print("clipped rewards:", rewards)
 clipped.close()
 
 # %% [markdown]
-# ## Primitive 10: Utility Functions
+# ## Cell 4.2: Utility functions
 #
 # - The `gymnasium.vector.utils` module provides helpers for working with
 #   batched spaces
@@ -616,8 +647,6 @@ clipped.close()
 #   - `iterate(space, batch)`: iterate over the first dimension of a batch
 
 # %%
-from gymnasium.spaces import Discrete, Dict
-
 # batch_space: replicate a space N times.
 single = Box(low=0.0, high=1.0, shape=(4,), dtype=np.float32)
 batched = batch_space(single, n=3)
@@ -645,7 +674,10 @@ for i, action in enumerate(iterate(batched_d, actions)):
     print(f"  env {i}: action={action}")
 
 # %% [markdown]
-# ## Composition Example 1: Minimal Vector Environment
+# # Part 5: Composition
+
+# %% [markdown]
+# ## Cell 5.1: Minimal vector environment
 #
 # - Create 2 envs, reset once, step a few times, inspect all return values
 
@@ -653,6 +685,7 @@ for i, action in enumerate(iterate(batched_d, actions)):
 # Minimal vector env workflow.
 vec_env = gym.make_vec("CartPole-v1", num_envs=2, vectorization_mode="sync")
 obs, info = vec_env.reset(seed=0)
+vec_env.action_space.seed(0)
 print("Step  0 obs:\n", obs)
 for t in range(3):
     obs, rewards, term, trunc, info = vec_env.step(vec_env.action_space.sample())
@@ -662,9 +695,10 @@ for t in range(3):
 vec_env.close()
 
 # %% [markdown]
-# ## Composition Example 2: Using a Custom Wrapper
+# ## Cell 5.2: Use a custom wrapper
 #
 # - Apply a `VectorRewardWrapper` that scales rewards by a factor
+
 
 # %%
 class ScaleReward(VectorRewardWrapper):
@@ -680,24 +714,33 @@ class ScaleReward(VectorRewardWrapper):
         return rewards * self._scale
 
 
+# Build two separate envs, so that stepping one does not advance the other.
 vec_env = gym.make_vec("CartPole-v1", num_envs=2, vectorization_mode="sync")
-scaled = ScaleReward(vec_env, scale=0.1)
+scaled = ScaleReward(
+    gym.make_vec("CartPole-v1", num_envs=2, vectorization_mode="sync"), scale=0.1
+)
 
+# Reset both with the same seed and send both the same actions.
 scaled.reset(seed=0)
+vec_env.reset(seed=0)
+scaled.action_space.seed(0)
+actions = scaled.action_space.sample()
 obs_scaled, rewards_scaled, term_scaled, trunc_scaled, info_scaled = scaled.step(
-    scaled.action_space.sample()
+    actions
 )
 print("scaled rewards:", rewards_scaled)
 # Compare with the original (unscaled) rewards from the base env.
-obs_orig, rewards_orig, term_orig, trunc_orig, info_orig = vec_env.step(
-    vec_env.action_space.sample()
-)
+obs_orig, rewards_orig, term_orig, trunc_orig, info_orig = vec_env.step(actions)
 print("original rewards:", rewards_orig)
+hdbg.dassert(np.array_equal(obs_scaled, obs_orig), "Both envs must stay in step")
+hdbg.dassert(
+    np.array_equal(rewards_scaled, 0.1 * rewards_orig), "Rewards must be scaled"
+)
 scaled.close()
 vec_env.close()
 
 # %% [markdown]
-# ## Composition Example 3: Async with Custom Env Configurations
+# ## Cell 5.3: Async with custom env configurations
 #
 # - `AsyncVectorEnv` can create sub-envs with different parameters by passing
 #   different factories
@@ -705,29 +748,26 @@ vec_env.close()
 # %%
 # Two FrozenLake envs with different map sizes via lambda factories.
 # Use observation_mode="different" to allow different obs spaces.
-try:
-    async_mixed = AsyncVectorEnv(
-        [
-            lambda: gym.make("FrozenLake-v1", map_name="4x4", is_slippery=False),
-            lambda: gym.make("FrozenLake-v1", map_name="8x8", is_slippery=False),
-        ],
-        shared_memory=False,
-        daemon=True,
-        observation_mode="different",
-    )
-    print("num_envs:", async_mixed.num_envs)
-    print("single_observation_space:", async_mixed.single_observation_space)
-    print("observation_space:", async_mixed.observation_space)
+async_mixed = AsyncVectorEnv(
+    [
+        lambda: gym.make("FrozenLake-v1", map_name="4x4", is_slippery=False),
+        lambda: gym.make("FrozenLake-v1", map_name="8x8", is_slippery=False),
+    ],
+    shared_memory=False,
+    daemon=True,
+    observation_mode="different",
+)
+print("num_envs:", async_mixed.num_envs)
+print("single_observation_space:", async_mixed.single_observation_space)
+print("observation_space:", async_mixed.observation_space)
 
-    obs, info = async_mixed.reset(seed=42)
-    print("obs:", obs)
+obs, info = async_mixed.reset(seed=42)
+print("obs:", obs)
 
-    async_mixed.close()
-except RuntimeError as exc:
-    print(f"AsyncVectorEnv not available in this context ({exc})")
+async_mixed.close()
 
 # %% [markdown]
-# ## Composition Example 4: `reset_mask` — Selective Reset
+# ## Cell 5.4: `reset_mask`: selective reset
 #
 # - When `AutoresetMode` is not what you need, pass `reset_mask` in `options`
 #   to selectively reset specific sub-envs
@@ -736,6 +776,7 @@ except RuntimeError as exc:
 # Reset only env 0 and 2 out of 3.
 vec_env = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
 vec_env.reset(seed=0)
+vec_env.action_space.seed(0)
 # Step a few times to change state.
 for _ in range(5):
     vec_env.step(vec_env.action_space.sample())
@@ -745,23 +786,22 @@ obs, info = vec_env.reset(
     seed=99,
     options={"reset_mask": np.array([True, False, True])},
 )
-print("obs after selective reset:")
-print(obs)
+print("obs after selective reset:\n", obs)
 # Env 1 (not reset) has advanced 5 more steps; envs 0 and 2 are fresh.
 
 vec_env.close()
 
 # %% [markdown]
-# ## Composition Example 5: Nesting Single-Env Wrappers Inside a Vector Env
+# ## Cell 5.5: Nest single-env wrappers inside a vector env
 #
 # - Standard single-env wrappers can be applied **inside** each sub-env factory
 
+
 # %%
-from gymnasium.wrappers import TimeLimit, RecordEpisodeStatistics
-
-
 def make_wrapped_cartpole():
-    """Create a CartPole with a short time limit."""
+    """
+    Create a CartPole with a short time limit.
+    """
     env = gym.make("CartPole-v1")
     env = TimeLimit(env, max_episode_steps=50)
     env = RecordEpisodeStatistics(env)
@@ -770,7 +810,7 @@ def make_wrapped_cartpole():
 
 vec_env = SyncVectorEnv([make_wrapped_cartpole for _ in range(2)])
 obs, info = vec_env.reset(seed=0)
-done = False
+vec_env.action_space.seed(0)
 for t in range(60):
     obs, rewards, term, trunc, info = vec_env.step(vec_env.action_space.sample())
     if np.any(term | trunc):
@@ -779,7 +819,10 @@ for t in range(60):
 vec_env.close()
 
 # %% [markdown]
-# ## API Patterns
+# # Part 6: API patterns
+
+# %% [markdown]
+# ## Cell 6.1: Vector env patterns
 #
 # - **Factory pattern**: `gym.make_vec(id, num_envs, vectorization_mode)` is
 #   the standard way to create vector envs. Avoid constructing `SyncVectorEnv`
@@ -797,10 +840,12 @@ vec_env.close()
 #   subset of sub-envs without affecting the others
 
 # %% [markdown]
-# ## Interactive Exploration
+# # Part 7: Interactive exploration
+
+# %% [markdown]
+# ## Cell 7.1: Explore vector envs
 #
 # - Try modifying the examples above:
-#   - What happens if you pass `autoreset_mode=AutoresetMode.DISABLED`?
 #   - What shape does `batch_space` produce for a `Dict` space?
 #   - How does `AsyncVectorEnv` handle an environment with a long per-step
 #     computation?
@@ -825,35 +870,13 @@ dict_space = Dict(
 batched = batch_space(dict_space, n=4)
 print("batched Dict space:", batched)
 
-# %%
-# Question: what happens with AutoresetMode.DISABLED?
-vec_disabled = SyncVectorEnv(
-    [lambda: ShortFrozenLake() for _ in range(2)],
-    autoreset_mode=AutoresetMode.DISABLED,
-)
-vec_disabled.reset(seed=0)
-for t in range(6):
-    obs, rewards, term, trunc, info = vec_disabled.step(
-        vec_disabled.action_space.sample()
-    )
-    print(f"  step={t}: term={term}, obs[0]={obs[0]}")
-    # Envs that are done stay terminated — you must manually reset them.
-    just_done = np.where(term | trunc)[0]
-    if len(just_done) > 0:
-        mask = np.zeros(2, dtype=np.bool_)
-        mask[just_done] = True
-        obs, info = vec_disabled.reset(seed=0, options={"reset_mask": mask})
-        print(f"    -> reset envs {just_done}, obs now: {obs}")
-vec_disabled.close()
-
 # %% [markdown]
 # ## Summary: The Mental Model
 #
 # - `VectorEnv` is the batched version of `gym.Env`: `reset()` and `step()`
 #   return arrays with a leading batch dimension of size `num_envs`
-# - Two concrete implementations cover the common use cases:
-#   `SyncVectorEnv` (sequential, simple) and `AsyncVectorEnv` (multiprocess,
-#   parallel)
+#   - Create one with `gym.make_vec()`, or build `SyncVectorEnv` (sequential) or
+#     `AsyncVectorEnv` (multiprocess) directly for per-env parameters
 # - Sub-envs that finish are auto-reset by default (`AutoresetMode.NEXT_STEP`),
 #   keeping the batch full without manual intervention
 # - The four-space contract (`single_observation_space`, `observation_space`,
@@ -862,6 +885,3 @@ vec_disabled.close()
 # - Wrappers work at two levels: standard single-env wrappers inside each
 #   factory, and vector wrappers (`VectorObservationWrapper`,
 #   `VectorRewardWrapper`) around the whole `VectorEnv`
-# - `gym.make_vec()` is the recommended factory; `SyncVectorEnv` /
-#   `AsyncVectorEnv` with explicit factory functions give fine-grained control
-#   over per-env parameters

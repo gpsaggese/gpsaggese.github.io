@@ -46,10 +46,13 @@ jobs:
           submodules: recursive
           fetch-depth: 0
 
+      # Use the same Python version as the thin env, which is stored in
+      # `helpers_root/.python-version`. Changing that file is the only edit
+      # needed to move both to a new version.
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version-file: helpers_root/.python-version
 
       # Some scripts declare their dependencies inline and are meant to be run
       # via `uv run`.
