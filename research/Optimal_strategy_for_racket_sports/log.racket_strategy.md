@@ -50,6 +50,47 @@
     on bandits
 - **Results**: none new; every number comes from the Gdoc or the notebooks
 
+## 2026-11-11: Spread Model for Speed vs Accuracy (#723)
+
+- **Issue**: [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723),
+  part 2: the spread of the return as a function of the ball speed; the plan, its
+  decisions, and GP's answers to Q4 to Q6 are in the Gdoc,
+  [Experiment 5](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.qrto9so35bnx)
+- **What was done**: `notebooks/racket_sports_07_speed_vs_accuracy_utils.py`
+  - `compute_speed_factor()`: the factor of the spread, with 4 shapes (linear,
+    knee, parabola, one-sided parabola)
+  - `build_spread_from_ball_speed()`: `std_x2` and `std_y2` from the ball speed,
+    with a factor per direction, `a_x` for the width and `a_y` for the depth
+  - The model and the notebooks do not change: the builder is for the sweeps only
+    (P1)
+  - Any coefficient of at least 0 is allowed, so a sweep can perturb it (GP, Q4);
+    a factor that is not positive raises, which only the linear shape with `a > 1`
+    can reach
+- **Next**: the sweeps, notebook 07, and Section VII-B of the paper, in one PR that
+  closes #723
+
+## 2026-11-11: GP's Answers on the Research Process (#694)
+
+- **Issue**: [#694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694),
+  last part: GP answered Q1 to Q3 in the Gdoc, under
+  [Research process](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.21d3arlkot6c)
+  - Q1: one Gdoc with several tabs, a raw log with everything and a distilled
+    executive summary, then the paper
+  - Q2: the research Gdocs are in the
+    [`Research projects`](https://drive.google.com/drive/folders/1NQB-LgY6Kn8Pw5Hbnp_1yCzN9HgoDIXe)
+    Drive folder
+  - Q3: a fork PR is fine for the helpers change,
+    [gpsaggese/helpers#1455](https://github.com/gpsaggese/helpers/pull/1455)
+  - In his reply on Q1 (2026-11-10): a new question goes in the Questions for GP
+    list itself, not only in a comment
+- **Docs**:
+  - `project_management.explanation.md`: the Gdoc tabs and the Drive folder; this
+    log keeps one short entry per merged PR, with a link to the Gdoc and no
+    findings; the life of a research question starts in the question list
+  - `design_principles.explanation.md`: P14 names the `Raw log` tab as the log of
+    the experiments
+  - `plan.racket_strategy.md`: #694 done
+
 ## 2026-11-10: Research Questions and Results in the Gdoc (#694)
 
 - **Issue**: [#694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694),
@@ -84,11 +125,10 @@
   ([GP on #713](https://github.com/gpsaggese/gpsaggese.github.io/issues/713#issuecomment-6751589012),
   2026-11-09, recorded under Experiment 6): the layer 3 success criterion is good
   enough (Q7), and PPO stays on the full grid, with no pruning for now (Q8)
-- **Pending GP**
+- **Asked GP**
   ([Research process](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.21d3arlkot6c)):
   Q1, one log or two; Q2, the Drive folder of the research Gdocs; Q3, how the general
-  rules reach the research guide of helpers; the paper checklist lives in
-  `project_management.explanation.md` for now
+  rules reach the research guide of helpers; answered, see the 2026-11-11 entry
 
 ## 2026-11-07: Racket RL Env and Notebook 06 (#713, Layer 3)
 

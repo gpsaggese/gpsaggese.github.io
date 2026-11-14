@@ -160,8 +160,46 @@
 - **Why**: the logistic regression beats p* on the plain hit rate but makes no
   money, because it is right on small moves and wrong on big ones
 - **Alternatives**: plain hit rate only, as in the spec
-- **Status**: proposed. Whether the results hold with a different target is
-  checked in #905
+- **Status**: proposed. The conclusion holds with other targets (#905,
+  `D20`)
+
+### `D20` (Compare four training targets with the same model and trades)
+
+- **Decision**: refit the step 2 linear model on four targets and keep
+  everything else the same: the sign of the move, the sign weighted by |r|,
+  the sign of the moves bigger than the cost only, and the return itself
+  (ridge regression, trading its sign)
+- **Why**: the step 2 model is right on small moves and wrong on big ones,
+  so a target closer to the PnL could do better. Changing only the target
+  shows if the conclusion depends on it
+- **Alternatives**: other models (trees, boosting); a three-class target
+  (up, flat, down); other thresholds for the large moves
+- **Status**: proposed. The 10 bp threshold is the cost, not tuned
+
+## Regimes
+
+### `D18` (Define the regimes from past data only)
+
+- **Decision**: volatility regime from the 7-day volatility against its
+  terciles over the past year (calm, normal, volatile); trend regime from
+  the 7-day return divided by its expected size, t = mom_7d / (vol_7d *
+  sqrt(n)), with |t| > 1 for falling or rising
+- **Why**: a regime must be known at decision time to be usable. Thresholds
+  over the whole sample would use the future, and fixed thresholds from
+  2020-2021 would put most of 2022-2026 in the calm regime
+- **Alternatives**: terciles over the whole sample; a volatility model
+  (e.g., GARCH); more regimes (volume, time of day)
+- **Status**: proposed. Set once, not tuned
+
+### `D19` (Split the step 2 trades by regime instead of refitting)
+
+- **Decision**: keep the step 2 models and trades, and only measure them
+  separately in each regime
+- **Why**: shows where the existing models make or lose money, and keeps
+  the comparison with step 2 direct. Fitting one model per regime would
+  leave fewer data per model and add more choices
+- **Alternatives**: one model per regime; the regime as a feature
+- **Status**: proposed
 
 ## Scope
 

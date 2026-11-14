@@ -362,14 +362,18 @@
       [PR #809](https://github.com/gpsaggese/gpsaggese.github.io/pull/809)
 
 - Next steps (phase 1, then phase 2):
-  - [-] [#694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694):
+  - [x] [#694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694):
         research Gdoc; the corner sims are done and in notebook 05
         ([PR #812](https://github.com/gpsaggese/gpsaggese.github.io/pull/812));
         the research questions and results that lived in GitHub comments are in
         the Gdoc, and `project_management.explanation.md` follows GP's rules,
-        with a Paper and Gdoc checklist for research PRs; the general rules for
-        the research guide of helpers wait for GP's answers to
+        with a Paper and Gdoc checklist for research PRs
+        ([PR #896](https://github.com/gpsaggese/gpsaggese.github.io/pull/896));
+        GP's answers to
         [Q1 to Q3](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.21d3arlkot6c)
+        are in the docs; the general rules for the research guide of helpers
+        are in the fork PR
+        [gpsaggese/helpers#1455](https://github.com/gpsaggese/helpers/pull/1455)
   - [x] [#788](https://github.com/gpsaggese/gpsaggese.github.io/issues/788):
         red to green heatmaps,
         [PR #804](https://github.com/gpsaggese/gpsaggese.github.io/pull/804)
@@ -390,6 +394,12 @@
           [GP on #723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723#issuecomment-6602349966):
           `design_principles.explanation.md`,
           [PR #857](https://github.com/gpsaggese/gpsaggese.github.io/pull/857)
+    - [-] The spread model: `compute_speed_factor()` and
+          `build_spread_from_ball_speed()` in
+          `notebooks/racket_sports_07_speed_vs_accuracy_utils.py`, with 4 shapes
+          and a factor per direction, for the sweeps only (P1)
+    - [ ] The sweeps, notebook 07, and Section VII-B of the paper, with the
+          results in the Gdoc
   - [ ] [#786](https://github.com/gpsaggese/gpsaggese.github.io/issues/786):
         model the spread as a function of player 2's movement
   - [x] [#714](https://github.com/gpsaggese/gpsaggese.github.io/issues/714):
