@@ -201,31 +201,6 @@
 - **Alternatives**: one model per regime; the regime as a feature
 - **Status**: proposed
 
-## Regimes
-
-### `D18` (Define the regimes from past data only)
-
-- **Decision**: volatility regime from the 7-day volatility against its
-  terciles over the past year (calm, normal, volatile); trend regime from
-  the 7-day return divided by its expected size, t = mom_7d / (vol_7d *
-  sqrt(n)), with |t| > 1 for falling or rising
-- **Why**: a regime must be known at decision time to be usable. Thresholds
-  over the whole sample would use the future, and fixed thresholds from
-  2020-2021 would put most of 2022-2026 in the calm regime
-- **Alternatives**: terciles over the whole sample; a volatility model
-  (e.g., GARCH); more regimes (volume, time of day)
-- **Status**: proposed. Set once, not tuned
-
-### `D19` (Split the step 2 trades by regime instead of refitting)
-
-- **Decision**: keep the step 2 models and trades, and only measure them
-  separately in each regime
-- **Why**: shows where the existing models make or lose money, and keeps
-  the comparison with step 2 direct. Fitting one model per regime would
-  leave fewer data per model and add more choices
-- **Alternatives**: one model per regime; the regime as a feature
-- **Status**: proposed
-
 ## Scope
 
 ### `D17` (Describe what happens before asking why)

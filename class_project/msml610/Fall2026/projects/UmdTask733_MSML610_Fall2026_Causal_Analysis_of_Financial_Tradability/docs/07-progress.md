@@ -15,7 +15,7 @@
 | Follow-ups from GP's answers: stale bars, SPY overnight bar, cost sweep, data sources | Nov 12 | In review | |
 | Gap analysis (#904) | Nov 19 | In review | |
 | Step 3: What happens per horizon in different market conditions (no causal analysis yet, `D17`) | Nov 19 | In review | |
-| Robustness: do the results hold with a different target? | Nov 26 | In progress: other targets in review, volatile markets next | #905 |
+| Robustness: do the results hold with a different target? | Nov 26 | In review | #905 |
 | Step 4: Best horizon per regime, walk-forward backtest | Nov 26 | Not started | |
 | Step 5: Write-up, video, final PR | Dec 3 | Not started | |
 
@@ -44,7 +44,7 @@
   regression, the same linear model trained on other targets, and the hit
   rate and PnL of a set of trades at one or several costs
 - `tradability.targets.ipynb`: robustness (#905), the step 2 model trained on
-  four targets
+  four targets, overall and in volatile markets
 - `tradability.models.ipynb`: the three models per horizon, tested on
   2022-2026, with costs from 0 to 20 bp
 - `data_sources.reference.md`: where each dataset comes from and how it is
@@ -124,12 +124,18 @@
     10 bp. Training on the large moves only gives almost the same trades;
     the weighted and return targets are worse at 4h and 1d
     - Data: `tradability.targets.ipynb`
+15. The volatile-market result of step 3 also holds with every target: all
+    four lose money in calm markets at 1h to 1d, and make money in volatile
+    ones (on BTC from 15m to 1d, t-stat 1.3 to 3.3). At 4h in volatile
+    markets each target is positive in 9 of 10 coin-years. Training on the
+    large moves gives the same edge as the sign (4h: 8.1 bp on BTC, 11.1 bp
+    on ETH); the weighted and return targets give less, and on ETH it is
+    within the noise
+    - Data: `tradability.targets.ipynb`, "Part 2" sections
 
 ## Next
 
-1. Robustness, part 2: does the volatile-market result hold with the other
-   targets? (#905)
-2. Step 4: trade only in volatile markets, walk forward, with costs
+1. Step 4: trade only in volatile markets, walk forward, with costs
 
 ## History
 
@@ -151,6 +157,7 @@
 | 2026-11-11 | PR #908 merged ("Very well done") |
 | 2026-11-12 | Step 3: results by regime |
 | 2026-11-12 | Robustness: the step 2 model trained on other targets (#905) |
+| 2026-11-12 | Robustness: the volatile-market result with the other targets (#905) |
 
 ## Open Work
 
