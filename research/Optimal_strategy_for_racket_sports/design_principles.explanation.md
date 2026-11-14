@@ -334,9 +334,11 @@
   than every line of the code
   - The notebooks contain all the details, the log all the experiments, and the
     paper the interesting experiments
-  - Where the experiments are logged, in the log, in the Gdoc, or in both, is pending
-    GP:
-    [Q1](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.21d3arlkot6c)
+  - The log of the experiments is the `Raw log` tab of the research Gdoc, its
+    `Research results` tab distills it into an executive summary, and the paper
+    distills it further
+  - One Gdoc with tabs, not more docs, since splitting things too much creates extra
+    work
 - **Why**:
   - Reviewing the plan and the paper scales better than reviewing every line
   - It keeps the code in sync with what the paper claims
@@ -354,7 +356,9 @@
   and
   [GP on #789](https://github.com/gpsaggese/gpsaggese.github.io/issues/789#issuecomment-6528212968);
   [GP on #694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694#issuecomment-6712939277):
-  control the research through the paper
+  control the research through the paper;
+  [GP's answer to Q1](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.21d3arlkot6c):
+  a raw log with everything, a distilled executive summary, then the paper
 
 ### P15: Put the Smarts in the Skills
 

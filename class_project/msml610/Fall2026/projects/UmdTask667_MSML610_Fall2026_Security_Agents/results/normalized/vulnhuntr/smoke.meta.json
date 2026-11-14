@@ -1,0 +1,35 @@
+{
+    "tool_version": "vulnhuntr ead88c5",
+    "model": "openai/gpt-oss-120b",
+    "base_url": "https://api.groq.com/openai/v1",
+    "configs": [
+        "one container per snippet",
+        "min_confidence=7",
+        "no line numbers: scored at snippet level"
+    ],
+    "started_at": "2026-10-31T16:25:54+00:00",
+    "seconds": 10.29,
+    "cost_usd": 0.0,
+    "tokens_in": null,
+    "tokens_out": null,
+    "n_requests": 2,
+    "n_parse_errors": 0,
+    "n_api_errors": 0,
+    "n_other_errors": 0,
+    "n_below_threshold": 0,
+    "statuses": [
+        {
+            "case_file": "case_f90c5e6a.py",
+            "status": "ok",
+            "returncode": 0,
+            "seconds": 5.27
+        }
+    ],
+    "n_snippets": 1,
+    "snippet_ids": [
+        "SEED-001"
+    ],
+    "agent": "vulnhuntr",
+    "run_id": "smoke",
+    "n_findings": 1
+}

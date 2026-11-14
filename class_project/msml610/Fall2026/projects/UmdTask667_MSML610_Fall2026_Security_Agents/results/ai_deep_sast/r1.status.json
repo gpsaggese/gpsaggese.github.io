@@ -1,0 +1,9 @@
+{
+  "agent": "ai_deep_sast",
+  "run_id": "r1",
+  "status": "aborted",
+  "reason": "Default upstream transport returned malformed JSON; stopped before completion. Not scored.",
+  "model": "openai/gpt-oss-120b",
+  "tool_version": "741a9e025ce0810cf06764f5869e490d1b80278c",
+  "raw_dir": "results/raw/ai_deep_sast/r1"
+}

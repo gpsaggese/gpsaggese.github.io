@@ -1,0 +1,152 @@
+# Copy one of the Dockerfile style and customize it.
+
+# #############################################################################
+# Python 3.12 slim (already has Python and pip).
+# #############################################################################
+
+FROM python:3.12-slim
+
+# Avoid interactive prompts during apt operations.
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install CA certificates (needed for HTTPS), git, basic build tools, and a
+# JDK. `default-jdk` on this Debian 13 image is OpenJDK 21. PySpark 3.5.9 is
+# pinned in requirements.txt and runs on that JDK.
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    ca-certificates \
+    default-jdk \
+    git \
+    graphviz \
+    && rm -rf /var/lib/apt/lists/*
+
+# Point JAVA_HOME at the JDK installed above. `/etc/profile` covers login
+# shells. ENV covers Jupyter and `docker exec`, which do not source it.
+RUN echo "export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))" >> /etc/profile \
+ && echo "export PATH=\$JAVA_HOME/bin:\$PATH" >> /etc/profile
+ENV JAVA_HOME=/usr/lib/jvm/default-java
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
+
+# Local Spark driver heap. Docker Desktop needs roughly 8 GB of memory so
+# this 4 GB heap fits beside the Python process and the OS.
+ENV SPARK_DRIVER_MEMORY=4g
+
+# Install project specific packages. Pin jupytext to avoid jitter in the
+# notebook files due to changing version. Pin ipykernel below 7 since 7.3.0
+# randomly stops answering execute requests, which hangs `jupyter nbconvert
+# --execute` forever.
+RUN mkdir -p /install
+COPY requirements.txt /install/requirements.txt
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir jupyterlab jupyterlab_vim "ipykernel<7" jupytext==1.19.3 -r /install/requirements.txt
+
+# Config.
+COPY etc_sudoers /install/
+COPY etc_sudoers /etc/sudoers
+COPY bashrc /root/.bashrc
+
+# Report package versions.
+COPY version.sh /install/
+RUN /install/version.sh 2>&1 | tee version.log
+
+# Jupyter.
+EXPOSE 8888
+
+# #############################################################################
+# Ubuntu 24.04 + pip to install.
+# #############################################################################
+
+# FROM ubuntu:24.04
+# ENV DEBIAN_FRONTEND noninteractive
+
+# # Install system utilities and Python in a single layer.
+# RUN apt-get update && \
+#     apt-get upgrade -y && \
+#     apt-get install -y --no-install-recommends \
+#       sudo \
+#       curl \
+#       git \
+#       build-essential \
+#       python3 \
+#       python3-pip \
+#       python3-dev \
+#       python3-venv \
+#     && rm -rf /var/lib/apt/lists/*
+
+# # Create virtual environment.
+# RUN python3 -m venv /opt/venv
+
+# # Make the venv the default Python.
+# ENV PATH="/opt/venv/bin:$PATH"
+
+# # Install project specific packages.
+# RUN mkdir /install
+# COPY requirements.txt /install/requirements.txt
+# RUN pip install --upgrade pip && \
+#     pip install --no-cache-dir jupyterlab jupyterlab_vim jupytext -r /install/requirements.txt
+
+# # Config.
+# COPY etc_sudoers /install/
+# COPY etc_sudoers /etc/sudoers
+# COPY bashrc /root/.bashrc
+
+# # Report package versions.
+# COPY version.sh /install/
+# RUN /install/version.sh 2>&1 | tee version.log
+
+# # Jupyter.
+# EXPOSE 8888
+
+# #############################################################################
+# Ubuntu 24.04 + uv.
+# #############################################################################
+
+# FROM ubuntu:24.04
+# ENV DEBIAN_FRONTEND noninteractive
+
+# # Install system utilities and Python in a single layer.
+# RUN apt-get update && \
+#   apt-get upgrade -y && \
+#   apt-get install -y --no-install-recommends \
+#     sudo \
+#     curl \
+#     git \
+#     build-essential \
+#     python3 \
+#     python3-pip \
+#     python3-dev \
+#     python3-venv \
+#     libgomp1 \
+#     g++ \
+#   && rm -rf /var/lib/apt/lists/*
+
+# # Install uv for package management.
+# RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+# ENV PATH="/root/.local/bin:$PATH"
+
+# # Install project specific packages using uv.
+# COPY pyproject.toml uv.lock /app/
+# WORKDIR /app
+# RUN uv sync
+# ENV PATH="/app/.venv/bin:$PATH"
+
+# # Install Jupyter.
+# RUN pip install --upgrade pip && \
+#     pip install --no-cache-dir jupyterlab jupyterlab_vim jupytext
+
+# # Copy project files.
+# COPY . /app
+
+# RUN mkdir /install
+
+# # Config.
+# COPY etc_sudoers /install/
+# COPY etc_sudoers /etc/sudoers
+# COPY bashrc /root/.bashrc
+
+# # Report package versions.
+# COPY version.sh /install/
+# RUN /install/version.sh 2>&1 | tee version.log
+
+# # Jupyter.
+# EXPOSE 8888
