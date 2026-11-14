@@ -177,8 +177,10 @@ class Test_manifests(hunitest.TestCase):
         hash1 = tsets.instance_hash(tenv.sample_instance(cfg, 12))
         hash2 = tsets.instance_hash(tenv.sample_instance(cfg, 12))
         self.assertEqual(hash1, hash2)
-        with self.assertRaises(AssertionError):
-            tsets.sample_checked(13, tsets.main_task_config(13), hash1)
+        # The check is strict on the machine type that wrote the manifests.
+        with umock.patch("platform.machine", return_value="aarch64"):
+            with self.assertRaises(AssertionError):
+                tsets.sample_checked(13, tsets.main_task_config(13), hash1)
 
     def test3(self) -> None:
         """
@@ -198,6 +200,58 @@ class Test_manifests(hunitest.TestCase):
                 tsets.load_set(name, manifest_dir)
             items = tsets.load_set(name, manifest_dir, allow_sealed=True)
         self.assertEqual([seed for seed, _, _ in items], eval_set.seeds)
+
+    def test4(self) -> None:
+        """
+        On another machine type a different hash is one warning, not an error.
+        """
+        cfg = tsets.main_task_config(12)
+        hash1 = tsets.instance_hash(tenv.sample_instance(cfg, 12))
+        # Start from fresh counts; `patch.dict` restores them afterwards.
+        fresh = {"checked": 0, "differ": 0}
+        with (
+            umock.patch("platform.machine", return_value="x86_64"),
+            umock.patch.dict(tsets._OTHER_MACHINE_COUNTS, fresh),
+        ):
+            with self.assertLogs(tsets._LOG, level="WARNING") as logs:
+                # An instance with the right hash, then two with a wrong one:
+                # all three are accepted.
+                tsets.sample_checked(12, cfg, hash1)
+                for seed in (13, 14):
+                    inst = tsets.sample_checked(
+                        seed, tsets.main_task_config(seed), hash1
+                    )
+                    self.assertEqual(inst.seed, seed)
+            self.assertEqual(
+                tsets._OTHER_MACHINE_COUNTS, {"checked": 3, "differ": 2}
+            )
+        # One warning, at the first difference, naming its seed and machine.
+        self.assertEqual(len(logs.records), 1)
+        self.assertIn("Instance 13 ", logs.output[0])
+        self.assertIn("x86_64", logs.output[0])
+
+    def test5(self) -> None:
+        """
+        On another machine type a majority of differences is reported.
+        """
+        cfg = tsets.main_task_config(12)
+        hash1 = tsets.instance_hash(tenv.sample_instance(cfg, 12))
+        fresh = {"checked": 0, "differ": 0}
+        with (
+            umock.patch("platform.machine", return_value="x86_64"),
+            umock.patch.dict(tsets._OTHER_MACHINE_COUNTS, fresh),
+            umock.patch.object(tsets, "_MIN_CHECKED", 3),
+        ):
+            with self.assertLogs(tsets._LOG, level="WARNING") as logs:
+                # Three wrong hashes out of the first three instances.
+                for seed in (13, 14, 15):
+                    tsets.sample_checked(
+                        seed, tsets.main_task_config(seed), hash1
+                    )
+                # Later differences add no warning.
+                tsets.sample_checked(16, tsets.main_task_config(16), hash1)
+        self.assertEqual(len(logs.records), 2)
+        self.assertIn("generator may have changed", logs.output[1])
 
 
 def _tampered_manifest(manifest_dir: str, name: str, change: str) -> None:
@@ -362,6 +416,11 @@ class Test_generator_compatibility(hunitest.TestCase):
         """
         Families on seeds 0-2 and tasks on seeds 11-12 hash as recorded.
         """
+        if not tsets.is_reference_machine():
+            self.skipTest(
+                "The recorded hashes are bit-level and were written on Apple "
+                "silicon (README, 'Other CPUs')"
+            )
         G = tenv.GraphConfig
         configs = {
             "proto": tenv.PROTO_CONFIG,

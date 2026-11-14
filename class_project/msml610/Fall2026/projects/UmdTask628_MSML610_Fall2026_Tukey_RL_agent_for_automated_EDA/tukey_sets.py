@@ -17,7 +17,11 @@ family against the code.
 Hashes are computed inside the project's Docker image; numbers are rounded to
 10 decimals first, so last-bit differences rarely change them (a value within
 about 1e-10 of a rounding boundary still can). The committed hashes were
-computed on arm64 (Apple silicon); no x86-64 run has checked them yet.
+computed on arm64 (Apple silicon). On another machine type the last bits of
+the data depend on the CPU's math kernels, and pgmpy can draw another sample,
+so a few percent of the instances hash differently although the generator is
+the same; there `check_instance()` warns instead of failing (README, "Other
+CPUs").
 
 Import as:
 
@@ -30,6 +34,7 @@ import hashlib
 import json
 import logging
 import os
+import platform
 from typing import Any, Callable, Dict, List, Tuple
 
 import numpy as np
@@ -766,17 +771,88 @@ def sample_checked(
     return inst
 
 
+# Machine types that wrote the manifest hashes: Apple silicon, which reports
+# "aarch64" in the linux/arm64 container and "arm64" on macOS.
+_REFERENCE_MACHINES = ("aarch64", "arm64")
+
+
+def is_reference_machine() -> bool:
+    """
+    Return whether this machine type is the one that wrote the manifests.
+
+    The test is the architecture name, so other arm64 machines count too.
+    """
+    return platform.machine() in _REFERENCE_MACHINES
+
+
+# Hash comparisons made in this process off the reference machine type, and
+# how many of them differed.
+_OTHER_MACHINE_COUNTS = {"checked": 0, "differ": 0}
+# After this many comparisons, a majority of differences is reported: it is
+# more than another CPU explains.
+_MIN_CHECKED = 20
+
+
+def _note_other_machine(seed: int, same: bool) -> None:
+    """
+    Count a hash comparison made off the reference machine type, and warn.
+
+    The first difference in a process gives one warning. A second warning
+    follows if most of the first `_MIN_CHECKED` instances differ, since a few
+    percent is what another CPU explains and more points to a changed
+    generator.
+
+    :param seed: instance seed
+    :param same: whether the instance's hash equals the manifest's
+    """
+    counts = _OTHER_MACHINE_COUNTS
+    counts["checked"] += 1
+    if not same:
+        counts["differ"] += 1
+        if counts["differ"] == 1:
+            _LOG.warning(
+                "Instance %s hashes differently from its manifest on this "
+                "machine type (%s). The manifests were written on Apple "
+                "silicon; elsewhere the last bits of the data depend on the "
+                "CPU's math kernels and pgmpy can draw another sample, so a "
+                "few percent of the instances are expected to differ. "
+                "Continuing; see README, 'Other CPUs'",
+                seed,
+                platform.machine(),
+            )
+    if (
+        counts["checked"] == _MIN_CHECKED
+        and 2 * counts["differ"] > _MIN_CHECKED
+    ):
+        _LOG.warning(
+            "%s of the first %s instances hash differently from their "
+            "manifests: more than another CPU explains, so the generator "
+            "may have changed",
+            counts["differ"],
+            _MIN_CHECKED,
+        )
+
+
 def check_instance(inst: tenv.Instance, expected_hash: str) -> None:
     """
     Check that an instance is the one its set manifest recorded.
 
+    On the machine type that wrote the manifests a different hash means the
+    generator changed, and the check fails. On any other machine type the
+    same generator gives a different hash for a few percent of the instances,
+    so a difference is counted and warned about there, not refused.
+
     :param inst: sampled instance
     :param expected_hash: hash recorded in the manifest
     """
-    hdbg.dassert_eq(
-        instance_hash(inst),
-        expected_hash,
-        "Instance %s differs from its manifest: the generator changed",
-        inst.seed,
-    )
+    actual = instance_hash(inst)
+    if is_reference_machine():
+        hdbg.dassert_eq(
+            actual,
+            expected_hash,
+            "Instance %s differs from its manifest: the generator changed",
+            inst.seed,
+        )
+    else:
+        _note_other_machine(inst.seed, actual == expected_hash)
     check_semantics(inst, expected_hash)

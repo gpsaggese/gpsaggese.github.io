@@ -116,9 +116,16 @@ class Test_run_method(hunitest.TestCase):
         eval_set = tsets.EVAL_SETS["V_m2_A0"]
         seed = eval_set.seeds[0]
         cfg = tsets.TASKS[eval_set.task](seed)
-        for method, params in (("proto_scripted", {}), ("pc", {"alpha": 0.05})):
-            with self.assertRaises(AssertionError, msg=method):
-                tbench.run_method(method, params, cfg, seed, expected_hash="0")
+        # The check is strict on the machine type that wrote the manifests.
+        with umock.patch("platform.machine", return_value="aarch64"):
+            for method, params in (
+                ("proto_scripted", {}),
+                ("pc", {"alpha": 0.05}),
+            ):
+                with self.assertRaises(AssertionError, msg=method):
+                    tbench.run_method(
+                        method, params, cfg, seed, expected_hash="0"
+                    )
 
     def test3(self) -> None:
         """
@@ -162,10 +169,13 @@ class Test_run_method(hunitest.TestCase):
             "V_m2_A0", "pc", {"alpha": 0.05}, _MANIFEST_DIR
         )
         set_name, method, params, seed, _ = tasks[0]
-        with self.assertRaises(AssertionError):
-            tbench.run_tasks(
-                [(set_name, method, params, seed, "0")], n_workers=1
-            )
+        # The check is strict on the machine type that wrote the manifests.
+        # The worker sees the patch because the pool forks this process.
+        with umock.patch("platform.machine", return_value="aarch64"):
+            with self.assertRaises(AssertionError):
+                tbench.run_tasks(
+                    [(set_name, method, params, seed, "0")], n_workers=1
+                )
 
     def test6(self) -> None:
         """
@@ -181,6 +191,13 @@ class Test_run_method(hunitest.TestCase):
         items = tsets.load_set("B_m2_D", _MANIFEST_DIR)[:2]
         mismatches = []
         for method, values in sorted(stored["methods"].items()):
+            if (
+                method == "var_sort_regress"
+                and not tsets.is_reference_machine()
+            ):
+                # On standardized data every variance is 1 up to rounding
+                # noise, so this method's order depends on the CPU.
+                continue
             params = tbench.FIXED.get(method, None)
             if params is None:
                 params = tuned[method]["params"]
