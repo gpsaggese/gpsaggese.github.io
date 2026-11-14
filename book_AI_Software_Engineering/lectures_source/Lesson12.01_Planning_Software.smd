@@ -56,11 +56,12 @@
   - It rarely stops to ask unless an instruction tells it to
   - A wrong assumption compounds in every commit downstream
 
-// TODO(gp): Check the cache example: it is an illustration, not taken from a
-// source
-- @Example@: _"add a cache to the paper resolver"_ leaves open
-  - In memory or on disk? Per run or across runs?
-  - What happens on a stale entry, a failed call, a rerun?
+// TODO(gp): Check the rate limit example: the open choices are an
+// illustration, not taken from a source
+- @Example@: _"add rate limiting to `shortlink`"_ leaves open
+  - Per client IP or per endpoint? How many requests per minute?
+  - In memory, or shared by all the processes of the service?
+  - What does a blocked client get: a `429`, a delay, a ban?
   - Each open choice is a guess, and the PR builds on the guess
 
 - @Comparison@:
@@ -91,35 +92,39 @@
 - @Key idea@: an agent can draft a plan in minutes, but only a human can decide
   that it is the right plan
 
-* A Running Example: Estimate Paper Quality
-// From: research/Estimate_academic_paper_quality/docs/04-plan.md:64 '## Roadmap'
-// From: research/Estimate_academic_paper_quality/docs/07-progress.md:120 '## History'
+* A Running Example: `shortlink`
+// From: book_AI_Software_Engineering/running_example.md:20 '## What It Is'
+// From: book_AI_Software_Engineering/running_example.md:70 '## Chapter Fit'
 
+// TODO(gp): The shortlink planning docs do not exist yet: the requirement,
+// decision, and PR ids and the numbers of this lesson are illustrative. Sync
+// them with the docs once they are written
 ::: columns
 :::: {.column width=50%}
-- @Example@: a pipeline in this repo that turns a list of papers into a JSON
-  report of candidate trading strategies
-  - Four stages: resolve, download, extract, and report
+- @Example@: `shortlink`, a small Python HTTP service with SQLite storage that
+  maps a short code to a URL
+  - Starter `v0`: create, redirect, stats, and health endpoints
+  - The project: add custom aliases, rate limiting, and click analytics
 
-- @Components@: every planning doc of this lesson exists for it
+- @Components@: every planning doc of this lesson is written for this project
 
-- @Remark@: it was also the running example of the docs lesson
-  - Here the focus moves from what each doc contains to how the docs drive
-    the work
+- @Remark@: the same service runs through the whole book
+  - Here the focus moves from its code to how the docs plan its next
+    features
 ::::
 :::: {.column width=50%}
 
 ```{=typst}
 #styled-table(
-  headers: ("Doc", "Size"),
+  headers: ("Doc", "Content"),
   rows: (
-    (raw("01-prd.md"), "20 requirements, 3 success metrics"),
-    (raw("02*-design.*.md"), "1 overview, 7 components"),
-    (raw("03-decisions.md"), "38 decisions"),
-    (raw("04-plan.md"), "4 versions, 27 PRs, 6 unscheduled"),
-    (raw("07-progress.md"), "8 findings, 12 history rows"),
+    (raw("01-prd.md"), "Requirements, non-goals, 3 success metrics"),
+    (raw("02*-design.*.md"), "1 overview, 5 components"),
+    (raw("03-decisions.md"), "Alias rules, limiter store, click writes"),
+    (raw("04-plan.md"), "4 versions, 14 PRs"),
+    (raw("07-progress.md"), "Findings with numbers, dated history"),
   ),
-  caption: "The planning docs of Estimate Paper Quality",
+  caption: "The planning docs of the shortlink features",
   col-widths: (1.35fr, 1.5fr),
 )
 ```
@@ -142,8 +147,8 @@
   - _PR_: the unit of review, one or more per task
   - _Commit_: what lands after a human approves the PR
 
-- @Example@: _"What if we turn our paper list into a report of strategies?"_
-  is an idea; Estimate Paper Quality is the project; `PR_T1` is a PR
+- @Example@: _"What if users could pick their own short codes?"_ is an idea;
+  the new features of `shortlink` are the project; `PR_T1` is a PR
 
 - @Key idea@: planning is the work between the idea and the first PR, and it
   decides how many PRs there are and in which order
@@ -340,20 +345,20 @@ caption=The four phases of a project (teal), each passed only through a human ga
   looked at the alternatives
 
 * Requirements That a Test Can Check
-// From: research/Estimate_academic_paper_quality/docs/01-prd.md:66 '### `R5` (Unresolved or Ambiguous Line)'
-// From: research/Estimate_academic_paper_quality/docs/01-prd.md:102 '### `R11` (Rerun Skips Converted Papers)'
+// From: book_AI_Software_Engineering/running_example.md:20 '## What It Is'
 
 - @Problem@: a requirement that no test can check is a wish, and an agent
   implements a wish in any way it likes
 
 - @Comparison@:
-  - _Bad_: _"the pipeline handles bad input gracefully"_
-  - _Good_: `R5`: _"when a line matches no paper or more than one paper, the
-    pipeline marks the line as unresolved, lists the candidates, and goes on
-    with the other lines"_
-  - _Bad_: _"reruns are fast"_
-  - _Good_: `R11`: _"a rerun does not download or convert again a paper whose
-    PDF and markdown already exist"_
+  - _Bad_: _"alias conflicts are handled gracefully"_
+  - _Good_: `R3`: _"when a user asks for an alias that already exists,
+    `POST /links` returns `409`, and the existing link still redirects to its
+    URL"_
+  - _Bad_: _"the service resists abuse"_
+  - _Good_: `R7`: _"a client that sends more than 10 `POST /links` in one
+    minute gets `429` with a `Retry-After` header, and other clients still
+    succeed"_
 
 - @Intuition@: each good requirement names an input, an observable output, and
   a condition, so the test writes itself
@@ -361,24 +366,23 @@ caption=The four phases of a project (teal), each passed only through a human ga
 - @Key idea@: if you cannot write the test, you cannot review the PR
 
 * Non-Goals and Success Metrics
-// From: research/Estimate_academic_paper_quality/docs/01-prd.md:199 '## Non-Goals'
-// From: research/Estimate_academic_paper_quality/docs/01-prd.md:215 '## Success Metrics'
+// From: book_AI_Software_Engineering/running_example.md:20 '## What It Is'
 
 - @Motivation@: an agent extends the scope whenever the scope is silent
   - A non-goal is a requirement that says _"stop here"_
 
-- @Examples@: three non-goals of Estimate Paper Quality
-  - Does not search for papers: it works only on the list from the user
-  - Does not check that the reported results are true
-  - Does not combine the features into a total score, nor rank the papers
+- @Examples@: three non-goals of the `shortlink` features
+  - No user accounts: the rate limit keys on the client IP
+  - No check of a target URL against a list of phishing sites
+  - No tracking of single visitors: analytics count clicks per link and day
 
 - @Examples@: its three success metrics
-  - _Resolution accuracy_: at least 95% of the lines of a hand-labeled list
-    resolve to the right paper
-  - _Download coverage_: at least 80% of the papers with a public PDF yield a
-    PDF and a markdown file
-  - _Extraction accuracy_: at least 90% of the Sharpe ratios match a
-    researcher, on 20 labeled papers
+  - _Redirect latency_: with analytics on, the p95 of `GET /{code}` stays
+    under 10 ms, on a replay of 10,000 requests
+  - _Click accuracy_: the stats endpoint matches a replay of 10,000 clicks
+    within 1%
+  - _Flood containment_: 1,000 `POST /links` from one client create at most 10
+    links per minute, and a second client sees no `429`
 
 - @Remark@: a success metric becomes a version of the plan: `v0.4` exists only
   to measure these three numbers
@@ -398,8 +402,8 @@ caption=The four phases of a project (teal), each passed only through a human ga
   5. Write one `02.<N>-design.<component>.md` per component
   6. Record each non-obvious choice in `03-decisions.md`
 
-- @Example@: the design of Estimate Paper Quality splits it into 7 components,
-  from the pipeline driver to the report, each with its own design doc
+- @Example@: the design of `shortlink` splits it into 5 components (API,
+  service, storage, rate limiter, and analytics), each with its own design doc
 
 - @Remark@: the design rules themselves are the topic of Lesson 13.01
 
@@ -467,7 +471,7 @@ caption=The four phases of a project (teal), each passed only through a human ga
 
 * Versions That Run
 // From: .claude/skills/project.create_plan/SKILL.md:32 '## Split Into Versions'
-// From: research/Estimate_academic_paper_quality/docs/04-plan.md:64 '## Roadmap'
+// From: book_AI_Software_Engineering/running_example.md:20 '## What It Is'
 
 - @Definition@: a **version** is a set of PRs whose result a person can run or
   demo
@@ -489,11 +493,11 @@ digraph Versions {
 
     // version : blue | measurement : green
 
-    V1 [label=<<b>v0.1</b> (12 PRs)<br/>clean reference list>,
+    V1 [label=<<b>v0.1</b> (5 PRs)<br/>custom aliases>,
         fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
-    V2 [label=<<b>v0.2</b> (3 PRs)<br/>PDF and markdown on disk>,
+    V2 [label=<<b>v0.2</b> (3 PRs)<br/>rate limiting>,
         fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
-    V3 [label=<<b>v0.3</b> (10 PRs)<br/>report of strategies>,
+    V3 [label=<<b>v0.3</b> (4 PRs)<br/>click analytics>,
         fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
     V4 [label=<<b>v0.4</b> (2 PRs)<br/>measured success metrics>,
         fillcolor="#A9DDB0", color="#4F9A5C", fontcolor="#1F4E2E"];
@@ -502,18 +506,18 @@ digraph Versions {
 }
 ```
 label=fig:versions
-caption=The four versions of Estimate Paper Quality: three deliver a runnable pipeline (blue), and the last one measures the PRD metrics (green)
+caption=The four versions of the shortlink features: three deliver a feature that runs (blue), and the last one measures the PRD metrics (green)
 
 - @Intuition@: each version ends on something a user can try, so feedback
   arrives after weeks, not after the whole project
-  - `v0.1` already turns a messy list into `references.md` and `issues.csv`
+  - `v0.1` already lets a user create `/my-talk` instead of a random code
 
 - @Key idea@: order versions so each needs only the versions before it, and
   plan the next one in detail and the later ones as a few bullets
 
 * Anatomy of a PR Entry
 // From: .claude/skills/project.rules.md:306 '## Format a PR Entry'
-// From: research/Estimate_academic_paper_quality/docs/04-plan.md:317 '### `PR_T1`: [ ] Shared Types of the Resolve Stage and the Import Graph Test'
+// From:
 
 ::: columns
 :::: {.column width=45%}
@@ -532,11 +536,11 @@ caption=The four versions of Estimate Paper Quality: three deliver a runnable pi
 \begingroup \scriptsize
 ```text
   ### PR_T1: [ ] Shared Types
-  - Background: no code exists
+  - Background: v0 passes dicts
   - Changes:
-    - Add epq_types.py
+    - Add shortlink_types.py
     - Add an import graph test
-  - Decisions: D22
+  - Decisions: D2
   - Spec: needed
   - Unit tests:
     - A field cannot be set
@@ -558,9 +562,10 @@ caption=The four versions of Estimate Paper Quality: three deliver a runnable pi
   2. Among independent PRs, by increasing complexity, starting with the highest
      design confidence
 
-- @Example@: `v0.1` starts with `PR_H1` (a public helper for the file names)
-  and `PR_T1` (the shared types), since later PRs use the names and the types,
-  and ends with `PR_P1` (the CLI), which calls the stages built before it
+- @Example@: `v0.1` starts with `PR_T1` (the shared types) and `PR_S1` (an
+  `alias` column in storage), since later PRs use the types and the column,
+  and ends with `PR_P1` (the `alias` field of `POST /links`), which calls the
+  code built before it
 
 - @Techniques@: keep the plan honest about the future
   - Write the PR entries of the next version in detail, with dependencies and
@@ -575,8 +580,7 @@ caption=The four versions of Estimate Paper Quality: three deliver a runnable pi
 
 * Open Questions Stay in the Plan
 // From: .claude/skills/project.rules.md:264 '## Structure the Plan File'
-// From: research/Estimate_academic_paper_quality/docs/04-plan.md:251 '## Evaluation'
-// From: research/Estimate_academic_paper_quality/docs/04-plan.md:983 '## Unscheduled: Pipeline'
+// From:
 
 - @Problem@: an open question that lives only in a chat thread is answered by
   the agent, with a guess, in the middle of a PR
@@ -585,14 +589,15 @@ caption=The four versions of Estimate Paper Quality: three deliver a runnable pi
   - Tag with `-> Project` a question that needs its own project
   - A blocked PR names the question that blocks it
 
-- @Example@: _Evaluation_ of Estimate Paper Quality
-  - Open question 1: _"Who labels the input list and the 20 papers, and where
-    do the labels live?"_
+- @Example@: _Evaluation_ of the `shortlink` features
+  - Open question 1: _"Which machine replays the 10,000 requests, and who
+    records the traffic that it replays?"_
   - `PR_V1` and `PR_V2` say: _"Blocked by Evaluation open question 1"_, so all
     of `v0.4` waits for a person, not for code
 
 - @Example@: an unscheduled PR answers an open question
-  - `PR_P4` adds `--max_cost_usd`: _"Answers Pipeline open question 1"_
+  - `PR_L4` adds a limit on `GET /{code}`: _"Answers Rate limiter open
+    question 1"_
 
 - @Key idea@: the plan shows not only what to build, but also what nobody has
   decided yet
@@ -613,8 +618,8 @@ caption=The four versions of Estimate Paper Quality: three deliver a runnable pi
   - _Review_: quote the tag in a comment, e.g., _"split this module by
     responsibility: `ARCH1.4`"_
 
-- @Example@: `PR_T1` adds an import graph test, so a module that imports a
-  higher layer fails the tests from the first PR on
+- @Example@: `PR_T1` adds an import graph test, so a storage module that
+  imports the service layer fails the tests from the first PR on
 
 - @Remark@: a departure from a rule is a decision: record it in
   `03-decisions.md` and cite the tag it departs from
@@ -668,7 +673,7 @@ caption=The four versions of Estimate Paper Quality: three deliver a runnable pi
 
 * Tracing Requirements to PRs and Tests
 // From: .claude/skills/project.create_plan/SKILL.md:81 '# Verification'
-// From: research/Estimate_academic_paper_quality/docs/04-plan.md:275 '### `PR_H1`: [ ] Public `format_base_filename()` in `download_utils`'
+// From:
 
 ::: columns
 :::: {.column width=55%}
@@ -678,9 +683,9 @@ caption=The four versions of Estimate Paper Quality: three deliver a runnable pi
   - Every PRD requirement is covered by at least one PR
   - Every requirement id in the plan links to its H3 in the PRD
 
-- @Example@: `PR_H1` lists `R9` (file base name) and `D7`
-  - Its tests check `R9`: `Jackson, Paul` and `Paul Jackson Jr.` both give
-    `Jackson`
+- @Example@: `PR_A2` lists `R2` (alias format) and `D4` (reserved words)
+  - Its tests check both: `my-talk` is accepted, and `My Talk!` and `health`
+    are rejected
 
 - @Key idea@: a requirement with no PR is forgotten, and a PR with no
   requirement is scope creep
@@ -704,13 +709,13 @@ digraph Trace {
 
     // spec : orange | plan : teal | check : green
 
-    R   [label="R9 in 01-prd.md",
+    R   [label="R2 in 01-prd.md",
          fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
-    D   [label="D7 in 03-decisions.md",
+    D   [label="D4 in 03-decisions.md",
          fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
-    Pr  [label="PR_H1 in 04-plan.md",
+    Pr  [label="PR_A2 in 04-plan.md",
          fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
-    T   [label="Test_format_base_filename",
+    T   [label="Test_validate_alias",
          fillcolor="#A9DDB0", color="#4F9A5C", fontcolor="#1F4E2E"];
 
     R -> Pr [label="  Built by  "];
@@ -726,7 +731,7 @@ caption=One requirement and one decision (orange) traced to the plan entry (teal
 
 * Decisions Made While Planning
 // From: .claude/skills/project.rules.md:375 '## Record Every Non-Obvious Choice'
-// From: research/Estimate_academic_paper_quality/docs/03-decisions.md:112 '### `D26` (The Resolver Is a Separate Executable That Reads and Writes CSV)'
+// From:
 
 - @Motivation@: design and planning make most of the choices of a project, and
   the code records none of the reasons
@@ -737,10 +742,10 @@ caption=One requirement and one decision (orange) traced to the plan entry (teal
   - A PR description lists it under _Decisions_: `/project.update_progress`
     moves it to the log after the merge
 
-- @Example@: `D26`: _"The resolver is a separate executable that reads and
-  writes CSV"_
-  - _Why_: a person can fix the papers CSV before the costly stages run
-  - _Status_: superseded by `D31`, when the intermediate files became JSON
+- @Example@: `D5`: _"The rate limiter keeps its counters in memory"_
+  - _Why_: no new service, and `v0` runs as one process
+  - _Status_: superseded by `D9`, when the service ran two processes and a
+    client got twice the limit
 
 - @Remark@: a decision is never deleted: it is superseded, so the log keeps
   the reason why the old choice looked right
@@ -764,8 +769,8 @@ caption=One requirement and one decision (orange) traced to the plan entry (teal
   - _History_: one row per date, never rewritten
 
 - @Comparison@: the plan holds the future, the log the past
-  - _"Will skip converted papers"_: plan
-  - _"A rerun skipped the paper in 1 s"_: log
+  - _"Will write the clicks in batches"_: plan
+  - _"Batches cut the p95 to 6 ms"_: log
 ::::
 :::: {.column width=42%}
 
@@ -788,25 +793,26 @@ caption=One requirement and one decision (orange) traced to the plan entry (teal
 :::
 
 * Findings Need Evidence
-// From: research/Estimate_academic_paper_quality/docs/07-progress.md:61 '## Findings'
+// From:
 // From: .claude/skills/project.rules.md:343 '## Write the Log'
 
-- @Problem@: _"the resolver works"_ is not a finding: nobody can check it, and
+- @Problem@: _"analytics are fast"_ is not a finding: nobody can check it, and
   nobody can tell when it stops being true
 
 - @Solution@: each finding gives what was measured, where, and the number with
   its unit, including the negative results
 
-- @Example@: findings 2 and 3 of Estimate Paper Quality
-  - Semantic Scholar without a key answered `429` to the first search of every
-    live run on 2026-11-02
-  - With Crossref only: 18 of 22 lines resolved in 68 s
-  - Adding the authors to the Crossref query: 20 of 22 lines in 59 s
-  - The 2 lines left need Semantic Scholar
+// TODO(gp): The numbers of these findings are illustrative: replace them with
+// the measured ones once the shortlink progress log exists
+- @Example@: findings 2 and 3 of the `shortlink` features
+  - Writing one click row in each redirect raised the p95 of `GET /{code}`
+    from 4 ms to 31 ms, on a replay of 10,000 requests
+  - Writing the click rows in a batch once per second: p95 of 6 ms
+  - The cost: a crash loses up to 1 s of clicks
 
-- @Interpretation@: the finding changed the code, since the pipeline now skips
-  an API that failed after its retries, and the plan, since a live run with an
-  API key moved to _Next_
+- @Interpretation@: the finding changed the code, since a redirect no longer
+  writes to the database, and the decisions log, since `D10` accepts the loss
+  of up to 1 s of clicks
 
 - @Key idea@: an agent can write a log entry, but it must never invent a
   number: a missing number is a question for the human
@@ -833,28 +839,26 @@ caption=One requirement and one decision (orange) traced to the plan entry (teal
   and the logs say it is done
 
 * When the Plan Meets an Agent
-// From: research/Estimate_academic_paper_quality/docs/07-progress.md:120 '## History'
-// From: research/Estimate_academic_paper_quality/docs/04-plan.md:26 '## Plan Hierarchy'
+// From:
 
-- @Example@: the first days of Estimate Paper Quality, from its history
-  - _2026-11-01_: wrote `04-plan.md` with 4 versions and 24 scheduled PRs
-  - _2026-11-02_: the code of `v0.1` to `v0.3` and 156 tests were written _in
-    one pass_, from the design docs
-  - _2026-11-02 to 11-05_: 13 new decisions (`D26` to `D38`) reshaped the
-    stages and the files
+// TODO(gp): This history is an illustrative scenario: replace it with the
+// real history once an agent runs the shortlink plan
+- @Example@: an agent gets the plan and the design docs of `shortlink`
+  - _Day 1_: `04-plan.md` has 4 versions and 14 scheduled PRs
+  - _Day 2_: the code of `v0.1` to `v0.3` and its tests are written _in one
+    pass_, from the design docs
+  - _Days 2 to 5_: 4 new decisions (`D9` to `D12`) reshape the rate limiter
+    and the click table
 
 - @Problem@: one pass skipped the planned review
-  - 21 PRs are _"written"_ on one branch and none is merged
+  - 12 PRs are _"written"_ on one branch and none is merged
   - No spec exists for the PRs marked `Spec: needed`
 
-- @Solution@: the plan stayed honest
+- @Solution@: the plan stays honest
   - A `Status:` line in each entry says _"written, not merged"_, so no box is
     ticked
-  - The plan grew to 27 scheduled PRs, and each change has a dated row
+  - The plan grows to 15 scheduled PRs, and each change has a dated row
 
-// TODO(gp): Check that this reading of the history is the intended lesson:
-// that an agent wrote the code in one pass is inferred, and the key idea is
-// an interpretation of 07-progress.md, not stated in the docs
 - @Key idea@: an agent can outrun the plan in a day, so the plan must record
   what is written, what is reviewed, and what is merged as three states
 
