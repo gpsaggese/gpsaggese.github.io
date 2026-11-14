@@ -142,8 +142,7 @@ Jenkinsfile
 *.tar.gz
 *.zip
 
-# Experiment data: stores, ledgers and evaluator output (large), and
-# evaluation-only data (hidden tests, reference patches), which must not enter
-# any image.
+# Experiment data: checkpoint stores and the spending ledger (large), and the
+# downloaded tablebase files.
 runs/
-data/swe_eval/
+data/syzygy/

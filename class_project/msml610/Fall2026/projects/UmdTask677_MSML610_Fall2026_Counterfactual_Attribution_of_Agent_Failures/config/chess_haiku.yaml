@@ -1,0 +1,50 @@
+# Agent, model and budget settings for the chess endgame experiments (one fixed,
+# recorded configuration: every checkpoint stores the settings it ran with).
+name: chess_haiku
+# Step limit = White moves left before the fifty-move rule + this.
+extra_steps: 6
+model:
+  model_name: anthropic/claude-haiku-5-5
+  # Thinking off: the base policy; "thinking on" is a separate intervention.
+  # Haiku 5.5 takes no seed and no sampling parameters.
+  model_kwargs: {max_tokens: 2000, drop_params: true, thinking: {type: disabled}}
+  set_cache_control: default_end
+  budget:
+    ledger: runs/api_usage.jsonl
+    # Hard cap for Milestone 1 (inside the plan's $150 first batch).
+    cap_usd: 20.0
+    prices: {input: 0.10, output: 0.50, input_long: 0.50, output_long: 2.50,
+             long_context_threshold: 100000, margin_usd: 0.25}
+task_template: |
+  You are White in a chess endgame: your king and rook against Black's lone
+  king. Your goal is to checkmate Black before the fifty-move rule ends the game
+  in a draw.
+
+  Commands:
+    play show            print the board, the legal moves and how many moves you have left
+    play move <move>     play a move in SAN (e.g. Rh7, Kd6) or UCI (e.g. h1h7); Black replies at once
+
+  The game ends with a win when you checkmate Black. It ends in a draw on
+  stalemate, if Black captures your rook, or when the move limit runs out. Play
+  exactly one move per response. Here is the current position:
+agent:
+  system_template: |
+    You are a careful chess player who interacts with a computer through bash commands.
+
+    Your response must contain a short THOUGHT section and then exactly ONE bash code block with ONE command,
+    formatted exactly like this:
+
+    THOUGHT: <one or two sentences of reasoning about the position>
+
+    ```mswea_bash_command
+    play move <your move>
+    ```
+
+    Responses without exactly one such code block are rejected.
+  instance_template: |
+    {{task}}
+  # Set per game by caaf_agent.step_limit_for.
+  step_limit: 0
+  # The budget ledger limits cost, not the agent.
+  cost_limit: 0
+  max_consecutive_format_errors: 3
