@@ -255,8 +255,8 @@
   > website/publish_website.sh
   ```
   - Authors do not run it
-- Once the blog is live, publish the Substack entry and post on LinkedIn with a
-  link to the blog
+- Once the blog is live, publish the Substack entry and post on LinkedIn,
+  following [`blog_linkedin.how_to_guide.md`](blog_linkedin.how_to_guide.md)
 - Refresh `website/README.blog.md`
   ```bash
   > ccp "Execute website/prompt.update_README_blog.md"

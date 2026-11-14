@@ -1,0 +1,84 @@
+{
+ "aa": {
+  "checkpoints": 2,
+  "ci_contains_zero": 2,
+  "cost": {
+   "phase_usd": 0.9553,
+   "total_usd": 2.5949
+  },
+  "errors": 0,
+  "false_alarms_p_lt_0.05": 0,
+  "max_abs_gap": 0.14,
+  "n_per_group": 50
+ },
+ "api": {
+  "cache_read": 7029623,
+  "calls": 3345,
+  "cap_usd": 20.0,
+  "completion_tokens": 4743215,
+  "prompt_tokens": 8256387,
+  "usd": 2.5949
+ },
+ "pilot": {
+  "by_task": {
+   "krk-m2-1": [
+    "checkmate",
+    "checkmate"
+   ],
+   "krk-m3-1": [
+    "fifty_move_rule",
+    "fifty_move_rule"
+   ],
+   "krk-m4-1": [
+    "fifty_move_rule",
+    "insufficient_material"
+   ],
+   "krk-m6-1": [
+    "fifty_move_rule",
+    "checkmate"
+   ],
+   "krk-m8-1": [
+    "insufficient_material",
+    "fifty_move_rule"
+   ]
+  },
+  "cost": {
+   "phase_usd": 0.0525,
+   "total_usd": 0.1726
+  },
+  "infra_errors": 0,
+  "not_won": 7,
+  "runs": 10,
+  "won": 3
+ },
+ "replay": {
+  "all_checks_pass": "62/62",
+  "command_output_match": "62/62",
+  "conversation_after_match": "62/62",
+  "env_after_match": "62/62",
+  "input_hash_match": "62/62",
+  "runs": 10,
+  "source_tapes_chain_ok": 10,
+  "tape_chain_ok": "62/62",
+  "to_end_same_final_env": "62/62",
+  "to_end_same_moves": "62/62",
+  "to_end_same_outcome": "62/62"
+ },
+ "screen": {
+  "always_won": 3,
+  "candidates": 30,
+  "cost": {
+   "phase_usd": 1.467,
+   "total_usd": 1.6396
+  },
+  "errors": 0,
+  "mixed_0.3_0.7": 12,
+  "n_per_checkpoint": 10,
+  "never_won": 9
+ },
+ "store": {
+  "branches": 634,
+  "checkpoints": 2904,
+  "failed_branches": 0
+ }
+}
