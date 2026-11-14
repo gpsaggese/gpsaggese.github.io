@@ -174,3 +174,51 @@ class Test_loaders(hunitest.TestCase):
         self.assertNotEqual(a, aebbench.sample_ids(tasks, 10, seed=1))
         self.assertEqual(len(a), 10)
         self.assertEqual(aebbench.sample_ids(tasks[:5], 10), "all")
+
+
+# #############################################################################
+# Test_download
+# #############################################################################
+
+
+class Test_download(hunitest.TestCase):
+    def test_every_open_sets_encoding(self) -> None:
+        """
+        Text files are opened as UTF-8; Windows otherwise defaults to cp1252.
+        """
+        import ast
+
+        here = os.path.dirname(os.path.dirname(__file__))
+        for name in ("benchmarks.py", "download_benchmarks.py"):
+            with open(os.path.join(here, name), encoding="utf-8") as f:
+                tree = ast.parse(f.read())
+            for node in ast.walk(tree):
+                if (
+                    isinstance(node, ast.Call)
+                    and isinstance(node.func, ast.Name)
+                    and node.func.id == "open"
+                ):
+                    kwargs = [k.arg for k in node.keywords]
+                    self.assertIn("encoding", kwargs, f"{name}:{node.lineno}")
+
+    def test_dacode_zip_by_hand(self) -> None:
+        """
+        Task folders are moved from a hand-downloaded zip, at any depth.
+        """
+        import zipfile
+
+        import research.agentic_data_science.bakeoff.download_benchmarks as radsbdobe
+
+        scratch = self.get_scratch_space()
+        source = os.path.join(scratch, "source")
+        os.makedirs(os.path.join(source, "di-text-001"))
+        zip_path = os.path.join(scratch, "source.zip")
+        with zipfile.ZipFile(zip_path, "w") as z:
+            z.writestr("source/di-text-002/data.csv", "a,b\n1,2\n")
+            z.writestr("source/ml-binary-003/train.csv", "x\n1\n")
+        ok = radsbdobe._download_dacode_source(source, zip_path)
+        self.assertTrue(ok)
+        self.assertEqual(
+            sorted(os.listdir(source)), ["di-text-001", "di-text-002", "ml-binary-003"]
+        )
+        self.assertTrue(os.path.exists(os.path.join(source, "di-text-002", "data.csv")))

@@ -78,6 +78,15 @@ python research/agentic_data_science/bakeoff/download_benchmarks.py --download
 python research/agentic_data_science/bakeoff/download_benchmarks.py --check
 ```
 
+Google Drive often refuses scripted downloads of DA-Code's `source.zip`. If it
+does, download it in a browser from
+<https://drive.google.com/uc?id=1ZGi0iNv797OneK_b2l2thJCulP6NUf7v>, then run:
+
+```bash
+python research/agentic_data_science/bakeoff/download_benchmarks.py --download \
+  --dacode-zip ~/Downloads/source.zip
+```
+
 `--check` confirms, for every sampled task, that its data files exist, that the
 gold answer scores 1, and that an empty answer scores 0.
 

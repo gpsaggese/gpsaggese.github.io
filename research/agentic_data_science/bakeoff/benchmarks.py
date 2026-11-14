@@ -135,7 +135,8 @@ def load_qrdata(root: str) -> List[Task]:
     Load the 411 QRData questions; data files come from the unzipped `data.zip`.
     """
     d = os.path.join(root, "QRData", "benchmark")
-    rows = json.load(open(os.path.join(d, "QRData.json")))
+    with open(os.path.join(d, "QRData.json"), encoding="utf-8") as f:
+        rows = json.load(f)
     tasks = []
     for i, r in enumerate(rows):
         meta = _as_obj(r["meta_data"])
@@ -393,7 +394,8 @@ def load_sample(name: str, root: str = BENCHMARK_DIR) -> List[Task]:
     """
     Load the tasks of a benchmark that are in the committed sample file.
     """
-    ids = json.load(open(SAMPLE_FILE))[name]
+    with open(SAMPLE_FILE, encoding="utf-8") as f:
+        ids = json.load(f)[name]
     tasks = load_tasks(name, root)
     if ids == "all":
         return tasks
@@ -410,7 +412,7 @@ def load_sample(name: str, root: str = BENCHMARK_DIR) -> List[Task]:
 
 
 def _read_jsonl(path: str) -> List[Dict]:
-    with open(path) as f:
+    with open(path, encoding="utf-8") as f:
         return [json.loads(line) for line in f if line.strip()]
 
 
