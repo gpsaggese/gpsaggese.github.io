@@ -19,6 +19,10 @@
   - Concrete tool walkthroughs (Claude Code, Copilot, Cursor, CI integrations)
   - Worked examples: real prompts, real diffs, real PR/CI workflows
   - References to benchmarks (SWE-bench), papers, and vendor docs
+- Running example: `shortlink`, a small URL shortener service, threads through
+  all chapters
+  - `book_AI_Software_Engineering/running_example.md` gives its starter state,
+    its seeded flaws, its oracles, and the task of each chapter
 
 ## Short TOC
 
@@ -36,12 +40,14 @@
   - 10, Reviewing Existing Code
   - 11, Debugging with AI
 - Planning and Architecture
-  - 12, Planning
+  - 12, Planning Software
   - 13, Software Architecture Guidelines
+  - 14, Principles of Good Software Design
+  - 15, Foundations of Robust Software
 - Delivery and Automation
-  - 14, GitHub Projects and Workflows
-  - 15, Releasing and Docker
-  - 16, Setting CI/CD for AI
+  - 16, GitHub Projects and Workflows
+  - 17, Releasing and Docker
+  - 18, Setting CI/CD for AI
 
 ## All Lesson Materials
 
@@ -55,6 +61,7 @@
 - `research/agentic_sw_eng/resources.md` (index of AI development resources)
 - `.github/workflows/*.yml` (CI workflows of this repo)
 - `book_AI_Software_Engineering/resources.md`
+- `book_AI_Software_Engineering/running_example.md` (the running example)
 - `book_AI_Software_Engineering/lectures_source/claude_code.md`
 - `book_Agentic_AI/lectures_source/*.smd`
 - The book's own decks (`book_AI_Software_Engineering/lectures_source/*.smd`) are
@@ -87,20 +94,22 @@
 | 10: Reviewing Existing Code                   |                                                    |          |           |          |      |
 | 11: Debugging with AI                         |                                                    |          |           |          |      |
 | **Part III: Planning and Architecture**       |                                                    |          |           |          |      |
-| 12: Planning                                  |                                                    |          |           |          |      |
+| 12: Planning Software                         |                                                    |          |           |          |      |
 | 13: Software Architecture Guidelines          |                                                    |          |           |          |      |
+| 14: Principles of Good Software Design        |                                                    |          |           |          |      |
+| 15: Foundations of Robust Software            |                                                    |          |           |          |      |
 | **Part IV: Delivery and Automation**          |                                                    |          |           |          |      |
-| 14: GitHub Projects and Workflows             | Lesson14.01_GitHub_Projects_and_Workflows.smd      |          |           |          |      |
-| 15: Releasing and Docker                      |                                                    |          |           |          |      |
-| 16: Setting CI/CD                             |                                                    |          |           |          |      |
+| 16: GitHub Projects and Workflows             | Lesson16.01_GitHub_Projects_and_Workflows.smd      |          |           |          |      |
+| 17: Releasing and Docker                      |                                                    |          |           |          |      |
+| 18: Setting CI/CD                             |                                                    |          |           |          |      |
 
 ## TODOs
 
 - Split the shared deck `Tools_source.smd` into per-chapter decks, or keep it as the
-  shared deck for chapters 09, 11-13, 15, and 16
+  shared deck for chapters 09, 11-13, 17, and 18
 - Write a dedicated deck for chapter 10
 - Resolve the `TODO(gp): Check` notes in the decks of chapters 02, 03, 07, 08, and
-  14, then fill their `Slides %`
+  16, then fill their `Slides %`
 - Confirm that Skills is chapter 02 and that Human-AI Collaboration Patterns belongs
   in Part I
 
@@ -887,9 +896,10 @@
 
 # Part III: Planning and Architecture
 
-- Part III covers how work is planned and how the code is structured
+- Part III covers how work is planned, how the code is structured, the principles
+  of good design, and what makes software robust
 
-## 12: Planning
+## 12: Planning Software
 
 ### Goals
 
@@ -915,9 +925,6 @@
   - Task lists, criticizing the plan, and executing in a loop
 
 ### Slides
-
-- `book_AI_Software_Engineering/lectures_source/Tools_source.smd` (section
-  `# Requirements and Planning`)
 
 ### Lesson Materials
 
@@ -959,6 +966,9 @@
   - [30%]: Scrum roles and goals
 - `website/docs/blog/posts/draft.A_proposal_for_AI_based_software_engineering.md`
   - [30%]: a staged plan for agentic AI development
+- `book_AI_Software_Engineering/running_example.md`
+  - [20%]: running example: PRD, design, and plan for the `shortlink` aliases,
+    rate limiting, and click analytics
 - `book_Agentic_AI/lectures_source/Lesson05.1-Reasoning_Memory_and_Planning.smd`
   - [15%]: planning as a loop, world models for planning
 - _Not covered_
@@ -1042,11 +1052,144 @@
 - _Not covered_
   - [15%]: service boundaries, scalability trade-offs
 
+## 14: Principles of Good Software Design
+
+### Goals
+
+- Explain the core design principles and the sources that each one merges
+- Spot a principle violation in a code change written by a human or an AI
+- Resolve conflicts between principles, such as DRY versus low coupling
+
+### Topics
+
+- Fight Complexity
+  - Simple versus easy, YAGNI, and growing from a working simple system
+- Build Deep Modules
+  - Information hiding, pulling complexity down, and somewhat general-purpose cores
+- Separate Layers and Concerns
+  - One abstraction per layer, flat structure, and the Law of Demeter
+- Keep One Source of Truth
+  - DRY, and when duplication is cheaper than coupling
+- Make Code Obvious
+  - Explicit, consistent, least astonishing, and comments that capture intent
+- Make Errors Impossible, Then Loud
+  - Illegal states unrepresentable, fail fast, and errors defined out of existence
+- Compose Small Pieces
+  - Composition over inheritance, and the Unix pipeline
+- Design Strategically
+  - Design it twice, leave code cleaner, and understand before removing
+- Laws and Tensions
+  - Hyrum's, Conway's, and Gall's laws, and where principles conflict
+- Principles and AI Agents
+  - Typical AI violations and encoding principles in rules
+
+### TODO
+
+- [ ] Write the deck of this chapter
+- [ ] Decide whether the `Design Philosophy` topic of chapter 13 moves here
+- [ ] Write material on deep modules and on defining errors out of existence, since
+      no repo doc covers them
+
+### Slides
+
+- N/A: no dedicated deck yet
+
+### Lesson Materials
+
+- `helpers_root/docs/coding/all.coding_style.how_to_guide.md`
+  - [40%]: DRY, encapsulate what changes, least surprise, naming, comments,
+    assertions
+- `helpers_root/docs/coding/all.code_design.how_to_guide.md`
+  - [40%]: plan first, KISS, simplicity first, interfaces, pure functions, invariants
+- `.claude/skills/architecture.rules.md`
+  - [35%]: layers, minimal interfaces, dependency direction, validation at the
+    boundary
+- `.claude/skills/coding.factor_common_code/SKILL.md`
+  - [10%]: refactor duplicated code into shared functions
+- `.claude/skills/coding.improve_code_for_humans/SKILL.md`
+  - [10%]: readability and debuggability changes
+- _Not covered_
+  - [45%]: deep modules, information hiding, defining errors out of existence,
+    composition over inheritance, Hyrum's and Conway's laws, conflicts between
+    principles, AI violations
+
+### Notes
+
+- Sources merged: Zen of Python (PEP 20), Ousterhout's _A Philosophy of Software
+  Design_, Parnas, the Unix philosophy, Brooks, Hickey, and _The Pragmatic Programmer_
+- Present each principle in one format: statement, source, an example in `shortlink`,
+  and when it fails
+- Chapter 13 has a `Design Philosophy` topic that overlaps with this chapter (KISS,
+  encapsulate what changes, pure functions)
+
+## 15: Foundations of Robust Software
+
+### Goals
+
+- Describe what makes software robust and why one technique is not enough
+- Compare the pros, cons, and cost of each foundational robustness technique
+- Choose a minimum set of techniques for a project by its risk and team size
+
+### Topics
+
+- What Makes Software Robust
+  - Robustness versus correctness and reliability
+  - Defense in depth: prevent, detect, contain, and learn
+- Preventing Defects
+  - Simple design and low coupling
+  - Static analysis and typing
+  - Fail fast: assertions and input validation
+- Detecting Defects
+  - Automated tests: unit, integration, and end-to-end
+  - Code review
+  - Continuous integration and quality gates
+- Containing Failures
+  - Timeouts, retries with backoff, idempotency, and circuit breakers
+  - Feature flags, canary releases, and rollback
+- Learning From Failures
+  - Observability: logs, metrics, and traces
+  - Blameless postmortems
+- Enabling Practices
+  - Small changes in version control
+  - Reproducible environments
+  - Docs and shared conventions
+- Trade-offs
+  - Pros, cons, and cost of each technique
+  - A minimum set: tests, review, and CI
+  - Robustness of AI-written code
+
+### TODO
+
+- [ ] Fill the lesson materials, starting from
+      `helpers_root/docs/coding/all.coding_style.how_to_guide.md` (assertions),
+      `helpers_root/docs/coding/all.code_design.how_to_guide.md`, and
+      `helpers_root/papers/AIgentic_Development_System/part1.code_quality.tex`
+- [ ] Write the deck of this chapter
+
+### Slides
+
+- N/A: no dedicated deck yet
+
+### Lesson Materials
+
+- _Not covered_
+  - [100%]: not assessed yet
+// TODO(gp): Fill the lesson materials
+
+### Notes
+
+- Present each technique in one fixed format: what it is, pros, cons, cost, and when
+  to skip it
+- Point to the chapter that teaches each technique in depth: 07 (tests, types), 09
+  (review), 11 (root cause), 13 and 14 (design), 17 (containers), and 18 (CI and
+  rollback)
+- Add a `shortlink` task for this chapter in `running_example.md`
+
 # Part IV: Delivery and Automation
 
 - Part IV covers how code moves from a GitHub project to a released container
 
-## 14: GitHub Projects and Workflows
+## 16: GitHub Projects and Workflows
 
 ### Goals
 
@@ -1124,7 +1267,7 @@
 - _Not covered_
   - [10%]: branch protection, code ownership
 
-## 15: Releasing and Docker
+## 17: Releasing and Docker
 
 ### Goals
 
@@ -1199,7 +1342,7 @@
 - _Not covered_
   - [15%]: production monitoring and rollback
 
-## 16: Setting CI/CD
+## 18: Setting CI/CD
 
 ### Goals
 
@@ -1290,8 +1433,8 @@
 | `auto_task.create_specs_from_todos`            | 12 (40%)           | Create a plan for fixing a list of TODOs                                                             |
 | `auto_task.criticize`                          | 06 (20%), 12 (35%) | Review a plan or GitHub issue for an `auto_task` before execution                                    |
 | `auto_task.execute_interactively`              | 04 (35%)           | Execute a sequence of tasks in a loop "execute, review, commit"                                      |
-| `auto_task.execute_with_stacked_prs`           | 14 (40%)           | Execute a sequence of tasks as one stack of branches and PRs                                         |
-| `auto_task.restack`                            | 14 (30%)           | Propagate reviewed changes down an existing PR stack, keeping every PR mergeable                     |
+| `auto_task.execute_with_stacked_prs`           | 16 (40%)           | Execute a sequence of tasks as one stack of branches and PRs                                         |
+| `auto_task.restack`                            | 16 (30%)           | Propagate reviewed changes down an existing PR stack, keeping every PR mergeable                     |
 | `coding.annotate_with_todoai`                  | 04 (15%)           | Annotate file with TODOs based on the convention and rule violations                                 |
 | `coding.factor_common_code`                    | 13 (30%)           | Identify and refactor duplicated code into shared functions across Python files                      |
 | `coding.find_doc`                              | 10 (40%)           | Find and summarize documentation for a dir, file, class, or function                                 |
@@ -1303,21 +1446,21 @@
 | `coding.make_function_private`                 | 13 (15%)           | Identify private or public functions in a file and rename with underscore                            |
 | `coding.todoai_gp`                             | 04 (20%)           | Implement TODO(ai_gp) items in a file: renames, code updates, references                             |
 | `coding_qa.review`                             | 09 (35%), 10 (20%) | Review Python files for bugs, suggest fixes, and provide test cases                                  |
-| `docker.shrink_container`                      | 15 (35%)           | Propose ways to shrink and speed up a Docker container, same behavior                                |
-| `docker.shrink_requirements`                   | 15 (25%)           | Find unused packages in requirements.txt not needed by the project code                              |
-| `docker.use_standard_style`                    | 15 (35%)           | Align Docker files in a project to the standard project template style                               |
+| `docker.shrink_container`                      | 17 (35%)           | Propose ways to shrink and speed up a Docker container, same behavior                                |
+| `docker.shrink_requirements`                   | 17 (25%)           | Find unused packages in requirements.txt not needed by the project code                              |
+| `docker.use_standard_style`                    | 17 (35%)           | Align Docker files in a project to the standard project template style                               |
 | `docs.add_content`                             | 08 (35%)           | Add content to the docs without redundancy and report skipped parts                                  |
-| `git.merge_conflicts`                          | 14 (20%)           | Resolve git merge, rebase, or cherry-pick conflicts and finalize the operation                       |
-| `github.create_child_pr`                       | 14 (25%)           | Write instructions to build a child PR from the current branch                                       |
+| `git.merge_conflicts`                          | 16 (20%)           | Resolve git merge, rebase, or cherry-pick conflicts and finalize the operation                       |
+| `github.create_child_pr`                       | 16 (25%)           | Write instructions to build a child PR from the current branch                                       |
 | `github.describe_pr_for_review`                | 09 (50%)           | Describe one or more PRs in a fixed format, score complexity and quality, and suggest a review order |
-| `github.get_pr_ready_to_merge`                 | 09 (20%), 16 (30%) | Get the current PR to a state where it can be reviewed and merged                                    |
-| `github.get_pr_to_pass_ci_tests`               | 11 (30%), 16 (40%) | Monitor GitHub CI checks for the current PR and fix any failures until they pass                     |
+| `github.get_pr_ready_to_merge`                 | 09 (20%), 18 (30%) | Get the current PR to a state where it can be reviewed and merged                                    |
+| `github.get_pr_to_pass_ci_tests`               | 11 (30%), 18 (40%) | Monitor GitHub CI checks for the current PR and fix any failures until they pass                     |
 | `github.get_pr_to_pass_local_tests`            | 11 (25%)           | Make the local unit tests pass for the current PR                                                    |
-| `github.split_branch_in_PRs`                   | 14 (40%)           | Split current Git changes into small, cohesive PRs to simplify merging                               |
+| `github.split_branch_in_PRs`                   | 16 (40%)           | Split current Git changes into small, cohesive PRs to simplify merging                               |
 | `project.create_plan`                          | 12 (60%)           | Write the end-to-end plan of a project from its design docs                                          |
 | `project.update_progress`                      | 12 (40%)           | Update the plan, the log, and the decisions after a PR is merged                                     |
 | `project.write_prd`                            | 12 (50%)           | Turn an idea into a product requirements doc (PRD) for a project                                     |
-| `pytest.fix_ci_tests`                          | 11 (35%), 16 (35%) | Analyze and fix failure of tests in GitHub CI                                                        |
+| `pytest.fix_ci_tests`                          | 11 (35%), 18 (35%) | Analyze and fix failure of tests in GitHub CI                                                        |
 | `pytest.fix_local_tests`                       | 11 (40%)           | Analyze and fix failure of local tests                                                               |
 | `readme_file.explain_code`                     | 08 (25%), 10 (45%) | Document a Python file's classes, functions, and relationships in markdown                           |
 | `readme_file.write_architecture`               | 10 (35%)           | Write architecture documentation for a Python file                                                   |
@@ -1332,7 +1475,7 @@
 | `testing.reach_coverage`                       | 07 (35%)           | Increase unit test coverage toward 100 percent for a function or file                                |
 | `testing.update_test_outcomes`                 | 11 (20%)           | Update the expected outcome of failing unit tests                                                    |
 | `testing.write_unit_tests`                     | 07 (40%)           | Propose a plan for unit testing a file and then implement it                                         |
-| `tutorial_in_60_mins.propagate_docker_changes` | 15 (15%)           | Sync tutorial and class-project Docker files to match project_template                               |
+| `tutorial_in_60_mins.propagate_docker_changes` | 17 (15%)           | Sync tutorial and class-project Docker files to match project_template                               |
 
 - 48 of 165 skills map to a chapter (58 skill and chapter pairs)
 - The other skills are not cited by any chapter yet
