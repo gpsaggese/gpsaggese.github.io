@@ -10,6 +10,7 @@ import test.test_tukey_baselines as ttetubas
 """
 
 import logging
+import unittest.mock as umock
 
 import numpy as np
 
@@ -168,6 +169,38 @@ class Test_run_baseline(hunitest.TestCase):
                 n_edges.append(int(inst.truth.B.sum()))
             # A transposed output would reverse every edge.
             self.assertLess(sum(shd), sum(n_edges), msg=name)
+
+    def test8(self) -> None:
+        """
+        Variables that tie on the relatives count are ordered by index.
+        """
+        cfg = tenv.GraphConfig(family="linear_exp", n_nodes=5, n_edges=6)
+        x = tenv.sample_instance(cfg, 3).d_train.to_numpy()
+        # Each row: the counts, and the rank each variable must get. The ranks
+        # have no ties, so the sort inside CausalDisco cannot reorder them.
+        cases = (
+            ([0, 0, 0, 0, 0], [0, 1, 2, 3, 4]),
+            ([1, 0, 1, 0, 0], [3, 0, 4, 1, 2]),
+        )
+        for counts, ranks in cases:
+            with (
+                umock.patch.object(
+                    tbasel.cdanaly,
+                    "rel_count_emp_hard",
+                    return_value=np.array(counts),
+                ),
+                umock.patch.object(
+                    tbasel.cdbasel,
+                    "sort_regress",
+                    wraps=tbasel.cdbasel.sort_regress,
+                ) as sort_regress,
+            ):
+                output = tbasel.run_baseline("rel_sort_regress", x)
+            passed = sort_regress.call_args.args[1]
+            self.assertEqual(passed.tolist(), ranks, msg=str(counts))
+            # An edge can only go from a lower to a higher rank.
+            for i, j in zip(*np.nonzero(output.adjacency)):
+                self.assertLess(ranks[i], ranks[j], msg=str(counts))
 
 
 class Test_score_output(hunitest.TestCase):

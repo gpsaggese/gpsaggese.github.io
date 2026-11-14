@@ -80,6 +80,31 @@
   Every file's command is in the docstring of `tukey_results.py`; the
   Milestone 2 table takes about 1.5 minutes with 10 workers
 
+## Other CPUs
+
+- Every stored result and every manifest hash was produced on Apple silicon,
+  in the `linux/arm64` container
+- On another machine type (Intel or AMD) the generator draws the same graphs,
+  but the last bits of the data depend on the CPU's math kernels, so a few
+  instances hash differently; there `check_instance()` in `tukey_sets.py`
+  warns once per process and goes on (and warns again if most instances
+  differ, which would mean a changed generator), and the one test that
+  compares bit-level hashes is skipped
+- `rel_sort_regress` breaks the ties of its count by variable index, so equal
+  counts give the same order on every CPU
+- Measured under x86-64 emulation on Nov 14, 2026 (not yet on a real Intel or
+  AMD machine):
+  - Hashes: 129 of the 4,800 instances of the 22 open sets differ; in 118 the
+    data agree to 1e-12 and a value crosses a rounding boundary of the hash;
+    in 11, all in the pgmpy family (settings `G`), the sample itself differs,
+    because pgmpy's own sampler depends on the CPU
+  - Milestone 2 table (`tukey_results.py m2_table`): 859 of its 52,000
+    per-graph scores and structural distances differ from the stored ones;
+    780 belong to `var_sort_regress`, which on standardized data orders the
+    variables by rounding noise (its setting means move by at most 0.008),
+    and 79 to the other methods, all on the 5 pgmpy graphs of setting `G`
+    with a different sample; every other value is equal
+
 ## Preliminary Results
 
 - From local runs of later milestones, not from this PR; each result file

@@ -197,7 +197,12 @@ def run_baseline(
                 scores = cdanaly.rel_count_emp_hard(
                     x_train, alpha=params.get("alpha", 0.05)
                 )
-                W = cdbasel.sort_regress(x_train, scores.astype(float))
+                # Many variables tie on this count, and `sort_regress()`
+                # orders with numpy's default argsort, whose tie order depends
+                # on the CPU. Break the ties here, by variable index, by
+                # passing the stable ranks instead of the counts.
+                ranks = np.argsort(np.argsort(scores, kind="stable"))
+                W = cdbasel.sort_regress(x_train, ranks.astype(float))
             else:
                 W = cdbasel.random_sort_regress(x_train, seed=seed)
             # CausalDisco's W[i, j] is the coefficient of i in j's regression.
