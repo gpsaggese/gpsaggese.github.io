@@ -595,3 +595,120 @@ def make_synthetic_ohlcv(
     df["high"] = df[["high", "open", "close"]].max(axis=1)
     df["low"] = df[["low", "open", "close"]].min(axis=1)
     return df.sort_values(["date", "ticker"]).reset_index(drop=True)
+
+
+# #############################################################################
+# 8. Baselines and model comparison
+# #############################################################################
+
+
+class PersistenceClassifier:
+    """
+    Predict that tomorrow moves in the same direction as today.
+
+    It has no parameters, so `learn_one` does nothing. It only predicts a
+    direction, so it returns probabilities just off 0.5: this keeps the
+    up/down prediction correct while log loss stays near ln(2) instead of
+    blowing up on every miss, as it would with 0/1 probabilities.
+    """
+
+    def __init__(self, feature: str = "ret_lag0", margin: float = 0.01) -> None:
+        self.feature = feature
+        self.margin = margin
+
+    def learn_one(self, x: Dict[str, float], y: Any) -> None:
+        pass
+
+    def predict_proba_one(self, x: Dict[str, float]) -> Dict[bool, float]:
+        p_up = 0.5 + (self.margin if x[self.feature] > 0 else -self.margin)
+        return {True: p_up, False: 1 - p_up}
+
+
+def run_walk_forward(
+    make_model: Callable[[], Any],
+    panel: pd.DataFrame,
+    feature_cols: List[str],
+    *,
+    target_col: str = "target_up",
+    warmup_days: int = 250,
+    refit_period: str = "M",
+) -> pd.DataFrame:
+    """
+    Evaluate a batch scikit-learn classifier retrained on an expanding window.
+
+    This is the standard alternative to online learning: periodically refit on
+    all data available so far, then freeze the model until the next refit. At
+    a refit on day `d`, the model is trained on rows dated before `d`, whose
+    labels (returns up to close `d`) are known at the close of `d`.
+
+    The scored days are the same as `run_prequential(..., warmup_days)`, so
+    the two outputs can be compared row by row.
+
+    :param make_model: callable returning a fresh unfitted sklearn classifier
+    :param panel: labeled feature panel
+    :param feature_cols: model input columns
+    :param target_col: label column
+    :param warmup_days: initial trading days that are never scored
+    :param refit_period: pandas period of refits ("M" = monthly, "Y" =
+        yearly); the model is refit on the first trading day of each period
+    :return: predictions in the same format as `run_prequential`
+    """
+    days = np.sort(panel["date"].unique())
+    first_scored = days[warmup_days]
+    scored = days[days >= first_scored]
+    # Refit on the first trading day of each period.
+    periods = pd.DatetimeIndex(scored).to_period(refit_period)
+    refit_days = scored[np.r_[True, periods[1:] != periods[:-1]]]
+    # Sentinel so the last block runs to the end of the data.
+    refit_days = np.append(refit_days, days[-1] + np.timedelta64(1, "D"))
+    out = []
+    for start, end in zip(refit_days[:-1], refit_days[1:]):
+        train = panel[panel["date"] < start]
+        test = panel[(panel["date"] >= start) & (panel["date"] < end)]
+        model = make_model()
+        model.fit(train[feature_cols], train[target_col].astype(int))
+        p_up = model.predict_proba(test[feature_cols])[:, 1]
+        out.append(
+            pd.DataFrame(
+                {
+                    "date": test["date"].to_numpy(),
+                    "ticker": test["ticker"].to_numpy(),
+                    "y_true": test[target_col].astype(bool).to_numpy(),
+                    "p_up": p_up,
+                    "y_pred": p_up > 0.5,
+                    "drift": False,
+                }
+            )
+        )
+    return pd.concat(out, ignore_index=True)
+
+
+def compare_models(
+    preds: Dict[str, pd.DataFrame], reference: str, *, n_boot: int = 1000
+) -> pd.DataFrame:
+    """
+    Summarize several models evaluated on the same predictions.
+
+    :param preds: model name -> output of `run_prequential` or
+        `run_walk_forward`
+    :param reference: name of the model every other model is tested against
+        with McNemar's test
+    :param n_boot: bootstrap replicates for the accuracy interval
+    :return: one row per model with metrics, a 95% block-bootstrap interval
+        for accuracy, and the McNemar p-value against `reference`
+    """
+    rows = {}
+    for name, p in preds.items():
+        row = summarize_predictions(p)[
+            ["accuracy", "balanced_accuracy", "mcc", "roc_auc", "log_loss"]
+        ]
+        ci = block_bootstrap_accuracy(p, n_boot=n_boot)
+        row["acc_ci_low"], row["acc_ci_high"] = ci["ci_low"], ci["ci_high"]
+        row["share_pred_up"] = p["y_pred"].mean()
+        row[f"mcnemar_p_vs_{reference}"] = (
+            np.nan
+            if name == reference
+            else mcnemar_test(p, preds[reference])["p_value"]
+        )
+        rows[name] = row
+    return pd.DataFrame(rows).T

@@ -1,7 +1,7 @@
 # River: Online Prediction of Next-Day Stock Direction
 
 - Course: DATA605, Fall 2026
-- Author: Brandon Wilson (@bzwilson)
+- Author: Brandon Wilson (@BrandonWilsonProjects)
 - Tool: [River](https://riverml.xyz/), a Python library for online machine
   learning on data streams
 - Project description:
@@ -35,7 +35,7 @@
   `data/`; later runs are offline
 - Run the unit tests (seconds, no network):
   ```bash
-  > ./docker_cmd.sh "python -m pytest test/test_river_utils.py"
+  > ./docker_cmd.sh "cd /git_root/class_project/data605/Fall2026/projects/UmdTask*River* && python -m pytest test/test_river_utils.py"
   ```
 - For details on the Docker scripts, see the
   [project template README](/class_project/project_template/docker_scripts.README.md)
@@ -105,7 +105,7 @@
 - [x] Validation, cleaning, leakage-safe features and labels
 - [x] Prequential evaluation with one-day label delay, significance tests
 - [x] Unit tests (leakage, delay, noise/signal sanity checks)
-- [ ] Baselines: majority class, persistence, walk-forward batch models
+- [x] Baselines: majority class, persistence, walk-forward batch models
 - [ ] River model comparison: Hoeffding (adaptive) trees, adaptive random
       forest, ensembles
 - [ ] Drift detection with ADWIN and adaptation across regimes
@@ -116,3 +116,4 @@
 
 ## Changelog
 - 2026-11-01: Project scaffold, data pipeline, evaluation framework
+- 2026-11-09: Baselines (online majority class, persistence, monthly walk-forward logistic regression and gradient boosting) and model comparison table
