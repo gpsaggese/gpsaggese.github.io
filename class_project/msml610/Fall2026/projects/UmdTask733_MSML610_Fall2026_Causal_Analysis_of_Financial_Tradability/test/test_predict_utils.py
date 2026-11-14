@@ -206,3 +206,36 @@ class Test_sweep_costs(hunitest.TestCase):
         # The PnL before costs is 0.02 per trade at every cost.
         self.assertEqual(df["gross_bps"].round(6).tolist(), [200.0] * 3)
         self.assertEqual(df["net_bps"].round(6).tolist(), [200.0, 195.0, 190.0])
+
+
+# #############################################################################
+# Test_evaluate_by_group
+# #############################################################################
+
+
+class Test_evaluate_by_group(hunitest.TestCase):
+    """
+    Test `predict_utils.evaluate_by_group()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that each group is measured on its own trades only.
+        """
+        # Prepare inputs.
+        pos = pd.Series([1.0, 1.0, -1.0, 1.0, 1.0])
+        fwd_ret = pd.Series([0.01, 0.03, 0.02, -0.01, 0.05])
+        # The last trade has no group, so it is left out.
+        groups = pd.Series(["a", "a", "b", "b", np.nan])
+        # Run test.
+        df = putil.evaluate_by_group(pos, fwd_ret, groups)
+        # Check outputs.
+        self.assertEqual(df.index.tolist(), ["a", "b"])
+        self.assertEqual(df["n"].tolist(), [2, 2])
+        self.assertEqual(df["share"].tolist(), [0.5, 0.5])
+        # Group a: PnL 0.01 and 0.03. Group b: PnL -0.02 and -0.01.
+        np.testing.assert_allclose(df["gross_bps"], [200.0, -150.0])
+        np.testing.assert_allclose(df["hit_rate"], [1.0, 0.0])
+        np.testing.assert_allclose(df["mean_abs_bps"], [200.0, 150.0])
+        expected_se = np.std([0.01, 0.03], ddof=1) / np.sqrt(2) * 1e4
+        self.assertAlmostEqual(df.loc["a", "se_bps"], expected_se)

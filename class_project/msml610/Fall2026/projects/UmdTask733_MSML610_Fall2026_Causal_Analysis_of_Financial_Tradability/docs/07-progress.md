@@ -14,7 +14,7 @@
 | Step 2: Predictability vs horizon, hit rate and PnL with costs | Nov 5 | Done | #820 |
 | Follow-ups from GP's answers: stale bars, SPY overnight bar, cost sweep, data sources | Nov 12 | In review | |
 | Gap analysis (#904) | Nov 19 | In review | |
-| Step 3: What happens per horizon in different market conditions (no causal analysis yet, `D17`) | Nov 19 | Not started | |
+| Step 3: What happens per horizon in different market conditions (no causal analysis yet, `D17`) | Nov 19 | In review | |
 | Robustness: do the results hold with a different target? | Nov 26 | Not started | #905 |
 | Step 4: Best horizon per regime, walk-forward backtest | Nov 26 | Not started | |
 | Step 5: Write-up, video, final PR | Dec 3 | Not started | |
@@ -30,11 +30,16 @@
   and labels per horizon
 - `test/test_data_utils.py`: unit tests, including no look-ahead and no
   feature or label spanning a gap
-- `test/test_predict_utils.py`, `test/test_tradability_utils.py`: unit tests
-  for the models, the metrics, the cost sweep, and the overnight bar
+- `test/test_predict_utils.py`, `test/test_tradability_utils.py`,
+  `test/test_regime_utils.py`: unit tests for the models, the metrics, the
+  cost sweep, the overnight bar, and the regimes (including no look-ahead)
 - `tradability.data.ipynb`: data quality, features, labels per horizon
 - `tradability.gaps.ipynb`: gap analysis (#904): when the gaps happen, and
   how many bars, labels, and features they cost
+- `regime_utils.py`: volatility and trend regimes at each bar, from past
+  data only
+- `tradability.regimes.ipynb`: step 3, the step 2 models and trades split by
+  regime
 - `predict_utils.py`: walk-forward split, always buy, momentum, and logistic
   regression, and the hit rate and PnL of a set of trades at one or several
   costs
@@ -101,12 +106,21 @@
     7-day windows restart after each gap. 7 of the 15 gaps start at 02:00
     UTC, and there is none after 2023-03-24
     - Data: `tradability.gaps.ipynb`
+12. The step 2 average hides two markets. The logistic regression has no
+    edge in calm and normal markets, but in volatile ones (about 30% of
+    2022-2026) its PnL per trade grows with the horizon: 1.7-2.2 bp at 1h,
+    7.7-10.9 bp at 4h (2.6-3.5 standard errors from zero on both coins), and
+    28-35 bp at 1d (noisier). At 4h it is about the 10 bp cost. It is
+    positive in 9 of 10 coin-years at 4h, but smaller in 2026
+    - Data: `tradability.regimes.ipynb`
+13. After a rising week, always buying makes a little more at every horizon,
+    and short moves reverse in every regime
 
 ## Next
 
-1. Step 3: what happens per horizon in different market conditions (calm vs
-   volatile, rising vs falling), without a causal analysis for now (`D17`)
-2. Robustness: do the results hold with a different target? (#905)
+1. Robustness: do the results hold with a different target? (#905),
+   including the volatile-market result
+2. Step 4: trade only in volatile markets, walk forward, with costs
 
 ## History
 
@@ -125,6 +139,8 @@
 | 2026-11-10 | To-do tab in the gdoc; filed #904 and #905; SPY 1h file saved in the project Drive folder |
 | 2026-11-10 | Follow-ups from GP's answers: stale bars, SPY overnight bar, cost sweep, data sources |
 | 2026-11-11 | Gap analysis (#904) |
+| 2026-11-11 | PR #908 merged ("Very well done") |
+| 2026-11-12 | Step 3: results by regime |
 
 ## Open Work
 
