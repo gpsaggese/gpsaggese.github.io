@@ -283,6 +283,48 @@ class Test_compute_quality_table(hunitest.TestCase):
         self.assertEqual(stats["n_segments"], 2)
 
 
+# #############################################################################
+# Test_compute_gap_table
+# #############################################################################
+
+
+class Test_compute_gap_table(hunitest.TestCase):
+    """
+    Test `data_utils.compute_gap_table()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test a filled gap and a long gap with a stale bar before it.
+        """
+        # Prepare inputs.
+        times = [
+            "2024-01-01 00:00",
+            "2024-01-01 00:10",
+            "2024-01-01 00:15",
+            "2024-01-01 00:30",
+            "2024-01-01 00:35",
+        ]
+        bars = _get_bars(times, [1.0, 2.0, 3.0, 4.0, 5.0])
+        # The bar at 00:15 has zero volume and is right before a gap.
+        bars.iloc[2, bars.columns.get_loc("volume")] = 0.0
+        clean = dutil.clean_bars(bars, max_fill_bars=2)
+        # Run test.
+        gaps = dutil.compute_gap_table(clean)
+        # Check outputs.
+        self.assertEqual(
+            gaps["start"].tolist(),
+            [
+                pd.Timestamp("2024-01-01 00:05Z"),
+                pd.Timestamp("2024-01-01 00:15Z"),
+            ],
+        )
+        self.assertEqual(gaps["n_bars"].tolist(), [1, 3])
+        self.assertEqual(gaps["n_stale"].tolist(), [0, 1])
+        self.assertEqual(gaps["is_filled"].tolist(), [True, False])
+        self.assertEqual(gaps["duration"].iloc[1], pd.Timedelta("15min"))
+
+
 def _get_gap_bars() -> pd.DataFrame:
     """
     Build 40 random 5-minute bars with a 1-hour gap after the first 20.
