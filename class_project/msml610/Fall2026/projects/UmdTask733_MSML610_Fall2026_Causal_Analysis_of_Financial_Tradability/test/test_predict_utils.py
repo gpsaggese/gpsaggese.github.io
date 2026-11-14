@@ -147,6 +147,99 @@ class Test_predict_logistic(hunitest.TestCase):
         self.assertGreater((pos[is_test].to_numpy() == expected).mean(), 0.99)
 
 
+def _get_skewed_data() -> tuple[pd.DataFrame, pd.DataFrame]:
+    """
+    Build data where the frequent move and the big move go opposite ways.
+
+    When `x1` > 0, the price goes up 10 bp 70% of the time and down 100 bp
+    30% of the time, and the reverse when `x1` < 0. So `x1` > 0 predicts
+    more up moves, but a loss on average.
+
+    :return: features and labels for a 1h horizon
+    """
+    rng = np.random.default_rng(0)
+    index = _get_index("2022-12-25", "2023-01-03")
+    x1 = rng.normal(size=len(index))
+    is_frequent = rng.uniform(size=len(index)) < 0.7
+    direction = np.where(x1 > 0, 1.0, -1.0)
+    fwd_ret = np.where(is_frequent, 0.001 * direction, -0.01 * direction)
+    features = pd.DataFrame({"x1": x1}, index=index)
+    labels = pd.DataFrame(
+        {"fwd_ret_1h": fwd_ret, "label_1h": (fwd_ret > 0).astype(float)},
+        index=index,
+    )
+    return features, labels
+
+
+# #############################################################################
+# Test_predict_with_target
+# #############################################################################
+
+
+class Test_predict_with_target(hunitest.TestCase):
+    """
+    Test `predict_utils.predict_with_target()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that the returns of the test year do not change its predictions,
+        for every target (no look-ahead).
+        """
+        # Prepare inputs.
+        features, labels = _get_skewed_data()
+        changed = labels.copy()
+        is_test_year = changed.index >= "2023-01-01"
+        changed.loc[is_test_year, "fwd_ret_1h"] = 0.05
+        changed.loc[is_test_year, "label_1h"] = 1.0
+        for target in putil.TARGETS:
+            # Run test.
+            pos = putil.predict_with_target(
+                features, labels, "1h", [2023], target=target
+            )
+            pos_changed = putil.predict_with_target(
+                features, changed, "1h", [2023], target=target
+            )
+            # Check outputs.
+            pd.testing.assert_series_equal(pos, pos_changed)
+            self.assertTrue(pos[~is_test_year].isna().all())
+            self.assertFalse(pos[is_test_year].isna().any())
+
+    def test2(self) -> None:
+        """
+        Test that only the sign target follows the frequent move.
+        """
+        # Prepare inputs.
+        features, labels = _get_skewed_data()
+        is_up = features["x1"] > 0
+        for target in putil.TARGETS:
+            # Run test.
+            pos = putil.predict_with_target(
+                features, labels, "1h", [2023], target=target, min_move=0.005
+            )
+            # Check outputs.
+            is_test = pos.notna()
+            share_long = (pos[is_test & is_up] > 0).mean()
+            if target == "sign":
+                # Long when x1 > 0, where the price goes up 70% of the time.
+                self.assertGreater(share_long, 0.9, msg=target)
+            else:
+                # Short when x1 > 0, where the big moves are down.
+                self.assertLess(share_long, 0.1, msg=target)
+
+    def test3(self) -> None:
+        """
+        Test that an unknown target raises an error.
+        """
+        # Prepare inputs.
+        features, labels = _get_skewed_data()
+        # Run test and check outputs.
+        with self.assertRaises(ValueError):
+            putil.predict_with_target(
+                features, labels, "1h", [2023], target="volume"
+            )
+
+
 # #############################################################################
 # Test_evaluate_positions
 # #############################################################################
@@ -206,3 +299,36 @@ class Test_sweep_costs(hunitest.TestCase):
         # The PnL before costs is 0.02 per trade at every cost.
         self.assertEqual(df["gross_bps"].round(6).tolist(), [200.0] * 3)
         self.assertEqual(df["net_bps"].round(6).tolist(), [200.0, 195.0, 190.0])
+
+
+# #############################################################################
+# Test_evaluate_by_group
+# #############################################################################
+
+
+class Test_evaluate_by_group(hunitest.TestCase):
+    """
+    Test `predict_utils.evaluate_by_group()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that each group is measured on its own trades only.
+        """
+        # Prepare inputs.
+        pos = pd.Series([1.0, 1.0, -1.0, 1.0, 1.0])
+        fwd_ret = pd.Series([0.01, 0.03, 0.02, -0.01, 0.05])
+        # The last trade has no group, so it is left out.
+        groups = pd.Series(["a", "a", "b", "b", np.nan])
+        # Run test.
+        df = putil.evaluate_by_group(pos, fwd_ret, groups)
+        # Check outputs.
+        self.assertEqual(df.index.tolist(), ["a", "b"])
+        self.assertEqual(df["n"].tolist(), [2, 2])
+        self.assertEqual(df["share"].tolist(), [0.5, 0.5])
+        # Group a: PnL 0.01 and 0.03. Group b: PnL -0.02 and -0.01.
+        np.testing.assert_allclose(df["gross_bps"], [200.0, -150.0])
+        np.testing.assert_allclose(df["hit_rate"], [1.0, 0.0])
+        np.testing.assert_allclose(df["mean_abs_bps"], [200.0, 150.0])
+        expected_se = np.std([0.01, 0.03], ddof=1) / np.sqrt(2) * 1e4
+        self.assertAlmostEqual(df.loc["a", "se_bps"], expected_se)
