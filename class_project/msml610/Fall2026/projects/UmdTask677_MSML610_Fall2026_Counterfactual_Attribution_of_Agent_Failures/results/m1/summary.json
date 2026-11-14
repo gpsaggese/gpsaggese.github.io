@@ -1,0 +1,72 @@
+{
+ "api": {
+  "cache_read": 1534199,
+  "calls": 794,
+  "cap_usd": 20.0,
+  "completion_tokens": 128315,
+  "prompt_tokens": 1859344,
+  "usd": 0.1201
+ },
+ "pilot": {
+  "by_task": {
+   "krk-m2-1": [
+    "insufficient_material",
+    "insufficient_material"
+   ],
+   "krk-m3-1": [
+    "insufficient_material",
+    "insufficient_material"
+   ],
+   "krk-m4-1": [
+    "insufficient_material",
+    "insufficient_material"
+   ],
+   "krk-m6-1": [
+    "fifty_move_rule",
+    "insufficient_material"
+   ],
+   "krk-m8-1": [
+    "insufficient_material",
+    "insufficient_material"
+   ]
+  },
+  "cost": {
+   "phase_usd": 0.006,
+   "total_usd": 0.006
+  },
+  "infra_errors": 0,
+  "not_won": 10,
+  "runs": 10,
+  "won": 0
+ },
+ "replay": {
+  "all_checks_pass": "37/37",
+  "command_output_match": "37/37",
+  "conversation_after_match": "37/37",
+  "env_after_match": "37/37",
+  "input_hash_match": "37/37",
+  "runs": 10,
+  "source_tapes_chain_ok": 10,
+  "tape_chain_ok": "37/37",
+  "to_end_same_final_env": "37/37",
+  "to_end_same_moves": "37/37",
+  "to_end_same_outcome": "37/37"
+ },
+ "screen": {
+  "always_won": 0,
+  "candidates": 16,
+  "cost": {
+   "phase_usd": 0.1141,
+   "total_usd": 0.1201
+  },
+  "errors": 0,
+  "mixed_0.3_0.7": 0,
+  "n_per_checkpoint": 10,
+  "never_won": 15
+ },
+ "store": {
+  "branches": 244,
+  "checkpoints": 959,
+  "failed_branches": 0
+ }
+}

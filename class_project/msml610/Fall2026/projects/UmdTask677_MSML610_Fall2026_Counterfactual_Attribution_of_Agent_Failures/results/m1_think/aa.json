@@ -1,0 +1,1858 @@
+{
+ "results": [
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 8,
+   "rep": 0,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 7,
+   "rep": 0,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 0,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 0,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 8,
+   "rep": 1,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 1,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 1,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 1,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 8,
+   "rep": 2,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 2,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 2,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 4,
+   "rep": 2,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 8,
+   "rep": 3,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 3,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 3,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 4,
+   "rep": 3,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 8,
+   "rep": 4,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 4,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 5,
+   "rep": 4,
+   "status": "insufficient_material",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 4,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 8,
+   "rep": 5,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 5,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 5,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 5,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 8,
+   "rep": 6,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 6,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 4,
+   "rep": 6,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 6,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 7,
+   "rep": 7,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 7,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 7,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 4,
+   "rep": 7,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 8,
+   "rep": 8,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 8,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 8,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 8,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 8,
+   "rep": 9,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 9,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 9,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 9,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 7,
+   "rep": 10,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 7,
+   "rep": 10,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 10,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 10,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 7,
+   "rep": 11,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 11,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 11,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 4,
+   "rep": 11,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 8,
+   "rep": 12,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 12,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 12,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 12,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 7,
+   "rep": 13,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 13,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 4,
+   "rep": 13,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 13,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 7,
+   "rep": 14,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 14,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 4,
+   "rep": 14,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 14,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 8,
+   "rep": 15,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 7,
+   "rep": 15,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 4,
+   "rep": 15,
+   "status": "insufficient_material",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 15,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 8,
+   "rep": 16,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 16,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 16,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 16,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 8,
+   "rep": 17,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 17,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 4,
+   "rep": 17,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 17,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 8,
+   "rep": 18,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 18,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 4,
+   "rep": 18,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 18,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 7,
+   "rep": 19,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 19,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 19,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 19,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 20,
+   "status": "insufficient_material",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 20,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 20,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 4,
+   "rep": 20,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 21,
+   "status": "insufficient_material",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 21,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 21,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 4,
+   "rep": 21,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 7,
+   "rep": 22,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 22,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 22,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 22,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 7,
+   "rep": 23,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 7,
+   "rep": 23,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 23,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 23,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 8,
+   "rep": 24,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 24,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 4,
+   "rep": 24,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 24,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 8,
+   "rep": 25,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 25,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 25,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 25,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 8,
+   "rep": 26,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 26,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 5,
+   "rep": 26,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 26,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 7,
+   "rep": 27,
+   "status": "insufficient_material",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 27,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 27,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 27,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 8,
+   "rep": 28,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 7,
+   "rep": 28,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 28,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 28,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 8,
+   "rep": 29,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 29,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 4,
+   "rep": 29,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 4,
+   "rep": 29,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 8,
+   "rep": 30,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 7,
+   "rep": 30,
+   "status": "insufficient_material",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 4,
+   "rep": 30,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 4,
+   "rep": 30,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 8,
+   "rep": 31,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 31,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 31,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 4,
+   "rep": 31,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 7,
+   "rep": 32,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 32,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 32,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 7,
+   "rep": 32,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 8,
+   "rep": 33,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 33,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 4,
+   "rep": 33,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 33,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 7,
+   "rep": 34,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 34,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 34,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 34,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 8,
+   "rep": 35,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 10,
+   "rep": 35,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 7,
+   "rep": 35,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 35,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 7,
+   "rep": 36,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 7,
+   "rep": 36,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 5,
+   "rep": 36,
+   "status": "insufficient_material",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 36,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 7,
+   "rep": 37,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 7,
+   "rep": 37,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 37,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 37,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 9,
+   "rep": 38,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 38,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 4,
+   "rep": 38,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 38,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 7,
+   "rep": 39,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 39,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 39,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 39,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 8,
+   "rep": 40,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 40,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 40,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 4,
+   "rep": 40,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 8,
+   "rep": 41,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 7,
+   "rep": 41,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 5,
+   "rep": 41,
+   "status": "insufficient_material",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 41,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 7,
+   "rep": 42,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 7,
+   "rep": 42,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 42,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 42,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 8,
+   "rep": 43,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 43,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 43,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 43,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 8,
+   "rep": 44,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 44,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 44,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 44,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 8,
+   "rep": 45,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 45,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 45,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 45,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 8,
+   "rep": 46,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 46,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 46,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 6,
+   "rep": 46,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 8,
+   "rep": 47,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 7,
+   "rep": 47,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 47,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 4,
+   "rep": 47,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 8,
+   "rep": 48,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 48,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 48,
+   "status": "checkmate",
+   "won": true
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 5,
+   "rep": 48,
+   "status": "insufficient_material",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "A",
+   "n_calls": 9,
+   "rep": 49,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "error": null,
+   "group": "B",
+   "n_calls": 8,
+   "rep": 49,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "A",
+   "n_calls": 6,
+   "rep": 49,
+   "status": "fifty_move_rule",
+   "won": false
+  },
+  {
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "error": null,
+   "group": "B",
+   "n_calls": 7,
+   "rep": 49,
+   "status": "checkmate",
+   "won": true
+  }
+ ],
+ "rows": [
+  {
+   "a_wins": 26,
+   "b_wins": 21,
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "ci95": [
+    -0.093,
+    0.283
+   ],
+   "fisher_p": 0.423,
+   "gap": 0.10000000000000003,
+   "half_width": 0.188,
+   "n_a": 50,
+   "n_b": 50,
+   "pooled_v": 0.47,
+   "screen_v": 0.5,
+   "step": 4,
+   "task": "krk-m4-1",
+   "v_a": 0.52,
+   "v_b": 0.42
+  },
+  {
+   "a_wins": 19,
+   "b_wins": 26,
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "ci95": [
+    -0.319,
+    0.053
+   ],
+   "fisher_p": 0.2276,
+   "gap": -0.14,
+   "half_width": 0.186,
+   "n_a": 50,
+   "n_b": 50,
+   "pooled_v": 0.45,
+   "screen_v": 0.5,
+   "step": 1,
+   "task": "krk-m2-1",
+   "v_a": 0.38,
+   "v_b": 0.52
+  }
+ ],
+ "summary": {
+  "checkpoints": 2,
+  "ci_contains_zero": 2,
+  "cost": {
+   "phase_usd": 0.9553,
+   "total_usd": 2.5949
+  },
+  "errors": 0,
+  "false_alarms_p_lt_0.05": 0,
+  "max_abs_gap": 0.14,
+  "n_per_group": 50
+ }
+}

@@ -1,0 +1,4 @@
+# Experiment stores and the API ledger (large; summaries go to results/).
+runs/
+# Downloaded by data/fetch_tablebases.sh.
+data/syzygy/
