@@ -8,7 +8,7 @@
 
 ## Create a plan
 
-- Create a plan `plan-msml610/book/prompt.slides_and_book_flow.md` for the following
+- Create a plan `plan-book_scripts/prompt.slides_and_book_flow.md` for the following
   actions and keep it updated using [ ], [.], [x] as you go
 
 ## Read convention

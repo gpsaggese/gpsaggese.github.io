@@ -22,7 +22,7 @@ claude> /slides.add_references Lesson01.01_LLM_Assisted_Code_Generation.smd
 ```
 
 ```
-claude> Execute msml610/book/prompt.slides_and_book_flow.md book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd
+claude> Execute book_scripts/prompt.slides_and_book_flow.md book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd
 
 > run_typst.py --input msml610/book/Lesson01.2-AI_and_Machine_Learning.typ
 
@@ -42,28 +42,28 @@ run_typst.py --compress_pdf
   - [ ] /slides.review <smd>
   - [ ] /slides.add_visuals <smd>
   - [ ] /slides.add_references <smd>
-  - [ ] msml610/book/prompt.slides_and_book_flow.md
+  - [ ] book_scripts/prompt.slides_and_book_flow.md
 
 - [ ] Lesson01.01_LLM_Assisted_Code_Generation.smd
   - [x] book_scripts/prompt.create_lesson_slides_from_chap_toc.md
   - [ ] /slides.review
   - [.] /slides.add_visuals
   - [x] /slides.add_references
-  - [x] msml610/book/prompt.slides_and_book_flow.md
+  - [x] book_scripts/prompt.slides_and_book_flow.md
 
 - [ ] Lesson05.01_Skills_Organization_and_Management.smd
   - [ ] book_scripts/prompt.create_lesson_slides_from_chap_toc.md
   - [ ] /slides.review
   - [ ] /slides.add_visuals
   - [ ] /slides.add_references
-  - [ ] msml610/book/prompt.slides_and_book_flow.md
+  - [ ] book_scripts/prompt.slides_and_book_flow.md
 
 - [ ] Lesson11.01_Planning_Software.smd
   - [x] book_scripts/prompt.create_lesson_slides_from_chap_toc.md
   - [ ] /slides.review
   - [ ] /slides.add_visuals
   - [ ] /slides.add_references
-  - [ ] msml610/book/prompt.slides_and_book_flow.md
+  - [ ] book_scripts/prompt.slides_and_book_flow.md
 
 ### [ ] Rename chapters
 

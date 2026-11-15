@@ -211,7 +211,7 @@
 ## Full Checklist Template
 
 - For a complete pass on one lecture (review, render, book chapter, compile), start
-  from the checklist template at `msml610/book/prompt.slides_and_book_flow.md` and
+  from the checklist template at `book_scripts/prompt.slides_and_book_flow.md` and
   follow steps 1-4 above in order
 
 # Workflows

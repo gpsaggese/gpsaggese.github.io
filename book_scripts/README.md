@@ -15,13 +15,14 @@
 | `book_scripts/prompt.find_references_to_chap_toc.md` | References for a chapter in `map.md` |
 | `book_scripts/prompt.inline_lesson_slides_from_skeleton_slides.md` | Slide content copied into a skeleton |
 | `book_scripts/prompt.update_book_chap_from_lesson_slides.md` | Typst chapter updated after its slides change |
-| `msml610/book/prompt.slides_and_book_flow.md` | Slides reviewed and book chapter generated |
+| `book_scripts/prompt.slides_and_book_flow.md` | Slides reviewed and book chapter generated |
 
 # Flow of Prompts and Files
 
 - Each box is a prompt, an intermediate file, or an external input
-  - A prompt is named without the `prompt.` prefix and the `.md` suffix, e.g.,
-    `create_lesson_slides.common` is `book_scripts/prompt.create_lesson_slides.common.md`
+  - A prompt is named without the `prompt.` prefix and the `.md` suffix
+    - E.g., `create_lesson_slides.common` is
+      `book_scripts/prompt.create_lesson_slides.common.md`
 - A solid arrow means that the source feeds the target
 - A dashed arrow means that the source updates a file or is reused by the target
 - A double-headed arrow means that the prompt reads the file and writes it back
@@ -212,7 +213,7 @@ caption=How the prompts feed each other through book_map.md, *.smd, *.typ, and *
   - E.g., `CHAP="## 14, GitHub Projects and Workflows"` in
     `book_AI_Software_Engineering`
 
-## Create `lesson_slides` from a topic list (no book map yet)
+## Create `lesson_slides` from a topic list (with book_map.md)
 
 - **Prompt**:
   ```text
@@ -390,6 +391,56 @@ caption=How the prompts feed each other through book_map.md, *.smd, *.typ, and *
   - E.g., `msml610/book/Lesson10.2-Causal_Inference_for_Time_Series.typ`
   - Keep it in sync with `book_scripts/prompt.update_book_chap_from_lesson_slides.md`
 
+## Convert Slides to a Typst Book Chapter with `gen_book_chapter.py`
+
+- **Command**:
+  ```bash
+  > gen_book_chapter.py -i msml610/01.2 --mode typst_aima --llm_backend hllm_cli_exec --model openrouter/anthropic/claude-opus-4.6 --no_incremental
+  ```
+- **Input**: Lesson slides `<SMD_FILE>`, specified as `msml610/01.2` or as
+  `msml610/lectures_source/<FILE>.smd`
+- **Output**: Typst file `<BOOK>/book/<FILE>.typ`, with the same name as the slides
+  (the same output as the prompt above)
+- **Workflow**:
+  - Python builds the document header (`#import`, `#chapter`) and the headings
+  - Python extracts the diagrams, figures, and tables and puts them back after the
+    LLM call
+  - The LLM is called once per slide, with
+    `class_scripts/prompt.generate_typst_book_chapter_slide.md`
+    - The LLM turns the prose of one slide into Typst
+    - The LLM sees placeholders like `@@FIGURE_1@@`, not raw figure markup
+  - Python adds safety nets: it checks that every figure is referenced, fixes stray
+    markdown bold, and adds the provenance tag
+  - The default actions then run: `lint` (`typstyle`), `fix_typst_code` (Claude Code
+    via `ccp`), and `render_pdf` (`run_typst.py`)
+  - `git_add` and `open_pdf` are off by default, and are selected with `--action`
+- **Flags**:
+  - `--llm_backend hllm_cli_exec`: shell out to simonw's `llm` CLI (text-only)
+  - `--model openrouter/anthropic/claude-opus-4.6`: use Opus 4.6 through OpenRouter
+  - `--no_incremental`: regenerate even if the `.typ` file already exists
+    - By default the script skips generation if the output exists
+- **Difference from the prompt `book_scripts/prompt.create_typst_book_chap_from_lesson_slides.md`**:
+  - **Control**:
+    - Prompt: Claude Code does the whole job in one agentic session
+    - Script: Python controls the flow and the LLM is a text-only function
+  - **Reliability**:
+    - Prompt: structure and figures depend on the LLM following the rules
+    - Script: headings and figures are deterministic, so the LLM cannot invent images
+  - **Model**:
+    - Prompt: the model that Claude Code runs
+    - Script: any model, chosen with `--model`
+  - **Cost and resume**:
+    - Prompt: one big session
+    - Script: many small LLM calls, and incremental mode skips finished work
+  - **Prompt files**:
+    - The script uses `class_scripts/prompt.generate_*.md`, not the files in
+      `book_scripts/`
+    - The two sets of prompts are separate and can drift apart
+- **Examples**:
+  - The lesson checklist below records the exact command used for each lesson
+  - `book_scripts/prompt.update_book_chap_from_lesson_slides.md` follows the prompt
+    route, not this script
+
 ## Convert Slides to a LaTeX Book Chapter
 
 - **Prompt**:
@@ -446,7 +497,7 @@ caption=How the prompts feed each other through book_map.md, *.smd, *.typ, and *
 
 - **Prompt**:
   ```text
-  claude> Execute msml610/book/prompt.slides_and_book_flow.md msml610/lectures_source/Lesson05.2-Overfitting.smd
+  claude> Execute book_scripts/prompt.slides_and_book_flow.md msml610/lectures_source/Lesson05.2-Overfitting.smd
   ```
 - **Input**: Lesson slides `<SMD_FILE>`, e.g.,
   `msml610/lectures_source/Lesson05.2-Overfitting.smd`
@@ -470,7 +521,7 @@ caption=How the prompts feed each other through book_map.md, *.smd, *.typ, and *
 
 // From msml610/book_map.md
 ```
-claude> Execute msml610/book/prompt.slides_and_book_flow.md msml610/lectures_source/Lesson05.2-Overfitting.smd
+claude> Execute book_scripts/prompt.slides_and_book_flow.md msml610/lectures_source/Lesson05.2-Overfitting.smd
 ```
 
 - [x] 5.1
