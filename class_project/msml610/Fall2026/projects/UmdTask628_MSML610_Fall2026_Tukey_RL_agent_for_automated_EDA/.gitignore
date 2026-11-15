@@ -4,7 +4,6 @@ __pycache__/
 
 # Logs written by scripts (`<script>.py.log`), pytest and helpers.
 *.log
-!docker_build.version.log
 tmp.*
 
 # Test scratch space created by `hunitest.TestCase`.
