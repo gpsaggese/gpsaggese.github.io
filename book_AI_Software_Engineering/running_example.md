@@ -3,18 +3,20 @@
 - Decision: the whole book uses `shortlink`, a URL shortener service, as its running
   example
   - Chapters 01-06 use it to show how to steer a model
-  - Chapters 07-11 use it as the code to write, review, and debug
-  - Chapters 12-13 use it as the feature to plan and architect
-  - Chapter 14 uses it as the code to refactor by design principles
-  - Chapter 15 uses it as the code to harden with robustness techniques
-  - Chapters 16-18 use it as the product to track, containerize, and release
+  - Chapters 07-09 use it as the code to write, document, and debug
+  - Chapter 10 uses it as the code to read and explain
+  - Chapters 11-12 use it as the feature to plan and architect
+  - Chapter 13 uses it as the code to refactor by design principles
+  - Chapters 14-17 use it as the product to track, review, containerize, and
+    release
+  - Chapter 18 uses it as the code to harden with robustness techniques
 - Why `shortlink` won over `ledgerlite` and `docsearch`
   - It is the only candidate that is a deployed service
-    - Chapters 17 and 18 get a real container, a health check, and a release gate
+    - Chapters 16 and 17 get a real container, a health check, and a release gate
   - It fills gaps that `book_map.md` marks as not covered
-    - Canary analysis, automated rollback, and production incident loops (chapter 18)
-    - Service boundaries and scalability trade-offs (chapter 13)
-  - Its security flaws give chapters 09 and 11 high-stakes review and debug targets
+    - Canary analysis, automated rollback, and production incident loops (chapter 17)
+    - Service boundaries and scalability trade-offs (chapter 12)
+  - Its security flaws give chapters 09 and 15 high-stakes debug and review targets
 - The rejected candidates are in `Alternatives Considered`
 
 # The Example
@@ -66,8 +68,8 @@
   - Reset to `v0`, run the prompt, and score the output with the oracles above
 - Scoring one run
   - Tests pass or fail
-  - Seeded flaw found or missed (chapters 09 and 10)
-  - Diff size and cost (chapter 03)
+  - Seeded flaw found or missed (chapters 10 and 15)
+  - Diff size and cost (chapter 02)
 
 ## Chapter Fit
 
@@ -76,23 +78,23 @@
 | Chap | Task on `shortlink`                                                  | Oracle                                         |
 | :--- | :------------------------------------------------------------------- | :--------------------------------------------- |
 | 01   | Generate the short-code generator from one spec with two models      | Same unit tests for both outputs               |
-| 02   | Write a skill that adds an endpoint under the repo rules             | Skill run on a sample endpoint, diff reviewed  |
-| 03   | Run the task "add click counts to stats" in three harnesses          | Tests pass, diff size, cost                    |
-| 04   | Implement redirect with the investigate, plan, edit, test loop       | `pytest` green after each step                 |
-| 05   | Write a spec for custom aliases with acceptance criteria, non-goals  | Golden JSON responses, alias edge cases        |
+| 02   | Run the task "add click counts to stats" in three harnesses          | Tests pass, diff size, cost                    |
+| 03   | Implement redirect with the investigate, plan, edit, test loop       | `pytest` green after each step                 |
+| 04   | Write a spec for custom aliases with acceptance criteria, non-goals  | Golden JSON responses, alias edge cases        |
+| 05   | Write a skill that adds an endpoint under the repo rules             | Skill run on a sample endpoint, diff reviewed  |
 | 06   | Delegation matrix: CRUD to the AI, redirect policy and auth to human | Confirmation points in the decision log        |
 | 07   | Lint, type hints, golden-file API tests, coverage gate               | Linter and `pyright` clean, coverage met       |
 | 08   | OpenAPI docstrings, README, C4 diagram, `CLAUDE.md`                  | Commands in the README run as written          |
-| 09   | Review a PR that redirects to any URL (open redirect)                | Seeded flaw found by the AI, then the human    |
+| 09   | Fix a failing test: a link expires one hour early                    | Reproducer fails before the fix, passes after  |
 | 10   | Explain the collision-handling path and map its imports              | Call graph shows the race window and the cycle |
-| 11   | Fix a failing test: a link expires one hour early                    | Reproducer fails before the fix, passes after  |
-| 12   | Write PRD, design, and plan for aliases, rate limiting, analytics    | Docs follow the project templates              |
-| 13   | Set the layers and write an ADR: SQLite versus Postgres              | No import cycle, dependency direction holds    |
-| 14   | Refactor the collision-handling code into one deep module            | Tests stay green, the public interface shrinks |
-| 15   | Add input validation, a storage timeout, and an idempotent create    | Bad input fails fast, a retry makes one link   |
-| 16   | Issues, sub-issues, and stacked PRs for the Part III features        | Each PR passes the tests on its own            |
-| 17   | Build the container image and run it                                 | Smoke test passes inside the container         |
-| 18   | CI with fast and slow tiers, coverage gate, release on tag, canary   | A planted failure is blocked by the gates      |
+| 11   | Write PRD, design, and plan for aliases, rate limiting, analytics    | Docs follow the project templates              |
+| 12   | Set the layers and write an ADR: SQLite versus Postgres              | No import cycle, dependency direction holds    |
+| 13   | Refactor the collision-handling code into one deep module            | Tests stay green, the public interface shrinks |
+| 14   | Issues, sub-issues, and stacked PRs for the Part III features        | Each PR passes the tests on its own            |
+| 15   | Review a PR that redirects to any URL (open redirect)                | Seeded flaw found by the AI, then the human    |
+| 16   | Build the container image and run it                                 | Smoke test passes inside the container         |
+| 17   | CI with fast and slow tiers, coverage gate, release on tag, canary   | A planted failure is blocked by the gates      |
+| 18   | Add input validation, a storage timeout, and an idempotent create    | Bad input fails fast, a retry makes one link   |
 
 ## Risks and Mitigations
 
@@ -100,13 +102,13 @@
   - Use SQLite and the framework test client: no external service
   - Ship a `Makefile` or `invoke` target that runs everything in one command
 - Security flaws can pull the discussion away from the workflow topic
-  - Plant flaws only in chapters 09 and 11
+  - Plant flaws only in chapters 09 and 15
   - Keep the fix of each flaw to a few lines
 - Framework boilerplate makes generated diffs noisy and hard to compare
   - Pin one framework and its version in the starter repo
   - Keep `v0` to a few small modules
 - Less reuse of existing repo material than `docsearch`
-  - Reuse the Docker and CI docs cited in chapters 17 and 18 of `book_map.md`
+  - Reuse the Docker and CI docs cited in chapters 16 and 17 of `book_map.md`
 - Borrow from `ledgerlite`
   - Property tests on invariants, e.g., short codes are unique and decode back to the
     URL
@@ -120,11 +122,11 @@
     worked
     - Needed to reuse the example as "unit tests" for the book prompts
   - **Seedable defects**: a bug or a design flaw can be planted for chapters 09, 10,
-    and 11
-  - **Architecture richness**: enough modules and layers for chapter 13, not so many
+    and 15
+  - **Architecture richness**: enough modules and layers for chapter 12, not so many
     that a reader gets lost
   - **Delivery fit**: the system maps onto the Docker and CI/CD flows of chapters
-    17 and 18
+    16 and 17
   - **Low setup cost**: a reader runs it with no paid service and no cloud account
   - **Reuse of repo material**: the repo already holds docs, skills, or tools about
     the topic
@@ -153,7 +155,7 @@
 | **Total (max 35)**     | **27**               | **29**       | **23**      |
 
 - `ledgerlite` scored higher on paper
-  - The decision weights delivery fit and the gaps in chapters 13 and 18 above the
+  - The decision weights delivery fit and the gaps in chapters 12 and 17 above the
     cheaper setup
 
 ## `ledgerlite`: a Double-Entry Ledger CLI
@@ -165,9 +167,9 @@
 - Strengths:
   - Strongest oracles: golden-file reports and property tests on the invariant
   - Lowest setup cost: no server, no key, no cloud account
-  - A CLI matches the dockerized executables of chapter 17
+  - A CLI matches the dockerized executables of chapter 16
 - Why not chosen:
-  - No running service, so chapter 18 monitoring and rollback stay uncovered
+  - No running service, so chapter 17 monitoring and rollback stay uncovered
   - Dry domain
   - Single-user tool: no concurrency or security stories
 
@@ -179,7 +181,7 @@
   - `ask`: retrieve passages and call an LLM behind a cached client
 - Strengths:
   - Hallucination shows up as an answer with no supporting passage (chapter 01)
-  - The answer prompt is a versioned artifact (chapter 05)
+  - The answer prompt is a versioned artifact (chapter 04)
   - Reuses `helpers_root/docs/tools/helpers/all.hllm.explanation.md` for cached and
     tested LLM calls
 - Why not chosen:

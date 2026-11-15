@@ -14,7 +14,7 @@ claude> Execute book_scripts/prompt.create_lesson_slides_from_chap_toc.md withou
 > gen_slides.py -i book_AI_Software_Engineering/14.01
 > gen_slides.py -i book_AI_Software_Engineering/14.01 --action release
 
-> lint_text.py -i book_AI_Software_Engineering/lectures_source/Lesson02.1*.smd --check
+> lint_text.py -i book_AI_Software_Engineering/lectures_source/Lesson05.01*.smd --check
 
 claude> /slides.review Lesson01.01_LLM_Assisted_Code_Generation.smd
 claude> /slides.add_visuals Lesson01.01_LLM_Assisted_Code_Generation.smd
@@ -22,7 +22,7 @@ claude> /slides.add_references Lesson01.01_LLM_Assisted_Code_Generation.smd
 ```
 
 ```
-claude> Execute msml610/book/prompt.slides_and_book_flow.md book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd
+claude> Execute msml610/book/prompt.slides_and_book_flow.md book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd
 
 > run_typst.py --input msml610/book/Lesson01.2-AI_and_Machine_Learning.typ
 
@@ -51,14 +51,14 @@ run_typst.py --compress_pdf
   - [x] /slides.add_references
   - [x] msml610/book/prompt.slides_and_book_flow.md
 
-- [ ] Lesson02.01_Skills_Organization_and_Management.smd
+- [ ] Lesson05.01_Skills_Organization_and_Management.smd
   - [ ] book_scripts/prompt.create_lesson_slides_from_chap_toc.md
   - [ ] /slides.review
   - [ ] /slides.add_visuals
   - [ ] /slides.add_references
   - [ ] msml610/book/prompt.slides_and_book_flow.md
 
-- [ ] Lesson12.01_Planning_Software.smd
+- [ ] Lesson11.01_Planning_Software.smd
   - [x] book_scripts/prompt.create_lesson_slides_from_chap_toc.md
   - [ ] /slides.review
   - [ ] /slides.add_visuals
@@ -103,3 +103,8 @@ run_typst.py --compress_pdf
 ### [ ] Use example as unit test
 - This example should be also used as "unit tests", e.g., running
   prompts to see what is generated
+
+### [ ] Changes to L11.01
+
+- Change "Capturing an Idea" to a slide about describing the idea as an informal
+  natural language description
