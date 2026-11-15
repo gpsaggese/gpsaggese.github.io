@@ -74,7 +74,7 @@
 - Regenerate a stored result in the container, e.g. the sortability report:
 
   ```bash
-  > ./docker_cmd.sh "cd /git_root/$(git rev-parse --show-prefix) && python tukey_results.py sortability --out results/m1/sortability.json"
+  > ./docker_cmd.sh "cd /git_root/$(git rev-parse --show-prefix) && ./tukey_results.py sortability --out results/m1/sortability.json"
   ```
 
   Every file's command is in the docstring of `tukey_results.py`; the

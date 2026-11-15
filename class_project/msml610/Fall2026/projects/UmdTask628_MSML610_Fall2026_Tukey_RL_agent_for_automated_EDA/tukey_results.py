@@ -4,7 +4,10 @@ Regenerate the set manifests and the stored Milestone 1-2 results.
 
 Every file under `configs/sets/`, `results/m1/` and `results/m2/` comes from
 one action below. Run them inside the project's Docker image from the project
-directory, e.g. through `./docker_cmd.sh "cd /git_root/<project dir> && ..."`.
+directory as `./tukey_results.py <action> ...`, e.g. through
+`./docker_cmd.sh "cd /git_root/<project dir> && ./tukey_results.py ..."`.
+With `--dry_run` an action computes its results and logs the files it would
+write, without writing them.
 
 # Usage Example
 - Write the manifests of the sets this milestone uses (never overwrites):
@@ -20,6 +23,8 @@ directory, e.g. through `./docker_cmd.sh "cd /git_root/<project dir> && ..."`.
   it into the two committed files (about 1.5 minutes with 8-10 workers):
 > tukey_results.py m2_table --out table.json --n_workers 8
 > tukey_results.py m2_split --table table.json --out results/m2
+- Run an action and log the files it would write, without writing them:
+> tukey_results.py proto_check --out results/m2/proto_check.json --dry_run
 
 The committed `results/m2` files come from the Oct 2026 run of this code
 before the scoring audit. Regenerating them (checked Nov 12, 2026) gives the
@@ -66,20 +71,31 @@ _LOG = logging.getLogger(__name__)
 # #############################################################################
 
 
-def _write_json(obj: Dict[str, Any], out: str, *, compact: bool = False) -> None:
+def _write_json(
+    obj: Dict[str, Any],
+    out: str,
+    *,
+    compact: bool = False,
+    dry_run: bool = False,
+) -> None:
     """
     Write a JSON file with a final newline.
 
     :param obj: content
     :param out: output path
     :param compact: write without whitespace (large per-graph files)
+    :param dry_run: log the path instead of writing the file
     """
-    with open(out, "w") as file:
-        if compact:
-            json.dump(obj, file, separators=(",", ":"))
-        else:
-            json.dump(obj, file, indent=1)
-        file.write("\n")
+    if dry_run:
+        _LOG.warning("[DRY_RUN] Would write '%s'", out)
+    else:
+        _LOG.info("Writing '%s'", out)
+        with open(out, "w") as file:
+            if compact:
+                json.dump(obj, file, separators=(",", ":"))
+            else:
+                json.dump(obj, file, indent=1)
+            file.write("\n")
 
 
 def _shd_dag(B_hat: np.ndarray, B_true: np.ndarray) -> int:
@@ -151,21 +167,27 @@ def _holm(p_values: Dict[str, float]) -> Dict[str, float]:
 # #############################################################################
 
 
-def write_manifests(manifest_dir: str, names: List[str]) -> None:
+def write_manifests(
+    manifest_dir: str, names: List[str], *, dry_run: bool = False
+) -> None:
     """
     Write the manifest of each set, refusing to overwrite an existing one.
 
     :param manifest_dir: output directory
     :param names: set names
+    :param dry_run: build the manifests but write nothing
     """
     hdbg.dassert_lt(0, len(names), "Pass --names")
-    os.makedirs(manifest_dir, exist_ok=True)
+    if dry_run:
+        _LOG.warning("[DRY_RUN] Would create '%s' if missing", manifest_dir)
+    else:
+        os.makedirs(manifest_dir, exist_ok=True)
     for name in names:
         path = tsets.manifest_path(manifest_dir, name)
         hdbg.dassert(not os.path.exists(path), "Manifest exists: %s", path)
         manifest = tsets.build_manifest(tsets.EVAL_SETS[name])
-        _write_json(manifest, path)
-        _LOG.info("Wrote %s (%s instances)", path, manifest["n_instances"])
+        _LOG.info("%s: %s instances", name, manifest["n_instances"])
+        _write_json(manifest, path, dry_run=dry_run)
 
 
 # #############################################################################
@@ -173,7 +195,7 @@ def write_manifests(manifest_dir: str, names: List[str]) -> None:
 # #############################################################################
 
 
-def generator_report(out: str) -> Dict[str, Any]:
+def generator_report(out: str, *, dry_run: bool = False) -> Dict[str, Any]:
     """
     Describe each generator family on its `V_sort_*` graphs (M1).
 
@@ -185,6 +207,7 @@ def generator_report(out: str) -> Dict[str, Any]:
     |pcorr| >= 0.1", which was replaced by the per-edge margin.
 
     :param out: output JSON path
+    :param dry_run: compute the report but write nothing
     :return: report per family
     """
     report: Dict[str, Any] = {}
@@ -228,11 +251,11 @@ def generator_report(out: str) -> Dict[str, Any]:
             )
         report[name.removeprefix("V_sort_")] = summary
         _LOG.info("%s: %s", name, summary)
-    _write_json(report, out)
+    _write_json(report, out, dry_run=dry_run)
     return report
 
 
-def sortability_report(out: str) -> Dict[str, Any]:
+def sortability_report(out: str, *, dry_run: bool = False) -> Dict[str, Any]:
     """
     Measure how far simple scores reveal the causal order, per family (M1).
 
@@ -245,6 +268,7 @@ def sortability_report(out: str) -> Dict[str, Any]:
     should be no better than a random order.
 
     :param out: output JSON path
+    :param dry_run: compute the report but write nothing
     :return: report per family
     """
     report: Dict[str, Any] = {}
@@ -287,7 +311,7 @@ def sortability_report(out: str) -> Dict[str, Any]:
     )
     for family, p_value in holm.items():
         report[family]["var_minus_random_shd"]["holm_p"] = p_value
-    _write_json(report, out)
+    _write_json(report, out, dry_run=dry_run)
     return report
 
 
@@ -296,7 +320,7 @@ def sortability_report(out: str) -> Dict[str, Any]:
 # #############################################################################
 
 
-def proto_check(out: str) -> Dict[str, Any]:
+def proto_check(out: str, *, dry_run: bool = False) -> Dict[str, Any]:
     """
     Reproduce the Oct 10 measurements on the prototype's seeds 0-19.
 
@@ -306,6 +330,7 @@ def proto_check(out: str) -> Dict[str, Any]:
     1.80, 0.10, 0.65 and 5.30.
 
     :param out: output JSON path
+    :param dry_run: compute the check but write nothing
     :return: means and per-seed values
     """
     values: Dict[str, List[float]] = {
@@ -346,12 +371,14 @@ def proto_check(out: str) -> Dict[str, Any]:
         }
         for name, v in values.items()
     }
-    _write_json(report, out)
+    _write_json(report, out, dry_run=dry_run)
     _LOG.info("Prototype check: %s", {k: v["mean"] for k, v in report.items()})
     return report
 
 
-def m2_table(out: str, n_workers: int, manifest_dir: str) -> Dict[str, Any]:
+def m2_table(
+    out: str, n_workers: int, manifest_dir: str, *, dry_run: bool = False
+) -> Dict[str, Any]:
     """
     Tune the non-learned methods on validation, then run the M2 table.
 
@@ -361,6 +388,7 @@ def m2_table(out: str, n_workers: int, manifest_dir: str) -> Dict[str, Any]:
     :param out: output JSON path
     :param n_workers: worker processes
     :param manifest_dir: directory of the set manifests
+    :param dry_run: compute the table but write nothing
     :return: tuned parameters, summaries and per-graph scores
     """
     tuned = tbench.tune(n_workers=n_workers, manifest_dir=manifest_dir)
@@ -372,11 +400,11 @@ def m2_table(out: str, n_workers: int, manifest_dir: str) -> Dict[str, Any]:
         tuned, n_workers=n_workers, manifest_dir=manifest_dir
     )
     result["tuned"] = tuned
-    _write_json(result, out)
+    _write_json(result, out, dry_run=dry_run)
     return result
 
 
-def m2_split(table_path: str, out_dir: str) -> None:
+def m2_split(table_path: str, out_dir: str, *, dry_run: bool = False) -> None:
     """
     Split an M2 table into a summary file and a compact per-graph file.
 
@@ -386,6 +414,7 @@ def m2_split(table_path: str, out_dir: str) -> None:
 
     :param table_path: `table.json` written by `m2_table`
     :param out_dir: directory for `table_summary.json` and `per_graph.json`
+    :param dry_run: split the table but write nothing
     """
     with open(table_path, "rb") as file:
         raw = file.read()
@@ -410,10 +439,18 @@ def m2_split(table_path: str, out_dir: str) -> None:
                 "shd_target": [int(x) for x in values["shd_target"]],
             }
         per_graph["settings"][setting] = entry
-    os.makedirs(out_dir, exist_ok=True)
-    _write_json(summary, os.path.join(out_dir, "table_summary.json"))
+    if dry_run:
+        _LOG.warning("[DRY_RUN] Would create '%s' if missing", out_dir)
+    else:
+        os.makedirs(out_dir, exist_ok=True)
     _write_json(
-        per_graph, os.path.join(out_dir, "per_graph.json"), compact=True
+        summary, os.path.join(out_dir, "table_summary.json"), dry_run=dry_run
+    )
+    _write_json(
+        per_graph,
+        os.path.join(out_dir, "per_graph.json"),
+        compact=True,
+        dry_run=dry_run,
     )
 
 
@@ -459,6 +496,11 @@ def _parse() -> argparse.ArgumentParser:
         default=[],
         help="Sets whose manifests to write",
     )
+    parser.add_argument(
+        "--dry_run",
+        action="store_true",
+        help="Compute the results and log the files, without writing them",
+    )
     hparser.add_verbosity_arg(parser)
     return parser
 
@@ -467,20 +509,22 @@ def _main(parser: argparse.ArgumentParser) -> None:
     args = parser.parse_args()
     hdbg.init_logger(verbosity=args.log_level, use_exec_path=True)
     if args.action == "write_manifests":
-        write_manifests(args.manifest_dir, args.names)
+        write_manifests(args.manifest_dir, args.names, dry_run=args.dry_run)
         return
     hdbg.dassert_ne(args.out, "", "Pass --out")
     if args.action == "generators":
-        generator_report(args.out)
+        generator_report(args.out, dry_run=args.dry_run)
     elif args.action == "sortability":
-        sortability_report(args.out)
+        sortability_report(args.out, dry_run=args.dry_run)
     elif args.action == "proto_check":
-        proto_check(args.out)
+        proto_check(args.out, dry_run=args.dry_run)
     elif args.action == "m2_table":
-        m2_table(args.out, args.n_workers, args.manifest_dir)
+        m2_table(
+            args.out, args.n_workers, args.manifest_dir, dry_run=args.dry_run
+        )
     elif args.action == "m2_split":
         hdbg.dassert_ne(args.table, "", "Pass --table")
-        m2_split(args.table, args.out)
+        m2_split(args.table, args.out, dry_run=args.dry_run)
     else:
         raise ValueError(f"Unknown action '{args.action}'")
 
