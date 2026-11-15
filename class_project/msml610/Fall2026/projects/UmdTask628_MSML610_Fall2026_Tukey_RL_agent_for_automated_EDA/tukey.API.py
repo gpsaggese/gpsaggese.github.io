@@ -157,7 +157,8 @@ hintros.print_obj_info(utils.cell2_2_plot_graph)
 #
 # **Description**
 # - `score`: `-0.5 * shd_target / |E*| - 0.5 * (1 - pred_frac)`; G* scores 0,
-#   the empty graph -1
+#   a reference and not an upper bound (with few rows a wrong graph can score
+#   above 0); the empty graph scores -1 when G* has an edge
 # - `shd_target`: structural distance to the identifiable target (here the
 #   CPDAG); `shd_dag`, `shd_cpdag`: the same against the DAG and its class
 # - `pred_frac`: held-out likelihood gain over the empty graph, relative to G*
@@ -267,9 +268,10 @@ hintros.print_obj_info(tscrip.ScriptedExpert)
 # Every baseline sees only the training rows.
 display(utils.cell3_3_compare_baselines(inst))
 # Outcome: on Gaussian data the CPDAG methods (PC, GES) can match the target;
-# DirectLiNGAM assumes non-Gaussian noise and orients at random here; sorting by
-# the number of relatives can recover the class (the sortability of Milestone 1);
-# the empty graph scores -1.
+# DirectLiNGAM assumes non-Gaussian noise, which this instance does not have, so
+# that assumption does not justify its directions here; sorting by the number of
+# relatives can recover the class (the sortability of Milestone 1); the empty
+# graph scores -1.
 
 # %% [markdown]
 # **Implementation** `cell3_3_compare_baselines()`
@@ -282,8 +284,11 @@ hintros.print_obj_info(utils.cell3_3_compare_baselines)
 #
 # - An instance hides a graph; an agent sees only the training rows through
 #   `Evidence`, and the score compares its graph with what the data identify
-# - The score is 0 for the hidden graph and -1 for the empty graph, and graphs
-#   in the same equivalence class tie when only the class is identifiable
-# - Tools are pure functions of the training rows; the scripted agent and the
-#   baselines use the same interface that the learned policy of Milestone 3
-#   will use
+# - The hidden graph scores 0, a reference and not an upper bound (with few rows
+#   a wrong graph can score above it); the empty graph scores -1 when the hidden
+#   graph has an edge; graphs in the same equivalence class tie when only the
+#   class is identifiable
+# - Tools are pure functions of the training rows; the scripted agent reads
+#   `Evidence`, as the learned policy of Milestone 3 will, while the baselines
+#   read the training rows through `run_baseline()`; all of them use the same
+#   training split and the same scorer

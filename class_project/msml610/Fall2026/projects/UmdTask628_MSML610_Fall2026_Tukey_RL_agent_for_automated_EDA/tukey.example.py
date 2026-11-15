@@ -34,6 +34,7 @@
 import logging
 
 # %%
+import helpers.hintrospection as hintros
 import helpers.hnotebook as hnotebook
 import tukey_utils as utils
 
@@ -85,6 +86,9 @@ utils.example_cell1_2_plot_gallery(seed=0)
 # - Samples one instance per topology and plots its graph with
 #   `plot_causal_dag()`
 
+# %%
+hintros.print_obj_info(utils.example_cell1_2_plot_gallery)
+
 # %% [markdown]
 # ## Cell 1.3: What simulated data leak about the causal order
 #
@@ -122,6 +126,9 @@ utils.example_cell1_3_plot_sortability(sortability)
 #   `tukey_results.py sortability`); the edge
 #   definition (Reisach et al. 2026, Eq. 4) counts each edge once, ties 1/2
 
+# %%
+hintros.print_obj_info(utils.example_cell1_3_load_sortability)
+
 # %% [markdown]
 # # Part 2: The toolbox, the scripted agent and the baselines
 
@@ -147,7 +154,7 @@ display(utils.example_cell2_1_load_m2_table("D"))
 # learned policy must beat.
 
 # %% [markdown]
-# ## Cell 2.2: Every method in every setting
+# ## Cell 2.2: Every method with a combined score, in every setting
 #
 # **Goal**
 # - See where each method's assumptions hold
@@ -174,3 +181,6 @@ utils.example_cell2_2_plot_m2_heatmap()
 # **Implementation** `example_cell2_2_plot_m2_heatmap()`
 # - Reads `results/m2/table_summary.json` (written by `tukey_results.py
 #   m2_table` and `m2_split`)
+
+# %%
+hintros.print_obj_info(utils.example_cell2_2_plot_m2_heatmap)

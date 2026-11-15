@@ -281,11 +281,14 @@ def cell3_3_compare_baselines(inst: tenv.Instance) -> pd.DataFrame:
 # #############################################################################
 
 
-def example_cell1_2_plot_gallery(*, seed: int = 0) -> None:
+def example_cell1_2_plot_gallery(
+    *, seed: int = 0, figsize: Tuple[float, float] = (14.0, 3.5)
+) -> None:
     """
     Plot one hidden graph per topology, with its identifiable target.
 
     :param seed: instance seed shared by the panels
+    :param figsize: figure size in inches
     """
     configs = {
         "Erdos-Renyi": tenv.GraphConfig(n_nodes=8, n_edges=10),
@@ -295,9 +298,7 @@ def example_cell1_2_plot_gallery(*, seed: int = 0) -> None:
         "star": tenv.GraphConfig(n_nodes=5, n_edges=4, topology="star"),
         "layered": tenv.GraphConfig(n_nodes=9, n_edges=10, topology="layered"),
     }
-    _, axes = plt.subplots(
-        1, len(configs), figsize=(3.5 * len(configs), 3.5), dpi=_GALLERY_DPI
-    )
+    _, axes = plt.subplots(1, len(configs), figsize=figsize, dpi=_GALLERY_DPI)
     for ax, (name, cfg) in zip(axes, configs.items()):
         inst = tenv.sample_instance(cfg, seed)
         title = f"{name}\ntarget: {inst.truth.target_class}"
@@ -340,11 +341,14 @@ def example_cell1_3_load_sortability(
     return pd.DataFrame(rows).round(3)
 
 
-def example_cell1_3_plot_sortability(table: pd.DataFrame) -> None:
+def example_cell1_3_plot_sortability(
+    table: pd.DataFrame, *, figsize: Tuple[float, float] = (11.0, 3.5)
+) -> None:
     """
     Plot raw and standardized variance and relatives sortability per family.
 
     :param table: output of `example_cell1_3_load_sortability()`
+    :param figsize: figure size in inches
     """
     columns = {
         "var_raw": "variance, raw",
@@ -355,7 +359,7 @@ def example_cell1_3_plot_sortability(table: pd.DataFrame) -> None:
         id_vars="family", value_vars=list(columns), var_name="score"
     )
     long["score"] = long["score"].map(columns)
-    _, ax = plt.subplots(figsize=(11, 3.5), dpi=_DPI)
+    _, ax = plt.subplots(figsize=figsize, dpi=_DPI)
     sns.barplot(data=long, x="family", y="value", hue="score", ax=ax)
     ax.axhline(0.5, color="black", linestyle="--", linewidth=1)
     ax.set_ylabel("sortability (edges)")
@@ -460,12 +464,15 @@ def example_cell2_1_load_m2_table(
 
 def example_cell2_2_plot_m2_heatmap(
     path: str = "results/m2/table_summary.json",
+    *,
+    figsize: Tuple[float, float] = (9.0, 5.0),
 ) -> None:
     """
     Plot the mean combined score of every method with a combined score, in
     every setting.
 
     :param path: committed result file
+    :param figsize: figure size in inches
     """
     table = _load_json(path)["table"]
     scores = pd.DataFrame(
@@ -475,7 +482,7 @@ def example_cell2_2_plot_m2_heatmap(
         }
     )
     scores = scores.loc[scores.mean(axis=1).sort_values(ascending=False).index]
-    _, ax = plt.subplots(figsize=(9, 5), dpi=_DPI)
+    _, ax = plt.subplots(figsize=figsize, dpi=_DPI)
     sns.heatmap(
         scores, annot=True, fmt=".2f", cmap="viridis", vmin=-1, vmax=0, ax=ax
     )
