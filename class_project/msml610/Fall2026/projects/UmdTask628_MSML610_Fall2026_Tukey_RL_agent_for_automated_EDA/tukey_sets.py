@@ -657,7 +657,12 @@ def check_semantics(inst: tenv.Instance, expected_hash: str) -> None:
     """
     Check an instance's scoring metadata against its manifest entry.
 
-    A plain `str` hash (no recorded metadata) checks nothing here.
+    On every machine type it compares the recorded `target_class`, the noise
+    family of column 0 (`noise`) and, in the noise-level sets, `noise_share`.
+    The manifests do not record, so nothing checks, the noise families of the
+    other columns (they set the non-Gaussian flags of a `mixed_node` target)
+    or the confounded pairs of a hidden common cause. A plain `str` hash (no
+    recorded metadata) checks nothing here.
 
     :param inst: sampled instance
     :param expected_hash: hash from `load_set()` (a `ManifestHash`)
@@ -759,7 +764,10 @@ def sample_checked(
     seed: int, cfg: tenv.GraphConfig, expected_hash: str
 ) -> tenv.Instance:
     """
-    Sample a manifest instance and check that the generator did not change.
+    Sample a manifest instance and check it against its manifest entry.
+
+    See `check_instance()`: a changed generator fails the check on the machine
+    type that wrote the manifests, and only gives a warning on another one.
 
     :param seed: instance seed
     :param cfg: generator settings
@@ -788,7 +796,9 @@ def is_reference_machine() -> bool:
 # Hash comparisons made in this process off the reference machine type, and
 # how many of them differed.
 _OTHER_MACHINE_COUNTS = {"checked": 0, "differ": 0}
-# After this many comparisons, a majority of differences is reported: it is
+# Whether this process has already warned that most comparisons differ.
+_OTHER_MACHINE_WARNED = {"majority": False}
+# From this many comparisons on, a majority of differences is reported: it is
 # more than another CPU explains.
 _MIN_CHECKED = 20
 
@@ -798,9 +808,10 @@ def _note_other_machine(seed: int, same: bool) -> None:
     Count a hash comparison made off the reference machine type, and warn.
 
     The first difference in a process gives one warning. A second warning
-    follows if most of the first `_MIN_CHECKED` instances differ, since a few
+    follows, once per process, at the first comparison from the
+    `_MIN_CHECKED`-th on where most comparisons so far differ, since a few
     percent is what another CPU explains and more points to a changed
-    generator.
+    generator. A repeated instance counts again.
 
     :param seed: instance seed
     :param same: whether the instance's hash equals the manifest's
@@ -821,15 +832,17 @@ def _note_other_machine(seed: int, same: bool) -> None:
                 platform.machine(),
             )
     if (
-        counts["checked"] == _MIN_CHECKED
-        and 2 * counts["differ"] > _MIN_CHECKED
+        counts["checked"] >= _MIN_CHECKED
+        and 2 * counts["differ"] > counts["checked"]
+        and not _OTHER_MACHINE_WARNED["majority"]
     ):
+        _OTHER_MACHINE_WARNED["majority"] = True
         _LOG.warning(
-            "%s of the first %s instances hash differently from their "
-            "manifests: more than another CPU explains, so the generator "
-            "may have changed",
+            "%s of the %s instances checked so far hash differently from "
+            "their manifests: more than another CPU explains, so the "
+            "generator may have changed",
             counts["differ"],
-            _MIN_CHECKED,
+            counts["checked"],
         )
 
 
@@ -837,10 +850,16 @@ def check_instance(inst: tenv.Instance, expected_hash: str) -> None:
     """
     Check that an instance is the one its set manifest recorded.
 
-    On the machine type that wrote the manifests a different hash means the
-    generator changed, and the check fails. On any other machine type the
-    same generator gives a different hash for a few percent of the instances,
-    so a difference is counted and warned about there, not refused.
+    - On the machine type that wrote the manifests: the hash (rounded training
+      and test rows, graph, weights, and the marks of a PAG target) must equal
+      the recorded one; a different hash means the generator changed, and the
+      check fails
+    - On any other machine type: the same generator gives a different hash
+      for a few percent of the instances, so a difference is counted and
+      warned about (`_note_other_machine()`), not refused
+    - On every machine type: `check_semantics()` compares the recorded
+      metadata; neither check covers the noise families after column 0 or
+      the confounded pairs
 
     :param inst: sampled instance
     :param expected_hash: hash recorded in the manifest

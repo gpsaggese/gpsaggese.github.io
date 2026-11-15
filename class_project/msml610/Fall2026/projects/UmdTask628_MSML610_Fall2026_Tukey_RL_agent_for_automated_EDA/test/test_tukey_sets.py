@@ -240,6 +240,7 @@ class Test_manifests(hunitest.TestCase):
         with (
             umock.patch("platform.machine", return_value="x86_64"),
             umock.patch.dict(tsets._OTHER_MACHINE_COUNTS, fresh),
+            umock.patch.dict(tsets._OTHER_MACHINE_WARNED, {"majority": False}),
             umock.patch.object(tsets, "_MIN_CHECKED", 3),
         ):
             with self.assertLogs(tsets._LOG, level="WARNING") as logs:
@@ -252,6 +253,30 @@ class Test_manifests(hunitest.TestCase):
                 tsets.sample_checked(16, tsets.main_task_config(16), hash1)
         self.assertEqual(len(logs.records), 2)
         self.assertIn("generator may have changed", logs.output[1])
+
+    def test6(self) -> None:
+        """
+        A majority of differences reached after the first 20 is reported once.
+        """
+        # Prepare inputs.
+        same = [True] * 20 + [False] * 80
+        fresh = {"checked": 0, "differ": 0}
+        # Run test.
+        with (
+            umock.patch.dict(tsets._OTHER_MACHINE_COUNTS, fresh),
+            umock.patch.dict(tsets._OTHER_MACHINE_WARNED, {"majority": False}),
+        ):
+            with self.assertLogs(tsets._LOG, level="WARNING") as logs:
+                for seed, is_same in enumerate(same):
+                    tsets._note_other_machine(seed, is_same)
+            counts = dict(tsets._OTHER_MACHINE_COUNTS)
+        # Check outputs.
+        self.assertEqual(counts, {"checked": 100, "differ": 80})
+        # The first difference (instance 20), then the first majority: 21 of
+        # 41 comparisons.
+        self.assertEqual(len(logs.records), 2)
+        self.assertIn("Instance 20 ", logs.output[0])
+        self.assertIn("21 of the 41 instances checked so far", logs.output[1])
 
 
 def _tampered_manifest(manifest_dir: str, name: str, change: str) -> None:
