@@ -33,7 +33,7 @@
 | File | What it does |
 | :--- | :--- |
 | `tukey_env.py` | Random causal graphs (13 generator families), data, train/test split, and `TukeyEnv`, which gives an agent only `Evidence` (no graph, no test rows); `d_test`, `instance` and `reward_oracle()` are for the experimenter and the trainer |
-| `tukey_sets.py` | Seeded validation and test sets with manifests that detect generator changes |
+| `tukey_sets.py` | Seeded validation and test sets with manifests: on the machine type that wrote the manifests a different instance hash stops the run; on another machine type it is counted and warned about (see "Other CPUs") |
 | `tukey_tools.py` | The statistical tools and `Evidence`, everything an agent sees |
 | `tukey_scoring.py` | The verifiable score: structure against the identifiable target plus held-out prediction |
 | `tukey_scripted.py` | The prototype's scripted rule as an agent, with cycle removal for DAG scoring |
@@ -42,7 +42,7 @@
 | `tukey_sortability.py` | How much simulated data leak about the causal order |
 | `tukey_results.py` | Regenerates the 22 manifests and the files under `results/m1` and `results/m2`, one command per file (not `results/post_audit/`) |
 | `tukey_utils.py`, `tukey.API.*`, `tukey.example.*` | Notebook helpers and the two notebooks (Milestones 1-2) |
-| `test/` | Unit tests for the eight modules above; `test_docker_tukey.py` runs both notebooks |
+| `test/` | Unit tests for the ten modules above; `test_docker_tukey.py` runs both notebooks |
 | `configs/sets/` | Manifests of the 22 sets Milestones 1-2 use: `V_main`, `V_proto` and the 20 sets of the Milestone 2 table (later milestones add theirs) |
 | `results/m1`, `results/m2` | Stored Milestone 1-2 results, each written by `tukey_results.py`: the example notebook reads `sortability.json` and `table_summary.json`; `generators.json` (per-family generator summary), `proto_check.json` (the prototype's Oct 10 numbers, reproduced within 0.1 SHD) and `per_graph.json` (per-graph rows behind the Milestone 2 table) are kept as evidence |
 | `results/post_audit/pc_ci_counts.json` | Corrected PC test counts after an audit (the stored counts included 3 non-test cache entries); the notebook applies its entries to `table_summary.json` only while that file has the SHA-256 they record; the others correct files of later PRs |
