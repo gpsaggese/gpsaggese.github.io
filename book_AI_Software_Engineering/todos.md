@@ -8,8 +8,8 @@
 ```
 claude> /model opus
 
-- Modify book_scripts/prompt.create_lesson_slides_from_chap_toc.md to generate
-claude> Execute book_scripts/prompt.create_lesson_slides_from_chap_toc.md without asking for confirmation
+- Modify book_scripts/prompt.slides.create_from_book_map.md to generate
+claude> Execute book_scripts/prompt.slides.create_from_book_map.md without asking for confirmation
 
 > gen_slides.py -i book_AI_Software_Engineering/14.01
 > gen_slides.py -i book_AI_Software_Engineering/14.01 --action release
@@ -22,7 +22,7 @@ claude> /slides.add_references Lesson01.01_LLM_Assisted_Code_Generation.smd
 ```
 
 ```
-claude> Execute book_scripts/prompt.slides_and_book_flow.md book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd
+claude> Execute book_scripts/prompt.pipeline.review_slides_and_create_chapter.md book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd
 
 > run_typst.py --input msml610/book/Lesson01.2-AI_and_Machine_Learning.typ
 
@@ -38,32 +38,32 @@ run_typst.py --compress_pdf
 
 ###
 - [ ] Template
-  - [ ] book_scripts/prompt.create_lesson_slides_from_chap_toc.md
+  - [ ] book_scripts/prompt.slides.create_from_book_map.md
   - [ ] /slides.review <smd>
   - [ ] /slides.add_visuals <smd>
   - [ ] /slides.add_references <smd>
-  - [ ] book_scripts/prompt.slides_and_book_flow.md
+  - [ ] book_scripts/prompt.pipeline.review_slides_and_create_chapter.md
 
 - [ ] Lesson01.01_LLM_Assisted_Code_Generation.smd
-  - [x] book_scripts/prompt.create_lesson_slides_from_chap_toc.md
+  - [x] book_scripts/prompt.slides.create_from_book_map.md
   - [ ] /slides.review
   - [.] /slides.add_visuals
   - [x] /slides.add_references
-  - [x] book_scripts/prompt.slides_and_book_flow.md
+  - [x] book_scripts/prompt.pipeline.review_slides_and_create_chapter.md
 
 - [ ] Lesson05.01_Skills_Organization_and_Management.smd
-  - [ ] book_scripts/prompt.create_lesson_slides_from_chap_toc.md
+  - [ ] book_scripts/prompt.slides.create_from_book_map.md
   - [ ] /slides.review
   - [ ] /slides.add_visuals
   - [ ] /slides.add_references
-  - [ ] book_scripts/prompt.slides_and_book_flow.md
+  - [ ] book_scripts/prompt.pipeline.review_slides_and_create_chapter.md
 
 - [ ] Lesson11.01_Planning_Software.smd
-  - [x] book_scripts/prompt.create_lesson_slides_from_chap_toc.md
+  - [x] book_scripts/prompt.slides.create_from_book_map.md
   - [ ] /slides.review
   - [ ] /slides.add_visuals
   - [ ] /slides.add_references
-  - [ ] book_scripts/prompt.slides_and_book_flow.md
+  - [ ] book_scripts/prompt.pipeline.review_slides_and_create_chapter.md
 
 ### [ ] Rename chapters
 
@@ -130,4 +130,4 @@ Lesson14.01_GitHub_Projects_and_Workflows.smd
 ### [ ] Generate a Typst
 
 From book_scripts/README.md
-- book_scripts/prompt.create_typst_book_chap_from_lesson_slides.md
+- book_scripts/prompt.book_chapter.create_typst_from_slides.md

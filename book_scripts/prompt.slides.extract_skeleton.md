@@ -12,7 +12,7 @@
   CHAP="## 08: Causal Data Pipelines"
   ```
 
-- Focus only on the chapter in `<DIR>/<BOOK>/map.md`
+- Focus only on the chapter in `<DIR>/<BOOK>/book_map.md`
 
 - Read the sections in the `<CHAP>` above
   ```
@@ -39,14 +39,14 @@
   * <title of slide>
   // From: <lesson_path>:<line num> '<title of slide>'
   * <title of slide>
-  // From: data605/lectures_source/Lesson02.3-Data_Pipelines.txt:87 '* <title of slide>'
+  // From: data605/lectures_source/Lesson02.3-Data_Pipelines.smd:87 '* <title of slide>'
   * <title of slide>
-  // From: msml610/lectures_source/Lesson06.1-Bayesian_Networks.txt:142 '* <title of slide>'
+  // From: msml610/lectures_source/Lesson06.1-Bayesian_Networks.smd:142 '* <title of slide>'
   ...
   ```
-  in `<BOOK>/lectures_source/Lesson0<num>.01_<name>.txt`
-  - `<lesson_path>` is a repo-root-relative path to the exact source `.txt` /
-    `.smd` file, `<line num>` its line, and `'<title of slide>'` that line's
+  in `<DIR>/<BOOK>/lectures_source/Lesson<CHAP_NUM>.<ID>_<TITLE>.smd`
+  - `<lesson_path>` is a repo-root-relative path to the exact source `.smd`
+    file, `<line num>` its line, and `'<title of slide>'` that line's
     full text single-quoted verbatim, leading marker included (`* `)
   - If no source slide can be identified, leave a bare `// From:` (nothing
     after the colon) instead of guessing

@@ -3,9 +3,9 @@
 - Use it when the chapter is not in a book map yet, or when `BOOK` is a course
   (e.g., `msml610`)
 - For lessons from a chapter TOC of a book map use
-  `book_scripts/prompt.create_lesson_slides_from_chap_toc.md`
+  `book_scripts/prompt.slides.create_from_book_map.md`
 - The steps shared with that prompt are in
-  `book_scripts/prompt.create_lesson_slides.common.md`
+  `book_scripts/prompt.slides.create_common.md`
 
 # Parameters
 - The relevant variables are:
@@ -17,7 +17,7 @@
   TITLE="Classical_Search_Algorithms"
   ```
   - The output file is built from them as described in
-    `book_scripts/prompt.create_lesson_slides.common.md`
+    `book_scripts/prompt.slides.create_common.md`
 
 <!--
 // Example of parameters (to ignore)
@@ -65,7 +65,7 @@
     Lessons")
 
 ## Create the Lesson
-- Execute `book_scripts/prompt.create_lesson_slides.common.md`
+- Execute `book_scripts/prompt.slides.create_common.md`
   - The topics are `## Topics`
   - The material read is the existing lessons and the file given in
     `Align the content with`

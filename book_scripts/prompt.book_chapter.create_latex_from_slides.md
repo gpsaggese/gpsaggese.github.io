@@ -18,7 +18,7 @@
 - Generate LaTeX format with complete document structure
 - Preserve slide organization with proper heading hierarchy
 - Output file: Generate a LaTeX file in the sibling `book` directory than
-  `lesson_source` (e.g., `msml610/book`) with the same filename as
+  `lectures_source` (e.g., `msml610/book`) with the same filename as
   the input but using `.tex` extension
 
 ## Document Template - Springer SNmono Format
@@ -123,18 +123,18 @@
 
 ## Slide Source Markers
 - Annotate the generated chapter file with pointers back to the exact heading
-  in the source `lectures_source/*.txt` file that each LaTeX construct was
+  in the source `lectures_source/*.smd` file that each LaTeX construct was
   generated from
 - Before each `\section`, `\subsection`, or `\textbf{...}` run-in heading that
   corresponds to a slide heading, add a one-line comment reproducing the
   original heading text with its markdown prefix (`#`, `##`, or `*`) exactly
-  as it appears in the source `.txt` file, plus the source file and line
+  as it appears in the source `.smd` file, plus the source file and line
   number (`%` is the comment marker here since the output is LaTeX, not
   Markdown):
   ```latex
   % From: <file>:<line num> '<prefix> <heading text>'
   ```
-  - `<file>` is a repo-root-relative path to the `lectures_source/*.txt` file
+  - `<file>` is a repo-root-relative path to the `lectures_source/*.smd` file
     being converted, `<line num>` its line
   - See `.claude/skills/slides.rules.md` ("Source Attribution") for the full
     `// From: <file>:<line num> '<title>'` convention
@@ -145,7 +145,7 @@
     ```
     becomes
     ```latex
-    % From: msml610/lectures_source/Lesson01.1-Why_Decisions.txt:12 '# Why Decisions, Not Predictions'
+    % From: msml610/lectures_source/Lesson01.1-Why_Decisions.smd:12 '# Why Decisions, Not Predictions'
     \section{Why Decisions, Not Predictions}
     ```
   - H2 (`##`) in the source maps to `\subsection{...}`:
@@ -154,7 +154,7 @@
     ```
     becomes
     ```latex
-    % From: msml610/lectures_source/Lesson01.1-Why_Decisions.txt:34 '## When Correlation Misleads'
+    % From: msml610/lectures_source/Lesson01.1-Why_Decisions.smd:34 '## When Correlation Misleads'
     \subsection{When Correlation Misleads}
     ```
   - Slide-level (`*`) heading in the source maps to a `\textbf{...}` run-in
@@ -165,7 +165,7 @@
     ```
     becomes
     ```latex
-    % From: msml610/lectures_source/Lesson01.1-Why_Decisions.txt:58 '* Why Traditional ML Falls Short'
+    % From: msml610/lectures_source/Lesson01.1-Why_Decisions.smd:58 '* Why Traditional ML Falls Short'
     \textbf{Why Traditional ML Falls Short} --- Traditional machine learning was
     built to answer one question well...
     ```
