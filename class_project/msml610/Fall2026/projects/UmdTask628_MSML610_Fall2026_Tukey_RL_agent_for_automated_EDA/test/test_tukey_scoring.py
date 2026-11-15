@@ -23,6 +23,7 @@ import numpy as np
 
 import helpers.hunit_test as hunitest
 import research.agentic_data_science.RL_for_auto_EDA_prototype as rlproto
+import tukey_env as tenv
 import tukey_scoring as tscore
 
 _LOG = logging.getLogger(__name__)
@@ -878,7 +879,13 @@ class Test_score_properties(hunitest.TestCase):
 
     def test4(self) -> None:
         """
-        Test the ordering G* >= any orientation of its skeleton, ties in class.
+        Test that on these 30 seeded graphs no orientation beats G*.
+
+        Each nonempty graph has 6,000 rows; of 10 random orientations of its
+        skeleton, no acyclic one scores above G*, and only those in G*'s
+        target class tie with it. This is a regression check on these fixtures, not a
+        property of the score: with few rows a wrong graph can score above
+        G* (`test5`).
         """
         # Prepare inputs.
         rng = np.random.default_rng(9)
@@ -909,6 +916,40 @@ class Test_score_properties(hunitest.TestCase):
                 )
         # Check outputs.
         self.assert_equal(str([n_violations, n_ties_outside_class]), "[0, 0]")
+
+    def test5(self) -> None:
+        """
+        Test that with 30 rows a wrong graph can score above G*.
+
+        Reversing the edge 2 -> 4 costs 1 in structure, but on these 10 test
+        rows its held-out gain is 1.42 times G*'s (`pred_frac` is capped at
+        1.5, not 1), so it scores above G*'s 0.
+        """
+        # Prepare inputs.
+        cfg = tenv.GraphConfig(
+            family="linear_exp", n_nodes=5, n_edges=6, n_samples=30
+        )
+        inst = tenv.sample_instance(cfg, 9)
+        B_wrong = inst.truth.B.copy()
+        B_wrong[2, 4], B_wrong[4, 2] = 0, 1
+        # Prepare outputs.
+        expected = """
+        edge 2 -> 4 in G*: 1
+        G*: shd_target 0, pred_frac 1.0, score 0.0
+        wrong: shd_target 1, pred_frac 1.4186, score 0.126
+        """
+        # Run test.
+        scores_true = tscore.score_graph(inst.truth.B, inst.truth, legacy=False)
+        scores_wrong = tscore.score_graph(B_wrong, inst.truth, legacy=False)
+        # Check outputs.
+        lines = [f"edge 2 -> 4 in G*: {inst.truth.B[2, 4]}"]
+        for name, scores in (("G*", scores_true), ("wrong", scores_wrong)):
+            lines.append(
+                f"{name}: shd_target {scores['shd_target']}, "
+                f"pred_frac {round(scores['pred_frac'], 4)}, "
+                f"score {round(scores['score'], 4)}"
+            )
+        self.assert_equal("\n".join(lines), expected, dedent=True)
 
 
 class Test_pag(hunitest.TestCase):

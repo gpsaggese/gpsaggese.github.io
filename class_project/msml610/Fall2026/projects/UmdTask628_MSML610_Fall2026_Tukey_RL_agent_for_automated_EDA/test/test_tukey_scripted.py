@@ -219,6 +219,17 @@ class Test_project_to_dag(hunitest.TestCase):
 # #############################################################################
 
 
+class _PlusWithProtoOrientation(tscrip.ScriptedPlus):
+    """
+    `ScriptedPlus` that orients with the prototype's statistic, not LiNGAM's.
+
+    It makes the same tool calls as `ScriptedPlus`, so the two differ only in
+    the orientation step.
+    """
+
+    _orient = tscrip.ScriptedExpert._orient
+
+
 class Test_ScriptedPlus(hunitest.TestCase):
     """
     The stronger rule orients symmetric-noise graphs better.
@@ -230,16 +241,25 @@ class Test_ScriptedPlus(hunitest.TestCase):
 
         The prototype's statistic `|corr(x_c, |resid|)|` is zero in both
         directions under symmetric noise, so its orientations are guesses.
+        Plus must beat the prototype, and also `plus_proto_orient`, which makes
+        Plus's calls but orients as the prototype: the extra CI tests alone
+        must not explain the gain.
         """
+        # Prepare inputs.
         cfg = tenv.GraphConfig(family="linear_uniform")
-        shd = {"proto": 0, "plus": 0}
+        agents = {
+            "proto": tscrip.ScriptedExpert,
+            "plus": tscrip.ScriptedPlus,
+            "plus_proto_orient": _PlusWithProtoOrientation,
+        }
+        shd = {name: 0 for name in agents}
+        # Run test.
         for seed in range(15):
-            for name, agent in (
-                ("proto", tscrip.ScriptedExpert()),
-                ("plus", tscrip.ScriptedPlus()),
-            ):
+            for name, agent_class in agents.items():
                 env = tenv.TukeyEnv(cfg, budget=10_000)
-                scores, _ = tscrip.run_episode(env, agent, seed=seed)
+                scores, _ = tscrip.run_episode(env, agent_class(), seed=seed)
                 shd[name] += scores["shd_dag"]
         _LOG.info("Total SHD over 15 graphs: %s", shd)
+        # Check outputs.
         self.assertLess(shd["plus"], shd["proto"])
+        self.assertLess(shd["plus"], shd["plus_proto_orient"])
