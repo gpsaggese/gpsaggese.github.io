@@ -471,11 +471,11 @@ class TestToolCache(hunitest.TestCase):
 
 
 # #############################################################################
-# Test_Evidence
+# TestEvidence
 # #############################################################################
 
 
-class Test_Evidence(hunitest.TestCase):
+class TestEvidence(hunitest.TestCase):
     """
     Check the evidence log: budget, repeats and legal actions.
     """

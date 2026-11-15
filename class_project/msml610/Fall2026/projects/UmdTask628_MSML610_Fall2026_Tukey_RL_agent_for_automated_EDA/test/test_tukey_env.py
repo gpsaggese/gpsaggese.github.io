@@ -358,11 +358,11 @@ class Test_generator_checks(hunitest.TestCase):
 
 
 # #############################################################################
-# Test_TukeyEnv
+# TestTukeyEnv
 # #############################################################################
 
 
-class Test_TukeyEnv(hunitest.TestCase):
+class TestTukeyEnv(hunitest.TestCase):
     """
     Check the episode API and what reaches an agent.
     """

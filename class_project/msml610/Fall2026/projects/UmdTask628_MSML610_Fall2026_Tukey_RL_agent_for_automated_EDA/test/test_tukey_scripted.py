@@ -84,11 +84,11 @@ def _expert_calls(
 
 
 # #############################################################################
-# Test_ScriptedExpert
+# TestScriptedExpert
 # #############################################################################
 
 
-class Test_ScriptedExpert(hunitest.TestCase):
+class TestScriptedExpert(hunitest.TestCase):
     """
     The tool-API rule matches the prototype and respects budgets.
     """
@@ -215,7 +215,7 @@ class Test_project_to_dag(hunitest.TestCase):
 
 
 # #############################################################################
-# Test_ScriptedPlus
+# TestScriptedPlus
 # #############################################################################
 
 
@@ -230,7 +230,7 @@ class _PlusWithProtoOrientation(tscrip.ScriptedPlus):
     _orient = tscrip.ScriptedExpert._orient
 
 
-class Test_ScriptedPlus(hunitest.TestCase):
+class TestScriptedPlus(hunitest.TestCase):
     """
     The stronger rule orients symmetric-noise graphs better.
     """
