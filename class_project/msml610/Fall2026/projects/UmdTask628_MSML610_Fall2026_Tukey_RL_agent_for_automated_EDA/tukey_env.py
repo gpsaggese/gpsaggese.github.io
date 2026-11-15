@@ -828,7 +828,9 @@ def _sample_nonlinear(cfg: GraphConfig, seed: int) -> Dict[str, Any]:
     :param seed: instance seed
     :return: fields of `Instance` besides `cfg`, `seed`, data and `truth`
     """
-    rng_graph, rng_weights, rng_noise, rng_split, rng_perm, rng_pilot = _spawn_rngs(seed, 6)
+    rng_graph, rng_weights, rng_noise, rng_split, rng_perm, rng_pilot = (
+        _spawn_rngs(seed, 6)
+    )
     B = _sample_dag(rng_graph, cfg)
     family = _MIXED_NOISES[rng_graph.integers(len(_MIXED_NOISES))]
     mechanism = _NONLINEAR_MECHANISMS[rng_graph.integers(2)]
@@ -1527,7 +1529,9 @@ class TukeyEnv:
         """
         hdbg.dassert_is_not(self._instance, None, "Call reset() first")
         # One submission per episode: repeated scores would leak the graph.
-        hdbg.dassert(not self._submitted, "Graph already submitted: call reset()")
+        hdbg.dassert(
+            not self._submitted, "Graph already submitted: call reset()"
+        )
         B_hat, n_dropped = tscore.edges_to_adjacency(edges, self.cfg.n_nodes)
         scores = tscore.score_graph(B_hat, self._instance.truth)
         scores["n_dropped_edges"] = n_dropped

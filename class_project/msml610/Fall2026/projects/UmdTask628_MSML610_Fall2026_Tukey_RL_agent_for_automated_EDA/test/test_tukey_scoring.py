@@ -923,9 +923,9 @@ class Test_score_properties(hunitest.TestCase):
 
         Each nonempty graph has 6,000 rows; of 10 random orientations of its
         skeleton, no acyclic one scores above G*, and only those in G*'s
-        target class tie with it. This is a regression check on these fixtures, not a
-        property of the score: with few rows a wrong graph can score above
-        G* (`test5`).
+        target class tie with it. This is a regression check on these
+        fixtures, not a property of the score: with few rows a wrong graph can
+        score above G* (`test5`).
         """
         # Prepare inputs.
         rng = np.random.default_rng(9)

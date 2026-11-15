@@ -200,7 +200,9 @@ class Test_run_method(hunitest.TestCase):
         """
         # Prepare inputs.
         project_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        with open(os.path.join(project_dir, "results/m2/per_graph.json")) as file:
+        with open(
+            os.path.join(project_dir, "results/m2/per_graph.json")
+        ) as file:
             stored = json.load(file)["settings"]["D"]
         with open(
             os.path.join(project_dir, "results/m2/table_summary.json")
