@@ -222,3 +222,26 @@ class Test_download(hunitest.TestCase):
             sorted(os.listdir(source)), ["di-text-001", "di-text-002", "ml-binary-003"]
         )
         self.assertTrue(os.path.exists(os.path.join(source, "di-text-002", "data.csv")))
+
+    def test_download_continues_after_a_failure(self) -> None:
+        """
+        A failed DABstep download does not stop the DA-Code step, and only the
+        DABstep tasks and context are requested.
+        """
+        import unittest.mock as umock
+
+        import research.agentic_data_science.bakeoff.download_benchmarks as radsbdobe
+
+        root = self.get_scratch_space()
+        os.makedirs(os.path.join(root, "QRData", "benchmark", "data"))
+        with umock.patch.object(radsbdobe, "_git_sparse_clone"), umock.patch(
+            "huggingface_hub.snapshot_download", side_effect=TypeError("brotli")
+        ) as hf, umock.patch.object(
+            radsbdobe, "_download_dacode_source", return_value=True
+        ) as dacode:
+            ok = radsbdobe._download(root)
+        self.assertFalse(ok)
+        self.assertEqual(
+            hf.call_args.kwargs["allow_patterns"], ["data/tasks/*", "data/context/*"]
+        )
+        dacode.assert_called_once()

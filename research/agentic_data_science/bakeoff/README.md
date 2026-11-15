@@ -73,7 +73,7 @@ Every agent runs on the same 50 tasks per benchmark, listed in
 so all 10 are used.
 
 ```bash
-pip install gdown huggingface_hub
+pip install -U gdown huggingface_hub brotli
 python research/agentic_data_science/bakeoff/download_benchmarks.py --download
 python research/agentic_data_science/bakeoff/download_benchmarks.py --check
 ```

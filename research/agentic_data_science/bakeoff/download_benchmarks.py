@@ -63,6 +63,9 @@ def _git_sparse_clone(url: str, dst: str, paths: List[str]) -> None:
     subprocess.run(["git", "-C", dst, "sparse-checkout", "set", *paths], check=True)
 
 
+# Only these parts of the DABstep repo are needed.
+_DABSTEP_PATTERNS = ["data/tasks/*", "data/context/*"]
+
 # `source.zip` of DA-Code, from the `gdown` command in its README.
 _DACODE_SOURCE_GDRIVE_ID = "1ZGi0iNv797OneK_b2l2thJCulP6NUf7v"
 
@@ -110,7 +113,42 @@ def _download_dacode_source(source_dir: str, zip_path: Optional[str]) -> bool:
     return True
 
 
-def _download(root: str, dacode_zip: Optional[str] = None) -> None:
+def _download_dabstep(dst: str) -> bool:
+    """
+    Download the DABstep tasks and context files from Hugging Face.
+
+    Only `data/tasks/` and `data/context/` are fetched: the rest of the repo is
+    thousands of leaderboard submissions.
+
+    :return: whether the download succeeded
+    """
+    try:
+        import huggingface_hub
+
+        huggingface_hub.snapshot_download(
+            repo_id="adyen/DABstep",
+            repo_type="dataset",
+            local_dir=dst,
+            allow_patterns=_DABSTEP_PATTERNS,
+        )
+    except Exception as e:  # pylint: disable=broad-except
+        _LOG.error(
+            "Could not download DABstep (%s: %s). If the error mentions "
+            "`process()` or brotli, run `pip install -U brotli`; if "
+            "huggingface_hub is missing, `pip install huggingface_hub`",
+            type(e).__name__,
+            e,
+        )
+        return False
+    return True
+
+
+def _download(root: str, dacode_zip: Optional[str] = None) -> bool:
+    """
+    Download every benchmark; a failure in one does not stop the others.
+
+    :return: whether all downloads succeeded
+    """
     os.makedirs(root, exist_ok=True)
     for name, (url, paths) in _GIT_SOURCES.items():
         _LOG.info("Downloading %s", name)
@@ -120,24 +158,18 @@ def _download(root: str, dacode_zip: Optional[str] = None) -> None:
     if not os.path.isdir(os.path.join(qr, "data")):
         with zipfile.ZipFile(os.path.join(qr, "data.zip")) as z:
             z.extractall(qr)
-    # DABstep is on Hugging Face.
-    try:
-        import huggingface_hub
-    except ImportError:
-        raise SystemExit(
-            "DABstep needs `pip install huggingface_hub`; then rerun --download"
-        )
+    failed = []
     _LOG.info("Downloading DABstep")
-    huggingface_hub.snapshot_download(
-        repo_id="adyen/DABstep",
-        repo_type="dataset",
-        local_dir=os.path.join(root, "DABstep"),
-    )
-    # Last, because Google Drive often refuses scripted downloads.
+    if not _download_dabstep(os.path.join(root, "DABstep")):
+        failed.append("dabstep")
+    _LOG.info("Downloading DA-Code task data")
     if not _download_dacode_source(
         os.path.join(root, "da-code", "da_code", "source"), dacode_zip
     ):
-        raise SystemExit(1)
+        failed.append("dacode")
+    if failed:
+        _LOG.error("Not downloaded: %s (see the errors above)", ", ".join(failed))
+    return not failed
 
 
 def _sample(root: str, n: int, seed: int) -> None:
@@ -200,8 +232,8 @@ def _parse() -> argparse.ArgumentParser:
 def _main(parser: argparse.ArgumentParser, argv: Optional[List[str]] = None) -> None:
     args = parser.parse_args(argv)
     hdbg.init_logger(verbosity=args.log_level, use_exec_path=True)
-    if args.download:
-        _download(args.root, args.dacode_zip)
+    if args.download and not _download(args.root, args.dacode_zip):
+        raise SystemExit(1)
     if args.sample:
         _sample(args.root, args.sample, args.seed)
     if args.check and not _check(args.root):
