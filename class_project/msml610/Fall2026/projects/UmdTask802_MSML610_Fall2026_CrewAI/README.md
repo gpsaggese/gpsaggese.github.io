@@ -115,14 +115,33 @@ outputs/evaluation_report.json
 
 ## Evaluation Result
 
-For the November 4, 2026 snapshot:
+The original evaluator compared every extracted number against one combined list of valid values. This could incorrectly accept a number under the wrong economic context, and it did not penalize missing required claims.
 
-| Method | Correct numeric claims | Total numeric claims | Fraction correct |
-|---|---:|---:|---:|
-| Three-agent CrewAI workflow | 14 | 14 | 1.00 |
-| Single-LLM baseline | 11 | 11 | 1.00 |
+The improved evaluator uses the following 12 labeled claims:
 
-The multi-agent workflow and baseline tied on numeric accuracy in this run. The CrewAI workflow included more numeric claims and provided a deterministic, auditable calculation path, but it did not outperform the baseline on the specified fraction-correct metric for this snapshot.
+1. Latest CPI value
+2. Prior-year CPI value
+3. Year-over-year inflation
+4. Latest unemployment rate
+5. Prior-year unemployment rate
+6. Change in unemployment
+7. Latest federal funds rate
+8. Prior-year federal funds rate
+9. Change in the federal funds rate
+10. Latest Treasury yield spread
+11. Prior-year Treasury yield spread
+12. Yield-curve sign
+
+It reports accuracy among submitted claims, completeness of the required checklist, and the fraction of all required claims that are correct.
+
+For the November 14, 2026 snapshot:
+
+| Method | Correct | Submitted | Required | Accuracy | Completeness | Required-claim score |
+|---|---:|---:|---:|---:|---:|---:|
+| Three-agent CrewAI workflow | 12 | 12 | 12 | 1.00 | 1.00 | 1.00 |
+| Single-LLM baseline | 12 | 12 | 12 | 1.00 | 1.00 | 1.00 |
+
+The field-aware evaluation confirmed that both systems produced every required claim correctly in this run. The CrewAI workflow provides a deterministic and auditable calculation path, but it matched rather than outperformed the single-LLM baseline on this snapshot. A multi-snapshot robustness experiment remains future work.
 
 ## Export the Final Report
 
