@@ -524,7 +524,9 @@ def pred_ll(
     Each node is regressed on its parents (OLS with intercept) on the training
     rows; the residual variance is the MLE `RSS / n`. The mean log-density of
     the test rows is summed over nodes. Markov-equivalent DAGs fit the same
-    Gaussian model, so they get the same value.
+    Gaussian model, so they get the same value. A node whose parents are
+    exactly linearly dependent on the training rows (e.g., two parents with
+    equal columns) has no OLS fit and is refused with an error.
 
     :param B: DAG adjacency
     :param moments_train: `get_moments()` of the training rows
@@ -535,12 +537,22 @@ def pred_ll(
     total = 0.0
     degenerate = False
     for j in range(B.shape[0]):
+        parents = np.flatnonzero(B[:, j])
         # Index 0 is the intercept; node k is at index k + 1.
-        idx = [0] + [p + 1 for p in np.flatnonzero(B[:, j])]
+        idx = [0] + [p + 1 for p in parents]
         target = j + 1
-        coef = np.linalg.solve(
-            moments_train[np.ix_(idx, idx)], moments_train[idx, target]
+        design = moments_train[np.ix_(idx, idx)]
+        # `np.linalg.solve()` fails on an exactly singular design, whose
+        # determinant is 0; this check names the node and its parents instead.
+        hdbg.dassert_ne(
+            np.linalg.det(design),
+            0.0,
+            "Parents %s of node %s are linearly dependent on the training "
+            "rows",
+            parents.tolist(),
+            j,
         )
+        coef = np.linalg.solve(design, moments_train[idx, target])
         sigma2 = (
             moments_train[target, target] - coef @ moments_train[idx, target]
         )

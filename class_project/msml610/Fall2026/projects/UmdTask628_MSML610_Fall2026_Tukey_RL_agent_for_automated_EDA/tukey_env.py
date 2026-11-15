@@ -1297,6 +1297,9 @@ def sample_instance(cfg: GraphConfig, seed: int) -> Instance:
     :return: the instance
     """
     hdbg.dassert_in(cfg.family, FAMILIES)
+    hdbg.dassert_lte(
+        2, cfg.n_nodes, "The tools and the scores compare pairs of variables"
+    )
     if cfg.noise_share is not None or cfg.noise_grid:
         hdbg.dassert_eq(cfg.family, "iscm", "Noise shares exist only for iSCM")
         hdbg.dassert_is_not(cfg.noise_share, None)

@@ -417,6 +417,60 @@ class Test_scale_invariance(hunitest.TestCase):
 
 
 # #############################################################################
+# TestToolCache
+# #############################################################################
+
+
+class TestToolCache(hunitest.TestCase):
+    """
+    Test the data checks of `tukey_tools.ToolCache`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that 5 training rows are refused and 6 give a CI test p-value.
+
+        Given 2 variables, Fisher z has `n - 2 - 3` degrees of freedom: 0 with
+        5 rows (where it used to report p = 1) and 1 with 6 rows.
+        """
+        # Prepare inputs.
+        rng = np.random.default_rng(0)
+        x_short = rng.normal(size=(5, 4))
+        x_enough = rng.normal(size=(6, 4))
+        action = ttools.ci_test_action(0, 1, (2, 3))
+        # Run test and check outputs.
+        with self.assertRaises(AssertionError):
+            ttools.ToolCache(x_short)
+        p_value = ttools.ToolCache(x_enough).run(action)["p"]
+        self.assertTrue(0.0 < p_value < 1.0)
+
+    def test2(self) -> None:
+        """
+        Test that duplicated or perfectly correlated columns are refused.
+        """
+        # Prepare inputs.
+        steps = np.arange(10.0)
+        cases = {
+            "duplicated column": np.column_stack([steps, steps, steps**2]),
+            "correlated pair": np.tile([[-1.0, -1.0], [1.0, 1.0]], (10, 1)),
+        }
+        # Run test and check outputs.
+        for name, x in cases.items():
+            with self.assertRaises(AssertionError, msg=name):
+                ttools.ToolCache(x)
+
+    def test3(self) -> None:
+        """
+        Test that a single variable is refused.
+        """
+        # Prepare inputs.
+        x = np.random.default_rng(1).normal(size=(100, 1))
+        # Run test and check outputs.
+        with self.assertRaises(AssertionError):
+            ttools.ToolCache(x)
+
+
+# #############################################################################
 # Test_Evidence
 # #############################################################################
 

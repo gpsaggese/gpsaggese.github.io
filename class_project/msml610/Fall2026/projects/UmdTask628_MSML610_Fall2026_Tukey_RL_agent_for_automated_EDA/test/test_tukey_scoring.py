@@ -423,6 +423,33 @@ class Test_score_graph(hunitest.TestCase):
 
 
 # #############################################################################
+# Test_pred_ll
+# #############################################################################
+
+
+class Test_pred_ll(hunitest.TestCase):
+    """
+    Test `tukey_scoring.pred_ll()` on a singular parent set.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that two parents with equal training columns are refused by name.
+        """
+        # Prepare inputs.
+        x = np.array([[0, 0, 1], [1, 1, 0], [2, 2, 1], [3, 3, 0]], dtype=float)
+        moments = tscore.get_moments(x)
+        B = _adjacency(3, [(0, 2), (1, 2)])
+        # Prepare outputs.
+        expected = "Parents [0, 1] of node 2 are linearly dependent"
+        # Run test.
+        with self.assertRaises(AssertionError) as cm:
+            tscore.pred_ll(B, moments, moments)
+        # Check outputs.
+        self.assertIn(expected, str(cm.exception))
+
+
+# #############################################################################
 # Test_edges_to_adjacency
 # #############################################################################
 

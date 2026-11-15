@@ -65,6 +65,15 @@ _ENTROPY_K1 = 79.047
 _ENTROPY_K2 = 7.4129
 _ENTROPY_GAMMA = 0.37457
 
+# Fewest training rows a `ToolCache` accepts: the largest CI test conditions on
+# 2 variables, and its Fisher z needs `n - 2 - 3 > 0` degrees of freedom.
+_MIN_TRAIN_ROWS = 6
+# A correlation matrix whose smallest eigenvalue is at most this is not
+# positive definite in floating point (duplicated or linearly dependent
+# columns, or fewer rows than variables): partial correlations and regressions
+# on it are undefined.
+_MIN_CORR_EIGENVALUE = 1e-10
+
 
 # #############################################################################
 # Action
@@ -190,14 +199,32 @@ class ToolCache:
         """
         Precompute the statistics every tool reuses.
 
+        The data are checked once here, not at each tool call: at least 2
+        variables, `_MIN_TRAIN_ROWS` rows, no constant column and a positive
+        definite correlation matrix.
+
         :param x_train: training rows, shape (n_train, n_nodes)
         """
         self.n_train, self.n_nodes = x_train.shape
+        hdbg.dassert_lte(
+            2, self.n_nodes, "The tools compare variables: pass at least 2"
+        )
+        hdbg.dassert_lte(
+            _MIN_TRAIN_ROWS,
+            self.n_train,
+            "Too few training rows for a CI test given 2 variables",
+        )
         self._x = x_train
         std = x_train.std(axis=0)
         hdbg.dassert(np.all(std > 0), "A constant column cannot be analysed")
         self._z = (x_train - x_train.mean(axis=0)) / std
         self.corr = np.corrcoef(x_train, rowvar=False)
+        hdbg.dassert_lt(
+            _MIN_CORR_EIGENVALUE,
+            np.linalg.eigvalsh(self.corr).min(),
+            "The correlation matrix of the training rows is not positive "
+            "definite (duplicated or linearly dependent columns)",
+        )
         self._cache: Dict[Action, Dict[str, float]] = {}
 
     def _ci_test(

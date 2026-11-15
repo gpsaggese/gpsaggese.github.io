@@ -275,6 +275,16 @@ class Test_sample_instance_linear(hunitest.TestCase):
         )
         self.assert_equal(actual, expected, dedent=True)
 
+    def test8(self) -> None:
+        """
+        A single variable is refused: the tools and scores compare pairs.
+        """
+        # Prepare inputs.
+        cfg = tenv.GraphConfig(n_nodes=1, n_edges=0, family="linear_exp")
+        # Run test and check outputs.
+        with self.assertRaises(AssertionError):
+            tenv.sample_instance(cfg, 0)
+
 
 # #############################################################################
 # Test_generator_checks
