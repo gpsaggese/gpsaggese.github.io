@@ -1,0 +1,65 @@
+{
+  "agent": "ai_deep_sast",
+  "run_id": "r2",
+  "status": "partial_quota_exhausted",
+  "tool_version": "741a9e025ce0810cf06764f5869e490d1b80278c",
+  "model": "openai/gpt-oss-120b",
+  "started_at": "2026-10-31T16:26:32+00:00",
+  "returncode": 0,
+  "summary": {
+    "target": "/Users/aaditmaniar/Projects/msml610/AI_Security_Agents/results/raw/ai_deep_sast/r2/cases",
+    "scan_mode": "Brute-force",
+    "phases": {
+      "index": {
+        "files_parsed": 62,
+        "files_skipped": 0,
+        "functions_found": 113,
+        "calls_found": 615,
+        "errors": 0
+      },
+      "coverage_items": 62,
+      "detection": {
+        "rule_based": {
+          "functions_analysed": 112,
+          "candidates_created": 69,
+          "duplicates_skipped": 0,
+          "errors": 1,
+          "resumed_skipped": 0
+        },
+        "exploratory": {
+          "batches_analysed": 64,
+          "candidates_created": 92,
+          "duplicates_skipped": 0,
+          "errors": 0,
+          "resumed_skipped": 0
+        }
+      },
+      "triage": {
+        "triaged": 78,
+        "true_positive": 42,
+        "false_positive": 22,
+        "needs_review": 12,
+        "not_applicable": 2,
+        "code_quality": 0,
+        "errors": 83
+      },
+      "reports": {
+        "markdown": "/Users/aaditmaniar/Projects/msml610/AI_Security_Agents/results/raw/ai_deep_sast/r2/reports/deepscan_report.md",
+        "json": "/Users/aaditmaniar/Projects/msml610/AI_Security_Agents/results/raw/ai_deep_sast/r2/reports/deepscan_report.json"
+      }
+    },
+    "success": true,
+    "token_usage": {
+      "total_input_tokens": 161218,
+      "total_output_tokens": 84056,
+      "total_calls": 259,
+      "estimated_cost_usd": 8.7225
+    },
+    "elapsed_seconds": 1371.68
+  },
+  "error": "Groq daily free-tier quota exhausted; one additional function needs a formatting retry.",
+  "n_complete_snippets": 16,
+  "n_incomplete_snippets": 46,
+  "n_published_findings_observed": 42,
+  "n_published_findings_scored": 4
+}

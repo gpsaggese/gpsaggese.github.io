@@ -61,6 +61,8 @@
   > git -c url."https://github.com/".insteadOf="git@github.com:" \
       submodule update --init helpers_root
   ```
+  - If it fails with `not our ref`, see
+    [`sync_helpers_submodule.how_to_guide.md`](sync_helpers_submodule.how_to_guide.md)
 - If you are not a collaborator on the repo, use the fork steps in
   [`how_to_contribute.md`](../class_project/how_to_contribute.md) instead
 

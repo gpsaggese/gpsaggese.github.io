@@ -1,0 +1,1 @@
+../../class_project/project_template/Dockerfile

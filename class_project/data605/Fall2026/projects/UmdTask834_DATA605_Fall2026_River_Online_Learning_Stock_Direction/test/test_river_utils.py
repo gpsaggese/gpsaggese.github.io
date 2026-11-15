@@ -137,3 +137,57 @@ class Test_stats:
         b = rivutil.run_prequential(_make_model(), panel, cols)
         res = rivutil.mcnemar_test(a, b)
         assert res["p_value"] == pytest.approx(1.0)
+
+
+# #############################################################################
+# Test_baselines
+# #############################################################################
+
+
+class Test_baselines:
+    def test_walk_forward_trains_only_on_past(self) -> None:
+        """
+        At every refit, all training dates must precede all scored dates.
+        """
+        from sklearn.linear_model import LogisticRegression
+
+        fits = []
+
+        class SpyModel(LogisticRegression):
+            def fit(self, X, y):
+                fits.append(len(X))
+                return super().fit(X, y)
+
+        panel = _panel(n_days=400, seed=8)
+        cols = rivutil.feature_columns(panel)
+        preds = rivutil.run_walk_forward(
+            SpyModel, panel, cols, warmup_days=100
+        )
+        # Training sets only grow (expanding window), one fit per month.
+        assert fits == sorted(fits)
+        n_months = preds["date"].dt.to_period("M").nunique()
+        assert len(fits) == n_months
+        # The first fit uses exactly the warm-up days.
+        n_tickers = panel["ticker"].nunique()
+        assert fits[0] == 100 * n_tickers
+
+    def test_walk_forward_scores_same_rows_as_prequential(self) -> None:
+        from sklearn.linear_model import LogisticRegression
+
+        panel = _panel(n_days=400, seed=9)
+        cols = rivutil.feature_columns(panel)
+        wf = rivutil.run_walk_forward(
+            LogisticRegression, panel, cols, warmup_days=100
+        )
+        pq = rivutil.run_prequential(
+            _make_model(), panel, cols, warmup_days=100
+        )
+        key = ["date", "ticker"]
+        pd.testing.assert_frame_equal(
+            wf[key].reset_index(drop=True), pq[key].reset_index(drop=True)
+        )
+
+    def test_persistence_repeats_today(self) -> None:
+        model = rivutil.PersistenceClassifier()
+        assert model.predict_proba_one({"ret_lag0": 0.01})[True] > 0.5
+        assert model.predict_proba_one({"ret_lag0": -0.01})[True] < 0.5

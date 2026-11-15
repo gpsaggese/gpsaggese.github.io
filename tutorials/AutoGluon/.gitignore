@@ -1,0 +1,9 @@
+# Models trained by the notebooks.
+tmp.autogluon/
+AutogluonModels/
+
+# Training logs written by CatBoost.
+catboost_info/
+
+# Dataset downloaded by `AutoGluon_utils.download_attrition_data()`.
+data/

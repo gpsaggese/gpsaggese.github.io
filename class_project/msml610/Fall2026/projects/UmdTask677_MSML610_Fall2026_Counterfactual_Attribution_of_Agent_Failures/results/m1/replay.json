@@ -1,0 +1,16 @@
+{
+ "mismatches": [],
+ "summary": {
+  "all_checks_pass": "37/37",
+  "command_output_match": "37/37",
+  "conversation_after_match": "37/37",
+  "env_after_match": "37/37",
+  "input_hash_match": "37/37",
+  "runs": 10,
+  "source_tapes_chain_ok": 10,
+  "tape_chain_ok": "37/37",
+  "to_end_same_final_env": "37/37",
+  "to_end_same_moves": "37/37",
+  "to_end_same_outcome": "37/37"
+ }
+}
