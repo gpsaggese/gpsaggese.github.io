@@ -370,7 +370,7 @@ class Test_load_set_checks(hunitest.TestCase):
 
 class Test_curriculum_config(hunitest.TestCase):
     """
-    The curriculum stages draw the sizes, densities and families of plan 3.9.
+    The curriculum stages draw the sizes, densities and families they document.
     """
 
     def test1(self) -> None:

@@ -1,7 +1,7 @@
 """
 Test the Tukey scorer: marks, SHD variants, equivalence classes, prediction.
 
-This is integration gate G2. Expected values are written out by hand for small
+This is an integration check. Expected values are written out by hand for small
 graphs; property tests compare against brute-force class enumeration,
 causal-learn and the prototype. Graphs inside one equivalence class are
 expected to tie wherever the target is the class.

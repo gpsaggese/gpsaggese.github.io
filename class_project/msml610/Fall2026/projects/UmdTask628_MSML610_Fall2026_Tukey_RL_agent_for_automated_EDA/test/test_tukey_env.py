@@ -1,7 +1,7 @@
 """
 Test the Tukey environment: generator contracts, prototype parity, leaks.
 
-This is integration gate G3 and the environment part of G8. The `proto` family
+This is an integration check. The `proto` family
 must reproduce the prototype bit for bit; the linear families must meet their
 contracts (acyclic, exact edge counts, noise-share floor, edge-strength margin,
 train-only standardization, per-instance target class); nothing an agent

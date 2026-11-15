@@ -131,7 +131,7 @@ def fixed_size_config(seed: int, *, n_nodes: int) -> tenv.GraphConfig:
 
 def curriculum_config(seed: int, *, stage: int) -> tenv.GraphConfig:
     """
-    Settings of one instance of a curriculum stage (plan 3.9).
+    Settings of one instance of a curriculum stage.
 
     - Stage 1: d in {4, 5}, d edges, exponential noise
     - Stage 2: d in {5, 6, 7}, `round(rho * d)` edges with rho ~ U[1, 1.5],
@@ -385,7 +385,7 @@ class EvalSet:
         return list(range(first, first + self.n_instances))
 
 
-# M4 suites by name and task (plan 5.5); appending keeps every seed offset.
+# M4 suites by name and task; appending keeps every seed offset.
 M4_SUITES = {
     # The M3 task and the curriculum's last stage.
     "main": "main",
@@ -494,7 +494,7 @@ def _make_sets() -> Dict[str, EvalSet]:
                 False,
             )
         )
-    # M4 suites (plan 5.5): a validation set for development and a sealed set
+    # M4 suites: a validation set for development and a sealed set
     # for the single confirmatory run, both written before any M4 results.
     position = {suite: k for k, suite in enumerate(M4_SUITES)}
     for suite, task in M4_SUITES.items():
@@ -512,7 +512,7 @@ def _make_sets() -> Dict[str, EvalSet]:
         sets.append(
             EvalSet(f"T_m4_{suite}", "m4", k * 1_000_000, 200, task, True)
         )
-    # Sim-to-real gap (plan 3.10): graphs of the Sachs data's size, played
+    # Sim-to-real gap: graphs of the Sachs data's size, played
     # like real data; the sealed set is read only by the final real-data run.
     sets.append(
         EvalSet(

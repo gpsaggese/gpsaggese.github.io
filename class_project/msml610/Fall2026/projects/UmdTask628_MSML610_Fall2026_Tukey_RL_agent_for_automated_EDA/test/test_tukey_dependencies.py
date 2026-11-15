@@ -1,7 +1,7 @@
 """
 Check that every pinned dependency imports and exposes the API Tukey uses.
 
-This is integration gate G1: a library upgrade that renames a function or a
+This is an integration check: a library upgrade that renames a function or a
 keyword argument fails here, before any experiment depends on it.
 
 Import as:
