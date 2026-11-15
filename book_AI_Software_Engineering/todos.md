@@ -108,3 +108,26 @@ run_typst.py --compress_pdf
 
 - Change "Capturing an Idea" to a slide about describing the idea as an informal
   natural language description
+
+### [.] Review current content
+
+> gen_slides.py -i book_AI_Software_Engineering/00.01
+
+- [x] Lesson00.01_History_of_Software_Engineering.smd
+Lesson01.01_LLM_Assisted_Code_Generation.smd
+Lesson02.01_AI_Harness.smd
+Lesson03.01_AI_Pair_Programming_Workflows.smd
+Lesson04.01_Prompt_Engineering_for_Code.smd
+Lesson05.01_Skills_Organization_and_Management.smd
+Lesson06.01_Human_AI_Collaboration_Patterns.smd
+Lesson07.01_Code_Cosmetics.smd
+Lesson08.01_Documenting_Code.smd
+Lesson11.01_Planning_Software.smd
+Lesson12.01_Software_Architecture_Guidelines.smd
+Lesson13.01_Principles_of_Good_Software_Design.smd
+Lesson14.01_GitHub_Projects_and_Workflows.smd
+
+### [ ] Generate a Typst
+
+From book_scripts/README.md
+- book_scripts/prompt.create_typst_book_chap_from_lesson_slides.md
