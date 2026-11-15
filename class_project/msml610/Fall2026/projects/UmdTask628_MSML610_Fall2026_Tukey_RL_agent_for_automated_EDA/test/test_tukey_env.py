@@ -99,6 +99,7 @@ class Test_sample_instance_proto(hunitest.TestCase):
         """
         Seeds 0-19 give the prototype's weights, graph and split bit for bit.
         """
+        # Run test and check outputs.
         for seed in range(20):
             inst = tenv.sample_instance(tenv.PROTO_CONFIG, seed)
             env = rlproto.Environment(seed=seed)
@@ -111,6 +112,7 @@ class Test_sample_instance_proto(hunitest.TestCase):
         """
         The scorer's legacy keys equal the prototype's `score()` dictionaries.
         """
+        # Run test and check outputs.
         for seed in range(5):
             inst = tenv.sample_instance(tenv.PROTO_CONFIG, seed)
             env = rlproto.Environment(seed=seed)
@@ -124,7 +126,9 @@ class Test_sample_instance_proto(hunitest.TestCase):
         """
         The prototype family refuses standardization.
         """
+        # Prepare inputs.
         cfg = dataclasses.replace(tenv.PROTO_CONFIG, standardize="post")
+        # Run test and check outputs.
         with self.assertRaises(AssertionError):
             tenv.sample_instance(cfg, 0)
 
@@ -143,6 +147,7 @@ class Test_sample_instance_linear(hunitest.TestCase):
         """
         Every family meets the contracts on 50 seeds; targets follow the noise.
         """
+        # Run test and check outputs.
         lines = []
         for name, cfg in _LINEAR_CONFIGS.items():
             targets: collections.Counter = collections.Counter()
@@ -153,6 +158,7 @@ class Test_sample_instance_linear(hunitest.TestCase):
                 targets[inst.truth.target_class] += 1
                 n_rejected += inst.n_rejected
             lines.append(f"{name}: {dict(sorted(targets.items()))} {n_rejected}")
+        # Check outputs.
         actual = "\n".join(lines)
         expected = """
         linear_exp: {'dag': 50} 0
@@ -167,10 +173,13 @@ class Test_sample_instance_linear(hunitest.TestCase):
         """
         The same seed gives the same instance; another seed a different one.
         """
+        # Prepare inputs.
         cfg = _LINEAR_CONFIGS["mixed"]
+        # Run test.
         inst1 = tenv.sample_instance(cfg, 7)
         inst2 = tenv.sample_instance(cfg, 7)
         inst3 = tenv.sample_instance(cfg, 8)
+        # Check outputs.
         self.assertTrue(inst1.d_train.equals(inst2.d_train))
         self.assertTrue(np.array_equal(inst1.W, inst2.W))
         self.assertFalse(inst1.d_train.equals(inst3.d_train))
@@ -179,6 +188,7 @@ class Test_sample_instance_linear(hunitest.TestCase):
         """
         Families share graph and weights per seed and differ only in noise.
         """
+        # Run test and check outputs.
         for seed in range(10):
             inst_exp = tenv.sample_instance(_LINEAR_CONFIGS["linear_exp"], seed)
             inst_gauss = tenv.sample_instance(
@@ -191,6 +201,7 @@ class Test_sample_instance_linear(hunitest.TestCase):
         """
         The sampled noise has the family's shape (raw scale, true weights).
         """
+        # Run test.
         lines = []
         for family in ("linear_exp", "linear_uniform", "linear_gauss"):
             cfg = tenv.GraphConfig(
@@ -205,6 +216,7 @@ class Test_sample_instance_linear(hunitest.TestCase):
                 f"{family}: skew {skew.min():.1f}..{skew.max():.1f}, "
                 f"kurt {kurt.min():.1f}..{kurt.max():.1f}"
             )
+        # Check outputs.
         actual = "\n".join(lines)
         expected = """
         linear_exp: skew 1.6..1.9, kurt 3.3..5.5
@@ -217,6 +229,7 @@ class Test_sample_instance_linear(hunitest.TestCase):
         """
         Column order does not reveal edge direction (500 graphs).
         """
+        # Run test.
         n_forward = 0
         n_edges = 0
         for seed in range(500):
@@ -224,6 +237,7 @@ class Test_sample_instance_linear(hunitest.TestCase):
             parents, children = np.nonzero(B)
             n_forward += int((parents < children).sum())
             n_edges += len(parents)
+        # Check outputs.
         frac = n_forward / n_edges
         _LOG.info("Edges from a lower to a higher column: %.3f", frac)
         self.assertLess(abs(frac - 0.5), 0.05)
@@ -232,7 +246,9 @@ class Test_sample_instance_linear(hunitest.TestCase):
         """
         The equal-variance raw family refuses other settings.
         """
+        # Prepare inputs.
         cfg = tenv.GraphConfig(family="linear_gauss_eqvar_raw")
+        # Run test and check outputs.
         with self.assertRaises(AssertionError):
             tenv.sample_instance(cfg, 0)
 
@@ -300,9 +316,12 @@ class Test_generator_checks(hunitest.TestCase):
         """
         The cap scales down deep weights of a strong chain to a 10% noise share.
         """
+        # Prepare inputs.
         W = _chain([2.0, 2.0, 2.0])
         noise_var = np.ones(4)
+        # Run test.
         W_capped = tenv.cap_signal_share(W, noise_var)
+        # Check outputs.
         cov = tenv.population_covariance(W_capped, noise_var)
         shares = noise_var / np.diag(cov)
         actual = (
@@ -319,8 +338,11 @@ class Test_generator_checks(hunitest.TestCase):
         """
         The cap leaves a weak chain unchanged.
         """
+        # Prepare inputs.
         W = _chain([0.8, 0.8, 0.8])
+        # Run test.
         W_capped = tenv.cap_signal_share(W, np.ones(4))
+        # Check outputs.
         self.assertTrue(np.array_equal(W, W_capped))
 
     def test3(self) -> None:
@@ -330,17 +352,20 @@ class Test_generator_checks(hunitest.TestCase):
         In 0 -> 1 -> 2 with 0 -> 2 of weight -1, x2 = e1 + e2, so x0 and x2 are
         uncorrelated although 0 -> 2 is an edge; given x1 it is visible.
         """
+        # Prepare inputs.
         W = np.zeros((3, 3))
         W[0, 1] = 1.0
         W[1, 2] = 1.0
         W[0, 2] = -1.0
         noise_var = np.ones(3)
+        # Run test.
         strengths = tenv.edge_strengths(W, noise_var)
         actual = (
             f"strengths {np.round(strengths, 4).tolist()}\n"
             f"margin {tenv.passes_edge_margin(W, noise_var)}\n"
             f"min marginal {tenv.min_partial_corr(W, noise_var, max_cond=0):.4f}"
         )
+        # Check outputs.
         expected = """
         strengths [0.7071, 0.5774, 0.7071]
         margin True
@@ -352,8 +377,10 @@ class Test_generator_checks(hunitest.TestCase):
         """
         A weak edge into a noisy child fails the margin.
         """
+        # Prepare inputs.
         W = np.zeros((2, 2))
         W[0, 1] = 0.05
+        # Run test and check outputs.
         self.assertFalse(tenv.passes_edge_margin(W, np.ones(2)))
 
 
@@ -371,8 +398,11 @@ class TestTukeyEnv(hunitest.TestCase):
         """
         Reset gives evidence built from D_train only and a whitelisted `info`.
         """
+        # Prepare inputs.
         env = tenv.TukeyEnv(_LINEAR_CONFIGS["linear_exp"])
+        # Run test.
         evidence, info = env.reset(seed=3)
+        # Check outputs.
         self.assertEqual(
             sorted(info), ["budget", "n_nodes", "n_train", "tool_costs"]
         )
@@ -411,9 +441,11 @@ class TestTukeyEnv(hunitest.TestCase):
         """
         Every tool result is reproduced by a fresh cache on D_train alone.
         """
+        # Prepare inputs.
         env = tenv.TukeyEnv(_LINEAR_CONFIGS["mixed"], budget=300)
         evidence, _ = env.reset(seed=4)
         fresh = ttools.ToolCache(env.d_train.to_numpy())
+        # Run test and check outputs.
         for action in ttools.enumerate_tool_actions(6):
             self.assertEqual(evidence.record(action), fresh.run(action))
 
@@ -421,9 +453,11 @@ class TestTukeyEnv(hunitest.TestCase):
         """
         Steps cost their price; budget, repeats, STOP and reuse are enforced.
         """
+        # Prepare inputs.
         env = tenv.TukeyEnv(_LINEAR_CONFIGS["linear_gauss"], budget=2)
         env.reset(seed=5)
         action = ttools.ci_test_action(0, 1, (2,))
+        # Run test and check outputs.
         _, reward, terminated, truncated, _ = env.step(action)
         self.assertEqual((reward, terminated, truncated), (-0.001, False, False))
         with self.assertRaises(AssertionError):
@@ -440,9 +474,11 @@ class TestTukeyEnv(hunitest.TestCase):
         """
         Submitting G* scores 0, the empty graph -1; bad edges are dropped.
         """
+        # Prepare inputs.
         env = tenv.TukeyEnv(_LINEAR_CONFIGS["linear_exp"])
         env.reset(seed=6)
         true_edges = [tuple(e) for e in np.argwhere(env._instance.truth.B == 1)]
+        # Run test.
         scores = env.submit_graph(true_edges + [(0, 0), (0, 9)])
         actual = (
             f"true: score {scores['score']}, shd_target {scores['shd_target']}, "
@@ -451,6 +487,7 @@ class TestTukeyEnv(hunitest.TestCase):
         env.reset(seed=6)
         scores = env.submit_graph([])
         actual += f"\nempty: score {scores['score']}, shd {scores['shd_target']}"
+        # Check outputs.
         expected = """
         true: score 0.0, shd_target 0, dropped 2, calls 0
         empty: score -1.0, shd 6
@@ -461,8 +498,10 @@ class TestTukeyEnv(hunitest.TestCase):
         """
         A second submission in one episode is refused until the next reset.
         """
+        # Prepare inputs.
         env = tenv.TukeyEnv(_LINEAR_CONFIGS["linear_exp"])
         env.reset(seed=6)
+        # Run test and check outputs.
         env.submit_graph([])
         with self.assertRaises(AssertionError):
             env.submit_graph([(0, 1)])
@@ -474,8 +513,10 @@ class TestTukeyEnv(hunitest.TestCase):
         """
         The reward oracle scores any DAG without ending the episode.
         """
+        # Prepare inputs.
         env = tenv.TukeyEnv(_LINEAR_CONFIGS["linear_exp"])
         env.reset(seed=6)
+        # Run test.
         oracle = env.reward_oracle()
         B_true = env.instance.truth.B
         empty = np.zeros_like(B_true)
@@ -485,6 +526,7 @@ class TestTukeyEnv(hunitest.TestCase):
         # The episode goes on: a tool call and the submission still run.
         env.step(ttools.Action(ttools.NONGAUSS, (0,)))
         actual.append(env.submit_graph([])["score"])
+        # Check outputs.
         self.assertEqual(actual, [0.0, -1.0, -1.0, -1.0])
 
 
@@ -518,6 +560,7 @@ class Test_more_families(hunitest.TestCase):
         """
         Every family: acyclic, exact edge count, standardized, finite; targets.
         """
+        # Run test and check outputs.
         lines = []
         for name, cfg in _MORE_CONFIGS.items():
             targets: collections.Counter = collections.Counter()
@@ -536,6 +579,7 @@ class Test_more_families(hunitest.TestCase):
                     self.assertGreaterEqual(share, 0.1 - 1e-9)
                 targets[inst.truth.target_class] += 1
             lines.append(f"{name}: {dict(sorted(targets.items()))}")
+        # Check outputs.
         actual = "\n".join(lines)
         expected = """
         mixed_node: {'dag': 3, 'ngdag_pattern': 17}
@@ -555,10 +599,12 @@ class Test_more_families(hunitest.TestCase):
         """
         Quadratic mechanism: a symmetric parent is uncorrelated with its child.
         """
+        # Prepare inputs.
         cfg = tenv.GraphConfig(
             family="nonlinear", n_nodes=2, n_edges=1, standardize="none"
         )
         found = 0
+        # Run test and check outputs.
         for seed in range(200):
             inst = tenv.sample_instance(cfg, seed)
             symmetric = inst.noise_families[0] in ("gaussian", "uniform")
@@ -577,9 +623,11 @@ class Test_more_families(hunitest.TestCase):
         """
         iSCM: every variable has unit variance before any post-processing.
         """
+        # Prepare inputs.
         cfg = tenv.GraphConfig(
             family="iscm", n_nodes=8, n_edges=12, standardize="none"
         )
+        # Run test and check outputs.
         for seed in range(10):
             x = tenv.sample_instance(cfg, seed).d_train.to_numpy()
             self.assertLess(np.abs(x.var(axis=0) - 1).max(), 0.15)
@@ -588,7 +636,9 @@ class Test_more_families(hunitest.TestCase):
         """
         Observed common cause: T1 and T2 are dependent, independent given U.
         """
+        # Prepare inputs.
         cfg = _MORE_CONFIGS["sklearn_confounder"]
+        # Run test and check outputs.
         for seed in range(10):
             inst = tenv.sample_instance(cfg, seed)
             (source,) = np.flatnonzero(inst.truth.B.sum(axis=1))
@@ -603,6 +653,7 @@ class Test_more_families(hunitest.TestCase):
         """
         Topologies: chain is a path, star has a hub, layers are short.
         """
+        # Run test and check outputs.
         for seed in range(10):
             B = tenv.sample_instance(_MORE_CONFIGS["chain"], seed).truth.B
             self.assertEqual(sorted(B.sum(axis=0).tolist()), [0] + [1] * 7)
@@ -659,6 +710,7 @@ class Test_hidden_confounder(hunitest.TestCase):
         """
         Variant a: T1 o-o T2 only; dependent given any other observed variable.
         """
+        # Run test and check outputs.
         for seed in range(5):
             inst = _hidden_instance("hidden_a", seed)
             ((i, j),) = inst.truth.confounded
@@ -675,6 +727,7 @@ class Test_hidden_confounder(hunitest.TestCase):
         """
         Variant b: A o-> T1 <-> T2 <-o B, and A is independent of T2.
         """
+        # Run test and check outputs.
         z_scores = []
         for seed in range(200):
             inst = _hidden_instance("hidden_b", seed)
@@ -692,6 +745,7 @@ class Test_hidden_confounder(hunitest.TestCase):
             x = inst.d_train.to_numpy()
             r = np.corrcoef(x[:, parents[t1]], x[:, t2])[0, 1]
             z_scores.append(np.sqrt(x.shape[0] - 3) * np.arctanh(r))
+        # Check outputs.
         # Independence is checked on the spread over seeds: a single seed
         # rejects at alpha = 0.001 once in a thousand draws, while a real
         # effect of A on T2 at the generator's weakest shares gives z ~ 12.
@@ -704,6 +758,7 @@ class Test_hidden_confounder(hunitest.TestCase):
         """
         Variant c: every observed variable comes from one non-Gaussian family.
         """
+        # Run test and check outputs.
         for seed in range(5):
             inst = _hidden_instance("hidden_c", seed)
             family = inst.noise_families[0]
@@ -721,12 +776,15 @@ class Test_hidden_confounder(hunitest.TestCase):
         """
         A DAG output gets PAG metrics, no combined score and a prediction gain.
         """
+        # Prepare inputs.
         inst = _hidden_instance("hidden_a", 0)
         ((i, j),) = inst.truth.confounded
+        # Run test.
         empty = tscore.score_graph(np.zeros((6, 6), dtype=int), inst.truth)
         claim = np.zeros((6, 6), dtype=int)
         claim[i, j] = 1
         claimed = tscore.score_graph(claim, inst.truth)
+        # Check outputs.
         for scores in (empty, claimed):
             self.assertTrue(np.isnan(scores["score"]))
             self.assertTrue(np.isnan(scores["shd_target"]))
@@ -746,9 +804,12 @@ class Test_rescale(hunitest.TestCase):
         """
         Each raw column is multiplied by one factor in [0.1, 10].
         """
+        # Prepare inputs.
         raw = tenv.sample_instance(tenv.EQVAR_RAW_CONFIG, 3)
         cfg = dataclasses.replace(tenv.EQVAR_RAW_CONFIG, standardize="rescale")
+        # Run test.
         rescaled = tenv.sample_instance(cfg, 3)
+        # Check outputs.
         np.testing.assert_array_equal(rescaled.truth.B, raw.truth.B)
         factors = rescaled.d_train.to_numpy()[0] / raw.d_train.to_numpy()[0]
         self.assertTrue(np.all((factors >= 0.1) & (factors <= 10.0)))
@@ -813,10 +874,12 @@ class Test_noise_share(hunitest.TestCase):
         Standardization then cancels it, which is why the noise level is set
         as a share of each node's variance instead.
         """
+        # Prepare inputs.
         cfg = tenv.GraphConfig()
         W = np.array([[0.0, 1.5, 0.0], [0.0, 0.0, -0.8], [0.0, 0.0, 0.0]])
         families = ("exponential",) * 3
         noise_std = np.array([1.0, 0.7, 1.2])
+        # Run test.
         data = []
         for factor in (1.0, 5.0):
             x = tenv._simulate_linear(
@@ -824,12 +887,14 @@ class Test_noise_share(hunitest.TestCase):
             )
             x_train, _ = tenv._split_and_scale(x, cfg, np.random.default_rng(1))
             data.append(x_train)
+        # Check outputs.
         np.testing.assert_allclose(data[0], data[1], atol=1e-12)
 
     def test2(self) -> None:
         """
         In the population every node has unit variance and the exact share.
         """
+        # Run test and check outputs.
         for seed in range(10):
             for share in _GRID:
                 inst = tenv.sample_instance(_noise_cfg(share), seed)
@@ -849,6 +914,7 @@ class Test_noise_share(hunitest.TestCase):
         """
         The levels of one seed share the graph, draws, split and permutation.
         """
+        # Run test and check outputs.
         for seed in range(10):
             insts = [tenv.sample_instance(_noise_cfg(q), seed) for q in _GRID]
             first = insts[0]
@@ -871,6 +937,7 @@ class Test_noise_share(hunitest.TestCase):
         """
         The historical iSCM of a seed has the same graph, family and target.
         """
+        # Run test and check outputs.
         for seed in range(10):
             old = tenv.sample_instance(tenv.GraphConfig(family="iscm"), seed)
             new = tenv.sample_instance(_noise_cfg(0.4), seed)
@@ -882,6 +949,7 @@ class Test_noise_share(hunitest.TestCase):
         """
         On a large sample the R2 on the true parents converges to 1 - share.
         """
+        # Run test and check outputs.
         for share in _GRID:
             inst = tenv.sample_instance(_noise_cfg(share, n_samples=200_000), 0)
             r2 = _sample_r2(inst.d_train.to_numpy(), inst.truth.B)
@@ -893,6 +961,7 @@ class Test_noise_share(hunitest.TestCase):
         """
         Sample R2 is the same after `rescale` as after `post` standardization.
         """
+        # Run test and check outputs.
         for share in (0.2, 0.8):
             post = tenv.sample_instance(_noise_cfg(share), 3)
             rescaled = tenv.sample_instance(
@@ -909,12 +978,14 @@ class Test_noise_share(hunitest.TestCase):
         """
         Invalid settings are refused.
         """
+        # Prepare inputs.
         bad = [
             tenv.GraphConfig(noise_share=0.4, noise_grid=_GRID),
             tenv.GraphConfig(family="iscm", noise_share=0.5, noise_grid=_GRID),
             tenv.GraphConfig(family="iscm", noise_share=0.1, noise_grid=(0.1,)),
             tenv.GraphConfig(family="iscm", noise_grid=_GRID),
         ]
+        # Run test and check outputs.
         for cfg in bad:
             with self.assertRaises(AssertionError, msg=str(cfg)):
                 tenv.sample_instance(cfg, 0)
@@ -929,6 +1000,7 @@ class Test_iscm_target(hunitest.TestCase):
         """
         Equal raw noise on the raw scale identifies the DAG only without iSCM.
         """
+        # Run test and check outputs.
         found = 0
         for seed in range(40):
             cfg = tenv.GraphConfig(

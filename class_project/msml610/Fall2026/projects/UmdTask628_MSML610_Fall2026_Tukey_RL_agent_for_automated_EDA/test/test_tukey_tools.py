@@ -124,6 +124,7 @@ class Test_enumerate_tool_actions(hunitest.TestCase):
         """
         Counts per tool for 3 and 6 variables, with no duplicates.
         """
+        # Run test and check outputs.
         lines: List[str] = []
         for n_nodes in (3, 6):
             actions = ttools.enumerate_tool_actions(n_nodes)
@@ -133,6 +134,7 @@ class Test_enumerate_tool_actions(hunitest.TestCase):
             }
             lines.append(f"{n_nodes}: {len(actions)} {counts}")
             self.assertEqual(len(set(actions)), len(actions))
+        # Check outputs.
         actual = "\n".join(lines)
         expected = (
             "3: 21 {'ci_test': 3, 'regress': 9, 'lingam_dir': 3, "
@@ -146,6 +148,7 @@ class Test_enumerate_tool_actions(hunitest.TestCase):
         """
         Equal calls written in different orders are the same action.
         """
+        # Run test and check outputs.
         self.assertEqual(
             ttools.ci_test_action(2, 0, (3, 1)),
             ttools.ci_test_action(0, 2, (1, 3)),
@@ -169,9 +172,11 @@ class Test_ci_test(hunitest.TestCase):
         """
         Partial correlations equal the correlation of regression residuals.
         """
+        # Prepare inputs.
         x = _simulate(seed=0)
         z = _standardize(x)
         cache = ttools.ToolCache(x)
+        # Run test.
         errors = []
         for action in ttools.enumerate_tool_actions(4):
             if action.kind != ttools.CI_TEST:
@@ -184,6 +189,7 @@ class Test_ci_test(hunitest.TestCase):
             resid_j = z[:, j] - z_cond @ beta_j
             expected = np.corrcoef(resid_i, resid_j)[0, 1]
             errors.append(abs(cache.run(action)["pcorr"] - expected))
+        # Check outputs.
         self.assertEqual(len(errors), 18)
         self.assertLess(max(errors), 1e-10)
 
@@ -191,9 +197,11 @@ class Test_ci_test(hunitest.TestCase):
         """
         Fisher-z p-values equal causal-learn's `fisherz` test.
         """
+        # Prepare inputs.
         x = _simulate(seed=1)
         cache = ttools.ToolCache(x)
         cit = cucit.CIT(x, "fisherz")
+        # Run test.
         actual = []
         expected = []
         for action in ttools.enumerate_tool_actions(4):
@@ -202,17 +210,21 @@ class Test_ci_test(hunitest.TestCase):
             i, j, cond = action.args[0], action.args[1], list(action.args[2:])
             actual.append(cache.run(action)["p"])
             expected.append(cit(i, j, cond))
+        # Check outputs.
         np.testing.assert_allclose(actual, expected, rtol=1e-6, atol=1e-12)
 
     def test3(self) -> None:
         """
         A true conditional independence is not rejected; a true edge is.
         """
+        # Prepare inputs.
         x = _simulate(seed=2)
         cache = ttools.ToolCache(x)
+        # Run test.
         # x1 and x3 are separated by {x0, x2}; x2 -> x3 is an edge.
         p_independent = cache.run(ttools.ci_test_action(1, 3, (0, 2)))["p"]
         p_edge = cache.run(ttools.ci_test_action(2, 3, (0, 1)))["p"]
+        # Check outputs.
         self.assertGreater(p_independent, 0.01)
         self.assertLess(p_edge, 1e-10)
 
@@ -231,10 +243,13 @@ class Test_regress(hunitest.TestCase):
         """
         One predictor: slope, t-statistic and p-value equal `linregress`.
         """
+        # Prepare inputs.
         x = _simulate(seed=3)
         z = _standardize(x)
         cache = ttools.ToolCache(x)
+        # Run test.
         result = cache.run(ttools.regress_action(2, (1,)))
+        # Check outputs.
         ref = scipy.stats.linregress(z[:, 1], z[:, 2])
         actual = [result["coef_1"], result["t_1"], result["p_1"], result["r2"]]
         expected = [ref.slope, ref.slope / ref.stderr, ref.pvalue, ref.rvalue**2]
@@ -244,10 +259,13 @@ class Test_regress(hunitest.TestCase):
         """
         Two predictors: coefficients and R2 equal scikit-learn; t equals OLS.
         """
+        # Prepare inputs.
         x = _simulate(seed=4)
         z = _standardize(x)
         cache = ttools.ToolCache(x)
+        # Run test.
         result = cache.run(ttools.regress_action(3, (0, 2)))
+        # Check outputs.
         model = sklimode.LinearRegression().fit(z[:, [0, 2]], z[:, 3])
         # Classical OLS standard errors with an intercept column.
         design = np.column_stack([np.ones(len(z)), z[:, [0, 2]]])
@@ -275,8 +293,10 @@ class Test_regress(hunitest.TestCase):
         """
         `resid_dep` equals the prototype's direction statistic on raw data.
         """
+        # Prepare inputs.
         x = _simulate(seed=5)
         cache = ttools.ToolCache(x)
+        # Run test and check outputs.
         for cause, effect in [(0, 1), (1, 0), (2, 3)]:
             model = sklimode.LinearRegression().fit(x[:, [cause]], x[:, effect])
             resid = x[:, effect] - model.predict(x[:, [cause]])
@@ -299,6 +319,7 @@ class Test_lingam_dir(hunitest.TestCase):
         """
         The sign finds the cause in >= 95% of 200 exponential-noise pairs.
         """
+        # Run test.
         n_correct = 0
         for seed in range(200):
             x, cause_col = _simulate_pair(seed=seed, noise="exponential")
@@ -306,6 +327,7 @@ class Test_lingam_dir(hunitest.TestCase):
             stat = ttools.ToolCache(x).run(action)["stat"]
             predicted = 0 if stat > 0 else 1
             n_correct += int(predicted == cause_col)
+        # Check outputs.
         _LOG.info("lingam_dir: %s/200 correct", n_correct)
         self.assertGreaterEqual(n_correct, 190)
 
@@ -313,6 +335,7 @@ class Test_lingam_dir(hunitest.TestCase):
         """
         The sign agrees with DirectLiNGAM's causal order on all 200 pairs.
         """
+        # Run test.
         n_agree = 0
         for seed in range(200):
             x, _ = _simulate_pair(seed=seed, noise="exponential")
@@ -322,18 +345,21 @@ class Test_lingam_dir(hunitest.TestCase):
             model.fit(x)
             first = 0 if stat > 0 else 1
             n_agree += int(first == model.causal_order_[0])
+        # Check outputs.
         self.assertEqual(n_agree, 200)
 
     def test3(self) -> None:
         """
         Under Gaussian noise the sign is at chance (no direction information).
         """
+        # Run test.
         n_correct = 0
         for seed in range(200):
             x, cause_col = _simulate_pair(seed=1000 + seed, noise="gaussian")
             action = ttools.Action(ttools.LINGAM_DIR, (0, 1))
             stat = ttools.ToolCache(x).run(action)["stat"]
             n_correct += int((0 if stat > 0 else 1) == cause_col)
+        # Check outputs.
         _LOG.info("lingam_dir on Gaussian pairs: %s/200 correct", n_correct)
         self.assertGreaterEqual(n_correct, 70)
         self.assertLessEqual(n_correct, 130)
@@ -353,13 +379,16 @@ class Test_nongauss_and_variance(hunitest.TestCase):
         """
         Exponential columns are skewed and heavy-tailed; Gaussian ones are not.
         """
+        # Prepare inputs.
         rng = np.random.default_rng(6)
         x = np.column_stack(
             [rng.exponential(size=20000), rng.normal(size=20000)]
         )
         cache = ttools.ToolCache(x)
+        # Run test.
         expo = cache.run(ttools.Action(ttools.NONGAUSS, (0,)))
         gauss = cache.run(ttools.Action(ttools.NONGAUSS, (1,)))
+        # Check outputs.
         # Population values: skew 2 and excess kurtosis 6 for exponential.
         self.assertLess(abs(expo["skew"] - 2.0), 0.15)
         self.assertGreater(expo["kurt"], 4.0)
@@ -372,11 +401,14 @@ class Test_nongauss_and_variance(hunitest.TestCase):
         """
         The log variance is 0 for a standardized column and tracks rescaling.
         """
+        # Prepare inputs.
         x = _standardize(_simulate(seed=7))
         x[:, 1] = 10.0 * x[:, 1]
         cache = ttools.ToolCache(x)
+        # Run test.
         log_var_0 = cache.run(ttools.Action(ttools.VARIANCE, (0,)))["log_var"]
         log_var_1 = cache.run(ttools.Action(ttools.VARIANCE, (1,)))["log_var"]
+        # Check outputs.
         self.assertLess(abs(log_var_0), 1e-12)
         self.assertLess(abs(log_var_1 - np.log(100.0)), 1e-12)
 
@@ -395,12 +427,15 @@ class Test_scale_invariance(hunitest.TestCase):
         """
         Rescaling and shifting columns changes no result except `variance`.
         """
+        # Prepare inputs.
         x = _simulate(seed=8)
         rng = np.random.default_rng(8)
         scales = np.exp(rng.uniform(np.log(0.1), np.log(10.0), size=4))
         offsets = rng.normal(scale=50.0, size=4)
+        # Run test.
         original = _all_results(x)
         rescaled = _all_results(x * scales + offsets)
+        # Check outputs.
         n_compared = 0
         for action, result in original.items():
             if action.kind == ttools.VARIANCE:
@@ -484,9 +519,11 @@ class TestEvidence(hunitest.TestCase):
         """
         Recording updates the history and budget; repeats are refused.
         """
+        # Prepare inputs.
         cache = ttools.ToolCache(_simulate(seed=9))
         evidence = ttools.Evidence(cache, budget=2)
         action = ttools.ci_test_action(0, 1, (2,))
+        # Run test and check outputs.
         result = evidence.record(action)
         self.assertEqual(result, cache.run(action))
         self.assertEqual(evidence.calls_used, 1)
@@ -507,8 +544,10 @@ class TestEvidence(hunitest.TestCase):
         """
         Legal actions exclude calls already made and vanish at budget 0.
         """
+        # Prepare inputs.
         cache = ttools.ToolCache(_simulate(seed=10))
         all_actions = ttools.enumerate_tool_actions(4)
+        # Run test and check outputs.
         evidence = ttools.Evidence(cache, budget=1)
         self.assertEqual(len(evidence.legal_tool_actions(all_actions)), 56)
         evidence.record(all_actions[0])
@@ -523,6 +562,7 @@ class TestEvidence(hunitest.TestCase):
         """
         Non-canonical and out-of-range calls are refused and cost nothing.
         """
+        # Prepare inputs.
         cache = ttools.ToolCache(_simulate(seed=9))
         evidence = ttools.Evidence(cache, budget=5)
         evidence.record(ttools.ci_test_action(0, 1, (2,)))
@@ -536,6 +576,7 @@ class TestEvidence(hunitest.TestCase):
             # A variable that does not exist.
             ttools.Action(ttools.NONGAUSS, (cache.n_nodes,)),
         ]
+        # Run test and check outputs.
         for action in refused:
             with self.assertRaises(AssertionError, msg=str(action)):
                 evidence.record(action)
@@ -564,8 +605,11 @@ class Test_mutual_info(hunitest.TestCase):
         """
         Independent variables carry no information.
         """
+        # Prepare inputs.
         rng = np.random.default_rng(0)
+        # Run test.
         result = self._result(rng.normal(size=2000), rng.normal(size=2000))
+        # Check outputs.
         self.assertLess(result["mi"], 0.02)
         self.assertLess(abs(result["mi_excess"]), 0.02)
 
@@ -573,10 +617,13 @@ class Test_mutual_info(hunitest.TestCase):
         """
         Y = x^2 + noise is uncorrelated with x, yet clearly dependent.
         """
+        # Prepare inputs.
         rng = np.random.default_rng(1)
         x = rng.normal(size=2000)
         y = x**2 + 0.3 * rng.normal(size=2000)
+        # Run test.
         result = self._result(x, y)
+        # Check outputs.
         self.assertLess(abs(np.corrcoef(x, y)[0, 1]), 0.1)
         self.assertGreater(result["mi"], 0.3)
         self.assertGreater(result["mi_excess"], 0.3)
@@ -585,10 +632,13 @@ class Test_mutual_info(hunitest.TestCase):
         """
         Linear-Gaussian dependence: close to the Gaussian value, no excess.
         """
+        # Prepare inputs.
         rng = np.random.default_rng(2)
         x = rng.normal(size=2000)
         y = 0.7 * x + np.sqrt(0.51) * rng.normal(size=2000)
+        # Run test.
         result = self._result(x, y)
+        # Check outputs.
         self.assertGreater(result["mi"], 0.2)
         self.assertLess(abs(result["mi_excess"]), 0.05)
 
@@ -596,8 +646,10 @@ class Test_mutual_info(hunitest.TestCase):
         """
         The Milestone 4 tool set appends one call per pair to the M3 calls.
         """
+        # Run test.
         m3 = ttools.enumerate_tool_actions(6)
         m4 = ttools.enumerate_tool_actions(6, toolset="m4")
+        # Check outputs.
         self.assertEqual(m4[: len(m3)], m3)
         self.assertEqual(len(m4) - len(m3), 15)
         self.assertEqual({a.kind for a in m4[len(m3) :]}, {ttools.MUTUAL_INFO})
@@ -606,9 +658,11 @@ class Test_mutual_info(hunitest.TestCase):
         """
         A Milestone 3 evidence log refuses a mutual-information call.
         """
+        # Prepare inputs.
         rng = np.random.default_rng(3)
         evidence = ttools.Evidence(
             ttools.ToolCache(rng.normal(size=(500, 3))), budget=5
         )
+        # Run test and check outputs.
         with self.assertRaises(AssertionError):
             evidence.record(ttools.Action(ttools.MUTUAL_INFO, (0, 1)))

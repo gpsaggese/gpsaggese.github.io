@@ -27,8 +27,10 @@ class Test_sortabilities(hunitest.TestCase):
         """
         Relatives: a chain ties everywhere (1/2), a collider is sorted (1).
         """
+        # Prepare inputs.
         chain = np.array([[0, 1, 0], [0, 0, 1], [0, 0, 0]])
         collider = np.array([[0, 0, 1], [0, 0, 1], [0, 0, 0]])
+        # Run test.
         lines = []
         for name, B in (("chain", chain), ("collider", collider)):
             counts = cdanaly.count_relatives(B).tolist()
@@ -36,6 +38,7 @@ class Test_sortabilities(hunitest.TestCase):
                 B, measure="adjacent_pairs"
             )
             lines.append(f"{name} counts {counts}, edges {edges}")
+        # Check outputs.
         actual = "\n".join(lines)
         expected = """
         chain counts [3, 3, 3], edges 0.5
@@ -47,22 +50,28 @@ class Test_sortabilities(hunitest.TestCase):
         """
         A negative weight flips CausalDisco's edge measure; binary does not.
         """
+        # Prepare inputs.
         scores = np.array([1.0, 2.0])
         weighted = np.array([[0.0, -0.8], [0.0, 0.0]])
         binary = (weighted != 0).astype(float)
+        # Run test.
         flipped = cdanaly.order_alignment_adjacent_pairs(weighted, scores)
         correct = cdanaly.order_alignment_adjacent_pairs(binary, scores)
+        # Check outputs.
         self.assertEqual((flipped, correct), (0.0, 1.0))
 
     def test3(self) -> None:
         """
         Prototype data: raw variance sorts the order; standardizing removes it.
         """
+        # Prepare inputs.
         inst = tenv.sample_instance(tenv.PROTO_CONFIG, 0)
         x = inst.d_train.to_numpy()
+        # Run test.
         raw = tsortab.sortabilities(x, inst.W)
         z = (x - x.mean(axis=0)) / x.std(axis=0)
         standardized = tsortab.sortabilities(z, inst.W)
+        # Check outputs.
         self.assertGreater(raw["var_edges"], 0.8)
         self.assertEqual(standardized["var_edges"], 0.5)
         # Relatives and R2 depend on correlations only.

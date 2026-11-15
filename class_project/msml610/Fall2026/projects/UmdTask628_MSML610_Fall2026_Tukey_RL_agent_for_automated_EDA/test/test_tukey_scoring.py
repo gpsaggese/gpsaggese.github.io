@@ -262,9 +262,13 @@ class Test_score_graph(hunitest.TestCase):
         """
         Test that the true complete DAG scores perfectly.
         """
+        # Prepare inputs.
         edges = [(0, 1), (1, 2), (0, 2)]
+        # Prepare outputs.
         expected = "is_dag=True shd_dag=0 shd_cpdag=0 shd_target=0"
+        # Run test.
         scores = self.helper(3, edges, edges, tscore.TARGET_CPDAG, expected)
+        # Check outputs.
         self.assert_equal(
             str([scores["pred_frac"], scores["score"]]), "[1.0, 0.0]"
         )
@@ -273,10 +277,13 @@ class Test_score_graph(hunitest.TestCase):
         """
         Test that a reversed single edge costs 1 as a DAG, 0 as a class.
         """
+        # Prepare outputs.
         expected = "is_dag=True shd_dag=1 shd_cpdag=0 shd_target=0"
+        # Run test.
         scores = self.helper(
             2, [(0, 1)], [(1, 0)], tscore.TARGET_CPDAG, expected
         )
+        # Check outputs.
         legacy = [scores["f1"], scores["fdr"], scores["skeleton_f1"]]
         self.assert_equal(str(legacy), "[0.0, 1.0, 1.0]")
 
@@ -284,7 +291,9 @@ class Test_score_graph(hunitest.TestCase):
         """
         Test a chain against its Markov-equivalent fork: tie on the class.
         """
+        # Prepare outputs.
         expected = "is_dag=True shd_dag=1 shd_cpdag=0 shd_target=0"
+        # Run test.
         self.helper(
             3, [(0, 1), (1, 2)], [(1, 0), (1, 2)], tscore.TARGET_CPDAG, expected
         )
@@ -293,7 +302,9 @@ class Test_score_graph(hunitest.TestCase):
         """
         Test a chain against a collider: different classes.
         """
+        # Prepare outputs.
         expected = "is_dag=True shd_dag=1 shd_cpdag=2 shd_target=2"
+        # Run test.
         self.helper(
             3, [(0, 1), (1, 2)], [(0, 1), (2, 1)], tscore.TARGET_CPDAG, expected
         )
@@ -302,7 +313,9 @@ class Test_score_graph(hunitest.TestCase):
         """
         Test a fully reversed chain (the paper's Key Example 1 situation).
         """
+        # Prepare outputs.
         expected = "is_dag=True shd_dag=2 shd_cpdag=0 shd_target=0"
+        # Run test.
         self.helper(
             3, [(0, 1), (1, 2)], [(2, 1), (1, 0)], tscore.TARGET_CPDAG, expected
         )
@@ -311,7 +324,9 @@ class Test_score_graph(hunitest.TestCase):
         """
         Test a true collider against a chain through the collider.
         """
+        # Prepare outputs.
         expected = "is_dag=True shd_dag=1 shd_cpdag=2 shd_target=2"
+        # Run test.
         self.helper(
             3, [(0, 2), (1, 2)], [(0, 2), (2, 1)], tscore.TARGET_CPDAG, expected
         )
@@ -320,7 +335,9 @@ class Test_score_graph(hunitest.TestCase):
         """
         Test Meek rule R1: the edge out of a collider is compelled.
         """
+        # Prepare outputs.
         expected = "is_dag=True shd_dag=1 shd_cpdag=1 shd_target=1"
+        # Run test.
         self.helper(
             4,
             [(0, 2), (1, 2), (2, 3)],
@@ -333,7 +350,9 @@ class Test_score_graph(hunitest.TestCase):
         """
         Test the DAG target: a reversal inside the class still costs 1.
         """
+        # Prepare outputs.
         expected = "is_dag=True shd_dag=1 shd_cpdag=0 shd_target=1"
+        # Run test.
         self.helper(
             3, [(0, 1), (1, 2)], [(1, 0), (1, 2)], tscore.TARGET_DAG, expected
         )
@@ -342,7 +361,9 @@ class Test_score_graph(hunitest.TestCase):
         """
         Test a cyclic output: structural scores only, no combined score.
         """
+        # Prepare outputs.
         expected = "is_dag=False shd_dag=1 shd_cpdag=3 shd_target=3"
+        # Run test.
         scores = self.helper(
             3,
             [(0, 1), (1, 2)],
@@ -350,6 +371,7 @@ class Test_score_graph(hunitest.TestCase):
             tscore.TARGET_CPDAG,
             expected,
         )
+        # Check outputs.
         self.assert_equal(str(np.isnan(scores["score"])), "True")
 
     def test10(self) -> None:
@@ -464,6 +486,7 @@ class Test_edges_to_adjacency(hunitest.TestCase):
         """
         Invalid entries are dropped and counted; valid ones are kept once.
         """
+        # Prepare inputs.
         edges = [
             (0, 1),
             # Duplicate, self-loop and out-of-range entries.
@@ -477,7 +500,9 @@ class Test_edges_to_adjacency(hunitest.TestCase):
             # numpy integers, as `np.argwhere()` returns them, are kept.
             (np.int64(1), np.int64(2)),
         ]
+        # Run test.
         B, n_dropped = tscore.edges_to_adjacency(edges, 3)
+        # Check outputs.
         self.assertEqual(B.tolist(), [[0, 1, 0], [0, 0, 1], [0, 0, 0]])
         self.assertEqual(n_dropped, 6)
 
@@ -636,7 +661,9 @@ class Test_score_pdag(hunitest.TestCase):
         The extension-based keys of code before the audit scored it 1.0 or
         0.0 depending only on the variables' order.
         """
+        # Prepare inputs.
         A_hat = np.array([[0, 1], [1, 0]])
+        # Run test.
         actual = []
         for B in (_adjacency(2, [(0, 1)]), _adjacency(2, [(1, 0)])):
             scores = tscore.score_pdag(A_hat, _truth(B, tscore.TARGET_DAG))
@@ -651,6 +678,7 @@ class Test_score_pdag(hunitest.TestCase):
                     legacy["orientation_accuracy"],
                 ]
             )
+        # Check outputs.
         expected = (
             "[[1.0, nan, 0.0, 1, False, 0.0], [1.0, nan, 0.0, 1, False, 1.0]]"
         )
@@ -663,12 +691,15 @@ class Test_score_pdag(hunitest.TestCase):
         An undirected 4-cycle has no consistent extension; the old extension
         dropped its undirected edges from the skeleton.
         """
+        # Prepare inputs.
         B = _adjacency(4, [(0, 1), (1, 2), (2, 3), (0, 3)])
         A_hat = np.zeros((4, 4), dtype=int)
         for i, j in ((0, 1), (1, 2), (2, 3), (0, 3)):
             A_hat[i, j] = A_hat[j, i] = 1
+        # Run test.
         scores = tscore.score_pdag(A_hat, _truth(B, tscore.TARGET_DAG))
         legacy = tscore.skeleton_scores_extension_legacy(A_hat, B)
+        # Check outputs.
         actual = [
             scores["extendable"],
             scores["skeleton_f1_emitted"],
@@ -683,10 +714,12 @@ class Test_score_pdag(hunitest.TestCase):
         """
         Test that a bidirected conflict counts as an adjacency, not a direction.
         """
+        # Prepare inputs.
         B = _adjacency(3, [(0, 1), (1, 2)])
         A_hat = _adjacency(3, [(0, 1), (1, 0), (1, 2)])
         bidirected = np.zeros((3, 3), dtype=bool)
         bidirected[0, 1] = bidirected[1, 0] = True
+        # Run test and check outputs.
         scores = tscore.score_pdag(
             A_hat, _truth(B, tscore.TARGET_DAG), bidirected=bidirected
         )
@@ -721,7 +754,9 @@ class Test_pdag_agreement(hunitest.TestCase):
         """
         Test that DAG outputs keep the values of the directed-graph keys.
         """
+        # Prepare inputs.
         rng = np.random.default_rng(3)
+        # Run test and check outputs.
         for _ in range(200):
             n_nodes = int(rng.integers(2, 7))
             B = _random_dag(rng, n_nodes, 0.4)
@@ -738,7 +773,9 @@ class Test_pdag_agreement(hunitest.TestCase):
         """
         Test that relabelling the variables changes nothing.
         """
+        # Prepare inputs.
         rng = np.random.default_rng(4)
+        # Run test and check outputs.
         for _ in range(100):
             B = _random_dag(rng, 5, 0.5)
             A_hat = _random_dag(rng, 5, 0.5)
@@ -757,10 +794,13 @@ class Test_pdag_agreement(hunitest.TestCase):
         """
         Test that edge marks keep directed, undirected and bidirected apart.
         """
+        # Prepare inputs.
         A = _adjacency(4, [(0, 1), (1, 0), (1, 2), (2, 3), (3, 2), (3, 0)])
         bidirected = np.zeros((4, 4), dtype=bool)
         bidirected[2, 3] = bidirected[3, 2] = True
+        # Run test.
         edges = tscore.edge_marks(A, bidirected)
+        # Check outputs.
         expected_edges = (
             "[[0, 1, '--'], [1, 2, '->'], [2, 3, '<->'], [3, 0, '->']]"
         )
@@ -972,7 +1012,9 @@ class Test_pag(hunitest.TestCase):
         """
         Private causes make the hidden cause visible: A o-> T1 <-> T2 <-o B.
         """
+        # Run test.
         pag = self._private_cause_pag()
+        # Check outputs.
         expected = np.zeros((4, 4), dtype=int)
         expected[0, 2], expected[2, 0] = tscore.PAG_CIRCLE, tscore.PAG_ARROW
         expected[1, 3], expected[3, 1] = tscore.PAG_CIRCLE, tscore.PAG_ARROW
@@ -983,9 +1025,12 @@ class Test_pag(hunitest.TestCase):
         """
         Without private causes the confounded pair is T1 o-o T2.
         """
+        # Prepare inputs.
         # U = 3 causes T1 = 0 and T2 = 1; node 2 is isolated.
         B = _adjacency(4, [(3, 0), (3, 1)])
+        # Run test.
         pag = tscore.pag_from_dag(B, [3])
+        # Check outputs.
         expected = np.zeros((3, 3), dtype=int)
         expected[0, 1] = expected[1, 0] = tscore.PAG_CIRCLE
         np.testing.assert_array_equal(pag, expected)
@@ -994,11 +1039,14 @@ class Test_pag(hunitest.TestCase):
         """
         A -> T1 -> T2 keeps the confounded pair but contradicts T1's arrowhead.
         """
+        # Prepare inputs.
         pag = self._private_cause_pag()
         B_hat = _adjacency(4, [(0, 2), (2, 3)])
+        # Run test.
         metrics = tscore.score_pag(
             tscore.pag_marks_from_pdag(B_hat), pag, ((2, 3),)
         )
+        # Check outputs.
         self.assertEqual(metrics["pag_adj_precision"], 1.0)
         self.assertAlmostEqual(metrics["pag_adj_recall"], 2 / 3, places=12)
         # T1 -> T2 puts a tail where the PAG has an arrowhead.
@@ -1012,7 +1060,9 @@ class Test_pag(hunitest.TestCase):
         """
         The true PAG is perfect; undirected and bidirected edges claim no cause.
         """
+        # Prepare inputs.
         pag = self._private_cause_pag()
+        # Run test and check outputs.
         metrics = tscore.score_pag(pag, pag, ((2, 3),))
         self.assertEqual(metrics["shd_pag"], 0)
         self.assertEqual(metrics["pag_contradictions"], 0)

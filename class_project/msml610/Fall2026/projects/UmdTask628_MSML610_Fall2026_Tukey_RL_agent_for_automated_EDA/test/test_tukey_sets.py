@@ -45,11 +45,13 @@ class Test_eval_sets(hunitest.TestCase):
         """
         Set seeds are distinct (except paired suites) and outside training.
         """
+        # Prepare inputs.
         paired = {
             f"{prefix}{suite}"
             for suite in tsets.M4_PAIRED
             for prefix in ("V_m4_", "T_m4_")
         } | set(tsets.NOISE_PAIRED)
+        # Run test and check outputs.
         seen = set()
         n_seeds = 0
         for name, eval_set in tsets.EVAL_SETS.items():
@@ -65,6 +67,7 @@ class Test_eval_sets(hunitest.TestCase):
         """
         Paired suites reuse their partner's seeds, on their own task.
         """
+        # Run test and check outputs.
         for suite, partner in tsets.M4_PAIRED.items():
             for prefix in ("V_m4_", "T_m4_"):
                 eval_set = tsets.EVAL_SETS[prefix + suite]
@@ -82,7 +85,9 @@ class Test_eval_sets(hunitest.TestCase):
         """
         Exactly the confirmatory test sets of M3 and M4 are sealed.
         """
+        # Run test.
         sealed = sorted(n for n, s in tsets.EVAL_SETS.items() if s.sealed)
+        # Check outputs.
         expected = ["T_main", "T_proto", "T_reserve", "T_sachs_matched"] + [
             f"T_m4_{suite}" for suite in tsets.M4_SUITES
         ]
@@ -95,6 +100,7 @@ class Test_eval_sets(hunitest.TestCase):
         """
         Every M4 suite has a validation twin on the same task.
         """
+        # Run test and check outputs.
         for suite, task in tsets.M4_SUITES.items():
             for prefix in ("V_m4_", "T_m4_"):
                 eval_set = tsets.EVAL_SETS[prefix + suite]
@@ -105,6 +111,7 @@ class Test_eval_sets(hunitest.TestCase):
         """
         The Sachs-matched graphs have the Sachs data's size and split.
         """
+        # Run test and check outputs.
         for name in ("V_sachs_matched", "T_sachs_matched"):
             self.assertEqual(tsets.EVAL_SETS[name].task, "sachs_matched")
         cfg = tsets.TASKS["sachs_matched"](0)
@@ -125,6 +132,7 @@ class Test_main_task_config(hunitest.TestCase):
         """
         Sizes and edge counts over 3,000 seeds.
         """
+        # Run test and check outputs.
         sizes: collections.Counter = collections.Counter()
         for seed in range(3000):
             cfg = tsets.main_task_config(seed)
@@ -139,8 +147,10 @@ class Test_main_task_config(hunitest.TestCase):
         """
         A family override keeps the size and the eqvar settings are enforced.
         """
+        # Run test.
         cfg = tsets.main_task_config(5)
         cfg_raw = tsets.main_task_config(5, family="linear_gauss_eqvar_raw")
+        # Check outputs.
         self.assertEqual(
             (cfg.n_nodes, cfg.n_edges), (cfg_raw.n_nodes, cfg_raw.n_edges)
         )
@@ -158,12 +168,15 @@ class Test_manifests(hunitest.TestCase):
         """
         A written manifest loads back and its instances pass the hash check.
         """
+        # Prepare inputs.
         manifest_dir = self.get_scratch_space()
+        # Run test.
         manifest = tsets.build_manifest(tsets.EVAL_SETS["V_proto"])
         path = tsets.manifest_path(manifest_dir, "V_proto")
         with open(path, "w") as file:
             json.dump(manifest, file)
         items = tsets.load_set("V_proto", manifest_dir)
+        # Check outputs.
         self.assertEqual(len(items), 200)
         for seed, cfg, sha256 in items[:3]:
             inst = tsets.sample_checked(seed, cfg, sha256)
@@ -173,9 +186,12 @@ class Test_manifests(hunitest.TestCase):
         """
         The hash is stable across samples and changes with the data.
         """
+        # Prepare inputs.
         cfg = tsets.main_task_config(12)
+        # Run test.
         hash1 = tsets.instance_hash(tenv.sample_instance(cfg, 12))
         hash2 = tsets.instance_hash(tenv.sample_instance(cfg, 12))
+        # Check outputs.
         self.assertEqual(hash1, hash2)
         # The check is strict on the machine type that wrote the manifests.
         with umock.patch("platform.machine", return_value="aarch64"):
@@ -188,11 +204,13 @@ class Test_manifests(hunitest.TestCase):
 
         A small stand-in set is sealed, so no real test graph is generated.
         """
+        # Prepare inputs.
         manifest_dir = self.get_scratch_space()
         name = "T_stand_in"
         eval_set = dataclasses.replace(
             tsets.EVAL_SETS["V_proto"], name=name, sealed=True, n_instances=2
         )
+        # Run test and check outputs.
         with umock.patch.dict(tsets.EVAL_SETS, {name: eval_set}):
             with open(tsets.manifest_path(manifest_dir, name), "w") as file:
                 json.dump(tsets.build_manifest(eval_set), file)
@@ -205,10 +223,12 @@ class Test_manifests(hunitest.TestCase):
         """
         On another machine type a different hash is one warning, not an error.
         """
+        # Prepare inputs.
         cfg = tsets.main_task_config(12)
         hash1 = tsets.instance_hash(tenv.sample_instance(cfg, 12))
         # Start from fresh counts; `patch.dict` restores them afterwards.
         fresh = {"checked": 0, "differ": 0}
+        # Run test and check outputs.
         with (
             umock.patch("platform.machine", return_value="x86_64"),
             umock.patch.dict(tsets._OTHER_MACHINE_COUNTS, fresh),
@@ -234,9 +254,11 @@ class Test_manifests(hunitest.TestCase):
         """
         On another machine type a majority of differences is reported.
         """
+        # Prepare inputs.
         cfg = tsets.main_task_config(12)
         hash1 = tsets.instance_hash(tenv.sample_instance(cfg, 12))
         fresh = {"checked": 0, "differ": 0}
+        # Run test.
         with (
             umock.patch("platform.machine", return_value="x86_64"),
             umock.patch.dict(tsets._OTHER_MACHINE_COUNTS, fresh),
@@ -251,6 +273,7 @@ class Test_manifests(hunitest.TestCase):
                     )
                 # Later differences add no warning.
                 tsets.sample_checked(16, tsets.main_task_config(16), hash1)
+        # Check outputs.
         self.assertEqual(len(logs.records), 2)
         self.assertIn("generator may have changed", logs.output[1])
 
@@ -317,12 +340,14 @@ class Test_load_set_checks(hunitest.TestCase):
         """
         Every committed unsealed manifest passes the checks.
         """
+        # Prepare inputs.
         names = [
             name
             for name, eval_set in tsets.EVAL_SETS.items()
             if not eval_set.sealed
             and os.path.exists(tsets.manifest_path(_MANIFEST_DIR, name))
         ]
+        # Run test and check outputs.
         self.assertEqual(sorted(names), _COMMITTED_SETS)
         for name in names:
             items = tsets.load_set(name, _MANIFEST_DIR)
@@ -334,6 +359,7 @@ class Test_load_set_checks(hunitest.TestCase):
         """
         Each kind of tampering is refused.
         """
+        # Run test and check outputs.
         for change in ("header", "order", "duplicate", "count", "size"):
             manifest_dir = os.path.join(self.get_scratch_space(), change)
             os.makedirs(manifest_dir)
@@ -351,6 +377,7 @@ class Test_curriculum_config(hunitest.TestCase):
         """
         Sizes, edge counts and families over 2,000 seeds per stage.
         """
+        # Prepare outputs.
         expected_nodes = {
             1: [4, 5],
             2: [5, 6, 7],
@@ -364,6 +391,7 @@ class Test_curriculum_config(hunitest.TestCase):
             4: {"mixed", "nonlinear"},
         }
         max_rho = {1: 1.0, 2: 1.5, 3: 1.5, 4: 2.0}
+        # Run test and check outputs.
         for stage in (1, 2, 3, 4):
             nodes = set()
             families: collections.Counter = collections.Counter()
@@ -386,6 +414,7 @@ class Test_curriculum_config(hunitest.TestCase):
         """
         Stage 3 is the main task.
         """
+        # Run test and check outputs.
         for seed in range(50):
             self.assertEqual(
                 tsets.curriculum_config(seed, stage=3),
@@ -446,6 +475,7 @@ class Test_generator_compatibility(hunitest.TestCase):
                 "The recorded hashes are bit-level and were written on Apple "
                 "silicon (README, 'Other CPUs')"
             )
+        # Prepare inputs.
         G = tenv.GraphConfig
         configs = {
             "proto": tenv.PROTO_CONFIG,
@@ -468,6 +498,7 @@ class Test_generator_compatibility(hunitest.TestCase):
             ),
             "scale_free": G(n_nodes=8, n_edges=12, topology="scale_free"),
         }
+        # Run test.
         actual = {}
         for name, cfg in configs.items():
             actual[name] = [
@@ -489,6 +520,7 @@ class Test_generator_compatibility(hunitest.TestCase):
                 )[:16]
                 for seed in (11, 12)
             ]
+        # Check outputs.
         self.assertEqual(actual, _COMPAT_HASHES)
 
 
@@ -501,9 +533,12 @@ class Test_noise_sets(hunitest.TestCase):
         """
         The levels of one seed are one graph at four noise shares.
         """
+        # Prepare inputs.
         seed = tsets.EVAL_SETS["V_noise_v1_L1"].seeds[0]
+        # Run test.
         configs = [tsets.TASKS[f"noise_v1_L{k}"](seed) for k in (1, 2, 3, 4)]
         shares = [cfg.noise_share for cfg in configs]
+        # Check outputs.
         self.assertEqual(tuple(shares), tsets.NOISE_GRID_V1)
         self.assertEqual(len({(c.n_nodes, c.n_edges) for c in configs}), 1)
 
@@ -511,10 +546,12 @@ class Test_noise_sets(hunitest.TestCase):
         """
         A manifest records the share, and a wrong share is refused.
         """
+        # Prepare inputs.
         manifest_dir = self.get_scratch_space()
         eval_set = dataclasses.replace(
             tsets.EVAL_SETS["V_noise_v1_L2"], n_instances=2
         )
+        # Run test and check outputs.
         manifest = tsets.build_manifest(eval_set)
         self.assertEqual(
             [item["noise_share"] for item in manifest["instances"]], [0.4, 0.4]
@@ -545,10 +582,12 @@ class Test_manifest_semantics(hunitest.TestCase):
         """
         A changed target class is refused; the metadata survives pickling.
         """
+        # Prepare inputs.
         manifest_dir = self.get_scratch_space()
         name = "V_noise_v1_L3"
         eval_set = dataclasses.replace(tsets.EVAL_SETS[name], n_instances=2)
         manifest = tsets.build_manifest(eval_set)
+        # Run test and check outputs.
         with umock.patch.dict(tsets.EVAL_SETS, {name: eval_set}):
             with open(tsets.manifest_path(manifest_dir, name), "w") as file:
                 json.dump(manifest, file)
@@ -575,7 +614,9 @@ class Test_manifest_semantics(hunitest.TestCase):
         """
         The first instance of every committed open set matches its metadata.
         """
+        # Prepare inputs.
         manifest_dir = _MANIFEST_DIR
+        # Run test.
         checked = 0
         for name, eval_set in sorted(tsets.EVAL_SETS.items()):
             path = tsets.manifest_path(manifest_dir, name)
@@ -584,4 +625,5 @@ class Test_manifest_semantics(hunitest.TestCase):
             seed, cfg, expected = tsets.load_set(name, manifest_dir)[0]
             tsets.sample_checked(seed, cfg, expected)
             checked += 1
+        # Check outputs.
         self.assertEqual(checked, len(_COMMITTED_SETS))

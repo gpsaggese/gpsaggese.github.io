@@ -97,7 +97,9 @@ class TestScriptedExpert(hunitest.TestCase):
         """
         Through the tool API the rule emits the prototype's edges on seeds 0-19.
         """
+        # Prepare inputs.
         expert = tscrip.ScriptedExpert()
+        # Run test.
         n_equal = 0
         calls = []
         for seed in range(20):
@@ -106,6 +108,7 @@ class TestScriptedExpert(hunitest.TestCase):
             reference = tscrip.proto_faithful_edges(env.d_train.to_numpy())
             n_equal += int(expert.emit_raw_edges(evidence) == reference)
             calls.append(evidence.calls_used)
+        # Check outputs.
         self.assertEqual(n_equal, 20)
         actual = f"calls {calls}"
         expected = (
@@ -118,11 +121,14 @@ class TestScriptedExpert(hunitest.TestCase):
         """
         Seed 0 reproduces the prototype's reported score (SHD 3, F1 0.667).
         """
+        # Prepare inputs.
         env = tenv.TukeyEnv(tenv.PROTO_CONFIG, budget=1000)
+        # Run test.
         evidence, _ = _play(env, tscrip.ScriptedExpert(), 0)
         edges = tscrip.ScriptedExpert().emit_raw_edges(evidence)
         B_hat, _ = tscore.edges_to_adjacency(edges, 6)
         scores = tscore.score_graph(B_hat, env._instance.truth)
+        # Check outputs.
         actual = str({key: scores[key] for key in ("shd", "f1", "tpr", "fdr")})
         expected = "{'shd': 3, 'f1': 0.667, 'tpr': 0.667, 'fdr': 0.333}"
         self.assert_equal(actual, expected)
@@ -131,8 +137,10 @@ class TestScriptedExpert(hunitest.TestCase):
         """
         Under small budgets the expert stays within budget and emits a DAG.
         """
+        # Prepare inputs.
         expert = tscrip.ScriptedExpert()
         cfg = tenv.GraphConfig(family="mixed", n_nodes=8, n_edges=12)
+        # Run test and check outputs.
         for budget in (0, 1, 5, 10):
             env = tenv.TukeyEnv(cfg, budget=budget)
             for seed in range(5):
@@ -144,10 +152,13 @@ class TestScriptedExpert(hunitest.TestCase):
         """
         The next action depends only on the evidence (replays are identical).
         """
+        # Prepare inputs.
         expert = tscrip.ScriptedExpert()
         cfg = tenv.GraphConfig(family="linear_exp")
+        # Run test.
         _, actions1 = _play(tenv.TukeyEnv(cfg, budget=1000), expert, 3)
         _, actions2 = _play(tenv.TukeyEnv(cfg, budget=1000), expert, 3)
+        # Check outputs.
         self.assertEqual(actions1, actions2)
         self.assertEqual(len(set(actions1)), len(actions1))
 
@@ -155,12 +166,14 @@ class TestScriptedExpert(hunitest.TestCase):
         """
         Strength order: relabelling the columns relabels the whole trajectory.
         """
+        # Prepare inputs.
         cfg = tenv.GraphConfig(family="linear_exp")
         perm = [4, 2, 0, 5, 1, 3]
         new_index = list(np.argsort(perm))
         strength = tscrip.ScriptedExpert(order="strength")
         index = tscrip.ScriptedExpert(order="index")
         n_index_equal = 0
+        # Run test and check outputs.
         for seed in range(5):
             x = tenv.sample_instance(cfg, seed).d_train.to_numpy()
             calls = _expert_calls(strength, x, budget=200)
@@ -188,13 +201,16 @@ class Test_project_to_dag(hunitest.TestCase):
         """
         A 3-cycle loses its weakest edge; a DAG is unchanged.
         """
+        # Prepare inputs.
         corr = np.eye(3)
         corr[0, 1] = corr[1, 0] = 0.5
         corr[1, 2] = corr[2, 1] = 0.3
         corr[0, 2] = corr[2, 0] = -0.4
         cyclic = [(0, 1), (1, 2), (2, 0)]
+        # Run test.
         actual = str(tscrip.project_to_dag(cyclic, corr))
         actual += "\n" + str(tscrip.project_to_dag([(0, 1), (1, 2)], corr))
+        # Check outputs.
         expected = """
         ([(0, 1), (2, 0)], 1)
         ([(0, 1), (1, 2)], 0)
@@ -205,11 +221,14 @@ class Test_project_to_dag(hunitest.TestCase):
         """
         Two cycles sharing an edge: deletions stop as soon as no cycle is left.
         """
+        # Prepare inputs.
         corr = np.full((4, 4), 0.5) + 0.5 * np.eye(4)
         corr[1, 2] = corr[2, 1] = 0.1
         # 0 -> 1 -> 2 -> 0 and 1 -> 2 -> 3 -> 1 share the weakest edge 1 -> 2.
         edges = [(0, 1), (1, 2), (2, 0), (2, 3), (3, 1)]
+        # Run test.
         actual = str(tscrip.project_to_dag(edges, corr))
+        # Check outputs.
         expected = "([(0, 1), (2, 0), (2, 3), (3, 1)], 1)"
         self.assert_equal(actual, expected)
 
