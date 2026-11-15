@@ -21,7 +21,7 @@
   [`D8`](03-decisions.md#d8-behaviour-cloning-then-reinforce); the curriculum,
   noise and real-data studies
 - Last full check of all four milestones: Oct 16, fresh clone, 371 tests
-  passed, notebooks ran; Milestones 1-2 rechecked Nov 12 for `PR_B1` (151 tests,
+  passed, notebooks ran; Milestones 1-2 rechecked Nov 15 for `PR_B1` (169 tests,
   both notebooks)
 
 ## Findings
@@ -82,6 +82,8 @@
 |            | move to the PRs that use them                              |
 |            | `tukey_results.py` regenerates the manifests and           |
 |            | `results/m1`, `results/m2`                                 |
+| 2026-11-15 | `PR_B1` fixed after a second code review: 169 tests        |
+|            | passed, both notebooks ran; current master merged in       |
 
 - Note: the docs were drafted with AI assistance; the authors check and explain
   every line
