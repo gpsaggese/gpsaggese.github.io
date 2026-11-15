@@ -1,6 +1,6 @@
 # Goal
 - Create the slides of one lesson from a chapter TOC of a book map
-- For lessons from an ad hoc list of topics (no book map) use
+- For lessons from an ad-hoc list of topics (no book map) use
   `book_scripts/prompt.create_lesson_slides_from_topic.md`
 - The steps shared with that prompt are in
   `book_scripts/prompt.create_lesson_slides.common.md`
@@ -8,9 +8,9 @@
 # Parameters
 - The relevant variables are:
   ```
-  DIR="/Users/saggese/src/umd_classes1"
-  BOOK="book_Modern_AI_for_Finance"
-  CHAP="## 04: Data Engineering"
+  DIR="/Users/saggese/src/umd_classes2"
+  BOOK="book_AI_Software_Engineering"
+  CHAP="08: Documenting Code"
   ```
   - `CHAP` is an H2 chapter of `<DIR>/<BOOK>/book_map.md`
   - The topics come from `### Topics` of that chapter

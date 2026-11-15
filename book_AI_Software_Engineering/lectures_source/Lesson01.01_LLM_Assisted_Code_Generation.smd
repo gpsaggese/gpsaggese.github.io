@@ -1,0 +1,1120 @@
+// type=UMD_slides
+// course_title=AI Software Engineering
+// lesson_title=Lesson 01.01: LLM-Assisted Code Generation
+// slides_engine=typst
+
+# LLM-Assisted Code Generation
+
+## How LLMs Generate Code
+
+* From Autocomplete to Code Generation
+
+- @Motivation@: modern coding assistants draft functions, tests, and entire files
+  from a natural-language prompt
+  - Not by following hardcoded rules, but by repeatedly predicting the next
+    token of code
+- @Question@: how does one mechanism, "predict the next token", produce code
+  that compiles and runs?
+- @Overview@: this lesson covers
+  1. How an LLM generates code, token by token
+  2. How the prompt and context shape what gets generated
+  3. Where code generation breaks down
+
+* Autoregressive Token Prediction
+
+::: columns
+:::: {.column width=60%}
+- @Definition@: an **autoregressive language model** generates a sequence by
+  repeatedly predicting the next _token_ conditioned on all previous tokens
+  $$\Pr(x_1, ..., x_n) = \prod_{t=1}^n \Pr(x_t | x_1, ..., x_{t-1})$$
+
+// From book Alammar et al., "Hands-On Large Language Models" (2024)
+- @Remark@: the same autoregressive mechanism that generates natural-language
+  text also generates code, since LLM is trained on code tokenized as text
+  [@alammar2024hands]
+  - For code, a _token_ is a sub-word unit of code text (e.g., `def`, `return`,
+    `:`), not a full line or statement
+  - The model never "plans" the whole function at once: it commits to one token,
+    then re-reads everything so far to pick the next one
+::::
+:::: {.column width=40%}
+```graphviz[width=50%]
+digraph TokenStrip {
+    // orange: prefix tokens | blue: token to predict
+    bgcolor="transparent";
+    pad="0.1";
+    nodesep=0.1;
+    ranksep=0.2;
+    node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Courier",
+          fontsize=12, margin="0.1,0.06", height=0.36, width=1.5,
+          fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.6];
+
+    T1 [label="def"];
+    T2 [label="parity"];
+    T3 [label="("];
+    T4 [label="n"];
+    T5 [label="):"];
+    Next [label="next token?", fontname="Helvetica", fontsize=11,
+          fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+
+    T1 -> T2 -> T3 -> T4 -> T5 -> Next;
+}
+```
+label=fig:token-strip
+caption=An illustrative split of the prompt into tokens (orange), with the next token (blue) still to be predicted: not real tokenizer output.
+::::
+:::
+
+* One Token at a Time
+
+::: columns
+:::: {.column width=70%}
+- @Algorithm@:
+  1. Feed the prompt tokens into the model
+  2. Model outputs a probability distribution over the next token
+  3. Pick a token (greedy, or sampled) [@holtzman2020curious]
+  4. Append it, feed the whole sequence back in
+  5. Repeat until a stop token or length limit
+- @Example@: the prompt `def parity(n):` steers the distribution toward
+  `return n % 2 == 0`, one token at a time, because that continuation was
+  common after similar signatures in training
+::::
+:::: {.column width=30%}
+```graphviz[width=75%]
+digraph TokenLoop {
+  rankdir=TB;
+  node [shape=box, style="rounded,filled", fontname="Helvetica",
+        fontsize=11, penwidth=1.5];
+  Prompt [label="Prompt tokens", fillcolor="#FFD1A6"];
+  Model  [label="Model", fillcolor="#A0D6D1"];
+  Dist   [label="Next-token\ndistribution", fillcolor="#A6E7F4"];
+  Tok    [label="Sampled token", fillcolor="#A6C8F4"];
+  Prompt -> Model -> Dist -> Tok;
+  Tok -> Model [label="  append,\l  repeat\l", style=dashed, constraint=false];
+}
+```
+label=fig:token-loop
+caption=The generation loop: prompt tokens (orange) go to the model (teal), which outputs a next-token distribution (light blue) and a sampled token (blue) that is appended and fed back.
+::::
+:::
+
+* Training Data: Public Repos and Documentation
+
+- @Components@: the **training corpus for a code-generation model** includes:
+  - _Public repositories_: source files scraped from open-source hosting
+  - _Documentation_: READMEs, API docs, and tutorial-style text
+  - _Natural-language text_: general text that teaches the model language and
+    reasoning, not just syntax
+
+// From paper Huynh et al., "Large Language Models for Code Generation: A
+// Comprehensive Survey" (2025)
+- @Remark@: code-generation models are typically pretrained or fine-tuned on
+  a mix of code and natural language, not code text alone, since:
+  - A prompt is natural language; and
+  - The desired output is code
+
+* Training Data: Filtering and Synthetic Code
+
+::: columns
+:::: {.column width=70%}
+// From paper Lozhkov et al., "StarCoder 2 and The Stack v2" (2024)
+- @Example@: **StarCoder 2** trains on a large multi-language corpus (The Stack
+  v2), with license filtering, deduplication, and quality filtering applied
+  before training [@lozhkov2024starcoder]
+
+// From paper Rozière et al., "Code Llama: Open Foundation Models for Code" (2023)
+- @Example@: **Code Llama** fine-tunes a general language model on a corpus that
+  is roughly 85% code [@roziere2023code]
+  - A code-heavy fine-tuning stage can specialize a general model for code
+
+- @Definition@: **synthetic code** is code generated by a model or
+  programmatically and added back into training data
+  - _Goal_: cover patterns that are rare or absent in scraped repositories
+::::
+:::: {.column width=30%}
+```graphviz
+digraph FilteringPipeline {
+    // orange: source | teal: filter step | blue: result
+    bgcolor="transparent";
+    pad="0.1";
+    splines=spline;
+    nodesep=0.3;
+    ranksep=0.35;
+    node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Helvetica",
+          fontsize=11, margin="0.16,0.08", height=0.4];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    node [fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+    Repos [label="Scraped\nrepositories"];
+    Synth [label="Synthetic code"];
+
+    node [fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    License [label="License filter"];
+    Dedup   [label="Deduplication"];
+    Quality [label="Quality filter"];
+
+    node [fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+    Corpus [label="Training corpus"];
+
+    Repos -> License -> Dedup -> Quality -> Corpus;
+    Synth -> Corpus [style=dashed, color="#8C8C8C", label="  Added back"];
+    { rank=same; Quality; Synth; }
+}
+```
+label=fig:filtering-pipeline
+caption=Scraped repositories (orange) pass license, deduplication, and quality filters (teal) into the training corpus (blue), which synthetic code (orange) also feeds.
+::::
+:::
+
+* Case Study: Codex and HumanEval
+
+::: columns
+:::: {.column width=60%}
+// From paper Chen et al., "Evaluating Large Language Models Trained on
+// Code" (2021)
+- @Example@: **Codex** is a GPT model fine-tuned on public source code,
+  introduced together with **HumanEval**, a benchmark of hand-written
+  programming problems checked by unit tests [@chen2021evaluating]
+  - Codex is the model that originally powered GitHub Copilot
+    [@openai2021codex], establishing next-token prediction as a viable basis
+    for a production coding assistant
+
+- @Fact@:
+  - Codex solved a majority of HumanEval problems under repeated sampling
+    [@chen2021evaluating]
+  - Despite being trained purely to predict the next token, with no explicit
+    notion of "correctness" during training
+::::
+:::: {.column width=40%}
+```graphviz[width=85%]
+digraph SampleAndTest {
+    // orange: input | teal: model | blue: output | green: test execution
+    bgcolor="transparent";
+    pad="0.1";
+    splines=spline;
+    nodesep=0.15;
+    ranksep=0.2;
+    node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Helvetica",
+          fontsize=11, margin="0.14,0.05", height=0.34];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    node [fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+    Prob [label="Problem:\nsignature +\ndocstring"];
+
+    node [fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    Codex [label="Codex"];
+
+    node [fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+    Samples [label="k sampled\nsolutions"];
+    Result  [label="Pass / fail"];
+
+    node [fillcolor="#DFEDE0", color="#8FB79A", fontcolor="#2E5A3D"];
+    Tests [label="Run unit tests"];
+
+    Prob -> Codex -> Samples -> Tests -> Result;
+    Result -> Codex [style=dashed, color="#8C8C8C",
+                     label="  Repeat\l  k times\l", constraint=false];
+
+    subgraph cluster_legend {
+        style="rounded,filled"; fillcolor="#FBFBFD"; color="#C7D0DA";
+        penwidth=1.0; margin=10;
+        node [fontsize=9, height=0.26, width=0.5, margin="0.08,0.04",
+              penwidth=1.2];
+        L1 [label="Input", fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+        L2 [label="Model", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+        L3 [label="Output", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+        L4 [label="Execution", fillcolor="#DFEDE0", color="#8FB79A", fontcolor="#2E5A3D"];
+        { rank=same; L1; L2; L3; L4; }
+    }
+    Result -> L2 [style=invis];
+}
+```
+label=fig:sample-and-test
+caption=Codex (teal) samples k solutions (blue) for a problem (orange), unit tests (green) check each one, and the loop repeats for k samples.
+::::
+:::
+
+* Assembling a Production Prompt
+
+::: columns
+:::: {.column width=60%}
+// From internet resource GitHub Blog, "Inside GitHub: Working with the LLMs
+// behind GitHub Copilot"
+- @Problem@:
+  - A raw autoregressive model only continues whatever text it is given
+  - A coding assistant must decide _what text to give it_
+
+- @Solution@:
+  - A **production assistant** builds a prompt around the cursor position from
+    several sources ("context"), not just the current file [@github2023inside]:
+    - Code before and after the cursor
+    - Recently viewed or edited files in the editor
+    - File path and language, to bias style and imports
+  - The "generation" a user sees is the model completing a prompt that was
+    silently assembled on their behalf
+::::
+:::: {.column width=40%}
+```graphviz
+digraph ProductionPrompt {
+    // orange: context source | teal: assembled prompt | blue: completion
+    bgcolor="transparent";
+    pad="0.1";
+    splines=spline;
+    nodesep=0.15;
+    ranksep=0.4;
+    node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Helvetica",
+          fontsize=11, margin="0.14,0.08", height=0.4];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    node [fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+    S1 [label="Code around\nthe cursor"];
+    S2 [label="Recent files\nin the editor"];
+    S3 [label="File path\nand language"];
+
+    node [fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    Prompt [label="Assembled\nprompt"];
+
+    node [fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+    Completion [label="Completion\nat cursor"];
+
+    { rank=same; S1; S2; S3; }
+    S1 -> Prompt;
+    S2 -> Prompt;
+    S3 -> Prompt;
+    Prompt -> Completion [label="  Model"];
+}
+```
+label=fig:production-prompt
+caption=Three context sources (orange) are assembled into one prompt (teal), which the model completes at the cursor (blue).
+::::
+:::
+
+* Pattern Completion, Not Verification
+
+- @Key idea@: code generation is repeated next-token prediction, trained on a
+  mixture of scraped repositories, documentation, and synthetic code
+- Two levers set completion quality:
+  - _What_ the model was trained on
+  - _What_ is placed in front of it as a prompt
+
+- @Remark@:
+  - The same mechanism generates:
+    - Correct code it has never seen
+    - Plausible code that is subtly wrong 
+  - Both come from pattern continuation, not verified execution
+
+## Context and Prompting Patterns
+
+* Why Context Shapes Generation Quality
+
+- @Motivation@:
+  - The same model, given a different prompt, produces different code
+    [@sclar2024quantifying]
+  - **Prompting** is the main lever a user has over generation quality
+
+- @Problem@: an under-specified prompt gives the model too many equally
+  plausible continuations to choose from
+
+- @Questions@:
+  1. What goes into a prompt?
+     - E.g., system prompts, few-shot examples, instructions
+  2. How context window size limits and shapes multi-file generation?
+
+* System Prompts, Instructions, and Completions
+
+- @Completion@: the model is given a prefix (e.g., a function signature) and
+  continues it directly
+- @Instruction@: the model is given a natural-language request (e.g., _"add input
+  validation to this function"_) and produces code as a response
+- @System prompt@: a standing instruction set before the user's request, fixing role,
+  constraints, and conventions for the whole session [@anthropic2026prompting]
+// From internet resource Anthropic, "Prompt engineering overview"
+  - @Example@: a system prompt stating _"follow this repo's existing style, never
+    invent an API"_ changes every completion generated afterward, without repeating
+    that constraint in each request
+
+* Few-Shot Prompting for Code
+
+::: columns
+:::: {.column width=60%}
+- @Definition@: **few-shot prompting** places one or more example
+  `input -> output` pairs in the prompt before the actual task, so the model uses the
+  pattern instead of guessing it from the instruction alone [@brown2020language]
+
+// From paper Austin et al., "Program Synthesis with Large Language Models" (2021)
+- @Fact@: providing a handful of example `(problem, solution)` pairs
+  measurably improves program-synthesis accuracy over instruction-only
+  prompting (across models, model sizes, etc)
+  - E.g., pasting two existing test functions from a repo before asking for a
+    third steers the model toward that repo's naming and assertion style
+
+- @Intuition@: few-shot examples work because generation is pattern continuation:
+  showing the pattern is often more effective than describing it
+::::
+:::: {.column width=40%}
+```graphviz
+digraph FewShotPrompt {
+    // orange: prompt content | teal: model | blue: output
+    bgcolor="transparent";
+    pad="0.1";
+    rankdir=LR;
+    compound=true;
+    splines=spline;
+    nodesep=0.15;
+    ranksep=0.45;
+    node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Helvetica",
+          fontsize=11, margin="0.14,0.08", height=0.4];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    subgraph cluster_prompt {
+        label="Prompt"; labelloc="t"; fontname="Helvetica-Bold"; fontsize=11.5;
+        fontcolor="#3A4A5C"; style="rounded,filled"; fillcolor="#F7F9FB";
+        color="#C7D0DA"; penwidth=1.0; margin=12;
+
+        node [fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+        E1 [label="Example 1\ninput -> output"];
+        E2 [label="Example 2\ninput -> output"];
+        E3 [label="New task\ninput -> ?"];
+        { rank=same; E1; E2; E3; }
+        E3 -> E2 -> E1 [style=invis];
+    }
+
+    node [fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    Model [label="Model"];
+
+    node [fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+    Out [label="Predicted\noutput"];
+
+    E2 -> Model [ltail=cluster_prompt];
+    Model -> Out;
+}
+```
+label=fig:few-shot-prompt
+caption=A few-shot prompt holds example pairs and a new task (orange), and the model (teal) continues the pattern to produce the predicted output (blue).
+::::
+:::
+
+* Chain-of-Thought Prompting
+
+::: columns
+:::: {.column width=60%}
+// From paper Wei et al., "Chain-of-Thought Prompting Elicits Reasoning in
+// Large Language Models" (2022)
+- @Definition@: **chain-of-thought prompting** asks the model to produce
+  intermediate reasoning steps before the final answer, instead of jumping
+  directly to it [@wei2022chain]
+
+- @Example@:
+  - Instead of _"write a function to merge two sorted lists"_
+  - Prompt for _"first describe the algorithm in steps, then implement it"_
+
+- @Intuition@:
+  - Since generation is autoregressive, reasoning tokens written before the code
+    become part of the context the code is conditioned on
+  - The model reads its own plan while writing the implementation
+::::
+:::: {.column width=40%}
+```graphviz
+digraph DirectVsReasoning {
+    // orange: prompt | teal: reasoning steps | blue: code
+    bgcolor="transparent";
+    pad="0.1";
+    splines=spline;
+    nodesep=0.35;
+    ranksep=0.4;
+    node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Helvetica",
+          fontsize=11, margin="0.16,0.08", height=0.4];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    node [fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+    Prompt [label="Prompt"];
+
+    node [fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    Plan [label="Reasoning\nsteps"];
+
+    node [fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+    CodeA [label="Code\n(direct)"];
+    CodeB [label="Code\n(plan in context)"];
+
+    Prompt -> CodeA [style=dashed, color="#8C8C8C", label="  Direct\l"];
+    Prompt -> Plan [label="  Reason\l  first\l"];
+    Plan -> CodeB;
+    { rank=same; CodeA; Plan; }
+}
+```
+label=fig:direct-vs-reasoning
+caption=A direct prompt jumps to code, while a reasoning-first prompt puts plan tokens (teal) in the context before the code (blue) is written.
+::::
+:::
+
+* Plan-Then-Implement Prompting
+
+::: columns
+:::: {.column width=65%}
+// From book Taulli, "AI-Assisted Programming" (2024)
+- @Definition@: **plan-then-implement prompting** decomposes a coding
+  request into an explicit planning stage and a separate implementation
+  stage, rather than one prompt asking for a finished solution directly
+
+- @Steps@:
+  1. Ask for a plan: files to touch, functions to add, edge cases to handle
+  2. Review or edit the plan
+  3. Ask for implementation against the approved plan
+
+- @Comparison@:
+  - _Single-shot_: one prompt, one diff, no intermediate checkpoint
+  - _Plan-then-implement_: a checkpoint between "what to build" and "how
+    it's built", catching a wrong approach before code is written
+::::
+:::: {.column width=35%}
+```graphviz[width=90%]
+digraph PlanThenImplement {
+    // orange: input | teal: model step | rose: human | blue: output
+    bgcolor="transparent";
+    pad="0.1";
+    splines=spline;
+    nodesep=0.15;
+    ranksep=0.16;
+    node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Helvetica",
+          fontsize=11, margin="0.14,0.05", height=0.32];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    node [fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+    Req [label="Request"];
+
+    node [fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    Ask  [label="Ask for plan"];
+    Impl [label="Implement\nagainst plan"];
+
+    node [fillcolor="#F6E1E8", color="#D98CA8", fontcolor="#6B2A44"];
+    Rev [label="Review or\nedit plan"];
+
+    node [fillcolor="#FFFFFF", color="#9AA9B8", fontcolor="#243B53"];
+    Ok [label="Approved?"];
+
+    node [fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+    Code [label="Code"];
+
+    Req -> Ask -> Rev -> Ok;
+    Ok -> Impl [label="  Yes"];
+    Impl -> Code;
+    Ok -> Ask [label="  No", style=dashed, color="#8C8C8C", constraint=false];
+
+    subgraph cluster_legend {
+        style="rounded,filled"; fillcolor="#FBFBFD"; color="#C7D0DA";
+        penwidth=1.0; margin=10;
+        node [fontsize=9, height=0.26, width=0.5, margin="0.08,0.04",
+              penwidth=1.2];
+        L1 [label="Input", fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+        L2 [label="Model", fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+        L3 [label="Human", fillcolor="#F6E1E8", color="#D98CA8", fontcolor="#6B2A44"];
+        L4 [label="Output", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+        { rank=same; L1; L2; L3; L4; }
+    }
+    Code -> L2 [style=invis];
+}
+```
+label=fig:plan-then-implement
+caption=A request (orange) gets a plan from the model (teal), a human (rose) reviews it, and only an approved plan is implemented into code (blue).
+::::
+:::
+
+* Prompting for Multi-File Tasks
+
+- @Problem@: a single prompt-completion cycle produces one coherent continuation,
+  but a real task often touches several files that must stay consistent with each
+  other [@jimenez2024swebench]
+
+- @Solution@: decompose the task into scoped, reviewable steps, each with its own
+  prompt and its own check, rather than one prompt for the whole change
+
+- @Example@: renaming a function used across a codebase decomposes into:
+  - Locate call sites
+  - Apply the rename
+  - Update imports and tests
+  so that each is a separate, independently checkable step
+
+- @Key idea@: iterative refinement across scoped steps trades one large,
+  hard-to-verify generation for several small, easy-to-verify ones
+
+* Context Window: Definition
+
+::: columns
+:::: {.column width=60%}
+- @Definition@: a model's **context window** is the maximum number of tokens
+  (prompt plus generated output combined) it can attend to for one request
+
+- @Key idea@: everything the model "knows" about the current task (e.g., the
+  file, the request, prior turns, retrieved snippets) must fit inside this
+  budget, or it is simply not seen
+
+- @Comparison@:
+  - _Small context_: forces aggressive selection of what to include
+  - _Large context_: allows more of the codebase in at once, but does not
+    guarantee the model uses all of it equally well [@liu2024lost]
+::::
+:::: {.column width=40%}
+```graphviz
+digraph ContextBudget {
+    // orange: tokens in the prompt | blue: generated tokens
+    bgcolor="transparent";
+    pad="0.1";
+    nodesep=0.3;
+    ranksep=0.12;
+    node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Helvetica",
+          fontsize=11, margin="0.16,0.08", height=0.4, width=2.2];
+    edge [style=invis];
+
+    subgraph cluster_window {
+        label="Context window (fixed size)"; labelloc="t";
+        fontname="Helvetica-Bold"; fontsize=11.5; fontcolor="#3A4A5C";
+        style="rounded,filled"; fillcolor="#F7F9FB"; color="#C7D0DA";
+        penwidth=1.0; margin=14;
+
+        node [fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+        Sys   [label="System prompt"];
+        Files [label="File contents"];
+        Snip  [label="Retrieved snippets"];
+        Req   [label="Request"];
+
+        node [fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+        Out [label="Generated output"];
+
+        Sys -> Files -> Snip -> Req -> Out;
+    }
+}
+```
+label=fig:context-window
+caption=Everything the model sees, the prompt parts (orange) and the generated output (blue), must fit in one fixed-size context window.
+::::
+:::
+
+* Lost in the Middle
+
+// From paper Liu et al., "Lost in the Middle: How Language Models Use Long
+// Contexts" (2023)
+// TODO(gp): Make this horizontal?
+::: columns
+:::: {.column width=60%}
+- @Fact@: retrieval accuracy from a long context is highest when the
+  relevant information is near the _beginning_ or _end_ of the context, and
+  degrades for information placed in the _middle_ [@liu2024lost]
+
+- @Problem@: a large codebase does not fit in any context window, so a
+  request touching several files competes for a limited token budget with
+  the rest of the prompt
+  - Including too little: the model has to guess the missing pieces
+  - Including too much: relevant content risks landing in the lost middle
+
+- @Remark@: retrieval strategies that select which files to include, rather
+  than pasting all of them [@zhang2023repocoder]
+::::
+:::: {.column width=40%}
+```tikz
+\tikzset{every node/.style={font=\sffamily\normalsize}, x=0.7cm, y=0.7cm}
+\definecolor{LostPink}{RGB}{244,166,166}
+\draw[->, line width=0.4pt] (0,0) -- (9.4,0);
+\draw[->, line width=0.4pt] (0,0) -- (0,6.2);
+\fill[LostPink!35] (3.3,0) rectangle (6.1,5.8);
+\node[align=center, text=red!60!black] at (4.7,4.9) {lost in the\\middle};
+\draw[blue!70!black, line width=0.8pt, smooth]
+  plot coordinates {(0.4,5.3) (1.4,4.0) (2.6,2.5) (4.7,1.5) (6.8,2.5) (8.0,4.0) (9.0,5.3)};
+\node[below] at (0.6,0) {start};
+\node[below] at (4.7,0) {middle};
+\node[below] at (8.8,0) {end};
+\node[below] at (4.7,-0.8) {Position of relevant text};
+\node[rotate=90] at (-0.6,3.1) {Retrieval accuracy};
+```
+label=fig:lost-in-the-middle
+caption=Schematic: accuracy is highest near the start and end of the context.
+::::
+:::
+
+* Anatomy of an Effective Code Prompt
+
+// From internet resource Anthropic, "Prompt engineering overview"
+::: columns
+:::: {.column width=60%}
+- @Components@ of a **well-formed code prompt**:
+  - _System prompt_: role, conventions, constraints
+  - _Context_: the specific files or snippets the task needs
+  - _Instruction_: the concrete request, stated unambiguously
+  - _Examples_ (optional): few-shot pairs showing the desired pattern
+
+- @Key idea@:
+  - Each component narrows the space of plausible continuations
+  - A well-formed prompt is how a user supplies the information the model's
+    training data alone cannot provide
+::::
+:::: {.column width=40%}
+```graphviz[width=45%]
+digraph PromptAnatomy {
+  rankdir=TB;
+  node [shape=box, style="rounded,filled", fontname="Helvetica",
+        fontsize=10, penwidth=1.5];
+  Sys [label="System prompt", fillcolor="#A6E7F4"];
+  Ctx [label="Context", fillcolor="#FFD1A6"];
+  Ex  [label="Examples", fillcolor="#A0D6D1"];
+  Ins [label="Instruction", fillcolor="#F4A6A6"];
+  Sys -> Ctx -> Ex -> Ins;
+}
+```
+label=fig:prompt-anatomy
+caption=A code prompt stacks a system prompt (light blue), context (orange), optional examples (teal), and an instruction (pink).
+// TODO(gp): Explain this 
+::::
+:::
+
+## Limits of Code Generation
+
+* Why Code Generation Still Fails
+
+- @Key idea@: prompting provides task-specific information, given a limited
+  context window
+  - E.g., system prompts, few-shot, chain-of-thought, plan-then-implement, scoped
+    multi-file decomposition
+
+- @Remark@: even a well-formed prompt does not guarantee correct code
+
+- @Motivation@: an LLM that predicts plausible next tokens has no built-in
+  notion of _"this API does not exist"_ or _"this codebase changed since
+  training"_
+
+- @Overview@: three structural limits
+  1. Hallucinated APIs and outdated library versions
+  2. Token and context budget limits on large codebases
+  3. Degradation on long files and ambiguous specs
+
+* Types of Hallucination: An Empirical View
+
+// From paper Liu et al., "Exploring and Evaluating Hallucinations in
+// LLM-Powered Code Generation" (2024)
+- @Fact@: an empirical study across mainstream code-generation LLMs categorized
+  hallucination types [@liu2024exploring]
+  - Hallucinations happen across essentially every model tested, not just weaker
+    or smaller ones
+
+- @Comparison@: hallucinations range from:
+  - _Syntactic_: code that does not even parse
+  - _Semantic_: code that parses and runs, but does the wrong thing
+  - _Knowledge-based_: code built on a wrong fact about a library or API
+    - E.g., the hardest to catch during a review, since the code looks idiomatic
+      and is internally consistent
+
+// From paper Lee et al., "Hallucination by Code Generation LLMs: Taxonomy,
+// Benchmarks, Mitigation, and Challenges" (2025)
+- @Definition@: a **hallucination** in code generation is output that is
+  plausible but factually or behaviorally wrong [@lee2025hallucination], e.g.,
+  - _Invented APIs_: calls to functions or methods that never existed
+  - _Incorrect library behavior_: a real API, but wrong assumed semantics
+  - _Outdated usage_: an API that existed, but under a since-changed
+    signature or a deprecated pattern
+
+* Why Hallucination Happens
+
+::: columns
+:::: {.column width=60%}
+- @Intuition@: the model was trained to continue plausible text, not to verify
+  facts against a live environment
+  - A rarely used but plausible-sounding function name can be more probable
+    under the model's training distribution than the real, less common one
+
+- @Key idea@: hallucination is not a bug that better training alone removes,
+  it is a direct consequence of generation without execution or lookup
+::::
+:::: {.column width=40%}
+```graphviz
+digraph NextTokenOptions {
+    // orange: prompt | teal: candidate names | blue: output | red edge: key path
+    bgcolor="transparent";
+    pad="0.1";
+    splines=spline;
+    nodesep=0.3;
+    ranksep=0.45;
+    node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Helvetica",
+          fontsize=11, margin="0.16,0.08", height=0.4];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    node [fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+    Prefix [label="Prompt prefix"];
+
+    node [fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    Invented [label="Plausible name\n(does not exist)"];
+    Real     [label="Real name\n(less common)"];
+
+    node [fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+    Chosen [label="Generated name"];
+
+    Prefix -> Invented [label="  More\l  probable\l", penwidth=2.4,
+                        color="#C0455B", fontcolor="#C0455B"];
+    Prefix -> Real [label="  Less\l  probable\l"];
+    Invented -> Chosen [penwidth=2.4, color="#C0455B"];
+    { rank=same; Invented; Real; }
+}
+```
+label=fig:next-token-options
+caption=Given a prompt prefix (orange), a plausible but invented name (teal) can be more probable than the real, rarer one, so the model generates it (blue).
+::::
+:::
+
+* Knowledge Conflicts
+
+::: columns
+:::: {.column width=60%}
+// From paper Ashik et al., "When LLMs Lag Behind: Knowledge Conflicts from
+// Evolving APIs in Code Generation" (2026)
+- @Definition@: a **knowledge conflict** occurs when the model's memorized,
+  pre-cutoff API pattern disagrees with the current version of the same library
+
+- @Fact@: models default to the memorized, pre-cutoff pattern even when the
+  prompt supplies the current API information directly [@ashik2026lag]
+  - Up-to-date context does not automatically override a strongly memorized old
+    pattern
+
+- @Remark@: this is a stronger failure mode than plain hallucination, it
+  persists even when the correct answer is already in the context
+::::
+:::: {.column width=40%}
+```graphviz
+digraph KnowledgeConflict {
+    // orange: input | teal: model memory | blue: output
+    bgcolor="transparent";
+    pad="0.1";
+    newrank=true;
+    splines=spline;
+    nodesep=0.3;
+    ranksep=0.4;
+    node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Helvetica",
+          fontsize=11, margin="0.14,0.08", height=0.4];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    subgraph cluster_before {
+        label="Before cutoff"; labelloc="t"; fontname="Helvetica-Bold";
+        fontsize=11.5; fontcolor="#3A4A5C"; style="rounded,filled";
+        fillcolor="#F7F9FB"; color="#C7D0DA"; penwidth=1.0; margin=12;
+
+        node [fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+        Train [label="Training\ndata"];
+        node [fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+        Memory [label="Memorized\nold API"];
+        Train -> Memory;
+    }
+
+    subgraph cluster_after {
+        label="After cutoff"; labelloc="t"; fontname="Helvetica-Bold";
+        fontsize=11.5; fontcolor="#3A4A5C"; style="rounded,filled";
+        fillcolor="#F7F9FB"; color="#C7D0DA"; penwidth=1.0; margin=12;
+
+        node [fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+        Change [label="Library\nchanges API"];
+        Prompt [label="Prompt shows\nnew API"];
+        Change -> Prompt;
+    }
+
+    node [fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+    Out [label="Output uses\nold API"];
+
+    { rank=same; Train; Change; }
+    { rank=same; Memory; Prompt; }
+    Train -> Change [style=invis];
+    Memory -> Prompt [style=invis];
+    Memory -> Out [penwidth=2.0];
+    Prompt -> Out [style=dashed, color="#8C8C8C",
+                   label="  Not enough\l  to override\l"];
+}
+```
+label=fig:knowledge-conflict
+caption=Training data (orange) leaves a memorized old API (teal), and a prompt showing the new API (orange) does not override it, so the output (blue) uses the old API.
+::::
+:::
+
+* Execution-Based Verification of Hallucination
+
+::: columns
+:::: {.column width=60%}
+// From paper Tian et al., "CodeHalu: Investigating Code Hallucinations in
+// LLMs via Execution-based Verification" (2024)
+- @Definition@: an **execution-based benchmark** detects hallucination by
+  running generated code against test inputs and checking outputs, rather
+  than only inspecting the code's text [@tian2024codehalu]
+
+- @Remark@: this motivates treating test execution, not code inspection, as the
+  ground truth for judging correctness
+::::
+:::: {.column width=40%}
+```graphviz
+digraph RunVsRead {
+    // blue: code and verdict | green: execution | teal: comparison | gray: weak check
+    bgcolor="transparent";
+    pad="0.1";
+    splines=spline;
+    nodesep=0.3;
+    ranksep=0.35;
+    node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Helvetica",
+          fontsize=11, margin="0.14,0.08", height=0.4];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    node [fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
+    Code   [label="Generated code"];
+    Result [label="Pass / fail"];
+
+    node [fillcolor="#DFEDE0", color="#8FB79A", fontcolor="#2E5A3D"];
+    Run [label="Run on\ntest inputs"];
+
+    node [fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    Compare [label="Compare with\nexpected output"];
+
+    node [style="rounded,filled,dashed", fillcolor="#F7F9FB", color="#9AA9B8",
+          fontcolor="#3A4A5C"];
+    Read  [label="Read code\ntext only"];
+    Looks [label="Looks correct\n(not ground truth)"];
+
+    Code -> Run -> Compare -> Result;
+    Code -> Read [style=dashed, color="#8C8C8C"];
+    Read -> Looks [style=dashed, color="#8C8C8C"];
+    { rank=same; Run; Read; }
+    { rank=same; Compare; Looks; }
+}
+```
+label=fig:run-vs-read
+caption=Generated code (blue) is run on test inputs (green) and compared with the expected output (teal), while reading the code text (dashed gray) is not ground truth.
+::::
+:::
+
+* Context Budget on Large Codebases
+
+::: columns
+:::: {.column width=50%}
+- @Problem@: even the largest available context window is finite, while a
+  real codebase can be orders of magnitude larger
+
+- @Implication@: a request touching a large codebase always operates on a
+  _subset_ of the code, selected by some retrieval or truncation strategy
+
+- @Example@: asking an assistant to "make this change consistent across the
+  whole codebase" in one prompt silently limits "whole codebase" to whatever
+  fit in the context window, not the literal whole codebase
+::::
+:::: {.column width=50%}
+```graphviz
+digraph CodebaseSubset {
+    // gray dashed: unseen files | orange: selected | blue: window | teal: model
+    bgcolor="transparent";
+    pad="0.1";
+    splines=spline;
+    nodesep=0.2;
+    ranksep=0.4;
+    node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Helvetica",
+          fontsize=11, margin="0.14,0.08", height=0.4];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75,
+          fontname="Helvetica", fontsize=10, fontcolor="#7B8794"];
+
+    subgraph cluster_codebase {
+        label="Codebase (far larger than the window)"; labelloc="t";
+        fontname="Helvetica-Bold"; fontsize=11.5; fontcolor="#3A4A5C";
+        style="rounded,filled"; fillcolor="#F7F9FB"; color="#C7D0DA";
+        penwidth=1.0; margin=14;
+
+        node [style="rounded,filled,dashed", fillcolor="#FFFFFF",
+              color="#9AA9B8", fontcolor="#3A4A5C", fontsize=10,
+              margin="0.1,0.05", height=0.32];
+        F1 [label="auth.py"];
+        F2 [label="db.py"];
+        F3 [label="cli.py"];
+        F4 [label="config.py"];
+        F8 [label="utils.py"];
+
+        node [style="rounded,filled", fillcolor="#FBEBD4", color="#D9A85F",
+              fontcolor="#6B4517"];
+        F5 [label="api.py"];
+        F6 [label="models.py"];
+        F7 [label="tests.py"];
+
+        { rank=same; F1; F2; F3; F4; }
+        { rank=same; F5; F6; F7; F8; }
+        F1 -> F5 [style=invis];
+        F2 -> F6 [style=invis];
+        F3 -> F7 [style=invis];
+        F4 -> F8 [style=invis];
+    }
+
+    node [fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79",
+          fontsize=11, margin="0.16,0.08", height=0.4];
+    Window [label="Context window\n(selected files only)"];
+
+    node [fillcolor="#B7DDD0", color="#6FA890", fontcolor="#1F4E39"];
+    Model [label="Model"];
+
+    F5 -> Window;
+    F6 -> Window;
+    F7 -> Window;
+    Window -> Model;
+}
+```
+label=fig:codebase-subset
+caption=Retrieval selects a few files (orange) from the codebase into the context window (blue) for the model (teal), and the unselected dashed files are never seen.
+::::
+:::
+
+* When Generation Degrades: Long Files
+
+- @Problem@: as a single file grows, more of it competes for the same context
+  budget, and more of it risks landing in the lost middle context window (or
+  outside)
+
+- @Comparison@:
+  - _Short, focused file_: most content stays near the start or end of
+    context, where retrieval is most reliable
+  - _Long, monolithic file_: relevant constraints are more likely to be
+    buried in the middle
+
+* When Generation Degrades: Ambiguous Specs
+
+::: columns
+:::: {.column width=50%}
+- @Problem@: an **ambiguous natural-language spec** has multiple plausible
+  continuations, and the model picks one without asking for clarification unless
+  explicitly prompted to, e.g.,
+  - _"add caching to this function"_ is ambiguous over cache key, eviction
+    policy, thread-safety, ...
+  - The model picks _a reasonable default_, not necessarily _the_ one the
+    codebase needs
+
+- @Remark@: writing specs that eliminate this ambiguity replaces the model's
+  freedom to guess with a deliberate, reviewable design choice instead
+::::
+:::: {.column width=50%}
+```graphviz
+digraph AmbiguousSpec {
+    // orange: request | teal dashed: model default | blue: spec decision
+    bgcolor="transparent";
+    pad="0.1";
+    rankdir=LR;
+    splines=spline;
+    nodesep=0.12;
+    ranksep=0.4;
+    node [shape=box, style="rounded,filled", penwidth=1.6, fontname="Helvetica",
+          fontsize=10, margin="0.12,0.06", height=0.36];
+    edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.7];
+
+    node [fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+    Root [label="Add caching\nto this function"];
+
+    node [fillcolor="#FFFFFF", color="#9AA9B8", fontcolor="#243B53"];
+    Key    [label="Cache key?"];
+    Evict  [label="Eviction\npolicy?"];
+    Thread [label="Thread\nsafety?"];
+
+    node [style="rounded,filled,dashed", fillcolor="#B7DDD0", color="#6FA890",
+          fontcolor="#1F4E39"];
+    D1 [label="Model picks\na default"];
+    D2 [label="Model picks\na default"];
+    D3 [label="Model picks\na default"];
+
+    node [style="rounded,filled", fillcolor="#D3E3F3", color="#7CA6CE",
+          fontcolor="#1F4E79"];
+    S1 [label="Spec decides"];
+    S2 [label="Spec decides"];
+    S3 [label="Spec decides"];
+
+    Root -> Key;
+    Root -> Evict;
+    Root -> Thread;
+    Key    -> D1 [style=dashed, color="#8C8C8C"];
+    Key    -> S1;
+    Evict  -> D2 [style=dashed, color="#8C8C8C"];
+    Evict  -> S2;
+    Thread -> D3 [style=dashed, color="#8C8C8C"];
+    Thread -> S3;
+}
+```
+label=fig:ambiguous-spec
+caption=An ambiguous request (orange) leaves several choices open, and each is either filled by a model default (dashed teal) or decided in the spec (blue).
+::::
+:::
+
+* Survey View: Where the Field Stands
+
+// From paper Huynh et al., "Large Language Models for Code Generation: A
+// Comprehensive Survey" (2025)
+- @Fact@: a comprehensive survey of code-generation LLMs finds that
+  - Architecture and training-data improvements have steadily raised benchmark
+    scores
+  - Hallucination and context limits remain open challenges across model families
+  - Better models shift where the limits show up (e.g., longer reliable context,
+    fewer invented APIs)
+
+* One Root Cause for Every Limit
+
+```{=typst}
+#styled-table(
+  headers: ("Limit", "Root cause"),
+  rows: (
+    ("Hallucinated APIs", "Pattern completion without lookup"),
+    ("Stale API knowledge", "Training-data cutoff vs. current library"),
+    ("Context budget limits", "Finite context vs. large codebases"),
+    ("Ambiguous specs", "Multiple plausible continuations"),
+  ),
+  col-widths: (1.3fr, 2fr),
+)
+```
+
+::: columns
+:::: {.column width=60%}
+- @Key idea@: every limit in this lesson traces back to the same root
+  - _"An autoregressive model continues plausible patterns, it does not verify
+    facts or execute code on its own"_
+  - LLM needs grounding in codebase, updated documentation, or execution
+
+::::
+:::: {.column width=40%}
+
+```mermaid
+mindmap
+  root((**LLM Code Generation**))
+    (**Generation**)
+      Autoregressive prediction
+      Training data mix
+    (**Prompting**)
+      System prompts
+      Few-shot / chain-of-thought
+      Context window
+    (**Limits**)
+      Hallucinated APIs
+      Knowledge conflicts
+      Context budget
+      Ambiguous specs
+```
+::::
+:::
+
+* Open Questions
+
+- How much of a codebase should a prompt include before more context starts
+  hurting, rather than helping, generation quality? [@shi2023large]
+- Can a model be made to signal its own uncertainty about an API call, instead of
+  generating a confident but wrong one?
+- Where is the boundary between an ambiguous spec the model should ask about and
+  one it is reasonable to resolve with a default?
+
+* References
+
+```{=typst}
+#set text(size: 0.75em)
+// Add the references listed here but not cited in the slide text.
+#std.cite(<huynh2025llm>, form: none)
+#std.cite(<taulli2024ai>, form: none)
+#std.cite(<austin2021program>, form: none)
+#std.cite(<anthropic2025overview>, form: none)
+#bibliography("/book_AI_Software_Engineering/lectures_source/refs.bib", title: none)
+```

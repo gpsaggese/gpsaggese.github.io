@@ -27,6 +27,189 @@
 - The open tasks and the next steps are in the Tasks section of
   `plan.racket_strategy.md`
 - Manual widget checks of the Milestone 1 notebook, noted as in progress in #654
+- The open research questions are in the Gdoc, under
+  [Questions for GP](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.xfydadrg3lvc)
+
+## 2026-11-12: Formalize the Research in the Paper (#921)
+
+- **Issue**: [#921](https://github.com/gpsaggese/gpsaggese.github.io/issues/921), from GP's meeting of
+  2026-11-12: formalize the research in the paper for his printed, line by line
+  review
+- **What was done** in `papers/Optimal_strategy_for_racket_sports/`:
+  - `paper.md`: the 2D model as the main method, with the headline result (the
+    best return is the middle, not the lines) in the abstract and the
+    introduction; Section VIII on the RL env of #713; the open PR8 items of the
+    plan; Appendix B, which links each result to its
+    [Gdoc](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0) experiment
+  - Figures 1 and 6 from `figures/make_code_figures.py`: the tennis map of Gdoc
+    Experiment 2.1, computed with the notebook 01 utils, and the pickleball maps
+    of Experiment 6.1, from the saved outputs of the full run of notebook 06
+  - The figures are referenced by label, so their numbers follow their order in
+    the paper
+  - 4 references for Section VIII: PPO, Stable-Baselines3, Gymnasium, and a book
+    on bandits
+- **Results**: none new; every number comes from the Gdoc or the notebooks
+
+## 2026-11-11: Spread Model for Speed vs Accuracy (#723)
+
+- **Issue**: [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723),
+  part 2: the spread of the return as a function of the ball speed; the plan, its
+  decisions, and GP's answers to Q4 to Q6 are in the Gdoc,
+  [Experiment 5](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.qrto9so35bnx)
+- **What was done**: `notebooks/racket_sports_07_speed_vs_accuracy_utils.py`
+  - `compute_speed_factor()`: the factor of the spread, with 4 shapes (linear,
+    knee, parabola, one-sided parabola)
+  - `build_spread_from_ball_speed()`: `std_x2` and `std_y2` from the ball speed,
+    with a factor per direction, `a_x` for the width and `a_y` for the depth
+  - The model and the notebooks do not change: the builder is for the sweeps only
+    (P1)
+  - Any coefficient of at least 0 is allowed, so a sweep can perturb it (GP, Q4);
+    a factor that is not positive raises, which only the linear shape with `a > 1`
+    can reach
+- **Next**: the sweeps, notebook 07, and Section VII-B of the paper, in one PR that
+  closes #723
+
+## 2026-11-11: GP's Answers on the Research Process (#694)
+
+- **Issue**: [#694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694),
+  last part: GP answered Q1 to Q3 in the Gdoc, under
+  [Research process](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.21d3arlkot6c)
+  - Q1: one Gdoc with several tabs, a raw log with everything and a distilled
+    executive summary, then the paper
+  - Q2: the research Gdocs are in the
+    [`Research projects`](https://drive.google.com/drive/folders/1NQB-LgY6Kn8Pw5Hbnp_1yCzN9HgoDIXe)
+    Drive folder
+  - Q3: a fork PR is fine for the helpers change,
+    [gpsaggese/helpers#1455](https://github.com/gpsaggese/helpers/pull/1455)
+  - In his reply on Q1 (2026-11-10): a new question goes in the Questions for GP
+    list itself, not only in a comment
+- **Docs**:
+  - `project_management.explanation.md`: the Gdoc tabs and the Drive folder; this
+    log keeps one short entry per merged PR, with a link to the Gdoc and no
+    findings; the life of a research question starts in the question list
+  - `design_principles.explanation.md`: P14 names the `Raw log` tab as the log of
+    the experiments
+  - `plan.racket_strategy.md`: #694 done
+
+## 2026-11-10: Research Questions and Results in the Gdoc (#694)
+
+- **Issue**: [#694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694),
+  from GP's rules for the research process
+  ([comment](https://github.com/gpsaggese/gpsaggese.github.io/issues/694#issuecomment-6712939277),
+  2026-11-07) and his follow-up: "pls put all the questions / content in the gdoc and
+  then you can post links from GH to there"
+- **Gdoc**: the research content that lived only in GitHub comments moved there
+  - [Experiment 4](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.xvdn4n7zo860):
+    the speed ratio and the reaction time (#789); its 3 figures are from a full run
+    of Part 3 of notebook 05 on master `80efe9d9`, which gave the same numbers as the
+    notebook
+  - [Experiment 5](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.qrto9so35bnx):
+    the plan of #723, part 2, with the decisions of 2026-11-03 and 2026-11-06
+  - [Experiment 6](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.kntokyu5w697):
+    the racket RL env of #713, layer 3 (#881), with the figures saved in notebook 06
+  - [Questions for GP](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.xfydadrg3lvc):
+    12 questions, one comment each with our recommendation, linked with one line from
+    #694, #713, #723, #789, #846, #857, and #881
+  - The `inspect.getsource()` question of #846 stays on GitHub, since it is about
+    code
+- **Docs**:
+  - `project_management.explanation.md`: the research Gdoc, GP's rules, the life of a
+    research question, and the paper as the way to review a research PR, with a Paper
+    and Gdoc checklist for its description
+  - `design_principles.explanation.md`: P13 rewritten for the Gdoc (it replaced the
+    GitHub rule on 2026-11-07), P12 updated, and links to the Gdoc in P4, P10, P14,
+    and P16
+  - `plan.racket_strategy.md`: links to the Gdoc, and the status of #823, #857, and
+    #881, all merged
+- **Decided**
+  ([GP on #713](https://github.com/gpsaggese/gpsaggese.github.io/issues/713#issuecomment-6751589012),
+  2026-11-09, recorded under Experiment 6): the layer 3 success criterion is good
+  enough (Q7), and PPO stays on the full grid, with no pruning for now (Q8)
+- **Asked GP**
+  ([Research process](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.21d3arlkot6c)):
+  Q1, one log or two; Q2, the Drive folder of the research Gdocs; Q3, how the general
+  rules reach the research guide of helpers; answered, see the 2026-11-11 entry
+
+## 2026-11-07: Racket RL Env and Notebook 06 (#713, Layer 3)
+
+- **Issue**: [#713](https://github.com/gpsaggese/gpsaggese.github.io/issues/713),
+  layer 3, after the Gymnasium tutorial (layer 1)
+  - GP's decisions on #713: brute force first, with the target learned by RL;
+    reuse the Milestone 2 code but not its results; a reward of 1 for a winner; a
+    discrete target grid with a programmable step
+- **What was done**:
+  - `notebooks/racket_sports_06_rl_return_utils.py`: `ReturnEnv`, a one-shot
+    Gymnasium env (a contextual bandit) whose step is one call of
+    `compute_winner_probability()` with 1 sample; the brute force through the env;
+    the comparison with a fresh Milestone 2 map; the pass rule
+  - `notebooks/racket_sports_06_rl_return.ipynb`: the env, the brute force,
+    Milestone 2 recomputed on the same grid, PPO (`stable-baselines3`) on
+    rescaled observations, and the pass rule; the saved outputs are from the full
+    run
+  - Tests: 14 unit tests, with 3 planted bugs caught, and a notebook test of about
+    10 minutes
+- **Findings**:
+  - SB3 feeds the raw meters to the network, and the constant input of player 1
+    at $y = -11.885$ m saturated a quarter to a third of the first layer;
+    rescaling the observation to $[-1, 1]$ removed the slow start
+  - PPO drifts after about 100k steps on a reward that is almost always 1 (tennis,
+    2 of 3 seeds), so the full run uses 75k steps
+  - Full run, 9 serves per sport, 1000 points per target, fresh seeds 3, 4, 5:
+    - The brute force matches Milestone 2: Spearman 0.98 in tennis and 0.99 in
+      pickleball, and each best cell is in the other's region on 15 of 18 serves;
+      the 3 misses are ties within sampling noise (0.2 points)
+    - The expected regret of PPO is under 0.8 points on all 6 runs, against 11 to
+      21 points for a random target
+    - The strict rule, every greedy cell in the Milestone 2 region, written before
+      the run, passed 4 of 6 runs; seed 5 failed in both sports, since on the flat
+      tennis plateau the policy spreads over tied cells and its top cell is fragile
+- **Open questions for GP**: which success metric matters for the next step, the
+  greedy cell or the expected regret; and whether to try a fix for the late drift,
+  tested again with a pass rule written in advance on fresh seeds
+
+## 2026-11-04: Design Principles
+
+- **Issue**: [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723)
+  (model the spread as a function of the ball speed), part 1, from
+  [GP's answer](https://github.com/gpsaggese/gpsaggese.github.io/issues/723#issuecomment-6602349966)
+  of 2026-11-03 to the proposal to scale the spread with the ball speed
+- **What was done**: `design_principles.explanation.md`, 15 principles, each with
+  why, an example from this project, and its source
+  - P1 to P3 are GP's from #723: independent variables with separate coupling
+    models, notebooks for intuition and code for sweeps, and sweeping to find what
+    is robust to what
+  - P4 to P15 are the principles we already follow, each checked against the plan,
+    this log, the paper, and the GitHub discussions, with a link to where it was
+    decided
+- **Name**: `.explanation.md`, as the file name convention of
+  `all.writing_docs.how_to_guide.md` asks and as `project_management.explanation.md`
+  does, instead of the `design_principles.md` of GP's comment
+
+## 2026-11-03: Remove Repetition in the Code and the Tests
+
+- **Issue**: [#823](https://github.com/gpsaggese/gpsaggese.github.io/issues/823)
+  (remove redundancy in code and tests, from GP's review of #804), with
+  [the plan](https://github.com/gpsaggese/gpsaggese.github.io/issues/823#issuecomment-6591281381)
+- **What was done**:
+  - Code, with no behavior change: `_show_figure()` in the notebook 01 utils
+    ends the redraws of Cell 1.1 and Cell 2.1, and `_build_returner_controls()`
+    builds the returner sliders of both widgets of `racket_strategy_utils.py`
+  - Tests: each failing check is tested once, in the test of the function that
+    owns it; 14 tests that repeated another test are removed; copied setup is
+    in shared helpers; the "Tests cover" lists and the `# Expected:` comments
+    that repeated the asserts are removed
+- **Numbers**: 244 tests to 230; test lines 7,092 to 6,558; source lines 5,230
+  to 5,256, since the 2 new helpers replace 2 copied blocks
+- **Testing**:
+  - Full suite: only the 5 known Docker failures, before and after
+  - The same 52 source lines raise a failing check in some test, before and
+    after; 13 of them were tested from 2 or 3 test classes, now none
+  - Source line coverage: 98.86% before and after, with the same lines missed
+  - Notebooks 01 to 05 run top to bottom, 05 in reduced mode
+  - The 12 Cell 1.1 and 6 Cell 2.1 widget images are byte identical to master
+- **Possible follow-up**: the notebook 05 tests check their outputs piece by
+  piece; the "compare whole output" rule of `testing.rules.md` would rewrite
+  about 60 asserts without removing any repetition
 
 ## 2026-11-01: PRs #804, #809, and #812 Merged
 

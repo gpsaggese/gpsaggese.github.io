@@ -1,0 +1,9 @@
+__pycache__/
+.ipynb_checkpoints/
+executed/
+*.mp4
+# Only these reviewed, numeric/public course inputs may be committed.
+!data/
+data/*
+!data/historical_features.json
+!data/move_attribution_summary.json

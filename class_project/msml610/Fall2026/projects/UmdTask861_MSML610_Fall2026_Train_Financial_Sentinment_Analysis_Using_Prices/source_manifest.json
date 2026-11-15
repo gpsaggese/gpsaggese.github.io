@@ -1,0 +1,454 @@
+{
+  "source_repository": "https://github.com/ypeng12/Quant.ai",
+  "source_commit": "e37938863b73033006e1aa2c452742c56cd8fd30",
+  "source_worktree_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "course_issue": "https://github.com/gpsaggese/gpsaggese.github.io/issues/861",
+  "branch": "UmdTask861_MSML610_Fall2026_Train_Financial_Sentinment_Analysis_Using_Prices",
+  "scope": "checkpoint; independent attribution validation and student presentation pending",
+  "files": {
+    ".dockerignore": {
+      "source": "research/financial_sentiment_using_prices/course/.dockerignore",
+      "sha256": "bb7945d80d92d837359aeb0d3cfe94194f49fb378490cf971cde21fa7bb45d65"
+    },
+    ".gitattributes": {
+      "source": "research/financial_sentiment_using_prices/course/.gitattributes",
+      "sha256": "a4088ed45c099792f6b290183248fb3a09e55c20425f54c75b8ab4e284517e32"
+    },
+    ".gitignore": {
+      "source": "research/financial_sentiment_using_prices/course/.gitignore",
+      "sha256": "0eff967cd44a5188f2cb248e54a5ec664c3583853d3672bffd8a6900b716b9e4"
+    },
+    "Dockerfile": {
+      "source": "research/financial_sentiment_using_prices/course/Dockerfile",
+      "sha256": "ed221e37593ecac5fd680aa324701ae63406669f8d7ed7d4e8db1e9883a6f902"
+    },
+    "PRESENTATION.md": {
+      "source": "research/financial_sentiment_using_prices/course/PRESENTATION.md",
+      "sha256": "fd69635d2e74e156f79a67c58735a7b58aea63f5ba6bc3cca79c25ec999591e0"
+    },
+    "README.md": {
+      "source": "research/financial_sentiment_using_prices/course/README.md",
+      "sha256": "8ccde95b3b5cf6d2e53ccd51cce49fb38a9e956d136f49ce7b3a30b72430cb09"
+    },
+    "bashrc": {
+      "source": "research/financial_sentiment_using_prices/course/bashrc",
+      "sha256": "b7b54adb9bd261078ed666b5a208af612cbdee25147bf20051d1f0a20a6d729b"
+    },
+    "data/historical_features.json": {
+      "source": "research/financial_sentiment_using_prices/course/data/historical_features.json",
+      "sha256": "ff2846b5412ceda48593a0c0023bfdef81d6f9c9a22e66d764255bad15157222"
+    },
+    "data/move_attribution_summary.json": {
+      "source": "research/financial_sentiment_using_prices/course/data/move_attribution_summary.json",
+      "sha256": "1bcbc2af9315cc41f3f70f92ccf8caef382db2adae91581cfeee3a8dffcfffd4"
+    },
+    "docker_bash.sh": {
+      "source": "research/financial_sentiment_using_prices/course/docker_bash.sh",
+      "sha256": "c7ef280d559a997f7279f9c134d9bf5260f01211f2e13bf353a16d6d40aa526b"
+    },
+    "docker_build.sh": {
+      "source": "research/financial_sentiment_using_prices/course/docker_build.sh",
+      "sha256": "623d398c7d88004e8a5166c841269587b867bc4f9932d732b21f8b19228844af"
+    },
+    "docker_jupyter.sh": {
+      "source": "research/financial_sentiment_using_prices/course/docker_jupyter.sh",
+      "sha256": "c230c332c6285a411186f9fac730616c0adbfe2cab2776bbd082bfb91f481db2"
+    },
+    "etc_sudoers": {
+      "source": "research/financial_sentiment_using_prices/course/etc_sudoers",
+      "sha256": "55c9b8c55bb8244a79b31739e4242af2b88713ba94e6c40b4d9b15c9df580b78"
+    },
+    "financial_sentiment.API.ipynb": {
+      "source": "research/financial_sentiment_using_prices/course/financial_sentiment.API.ipynb",
+      "sha256": "2dbf18c649e349529ed805df1c930be9a47d9f08fa905142d164a142cde1da44"
+    },
+    "financial_sentiment.API.py": {
+      "source": "research/financial_sentiment_using_prices/course/financial_sentiment.API.py",
+      "sha256": "0f7d59bc459a72b3e205708540d1aad82a978c8e094e09bcf6e34ce0044501b6"
+    },
+    "financial_sentiment.example.ipynb": {
+      "source": "research/financial_sentiment_using_prices/course/financial_sentiment.example.ipynb",
+      "sha256": "8383756994af536b6ccfd5f64d77dfad2f177059f90019559eea909159bdf7b9"
+    },
+    "financial_sentiment.example.py": {
+      "source": "research/financial_sentiment_using_prices/course/financial_sentiment.example.py",
+      "sha256": "0dc4f21f55e100c5130dfedca64a12bc412527ca705942b7b26b1415e58ff685"
+    },
+    "financial_sentiment_utils.py": {
+      "source": "research/financial_sentiment_using_prices/course/financial_sentiment_utils.py",
+      "sha256": "0f6544a0110597419d97487ea982e69dad6d3b61dd60222c2a9acd987014c2f7"
+    },
+    "public_results/financial_sentiment_price_bert.json": {
+      "source": "reports/financial_sentiment_price_bert.json",
+      "sha256": "133dbd4db606c824a4ed53d24af341a545d130649ab2690ea87504cd9cb94e45"
+    },
+    "public_results/financial_sentiment_strategy_comparison.json": {
+      "source": "reports/financial_sentiment_strategy_comparison.json",
+      "sha256": "4108c9d927e2703fee45187febb7a23f533401925c0dbf540cad63157d6a44d8"
+    },
+    "requirements.txt": {
+      "source": "research/financial_sentiment_using_prices/course/requirements.txt",
+      "sha256": "589c648515c5445e274d9437c87c8d8169ddcae47b42827b664e38b2d144b13c"
+    },
+    "research_reports/financial_sentiment.finbert_2023_report.md": {
+      "source": "research/financial_sentiment_using_prices/financial_sentiment.finbert_2023_report.md",
+      "sha256": "3e0f97614bb697a3fe15a5ba629b807122fb66a565a392ba4a645b7fa18f0e13"
+    },
+    "research_reports/financial_sentiment.lm_report.md": {
+      "source": "research/financial_sentiment_using_prices/financial_sentiment.lm_report.md",
+      "sha256": "a124c1494508af9c260f0c1e88044a0ac234434c3965a95a6bc99291944f33f4"
+    },
+    "research_reports/financial_sentiment.multi_horizon_report.md": {
+      "source": "research/financial_sentiment_using_prices/financial_sentiment.multi_horizon_report.md",
+      "sha256": "05863f0a70e31e1424fa064e273d2046267290e5fa34b503a223cd0d4aaa88f3"
+    },
+    "research_reports/financial_sentiment.research_report.md": {
+      "source": "research/financial_sentiment_using_prices/financial_sentiment.research_report.md",
+      "sha256": "e981b23bf26405b451637753eddf1d83cd788188a1aab6cc72e850ec09a7ffd9"
+    },
+    "research_sources/calendar_audit.py": {
+      "source": "research/financial_sentiment_using_prices/calendar_audit.py",
+      "sha256": "5a53ad9ae036a60b7774d03625ad81c51888d6f0e4bb4791c67c15aa4d678220"
+    },
+    "research_sources/collect_research.py": {
+      "source": "research/financial_sentiment_using_prices/collect_research.py",
+      "sha256": "bda69d1b530aace4c6c738eee6adf240d75e2a0d25d0fcef23a81475aa573870"
+    },
+    "research_sources/company_facts.py": {
+      "source": "research/financial_sentiment_using_prices/company_facts.py",
+      "sha256": "cfdaede4fc8ea3340a652182e8bfd513b0cb804f6b50516b11a4f49ad5917aba"
+    },
+    "research_sources/corporate_action_archive.py": {
+      "source": "research/financial_sentiment_using_prices/corporate_action_archive.py",
+      "sha256": "9f4c62fce39c832b0088170d4036e2ad074005e4acd4472be556d4042c96cfc1"
+    },
+    "research_sources/corporate_actions.py": {
+      "source": "research/financial_sentiment_using_prices/corporate_actions.py",
+      "sha256": "5b1c57876bf9606c0c939d77e6a17a3206062d24e637a48f143f63f3c2563a77"
+    },
+    "research_sources/daily_collection.py": {
+      "source": "research/financial_sentiment_using_prices/daily_collection.py",
+      "sha256": "4e18f53339064e19c252a32e3c132e789e21b0ea04f09988a76701cfb08e999c"
+    },
+    "research_sources/daily_execution.py": {
+      "source": "research/financial_sentiment_using_prices/daily_execution.py",
+      "sha256": "eb6fce31ac7e498643046e732ea4513dde348210037b0f9417e4a69b18fa5aeb"
+    },
+    "research_sources/data_preflight.py": {
+      "source": "research/financial_sentiment_using_prices/data_preflight.py",
+      "sha256": "68dd62f26a26df1a5bdbbb912c0adcc6ad80c045172684a3d656072de4e89c41"
+    },
+    "research_sources/event_extraction.py": {
+      "source": "research/financial_sentiment_using_prices/event_extraction.py",
+      "sha256": "31052ba7cccfa8d2923df48edf24fdc9128ca1c6f4550d6669535366f1cff726"
+    },
+    "research_sources/expanded_finbert.py": {
+      "source": "research/financial_sentiment_using_prices/expanded_finbert.py",
+      "sha256": "4a1aac2d496adb8362f9eae7ad5cf406b3a0819d9fa34b6160a66769f03bc87d"
+    },
+    "research_sources/export_report_pdf.py": {
+      "source": "research/financial_sentiment_using_prices/export_report_pdf.py",
+      "sha256": "178a573a28e0573538c48fbb38b7163b4518e60914790f0510adb7c0d301381c"
+    },
+    "research_sources/financial_sentiment.API.py": {
+      "source": "research/financial_sentiment_using_prices/financial_sentiment.API.py",
+      "sha256": "c755c3644e2363b986e6f904fbfb3814b1fcaf7007e022ce7c5f035d4229e912"
+    },
+    "research_sources/financial_sentiment.example.py": {
+      "source": "research/financial_sentiment_using_prices/financial_sentiment.example.py",
+      "sha256": "f2bb7ad0421ee95333cb8ab3877d03069399fbe5492adfcc542d024737e444b8"
+    },
+    "research_sources/financial_sentiment.expansion.py": {
+      "source": "research/financial_sentiment_using_prices/financial_sentiment.expansion.py",
+      "sha256": "45b2a422e84e33b7b7ecf8516b2e19a36cfe86387e8cb90579a538ece7079345"
+    },
+    "research_sources/financial_sentiment.lm.py": {
+      "source": "research/financial_sentiment_using_prices/financial_sentiment.lm.py",
+      "sha256": "a550d9e46667e1085ae23af54c2794872443159df4c22459999aa5aa9fceb899"
+    },
+    "research_sources/financial_sentiment.multi_horizon.py": {
+      "source": "research/financial_sentiment_using_prices/financial_sentiment.multi_horizon.py",
+      "sha256": "25bd1b612c447eb83544bccd80171547d386d5cb6a3ec370776e61c93b5d7d94"
+    },
+    "research_sources/financial_sentiment.research.py": {
+      "source": "research/financial_sentiment_using_prices/financial_sentiment.research.py",
+      "sha256": "1b260a0ffc1090c1b33b8a1c6e94997d23e5b3a9367486926c9121241ec19f62"
+    },
+    "research_sources/financial_sentiment_utils.py": {
+      "source": "research/financial_sentiment_using_prices/financial_sentiment_utils.py",
+      "sha256": "94c7454359fe4d0a7fba8c6da2df825b6c42c8b596b68a6406b16736da064c8b"
+    },
+    "research_sources/finbert_comparison.py": {
+      "source": "research/financial_sentiment_using_prices/finbert_comparison.py",
+      "sha256": "aaeb17ad3c216288938248b02790624fe6f5b9a1620ce43b3c35b4660f0155e8"
+    },
+    "research_sources/grouped_collation.py": {
+      "source": "research/financial_sentiment_using_prices/grouped_collation.py",
+      "sha256": "765b06485369cb23600815327ceda3051585a14aefaae83005471d1b6bcd3d8d"
+    },
+    "research_sources/grouped_loss.py": {
+      "source": "research/financial_sentiment_using_prices/grouped_loss.py",
+      "sha256": "849840f264fdf0f832de0afa7b20da3a90006246f97d392cbc392a6f6484d47a"
+    },
+    "research_sources/historical_backfill.py": {
+      "source": "research/financial_sentiment_using_prices/historical_backfill.py",
+      "sha256": "df6f4ea3ae2531ce439fb8b01ee99411bb6b455b604a5f1bc0b57880efc03c16"
+    },
+    "research_sources/historical_ranges.py": {
+      "source": "research/financial_sentiment_using_prices/historical_ranges.py",
+      "sha256": "2fcf7ad00e066af7f89cfc40037bf7b0b1831502fe17c879a31e8764141f26b5"
+    },
+    "research_sources/issuer_event.py": {
+      "source": "research/financial_sentiment_using_prices/issuer_event.py",
+      "sha256": "408544e22476c4e779c21f999fd243349d2e9eda099870634d3efaa868f77f13"
+    },
+    "research_sources/lm_baseline.py": {
+      "source": "research/financial_sentiment_using_prices/lm_baseline.py",
+      "sha256": "6a002faea5926d2a06049a44a4e97ce812068825fd7b66f2fa887fb2676ad4ea"
+    },
+    "research_sources/move_attribution.py": {
+      "source": "research/financial_sentiment_using_prices/move_attribution.py",
+      "sha256": "d37f23470e9f5fa19ee0fed205194f77f855578d82ff8ec5e47ff94dc0c05102"
+    },
+    "research_sources/multi_horizon.py": {
+      "source": "research/financial_sentiment_using_prices/multi_horizon.py",
+      "sha256": "865319459cead0ba0f713f374e518a01f51f6893fdf390d013a0ca8439da976b"
+    },
+    "research_sources/prepare_text_candidates.py": {
+      "source": "research/financial_sentiment_using_prices/prepare_text_candidates.py",
+      "sha256": "0d5c3978cfef9b8c01c26000e46992c1cde7b44d7f615c0cb0ed868b1308bdef"
+    },
+    "research_sources/price_baselines.py": {
+      "source": "research/financial_sentiment_using_prices/price_baselines.py",
+      "sha256": "789e4a8876f0bcf0ac80a56efea392e08c5a9dd25c0b65165ffb92a7ed580303"
+    },
+    "research_sources/price_context.py": {
+      "source": "research/financial_sentiment_using_prices/price_context.py",
+      "sha256": "7c37d776c2f1c257a016a0ce54914d2c1669b832909617302ad83257e69d3d29"
+    },
+    "research_sources/price_labels.py": {
+      "source": "research/financial_sentiment_using_prices/price_labels.py",
+      "sha256": "0331ce178a6237b127d1b2f82ed8a9593c074a8bdc1959d82ec11992a2e594fc"
+    },
+    "research_sources/price_transformer.py": {
+      "source": "research/financial_sentiment_using_prices/price_transformer.py",
+      "sha256": "7b2602e76fe7bc175cf7d24960108d33ed8478a60937cccc9f884efac3a1942b"
+    },
+    "research_sources/quant_signal_adapter.py": {
+      "source": "research/financial_sentiment_using_prices/quant_signal_adapter.py",
+      "sha256": "a5a5112297b4e5c806e91b1d5fca95658bbf43c39a6bbfde4a2875d07df711e2"
+    },
+    "research_sources/render_stock_context.py": {
+      "source": "research/financial_sentiment_using_prices/render_stock_context.py",
+      "sha256": "f935a69fa931f8fa94eac66c5ed323360e39ca81c0aa673688f118b5625f51b1"
+    },
+    "research_sources/requirements-course.txt": {
+      "source": "research/financial_sentiment_using_prices/requirements-course.txt",
+      "sha256": "81ab3958a2584bf8166f2ad797d237a2ba28c3b731f67b197a01029205fed3f5"
+    },
+    "research_sources/requirements-experiments.txt": {
+      "source": "research/financial_sentiment_using_prices/requirements-experiments.txt",
+      "sha256": "287f953a7f0e9b2dddcc3584f099574524048db3c745e99c26dc82e5d9c692bc"
+    },
+    "research_sources/requirements-nlp.txt": {
+      "source": "research/financial_sentiment_using_prices/requirements-nlp.txt",
+      "sha256": "745fbe146e17ce5e4ace0ee412f3d3442b16a468a1e51d5800250f8e19555d1e"
+    },
+    "research_sources/requirements-price-bert.txt": {
+      "source": "research/financial_sentiment_using_prices/requirements-price-bert.txt",
+      "sha256": "8ab6613bf7b3143300841364c509e740b9c4c5b4f182d7764385248c1e64df2e"
+    },
+    "research_sources/requirements-profit-research.txt": {
+      "source": "research/financial_sentiment_using_prices/requirements-profit-research.txt",
+      "sha256": "6961d4ddc65cc1900f1214cf577431855263e0e34965d6741db311dc162c1bd1"
+    },
+    "research_sources/requirements-report.txt": {
+      "source": "research/financial_sentiment_using_prices/requirements-report.txt",
+      "sha256": "45839a1f39596be1beac57c473de8eccc4b9bca387bf9ce570d40ec3ca7e2ecf"
+    },
+    "research_sources/requirements.txt": {
+      "source": "research/financial_sentiment_using_prices/requirements.txt",
+      "sha256": "918975f275e0444910c4b5249bdb3a40f0e0aabfc5a6b347e58c3f7aa5dd5098"
+    },
+    "research_sources/run_course.py": {
+      "source": "research/financial_sentiment_using_prices/run_course.py",
+      "sha256": "77616d91a4de646f13c73387deb9fc4cc990ffe91084f413a6a16c510e6c69ad"
+    },
+    "research_sources/run_historical.py": {
+      "source": "research/financial_sentiment_using_prices/run_historical.py",
+      "sha256": "52df88599cb36d4892c1dee4b76e98fddc8661dc1a7c6524deff4c30323cf739"
+    },
+    "research_sources/run_research.py": {
+      "source": "research/financial_sentiment_using_prices/run_research.py",
+      "sha256": "48d223f91873014388773e225df97b71a74afcb8d7d6679d98155657d2656e4e"
+    },
+    "research_sources/semantic_signal_gate.py": {
+      "source": "research/financial_sentiment_using_prices/semantic_signal_gate.py",
+      "sha256": "755dd853a57330f84c0837d2b7f9d5f485673de677d5f5d603943aa0ca7188ae"
+    },
+    "research_sources/sentiment_model.py": {
+      "source": "research/financial_sentiment_using_prices/sentiment_model.py",
+      "sha256": "b7dd974391dc008bca8c05f00dbff7ed185afa18dbd682fbe455a91695c1a34f"
+    },
+    "research_sources/stock_context.py": {
+      "source": "research/financial_sentiment_using_prices/stock_context.py",
+      "sha256": "bc1c45eb3e0fc1e722952e7d56471bcc1b918a0a5b4a74f646e81d54ae3d484e"
+    },
+    "research_sources/tests/test_calendar_audit.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_calendar_audit.py",
+      "sha256": "ef28bdff00ba53639015ce2ff6285510f2349fa70962d1b5585de29cbdd4f524"
+    },
+    "research_sources/tests/test_collect_research.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_collect_research.py",
+      "sha256": "4897add265a5f785bc71bdf6d26f20a5906191ab94f9303f953655ada05ccd2c"
+    },
+    "research_sources/tests/test_company_facts.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_company_facts.py",
+      "sha256": "f8f00162430d4d8737b9da83824b4b2958f6a7924f5ff1279b0a675d230bc043"
+    },
+    "research_sources/tests/test_corporate_action_archive.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_corporate_action_archive.py",
+      "sha256": "1e8fa66e73756d353998fc55916328f0fe26a000e7d6421ac2c89d54ec96c2b9"
+    },
+    "research_sources/tests/test_corporate_actions.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_corporate_actions.py",
+      "sha256": "c667a300c249334bface72743f5a3788d9211d908b2e18c5bb7dd70084af2a29"
+    },
+    "research_sources/tests/test_daily_collection.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_daily_collection.py",
+      "sha256": "fc2ac2aedce1627a471a4562b909a150cfbf8b1a5e061b22c1666e054fac4171"
+    },
+    "research_sources/tests/test_daily_execution.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_daily_execution.py",
+      "sha256": "a160f4a304e2e5b2d5bb9ed39db041ddbd71fdc33ac44ad3b68bc4425c9d30b1"
+    },
+    "research_sources/tests/test_data_preflight.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_data_preflight.py",
+      "sha256": "0a2c5634e3ff59b90a10f584f305560c4ccd7526340a17b67a8d239e8570febb"
+    },
+    "research_sources/tests/test_event_extraction.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_event_extraction.py",
+      "sha256": "377555cda88dd71c641f7328c791bfc3fdf438d0f1a7dc7be00ad036a302beda"
+    },
+    "research_sources/tests/test_expanded_finbert.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_expanded_finbert.py",
+      "sha256": "f5b79b70a8877eb9c59fb0b387deb28e028e3b000a02b8f9414fd59ab9f02c5d"
+    },
+    "research_sources/tests/test_finbert_comparison.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_finbert_comparison.py",
+      "sha256": "449582e883c4f9a33b388e89816b9fe0912cb6a5becedbea8667010a121b57f7"
+    },
+    "research_sources/tests/test_grouped_collation.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_grouped_collation.py",
+      "sha256": "81512f7f512c031966af9a3766d798e7d5c81d422db21c0eeb4e18319ae9053e"
+    },
+    "research_sources/tests/test_grouped_loss.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_grouped_loss.py",
+      "sha256": "8d998675eb8c53942e52eb11b4a7160b8ead69665965970d7cb62f5b56c738dc"
+    },
+    "research_sources/tests/test_historical_pipeline.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_historical_pipeline.py",
+      "sha256": "23639255e6469bd1b2a61fca71c8eab92ef7fc6caff46755456e42b361e5336a"
+    },
+    "research_sources/tests/test_historical_ranges.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_historical_ranges.py",
+      "sha256": "fb18b05874fdbc90473e9072bbd2db1c110abdb82d9c234acdbe9dacbcc2c7ae"
+    },
+    "research_sources/tests/test_issuer_event.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_issuer_event.py",
+      "sha256": "256294266574386a60fd609d9d2d6efe780fdc1bf38569873444ba2494de1e61"
+    },
+    "research_sources/tests/test_lm_baseline.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_lm_baseline.py",
+      "sha256": "045c4be524e353e31f98369ffe68f1fe378b7f91c17b026d923043d6378a2dad"
+    },
+    "research_sources/tests/test_move_attribution.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_move_attribution.py",
+      "sha256": "1cb9f3776ba829069356d65398af780e8329cb147f678997319b98a2d86067d0"
+    },
+    "research_sources/tests/test_multi_horizon.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_multi_horizon.py",
+      "sha256": "2e0652eda0bfe5a5c5e435f70a22f98c92688397ee00f865949006d6ce43e113"
+    },
+    "research_sources/tests/test_pipeline.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_pipeline.py",
+      "sha256": "2912aa123e6a79fb06ee54283d82ecda939e7b4a4830a4a41797787b438e3956"
+    },
+    "research_sources/tests/test_prepare_text_candidates.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_prepare_text_candidates.py",
+      "sha256": "3091f0e3fb2a6f409c1199ddb66ffc35c7fe4d9b339822962b875a19a2d6dcda"
+    },
+    "research_sources/tests/test_price_baselines.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_price_baselines.py",
+      "sha256": "78cf1c5d87e37ca40b7ba21aa08e92cd3b4ca3faf52963b581b2e45fe124b417"
+    },
+    "research_sources/tests/test_price_context.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_price_context.py",
+      "sha256": "9f2e7ace995d91de5000db2a7843d37fadb2d04bf47052f873f2c59be9e5dcdc"
+    },
+    "research_sources/tests/test_price_labels.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_price_labels.py",
+      "sha256": "380ccaaef0d28877a33e54d694c0be0645d844429a58264f0049edd42e89ecdd"
+    },
+    "research_sources/tests/test_price_transformer.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_price_transformer.py",
+      "sha256": "f9cedf25c31ff02cde706e256261113b445949dd29551bba228051ca2d1fd1e1"
+    },
+    "research_sources/tests/test_quant_signal_adapter.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_quant_signal_adapter.py",
+      "sha256": "a3da7f000f733f2ac0eb800ebc71ec42f80079337facef4869f90ab2adf64e4c"
+    },
+    "research_sources/tests/test_run_course.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_run_course.py",
+      "sha256": "db29246fbf8611367291a5f469beac80cde49c9608b1dddc1a3a116713c368d2"
+    },
+    "research_sources/tests/test_semantic_signal_gate.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_semantic_signal_gate.py",
+      "sha256": "b0e30099657b9bfe9e98211d922c3379086207fe32d1c14ca731ba42c808b0d3"
+    },
+    "research_sources/tests/test_source_eligibility.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_source_eligibility.py",
+      "sha256": "3b193397ed5ac69c18d6ade10e01649387b3827e884d3036f740ad90fd461bac"
+    },
+    "research_sources/tests/test_source_snapshot.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_source_snapshot.py",
+      "sha256": "ee2923f104b8441755dea67b6636d7a12c44f4f995315fb4fedbb5ba6eab629c"
+    },
+    "research_sources/tests/test_stock_context.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_stock_context.py",
+      "sha256": "8a63e1174e0c3abdeaf61d4c028081594d7fe3d46828a8b4a31b22de0468e988"
+    },
+    "research_sources/tests/test_text_event_review.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_text_event_review.py",
+      "sha256": "7d9c41f42a60ec38db7b261816f1bb3696e10cd3fd56bfe880dd025d622612f8"
+    },
+    "research_sources/tests/test_tokenize_transformer.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_tokenize_transformer.py",
+      "sha256": "6a13b297a42f53ebaacdef07fd9c00fc7dc7a003112d176f9acc08f2b86f4157"
+    },
+    "research_sources/tests/test_train_price_bert.py": {
+      "source": "research/financial_sentiment_using_prices/tests/test_train_price_bert.py",
+      "sha256": "03b017d14dcca0fe594dff0e7e4977b28b44c6e2b2678ff5071d36f45f6d5c30"
+    },
+    "research_sources/text_event_review.py": {
+      "source": "research/financial_sentiment_using_prices/text_event_review.py",
+      "sha256": "a696b350e3f383f0e98f8833bf79cbda9a5e98a18509a7d7ff529cb6d1d89c6e"
+    },
+    "research_sources/tokenize_transformer.py": {
+      "source": "research/financial_sentiment_using_prices/tokenize_transformer.py",
+      "sha256": "242ba5b4b289633d2d625a2c4266b406c133d6a354e57c43d8bf38cf5886c4db"
+    },
+    "research_sources/train_price_bert.py": {
+      "source": "research/financial_sentiment_using_prices/train_price_bert.py",
+      "sha256": "4bafd456d522506698ecfa8c1eb5517e4ba331f989280642f47126377f73953d"
+    },
+    "test_financial_sentiment.py": {
+      "source": "research/financial_sentiment_using_prices/course/test_financial_sentiment.py",
+      "sha256": "3c333997df8ffd28fae7378eafb75a1322e12dbaf2ccd75499594a47178d20fa"
+    },
+    "version.sh": {
+      "source": "research/financial_sentiment_using_prices/course/version.sh",
+      "sha256": "8d06fff22f2ecef56042cd82b58b27eb5dc2acf1d9d9f378586367c05f20c1ba"
+    }
+  }
+}

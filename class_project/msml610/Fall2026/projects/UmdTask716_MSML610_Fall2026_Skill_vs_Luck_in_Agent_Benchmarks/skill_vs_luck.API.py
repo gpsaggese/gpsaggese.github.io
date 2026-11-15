@@ -33,6 +33,7 @@
 
 import logging
 
+import numpy as np
 import pandas as pd
 
 # %%
@@ -76,6 +77,13 @@ except ImportError:
 # | `compute_min_tasks(sd_diff, gap)` | Tasks needed for a gap | Normal approximation |
 # | `compute_min_detectable_gap(sd_diff, n_tasks)` | Smallest gap a benchmark can detect | Inverse of the above |
 # | `simulate_outcomes(abilities, n_tasks)` | Benchmark where the truth is known | Rasch model |
+# | `compute_rank_intervals(outcomes)` | Interval on each rank, chance of coming out first | Bootstrap over tasks, ties split |
+# | `compute_split_half_correlation(outcomes)` | Rank correlation between 2 halves of the tasks | Spearman and Kendall |
+# | `compute_held_out_drop(outcomes)` | Leader of one half scored on the other | Winner's curse on real data |
+# | `simulate_winners_curse(n_variants, n_tasks)` | Inflation of the best of K equal variants | Against $\sigma \sqrt{2 \ln K}$ |
+# | `fit_irt_2pl(outcomes)` | Ability, difficulty, discrimination | Bayesian 2PL in NumPyro |
+# | `compute_effective_size(information)` | Equally informative tasks a benchmark is worth | From the task information |
+# | `compute_selection_effect(fit)` | Split-half correlation of the top agents, by how they are picked | Benchmarks simulated from the fit |
 #
 # - **Key functions**:
 #   - `compute_score_cis()`: how uncertain 1 score is
@@ -307,6 +315,137 @@ print("power=", power.to_dict())
 # Outcome: the paired test finds the gap far more often than the overlap rule.
 
 # %% [markdown]
+# # Part 6: Ranking under uncertainty
+
+# %% [markdown]
+# ## Cell 6.1: Bootstrap the whole leaderboard
+#
+# - `compute_rank_intervals()` resamples the tasks, ranks all agents in each
+#   sample, and reports the spread of each rank
+# - Tied agents share the average of their ranks, and a tie for first is split
+
+# %%
+# Rank intervals and the chance of coming out first for the top 5 agents.
+rank_intervals = utils.compute_rank_intervals(outcomes, n_boot=500, seed=0)
+
+display(rank_intervals.head(5).round(3))
+# Outcome: the top 2 agents each come out first about a third of the time.
+
+# %% [markdown]
+# ## Cell 6.2: Does the observed ranking find the true one?
+#
+# - `check_ranking_recovery()` simulates benchmarks where the true ranking is
+#   known
+
+# %%
+# 5 agents 0.2 logits apart on 500 tasks.
+recovery = utils.check_ranking_recovery(
+    [0.0, 0.2, 0.4, 0.6, 0.8], 500, n_trials=100, seed=0
+)
+
+print("recovery=", recovery.round(3).to_dict())
+# Outcome: the truly best agent comes out first in most but not all benchmarks.
+
+# %% [markdown]
+# # Part 7: Persistence and selection
+
+# %% [markdown]
+# ## Cell 7.1: Split-half rank correlation
+#
+# - `compute_split_half_correlation()` ranks the agents on 2 random halves of
+#   the tasks and correlates the rankings
+
+# %%
+# Correlate the 2 rankings of the top 20 agents over 200 splits.
+top_20_outcomes = outcomes.loc[leaderboard.index[:20]]
+split_half = utils.compute_split_half_correlation(
+    top_20_outcomes, n_splits=200, seed=0
+)
+
+display(split_half.median().round(3))
+# Outcome: the top 20 keep little of their order from one half to the other.
+
+# %% [markdown]
+# ## Cell 7.2: The winner's curse
+#
+# - `simulate_winners_curse()` picks the best of K equally good variants and
+#   measures how much it overstates the true score
+
+# %%
+# The best of 10 equal variants on 500 tasks.
+curse = utils.simulate_winners_curse(10, 500, n_trials=200, seed=0)
+
+display(curse.round(4))
+# Outcome: the best variant looks about 3 points better than it is, less than
+# the spec's correction.
+
+# %% [markdown]
+# # Part 8: Item response theory
+
+# %% [markdown]
+# ## Cell 8.1: Fit a 2PL model
+#
+# - `fit_irt_2pl()` fits an ability per agent and a difficulty and a
+#   discrimination per task
+# - On a simulated benchmark, the fitted abilities should follow the true ones
+
+# %%
+# Fit the 3 simulated agents of Cell 5.1.
+irt = utils.fit_irt_2pl(simulated, n_steps=2000, n_samples=200, seed=0)
+
+display(irt["agents"].round(2))
+# Outcome: the fitted abilities are in the same order as the true ones
+# (-1.5, 0, 1.5), on a stretched scale since the 2PL also fits the
+# discriminations.
+
+# %% [markdown]
+# ## Cell 8.2: The effective size of a benchmark
+#
+# - `compute_task_information()` measures how much each task tells about a
+#   group of agents
+# - `compute_effective_size()` turns it into a number of equally informative
+#   tasks
+
+# %%
+# Effective size of the simulated benchmark for its 3 agents.
+information = utils.compute_task_information(
+    irt["agents"]["ability"], irt["tasks"]
+)
+effective_size = utils.compute_effective_size(information)
+
+print("effective_size=", round(effective_size))
+print(
+    "utils.count_informative_tasks(simulated)=",
+    utils.count_informative_tasks(simulated),
+)
+# Outcome: the 500 simulated tasks are worth about 466 equally informative
+# tasks, and 124 are solved by all 3 agents or by none.
+
+# %% [markdown]
+# ## Cell 8.3: Picking the top agents on their score
+#
+# - `compute_selection_effect()` simulates benchmarks from a fit and compares
+#   the split-half correlation of the top agents picked on the score and on the
+#   true ability
+
+# %%
+# 30 agents with close abilities, on the tasks of the fit above.
+close_fit = {
+    "agents": pd.DataFrame(
+        {"ability": np.linspace(-0.5, 0.5, 30)},
+        index=[f"agent_{i}" for i in range(30)],
+    ),
+    "tasks": irt["tasks"],
+}
+selection_effect = utils.compute_selection_effect(
+    close_fit, top_k=5, n_trials=50, seed=0
+)
+
+display(selection_effect.round(3))
+# Outcome: among close agents, the median Kendall is -0.2 when they are picked
+# on the score, below the 0.0 when they are picked on the true ability.
+
+# %% [markdown]
 # ## Summary: The Mental Model
 #
 # - A benchmark score is an estimate
@@ -319,3 +458,10 @@ print("power=", power.to_dict())
 #   "significant" gaps
 # - The tasks needed to resolve a gap grow like $1 / \Delta^2$
 #   - Halving the gap needs 4 times the tasks
+# - A ranking is uncertain too
+#   - Bootstrap the whole leaderboard to get rank intervals and the chance of
+#     coming out first
+# - Picking the best of many variants overstates its score
+#   - Check it on held-out tasks
+# - Not every task counts the same
+#   - An IRT fit shows how many tasks really tell the agents apart

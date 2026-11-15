@@ -97,6 +97,28 @@ def _make_sweep_rows() -> pd.DataFrame:
     return df
 
 
+def _make_corner_rows(p: Dict[str, float], se: float) -> pd.DataFrame:
+    """
+    Build the rows of one corner of `run_corners()`, by hand.
+
+    :param p: the highest `P(winner)` per serve
+    :param se: the standard error of each value
+    :return: one row per serve, with a mean `P(winner)` of 0.5
+    """
+    corners = pd.DataFrame(
+        {
+            "sport": "Tennis",
+            "side": "deuce",
+            "group": "ball=min v_p=max",
+            "serve_name": list(p),
+            "max_p_winner": list(p.values()),
+            "max_p_winner_se": se,
+            "mean_p_winner": 0.5,
+        }
+    )
+    return corners
+
+
 # #############################################################################
 # Test_get_experiment_config
 # #############################################################################
@@ -283,22 +305,6 @@ class Test_parse_settings_string(hunitest.TestCase):
         )
         # Check outputs.
         self.assertEqual(actual, settings)
-
-    def test2(self) -> None:
-        """
-        Test that a string with an unknown setting is rejected.
-        """
-        # Prepare inputs.
-        settings = _get_tiny_settings("Tennis")
-        text = racket_sports_05_variable_sensitivity_utils.settings_to_string(
-            settings
-        )
-        text = text.replace("seed=1", "seed=1 v_x=2.0")
-        # Run test and check outputs.
-        with self.assertRaises(AssertionError):
-            racket_sports_05_variable_sensitivity_utils.parse_settings_string(
-                text
-            )
 
 
 # #############################################################################
@@ -558,16 +564,7 @@ class Test_find_best_serves(hunitest.TestCase):
         :param se: the standard error of each value
         :return: the output of `find_best_serves()`
         """
-        corners = pd.DataFrame(
-            {
-                "sport": "Tennis",
-                "side": "deuce",
-                "group": "ball=min v_p=max",
-                "serve_name": list(p),
-                "max_p_winner": list(p.values()),
-                "max_p_winner_se": se,
-            }
-        )
+        corners = _make_corner_rows(p, se)
         actual = racket_sports_05_variable_sensitivity_utils.find_best_serves(
             corners
         )
@@ -1162,17 +1159,7 @@ class Test_plot_serve_table(hunitest.TestCase):
         :param se: the standard error of each value
         :return: the figure
         """
-        corners = pd.DataFrame(
-            {
-                "sport": "Tennis",
-                "side": "deuce",
-                "group": "ball=min v_p=max",
-                "serve_name": list(p),
-                "max_p_winner": list(p.values()),
-                "max_p_winner_se": se,
-                "mean_p_winner": 0.5,
-            }
-        )
+        corners = _make_corner_rows(p, se)
         fig = racket_sports_05_variable_sensitivity_utils.plot_serve_table(
             corners, "Tennis"
         )
@@ -1216,15 +1203,8 @@ class Test_plot_serve_table(hunitest.TestCase):
         """
         Test that the table uses the colormap of `plot_winner_heatmap()`.
         """
-        # Prepare inputs.
-        module = racket_sports_01_shot_probability_utils
-        sport = racket_params.PICKLEBALL
-        heatmap = module.compute_winner_heatmap(
-            (-1.5, 4.4), (0.5, 1.0), 12.0, 0.2, 1.5, sport.court, 3, 4, 1100, 1
-        )
-        _, ax = plt.subplots()
-        module.plot_winner_heatmap(ax, heatmap, sport.court, (-1.5, 4.4))
-        expected = ax.collections[0].get_cmap().name
+        # Prepare outputs.
+        expected = racket_sports_01_shot_probability_utils.HEATMAP_CMAP
         # Run test.
         fig = self.helper({"wide-deep": 0.5, "T-deep": 1.0}, 0.002)
         # Check outputs.

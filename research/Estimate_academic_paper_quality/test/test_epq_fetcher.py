@@ -4,6 +4,7 @@ from typing import List
 from unittest import mock
 
 import helpers.hio as hio
+import helpers.hprint as hprint
 import helpers.hunit_test as hunitest
 
 import research.Estimate_academic_paper_quality.epq_fetcher as epqfetch
@@ -96,13 +97,17 @@ class Test_is_fetched(hunitest.TestCase):
         :param expected: expected result
         """
         # Prepare inputs.
-        papers_dir = self.get_scratch_space()
+        scratch = self.get_scratch_space()
+        pdf_dir = os.path.join(scratch, "paper_pdf")
+        md_dir = os.path.join(scratch, "paper_md")
+        hio.create_dir(pdf_dir, incremental=True)
+        hio.create_dir(md_dir, incremental=True)
         if pdf_content:
-            hio.to_file(os.path.join(papers_dir, "b.pdf"), pdf_content)
+            hio.to_file(os.path.join(pdf_dir, "b.pdf"), pdf_content)
         if md_content:
-            hio.to_file(os.path.join(papers_dir, "b.md"), md_content)
+            hio.to_file(os.path.join(md_dir, "b.md"), md_content)
         # Run test.
-        actual = epqfetch.is_fetched(papers_dir, "b")
+        actual = epqfetch.is_fetched(pdf_dir, md_dir, "b")
         # Check outputs.
         self.assertEqual(actual, expected)
 
@@ -132,6 +137,76 @@ class Test_is_fetched(hunitest.TestCase):
 
 
 # #############################################################################
+# Test__read_last_line
+# #############################################################################
+
+
+class Test__read_last_line(hunitest.TestCase):
+    """
+    Test `epq_fetcher._read_last_line()`.
+    """
+
+    def helper(self, log_text: str, expected: str) -> None:
+        """
+        Test helper for `_read_last_line()`.
+
+        :param log_text: content of the log, "" for no file
+        :param expected: expected reason
+        """
+        # Prepare inputs.
+        log_path = os.path.join(self.get_scratch_space(), "tool.log")
+        if log_text:
+            hio.to_file(log_path, log_text)
+        # Run test.
+        actual = epqfetch._read_last_line(log_path)
+        # Check outputs.
+        self.assert_equal(actual, expected)
+
+    def test1(self) -> None:
+        """
+        Test the notes of `hsystem` after a failed command are skipped, and the
+        last exception line of the traceback is the reason.
+        """
+        log_text = """
+        Traceback (most recent call last):
+          File "download_with_chrome.py", line 337, in _download
+        playwright._impl._errors.Error: BrowserType.connect_over_cdp: Protocol error
+        Call log:
+          - <ws preparing> retrieving websocket url from http://127.0.0.1:9222
+          - <ws disconnected> ws://127.0.0.1:9222/devtools/browser/x code=1000
+
+        '
+        - Output saved in 'tmp.system_output.txt'
+        - Command saved in 'tmp.system_cmd.sh'
+        """
+        expected = (
+            "playwright._impl._errors.Error: BrowserType.connect_over_cdp: "
+            "Protocol error"
+        )
+        self.helper(hprint.dedent(log_text), expected)
+
+    def test2(self) -> None:
+        """
+        Test a log with no exception line gives its last line.
+        """
+        log_text = "Start\nDownloading\nHTTP 404 for the input\n\n"
+        self.helper(log_text, "HTTP 404 for the input")
+
+    def test3(self) -> None:
+        """
+        Test a missing log.
+        """
+        self.helper("", "no output")
+
+    def test4(self) -> None:
+        """
+        Test a log with only the notes of `hsystem`.
+        """
+        log_text = "'\n- Output saved in 'o.txt'\n- Command saved in 'c.sh'\n"
+        self.helper(log_text, "no output")
+
+
+# #############################################################################
 # Test_fetch_paper
 # #############################################################################
 
@@ -154,16 +229,17 @@ class Test_fetch_paper(hunitest.TestCase):
         :param download_inputs: ordered download inputs of the paper
         :param expected: expected `status|reason`
         :param pdf_content: content of a PDF that is already in the dir
-        :return: path of the dir of the papers
+        :return: scratch dir, with the dirs `paper_pdf` and `paper_md`
         """
         # Prepare inputs.
         scratch = self.get_scratch_space()
         tool_path = epqteuti.make_stub_tool(scratch)
         calls_path = os.path.join(scratch, "calls.txt")
-        papers_dir = os.path.join(scratch, "papers")
-        hio.create_dir(papers_dir, incremental=True)
+        pdf_dir = os.path.join(scratch, "paper_pdf")
+        md_dir = os.path.join(scratch, "paper_md")
+        hio.create_dir(pdf_dir, incremental=True)
         if pdf_content:
-            hio.to_file(os.path.join(papers_dir, "b.pdf"), pdf_content)
+            hio.to_file(os.path.join(pdf_dir, "b.pdf"), pdf_content)
         paper = epqteuti.make_paper(
             base_name="b", download_inputs=tuple(download_inputs)
         )
@@ -171,32 +247,40 @@ class Test_fetch_paper(hunitest.TestCase):
         with mock.patch.dict(os.environ, {"EPQ_STUB_CALLS": calls_path}):
             result = epqfetch.fetch_paper(
                 paper,
-                papers_dir,
+                pdf_dir,
+                md_dir,
                 log_dir=os.path.join(scratch, "logs"),
                 tool_path=tool_path,
             )
         # Check outputs.
         actual = f"{result.status}|{result.reason}"
         self.assert_equal(actual, expected)
-        return papers_dir
+        return scratch
 
     def test1(self) -> None:
         """
         Test the first input that works gives the PDF and the markdown.
         """
         # Run test.
-        papers_dir = self.helper(["https://x/good.pdf"], "ok|")
+        scratch = self.helper(["https://x/good.pdf"], "ok|")
         # Check outputs.
-        self.assertTrue(epqfetch.is_fetched(papers_dir, "b"))
+        pdf_dir = os.path.join(scratch, "paper_pdf")
+        md_dir = os.path.join(scratch, "paper_md")
+        self.assertTrue(epqfetch.is_fetched(pdf_dir, md_dir, "b"))
+        # The markdown is not left next to the PDF.
+        self.assertEqual(os.listdir(pdf_dir), ["b.pdf"])
+        self.assertEqual(os.listdir(md_dir), ["b.md"])
 
     def test2(self) -> None:
         """
         Test an HTML page is rejected and the next input is tried.
         """
         # Run test.
-        papers_dir = self.helper(["https://x/html", "https://x/good"], "ok|")
+        scratch = self.helper(["https://x/html", "https://x/good"], "ok|")
         # Check outputs.
-        self.assertTrue(epqfetch.is_fetched(papers_dir, "b"))
+        pdf_dir = os.path.join(scratch, "paper_pdf")
+        md_dir = os.path.join(scratch, "paper_md")
+        self.assertTrue(epqfetch.is_fetched(pdf_dir, md_dir, "b"))
 
     def test3(self) -> None:
         """
@@ -235,13 +319,20 @@ class Test_fetch_paper(hunitest.TestCase):
         Test a valid PDF with no markdown only runs the conversion.
         """
         # Run test.
-        papers_dir = self.helper(
+        scratch = self.helper(
             ["https://x/good"], "ok|", pdf_content="%PDF-1.4 old"
         )
         # Check outputs.
-        calls = hio.from_file(os.path.join(papers_dir, "..", "calls.txt"))
+        calls = hio.from_file(os.path.join(scratch, "calls.txt"))
         self.assertIn("clear=True", calls)
         self.assertNotIn("https://x/good", calls)
+        # The markdown is in its own dir.
+        self.assertTrue(
+            os.path.isfile(os.path.join(scratch, "paper_md", "b.md"))
+        )
+        self.assertFalse(
+            os.path.isfile(os.path.join(scratch, "paper_pdf", "b.md"))
+        )
 
     def test8(self) -> None:
         """

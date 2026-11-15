@@ -1,0 +1,3 @@
+# First clone Cisco's tool at the revision documented in results/COMPARISON.md.
+-r requirements.txt
+-r third_party/ai-deep-sast/requirements.txt

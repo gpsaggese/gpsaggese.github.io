@@ -63,11 +63,14 @@ jobs:
             echo "stale=false" >> $GITHUB_OUTPUT
           fi
 
+      # Use the same Python version as the thin env, which is stored in
+      # `helpers_root/.python-version`. Keep this step in sync with
+      # `fast_tests.no_docker.yml`.
       - name: Set up Python
         if: steps.check.outputs.stale == 'true'
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version-file: helpers_root/.python-version
 
       # Some scripts declare their dependencies inline and are meant to be run
       # via `uv run`.

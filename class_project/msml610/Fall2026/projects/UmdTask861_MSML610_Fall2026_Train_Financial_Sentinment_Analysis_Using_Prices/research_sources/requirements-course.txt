@@ -1,0 +1,8 @@
+# Research notebook replay; these are the versions actually executed on Python 3.11.
+# This is an environment specification, not a hashed cross-platform lock file.
+-r requirements-experiments.txt
+matplotlib==3.10.7
+nbformat==5.10.4
+nbclient==0.10.2
+nbconvert==7.16.6
+ipykernel==7.1.0

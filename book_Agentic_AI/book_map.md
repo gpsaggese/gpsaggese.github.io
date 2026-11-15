@@ -276,7 +276,7 @@
 - `book_Agentic_AI/lectures_source/Lesson01.1-What_Is_An_Agentic_AI.smd`
   - [25%]: Preview of ReAct and the loop, WebShop grounding example, agents
     vs. chatbots framing that the history builds on
-- `book_AI_Software_Engineering/lectures_source/Lesson02.1_AI_Pair_Programming_Workflows.smd`
+- `book_AI_Software_Engineering/lectures_source/Lesson04.01_AI_Pair_Programming_Workflows.smd`
   - [15%]: MCP as one protocol for many tools, which continues the tool-use
     standards thread into today's products
 - _Not covered_
@@ -326,7 +326,7 @@
 - `book_Agentic_AI/lectures_source/Lesson02.1-LLM_Building_Blocks.smd`
   - [20%]: Expressivity section, decoding strategies (greedy, top-k, top-p)
     that CoT-decoding builds on
-- `book_AI_Software_Engineering/lectures_source/Lesson03.1_Prompt_Engineering_for_Code.smd`
+- `book_AI_Software_Engineering/lectures_source/Lesson05.01_Prompt_Engineering_for_Code.smd`
   - [15%]: Structured chain-of-thought, self-planning, least-to-most
     decomposition, sample-and-vote applied to code
 - _Not covered_
@@ -423,7 +423,7 @@
 - `book_Agentic_AI/lectures_source/Lesson04.1-LLM_Reasoning.smd`
   - [30%]: Self-consistency, tree/graph of thought search, and the limits of
     self-correction that motivate grounded verifiers
-- `book_AI_Software_Engineering/lectures_source/Lesson03.1_Prompt_Engineering_for_Code.smd`
+- `book_AI_Software_Engineering/lectures_source/Lesson05.01_Prompt_Engineering_for_Code.smd`
   - [30%]: Self-refine and self-debug, test-first prompting, flow engineering,
     sample and vote, the refinement loop
 - `book_Agentic_AI/lectures_source/Lesson08.1-Learning_to_reason.smd`
@@ -782,7 +782,7 @@
 - `book_Agentic_AI/lectures_source/Lesson01.1-What_Is_An_Agentic_AI.smd`
   - [20%]: Single-agent vs. multi-agent taxonomy, reactive vs. deliberative
     agents
-- `book_AI_Software_Engineering/lectures_source/Lesson14.1_Human_AI_Collaboration_Patterns.smd`
+- `book_AI_Software_Engineering/lectures_source/Lesson06.01_Human_AI_Collaboration_Patterns.smd`
   - [20%]: Division of labor, shared conventions, multiple engineers with one
     or more agents, escalation paths
 - `book_Agentic_AI/lectures_source/Lesson03.1-History_of_LLM_Agents.smd`
@@ -825,13 +825,13 @@
 - TODO: no deck yet
 
 ### Lesson Materials
-- `book_AI_Software_Engineering/lectures_source/Lesson02.1_AI_Pair_Programming_Workflows.smd`
+- `book_AI_Software_Engineering/lectures_source/Lesson04.01_AI_Pair_Programming_Workflows.smd`
   - [30%]: MCP as one protocol for many tools, agent surfaces, CI integration,
     background sessions, the framework layer seen from the product side
 - `book_Agentic_AI/lectures_source/Lesson06.1-Inference_time_techniques.smd`
   - [25%]: OPRO as prompt optimization without gradients, the mechanism DSPy
     teleprompters generalize
-- `book_AI_Software_Engineering/lectures_source/Lesson03.1_Prompt_Engineering_for_Code.smd`
+- `book_AI_Software_Engineering/lectures_source/Lesson05.01_Prompt_Engineering_for_Code.smd`
   - [25%]: Prompt patterns as reusable templates, prompts as versioned
     artifacts, decomposition into scoped steps
 - `book_Agentic_AI/lectures_source/Lesson01.1-What_Is_An_Agentic_AI.smd`
@@ -927,7 +927,7 @@
 - `book_Agentic_AI/lectures_source/Lesson03.1-History_of_LLM_Agents.smd`
   - [15%]: Brittle parsing and grounding, compounding errors, which dominate
     GUI agent failures
-- `book_AI_Software_Engineering/lectures_source/Lesson14.1_Human_AI_Collaboration_Patterns.smd`
+- `book_AI_Software_Engineering/lectures_source/Lesson06.01_Human_AI_Collaboration_Patterns.smd`
   - [15%]: Confirmation points for hard-to-reverse actions, three-tier
     oversight, which computer-use agents need
 - _Not covered_
@@ -970,13 +970,13 @@
 - TODO: no deck yet; see `book_AI_Software_Engineering/lectures_source/*.smd`
 
 ### Lesson Materials
-- `book_AI_Software_Engineering/lectures_source/Lesson01.1_LLM_Assisted_Code_Generation.smd`
+- `book_AI_Software_Engineering/lectures_source/Lesson01.01_LLM_Assisted_Code_Generation.smd`
   - [55%]: Code generation mechanics, prompt anatomy, hallucination taxonomy
     and its root causes, context budget and degradation on large codebases
-- `book_AI_Software_Engineering/lectures_source/Lesson02.1_AI_Pair_Programming_Workflows.smd`
+- `book_AI_Software_Engineering/lectures_source/Lesson04.01_AI_Pair_Programming_Workflows.smd`
   - [50%]: Autocomplete vs. chat vs. agentic assistance, Claude Code / Copilot
     / Cursor, CLI and IDE surfaces, MCP, CI integration, automated PR review
-- `book_AI_Software_Engineering/lectures_source/Lesson03.1_Prompt_Engineering_for_Code.smd`
+- `book_AI_Software_Engineering/lectures_source/Lesson05.01_Prompt_Engineering_for_Code.smd`
   - [45%]: Specs and acceptance criteria, few-shot patterns, test-first
     prompting, self-refine and self-debug, decomposition and the refinement
     loop
@@ -1022,7 +1022,7 @@
 - TODO: no deck yet
 
 ### Lesson Materials
-- `book_AI_Software_Engineering/lectures_source/Lesson14.1_Human_AI_Collaboration_Patterns.smd`
+- `book_AI_Software_Engineering/lectures_source/Lesson06.01_Human_AI_Collaboration_Patterns.smd`
   - [35%]: Three collaboration modes, the handoff problem, task-risk matching,
     three-tier oversight, escalation when the agent is uncertain,
     machine-readable contracts, team-level impact measurement
@@ -1311,7 +1311,7 @@
 - TODO: no deck yet
 
 ### Lesson Materials
-- `book_AI_Software_Engineering/lectures_source/Lesson14.1_Human_AI_Collaboration_Patterns.smd`
+- `book_AI_Software_Engineering/lectures_source/Lesson06.01_Human_AI_Collaboration_Patterns.smd`
   - [25%]: Confirmation points for hard-to-reverse actions, what to delegate
     vs. what needs a human, three-tier oversight, risk matrix
 - `book_Agentic_AI/lectures_source/Lesson07.1-Tool_use_and_retrieval.smd`
@@ -1374,7 +1374,7 @@
 - `book_Agentic_AI/lectures_source/Lesson09.1_Post_training_and_verifiable_agents.smd`
   - [15%]: Verification gaps and reward hacking, which capability evaluations
     must anticipate
-- `book_AI_Software_Engineering/lectures_source/Lesson14.1_Human_AI_Collaboration_Patterns.smd`
+- `book_AI_Software_Engineering/lectures_source/Lesson06.01_Human_AI_Collaboration_Patterns.smd`
   - [15%]: Calibrating trust vs. reliance, evidence and provenance for team
     trust
 - _Not covered_

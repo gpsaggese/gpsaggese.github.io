@@ -213,3 +213,107 @@
 - For a complete pass on one lecture (review, render, book chapter, compile), start
   from the checklist template at `msml610/book/prompt.slides_and_book_flow.md` and
   follow steps 1-4 above in order
+
+# Workflows
+
+## Overview
+
+- Extract headers and create a comprehensive syllabus from all lecture materials
+  using the `for_loop_lessons.py` orchestration script
+
+## Slides
+
+### Iterate on the Slides
+
+- Generate slides when editing the source
+  ```bash
+  > gen_slides.py -i msml610/lectures_source/Lesson01.1-Intro.smd
+  > gen_slides.py -i msml610/01.1 --daemon
+  > gen_slides.py -i msml610/01.1 --daemon
+  ```
+
+- The file is generated in `lectures_pdf.tmp`
+
+## Check Slides
+
+```
+claude> /slides.criticize msml610/lectures_source/Lesson01.2-AI_and_Machine_Learning.smd
+```
+
+## Slides Commentary
+
+### Generate for One Lecture
+- Generate one lecture
+  ```
+  > gen_lecture_commentary.py msml610/01.1 --image_type jpg
+  ```
+
+### Generate for All Lectures
+
+- Generate all the lectures
+  ```
+  > for_loop_lessons.py --class data605 --action generate_lecture_commentary --lectures "01.1-02"
+
+  # Check out.
+  > publish_class_links.py --dir msml610 --out_file ./links.html --do_not_fail_on_warnings --use_master
+  > open book_springer/lecture_commentary/Lesson04.1_Knowledge_Representation.book_chapter.html
+  ```
+
+### Publish the lecture commentary on the website
+
+website/update_class_links.sh
+
+## Update Slides Commentary
+
+```
+claude> Execute class_scripts/prompt.update_lecture_commentary.md on msml610/lectures_source/Lesson01.2-AI_and_Machine_Learning.smd
+```
+
+## Course Syllabus
+
+### Generate Complete Course Syllabus
+
+- Extract all lecture headers and create a consolidated syllabus:
+
+  ```bash
+  > cd /Users/saggese/src/umd_classes1
+  > for_loop_lessons.py --class msml610 --action generate_toc
+  ```
+
+This generates:
+- **Output file**: `msml610/all_tocs.md`
+- **Content**: All lecture headers organized hierarchically (up to 5 levels deep)
+- **Format**: Markdown with lecture structure preserved
+
+### Generate Syllabus for Specific Lectures
+
+- Extract headers from a subset of lectures using pattern matching:
+  ```bash
+  # Single lecture pattern
+  > for_loop_lessons.py --class msml610 --lectures "01*" --action generate_toc
+
+  # Multiple lecture patterns (colon-separated)
+  > for_loop_lessons.py --class msml610 --lectures "01*:02*:03.1" --action generate_toc
+
+  # Continuous range (inclusive)
+  > for_loop_lessons.py --class msml610 --lectures "01.1-03.2" --action generate_toc
+  ```
+
+### Output Format
+
+- The syllabus markdown file contains structured headers with proper indentation:
+  ```markdown
+  # Lesson01.1-Intro.smd
+
+  ## Main Topic
+  ### Subtopic 1
+  #### Sub-subtopic
+  ### Subtopic 2
+
+  # Lesson01.2-Topic.smd
+
+  ## Another Main Topic
+  ...
+  ```
+
+- This provides a complete overview of the course curriculum and lecture structure

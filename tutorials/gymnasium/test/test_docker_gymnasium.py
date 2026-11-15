@@ -16,13 +16,12 @@ import os
 import re
 from typing import Any, Dict, List
 
-import pytest
-
 import helpers.hdocker_tests as hdoctest
 import helpers.hio as hio
 import helpers.hserver as hserver
 import helpers.hsystem as hsystem
 import helpers.hunit_test as hunitest
+import pytest
 
 _LOG = logging.getLogger(__name__)
 
@@ -216,5 +215,15 @@ class Test_notebooks(hunitest.TestCase):
         """
         # Prepare inputs.
         notebook_name = "gymnasium.05.API.Vector"
+        # Run test.
+        self.helper(notebook_name)
+
+    @pytest.mark.slow
+    def test6(self) -> None:
+        """
+        Test that the example notebook runs and repeats inside Docker.
+        """
+        # Prepare inputs.
+        notebook_name = "gymnasium.example"
         # Run test.
         self.helper(notebook_name)
