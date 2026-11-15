@@ -10,7 +10,7 @@
   ```
   DIR="/Users/saggese/src/umd_classes2"
   BOOK="book_AI_Software_Engineering"
-  CHAP="12, Planning Software"
+  CHAP="13: Software Architecture Guidelines"
   ```
   - `CHAP` is an H2 chapter of `<DIR>/<BOOK>/book_map.md`
   - The topics come from `### Topics` of that chapter

@@ -27,6 +27,7 @@
 ## Short TOC
 
 - Foundations of AI-Assisted Coding
+  - 00, History of Software Engineering
   - 01, Coding Models
   - 02, Skills Organization and Management
   - 03, AI Harness
@@ -62,6 +63,7 @@
 - `.github/workflows/*.yml` (CI workflows of this repo)
 - `book_AI_Software_Engineering/resources.md`
 - `book_AI_Software_Engineering/running_example.md` (the running example)
+- `book_AI_Software_Engineering/plan.history.md` (era-by-era history outline)
 - `book_AI_Software_Engineering/lectures_source/claude_code.md`
 - `book_Agentic_AI/lectures_source/*.smd`
 - The book's own decks (`book_AI_Software_Engineering/lectures_source/*.smd`) are
@@ -81,6 +83,7 @@
 | Chap                                          | Slides                                             | Slides % | Criticize | Tutorial | Book |
 | --------------------------------------------- | -------------------------------------------------- | -------- | --------- | -------- | ---- |
 | **Part I: Foundations of AI-Assisted Coding** |                                                    |          |           |          |      |
+| 00: History of Software Engineering           | Lesson00.01_History_of_Software_Engineering.smd    |          |           |          |      |
 | 01: Coding Models                             | Lesson01.01_LLM_Assisted_Code_Generation.smd       | 100%     |           |          |      |
 | 02: Skills Organization and Management        | Lesson02.01_Skills_Organization_and_Management.smd |          |           |          | yes  |
 | 03: AI Harness                                | Lesson03.01_AI_Harness.smd                         |          |           |          |      |
@@ -108,8 +111,8 @@
 - Split the shared deck `Tools_source.smd` into per-chapter decks, or keep it as the
   shared deck for chapters 09, 11-13, 17, and 18
 - Write a dedicated deck for chapter 10
-- Resolve the `TODO(gp): Check` notes in the decks of chapters 02, 03, 07, 08, and
-  16, then fill their `Slides %`
+- Resolve the `TODO(gp): Check` notes in the decks of chapters 00, 02, 03, 07, 08,
+  and 16, then fill their `Slides %`
 - Confirm that Skills is chapter 02 and that Human-AI Collaboration Patterns belongs
   in Part I
 
@@ -122,6 +125,58 @@
   - Avoid spaghetti code
   - The craft of Software Development
 - Part I explains how models write code and how humans steer them
+
+## 00: History of Software Engineering
+
+### Goals
+
+- Trace ten eras of software engineering, from punch cards to coding agents
+- Compare eras by abstraction level, feedback loop, bottleneck, and engineer's role
+- Explain why specifying and verifying stay hard as tools improve
+
+### Topics
+
+- Why History Matters
+  - Ten eras at a glance and four lenses to compare them
+- Before the Internet
+  - Punch cards, the software crisis, and structured programming
+  - Waterfall, the cost-of-change argument, and object orientation
+  - No silver bullet: essential versus accidental complexity
+- The Internet, Open Source, and Agile
+  - Web distribution, open source, and version control from CVS to Git
+  - The Agile Manifesto, its practices, and cargo-cult agile
+- The Platform Era
+  - Stack Overflow, frameworks, and dependency risk
+  - Infrastructure as code, DevOps, microservices, and Conway's law
+- AI Enters the Editor
+  - AI autocomplete, comments as prompts, and their limits
+  - Chat assistants and the human as copy-paste bus
+- Vibe Coding and Agentic Engineering
+  - Vibe coding: where it works and where it fails
+  - Coding agents and the shift to specifying, reviewing, and orchestrating
+  - New practices and open questions
+- Patterns Across Eras
+  - Rising abstraction, shrinking feedback loops, and a moving bottleneck
+  - What might come next, and the constant of deciding what to build
+
+### TODO
+
+- [ ] Verify the numbers and quotes of the cited papers against the sources
+- [ ] Decide whether the deck keeps its CSV running task or uses `shortlink`
+- [ ] Trim the deck from 40 slides to the 30-35 target, or split it in two
+
+### Slides
+
+- `book_AI_Software_Engineering/lectures_source/Lesson00.01_History_of_Software_Engineering.smd`
+
+### Lesson Materials
+
+- `book_AI_Software_Engineering/plan.history.md`
+  - [80%]: the ten eras, their tools and practices, open questions, patterns
+    across eras
+- _Not covered_
+  - [20%]: cost-of-change data, essential versus accidental complexity, Conway's
+    law, empirical studies of AI coding tools
 
 ## 01: Coding Models
 

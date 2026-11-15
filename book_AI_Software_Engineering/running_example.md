@@ -167,7 +167,7 @@
   - Lowest setup cost: no server, no key, no cloud account
   - A CLI matches the dockerized executables of chapter 17
 - Why not chosen:
-  - No running service, so chapter 17 monitoring and rollback stay uncovered
+  - No running service, so chapter 18 monitoring and rollback stay uncovered
   - Dry domain
   - Single-user tool: no concurrency or security stories
 

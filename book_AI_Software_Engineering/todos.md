@@ -94,12 +94,12 @@ run_typst.py --compress_pdf
 - Output: book_AI_Software_Engineering/running_example.md
 - Decision: use `shortlink` (URL shortener service)
 
-### [ ] Use example as unit test
-- This example should be also used as "unit tests", e.g., running
-  prompts to see what is generated
-
 ### [x] Update with running example
 - Add a reference to book_AI_Software_Engineering/running_example.md as running
   example to book_AI_Software_Engineering/book_map.md
 - Update Lesson12.01_Planning_Software.smd with book_AI_Software_Engineering/running_example.md
   instead of the pipeline to download and process papers
+
+### [ ] Use example as unit test
+- This example should be also used as "unit tests", e.g., running
+  prompts to see what is generated
