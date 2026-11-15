@@ -88,8 +88,9 @@
   but the last bits of the data depend on the CPU's math kernels, so a few
   instances hash differently; there `check_instance()` in `tukey_sets.py`
   warns once per process and goes on (and warns again if most instances
-  differ, which would mean a changed generator), and the one test that
-  compares bit-level hashes is skipped
+  differ, which would mean a changed generator; each worker process of a
+  parallel run counts on its own), and the one test that compares bit-level
+  hashes is skipped
 - `rel_sort_regress` breaks the ties of its count by variable index, so equal
   counts give the same order on every CPU
 - Measured under x86-64 emulation on Nov 14, 2026 (not yet on a real Intel or

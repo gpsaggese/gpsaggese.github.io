@@ -52,6 +52,11 @@
 - **Why**: the spec's M3 asks to beat the scripted baseline; the rule is not PC,
   so PC is reported too
 - **Alternatives**: a hand-tuned rule (a secondary comparison)
+- **Limits**: the tuned variants search small grids (`GRIDS` in
+  `tukey_benchmark.py`) on the validation sets, and the chosen value is often
+  the smallest of its grid (`scripted_plus` in 9 of the 10 settings,
+  `scripted_tuned` in 5), so the Milestone 2 table reports these grids, not
+  the best each method can do
 - **Status**: accepted
 
 ### `D6` (The policy runs under a call budget)

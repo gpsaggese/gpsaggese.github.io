@@ -527,9 +527,9 @@ def pred_ll(
     Each node is regressed on its parents (OLS with intercept) on the training
     rows; the residual variance is the MLE `RSS / n`. The mean log-density of
     the test rows is summed over nodes. Markov-equivalent DAGs fit the same
-    Gaussian model, so they get the same value. A node whose parents are
-    exactly linearly dependent on the training rows (e.g., two parents with
-    equal columns) has no OLS fit and is refused with an error.
+    Gaussian model, so they get the same value. A node is refused only when
+    its normal equations are exactly singular in floating point (e.g., two
+    parents with equal columns); a near-singular fit is solved as it is.
 
     :param B: DAG adjacency
     :param moments_train: `get_moments()` of the training rows
