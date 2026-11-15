@@ -236,7 +236,7 @@ with pd.option_context("display.max_colwidth", None):
 # - Records each call in the evidence, which caches results per dataset
 
 # %%
-hintros.print_obj_info(ttools.ToolCache)
+hintros.print_obj_info(utils.cell3_1_call_each_tool)
 
 # %% [markdown]
 # ## Cell 3.2: Run the prototype's rule as an agent
@@ -245,6 +245,8 @@ hintros.print_obj_info(ttools.ToolCache)
 # - Play the prototype's scripted rule through the tool API and print the
 #   prototype's own edges beside its score (`test_tukey_scripted.py` checks
 #   that the two graphs are equal on seeds 0-19)
+# - The test compares the rule's raw edges, while the printed score is of its
+#   graph after cycle removal (`emit_graph()`)
 
 # %%
 # The prototype's own setting (exponential noise, raw scale), unlimited budget.

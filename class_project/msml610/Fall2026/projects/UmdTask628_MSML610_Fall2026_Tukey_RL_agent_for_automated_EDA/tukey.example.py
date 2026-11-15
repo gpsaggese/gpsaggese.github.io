@@ -120,7 +120,8 @@ utils.example_cell1_3_plot_sortability(sortability)
 #   1.00) in every random-graph family, including iSCM data, because it depends
 #   on the graph, not on the weights; the exception is `sklearn_confounder`
 #   (0.50 with the true graph, 0.49 estimated: no order signal)
-#
+
+# %% [markdown]
 # **Implementation** `example_cell1_3_load_sortability()`
 # - Reads `results/m1/sortability.json` (written by
 #   `tukey_results.py sortability`); the edge
@@ -177,7 +178,8 @@ utils.example_cell2_2_plot_m2_heatmap()
 #   easy for every method (a random order scores -0.095 there)
 # - Read the `ges` and `pc` rows: best on Gaussian data, where the target is the
 #   equivalence class
-#
+
+# %% [markdown]
 # **Implementation** `example_cell2_2_plot_m2_heatmap()`
 # - Reads `results/m2/table_summary.json` (written by `tukey_results.py
 #   m2_table` and `m2_split`)
