@@ -9,7 +9,7 @@ import research.Optimal_strategy_for_racket_sports.test.test_racket_sports_07_sp
 import dataclasses
 import logging
 import pprint
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, List, Tuple
 
 import helpers.hunit_test as hunitest
 import pandas as pd
@@ -32,8 +32,8 @@ def _get_tiny_config(
     the notebook 01 utils).
 
     :param update: fields of the configuration to change
-    :return: one sport, a tiny grid, 3 ball speeds, and the base with one
-        variant
+    :return: one sport, a tiny grid, 3 ball speeds, the base with one
+        variant, and 2 values of `a` for the scaling check
     """
     config = racket_sports_07_speed_vs_accuracy_utils.get_experiment_config(
         False
@@ -45,6 +45,7 @@ def _get_tiny_config(
         n_samples=1100,
         speed_ratios=(0.5, 1.0, 2.0),
         a_values={"base": (0.0, 1.0), "knee": (1.0,)},
+        scaling_a_values=(0.0, 0.5),
     )
     config = dataclasses.replace(config, **update)
     return config
@@ -59,6 +60,66 @@ def _to_str(df: pd.DataFrame) -> str:
     """
     text: str = df.to_string(float_format=lambda value: str(float(value)))
     return text
+
+
+def _make_sweep_rows(
+    p_winner: List[float],
+    p_winner_se: float,
+    mean_p_winner: List[float],
+    **update: Any,
+) -> pd.DataFrame:
+    """
+    Build the rows of one sweep of `run_speed_sweeps()`, by hand.
+
+    :param p_winner: the highest `P(winner)` per ball speed, from `v0 / 2` in
+        steps of `v0 / 2`
+    :param p_winner_se: the standard error of each value
+    :param mean_p_winner: the mean `P(winner)` over the half per ball speed
+    :param update: columns to change, e.g., `sport="Pickleball"`
+    :return: one row per ball speed, for the tennis base at `a = 1`
+    """
+    speed_ratios = [0.5 * (i + 1) for i in range(len(p_winner))]
+    sweep = pd.DataFrame(
+        {
+            "sport": "Tennis",
+            "variant": "base",
+            "a": 1.0,
+            "speed_ratio": speed_ratios,
+            "ball_speed": [25.0 * ratio for ratio in speed_ratios],
+            "max_p_winner": p_winner,
+            "max_p_winner_se": p_winner_se,
+            "mean_p_winner": mean_p_winner,
+        }
+    )
+    sweep = sweep.assign(**update)
+    return sweep
+
+
+def _make_best_speed_rows(
+    variant: str, a: float, band_ratios: Tuple[float, ...]
+) -> pd.DataFrame:
+    """
+    Build one row of `find_best_speeds()`, by hand.
+
+    :param variant: name of the variant, e.g., "base"
+    :param a: coefficient of the sweep
+    :param band_ratios: the ball speeds of the band, as `v_b / v0`
+    :return: the row, with the first speed of the band as the marked one and
+        a loss of the fastest ball of 10 points per speed of the band
+    """
+    best_speeds = pd.DataFrame(
+        {
+            "sport": ["Tennis"],
+            "variant": [variant],
+            "a": [a],
+            "best_speed_ratio": [band_ratios[0]],
+            "band_low_ratio": [min(band_ratios)],
+            "band_high_ratio": [max(band_ratios)],
+            "band_ratios": [band_ratios],
+            "fastest_loss_points": [10.0 * len(band_ratios)],
+        }
+    )
+    return best_speeds
 
 
 # #############################################################################
@@ -458,24 +519,24 @@ class Test_count_maps(hunitest.TestCase):
     def test1(self) -> None:
         """
         Test the full run: 160 maps for the base, 576 for the 9 variants at 2
-        values of `a`, and 32 for the second seed.
+        values of `a`, 32 for the second seed, and 18 for the scaling check.
         """
         # Prepare inputs.
         run_full = True
         # Prepare outputs.
-        expected = 160 + 576 + 32
+        expected = 160 + 576 + 32 + 18
         # Run test.
         self.helper(run_full, expected)
 
     def test2(self) -> None:
         """
         Test the reduced run: 54 maps for the base and 126 for the 7 variants,
-        all on 9 ball speeds.
+        all on 9 ball speeds, and 18 for the scaling check.
         """
         # Prepare inputs.
         run_full = False
         # Prepare outputs.
-        expected = 54 + 126
+        expected = 54 + 126 + 18
         # Run test.
         self.helper(run_full, expected)
 
@@ -836,3 +897,467 @@ class Test_run_speed_sweeps(hunitest.TestCase):
         mean = actual[is_base].set_index(["a", "speed_ratio"])["mean_p_winner"]
         self.assertLess(mean[1.0, 2.0], mean[0.0, 2.0] - 0.05)
         self.assertGreater(mean[1.0, 0.5], mean[0.0, 0.5] + 0.02)
+
+
+# #############################################################################
+# Test_find_best_speeds
+# #############################################################################
+
+
+class Test_find_best_speeds(hunitest.TestCase):
+    """
+    Test `find_best_speeds()`.
+    """
+
+    def helper(
+        self,
+        p_winner: List[float],
+        p_winner_se: float,
+        mean_p_winner: List[float],
+    ) -> pd.Series:
+        """
+        Find the best ball speed of one sweep, at `v0 / 2`, `v0`, `1.5 v0`,
+        and `2 v0`, with `v0` = 25 m/s.
+
+        :param p_winner: the highest `P(winner)` per ball speed
+        :param p_winner_se: the standard error of each value
+        :param mean_p_winner: the mean `P(winner)` over the half per ball speed
+        :return: the only row of `find_best_speeds()`
+        """
+        sweeps = _make_sweep_rows(p_winner, p_winner_se, mean_p_winner)
+        best_speeds = racket_sports_07_speed_vs_accuracy_utils.find_best_speeds(
+            sweeps
+        )
+        self.assertEqual(len(best_speeds), 1)
+        row: pd.Series = best_speeds.round(6).iloc[0]
+        return row
+
+    def test1(self) -> None:
+        """
+        Test a clear best speed: the others are more than 2 SE away, and the
+        mean over the half peaks at another speed.
+        """
+        # Prepare inputs.
+        p_winner = [0.9, 0.99, 0.95, 0.8]
+        p_winner_se = 0.002
+        mean_p_winner = [0.6, 0.7, 0.8, 0.75]
+        # Prepare outputs.
+        expected = """
+        sport                       Tennis
+        variant                       base
+        a                              1.0
+        best_speed_ratio               1.0
+        best_ball_speed               25.0
+        band_low_ratio                 1.0
+        band_high_ratio                1.0
+        band_ratios                 (1.0,)
+        n_band                           1
+        n_speeds                         4
+        slowest_in_band              False
+        fastest_in_band              False
+        top_p_winner                  0.99
+        fastest_p_winner               0.8
+        fastest_loss_points           19.0
+        best_mean_speed_ratio          1.5
+        best_mean_p_winner             0.8
+        fastest_mean_loss_points       5.0
+        """
+        # Run test.
+        actual = self.helper(p_winner, p_winner_se, mean_p_winner)
+        # Check outputs.
+        actual = actual.to_string()
+        self.assert_equal(actual, expected, dedent=True, fuzzy_match=True)
+
+    def test2(self) -> None:
+        """
+        Test that every speed is in the band when all tie at 1.000 with no
+        standard error, as in tennis: the fastest ball loses nothing.
+        """
+        # Prepare inputs.
+        p_winner = [1.0, 1.0, 1.0, 1.0]
+        p_winner_se = 0.0
+        mean_p_winner = [0.6, 0.7, 0.8, 0.9]
+        names = ["band_ratios", "fastest_in_band", "fastest_loss_points"]
+        # Prepare outputs.
+        expected = """
+        band_ratios            (0.5, 1.0, 1.5, 2.0)
+        fastest_in_band                        True
+        fastest_loss_points                     0.0
+        """
+        # Run test.
+        actual = self.helper(p_winner, p_winner_se, mean_p_winner)
+        # Check outputs.
+        actual = actual[names].to_string()
+        self.assert_equal(actual, expected, dedent=True, fuzzy_match=True)
+
+    def test3(self) -> None:
+        """
+        Test a band of 3 speeds within 2 SE of the highest: the marked speed
+        is the middle of the band, not the highest value.
+        """
+        # Prepare inputs.
+        p_winner = [0.985, 0.985, 0.99, 0.8]
+        p_winner_se = 0.004
+        mean_p_winner = [0.9, 0.8, 0.7, 0.6]
+        names = ["band_ratios", "best_speed_ratio", "slowest_in_band"]
+        # Prepare outputs.
+        expected = """
+        band_ratios         (0.5, 1.0, 1.5)
+        best_speed_ratio                1.0
+        slowest_in_band                True
+        """
+        # Run test.
+        actual = self.helper(p_winner, p_winner_se, mean_p_winner)
+        # Check outputs.
+        actual = actual[names].to_string()
+        self.assert_equal(actual, expected, dedent=True, fuzzy_match=True)
+
+    def test4(self) -> None:
+        """
+        Test that with no standard error only an equal value is in the band,
+        so a band can skip a speed.
+        """
+        # Prepare inputs.
+        p_winner = [1.0, 0.999, 1.0, 0.5]
+        p_winner_se = 0.0
+        mean_p_winner = [0.6, 0.7, 0.8, 0.75]
+        names = ["band_ratios", "n_band"]
+        # Prepare outputs.
+        expected = """
+        band_ratios    (0.5, 1.5)
+        n_band                  2
+        """
+        # Run test.
+        actual = self.helper(p_winner, p_winner_se, mean_p_winner)
+        # Check outputs.
+        actual = actual[names].to_string()
+        self.assert_equal(actual, expected, dedent=True, fuzzy_match=True)
+
+    def test5(self) -> None:
+        """
+        Test one row per sport, variant, and `a`, in the order of the runs,
+        with the rows of each sweep in any order: the pickleball rows come
+        fastest first, and its fastest ball still loses 20 points.
+        """
+        # Prepare inputs.
+        p_winner_se = 0.002
+        mean_p_winner = [0.5, 0.5, 0.5]
+        sweeps = pd.concat(
+            [
+                _make_sweep_rows([0.9, 0.8, 0.7], p_winner_se, mean_p_winner),
+                _make_sweep_rows(
+                    [0.7, 0.9, 0.8], p_winner_se, mean_p_winner, variant="knee"
+                ),
+                _make_sweep_rows(
+                    [0.7, 0.8, 0.9], p_winner_se, mean_p_winner, a=0.5
+                ),
+                _make_sweep_rows(
+                    [0.9, 0.8, 0.7],
+                    p_winner_se,
+                    mean_p_winner,
+                    sport="Pickleball",
+                ).iloc[::-1],
+            ],
+            ignore_index=True,
+        )
+        # Prepare outputs.
+        expected = """
+                sport variant    a  best_speed_ratio  fastest_loss_points
+        0      Tennis    base  1.0               0.5                 20.0
+        1      Tennis    knee  1.0               1.0                 10.0
+        2      Tennis    base  0.5               1.5                  0.0
+        3  Pickleball    base  1.0               0.5                 20.0
+        """
+        # Run test.
+        actual = racket_sports_07_speed_vs_accuracy_utils.find_best_speeds(
+            sweeps
+        )
+        # Check outputs.
+        columns = ["sport", "variant", "a", "best_speed_ratio"]
+        columns += ["fastest_loss_points"]
+        actual = _to_str(actual[columns].round(6))
+        self.assert_equal(actual, expected, dedent=True, fuzzy_match=True)
+
+    def test6(self) -> None:
+        """
+        Test that no run, and a sweep with one ball speed, are rejected.
+        """
+        # Prepare inputs.
+        bad_inputs = (pd.DataFrame(), _make_sweep_rows([0.9], 0.002, [0.5]))
+        # Run test and check outputs.
+        for sweeps in bad_inputs:
+            with (
+                self.subTest(n_rows=len(sweeps)),
+                self.assertRaises(AssertionError),
+            ):
+                racket_sports_07_speed_vs_accuracy_utils.find_best_speeds(sweeps)
+
+
+# #############################################################################
+# Test_summarize_robustness
+# #############################################################################
+
+
+class Test_summarize_robustness(hunitest.TestCase):
+    """
+    Test `summarize_robustness()`.
+    """
+
+    def helper(
+        self, base_band: Tuple[float, ...], variant_band: Tuple[float, ...]
+    ) -> pd.Series:
+        """
+        Compare the band of a variant with the band of the base, at `a = 1`.
+
+        :param base_band: the ball speeds of the band of the base
+        :param variant_band: the ball speeds of the band of the variant
+        :return: the only row of `summarize_robustness()`
+        """
+        best_speeds = pd.concat(
+            [
+                _make_best_speed_rows("base", 1.0, base_band),
+                _make_best_speed_rows("knee", 1.0, variant_band),
+            ],
+            ignore_index=True,
+        )
+        robustness = (
+            racket_sports_07_speed_vs_accuracy_utils.summarize_robustness(
+                best_speeds
+            )
+        )
+        self.assertEqual(len(robustness), 1)
+        row: pd.Series = robustness.iloc[0]
+        return row
+
+    def test1(self) -> None:
+        """
+        Test 2 bands that share ball speeds: the best speed is robust to the
+        variant.
+        """
+        # Prepare inputs.
+        base_band = (0.5, 1.0, 1.5)
+        variant_band = (1.0, 1.5, 2.0, 2.5)
+        # Prepare outputs.
+        expected = """
+        sport                    Tennis
+        variant                    knee
+        a                           1.0
+        base_band_low_ratio         0.5
+        base_band_high_ratio        1.5
+        band_low_ratio              1.0
+        band_high_ratio             2.5
+        n_shared                      2
+        overlaps                   True
+        d_best_speed_ratio          0.5
+        d_fastest_loss_points      10.0
+        """
+        # Run test.
+        actual = self.helper(base_band, variant_band)
+        # Check outputs.
+        actual = actual.to_string()
+        self.assert_equal(actual, expected, dedent=True, fuzzy_match=True)
+
+    def test2(self) -> None:
+        """
+        Test 2 bands apart: the best speed is not robust to the variant.
+        """
+        # Prepare inputs.
+        base_band = (1.5, 2.0)
+        variant_band = (0.5,)
+        names = ["n_shared", "overlaps", "d_best_speed_ratio"]
+        # Prepare outputs.
+        expected = """
+        n_shared                  0
+        overlaps              False
+        d_best_speed_ratio     -1.0
+        """
+        # Run test.
+        actual = self.helper(base_band, variant_band)
+        # Check outputs.
+        actual = actual[names].to_string()
+        self.assert_equal(actual, expected, dedent=True, fuzzy_match=True)
+
+    def test3(self) -> None:
+        """
+        Test that a band inside the gap of the other one shares no ball
+        speed: the bands compare speed by speed, not by their ends.
+        """
+        # Prepare inputs.
+        base_band = (0.5, 1.5)
+        variant_band = (1.0,)
+        names = ["n_shared", "overlaps"]
+        # Prepare outputs.
+        expected = """
+        n_shared        0
+        overlaps    False
+        """
+        # Run test.
+        actual = self.helper(base_band, variant_band)
+        # Check outputs.
+        actual = actual[names].to_string()
+        self.assert_equal(actual, expected, dedent=True, fuzzy_match=True)
+
+    def test4(self) -> None:
+        """
+        Test that a variant with no base sweep at its `a` is rejected.
+        """
+        # Prepare inputs.
+        best_speeds = pd.concat(
+            [
+                _make_best_speed_rows("base", 1.0, (0.5,)),
+                _make_best_speed_rows("knee", 0.5, (0.5,)),
+            ],
+            ignore_index=True,
+        )
+        # Run test and check outputs.
+        with self.assertRaises(AssertionError):
+            racket_sports_07_speed_vs_accuracy_utils.summarize_robustness(
+                best_speeds
+            )
+
+
+# #############################################################################
+# Test_check_speed_scaling
+# #############################################################################
+
+
+class Test_check_speed_scaling(hunitest.TestCase):
+    """
+    Test `check_speed_scaling()`.
+    """
+
+    def helper(
+        self, variant: str, a: float, k: float, t_r: float
+    ) -> Dict[str, Any]:
+        """
+        Run the check at `v_b = v0`, where player 1 reaches many landing
+        points.
+
+        :param variant: name of the variant, e.g., "base"
+        :param a: coefficient of the depth factor
+        :param k: the factor of the speeds
+        :param t_r: reaction time of player 1, in seconds
+        :return: the output of `check_speed_scaling()`
+        """
+        config = _get_tiny_config()
+        spec = racket_sports_07_speed_vs_accuracy_utils.build_sweep_spec(
+            "Pickleball", variant, a, 1.0, config
+        )
+        spec["settings"].update(v_p=6.0, t_r=t_r)
+        actual: Dict[str, Any] = (
+            racket_sports_07_speed_vs_accuracy_utils.check_speed_scaling(spec, k)
+        )
+        return actual
+
+    def test1(self) -> None:
+        """
+        Test Proposition 1 at `a = 0`: with `t_r = 0`, scaling both speeds
+        leaves the map unchanged, cell by cell, with or without `v0`.
+        """
+        # Prepare inputs.
+        variant = "base"
+        a = 0.0
+        k = 2.0
+        t_r = 0.0
+        # Run test.
+        actual = self.helper(variant, a, k, t_r)
+        # Check outputs.
+        self.assertEqual(actual["max_diff_speeds"], 0.0)
+        self.assertEqual(actual["max_diff_speeds_and_v0"], 0.0)
+        # The reach rule is exercised: a difference could show.
+        self.assertGreater(actual["mean_p_reached"], 0.01)
+
+    def test2(self) -> None:
+        """
+        Test that with `a > 0` scaling both speeds changes the map, and
+        scaling `v0` with them does not, for every shape and with `a_x` equal
+        to `a_y` or not.
+        """
+        # Prepare inputs.
+        variants = (
+            "base",
+            "knee",
+            "parabola",
+            "one_sided_parabola",
+            "a_x_eq_a_y",
+        )
+        a = 0.5
+        k = 2.0
+        t_r = 0.0
+        # Run test and check outputs.
+        for variant in variants:
+            with self.subTest(variant=variant):
+                actual = self.helper(variant, a, k, t_r)
+                self.assertGreater(actual["max_diff_speeds"], 0.05)
+                self.assertEqual(actual["max_diff_speeds_and_v0"], 0.0)
+                self.assertGreater(actual["mean_p_reached"], 0.01)
+
+    def test3(self) -> None:
+        """
+        Test the planted failure: at `t_r > 0` scaling the 2 speeds and `v0`
+        still changes the map, since the reaction distance `v_p * t_r`
+        changes.
+        """
+        # Prepare inputs.
+        variant = "base"
+        a = 0.5
+        k = 2.0
+        t_r = 0.2
+        # Run test.
+        actual = self.helper(variant, a, k, t_r)
+        # Check outputs.
+        self.assertGreater(actual["max_diff_speeds_and_v0"], 0.05)
+
+    def test4(self) -> None:
+        """
+        Test that a factor that is not positive is rejected.
+        """
+        # Prepare inputs.
+        variant = "base"
+        a = 0.5
+        t_r = 0.0
+        # Run test and check outputs.
+        for k in (0.0, -1.0, float("nan")):
+            with self.subTest(k=k), self.assertRaises(AssertionError):
+                self.helper(variant, a, k, t_r)
+
+
+# #############################################################################
+# Test_run_scaling_checks
+# #############################################################################
+
+
+class Test_run_scaling_checks(hunitest.TestCase):
+    """
+    Test `run_scaling_checks()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test one row per sport and `a`, all with `t_r = 0` at `v_b = v0`: the
+        map changes with the 2 speeds only when `a > 0`, and never when `v0`
+        is scaled too.
+        """
+        # Prepare inputs.
+        config = _get_tiny_config(sports=("Tennis", "Pickleball"))
+        # Prepare outputs.
+        expected = """
+                sport    a    k  speeds_differ  max_diff_speeds_and_v0  at_v0_with_t_r_0
+        0      Tennis  0.0  2.0          False                     0.0              True
+        1      Tennis  0.5  2.0           True                     0.0              True
+        2  Pickleball  0.0  2.0          False                     0.0              True
+        3  Pickleball  0.5  2.0           True                     0.0              True
+        """
+        # Run test.
+        actual = racket_sports_07_speed_vs_accuracy_utils.run_scaling_checks(
+            config
+        )
+        # Check outputs.
+        actual["speeds_differ"] = actual["max_diff_speeds"] > 0.05
+        actual["at_v0_with_t_r_0"] = actual["settings"].str.contains(
+            r"std_x2=0\.5 std_y2=1\.0 ball_speed=(?:25|12)\.0 t_r=0\.0 "
+        )
+        columns = ["sport", "a", "k", "speeds_differ", "max_diff_speeds_and_v0"]
+        columns += ["at_v0_with_t_r_0"]
+        actual = _to_str(actual[columns])
+        self.assert_equal(actual, expected, dedent=True, fuzzy_match=True)

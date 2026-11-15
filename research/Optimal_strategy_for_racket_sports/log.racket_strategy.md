@@ -30,6 +30,26 @@
 - The open research questions are in the Gdoc, under
   [Questions for GP](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.xfydadrg3lvc)
 
+## 2026-11-15: Best Ball Speed and Speed Scaling Check (#723)
+
+- **Issue**: [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723),
+  the third of 4 PRs: how the sweeps are read, with no results yet; the planned
+  outputs are in the Gdoc,
+  [Experiment 5](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.qrto9so35bnx)
+- **What was done**: `notebooks/racket_sports_07_speed_vs_accuracy_utils.py`
+  - `find_best_speeds()`: the best ball speed of a sweep as a band, every speed
+    within 2 standard errors of the highest `P(winner)`, with the rule of the best
+    region of notebook 01 (P9); the loss of the fastest ball; and the speed with
+    the highest mean `P(winner)` over the half, which does not saturate
+  - `summarize_robustness()`: whether the band of each variant shares a ball
+    speed with the band of the base, so the summary reads "robust to X, not to
+    Y" (P3)
+  - `check_speed_scaling()`, `run_scaling_checks()`: with `t_r = 0` and `a > 0`,
+    scaling both speeds changes the maps, and scaling `v0` with them does not, so
+    Proposition 1 needs a spread that does not depend on the ball speed (P4)
+- **Next**: notebook 07 and Section VII-B of the paper, with the results in the
+  Gdoc, which finish #723
+
 ## 2026-11-15: Sweeps of the Ball Speed for Speed vs Accuracy (#723)
 
 - **Issue**: [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723),
