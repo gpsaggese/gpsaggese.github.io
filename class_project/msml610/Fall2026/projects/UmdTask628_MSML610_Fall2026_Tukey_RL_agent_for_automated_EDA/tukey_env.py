@@ -16,7 +16,8 @@ Families in this module:
   scale, where the DAG is identifiable (Peters and Buhlmann 2014)
 - `mixed`: one of the three noise families drawn per graph
 - `mixed_node`: a noise family drawn per node (target: the ngDAG pattern of
-  Hoyer et al. 2008 when Gaussian and non-Gaussian nodes mix)
+  Hoyer et al. 2008 when Gaussian and non-Gaussian nodes mix; the DAG when the
+  noise variances are equal on the raw scale)
 - `nonlinear`: additive noise, one mechanism per graph (`tanh(3z)` or the
   bounded quadratic `clip(z^2, 0, 9)` of the standardized parent)
 - `iscm`: linear SEM standardized inside the model (Ormaniec et al. 2025);
@@ -486,6 +487,10 @@ def _target_for_linear(
     """
     Decide what is identifiable for a linear SEM instance.
 
+    Equal noise variances on the raw scale identify the DAG whatever the noise
+    families: Peters and Buhlmann (2014) show it for Gaussian noise, and Chen,
+    Drton and Wang (2019, Theorem 1) use only the covariance matrix.
+
     :param families: noise family per node
     :param cfg: generator settings
     :param equal_noise_kept: whether `noise_scale="equal"` leaves the noise
@@ -495,14 +500,14 @@ def _target_for_linear(
     :return: target class and the reason
     """
     gaussian = [f == "gaussian" for f in families]
+    equal_raw = (
+        equal_noise_kept
+        and cfg.noise_scale == "equal"
+        and cfg.standardize == "none"
+    )
     if not any(gaussian):
         target = (tscore.TARGET_DAG, "linear, every noise non-Gaussian (LiNGAM)")
     elif all(gaussian):
-        equal_raw = (
-            equal_noise_kept
-            and cfg.noise_scale == "equal"
-            and cfg.standardize == "none"
-        )
         if equal_raw:
             target = (
                 tscore.TARGET_DAG,
@@ -513,6 +518,8 @@ def _target_for_linear(
                 tscore.TARGET_CPDAG,
                 "linear Gaussian: equivalence class only",
             )
+    elif equal_raw:
+        target = (tscore.TARGET_DAG, "linear, equal noise variances, raw scale")
     else:
         target = (tscore.TARGET_NGDAG, "mixed Gaussian and non-Gaussian noise")
     return target

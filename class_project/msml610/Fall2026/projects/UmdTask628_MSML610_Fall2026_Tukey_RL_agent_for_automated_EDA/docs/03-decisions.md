@@ -8,7 +8,7 @@
 
 - **Decision**: score against the equivalence class (CPDAG) for linear-Gaussian
   data, and against the DAG where the model identifies it (non-Gaussian noise,
-  nonlinear additive noise)
+  equal noise variances on the raw scale, nonlinear additive noise)
 - **Why**: linear-Gaussian data cannot reveal every edge direction, so Key
   Example 1 is read as "directions where identifiable"
 - **Alternatives**: the true DAG everywhere (reported as a diagnostic)

@@ -236,6 +236,45 @@ class Test_sample_instance_linear(hunitest.TestCase):
         with self.assertRaises(AssertionError):
             tenv.sample_instance(cfg, 0)
 
+    def test7(self) -> None:
+        """
+        Mixed noise families with equal raw noise variances target the DAG.
+
+        Seed 10 has one edge, between its two Gaussian nodes: equal variances
+        identify its direction, so the reversed edge costs 1.
+        """
+        # Prepare inputs.
+        cfg = tenv.GraphConfig(
+            family="mixed_node",
+            n_nodes=3,
+            n_edges=1,
+            noise_scale="equal",
+            standardize="none",
+        )
+        # Prepare outputs.
+        expected = """
+        families ('gaussian', 'gaussian', 'uniform'), edges [[1, 0]]
+        target dag: linear, equal noise variances, raw scale
+        true: shd_target 0, score 0.0
+        reversed: shd_target 1, score -0.5
+        """
+        # Run test.
+        inst = tenv.sample_instance(cfg, 10)
+        B = inst.truth.B
+        scores_true = tscore.score_graph(B, inst.truth, legacy=False)
+        scores_reversed = tscore.score_graph(B.T, inst.truth, legacy=False)
+        # Check outputs.
+        actual = (
+            f"families {inst.noise_families}, "
+            f"edges {np.argwhere(B).tolist()}\n"
+            f"target {inst.truth.target_class}: {inst.target_reason}\n"
+            f"true: shd_target {scores_true['shd_target']}, "
+            f"score {scores_true['score']}\n"
+            f"reversed: shd_target {scores_reversed['shd_target']}, "
+            f"score {scores_reversed['score']}"
+        )
+        self.assert_equal(actual, expected, dedent=True)
+
 
 # #############################################################################
 # Test_generator_checks
