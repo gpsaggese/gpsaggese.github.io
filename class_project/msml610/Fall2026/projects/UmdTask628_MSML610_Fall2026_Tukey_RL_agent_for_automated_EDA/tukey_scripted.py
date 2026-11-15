@@ -168,7 +168,7 @@ class ScriptedExpert:
               behaviour-cloning teacher, since a policy sees no column
               indices
         """
-        hdbg.dassert_in(order, ("index", "strength"))
+        hdbg.dassert_in(order, ("index", "strength"), "Unknown processing order")
         self.threshold = threshold
         self.order = order
         # Lists that depend only on the episode's evidence (see `_memo()`).

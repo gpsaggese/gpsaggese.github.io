@@ -289,7 +289,7 @@ def _sample_dag(rng: np.random.Generator, cfg: GraphConfig) -> np.ndarray:
     :param cfg: generator settings
     :return: DAG adjacency
     """
-    hdbg.dassert_in(cfg.topology, TOPOLOGIES)
+    hdbg.dassert_in(cfg.topology, TOPOLOGIES, "No sampler for this topology")
     if cfg.topology == "er":
         B = _sample_er_dag(rng, cfg.n_nodes, cfg.n_edges)
     else:
@@ -553,13 +553,17 @@ def _split_and_scale(
     elif cfg.standardize == "rescale":
         # One log-uniform factor per column: the raw variances no longer
         # follow the causal order.
-        hdbg.dassert_is_not(rng_split, None)
+        hdbg.dassert_is_not(
+            rng_split,
+            None,
+            "Rescaling draws its factors from the split's random stream",
+        )
         factors = np.exp(
             rng_split.uniform(np.log(0.1), np.log(10.0), size=x.shape[1])
         )
         x_train, x_test = x_train * factors, x_test * factors
     else:
-        hdbg.dassert_eq(cfg.standardize, "none")
+        hdbg.dassert_eq(cfg.standardize, "none", "Unknown `standardize` setting")
     return x_train, x_test
 
 
@@ -699,7 +703,7 @@ def _mechanism(name: str, z: np.ndarray) -> np.ndarray:
     """
     if name == "tanh":
         return np.tanh(3.0 * z)
-    hdbg.dassert_eq(name, "quadratic")
+    hdbg.dassert_eq(name, "quadratic", "Unknown nonlinear mechanism")
     return np.clip(z**2, 0.0, 9.0)
 
 
@@ -911,11 +915,21 @@ def _sample_iscm_noise_share(cfg: GraphConfig, seed: int) -> Dict[str, Any]:
     :param seed: instance seed
     :return: fields of `Instance` besides `cfg`, `seed`, data and `truth`
     """
-    hdbg.dassert_in(cfg.noise_share, cfg.noise_grid)
+    hdbg.dassert_in(
+        cfg.noise_share,
+        cfg.noise_grid,
+        "The share must be a level of the grid, whose levels share one draw",
+    )
     for level in cfg.noise_grid:
         # Above the 10% floor, so the cap of the other families never binds.
-        hdbg.dassert_lt(_MIN_NOISE_SHARE, level)
-        hdbg.dassert_lt(level, 1.0)
+        hdbg.dassert_lt(
+            _MIN_NOISE_SHARE,
+            level,
+            "Levels lie above the noise-share floor of the other families",
+        )
+        hdbg.dassert_lt(
+            level, 1.0, "A noise share of 1 leaves the parents no signal"
+        )
     rng_graph, rng_weights, rng_noise, rng_split, rng_perm = _spawn_rngs(seed, 5)
     B = _sample_dag(rng_graph, cfg)
     family = _MIXED_NOISES[rng_graph.integers(len(_MIXED_NOISES))]
@@ -1099,8 +1113,14 @@ def _sample_sklearn_reg(cfg: GraphConfig, seed: int) -> Dict[str, Any]:
     :return: fields of `Instance` besides `cfg`, `seed`, data and `truth`
     """
     n_features = cfg.n_nodes - 1
-    hdbg.dassert_lte(2, cfg.n_edges)
-    hdbg.dassert_lte(cfg.n_edges, n_features)
+    hdbg.dassert_lte(
+        2,
+        cfg.n_edges,
+        "y is a collider only with 2 or more informative features",
+    )
+    hdbg.dassert_lte(
+        cfg.n_edges, n_features, "Each edge comes from its own feature"
+    )
     rng_graph, rng_noise, rng_split, rng_perm = _spawn_rngs(seed, 4)
     n_rejected = 0
     for _ in range(_MAX_TRIES):
@@ -1152,7 +1172,7 @@ def _sample_sklearn_confounder(cfg: GraphConfig, seed: int) -> Dict[str, Any]:
     hdbg.dassert_eq(cfg.confounder, "observed", "Only an observed U for now")
     hdbg.dassert_eq(cfg.n_edges, 2, "U -> T1 and U -> T2")
     n_features = cfg.n_nodes - 2
-    hdbg.dassert_lte(1, n_features)
+    hdbg.dassert_lte(1, n_features, "The common cause U is one of the features")
     rng_graph, rng_noise, rng_split, rng_perm = _spawn_rngs(seed, 4)
     features, targets, coef = skdata.make_regression(
         n_samples=cfg.n_samples,
@@ -1210,11 +1230,19 @@ def _sample_hidden_confounder(cfg: GraphConfig, seed: int) -> Dict[str, Any]:
     :return: fields of `Instance` besides `cfg`, `seed`, data and `truth`
     """
     variant = cfg.confounder
-    hdbg.dassert_in(variant, ("hidden_a", "hidden_b", "hidden_c"))
+    hdbg.dassert_in(
+        variant,
+        ("hidden_a", "hidden_b", "hidden_c"),
+        "Unknown hidden-confounder variant",
+    )
     n_private = 2 if variant == "hidden_b" else 0
-    hdbg.dassert_eq(cfg.n_edges, 2 + n_private)
+    hdbg.dassert_eq(
+        cfg.n_edges,
+        2 + n_private,
+        "`n_edges` counts the 2 edges of U and the private causes",
+    )
     n_isolated = cfg.n_nodes - 2 - n_private
-    hdbg.dassert_lte(0, n_isolated)
+    hdbg.dassert_lte(0, n_isolated, "Too few variables for this variant")
     rng_graph, rng_noise, rng_split, rng_perm = _spawn_rngs(seed, 4)
     family = "gaussian"
     if variant == "hidden_c":
@@ -1296,13 +1324,17 @@ def sample_instance(cfg: GraphConfig, seed: int) -> Instance:
     :param seed: instance seed (same seed and settings give the same instance)
     :return: the instance
     """
-    hdbg.dassert_in(cfg.family, FAMILIES)
+    hdbg.dassert_in(cfg.family, FAMILIES, "Unknown generator family")
     hdbg.dassert_lte(
         2, cfg.n_nodes, "The tools and the scores compare pairs of variables"
     )
     if cfg.noise_share is not None or cfg.noise_grid:
         hdbg.dassert_eq(cfg.family, "iscm", "Noise shares exist only for iSCM")
-        hdbg.dassert_is_not(cfg.noise_share, None)
+        hdbg.dassert_is_not(
+            cfg.noise_share,
+            None,
+            "A noise grid needs the noise share of this instance",
+        )
     sampler = _SAMPLERS.get(cfg.family, _sample_linear)
     sample = sampler(cfg, seed)
     B = (sample["W"] != 0).astype(int)
@@ -1367,7 +1399,11 @@ class TukeyEnv:
         """
         self.cfg = cfg
         self.budget = 3 * cfg.n_nodes if budget is None else budget
-        hdbg.dassert_lte(0, self.budget)
+        hdbg.dassert_lte(
+            0,
+            self.budget,
+            "The budget counts tool calls, so it cannot be negative",
+        )
         self.toolset = toolset
         self._instance: Optional[Instance] = None
         self._evidence: Optional[ttools.Evidence] = None

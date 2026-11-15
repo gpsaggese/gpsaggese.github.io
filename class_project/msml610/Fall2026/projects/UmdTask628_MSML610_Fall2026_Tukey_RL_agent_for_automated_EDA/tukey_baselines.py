@@ -144,7 +144,7 @@ def run_baseline(
         0.05)
     :return: the baseline's graph and cost
     """
-    hdbg.dassert_in(name, BASELINES)
+    hdbg.dassert_in(name, BASELINES, "No runner for this baseline")
     params = params or {}
     n_nodes = x_train.shape[1]
     bidirected = None
@@ -287,7 +287,9 @@ def score_output(
             output.adjacency, truth, lam=lam, bidirected=output.bidirected
         )
     else:
-        hdbg.dassert_eq(output.kind, "pag")
+        hdbg.dassert_eq(
+            output.kind, "pag", "A baseline output is a DAG, a PDAG or a PAG"
+        )
         # Without a hidden cause the true PAG is the PAG of the DAG itself.
         pag = truth.pag
         if pag is None:

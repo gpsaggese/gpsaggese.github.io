@@ -132,7 +132,7 @@ def enumerate_tool_actions(n_nodes: int, *, toolset: str = "m3") -> List[Action]
     :param toolset: key of `TOOLSETS`
     :return: all canonical tool actions (STOP excluded)
     """
-    hdbg.dassert_in(toolset, TOOLSETS)
+    hdbg.dassert_in(toolset, TOOLSETS, "Unknown tool set")
     nodes = range(n_nodes)
     actions = []
     for i, j in itertools.combinations(nodes, 2):
@@ -424,7 +424,7 @@ class Evidence:
         :param budget: maximum number of tool calls
         :param toolset: tools the agent may call (key of `TOOLSETS`)
         """
-        hdbg.dassert_in(toolset, TOOLSETS)
+        hdbg.dassert_in(toolset, TOOLSETS, "Unknown tool set")
         self.toolset = toolset
         self._cache = cache
         self.n_nodes = cache.n_nodes

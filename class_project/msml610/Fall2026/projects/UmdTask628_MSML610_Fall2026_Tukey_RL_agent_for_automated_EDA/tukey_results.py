@@ -434,7 +434,11 @@ def m2_split(table_path: str, out_dir: str, *, dry_run: bool = False) -> None:
         seeds = next(iter(methods.values()))["seeds"]
         entry: Dict[str, Any] = {"seeds": seeds, "methods": {}}
         for method, values in methods.items():
-            hdbg.dassert_eq(values["seeds"], seeds)
+            hdbg.dassert_eq(
+                values["seeds"],
+                seeds,
+                "The per-graph file lists the seeds once per setting",
+            )
             entry["methods"][method] = {
                 "score": [round(x, 4) for x in values["score"]],
                 "shd_target": [int(x) for x in values["shd_target"]],

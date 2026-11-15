@@ -144,7 +144,7 @@ def curriculum_config(seed: int, *, stage: int) -> tenv.GraphConfig:
     :param stage: 1 to 4
     :return: generator settings
     """
-    hdbg.dassert_in(stage, (1, 2, 3, 4))
+    hdbg.dassert_in(stage, (1, 2, 3, 4), "Unknown curriculum stage")
     if stage == 3:
         return main_task_config(seed)
     rng = np.random.default_rng([seed, _CURRICULUM_STREAM])
@@ -177,7 +177,7 @@ def noise_level_config(seed: int, *, level: int) -> tenv.GraphConfig:
     :param level: 1 to 4, the position in `NOISE_GRID_V1`
     :return: generator settings
     """
-    hdbg.dassert_in(level, (1, 2, 3, 4))
+    hdbg.dassert_in(level, (1, 2, 3, 4), "Unknown level of `NOISE_GRID_V1`")
     n_nodes, n_edges = draw_size(seed)
     cfg = tenv.GraphConfig(
         n_nodes=n_nodes,
@@ -551,7 +551,7 @@ def _make_sets() -> Dict[str, EvalSet]:
     )
     sets.append(EvalSet("T_llm_v1_main", "llm_v1", 0, 200, "main", True))
     sets_by_name = {eval_set.name: eval_set for eval_set in sets}
-    hdbg.dassert_eq(len(sets_by_name), len(sets))
+    hdbg.dassert_eq(len(sets_by_name), len(sets), "Set names must be unique")
     return sets_by_name
 
 
@@ -729,8 +729,15 @@ def load_set(
             key,
         )
     seeds = [item["seed"] for item in manifest["instances"]]
-    hdbg.dassert_eq(len(seeds), eval_set.n_instances)
-    hdbg.dassert_no_duplicates(seeds)
+    hdbg.dassert_eq(
+        len(seeds),
+        eval_set.n_instances,
+        "Manifest of '%s' lists another number of instances",
+        name,
+    )
+    hdbg.dassert_no_duplicates(
+        seeds, "Manifest of '%s' lists a seed twice", name
+    )
     hdbg.dassert_eq(
         seeds, eval_set.seeds, "Manifest of '%s' lists other seeds", name
     )

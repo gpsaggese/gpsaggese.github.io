@@ -254,7 +254,11 @@ def summarize(
     :param reference: per-graph results of `proto_scripted`, same seeds
     :return: means with intervals, exact recovery, paired comparisons
     """
-    hdbg.dassert_eq([r["seed"] for r in results], [r["seed"] for r in reference])
+    hdbg.dassert_eq(
+        [r["seed"] for r in results],
+        [r["seed"] for r in reference],
+        "Paired statistics need the same graphs in the same order",
+    )
     summary: Dict[str, Any] = {"n_graphs": len(results)}
     for key in _KEYS + ("calls", "seconds"):
         values = np.array([r[key] for r in results], dtype=float)

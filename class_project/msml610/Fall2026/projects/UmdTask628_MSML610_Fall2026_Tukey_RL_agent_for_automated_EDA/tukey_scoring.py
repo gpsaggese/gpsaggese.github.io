@@ -195,7 +195,7 @@ def marks_from_edge_marks(edges: List[List[Any]], n_nodes: int) -> np.ndarray:
         elif mark == EDGE_UNDIRECTED:
             marks[lo, hi] = MARK_UNDIRECTED
         else:
-            hdbg.dassert_eq(mark, EDGE_BIDIRECTED)
+            hdbg.dassert_eq(mark, EDGE_BIDIRECTED, "Unknown edge mark")
             marks[lo, hi] = MARK_BIDIRECTED
     return marks
 
@@ -664,7 +664,11 @@ def make_truth(
     :param confounded: pairs with a hidden common cause (`TARGET_PAG` only)
     :return: `Truth` with moments and the empty/true log-likelihoods
     """
-    hdbg.dassert_eq(target_class == TARGET_PAG, pag is not None)
+    hdbg.dassert_eq(
+        target_class == TARGET_PAG,
+        pag is not None,
+        "A PAG target needs its PAG, and only a PAG target has one",
+    )
     moments_train = get_moments(x_train)
     moments_test = get_moments(x_test)
     ll_empty, _ = pred_ll(np.zeros_like(B), moments_train, moments_test)
@@ -730,7 +734,9 @@ def pdag_agreement(marks_hat: np.ndarray, B: np.ndarray) -> Dict[str, Any]:
         `n_directed_shared`) and `orientation_coverage` (`n_directed_shared` /
         `n_shared`); a ratio with a zero denominator is NaN
     """
-    hdbg.dassert_eq(marks_hat.shape, B.shape)
+    hdbg.dassert_eq(
+        marks_hat.shape, B.shape, "Both graphs must be over the same variables"
+    )
     upper = np.triu(np.ones(B.shape, dtype=bool), 1)
     marks_true = marks_from_pdag(B)
     adj_hat = upper & (marks_hat != MARK_NONE)
@@ -995,7 +1001,11 @@ def score_graph(
         - Default: True
     :return: score dictionary
     """
-    hdbg.dassert_eq(B_hat.shape, truth.B.shape)
+    hdbg.dassert_eq(
+        B_hat.shape,
+        truth.B.shape,
+        "The graph must be over the instance's variables",
+    )
     acyclic = is_dag(B_hat)
     if truth.target_class == TARGET_PAG:
         scores = {"is_dag": acyclic}
