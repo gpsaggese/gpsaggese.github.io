@@ -104,9 +104,57 @@ def predict_logistic(
     :param interval: bar size, e.g., "5m"
     :return: position +1 or -1 for the bars in the test years, NaN elsewhere
     """
+    pos = predict_with_target(
+        features, labels, horizon, test_years, target="sign", interval=interval
+    )
+    return pos
+
+
+TARGETS = ["sign", "weighted_sign", "large_moves", "return"]
+
+
+def predict_with_target(
+    features: pd.DataFrame,
+    labels: pd.DataFrame,
+    horizon: str,
+    test_years: list[int],
+    *,
+    target: str = "sign",
+    min_move: float = 0.001,
+    interval: str = "5m",
+) -> pd.Series:
+    """
+    Predict the direction with a linear model trained on a given target.
+
+    The model is fit walking forward by year, as in `predict_logistic()`.
+    Only what the model is trained on changes:
+    - `sign`: logistic regression on the sign of the move (step 2)
+    - `weighted_sign`: the same, with each bar weighted by |r|, so that a
+      big move counts more than a small one
+    - `large_moves`: the same, trained only on the bars with |r| above
+      `min_move`
+    - `return`: ridge regression on the return itself; the position is the
+      sign of the predicted return
+
+    :param features: features as returned by `compute_features()`
+    :param labels: labels as returned by `compute_labels()`
+    :param horizon: holding period, e.g., "1h"
+    :param test_years: years to predict, e.g., [2022, 2023]
+    :param target: what the model is trained on, one of `TARGETS`
+    :param min_move: smallest |r| to train on for `large_moves`, as a return
+        (0.001 = 10 bp, the cost of a round trip)
+    :param interval: bar size, e.g., "5m"
+    :return: position +1 or -1 for the bars in the test years, NaN elsewhere
+    """
+    if target not in TARGETS:
+        raise ValueError(f"Invalid target='{target}'")
     label = labels[f"label_{horizon}"]
     has_features = features.notna().all(axis=1).to_numpy()
     has_label = label.notna().to_numpy()
+    if target == "sign":
+        abs_ret = None
+    else:
+        abs_ret = labels[f"fwd_ret_{horizon}"].abs()
     pos = pd.Series(np.nan, index=features.index)
     for test_year in test_years:
         is_train, is_test = split_walk_forward(
@@ -114,12 +162,30 @@ def predict_logistic(
         )
         is_train &= has_features & has_label
         is_test &= has_features
-        model = skpipe.make_pipeline(
-            skprep.StandardScaler(), sklm.LogisticRegression(max_iter=1000)
-        )
-        model.fit(features[is_train], label[is_train])
-        prob_up = model.predict_proba(features[is_test])[:, 1]
-        pos[is_test] = np.where(prob_up > 0.5, 1.0, -1.0)
+        if target == "large_moves":
+            is_train &= (abs_ret > min_move).to_numpy()
+        if target == "return":
+            model = skpipe.make_pipeline(
+                skprep.StandardScaler(), sklm.Ridge(alpha=1.0)
+            )
+            fwd_ret = labels[f"fwd_ret_{horizon}"]
+            model.fit(features[is_train], fwd_ret[is_train])
+            pred = model.predict(features[is_test])
+        else:
+            model = skpipe.make_pipeline(
+                skprep.StandardScaler(), sklm.LogisticRegression(max_iter=1000)
+            )
+            fit_params = {}
+            if target == "weighted_sign":
+                # Scale the weights to a mean of 1, so that the
+                # regularization is the same as without weights.
+                weight = abs_ret[is_train].to_numpy()
+                fit_params["logisticregression__sample_weight"] = (
+                    weight / weight.mean()
+                )
+            model.fit(features[is_train], label[is_train], **fit_params)
+            pred = model.predict_proba(features[is_test])[:, 1] - 0.5
+        pos[is_test] = np.where(pred > 0, 1.0, -1.0)
     return pos
 
 
@@ -187,3 +253,39 @@ def sweep_costs(
     df = pd.DataFrame(rows)
     df.insert(0, "cost_bps", [cost * 1e4 for cost in costs])
     return df
+
+
+def evaluate_by_group(
+    pos: pd.Series,
+    fwd_ret: pd.Series,
+    groups: pd.Series,
+    *,
+    cost: float = 0.0,
+) -> pd.DataFrame:
+    """
+    Measure the trades separately for each group, e.g., each market regime.
+
+    :param pos: position for each trade, +1 or -1
+    :param fwd_ret: return over the holding period of each trade
+    :param groups: group of each trade; trades with no group are left out
+    :param cost: cost of a round trip, as a return (0.001 = 10 bp)
+    :return: one row per group with the metrics of `evaluate_positions()`
+        and:
+        - `share`: share of the trades in the group
+        - `mean_abs_bps`: average |r| of the trades, in basis points
+        - `se_bps`: standard error of the PnL per trade, in basis points
+    """
+    df = pd.DataFrame({"pos": pos, "fwd_ret": fwd_ret, "group": groups})
+    df = df.dropna()
+    df = df[df["fwd_ret"] != 0]
+    rows = {}
+    for group, sub in df.groupby("group", observed=True):
+        stats = evaluate_positions(sub["pos"], sub["fwd_ret"], cost=cost)
+        pnl = sub["pos"] * sub["fwd_ret"]
+        stats["share"] = len(sub) / len(df)
+        stats["mean_abs_bps"] = sub["fwd_ret"].abs().mean() * 1e4
+        stats["se_bps"] = pnl.std() / np.sqrt(len(sub)) * 1e4
+        rows[group] = stats
+    results = pd.DataFrame(rows).T
+    results.index.name = "group"
+    return results

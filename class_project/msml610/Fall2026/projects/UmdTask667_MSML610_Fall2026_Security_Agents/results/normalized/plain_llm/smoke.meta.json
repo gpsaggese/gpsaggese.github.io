@@ -1,0 +1,23 @@
+{
+    "tool_version": "prompt-c81fdbaf",
+    "model": "openai/gpt-oss-120b",
+    "base_url": "https://api.groq.com/openai/v1",
+    "configs": [
+        "single prompt, temperature 0, json_object"
+    ],
+    "started_at": "2026-10-31T00:45:02+00:00",
+    "seconds": 7.11,
+    "cost_usd": 0.0,
+    "tokens_in": 957,
+    "tokens_out": 709,
+    "n_requests": 2,
+    "n_parse_errors": 0,
+    "n_snippets": 2,
+    "snippet_ids": [
+        "SEED-001",
+        "SEED-002"
+    ],
+    "agent": "plain_llm",
+    "run_id": "smoke",
+    "n_findings": 2
+}

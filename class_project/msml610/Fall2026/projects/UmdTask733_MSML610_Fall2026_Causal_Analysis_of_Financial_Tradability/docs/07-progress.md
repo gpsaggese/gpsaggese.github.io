@@ -14,9 +14,9 @@
 | Step 2: Predictability vs horizon, hit rate and PnL with costs | Nov 5 | Done | #820 |
 | Follow-ups from GP's answers: stale bars, SPY overnight bar, cost sweep, data sources | Nov 12 | In review | |
 | Gap analysis (#904) | Nov 19 | In review | |
-| Step 3: What happens per horizon in different market conditions (no causal analysis yet, `D17`) | Nov 19 | Not started | |
-| Robustness: do the results hold with a different target? | Nov 26 | Not started | #905 |
-| Step 4: Best horizon per regime, walk-forward backtest | Nov 26 | Not started | |
+| Step 3: What happens per horizon in different market conditions (no causal analysis yet, `D17`) | Nov 19 | In review | |
+| Robustness: do the results hold with a different target? | Nov 26 | In review | #905 |
+| Step 4: Trade only in volatile markets, walk-forward backtest with costs | Nov 26 | In review | |
 | Step 5: Write-up, video, final PR | Dec 3 | Not started | |
 
 ## Built
@@ -30,14 +30,26 @@
   and labels per horizon
 - `test/test_data_utils.py`: unit tests, including no look-ahead and no
   feature or label spanning a gap
-- `test/test_predict_utils.py`, `test/test_tradability_utils.py`: unit tests
-  for the models, the metrics, the cost sweep, and the overnight bar
+- `test/test_predict_utils.py`, `test/test_tradability_utils.py`,
+  `test/test_regime_utils.py`, `test/test_backtest_utils.py`: unit tests for
+  the models, the metrics, the cost sweep, the overnight bar, the regimes,
+  and the backtest (including no look-ahead)
 - `tradability.data.ipynb`: data quality, features, labels per horizon
 - `tradability.gaps.ipynb`: gap analysis (#904): when the gaps happen, and
   how many bars, labels, and features they cost
+- `regime_utils.py`: volatility and trend regimes at each bar, from past
+  data only
+- `tradability.regimes.ipynb`: step 3, the step 2 models and trades split by
+  regime
 - `predict_utils.py`: walk-forward split, always buy, momentum, and logistic
-  regression, and the hit rate and PnL of a set of trades at one or several
-  costs
+  regression, the same linear model trained on other targets, and the hit
+  rate and PnL of a set of trades at one or several costs
+- `tradability.targets.ipynb`: robustness (#905), the step 2 model trained on
+  four targets, overall and in volatile markets
+- `backtest_utils.py`: chooses the regimes to trade from earlier years only,
+  and measures a strategy (PnL per trade, Sharpe ratio, drawdown)
+- `tradability.backtest.ipynb`: step 4, trading only in volatile markets,
+  with costs from 0 to 20 bp
 - `tradability.models.ipynb`: the three models per horizon, tested on
   2022-2026, with costs from 0 to 20 bp
 - `data_sources.reference.md`: where each dataset comes from and how it is
@@ -101,12 +113,44 @@
     7-day windows restart after each gap. 7 of the 15 gaps start at 02:00
     UTC, and there is none after 2023-03-24
     - Data: `tradability.gaps.ipynb`
+12. The step 2 average hides two markets. The logistic regression has no
+    edge in calm and normal markets, but in volatile ones (about 30% of
+    2022-2026) its PnL per trade grows with the horizon: 1.7-2.2 bp at 1h,
+    7.7-10.9 bp at 4h (2.6-3.5 standard errors from zero on both coins), and
+    28-35 bp at 1d (noisier). At 4h it is about the 10 bp cost. It is
+    positive in 9 of 10 coin-years at 4h, but smaller in 2026
+    - Data: `tradability.regimes.ipynb`
+13. After a rising week, always buying makes a little more at every horizon,
+    and short moves reverse in every regime
+14. The step 2 conclusion does not depend on the target. Trained on the
+    sign weighted by |r|, on the moves bigger than 10 bp only, or on the
+    return itself, the model still has a weighted hit rate of 0.50 +/- 0.01
+    from 5m to 1h, the best horizon is still 1d, and nothing makes money at
+    10 bp. Training on the large moves only gives almost the same trades;
+    the weighted and return targets are worse at 4h and 1d
+    - Data: `tradability.targets.ipynb`
+15. The volatile-market result of step 3 also holds with every target: all
+    four lose money in calm markets at 1h to 1d, and make money in volatile
+    ones (on BTC from 15m to 1d, t-stat 1.3 to 3.3). At 4h in volatile
+    markets each target is positive in 9 of 10 coin-years. Training on the
+    large moves gives the same edge as the sign (4h: 8.1 bp on BTC, 11.1 bp
+    on ETH); the weighted and return targets give less, and on ETH it is
+    within the noise
+    - Data: `tradability.targets.ipynb`, "Part 2" sections
+16. Trading only in volatile markets makes the 1d model profitable after a
+    10 bp cost on both coins: 25.4 bp per trade on BTC and 18.4 bp on ETH
+    (Sharpe 0.78 and 0.47). Choosing the regimes from earlier years only
+    keeps it on BTC (27.4 bp per trade) and less on ETH (7.4 bp). 4h breaks
+    even at 10 bp but makes money at 5 bp; 1h loses at any cost of 2 bp or
+    more. Only about 100 daily trades a year, so no t-stat is above 1.7, and
+    2026 is negative on both coins
+    - Data: `tradability.backtest.ipynb`
 
 ## Next
 
-1. Step 3: what happens per horizon in different market conditions (calm vs
-   volatile, rising vs falling), without a causal analysis for now (`D17`)
-2. Robustness: do the results hold with a different target? (#905)
+1. Step 5: write-up, video, final PR
+2. Check the 1d volatile-market strategy on other coins or earlier years,
+   to get more trades (after class)
 
 ## History
 
@@ -125,6 +169,11 @@
 | 2026-11-10 | To-do tab in the gdoc; filed #904 and #905; SPY 1h file saved in the project Drive folder |
 | 2026-11-10 | Follow-ups from GP's answers: stale bars, SPY overnight bar, cost sweep, data sources |
 | 2026-11-11 | Gap analysis (#904) |
+| 2026-11-11 | PR #908 merged ("Very well done") |
+| 2026-11-12 | Step 3: results by regime |
+| 2026-11-12 | Robustness: the step 2 model trained on other targets (#905) |
+| 2026-11-12 | Robustness: the volatile-market result with the other targets (#905) |
+| 2026-11-12 | Step 4: walk-forward backtest, trading only in volatile markets |
 
 ## Open Work
 

@@ -1,6 +1,8 @@
+crewai[google-genai] == 1.14.7
 ipywidgets
 matplotlib
 numpy
 pandas
+pytest
 seaborn
 tqdm
