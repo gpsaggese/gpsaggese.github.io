@@ -107,7 +107,8 @@ The main contributions of this paper are:
   as a region of statistically tied aim points (Sections\ IV-G and IV-H).
 - A study of which variables change the answer, with a proposition that, with
   no reaction time, the ball and player speeds act only through their ratio
-  (Section\ VII-A and Appendix\ A).
+  (Section\ VII-A and Appendix\ A), and of the best ball speed when a faster
+  return is less accurate (Section\ VII-B).
 - A one-step reinforcement learning environment built on the same model, which
   reproduces the winner probability map from the reward alone, and a proximal
   policy optimization (PPO) agent evaluated on it with a pass rule written
@@ -126,7 +127,8 @@ The paper is organized as follows. Section\ II reviews related work. Section\ II
 methodology and, in Sections\ IV-G and IV-H, the 2D model we compute with.
 Section\ V develops the game-theoretic layer. Section\ VI works a small
 illustrative example by hand. Section\ VII discusses the tennis and pickleball
-parametrizations and which variables matter. Section\ VIII checks the return of
+parametrizations, which variables matter, and the best ball speed when speed costs
+accuracy. Section\ VIII checks the return of
 serve with reinforcement learning. Section\ IX discusses limitations, and Section\ X concludes. Appendix\ B lists, for each result, the notebook that reproduces it
 and the entry of the project's research log that holds its runs and figures.
 
@@ -548,7 +550,7 @@ region is large, 41 of 150 cells, because these cells tie within sampling
 error near $P_{\mathrm{win}} = 1$: placement inside it hardly matters. Because
 the spread does not depend on the ball speed in this model, a faster return
 never lowers $P_{\mathrm{win}}$, so hitting as fast as possible always looks
-best; a speed and accuracy trade-off is left to future work. The model is
+best; Section\ VII-B makes the spread grow with the ball speed. The model is
 implemented, with a heatmap of $P_{\mathrm{win}}$ for both sports, in the
 accompanying code (Appendix\ B).
 
@@ -775,19 +777,105 @@ on the highest $P_{\mathrm{win}}$ for pickleball at $v_p = 6$\ m/s. It is not an
 important variable at realistic values, and we keep it in the model for
 completeness. Without it the two speeds are not separate variables:
 
-**Proposition 1.** With $t_r = 0$, $P_{\mathrm{win}}$ of every target depends on
-$v_p$ and $v_b$ only through the ratio $v_p / v_b$.
+**Proposition 1.** With $t_r = 0$ and a spread that does not depend on the ball
+speed, $P_{\mathrm{win}}$ of every target depends on $v_p$ and $v_b$ only through
+the ratio $v_p / v_b$.
 
 A proof sketch is in Appendix\ A. In simulation, multiplying both speeds by the
 same factor gives identical maps, cell by cell, on 30 pairs of maps and on 500
 random settings. With $t_r > 0$ the same scaling changes the maps, since a second
-quantity enters, the reaction distance $v_p t_r$.
+quantity enters, the reaction distance $v_p t_r$. Section\ VII-B shows what changes
+when the spread grows with the ball speed.
 
 Two limits apply to these results. The highest $P_{\mathrm{win}}$ is 1.000 for many
 tennis settings, so it cannot rank them. And the spread does not depend on the
-ball speed in this model (Section\ IV-H), so a faster ball always looks better.
+ball speed here (Section\ IV-H), so a faster ball always looks better; Section\ VII-B
+removes this limit.
 
 Details: research log, Experiments 3 and 4 (Appendix\ B).
+
+## Speed Versus Accuracy
+
+With a spread that does not depend on the ball speed, a faster return never lowers
+$P_{\mathrm{win}}$, and the fastest ball always looks best. Players miss more when
+they hit harder: development players serving flat were less accurate at maximum
+power than at minimum power [@menayo2008serve], and in the topspin forehands of
+college players the trade-off between ball speed and accuracy appeared in the
+hitting direction only [@sudo2024speedaccuracy]. The landing errors of advanced
+players also spread more along the sideline than across it
+[@delgadogarcia2019errors], which supports a spread at a given speed that is
+larger in depth than in width.
+
+We make the spread grow with the ball speed in the sweeps of this section only:
+the model still takes $v_b$, $\sigma_x$, and $\sigma_y$ as separate inputs, and each
+map sets the two spreads from its ball speed. With $u = (v_b - v_0) / v_0$, where the
+reference speed $v_0$ is the base ball speed of Section\ VII-A (25\ m/s for tennis
+and 12\ m/s for pickleball),
+
+$$
+\sigma_x = f(a_x) \, \sigma_{x,0}, \qquad \sigma_y = f(a_y) \, \sigma_{y,0},
+$$
+
+with the spread at $v_0$, $(\sigma_{x,0}, \sigma_{y,0}) = (0.5, 1.0)$ m, and one of
+four shapes of the factor: linear, $f(a) = 1 + a u$, the base; knee,
+$1 + a \max(0, u)$; parabola, $1 + a u^2$; and one-sided parabola,
+$1 + a \max(0, u)^2$. All four give the spread at $v_0$ for $v_b = v_0$, and
+$1 + a$ times it for $v_b = 2 v_0$. They differ below $v_0$, where only the linear
+shape makes a slower ball more accurate. The depth gets $a_y = a$ and the width
+$a_x = a / 2$, our assumption between a width that does not change with the speed,
+as in [@sudo2024speedaccuracy], and a width as sensitive as the depth. No study
+gives a value of $a$, so we sweep an assumed range, $a \in \{0, 0.25, 0.5, 0.75,
+1\}$, with $v_b / v_0$ from 0.5 to 2 in steps of 0.1. We then change one value at a
+time, at $a = 0.5$ and 1: the other three shapes, $a_x = a_y$, the spread at $v_0$
+halved and doubled, $v_p = 1.9$ and 3.0\ m/s, the deep serve at the T, and a second
+seed, at $a = 1$ only. The full run has 786 maps, with the grid, the $K$, and the
+common random numbers of Section\ IV-H, and the maps of a sweep share one seed. As
+for the best region, the best speed is a band: every speed whose highest
+$P_{\mathrm{win}}$ is within two standard errors of the highest over the sweep,
+marked at its middle. We call the best speed robust to a change if the two bands
+share at least one speed, a rule fixed before the runs.
+
+**Hitting much faster than $v_0$ does not pay.** In pickleball the best speed falls
+as $a$ grows ([@fig-best-speed]): the band is 0.9 to 2\ $v_0$ at $a = 0$, where the
+fastest balls tie as in Section\ VII-A, 0.5 to 1\ $v_0$ at $a = 0.5$, and 0.5 to
+0.8\ $v_0$ (6 to 9.6\ m/s) at $a = 1$, marked at 0.7\ $v_0$. The fastest ball,
+$2 v_0$, loses 2.9 points of the highest $P_{\mathrm{win}}$ at $a = 0.5$ and 9.9
+points at $a = 1$, and 2.7 to 9.9 points across the four shapes. In tennis the
+highest $P_{\mathrm{win}}$ is 1.000 at almost every speed, the saturation of
+Section\ VII-A, so it cannot rank the speeds, but the mean over the server's half
+can. At $a = 1$ the mean is highest at 0.6\ $v_0$ (15\ m/s), and the fastest ball
+loses 11.1 points of it; across the four shapes at $a \ge 0.5$ it loses 4.3 to 11.1
+points.
+
+**The shape below $v_0$ decides the best pickleball speed.** With the linear shape
+the band reaches the slowest speed of the sweep, so the best pickleball speed is at
+or below $v_0 / 2$. With the knee and the two parabolas, which do not make a slower
+ball more accurate, it stays near $v_0$: at $a = 1$ their bands are 0.8 to 1.1 and
+0.8 to 1.3\ $v_0$, marked at 1.0\ $v_0$, against 0.7\ $v_0$ for the linear shape. A
+slower ball gives the server more time, so it pays only if it is also more
+accurate. The bands still share one speed, 0.8\ $v_0$, so the best speed is robust
+to the shape under our rule, but the marked speed moves by 0.3\ $v_0$.
+
+**What the best speed is robust to.** The best speed is robust to $a_x = a_y$, to
+$v_p$, to the serve, and to the seed: they move the marked speed by at most
+0.1\ $v_0$, except $v_p = 3.0$\ m/s in pickleball at $a = 0.5$, which moves it up
+by 0.3\ $v_0$ while the bands share four speeds. The spread at $v_0$ matters more.
+Doubled, it pulls the band to the slow end, 0.5 to 0.8\ $v_0$ in tennis and only
+0.5\ $v_0$ in pickleball at $a = 1$, and the fastest ball loses 13.8 and 31.9 more
+points; halved, almost every speed ties. The shape below $v_0$ and the spread at
+$v_0$ are the main uncertainties of this section, and both call for data rather
+than more sweeps.
+
+![Best ball speed $v_b / v_0$ against the coefficient $a$ of the spread: the linear base (line, with its band of tied speeds shaded) and the other three shapes at $a = 0.5$ and 1 (markers, with their bands as bars). In tennis the highest $P_{\mathrm{win}}$ is 1.000 at almost every speed, so the bands cover nearly the whole range; in pickleball the linear base falls to the slowest speed of the sweep, while the other shapes stay near $v_0$.](figures/speed_vs_accuracy_best_speed.png){#fig-best-speed}
+
+**Proposition 1 with a spread that depends on the ball speed.** With $a > 0$ the
+landing points depend on $v_b$ through $v_b / v_0$, so with $t_r = 0$,
+$P_{\mathrm{win}}$ depends on $v_p / v_b$ and on $v_b / v_0$ (Appendix\ A). For the
+linear base at $t_r = 0$, doubling both speeds changes one cell by up to 0.23 in
+tennis and 0.32 in pickleball at $a = 1$, while doubling $v_0$ with them leaves
+every cell unchanged, at $a = 0$, 0.5, and 1 in both sports.
+
+Details: research log, Experiment 5 (Appendix\ B).
 
 # Reinforcement Learning Check of the Return
 
@@ -971,7 +1059,8 @@ example, wider angles or greater required pace probably carry larger
 execution error than safe, central targets. The current framework does
 not model this coupling; doing so would require calibrating
 $\sigma(\cdot)$ as a function of target geometry from empirical stroke
-data, which is a natural extension. The 2D model has the same limit: its
+data, which is a natural extension; Section\ VII-B models the pace part of it in
+the 2D model, with an assumed coefficient. The 2D model has the same limit: its
 spread $(\sigma_x, \sigma_y)$ does not depend on how far the returner runs
 before hitting, a coupling that would make the serve a strategic choice.
 
@@ -1016,7 +1105,9 @@ return is the middle of the server's half in both sports, not a spot near the
 lines: landing in matters more than landing far from the opponent. The error
 spread matters most; the ball and player speeds matter mainly with a slow ball
 and a fast server, and with no reaction time they act only through their ratio
-(Proposition 1). A one-step reinforcement learning environment built on the
+(Proposition 1). When a faster return is less accurate, hitting much faster than
+the default ball speed does not pay, while the best slower speed depends on how
+accurate a slower ball is (Section\ VII-B). A one-step reinforcement learning environment built on the
 same model reproduces the winner probability map from the reward alone, and a
 PPO agent trained on it aims at the same middle region. The general framework,
 a trajectory model, a grid score with reachability, and a zero-sum game
@@ -1026,8 +1117,9 @@ same parametrized model covers both sports.
 
 The results are computational: the parameters come from literature ranges and
 round values, not from tracking data, so they show how the model behaves rather
-than how players play. The most immediate next steps are: (i) making the spread
-of a return grow with the ball speed and with the distance the returner runs;
+than how players play. The most immediate next steps are: (i) measuring how the
+spread of a return grows with the ball speed, which Section\ VII-B sweeps with an
+assumed coefficient, and making it grow with the distance the returner runs;
 (ii) calibrating the spread $(\sigma_x, \sigma_y)$ and the reachability
 parameters $(t_r, v_p)$ from tracking data or from experts, rather than from
 literature ranges; (iii) replacing the deterministic reachability with a graded,
@@ -1061,6 +1153,14 @@ $P_{\mathrm{win}}$ is the probability of this event, so it depends on $v_p$ and
 $v_b$ only through $r$, and so do the best region and the best target, which are
 functions of the map. With $t_r > 0$ the map depends on both $r$ and $v_p t_r$.
 
+With the spread of Section\ VII-B the first step changes: the spread, and with it
+the distribution of $(X_k, Y_k)$, depends on $v_b$ through $v_b / v_0$. The reach
+rule does not change, so each event $W_k$ depends on the speeds through $r$,
+$v_p t_r$, and $v_b / v_0$, and with $t_r = 0$ through $r$ and $v_b / v_0$.
+Multiplying $v_p$, $v_b$, and $v_0$ by the same factor leaves all three unchanged,
+so it leaves the map unchanged, for every shape of the factor and any $a_x$ and
+$a_y$.
+
 # Appendix\ B: Experiment Index {.unnumbered}
 
 The paper holds the model and the reasoning; the runs, the figures, the settings
@@ -1076,9 +1176,13 @@ The accompanying code holds:
   Sections\ IV-G and IV-H
 - `notebooks/racket_sports_06_rl_return_utils.py`: the environment of
   Section\ VIII
+- `notebooks/racket_sports_07_speed_vs_accuracy_utils.py`: the spread model and the
+  sweeps of Section\ VII-B
 - `racket_params.py`: the sport parameters, including $v_{\max}$
-- `figures/make_code_figures.py`, next to the paper: Figs. 1 and 6; Figs. 4 and
-  5 come from the data that notebook 05 writes
+- `figures/make_code_figures.py`, next to the paper: [@fig-winner-map] and
+  [@fig-rl-maps]; `figures/make_figures.py` draws [@fig-sweeps] and
+  [@fig-serve-depth] from the data that notebook 05 writes, and [@fig-best-speed]
+  from the data that notebook 07 writes
 
 
 : Where the details of each result are kept
@@ -1089,5 +1193,5 @@ The accompanying code holds:
 | IV-H | Winner probability map | 01, Part 2 | [Experiment 2](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0) |
 | VII-A | Sweeps and serves | 05 | [Experiment 3](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0) |
 | VII-A | Speed ratio, reaction time | 05, Part 3 | [Experiment 4](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.xvdn4n7zo860) |
-| VII-B | Speed vs accuracy, coming with #723 | 07 | [Experiment 5](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.qrto9so35bnx) |
+| VII-B | Speed vs accuracy | 07 | [Experiment 5](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.qrto9so35bnx) |
 | VIII | Reinforcement learning | 06 | [Experiment 6](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.kntokyu5w697) |

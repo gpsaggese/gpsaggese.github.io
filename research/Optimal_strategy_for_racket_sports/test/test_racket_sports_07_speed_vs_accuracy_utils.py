@@ -8,10 +8,13 @@ import research.Optimal_strategy_for_racket_sports.test.test_racket_sports_07_sp
 
 import dataclasses
 import logging
+import os
 import pprint
 from typing import Any, Dict, List, Tuple
 
 import helpers.hunit_test as hunitest
+import matplotlib
+import matplotlib.pyplot as plt
 import pandas as pd
 
 from research.Optimal_strategy_for_racket_sports.notebooks import (
@@ -20,6 +23,9 @@ from research.Optimal_strategy_for_racket_sports.notebooks import (
 )
 
 _LOG = logging.getLogger(__name__)
+
+# Use the non-interactive backend so the figures render without a display.
+matplotlib.use("Agg")
 
 
 def _get_tiny_config(
@@ -406,6 +412,50 @@ class Test_build_spread_from_ball_speed(hunitest.TestCase):
                 racket_sports_07_speed_vs_accuracy_utils.build_spread_from_ball_speed(
                     ball_speed_mps, std0_x, std0_y, v0_mps, a_x, a_y, shape
                 )
+
+
+# #############################################################################
+# Test_plot_speed_factors
+# #############################################################################
+
+
+class Test_plot_speed_factors(hunitest.TestCase):
+    """
+    Test `plot_speed_factors()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test one panel per `a`, with one curve per shape, each at `1 + a` at
+        `2 v0`.
+        """
+        # Prepare inputs.
+        a_values = [0.5, 1.0]
+        # Prepare outputs.
+        expected = "[[1.5, 1.5, 1.5, 1.5], [2.0, 2.0, 2.0, 2.0]]"
+        # Run test.
+        fig = racket_sports_07_speed_vs_accuracy_utils.plot_speed_factors(
+            a_values
+        )
+        # Check outputs.
+        self.assertEqual(len(fig.axes), 2)
+        # The 4 shapes, then the vertical line at `v0`.
+        actual = [
+            [float(line.get_ydata()[-1]) for line in ax.get_lines()[:4]]
+            for ax in fig.axes
+        ]
+        self.assert_equal(str(actual), expected)
+        plt.close("all")
+
+    def test2(self) -> None:
+        """
+        Test that no value of `a` is rejected.
+        """
+        # Prepare inputs.
+        a_values: List[float] = []
+        # Run test and check outputs.
+        with self.assertRaises(AssertionError):
+            racket_sports_07_speed_vs_accuracy_utils.plot_speed_factors(a_values)
 
 
 # #############################################################################
@@ -900,6 +950,48 @@ class Test_run_speed_sweeps(hunitest.TestCase):
 
 
 # #############################################################################
+# Test_plot_sweep_maps
+# #############################################################################
+
+
+class Test_plot_sweep_maps(hunitest.TestCase):
+    """
+    Test `plot_sweep_maps()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test one map per ball speed, each titled with its speed and spread.
+        """
+        # Prepare inputs.
+        sport_name = "Pickleball"
+        variant = "base"
+        a = 1.0
+        speed_ratios = [0.5, 2.0]
+        config = _get_tiny_config()
+        # Prepare outputs.
+        expected = """
+        v_b = 0.5 v0 = 6 m/s
+        spread (0.38, 0.50) m
+        v_b = 2 v0 = 24 m/s
+        spread (0.75, 2.00) m
+        """
+        # Run test.
+        fig = racket_sports_07_speed_vs_accuracy_utils.plot_sweep_maps(
+            sport_name, variant, a, speed_ratios, config
+        )
+        # Check outputs.
+        # One map and one colorbar per panel, as in `plot_montage()`.
+        self.assertEqual(len(fig.axes), 2 + 2)
+        # The first 2 lines of each map title; the third has the result.
+        actual = "\n".join(
+            "\n".join(ax.get_title().split("\n")[:2]) for ax in fig.axes[:2]
+        )
+        self.assert_equal(actual, expected, dedent=True)
+        plt.close("all")
+
+
+# #############################################################################
 # Test_find_best_speeds
 # #############################################################################
 
@@ -1217,6 +1309,124 @@ class Test_summarize_robustness(hunitest.TestCase):
 
 
 # #############################################################################
+# Test_plot_speed_sweeps
+# #############################################################################
+
+
+class Test_plot_speed_sweeps(hunitest.TestCase):
+    """
+    Test `plot_speed_sweeps()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test one row of 2 panels per sport, with one curve per `a` of the
+        variant.
+        """
+        # Prepare inputs.
+        config = _get_tiny_config()
+        sweeps = racket_sports_07_speed_vs_accuracy_utils.run_speed_sweeps(
+            config
+        )
+        best_speeds = racket_sports_07_speed_vs_accuracy_utils.find_best_speeds(
+            sweeps
+        )
+        variant = "base"
+        # Prepare outputs.
+        expected = "['a = 0', 'a = 1']"
+        # Run test.
+        fig = racket_sports_07_speed_vs_accuracy_utils.plot_speed_sweeps(
+            sweeps, best_speeds, variant
+        )
+        # Check outputs.
+        self.assertEqual(len(fig.axes), 2)
+        labels = [text.get_text() for text in fig.axes[0].get_legend().texts]
+        self.assert_equal(str(labels), expected)
+        # The curve of `a = 1` holds only the 3 maps of the base, not the knee.
+        curve = [
+            line
+            for line in fig.axes[0].get_lines()
+            if line.get_label() == "a = 1"
+        ][0]
+        is_base = (sweeps["variant"] == "base") & (sweeps["a"] == 1.0)
+        self.assertEqual(curve.get_xdata().tolist(), [0.5, 1.0, 2.0])
+        self.assertEqual(
+            curve.get_ydata().tolist(),
+            sweeps.loc[is_base, "max_p_winner"].tolist(),
+        )
+        plt.close("all")
+
+    def test2(self) -> None:
+        """
+        Test that a variant without runs is rejected.
+        """
+        # Prepare inputs.
+        sweeps = _make_sweep_rows([0.9, 0.8], 0.002, [0.5, 0.5])
+        variant = "knee"
+        # Run test and check outputs.
+        with self.assertRaises(AssertionError):
+            racket_sports_07_speed_vs_accuracy_utils.plot_speed_sweeps(
+                sweeps, pd.DataFrame(), variant
+            )
+
+
+# #############################################################################
+# Test_plot_best_speeds
+# #############################################################################
+
+
+class Test_plot_best_speeds(hunitest.TestCase):
+    """
+    Test `plot_best_speeds()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test the base as a line through its marked speeds, not the ends of
+        its bands, and the knee as markers with error bars; the other variants
+        are not drawn.
+        """
+        # Prepare inputs.
+        # The first speed of a band is its marked speed, here not its low end.
+        best_speeds = pd.concat(
+            [
+                _make_best_speed_rows("base", 0.0, (2.0, 1.5)),
+                _make_best_speed_rows("base", 1.0, (1.0, 0.5)),
+                _make_best_speed_rows("knee", 1.0, (1.0, 1.5)),
+                _make_best_speed_rows("v_p_3.0", 1.0, (1.5,)),
+            ],
+            ignore_index=True,
+        )
+        # Prepare outputs.
+        expected = "['linear (base)', 'knee']"
+        # Run test.
+        fig = racket_sports_07_speed_vs_accuracy_utils.plot_best_speeds(
+            best_speeds
+        )
+        # Check outputs.
+        self.assertEqual(len(fig.axes), 1)
+        ax = fig.axes[0]
+        labels = [text.get_text() for text in ax.get_legend().texts]
+        self.assert_equal(str(labels), expected)
+        base = ax.get_lines()[0]
+        self.assertEqual(base.get_xdata().tolist(), [0.0, 1.0])
+        self.assertEqual(base.get_ydata().tolist(), [2.0, 1.0])
+        plt.close("all")
+
+    def test2(self) -> None:
+        """
+        Test that rows without the base are rejected.
+        """
+        # Prepare inputs.
+        best_speeds = _make_best_speed_rows("knee", 1.0, (1.0,))
+        # Run test and check outputs.
+        with self.assertRaises(AssertionError):
+            racket_sports_07_speed_vs_accuracy_utils.plot_best_speeds(
+                best_speeds
+            )
+
+
+# #############################################################################
 # Test_check_speed_scaling
 # #############################################################################
 
@@ -1361,3 +1571,60 @@ class Test_run_scaling_checks(hunitest.TestCase):
         columns += ["at_v0_with_t_r_0"]
         actual = _to_str(actual[columns])
         self.assert_equal(actual, expected, dedent=True, fuzzy_match=True)
+
+
+# #############################################################################
+# Test_save_paper_figure_data
+# #############################################################################
+
+
+class Test_save_paper_figure_data(hunitest.TestCase):
+    """
+    Test `save_paper_figure_data()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that the file holds only the base and the other shapes, with the
+        columns of the figure.
+        """
+        # Prepare inputs.
+        out_dir = self.get_scratch_space()
+        best_speeds = pd.concat(
+            [
+                _make_best_speed_rows("base", 1.0, (0.5, 1.0)),
+                _make_best_speed_rows("parabola", 1.0, (1.0,)),
+                _make_best_speed_rows("seed_2", 1.0, (0.5,)),
+            ],
+            ignore_index=True,
+        )
+        # Prepare outputs.
+        expected = """
+        sport,variant,a,best_speed_ratio,band_low_ratio,band_high_ratio
+        Tennis,base,1.0,0.5,0.5,1.0
+        Tennis,parabola,1.0,1.0,1.0,1.0
+        """
+        # Run test.
+        path = racket_sports_07_speed_vs_accuracy_utils.save_paper_figure_data(
+            best_speeds, out_dir
+        )
+        # Check outputs.
+        self.assertEqual(
+            os.path.basename(path), "speed_vs_accuracy_best_speed.csv"
+        )
+        with open(path) as f:
+            actual = f.read()
+        self.assert_equal(actual, expected, dedent=True)
+
+    def test2(self) -> None:
+        """
+        Test that a directory that does not exist is rejected.
+        """
+        # Prepare inputs.
+        out_dir = os.path.join(self.get_scratch_space(), "missing")
+        best_speeds = _make_best_speed_rows("base", 1.0, (0.5,))
+        # Run test and check outputs.
+        with self.assertRaises(AssertionError):
+            racket_sports_07_speed_vs_accuracy_utils.save_paper_figure_data(
+                best_speeds, out_dir
+            )

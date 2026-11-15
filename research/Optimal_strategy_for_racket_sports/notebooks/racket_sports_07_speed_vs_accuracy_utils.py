@@ -12,6 +12,7 @@ from the ball speed with one model, for the sweeps only.
 - The best ball speed as a band of tied speeds, and what it is robust to
 - The speed scaling check: Proposition 1 with a spread that depends on the
   ball speed
+- The plots of the notebook, and the data of the paper's figure
 
 Import as:
 
@@ -20,13 +21,16 @@ import research.Optimal_strategy_for_racket_sports.notebooks.racket_sports_07_sp
 
 import dataclasses
 import logging
-from typing import Any, Dict, Tuple
+import os
+from typing import Any, Dict, List, Sequence, Tuple
 
 import helpers.hdbg as hdbg
 import helpers.hnotebook as hnotebo
 import helpers.hprint as hprint
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from matplotlib.figure import Figure
 from tqdm.autonotebook import tqdm
 
 import research.Optimal_strategy_for_racket_sports.notebooks.racket_sports_01_shot_probability_utils as rosfrsnrs0spu
@@ -151,6 +155,65 @@ def build_spread_from_ball_speed(
     factor_y = compute_speed_factor(ball_speed_mps, v0_mps, a_y, shape)
     spread = (factor_x * std0_x, factor_y * std0_y)
     return spread
+
+
+# One style per shape: a color, and a marker and a line style as a second
+# encoding.
+_SHAPE_STYLES = {
+    "linear": {"color": "#2a78d6", "marker": "o", "linestyle": "-"},
+    "knee": {"color": "#eb6834", "marker": "s", "linestyle": "--"},
+    "parabola": {"color": "#1baf7a", "marker": "^", "linestyle": ":"},
+    "one_sided_parabola": {"color": "#8e5cc4", "marker": "D", "linestyle": "-."},
+}
+
+
+def plot_speed_factors(a_values: Sequence[float]) -> Figure:
+    """
+    Plot the factor of the spread against the ball speed, for each shape.
+
+    One panel per coefficient `a`. The factor depends on the speeds only
+    through `v_b / v0`, so the x axis is that ratio, for every sport.
+
+    :param a_values: coefficients, one panel each, e.g., `[0.5, 1.0]`
+    :return: the figure
+    """
+    _LOG.debug(hprint.to_str("a_values"))
+    hdbg.dassert_lte(1, len(a_values), "There must be at least 1 value of a")
+    speed_ratios = np.linspace(0.5, 2.0, 151)
+    fig: Figure
+    fig, axes = plt.subplots(
+        1, len(a_values), figsize=(5 * len(a_values), 3.8), squeeze=False
+    )
+    for ax, a in zip(axes[0], a_values):
+        for shape in SPREAD_SHAPES:
+            # With `v0 = 1` the ball speed is the ratio itself.
+            factors = [
+                compute_speed_factor(ratio, 1.0, a, shape)
+                for ratio in speed_ratios
+            ]
+            style = _SHAPE_STYLES[shape]
+            ax.plot(
+                speed_ratios,
+                factors,
+                color=style["color"],
+                linestyle=style["linestyle"],
+                linewidth=2,
+                label=shape,
+            )
+        # At `v0` every shape gives the spread at `v0`.
+        ax.axvline(1.0, color="gray", linewidth=0.8, linestyle=":")
+        ax.set_xlabel("ball speed v_b / v0")
+        ax.set_ylabel("factor f of the spread at v0")
+        ax.set_title(f"a = {a:g}", fontsize=11)
+        ax.grid(alpha=0.3)
+    axes[0, 0].legend(fontsize=9, frameon=False)
+    fig.suptitle(
+        "The spread grows with the ball speed: f = 1 + a g(u), u = (v_b - v0)"
+        " / v0",
+        fontsize=12,
+    )
+    fig.tight_layout()
+    return fig
 
 
 # #############################################################################
@@ -425,6 +488,47 @@ def run_speed_sweeps(config: ExperimentConfig) -> pd.DataFrame:
     return sweeps
 
 
+def plot_sweep_maps(
+    sport_name: str,
+    variant: str,
+    a: float,
+    speed_ratios: Sequence[float],
+    config: ExperimentConfig,
+) -> Figure:
+    """
+    Plot the maps of one sweep at a few ball speeds, side by side.
+
+    Each map is the one of `run_speed_sweeps()` at that ball speed, drawn by
+    `plot_montage()` of notebook 05.
+
+    :param sport_name: "Tennis" or "Pickleball"
+    :param variant: a name of `_VARIANTS`, e.g., "base"
+    :param a: coefficient of the depth factor
+    :param speed_ratios: ball speeds as `v_b / v0`, one map each, e.g.,
+        `[0.5, 1.0, 2.0]`
+    :param config: how much to run, for the grid and the samples
+    :return: the figure
+    """
+    _LOG.debug(hprint.to_str("sport_name variant a speed_ratios"))
+    specs = [
+        build_sweep_spec(sport_name, variant, a, speed_ratio, config)
+        for speed_ratio in speed_ratios
+    ]
+    settings_list = [spec["settings"] for spec in specs]
+    titles = [
+        f"v_b = {spec['speed_ratio']:g} v0 = {spec['settings']['ball_speed']:g}"
+        f" m/s\nspread ({spec['settings']['std_x2']:.2f},"
+        f" {spec['settings']['std_y2']:.2f}) m"
+        for spec in specs
+    ]
+    suptitle = (
+        f"{sport_name}: {variant} at a = {a:g}, the spread from the ball speed,"
+        " other settings at the defaults"
+    )
+    fig: Figure = rosfrsnrs0vsu.plot_montage(settings_list, titles, suptitle)
+    return fig
+
+
 # #############################################################################
 # Best ball speed
 # #############################################################################
@@ -561,6 +665,171 @@ def summarize_robustness(best_speeds: pd.DataFrame) -> pd.DataFrame:
     return robustness
 
 
+def _get_a_color(a: float) -> Tuple[float, float, float, float]:
+    """
+    Get the color of a coefficient `a`, from light (0) to dark (1 or more).
+
+    :param a: coefficient, at least 0
+    :return: an RGBA color of the "viridis" colormap
+    """
+    cmap = plt.get_cmap("viridis_r")
+    color: Tuple[float, float, float, float] = cmap(0.15 + 0.8 * min(a, 1.0))
+    return color
+
+
+def plot_speed_sweeps(
+    sweeps: pd.DataFrame, best_speeds: pd.DataFrame, variant: str
+) -> Figure:
+    """
+    Plot the highest and the mean `P(winner)` against the ball speed.
+
+    One row per sport and one curve per `a`. The left panel has a 2 SE band
+    around each curve; a filled marker is a speed of the band of the best
+    speed, a hollow one a speed outside it, and the star the marked speed.
+
+    :param sweeps: the rows of `run_speed_sweeps()`
+    :param best_speeds: the rows of `find_best_speeds()` of the same sweeps
+    :param variant: the variant to plot, e.g., "base"
+    :return: the figure
+    """
+    _LOG.debug(hprint.to_str("variant"))
+    hdbg.dassert_in(variant, set(sweeps["variant"]), "Unknown variant")
+    runs = sweeps[sweeps["variant"] == variant]
+    sports = list(runs["sport"].unique())
+    fig: Figure
+    fig, axes = plt.subplots(
+        len(sports), 2, figsize=(13, 4 * len(sports)), squeeze=False
+    )
+    for i, sport_name in enumerate(sports):
+        for a, grp in runs[runs["sport"] == sport_name].groupby("a"):
+            grp = grp.sort_values("speed_ratio")
+            best = best_speeds[
+                (best_speeds["sport"] == sport_name)
+                & (best_speeds["variant"] == variant)
+                & (best_speeds["a"] == a)
+            ].iloc[0]
+            x = grp["speed_ratio"].to_numpy()
+            p = grp["max_p_winner"].to_numpy()
+            se = grp["max_p_winner_se"].to_numpy()
+            color = _get_a_color(float(a))
+            in_band = np.isin(x, best["band_ratios"])
+            # Left: the highest `P(winner)` with its band of tied speeds.
+            ax = axes[i, 0]
+            ax.plot(x, p, color=color, linewidth=1.5, label=f"a = {a:g}")
+            ax.fill_between(x, p - 2 * se, p + 2 * se, color=color, alpha=0.15)
+            ax.plot(x[in_band], p[in_band], "o", color=color, ms=5)
+            ax.plot(
+                x[~in_band],
+                p[~in_band],
+                "o",
+                markerfacecolor="white",
+                color=color,
+                ms=5,
+            )
+            ax.plot(
+                best["best_speed_ratio"],
+                p[x == best["best_speed_ratio"]][0],
+                "*",
+                color=color,
+                ms=14,
+                markeredgecolor="black",
+            )
+            # Right: the mean over the half, which does not saturate.
+            axes[i, 1].plot(
+                x, grp["mean_p_winner"], "o-", color=color, linewidth=1.5, ms=4
+            )
+        for j, label in enumerate(
+            ("highest P(winner), +- 2 SE", "mean P(winner) over the half")
+        ):
+            axes[i, j].axvline(1.0, color="gray", linewidth=0.8, linestyle=":")
+            axes[i, j].set_xlabel("ball speed v_b / v0")
+            axes[i, j].set_ylabel(label)
+            axes[i, j].set_title(sport_name, fontsize=11)
+            axes[i, j].grid(alpha=0.3)
+        axes[i, 0].legend(fontsize=9, frameon=False)
+    fig.suptitle(
+        f"{variant}: the best ball speed when speed costs accuracy (star: the"
+        " marked speed, filled: its band)",
+        fontsize=12,
+    )
+    fig.tight_layout()
+    return fig
+
+
+# The variants of the paper's figure: the base and the 3 other shapes.
+_FIGURE_VARIANTS = (_BASE_VARIANT, "knee", "parabola", "one_sided_parabola")
+
+
+def plot_best_speeds(best_speeds: pd.DataFrame) -> Figure:
+    """
+    Plot the best ball speed against `a`, for the base and the other shapes.
+
+    One panel per sport. The base is a line with its band shaded; each other
+    shape is a marker with its band as an error bar, shifted a little in `a`
+    so the bars do not hide each other.
+
+    :param best_speeds: the rows of `find_best_speeds()`, with the base
+    :return: the figure
+    """
+    _LOG.debug(hprint.to_str("best_speeds.shape"))
+    hdbg.dassert_in(
+        _BASE_VARIANT, set(best_speeds["variant"]), "The base is missing"
+    )
+    sports = list(best_speeds["sport"].unique())
+    fig: Figure
+    fig, axes = plt.subplots(
+        1, len(sports), figsize=(6 * len(sports), 4.2), squeeze=False
+    )
+    for ax, sport_name in zip(axes[0], sports):
+        rows = best_speeds[best_speeds["sport"] == sport_name]
+        for k, variant in enumerate(_FIGURE_VARIANTS):
+            grp = rows[rows["variant"] == variant].sort_values("a")
+            if grp.empty:
+                continue
+            shape = "linear" if variant == _BASE_VARIANT else variant
+            style = _SHAPE_STYLES[shape]
+            a_values = grp["a"].to_numpy()
+            best = grp["best_speed_ratio"].to_numpy()
+            low = grp["band_low_ratio"].to_numpy()
+            high = grp["band_high_ratio"].to_numpy()
+            if variant == _BASE_VARIANT:
+                ax.plot(
+                    a_values,
+                    best,
+                    color=style["color"],
+                    marker=style["marker"],
+                    linewidth=2,
+                    label="linear (base)",
+                )
+                ax.fill_between(
+                    a_values, low, high, color=style["color"], alpha=0.15
+                )
+            else:
+                shift = 0.02 * k
+                ax.errorbar(
+                    a_values + shift,
+                    best,
+                    yerr=[best - low, high - best],
+                    color=style["color"],
+                    marker=style["marker"],
+                    linestyle="none",
+                    capsize=3,
+                    label=variant,
+                )
+        ax.axhline(1.0, color="gray", linewidth=0.8, linestyle=":")
+        ax.set_xlabel("coefficient a of the spread")
+        ax.set_ylabel("best ball speed v_b / v0")
+        ax.set_ylim(0.45, 2.05)
+        ax.set_title(sport_name, fontsize=11)
+        ax.grid(alpha=0.3)
+    axes[0, 0].legend(fontsize=9, frameon=False)
+    fig.suptitle(
+        "Best ball speed against a, with its band of tied speeds", fontsize=12
+    )
+    fig.tight_layout()
+    return fig
+
+
 # #############################################################################
 # Speed scaling check
 # #############################################################################
@@ -664,3 +933,34 @@ def run_scaling_checks(config: ExperimentConfig) -> pd.DataFrame:
             rows.append(row)
     scaling_checks = pd.DataFrame(rows)
     return scaling_checks
+
+
+# #############################################################################
+# Data of the paper's figure
+# #############################################################################
+
+# The `figures` directory of the paper, the same as for notebook 05.
+PAPER_FIGURES_DIR = rosfrsnrs0vsu.PAPER_FIGURES_DIR
+
+
+def save_paper_figure_data(best_speeds: pd.DataFrame, out_dir: str) -> str:
+    """
+    Save the data of the paper's figure, for `figures/make_figures.py`.
+
+    The figure shows the best ball speed against `a` for the base and the 3
+    other shapes, so only their rows are saved.
+
+    :param best_speeds: the rows of `find_best_speeds()` of the full run
+    :param out_dir: the `figures` directory of the paper, e.g.,
+        `PAPER_FIGURES_DIR`
+    :return: the path of the file
+    """
+    _LOG.debug(hprint.to_str("out_dir"))
+    hdbg.dassert_dir_exists(out_dir)
+    is_shown = best_speeds["variant"].isin(_FIGURE_VARIANTS)
+    columns: List[str] = ["sport", "variant", "a", "best_speed_ratio"]
+    columns += ["band_low_ratio", "band_high_ratio"]
+    df = best_speeds.loc[is_shown, columns]
+    path = os.path.join(out_dir, "speed_vs_accuracy_best_speed.csv")
+    df.to_csv(path, index=False)
+    return path

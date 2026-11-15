@@ -403,8 +403,9 @@
           full and the reduced runs, and no results yet,
           [PR #943](https://github.com/gpsaggese/gpsaggese.github.io/pull/943)
     - [-] The best ball speed as a band of tied speeds, the robustness table,
-          and the speed scaling check of Proposition 1 (branch `_3`)
-    - [ ] Notebook 07 and Section VII-B of the paper, with the results in the
+          and the speed scaling check of Proposition 1,
+          [PR #944](https://github.com/gpsaggese/gpsaggese.github.io/pull/944)
+    - [-] Notebook 07 and Section VII-B of the paper, with the results in the
           Gdoc, which finish the issue (branch `_4`)
   - [ ] [#786](https://github.com/gpsaggese/gpsaggese.github.io/issues/786):
         model the spread as a function of player 2's movement

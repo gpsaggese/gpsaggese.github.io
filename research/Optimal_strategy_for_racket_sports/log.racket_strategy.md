@@ -30,6 +30,28 @@
 - The open research questions are in the Gdoc, under
   [Questions for GP](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.xfydadrg3lvc)
 
+## 2026-11-15: Notebook 07 and Section VII-B, Speed vs Accuracy (#723)
+
+- **Issue**: [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723),
+  the last of 4 PRs: the results of the sweeps, in notebook 07 and in the paper;
+  the numbers and the decisions are in the Gdoc,
+  [Experiment 5](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.qrto9so35bnx)
+- **What was done**:
+  - `notebooks/racket_sports_07_speed_vs_accuracy.ipynb` and its paired `.py`, with
+    the outputs of the reduced run saved, and a test that runs it top to bottom
+  - The plots of the notebook and `save_paper_figure_data()` in its utils, with
+    tests
+  - `paper.md`: Section VII-B and its figure, from the data of the full run;
+    Proposition 1 states its assumption, and Appendix A covers the spread of
+    VII-B; the sentences that said a faster ball always looks best now point to
+    VII-B; 3 references
+  - The #723 notes of notebooks 01 and 05 point to notebook 07, and the README has
+    its row
+- **Next**: #723 is done; GP's answers to Q21 (the behavior of the spread below
+  `v0`) and Q22 (the robustness rule) in the
+  [Gdoc](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.71s0u7ftk0yx)
+  may change the wording of VII-B
+
 ## 2026-11-15: Best Ball Speed and Speed Scaling Check (#723)
 
 - **Issue**: [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723),
