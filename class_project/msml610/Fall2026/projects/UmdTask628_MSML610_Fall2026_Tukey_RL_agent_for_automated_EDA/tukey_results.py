@@ -17,7 +17,8 @@ write, without writing them.
 > tukey_results.py generators --out results/m1/generators.json
 - Report var-, R2- and relatives-sortability per generator family (M1):
 > tukey_results.py sortability --out results/m1/sortability.json
-- Reproduce the Oct 10 numbers on the prototype's seeds 0-19 (M2):
+- Reproduce the Oct 10 numbers within 0.1 SHD on the prototype's seeds 0-19
+  (M2):
 > tukey_results.py proto_check --out results/m2/proto_check.json
 - Tune the non-learned methods on validation and run the M2 table, then split
   it into the two committed files (about 1.5 minutes with 8-10 workers):
@@ -322,7 +323,7 @@ def sortability_report(out: str, *, dry_run: bool = False) -> Dict[str, Any]:
 
 def proto_check(out: str, *, dry_run: bool = False) -> Dict[str, Any]:
     """
-    Reproduce the Oct 10 measurements on the prototype's seeds 0-19.
+    Reproduce the Oct 10 measurements within 0.1 SHD on seeds 0-19.
 
     Mean DAG SHD on the prototype's raw data of: its scripted rule (edges as
     emitted, possibly cyclic, with the prototype's `shd`), DirectLiNGAM, and

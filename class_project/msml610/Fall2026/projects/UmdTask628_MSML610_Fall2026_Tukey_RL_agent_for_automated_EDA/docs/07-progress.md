@@ -80,7 +80,8 @@
 | 2026-11-12 | `PR_B1` trimmed after a code review: 151 tests passed,     |
 |            | both notebooks ran; torch and later-milestone manifests    |
 |            | move to the PRs that use them                              |
-|            | `tukey_results.py` regenerates every stored result         |
+|            | `tukey_results.py` regenerates the manifests and           |
+|            | `results/m1`, `results/m2`                                 |
 
 - Note: the docs were drafted with AI assistance; the authors check and explain
   every line

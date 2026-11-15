@@ -15,7 +15,10 @@ The combined score follows the spec and GP's draft paper:
 where `SHD_target` compares against what the data can identify (the DAG, its
 equivalence class, or the non-Gaussian pattern) and `pred_frac` is the held-out
 log-likelihood gain of the discovered graph over the empty graph, relative to
-the true graph's gain. The true graph scores 0 and the empty graph -1.
+the true graph's gain. The true graph scores 0, a reference and not an upper
+bound: `pred_frac` is capped at 1.5, so with few rows a wrong graph can score
+above 0. The empty graph scores -1 when the true graph has an edge, and 0 when
+it has none.
 
 Instances with a hidden common cause have a PAG target (Zhang 2008), which a
 DAG cannot express: they get PAG-compatible metrics (adjacencies, orientation
@@ -900,7 +903,10 @@ def score_pdag(
     Marks are compared as emitted: an undirected edge matches only an
     undirected edge of the target, and a bidirected conflict (PC) matches no
     mark of a DAG or CPDAG target. The prediction term uses any DAG extension
-    (all extensions of a valid PDAG are Markov equivalent, so they agree).
+    (all extensions of a valid PDAG are Markov equivalent, so they agree). A
+    bidirected pair enters the extension as the undirected adjacency it is
+    stored as in `A_hat`, so its prediction term is that of an extension of
+    the adjacency, not of both arrowheads.
 
     :param A_hat: discovered PDAG adjacency (bidirected pairs as undirected)
     :param truth: instance truth

@@ -327,8 +327,10 @@ class ToolCache:
 
         `mi_excess` subtracts the mutual information of a Gaussian pair with
         the same correlation, `-log(1 - r^2) / 2`: it is near 0 for
-        linear-Gaussian dependence and positive when the dependence is
-        nonlinear.
+        linear-Gaussian dependence. It is an estimated excess over that
+        Gaussian reference, not a test of nonlinearity: non-Gaussian noise can
+        make it positive for a linear pair, and some nonlinear pairs give a
+        negative value.
 
         :param i: first variable
         :param j: second variable
@@ -406,6 +408,10 @@ class Evidence:
 
     Holds the free correlation matrix, the results of the tool calls made so
     far, and the budget. It never holds the hidden graph or the test rows.
+    The boundary is a convention, not enforced isolation: the private
+    `_cache` holds the training rows and can run a tool without counting a
+    call. The supplied agents read only the public fields, and their calls go
+    through `TukeyEnv.step()`, which calls `record()`.
     """
 
     def __init__(

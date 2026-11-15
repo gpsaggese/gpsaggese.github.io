@@ -462,7 +462,8 @@ def example_cell2_2_plot_m2_heatmap(
     path: str = "results/m2/table_summary.json",
 ) -> None:
     """
-    Plot the mean combined score of every method in every setting.
+    Plot the mean combined score of every method with a combined score, in
+    every setting.
 
     :param path: committed result file
     """
