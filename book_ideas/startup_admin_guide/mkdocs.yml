@@ -6,7 +6,7 @@ theme:
     primary: black
     accent: cyan
   logo: assets/logo.png
-  favicon: assets/favicon.ico
+  favicon: assets/favicon.png
   #features:
     #- navigation.tabs
     #- navigation.top
