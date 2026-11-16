@@ -249,7 +249,6 @@ caption=Nested TAM, SAM, SOM, with the beachhead in orange
 )
 ```
 
-// TODO(gp): Provide <FEE> and the price lists of direct APIs : not in the input
 - @Noesis's position@: Noesis keeps the single API of a gateway and adds an
   auction price and a metered contract
   - A buyer pays \<FEE\>% on cleared volume vs. OpenRouter's 5.5% fee on every
