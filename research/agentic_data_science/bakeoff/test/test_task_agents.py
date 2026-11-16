@@ -153,3 +153,39 @@ class Test_run_benchmarks(hunitest.TestCase):
         self.assertLess(lo, 0.5)
         self.assertGreater(hi, 0.5)
         self.assertEqual(radsbrube.bootstrap_ci([1.0, 1.0]), (1.0, 1.0))
+
+    def test_retry_errors(self) -> None:
+        """
+        `retry_errors` reruns only failed tasks, and the summary keeps the latest.
+        """
+        runs = os.path.join(self.get_scratch_space(), "runs.jsonl")
+        tasks = [_task("1", "0.5"), _task("boom", "0.5")]
+        self._run(runs, _FixedAgent("0.5"), tasks)
+        self.assertEqual(radsbrube.summarize(runs)[0]["errors"], 1)
+        # The crash is fixed: only the failed task runs again.
+        fixed = _FixedAgent("0.5")
+        fixed.answer = lambda task, workdir: radsbtaag.TaskResult(answer="0.5")
+        with umock.patch.object(
+            radsbtaag, "get_task_agent", return_value=fixed
+        ), umock.patch.object(radsbben, "load_sample", return_value=tasks):
+            n = radsbrube.run(["fixed"], ["qrdata"], runs_file=runs, retry_errors=True)
+        self.assertEqual(n, 1)
+        summary = radsbrube.summarize(runs)[0]
+        self.assertEqual(summary["n"], 2)
+        self.assertEqual(summary["errors"], 0)
+        self.assertEqual(summary["accuracy"], 1.0)
+
+    def test_stops_after_errors_in_a_row(self) -> None:
+        """
+        Many failures in a row stop the run instead of burning every task.
+        """
+        runs = os.path.join(self.get_scratch_space(), "runs.jsonl")
+        tasks = [_task(str(i)) for i in range(8)]
+        broken = _FixedAgent("x")
+        broken.answer = lambda task, workdir: radsbtaag.TaskResult(error="limit")
+        with umock.patch.object(
+            radsbtaag, "get_task_agent", return_value=broken
+        ), umock.patch.object(radsbben, "load_sample", return_value=tasks):
+            with self.assertRaises(radsbrube.TooManyErrors):
+                radsbrube.run(["fixed"], ["qrdata"], runs_file=runs)
+        self.assertEqual(len(radsbrube.latest_runs(runs)), 5)

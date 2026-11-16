@@ -5,12 +5,15 @@ Run agents on the benchmark sample and score their answers.
 Usage:
 > run_benchmarks.py --agents oracle --limit 3
 > run_benchmarks.py --agents claude_code,smolagents
+> run_benchmarks.py --agents claude_code --retry-errors
 > run_benchmarks.py --summary
 
 Every (agent, benchmark, task) run gets a fresh working directory with copies of
 the task's data files, and appends one JSON line to `results/benchmark_runs.jsonl`
 (answer, score, tokens, cost, time, error). Runs already in that file are
-skipped, so an interrupted run resumes where it stopped.
+skipped, so an interrupted run resumes where it stopped. `--retry-errors` reruns
+the tasks whose latest run failed. A run stops after 5 failures in a row, which
+usually means a usage limit, not hard tasks.
 
 `--summary` prints accuracy per agent and benchmark, with a 95% bootstrap
 confidence interval, plus cost and time.
@@ -54,15 +57,37 @@ def make_workdir(task: radsbben.Task, root: str, agent: str) -> str:
     return workdir
 
 
-def done_runs(path: str) -> Set[Tuple[str, str, str]]:
+def latest_runs(path: str) -> List[Dict]:
     """
-    Return the (agent, benchmark, task_id) triples already in the runs file.
+    Return the last run of each (agent, benchmark, task_id) in the runs file.
+
+    A task that was retried keeps only its latest result.
     """
     if not os.path.exists(path):
-        return set()
+        return []
     with open(path, encoding="utf-8") as f:
         rows = [json.loads(line) for line in f if line.strip()]
-    return {(r["agent"], r["benchmark"], r["task_id"]) for r in rows}
+    latest = {(r["agent"], r["benchmark"], r["task_id"]): r for r in rows}
+    return list(latest.values())
+
+
+def done_runs(path: str, retry_errors: bool = False) -> Set[Tuple[str, str, str]]:
+    """
+    Return the (agent, benchmark, task_id) triples that need no new run.
+
+    :param retry_errors: if True, a task whose latest run failed is not done
+    """
+    return {
+        (r["agent"], r["benchmark"], r["task_id"])
+        for r in latest_runs(path)
+        if not (retry_errors and r.get("error"))
+    }
+
+
+class TooManyErrors(RuntimeError):
+    """
+    Raised when an agent fails many tasks in a row (e.g., a usage limit).
+    """
 
 
 def run(
@@ -71,17 +96,23 @@ def run(
     limit: Optional[int] = None,
     runs_file: str = RUNS_FILE,
     bench_root: str = radsbben.BENCHMARK_DIR,
+    retry_errors: bool = False,
+    max_consecutive_errors: int = 5,
 ) -> int:
     """
     Run each agent on each sampled task not yet in `runs_file`.
 
     :param limit: run at most this many tasks per benchmark
+    :param retry_errors: also rerun tasks whose latest run failed
+    :param max_consecutive_errors: stop after this many failures in a row, since
+        that usually means a usage limit or an outage, not hard tasks
     :return: number of new runs
     """
     os.makedirs(os.path.dirname(runs_file), exist_ok=True)
     work_root = os.path.join(os.path.dirname(runs_file), "work")
-    done = done_runs(runs_file)
+    done = done_runs(runs_file, retry_errors)
     n_new = 0
+    errors_in_a_row = 0
     for agent_name in agents:
         agent = radsbtaag.get_task_agent(agent_name)
         for bench in benchmarks:
@@ -103,6 +134,13 @@ def run(
                 with open(runs_file, "a", encoding="utf-8") as f:
                     f.write(json.dumps(row, default=str) + "\n")
                 n_new += 1
+                errors_in_a_row = errors_in_a_row + 1 if res.error else 0
+                if errors_in_a_row >= max_consecutive_errors:
+                    raise TooManyErrors(
+                        f"{agent_name}: {errors_in_a_row} failures in a row, last: "
+                        f"{(res.error or '').strip().splitlines()[-1][:200]}. "
+                        "Check the account limits, then rerun with --retry-errors"
+                    )
                 _LOG.info(
                     "%s %s %s score=%s time=%ss%s",
                     agent_name, bench, task.task_id, score, res.runtime_s,
@@ -129,8 +167,7 @@ def summarize(runs_file: str = RUNS_FILE) -> List[Dict]:
     """
     Aggregate the runs file into one row per (agent, benchmark).
     """
-    with open(runs_file, encoding="utf-8") as f:
-        rows = [json.loads(line) for line in f if line.strip()]
+    rows = latest_runs(runs_file)
     groups: Dict[Tuple[str, str], List[Dict]] = {}
     for r in rows:
         groups.setdefault((r["agent"], r["benchmark"]), []).append(r)
@@ -176,6 +213,9 @@ def _parse() -> argparse.ArgumentParser:
         help="Comma-separated benchmark names (default: all)",
     )
     parser.add_argument("--limit", type=int, help="Max tasks per benchmark")
+    parser.add_argument(
+        "--retry-errors", action="store_true", help="Rerun tasks whose last run failed"
+    )
     parser.add_argument("--runs-file", default=RUNS_FILE, help="Output JSONL")
     parser.add_argument("--summary", action="store_true", help="Print accuracy table")
     hparser.add_verbosity_arg(parser)
@@ -186,9 +226,16 @@ def _main(parser: argparse.ArgumentParser, argv: Optional[List[str]] = None) -> 
     args = parser.parse_args(argv)
     hdbg.init_logger(verbosity=args.log_level, use_exec_path=True)
     if args.agents:
-        n = run(
-            args.agents.split(","), args.benchmarks.split(","), args.limit, args.runs_file
-        )
+        try:
+            n = run(
+                args.agents.split(","),
+                args.benchmarks.split(","),
+                args.limit,
+                args.runs_file,
+                retry_errors=args.retry_errors,
+            )
+        except TooManyErrors as e:
+            raise SystemExit(f"Stopped: {e}")
         print(f"{n} new runs written to {args.runs_file}")
     if args.summary:
         _print_summary(summarize(args.runs_file))
