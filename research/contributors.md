@@ -15,8 +15,8 @@
     + [Noesis](#noesis)
     + [Process](#process)
     + [Racket sports](#racket-sports)
-    + [Tymes](#tymes)
-    + [Tyrn](#tyrn)
+    + [Tymes.ai](#tymesai)
+    + [Tyrn.dev](#tyrndev)
 - [Contributors](#contributors)
 
 <!-- tocstop -->
@@ -231,13 +231,13 @@
 | Vedanshu Joshi           | vedanshujoshi0@gmail.com        | -                            | Vedanshu7       | -                          |
 | Samarth KaPatel          | samarth.kapatel5@gmail.com      | -                            | samarth9008     | -                          |
 | Grisha Pomazkin          | pomazking@gmail.com             | -                            | PomazkinG       | -                          |
-| Linu Teresa              | -                               | lteresa@umd.edu              | -               | Counterfactual attribution |
+| Linu Teresa              | -                               | lteresa@umd.edu              | linuteresa      | Counterfactual attribution |
 | Sri Ramm Sekar Sasirekha | srirammsekarsasirekha@gmail.com | ssramm69@umd.edu             | SriRammSS       | Counterfactual attribution |
 | Heanh Sok                | heanhsok@gmail.com              | -                            | heanhsok        | Noesis                     |
 
 - [ ] @gilesgreene
 - [ ] @Delvitron1019
-- [ ] @sohail-umd, Sohail-5678
+- [ ] @Sohail-5678
 - [ ] @Sim2200
 - [ ] @caicedoss
 - [ ] @Jav359003
@@ -249,6 +249,6 @@
 - [ ] @Under-the-stars
 - [ ] @Vedanshu7
 - [ ] @samarth9008
-- [ ] @PomazkinG
+- [ ] @linuteresa
 - [ ] @SriRammSS
 - [ ] @heanhsok
