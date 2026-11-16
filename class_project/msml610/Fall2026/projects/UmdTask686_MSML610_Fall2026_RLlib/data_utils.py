@@ -26,6 +26,7 @@ import requests
 
 import class_project.msml610.Fall2026.projects.UmdTask686_MSML610_Fall2026_RLlib.rllib_utils as rlutils
 import class_project.msml610.Fall2026.projects.UmdTask686_MSML610_Fall2026_RLlib.taq_utils as rltautil
+import helpers.hdbg as hdbg
 import helpers.hprint as hprint
 
 _LOG = logging.getLogger(__name__)
@@ -392,6 +393,82 @@ def fit_permanent_impact(
     return fit
 
 
+def to_env_config(params: Dict[str, float]) -> Dict[str, float]:
+    """
+    Keep only the calibrated parameters that `ExecutionEnv` reads.
+
+    :param params: output of `calibrate()`
+    :return: config overriding `rlutils.DEFAULT_CONFIG`
+    """
+    _LOG.debug(hprint.to_str("list(params)"))
+    keys = ("daily_vol", "adv", "s0", "gamma", "eta", "half_spread_bps")
+    config = {k: params[k] for k in keys}
+    _LOG.debug("return=%s", config)
+    return config
+
+
+# VIX level splitting calm and stressed days, close to the long-run VIX mean.
+VIX_THRESHOLD = 20.0
+
+
+def label_vix_regimes(
+    days: pd.Index, vix: pd.Series, threshold: float = VIX_THRESHOLD
+) -> pd.Series:
+    """
+    Label each trading day as `calm` or `stressed` by the previous VIX close.
+
+    The previous close is known at the open, so the label does not look
+    ahead into the trading day.
+
+    :param days: trading days
+    :param vix: VIX daily close indexed by date
+    :param threshold: days with a previous close below it are `calm`
+    :return: label of each day, indexed by `days`
+    """
+    _LOG.debug(hprint.to_str("len(days) threshold"))
+    # Sort by date, as `searchsorted()` needs.
+    vix = vix.sort_index()
+    # Position of the last VIX close strictly before each day.
+    pos = vix.index.searchsorted(pd.DatetimeIndex(days), side="left") - 1
+    hdbg.dassert_lte(0, pos.min(), "VIX starts after the first day")
+    prev_vix = vix.to_numpy()[pos]
+    labels = pd.Series(
+        np.where(prev_vix < threshold, "calm", "stressed"), index=days
+    )
+    _LOG.debug("return=%s", labels.value_counts().to_dict())
+    return labels
+
+
+def calibrate_by_regime(
+    bars: pd.DataFrame,
+    vix: pd.Series,
+    n_steps: int,
+    total_shares: int,
+    *,
+    threshold: float = VIX_THRESHOLD,
+) -> Dict[str, Dict[str, float]]:
+    """
+    Calibrate `ExecutionEnv` separately on the calm and the stressed days.
+
+    :param bars: as in `calibrate()`
+    :param vix: VIX daily close indexed by date
+    :param n_steps: trading steps in one day
+    :param total_shares: shares to liquidate
+    :param threshold: as in `label_vix_regimes()`
+    :return: regime name to the output of `calibrate()` on its days
+    """
+    _LOG.debug(hprint.to_str("n_steps total_shares threshold"))
+    day = pd.Index(bars.index.tz_convert("America/New_York").date)
+    labels = label_vix_regimes(day.unique(), vix, threshold)
+    minute_labels = labels.reindex(day).to_numpy()
+    params = {}
+    for regime in ("calm", "stressed"):
+        mask = minute_labels == regime
+        params[regime] = calibrate(bars[mask], n_steps, total_shares)
+    _LOG.debug("return=%s", list(params))
+    return params
+
+
 # #############################################################################
 # M1 table
 # #############################################################################
@@ -431,9 +508,7 @@ def compute_m1_table(
         # Calibrate on the period's years.
         bars = loaders[source](start_year, end_year)
         params = calibrate(bars, n_steps, total_shares)
-        # Keep only the parameters that `ExecutionEnv` reads.
-        keys = ("daily_vol", "adv", "s0", "gamma", "eta", "half_spread_bps")
-        config = {k: params[k] for k in keys}
+        config = to_env_config(params)
         # Format each metric as a display string for the table.
         rows = {
             "Trading days": f"{params['n_days']:.0f}",
