@@ -8,8 +8,8 @@
 
 ## Create a plan
 
-- Create a plan `plan-msml610/book/prompt.slides_and_book_flow.md` for the following
-  actions and keep it updated using [ ], [.], [x] as you go
+- Create a plan `plan-pipeline.review_slides_and_create_chapter.md` for the
+  following actions and keep it updated using [ ], [.], [x] as you go
 
 ## Read convention
 

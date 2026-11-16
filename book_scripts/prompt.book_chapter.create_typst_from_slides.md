@@ -16,7 +16,7 @@
 - Generate typst format with complete document structure
 - Preserve slide organization with proper heading hierarchy
 - Output file: Generate a typst file in the sibling `book` directory than
-  `lesson_source` (e.g., `msml610/book`) with the same filename as
+  `lectures_source` (e.g., `msml610/book`) with the same filename as
   the input but using `.typ` extension
 
 ## Document Template
