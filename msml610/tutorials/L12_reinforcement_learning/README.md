@@ -1,1 +1,1 @@
-../../../class_project/project_template/README.md
+../../../class_project/project_template/docker_scripts.README.md
