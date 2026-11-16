@@ -10,16 +10,16 @@
 
 // Document metadata
 #set document(
-  title: "Lesson 02.01: Skills Organization and Management",
+  title: "Lesson 05.01: Skills Organization and Management",
   author: "AI Software Engineering",
 )
 
 // Apply the AIMA document template (page/text/heading set + show rules).
 #show: aima-style
 
-#chapter("Lesson 02.01: Skills Organization and Management")
+#chapter("Lesson 05.01: Skills Organization and Management")
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:7 '* Roadmap'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:7 '* Roadmap'
 // Slide: Roadmap
 #strong[Roadmap]
 
@@ -40,11 +40,11 @@ skill set small. Testing skills borrows from software testing: sample runs,
 golden outputs, assertions that tolerate stochastic output, and regression
 checks after a rule changes.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:22 '# Why Repositories Need Agent Conventions'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:22 '# Why Repositories Need Agent Conventions'
 // Slide: Why Repositories Need Agent Conventions
 #strong[Why Repositories Need Agent Conventions]
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:24 '* Why Agents Need Explicit Conventions'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:24 '* Why Agents Need Explicit Conventions'
 // Slide: Why Agents Need Explicit Conventions
 #strong[Why Agents Need Explicit Conventions]
 
@@ -70,7 +70,7 @@ to an agent. When the rules live in the repo rather than in tribal knowledge,
 the agent can read them at the start of every session and produce code that
 fits.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:44 '* Restating Conventions per Session Does Not Scale'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:44 '* Restating Conventions per Session Does Not Scale'
 // Slide: Restating Conventions per Session Does Not Scale
 #strong[Restating Conventions per Session Does Not Scale]
 
@@ -157,7 +157,7 @@ session unchanged.
 // render_images:begin
 #figure(
   image(
-    "Lesson02.01_Skills_Organization_and_Management.typ.figs/Lesson02.01_Skills_Organization_and_Management.1.png",
+    "Lesson05.01_Skills_Organization_and_Management.typ.figs/Lesson05.01_Skills_Organization_and_Management.1.png",
     width: 70%,
   ),
   caption: [Pasted prompts drift apart, while files in the repo reach every session],
@@ -172,7 +172,7 @@ through a pull request: it is proposed, discussed, approved, and merged with the
 same rigor as any other code change. This closes the loop between how the team
 works and how the agent works, making the two evolve together rather than apart.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:133 '* Consistency as a Reliability Property'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:133 '* Consistency as a Reliability Property'
 // Slide: Consistency as a Reliability Property
 #strong[Consistency as a Reliability Property]
 
@@ -202,11 +202,11 @@ project-wide conventions in a form the agent can follow on every run, so the
 code it writes stays consistent with the rest of the codebase, whichever
 engineer starts the session.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:156 '# Topics, Rules, Templates, and Skills'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:156 '# Topics, Rules, Templates, and Skills'
 // Slide: Topics, Rules, Templates, and Skills
 #strong[Topics, Rules, Templates, and Skills]
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:158 '* Topics Group Three Kinds of Files'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:158 '* Topics Group Three Kinds of Files'
 // Slide: Topics Group Three Kinds of Files
 #strong[Topics Group Three Kinds of Files]
 
@@ -293,7 +293,7 @@ its skills, rule file, and template.
 // render_images:begin
 #figure(
   image(
-    "Lesson02.01_Skills_Organization_and_Management.typ.figs/Lesson02.01_Skills_Organization_and_Management.2.png",
+    "Lesson05.01_Skills_Organization_and_Management.typ.figs/Lesson05.01_Skills_Organization_and_Management.2.png",
     width: 70%,
   ),
   caption: [A topic groups skills (teal), a rule file (blue), and a template (orange)],
@@ -302,7 +302,7 @@ its skills, rule file, and template.
   placement: auto,
 ) <fig:topicsgroupthreekindsoffiles>
 // render_images:end
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:242 '* Rules: Why and When'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:242 '* Rules: Why and When'
 // Slide: Rules: Why and When
 #strong[Rules: Why and When]
 
@@ -327,7 +327,7 @@ A rule states the convention and then shows it:
 This pattern keeps each convention self-contained: the header names it, the body
 explains it, and the examples remove any ambiguity about what compliance means.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:266 '* Templates: What to Copy'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:266 '* Templates: What to Copy'
 // Slide: Templates: What to Copy
 #strong[Templates: What to Copy]
 
@@ -356,7 +356,7 @@ structural violations. A template never explains why one structural choice beats
 another; that kind of decision criterion belongs in the corresponding rule file,
 not in the skeleton itself.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:291 '* Skills: How, Step by Step'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:291 '* Skills: How, Step by Step'
 // Slide: Skills: How, Step by Step
 #strong[Skills: How, Step by Step]
 
@@ -385,7 +385,7 @@ file keeps the #emph[knowledge] (what the standard actually requires). Because
 many skills can point to the same rule file, updating a convention in one place
 propagates to every workflow that depends on it.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:315 '* Rules, Templates, and Skills Compared'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:315 '* Rules, Templates, and Skills Compared'
 // Slide: Rules, Templates, and Skills Compared
 #strong[Rules, Templates, and Skills Compared]
 
@@ -441,7 +441,7 @@ you want a template. Keeping the three kinds separate means no single file tries
 to do double duty, and the agent can load only the file relevant to its current
 need rather than parsing a monolithic guide for the one paragraph that matters.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:340 '* One Home per Fact'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:340 '* One Home per Fact'
 // Slide: One Home per Fact
 #strong[One Home per Fact]
 
@@ -475,11 +475,11 @@ experience, while skills and rules are kept current as the system evolves.
 Pointing a durable skill at a perishable blog would introduce a fragile
 dependency that breaks silently the moment the blog falls out of date.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:364 '# Agent Instruction Manifests'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:364 '# Agent Instruction Manifests'
 // Slide: Agent Instruction Manifests
 #strong[Agent Instruction Manifests]
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:366 '* Agent Instruction Manifest: Definition'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:366 '* Agent Instruction Manifest: Definition'
 // Slide: Agent Instruction Manifest: Definition
 #strong[Agent Instruction Manifest: Definition]
 
@@ -504,7 +504,7 @@ ambiguity charitably. An instruction manifest is an operating manual whose first
 reader is a machine: it must be precise, unambiguous, and structured so that a
 language model can parse it reliably on every cold start.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:389 '* What Goes in a Manifest'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:389 '* What Goes in a Manifest'
 // Slide: What Goes in a Manifest
 #strong[What Goes in a Manifest]
 
@@ -544,7 +544,7 @@ tracker) and information that a tool already enforces (such as formatting rules
 checked by a linter), since restating those in the manifest adds cost without
 changing behavior.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:411 '* Layered Manifests: User, Repo, Directory'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:411 '* Layered Manifests: User, Repo, Directory'
 // Slide: Layered Manifests: User, Repo, Directory
 #strong[Layered Manifests: User, Repo, Directory]
 
@@ -571,7 +571,7 @@ a symlink pointing to `helpers_root/.claude`, which means every repository that
 embeds `helpers` as a submodule automatically shares one canonical set of rules
 and skill files, with no duplication and no risk of drift between copies.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:437 '* Context Budget: Why Not One Big Manifest'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:437 '* Context Budget: Why Not One Big Manifest'
 // Slide: Context Budget: Why Not One Big Manifest
 #strong[Context Budget: Why Not One Big Manifest]
 
@@ -602,7 +602,7 @@ elsewhere; a library tries to hold everything. Past a certain size, what an
 agent needs is not a longer document but a better index into shorter,
 task-relevant ones.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:459 '* Pointers From CLAUDE.md to Rules and Templates'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:459 '* Pointers From CLAUDE.md to Rules and Templates'
 // Slide: Pointers From CLAUDE.md to Rules and Templates
 #strong[Pointers From CLAUDE.md to Rules and Templates]
 
@@ -665,7 +665,7 @@ to the rule file (blue) and the template (orange) of each file type.
 // render_images:begin
 #figure(
   image(
-    "Lesson02.01_Skills_Organization_and_Management.typ.figs/Lesson02.01_Skills_Organization_and_Management.3.png",
+    "Lesson05.01_Skills_Organization_and_Management.typ.figs/Lesson05.01_Skills_Organization_and_Management.3.png",
     width: 70%,
   ),
   caption: [Manifest and index (violet) lead to rule file (blue) and template (orange)],
@@ -674,7 +674,7 @@ to the rule file (blue) and the template (orange) of each file type.
   placement: auto,
 ) <fig:pointersfromclaudemdtorulesandtemplates>
 // render_images:end
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:524 '* Enforcing Rules With Hooks'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:524 '* Enforcing Rules With Hooks'
 // Slide: Enforcing Rules With Hooks
 #strong[Enforcing Rules With Hooks]
 
@@ -737,7 +737,7 @@ write.
 // render_images:begin
 #figure(
   image(
-    "Lesson02.01_Skills_Organization_and_Management.typ.figs/Lesson02.01_Skills_Organization_and_Management.4.png",
+    "Lesson05.01_Skills_Organization_and_Management.typ.figs/Lesson05.01_Skills_Organization_and_Management.4.png",
     width: 70%,
   ),
   caption: [The harness runs the hook (teal) before every edit (blue)],
@@ -755,7 +755,7 @@ reminds the model to follow the rules but does not prevent the edit from
 proceeding if it ignores them. Any check that must not be forgotten belongs on a deterministic trigger, not on the model's voluntary
 recall.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:592 '* Machine-Readable Contracts: `repo_config.yaml`'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:592 '* Machine-Readable Contracts: `repo_config.yaml`'
 // Slide: Machine-Readable Contracts: `repo_config.yaml`
 #strong[Machine-Readable Contracts: `repo_config.yaml`]
 
@@ -806,11 +806,11 @@ environment-variable guessing, no fragile string extraction from a README. The
 contract is the single source of truth, and every consumer of that truth,
 whether human, script, or autonomous agent, reads the same file.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:627 '# Writing a Skill'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:627 '# Writing a Skill'
 // Slide: Writing a Skill
 #strong[Writing a Skill]
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:629 '* From a Repeated Workflow to a Skill'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:629 '* From a Repeated Workflow to a Skill'
 // Slide: From a Repeated Workflow to a Skill
 #strong[From a Repeated Workflow to a Skill]
 
@@ -838,7 +838,7 @@ standard folder layout already in place. For a more guided path, the
 `skill-creator` skill itself walks you through questions about your workflow and
 writes the skill folder for you.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:652 '* Anatomy of a SKILL.md'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:652 '* Anatomy of a SKILL.md'
 // Slide: Anatomy of a SKILL.md
 #strong[Anatomy of a SKILL.md]
 
@@ -879,7 +879,7 @@ tool selection and routing, the goal anchors the skill's intent, the inputs and
 workflow make the skill reproducible, and the verification checklist closes the
 loop by ensuring the result actually satisfies the goal.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:694 '* Progressive Disclosure'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:694 '* Progressive Disclosure'
 // Slide: Progressive Disclosure
 #strong[Progressive Disclosure]
 
@@ -944,7 +944,7 @@ load one it does not. Writing a good description is less about completeness and
 more about discrimination: it should make clear, in one clause, exactly which
 tasks the skill applies to and which it does not.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:726 '* Frontmatter: Description and Model'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:726 '* Frontmatter: Description and Model'
 // Slide: Frontmatter: Description and Model
 #strong[Frontmatter: Description and Model]
 
@@ -969,7 +969,7 @@ mechanical edit that applies a single rule (for instance,
 needs `sonnet`. Tasks that require judgment across many rules simultaneously,
 such as `skill.check_against_rules`, call for `opus`.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:753 '* Inputs and Workflow Steps'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:753 '* Inputs and Workflow Steps'
 // Slide: Inputs and Workflow Steps
 #strong[Inputs and Workflow Steps]
 
@@ -1000,7 +1000,7 @@ Conventions," then "Infer the Rules," and finally "Improve the Prompt." Each
 header names an action, none carries a step number, and none restates a rule
 that already lives in a shared conventions file.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:777 '* Verification and Provenance'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:777 '* Verification and Provenance'
 // Slide: Verification and Provenance
 #strong[Verification and Provenance]
 
@@ -1025,7 +1025,7 @@ regenerate the file can locate the skill to rerun. Provenance turns every
 generated artifact into a self-documenting link back to its own creation
 process.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:800 '* Worked Example: `coding.fix_docstring`'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:800 '* Worked Example: `coding.fix_docstring`'
 // Slide: Worked Example: `coding.fix_docstring`
 #strong[Worked Example: `coding.fix_docstring`]
 
@@ -1064,7 +1064,7 @@ model: haiku
 This compact format captures the entire task: accept files, apply a referenced
 convention, and verify both style compliance and behavioral preservation.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:840 '* Running a Skill'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:840 '* Running a Skill'
 // Slide: Running a Skill
 #strong[Running a Skill]
 
@@ -1092,11 +1092,11 @@ One practical habit worth adopting: commit your work before running any skill.
 That way each skill application produces exactly one diff you can review in
 isolation, making it straightforward to accept, amend, or revert the change.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:866 '# Maintaining Skills'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:866 '# Maintaining Skills'
 // Slide: Maintaining Skills
 #strong[Maintaining Skills]
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:868 '* Why Skills Drift'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:868 '* Why Skills Drift'
 // Slide: Why Skills Drift
 #strong[Why Skills Drift]
 
@@ -1152,7 +1152,7 @@ operated without the rule it was supposed to follow.
 // render_images:begin
 #figure(
   image(
-    "Lesson02.01_Skills_Organization_and_Management.typ.figs/Lesson02.01_Skills_Organization_and_Management.5.png",
+    "Lesson05.01_Skills_Organization_and_Management.typ.figs/Lesson05.01_Skills_Organization_and_Management.5.png",
     width: 70%,
   ),
   caption: [A renamed header leaves the skill stale (red) for 12 weeks],
@@ -1177,7 +1177,7 @@ have no tests, so the same class of breakage passes in silence. If skills are to
 reliable, they need the same checks that code gets: validated references, change
 history tracking, and tests that exercise the dependency chain end to end.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:930 '* Learning From Git History: `skill.auto_add`'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:930 '* Learning From Git History: `skill.auto_add`'
 // Slide: Learning From Git History: `skill.auto_add`
 #strong[Learning From Git History: `skill.auto_add`]
 
@@ -1235,7 +1235,7 @@ future runs, as @fig:learningfromgithistoryskillautoadd shows.
 // render_images:begin
 #figure(
   image(
-    "Lesson02.01_Skills_Organization_and_Management.typ.figs/Lesson02.01_Skills_Organization_and_Management.6.png",
+    "Lesson05.01_Skills_Organization_and_Management.typ.figs/Lesson05.01_Skills_Organization_and_Management.6.png",
     width: 70%,
   ),
   caption: [Each manual fix (orange) becomes a prompt rule (blue)],
@@ -1256,7 +1256,7 @@ comment when a claim is uncertain" applies to every future chapter; a rule like
 "add a TODO to line 47 of Lesson 3" applies to nothing else. Each fix, properly
 generalized, improves every later run across every file the prompt touches.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:996 '* Checking References: `skill.check_refs`'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:996 '* Checking References: `skill.check_refs`'
 // Slide: Checking References: `skill.check_refs`
 #strong[Checking References: `skill.check_refs`]
 
@@ -1299,7 +1299,7 @@ that looks fine until someone tries to follow it. Catching these immediately,
 while the edit is fresh, is far cheaper than debugging a broken cross-reference
 weeks later.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:1024 '* Keeping the Skill Set Small'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:1024 '* Keeping the Skill Set Small'
 // Slide: Keeping the Skill Set Small
 #strong[Keeping the Skill Set Small]
 
@@ -1322,11 +1322,11 @@ system improves through the same workflow it supports. There is no separate
 "meta" layer for upkeep: the same process that builds a new capability also
 cleans up and tightens the existing ones.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:1046 '# Testing Skills'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:1046 '# Testing Skills'
 // Slide: Testing Skills
 #strong[Testing Skills]
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:1048 '* Why Test a Skill'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:1048 '* Why Test a Skill'
 // Slide: Why Test a Skill
 #strong[Why Test a Skill]
 
@@ -1353,7 +1353,7 @@ every figure label referenced in the prose also appears in a figure block). Each
 of these defines a different testing strategy, and choosing the right one
 depends on what the skill is supposed to guarantee.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:1068 '* Smoke Test: Run on a Sample File, Review the Diff'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:1068 '* Smoke Test: Run on a Sample File, Review the Diff'
 // Slide: Smoke Test: Run on a Sample File, Review the Diff
 #strong[Smoke Test: Run on a Sample File, Review the Diff]
 
@@ -1376,7 +1376,7 @@ tooling. The tradeoff is that it is entirely manual: a single run against a
 single model, so it will miss failures that surface only with different inputs
 or under a different provider.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:1089 '* Fixtures and Golden Outputs'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:1089 '* Fixtures and Golden Outputs'
 // Slide: Fixtures and Golden Outputs
 #strong[Fixtures and Golden Outputs]
 
@@ -1416,7 +1416,7 @@ prompt and an update to its test cases appear in a single diff. This keeps the
 two artifacts from drifting apart and makes code review straightforward: anyone
 reading the prompt change can immediately see whether the tests still match.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:1116 '* Assertions for Stochastic Output'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:1116 '* Assertions for Stochastic Output'
 // Slide: Assertions for Stochastic Output
 #strong[Assertions for Stochastic Output]
 
@@ -1470,7 +1470,7 @@ cases whose ground truth is already known. Once those rates are quantified, the
 test framework can set pass thresholds that account for the judge's own
 reliability rather than treating its verdicts as ground truth.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:1140 '* Detecting Regressions After Rule Changes'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:1140 '* Detecting Regressions After Rule Changes'
 // Slide: Detecting Regressions After Rule Changes
 #strong[Detecting Regressions After Rule Changes]
 
@@ -1534,7 +1534,7 @@ verification steps must all pass before the blue merge step proceeds.
 // render_images:begin
 #figure(
   image(
-    "Lesson02.01_Skills_Organization_and_Management.typ.figs/Lesson02.01_Skills_Organization_and_Management.7.png",
+    "Lesson05.01_Skills_Organization_and_Management.typ.figs/Lesson05.01_Skills_Organization_and_Management.7.png",
     width: 75%,
   ),
   caption: [A rule edit reruns the checks (teal) before the merge (blue)],
@@ -1549,7 +1549,7 @@ in seconds. The full production model serves as a gate before a release,
 ensuring that the final golden-output comparison reflects the same model quality
 end users will see. The principle is the same as for code: a rule change does not merge until the skills that depend on it pass.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:1206 '* Measuring Skill Quality'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:1206 '* Measuring Skill Quality'
 // Slide: Measuring Skill Quality
 #strong[Measuring Skill Quality]
 
@@ -1591,7 +1591,7 @@ OpenAI Evals each provide harnesses for scoring LLM outputs on user-defined
 criteria, making it straightforward to operationalize these quality dimensions
 without building a custom pipeline from scratch.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:1231 '* Summary'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:1231 '* Summary'
 // Slide: Summary
 #strong[Summary]
 
@@ -1640,7 +1640,7 @@ approach catches both hard failures (a missing section, a broken reference) and
 softer regressions (a change in tone or coverage) without demanding exact string
 matching.
 
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:1246 '* References'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:1246 '* References'
 // Slide: References
 #strong[References]
 

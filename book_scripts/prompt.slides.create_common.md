@@ -1,8 +1,8 @@
 # Goal
 - Describe the steps shared by the prompts that create the slides of one lesson
 - Do not use this file alone: it is executed by
-  - `book_scripts/prompt.create_lesson_slides_from_chap_toc.md`
-  - `book_scripts/prompt.create_lesson_slides_from_topic.md`
+  - `book_scripts/prompt.slides.create_from_book_map.md`
+  - `book_scripts/prompt.slides.create_from_topics.md`
 
 # Parameters
 - The calling prompt defines

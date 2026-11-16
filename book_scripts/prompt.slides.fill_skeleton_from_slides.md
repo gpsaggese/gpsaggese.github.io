@@ -20,7 +20,7 @@
 
   ## <H2 title>
   ```
-  - `<file>` is a repo-root-relative path to the exact source `.txt` / `.smd`
+  - `<file>` is a repo-root-relative path to the exact source `.smd`
     file, `<line num>` its line, and `'<title of slide>'` that line's full
     text single-quoted verbatim, leading marker included (`* `)
   - If no source slide can be identified, leave a bare `// From:` (nothing
@@ -33,7 +33,7 @@
   # Representation as a Foundation for Decisions
 
   * Why Knowledge Representation Matters
-  // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.txt:42 '* Why Knowledge Representation Matters'
+  // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:42 '* Why Knowledge Representation Matters'
   ```
 
 # Workflow
@@ -51,7 +51,7 @@
 - E.g., this snippet
   ```
   * Why Knowledge Representation Matters
-  // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.txt:42 '* Why Knowledge Representation Matters'
+  // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:42 '* Why Knowledge Representation Matters'
 
   * <Next slide>
   // From: <file>:<line num> '<title of slide>'
@@ -59,7 +59,7 @@
   becomes
   ```
   * Why Knowledge Representation Matters
-  // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.txt:42 '* Why Knowledge Representation Matters'
+  // From: msml610/lectures_source/Lesson03.1-Knowledge_representation.smd:42 '* Why Knowledge Representation Matters'
 
   - @Motivation@: **Why KR is essential to AI**
 

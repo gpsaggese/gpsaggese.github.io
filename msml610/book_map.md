@@ -240,7 +240,7 @@ WARNING: Can't find s3fs: continuing
 // TODO(ai_gp): Where to move this piece? Move / merge it to book_scripts/README.md
 
 ```
-claude> Execute msml610/book/prompt.slides_and_book_flow.md msml610/lectures_source/Lesson05.2-Overfitting.smd
+claude> Execute book_scripts/prompt.pipeline.review_slides_and_create_chapter.md msml610/lectures_source/Lesson05.2-Overfitting.smd
 ```
 
 - [x] 5.1

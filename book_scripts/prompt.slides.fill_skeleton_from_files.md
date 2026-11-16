@@ -5,15 +5,15 @@
   ```
   DIR="/Users/saggese/src/umd_classes1"
   BOOK="book_AI_Software_Engineering"
-  CHAP="## Tools_source.smd"
+  FILE="Tools_source.smd"
   ```
 
-- Read carefully the entire table of content `$DIR/$BOOK/map.md`
+- Read carefully the entire table of content `<DIR>/<BOOK>/book_map.md`
 
 ## Write Slides
-- Execute `$DIR/helpers_root/.claude/skills/slides.write/SKILL.md` for the
-  material in the skeleton slides in `$DIR/$BOOK/CHAP` using the available
-  references for each slide
+- Execute `<DIR>/helpers_root/.claude/skills/slides.write/SKILL.md` for the
+  material in the skeleton slides in `<DIR>/<BOOK>/lectures_source/<FILE>` using
+  the available references for each slide
   ```
   * Why AI Agents Need Explicit Rules
   // From: helpers_root/CLAUDE.md

@@ -4,7 +4,7 @@
   and local slides)
 
 # Workload
-- Information about the entire book flow is at `book_proposals/README.md`
+- Information about the entire book flow is at `book_scripts/README.md`
 
 - The relevant variables are:
   ```
@@ -13,11 +13,11 @@
   CHAP="## 02: AI Pair Programming Workflows"
   ```
 
-- Read carefully the entire table of content `<DIR>/<BOOK>/map.md` of the book
+- Read carefully the entire table of content `<DIR>/<BOOK>/book_map.md` of the book
 
 ## Step 1: Find content
 - Your task is to review the content of a chapter of a book in `<CHAP>` from
-  `<DIR>/<BOOK>/map.md` and add references to books and technical papers that
+  `<DIR>/<BOOK>/book_map.md` and add references to books and technical papers that
   apply to the specific chapter
 
 - Find related academic references (papers, journals, conference papers,
@@ -29,18 +29,18 @@
 
 - Prefer recent references rather than old
 
-## Step 2: Update the map.md file
+## Step 2: Update the book_map.md file
 - Add or improve sections `### Local Material`, `### Books`, `### Papers`
-  `### Internet resources` in `<DIR>/<BOOK>/map.md` with the newly found content
+  `### Internet resources` in `<DIR>/<BOOK>/book_map.md` with the newly found content
   - Local materials are on the local disk (their location is in sections 
-    like `# General Resources` in `<DIR>/<BOOK>/map.md`, in files like
+    like `# General Resources` in `<DIR>/<BOOK>/book_map.md`, in files like
     `<DIR>/<BOOK>/resources.md`)
 - E.g.,
 
   ```
   ### Local Material
-  - `msml610/lectures_source/Lesson08.1-Causal_AI_intro.txt`
-  - `msml610/lectures_source/Lesson08.5-Experimentation.txt`
+  - `msml610/lectures_source/Lesson08.1-Causal_AI_intro.smd`
+  - `msml610/lectures_source/Lesson08.5-Experimentation.smd`
   
   ### Books
   - Brynjolfsson et al, "Machine, Platform, Crowd", 2021
