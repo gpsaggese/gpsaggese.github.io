@@ -564,7 +564,7 @@ def cell5_5_coherence_by_num_topics(
     :return: one row per number of topics
         ```
         num_topics  c_v
-        3           0.31
+        3           0.386
         ```
     """
     _LOG.debug(hprint.to_str("len(corpus) num_topics_list random_state"))
@@ -616,7 +616,7 @@ def cell6_3_most_similar_to_df(
     """
     _LOG.debug(hprint.to_str("terms topn"))
     missing = [term for term in terms if term not in kv]
-    hdbg.dassert_eq(len(missing), 0, "Terms not in the vocabulary:", missing)
+    hdbg.dassert_eq(len(missing), 0, "Terms not in the vocabulary: %s", missing)
     rows = []
     for term in terms:
         row = {"term": term}
