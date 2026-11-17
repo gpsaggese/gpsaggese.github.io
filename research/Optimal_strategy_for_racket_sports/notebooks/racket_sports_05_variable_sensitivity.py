@@ -472,8 +472,8 @@ display(sensitivity.round(3))
 # - Caveats
 #   - Saturation: the highest $P(winner)$ is 1.000 for many tennis settings, so it
 #     cannot rank them
-#   - The spread does not depend on the ball speed yet (#723), so a faster ball
-#     always looks better
+#   - The spread does not depend on the ball speed here, so a faster ball always
+#     looks better; notebook 07 makes it grow with the ball speed (#723)
 #   - `v_p` = 6 m/s and spreads of 3 m are slider ends, not measured values
 # - Next: a closed form for these relations, with symbolic regression (#790)
 

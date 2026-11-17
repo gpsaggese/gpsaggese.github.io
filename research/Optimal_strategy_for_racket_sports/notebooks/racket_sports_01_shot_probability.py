@@ -208,7 +208,8 @@ _ = utils.cell1_1_plot_shot_widget(SPORT)
 #   probability of a winner, $P(winner)$, counted as one event on the same Monte
 #   Carlo landing points
 # - **Limitation: in this model, hitting as fast as possible always looks best;
-#   see [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723)**
+#   notebook 07 makes the spread grow with the ball speed, see
+#   [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723)**
 #   - The spread `std_x2`, `std_y2` does not grow with `ball_speed`, so a faster
 #     ball only takes time away from player 1, at no cost in accuracy
 #   - Real players miss more when they hit harder, so the best `ball_speed` cannot
@@ -300,7 +301,7 @@ _ = utils.cell2_1_plot_winner_widget(SPORT)
 #     under 1 in 20, and $P(winner)$ fall around player 1
 # - Raise `ball_speed` to its maximum
 #   - Observe no cell go down: in this model hitting as fast as possible always
-#     looks best (see #723)
+#     looks best; notebook 07 makes speed cost accuracy (#723)
 # - Raise `std_x2` and `std_y2` to 2 m
 #   - Observe the map fade, and the best $P(winner)$ fall with its $P(in)$: from
 #     1.00 to 0.95 in tennis, and from 0.996 to 0.76 in pickleball
@@ -348,7 +349,8 @@ _ = utils.cell2_1_plot_winner_widget(SPORT)
 #   - The ball flies in a straight line at the constant `ball_speed`: no arc, no
 #     slowdown
 # - The spread of the return does not depend on the ball speed
-#   - In this model, hitting as fast as possible always looks best; see
+#   - In this model, hitting as fast as possible always looks best; notebook 07
+#     makes it grow with the ball speed, see
 #     [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723)
 # - The net is ignored, as in Part 1
 #   - A return that would hit the net is not modeled
