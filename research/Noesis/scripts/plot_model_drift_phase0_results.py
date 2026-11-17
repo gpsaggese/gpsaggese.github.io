@@ -107,6 +107,7 @@ def _save(figure: plt.Figure, dst_dir: str, stem: str) -> None:
         os.path.join(dst_dir, stem + ".svg"),
         bbox_inches="tight",
         facecolor="white",
+        metadata={"Date": None},
     )
     plt.close(figure)
 
@@ -480,24 +481,53 @@ def _plot_cusum_delay(summary: Mapping[str, object], dst_dir: str) -> None:
     _save(figure, dst_dir, "cusum-fisher-detection-delay")
 
 
-def _main() -> None:
-    args = _parse_args()
+def generate_phase0_figures(
+    warmup_summary: str = DEFAULT_WARMUP_SUMMARY,
+    comparison_summary: str = DEFAULT_COMPARISON_SUMMARY,
+    stability_summary: str = DEFAULT_STABILITY_SUMMARY,
+    capability_scenarios: str = DEFAULT_CAPABILITY_SCENARIOS,
+    cusum_summary: str = DEFAULT_CUSUM_SUMMARY,
+    dst_dir: str = DEFAULT_DST_DIR,
+) -> Tuple[str, ...]:
+    """Regenerate the paper figures from checked-in experiment artifacts."""
     plt.rcParams.update(
         {
             "font.family": "DejaVu Sans",
             "axes.labelcolor": INK,
             "text.color": INK,
             "svg.fonttype": "none",
+            "svg.hashsalt": "noesis-model-drift-v1",
         }
     )
-    _plot_live_capability(_read_json(args.warmup_summary), args.dst_dir)
-    _plot_method_comparison(_read_json(args.comparison_summary), args.dst_dir)
-    _plot_stability(_read_json(args.stability_summary), args.dst_dir)
+    _plot_live_capability(_read_json(warmup_summary), dst_dir)
+    _plot_method_comparison(_read_json(comparison_summary), dst_dir)
+    _plot_stability(_read_json(stability_summary), dst_dir)
     _plot_synthetic_detection(
-        _read_csv(args.capability_scenarios), args.dst_dir
+        _read_csv(capability_scenarios), dst_dir
     )
-    _plot_cusum_delay(_read_json(args.cusum_summary), args.dst_dir)
-    print("Figures: %s" % args.dst_dir)
+    _plot_cusum_delay(_read_json(cusum_summary), dst_dir)
+    stems = (
+        "live-capability-by-route",
+        "substitution-sensitivity-comparison",
+        "mmd-stability-pvalues",
+        "synthetic-capability-detection",
+        "cusum-fisher-detection-delay",
+    )
+    figure_paths = tuple(os.path.join(dst_dir, stem + ".png") for stem in stems)
+    print("Figures: %s" % dst_dir)
+    return figure_paths
+
+
+def _main() -> None:
+    args = _parse_args()
+    generate_phase0_figures(
+        warmup_summary=args.warmup_summary,
+        comparison_summary=args.comparison_summary,
+        stability_summary=args.stability_summary,
+        capability_scenarios=args.capability_scenarios,
+        cusum_summary=args.cusum_summary,
+        dst_dir=args.dst_dir,
+    )
 
 
 if __name__ == "__main__":

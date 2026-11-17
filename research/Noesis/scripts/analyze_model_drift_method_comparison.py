@@ -225,15 +225,30 @@ def _render_findings(summary: Mapping[str, object]) -> str:
     return "\n".join(lines)
 
 
-def _main() -> None:
-    args = _parse_args()
-    fingerprint = _read_json(args.fingerprint_summary)
-    stability = _read_json(args.stability_summary)
+def run_method_comparison(
+    capability_summary: str = DEFAULT_CAPABILITY_SUMMARY,
+    warmup_grades: str = DEFAULT_WARMUP_GRADES,
+    fingerprint_summary: str = DEFAULT_FINGERPRINT_SUMMARY,
+    stability_summary: str = DEFAULT_STABILITY_SUMMARY,
+    dst_dir: str = DEFAULT_DST_DIR,
+) -> Mapping[str, object]:
+    """Rebuild the frozen-evidence comparison and return its summary.
+
+    This entry point is shared by the command-line program and the paired
+    analysis notebook. It reads only checked-in artifacts and makes no model
+    provider calls.
+    """
+    fingerprint = _read_json(fingerprint_summary)
+    stability = _read_json(stability_summary)
     capability_rows = []
-    with open(args.capability_summary, encoding="utf-8", newline="") as file_:
+    with open(capability_summary, encoding="utf-8", newline="") as file_:
         capability_rows = list(csv.DictReader(file_))
-    healthy = next(row for row in capability_rows if row["scenario_name"] == "healthy_a_a")
-    paired = _paired_capability_result(_read_jsonl(args.warmup_grades))
+    healthy = next(
+        row
+        for row in capability_rows
+        if row["scenario_name"] == "healthy_a_a"
+    )
+    paired = _paired_capability_result(_read_jsonl(warmup_grades))
     full_mmd = next(
         row
         for row in fingerprint["scenario_results"]
@@ -252,7 +267,7 @@ def _main() -> None:
                 "permutations": fingerprint["protocol"]["permutations"],
             },
         },
-        "scenario_comparison": _scenario_rows(args.capability_summary, fingerprint),
+        "scenario_comparison": _scenario_rows(capability_summary, fingerprint),
         "healthy_controls": {
             "capability_alerts": int(healthy["detected_trials"]),
             "capability_trials": int(healthy["total_trials"]),
@@ -264,22 +279,34 @@ def _main() -> None:
             "Methods used different prompt banks, response collections, and trial designs."
         ),
     }
-    os.makedirs(args.dst_dir, exist_ok=True)
-    summary_path = os.path.join(args.dst_dir, "comparison_summary.json")
-    table_path = os.path.join(args.dst_dir, "comparison.csv")
-    findings_path = os.path.join(args.dst_dir, "findings.md")
+    os.makedirs(dst_dir, exist_ok=True)
+    summary_path = os.path.join(dst_dir, "comparison_summary.json")
+    table_path = os.path.join(dst_dir, "comparison.csv")
+    findings_path = os.path.join(dst_dir, "findings.md")
     with open(summary_path, "w", encoding="utf-8") as file_:
         json.dump(summary, file_, indent=2, sort_keys=True)
         file_.write("\n")
     with open(table_path, "w", encoding="utf-8", newline="") as file_:
         fieldnames = list(summary["scenario_comparison"][0])
-        writer = csv.DictWriter(file_, fieldnames=fieldnames)
+        writer = csv.DictWriter(file_, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         writer.writerows(summary["scenario_comparison"])
     with open(findings_path, "w", encoding="utf-8") as file_:
         file_.write(_render_findings(summary))
     print("Comparison: %s" % findings_path)
     print("Provider calls: 0")
+    return summary
+
+
+def _main() -> None:
+    args = _parse_args()
+    run_method_comparison(
+        capability_summary=args.capability_summary,
+        warmup_grades=args.warmup_grades,
+        fingerprint_summary=args.fingerprint_summary,
+        stability_summary=args.stability_summary,
+        dst_dir=args.dst_dir,
+    )
 
 
 if __name__ == "__main__":
