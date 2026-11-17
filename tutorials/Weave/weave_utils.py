@@ -23,6 +23,23 @@ import helpers.hnotebook as hnotebo
 import inspect
 import helpers.hintrospection as hintros
 
+import hashlib
+from pathlib import Path
+from typing import Optional, Tuple
+
+import pydantic
+import requests
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import f1_score
+from sklearn.pipeline import Pipeline
+
+import time
+from io import StringIO
+from urllib.parse import urljoin
+
+from bs4 import BeautifulSoup
+
 _LOG = logging.getLogger(__name__)
 
 
@@ -280,3 +297,740 @@ def summarize_keyword_evaluations(
             }
         )
     return pd.DataFrame(rows).set_index("model").round(3)
+
+
+# #############################################################################
+# FOMC application data
+# #############################################################################
+
+
+DATA_DIR = Path(__file__).resolve().parent / "data"
+
+FOMC_DATASET_URL = (
+    "https://huggingface.co/datasets/"
+    "gtfintechlab/fomc_communication/resolve/main"
+)
+
+LABEL_NAMES = {
+    0: "dovish",
+    1: "hawkish",
+    2: "neutral",
+}
+
+
+def load_fomc_split(split: str) -> pd.DataFrame:
+    """
+    Download, cache, and validate a labeled FOMC dataset split.
+
+    :param split: dataset split, either train or test
+    :return: cleaned dataframe containing sentences and labels
+    """
+    hdbg.dassert_in(split, ["train", "test"])
+    cache_dir = DATA_DIR / "raw"
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    cache_path = cache_dir / f"{split}.csv"
+
+    if not cache_path.exists():
+        url = f"{FOMC_DATASET_URL}/{split}.csv"
+        _LOG.info("Downloading %s", url)
+        response = requests.get(url, timeout=60)
+        response.raise_for_status()
+        cache_path.write_bytes(response.content)
+
+    data = pd.read_csv(cache_path)
+    data = data[["sentence", "year", "label"]].copy()
+
+    hdbg.dassert(data["sentence"].notna().all())
+    hdbg.dassert(data["label"].notna().all())
+
+    data["sentence"] = data["sentence"].str.strip()
+
+    hdbg.dassert(data["sentence"].ne("").all())
+    hdbg.dassert(
+        set(data["label"].unique()).issubset(LABEL_NAMES)
+    )
+
+    data["label"] = data["label"].astype(int)
+    return data
+
+
+def training_data_digest(train_df: pd.DataFrame) -> str:
+    """
+    Calculate a reproducible fingerprint of the training data.
+
+    :param train_df: training sentences and labels
+    :return: SHA-256 fingerprint of the training examples
+    """
+    content = train_df[["sentence", "label"]].to_csv(
+        index=False,
+        lineterminator="\n",
+    )
+    return hashlib.sha256(content.encode("utf-8")).hexdigest()
+
+
+# #############################################################################
+# FOMC classification models
+# #############################################################################
+
+
+class TfidfLogRegModel(weave.Model):
+    """
+    Classify FOMC sentences using TF-IDF and logistic regression.
+
+    Weave versions the model configuration and training data fingerprint.
+    The fitted scikit-learn pipeline is kept in memory.
+    """
+
+    ngram_range: Tuple[int, int] = (1, 2)
+    max_features: int = 10000
+    C: float = 1.0
+    max_iter: int = 1000
+    random_state: int = 42
+    class_weight: Optional[str] = None
+    training_digest: str
+
+    _pipeline: Optional[Pipeline] = pydantic.PrivateAttr(
+        default=None
+    )
+
+    def fit(
+        self,
+        train_df: pd.DataFrame,
+    ) -> "TfidfLogRegModel":
+        """
+        Train the model on labeled FOMC sentences.
+
+        :param train_df: training sentences and labels
+        :return: fitted model
+        """
+        hdbg.dassert_eq(
+            self.training_digest,
+            training_data_digest(train_df),
+        )
+
+        self._pipeline = Pipeline(
+            [
+                (
+                    "tfidf",
+                    TfidfVectorizer(
+                        ngram_range=self.ngram_range,
+                        lowercase=True,
+                        max_features=self.max_features,
+                    ),
+                ),
+                (
+                    "classifier",
+                    LogisticRegression(
+                        C=self.C,
+                        max_iter=self.max_iter,
+                        random_state=self.random_state,
+                        class_weight=self.class_weight,
+                    ),
+                ),
+            ]
+        )
+
+        self._pipeline.fit(
+            train_df["sentence"].tolist(),
+            train_df["label"].tolist(),
+        )
+        return self
+
+    @weave.op
+    def predict(self, sentence: str) -> Dict[str, Any]:
+        """
+        Classify a single FOMC sentence.
+
+        :param sentence: sentence to classify
+        :return: predicted label, label name, and confidence
+        """
+        if self._pipeline is None:
+            raise RuntimeError(
+                "Call fit() before predict()."
+            )
+
+        probabilities = self._pipeline.predict_proba(
+            [sentence]
+        )[0]
+
+        best = probabilities.argmax()
+        label = int(self._pipeline.classes_[best])
+
+        return {
+            "label": label,
+            "label_name": LABEL_NAMES[label],
+            "confidence": round(
+                float(probabilities[best]), 4
+            ),
+        }
+
+
+# #############################################################################
+# FOMC model evaluation
+# #############################################################################
+
+
+def make_fomc_test_dataset(
+    test_df: pd.DataFrame,
+) -> weave.Dataset:
+    """
+    Convert labeled test sentences into a Weave dataset.
+
+    :param test_df: held-out sentences and labels
+    :return: dataset for model evaluation
+    """
+    rows = [
+        {
+            "sentence": str(row.sentence),
+            "label": int(row.label),
+        }
+        for row in test_df.itertuples(index=False)
+    ]
+
+    return weave.Dataset(
+        name="fomc-test-sentences",
+        rows=rows,
+    )
+
+
+@weave.op
+def accuracy_scorer(
+    label: int,
+    output: Dict[str, Any],
+) -> Dict[str, bool]:
+    """
+    Check whether a prediction matches the reference label.
+
+    :param label: true numeric label
+    :param output: model prediction
+    :return: dictionary indicating prediction correctness
+    """
+    return {
+        "correct": int(output["label"]) == int(label)
+    }
+
+
+class MacroF1Scorer(weave.Scorer):
+    """
+    Calculate macro-F1 across the three monetary policy classes.
+    """
+
+    labels: List[int] = [0, 1, 2]
+
+    @weave.op
+    def score(
+        self,
+        *,
+        output: Dict[str, Any],
+        label: int,
+    ) -> Dict[str, int]:
+        """
+        Record the true and predicted labels.
+
+        :param output: model prediction
+        :param label: true numeric label
+        :return: labels needed for aggregate scoring
+        """
+        return {
+            "true_label": int(label),
+            "predicted_label": int(output["label"]),
+        }
+
+    @weave.op
+    def summarize(
+        self,
+        score_rows: List[Optional[Dict[str, int]]],
+    ) -> Dict[str, Any]:
+        """
+        Calculate macro-F1 and individual class F1 scores.
+
+        :param score_rows: results from individual predictions
+        :return: aggregate classification metrics
+        """
+        rows = [row for row in score_rows if row]
+        hdbg.dassert(len(rows) > 0)
+
+        y_true = [row["true_label"] for row in rows]
+        y_pred = [row["predicted_label"] for row in rows]
+
+        per_class = f1_score(
+            y_true,
+            y_pred,
+            labels=self.labels,
+            average=None,
+            zero_division=0,
+        )
+
+        summary = {
+            "macro_f1": float(per_class.mean()),
+            "n_scored": len(rows),
+        }
+
+        for label_id, value in zip(self.labels, per_class):
+            summary[f"f1_{LABEL_NAMES[label_id]}"] = float(value)
+
+        return summary
+
+
+def summarize_fomc_evaluations(
+    summaries: Dict[str, Dict[str, Any]],
+    expected_rows: int,
+) -> pd.DataFrame:
+    """
+    Compare the classification metrics of evaluated models.
+
+    :param summaries: model names and evaluation summaries
+    :param expected_rows: expected number of scored sentences
+    :return: model comparison dataframe
+    """
+    rows = []
+
+    for name, summary in summaries.items():
+        f1_summary = summary["MacroF1Scorer"]
+
+        hdbg.dassert_eq(
+            f1_summary["n_scored"],
+            expected_rows,
+        )
+
+        rows.append(
+            {
+                "model": name,
+                "macro_f1": f1_summary["macro_f1"],
+                "accuracy": summary["accuracy_scorer"][
+                    "correct"
+                ]["true_fraction"],
+                "f1_dovish": f1_summary["f1_dovish"],
+                "f1_hawkish": f1_summary["f1_hawkish"],
+                "f1_neutral": f1_summary["f1_neutral"],
+                "mean_latency_s": summary["model_latency"][
+                    "mean"
+                ],
+                "n_scored": f1_summary["n_scored"],
+            }
+        )
+
+    return pd.DataFrame(rows).set_index("model")
+
+
+# #############################################################################
+# FOMC statement ingestion
+# #############################################################################
+
+
+FED_BASE_URL = "https://www.federalreserve.gov"
+
+
+def discover_fomc_statements(
+    start_year: int = 2015,
+    end_year: int = 2024,
+) -> pd.DataFrame:
+    """
+    Discover official FOMC monetary policy statement URLs.
+
+    :param start_year: first announcement year
+    :param end_year: last announcement year
+    :return: announcement dates and source URLs
+    """
+    calendar_urls = [
+        f"{FED_BASE_URL}/monetarypolicy/fomchistorical{year}.htm"
+        for year in range(start_year, min(end_year, 2020) + 1)
+    ]
+
+    calendar_urls.append(
+        f"{FED_BASE_URL}/monetarypolicy/fomccalendars.htm"
+    )
+
+    pattern = re.compile(
+        r"/newsevents/pressreleases/monetary(\d{8})a\.htm",
+        re.IGNORECASE,
+    )
+
+    links = {}
+
+    for calendar_url in calendar_urls:
+        response = requests.get(calendar_url, timeout=60)
+        response.raise_for_status()
+
+        soup = BeautifulSoup(response.content, "html.parser")
+
+        for link in soup.find_all("a", href=True):
+            url = urljoin(calendar_url, link["href"])
+            match = pattern.search(url)
+
+            if match:
+                date = pd.to_datetime(
+                    match.group(1),
+                    format="%Y%m%d",
+                )
+
+                if start_year <= date.year <= end_year:
+                    links[date] = url
+
+    hdbg.dassert(len(links) > 0)
+
+    # Exclude the unrelated FIMA Repo Facility announcement.
+    links.pop(pd.Timestamp("2020-03-31"), None)
+
+    return (
+        pd.DataFrame(
+            [
+                {"date": date, "source_url": url}
+                for date, url in links.items()
+            ]
+        )
+        .sort_values("date")
+        .reset_index(drop=True)
+    )
+
+
+def download_fomc_statement(
+    date: pd.Timestamp,
+    url: str,
+) -> str:
+    """
+    Download and cache an official FOMC statement.
+
+    :param date: announcement date
+    :param url: official statement URL
+    :return: cleaned statement text
+    """
+    cache_dir = DATA_DIR / "raw" / "fomc_statements"
+    cache_dir.mkdir(parents=True, exist_ok=True)
+
+    cache_path = cache_dir / f"{date:%Y-%m-%d}.txt"
+
+    if cache_path.exists():
+        text = cache_path.read_text(encoding="utf-8")
+        if len(text.strip()) >= 300:
+            return text
+
+    response = requests.get(url, timeout=60)
+    response.raise_for_status()
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    article = soup.select_one("#article")
+
+    hdbg.dassert(
+        article is not None,
+        f"No article found for {date}",
+    )
+
+    paragraphs = [
+        paragraph.get_text(" ", strip=True)
+        for paragraph in article.find_all("p")
+    ]
+
+    text = "\n".join(
+        paragraph for paragraph in paragraphs if paragraph
+    )
+
+    text = text.replace("\xa0", " ").replace("\u200b", "")
+    text = re.sub(r"[ \t]+", " ", text).strip()
+
+    hdbg.dassert(
+        len(text) >= 300,
+        f"Statement appears too short: {date}",
+    )
+
+    cache_path.write_text(text, encoding="utf-8")
+
+    time.sleep(0.3)
+    return text
+
+
+def load_fomc_statements(
+    start_year: int = 2015,
+    end_year: int = 2024,
+) -> pd.DataFrame:
+    """
+    Load and cache official FOMC monetary policy statements.
+
+    :param start_year: first announcement year
+    :param end_year: last announcement year
+    :return: dates, statement texts, and source URLs
+    """
+    cache_dir = DATA_DIR / "processed"
+    cache_dir.mkdir(parents=True, exist_ok=True)
+
+    cache_path = (
+        cache_dir
+        / f"fomc_statements_{start_year}_{end_year}.csv"
+    )
+
+    if cache_path.exists():
+        data = pd.read_csv(
+            cache_path,
+            parse_dates=["date"],
+        )
+    else:
+        links = discover_fomc_statements(
+            start_year,
+            end_year,
+        )
+
+        records = []
+
+        for row in links.itertuples(index=False):
+            text = download_fomc_statement(
+                row.date,
+                row.source_url,
+            )
+
+            records.append(
+                {
+                    "date": row.date,
+                    "statement_text": text,
+                    "source_url": row.source_url,
+                }
+            )
+
+        data = pd.DataFrame(records)
+
+    data = data.sort_values("date").reset_index(drop=True)
+
+    hdbg.dassert(data["date"].is_unique)
+    hdbg.dassert(data["statement_text"].notna().all())
+    hdbg.dassert(data["statement_text"].str.strip().ne("").all())
+
+    if (start_year, end_year) == (2015, 2024):
+        hdbg.dassert_eq(len(data), 84)
+
+    data.to_csv(cache_path, index=False)
+    return data
+
+
+# #############################################################################
+# Treasury yield ingestion
+# #############################################################################
+
+
+def download_treasury_year(
+    year: int,
+    max_retries: int = 5,
+) -> pd.DataFrame:
+    """
+    Download and cache daily Treasury yields for one year.
+
+    :param year: observation year
+    :param max_retries: maximum download attempts
+    :return: raw Treasury yield dataframe
+    """
+    hdbg.dassert(max_retries > 0)
+
+    cache_dir = DATA_DIR / "raw" / "treasury_yields"
+    cache_dir.mkdir(parents=True, exist_ok=True)
+
+    cache_path = cache_dir / f"treasury_{year}.csv"
+
+    if cache_path.exists():
+        return pd.read_csv(cache_path)
+
+    url = (
+        "https://home.treasury.gov/resource-center/"
+        "data-chart-center/interest-rates/"
+        f"daily-treasury-rates.csv/{year}/all"
+    )
+
+    params = {
+        "type": "daily_treasury_yield_curve",
+        "field_tdr_date_value": str(year),
+        "page": "",
+        "_format": "csv",
+    }
+
+    for attempt in range(max_retries):
+        try:
+            _LOG.info("Downloading Treasury yields for %d", year)
+
+            response = requests.get(
+                url,
+                params=params,
+                timeout=90,
+                headers={"User-Agent": "Mozilla/5.0"},
+            )
+            response.raise_for_status()
+
+            data = pd.read_csv(StringIO(response.text))
+            data.columns = data.columns.str.strip()
+
+            hdbg.dassert(not data.empty)
+            hdbg.dassert_in("Date", data.columns)
+            hdbg.dassert_in("2 Yr", data.columns)
+
+            data.to_csv(cache_path, index=False)
+
+            time.sleep(1)
+            return data
+
+        except requests.exceptions.RequestException:
+            if attempt == max_retries - 1:
+                raise
+
+            wait_seconds = min(5 * 2**attempt, 60)
+
+            _LOG.warning(
+                "Treasury download failed; retrying in %d seconds",
+                wait_seconds,
+            )
+
+            time.sleep(wait_seconds)
+
+    raise RuntimeError("Treasury download failed.")
+
+
+def load_treasury_yields(
+    start_year: int = 2014,
+    end_year: int = 2024,
+) -> pd.DataFrame:
+    """
+    Load daily 2-year Treasury par yields.
+
+    :param start_year: first observation year
+    :param end_year: last observation year
+    :return: sorted dates and 2-year yields in percent
+    """
+    hdbg.dassert(start_year <= end_year)
+
+    cache_dir = DATA_DIR / "processed"
+    cache_dir.mkdir(parents=True, exist_ok=True)
+
+    cache_path = (
+        cache_dir
+        / f"treasury_2yr_daily_{start_year}_{end_year}.csv"
+    )
+
+    if cache_path.exists():
+        data = pd.read_csv(
+            cache_path,
+            parse_dates=["date"],
+        )
+    else:
+        frames = [
+            download_treasury_year(year)
+            for year in range(start_year, end_year + 1)
+        ]
+
+        raw = pd.concat(frames, ignore_index=True)
+        raw.columns = raw.columns.str.strip()
+
+        data = raw[["Date", "2 Yr"]].rename(
+            columns={
+                "Date": "date",
+                "2 Yr": "yield_2yr",
+            }
+        )
+
+        data["date"] = pd.to_datetime(
+            data["date"],
+            errors="raise",
+        )
+
+        data["yield_2yr"] = pd.to_numeric(
+            data["yield_2yr"],
+            errors="coerce",
+        )
+
+        data = data.dropna(
+            subset=["date", "yield_2yr"]
+        )
+
+    data = data.sort_values("date").reset_index(drop=True)
+
+    hdbg.dassert(not data.empty)
+    hdbg.dassert(data["date"].is_unique)
+    hdbg.dassert(data["yield_2yr"].notna().all())
+    hdbg.dassert(
+        data["date"].dt.year.between(
+            start_year,
+            end_year,
+        ).all()
+    )
+
+    data.to_csv(cache_path, index=False)
+    return data
+
+
+# #############################################################################
+# FOMC and Treasury alignment
+# #############################################################################
+
+
+def align_fomc_yields(
+    statements: pd.DataFrame,
+    treasury: pd.DataFrame,
+) -> pd.DataFrame:
+    """
+    Match announcements to same-day or next-trading-day yields.
+
+    :param statements: dated FOMC monetary policy statements
+    :param treasury: daily 2-year Treasury yields
+    :return: statements with aligned yield changes in basis points
+    """
+    statements = statements.copy()
+    treasury = treasury.copy()
+
+    statements["date"] = pd.to_datetime(
+        statements["date"]
+    ).dt.normalize()
+
+    treasury["date"] = pd.to_datetime(
+        treasury["date"]
+    ).dt.normalize()
+
+    statements = statements.sort_values("date")
+    treasury = treasury.sort_values("date")
+
+    hdbg.dassert(statements["date"].is_unique)
+    hdbg.dassert(treasury["date"].is_unique)
+
+    treasury["previous_trading_date"] = (
+        treasury["date"].shift(1)
+    )
+
+    treasury["yield_previous_close"] = (
+        treasury["yield_2yr"].shift(1)
+    )
+
+    treasury["yield_event_close"] = treasury["yield_2yr"]
+
+    treasury["yield_change_bps"] = (
+        (
+            treasury["yield_event_close"]
+            - treasury["yield_previous_close"]
+        ) * 100
+    ).round(2)
+
+    treasury = treasury.rename(
+        columns={"date": "yield_observation_date"}
+    )
+
+    yield_columns = [
+        "yield_observation_date",
+        "previous_trading_date",
+        "yield_previous_close",
+        "yield_event_close",
+        "yield_change_bps",
+    ]
+
+    aligned = pd.merge_asof(
+        statements,
+        treasury[yield_columns],
+        left_on="date",
+        right_on="yield_observation_date",
+        direction="forward",
+        tolerance=pd.Timedelta(days=4),
+    )
+
+    aligned["same_day_yield"] = (
+        aligned["date"]
+        == aligned["yield_observation_date"]
+    )
+
+    hdbg.dassert_eq(len(aligned), len(statements))
+    hdbg.dassert(aligned["date"].is_unique)
+    hdbg.dassert(aligned["yield_change_bps"].notna().all())
+
+    return aligned.reset_index(drop=True)
+
+
