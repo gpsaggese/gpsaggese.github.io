@@ -109,13 +109,23 @@ def build_fred_crew(
         description=(
             "Using only the Researcher and Analyst outputs, write a concise "
             "macroeconomic briefing covering inflation, labor conditions, "
-            "interest rates, and the yield curve. Include observation dates. "
-            "Do not introduce any numeric claim that is absent from the "
-            "provided outputs. Keep the briefing under 350 words."
+            "interest rates, and the yield curve. Begin with a Markdown table "
+            "having the exact columns Claim and Value. Include exactly one row "
+            "for each of these claim labels: cpi_latest, cpi_prior_year, "
+            "inflation_yoy, unemployment_latest, unemployment_prior_year, "
+            "unemployment_change, fed_funds_latest, fed_funds_prior_year, "
+            "fed_funds_change, yield_spread_latest, yield_spread_prior_year, "
+            "and yield_curve_sign. Preserve the values and precision from the "
+            "Researcher and Analyst outputs. After the table, include sections "
+            "for Inflation, Labor Market, Interest Rates, Yield Curve, and a "
+            "short Outlook. Include observation dates. Do not introduce any "
+            "numeric claim absent from the provided outputs. Keep the complete "
+            "briefing under 350 words."
         ),
         expected_output=(
-            "A Markdown briefing with sections for Inflation, Labor Market, "
-            "Interest Rates, and Yield Curve, followed by a short outlook."
+            "A Markdown briefing beginning with a complete 12-row Claim and "
+            "Value table, followed by sections for Inflation, Labor Market, "
+            "Interest Rates, Yield Curve, and Outlook."
         ),
         agent=writer,
         context=[research_task, analysis_task],
