@@ -394,12 +394,17 @@
           [GP on #723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723#issuecomment-6602349966):
           `design_principles.explanation.md`,
           [PR #857](https://github.com/gpsaggese/gpsaggese.github.io/pull/857)
-    - [-] The spread model: `compute_speed_factor()` and
+    - [x] The spread model: `compute_speed_factor()` and
           `build_spread_from_ball_speed()` in
           `notebooks/racket_sports_07_speed_vs_accuracy_utils.py`, with 4 shapes
-          and a factor per direction, for the sweeps only (P1)
-    - [ ] The sweeps, notebook 07, and Section VII-B of the paper, with the
-          results in the Gdoc
+          and a factor per direction, for the sweeps only (P1),
+          [PR #914](https://github.com/gpsaggese/gpsaggese.github.io/pull/914)
+    - [-] The sweeps: `build_sweep_spec()` and `run_speed_sweeps()`, with the
+          full and the reduced runs, and no results yet (branch `_2`)
+    - [ ] The best ball speed as a band of tied speeds, the robustness table,
+          and the speed scaling check of Proposition 1 (branch `_3`)
+    - [ ] Notebook 07 and Section VII-B of the paper, with the results in the
+          Gdoc, which finish the issue (branch `_4`)
   - [ ] [#786](https://github.com/gpsaggese/gpsaggese.github.io/issues/786):
         model the spread as a function of player 2's movement
   - [x] [#714](https://github.com/gpsaggese/gpsaggese.github.io/issues/714):
