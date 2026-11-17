@@ -160,6 +160,38 @@
   bid, so the tier would be empty or collusion-prone (`04-plan.md`, Risks)
 - **Status**: proposed
 
+### `D36` (Reject a Prompt Over the Cap, Estimated From Its Characters)
+
+- **Decision**: enforce D19's prompt limit by rejecting, not truncating
+  - Estimate a prompt's tokens as `ceil(characters / 2)` plus 45 per request plus 6
+    per extra message
+  - Reject a request above `NOESIS_MAX_PROMPT_TOKENS` (default 1,000) with HTTP 400
+    `context_length_exceeded`, before any provider call
+  - Log nothing in `requests`, like the other rejections before the provider
+    (`02.1-design.gateway.md`)
+  - The 1,000 is also `PROMPT_TOKENS_PER_TASK` in `market/supply_adapter.py`, which
+    prices asks (D25) and cannot import the setting
+- **Why**:
+  - The repo has no tokenizer, and Llama 3.3's own tokenizer is a gated download
+  - Sellers bill 1.75 (numbers), 2.44 (code), and about 5.1 (prose) characters per
+    token, plus 9 to 40 framing tokens per request
+    (`notebooks/prompt_tokens.ipynb`)
+  - A ratio of 2 keeps code under the cap and number-heavy text within 13% of it,
+    so D25's worst-case ask price holds
+  - English prompts are capped near 1,900 characters
+  - Rejecting matches the default of OpenAI, which fails an over-length request
+    with a 400 instead of truncating it, and of OpenRouter for endpoints over
+    8,192 tokens of context, which includes every Llama 3.3 70B endpoint
+- **Alternatives**:
+  - A ratio of 3: code and numbers overshoot by 19% to 68%
+  - A ratio of 1.75: never overshoots, but English is capped near 1,700 characters
+  - A tokenizer dependency: `tiktoken` only approximates Llama
+  - Truncating the prompt: silently changes the buyer's request
+  - Logging the refusal as `refused_cap`: that status is reserved for the monthly
+    spend cap (PRD G8), and the gateway logs nothing before the provider
+    (`02.1-design.gateway.md`)
+- **Status**: proposed
+
 ## Implementation
 
 ### `D11` (Async `psycopg` 3 for the gateway, not `helpers.hsql`)
