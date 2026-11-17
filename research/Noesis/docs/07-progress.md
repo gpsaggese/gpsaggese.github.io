@@ -84,6 +84,7 @@
 | 10/25 | PR_M10: extracted the Python-only market runner and contract store; API delegates without response changes; five M11 regimes validated through the runner (D29) |
 | 10/28 | PR_P4: free credit ledger gates `POST /bids` on `n_tasks * p_max` and debits each cleared contract once (`market/credit_ledger.py`, `noesis_platform/platform_api.py`; D30, D31) |
 | 10/31 | Offline replay runs six checker scenarios over five seeds and 30,000 contracts; all observed rates agree with exact analytic predictions and reproducible JSON/CSV/Markdown findings are generated |
+| 11/12 | Prompt-token experiment measures billed tokens per character on the seed sellers (`scripts/experiment_prompt_tokens.py`, `data/prompt_tokens/`) |
 
 - 11/5: M12 tables, volume summaries, plotting helpers, and an offline reviewer
   demo implemented locally; four small review units prepared (issue #631).
