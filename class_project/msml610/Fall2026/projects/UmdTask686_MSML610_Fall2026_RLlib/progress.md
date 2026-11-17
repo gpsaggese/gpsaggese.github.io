@@ -3,11 +3,10 @@
 - **Issue**: [#686](https://github.com/gpsaggese/gpsaggese.github.io/issues/686)
 - **Author**: Simran Kharbanda (@Sim2200)
 - **Format**: follows `docs/planning/all.document_research.how_to_guide.md`.
-  The notebooks hold the details, this log holds the findings and the decisions,
-  and the Google Doc holds the visual evidence
+  The notebooks hold the details, this log holds the findings, the README holds
+  the decisions, and the Google Doc holds the visual evidence
 - **Google Doc**:
-  [Research results - MSML610 RLlib Project 1](https://docs.google.com/document/d/1ENZxEE3-JiKPs9pAgXvejf14-bE478Qb0qmD4JKIaq8/edit)
-- **Dates**: UTC
+  [Research results - MSML610 RLlib Project 1](https://docs.google.com/document/d/1E73NTJcTl_BcskJEdCJQoa3q1EduAlgtuekzBBLWOGU/edit)
 
 ## Status
 
