@@ -3,8 +3,8 @@ HTTP endpoints for the Noesis gateway: OpenAI-compatible chat completions,
 model listing, health, and operator admin.
 
 Request flow for `POST /v1/chat/completions`:
-auth -> contract -> route -> clamp tokens -> (fault) -> provider -> log ->
-OpenAI-shaped response.
+auth -> contract -> route -> prompt cap -> clamp tokens -> (fault) -> provider
+-> log -> OpenAI-shaped response.
 
 `RoutingError`s raised by any endpoint are turned into OpenAI-style error
 responses once, by the handler registered in `gateway_app.create_app()`.
@@ -16,6 +16,7 @@ import research.Noesis.gateway.gateway_api as rnogaapi
 
 import dataclasses
 import logging
+import math
 import time
 from typing import Any, Dict, List, Optional
 
@@ -41,6 +42,14 @@ _FAILURE_HTTP_STATUS = {
     rnogapro.GATEWAY_ERROR: 503,
     rnogapro.BUYER_ERROR: 400,
 }
+
+# Prompt-token estimate without a tokenizer (`docs/03-decisions.md` D36), from
+# the tokens sellers bill in `notebooks/prompt_tokens.ipynb`: number-heavy text
+# bills 1.75 characters per token, prose about 5, and the chat template adds up
+# to about 40 tokens per request and 6 per extra message.
+_CHARS_PER_TOKEN = 2
+_REQUEST_OVERHEAD_TOKENS = 45
+_MESSAGE_OVERHEAD_TOKENS = 6
 
 
 # #############################################################################
@@ -122,6 +131,25 @@ def error_response(
         headers=headers,
     )
     return response
+
+
+def estimate_prompt_tokens(messages: List[ChatMessage]) -> int:
+    """
+    Estimate the prompt tokens a provider bills for `messages`.
+
+    E.g., one message of 1,910 characters is estimated at 955 + 45 = 1,000
+    tokens.
+
+    :param messages: the request's messages
+    :return: estimated prompt tokens, including the chat-template framing
+    """
+    n_chars = sum(len(message.content) for message in messages)
+    n_tokens = (
+        math.ceil(n_chars / _CHARS_PER_TOKEN)
+        + _REQUEST_OVERHEAD_TOKENS
+        + _MESSAGE_OVERHEAD_TOKENS * (len(messages) - 1)
+    )
+    return n_tokens
 
 
 def _completion_body(
@@ -223,6 +251,16 @@ def build_router() -> fastapi.APIRouter:
                 404,
                 "model_not_found",
                 f"Model '{body.model}' not served; use '{settings.model_id}'",
+            )
+        # Reject a prompt over the task's prompt cap before any provider call,
+        # as OpenAI does for prompts over the context length.
+        prompt_tokens = estimate_prompt_tokens(body.messages)
+        if prompt_tokens > settings.max_prompt_tokens:
+            return error_response(
+                400,
+                "context_length_exceeded",
+                f"Prompt is about {prompt_tokens} tokens; the limit is "
+                f"{settings.max_prompt_tokens}",
             )
         # Clamp to the task definition (PRD D1).
         max_tokens = min(
