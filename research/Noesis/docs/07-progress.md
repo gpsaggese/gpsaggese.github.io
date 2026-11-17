@@ -58,7 +58,7 @@
    passed; healthy produced 0/5,000 false alarms, weak-model detection was 81.76%
    versus 82.81% predicted, and borderline latency was 31.84% versus 33.19%
 9. **Sellers bill 1.75 to 5.1 characters per prompt token** (11/12): see the
-   [research Gdoc](https://docs.google.com/document/d/1E7ZUapITNt7N7WijTa6UUYZMPQLhfg-91lmAMY7S2AU/edit) and `notebooks/prompt_tokens.ipynb`
+   [research Gdoc](https://docs.google.com/document/d/1SzrZSrdrpSwFyXWyjdmYOlcaDSjWxw0hXNiI9JkBhmw/edit) and `notebooks/prompt_tokens.ipynb`
 
 ## Next (M2 — Checker runtime and data)
 
