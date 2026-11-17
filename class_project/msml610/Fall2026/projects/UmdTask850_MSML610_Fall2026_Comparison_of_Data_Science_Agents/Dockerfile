@@ -34,6 +34,7 @@ COPY bashrc /root/.bashrc
 # Report package versions.
 COPY version.sh /install/
 RUN /install/version.sh 2>&1 | tee version.log
+WORKDIR /git_root/class_project/msml610/Fall2026/projects/UmdTask850_MSML610_Fall2026_Comparison_of_Data_Science_Agents
 
 # Jupyter.
 EXPOSE 8888
