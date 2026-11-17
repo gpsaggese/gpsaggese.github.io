@@ -15,7 +15,7 @@
 | :-------- | :------------------------------------------------------ | :---------- | :----------------------------------------------------------------- |
 | 1         | Container, `ExecutionEnv`, calibration, baselines       | Done        | [#725](https://github.com/gpsaggese/gpsaggese.github.io/pull/725) |
 | 2         | `rllib.API.ipynb`: RLlib API on CartPole                | Done        | [#796](https://github.com/gpsaggese/gpsaggese.github.io/pull/796) |
-| 3         | `rllib.example.ipynb`: DQN on the execution environment | In progress | [#873](https://github.com/gpsaggese/gpsaggese.github.io/pull/873) |
+| 3         | `rllib.example.ipynb`: DQN on the execution environment | Done        | [#873](https://github.com/gpsaggese/gpsaggese.github.io/pull/873) |
 
 ## Built
 
@@ -85,4 +85,4 @@
 
 ## Open Work
 
-- [#873](https://github.com/gpsaggese/gpsaggese.github.io/pull/873): M3, draft
+- [#873](https://github.com/gpsaggese/gpsaggese.github.io/pull/873): M3, in review
