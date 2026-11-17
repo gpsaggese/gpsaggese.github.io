@@ -27,6 +27,8 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+from datasets import load_dataset
 
 # %%
 # Use this for most notebooks.
@@ -141,4 +143,15 @@ for i in range(len(columns)):
     axs[i//9][i%9].set_title(columns[i])
 plt.show()
 
+# %% [markdown]
+# Graphs for time series columns:
+
 # %%
+fig, (axs) = plt.subplots(2, 2)
+columns = ['tpep_pickup_datetime','tpep_dropoff_datetime']
+for i in range(len(columns)):
+    axs[i][0].boxplot(yellow_taxi[columns[i]].apply(lambda x: x.day))
+    axs[i][0].set_title(columns[i] + '_day')
+    axs[i][1].boxplot(yellow_taxi[columns[i]].apply(lambda x: x.hour))
+    axs[i][1].set_title(columns[i] + '_hour')
+plt.show()
