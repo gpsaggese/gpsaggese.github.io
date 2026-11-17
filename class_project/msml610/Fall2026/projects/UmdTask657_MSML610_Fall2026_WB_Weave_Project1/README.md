@@ -18,8 +18,9 @@ relates to the change in the 2-year Treasury yield on the announcement day.
 | Define the problem | Classify sentences with macro-F1 on `test.csv`; fit a TF-IDF + logistic regression baseline on `train.csv`; define statement tone as the share of hawkish sentences minus the share of dovish sentences | `weave.example.ipynb` |
 | Trace the models | Wrap the baseline, FOMC-RoBERTa, and a zero-shot classifier as `weave.Model` classes with a traced `predict` | `weave_utils.py`, `weave.example.ipynb` |
 | Evaluate with Weave | Publish the test sentences as a `weave.Dataset` and run `weave.Evaluation` with an accuracy scorer and a custom macro-F1 `weave.Scorer` | `weave_utils.py`, `weave.example.ipynb` |
-| Link tone to yields | Pick the model by macro-F1, then measure the Spearman correlation (with a bootstrap 95% CI) between the change in tone and the yield change | in progress |
-| Visualize and report | Compare the evaluations in the Weave UI and plot tone change against yield change | in progress |
+| Link tone to yields | Pick the model by macro-F1, then measure the Spearman correlation (with a bootstrap 95% CI) between the change in tone and the yield change | `weave.example.ipynb` |
+| Visualize and report | Compare the evaluations in the Weave UI and plot tone change against yield change | `weave.example.ipynb` |
+
 
 ## 2. Project Structure
 
@@ -175,3 +176,58 @@ The container follows the class template with these changes:
 | `BuildKit is enabled but the buildx component is missing` | Install the buildx plugin (see Prerequisites) |
 | `docker_jupyter.sh` prints `denied: requested access to the resource is denied` | Harmless: the script tries to pull the image from Docker Hub first, then uses the local build |
 | Port 8888 is busy | `./docker_jupyter.sh -p 8890`, then open <http://localhost:8890> |
+
+
+## 10. Learn W&B Weave in 60 Minutes
+
+The original project is being adapted into a standalone, beginner-friendly
+tutorial in [`tutorials/Weave/`](../../../../../tutorials/Weave/).
+
+The tutorial follows the repository's "Learn in 60 Minutes" format and
+uses the FOMC classification and Treasury yield analysis as its practical
+application.
+
+### Tutorial Structure
+
+| Component | Description |
+|---|---|
+| `weave.API.ipynb` | Introduction to Weave tracing, datasets, model versioning, scorers, and evaluations |
+| `weave.example.ipynb` | End-to-end FOMC tone classification and Treasury yield analysis |
+| `weave_utils.py` | Reusable models, evaluation utilities, data ingestion, and analysis functions |
+| Docker scripts | Reproducible tutorial environment |
+| Notebook tests | Automated execution and validation of both notebooks |
+
+### Development Progress (November 17, 2026)
+
+Completed:
+
+- Created the standalone tutorial directory using the class project
+  template.
+- Implemented and successfully executed the Weave API tutorial.
+- Demonstrated tracing, nested operations, dataset versioning, model
+  versioning, custom scorers, and comparative evaluations.
+- Implemented a trainable TF-IDF and logistic regression Weave model.
+- Implemented accuracy and macro-F1 evaluation utilities.
+- Validated ingestion of 1,984 training sentences and 496 test sentences.
+- Downloaded and cached 84 FOMC statements from 2015 through 2024.
+- Downloaded 2,751 daily Treasury yield observations from 2014 through
+  2024.
+- Successfully aligned all 84 FOMC announcements with Treasury yields:
+  83 same-day matches, one next-trading-day match, and no missing yield
+  changes.
+- Excluded downloaded tutorial data from version control.
+
+Remaining:
+
+- Reconcile the yield-change summary with the original project.
+- Clean statement text and implement statement-level tone scoring.
+- Implement Spearman correlation, paired bootstrap confidence intervals,
+  and visualizations.
+- Complete the application notebook and its paired Python file.
+- Execute and validate the full application evaluation.
+- Complete the standalone tutorial README and accompanying blog post.
+- Run Docker notebook tests and final repository linting.
+
+The tutorial is under active development and is not yet ready for final
+review.
+
