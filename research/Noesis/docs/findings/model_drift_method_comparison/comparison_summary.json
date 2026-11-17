@@ -1,0 +1,69 @@
+{
+  "comparison_type": "frozen_evidence_triangulation",
+  "head_to_head_limit": "Methods used different prompt banks, response collections, and trial designs.",
+  "healthy_controls": {
+    "capability_alerts": 0,
+    "capability_trials": 1000,
+    "mmd_comparisons": 10,
+    "mmd_holm_alerts": 0,
+    "mmd_raw_alerts": 0
+  },
+  "live_full_swap": {
+    "capability": {
+      "alternative_correct": 19,
+      "alternative_gradable": 57,
+      "alternative_route": "cloudflare-llama-3.1-8b",
+      "both_correct": 16,
+      "both_wrong": 18,
+      "mcnemar_p_value": 0.0008554458618164062,
+      "only_alternative_correct": 3,
+      "only_reference_correct": 19,
+      "paired_items": 56,
+      "reference_correct": 36,
+      "reference_gradable": 59,
+      "reference_route": "cloudflare-llama-3.3-70b"
+    },
+    "mmd": {
+      "alternative_responses": 60,
+      "p_value": 0.0,
+      "permutations": 1000,
+      "reference_responses": 60
+    }
+  },
+  "provider_calls": 0,
+  "scenario_comparison": [
+    {
+      "capability_detection_rate": 1.0,
+      "capability_trials": 1000,
+      "comparison_class": "directional_only_different_data_and_trial_designs",
+      "mmd_detection_rate": 1.0,
+      "mmd_trials": 1,
+      "scenario": "full_swap"
+    },
+    {
+      "capability_detection_rate": 0.044,
+      "capability_trials": 1000,
+      "comparison_class": "directional_only_different_data_and_trial_designs",
+      "mmd_detection_rate": 0.0,
+      "mmd_trials": 100,
+      "scenario": "partial_substitution_10"
+    },
+    {
+      "capability_detection_rate": 0.727,
+      "capability_trials": 1000,
+      "comparison_class": "directional_only_different_data_and_trial_designs",
+      "mmd_detection_rate": 0.0,
+      "mmd_trials": 100,
+      "scenario": "partial_substitution_25"
+    },
+    {
+      "capability_detection_rate": 1.0,
+      "capability_trials": 1000,
+      "comparison_class": "directional_only_different_data_and_trial_designs",
+      "mmd_detection_rate": 0.87,
+      "mmd_trials": 100,
+      "scenario": "partial_substitution_50"
+    }
+  ],
+  "schema_version": "noesis-method-comparison-v1"
+}

@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="760" viewBox="0 0 1400 760">
+  <defs>
+    <style>
+      .title { font: 700 28px Helvetica, Arial, sans-serif; fill: #172033; }
+      .box-title { font: 700 21px Helvetica, Arial, sans-serif; fill: #172033; }
+      .body { font: 16px Helvetica, Arial, sans-serif; fill: #39445a; }
+      .small { font: 14px Helvetica, Arial, sans-serif; fill: #536078; }
+      .label { font: 700 15px Helvetica, Arial, sans-serif; fill: #536078; letter-spacing: 0.4px; }
+      .arrow { stroke: #718096; stroke-width: 3; fill: none; marker-end: url(#arrowhead); }
+      .dash { stroke: #a97818; stroke-width: 3; fill: none; stroke-dasharray: 10 8; marker-end: url(#arrowhead-gold); }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#718096"/>
+    </marker>
+    <marker id="arrowhead-gold" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#a97818"/>
+    </marker>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#172033" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <rect width="1400" height="760" fill="#ffffff"/>
+  <text x="700" y="48" text-anchor="middle" class="title">Noesis layered quality-of-service monitor</text>
+
+  <rect x="55" y="105" width="245" height="138" rx="18" fill="#eef4fb" stroke="#5d7fa7" stroke-width="2" filter="url(#shadow)"/>
+  <text x="177.5" y="140" text-anchor="middle" class="box-title">Frozen monitor plan</text>
+  <text x="177.5" y="173" text-anchor="middle" class="body">Probe bank and schedule</text>
+  <text x="177.5" y="199" text-anchor="middle" class="body">Provider, model, settings</text>
+  <text x="177.5" y="225" text-anchor="middle" class="small">Versioned before collection</text>
+
+  <rect x="385" y="105" width="245" height="138" rx="18" fill="#f4f6f8" stroke="#7b8797" stroke-width="2" filter="url(#shadow)"/>
+  <text x="507.5" y="140" text-anchor="middle" class="box-title">Inference endpoint</text>
+  <text x="507.5" y="173" text-anchor="middle" class="body">Provider and model route</text>
+  <text x="507.5" y="199" text-anchor="middle" class="body">Bounded provider calls</text>
+  <text x="507.5" y="225" text-anchor="middle" class="small">Attribution and spend gates</text>
+
+  <rect x="715" y="105" width="275" height="138" rx="18" fill="#edf7f2" stroke="#4f8a70" stroke-width="2" filter="url(#shadow)"/>
+  <text x="852.5" y="140" text-anchor="middle" class="box-title">Immutable observations</text>
+  <text x="852.5" y="173" text-anchor="middle" class="body">Response, grade, route</text>
+  <text x="852.5" y="199" text-anchor="middle" class="body">Latency, tokens, and cost</text>
+  <text x="852.5" y="225" text-anchor="middle" class="small">Persisted before the next call</text>
+
+  <path d="M300 174 H385" class="arrow"/>
+  <path d="M630 174 H715" class="arrow"/>
+
+  <text x="852.5" y="278" text-anchor="middle" class="label">ONE EVIDENCE STREAM</text>
+  <path d="M852.5 243 V292 H327.5 V320" class="arrow"/>
+  <path d="M852.5 243 V292 H882.5 V320" class="arrow"/>
+
+  <rect x="95" y="320" width="465" height="205" rx="20" fill="#eef4fb" stroke="#5d7fa7" stroke-width="2.5" filter="url(#shadow)"/>
+  <text x="128" y="360" class="label">TIER 0 · CONTINUOUS, LOW COST</text>
+  <text x="128" y="397" class="box-title">Contract canaries</text>
+  <text x="128" y="429" class="body">Known-answer prompts with exact pass/fail grading</text>
+  <rect x="128" y="455" width="183" height="48" rx="12" fill="#ffffff" stroke="#8aa6c5" stroke-width="2"/>
+  <text x="219.5" y="485" text-anchor="middle" class="body">Fisher: fixed windows</text>
+  <rect x="329" y="455" width="198" height="48" rx="12" fill="#ffffff" stroke="#8aa6c5" stroke-width="2"/>
+  <text x="428" y="485" text-anchor="middle" class="body">CUSUM: each grade</text>
+
+  <rect x="650" y="320" width="465" height="205" rx="20" fill="#f3effa" stroke="#8064a2" stroke-width="2.5" filter="url(#shadow)"/>
+  <text x="683" y="360" class="label">TIER 1 · SCHEDULED OR TRIGGERED</text>
+  <text x="683" y="397" class="box-title">Behavioral fingerprint</text>
+  <text x="683" y="429" class="body">Repeated stochastic responses without answer keys</text>
+  <rect x="683" y="455" width="399" height="48" rx="12" fill="#ffffff" stroke="#9b86b7" stroke-width="2"/>
+  <text x="882.5" y="485" text-anchor="middle" class="body">Hamming MMD: distributional change</text>
+
+  <path d="M560 422 H650" class="dash"/>
+  <text x="605" y="405" text-anchor="middle" class="small">persistent anomaly</text>
+
+  <rect x="1170" y="320" width="185" height="205" rx="20" fill="#fff6df" stroke="#b78a2f" stroke-width="2.5" filter="url(#shadow)"/>
+  <text x="1200" y="360" class="label">TIER 2</text>
+  <text x="1200" y="397" class="box-title">Deep audit</text>
+  <text x="1200" y="431" class="body">Broad benchmarks</text>
+  <text x="1200" y="457" class="body">Agentic suites</text>
+  <text x="1200" y="483" class="small">Onboarding, releases,</text>
+  <text x="1200" y="505" class="small">and incident review</text>
+  <path d="M1115 422 H1170" class="dash"/>
+
+  <rect x="360" y="610" width="680" height="105" rx="20" fill="#f4f6f8" stroke="#7b8797" stroke-width="2.5" filter="url(#shadow)"/>
+  <text x="700" y="650" text-anchor="middle" class="box-title">Evidence review and operational response</text>
+  <text x="700" y="681" text-anchor="middle" class="body">Capability loss, behavioral drift, or probable substitution</text>
+  <text x="700" y="704" text-anchor="middle" class="small">Alerts preserve evidence; they do not automatically penalize a provider</text>
+
+  <path d="M327.5 525 V590 H590 V610" class="arrow"/>
+  <path d="M882.5 525 V590 H810 V610" class="arrow"/>
+  <path d="M1262.5 525 V565 H1010 V625" class="arrow"/>
+</svg>

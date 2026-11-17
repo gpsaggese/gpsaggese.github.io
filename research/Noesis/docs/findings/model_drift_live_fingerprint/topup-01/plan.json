@@ -1,0 +1,62 @@
+{
+  "calls": [
+    {
+      "batch": 1,
+      "call_id": "topup-01-fingerprint-alternative-systems-analysis-s06",
+      "expected_provider_name": "Cloudflare",
+      "max_tokens": 384,
+      "metadata": [
+        [
+          "pool",
+          "alternative"
+        ],
+        [
+          "prompt_id",
+          "systems-analysis"
+        ],
+        [
+          "prompt_index",
+          "0"
+        ],
+        [
+          "sample_index",
+          "6"
+        ],
+        [
+          "bank_hash",
+          "6ba78b72d6ab69db977c6d319b19d640d04d9d80c47fa97316f56917b8326892"
+        ],
+        [
+          "sampling_temperature",
+          "1.0"
+        ],
+        [
+          "replaces_call_id",
+          "fingerprint-alternative-systems-analysis-s06"
+        ]
+      ],
+      "model_id": "meta-llama/llama-3.1-8b-instruct",
+      "prompt": "A small online marketplace must choose between synchronous validation during checkout and asynchronous validation after accepting an order. Analyze the tradeoffs for reliability, latency, user trust, operational complexity, and recovery from partial failures. Give a concrete recommendation for a team with three engineers and modest traffic. Write a cohesive response of approximately 180 to 220 words. Do not use a table.",
+      "provider_slug": "cloudflare",
+      "route_name": "cloudflare-llama-3.1-8b",
+      "timeout_s": 60.0
+    }
+  ],
+  "fallbacks_allowed": false,
+  "metadata": {
+    "bank_hash": "6ba78b72d6ab69db977c6d319b19d640d04d9d80c47fa97316f56917b8326892",
+    "original_failures_preserved": true,
+    "prior_observations_path": "research/Noesis/docs/findings/model_drift_live_fingerprint/observations.jsonl",
+    "replacement_calls": 1
+  },
+  "policy": {
+    "consecutive_provider_errors": 2,
+    "maximum_calls": 1,
+    "maximum_cost_usd": 0.1,
+    "maximum_error_rate": 0.2,
+    "per_call_reserve_usd": 0.01,
+    "timeout_count": 2
+  },
+  "provider_calls": 1,
+  "schema_version": "noesis-live-fingerprint-topup-v1"
+}

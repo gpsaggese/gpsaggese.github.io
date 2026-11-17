@@ -1,0 +1,60 @@
+{"expected":421,"grader_id":"integer-v1","item_id":"math-01"}
+{"expected":60,"grader_id":"integer-v1","item_id":"math-02"}
+{"expected":22032,"grader_id":"integer-v1","item_id":"math-03"}
+{"expected":23,"grader_id":"integer-v1","item_id":"math-04"}
+{"expected":56,"grader_id":"integer-v1","item_id":"math-05"}
+{"expected":"5/14","grader_id":"fraction-v1","item_id":"math-06"}
+{"expected":9,"grader_id":"integer-v1","item_id":"math-07"}
+{"expected":179,"grader_id":"integer-v1","item_id":"math-08"}
+{"expected":300,"grader_id":"integer-v1","item_id":"math-09"}
+{"expected":12,"grader_id":"integer-v1","item_id":"math-10"}
+{"expected":17,"grader_id":"integer-v1","item_id":"math-11"}
+{"expected":86,"grader_id":"integer-v1","item_id":"math-12"}
+{"expected":"B","grader_id":"choice-v1","item_id":"expert-science-01"}
+{"expected":"B","grader_id":"choice-v1","item_id":"expert-science-02"}
+{"expected":"C","grader_id":"choice-v1","item_id":"expert-science-03"}
+{"expected":"B","grader_id":"choice-v1","item_id":"expert-science-04"}
+{"expected":"A","grader_id":"choice-v1","item_id":"expert-science-05"}
+{"expected":"C","grader_id":"choice-v1","item_id":"expert-science-06"}
+{"expected":"B","grader_id":"choice-v1","item_id":"expert-science-07"}
+{"expected":"D","grader_id":"choice-v1","item_id":"expert-science-08"}
+{"expected":"A","grader_id":"choice-v1","item_id":"expert-science-09"}
+{"expected":"B","grader_id":"choice-v1","item_id":"expert-science-10"}
+{"expected":"C","grader_id":"choice-v1","item_id":"expert-science-11"}
+{"expected":"A","grader_id":"choice-v1","item_id":"expert-science-12"}
+{"expected":"3 3","grader_id":"exact-text-v1","item_id":"code-tracing-01"}
+{"expected":"14","grader_id":"exact-text-v1","item_id":"code-tracing-02"}
+{"expected":"2 5","grader_id":"exact-text-v1","item_id":"code-tracing-03"}
+{"expected":"[4, 2]","grader_id":"exact-text-v1","item_id":"code-tracing-04"}
+{"expected":"15","grader_id":"exact-text-v1","item_id":"code-tracing-05"}
+{"expected":"48","grader_id":"exact-text-v1","item_id":"code-tracing-06"}
+{"expected":"5","grader_id":"exact-text-v1","item_id":"code-tracing-07"}
+{"expected":"10","grader_id":"exact-text-v1","item_id":"code-tracing-08"}
+{"expected":"0 [0]","grader_id":"exact-text-v1","item_id":"code-tracing-09"}
+{"expected":"fdb","grader_id":"exact-text-v1","item_id":"code-tracing-10"}
+{"expected":"7","grader_id":"exact-text-v1","item_id":"code-tracing-11"}
+{"expected":"78","grader_id":"exact-text-v1","item_id":"code-tracing-12"}
+{"expected":"fig|kiwi|pear|banana","grader_id":"exact-text-v1","item_id":"instruction-following-01"}
+{"expected":{"even":[2,4,6],"odd":[1,3,5]},"grader_id":"json-v1","item_id":"instruction-following-02"}
+{"expected":"OFUXPSL","grader_id":"exact-text-v1","item_id":"instruction-following-03"}
+{"expected":"ani","grader_id":"exact-text-v1","item_id":"instruction-following-04"}
+{"expected":"GREEN BLUE RED","grader_id":"exact-text-v1","item_id":"instruction-following-05"}
+{"expected":"C*p*b*l*ty","grader_id":"exact-text-v1","item_id":"instruction-following-06"}
+{"expected":"alpha\nbeta\ngamma","grader_id":"exact-text-v1","item_id":"instruction-following-07"}
+{"expected":{"Ada":3,"Grace":5,"Linus":5},"grader_id":"json-v1","item_id":"instruction-following-08"}
+{"expected":"ExPeRiMeNt","grader_id":"exact-text-v1","item_id":"instruction-following-09"}
+{"expected":"Misp","grader_id":"exact-text-v1","item_id":"instruction-following-10"}
+{"expected":"[9291]","grader_id":"exact-text-v1","item_id":"instruction-following-11"}
+{"expected":"bravo,alpha,charlie,delta","grader_id":"exact-text-v1","item_id":"instruction-following-12"}
+{"expected":4,"grader_id":"integer-v1","item_id":"multi-step-reasoning-01"}
+{"expected":"A","grader_id":"choice-v1","item_id":"multi-step-reasoning-02"}
+{"expected":"B","grader_id":"choice-v1","item_id":"multi-step-reasoning-03"}
+{"expected":"11:36 AM","grader_id":"exact-answer-v1","item_id":"multi-step-reasoning-04"}
+{"expected":"B","grader_id":"choice-v1","item_id":"multi-step-reasoning-05"}
+{"expected":24,"grader_id":"integer-v1","item_id":"multi-step-reasoning-06"}
+{"expected":17,"grader_id":"integer-v1","item_id":"multi-step-reasoning-07"}
+{"expected":25,"grader_id":"integer-v1","item_id":"multi-step-reasoning-08"}
+{"expected":"B","grader_id":"choice-v1","item_id":"multi-step-reasoning-09"}
+{"expected":643,"grader_id":"integer-v1","item_id":"multi-step-reasoning-10"}
+{"expected":10,"grader_id":"integer-v1","item_id":"multi-step-reasoning-11"}
+{"expected":"1/4","grader_id":"fraction-v1","item_id":"multi-step-reasoning-12"}
