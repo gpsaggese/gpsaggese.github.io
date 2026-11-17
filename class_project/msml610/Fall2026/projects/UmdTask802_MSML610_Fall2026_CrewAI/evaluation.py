@@ -19,6 +19,21 @@ _MONTHS = (
     "September|October|November|December"
 )
 
+_REQUIRED_CLAIMS = (
+    "cpi_latest",
+    "cpi_prior_year",
+    "inflation_yoy",
+    "unemployment_latest",
+    "unemployment_prior_year",
+    "unemployment_change",
+    "fed_funds_latest",
+    "fed_funds_prior_year",
+    "fed_funds_change",
+    "yield_spread_latest",
+    "yield_spread_prior_year",
+    "yield_curve_sign",
+)
+
 
 def generate_baseline(
     snapshot_dir: Path,
@@ -37,15 +52,154 @@ Using only the raw FRED profile below, calculate and discuss:
 - the change in the federal funds rate,
 - the sign of the yield curve spread.
 
-Include inflation, labor, interest rates, and the yield curve.
-Include observation dates and keep the response below 350 words.
-Do not use external information.
+Begin with a Markdown table having the exact columns Claim and Value.
+Include exactly one row for each of these claim labels:
+- cpi_latest
+- cpi_prior_year
+- inflation_yoy
+- unemployment_latest
+- unemployment_prior_year
+- unemployment_change
+- fed_funds_latest
+- fed_funds_prior_year
+- fed_funds_change
+- yield_spread_latest
+- yield_spread_prior_year
+- yield_curve_sign
+
+After the table, include sections covering inflation, labor, interest rates,
+and the yield curve. Include observation dates and keep the complete response
+below 350 words. Do not use tools or external information.Do not introduce
+any new numeric values beyond the required claim values and observation dates.
 
 Raw profile:
 {json.dumps(profiles, indent=2)}
 """
     llm = LLM(model=llm_name)
     return str(llm.call(prompt))
+
+
+def get_expected_claims(snapshot_dir: Path) -> dict[str, Any]:
+    """Build the required field-aware claims from the saved snapshot."""
+
+    profiles = ft.profile_fred_snapshot(snapshot_dir)
+    statistics = ft.calculate_macro_statistics(snapshot_dir)
+    return {
+        "cpi_latest": profiles["CPIAUCSL"]["latest_value"],
+        "cpi_prior_year": profiles["CPIAUCSL"]["prior_year_value"],
+        "inflation_yoy": statistics["inflation_yoy_pct"],
+        "unemployment_latest": profiles["UNRATE"]["latest_value"],
+        "unemployment_prior_year": profiles["UNRATE"][
+            "prior_year_value"
+        ],
+        "unemployment_change": statistics["unemployment_change_pp"],
+        "fed_funds_latest": profiles["FEDFUNDS"]["latest_value"],
+        "fed_funds_prior_year": profiles["FEDFUNDS"][
+            "prior_year_value"
+        ],
+        "fed_funds_change": statistics["fed_funds_change_pp"],
+        "yield_spread_latest": profiles["T10Y2Y"]["latest_value"],
+        "yield_spread_prior_year": profiles["T10Y2Y"][
+            "prior_year_value"
+        ],
+        "yield_curve_sign": statistics["yield_curve_sign"],
+    }
+
+
+def extract_required_claims(text: str) -> dict[str, str]:
+    """Extract labeled values from a Markdown Claim and Value table."""
+
+    extracted = {}
+    row_pattern = re.compile(
+        r"^\s*\|\s*([a-z_]+)\s*\|\s*([^|]+?)\s*\|\s*$",
+        flags=re.IGNORECASE,
+    )
+    for line in text.splitlines():
+        match = row_pattern.match(line)
+        if not match:
+            continue
+        claim_name = match.group(1).lower()
+        if claim_name not in _REQUIRED_CLAIMS:
+            continue
+        extracted[claim_name] = match.group(2).strip()
+    return extracted
+
+
+def _parse_claim_number(raw_value: str) -> tuple[float, int] | None:
+    """Parse a number and its displayed decimal precision."""
+
+    cleaned = raw_value.replace(",", "")
+    match = re.search(r"[-+]?\d+(?:\.\d+)?", cleaned)
+    if not match:
+        return None
+    numeric_text = match.group(0)
+    decimals = (
+        len(numeric_text.split(".", maxsplit=1)[1])
+        if "." in numeric_text
+        else 0
+    )
+    return float(numeric_text), decimals
+
+
+def evaluate_required_claims(
+    text: str,
+    expected_claims: dict[str, Any],
+) -> dict[str, Any]:
+    """Evaluate every required claim by its labeled field."""
+
+    submitted = extract_required_claims(text)
+    evaluated_claims = []
+    correct_count = 0
+
+    for claim_name in _REQUIRED_CLAIMS:
+        expected = expected_claims[claim_name]
+        raw_value = submitted.get(claim_name)
+        is_correct = False
+        submitted_value: Any = None
+
+        if raw_value is not None:
+            if isinstance(expected, str):
+                submitted_value = raw_value.strip().lower()
+                is_correct = submitted_value == expected.lower()
+            else:
+                parsed = _parse_claim_number(raw_value)
+                if parsed is not None:
+                    submitted_value, decimals = parsed
+                    tolerance = 0.5 * (10 ** (-decimals)) + 1e-12
+                    is_correct = (
+                        abs(submitted_value - float(expected))
+                        <= tolerance
+                    )
+
+        if is_correct:
+            correct_count += 1
+
+        evaluated_claims.append(
+            {
+                "claim": claim_name,
+                "submitted": raw_value,
+                "expected": expected,
+                "correct": is_correct,
+            }
+        )
+
+    submitted_count = len(submitted)
+    required_count = len(_REQUIRED_CLAIMS)
+    accuracy = (
+        correct_count / submitted_count if submitted_count else 0.0
+    )
+    completeness = submitted_count / required_count
+    required_claim_score = correct_count / required_count
+
+    return {
+        "correct_claims": correct_count,
+        "submitted_claims": submitted_count,
+        "required_claims": required_count,
+        "accuracy": round(accuracy, 4),
+        "completeness": round(completeness, 4),
+        "fraction_correct": round(required_claim_score, 4),
+        "claims": evaluated_claims,
+    }
 
 
 def _remove_dates_and_series_names(text: str) -> str:
@@ -207,16 +361,30 @@ def main() -> None:
         encoding="utf-8",
     )
 
+    expected_claims = get_expected_claims(snapshot_dir)
     expected_values = get_expected_values(snapshot_dir)
+
+    crew_required = evaluate_required_claims(
+        crew_text,
+        expected_claims,
+    )
+    crew_required["all_numeric_claims"] = evaluate_numeric_claims(
+        crew_text,
+        expected_values,
+    )
+
+    baseline_required = evaluate_required_claims(
+        baseline_text,
+        expected_claims,
+    )
+    baseline_required["all_numeric_claims"] = evaluate_numeric_claims(
+        baseline_text,
+        expected_values,
+    )
+
     report = {
-        "crew": evaluate_numeric_claims(
-            crew_text,
-            expected_values,
-        ),
-        "single_llm_baseline": evaluate_numeric_claims(
-            baseline_text,
-            expected_values,
-        ),
+        "crew": crew_required,
+        "single_llm_baseline": baseline_required,
     }
 
     report_path = output_dir / "evaluation_report.json"
@@ -226,12 +394,20 @@ def main() -> None:
     )
 
     print(
-        "Crew accuracy:",
+        "Crew required-claim score:",
         report["crew"]["fraction_correct"],
     )
     print(
-        "Single-LLM baseline accuracy:",
+        "Crew completeness:",
+        report["crew"]["completeness"],
+    )
+    print(
+        "Single-LLM baseline required-claim score:",
         report["single_llm_baseline"]["fraction_correct"],
+    )
+    print(
+        "Single-LLM baseline completeness:",
+        report["single_llm_baseline"]["completeness"],
     )
     print(f"Baseline saved to: {baseline_path}")
     print(f"Evaluation saved to: {report_path}")
