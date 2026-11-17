@@ -62,27 +62,6 @@
 1. Almgren-Chriss variance penalty and its analytic schedule
 2. PPO vs DQN on the execution environment
 
-## History
-
-| Date       | Done                                                                                          |
-| :--------- | :-------------------------------------------------------------------------------------------- |
-| 2026-10-18 | Opened #686 with the objective, tasks, and milestones; set up the fork and the local repo  |
-| 2026-10-22 | Office hours with GP: Project 1, SPY intraday data, 1-minute bars; opened #725                |
-| 2026-10-24 | First calibration on Alpaca 1-minute bars, 2016-2019; M1 table and README                     |
-| 2026-10-25 | `rllib.API.ipynb` (M2); code-quality skills applied to M1                                     |
-| 2026-10-26 | Moved M1 to NYSE TAQ 2015-2024 and added the spread cost; decided on Almgren et al. impact    |
-| 2026-10-27 | Started M3: VIX regime labels, one calibration per regime, `train_dqn()`                      |
-| 2026-10-28 | #725 merged; opened #796; first M3 run; added the `expected_cost` reward                      |
-| 2026-11-01 | Notebook and code-quality skills applied to M2; reran `rllib.API.ipynb`                       |
-| 2026-11-03 | M2 cleanup; #796 ready for review                                                             |
-| 2026-11-05 | Tuned DQN on the 2015-2019 market; template dependency policy                                 |
-| 2026-11-06 | Opened #873 (draft); reran `rllib.example.ipynb` with TWAP-multiple actions                   |
-| 2026-11-07 | #796 merged                                                                                   |
-| 2026-11-11 | Rebased M3 on master; resolved the import-order conflict from #881                            |
-| 2026-11-12 | Started the research Google Doc                                                               |
-| 2026-11-14 | Decided: 100,000-share headline with the ADV sweep, 3 seeds, Almgren-Chriss then PPO vs DQN   |
-| 2026-11-15 | Reran `rllib.example.ipynb` with 3 training seeds per agent; M3 results in the README        |
-
 ## Open Work
 
 - [#873](https://github.com/gpsaggese/gpsaggese.github.io/pull/873): M3, in review
