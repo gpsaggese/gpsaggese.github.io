@@ -407,7 +407,6 @@ are commented out for reference. Choose the one that best fits your project:
   ```
 - Install every third-party package imported by the notebook and by its paired
   `*_utils.py` file
-- To automate this, use the Claude skill `notebook.fix_packages`
 
 ### Dependencies Are Hard to Maintain
 - Use a project specific `requirements.txt` only when the dependencies are
