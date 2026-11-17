@@ -19,10 +19,60 @@ milestone, newest first.
 |---|---|---|
 | M1 | Container, environment, SPY calibration, TWAP and sell-all baselines | Done |
 | M2 | `rllib.API.ipynb`: RLlib API on CartPole | Done |
-| M3 | `rllib.example.ipynb`: DQN and PPO agents, evaluation, plots | Not started |
+| M3 | `rllib.example.ipynb`: DQN agent, evaluation by VIX regime, order-size sweep | Done |
 | Bonus | PPO vs DQN, Almgren-Chriss variance penalty and schedule | Not started |
 
 ## Results
+
+### M3: DQN on the Execution Environment
+
+Setup:
+
+- Train on the 2015-2019 calibration; test on 1,000 episodes calibrated on
+  2020-2024, split by VIX regime (519 calm and 481 stressed episodes, in
+  proportion to the days)
+  - A day is calm if the previous VIX close is below 20
+- Actions: multiples 0 to 3x of the TWAP pace (remaining inventory over
+  remaining steps), so TWAP is the action 1.0 at every step
+- Rewards: `shortfall` (the spec reward) and `expected_cost` (the same minus
+  the P&L of the price shock on the shares still held, which removes the
+  price noise without changing the expected return)
+- DQN: 60 iterations (~60,000 env steps), 3 training seeds per agent; the
+  DQN rows average the seeds
+- Every policy runs on the same test paths, so the win rate compares each
+  episode with TWAP
+
+Test results at 100,000 shares, all episodes (bps):
+
+| Policy | Shortfall mean ± std | Expected cost | Expected cost std over seeds | Win rate vs TWAP |
+|---|---|---|---|---|
+| TWAP | 1.67 ± 53.51 | 0.208 | | |
+| Sell-all | 0.54 ± 0.10 | 0.541 | | 0.49 |
+| DQN (`shortfall`) | 1.00 ± 37.58 | 0.224 | 0.004 | 0.57 |
+| DQN (`expected_cost`) | 1.00 ± 49.58 | 0.254 | 0.013 | 0.56 |
+
+Order-size sweep, `expected_cost` agent, expected cost (bps):
+
+| Order | TWAP | Sell-all | DQN | DQN / TWAP |
+|---|---|---|---|---|
+| 1% ADV (0.73M shares) | 0.449 | 2.890 | 0.760 ± 0.172 | 1.69x |
+| 5% ADV (3.67M shares) | 1.564 | 13.765 | 2.442 ± 0.109 | 1.56x |
+| 10% ADV (7.34M shares) | 2.957 | 27.360 | 4.596 ± 0.327 | 1.55x |
+
+Findings:
+
+- With linear impact and no risk penalty, TWAP has the lowest expected cost;
+  DQN is 8-22% above it at 100,000 shares and 1.5-1.7x TWAP for larger
+  orders
+- The shortfall means are dominated by price noise (~38-68 bps std), so
+  compare the expected cost, not the shortfall mean or the win rate
+- Both DQN agents sell faster than TWAP early in the day (inventory plot in
+  the notebook); the `expected_cost` agent also keeps ~17% of the order until
+  the last step
+- Selling early lowers the shortfall std (38-50 vs 54 bps) and wins slightly
+  more than half the episodes, but pays more impact on average
+- The spread over seeds is small next to the gap to TWAP, so the gap is not
+  a training accident
 
 ### M2: RLlib API on CartPole
 
@@ -76,6 +126,14 @@ Findings:
 
 ## Decisions
 
+- 2026-11-14: 100,000 shares stays the headline, with the 1/5/10% ADV sweep
+  next to it; results average 3 training seeds per agent, since one run of
+  the same notebook gave 5.52 and the next 4.18 bps at 10% ADV
+- 2026-11-05: Actions as multiples of the TWAP pace instead of fractions of
+  the remaining inventory, since no fraction action can follow TWAP; tuned on
+  the 2015-2019 market only, so the test set is used once
+- 2026-10-28: `expected_cost` reward next to the spec's `shortfall` reward,
+  since the price noise is ~100x the cost differences between schedules
 - 2026-10-26: NYSE TAQ on WRDS as the data source, replacing Alpaca
   - Covers 2015-2019, as in the spec (Alpaca starts in 2016)
   - Check against Alpaca 2016-2024: all 2,264 trading days match, close
@@ -96,14 +154,14 @@ Findings:
 
 - Drop cancelled and corrected trades (`tr_corr` other than 00), which the
   WRDS consolidated trades keep; they are under 0.01% of SPY trades
-- Order size as a percentage of ADV, and a sweep over sizes (M3)
 
 ## Files
 
 - `rllib_utils.py`: `ExecutionEnv` Gymnasium environment, TWAP and sell-all
-  baselines
+  baselines, episode runner, `train_dqn()`, plots
 - `taq_utils.py`: SPY 1-minute bars from NYSE TAQ on WRDS
-- `data_utils.py`: SPY (Alpaca) and VIX download, calibration, M1 table
+- `data_utils.py`: SPY (Alpaca) and VIX download, calibration, VIX regimes,
+  M1 table
 - `test/`: unit tests
 - `rllib.API.ipynb`, `rllib.example.ipynb`: notebooks (M2, M3)
 - `Dockerfile`, `requirements.txt`, `docker_*.sh`: container, see

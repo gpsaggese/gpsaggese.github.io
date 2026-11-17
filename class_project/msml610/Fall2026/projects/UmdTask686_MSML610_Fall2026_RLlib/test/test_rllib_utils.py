@@ -8,6 +8,8 @@ import logging
 from typing import Any, Dict, Tuple
 
 import gymnasium.utils.env_checker as genvche
+import pandas as pd
+import torch
 
 import class_project.msml610.Fall2026.projects.UmdTask686_MSML610_Fall2026_RLlib.rllib_utils as rlutils
 import helpers.hunit_test as hunitest
@@ -91,6 +93,65 @@ class Test_ExecutionEnv(hunitest.TestCase):
         # Check outputs.
         actual = f"{total_reward:.6f}"
         expected = f"{-info['shortfall_bps']:.6f}"
+        self.assert_equal(actual, expected)
+
+    def test4(self) -> None:
+        """
+        Check that the `expected_cost` reward removes the price noise.
+
+        Without impact and spread, the expected cost is 0, so the episode
+        return is 0 while the true shortfall is not.
+        """
+        # Prepare inputs.
+        cfg = {
+            "eta": 0.0,
+            "gamma": 0.0,
+            "half_spread_bps": 0.0,
+            "reward": "expected_cost",
+        }
+        env = rlutils.ExecutionEnv(cfg)
+        # Action 3 sells 20% of the remaining inventory.
+        action = 3
+        seed = 1
+        # Prepare outputs.
+        expected = (
+            "total_reward=0.000000 expected_cost=0.000000 has_shortfall=True"
+        )
+        # Run test.
+        _, total_reward, info = self.helper(env, action, seed)
+        # Check outputs.
+        # Add 0.0 to print -0.0 as 0.0.
+        actual = (
+            f"total_reward={round(total_reward, 6) + 0.0:.6f} "
+            f"expected_cost={round(info['expected_cost_bps'], 6) + 0.0:.6f} "
+            f"has_shortfall={abs(info['shortfall_bps']) > 1e-3}"
+        )
+        self.assert_equal(actual, expected)
+
+    def test5(self) -> None:
+        """
+        Check that the `twap_multiple` action 1.0 sells at the TWAP pace.
+        """
+        # Prepare inputs.
+        cfg = {
+            "total_shares": 1000,
+            "n_steps": 4,
+            "action_type": "twap_multiple",
+        }
+        env = rlutils.ExecutionEnv(cfg)
+        # Action 3 is the multiple 1.0 of the TWAP pace.
+        action = 3
+        # Prepare outputs.
+        expected = "250.0 250.0 250.0 250.0"
+        # Run test.
+        env.reset(seed=0)
+        shares = []
+        terminated = False
+        while not terminated:
+            _, _, terminated, _, info = env.step(action)
+            shares.append(info["shares"])
+        # Check outputs.
+        actual = " ".join(f"{s:.1f}" for s in shares)
         self.assert_equal(actual, expected)
 
 
@@ -186,3 +247,122 @@ class Test_run_baseline(hunitest.TestCase):
         # Check outputs.
         actual = str(twap.mean() < sell_all.mean())
         self.assert_equal(actual, expected)
+
+
+class Test_run_episodes(hunitest.TestCase):
+    """
+    Test `rllib_utils.run_episodes()` function.
+    """
+
+    def test1(self) -> None:
+        """
+        Check the inventory path of TWAP over 4 steps.
+        """
+        # Prepare inputs.
+        cfg = {**_NO_NOISE_CONFIG, "n_steps": 4}
+        n_episodes = 2
+        # Prepare outputs.
+        expected = "[[1.0, 0.75, 0.5, 0.25, 0.0], [1.0, 0.75, 0.5, 0.25, 0.0]]"
+        # Run test.
+        _, inventory = rlutils.run_episodes(
+            lambda env, obs: rlutils.twap_shares(env),
+            config=cfg,
+            n_episodes=n_episodes,
+        )
+        # Check outputs.
+        actual = str(inventory.round(6).tolist())
+        self.assert_equal(actual, expected)
+
+
+class _FakeModule:
+    """
+    Stand-in for an RLlib `RLModule` returning a fixed output.
+    """
+
+    def __init__(self, out: Dict[str, Any]) -> None:
+        self.out = out
+
+    def forward_inference(self, batch: Dict[str, Any]) -> Dict[str, Any]:
+        return self.out
+
+
+class Test_get_greedy_policy(hunitest.TestCase):
+    """
+    Test `rllib_utils.get_greedy_policy()` function.
+    """
+
+    def helper(self, out: Dict[str, Any], expected: str) -> None:
+        """
+        Check the shares sold at the first step for a fixed module output.
+
+        :param out: output of `forward_inference()`
+        :param expected: expected shares
+        """
+        # Prepare inputs.
+        env = rlutils.ExecutionEnv()
+        obs, _ = env.reset(seed=0)
+        policy = rlutils.get_greedy_policy(_FakeModule(out))
+        # Run test.
+        shares = policy(env, obs)
+        # Check outputs.
+        actual = f"{shares:.1f}"
+        self.assert_equal(actual, expected)
+
+    def test1(self) -> None:
+        """
+        Check a DQN output: action 2 sells 10% of 100,000 shares.
+        """
+        # Prepare inputs.
+        out = {"actions": torch.tensor([2])}
+        # Prepare outputs.
+        expected = "10000.0"
+        # Run test.
+        self.helper(out, expected)
+
+    def test2(self) -> None:
+        """
+        Check a PPO output: the highest logit, action 4, sells 30%.
+        """
+        # Prepare inputs.
+        out = {"action_dist_inputs": torch.tensor([[0, 0, 1, 0, 5, 0, 0, 0.0]])}
+        # Prepare outputs.
+        expected = "30000.0"
+        # Run test.
+        self.helper(out, expected)
+
+
+class Test_summarize_episodes(hunitest.TestCase):
+    """
+    Test `rllib_utils.summarize_episodes()` function.
+    """
+
+    def test1(self) -> None:
+        """
+        Check the shortfall, expected cost, and paired win rate against TWAP.
+        """
+        # Prepare inputs.
+        costs = {
+            "TWAP": pd.DataFrame(
+                {
+                    "shortfall_bps": [1.0, 2.0, 3.0, 4.0],
+                    "expected_cost_bps": [0.5, 0.5, 0.5, 0.5],
+                }
+            ),
+            "agent": pd.DataFrame(
+                {
+                    "shortfall_bps": [0.0, 3.0, 2.0, 5.0],
+                    "expected_cost_bps": [0.4, 0.8, 0.6, 1.0],
+                }
+            ),
+        }
+        # Prepare outputs.
+        expected = r"""
+               shortfall mean  shortfall std  expected cost  win rate vs TWAP
+        TWAP              2.5       1.118034            0.5               0.0
+        agent             2.5       1.802776            0.7               0.5
+        """
+        # Run test.
+        df = rlutils.summarize_episodes(costs)
+        # Check outputs.
+        actual = df.round(6).to_string()
+        self.assert_equal(actual, expected, dedent=True, fuzzy_match=True)
