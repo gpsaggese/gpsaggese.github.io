@@ -11,6 +11,7 @@
 | `demo_contract_monitoring.py` | Exercise probe-to-verdict monitoring with deterministic in-memory boundaries (`PR_S4`) |
 | `generate_canary_bank.py` | Reproducibly generate versioned canary candidates |
 | `run_checker_replay.py` | Run production-checker replay, analytic comparison, and artifact generation |
+| `run_model_drift_cusum_pilot.py` | Compare offline Bernoulli CUSUM and Fisher-window detection |
 | `spike_openrouter.py`     | Measure pinned OpenRouter providers for one model |
 | `demo_supply_asks.py`     | Show OpenRouter prices becoming one ask per seller and clearing against a bid (`PR_S9`) |
 | `demo_credit_ledger.py`   | Show the free credit ledger gating bids and charging cleared contracts (`PR_P4`) |
@@ -63,6 +64,14 @@
 - Full checker replay demo (no key, database, network, or spend):
   ```bash
   > research/Noesis/scripts/run_checker_replay.py
+  ```
+
+- Small CUSUM-versus-Fisher pilot (one process, no key, network, or spend):
+
+  ```bash
+  > PYTHONPATH=.:/path/to/helpers_root \
+      python3 research/Noesis/scripts/run_model_drift_cusum_pilot.py \
+      --max_rss_mb 512
   ```
 
 ## Auction Report Demo (PR_M12)

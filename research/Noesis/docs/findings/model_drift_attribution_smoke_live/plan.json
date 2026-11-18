@@ -1,0 +1,182 @@
+{
+  "calls": [
+    {
+      "batch": 1,
+      "call_id": "attribution-smoke-01",
+      "expected_provider_name": "Cloudflare",
+      "max_tokens": 8,
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "prompt": "Reply with exactly OK. This is attribution test attribution-smoke-01.",
+      "provider_slug": "cloudflare",
+      "route_name": "cloudflare-llama-3.3-70b",
+      "timeout_s": 30.0
+    },
+    {
+      "batch": 1,
+      "call_id": "attribution-smoke-02",
+      "expected_provider_name": "Cloudflare",
+      "max_tokens": 8,
+      "model_id": "meta-llama/llama-3.1-8b-instruct",
+      "prompt": "Reply with exactly OK. This is attribution test attribution-smoke-02.",
+      "provider_slug": "cloudflare",
+      "route_name": "cloudflare-llama-3.1-8b",
+      "timeout_s": 30.0
+    },
+    {
+      "batch": 1,
+      "call_id": "attribution-smoke-03",
+      "expected_provider_name": "Cloudflare",
+      "max_tokens": 8,
+      "model_id": "meta-llama/llama-3.2-3b-instruct",
+      "prompt": "Reply with exactly OK. This is attribution test attribution-smoke-03.",
+      "provider_slug": "cloudflare",
+      "route_name": "cloudflare-llama-3.2-3b",
+      "timeout_s": 30.0
+    },
+    {
+      "batch": 1,
+      "call_id": "attribution-smoke-04",
+      "expected_provider_name": "CoreWeave",
+      "max_tokens": 8,
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "prompt": "Reply with exactly OK. This is attribution test attribution-smoke-04.",
+      "provider_slug": "coreweave",
+      "route_name": "coreweave-llama-3.3-70b",
+      "timeout_s": 30.0
+    },
+    {
+      "batch": 1,
+      "call_id": "attribution-smoke-05",
+      "expected_provider_name": "Cloudflare",
+      "max_tokens": 8,
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "prompt": "Reply with exactly OK. This is attribution test attribution-smoke-05.",
+      "provider_slug": "cloudflare",
+      "route_name": "cloudflare-llama-3.3-70b",
+      "timeout_s": 30.0
+    },
+    {
+      "batch": 2,
+      "call_id": "attribution-smoke-06",
+      "expected_provider_name": "Cloudflare",
+      "max_tokens": 8,
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "prompt": "Reply with exactly OK. This is attribution test attribution-smoke-06.",
+      "provider_slug": "cloudflare",
+      "route_name": "cloudflare-llama-3.3-70b",
+      "timeout_s": 30.0
+    },
+    {
+      "batch": 2,
+      "call_id": "attribution-smoke-07",
+      "expected_provider_name": "Cloudflare",
+      "max_tokens": 8,
+      "model_id": "meta-llama/llama-3.1-8b-instruct",
+      "prompt": "Reply with exactly OK. This is attribution test attribution-smoke-07.",
+      "provider_slug": "cloudflare",
+      "route_name": "cloudflare-llama-3.1-8b",
+      "timeout_s": 30.0
+    },
+    {
+      "batch": 2,
+      "call_id": "attribution-smoke-08",
+      "expected_provider_name": "Cloudflare",
+      "max_tokens": 8,
+      "model_id": "meta-llama/llama-3.2-3b-instruct",
+      "prompt": "Reply with exactly OK. This is attribution test attribution-smoke-08.",
+      "provider_slug": "cloudflare",
+      "route_name": "cloudflare-llama-3.2-3b",
+      "timeout_s": 30.0
+    },
+    {
+      "batch": 2,
+      "call_id": "attribution-smoke-09",
+      "expected_provider_name": "CoreWeave",
+      "max_tokens": 8,
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "prompt": "Reply with exactly OK. This is attribution test attribution-smoke-09.",
+      "provider_slug": "coreweave",
+      "route_name": "coreweave-llama-3.3-70b",
+      "timeout_s": 30.0
+    },
+    {
+      "batch": 2,
+      "call_id": "attribution-smoke-10",
+      "expected_provider_name": "Cloudflare",
+      "max_tokens": 8,
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "prompt": "Reply with exactly OK. This is attribution test attribution-smoke-10.",
+      "provider_slug": "cloudflare",
+      "route_name": "cloudflare-llama-3.3-70b",
+      "timeout_s": 30.0
+    },
+    {
+      "batch": 2,
+      "call_id": "attribution-smoke-11",
+      "expected_provider_name": "Cloudflare",
+      "max_tokens": 8,
+      "model_id": "meta-llama/llama-3.1-8b-instruct",
+      "prompt": "Reply with exactly OK. This is attribution test attribution-smoke-11.",
+      "provider_slug": "cloudflare",
+      "route_name": "cloudflare-llama-3.1-8b",
+      "timeout_s": 30.0
+    },
+    {
+      "batch": 2,
+      "call_id": "attribution-smoke-12",
+      "expected_provider_name": "Cloudflare",
+      "max_tokens": 8,
+      "model_id": "meta-llama/llama-3.2-3b-instruct",
+      "prompt": "Reply with exactly OK. This is attribution test attribution-smoke-12.",
+      "provider_slug": "cloudflare",
+      "route_name": "cloudflare-llama-3.2-3b",
+      "timeout_s": 30.0
+    },
+    {
+      "batch": 2,
+      "call_id": "attribution-smoke-13",
+      "expected_provider_name": "CoreWeave",
+      "max_tokens": 8,
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "prompt": "Reply with exactly OK. This is attribution test attribution-smoke-13.",
+      "provider_slug": "coreweave",
+      "route_name": "coreweave-llama-3.3-70b",
+      "timeout_s": 30.0
+    },
+    {
+      "batch": 2,
+      "call_id": "attribution-smoke-14",
+      "expected_provider_name": "Cloudflare",
+      "max_tokens": 8,
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "prompt": "Reply with exactly OK. This is attribution test attribution-smoke-14.",
+      "provider_slug": "cloudflare",
+      "route_name": "cloudflare-llama-3.3-70b",
+      "timeout_s": 30.0
+    },
+    {
+      "batch": 2,
+      "call_id": "attribution-smoke-15",
+      "expected_provider_name": "Cloudflare",
+      "max_tokens": 8,
+      "model_id": "meta-llama/llama-3.1-8b-instruct",
+      "prompt": "Reply with exactly OK. This is attribution test attribution-smoke-15.",
+      "provider_slug": "cloudflare",
+      "route_name": "cloudflare-llama-3.1-8b",
+      "timeout_s": 30.0
+    }
+  ],
+  "campaign_id": "noesis-qos-phase0-controlled-v1",
+  "campaign_manifest_hash": "9fa74eb00d534ce608927328dda60774c9a6398e53474246d910da18467c6d31",
+  "fallbacks_allowed": false,
+  "policy": {
+    "consecutive_provider_errors": 2,
+    "maximum_calls": 15,
+    "maximum_cost_usd": 0.25,
+    "maximum_error_rate": 0.2,
+    "per_call_reserve_usd": 0.01,
+    "timeout_count": 2
+  },
+  "provider_calls": 15,
+  "schema_version": "noesis-attribution-smoke-v1"
+}
