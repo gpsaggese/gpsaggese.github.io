@@ -6,9 +6,8 @@ import tutorials.Weave.test.test_docker_weave as tptdal
 
 import logging
 
-import pytest
-
 import helpers.hdocker_tests as hdoctest
+import pytest
 
 _LOG = logging.getLogger(__name__)
 

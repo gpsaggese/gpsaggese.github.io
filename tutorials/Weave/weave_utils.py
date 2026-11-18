@@ -8,43 +8,35 @@ import tutorials.Weave.weave_utils as utils
 
 import asyncio
 import contextvars
+import hashlib
+import inspect
 import logging
 import os
 import re
+import time
 from concurrent.futures import ThreadPoolExecutor
-from typing import Any, Dict, List
+from io import StringIO
+from pathlib import Path
+from typing import Any
+from urllib.parse import urljoin
 
 import dotenv
-import pandas as pd
-import weave
-
 import helpers.hdbg as hdbg
-import helpers.hnotebook as hnotebo
-import inspect
 import helpers.hintrospection as hintros
-
-import hashlib
-from pathlib import Path
-from typing import Optional, Tuple
-
+import helpers.hnotebook as hnotebo
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 import pydantic
 import requests
+import seaborn as sns
+import weave
+from bs4 import BeautifulSoup
+from scipy.stats import spearmanr
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score
 from sklearn.pipeline import Pipeline
-
-import time
-from io import StringIO
-from urllib.parse import urljoin
-
-from bs4 import BeautifulSoup
-
-import numpy as np
-from scipy.stats import spearmanr
-
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 _LOG = logging.getLogger(__name__)
 
@@ -104,7 +96,7 @@ def print_api_info(obj: Any) -> None:
 
 
 @weave.op
-def count_keyword_hits(sentence: str, words: List[str]) -> int:
+def count_keyword_hits(sentence: str, words: list[str]) -> int:
     """
     Count keywords that match the beginning of a token.
 
@@ -122,9 +114,9 @@ def count_keyword_hits(sentence: str, words: List[str]) -> int:
 @weave.op
 def keyword_tone(
     sentence: str,
-    hawkish_words: List[str],
-    dovish_words: List[str],
-) -> Dict[str, Any]:
+    hawkish_words: list[str],
+    dovish_words: list[str],
+) -> dict[str, Any]:
     """
     Classify a sentence using monetary policy keywords.
 
@@ -158,11 +150,11 @@ class KeywordToneModel(weave.Model):
     Classify monetary policy tone using configurable keyword lists.
     """
 
-    hawkish_words: List[str]
-    dovish_words: List[str]
+    hawkish_words: list[str]
+    dovish_words: list[str]
 
     @weave.op
-    def predict(self, sentence: str) -> Dict[str, Any]:
+    def predict(self, sentence: str) -> dict[str, Any]:
         """
         Predict the monetary policy tone of a sentence.
 
@@ -184,8 +176,8 @@ class KeywordToneModel(weave.Model):
 @weave.op
 def exact_match(
     label: str,
-    output: Dict[str, Any],
-) -> Dict[str, bool]:
+    output: dict[str, Any],
+) -> dict[str, bool]:
     """
     Check whether a predicted label matches its reference label.
 
@@ -205,9 +197,9 @@ class PerClassRecall(weave.Scorer):
     def score(
         self,
         *,
-        output: Dict[str, Any],
+        output: dict[str, Any],
         label: str,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Record prediction correctness and the reference class.
 
@@ -223,8 +215,8 @@ class PerClassRecall(weave.Scorer):
     @weave.op
     def summarize(
         self,
-        score_rows: List[Dict[str, Any]],
-    ) -> Dict[str, float]:
+        score_rows: list[dict[str, Any]],
+    ) -> dict[str, float]:
         """
         Aggregate prediction correctness by reference class.
 
@@ -251,7 +243,7 @@ def run_evaluation(
     evaluation: weave.Evaluation,
     model: weave.Model,
     display_name: str,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Run an evaluation from either a notebook or a Python script.
 
@@ -260,7 +252,7 @@ def run_evaluation(
     :param display_name: name displayed in the Weave interface
     :return: evaluation summary
     """
-    async def evaluate() -> Dict[str, Any]:
+    async def evaluate() -> dict[str, Any]:
         return await evaluation.evaluate(
             model,
             __weave={"display_name": display_name},
@@ -282,7 +274,7 @@ def run_evaluation(
 
 
 def summarize_keyword_evaluations(
-    summaries: Dict[str, Dict[str, Any]],
+    summaries: dict[str, dict[str, Any]],
 ) -> pd.DataFrame:
     """
     Convert keyword model evaluation summaries into a comparison table.
@@ -387,15 +379,15 @@ class TfidfLogRegModel(weave.Model):
     The fitted scikit-learn pipeline is kept in memory.
     """
 
-    ngram_range: Tuple[int, int] = (1, 2)
+    ngram_range: tuple[int, int] = (1, 2)
     max_features: int = 10000
     C: float = 1.0
     max_iter: int = 1000
     random_state: int = 42
-    class_weight: Optional[str] = None
+    class_weight: str | None = None
     training_digest: str
 
-    _pipeline: Optional[Pipeline] = pydantic.PrivateAttr(
+    _pipeline: Pipeline | None = pydantic.PrivateAttr(
         default=None
     )
 
@@ -443,7 +435,7 @@ class TfidfLogRegModel(weave.Model):
         return self
 
     @weave.op
-    def predict(self, sentence: str) -> Dict[str, Any]:
+    def predict(self, sentence: str) -> dict[str, Any]:
         """
         Classify a single FOMC sentence.
 
@@ -473,8 +465,8 @@ class TfidfLogRegModel(weave.Model):
     @weave.op
     def predict_batch(
         self,
-        sentences: List[str],
-    ) -> List[int]:
+        sentences: list[str],
+    ) -> list[int]:
         """
         Classify multiple FOMC sentences in one operation.
 
@@ -523,8 +515,8 @@ def make_fomc_test_dataset(
 @weave.op
 def accuracy_scorer(
     label: int,
-    output: Dict[str, Any],
-) -> Dict[str, bool]:
+    output: dict[str, Any],
+) -> dict[str, bool]:
     """
     Check whether a prediction matches the reference label.
 
@@ -542,15 +534,17 @@ class MacroF1Scorer(weave.Scorer):
     Calculate macro-F1 across the three monetary policy classes.
     """
 
-    labels: List[int] = [0, 1, 2]
+    labels: list[int] = pydantic.Field(
+        default_factory=lambda: [0, 1, 2],
+    )
 
     @weave.op
     def score(
         self,
         *,
-        output: Dict[str, Any],
+        output: dict[str, Any],
         label: int,
-    ) -> Dict[str, int]:
+    ) -> dict[str, int]:
         """
         Record the true and predicted labels.
 
@@ -566,8 +560,8 @@ class MacroF1Scorer(weave.Scorer):
     @weave.op
     def summarize(
         self,
-        score_rows: List[Optional[Dict[str, int]]],
-    ) -> Dict[str, Any]:
+        score_rows: list[dict[str, int] | None],
+    ) -> dict[str, Any]:
         """
         Calculate macro-F1 and individual class F1 scores.
 
@@ -600,7 +594,7 @@ class MacroF1Scorer(weave.Scorer):
 
 
 def summarize_fomc_evaluations(
-    summaries: Dict[str, Dict[str, Any]],
+    summaries: dict[str, dict[str, Any]],
     expected_rows: int,
 ) -> pd.DataFrame:
     """
@@ -1108,7 +1102,7 @@ def clean_statement_text(text: str) -> str:
     return cleaned
 
 
-def split_sentences(text: str) -> List[str]:
+def split_sentences(text: str) -> list[str]:
     """
     Split an FOMC statement into individual sentences.
 
@@ -1153,7 +1147,7 @@ def split_sentences(text: str) -> List[str]:
 def score_statement_tone(
     model: TfidfLogRegModel,
     statement_text: str,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Calculate monetary policy tone from sentence predictions.
 
@@ -1195,7 +1189,7 @@ def score_statement_tone(
 
 def calculate_statement_tones(
     aligned: pd.DataFrame,
-    models: Dict[str, TfidfLogRegModel],
+    models: dict[str, TfidfLogRegModel],
 ) -> pd.DataFrame:
     """
     Calculate statement tone and tone changes for each model.
@@ -1246,7 +1240,7 @@ def calculate_statement_tones(
 
 def calculate_tone_correlations(
     tones: pd.DataFrame,
-    model_names: List[str],
+    model_names: list[str],
 ) -> pd.DataFrame:
     """
     Calculate Spearman correlations between tone and yield changes.
@@ -1288,7 +1282,7 @@ def bootstrap_correlation_difference(
     model_b: str,
     n_bootstrap: int = 2000,
     random_state: int = 42,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Estimate uncertainty in the difference between correlations.
 
@@ -1363,8 +1357,8 @@ def bootstrap_correlation_difference(
 
 def plot_tone_correlations(
     tones: pd.DataFrame,
-    model_names: List[str],
-    figsize: Tuple[int, int] = (12, 5),
+    model_names: list[str],
+    figsize: tuple[int, int] = (12, 5),
 ):
     """
     Plot tone changes against Treasury yield changes.
