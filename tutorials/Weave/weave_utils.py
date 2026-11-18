@@ -40,6 +40,12 @@ from urllib.parse import urljoin
 
 from bs4 import BeautifulSoup
 
+import numpy as np
+from scipy.stats import spearmanr
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
 _LOG = logging.getLogger(__name__)
 
 
@@ -463,6 +469,27 @@ class TfidfLogRegModel(weave.Model):
                 float(probabilities[best]), 4
             ),
         }
+
+    @weave.op
+    def predict_batch(
+        self,
+        sentences: List[str],
+    ) -> List[int]:
+        """
+        Classify multiple FOMC sentences in one operation.
+
+        :param sentences: monetary policy sentences
+        :return: predicted numeric labels
+        """
+        if self._pipeline is None:
+            raise RuntimeError("Call fit() before predict().")
+
+        hdbg.dassert(len(sentences) > 0)
+
+        predictions = self._pipeline.predict(sentences)
+
+        return [int(label) for label in predictions]
+
 
 
 # #############################################################################
@@ -1034,3 +1061,380 @@ def align_fomc_yields(
     return aligned.reset_index(drop=True)
 
 
+# #############################################################################
+# FOMC statement text processing
+# #############################################################################
+
+
+def clean_statement_text(text: str) -> str:
+    """
+    Remove publication metadata from FOMC statement text.
+
+    :param text: downloaded FOMC statement
+    :return: cleaned monetary policy statement
+    """
+    lines = []
+
+    for line in text.splitlines():
+        line = line.strip()
+
+        if not line:
+            continue
+
+        # Remove standalone publication dates.
+        if re.fullmatch(
+            r"[A-Za-z]+ \d{1,2}, \d{4}",
+            line,
+        ):
+            continue
+
+        # Remove publication and sharing metadata.
+        if re.fullmatch(
+            r"For immediate release(?:\s+Share)?",
+            line,
+            flags=re.IGNORECASE,
+        ):
+            continue
+
+        if line.lower() == "share":
+            continue
+
+        lines.append(line)
+
+    cleaned = "\n".join(lines)
+
+    hdbg.dassert(len(cleaned) >= 300)
+
+    return cleaned
+
+
+def split_sentences(text: str) -> List[str]:
+    """
+    Split an FOMC statement into individual sentences.
+
+    :param text: monetary policy statement
+    :return: nonempty sentence strings
+    """
+    text = clean_statement_text(text)
+
+    # Protect common abbreviations during sentence splitting.
+    abbreviations = {
+        "U.S.": "U<DOT>S<DOT>",
+        "Mr.": "Mr<DOT>",
+        "Mrs.": "Mrs<DOT>",
+        "Ms.": "Ms<DOT>",
+        "Dr.": "Dr<DOT>",
+    }
+
+    for abbreviation, replacement in abbreviations.items():
+        text = text.replace(abbreviation, replacement)
+
+    text = re.sub(r"\s+", " ", text).strip()
+
+    sentences = re.split(r"(?<=[.!?])\s+", text)
+
+    sentences = [
+        sentence.replace("<DOT>", ".").strip()
+        for sentence in sentences
+        if sentence.strip()
+    ]
+
+    hdbg.dassert(len(sentences) > 0)
+
+    return sentences
+
+
+# #############################################################################
+# FOMC statement tone analysis
+# #############################################################################
+
+
+@weave.op
+def score_statement_tone(
+    model: TfidfLogRegModel,
+    statement_text: str,
+) -> Dict[str, Any]:
+    """
+    Calculate monetary policy tone from sentence predictions.
+
+    :param model: fitted FOMC classification model
+    :param statement_text: complete FOMC statement
+    :return: sentence counts, label shares, and tone score
+    """
+    sentences = split_sentences(statement_text)
+    labels = model.predict_batch(sentences)
+
+    n_sentences = len(sentences)
+
+    hdbg.dassert_eq(len(labels), n_sentences)
+    hdbg.dassert(set(labels).issubset(LABEL_NAMES))
+
+    n_dovish = labels.count(0)
+    n_hawkish = labels.count(1)
+    n_neutral = labels.count(2)
+
+    dovish_share = n_dovish / n_sentences
+    hawkish_share = n_hawkish / n_sentences
+    neutral_share = n_neutral / n_sentences
+
+    tone = hawkish_share - dovish_share
+
+    hdbg.dassert(-1.0 <= tone <= 1.0)
+
+    return {
+        "n_sentences": n_sentences,
+        "n_dovish": n_dovish,
+        "n_hawkish": n_hawkish,
+        "n_neutral": n_neutral,
+        "dovish_share": dovish_share,
+        "hawkish_share": hawkish_share,
+        "neutral_share": neutral_share,
+        "tone": tone,
+    }
+
+
+def calculate_statement_tones(
+    aligned: pd.DataFrame,
+    models: Dict[str, TfidfLogRegModel],
+) -> pd.DataFrame:
+    """
+    Calculate statement tone and tone changes for each model.
+
+    :param aligned: FOMC statements aligned with Treasury yields
+    :param models: named fitted classification models
+    :return: announcement-level tone and yield change dataframe
+    """
+    hdbg.dassert(len(models) > 0)
+
+    aligned = aligned.sort_values("date").reset_index(drop=True)
+
+    records = []
+
+    for row in aligned.itertuples(index=False):
+        record = {
+            "date": row.date,
+            "yield_change_bps": row.yield_change_bps,
+        }
+
+        for name, model in models.items():
+            result = score_statement_tone(
+                model,
+                row.statement_text,
+            )
+
+            record["n_sentences"] = result["n_sentences"]
+            record[f"{name}_tone"] = result["tone"]
+
+        records.append(record)
+
+    tones = pd.DataFrame(records)
+
+    for name in models:
+        tones[f"{name}_tone_change"] = (
+            tones[f"{name}_tone"].diff()
+        )
+
+    hdbg.dassert_eq(len(tones), len(aligned))
+    hdbg.dassert(tones["date"].is_unique)
+
+    return tones
+
+# #############################################################################
+# FOMC tone and Treasury yield correlation analysis
+# #############################################################################
+
+
+def calculate_tone_correlations(
+    tones: pd.DataFrame,
+    model_names: List[str],
+) -> pd.DataFrame:
+    """
+    Calculate Spearman correlations between tone and yield changes.
+
+    :param tones: announcement-level tone and yield data
+    :param model_names: classification model names
+    :return: correlation results for each model
+    """
+    columns = [
+        f"{name}_tone_change" for name in model_names
+    ]
+
+    valid = tones.dropna(
+        subset=columns + ["yield_change_bps"]
+    )
+
+    hdbg.dassert(len(valid) > 2)
+
+    rows = []
+
+    for name in model_names:
+        result = spearmanr(
+            valid[f"{name}_tone_change"],
+            valid["yield_change_bps"],
+        )
+
+        rows.append({
+            "model": name,
+            "n_observations": len(valid),
+            "spearman_rho": float(result.statistic),
+            "p_value": float(result.pvalue),
+        })
+
+    return pd.DataFrame(rows).set_index("model")
+
+def bootstrap_correlation_difference(
+    tones: pd.DataFrame,
+    model_a: str,
+    model_b: str,
+    n_bootstrap: int = 2000,
+    random_state: int = 42,
+) -> Dict[str, Any]:
+    """
+    Estimate uncertainty in the difference between correlations.
+
+    :param tones: announcement-level tone and yield data
+    :param model_a: first classification model
+    :param model_b: second classification model
+    :param n_bootstrap: number of bootstrap samples
+    :param random_state: random number generator seed
+    :return: observed difference and confidence interval
+    """
+    columns = [
+        f"{model_a}_tone_change",
+        f"{model_b}_tone_change",
+        "yield_change_bps",
+    ]
+
+    valid = tones.dropna(subset=columns)
+
+    x_a = valid[columns[0]].to_numpy()
+    x_b = valid[columns[1]].to_numpy()
+    y = valid[columns[2]].to_numpy()
+
+    n = len(valid)
+
+    hdbg.dassert(n > 2)
+    hdbg.dassert(n_bootstrap > 0)
+
+    rho_a = float(spearmanr(x_a, y).statistic)
+    rho_b = float(spearmanr(x_b, y).statistic)
+
+    observed_difference = rho_b - rho_a
+
+    rng = np.random.default_rng(random_state)
+
+    differences = []
+
+    for _ in range(n_bootstrap):
+        indices = rng.integers(0, n, size=n)
+
+        sample_a = spearmanr(
+            x_a[indices],
+            y[indices],
+        ).statistic
+
+        sample_b = spearmanr(
+            x_b[indices],
+            y[indices],
+        ).statistic
+
+        if np.isfinite(sample_a) and np.isfinite(sample_b):
+            differences.append(sample_b - sample_a)
+
+    hdbg.dassert(len(differences) > 0)
+
+    ci_lower, ci_upper = np.percentile(
+        differences,
+        [2.5, 97.5],
+    )
+
+    return {
+        "model_a": model_a,
+        "model_b": model_b,
+        "n_observations": n,
+        "rho_a": rho_a,
+        "rho_b": rho_b,
+        "observed_difference": observed_difference,
+        "ci_lower": float(ci_lower),
+        "ci_upper": float(ci_upper),
+        "n_bootstrap": n_bootstrap,
+        "n_valid_bootstrap": len(differences),
+    }
+
+def plot_tone_correlations(
+    tones: pd.DataFrame,
+    model_names: List[str],
+    figsize: Tuple[int, int] = (12, 5),
+):
+    """
+    Plot tone changes against Treasury yield changes.
+
+    :param tones: announcement-level tone and yield data
+    :param model_names: classification model names
+    :param figsize: figure dimensions
+    :return: matplotlib figure
+    """
+    correlations = calculate_tone_correlations(
+        tones,
+        model_names,
+    )
+
+    columns = [
+        f"{name}_tone_change" for name in model_names
+    ]
+
+    valid = tones.dropna(
+        subset=columns + ["yield_change_bps"]
+    )
+
+    fig, axes = plt.subplots(
+        1,
+        len(model_names),
+        figsize=figsize,
+        sharex=True,
+        sharey=True,
+        squeeze=False,
+    )
+
+    for ax, name in zip(axes[0], model_names):
+        rho = correlations.loc[name, "spearman_rho"]
+        n = correlations.loc[name, "n_observations"]
+
+        sns.regplot(
+            data=valid,
+            x=f"{name}_tone_change",
+            y="yield_change_bps",
+            ax=ax,
+            ci=None,
+            scatter_kws={"alpha": 0.65},
+        )
+
+        ax.axhline(
+            0,
+            linestyle="--",
+            color="gray",
+            linewidth=0.8,
+        )
+
+        ax.axvline(
+            0,
+            linestyle="--",
+            color="gray",
+            linewidth=0.8,
+        )
+
+        ax.set_title(
+            f"{name.capitalize()}\n"
+            f"Spearman rho = {rho:.3f}, n = {n}"
+        )
+
+        ax.set_xlabel("Change in FOMC tone")
+        ax.set_ylabel("2-year yield change (bps)")
+
+    fig.suptitle(
+        "FOMC Tone Changes and Treasury Yield Changes"
+    )
+
+    fig.tight_layout()
+
+    return fig
