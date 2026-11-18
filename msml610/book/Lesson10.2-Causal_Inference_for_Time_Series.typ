@@ -561,13 +561,13 @@ outcome. The gap represents the policy effect.
 //     nodesep=0.6;
 //     ranksep=0.8;
 //     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
-//
+// 
 //     PrePeriod  [label=<Pre-period<BR/>(t &lt; t*)>,      fillcolor="#FFD1A6"];
 //     Event      [label=<Intervention<BR/>at t = t*>,   fillcolor="#F4A6A6"];
 //     PostPeriod [label=<Post-period<BR/>(t &gt;= t*)>,    fillcolor="#B2E2B2"];
 //     Forecast   [label=<Counterfactual<BR/>forecast>,  fillcolor="#A6E7F4"];
 //     Effect     [label=<Causal effect<BR/>= Actual - Forecast>, fillcolor="#A6C8F4"];
-//
+// 
 //     PrePeriod -> Event -> PostPeriod;
 //     PrePeriod -> Forecast [label="  fit model"];
 //     Forecast -> Effect;
@@ -728,13 +728,13 @@ between-group differences and common time trends are removed.
 //     nodesep=0.8;
 //     ranksep=0.8;
 //     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
-//
+// 
 //     TreatPre   [label=<Treated<BR/>Pre>,   fillcolor="#FFD1A6"];
 //     TreatPost  [label=<Treated<BR/>Post>,  fillcolor="#F4A6A6"];
 //     CtrlPre    [label=<Control<BR/>Pre>,   fillcolor="#B2E2B2"];
 //     CtrlPost   [label=<Control<BR/>Post>,  fillcolor="#A0D6D1"];
 //     Effect     [label=<DiD =<BR/>(T_post - T_pre)<BR/>- (C_post - C_pre)>, fillcolor="#A6C8F4"];
-//
+// 
 //     TreatPre -> TreatPost [label="  change in treated"];
 //     CtrlPre -> CtrlPost  [label="  change in control"];
 //     TreatPost -> Effect;
@@ -959,13 +959,13 @@ donors contribute and how much, making the counterfactual explicit.
 //     nodesep=0.8;
 //     ranksep=0.8;
 //     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
-//
+// 
 //     Treated [label=<Treated unit<BR/>(e.g., California)>,  fillcolor="#F4A6A6"];
 //     Donors  [label=<Donor pool<BR/>(other states)>,         fillcolor="#FFD1A6"];
 //     Weights [label=<Optimal weights<BR/>w<SUB>1</SUB>, w<SUB>2</SUB>, ..., w_J>,fillcolor="#A6E7F4"];
 //     Synth   [label=<Synthetic<BR/>counterfactual>,          fillcolor="#B2E2B2"];
 //     Effect  [label=<Causal effect =<BR/>Treated - Synthetic>,fillcolor="#A6C8F4"];
-//
+// 
 //     Donors -> Weights;
 //     Treated -> Weights [label="  pre-treatment fit"];
 //     Weights -> Synth;
