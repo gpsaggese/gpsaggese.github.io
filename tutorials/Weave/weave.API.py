@@ -8,18 +8,6 @@
 #       format_name: percent
 #       format_version: '1.3'
 #       jupytext_version: 1.19.6
-# ---
-
-# %%
-
-# ---
-# jupyter:
-#   jupytext:
-#     formats: ipynb,py:percent
-#     text_representation:
-#       extension: .py
-#       format_name: percent
-#       format_version: '1.3'
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -42,7 +30,11 @@
 # - Reference: [Weave documentation](https://weave-docs.wandb.ai/).
 
 # %%
-# !pip install -q weave==0.54.0 python-dotenv==1.2.4
+# !pip install -q weave==0.54.0 python-dotenv==1.2.4 \
+#     pandas==3.1.1 numpy==2.5.5 pydantic==2.14.3 \
+#     scikit-learn==1.9.1 scipy==1.18.1 \
+#     requests==2.34.2 beautifulsoup4==4.15.0 \
+#     matplotlib==3.11.2 seaborn==0.13.2
 
 import weave
 
