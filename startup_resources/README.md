@@ -18,6 +18,7 @@
   | 3  | `FriendlySalezBizDev` | `startup_resources/gp_resources.3.FriendlySalezBizDev.csv` |
   | 4  | `AIGrants`            | `startup_resources/gp_resources.4.AIGrants.csv`            |
   | 5  | `CryptoGrants`        | `startup_resources/gp_resources.5.CryptoGrants.csv`        |
+  | 6  | `VC`                  | `startup_resources/gp_resources.6.VC.csv`                  |
 - `startup_resources/ai_grants.md` is the notes on the grant programs, not a tab
 
 # Summary of Commands
