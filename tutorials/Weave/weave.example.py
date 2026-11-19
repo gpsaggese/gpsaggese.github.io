@@ -673,7 +673,24 @@ fig = utils.plot_tone_correlations(
     model_names,
 )
 
-display(fig)
+from IPython.display import display
+from IPython.core.pylabtools import print_figure
+
+display(
+    {
+        "image/png": print_figure(fig, fmt="png"),
+    },
+    raw=True,
+    metadata={
+        "image/png": {
+            "alt": (
+                "Side-by-side scatter plots comparing FOMC tone changes "
+                "and Treasury yield changes for the baseline and "
+                "balanced models, with descriptive linear fits."
+            )
+        }
+    },
+)
 plt.close(fig)
 
 # %% [markdown]
