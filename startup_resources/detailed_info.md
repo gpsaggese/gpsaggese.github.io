@@ -18,6 +18,94 @@ https://coach-carter.beehiiv.com/archive
 - Amounts and dates are as stated in the newsletter. Confirm them on the
   sponsor page before applying
 
+# Definitions
+
+- These definitions apply to the `Difficulty` field in the sections below
+- They also apply to the `Difficulty`, `Amount`, and `AmountSize` columns of the
+  CSV files `startup_resources/gp_resources.*.csv`
+  - The angel, accelerator, VC, AI grant, and crypto grant files have these
+    columns
+  - `gp_resources.3.FriendlySalezBizDev.csv` is a contact list and has no
+    amount columns
+
+## Difficulty
+
+- `Difficulty` rates how hard it is to get the money or the meeting
+  - Rate the odds and the effort for a typical startup or lab
+  - Use four levels: easy, medium, hard, very hard
+- Levels:
+  - **easy**: Open to almost any applicant, with no competitive selection
+    - Rolling or always open, short form, no gatekeeper
+    - E.g., NAIRR Pilot, NVIDIA Inception, Starknet Seed Grants
+  - **medium**: Open call that needs a real application and a good fit
+    - Competitive, or limited to a restricted pool of applicants
+    - E.g., Google Academic Research Awards, NSF ExpandAI (MSIs only)
+  - **hard**: Highly selective, or access is limited
+    - Acceptance rate ~2-10%, a fixed deadline with heavy paperwork, a warm intro,
+      an invitation, or a program that is between rounds
+    - E.g., NSF SBIR/STTR, Schmidt Sciences AI2050 Fellowship, Alchemist (~3%)
+  - **very hard**: Almost no chance without a special edge
+    - Acceptance rate under ~2%, a large consortium, or a person who rarely
+      invests
+    - E.g., NSF National AI Research Institutes, Y Combinator (~1%), A16z Speedrun
+      (under 0.4%)
+- Map the labels used in the CSV files to the four levels:
+
+  | CSV label                | Level     |
+  | :----------------------- | :-------- |
+  | `Easy`, `Low`            | easy      |
+  | `Moderate`, `Medium`     | medium    |
+  | `Hard`, `High`           | hard      |
+  | `Very hard`, `Very high` | very hard |
+
+  - `Low`, `Medium`, `High`, and `Very high` rate a person (angel or VC)
+  - For a person, the level is how hard it is to get a reply and a check
+  - E.g., `Low`: Rajeev Madhavan, who already invested $100K via SAFE
+  - E.g., `Medium`: UMD Dingman Center Angels, with a formal application and pitch
+  - E.g., `High`: Gokul Rajaram, a prolific angel with a fund
+  - E.g., `Very high`: Naval Ravikant, who made few new investments recently
+- Special values:
+  - A range (`Moderate–Hard`, `Easy–moderate`) means the level depends on the
+    track or the tier
+    - Use the level of the track you apply to
+    - If no track is chosen, use the harder level
+  - A level with a status (`Hard: between rounds`) keeps the level
+    - Put the status in the `Deadline` or `Status` field
+  - `N/A: <reason>` means that the program is closed to outsiders, paused, or
+    discontinued
+    - Do not assign a level
+
+## AmountSize
+
+- `AmountSize` classifies the size of the money that one winner receives
+  - It is read from the `Amount` column, which grants, angels, VCs, and
+    accelerators all use
+  - It is the column right after `Amount` in each CSV file
+- Levels, in USD:
+
+  | Level      | Amount per winner | Examples                               |
+  | :--------- | :---------------- | :------------------------------------- |
+  | very small | under $10K        | Women Founders Grant ($5K)             |
+  | small      | $10K to $100K     | Z Fellows ($10K), EF PhD Fellowship    |
+  | medium     | $100K to $500K    | Techstars ($220K), Thiel Fellowship    |
+  | large      | $500K and above   | Y Combinator ($500K), Hult Prize ($1M) |
+
+- The lower bound is included in each level
+  - E.g., $10K is small, $100K is medium, $500K is large
+- Rules for the amount:
+  - Use one award or one check, not the total pool
+    - E.g., "$2M pool per round" is not an award size
+    - E.g., a VC fund size (`$200M Fund III`) is not a check size
+  - Use the typical first award or check if the source states one
+    - If the source gives only a range, use the lower end
+    - E.g., `$100K–$250K` is medium and `$250K–$1M+` by phase is medium
+  - Count credits and in-kind support at the dollar value stated
+    - E.g., `Up to ~$150K in Azure credits` is medium
+    - Say in the notes that the amount is credits and not cash
+  - Convert other currencies to USD at a rough rate
+  - Use `unknown` when the source says `Varies`, `Not stated`, or gives no figure
+  - Use `N/A` when the program is closed, paused, or discontinued
+
 # Detail
 
 ## Federal / Government
@@ -774,6 +862,26 @@ worldwide
 - **Deadline**: Not stated. Check the program page
 - **Note**: The Dingman Center also runs UMD Dingman Center Angels (see the
   `FriendlyAngels` tab)
+
+### Mokhtarzada Hatchery (UMD Computer Science)
+
+- **Website**: <https://hatchery.umd.edu/>
+- **Submission**: <https://www.hatchery.umd.edu/apply>
+- **Award size**: Seed funding of up to $10,000 per team per year. Teams can
+  have other funding
+- **Eligibility**: Teams of 2 to 4 members. At least one member is a current
+  degree-seeking UMD student. Other members are current UMD students or UMD
+  graduates from the prior spring. Technology companies get preference
+- **Deadline**: Applications usually open about two weeks before the fall
+  semester starts. No fixed date is stated. The 2025-2026 round is closed. The
+  site has a 2026-2027 cohort page, but it gives no application details
+- **Note**: Also gives mentoring from an experienced entrepreneur, a dedicated
+  24/7 workspace in the Brendan Iribe Center (Room 2237), and access to
+  speakers and advisors from the Washington, D.C. startup ecosystem. Up to 4
+  teams are admitted each year. Launched in 2021, funded by the alumni
+  Haroon, Idris, and Zeki Mokhtarzada. Mtech Ventures
+  (<https://mtechventures.umd.edu/>) is a separate UMD incubator: it gives lab
+  and office space, but no funding
 
 ### NFTE World Series of Innovation
 
