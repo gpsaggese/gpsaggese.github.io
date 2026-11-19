@@ -289,6 +289,12 @@ class TestOpenRouterProvider(hunitest.TestCase):
         bodies = [
             {"provider": "Groq", "choices": []},
             {"provider": "Groq", "choices": [{"message": {"role": "assistant"}}]},
+            {
+                "provider": "Groq",
+                "choices": [
+                    {"message": {"role": "assistant", "content": None}}
+                ],
+            },
         ]
         # Run test and check outputs.
         for body in bodies:

@@ -12,9 +12,9 @@ import functools
 import math
 from typing import Optional, Sequence, Tuple
 
-import research.Noesis.monitor.monitor_metrics as rnmonmet
-
 import helpers.hdbg as hdbg
+
+import research.Noesis.monitor.monitor_metrics as rnmonmet
 
 # #############################################################################
 # Detection models
@@ -125,7 +125,7 @@ class CapabilityDetection:
 # #############################################################################
 
 
-@functools.lru_cache(maxsize=None)
+@functools.cache
 def one_sided_fisher_quality_p_value(
     baseline_correct: int,
     baseline_incorrect: int,

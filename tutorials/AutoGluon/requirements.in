@@ -1,0 +1,15 @@
+# Base packages, same as `class_project/project_template/requirements.txt`.
+ipywidgets
+matplotlib
+numpy
+pandas
+seaborn
+tqdm
+
+# AutoGluon Tabular with the CPU model families used by the notebooks.
+# - `torch`-based models (e.g., `NN_TORCH`, `FASTAI`) are left out on purpose to
+#   keep the image small and the notebooks fast on a laptop.
+autogluon.tabular[catboost,lightgbm,xgboost]==1.6.3
+
+# Per-prediction explanations in `AutoGluon.example.ipynb`.
+shap

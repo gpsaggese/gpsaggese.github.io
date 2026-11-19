@@ -1,0 +1,9 @@
+{
+  "alpha": 0.05,
+  "character_length": 256,
+  "implementation_commit": "fd2ee24d75c9fef87debff8caefa0c04d4a5d374",
+  "permutations": 200,
+  "prompt_count": 5,
+  "samples_per_prompt": 12,
+  "trials_per_scenario": 20
+}

@@ -6,9 +6,9 @@ import os
 import sys
 from unittest import mock
 
-import research.Noesis.scripts.run_model_drift_capability_experiment as rnscmdce
-
 import helpers.hunit_test as hunitest
+
+import research.Noesis.scripts.run_model_drift_capability_experiment as rnscmdce
 
 # #############################################################################
 # Test_main

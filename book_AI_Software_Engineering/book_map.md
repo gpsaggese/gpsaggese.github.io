@@ -1,48 +1,57 @@
 # Summary
 
 ## Title
+
 - Software Engineering with AI: Practical Workflows for AI-Assisted Development
-- Building Software with AI: From Code Generation to Autonomous Agents
+- Building Software with AI
 
 ## Target Audience
-- Advanced undergraduate/graduate CS students and working software engineers
-  who already know git, testing, and CI/CD basics
-- Assumes working familiarity with LLMs (prompting, context windows) but no
-  prior AI/ML coursework
+
+- Advanced undergraduate/graduate CS students and working software engineers who
+  already know git, testing, and CI/CD basics
+- Assumes working familiarity with LLMs (prompting, context windows)
 
 ## Approach of the Book
+
 - Focus on:
+  - Making AI-assisted development operational in a real codebase
   - Practical workflows over theory
   - Concrete tool walkthroughs (Claude Code, Copilot, Cursor, CI integrations)
   - Worked examples: real prompts, real diffs, real PR/CI workflows
-  - Making AI-assisted development operational in a real codebase
-- Provide resources to go one level deep
-  - Related classes (`msml610`, `data605`)
   - References to benchmarks (SWE-bench), papers, and vendor docs
+- Running example: `shortlink`, a small URL shortener service, threads through all
+  chapters
+  - `book_AI_Software_Engineering/running_example.md` gives its starter state, its
+    seeded flaws, its oracles, and the task of each chapter
 
 ## Short TOC
+
 - Foundations of AI-Assisted Coding
+  - 00, History of Software Engineering
   - 01, Coding Models
-  - 02, Skills Organization and Management
-  - 03, AI Harness
-  - 04, AI Pair Programming Workflows
-  - 05, Prompt Engineering for Code
+  - 02, AI Harness
+  - 03, AI Pair Programming Workflows
+  - 04, Prompt Engineering for Code
+  - 05, Skills Organization and Management
   - 06, Human-AI Collaboration Patterns
-- Writing and Reviewing Code
+- Writing and Debugging Code
   - 07, Code Cosmetics
   - 08, Documenting Code
-  - 09, Reviewing Pull Requests
+  - 09, Debugging with AI
+- Understanding, Planning, and Design
   - 10, Reviewing Existing Code
-  - 11, Debugging with AI
-- Planning and Architecture
-  - 12, Planning
-  - 13, Software Architecture Guidelines
-- Delivery and Automation
+  - 11, Planning Software
+  - 12, Software Architecture Guidelines
+  - 13, Principles of Good Software Design
+- From Pull Request to Production
   - 14, GitHub Projects and Workflows
-  - 15, Releasing and Docker
-  - 16, Setting CI/CD
+  - 15, Reviewing Pull Requests
+  - 16, Releasing and Docker
+  - 17, Setting CI/CD for AI
+  - 18, Foundations of Robust Software
 
 ## All Lesson Materials
+
 - `helpers_root/docs/` (tools, coding, planning, work_organization,
   documentation_meta, and dev_system guides)
 - `helpers_root/papers/AIgentic_Development_System/part*.tex`
@@ -53,49 +62,57 @@
 - `research/agentic_sw_eng/resources.md` (index of AI development resources)
 - `.github/workflows/*.yml` (CI workflows of this repo)
 - `book_AI_Software_Engineering/resources.md`
+- `book_AI_Software_Engineering/running_example.md` (the running example)
+- `book_AI_Software_Engineering/plan.history.md` (era-by-era history outline)
 - `book_AI_Software_Engineering/lectures_source/claude_code.md`
 - `book_Agentic_AI/lectures_source/*.smd`
-- `data605/lectures_source/*.smd`
-- The book's own decks (`book_AI_Software_Engineering/lectures_source/*.smd`)
-  are chapter `### Slides`, not Lesson Materials
+- The book's own decks (`book_AI_Software_Engineering/lectures_source/*.smd`) are
+  chapter `### Slides`, not Lesson Materials
 
 ## Chapter Templates and Invariants
 
-- Follow `.claude/skills/book_map.rules.md` for the Chapter Template (Goals,
-  Topics, TODO, Slides, Lesson Materials, Notes) and Roadmap section conventions
-  used throughout this file
+- Follow `.claude/skills/book_map.rules.md` for the Chapter Template (Goals, Topics,
+  TODO, Slides, Lesson Materials, Notes) and Roadmap section conventions used
+  throughout this file
 
 # Roadmap
 
-| Chap                                    | Slides                                          | Slides % | Criticize | Tutorial | Book |
-| --------------------------------------- | ----------------------------------------------- | -------- | --------- | -------- | ---- |
-| **Part I: Foundations of AI-Assisted Coding** |                                           |          |           |          |      |
-| 01: Coding Models                       | Lesson01.1_LLM_Assisted_Code_Generation.smd     | 100%     |           |          |      |
-| 02: Skills Organization and Management  | Lesson05.1_Tools.smd                            |          |           |          |      |
-| 03: AI Harness                          | Lesson02.1_AI_Pair_Programming_Workflows.smd    |          |           |          |      |
-| 04: AI Pair Programming Workflows       | Lesson02.1_AI_Pair_Programming_Workflows.smd    | 100%     |           |          |      |
-| 05: Prompt Engineering for Code         | Lesson03.1_Prompt_Engineering_for_Code.smd      | 100%     |           |          |      |
-| 06: Human-AI Collaboration Patterns     | Lesson14.1_Human_AI_Collaboration_Patterns.smd  | 100%     |           |          |      |
-| **Part II: Writing and Reviewing Code** |                                                 |          |           |          |      |
-| 07: Code Cosmetics                      | Lesson05.1_Tools.smd                            |          |           |          |      |
-| 08: Documenting Code                    | Lesson05.1_Tools.smd                            |          |           |          |      |
-| 09: Reviewing Pull Requests             | Lesson05.1_Tools.smd                            |          |           |          |      |
-| 10: Reviewing Existing Code             |                                                 |          |           |          |      |
-| 11: Debugging with AI                   | Lesson05.1_Tools.smd                            |          |           |          |      |
-| **Part III: Planning and Architecture** |                                                 |          |           |          |      |
-| 12: Planning                            | Lesson05.1_Tools.smd                            |          |           |          |      |
-| 13: Software Architecture Guidelines    | Lesson05.1_Tools.smd                            |          |           |          |      |
-| **Part IV: Delivery and Automation**    |                                                 |          |           |          |      |
-| 14: GitHub Projects and Workflows       |                                                 |          |           |          |      |
-| 15: Releasing and Docker                | Lesson05.1_Tools.smd                            |          |           |          |      |
-| 16: Setting CI/CD                       | Lesson05.1_Tools.smd                            |          |           |          |      |
+- The slides are in `book_AI_Software_Engineering/lectures_source/*.smd`
+- The book chapters are in `book_AI_Software_Engineering/book/*.typ`
+
+| Chap                                              | Slides                                             | Slides % | Criticize | Tutorial | Book |
+| ------------------------------------------------- | -------------------------------------------------- | -------- | --------- | -------- | ---- |
+| **Part I: Foundations of AI-Assisted Coding**     |                                                    |          |           |          |      |
+| 00: History of Software Engineering               | Lesson00.01_History_of_Software_Engineering.smd    |          |           |          |      |
+| 01: Coding Models                                 | Lesson01.01_LLM_Assisted_Code_Generation.smd       | 100%     |           |          |      |
+| 02: AI Harness                                    | Lesson02.01_AI_Harness.smd                         |          |           |          |      |
+| 03: AI Pair Programming Workflows                 | Lesson03.01_AI_Pair_Programming_Workflows.smd      | 100%     |           |          |      |
+| 04: Prompt Engineering for Code                   | Lesson04.01_Prompt_Engineering_for_Code.smd        | 100%     |           |          |      |
+| 05: Skills Organization and Management            | Lesson05.01_Skills_Organization_and_Management.smd |          |           |          | yes  |
+| 06: Human-AI Collaboration Patterns               | Lesson06.01_Human_AI_Collaboration_Patterns.smd    | 100%     |           |          |      |
+| **Part II: Writing and Debugging Code**           |                                                    |          |           |          |      |
+| 07: Code Cosmetics                                | Lesson07.01_Code_Cosmetics.smd                     |          |           |          |      |
+| 08: Documenting Code                              | Lesson08.01_Documenting_Code.smd                   |          |           |          |      |
+| 09: Debugging with AI                             |                                                    |          |           |          |      |
+| **Part III: Understanding, Planning, and Design** |                                                    |          |           |          |      |
+| 10: Reviewing Existing Code                       |                                                    |          |           |          |      |
+| 11: Planning Software                             | Lesson11.01_Planning_Software.smd                  |          |           |          |      |
+| 12: Software Architecture Guidelines              | Lesson12.01_Software_Architecture_Guidelines.smd   |          |           |          |      |
+| 13: Principles of Good Software Design            | Lesson13.01_Principles_of_Good_Software_Design.smd |          |           |          |      |
+| **Part IV: From Pull Request to Production**      |                                                    |          |           |          |      |
+| 14: GitHub Projects and Workflows                 | Lesson14.01_GitHub_Projects_and_Workflows.smd      |          |           |          |      |
+| 15: Reviewing Pull Requests                       |                                                    |          |           |          |      |
+| 16: Releasing and Docker                          |                                                    |          |           |          |      |
+| 17: Setting CI/CD                                 |                                                    |          |           |          |      |
+| 18: Foundations of Robust Software                |                                                    |          |           |          |      |
 
 ## TODOs
-- Split the shared deck `Lesson05.1_Tools.smd` into per-chapter decks, or keep
-  it as the shared deck for chapters 02, 07-09, 11-13, 15, and 16
-- Write a dedicated deck for chapters 03, 10, and 14
-- Confirm that Skills is chapter 02 and that Human-AI Collaboration Patterns
-  belongs in Part I
+
+- Split the shared deck `Tools_source.smd` into per-chapter decks, or keep it as the
+  shared deck for chapters 09, 11, 12, 15, 16, and 17
+- Write a dedicated deck for chapter 10
+- Resolve the `TODO(gp): Check` notes in the decks of chapters 00, 02, 05, 07, 08,
+  and 14, then fill their `Slides %`
 
 # Detailed TOC
 
@@ -105,16 +122,70 @@
   - Human attention is limited
   - Avoid spaghetti code
   - The craft of Software Development
-- Part I explains how models write code and how humans steer them.
+- Part I explains how models write code and how humans steer them
+
+## 00: History of Software Engineering
+
+### Goals
+
+- Trace ten eras of software engineering, from punch cards to coding agents
+- Compare eras by abstraction level, feedback loop, bottleneck, and engineer's role
+- Explain why specifying and verifying stay hard as tools improve
+
+### Topics
+
+- Why History Matters
+  - Ten eras at a glance and four lenses to compare them
+- Before the Internet
+  - Punch cards, the software crisis, and structured programming
+  - Waterfall, the cost-of-change argument, and object orientation
+  - No silver bullet: essential versus accidental complexity
+- The Internet, Open Source, and Agile
+  - Web distribution, open source, and version control from CVS to Git
+  - The Agile Manifesto, its practices, and cargo-cult agile
+- The Platform Era
+  - Stack Overflow, frameworks, and dependency risk
+  - Infrastructure as code, DevOps, microservices, and Conway's law
+- AI Enters the Editor
+  - AI autocomplete, comments as prompts, and their limits
+  - Chat assistants and the human as copy-paste bus
+- Vibe Coding and Agentic Engineering
+  - Vibe coding: where it works and where it fails
+  - Coding agents and the shift to specifying, reviewing, and orchestrating
+  - New practices and open questions
+- Patterns Across Eras
+  - Rising abstraction, shrinking feedback loops, and a moving bottleneck
+  - What might come next, and the constant of deciding what to build
+
+### TODO
+
+- [ ] Verify the numbers and quotes of the cited papers against the sources
+- [ ] Decide whether the deck keeps its CSV running task or uses `shortlink`
+- [ ] Trim the deck from 40 slides to the 30-35 target, or split it in two
+
+### Slides
+
+- `book_AI_Software_Engineering/lectures_source/Lesson00.01_History_of_Software_Engineering.smd`
+
+### Lesson Materials
+
+- `book_AI_Software_Engineering/plan.history.md`
+  - [80%]: the ten eras, their tools and practices, open questions, patterns across
+    eras
+- _Not covered_
+  - [20%]: cost-of-change data, essential versus accidental complexity, Conway's law,
+    empirical studies of AI coding tools
 
 ## 01: Coding Models
 
 ### Goals
+
 - Describe how LLMs generate code and where they fail
 - Compare coding models by benchmark, such as HumanEval and SWE-bench
 - Recognize context-window and hallucination limits in generated code
 
 ### Topics
+
 - How LLMs Generate Code
   - Autoregressive token prediction
   - Training data: public repos, documentation, and synthetic code
@@ -129,12 +200,15 @@
   - Benchmarks: HumanEval, SWE-bench, and their limits
 
 ### TODO
+
 - [ ] Add a slide on SWE-bench results
 
 ### Slides
-- `book_AI_Software_Engineering/lectures_source/Lesson01.1_LLM_Assisted_Code_Generation.smd`
+
+- `book_AI_Software_Engineering/lectures_source/Lesson01.01_LLM_Assisted_Code_Generation.smd`
 
 ### Lesson Materials
+
 - `website/docs/blog/posts/how_to.Compare_LLM_models.md`
   - [40%]: LLM evaluation landscape, reliable benchmarks, comparison by category
 - `book_Agentic_AI/lectures_source/Lesson02.1-LLM_Building_Blocks.smd`
@@ -153,86 +227,16 @@
   - [45%]: code model families, code-specific training data, SWE-bench results,
     hallucination taxonomy for code
 
-## 02: Skills Organization and Management
+## 02: AI Harness
 
 ### Goals
-- Organize agent skills, rules, and templates in a repo
-- Write a skill from a workflow that the team repeats
-- Keep skills in sync with the rules and files they reference
 
-### Topics
-- Definitions: Topics, Skills, Rules, and Templates
-  - Why each kind of file has its own role
-  - Pointers from CLAUDE.md to rules and templates
-- Agent Instruction Manifests
-  - CLAUDE.md and AGENTS.md as machine-readable manuals
-  - Repo contracts such as `repo_config.yaml`
-- Writing a Skill
-  - Frontmatter, goal, inputs, workflow, and verification sections
-  - Running a skill from a slash command or the shell
-- Maintaining Skills
-  - Updating a skill from lessons learned in Git history
-  - Checking references between skills and rules
-- Testing Skills
-  - Running a skill on a sample file and reviewing the diff
-  - Detecting regressions after rule changes
-
-### TODO
-- [ ] Add a deck section on testing skills
-
-### Slides
-- `book_AI_Software_Engineering/lectures_source/Lesson05.1_Tools.smd`
-  (section `# Rules, Skills, and Agent Instruction Manifests`)
-
-### Lesson Materials
-- `helpers_root/docs/tools/ai/all.ai_workflows.how_to_guide.md`
-  - [70%]: topics, skills, rules, templates, running a skill, adding rules
-- `.claude/skills/skill.rules.md`
-  - [50%]: SKILL.md format, frontmatter, naming, directory structure, rule files
-- `website/docs/blog/posts/draft.how_to.Claude_skills.md`
-  - [45%]: what skills are, progressive disclosure, a first skill, guidelines
-- `research/agentic_sw_eng/resources.md`
-  - [35%]: index of rules, skills, templates, and agent configuration
-- `book_AI_Software_Engineering/resources.md`
-  - [30%]: agent instruction manifests, CLAUDE.md as a manual, self-documenting
-    workflows
-- `.claude/rules.md`
-  - [30%]: mapping from file type to rules and templates
-- `.claude/skills/skill.auto_add/SKILL.md`
-  - [25%]: update a skill from lessons learned in Git history
-- `research/ideas/draft.Unit_Testing_LLM_Skills.md`
-  - [25%]: unit tests for LLM skills
-- `.claude/skills/skill.check_refs/SKILL.md`
-  - [20%]: check the references between skills and rules
-- `research/ideas/draft.Measuring_Quality_of_Skills_and_Prompts.md`
-  - [20%]: quality metrics for skills
-- `website/docs/blog/posts/draft.how_to.Enforce_rules_in_Claude_Code.md`
-  - [20%]: hooks that force the agent to load the rules for a file type
-- `.claude/skills/skill.consolidate_skills/SKILL.md`
-  - [15%]: merge and rename skills by topic
-- `.claude/skills/skill.reorganize_rules/SKILL.md`
-  - [15%]: reorganize the rules in a rules file
-- `.claude/skills/skill.check_against_rules/SKILL.md`
-  - [15%]: check a file against the rules that apply to it
-- `.claude/skills/rules.add/SKILL.md`
-  - [15%]: add a rule to the set of rules
-- `helpers_root/docs/tools/ai/all.ai_review.how_to_guide.md`
-  - [15%]: tools that apply rules to files, improving the tools while reviewing
-- `website/docs/blog/posts/draft.ideas.Deterministic_skills.md`
-  - [10%]: skills that call deterministic code
-- `book_Agentic_AI/lectures_source/Lesson07.1-Tool_use_and_retrieval.smd`
-  - [10%]: tool calls and their failure modes
-- _Not covered_
-  - [15%]: skill evaluation in production, sharing skills across repos
-
-## 03: AI Harness
-
-### Goals
 - Describe the parts of a coding harness: model, tool loop, and permissions
 - Compare Claude Code, GitHub Copilot, and Cursor by surface and integration
 - Choose a harness by work style and project location
 
 ### Topics
+
 - Harness Anatomy
   - Model, tool loop, context management, and permissions
   - Instructions and skills loaded at session start
@@ -250,13 +254,17 @@
   - Moving work between harnesses
 
 ### TODO
+
 - [ ] Compare the Copilot and Cursor internals, not only their surfaces
 
 ### Slides
-- `book_AI_Software_Engineering/lectures_source/Lesson02.1_AI_Pair_Programming_Workflows.smd`
+
+- `book_AI_Software_Engineering/lectures_source/Lesson02.01_AI_Harness.smd`
+- `book_AI_Software_Engineering/lectures_source/Lesson03.01_AI_Pair_Programming_Workflows.smd`
   (sections `## Pair Programming Tool Landscape` and `## Where to Run the Assistant`)
 
 ### Lesson Materials
+
 - `website/docs/blog/posts/draft.how_to.Coding_Agents.md`
   - [70%]: Claude Code, GitHub Copilot, ChatGPT, Cursor, Devin
 - `book_AI_Software_Engineering/lectures_source/claude_code.md`
@@ -292,17 +300,19 @@
 - `website/docs/blog/posts/how_to.Count_cost.md`
   - [15%]: cost tracking of agent sessions with `ccusage` and OpenRouter
 - _Not covered_
-  - [25%]: permission models, Copilot and Cursor internals, a harness test on
-    the same task
+  - [25%]: permission models, Copilot and Cursor internals, a harness test on the
+    same task
 
-## 04: AI Pair Programming Workflows
+## 03: AI Pair Programming Workflows
 
 ### Goals
+
 - Choose autocomplete, chat, or agentic assistance for a given task
 - Run a pair-programming loop with an agent on a real change
 - Use CI, PR review, and asynchronous sessions within one working day
 
 ### Topics
+
 - Three Interaction Models
   - Autocomplete, chat, and agentic assistance
   - Vibe coding versus agentic coding
@@ -317,17 +327,17 @@
   - Dispatch, remote control, background sessions, and isolated workspaces
 
 ### Slides
-- `book_AI_Software_Engineering/lectures_source/Lesson02.1_AI_Pair_Programming_Workflows.smd`
+
+- `book_AI_Software_Engineering/lectures_source/Lesson03.01_AI_Pair_Programming_Workflows.smd`
 
 ### Lesson Materials
+
 - `helpers_root/docs/tools/ai/all.create_pr_with_claude_code.how_to_guide.md`
   - [60%]: investigate before changing, worktrees, small steps, layered tests
 - `website/docs/blog/posts/draft.how_to.Use_Claude_Code.md`
-  - [55%]: create and edit code, run and test, debug, larger projects, prompting
-    tips
+  - [55%]: create and edit code, run and test, debug, larger projects, prompting tips
 - `website/docs/blog/posts/draft.how_to.My_agentic_engineering_flow.md`
-  - [50%]: unit of work, spec before code, criticize first, keep the PR
-    mergeable
+  - [50%]: unit of work, spec before code, criticize first, keep the PR mergeable
 - `website/docs/blog/posts/draft.how_to.Automate_Coding_with_LLM.md`
   - [40%]: workflow patterns and advanced features
 - `helpers_root/docs/tools/ai/all.ai_workflows.how_to_guide.md`
@@ -354,14 +364,16 @@
   - [25%]: pair-programming metrics and evidence, dispatch and remote control,
     scheduled tasks
 
-## 05: Prompt Engineering for Code
+## 04: Prompt Engineering for Code
 
 ### Goals
+
 - Write a code spec with acceptance criteria and explicit constraints
 - Choose few-shot, chain-of-thought, or decomposition prompts per task
 - Treat prompts as versioned artifacts that the team reviews
 
 ### Topics
+
 - Writing Specs for AI
   - Anatomy of a code spec, acceptance criteria, and non-goals
   - Ambiguous versus unambiguous requests
@@ -379,9 +391,11 @@
   - Review and reuse across the team
 
 ### Slides
-- `book_AI_Software_Engineering/lectures_source/Lesson03.1_Prompt_Engineering_for_Code.smd`
+
+- `book_AI_Software_Engineering/lectures_source/Lesson04.01_Prompt_Engineering_for_Code.smd`
 
 ### Lesson Materials
+
 - `book_Agentic_AI/lectures_source/Lesson04.1-LLM_Reasoning.smd`
   - [45%]: chain-of-thought variants, self-consistency, tree of thought, premise
     order
@@ -414,17 +428,91 @@
 - `website/docs/blog/posts/draft.LLM_issues.md`
   - [10%]: correction loops for imprecise output
 - _Not covered_
-  - [30%]: acceptance-criteria specs, negative examples, test-first prompting,
-    style transfer from a codebase
+  - [30%]: acceptance-criteria specs, negative examples, test-first prompting, style
+    transfer from a codebase
+
+## 05: Skills Organization and Management
+
+### Goals
+
+- Organize agent skills, rules, and templates in a repo
+- Write a skill from a workflow that the team repeats
+- Keep skills in sync with the rules and files they reference
+
+### Topics
+
+- Definitions: Topics, Skills, Rules, and Templates
+  - Why each kind of file has its own role
+  - Pointers from CLAUDE.md to rules and templates
+- Agent Instruction Manifests
+  - CLAUDE.md and AGENTS.md as machine-readable manuals
+  - Repo contracts such as `repo_config.yaml`
+- Writing a Skill
+  - Frontmatter, goal, inputs, workflow, and verification sections
+  - Running a skill from a slash command or the shell
+- Maintaining Skills
+  - Updating a skill from lessons learned in Git history
+  - Checking references between skills and rules
+- Testing Skills
+  - Running a skill on a sample file and reviewing the diff
+  - Detecting regressions after rule changes
+
+### TODO
+
+- [ ] Add a deck section on testing skills
+
+### Slides
+
+- `book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd`
+
+### Lesson Materials
+
+- `helpers_root/docs/tools/ai/all.ai_workflows.how_to_guide.md`
+  - [70%]: topics, skills, rules, templates, running a skill, adding rules
+- `.claude/skills/skill.rules.md`
+  - [50%]: SKILL.md format, frontmatter, naming, directory structure, rule files
+- `website/docs/blog/posts/draft.how_to.Claude_skills.md`
+  - [45%]: what skills are, progressive disclosure, a first skill, guidelines
+- `research/agentic_sw_eng/resources.md`
+  - [35%]: index of rules, skills, templates, and agent configuration
+- `book_AI_Software_Engineering/resources.md`
+  - [30%]: agent instruction manifests, CLAUDE.md as a manual, self-documenting
+    workflows
+- `.claude/rules.md`
+  - [30%]: mapping from file type to rules and templates
+- `.claude/skills/skill.auto_add/SKILL.md`
+  - [25%]: update a skill from lessons learned in Git history
+- `research/ideas/draft.Unit_Testing_LLM_Skills.md`
+  - [25%]: unit tests for LLM skills
+- `.claude/skills/skill.check_refs/SKILL.md`
+  - [20%]: check the references between skills and rules
+- `research/ideas/draft.Measuring_Quality_of_Skills_and_Prompts.md`
+  - [20%]: quality metrics for skills
+- `website/docs/blog/posts/draft.how_to.Enforce_rules_in_Claude_Code.md`
+  - [20%]: hooks that force the agent to load the rules for a file type
+- `.claude/skills/skill.consolidate_skills/SKILL.md`
+  - [15%]: merge and rename skills by topic
+- `.claude/skills/skill.reorganize_rules/SKILL.md`
+  - [15%]: reorganize the rules in a rules file
+- `.claude/skills/skill.check_against_rules/SKILL.md`
+  - [15%]: check a file against the rules that apply to it
+- `.claude/skills/rules.add/SKILL.md`
+  - [15%]: add a rule to the set of rules
+- `helpers_root/docs/tools/ai/all.ai_review.how_to_guide.md`
+  - [15%]: tools that apply rules to files, improving the tools while reviewing
+- _Not covered_
+  - [15%]: skill evaluation in production, sharing skills across repos
 
 ## 06: Human-AI Collaboration Patterns
 
 ### Goals
+
 - Pick pair, review-loop, or autonomous collaboration for each task
 - Design handoffs with explicit confirmation points
 - Match the level of oversight to the risk of the task
 
 ### Topics
+
 - Collaboration Modes
   - Pair, review-loop, and autonomous collaboration
   - Comparing the three modes
@@ -439,9 +527,11 @@
   - Evidence and provenance for team trust
 
 ### Slides
-- `book_AI_Software_Engineering/lectures_source/Lesson14.1_Human_AI_Collaboration_Patterns.smd`
+
+- `book_AI_Software_Engineering/lectures_source/Lesson06.01_Human_AI_Collaboration_Patterns.smd`
 
 ### Lesson Materials
+
 - `helpers_root/docs/tools/ai/all.ai_review.how_to_guide.md`
   - [35%]: reviewer workflow and human review of AI transforms
 - `helpers_root/docs/work_organization/all.team_collaboration.how_to_guide.md`
@@ -475,18 +565,20 @@
 - _Not covered_
   - [30%]: task-risk matrix, adaptive autonomy, team-level metrics
 
-# Part II: Writing and Reviewing Code
+# Part II: Writing and Debugging Code
 
-- Part II covers the code that humans and AI write, check, and document.
+- Part II covers writing, documenting, and debugging the code
 
 ## 07: Code Cosmetics
 
 ### Goals
+
 - Make generated code follow the repo style guide
 - Write fast unit tests and check output with golden files
 - Enforce coverage thresholds in CI
 
 ### Topics
+
 - Style and Naming
   - Naming conventions, spelling, and avoiding code stutter
   - Comments and docstrings
@@ -504,13 +596,15 @@
   - Mutation testing and quarantine of flaky tests
 
 ### Slides
-- `book_AI_Software_Engineering/lectures_source/Lesson05.1_Tools.smd`
-  (sections `# Automating Code Quality` and `# Automating Unit Testing`)
+
+- `book_AI_Software_Engineering/lectures_source/Lesson07.01_Code_Cosmetics.smd`
+- `book_AI_Software_Engineering/lectures_source/Tools_source.smd` (sections
+  `# Automating Code Quality` and `# Automating Unit Testing`)
 
 ### Lesson Materials
+
 - `helpers_root/papers/AIgentic_Development_System/part1.code_quality.tex`
-  - [85%]: linter framework, pre-commit, coverage, unit test framework, golden
-    files
+  - [85%]: linter framework, pre-commit, coverage, unit test framework, golden files
 - `helpers_root/docs/coding/all.coding_style.how_to_guide.md`
   - [80%]: naming, comments, docstrings, imports, logging, assertions, tests
 - `.claude/skills/coding.rules.md`
@@ -569,11 +663,13 @@
 ## 08: Documenting Code
 
 ### Goals
+
 - Write docstrings and comments that serve both humans and AI tools
 - Keep architecture diagrams in sync with the code they describe
 - Update docs in the same PR as the code change
 
 ### Topics
+
 - Docstrings and Comments
   - Descriptive versus imperative style, and what a docstring contains
   - Avoiding distracting comments and stale TODOs
@@ -590,10 +686,13 @@
   - Project docs: PRD, design, plan, progress, and decisions
 
 ### Slides
-- `book_AI_Software_Engineering/lectures_source/Lesson05.1_Tools.smd`
-  (section `# Automating Documentation`)
+
+- `book_AI_Software_Engineering/lectures_source/Lesson08.01_Documenting_Code.smd`
+- `book_AI_Software_Engineering/lectures_source/Tools_source.smd` (section
+  `# Automating Documentation`)
 
 ### Lesson Materials
+
 - `helpers_root/docs/documentation_meta/all.writing_docs.how_to_guide.md`
   - [55%]: conventions for writing docs
 - `helpers_root/docs/documentation_meta/all.diataxis.explanation.md`
@@ -645,139 +744,16 @@
 - _Not covered_
   - [25%]: doc-drift checks in CI, measured doc quality
 
-## 09: Reviewing Pull Requests
+## 09: Debugging with AI
 
 ### Goals
-- Review a PR with an AI reviewer and then with a human reviewer
-- Compare AI code review tools by features, price, and fit
-- Address review comments with small follow-up commits
 
-### Topics
-- Review Workflow
-  - Filing and reviewing a PR, labels, and review states
-  - Addressing a review comment
-- AI Reviewer Tools
-  - The `ai_review` tool and its workflows
-  - GitHub Copilot review, Graphite, CodeRabbit, and Deepcode
-- Reviewer Rules and Prompts
-  - Checking a PR against the repo rules
-  - Improving the reviewer over time
-- Automated Review in CI
-  - Review as a CI step and its failure modes
-- Human Judgment
-  - What a human must still check in an AI-reviewed PR
-
-### Slides
-- `book_AI_Software_Engineering/lectures_source/Lesson05.1_Tools.smd`
-  (section `# Automating the Pull Request Lifecycle`, slides on PR review)
-
-### Lesson Materials
-- `helpers_root/docs/tools/ai/all.ai_review.how_to_guide.md`
-  - [75%]: the `ai_review` tool, reviewer workflow, improving the reviewer
-- `helpers_root/docs/coding/all.code_review.how_to_guide.md`
-  - [70%]: general rules, author and reviewer points of view, workflows
-- `helpers_root/docs/tools/ai/all.code_review_tools.reference.md`
-  - [60%]: Copilot, Graphite, CodeRabbit, and Deepcode: features and prices
-- `.claude/skills/github.describe_pr_for_review/SKILL.md`
-  - [50%]: describe a PR in a fixed format, score it, suggest a review order
-- `helpers_root/docs/work_organization/all.use_github.how_to_guide.md`
-  - [50%]: PR filing, review, and addressing comments
-- `website/docs/blog/posts/draft.how_to.Github_Copilot_Review.md`
-  - [45%]: request a Copilot review as a first line of defense
-- `helpers_root/docs/coding/all.submit_code_for_review.how_to_guide.md`
-  - [40%]: first review process: style, linter, example code
-- `.claude/skills/coding_qa.review/SKILL.md`
-  - [35%]: review Python files for bugs and suggest fixes
-- `.claude/skills/skill.check_against_rules/SKILL.md`
-  - [30%]: check a file against the rules that apply to it
-- `.claude/agents/code.reviewer.md`
-  - [30%]: a code reviewer agent
-- `helpers_root/docs/tools/ai/all.create_pr_with_claude_code.how_to_guide.md`
-  - [25%]: opening and following up on a PR
-- `website/docs/blog/posts/draft.how_to.How_to_run_Claude_on_GitHub.md`
-  - [25%]: `@claude` on PRs for review help
-- `.claude/skills/github.get_pr_ready_to_merge/SKILL.md`
-  - [20%]: get the PR to a state that can be reviewed and merged
-- `helpers_root/docs/planning/all.plan_work.how_to_guide.md`
-  - [20%]: from idea to merged PR, review and merge
-- `research/ideas/draft.Codebase_automerge.md`
-  - [15%]: automated sequential merging of PRs
-- `.github/workflows/claude.yml`
-  - [15%]: the workflow that runs Claude on issues and PRs
-- _Not covered_
-  - [15%]: measured review quality, reviewing AI-written PRs at scale
-
-## 10: Reviewing Existing Code
-
-### Goals
-- Build a mental model of an unfamiliar module in one session
-- Map dependencies and call paths before editing
-- Record findings as notes that a teammate can reuse
-
-### Topics
-- Reading a Module
-  - Public functions, invariants, and the role of each file
-  - Pure functions and design philosophy
-- Dependency Analysis
-  - Import graphs and cycle detection
-  - Package structure and the anatomy of a package
-- Diagramming Existing Code
-  - C4 component and code views
-  - Class diagrams generated from code
-- Using AI to Explain Code
-  - Finding the rules and skills that apply to a file
-  - Running read-only skills before editing
-- Recording Findings
-  - Research logs and reproducible notes
-
-### TODO
-- [ ] Write a deck on reading unfamiliar code with AI
-
-### Slides
-- N/A: no dedicated deck yet
-
-### Lesson Materials
-- `website/docs/blog/posts/draft.how_to.Read_other_people_code.md`
-  - [55%]: what to do and what not to do when reading unfamiliar code
-- `.claude/skills/readme_file.explain_code/SKILL.md`
-  - [45%]: document classes, functions, and relationships of a file
-- `.claude/skills/coding.find_doc/SKILL.md`
-  - [40%]: find and summarize docs for a dir, file, class, or function
-- `research/ideas/draft.Code_Visualization.md`
-  - [40%]: visualizing Python codebases
-- `helpers_root/docs/coding/all.code_design.how_to_guide.md`
-  - [35%]: design philosophy, invariants, pure functions, and roles
-- `helpers_root/docs/documentation_meta/all.architecture_diagrams.explanation.md`
-  - [35%]: C4 component and code views, class diagrams
-- `.claude/skills/readme_file.write_architecture/SKILL.md`
-  - [35%]: write architecture docs for a Python file
-- `helpers_root/docs/tools/codebase/all.import_check.reference.md`
-  - [35%]: visualize directory, external, and cyclic dependencies
-- `helpers_root/docs/tools/ai/all.ai_workflows.how_to_guide.md`
-  - [30%]: finding rules for a file, running a skill on a file
-- `website/docs/blog/posts/draft.how_to.Codebase_local_kg.md`
-  - [30%]: a local knowledge graph of the codebase for the agent
-- `helpers_root/docs/tools/codebase/all.imports_and_packages.how_to_guide.md`
-  - [25%]: package hierarchy and anatomy of a package
-- `.claude/skills/coding_qa.review/SKILL.md`
-  - [20%]: review Python files for bugs
-- `helpers_root/docs/planning/all.document_research.how_to_guide.md`
-  - [15%]: research logs and reproducible notes
-- `.claude/skills/coding.improve_code_for_humans/SKILL.md`
-  - [10%]: readability and debuggability changes
-- `helpers_root/papers/AIgentic_Development_System/part2.runnable_directory.tex`
-  - [10%]: runnable directories as bounded units of code
-- _Not covered_
-  - [35%]: onboarding walkthroughs, tracing call graphs with AI
-
-## 11: Debugging with AI
-
-### Goals
 - Reproduce a failure before asking the AI to fix it
 - Use test failures and runtime output as grounded feedback
 - Stop refinement loops that do not converge
 
 ### Topics
+
 - Reproducing Failures
   - Minimal reproducers and golden outputs
   - Logging and assertions as debugging aids
@@ -795,10 +771,12 @@
   - When retries do not help
 
 ### Slides
-- `book_AI_Software_Engineering/lectures_source/Lesson05.1_Tools.smd`
-  (slide `Automating Root-Cause Analysis When a Gate Fails`)
+
+- `book_AI_Software_Engineering/lectures_source/Tools_source.smd` (slide
+  `Automating Root-Cause Analysis When a Gate Fails`)
 
 ### Lesson Materials
+
 - `book_Agentic_AI/lectures_source/Lesson06.1-Inference_time_techniques.smd`
   - [55%]: self-debugging, grounded versus self-judged feedback, verifier design
 - `.claude/skills/pytest.rules.md`
@@ -840,18 +818,89 @@
 - _Not covered_
   - [30%]: reproducing production failures, trace inspection
 
-# Part III: Planning and Architecture
+# Part III: Understanding, Planning, and Design
 
-- Part III covers how work is planned and how the code is structured.
+- Part III covers reading existing code, planning the work, and designing the
+  structure
 
-## 12: Planning
+## 10: Reviewing Existing Code
 
 ### Goals
+
+- Build a mental model of an unfamiliar module in one session
+- Map dependencies and call paths before editing
+- Record findings as notes that a teammate can reuse
+
+### Topics
+
+- Reading a Module
+  - Public functions, invariants, and the role of each file
+  - Pure functions and design philosophy
+- Dependency Analysis
+  - Import graphs and cycle detection
+  - Package structure and the anatomy of a package
+- Diagramming Existing Code
+  - C4 component and code views
+  - Class diagrams generated from code
+- Using AI to Explain Code
+  - Finding the rules and skills that apply to a file
+  - Running read-only skills before editing
+- Recording Findings
+  - Research logs and reproducible notes
+
+### TODO
+
+- [ ] Write a deck on reading unfamiliar code with AI
+
+### Slides
+
+- N/A: no dedicated deck yet
+
+### Lesson Materials
+
+- `website/docs/blog/posts/draft.how_to.Read_other_people_code.md`
+  - [55%]: what to do and what not to do when reading unfamiliar code
+- `.claude/skills/readme_file.explain_code/SKILL.md`
+  - [45%]: document classes, functions, and relationships of a file
+- `.claude/skills/coding.find_doc/SKILL.md`
+  - [40%]: find and summarize docs for a dir, file, class, or function
+- `research/ideas/draft.Code_Visualization.md`
+  - [40%]: visualizing Python codebases
+- `helpers_root/docs/coding/all.code_design.how_to_guide.md`
+  - [35%]: design philosophy, invariants, pure functions, and roles
+- `helpers_root/docs/documentation_meta/all.architecture_diagrams.explanation.md`
+  - [35%]: C4 component and code views, class diagrams
+- `.claude/skills/readme_file.write_architecture/SKILL.md`
+  - [35%]: write architecture docs for a Python file
+- `helpers_root/docs/tools/codebase/all.import_check.reference.md`
+  - [35%]: visualize directory, external, and cyclic dependencies
+- `helpers_root/docs/tools/ai/all.ai_workflows.how_to_guide.md`
+  - [30%]: finding rules for a file, running a skill on a file
+- `website/docs/blog/posts/draft.how_to.Codebase_local_kg.md`
+  - [30%]: a local knowledge graph of the codebase for the agent
+- `helpers_root/docs/tools/codebase/all.imports_and_packages.how_to_guide.md`
+  - [25%]: package hierarchy and anatomy of a package
+- `.claude/skills/coding_qa.review/SKILL.md`
+  - [20%]: review Python files for bugs
+- `helpers_root/docs/planning/all.document_research.how_to_guide.md`
+  - [15%]: research logs and reproducible notes
+- `.claude/skills/coding.improve_code_for_humans/SKILL.md`
+  - [10%]: readability and debuggability changes
+- `helpers_root/papers/AIgentic_Development_System/part2.runnable_directory.tex`
+  - [10%]: runnable directories as bounded units of code
+- _Not covered_
+  - [35%]: onboarding walkthroughs, tracing call graphs with AI
+
+## 11: Planning Software
+
+### Goals
+
 - Turn an idea into a plan with milestones and PRs
 - Keep a progress log and a decisions log for each project
 - Criticize a task list before the AI executes it
 
 ### Topics
+
 - Planning Hierarchy
   - Ideas, plans, PRs, and tasks
   - Capturing an idea
@@ -868,10 +917,11 @@
   - Task lists, criticizing the plan, and executing in a loop
 
 ### Slides
-- `book_AI_Software_Engineering/lectures_source/Lesson05.1_Tools.smd`
-  (section `# Requirements and Planning`)
+
+- `book_AI_Software_Engineering/lectures_source/Lesson11.01_Planning_Software.smd`
 
 ### Lesson Materials
+
 - `helpers_root/docs/planning/all.plan_work.how_to_guide.md`
   - [85%]: planning hierarchy, plan docs, end-to-end plan, progress log
 - `.claude/skills/project.rules.md`
@@ -910,19 +960,24 @@
   - [30%]: Scrum roles and goals
 - `website/docs/blog/posts/draft.A_proposal_for_AI_based_software_engineering.md`
   - [30%]: a staged plan for agentic AI development
+- `book_AI_Software_Engineering/running_example.md`
+  - [20%]: running example: PRD, design, and plan for the `shortlink` aliases, rate
+    limiting, and click analytics
 - `book_Agentic_AI/lectures_source/Lesson05.1-Reasoning_Memory_and_Planning.smd`
   - [15%]: planning as a loop, world models for planning
 - _Not covered_
   - [10%]: effort estimation, roadmapping across quarters
 
-## 13: Software Architecture Guidelines
+## 12: Software Architecture Guidelines
 
 ### Goals
+
 - Apply design rules that keep modules independent and cohesive
 - Choose a monorepo or multiple repos with explicit trade-offs
 - Draw architecture diagrams that match the code structure
 
 ### Topics
+
 - Design Philosophy
   - Keep it simple and separate what changes from what stays the same
   - Pure functions and invariants by default
@@ -940,10 +995,13 @@
   - Modularizing code with AI
 
 ### Slides
-- `book_AI_Software_Engineering/lectures_source/Lesson05.1_Tools.smd`
-  (section `# Code Modularization and Repo Structure`)
+
+- `book_AI_Software_Engineering/lectures_source/Lesson12.01_Software_Architecture_Guidelines.smd`
+- `book_AI_Software_Engineering/lectures_source/Tools_source.smd` (section
+  `# Code Modularization and Repo Structure`)
 
 ### Lesson Materials
+
 - `helpers_root/docs/documentation_meta/all.architecture_diagrams.explanation.md`
   - [80%]: C4 levels, PlantUML conventions, class diagrams
 - `helpers_root/papers/AIgentic_Development_System/part2.runnable_directory.tex`
@@ -965,8 +1023,7 @@
 - `helpers_root/docs/tools/dev_system/all.create_a_runnable_dir.how_to_guide.md`
   - [40%]: create a runnable dir as a sub-directory under a super-repo
 - `book_AI_Software_Engineering/resources.md`
-  - [40%]: package structure, import cycle detection, single versus multiple
-    repo
+  - [40%]: package structure, import cycle detection, single versus multiple repo
 - `helpers_root/docs/tools/dev_system/all.create_a_super_repo_with_helpers.how_to_guide.md`
   - [35%]: create a super-repo with the helpers sub-repo
 - `research/ideas/draft.AI_Technical_Debt_Management.md`
@@ -990,18 +1047,92 @@
 - _Not covered_
   - [15%]: service boundaries, scalability trade-offs
 
-# Part IV: Delivery and Automation
+## 13: Principles of Good Software Design
 
-- Part IV covers how code moves from a GitHub project to a released container.
+### Goals
+
+- Explain the core design principles and the sources that each one merges
+- Spot a principle violation in a code change written by a human or an AI
+- Resolve conflicts between principles, such as DRY versus low coupling
+
+### Topics
+
+- Fight Complexity
+  - Simple versus easy, YAGNI, and growing from a working simple system
+- Build Deep Modules
+  - Information hiding, pulling complexity down, and somewhat general-purpose cores
+- Separate Layers and Concerns
+  - One abstraction per layer, flat structure, and the Law of Demeter
+- Keep One Source of Truth
+  - DRY, and when duplication is cheaper than coupling
+- Make Code Obvious
+  - Explicit, consistent, least astonishing, and comments that capture intent
+- Make Errors Impossible, Then Loud
+  - Illegal states unrepresentable, fail fast, and errors defined out of existence
+- Compose Small Pieces
+  - Composition over inheritance, and the Unix pipeline
+- Design Strategically
+  - Design it twice, leave code cleaner, and understand before removing
+- Laws and Tensions
+  - Hyrum's, Conway's, and Gall's laws, and where principles conflict
+- Principles and AI Agents
+  - Typical AI violations and encoding principles in rules
+
+### TODO
+
+- [ ] Write the deck of this chapter
+- [ ] Decide whether the `Design Philosophy` topic of chapter 12 moves here
+- [ ] Write material on deep modules and on defining errors out of existence, since
+      no repo doc covers them
+
+### Slides
+
+- `book_AI_Software_Engineering/lectures_source/Lesson13.01_Principles_of_Good_Software_Design.smd`
+
+### Lesson Materials
+
+- `helpers_root/docs/coding/all.coding_style.how_to_guide.md`
+  - [40%]: DRY, encapsulate what changes, least surprise, naming, comments,
+    assertions
+- `helpers_root/docs/coding/all.code_design.how_to_guide.md`
+  - [40%]: plan first, KISS, simplicity first, interfaces, pure functions, invariants
+- `.claude/skills/architecture.rules.md`
+  - [35%]: layers, minimal interfaces, dependency direction, validation at the
+    boundary
+- `.claude/skills/coding.factor_common_code/SKILL.md`
+  - [10%]: refactor duplicated code into shared functions
+- `.claude/skills/coding.improve_code_for_humans/SKILL.md`
+  - [10%]: readability and debuggability changes
+- _Not covered_
+  - [45%]: deep modules, information hiding, defining errors out of existence,
+    composition over inheritance, Hyrum's and Conway's laws, conflicts between
+    principles, AI violations
+
+### Notes
+
+- Sources merged: Zen of Python (PEP 20), Ousterhout's _A Philosophy of Software
+  Design_, Parnas, the Unix philosophy, Brooks, Hickey, and _The Pragmatic
+  Programmer_
+- Present each principle in one format: statement, source, an example in `shortlink`,
+  and when it fails
+- Chapter 12 has a `Design Philosophy` topic that overlaps with this chapter (KISS,
+  encapsulate what changes, pure functions)
+
+# Part IV: From Pull Request to Production
+
+- Part IV covers how a change moves from an issue and a PR, through review, to a
+  released container, and what keeps it robust
 
 ## 14: GitHub Projects and Workflows
 
 ### Goals
+
 - Set up a GitHub project with a lean four-status board
 - Name, file, and close issues with consistent conventions
 - Keep a clean PR history with Git branching and rebasing
 
 ### Topics
+
 - GitHub Project Structure
   - Issue fields and the lean four-status board
   - Sprints, cadence, and carryover
@@ -1018,12 +1149,16 @@
   - Splitting work across issues
 
 ### TODO
+
 - [ ] Write a deck on branch protection and code ownership
 
 ### Slides
-- N/A: no dedicated deck yet (PR lifecycle is covered in chapter 09)
+
+- `book_AI_Software_Engineering/lectures_source/Lesson14.01_GitHub_Projects_and_Workflows.smd`
+  (the PR lifecycle is covered in chapter 15)
 
 ### Lesson Materials
+
 - `helpers_root/docs/work_organization/all.github_projects_process.reference.md`
   - [85%]: project structure, board, sprints, automation, sub-issues
 - `helpers_root/docs/work_organization/all.use_github.how_to_guide.md`
@@ -1067,14 +1202,82 @@
 - _Not covered_
   - [10%]: branch protection, code ownership
 
-## 15: Releasing and Docker
+## 15: Reviewing Pull Requests
 
 ### Goals
+
+- Review a PR with an AI reviewer and then with a human reviewer
+- Compare AI code review tools by features, price, and fit
+- Address review comments with small follow-up commits
+
+### Topics
+
+- Review Workflow
+  - Filing and reviewing a PR, labels, and review states
+  - Addressing a review comment
+- AI Reviewer Tools
+  - The `ai_review` tool and its workflows
+  - GitHub Copilot review, Graphite, CodeRabbit, and Deepcode
+- Reviewer Rules and Prompts
+  - Checking a PR against the repo rules
+  - Improving the reviewer over time
+- Automated Review in CI
+  - Review as a CI step and its failure modes
+- Human Judgment
+  - What a human must still check in an AI-reviewed PR
+
+### Slides
+
+- `book_AI_Software_Engineering/lectures_source/Tools_source.smd` (section
+  `# Automating the Pull Request Lifecycle`, slides on PR review)
+
+### Lesson Materials
+
+- `helpers_root/docs/tools/ai/all.ai_review.how_to_guide.md`
+  - [75%]: the `ai_review` tool, reviewer workflow, improving the reviewer
+- `helpers_root/docs/coding/all.code_review.how_to_guide.md`
+  - [70%]: general rules, author and reviewer points of view, workflows
+- `helpers_root/docs/tools/ai/all.code_review_tools.reference.md`
+  - [60%]: Copilot, Graphite, CodeRabbit, and Deepcode: features and prices
+- `.claude/skills/github.describe_pr_for_review/SKILL.md`
+  - [50%]: describe a PR in a fixed format, score it, suggest a review order
+- `helpers_root/docs/work_organization/all.use_github.how_to_guide.md`
+  - [50%]: PR filing, review, and addressing comments
+- `website/docs/blog/posts/draft.how_to.Github_Copilot_Review.md`
+  - [45%]: request a Copilot review as a first line of defense
+- `helpers_root/docs/coding/all.submit_code_for_review.how_to_guide.md`
+  - [40%]: first review process: style, linter, example code
+- `.claude/skills/coding_qa.review/SKILL.md`
+  - [35%]: review Python files for bugs and suggest fixes
+- `.claude/skills/skill.check_against_rules/SKILL.md`
+  - [30%]: check a file against the rules that apply to it
+- `.claude/agents/code.reviewer.md`
+  - [30%]: a code reviewer agent
+- `helpers_root/docs/tools/ai/all.create_pr_with_claude_code.how_to_guide.md`
+  - [25%]: opening and following up on a PR
+- `website/docs/blog/posts/draft.how_to.How_to_run_Claude_on_GitHub.md`
+  - [25%]: `@claude` on PRs for review help
+- `.claude/skills/github.get_pr_ready_to_merge/SKILL.md`
+  - [20%]: get the PR to a state that can be reviewed and merged
+- `helpers_root/docs/planning/all.plan_work.how_to_guide.md`
+  - [20%]: from idea to merged PR, review and merge
+- `research/ideas/draft.Codebase_automerge.md`
+  - [15%]: automated sequential merging of PRs
+- `.github/workflows/claude.yml`
+  - [15%]: the workflow that runs Claude on issues and PRs
+- _Not covered_
+  - [15%]: measured review quality, reviewing AI-written PRs at scale
+
+## 16: Releasing and Docker
+
+### Goals
+
 - Build dev and prod images through one documented release flow
 - Ship executables that run the same way in any container
 - Release a multi-architecture image through a checklist
 
 ### Topics
+
 - Container Stages
   - Local, dev, and prod stages
   - Pre-built versus build-on-the-fly containers
@@ -1092,11 +1295,13 @@
   - Post-release checks
 
 ### Slides
-- `book_AI_Software_Engineering/lectures_source/Lesson05.1_Tools.smd`
-  (sections `# Dockerization and Dockerized Executables` and the container
-  release slides in `# Automating Build, Release, and CI/CD`)
+
+- `book_AI_Software_Engineering/lectures_source/Tools_source.smd` (sections
+  `# Dockerization and Dockerized Executables` and the container release slides in
+  `# Automating Build, Release, and CI/CD`)
 
 ### Lesson Materials
+
 - `helpers_root/docs/tools/dev_system/all.devops_docker_auto_release.explanation.md`
   - [90%]: automated build and test, manual review, automated release
 - `helpers_root/papers/AIgentic_Development_System/part3.containerized_development.tex`
@@ -1138,14 +1343,16 @@
 - _Not covered_
   - [15%]: production monitoring and rollback
 
-## 16: Setting CI/CD
+## 17: Setting CI/CD
 
 ### Goals
+
 - Set up a CI pipeline that runs fast and slow test tiers
 - Make a failing gate report its root cause
 - Release containers only after the gates pass
 
 ### Topics
+
 - Build Automation
   - Centralized task registry with invoke
   - Build health monitoring and the buildmeister role
@@ -1163,11 +1370,13 @@
   - Feeding production incidents back to the agent
 
 ### Slides
-- `book_AI_Software_Engineering/lectures_source/Lesson05.1_Tools.smd`
-  (sections `# Automating Build, Release, and CI/CD` and
+
+- `book_AI_Software_Engineering/lectures_source/Tools_source.smd` (sections
+  `# Automating Build, Release, and CI/CD` and
   `# Production Feedback and Release Monitoring`)
 
 ### Lesson Materials
+
 - `helpers_root/papers/AIgentic_Development_System/part1.code_quality.tex`
   - [60%]: CI/CD automation section, CI integration, enforced thresholds
 - `helpers_root/docs/work_organization/all.buildmeister.how_to_guide.md`
@@ -1209,65 +1418,128 @@
 - _Not covered_
   - [25%]: canary analysis, automated rollback, production incident loops
 
+## 18: Foundations of Robust Software
+
+### Goals
+
+- Describe what makes software robust and why one technique is not enough
+- Compare the pros, cons, and cost of each foundational robustness technique
+- Choose a minimum set of techniques for a project by its risk and team size
+
+### Topics
+
+- What Makes Software Robust
+  - Robustness versus correctness and reliability
+  - Defense in depth: prevent, detect, contain, and learn
+- Preventing Defects
+  - Simple design and low coupling
+  - Static analysis and typing
+  - Fail fast: assertions and input validation
+- Detecting Defects
+  - Automated tests: unit, integration, and end-to-end
+  - Code review
+  - Continuous integration and quality gates
+- Containing Failures
+  - Timeouts, retries with backoff, idempotency, and circuit breakers
+  - Feature flags, canary releases, and rollback
+- Learning From Failures
+  - Observability: logs, metrics, and traces
+  - Blameless postmortems
+- Enabling Practices
+  - Small changes in version control
+  - Reproducible environments
+  - Docs and shared conventions
+- Trade-offs
+  - Pros, cons, and cost of each technique
+  - A minimum set: tests, review, and CI
+  - Robustness of AI-written code
+
+### TODO
+
+- [ ] Fill the lesson materials, starting from
+      `helpers_root/docs/coding/all.coding_style.how_to_guide.md` (assertions),
+      `helpers_root/docs/coding/all.code_design.how_to_guide.md`, and
+      `helpers_root/papers/AIgentic_Development_System/part1.code_quality.tex`
+- [ ] Write the deck of this chapter
+
+### Slides
+
+- N/A: no dedicated deck yet
+
+### Lesson Materials
+
+- _Not covered_
+  - [100%]: not assessed yet
+// TODO(gp): Fill the lesson materials
+
+### Notes
+
+- Present each technique in one fixed format: what it is, pros, cons, cost, and when
+  to skip it
+- Point to the chapter that teaches each technique in depth: 07 (tests, types), 09
+  (root cause), 12 and 13 (design), 15 (review), 16 (containers), and 17 (CI and
+  rollback)
+- Add a `shortlink` task for this chapter in `running_example.md`
+
 # Appendix
 
 ## Skills to Chapters
 
-- Each row lists a skill from `.claude/skills/*/SKILL.md` that a chapter cites in
-  its `### Lesson Materials`
+- Each row lists a skill from `.claude/skills/*/SKILL.md` that a chapter cites in its
+  `### Lesson Materials`
 - The percentage after each chapter is the coverage figure given in that chapter
 - Skills are sorted by name, so skills of one family sit together
 
 | Skill                                          | Chapters           | Description                                                                                          |
 | ---------------------------------------------- | ------------------ | ---------------------------------------------------------------------------------------------------- |
-| `architecture.write_design`                    | 12 (40%), 13 (45%) | Write the design docs of a project from its PRD, before the code                                     |
-| `auto_task.create_plan_for_feature`            | 12 (55%)           | Break a complex feature into an ordered PR plan, with a spec per complex PR                          |
-| `auto_task.create_specs_from_todos`            | 12 (40%)           | Create a plan for fixing a list of TODOs                                                             |
-| `auto_task.criticize`                          | 06 (20%), 12 (35%) | Review a plan or GitHub issue for an `auto_task` before execution                                    |
-| `auto_task.execute_interactively`              | 04 (35%)           | Execute a sequence of tasks in a loop "execute, review, commit"                                      |
+| `architecture.write_design`                    | 11 (40%), 12 (45%) | Write the design docs of a project from its PRD, before the code                                     |
+| `auto_task.create_plan_for_feature`            | 11 (55%)           | Break a complex feature into an ordered PR plan, with a spec per complex PR                          |
+| `auto_task.create_specs_from_todos`            | 11 (40%)           | Create a plan for fixing a list of TODOs                                                             |
+| `auto_task.criticize`                          | 06 (20%), 11 (35%) | Review a plan or GitHub issue for an `auto_task` before execution                                    |
+| `auto_task.execute_interactively`              | 03 (35%)           | Execute a sequence of tasks in a loop "execute, review, commit"                                      |
 | `auto_task.execute_with_stacked_prs`           | 14 (40%)           | Execute a sequence of tasks as one stack of branches and PRs                                         |
 | `auto_task.restack`                            | 14 (30%)           | Propagate reviewed changes down an existing PR stack, keeping every PR mergeable                     |
-| `coding.annotate_with_todoai`                  | 04 (15%)           | Annotate file with TODOs based on the convention and rule violations                                 |
-| `coding.factor_common_code`                    | 13 (30%)           | Identify and refactor duplicated code into shared functions across Python files                      |
+| `coding.annotate_with_todoai`                  | 03 (15%)           | Annotate file with TODOs based on the convention and rule violations                                 |
+| `coding.factor_common_code`                    | 12 (30%)           | Identify and refactor duplicated code into shared functions across Python files                      |
 | `coding.find_doc`                              | 10 (40%)           | Find and summarize documentation for a dir, file, class, or function                                 |
 | `coding.fix_comments`                          | 08 (25%)           | Update docstrings and comments in a Python file without changing logic                               |
 | `coding.fix_docstring`                         | 07 (20%), 08 (30%) | Fix Python Docstrings                                                                                |
-| `coding.fix_pyright`                           | 07 (25%), 11 (15%) | Run pyright on Python files and fix the reported lints                                               |
+| `coding.fix_pyright`                           | 07 (25%), 09 (15%) | Run pyright on Python files and fix the reported lints                                               |
 | `coding.fix_type_hints`                        | 07 (30%)           | Fix type hints in a file to follow the typing module conventions                                     |
 | `coding.improve_code_for_humans`               | 10 (10%)           | Make the code more readable and debuggable                                                           |
-| `coding.make_function_private`                 | 13 (15%)           | Identify private or public functions in a file and rename with underscore                            |
-| `coding.todoai_gp`                             | 04 (20%)           | Implement TODO(ai_gp) items in a file: renames, code updates, references                             |
-| `coding_qa.review`                             | 09 (35%), 10 (20%) | Review Python files for bugs, suggest fixes, and provide test cases                                  |
-| `docker.shrink_container`                      | 15 (35%)           | Propose ways to shrink and speed up a Docker container, same behavior                                |
-| `docker.shrink_requirements`                   | 15 (25%)           | Find unused packages in requirements.txt not needed by the project code                              |
-| `docker.use_standard_style`                    | 15 (35%)           | Align Docker files in a project to the standard project template style                               |
+| `coding.make_function_private`                 | 12 (15%)           | Identify private or public functions in a file and rename with underscore                            |
+| `coding.todoai_gp`                             | 03 (20%)           | Implement TODO(ai_gp) items in a file: renames, code updates, references                             |
+| `coding_qa.review`                             | 10 (20%), 15 (35%) | Review Python files for bugs, suggest fixes, and provide test cases                                  |
+| `docker.shrink_container`                      | 16 (35%)           | Propose ways to shrink and speed up a Docker container, same behavior                                |
+| `docker.shrink_requirements`                   | 16 (25%)           | Find unused packages in requirements.txt not needed by the project code                              |
+| `docker.use_standard_style`                    | 16 (35%)           | Align Docker files in a project to the standard project template style                               |
 | `docs.add_content`                             | 08 (35%)           | Add content to the docs without redundancy and report skipped parts                                  |
 | `git.merge_conflicts`                          | 14 (20%)           | Resolve git merge, rebase, or cherry-pick conflicts and finalize the operation                       |
 | `github.create_child_pr`                       | 14 (25%)           | Write instructions to build a child PR from the current branch                                       |
-| `github.describe_pr_for_review`                | 09 (50%)           | Describe one or more PRs in a fixed format, score complexity and quality, and suggest a review order |
-| `github.get_pr_ready_to_merge`                 | 09 (20%), 16 (30%) | Get the current PR to a state where it can be reviewed and merged                                    |
-| `github.get_pr_to_pass_ci_tests`               | 11 (30%), 16 (40%) | Monitor GitHub CI checks for the current PR and fix any failures until they pass                     |
-| `github.get_pr_to_pass_local_tests`            | 11 (25%)           | Make the local unit tests pass for the current PR                                                    |
+| `github.describe_pr_for_review`                | 15 (50%)           | Describe one or more PRs in a fixed format, score complexity and quality, and suggest a review order |
+| `github.get_pr_ready_to_merge`                 | 15 (20%), 17 (30%) | Get the current PR to a state where it can be reviewed and merged                                    |
+| `github.get_pr_to_pass_ci_tests`               | 09 (30%), 17 (40%) | Monitor GitHub CI checks for the current PR and fix any failures until they pass                     |
+| `github.get_pr_to_pass_local_tests`            | 09 (25%)           | Make the local unit tests pass for the current PR                                                    |
 | `github.split_branch_in_PRs`                   | 14 (40%)           | Split current Git changes into small, cohesive PRs to simplify merging                               |
-| `project.create_plan`                          | 12 (60%)           | Write the end-to-end plan of a project from its design docs                                          |
-| `project.update_progress`                      | 12 (40%)           | Update the plan, the log, and the decisions after a PR is merged                                     |
-| `project.write_prd`                            | 12 (50%)           | Turn an idea into a product requirements doc (PRD) for a project                                     |
-| `pytest.fix_ci_tests`                          | 11 (35%), 16 (35%) | Analyze and fix failure of tests in GitHub CI                                                        |
-| `pytest.fix_local_tests`                       | 11 (40%)           | Analyze and fix failure of local tests                                                               |
+| `project.create_plan`                          | 11 (60%)           | Write the end-to-end plan of a project from its design docs                                          |
+| `project.update_progress`                      | 11 (40%)           | Update the plan, the log, and the decisions after a PR is merged                                     |
+| `project.write_prd`                            | 11 (50%)           | Turn an idea into a product requirements doc (PRD) for a project                                     |
+| `pytest.fix_ci_tests`                          | 09 (35%), 17 (35%) | Analyze and fix failure of tests in GitHub CI                                                        |
+| `pytest.fix_local_tests`                       | 09 (40%)           | Analyze and fix failure of local tests                                                               |
 | `readme_file.explain_code`                     | 08 (25%), 10 (45%) | Document a Python file's classes, functions, and relationships in markdown                           |
 | `readme_file.write_architecture`               | 10 (35%)           | Write architecture documentation for a Python file                                                   |
-| `rules.add`                                    | 02 (15%)           | Add a rule to the set of rules                                                                       |
-| `skill.add_architecture`                       | 13 (25%)           | Add a rule to the set of architecture rules                                                          |
-| `skill.auto_add`                               | 02 (25%)           | Update a skill or prompt using lessons learned from a file's Git history                             |
-| `skill.check_against_rules`                    | 02 (15%), 09 (30%) | Check a file against applicable convention rules and list violations                                 |
-| `skill.check_refs`                             | 02 (20%)           | Check the references in all the skill files                                                          |
-| `skill.consolidate_skills`                     | 02 (15%)           | Consolidate and rename skills by topic to remove redundancy                                          |
-| `skill.reorganize_rules`                       | 02 (15%)           | Reorganize the rules in a skill rules file                                                           |
+| `rules.add`                                    | 05 (15%)           | Add a rule to the set of rules                                                                       |
+| `skill.add_architecture`                       | 12 (25%)           | Add a rule to the set of architecture rules                                                          |
+| `skill.auto_add`                               | 05 (25%)           | Update a skill or prompt using lessons learned from a file's Git history                             |
+| `skill.check_against_rules`                    | 05 (15%), 15 (30%) | Check a file against applicable convention rules and list violations                                 |
+| `skill.check_refs`                             | 05 (20%)           | Check the references in all the skill files                                                          |
+| `skill.consolidate_skills`                     | 05 (15%)           | Consolidate and rename skills by topic to remove redundancy                                          |
+| `skill.reorganize_rules`                       | 05 (15%)           | Reorganize the rules in a skill rules file                                                           |
 | `testing.fix_unit_tests`                       | 07 (25%)           | Apply the conventions usually not followed in the unit test                                          |
 | `testing.reach_coverage`                       | 07 (35%)           | Increase unit test coverage toward 100 percent for a function or file                                |
-| `testing.update_test_outcomes`                 | 11 (20%)           | Update the expected outcome of failing unit tests                                                    |
+| `testing.update_test_outcomes`                 | 09 (20%)           | Update the expected outcome of failing unit tests                                                    |
 | `testing.write_unit_tests`                     | 07 (40%)           | Propose a plan for unit testing a file and then implement it                                         |
-| `tutorial_in_60_mins.propagate_docker_changes` | 15 (15%)           | Sync tutorial and class-project Docker files to match project_template                               |
+| `tutorial_in_60_mins.propagate_docker_changes` | 16 (15%)           | Sync tutorial and class-project Docker files to match project_template                               |
 
 - 48 of 165 skills map to a chapter (58 skill and chapter pairs)
 - The other skills are not cited by any chapter yet

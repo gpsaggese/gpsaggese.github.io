@@ -1,0 +1,27 @@
+# macOS files.
+.DS_Store
+
+# Python-generated files.
+__pycache__/
+*.py[cod]
+
+# Test and notebook caches.
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Temporary logs and command outputs.
+*.log
+tmp.*
+
+# Locally generated notebook HTML files.
+*.html
+
+# Secrets and local environment configuration.
+.env
+.env.*
+!.env.example
+
+# Downloaded data and generated outputs.
+
+data/
+outputs/

@@ -1,1 +1,1 @@
-../../../helpers_root/devops/docker_build/update_os.sh
+../../../../helpers_root/devops/docker_build/update_os.sh
