@@ -26,6 +26,9 @@ https://coach-carter.beehiiv.com/archive
   - The angel, accelerator, VC, grant, and credit files have the
     `Difficulty`, `Amount`, `AmountSize`, and `GeoFocus` columns
   - Only the accelerator and `FriendlyVCs` files have the `Stage` column
+  - Only the accelerator and `Grants` files have the `AcceptanceRate` column
+    - In the `Grants` file it is filled for the NSF TIP programs only
+    - Older rows keep the `Selectivity` in `Notes`
   - `gp_resources.4.FriendlySalezBizDev.csv` is a contact list and has none of
     these columns
   - `gp_resources.7.Support.csv` has advice and help, but no money, so it has
