@@ -718,12 +718,21 @@ worldwide
 
 - **Website**: <https://cloud.google.com/startup>
 - **Submission**: <https://cloud.google.com/startup>
-- **Award size**: Google Cloud credits; amount not in the email (public info: up
-  to ~$200K, more for AI startups; verify)
-- **Eligibility**: Early-stage startups (tier by funding stage)
+- **Award size**: Google Cloud credits: up to $2K (entry tier, one year), up to
+  $200K (Scale tier, VC-funded), up to $350K (AI-first startups)
+  - AI-first: year 1 covers 100% of usage up to $250K, year 2 covers 20% of
+    spend up to $100K. The AI tier adds $150K in year 1 and a $10K Model Garden
+    credit for partner LLMs
+  - Scale tier (not AI): $100K in year 1
+- **Eligibility**: Startups with a business domain, tier by funding stage. The
+  Scale tier is for VC-funded startups. The AI tier is for startups that build
+  on Vertex AI or Gemini
 - **Deadline**: Rolling; no deadline listed
-- **Source**: Inbound email from Google Cloud Startups SDR. Amount and URL not
-  in the email, verify on site
+- **Note**: Google has final say on acceptance. A third-party guide says
+  pre-seed and bootstrapped teams can reach the AI tier. Google's pages tie it
+  to VC funding: verify
+- **Source**: Inbound email from Google Cloud Startups SDR (amount and URL not
+  in the email). Tiers from Google pages via web search, Nov 2026
 
 ### SoGal, iFundWomen, Google for Startups (named only)
 
