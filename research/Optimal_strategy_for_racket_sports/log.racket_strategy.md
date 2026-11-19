@@ -30,6 +30,26 @@
 - The open research questions are in the Gdoc, under
   [Questions for GP](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.xfydadrg3lvc)
 
+## 2026-11-15: Sweeps of the Ball Speed for Speed vs Accuracy (#723)
+
+- **Issue**: [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723),
+  the second of 4 PRs: the settings and the runs of the sweeps, with no results
+  yet; the plan and its decisions are in the Gdoc,
+  [Experiment 5](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.qrto9so35bnx)
+- **What was done**: `notebooks/racket_sports_07_speed_vs_accuracy_utils.py`
+  - `get_experiment_config()`: the full run and a reduced run of a minute, with
+    the `RUN_FULL_SIMS` switch of notebook 05, since Q11 is still open
+  - `build_sweep_spec()`: the settings of one map, with `std_x2` and `std_y2`
+    from the builder, and the builder inputs as separate columns (P1, P6)
+  - `run_speed_sweeps()`: the ball speed from `v0 / 2` to `2 v0`, for each sport,
+    variant, and `a`, on common random numbers (P7)
+  - The variants change one value at a time (P3): the 3 other shapes, `a_x = a_y`,
+    the spread at `v0` halved and doubled, `v_p` = 1.9 and 3.0 m/s, the T-deep
+    serve, and a second seed
+  - `get_serves()` of the notebook 05 utils is now public, for the T-deep serve
+- **Next**: the best ball speed, the robustness table, and the speed scaling
+  check; then notebook 07 and Section VII-B of the paper, which finish #723
+
 ## 2026-11-12: Formalize the Research in the Paper (#921)
 
 - **Issue**: [#921](https://github.com/gpsaggese/gpsaggese.github.io/issues/921), from GP's meeting of

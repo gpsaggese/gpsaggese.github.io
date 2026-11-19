@@ -255,7 +255,7 @@ def inline_content_in_skeleton_slides(
 
     NOTE: this function is meant to run once, on a fresh skeleton file where
     the `// From` tags are still empty (per the template in
-    `prompt.03.create_lesson_slides_from_skeleton_slides.md`). Re-running it
+    `book_scripts/prompt.slides.fill_skeleton_from_slides.md`). Re-running it
     on an already-inlined file is unsound: previously inlined content can
     itself contain header/`* ` title lines (e.g., a header-level `// From`
     match pulls in nested subsections and slides), so there is no way to

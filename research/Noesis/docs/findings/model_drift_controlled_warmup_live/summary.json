@@ -1,0 +1,8 @@
+{
+  "attribution_matches": 141,
+  "completed_calls": 143,
+  "halt_reason": "TIMEOUT_LIMIT",
+  "state": "HALTED",
+  "successful_calls": 141,
+  "total_cost_usd": 0.012388898699999996
+}

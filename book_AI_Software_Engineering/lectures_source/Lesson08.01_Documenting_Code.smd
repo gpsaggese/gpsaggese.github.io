@@ -714,7 +714,7 @@ caption=Code view of the bibliographic clients: one service class and the frozen
 
 * CLAUDE.md as the Agent's Manual
 // From: helpers_root/papers/AIgentic_Development_System/part4.AI_optimized_development.tex:53 '\subsection{Agent Instruction Manifests: Making the Repository Speak to AI}'
-// From: book_AI_Software_Engineering/lectures_source/Lesson02.01_Skills_Organization_and_Management.smd:366 '* Agent Instruction Manifest: Definition'
+// From: book_AI_Software_Engineering/lectures_source/Lesson05.01_Skills_Organization_and_Management.smd:366 '* Agent Instruction Manifest: Definition'
 
 - @Definition@: `CLAUDE.md` or `AGENTS.md` _(AGENTS.md, 2025)_ is a versioned
   doc whose first reader is a program
@@ -732,7 +732,7 @@ caption=Code view of the bibliographic clients: one service class and the frozen
   - Review a change to the manifest like a change to the code
 
 - @Remark@: agent instruction manifests, their layers, and their pointers to
-  rules are covered in detail in Lesson 02.01
+  rules are covered in detail in Lesson 05.01
 
 * One Home per Fact
 // From: helpers_root/docs/documentation_meta/all.where_to_add_material.explanation.md:23 '### The Three Places'
@@ -1076,7 +1076,7 @@ caption=Incremental update: compare the change dates (orange), run the skill onl
 
 - @Remark@: start with the plan, the progress log, and the meta-doc, and add
   the others only when needed
-  - Writing the PRD and the plan is covered in detail in Lesson 12.01
+  - Writing the PRD and the plan is covered in detail in Lesson 11.01
 
 * Slot Numbers and Linkable IDs
 // From: .claude/skills/project.rules.md:43 '## Name the Docs with a Slot Number'

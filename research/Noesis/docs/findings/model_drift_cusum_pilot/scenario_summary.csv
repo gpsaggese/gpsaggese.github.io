@@ -1,0 +1,7 @@
+scenario_name,trials,cusum_detection_rate,fisher_detection_rate,cusum_median_query,fisher_median_query,cusum_p90_query,fisher_p90_query
+healthy_a_a,250,0.012,0.0,637,,876,
+full_weak_model_swap,250,1.0,1.0,21.0,120.0,32,120
+threshold_level_drop,250,1.0,0.904,93.0,240.0,174,600
+gradual_degradation,250,1.0,1.0,181.0,300.0,262,420
+partial_substitution_25,250,1.0,0.8,118.0,300.0,224,660
+partial_substitution_50,250,1.0,1.0,47.0,120.0,78,240

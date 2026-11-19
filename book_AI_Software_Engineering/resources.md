@@ -49,6 +49,11 @@
   - CI integration & workflow behavior
   - Enforced thresholds & quality gates
   - Visibility & developer experience
+  - Best practices & operational consistency
+    - Always upload coverage, even when tests fail
+    - Monitor coverage deltas in PRs
+    - Global config with repo-specific overrides
+    - Weekly review of coverage trends
 
 ## Unit Testing
 
@@ -101,9 +106,33 @@
 
 - Runnable Directories Architecture
   - Problem: monorepo vs multi-repo tradeoffs
+    - [Mono vs. multi-repo debate (GitKraken, 2023)](https://free.gitkraken.com/hubfs/Mono_v_Multi-Repo_debate_2023.pdf)
+    - [Why Google stores billions of lines of code in a single repository](https://dl.acm.org/doi/10.1145/2854146)
+    - [What it is like to work in Meta's (Facebook's) monorepo](https://blog.3d-logic.com/2024/09/02/what-it-is-like-to-work-in-metas-facebooks-monorepo/)
+    - [Microsoft: How "Mono-repo" and "One Infra" help deliver a better developer experience](https://devblogs.microsoft.com/appcenter/how-mono-repo-and-one-infra-help-us-deliver-a-better-developer-experience/)
+    - [Uber: Faster Together, Uber Engineering's iOS Monorepo](https://www.uber.com/blog/ios-monorepo/)
   - Solution: hybrid runnable directory approach
   - Design goals & functionalities
   - Independent yet cohesive modules
+
+- Runnable Directory Design Goals
+  - Development functionalities
+    - Compose code with a Git submodule (`//helpers`)
+    - Add the toolchain to a new project by adding the submodule
+    - Complex workflows with Python `invoke`
+    - Keep common files in sync across repos (links, automatic diff)
+    - Local and remote development in IDEs (PyCharm, VS Code)
+  - Python package management
+    - Dependency control with [poetry](https://python-poetry.org/) and
+      virtual environments
+    - Code and container versions in sync (Git, `changelog.txt`)
+  - DevOps functionalities
+    - Container stages: test/local, dev, prod
+    - Standard build, test, retrieve, deploy of containers
+    - Alignment of dev environment, deployment, and CI/CD
+    - Multi-architecture builds (x86, Arm) on Linux, macOS, WSL
+    - Separation of roles: devops builds containers, developers use them
+    - Multi-container applications
 
 - Development System Components
   - Docker containerization
@@ -141,6 +170,12 @@
   - Template-based project synchronization
   - Declarative repository settings
   - GitHub metadata management
+  - Design principles & workflow behavior
+    - Declarative configuration (YAML in version control as source of truth)
+    - Reproducible execution (sync runs in Docker containers)
+    - Non-destructive by default (explicit confirmation, backup for rollback)
+    - Extensibility (future GitHub API features, e.g., views and layouts)
+    - Interactive and automated (CI/CD) execution
 
 - CI/CD Automation & Buildmeister Role
   - Build health monitoring
@@ -148,6 +183,14 @@
   - Build break triage & escalation
   - Allure test reporting
   - Post-mortem logging
+  - Handover & daily reporting
+    - Daily status email: build status, failing tests and owners, issue links,
+      expected resolution, dashboard screenshot
+    - Rotation handover confirmed by reply from incoming Buildmeister
+  - Workflow in practice
+    - Slack alert from GitHub Actions bot (#build-notifications)
+    - Triage: rerun tests, blame commits, file structured GitHub issue
+    - Escalate after 1 hour: disable test with owner consent or revert change
 
 - Docker Container Release Flow
   - Development & production image workflows
@@ -158,6 +201,10 @@
   - Feature release communication
   - Quality gates & automated testing
   - Rollback capabilities
+  - Release schedule
+  - Pre-release internal testing
+  - Central release documentation updates
+  - Release communication template
 
 ## Dockerized Executables
 
@@ -189,6 +236,16 @@
   - Docker dependency overhead
   - Image storage & startup latency
 
+- Comparison with Language-Specific Solutions
+  - [uv](https://docs.astral.sh/uv/) and similar tools: fast version pinning
+    and isolation within one language ecosystem
+  - Dockerized executables complement, not replace, them
+  - Containers fit best for:
+    - Tools in languages not used by the main project
+    - System utilities with native dependencies
+    - Tools needing specific OS packages or libraries
+    - Cross-language toolchains
+
 - Implementation Guidelines
   - Creating minimal images
   - Building wrapper scripts
@@ -203,6 +260,11 @@
   - Automated task orchestration
 
 ## AI-Optimized Development Infrastructure
+
+- Motivation
+  - Same principles help humans and AI agents: discoverability, automation,
+    standardization, immediate feedback
+  - Infrastructure built for human efficiency enables AI-assisted development
 
 - Self-Documenting Executable Workflows
   - Invoke task discoverability

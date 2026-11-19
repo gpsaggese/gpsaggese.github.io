@@ -6,7 +6,7 @@ Mode-specific instructions for `--mode springer_latex`. See
 Springer SNmono LaTeX syntax and structure.
 
 Copied and adapted from
-`/Users/saggese/src/notes1/book_proposals/prompt.create_latex_book_chap_from_lesson_slides.md`.
+`/Users/saggese/src/notes1/book_scripts/prompt.book_chapter.create_latex_from_slides.md`.
 
 ## Output Format
 
