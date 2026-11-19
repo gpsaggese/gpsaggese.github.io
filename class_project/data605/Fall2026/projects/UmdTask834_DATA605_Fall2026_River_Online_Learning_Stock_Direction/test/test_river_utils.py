@@ -191,3 +191,49 @@ class Test_baselines:
         model = rivutil.PersistenceClassifier()
         assert model.predict_proba_one({"ret_lag0": 0.01})[True] > 0.5
         assert model.predict_proba_one({"ret_lag0": -0.01})[True] < 0.5
+
+
+# #############################################################################
+# Test_model_comparison
+# #############################################################################
+
+
+class Test_model_comparison:
+    def test_down_call_accuracy(self) -> None:
+        preds = pd.DataFrame(
+            {
+                "y_true": [True, False, False, True],
+                "y_pred": [True, False, False, False],
+            }
+        )
+        # Three "down" calls, two of them correct.
+        assert rivutil.down_call_accuracy(preds) == pytest.approx(2 / 3)
+
+    def test_down_call_accuracy_never_down(self) -> None:
+        preds = pd.DataFrame({"y_true": [True, False], "y_pred": [True, True]})
+        assert np.isnan(rivutil.down_call_accuracy(preds))
+
+    def test_split_preds_partitions_dates(self) -> None:
+        panel = _panel(n_days=300, seed=10)
+        cols = rivutil.feature_columns(panel)
+        preds, _ = rivutil.run_models(
+            {"logreg": rivutil.make_river_logreg}, panel, cols, warmup_days=50
+        )
+        split = str(preds["logreg"]["date"].iloc[len(preds["logreg"]) // 2].date())
+        early, late = rivutil.split_preds(preds, split)
+        assert early["logreg"]["date"].max() < pd.Timestamp(split)
+        assert late["logreg"]["date"].min() >= pd.Timestamp(split)
+        assert len(early["logreg"]) + len(late["logreg"]) == len(preds["logreg"])
+
+    def test_river_models_run(self) -> None:
+        """
+        Every model in the zoo trains and predicts on a short stream.
+        """
+        panel = _panel(n_days=150, seed=11)
+        cols = rivutil.feature_columns(panel)
+        preds, seconds = rivutil.run_models(
+            rivutil.make_river_models(), panel, cols, warmup_days=50
+        )
+        assert set(preds) == set(seconds.index)
+        for p in preds.values():
+            assert p["p_up"].between(0, 1).all()
