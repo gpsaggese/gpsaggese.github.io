@@ -9,6 +9,10 @@ from the ball speed with one model, for the sweeps only.
 - The spread model: `compute_speed_factor()`, `build_spread_from_ball_speed()`
 - The sweeps: the ball speed for each coefficient `a`, then one variable at a
   time; every map is a run of `compute_run()` of the notebook 05 utils
+- The best ball speed as a band of tied speeds, and what it is robust to
+- The speed scaling check: Proposition 1 with a spread that depends on the
+  ball speed
+- The plots of the notebook, and the data of the paper's figure
 
 Import as:
 
@@ -17,13 +21,16 @@ import research.Optimal_strategy_for_racket_sports.notebooks.racket_sports_07_sp
 
 import dataclasses
 import logging
-from typing import Any, Dict, Tuple
+import os
+from typing import Any, Dict, List, Sequence, Tuple
 
 import helpers.hdbg as hdbg
 import helpers.hnotebook as hnotebo
 import helpers.hprint as hprint
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from matplotlib.figure import Figure
 from tqdm.autonotebook import tqdm
 
 import research.Optimal_strategy_for_racket_sports.notebooks.racket_sports_01_shot_probability_utils as rosfrsnrs0spu
@@ -150,6 +157,65 @@ def build_spread_from_ball_speed(
     return spread
 
 
+# One style per shape: a color, and a marker and a line style as a second
+# encoding.
+_SHAPE_STYLES = {
+    "linear": {"color": "#2a78d6", "marker": "o", "linestyle": "-"},
+    "knee": {"color": "#eb6834", "marker": "s", "linestyle": "--"},
+    "parabola": {"color": "#1baf7a", "marker": "^", "linestyle": ":"},
+    "one_sided_parabola": {"color": "#8e5cc4", "marker": "D", "linestyle": "-."},
+}
+
+
+def plot_speed_factors(a_values: Sequence[float]) -> Figure:
+    """
+    Plot the factor of the spread against the ball speed, for each shape.
+
+    One panel per coefficient `a`. The factor depends on the speeds only
+    through `v_b / v0`, so the x axis is that ratio, for every sport.
+
+    :param a_values: coefficients, one panel each, e.g., `[0.5, 1.0]`
+    :return: the figure
+    """
+    _LOG.debug(hprint.to_str("a_values"))
+    hdbg.dassert_lte(1, len(a_values), "There must be at least 1 value of a")
+    speed_ratios = np.linspace(0.5, 2.0, 151)
+    fig: Figure
+    fig, axes = plt.subplots(
+        1, len(a_values), figsize=(5 * len(a_values), 3.8), squeeze=False
+    )
+    for ax, a in zip(axes[0], a_values):
+        for shape in SPREAD_SHAPES:
+            # With `v0 = 1` the ball speed is the ratio itself.
+            factors = [
+                compute_speed_factor(ratio, 1.0, a, shape)
+                for ratio in speed_ratios
+            ]
+            style = _SHAPE_STYLES[shape]
+            ax.plot(
+                speed_ratios,
+                factors,
+                color=style["color"],
+                linestyle=style["linestyle"],
+                linewidth=2,
+                label=shape,
+            )
+        # At `v0` every shape gives the spread at `v0`.
+        ax.axvline(1.0, color="gray", linewidth=0.8, linestyle=":")
+        ax.set_xlabel("ball speed v_b / v0")
+        ax.set_ylabel("factor f of the spread at v0")
+        ax.set_title(f"a = {a:g}", fontsize=11)
+        ax.grid(alpha=0.3)
+    axes[0, 0].legend(fontsize=9, frameon=False)
+    fig.suptitle(
+        "The spread grows with the ball speed: f = 1 + a g(u), u = (v_b - v0)"
+        " / v0",
+        fontsize=12,
+    )
+    fig.tight_layout()
+    return fig
+
+
 # #############################################################################
 # Sweep settings
 # #############################################################################
@@ -207,11 +273,14 @@ class ExperimentConfig:
     # Values of the coefficient `a` per variant of `_VARIANTS`; a variant that
     # is not listed is not run.
     a_values: Dict[str, Tuple[float, ...]]
+    # Values of `a` of the speed scaling check.
+    scaling_a_values: Tuple[float, ...]
 
 
-# 768 maps. The range of `a`, from 0 (the Milestone 2 model) to 1, is our
-# assumption: no study gives a value. The variants run at `a` = 0.5 and 1, and
-# the second seed only at `a = 1`.
+# 786 maps: 768 for the sweeps and 18 for the speed scaling check. The range of
+# `a`, from 0 (the Milestone 2 model) to 1, is our assumption: no study gives a
+# value. The variants run at `a` = 0.5 and 1, and the second seed only at
+# `a = 1`.
 _FULL_CONFIG = ExperimentConfig(
     sports=("Tennis", "Pickleball"),
     grid_size=rosfrsnrs0spu.HEATMAP_GRID_SIZE,
@@ -231,10 +300,12 @@ _FULL_CONFIG = ExperimentConfig(
         "serve_T_deep": (0.5, 1.0),
         "seed_2": (1.0,),
     },
+    scaling_a_values=(0.0, 0.5, 1.0),
 )
-# 180 maps. The speeds keep both ends and `v0`, so the loss of the fastest ball
-# and the map of the Milestone 2 defaults are still in the run. Every kind of
-# variant runs at `a = 1`: a shape, the direction, a spread at `v0`, and `v_p`.
+# 198 maps: 180 for the sweeps and the same 18 for the speed scaling check. The
+# speeds keep both ends and `v0`, so the loss of the fastest ball and the map of
+# the Milestone 2 defaults are still in the run. Every kind of variant runs at
+# `a = 1`: a shape, the direction, a spread at `v0`, and `v_p`.
 _REDUCED_CONFIG = dataclasses.replace(
     _FULL_CONFIG,
     n_samples=2000,
@@ -268,16 +339,19 @@ def get_experiment_config(run_full: bool) -> ExperimentConfig:
 
 def count_maps(config: ExperimentConfig) -> int:
     """
-    Count the maps of the sweeps of a run.
+    Count the maps of a run: the sweeps and the speed scaling check.
 
     :param config: how much to run
-    :return: the number of maps, e.g., 768 for the full run and 180 for the
+    :return: the number of maps, e.g., 786 for the full run and 198 for the
         reduced one
     """
     _LOG.debug(hprint.to_str("config"))
     # One sweep per sport, variant, and `a`, with one map per ball speed.
     n_a_values = sum(len(a_values) for a_values in config.a_values.values())
-    n_maps = len(config.sports) * n_a_values * len(config.speed_ratios)
+    n_sweep_maps = len(config.sports) * n_a_values * len(config.speed_ratios)
+    # A check compares 3 maps: the base, both speeds scaled, and `v0` scaled too.
+    n_scaling_maps = 3 * len(config.sports) * len(config.scaling_a_values)
+    n_maps = n_sweep_maps + n_scaling_maps
     return n_maps
 
 
@@ -412,3 +486,481 @@ def run_speed_sweeps(config: ExperimentConfig) -> pd.DataFrame:
         rows.append(row)
     sweeps = pd.DataFrame(rows)
     return sweeps
+
+
+def plot_sweep_maps(
+    sport_name: str,
+    variant: str,
+    a: float,
+    speed_ratios: Sequence[float],
+    config: ExperimentConfig,
+) -> Figure:
+    """
+    Plot the maps of one sweep at a few ball speeds, side by side.
+
+    Each map is the one of `run_speed_sweeps()` at that ball speed, drawn by
+    `plot_montage()` of notebook 05.
+
+    :param sport_name: "Tennis" or "Pickleball"
+    :param variant: a name of `_VARIANTS`, e.g., "base"
+    :param a: coefficient of the depth factor
+    :param speed_ratios: ball speeds as `v_b / v0`, one map each, e.g.,
+        `[0.5, 1.0, 2.0]`
+    :param config: how much to run, for the grid and the samples
+    :return: the figure
+    """
+    _LOG.debug(hprint.to_str("sport_name variant a speed_ratios"))
+    specs = [
+        build_sweep_spec(sport_name, variant, a, speed_ratio, config)
+        for speed_ratio in speed_ratios
+    ]
+    settings_list = [spec["settings"] for spec in specs]
+    titles = [
+        f"v_b = {spec['speed_ratio']:g} v0 = {spec['settings']['ball_speed']:g}"
+        f" m/s\nspread ({spec['settings']['std_x2']:.2f},"
+        f" {spec['settings']['std_y2']:.2f}) m"
+        for spec in specs
+    ]
+    suptitle = (
+        f"{sport_name}: {variant} at a = {a:g}, the spread from the ball speed,"
+        " other settings at the defaults"
+    )
+    fig: Figure = rosfrsnrs0vsu.plot_montage(settings_list, titles, suptitle)
+    return fig
+
+
+# #############################################################################
+# Best ball speed
+# #############################################################################
+
+
+def find_best_speeds(sweeps: pd.DataFrame) -> pd.DataFrame:
+    """
+    Find the best ball speed of each sweep, as a band of tied speeds.
+
+    The value of a ball speed is the highest `P(winner)` of its map. Many
+    speeds can tie at the top, e.g., at 1.000 in tennis, so the best speed is a
+    band: every speed within 2 standard errors of the highest value, with the
+    rule of `find_best_region()` of notebook 01. The marked speed is the speed
+    of the band closest to its middle, as for the best region. The maps of a
+    sweep share their seed, so their values move together and the band is
+    wider than it needs to be.
+
+    :param sweeps: the rows of `run_speed_sweeps()`, with at least 2 ball
+        speeds per sport, variant, and `a`
+    :return: one row per sport, variant, and `a`, with:
+        - `best_speed_ratio`, `best_ball_speed`: the marked speed, as
+          `v_b / v0` and in m/s
+        - `band_low_ratio`, `band_high_ratio`, `band_ratios`, `n_band`: the
+          ends of the band, its speeds, and how many they are, of `n_speeds`
+        - `slowest_in_band`, `fastest_in_band`: True if the band reaches that
+          end of the sweep, so the best speed may lie beyond it
+        - `top_p_winner`: the highest value over the speeds
+        - `fastest_p_winner`, `fastest_loss_points`: the value of the fastest
+          ball, and what it loses against the highest, in percentage points
+        - `best_mean_speed_ratio`, `best_mean_p_winner`: the speed with the
+          highest mean `P(winner)` over the half, which does not saturate
+        - `fastest_mean_loss_points`: what the fastest ball loses on that mean
+    """
+    _LOG.debug(hprint.to_str("sweeps.shape"))
+    hdbg.dassert_lte(1, len(sweeps), "There must be at least 1 run")
+    rows = []
+    for (sport, variant, a), runs in sweeps.groupby(
+        ["sport", "variant", "a"], sort=False
+    ):
+        runs = runs.sort_values("speed_ratio")
+        hdbg.dassert_lte(2, len(runs), "A sweep needs at least 2 ball speeds")
+        # The speeds of a sweep form a map with one row of cells, so the rule
+        # of the best region applies to them as it is: `x_m` is the speed.
+        speed_map = pd.DataFrame(
+            {
+                "x_m": runs["speed_ratio"].to_numpy(),
+                "y_m": 0.0,
+                "p_winner": runs["max_p_winner"].to_numpy(),
+                "p_winner_se": runs["max_p_winner_se"].to_numpy(),
+            }
+        )
+        in_band = rosfrsnrs0spu.find_best_region(speed_map)
+        best = rosfrsnrs0spu.find_best_target(speed_map)
+        band = runs[in_band]
+        marked = runs[runs["speed_ratio"] == best["x_m"]].iloc[0]
+        # The fastest ball, and the speed with the highest mean over the half.
+        fastest = runs.iloc[-1]
+        best_mean = runs.loc[runs["mean_p_winner"].idxmax()]
+        rows.append(
+            {
+                "sport": sport,
+                "variant": variant,
+                "a": a,
+                "best_speed_ratio": marked["speed_ratio"],
+                "best_ball_speed": marked["ball_speed"],
+                "band_low_ratio": band["speed_ratio"].min(),
+                "band_high_ratio": band["speed_ratio"].max(),
+                "band_ratios": tuple(band["speed_ratio"].tolist()),
+                "n_band": len(band),
+                "n_speeds": len(runs),
+                "slowest_in_band": bool(in_band[0]),
+                "fastest_in_band": bool(in_band[-1]),
+                "top_p_winner": best["max_p_winner"],
+                "fastest_p_winner": fastest["max_p_winner"],
+                "fastest_loss_points": 100
+                * (best["max_p_winner"] - fastest["max_p_winner"]),
+                "best_mean_speed_ratio": best_mean["speed_ratio"],
+                "best_mean_p_winner": best_mean["mean_p_winner"],
+                "fastest_mean_loss_points": 100
+                * (best_mean["mean_p_winner"] - fastest["mean_p_winner"]),
+            }
+        )
+    best_speeds = pd.DataFrame(rows)
+    return best_speeds
+
+
+def summarize_robustness(best_speeds: pd.DataFrame) -> pd.DataFrame:
+    """
+    Compare the band of each variant with the band of the base.
+
+    The best speed is robust to a variant if the 2 bands share at least one
+    ball speed, for the same sport and `a`: the variant does not move the best
+    speed by more than the sampling noise can explain (P3).
+
+    :param best_speeds: the rows of `find_best_speeds()`, with the base rows
+        of every sport and `a` of the variants
+    :return: one row per sport, variant, and `a`, without the base, with:
+        - `base_band_low_ratio`, `base_band_high_ratio`: the band of the base
+        - `band_low_ratio`, `band_high_ratio`: the band of the variant
+        - `n_shared`, `overlaps`: the ball speeds in both bands, and whether
+          there is at least one
+        - `d_best_speed_ratio`: how far the marked speed moves, as `v_b / v0`
+        - `d_fastest_loss_points`: how much more the fastest ball loses
+    """
+    _LOG.debug(hprint.to_str("best_speeds.shape"))
+    hdbg.dassert_lte(1, len(best_speeds), "There must be at least 1 sweep")
+    is_base = best_speeds["variant"] == _BASE_VARIANT
+    base_rows = best_speeds[is_base].set_index(["sport", "a"])
+    rows = []
+    for _, row in best_speeds[~is_base].iterrows():
+        key = (row["sport"], row["a"])
+        hdbg.dassert_in(key, base_rows.index, "The variant has no base sweep")
+        base = base_rows.loc[key]
+        # Both sweeps run the same ball speeds, so the bands compare as sets.
+        n_shared = len(set(row["band_ratios"]) & set(base["band_ratios"]))
+        rows.append(
+            {
+                "sport": row["sport"],
+                "variant": row["variant"],
+                "a": row["a"],
+                "base_band_low_ratio": base["band_low_ratio"],
+                "base_band_high_ratio": base["band_high_ratio"],
+                "band_low_ratio": row["band_low_ratio"],
+                "band_high_ratio": row["band_high_ratio"],
+                "n_shared": n_shared,
+                "overlaps": n_shared > 0,
+                "d_best_speed_ratio": row["best_speed_ratio"]
+                - base["best_speed_ratio"],
+                "d_fastest_loss_points": row["fastest_loss_points"]
+                - base["fastest_loss_points"],
+            }
+        )
+    robustness = pd.DataFrame(rows)
+    return robustness
+
+
+def _get_a_color(a: float) -> Tuple[float, float, float, float]:
+    """
+    Get the color of a coefficient `a`, from light (0) to dark (1 or more).
+
+    :param a: coefficient, at least 0
+    :return: an RGBA color of the "viridis" colormap
+    """
+    cmap = plt.get_cmap("viridis_r")
+    color: Tuple[float, float, float, float] = cmap(0.15 + 0.8 * min(a, 1.0))
+    return color
+
+
+def plot_speed_sweeps(
+    sweeps: pd.DataFrame, best_speeds: pd.DataFrame, variant: str
+) -> Figure:
+    """
+    Plot the highest and the mean `P(winner)` against the ball speed.
+
+    One row per sport and one curve per `a`. The left panel has a 2 SE band
+    around each curve; a filled marker is a speed of the band of the best
+    speed, a hollow one a speed outside it, and the star the marked speed.
+
+    :param sweeps: the rows of `run_speed_sweeps()`
+    :param best_speeds: the rows of `find_best_speeds()` of the same sweeps
+    :param variant: the variant to plot, e.g., "base"
+    :return: the figure
+    """
+    _LOG.debug(hprint.to_str("variant"))
+    hdbg.dassert_in(variant, set(sweeps["variant"]), "Unknown variant")
+    runs = sweeps[sweeps["variant"] == variant]
+    sports = list(runs["sport"].unique())
+    fig: Figure
+    fig, axes = plt.subplots(
+        len(sports), 2, figsize=(13, 4 * len(sports)), squeeze=False
+    )
+    for i, sport_name in enumerate(sports):
+        for a, grp in runs[runs["sport"] == sport_name].groupby("a"):
+            grp = grp.sort_values("speed_ratio")
+            best = best_speeds[
+                (best_speeds["sport"] == sport_name)
+                & (best_speeds["variant"] == variant)
+                & (best_speeds["a"] == a)
+            ].iloc[0]
+            x = grp["speed_ratio"].to_numpy()
+            p = grp["max_p_winner"].to_numpy()
+            se = grp["max_p_winner_se"].to_numpy()
+            color = _get_a_color(float(a))
+            in_band = np.isin(x, best["band_ratios"])
+            # Left: the highest `P(winner)` with its band of tied speeds.
+            ax = axes[i, 0]
+            ax.plot(x, p, color=color, linewidth=1.5, label=f"a = {a:g}")
+            ax.fill_between(x, p - 2 * se, p + 2 * se, color=color, alpha=0.15)
+            ax.plot(x[in_band], p[in_band], "o", color=color, ms=5)
+            ax.plot(
+                x[~in_band],
+                p[~in_band],
+                "o",
+                markerfacecolor="white",
+                color=color,
+                ms=5,
+            )
+            ax.plot(
+                best["best_speed_ratio"],
+                p[x == best["best_speed_ratio"]][0],
+                "*",
+                color=color,
+                ms=14,
+                markeredgecolor="black",
+            )
+            # Right: the mean over the half, which does not saturate.
+            axes[i, 1].plot(
+                x, grp["mean_p_winner"], "o-", color=color, linewidth=1.5, ms=4
+            )
+        for j, label in enumerate(
+            ("highest P(winner), +- 2 SE", "mean P(winner) over the half")
+        ):
+            axes[i, j].axvline(1.0, color="gray", linewidth=0.8, linestyle=":")
+            axes[i, j].set_xlabel("ball speed v_b / v0")
+            axes[i, j].set_ylabel(label)
+            axes[i, j].set_title(sport_name, fontsize=11)
+            axes[i, j].grid(alpha=0.3)
+        axes[i, 0].legend(fontsize=9, frameon=False)
+    fig.suptitle(
+        f"{variant}: the best ball speed when speed costs accuracy (star: the"
+        " marked speed, filled: its band)",
+        fontsize=12,
+    )
+    fig.tight_layout()
+    return fig
+
+
+# The variants of the paper's figure: the base and the 3 other shapes.
+_FIGURE_VARIANTS = (_BASE_VARIANT, "knee", "parabola", "one_sided_parabola")
+
+
+def plot_best_speeds(best_speeds: pd.DataFrame) -> Figure:
+    """
+    Plot the best ball speed against `a`, for the base and the other shapes.
+
+    One panel per sport. The base is a line with its band shaded; each other
+    shape is a marker with its band as an error bar, shifted a little in `a`
+    so the bars do not hide each other.
+
+    :param best_speeds: the rows of `find_best_speeds()`, with the base
+    :return: the figure
+    """
+    _LOG.debug(hprint.to_str("best_speeds.shape"))
+    hdbg.dassert_in(
+        _BASE_VARIANT, set(best_speeds["variant"]), "The base is missing"
+    )
+    sports = list(best_speeds["sport"].unique())
+    fig: Figure
+    fig, axes = plt.subplots(
+        1, len(sports), figsize=(6 * len(sports), 4.2), squeeze=False
+    )
+    for ax, sport_name in zip(axes[0], sports):
+        rows = best_speeds[best_speeds["sport"] == sport_name]
+        for k, variant in enumerate(_FIGURE_VARIANTS):
+            grp = rows[rows["variant"] == variant].sort_values("a")
+            if grp.empty:
+                continue
+            shape = "linear" if variant == _BASE_VARIANT else variant
+            style = _SHAPE_STYLES[shape]
+            a_values = grp["a"].to_numpy()
+            best = grp["best_speed_ratio"].to_numpy()
+            low = grp["band_low_ratio"].to_numpy()
+            high = grp["band_high_ratio"].to_numpy()
+            if variant == _BASE_VARIANT:
+                ax.plot(
+                    a_values,
+                    best,
+                    color=style["color"],
+                    marker=style["marker"],
+                    linewidth=2,
+                    label="linear (base)",
+                )
+                ax.fill_between(
+                    a_values, low, high, color=style["color"], alpha=0.15
+                )
+            else:
+                shift = 0.02 * k
+                ax.errorbar(
+                    a_values + shift,
+                    best,
+                    yerr=[best - low, high - best],
+                    color=style["color"],
+                    marker=style["marker"],
+                    linestyle="none",
+                    capsize=3,
+                    label=variant,
+                )
+        ax.axhline(1.0, color="gray", linewidth=0.8, linestyle=":")
+        ax.set_xlabel("coefficient a of the spread")
+        ax.set_ylabel("best ball speed v_b / v0")
+        ax.set_ylim(0.45, 2.05)
+        ax.set_title(sport_name, fontsize=11)
+        ax.grid(alpha=0.3)
+    axes[0, 0].legend(fontsize=9, frameon=False)
+    fig.suptitle(
+        "Best ball speed against a, with its band of tied speeds", fontsize=12
+    )
+    fig.tight_layout()
+    return fig
+
+
+# #############################################################################
+# Speed scaling check
+# #############################################################################
+
+
+def _compute_scaled_map(
+    spec: Dict[str, Any], k_speeds: float, k_v0: float
+) -> pd.DataFrame:
+    """
+    Compute the map of a run with its speeds and its `v0` multiplied.
+
+    The builder computes the spread again, from the new ball speed and `v0`.
+
+    :param spec: a run, from `build_sweep_spec()`
+    :param k_speeds: factor of the ball speed and of the speed of player 1
+    :param k_v0: factor of the reference ball speed `v0`
+    :return: the map of `compute_run()`
+    """
+    settings = spec["settings"]
+    ball_speed = settings["ball_speed"] * k_speeds
+    std_x2, std_y2 = build_spread_from_ball_speed(
+        ball_speed,
+        spec["std0_x"],
+        spec["std0_y"],
+        spec["v0"] * k_v0,
+        spec["a_x"],
+        spec["a_y"],
+        spec["shape"],
+    )
+    scaled = dict(
+        settings,
+        ball_speed=ball_speed,
+        v_p=settings["v_p"] * k_speeds,
+        std_x2=std_x2,
+        std_y2=std_y2,
+    )
+    _, heatmap = rosfrsnrs0vsu.compute_run(scaled)
+    return heatmap
+
+
+def check_speed_scaling(spec: Dict[str, Any], k: float) -> Dict[str, Any]:
+    """
+    Compare the map of a run with 2 maps whose speeds are multiplied by `k`.
+
+    With a spread from the builder, the landing points depend on the ball
+    speed through `v_b / v0`, and player 1 reaches a landing point through
+    `v_p / v_b` and the reaction distance `v_p * t_r`. So, with `t_r = 0`:
+    - Multiplying `v_p` and `v_b` by `k` changes `v_b / v0`: the maps differ
+      when `a > 0`, and Proposition 1 needs a spread that does not depend on
+      the ball speed
+    - Multiplying `v_p`, `v_b`, and `v0` by `k` changes neither ratio: the
+      maps are identical, for every shape and any `a_x`, `a_y`
+
+    :param spec: a run, from `build_sweep_spec()`
+    :param k: the factor, positive; a power of 2 scales the speeds exactly,
+        e.g., 2.0
+    :return: `max_diff_speeds`, the largest cell difference with both speeds
+        scaled, over `p_winner`, `p_winner_se`, `p_in`, and `p_reached`;
+        `max_diff_speeds_and_v0`, the same with `v0` scaled too; `k`; the
+        settings string of the run; and `mean_p_reached`, which shows that the
+        reach rule is exercised
+    """
+    _LOG.debug(hprint.to_str("k"))
+    hdbg.dassert(np.isfinite(k), "k=%s must be finite", k)
+    hdbg.dassert_lt(0, k, "k must be positive")
+    # Same seed and same grid: the 3 maps line up cell by cell.
+    summary, heatmap = rosfrsnrs0vsu.compute_run(spec["settings"])
+    scaled_maps = {
+        "speeds": _compute_scaled_map(spec, k, 1.0),
+        "speeds_and_v0": _compute_scaled_map(spec, k, k),
+    }
+    row: Dict[str, Any] = {"settings": summary["settings"], "k": k}
+    columns = ["p_winner", "p_winner_se", "p_in", "p_reached"]
+    for name, scaled_map in scaled_maps.items():
+        diff = (heatmap[columns] - scaled_map[columns]).abs()
+        row[f"max_diff_{name}"] = float(diff.to_numpy().max())
+    row["mean_p_reached"] = float(heatmap["p_reached"].mean())
+    return row
+
+
+def run_scaling_checks(config: ExperimentConfig) -> pd.DataFrame:
+    """
+    Run `check_speed_scaling()` on the base of each sport, for each `a`.
+
+    Each run is the base at `v_b = v0` with `t_r = 0`, and both speeds are
+    doubled, so the scaled ball is at `2 v0`, where the spread is `1 + a`
+    times larger unless `v0` is doubled too.
+
+    :param config: how much to run
+    :return: one row per sport and `a`, with `sport`, `a`, and the output of
+        `check_speed_scaling()`
+    """
+    _LOG.debug(hprint.to_str("config"))
+    rows = []
+    for sport_name in config.sports:
+        for a in config.scaling_a_values:
+            spec = build_sweep_spec(sport_name, _BASE_VARIANT, a, 1.0, config)
+            spec["settings"]["t_r"] = 0.0
+            row = {"sport": sport_name, "a": a}
+            row.update(check_speed_scaling(spec, 2.0))
+            rows.append(row)
+    scaling_checks = pd.DataFrame(rows)
+    return scaling_checks
+
+
+# #############################################################################
+# Data of the paper's figure
+# #############################################################################
+
+# The `figures` directory of the paper, the same as for notebook 05.
+PAPER_FIGURES_DIR = rosfrsnrs0vsu.PAPER_FIGURES_DIR
+
+
+def save_paper_figure_data(best_speeds: pd.DataFrame, out_dir: str) -> str:
+    """
+    Save the data of the paper's figure, for `figures/make_figures.py`.
+
+    The figure shows the best ball speed against `a` for the base and the 3
+    other shapes, so only their rows are saved.
+
+    :param best_speeds: the rows of `find_best_speeds()` of the full run
+    :param out_dir: the `figures` directory of the paper, e.g.,
+        `PAPER_FIGURES_DIR`
+    :return: the path of the file
+    """
+    _LOG.debug(hprint.to_str("out_dir"))
+    hdbg.dassert_dir_exists(out_dir)
+    is_shown = best_speeds["variant"].isin(_FIGURE_VARIANTS)
+    columns: List[str] = ["sport", "variant", "a", "best_speed_ratio"]
+    columns += ["band_low_ratio", "band_high_ratio"]
+    df = best_speeds.loc[is_shown, columns]
+    path = os.path.join(out_dir, "speed_vs_accuracy_best_speed.csv")
+    df.to_csv(path, index=False)
+    return path
