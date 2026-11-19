@@ -49,31 +49,35 @@ https://coach-carter.beehiiv.com/archive
       invests
     - E.g., NSF National AI Research Institutes, Y Combinator (~1%), A16z Speedrun
       (under 0.4%)
-- Map the labels used in the CSV files to the four levels:
-
-  | CSV label                | Level     |
-  | :----------------------- | :-------- |
-  | `Easy`, `Low`            | easy      |
-  | `Moderate`, `Medium`     | medium    |
-  | `Hard`, `High`           | hard      |
-  | `Very hard`, `Very high` | very hard |
-
-  - `Low`, `Medium`, `High`, and `Very high` rate a person (angel or VC)
+- The `Difficulty` column of every CSV file uses one of these labels:
+  `Easy`, `Medium`, `Hard`, `Very hard`, `N/A`
+  - It is the column right after `AmountSize` in each CSV file
+  - Angels and VCs use the same labels as programs
   - For a person, the level is how hard it is to get a reply and a check
-  - E.g., `Low`: Rajeev Madhavan, who already invested $100K via SAFE
+  - E.g., `Easy`: Rajeev Madhavan, who already invested $100K via SAFE
   - E.g., `Medium`: UMD Dingman Center Angels, with a formal application and pitch
-  - E.g., `High`: Gokul Rajaram, a prolific angel with a fund
-  - E.g., `Very high`: Naval Ravikant, who made few new investments recently
+  - E.g., `Hard`: Gokul Rajaram, a prolific angel with a fund
+  - E.g., `Very hard`: Naval Ravikant, who made few new investments recently
+- Old labels were renamed to the labels above:
+
+  | Old label   | New label   |
+  | :---------- | :---------- |
+  | `Low`       | `Easy`      |
+  | `Moderate`  | `Medium`    |
+  | `High`      | `Hard`      |
+  | `Very high` | `Very hard` |
+
 - Special values:
   - A range (`Moderate–Hard`, `Easy–moderate`) means the level depends on the
     track or the tier
     - Use the level of the track you apply to
     - If no track is chosen, use the harder level
   - A level with a status (`Hard: between rounds`) keeps the level
-    - Put the status in the `Deadline` or `Status` field
-  - `N/A: <reason>` means that the program is closed to outsiders, paused, or
-    discontinued
+    - Put the status in the `Deadline` or `Notes` field
+  - `N/A` means that the program is closed to outsiders, paused, or
+    discontinued, or that the row is a directory or a placeholder, not a program
     - Do not assign a level
+    - Put the reason in the `Deadline` or `Notes` field
 
 ## AmountSize
 
