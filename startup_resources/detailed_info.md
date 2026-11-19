@@ -21,12 +21,77 @@ https://coach-carter.beehiiv.com/archive
 # Definitions
 
 - These definitions apply to the `Difficulty` field in the sections below
-- They also apply to the `Difficulty`, `Amount`, `AmountSize`, and `GeoFocus`
-  columns of the CSV files `startup_resources/gp_resources.*.csv`
+- They also apply to the `Difficulty`, `Amount`, `AmountSize`, `GeoFocus`, and
+  `Stage` columns of the CSV files `startup_resources/gp_resources.*.csv`
   - The angel, accelerator, VC, AI grant, and crypto grant files have these
     columns
-  - `gp_resources.3.FriendlySalezBizDev.csv` is a contact list and has no
-    amount columns
+  - `gp_resources.3.FriendlySalezBizDev.csv` is a contact list and has none of
+    these columns
+
+## Schema
+
+- The same data has the same column name in every CSV file
+  - E.g., `Notes`, not `Notes / sources` in one file and `Notes` in another
+- Column names are PascalCase, with no spaces and no punctuation
+  - E.g., `ApplicationPage`, `AmountSize`, `GeoFocus`
+- There are three row types
+  - Each row type has one column set, in one fixed order
+  - Every file of a row type has all the columns of the set, in the same order
+  - A column with no data in a file stays in the file, with empty cells
+- Row types and column sets:
+  - **People**: the angels and the VCs, in CSV files 0 and 2
+    - `Name`, `Organization`, `Email`, `LinkedIn`, `Website`, `Focus`, `Stage`,
+      `GeoFocus`, `Amount`, `AmountSize`, `Difficulty`, `Notes`
+  - **Contacts**: the people for sales and business development, in CSV file 3
+    - `Name`, `Organization`, `Email`, `LinkedIn`, `SchoolAffiliation`, `Notes`
+    - It has no money columns
+  - **Programs**: the accelerators, grants, and programs that take
+    applications, in CSV files 1, 4, 5, and 6
+    - `Name`, `Category`, `Eligibility`, `Focus`, `Stage`, `GeoFocus`, `Amount`,
+      `AmountSize`, `Difficulty`, `AcceptanceRate`, `Website`, `ApplicationPage`,
+      `Deadline`, `Notes`
+- Order of the columns: who or what it is, then fit and money, then links, then
+  `Notes`
+- Meaning of the columns:
+
+  | Column              | Meaning                                                    |
+  | :------------------ | :--------------------------------------------------------- |
+  | `Name`              | Person or people (People, Contacts) or program (Programs)  |
+  | `Organization`      | Fund, firm, or company of the person                       |
+  | `Email`             | Email address of the person                                |
+  | `LinkedIn`          | URL of the LinkedIn profile                                |
+  | `SchoolAffiliation` | School of the contact                                      |
+  | `Category`          | Type of program, e.g., `Student Funding`, `Startup-only`   |
+  | `Eligibility`       | Who can apply                                              |
+  | `Focus`             | Sector or theme, e.g., `Fintech`, `AI`                     |
+  | `Stage`             | Company stage: see `Stage` below                           |
+  | `GeoFocus`          | Location: see `GeoFocus` below                             |
+  | `Amount`            | Check or award size, as stated by the source               |
+  | `AmountSize`        | Size level of `Amount`: see `AmountSize` below             |
+  | `Difficulty`        | How hard it is to get the money or the meeting             |
+  | `AcceptanceRate`    | Share of applicants accepted, as stated by the program     |
+  | `Website`           | Home page of the firm or program                           |
+  | `ApplicationPage`   | Page to apply or to submit a pitch                         |
+  | `Deadline`          | Deadline, or the status of the call                        |
+  | `Notes`             | Free text and sources                                      |
+
+- Put each fact in its own column
+  - E.g., the check size goes in `Amount`, the sector in `Focus`, the stage in
+    `Stage`, the location in `GeoFocus`
+  - Put a fact that has no column, e.g., `$100K+ MRR`, in `Notes`
+- To add a column, add it to all the files of the row type
+- Old column names were renamed to the names above:
+
+  | Old name                  | New name            | CSV files  |
+  | :------------------------ | :------------------ | :--------- |
+  | `Application page`        | `ApplicationPage`   | 1, 4, 5, 6 |
+  | `Acceptance rate`         | `AcceptanceRate`    | 1          |
+  | `Who it's for`            | `Eligibility`       | 4, 5, 6    |
+  | `Company`, `Firm`         | `Organization`      | 0, 2       |
+  | `Notes / sources`         | `Notes`             | 0, 2       |
+  | `LinkedIn Profile Link`   | `LinkedIn`          | 3          |
+  | `School Affiliation`      | `SchoolAffiliation` | 3          |
+  | `First Name`, `Last Name` | `Name`              | 3          |
 
 ## Difficulty
 
@@ -161,6 +226,49 @@ https://coach-carter.beehiiv.com/archive
   - Many rows are `N/A`: the angel, VC, and AI grant files do not state the
     location for those rows
     - Fill them from the program or fund page
+
+## Stage
+
+- `Stage` says the stage of the companies that the funder or the program accepts
+  - It is not the stage of the funder
+  - It is not the check size: put the size in `Amount`
+  - It is not the sector: put the sector in `Focus`
+- Values, from the earliest stage to the latest:
+
+  | Value       | Meaning                                              |
+  | :---------- | :--------------------------------------------------- |
+  | `Idea`      | No product yet, only an idea or a team               |
+  | `Pre-seed`  | First product or prototype, first small round        |
+  | `Seed`      | Product in the market, early traction                |
+  | `Series A`  | Repeatable traction, scaling the first model         |
+  | `Series B`  | Scaling a proven model                               |
+  | `Series C`  | Expansion of a company with a large customer base    |
+  | `Growth`    | Growth equity in a mature or profitable company      |
+
+- Other values:
+  - `Early-stage`: the source says "early-stage" and names no round
+  - `Later stage`: the source says "later stage" and names no round
+  - `Any`: no stage limit
+  - `N/A`: the source does not say
+- A range uses `to`, with the earlier stage first
+  - E.g., `Pre-seed to Seed`, `Seed to Series A`, `Series A to Series C`
+- An open range uses `onward`
+  - E.g., `Idea onward`
+- Rules:
+  - Use the stage names of the source, mapped to the closest value
+    - E.g., `Seed-at-scale` is `Seed`, and `Seed and Series A` is
+      `Seed to Series A`
+  - Put only the stage in `Stage`
+    - Move the check size to `Amount`, the sector to `Focus`, and a trait of the
+      company, e.g., `$100K+ MRR`, to `Notes`
+  - Use `N/A` when the source is silent
+    - An empty cell means that nobody has reviewed the row yet
+- Current state of the CSV files:
+  - `Stage` is a column in all the files except
+    `gp_resources.3.FriendlySalezBizDev.csv`
+  - It is filled for 5 of 8 rows of the accelerator file and for 9 rows of the
+    VC file
+  - It is empty in the other rows: fill them from the program or fund page
 
 # Detail
 
