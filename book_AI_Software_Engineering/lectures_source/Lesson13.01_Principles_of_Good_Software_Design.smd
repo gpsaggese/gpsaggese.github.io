@@ -6,7 +6,9 @@
 
 * Roadmap
 
-- **Why principles matter with agents**: complexity grows one change at a time
+- **Why design principles matter with agents**
+  - Complexity grows one change at a time
+  - Agents make 10s-100s changes a day
 - **Fight complexity**: simple versus easy, YAGNI, grow from what works
 - **Build deep modules**: a small interface that hides the decisions
 - **Separate layers and concerns**: one abstraction per layer, Demeter
@@ -39,19 +41,18 @@
   - An agent makes dozens of changes a day, and each one looks reasonable in
     its diff
 
-- @Key idea@: a design principle is a rule that removes accidental complexity
-  before it piles up, so the reviewer can say _"no"_ to a diff that passes
-  the tests
+- @Definition@: a **design principle** is a rule that removes accidental complexity
+  before it piles up, so the reviewer can say _"no"_ to a diff that passes the tests
 
 * Where the Principles Come From
 // From: helpers_root/docs/coding/all.coding_style.how_to_guide.md:166 '## Disclaimer'
+// TODO(ai_gp): Remove all the comments pointing to Tools_source.smd
 // From: book_AI_Software_Engineering/lectures_source/Tools_source.smd:62 '* Lessons Learned in 50 Years of Software Engineering'
 
 - @Motivation@: 50 years of writing on design repeat a few ideas under
-  different names, merged here into 8 principles and 3 laws
+  different names, merged here into principles
 
-// TODO(gp): Check the years of the sources: the McIlroy foreword (1978) and
-// "No Silver Bullet" (1986 IFIP, 1987 IEEE Computer) are recalled from memory
+// TODO(ai_gp): Change order and rename to "Core idea", "Source", "Year"
 ```{=typst}
 #styled-table(
   headers: ("Source", "Year", "Core idea used here"),
@@ -64,7 +65,6 @@
     ("Hickey", "2011", "Simple is not the same as easy"),
     ("Ousterhout", "2018", "Deep modules, errors defined out"),
   ),
-  caption: "The sources merged into the principles of this lesson",
   col-widths: (1.2fr, 0.6fr, 2.8fr),
 )
 ```
