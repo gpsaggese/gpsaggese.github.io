@@ -21,8 +21,8 @@ https://coach-carter.beehiiv.com/archive
 # Definitions
 
 - These definitions apply to the `Difficulty` field in the sections below
-- They also apply to the `Difficulty`, `Amount`, and `AmountSize` columns of the
-  CSV files `startup_resources/gp_resources.*.csv`
+- They also apply to the `Difficulty`, `Amount`, `AmountSize`, and `GeoFocus`
+  columns of the CSV files `startup_resources/gp_resources.*.csv`
   - The angel, accelerator, VC, AI grant, and crypto grant files have these
     columns
   - `gp_resources.3.FriendlySalezBizDev.csv` is a contact list and has no
@@ -105,6 +105,56 @@ https://coach-carter.beehiiv.com/archive
   - Convert other currencies to USD at a rough rate
   - Use `unknown` when the source says `Varies`, `Not stated`, or gives no figure
   - Use `N/A` when the program is closed, paused, or discontinued
+
+## GeoFocus
+
+- `GeoFocus` says where the applicant must be based, or must work, to use the
+  opportunity
+  - Read it as: "Can a Maryland company use it, and must it move?"
+  - For an angel or a VC, it says where they invest
+  - It is not the sector: put the sector in `Focus`
+- Use the location the applicant needs, not the location of the funder
+  - E.g., the Ethereum Foundation is based in Switzerland, but its grants are
+    `Global`
+- Values:
+
+  | Value                 | Meaning                                       | Examples                      |
+  | :-------------------- | :-------------------------------------------- | :---------------------------- |
+  | `Global`              | No location limit. Remote is fine             | Hello Tomorrow, Hult Prize    |
+  | `US`                  | US entity or US-based applicant only          | NSF SBIR/STTR, Dorm Room Fund |
+  | `US: <state or city>` | One US place only                             | `US: MD`, `US: Baltimore`     |
+  | `Non-US`              | Applicant must be outside the US              | USAID Program                 |
+  | `<country>`           | One non-US country only                       | `UAE`                         |
+  | `<country>: <place>`  | One place in a non-US country                 | `UAE: Dubai`                  |
+  | `On site: <place>`    | Applicant works at the place, from any origin | YC: `On site: San Francisco`  |
+  | `Unknown`             | The source does not say                       |                               |
+
+- Rules:
+  - Use `Global` only when the source states no limit
+    - A permissionless on-chain program (any builder can apply) is `Global`
+      unless the source names a limit
+  - Use `Unknown` when the source is silent
+    - Do not leave the cell empty
+    - Do not guess from the sponsor name
+  - List several places with `;`
+    - E.g., `US: MD; US: DC; US: VA`
+    - After `On site:` the applicant picks one place, e.g., Techstars:
+      `On site: Baltimore; Boston; London`
+  - Use the narrowest true value
+    - E.g., `US: MD`, not `US`, for a Maryland-only program
+  - If the tracks have different locations, use the track you apply to
+    - If no track is chosen, list all the places
+  - Start every item with one of the values above, so that a filter on the first
+    word works
+- Current state of the CSV files:
+  - `GeoFocus` is a column in the angel, accelerator, VC, AI grant, and crypto
+    grant files
+    - It was `Geographical focus` in the accelerator file and `Geo` in the VC file
+  - `gp_resources.3.FriendlySalezBizDev.csv` is a contact list and has no
+    `GeoFocus` column
+  - Many rows are `Unknown`: the angel, VC, and AI grant files do not state the
+    location for those rows
+    - Fill them from the program or fund page
 
 # Detail
 
