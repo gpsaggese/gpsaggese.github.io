@@ -19,4 +19,5 @@ helpers_root/dev_scripts_helpers/google/from_gsheet.py \
   --url "${SHEET_URL}" \
   --tabname _ALL_ \
   --output_file startup_resources/gp_resources.csv \
+  --overwrite \
   "$@"
