@@ -17,9 +17,11 @@
   | 2  | `FriendlyVCs`         | `startup_resources/gp_resources.2.FriendlyVCs.csv`         |
   | 3  | `VC`                  | `startup_resources/gp_resources.3.VC.csv`                  |
   | 4  | `FriendlySalezBizDev` | `startup_resources/gp_resources.4.FriendlySalezBizDev.csv` |
-  | 5  | `AIGrants`            | `startup_resources/gp_resources.5.AIGrants.csv`            |
-  | 6  | `CryptoGrants`        | `startup_resources/gp_resources.6.CryptoGrants.csv`        |
-  | 7  | `Credits`             | `startup_resources/gp_resources.7.Credits.csv`             |
+  | 5  | `Grants`              | `startup_resources/gp_resources.5.Grants.csv`              |
+  | 6  | `Credits`             | `startup_resources/gp_resources.6.Credits.csv`             |
+  | 7  | `Support`             | `startup_resources/gp_resources.7.Support.csv`             |
+- The `Focus` column of the `Grants` tab tells the AI grants, the crypto grants,
+  and the other grants apart: `AI`, `Crypto`, or `General`
 - `startup_resources/ai_grants.md` is the notes on the grant programs, not a tab
 
 # Summary of Commands

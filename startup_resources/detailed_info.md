@@ -23,11 +23,74 @@ https://coach-carter.beehiiv.com/archive
 - These definitions apply to the `Difficulty` field in the sections below
 - They also apply to the `Difficulty`, `Amount`, `AmountSize`, `GeoFocus`, and
   `Stage` columns of the CSV files `startup_resources/gp_resources.*.csv`
-  - The angel, accelerator, VC, AI grant, crypto grant, and credit files have the
+  - The angel, accelerator, VC, grant, and credit files have the
     `Difficulty`, `Amount`, `AmountSize`, and `GeoFocus` columns
   - Only the accelerator and `FriendlyVCs` files have the `Stage` column
   - `gp_resources.4.FriendlySalezBizDev.csv` is a contact list and has none of
     these columns
+  - `gp_resources.7.Support.csv` has advice and help, but no money, so it has
+    none of the money columns
+
+## Tabs
+
+- Each CSV file is one tab of the Google Sheet, as listed in
+  `startup_resources/README.md`
+- Put a row in a tab by the type of money, not by who gives it
+  - Equity (SAFE, convertible note, common stock, or a loan that converts):
+    use the `VC` tab
+  - Non-dilutive (grant, prize, or fellowship): use the `Grants` tab
+    - Set `Focus` to `Crypto` for a crypto foundation grant, to `AI` for a
+      grant for AI work, and to `General` for any other grant
+    - Use `Credits` for cloud, GPU, or API credits
+  - Advice, help, or support with no money and no credits: use the `Support`
+    tab
+    - E.g., an incubator, an advising office, a tech transfer office, or a
+      directory of grants
+  - A person who invests goes in `FriendlyAngels` or `FriendlyVCs`, not in a
+    program tab
+- Contents of each tab:
+  - `0.FriendlyAngels` (People): angel investors and family offices in the
+    network, who invest their own money
+  - `1.Accelerators` (Programs): cohort accelerators that give cash and mentoring
+    for equity, e.g., Alchemist, PearX, YCombinator
+  - `2.FriendlyVCs` (People): partners and staff of VC firms in the network
+  - `3.VC` (Programs): programs and funds that invest for equity and take
+    applications
+    - E.g., Y Combinator, AI Grant, USM Momentum Fund
+    - It also holds state, regional, and university seed funds that take equity
+      or convertible notes
+      - E.g., TEDCO Builder Fund, AlphaLab, Virginia Venture Partners
+  - `4.FriendlySalezBizDev` (Contacts): people for sales and business
+    development, with no money columns
+  - `5.Grants` (Programs): non-dilutive programs that are not credits
+    - Federal, corporate, foundation, and student grants and prizes
+    - State, regional, and university programs that give grants or training
+      with some money, e.g., NSF I-Corps, TEDCO MII, VIPC CCF
+    - Grants and fellowships from crypto foundations, e.g., Ethereum Foundation
+    - `Focus` has three values: `AI` (a program for AI work, e.g., NSF AI
+      Institutes), `Crypto` (a crypto foundation or ecosystem program), and
+      `General` (any other topic, e.g., student funding or state programs)
+    - `Category` has its own list of values for each `Focus`: the crypto rows
+      use the ecosystem types, e.g., `L1/L2 Ecosystem Grants`, and the other
+      rows use the funder types, e.g., `Federal / Government`
+  - `6.Credits` (Programs): cloud, GPU, and API credits, e.g., NVIDIA Inception
+  - `7.Support` (Programs): advice, help, and support with no money and no
+    credits
+    - Categories: `Advising`, `Proposal Help`, `Incubator`,
+      `Regional Ecosystem`, `University Tech Transfer Office`, `Directory`
+    - E.g., SBTDC, TEDCO Proposal Lab, bwtech@UMBC, UNC Innovate Carolina,
+      Grantmatch
+    - For a row whose amount is a value of the help, not cash, write the
+      amount in `Notes`
+    - It has no money columns, no `Difficulty`, and no `Deadline`
+- A program with both equity and non-dilutive money goes in the tab of its main
+  product
+  - Write the other product in `Notes`, with the tab where it is listed
+  - E.g., `TEDCO` is in `VC`, and its `Notes` says that MII and BII are in
+    `Grants`
+- If the type of money is not known, put the row in `Grants`
+  - Write `assumed, not checked` in `Notes`
+  - Move the row to `VC` when the program takes equity
 
 ## Schema
 
@@ -47,11 +110,14 @@ https://coach-carter.beehiiv.com/archive
   - **Contacts**: the people for sales and business development, in CSV file 4
     - `Name`, `Organization`, `Email`, `LinkedIn`, `SchoolAffiliation`, `Notes`
     - It has no money columns
-  - **Programs**: the accelerators, grants, and programs that take
-    applications, in CSV files 1, 3, 5, 6, and 7
+  - **Programs**: the accelerators, grants, support offices, and programs that
+    take applications, in CSV files 1, 3, 5, 6, and 7
     - `Name`, `Category`, `Eligibility`, `Focus`, `Stage`, `GeoFocus`, `Amount`,
       `AmountSize`, `Difficulty`, `AcceptanceRate`, `Website`, `ApplicationPage`,
       `Deadline`, `Notes`
+    - `gp_resources.7.Support.csv` has only `Name`, `Category`, `Eligibility`,
+      `GeoFocus`, `Website`, `ApplicationPage`, and `Notes`: the other columns
+      have no data in it
 - Order of the columns: who or what it is, then fit and money, then links, then
   `Notes`
 - Meaning of the columns:
@@ -65,7 +131,7 @@ https://coach-carter.beehiiv.com/archive
   | `SchoolAffiliation` | School of the contact                                      |
   | `Category`          | Type of program, e.g., `Student Funding`, `Startup-only`   |
   | `Eligibility`       | Who can apply                                              |
-  | `Focus`             | Sector or theme, e.g., `Fintech`, `AI`                     |
+  | `Focus`             | Sector or theme, e.g., `Fintech`, `AI`, `Crypto`           |
   | `Stage`             | Company stage: see `Stage` below                           |
   | `GeoFocus`          | Location: see `GeoFocus` below                             |
   | `Amount`            | Check or award size, as stated by the source               |
@@ -86,9 +152,9 @@ https://coach-carter.beehiiv.com/archive
 
   | Old name                  | New name            | CSV files     |
   | :------------------------ | :------------------ | :------------ |
-  | `Application page`        | `ApplicationPage`   | 1, 3, 5, 6, 7 |
+  | `Application page`        | `ApplicationPage`   | 1, 3, 5, 6    |
   | `Acceptance rate`         | `AcceptanceRate`    | 1             |
-  | `Who it's for`            | `Eligibility`       | 3, 5, 6, 7    |
+  | `Who it's for`            | `Eligibility`       | 3, 5, 6       |
   | `Company`, `Firm`         | `Organization`      | 0, 2          |
   | `Notes / sources`         | `Notes`             | 0, 2          |
   | `LinkedIn Profile Link`   | `LinkedIn`          | 4             |
@@ -220,12 +286,12 @@ https://coach-carter.beehiiv.com/archive
   - Start every item with one of the values above, so that a filter on the first
     word works
 - Current state of the CSV files:
-  - `GeoFocus` is a column in the angel, accelerator, VC, AI grant, crypto
-    grant, and credit files
+  - `GeoFocus` is a column in the angel, accelerator, VC, grant, and credit
+    files
     - It was `Geographical focus` in the accelerator file and `Geo` in the VC file
   - `gp_resources.4.FriendlySalezBizDev.csv` is a contact list and has no
     `GeoFocus` column
-  - Many rows are `N/A`: the angel, VC, and AI grant files do not state the
+  - Many rows are `N/A`: the angel, VC, and grant files do not state the
     location for those rows
     - Fill them from the program or fund page
 
