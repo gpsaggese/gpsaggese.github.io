@@ -522,6 +522,171 @@ worldwide
 - **Difficulty**: Hard. Competitive, investment-style program, not a grant in the
   traditional sense
 
+## Student Funding
+
+### VentureWell E-Teams
+
+- **Website**: <https://venturewell.org/e-team-program/>
+- **Submission**: <https://venturewell.org/e-team-program/>
+- **Award size**: Non-dilutive, in two stages: Pioneer $5,000 and Propel
+  $20,000, up to $25,000 per team
+- **Eligibility**: Teams of 2+ students with a faculty advisor, currently
+  enrolled at a US institution
+- **Deadline**: Spring 2027 cycle: applications opened Nov 9, 2026 and are due
+  Jan 25, 2027. Three cycles per year
+- **Note**: Some aggregator sites list $10K–$100K, which conflicts with
+  VentureWell's own $25,000 maximum. Check the official page for current
+  guidelines
+
+### Pitch Dingman Competition (UMD Dingman Center)
+
+- **Website**:
+  <https://www.rhsmith.umd.edu/centers/dingman-center/initiatives-programs/pitch-dingman-competition>
+- **Submission**: Same page; shortcut <https://go.umd.edu/pitchdingman>
+- **Award size**: 2026 top prize $25,000. Over $170,000 in total prizes in 2025
+  and 2026. Prizes change each year
+- **Eligibility**: UMD ventures. A University System of Maryland (USM) schools
+  track was added in 2023, with a $10,000 prize that year
+- **Deadline**: Not stated. Check the program page
+- **Note**: The Dingman Center also runs UMD Dingman Center Angels (see the
+  `FriendlyAngels` tab)
+
+### Other regional student pitch programs
+
+- **Website**: N/A, not yet researched
+- **Award size**: Varies
+- **Eligibility**: Students in Maryland and the mid-Atlantic region
+- **Deadline**: Varies
+- **Note**: Listed from the advice above. The Pitch Dingman Competition has a USM
+  track. The USM programs are in the USM section below. List more programs here
+  once found
+
+## Maryland State Programs
+
+### TEDCO Maryland Innovation Initiative (MII)
+
+- **Website**: <https://www.tedcomd.com/mii>
+- **Submission**: <https://www.tedcomd.com/mii>. The page has no direct
+  application link or RFA link: check the Request for Applications (RFA) of each
+  track
+- **Award size**: Non-dilutive, two phases, 9 months each:
+  - Technology Assessment: up to $130,000 for a sole application, up to
+    $180,000 for a joint application (two Qualifying Universities)
+  - Company Formation: up to $300,000
+  - Up to $430,000 total for a sole applicant through both phases
+- **Eligibility**:
+  - Technology Assessment: full-time faculty at a Qualifying University
+  - Company Formation: Maryland-based startups that licensed technology from a
+    Qualifying University within 12 months
+  - Qualifying Universities: Johns Hopkins, Morgan State, UMB, UMBC, and UMCP
+    (UMD College Park)
+  - The technology must be owned by the university, disclosed to its tech
+    transfer office, and have IP protection
+- **Deadline**: Reviewed quarterly. Complete applications are due 5:00pm on
+  Jan 15, Apr 15, Jul 15, and Oct 15 (next business day if the 15th is not a
+  business day). Next: Jan 15, 2027
+- **Note**: Students are not listed as applicants on the MII page. A student
+  project needs a faculty member to apply, or a licensed startup for Company
+  Formation
+- **Watch**: Per advice, MII funding will open to students at UMD soon, as an
+  expansion of BII beyond Baltimore (see BII below). Not confirmed on the TEDCO
+  site. It is not clear if it will get a new web page or be listed on the main
+  MII page. Alla McCoy at UMD probably knows the most about this
+
+### TEDCO Baltimore Innovation Initiative (BII)
+
+- **Website**: <https://www.tedcomd.com/baltimore-innovation-initiative-bii>
+- **Submission**: Submit an Indication of Interest (IOI) first:
+  <https://clear-chiller-c1b.notion.site/193dfc3fd28c80878d1af6010e25ae36>. The
+  full application portal link comes after the IOI is accepted. Requirements:
+  <https://clear-chiller-c1b.notion.site/Baltimore-Innovation-Initiative-314dfc3fd28c807fb4cdcad1ce81235d>
+- **Award size**: Non-dilutive
+  - Technology Advancement: up to $50,000, or up to $75,000 for a joint
+    application from two or more Qualifying Universities. Up to 9 months
+  - Entrepreneurship Commercialization, Programming, and Infrastructure: up to
+    $50,000. Up to 12 months
+- **Eligibility**:
+  - Institutions in the Baltimore-Columbia-Towson MSA that opt in as
+    collaborators. Only collaborating organizations can submit proposals
+  - Students and student principal investigators can apply for Technology
+    Advancement
+  - Full-time faculty and staff at eligible institutions can apply
+  - Technology-based startups can apply for Technology Advancement if they work
+    with faculty, students, or staff from a participating institution
+  - Entrepreneurship track: staff or faculty who run entrepreneurship or
+    commercialization programs
+  - Participating institutions include JHU, Morgan State, Towson, UMB, UMBC,
+    University of Baltimore, Loyola, MICA, and Howard CC. UMD College Park is
+    not listed
+- **Deadline**: Rolling window Aug 19, 2026 to Nov 5, 2026, 5:00pm. Closed as of
+  Nov 19, 2026. Late submissions are rejected
+- **Note**: Described as a pilot limited to the Baltimore area. The page says
+  nothing about expansion. The expansion to UMD comes from advice, not from the
+  page. Questions go to the onsite Project Lead listed on the BII page
+- **Contact**: Alla McCoy at UMD, for the expansion
+
+## University System of Maryland (USM) Innovation Collective
+
+- **Resources page**: <https://www.usmd.edu/launch/resources/>. Questions to
+  <launch@usmd.edu>
+- **Advice**: The Launch Fund is in a holding pattern right now. Start with the
+  resources on the page above
+- **Not funding, so not listed below**: Maryland SBDCs, Maryland Business
+  Opportunity Center, Startup UMD workshops, I-Corps, Maryland New Venture
+  Program (12-week program, UMBC), UMB IP and legal assistance
+
+### USM Launch Fund
+
+- **Website**: <https://www.usmd.edu/launch/>
+- **Submission**: Not stated
+- **Award size**: Grant funding. Amount not stated on the resources page
+- **Eligibility**: USM-related ventures, including those led by alumni and
+  located in USM spaces
+- **Status**: In a holding pattern, per advice. Not confirmed on the site
+- **Deadline**: Not stated
+
+### USM Momentum Fund
+
+- **Website**: <https://momentum.usmd.edu/>
+- **Award size**: $16M fund. It invests in startups (equity-style, not a grant)
+- **Eligibility**: USM-related startups, including those led by alumni and
+  located in USM spaces
+- **Deadline**: Not stated
+
+### Salisbury University: Shore Hatchery
+
+- **Website**:
+  <https://www.salisbury.edu/academic-offices/business/entrepreneurship/shore-hatchery/>
+- **Award size**: Up to $200,000 per year in prize money, through fall and
+  spring business plan competitions
+- **Eligibility**: Not stated on the resources page. Check the program page
+- **Deadline**: Fall and spring competitions. Dates not stated
+
+### Towson University: StarTUp
+
+- **Website**: <https://www.towson.edu/startup/>
+- **Award size**: Free co-working space. The accelerator program gives
+  mentoring, space, and $10K
+- **Eligibility**: Not stated on the resources page. Check the program page
+- **Deadline**: Not stated
+
+### Maryland Industrial Partnerships (MIPS)
+
+- **Website**: <https://www.mips.umd.edu/>
+- **Award size**: Funding for university-based research projects that help
+  companies develop new products. Amount not stated on the resources page
+- **Eligibility**: Implied: companies that partner with university researchers.
+  Check the program page
+- **Deadline**: Not stated
+
+### Maryland Technical Internship Program (MTIP)
+
+- **Website**: <https://mtip.umbc.edu/>
+- **Award size**: Reimbursement for interns. Amount not stated on the resources
+  page
+- **Eligibility**: Not stated on the resources page. Check the program page
+- **Deadline**: Not stated
+
 ## Directories, Search Tools, and Other Resources
 
 ### Grantmatch (Grants.gov "Search Grants")
