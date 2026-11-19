@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -xe
 # """
 # Upload the CSV files `startup_resources/gp_resources.<ID>.<tab_name>.csv` to
 # the tabs of the Google Sheet "GP's Startup Network".

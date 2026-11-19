@@ -5,6 +5,18 @@ https://www.thegrantportal.com/
 https://maryland.grantwatch.com/
 https://www.instrumentl.com/
 https://www.linkedin.com/posts/ymlnv_i-found-30-web3-grant-programs-funding-builders-activity-7486356023230844929-_fHG/
+https://coach-carter.beehiiv.com/archive
+
+- The last link is the archive of The Scouting Report, a weekly newsletter
+  of student and startup funding opportunities (grants, competitions,
+  accelerators, fellowships, credits)
+- Use it as a source of links: each issue lists the sponsor, amount,
+  deadline, and application URL
+- Issues #011-#018 (Oct 6 - Nov 17, 2026) are captured in the sections
+  below, marked `Source: The Scouting Report #NNN`. Issue #014 and the
+  issues before #011 (archive pages 2 and 3+) are not reviewed yet
+- Amounts and dates are as stated in the newsletter. Confirm them on the
+  sponsor page before applying
 
 # Detail
 
@@ -522,6 +534,218 @@ worldwide
 - **Difficulty**: Hard. Competitive, investment-style program, not a grant in the
   traditional sense
 
+### Build in Tulsa: Arch Accelerator
+
+- **Website**: <https://www.buildintulsa.com/program/arch>
+- **Submission**: <https://www.buildintulsa.com/program/arch>
+- **Award size**: $70K non-dilutive plus a stipend
+- **Eligibility**: Revenue-stage tech founders. In person in Tulsa, so
+  relocation is required
+- **Deadline**: Nov 20, 2026
+- **Source**: The Scouting Report #018
+
+### Hello Tomorrow Global Challenge 2026
+
+- **Website**: <https://hello-tomorrow.org/global-challenge/>
+- **Submission**: <https://hello-tomorrow.org/global-challenge/>
+- **Award size**: EUR 100K equity-free grand prize
+- **Eligibility**: Early-stage deep-tech founders, open globally
+- **Deadline**: Nov 30, 2026
+- **Note**: Finalists pitch at the Hello Tomorrow Summit in Paris
+- **Source**: The Scouting Report #017, #018
+
+### SET Award 2027 (dena, Start Up Energy Transition)
+
+- **Website**:
+  <https://www.startup-energy-transition.com/set-award/set-award-2027/>
+- **Submission**:
+  <https://www.startup-energy-transition.com/set-award/set-award-2027/>
+- **Award size**: Mainly recognition and exposure, not cash
+- **Eligibility**: Climate and energy-transition startups worldwide
+- **Deadline**: Nov 30, 2026
+- **Note**: Top 100 join the SET100 list. Finalists pitch at the SET Tech
+  Festival in Berlin
+- **Source**: The Scouting Report #017, #018
+
+### The Great Oral Health Pitch
+
+- **Website**: <https://shilsfund.org/the-great-oral-health-pitch/>
+- **Submission**: <https://shilsfund.org/the-great-oral-health-pitch/>
+- **Award size**: $2,000 regional prizes feeding a grand prize package worth
+  $50K+
+- **Eligibility**: Oral-health ideas; national pitch competition
+- **Deadline**: Nov 30, 2026
+- **Note**: Sponsor not named in the issue (domain: shilsfund.org). Narrow focus
+- **Source**: The Scouting Report #017, #018
+
+### BioTools Innovator 2027
+
+- **Website**: <https://biotoolsinnovator.org/apply/>
+- **Submission**: <https://biotoolsinnovator.org/apply/>
+- **Award size**: Up to $300K
+- **Eligibility**: Life-science and biotech tool startups; recruits globally
+- **Deadline**: Dec 1, 2026
+- **Note**: Sponsor not named in the issue (domain: biotoolsinnovator.org)
+- **Source**: The Scouting Report #018
+
+### F. M. Kirby Impact Prize 2027 (Duke CASE)
+
+- **Website**: <https://kirbyimpactprize.smapply.org/prog/2027kirbyprize/>
+- **Submission**: <https://kirbyimpactprize.smapply.org/prog/2027kirbyprize/>
+- **Award size**: $150K unrestricted
+- **Eligibility**: Social-impact ventures
+- **Deadline**: Dec 2, 2026
+- **Note**: Run by Duke's Center for the Advancement of Social Entrepreneurship.
+  May cap at 250 applications
+- **Source**: The Scouting Report #018
+
+### D-Prize Global Competition
+
+- **Website**: <https://d-prize.org/>
+- **Submission**: <https://d-prize.org/>
+- **Award size**: Up to $20K
+- **Eligibility**: First-time founders (US eligible) delivering tested
+  anti-poverty solutions in lower- and middle-income nations
+- **Deadline**: Final extension Dec 6, 2026 (first round was Oct 25)
+- **Source**: The Scouting Report #013
+
+### 9Fresh Founder Residency
+
+- **Website**: <https://9fresh.co/founder-residency/>
+- **Submission**: <https://9fresh.co/founder-residency/>
+- **Award size**: Not a grant. Rooms about $550-$750 a month, utilities and wifi
+  included
+- **Eligibility**: Founders, teams, independent builders, mentors, investors,
+  digital nomads. 12-month on-campus residency in Cazenovia, NY
+- **Deadline**: Round 1 closes Dec 11, 2026 (midnight ET)
+- **Note**: Move-in March 2027. Residents cover meals and parking
+- **Source**: The Scouting Report #018
+
+### SEED SPOT Impact Accelerator
+
+- **Website**: <https://seedspot.org/>
+- **Submission**: <https://seedspot.org/>
+- **Award size**: Not stated. Takes no equity
+- **Eligibility**: Impact-driven founders; national virtual accelerator
+- **Deadline**: Jan 11, 2027
+- **Source**: The Scouting Report #018
+
+### NIA Start-Up Challenge 2027 (NIH)
+
+- **Website**:
+  <https://www.nih.gov/challenges/2027-nia-start-challenge-accelerator>
+- **Submission**:
+  <https://www.nih.gov/challenges/2027-nia-start-challenge-accelerator>
+- **Award size**: Not stated in #018. #016 mentions $994K for an NIH
+  aging/longevity challenge (unverified, may be the same program)
+- **Eligibility**: Aging- and longevity-focused startups
+- **Deadline**: Jan 15, 2027
+- **Note**: Application portal opens Dec 1, 2026
+- **Source**: The Scouting Report #016, #018
+
+### South Summit Startup Competition 2027
+
+- **Website**: <https://www.southsummit.io/en/content/startup-competition>
+- **Submission**: <https://www.southsummit.io/en/content/startup-competition>
+- **Award size**: Not stated
+- **Eligibility**: Not stated
+- **Deadline**: Jan 31, 2027
+- **Note**: Finalists pitch at South Summit in Madrid
+- **Source**: The Scouting Report #018
+
+### Claude for Startups (Anthropic)
+
+- **Website**: <https://claude.com/programs/startups>
+- **Submission**: <https://claude.com/programs/startups>
+- **Award size**: Free Claude API credits plus priority rate limits (no dollar
+  value stated)
+- **Eligibility**: Startups (eligibility not stated in the newsletter)
+- **Deadline**: Rolling; no deadline listed
+- **Source**: The Scouting Report #011, #012, #018
+
+### Microsoft for Startups Founders Hub
+
+- **Website**: <https://www.microsoft.com/en-us/startups>
+- **Submission**: <https://www.microsoft.com/en-us/startups>
+- **Award size**: Up to ~$150K in Azure credits plus AI model access and dev
+  tools
+- **Eligibility**: Startups; no equity or VC introduction required
+- **Deadline**: Rolling; no deadline listed
+- **Source**: The Scouting Report #011, #012, #018
+
+### AWS Activate
+
+- **Website**: <https://aws.amazon.com/activate/>
+- **Submission**: <https://aws.amazon.com/activate/>
+- **Award size**: $1K-$100K in AWS credits, valid for two years
+- **Eligibility**: Early-stage startups
+- **Deadline**: Rolling; no deadline listed
+- **Source**: The Scouting Report #011, #012, #018
+
+### ElevenLabs Startup Grants
+
+- **Website**: <https://elevenlabs.io/startup-grants>
+- **Submission**: <https://elevenlabs.io/startup-grants>
+- **Award size**: 33M free voice-AI credits (~$10K value) for 12 months
+- **Eligibility**: Startups (eligibility not stated)
+- **Deadline**: Rolling; no deadline listed
+- **Source**: The Scouting Report #016, #017, #018
+
+### SoGal, iFundWomen, Google for Startups (named only)
+
+- **Website**: N/A, the newsletter gives no URLs
+- **Award size**: Not stated
+- **Eligibility**: Not stated
+- **Deadline**: Rolling all fall
+- **Note**: Named with no details. Also mentioned: "a deep bench of
+  accelerators"
+- **Source**: The Scouting Report #015, #016, #017, #018
+
+### Techstars Anywhere
+
+- **Website**: <https://www.techstars.com/accelerators/anywhere>
+- **Submission**: <https://www.techstars.com/accelerators/anywhere>
+- **Award size**: Not stated
+- **Eligibility**: Remote-first; no relocation required
+- **Deadline**: Closed (last call was Nov 18, 2026)
+- **Note**: Program begins March 2027
+- **Source**: The Scouting Report #013, #018
+
+### Y Combinator Winter 2027
+
+- **Website**: <https://www.ycombinator.com/apply>
+- **Submission**: <https://www.ycombinator.com/apply>
+- **Award size**: $125K for 7% plus $375K uncapped SAFE
+- **Eligibility**: Open globally
+- **Deadline**: Closed (was Nov 2, 2026)
+- **Note**: Three-month program ending in Demo Day
+- **Source**: The Scouting Report #013, #015
+
+### Supernova Challenge (Expand North Star, Dubai)
+
+- **Website**:
+  <https://expandnorthstar.com/supernova-challenge-pitch-competition>
+- **Submission**:
+  <https://expandnorthstar.com/supernova-challenge-pitch-competition>
+- **Award size**: Equity-free pitch pool; no cash amount stated
+- **Eligibility**: International reach; travel to Dubai required
+- **Deadline**: Closed (was Nov 2, 2026)
+- **Note**: Held at GITEX in Dubai, Dec 8-10, 2026
+- **Source**: The Scouting Report #013, #015
+
+### Unearthodox Exploration Co-Lab 2027
+
+- **Website**:
+  <https://opportunitydesk.org/2026/10/02/unearthodoxs-exploration-co-lab-2027-edges-of-possibility-for-innovators/>
+- **Submission**:
+  <https://opportunitydesk.org/2026/10/02/unearthodoxs-exploration-co-lab-2027-edges-of-possibility-for-innovators/>
+- **Award size**: CHF 10K (~$12K) plus 10-month online incubation
+- **Eligibility**: Global early-stage ventures addressing root causes of
+  environmental and social problems; must be past the idea stage
+- **Deadline**: Closed (was Nov 16, 2026)
+- **Note**: Link is to an aggregator (Opportunity Desk), not the sponsor
+- **Source**: The Scouting Report #017
+
 ## Student Funding
 
 ### VentureWell E-Teams
@@ -551,6 +775,241 @@ worldwide
 - **Note**: The Dingman Center also runs UMD Dingman Center Angels (see the
   `FriendlyAngels` tab)
 
+### NFTE World Series of Innovation
+
+- **Website**: <https://innovation.nfte.com>
+- **Submission**: <https://innovation.nfte.com>
+- **Award size**: $300-$1,500 cash prizes
+- **Eligibility**: Ages 5-24 (high school and younger); online innovation
+  challenges
+- **Deadline**: Dec 13, 2026
+- **Source**: The Scouting Report #012
+
+### Tulane Business Model Competition
+
+- **Website**:
+  <https://freeman.tulane.edu/lepage/tulane-business-model-competition>
+- **Submission**:
+  <https://freeman.tulane.edu/lepage/tulane-business-model-competition>
+- **Award size**: $125K split among three finalists
+- **Eligibility**: National; teams of 1-5 degree-seeking students (one student
+  leads and owns at least 20%)
+- **Deadline**: Jan 10, 2027
+- **Note**: Finals in New Orleans on Mar 9, 2027
+- **Source**: The Scouting Report #012, #018
+
+### Diamond Challenge (high school)
+
+- **Website**: <https://diamondchallenge.org/>
+- **Submission**: <https://diamondchallenge.org/>
+- **Award size**: $100K+ total awards; $12K per first-place winner
+- **Eligibility**: High school students; Business and Social Innovation tracks
+- **Deadline**: Jan 14, 2027
+- **Note**: Run by the University of Delaware Horn program
+- **Source**: The Scouting Report #012
+
+### Rice Business Plan Competition
+
+- **Website**: <https://rbpc.rice.edu/eligibility>
+- **Submission**: <https://rbpc.rice.edu/eligibility>
+- **Award size**: More than $1M in cash and investment
+- **Eligibility**: Student-led startups from any university with 2+ student
+  founders and less than $300K raised
+- **Deadline**: Jan 29, 2027
+- **Note**: About 40 teams compete over three days in Houston
+- **Source**: The Scouting Report #012, #018
+
+### e-Fest (Schulze Family Foundation Challenge)
+
+- **Website**:
+  <https://business.stthomas.edu/schulze-school/student-engagement/competitions/efest/>
+- **Submission**:
+  <https://business.stthomas.edu/schulze-school/student-engagement/competitions/efest/>
+- **Award size**: More than $200K in cash across pitch and business-plan tracks
+- **Eligibility**: Undergraduate teams nationwide
+- **Deadline**: Jan 31, 2027
+- **Note**: Run by the University of St. Thomas and the Schulze Family
+  Foundation
+- **Source**: The Scouting Report #018
+
+### Blue Ocean Student Entrepreneur Competition (high school)
+
+- **Website**: <https://www.blueoceancompetition.org/>
+- **Submission**: <https://www.blueoceancompetition.org/>
+- **Award size**: Cash prizes (amount not listed)
+- **Eligibility**: High school students worldwide; fully virtual pitch
+- **Deadline**: Feb 21, 2027
+- **Source**: The Scouting Report #012
+
+### Microsoft Imagine Cup 2027
+
+- **Website**: <https://imaginecup.microsoft.com>
+- **Submission**: <https://imaginecup.microsoft.com>
+- **Award size**: Azure credits plus Student, Finalist, and Category prizes
+  (values not stated)
+- **Eligibility**: Early-stage software or AI startups: registered entity
+  founded on or after Nov 2024, not yet Series C, founders 18+. Separate Student
+  Prize for student teams; open to non-students too
+- **Deadline**: Feb 28, 2027
+- **Source**: The Scouting Report #016, #018
+
+### TCU Richards Barrentine Values and Ventures Competition
+
+- **Website**: <https://www.neeley.tcu.edu/VandV>
+- **Submission**: <https://www.neeley.tcu.edu/VandV>
+- **Award size**: Described as "significant non-dilutive capital" (no figure
+  given)
+- **Eligibility**: Undergraduate teams of 2-5 (one team per school) with
+  values-driven for-profit ventures
+- **Deadline**: Early spring semester 2027 (exact date TBA)
+- **Source**: The Scouting Report #012
+
+### Hult Prize
+
+- **Website**: <https://www.hultprize.org/>
+- **Submission**: <https://www.hultprize.org/>
+- **Award size**: $1M grand prize
+- **Eligibility**: Any college student, anywhere
+- **Deadline**: Campus qualifiers Sep 2026 - Feb 2027 (no single date)
+- **Note**: Confirm dates on the site
+- **Source**: The Scouting Report #011, #012
+
+### Global Student Entrepreneur Awards (GSEA)
+
+- **Website**: <https://eonetwork.org/gsea/>
+- **Submission**: <https://eonetwork.org/gsea/>
+- **Award size**: $100K+ prize pool
+- **Eligibility**: Students already running a real venture (Entrepreneurs'
+  Organization)
+- **Deadline**: Local rounds run fall and winter (no single date)
+- **Note**: Confirm dates on the site
+- **Source**: The Scouting Report #011, #012
+
+### Y Combinator Early Decision (students)
+
+- **Website**: <https://www.ycombinator.com/early-decision>
+- **Submission**: <https://www.ycombinator.com/early-decision>
+- **Award size**: $125K for 7% plus $375K uncapped SAFE
+- **Eligibility**: Students who apply now and join a future batch after
+  graduating; no need to drop out
+- **Deadline**: Rolling (apply anytime)
+- **Source**: The Scouting Report #011, #012, #018
+
+### Thiel Fellowship
+
+- **Website**: <https://www.thielfellowship.org/apply>
+- **Submission**: <https://www.thielfellowship.org/apply>
+- **Award size**: $250K over two years
+- **Eligibility**: Age 22 or under; degree not required
+- **Deadline**: Rolling (apply anytime)
+- **Source**: The Scouting Report #012
+
+### Z Fellows
+
+- **Website**: <https://www.zfellows.com/>
+- **Submission**: <https://www.zfellows.com/>
+- **Award size**: $10K, or investment at a $1B cap
+- **Eligibility**: All ages; one intensive week with technical builders
+- **Deadline**: Rolling (multiple cohorts a year)
+- **Source**: The Scouting Report #012
+
+### Dorm Room Fund
+
+- **Website**: <https://dormroomfund.com/opportunities>
+- **Submission**: <https://dormroomfund.com/opportunities>
+- **Award size**: Pre-seed investment for equity (check size not listed)
+- **Eligibility**: Student founders across the US
+- **Deadline**: Rolling
+- **Source**: The Scouting Report #012
+
+### 1517 Fund Medici Grant
+
+- **Website**: <https://www.1517fund.com/medici>
+- **Submission**: <https://www.1517fund.com/medici>
+- **Award size**: $1K
+- **Eligibility**: Young builders and students working on projects outside the
+  classroom
+- **Deadline**: Rolling (apply anytime)
+- **Source**: The Scouting Report #011, #012
+
+### Awesome Foundation
+
+- **Website**: <https://www.awesomefoundation.org/en>
+- **Submission**: <https://www.awesomefoundation.org/en>
+- **Award size**: $1K micro-grant, no equity
+- **Eligibility**: Idea-stage projects accepted; nationwide, via local chapters
+- **Deadline**: Rolling (monthly)
+- **Source**: The Scouting Report #011, #012
+
+### GoDaddy Empower (students)
+
+- **Website**: <https://www.godaddy.com/godaddy-for-good/empower>
+- **Submission**: <https://www.godaddy.com/godaddy-for-good/empower>
+- **Award size**: In-kind: free .com domain and AI website builder for three
+  years
+- **Eligibility**: Enrolled students 18+
+- **Deadline**: Not stated
+- **Note**: Not a cash grant
+- **Source**: The Scouting Report #015, #016
+
+### TigerLaunch 2027 (Princeton)
+
+- **Website**: <https://tigerlaunch.com/>
+- **Submission**: <https://tigerlaunch.com/>
+- **Award size**: $60K non-dilutive prizes ($30K / $20K / $10K)
+- **Eligibility**: Students from any college
+- **Deadline**: Closed (was Nov 1, 2026, extended)
+- **Note**: Student-led. Regional rounds this winter; global finals at Princeton
+  in April
+- **Source**: The Scouting Report #015
+
+### SXSW Pitch 2027 (Student Startups)
+
+- **Website**: <https://cart.sxsw.com/products/acceleratorapp>
+- **Submission**: <https://cart.sxsw.com/products/acceleratorapp>
+- **Award size**: Not stated
+- **Eligibility**: Student startups launched before Jan 2024 with under $10M
+  raised
+- **Deadline**: Closed (was Nov 13, 2026)
+- **Note**: Newsletter author discloses serving on the SXSW Pitch Advisory Board
+- **Source**: The Scouting Report #015, #016, #017
+
+### VentureWell Ecosystem Futures Fellowship
+
+- **Website**: <https://venturewell.org/ecosystem-futures-fellowship/>
+- **Submission**: <https://venturewell.org/ecosystem-futures-fellowship/>
+- **Award size**: $10K base + $5K travel per fellow
+- **Eligibility**: Two-person campus teams with at least one faculty member,
+  building STEM entrepreneurship ecosystems. HBCUs, HSIs, TCUs, and community
+  colleges especially welcome
+- **Deadline**: Closed (was Oct 30, 2026)
+- **Source**: The Scouting Report #013, #015
+
+### Ember Fellowship
+
+- **Website**: <https://emberfellows.org>
+- **Submission**: <https://emberfellows.org>
+- **Award size**: Not stated. Two-year program ending in a full-time startup
+  role in Baltimore, Birmingham, Atlanta, or Detroit
+- **Eligibility**: Seniors and recent graduates who want a startup career;
+  competitive selection
+- **Deadline**: Closed (was Nov 6, 2026)
+- **Note**: Training alongside staff from IDEO, McKinsey, and OpenAI. Baltimore
+  placement is relevant for UMD
+- **Source**: The Scouting Report #013, #015, #016
+
+### State of Black Entrepreneurship Fellows 2027 (Center for Black Entrepreneurship)
+
+- **Website**: <https://cbecenter.org/program/research-program/>
+- **Submission**: <https://cbecenter.org/program/research-program/>
+- **Award size**: $10K research fellowship
+- **Eligibility**: Doctoral students, postdocs, and faculty researchers; HBCU
+  affiliates especially encouraged
+- **Deadline**: Closed (was Nov 16, 2026)
+- **Note**: Year-long contribution to the annual report. Research-focused, not
+  founder-focused
+- **Source**: The Scouting Report #017
+
 ### Other regional student pitch programs
 
 - **Website**: N/A, not yet researched
@@ -560,6 +1019,164 @@ worldwide
 - **Note**: Listed from the advice above. The Pitch Dingman Competition has a USM
   track. The USM programs are in the USM section below. List more programs here
   once found
+
+## Small Business & Founder Grants
+
+Micro-grants and targeted grants for founders and small businesses, from
+The Scouting Report newsletter. Mostly not applicable to university
+applicants.
+
+### Shophand Small Business Boost
+
+- **Website**: <https://www.shophand.com/small-business-boost-grant>
+- **Submission**: <https://www.shophand.com/small-business-boost-grant>
+- **Award size**: $2,500 cash plus $2,500 in services
+- **Eligibility**: US for-profits with under 50 employees and under $5M revenue;
+  no demographic restriction
+- **Deadline**: Nov 30, 2026
+- **Source**: The Scouting Report #012, #013, #015, #016, #017, #018
+
+### Threadneedle Alley Foundation Grant
+
+- **Website**: <https://www.threadneedlealley.org/>
+- **Submission**: <https://www.threadneedlealley.org/>
+- **Award size**: $5,000 plus mentorship
+- **Eligibility**: US midlife founders from underserved communities facing real
+  financial barriers
+- **Deadline**: Nov 30, 2026
+- **Source**: The Scouting Report #017, #018
+
+### EDDIE Awards 2027 (Synergies Work)
+
+- **Website**: <https://synergieswork.org/eddie-awards-application/>
+- **Submission**: <https://synergieswork.org/eddie-awards-application/>
+- **Award size**: $10K top prize plus finalist travel
+- **Eligibility**: US founders with disabilities
+- **Deadline**: Nov 30, 2026
+- **Source**: The Scouting Report #018
+
+### Hiring Our Heroes Small Business Grant
+
+- **Website**: <https://www.hiringourheroes.org/?p=6518>
+- **Submission**: <https://www.hiringourheroes.org/?p=6518>
+- **Award size**: Not stated
+- **Eligibility**: Veteran- and military-spouse-owned small businesses
+- **Deadline**: Dec 15, 2026
+- **Note**: Run by the US Chamber of Commerce Foundation
+- **Source**: The Scouting Report #018
+
+### The No Excuses Fund (.TECH Domains)
+
+- **Website**: <https://noexcuses.get.tech/>
+- **Submission**: <https://noexcuses.get.tech/>
+- **Award size**: Not stated
+- **Eligibility**: Founders who have been turned down
+- **Deadline**: Dec 15, 2026
+- **Note**: Unconditional fund. Decisions by mid-January
+- **Source**: The Scouting Report #018
+
+### HerRise MicroGrant
+
+- **Website**: <https://www.hersuitespot.com/herrise/>
+- **Submission**: <https://www.hersuitespot.com/herrise/>
+- **Award size**: $1,000 monthly
+- **Eligibility**: Women-owned businesses (at least 51% women-owned) with under
+  $1M revenue
+- **Deadline**: Monthly, last day of each month (next: Nov 30, 2026)
+- **Note**: Sponsor not named in the issue (domain: hersuitespot.com)
+- **Source**: The Scouting Report #011, #015, #016, #017, #018
+
+### Freed Fellowship
+
+- **Website**: <https://freedfellowship.com/>
+- **Submission**: <https://freedfellowship.com/>
+- **Award size**: $500 monthly to one winner; $2,500 year-end grant to one
+  fellow
+- **Eligibility**: Not stated
+- **Deadline**: Rolling (monthly)
+- **Note**: Applications reopen monthly
+- **Source**: The Scouting Report #013, #015, #016, #017, #018
+
+### Amber Grant (WomensNet)
+
+- **Website**: <https://ambergrantsforwomen.com/get-an-amber-grant/>
+- **Submission**: <https://ambergrantsforwomen.com/get-an-amber-grant/>
+- **Award size**: $10K monthly; $25K year-end grant for one monthly winner
+- **Eligibility**: Woman-owned businesses
+- **Deadline**: Rolling (monthly)
+- **Source**: The Scouting Report #011, #012
+
+### SoGal Black Founder Startup Grant
+
+- **Website**: <https://www.iamsogal.com/black-founder-startup-grant/>
+- **Submission**: <https://www.iamsogal.com/black-founder-startup-grant/>
+- **Award size**: $5K-$10K cash plus lifetime advisor access
+- **Eligibility**: Black women and nonbinary founders
+- **Deadline**: Rolling (winners chosen monthly)
+- **Source**: The Scouting Report #011, #012
+
+### Galaxy Grant
+
+- **Website**: <https://galaxyofstars.org/galaxy-grants/>
+- **Submission**: <https://galaxyofstars.org/galaxy-grants/>
+- **Award size**: $2,500 base award (past winners $750-$25K)
+- **Eligibility**: Women and minority business owners; free to apply
+- **Deadline**: Multiple cycles per year (last known cycle closed Oct 31, 2026)
+- **Note**: Sponsor not named in the issue (domain: galaxyofstars.org)
+- **Source**: The Scouting Report #013, #015
+
+### AI Impact Grant
+
+- **Website**: <https://aiimpactgrant.com/>
+- **Submission**: <https://aiimpactgrant.com/>
+- **Award size**: $2,500 quarterly
+- **Eligibility**: Entrepreneurs building with AI, including those just starting
+- **Deadline**: Quarterly (last known cycle closed Nov 15, 2026)
+- **Note**: Sponsor not named in the issue. Relevant to AI work
+- **Source**: The Scouting Report #017
+
+### Darcy's Business Freedom Grant
+
+- **Website**: <https://businessfreedomgrant.com/>
+- **Submission**: <https://businessfreedomgrant.com/>
+- **Award size**: $1,000 unrestricted
+- **Eligibility**: Any US small business owner; no entry fee
+- **Deadline**: Closed (was Nov 15, 2026)
+- **Source**: The Scouting Report #017
+
+### Women Founders Grant
+
+- **Website**: <https://womenfoundersgrant.com/apply-now-women-grants>
+- **Submission**: <https://womenfoundersgrant.com/apply-now-women-grants>
+- **Award size**: $5,000
+- **Eligibility**: Businesses majority-founded by women, any stage, nationwide
+- **Deadline**: Closed (was Oct 31, 2026)
+- **Note**: Sponsor not named in the issue
+- **Source**: The Scouting Report #013, #015
+
+### Breva Thrive Grant (Q4)
+
+- **Website**: <https://www.breva.ai/thrive-grant>
+- **Submission**: <https://www.breva.ai/thrive-grant>
+- **Award size**: $5,000
+- **Eligibility**: US for-profit companies with a revenue history and a
+  community-benefit angle
+- **Deadline**: Closed (Q4 cycle was Oct 31, 2026)
+- **Note**: Quarterly program
+- **Source**: The Scouting Report #013, #015
+
+### Visa Foundation: US Small Business Growth & Innovation
+
+- **Website**: <https://rpaforvisafoundation.smapply.us/>
+- **Submission**: <https://rpaforvisafoundation.smapply.us/>
+- **Award size**: $100K-$250K
+- **Eligibility**: US 501(c)(3) entrepreneurial-support organizations with a
+  $1M-$10M budget and two years of audited financials, serving small and micro
+  businesses
+- **Deadline**: Closed (was Oct 21, 2026)
+- **Note**: Organization-level capacity grant: the organization applies and
+  receives the funds
+- **Source**: The Scouting Report #013
 
 ## Maryland State Programs
 
