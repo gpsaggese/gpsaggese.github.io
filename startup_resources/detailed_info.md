@@ -89,25 +89,27 @@ https://coach-carter.beehiiv.com/archive
 
   | Level      | Amount per winner | Examples                               |
   | :--------- | :---------------- | :------------------------------------- |
-  | very small | under $10K        | Women Founders Grant ($5K)             |
-  | small      | $10K to $100K     | Z Fellows ($10K), EF PhD Fellowship    |
-  | medium     | $100K to $500K    | Techstars ($220K), Thiel Fellowship    |
-  | large      | $500K and above   | Y Combinator ($500K), Hult Prize ($1M) |
+  | Very small | under $10K        | Women Founders Grant ($5K)             |
+  | Small      | $10K to $100K     | Z Fellows ($10K), EF PhD Fellowship    |
+  | Medium     | $100K to $500K    | Techstars ($220K), Thiel Fellowship    |
+  | Large      | $500K and above   | Y Combinator ($500K), Hult Prize ($1M) |
 
+- The `AmountSize` column of every CSV file uses one of these labels:
+  `Very small`, `Small`, `Medium`, `Large`, `N/A`
 - The lower bound is included in each level
-  - E.g., $10K is small, $100K is medium, $500K is large
+  - E.g., $10K is `Small`, $100K is `Medium`, $500K is `Large`
 - Rules for the amount:
   - Use one award or one check, not the total pool
     - E.g., "$2M pool per round" is not an award size
     - E.g., a VC fund size (`$200M Fund III`) is not a check size
   - Use the typical first award or check if the source states one
     - If the source gives only a range, use the lower end
-    - E.g., `$100K–$250K` is medium and `$250K–$1M+` by phase is medium
+    - E.g., `$100K–$250K` is `Medium` and `$250K–$1M+` by phase is `Medium`
   - Count credits and in-kind support at the dollar value stated
-    - E.g., `Up to ~$150K in Azure credits` is medium
+    - E.g., `Up to ~$150K in Azure credits` is `Medium`
     - Say in the notes that the amount is credits and not cash
   - Convert other currencies to USD at a rough rate
-  - Use `unknown` when the source says `Varies`, `Not stated`, or gives no figure
+  - Use `N/A` when the source says `Varies`, `Not stated`, or gives no figure
   - Use `N/A` when the program is closed, paused, or discontinued
 
 ## GeoFocus
@@ -131,13 +133,13 @@ https://coach-carter.beehiiv.com/archive
   | `<country>`           | One non-US country only                       | `UAE`                         |
   | `<country>: <place>`  | One place in a non-US country                 | `UAE: Dubai`                  |
   | `On site: <place>`    | Applicant works at the place, from any origin | YC: `On site: San Francisco`  |
-  | `Unknown`             | The source does not say                       |                               |
+  | `N/A`                 | The source does not say                       |                               |
 
 - Rules:
   - Use `Global` only when the source states no limit
     - A permissionless on-chain program (any builder can apply) is `Global`
       unless the source names a limit
-  - Use `Unknown` when the source is silent
+  - Use `N/A` when the source is silent
     - Do not leave the cell empty
     - Do not guess from the sponsor name
   - List several places with `;`
@@ -156,7 +158,7 @@ https://coach-carter.beehiiv.com/archive
     - It was `Geographical focus` in the accelerator file and `Geo` in the VC file
   - `gp_resources.3.FriendlySalezBizDev.csv` is a contact list and has no
     `GeoFocus` column
-  - Many rows are `Unknown`: the angel, VC, and AI grant files do not state the
+  - Many rows are `N/A`: the angel, VC, and AI grant files do not state the
     location for those rows
     - Fill them from the program or fund page
 
