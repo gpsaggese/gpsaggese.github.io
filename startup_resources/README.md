@@ -15,10 +15,11 @@
   | 0  | `FriendlyAngels`      | `startup_resources/gp_resources.0.FriendlyAngels.csv`      |
   | 1  | `Accelerators`        | `startup_resources/gp_resources.1.Accelerators.csv`        |
   | 2  | `FriendlyVCs`         | `startup_resources/gp_resources.2.FriendlyVCs.csv`         |
-  | 3  | `FriendlySalezBizDev` | `startup_resources/gp_resources.3.FriendlySalezBizDev.csv` |
-  | 4  | `AIGrants`            | `startup_resources/gp_resources.4.AIGrants.csv`            |
-  | 5  | `CryptoGrants`        | `startup_resources/gp_resources.5.CryptoGrants.csv`        |
-  | 6  | `VC`                  | `startup_resources/gp_resources.6.VC.csv`                  |
+  | 3  | `VC`                  | `startup_resources/gp_resources.3.VC.csv`                  |
+  | 4  | `FriendlySalezBizDev` | `startup_resources/gp_resources.4.FriendlySalezBizDev.csv` |
+  | 5  | `AIGrants`            | `startup_resources/gp_resources.5.AIGrants.csv`            |
+  | 6  | `CryptoGrants`        | `startup_resources/gp_resources.6.CryptoGrants.csv`        |
+  | 7  | `Credits`             | `startup_resources/gp_resources.7.Credits.csv`             |
 - `startup_resources/ai_grants.md` is the notes on the grant programs, not a tab
 
 # Summary of Commands

@@ -23,9 +23,10 @@ https://coach-carter.beehiiv.com/archive
 - These definitions apply to the `Difficulty` field in the sections below
 - They also apply to the `Difficulty`, `Amount`, `AmountSize`, `GeoFocus`, and
   `Stage` columns of the CSV files `startup_resources/gp_resources.*.csv`
-  - The angel, accelerator, VC, AI grant, and crypto grant files have these
-    columns
-  - `gp_resources.3.FriendlySalezBizDev.csv` is a contact list and has none of
+  - The angel, accelerator, VC, AI grant, crypto grant, and credit files have the
+    `Difficulty`, `Amount`, `AmountSize`, and `GeoFocus` columns
+  - Only the accelerator and `FriendlyVCs` files have the `Stage` column
+  - `gp_resources.4.FriendlySalezBizDev.csv` is a contact list and has none of
     these columns
 
 ## Schema
@@ -36,17 +37,18 @@ https://coach-carter.beehiiv.com/archive
   - E.g., `ApplicationPage`, `AmountSize`, `GeoFocus`
 - There are three row types
   - Each row type has one column set, in one fixed order
-  - Every file of a row type has all the columns of the set, in the same order
-  - A column with no data in a file stays in the file, with empty cells
+  - Every file of a row type has the columns of the set, in the same order
+  - A column with no data in any row of a file is removed from the file
+    - To fill it later, add it back in its place in the order of the set
 - Row types and column sets:
   - **People**: the angels and the VCs, in CSV files 0 and 2
     - `Name`, `Organization`, `Email`, `LinkedIn`, `Website`, `Focus`, `Stage`,
       `GeoFocus`, `Amount`, `AmountSize`, `Difficulty`, `Notes`
-  - **Contacts**: the people for sales and business development, in CSV file 3
+  - **Contacts**: the people for sales and business development, in CSV file 4
     - `Name`, `Organization`, `Email`, `LinkedIn`, `SchoolAffiliation`, `Notes`
     - It has no money columns
   - **Programs**: the accelerators, grants, and programs that take
-    applications, in CSV files 1, 4, 5, and 6
+    applications, in CSV files 1, 3, 5, 6, and 7
     - `Name`, `Category`, `Eligibility`, `Focus`, `Stage`, `GeoFocus`, `Amount`,
       `AmountSize`, `Difficulty`, `AcceptanceRate`, `Website`, `ApplicationPage`,
       `Deadline`, `Notes`
@@ -82,16 +84,16 @@ https://coach-carter.beehiiv.com/archive
 - To add a column, add it to all the files of the row type
 - Old column names were renamed to the names above:
 
-  | Old name                  | New name            | CSV files  |
-  | :------------------------ | :------------------ | :--------- |
-  | `Application page`        | `ApplicationPage`   | 1, 4, 5, 6 |
-  | `Acceptance rate`         | `AcceptanceRate`    | 1          |
-  | `Who it's for`            | `Eligibility`       | 4, 5, 6    |
-  | `Company`, `Firm`         | `Organization`      | 0, 2       |
-  | `Notes / sources`         | `Notes`             | 0, 2       |
-  | `LinkedIn Profile Link`   | `LinkedIn`          | 3          |
-  | `School Affiliation`      | `SchoolAffiliation` | 3          |
-  | `First Name`, `Last Name` | `Name`              | 3          |
+  | Old name                  | New name            | CSV files     |
+  | :------------------------ | :------------------ | :------------ |
+  | `Application page`        | `ApplicationPage`   | 1, 3, 5, 6, 7 |
+  | `Acceptance rate`         | `AcceptanceRate`    | 1             |
+  | `Who it's for`            | `Eligibility`       | 3, 5, 6, 7    |
+  | `Company`, `Firm`         | `Organization`      | 0, 2          |
+  | `Notes / sources`         | `Notes`             | 0, 2          |
+  | `LinkedIn Profile Link`   | `LinkedIn`          | 4             |
+  | `School Affiliation`      | `SchoolAffiliation` | 4             |
+  | `First Name`, `Last Name` | `Name`              | 4             |
 
 ## Difficulty
 
@@ -218,10 +220,10 @@ https://coach-carter.beehiiv.com/archive
   - Start every item with one of the values above, so that a filter on the first
     word works
 - Current state of the CSV files:
-  - `GeoFocus` is a column in the angel, accelerator, VC, AI grant, and crypto
-    grant files
+  - `GeoFocus` is a column in the angel, accelerator, VC, AI grant, crypto
+    grant, and credit files
     - It was `Geographical focus` in the accelerator file and `Geo` in the VC file
-  - `gp_resources.3.FriendlySalezBizDev.csv` is a contact list and has no
+  - `gp_resources.4.FriendlySalezBizDev.csv` is a contact list and has no
     `GeoFocus` column
   - Many rows are `N/A`: the angel, VC, and AI grant files do not state the
     location for those rows
@@ -264,8 +266,9 @@ https://coach-carter.beehiiv.com/archive
   - Use `N/A` when the source is silent
     - An empty cell means that nobody has reviewed the row yet
 - Current state of the CSV files:
-  - `Stage` is a column in all the files except
-    `gp_resources.3.FriendlySalezBizDev.csv`
+  - `Stage` is a column only in the accelerator file and in
+    `gp_resources.2.FriendlyVCs.csv`
+    - The other files had no `Stage` data, so the column was removed from them
   - It is filled for 5 of 8 rows of the accelerator file and for 9 rows of the
     VC file
   - It is empty in the other rows: fill them from the program or fund page
@@ -942,6 +945,17 @@ worldwide
 - **Eligibility**: Startups (eligibility not stated)
 - **Deadline**: Rolling; no deadline listed
 - **Source**: The Scouting Report #016, #017, #018
+
+### Google for Startups Cloud Program
+
+- **Website**: <https://cloud.google.com/startup>
+- **Submission**: <https://cloud.google.com/startup>
+- **Award size**: Google Cloud credits; amount not in the email (public info: up
+  to ~$200K, more for AI startups; verify)
+- **Eligibility**: Early-stage startups (tier by funding stage)
+- **Deadline**: Rolling; no deadline listed
+- **Source**: Inbound email from Google Cloud Startups SDR. Amount and URL not
+  in the email, verify on site
 
 ### SoGal, iFundWomen, Google for Startups (named only)
 
