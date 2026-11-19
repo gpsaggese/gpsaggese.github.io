@@ -1,0 +1,1810 @@
+{
+ "name": "B_m2_Braw",
+ "task": "main_eqvar_raw",
+ "seed_range": "m2",
+ "offset": 3000000,
+ "n_instances": 200,
+ "sealed": false,
+ "instances": [
+  {
+   "seed": 2003000000,
+   "n_nodes": 8,
+   "n_edges": 12,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "54d80a1384a6bff1767bb4ab10b5144021c7d1c8aa3d6556e4073fd27bc1085b"
+  },
+  {
+   "seed": 2003000001,
+   "n_nodes": 7,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "16d65be7a1f4957b7901be88af718d204439aacca97b55a84639d08168f9df42"
+  },
+  {
+   "seed": 2003000002,
+   "n_nodes": 7,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "c929e3f9a130e8822577471b289cf15eb7b1da10d8858161cb15d8f078aa898d"
+  },
+  {
+   "seed": 2003000003,
+   "n_nodes": 7,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "003307280b3d1584d1b039b80598664fad495d0af460117cf26d2f885767d485"
+  },
+  {
+   "seed": 2003000004,
+   "n_nodes": 7,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "172e88932315710ede71cb226498686564a77f0b83c9ece611e2eb12827ff18e"
+  },
+  {
+   "seed": 2003000005,
+   "n_nodes": 7,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "1c62268fed22493190da9e055eba2d76022cc87b26447e52828cea160a764b53"
+  },
+  {
+   "seed": 2003000006,
+   "n_nodes": 7,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "0dbdf8abb3d86056008a34de602df0c00edd2108be9e86d5246a51e57cef2615"
+  },
+  {
+   "seed": 2003000007,
+   "n_nodes": 6,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "fe2a47413cf3990e0fdf28924e811e271f07b07bd40ec20ca5f90d2c9cb83826"
+  },
+  {
+   "seed": 2003000008,
+   "n_nodes": 6,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "d9782aa67903305adb51be2394510dcab84c3610dc6aa35745bf27c5bce80a2c"
+  },
+  {
+   "seed": 2003000009,
+   "n_nodes": 8,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "f403b4fc18368bce906fc6200b55b1c4a784feee4332010ee27c96e65bf87406"
+  },
+  {
+   "seed": 2003000010,
+   "n_nodes": 6,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "69ff3da359bf12c96e3616a12a00dff42235340d5f6275c281a1596cc3f11a87"
+  },
+  {
+   "seed": 2003000011,
+   "n_nodes": 8,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "92a317d96e20c8e7a1e077916a2782ee4e163d658dfc326b8b2a1d13fc624b76"
+  },
+  {
+   "seed": 2003000012,
+   "n_nodes": 8,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "9d38993f3c672121a3f423dbe535f24f06434d85e2a3dc411db46dd4a1c342af"
+  },
+  {
+   "seed": 2003000013,
+   "n_nodes": 7,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "40b918a290fea78ad7a36cff2b59bbe0926b72a84d4721429b3edfeda1b219cd"
+  },
+  {
+   "seed": 2003000014,
+   "n_nodes": 6,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "891ee317ed858a360a8efa4f6c4e1c4202c98d7547fd0e1bacfb622d2b28bc29"
+  },
+  {
+   "seed": 2003000015,
+   "n_nodes": 6,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "bac607c05a495c74b5be4a0df3b6ca02bdc9a4ccbe11fb1c3c3cac7acbac6dd4"
+  },
+  {
+   "seed": 2003000016,
+   "n_nodes": 6,
+   "n_edges": 6,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "7486a92b7707e882c4e49ee257ad569554295d9596982b9432e380477b3c5cbf"
+  },
+  {
+   "seed": 2003000017,
+   "n_nodes": 6,
+   "n_edges": 6,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "dabfbdaf1b7eaa3c194fa6bff52f3215da6ec2f920cb1cd5cf30b1cd119f4cb5"
+  },
+  {
+   "seed": 2003000018,
+   "n_nodes": 8,
+   "n_edges": 12,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "2a8011f3e68860f72bf41631bf92f7831e7e1cf3e63c2d712faa769a291b33a2"
+  },
+  {
+   "seed": 2003000019,
+   "n_nodes": 6,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "b067e48a4ecd4a7cb39b45d8f9a8fb1afaddb15fdcab8bafa22cb880ab11a9c0"
+  },
+  {
+   "seed": 2003000020,
+   "n_nodes": 7,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "e2e2301140318a6935a1b4e47ec0f0218675b96b6f49414cb72d61e8972bbe42"
+  },
+  {
+   "seed": 2003000021,
+   "n_nodes": 8,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "f690be3c9a6bcaa5948252f90b21724681fdfc0be39527c134a124a8841f76c7"
+  },
+  {
+   "seed": 2003000022,
+   "n_nodes": 7,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "b9375a60505f3d07fe90516b9c34a387d3faa68db54099c10e4957740e00c693"
+  },
+  {
+   "seed": 2003000023,
+   "n_nodes": 7,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "6f367807dcf02791494436ff42338461ecd33149a432a10c52c5545e2571d3cf"
+  },
+  {
+   "seed": 2003000024,
+   "n_nodes": 8,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "b1ab0bf56a582ff8d5761cdb3d172eaa2c8c30e8325663366a29c0518c3a0c78"
+  },
+  {
+   "seed": 2003000025,
+   "n_nodes": 6,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "2770b9b7f3e90e065f42d1cf122baeeae6c49f52afc22ba9e76c0157e566da8e"
+  },
+  {
+   "seed": 2003000026,
+   "n_nodes": 8,
+   "n_edges": 12,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "b3cbf6883e0f3b68f08c44e8f00bab3b074a16d89bc4970aac9f7ec7fe029441"
+  },
+  {
+   "seed": 2003000027,
+   "n_nodes": 6,
+   "n_edges": 6,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "01294e46dcc81241f308299b401fc3989c5ab5ed651f93b0ad5829a02e4ed148"
+  },
+  {
+   "seed": 2003000028,
+   "n_nodes": 7,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "205f22457eed7c65d80d3d744a3d1da763ec49fc288f495d9cc7b854f0559dd2"
+  },
+  {
+   "seed": 2003000029,
+   "n_nodes": 6,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "915f771001ce12ca59258f98d607f547d1a7d1f8e4dd43cb403181ac812f39b7"
+  },
+  {
+   "seed": 2003000030,
+   "n_nodes": 8,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "3b33699a3ef9c069888295200c107cbfc1e37c923df63006cd896c08ed5b3af2"
+  },
+  {
+   "seed": 2003000031,
+   "n_nodes": 8,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "f24ffcc04b4fd5bd008ea8f719d7421c4cd03e21c33918b9d2f4e9fb96e561fe"
+  },
+  {
+   "seed": 2003000032,
+   "n_nodes": 8,
+   "n_edges": 11,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "758d4732af470b7b27c6e0373a22be2273f03e0a68eed9a3c94dd159809e3944"
+  },
+  {
+   "seed": 2003000033,
+   "n_nodes": 6,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "9ccc68257c147c1e13acf9c50e8330396ce9f4744fb2cea053cc0f4c9b2908d0"
+  },
+  {
+   "seed": 2003000034,
+   "n_nodes": 7,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "0164fb505bea0589c86bc826801a55759ada2d62a9a2a009448079e81e44e7f7"
+  },
+  {
+   "seed": 2003000035,
+   "n_nodes": 7,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "9cfb0e47dc618f3434ed5c26e439896e9c20e2eaad35ae807456e7f6547ca23c"
+  },
+  {
+   "seed": 2003000036,
+   "n_nodes": 8,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "af81030172f2441bae67728b96b5b048a0437e29d4b21f107ebc1c7a6ed1aca0"
+  },
+  {
+   "seed": 2003000037,
+   "n_nodes": 6,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "85faf5b5800048ae722467d4a2ef08a8013841b7b7e99d2b4314353b6b7a28a5"
+  },
+  {
+   "seed": 2003000038,
+   "n_nodes": 8,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "a4a09c417311f9d8f7fdd76994bb897ac971a7dea7910a0498d71fb9c2b16b11"
+  },
+  {
+   "seed": 2003000039,
+   "n_nodes": 7,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "d21750d196fab83447eb31f77937d501255adc1e016201cd884842905df0f3e3"
+  },
+  {
+   "seed": 2003000040,
+   "n_nodes": 7,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "60b3d0872a0c4949105dea3029387347a9a7da4cfe5552d50a8d0f0c6d9a53ac"
+  },
+  {
+   "seed": 2003000041,
+   "n_nodes": 8,
+   "n_edges": 12,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "f2dea7db64cc6a28c7991d93035baacb1b139a57b021ce07b4b09b038e4380ad"
+  },
+  {
+   "seed": 2003000042,
+   "n_nodes": 6,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "a7676b9d11d504aa9ad8ba18dc304929f28df6e5b037529fa37bf3dc3ee07e79"
+  },
+  {
+   "seed": 2003000043,
+   "n_nodes": 8,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "05eb9f7403e6b2895cbcb2378ca844c8ea4b6f965a8785dcfc0167db02cdefc5"
+  },
+  {
+   "seed": 2003000044,
+   "n_nodes": 8,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "4ad93a24d071639346b2a999c34c9c5632c7954802b9c2cbe3aea3572fd8bf67"
+  },
+  {
+   "seed": 2003000045,
+   "n_nodes": 8,
+   "n_edges": 11,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "db8f5743bf5455eaad49764452e4848e2f57e6563ba241cc94a4bc191c1d7620"
+  },
+  {
+   "seed": 2003000046,
+   "n_nodes": 6,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "2cc2f6eb9f7e6dcda0524b36a0a7f83991538b83c8b99f9700b654a4616ceb96"
+  },
+  {
+   "seed": 2003000047,
+   "n_nodes": 7,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "ae54a5639f7cd26d28efd921d7b97469c48cf4e465a230d90e2b33cce535612f"
+  },
+  {
+   "seed": 2003000048,
+   "n_nodes": 7,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "0af85d41581a5f9344ddffc81a27962ed9ec3e7344a18fa050a1424a20526f87"
+  },
+  {
+   "seed": 2003000049,
+   "n_nodes": 8,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "9c62b6405313655f851d211975a57bf00265784d850730830fc322a5778e30a8"
+  },
+  {
+   "seed": 2003000050,
+   "n_nodes": 6,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "2523372a4cb117715eeaa68ca6338482b90e7e27b4ade24626f2fee3e934a1f7"
+  },
+  {
+   "seed": 2003000051,
+   "n_nodes": 7,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "bd284340f64ff8fbe73517edeb3ad56fa7a9ec04b0fde1af40943cda71cf7d76"
+  },
+  {
+   "seed": 2003000052,
+   "n_nodes": 7,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "165d6a8492c9d95840cf79c273d4aba4d31114f699743ba5333486ee409ae97a"
+  },
+  {
+   "seed": 2003000053,
+   "n_nodes": 8,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "b985a4164b1303c965a7da5dc04e76357e4646a34f0b6445b3a3ceacca334bf1"
+  },
+  {
+   "seed": 2003000054,
+   "n_nodes": 7,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "a6e606e1cd2155d5813d6a8e45a7cfb9b015975b6149893b959e148d11a5735e"
+  },
+  {
+   "seed": 2003000055,
+   "n_nodes": 8,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "e70c061b9a5978bb241b766bb483651fe5dd79ed76f2099fdbd29ce40f9b6bce"
+  },
+  {
+   "seed": 2003000056,
+   "n_nodes": 7,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "90a46ca2aa83ff6410d723e626f0166b040002576f14a5b7f535c77706ea4bfd"
+  },
+  {
+   "seed": 2003000057,
+   "n_nodes": 6,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "02c83a1bef221ca5a5e9f37ab6ccda09506b825e8ea22c825dcc9a7bca391d53"
+  },
+  {
+   "seed": 2003000058,
+   "n_nodes": 7,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "3532559d676873587ce0b710fdff0f83cb2d0d2406b20ac25ff874a8da0de502"
+  },
+  {
+   "seed": 2003000059,
+   "n_nodes": 7,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "00e5acc5b502000817892fc6ed4e7091cd423159ba5244373aace4d9f4804dda"
+  },
+  {
+   "seed": 2003000060,
+   "n_nodes": 6,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "7b3b12bd481e50d76136d55cfc21a361331d65a59f98a844d76eb1f6a8f5899b"
+  },
+  {
+   "seed": 2003000061,
+   "n_nodes": 6,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "c9b6d44e6420904199b88d4c42935ed65a903367babe96bcf9cc4c2245b7a098"
+  },
+  {
+   "seed": 2003000062,
+   "n_nodes": 6,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "dae313fd8b8815becd3ab637710ba7d18c2031081392fa1b6430b3a3e33ca763"
+  },
+  {
+   "seed": 2003000063,
+   "n_nodes": 6,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "04573bcc1dadfd0446d3db6da3418511767fbf809f756b4d7a98d4ebd933d55c"
+  },
+  {
+   "seed": 2003000064,
+   "n_nodes": 8,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "6cce4671eb80908928f172831792ff53d78c60618d1040f2742725dd5509febd"
+  },
+  {
+   "seed": 2003000065,
+   "n_nodes": 8,
+   "n_edges": 11,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "50826d98c6b92e97911a1992cbea82869644e82d01d5479cbad163c59f3788a4"
+  },
+  {
+   "seed": 2003000066,
+   "n_nodes": 8,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "39d7e863b9f80fa432f993de73246c6af1990c1edab8b2badbb0b659413af467"
+  },
+  {
+   "seed": 2003000067,
+   "n_nodes": 8,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "4449d9266cce042dad3bd04bc140bc7bfb90d2d2f47969e7b1abaf6f434f4186"
+  },
+  {
+   "seed": 2003000068,
+   "n_nodes": 6,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "77e439c5203592ad0c1ff031427a71364222e2aa19a4bcf0435dfab7eeccb7c6"
+  },
+  {
+   "seed": 2003000069,
+   "n_nodes": 6,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "10aaaada4f2763131242c3d220f149d5b50450598b2565457b271f5d6a988dc5"
+  },
+  {
+   "seed": 2003000070,
+   "n_nodes": 7,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "ea335f9baa727eb7c0753f524bdc9ecad7798071c5dba78c72de33e5eef55886"
+  },
+  {
+   "seed": 2003000071,
+   "n_nodes": 8,
+   "n_edges": 12,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "54afd76050aa94abc961b93f8608bdebf68e120e011991274b4b9f30f7e23a3d"
+  },
+  {
+   "seed": 2003000072,
+   "n_nodes": 6,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "41abb6c063f8725eb681c99efc535cacfbf9a116e13e34d148764da7ef5a238b"
+  },
+  {
+   "seed": 2003000073,
+   "n_nodes": 7,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "fa8d2ecdf1c12208c3c4fa9043e8c970d3563eca1017a7fdf9b51aaf35e30376"
+  },
+  {
+   "seed": 2003000074,
+   "n_nodes": 8,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "bf416a9fabfcd6ae3121f5a202bb699324d1987dce8b5094d1f61d428ecfda22"
+  },
+  {
+   "seed": 2003000075,
+   "n_nodes": 8,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "1c48bb638312dd2732d84fa8ceb08bfbdda7c5c4ae1da7827717f8833c350319"
+  },
+  {
+   "seed": 2003000076,
+   "n_nodes": 6,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "f5db23593b79c59b129dc5615cc7ea3b1820c55e2f7bec3fcded7efaf4b257b0"
+  },
+  {
+   "seed": 2003000077,
+   "n_nodes": 6,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "713e5846f3b9f47e69574c90d6e331ff4c08a780334af6596560aa489a13f19a"
+  },
+  {
+   "seed": 2003000078,
+   "n_nodes": 7,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "b8c56bc385bdc67c54631f19d8099c0c631e752f3f696a1dceb1b577e9e28c7b"
+  },
+  {
+   "seed": 2003000079,
+   "n_nodes": 7,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "30629f301e8ee1ee7b76aab277e84e73227caee76e738e3d962ca78c49d7d686"
+  },
+  {
+   "seed": 2003000080,
+   "n_nodes": 7,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "82a7f66d0387512c8834e2a744a9a52a1b0f45e4a17f4ef2a1d51f4e61299b8a"
+  },
+  {
+   "seed": 2003000081,
+   "n_nodes": 8,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "3dfd4361360a958e8d6703467e4a72931f76ff5aefb3f3acfb7b2fa76187baee"
+  },
+  {
+   "seed": 2003000082,
+   "n_nodes": 7,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "8856d4cab18ce2f885af69a6cb88ba3a4a4b68446cc9ea09f7f44a25db7bbf5d"
+  },
+  {
+   "seed": 2003000083,
+   "n_nodes": 8,
+   "n_edges": 11,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "afd25510ab38ba27c2da6960be16de95c84ab5835656f259419fc074d7435585"
+  },
+  {
+   "seed": 2003000084,
+   "n_nodes": 8,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "8a55c992cbff334a8dfffab1fcd81d51bbbbb56ea3ae75833619379150fd240f"
+  },
+  {
+   "seed": 2003000085,
+   "n_nodes": 7,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "44af27a8feb32e9df4fddd3136749e8de006184a34770a1fa2022318146b3380"
+  },
+  {
+   "seed": 2003000086,
+   "n_nodes": 7,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "ccaa49dd828c20618eaf7d003050d992fbfbb01d85ad5fccc6f0487f9d3865cd"
+  },
+  {
+   "seed": 2003000087,
+   "n_nodes": 6,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "152fc5ae0c784ee354a85edc81e924326c9a9da6af50617dced8a69475bbe754"
+  },
+  {
+   "seed": 2003000088,
+   "n_nodes": 7,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "bcd3467958f64ec0e4cfd6faaa5e90f2497c435de9739442e64b4a721f9f17cd"
+  },
+  {
+   "seed": 2003000089,
+   "n_nodes": 8,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "ec3251b25666e437d0eb09758c91ca2e4bbbd827802fb5338859194c2b7bc129"
+  },
+  {
+   "seed": 2003000090,
+   "n_nodes": 7,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "62f663816efe9c9c4f0fd8cbcc6b5ff3b80b3162cbe2f6f5a9eac3eb73ff3145"
+  },
+  {
+   "seed": 2003000091,
+   "n_nodes": 8,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "4bf63b8ac8b7bb764fac06651de0962481a44943b47d634782278ee660885450"
+  },
+  {
+   "seed": 2003000092,
+   "n_nodes": 7,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "bce2a79dae5c3548be0f202874a481edf8c0ff43b2809ae1c3618124298796d1"
+  },
+  {
+   "seed": 2003000093,
+   "n_nodes": 8,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "1ed34ec0d228298da015d4088f46cdbe5047381b2d1ea4cdfc019645c969a949"
+  },
+  {
+   "seed": 2003000094,
+   "n_nodes": 8,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "401456c02ff8258f4d8f1e654a7ad234a8b913af88c75035cab2fea10e4a59e8"
+  },
+  {
+   "seed": 2003000095,
+   "n_nodes": 8,
+   "n_edges": 12,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "c6aeb2fc5ee73cc700bf542ee091dc4a1433cd29716e315faf99ce5e6cb9a57f"
+  },
+  {
+   "seed": 2003000096,
+   "n_nodes": 7,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "481e0b662a8bff04a1761c3acac5f0605ce780e9792af2a179e1b51e8a172591"
+  },
+  {
+   "seed": 2003000097,
+   "n_nodes": 6,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "1775f64d42360bffb522a070b51bd2f87f6290ae88a62f3f7925f09cd6a6a969"
+  },
+  {
+   "seed": 2003000098,
+   "n_nodes": 8,
+   "n_edges": 11,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "f48896587b32ef2b9418409057474a4cccdce9b98df3e6b0f48843fed1a2debb"
+  },
+  {
+   "seed": 2003000099,
+   "n_nodes": 8,
+   "n_edges": 11,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "974ed954efab809c3019ac16419d93f3c1dea946fa3e88f92a2c3744b77e3d2e"
+  },
+  {
+   "seed": 2003000100,
+   "n_nodes": 6,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "aaadaaffa2f2ae1e1604b3a4a2dc6b7ccc8542703097fd95ecdfe71d075aa4ee"
+  },
+  {
+   "seed": 2003000101,
+   "n_nodes": 6,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "25304617a57b9cc442d9a7362aa81c0b1a5f25505969c5f2c512eb7713ffbf4a"
+  },
+  {
+   "seed": 2003000102,
+   "n_nodes": 6,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "d4532f792d68c637922c332b982ce5a9a5d2dac81d5de65dc469259694e7728a"
+  },
+  {
+   "seed": 2003000103,
+   "n_nodes": 8,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "4f63a97e0a7e91626ca9595b51bc93c73363e4e000d9b8e5ccfc4ba793c9d3e7"
+  },
+  {
+   "seed": 2003000104,
+   "n_nodes": 7,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "5118740d455a377b8f3b42c65d5b105a94d6117c4ec54d6b573fdde90f514a6a"
+  },
+  {
+   "seed": 2003000105,
+   "n_nodes": 8,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "01a3fcbbfa801f5848e364a0cd61e722cc44cea8831c8087b8e31f248d4cee5c"
+  },
+  {
+   "seed": 2003000106,
+   "n_nodes": 6,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "a3bdfa9130b98e9a7703126342d490ae59ba04d4a0c21b00e9715337d1d2fff7"
+  },
+  {
+   "seed": 2003000107,
+   "n_nodes": 6,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "38e1134c4bc94ae9dd78fd52fe840e11b8cdf82eb5d1c5fe11103f215c362b69"
+  },
+  {
+   "seed": 2003000108,
+   "n_nodes": 8,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "8ddbe7bd5349781c38eaea966fbb5c03f85ef375e6dbb0934192d997c9566f1f"
+  },
+  {
+   "seed": 2003000109,
+   "n_nodes": 7,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "17a46b308c023203a7f76118b77648a87e8fccd71a3d50809667c994d0d787bb"
+  },
+  {
+   "seed": 2003000110,
+   "n_nodes": 6,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "2d9e72da0428dc621b6fb793e9e621e4abdf3664d2bf39871a86d56782105896"
+  },
+  {
+   "seed": 2003000111,
+   "n_nodes": 7,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "a8710816c57c7167e0f3cd365c582ef92bd19ed4784825ce10c481cef3a7a083"
+  },
+  {
+   "seed": 2003000112,
+   "n_nodes": 8,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "8609ff169ba288ea0473cc22f32a47ecb224ffd3f459850ab845aa2f84ee2bcd"
+  },
+  {
+   "seed": 2003000113,
+   "n_nodes": 7,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "07f0827dd29d75841422cd8c95151b893e78d40faa6ac9a35d0198f3e2493b17"
+  },
+  {
+   "seed": 2003000114,
+   "n_nodes": 6,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "78ce79f081747d1d7a59a5c050cc50a2e8f204cd168fd1f2cd3ee78cf5ba1c87"
+  },
+  {
+   "seed": 2003000115,
+   "n_nodes": 7,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "1cb2448e83ad37a9d0d1db2426130a77b908d5d0f30ef6f31ad9719c13b5ee2e"
+  },
+  {
+   "seed": 2003000116,
+   "n_nodes": 8,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "3a04cca18c1b5a054bdee69e64d50d1ff0ccb8b319552aec11e19936b6db6242"
+  },
+  {
+   "seed": 2003000117,
+   "n_nodes": 7,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "181b2020d41bd9b98fd60fd8aa427abdcf561b5c2af1356b65d3250581ec68d1"
+  },
+  {
+   "seed": 2003000118,
+   "n_nodes": 6,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "a5de04149252ef418a7b2b7813c09a57431aa73c39ed351b82b8b0e5cb031736"
+  },
+  {
+   "seed": 2003000119,
+   "n_nodes": 6,
+   "n_edges": 6,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "0904d8151283d2c602593ff6304fd4b734373472105fd391b24f9ba3ed209499"
+  },
+  {
+   "seed": 2003000120,
+   "n_nodes": 8,
+   "n_edges": 11,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "bafb53ce466b6185170d021c6699f7a59bbecf90c37d31d776e133a955c0cd58"
+  },
+  {
+   "seed": 2003000121,
+   "n_nodes": 8,
+   "n_edges": 11,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "75644ee36282fcf58588ffec564db05397a7804a78bf3f07cda80343e7a6c6c7"
+  },
+  {
+   "seed": 2003000122,
+   "n_nodes": 7,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "1bae479c07a1197557942c99023a846ba76087b6cb1fc37cb2599485172969bc"
+  },
+  {
+   "seed": 2003000123,
+   "n_nodes": 6,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "a827f8de226008efcc6fc9d863504c63a86dcf0af70883032cc3518aed0a4004"
+  },
+  {
+   "seed": 2003000124,
+   "n_nodes": 7,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "0464728385090f4996a380e175325a5f2d5554f0d1059859a938b9a83da49336"
+  },
+  {
+   "seed": 2003000125,
+   "n_nodes": 8,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "aca1de927a45257b86ac24ac6489f071ee208b2ac3f4663a1ec41f1123d445af"
+  },
+  {
+   "seed": 2003000126,
+   "n_nodes": 6,
+   "n_edges": 6,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "7ac5a699990831eb8d814d8806f99751a30196989e9f50208377e38329608807"
+  },
+  {
+   "seed": 2003000127,
+   "n_nodes": 8,
+   "n_edges": 12,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "7990c7d2da5429c966daa686f3414589cc3c1f19c3ee2e43d4accee086206e3a"
+  },
+  {
+   "seed": 2003000128,
+   "n_nodes": 8,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "1e5d8274f7c96bd1b9eca69f6f10b5188ed1cf1290163d4ae057fc38157b0819"
+  },
+  {
+   "seed": 2003000129,
+   "n_nodes": 8,
+   "n_edges": 11,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "1b1c125dc23bcd1f46d10c33875e066f5d572f1f1cb061d8d6f3312f35185598"
+  },
+  {
+   "seed": 2003000130,
+   "n_nodes": 7,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "35694492c4df617818390aadf5b7142a640f07e8136dc3311fd117f29bef81de"
+  },
+  {
+   "seed": 2003000131,
+   "n_nodes": 8,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "1d3339e739703756c3a0f19be84af055b5d17d5ab706b31e547f987e3352229a"
+  },
+  {
+   "seed": 2003000132,
+   "n_nodes": 6,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "6d955d4a17ccb95ea68e95f38b5f60bedf99693f43ed7215b438f1234d8af38b"
+  },
+  {
+   "seed": 2003000133,
+   "n_nodes": 8,
+   "n_edges": 12,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "ae0326cf1ecf14076d1468a9aae26bed46fd80a11cf8f4142325d3f2413abe9c"
+  },
+  {
+   "seed": 2003000134,
+   "n_nodes": 6,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "f68e263a2ac6bd77242114dccc25428b18b150c6696f3ee4493a0438dda817ba"
+  },
+  {
+   "seed": 2003000135,
+   "n_nodes": 7,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "e5f7d161046d352e1c930ba1cdd3fee44d9f028f9c13b484873758fc63e7d7c1"
+  },
+  {
+   "seed": 2003000136,
+   "n_nodes": 7,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "5d9dfdcc2680c9a004e29ca2a8c9f67c2251825e5768dfb22897806fd0836b61"
+  },
+  {
+   "seed": 2003000137,
+   "n_nodes": 7,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "4578b086f1ca43e806679f87072bb255d534da29e3ff1d28f4b79066cab5fd4a"
+  },
+  {
+   "seed": 2003000138,
+   "n_nodes": 6,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "159bdccd7572dff6e77b95cac8f250228caf8c2b338ad64f7c608ae1c6d8dae4"
+  },
+  {
+   "seed": 2003000139,
+   "n_nodes": 7,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "422ad931054e4988736aac978eaeb8f06e3c4ca3d8bb8c91d5c6a046d4ab6960"
+  },
+  {
+   "seed": 2003000140,
+   "n_nodes": 7,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "2dd00daa2e76e06d5ecc6ffad7b6484e236e1c2eb68adf99f41b2944ae5d275e"
+  },
+  {
+   "seed": 2003000141,
+   "n_nodes": 7,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "dd0ac8d5655eb7dfe58ccc73a87ab6aaee4b2bd122052f0fcb0b0a49860720a8"
+  },
+  {
+   "seed": 2003000142,
+   "n_nodes": 8,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "bb439686f9a07b1d4d1aaf5480ccc132f6d864f5354f0e7fc88edf98510542c9"
+  },
+  {
+   "seed": 2003000143,
+   "n_nodes": 7,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "dc093041c49335426e9596155b5758f265cc0930c3237b79ba54584406fc453d"
+  },
+  {
+   "seed": 2003000144,
+   "n_nodes": 6,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "0ac184928fe8f6398da1e5417bc9d260cc6ceb5b1a4a9ad27e6c120839f3d5b8"
+  },
+  {
+   "seed": 2003000145,
+   "n_nodes": 8,
+   "n_edges": 11,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "50617144a204a1bb2491f99270455e32a96c7bb8e82a07919868214a48e08869"
+  },
+  {
+   "seed": 2003000146,
+   "n_nodes": 7,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "d9e50b018188b5440750bcc7b5db7a458ece8fe9dc2c8f28440af485c0340c37"
+  },
+  {
+   "seed": 2003000147,
+   "n_nodes": 8,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "2fec61c48b63a3e050f398347d98ce1fe97f0b7a944f9fb8c6c4e328fc730d29"
+  },
+  {
+   "seed": 2003000148,
+   "n_nodes": 8,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "6b021e331d5eb2f38a95b9d3d2db8d07ede3b8660a5ee0ac10bf92535aac85b0"
+  },
+  {
+   "seed": 2003000149,
+   "n_nodes": 6,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "be08969efbac1b5e0b921d15773d8a4a659df01cf8ccce5b3b7d5b095a167a45"
+  },
+  {
+   "seed": 2003000150,
+   "n_nodes": 7,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "f284312f1afed0ac36b36625b644e190ea91217b436f878dde862910e06af5a1"
+  },
+  {
+   "seed": 2003000151,
+   "n_nodes": 7,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "80d88fab24b238adb68b32ce0125a453e750a82b4ff7f68c6990dd7327bca75d"
+  },
+  {
+   "seed": 2003000152,
+   "n_nodes": 6,
+   "n_edges": 6,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "6ac9fce436722c28b01df7a2241ca3f27862c471c20d25a5488e03075f3c7ca0"
+  },
+  {
+   "seed": 2003000153,
+   "n_nodes": 8,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "a025b7a84a5642685b391f84bbc18befd3ef4d8f16bce49ede36b29262509e44"
+  },
+  {
+   "seed": 2003000154,
+   "n_nodes": 8,
+   "n_edges": 12,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "56d4e90f53d5af83491be6806a3fa73dc341f3041dbe156b659cb668c98d0213"
+  },
+  {
+   "seed": 2003000155,
+   "n_nodes": 6,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "b6e596f3e76f35b95b7c4bdf6505444dd7f076311fb8815f6b05e5a52df1fe6b"
+  },
+  {
+   "seed": 2003000156,
+   "n_nodes": 8,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "9397f06b58d20ef7b213ca439c64784e0598d831444c34d753b0496ae18c6446"
+  },
+  {
+   "seed": 2003000157,
+   "n_nodes": 6,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "e0f33892b41198ab650cef9097d3d235013cfe8e1000aa76fec0d64cee5f2625"
+  },
+  {
+   "seed": 2003000158,
+   "n_nodes": 8,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "1968670b34686edfe9c9ec4a714375fd8a823fd6a43bb521edf1b6f0742c4364"
+  },
+  {
+   "seed": 2003000159,
+   "n_nodes": 7,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "a40ef61f6ab723e702fd9723603f11b89fe7bf05ddc5e189b0f1cd26916500e3"
+  },
+  {
+   "seed": 2003000160,
+   "n_nodes": 8,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "379ded5056d964254e087cd4a460449bbd770c23c0302de82a47f54e9d43edd4"
+  },
+  {
+   "seed": 2003000161,
+   "n_nodes": 8,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "f8a676abf7ff5c62c1d42eacd986bc26740495238af4df77e1b8170da81627fc"
+  },
+  {
+   "seed": 2003000162,
+   "n_nodes": 7,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "3bb7c8dbcd5e5db45428581dd7190bf74ab3adbe05f6e63a6c77d8834eee2ba2"
+  },
+  {
+   "seed": 2003000163,
+   "n_nodes": 7,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "133c70dad4d25ce7ea146c2dc0a91280d6eb31650e9ef59d9096f3bfc5b60194"
+  },
+  {
+   "seed": 2003000164,
+   "n_nodes": 7,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "287d57cb5680abbb22bd930518fb3d38df38487fda6befe0fac45772a930c599"
+  },
+  {
+   "seed": 2003000165,
+   "n_nodes": 8,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "f47eb1dbf4c7893098fe6b1d62d21dc2de8e26ec127da7851e5cf0331e8d64a8"
+  },
+  {
+   "seed": 2003000166,
+   "n_nodes": 7,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "2f5931c8f9d8f3368a128f513ccdf72e9e73b3987f1199b58171b1d7ee41e342"
+  },
+  {
+   "seed": 2003000167,
+   "n_nodes": 7,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "2ea43f1e79d51e33a13472c14eccd5487ea983714d248120694908885477f17f"
+  },
+  {
+   "seed": 2003000168,
+   "n_nodes": 8,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "96ce72d21df3e23e8a96369391fabcff2c07419dd260cb470738bc4557921291"
+  },
+  {
+   "seed": 2003000169,
+   "n_nodes": 8,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "5ff9061a66c869978bfa3164ecd92582f633fb3ed47212acadc28bf0b48fa0a0"
+  },
+  {
+   "seed": 2003000170,
+   "n_nodes": 6,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "26144c93ca3f1b96770dbdc71d249dc1692372792129ab378b74cb28dc6fc141"
+  },
+  {
+   "seed": 2003000171,
+   "n_nodes": 7,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "c7f4300238727c64c70f7baf8eebe530a96a15b2b2266c1c878a36fba7ba420e"
+  },
+  {
+   "seed": 2003000172,
+   "n_nodes": 7,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "4a2c6aea9c8aba520561219e3931450b0b1a108d5d506b0888865e4822d81566"
+  },
+  {
+   "seed": 2003000173,
+   "n_nodes": 6,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "60c4c7f093677adb7e015700687bae8f98a3b50bce44d960e3d81e06767a81bc"
+  },
+  {
+   "seed": 2003000174,
+   "n_nodes": 8,
+   "n_edges": 11,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "8ec620c3ded59e5cad92b7f54396cf681755949a7856973c31d8ae82c546c0be"
+  },
+  {
+   "seed": 2003000175,
+   "n_nodes": 7,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "78131556d1a7308b9ba6eb88afb265d8951694f1f4fc6330be094a2e17129d0f"
+  },
+  {
+   "seed": 2003000176,
+   "n_nodes": 8,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "f366bf526cf8301420a6bdd6fe913ec8349c7111528990c187ab38e8cc6c7af9"
+  },
+  {
+   "seed": 2003000177,
+   "n_nodes": 7,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "672ccc1afa23129ede4db2bca738430f37b0f6d51ea9cf187f56bd7ea100287f"
+  },
+  {
+   "seed": 2003000178,
+   "n_nodes": 7,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "c26ed44bd90608b46a305a4cbf41ac45dce1914cf34ac81f00de70c9db4a993f"
+  },
+  {
+   "seed": 2003000179,
+   "n_nodes": 6,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "f3d851b8038c824557f06bec71b71745da2b1907455d6ab2ed190eb1adc07b94"
+  },
+  {
+   "seed": 2003000180,
+   "n_nodes": 7,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "e48631348dfe101358abca3c8322b9d4881058d949b86d7ffe09db0e221a0731"
+  },
+  {
+   "seed": 2003000181,
+   "n_nodes": 8,
+   "n_edges": 11,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "68884cafda5e1c39debf4c022c72a6f04016126c29df4ef2ac1fbc730333ebf1"
+  },
+  {
+   "seed": 2003000182,
+   "n_nodes": 8,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "5a0931953f102d35d0c3e0c83852957ba8376f0ea7e9dde3a0a717d7306d6745"
+  },
+  {
+   "seed": 2003000183,
+   "n_nodes": 8,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "37afcf008be8c4acd0b64839409302c059a6c83c985933776dfdd6a12cda2203"
+  },
+  {
+   "seed": 2003000184,
+   "n_nodes": 6,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "e168479934211c09001af96df069bbe970b956da40b5fd6ae541db6db0acb93d"
+  },
+  {
+   "seed": 2003000185,
+   "n_nodes": 8,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "5a2b80ff14224263ac054b8204d8cdcd88cb77e7be1b0fa0b0d92f50321a5fa3"
+  },
+  {
+   "seed": 2003000186,
+   "n_nodes": 7,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "8742a867a8d47a5849e75c1fe12e32a3b8dfb0357643b26528bd439388a641ce"
+  },
+  {
+   "seed": 2003000187,
+   "n_nodes": 7,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "a9bfda6c2ac2efdc6ad40cc24f0f9c1a27e2b7425a405f57ed222ecb31941291"
+  },
+  {
+   "seed": 2003000188,
+   "n_nodes": 6,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "b6d52d477cef2ba5181ccfc247d2dff6edf68ad6017240efee7c4228258024b1"
+  },
+  {
+   "seed": 2003000189,
+   "n_nodes": 7,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "86d538cd4e454c36a9cf8308cfbc7159e560c63e9c27a2b5e80f9c9998b163a9"
+  },
+  {
+   "seed": 2003000190,
+   "n_nodes": 8,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "d596041e56263a4ffd25dfcb6f60d83b18802cb71826a75e35e0aec16ad718ee"
+  },
+  {
+   "seed": 2003000191,
+   "n_nodes": 8,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "5da5c7ed95aaa0ec922829fed86c8eed6c61834423b8a162852d56d993e9a2d6"
+  },
+  {
+   "seed": 2003000192,
+   "n_nodes": 6,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "f02ff5dfda7dac03adda98cbb1b0d74782fb9982f36a6721698dd802163b58d4"
+  },
+  {
+   "seed": 2003000193,
+   "n_nodes": 7,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "db5feead47eedad7ac8c31a313d17393a1da367cddf5a8ba817ee4822cd2d9ef"
+  },
+  {
+   "seed": 2003000194,
+   "n_nodes": 6,
+   "n_edges": 8,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "11d796e8f04258bbc449dc2e63d1cdf8be95835c2fb621c3f9ce62bab780eb70"
+  },
+  {
+   "seed": 2003000195,
+   "n_nodes": 8,
+   "n_edges": 12,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "5a5c97d809e5493daa7d132b695a7d3ec98de4a44e313bb3bc6866e889fde582"
+  },
+  {
+   "seed": 2003000196,
+   "n_nodes": 7,
+   "n_edges": 9,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "7d146b63c8da4c4b176d8f2c71c295ccdcf7094d196aada746bf7c8afacff16b"
+  },
+  {
+   "seed": 2003000197,
+   "n_nodes": 7,
+   "n_edges": 7,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "d5f8dd95c8ba26797340d490449e3c021f97ecc3144db5970be82a79e64e6fb4"
+  },
+  {
+   "seed": 2003000198,
+   "n_nodes": 7,
+   "n_edges": 10,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "181bd092a856b847276d37c319b87257480e260255aa5130d68bf7ff48b5f67e"
+  },
+  {
+   "seed": 2003000199,
+   "n_nodes": 6,
+   "n_edges": 6,
+   "family": "linear_gauss_eqvar_raw",
+   "noise": "gaussian",
+   "target_class": "dag",
+   "sha256": "633b360ad120466cb119aaf4127c2258f7700bc9a0a1df495af594944f28d87f"
+  }
+ ]
+}

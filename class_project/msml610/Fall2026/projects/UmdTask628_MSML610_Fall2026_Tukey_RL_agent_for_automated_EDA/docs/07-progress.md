@@ -4,8 +4,8 @@
 
 | Part                         | Status                                   | PR               |
 | :--------------------------- | :--------------------------------------- | :--------------- |
-| Plan and docs                | Drafted                                  | `PR_P1`          |
-| M1-M2: environment, scoring  | First version built; to revalidate       | `PR_B1`          |
+| Plan and docs                | Merged (#865)                            | `PR_P1`          |
+| M1-M2: environment, scoring  | Revalidated; in review                   | `PR_B1`          |
 | M3: RLVR training            | First version built; to revalidate       | `PR_R1`          |
 | M4: curriculum, sim-to-real  | First version built; to revalidate       | `PR_G1`, `PR_G2` |
 | Open research questions      | Open, see [`04-plan.md`](04-plan.md)     | `PR_X1`, `PR_X2` |
@@ -20,7 +20,9 @@
 - A tool policy and graph decoder trained per
   [`D8`](03-decisions.md#d8-behaviour-cloning-then-reinforce); the curriculum,
   noise and real-data studies
-- Last full check: Oct 16, fresh clone, 371 tests passed, notebooks ran
+- Last full check of all four milestones: Oct 16, fresh clone, 371 tests
+  passed, notebooks ran; Milestones 1-2 rechecked Nov 15 for `PR_B1` (169 tests,
+  both notebooks)
 
 ## Findings
 
@@ -61,7 +63,7 @@
 
 ## Next
 
-1. `PR_B1`, with the full tests and the Docker build rerun
+1. `PR_R1` (Milestone 3), with its tests and the Docker build rerun
 2. Reviewers' answer on `D1` and `D2`; team roles confirmed
 3. Research Google Doc, linked from #628
 
@@ -72,6 +74,16 @@
 | 2026-10-13 | Opened #628; opened and closed #629 (93 files, too large)  |
 | 2026-10-16 | First version of M1-M4 runs locally; 371 tests passed      |
 | 2026-11-04 | Drafted `PR_P1`; decisions `D1`-`D9`                       |
+| 2026-11-09 | `PR_P1` merged (#865)                                      |
+| 2026-11-11 | `PR_B1` revalidated on current master: 144 tests passed,   |
+|            | both notebooks ran in a fresh image                        |
+| 2026-11-12 | `PR_B1` trimmed after a code review: 151 tests passed,     |
+|            | both notebooks ran; torch and later-milestone manifests    |
+|            | move to the PRs that use them                              |
+|            | `tukey_results.py` regenerates the manifests and           |
+|            | `results/m1`, `results/m2`                                 |
+| 2026-11-15 | `PR_B1` fixed after a second code review: 169 tests        |
+|            | passed, both notebooks ran; current master merged in       |
 
 - Note: the docs were drafted with AI assistance; the authors check and explain
   every line
