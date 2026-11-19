@@ -73,14 +73,14 @@ Chandrashekar), tracked in
 
 ## Structure of the Dir
 
-| Dir                       | Description                                                                        |
-| :------------------------ | :--------------------------------------------------------------------------------- |
-| `data/`                   | SWE-bench Verified snapshot, list of the EvalPlus downloads, and the coding scores |
-| `data/coding_runs/`       | Scores of the coding-benchmark solutions, from `score_coding_runs.py`              |
-| `data/coding_runs_pilot/` | Scores of the 20-task pilot                                                        |
-| `data/raw/`               | Downloads and raw model answers, rebuilt by the scripts and not committed          |
-| `docs/`                   | Progress log (`progress.md`) and decisions (`decisions.md`)                        |
-| `test/`                   | Unit tests                                                                         |
+| Dir                       | Description                                                                                 |
+| :------------------------ | :------------------------------------------------------------------------------------------ |
+| `data/`                   | SWE-bench Verified snapshot and the list of the EvalPlus downloads                          |
+| `data/coding_runs/`       | Scores of the coding-benchmark solutions, from `score_coding_runs.py`, kept on Google Drive |
+| `data/coding_runs_pilot/` | Scores of the 20-task pilot, kept on Google Drive                                           |
+| `data/raw/`               | Downloads and raw model answers, rebuilt by the scripts and not committed                   |
+| `docs/`                   | Progress log (`progress.md`) and decisions (`decisions.md`)                                 |
+| `test/`                   | Unit tests                                                                                  |
 
 ## Description of Files
 
@@ -92,6 +92,7 @@ Chandrashekar), tracked in
 | `Dockerfile`                            | Python 3.12 slim image with the packages in the 2 requirements files                                                      | Docker    |
 | `docs/decisions.md`                     | Non-obvious choices, one entry per decision                                                                               | Docs      |
 | `docs/progress.md`                      | Status, built pieces, findings with their evidence, and history                                                           | Docs      |
+| `fetch_coding_scores.py`                | Download the scores of the coding runs from Google Drive into `data/`                                                     | Data      |
 | `fetch_evalplus_data.py`                | Download the EvalPlus datasets and the public EvalPlus samples                                                            | Data      |
 | `fetch_swebench_verified.py`            | Download the public SWE-bench Verified results into `data/`                                                               | Data      |
 | `preregistration.md`                    | Design, analyses, and predictions of the local runs, written before them                                                  | Docs      |
@@ -109,6 +110,7 @@ Chandrashekar), tracked in
 | `skill_vs_luck.runs.py`                 | Jupytext pair of `skill_vs_luck.runs.ipynb`                                                                               | Notebooks |
 | `skill_vs_luck_runs_utils.py`           | Prompts, Ollama client, scoring, and run-level analysis of the coding runs                                                | Library   |
 | `skill_vs_luck_utils.py`                | Data loading, intervals, rank intervals, paired tests, benchmark size, simulation, split-half, winner's curse, IRT, plots | Library   |
+| `test/test_fetch_coding_scores.py`      | Unit tests for `fetch_coding_scores.py`                                                                                   | Tests     |
 | `test/test_skill_vs_luck_runs_utils.py` | Unit tests for `skill_vs_luck_runs_utils.py`                                                                              | Tests     |
 | `test/test_skill_vs_luck_utils.py`      | Unit tests for `skill_vs_luck_utils.py`                                                                                   | Tests     |
 | `version.sh`                            | Print the package versions inside the image                                                                               | Docker    |
@@ -157,6 +159,27 @@ Chandrashekar), tracked in
 - Print the debug logs while building:
   ```bash
   > ./fetch_swebench_verified.py --dst_dir data --overwrite -v DEBUG
+  ```
+
+## `fetch_coding_scores.py`
+
+### What It Does
+
+- Downloads the scores of the coding runs (the 88 `.csv.gz` files of
+  `data/coding_runs/` and `data/coding_runs_pilot/`) as 1 archive from the
+  [Google Drive folder of the project](https://drive.google.com/drive/folders/1rgI_x5rfX9HXiP0kZUHfyq2Zg8WWuV4y),
+  since they are not kept in the repo
+- Checks the SHA-256 of the archive, so the notebooks read the same scores they
+  were run on
+- Keeps the archive in `data/raw/`, and downloads it again only if it is
+  missing or different
+- Extracts only plain files, and only into the 2 score dirs
+
+### Examples
+
+- Download and extract the scores inside the container (needs internet):
+  ```bash
+  > ./docker_cmd.sh "cd /git_root/class_project/msml610/Fall2026/projects/UmdTask716_MSML610_Fall2026_Skill_vs_Luck_in_Agent_Benchmarks && python fetch_coding_scores.py"
   ```
 
 ## `fetch_evalplus_data.py`
@@ -268,9 +291,11 @@ Chandrashekar), tracked in
 
 ## Run the Notebooks
 
-- Build the image and start Jupyter, from this dir:
+- Build the image, download the scores that `skill_vs_luck.runs.ipynb` reads
+  (see `fetch_coding_scores.py`), and start Jupyter, from this dir:
   ```bash
   > ./docker_build.sh
+  > ./docker_cmd.sh "cd /git_root/class_project/msml610/Fall2026/projects/UmdTask716_MSML610_Fall2026_Skill_vs_Luck_in_Agent_Benchmarks && python fetch_coding_scores.py"
   > ./docker_jupyter.sh
   ```
 

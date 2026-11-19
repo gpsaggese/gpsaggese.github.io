@@ -7,3 +7,6 @@ tmp.*
 docker_build.version.log
 # Raw downloads (large, untrusted code samples), rebuilt by the fetch scripts.
 data/raw/
+# Scores of the coding runs, on Google Drive, see `fetch_coding_scores.py`.
+data/coding_runs/
+data/coding_runs_pilot/
