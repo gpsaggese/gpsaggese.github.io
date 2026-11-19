@@ -1,0 +1,729 @@
+{
+  "split": "test",
+  "dataset_sha256": "ed073d72c5cdda159fff9541dbbc639b3820d15904c93e627e4488f81e47177b",
+  "model_repository": "LiquidAI/d1-3B-GGUF",
+  "model_revision": "bb1e436ea78eb96a3f1acb6da865f70c2fbeb563",
+  "model_file": "d1-3B-Q8_0.gguf",
+  "model_sha256": "2f0942d5a5f64cf69c3356d2be439b71644b1f0eb3a580912a5a0179eeaba77d",
+  "llama_cpp_commit": "8956c769e8ababd9fbd89c81764f241d5f515d68",
+  "prompt_version": "support-route-v1",
+  "question": {
+    "route": {
+      "type": "choice",
+      "instructions": "Which team should handle this customer request?",
+      "criteria": {
+        "billing": "Payments and refunds",
+        "shipping": "Delivery and tracking",
+        "technical": "Product or account malfunction"
+      }
+    }
+  },
+  "action_costs": {
+    "billing": {
+      "billing": 0.0,
+      "shipping": 5.0,
+      "technical": 7.0
+    },
+    "shipping": {
+      "billing": 8.0,
+      "shipping": 0.0,
+      "technical": 6.0
+    },
+    "technical": {
+      "billing": 8.0,
+      "shipping": 6.0,
+      "technical": 0.0
+    },
+    "review": {
+      "billing": 1.5,
+      "shipping": 1.5,
+      "technical": 1.5
+    }
+  },
+  "records": [
+    {
+      "id": "B-T-01",
+      "true_route": "billing",
+      "text": "I see two pending charges for one purchase and need the duplicate reversed.",
+      "probabilities": {
+        "billing": 0.976130194114115,
+        "shipping": 0.006087669815751612,
+        "technical": 0.01778213607013332
+      },
+      "top_route": "billing",
+      "policy_action": "billing",
+      "expected_costs": {
+        "billing": 0.1549133015696913,
+        "shipping": 7.91573436933372,
+        "technical": 7.845567571807429,
+        "review": 1.4999999999999998
+      },
+      "seconds": 1.457
+    },
+    {
+      "id": "B-T-02",
+      "true_route": "billing",
+      "text": "Please send an itemized bill for the equipment I bought last week.",
+      "probabilities": {
+        "billing": 0.7926161990358881,
+        "shipping": 0.04317489371644836,
+        "technical": 0.16420890724766346
+      },
+      "top_route": "billing",
+      "policy_action": "billing",
+      "expected_costs": {
+        "billing": 1.365336819315886,
+        "shipping": 7.326183035773085,
+        "technical": 6.5999789545857945,
+        "review": 1.5
+      },
+      "seconds": 1.368
+    },
+    {
+      "id": "B-T-03",
+      "true_route": "billing",
+      "text": "My trial ended early and I was billed before the date shown in my account.",
+      "probabilities": {
+        "billing": 0.9522039033093228,
+        "shipping": 0.006032924691672045,
+        "technical": 0.04176317199900497
+      },
+      "top_route": "billing",
+      "policy_action": "billing",
+      "expected_costs": {
+        "billing": 0.32250682745139503,
+        "shipping": 7.868210258468612,
+        "technical": 7.653828774624615,
+        "review": 1.4999999999999998
+      },
+      "seconds": 1.371
+    },
+    {
+      "id": "B-T-04",
+      "true_route": "billing",
+      "text": "I returned the item but have not received the promised refund.",
+      "probabilities": {
+        "billing": 0.9730129407596374,
+        "shipping": 0.007902478181721259,
+        "technical": 0.019084581058641352
+      },
+      "top_route": "billing",
+      "policy_action": "billing",
+      "expected_costs": {
+        "billing": 0.17310445831909577,
+        "shipping": 7.8986110124289475,
+        "technical": 7.831518395167427,
+        "review": 1.5
+      },
+      "seconds": 1.413
+    },
+    {
+      "id": "B-T-05",
+      "true_route": "billing",
+      "text": "Can you apply my credit balance to the next invoice?",
+      "probabilities": {
+        "billing": 0.9663749370976388,
+        "shipping": 0.007043250669089432,
+        "technical": 0.026581812233271877
+      },
+      "top_route": "billing",
+      "policy_action": "billing",
+      "expected_costs": {
+        "billing": 0.22128893897835028,
+        "shipping": 7.890490370180742,
+        "technical": 7.773259000795647,
+        "review": 1.5000000000000002
+      },
+      "seconds": 1.456
+    },
+    {
+      "id": "B-T-06",
+      "true_route": "billing",
+      "text": "The receipt lists the wrong currency for this payment.",
+      "probabilities": {
+        "billing": 0.9342022007162947,
+        "shipping": 0.008043600839112135,
+        "technical": 0.057754198444593265
+      },
+      "top_route": "billing",
+      "policy_action": "billing",
+      "expected_costs": {
+        "billing": 0.44449739330771354,
+        "shipping": 7.820142796397917,
+        "technical": 7.5218792107650305,
+        "review": 1.5000000000000002
+      },
+      "seconds": 1.387
+    },
+    {
+      "id": "B-T-07",
+      "true_route": "billing",
+      "text": "Please update the business address printed on future invoices.",
+      "probabilities": {
+        "billing": 0.5846802665262428,
+        "shipping": 0.07627184459853442,
+        "technical": 0.3390478888752227
+      },
+      "top_route": "billing",
+      "policy_action": "review",
+      "expected_costs": {
+        "billing": 2.754694445119231,
+        "shipping": 6.7117294654612785,
+        "technical": 5.135073199801149,
+        "review": 1.5
+      },
+      "seconds": 1.36
+    },
+    {
+      "id": "B-T-08",
+      "true_route": "billing",
+      "text": "My subscription fee went up unexpectedly. Explain the new charge.",
+      "probabilities": {
+        "billing": 0.7351329257518078,
+        "shipping": 0.006710225600927786,
+        "technical": 0.25815684864726435
+      },
+      "top_route": "billing",
+      "policy_action": "review",
+      "expected_costs": {
+        "billing": 1.8406490685354895,
+        "shipping": 7.430004497898048,
+        "technical": 5.921324759620029,
+        "review": 1.5
+      },
+      "seconds": 1.372
+    },
+    {
+      "id": "B-T-09",
+      "true_route": "billing",
+      "text": "I need to dispute a purchase that I did not authorize.",
+      "probabilities": {
+        "billing": 0.9658235150484458,
+        "shipping": 0.005741912215084284,
+        "technical": 0.028434572736469838
+      },
+      "top_route": "billing",
+      "policy_action": "billing",
+      "expected_costs": {
+        "billing": 0.22775157023071027,
+        "shipping": 7.897195556806385,
+        "technical": 7.761039593678072,
+        "review": 1.4999999999999998
+      },
+      "seconds": 1.299
+    },
+    {
+      "id": "B-T-10",
+      "true_route": "billing",
+      "text": "The shipment is delayed but my main request is a refund for the delivery fee.",
+      "probabilities": {
+        "billing": 0.9657762091156038,
+        "shipping": 0.0228501883791635,
+        "technical": 0.011373602505232738
+      },
+      "top_route": "billing",
+      "policy_action": "billing",
+      "expected_costs": {
+        "billing": 0.19386615943244667,
+        "shipping": 7.794451287956226,
+        "technical": 7.863310803199812,
+        "review": 1.5
+      },
+      "seconds": 1.552
+    },
+    {
+      "id": "B-T-11",
+      "true_route": "billing",
+      "text": "The app works now. Please correct the amount charged during the outage.",
+      "probabilities": {
+        "billing": 0.9509909611002182,
+        "shipping": 0.006087926246228668,
+        "technical": 0.042921112653553146
+      },
+      "top_route": "billing",
+      "policy_action": "billing",
+      "expected_costs": {
+        "billing": 0.3308874198060154,
+        "shipping": 7.865454364723065,
+        "technical": 7.644455246279118,
+        "review": 1.5
+      },
+      "seconds": 1.385
+    },
+    {
+      "id": "B-T-12",
+      "true_route": "billing",
+      "text": "Why was my card billed after the cancellation confirmation?",
+      "probabilities": {
+        "billing": 0.9588717016338951,
+        "shipping": 0.006852700833206753,
+        "technical": 0.034275597532898036
+      },
+      "top_route": "billing",
+      "policy_action": "billing",
+      "expected_costs": {
+        "billing": 0.27419268689632004,
+        "shipping": 7.876627198268549,
+        "technical": 7.712089818070401,
+        "review": 1.4999999999999998
+      },
+      "seconds": 1.391
+    },
+    {
+      "id": "S-T-01",
+      "true_route": "shipping",
+      "text": "The courier says my address is incomplete. How can I correct it?",
+      "probabilities": {
+        "billing": 0.013111796483832953,
+        "shipping": 0.9542092640240438,
+        "technical": 0.03267893949212316
+      },
+      "top_route": "shipping",
+      "policy_action": "shipping",
+      "expected_costs": {
+        "billing": 4.999798896565081,
+        "shipping": 0.3009680088234026,
+        "technical": 5.830149956014926,
+        "review": 1.4999999999999998
+      },
+      "seconds": 1.45
+    },
+    {
+      "id": "S-T-02",
+      "true_route": "shipping",
+      "text": "When will the second parcel in my order be delivered?",
+      "probabilities": {
+        "billing": 0.005349698594132663,
+        "shipping": 0.9867643290281563,
+        "technical": 0.007885972377711109
+      },
+      "top_route": "shipping",
+      "policy_action": "shipping",
+      "expected_costs": {
+        "billing": 4.989023451784759,
+        "shipping": 0.09011342301932795,
+        "technical": 5.963383562921999,
+        "review": 1.5
+      },
+      "seconds": 1.379
+    },
+    {
+      "id": "S-T-03",
+      "true_route": "shipping",
+      "text": "Tracking shows the box stuck at a sorting center for four days.",
+      "probabilities": {
+        "billing": 0.008631278600570773,
+        "shipping": 0.9733372533054789,
+        "technical": 0.018031468093950304
+      },
+      "top_route": "shipping",
+      "policy_action": "shipping",
+      "expected_costs": {
+        "billing": 4.992906543185047,
+        "shipping": 0.17723903736826802,
+        "technical": 5.90907374863744,
+        "review": 1.5000000000000002
+      },
+      "seconds": 1.399
+    },
+    {
+      "id": "S-T-04",
+      "true_route": "shipping",
+      "text": "The driver left the package at another apartment. Please help locate it.",
+      "probabilities": {
+        "billing": 0.006332819758460559,
+        "shipping": 0.9834155575621375,
+        "technical": 0.01025162267940184
+      },
+      "top_route": "shipping",
+      "policy_action": "shipping",
+      "expected_costs": {
+        "billing": 4.988839146566501,
+        "shipping": 0.11217229414409552,
+        "technical": 5.951155903440509,
+        "review": 1.4999999999999998
+      },
+      "seconds": 1.52
+    },
+    {
+      "id": "S-T-05",
+      "true_route": "shipping",
+      "text": "Can you hold my delivery at a pickup point instead?",
+      "probabilities": {
+        "billing": 0.007941592619479788,
+        "shipping": 0.9837572825438902,
+        "technical": 0.008301124836630203
+      },
+      "top_route": "shipping",
+      "policy_action": "shipping",
+      "expected_costs": {
+        "billing": 4.976894286575862,
+        "shipping": 0.11333948997561952,
+        "technical": 5.966076436219179,
+        "review": 1.5000000000000002
+      },
+      "seconds": 1.367
+    },
+    {
+      "id": "S-T-06",
+      "true_route": "shipping",
+      "text": "I need proof of delivery for the parcel sent yesterday.",
+      "probabilities": {
+        "billing": 0.0072817355627791186,
+        "shipping": 0.9839971984783876,
+        "technical": 0.008721065958833402
+      },
+      "top_route": "shipping",
+      "policy_action": "shipping",
+      "expected_costs": {
+        "billing": 4.9810334541037715,
+        "shipping": 0.11058028025523337,
+        "technical": 5.962237075372559,
+        "review": 1.5000000000000002
+      },
+      "seconds": 1.23
+    },
+    {
+      "id": "S-T-07",
+      "true_route": "shipping",
+      "text": "The package was returned to sender before I could receive it.",
+      "probabilities": {
+        "billing": 0.511039286417523,
+        "shipping": 0.40229774388109063,
+        "technical": 0.08666296970138627
+      },
+      "top_route": "billing",
+      "policy_action": "review",
+      "expected_costs": {
+        "billing": 2.618129507315157,
+        "shipping": 4.608292109548502,
+        "technical": 6.502100754626728,
+        "review": 1.5
+      },
+      "seconds": 1.338
+    },
+    {
+      "id": "S-T-08",
+      "true_route": "shipping",
+      "text": "Please tell me which carrier has my order now.",
+      "probabilities": {
+        "billing": 0.00946551310274396,
+        "shipping": 0.9798306250789671,
+        "technical": 0.010703861818288885
+      },
+      "top_route": "shipping",
+      "policy_action": "shipping",
+      "expected_costs": {
+        "billing": 4.974080158122858,
+        "shipping": 0.13994727573168497,
+        "technical": 5.954707855295754,
+        "review": 1.5
+      },
+      "seconds": 1.29
+    },
+    {
+      "id": "S-T-09",
+      "true_route": "shipping",
+      "text": "The box came with a broken seal. How do I file a shipping damage report?",
+      "probabilities": {
+        "billing": 0.07533537970720174,
+        "shipping": 0.7230386155061213,
+        "technical": 0.20162600478667703
+      },
+      "top_route": "shipping",
+      "policy_action": "review",
+      "expected_costs": {
+        "billing": 5.026575111037346,
+        "shipping": 1.8124390663776762,
+        "technical": 4.940914730694341,
+        "review": 1.5
+      },
+      "seconds": 1.453
+    },
+    {
+      "id": "S-T-10",
+      "true_route": "shipping",
+      "text": "The price is correct but the item was sent to my old address. Redirect it.",
+      "probabilities": {
+        "billing": 0.02527804016780111,
+        "shipping": 0.8528666991780142,
+        "technical": 0.12185526065418463
+      },
+      "top_route": "shipping",
+      "policy_action": "shipping",
+      "expected_costs": {
+        "billing": 5.117320320469363,
+        "shipping": 0.9333558852675167,
+        "technical": 5.319424516410494,
+        "review": 1.4999999999999998
+      },
+      "seconds": 1.577
+    },
+    {
+      "id": "S-T-11",
+      "true_route": "shipping",
+      "text": "The app shows no delivery updates. I need the actual courier status.",
+      "probabilities": {
+        "billing": 0.005543447677446497,
+        "shipping": 0.9767142040602537,
+        "technical": 0.017742348262299843
+      },
+      "top_route": "shipping",
+      "policy_action": "shipping",
+      "expected_costs": {
+        "billing": 5.0077674581373675,
+        "shipping": 0.15080167099337105,
+        "technical": 5.904632805781095,
+        "review": 1.5000000000000002
+      },
+      "seconds": 1.403
+    },
+    {
+      "id": "S-T-12",
+      "true_route": "shipping",
+      "text": "I need to schedule the delivery for a day when someone is home.",
+      "probabilities": {
+        "billing": 0.006472190061595427,
+        "shipping": 0.9862128434058481,
+        "technical": 0.0073149665325564625
+      },
+      "top_route": "shipping",
+      "policy_action": "shipping",
+      "expected_costs": {
+        "billing": 4.9822689827571365,
+        "shipping": 0.09566731968810219,
+        "technical": 5.9690545809278515,
+        "review": 1.5
+      },
+      "seconds": 1.469
+    },
+    {
+      "id": "T-T-01",
+      "true_route": "technical",
+      "text": "The app keeps logging me out after a few seconds.",
+      "probabilities": {
+        "billing": 0.01186921722660805,
+        "shipping": 0.008584476651900702,
+        "technical": 0.9795463061214913
+      },
+      "top_route": "technical",
+      "policy_action": "technical",
+      "expected_costs": {
+        "billing": 6.899746526109942,
+        "shipping": 5.972231574541812,
+        "technical": 0.14646059772426862,
+        "review": 1.5
+      },
+      "seconds": 1.25
+    },
+    {
+      "id": "T-T-02",
+      "true_route": "technical",
+      "text": "I get a server error when I try to save my profile.",
+      "probabilities": {
+        "billing": 0.010813858965876109,
+        "shipping": 0.00820399003186997,
+        "technical": 0.9809821510022539
+      },
+      "top_route": "technical",
+      "policy_action": "technical",
+      "expected_costs": {
+        "billing": 6.907895007175127,
+        "shipping": 5.972403777740532,
+        "technical": 0.1357348119182287,
+        "review": 1.5
+      },
+      "seconds": 1.335
+    },
+    {
+      "id": "T-T-03",
+      "true_route": "technical",
+      "text": "My account is locked even after I enter the correct recovery code.",
+      "probabilities": {
+        "billing": 0.016230144929261017,
+        "shipping": 0.008370345254316685,
+        "technical": 0.9753995098164222
+      },
+      "top_route": "technical",
+      "policy_action": "technical",
+      "expected_costs": {
+        "billing": 6.869648294986539,
+        "shipping": 5.982238218332621,
+        "technical": 0.18006323095998825,
+        "review": 1.4999999999999998
+      },
+      "seconds": 1.234
+    },
+    {
+      "id": "T-T-04",
+      "true_route": "technical",
+      "text": "The device will not pair with Bluetooth after the update.",
+      "probabilities": {
+        "billing": 0.026799871550628972,
+        "shipping": 0.017250243568996654,
+        "technical": 0.9559498848803742
+      },
+      "top_route": "technical",
+      "policy_action": "technical",
+      "expected_costs": {
+        "billing": 6.777900412007604,
+        "shipping": 5.950098281687278,
+        "technical": 0.3179004338190117,
+        "review": 1.4999999999999998
+      },
+      "seconds": 1.289
+    },
+    {
+      "id": "T-T-05",
+      "true_route": "technical",
+      "text": "Please fix the broken link in the account activation email.",
+      "probabilities": {
+        "billing": 0.03180295400681407,
+        "shipping": 0.01697295013373216,
+        "technical": 0.9512240958594538
+      },
+      "top_route": "technical",
+      "policy_action": "technical",
+      "expected_costs": {
+        "billing": 6.743433421684838,
+        "shipping": 5.961768207211236,
+        "technical": 0.35626133285690553,
+        "review": 1.5000000000000002
+      },
+      "seconds": 1.32
+    },
+    {
+      "id": "T-T-06",
+      "true_route": "technical",
+      "text": "The desktop client cannot sync my files anymore.",
+      "probabilities": {
+        "billing": 0.01576972622227261,
+        "shipping": 0.015550815516278373,
+        "technical": 0.968679458261449
+      },
+      "top_route": "technical",
+      "policy_action": "technical",
+      "expected_costs": {
+        "billing": 6.858510285411534,
+        "shipping": 5.938234559346874,
+        "technical": 0.21946270287585112,
+        "review": 1.4999999999999998
+      },
+      "seconds": 1.328
+    },
+    {
+      "id": "T-T-07",
+      "true_route": "technical",
+      "text": "I cannot see any images in the product dashboard.",
+      "probabilities": {
+        "billing": 0.020463956723389645,
+        "shipping": 0.02076264082608726,
+        "technical": 0.9587734024505231
+      },
+      "top_route": "technical",
+      "policy_action": "technical",
+      "expected_costs": {
+        "billing": 6.815227021284098,
+        "shipping": 5.916352068490256,
+        "technical": 0.28828749874364074,
+        "review": 1.5
+      },
+      "seconds": 1.258
+    },
+    {
+      "id": "T-T-08",
+      "true_route": "technical",
+      "text": "My verification code never arrives when I try to log in.",
+      "probabilities": {
+        "billing": 0.023752898224070406,
+        "shipping": 0.012660216497927722,
+        "technical": 0.963586885278002
+      },
+      "top_route": "technical",
+      "policy_action": "technical",
+      "expected_costs": {
+        "billing": 6.808409279435652,
+        "shipping": 5.971544497460576,
+        "technical": 0.2659844847801296,
+        "review": 1.5000000000000002
+      },
+      "seconds": 1.342
+    },
+    {
+      "id": "T-T-09",
+      "true_route": "technical",
+      "text": "The order page is stuck on a spinning icon before payment.",
+      "probabilities": {
+        "billing": 0.8634093444665075,
+        "shipping": 0.010662647593870785,
+        "technical": 0.12592800793962153
+      },
+      "top_route": "billing",
+      "policy_action": "billing",
+      "expected_costs": {
+        "billing": 0.9348092935467046,
+        "shipping": 7.66284280336979,
+        "technical": 6.971250641295285,
+        "review": 1.4999999999999998
+      },
+      "seconds": 1.334
+    },
+    {
+      "id": "T-T-10",
+      "true_route": "technical",
+      "text": "The delivery arrived but the setup wizard fails at step three.",
+      "probabilities": {
+        "billing": 0.02825091774083785,
+        "shipping": 0.2444832786683385,
+        "technical": 0.7272658035908236
+      },
+      "top_route": "technical",
+      "policy_action": "review",
+      "expected_costs": {
+        "billing": 6.313277018477458,
+        "shipping": 4.589602163471644,
+        "technical": 1.6929070139367337,
+        "review": 1.4999999999999998
+      },
+      "seconds": 1.353
+    },
+    {
+      "id": "T-T-11",
+      "true_route": "technical",
+      "text": "The billing page crashes when I try to download my invoice.",
+      "probabilities": {
+        "billing": 0.5014218383010658,
+        "shipping": 0.01381474769533843,
+        "technical": 0.48476341400359574
+      },
+      "top_route": "billing",
+      "policy_action": "review",
+      "expected_costs": {
+        "billing": 3.462417636501862,
+        "shipping": 6.919955190430101,
+        "technical": 4.094263192580557,
+        "review": 1.5
+      },
+      "seconds": 1.418
+    },
+    {
+      "id": "T-T-12",
+      "true_route": "technical",
+      "text": "The firmware update repeats forever and never finishes.",
+      "probabilities": {
+        "billing": 0.02313360608510429,
+        "shipping": 0.016876409567219218,
+        "technical": 0.9599899843476765
+      },
+      "top_route": "technical",
+      "policy_action": "technical",
+      "expected_costs": {
+        "billing": 6.804311938269831,
+        "shipping": 5.945008754766893,
+        "technical": 0.28632730608414964,
+        "review": 1.5
+      },
+      "seconds": 1.366
+    }
+  ]
+}

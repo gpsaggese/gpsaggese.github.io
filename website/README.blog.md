@@ -14,10 +14,22 @@
 
 ## Ready for Review
 
-- 2026-10-19: `website/docs/blog/posts/in_60_mins.GluonTS.md`
+- 2026-10-31: `website/docs/blog/posts/in_60_mins.GluonTS.md`
+  - Prepared for publication (`draft: false`); GP approval and deployment are
+    pending.
+  - GP approved Ibrahim Ahmed Mohammed as an author; byline and acknowledgment
+    added. Other coauthor profile details await GP.
 - 2026-10-19: `website/docs/blog/posts/in_5_mins.helpers_render_images.md`
 
 Total: 2 posts ready for review
+
+## To Update
+- [ ] Update in_10_mins.helpers_open_md.md with
+  helpers_root/dev_scripts_helpers/documentation/open_md.README.md
+
+## To Create
+
+- [ ] helpers_root/dev_scripts_helpers/documentation/summarize_md.README.md
 
 ## Published Blogs
 
@@ -221,80 +233,3 @@ python.invoke.txt
 | `website/docs/blog/posts/draft.how_to.Claude_Code_and_tmux.md` | 19 | 5% | Just a raw link |
 
 Total: 55 draft blogs
-
-# Publishing Checklist
-
-- Create
-  ```bash
-  claude> /blog.create_from_notes XYZ
-  ```
-
-- Set the target
-  ```bash
-  FILE="..."
-  echo "Processing $FILE ..."
-  MODEL="--model deepseek/deepseek-v4-flash"
-  MODEL=""
-  ```
-
-- Make sure there are no TODOs
-  ```bash
-  > cc -p "/coding.todoai_gp $FILE"
-  ```
-
-- Detect and remove AI slop, if any
-  ```bash
-  > cc -p "/blog.humanize $FILE"
-  ```
-
-- Add links to rest of the blogs
-  ```bash
-  > cc -p "/blog.add_links $FILE"
-  ```
-
-- To lint the text use
-  ```
-  > website/format_blog.sh <FILE>
-  ```
-
-- Render
-  ```
-  > render_images.py -i website/docs/blog/posts/$FILE
-  > git add ...
-  ```
-
-- Check how it's rendered
-  ```bash
-  > open_md.py --input website/docs/blog/posts/how_to.Render_md_from_terminal.md --mode github
-  ```
-
-- Mark ready for publishing
-  ```bash
-  > website/mark_blog_as_ready.py --file $FILE
-  ```
-
-- Preview the website
-  ```bash
-  > website/preview_website.sh
-  ```
-
-- Fix all the problematic blogs, if any
-  ```
-  > ccp "Run website/preview_website.sh and fix the problems following .claude/skills/blog.rules.md"
-  ```
-
-- Publish the website
-  ```bash
-  > website/publish_website.sh
-  ```
-
-- Update the readme:
-  ```bash
-  > ccp "Execute website/prompt.update_README_blog.md"
-  ```
-
-- Check for dead links
-  ```bash
-  > uvx linkchecker http://127.0.0.1:8000/ 2>&1 | tee linkchecker.log
-  > uvx linkchecker https://gpsaggese.github.io/ 2>&1 | tee linkchecker.log
-  ```

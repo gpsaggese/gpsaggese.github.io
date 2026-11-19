@@ -153,6 +153,20 @@ class Test_select_canaries(hunitest.TestCase):
         first = rnochcan.select_canaries(bank, 42, 9, "private-secret")
         second = rnochcan.select_canaries(bank, 42, 9, "private-secret")
         self.assertEqual(first, second)
+        self.assertEqual(
+            [item.canary_id for item in first],
+            [
+                "math-v1-002",
+                "code-v1-004",
+                "logic-v1-000",
+                "math-v1-004",
+                "code-v1-000",
+                "logic-v1-004",
+                "math-v1-001",
+                "code-v1-002",
+                "logic-v1-001",
+            ],
+        )
         self.assertEqual(len({item.canary_id for item in first}), 9)
         counts = {
             family: sum(item.family == family for item in first)
@@ -168,3 +182,18 @@ class Test_select_canaries(hunitest.TestCase):
         first = rnochcan.select_canaries(bank, 1, 5, "private-secret")
         second = rnochcan.select_canaries(bank, 2, 5, "private-secret")
         self.assertNotEqual(first, second)
+
+    def test3(self) -> None:
+        """
+        Test an opaque monitoring key is repeatable and contract-independent.
+        """
+        bank = tuple(_canary("math-v1-%03d" % i) for i in range(20))
+        first = rnochcan.select_canaries_for_key(
+            bank, "monitoring-run:7", 5, "private-secret"
+        )
+        second = rnochcan.select_canaries_for_key(
+            bank, "monitoring-run:7", 5, "private-secret"
+        )
+        contract = rnochcan.select_canaries(bank, 7, 5, "private-secret")
+        self.assertEqual(first, second)
+        self.assertNotEqual(first, contract)

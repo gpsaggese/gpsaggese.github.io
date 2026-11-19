@@ -1,0 +1,379 @@
+{
+  "endpoint": "http://127.0.0.1:18089/v1/systemone",
+  "cases": [
+    {
+      "name": "text_multi",
+      "seconds": 3.058,
+      "request": {
+        "state": "Customer: My card was charged twice. Please refund the second charge today.",
+        "questions": {
+          "route": {
+            "type": "choice",
+            "instructions": "Which team should handle this customer request?",
+            "criteria": {
+              "billing": "Payments and refunds",
+              "shipping": "Delivery and tracking",
+              "technical": "Product or account malfunction"
+            }
+          },
+          "refund_requested": {
+            "type": "noul",
+            "instructions": "Does the customer explicitly request a refund?"
+          },
+          "urgency": {
+            "type": "score",
+            "instructions": "How urgently does this need a reply?",
+            "criteria": [
+              "can wait",
+              "this week",
+              "today",
+              "immediately"
+            ]
+          }
+        }
+      },
+      "response": {
+        "model": "/tmp/UmdTask589_model/d1-3B-Q8_0.gguf",
+        "answers": {
+          "route": {
+            "type": "choice",
+            "choice": "billing",
+            "probabilities": {
+              "billing": 0.9846206120517036,
+              "shipping": 0.005291214029492989,
+              "technical": 0.01008817391880339
+            },
+            "confidence": 0.9769309180775554
+          },
+          "refund_requested": {
+            "type": "noul",
+            "noul": 0.966362291187114
+          },
+          "urgency": {
+            "type": "score",
+            "score": 2.064253210943235,
+            "legend": {
+              "0": "can wait",
+              "1": "this week",
+              "2": "today",
+              "3": "immediately"
+            },
+            "probabilities": {
+              "0": 0.0035569079786530833,
+              "1": 0.005664496046239485,
+              "2": 0.9137470730283264,
+              "3": 0.07703152294678094
+            },
+            "confidence": 0.9101901650496734
+          }
+        },
+        "usage": {
+          "input_tokens": 161,
+          "output_tokens": 0
+        }
+      }
+    },
+    {
+      "name": "json_multi",
+      "seconds": 3.827,
+      "request": {
+        "state": {
+          "channel": "email",
+          "message": "Customer: My card was charged twice. Please refund the second charge today.",
+          "priority": "standard"
+        },
+        "questions": {
+          "route": {
+            "type": "choice",
+            "instructions": "Which team should handle this customer request?",
+            "criteria": {
+              "billing": "Payments and refunds",
+              "shipping": "Delivery and tracking",
+              "technical": "Product or account malfunction"
+            }
+          },
+          "refund_requested": {
+            "type": "noul",
+            "instructions": "Does the customer explicitly request a refund?"
+          },
+          "urgency": {
+            "type": "score",
+            "instructions": "How urgently does this need a reply?",
+            "criteria": [
+              "can wait",
+              "this week",
+              "today",
+              "immediately"
+            ]
+          }
+        }
+      },
+      "response": {
+        "model": "/tmp/UmdTask589_model/d1-3B-Q8_0.gguf",
+        "answers": {
+          "route": {
+            "type": "choice",
+            "choice": "billing",
+            "probabilities": {
+              "billing": 0.9837440535167298,
+              "shipping": 0.005359766956696826,
+              "technical": 0.010896179526573353
+            },
+            "confidence": 0.9756160802750945
+          },
+          "refund_requested": {
+            "type": "noul",
+            "noul": 0.9618067345314869
+          },
+          "urgency": {
+            "type": "score",
+            "score": 2.0357604056444973,
+            "legend": {
+              "0": "can wait",
+              "1": "this week",
+              "2": "today",
+              "3": "immediately"
+            },
+            "probabilities": {
+              "0": 0.005066728597837513,
+              "1": 0.008572889036078295,
+              "2": 0.9318936304898334,
+              "3": 0.05446675187625072
+            },
+            "confidence": 0.9268269018919959
+          }
+        },
+        "usage": {
+          "input_tokens": 224,
+          "output_tokens": 0
+        }
+      }
+    },
+    {
+      "name": "unseen_choice_schema",
+      "seconds": 1.728,
+      "request": {
+        "state": "Customer: My card was charged twice. Please refund the second charge today.",
+        "questions": {
+          "next_step": {
+            "type": "choice",
+            "instructions": "What should the support agent do next?",
+            "criteria": {
+              "investigate_charge": "Check payment records",
+              "request_tracking": "Ask for a parcel tracking number",
+              "reset_password": "Send account reset instructions",
+              "human_review": "Ask a human specialist to decide"
+            }
+          }
+        }
+      },
+      "response": {
+        "model": "/tmp/UmdTask589_model/d1-3B-Q8_0.gguf",
+        "answers": {
+          "next_step": {
+            "type": "choice",
+            "choice": "investigate_charge",
+            "probabilities": {
+              "investigate_charge": 0.9712216076987739,
+              "request_tracking": 0.008191463029059523,
+              "reset_password": 0.005942005141903216,
+              "human_review": 0.01464492413026341
+            },
+            "confidence": 0.9616288102650318
+          }
+        },
+        "usage": {
+          "input_tokens": 70,
+          "output_tokens": 0
+        }
+      }
+    },
+    {
+      "name": "reordered_choice",
+      "seconds": 3.25,
+      "request": {
+        "state": "Customer: My card was charged twice. Please refund the second charge today.",
+        "questions": {
+          "route": {
+            "type": "choice",
+            "instructions": "Which team should handle this customer request?",
+            "criteria": {
+              "technical": "Product or account malfunction",
+              "shipping": "Delivery and tracking",
+              "billing": "Payments and refunds"
+            }
+          },
+          "refund_requested": {
+            "type": "noul",
+            "instructions": "Does the customer explicitly request a refund?"
+          },
+          "urgency": {
+            "type": "score",
+            "instructions": "How urgently does this need a reply?",
+            "criteria": [
+              "can wait",
+              "this week",
+              "today",
+              "immediately"
+            ]
+          }
+        }
+      },
+      "response": {
+        "model": "/tmp/UmdTask589_model/d1-3B-Q8_0.gguf",
+        "answers": {
+          "route": {
+            "type": "choice",
+            "choice": "billing",
+            "probabilities": {
+              "technical": 0.015189145298138274,
+              "shipping": 0.005228843138648617,
+              "billing": 0.9795820115632131
+            },
+            "confidence": 0.9693730173448195
+          },
+          "refund_requested": {
+            "type": "noul",
+            "noul": 0.966362291187114
+          },
+          "urgency": {
+            "type": "score",
+            "score": 2.064253210943235,
+            "legend": {
+              "0": "can wait",
+              "1": "this week",
+              "2": "today",
+              "3": "immediately"
+            },
+            "probabilities": {
+              "0": 0.0035569079786530833,
+              "1": 0.005664496046239485,
+              "2": 0.9137470730283264,
+              "3": 0.07703152294678094
+            },
+            "confidence": 0.9101901650496734
+          }
+        },
+        "usage": {
+          "input_tokens": 161,
+          "output_tokens": 0
+        }
+      }
+    },
+    {
+      "name": "repeated_text_multi",
+      "seconds": 2.896,
+      "request": {
+        "state": "Customer: My card was charged twice. Please refund the second charge today.",
+        "questions": {
+          "route": {
+            "type": "choice",
+            "instructions": "Which team should handle this customer request?",
+            "criteria": {
+              "billing": "Payments and refunds",
+              "shipping": "Delivery and tracking",
+              "technical": "Product or account malfunction"
+            }
+          },
+          "refund_requested": {
+            "type": "noul",
+            "instructions": "Does the customer explicitly request a refund?"
+          },
+          "urgency": {
+            "type": "score",
+            "instructions": "How urgently does this need a reply?",
+            "criteria": [
+              "can wait",
+              "this week",
+              "today",
+              "immediately"
+            ]
+          }
+        }
+      },
+      "response": {
+        "model": "/tmp/UmdTask589_model/d1-3B-Q8_0.gguf",
+        "answers": {
+          "route": {
+            "type": "choice",
+            "choice": "billing",
+            "probabilities": {
+              "billing": 0.9846206120517036,
+              "shipping": 0.005291214029492989,
+              "technical": 0.01008817391880339
+            },
+            "confidence": 0.9769309180775554
+          },
+          "refund_requested": {
+            "type": "noul",
+            "noul": 0.966362291187114
+          },
+          "urgency": {
+            "type": "score",
+            "score": 2.064253210943235,
+            "legend": {
+              "0": "can wait",
+              "1": "this week",
+              "2": "today",
+              "3": "immediately"
+            },
+            "probabilities": {
+              "0": 0.0035569079786530833,
+              "1": 0.005664496046239485,
+              "2": 0.9137470730283264,
+              "3": 0.07703152294678094
+            },
+            "confidence": 0.9101901650496734
+          }
+        },
+        "usage": {
+          "input_tokens": 161,
+          "output_tokens": 0
+        }
+      }
+    },
+    {
+      "name": "single_choice",
+      "seconds": 1.327,
+      "request": {
+        "state": "Customer: My card was charged twice. Please refund the second charge today.",
+        "questions": {
+          "route": {
+            "type": "choice",
+            "instructions": "Which team should handle this customer request?",
+            "criteria": {
+              "billing": "Payments and refunds",
+              "shipping": "Delivery and tracking",
+              "technical": "Product or account malfunction"
+            }
+          }
+        }
+      },
+      "response": {
+        "model": "/tmp/UmdTask589_model/d1-3B-Q8_0.gguf",
+        "answers": {
+          "route": {
+            "type": "choice",
+            "choice": "billing",
+            "probabilities": {
+              "billing": 0.9846206120517036,
+              "shipping": 0.005291214029492989,
+              "technical": 0.01008817391880339
+            },
+            "confidence": 0.9769309180775554
+          }
+        },
+        "usage": {
+          "input_tokens": 60,
+          "output_tokens": 0
+        }
+      }
+    }
+  ],
+  "observations": {
+    "multi_question_count": 3,
+    "option_order_max_probability_change": 0.005100971379334884,
+    "repeat_identical_answers": true,
+    "single_vs_multi_route_identical": true
+  }
+}

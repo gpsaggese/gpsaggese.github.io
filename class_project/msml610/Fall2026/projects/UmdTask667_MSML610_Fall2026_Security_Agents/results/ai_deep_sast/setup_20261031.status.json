@@ -1,0 +1,26 @@
+{
+  "agent": "ai_deep_sast",
+  "run_id": "setup_20261031",
+  "status": "indexed_only",
+  "tool_version": "741a9e025ce0810cf06764f5869e490d1b80278c",
+  "model": "openai/gpt-oss-120b",
+  "started_at": "2026-10-31T16:14:33+00:00",
+  "returncode": 0,
+  "summary": {
+    "target": "/Users/aaditmaniar/Projects/msml610/AI_Security_Agents/results/raw/ai_deep_sast/setup_20261031/cases",
+    "scan_mode": "Brute-force",
+    "phases": {
+      "index": {
+        "files_parsed": 62,
+        "files_skipped": 0,
+        "functions_found": 113,
+        "calls_found": 615,
+        "errors": 0
+      },
+      "coverage_items": 62,
+      "dry_run": true
+    },
+    "success": true,
+    "elapsed_seconds": 0.16
+  }
+}

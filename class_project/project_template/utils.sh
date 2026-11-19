@@ -186,13 +186,13 @@ get_docker_vars_script() {
     # """
     local script_path=$1
     # Find the name of the container.
-    SCRIPT_DIR=$(dirname $script_path)
+    SCRIPT_DIR=$(dirname "$script_path")
     DOCKER_NAME="$SCRIPT_DIR/docker_name.sh"
-    if [[ ! -e $SCRIPT_DIR ]]; then
+    if [[ ! -e "$SCRIPT_DIR" ]]; then
         echo "Can't find $DOCKER_NAME"
         exit -1
     fi;
-    source $DOCKER_NAME
+    source "$DOCKER_NAME"
 }
 
 
@@ -237,7 +237,7 @@ build_container_image() {
         # Build for a single architecture.
         echo "Building for current architecture..."
         OPTS="--progress plain $@"
-        (cd $DIR; $DOCKER_CMD build $OPTS -t $FULL_IMAGE_NAME . 2>&1 | tee ../docker_build.log; exit ${PIPESTATUS[0]})
+        (cd "$DIR"; $DOCKER_CMD build $OPTS -t $FULL_IMAGE_NAME . 2>&1 | tee ../docker_build.log; exit ${PIPESTATUS[0]})
     else
         # Multi-arch builds require docker buildx; force docker CLI.
         echo "Building for multiple architectures..."
@@ -260,7 +260,26 @@ build_container_image() {
     if [ -f docker_build.version.log ]; then
       rm docker_build.version.log
     fi
-    (cd $DIR; $DOCKER_CMD run --rm -it -v $(pwd):/data $FULL_IMAGE_NAME bash -c "/data/version.sh") 2>&1 | tee docker_build.version.log
+    # `-t` needs a TTY. Keep it for interactive builds, and drop it otherwise.
+    local docker_run_flags="--rm -i"
+    if [ -t 0 ]; then
+        docker_run_flags="--rm -it"
+    fi
+    # Git Bash rewrites a mount path that contains a space, and it rewrites an
+    # argument that starts with `/`. `pwd -W` is the Windows path; Linux and
+    # macOS fall back to `pwd`.
+    (
+        cd "$DIR"
+        if host_dir=$(pwd -W 2>/dev/null); then
+            :
+        else
+            host_dir=$(pwd)
+        fi
+        MSYS_NO_PATHCONV=1 $DOCKER_CMD run $docker_run_flags \
+            -v "${host_dir}:/data" \
+            $FULL_IMAGE_NAME \
+            bash -c "bash /data/version.sh"
+    ) 2>&1 | tee docker_build.version.log
     #
     $DOCKER_CMD image ls | grep "$REPO_NAME/$IMAGE_NAME" || true
     rm -rf $DIR

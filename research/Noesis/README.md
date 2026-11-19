@@ -11,9 +11,9 @@
   proxy, with an optional Postgres backend and a Docker Compose deployment
 - See:
   - `docs/README.md` for the index of all docs
-  - `docs/design.architecture.md` for the C4-model architecture
-  - `docs/onboarding.md` to set up, run, and test the MVP gateway
-  - `docs/plan.md` for the protocol implementation roadmap
+  - `docs/02-design.architecture.md` for the C4-model architecture
+  - `docs/09-onboarding.md` to set up, run, and test the MVP gateway
+  - `docs/04-plan.md` for the protocol implementation roadmap
 
 ## Structure of the Dir
 
@@ -25,6 +25,7 @@
 | `docs/`             | All docs: architecture, plans, specs, notes, findings, onboarding   | Docs                |
 | `gateway/`          | OpenAI-compatible gateway and the legacy in-process proxy           | `NoesisServer`      |
 | `market/`           | Call auction and contract dispatch                                  | `NoesisMarket`      |
+| `monitor/`          | Standalone provider/model checks without market contracts           | `NoesisServer`      |
 | `noesis_platform/`  | HTTP service over the market and the proxy, Postgres stores         | `NoesisPlatform`    |
 | `prober/`           | Live calibration and hidden scheduled canary execution              | `NoesisServer`      |
 | `scripts/`          | One-off measurement scripts                                         | Tools               |
@@ -36,6 +37,7 @@
   | :----------------- | :------------------------------------------------ |
   | `common/`, `market/` | nothing in `research.Noesis`                    |
   | `gateway/`         | `common/`                                         |
+  | `monitor/`         | `checker/`, `common/`, provider modules in `gateway/` |
   | `checker/`         | `common/`, `gateway/gateway_providers.py`         |
   | `noesis_platform/` | `market/`, `gateway/passthrough_proxy.py`         |
   | `prober/`          | `checker/`, `common/`, `gateway/`                 |
@@ -58,11 +60,12 @@
 | Command                                                                          | Description                                                  |
 | :------------------------------------------------------------------------------- | :----------------------------------------------------------- |
 | `uvicorn research.Noesis.noesis_platform.main:app`                               | Serve the `NoesisPlatform` HTTP API (in-process, no Docker)  |
-| `uvicorn research.Noesis.gateway.gateway_app:build_default_app --factory`        | Serve the MVP gateway (see `docs/onboarding.md`)             |
+| `uvicorn research.Noesis.gateway.gateway_app:build_default_app --factory`        | Serve the MVP gateway (see `docs/09-onboarding.md`)             |
 | `scripts/spike_openrouter.py`                                                    | Measure pinned OpenRouter providers (`--dry-run` costs nothing) |
 | `scripts/detection_math.py`                                                      | Print violation-rule false-alarm and detection rates         |
 | `python3 -m research.Noesis.prober.prober_cli calibrate ...`                     | Validate or execute live canary calibration                  |
 | `python3 -m research.Noesis.prober.prober_cli probe`                             | Run the scheduled canary worker                              |
+| `python3 -m research.Noesis.monitor.monitor_cli --target PROVIDER=MODEL`          | Validate a standalone monitoring run                         |
 | `devops/docker_run/run_docker_noesis.sh`                                         | Build and run the dockerized API plus a Postgres sidecar     |
 | `invoke run_fast_tests`                                                          | Run the fast unit test suite                                 |
 
@@ -83,7 +86,7 @@
   - `devops/docker_run/run_docker_noesis.sh` brings up `noesis_api` next to a
     `noesis_postgres` sidecar, wired through `NOESIS_DB_BACKEND` and `POSTGRES_*` in
     `devops/compose/docker-compose.noesis.yml`
-- Order-to-contract flow (C3 diagram in `docs/design.architecture.md`)
+- Order-to-contract flow (C3 diagram in `docs/02-design.architecture.md`)
   - `OrderBook.submit_bid()` / `submit_ask()` queue orders in the `OrderBookStore`
   - `OrderBook.clear_round()` buckets orders by tier and clears each one
   - `build_contracts()` turns the tier results into `Contract`s;

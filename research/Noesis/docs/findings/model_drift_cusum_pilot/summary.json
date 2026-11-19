@@ -1,0 +1,84 @@
+{
+  "calibration_false_alarm_rate": 0.01,
+  "execution": {
+    "peak_rss_mb": 29.03125,
+    "wall_time_seconds": 11.539680374989985,
+    "worker_processes": 1
+  },
+  "planned_extension": "Larger calibration across more seeds, baseline levels, baseline uncertainty, family-level changes, and independent multi-day live windows.",
+  "protocol": {
+    "alternative_accuracy": 0.85,
+    "baseline_windows": 5,
+    "calibration_trials": 1000,
+    "healthy_accuracy": 0.95,
+    "observations_per_window": 60,
+    "post_windows": 15,
+    "target_false_alarm_rate": 0.01,
+    "trials_per_scenario": 250
+  },
+  "scenarios": [
+    {
+      "cusum_detection_rate": 0.012,
+      "cusum_median_query": 637,
+      "cusum_p90_query": 876,
+      "fisher_detection_rate": 0.0,
+      "fisher_median_query": null,
+      "fisher_p90_query": null,
+      "scenario_name": "healthy_a_a",
+      "trials": 250
+    },
+    {
+      "cusum_detection_rate": 1.0,
+      "cusum_median_query": 21.0,
+      "cusum_p90_query": 32,
+      "fisher_detection_rate": 1.0,
+      "fisher_median_query": 120.0,
+      "fisher_p90_query": 120,
+      "scenario_name": "full_weak_model_swap",
+      "trials": 250
+    },
+    {
+      "cusum_detection_rate": 1.0,
+      "cusum_median_query": 93.0,
+      "cusum_p90_query": 174,
+      "fisher_detection_rate": 0.904,
+      "fisher_median_query": 240.0,
+      "fisher_p90_query": 600,
+      "scenario_name": "threshold_level_drop",
+      "trials": 250
+    },
+    {
+      "cusum_detection_rate": 1.0,
+      "cusum_median_query": 181.0,
+      "cusum_p90_query": 262,
+      "fisher_detection_rate": 1.0,
+      "fisher_median_query": 300.0,
+      "fisher_p90_query": 420,
+      "scenario_name": "gradual_degradation",
+      "trials": 250
+    },
+    {
+      "cusum_detection_rate": 1.0,
+      "cusum_median_query": 118.0,
+      "cusum_p90_query": 224,
+      "fisher_detection_rate": 0.8,
+      "fisher_median_query": 300.0,
+      "fisher_p90_query": 660,
+      "scenario_name": "partial_substitution_25",
+      "trials": 250
+    },
+    {
+      "cusum_detection_rate": 1.0,
+      "cusum_median_query": 47.0,
+      "cusum_p90_query": 78,
+      "fisher_detection_rate": 1.0,
+      "fisher_median_query": 120.0,
+      "fisher_p90_query": 240,
+      "scenario_name": "partial_substitution_50",
+      "trials": 250
+    }
+  ],
+  "schema_version": "noesis-cusum-pilot-v1",
+  "status": "PRELIMINARY",
+  "threshold": 8.080612311381127
+}

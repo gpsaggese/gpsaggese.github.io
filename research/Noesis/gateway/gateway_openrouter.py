@@ -5,7 +5,7 @@ Every call is pinned (`provider.only=[slug]`, `allow_fallbacks=false`), so the
 answer can only come from the seller's provider. Failures are classified so
 that only real provider failures count against the seller.
 
-This replaces the `PR_S7` placeholder in `plan.md`.
+This replaces the `PR_S7` placeholder in `04-plan.md`.
 
 Import as:
 
@@ -191,20 +191,21 @@ class OpenRouterProvider:
             )
         choices = data.get("choices") or []
         message = (choices[0].get("message") or {}) if choices else {}
-        if "content" not in message:
+        content = message.get("content")
+        if not isinstance(content, str):
             return self._failure(
                 slug,
                 rnogapro.UPSTREAM_ERROR,
                 start,
                 200,
-                "no completion in response",
+                "missing or non-text completion in response",
                 latency_s=latency_s,
                 served_by=data.get("provider"),
             )
         usage = data.get("usage") or {}
         result = rnogapro.ProviderResult(
             status=rnogapro.OK,
-            text=message["content"],
+            text=content,
             served_by=data.get("provider"),
             model_served=data.get("model"),
             prompt_tokens=usage.get("prompt_tokens"),

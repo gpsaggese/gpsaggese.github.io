@@ -1,0 +1,466 @@
+{
+ "rows": [
+  {
+   "branch_id": "br-b08353afb2d7",
+   "checkpoint": "aa3905456d2641c7f28ab191b33e8f3f549c1fbb43d546bb990342c3a9f705ec",
+   "ci95": [
+    0.397,
+    0.892
+   ],
+   "dtz": 3,
+   "n": 10,
+   "spare_plies": 8,
+   "step": 0,
+   "task": "krk-m2-1",
+   "v": 0.7,
+   "wins": 7
+  },
+  {
+   "branch_id": "br-b08353afb2d7",
+   "checkpoint": "17dc1fd8482c061ad8abb70da4f3be819fcff25268f867fd88dbd3678182bff1",
+   "ci95": [
+    0.722,
+    1.0
+   ],
+   "dtz": 1,
+   "n": 10,
+   "spare_plies": 8,
+   "step": 1,
+   "task": "krk-m2-1",
+   "v": 1.0,
+   "wins": 10
+  },
+  {
+   "branch_id": "br-8778e2dc19c9",
+   "checkpoint": "66bcdd5bfba9d78850fd5ef57eb2bb05c79a08e0efc8429f53f557062e04b51e",
+   "ci95": [
+    0.057,
+    0.51
+   ],
+   "dtz": 5,
+   "n": 10,
+   "spare_plies": 8,
+   "step": 0,
+   "task": "krk-m3-1",
+   "v": 0.2,
+   "wins": 2
+  },
+  {
+   "branch_id": "br-8778e2dc19c9",
+   "checkpoint": "f32ff1a83fa3e47e0658377caaca428b71e852c5c2e9213eb9b306e56e293f3f",
+   "ci95": [
+    0.0,
+    0.278
+   ],
+   "dtz": 11,
+   "n": 10,
+   "spare_plies": 0,
+   "step": 1,
+   "task": "krk-m3-1",
+   "v": 0.0,
+   "wins": 0
+  },
+  {
+   "branch_id": "br-40afc5c2d2ad",
+   "checkpoint": "b9fc0d1d1581287fa253bfa33c21b0a67aaa63b8e3fedf0e9cd836e335e0c7fa",
+   "ci95": [
+    0.108,
+    0.603
+   ],
+   "dtz": 7,
+   "n": 10,
+   "spare_plies": 8,
+   "step": 0,
+   "task": "krk-m4-1",
+   "v": 0.3,
+   "wins": 3
+  },
+  {
+   "branch_id": "br-5d69d1bd40a6",
+   "checkpoint": "b037df3b74f1360fad476d0bccea6707787d66f4ddf9fe458a552ade2865a04d",
+   "ci95": [
+    0.108,
+    0.603
+   ],
+   "dtz": 5,
+   "n": 10,
+   "spare_plies": 8,
+   "step": 0,
+   "task": "krk-m3-1",
+   "v": 0.3,
+   "wins": 3
+  },
+  {
+   "branch_id": "br-5d69d1bd40a6",
+   "checkpoint": "5176f837771b2a4cb000cdff1e6250dff011bf2e4fc4f1aa66d9f0dbef369c6b",
+   "ci95": [
+    0.0,
+    0.278
+   ],
+   "dtz": 11,
+   "n": 10,
+   "spare_plies": 0,
+   "step": 1,
+   "task": "krk-m3-1",
+   "v": 0.0,
+   "wins": 0
+  },
+  {
+   "branch_id": "br-530e4c7ce831",
+   "checkpoint": "c256335e2671b212776b227dd8a001ec4b81b131d57e6cacd98214270511b5d1",
+   "ci95": [
+    0.057,
+    0.51
+   ],
+   "dtz": 15,
+   "n": 10,
+   "spare_plies": 8,
+   "step": 0,
+   "task": "krk-m8-1",
+   "v": 0.2,
+   "wins": 2
+  },
+  {
+   "branch_id": "br-530e4c7ce831",
+   "checkpoint": "49beaddd63daf0ead1debe755d54e79da41d95618dfa3db8d3f4f8356b4463e6",
+   "ci95": [
+    0.0,
+    0.278
+   ],
+   "dtz": 17,
+   "n": 10,
+   "spare_plies": 4,
+   "step": 1,
+   "task": "krk-m8-1",
+   "v": 0.0,
+   "wins": 0
+  },
+  {
+   "branch_id": "br-530e4c7ce831",
+   "checkpoint": "2fe7d7aeb4722e4201480d6cec4a161e73aea7c5a5a42168695255d7ecba6344",
+   "ci95": [
+    0.0,
+    0.278
+   ],
+   "dtz": 15,
+   "n": 10,
+   "spare_plies": 4,
+   "step": 2,
+   "task": "krk-m8-1",
+   "v": 0.0,
+   "wins": 0
+  },
+  {
+   "branch_id": "br-f2126a68de64",
+   "checkpoint": "87d5f281272f0a57f75bf0ff120ebcc95394db0f03109b30da4070df9bb24ffc",
+   "ci95": [
+    0.057,
+    0.51
+   ],
+   "dtz": 11,
+   "n": 10,
+   "spare_plies": 8,
+   "step": 0,
+   "task": "krk-m6-1",
+   "v": 0.2,
+   "wins": 2
+  },
+  {
+   "branch_id": "br-f2126a68de64",
+   "checkpoint": "982dc0de1cd0daf2c07b93e8a98cfafa8b3fd82ce7dc8c455205e0e01d1035cc",
+   "ci95": [
+    0.108,
+    0.603
+   ],
+   "dtz": 9,
+   "n": 10,
+   "spare_plies": 8,
+   "step": 1,
+   "task": "krk-m6-1",
+   "v": 0.3,
+   "wins": 3
+  },
+  {
+   "branch_id": "br-f2126a68de64",
+   "checkpoint": "3ba650570f6161fa82f57a6f845a64029c836381d514cb6e2aca85b5b37bbfcd",
+   "ci95": [
+    0.108,
+    0.603
+   ],
+   "dtz": 7,
+   "n": 10,
+   "spare_plies": 6,
+   "step": 3,
+   "task": "krk-m6-1",
+   "v": 0.3,
+   "wins": 3
+  },
+  {
+   "branch_id": "br-f2126a68de64",
+   "checkpoint": "ad835853f54a514ff5dc446e67ea5a768e2d68835750e899fb5c881ed552d947",
+   "ci95": [
+    0.0,
+    0.278
+   ],
+   "dtz": 9,
+   "n": 10,
+   "spare_plies": 2,
+   "step": 4,
+   "task": "krk-m6-1",
+   "v": 0.0,
+   "wins": 0
+  },
+  {
+   "branch_id": "br-199f2cd2c646",
+   "checkpoint": "f6ce3c7ace80cb8dd172d94a874431920be09d3c1f518b6201f7f1d7cc612c66",
+   "ci95": [
+    0.108,
+    0.603
+   ],
+   "dtz": 7,
+   "n": 10,
+   "spare_plies": 8,
+   "step": 0,
+   "task": "krk-m4-1",
+   "v": 0.3,
+   "wins": 3
+  },
+  {
+   "branch_id": "br-199f2cd2c646",
+   "checkpoint": "2a2ef138bf3aed810378a4ab29b6ac577f12bfd3852035cbf57e426c3cfd7587",
+   "ci95": [
+    0.397,
+    0.892
+   ],
+   "dtz": 7,
+   "n": 10,
+   "spare_plies": 6,
+   "step": 1,
+   "task": "krk-m4-1",
+   "v": 0.7,
+   "wins": 7
+  },
+  {
+   "branch_id": "br-199f2cd2c646",
+   "checkpoint": "5a62d40e401900bfa650561baf55efaf36019ae3b6197e23451f0f318e89d977",
+   "ci95": [
+    0.168,
+    0.687
+   ],
+   "dtz": 7,
+   "n": 10,
+   "spare_plies": 2,
+   "step": 3,
+   "task": "krk-m4-1",
+   "v": 0.4,
+   "wins": 4
+  },
+  {
+   "branch_id": "br-199f2cd2c646",
+   "checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+   "ci95": [
+    0.237,
+    0.763
+   ],
+   "dtz": 5,
+   "n": 10,
+   "spare_plies": 2,
+   "step": 4,
+   "task": "krk-m4-1",
+   "v": 0.5,
+   "wins": 5
+  },
+  {
+   "branch_id": "br-2067ec95407b",
+   "checkpoint": "8d31f723bf4684d58662b7e46f4f424edfe2ea7b314b2058cba9c1f175b0f985",
+   "ci95": [
+    0.49,
+    0.943
+   ],
+   "dtz": 3,
+   "n": 10,
+   "spare_plies": 8,
+   "step": 0,
+   "task": "krk-m2-1",
+   "v": 0.8,
+   "wins": 8
+  },
+  {
+   "branch_id": "br-2067ec95407b",
+   "checkpoint": "81069e3a5309d4566e2e14ca660d9ac32545c75c0fa99ba9104a7b4676e8a114",
+   "ci95": [
+    0.237,
+    0.763
+   ],
+   "dtz": 5,
+   "n": 10,
+   "spare_plies": 4,
+   "step": 1,
+   "task": "krk-m2-1",
+   "v": 0.5,
+   "wins": 5
+  },
+  {
+   "branch_id": "br-2067ec95407b",
+   "checkpoint": "61c0d31b3b6fa66e46eb553488e7357a0d37aa2befbf7c5a9bb949f1e050a01d",
+   "ci95": [
+    0.237,
+    0.763
+   ],
+   "dtz": 3,
+   "n": 10,
+   "spare_plies": 4,
+   "step": 2,
+   "task": "krk-m2-1",
+   "v": 0.5,
+   "wins": 5
+  },
+  {
+   "branch_id": "br-2067ec95407b",
+   "checkpoint": "c8a3927b0427ebaf23964d260bf32d0bb5fba8247dd078298620ace673909a53",
+   "ci95": [
+    0.722,
+    1.0
+   ],
+   "dtz": 1,
+   "n": 10,
+   "spare_plies": 4,
+   "step": 3,
+   "task": "krk-m2-1",
+   "v": 1.0,
+   "wins": 10
+  },
+  {
+   "branch_id": "br-f5adf03595ac",
+   "checkpoint": "3cba1a4bf918f3751a4a36dd75dfe1615e742655d2bd4462f92abd7450a73685",
+   "ci95": [
+    0.018,
+    0.404
+   ],
+   "dtz": 11,
+   "n": 10,
+   "spare_plies": 8,
+   "step": 0,
+   "task": "krk-m6-1",
+   "v": 0.1,
+   "wins": 1
+  },
+  {
+   "branch_id": "br-f5adf03595ac",
+   "checkpoint": "64b3471c4a41a46d664267fecdb056ec8bdf4be3071923e3bdcb52acc32473eb",
+   "ci95": [
+    0.018,
+    0.404
+   ],
+   "dtz": 9,
+   "n": 10,
+   "spare_plies": 6,
+   "step": 2,
+   "task": "krk-m6-1",
+   "v": 0.1,
+   "wins": 1
+  },
+  {
+   "branch_id": "br-f5adf03595ac",
+   "checkpoint": "b1c9ea92f28f72ade28c872a43b414782a096fafbb68d853c6faa4214fa9dbfb",
+   "ci95": [
+    0.397,
+    0.892
+   ],
+   "dtz": 3,
+   "n": 10,
+   "spare_plies": 6,
+   "step": 5,
+   "task": "krk-m6-1",
+   "v": 0.7,
+   "wins": 7
+  },
+  {
+   "branch_id": "br-f5adf03595ac",
+   "checkpoint": "f14def276c808949901b472e15be1146bf80218e6fbe5e9dad29e12849bfcf5d",
+   "ci95": [
+    0.722,
+    1.0
+   ],
+   "dtz": 1,
+   "n": 10,
+   "spare_plies": 4,
+   "step": 7,
+   "task": "krk-m6-1",
+   "v": 1.0,
+   "wins": 10
+  },
+  {
+   "branch_id": "br-c2926ef37908",
+   "checkpoint": "292a943896b341568017fc72aa696234d8261ade891aa9b81a4c1027ea23b65f",
+   "ci95": [
+    0.0,
+    0.278
+   ],
+   "dtz": 15,
+   "n": 10,
+   "spare_plies": 8,
+   "step": 0,
+   "task": "krk-m8-1",
+   "v": 0.0,
+   "wins": 0
+  },
+  {
+   "branch_id": "br-c2926ef37908",
+   "checkpoint": "02420b1d774b243bfe98ccb523c95b9145771b5da95c12ff63f5597563e1f2f2",
+   "ci95": [
+    0.0,
+    0.278
+   ],
+   "dtz": 17,
+   "n": 10,
+   "spare_plies": 4,
+   "step": 1,
+   "task": "krk-m8-1",
+   "v": 0.0,
+   "wins": 0
+  },
+  {
+   "branch_id": "br-c2926ef37908",
+   "checkpoint": "39a1a083b017922547af88f8d1d48808f2daabf9b0fb62a51f0aefac2482270c",
+   "ci95": [
+    0.0,
+    0.278
+   ],
+   "dtz": 13,
+   "n": 10,
+   "spare_plies": 4,
+   "step": 3,
+   "task": "krk-m8-1",
+   "v": 0.0,
+   "wins": 0
+  },
+  {
+   "branch_id": "br-c2926ef37908",
+   "checkpoint": "3744c662b42c80bd6a8bef23086ca0362bc4618829d58ba874dacbddcf3f969f",
+   "ci95": [
+    0.0,
+    0.278
+   ],
+   "dtz": 15,
+   "n": 10,
+   "spare_plies": 0,
+   "step": 4,
+   "task": "krk-m8-1",
+   "v": 0.0,
+   "wins": 0
+  }
+ ],
+ "summary": {
+  "always_won": 3,
+  "candidates": 30,
+  "cost": {
+   "phase_usd": 1.467,
+   "total_usd": 1.6396
+  },
+  "errors": 0,
+  "mixed_0.3_0.7": 12,
+  "n_per_checkpoint": 10,
+  "never_won": 9
+ }
+}

@@ -149,7 +149,7 @@ class PostgresOrderBookStore(rnbacaau.OrderBookStore):
     def __init__(self, connection: hsqlimpl.DbConnection) -> None:
         """
         :param connection: Postgres connection, shared for the process
-            lifetime (see `spec.PR_P2b.md`'s "Out of Scope": no connection
+            lifetime (see `06-spec.PR_P2b.md`'s "Out of Scope": no connection
             pooling)
         """
         self._connection = connection

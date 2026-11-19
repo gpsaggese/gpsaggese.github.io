@@ -6,6 +6,19 @@ authors:
     url: https://gpsaggese.github.io/
     email: saggese@gmail.com, gsaggese@umd.edu
 
+  Sohail-5678:
+    name: Ameer Sohail Shaik
+    description: Research assistant, Agentic Data Science
+    avatar: https://github.com/Sohail-5678.png
+    url: https://github.com/Sohail-5678
+
+  Worldsoldure00:
+    name: Ibrahim Ahmed Mohammed
+    description: >-
+      Editorial review, technical improvements, and publication preparation
+    avatar: https://github.com/Worldsoldure00.png
+    url: https://github.com/Worldsoldure00
+
   PranavShashidhara:
     name: Pranav
     description: TBD
@@ -31,14 +44,12 @@ authors:
     name: Utkrisht Nath
     description: TBD
     avatar: TBD
-    url: TBD
     email: TBD
 
   Harsh Yadav:
     name: Harsh Yadav
     description: TBD
     avatar: TBD
-    url: TBD
     email: TBD
 
   SaranshKumar:
@@ -75,3 +86,10 @@ authors:
     avatar: TBD
     url: TBD
     email: TBD
+
+  LinuTeresa:
+    name: Linu Teresa
+    description: TBD
+    avatar: https://github.com/linuteresa.png
+    url: TBD
+    email: lteresa@umd.edu

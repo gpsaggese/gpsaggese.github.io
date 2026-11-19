@@ -1,0 +1,729 @@
+{
+  "split": "dev",
+  "dataset_sha256": "ed073d72c5cdda159fff9541dbbc639b3820d15904c93e627e4488f81e47177b",
+  "model_repository": "LiquidAI/d1-3B-GGUF",
+  "model_revision": "bb1e436ea78eb96a3f1acb6da865f70c2fbeb563",
+  "model_file": "d1-3B-Q8_0.gguf",
+  "model_sha256": "2f0942d5a5f64cf69c3356d2be439b71644b1f0eb3a580912a5a0179eeaba77d",
+  "llama_cpp_commit": "8956c769e8ababd9fbd89c81764f241d5f515d68",
+  "prompt_version": "support-route-v1",
+  "question": {
+    "route": {
+      "type": "choice",
+      "instructions": "Which team should handle this customer request?",
+      "criteria": {
+        "billing": "Payments and refunds",
+        "shipping": "Delivery and tracking",
+        "technical": "Product or account malfunction"
+      }
+    }
+  },
+  "action_costs": {
+    "billing": {
+      "billing": 0.0,
+      "shipping": 5.0,
+      "technical": 7.0
+    },
+    "shipping": {
+      "billing": 8.0,
+      "shipping": 0.0,
+      "technical": 6.0
+    },
+    "technical": {
+      "billing": 8.0,
+      "shipping": 6.0,
+      "technical": 0.0
+    },
+    "review": {
+      "billing": 1.5,
+      "shipping": 1.5,
+      "technical": 1.5
+    }
+  },
+  "records": [
+    {
+      "id": "B-D-01",
+      "true_route": "billing",
+      "text": "My card was charged twice for the same order. Please refund the extra charge.",
+      "probabilities": {
+        "billing": 0.9783818301863652,
+        "shipping": 0.005334798273916718,
+        "technical": 0.016283371539718153
+      },
+      "top_route": "billing",
+      "policy_action": "billing",
+      "expected_costs": {
+        "billing": 0.14065759214761067,
+        "shipping": 7.92475487072923,
+        "technical": 7.859063431134421,
+        "review": 1.5
+      },
+      "seconds": 1.691
+    },
+    {
+      "id": "B-D-02",
+      "true_route": "billing",
+      "text": "I need a copy of the invoice for last month's subscription.",
+      "probabilities": {
+        "billing": 0.9271258673690903,
+        "shipping": 0.010340715310848108,
+        "technical": 0.06253341732006172
+      },
+      "top_route": "billing",
+      "policy_action": "billing",
+      "expected_costs": {
+        "billing": 0.4894374977946726,
+        "shipping": 7.792207442873092,
+        "technical": 7.479051230817811,
+        "review": 1.5
+      },
+      "seconds": 1.417
+    },
+    {
+      "id": "B-D-03",
+      "true_route": "billing",
+      "text": "The discount code was accepted but the full amount appeared on my receipt.",
+      "probabilities": {
+        "billing": 0.8282441675953303,
+        "shipping": 0.01162460701993165,
+        "technical": 0.16013122538473798
+      },
+      "top_route": "billing",
+      "policy_action": "billing",
+      "expected_costs": {
+        "billing": 1.179041612792824,
+        "shipping": 7.58674069307107,
+        "technical": 6.695700982882232,
+        "review": 1.4999999999999998
+      },
+      "seconds": 1.346
+    },
+    {
+      "id": "B-D-04",
+      "true_route": "billing",
+      "text": "Can you change the payment method on my upcoming renewal?",
+      "probabilities": {
+        "billing": 0.9847894323168999,
+        "shipping": 0.004920569338159209,
+        "technical": 0.010289998344941048
+      },
+      "top_route": "billing",
+      "policy_action": "billing",
+      "expected_costs": {
+        "billing": 0.09663283510538338,
+        "shipping": 7.940055448604845,
+        "technical": 7.907838874564154,
+        "review": 1.5000000000000002
+      },
+      "seconds": 1.358
+    },
+    {
+      "id": "B-D-05",
+      "true_route": "billing",
+      "text": "I cancelled before renewal yet a new subscription fee posted.",
+      "probabilities": {
+        "billing": 0.8999329510245113,
+        "shipping": 0.006100579233551939,
+        "technical": 0.0939664697419367
+      },
+      "top_route": "billing",
+      "policy_action": "billing",
+      "expected_costs": {
+        "billing": 0.6882681843613166,
+        "shipping": 7.763262426647711,
+        "technical": 7.236067083597402,
+        "review": 1.5
+      },
+      "seconds": 1.194
+    },
+    {
+      "id": "B-D-06",
+      "true_route": "billing",
+      "text": "Please explain the tax line on my latest invoice.",
+      "probabilities": {
+        "billing": 0.8575389669818566,
+        "shipping": 0.018791400664081834,
+        "technical": 0.12366963235406145
+      },
+      "top_route": "billing",
+      "policy_action": "billing",
+      "expected_costs": {
+        "billing": 0.9596444297988392,
+        "shipping": 7.6023295299792215,
+        "technical": 6.973060139839344,
+        "review": 1.4999999999999998
+      },
+      "seconds": 1.3
+    },
+    {
+      "id": "B-D-07",
+      "true_route": "billing",
+      "text": "My refund says completed but the money is not back on my card.",
+      "probabilities": {
+        "billing": 0.9783586873956659,
+        "shipping": 0.006231667206771519,
+        "technical": 0.015409645397562477
+      },
+      "top_route": "billing",
+      "policy_action": "billing",
+      "expected_costs": {
+        "billing": 0.13902585381679494,
+        "shipping": 7.919327371550702,
+        "technical": 7.8642595024059565,
+        "review": 1.5
+      },
+      "seconds": 1.442
+    },
+    {
+      "id": "B-D-08",
+      "true_route": "billing",
+      "text": "The annual plan was billed even though I selected monthly billing.",
+      "probabilities": {
+        "billing": 0.705548773296945,
+        "shipping": 0.01679877483213213,
+        "technical": 0.27765245187092275
+      },
+      "top_route": "billing",
+      "policy_action": "review",
+      "expected_costs": {
+        "billing": 2.02756103725712,
+        "shipping": 7.310304897601096,
+        "technical": 5.745182835368353,
+        "review": 1.4999999999999998
+      },
+      "seconds": 1.401
+    },
+    {
+      "id": "B-D-09",
+      "true_route": "billing",
+      "text": "I need a receipt with my company name for accounting.",
+      "probabilities": {
+        "billing": 0.9168731639870725,
+        "shipping": 0.015815080683294947,
+        "technical": 0.06731175532963249
+      },
+      "top_route": "billing",
+      "policy_action": "billing",
+      "expected_costs": {
+        "billing": 0.5502576907239021,
+        "shipping": 7.738855843874375,
+        "technical": 7.42987579599635,
+        "review": 1.5
+      },
+      "seconds": 1.292
+    },
+    {
+      "id": "B-D-10",
+      "true_route": "billing",
+      "text": "The parcel arrived but I was charged for two items instead of one. Fix the charge.",
+      "probabilities": {
+        "billing": 0.887612165959119,
+        "shipping": 0.017264652481967898,
+        "technical": 0.09512318155891329
+      },
+      "top_route": "billing",
+      "policy_action": "billing",
+      "expected_costs": {
+        "billing": 0.7521855333222325,
+        "shipping": 7.6716364170264315,
+        "technical": 7.204485242564759,
+        "review": 1.5
+      },
+      "seconds": 1.496
+    },
+    {
+      "id": "B-D-11",
+      "true_route": "billing",
+      "text": "My account works but the payment failed and I want to try another card.",
+      "probabilities": {
+        "billing": 0.9721888462733845,
+        "shipping": 0.0054410326303168405,
+        "technical": 0.02237012109629871
+      },
+      "top_route": "billing",
+      "policy_action": "billing",
+      "expected_costs": {
+        "billing": 0.18379601082567515,
+        "shipping": 7.911731496764869,
+        "technical": 7.810156965968977,
+        "review": 1.5
+      },
+      "seconds": 1.314
+    },
+    {
+      "id": "B-D-12",
+      "true_route": "billing",
+      "text": "The price at checkout was higher than the quoted price. Please adjust the bill.",
+      "probabilities": {
+        "billing": 0.8817216172349744,
+        "shipping": 0.015032398240225286,
+        "technical": 0.10324598452480024
+      },
+      "top_route": "billing",
+      "policy_action": "billing",
+      "expected_costs": {
+        "billing": 0.7978838828747281,
+        "shipping": 7.673248845028597,
+        "technical": 7.143967327321147,
+        "review": 1.5
+      },
+      "seconds": 1.541
+    },
+    {
+      "id": "S-D-01",
+      "true_route": "shipping",
+      "text": "Where is my parcel? The tracking page has not moved since Monday.",
+      "probabilities": {
+        "billing": 0.005942305869230509,
+        "shipping": 0.9778472552447998,
+        "technical": 0.016210438885969798
+      },
+      "top_route": "shipping",
+      "policy_action": "shipping",
+      "expected_costs": {
+        "billing": 5.002709348425787,
+        "shipping": 0.14480108026966287,
+        "technical": 5.914621978422643,
+        "review": 1.5000000000000002
+      },
+      "seconds": 1.907
+    },
+    {
+      "id": "S-D-02",
+      "true_route": "shipping",
+      "text": "The package was marked delivered but I cannot find it at my address.",
+      "probabilities": {
+        "billing": 0.012868749298288793,
+        "shipping": 0.9685305267211547,
+        "technical": 0.01860072398055657
+      },
+      "top_route": "shipping",
+      "policy_action": "shipping",
+      "expected_costs": {
+        "billing": 4.972857701469669,
+        "shipping": 0.21455433826964976,
+        "technical": 5.914133154713238,
+        "review": 1.5000000000000002
+      },
+      "seconds": 1.405
+    },
+    {
+      "id": "S-D-03",
+      "true_route": "shipping",
+      "text": "Can I change the delivery address before the box leaves the warehouse?",
+      "probabilities": {
+        "billing": 0.0202969762253171,
+        "shipping": 0.9649171848146549,
+        "technical": 0.014785838960027942
+      },
+      "top_route": "shipping",
+      "policy_action": "shipping",
+      "expected_costs": {
+        "billing": 4.928086796793471,
+        "shipping": 0.25109084356270445,
+        "technical": 5.951878918690467,
+        "review": 1.5
+      },
+      "seconds": 1.572
+    },
+    {
+      "id": "S-D-04",
+      "true_route": "shipping",
+      "text": "My order has been in transit for two weeks. Please locate it.",
+      "probabilities": {
+        "billing": 0.005057773977900833,
+        "shipping": 0.9875225973333233,
+        "technical": 0.007419628688775986
+      },
+      "top_route": "shipping",
+      "policy_action": "shipping",
+      "expected_costs": {
+        "billing": 4.989550387488048,
+        "shipping": 0.08497996395586258,
+        "technical": 5.965597775823146,
+        "review": 1.5
+      },
+      "seconds": 1.356
+    },
+    {
+      "id": "S-D-05",
+      "true_route": "shipping",
+      "text": "I received only one of the two boxes in my shipment.",
+      "probabilities": {
+        "billing": 0.12029468576833223,
+        "shipping": 0.6530377202290977,
+        "technical": 0.22666759400257022
+      },
+      "top_route": "shipping",
+      "policy_action": "review",
+      "expected_costs": {
+        "billing": 4.85186175916348,
+        "shipping": 2.322363050162079,
+        "technical": 4.880583807521244,
+        "review": 1.5000000000000002
+      },
+      "seconds": 1.359
+    },
+    {
+      "id": "S-D-06",
+      "true_route": "shipping",
+      "text": "Please send the courier tracking number for my replacement item.",
+      "probabilities": {
+        "billing": 0.005921147576955558,
+        "shipping": 0.9809704453153502,
+        "technical": 0.013108407107694328
+      },
+      "top_route": "shipping",
+      "policy_action": "shipping",
+      "expected_costs": {
+        "billing": 4.996611076330612,
+        "shipping": 0.12601962326181043,
+        "technical": 5.933191852507746,
+        "review": 1.5000000000000002
+      },
+      "seconds": 1.46
+    },
+    {
+      "id": "S-D-07",
+      "true_route": "shipping",
+      "text": "The delivery date passed and there is no new estimate.",
+      "probabilities": {
+        "billing": 0.011454999569449516,
+        "shipping": 0.9681716411926238,
+        "technical": 0.02037335923792676
+      },
+      "top_route": "shipping",
+      "policy_action": "shipping",
+      "expected_costs": {
+        "billing": 4.983471720628606,
+        "shipping": 0.21388015198315669,
+        "technical": 5.900669843711339,
+        "review": 1.5
+      },
+      "seconds": 1.346
+    },
+    {
+      "id": "S-D-08",
+      "true_route": "shipping",
+      "text": "I need to arrange a different delivery time with the courier.",
+      "probabilities": {
+        "billing": 0.004943536953104774,
+        "shipping": 0.9870714563885596,
+        "technical": 0.007985006658335517
+      },
+      "top_route": "shipping",
+      "policy_action": "shipping",
+      "expected_costs": {
+        "billing": 4.9912523285511465,
+        "shipping": 0.0874583355748513,
+        "technical": 5.961977033956196,
+        "review": 1.5
+      },
+      "seconds": 1.563
+    },
+    {
+      "id": "S-D-09",
+      "true_route": "shipping",
+      "text": "The tracking number on the dispatch email is invalid.",
+      "probabilities": {
+        "billing": 0.00814445745542179,
+        "shipping": 0.9587716599873213,
+        "technical": 0.03308388255725683
+      },
+      "top_route": "shipping",
+      "policy_action": "shipping",
+      "expected_costs": {
+        "billing": 5.025445477837404,
+        "shipping": 0.26365895498691533,
+        "technical": 5.817785619567302,
+        "review": 1.4999999999999998
+      },
+      "seconds": 1.46
+    },
+    {
+      "id": "S-D-10",
+      "true_route": "shipping",
+      "text": "I paid for express delivery but need to know when the package will arrive.",
+      "probabilities": {
+        "billing": 0.006653594067003536,
+        "shipping": 0.9857440010679911,
+        "technical": 0.007602404865005338
+      },
+      "top_route": "shipping",
+      "policy_action": "shipping",
+      "expected_costs": {
+        "billing": 4.981936839394993,
+        "shipping": 0.09884318172606033,
+        "technical": 5.967692758943975,
+        "review": 1.5
+      },
+      "seconds": 1.441
+    },
+    {
+      "id": "S-D-11",
+      "true_route": "shipping",
+      "text": "The invoice is fine but the parcel went to the wrong building. Please redirect it.",
+      "probabilities": {
+        "billing": 0.015369254027332125,
+        "shipping": 0.9508421268124162,
+        "technical": 0.03378861916025157
+      },
+      "top_route": "shipping",
+      "policy_action": "shipping",
+      "expected_costs": {
+        "billing": 4.990730968183842,
+        "shipping": 0.3256857471801664,
+        "technical": 5.828006793093154,
+        "review": 1.4999999999999998
+      },
+      "seconds": 1.54
+    },
+    {
+      "id": "S-D-12",
+      "true_route": "shipping",
+      "text": "The box arrived damaged and I need help with the delivery claim.",
+      "probabilities": {
+        "billing": 0.04274366501396481,
+        "shipping": 0.9067575630792276,
+        "technical": 0.05049877190680765
+      },
+      "top_route": "shipping",
+      "policy_action": "shipping",
+      "expected_costs": {
+        "billing": 4.887279218743792,
+        "shipping": 0.6449419515525643,
+        "technical": 5.782494698587084,
+        "review": 1.5000000000000002
+      },
+      "seconds": 1.536
+    },
+    {
+      "id": "T-D-01",
+      "true_route": "technical",
+      "text": "I cannot sign in because the app rejects my password.",
+      "probabilities": {
+        "billing": 0.015059364861339443,
+        "shipping": 0.008561268963271496,
+        "technical": 0.976379366175389
+      },
+      "top_route": "technical",
+      "policy_action": "technical",
+      "expected_costs": {
+        "billing": 6.87746190804408,
+        "shipping": 5.978751115943049,
+        "technical": 0.17184253267034452,
+        "review": 1.4999999999999998
+      },
+      "seconds": 1.467
+    },
+    {
+      "id": "T-D-02",
+      "true_route": "technical",
+      "text": "The website shows an error whenever I upload a document.",
+      "probabilities": {
+        "billing": 0.01885317121120172,
+        "shipping": 0.02734688622110476,
+        "technical": 0.9537999425676935
+      },
+      "top_route": "technical",
+      "policy_action": "technical",
+      "expected_costs": {
+        "billing": 6.813334029079378,
+        "shipping": 5.873625025095775,
+        "technical": 0.31490668701624236,
+        "review": 1.5
+      },
+      "seconds": 1.255
+    },
+    {
+      "id": "T-D-03",
+      "true_route": "technical",
+      "text": "Please help me reset two factor authentication on my account.",
+      "probabilities": {
+        "billing": 0.022872493313292504,
+        "shipping": 0.012009562734284213,
+        "technical": 0.9651179439524232
+      },
+      "top_route": "technical",
+      "policy_action": "technical",
+      "expected_costs": {
+        "billing": 6.815873421338384,
+        "shipping": 5.97368761022088,
+        "technical": 0.2550373229120453,
+        "review": 1.5
+      },
+      "seconds": 1.266
+    },
+    {
+      "id": "T-D-04",
+      "true_route": "technical",
+      "text": "The mobile app closes as soon as I open settings.",
+      "probabilities": {
+        "billing": 0.017585721607458204,
+        "shipping": 0.01403425831430085,
+        "technical": 0.9683800200782409
+      },
+      "top_route": "technical",
+      "policy_action": "technical",
+      "expected_costs": {
+        "billing": 6.84883143211919,
+        "shipping": 5.95096589332911,
+        "technical": 0.22489132274547075,
+        "review": 1.4999999999999998
+      },
+      "seconds": 1.226
+    },
+    {
+      "id": "T-D-05",
+      "true_route": "technical",
+      "text": "My dashboard is blank after the latest update.",
+      "probabilities": {
+        "billing": 0.013872164774712554,
+        "shipping": 0.011579811003091453,
+        "technical": 0.974548024222196
+      },
+      "top_route": "technical",
+      "policy_action": "technical",
+      "expected_costs": {
+        "billing": 6.879735224570829,
+        "shipping": 5.958265463530876,
+        "technical": 0.18045618421624915,
+        "review": 1.5
+      },
+      "seconds": 1.325
+    },
+    {
+      "id": "T-D-06",
+      "true_route": "technical",
+      "text": "The password reset link opens an expired token page.",
+      "probabilities": {
+        "billing": 0.024994085280359644,
+        "shipping": 0.014212382672975938,
+        "technical": 0.9607935320466645
+      },
+      "top_route": "technical",
+      "policy_action": "technical",
+      "expected_costs": {
+        "billing": 6.796616637691532,
+        "shipping": 5.9647138745228645,
+        "technical": 0.2852269782807328,
+        "review": 1.5000000000000002
+      },
+      "seconds": 1.384
+    },
+    {
+      "id": "T-D-07",
+      "true_route": "technical",
+      "text": "I cannot connect the product to my home network.",
+      "probabilities": {
+        "billing": 0.018202808889228678,
+        "shipping": 0.017915371590507375,
+        "technical": 0.9638818195202639
+      },
+      "top_route": "technical",
+      "policy_action": "technical",
+      "expected_costs": {
+        "billing": 6.836749594594384,
+        "shipping": 5.928913388235412,
+        "technical": 0.2531147006568737,
+        "review": 1.4999999999999998
+      },
+      "seconds": 1.379
+    },
+    {
+      "id": "T-D-08",
+      "true_route": "technical",
+      "text": "Notifications stopped working after I changed phones.",
+      "probabilities": {
+        "billing": 0.01737143225801019,
+        "shipping": 0.014601103910326351,
+        "technical": 0.9680274638316635
+      },
+      "top_route": "technical",
+      "policy_action": "technical",
+      "expected_costs": {
+        "billing": 6.849197766373276,
+        "shipping": 5.9471362410540625,
+        "technical": 0.22657808152603962,
+        "review": 1.5
+      },
+      "seconds": 1.272
+    },
+    {
+      "id": "T-D-09",
+      "true_route": "technical",
+      "text": "The checkout page freezes before I can enter payment details.",
+      "probabilities": {
+        "billing": 0.8552683312694274,
+        "shipping": 0.007058450453565963,
+        "technical": 0.1376732182770068
+      },
+      "top_route": "billing",
+      "policy_action": "billing",
+      "expected_costs": {
+        "billing": 0.9990047802068773,
+        "shipping": 7.6681859598174595,
+        "technical": 6.8844973528768145,
+        "review": 1.5
+      },
+      "seconds": 1.384
+    },
+    {
+      "id": "T-D-10",
+      "true_route": "technical",
+      "text": "My delivery is fine but the tracking feature in the app crashes. Fix the app.",
+      "probabilities": {
+        "billing": 0.006823826168991001,
+        "shipping": 0.6688166922189293,
+        "technical": 0.3243594816120797
+      },
+      "top_route": "shipping",
+      "policy_action": "review",
+      "expected_costs": {
+        "billing": 5.614599832379204,
+        "shipping": 2.0007474990244063,
+        "technical": 4.0674907626655035,
+        "review": 1.5
+      },
+      "seconds": 1.442
+    },
+    {
+      "id": "T-D-11",
+      "true_route": "technical",
+      "text": "The invoice loads as a blank PDF in my browser. Please fix the download.",
+      "probabilities": {
+        "billing": 0.34698103584753465,
+        "shipping": 0.0713873063826971,
+        "technical": 0.5816316577697682
+      },
+      "top_route": "technical",
+      "policy_action": "review",
+      "expected_costs": {
+        "billing": 4.428358136301863,
+        "shipping": 6.265638233398887,
+        "technical": 3.2041721250764597,
+        "review": 1.5
+      },
+      "seconds": 1.395
+    },
+    {
+      "id": "T-D-12",
+      "true_route": "technical",
+      "text": "The device says software update failed and will not restart.",
+      "probabilities": {
+        "billing": 0.030194363621019123,
+        "shipping": 0.019042438396014754,
+        "technical": 0.950763197982966
+      },
+      "top_route": "technical",
+      "policy_action": "technical",
+      "expected_costs": {
+        "billing": 6.750554577860836,
+        "shipping": 5.946134096865949,
+        "technical": 0.35580953934424153,
+        "review": 1.4999999999999998
+      },
+      "seconds": 1.339
+    }
+  ]
+}
