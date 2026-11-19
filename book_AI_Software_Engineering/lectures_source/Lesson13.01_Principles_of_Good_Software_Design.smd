@@ -23,7 +23,6 @@
 # Why Design Principles Matter With Agents
 
 * Complexity Is the Enemy
-// From: book_AI_Software_Engineering/lectures_source/Tools_source.smd:35 '* Why Software Engineering Is Difficult'
 // From: helpers_root/docs/coding/all.code_design.how_to_guide.md:85 '### Keep It Simple'
 
 - @Definition@: **complexity** is anything in the structure of a system that
@@ -46,26 +45,23 @@
 
 * Where the Principles Come From
 // From: helpers_root/docs/coding/all.coding_style.how_to_guide.md:166 '## Disclaimer'
-// TODO(ai_gp): Remove all the comments pointing to Tools_source.smd
-// From: book_AI_Software_Engineering/lectures_source/Tools_source.smd:62 '* Lessons Learned in 50 Years of Software Engineering'
 
 - @Motivation@: 50 years of writing on design repeat a few ideas under
   different names, merged here into principles
 
-// TODO(ai_gp): Change order and rename to "Core idea", "Source", "Year"
 ```{=typst}
 #styled-table(
-  headers: ("Source", "Year", "Core idea used here"),
+  headers: ("Core idea", "Source", "Year"),
   rows: (
-    ("Parnas", "1972", "Hide each design decision in one module"),
-    ("Unix (McIlroy)", "1978", "Small programs that compose"),
-    ("Brooks", "1987", "Essential versus accidental complexity"),
-    ("Hunt and Thomas", "1999", "DRY, orthogonality, crash early, Demeter"),
-    ("PEP 20", "2004", "Explicit, simple, flat, never silent"),
-    ("Hickey", "2011", "Simple is not the same as easy"),
-    ("Ousterhout", "2018", "Deep modules, errors defined out"),
+    ("Hide each design decision in one module", "Parnas", "1972"),
+    ("Small programs that compose", "Unix (McIlroy)", "1978"),
+    ("Essential versus accidental complexity", "Brooks", "1987"),
+    ("DRY, orthogonality, crash early, Demeter", "Hunt and Thomas", "1999"),
+    ("Explicit, simple, flat, never silent", "PEP 20", "2004"),
+    ("Simple is not the same as easy", "Hickey", "2011"),
+    ("Deep modules, errors defined out", "Ousterhout", "2018"),
   ),
-  col-widths: (1.2fr, 0.6fr, 2.8fr),
+  col-widths: (2.8fr, 1.2fr, 0.6fr),
 )
 ```
 
@@ -259,7 +255,6 @@ caption=A deep module (left) has a narrow interface (coral) over a large impleme
 :::
 
 * Information Hiding
-// From: book_AI_Software_Engineering/lectures_source/Tools_source.smd:62 '* Lessons Learned in 50 Years of Software Engineering'
 // From: helpers_root/docs/coding/all.coding_style.how_to_guide.md:223 '#### Encapsulate What Changes'
 
 - @Definition@: decompose a system by the design decisions that are likely to
@@ -882,7 +877,6 @@ caption=One small tool of ours (orange) composes with generic tools (teal) and w
   - Treat a change of observable behavior as a breaking change
 
 * Conway's and Gall's Laws
-// From: book_AI_Software_Engineering/lectures_source/Tools_source.smd:35 '* Why Software Engineering Is Difficult'
 
 - @Definition@: **Conway's law**: a system mirrors the communication structure
   of the organization that builds it _(Conway, 1968)_
