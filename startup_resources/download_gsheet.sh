@@ -1,7 +1,7 @@
 #!/bin/bash
 # """
 # Download all the tabs of the Google Sheet "GP's Startup Network" to the CSV
-# files `startup/gp_resources.<ID>.<tab_name>.csv`.
+# files `startup_resources/gp_resources.<ID>.<tab_name>.csv`.
 #
 # The command fails if a CSV file already exists. Pass `--overwrite` to replace
 # the existing CSV files and discard the local changes that are not uploaded.
@@ -18,5 +18,5 @@ SHEET_URL="https://docs.google.com/spreadsheets/d/1Qa9g-j0NSdStV46W_dc85TMrwywIE
 helpers_root/dev_scripts_helpers/google/from_gsheet.py \
   --url "${SHEET_URL}" \
   --tabname _ALL_ \
-  --output_file startup/gp_resources.csv \
+  --output_file startup_resources/gp_resources.csv \
   "$@"
