@@ -2,6 +2,9 @@
 """
 Measure how many prompt tokens each seed seller bills per character (#720).
 
+The script makes the paid calls and saves them; the notebook
+`notebooks/prompt_tokens.ipynb` fits and plots them.
+
 # Usage Example
 
 - Print the plan and its maximum cost without calling anyone:
@@ -56,7 +59,7 @@ CONFIG: Dict[str, Any] = {
     "max_tokens": 1,
     "timeout_s": 30.0,
 }
-# Where the run saves its calls.
+# Where the run saves its calls, and where the notebook reads them.
 RAW_PATH = os.path.join(
     rnonoset.NOESIS_DIR, "data", "prompt_tokens", "prompt_tokens.raw.jsonl"
 )
@@ -276,7 +279,7 @@ def _main(parser: argparse.ArgumentParser) -> None:
         finally:
             await provider.aclose()
 
-    # Run and save the raw calls.
+    # Run and save the raw calls for the notebook.
     measurements = asyncio.run(_go())
     save_measurements(measurements, RAW_PATH)
     n_ok = sum(m.status == rnogapro.OK for m in measurements)
