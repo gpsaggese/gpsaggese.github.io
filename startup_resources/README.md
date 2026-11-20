@@ -5,21 +5,21 @@
 - Each tab of the Google Sheet is one CSV file
   `startup_resources/gp_resources.<ID>.<tab_name>.csv`
   - `<ID>` is the position of the tab in the Google Sheet, starting from 0
-  - E.g., `startup_resources/gp_resources.0.FriendlyAngels.csv`
+  - E.g., `startup_resources/gp_resources.5.FriendlyAngels.csv`
 - The tab names have no spaces, so that `from_gsheet.py` and `to_gsheet.py` do
   a roundtrip
 - The tabs are:
 
   | ID | Tab name              | CSV file                                                   |
   | :- | :-------------------- | :--------------------------------------------------------- |
-  | 0  | `FriendlyAngels`      | `startup_resources/gp_resources.0.FriendlyAngels.csv`      |
-  | 1  | `Accelerators`        | `startup_resources/gp_resources.1.Accelerators.csv`        |
-  | 2  | `FriendlyVCs`         | `startup_resources/gp_resources.2.FriendlyVCs.csv`         |
-  | 3  | `VC`                  | `startup_resources/gp_resources.3.VC.csv`                  |
+  | 0  | `Credits`             | `startup_resources/gp_resources.0.Credits.csv`             |
+  | 1  | `Grants`              | `startup_resources/gp_resources.1.Grants.csv`              |
+  | 2  | `Support`             | `startup_resources/gp_resources.2.Support.csv`             |
+  | 3  | `Accelerators`        | `startup_resources/gp_resources.3.Accelerators.csv`        |
   | 4  | `FriendlySalezBizDev` | `startup_resources/gp_resources.4.FriendlySalezBizDev.csv` |
-  | 5  | `Grants`              | `startup_resources/gp_resources.5.Grants.csv`              |
-  | 6  | `Credits`             | `startup_resources/gp_resources.6.Credits.csv`             |
-  | 7  | `Support`             | `startup_resources/gp_resources.7.Support.csv`             |
+  | 5  | `FriendlyAngels`      | `startup_resources/gp_resources.5.FriendlyAngels.csv`      |
+  | 6  | `FriendlyVCs`         | `startup_resources/gp_resources.6.FriendlyVCs.csv`         |
+  | 7  | `VC`                  | `startup_resources/gp_resources.7.VC.csv`                  |
 - The `Focus` column of the `Grants` tab tells the AI grants, the crypto grants,
   and the other grants apart: `AI`, `Crypto`, or `General`
 - `startup_resources/ai_grants.md` is the notes on the grant programs, not a tab
@@ -81,7 +81,7 @@
     - Older rows keep the `Selectivity` in `Notes`
   - `gp_resources.4.FriendlySalezBizDev.csv` is a contact list and has none of
     these columns
-  - `gp_resources.7.Support.csv` has advice and help, but no money, so it has
+  - `gp_resources.2.Support.csv` has advice and help, but no money, so it has
     none of the money columns
 
 ## Tabs
@@ -102,20 +102,8 @@
   - A person who invests goes in `FriendlyAngels` or `FriendlyVCs`, not in a
     program tab
 - Contents of each tab:
-  - `0.FriendlyAngels` (People): angel investors and family offices in the
-    network, who invest their own money
-  - `1.Accelerators` (Programs): cohort accelerators that give cash and mentoring
-    for equity, e.g., Alchemist, PearX, YCombinator
-  - `2.FriendlyVCs` (People): partners and staff of VC firms in the network
-  - `3.VC` (Programs): programs and funds that invest for equity and take
-    applications
-    - E.g., Y Combinator, AI Grant, USM Momentum Fund
-    - It also holds state, regional, and university seed funds that take equity
-      or convertible notes
-      - E.g., TEDCO Builder Fund, AlphaLab, Virginia Venture Partners
-  - `4.FriendlySalezBizDev` (Contacts): people for sales and business
-    development, with no money columns
-  - `5.Grants` (Programs): non-dilutive programs that are not credits
+  - `0.Credits` (Programs): cloud, GPU, and API credits, e.g., NVIDIA Inception
+  - `1.Grants` (Programs): non-dilutive programs that are not credits
     - Federal, corporate, foundation, and student grants and prizes
     - State, regional, and university programs that give grants or training
       with some money, e.g., NSF I-Corps, TEDCO MII, VIPC CCF
@@ -126,8 +114,7 @@
     - `Category` has its own list of values for each `Focus`: the crypto rows
       use the ecosystem types, e.g., `L1/L2 Ecosystem Grants`, and the other
       rows use the funder types, e.g., `Federal / Government`
-  - `6.Credits` (Programs): cloud, GPU, and API credits, e.g., NVIDIA Inception
-  - `7.Support` (Programs): advice, help, and support with no money and no
+  - `2.Support` (Programs): advice, help, and support with no money and no
     credits
     - Categories: `Advising`, `Proposal Help`, `Incubator`,
       `Regional Ecosystem`, `University Tech Transfer Office`, `Directory`
@@ -136,6 +123,19 @@
     - For a row whose amount is a value of the help, not cash, write the
       amount in `Notes`
     - It has no money columns, no `Difficulty`, and no `Deadline`
+  - `3.Accelerators` (Programs): cohort accelerators that give cash and mentoring
+    for equity, e.g., Alchemist, PearX, YCombinator
+  - `4.FriendlySalezBizDev` (Contacts): people for sales and business
+    development, with no money columns
+  - `5.FriendlyAngels` (People): angel investors and family offices in the
+    network, who invest their own money
+  - `6.FriendlyVCs` (People): partners and staff of VC firms in the network
+  - `7.VC` (Programs): programs and funds that invest for equity and take
+    applications
+    - E.g., Y Combinator, AI Grant, USM Momentum Fund
+    - It also holds state, regional, and university seed funds that take equity
+      or convertible notes
+      - E.g., TEDCO Builder Fund, AlphaLab, Virginia Venture Partners
 - A program with both equity and non-dilutive money goes in the tab of its main
   product
   - Write the other product in `Notes`, with the tab where it is listed
@@ -157,18 +157,18 @@
   - A column with no data in any row of a file is removed from the file
     - To fill it later, add it back in its place in the order of the set
 - Row types and column sets:
-  - **People**: the angels and the VCs, in CSV files 0 and 2
+  - **People**: the angels and the VCs, in CSV files 5 and 6
     - `Name`, `Organization`, `Email`, `LinkedIn`, `Website`, `Focus`, `Stage`,
       `GeoFocus`, `Amount`, `AmountSize`, `Difficulty`, `Notes`
   - **Contacts**: the people for sales and business development, in CSV file 4
     - `Name`, `Organization`, `Email`, `LinkedIn`, `SchoolAffiliation`, `Notes`
     - It has no money columns
   - **Programs**: the accelerators, grants, support offices, and programs that
-    take applications, in CSV files 1, 3, 5, 6, and 7
+    take applications, in CSV files 0, 1, 2, 3, and 7
     - `Name`, `Category`, `Eligibility`, `Focus`, `Stage`, `GeoFocus`, `Amount`,
       `AmountSize`, `Difficulty`, `AcceptanceRate`, `Website`, `ApplicationPage`,
       `Deadline`, `Notes`
-    - `gp_resources.7.Support.csv` has only `Name`, `Category`, `Eligibility`,
+    - `gp_resources.2.Support.csv` has only `Name`, `Category`, `Eligibility`,
       `GeoFocus`, `Website`, `ApplicationPage`, and `Notes`: the other columns
       have no data in it
 - Order of the columns: who or what it is, then fit and money, then links, then
@@ -386,7 +386,7 @@
     - An empty cell means that nobody has reviewed the row yet
 - Current state of the CSV files:
   - `Stage` is a column only in the accelerator file and in
-    `gp_resources.2.FriendlyVCs.csv`
+    `gp_resources.6.FriendlyVCs.csv`
     - The other files had no `Stage` data, so the column was removed from them
   - It is filled for 5 of 8 rows of the accelerator file and for 9 rows of the
     VC file
