@@ -27,6 +27,170 @@
 - The open tasks and the next steps are in the Tasks section of
   `plan.racket_strategy.md`
 - Manual widget checks of the Milestone 1 notebook, noted as in progress in #654
+- The open research questions are in the Gdoc, under
+  [Questions for GP](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.xfydadrg3lvc)
+
+## 2026-11-15: Notebook 07 and Section VII-B, Speed vs Accuracy (#723)
+
+- **Issue**: [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723),
+  the last of 4 PRs: the results of the sweeps, in notebook 07 and in the paper;
+  the numbers and the decisions are in the Gdoc,
+  [Experiment 5](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.qrto9so35bnx)
+- **What was done**:
+  - `notebooks/racket_sports_07_speed_vs_accuracy.ipynb` and its paired `.py`, with
+    the outputs of the reduced run saved, and a test that runs it top to bottom
+  - The plots of the notebook and `save_paper_figure_data()` in its utils, with
+    tests
+  - `paper.md`: Section VII-B and its figure, from the data of the full run;
+    Proposition 1 states its assumption, and Appendix A covers the spread of
+    VII-B; the sentences that said a faster ball always looks best now point to
+    VII-B; 3 references
+  - The #723 notes of notebooks 01 and 05 point to notebook 07, and the README has
+    its row
+- **Next**: #723 is done; GP's answers to Q21 (the behavior of the spread below
+  `v0`) and Q22 (the robustness rule) in the
+  [Gdoc](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.71s0u7ftk0yx)
+  may change the wording of VII-B
+
+## 2026-11-15: Best Ball Speed and Speed Scaling Check (#723)
+
+- **Issue**: [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723),
+  the third of 4 PRs: how the sweeps are read, with no results yet; the planned
+  outputs are in the Gdoc,
+  [Experiment 5](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.qrto9so35bnx)
+- **What was done**: `notebooks/racket_sports_07_speed_vs_accuracy_utils.py`
+  - `find_best_speeds()`: the best ball speed of a sweep as a band, every speed
+    within 2 standard errors of the highest `P(winner)`, with the rule of the best
+    region of notebook 01 (P9); the loss of the fastest ball; and the speed with
+    the highest mean `P(winner)` over the half, which does not saturate
+  - `summarize_robustness()`: whether the band of each variant shares a ball
+    speed with the band of the base, so the summary reads "robust to X, not to
+    Y" (P3)
+  - `check_speed_scaling()`, `run_scaling_checks()`: with `t_r = 0` and `a > 0`,
+    scaling both speeds changes the maps, and scaling `v0` with them does not, so
+    Proposition 1 needs a spread that does not depend on the ball speed (P4)
+- **Next**: notebook 07 and Section VII-B of the paper, with the results in the
+  Gdoc, which finish #723
+
+## 2026-11-15: Sweeps of the Ball Speed for Speed vs Accuracy (#723)
+
+- **Issue**: [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723),
+  the second of 4 PRs: the settings and the runs of the sweeps, with no results
+  yet; the plan and its decisions are in the Gdoc,
+  [Experiment 5](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.qrto9so35bnx)
+- **What was done**: `notebooks/racket_sports_07_speed_vs_accuracy_utils.py`
+  - `get_experiment_config()`: the full run and a reduced run of a minute, with
+    the `RUN_FULL_SIMS` switch of notebook 05, since Q11 is still open
+  - `build_sweep_spec()`: the settings of one map, with `std_x2` and `std_y2`
+    from the builder, and the builder inputs as separate columns (P1, P6)
+  - `run_speed_sweeps()`: the ball speed from `v0 / 2` to `2 v0`, for each sport,
+    variant, and `a`, on common random numbers (P7)
+  - The variants change one value at a time (P3): the 3 other shapes, `a_x = a_y`,
+    the spread at `v0` halved and doubled, `v_p` = 1.9 and 3.0 m/s, the T-deep
+    serve, and a second seed
+  - `get_serves()` of the notebook 05 utils is now public, for the T-deep serve
+- **Next**: the best ball speed, the robustness table, and the speed scaling
+  check; then notebook 07 and Section VII-B of the paper, which finish #723
+
+## 2026-11-12: Formalize the Research in the Paper (#921)
+
+- **Issue**: [#921](https://github.com/gpsaggese/gpsaggese.github.io/issues/921), from GP's meeting of
+  2026-11-12: formalize the research in the paper for his printed, line by line
+  review
+- **What was done** in `papers/Optimal_strategy_for_racket_sports/`:
+  - `paper.md`: the 2D model as the main method, with the headline result (the
+    best return is the middle, not the lines) in the abstract and the
+    introduction; Section VIII on the RL env of #713; the open PR8 items of the
+    plan; Appendix B, which links each result to its
+    [Gdoc](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0) experiment
+  - Figures 1 and 6 from `figures/make_code_figures.py`: the tennis map of Gdoc
+    Experiment 2.1, computed with the notebook 01 utils, and the pickleball maps
+    of Experiment 6.1, from the saved outputs of the full run of notebook 06
+  - The figures are referenced by label, so their numbers follow their order in
+    the paper
+  - 4 references for Section VIII: PPO, Stable-Baselines3, Gymnasium, and a book
+    on bandits
+- **Results**: none new; every number comes from the Gdoc or the notebooks
+
+## 2026-11-11: Spread Model for Speed vs Accuracy (#723)
+
+- **Issue**: [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723),
+  part 2: the spread of the return as a function of the ball speed; the plan, its
+  decisions, and GP's answers to Q4 to Q6 are in the Gdoc,
+  [Experiment 5](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.qrto9so35bnx)
+- **What was done**: `notebooks/racket_sports_07_speed_vs_accuracy_utils.py`
+  - `compute_speed_factor()`: the factor of the spread, with 4 shapes (linear,
+    knee, parabola, one-sided parabola)
+  - `build_spread_from_ball_speed()`: `std_x2` and `std_y2` from the ball speed,
+    with a factor per direction, `a_x` for the width and `a_y` for the depth
+  - The model and the notebooks do not change: the builder is for the sweeps only
+    (P1)
+  - Any coefficient of at least 0 is allowed, so a sweep can perturb it (GP, Q4);
+    a factor that is not positive raises, which only the linear shape with `a > 1`
+    can reach
+- **Next**: the sweeps, notebook 07, and Section VII-B of the paper, in one PR that
+  closes #723
+
+## 2026-11-11: GP's Answers on the Research Process (#694)
+
+- **Issue**: [#694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694),
+  last part: GP answered Q1 to Q3 in the Gdoc, under
+  [Research process](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.21d3arlkot6c)
+  - Q1: one Gdoc with several tabs, a raw log with everything and a distilled
+    executive summary, then the paper
+  - Q2: the research Gdocs are in the
+    [`Research projects`](https://drive.google.com/drive/folders/1NQB-LgY6Kn8Pw5Hbnp_1yCzN9HgoDIXe)
+    Drive folder
+  - Q3: a fork PR is fine for the helpers change,
+    [gpsaggese/helpers#1455](https://github.com/gpsaggese/helpers/pull/1455)
+  - In his reply on Q1 (2026-11-10): a new question goes in the Questions for GP
+    list itself, not only in a comment
+- **Docs**:
+  - `project_management.explanation.md`: the Gdoc tabs and the Drive folder; this
+    log keeps one short entry per merged PR, with a link to the Gdoc and no
+    findings; the life of a research question starts in the question list
+  - `design_principles.explanation.md`: P14 names the `Raw log` tab as the log of
+    the experiments
+  - `plan.racket_strategy.md`: #694 done
+
+## 2026-11-10: Research Questions and Results in the Gdoc (#694)
+
+- **Issue**: [#694](https://github.com/gpsaggese/gpsaggese.github.io/issues/694),
+  from GP's rules for the research process
+  ([comment](https://github.com/gpsaggese/gpsaggese.github.io/issues/694#issuecomment-6712939277),
+  2026-11-07) and his follow-up: "pls put all the questions / content in the gdoc and
+  then you can post links from GH to there"
+- **Gdoc**: the research content that lived only in GitHub comments moved there
+  - [Experiment 4](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.xvdn4n7zo860):
+    the speed ratio and the reaction time (#789); its 3 figures are from a full run
+    of Part 3 of notebook 05 on master `80efe9d9`, which gave the same numbers as the
+    notebook
+  - [Experiment 5](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.qrto9so35bnx):
+    the plan of #723, part 2, with the decisions of 2026-11-03 and 2026-11-06
+  - [Experiment 6](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.kntokyu5w697):
+    the racket RL env of #713, layer 3 (#881), with the figures saved in notebook 06
+  - [Questions for GP](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.xfydadrg3lvc):
+    12 questions, one comment each with our recommendation, linked with one line from
+    #694, #713, #723, #789, #846, #857, and #881
+  - The `inspect.getsource()` question of #846 stays on GitHub, since it is about
+    code
+- **Docs**:
+  - `project_management.explanation.md`: the research Gdoc, GP's rules, the life of a
+    research question, and the paper as the way to review a research PR, with a Paper
+    and Gdoc checklist for its description
+  - `design_principles.explanation.md`: P13 rewritten for the Gdoc (it replaced the
+    GitHub rule on 2026-11-07), P12 updated, and links to the Gdoc in P4, P10, P14,
+    and P16
+  - `plan.racket_strategy.md`: links to the Gdoc, and the status of #823, #857, and
+    #881, all merged
+- **Decided**
+  ([GP on #713](https://github.com/gpsaggese/gpsaggese.github.io/issues/713#issuecomment-6751589012),
+  2026-11-09, recorded under Experiment 6): the layer 3 success criterion is good
+  enough (Q7), and PPO stays on the full grid, with no pruning for now (Q8)
+- **Asked GP**
+  ([Research process](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.21d3arlkot6c)):
+  Q1, one log or two; Q2, the Drive folder of the research Gdocs; Q3, how the general
+  rules reach the research guide of helpers; answered, see the 2026-11-11 entry
 
 ## 2026-11-07: Racket RL Env and Notebook 06 (#713, Layer 3)
 

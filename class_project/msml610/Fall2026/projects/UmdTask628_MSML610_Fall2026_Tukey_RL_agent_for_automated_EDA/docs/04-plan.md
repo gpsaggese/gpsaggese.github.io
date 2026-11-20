@@ -20,7 +20,7 @@
 - A first version of M1-M4 exists locally. Each PR brings one part into the
   repo, revalidated, and opens after the review of the previous one
 - `v0.1`: plan and docs
-  - [ ] `PR_P1`
+  - [x] `PR_P1` (#865)
 - `v0.2`: environment, tools, scripted baseline, scoring (M1-M2)
   - [ ] `PR_B1`
 - `v0.3`: RLVR training (M3)
@@ -64,7 +64,7 @@
 
 ## v0.1: Plan and Docs
 
-### `PR_P1`: [ ] Plan and docs
+### `PR_P1`: [x] Plan and docs (merged as #865)
 
 - README, plan, decisions, progress log, how we work; docs only
 - Acceptance: reviewers comment on `D1`, `D2` and the scope of `PR_B1`
@@ -82,7 +82,7 @@
 - Acceptance: full tests and the Docker build pass on a clean checkout; each
   number names its input file and command. Split it if too large to review
 - Owners (proposed): Rayhan, integration; Ronak, environment checks and Docker;
-  Sai, tools and baselines checks. Target Nov 8
+  Sai, tools and baselines checks. Target Nov 8 (moved; see the progress log)
 
 ## v0.3: RLVR Training
 

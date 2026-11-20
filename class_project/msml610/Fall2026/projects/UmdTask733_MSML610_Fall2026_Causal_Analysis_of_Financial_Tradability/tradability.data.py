@@ -24,7 +24,9 @@
 # - Put the bars on a regular 5-minute grid and find the gaps
 # - Fill gaps of up to 3 bars, leave longer gaps empty and split the data
 #   into segments at each one, so later features and labels never span a gap
-# - Flag zero-volume bars and extreme returns (kept, not dropped)
+# - Treat zero-volume bars right before a gap as part of the gap (stale
+#   prices); flag the other zero-volume bars and extreme returns (kept, not
+#   dropped)
 # - Summarize the data quality per coin
 # - Compute features (past data only) and forward-return labels for each
 #   horizon, inside each segment
@@ -235,7 +237,8 @@ plt.tight_layout()
 # ## Observations
 #
 # - The data is clean overall: no duplicates, and only 462 of 709,920 bars
-#   (0.07%) are missing for each coin
+#   (0.07%) are missing for each coin. With the stale bars below, 503 bars
+#   (0.07%) are treated as missing
 # - BTC and ETH have the same 15 gaps at the same times, so these are Binance
 #   outages and maintenance, not problems with one coin. The longest is
 #   5h50m on 2020-02-19. Most are in 2020-2021, and the last one is on
@@ -243,10 +246,11 @@ plt.tight_layout()
 # - Every gap is at least 12 bars (1 hour) long, so nothing was filled. The
 #   data splits into 16 segments, and features and labels will be computed
 #   inside each one
-# - The 42 zero-volume bars are on 4 days, and on 3 of them they come right
-#   before a gap (2020-12-21, 2021-02-11, 2023-03-24). Trading stopped before
-#   the data stopped, so the prices in those bars are stale. For now they are
-#   only flagged; we may want to treat them as part of the gap
+# - 41 of the 42 zero-volume bars come right before a gap (on 2020-12-21,
+#   2021-02-11, and 2023-03-24). Trading stopped before the data stopped, so
+#   the prices in those bars are stale. They are now treated as part of the
+#   gap, which makes those gaps longer but adds no new gap. The one left is on
+#   2021-01-11 and is only flagged
 # - About 300 bars per coin (0.05%) have an extreme return, more than 10
 #   times the past day's std. The largest ones are real crashes and
 #   rebounds: March 2020 (+18% in 5 minutes on 2020-03-13), the May 2021

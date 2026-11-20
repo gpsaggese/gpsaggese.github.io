@@ -593,7 +593,7 @@ import market_data
     `invoke lint_detect_cycles`
   - `show_imports` draws the dependency graph
 
-- @Remark@: the package hierarchy is covered in detail in Lesson 13.01
+- @Remark@: the package hierarchy is covered in detail in Lesson 12.01
 ::::
 :::: {.column width=38%}
 
@@ -916,7 +916,7 @@ caption=A golden file test either updates the stored output (blue) or compares w
 - @Key idea@: the tier sets how often a test gives feedback, so an agent in a
   loop runs the fast tier after each edit
 
-- @Remark@: the CI pipeline for the tiers is covered in detail in Lesson 16.01
+- @Remark@: the CI pipeline for the tiers is covered in detail in Lesson 17.01
 
 * Writing Tests With an Agent
 // From: book_AI_Software_Engineering/lectures_source/Tools_source.smd:1223 '* Writing and Extending Unit Tests with AI'

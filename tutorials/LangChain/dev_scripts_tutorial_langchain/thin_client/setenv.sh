@@ -1,1 +1,1 @@
-../../../helpers_root/dev_scripts_helpers/thin_client/setenv.sh
+../../../../helpers_root/dev_scripts_helpers/thin_client/setenv.sh

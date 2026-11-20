@@ -30,6 +30,8 @@
 # - Evaluate on non-overlapping trades in 2022-01-01 to 2026-10-01
 # - Compare the hit rate with p* from Exercise 1 (corrected with N_eff), and
 #   with p* after a cost c per trade: p* + c / (2 mean |r|)
+# - The cost depends on how the orders are executed, so the last section
+#   sweeps it from 0 to 20 bp per round trip
 
 # %% [markdown]
 # ## Imports
@@ -56,6 +58,8 @@ HORIZONS = ["5m", "15m", "1h", "4h", "1d"]
 TEST_YEARS = [2022, 2023, 2024, 2025, 2026]
 # Cost of a round trip: 10 bp, as in the plan on #733.
 COST = 0.001
+# Costs to sweep, from free trading to an expensive 20 bp.
+COSTS = [0.0, 0.0002, 0.0005, 0.001, 0.002]
 # Past return over the same length as the horizon, for momentum.
 MOMENTUM_COLUMNS = {
     "5m": "ret_1",
@@ -229,6 +233,58 @@ axes[1].legend(fontsize=7, ncol=2)
 plt.tight_layout()
 
 # %% [markdown]
+# ## Cost sweep
+#
+# 10 bp per round trip is on the expensive side. Sweep the cost:
+# - Break-even cost: the cost at which a model stops making money, which is
+#   its PnL per trade before costs (0 if it loses money even for free)
+# - PnL per trade after costs for each cost
+# - Hit rate needed for a 95% chance of profit, for each cost
+
+# %%
+# The break-even cost of each model, in bp.
+break_even = results["gross_bps"].clip(lower=0).unstack("model")[MODELS]
+break_even = break_even.reindex(
+    pd.MultiIndex.from_product([SYMBOLS, HORIZONS]), axis=0
+)
+break_even.round(2)
+
+# %%
+rows = []
+for (symbol, horizon, model), df in trades.items():
+    sweep = putil.sweep_costs(df["pos"], df["fwd_ret"], COSTS)
+    sweep["symbol"] = symbol
+    sweep["horizon"] = horizon
+    sweep["model"] = model
+    rows.append(sweep)
+sweep = pd.concat(rows, ignore_index=True)
+# PnL per trade after costs (bp), one column per cost.
+net = sweep.pivot_table(
+    index=["symbol", "horizon", "model"], columns="cost_bps", values="net_bps"
+)
+net = net.reindex(pd.MultiIndex.from_product([SYMBOLS, HORIZONS, MODELS]))
+net.round(2)
+
+# %%
+fig, axes = plt.subplots(1, 2, figsize=(13, 4.5), sharey=True)
+for ax, symbol in zip(axes, SYMBOLS):
+    for cost in COSTS:
+        mask = (sweep["symbol"] == symbol) & (sweep["model"] == "always_buy")
+        mask &= sweep["cost_bps"] == cost * 1e4
+        sub = sweep[mask].set_index("horizon").loc[HORIZONS]
+        ax.plot(
+            HORIZONS,
+            sub["p_star_cost"].clip(upper=1.0),
+            marker="o",
+            label=f"{cost * 1e4:g} bp",
+        )
+    ax.set_title(f"{symbol}: hit rate needed vs cost")
+    ax.set_xlabel("horizon")
+    ax.set_ylabel("hit rate needed (95% chance of profit)")
+    ax.legend(fontsize=8)
+plt.tight_layout()
+
+# %% [markdown]
 # ## Observations
 #
 # - Short moves tend to reverse. Momentum is right only 46-49% of the time
@@ -248,9 +304,21 @@ plt.tight_layout()
 #   62-66% at 1h, 57-59% at 4h, and 55-56% at 1d. Without costs it is 50.2%
 #   to 52.9%. Costs push the best horizon towards the longest ones
 # - Before costs, the best model makes under 0.3 bp per trade from 5m to 1h,
-#   1.6 bp at 4h, and 9.5 bp at 1d. It is below the 10 bp cost everywhere, so
+#   1.6 bp at 4h, and 9.4 bp at 1d. It is below the 10 bp cost everywhere, so
 #   no model makes money after costs in 2022-2026. The closest is the
-#   logistic regression on ETH at 1d (9.5 bp before costs), on only 1,725
+#   logistic regression on ETH at 1d (9.4 bp before costs), on only 1,725
 #   trades
 # - Results at 1d are noisy: about 1,730 trades, and the hit rate and the
 #   weighted hit rate differ a lot
+#
+# Cost sweep:
+# - From 5m to 1h every model breaks even at 0.3 bp per trade or less, so even
+#   a 2 bp cost makes all of them lose money. At 4h the best break-even cost
+#   is 1.6 bp (logistic regression on BTC)
+# - Only 1d survives small costs. At 2 bp, 5 of the 6 models at 1d make money;
+#   at 5 bp, only always buying on BTC (2.1 bp per trade) and the logistic
+#   regression on ETH (4.4 bp). Always buying works because of the 2020-2026
+#   uptrend, not because it predicts anything
+# - So the answer to "which horizon is best" depends mostly on the cost: with
+#   free trading the shortest horizons are not worse than the longest, with
+#   any realistic cost only the longest one is left

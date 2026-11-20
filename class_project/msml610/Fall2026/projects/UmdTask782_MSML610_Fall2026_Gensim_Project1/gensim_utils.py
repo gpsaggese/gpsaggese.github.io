@@ -8,6 +8,10 @@ The notebook `gensim.example.ipynb` calls these functions, one per cell, to:
 - Make a stratified train / test split
 - Summarize the data in one table
 
+The notebook `gensim.API.ipynb` reuses the loading and tokenizing functions
+above, and calls the functions in the `gensim.API.ipynb` sections below to
+turn the outputs of the Gensim models into tables.
+
 Import as:
 
 import class_project.msml610.Fall2026.projects.UmdTask782_MSML610_Fall2026_Gensim_Project1.gensim_utils as cmfpugpgu
@@ -20,12 +24,15 @@ import urllib.request
 import zipfile
 from typing import Any, Dict, List, Tuple
 
+import gensim.corpora
+import gensim.models
 import gensim.parsing.preprocessing
 import gensim.utils
 import helpers.hdbg as hdbg
 import helpers.hio as hio
 import helpers.hnotebook as hnotebo
 import helpers.hprint as hprint
+import numpy as np
 import pandas as pd
 import sklearn.model_selection
 
@@ -393,3 +400,264 @@ def cell1_7_build_data_table(
     table_df = pd.DataFrame(rows).set_index("split")
     _LOG.debug("return=%s", table_df.shape)
     return table_df
+
+
+# #############################################################################
+# gensim.API.ipynb: Cell 2.3: Convert one sentence with doc2bow
+# #############################################################################
+
+
+def cell2_3_bow_to_df(
+    dictionary: gensim.corpora.Dictionary, bow: List[Tuple[int, int]]
+) -> pd.DataFrame:
+    """
+    Show a bag-of-words vector with the token behind each id.
+
+    :param dictionary: dictionary that produced `bow`
+    :param bow: sparse vector as `(token_id, count)` pairs, from `doc2bow()`
+    :return: one row per token of the sentence
+        ```
+        token_id  token   count
+        12        profit  1
+        ```
+    """
+    _LOG.debug(hprint.to_str("len(bow)"))
+    bow_df = pd.DataFrame(bow, columns=["token_id", "count"])
+    bow_df.insert(1, "token", bow_df["token_id"].map(dictionary.get))
+    _LOG.debug("return=%s", bow_df.shape)
+    return bow_df
+
+
+# #############################################################################
+# gensim.API.ipynb: Cell 3.2: Reweight one sentence with TF-IDF
+# #############################################################################
+
+
+def cell3_2_tfidf_to_df(
+    dictionary: gensim.corpora.Dictionary,
+    bow: List[Tuple[int, int]],
+    tfidf_vec: List[Tuple[int, float]],
+) -> pd.DataFrame:
+    """
+    Show the count and the TF-IDF weight of each token of a sentence.
+
+    :param dictionary: dictionary that produced `bow`
+    :param bow: sparse count vector, from `doc2bow()`
+    :param tfidf_vec: sparse TF-IDF vector of the same sentence, from
+        `tfidf[bow]`
+    :return: one row per token, sorted by decreasing weight
+        ```
+        token     count  doc_freq  tfidf
+        cramo     1      2         0.62
+        ```
+    """
+    _LOG.debug(hprint.to_str("len(bow) len(tfidf_vec)"))
+    weights = dict(tfidf_vec)
+    rows = []
+    for token_id, count in bow:
+        rows.append(
+            {
+                "token": dictionary[token_id],
+                "count": count,
+                # Number of sentences of the corpus that contain the token.
+                "doc_freq": dictionary.dfs[token_id],
+                # A token in every sentence gets weight 0 and is dropped by
+                # the model, so it is missing from `weights`.
+                "tfidf": round(weights.get(token_id, 0.0), 3),
+            }
+        )
+    tfidf_df = pd.DataFrame(rows)
+    tfidf_df = tfidf_df.sort_values("tfidf", ascending=False)
+    tfidf_df = tfidf_df.reset_index(drop=True)
+    _LOG.debug("return=%s", tfidf_df.shape)
+    return tfidf_df
+
+
+# #############################################################################
+# gensim.API.ipynb: Cell 4.2: Find the sentences most similar to a query
+# #############################################################################
+
+
+def cell4_2_top_matches(
+    sims: np.ndarray, df: pd.DataFrame, *, topn: int = 5
+) -> pd.DataFrame:
+    """
+    Show the sentences with the highest similarity to a query.
+
+    :param sims: one cosine similarity per sentence of `df`, from
+        `index[query_vec]`
+    :param df: sentences that were indexed, with the columns `sentence` and
+        `label`, in the same order as the index
+    :param topn: number of sentences to return
+    :return: the `topn` most similar sentences, best first
+        ```
+        score  label     sentence
+        0.71   positive  Operating profit rose to EUR 13.1 mn ...
+        ```
+    """
+    _LOG.debug(hprint.to_str("sims.shape df.shape topn"))
+    hdbg.dassert_eq(len(sims), len(df), "One score per indexed sentence")
+    # Sort the sentence positions by decreasing score.
+    top_idx = np.argsort(-sims)[:topn]
+    matches_df = df.iloc[top_idx][["label", "sentence"]].copy()
+    matches_df.insert(0, "score", np.round(sims[top_idx], 3))
+    matches_df = matches_df.reset_index(drop=True)
+    _LOG.debug("return=%s", matches_df.shape)
+    return matches_df
+
+
+# #############################################################################
+# gensim.API.ipynb: Cell 5.2: Show the top words of each topic
+# #############################################################################
+
+
+def cell5_2_topics_to_df(
+    lda: gensim.models.LdaModel, *, topn: int = 8
+) -> pd.DataFrame:
+    """
+    Show the top words of each topic of an LDA model.
+
+    :param lda: trained LDA model
+    :param topn: number of words per topic
+    :return: one row per topic, with its top words, most probable first
+        ```
+        topic  top_words
+        0      eur, mn, profit, net, sales, period, quarter, million
+        ```
+    """
+    _LOG.debug(hprint.to_str("lda.num_topics topn"))
+    rows = []
+    for topic_id in range(lda.num_topics):
+        word_probs = lda.show_topic(topic_id, topn=topn)
+        words = [word for word, _ in word_probs]
+        rows.append({"topic": topic_id, "top_words": ", ".join(words)})
+    topics_df = pd.DataFrame(rows).set_index("topic")
+    _LOG.debug("return=%s", topics_df.shape)
+    return topics_df
+
+
+# #############################################################################
+# gensim.API.ipynb: Cell 5.5: Compare the coherence of several topic counts
+# #############################################################################
+
+
+def cell5_5_coherence_by_num_topics(
+    corpus: List[List[Tuple[int, int]]],
+    texts: List[List[str]],
+    dictionary: gensim.corpora.Dictionary,
+    num_topics_list: List[int],
+    *,
+    random_state: int = 42,
+) -> pd.DataFrame:
+    """
+    Fit one LDA model per number of topics and score its coherence.
+
+    Each model uses the same settings as the model of the notebook, so that
+    only the number of topics changes.
+
+    :param corpus: bag-of-words corpus
+    :param texts: tokenized sentences behind `corpus`, used by the `c_v`
+        coherence to count the co-occurrences of the top words
+    :param dictionary: dictionary of `corpus`
+    :param num_topics_list: numbers of topics to try
+    :param random_state: seed of every LDA model
+    :return: one row per number of topics
+        ```
+        num_topics  c_v
+        3           0.386
+        ```
+    """
+    _LOG.debug(hprint.to_str("len(corpus) num_topics_list random_state"))
+    rows = []
+    for num_topics in num_topics_list:
+        lda = gensim.models.LdaModel(
+            corpus,
+            id2word=dictionary,
+            num_topics=num_topics,
+            passes=10,
+            random_state=random_state,
+        )
+        # Use 1 process, so that the result does not depend on the machine.
+        coherence_model = gensim.models.CoherenceModel(
+            model=lda,
+            texts=texts,
+            dictionary=dictionary,
+            coherence="c_v",
+            processes=1,
+        )
+        c_v = coherence_model.get_coherence()
+        _LOG.debug("num_topics=%s c_v=%s", num_topics, c_v)
+        rows.append({"num_topics": num_topics, "c_v": round(c_v, 3)})
+    coherence_df = pd.DataFrame(rows).set_index("num_topics")
+    _LOG.debug("return=%s", coherence_df.shape)
+    return coherence_df
+
+
+# #############################################################################
+# gensim.API.ipynb: Cell 6.3: Nearest neighbors of finance terms
+# #############################################################################
+
+
+def cell6_3_most_similar_to_df(
+    kv: gensim.models.KeyedVectors, terms: List[str], *, topn: int = 5
+) -> pd.DataFrame:
+    """
+    Show the nearest neighbors of several words, one row per word.
+
+    :param kv: word vectors, e.g., `model.wv` of a `Word2Vec` model
+    :param terms: words to query; each must be in the vocabulary of `kv`
+    :param topn: number of neighbors per word
+    :return: one row per term, with one column per neighbor, closest first,
+        and the cosine similarity in parentheses
+        ```
+        term    1           2                 ...
+        profit  net (0.91)  thousand (0.90)   ...
+        ```
+    """
+    _LOG.debug(hprint.to_str("terms topn"))
+    missing = [term for term in terms if term not in kv]
+    hdbg.dassert_eq(len(missing), 0, "Terms not in the vocabulary: %s", missing)
+    rows = []
+    for term in terms:
+        row = {"term": term}
+        neighbors = kv.most_similar(term, topn=topn)
+        for rank, (word, score) in enumerate(neighbors, start=1):
+            row[str(rank)] = f"{word} ({score:.2f})"
+        rows.append(row)
+    neighbors_df = pd.DataFrame(rows).set_index("term")
+    _LOG.debug("return=%s", neighbors_df.shape)
+    return neighbors_df
+
+
+# #############################################################################
+# gensim.API.ipynb: Cell 9.2: Sentence features for all the sentences
+# #############################################################################
+
+
+def cell9_2_build_mean_vectors(
+    kv: gensim.models.KeyedVectors, texts: List[List[str]]
+) -> np.ndarray:
+    """
+    Represent each sentence as the mean of the vectors of its words.
+
+    The words that are not in the vocabulary of `kv` are skipped. A sentence
+    with no word in the vocabulary (e.g., no token left after removing the
+    stop words) gets the zero vector, so that every sentence has a row.
+
+    :param kv: word vectors
+    :param texts: tokenized sentences
+    :return: array with one row per sentence and `kv.vector_size` columns
+    """
+    _LOG.debug(hprint.to_str("len(texts)"))
+    n_dims = kv.vector_size
+    vectors: np.ndarray = np.zeros((len(texts), n_dims), dtype=np.float32)
+    n_zero = 0
+    for i, tokens in enumerate(texts):
+        known = [token for token in tokens if token in kv]
+        if known:
+            vectors[i] = kv.get_mean_vector(known)
+        else:
+            n_zero += 1
+    _LOG.info("Sentences with no known word: '%s'", n_zero)
+    _LOG.debug("return=%s", vectors.shape)
+    return vectors

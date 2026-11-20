@@ -138,6 +138,25 @@ def compute_returns(prices: pd.Series) -> pd.Series:
     return rets
 
 
+def drop_overnight(
+    rets: pd.Series, *, tz: str = "America/New_York"
+) -> pd.Series:
+    """
+    Drop the first return of each trading day.
+
+    For an asset that does not trade overnight (e.g., SPY), the first intraday
+    bar goes from the previous day's close, so it includes the overnight move.
+    The overnight dynamics are very different from the intraday ones.
+
+    :param rets: intraday returns indexed by bar open time
+    :param tz: time zone of the exchange, used to find the trading day
+    :return: returns without the first bar of each trading day
+    """
+    local_dates = pd.Series(rets.index.tz_convert(tz).date, index=rets.index)
+    is_first = ~local_dates.duplicated()
+    return rets[~is_first.to_numpy()]
+
+
 def simulate_pnl(
     rets: pd.Series,
     hit_rate: float,
@@ -191,6 +210,7 @@ def run_experiment(
     *,
     mode: str = "shuffle",
     source: str = "binance",
+    overnight: bool = True,
 ) -> pd.DataFrame:
     """
     Simulate the PnL distribution for each hit rate on one asset / frequency.
@@ -203,10 +223,14 @@ def run_experiment(
     :param n_sims: number of simulations per hit rate
     :param mode: "shuffle" or "bernoulli" (see `simulate_pnl()`)
     :param source: "binance" or "yahoo" (see `load_prices()`)
+    :param overnight: keep the first bar of each trading day; if False, drop
+        it (see `drop_overnight()`)
     :return: one row per (hit_rate, simulation) with the PnL
     """
     prices = load_prices(symbol, interval, start, end, source=source)
     rets = compute_returns(prices)
+    if not overnight:
+        rets = drop_overnight(rets)
     results = []
     for hit_rate in hit_rates:
         pnls = simulate_pnl(rets, hit_rate, n_sims, mode=mode)

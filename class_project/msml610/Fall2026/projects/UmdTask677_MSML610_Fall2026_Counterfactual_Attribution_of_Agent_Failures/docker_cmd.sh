@@ -37,10 +37,8 @@ run "$DOCKER_CMD image ls | grep '$FULL_IMAGE_NAME' || true"
 CONTAINER_NAME="${IMAGE_NAME}.cmd"
 DOCKER_CMD=$(get_docker_cmd_command)
 PORT=""
-# Let the agent runner start each task's container on the host's Docker daemon
-# (a sibling of this container), and pass the API key through from the host
-# shell without writing it anywhere.
-DOCKER_RUN_OPTS="-v /var/run/docker.sock:/var/run/docker.sock -e ANTHROPIC_API_KEY"
+# Pass the API key through from the host shell without writing it anywhere.
+DOCKER_RUN_OPTS="-e ANTHROPIC_API_KEY"
 DOCKER_CMD_OPTS=$(get_docker_bash_options $CONTAINER_NAME "$PORT" "$DOCKER_RUN_OPTS")
 # Remove a stale container from an interrupted run and clean up on exit.
 kill_existing_container
