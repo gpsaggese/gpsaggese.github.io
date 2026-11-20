@@ -1,0 +1,244 @@
+{
+  "route_families": [
+    {
+      "accuracy": 0.08333333333333333,
+      "correct": 1,
+      "family": "code-tracing",
+      "graded": 12,
+      "route_name": "cloudflare-llama-3.1-8b",
+      "substantive_accuracy": 0.08333333333333333,
+      "substantive_correct": 1,
+      "ungraded": 0
+    },
+    {
+      "accuracy": 0.8333333333333334,
+      "correct": 10,
+      "family": "expert-science",
+      "graded": 12,
+      "route_name": "cloudflare-llama-3.1-8b",
+      "substantive_accuracy": 0.8333333333333334,
+      "substantive_correct": 10,
+      "ungraded": 0
+    },
+    {
+      "accuracy": 0.2727272727272727,
+      "correct": 3,
+      "family": "instruction-following",
+      "graded": 11,
+      "route_name": "cloudflare-llama-3.1-8b",
+      "substantive_accuracy": 0.2727272727272727,
+      "substantive_correct": 3,
+      "ungraded": 1
+    },
+    {
+      "accuracy": 0.0,
+      "correct": 0,
+      "family": "math",
+      "graded": 12,
+      "route_name": "cloudflare-llama-3.1-8b",
+      "substantive_accuracy": 0.16666666666666666,
+      "substantive_correct": 2,
+      "ungraded": 0
+    },
+    {
+      "accuracy": 0.2,
+      "correct": 2,
+      "family": "multi-step-reasoning",
+      "graded": 10,
+      "route_name": "cloudflare-llama-3.1-8b",
+      "substantive_accuracy": 0.3,
+      "substantive_correct": 3,
+      "ungraded": 2
+    },
+    {
+      "accuracy": 0.09090909090909091,
+      "correct": 1,
+      "family": "code-tracing",
+      "graded": 11,
+      "route_name": "cloudflare-llama-3.2-3b",
+      "substantive_accuracy": 0.09090909090909091,
+      "substantive_correct": 1,
+      "ungraded": 1
+    },
+    {
+      "accuracy": 0.4166666666666667,
+      "correct": 5,
+      "family": "expert-science",
+      "graded": 12,
+      "route_name": "cloudflare-llama-3.2-3b",
+      "substantive_accuracy": 0.8333333333333334,
+      "substantive_correct": 10,
+      "ungraded": 0
+    },
+    {
+      "accuracy": 0.4166666666666667,
+      "correct": 5,
+      "family": "instruction-following",
+      "graded": 12,
+      "route_name": "cloudflare-llama-3.2-3b",
+      "substantive_accuracy": 0.4166666666666667,
+      "substantive_correct": 5,
+      "ungraded": 0
+    },
+    {
+      "accuracy": 0.08333333333333333,
+      "correct": 1,
+      "family": "math",
+      "graded": 12,
+      "route_name": "cloudflare-llama-3.2-3b",
+      "substantive_accuracy": 0.3333333333333333,
+      "substantive_correct": 4,
+      "ungraded": 0
+    },
+    {
+      "accuracy": 0.0,
+      "correct": 0,
+      "family": "multi-step-reasoning",
+      "graded": 12,
+      "route_name": "cloudflare-llama-3.2-3b",
+      "substantive_accuracy": 0.16666666666666666,
+      "substantive_correct": 2,
+      "ungraded": 0
+    },
+    {
+      "accuracy": 0.36363636363636365,
+      "correct": 4,
+      "family": "code-tracing",
+      "graded": 11,
+      "route_name": "cloudflare-llama-3.3-70b",
+      "substantive_accuracy": 0.36363636363636365,
+      "substantive_correct": 4,
+      "ungraded": 1
+    },
+    {
+      "accuracy": 0.6666666666666666,
+      "correct": 8,
+      "family": "expert-science",
+      "graded": 12,
+      "route_name": "cloudflare-llama-3.3-70b",
+      "substantive_accuracy": 0.9166666666666666,
+      "substantive_correct": 11,
+      "ungraded": 0
+    },
+    {
+      "accuracy": 0.5,
+      "correct": 6,
+      "family": "instruction-following",
+      "graded": 12,
+      "route_name": "cloudflare-llama-3.3-70b",
+      "substantive_accuracy": 0.5,
+      "substantive_correct": 6,
+      "ungraded": 0
+    },
+    {
+      "accuracy": 0.08333333333333333,
+      "correct": 1,
+      "family": "math",
+      "graded": 12,
+      "route_name": "cloudflare-llama-3.3-70b",
+      "substantive_accuracy": 0.5833333333333334,
+      "substantive_correct": 7,
+      "ungraded": 0
+    },
+    {
+      "accuracy": 0.25,
+      "correct": 3,
+      "family": "multi-step-reasoning",
+      "graded": 12,
+      "route_name": "cloudflare-llama-3.3-70b",
+      "substantive_accuracy": 0.6666666666666666,
+      "substantive_correct": 8,
+      "ungraded": 0
+    },
+    {
+      "accuracy": 0.4166666666666667,
+      "correct": 5,
+      "family": "code-tracing",
+      "graded": 12,
+      "route_name": "coreweave-llama-3.3-70b",
+      "substantive_accuracy": 0.4166666666666667,
+      "substantive_correct": 5,
+      "ungraded": 0
+    },
+    {
+      "accuracy": 0.5833333333333334,
+      "correct": 7,
+      "family": "expert-science",
+      "graded": 12,
+      "route_name": "coreweave-llama-3.3-70b",
+      "substantive_accuracy": 0.9166666666666666,
+      "substantive_correct": 11,
+      "ungraded": 0
+    },
+    {
+      "accuracy": 0.5,
+      "correct": 6,
+      "family": "instruction-following",
+      "graded": 12,
+      "route_name": "coreweave-llama-3.3-70b",
+      "substantive_accuracy": 0.5,
+      "substantive_correct": 6,
+      "ungraded": 0
+    },
+    {
+      "accuracy": 0.16666666666666666,
+      "correct": 2,
+      "family": "math",
+      "graded": 12,
+      "route_name": "coreweave-llama-3.3-70b",
+      "substantive_accuracy": 0.4166666666666667,
+      "substantive_correct": 5,
+      "ungraded": 0
+    },
+    {
+      "accuracy": 0.25,
+      "correct": 3,
+      "family": "multi-step-reasoning",
+      "graded": 12,
+      "route_name": "coreweave-llama-3.3-70b",
+      "substantive_accuracy": 0.6666666666666666,
+      "substantive_correct": 8,
+      "ungraded": 0
+    }
+  ],
+  "routes": [
+    {
+      "accuracy": 0.2807017543859649,
+      "correct": 16,
+      "graded": 57,
+      "route_name": "cloudflare-llama-3.1-8b",
+      "substantive_accuracy": 0.3333333333333333,
+      "substantive_correct": 19,
+      "ungraded": 3
+    },
+    {
+      "accuracy": 0.2033898305084746,
+      "correct": 12,
+      "graded": 59,
+      "route_name": "cloudflare-llama-3.2-3b",
+      "substantive_accuracy": 0.3728813559322034,
+      "substantive_correct": 22,
+      "ungraded": 1
+    },
+    {
+      "accuracy": 0.3728813559322034,
+      "correct": 22,
+      "graded": 59,
+      "route_name": "cloudflare-llama-3.3-70b",
+      "substantive_accuracy": 0.6101694915254238,
+      "substantive_correct": 36,
+      "ungraded": 1
+    },
+    {
+      "accuracy": 0.38333333333333336,
+      "correct": 23,
+      "graded": 60,
+      "route_name": "coreweave-llama-3.3-70b",
+      "substantive_accuracy": 0.5833333333333334,
+      "substantive_correct": 35,
+      "ungraded": 0
+    }
+  ],
+  "schema_version": "noesis-warmup-grades-v2",
+  "total_observations": 240
+}

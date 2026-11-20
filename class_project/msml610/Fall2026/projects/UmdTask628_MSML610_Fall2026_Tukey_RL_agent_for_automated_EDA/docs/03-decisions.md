@@ -8,7 +8,7 @@
 
 - **Decision**: score against the equivalence class (CPDAG) for linear-Gaussian
   data, and against the DAG where the model identifies it (non-Gaussian noise,
-  nonlinear additive noise)
+  equal noise variances on the raw scale, nonlinear additive noise)
 - **Why**: linear-Gaussian data cannot reveal every edge direction, so Key
   Example 1 is read as "directions where identifiable"
 - **Alternatives**: the true DAG everywhere (reported as a diagnostic)
@@ -27,7 +27,8 @@
 - **Decision**: score = -`lam` x (target SHD / true edges) - (1 - `lam`) x
   (prediction shortfall on the test rows)
 - **Why**: prediction alone rewards dense graphs (`lam = 0` collapses to them);
-  structure alone (`lam = 1`) ended within 0.003 (not tested)
+  structure alone (`lam = 1`) scored -0.278 against -0.274 on development
+  graphs, with no significance test (results arrive with `PR_R1`)
 - **Alternatives**: structure only
 - **Status**: proposed
 
@@ -51,6 +52,11 @@
 - **Why**: the spec's M3 asks to beat the scripted baseline; the rule is not PC,
   so PC is reported too
 - **Alternatives**: a hand-tuned rule (a secondary comparison)
+- **Limits**: the tuned variants search small grids (`GRIDS` in
+  `tukey_benchmark.py`) on the validation sets, and the chosen value is often
+  the smallest of its grid (`scripted_plus` in 9 of the 10 settings,
+  `scripted_tuned` in 5), so the Milestone 2 table reports these grids, not
+  the best each method can do
 - **Status**: accepted
 
 ### `D6` (The policy runs under a call budget)

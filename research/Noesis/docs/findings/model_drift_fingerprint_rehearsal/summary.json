@@ -1,0 +1,77 @@
+{
+  "passed": true,
+  "protocol": {
+    "alpha": 0.05,
+    "character_length": 256,
+    "implementation_commit": "fd2ee24d75c9fef87debff8caefa0c04d4a5d374",
+    "permutations": 200,
+    "prompt_count": 5,
+    "samples_per_prompt": 12,
+    "trials_per_scenario": 20
+  },
+  "provider_calls": 0,
+  "runtime": {
+    "numpy": "2.0.2",
+    "python": "3.9.6",
+    "torch": "2.8.0"
+  },
+  "scenarios": [
+    {
+      "accepted": true,
+      "detection_rate": 0.05,
+      "expectation": "NO_ALERT",
+      "false_alarm_rate": 0.05,
+      "median_p_value": 0.355,
+      "name": "healthy_a_a",
+      "substituted_count": 0,
+      "substitution_fraction": 0.0,
+      "total_trials": 20
+    },
+    {
+      "accepted": true,
+      "detection_rate": 1.0,
+      "expectation": "DETECT",
+      "false_alarm_rate": 0.0,
+      "median_p_value": 0.0,
+      "name": "full_model_swap",
+      "substituted_count": 60,
+      "substitution_fraction": 1.0,
+      "total_trials": 20
+    },
+    {
+      "accepted": null,
+      "detection_rate": 0.05,
+      "expectation": "MEASURE",
+      "false_alarm_rate": 0.0,
+      "median_p_value": 0.43000000000000005,
+      "name": "partial_substitution_10",
+      "substituted_count": 6,
+      "substitution_fraction": 0.1,
+      "total_trials": 20
+    },
+    {
+      "accepted": null,
+      "detection_rate": 0.1,
+      "expectation": "MEASURE",
+      "false_alarm_rate": 0.0,
+      "median_p_value": 0.3175,
+      "name": "partial_substitution_25",
+      "substituted_count": 15,
+      "substitution_fraction": 0.25,
+      "total_trials": 20
+    },
+    {
+      "accepted": true,
+      "detection_rate": 0.95,
+      "expectation": "DETECT",
+      "false_alarm_rate": 0.0,
+      "median_p_value": 0.005,
+      "name": "partial_substitution_50",
+      "substituted_count": 30,
+      "substitution_fraction": 0.5,
+      "total_trials": 20
+    }
+  ],
+  "schema_version": "noesis-fingerprint-control-v1",
+  "validation_scope": "synthetic-implementation-control"
+}

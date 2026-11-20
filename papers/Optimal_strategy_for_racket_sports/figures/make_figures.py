@@ -1,8 +1,9 @@
 """
-Generate the four figures used in `paper.md`.
+Generate the five figures used in `paper.md`.
 
-Figures 3 and 4 read the CSV files next to this script, which the
-`racket_sports_05_variable_sensitivity` notebook writes with
+The figures of Section VII read the CSV files next to this script: the
+`racket_sports_05_variable_sensitivity` notebook writes 2 of them, and the
+`racket_sports_07_speed_vs_accuracy` notebook the third, with
 `RUN_FULL_SIMS = True`.
 
 Run with:
@@ -282,3 +283,79 @@ print(
     "Wrote figures/variable_sensitivity_sweeps.png and"
     " figures/variable_sensitivity_serve_depth.png"
 )
+
+# #############################################################################
+# Figure: best ball speed against a, speed vs accuracy (Section VII-B).
+# #############################################################################
+
+# The CSV file comes from the `racket_sports_07_speed_vs_accuracy` notebook.
+best_speeds = np.genfromtxt(
+    "figures/speed_vs_accuracy_best_speed.csv",
+    delimiter=",",
+    names=True,
+    dtype=None,
+    encoding="utf-8",
+)
+# The base is a line with its band shaded; the other shapes are markers with
+# their bands as bars, shifted a little in `a` so the bars do not overlap.
+shapes = [
+    ("base", "Linear (base)", "#1a5276", "o"),
+    ("knee", "Knee", "#a04000", "s"),
+    ("parabola", "Parabola", "#1e8449", "^"),
+    ("one_sided_parabola", "One-sided parabola", "#7d3c98", "D"),
+]
+fig, axes = plt.subplots(1, 2, figsize=(3.4, 2.1), sharey=True)
+for ax, (sport, _, _) in zip(axes, sports):
+    for k, (variant, label, color, marker) in enumerate(shapes):
+        rows = best_speeds[
+            (best_speeds["sport"] == sport) & (best_speeds["variant"] == variant)
+        ]
+        rows = rows[np.argsort(rows["a"])]
+        best = rows["best_speed_ratio"]
+        low = rows["band_low_ratio"]
+        high = rows["band_high_ratio"]
+        if variant == "base":
+            ax.fill_between(rows["a"], low, high, color=color, alpha=0.15)
+            ax.plot(
+                rows["a"],
+                best,
+                color=color,
+                marker=marker,
+                markersize=2.5,
+                linewidth=1.0,
+                label=label,
+            )
+        else:
+            ax.errorbar(
+                rows["a"] + 0.04 * k,
+                best,
+                yerr=[best - low, high - best],
+                color=color,
+                marker=marker,
+                markersize=2.5,
+                linestyle="none",
+                linewidth=0.8,
+                capsize=1.5,
+                label=label,
+            )
+    ax.axhline(1.0, color="#7f8c8d", linewidth=0.6, linestyle=":")
+    ax.set_title(sport)
+    ax.set_xlabel(r"Coefficient $a$", labelpad=1)
+    ax.set_ylim(0.45, 2.05)
+    ax.spines[["top", "right"]].set_visible(False)
+axes[0].set_ylabel(r"Best $v_b / v_0$")
+handles, labels = axes[0].get_legend_handles_labels()
+fig.legend(
+    handles,
+    labels,
+    loc="upper center",
+    ncol=2,
+    frameon=False,
+    fontsize=6.5,
+    bbox_to_anchor=(0.5, 1.02),
+)
+fig.tight_layout(rect=(0, 0, 1, 0.82), pad=0.4)
+fig.savefig("figures/speed_vs_accuracy_best_speed.png", dpi=300)
+plt.close(fig)
+
+print("Wrote figures/speed_vs_accuracy_best_speed.png")

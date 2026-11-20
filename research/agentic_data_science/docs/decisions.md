@@ -22,15 +22,15 @@
 
 ## Bake-off
 
-### D-3. Keep the Bake-off in `tutorials/agentic_eda/bakeoff/` for now
+### D-3. The Bake-off lives in `research/agentic_data_science/bakeoff/`
 
-- **Decision**: the harness lives next to the other `agentic_eda` code and follows
-  its conventions (absolute imports, `_parse()`/`_main()`, `hunitest` tests)
-- **Why**: the track plan put Project 1 code in `tutorials/agentic_eda/`, which
-  already holds an EDA agent
-- **Alternatives**: `research/agentic_data_science/bakeoff/`, next to
-  `schema_agent/`, so that in-house entrants can be imported directly
-- **Status**: proposed, see Open Question 1 of the Bake-off Harness in `plan.md`
+- **Decision**: move the harness from `tutorials/agentic_eda/bakeoff/` to this
+  repo, next to `schema_agent/`, keeping its conventions (absolute imports,
+  `_parse()`/`_main()`, `hunitest` tests)
+- **Why**: `gpsaggese/tutorials` was archived after `#706` merged, so it takes no
+  new PRs; most entrants already live in this repo
+- **Alternatives**: keep it in `tutorials` (no longer possible)
+- **Status**: accepted
 
 ### D-4. Offline samples by default; never fake real data
 

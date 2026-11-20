@@ -1,0 +1,20 @@
+# Direct dependencies of Tukey, pinned to the versions of the image every
+# result was produced in. `requirements.txt` is generated from this file:
+# > pip-compile --strip-extras --constraint=frozen_image_pip_freeze.txt \
+#     --output-file=requirements.txt requirements.in
+causal-learn==0.1.4.8
+CausalDisco==0.2.4
+# Not in the frozen image (it showed a tqdm warning in the notebooks); one of
+# the template's base packages, with matplotlib, numpy, pandas, seaborn, tqdm.
+ipywidgets==8.1.9
+lingam==1.12.2
+matplotlib==3.11.2
+networkx==3.7
+numpy==2.5.4
+pandas==3.0.6
+pgmpy==1.1.2
+pytest==9.1.1
+scikit-learn==1.9.1
+scipy==1.18.1
+seaborn==0.13.2
+tqdm==4.70.1
