@@ -119,62 +119,61 @@ corpus.
 // Slide: Expressiveness Vs. Tractability
 #wrap-content(
   [
-    // rendered_images:begin
-    // ```tikz
-    // \begin{axis}[
-    //   width=12cm,
-    //   height=8cm,
-    //   axis lines=middle,
-    //   xlabel style={
-    //     at={(axis description cs:0.5,-0.05)},
-    //     anchor=north,
-    //     font=\Huge\bfseries
-    //   },
-    //   ylabel style={
-    //     at={(axis description cs:-0.02,0.5)},
-    //     anchor=south,
-    //     rotate=90,
-    //     font=\Huge\bfseries
-    //   },
-    //   xlabel={\textbf{Expressiveness}},
-    //   ylabel={\textbf{Tractability}},
-    //   xtick=\empty,
-    //   ytick=\empty,
-    //   xmin=0.5, xmax=10,
-    //   ymin=0, ymax=10,
-    //   domain=1:9,
-    //   samples=100,
-    //   enlargelimits=true,
-    //   clip=false,
-    //   ]
-    //
-    //   % Tradeoff curve (dashed, ultra thick hyperbola)
-    //   \addplot[domain=1:9, ultra thick, dashed, blue] {10 / x};
-    //
-    //   % Points
-    //   \addplot[only marks, mark=*] coordinates {(2,5)} node[above right, font=\huge\bfseries] {\textbf{Atomic}};
-    //   \addplot[only marks, mark=*] coordinates {(5,2)} node[above right, font=\huge\bfseries] {\textbf{Factored}};
-    //   \addplot[only marks, mark=*] coordinates {(8,1.25)} node[below right, font=\huge\bfseries] {\textbf{Structured}};
-    // \end{axis}
-    // ```
-    // label=fig:expressivenessvstractability
-    // caption=Diagram illustrating the tradeoff between expressiveness and tractability across atomic, factored, and structured representations.
-    // width=100%
-    // placement=auto
-    // rendered_images:end
-    // render_images:begin
-    #figure(
-      image(
-        "Lesson03.1-Knowledge_representation.typ.figs/Lesson03.1-Knowledge_representation.1.png",
-        width: 100%,
-      ),
-      caption: [Diagram illustrating the tradeoff between expressiveness and
-        tractability across atomic, factored, and structured representations.],
-      kind: "figure",
-      supplement: [Fig.],
-      placement: auto,
-    ) <fig:expressivenessvstractability>
-    // render_images:end
+// rendered_images:begin
+//     ```tikz
+//     \begin{axis}[
+//       width=12cm,
+//       height=8cm,
+//       axis lines=middle,
+//       xlabel style={
+//         at={(axis description cs:0.5,-0.05)},
+//         anchor=north,
+//         font=\Huge\bfseries
+//       },
+//       ylabel style={
+//         at={(axis description cs:-0.02,0.5)},
+//         anchor=south,
+//         rotate=90,
+//         font=\Huge\bfseries
+//       },
+//       xlabel={\textbf{Expressiveness}},
+//       ylabel={\textbf{Tractability}},
+//       xtick=\empty,
+//       ytick=\empty,
+//       xmin=0.5, xmax=10,
+//       ymin=0, ymax=10,
+//       domain=1:9,
+//       samples=100,
+//       enlargelimits=true,
+//       clip=false,
+//       ]
+//     
+//       % Tradeoff curve (dashed, ultra thick hyperbola)
+//       \addplot[domain=1:9, ultra thick, dashed, blue] {10 / x};
+//     
+//       % Points
+//       \addplot[only marks, mark=*] coordinates {(2,5)} node[above right, font=\huge\bfseries] {\textbf{Atomic}};
+//       \addplot[only marks, mark=*] coordinates {(5,2)} node[above right, font=\huge\bfseries] {\textbf{Factored}};
+//       \addplot[only marks, mark=*] coordinates {(8,1.25)} node[below right, font=\huge\bfseries] {\textbf{Structured}};
+//     \end{axis}
+//     ```
+//     label=fig:expressivenessvstractability
+//     caption=Diagram illustrating the tradeoff between expressiveness and tractability across atomic, factored, and structured representations.
+//     width=100%
+//     placement=auto
+// rendered_images:end
+// render_images:begin
+#figure(
+  image(
+    "Lesson03.1-Knowledge_representation.typ.figs/Lesson03.1-Knowledge_representation.1.png",
+    width: 100%,
+  ),
+  caption: [Diagram illustrating the tradeoff between expressiveness and tractability across atomic, factored, and structured representations.],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
+) <fig:expressivenessvstractability>
+// render_images:end
   ],
   align: right,
   column-gutter: 1em,
@@ -604,43 +603,43 @@ mechanisms for revising their beliefs when new evidence contradicts old conclusi
 // Slide: Models and Possible Worlds
 #wrap-content(
   [
-    // rendered_images:begin
-    // ```graphviz
-    // digraph G {
-    //   rankdir=TD;
-    //   nodesep=3.5;
-    //   node [shape=box, style="rounded,filled", fillcolor="#f7f7f7"];
-    //
-    //   Model [label="Model"];
-    //   Worlds [label="Possible\nworlds"];
-    //
-    //   Model -> Worlds [
-    //     dir=both
-    //     fontsize=10
-    //     penwidth=2
-    //     label="   Grounding"
-    //     labeldistance=3.0
-    //     labelangle=0
-    //   ];
-    // }
-    // ```
-    // label=fig:modelsandpossibleworlds
-    // caption=Diagram relating a model to the possible worlds it grounds.
-    // width=100%
-    // placement=auto
-    // rendered_images:end
-    // render_images:begin
-    #figure(
-      image(
-        "Lesson03.1-Knowledge_representation.typ.figs/Lesson03.1-Knowledge_representation.2.png",
-        width: 100%,
-      ),
-      caption: [Diagram relating a model to the possible worlds it grounds.],
-      kind: "figure",
-      supplement: [Fig.],
-      placement: auto,
-    ) <fig:modelsandpossibleworlds>
-    // render_images:end
+// rendered_images:begin
+//     ```graphviz
+//     digraph G {
+//       rankdir=TD;
+//       nodesep=3.5;
+//       node [shape=box, style="rounded,filled", fillcolor="#f7f7f7"];
+//     
+//       Model [label="Model"];
+//       Worlds [label="Possible\nworlds"];
+//     
+//       Model -> Worlds [
+//         dir=both
+//         fontsize=10
+//         penwidth=2
+//         label="   Grounding"
+//         labeldistance=3.0
+//         labelangle=0
+//       ];
+//     }
+//     ```
+//     label=fig:modelsandpossibleworlds
+//     caption=Diagram relating a model to the possible worlds it grounds.
+//     width=100%
+//     placement=auto
+// rendered_images:end
+// render_images:begin
+#figure(
+  image(
+    "Lesson03.1-Knowledge_representation.typ.figs/Lesson03.1-Knowledge_representation.2.png",
+    width: 100%,
+  ),
+  caption: [Diagram relating a model to the possible worlds it grounds.],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
+) <fig:modelsandpossibleworlds>
+// render_images:end
   ],
   align: right,
   column-gutter: 1em,
@@ -869,21 +868,21 @@ tracks reasoning about the actual world.
 // digraph EntailmentSemantics {
 //   rankdir=TB;
 //   node [shape=box, style=filled, fillcolor=lightgray];
-//
+// 
 //   // Representation layer
 //   Sentence1 -> Sentence2 [label="Entails", style=dashed];
-//
+// 
 //   // World layer
 //   RealWorld1 -> RealWorld2 [label="Follows", style=dashed];
-//
+// 
 //   // Semantics arrows
 //   Sentence1 -> RealWorld1 [label="Semantics", style=dashed];
 //   Sentence2 -> RealWorld2 [label="Semantics", style=dashed];
-//
+// 
 //   // Invisible edges to align Representation and World vertically
 //   {rank=same; Sentence1; Sentence2}
 //   {rank=same; RealWorld1; RealWorld2}
-//
+// 
 //   // Labels for layers (optional)
 //   subgraph cluster_representation {
 //     label="Representation";
@@ -891,7 +890,7 @@ tracks reasoning about the actual world.
 //     Sentence1;
 //     Sentence2;
 //   }
-//
+// 
 //   subgraph cluster_world {
 //     label="World";
 //     style=dotted;
@@ -911,8 +910,7 @@ tracks reasoning about the actual world.
     "Lesson03.1-Knowledge_representation.typ.figs/Lesson03.1-Knowledge_representation.3.png",
     width: 70%,
   ),
-  caption: [Diagram relating entailment between sentences, consequence between world
-    states, and the semantics that link representation to the world.],
+  caption: [Diagram relating entailment between sentences, consequence between world states, and the semantics that link representation to the world.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -1110,13 +1108,13 @@ individuals that share a common role.
 //     ranksep=0.75;
 //     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12,
 //     penwidth=1.4];
-//
+// 
 //     // Node styles
 //     Student [label="Student", fillcolor="#A6C8F4"];
 //     Professor [label="Professor", fillcolor="#A6E7F4"];
 //     Course [label="Course", fillcolor="#B2E2B2"];
 //     Department [label="Department", fillcolor="#FFD1A6"];
-//
+// 
 //     Alice [label="Alice", fillcolor="#C6A6F4"];
 //     Bob [label="Bob", fillcolor="#C6A6F4"];
 //     GP [label="GP", fillcolor="#C6A6F4"];
@@ -1125,10 +1123,10 @@ individuals that share a common role.
 //     MSML610 [label="MSML610", fillcolor="#D2B48C"];
 //     ComputerScience [label="ComputerScience", fillcolor="#F4A6A6"];
 //     Mathematics [label="Mathematics", fillcolor="#F4A6A6"];
-//
+// 
 //     // Force ranks
 //     //{rank=same; Student; Professor; Course; Department;}
-//
+// 
 //     // Edges
 //     Alice -> Student [label="instance of"];
 //     Bob -> Student [label="instance of"];
@@ -1138,7 +1136,7 @@ individuals that share a common role.
 //     MSML610 -> Course [label="instance of"];
 //     ComputerScience -> Department [label="instance of"];
 //     Mathematics -> Department [label="instance of"];
-//
+// 
 //     Student -> Course [label="takesCourse"];
 //     Professor -> Course [label="teachesCourse"];
 //     Student -> Department [label="belongsToDepartment"];
@@ -1157,8 +1155,7 @@ individuals that share a common role.
     "Lesson03.1-Knowledge_representation.typ.figs/Lesson03.1-Knowledge_representation.4.png",
     width: 70%,
   ),
-  caption: [Diagram relating student, professor, course, and department entities and
-    instances in an example university ontology.],
+  caption: [Diagram relating Student, Professor, Course, and Department entities and instances in an example university ontology.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
