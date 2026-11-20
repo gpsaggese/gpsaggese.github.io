@@ -271,8 +271,7 @@ digraph Depth {
     { rank=same; DeepI; ShalI; }
 }
 ```
-label=fig:deep-modules caption=A deep module (left) has a narrow interface over a
-large implementation; a shallow one has a wide interface over little
+label=fig:deep-modules caption=A deep module (left) has a narrow interface over a large implementation; a shallow one has a wide interface over little
 
 ::::
 :::
@@ -502,8 +501,7 @@ digraph Demeter {
             label="  Reaches  "];
 }
 ```
-label=fig:demeter caption=The handler (rose) should talk to its friend the store
-(blue), not reach through it to the strangers behind it (red dashed edge)
+label=fig:demeter caption=The handler (rose) should talk to its friend the store (blue), not reach through it to the strangers behind it (red dashed edge)
 
 ::::
 :::
@@ -793,8 +791,8 @@ digraph Compose {
     Jq -> Sort -> Agent;
 }
 ```
-label=fig:compose caption=One small tool of ours (orange) composes with generic tools
-(teal) and with an agent (rose) through a plain-text interface
+label=fig:compose
+caption=One small tool of ours (orange) composes with generic tools (teal) and with an agent (rose) through a plain-text interface
 
 - @Intuition@: A coding agent is a power user of the shell
   - A tool with plain-text output and an exit code needs no custom integration to be
@@ -802,7 +800,6 @@ label=fig:compose caption=One small tool of ours (orange) composes with generic 
 
 - @Remark@: The same idea inside Python: A function that takes and returns one type,
   e.g., a `pd.DataFrame`, chains with any other such function
-  - Splitting a script into stages is covered in detail in Lesson 12.01
 
 # Design Strategically
 
@@ -820,7 +817,7 @@ label=fig:compose caption=One small tool of ours (orange) composes with generic 
 // TODO(gp): Check the "10-20%" figure: it is recalled from Ousterhout (2018)
 // and is not in the notes
 
-- @Techniques@: Invest a small, steady share of the time, about 10-20%, in design
+- @Techniques@: Invest a small, steady share of the time (e.g., 10-20%), in design
   - Clean up a little in every change, instead of a big rewrite later
 
 // TODO(gp): Check the claim that agents are tactical by default: it is a
@@ -908,7 +905,7 @@ label=fig:compose caption=One small tool of ours (orange) composes with generic 
   - Randomize what is not promised, e.g., the order of a result set
   - Treat a change of observable behavior as a breaking change
 
-* Conway's and Gall's Laws
+* Conway's Law
 
 - @Definition@: **Conway's law**: A system mirrors the communication structure of the
   organization that builds it _(Conway, 1968)_
@@ -921,6 +918,8 @@ label=fig:compose caption=One small tool of ours (orange) composes with generic 
   - One agent session per task writes one helper per task: Five sessions, five copies
     of `is_valid_code()`
   - _Fix_: Split the tasks along the module boundaries you want
+
+* Gall's Law
 
 // TODO(gp): Check the wording of Gall's law and the year of "Systemantics":
 // it is recalled from memory

@@ -15,6 +15,12 @@ combining Bayesian inference, knowledge graphs, and temporal machine learning
 for decision-making under uncertainty. Applications include predictive
 maintenance, failure prediction, demand forecasting, and energy optimization.
 
+### [Agentic AI](#agentic_ai_publications)
+
+**2026-present**: Research on text-to-image generation and self-correction
+pipelines, analyzing where vision-language critics and image editors fail and
+how to train them to improve generated images.
+
 ### [Cryptography](#cryptography_publications)
 
 **2000-2005 (PhD work)**: hardware implementations of cryptographic algorithms,
@@ -275,6 +281,28 @@ Trubacheva
 - Practical deployment: Demonstrates how runnable directories simplify build
   systems, testing, deployment, and version management while maintaining
   reproducibility and modularity in large-scale software projects
+
+## Agentic AI Publications
+
+### LEDGE: Separating Critic and Editor Failures in Text-to-Image Self-Correction (2026)
+
+**Authors:** V. Agarwal, M. Gangrade, S. Ayhan, G.P. Saggese
+
+**Publication:** arXiv preprint arXiv:2611.20446, 2026
+
+**Links:** [arXiv](https://arxiv.org/abs/2611.20446)
+
+- Failure attribution: Separates the two components of text-to-image
+  self-correction, a vision-language critic that diagnoses errors and an image
+  editor that fixes them, by feeding oracle edit instructions derived from
+  GenEval to a fixed editor
+- Editor gap: On Stable Diffusion 3.5 Large, oracle instructions raise GenEval
+  from 72.0% to 81.2%, versus 74.1% for the baseline critic, yet 435 of 644
+  failed images stay unrepaired
+- Critic training: Training the critic on oracle labels from disjoint prompts
+  raises exact diagnosis accuracy from 33.3% to 70.8% and lifts GenEval on
+  Stable Diffusion 1.5 from 42.2% to 59.4%, with gains that transfer to unseen
+  object classes, a second editor, and independent T2I-CompBench judges
 
 ## Cryptography Publications
 

@@ -50,6 +50,8 @@
   - 17, Setting CI/CD for AI
   - 18, Foundations of Robust Software
 
+// TODO(ai_gp): Add a chapter about testing
+
 ## All Lesson Materials
 
 - `helpers_root/docs/` (tools, coding, planning, work_organization,

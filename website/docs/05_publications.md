@@ -63,6 +63,8 @@
 
 ### 2026
 
+- V. Agarwal, M. Gangrade, S. Ayhan, G.P. Saggese, _LEDGE: Separating Critic and Editor Failures in Text-to-Image Self-Correction_, arXiv preprint arXiv:2611.20446, 2026
+
 - C. Ma, G. Pomazkin, G.P. Saggese, P. Smith, _Beyond Accuracy: A Stability-Aware Metric for Multi-Horizon Forecasting_, arXiv preprint arXiv:2601.10863, 2026
 
 ### 2025
