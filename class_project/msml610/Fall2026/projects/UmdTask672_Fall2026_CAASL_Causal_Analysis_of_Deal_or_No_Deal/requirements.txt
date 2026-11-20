@@ -3,3 +3,6 @@ numpy>=1.24
 scipy>=1.10
 statsmodels>=0.14
 pytest>=7.0
+scikit-learn>=1.4
+joblib>=1.3
+

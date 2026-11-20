@@ -1,17 +1,22 @@
 .venv/
 venv/
 env/
-
 __pycache__/
 *.py[cod]
 .pytest_cache/
-
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
 .ipynb_checkpoints/
+build/
+dist/
+*.egg-info/
 
 .DS_Store
-
 .vscode/
 .idea/
+
 
 .env
 .env.*
@@ -19,17 +24,19 @@ __pycache__/
 *.pem
 *.key
 
+
 data/processed/*
 !data/processed/.gitkeep
 
-*.log
-*.tmp
-
-*.pkl
+# Model artifacts and generated experiment results
+outputs/*
+!outputs/.gitkeep
 *.joblib
+*.pkl
 *.pt
 *.pth
 
-build/
-dist/
-*.egg-info/
+# Temporary files and logs
+*.log
+*.tmp
+*.swp
