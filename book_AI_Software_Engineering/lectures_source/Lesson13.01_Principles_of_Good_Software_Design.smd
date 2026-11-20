@@ -167,8 +167,8 @@
 // From: helpers_root/docs/coding/all.code_design.how_to_guide.md:268 '#### Good Practices'
 
 - @Solution@: build a version that works end to end, then improve each block
-  - The skateboard, then the bike, then the car: each one carries a person
-  - Not wheels, then a chassis, then a big-bang integration at the end
+  - Yes: skateboard $\to$ bike $\to$ car: each one carries a person
+  - No: wheels $\to$ a chassis $\to$ a big-bang integration at the end
 
 - @Comparison@: two ways to hit a target in the dark _(Hunt et al., 1999)_
   - _Open loop_: compute wind, angle, and distance, then fire once and hope
@@ -180,8 +180,10 @@
   - Aliases, rate limiting, and analytics arrive as versions on top of a
     service that already redirects
 
-- @Key idea@: an agent can write a whole system in one pass, but nothing in
-  that pass ever ran end to end, so nobody knows which part is wrong
+- @Key idea@:
+  - An agent can write a whole system in one pass
+  - But nothing in that pass ever ran end to end
+  - So nobody knows which part is wrong
 
 # Build Deep Modules
 
@@ -200,7 +202,10 @@
     caches, permissions, and file systems
 
 - @Counterexample@: a tiny wrapper is shallow
-  - `def is_exists(path): return os.path.exists(path)`
+  ```python
+  def is_exists(path):
+      return os.path.exists(path)`
+  ```
   - It costs a new name and saves nothing
 
 - @Key idea@: a module earns its place by the complexity it hides, not by the
@@ -249,7 +254,7 @@ digraph Depth {
 }
 ```
 label=fig:deep-modules
-caption=A deep module (left) has a narrow interface (coral) over a large implementation (blue); a shallow one has a wide interface over little
+caption=A deep module (left) has a narrow interface over a large implementation; a shallow one has a wide interface over little
 
 ::::
 :::
@@ -259,7 +264,7 @@ caption=A deep module (left) has a narrow interface (coral) over a large impleme
 
 - @Definition@: decompose a system by the design decisions that are likely to
   change, and hide each decision inside one module _(Parnas, 1972)_
-  - Not by the steps of the processing, as in a flowchart
+  - Do not decompose by the steps of the processing, as in a flowchart
 
 - @Comparison@: two ways to split the same program
   - _By steps_: read, generate, check, insert, and each step knows the data
