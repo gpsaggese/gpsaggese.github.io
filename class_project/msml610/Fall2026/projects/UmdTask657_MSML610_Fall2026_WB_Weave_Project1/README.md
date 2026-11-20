@@ -18,8 +18,9 @@ relates to the change in the 2-year Treasury yield on the announcement day.
 | Define the problem | Classify sentences with macro-F1 on `test.csv`; fit a TF-IDF + logistic regression baseline on `train.csv`; define statement tone as the share of hawkish sentences minus the share of dovish sentences | `weave.example.ipynb` |
 | Trace the models | Wrap the baseline, FOMC-RoBERTa, and a zero-shot classifier as `weave.Model` classes with a traced `predict` | `weave_utils.py`, `weave.example.ipynb` |
 | Evaluate with Weave | Publish the test sentences as a `weave.Dataset` and run `weave.Evaluation` with an accuracy scorer and a custom macro-F1 `weave.Scorer` | `weave_utils.py`, `weave.example.ipynb` |
-| Link tone to yields | Pick the model by macro-F1, then measure the Spearman correlation (with a bootstrap 95% CI) between the change in tone and the yield change | in progress |
-| Visualize and report | Compare the evaluations in the Weave UI and plot tone change against yield change | in progress |
+| Link tone to yields | Pick the model by macro-F1, then measure the Spearman correlation (with a bootstrap 95% CI) between the change in tone and the yield change | `weave.example.ipynb` |
+| Visualize and report | Compare the evaluations in the Weave UI and plot tone change against yield change | `weave.example.ipynb` |
+
 
 ## 2. Project Structure
 
@@ -175,3 +176,165 @@ The container follows the class template with these changes:
 | `BuildKit is enabled but the buildx component is missing` | Install the buildx plugin (see Prerequisites) |
 | `docker_jupyter.sh` prints `denied: requested access to the resource is denied` | Harmless: the script tries to pull the image from Docker Hub first, then uses the local build |
 | Port 8888 is busy | `./docker_jupyter.sh -p 8890`, then open <http://localhost:8890> |
+
+
+## 10. Learn W&B Weave in 60 Minutes
+
+The original project has been adapted into a standalone, beginner-friendly
+tutorial in [`tutorials/Weave/`](../../../../../tutorials/Weave/).
+
+The tutorial follows the repository's "Learn in 60 Minutes" format and
+uses FOMC classification and Treasury yield analysis as its practical
+application.
+
+### Tutorial Structure
+
+| Component | Description |
+|---|---|
+| `weave.API.ipynb` | Introduction to Weave tracing, datasets, model versioning, scorers, and evaluations |
+| `weave.example.ipynb` | End-to-end FOMC tone classification and Treasury yield analysis |
+| `weave_utils.py` | Reusable models, evaluation utilities, data ingestion, and statistical analysis |
+| `test/test_weave_utils.py` | Automated unit tests for tutorial utilities |
+| `test/test_docker_weave.py` | Docker-based notebook execution tests |
+| Docker scripts | Reproducible tutorial environment |
+| `README.md` | Tutorial setup instructions and learning resources |
+
+An accompanying blog post is available in
+[`website/docs/blog/posts/in_60_mins.Weave.md`](../../../../../website/docs/blog/posts/in_60_mins.Weave.md).
+
+### Completed Development (November 18, 2026)
+
+- Created the standalone tutorial directory using the class project
+  template and standardized Docker configuration.
+- Implemented the Weave API tutorial covering tracing, nested operations,
+  dataset versioning, model versioning, custom scorers, and comparative
+  evaluations.
+- Implemented baseline and class-balanced TF-IDF logistic regression
+  models using the Weave model interface.
+- Implemented accuracy, macro-F1, per-class metrics, and evaluation
+  latency reporting.
+- Validated ingestion of 1,984 training sentences and 496 test sentences.
+- Downloaded and cached 84 FOMC statements from 2015 through 2024.
+- Downloaded 2,751 daily Treasury yield observations from 2014 through
+  2024.
+- Successfully aligned all 84 FOMC announcements with Treasury yields:
+  83 same-day matches, one next-observation match, and no missing yield
+  changes.
+- Verified that the tutorial reproduces the original project's aligned
+  announcement dates and individual yield changes.
+- Implemented statement cleaning, sentence splitting, statement-level
+  tone scoring, and consecutive tone changes.
+- Implemented Spearman correlation analysis, paired bootstrap confidence
+  intervals, and comparative visualizations.
+- Completed both tutorial notebooks and their synchronized Python files.
+- Implemented 32 automated unit tests covering the tutorial utilities.
+- Completed the standalone tutorial README and accompanying blog post.
+- Excluded downloaded tutorial data from version control.
+
+### Tutorial Evaluation Results
+
+The standalone tutorial compares two lightweight classifiers trained on
+the same FOMC dataset. These experiments are separate from the
+original project's FOMC-RoBERTa and zero-shot model comparisons.
+
+| Metric | Baseline TF-IDF | Balanced TF-IDF |
+|---|---:|---:|
+| Macro-F1 | 0.5180 | 0.5825 |
+| Accuracy | 60.08% | 60.28% |
+| Dovish F1 | 0.4390 | 0.5714 |
+| Hawkish F1 | 0.4096 | 0.5106 |
+| Neutral F1 | 0.7053 | 0.6653 |
+| Spearman correlation | 0.1691 | 0.1773 |
+| Correlation p-value | 0.1264 | 0.1087 |
+
+The class-balanced classifier improves macro-F1 by approximately 12.4%
+relative to the baseline while maintaining similar overall accuracy.
+
+The financial analysis uses 83 consecutive statement-tone changes.
+Both classifiers produce weak positive correlations with changes in
+two-year Treasury yields, but neither correlation is statistically
+significant at the 5% level.
+
+The paired bootstrap analysis uses 2,000 resamples and produces a
+95% confidence interval of approximately [-0.1814, 0.1928] for the
+difference between the two correlations.
+
+The results demonstrate that improved classification performance does
+not necessarily translate into improved downstream financial analysis.
+The financial analysis is exploratory and does not establish causality.
+
+### Validation Results
+
+| Validation | Result |
+|---|---|
+| Python tutorial script execution | Both scripts passed |
+| Notebook structure and synchronization | Passed |
+| Automated utility unit tests | 32 passed |
+| Docker image build | Passed |
+| Interactive Docker notebook execution | Both notebooks passed |
+| Headless Docker notebook execution | Both notebooks passed |
+| Post-linting unit tests | 32 passed |
+| Post-linting headless notebook execution | Both notebooks passed |
+| Supplemental Ruff validation | Passed with documented exceptions |
+| Git whitespace validation | Passed |
+| Markdown formatting review | Completed |
+| Standard strict MkDocs build | Passed |
+| Draft-enabled strict MkDocs build | Passed |
+| Tutorial blog HTML generation | Passed |
+
+### Validation Limitations
+
+- The pinned `helpers_root` submodule revision could not be retrieved
+  from its remote repository. Validation used an available local helpers
+  checkout instead, without changing the committed submodule reference.
+- Docker notebook execution used an explicit helpers bind mount and
+  `WANDB_API_KEY` environment variable forwarding.
+- Both notebooks passed manual headless Docker execution. The complete
+  automated Docker test suite was not independently validated.
+- Supplemental Ruff validation passed with `I001` and `PLR0402`
+  excluded to preserve repository-specific helper import conventions.
+- The complete repository-specific linting workflow could not be
+  executed because some required tools were unavailable.
+- Markdown formatter output was reviewed selectively. The original
+  formatting was retained where automated changes reduced readability
+  or could affect Markdown rendering.
+- Application notebook HTML generation produced one nonfatal warning
+  concerning missing image alternative text.
+- The blog remains a draft pending publication review.
+
+### Financial Analysis Limitations
+
+- The sentence classification dataset contains imbalanced classes.
+- The test dataset is used to compare the two classifiers, rather than
+  providing an independent estimate after model selection.
+- Statement tone scores use hard sentence-level predictions and a
+  heuristic sentence splitter.
+- Daily Treasury yields may reflect economic events other than FOMC
+  announcements.
+- One announcement is aligned with the next available Treasury yield
+  observation rather than a same-day observation.
+- The paired bootstrap does not explicitly model time-series dependence.
+- The underlying external data sources may change over time.
+
+### Final Status
+
+The standalone tutorial implementation, evaluation, documentation, and
+notebook execution validation are complete.
+
+The tutorial is ready for final repository review, subject to the
+documented validation limitations and the tutorial cleanup checklist.
+
+### Final Quality Review
+
+- Reviewed all 23 project template files, available skill documentation,
+  and the BambooAI and TensorFlow reference tutorials.
+- All 32 utility unit tests passed, with 58% combined statement and
+  branch coverage.
+- Both tutorial notebooks executed successfully in Docker, including
+  headless HTML export.
+- Supplemental Python linting and strict MkDocs builds passed.
+- The standard automated Docker test workflow and full repository
+  linting remain unverified due to shared helpers and tooling limitations.
+- The application notebook still produces one nonblocking image
+  alternative text warning during HTML export.
+- The accompanying blog remains a draft pending review.
