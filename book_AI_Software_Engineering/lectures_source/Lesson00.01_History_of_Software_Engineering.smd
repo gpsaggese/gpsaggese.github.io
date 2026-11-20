@@ -8,37 +8,41 @@
 
 * Roadmap
 
-- This lesson opens with **why history matters**: ten eras of software
-  engineering and four lenses to compare them
-- It covers the **pre-internet era**: punch cards, the software crisis,
-  structured programming, waterfall, and object orientation
-- It follows **the internet, open source, and agile**: cheap distribution,
-  shared code, and short feedback loops
-- It surveys the **platform era**: Stack Overflow, frameworks, cloud, and
-  DevOps
-- It examines **AI in the editor**: autocomplete and chat assistants
-- It analyzes **vibe coding and agentic engineering**: the engineer's job
-  shifts from writing code to specifying and verifying it
-- It closes with the **patterns that repeat across every era** and what they
-  predict
+- This lesson opens with **why history matters**: Ten eras of software engineering
+  and four lenses to compare them
+
+- It covers the **pre-internet era**: Punch cards, the software crisis, structured
+  programming, waterfall, and object orientation
+
+- It follows **the internet, open source, and agile**: Cheap distribution, shared
+  code, and short feedback loops
+
+- It surveys the **platform era**: Stack Overflow, frameworks, cloud, and DevOps
+
+- It examines **AI in the editor**: Autocomplete and chat assistants
+
+- It analyzes **vibe coding and agentic engineering**: The engineer's job shifts from
+  writing code to specifying and verifying it
+
+- It closes with the **patterns that repeat across every era** and what they predict
 
 # Why History Matters
 
 * Why Study Software History
+
 // From: book_AI_Software_Engineering/plan.history.md:104 '- **Patterns that repeat across every era**'
 
-- @Motivation@: AI coding tools change every few months, so a list of tools
-  goes stale fast
+- @Motivation@: AI coding tools change every few months, so a list of tools goes
+  stale fast
   - The forces that shape each new tool are much older and more stable
 
-- @Question@: what is truly new about coding agents, and what repeats an old
-  pattern?
+- @Question@: What is truly new about coding agents, and what repeats an old pattern?
 
-- @Key idea@: every era raised the level of abstraction, shortened the
-  feedback loop, and moved the bottleneck somewhere else
+- @Key idea@: Every era raised the level of abstraction, shortened the feedback loop,
+  and moved the bottleneck somewhere else
   - Coding agents continue this trend rather than break it
 
-- @Remark@: data scientists already work in the newest eras
+- @Remark@: Data scientists already work in the newest eras
   - Python, Stack Overflow, cloud notebooks, and now coding agents
   - The older eras explain why tests, reviews, and specs exist at all
 
@@ -68,47 +72,49 @@
 )]
 ```
 
-- @Remark@: the eras overlap because a new era starts long before the old one
-  ends
-  - E.g., teams still run waterfall projects, and Stack Overflow is still in
-    use
+- @Remark@: The eras overlap because a new era starts long before the old one ends
+  - E.g., teams still run waterfall projects, and Stack Overflow is still in use
 
 * Four Lenses for Each Era
+
 // From: book_AI_Software_Engineering/plan.history.md:104 '- **Patterns that repeat across every era**'
 
-- @Goal@: compare eras along the same axes, not as a list of tools
+- @Goal@: Compare eras along the same axes, not as a list of tools
 
-- @Components@:
-  1. _Abstraction level_: what the engineer writes (e.g., machine code, a
-     framework call, a prompt)
-  2. _Feedback loop_: how long it takes to learn whether the code works
-  3. _Bottleneck_: the scarce resource that limits how fast software ships
-  4. _Engineer's role_: what the engineer spends the day doing
+- @Components@
+  1. _Abstraction level_: What the engineer writes (e.g., machine code, a framework
+     call, a prompt)
+  2. _Feedback loop_: How long it takes to learn whether the code works
+  3. _Bottleneck_: The scarce resource that limits how fast software ships
+  4. _Engineer's role_: What the engineer spends the day doing
 
-- @Example@: one **running task** follows us through every era
+- @Example@: One **running task** follows us through every era
   - _"Compute the average price in a CSV file of sales"_
   - Same task, very different work in 1965, 2010, and 2026
 
 # Before the Internet
 
 * Mainframes and Punch Cards
+
 // From: book_AI_Software_Engineering/plan.history.md:3 '- **Mainframes and punch cards (1950s–1970s)**'
 // From: book_AI_Software_Engineering/plan.history.md:8 '  - **The engineer's role:** something between a mathematician and a machine operator, very close to the hardware'
 
 ::: columns
 :::: {.column width=63%}
-- @Definition@: in **batch processing**, programmers punched code onto cards
-  and got a printout hours or days later
 
-- @Characteristics@:
+- @Definition@: In **batch processing**, programmers punched code onto cards and got
+  a printout hours or days later
+
+- @Characteristics@
   - Assembly, then FORTRAN (1957) and COBOL (1959)
   - Machine time cost more than programmer time
   - Code was checked by hand before each costly run
 
-- @Example@: one typo in the running task costs a full day of waiting
+- @Example@: One typo in the running task costs a full day of waiting
 
-- @Interpretation@: slow feedback forces careful thinking up front
+- @Interpretation@: Slow feedback forces careful thinking up front
   - The engineer is part mathematician, part machine operator
+
 ::::
 :::: {.column width=37%}
 
@@ -142,29 +148,32 @@ digraph BatchCycle {
                     constraint=false];
 }
 ```
-label=fig:batch-cycle
-caption=The batch cycle: the programmer (rose) waits hours for a printout (blue).
+label=fig:batch-cycle caption=The batch cycle: The programmer (rose) waits hours for
+a printout (blue)
 
 ::::
 :::
 
 * The Software Crisis
+
 // From: book_AI_Software_Engineering/plan.history.md:9 '  - **Big ideas:** the word "software engineering" itself (NATO conference, 1968) and the "software crisis"'
 
 ::: columns
 :::: {.column width=66%}
-- @Problem@: by the late 1960s, large projects were routinely late, over
-  budget, and unreliable
 
-- @Definition@: the **software crisis** is the gap between what hardware can
-  do and what teams can reliably build
+- @Problem@: By the late 1960s, large projects were routinely late, over budget, and
+  unreliable
 
-- @Fact@: the 1968 NATO conference coined **software engineering** as a
-  provocative term (Naur and Randell, 1969)
+- @Definition@: The **software crisis** is the gap between what hardware can do and
+  what teams can reliably build
 
-- @Fact@: **Brooks's law**: _"adding manpower to a late software project
-  makes it later"_ (Brooks, 1975)
+- @Fact@: The 1968 NATO conference coined **software engineering** as a provocative
+  term (Naur and Randell, 1969)
+
+- @Fact@: **Brooks's law**: _"adding manpower to a late software project makes it
+  later"_ (Brooks, 1975)
   - Communication paths grow as $n(n-1)/2$
+
 ::::
 :::: {.column width=34%}
 
@@ -185,51 +194,52 @@ graph CommPaths {
     D -- E;
 }
 ```
-label=fig:comm-paths
-caption=Five engineers (rose) already need ten communication paths.
+label=fig:comm-paths caption=Five engineers (rose) already need ten communication
+paths
 
 ::::
 :::
 
 * Structured Programming
+
 // From: book_AI_Software_Engineering/plan.history.md:13 '    - Dijkstra's "GOTO considered harmful" pushed people toward structured control flow'
 
-- @Problem@: unrestricted `GOTO` jumps produce "spaghetti code" whose control
-  flow is hard to follow or verify
+- @Problem@: Unrestricted `GOTO` jumps produce "spaghetti code" whose control flow is
+  hard to follow or verify
 
-- @Solution 1: structured control flow@: build programs only from
-  _sequence_, _selection_, and _iteration_
+- @Solution 1: Structured control flow@: Build programs only from _sequence_,
+  _selection_, and _iteration_
   - Dijkstra, _"Go To Statement Considered Harmful"_ (1968)
 
-- @Solution 2: information hiding@: hide each design decision inside a
-  **module** with a narrow interface (Parnas, 1972)
+- @Solution 2: Information hiding@: Hide each design decision inside a **module**
+  with a narrow interface (Parnas, 1972)
   - Decompose by what is likely to change, not by processing steps
 
 - @Characteristics@: C, Pascal, and Ada on terminals and later PCs
   - Interactive compilers cut the feedback loop from days to minutes
 
-- @Remark@: both ideas still define code that an agent handles well
-  - Small modules with clear interfaces fit in a context window and are easy
-    to review
+- @Remark@: Both ideas still define code that an agent handles well
+  - Small modules with clear interfaces fit in a context window and are easy to
+    review
 
 * The Waterfall Model
+
 // From: book_AI_Software_Engineering/plan.history.md:14 '  - **Process:** waterfall, meaning requirements → design → build → test → maintain'
 
 ::: columns
 :::: {.column width=50%}
-- @Definition@: the **waterfall model** runs each phase once, in order, with
-  sign-off at each gate
+
+- @Definition@: The **waterfall model** runs each phase once, in order, with sign-off
+  at each gate
   - Releases measured in years
 
-- @Example@: the running task gets a 20-page requirements document before
-  any code
+- @Example@: The running task gets a 20-page requirements document before any code
 
-- @Intuition@: it copies construction, where late design changes are
-  ruinous
+- @Intuition@: It copies construction, where late design changes are ruinous
 
-- @Remark@: Royce (1970) called this one-pass version _"risky and invites
-  failure"_
+- @Remark@: Royce (1970) called this one-pass version _"risky and invites failure"_
   - He asked for feedback between phases (red edge)
+
 ::::
 :::: {.column width=50%}
 
@@ -263,32 +273,36 @@ digraph Waterfall {
     Test -> Design [style=dashed, color="#C0455B", penwidth=1.6];
 }
 ```
-label=fig:waterfall
-caption=Waterfall flows from requirements (orange) through design and build (teal) and test (sage) to maintenance (blue), with Royce's feedback edge (red).
+label=fig:waterfall caption=Waterfall flows from requirements (orange) through design
+and build (teal) and test (sage) to maintenance (blue), with Royce's feedback edge
+(red)
 
 ::::
 :::
 
 * The Cost-of-Change Argument
+
 // From: book_AI_Software_Engineering/plan.history.md:16 '    - The thinking was that a change late in the project cost far more than one early on, so plan everything'
 
 ::: columns
 :::: {.column width=58%}
-- @Fact@: Boehm (1981) found that a defect fixed late costs orders of
-  magnitude more than one fixed early
+
+- @Fact@: Boehm (1981) found that a defect fixed late costs orders of magnitude more
+  than one fixed early
   - Data from large, contract-driven projects of the 1970s
 
-- @Interpretation@: if late change is very expensive, the rational process
-  is to plan everything up front
+- @Interpretation@: If late change is very expensive, the rational process is to plan
+  everything up front
   - This is the economic argument behind waterfall
 
-- @Remark@: the curve depends on the tools
+- @Remark@: The curve depends on the tools
   - Cheap compilers, tests, and deploys flatten it
   - Agile later bet on exactly this (Beck, 1999)
 
-- @Key idea@: process follows the cost of feedback
+- @Key idea@: Process follows the cost of feedback
   - Expensive feedback $\to$ plan up front
   - Cheap feedback $\to$ iterate
+
 ::::
 :::: {.column width=42%}
 
@@ -310,64 +324,63 @@ caption=Waterfall flows from requirements (orange) through design and build (tea
 :::
 
 * Object-Oriented Programming
+
 // From: book_AI_Software_Engineering/plan.history.md:17 '  - **Rise of OOP (1980s–90s):** C++, Smalltalk, then Java'
 
-- @Definition@: **object-oriented programming** bundles data and the
-  functions that act on it into _objects_ that interact through messages
+- @Definition@: **Object-oriented programming** bundles data and the functions that
+  act on it into _objects_ that interact through messages
   - Smalltalk (1970s), C++ (1985), then Java (1995)
 
-- @Characteristics@:
+- @Characteristics@
   - Encapsulation, inheritance, polymorphism
   - UML diagrams to design systems before coding
   - "Software architect" becomes a separate job
 
-- @Examples@:
-  - _Design Patterns_ (Gamma et al., 1994) catalogs 23 reusable designs
-    (e.g., `Observer`, `Factory`, `Strategy`) and gives teams a shared
-    vocabulary
-  - The running task becomes a `SalesReport` class with a `mean_price()`
-    method
+- @Examples@
+  - _Design Patterns_ (Gamma et al., 1994) catalogs 23 reusable designs (e.g.,
+    `Observer`, `Factory`, `Strategy`) and gives teams a shared vocabulary
+  - The running task becomes a `SalesReport` class with a `mean_price()` method
 
-- @Remark@: OOP raised the abstraction level from procedures to domain
-  concepts (e.g., `Invoice`, `Customer`)
+- @Remark@: OOP raised the abstraction level from procedures to domain concepts
+  (e.g., `Invoice`, `Customer`)
 
 * Limits of Plan-Driven Development
+
 // From: book_AI_Software_Engineering/plan.history.md:19 '  - **What held people back:** coordinating big teams, and requirements that were out of date by the time the code shipped'
 
-- @Problem@: plan-driven projects hit two walls
+- @Problem@: Plan-driven projects hit two walls
   1. Coordinating large teams costs more than writing the code
   2. Requirements go stale before the code ships
 
-- @Example@: by the time the running task's report module ships, the
-  analysts want a median, not a mean, and a weekly breakdown
+- @Example@: By the time the running task's report module ships, the analysts want a
+  median, not a mean, and a weekly breakdown
   - The spec was right in year 0 and wrong in year 2
 
-- @Remark@: more process does not fix stale requirements
+- @Remark@: More process does not fix stale requirements
   - Each extra sign-off adds delay, so the gap between spec and need grows
 
-- @Key idea@: the bottleneck of this era is **coordination**, not hardware
-  and not typing
+- @Key idea@: The bottleneck of this era is **coordination**, not hardware and not
+  typing
 
 * No Silver Bullet
+
 // From: book_AI_Software_Engineering/plan.history.md:109 '  - **The constant:** working out what to build and confirming it's right stays the hard part'
 
 ::: columns
 :::: {.column width=60%}
-- @Definition@: Brooks (1986) splits the difficulty of software into two
-  parts
-  - **Essential complexity**: deciding what the software must do
-  - **Accidental complexity**: the effort of expressing it with current
-    tools
 
-- @Fact@: no single tool gives a 10x gain within a decade
+- @Definition@: Brooks (1986) splits the difficulty of software into two parts
+  - **Essential complexity**: Deciding what the software must do
+  - **Accidental complexity**: The effort of expressing it with current tools
+
+- @Fact@: No single tool gives a 10x gain within a decade
   - Tools remove only accidental complexity
 
-- @Intuition@: languages, IDEs, and later LLMs all attack accidental
-  complexity
+- @Intuition@: Languages, IDEs, and later LLMs all attack accidental complexity
   - As accidental work shrinks, the essential part dominates
 
-- @Key idea@: every era shrinks accidental work, and none removes essential
-  work
+- @Key idea@: Every era shrinks accidental work, and none removes essential work
+
 ::::
 :::: {.column width=40%}
 
@@ -402,8 +415,8 @@ digraph Complexity {
     { rank=max; Tools; }
 }
 ```
-label=fig:essential-accidental
-caption=Better tools (teal) shrink accidental complexity (blue), not essential complexity (orange).
+label=fig:essential-accidental caption=Better tools (teal) shrink accidental
+complexity (blue), not essential complexity (orange)
 
 ::::
 :::
@@ -411,58 +424,62 @@ caption=Better tools (teal) shrink accidental complexity (blue), not essential c
 # The Internet, Open Source, and Agile
 
 * The Internet Changes Distribution
+
 // From: book_AI_Software_Engineering/plan.history.md:21 '- **The internet and open source (mid-1990s–2000s)**'
 // From: book_AI_Software_Engineering/plan.history.md:26 '  - **Scripting languages spread:** Perl, PHP, Python, Ruby'
 
-- @Comparison@: how software reaches users
-  - _Before_: shrink-wrapped boxes, one release every year or two
-  - _After_: downloads, then web apps updated for every user at once
+- @Comparison@: How software reaches users
+  - _Before_: Shrink-wrapped boxes, one release every year or two
+  - _After_: Downloads, then web apps updated for every user at once
 
-- @Characteristics@: scripting languages spread (Perl, PHP, Python, Ruby)
-  - Interpreted and dynamically typed: the code runs a second after it is
-    written
+- @Characteristics@: Scripting languages spread (Perl, PHP, Python, Ruby)
+  - Interpreted and dynamically typed: The code runs a second after it is written
   - Faster iteration, at the cost of less rigor up front
 
-- @Example@: the running task becomes a 10-line Python script that uses the
-  `csv` module
+- @Example@: The running task becomes a 10-line Python script that uses the `csv`
+  module
 
 - @Remark@: NumPy, pandas, and scikit-learn appeared in the late 2000s
   - They made Python the default language of data science
 
 * Open Source and the Bazaar
+
 // From: book_AI_Software_Engineering/plan.history.md:23 '  - **Open source took off:** Linux, Apache, GNU, and later GitHub (2008)'
 
-- @Definition@: **open source** software ships with its source code and a
-  license that lets anyone read, change, and redistribute it
+- @Definition@: **Open source** software ships with its source code and a license
+  that lets anyone read, change, and redistribute it
 
 - @Comparison@: Raymond (1999) contrasts two ways to build software
-  - _Cathedral_: a small closed team releases rarely
-  - _Bazaar_: many contributors release early and often
+  - _Cathedral_: A small closed team releases rarely
+  - _Bazaar_: Many contributors release early and often
   - _"Given enough eyeballs, all bugs are shallow"_
 
-- @Examples@: GNU (1983), Linux (1991), Apache (1995), and GitHub (2008) as
-  the place where projects meet
+- @Examples@: GNU (1983), Linux (1991), Apache (1995), and GitHub (2008) as the place
+  where projects meet
 
-- @Key idea@: engineers began to **assemble** existing libraries instead of
-  writing everything themselves
+- @Key idea@: Engineers began to **assemble** existing libraries instead of writing
+  everything themselves
   - The skill shifts from writing code to choosing and connecting components
 
 * Version Control: CVS to Git
+
 // From: book_AI_Software_Engineering/plan.history.md:25 '  - **Version control matured:** CVS → SVN → Git'
 
 ::: columns
 :::: {.column width=62%}
-- @Motivation@: many people editing the same files need history, merging,
-  and a way to undo
 
-- @Intuition@: each new tool made branching cheaper
+- @Motivation@: Many people editing the same files need history, merging, and a way
+  to undo
+
+- @Intuition@: Each new tool made branching cheaper
   - Cheap branches $\to$ more parallel experiments
 
 - @Remark@: GitHub made the **pull request** the unit of code review
   - Coding agents deliver their work as pull requests today
 
-- @Example@: each change to the running task's script goes through a
-  reviewed pull request
+- @Example@: Each change to the running task's script goes through a reviewed pull
+  request
+
 ::::
 :::: {.column width=38%}
 
@@ -489,28 +506,30 @@ digraph VCS {
     CVS -> SVN -> Git -> GitHub;
 }
 ```
-label=fig:vcs
-caption=From centralized tools (white) to distributed Git (teal) and GitHub pull requests (blue).
+label=fig:vcs caption=From centralized tools (white) to distributed Git (teal) and
+GitHub pull requests (blue)
 
 ::::
 :::
 
 * The Agile Manifesto
+
 // From: book_AI_Software_Engineering/plan.history.md:30 '  - **Agile Manifesto (2001):** people over process, working software over documentation, responding to change over following a plan'
 
 ::: columns
 :::: {.column width=62%}
-- @Definition@: the **Agile Manifesto** (Beck et al., 2001) values
+
+- @Definition@: The **Agile Manifesto** (Beck et al., 2001) values
   1. Individuals and interactions over processes and tools
   2. Working software over comprehensive documentation
   3. Customer collaboration over contract negotiation
   4. Responding to change over following a plan
 
-- @Remark@: the items on the right still matter, the items on the left
-  matter more
+- @Remark@: The items on the right still matter, the items on the left matter more
 
-- @Comparison@: waterfall delivers once at the end, agile delivers a working
+- @Comparison@: Waterfall delivers once at the end, agile delivers a working
   increment every 1-4 weeks
+
 ::::
 :::: {.column width=38%}
 
@@ -540,28 +559,31 @@ digraph AgileLoop {
                   fontcolor="#C0455B", penwidth=1.6];
 }
 ```
-label=fig:agile-loop
-caption=One agile iteration: plan (orange), build (teal), test (sage), and demo to the customer (rose).
+label=fig:agile-loop caption=One agile iteration: Plan (orange), build (teal), test
+(sage), and demo to the customer (rose)
 
 ::::
 :::
 
 * Agile Practices
+
 // From: book_AI_Software_Engineering/plan.history.md:31 '  - **Practices:** Scrum, XP, Kanban'
 
 ::: columns
 :::: {.column width=54%}
-- @Definition@: **test-driven development** writes a failing test first,
-  then the code that makes it pass
 
-- @Characteristics@: each practice of Scrum, XP, and Kanban shortens one
-  feedback loop (see table)
+- @Definition@: **Test-driven development** writes a failing test first, then the
+  code that makes it pass
 
-- @Example@: the running task as a user story: _"As an analyst, I want last
-  week's average price"_
+- @Characteristics@: Each practice of Scrum, XP, and Kanban shortens one feedback
+  loop (see table)
+
+- @Example@: The running task as a user story: _"As an analyst, I want last week's
+  average price"_
   - Plus a test with a 3-row CSV and a known answer
 
-- @Remark@: tests and CI return as the core loop of agentic engineering
+- @Remark@: Tests and CI return as the core loop of agentic engineering
+
 ::::
 :::: {.column width=46%}
 
@@ -584,62 +606,65 @@ caption=One agile iteration: plan (orange), build (teal), test (sage), and demo 
 :::
 
 * Agile in Practice
+
 // From: book_AI_Software_Engineering/plan.history.md:34 '  - **What changed:** short feedback loops took the place of long plans'
 // From: book_AI_Software_Engineering/plan.history.md:36 '  - **Downsides:** "cargo-cult agile," ritual without the substance, and agile turned into a certification industry'
 
-- @Fact@: short feedback loops replaced long plans
+- @Fact@: Short feedback loops replaced long plans
   - The customer sees progress every couple of weeks, not once a year
 
-- @Remark@: agile bets that cheap change flattens the cost-of-change curve
+- @Remark@: Agile bets that cheap change flattens the cost-of-change curve
   - Automated tests and CI make late change cheap enough
 
-- @Cons@:
-  - **Cargo-cult agile**: standups and sprints without real feedback from
-    users
+- @Cons@
+  - **Cargo-cult agile**: Standups and sprints without real feedback from users
   - Agile turned into a certification industry
 
-- @Key idea@: a ritual copies the form of a practice, not its feedback loop
-  - Agentic workflows face the same risk, e.g., a "review" step that nobody
-    actually performs
+- @Key idea@: A ritual copies the form of a practice, not its feedback loop
+  - Agentic workflows face the same risk, e.g., a "review" step that nobody actually
+    performs
 
 # The Platform Era
 
 * Stack Overflow and Search
+
 // From: book_AI_Software_Engineering/plan.history.md:38 '- **The Stack Overflow and Google era (around 2008–2020)**'
 // From: book_AI_Software_Engineering/plan.history.md:43 '  - **This is the first form of "AI-free outsourced thinking":** the crowd answered your question'
 
-- @Characteristics@: search the error message, find an answer, paste it in
+- @Characteristics@: Search the error message, find an answer, paste it in
   - Stack Overflow launched in 2008
   - Knowing _where to look_ matters more than memorizing APIs
 
-- @Example@: for the running task, search _"pandas average of column"_ and
-  paste `df["price"].mean()`
+- @Example@: For the running task, search _"pandas average of column"_ and paste
+  `df["price"].mean()`
 
-- @Key idea@: this is the first form of **outsourced thinking**, with no AI
-  involved
+- @Key idea@: This is the first form of **outsourced thinking**, with no AI involved
   - The crowd answers your question
   - The person who pastes the code often does not understand it
 
-- @Fact@: those answers later became training data for code LLMs
-  - Posting on Stack Overflow fell by about 25% within six months of the
-    release of ChatGPT (del Rio-Chanona et al., 2024)
+- @Fact@: Those answers later became training data for code LLMs
+  - Posting on Stack Overflow fell by about 25% within six months of the release of
+    ChatGPT (del Rio-Chanona et al., 2024)
 
 * Abstraction Piles Up
+
 // From: book_AI_Software_Engineering/plan.history.md:41 '  - **Abstraction kept piling up:** frameworks (Rails, Django, React) and package managers (npm, pip)'
 
 ::: columns
 :::: {.column width=62%}
-- @Characteristics@: frameworks (Rails, Django, React) and package managers
-  (npm, pip) make huge dependency trees normal
 
-- @Example@: **left-pad** (2016)
-  - Removing an 11-line npm package broke builds of thousands of projects,
-    including Babel and React
+- @Characteristics@: Frameworks (Rails, Django, React) and package managers (npm,
+  pip) make huge dependency trees normal
 
-- @Problem@: every dependency is code you run but never read
+- @Example@: **Left-pad** (2016)
+  - Removing an 11-line npm package broke builds of thousands of projects, including
+    Babel and React
 
-- @Remark@: LLMs suggest packages that do not exist, and attackers can
-  register those names (Spracklen et al., 2025)
+- @Problem@: Every dependency is code you run but never read
+
+- @Remark@: LLMs suggest packages that do not exist, and attackers can register those
+  names (Spracklen et al., 2025)
+
 ::::
 :::: {.column width=38%}
 
@@ -673,49 +698,52 @@ digraph LeftPad {
                   fontcolor="#C0455B", penwidth=1.6];
 }
 ```
-label=fig:left-pad
-caption=An app (blue) breaks when a tiny package (red) deep in its tree disappears.
+label=fig:left-pad caption=An app (blue) breaks when a tiny package (red) deep in its
+tree disappears
 
 ::::
 :::
 
 * Infrastructure as Code
+
 // From: book_AI_Software_Engineering/plan.history.md:46 '  - **Infrastructure became code:** AWS, Terraform, Docker, Kubernetes'
 
-- @Definition@: **infrastructure as code** describes servers, networks, and
+- @Definition@: **Infrastructure as code** describes servers, networks, and
   deployments in versioned text files instead of manual setup
 
-- @Examples@:
-  - _AWS_ (2006): rent machines by the hour through an API
-  - _Docker_ (2013): package an app and its dependencies in a container
-  - _Kubernetes_ (2014): schedule containers across a cluster
-  - _Terraform_ (2014): declare the infrastructure, and the tool creates it
+- @Examples@
+  - _AWS_ (2006): Rent machines by the hour through an API
+  - _Docker_ (2013): Package an app and its dependencies in a container
+  - _Kubernetes_ (2014): Schedule containers across a cluster
+  - _Terraform_ (2014): Declare the infrastructure, and the tool creates it
 
-- @Example@: the running task runs every night as a container job that
-  writes the average to a dashboard
+- @Example@: The running task runs every night as a container job that writes the
+  average to a dashboard
 
-- @Remark@: text files are exactly what LLMs read and write well
+- @Remark@: Text files are exactly what LLMs read and write well
   - Infrastructure as code made operations reachable for coding agents
 
 * DevOps and Continuous Delivery
+
 // From: book_AI_Software_Engineering/plan.history.md:47 '  - **DevOps:** "you build it, you run it"; the wall between developers and operations came down'
 // From: book_AI_Software_Engineering/plan.history.md:52 '  - **The engineer's role:** broadened to cover infrastructure, security and operations ("full-stack" plus "shift left")'
 
 ::: columns
 :::: {.column width=62%}
-- @Definition@: **DevOps** removes the wall between developers and
-  operations: _"you build it, you run it"_ (Vogels and Gray, 2006)
 
-- @Characteristics@:
+- @Definition@: **DevOps** removes the wall between developers and operations: _"you
+  build it, you run it"_ (Vogels and Gray, 2006)
+
+- @Characteristics@
   - CI/CD pipelines deploy many times a day
   - Observability, site reliability engineering, on-call rotations
 
 - @Fact@: Forsgren et al. (2018) tie delivery performance to four metrics
   - Deployment frequency, lead time, change failure rate, time to restore
 
-- @Remark@: the engineer's role broadens to infrastructure, security, and
-  operations
-  - "Full-stack" engineers and "shift left": test and secure early
+- @Remark@: The engineer's role broadens to infrastructure, security, and operations
+  - "Full-stack" engineers and "shift left": Test and secure early
+
 ::::
 :::: {.column width=38%}
 
@@ -747,29 +775,32 @@ digraph CICD {
     Monitor -> Commit [style=dashed, color="#C0455B", penwidth=1.6];
 }
 ```
-label=fig:cicd
-caption=The CI/CD loop: commit (orange), build (teal), test (sage), deploy (blue), and monitor (cyan).
+label=fig:cicd caption=The CI/CD loop: Commit (orange), build (teal), test (sage),
+deploy (blue), and monitor (cyan)
 
 ::::
 :::
 
 * Microservices and Conway's Law
+
 // From: book_AI_Software_Engineering/plan.history.md:50 '  - **Microservices:** systems got split into independently deployable services'
 
 ::: columns
 :::: {.column width=58%}
-- @Definition@: **microservices** split a system into small services that
-  deploy independently
 
-- @Fact@: **Conway's law**: a system copies the communication structure of
-  the organization that builds it (Conway, 1968)
+- @Definition@: **Microservices** split a system into small services that deploy
+  independently
 
-- @Pros@: each team ships its service on its own schedule
+- @Fact@: **Conway's law**: A system copies the communication structure of the
+  organization that builds it (Conway, 1968)
 
-- @Cons@: complexity moves into the network (e.g., distributed failures,
-  version skew)
+- @Pros@: Each team ships its service on its own schedule
 
-- @Key idea@: microservices trade system complexity for team independence
+- @Cons@: Complexity moves into the network (e.g., distributed failures, version
+  skew)
+
+- @Key idea@: Microservices trade system complexity for team independence
+
 ::::
 :::: {.column width=42%}
 
@@ -809,8 +840,8 @@ digraph Conway {
     Orders -> Payments -> Shipping;
 }
 ```
-label=fig:conway
-caption=Each team (rose) owns one service (teal), and service calls mirror how the teams talk.
+label=fig:conway caption=Each team (rose) owns one service (teal), and service calls
+mirror how the teams talk
 
 ::::
 :::
@@ -818,43 +849,46 @@ caption=Each team (rose) owns one service (teal), and service calls mirror how t
 # AI Enters the Editor
 
 * AI Autocomplete
+
 // From: book_AI_Software_Engineering/plan.history.md:54 '- **AI autocomplete (around 2021–2023)**'
 
-- @Definition@: **AI autocomplete** suggests the next line, or a whole
-  function, inline from the code around the cursor and its comments
+- @Definition@: **AI autocomplete** suggests the next line, or a whole function,
+  inline from the code around the cursor and its comments
 
-- @Characteristics@:
+- @Characteristics@
   - The human still writes the structure
   - The human accepts or rejects each suggestion with one key
 
-- @Examples@:
+- @Examples@
   - **GitHub Copilot** (2021), built on OpenAI **Codex**
-  - Codex solved 28.8% of HumanEval problems with one sample, and 70.2%
-    with 100 samples (Chen et al., 2021)
-  - For the running task, type `def mean_price(path):` and the tool fills
-    in the body
+  - Codex solved 28.8% of HumanEval problems with one sample, and 70.2% with 100
+    samples (Chen et al., 2021)
+  - For the running task, type `def mean_price(path):` and the tool fills in the body
 
-- @Remark@: the feedback loop is now keystrokes: a suggestion appears while
-  the human types
+- @Remark@: The feedback loop is now keystrokes: A suggestion appears while the human
+  types
 
 * Comments Become Prompts
+
 // From: book_AI_Software_Engineering/plan.history.md:59 '    - Writing a good comment in effect became a way to prompt the model'
 
 ::: columns
 :::: {.column width=50%}
-- @Intuition@: the model continues the most likely code for its context, so
-  a precise comment steers the completion
+
+- @Intuition@: The model continues the most likely code for its context, so a precise
+  comment steers the completion
   - Writing a good comment becomes a way to prompt
 
-- @Fact@: in a controlled experiment, developers with Copilot finished an
-  HTTP-server task 55.8% faster (Peng et al., 2023)
+- @Fact@: In a controlled experiment, developers with Copilot finished an HTTP-server
+  task 55.8% faster (Peng et al., 2023)
 
-- @Remark@: less boilerplate, less hunting through documentation
+- @Remark@: Less boilerplate, less hunting through documentation
   - Gains are largest on well-known, self-contained tasks
+
 ::::
 :::: {.column width=50%}
 
-- @Example@: the comment and signature are the prompt
+- @Example@: The comment and signature are the prompt
   ```python
   import pandas as pd
 
@@ -871,56 +905,56 @@ caption=Each team (rose) owns one service (teal), and service calls mirror how t
 :::
 
 * Limits of Autocomplete
+
 // From: book_AI_Software_Engineering/plan.history.md:60 '  - **Limits:** it only saw a small slice of the code, it would confidently make up APIs, and it gave no help with design'
 
-- @Limitations@:
-  1. _Small context_: sees the current file and a few neighbors, not the
-     codebase
-  2. _Confident hallucination_: invents functions and APIs that do not
-     exist
-  3. _No design help_: completes the code you started, not the design you
-     need
+- @Limitations@
+  1. _Small context_: Sees the current file and a few neighbors, not the codebase
+  2. _Confident hallucination_: Invents functions and APIs that do not exist
+  3. _No design help_: Completes the code you started, not the design you need
 
-- @Fact@: about 40% of Copilot programs for security-relevant scenarios
-  contained a vulnerability (Pearce et al., 2022)
+- @Fact@: About 40% of Copilot programs for security-relevant scenarios contained a
+  vulnerability (Pearce et al., 2022)
 
-- @Key idea@: autocomplete speeds up typing, the part of the job that was
-  rarely the bottleneck
+- @Key idea@: Autocomplete speeds up typing, the part of the job that was rarely the
+  bottleneck
   - It shrinks accidental complexity and leaves essential complexity alone
 
 * Chat Assistants
+
 // From: book_AI_Software_Engineering/plan.history.md:62 '- **Chat assistants and copy-paste (around 2022–2024)**'
 
-- @Definition@: a **chat assistant** turns a natural-language description
-  into code inside a conversation
+- @Definition@: A **chat assistant** turns a natural-language description into code
+  inside a conversation
   - E.g., ChatGPT, released in November 2022
 
-- @Characteristics@: the model explains, refactors, and translates between
-  languages
+- @Characteristics@: The model explains, refactors, and translates between languages
   - The search-then-Stack-Overflow loop collapses into one conversation
 
-- @Example@: for the running task, ask _"Write Python to compute the average
-  price in sales.csv, skipping rows with no price"_
+- @Example@: For the running task, ask _"Write Python to compute the average price in
+  sales.csv, skipping rows with no price"_
   - Paste the code, run it, paste the `KeyError` back into the chat
 
-- @Remark@: unlike autocomplete, chat can discuss design and trade-offs
+- @Remark@: Unlike autocomplete, chat can discuss design and trade-offs
   - But it sees only what the human pastes
 
 * The Human as Copy-Paste Bus
+
 // From: book_AI_Software_Engineering/plan.history.md:67 '  - **Downsides:** losing context between chat and IDE, and lots of manual integration work'
 
 ::: columns
 :::: {.column width=58%}
-- @Problem@: the model and the code live in different windows
+
+- @Problem@: The model and the code live in different windows
   - Context is lost between chat and IDE
   - The human copies code one way and errors the other way
 
-- @Interpretation@: the human acts as the **tool-calling layer** for the
-  model
+- @Interpretation@: The human acts as the **tool-calling layer** for the model
   - Reads files, runs code, and reports results
 
-- @Key idea@: the next step automates exactly this loop
+- @Key idea@: The next step automates exactly this loop
   - Give the model tools to read files, edit them, and run commands itself
+
 ::::
 :::: {.column width=42%}
 
@@ -951,8 +985,8 @@ digraph CopyPaste {
     IDE -> Human [label="Errors  "];
 }
 ```
-label=fig:copy-paste
-caption=The human (rose) carries code and errors between the chat (teal) and the IDE (coral).
+label=fig:copy-paste caption=The human (rose) carries code and errors between the
+chat (teal) and the IDE (coral)
 
 ::::
 :::
@@ -960,22 +994,25 @@ caption=The human (rose) carries code and errors between the chat (teal) and the
 # Vibe Coding and Agentic Engineering
 
 * Vibe Coding
+
 // From: book_AI_Software_Engineering/plan.history.md:69 '- **Vibe coding (2025)**'
 
 ::: columns
 :::: {.column width=60%}
-- @Definition@: **vibe coding** (Karpathy, 2025) means to _"fully give in to
-  the vibes"_ and _"forget that the code even exists"_
 
-- @Characteristics@: prompt, run, look at the result, prompt again
+- @Definition@: **Vibe coding** (Karpathy, 2025) means to _"fully give in to the
+  vibes"_ and _"forget that the code even exists"_
+
+- @Characteristics@: Prompt, run, look at the result, prompt again
   - The code itself becomes almost invisible
 
-- @Examples@: AI-first editors (Cursor, Windsurf) and app builders
-  (Lovable, Bolt, v0, Replit Agent)
+- @Examples@: AI-first editors (Cursor, Windsurf) and app builders (Lovable, Bolt,
+  v0, Replit Agent)
 
-- @Example@: for the running task, ask _"Build a web dashboard of the weekly
-  average price from this CSV"_
+- @Example@: For the running task, ask _"Build a web dashboard of the weekly average
+  price from this CSV"_
   - A working app in minutes, with no line of code read
+
 ::::
 :::: {.column width=40%}
 
@@ -1009,48 +1046,49 @@ digraph VibeLoop {
     { rank=same; App; Read; }
 }
 ```
-label=fig:vibe-loop
-caption=Vibe coding: prompt (orange), generated app (blue), try it (rose), and skip reading the code (gray).
+label=fig:vibe-loop caption=Vibe coding: Prompt (orange), generated app (blue), try
+it (rose), and skip reading the code (gray)
 
 ::::
 :::
 
 * Where Vibe Coding Works and Fails
+
 // From: book_AI_Software_Engineering/plan.history.md:73 '  - **What changed:** people who aren't programmers can ship working prototypes'
 // From: book_AI_Software_Engineering/plan.history.md:75 '  - **Downsides:** unreviewed code, security holes, technical debt nobody understands'
 
-- @Pros@:
+- @Pros@
   - People who are not programmers ship working prototypes
   - Idea to demo in minutes, so prototypes become very cheap
 
-- @Cons@:
+- @Cons@
   - Unreviewed code, security holes, and technical debt nobody understands
-  - Users with an AI assistant wrote less secure code and were more
-    confident that it was secure (Perry et al., 2023)
+  - Users with an AI assistant wrote less secure code and were more confident that it
+    was secure (Perry et al., 2023)
 
-- @Key idea@: good for throwaway tools and exploration, poor for production
-  systems
+- @Key idea@: Good for throwaway tools and exploration, poor for production systems
   - E.g., a vibe-coded exploratory notebook is fine
   - A vibe-coded feature pipeline that feeds a production model is not
 
 * Agentic Engineering
+
 // From: book_AI_Software_Engineering/plan.history.md:78 '- **Agentic engineering (2025–present)**'
 // From: book_AI_Software_Engineering/plan.history.md:79 '  - **Tools:** coding agents that work in the terminal or the cloud (Claude Code, Codex, Devin, Copilot agent mode, and others)'
 
 ::: columns
 :::: {.column width=63%}
-- @Definition@: a **coding agent** is an LLM in a loop with tools: it reads
-  code, plans, edits files, runs tests, and fixes its mistakes
+
+- @Definition@: A **coding agent** is an LLM in a loop with tools: It reads code,
+  plans, edits files, runs tests, and fixes its mistakes
 
 - @Examples@: Claude Code, Codex, Devin, Copilot agent mode
   - Background agents work on tickets and open pull requests
 
-- @Fact@: on SWE-bench (Jimenez et al., 2024), agents went from about 2% of
-  real GitHub issues solved in 2023 to above 70% of a verified subset in
-  2025
+- @Fact@: On SWE-bench (Jimenez et al., 2024), agents went from about 2% of real
+  GitHub issues solved in 2023 to above 70% of a verified subset in 2025
 
-- @Example@: the running task becomes a ticket, and the agent opens a pull
-  request
+- @Example@: The running task becomes a ticket, and the agent opens a pull request
+
 ::::
 :::: {.column width=37%}
 
@@ -1084,30 +1122,33 @@ digraph AgenticLoop {
                      fontcolor="#C0455B", penwidth=1.6, constraint=false];
 }
 ```
-label=fig:agentic-loop
-caption=The agent loop: plan (teal), act (coral), observe (cyan), and iterate until a pull request (blue).
+label=fig:agentic-loop caption=The agent loop: Plan (teal), act (coral), observe
+(cyan), and iterate until a pull request (blue)
 
 ::::
 :::
 
 * From Writing Code to Specifying It
+
 // From: book_AI_Software_Engineering/plan.history.md:83 '    - **From writing code to specifying it:** clear specs, acceptance criteria, and context files (CLAUDE.md, AGENTS.md)'
 
 ::: columns
 :::: {.column width=55%}
-- @Problem@: an agent does what the prompt says, not what the engineer meant
+
+- @Problem@: An agent does what the prompt says, not what the engineer meant
   - Vague request $\to$ plausible but wrong code, at scale
 
-- @Solution@: write the intent down first
+- @Solution@: Write the intent down first
   - Clear specs and acceptance criteria
   - Context files (`CLAUDE.md`, `AGENTS.md`) that hold project conventions
 
-- @Key idea@: the spec becomes the main artifact the human writes
+- @Key idea@: The spec becomes the main artifact the human writes
   - Code is generated from it, like object code from source code
+
 ::::
 :::: {.column width=45%}
 
-- @Example@: a spec for the running task
+- @Example@: A spec for the running task
   ```text
   ## Task: weekly average price
   - Input: sales.csv with
@@ -1124,20 +1165,23 @@ caption=The agent loop: plan (teal), act (coral), observe (cyan), and iterate un
 :::
 
 * From Typing to Reviewing and Orchestrating
+
 // From: book_AI_Software_Engineering/plan.history.md:84 '    - **From typing to reviewing:** reading diffs and judging correctness, architecture and risk'
 // From: book_AI_Software_Engineering/plan.history.md:85 '    - **From doing the work to orchestrating it:** running several agents in parallel and breaking work into tasks agents can handle'
 
 ::: columns
 :::: {.column width=58%}
-- @Characteristics@: the human's day shifts
-  - _Reviewing_: read diffs, judge correctness, architecture, and risk
-  - _Orchestrating_: run several agents in parallel on separate tasks
-  - _Decomposing_: split work into tasks small enough for one agent
 
-- @Comparison@: the engineer works more like a tech lead than a typist
-  - Same skills as leading junior developers: clear tasks, careful review
+- @Characteristics@: The human's day shifts
+  - _Reviewing_: Read diffs, judge correctness, architecture, and risk
+  - _Orchestrating_: Run several agents in parallel on separate tasks
+  - _Decomposing_: Split work into tasks small enough for one agent
 
-- @Remark@: this extends the pull-request workflow of the Git era
+- @Comparison@: The engineer works more like a tech lead than a typist
+  - Same skills as leading junior developers: Clear tasks, careful review
+
+- @Remark@: This extends the pull-request workflow of the Git era
+
 ::::
 :::: {.column width=42%}
 
@@ -1179,13 +1223,14 @@ digraph Orchestrate {
                 fontcolor="#C0455B", penwidth=1.6, constraint=false];
 }
 ```
-label=fig:orchestrate
-caption=The engineer (rose) writes specs (orange), runs agents (teal), and reviews their pull requests (blue).
+label=fig:orchestrate caption=The engineer (rose) writes specs (orange), runs agents
+(teal), and reviews their pull requests (blue)
 
 ::::
 :::
 
 * New Practices for Agentic Engineering
+
 // From: book_AI_Software_Engineering/plan.history.md:86 '  - **New practices:**'
 
 ```{=typst}
@@ -1206,66 +1251,67 @@ caption=The engineer (rose) writes specs (orange), runs agents (teal), and revie
 )]
 ```
 
-- @Key idea@: tests and types matter **more** with agents, not less
+- @Key idea@: Tests and types matter **more** with agents, not less
   - An agent can iterate against a failing test with no human in the loop
-  - E.g., the 3-row CSV test from the agile era now guards the agent's pull
-    request for the running task
+  - E.g., the 3-row CSV test from the agile era now guards the agent's pull request
+    for the running task
 
 * Open Questions: Skills and Accountability
+
 // From: book_AI_Software_Engineering/plan.history.md:92 '    - How juniors learn when they no longer write the boilerplate that used to teach them'
 // From: book_AI_Software_Engineering/plan.history.md:94 '    - Who's accountable when an agent ships a bug'
 
-- @Question@: how do juniors learn when agents write the boilerplate that
-  used to teach them?
-  - Debugging and writing code built intuition that reviewing may not
-    replace
+- @Question@: How do juniors learn when agents write the boilerplate that used to
+  teach them?
+  - Debugging and writing code built intuition that reviewing may not replace
   - Reviewing well requires knowing what good code looks like
 
-- @Question@: who is accountable when an agent ships a bug?
-  - The author of the spec, the reviewer who approved it, or the tool
-    vendor?
+- @Question@: Who is accountable when an agent ships a bug?
+  - The author of the spec, the reviewer who approved it, or the tool vendor?
 
-- @Remark@: the same question arose with code pasted from Stack Overflow
-  - Common practice: the engineer who merges a change owns it
+- @Remark@: The same question arose with code pasted from Stack Overflow
+  - Common practice: The engineer who merges a change owns it
 
 * Open Questions: Review and Demand
+
 // From: book_AI_Software_Engineering/plan.history.md:93 '    - Review becoming the bottleneck: code gets generated faster than people can understand it'
 // From: book_AI_Software_Engineering/plan.history.md:95 '    - Whether the cost of software heading toward zero creates far more software (Jevons paradox)'
 
-- @Question@: what happens when code is produced faster than people can
-  understand it?
+- @Question@: What happens when code is produced faster than people can understand
+  it?
   - Review becomes the bottleneck
 
-- @Fact@: in a randomized trial (Becker et al., 2025), experienced
-  open-source developers took 19% longer with AI tools, yet believed they
-  were 20% faster
+- @Fact@: In a randomized trial (Becker et al., 2025), experienced open-source
+  developers took 19% longer with AI tools, yet believed they were 20% faster
   - Gains depend on the task, the codebase, and how well the human verifies
 
-- @Question@: will cheaper software create far more software?
-  - **Jevons paradox** (Jevons, 1865): more efficient steam engines increased
-    total coal use
-  - E.g., personal tools and one-off analyses that were never worth writing
-    before
+- @Question@: Will cheaper software create far more software?
+  - **Jevons paradox** (Jevons, 1865): More efficient steam engines increased total
+    coal use
+  - E.g., personal tools and one-off analyses that were never worth writing before
 
 # Patterns Across Eras
 
 * The Abstraction Level Keeps Rising
+
 // From: book_AI_Software_Engineering/plan.history.md:105 '  - **The level you work at keeps going up:** machine code → languages → frameworks → services → prompts → intent'
 
 ::: columns
 :::: {.column width=64%}
-- @Fact@: each era lets the engineer write less to say more (see figure)
 
-- @Remark@: each step was first dismissed as "not real programming"
-  - E.g., assembly programmers doubted that compiled FORTRAN could match
-    hand-written code
+- @Fact@: Each era lets the engineer write less to say more (see figure)
 
-- @Interpretation@: each step removes accidental complexity and leaves the
-  essential part
+- @Remark@: Each step was first dismissed as "not real programming"
+  - E.g., assembly programmers doubted that compiled FORTRAN could match hand-written
+    code
 
-- @Example@: the running task across eras
-  - A deck of cards, a 10-line script, `df["price"].mean()`, a one-line
-    prompt, a spec
+- @Interpretation@: Each step removes accidental complexity and leaves the essential
+  part
+
+- @Example@: The running task across eras
+  - A deck of cards, a 10-line script, `df["price"].mean()`, a one-line prompt, a
+    spec
+
 ::::
 :::: {.column width=36%}
 
@@ -1294,26 +1340,28 @@ digraph Ladder {
     L1 -> L2 -> L3 -> L4 -> L5 -> L6;
 }
 ```
-label=fig:abstraction-ladder
-caption=The abstraction ladder, with the AI-era levels in teal.
+label=fig:abstraction-ladder caption=The abstraction ladder, with the AI-era levels
+in teal
 
 ::::
 :::
 
 * Feedback Loops Keep Shrinking
+
 // From: book_AI_Software_Engineering/plan.history.md:107 '  - **Feedback loops keep getting shorter:** days (batch jobs) → minutes (compiling) → seconds (live reload) → instant (agents iterating)'
 
 ::: columns
 :::: {.column width=50%}
-- @Fact@: feedback went from days to minutes to seconds to near-instant
 
-- @Intuition@: a shorter loop means more experiments per day, and more
-  experiments mean faster learning
+- @Fact@: Feedback went from days to minutes to seconds to near-instant
+
+- @Intuition@: A shorter loop means more experiments per day, and more experiments
+  mean faster learning
   - Agile and DevOps applied the same idea to customers and production
 
-- @Remark@: agents shorten the loop for the machine, not always for the
-  human
+- @Remark@: Agents shorten the loop for the machine, not always for the human
   - The loop that matters now is how fast a human can verify the result
+
 ::::
 :::: {.column width=50%}
 
@@ -1335,22 +1383,23 @@ caption=The abstraction ladder, with the AI-era levels in teal.
 :::
 
 * The Bottleneck Keeps Moving
+
 // From: book_AI_Software_Engineering/plan.history.md:108 '  - **The bottleneck keeps moving:** hardware → coordination → shipping → writing code → *specifying and verifying*'
 
 ::: columns
 :::: {.column width=64%}
-- @Fact@: each era removed one bottleneck and exposed the next one (see
-  figure)
 
-- @Intuition@: speeding up a step that is not the bottleneck does not speed
-  up the system (Goldratt, 1984)
+- @Fact@: Each era removed one bottleneck and exposed the next one (see figure)
 
-- @Example@: agents write code 10x faster, but reviewers read at the same
-  speed
+- @Intuition@: Speeding up a step that is not the bottleneck does not speed up the
+  system (Goldratt, 1984)
+
+- @Example@: Agents write code 10x faster, but reviewers read at the same speed
   - The team ships at the speed of review
 
-- @Key idea@: today's scarce resource is human attention
+- @Key idea@: Today's scarce resource is human attention
   - Knowing what to ask for and confirming that the answer is right
+
 ::::
 :::: {.column width=36%}
 
@@ -1377,50 +1426,52 @@ digraph Bottleneck {
     B1 -> B2 -> B3 -> B4 -> B5;
 }
 ```
-label=fig:bottleneck
-caption=The bottleneck moved down the chain and now sits at specifying and verifying (red).
+label=fig:bottleneck caption=The bottleneck moved down the chain and now sits at
+specifying and verifying (red)
 
 ::::
 :::
 
 * What Might Come Next
+
 // From: book_AI_Software_Engineering/plan.history.md:97 '- **What might come next (speculative)**'
 
-- @Question@: if the patterns continue, what changes next?
-  1. _Product and systems thinkers_: taste, judgment, and domain knowledge
-     matter more than syntax
-  2. _Self-maintaining software_: agents watch production, file their own
-     bugs, and patch them
-  3. _Natural language as the main language_: code is treated like compiled
-     output
-  4. _Personal and disposable software_: apps built for one person or one
-     task, then thrown away
-  5. _Verification as the core skill_: formal methods, property-based
-     testing, and AI-assisted review return
+- @Question@: If the patterns continue, what changes next?
+  1. _Product and systems thinkers_: Taste, judgment, and domain knowledge matter
+     more than syntax
+  2. _Self-maintaining software_: Agents watch production, file their own bugs, and
+     patch them
+  3. _Natural language as the main language_: Code is treated like compiled output
+  4. _Personal and disposable software_: Apps built for one person or one task, then
+     thrown away
+  5. _Verification as the core skill_: Formal methods, property-based testing, and
+     AI-assisted review return
 
-- @Remark@: each prediction extends a pattern
-  - Rising abstraction (3), shorter loops (2), a moving bottleneck (1, 5),
-    cheaper software (4)
+- @Remark@: Each prediction extends a pattern
+  - Rising abstraction (3), shorter loops (2), a moving bottleneck (1, 5), cheaper
+    software (4)
 
 * The Constant: Deciding What to Build
+
 // From: book_AI_Software_Engineering/plan.history.md:109 '  - **The constant:** working out what to build and confirming it's right stays the hard part'
 
 ::: columns
 :::: {.column width=60%}
-- @Key idea@: working out what to build and confirming that it is right
-  stays the hard part
-  - This is the essential complexity of Brooks, untouched by 70 years of
-    tools
 
-- @Interpretation@: every era in this lesson shrank accidental complexity
+- @Key idea@: Working out what to build and confirming that it is right stays the
+  hard part
+  - This is the essential complexity of Brooks, untouched by 70 years of tools
+
+- @Interpretation@: Every era in this lesson shrank accidental complexity
   - Compilers, libraries, frameworks, cloud, autocomplete, agents
 
-- @Example@: the code for the running task is one sentence away, but the
-  questions remain
+- @Example@: The code for the running task is one sentence away, but the questions
+  remain
   - List price or discounted price? ISO week or fiscal week? Refunds?
 
-- @Remark@: data scientists know this well
+- @Remark@: Data scientists know this well
   - Choosing the right metric and validating the result was always the job
+
 ::::
 :::: {.column width=40%}
 
@@ -1455,26 +1506,31 @@ digraph Complexity {
     { rank=max; Tools; }
 }
 ```
-label=fig:essential-accidental-again
-caption=The same split: tools (teal) shrink accidental complexity (blue), and essential complexity (orange) remains.
+label=fig:essential-accidental-again caption=The same split: Tools (teal) shrink
+accidental complexity (blue), and essential complexity (orange) remains
 
 ::::
 :::
 
 * Summary
 
-- @Key idea@: software engineering history repeats one trend: higher
-  abstraction, shorter feedback, and a moving bottleneck
-- Before the internet, the bottleneck was hardware and then coordination,
-  which waterfall tried to plan away
-- The internet, open source, and agile made change cheap, so iteration
-  replaced planning
-- Search, frameworks, and the cloud made assembly and operations part of the
-  job, and AI autocomplete and chat sped up typing
-- Coding agents automate the write-run-fix loop, so the engineer specifies,
-  reviews, and orchestrates
-- Essential complexity stays constant: deciding what to build and verifying
-  that it is right
+- @Key idea@: Software engineering history repeats one trend: Higher abstraction,
+  shorter feedback, and a moving bottleneck
+
+- Before the internet, the bottleneck was hardware and then coordination, which
+  waterfall tried to plan away
+
+- The internet, open source, and agile made change cheap, so iteration replaced
+  planning
+
+- Search, frameworks, and the cloud made assembly and operations part of the job, and
+  AI autocomplete and chat sped up typing
+
+- Coding agents automate the write-run-fix loop, so the engineer specifies, reviews,
+  and orchestrates
+
+- Essential complexity stays constant: Deciding what to build and verifying that it
+  is right
 
 * References
 
@@ -1485,68 +1541,65 @@ caption=The same split: tools (teal) shrink accidental complexity (blue), and es
 - **Becker et al.**: _"Measuring the Impact of Early-2025 AI on Experienced
   Open-Source Developer Productivity"_, arXiv (2025)
 
-- **Spracklen et al.**: _"We Have a Package for You! A Comprehensive Analysis
-  of Package Hallucinations by Code Generating LLMs"_, USENIX Security (2025)
+- **Spracklen et al.**: _"We Have a Package for You! A Comprehensive Analysis of
+  Package Hallucinations by Code Generating LLMs"_, USENIX Security (2025)
 
-- **Karpathy**: _"There's a new kind of coding I call vibe coding"_, post on
-  X (2025)
+- **Karpathy**: _"There's a new kind of coding I call vibe coding"_, post on X (2025)
 
-- **Jimenez et al.**: _"SWE-bench: Can Language Models Resolve Real-World
-  GitHub Issues?"_, ICLR (2024)
+- **Jimenez et al.**: _"SWE-bench: Can Language Models Resolve Real-World GitHub
+  Issues?"_, ICLR (2024)
 
-- **del Rio-Chanona et al.**: _"Are Large Language Models a Threat to Digital
-  Public Goods? Evidence from Activity on Stack Overflow"_, PNAS Nexus (2024)
+- **del Rio-Chanona et al.**: _"Are Large Language Models a Threat to Digital Public
+  Goods? Evidence from Activity on Stack Overflow"_, PNAS Nexus (2024)
 
-- **Peng et al.**: _"The Impact of AI on Developer Productivity: Evidence
-  from GitHub Copilot"_, arXiv (2023)
+- **Peng et al.**: _"The Impact of AI on Developer Productivity: Evidence from GitHub
+  Copilot"_, arXiv (2023)
 
-- **Perry et al.**: _"Do Users Write More Insecure Code with AI
-  Assistants?"_, ACM CCS (2023)
+- **Perry et al.**: _"Do Users Write More Insecure Code with AI Assistants?"_, ACM
+  CCS (2023)
 
-- **Pearce et al.**: _"Asleep at the Keyboard? Assessing the Security of
-  GitHub Copilot's Code Contributions"_, IEEE S&P (2022)
+- **Pearce et al.**: _"Asleep at the Keyboard? Assessing the Security of GitHub
+  Copilot's Code Contributions"_, IEEE S&P (2022)
 
-- **Chen et al.**: _"Evaluating Large Language Models Trained on Code"_,
-  arXiv (2021)
+- **Chen et al.**: _"Evaluating Large Language Models Trained on Code"_, arXiv (2021)
 
-- **Forsgren et al.**: _"Accelerate: The Science of Lean Software and
-  DevOps"_, IT Revolution (2018)
+- **Forsgren et al.**: _"Accelerate: The Science of Lean Software and DevOps"_, IT
+  Revolution (2018)
 
 - **Vogels and Gray**: _"A Conversation with Werner Vogels"_, ACM Queue (2006)
 
-- **Beck et al.**: _"Manifesto for Agile Software Development"_,
-  agilemanifesto.org (2001)
+- **Beck et al.**: _"Manifesto for Agile Software Development"_, agilemanifesto.org
+  (2001)
 
-- **Beck**: _"Extreme Programming Explained: Embrace Change"_,
-  Addison-Wesley (1999)
+- **Beck**: _"Extreme Programming Explained: Embrace Change"_, Addison-Wesley (1999)
 
 - **Raymond**: _"The Cathedral and the Bazaar"_, O'Reilly (1999)
 
 - **Gamma et al.**: _"Design Patterns: Elements of Reusable Object-Oriented
   Software"_, Addison-Wesley (1994)
 
-- **Brooks**: _"No Silver Bullet: Essence and Accidents of Software
-  Engineering"_, IFIP Congress (1986)
+- **Brooks**: _"No Silver Bullet: Essence and Accidents of Software Engineering"_,
+  IFIP Congress (1986)
 
-- **Goldratt**: _"The Goal: A Process of Ongoing Improvement"_, North River
-  Press (1984)
+- **Goldratt**: _"The Goal: A Process of Ongoing Improvement"_, North River Press
+  (1984)
 
 - **Boehm**: _"Software Engineering Economics"_, Prentice Hall (1981)
 
 - **Brooks**: _"The Mythical Man-Month: Essays on Software Engineering"_,
   Addison-Wesley (1975)
 
-- **Parnas**: _"On the Criteria to Be Used in Decomposing Systems into
-  Modules"_, Communications of the ACM (1972)
+- **Parnas**: _"On the Criteria to Be Used in Decomposing Systems into Modules"_,
+  Communications of the ACM (1972)
 
-- **Royce**: _"Managing the Development of Large Software Systems"_, IEEE
-  WESCON (1970)
+- **Royce**: _"Managing the Development of Large Software Systems"_, IEEE WESCON
+  (1970)
 
-- **Naur and Randell**: _"Software Engineering: Report on a Conference
-  Sponsored by the NATO Science Committee"_, NATO (1969)
+- **Naur and Randell**: _"Software Engineering: Report on a Conference Sponsored by
+  the NATO Science Committee"_, NATO (1969)
 
-- **Dijkstra**: _"Go To Statement Considered Harmful"_, Communications of the
-  ACM (1968)
+- **Dijkstra**: _"Go To Statement Considered Harmful"_, Communications of the ACM
+  (1968)
 
 - **Conway**: _"How Do Committees Invent?"_, Datamation (1968)
 
