@@ -500,7 +500,7 @@ caption=The handler (rose) should talk to its friend the store (blue), not reach
   - _Inadvertent_: the author does not see it, e.g., a `clicks` column and a
     click log
   - _Impatient_: copy, paste, modify
-  - _Inter-developer_: two people, or two agent sessions, write the same helper
+  - _Inter-developer_: two people or two AI agents write the same helper
 
 - @Example@: the code length `7` lives in the generator, in the API regex, and
   in a test fixture
@@ -542,8 +542,8 @@ caption=The handler (rose) should talk to its friend the store (blue), not reach
 
 - @Techniques@: three ways to keep one authoritative copy
   - _Derive_: compute a value, do not store it next to its source
-  - _Generate_: write one form, e.g., the request dataclasses, and generate
-    the others, e.g., the API schema
+  - _Generate_: write one form (e.g., the request dataclasses) and generate the
+    others (e.g., the API schema)
   - _Enforce once_: let the strongest layer own a rule
 
 - @Example@: two facts of `shortlink` with one owner each
@@ -551,8 +551,7 @@ caption=The handler (rose) should talk to its friend the store (blue), not reach
   - _Uniqueness_: the `UNIQUE` index owns it, and the check-then-insert of
     `v0` was a weaker copy, with a race
 
-- @Remark@: the skill `coding.factor_common_code` is covered in detail in
-  Lesson 12.01
+- @Remark@: the skill `coding.factor_common_code`
 
 # Make Code Obvious
 
@@ -571,7 +570,7 @@ caption=The handler (rose) should talk to its friend the store (blue), not reach
     `os.environ["CODE_LEN"]`
 
 - @Solution@:
-  - Name the options at the call: `create_link(url, track=True)`
+  - Name the options at the call: `create_link(url, track: bool = True)`
   - List every option in a signature, and force keywords with `*`
   - Read the environment once, at the entry point, and pass the values down
 
@@ -603,7 +602,7 @@ caption=The handler (rose) should talk to its friend the store (blue), not reach
 
 - @Remark@: consistency beats a local optimum
   - A convention that is slightly worse but used everywhere is better than the
-    best choice used in one place
+    best choice but different in every place
 
 * Comments That Capture Intent
 // From: helpers_root/docs/coding/all.coding_style.how_to_guide.md:213 '#### The Writer Is the Reader'
@@ -614,7 +613,12 @@ caption=The handler (rose) should talk to its friend the store (blue), not reach
   - A comment that repeats the code is duplicated knowledge
 
 - @Comparison@:
-  - _Repeats the code_: `# Loop 5 times.`
+  - _Repeats the code_:
+    ```python
+    # Loop 5 times.
+    for i in range(0, 5):
+      ...
+    ```
   - _Captures intent_:
     ```python
     # Try at most 5 codes: with 36^7 codes and 1M links, the
@@ -623,9 +627,6 @@ caption=The handler (rose) should talk to its friend the store (blue), not reach
 
 - @Techniques@: write the interface comment before the code
   - If the comment is hard to write, the interface is too complex
-
-- @Remark@: the form of docstrings and comments is covered in detail in Lesson
-  08.01
 
 # Make Errors Impossible, Then Loud
 
@@ -642,23 +643,18 @@ caption=The handler (rose) should talk to its friend the store (blue), not reach
   - `expires_at: datetime` accepts a naive local time, and one comparison in
     local time expires links one hour early
   - _Fix_: a frozen dataclass whose constructor accepts only a UTC-aware time
+    ```python
+    @dataclasses.dataclass(frozen=True)
+    class UtcTime:
+        value: datetime.datetime
+
+        def __post_init__(self) -> None:
+            tz = self.value.tzinfo
+            assert tz == datetime.timezone.utc, "Not a UTC time"
+    ```
 
 - @Key idea@: a check that lives in the type runs once at construction, and
   no caller can forget it
-
-```{=typst}
-#set text(size: 0.8em)
-```
-
-```python
-  @dataclasses.dataclass(frozen=True)
-  class UtcTime:
-      value: datetime.datetime
-
-      def __post_init__(self) -> None:
-          tz = self.value.tzinfo
-          hdbg.dassert_eq(tz, datetime.timezone.utc, "Not a UTC time")
-```
 
 * Fail Fast and Loud
 // From: helpers_root/docs/coding/all.code_like_pragmatic_programmer.how_to_guide.md:703 '### PP_Tip 32: Crash early'
@@ -681,14 +677,11 @@ caption=The handler (rose) should talk to its friend the store (blue), not reach
     failed without a rerun
   - Let unexpected errors raise: do not catch what you cannot handle
 
-- @Remark@: the full set of defenses (timeouts, retries, observability) is
-  covered in detail in Lesson 18.01
-
 * Define Errors Out of Existence
 // From:
 
-- @Definition@: change the meaning of an operation so the error case is a
-  normal case _(Ousterhout, 2018)_
+- @Definition@: change the meaning of an operation so the error case is a normal case
+  _(Ousterhout, 2018)_
   - Every exception a module throws is part of its interface
 
 - @Examples@:
