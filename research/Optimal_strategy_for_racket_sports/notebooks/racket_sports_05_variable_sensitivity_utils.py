@@ -631,7 +631,7 @@ def plot_montage(
 # #############################################################################
 
 
-def _get_serves(
+def get_serves(
     sport_name: str, side: str, serve_names: Sequence[str]
 ) -> List[Tuple[str, float, float]]:
     """
@@ -642,6 +642,10 @@ def _get_serves(
     :param serve_names: names of the serves, e.g., `["T-deep"]`
     :return: `(name, x1, y1)`, e.g., `("T-deep", -0.3, 6.1)`
     """
+    _LOG.debug(hprint.to_str("sport_name side serve_names"))
+    hdbg.dassert_in(sport_name, _SPORTS, "Unknown sport")
+    # Any other side would be read as the ad side, and mirror the serves.
+    hdbg.dassert_in(side, ("deuce", "ad"), "Unknown side")
     sign = 1.0 if side == "deuce" else -1.0
     serves = []
     for name in serve_names:
@@ -687,9 +691,7 @@ def run_corners(config: ExperimentConfig) -> pd.DataFrame:
         base = get_default_settings(sport_name)
         base = _apply_config_to_settings(base, config)
         for side in config.sides:
-            for name, x1, y1 in _get_serves(
-                sport_name, side, config.serve_names
-            ):
+            for name, x1, y1 in get_serves(sport_name, side, config.serve_names):
                 for ball_name, ball_speed in ball_speeds.items():
                     for v_p_name, v_p in v_ps.items():
                         run_id = (

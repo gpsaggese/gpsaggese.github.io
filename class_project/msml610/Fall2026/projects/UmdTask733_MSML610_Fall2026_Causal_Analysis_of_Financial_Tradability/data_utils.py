@@ -159,6 +159,8 @@ def clean_bars(
     - Drop duplicate timestamps (keep the first)
     - Put the bars on a regular time grid, so that a shift by n rows is always
       a shift by n bars
+    - Treat zero-volume bars right before a gap as part of the gap: trading
+      had already stopped, so their prices are stale
     - Fill gaps of up to `max_fill_bars` bars with flat bars at the last close
       and zero volume
     - Leave longer gaps as NaN and start a new segment after each one, so
@@ -174,7 +176,9 @@ def clean_bars(
     :param extreme_std: flag a return if |r| > extreme_std * rolling std
     :return: bars on a regular grid with the OHLCV columns and:
         - `ret`: return from the previous bar, NaN at the start of a segment
-        - `is_missing`: the bar is not in the data
+        - `is_missing`: the bar is not in the data, or it is stale
+        - `is_stale`: the bar has zero volume and is right before a gap (or
+          before other stale bars), so it is treated as missing
         - `is_filled`: the bar is missing and was filled
         - `is_zero_volume`: the bar is in the data with zero volume
         - `is_extreme`: |ret| is larger than `extreme_std` rolling stds
@@ -188,7 +192,15 @@ def clean_bars(
     grid = pd.date_range(bars.index[0], bars.index[-1], freq=step)
     df = bars.reindex(grid)
     df.index.name = bars.index.name
-    is_missing = df["close"].isna()
+    is_absent = df["close"].isna()
+    # A run of zero-volume bars that ends right before a gap is stale: drop it
+    # and make it part of the gap.
+    is_zero = (df["volume"] == 0) & ~is_absent
+    zero_run_id = (is_zero != is_zero.shift()).cumsum()
+    next_is_absent = is_absent.shift(-1, fill_value=False)
+    is_stale = is_zero & next_is_absent.groupby(zero_run_id).transform("last")
+    df.loc[is_stale, _OHLCV_COLUMNS] = np.nan
+    is_missing = is_absent | is_stale
     # Number each run of missing bars and measure its length.
     run_id = (is_missing != is_missing.shift()).cumsum()
     run_len = is_missing.groupby(run_id).transform("size")
@@ -211,12 +223,14 @@ def clean_bars(
         lambda r: r.shift().rolling(vol_window_bars, min_periods=12).std()
     )
     df["is_missing"] = is_missing
+    df["is_stale"] = is_stale
     df["is_filled"] = is_filled
     df["is_zero_volume"] = (df["volume"] == 0) & ~is_missing
     df["is_extreme"] = df["ret"].abs() > extreme_std * past_std
     cols = _OHLCV_COLUMNS + [
         "ret",
         "is_missing",
+        "is_stale",
         "is_filled",
         "is_zero_volume",
         "is_extreme",
@@ -248,6 +262,7 @@ def compute_quality_table(
         "n_duplicates": int(raw_bars.index.duplicated().sum()),
         "n_gaps": len(gaps),
         "n_missing_bars": int(clean["is_missing"].sum()),
+        "n_stale_bars": int(clean["is_stale"].sum()),
         "longest_gap": longest_gap,
         "n_filled_bars": int(clean["is_filled"].sum()),
         "n_long_gaps": n_segments - 1,
@@ -262,6 +277,44 @@ def compute_quality_table(
 # #############################################################################
 # Features
 # #############################################################################
+
+
+def compute_gap_table(
+    clean: pd.DataFrame, *, interval: str = "5m"
+) -> pd.DataFrame:
+    """
+    List the runs of missing bars after cleaning.
+
+    Unlike `find_gaps()`, this works on the cleaned bars, so a gap includes
+    the stale bars right before it.
+
+    :param clean: bars as returned by `clean_bars()`
+    :param interval: bar size, e.g., "5m"
+    :return: one row per run of missing bars with:
+        - `start`, `end`: open time of the first and last missing bar
+        - `n_bars`: number of missing bars, stale ones included
+        - `n_stale`: number of stale bars (zero volume, right before the gap)
+        - `duration`: length of the gap
+        - `is_filled`: the gap was short enough to be filled
+    """
+    step = to_timedelta(interval)
+    is_missing = clean["is_missing"]
+    run_id = (is_missing != is_missing.shift()).cumsum()
+    missing = clean[is_missing]
+    times = missing.index.to_series()
+    grouped = missing.groupby(run_id[is_missing])
+    gaps = pd.DataFrame(
+        {
+            "start": times.groupby(run_id[is_missing]).min(),
+            "end": times.groupby(run_id[is_missing]).max(),
+            "n_bars": grouped.size(),
+            "n_stale": grouped["is_stale"].sum().astype(int),
+            "is_filled": grouped["is_filled"].all(),
+        }
+    ).reset_index(drop=True)
+    gaps["duration"] = gaps["n_bars"] * step
+    cols = ["start", "end", "n_bars", "n_stale", "duration", "is_filled"]
+    return gaps[cols]
 
 
 def get_n_bars(duration: str, interval: str) -> int:

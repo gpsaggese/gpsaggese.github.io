@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.6
+#       jupytext_version: 1.19.3
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -43,8 +43,13 @@ import logging
 import matplotlib.pyplot as plt
 import pandas as pd
 from river import compose, linear_model, preprocessing
-
 import river_utils as rivutil
+from river import dummy
+from sklearn.ensemble import HistGradientBoostingClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
 
 logging.basicConfig(level=logging.INFO)
 _LOG = logging.getLogger(__name__)
@@ -121,10 +126,49 @@ plt.show()
 # %% [markdown]
 # ## 5. Baselines (next milestone)
 #
-# - Majority class learned online (`dummy.PriorClassifier`)
-# - Persistence: predict today's direction for tomorrow
-# - Batch logistic regression / gradient boosting retrained walk-forward
-#   (expanding window, monthly refit) on the same timeline
+# - Always up (online): predicts the majority class, learned day by day
+# - Persistence: predicts that tomorrow repeats today's direction
+# - Batch logistic regression and batch gradient boosting: retrained on
+#   the first trading day of each month on all earlier data (expanding window)
+#
+# All models are scored on the same predictions, so they can be compared row by
+# row with McNemar's test.
+
+# %%
+# Online baselines use the same test-then-train loop as the River model.
+all_preds = {"river_logreg": preds}
+all_preds["always_up_online"] = rivutil.run_prequential(
+    dummy.PriorClassifier(), panel, feature_cols, warmup_days=250
+)
+all_preds["persistence"] = rivutil.run_prequential(
+    rivutil.PersistenceClassifier(), panel, feature_cols, warmup_days=250
+)
+# Batch models retrained monthly on all past data.
+all_preds["batch_logreg_monthly"] = rivutil.run_walk_forward(
+    lambda: make_pipeline(StandardScaler(), LogisticRegression(max_iter=1000)),
+    panel, feature_cols, warmup_days=250,
+)
+all_preds["batch_hgb_monthly"] = rivutil.run_walk_forward(
+    lambda: HistGradientBoostingClassifier(
+        max_iter=100, learning_rate=0.05, random_state=0
+    ),
+    panel, feature_cols, warmup_days=250,
+)
+
+# %%
+comparison = rivutil.compare_models(all_preds, reference="always_up_online")
+comparison.round(4)
+
+# %%
+# Rolling 250-day accuracy of every model.
+fig, ax = plt.subplots(figsize=(10, 4))
+for name, p in all_preds.items():
+    daily = (p["y_true"] == p["y_pred"]).groupby(p["date"]).mean()
+    daily.rolling(250).mean().plot(ax=ax, label=name)
+ax.axhline(0.5, color="gray", linestyle="--")
+ax.set_ylabel("Rolling 250-day accuracy")
+ax.legend(fontsize=8)
+plt.show()
 
 # %% [markdown]
 # ## 6. River model comparison (next milestone)

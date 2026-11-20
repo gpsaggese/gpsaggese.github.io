@@ -1,1 +1,1 @@
-../../../helpers_root/devops/docker_run/entrypoint.sh
+../../../../helpers_root/devops/docker_run/entrypoint.sh

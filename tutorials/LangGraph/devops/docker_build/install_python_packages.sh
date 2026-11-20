@@ -1,1 +1,1 @@
-../../../helpers_root/devops/docker_build/install_python_packages.sh
+../../../../helpers_root/devops/docker_build/install_python_packages.sh

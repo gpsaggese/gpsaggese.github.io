@@ -162,3 +162,72 @@ class Test_fit_permanent_impact(hunitest.TestCase):
             f"n_obs={fit['n_obs']:.0f}"
         )
         self.assert_equal(actual, expected)
+
+
+class Test_label_vix_regimes(hunitest.TestCase):
+    """
+    Test `data_utils.label_vix_regimes()` function.
+    """
+
+    def test1(self) -> None:
+        """
+        Check that each day uses the last VIX close before it.
+        """
+        # Prepare inputs.
+        # No VIX close on 2020-03-04, so 2020-03-05 uses the one of 03-03.
+        vix = pd.Series(
+            [15.0, 25.0, 18.0],
+            index=pd.to_datetime(["2020-03-02", "2020-03-03", "2020-03-05"]),
+        )
+        days = pd.Index(
+            pd.to_datetime(["2020-03-03", "2020-03-04", "2020-03-05"]).date
+        )
+        threshold = 20.0
+        # Prepare outputs.
+        expected = "['calm', 'stressed', 'stressed']"
+        # Run test.
+        labels = rldautil.label_vix_regimes(days, vix, threshold)
+        # Check outputs.
+        actual = str(labels.tolist())
+        self.assert_equal(actual, expected)
+
+
+class Test_calibrate_by_regime(hunitest.TestCase):
+    """
+    Test `data_utils.calibrate_by_regime()` function.
+    """
+
+    def test1(self) -> None:
+        """
+        Check that each regime is calibrated on its own days.
+        """
+        # Prepare inputs.
+        # 3 days with 2 bars each; the VIX before day 2 is above 20.
+        timestamps = [
+            "2020-03-02 09:30",
+            "2020-03-02 15:59",
+            "2020-03-03 09:30",
+            "2020-03-03 15:59",
+            "2020-03-04 09:30",
+            "2020-03-04 15:59",
+        ]
+        prices = [100.0] * len(timestamps)
+        bars = _get_bars(timestamps, prices, prices)
+        vix = pd.Series(
+            [15.0, 25.0, 15.0],
+            index=pd.to_datetime(["2020-02-28", "2020-03-02", "2020-03-03"]),
+        )
+        n_steps = 20
+        total_shares = 1
+        # Prepare outputs.
+        expected = "calm: n_days=2 adv=2.0, stressed: n_days=1 adv=2.0"
+        # Run test.
+        params = rldautil.calibrate_by_regime(
+            bars, vix, n_steps, total_shares
+        )
+        # Check outputs.
+        actual = ", ".join(
+            f"{k}: n_days={v['n_days']:.0f} adv={v['adv']}"
+            for k, v in params.items()
+        )
+        self.assert_equal(actual, expected)

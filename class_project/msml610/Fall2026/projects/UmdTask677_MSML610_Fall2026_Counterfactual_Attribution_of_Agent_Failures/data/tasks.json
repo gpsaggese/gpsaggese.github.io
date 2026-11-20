@@ -1,0 +1,160 @@
+{
+ "material": "KRvK",
+ "pilot": [
+  "krk-m2-1",
+  "krk-m3-1",
+  "krk-m4-1",
+  "krk-m6-1",
+  "krk-m8-1"
+ ],
+ "reserves": [
+  {
+   "dtz": 3,
+   "fen": "8/8/8/5K1k/5R2/8/8/8 w - - 89 1",
+   "id": "krk-m2-5",
+   "slack_plies": 8
+  },
+  {
+   "dtz": 5,
+   "fen": "6k1/4K3/8/2R5/8/8/8/8 w - - 87 1",
+   "id": "krk-m3-5",
+   "slack_plies": 8
+  },
+  {
+   "dtz": 7,
+   "fen": "8/6k1/8/6K1/6R1/8/8/8 w - - 85 1",
+   "id": "krk-m4-5",
+   "slack_plies": 8
+  },
+  {
+   "dtz": 11,
+   "fen": "8/8/8/8/8/1R6/5k2/3K4 w - - 81 1",
+   "id": "krk-m6-5",
+   "slack_plies": 8
+  }
+ ],
+ "rule": "seeded random positions, start_positions(seed=677+bin)",
+ "slack_plies": 8,
+ "tasks": [
+  {
+   "dtz": 3,
+   "fen": "4R3/8/8/8/7K/8/8/7k w - - 89 1",
+   "id": "krk-m2-1",
+   "slack_plies": 8
+  },
+  {
+   "dtz": 3,
+   "fen": "8/8/8/4K3/8/7k/2R5/8 w - - 89 1",
+   "id": "krk-m2-2",
+   "slack_plies": 8
+  },
+  {
+   "dtz": 3,
+   "fen": "6k1/8/7K/8/4R3/8/8/8 w - - 89 1",
+   "id": "krk-m2-3",
+   "slack_plies": 8
+  },
+  {
+   "dtz": 3,
+   "fen": "8/8/8/8/1R6/5K1k/8/8 w - - 89 1",
+   "id": "krk-m2-4",
+   "slack_plies": 8
+  },
+  {
+   "dtz": 5,
+   "fen": "8/8/8/8/1R1K4/8/8/3k4 w - - 87 1",
+   "id": "krk-m3-1",
+   "slack_plies": 8
+  },
+  {
+   "dtz": 5,
+   "fen": "7k/8/8/5K2/5R2/8/8/8 w - - 87 1",
+   "id": "krk-m3-2",
+   "slack_plies": 8
+  },
+  {
+   "dtz": 5,
+   "fen": "8/8/8/8/6R1/3K4/8/1k6 w - - 87 1",
+   "id": "krk-m3-3",
+   "slack_plies": 8
+  },
+  {
+   "dtz": 5,
+   "fen": "8/8/8/7k/1R2K3/8/8/8 w - - 87 1",
+   "id": "krk-m3-4",
+   "slack_plies": 8
+  },
+  {
+   "dtz": 7,
+   "fen": "8/8/8/8/8/3R4/4K1k1/8 w - - 85 1",
+   "id": "krk-m4-1",
+   "slack_plies": 8
+  },
+  {
+   "dtz": 7,
+   "fen": "8/8/8/4R3/6K1/8/6k1/8 w - - 85 1",
+   "id": "krk-m4-2",
+   "slack_plies": 8
+  },
+  {
+   "dtz": 7,
+   "fen": "8/8/8/6R1/4K3/7k/8/8 w - - 85 1",
+   "id": "krk-m4-3",
+   "slack_plies": 8
+  },
+  {
+   "dtz": 7,
+   "fen": "2R5/8/8/1K6/8/8/1k6/8 w - - 85 1",
+   "id": "krk-m4-4",
+   "slack_plies": 8
+  },
+  {
+   "dtz": 11,
+   "fen": "4K3/k7/8/6R1/8/8/8/8 w - - 81 1",
+   "id": "krk-m6-1",
+   "slack_plies": 8
+  },
+  {
+   "dtz": 11,
+   "fen": "7k/8/8/8/3K4/8/8/1R6 w - - 81 1",
+   "id": "krk-m6-2",
+   "slack_plies": 8
+  },
+  {
+   "dtz": 11,
+   "fen": "6R1/8/8/K7/8/8/8/1k6 w - - 81 1",
+   "id": "krk-m6-3",
+   "slack_plies": 8
+  },
+  {
+   "dtz": 11,
+   "fen": "2k5/8/5K2/8/8/8/8/6R1 w - - 81 1",
+   "id": "krk-m6-4",
+   "slack_plies": 8
+  },
+  {
+   "dtz": 15,
+   "fen": "8/8/8/8/4K3/k7/8/7R w - - 77 1",
+   "id": "krk-m8-1",
+   "slack_plies": 8
+  },
+  {
+   "dtz": 15,
+   "fen": "8/8/8/8/RK6/8/8/3k4 w - - 77 1",
+   "id": "krk-m8-2",
+   "slack_plies": 8
+  },
+  {
+   "dtz": 15,
+   "fen": "8/2R5/8/8/8/8/8/1k3K2 w - - 77 1",
+   "id": "krk-m8-3",
+   "slack_plies": 8
+  },
+  {
+   "dtz": 15,
+   "fen": "4R3/8/8/6K1/8/8/8/2k5 w - - 77 1",
+   "id": "krk-m8-4",
+   "slack_plies": 8
+  }
+ ]
+}
