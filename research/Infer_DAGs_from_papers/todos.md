@@ -1,0 +1,3 @@
+- [ ] Finalize research/Infer_DAGs_from_papers/docs/01-prd.md
+- [ ] Run LLM prototype to check output format
+- [ ] 
