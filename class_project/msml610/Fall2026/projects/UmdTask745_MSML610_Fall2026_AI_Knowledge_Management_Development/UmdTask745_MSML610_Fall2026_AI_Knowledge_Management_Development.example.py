@@ -14,130 +14,211 @@
 # ---
 
 # %% [markdown]
-# # Description
+# # Decision-Aware Knowledge Base: Offline Build and Evaluation on EDC
 #
-# This notebook examines ...
-#
-# The name of this notebook should follow the format: `<tool>.example.ipynb` (e.g., `pycaret.example.ipynb` for a pycaret example).
-#
-# References:
-# - Add description of what the notebook does.
-# - Point to references, e.g. (tool.example.md)
-# - Add citations.
-# - Keep the notebook flow clear.
-# - Comments should be imperative and have a period at the end.
-# - Your code should be well commented.
-#
-# Guide: https://github.com/causify-ai/helpers/blob/master/docs/coding/all.jupyter_notebook.how_to_guide.md
+# - This notebook runs the whole offline half on 10 decision records of
+#   `eclipse-edc/Connector`, then checks each stage against the draft answer
+#   keys in `specs/gold/` and tries the tuning knobs that need no API key
+# - The pedagogical arc:
+#   - Build the knowledge base: records, links, graph, staleness, gaps
+#   - How well are records read?
+#   - How well are records linked to code, and which signal helps?
+#   - Which records look stale, and how the threshold changes that
+#   - Which complex modules have no decision record
+# - The answer keys were written by one person and are not reviewed yet, so
+#   read the numbers as a first check, not a finding
 
-# %% [markdown]
-# ## Imports
+# %%
+# !pip install -q --root-user-action=ignore lizard==1.25.0 markdown-it-py==4.0.0 networkx==3.5 python-dotenv==1.2.4
+
+import lizard
+import markdown_it
+import networkx
+
+print("lizard version: ", lizard.version)
+print("markdown-it-py version: ", markdown_it.__version__)
+print("networkx version: ", networkx.__version__)
 
 # %%
 # %load_ext autoreload
 # %autoreload 2
 
-# System libraries.
 import logging
 
-# Third-party libraries.
-# import numpy as np
-# import pandas as pd
-# import seaborn as sns
-# import matplotlib.pyplot as plt
+import pandas as pd
 
 # %%
-# # To install additional packages, use:
-# import helpers.hmodule as hmodule
-# hmodule.install_module_if_not_present(
-#     ["pycaret"],
-#     use_activate=True,
-#     use_sudo=False,
-#     venv_path="/opt/venv",
-# )
-
-# %%
-# Use this for most notebooks.
-import helpers.hdbg as hdbg
 import helpers.hnotebook as hnotebook
 
-_LOG = logging.getLogger(__name__)
+import UmdTask745_MSML610_Fall2026_AI_Knowledge_Management_Development_utils as utils
 
 # Initialize notebook configuration and logging.
-hdbg.init_logger(verbosity=logging.INFO)
 hnotebook.config_notebook()
+_LOG = logging.getLogger(__name__)
+utils.init_loggers(_LOG)
 
-# Convert `display` into `print()`.
+# Make the `adrqa` package under `src/` importable.
+utils.add_src_to_path()
+
+# Convert `display` into `print()` when running outside IPython.
 try:
     from IPython.display import display
 except ImportError:
     display = print  # type: ignore
 
+# %%
+import adrqa.config as aconfig
+import adrqa.gitstore as agitsto
+import adrqa.offline as aofflin
 
 # %% [markdown]
-# ## Make the notebook flow clear
+# # Part 1: Build the Knowledge Base
+
+# %% [markdown]
+# ## Cell 1.1: Run the Offline Build
 #
-# Each notebook needs to follow a clear and logical flow, e.g:
-# - Load data
-# - Compute stats
-# - Clean data
-# - Compute stats
-# - Do analysis
-# - Show results
-
+# - Same as `python -m adrqa build`: clone once, parse, link, build the graph,
+#   score staleness, rank gaps, and write JSON to `data/`
+# - Without an API key the replacement finder is the rule-based parser only
+# - Scoring staleness follows each file's history, so this takes a little
+#   while
 
 # %%
-class Template:
-    """
-    Brief imperative description of what the class does in one line, if needed.
-    """
-
-    def __init__(self) -> None:
-        """
-        Initialize the Template class.
-        """
-        pass
-
-    def method1(self, arg1: int) -> None:
-        """
-        Brief imperative description of what the method does in one line.
-
-        You can elaborate more in the method docstring in this section, for e.g. explaining
-        the formula/algorithm. Every method/function should have a docstring, typehints and include the
-        parameters and return as follows:
-
-        :param arg1: description of arg1
-        :return: description of return
-        """
-        # Code blocks go here.
-        # Make sure to include comments to explain what the code is doing.
-        # No empty lines between code blocks.
-        pass
-
-
-def template_function(arg1: int) -> None:
-    """
-    Brief imperative description of what the function does in one line.
-
-    You can elaborate more in the function docstring in this section, for e.g. explaining
-    the formula/algorithm. Every function should have a docstring, typehints and include the
-    parameters and return as follows:
-
-    :param arg1: description of arg1
-    :return: description of return
-    """
-    # Code blocks go here.
-    # Make sure to include comments to explain what the code is doing.
-    # No empty lines between code blocks.
-    pass
-
+result = aofflin.build_offline(log=_LOG.info)
+print(
+    f"records: {len(result['records'])}, links: {len(result['links'])}, "
+    f"gap modules: {len(result['gaps'])}"
+)
 
 # %% [markdown]
-# ## The flow should be highlighted using headings in markdown
-# ```
-# # Level 1
-# ## Level 2
-# ### Level 3
-# ```
+# ## Cell 1.2: What Was Written
+#
+# - Each stage leaves one JSON file, so later stages and the second half of
+#   the project read files instead of rerunning anything
 
 # %%
+for path in sorted((aconfig.DATA_DIR).glob("*.json")):
+    print(f"{path.name:28s} {path.stat().st_size / 1024:8.1f} KB")
+
+# %% [markdown]
+# # Part 2: Reading the Records
+
+# %% [markdown]
+# ## Cell 2.1: The Parsed Records
+
+# %%
+records = utils.load_json("records.json")
+display(utils.records_table(records))
+
+# %% [markdown]
+# ## Cell 2.2: Score Against the Extraction Key
+
+# %%
+display(utils.extraction_scores(records, utils.load_gold("extraction.json")))
+
+# %% [markdown]
+# - Everything is read correctly, but all 10 records follow one template, so
+#   this says little about messier repositories
+# - EDC records have no status line, so status is never scored
+
+# %% [markdown]
+# # Part 3: Linking Records to Code
+
+# %% [markdown]
+# ## Cell 3.1: Precision and Recall of the Links
+#
+# - A directory in the linking key stands for its non-test code files
+
+# %%
+links = utils.load_json("links.json")
+gold_pairs = utils.expand_gold(
+    utils.load_gold("linking.json"), agitsto.GitStore().tree
+)
+display(pd.DataFrame([utils.link_scores(links, gold_pairs)]))
+
+# %% [markdown]
+# - Nearly every right file is found (recall), but only about half of the
+#   links are right (precision)
+# - Wrong links come from names mentioned in passing and sentences like "this
+#   will remain unchanged"
+
+# %% [markdown]
+# ## Cell 3.2: Switch Each Signal Off
+#
+# - Which signal earns its place? Drop one at a time and score the rest
+
+# %%
+display(utils.signal_ablation(links, gold_pairs))
+
+# %% [markdown]
+# - `explicit_class` carries the recall: without it recall collapses
+# - `explicit_module` adds most of the wrong links: dropping it raises
+#   precision but loses some right files, a trade-off worth tuning
+# - `adr_commit` adds nothing on EDC
+
+# %% [markdown]
+# ## Cell 3.3: Why the Commit Signal Is Empty
+
+# %%
+display(pd.DataFrame(utils.load_json("adr_commit_signal.json")))
+
+# %% [markdown]
+# - The commits that added the records touched no code that still exists
+
+# %% [markdown]
+# # Part 4: Staleness
+
+# %% [markdown]
+# ## Cell 4.1: Scores Per Record
+
+# %%
+scores = utils.load_json("staleness.json")
+threshold = aconfig.get_settings().stale_warn_threshold
+display(utils.staleness_table(scores, threshold))
+
+# %%
+utils.plot_staleness(scores, threshold)
+
+# %% [markdown]
+# - Two records get no score (null), not 0: no linked code was found, so
+#   there is nothing to measure
+# - The count includes the commits that carried the decision out, so a high
+#   score is a hint to check the record, not proof it is wrong
+
+# %% [markdown]
+# ## Cell 4.2: How the Threshold Changes the Warnings
+#
+# - The default of 15 is untested, so try a few values
+
+# %%
+display(utils.threshold_sweep(scores, [5, 10, 15, 25]))
+
+# %% [markdown]
+# # Part 5: Documentation Gaps
+
+# %% [markdown]
+# ## Cell 5.1: Complex Modules Without a Record
+
+# %%
+gaps = utils.load_json("gap_report.json")
+display(pd.DataFrame(gaps).head(10))
+
+# %%
+utils.plot_gaps(gaps, top=10)
+
+# %% [markdown]
+# - Coverage only counts the 10 records used here, out of 113 in the
+#   repository, so a module shown as uncovered may have a record we skipped
+
+# %% [markdown]
+# # Takeaways
+#
+# - The offline half turns loose Markdown records into a graph that answers
+#   "which decisions govern this code?" and "what replaced this decision?"
+#   without any model
+# - Reading records is solved on this corpus; linking is the weak stage, with
+#   high recall and low precision
+# - Staleness and gaps are cheap hints that point a reviewer at records and
+#   modules worth a look
+# - The second half of the project (next PR) uses this graph to answer
+#   questions with citations

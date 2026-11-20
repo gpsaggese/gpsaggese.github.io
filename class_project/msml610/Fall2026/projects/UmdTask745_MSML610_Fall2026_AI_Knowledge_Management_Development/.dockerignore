@@ -78,6 +78,8 @@ Thumbs.db
 
 # Large data files (mount via volume instead)
 data/
+# Clone of the analyzed repository, created by `adrqa build`.
+.cache/
 *.csv
 *.pkl
 *.h5
