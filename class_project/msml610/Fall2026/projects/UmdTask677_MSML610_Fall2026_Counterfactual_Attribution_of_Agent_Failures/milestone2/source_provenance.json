@@ -1,0 +1,259 @@
+{
+  "pr": "https://github.com/gpsaggese/gpsaggese.github.io/pull/917",
+  "head_commit": "8799acfc484febd0c9156ccca0bfa00fb0724aeb",
+  "verified_files": [
+    {
+      "path": ".dockerignore",
+      "git_blob": "af0391fe3b86bd27125e270965997c8320ac6a33",
+      "sha256": "36700aa945be2612220783e9a70e6b807fb147a54e8fcc9fc9a487c5cd11f3f7"
+    },
+    {
+      "path": ".gitignore",
+      "git_blob": "f183fc7d019b2c2d5f6e5a655fa436cfbe78706e",
+      "sha256": "7e8cb7df6d506826d1236dfb3c59352fa90b7aadef342ab363ff08fed11b7078"
+    },
+    {
+      "path": "Dockerfile",
+      "git_blob": "2fc34bd855db79f963d4aea7b810d45a57fc5a2a",
+      "sha256": "3874947e91283ee372ea7b3979d4f30cba21b6be2205c9d3f413ca2e0608bcfe"
+    },
+    {
+      "path": "README.md",
+      "git_blob": "aed67ab3c7950b6447d74da6c6a9fb57c1d41c6f",
+      "sha256": "9e9ccde2f9bb1f5d2a294aa0051101c92dbef88423bdad781076134ba8cf09a2"
+    },
+    {
+      "path": "bashrc",
+      "git_blob": "4b7ff4c491146f3d858b867d1d0b051ceb44049d",
+      "sha256": "b7b54adb9bd261078ed666b5a208af612cbdee25147bf20051d1f0a20a6d729b"
+    },
+    {
+      "path": "caaf_agent.py",
+      "git_blob": "7d3e7177ae0ebdf8d569e00dac73551ee1bf6fcf",
+      "sha256": "b51024a93fb13cfc13e7042c532f28b6e4cae52e49ac7cb5090dfd46be93d7af"
+    },
+    {
+      "path": "caaf_chess.py",
+      "git_blob": "0a901f5dce0ae0d6f328f5c011e08a929e3a653f",
+      "sha256": "4cbedadb90685a15e7dbe82e20eb2494eb02f21c34fc2bd1dea26111ea0bfb02"
+    },
+    {
+      "path": "caaf_m1.py",
+      "git_blob": "fa9a3c774fc8c19f6478d2f81e152062c6eb90dd",
+      "sha256": "5db99df98e145b5290e316e0f36b9f2090fefb1a5d7f4be762e9af7b99eb88f0"
+    },
+    {
+      "path": "caaf_store.py",
+      "git_blob": "135de57241f8710a7d341bf8846d0626f78c33ca",
+      "sha256": "e14186300476775eb7cf243d162bf191fff57cc2fdb4057179df8a5e2091acfd"
+    },
+    {
+      "path": "caaf_utils.py",
+      "git_blob": "802a3508a3d6c0dc6d8bb995204928b372282ca3",
+      "sha256": "685263423bc4575cae89fcf5648b57c9c2a02b738d1022d792a31c2a3be21e70"
+    },
+    {
+      "path": "config/chess_haiku.yaml",
+      "git_blob": "7bcaab43c0bdece301c0423c03a25d30e157691d",
+      "sha256": "f3914002d541e61e10e3e50b3e58a2701b6041d12a9134ebc09a73b52b2c0446"
+    },
+    {
+      "path": "config/chess_haiku_think.yaml",
+      "git_blob": "a57d76cd57b44b07d19a4e4d1f255423318611c1",
+      "sha256": "d7608bba8fb520c2692f5a1dde771e969644e2dc80f333b0a620cd68b48bd60f"
+    },
+    {
+      "path": "data/fetch_tablebases.sh",
+      "git_blob": "e28a2c34ff9f0cf0f4f69aa87397ea496058f2f7",
+      "sha256": "b81181c5bd6b451e30c8d9411618b628152c0a5050fe3cb1fa82ffb1fc05dbd3"
+    },
+    {
+      "path": "data/tasks.json",
+      "git_blob": "c9cde75a0d22e52ee3ec5aae27e37a0933b14506",
+      "sha256": "d73e4d03b5e87aa85bfbbe51bd1335905727a7600afe4e1efe440893e0908710"
+    },
+    {
+      "path": "docker_bash.sh",
+      "git_blob": "f35c76f1112b37a64e40d6179e2f755deff6feb9",
+      "sha256": "9e01943e7f7ea6611212cdd0a0b2e83a641e4f6230a6bed644d23b535175d3f9"
+    },
+    {
+      "path": "docker_build.sh",
+      "git_blob": "5b0957a99ea8f02c4d68cf552c5e18c8b057ba5a",
+      "sha256": "2e34c1eb627d1df1ce429bf51522cb62e65533cd2c6211e42d50c0e928ad47d9"
+    },
+    {
+      "path": "docker_build.version.log",
+      "git_blob": "d0b8c52707ede18822c87e2bf9e9779b97ab2088",
+      "sha256": "7339336efb40f527b2f289ade69caba9c4c66d8157eb9155b8f2226f27e7d41b"
+    },
+    {
+      "path": "docker_clean.sh",
+      "git_blob": "7e40839ae263b1e405a0fe81899225582708c1bd",
+      "sha256": "25decc599312e8f9b436c421763b41ad21e77c50457ed7fcf1339bfae606cd94"
+    },
+    {
+      "path": "docker_cmd.sh",
+      "git_blob": "f16b3ac82d1dbd6053e1f20e08f37484d26e1ea5",
+      "sha256": "ac8fbff5f720c370509d67203d00e9422534a51727505bab5a124c48c7f29b0b"
+    },
+    {
+      "path": "docker_exec.sh",
+      "git_blob": "24f8e401a6ef92a8203e8396fe3e29646439d578",
+      "sha256": "f5e7b7807ddb5b3e8757f8908708820a0867dadc425f390c8ceceae49da65e83"
+    },
+    {
+      "path": "docker_jupyter.sh",
+      "git_blob": "d927a4c6ee8e9cd964d75258f1f66685ee1ef3d2",
+      "sha256": "635315649c02ae3dc459a11f1992b42232f0dff13fae93241e7d2f2b31a2b261"
+    },
+    {
+      "path": "docker_name.sh",
+      "git_blob": "7cbee2a75c57391ed56c3ca25caf94f0d1a2dfb2",
+      "sha256": "d570c34cea7a2cf204ae2c5dbbd554cd4564742f05f27f2d501304fc479d778d"
+    },
+    {
+      "path": "docker_push.sh",
+      "git_blob": "27d752dd938fdc13c559c44ab5e7408e3f567ddc",
+      "sha256": "f28129934eb1bc00b1e95b7b693d0e90888555277313e532686489f761cf2936"
+    },
+    {
+      "path": "docker_scripts.README.md",
+      "git_blob": "cc5cdfeb6040add7e29756709ea1c1ef01fa863e",
+      "sha256": "6b6c506ada181a94db08f0de6bdf317e31a98c950cbb5d7c7a7f7aaaee8b76c0"
+    },
+    {
+      "path": "docs/03-decisions.md",
+      "git_blob": "60943520884c1b71cc11b9efa4e10dafe379d7e5",
+      "sha256": "3b95d64d60758b21e18ad5cc00ff8942a79641bd58fb99ed8fd46666328b9fba"
+    },
+    {
+      "path": "docs/04-plan.md",
+      "git_blob": "120e5a180c425d9084bd11c1a989f083583ca440",
+      "sha256": "e77135de7a7f075c1ef65a6e8817f305a84edafe08f79f7cf5452f2f54da8345"
+    },
+    {
+      "path": "docs/07-progress.md",
+      "git_blob": "d360f43226778c1fb9109b318b5c635485d01329",
+      "sha256": "31b1a8ecdbe5e3057b46064e30e8e7b4f0cec8ae0a755a73fd77f3ebc419f020"
+    },
+    {
+      "path": "docs/milestone1.md",
+      "git_blob": "94a34e41e90562f147c1635538886085b117610e",
+      "sha256": "12832a7139c2cdc0cbc7786daf9fc8c0a54fcdcb0b3b6ff5ece7157937728f21"
+    },
+    {
+      "path": "etc_sudoers",
+      "git_blob": "ee0816a154cad956c3e4746da57211854429351a",
+      "sha256": "55c9b8c55bb8244a79b31739e4242af2b88713ba94e6c40b4d9b15c9df580b78"
+    },
+    {
+      "path": "requirements.txt",
+      "git_blob": "00c7f80b962d0c8623ae5a1b7ab92ce1e5fb1272",
+      "sha256": "e292f39df2a0df1e54995d7314e30f30928fd5c9c3983b900ea360baa6388984"
+    },
+    {
+      "path": "results/ledger_summary.json",
+      "git_blob": "45c354e38490de1e0a8e1a5714bd41acaa8b5ee4",
+      "sha256": "126acd591fcd7626dc86c0804ab119a227cbe1813e4be94b8ebe696dfcc664c8"
+    },
+    {
+      "path": "results/m1/pilot.json",
+      "git_blob": "66293277eebd3cbd3dae1d6149894bd7ae551454",
+      "sha256": "2b462beab662a8dd0be0e17cc021d0bba0f63ba18499c407e0b8e9831af7399c"
+    },
+    {
+      "path": "results/m1/replay.json",
+      "git_blob": "fd8eac8124d2fca65c3577e0cd5908e412204014",
+      "sha256": "350ef909ebe6e38dd711226fa1c9bf62216f36ad40e33bf4f6c584702a5c77e6"
+    },
+    {
+      "path": "results/m1/screen.json",
+      "git_blob": "eea64fae84cd8be49939f44b27ce30d4e1379419",
+      "sha256": "9e22212c7f34aa65c9de8f9a3711655a8696608811771252d0b3a15d28b881ee"
+    },
+    {
+      "path": "results/m1/summary.json",
+      "git_blob": "5d75a7a9c3f2d77eb9815fc379726e42234693b1",
+      "sha256": "161e07d67eec11aa627c8b7f9bedf467302eed224ae008ecde8f814082d762f1"
+    },
+    {
+      "path": "results/m1_think/aa.json",
+      "git_blob": "d63b2963b71f7107e2f0f9641509bfe5ce626991",
+      "sha256": "cb93b3c0a804da637d2c53227895c610e9444f2542c7e76239bb3ba0efb105a5"
+    },
+    {
+      "path": "results/m1_think/pilot.json",
+      "git_blob": "f6d2a85bd21ce89c0d8cedcbd002dc27de0c3b53",
+      "sha256": "ee9c16be06db3f3df55c4d3f6cb1f6fbdbdc221da3cea66d5654752adeff5848"
+    },
+    {
+      "path": "results/m1_think/replay.json",
+      "git_blob": "231262f7a4d7d324d338735906d9492678bfe1d3",
+      "sha256": "cf34a9381229f9f199b6fc27ec71cf9babae8f646f379ca564e921ab555bf2bf"
+    },
+    {
+      "path": "results/m1_think/screen.json",
+      "git_blob": "fc611b126b9d3d79e2d8bfd47156f838739cda6d",
+      "sha256": "600c452560fda90ede257e190eddcf933385590b0821e7fa99eb4cd5bec4f6fa"
+    },
+    {
+      "path": "results/m1_think/summary.json",
+      "git_blob": "d8a292ac89c63eb3d6445e06b60062545d75205c",
+      "sha256": "4c92c3a63cbd1a8484f82b2d5821736067d5ddd02e59413e1636052a4ef37808"
+    },
+    {
+      "path": "run_jupyter.sh",
+      "git_blob": "200db3e1bde00de74a756c700c0f08606705456b",
+      "sha256": "65a73105a1f41fcbe9c3ccdc23d0e577dc4e5140190e299ef8232acd092e1af6"
+    },
+    {
+      "path": "template.API.ipynb",
+      "git_blob": "5e4da717c0c5ee97ecd9183bb6a022c4535ab507",
+      "sha256": "e1cd26df6d01e49e6194384198d4e0443969acc10894dc2ee2c7f7744c67a6f4"
+    },
+    {
+      "path": "template.API.py",
+      "git_blob": "b33f989ea1ec194831237b7b6724192a00d6efe8",
+      "sha256": "e81b1bb00fd74f370c5cb011161107632aec4ee104252e00e55074dd637f29b3"
+    },
+    {
+      "path": "template.example.ipynb",
+      "git_blob": "cdcb040ae8e89b539207e0e41a0c5f779ae12866",
+      "sha256": "bad37fc82b5ecf68e66da302e9b9af71bf0478bbe454ea5f6b3b6c56c30097dc"
+    },
+    {
+      "path": "template.example.py",
+      "git_blob": "82ef1dbba12686930796dabb483b3c0fd749b412",
+      "sha256": "80783e1619785af0f627f2928dec14011d477666787042a57bd3060ed288fff5"
+    },
+    {
+      "path": "template_utils.py",
+      "git_blob": "e3d666f542e496fbc2c1eeaf64aeb3ceea210394",
+      "sha256": "cce629e6350374bc254f2f58be4aa533f0e54351123a338cfd10f3f1fe78d52a"
+    },
+    {
+      "path": "test/test_caaf.py",
+      "git_blob": "5b9c8ac562ced65096f9085652d55810486de49f",
+      "sha256": "be0b155ce868f950175f10e1cdeb8a7a7a66a809cbf3db0f6f68a7107fcaae76"
+    },
+    {
+      "path": "test/test_docker_template.py",
+      "git_blob": "a8fcdea44000576b429c8ce365a64af52efb1dcd",
+      "sha256": "2830fe0c939a31b398e4a62e24194e0a83568b4bb1a415e372314338ef19eac3"
+    },
+    {
+      "path": "utils.sh",
+      "git_blob": "07b67b6b739ecd73bb166e7c25adf73a7ebb34b7",
+      "sha256": "0a44c4850a857e29281e09682c1e79ff73015f030a49c4d50765e2b3d2539d4a"
+    },
+    {
+      "path": "version.sh",
+      "git_blob": "c46ed254c5876f98d25bf0f2e4ace1446c318d18",
+      "sha256": "8d06fff22f2ecef56042cd82b58b27eb5dc2acf1d9d9f378586367c05f20c1ba"
+    }
+  ],
+  "archive_sha256": "d63ef2d94a695280cffa1896bbe201e0f2d3f79def9b90751801c6f09e3a7172",
+  "raw_archive_drive_url": "https://drive.google.com/file/d/1TZZneyZp02Sxwi2Vef-QcVunpkcWPkqI/view",
+  "snapshot_note": "Extracted afresh from the verified archive, not the previously replayed review store."
+}

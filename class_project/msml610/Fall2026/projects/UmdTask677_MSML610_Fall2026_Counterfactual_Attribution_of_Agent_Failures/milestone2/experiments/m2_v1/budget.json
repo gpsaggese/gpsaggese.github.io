@@ -1,0 +1,54 @@
+{
+  "caveats": [
+    "Historical mean is from selected still-winnable checkpoints, not an unbiased cost forecast for all M2 checkpoints.",
+    "Cache hit rates, completion lengths, provider prices, and retries can change cost; taxes and account-specific charges are excluded.",
+    "Ceilings are proposed authorization limits, not claims that the current vendor budget guard enforces a hard cap.",
+    "Vendor guard checks spending before calls without reserving in-flight cost and can overshoot with concurrency; replace it before paid execution.",
+    "Implement atomic per-call maximum-cost reservations and reconcile all reported usage, retries, and failed calls. Pause if no safe reservation fits."
+  ],
+  "currency": "USD",
+  "expected_total_usd": 10.9,
+  "historical_fresh_forks": 500,
+  "historical_mean_usd_per_fork": 0.004845,
+  "historical_model_calls": 2489,
+  "historical_p95_usd_per_fork": 0.008925,
+  "historical_repriced_usd": 2.42232,
+  "paid_spend_this_preparation": 0,
+  "phases": [
+    {
+      "continuations": 300,
+      "expected_usd_at_historical_mean": 1.45,
+      "phase": "estimator_validation",
+      "proposed_phase_ceiling_usd": 3
+    },
+    {
+      "continuations": 1440,
+      "expected_usd_at_historical_mean": 6.98,
+      "phase": "profiles_primary",
+      "proposed_phase_ceiling_usd": 16
+    },
+    {
+      "continuations": 510,
+      "expected_usd_at_historical_mean": 2.47,
+      "phase": "profiles_stability",
+      "proposed_phase_ceiling_usd": 6
+    }
+  ],
+  "planned_continuations": 2250,
+  "planning_range_usd": [
+    8.18,
+    16.35
+  ],
+  "pricing_checked_on": "2026-11-13",
+  "pricing_source": "https://platform.claude.com/docs/en/about-claude/pricing",
+  "proposed_total_ceiling_usd": 25,
+  "rates_per_million_tokens": {
+    "cache_hit_up_to_100k": 0.01,
+    "cache_write_5m_up_to_100k": 0.125,
+    "input_over_100k": 0.5,
+    "input_up_to_100k": 0.1,
+    "output_over_100k": 2.5,
+    "output_up_to_100k": 0.5
+  },
+  "status": "PROPOSED_NOT_AUTHORIZED"
+}

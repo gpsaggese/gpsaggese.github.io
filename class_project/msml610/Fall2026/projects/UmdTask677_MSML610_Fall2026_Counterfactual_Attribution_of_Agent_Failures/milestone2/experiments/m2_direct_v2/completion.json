@@ -1,0 +1,30 @@
+{
+  "all_3900_completed": true,
+  "budget": {
+    "accounted_plus_reserved_usd": 14.07594497,
+    "available_usd": 7.92405503,
+    "by_status": [
+      {
+        "amount": 0,
+        "n": 10,
+        "status": "rejected_before_inference"
+      },
+      {
+        "amount": 14075944970,
+        "n": 16165,
+        "status": "settled"
+      }
+    ],
+    "cap_usd": 22.0,
+    "requests": 16175,
+    "within_cap": true
+  },
+  "elapsed_seconds": 9176,
+  "executable_source_unchanged": true,
+  "milestone3_or4_started": false,
+  "resume_epochs": 1,
+  "shortcut_used": false,
+  "source_cache_note": "Original pytest-cache change was non-executable; corrected source capture excludes caches.",
+  "source_preserved": true,
+  "status": "COMPLETE"
+}

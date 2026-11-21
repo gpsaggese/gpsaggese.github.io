@@ -1,0 +1,7 @@
+{
+  "phase": "estimator_validation",
+  "approved_usd": 3,
+  "approved_on": "2026-11-18",
+  "remaining_phases_approved": false,
+  "instruction": "Run the first validation stage within $3, report results before moving ahead. The broader Milestone 2 objective remains pending subsequent phase release."
+}

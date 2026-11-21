@@ -1,0 +1,10 @@
+{
+  "archive_sha256": "d63ef2d94a695280cffa1896bbe201e0f2d3f79def9b90751801c6f09e3a7172",
+  "blobs": 4040,
+  "no_model_modules_imported": true,
+  "original_database_unchanged": true,
+  "original_ledger_unchanged": true,
+  "source_files_verified": 50,
+  "sqlite_integrity": "ok",
+  "tapes": 634
+}

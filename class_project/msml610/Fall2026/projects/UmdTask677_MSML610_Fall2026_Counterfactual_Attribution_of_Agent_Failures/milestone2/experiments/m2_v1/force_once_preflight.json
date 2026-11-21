@@ -1,0 +1,34 @@
+{
+  "network_blocked": true,
+  "live_model_query_blocked": true,
+  "source_store_modified": false,
+  "cases": [
+    {
+      "decision_id": "krk-m3-1_trial0_step002",
+      "checks": {
+        "environment": true,
+        "api_visible_conversation": true,
+        "termination_and_step_counters": true
+      },
+      "cost_counter_note": "Forced reply has zero new API cost; cost metadata intentionally differs."
+    },
+    {
+      "decision_id": "krk-m4-1_trial0_step001",
+      "checks": {
+        "environment": true,
+        "api_visible_conversation": true,
+        "termination_and_step_counters": true
+      },
+      "cost_counter_note": "Forced reply has zero new API cost; cost metadata intentionally differs."
+    },
+    {
+      "decision_id": "krk-m8-1_trial0_step003",
+      "checks": {
+        "environment": true,
+        "api_visible_conversation": true,
+        "termination_and_step_counters": true
+      },
+      "cost_counter_note": "Forced reply has zero new API cost; cost metadata intentionally differs."
+    }
+  ]
+}

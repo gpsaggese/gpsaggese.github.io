@@ -1,0 +1,15 @@
+{
+  "branches": 96,
+  "replayed_decision_steps": 433,
+  "verified_blobs": 722,
+  "paid_model_calls": 385,
+  "additional_usage_rated_usd": 0.33522724,
+  "all_environment_replays_match": true,
+  "all_model_input_hashes_match": true,
+  "all_snapshot_identities_match": true,
+  "all_referee_scores_match": true,
+  "request_ledger_reconciles_exactly": true,
+  "outstanding_requests": null,
+  "complete_population_audit": false,
+  "scope": "The first completed replicate: all 48 decisions and both arms; global outstanding requests are still monitored separately."
+}
