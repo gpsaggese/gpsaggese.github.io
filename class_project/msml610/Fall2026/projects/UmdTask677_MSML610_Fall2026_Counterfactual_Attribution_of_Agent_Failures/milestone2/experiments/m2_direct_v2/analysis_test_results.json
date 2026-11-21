@@ -1,0 +1,8 @@
+{
+  "passed": 27,
+  "failed": 0,
+  "paid_calls": 0,
+  "includes_predecision_feature_checks": true,
+  "figure_rendering_smoke_check": "passed",
+  "exact_test_interval_and_tie_rank_checks": "passed"
+}

@@ -1,0 +1,11 @@
+task_id,trial,branch_id,run_id,outcome,won,calls,checkpoints
+krk-m2-1,0,br-b08353afb2d7,run-6e712dfe3aac,checkmate,True,2,3
+krk-m2-1,1,br-2067ec95407b,run-5bc61eb52f05,checkmate,True,4,5
+krk-m3-1,0,br-5d69d1bd40a6,run-fdd2ea1b8a28,fifty_move_rule,False,7,8
+krk-m3-1,1,br-8778e2dc19c9,run-5157331038bb,fifty_move_rule,False,7,8
+krk-m4-1,0,br-199f2cd2c646,run-0a9e69b6000b,fifty_move_rule,False,8,9
+krk-m4-1,1,br-40afc5c2d2ad,run-c96b6903d568,insufficient_material,False,1,2
+krk-m6-1,0,br-f2126a68de64,run-f3cc2b004a22,fifty_move_rule,False,10,11
+krk-m6-1,1,br-f5adf03595ac,run-821ef17c0bd0,checkmate,True,8,9
+krk-m8-1,0,br-530e4c7ce831,run-785341a28f04,insufficient_material,False,3,4
+krk-m8-1,1,br-c2926ef37908,run-c08118a23054,fifty_move_rule,False,12,13
