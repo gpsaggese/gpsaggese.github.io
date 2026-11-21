@@ -1,0 +1,41 @@
+{
+  "status": "DRAFT, single annotator, needs teammate review",
+  "guideline": "Labelled by hand from the record text at the pinned SHA. Anchors are the opening words of each section. Status is null because the records have none; it is never inferred.",
+  "records": [
+    {"id": "2025-05-28-dataspace-profile-context", "title": "Dataspace Profile Context", "date": "2025-05-28", "status": null,
+     "decision_anchor": "We'll introduce the concept of", "rationale_anchor": "At the moment the EDC connector", "approach_anchor": "A `DataspaceProfileContextRegistry` service",
+     "references": [], "supersedes": []},
+    {"id": "2025-07-25-multiple-participant-identifiers", "title": "Different participant identifiers for Dataspace Profile Contexts", "date": "2025-07-25", "status": null,
+     "decision_anchor": "We will enable the connector to use different", "rationale_anchor": "The dataspace profile context concept outlined", "approach_anchor": "> Note: throughout this DR",
+     "references": ["2025-05-28-dataspace-profile-context"], "supersedes": []},
+    {"id": "2025-08-26-participant-context", "title": "Participant Context (EDC Virtual)", "date": "2025-08-26", "status": null,
+     "decision_anchor": "We will enable the connector to run workloads", "rationale_anchor": "Currently, the connector is designed", "approach_anchor": "We will introduce a new concept and entity",
+     "references": ["2025-05-28-dataspace-profile-context"], "supersedes": []},
+    {"id": "2025-10-15-participant-context-config", "title": "Participant Context Configuration", "date": "2025-10-15", "status": null,
+     "decision_anchor": "We will implement a configuration system", "rationale_anchor": "Currently, EDC configuration needs", "approach_anchor": "We will introduce three new SPI interfaces",
+     "references": [], "supersedes": []},
+    {"id": "2025-10-29-participant-identifiers", "title": "Participants Identifiers resolution", "date": "2025-10-29", "status": null,
+     "decision_anchor": "We will introduce a participant identifier resolution", "rationale_anchor": "Currently, the resolution of a participant identifier", "approach_anchor": "We will remove the `getParticipantId` method",
+     "references": ["2025-07-25-multiple-participant-identifiers"], "supersedes": []},
+    {"id": "2026-05-11-multi-profile-virtual-connector", "title": "Multi-Profile Support in EDC Virtual", "date": "2026-05-11", "status": null,
+     "decision_anchor": "We will let a single virtual EDC runtime", "rationale_anchor": "The [Dataspace Profile Context]", "approach_anchor": "### Reshape of `DataspaceProfileContext`",
+     "references": ["2025-05-28-dataspace-profile-context", "2025-08-26-participant-context", "2025-10-15-participant-context-config"], "supersedes": []},
+    {"id": "2026-09-22-per-participant-resource-ids", "title": "Per-participant resource identifiers", "date": "2026-09-22", "status": null,
+     "decision_anchor": "The identity of an `Asset`", "rationale_anchor": "The [participant context]", "approach_anchor": "### Stores",
+     "references": ["2025-08-26-participant-context"],
+     "supersedes": [{"target": "2025-08-26-participant-context", "scope": "partial", "statement": "the store and service interface for those entities won't change"}]},
+    {"id": "2026-09-24-remove-atomikos", "title": "Remove the Atomikos transaction extension", "date": "2026-09-24", "status": null,
+     "decision_anchor": "The `transaction-atomikos` extension", "rationale_anchor": "`transaction-atomikos` provides a JTA/XA-backed", "approach_anchor": "### Components to remove",
+     "references": [], "supersedes": []},
+    {"id": "2025-02-07-http-proxy-data-plane-deprecation", "title": "Deprecation of HTTP Proxy in the Data Plane", "date": "2025-02-07", "status": null,
+     "decision_anchor": "We will deprecate and eventually remove", "rationale_anchor": "The current proxy functionality", "approach_anchor": "Mark `data-plane-public-api-v2`",
+     "references": [], "supersedes": []},
+    {"id": "2024-10-10-daps-deprecation", "title": "DAPS module deprecation", "date": "2024-10-10", "status": null,
+     "decision_anchor": "We will stop publishing DAPS", "rationale_anchor": "Shifting toward decentralized identity", "approach_anchor": "The `oauth2-daps` has been deprecated",
+     "references": [], "supersedes": []}
+  ],
+  "known_implicit_supersedes": [
+    {"newer": "2025-10-29-participant-identifiers", "older": "2025-07-25-multiple-participant-identifiers",
+     "note": "The newer record removes getParticipantId and participantId, which the older one added, without using the word supersede. The parser is not expected to catch this; QA item S2 measures the effect."}
+  ]
+}
