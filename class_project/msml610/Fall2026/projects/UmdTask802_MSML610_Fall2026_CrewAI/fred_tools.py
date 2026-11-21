@@ -26,6 +26,7 @@ def download_fred_series(
     *,
     data_dir: str = "data/fred",
     download_date: Optional[str] = None,
+    observation_cutoff: Optional[str] = None,
 ) -> Path:
     """
     Download and save one FRED series as a dated CSV snapshot.
@@ -33,12 +34,15 @@ def download_fred_series(
     :param series_id: FRED series identifier.
     :param data_dir: Root directory for saved snapshots.
     :param download_date: Optional ISO date used for the snapshot directory.
+    :param observation_cutoff: Optional latest observation date to retain.
     :return: Path to the saved CSV file.
     """
     if series_id not in FRED_SERIES:
         raise ValueError(f"Unsupported FRED series: {series_id}")
 
-    snapshot_date = download_date or date.today().isoformat()
+    snapshot_date = (
+        download_date or observation_cutoff or date.today().isoformat()
+    )
     snapshot_dir = Path(data_dir) / snapshot_date
     snapshot_dir.mkdir(parents=True, exist_ok=True)
     output_path = snapshot_dir / f"{series_id}.csv"
@@ -59,7 +63,35 @@ def download_fred_series(
             f"{dataframe.columns.tolist()}"
         )
 
-    output_path.write_bytes(response.content)
+    if observation_cutoff is None:
+        output_path.write_bytes(response.content)
+    else:
+        try:
+            cutoff = date.fromisoformat(observation_cutoff)
+        except ValueError as error:
+            raise ValueError(
+                "observation_cutoff must use YYYY-MM-DD format: "
+                f"{observation_cutoff}"
+            ) from error
+
+        observation_dates = pd.to_datetime(
+            dataframe["observation_date"],
+            errors="coerce",
+        )
+        keep_rows = (
+            observation_dates.notna()
+            & (observation_dates.dt.date <= cutoff)
+        )
+        dataframe = dataframe.loc[keep_rows].copy()
+
+        if dataframe.empty:
+            raise ValueError(
+                f"No {series_id} observations exist on or before "
+                f"{observation_cutoff}."
+            )
+
+        dataframe.to_csv(output_path, index=False)
+
     return output_path
 
 
@@ -67,12 +99,14 @@ def download_all_fred_series(
     *,
     data_dir: str = "data/fred",
     download_date: Optional[str] = None,
+    observation_cutoff: Optional[str] = None,
 ) -> dict[str, Path]:
     """
     Download all required FRED series into one dated snapshot directory.
 
     :param data_dir: Root directory for saved snapshots.
     :param download_date: Optional ISO date used for the snapshot directory.
+    :param observation_cutoff: Optional latest observation date to retain.
     :return: Mapping from series identifier to saved CSV path.
     """
     return {
@@ -80,6 +114,7 @@ def download_all_fred_series(
             series_id,
             data_dir=data_dir,
             download_date=download_date,
+            observation_cutoff=observation_cutoff,
         )
         for series_id in FRED_SERIES
     }
