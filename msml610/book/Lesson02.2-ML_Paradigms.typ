@@ -78,30 +78,30 @@ algorithm.
 //          fontcolor="#26215C", color="#D8D6EE", penwidth=1.2,
 //          height=0.46, margin="0.18,0.09"];
 //   edge  [arrowhead=none, penwidth=1.4, color="#B9B6D6"];
-//
+// 
 //   root [label="Learning Paradigms", shape=box, style="rounded,filled",
 //         fillcolor="#26215C", fontcolor="white", fontsize=14, penwidth=0,
 //         margin="0.26,0.16"];
-//
+// 
 //   // Label availability - violet
 //   label_avail [label="Label Availability", fillcolor="white", color="#7C74D6", fontcolor="#45296B", penwidth=1.6, fontsize=12];
 //   supervised   [label=<<b>Supervised</b><br/><font point-size="9" color="#45296B">Labeled input-output pairs</font>>, fillcolor="#EFEDFC", color="#CBC7F0", fontcolor="#45296B"];
 //   unsupervised [label=<<b>Unsupervised</b><br/><font point-size="9" color="#45296B">Unlabeled data, discover structure</font>>, fillcolor="#EFEDFC", color="#CBC7F0", fontcolor="#45296B"];
 //   selfsup      [label=<<b>Self-supervised</b><br/><font point-size="9" color="#45296B">Labels derived from data</font>>, fillcolor="#EFEDFC", color="#CBC7F0", fontcolor="#45296B"];
 //   semisup      [label=<<b>Semi-supervised</b><br/><font point-size="9" color="#45296B">Mixed labeled + unlabeled</font>>, fillcolor="#EFEDFC", color="#CBC7F0", fontcolor="#45296B"];
-//
+// 
 //   // Interactive - blue
 //   interactive  [label="Interactive/Sequential", fillcolor="white", color="#3E86C8", fontcolor="#1F4E79", penwidth=1.6, fontsize=12];
 //   rl           [label=<<b>Reinforcement</b><br/><font point-size="9" color="#1F4E79">Learn from delayed rewards</font>>, fillcolor="#E8F1FB", color="#BFD8F1", fontcolor="#1F4E79"];
 //   active       [label=<<b>Active Learning</b><br/><font point-size="9" color="#1F4E79">Request labels on demand</font>>, fillcolor="#E8F1FB", color="#BFD8F1", fontcolor="#1F4E79"];
 //   online       [label=<<b>Online Learning</b><br/><font point-size="9" color="#1F4E79">Sequential data, incremental update</font>>, fillcolor="#E8F1FB", color="#BFD8F1", fontcolor="#1F4E79"];
-//
+// 
 //   root -> label_avail [color="#7C74D6", penwidth=2.0];
 //   root -> interactive [color="#3E86C8", penwidth=2.0];
-//
+// 
 //   label_avail -> {supervised unsupervised selfsup semisup} [color="#A9A3E6"];
 //   interactive -> {rl active online}                        [color="#8FB6DE"];
-//
+// 
 //   { rank=same; supervised; unsupervised; selfsup; semisup; rl; active; online; }
 // }
 // ```
@@ -116,8 +116,7 @@ algorithm.
     "Lesson02.2-ML_Paradigms.typ.figs/Lesson02.2-ML_Paradigms.1.png",
     width: 80%,
   ),
-  caption: [Diagram relating learning paradigms, label availability and
-    interactive/sequential.],
+  caption: [Diagram relating learning paradigms, label availability and interactive/sequential.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -345,46 +344,45 @@ receives both a reward and a new state from the environment, then repeats.
 
 #wrap-content(
   [
-    // rendered_images:begin
-    //             ```graphviz
-    //             digraph BayesianFlow {
-    //                 splines=true;
-    //                 nodesep=1.0;
-    //                 ranksep=0.75;
-    //
-    //                 node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
-    //
-    //                 // Node styles
-    //                 Agent      [label="Agent", shape=box, fillcolor="#F4A6A6"];
-    //                 Env        [label="Environment", shape=box, fillcolor="#B2E2B2"];
-    //
-    //                 // Force ranks
-    //                 //{ rank=same; Agent; Env; }
-    //
-    //                 // Edges
-    //                 Agent -> Env [label="  Action", fontcolor=black, labeldistance=2.0];
-    //                 Env -> Agent [label="  State", fontcolor=black, labeldistance=2.0];
-    //                 Env -> Agent [label="  Reward", fontcolor=black, labeldistance=2.0];
-    //             }
-    //             ```
-    //             label=fig:reinforcementlearning
-    //             caption=Diagram relating agent, environment and reward signals in the RL loop.
-    // width=100%
-    // placement=auto
-    // rendered_images:end
-    // render_images:begin
-    #figure(
-      image(
-        "Lesson02.2-ML_Paradigms.typ.figs/Lesson02.2-ML_Paradigms.2.png",
-        width: 100%,
-      ),
-      caption: [Diagram relating agent, environment and reward signals in the RL
-        loop.],
-      kind: "figure",
-      supplement: [Fig.],
-      placement: auto,
-    ) <fig:reinforcementlearning>
-    // render_images:end
+// rendered_images:begin
+//                 ```graphviz
+//                 digraph BayesianFlow {
+//                     splines=true;
+//                     nodesep=1.0;
+//                     ranksep=0.75;
+//     
+//                     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
+//     
+//                     // Node styles
+//                     Agent      [label="Agent", shape=box, fillcolor="#F4A6A6"];
+//                     Env        [label="Environment", shape=box, fillcolor="#B2E2B2"];
+//     
+//                     // Force ranks
+//                     //{ rank=same; Agent; Env; }
+//     
+//                     // Edges
+//                     Agent -> Env [label="  Action", fontcolor=black, labeldistance=2.0];
+//                     Env -> Agent [label="  State", fontcolor=black, labeldistance=2.0];
+//                     Env -> Agent [label="  Reward", fontcolor=black, labeldistance=2.0];
+//                 }
+//                 ```
+//                 label=fig:reinforcementlearning
+//                 caption=Diagram relating agent, environment and reward signals in the RL loop.
+//     width=100%
+//     placement=auto
+// rendered_images:end
+// render_images:begin
+#figure(
+  image(
+    "Lesson02.2-ML_Paradigms.typ.figs/Lesson02.2-ML_Paradigms.2.png",
+    width: 100%,
+  ),
+  caption: [Diagram relating agent, environment and reward signals in the RL loop.],
+  kind: "figure",
+  supplement: [Fig.],
+  placement: auto,
+) <fig:reinforcementlearning>
+// render_images:end
   ],
   align: right,
   column-gutter: 1em,
@@ -489,8 +487,7 @@ engineering new features, or tuning parameters).
     "Lesson02.2-ML_Paradigms.typ.figs/Lesson02.2-ML_Paradigms.3.png",
     width: 70%,
   ),
-  caption: [Diagram illustrating the machine learning workflow: from question to
-    evaluation.],
+  caption: [Diagram illustrating the machine learning workflow: from question to evaluation.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -641,7 +638,7 @@ is essential for choosing the right model for a given application.
 //     nodesep=0.5;
 //     ranksep=0.6;
 //     rankdir=TB;
-//
+// 
 //     node [shape=box,
 //           style="rounded,filled",
 //           penwidth=1.8,
@@ -649,7 +646,7 @@ is essential for choosing the right model for a given application.
 //           fontsize=11,
 //           margin="0.18,0.10",
 //           height=0.45];
-//
+// 
 //     edge [style=dashed,
 //           color="#B23A48",
 //           penwidth=1.3,
@@ -657,15 +654,15 @@ is essential for choosing the right model for a given application.
 //           fontname="Helvetica",
 //           fontsize=9,
 //           fontcolor="#6B1F1F"];
-//
+// 
 //     Accurate      [label="Accurate", fillcolor="#9CC4F2", color="#3C6FB0", fontcolor="#1F4E79", penwidth=2.4];
 //     Interpretable [label="Interpretable", fillcolor="#A9DDB0", color="#4F9A5C", fontcolor="#1F4E2E"];
 //     Simple        [label="Simple", fillcolor="#A9DDB0", color="#4F9A5C", fontcolor="#1F4E2E"];
 //     Fast          [label="Fast", fillcolor="#A9DDB0", color="#4F9A5C", fontcolor="#1F4E2E"];
 //     Scalable      [label="Scalable", fillcolor="#A9DDB0", color="#4F9A5C", fontcolor="#1F4E2E"];
-//
+// 
 //     { rank=same; Interpretable; Simple; Fast; Scalable; }
-//
+// 
 //     Accurate -> Interpretable [label="  Trade-off  "];
 //     Accurate -> Simple [label="  Overfitting risk  "];
 //     Accurate -> Fast [label="  Compute cost  "];
@@ -683,8 +680,7 @@ is essential for choosing the right model for a given application.
     "Lesson02.2-ML_Paradigms.typ.figs/Lesson02.2-ML_Paradigms.4.png",
     width: 70%,
   ),
-  caption: [Tradeoffs between accuracy, interpretability, simplicity, speed and
-    scalability.],
+  caption: [Tradeoffs between accuracy, interpretability, simplicity, speed and scalability.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,
@@ -785,7 +781,7 @@ at every stage is therefore critical.
 //     nodesep=0.35;
 //     ranksep=0.5;
 //     rankdir=LR;
-//
+// 
 //     node [shape=box,
 //           style="rounded,filled",
 //           penwidth=1.8,
@@ -793,7 +789,7 @@ at every stage is therefore critical.
 //           fontsize=11,
 //           margin="0.18,0.10",
 //           height=0.45];
-//
+// 
 //     edge [color="#A3B1C0",
 //           penwidth=1.3,
 //           arrowhead=vee,
@@ -801,14 +797,14 @@ at every stage is therefore critical.
 //           fontname="Helvetica",
 //           fontsize=9,
 //           fontcolor="#7B8794"];
-//
+// 
 //     Image    [label="Input\nimage", shape=ellipse, fillcolor="#FFC98A", color="#D98E2B", fontcolor="#6B4517"];
 //     Detect   [label="Text\ndetection", fillcolor="#9CC4F2", color="#3C6FB0", fontcolor="#1F4E79"];
 //     Segment  [label="Character\nsegmentation", fillcolor="#9CC4F2", color="#3C6FB0", fontcolor="#1F4E79"];
 //     Classify [label="Character\nclassification", fillcolor="#9CC4F2", color="#3C6FB0", fontcolor="#1F4E79"];
 //     Spell    [label="Spelling\ncorrection", fillcolor="#9CC4F2", color="#3C6FB0", fontcolor="#1F4E79"];
 //     Text     [label="Output\ntext", shape=ellipse, fillcolor="#A9DDB0", color="#4F9A5C", fontcolor="#1F4E2E"];
-//
+// 
 //     Image -> Detect;
 //     Detect -> Segment [label="  Boxes  "];
 //     Segment -> Classify [label="  h e l l o  "];
@@ -827,8 +823,7 @@ at every stage is therefore critical.
     "Lesson02.2-ML_Paradigms.typ.figs/Lesson02.2-ML_Paradigms.5.png",
     width: 70%,
   ),
-  caption: [Four-stage OCR pipeline: text detection, character segmentation,
-    classification and spelling correction.],
+  caption: [Four-stage OCR pipeline: text detection, character segmentation, classification and spelling correction.],
   kind: "figure",
   supplement: [Fig.],
   placement: auto,

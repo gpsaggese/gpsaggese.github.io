@@ -351,7 +351,7 @@ step that reuses the held-out data once the estimate is final.
 
 #figure(
   image(
-    "Lesson02.5-ML_Techniques_Model_Evaluation.typ.figs/Lesson02.5-ML_Techniques_Model_Evaluation.5.png",
+    "../lectures_source/figures/L02.5.Testing_Data_For_Training.png",
     width: 70%,
   ),
   caption: [Held-out data feeding both the error estimate and the final retrained model.],
