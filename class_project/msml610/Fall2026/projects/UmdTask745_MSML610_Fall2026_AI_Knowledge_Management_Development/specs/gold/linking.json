@@ -1,0 +1,83 @@
+{
+  "status": "DRAFT, single annotator, needs teammate review",
+  "guideline": "A path is governed if a developer would create or change it to implement or revisit this decision, and it exists at the pinned SHA. A passing mention, a type used in an example, or code the record says is unaffected or unchanged is not governed. A directory entry stands for its non-test code files. An empty list means the code is gone, so linking nothing is correct.",
+  "records": {
+    "2025-05-28-dataspace-profile-context": [
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/protocol/spi/DataspaceProfileContext.java",
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/protocol/spi/DataspaceProfileContextRegistry.java"
+    ],
+    "2025-07-25-multiple-participant-identifiers": [
+      "core/common/connector-core/src/main/java/org/eclipse/edc/connector/core/agent/ParticipantAgentServiceImpl.java",
+      "core/control-plane/control-plane-aggregate-services/src/main/java/org/eclipse/edc/connector/controlplane/services/protocol/ProtocolTokenValidatorImpl.java",
+      "extensions/common/iam/iam-mock/src/main/java/org/eclipse/edc/iam/mock/IamMockExtension.java",
+      "extensions/common/iam/iam-mock/src/main/java/org/eclipse/edc/iam/mock/MockParticipantIdExtractionFunction.java",
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/participant/spi/ParticipantAgentService.java",
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/protocol/spi/DataspaceProfileContext.java",
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/protocol/spi/DataspaceProfileContextRegistry.java",
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/protocol/spi/DefaultParticipantIdExtractionFunction.java",
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/protocol/spi/ParticipantIdExtractionFunction.java"
+    ],
+    "2025-08-26-participant-context": [
+      "data-protocols/dsp/dsp-core/dsp-http-core/src/main/java/org/eclipse/edc/protocol/dsp/http/dispatcher/DspHttpRemoteMessageDispatcherImpl.java",
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/asset/spi/domain/Asset.java",
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/contract/spi/types/agreement/ContractAgreement.java",
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/contract/spi/types/negotiation/ContractNegotiation.java",
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/contract/spi/types/offer/ContractDefinition.java",
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/dataplane/spi/instance/DataPlaneInstance.java",
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/policy/spi/PolicyDefinition.java",
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/services/spi/catalog/CatalogProtocolService.java",
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/services/spi/contractnegotiation/ContractNegotiationProtocolService.java",
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/services/spi/transferprocess/TransferProcessProtocolService.java",
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/transfer/spi/types/TransferProcess.java",
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/spi/iam/IdentityService.java",
+      "spi/core-spi/src/main/java/org/eclipse/edc/participantcontext/spi/service/ParticipantContextService.java",
+      "spi/core-spi/src/main/java/org/eclipse/edc/participantcontext/spi/store/ParticipantContextStore.java",
+      "spi/core-spi/src/main/java/org/eclipse/edc/participantcontext/spi/types/ParticipantContext.java"
+    ],
+    "2025-10-15-participant-context-config": [
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/participantcontext/spi/config/ParticipantContextConfig.java",
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/participantcontext/spi/config/service/ParticipantContextConfigService.java",
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/participantcontext/spi/config/store/ParticipantContextConfigStore.java"
+    ],
+    "2025-10-29-participant-identifiers": [
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/protocol/spi/DataspaceProfileContext.java",
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/protocol/spi/DataspaceProfileContextRegistry.java",
+      "spi/core-spi/src/main/java/org/eclipse/edc/participantcontext/spi/identity/ParticipantIdentityResolver.java",
+      "spi/core-spi/src/main/java/org/eclipse/edc/spi/system/ServiceExtensionContext.java"
+    ],
+    "2026-05-11-multi-profile-virtual-connector": [
+      "core/common/lib/core-lib/src/main/java/org/eclipse/edc/web/jersey/providers/jsonld/AbstractJerseyJsonLdInterceptor.java",
+      "core/common/lib/core-lib/src/main/java/org/eclipse/edc/web/jersey/providers/jsonld/ProfileJerseyJsonLdInterceptor.java",
+      "core/common/lib/core-lib/src/main/java/org/eclipse/edc/web/jersey/providers/jsonld/UrlInfoRequestFilter.java",
+      "data-protocols/dsp/dsp-virtual/dsp-2025-virtual",
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/protocol/spi/DataspaceProfileContext.java",
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/protocol/spi/DataspaceProfileContextRegistry.java"
+    ],
+    "2026-09-22-per-participant-resource-ids": [
+      "extensions/control-plane/store/sql/asset-index-sql/src/main/resources/asset-index-schema.sql",
+      "extensions/control-plane/store/sql/contract-definition-store-sql/src/main/resources/contract-definition-schema.sql",
+      "extensions/control-plane/store/sql/policy-definition-store-sql/src/main/resources/policy-definition-schema.sql",
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/asset/spi/domain/Asset.java",
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/asset/spi/index/AssetIndex.java",
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/contract/spi/offer/ConsumerOfferResolver.java",
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/contract/spi/offer/store/ContractDefinitionStore.java",
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/contract/spi/types/offer/ContractDefinition.java",
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/policy/spi/PolicyDefinition.java",
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/policy/spi/store/PolicyDefinitionStore.java",
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/services/spi/asset/AssetService.java",
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/services/spi/contractdefinition/ContractDefinitionService.java",
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/services/spi/policydefinition/PolicyDefinitionService.java",
+      "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/transfer/spi/flow/DataFlowController.java",
+      "spi/control-plane-spi/src/testFixtures/java/org/eclipse/edc/connector/controlplane/asset/spi/testfixtures/AssetIndexTestBase.java",
+      "spi/control-plane-spi/src/testFixtures/java/org/eclipse/edc/connector/controlplane/contract/spi/testfixtures/offer/store/ContractDefinitionStoreTestBase.java",
+      "spi/control-plane-spi/src/testFixtures/java/org/eclipse/edc/connector/controlplane/policy/spi/testfixtures/store/PolicyDefinitionStoreTestBase.java"
+    ],
+    "2026-09-24-remove-atomikos": [
+      "extensions/common/transaction/transaction-local",
+      "gradle/libs.versions.toml",
+      "settings.gradle.kts"
+    ],
+    "2025-02-07-http-proxy-data-plane-deprecation": [],
+    "2024-10-10-daps-deprecation": []
+  }
+}
