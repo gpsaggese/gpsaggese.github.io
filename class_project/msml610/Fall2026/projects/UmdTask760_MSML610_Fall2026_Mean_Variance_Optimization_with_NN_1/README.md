@@ -23,7 +23,7 @@ Open the URL printed by the launcher (default port 8888). To use port 8889, laun
 
 | Stage | Method | Comparison |
 | --- | --- | --- |
-| 1. Statistical baselines | Estimate annualized mean returns and a Ledoit–Wolf covariance matrix from the previous 126 trading days. Solve long-only, fully invested portfolios with CLARABEL. | Equal weight, minimum variance, and classical mean–variance optimization (MVO) on the same dates after fees. |
+| 1. Statistical baselines | Estimate annualized mean returns and a Ledoit–Wolf covariance matrix from the previous 126 trading days. Solve long-only, fully invested portfolios with CLARABEL. | Equal weight, minimum variance, classical MVO, and MVO with historical mean shrinkage on the same dates after fees. |
 | 2. Learn the solver’s weights | Train a network on 512 solver-labeled instances. Test on 128 instances from later dates, first with long-only weights, then with an additional L1 turnover cap of 0.4. | Compare the network and solver on each instance using the objective gap and median single-instance CPU time. |
 | 3. Learn expected returns | Give both predictors each ETF’s 21-day mean return and 126-day volatility. Train one on return-prediction error and the other on realized gross portfolio utility through a differentiable MVO layer. | Convert both predictions to weights with the same MVO solver. Compare their net returns and utility with the Stage 1 baselines. |
 
@@ -42,7 +42,9 @@ Stage 3 uses rolling folds with 60 holding periods for training, 12 for validati
 
 **Out-of-sample performance.** Equal weighting produced the highest compound annual growth rate (12.89%) and annual net utility (−0.0128). Minimum variance had the lowest annual volatility (14.50%). Across the three seeds, decision-focused training beat predict-then-optimize in two runs, but had lower average net utility (−0.0583 versus −0.0526). Annual net utility is annualized mean net return minus five times annualized net return variance.
 
-The seeds measure training variability over one market history. The results cover these nine ETFs and this test period. All MVO pipelines use Ledoit–Wolf covariance shrinkage. A separate experiment would be needed to quantify how much performance comes from shrinkage.
+**Historical mean shrinkage.** In notebook section 1.4, `classical_mvo` uses the full estimated mean return for each ETF and `shrunk_mean_mvo` uses 25% of that estimate. Shrinkage raised annual net utility from −0.1289 to −0.0632 (a change of +0.0658). Both strategies use the same Ledoit–Wolf covariance, constraints, test dates, and trading rules.
+
+The seeds measure training variability over one market history. The results cover these nine ETFs and this test period.
 
 ## Outputs
 

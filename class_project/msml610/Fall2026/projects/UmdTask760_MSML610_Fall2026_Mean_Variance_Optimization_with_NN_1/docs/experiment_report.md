@@ -10,6 +10,7 @@ Out-of-sample period: 2016-07-07 to 2025-12-11 (2373 trading days).
 | equal_weight | 0.1289 | 0.1726 | 0.789 | -0.367 | -0.0128 | 0.4297 | 0.1111 |
 | minimum_variance | 0.0773 | 0.145 | 0.5866 | -0.3021 | -0.02 | 2.8368 | 0.7295 |
 | classical_mvo | 0.0471 | 0.1972 | 0.3323 | -0.3823 | -0.1289 | 11.0201 | 1.0 |
+| shrunk_mean_mvo | 0.0529 | 0.1597 | 0.4028 | -0.3232 | -0.0632 | 6.8286 | 0.7761 |
 
 ## Stage 2: Approximation Accuracy and CPU Time
 
@@ -29,12 +30,23 @@ The mean objective gap measures how closely the network matches the solver. The 
 | equal_weight | 0.1289 | 0.1726 | 0.789 | -0.367 | -0.0128 | 0.4297 | 0.1111 |
 | minimum_variance | 0.0773 | 0.145 | 0.5866 | -0.3021 | -0.02 | 2.8368 | 0.7295 |
 | predict_then_optimize | 0.0655 | 0.1607 | 0.4755 | -0.3579 | -0.0526 | 11.7943 | 1.0 |
+| shrunk_mean_mvo | 0.0529 | 0.1597 | 0.4028 | -0.3232 | -0.0632 | 6.8286 | 0.7761 |
 
 `equal_weight` had the highest average annual net utility.
 
 - Decision-focused learning achieved higher annual net utility than `equal_weight` in 0 of 3 seeds.
 - Decision-focused learning achieved higher annual net utility than `minimum_variance` in 0 of 3 seeds.
+- Decision-focused learning achieved higher annual net utility than `classical_mvo` in 3 of 3 seeds.
+- Decision-focused learning achieved higher annual net utility than `shrunk_mean_mvo` in 2 of 3 seeds.
 - Decision-focused learning achieved higher annual net utility than `predict_then_optimize` in 2 of 3 seeds.
+
+### Historical Mean Shrinkage
+
+The shrinkage baseline scales historical mean returns by 25% and uses the same covariance, constraints, and trading rules as classical MVO.
+
+The annual net utility difference between shrunk-mean MVO and classical MVO was +0.0658. Decision-focused learning differed from shrunk-mean MVO by +0.0049.
+
+This comparison measures historical mean shrinkage within classical MVO. Ledoit–Wolf covariance shrinkage is common to both portfolios.
 
 ![Net portfolio value and drawdown](backtest_seed7.png)
 
