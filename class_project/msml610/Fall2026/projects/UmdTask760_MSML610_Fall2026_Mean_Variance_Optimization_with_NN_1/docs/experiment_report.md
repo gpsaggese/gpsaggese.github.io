@@ -1,56 +1,43 @@
-# 实际运行结果与解释
+# Results for Nine U.S. Sector ETFs
 
-数值由完整实验自动生成。配置、哈希与逐折结果见 `experiment_snapshot.json`；测试环境和执行记录见 `validation.json`。
+Data period: 2010-01-04 to 2025-12-31 (4024 trading days).
+Out-of-sample period: 2016-07-07 to 2025-12-11 (2373 trading days).
 
-输入：2010-01-04 至 2025-12-31，4024 个交易日、10 个行业组合。
-样本外：2016-07-07 至 2025-12-11，2373 个交易日、10 折。末尾不足完整持有期的日期不进入评价。
+## Stage 1: Traditional Portfolio Strategies
 
-## 实验 A：近似误差和计算时间
-
-| 设置 | 平均目标差距 | 权重 RMSE | 网络单次 ms | 求解器单次 ms | 收支平衡次数 |
-|---|---:|---:|---:|---:|---:|
-| long_only | 0.03927 | 0.13360 | 0.1542 | 0.4937 | 1945 |
-| turnover_0.4 | 0.01962 | 0.05623 | 0.4682 | 0.5533 | 4645 |
-
-时间受硬件和系统负载影响。收支平衡次数只比较计算成本，忽略近似误差；网络批量吞吐量不能直接当作单次延迟。不同约束的目标差距也不能直接互相排名。
-
-## 实验 B：三个预先指定种子的均值
-
-| 策略 | CAGR | 波动率 | Sharpe | 最大回撤 | 净效用 | 年化换手 | 最大目标权重 |
+| Strategy | cagr | annual_volatility | sharpe_rf_zero | max_drawdown | annual_utility | annual_turnover | maximum_target_weight |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| decision_focused | 8.02% | 16.61% | 0.547 | -32.65% | -0.0470 | 13.46 | 100.00% |
-| equal_weight | 13.46% | 17.70% | 0.803 | -36.57% | -0.0145 | 0.47 | 10.00% |
-| historical_mvo | 6.65% | 21.17% | 0.410 | -38.51% | -0.1373 | 10.52 | 100.00% |
-| minimum_variance | 7.11% | 14.64% | 0.542 | -29.37% | -0.0278 | 2.99 | 76.95% |
-| predict_then_optimize | 6.66% | 16.13% | 0.481 | -32.90% | -0.0526 | 12.84 | 100.00% |
-| shrunk_mean_mvo | 6.48% | 16.12% | 0.470 | -32.45% | -0.0541 | 7.04 | 79.22% |
+| equal_weight | 0.1289 | 0.1726 | 0.789 | -0.367 | -0.0128 | 0.4297 | 0.1111 |
+| minimum_variance | 0.0773 | 0.145 | 0.5866 | -0.3021 | -0.02 | 2.8368 | 0.7295 |
+| classical_mvo | 0.0471 | 0.1972 | 0.3323 | -0.3823 | -0.1289 | 11.0201 | 1.0 |
 
-本次平均净效用最高的策略是 `equal_weight`。
+## Stage 2: Approximation Accuracy and CPU Time
 
-- 决策导向净效用高于 `equal_weight`：0/3 个种子。
-- 决策导向净效用高于 `minimum_variance`：0/3 个种子。
-- 决策导向净效用高于 `predict_then_optimize`：3/3 个种子。
-- 决策导向净效用高于 `shrunk_mean_mvo`：2/3 个种子。
+| Strategy | objective_gap_mean | nn_single_median_ms | solver_single_median_ms |
+|---|---:|---:|---:|
+| long_only | 0.05518 | 0.73833 | 0.53035 |
+| turnover_0.4 | 0.02371 | 0.74708 | 0.57612 |
 
-种子共享市场历史，不能作为独立市场样本。收缩对照不能严格分解神经网络提升的因果来源。
+The mean objective gap measures how closely the network matches the solver. The two timing columns show the median CPU time per test instance in milliseconds.
 
-## 不确定性（固定 seed=7）
+## Stage 3: Average Results Across Three Random Seeds
 
-| 决策导向减去基线 | 95% 区块 bootstrap 下界 | 上界 |
-|---|---:|---:|
-| equal_weight | -0.0765 | 0.0275 |
-| minimum_variance | -0.0598 | 0.0336 |
-| predict_then_optimize | -0.0330 | 0.0417 |
+| Strategy | cagr | annual_volatility | sharpe_rf_zero | max_drawdown | annual_utility | annual_turnover | maximum_target_weight |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| classical_mvo | 0.0471 | 0.1972 | 0.3323 | -0.3823 | -0.1289 | 11.0201 | 1.0 |
+| decision_focused | 0.0642 | 0.1636 | 0.4634 | -0.3801 | -0.0583 | 11.865 | 1.0 |
+| equal_weight | 0.1289 | 0.1726 | 0.789 | -0.367 | -0.0128 | 0.4297 | 0.1111 |
+| minimum_variance | 0.0773 | 0.145 | 0.5866 | -0.3021 | -0.02 | 2.8368 | 0.7295 |
+| predict_then_optimize | 0.0655 | 0.1607 | 0.4755 | -0.3579 | -0.0526 | 11.7943 | 1.0 |
 
-所有区间跨零，本次检查未显示稳健的决策导向优势。
+`equal_weight` had the highest average annual net utility.
 
-区块 bootstrap 不能消除市场非平稳性和模型选择偏差。
+- Decision-focused learning achieved higher annual net utility than `equal_weight` in 0 of 3 seeds.
+- Decision-focused learning achieved higher annual net utility than `minimum_variance` in 0 of 3 seeds.
+- Decision-focused learning achieved higher annual net utility than `predict_then_optimize` in 2 of 3 seeds.
 
-![固定种子7的净值和回撤](backtest_seed7.png)
+![Net portfolio value and drawdown](backtest_seed7.png)
 
-## 局限
+Adjusted prices for the nine surviving ETFs approximate dividend reinvestment. The backtest estimates trading costs from the value traded. Decision-focused training uses gross portfolio utility over each holding period.
 
-- 训练采用毛效用，评价采用扣费后净收益；二者并不完全一致。
-- 没有整数手数/持仓数量限制，也没有另设完全未触碰的最终市场测试期。
-- 行业组合是研究序列，存在历史修订，不能等同于可交易 ETF 的实盘回报。
-- CVXPYlayers/NumPy 接口出现上游弃用警告；当前数值和梯度检查通过。
+All three seeds use the same market history. Results depend on the ETFs selected and the market conditions during the sample period. The study uses no separate final holdout period.
