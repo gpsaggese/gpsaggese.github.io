@@ -186,11 +186,76 @@ plt.show()
 #   (52.0% vs. 50.3%); section 6 tests whether tuning closes this gap.
 
 # %% [markdown]
-# ## 6. River model comparison (next milestone)
+# ## 6. River model comparison
 #
-# - Hoeffding tree and Hoeffding adaptive tree
-# - Adaptive random forest (`forest.ARFClassifier`)
-# - Online bagging / ensembles combining the above
+# Eleven RIver models run on the same stream with identical one-day label delay: six settings of the online logistic regression (learning rate x L2 penalty) and five other model families (naive Bayes, Hoeffding tree, Hoeffding adaptive tree, adaptive random forest, bagged Hoeffding trees). 
+#
+# To avoid overstating the tuned model, the logistic regression setting is
+# chosen on 2011-2014 only (by log loss), and every model is then compared on
+# 2015-2026. The key column is `down_call_accuracy`: a model can only beat
+# always predicting "up" if its "down" calls are right more than half the time.
+
+# %%
+# Six settings of the online logistic regression plus five other River models.
+# The `lr=lr, l2=l2` defaults freeze each loop value inside its lambda;
+# without them every lambda would use the last values of the loop.
+logreg_grid = {
+    f"river_logreg_lr{lr}_l2{l2}": (
+        lambda lr=lr, l2=l2: rivutil.make_river_logreg(lr, l2)
+    )
+    for lr in (0.01, 0.001, 0.0001)
+    for l2 in (0.0, 0.01)
+}
+river_preds, river_seconds = rivutil.run_models(
+    {**logreg_grid, **rivutil.make_river_models()},
+    panel, feature_cols, warmup_days=250,
+)
+
+# %%
+# Choose the logistic regression setting on 2011-2014 only.
+SPLIT_DATE = "2015-01-01"
+early, late = rivutil.split_preds({**all_preds, **river_preds}, SPLIT_DATE)
+selection = rivutil.compare_models(
+    {k: early[k] for k in logreg_grid},
+    reference="river_logreg_lr0.01_l20.0",
+    n_boot=200,
+)
+best_logreg = selection["log_loss"].idxmin()
+print("Chosen on 2011-2014:", best_logreg)
+selection.sort_values("log_loss").round(4)
+
+# %%
+# Compare everything on 2015-2026.
+pd.set_option("display.max_columns", None)
+report_models = list(dict.fromkeys([
+    "always_up_online", "persistence",
+    "batch_logreg_monthly", "batch_hgb_monthly",
+    "river_logreg_lr0.01_l20.0", best_logreg,
+    *rivutil.make_river_models(),
+]))
+results = rivutil.compare_models(
+    {k: late[k] for k in report_models}, reference="always_up_online"
+)
+results["seconds_full_run"] = river_seconds
+results.round(4)
+
+# %% [markdown]
+# **Findings (River models, test period 2015-2026)**
+# - Tuning matters: the learning rate chosen on 2011-2014 (0.0001) raised the
+#   online logistic regression from 50.3% to 52.0% and its log loss from 0.725
+#   to 0.693 (= ln 2), closing the gap to the monthly batch model (52.1%).
+# - It improves by learning less: the chosen setting is the smallest in the
+#   grid, and the model's share of "up" calls rises from 62% to 85%, so it
+#   behaves more like always predicting "up".
+# - More complex River models do not help: Hoeffding trees, the Hoeffding
+#   adaptive tree, the adaptive random forest, bagged trees and naive Bayes
+#   all score 49.9-51.1%. The single trees are overconfident (log loss 0.90-0.93).
+# - No model's "down" calls carry information: every model is right on 45-48%
+#   of its "down" calls, the same as the 47% share of down days. AUCs are
+#   0.49-0.51. No model beats always "up" (53.0%, 95% CI 52.1-54.0%).
+# - McNemar p-values are optimistic because the 8 stocks move together; the
+#   block-bootstrap intervals of the two best models (tuned River and batch
+#   logistic regression) only just reach always-up's accuracy.
 
 # %% [markdown]
 # ## 7. Drift and adaptation (next milestone)
