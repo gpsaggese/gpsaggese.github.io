@@ -5,92 +5,24 @@ https://www.thegrantportal.com/
 https://maryland.grantwatch.com/
 https://www.instrumentl.com/
 https://www.linkedin.com/posts/ymlnv_i-found-30-web3-grant-programs-funding-builders-activity-7486356023230844929-_fHG/
+https://coach-carter.beehiiv.com/archive
 
-# Summary Table
+- The last link is the archive of The Scouting Report, a weekly newsletter
+  of student and startup funding opportunities (grants, competitions,
+  accelerators, fellowships, credits)
+- Use it as a source of links: each issue lists the sponsor, amount,
+  deadline, and application URL
+- Issues #011-#018 (Oct 6 - Nov 17, 2026) are captured in the sections
+  below, marked `Source: The Scouting Report #NNN`. Issue #014 and the
+  issues before #011 (archive pages 2 and 3+) are not reviewed yet
+- Amounts and dates are as stated in the newsletter. Confirm them on the
+  sponsor page before applying
 
-## AI
+# Definitions
 
-| Program                             | Who it's for                                                   | Amount                                        | Difficulty                       |
-| ----------------------------------- | -------------------------------------------------------------- | --------------------------------------------- | -------------------------------- |
-| NSF National AI Research Institutes | University-led consortia                                       | ~$20M each                                    | Very hard: between solicitations |
-| NSF ExpandAI (NSF 23-506)           | MSIs only (HBCU, HSI, ANSI, PBI)                               | Up to $400K / 2 yr (Track 1); $7.5M FY26 pool | Moderate                         |
-| AI Forge (DARPA + NSF)              | US universities & service academies only                       | $750K–$3M, one-year terms                     | Hard                             |
-| DOE Genesis Mission AI              | Universities, nonprofits, national labs                        | Varies by FOA                                 | Hard                             |
-| NAIRR Pilot                         | US academics, nonprofits, agencies, startups w/ federal grants | Compute + data, not cash                      | Easy                             |
-| NSF SBIR/STTR                       | Startups only                                                  | $250K–$1M+ by phase                           | Hard                             |
-| NVIDIA Inception                    | Startups only                                                  | GPU credits, technical access                 | Easy                             |
-| Google Academic Research Awards     | Faculty at degree-granting institutions                        | Up to $100K                                   | Moderate                         |
-| Amazon Research Awards              | Faculty/researchers at universities or nonprofits              | $50K–$250K+ (cash + AWS credits), by track    | Moderate                         |
-| Cisco Research University Gifts     | Full-time faculty/research staff (PI); rolling RFPs            | $50K–$100K, sometimes more                    | Moderate                         |
-| Schmidt Sciences AI2050 Fellowship  | Early-career researchers, worldwide                            | $300K–$500K over 3 years                      | Hard                             |
-| Schmidt Sciences Trustworthy AI RFP | Researchers/institutions, worldwide                            | $1M–$5M+                                      | Hard                             |
-| Coefficient Giving (ex–Open Phil.)  | Academics, grad students, nonprofits, worldwide                | $100K (exploratory)–$10M                      | Hard                             |
-| ASPIRE / ATRC (Abu Dhabi, UAE)      | Researchers via a UAE host institution or int'l partnership    | ~$81M awarded across 114 projects to date     | Hard                             |
-| Sandooq Al Watan (UAE)              | UAE + int'l experts (SWARD); any innovator (Grants programme)  | ~$1.4K–$6.8K individual; ~$272K+ SWARD        | Moderate                         |
-| Dubai RDI Grant Initiative (UAE)    | PI at Dubai-based HEI; int'l co-investigators allowed          | ~$136K–$408K per project                      | Moderate–Hard                    |
-| MBZUAI research funding (UAE)       | Own grad students/postdocs; PIs via philanthropic partners     | Varies, e.g. $1M Google.org award             | Moderate                         |
-| AI Grant                            | AI startup founders/teams (Delaware C-corp)                    | $250K SAFE + $600K+ credits                   | Hard                             |
-| Grantmatch (Grants.gov Search)      | Anyone seeking federal grants (search tool, not a funder)      | N/A, directory only                           | Easy to search                   |
-| Seedfund (NSF AI topic page)        | US small AI businesses                                         | Up to $2M, zero equity                        | Hard                             |
-| Aigrant                             | Open-source AI/ML project developers                           | $5K–$50K                                      | Moderate                         |
-| USgrants                            | AI researchers/businesses (directory)                          | Varies                                        | N/A: directory only              |
-| USAID Program                       | NGOs, local businesses, nontraditional partners                | Varies by award                               | Hard                             |
-| Maryland Dept. of Commerce (Build Our Future) | Innovation-infrastructure projects in Maryland        | ~$7M pool (FY26)                              | Moderate                         |
-| NSF CISE Core Programs                        | Academic PIs (incl. US-Italy collab track)              | Varies                                        | Hard                              |
-| NSF 24-554 (AI, Formal Methods, Math Reasoning) | Academic PIs                                          | Varies                                        | Hard                              |
-| NSF 24-569 (Mathematical Foundations of AI)   | Academic PIs                                            | Varies                                        | Hard                              |
-| NSF 23-518 (Advanced Computing Systems & Services) | Academic PIs                                       | Varies                                        | Hard                              |
-| ACED (Computing-Enabled Scientific Discovery) | Academic PIs                                            | Varies                                        | Hard                              |
-| NSF DCL 24-111 (AI-Ready Test Beds)           | Academic PIs (planning grants)                           | Varies                                        | Hard                              |
-| OpenAI Superalignment Fast Grants             | AI safety/alignment researchers                          | Not specified on page                         | Hard                              |
-| a16z Open Source AI Grant                     | Open-source AI project maintainers                       | Not specified, no open portal                 | Hard                              |
-| Microsoft AI for Accessibility                | AI projects improving accessibility                      | Cash + Azure credits                          | Moderate                          |
-| Llama Impact Grants (Meta)                    | Open-source Llama-based projects                         | Not specified on page                         | Hard                              |
-| Google.org Digital Futures Project            | Responsible-AI research partners                         | Not specified, appears invite-only            | Hard                              |
-| Artists + Machine Intelligence Grants (Google) | Artists using Google AI experiments                     | Not specified                                 | Hard                              |
-| NEA FY 2025 Grants                            | Arts organizations (not AI-specific)                     | Varies                                        | Moderate                          |
-
-## Crypto
-
-| Program                              | Who it's for                                            | Amount                                         | Difficulty    |
-| ------------------------------------ | ------------------------------------------------------- | ---------------------------------------------- | ------------- |
-| Ethereum Foundation Academic Grants  | Academic researchers globally                           | $2M pool per round                             | Moderate      |
-| EF PhD Fellowship                    | Enrolled PhD students                                   | $24K/yr, 9–10 awarded                          | Hard          |
-| EF Ecosystem Support (ESP)           | Anyone advancing Ethereum                               | Varies                                         | Moderate      |
-| Ripple UBRI                          | Universities (partnership model)                        | $80M+ since 2018, 60+ universities             | Hard to enter |
-| NLnet / NGI Zero                     | Individuals, researchers, nonprofits, small teams       | Typically up to ~$58K                          | Moderate      |
-| Filecoin Grants                      | Any builder                                             | $5K–$10K Builder Next Step; Open Grants + RFPs | Easy–moderate |
-| Solana Foundation Grants / Superteam | Any builder, open-source on Solana                      | Milestone-based; microgrants up to $10K        | Easy–moderate |
-| Optimism Retro Funding (RetroPGF)    | Builders who already shipped public goods on OP         | Share of ~$85M pool (850M OP, price-dependent) | Moderate      |
-| Polygon Community Grants             | AI-agent / verifiable-compute / on-chain infra builders | Varies                                         | Moderate      |
-| Uniswap Foundation Grants             | Builders across the Uniswap ecosystem                    | Variable; $250K+ reported for larger grants      | Moderate–Hard         |
-| Base Ecosystem Grants                 | Builders on Base (Coinbase L2)                           | 1–5 ETH rolling; Batches $10K+$50K (cohort closed) | Moderate–Hard         |
-| Avalanche Foundation Grants           | Live Avalanche L1s/tooling; academic researchers         | $40M pool (retroactive); research up to $50K     | Moderate–Hard         |
-| Starknet Seed Grants                  | Early-stage teams w/ MVP on Starknet                     | Up to $25K STRK                                  | Easy                  |
-| Starknet Growth Grants                | Later-stage teams w/ live product on Starknet            | $25K–$1M STRK                                    | Hard                  |
-| Arbitrum Foundation / DAO Grants      | Arbitrum builders (narrow surviving tracks)              | Varies by track                                  | Hard: most tracks closed/stale |
-| Near Foundation Grants                | NEAR builders (via community channels)                   | Varies; up to ~$10K/mo (Protocol Rewards)        | N/A: direct NF grants paused |
-| Compound Grants                       | Compound ecosystem builders                              | <$125K (Rapid) / $125K+ (Community)              | Moderate: status uncertain |
-| Curve DAO Grants                      | Curve ecosystem contributors                             | Ad hoc, DAO-voted, no fixed range                | Hard: forum proposal + vote |
-| Lido LEGO                             | Ethereum/PoS/DeFi contributors                           | $1K–$100K+, tiered                               | Easy–Hard by tier     |
-| 1inch Foundation Grants               | 1inch ecosystem builders                                 | Ad hoc, DAO-voted                                | Moderate               |
-| Sky Ecosystem Grants (ex-MakerDAO)    | Dai/USDS adoption projects                               | 5K–50K DAI historically                          | N/A: currently paused |
-| Balancer Grants                       | Balancer Protocol builders                               | $1K–$100K (BAL) historically                     | Uncertain: post-exploit status |
-| Aave Grants DAO                       | —                                                         | —                                                 | N/A: discontinued     |
-| Safe Ecosystem Grants                 | Safe smart-account ecosystem builders                    | Not fixed, milestone-based                       | Moderate               |
-| ENS DAO Grants (Ecosystem WG)         | ENS-specific projects                                    | 10K–25K USDC + ENS, tiered                       | Moderate–Hard          |
-| Gitcoin Grants (Quadratic Funding)    | Open-source Ethereum public goods                        | ~$1.8M matching, most recent round               | Hard: between rounds  |
-| Protocol Labs: Founders Forge         | Early-stage Web3/AI builders                             | Up to $30K + accelerator                         | Moderate–Hard          |
-| The Graph Foundation Grants           | Open-source Graph ecosystem contributors                 | Not published                                    | N/A: paused           |
-| Chainlink Grants / BUILD              | Web3 dev teams (historical)                              | Not published / non-cash                         | N/A: dormant/winding down |
-| ENS Public Goods WG Grants            | —                                                         | —                                                 | N/A: discontinued     |
-| Protocol Labs Research Grants (classic) | —                                                       | —                                                 | N/A: discontinued since 2023 |
-| Algorand Foundation xGov              | Retroactive OSS contributors to Algorand                 | Min. 10K ALGO (~$790+)                           | Moderate               |
-| Stellar Community Fund: Build Award   | Stellar/Soroban builders                                 | Up to $150K (+follow-on to $300K)                | Moderate–Hard          |
-| Aptos Foundation Grants               | Aptos ecosystem builders                                 | $5K–$150K by track                               | Moderate               |
-| Sui Foundation Grants (RFP/Academic)  | Move-language builders / researchers                     | $25K (academic); varies (RFP)                    | Hard                   |
-| Web3 Foundation Grants (Polkadot)     | —                                                         | —                                                 | N/A: discontinued Dec 2025 |
-| Interchain Foundation Grants (Cosmos) | —                                                         | —                                                 | N/A: closed/paused     |
+- The rules for the CSV columns and for the fields `Difficulty`,
+  `AmountSize`, `GeoFocus`, and `Stage` are in `startup_resources/README.md`
+- They apply to the sections below
 
 # Detail
 
@@ -268,6 +200,23 @@ https://www.linkedin.com/posts/ymlnv_i-found-30-web3-grant-programs-funding-buil
 - **What it is**: Informational webinar on the NSF SBIR/STTR Fast-Track pilot, not
   a grant itself. Pair with the NSF SBIR/STTR entry below
 - **Deadline**: N/A, informational resource, not a grant
+
+### NSF ACCESS Allocations
+
+- **Website**: <https://allocations.access-ci.org/>
+- **Submission**: <https://allocations.access-ci.org/get-your-first-project>
+- **Award size**: Free compute allocations in ACCESS credits: Explore up to
+  400K, Discover up to 1.5M, Accelerate 3M, Maximize no set cap. Resources are
+  GPU, large-memory, modeling, and storage systems
+- **Eligibility**: Researchers and educators with an ACCESS ID. No NSF award is
+  needed. Grad students need a letter of collaboration from their advisor for
+  Explore and Discover
+- **Deadline**: Rolling for Explore, Discover, and Accelerate. Maximize has
+  semi-annual windows
+- **Review**: Explore and Discover get an eligibility check. Accelerate and
+  Maximize get panel merit review. Start with Explore and upgrade later
+- **Note**: Compute, not cash. Related: NAIRR Pilot in the `Credits` tab
+- **Source**: ACCESS pages via web search, Nov 2026. Verify the limits on site
 
 ## Corporate / Foundation
 
@@ -607,6 +556,990 @@ worldwide
 - **Deadline**: Closed (Batch 4); next batch timing not published
 - **Difficulty**: Hard. Competitive, investment-style program, not a grant in the
   traditional sense
+
+### Build in Tulsa: Arch Accelerator
+
+- **Website**: <https://www.buildintulsa.com/program/arch>
+- **Submission**: <https://www.buildintulsa.com/program/arch>
+- **Award size**: $70K non-dilutive plus a stipend
+- **Eligibility**: Revenue-stage tech founders. In person in Tulsa, so
+  relocation is required
+- **Deadline**: Nov 20, 2026
+- **Source**: The Scouting Report #018
+
+### Hello Tomorrow Global Challenge 2026
+
+- **Website**: <https://hello-tomorrow.org/global-challenge/>
+- **Submission**: <https://hello-tomorrow.org/global-challenge/>
+- **Award size**: EUR 100K equity-free grand prize
+- **Eligibility**: Early-stage deep-tech founders, open globally
+- **Deadline**: Nov 30, 2026
+- **Note**: Finalists pitch at the Hello Tomorrow Summit in Paris
+- **Source**: The Scouting Report #017, #018
+
+### SET Award 2027 (dena, Start Up Energy Transition)
+
+- **Website**:
+  <https://www.startup-energy-transition.com/set-award/set-award-2027/>
+- **Submission**:
+  <https://www.startup-energy-transition.com/set-award/set-award-2027/>
+- **Award size**: Mainly recognition and exposure, not cash
+- **Eligibility**: Climate and energy-transition startups worldwide
+- **Deadline**: Nov 30, 2026
+- **Note**: Top 100 join the SET100 list. Finalists pitch at the SET Tech
+  Festival in Berlin
+- **Source**: The Scouting Report #017, #018
+
+### The Great Oral Health Pitch
+
+- **Website**: <https://shilsfund.org/the-great-oral-health-pitch/>
+- **Submission**: <https://shilsfund.org/the-great-oral-health-pitch/>
+- **Award size**: $2,000 regional prizes feeding a grand prize package worth
+  $50K+
+- **Eligibility**: Oral-health ideas; national pitch competition
+- **Deadline**: Nov 30, 2026
+- **Note**: Sponsor not named in the issue (domain: shilsfund.org). Narrow focus
+- **Source**: The Scouting Report #017, #018
+
+### BioTools Innovator 2027
+
+- **Website**: <https://biotoolsinnovator.org/apply/>
+- **Submission**: <https://biotoolsinnovator.org/apply/>
+- **Award size**: Up to $300K
+- **Eligibility**: Life-science and biotech tool startups; recruits globally
+- **Deadline**: Dec 1, 2026
+- **Note**: Sponsor not named in the issue (domain: biotoolsinnovator.org)
+- **Source**: The Scouting Report #018
+
+### F. M. Kirby Impact Prize 2027 (Duke CASE)
+
+- **Website**: <https://kirbyimpactprize.smapply.org/prog/2027kirbyprize/>
+- **Submission**: <https://kirbyimpactprize.smapply.org/prog/2027kirbyprize/>
+- **Award size**: $150K unrestricted
+- **Eligibility**: Social-impact ventures
+- **Deadline**: Dec 2, 2026
+- **Note**: Run by Duke's Center for the Advancement of Social Entrepreneurship.
+  May cap at 250 applications
+- **Source**: The Scouting Report #018
+
+### D-Prize Global Competition
+
+- **Website**: <https://d-prize.org/>
+- **Submission**: <https://d-prize.org/>
+- **Award size**: Up to $20K
+- **Eligibility**: First-time founders (US eligible) delivering tested
+  anti-poverty solutions in lower- and middle-income nations
+- **Deadline**: Final extension Dec 6, 2026 (first round was Oct 25)
+- **Source**: The Scouting Report #013
+
+### 9Fresh Founder Residency
+
+- **Website**: <https://9fresh.co/founder-residency/>
+- **Submission**: <https://9fresh.co/founder-residency/>
+- **Award size**: Not a grant. Rooms about $550-$750 a month, utilities and wifi
+  included
+- **Eligibility**: Founders, teams, independent builders, mentors, investors,
+  digital nomads. 12-month on-campus residency in Cazenovia, NY
+- **Deadline**: Round 1 closes Dec 11, 2026 (midnight ET)
+- **Note**: Move-in March 2027. Residents cover meals and parking
+- **Source**: The Scouting Report #018
+
+### SEED SPOT Impact Accelerator
+
+- **Website**: <https://seedspot.org/>
+- **Submission**: <https://seedspot.org/>
+- **Award size**: Not stated. Takes no equity
+- **Eligibility**: Impact-driven founders; national virtual accelerator
+- **Deadline**: Jan 11, 2027
+- **Source**: The Scouting Report #018
+
+### NIA Start-Up Challenge 2027 (NIH)
+
+- **Website**:
+  <https://www.nih.gov/challenges/2027-nia-start-challenge-accelerator>
+- **Submission**:
+  <https://www.nih.gov/challenges/2027-nia-start-challenge-accelerator>
+- **Award size**: Not stated in #018. #016 mentions $994K for an NIH
+  aging/longevity challenge (unverified, may be the same program)
+- **Eligibility**: Aging- and longevity-focused startups
+- **Deadline**: Jan 15, 2027
+- **Note**: Application portal opens Dec 1, 2026
+- **Source**: The Scouting Report #016, #018
+
+### South Summit Startup Competition 2027
+
+- **Website**: <https://www.southsummit.io/en/content/startup-competition>
+- **Submission**: <https://www.southsummit.io/en/content/startup-competition>
+- **Award size**: Not stated
+- **Eligibility**: Not stated
+- **Deadline**: Jan 31, 2027
+- **Note**: Finalists pitch at South Summit in Madrid
+- **Source**: The Scouting Report #018
+
+### Claude for Startups (Anthropic)
+
+- **Website**: <https://claude.com/programs/startups>
+- **Submission**: <https://claude.com/programs/startups>
+- **Award size**: Free Claude API credits plus priority rate limits (no dollar
+  value stated)
+- **Eligibility**: Startups (eligibility not stated in the newsletter)
+- **Deadline**: Rolling; no deadline listed
+- **Source**: The Scouting Report #011, #012, #018
+
+### Microsoft for Startups Founders Hub
+
+- **Website**: <https://www.microsoft.com/en-us/startups>
+- **Submission**: <https://www.microsoft.com/en-us/startups>
+- **Award size**: Up to ~$150K in Azure credits plus AI model access and dev
+  tools
+- **Eligibility**: Startups; no equity or VC introduction required
+- **Deadline**: Rolling; no deadline listed
+- **Source**: The Scouting Report #011, #012, #018
+
+### AWS Activate
+
+- **Website**: <https://aws.amazon.com/activate/>
+- **Submission**: <https://aws.amazon.com/activate/>
+- **Award size**: $1K-$100K in AWS credits, valid for two years
+- **Eligibility**: Early-stage startups
+- **Deadline**: Rolling; no deadline listed
+- **Source**: The Scouting Report #011, #012, #018
+
+### ElevenLabs Startup Grants
+
+- **Website**: <https://elevenlabs.io/startup-grants>
+- **Submission**: <https://elevenlabs.io/startup-grants>
+- **Award size**: 33M free voice-AI credits (~$10K value) for 12 months
+- **Eligibility**: Startups (eligibility not stated)
+- **Deadline**: Rolling; no deadline listed
+- **Source**: The Scouting Report #016, #017, #018
+
+### Google for Startups Cloud Program
+
+- **Website**: <https://cloud.google.com/startup>
+- **Submission**: <https://cloud.google.com/startup>
+- **Award size**: Google Cloud credits: up to $2K (entry tier, one year), up to
+  $200K (Scale tier, VC-funded), up to $350K (AI-first startups)
+  - AI-first: year 1 covers 100% of usage up to $250K, year 2 covers 20% of
+    spend up to $100K. The AI tier adds $150K in year 1 and a $10K Model Garden
+    credit for partner LLMs
+  - Scale tier (not AI): $100K in year 1
+- **Eligibility**: Startups with a business domain, tier by funding stage. The
+  Scale tier is for VC-funded startups. The AI tier is for startups that build
+  on Vertex AI or Gemini
+- **Deadline**: Rolling; no deadline listed
+- **Note**: Google has final say on acceptance. A third-party guide says
+  pre-seed and bootstrapped teams can reach the AI tier. Google's pages tie it
+  to VC funding: verify
+- **Source**: Inbound email from Google Cloud Startups SDR (amount and URL not
+  in the email). Tiers from Google pages via web search, Nov 2026
+
+### SoGal, iFundWomen, Google for Startups (named only)
+
+- **Website**: N/A, the newsletter gives no URLs
+- **Award size**: Not stated
+- **Eligibility**: Not stated
+- **Deadline**: Rolling all fall
+- **Note**: Named with no details. Also mentioned: "a deep bench of
+  accelerators"
+- **Source**: The Scouting Report #015, #016, #017, #018
+
+### Techstars Anywhere
+
+- **Website**: <https://www.techstars.com/accelerators/anywhere>
+- **Submission**: <https://www.techstars.com/accelerators/anywhere>
+- **Award size**: Not stated
+- **Eligibility**: Remote-first; no relocation required
+- **Deadline**: Closed (last call was Nov 18, 2026)
+- **Note**: Program begins March 2027
+- **Source**: The Scouting Report #013, #018
+
+### Y Combinator Winter 2027
+
+- **Website**: <https://www.ycombinator.com/apply>
+- **Submission**: <https://www.ycombinator.com/apply>
+- **Award size**: $125K for 7% plus $375K uncapped SAFE
+- **Eligibility**: Open globally
+- **Deadline**: Closed (was Nov 2, 2026)
+- **Note**: Three-month program ending in Demo Day
+- **Source**: The Scouting Report #013, #015
+
+### Supernova Challenge (Expand North Star, Dubai)
+
+- **Website**:
+  <https://expandnorthstar.com/supernova-challenge-pitch-competition>
+- **Submission**:
+  <https://expandnorthstar.com/supernova-challenge-pitch-competition>
+- **Award size**: Equity-free pitch pool; no cash amount stated
+- **Eligibility**: International reach; travel to Dubai required
+- **Deadline**: Closed (was Nov 2, 2026)
+- **Note**: Held at GITEX in Dubai, Dec 8-10, 2026
+- **Source**: The Scouting Report #013, #015
+
+### Unearthodox Exploration Co-Lab 2027
+
+- **Website**:
+  <https://opportunitydesk.org/2026/10/02/unearthodoxs-exploration-co-lab-2027-edges-of-possibility-for-innovators/>
+- **Submission**:
+  <https://opportunitydesk.org/2026/10/02/unearthodoxs-exploration-co-lab-2027-edges-of-possibility-for-innovators/>
+- **Award size**: CHF 10K (~$12K) plus 10-month online incubation
+- **Eligibility**: Global early-stage ventures addressing root causes of
+  environmental and social problems; must be past the idea stage
+- **Deadline**: Closed (was Nov 16, 2026)
+- **Note**: Link is to an aggregator (Opportunity Desk), not the sponsor
+- **Source**: The Scouting Report #017
+
+### Cloudflare for Startups
+
+- **Website**: <https://www.cloudflare.com/hatch>
+- **Submission**: <https://www.cloudflare.com/lp/startups>
+- **Award size**: $10K (bootstrapped, under $1M raised), $100K (under $5M
+  raised, partner-funded), up to $350K (over $5M raised, partner-funded) in
+  Cloudflare credits, valid one year or until used
+- **Eligibility**: For-profit startups incorporated within 10 years, funded up
+  to Series B, building a technology product, first-time applicants. Agencies,
+  consultancies, MSPs, resellers, and personal blogs do not fit
+- **Deadline**: Rolling; no deadline listed
+- **Note**: Review takes up to 48 hours. The Cloudflare blog says the top tier
+  is $250K, the page says $350K: verify
+- **Source**: Cloudflare page, Nov 2026
+
+### Databricks for Startups
+
+- **Website**: <https://www.databricks.com/product/startups>
+- **Submission**: <https://sites.google.com/databricks.com/startup-program-apply>
+- **Award size**: Up to $200K in credits for Databricks and Neon (Postgres)
+- **Eligibility**: Early-stage, venture-backed startups, pre-seed to Series A
+  preferred. No public criteria. An investor can nominate a startup
+- **Deadline**: Rolling; no deadline listed
+- **Note**: Credit duration not stated. The AI Accelerator Program is separate
+  and invitation-only
+- **Source**: Databricks page, Nov 2026
+
+### Together AI Startup Accelerator
+
+- **Website**: <https://www.together.ai/forms/startups-program>
+- **Submission**: <https://www.together.ai/forms/startups-program>
+- **Award size**: Up to $15K (raised under $5M), $30K ($5-10M), $50K (over
+  $10M) in platform credits, plus 3, 6, or 10 hours of forward-deployed
+  engineering
+- **Eligibility**: Pre-seed to growth-stage AI startups. Selection-based
+- **Deadline**: Rolling; no deadline listed
+- **Note**: Credits cover serverless inference, dedicated endpoints,
+  fine-tuning, and instant clusters. They do not cover Reserved GPU Clusters.
+  Validity period not stated
+- **Source**: Together AI page, Nov 2026
+
+### Modal for Startups
+
+- **Website**: <https://modal.com/lp/startups>
+- **Submission**: <https://modal.com/lp/startups>
+- **Award size**: Up to $50K in GPU cloud credits per the Modal page. A
+  directory says up to $25K
+- **Eligibility**: Early-stage startups new to Modal. A payment method is
+  required, so apps keep running when the credits end
+- **Deadline**: Rolling; no deadline listed
+- **Source**: Web search, Nov 2026. The Modal page did not load: verify the
+  amount on site
+
+### DigitalOcean Hatch
+
+- **Website**: <https://www.digitalocean.com/hatch>
+- **Submission**: <https://www.digitalocean.com/hatch/partners> (apply through
+  a partner)
+- **Award size**: Set per startup by the partner. Valid 12 months, $10K monthly
+  use limit. GPU credits are a separate review
+- **Eligibility**: AI-native startups that raised $10M or less, with no earlier
+  DigitalOcean credits. Service agencies are not eligible
+- **Deadline**: Paused. Applications for the current cohort are closed. An
+  updated program launches in early 2027
+- **Note**: Credits do not cover GPU Droplets, Serverless Inference, or
+  third-party AI models. Unused credits are forfeited
+- **Source**: DigitalOcean page, Nov 2026
+
+### MongoDB for Startups
+
+- **Website**: <https://www.mongodb.com/startups>
+- **Submission**: <https://www.mongodb.com/solutions/startups>
+- **Award size**: Up to $15K in MongoDB Atlas credits, by stage and partner
+- **Eligibility**: Startups 7 years old or younger, Series B or earlier,
+  building one software product. Agencies and dev shops are not eligible
+- **Deadline**: Rolling; no deadline listed
+- **Note**: Decision by email, about 5 business days. Activate the promo code
+  within 30 days. Credits last 12 months (6 months for $500)
+- **Source**: MongoDB page, Nov 2026
+
+## Academic / Research Credits
+
+- Cloud, GPU, and API credits for researchers at universities and nonprofits
+- Credits only: no cash. These rows are in the `Credits` tab
+- Most programs fund one project and expire after about one year
+
+### Nebius Research Grants
+
+- **Website**: <https://nebius.com/nebius-research-credits-program>
+- **Submission**: <https://nebius.com/nebius-research-grants>
+- **Award size**: GPU cloud credits, Token Factory tokens, and Tavily credits.
+  Amount set per proposal
+- **Eligibility**: PhD students, postdocs, faculty, and researchers at
+  accredited academic or nonprofit institutions. Apply once per team
+- **Deadline**: Rolling; open year-round. Proposals done by the last day of a
+  month enter the next month's review
+- **Note**: Winners agree to co-marketing. Credits are released after
+  onboarding and identity checks
+- **Source**: Nebius page, Nov 2026
+
+### Google Cloud Research Credits
+
+- **Website**: <https://edu.google.com/programs/credits/research>
+- **Submission**: <https://edu.google.com/programs/credits/research>
+- **Award size**: Not on the page. Third-party sources say ~$5K for faculty and
+  postdocs and ~$1K for PhD students: verify
+- **Eligibility**: Faculty, PhD students, and postdocs at accredited
+  higher-ed or eligible nonprofit research institutions in the listed countries
+- **Deadline**: Rolling; no deadline listed
+- **Note**: The form needs a proposal of up to 250 words, a pricing calculator
+  estimate, and a Google Cloud Billing Account ID. Activate within 60 days.
+  Credits expire after 365 days
+- **Source**: Google page, Nov 2026
+
+### AWS Cloud Credit for Research
+
+- **Website**:
+  <https://aws.amazon.com/government-education/research-and-technical-computing/cloud-credit-for-research/>
+- **Submission**: Same page, "Apply now" button
+- **Award size**: AWS promotional credits. Students up to $5K, no stated cap
+  for faculty and staff. Valid one year, no extension
+- **Eligibility**: Full-time faculty, research staff, and grad or PhD students
+  at accredited research institutions. Institutional email required
+- **Deadline**: Rolling. Review takes about 90-120 days
+- **Note**: Funds finite projects only: proof of concept, repeatable solution,
+  or workshop. EC2 is limited to on-demand and spot. Applications from greater
+  China are not processed. Contact: aws-research-credit@amazon.com. Not the
+  same as Amazon Research Awards in the `Grants` tab
+- **Source**: AWS page via web search, Nov 2026
+
+### NVIDIA Academic Grant Program
+
+- **Website**:
+  <https://www.nvidia.com/en-us/industries/higher-education-research/academic-grant-program/>
+- **Submission**: <https://academicgrants.nvidia.com/academicgrantprogram/s/welcome>
+- **Award size**: Up to 30,000 H100 80GB GPU hours, or hardware (up to 8 RTX PRO
+  6000 GPUs, or 2 DGX Spark systems), by call for proposals
+- **Eligibility**: Full-time faculty at accredited institutions that award
+  PhDs. Worldwide. The project must use NVIDIA pretrained models or software
+- **Deadline**: Not accepting applications now. No reopening date stated
+- **Note**: Also gives letters of support and a GTC presentation slot. Past
+  recipients must report results to apply again. Join the NVIDIA Developer
+  Program for updates
+- **Difficulty**: Hard. Between rounds
+- **Source**: NVIDIA page, Nov 2026
+
+### Anthropic AI for Science Program
+
+- **Website**:
+  <https://support.claude.com/en/articles/11199177-anthropic-s-ai-for-science-program>
+- **Submission**:
+  <https://docs.google.com/forms/d/e/1FAIpQLSfwDGfVg2lHJ0cc0oF_ilEnjvr_r4_paYi7VLlr5cLNXASdvA/viewform?usp=header>
+- **Award size**: Up to $20K in Claude API credits for 6 months
+- **Eligibility**: Researchers at academic or nonprofit institutions on
+  high-priority scientific projects, mostly biology and life sciences.
+  Biosecurity screening applies
+- **Deadline**: Rolling. Evaluated on the first Monday of each month
+- **Note**: API only, not the Claude web app. No fine-tuning or nonpublic
+  models. A multi-person group applies once. Unselected applicants get no reply
+- **Source**: Anthropic help center, Nov 2026
+
+### Anthropic External Researcher Access Program
+
+- **Website**:
+  <https://support.claude.com/en/articles/9125743-what-is-the-external-researcher-access-program>
+- **Submission**: <https://forms.gle/pZYC8f6qYqSKvRWn9>
+- **Award size**: $1K in Claude API credits, more in rare cases
+- **Eligibility**: Researchers on AI safety and alignment topics that Anthropic
+  sees as high priority. Must be in a country where Claude is available
+- **Deadline**: Rolling. Evaluated on the first Monday of each month
+- **Note**: API only. Credits go to one organization ID that the team splits.
+  Unselected applicants get no reply
+- **Source**: Anthropic help center, Nov 2026
+
+## Student Funding
+
+### VentureWell E-Teams
+
+- **Website**: <https://venturewell.org/e-team-program/>
+- **Submission**: <https://venturewell.org/e-team-program/>
+- **Award size**: Non-dilutive, in two stages: Pioneer $5,000 and Propel
+  $20,000, up to $25,000 per team
+- **Eligibility**: Teams of 2+ students with a faculty advisor, currently
+  enrolled at a US institution
+- **Deadline**: Spring 2027 cycle: applications opened Nov 9, 2026 and are due
+  Jan 25, 2027. Three cycles per year
+- **Note**: Some aggregator sites list $10K–$100K, which conflicts with
+  VentureWell's own $25,000 maximum. Check the official page for current
+  guidelines
+
+### Pitch Dingman Competition (UMD Dingman Center)
+
+- **Website**:
+  <https://www.rhsmith.umd.edu/centers/dingman-center/initiatives-programs/pitch-dingman-competition>
+- **Submission**: Same page; shortcut <https://go.umd.edu/pitchdingman>
+- **Award size**: 2026 top prize $25,000. Over $170,000 in total prizes in 2025
+  and 2026. Prizes change each year
+- **Eligibility**: UMD ventures. A University System of Maryland (USM) schools
+  track was added in 2023, with a $10,000 prize that year
+- **Deadline**: Not stated. Check the program page
+- **Note**: The Dingman Center also runs UMD Dingman Center Angels (see the
+  `FriendlyAngels` tab)
+
+### Mokhtarzada Hatchery (UMD Computer Science)
+
+- **Website**: <https://hatchery.umd.edu/>
+- **Submission**: <https://www.hatchery.umd.edu/apply>
+- **Award size**: Seed funding of up to $10,000 per team per year. Teams can
+  have other funding
+- **Eligibility**: Teams of 2 to 4 members. At least one member is a current
+  degree-seeking UMD student. Other members are current UMD students or UMD
+  graduates from the prior spring. Technology companies get preference
+- **Deadline**: Applications usually open about two weeks before the fall
+  semester starts. No fixed date is stated. The 2025-2026 round is closed. The
+  site has a 2026-2027 cohort page, but it gives no application details
+- **Note**: Also gives mentoring from an experienced entrepreneur, a dedicated
+  24/7 workspace in the Brendan Iribe Center (Room 2237), and access to
+  speakers and advisors from the Washington, D.C. startup ecosystem. Up to 4
+  teams are admitted each year. Launched in 2021, funded by the alumni
+  Haroon, Idris, and Zeki Mokhtarzada. Mtech Ventures
+  (<https://mtechventures.umd.edu/>) is a separate UMD incubator: it gives lab
+  and office space, but no funding
+
+### NFTE World Series of Innovation
+
+- **Website**: <https://innovation.nfte.com>
+- **Submission**: <https://innovation.nfte.com>
+- **Award size**: $300-$1,500 cash prizes
+- **Eligibility**: Ages 5-24 (high school and younger); online innovation
+  challenges
+- **Deadline**: Dec 13, 2026
+- **Source**: The Scouting Report #012
+
+### Tulane Business Model Competition
+
+- **Website**:
+  <https://freeman.tulane.edu/lepage/tulane-business-model-competition>
+- **Submission**:
+  <https://freeman.tulane.edu/lepage/tulane-business-model-competition>
+- **Award size**: $125K split among three finalists
+- **Eligibility**: National; teams of 1-5 degree-seeking students (one student
+  leads and owns at least 20%)
+- **Deadline**: Jan 10, 2027
+- **Note**: Finals in New Orleans on Mar 9, 2027
+- **Source**: The Scouting Report #012, #018
+
+### Diamond Challenge (high school)
+
+- **Website**: <https://diamondchallenge.org/>
+- **Submission**: <https://diamondchallenge.org/>
+- **Award size**: $100K+ total awards; $12K per first-place winner
+- **Eligibility**: High school students; Business and Social Innovation tracks
+- **Deadline**: Jan 14, 2027
+- **Note**: Run by the University of Delaware Horn program
+- **Source**: The Scouting Report #012
+
+### Rice Business Plan Competition
+
+- **Website**: <https://rbpc.rice.edu/eligibility>
+- **Submission**: <https://rbpc.rice.edu/eligibility>
+- **Award size**: More than $1M in cash and investment
+- **Eligibility**: Student-led startups from any university with 2+ student
+  founders and less than $300K raised
+- **Deadline**: Jan 29, 2027
+- **Note**: About 40 teams compete over three days in Houston
+- **Source**: The Scouting Report #012, #018
+
+### e-Fest (Schulze Family Foundation Challenge)
+
+- **Website**:
+  <https://business.stthomas.edu/schulze-school/student-engagement/competitions/efest/>
+- **Submission**:
+  <https://business.stthomas.edu/schulze-school/student-engagement/competitions/efest/>
+- **Award size**: More than $200K in cash across pitch and business-plan tracks
+- **Eligibility**: Undergraduate teams nationwide
+- **Deadline**: Jan 31, 2027
+- **Note**: Run by the University of St. Thomas and the Schulze Family
+  Foundation
+- **Source**: The Scouting Report #018
+
+### Blue Ocean Student Entrepreneur Competition (high school)
+
+- **Website**: <https://www.blueoceancompetition.org/>
+- **Submission**: <https://www.blueoceancompetition.org/>
+- **Award size**: Cash prizes (amount not listed)
+- **Eligibility**: High school students worldwide; fully virtual pitch
+- **Deadline**: Feb 21, 2027
+- **Source**: The Scouting Report #012
+
+### Microsoft Imagine Cup 2027
+
+- **Website**: <https://imaginecup.microsoft.com>
+- **Submission**: <https://imaginecup.microsoft.com>
+- **Award size**: Azure credits plus Student, Finalist, and Category prizes
+  (values not stated)
+- **Eligibility**: Early-stage software or AI startups: registered entity
+  founded on or after Nov 2024, not yet Series C, founders 18+. Separate Student
+  Prize for student teams; open to non-students too
+- **Deadline**: Feb 28, 2027
+- **Source**: The Scouting Report #016, #018
+
+### TCU Richards Barrentine Values and Ventures Competition
+
+- **Website**: <https://www.neeley.tcu.edu/VandV>
+- **Submission**: <https://www.neeley.tcu.edu/VandV>
+- **Award size**: Described as "significant non-dilutive capital" (no figure
+  given)
+- **Eligibility**: Undergraduate teams of 2-5 (one team per school) with
+  values-driven for-profit ventures
+- **Deadline**: Early spring semester 2027 (exact date TBA)
+- **Source**: The Scouting Report #012
+
+### Hult Prize
+
+- **Website**: <https://www.hultprize.org/>
+- **Submission**: <https://www.hultprize.org/>
+- **Award size**: $1M grand prize
+- **Eligibility**: Any college student, anywhere
+- **Deadline**: Campus qualifiers Sep 2026 - Feb 2027 (no single date)
+- **Note**: Confirm dates on the site
+- **Source**: The Scouting Report #011, #012
+
+### Global Student Entrepreneur Awards (GSEA)
+
+- **Website**: <https://eonetwork.org/gsea/>
+- **Submission**: <https://eonetwork.org/gsea/>
+- **Award size**: $100K+ prize pool
+- **Eligibility**: Students already running a real venture (Entrepreneurs'
+  Organization)
+- **Deadline**: Local rounds run fall and winter (no single date)
+- **Note**: Confirm dates on the site
+- **Source**: The Scouting Report #011, #012
+
+### Y Combinator Early Decision (students)
+
+- **Website**: <https://www.ycombinator.com/early-decision>
+- **Submission**: <https://www.ycombinator.com/early-decision>
+- **Award size**: $125K for 7% plus $375K uncapped SAFE
+- **Eligibility**: Students who apply now and join a future batch after
+  graduating; no need to drop out
+- **Deadline**: Rolling (apply anytime)
+- **Source**: The Scouting Report #011, #012, #018
+
+### Thiel Fellowship
+
+- **Website**: <https://www.thielfellowship.org/apply>
+- **Submission**: <https://www.thielfellowship.org/apply>
+- **Award size**: $250K over two years
+- **Eligibility**: Age 22 or under; degree not required
+- **Deadline**: Rolling (apply anytime)
+- **Source**: The Scouting Report #012
+
+### Z Fellows
+
+- **Website**: <https://www.zfellows.com/>
+- **Submission**: <https://www.zfellows.com/>
+- **Award size**: $10K, or investment at a $1B cap
+- **Eligibility**: All ages; one intensive week with technical builders
+- **Deadline**: Rolling (multiple cohorts a year)
+- **Source**: The Scouting Report #012
+
+### Dorm Room Fund
+
+- **Website**: <https://dormroomfund.com/opportunities>
+- **Submission**: <https://dormroomfund.com/opportunities>
+- **Award size**: Pre-seed investment for equity (check size not listed)
+- **Eligibility**: Student founders across the US
+- **Deadline**: Rolling
+- **Source**: The Scouting Report #012
+
+### 1517 Fund Medici Grant
+
+- **Website**: <https://www.1517fund.com/medici>
+- **Submission**: <https://www.1517fund.com/medici>
+- **Award size**: $1K
+- **Eligibility**: Young builders and students working on projects outside the
+  classroom
+- **Deadline**: Rolling (apply anytime)
+- **Source**: The Scouting Report #011, #012
+
+### Awesome Foundation
+
+- **Website**: <https://www.awesomefoundation.org/en>
+- **Submission**: <https://www.awesomefoundation.org/en>
+- **Award size**: $1K micro-grant, no equity
+- **Eligibility**: Idea-stage projects accepted; nationwide, via local chapters
+- **Deadline**: Rolling (monthly)
+- **Source**: The Scouting Report #011, #012
+
+### GoDaddy Empower (students)
+
+- **Website**: <https://www.godaddy.com/godaddy-for-good/empower>
+- **Submission**: <https://www.godaddy.com/godaddy-for-good/empower>
+- **Award size**: In-kind: free .com domain and AI website builder for three
+  years
+- **Eligibility**: Enrolled students 18+
+- **Deadline**: Not stated
+- **Note**: Not a cash grant
+- **Source**: The Scouting Report #015, #016
+
+### TigerLaunch 2027 (Princeton)
+
+- **Website**: <https://tigerlaunch.com/>
+- **Submission**: <https://tigerlaunch.com/>
+- **Award size**: $60K non-dilutive prizes ($30K / $20K / $10K)
+- **Eligibility**: Students from any college
+- **Deadline**: Closed (was Nov 1, 2026, extended)
+- **Note**: Student-led. Regional rounds this winter; global finals at Princeton
+  in April
+- **Source**: The Scouting Report #015
+
+### SXSW Pitch 2027 (Student Startups)
+
+- **Website**: <https://cart.sxsw.com/products/acceleratorapp>
+- **Submission**: <https://cart.sxsw.com/products/acceleratorapp>
+- **Award size**: Not stated
+- **Eligibility**: Student startups launched before Jan 2024 with under $10M
+  raised
+- **Deadline**: Closed (was Nov 13, 2026)
+- **Note**: Newsletter author discloses serving on the SXSW Pitch Advisory Board
+- **Source**: The Scouting Report #015, #016, #017
+
+### VentureWell Ecosystem Futures Fellowship
+
+- **Website**: <https://venturewell.org/ecosystem-futures-fellowship/>
+- **Submission**: <https://venturewell.org/ecosystem-futures-fellowship/>
+- **Award size**: $10K base + $5K travel per fellow
+- **Eligibility**: Two-person campus teams with at least one faculty member,
+  building STEM entrepreneurship ecosystems. HBCUs, HSIs, TCUs, and community
+  colleges especially welcome
+- **Deadline**: Closed (was Oct 30, 2026)
+- **Source**: The Scouting Report #013, #015
+
+### Ember Fellowship
+
+- **Website**: <https://emberfellows.org>
+- **Submission**: <https://emberfellows.org>
+- **Award size**: Not stated. Two-year program ending in a full-time startup
+  role in Baltimore, Birmingham, Atlanta, or Detroit
+- **Eligibility**: Seniors and recent graduates who want a startup career;
+  competitive selection
+- **Deadline**: Closed (was Nov 6, 2026)
+- **Note**: Training alongside staff from IDEO, McKinsey, and OpenAI. Baltimore
+  placement is relevant for UMD
+- **Source**: The Scouting Report #013, #015, #016
+
+### State of Black Entrepreneurship Fellows 2027 (Center for Black Entrepreneurship)
+
+- **Website**: <https://cbecenter.org/program/research-program/>
+- **Submission**: <https://cbecenter.org/program/research-program/>
+- **Award size**: $10K research fellowship
+- **Eligibility**: Doctoral students, postdocs, and faculty researchers; HBCU
+  affiliates especially encouraged
+- **Deadline**: Closed (was Nov 16, 2026)
+- **Note**: Year-long contribution to the annual report. Research-focused, not
+  founder-focused
+- **Source**: The Scouting Report #017
+
+### Other regional student pitch programs
+
+- **Website**: N/A, not yet researched
+- **Award size**: Varies
+- **Eligibility**: Students in Maryland and the mid-Atlantic region
+- **Deadline**: Varies
+- **Note**: Listed from the advice above. The Pitch Dingman Competition has a USM
+  track. The USM programs are in the USM section below. List more programs here
+  once found
+
+## Small Business & Founder Grants
+
+Micro-grants and targeted grants for founders and small businesses, from
+The Scouting Report newsletter. Mostly not applicable to university
+applicants.
+
+### Shophand Small Business Boost
+
+- **Website**: <https://www.shophand.com/small-business-boost-grant>
+- **Submission**: <https://www.shophand.com/small-business-boost-grant>
+- **Award size**: $2,500 cash plus $2,500 in services
+- **Eligibility**: US for-profits with under 50 employees and under $5M revenue;
+  no demographic restriction
+- **Deadline**: Nov 30, 2026
+- **Source**: The Scouting Report #012, #013, #015, #016, #017, #018
+
+### Threadneedle Alley Foundation Grant
+
+- **Website**: <https://www.threadneedlealley.org/>
+- **Submission**: <https://www.threadneedlealley.org/>
+- **Award size**: $5,000 plus mentorship
+- **Eligibility**: US midlife founders from underserved communities facing real
+  financial barriers
+- **Deadline**: Nov 30, 2026
+- **Source**: The Scouting Report #017, #018
+
+### EDDIE Awards 2027 (Synergies Work)
+
+- **Website**: <https://synergieswork.org/eddie-awards-application/>
+- **Submission**: <https://synergieswork.org/eddie-awards-application/>
+- **Award size**: $10K top prize plus finalist travel
+- **Eligibility**: US founders with disabilities
+- **Deadline**: Nov 30, 2026
+- **Source**: The Scouting Report #018
+
+### Hiring Our Heroes Small Business Grant
+
+- **Website**: <https://www.hiringourheroes.org/?p=6518>
+- **Submission**: <https://www.hiringourheroes.org/?p=6518>
+- **Award size**: Not stated
+- **Eligibility**: Veteran- and military-spouse-owned small businesses
+- **Deadline**: Dec 15, 2026
+- **Note**: Run by the US Chamber of Commerce Foundation
+- **Source**: The Scouting Report #018
+
+### The No Excuses Fund (.TECH Domains)
+
+- **Website**: <https://noexcuses.get.tech/>
+- **Submission**: <https://noexcuses.get.tech/>
+- **Award size**: Not stated
+- **Eligibility**: Founders who have been turned down
+- **Deadline**: Dec 15, 2026
+- **Note**: Unconditional fund. Decisions by mid-January
+- **Source**: The Scouting Report #018
+
+### HerRise MicroGrant
+
+- **Website**: <https://www.hersuitespot.com/herrise/>
+- **Submission**: <https://www.hersuitespot.com/herrise/>
+- **Award size**: $1,000 monthly
+- **Eligibility**: Women-owned businesses (at least 51% women-owned) with under
+  $1M revenue
+- **Deadline**: Monthly, last day of each month (next: Nov 30, 2026)
+- **Note**: Sponsor not named in the issue (domain: hersuitespot.com)
+- **Source**: The Scouting Report #011, #015, #016, #017, #018
+
+### Freed Fellowship
+
+- **Website**: <https://freedfellowship.com/>
+- **Submission**: <https://freedfellowship.com/>
+- **Award size**: $500 monthly to one winner; $2,500 year-end grant to one
+  fellow
+- **Eligibility**: Not stated
+- **Deadline**: Rolling (monthly)
+- **Note**: Applications reopen monthly
+- **Source**: The Scouting Report #013, #015, #016, #017, #018
+
+### Amber Grant (WomensNet)
+
+- **Website**: <https://ambergrantsforwomen.com/get-an-amber-grant/>
+- **Submission**: <https://ambergrantsforwomen.com/get-an-amber-grant/>
+- **Award size**: $10K monthly; $25K year-end grant for one monthly winner
+- **Eligibility**: Woman-owned businesses
+- **Deadline**: Rolling (monthly)
+- **Source**: The Scouting Report #011, #012
+
+### SoGal Black Founder Startup Grant
+
+- **Website**: <https://www.iamsogal.com/black-founder-startup-grant/>
+- **Submission**: <https://www.iamsogal.com/black-founder-startup-grant/>
+- **Award size**: $5K-$10K cash plus lifetime advisor access
+- **Eligibility**: Black women and nonbinary founders
+- **Deadline**: Rolling (winners chosen monthly)
+- **Source**: The Scouting Report #011, #012
+
+### Galaxy Grant
+
+- **Website**: <https://galaxyofstars.org/galaxy-grants/>
+- **Submission**: <https://galaxyofstars.org/galaxy-grants/>
+- **Award size**: $2,500 base award (past winners $750-$25K)
+- **Eligibility**: Women and minority business owners; free to apply
+- **Deadline**: Multiple cycles per year (last known cycle closed Oct 31, 2026)
+- **Note**: Sponsor not named in the issue (domain: galaxyofstars.org)
+- **Source**: The Scouting Report #013, #015
+
+### AI Impact Grant
+
+- **Website**: <https://aiimpactgrant.com/>
+- **Submission**: <https://aiimpactgrant.com/>
+- **Award size**: $2,500 quarterly
+- **Eligibility**: Entrepreneurs building with AI, including those just starting
+- **Deadline**: Quarterly (last known cycle closed Nov 15, 2026)
+- **Note**: Sponsor not named in the issue. Relevant to AI work
+- **Source**: The Scouting Report #017
+
+### Darcy's Business Freedom Grant
+
+- **Website**: <https://businessfreedomgrant.com/>
+- **Submission**: <https://businessfreedomgrant.com/>
+- **Award size**: $1,000 unrestricted
+- **Eligibility**: Any US small business owner; no entry fee
+- **Deadline**: Closed (was Nov 15, 2026)
+- **Source**: The Scouting Report #017
+
+### Women Founders Grant
+
+- **Website**: <https://womenfoundersgrant.com/apply-now-women-grants>
+- **Submission**: <https://womenfoundersgrant.com/apply-now-women-grants>
+- **Award size**: $5,000
+- **Eligibility**: Businesses majority-founded by women, any stage, nationwide
+- **Deadline**: Closed (was Oct 31, 2026)
+- **Note**: Sponsor not named in the issue
+- **Source**: The Scouting Report #013, #015
+
+### Breva Thrive Grant (Q4)
+
+- **Website**: <https://www.breva.ai/thrive-grant>
+- **Submission**: <https://www.breva.ai/thrive-grant>
+- **Award size**: $5,000
+- **Eligibility**: US for-profit companies with a revenue history and a
+  community-benefit angle
+- **Deadline**: Closed (Q4 cycle was Oct 31, 2026)
+- **Note**: Quarterly program
+- **Source**: The Scouting Report #013, #015
+
+### Visa Foundation: US Small Business Growth & Innovation
+
+- **Website**: <https://rpaforvisafoundation.smapply.us/>
+- **Submission**: <https://rpaforvisafoundation.smapply.us/>
+- **Award size**: $100K-$250K
+- **Eligibility**: US 501(c)(3) entrepreneurial-support organizations with a
+  $1M-$10M budget and two years of audited financials, serving small and micro
+  businesses
+- **Deadline**: Closed (was Oct 21, 2026)
+- **Note**: Organization-level capacity grant: the organization applies and
+  receives the funds
+- **Source**: The Scouting Report #013
+
+## Maryland State Programs
+
+### TEDCO Maryland Innovation Initiative (MII)
+
+- **Website**: <https://www.tedcomd.com/mii>
+- **Submission**: <https://www.tedcomd.com/mii>. The page has no direct
+  application link or RFA link: check the Request for Applications (RFA) of each
+  track
+- **Award size**: Non-dilutive, two phases, 9 months each:
+  - Technology Assessment: up to $130,000 for a sole application, up to
+    $180,000 for a joint application (two Qualifying Universities)
+  - Company Formation: up to $300,000
+  - Up to $430,000 total for a sole applicant through both phases
+- **Eligibility**:
+  - Technology Assessment: full-time faculty at a Qualifying University
+  - Company Formation: Maryland-based startups that licensed technology from a
+    Qualifying University within 12 months
+  - Qualifying Universities: Johns Hopkins, Morgan State, UMB, UMBC, and UMCP
+    (UMD College Park)
+  - The technology must be owned by the university, disclosed to its tech
+    transfer office, and have IP protection
+- **Deadline**: Reviewed quarterly. Complete applications are due 5:00pm on
+  Jan 15, Apr 15, Jul 15, and Oct 15 (next business day if the 15th is not a
+  business day). Next: Jan 15, 2027
+- **Note**: Students are not listed as applicants on the MII page. A student
+  project needs a faculty member to apply, or a licensed startup for Company
+  Formation
+- **Watch**: Per advice, MII funding will open to students at UMD soon, as an
+  expansion of BII beyond Baltimore (see BII below). Not confirmed on the TEDCO
+  site. It is not clear if it will get a new web page or be listed on the main
+  MII page. Alla McCoy at UMD probably knows the most about this
+
+### TEDCO Baltimore Innovation Initiative (BII)
+
+- **Website**: <https://www.tedcomd.com/baltimore-innovation-initiative-bii>
+- **Submission**: Submit an Indication of Interest (IOI) first:
+  <https://clear-chiller-c1b.notion.site/193dfc3fd28c80878d1af6010e25ae36>. The
+  full application portal link comes after the IOI is accepted. Requirements:
+  <https://clear-chiller-c1b.notion.site/Baltimore-Innovation-Initiative-314dfc3fd28c807fb4cdcad1ce81235d>
+- **Award size**: Non-dilutive
+  - Technology Advancement: up to $50,000, or up to $75,000 for a joint
+    application from two or more Qualifying Universities. Up to 9 months
+  - Entrepreneurship Commercialization, Programming, and Infrastructure: up to
+    $50,000. Up to 12 months
+- **Eligibility**:
+  - Institutions in the Baltimore-Columbia-Towson MSA that opt in as
+    collaborators. Only collaborating organizations can submit proposals
+  - Students and student principal investigators can apply for Technology
+    Advancement
+  - Full-time faculty and staff at eligible institutions can apply
+  - Technology-based startups can apply for Technology Advancement if they work
+    with faculty, students, or staff from a participating institution
+  - Entrepreneurship track: staff or faculty who run entrepreneurship or
+    commercialization programs
+  - Participating institutions include JHU, Morgan State, Towson, UMB, UMBC,
+    University of Baltimore, Loyola, MICA, and Howard CC. UMD College Park is
+    not listed
+- **Deadline**: Rolling window Aug 19, 2026 to Nov 5, 2026, 5:00pm. Closed as of
+  Nov 19, 2026. Late submissions are rejected
+- **Note**: Described as a pilot limited to the Baltimore area. The page says
+  nothing about expansion. The expansion to UMD comes from advice, not from the
+  page. Questions go to the onsite Project Lead listed on the BII page
+- **Contact**: Alla McCoy at UMD, for the expansion
+
+## University System of Maryland (USM) Innovation Collective
+
+- **Resources page**: <https://www.usmd.edu/launch/resources/>. Questions to
+  <launch@usmd.edu>
+- **Advice**: The Launch Fund is in a holding pattern right now. Start with the
+  resources on the page above
+- **Not funding, so not listed below**: Maryland SBDCs, Maryland Business
+  Opportunity Center, Startup UMD workshops, I-Corps, Maryland New Venture
+  Program (12-week program, UMBC), UMB IP and legal assistance
+
+### USM Launch Fund
+
+- **Website**: <https://www.usmd.edu/launch/>
+- **Submission**: Not stated
+- **Award size**: Grant funding. Amount not stated on the resources page
+- **Eligibility**: USM-related ventures, including those led by alumni and
+  located in USM spaces
+- **Status**: In a holding pattern, per advice. Not confirmed on the site
+- **Deadline**: Not stated
+
+### USM Momentum Fund
+
+- **Website**: <https://momentum.usmd.edu/>
+- **Award size**: $16M fund. It invests in startups (equity-style, not a grant)
+- **Eligibility**: USM-related startups, including those led by alumni and
+  located in USM spaces
+- **Deadline**: Not stated
+
+### Salisbury University: Shore Hatchery
+
+- **Website**:
+  <https://www.salisbury.edu/academic-offices/business/entrepreneurship/shore-hatchery/>
+- **Award size**: Up to $200,000 per year in prize money, through fall and
+  spring business plan competitions
+- **Eligibility**: Not stated on the resources page. Check the program page
+- **Deadline**: Fall and spring competitions. Dates not stated
+
+### Towson University: StarTUp
+
+- **Website**: <https://www.towson.edu/startup/>
+- **Award size**: Free co-working space. The accelerator program gives
+  mentoring, space, and $10K
+- **Eligibility**: Not stated on the resources page. Check the program page
+- **Deadline**: Not stated
+
+### Maryland Industrial Partnerships (MIPS)
+
+- **Website**: <https://www.mips.umd.edu/>
+- **Award size**: Funding for university-based research projects that help
+  companies develop new products. Amount not stated on the resources page
+- **Eligibility**: Implied: companies that partner with university researchers.
+  Check the program page
+- **Deadline**: Not stated
+
+### Maryland Technical Internship Program (MTIP)
+
+- **Website**: <https://mtip.umbc.edu/>
+- **Award size**: Reimbursement for interns. Amount not stated on the resources
+  page
+- **Eligibility**: Not stated on the resources page. Check the program page
+- **Deadline**: Not stated
 
 ## Directories, Search Tools, and Other Resources
 

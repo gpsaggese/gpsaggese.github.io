@@ -97,3 +97,7 @@ working with symlinked files, the actual content lives in `helpers_root/`.
 - You MUST read and strictly follow `.claude/rules.md`
 
 - You MUST never commit changes without user permission
+
+- After writing code, you MUST run the commit gates
+  (`helpers_root/dev_scripts_helpers/git/git_hooks/pre-commit.py`) and fix all
+  errors before declaring the task done (see `helpers_root/CLAUDE.md`)
