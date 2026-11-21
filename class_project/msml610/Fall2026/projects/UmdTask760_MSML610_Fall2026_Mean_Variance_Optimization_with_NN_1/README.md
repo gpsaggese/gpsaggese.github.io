@@ -44,8 +44,12 @@ Stage 3 uses rolling folds with 60 holding periods for training, 12 for validati
 
 The seeds measure training variability over one market history. The results cover these nine ETFs and this test period. All MVO pipelines use Ledoit–Wolf covariance shrinkage. A separate experiment would be needed to quantify how much performance comes from shrinkage.
 
-## Outputs and references
+## Outputs
 
 The notebook writes per-rebalance weights, daily net returns, and per-seed backtests to `results/us_sector_etfs/`, along with the two Stage 2 models. The saved snapshot includes the data hashes, fold dates, and numerical results. [Experiment snapshot](docs/experiment_snapshot.json) · [Net portfolio value and drawdown for seed 7](docs/backtest_seed7.png)
 
-The differentiable layer in Stage 3 follows Agrawal et al. For a related application to portfolio construction, see Costa and Iyengar. [Differentiable Convex Optimization Layers](https://arxiv.org/abs/1910.12430) · [Distributionally Robust End-to-End Portfolio Construction](https://arxiv.org/abs/2206.05134)
+## References
+
+1. Zhang, Z., Zohren, S., & Roberts, S. (2020). [Deep Learning for Portfolio Optimization](https://arxiv.org/abs/2005.13665).
+2. Agrawal, A., Amos, B., Barratt, S., Boyd, S., Diamond, S., & Kolter, J. Z. (2019). [Differentiable Convex Optimization Layers](https://proceedings.neurips.cc/paper_files/paper/2019/hash/9ce3c52fc54362e22053399d3181c638-Abstract.html).
+3. Lee, J., Jeon, H., Bae, H., & Lee, Y. (2025). [Return Prediction for Mean-Variance Portfolio Selection: How Decision-Focused Learning Shapes Forecasting Models](https://doi.org/10.1145/3768292.3770423).
