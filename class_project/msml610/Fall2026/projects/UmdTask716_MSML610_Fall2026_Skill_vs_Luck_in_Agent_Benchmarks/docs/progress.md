@@ -3,6 +3,8 @@
 - Issue: #716
 - Research Google Doc:
   [Research Log](https://docs.google.com/document/d/1iJIWKuPMyGRoqac1RVM7up6cYdndUxApQUTU331Yom4/edit)
+- Google Drive folder, with the scores of the coding runs:
+  [MSML610_Fall2026_Skill_vs_Luck_in_Agent_Benchmarks](https://drive.google.com/drive/folders/1rgI_x5rfX9HXiP0kZUHfyq2Zg8WWuV4y)
 - Spec:
   [draft.Skill_vs_Luck_in_Agent_Benchmarks.md](/research/ideas/draft.Skill_vs_Luck_in_Agent_Benchmarks.md)
 
@@ -14,11 +16,11 @@
 | M1: Outcome tensor (HumanEval+, MBPP+, 5 runs) | Oct 29 | In review | #808 |
 | M2: Task luck, intervals, paired tests, minimum N | Oct 28 | Done | #735 |
 | M2: Run-to-run luck | Oct 29 | In review | #808 |
-| M2: Ranking under uncertainty | Oct 30 | In review | #855 |
-| M3: Split-half rank correlation (SWE-bench) | Nov 15 | In review | #855 |
-| M3: 2PL IRT and effective size (SWE-bench) | Nov 15 | In review | #855 |
+| M2: Ranking under uncertainty | Oct 30 | Done | #855 |
+| M3: Split-half rank correlation (SWE-bench) | Nov 15 | Done | #855 |
+| M3: 2PL IRT and effective size (SWE-bench) | Nov 15 | Done | #855 |
 | M3: Cross-benchmark rank correlation | Nov 15 | Not started | |
-| M4: Winner's curse, simulated and held-out (SWE-bench) | Nov 15 | In review | #855 |
+| M4: Winner's curse, simulated and held-out (SWE-bench) | Nov 15 | Done | #855 |
 | M4: Measured drop on real prompt variants | Nov 15 | Not started | |
 | Phase 2: Studies A to D, pre-registered | Nov 3 | Done on branch `_3`, PR after #808 | |
 | Write-up and paper draft | Dec 7 | Not started | |
@@ -36,7 +38,8 @@
 - Docker setup from `class_project/project_template`
 - In PR #808: `run_coding_agents.py` (answers from local models through
   Ollama), `score_coding_runs.py` (EvalPlus tests in a sandbox),
-  `skill_vs_luck_runs_utils.py`, and `skill_vs_luck.runs.ipynb`
+  `skill_vs_luck_runs_utils.py`, `skill_vs_luck.runs.ipynb`, and
+  `fetch_coding_scores.py` (downloads the scores from Google Drive)
 - On [branch `_3`](https://github.com/prathambharati/gpsaggese.github.io/tree/UmdTask716_MSML610_Fall2026_Skill_vs_Luck_in_Agent_Benchmarks_3/class_project/msml610/Fall2026/projects/UmdTask716_MSML610_Fall2026_Skill_vs_Luck_in_Agent_Benchmarks), for phase 2:
   - `preregistration_2.md`: the plan and the 13 predictions, committed before
     any of it was analyzed
@@ -140,8 +143,8 @@
    results, and correlate the rankings across benchmarks
 2. M4: compare the simulated held-out drop with the drop measured on real
    prompt variants
-3. Phase 2: move the scores to Google Drive, as GP asked on #808, and open the
-   PR of branch `_3` after #808 merges
+3. Phase 2: open the PR of branch `_3` after #808 merges; its scores are
+   already in the Google Drive folder
 4. Write-up: related work and a first draft of the paper sections
 
 ## History
@@ -160,11 +163,12 @@
 | 2026-11-01 | Added the 2PL IRT model and the effective size; pinned `jax`, `jaxlib` 0.12.0.1 and `numpyro` 0.22.0; see D-2 and D-3 |
 | 2026-11-03 | Review fixes: how the top 20 are picked (Cell 8.5), the correction given the tasks, 5,000 trials in Cell 7.1 |
 | 2026-11-03 | PR #855 opened: ranking under uncertainty, split-half, winner's curse, and IRT |
+| 2026-11-09 | PR #855 merged |
+| 2026-11-14 | GP on #808: it can merge once the score files are on Google Drive |
+| 2026-11-16 | Merged `master` into #808 to resolve the `README.md` conflict with #855; moved the 88 score files of #808 and the phase-2 scores to the Google Drive folder, downloaded by `fetch_coding_scores.py` |
 
 ## Open Work
 
-- #808: run-to-run luck, waiting for review; its score files move to Google
-  Drive, as GP asked there
-- #855: ranking, split-half, winner's curse, and IRT, waiting for review
-- #808 and #855 both edit `README.md`, so the second to merge has to resolve it
+- #808: run-to-run luck; its score files are on Google Drive, as GP asked
+  there, so it only waits for GP to merge it
 - Phase 2 is on branch `_3`, on top of #808, so its PR comes after #808 merges
