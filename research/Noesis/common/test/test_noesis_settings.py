@@ -72,6 +72,7 @@ class Test_load_settings(hunitest.TestCase):
             database_url=rnonoset.DEFAULT_DATABASE_URL,
             model_id=rnonoset.DEFAULT_MODEL_ID,
             max_tokens_cap=256,
+            max_prompt_tokens=1000,
             spend_cap_usd=50.0,
             timeout_multiplier=2.0,
             seed_path=rnonoset.DEFAULT_SEED_PATH,
@@ -111,6 +112,7 @@ class Test_load_settings(hunitest.TestCase):
         # Run test and check outputs.
         for name, value in [
             ("NOESIS_MAX_TOKENS_CAP", "0"),
+            ("NOESIS_MAX_PROMPT_TOKENS", "0"),
             ("NOESIS_SPEND_CAP_USD", "-1"),
         ]:
             with self.assertRaises(AssertionError):
@@ -121,5 +123,6 @@ class Test_load_settings(hunitest.TestCase):
         Test that a fractional token cap is rejected.
         """
         # Run test and check outputs.
-        with self.assertRaises(AssertionError):
-            self.helper({"NOESIS_MAX_TOKENS_CAP": "10.5"}, "")
+        for name in ["NOESIS_MAX_TOKENS_CAP", "NOESIS_MAX_PROMPT_TOKENS"]:
+            with self.assertRaises(AssertionError):
+                self.helper({name: "10.5"}, "")

@@ -88,6 +88,7 @@
 | 10/31 | Offline replay runs six checker scenarios over five seeds and 30,000 contracts; all observed rates agree with exact analytic predictions and reproducible JSON/CSV/Markdown findings are generated |
 | 11/12 | Prompt-token experiment measures billed tokens per character on the seed sellers (`scripts/experiment_prompt_tokens.py`, `data/prompt_tokens/`) |
 | 11/17 | Notebook fits and plots the prompt tokens billed per character (`notebooks/prompt_tokens.ipynb`) |
+| 11/17 | Gateway rejects prompts estimated above `NOESIS_MAX_PROMPT_TOKENS` with a 400 `context_length_exceeded` before any provider call (D36) |
 
 - 11/5: M12 tables, volume summaries, plotting helpers, and an offline reviewer
   demo implemented locally; four small review units prepared (issue #631).

@@ -19,6 +19,7 @@ import httpx  # pylint: disable=wrong-import-position
 import helpers.hunit_test as hunitest  # pylint: disable=wrong-import-position
 import research.Noesis.common.noesis_settings as rnonoset  # pylint: disable=wrong-import-position
 import research.Noesis.common.test.noesis_test_utils as rnctnteut  # pylint: disable=wrong-import-position
+import research.Noesis.gateway.gateway_api as rnogaapi  # pylint: disable=wrong-import-position
 import research.Noesis.gateway.gateway_fake_provider as rnogafapr  # pylint: disable=wrong-import-position
 import research.Noesis.gateway.gateway_providers as rnogapro  # pylint: disable=wrong-import-position
 import research.Noesis.gateway.test.gateway_test_utils as rnteteut  # pylint: disable=wrong-import-position
@@ -49,6 +50,17 @@ def _buyer_headers(contract_id: Any) -> Dict[str, str]:
         "X-Noesis-Contract": str(contract_id),
     }
     return headers
+
+
+def _prompt_of(n_chars: int) -> List[Dict[str, str]]:
+    """
+    Return one user message of `n_chars` characters.
+
+    With 2 characters per token and 45 tokens of framing, 1,910 characters is
+    exactly the default 1,000-token prompt cap and 1,912 is one token over.
+    """
+    messages = [{"role": "user", "content": "9" * n_chars}]
+    return messages
 
 
 def _sdk(gw: rnteteut.Gateway) -> Any:
@@ -277,6 +289,12 @@ class Test_chat_completions(hunitest.TestCase):
                 ),
                 (
                     _buyer_headers(contract),
+                    {**ok_body, "messages": _prompt_of(1912)},
+                    400,
+                    "context_length_exceeded",
+                ),
+                (
+                    _buyer_headers(contract),
                     {**ok_body, "stream": True},
                     400,
                     "stream_not_supported",
@@ -329,6 +347,85 @@ class Test_chat_completions(hunitest.TestCase):
             self.assertEqual(gw.fake.calls[-1][1].temperature, 0)
 
         _run_gateway(self, _groq(), _body)
+
+    def test7(self) -> None:
+        """
+        Test that a prompt exactly at the prompt cap reaches the provider.
+        """
+
+        async def _body(gw: rnteteut.Gateway) -> None:
+            # Prepare inputs.
+            payload = {"model": _MODEL, "messages": _prompt_of(1910)}
+            # Run test.
+            resp = await gw.http.post(
+                "/v1/chat/completions",
+                json=payload,
+                headers=_buyer_headers(gw.contract_id),
+            )
+            # Check outputs.
+            self.assertEqual(resp.status_code, 200, msg=resp.text)
+            self.assertEqual(len(gw.fake.calls), 1)
+
+        _run_gateway(self, _groq(), _body)
+
+
+# #############################################################################
+# Test_estimate_prompt_tokens
+# #############################################################################
+
+
+class Test_estimate_prompt_tokens(hunitest.TestCase):
+    """
+    Test `estimate_prompt_tokens()`.
+    """
+
+    def helper(self, contents: List[str], expected: int) -> None:
+        """
+        Estimate the tokens of one user message per content and compare.
+        """
+        # Prepare inputs.
+        messages = [
+            rnogaapi.ChatMessage(role="user", content=content)
+            for content in contents
+        ]
+        # Run test.
+        actual = rnogaapi.estimate_prompt_tokens(messages)
+        # Check outputs.
+        self.assertEqual(actual, expected)
+
+    def test1(self) -> None:
+        """
+        Test one message at the 1,000-token cap: 1,910 / 2 + 45.
+        """
+        # Prepare inputs.
+        contents = ["9" * 1910]
+        # Prepare outputs.
+        expected = 1000
+        # Run test and check outputs.
+        self.helper(contents, expected)
+
+    def test2(self) -> None:
+        """
+        Test one message one token over the cap, rounding the characters up.
+        """
+        # Prepare inputs.
+        contents = ["9" * 1911]
+        # Prepare outputs.
+        expected = 1001
+        # Run test and check outputs.
+        self.helper(contents, expected)
+
+    def test3(self) -> None:
+        """
+        Test that each extra message adds 6 tokens of framing.
+        """
+        # Prepare inputs.
+        contents = ["ab", "cd", "ef"]
+        # Prepare outputs.
+        # 6 characters, 45 tokens per request, and 6 for each of 2 extra messages.
+        expected = 3 + 45 + 2 * 6
+        # Run test and check outputs.
+        self.helper(contents, expected)
 
 
 # #############################################################################
