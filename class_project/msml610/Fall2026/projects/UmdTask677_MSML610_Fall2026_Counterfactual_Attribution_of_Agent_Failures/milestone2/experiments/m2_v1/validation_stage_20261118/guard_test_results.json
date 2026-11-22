@@ -1,0 +1,15 @@
+{
+  "test_command": ".venv/bin/python -m pytest -q -c /dev/null tests vendor/pr917/test/test_caaf.py",
+  "passed": 21,
+  "failed": 0,
+  "no_paid_inference": true,
+  "coverage": [
+    "process concurrency",
+    "retained uncertain request liability",
+    "usage reconciliation",
+    "cache and reasoning prices",
+    "no implicit retry",
+    "fixed model policy",
+    "original chess checkpoint tests"
+  ]
+}

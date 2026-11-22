@@ -1,0 +1,523 @@
+{
+  "additional_approved_usd": 22,
+  "administrative_resume_samples": 16,
+  "analysis_source_sha256": {
+    "m2_runtime/features.py": "c22cf6fc8f49f0d903906b528704ac1506df6f203f595f3896dd24e4d2741b05",
+    "scripts/report_remaining_m2.py": "775fc29c548fb2e26787f73107492e390c9f14fb018ff792738ab26a76d49adc"
+  },
+  "audit": {
+    "additional_usage_rated_usd": 14.07594497,
+    "all_environment_replays_match": true,
+    "all_model_input_hashes_match": true,
+    "all_referee_scores_match": true,
+    "all_snapshot_identities_match": true,
+    "branches": 3900,
+    "complete_population_audit": true,
+    "outstanding_requests": 0,
+    "paid_model_calls": 16165,
+    "replayed_decision_steps": 18115,
+    "request_ledger_reconciles_exactly": true,
+    "stored_branch_segments": 3916,
+    "verified_blobs": 20995,
+    "zero_billed_preinference_rejections": 10
+  },
+  "distinct_positions": 4,
+  "first_stage_usd": 1.5271121,
+  "infrastructure_note": "Provider API credits ran out after 1414 completed samples. Completed outcomes were retained, and interrupted samples continued from their last saved states; no sampled prefixes were redrawn.",
+  "limitations": [
+    "Selected feasibility study: seven failed trajectories from only four positions.",
+    "30 samples per arm leave small effects unresolved; confidence intervals are unadjusted, p-values Holm-corrected across 48 primary decisions.",
+    "Sparse/diffuse summaries are exploratory and policy-conditional, not population classifications.",
+    "Independent repeats measure stability, but do not prove equality of all effects.",
+    "The predeclared repeats cover krk-m3-1 and krk-m6-1; krk-m4-1 primary discoveries are not independently repeated by this stability phase.",
+    "Fresh sampling uses no model seed; deterministic environment replay is distinct from model determinism.",
+    "The requested model ID and sampling settings are pinned; no immutable provider model-weight digest is recorded.",
+    "Pre-decision features cannot identify an unobserved candidate reply; action-specific surrogate inputs need an explicit timing definition in Milestone 4.",
+    "Milestone 4 needs expanded task groups and held-out evaluation before a surrogate or feedback benefit can be claimed."
+  ],
+  "m4_input_timing_audit": {
+    "groups_with_opposite_point_gain_signs": 1,
+    "interpretation": "Identical saved pre-generation context and board can precede different original replies and reply-specific gains. State-only inputs cannot distinguish those replies; opposite point estimates are diagnostic, not an additional significance test. This file contains labels and is excluded from predictors.",
+    "shared_saved_prefix_groups": [
+      {
+        "before_context_sha256": "6b9cef8cb929b7f04c90bad3d87e5d2762cd081f2b5b75c0b56bb386c04e4d5b",
+        "before_env_sha256": "534685e8569a41a90f233a53991d838caf7d1ed0dc27356a883eb6b860c1b757",
+        "decisions": [
+          {
+            "decision_id": "krk-m3-1_trial0_step001",
+            "gain_ci95": [
+              -0.12716733489263576,
+              0.19681183955688292
+            ],
+            "original_reply_sha256": "619a14ced9eda8403fda6923e93adae81ee16f000495636efaf04576ab932a24",
+            "repair_gain": 0.03333333333333333
+          },
+          {
+            "decision_id": "krk-m3-1_trial1_step001",
+            "gain_ci95": [
+              -0.029436429747216886,
+              0.3045247334191227
+            ],
+            "original_reply_sha256": "b37ff52ac7f86bf3d5cc17d3030f044e8c9a55e0765d610a98a08be48cd597a8",
+            "repair_gain": 0.13333333333333333
+          }
+        ],
+        "opposite_point_gain_signs": false
+      },
+      {
+        "before_context_sha256": "7b88a3bab05bf030e01f3b6648a3e0a7ba67fb9fd95a7fab43977d2456540a43",
+        "before_env_sha256": "bdd8d6162c8c5ef1eba6b496d9c80da5643d4ccec3619808e088e54da2695ff8",
+        "decisions": [
+          {
+            "decision_id": "krk-m4-1_trial0_step001",
+            "gain_ci95": [
+              -0.5324980106910644,
+              -0.0809227155817438
+            ],
+            "original_reply_sha256": "cd427545b1f0d2dac3146a7507512dd3456cd2339b6deb79fdc1b939fb0c2f7b",
+            "repair_gain": -0.3333333333333333
+          },
+          {
+            "decision_id": "krk-m4-1_trial1_step001",
+            "gain_ci95": [
+              0.18020136212699173,
+              0.5448675356639506
+            ],
+            "original_reply_sha256": "c90ba799580fc825327293960a37cd69216242df5763f4c8c9cf34d86060449f",
+            "repair_gain": 0.36666666666666664
+          }
+        ],
+        "opposite_point_gain_signs": true
+      },
+      {
+        "before_context_sha256": "b229548916e61532fd5da80b6a352afc68e31dc672ac353fa9135ed9cae265ff",
+        "before_env_sha256": "35db0bf755969a5d7b6dde6d5fe808fd24514d1cb408b2f472c295bce1ac5591",
+        "decisions": [
+          {
+            "decision_id": "krk-m8-1_trial0_step001",
+            "gain_ci95": [
+              -0.113517091390478,
+              0.113517091390478
+            ],
+            "original_reply_sha256": "2266fd95ca045af710fcaa5a126fde9a89494d12002ed7a9c40981a1f21549ce",
+            "repair_gain": 0.0
+          },
+          {
+            "decision_id": "krk-m8-1_trial1_step001",
+            "gain_ci95": [
+              -0.08344960601176318,
+              0.16670751396958874
+            ],
+            "original_reply_sha256": "4f25ce9242ec120bfe825a40d3ba60026215922214935bb21cef98def4a6eb2f",
+            "repair_gain": 0.03333333333333333
+          }
+        ],
+        "opposite_point_gain_signs": false
+      }
+    ]
+  },
+  "method": "Direct randomized-policy resumption contrasts; whole assistant reply intervention",
+  "milestone2_experimental_deliverables_complete": true,
+  "milestone3_or4_experiments_started": false,
+  "milestone4_dataset_rows": 48,
+  "natural_failed_runs": 7,
+  "official_benchmark_score_claimed": false,
+  "patterns": [
+    {
+      "baseline_n": 30,
+      "baseline_redecide_ci95": [
+        0.03459925995971615,
+        0.25621441315266624
+      ],
+      "baseline_redecide_wins": 3,
+      "caveat": "Exploratory observed concentration; unresolved small effects prevent a definitive sparse/diffuse classification.",
+      "decisions": 7,
+      "pattern_conclusion": "No harmful step resolved after multiplicity correction",
+      "resolved_harmful_steps": [],
+      "resolved_helpful_steps": [],
+      "task_id": "krk-m3-1",
+      "top_two_share_of_positive_point_gains": 1.0,
+      "trial": 0
+    },
+    {
+      "baseline_n": 30,
+      "baseline_redecide_ci95": [
+        0.07336434240351683,
+        0.33564705185680177
+      ],
+      "baseline_redecide_wins": 5,
+      "caveat": "Exploratory observed concentration; unresolved small effects prevent a definitive sparse/diffuse classification.",
+      "decisions": 7,
+      "pattern_conclusion": "No harmful step resolved after multiplicity correction",
+      "resolved_harmful_steps": [],
+      "resolved_helpful_steps": [],
+      "task_id": "krk-m3-1",
+      "top_two_share_of_positive_point_gains": 1.0,
+      "trial": 1
+    },
+    {
+      "baseline_n": 30,
+      "baseline_redecide_ci95": [
+        0.21873702204017678,
+        0.5448675356639506
+      ],
+      "baseline_redecide_wins": 11,
+      "caveat": "Exploratory observed concentration; unresolved small effects prevent a definitive sparse/diffuse classification.",
+      "decisions": 8,
+      "pattern_conclusion": "Localized resolved harmful steps",
+      "resolved_harmful_steps": [
+        3,
+        5
+      ],
+      "resolved_helpful_steps": [],
+      "task_id": "krk-m4-1",
+      "top_two_share_of_positive_point_gains": 1.0,
+      "trial": 0
+    },
+    {
+      "baseline_n": 30,
+      "baseline_redecide_ci95": [
+        0.21873702204017678,
+        0.5448675356639506
+      ],
+      "baseline_redecide_wins": 11,
+      "caveat": "Exploratory observed concentration; unresolved small effects prevent a definitive sparse/diffuse classification.",
+      "decisions": 1,
+      "pattern_conclusion": "Localized resolved harmful steps",
+      "resolved_harmful_steps": [
+        1
+      ],
+      "resolved_helpful_steps": [],
+      "task_id": "krk-m4-1",
+      "top_two_share_of_positive_point_gains": 1.0,
+      "trial": 1
+    },
+    {
+      "baseline_n": 30,
+      "baseline_redecide_ci95": [
+        0.0059084379948573795,
+        0.16670751396958874
+      ],
+      "baseline_redecide_wins": 1,
+      "caveat": "Exploratory observed concentration; unresolved small effects prevent a definitive sparse/diffuse classification.",
+      "decisions": 10,
+      "pattern_conclusion": "No harmful step resolved after multiplicity correction",
+      "resolved_harmful_steps": [],
+      "resolved_helpful_steps": [],
+      "task_id": "krk-m6-1",
+      "top_two_share_of_positive_point_gains": 0.9411764705882353,
+      "trial": 0
+    },
+    {
+      "baseline_n": 30,
+      "baseline_redecide_ci95": [
+        0,
+        0.113517091390478
+      ],
+      "baseline_redecide_wins": 0,
+      "caveat": "Exploratory observed concentration; unresolved small effects prevent a definitive sparse/diffuse classification.",
+      "decisions": 3,
+      "pattern_conclusion": "No harmful step resolved after multiplicity correction",
+      "resolved_harmful_steps": [],
+      "resolved_helpful_steps": [],
+      "task_id": "krk-m8-1",
+      "top_two_share_of_positive_point_gains": null,
+      "trial": 0
+    },
+    {
+      "baseline_n": 30,
+      "baseline_redecide_ci95": [
+        0.0059084379948573795,
+        0.16670751396958874
+      ],
+      "baseline_redecide_wins": 1,
+      "caveat": "Exploratory observed concentration; unresolved small effects prevent a definitive sparse/diffuse classification.",
+      "decisions": 12,
+      "pattern_conclusion": "No harmful step resolved after multiplicity correction",
+      "resolved_harmful_steps": [],
+      "resolved_helpful_steps": [],
+      "task_id": "krk-m8-1",
+      "top_two_share_of_positive_point_gains": 1.0,
+      "trial": 1
+    }
+  ],
+  "per_arm": 30,
+  "primary_continuations": 2880,
+  "primary_decisions": 48,
+  "resolved_harmful_decisions": [
+    {
+      "after_checkpoint": "5a62d40e401900bfa650561baf55efaf36019ae3b6197e23451f0f318e89d977",
+      "before_checkpoint": "efabdf0167e93a7168c589a890310401575629da2b4bd49eaa0f34d9f729c81d",
+      "decision_id": "krk-m4-1_trial0_step003",
+      "fisher_p": 3.5641554737909744e-07,
+      "gain_ci_high": 0.7986160790405454,
+      "gain_ci_low": 0.42769231415574793,
+      "holm_p": 1.7107946274196676e-05,
+      "keep_ci_high": 0.33564705185680177,
+      "keep_ci_low": 0.07336434240351683,
+      "keep_n": 30,
+      "keep_probability": 0.16666666666666666,
+      "keep_wins": 5,
+      "proposal_delta": -0.6666666666666666,
+      "redecide_ci_high": 0.9266356575964831,
+      "redecide_ci_low": 0.6643529481431982,
+      "redecide_n": 30,
+      "redecide_probability": 0.8333333333333334,
+      "redecide_wins": 25,
+      "repair_gain": 0.6666666666666666,
+      "source_branch_id": "br-199f2cd2c646",
+      "source_run_id": "run-0a9e69b6000b",
+      "step": 3,
+      "task_id": "krk-m4-1",
+      "trial": 0
+    },
+    {
+      "after_checkpoint": "2b02e0973a21b3df249f6bf3c8cdfe879a5ffe50ded0ca4f98dd63d78247840b",
+      "before_checkpoint": "b8533fa3dd8f3490270c9a7189951318f391c5370dbdf7c1bbdcac73b6c02661",
+      "decision_id": "krk-m4-1_trial0_step005",
+      "fisher_p": 0.0003188052525640556,
+      "gain_ci_high": 0.5448675356639506,
+      "gain_ci_low": 0.18020136212699173,
+      "holm_p": 0.014983846870510612,
+      "keep_ci_high": 0.113517091390478,
+      "keep_ci_low": 0,
+      "keep_n": 30,
+      "keep_probability": 0.0,
+      "keep_wins": 0,
+      "proposal_delta": -0.36666666666666664,
+      "redecide_ci_high": 0.5448675356639506,
+      "redecide_ci_low": 0.21873702204017678,
+      "redecide_n": 30,
+      "redecide_probability": 0.36666666666666664,
+      "redecide_wins": 11,
+      "repair_gain": 0.36666666666666664,
+      "source_branch_id": "br-199f2cd2c646",
+      "source_run_id": "run-0a9e69b6000b",
+      "step": 5,
+      "task_id": "krk-m4-1",
+      "trial": 0
+    },
+    {
+      "after_checkpoint": "2d79bd4c91c601ba248d5e9ce867b29a689bb68f4b8ee0a7c600f253f3c93ef4",
+      "before_checkpoint": "b9fc0d1d1581287fa253bfa33c21b0a67aaa63b8e3fedf0e9cd836e335e0c7fa",
+      "decision_id": "krk-m4-1_trial1_step001",
+      "fisher_p": 0.0003188052525640556,
+      "gain_ci_high": 0.5448675356639506,
+      "gain_ci_low": 0.18020136212699173,
+      "holm_p": 0.014983846870510612,
+      "keep_ci_high": 0.113517091390478,
+      "keep_ci_low": 0,
+      "keep_n": 30,
+      "keep_probability": 0.0,
+      "keep_wins": 0,
+      "proposal_delta": -0.36666666666666664,
+      "redecide_ci_high": 0.5448675356639506,
+      "redecide_ci_low": 0.21873702204017678,
+      "redecide_n": 30,
+      "redecide_probability": 0.36666666666666664,
+      "redecide_wins": 11,
+      "repair_gain": 0.36666666666666664,
+      "source_branch_id": "br-40afc5c2d2ad",
+      "source_run_id": "run-c96b6903d568",
+      "step": 1,
+      "task_id": "krk-m4-1",
+      "trial": 1
+    }
+  ],
+  "resolved_helpful_decisions": [],
+  "shortcut_statistically_validated": false,
+  "shortcut_used": false,
+  "stability": [
+    {
+      "interpretation": "Rank agreement and effect differences describe stability; interval overlap or nonsignificance is not proof of equivalence.",
+      "mean_absolute_gain_difference": 0.038095238095238106,
+      "spearman_rank_agreement": 0.9860132971832692,
+      "steps": [
+        {
+          "difference": 0.2,
+          "difference_ci90_conservative": [
+            -0.12536060959807674,
+            0.5364540581958784
+          ],
+          "primary_gain": 0.03333333333333333,
+          "repeat_gain": 0.23333333333333334,
+          "step": 1
+        },
+        {
+          "difference": 0.06666666666666668,
+          "difference_ci90_conservative": [
+            -0.1977166237122739,
+            0.33966401916442945
+          ],
+          "primary_gain": 0.03333333333333333,
+          "repeat_gain": 0.1,
+          "step": 2
+        },
+        {
+          "difference": 0.0,
+          "difference_ci90_conservative": [
+            -0.227034182780956,
+            0.227034182780956
+          ],
+          "primary_gain": 0.0,
+          "repeat_gain": 0.0,
+          "step": 3
+        },
+        {
+          "difference": 0.0,
+          "difference_ci90_conservative": [
+            -0.227034182780956,
+            0.227034182780956
+          ],
+          "primary_gain": 0.0,
+          "repeat_gain": 0.0,
+          "step": 4
+        },
+        {
+          "difference": 0.0,
+          "difference_ci90_conservative": [
+            -0.227034182780956,
+            0.227034182780956
+          ],
+          "primary_gain": 0.0,
+          "repeat_gain": 0.0,
+          "step": 5
+        },
+        {
+          "difference": 0.0,
+          "difference_ci90_conservative": [
+            -0.227034182780956,
+            0.227034182780956
+          ],
+          "primary_gain": 0.0,
+          "repeat_gain": 0.0,
+          "step": 6
+        },
+        {
+          "difference": 0.0,
+          "difference_ci90_conservative": [
+            -0.227034182780956,
+            0.227034182780956
+          ],
+          "primary_gain": 0.0,
+          "repeat_gain": 0.0,
+          "step": 7
+        }
+      ],
+      "task_id": "krk-m3-1",
+      "trial": 0
+    },
+    {
+      "interpretation": "Rank agreement and effect differences describe stability; interval overlap or nonsignificance is not proof of equivalence.",
+      "mean_absolute_gain_difference": 0.06666666666666668,
+      "spearman_rank_agreement": 0.7981885710176262,
+      "steps": [
+        {
+          "difference": 0.2,
+          "difference_ci90_conservative": [
+            -0.14572790913690833,
+            0.5474301436261577
+          ],
+          "primary_gain": -0.2,
+          "repeat_gain": 0.0,
+          "step": 1
+        },
+        {
+          "difference": 0.1,
+          "difference_ci90_conservative": [
+            -0.3352342624086286,
+            0.523128678770773
+          ],
+          "primary_gain": -0.13333333333333333,
+          "repeat_gain": -0.03333333333333333,
+          "step": 2
+        },
+        {
+          "difference": -0.2,
+          "difference_ci90_conservative": [
+            -0.5987864329067127,
+            0.223821283650532
+          ],
+          "primary_gain": 0.26666666666666666,
+          "repeat_gain": 0.06666666666666667,
+          "step": 3
+        },
+        {
+          "difference": -0.13333333333333333,
+          "difference_ci90_conservative": [
+            -0.4501612289495752,
+            0.19888541768801757
+          ],
+          "primary_gain": 0.26666666666666666,
+          "repeat_gain": 0.13333333333333333,
+          "step": 4
+        },
+        {
+          "difference": -0.03333333333333333,
+          "difference_ci90_conservative": [
+            -0.28022460536006677,
+            0.19696669740224118
+          ],
+          "primary_gain": 0.03333333333333333,
+          "repeat_gain": 0.0,
+          "step": 5
+        },
+        {
+          "difference": 0.0,
+          "difference_ci90_conservative": [
+            -0.227034182780956,
+            0.227034182780956
+          ],
+          "primary_gain": 0.0,
+          "repeat_gain": 0.0,
+          "step": 6
+        },
+        {
+          "difference": 0.0,
+          "difference_ci90_conservative": [
+            -0.227034182780956,
+            0.227034182780956
+          ],
+          "primary_gain": 0.0,
+          "repeat_gain": 0.0,
+          "step": 7
+        },
+        {
+          "difference": 0.0,
+          "difference_ci90_conservative": [
+            -0.227034182780956,
+            0.227034182780956
+          ],
+          "primary_gain": 0.0,
+          "repeat_gain": 0.0,
+          "step": 8
+        },
+        {
+          "difference": 0.0,
+          "difference_ci90_conservative": [
+            -0.227034182780956,
+            0.227034182780956
+          ],
+          "primary_gain": 0.0,
+          "repeat_gain": 0.0,
+          "step": 9
+        },
+        {
+          "difference": 0.0,
+          "difference_ci90_conservative": [
+            -0.227034182780956,
+            0.227034182780956
+          ],
+          "primary_gain": 0.0,
+          "repeat_gain": 0.0,
+          "step": 10
+        }
+      ],
+      "task_id": "krk-m6-1",
+      "trial": 0
+    }
+  ],
+  "stability_continuations": 1020,
+  "stability_decisions": 17,
+  "total_m2_usage_rated_usd": 15.60305707
+}

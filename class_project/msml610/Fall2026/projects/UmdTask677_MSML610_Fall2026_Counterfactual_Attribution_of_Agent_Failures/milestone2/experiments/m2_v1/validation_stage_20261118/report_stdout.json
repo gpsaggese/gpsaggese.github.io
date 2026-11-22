@@ -1,0 +1,130 @@
+{
+  "all_300_completed": true,
+  "results": [
+    {
+      "decision_id": "krk-m3-1_trial0_step002",
+      "selection_role": "loss_of_forced_win_nonterminal",
+      "keep_wins": 0,
+      "keep_n": 50,
+      "redecide_wins": 0,
+      "redecide_n": 50,
+      "repair_gain": 0.0,
+      "repair_gain_ci95": [
+        -0.07135003417431873,
+        0.07135003417431873
+      ],
+      "keep_ci95": [
+        0,
+        0.07135003417431873
+      ],
+      "redecide_ci95": [
+        0,
+        0.07135003417431873
+      ],
+      "fisher_p": 1,
+      "outcomes": {
+        "keep_original_reply": {
+          "fifty_move_rule": 37,
+          "insufficient_material": 13
+        },
+        "redecide_reply": {
+          "fifty_move_rule": 46,
+          "insufficient_material": 4
+        }
+      },
+      "holm_adjusted_p": 1
+    },
+    {
+      "decision_id": "krk-m4-1_trial0_step001",
+      "selection_role": "still_winning_nonterminal",
+      "keep_wins": 33,
+      "keep_n": 50,
+      "redecide_wins": 17,
+      "redecide_n": 50,
+      "repair_gain": -0.32,
+      "repair_gain_ci95": [
+        -0.4835287720694105,
+        -0.12418188840895575
+      ],
+      "keep_ci95": [
+        0.5215356854148285,
+        0.7756323036493895
+      ],
+      "redecide_ci95": [
+        0.2243676963506106,
+        0.47846431458517147
+      ],
+      "fisher_p": 0.0025235377955630557,
+      "outcomes": {
+        "keep_original_reply": {
+          "checkmate": 33,
+          "insufficient_material": 5,
+          "fifty_move_rule": 12
+        },
+        "redecide_reply": {
+          "insufficient_material": 12,
+          "checkmate": 17,
+          "fifty_move_rule": 21
+        }
+      },
+      "holm_adjusted_p": 0.007570613386689167
+    },
+    {
+      "decision_id": "krk-m8-1_trial0_step003",
+      "selection_role": "terminal_rook_loss",
+      "keep_wins": 0,
+      "keep_n": 50,
+      "redecide_wins": 0,
+      "redecide_n": 50,
+      "repair_gain": 0.0,
+      "repair_gain_ci95": [
+        -0.07135003417431873,
+        0.07135003417431873
+      ],
+      "keep_ci95": [
+        0,
+        0.07135003417431873
+      ],
+      "redecide_ci95": [
+        0,
+        0.07135003417431873
+      ],
+      "fisher_p": 1,
+      "outcomes": {
+        "keep_original_reply": {
+          "insufficient_material": 50
+        },
+        "redecide_reply": {
+          "insufficient_material": 27,
+          "fifty_move_rule": 23
+        }
+      },
+      "holm_adjusted_p": 1
+    }
+  ],
+  "paid_model_calls": 1482,
+  "observed_usage_cost_usd": 1.5271121,
+  "accounted_liability_usd": 1.5271121,
+  "approved_usd": 3,
+  "audited_completed_branches": 300,
+  "checks": "branch parents, initial API-visible input hashes, retained absolute step limits, forced reply hashes, every model call's policy, tape chains, snapshot hashes, legal move reconstruction, independent referee outcomes and raw usage/ledger reconciliation",
+  "source_preserved": true,
+  "elapsed_seconds": 5629,
+  "later_phases_started": false,
+  "milestone2_complete": false,
+  "shortcut_estimator_validated": false,
+  "limitations": [
+    "Selected cases from only three positions; not population-level attribution.",
+    "Effects refer to re-deciding a whole reply, including reasoning text, under the same model policy.",
+    "Independent V(before)/V(after) profiles and stability repetitions have not been run.",
+    "Reported 95% effect intervals are unadjusted; Holm p-values correct across these three cases."
+  ],
+  "analysis_source_sha256": "6a074ec34a6d604a572618e5cc3fcf362c2a1af1c2b386a04f1ca6db80896613",
+  "execution_manifest_sha256": "03c0a00c34a65404dea89e8754c11f7a35325178eb38edc361f28bf8dd388e1c",
+  "interpretation": [
+    "For krk-m4-1 trial 0 decision 1, keeping the original complete reply wins 66% versus 34% when re-deciding: repair gain -32 percentage points, unadjusted 95% interval [-48.4,-12.4], Holm-adjusted p approximately 0.00757. This is evidence that the original reply was helpful under this tested continuation policy.",
+    "For the selected krk-m3-1 and krk-m8-1 decisions, both arms won 0/50. No recovery was observed. Each sampled arm's Wilson 95% upper win-rate bound is approximately 7.1%; these results do not prove recovery is impossible or that the task is underspecified.",
+    "A theoretically losing chess move can have near-zero measured repair gain when the tested agent already has little chance of recovery immediately before it. Earlier checkpoints still need profiling; do not assign blame from the tablebase pivot alone.",
+    "The direct-arm infrastructure and first selected contrasts are demonstrated. The checkpoint-value shortcut and full Milestone 2 are not yet validated/completed."
+  ]
+}

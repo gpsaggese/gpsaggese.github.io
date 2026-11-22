@@ -1,0 +1,23 @@
+{
+  "all_exports_balanced": true,
+  "feature_label_join_rows": 48,
+  "feature_count": 28,
+  "task_groups": 4,
+  "identical_state_opposite_reply_labels_documented": true,
+  "all_pinned_non_cache_source_hashes_match": true,
+  "original_input_hashes_match": true,
+  "database_integrity": {
+    "paid_runs/validation_stage_20261118/budget.sqlite": "ok",
+    "paid_runs/m2_direct_v2/jobs.sqlite": "ok",
+    "paid_runs/m2_direct_v2/budget.sqlite": "ok",
+    "paid_runs/validation_stage_20261118/store/manifest.sqlite": "ok",
+    "paid_runs/m2_direct_v2/store/manifest.sqlite": "ok"
+  },
+  "all_30_tests_passed": true,
+  "full_population_replay_audit_passed": true,
+  "plots_visually_inspected": [
+    "primary_profiles.png",
+    "checkpoint_values.png",
+    "stability_profiles.png"
+  ]
+}

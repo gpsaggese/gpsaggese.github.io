@@ -1,0 +1,94 @@
+{
+  "schema": "caaf.m2.publication_verification/1",
+  "date": "2026-11-21",
+  "upstream_base": "db0861e125880e0df362c53f69e33524a51b460a",
+  "source_m2_commit": "1f629bdee737b560f5a7aff4ddbf4ba489d270b2",
+  "scope": "Milestone 2 only",
+  "m3_excluded": true,
+  "local_m3_artifact_hashes_unchanged": true,
+  "existing_m1_files_verified_unchanged": 50,
+  "exported_m2_files_verified_unchanged": 100,
+  "credential_scan": {
+    "files_scanned": 104,
+    "nested_source_archive_members_scanned": 67,
+    "credential_content_found": false
+  },
+  "tests": {
+    "exit_code": 0,
+    "network_blocked": true,
+    "new_api_calls": 0,
+    "tests": 30,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "audit": {
+    "date": "2026-11-21",
+    "network_blocked": true,
+    "new_api_calls": 0,
+    "new_api_cost_usd": 0,
+    "full_population_audit": {
+      "branches": 3900,
+      "stored_branch_segments": 3916,
+      "replayed_decision_steps": 18115,
+      "verified_blobs": 20995,
+      "paid_model_calls": 16165,
+      "additional_usage_rated_usd": 14.07594497,
+      "all_environment_replays_match": true,
+      "all_model_input_hashes_match": true,
+      "all_snapshot_identities_match": true,
+      "all_referee_scores_match": true,
+      "request_ledger_reconciles_exactly": true,
+      "complete_population_audit": true,
+      "outstanding_requests": 0,
+      "zero_billed_preinference_rejections": 10
+    },
+    "profile_rows_recomputed": 65,
+    "source_database_identities_unchanged": true,
+    "elapsed_seconds": 35.86
+  },
+  "raw_checkpoint_stores_in_git": false,
+  "full_raw_archive_publicly_hosted_by_this_pr": false,
+  "publication_layout": {
+    "exported_m2_files": 100,
+    "lfs_objects": [
+      {
+        "path": "experiments/m2_direct_v2/checkpoint_values.pdf",
+        "oid": "8a13f143c38fc2a5b2ee1aaf5a1cb7d06d4b3a10413db167f59530733ae97f59",
+        "bytes": 34883
+      },
+      {
+        "path": "experiments/m2_direct_v2/checkpoint_values.png",
+        "oid": "a7f444679fae3f7a7612522a22bf900fc2d3931402b26c168c933aaacd6ebfca",
+        "bytes": 325486
+      },
+      {
+        "path": "experiments/m2_direct_v2/primary_profiles.pdf",
+        "oid": "7c42ca364b25c728abeb7f0928a387498a277e01070c13e7b47fb56ffa61d624",
+        "bytes": 28472
+      },
+      {
+        "path": "experiments/m2_direct_v2/primary_profiles.png",
+        "oid": "2f531867feea739d00c357616df89aa97d279002da5673434e3e0b02ab9c1f7d",
+        "bytes": 233629
+      },
+      {
+        "path": "experiments/m2_direct_v2/stability_profiles.pdf",
+        "oid": "e4f1c4d8e9757c152dc1d6f56c3abe56ce494fa3f0ae964179b8fe774bd048a9",
+        "bytes": 22113
+      },
+      {
+        "path": "experiments/m2_direct_v2/stability_profiles.png",
+        "oid": "aeccb79577fe32b1fce3f6e6279563e5da018373b6d71cb49e1757388dbd3247",
+        "bytes": 86030
+      },
+      {
+        "path": "reports/milestone2_results.html",
+        "oid": "dcb472d607d5a70093c8eb05e15aa734f04ae68cefa061c78909726e0e59e8e0",
+        "bytes": 17374
+      }
+    ],
+    "m1_compatibility_link": "vendor/pr917 -> ../..",
+    "unrelated_changes": 0
+  }
+}

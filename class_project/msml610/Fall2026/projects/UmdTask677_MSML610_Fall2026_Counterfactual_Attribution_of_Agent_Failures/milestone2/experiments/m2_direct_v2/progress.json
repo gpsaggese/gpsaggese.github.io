@@ -1,0 +1,37 @@
+{
+  "budget": {
+    "accounted_plus_reserved_usd": 14.07594497,
+    "available_usd": 7.92405503,
+    "by_status": [
+      {
+        "amount": 0,
+        "n": 10,
+        "status": "rejected_before_inference"
+      },
+      {
+        "amount": 14075944970,
+        "n": 16165,
+        "status": "settled"
+      }
+    ],
+    "cap_usd": 22.0,
+    "requests": 16175,
+    "within_cap": true
+  },
+  "counts": {
+    "completed": 3900
+  },
+  "current_phase": "profiles_stability",
+  "elapsed_seconds": 9176,
+  "free_disk_mib": 1771,
+  "jobs": 3900,
+  "per_phase": {
+    "profiles_primary": {
+      "completed": 2880
+    },
+    "profiles_stability": {
+      "completed": 1020
+    }
+  },
+  "resume_epoch": "resume_epoch_01"
+}

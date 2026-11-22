@@ -1,0 +1,175 @@
+{
+  "analysis": {
+    "extra_sampling": "Not authorized by this manifest; new prespecified confirmation manifest required",
+    "failure_classification": "Report top-step concentration only with uncertainty; sparse/diffuse classification exploratory, no forced binary labels.",
+    "gain_interval": "Newcombe 95% for independent proportions; retain shared-boundary covariance when comparing whole profiles",
+    "multiplicity": "Holm correction across primary decision-level tests; unadjusted intervals explicitly exploratory",
+    "no_optional_stopping": true,
+    "win_rate_interval": "Wilson 95%",
+    "zero_successes": "Report uncertainty bound and no recovery observed under this policy; never impossible unless independently proven by sealed chess rules."
+  },
+  "budget_approval": {
+    "approved": false,
+    "approved_usd": 0
+  },
+  "budget_file": "budget.json",
+  "created_on": "2026-11-13",
+  "estimand": {
+    "outcome": "White checkmates within original board and agent limits; do not substitute oracle winnability for actual success.",
+    "proposal_delta": "negative repair_gain",
+    "repair_gain": "P(win | redecide from before) - P(win | force original reply from before)",
+    "shortcut": "V(before) - V(after)",
+    "unit": "whole assistant reply including explanation and command; not move-only"
+  },
+  "execution": {
+    "executor_implemented": false,
+    "requires_before_paid": [
+      "Explicit user budget approval",
+      "Implement and test atomic budget reservations including concurrent in-flight calls and retries",
+      "Offline force-once identity checks for all selected cases",
+      "Pin actual executable source and dependencies",
+      "Check account/model access without substituting a model",
+      "Run validation phase first; review outcomes before releasing profile phases"
+    ],
+    "retry_rule": "Up to two infrastructure retries per planned job, same experimental assignment; preserve all attempts, include costs, never retry based on chess outcome. Halt phase if failures remain.",
+    "scope": "No retail jobs, no new starting positions, no model/scaffold changes, no Milestone 4 training in this preparation.",
+    "validation_phase_release": "Review force-once identity, balanced assignments, restored limits, infrastructure errors, and spend after phase 1. Statistical comparison with the shortcut happens only after the primary profiles; causal interpretation remains gated until then."
+  },
+  "experiment_id": "chess_m2_v1",
+  "jobs_file": "planned_jobs.csv",
+  "milestone4": {
+    "coverage_note": "Seven failures cover only four positions. Expand with the remaining planned tasks before evaluating generalization.",
+    "features": "Export only pre-decision features in a separate table; oracle diagnostics, future moves, outcomes, and gain labels excluded from predictor inputs.",
+    "split_unit": "whole starting-position task; two trials and all descendants stay together"
+  },
+  "paid_continuations": 2250,
+  "policy": {
+    "defender": "original deterministic tablebase policy",
+    "limits": "Restore original counters and original absolute step limit in every arm; consume one step for a forced reply.",
+    "model": "anthropic/claude-haiku-5-5",
+    "model_seed": null,
+    "reply_history": "text only as in original protocol",
+    "sampling": {
+      "drop_params": true,
+      "max_tokens": 16000,
+      "thinking": {
+        "type": "adaptive"
+      }
+    }
+  },
+  "population": {
+    "distinct_failed_tasks": 4,
+    "include_flat_and_oracle_lost_states": true,
+    "natural_failed_runs": 7,
+    "pilot_runs": 10,
+    "profile_decisions": 48,
+    "terminal_values": "Exact from sealed board outcome; no paid continuation from terminal checkpoints."
+  },
+  "primary": {
+    "independent_of_M1_screening": true,
+    "per_nonterminal_checkpoint": 30,
+    "reuse_M1_outcomes": false,
+    "reuse_direct_validation_outcomes": false
+  },
+  "schema": "caaf.m2.experiment/1",
+  "source": {
+    "archive_sha256": "d63ef2d94a695280cffa1896bbe201e0f2d3f79def9b90751801c6f09e3a7172",
+    "commit": "8799acfc484febd0c9156ccca0bfa00fb0724aeb",
+    "historical_source_dirty": true,
+    "note": "Historical run source was dirty; PR code is pinned for new work, original replay validated separately.",
+    "pr": "https://github.com/gpsaggese/gpsaggese.github.io/pull/917"
+  },
+  "stability": {
+    "independent_new_samples": true,
+    "per_nonterminal_checkpoint": 30,
+    "runs": [
+      {
+        "branch_id": "br-5d69d1bd40a6",
+        "calls": 7,
+        "checkpoints": 8,
+        "outcome": "fifty_move_rule",
+        "run_id": "run-fdd2ea1b8a28",
+        "task_id": "krk-m3-1",
+        "trial": 0,
+        "won": false
+      },
+      {
+        "branch_id": "br-f2126a68de64",
+        "calls": 10,
+        "checkpoints": 11,
+        "outcome": "fifty_move_rule",
+        "run_id": "run-f3cc2b004a22",
+        "task_id": "krk-m6-1",
+        "trial": 0,
+        "won": false
+      }
+    ]
+  },
+  "status": "PREPARED_OFFLINE_PAID_RUNS_BLOCKED",
+  "validation": {
+    "fallback": "Do not label unvalidated shortcut as causal effect. Report checkpoint-value changes as descriptive; plan direct-arm profiles as a new version if equivalence is unresolved.",
+    "identity_gate": "Offline force-once environment and API-visible context must match original after-checkpoint; counters must match. Compare cost metadata separately.",
+    "per_arm": 50,
+    "schedule": "A/B alternating, cases interleaved",
+    "selected_decisions": [
+      {
+        "after_checkpoint": "28fed58b70c953963327c6e7a5c38f5ddd9b4dd812d36120270d8335ba32edc2",
+        "after_status": "ongoing",
+        "before_checkpoint": "5176f837771b2a4cb000cdff1e6250dff011bf2e4fc4f1aa66d9f0dbef369c6b",
+        "branch_id": "br-5d69d1bd40a6",
+        "commands_json": "[\"play move Kc3\"]",
+        "decision_id": "krk-m3-1_trial0_step002",
+        "oracle_after_win": false,
+        "oracle_before_win": true,
+        "original_reply_sha256": "0db158b167e902323617699b6d1733f9e9584b6c3d928157185687ef9e07c747",
+        "profile_eligible": true,
+        "run_id": "run-fdd2ea1b8a28",
+        "selection_role": "loss_of_forced_win_nonterminal",
+        "source_failed": true,
+        "source_outcome": "fifty_move_rule",
+        "step": 2,
+        "task_id": "krk-m3-1",
+        "trial": 0
+      },
+      {
+        "after_checkpoint": "2a2ef138bf3aed810378a4ab29b6ac577f12bfd3852035cbf57e426c3cfd7587",
+        "after_status": "ongoing",
+        "before_checkpoint": "f6ce3c7ace80cb8dd172d94a874431920be09d3c1f518b6201f7f1d7cc612c66",
+        "branch_id": "br-199f2cd2c646",
+        "commands_json": "[\"play move Ke1\"]",
+        "decision_id": "krk-m4-1_trial0_step001",
+        "oracle_after_win": true,
+        "oracle_before_win": true,
+        "original_reply_sha256": "cd427545b1f0d2dac3146a7507512dd3456cd2339b6deb79fdc1b939fb0c2f7b",
+        "profile_eligible": true,
+        "run_id": "run-0a9e69b6000b",
+        "selection_role": "still_winning_nonterminal",
+        "source_failed": true,
+        "source_outcome": "fifty_move_rule",
+        "step": 1,
+        "task_id": "krk-m4-1",
+        "trial": 0
+      },
+      {
+        "after_checkpoint": "6663026188b27403e7acc9a183cee8fbc6ec6cf36b3e2eb54975cd50f3f76a8d",
+        "after_status": "insufficient_material",
+        "before_checkpoint": "2fe7d7aeb4722e4201480d6cec4a161e73aea7c5a5a42168695255d7ecba6344",
+        "branch_id": "br-530e4c7ce831",
+        "commands_json": "[\"play move Ra3\"]",
+        "decision_id": "krk-m8-1_trial0_step003",
+        "oracle_after_win": false,
+        "oracle_before_win": true,
+        "original_reply_sha256": "858121ae068bbfb6b8e909b16cd61ebff591e54210fec77d44a37b0a637845b6",
+        "profile_eligible": true,
+        "run_id": "run-785341a28f04",
+        "selection_role": "terminal_rook_loss",
+        "source_failed": true,
+        "source_outcome": "insufficient_material",
+        "step": 3,
+        "task_id": "krk-m8-1",
+        "trial": 0
+      }
+    ],
+    "statistical_gate": "Evaluate after primary profiles supply independent V(before)/V(after) estimates. Form a conservative >=90% interval for direct_gain - shortcut_gain by subtracting their independent 95% interval endpoints (Bonferroni coverage). Shortcut accepted for a checked case only if the whole interval is within +/-0.20; otherwise inconclusive. Three cases do not establish universal equivalence. With 30/50 samples equivalence may remain unresolved; do not change tolerance after seeing results."
+  }
+}

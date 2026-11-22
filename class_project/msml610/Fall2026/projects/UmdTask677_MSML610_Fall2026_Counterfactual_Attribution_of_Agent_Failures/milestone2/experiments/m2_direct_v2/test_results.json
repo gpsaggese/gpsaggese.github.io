@@ -1,0 +1,13 @@
+{
+  "passed": 25,
+  "failed": 0,
+  "includes": [
+    "original chess tests",
+    "concurrent spending guard",
+    "wire accounting",
+    "lossless compressed snapshots",
+    "minimal source seeding",
+    "bounded pre-inference rate-limit retries"
+  ],
+  "paid_calls": 0
+}

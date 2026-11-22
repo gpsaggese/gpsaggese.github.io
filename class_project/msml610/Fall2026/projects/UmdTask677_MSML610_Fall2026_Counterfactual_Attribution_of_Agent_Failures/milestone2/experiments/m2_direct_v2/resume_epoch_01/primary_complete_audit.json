@@ -1,0 +1,16 @@
+{
+  "branches": 2880,
+  "stored_branch_segments": 2896,
+  "replayed_decision_steps": 13539,
+  "verified_blobs": 16275,
+  "paid_model_calls": 12099,
+  "additional_usage_rated_usd": 10.501435825,
+  "all_environment_replays_match": true,
+  "all_model_input_hashes_match": true,
+  "all_snapshot_identities_match": true,
+  "all_referee_scores_match": true,
+  "request_ledger_reconciles_exactly": true,
+  "complete_population_audit": false,
+  "outstanding_requests": null,
+  "zero_billed_preinference_rejections": 10
+}
