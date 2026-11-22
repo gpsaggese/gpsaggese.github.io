@@ -12,6 +12,8 @@ from the ball speed with one model, for the sweeps only.
 - The best ball speed as a band of tied speeds, and what it is robust to
 - The speed scaling check: Proposition 1 with a spread that depends on the
   ball speed
+- The threshold `a*`: the smallest `a` at which hitting at `2 v0` stops being
+  among the best speeds, on a fine grid of `a`
 - The plots of the notebook, and the data of the paper's figure
 
 Import as:
@@ -467,6 +469,8 @@ def run_speed_sweeps(config: ExperimentConfig) -> pd.DataFrame:
           `std_x2`, and `std_y2`
         - The summary of `compute_run()` of notebook 05, e.g., `max_p_winner`;
           its `settings` column is the settings string that rebuilds the map
+        - `mean_p_winner_se`: the mean of the standard errors of the cells,
+          an upper bound of the standard error of `mean_p_winner`
     """
     _LOG.debug(hprint.to_str("config"))
     specs = [
@@ -478,11 +482,15 @@ def run_speed_sweeps(config: ExperimentConfig) -> pd.DataFrame:
     ]
     rows = []
     for spec in tqdm(specs, desc="speed sweeps"):
-        summary, _ = rosfrsnrs0vsu.compute_run(spec["settings"])
+        summary, heatmap = rosfrsnrs0vsu.compute_run(spec["settings"])
         # The settings string of the summary takes the place of the settings.
         row = {name: value for name, value in spec.items() if name != "settings"}
         row.update(spec["settings"])
         row.update(summary)
+        # The standard deviation of a mean is at most the mean of the standard
+        # deviations, whatever the correlation of the cells, which share their
+        # draws.
+        row["mean_p_winner_se"] = float(heatmap["p_winner_se"].mean())
         rows.append(row)
     sweeps = pd.DataFrame(rows)
     return sweeps
@@ -534,6 +542,36 @@ def plot_sweep_maps(
 # #############################################################################
 
 
+def _build_speed_map(
+    runs: pd.DataFrame, value_col: str, se_col: str
+) -> pd.DataFrame:
+    """
+    Build a map with one row of cells from the ball speeds of a sweep.
+
+    The rule of the best region of notebook 01 then applies to the speeds as it
+    is: `x_m` is the speed as `v_b / v0`, and `p_winner` the value that ranks
+    the speeds.
+
+    :param runs: the rows of one sweep of `run_speed_sweeps()`, sorted by
+        `speed_ratio`
+    :param value_col: the column of the value, e.g., "max_p_winner"
+    :param se_col: the column of its standard error, e.g., "max_p_winner_se"
+    :return: one row per speed, with `x_m`, `y_m`, `p_winner`, `p_winner_se`
+    """
+    _LOG.debug(hprint.to_str("value_col se_col"))
+    for column in (value_col, se_col):
+        hdbg.dassert_in(column, runs.columns, "Missing column")
+    speed_map = pd.DataFrame(
+        {
+            "x_m": runs["speed_ratio"].to_numpy(),
+            "y_m": 0.0,
+            "p_winner": runs[value_col].to_numpy(dtype=float),
+            "p_winner_se": runs[se_col].to_numpy(dtype=float),
+        }
+    )
+    return speed_map
+
+
 def find_best_speeds(sweeps: pd.DataFrame) -> pd.DataFrame:
     """
     Find the best ball speed of each sweep, as a band of tied speeds.
@@ -572,14 +610,7 @@ def find_best_speeds(sweeps: pd.DataFrame) -> pd.DataFrame:
         hdbg.dassert_lte(2, len(runs), "A sweep needs at least 2 ball speeds")
         # The speeds of a sweep form a map with one row of cells, so the rule
         # of the best region applies to them as it is: `x_m` is the speed.
-        speed_map = pd.DataFrame(
-            {
-                "x_m": runs["speed_ratio"].to_numpy(),
-                "y_m": 0.0,
-                "p_winner": runs["max_p_winner"].to_numpy(),
-                "p_winner_se": runs["max_p_winner_se"].to_numpy(),
-            }
-        )
+        speed_map = _build_speed_map(runs, "max_p_winner", "max_p_winner_se")
         in_band = rosfrsnrs0spu.find_best_region(speed_map)
         best = rosfrsnrs0spu.find_best_target(speed_map)
         band = runs[in_band]
@@ -933,6 +964,446 @@ def run_scaling_checks(config: ExperimentConfig) -> pd.DataFrame:
             rows.append(row)
     scaling_checks = pd.DataFrame(rows)
     return scaling_checks
+
+
+# #############################################################################
+# Threshold of `a`
+# #############################################################################
+
+
+@dataclasses.dataclass(frozen=True)
+class ThresholdConfig:
+    """
+    How much of the threshold run to run: the sweeps, then the seed runs.
+    """
+
+    # The sweeps on a fine grid of `a`, without the speed scaling check.
+    sweeps: ExperimentConfig
+    # The sport whose maps run again with other seeds, for the standard error
+    # of their mean `P(winner)`.
+    seed_sport: str
+    # The variants of those maps; the other variants keep the bound of the
+    # cells.
+    seed_variants: Tuple[str, ...]
+    # The seeds of those runs, besides seed 1 of the sweeps.
+    extra_seeds: Tuple[int, ...]
+
+
+# The fine grid of `a`, in steps of 0.025: up to 0.5 for every shape, and up to
+# 1 for the sweeps of the linear shape, where `v0` itself leaves the band of the
+# best speed only above 0.5 in pickleball.
+_A_UP_TO_HALF = tuple(step / 40 for step in range(21))
+_A_UP_TO_ONE = tuple(step / 40 for step in range(41))
+# The 4 shapes, whose tennis maps run with the extra seeds.
+_SHAPE_VARIANTS = (_BASE_VARIANT, "knee", "parabola", "one_sided_parabola")
+# 15,232 maps: 8,576 for the sweeps, the 4 shapes up to `a = 0.5` and the base
+# with its 4 variants of the spread at `v0` and `v_p` up to `a = 1`, on the 16
+# ball speeds of the full run; then 6,656 for the tennis maps of the 4 shapes
+# with seeds 2 to 5.
+_THRESHOLD_FULL_CONFIG = ThresholdConfig(
+    sweeps=dataclasses.replace(
+        _FULL_CONFIG,
+        a_values={
+            _BASE_VARIANT: _A_UP_TO_ONE,
+            "knee": _A_UP_TO_HALF,
+            "parabola": _A_UP_TO_HALF,
+            "one_sided_parabola": _A_UP_TO_HALF,
+            "std0_half": _A_UP_TO_ONE,
+            "std0_double": _A_UP_TO_ONE,
+            "v_p_1.9": _A_UP_TO_ONE,
+            "v_p_3.0": _A_UP_TO_ONE,
+        },
+        scaling_a_values=(),
+    ),
+    seed_sport="Tennis",
+    seed_variants=_SHAPE_VARIANTS,
+    extra_seeds=(2, 3, 4, 5),
+)
+# 280 maps: 140 for the sweeps of the 4 shapes, on 5 ball speeds with `v0` and
+# both ends, in steps of 0.25 of `a` and with the base up to `a = 1`; then 140
+# for the tennis maps with seeds 2 and 3. The variants of the base run only in
+# the full run.
+_THRESHOLD_REDUCED_CONFIG = ThresholdConfig(
+    sweeps=dataclasses.replace(
+        _REDUCED_CONFIG,
+        speed_ratios=(0.5, 0.8, 1.0, 1.5, 2.0),
+        a_values={
+            _BASE_VARIANT: (0.0, 0.25, 0.5, 0.75, 1.0),
+            "knee": (0.0, 0.25, 0.5),
+            "parabola": (0.0, 0.25, 0.5),
+            "one_sided_parabola": (0.0, 0.25, 0.5),
+        },
+        scaling_a_values=(),
+    ),
+    seed_sport="Tennis",
+    seed_variants=_SHAPE_VARIANTS,
+    extra_seeds=(2, 3),
+)
+
+
+def get_threshold_config(run_full: bool) -> ThresholdConfig:
+    """
+    Get how much of the threshold run to run.
+
+    :param run_full: True for the full run of the threshold table, False for
+        the reduced run that takes about a minute
+    :return: the configuration
+    """
+    _LOG.debug(hprint.to_str("run_full"))
+    hdbg.dassert_isinstance(run_full, bool, "run_full must be a bool")
+    config = _THRESHOLD_FULL_CONFIG if run_full else _THRESHOLD_REDUCED_CONFIG
+    return config
+
+
+def count_threshold_maps(config: ThresholdConfig) -> int:
+    """
+    Count the maps of the threshold run: the sweeps and the seed runs.
+
+    :param config: how much to run
+    :return: the number of maps, e.g., 15,232 for the full run and 280 for the
+        reduced one
+    """
+    _LOG.debug(hprint.to_str("config.extra_seeds"))
+    n_sweep_maps = count_maps(config.sweeps)
+    # Each seed runs again the maps of one sport and of the seed variants.
+    seed_a_values = {
+        variant: config.sweeps.a_values[variant]
+        for variant in config.seed_variants
+    }
+    seed_sweeps = dataclasses.replace(
+        config.sweeps, sports=(config.seed_sport,), a_values=seed_a_values
+    )
+    n_seed_maps = len(config.extra_seeds) * count_maps(seed_sweeps)
+    n_maps = n_sweep_maps + n_seed_maps
+    return n_maps
+
+
+def add_seed_mean_se(
+    sweeps: pd.DataFrame, config: ThresholdConfig
+) -> pd.DataFrame:
+    """
+    Estimate the standard error of the mean `P(winner)` of maps from seeds.
+
+    The cells of a map share their standard normal draws, so their standard
+    errors do not give the one of their mean. Each map of `config.seed_sport`
+    and `config.seed_variants` runs again with each of `config.extra_seeds`,
+    all else equal: with its own seed, that is `n = 1 + len(extra_seeds)`
+    independent estimates of its mean.
+
+    :param sweeps: the rows of `run_speed_sweeps()`, none with an extra seed
+    :param config: the sport, the variants, and the seeds of the runs
+    :return: a copy of `sweeps` with 2 columns, NaN for the other maps:
+        - `mean_p_winner_seeds`: the average of the `n` estimates
+        - `mean_p_winner_seeds_se`: their standard deviation over `sqrt(n)`,
+          the standard error of that average
+    """
+    _LOG.debug(hprint.to_str("sweeps.shape config.extra_seeds"))
+    hdbg.dassert_lte(1, len(config.extra_seeds), "There must be an extra seed")
+    hdbg.dassert_no_duplicates(list(config.extra_seeds), "Repeated seeds")
+    is_seeded = (sweeps["sport"] == config.seed_sport) & sweeps["variant"].isin(
+        config.seed_variants
+    )
+    hdbg.dassert_lte(1, int(is_seeded.sum()), "No map to run again")
+    estimates = []
+    for _, row in tqdm(
+        sweeps[is_seeded].iterrows(), total=int(is_seeded.sum()), desc="seeds"
+    ):
+        # The settings string rebuilds the map exactly, and only the seed
+        # changes.
+        settings = rosfrsnrs0vsu.parse_settings_string(row["settings"])
+        hdbg.dassert_not_in(
+            settings["seed"],
+            config.extra_seeds,
+            "The seed of a map must not be an extra seed",
+        )
+        means = [row["mean_p_winner"]]
+        for seed in config.extra_seeds:
+            summary, _ = rosfrsnrs0vsu.compute_run(dict(settings, seed=seed))
+            means.append(summary["mean_p_winner"])
+        estimates.append(means)
+    # One row per map, one column per seed.
+    estimates_array = np.array(estimates)
+    n_seeds = estimates_array.shape[1]
+    seeded = sweeps.copy()
+    seeded["mean_p_winner_seeds"] = np.nan
+    seeded["mean_p_winner_seeds_se"] = np.nan
+    seeded.loc[is_seeded, "mean_p_winner_seeds"] = estimates_array.mean(axis=1)
+    seeded.loc[is_seeded, "mean_p_winner_seeds_se"] = estimates_array.std(
+        axis=1, ddof=1
+    ) / np.sqrt(n_seeds)
+    return seeded
+
+
+def find_threshold_bands(sweeps: pd.DataFrame, tennis_se: str) -> pd.DataFrame:
+    """
+    Find the band of the best ball speed of each sweep, for the threshold.
+
+    The band is every speed within 2 standard errors of the highest value, the
+    rule of `find_best_region()` of notebook 01, as in `find_best_speeds()`
+    (P9). The value is the highest cell in pickleball, as there, and the mean
+    over the half in tennis, since its highest cell is 1.000 at almost every
+    speed.
+
+    :param sweeps: the rows of `run_speed_sweeps()`, with the columns of
+        `add_seed_mean_se()` for "seeds"
+    :param tennis_se: how tennis gets its value and its standard error:
+        - "seeds": the average of the seeds, with the standard error from
+          their spread
+        - "cells": seed 1 alone, with the mean of the standard errors of the
+          cells, an upper bound
+    :return: one row per map, with `sport`, `variant`, `a`, `speed_ratio`,
+        `tennis_se`, the value and its standard error as `value` and
+        `value_se`, and `in_band`
+    """
+    _LOG.debug(hprint.to_str("sweeps.shape tennis_se"))
+    # The columns of the value and of its standard error, per sport.
+    metrics = {
+        "Pickleball": {
+            "seeds": ("max_p_winner", "max_p_winner_se"),
+            "cells": ("max_p_winner", "max_p_winner_se"),
+        },
+        "Tennis": {
+            "seeds": ("mean_p_winner_seeds", "mean_p_winner_seeds_se"),
+            "cells": ("mean_p_winner", "mean_p_winner_se"),
+        },
+    }
+    hdbg.dassert_in(tennis_se, ("seeds", "cells"), "Unknown method")
+    hdbg.dassert_lte(1, len(sweeps), "There must be at least 1 run")
+    parts = []
+    for (sport, variant, a), runs in sweeps.groupby(
+        ["sport", "variant", "a"], sort=False
+    ):
+        runs = runs.sort_values("speed_ratio")
+        hdbg.dassert_lte(2, len(runs), "A sweep needs at least 2 ball speeds")
+        hdbg.dassert_in(sport, metrics, "Unknown sport")
+        value_col, se_col = metrics[sport][tennis_se]
+        speed_map = _build_speed_map(runs, value_col, se_col)
+        hdbg.dassert(
+            speed_map.notna().all().all(),
+            "Missing values: sport=%s variant=%s a=%s",
+            sport,
+            variant,
+            a,
+        )
+        parts.append(
+            pd.DataFrame(
+                {
+                    "sport": sport,
+                    "variant": variant,
+                    "a": a,
+                    "speed_ratio": speed_map["x_m"],
+                    "tennis_se": tennis_se,
+                    "value": speed_map["p_winner"],
+                    "value_se": speed_map["p_winner_se"],
+                    "in_band": rosfrsnrs0spu.find_best_region(speed_map),
+                }
+            )
+        )
+    bands = pd.concat(parts, ignore_index=True)
+    return bands
+
+
+def find_speed_thresholds(bands: pd.DataFrame) -> pd.DataFrame:
+    """
+    Find the 2 thresholds of `a` of each sport and variant.
+
+    - `a*`: the smallest `a` at which the fastest ball, `2 v0`, is out of the
+      band of the best speed; below it, hitting as hard as possible is among
+      the best speeds
+    - `a**`: the smallest `a` at which every speed of the band is slower than
+      `v0`, so `v0` itself is out of the band, and not because faster balls
+      win
+
+    On a grid of `a`, the true threshold is between the value of `a` before
+    the one found and the one found.
+
+    :param bands: the rows of `find_threshold_bands()`, with `v0` and the same
+        ball speeds at every `a`
+    :return: one row per sport and variant, with:
+        - `tennis_se`, `n_a`, `a_max`: the method, how many values of `a`, and
+          the largest
+        - `a_star`, NaN if the fastest ball is in the band up to `a_max`
+        - `a_star_prev`: the value of `a` before `a_star`, NaN if `a_star` is
+          the first
+        - `fastest_reenters`: True if the fastest ball is in the band again at
+          a larger `a`
+        - `band_low_ratio_at_a_star`, `band_high_ratio_at_a_star`: the band at
+          `a_star`
+        - `a_star_star`, NaN if the band reaches `v0` up to `a_max`
+    """
+    _LOG.debug(hprint.to_str("bands.shape"))
+    hdbg.dassert_lte(1, len(bands), "There must be at least 1 map")
+    rows = []
+    for (sport, variant), grp in bands.groupby(["sport", "variant"], sort=False):
+        a_values = np.sort(grp["a"].unique())
+        speed_ratios = grp["speed_ratio"].unique()
+        hdbg.dassert_in(1.0, speed_ratios, "The sweeps must have v0")
+        hdbg.dassert_eq(
+            len(grp),
+            len(a_values) * len(speed_ratios),
+            "Every a must have the same ball speeds",
+        )
+        # Per `a`: whether the fastest ball is in the band, and the band.
+        is_fastest = grp["speed_ratio"] == speed_ratios.max()
+        fastest_in = grp[is_fastest].set_index("a")["in_band"].loc[a_values]
+        band = grp[grp["in_band"]].groupby("a")["speed_ratio"]
+        band_low = band.min().loc[a_values].to_numpy()
+        band_high = band.max().loc[a_values].to_numpy()
+        # The first `a` with the fastest ball out, and with the band below `v0`.
+        i_out = np.flatnonzero(~fastest_in.to_numpy(dtype=bool))
+        i_below = np.flatnonzero(band_high < 1.0)
+        has_star = i_out.size > 0
+        i_star = int(i_out[0]) if has_star else -1
+        # The fastest ball is in the band again if some `a` from `a*` on does
+        # not have it out.
+        reenters = has_star and i_out.size < len(a_values) - i_star
+        rows.append(
+            {
+                "sport": sport,
+                "variant": variant,
+                "tennis_se": grp["tennis_se"].iloc[0],
+                "n_a": len(a_values),
+                "a_max": a_values[-1],
+                "a_star": a_values[i_star] if has_star else np.nan,
+                "a_star_prev": a_values[i_star - 1] if i_star > 0 else np.nan,
+                "fastest_reenters": bool(reenters),
+                "band_low_ratio_at_a_star": (
+                    band_low[i_star] if has_star else np.nan
+                ),
+                "band_high_ratio_at_a_star": (
+                    band_high[i_star] if has_star else np.nan
+                ),
+                "a_star_star": (
+                    a_values[i_below[0]] if i_below.size > 0 else np.nan
+                ),
+            }
+        )
+    thresholds = pd.DataFrame(rows)
+    return thresholds
+
+
+def compare_tennis_se(
+    thresholds_seeds: pd.DataFrame, thresholds_cells: pd.DataFrame
+) -> pd.DataFrame:
+    """
+    Put the thresholds of the 2 standard errors of the tennis mean side by
+    side.
+
+    :param thresholds_seeds: the rows of `find_speed_thresholds()` with the
+        standard error from the seeds
+    :param thresholds_cells: the rows of the same sweeps with the bound of the
+        cells
+    :return: the rows of `thresholds_seeds`, without `tennis_se`, and with
+        `a_star_cells` and `a_star_star_cells`, the thresholds with the bound
+        of the cells; in pickleball they are the same, since it uses the
+        highest cell
+    """
+    _LOG.debug(hprint.to_str("thresholds_seeds.shape thresholds_cells.shape"))
+    for thresholds, tennis_se in (
+        (thresholds_seeds, "seeds"),
+        (thresholds_cells, "cells"),
+    ):
+        hdbg.dassert_eq(
+            set(thresholds["tennis_se"]), {tennis_se}, "Wrong method"
+        )
+    keys = ["sport", "variant"]
+    hdbg.dassert_set_eq(
+        set(thresholds_seeds[keys].itertuples(index=False)),
+        set(thresholds_cells[keys].itertuples(index=False)),
+        "The 2 tables must have the same sweeps",
+    )
+    cells = thresholds_cells[keys + ["a_star", "a_star_star"]].rename(
+        columns={"a_star": "a_star_cells", "a_star_star": "a_star_star_cells"}
+    )
+    # The rows stay in the order of `thresholds_seeds`.
+    comparison = thresholds_seeds.drop(columns="tennis_se").merge(
+        cells, on=keys, how="left", validate="one_to_one"
+    )
+    return comparison
+
+
+def plot_threshold_bands(
+    bands: pd.DataFrame, thresholds: pd.DataFrame, variants: Sequence[str]
+) -> Figure:
+    """
+    Plot the band of the best ball speed against `a`, with the thresholds.
+
+    One row of panels per sport and one column per variant. A filled square is
+    a speed of the band at that `a`, a hollow one a speed outside it; the solid
+    line is `a*`, and the dashed one `a**`.
+
+    :param bands: the rows of `find_threshold_bands()`
+    :param thresholds: the rows of `find_speed_thresholds()` of the same bands
+    :param variants: the variants to plot, e.g., the 4 shapes
+    :return: the figure
+    """
+    _LOG.debug(hprint.to_str("variants"))
+    hdbg.dassert_lte(1, len(variants), "There must be at least 1 variant")
+    sports = list(bands["sport"].unique())
+    fig: Figure
+    fig, axes = plt.subplots(
+        len(sports),
+        len(variants),
+        figsize=(3.6 * len(variants), 3.4 * len(sports)),
+        squeeze=False,
+        sharey=True,
+    )
+    for i, sport_name in enumerate(sports):
+        for j, variant in enumerate(variants):
+            ax = axes[i, j]
+            grp = bands[
+                (bands["sport"] == sport_name) & (bands["variant"] == variant)
+            ]
+            hdbg.dassert_lte(1, len(grp), "No map: %s %s", sport_name, variant)
+            row = thresholds[
+                (thresholds["sport"] == sport_name)
+                & (thresholds["variant"] == variant)
+            ].iloc[0]
+            shape = variant if variant in SPREAD_SHAPES else "linear"
+            color = _SHAPE_STYLES[shape]["color"]
+            in_band = grp["in_band"].to_numpy(dtype=bool)
+            ax.plot(
+                grp["a"][in_band],
+                grp["speed_ratio"][in_band],
+                "s",
+                color=color,
+                ms=3.5,
+                label="in the band",
+            )
+            ax.plot(
+                grp["a"][~in_band],
+                grp["speed_ratio"][~in_band],
+                "s",
+                markerfacecolor="white",
+                color="lightgray",
+                ms=3.5,
+                label="out of the band",
+            )
+            # The thresholds found on the grid, if any.
+            for name, label, linestyle in (
+                ("a_star", "a*", "-"),
+                ("a_star_star", "a**", "--"),
+            ):
+                if np.isfinite(row[name]):
+                    ax.axvline(
+                        row[name],
+                        color="black",
+                        linestyle=linestyle,
+                        linewidth=1.2,
+                        label=f"{label} = {row[name]:g}",
+                    )
+            ax.axhline(1.0, color="gray", linewidth=0.8, linestyle=":")
+            ax.set_xlabel("coefficient a of the spread")
+            ax.set_title(f"{sport_name}: {variant}", fontsize=10)
+            ax.legend(fontsize=7, frameon=False, loc="upper right")
+        axes[i, 0].set_ylabel("ball speed v_b / v0")
+    fig.suptitle(
+        "The band of the best ball speed against a: 2 v0 leaves it at a*, and"
+        " v0 at a**",
+        fontsize=12,
+    )
+    fig.tight_layout()
+    return fig
 
 
 # #############################################################################

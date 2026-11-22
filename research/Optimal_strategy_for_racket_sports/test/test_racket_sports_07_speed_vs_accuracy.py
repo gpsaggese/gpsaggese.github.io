@@ -37,7 +37,7 @@ class Test_notebook(hunitest.TestCase):
     @pytest.mark.superslow
     def test1(self) -> None:
         """
-        Test that the notebook runs top to bottom, in about a minute.
+        Test that the notebook runs top to bottom, in about 2 minutes.
         """
         # Prepare inputs.
         notebook_dir = os.path.join(

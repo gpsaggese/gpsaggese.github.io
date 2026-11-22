@@ -24,6 +24,7 @@
 #   - The best ball speed for each coefficient `a`, as a band of tied speeds
 #   - What the best speed is robust to, and which shape wins
 #   - Proposition 1 when the spread depends on the ball speed
+#   - The threshold $a^*$ above which hitting as hard as possible stops paying
 #   - A summary of what is robust to what
 
 # %%
@@ -59,14 +60,20 @@ except ImportError:
 # %% [markdown]
 # ## Cell 0.1: Reduced or Full Runs
 #
-# - The reduced runs take under a minute, on one core
-#   - 9 ball speeds that keep $v_0 / 2$, $v_0$, and $2 v_0$, the base at 3 values of
-#     `a`, every kind of variant at `a = 1`, and 2000 samples per target
+# - The reduced runs take about a minute and a half, on one core
+#   - Parts 1 to 4: 9 ball speeds that keep $v_0 / 2$, $v_0$, and $2 v_0$, the base
+#     at 3 values of `a`, every kind of variant at `a = 1`, and 2000 samples per
+#     target
+#   - Part 5: the 4 shapes on 5 ball speeds in steps of 0.25 of `a`, with seeds 2
+#     and 3 for the tennis maps, 280 maps
 #   - The cells of each map are the same as in the full runs, so a reduced result
 #     compares cell by cell with a full one
-# - The full runs take about 2 minutes, and give the numbers of the paper
-#   - 16 ball speeds, the base at 5 values of `a`, every variant at `a` = 0.5 and 1,
-#     and 5000 samples per target
+# - The full runs take about 55 minutes, and give the numbers of the paper and of
+#   the threshold
+#   - Parts 1 to 4, about 2 minutes: 16 ball speeds, the base at 5 values of `a`,
+#     every variant at `a` = 0.5 and 1, and 5000 samples per target
+#   - Part 5, 15,232 maps: 8,576 for the sweeps on a fine grid of `a`, and 6,656
+#     for the tennis maps of the 4 shapes with seeds 2 to 5
 #   - Seed 1, so each map repeats exactly from its settings string
 # - The numbers quoted in the markdown of this notebook are from the full runs
 
@@ -364,10 +371,257 @@ display(scaling_checks[columns])
 #   - So with $t_r = 0$, $P(winner)$ depends on $v_p / v_b$ and on $v_b / v_0$
 
 # %% [markdown]
-# # Part 5: Summary
+# # Part 5: The Threshold of `a`
 
 # %% [markdown]
-# ## Cell 5.1: What Is Robust to What
+# ## Cell 5.1: What `a` Means
+#
+# **Goal**
+# - Read the coefficient `a` as a number a player can picture
+
+# %% [markdown]
+# **Description**
+# - All 4 shapes give $f = 1 + a$ at $v_b = 2 v_0$
+#   - So doubling the ball speed widens the spread by $a \times 100\%$, whatever the
+#     shape
+#   - E.g., `a = 0.25`: the spread at $2 v_0$ is 25% wider than at $v_0$
+
+# %%
+# Compute the factor of each shape at `2 v0`, at `a = 0.25`.
+for shape in utils.SPREAD_SHAPES:
+    print(shape, "factor=", utils.compute_speed_factor(2.0, 1.0, 0.25, shape))
+# Outcome: 1.25 for every shape.
+
+# %% [markdown]
+# ## Cell 5.2: Sweeps on a Fine Grid of `a`
+#
+# **Goal**
+# - Find the smallest `a` at which hitting at $2 v_0$ stops being among the best
+#   speeds: the threshold $a^*$
+
+# %% [markdown]
+# **Description**
+# - `a` goes from 0 in steps of 0.025
+#   - Up to 0.5 for the knee and the 2 parabolas
+#   - Up to 1 for the linear shape, the base, since there $v_0$ itself leaves the
+#     band only above 0.5 in pickleball: the second threshold $a^{**}$
+# - The ball speeds, the samples, the seed, and the common random numbers are the
+#   ones of Part 2
+# - The robustness of $a^*$ changes one value of the linear base at a time, up to
+#   `a = 1`, in the full run only
+#   - The spread at $v_0$ halved and doubled, and `v_p` = 1.9 and 3.0 m/s
+# - The full run has 8,576 maps for the sweeps; the reduced run has 140, the 4
+#   shapes on 5 ball speeds in steps of 0.25 of `a`
+
+# %%
+# Run the sweeps of the threshold.
+threshold_config = utils.get_threshold_config(RUN_FULL_SIMS)
+print("n_maps=", utils.count_threshold_maps(threshold_config))
+threshold_sweeps = utils.run_speed_sweeps(threshold_config.sweeps)
+print("threshold_sweeps.shape=", threshold_sweeps.shape)
+# Outcome: one row per map, as in Part 2.
+
+# %% [markdown]
+# ## Cell 5.3: The Standard Error of the Tennis Mean
+#
+# **Goal**
+# - Get the standard error of the mean $P(winner)$ over the half, which ranks the
+#   tennis speeds
+
+# %% [markdown]
+# **Description**
+# - Pickleball ranks the speeds by the highest cell, with its own standard error, as
+#   in Part 2
+# - Tennis ranks them by the mean over the half, since its highest cell is 1.000 at
+#   almost every speed
+#   - The cells of a map share their draws, so their standard errors do not give
+#     the one of their mean
+# - Each tennis map of the 4 shapes runs again with seeds 2 to 5, all else equal:
+#   with seed 1 that is 5 independent estimates of its mean
+#   - The band uses their average, with their standard deviation over $\sqrt{5}$ as
+#     its standard error
+#   - The mean of the standard errors of the cells is shown next to it: it bounds
+#     the standard error of the mean from above
+#   - The variants of the base keep this bound in tennis
+# - The full run has 6,656 more tennis maps; the reduced run uses seeds 2 and 3,
+#   140 maps
+
+# %%
+# Run the tennis maps again with the other seeds.
+threshold_sweeps = utils.add_seed_mean_se(threshold_sweeps, threshold_config)
+is_tennis = threshold_sweeps["sport"] == "Tennis"
+columns = ["mean_p_winner_seeds_se", "mean_p_winner_se"]
+display(threshold_sweeps.loc[is_tennis, columns].describe().round(5))
+# Outcome: the standard error from the seeds, and the bound of the cells.
+
+# %% [markdown]
+# **Reading the output**
+# - Over the 1,664 tennis maps of the 4 shapes, the standard error of the average of
+#   the 5 seeds has a median of 0.00034, and the bound of the cells 0.0030, 8.6
+#   times larger
+#   - One seed alone has a standard deviation 3.8 times smaller than the bound
+#     (2.4 to 5.6)
+#   - The average of the seeds moves the mean by 0.0004 from seed 1 (median)
+# - So the bound of the cells makes the tennis bands much wider, and $a^*$ larger
+
+# %% [markdown]
+# ## Cell 5.4: The Band of the Best Speed Against `a`
+#
+# **Goal**
+# - See where $2 v_0$ and $v_0$ leave the band of the best speed as `a` grows
+
+# %% [markdown]
+# **Description**
+# - The band of each sweep is every speed within 2 standard errors of the highest
+#   value, the rule of Part 2
+# - One panel per sport and shape
+#   - A filled square is a speed of the band at that `a`
+#   - The solid line is $a^*$, where $2 v_0$ leaves the band
+#   - The dashed line is $a^{**}$, where the whole band is slower than $v_0$
+
+# %%
+# Find the band of each sweep of the 4 shapes and the 2 thresholds, with the
+# seeds in tennis.
+shapes = list(threshold_config.seed_variants)
+is_shape = threshold_sweeps["variant"].isin(shapes)
+threshold_bands = utils.find_threshold_bands(threshold_sweeps[is_shape], "seeds")
+thresholds_seeds = utils.find_speed_thresholds(threshold_bands)
+_ = utils.plot_threshold_bands(threshold_bands, thresholds_seeds, shapes)
+# Outcome: the band shrinks toward the slow speeds as `a` grows.
+
+# %% [markdown]
+# **Reading the output**
+# - $2 v_0$ leaves the band early, but the band shrinks gradually: at $a^*$ it still
+#   reaches 1.6 to 1.9 $v_0$
+# - Pickleball: the band of the linear shape goes from 0.7 to 1.9 $v_0$ at $a^*$ to
+#   0.5 to 1.0 $v_0$ at `a = 0.5`
+#   - The knee and the parabolas keep 0.8 $v_0$ as the slow end, and come down to
+#     1.2 and 1.5 $v_0$ at `a = 0.5`
+# - Tennis, with the seeds: the bands are narrower
+#   - At `a = 0.5` the knee is 1.0 $v_0$ alone, the parabolas 1.0 to 1.2 $v_0$, and
+#     the linear shape 0.6 to 0.7 $v_0$
+
+# %% [markdown]
+# ## Cell 5.5: $a^*$ and $a^{**}$ of Each Shape
+#
+# **Goal**
+# - Read the 2 thresholds of each sport and shape
+
+# %% [markdown]
+# **Description**
+# - `a_star`: the first `a` of the grid at which $2 v_0$ is out of the band
+#   - The true threshold is between `a_star_prev` and `a_star`
+#   - `fastest_reenters`: $2 v_0$ is in the band again at a larger `a`
+#   - `band_low_ratio_at_a_star`, `band_high_ratio_at_a_star`: the band at $a^*$
+# - `a_star_star`: the first `a` at which the whole band is slower than $v_0$
+# - `a_star_cells`, `a_star_star_cells`: the same with the bound of the cells in
+#   tennis; in pickleball they are the same
+# - NaN: the threshold is not reached up to `a_max`
+
+# %%
+# Put the thresholds of the 2 standard errors side by side.
+threshold_bands_cells = utils.find_threshold_bands(threshold_sweeps, "cells")
+thresholds_cells = utils.find_speed_thresholds(threshold_bands_cells)
+is_shape = thresholds_cells["variant"].isin(shapes)
+thresholds = utils.compare_tennis_se(
+    thresholds_seeds, thresholds_cells[is_shape]
+)
+columns = ["sport", "variant", "a_max", "a_star_prev", "a_star", "a_star_cells"]
+columns += ["fastest_reenters", "band_low_ratio_at_a_star"]
+columns += ["band_high_ratio_at_a_star", "a_star_star", "a_star_star_cells"]
+display(thresholds[columns])
+# Outcome: one row per sport and shape.
+
+# %% [markdown]
+# **Reading the output**
+# - Pickleball: $a^* = 0.175$ for the linear shape and the 2 parabolas, and 0.2 for
+#   the knee
+#   - At $a^*$ the fastest ball loses 0.26 to 0.38 points of the highest
+#     $P(winner)$
+# - Tennis: $a^*$ depends on the standard error of the mean
+#   - With the seeds: 0.05 for the linear shape and the knee, 0.025 for the
+#     parabolas
+#   - With the bound of the cells: 0.15 and 0.125
+# - $a^{**}$ exists only for the linear shape: 0.6 in pickleball, and in tennis 0.25
+#   with the seeds and 0.525 with the bound
+# - No sweep has $2 v_0$ back in the band after $a^*$
+
+# %% [markdown]
+# ## Cell 5.6: What $a^*$ Is Robust To
+#
+# **Goal**
+# - See how much $a^*$ moves when one value of the linear base changes
+
+# %% [markdown]
+# **Description**
+# - The base, then the spread at $v_0$ halved and doubled, and `v_p` = 1.9 and 3.0
+#   m/s, each on the grid up to `a = 1`
+#   - Only the full run has the variants
+# - Tennis uses the bound of the cells here, for the base too, so that the rows
+#   compare
+
+# %%
+# Show the thresholds of the base and of its variants, with the bound of the
+# cells in tennis.
+variants = ["base", "std0_half", "std0_double", "v_p_1.9", "v_p_3.0"]
+columns = ["sport", "variant", "tennis_se", "a_max", "a_star_prev", "a_star"]
+columns += ["band_low_ratio_at_a_star", "band_high_ratio_at_a_star"]
+columns += ["a_star_star"]
+display(
+    thresholds_cells.loc[thresholds_cells["variant"].isin(variants), columns]
+)
+# Outcome: one row per sport and variant.
+
+# %% [markdown]
+# **Reading the output**
+# - The spread at $v_0$ matters most
+#   - Halved, it moves $a^*$ from 0.175 to 0.825 in pickleball, and from 0.15 to
+#     0.175 in tennis
+#   - Doubled, it lowers $a^*$ to 0.125 in both sports
+# - `v_p` = 1.9 m/s moves $a^*$ by at most 0.025
+# - `v_p` = 3.0 m/s raises it to 0.275 in pickleball and 0.225 in tennis: a faster
+#   server makes speed worth more
+
+# %% [markdown]
+# ## Cell 5.7: The Conditional Claim
+#
+# - Since `a` is unknown, the result is a claim that holds for any `a`, with no jump
+#   at $a^*$
+# - Draft for the abstract
+#   > Since how much accuracy a faster ball costs is unknown, we state the speed
+#   > result as a threshold: if doubling the ball speed widens the landing spread
+#   > by less than about 15 to 20% in pickleball (2.5 to 15% in tennis, depending
+#   > on the error estimate), the fastest ball stays among the best speeds; beyond
+#   > that, the best speeds come down gradually toward the base speed.
+# - Draft for Section VII-B
+#   > **A threshold on the cost of speed.** Since $a$ is unknown, we report $a^*$,
+#   > the smallest $a$ at which the fastest ball, $2 v_0$, leaves the band of the
+#   > best speed, on a grid of $a$ in steps of 0.025 with the speeds, seeds, and
+#   > common random numbers above. All four shapes give $f = 1 + a$ at $2 v_0$, so
+#   > $a$ is the fraction by which doubling the ball speed widens the spread. In
+#   > pickleball, ranked by the highest cell, $a^*$ is 0.175 to 0.2 across the four
+#   > shapes. In tennis, ranked by the mean over the server's half, $a^*$ depends on
+#   > the standard error of that mean: 0.025 to 0.05 with five independent seeds,
+#   > and 0.125 to 0.15 with the mean of the standard errors of the cells, an upper
+#   > bound about 9 times larger. So if doubling the ball speed widens the spread
+#   > by less than about 15 to 20% in pickleball ($a < a^*$), the fastest ball stays
+#   > among the best speeds. There is no jump at $a^*$: the fastest ball loses only
+#   > 0.1 to 0.4 points there, and the band still reaches 1.6 to 1.9 $v_0$ (tennis
+#   > with the seeds). Beyond $a^*$ the fastest speeds drop out of the band
+#   > gradually: at $a = 0.5$ the band of the knee and the parabolas tops out at 1.5
+#   > $v_0$ or less in pickleball and 1.2 $v_0$ or less in tennis (seeds), while the
+#   > band of the linear shape falls below $v_0$ ($a^{**}$ = 0.6 in pickleball, 0.25
+#   > to 0.525 in tennis). The main
+#   > sensitivity is the spread at $v_0$: halved, it moves $a^*$ of pickleball from
+#   > 0.175 to 0.825; doubled, to 0.125. A faster server, $v_p = 3.0$ m/s, raises
+#   > $a^*$ to 0.275 in pickleball and 0.225 in tennis, while $v_p = 1.9$ m/s moves
+#   > it by at most 0.025 (the tennis variants use the bound of the cells).
+
+# %% [markdown]
+# # Part 6: Summary
+
+# %% [markdown]
+# ## Cell 6.1: What Is Robust to What
 #
 # - **Hitting much faster than $v_0$ does not pay once speed costs accuracy**
 #   - At $a \ge 0.5$ the fastest ball, $2 v_0$, loses 2.7 to 9.9 points of the
@@ -381,12 +635,22 @@ display(scaling_checks[columns])
 #   - A doubled spread at $v_0$ pulls the best speed to the slow end
 # - With $t_r = 0$ the maps depend on $v_p / v_b$ and on $v_b / v_0$, so
 #   Proposition 1 needs a spread that does not depend on the ball speed
+# - **Hitting as hard as possible pays only while speed costs little accuracy**
+#   - If doubling the ball speed widens the spread by less than about 15 to 20% in
+#     pickleball ($a < a^*$), $2 v_0$ stays among the best speeds; in tennis $a^*$
+#     is 0.025 to 0.05 with the seeds and 0.125 to 0.15 with the bound of the cells
+#   - Beyond $a^*$ the fastest speeds drop out of the band gradually: at `a = 0.5`
+#     the band of the knee and the parabolas tops out at 1.5 $v_0$ or less
+#   - The spread at $v_0$ moves $a^*$ the most: 0.825 in pickleball when it is
+#     halved
 # - Caveats
 #   - `a`, its range, and $a_x = a / 2$ are assumptions, not measurements
 #   - The highest $P(winner)$ saturates at 1 in tennis
+#   - In tennis $a^*$ depends on the standard error of the mean over the half, an
+#     open question for GP
 
 # %% [markdown]
-# ## Cell 5.2: Save the Data of the Paper's Figure
+# ## Cell 6.2: Save the Data of the Paper's Figure
 #
 # - The full runs write a small CSV file next to the paper's figures
 #   - `figures/make_figures.py` of the paper draws the figure of Section VII-B from
