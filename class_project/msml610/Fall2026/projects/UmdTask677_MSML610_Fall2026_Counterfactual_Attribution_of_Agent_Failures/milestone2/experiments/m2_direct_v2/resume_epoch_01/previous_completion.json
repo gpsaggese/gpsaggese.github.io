@@ -1,0 +1,23 @@
+{
+  "all_3900_completed": false,
+  "status": "HALTED_PROVIDER_CREDITS",
+  "source_preserved": true,
+  "executable_source_unchanged": true,
+  "non_executable_cache_changed": true,
+  "halt_reason": "Anthropic API credit balance too low; confirmed by free token-count endpoint, HTTP 400.",
+  "counts": {
+    "completed": 1414,
+    "infrastructure_error": 16,
+    "not_started_stage_halted": 1450,
+    "pending": 1020
+  },
+  "additional_usage_rated_usd": 5.182657765,
+  "additional_approved_usd": 22,
+  "remaining_approved_usd": 16.817342234999998,
+  "total_usage_rated_including_validation_usd": 6.709769865,
+  "outstanding_or_uncertain_requests": 0,
+  "note": "The old end-of-run file assertion included pytest cache data. All non-cache files match their pre-run hashes.",
+  "elapsed_seconds": 3229,
+  "shortcut_used": false,
+  "milestone3_or4_started": false
+}

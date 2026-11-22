@@ -1,0 +1,20 @@
+{
+  "budget": {
+    "accounted_plus_reserved_usd": 1.5271121,
+    "available_usd": 1.4728879,
+    "by_status": [
+      {
+        "amount": 1527112100,
+        "n": 1482,
+        "status": "settled"
+      }
+    ],
+    "cap_usd": 3.0,
+    "requests": 1482,
+    "within_cap": true
+  },
+  "completed": 300,
+  "elapsed_seconds": 5629,
+  "finished_job_records": 300,
+  "infrastructure_errors": 0
+}

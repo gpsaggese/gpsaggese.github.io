@@ -1,0 +1,22 @@
+{
+  "all_300_completed": true,
+  "budget": {
+    "accounted_plus_reserved_usd": 1.5271121,
+    "available_usd": 1.4728879,
+    "by_status": [
+      {
+        "amount": 1527112100,
+        "n": 1482,
+        "status": "settled"
+      }
+    ],
+    "cap_usd": 3.0,
+    "requests": 1482,
+    "within_cap": true
+  },
+  "elapsed_seconds": 5629,
+  "executable_source_unchanged": true,
+  "later_phases_started": false,
+  "source_database_unchanged": true,
+  "source_ledger_unchanged": true
+}

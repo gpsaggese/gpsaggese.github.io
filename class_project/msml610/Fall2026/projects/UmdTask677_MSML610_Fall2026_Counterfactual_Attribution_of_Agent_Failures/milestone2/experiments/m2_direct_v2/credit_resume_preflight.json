@@ -1,0 +1,152 @@
+{
+  "passed": 16,
+  "paid_calls": 0,
+  "network_blocked": true,
+  "rule": "Continue existing prefixes; never restart a sampled trajectory solely because it was long-running when credits ran out.",
+  "jobs": [
+    {
+      "job_id": "m2direct_01410",
+      "existing_branch": "br-bc069ac551b5",
+      "resume_checkpoint": "b9ee4e905e39cf057f82329cc927dd742f12b2b39c1f02c55ecde0da53843176",
+      "context_sha256": "aa509c28ac5a0253a9133433a5be88cfc9571303497067473208abd5aab8f493",
+      "env_sha256": "f790e31da9ff78ad91431ba3d9317c82b575ce952f201999bdef6c2fbffa069a",
+      "saved_paid_model_calls": 8,
+      "full_restore_verified": true
+    },
+    {
+      "job_id": "m2direct_01411",
+      "existing_branch": "br-feac8d9da483",
+      "resume_checkpoint": "cd768ee4c604d6fcaaa929696eed52eaf483338cc79d25160a27aefe419ce098",
+      "context_sha256": "ac1f3877334be0225dd8ea52ab938b0cb36dc3034ebb1ecdbd2e895ee5a8c4a0",
+      "env_sha256": "f5c08e3c712d889325b0ac3beab6e598fce9fe12f4a7a00862a3b691f8d7a8d1",
+      "saved_paid_model_calls": 7,
+      "full_restore_verified": true
+    },
+    {
+      "job_id": "m2direct_01413",
+      "existing_branch": "br-59fb217901fd",
+      "resume_checkpoint": "b9b21fc878994f823e63eb107de641e8a9f72bf214c4fd18fda5b29867cf20e3",
+      "context_sha256": "8e29db2b59cd914feb24f92ed280936f217f0d9ca277d457ce13d5c98bee017c",
+      "env_sha256": "7dd8dc8cdec4cf1744299407909587736ae094c4e5f334ae3fe5bdbebdcbaacc",
+      "saved_paid_model_calls": 8,
+      "full_restore_verified": true
+    },
+    {
+      "job_id": "m2direct_01415",
+      "existing_branch": "br-1ad4d1ae5749",
+      "resume_checkpoint": "2c7bfcba13bada09778ad94940caac3ed49bd1f0ef19c3b9b08e687a5e7905c3",
+      "context_sha256": "193727f54306a8765146b82a48b626354ba6e72d998ebb608a606eb1b416d3d8",
+      "env_sha256": "8f41dd06a14abe0f62a4e1f565642d644925d94799c62202ee6c1bbb1b257c02",
+      "saved_paid_model_calls": 6,
+      "full_restore_verified": true
+    },
+    {
+      "job_id": "m2direct_01416",
+      "existing_branch": "br-85bae6557caa",
+      "resume_checkpoint": "dc336794e6da5f8d6d9d08ad296f2ab11be0ca8cb7e160de2e3330fd5cfd93f4",
+      "context_sha256": "2f48a93e09032472b29b7b895e86648687de80fae4d2759021e638585c86e29f",
+      "env_sha256": "c7235035d76d3ede7967fcec0753388d8b857e0d305cbaf7ee87c8f817a72d4e",
+      "saved_paid_model_calls": 6,
+      "full_restore_verified": true
+    },
+    {
+      "job_id": "m2direct_01417",
+      "existing_branch": "br-7b00a3c0e252",
+      "resume_checkpoint": "c3094b85dd5df5f25b7027860e3e6c31450a3baef0be7b7adea753b4ff6a517d",
+      "context_sha256": "16e895d90881edb2858a6d05068dbbafda30f9e9f856c83d4bd803bcff118409",
+      "env_sha256": "505ff12b02b0e60d6a742358b272c196df4e50f6337cae652e5f1ec90ecacfe7",
+      "saved_paid_model_calls": 6,
+      "full_restore_verified": true
+    },
+    {
+      "job_id": "m2direct_01419",
+      "existing_branch": "br-68e5947cde1f",
+      "resume_checkpoint": "54d927f3796fb48da30b76837833c7c631b606efa36fff9bea6d5e68b5d4ca53",
+      "context_sha256": "2560f67cdc5edee01c7fd268b227eb17a9f6bf83329c60c7c45ce6884a023341",
+      "env_sha256": "e40f77eb0450266a18c3c2aded499ed38420b4de01cbad90224f3ea3008fdd3c",
+      "saved_paid_model_calls": 6,
+      "full_restore_verified": true
+    },
+    {
+      "job_id": "m2direct_01420",
+      "existing_branch": "br-20c2ea2a5bfe",
+      "resume_checkpoint": "555dc9c7118d1afbf59038f9f969d8a62a67de6cf473fa6d3af39c66c4f9e32e",
+      "context_sha256": "bc3918e211ce50427002cfaa5bb0fb07707ffec3f4155e30a49dabd3384fe342",
+      "env_sha256": "f6cbfc74654c9fa2a02fdb68a4ae2e135dd0ce4e60b015c3eafaf530639d62ae",
+      "saved_paid_model_calls": 6,
+      "full_restore_verified": true
+    },
+    {
+      "job_id": "m2direct_01422",
+      "existing_branch": "br-7360a7f8e8d2",
+      "resume_checkpoint": "9c876839855ca8bc14093f4fd2b0b0d9e61a1e9c6892f5f4486a8958f8048101",
+      "context_sha256": "2bcba3e465f4a9d40c4455fd7c51d100ba8124e0bc48b11800738baa7683a4d5",
+      "env_sha256": "ad9fc1edd1f77573795af597ccc09aca52d47461deebfeaea6639e6fe373921e",
+      "saved_paid_model_calls": 5,
+      "full_restore_verified": true
+    },
+    {
+      "job_id": "m2direct_01423",
+      "existing_branch": "br-75f128843920",
+      "resume_checkpoint": "b3ee249dd5996583bbda41ad2c0d1424469ffdc09f5bcfd8a56731939f6248d2",
+      "context_sha256": "082e3012b422e7aa2b8f2dec4415d3369f607a79192f61cfeacc50dda7565a18",
+      "env_sha256": "280768a05b1f21540809ee9989825c166af0cabd3b704a5d4355827d555b7194",
+      "saved_paid_model_calls": 5,
+      "full_restore_verified": true
+    },
+    {
+      "job_id": "m2direct_01424",
+      "existing_branch": "br-db5854220c8c",
+      "resume_checkpoint": "1cfce18e2e4d26db7f732bb0b60ad31f8d0ff8057592902d30dbfab91221af9a",
+      "context_sha256": "e8b0780731830fde210e29c87c26af3a49d2a6e0f0aeeb303b51ed73d87b4626",
+      "env_sha256": "d9f8036d26941bd339f6d8a11dd6931d311f5fe000d0202e491712616f8aec0e",
+      "saved_paid_model_calls": 4,
+      "full_restore_verified": true
+    },
+    {
+      "job_id": "m2direct_01425",
+      "existing_branch": "br-cdb5afedf89d",
+      "resume_checkpoint": "e48e89f5d6029de9b8b222311955c0bd6cd7cc3515da53b65e3813ca6af9c42c",
+      "context_sha256": "6997dee05f46b1ee1bdcfb3f656737761d05e018131310c3042ea27d9f1d6d3a",
+      "env_sha256": "ffe881b5979a83792c6d01289b7c7644f53c2a87de977a54e1969455f62b08cc",
+      "saved_paid_model_calls": 3,
+      "full_restore_verified": true
+    },
+    {
+      "job_id": "m2direct_01426",
+      "existing_branch": "br-2e8dfbc7fdd1",
+      "resume_checkpoint": "aa60dfdfc2a92331b33e8fad6288e43070188560375653f659ccdc0a0ab29739",
+      "context_sha256": "8dfc5b830807d1c6db78191f32ad2855b62ebb8229c199d93a8955e6f01b5243",
+      "env_sha256": "160da4edc295c5b78ef233ea77d5e6553b42fb616b83ca901a40aa04b306afdb",
+      "saved_paid_model_calls": 3,
+      "full_restore_verified": true
+    },
+    {
+      "job_id": "m2direct_01427",
+      "existing_branch": "br-24a6c9e85029",
+      "resume_checkpoint": "b0993174437cfcb3bdbadef45e25d82a830016f2d7578b085b452bea7aac55ec",
+      "context_sha256": "4c24ec718b9536d201ffd3b06b4cb6effe028a869f3a19db6e5f1ac6dc2b7608",
+      "env_sha256": "dd41725d2899cfecb61a0c67811c231d525fe6f6923e37c755e7bdebfebf50d7",
+      "saved_paid_model_calls": 5,
+      "full_restore_verified": true
+    },
+    {
+      "job_id": "m2direct_01428",
+      "existing_branch": "br-ec1fca3a5f28",
+      "resume_checkpoint": "f194c6874c90039ca308ab7b77278502293406aa22e0372e0f8ae20c41fe3f69",
+      "context_sha256": "cf8eb1f0f412b3cf8cb423072a180171187058807d53d8f076eb495dbd563ef7",
+      "env_sha256": "160da4edc295c5b78ef233ea77d5e6553b42fb616b83ca901a40aa04b306afdb",
+      "saved_paid_model_calls": 2,
+      "full_restore_verified": true
+    },
+    {
+      "job_id": "m2direct_01429",
+      "existing_branch": "br-3b11ef8507f6",
+      "resume_checkpoint": "86c8d61b4194f4696315d99407bb926d7d169e796b173b00acc4504a939da808",
+      "context_sha256": "a4025fca53206fdc90c82af289e1e1a013112c84aab0ed9e466330442fb61659",
+      "env_sha256": "22f5da9584f6cf96080cdedd671bd6a1f8dd9e6393d33f0695463f8248d2e973",
+      "saved_paid_model_calls": 2,
+      "full_restore_verified": true
+    }
+  ]
+}
