@@ -42,6 +42,8 @@ keywords:
 bibliography: references.bib
 ---
 
+Frozen: the paper source is now paper.tex (#963)
+
 # Introduction
 
 Deciding where to send the ball is, together with deciding how to hit it,
