@@ -28,7 +28,10 @@
   - The agent benchmark files (#695)
   - `causal_success_utils.py` and its tests (#709)
   - The causal success API notebook (#738)
-- `causal_success_example` has not been cleaned up yet (see #707)
+- `causal_success_example` was rewritten in #707 on the config of
+  `causal_success_utils.py`, with its helpers in
+  `causal_success_analysis_utils.py`
+  - How it was done and checked is in `docs/07-progress.md`, not in this file
 - [The Workflow](#the-workflow) sums up the steps that were followed, so that
   they can be reused on other folders
 
@@ -51,17 +54,21 @@
 
 ## Files
 
-| File                                    | What It Is                                         |
-| :-------------------------------------- | :------------------------------------------------- |
-| `agent_benchmark_utils.py`              | The simulation, merged from `skill_luck_sim/`      |
-| `agent_benchmark_API.py` / `.ipynb`     | API notebook: one small benchmark, step by step    |
-| `agent_benchmark_example.py` / `.ipynb` | Example notebook: the full sweep, figures, limits  |
-| `agent_benchmark_results/`              | The two CSV files of the full sweep (seed 0)       |
-| `test/test_agent_benchmark_utils.py`    | Unit tests for `agent_benchmark_utils.py`          |
-| `causal_success_utils.py`               | The talent and luck simulation (#709, #738)        |
-| `causal_success_API.py` / `.ipynb`      | API notebook: the building blocks, step by step    |
-| `test/test_causal_success_utils.py`     | Unit tests for `causal_success_utils.py`           |
-| `test/test_docker_all.py`               | Runs the notebooks and unit tests inside Docker    |
+| File                                         | What It Is                                        |
+| :------------------------------------------- | :------------------------------------------------ |
+| `agent_benchmark_utils.py`                   | The simulation, merged from `skill_luck_sim/`     |
+| `agent_benchmark_API.py` / `.ipynb`          | API notebook: one small benchmark, step by step   |
+| `agent_benchmark_example.py` / `.ipynb`      | Example notebook: the full sweep, figures, limits |
+| `agent_benchmark_results/`                   | The two CSV files of the full sweep (seed 0)      |
+| `test/test_agent_benchmark_utils.py`         | Unit tests for `agent_benchmark_utils.py`         |
+| `causal_success_utils.py`                    | The talent and luck simulation (#709, #738)       |
+| `causal_success_API.py` / `.ipynb`           | API notebook: the building blocks, step by step   |
+| `causal_success_example.py` / `.ipynb`       | Example notebook: the full analysis (#707)        |
+| `causal_success_analysis_utils.py`           | Analysis helpers of the example notebook (#707)   |
+| `test/test_causal_success_utils.py`          | Unit tests for `causal_success_utils.py`          |
+| `test/test_causal_success_analysis_utils.py` | Unit tests for the analysis helpers               |
+| `test/test_docker_all.py`                    | Runs the notebooks and unit tests inside Docker   |
+| `docs/`                                      | Plan, decisions, and progress of the project      |
 
 ## Merging `skill_luck_sim/`
 
