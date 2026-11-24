@@ -1,0 +1,27 @@
+inputs/
+.venv/
+__pycache__/
+*.pyc
+paid_runs/
+evidence/
+.env*
+.offline_settings/
+.matplotlib_cache/
+
+.pytest_cache/
+
+# Local delivery copies and future-milestone planning are outside M2 publication.
+delivery/
+experiments/m3_plan_v1/
+
+# Preserve operational evidence locally; publish scientific summaries instead.
+*.sqlite
+*.sqlite-*
+experiments/**/*.log
+experiments/**/HANDOFF.json
+experiments/**/halt_credit_*/
+experiments/**/final_artifact_inventory.json
+experiments/**/halt_evidence_inventory.json
+experiments/**/credit_probe_latest.json
+experiments/**/halt_provider_check.json
+experiments/**/authentication_check.json

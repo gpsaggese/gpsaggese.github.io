@@ -1,0 +1,6 @@
+name,substitution_fraction,expectation,total_trials,substituted_count,detection_rate,false_alarm_rate,median_p_value,accepted
+healthy_a_a,0.0,NO_ALERT,20,0,0.05,0.05,0.355,True
+full_model_swap,1.0,DETECT,20,60,1.0,0.0,0.0,True
+partial_substitution_10,0.1,MEASURE,20,6,0.05,0.0,0.43000000000000005,
+partial_substitution_25,0.25,MEASURE,20,15,0.1,0.0,0.3175,
+partial_substitution_50,0.5,DETECT,20,30,0.95,0.0,0.005,True

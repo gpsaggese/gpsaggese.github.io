@@ -1,0 +1,6 @@
+{
+  "wilson_zero_success_bound": "passed",
+  "newcombe_reference_case": "passed",
+  "fisher_reference_case": "passed",
+  "no_model_imports": true
+}

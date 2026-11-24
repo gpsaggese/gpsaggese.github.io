@@ -1,1 +1,1 @@
-../../../helpers_root/devops/docker_run/test_setup.sh
+../../../../helpers_root/devops/docker_run/test_setup.sh

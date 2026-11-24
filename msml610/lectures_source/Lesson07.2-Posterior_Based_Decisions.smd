@@ -242,13 +242,14 @@
 ## Posterior Predictive Checks
 
 * Samples from Posterior Distribution
-- Given **\blue{posterior distribution $\Pr(\theta | y)$}**, generate predictions
-  **\red{$\tilde{y}$}** based on data **\green{$y$}** and estimated parameters
-  **\purple{$\hat{\theta}$}**:
+- Given **\blue{posterior distribution}** $\textcolor{blue}{\Pr(\theta | y)}$,
+  generate **\red{predictions}** $\textcolor{red}{\tilde{y}}$ based on
+  **\green{data}** $\textcolor{green}{y}$ and **\violet{estimated parameters}**
+  $\textcolor{purple}{\hat{\theta}}$:
   $$
-  \Pr(\red{\tilde{y}} | \green{y})
-  = \int_{\purple{\hat{\theta}}} \Pr(\tilde{y} | \theta)
-    \blue{\Pr(\theta | y)} d\theta
+  \Pr(\textcolor{red}{\tilde{y}} | \textcolor{green}{y})
+  = \int_{\textcolor{purple}{\hat{\theta}}} \Pr(\tilde{y} | \theta)
+    \textcolor{blue}{\Pr(\theta | y)} d\theta
   = \int \text{model} \times \text{posterior}
   $$
   - This is called the _"posterior predictive distribution"_ as it

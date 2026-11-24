@@ -1,4 +1,31 @@
-# In-Memory Market Demonstration
+# Noesis notebooks
+
+## Model-drift analysis and figures
+
+- `model_drift_analysis.ipynb` and `model_drift_analysis.py` reproduce the
+  frozen capability-versus-Hamming-MMD comparison and write the derived
+  summary, table, and findings report under `docs/findings`
+- `model_drift_figures.ipynb` and `model_drift_figures.py` regenerate the five
+  paper figures as PNG and SVG files from the checked-in summaries
+- Neither notebook makes provider calls; the expensive live collection and
+  permutation-test outputs are treated as frozen inputs
+
+From the repository root, sync and execute the notebooks with:
+
+```bash
+jupytext --sync research/Noesis/notebooks/model_drift_analysis.ipynb
+jupytext --sync research/Noesis/notebooks/model_drift_figures.ipynb
+PYTHONPATH="$PWD/helpers_root:$PWD" jupyter nbconvert \
+  --execute --to html --ExecutePreprocessor.timeout=120 \
+  --output-dir=/tmp/noesis-model-drift \
+  research/Noesis/notebooks/model_drift_analysis.ipynb \
+  research/Noesis/notebooks/model_drift_figures.ipynb
+```
+
+Keep executed outputs and generated HTML out of the PR. The paired notebook
+sources contain no saved execution outputs.
+
+## In-memory market demonstration
 
 - `market_in_memory.ipynb`: five seeded scenarios with input tables, auction
   results, per-tier curves, contracts, and unmatched orders
@@ -25,3 +52,18 @@
   to explore different values with the same guaranteed regimes
 - Keep executed outputs and generated HTML out of the PR; the paired sources
   contain no saved execution outputs
+
+# Prompt Tokens Billed per Character
+
+- `prompt_tokens.ipynb`: fits the prompt tokens that the seed sellers billed in
+  the run of `scripts/experiment_prompt_tokens.py` (#720), and plots them
+- `prompt_tokens.py`: Jupytext pair; edit either source and sync with
+  `jupytext --sync research/Noesis/notebooks/prompt_tokens.ipynb`
+- `prompt_tokens_utils.py`: the fit, the tables, and the plot, one function per
+  cell
+- Reads `data/prompt_tokens/prompt_tokens.raw.jsonl`; makes no calls
+- Run it top to bottom from the repository root:
+
+  ```bash
+  > python research/Noesis/notebooks/prompt_tokens.py
+  ```

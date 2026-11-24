@@ -1,6 +1,8 @@
 # How to Post a Blog on LinkedIn
 
 - Use this to promote a published blog on LinkedIn
+- We post in our [LinkedIn group](https://www.linkedin.com/groups/42828606/),
+  and then share the blog from our own profiles
 - Each LinkedIn post is a short version of the blog, with links to the website
   and to the Substack post
   - The website stays the source of truth: the LinkedIn post only points to it
@@ -25,8 +27,8 @@
 | 1    | Check the blog is live | LinkedIn owner | Before drafting               |
 | 2    | Write the post         | LinkedIn owner | Before the review             |
 | 3    | Review the post        | GP             | Before posting                |
-| 4    | Post it                | Org account    | Same day as the Substack post |
-| 5    | Share it               | Team           | Same day                      |
+| 4    | Post it in the group   | LinkedIn owner | Same day as the Substack post |
+| 5    | Share it               | Authors, team  | Same day                      |
 | 6    | Track the numbers      | LinkedIn owner | Weekly, for the report        |
 
 # 1. Check the Blog Is Live
@@ -72,26 +74,28 @@
 
 # 4. Post It
 
-- Post on the same day as the weekly Substack post
-- The account that posts is to be confirmed by GP in
-  [#936](https://github.com/gpsaggese/gpsaggese.github.io/issues/936)
+- Post in the [LinkedIn group](https://www.linkedin.com/groups/42828606/) on
+  the same day as the weekly Substack post
 - Attach the image, and check that both links work in the published post
 - Link the LinkedIn post in the blog's issue
 
 # 5. Share It
 
-- The team reshares the post on the same day
-- Add one line of your own when resharing, instead of a bare repost
+- On the same day, the blog's authors and the team share the blog from their
+  own profiles
+  - Write a short post with 1-2 lines of your own take and the website link
+    (with `?utm_source=linkedin`)
+- React to and comment on the group post, and reply to comments in the first
+  hours
 
 # 6. Track the Numbers
 
 - Every week, add the numbers to the LinkedIn tab of the
   [weekly report](https://docs.google.com/spreadsheets/d/19n2gV8IZ3JnFicclOnglCl9qvzNA6o4S7hGWpeTNV50/edit?usp=sharing)
-  - Impressions, reactions, comments, and reposts, from the post's analytics
+  - Reactions, comments, and reposts on the group post, and impressions if
+    LinkedIn shows them
   - Clicks from LinkedIn to the website, from Google Analytics
     (`utm_source=linkedin`)
-- How we get the LinkedIn analytics is to be confirmed by GP in
-  [#936](https://github.com/gpsaggese/gpsaggese.github.io/issues/936)
 
 # Checklist
 
@@ -102,7 +106,8 @@
   - [ ] Blog live on the website and on Substack
   - [ ] Post drafted from the template, as a comment in this issue
   - [ ] Reviewed by GP
-  - [ ] Posted on the publication day: <LinkedIn link>
-  - [ ] Reshared by the team
+  - [ ] Posted in the LinkedIn group on the publication day: <LinkedIn link>
+  - [ ] Shared by the authors and the team from their own profiles
+  - [ ] Team reacted to and commented on the group post
   - [ ] Numbers added to the LinkedIn tab of the weekly report
   ```

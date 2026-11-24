@@ -19,7 +19,7 @@
 | Tier | Capability class (e.g., `standard`); the MVP has one |
 | Auction / clearing | Matching bids to asks every T seconds and setting one price per tier |
 | Contract | A matched deal we can check: tasks, tier, `l_max`, `r_min`, price, state |
-| Task | One chat completion, at most 256 output tokens (`03-decisions.md` D19) |
+| Task | One chat completion, at most 256 output tokens and a prompt of at most 1,000 tokens (`03-decisions.md` D19, D36) |
 | `l_max` | The contract's latency limit in seconds; the request timeout is 2x this |
 | `r_min` | The contract's promised reliability (share of on-time successful requests) |
 | Window | The requests a contract covers: its task count or 60 s, whichever comes first |

@@ -1,0 +1,526 @@
+{
+ "sha": "a66db8963acfecec5a7f3316115f42eaf54c0374",
+ "commits": 3404,
+ "records": {
+  "2025-05-28-dataspace-profile-context": {
+   "path": "docs/developer/decision-records/2025-05-28-dataspace-profile-context/README.md",
+   "first_commit": "8ad147b8fd7912f181f4457fc8f8fd50b9a1bf7a",
+   "first_commit_date": "2025-06-12",
+   "last_edit_date": "2025-06-12",
+   "edits_after_first": 0,
+   "resolved_refs": {
+    "class": [
+     "ContractDefinition",
+     "DataspaceProfileContext",
+     "DataspaceProfileContextRegistry"
+    ],
+    "module": [],
+    "path": [],
+    "file": []
+   },
+   "n_resolved_refs": 3,
+   "dead_identifiers": [],
+   "unresolved_other": [],
+   "adr_commit_files": 2,
+   "adr_commit_code_files": [],
+   "linked_files": [
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/contract/spi/types/offer/ContractDefinition.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/protocol/spi/DataspaceProfileContext.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/protocol/spi/DataspaceProfileContextRegistry.java"
+   ],
+   "n_linked_files": 3,
+   "churn_no_rename_following": 5,
+   "churn_with_shared_config": 16,
+   "churn_code": 16,
+   "stale": 16.0,
+   "stale_reason": null
+  },
+  "2025-07-25-multiple-participant-identifiers": {
+   "path": "docs/developer/decision-records/2025-07-25-multiple-participant-identifiers/README.md",
+   "first_commit": "6438222e0fa68bae43a3d95a38b4493b6b0f58f6",
+   "first_commit_date": "2025-07-30",
+   "last_edit_date": "2025-07-30",
+   "edits_after_first": 0,
+   "resolved_refs": {
+    "class": [
+     "ClaimToken",
+     "CredentialSubject",
+     "DataspaceProfileContext",
+     "DataspaceProfileContextRegistry",
+     "DefaultParticipantIdExtractionFunction",
+     "ParticipantAgentService",
+     "ParticipantAgentServiceExtension",
+     "ParticipantAgentServiceImpl",
+     "ParticipantIdExtractionFunction",
+     "ProtocolTokenValidatorImpl",
+     "ServiceExtensionContext",
+     "VerifiableCredential"
+    ],
+    "module": [
+     "iam-mock"
+    ],
+    "path": [],
+    "file": []
+   },
+   "n_resolved_refs": 13,
+   "dead_identifiers": [
+    "DefaultDcpParticipantAgentServiceExtension"
+   ],
+   "unresolved_other": [
+    "DCP",
+    "DataspaceProfileRegistry",
+    "DefaultDcpIdExtractionFunction",
+    "ExtensionPoint",
+    "FunctionalInterface",
+    "NotNull",
+    "ParticipantAgentServiceExtensions"
+   ],
+   "adr_commit_files": 2,
+   "adr_commit_code_files": [],
+   "linked_files": [
+    "core/common/connector-core/src/main/java/org/eclipse/edc/connector/core/agent/ParticipantAgentServiceImpl.java",
+    "core/control-plane/control-plane-aggregate-services/src/main/java/org/eclipse/edc/connector/controlplane/services/protocol/ProtocolTokenValidatorImpl.java",
+    "extensions/common/iam/iam-mock/build.gradle.kts",
+    "extensions/common/iam/iam-mock/src/main/java/org/eclipse/edc/iam/mock/IamMockExtension.java",
+    "extensions/common/iam/iam-mock/src/main/java/org/eclipse/edc/iam/mock/MockIdentityService.java",
+    "extensions/common/iam/iam-mock/src/main/java/org/eclipse/edc/iam/mock/MockParticipantIdExtractionFunction.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/participant/spi/ParticipantAgentService.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/participant/spi/ParticipantAgentServiceExtension.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/protocol/spi/DataspaceProfileContext.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/protocol/spi/DataspaceProfileContextRegistry.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/protocol/spi/DefaultParticipantIdExtractionFunction.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/protocol/spi/ParticipantIdExtractionFunction.java",
+    "spi/core-spi/src/main/java/org/eclipse/edc/iam/verifiablecredentials/spi/model/CredentialSubject.java",
+    "spi/core-spi/src/main/java/org/eclipse/edc/iam/verifiablecredentials/spi/model/VerifiableCredential.java",
+    "spi/core-spi/src/main/java/org/eclipse/edc/spi/iam/ClaimToken.java",
+    "spi/core-spi/src/main/java/org/eclipse/edc/spi/system/ServiceExtensionContext.java"
+   ],
+   "n_linked_files": 16,
+   "churn_no_rename_following": 21,
+   "churn_with_shared_config": 27,
+   "churn_code": 27,
+   "stale": 27.0,
+   "stale_reason": null
+  },
+  "2025-08-26-participant-context": {
+   "path": "docs/developer/decision-records/2025-08-26-participant-context/README.md",
+   "first_commit": "09b24974f621ac95cb238ecaf15b00fdfa19af80",
+   "first_commit_date": "2025-08-29",
+   "last_edit_date": "2025-11-26",
+   "edits_after_first": 1,
+   "resolved_refs": {
+    "class": [
+     "Asset",
+     "CatalogProtocolService",
+     "ContractAgreement",
+     "ContractDefinition",
+     "ContractNegotiation",
+     "ContractNegotiationProtocolService",
+     "DataPlaneInstance",
+     "DspHttpRemoteMessageDispatcherImpl",
+     "IdentityService",
+     "ParticipantContext",
+     "ParticipantContextService",
+     "ParticipantContextStore",
+     "PolicyDefinition",
+     "TransferProcess",
+     "TransferProcessProtocolService"
+    ],
+    "module": [],
+    "path": [],
+    "file": []
+   },
+   "n_resolved_refs": 15,
+   "dead_identifiers": [
+    "RemoteMessageDispatcher"
+   ],
+   "unresolved_other": [
+    "EndpointDataReferenceEntry",
+    "RemoteDispatcher"
+   ],
+   "adr_commit_files": 2,
+   "adr_commit_code_files": [],
+   "linked_files": [
+    "data-protocols/dsp/dsp-core/dsp-http-core/src/main/java/org/eclipse/edc/protocol/dsp/http/dispatcher/DspHttpRemoteMessageDispatcherImpl.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/asset/spi/domain/Asset.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/contract/spi/types/agreement/ContractAgreement.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/contract/spi/types/negotiation/ContractNegotiation.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/contract/spi/types/offer/ContractDefinition.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/dataplane/spi/instance/DataPlaneInstance.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/policy/spi/PolicyDefinition.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/services/spi/catalog/CatalogProtocolService.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/services/spi/contractnegotiation/ContractNegotiationProtocolService.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/services/spi/transferprocess/TransferProcessProtocolService.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/transfer/spi/types/TransferProcess.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/spi/iam/IdentityService.java",
+    "spi/core-spi/src/main/java/org/eclipse/edc/participantcontext/spi/service/ParticipantContextService.java",
+    "spi/core-spi/src/main/java/org/eclipse/edc/participantcontext/spi/store/ParticipantContextStore.java",
+    "spi/core-spi/src/main/java/org/eclipse/edc/participantcontext/spi/types/ParticipantContext.java"
+   ],
+   "n_linked_files": 15,
+   "churn_no_rename_following": 30,
+   "churn_with_shared_config": 63,
+   "churn_code": 63,
+   "stale": 31.5,
+   "stale_reason": null
+  },
+  "2025-10-15-participant-context-config": {
+   "path": "docs/developer/decision-records/2025-10-15-participant-context-config/README.md",
+   "first_commit": "0ef62ebe11a7869cf36ab862f651e0ead3dc35ee",
+   "first_commit_date": "2025-10-17",
+   "last_edit_date": "2025-10-17",
+   "edits_after_first": 0,
+   "resolved_refs": {
+    "class": [
+     "Config",
+     "ParticipantContextConfig",
+     "ParticipantContextConfigService",
+     "ParticipantContextConfigStore",
+     "ServiceResult",
+     "Validator"
+    ],
+    "module": [],
+    "path": [],
+    "file": []
+   },
+   "n_resolved_refs": 6,
+   "dead_identifiers": [],
+   "unresolved_other": [
+    "ExtensionPoint",
+    "JsonObject",
+    "ValidatorResult"
+   ],
+   "adr_commit_files": 2,
+   "adr_commit_code_files": [],
+   "linked_files": [
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/participantcontext/spi/config/ParticipantContextConfig.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/participantcontext/spi/config/service/ParticipantContextConfigService.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/participantcontext/spi/config/store/ParticipantContextConfigStore.java",
+    "spi/core-spi/src/main/java/org/eclipse/edc/spi/result/ServiceResult.java",
+    "spi/core-spi/src/main/java/org/eclipse/edc/spi/system/configuration/Config.java",
+    "spi/core-spi/src/main/java/org/eclipse/edc/validator/spi/Validator.java"
+   ],
+   "n_linked_files": 6,
+   "churn_no_rename_following": 6,
+   "churn_with_shared_config": 10,
+   "churn_code": 10,
+   "stale": 10.0,
+   "stale_reason": null
+  },
+  "2025-10-29-participant-identifiers": {
+   "path": "docs/developer/decision-records/2025-10-29-participant-identifiers/README.md",
+   "first_commit": "84eeb92203cb851b5c557418f53da41d2eb3ba45",
+   "first_commit_date": "2025-10-30",
+   "last_edit_date": "2025-10-30",
+   "edits_after_first": 0,
+   "resolved_refs": {
+    "class": [
+     "DataspaceProfileContext",
+     "DataspaceProfileContextRegistry",
+     "ParticipantIdentityResolver",
+     "ServiceExtensionContext"
+    ],
+    "module": [],
+    "path": [],
+    "file": []
+   },
+   "n_resolved_refs": 4,
+   "dead_identifiers": [],
+   "unresolved_other": [
+    "ParticipantIdentifierResolver"
+   ],
+   "adr_commit_files": 2,
+   "adr_commit_code_files": [],
+   "linked_files": [
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/protocol/spi/DataspaceProfileContext.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/protocol/spi/DataspaceProfileContextRegistry.java",
+    "spi/core-spi/src/main/java/org/eclipse/edc/participantcontext/spi/identity/ParticipantIdentityResolver.java",
+    "spi/core-spi/src/main/java/org/eclipse/edc/spi/system/ServiceExtensionContext.java"
+   ],
+   "n_linked_files": 4,
+   "churn_no_rename_following": 4,
+   "churn_with_shared_config": 9,
+   "churn_code": 9,
+   "stale": 9.0,
+   "stale_reason": null
+  },
+  "2026-05-11-multi-profile-virtual-connector": {
+   "path": "docs/developer/decision-records/2026-05-11-multi-profile-virtual-connector/README.md",
+   "first_commit": "1370959c690535b59212204d6bd03793ed59257c",
+   "first_commit_date": "2026-05-11",
+   "last_edit_date": "2026-05-20",
+   "edits_after_first": 1,
+   "resolved_refs": {
+    "class": [
+     "AbstractJerseyJsonLdInterceptor",
+     "DataspaceProfileContext",
+     "DataspaceProfileContextRegistry",
+     "JsonLdNamespace",
+     "ParticipantContextConfig",
+     "ParticipantIdExtractionFunction",
+     "ProfileJerseyJsonLdInterceptor",
+     "ProtocolVersion",
+     "ProtocolWebhook",
+     "UrlInfoRequestFilter"
+    ],
+    "module": [
+     "dsp-2025"
+    ],
+    "path": [
+     "data-protocols/dsp/dsp-virtual/dsp-2025-virtual"
+    ],
+    "file": []
+   },
+   "n_resolved_refs": 12,
+   "dead_identifiers": [
+    "DspHttpDispatcherV2025Extension",
+    "ParticipantProfileResolver"
+   ],
+   "unresolved_other": [
+    "http-dsp-profile-2025-1"
+   ],
+   "adr_commit_files": 2,
+   "adr_commit_code_files": [],
+   "linked_files": [
+    "core/common/lib/core-lib/src/main/java/org/eclipse/edc/web/jersey/providers/jsonld/AbstractJerseyJsonLdInterceptor.java",
+    "core/common/lib/core-lib/src/main/java/org/eclipse/edc/web/jersey/providers/jsonld/ProfileJerseyJsonLdInterceptor.java",
+    "core/common/lib/core-lib/src/main/java/org/eclipse/edc/web/jersey/providers/jsonld/UrlInfoRequestFilter.java",
+    "data-protocols/dsp/dsp-2025/build.gradle.kts",
+    "data-protocols/dsp/dsp-2025/dsp-catalog-2025/build.gradle.kts",
+    "data-protocols/dsp/dsp-2025/dsp-catalog-2025/dsp-catalog-http-api-2025/build.gradle.kts",
+    "data-protocols/dsp/dsp-2025/dsp-catalog-2025/dsp-catalog-http-api-2025/src/main/java/org/eclipse/edc/protocol/dsp/catalog/http/api/v2025/DspCatalogApi2025Extension.java",
+    "data-protocols/dsp/dsp-2025/dsp-catalog-2025/dsp-catalog-http-api-2025/src/main/java/org/eclipse/edc/protocol/dsp/catalog/http/api/v2025/controller/DspCatalogApiController20251.java",
+    "data-protocols/dsp/dsp-2025/dsp-catalog-2025/dsp-catalog-transform-2025/build.gradle.kts",
+    "data-protocols/dsp/dsp-2025/dsp-catalog-2025/dsp-catalog-transform-2025/src/main/java/org/eclipse/edc/protocol/dsp/catalog/transform/v2025/DspCatalogTransformV2025Extension.java",
+    "data-protocols/dsp/dsp-2025/dsp-catalog-2025/dsp-catalog-transform-2025/src/main/java/org/eclipse/edc/protocol/dsp/catalog/transform/v2025/to/JsonObjectToCatalogTransformer.java",
+    "data-protocols/dsp/dsp-2025/dsp-http-api-configuration-2025/build.gradle.kts",
+    "data-protocols/dsp/dsp-2025/dsp-http-api-configuration-2025/src/main/java/org/eclipse/edc/protocol/dsp/http/api/configuration/v2025/DspApiConfigurationV2025Extension.java",
+    "data-protocols/dsp/dsp-2025/dsp-negotiation-2025/build.gradle.kts",
+    "data-protocols/dsp/dsp-2025/dsp-negotiation-2025/dsp-negotiation-http-api-2025/build.gradle.kts",
+    "data-protocols/dsp/dsp-2025/dsp-negotiation-2025/dsp-negotiation-http-api-2025/src/main/java/org/eclipse/edc/protocol/dsp/negotiation/http/api/v2025/DspNegotiationApi2025Extension.java",
+    "data-protocols/dsp/dsp-2025/dsp-negotiation-2025/dsp-negotiation-http-api-2025/src/main/java/org/eclipse/edc/protocol/dsp/negotiation/http/api/v2025/controller/DspNegotiationApiController20251.java",
+    "data-protocols/dsp/dsp-2025/dsp-negotiation-2025/dsp-negotiation-transform-2025/build.gradle.kts",
+    "data-protocols/dsp/dsp-2025/dsp-negotiation-2025/dsp-negotiation-transform-2025/src/main/java/org/eclipse/edc/protocol/dsp/negotiation/transform/v2025/DspNegotiationTransformV2025Extension.java",
+    "data-protocols/dsp/dsp-2025/dsp-negotiation-2025/dsp-negotiation-transform-2025/src/main/java/org/eclipse/edc/protocol/dsp/negotiation/transform/v2025/from/JsonObjectFromContractAgreementMessageV2025Transformer.java",
+    "data-protocols/dsp/dsp-2025/dsp-negotiation-2025/dsp-negotiation-transform-2025/src/main/java/org/eclipse/edc/protocol/dsp/negotiation/transform/v2025/from/JsonObjectFromContractOfferMessageV2025Transformer.java",
+    "data-protocols/dsp/dsp-2025/dsp-negotiation-2025/dsp-negotiation-transform-2025/src/main/java/org/eclipse/edc/protocol/dsp/negotiation/transform/v2025/from/JsonObjectFromContractRequestMessageV2025Transformer.java",
+    "data-protocols/dsp/dsp-2025/dsp-spi-2025/build.gradle.kts",
+    "data-protocols/dsp/dsp-2025/dsp-spi-2025/src/main/java/org/eclipse/edc/protocol/dsp/spi/type/Dsp2025Constants.java",
+    "data-protocols/dsp/dsp-2025/dsp-transfer-process-2025/build.gradle.kts",
+    "data-protocols/dsp/dsp-2025/dsp-transfer-process-2025/dsp-transfer-process-http-api-2025/build.gradle.kts",
+    "data-protocols/dsp/dsp-2025/dsp-transfer-process-2025/dsp-transfer-process-http-api-2025/src/main/java/org/eclipse/edc/protocol/dsp/transferprocess/http/api/v2025/DspTransferProcessApi2025Extension.java",
+    "data-protocols/dsp/dsp-2025/dsp-transfer-process-2025/dsp-transfer-process-http-api-2025/src/main/java/org/eclipse/edc/protocol/dsp/transferprocess/http/api/v2025/controller/DspTransferProcessApiController20251.java",
+    "data-protocols/dsp/dsp-2025/dsp-transfer-process-2025/dsp-transfer-process-transform-2025/build.gradle.kts",
+    "data-protocols/dsp/dsp-2025/dsp-transfer-process-2025/dsp-transfer-process-transform-2025/src/main/java/org/eclipse/edc/protocol/dsp/transferprocess/transform/v2025/DspTransferProcessTransformV2025Extension.java",
+    "data-protocols/dsp/dsp-virtual/dsp-2025-virtual/build.gradle.kts",
+    "data-protocols/dsp/dsp-virtual/dsp-2025-virtual/dsp-catalog-http-api-2025-virtual/build.gradle.kts",
+    "data-protocols/dsp/dsp-virtual/dsp-2025-virtual/dsp-catalog-http-api-2025-virtual/src/main/java/org/eclipse/edc/protocol/dsp/catalog/http/api/v2025/virtual/DspVirtualCatalogApi2025Extension.java",
+    "data-protocols/dsp/dsp-virtual/dsp-2025-virtual/dsp-catalog-http-api-2025-virtual/src/main/java/org/eclipse/edc/protocol/dsp/catalog/http/api/v2025/virtual/controller/DspVirtualCatalogApiController20251.java",
+    "data-protocols/dsp/dsp-virtual/dsp-2025-virtual/dsp-http-api-configuration-2025-virtual/build.gradle.kts",
+    "data-protocols/dsp/dsp-virtual/dsp-2025-virtual/dsp-http-api-configuration-2025-virtual/src/main/java/org/eclipse/edc/protocol/dsp/http/api/configuration/v2025/virtual/DspVirtualApiConfigurationV2025Extension.java",
+    "data-protocols/dsp/dsp-virtual/dsp-2025-virtual/dsp-negotiation-http-api-2025-virtual/build.gradle.kts",
+    "data-protocols/dsp/dsp-virtual/dsp-2025-virtual/dsp-negotiation-http-api-2025-virtual/src/main/java/org/eclipse/edc/protocol/dsp/negotiation/http/api/v2025/virtual/DspVirtualNegotiationApi2025Extension.java",
+    "data-protocols/dsp/dsp-virtual/dsp-2025-virtual/dsp-negotiation-http-api-2025-virtual/src/main/java/org/eclipse/edc/protocol/dsp/negotiation/http/api/v2025/virtual/controller/DspVirtualNegotiationApiController20251.java",
+    "data-protocols/dsp/dsp-virtual/dsp-2025-virtual/dsp-transfer-process-http-api-2025-virtual/build.gradle.kts",
+    "data-protocols/dsp/dsp-virtual/dsp-2025-virtual/dsp-transfer-process-http-api-2025-virtual/src/main/java/org/eclipse/edc/protocol/dsp/transferprocess/http/api/v2025/virtual/DspVirtualTransferProcessApi2025Extension.java",
+    "data-protocols/dsp/dsp-virtual/dsp-2025-virtual/dsp-transfer-process-http-api-2025-virtual/src/main/java/org/eclipse/edc/protocol/dsp/transferprocess/http/api/v2025/virtual/controller/DspVirtualTransferProcessApiController20251.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/participantcontext/spi/config/ParticipantContextConfig.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/protocol/spi/DataspaceProfileContext.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/protocol/spi/DataspaceProfileContextRegistry.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/protocol/spi/ParticipantIdExtractionFunction.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/protocol/spi/ProtocolVersion.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/protocol/spi/ProtocolWebhook.java",
+    "spi/core-spi/src/main/java/org/eclipse/edc/jsonld/spi/JsonLdNamespace.java"
+   ],
+   "n_linked_files": 49,
+   "churn_no_rename_following": 16,
+   "churn_with_shared_config": 17,
+   "churn_code": 17,
+   "stale": 8.5,
+   "stale_reason": null
+  },
+  "2026-09-22-per-participant-resource-ids": {
+   "path": "docs/developer/decision-records/2026-09-22-per-participant-resource-ids/README.md",
+   "first_commit": "bb07ccc67a2342c756d3680c8eadbac8971d4644",
+   "first_commit_date": "2026-09-23",
+   "last_edit_date": "2026-09-23",
+   "edits_after_first": 0,
+   "resolved_refs": {
+    "class": [
+     "Asset",
+     "AssetIndex",
+     "AssetIndexTestBase",
+     "AssetService",
+     "ConsumerOfferResolver",
+     "ContractAgreement",
+     "ContractDefinition",
+     "ContractDefinitionService",
+     "ContractDefinitionStore",
+     "ContractDefinitionStoreTestBase",
+     "ContractNegotiation",
+     "DataFlowController",
+     "DataPlaneInstance",
+     "DataPlaneSelectorService",
+     "ParticipantContext",
+     "PolicyDefinition",
+     "PolicyDefinitionService",
+     "PolicyDefinitionStore",
+     "PolicyDefinitionStoreTestBase",
+     "SingleParticipantContextSupplier",
+     "TransferProcess"
+    ],
+    "module": [],
+    "path": [],
+    "file": []
+   },
+   "n_resolved_refs": 21,
+   "dead_identifiers": [],
+   "unresolved_other": [],
+   "adr_commit_files": 2,
+   "adr_commit_code_files": [],
+   "linked_files": [
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/asset/spi/domain/Asset.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/asset/spi/index/AssetIndex.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/contract/spi/offer/ConsumerOfferResolver.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/contract/spi/offer/store/ContractDefinitionStore.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/contract/spi/types/agreement/ContractAgreement.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/contract/spi/types/negotiation/ContractNegotiation.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/contract/spi/types/offer/ContractDefinition.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/dataplane/spi/DataPlaneSelectorService.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/dataplane/spi/instance/DataPlaneInstance.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/policy/spi/PolicyDefinition.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/policy/spi/store/PolicyDefinitionStore.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/services/spi/asset/AssetService.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/services/spi/contractdefinition/ContractDefinitionService.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/services/spi/policydefinition/PolicyDefinitionService.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/transfer/spi/flow/DataFlowController.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/connector/controlplane/transfer/spi/types/TransferProcess.java",
+    "spi/control-plane-spi/src/main/java/org/eclipse/edc/participantcontext/single/spi/SingleParticipantContextSupplier.java",
+    "spi/control-plane-spi/src/testFixtures/java/org/eclipse/edc/connector/controlplane/asset/spi/testfixtures/AssetIndexTestBase.java",
+    "spi/control-plane-spi/src/testFixtures/java/org/eclipse/edc/connector/controlplane/contract/spi/testfixtures/offer/store/ContractDefinitionStoreTestBase.java",
+    "spi/control-plane-spi/src/testFixtures/java/org/eclipse/edc/connector/controlplane/policy/spi/testfixtures/store/PolicyDefinitionStoreTestBase.java",
+    "spi/core-spi/src/main/java/org/eclipse/edc/participantcontext/spi/types/ParticipantContext.java"
+   ],
+   "n_linked_files": 21,
+   "churn_no_rename_following": 11,
+   "churn_with_shared_config": 11,
+   "churn_code": 11,
+   "stale": 11.0,
+   "stale_reason": null
+  },
+  "2026-09-24-remove-atomikos": {
+   "path": "docs/developer/decision-records/2026-09-24-remove-atomikos/README.md",
+   "first_commit": "de28060a4714d9995912b74190e4e2ee63052e84",
+   "first_commit_date": "2026-09-24",
+   "last_edit_date": "2026-09-24",
+   "edits_after_first": 0,
+   "resolved_refs": {
+    "class": [
+     "DataSourceRegistry",
+     "TransactionContext"
+    ],
+    "module": [
+     "sql-pool-apache-commons",
+     "transaction-local"
+    ],
+    "path": [
+     "gradle/libs.versions.toml"
+    ],
+    "file": [
+     "settings.gradle.kts"
+    ]
+   },
+   "n_resolved_refs": 6,
+   "dead_identifiers": [
+    "transaction-atomikos"
+   ],
+   "unresolved_other": [
+    "atomikos-jdbc",
+    "atomikos-jta"
+   ],
+   "adr_commit_files": 2,
+   "adr_commit_code_files": [],
+   "linked_files": [
+    "extensions/common/sql/sql-pool/sql-pool-apache-commons/build.gradle.kts",
+    "extensions/common/sql/sql-pool/sql-pool-apache-commons/src/main/java/org/eclipse/edc/sql/pool/commons/CommonsConnectionPool.java",
+    "extensions/common/sql/sql-pool/sql-pool-apache-commons/src/main/java/org/eclipse/edc/sql/pool/commons/CommonsConnectionPoolConfig.java",
+    "extensions/common/sql/sql-pool/sql-pool-apache-commons/src/main/java/org/eclipse/edc/sql/pool/commons/CommonsConnectionPoolServiceExtension.java",
+    "extensions/common/transaction/transaction-local/build.gradle.kts",
+    "extensions/common/transaction/transaction-local/src/main/java/org/eclipse/edc/transaction/local/ConnectionWrapper.java",
+    "extensions/common/transaction/transaction-local/src/main/java/org/eclipse/edc/transaction/local/DataSourceResource.java",
+    "extensions/common/transaction/transaction-local/src/main/java/org/eclipse/edc/transaction/local/LocalDataSourceRegistry.java",
+    "extensions/common/transaction/transaction-local/src/main/java/org/eclipse/edc/transaction/local/LocalTransactionContext.java",
+    "extensions/common/transaction/transaction-local/src/main/java/org/eclipse/edc/transaction/local/LocalTransactionExtension.java",
+    "gradle/libs.versions.toml",
+    "settings.gradle.kts",
+    "spi/core-spi/src/main/java/org/eclipse/edc/transaction/datasource/spi/DataSourceRegistry.java",
+    "spi/core-spi/src/main/java/org/eclipse/edc/transaction/spi/TransactionContext.java"
+   ],
+   "n_linked_files": 14,
+   "churn_no_rename_following": 28,
+   "churn_with_shared_config": 28,
+   "churn_code": 0,
+   "stale": 0.0,
+   "stale_reason": null
+  },
+  "2025-02-07-http-proxy-data-plane-deprecation": {
+   "path": "docs/developer/decision-records/2025-02-07-http-proxy-data-plane-deprecation/README.md",
+   "first_commit": "5761ab73f6a84c0717a90f083145365423989633",
+   "first_commit_date": "2025-02-10",
+   "last_edit_date": "2025-02-10",
+   "edits_after_first": 0,
+   "resolved_refs": {
+    "class": [],
+    "module": [],
+    "path": [],
+    "file": []
+   },
+   "n_resolved_refs": 0,
+   "dead_identifiers": [
+    "data-plane-api",
+    "data-plane-public-api-v2"
+   ],
+   "unresolved_other": [],
+   "adr_commit_files": 2,
+   "adr_commit_code_files": [],
+   "linked_files": [],
+   "n_linked_files": 0,
+   "churn_no_rename_following": null,
+   "churn_with_shared_config": null,
+   "churn_code": null,
+   "stale": null,
+   "stale_reason": "no_linked_files"
+  },
+  "2024-10-10-daps-deprecation": {
+   "path": "docs/developer/decision-records/2024-10-10-daps-deprecation/README.md",
+   "first_commit": "dda8fa46de899f5440ac3516ed4f9458f9fe0e58",
+   "first_commit_date": "2024-10-10",
+   "last_edit_date": "2024-10-10",
+   "edits_after_first": 0,
+   "resolved_refs": {
+    "class": [],
+    "module": [],
+    "path": [],
+    "file": []
+   },
+   "n_resolved_refs": 0,
+   "dead_identifiers": [
+    "oauth2-daps"
+   ],
+   "unresolved_other": [],
+   "adr_commit_files": 5,
+   "adr_commit_code_files": [
+    "extensions/common/iam/oauth2/oauth2-daps/src/main/java/org/eclipse/edc/iam/oauth2/daps/DapsExtension.java",
+    "extensions/common/iam/oauth2/oauth2-daps/src/main/java/org/eclipse/edc/iam/oauth2/daps/DapsJwtDecorator.java",
+    "extensions/common/iam/oauth2/oauth2-daps/src/main/java/org/eclipse/edc/iam/oauth2/daps/DapsTokenDecorator.java"
+   ],
+   "linked_files": [],
+   "n_linked_files": 0,
+   "churn_no_rename_following": null,
+   "churn_with_shared_config": null,
+   "churn_code": null,
+   "stale": null,
+   "stale_reason": "no_linked_files"
+  }
+ }
+}

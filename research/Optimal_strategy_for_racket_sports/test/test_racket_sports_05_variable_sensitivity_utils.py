@@ -504,6 +504,72 @@ class Test_run_all_sweeps(hunitest.TestCase):
 
 
 # #############################################################################
+# Test_get_serves
+# #############################################################################
+
+
+class Test_get_serves(hunitest.TestCase):
+    """
+    Test `get_serves()`.
+    """
+
+    def helper(self, sport_name: str, side: str, expected: str) -> None:
+        """
+        Check the default serve and the deep serve at the T of a side.
+
+        :param sport_name: "Tennis" or "Pickleball"
+        :param side: "deuce" or "ad"
+        :param expected: the serves, as `(name, x1, y1)`
+        """
+        # Prepare inputs.
+        serve_names = ("body-mid", "T-deep")
+        # Run test.
+        actual = racket_sports_05_variable_sensitivity_utils.get_serves(
+            sport_name, side, serve_names
+        )
+        # Check outputs.
+        self.assert_equal(str(actual), expected)
+
+    def test1(self) -> None:
+        """
+        Test the deuce side in tennis: "body-mid" is the default serve.
+        """
+        # Prepare inputs.
+        sport_name = "Tennis"
+        side = "deuce"
+        # Prepare outputs.
+        expected = "[('body-mid', -2.1, 3.2), ('T-deep', -0.3, 6.1)]"
+        # Run test.
+        self.helper(sport_name, side, expected)
+
+    def test2(self) -> None:
+        """
+        Test that the ad side in pickleball mirrors the deuce side.
+        """
+        # Prepare inputs.
+        sport_name = "Pickleball"
+        side = "ad"
+        # Prepare outputs.
+        expected = "[('body-mid', 1.5, 4.4), ('T-deep', 0.3, 6.4)]"
+        # Run test.
+        self.helper(sport_name, side, expected)
+
+    def test3(self) -> None:
+        """
+        Test that an unknown side is rejected, and not read as the ad side.
+        """
+        # Prepare inputs.
+        sport_name = "Tennis"
+        side = "left"
+        serve_names = ("T-deep",)
+        # Run test and check outputs.
+        with self.assertRaises(AssertionError):
+            racket_sports_05_variable_sensitivity_utils.get_serves(
+                sport_name, side, serve_names
+            )
+
+
+# #############################################################################
 # Test_run_corners
 # #############################################################################
 

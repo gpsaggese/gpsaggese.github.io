@@ -232,3 +232,57 @@ Stage and inspect only the intended source files.
 Commit and push the implementation branch.
 
 Open the second project pull request and request review.
+
+## November 15, 2026
+
+### Work Completed
+
+Updated the local repository from the merged implementation pull request and created the incremental branch `UmdTask802_MSML610_Fall2026_CrewAI_2`.
+
+Replaced the ambiguous numeric-claim comparison with a field-aware evaluation based on 12 required claims. The evaluator now associates every submitted value with its economic meaning instead of comparing it against one combined list of valid numbers.
+
+Added separate measurements for submitted-claim accuracy, required-claim completeness, and the fraction of all required claims that are correct.
+
+Updated the CrewAI Writer task and the single-LLM baseline prompt so both systems produce the same labeled Claim and Value table.
+
+Updated the example notebook to display the new evaluation metrics.
+
+Added deterministic tests for a complete correct table, an incorrect value, a missing field, and correct numerical rounding.
+
+### Result
+
+The three-agent CrewAI workflow submitted all 12 required claims correctly.
+
+The single-LLM baseline also submitted all 12 required claims correctly.
+
+Both systems received an accuracy of 1.0, completeness of 1.0, and required-claim score of 1.0 for the November 14, 2026 snapshot.
+
+The experiment therefore resulted in a tie. The CrewAI workflow matched the baseline but did not outperform it on this snapshot.
+
+### Testing
+
+Six deterministic FRED pipeline tests passed inside Docker.
+
+The updated example notebook executed successfully inside Docker.
+
+Five Docker and notebook integration tests passed from the Mac host.
+
+Python compilation and `git diff --check` completed without errors.
+
+### Findings
+
+The original evaluation could accept a correct number in the wrong context and did not penalize omitted claims.
+
+The field-aware checklist provides a more defensible comparison because missing, incorrect, and misplaced values affect the score.
+
+The generic numeric evaluator identified the baseline’s statement about a 13-month interval as unsupported. Manual inspection showed that the interval was correct, so it was not treated as evidence that the CrewAI workflow beat the baseline.
+
+A single easy snapshot is not sufficient to demonstrate a consistent advantage for the multi-agent workflow.
+
+### Next
+
+Design a multi-snapshot robustness experiment containing different inflation, unemployment, interest-rate, and yield-curve conditions.
+
+Use the same model, required claims, and evaluation rules for the CrewAI workflow and baseline.
+
+Report a CrewAI advantage only if it is supported by the additional experiments. Otherwise, document the tie as the final experimental result.

@@ -1,0 +1,16 @@
+{
+  "additional_usage_rated_usd": 14.07594497,
+  "all_environment_replays_match": true,
+  "all_model_input_hashes_match": true,
+  "all_referee_scores_match": true,
+  "all_snapshot_identities_match": true,
+  "branches": 3900,
+  "complete_population_audit": true,
+  "outstanding_requests": 0,
+  "paid_model_calls": 16165,
+  "replayed_decision_steps": 18115,
+  "request_ledger_reconciles_exactly": true,
+  "stored_branch_segments": 3916,
+  "verified_blobs": 20995,
+  "zero_billed_preinference_rejections": 10
+}

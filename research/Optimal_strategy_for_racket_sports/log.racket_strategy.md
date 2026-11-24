@@ -30,6 +30,68 @@
 - The open research questions are in the Gdoc, under
   [Questions for GP](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.xfydadrg3lvc)
 
+## 2026-11-15: Notebook 07 and Section VII-B, Speed vs Accuracy (#723)
+
+- **Issue**: [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723),
+  the last of 4 PRs: the results of the sweeps, in notebook 07 and in the paper;
+  the numbers and the decisions are in the Gdoc,
+  [Experiment 5](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.qrto9so35bnx)
+- **What was done**:
+  - `notebooks/racket_sports_07_speed_vs_accuracy.ipynb` and its paired `.py`, with
+    the outputs of the reduced run saved, and a test that runs it top to bottom
+  - The plots of the notebook and `save_paper_figure_data()` in its utils, with
+    tests
+  - `paper.md`: Section VII-B and its figure, from the data of the full run;
+    Proposition 1 states its assumption, and Appendix A covers the spread of
+    VII-B; the sentences that said a faster ball always looks best now point to
+    VII-B; 3 references
+  - The #723 notes of notebooks 01 and 05 point to notebook 07, and the README has
+    its row
+- **Next**: #723 is done; GP's answers to Q21 (the behavior of the spread below
+  `v0`) and Q22 (the robustness rule) in the
+  [Gdoc](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.71s0u7ftk0yx)
+  may change the wording of VII-B
+
+## 2026-11-15: Best Ball Speed and Speed Scaling Check (#723)
+
+- **Issue**: [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723),
+  the third of 4 PRs: how the sweeps are read, with no results yet; the planned
+  outputs are in the Gdoc,
+  [Experiment 5](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.qrto9so35bnx)
+- **What was done**: `notebooks/racket_sports_07_speed_vs_accuracy_utils.py`
+  - `find_best_speeds()`: the best ball speed of a sweep as a band, every speed
+    within 2 standard errors of the highest `P(winner)`, with the rule of the best
+    region of notebook 01 (P9); the loss of the fastest ball; and the speed with
+    the highest mean `P(winner)` over the half, which does not saturate
+  - `summarize_robustness()`: whether the band of each variant shares a ball
+    speed with the band of the base, so the summary reads "robust to X, not to
+    Y" (P3)
+  - `check_speed_scaling()`, `run_scaling_checks()`: with `t_r = 0` and `a > 0`,
+    scaling both speeds changes the maps, and scaling `v0` with them does not, so
+    Proposition 1 needs a spread that does not depend on the ball speed (P4)
+- **Next**: notebook 07 and Section VII-B of the paper, with the results in the
+  Gdoc, which finish #723
+
+## 2026-11-15: Sweeps of the Ball Speed for Speed vs Accuracy (#723)
+
+- **Issue**: [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723),
+  the second of 4 PRs: the settings and the runs of the sweeps, with no results
+  yet; the plan and its decisions are in the Gdoc,
+  [Experiment 5](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.qrto9so35bnx)
+- **What was done**: `notebooks/racket_sports_07_speed_vs_accuracy_utils.py`
+  - `get_experiment_config()`: the full run and a reduced run of a minute, with
+    the `RUN_FULL_SIMS` switch of notebook 05, since Q11 is still open
+  - `build_sweep_spec()`: the settings of one map, with `std_x2` and `std_y2`
+    from the builder, and the builder inputs as separate columns (P1, P6)
+  - `run_speed_sweeps()`: the ball speed from `v0 / 2` to `2 v0`, for each sport,
+    variant, and `a`, on common random numbers (P7)
+  - The variants change one value at a time (P3): the 3 other shapes, `a_x = a_y`,
+    the spread at `v0` halved and doubled, `v_p` = 1.9 and 3.0 m/s, the T-deep
+    serve, and a second seed
+  - `get_serves()` of the notebook 05 utils is now public, for the T-deep serve
+- **Next**: the best ball speed, the robustness table, and the speed scaling
+  check; then notebook 07 and Section VII-B of the paper, which finish #723
+
 ## 2026-11-12: Formalize the Research in the Paper (#921)
 
 - **Issue**: [#921](https://github.com/gpsaggese/gpsaggese.github.io/issues/921), from GP's meeting of

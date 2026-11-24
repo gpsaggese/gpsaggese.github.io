@@ -1,0 +1,119 @@
+[
+  {
+    "baseline_n": 30,
+    "baseline_redecide_ci95": [
+      0.03459925995971615,
+      0.25621441315266624
+    ],
+    "baseline_redecide_wins": 3,
+    "caveat": "Exploratory observed concentration; unresolved small effects prevent a definitive sparse/diffuse classification.",
+    "decisions": 7,
+    "pattern_conclusion": "No harmful step resolved after multiplicity correction",
+    "resolved_harmful_steps": [],
+    "resolved_helpful_steps": [],
+    "task_id": "krk-m3-1",
+    "top_two_share_of_positive_point_gains": 1.0,
+    "trial": 0
+  },
+  {
+    "baseline_n": 30,
+    "baseline_redecide_ci95": [
+      0.07336434240351683,
+      0.33564705185680177
+    ],
+    "baseline_redecide_wins": 5,
+    "caveat": "Exploratory observed concentration; unresolved small effects prevent a definitive sparse/diffuse classification.",
+    "decisions": 7,
+    "pattern_conclusion": "No harmful step resolved after multiplicity correction",
+    "resolved_harmful_steps": [],
+    "resolved_helpful_steps": [],
+    "task_id": "krk-m3-1",
+    "top_two_share_of_positive_point_gains": 1.0,
+    "trial": 1
+  },
+  {
+    "baseline_n": 30,
+    "baseline_redecide_ci95": [
+      0.21873702204017678,
+      0.5448675356639506
+    ],
+    "baseline_redecide_wins": 11,
+    "caveat": "Exploratory observed concentration; unresolved small effects prevent a definitive sparse/diffuse classification.",
+    "decisions": 8,
+    "pattern_conclusion": "Localized resolved harmful steps",
+    "resolved_harmful_steps": [
+      3,
+      5
+    ],
+    "resolved_helpful_steps": [],
+    "task_id": "krk-m4-1",
+    "top_two_share_of_positive_point_gains": 1.0,
+    "trial": 0
+  },
+  {
+    "baseline_n": 30,
+    "baseline_redecide_ci95": [
+      0.21873702204017678,
+      0.5448675356639506
+    ],
+    "baseline_redecide_wins": 11,
+    "caveat": "Exploratory observed concentration; unresolved small effects prevent a definitive sparse/diffuse classification.",
+    "decisions": 1,
+    "pattern_conclusion": "Localized resolved harmful steps",
+    "resolved_harmful_steps": [
+      1
+    ],
+    "resolved_helpful_steps": [],
+    "task_id": "krk-m4-1",
+    "top_two_share_of_positive_point_gains": 1.0,
+    "trial": 1
+  },
+  {
+    "baseline_n": 30,
+    "baseline_redecide_ci95": [
+      0.0059084379948573795,
+      0.16670751396958874
+    ],
+    "baseline_redecide_wins": 1,
+    "caveat": "Exploratory observed concentration; unresolved small effects prevent a definitive sparse/diffuse classification.",
+    "decisions": 10,
+    "pattern_conclusion": "No harmful step resolved after multiplicity correction",
+    "resolved_harmful_steps": [],
+    "resolved_helpful_steps": [],
+    "task_id": "krk-m6-1",
+    "top_two_share_of_positive_point_gains": 0.9411764705882353,
+    "trial": 0
+  },
+  {
+    "baseline_n": 30,
+    "baseline_redecide_ci95": [
+      0,
+      0.113517091390478
+    ],
+    "baseline_redecide_wins": 0,
+    "caveat": "Exploratory observed concentration; unresolved small effects prevent a definitive sparse/diffuse classification.",
+    "decisions": 3,
+    "pattern_conclusion": "No harmful step resolved after multiplicity correction",
+    "resolved_harmful_steps": [],
+    "resolved_helpful_steps": [],
+    "task_id": "krk-m8-1",
+    "top_two_share_of_positive_point_gains": null,
+    "trial": 0
+  },
+  {
+    "baseline_n": 30,
+    "baseline_redecide_ci95": [
+      0.0059084379948573795,
+      0.16670751396958874
+    ],
+    "baseline_redecide_wins": 1,
+    "caveat": "Exploratory observed concentration; unresolved small effects prevent a definitive sparse/diffuse classification.",
+    "decisions": 12,
+    "pattern_conclusion": "No harmful step resolved after multiplicity correction",
+    "resolved_harmful_steps": [],
+    "resolved_helpful_steps": [],
+    "task_id": "krk-m8-1",
+    "top_two_share_of_positive_point_gains": 1.0,
+    "trial": 1
+  }
+]

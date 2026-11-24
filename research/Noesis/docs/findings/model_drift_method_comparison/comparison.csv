@@ -1,0 +1,5 @@
+scenario,capability_detection_rate,capability_trials,mmd_detection_rate,mmd_trials,comparison_class
+full_swap,1.0,1000,1.0,1,directional_only_different_data_and_trial_designs
+partial_substitution_10,0.044,1000,0.0,100,directional_only_different_data_and_trial_designs
+partial_substitution_25,0.727,1000,0.0,100,directional_only_different_data_and_trial_designs
+partial_substitution_50,1.0,1000,0.87,100,directional_only_different_data_and_trial_designs

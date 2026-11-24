@@ -22,6 +22,17 @@
   - A stopping rule for $N$ derived from measurable quantities
   - A correction to reported test-time-scaling gains that are measured with the same
     proxy used for selection
+- Focus of the empirical work: verifier co-fooling
+  - The standard remedy for a noisy proxy is to ensemble diverse verifiers, in the
+    same way a portfolio diversifies across assets
+  - At budget $N$ the winner sits near each verifier's top $1/N$ of candidates, so
+    raising $N$ probes the joint upper tail of the verifiers' errors rather than
+    their average agreement
+  - Two verifiers co-fool when both rank the same wrong answer near the top
+  - An ensemble helps only if its members do not co-fool, and their correlation
+    does not reveal whether they do
+  - This is the blind spot of correlation-based diversification in finance, where
+    assets that look uncorrelated on average still fall together in a crash
 
 ## Formalization
 
@@ -43,6 +54,24 @@
   $$
 - $N^{*}$ is finite whenever $\rho$ decays in the upper tail, i.e., the proxy is
   least reliable exactly on the candidates it ranks highest
+- $N^{*}$ cannot be identified from unlabeled proxy scores
+  - $N^{*}$ depends on the joint distribution of $\hat{v}$ and $v$, while
+    inference-time data reveal only the distribution of $\hat{v}$
+  - Two settings with identical verifier scores can have different $N^{*}$
+    - E.g., two verifiers that agree because both are right look the same as two
+      verifiers that are fooled by the same wrong answer
+  - A label-free estimate therefore needs an assumption such as independent
+    verifier errors, which is exactly what co-fooling violates
+- Tail co-fooling of verifiers $k$ and $l$ at level $q$ is:
+  $$
+  \lambda_{kl}(q) = P(u_l > q \mid u_k > q, \text{ wrong answer})
+  $$
+  where $u_k$ is the percentile of verifier $k$'s score among the wrong answers to
+  the same problem
+  - Independent verifiers give $\lambda_{kl}(q) = 1 - q$, so the lift
+    $\lambda_{kl}(q) / (1 - q)$ is 1
+  - A Gaussian copula with the pair's observed correlation gives the tail sharing
+    that correlation alone predicts
 
 ## Key Examples
 
@@ -63,15 +92,16 @@
 
 ## Questions
 
-1. Can $N^{*}$ be estimated from quantities observable at inference time (proxy score
-   dispersion, agreement among independent verifiers) without any held-out ground
-   truth?
+1. How many labeled problems are needed to locate $N^{*}$?
 2. Is the empirical penalty closer to $\sqrt{\ln N}$, $\ln N$, or something heavier
    once the proxy is a learned reward model rather than Gaussian noise?
 3. Does the same correction apply at the agent level, where the unit of search is a
    whole trajectory rather than a single answer?
-4. Does verifier ensembling with diverse verifiers raise $\rho$ enough to move
-   $N^{*}$, or does it merely rescale the noise?
+4. Do diverse verifiers share their worst mistakes in the upper tail
+   that best-of-$N$ selection reaches?
+   - Does the correlation between verifiers predict it?
+   - Does it predict how much an ensemble gains at large $N$, i.e., whether
+     ensembling raises $\rho$ enough to move $N^{*}$ or merely rescales the noise?
 5. If true, how much of the published gain from test-time compute is real, and how
    much is measurement against the selection proxy?
 
@@ -84,6 +114,14 @@
   whether the fitted $\rho$ predicts $N^{*}$ out of sample
 - **Held-out verifier protocol**: always evaluate with a verifier disjoint from the
   one used for selection, in the same way a backtest needs an out-of-sample period
+- **Tail co-fooling map**: for every pair of verifiers, measure how often both rank
+  the same wrong answer in their top fraction, against independence and against a
+  Gaussian copula with the same correlation
+  - Relate it to verifier type (outcome reward model, process reward model, LLM
+    judge), base model, and training data
+- **Tail-aware ensembling**: with a small labeled split, test whether choosing or
+  weighting ensemble members by tail co-fooling beats choosing them by accuracy or
+  by correlation
 - **Conformal selection**: use distribution-free bounds to select candidates with a
   guaranteed error rate instead of a raw argmax
 - **Comparison of search shapes**: best-of-$N$ vs voting vs tree search at matched
@@ -111,17 +149,28 @@
     visible/held-out test splits
   - Generate $N$ up to a few hundred candidates per task, caching proxy and true
     scores separately
+  - Score every candidate with several verifiers, so that verifier pairs can be
+    compared on the same candidates
   - This is the result: a dataset of (candidate, proxy score, true score) triples
     that supports offline resampling of any $N$
 - Milestone 2: measure the overfitting curve
   - Plot true quality vs $N$ for proxies of deliberately varying quality (strong
     verifier, weak reward model, visible tests only)
+  - Include ensembles, and check whether averaging the top verifiers beats the best
+    single verifier at large $N$
   - This is the result: empirical evidence for or against a finite $N^{*}$ and an
     estimate of where it lies per proxy
-- Milestone 3: predict $N^{*}$ without ground truth
-  - Estimate $\rho$ and noise scale from verifier disagreement alone, then predict
-    $N^{*}$ and validate against the measured curve
-  - This is the result: an inference-time stopping rule with measured accuracy
+- Milestone 3: measure tail co-fooling across verifiers
+  - Estimate $\lambda_{kl}(q)$ for every verifier pair, with confidence intervals
+    from a bootstrap over problems, and compare it with independence and with the
+    Gaussian copula benchmark
+  - Explain the pattern by verifier type, base model, and training data
+  - Test whether the tail co-fooling of an ensemble's members predicts its gain
+    over its best member at large $N$ better than their correlation does
+  - Test tail-aware ensembling with a small labeled split, and report how many
+    labeled problems are needed to locate $N^{*}$
+  - This is the result: a ground-truth measurement of where verifier diversity
+    fails in the tail, and of whether that explains where ensembles stop improving
 - Milestone 4: extend to agent trajectories
   - Apply the same analysis where the search unit is a full agent run scored by a
     proxy (visible tests, self-critique)
@@ -133,3 +182,12 @@
 - Gao et al., _Scaling Laws for Reward Model Overoptimization_. (2022)
 - Cobbe et al., _Training Verifiers to Solve Math Word Problems_. (2021)
 - Bailey et al., _The Probability of Backtest Overfitting_. (2014)
+- Saad-Falcon et al., _Shrinking the Generation-Verification Gap with Weak
+  Verifiers_. (2025)
+- Lee et al., _FUSE: Ensembling Verifiers with Zero Labeled Data_. (2026)
+- Afrin and Shihab, _Evaluator Ensembles Under Reward Hacking: Covariance Geometry
+  and Finite-Search Guarantees_. (2026)
+- Dorner et al., _ROC-n-reroll: How Verifier Imperfection Affects Test-Time
+  Scaling_. (2025)
+- Embrechts et al., _Correlation and Dependence in Risk Management: Properties and
+  Pitfalls_. (2002)

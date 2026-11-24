@@ -1,0 +1,2 @@
+# Preserve recorded bytes across checkouts so release SHA-256 checks stay valid.
+* -text

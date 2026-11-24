@@ -1,0 +1,9 @@
+{
+  "checkpoint_and_job_references": "passed",
+  "balanced_validation_arms": "passed",
+  "all_48_primary_boundaries_sampled_30_times": "passed",
+  "paid_authorization": false,
+  "paid_executor_present": false,
+  "preflight_cases_passed": 3,
+  "paid_spend_usd": 0
+}
