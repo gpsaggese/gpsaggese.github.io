@@ -1,0 +1,11 @@
+{
+  "archive": "evidence/chess_m2_completed_20261119.tar.gz",
+  "sha256": "95e4352caf451a5771623638149c9cc3ac9e58584888b43dd7f628649bf0e8af",
+  "bytes": 615108765,
+  "verified_payload_files": 32149,
+  "payload_hashes_match": true,
+  "credential_content_found": false,
+  "original_M1_archive_included": true,
+  "both_paid_stage_stores_included": true,
+  "utc": "2026-11-19T16:07:46.537800+00:00"
+}

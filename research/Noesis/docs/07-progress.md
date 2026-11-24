@@ -57,6 +57,8 @@
 8. **Offline checker replay matches the analytic model** (10/31): all six scenarios
    passed; healthy produced 0/5,000 false alarms, weak-model detection was 81.76%
    versus 82.81% predicted, and borderline latency was 31.84% versus 33.19%
+9. **Sellers bill 1.75 to 5.1 characters per prompt token** (11/12): see the
+   [research Gdoc](https://docs.google.com/document/d/1SzrZSrdrpSwFyXWyjdmYOlcaDSjWxw0hXNiI9JkBhmw/edit) and `notebooks/prompt_tokens.ipynb`
 
 ## Next (M2 — Checker runtime and data)
 
@@ -84,6 +86,9 @@
 | 10/25 | PR_M10: extracted the Python-only market runner and contract store; API delegates without response changes; five M11 regimes validated through the runner (D29) |
 | 10/28 | PR_P4: free credit ledger gates `POST /bids` on `n_tasks * p_max` and debits each cleared contract once (`market/credit_ledger.py`, `noesis_platform/platform_api.py`; D30, D31) |
 | 10/31 | Offline replay runs six checker scenarios over five seeds and 30,000 contracts; all observed rates agree with exact analytic predictions and reproducible JSON/CSV/Markdown findings are generated |
+| 11/12 | Prompt-token experiment measures billed tokens per character on the seed sellers (`scripts/experiment_prompt_tokens.py`, `data/prompt_tokens/`) |
+| 11/17 | Notebook fits and plots the prompt tokens billed per character (`notebooks/prompt_tokens.ipynb`) |
+| 11/17 | Gateway rejects prompts estimated above `NOESIS_MAX_PROMPT_TOKENS` with a 400 `context_length_exceeded` before any provider call (D36) |
 
 - 11/5: M12 tables, volume summaries, plotting helpers, and an offline reviewer
   demo implemented locally; four small review units prepared (issue #631).

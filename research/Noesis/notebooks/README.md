@@ -52,3 +52,18 @@ sources contain no saved execution outputs.
   to explore different values with the same guaranteed regimes
 - Keep executed outputs and generated HTML out of the PR; the paired sources
   contain no saved execution outputs
+
+# Prompt Tokens Billed per Character
+
+- `prompt_tokens.ipynb`: fits the prompt tokens that the seed sellers billed in
+  the run of `scripts/experiment_prompt_tokens.py` (#720), and plots them
+- `prompt_tokens.py`: Jupytext pair; edit either source and sync with
+  `jupytext --sync research/Noesis/notebooks/prompt_tokens.ipynb`
+- `prompt_tokens_utils.py`: the fit, the tables, and the plot, one function per
+  cell
+- Reads `data/prompt_tokens/prompt_tokens.raw.jsonl`; makes no calls
+- Run it top to bottom from the repository root:
+
+  ```bash
+  > python research/Noesis/notebooks/prompt_tokens.py
+  ```

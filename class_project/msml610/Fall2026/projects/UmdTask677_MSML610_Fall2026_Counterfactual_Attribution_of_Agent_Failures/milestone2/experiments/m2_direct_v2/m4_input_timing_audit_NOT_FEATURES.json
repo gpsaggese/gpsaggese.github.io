@@ -1,0 +1,81 @@
+{
+  "groups_with_opposite_point_gain_signs": 1,
+  "interpretation": "Identical saved pre-generation context and board can precede different original replies and reply-specific gains. State-only inputs cannot distinguish those replies; opposite point estimates are diagnostic, not an additional significance test. This file contains labels and is excluded from predictors.",
+  "shared_saved_prefix_groups": [
+    {
+      "before_context_sha256": "6b9cef8cb929b7f04c90bad3d87e5d2762cd081f2b5b75c0b56bb386c04e4d5b",
+      "before_env_sha256": "534685e8569a41a90f233a53991d838caf7d1ed0dc27356a883eb6b860c1b757",
+      "decisions": [
+        {
+          "decision_id": "krk-m3-1_trial0_step001",
+          "gain_ci95": [
+            -0.12716733489263576,
+            0.19681183955688292
+          ],
+          "original_reply_sha256": "619a14ced9eda8403fda6923e93adae81ee16f000495636efaf04576ab932a24",
+          "repair_gain": 0.03333333333333333
+        },
+        {
+          "decision_id": "krk-m3-1_trial1_step001",
+          "gain_ci95": [
+            -0.029436429747216886,
+            0.3045247334191227
+          ],
+          "original_reply_sha256": "b37ff52ac7f86bf3d5cc17d3030f044e8c9a55e0765d610a98a08be48cd597a8",
+          "repair_gain": 0.13333333333333333
+        }
+      ],
+      "opposite_point_gain_signs": false
+    },
+    {
+      "before_context_sha256": "7b88a3bab05bf030e01f3b6648a3e0a7ba67fb9fd95a7fab43977d2456540a43",
+      "before_env_sha256": "bdd8d6162c8c5ef1eba6b496d9c80da5643d4ccec3619808e088e54da2695ff8",
+      "decisions": [
+        {
+          "decision_id": "krk-m4-1_trial0_step001",
+          "gain_ci95": [
+            -0.5324980106910644,
+            -0.0809227155817438
+          ],
+          "original_reply_sha256": "cd427545b1f0d2dac3146a7507512dd3456cd2339b6deb79fdc1b939fb0c2f7b",
+          "repair_gain": -0.3333333333333333
+        },
+        {
+          "decision_id": "krk-m4-1_trial1_step001",
+          "gain_ci95": [
+            0.18020136212699173,
+            0.5448675356639506
+          ],
+          "original_reply_sha256": "c90ba799580fc825327293960a37cd69216242df5763f4c8c9cf34d86060449f",
+          "repair_gain": 0.36666666666666664
+        }
+      ],
+      "opposite_point_gain_signs": true
+    },
+    {
+      "before_context_sha256": "b229548916e61532fd5da80b6a352afc68e31dc672ac353fa9135ed9cae265ff",
+      "before_env_sha256": "35db0bf755969a5d7b6dde6d5fe808fd24514d1cb408b2f472c295bce1ac5591",
+      "decisions": [
+        {
+          "decision_id": "krk-m8-1_trial0_step001",
+          "gain_ci95": [
+            -0.113517091390478,
+            0.113517091390478
+          ],
+          "original_reply_sha256": "2266fd95ca045af710fcaa5a126fde9a89494d12002ed7a9c40981a1f21549ce",
+          "repair_gain": 0.0
+        },
+        {
+          "decision_id": "krk-m8-1_trial1_step001",
+          "gain_ci95": [
+            -0.08344960601176318,
+            0.16670751396958874
+          ],
+          "original_reply_sha256": "4f25ce9242ec120bfe825a40d3ba60026215922214935bb21cef98def4a6eb2f",
+          "repair_gain": 0.03333333333333333
+        }
+      ],
+      "opposite_point_gain_signs": false
+    }
+  ]
+}

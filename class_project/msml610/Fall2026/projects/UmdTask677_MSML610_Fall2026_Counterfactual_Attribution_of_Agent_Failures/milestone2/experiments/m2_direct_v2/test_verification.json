@@ -1,0 +1,8 @@
+{
+  "observed_command": ".venv/bin/python -m pytest -q -c /dev/null tests vendor/pr917/test/test_caaf.py",
+  "exit_code": 0,
+  "passed": 30,
+  "warnings": 1,
+  "warning": "Pydantic ReadOnly qualifier warning from dependency; no failed checks.",
+  "paid_calls": 0
+}

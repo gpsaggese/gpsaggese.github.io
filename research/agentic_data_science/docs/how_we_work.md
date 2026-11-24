@@ -7,8 +7,8 @@
 ## Resources
 
 - GitHub project: [Agentic_Data_Science](https://github.com/users/gpsaggese/projects/9)
-- Code: `research/agentic_data_science/` in this repo, and
-  `agentic_eda/bakeoff/` in [`gpsaggese/tutorials`](https://github.com/gpsaggese/tutorials)
+- Code: `research/agentic_data_science/` in this repo; the Bake-off is in
+  `research/agentic_data_science/bakeoff/`
 - Google Doc of the project:
   [Agentic Data Science: Vision and Plan](https://docs.google.com/document/d/1fAao18l5oqeGvmGq4V4S0RGvXggXAFtsiv9gMIt0UlU)
 - Paper: `papers/RL_for_Automated_EDA/`

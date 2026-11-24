@@ -1,0 +1,33 @@
+{
+  "approved_additional_usd": 22,
+  "counts_before": {
+    "completed": 1414,
+    "infrastructure_error": 16,
+    "not_started_stage_halted": 1450,
+    "pending": 1020
+  },
+  "source_hashes": {
+    "scripts/resume_remaining_m2.py": "bebed345598e811a5dc40e13a4b3a5f9b0d1b3400d878004348054227a4935da",
+    "scripts/run_remaining_m2.py": "1572e1452644661df3620e7469db85f6f999631535eb1158464720e646249cdb",
+    "scripts/run_validation_stage.py": "2846c43c38bd8bce9039d211a59805e2ab4d02de48dcd4760762f51bbe7c7f5e",
+    "m2_runtime/budget.py": "2cd70f8a506d1189e5b98d33b9a6c4e3dd8df1e1e94755b41b708f0cef74000a",
+    "m2_runtime/compact_store.py": "4b19c8749f8a46bc0b911753ec03dd6aad7fe3de6927cb2cd1d15f0c133fcf41",
+    "requirements-preparation.lock": "3e96ff8349fd561e9e1ca0986a138ebd3e9f878686c1184dec4c49bcd5b885b8",
+    "experiments/m2_direct_v2/experiment_manifest.json": "67499bf51ea26ae098b3b68e38c283799be3ec139b1291d053fa5d9941e6b9fd",
+    "experiments/m2_direct_v2/planned_jobs.csv": "833e68c49242504ce720b71b233d70c078bcda8393464c5f9285b5f0492c47d5",
+    "vendor/pr917/caaf_utils.py": "685263423bc4575cae89fcf5648b57c9c2a02b738d1022d792a31c2a3be21e70",
+    "vendor/pr917/caaf_agent.py": "b51024a93fb13cfc13e7042c532f28b6e4cae52e49ac7cb5090dfd46be93d7af",
+    "vendor/pr917/template_utils.py": "cce629e6350374bc254f2f58be4aa533f0e54351123a338cfd10f3f1fe78d52a",
+    "vendor/pr917/caaf_m1.py": "5db99df98e145b5290e316e0f36b9f2090fefb1a5d7f4be762e9af7b99eb88f0",
+    "vendor/pr917/template.API.py": "e81b1bb00fd74f370c5cb011161107632aec4ee104252e00e55074dd637f29b3",
+    "vendor/pr917/caaf_chess.py": "4cbedadb90685a15e7dbe82e20eb2494eb02f21c34fc2bd1dea26111ea0bfb02",
+    "vendor/pr917/caaf_store.py": "e14186300476775eb7cf243d162bf191fff57cc2fdb4057179df8a5e2091acfd",
+    "vendor/pr917/template.example.py": "80783e1619785af0f627f2928dec14011d477666787042a57bd3060ed288fff5",
+    "vendor/pr917/config/chess_haiku.yaml": "f3914002d541e61e10e3e50b3e58a2701b6041d12a9134ebc09a73b52b2c0446",
+    "vendor/pr917/config/chess_haiku_think.yaml": "d7608bba8fb520c2692f5a1dde771e969644e2dc80f333b0a620cd68b48bd60f"
+  },
+  "runtime_cache_excluded": true,
+  "resume_rule": "Continue partial trajectories from their last saved checkpoint. Preserve all completed outcomes and all paid prefixes. No redraws.",
+  "original_execution_sha256": "f49072ab38b61e5aeac179e947755d7fcb5214161f285009e2e7987ba55e0482",
+  "utc_start": "2026-11-19T14:23:44Z"
+}

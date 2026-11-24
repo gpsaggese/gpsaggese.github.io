@@ -13,6 +13,7 @@
 | `run_checker_replay.py` | Run production-checker replay, analytic comparison, and artifact generation |
 | `run_model_drift_cusum_pilot.py` | Compare offline Bernoulli CUSUM and Fisher-window detection |
 | `spike_openrouter.py`     | Measure pinned OpenRouter providers for one model |
+| `experiment_prompt_tokens.py` | Measure the prompt tokens each seed seller bills per character (#720) |
 | `demo_supply_asks.py`     | Show OpenRouter prices becoming one ask per seller and clearing against a bid (`PR_S9`) |
 | `demo_credit_ledger.py`   | Show the free credit ledger gating bids and charging cleared contracts (`PR_P4`) |
 
@@ -47,6 +48,12 @@
 
   ```bash
   > research/Noesis/scripts/spike_openrouter.py --n 20
+  ```
+- Prompt-token experiment: print the plan and its maximum cost, then run it
+  (needs `OPENROUTER_API_KEY`):
+  ```bash
+  > research/Noesis/scripts/experiment_prompt_tokens.py --dry_run
+  > research/Noesis/scripts/experiment_prompt_tokens.py
   ```
 - Supply adapter demo on the checked-in catalog sample (no key, no network):
   ```bash

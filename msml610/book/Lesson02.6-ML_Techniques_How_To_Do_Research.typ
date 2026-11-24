@@ -147,8 +147,7 @@ population #cite(
   "abumostafa2012learning",
 ). When that assumption breaks, the guarantees on generalization break with it.
 
-Several mechanisms introduce sampling bias into a dataset, as @fig:samplingbias12
-illustrates:
+Several mechanisms introduce sampling bias into a dataset:
 
 - #emph[Non-random sampling]: the collection process favors certain outcomes or
   groups over others, so some subpopulations are systematically overrepresented.
@@ -159,17 +158,6 @@ illustrates:
   dataset, hiding the patterns associated with failure or attrition.
 - #emph[Self-selection bias]: participants opt in voluntarily, and those who choose
   to participate often differ systematically from those who do not.
-
-#figure(
-  image(
-    "Lesson02.6-ML_Techniques_How_To_Do_Research.typ.figs/Lesson02.6-ML_Techniques_How_To_Do_Research.1.png",
-    width: 70%,
-  ),
-  caption: [Diagram relating Sampling Bias],
-  kind: "figure",
-  supplement: [Fig.],
-  placement: auto,
-) <fig:samplingbias12>
 
 The consequences of these biases are far-reaching. Systematic errors distort the
 relationships a model learns, so predictions that look accurate on the training set

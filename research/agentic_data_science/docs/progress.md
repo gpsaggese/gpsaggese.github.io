@@ -12,7 +12,7 @@
 
 ## Built
 
-- Bake-off harness: `tutorials/agentic_eda/bakeoff/`, see its `README.md`
+- Bake-off harness: `../bakeoff/`, see its `README.md`
 - RL-for-EDA environment, scoring, and agents: `../RL_for_auto_EDA_prototype.py`,
   design in `../RL_for_auto_EDA_prototype_design.md`
 - RL-for-EDA benchmark against PC and GES: `../RL_for_auto_EDA_benchmark.py`
@@ -62,6 +62,7 @@
 | 2026-10-14 | Merged #620: track plan with the Bake-off and Meta-Dataset projects                               |
 | 2026-11-07 | Merged `gpsaggese/tutorials#706`: Bake-off harness skeleton; replaces the split PRs #704 and #705 |
 | 2026-11-07 | Moved the plan to `docs/plan.md` in the planning-guide format (#880); decisions D-1 to D-7        |
+| 2026-11-14 | Moved the Bake-off to `research/agentic_data_science/bakeoff/` (`tutorials` archived, D-3)        |
 
 ## Open Work
 

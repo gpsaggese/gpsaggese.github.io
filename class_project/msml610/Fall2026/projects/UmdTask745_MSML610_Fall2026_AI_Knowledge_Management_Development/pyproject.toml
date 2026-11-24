@@ -1,0 +1,29 @@
+[project]
+name = "adrqa"
+version = "0.1.0"
+description = "Offline half of decision-aware question answering over Architecture Decision Records: read, link, graph, score, rank"
+requires-python = ">=3.11"
+dependencies = [
+    "lizard==1.25.0",
+    "markdown-it-py==4.0.0",
+    "networkx==3.5",
+    "python-dotenv==1.2.4",
+]
+
+[project.optional-dependencies]
+# The model relation extractor, used only with OPENAI_API_KEY and OPENAI_CHAT_MODEL.
+llm = ["openai==2.31.0"]
+test = ["pytest==8.3.5"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "--basetemp=.cache/pytest"
+markers = ["corpus: needs the pinned clone and generated data"]

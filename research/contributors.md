@@ -221,10 +221,10 @@
 | Ameer Shaik              | -                               | sohail08@umd.edu             | Sohail-5678,sohail-umd      | Auto DS                    |
 | Simran Kharbanda         | simrank3574@gmail.com           | simrank@umd.edu              | Sim2200         | Noesis                     |
 | Lucas Caicedo            | -                               | lucas.caicedo@gwmail.gwu.edu | caicedoss       | Noesis                     |
-| Javin Ahuja              | -                               | jahuja@terpmail.umd.edu      | Jav359003       | Noesis                     |
+| Javin Ahuja              | javinahuja18805@gmail.com       | jahuja@terpmail.umd.edu      | Jav359003       | Noesis                     |
 | Aahan Rembersu           | aahanrembersu07@gmail.com       | arembers@terpmail.umd.edu    | aahanrembersu07 | Racket sports              |
 | Niveda Jawahar           | -                               | nivedaj@umd.edu              | Niveda-227      | CAASL                      |
-| Krishna Buddi            | -                               | kbuddi@umd.edu               | bkk8403         | CAASL                      |
+| Krishna Buddi            | kishorebuddi003@gmail.com       | kbuddi@umd.edu               | bkk8403         | CAASL                      |
 | Ibrahim Ahmed            | ibrahim.iftaquar@gmail.com      | ibrahima@umd.edu             | Worldsoldure00  | Blog tutorials             |
 | Mohammed Syed            | syed.mohammed0975@gmail.com     | syed@umd.edu                 | Eyepatch0       | MCTS / AlphaZero           |
 | Shobha Gupta             | s2002290902g@gmail.com          | gupta29@umd.edu              | Under-the-stars | Age and startup success    |
@@ -234,6 +234,7 @@
 | Linu Teresa              | -                               | lteresa@umd.edu              | -               | Counterfactual attribution |
 | Sri Ramm Sekar Sasirekha | srirammsekarsasirekha@gmail.com | ssramm69@umd.edu             | SriRammSS       | Counterfactual attribution |
 | Heanh Sok                | heanhsok@gmail.com              | -                            | heanhsok        | Noesis                     |
+| Harshit Gadge            | harshit.gadge.hg@gmail.com      | hgadge@umd.edu               | HarshitGadge    | Auto DS                    |
 
 - [ ] @gilesgreene
 - [ ] @Delvitron1019
@@ -252,3 +253,4 @@
 - [ ] @PomazkinG
 - [ ] @SriRammSS
 - [ ] @heanhsok
+- [ ] @HarshitGadge
