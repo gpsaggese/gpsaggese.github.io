@@ -237,3 +237,60 @@ class Test_model_comparison:
         assert set(preds) == set(seconds.index)
         for p in preds.values():
             assert p["p_up"].between(0, 1).all()
+
+
+# tests for the drift tools.
+
+
+class Test_drift:
+    def test_detect_drift_finds_a_jump(self) -> None:
+        """
+        A clear shift in the mean is detected after it happens, not before.
+        """
+        rng = np.random.default_rng(0)
+        dates = pd.bdate_range("2020-01-01", periods=1000)
+        # the mean drops from 0.6 to 0.4 halfway through.
+        values = np.r_[rng.normal(0.6, 0.1, 500), rng.normal(0.4, 0.1, 500)]
+        series = pd.Series(values, index=dates)
+        found = rivutil.detect_drift(series)
+        # ADWIN must fire at least once...
+        assert len(found) >= 1
+        # ...and never before the change actually happens.
+        assert all(d >= dates[500] for d in found)
+
+    def test_detect_drift_quiet_on_constant_mean(self) -> None:
+        rng = np.random.default_rng(1)
+        dates = pd.bdate_range("2020-01-01", periods=1000)
+        # no change at all, so at most one false alarm is acceptable.
+        series = pd.Series(rng.normal(0.5, 0.1, 1000), index=dates)
+        assert len(rivutil.detect_drift(series)) <= 1
+
+    def test_edge_by_period_reference_is_zero(self) -> None:
+        panel = _panel(n_days=400, seed=12)
+        cols = rivutil.feature_columns(panel)
+        preds, _ = rivutil.run_models(
+            {"a": _make_model, "b": rivutil.make_river_logreg},
+            panel, cols, warmup_days=50,
+        )
+        edge = rivutil.edge_by_period(preds, "a")
+        # a model compared with itself has zero edge in every period.
+        assert (edge.loc["a"] == 0).all()
+
+    def test_frozen_classifier_stops_learning(self) -> None:
+        # a stand-in model that only counts how often it learns.
+        class Counter:
+            def __init__(self) -> None:
+                self.n = 0
+
+            def learn_one(self, x, y) -> None:
+                self.n += 1
+
+            def predict_proba_one(self, x):
+                return {True: 0.5, False: 0.5}
+
+        inner = Counter()
+        frozen = rivutil.FrozenClassifier(inner, n_updates=3)
+        # offer 10 labels; only the first 3 may reach the model.
+        for _ in range(10):
+            frozen.learn_one({}, True)
+        assert inner.n == 3

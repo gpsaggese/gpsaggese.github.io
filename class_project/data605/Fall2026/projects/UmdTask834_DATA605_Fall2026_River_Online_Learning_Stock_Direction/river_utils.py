@@ -830,3 +830,109 @@ class Test_model_comparison:
         assert set(preds) == set(seconds.index)
         for p in preds.values():
             assert p["p_up"].between(0, 1).all()
+
+# 10. drift and regimes
+
+
+def daily_mean(preds: pd.DataFrame, column: str) -> pd.Series:
+    """
+    Average a per-prediction quantity over the stocks of each trading day.
+
+    :param preds: output of `run_prequential` or `run_walk_forward`
+    :param column: "correct" for the daily accuracy, "up" for the share of
+        stocks that closed higher the next day, or any column of `preds`
+    :return: one value per trading day, indexed by date
+    """
+    # pick the per-prediction values to average.
+    if column == "correct":
+        # 1 when the model called the direction right, 0 otherwise.
+        values = preds["y_true"] == preds["y_pred"]
+    elif column == "up":
+        # 1 when the stock closed higher the next day.
+        values = preds["y_true"]
+    else:
+        values = preds[column]
+    # average over the stocks of each day, so ADWIN sees one value per day.
+    return values.astype(float).groupby(preds["date"]).mean()
+
+
+def detect_drift(
+    series: pd.Series, *, delta: float = 0.002, clock: int = 1
+) -> List[pd.Timestamp]:
+    """
+    Run ADWIN over a daily series and return the dates where it fires.
+
+    ADWIN keeps a window of recent values and drops the older part when the
+    means of the two parts differ by more than chance allows (controlled by
+    `delta`). A detection comes some time after the true change, because
+    ADWIN needs enough new data to be confident.
+
+    :param series: daily values indexed by date, e.g. from `daily_mean`
+    :param delta: confidence parameter; smaller values mean fewer, more
+        certain detections
+    :param clock: check for drift every `clock` values (1 = every day)
+    :return: dates of the detections
+    """
+    from river import drift
+
+    # a fresh detector, so earlier runs never leak into this one.
+    detector = drift.ADWIN(delta=delta, clock=clock)
+    dates = []
+    # feed the days in time order, exactly as they would arrive live.
+    for date, value in series.items():
+        detector.update(float(value))
+        # record the day on which ADWIN became confident of a change.
+        if detector.drift_detected:
+            dates.append(pd.Timestamp(date))
+    return dates
+
+
+def edge_by_period(
+    preds: Dict[str, pd.DataFrame], reference: str, *, period: str = "Y"
+) -> pd.DataFrame:
+    """
+    Accuracy of each model minus the reference model, per calendar period.
+
+    :param preds: model name -> predictions on the same rows
+    :param reference: model to subtract, e.g. "always_up_online"
+    :param period: pandas period, "Y" (year) or "Q" (quarter)
+    :return: models as rows, periods as columns, in accuracy points
+        (0.01 = one percentage point better than the reference)
+    """
+    acc = {}
+    for name, p in preds.items():
+        # 1 for a correct call, 0 for a miss.
+        correct = (p["y_true"] == p["y_pred"]).astype(float)
+        # accuracy within each year (or quarter).
+        acc[name] = correct.groupby(p["date"].dt.to_period(period)).mean()
+    # one row per model, one column per period.
+    acc = pd.DataFrame(acc).T
+    # subtract the reference row: positive means beating the reference.
+    return acc - acc.loc[reference]
+
+
+class FrozenClassifier:
+    """
+    Wrap a River classifier so that it stops learning after `n_updates`.
+
+    Comparing a frozen copy with the same model that keeps learning shows how
+    much continual (online) learning is worth when the market changes.
+    """
+
+    def __init__(self, model: Any, n_updates: int) -> None:
+        # the model being wrapped.
+        self.model = model
+        # how many labels the model may learn before it is frozen.
+        self.n_updates = n_updates
+        # how many labels it has learned so far.
+        self.n_learned = 0
+
+    def learn_one(self, x: Dict[str, float], y: Any) -> None:
+        # learn only until the budget is used up; after that, ignore labels.
+        if self.n_learned < self.n_updates:
+            self.model.learn_one(x, y)
+            self.n_learned += 1
+
+    def predict_proba_one(self, x: Dict[str, float]) -> Dict[Any, float]:
+        # predictions keep working after the model is frozen.
+        return self.model.predict_proba_one(x)
