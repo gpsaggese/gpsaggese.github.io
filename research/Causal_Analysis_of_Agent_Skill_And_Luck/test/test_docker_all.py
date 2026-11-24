@@ -87,6 +87,7 @@ class Test_docker(hdoctest.DockerTestCase):
             for test_file in (
                 "test_agent_benchmark_utils.py",
                 "test_causal_success_utils.py",
+                "test_causal_success_analysis_utils.py",
             )
         )
         shell_cmd = f"cd /git_root && python -m pytest {test_files}"
