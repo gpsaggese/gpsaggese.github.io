@@ -1,0 +1,7 @@
+luigi
+pandas
+numpy
+requests
+yfinance
+scikit-learn
+matplotlib

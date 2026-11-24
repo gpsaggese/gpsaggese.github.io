@@ -1,0 +1,51 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+
+# =========================
+# Environment variables
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# Downloaded data
+# =========================
+data/raw/
+data/processed/
+
+# =========================
+# Generated checksums
+# =========================
+*.sha256
+
+# =========================
+# Logs and temporary files
+# =========================
+logs/
+*.log
+*.tmp
+
+# =========================
+# Generated outputs
+# =========================
+outputs/
+
+# =========================
+# Jupyter notebooks
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# macOS / IDE
+# =========================
+.DS_Store
+.vscode/
+.idea/

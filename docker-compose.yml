@@ -1,0 +1,22 @@
+services:
+
+  app:
+    build: .
+    container_name: earnings_app
+    working_dir: /app
+    volumes:
+      - .:/app
+    environment:
+      PYTHONPATH: /app
+
+  scheduler:
+    build: .
+    container_name: earnings_scheduler
+    command: >
+      luigid
+      --address 0.0.0.0
+      --port 8082
+    ports:
+      - "8082:8082"
+    volumes:
+      - .:/app
