@@ -696,19 +696,26 @@ def down_call_accuracy(preds: pd.DataFrame) -> float:
     return float((~down["y_true"]).mean()) if len(down) else float("nan")
 
 
-def make_river_logreg(lr: float = 0.01, l2: float = 0.0) -> Any:
+def make_river_logreg(
+    lr: float = 0.01, l2: float = 0.0, intercept_lr: float = 0.01
+) -> Any:
     """
     Build a standardized online logistic regression.
 
     :param lr: SGD learning rate for the weights (the River default is 0.01)
     :param l2: L2 penalty that pulls the weights toward zero
+    :param intercept_lr: learning rate for the intercept, which tracks the
+        recent share of up days (the River default is 0.01)
     :return: River pipeline
     """
     from river import compose, linear_model, optim, preprocessing
 
     return compose.Pipeline(
         preprocessing.StandardScaler(),
-        linear_model.LogisticRegression(optimizer=optim.SGD(lr), l2=l2),
+        # the intercept has its own learning rate, separate from the weights.
+        linear_model.LogisticRegression(
+            optimizer=optim.SGD(lr), l2=l2, intercept_lr=intercept_lr
+        ),
     )
 
 

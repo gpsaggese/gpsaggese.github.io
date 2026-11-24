@@ -258,11 +258,152 @@ results.round(4)
 #   logistic regression) only just reach always-up's accuracy.
 
 # %% [markdown]
-# ## 7. Drift and adaptation (next milestone)
+# ## 7. Drift and adaptation
 #
-# - ADWIN on the error stream; mark detected drifts against known regimes
-#   (2020 COVID crash, 2022 rate hikes)
-# - Compare a static model, a model with forgetting, and an adaptive tree
+# Markets change: up days were common in 2017 and 2024 and rare in 2022. This
+# section asks three questions:
+# 1. When did the market change? ADWIN on the daily share of up days.
+# 2. When did each model's accuracy change? ADWIN on each model's daily
+#    accuracy.
+# 3. Is continual learning worth it? The tuned online logistic regression
+#    is compared, year by year, with an identical copy that stops learning at
+#    the end of 2014, and with the drift-aware Hoeffding adaptive tree and
+#    adaptive random forest.
+#
+# ADWIN flags a change only after enough new days confirm it, so detections lag
+# the true change.
+
+# %%
+# ADWIN on the daily share of stocks that closed higher.
+up_share = rivutil.daily_mean(all_preds["always_up_online"], "up")
+market_drifts = rivutil.detect_drift(up_share)
+print("Market drifts:", [d.date() for d in market_drifts])
+ax = up_share.rolling(60).mean().plot(
+    figsize=(10, 4), label="Share of up days (60-day mean)"
+)
+for d in market_drifts:
+    ax.axvline(d, color="red", linestyle=":", alpha=0.7)
+ax.axhline(0.5, color="gray", linestyle="--")
+ax.legend()
+plt.show()
+
+# %%
+# robustness check: does a more sensitive ADWIN find the 2022 shift?
+# a larger delta needs less evidence to fire, so it also raises more false alarms.
+for delta in (0.002, 0.05, 0.2):
+    found = rivutil.detect_drift(up_share, delta=delta)
+    print(f"delta={delta}: {len(found)} detections", [d.date() for d in found][:10])
+
+# %%
+# ADWIN on each model's daily accuracy.
+both = {**all_preds, **river_preds}
+models_to_track = [
+    "always_up_online", best_logreg, "batch_logreg_monthly",
+    "river_hoeffding_adaptive_tree", "river_adaptive_random_forest",
+]
+model_drifts = {
+    m: [d.date() for d in rivutil.detect_drift(rivutil.daily_mean(both[m], "correct"))]
+    for m in models_to_track
+}
+pd.Series(model_drifts, name="ADWIN detections")
+
+# %%
+# Same tuned model, but it stops learning at the end of 2014. On each day the
+# model learns the previous day's labels, so it has learned every row dated
+# before SPLIT_DATE exactly when it makes its first 2015 prediction.
+n_before_split = int((panel["date"] < SPLIT_DATE).sum())
+frozen_name = f"{best_logreg}_frozen_2014"
+frozen_preds, _ = rivutil.run_models(
+    {frozen_name: lambda: rivutil.FrozenClassifier(
+        logreg_grid[best_logreg](), n_before_split
+    )},
+    panel, feature_cols, warmup_days=250,
+)
+both.update(frozen_preds)
+
+# %%
+# Accuracy minus always-up, in percentage points, per year of the test period.
+compare = [
+    "always_up_online", "batch_logreg_monthly", best_logreg, frozen_name,
+    "river_hoeffding_adaptive_tree", "river_adaptive_random_forest",
+]
+_, late_both = rivutil.split_preds({k: both[k] for k in compare}, SPLIT_DATE)
+edge = (rivutil.edge_by_period(late_both, "always_up_online") * 100).round(1)
+up_by_year = (
+    rivutil.daily_mean(late_both["always_up_online"], "up")
+    .groupby(lambda d: d.year).mean() * 100
+).round(1)
+print("Share of up days per year (%):")
+print(up_by_year.to_string())
+edge.style.background_gradient(cmap="RdBu", vmin=-5, vmax=5, axis=None)
+
+# %%
+# is the frozen model really better than the online one? compare them on the
+# same 2015-2026 predictions with McNemar's test.
+print(rivutil.mcnemar_test(late_both[frozen_name], late_both[best_logreg]))
+# does continual learning make the model call "down" more after a bad year?
+# share of "up" calls per year, online vs frozen.
+share_up_calls = pd.DataFrame({
+    name: late_both[name]["y_pred"].groupby(late_both[name]["date"].dt.year).mean()
+    for name in [best_logreg, frozen_name]
+})
+(share_up_calls * 100).round(1)
+
+# %%
+# does a slow intercept stop the trend following? same tuned weights, but the
+# intercept now learns as slowly as the weights.
+slow_name = f"{best_logreg}_slow_intercept"
+lr_best = float(best_logreg.split("_lr")[1].split("_l2")[0])
+l2_best = float(best_logreg.split("_l2")[1])
+slow_preds, _ = rivutil.run_models(
+    {slow_name: lambda: rivutil.make_river_logreg(lr_best, l2_best, intercept_lr=lr_best)},
+    panel, feature_cols, warmup_days=250,
+)
+both.update(slow_preds)
+_, late_both = rivutil.split_preds(
+    {k: both[k] for k in compare + [slow_name]}, SPLIT_DATE
+)
+# yearly edge vs always-up, now including the slow-intercept model.
+edge = (rivutil.edge_by_period(late_both, "always_up_online") * 100).round(1)
+# share of "up" calls per year for the three logistic regressions.
+share_up_calls = pd.DataFrame({
+    name: late_both[name]["y_pred"].groupby(late_both[name]["date"].dt.year).mean()
+    for name in [best_logreg, frozen_name, slow_name]
+})
+display((share_up_calls * 100).round(1))
+edge.style.background_gradient(cmap="RdBu", vmin=-5, vmax=5, axis=None)
+
+# %% [markdown]
+# **Findings (drift and adaptation, test period 2015-2026)**
+# - ADWIN found no drift: no detections in the daily share of up days or in
+#   any model's daily accuracy, even with a far more sensitive setting
+#   (delta = 0.002, 0.05 and 0.2 all give 0 detections). The market's dips
+#   (2015-16, 2018, 2020, 2022) are short and small: the 2022 dip lowered the
+#   share of up days by about 5 points for several months, which is within
+#   the day-to-day noise of 8 stocks that move together.
+# - Continual learning hurt. The tuned logistic regression frozen at the end
+#   of 2014 averaged -0.2 points per year against always-up; the same model
+#   that kept learning averaged -1.1 (McNemar: frozen right and online wrong
+#   2,271 times vs. 2,053 the other way, p = 0.001). The drift-aware Hoeffding
+#   adaptive tree (-1.9) and adaptive random forest (-2.4) did worst; the
+#   forest lost to always-up in 11 of 12 years.
+# - The online model became a trend follower: its share of "up" calls fell to
+#   48% in 2022 and rose to 100% in 2024, while the frozen copy stayed at
+#   87-95%. Its worst years (2021-2023, -2.4 to -3.4 points) surround the 2022
+#   reversal.
+# - Cause: tuning lowered the weights' learning rate to 0.0001, but River's
+#   logistic regression keeps a separate intercept learning rate (0.01), and
+#   the intercept tracks the recent share of up days.
+# - A slow intercept removes the swings (no 2022 loss) but learns the up rate
+#   too slowly: its "up" share stays at 62-78% until 2023 and reaches the 90s
+#   only by 2024. Its 12-year average (-1.0) is no better.
+# - Overall: the only stable, learnable pattern here is the long-run share of
+#   up days. Learning it once and stopping beat every form of continual
+#   adaptation. Online learning helps when relationships change and stay
+#   learnable; here, adapting meant reacting to noise.
+# - Single-year edges carry about +/-2-3 points of noise (about 2,000
+#   correlated predictions per year), and McNemar p-values are optimistic for
+#   the same reason; conclusions rest on patterns across many years.
 
 # %% [markdown]
 # ## 8. Economic evaluation (next milestone)
