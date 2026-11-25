@@ -7,10 +7,16 @@ The notebook `gensim.example.ipynb` calls these functions, one per cell, to:
 - Tokenize the sentences with `simple_preprocess()` and the Gensim stop words
 - Make a stratified train / test split
 - Summarize the data in one table
+- Turn the TF-IDF vectors into a feature matrix for the baseline
+- Score the models and plot their confusion matrices
+- Project the Word2Vec vectors of the frequent words to 2D with PCA
+- Tokenize again, keeping the direction and negation stop words
 
 The notebook `gensim.API.ipynb` reuses the loading and tokenizing functions
 above, and calls the functions in the `gensim.API.ipynb` sections below to
-turn the outputs of the Gensim models into tables.
+turn the outputs of the Gensim models into tables. The example notebook also
+reuses `cell6_3_most_similar_to_df()` and `cell9_2_build_mean_vectors()`
+from these sections.
 
 Import as:
 
@@ -22,9 +28,10 @@ import logging
 import os
 import urllib.request
 import zipfile
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import gensim.corpora
+import gensim.matutils
 import gensim.models
 import gensim.parsing.preprocessing
 import gensim.utils
@@ -32,8 +39,14 @@ import helpers.hdbg as hdbg
 import helpers.hio as hio
 import helpers.hnotebook as hnotebo
 import helpers.hprint as hprint
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import scipy.sparse
+import seaborn as sns
+import sklearn.decomposition
+import sklearn.linear_model
+import sklearn.metrics
 import sklearn.model_selection
 
 _LOG = logging.getLogger(__name__)
@@ -400,6 +413,369 @@ def cell1_7_build_data_table(
     table_df = pd.DataFrame(rows).set_index("split")
     _LOG.debug("return=%s", table_df.shape)
     return table_df
+
+
+# #############################################################################
+# Cell 2.5: Turn the TF-IDF vectors into a feature matrix
+# #############################################################################
+
+
+def cell2_5_build_tfidf_matrix(
+    dictionary: gensim.corpora.Dictionary,
+    tfidf: gensim.models.TfidfModel,
+    texts: List[List[str]],
+) -> scipy.sparse.csr_matrix:
+    """
+    Turn tokenized sentences into a sparse TF-IDF matrix for scikit-learn.
+
+    Each sentence goes through `doc2bow()` and then `tfidf[bow]`, so the
+    tokens that are not in `dictionary` (e.g., test tokens never seen in the
+    train set) are dropped.
+
+    :param dictionary: dictionary fitted on the train sentences
+    :param tfidf: TF-IDF model fitted on the train bag-of-words corpus
+    :param texts: tokenized sentences
+    :return: sparse matrix with one row per sentence and one column per token
+        of `dictionary`
+    """
+    _LOG.debug(hprint.to_str("len(dictionary) len(texts)"))
+    tfidf_corpus = [tfidf[dictionary.doc2bow(tokens)] for tokens in texts]
+    # `corpus2csc()` puts the sentences in the columns, so transpose it.
+    matrix = gensim.matutils.corpus2csc(
+        tfidf_corpus, num_terms=len(dictionary), num_docs=len(texts)
+    )
+    matrix = matrix.T.tocsr()
+    hdbg.dassert_eq(
+        matrix.shape[0], len(texts), "One row per sentence is expected"
+    )
+    _LOG.debug("return=%s", matrix.shape)
+    return matrix
+
+
+# #############################################################################
+# Cell 2.7: Words with the largest weights for each class
+# #############################################################################
+
+
+def cell2_7_top_words_per_class(
+    clf: sklearn.linear_model.LogisticRegression,
+    dictionary: gensim.corpora.Dictionary,
+    *,
+    topn: int = 8,
+) -> pd.DataFrame:
+    """
+    Show the words that push a logistic regression most toward each class.
+
+    :param clf: logistic regression fitted on the TF-IDF matrix, whose
+        columns are the token ids of `dictionary`
+    :param dictionary: dictionary that produced the TF-IDF matrix
+    :param topn: number of words per class
+    :return: one row per class, with its words, largest weight first, and the
+        weight in parentheses
+        ```
+        label     top_words
+        negative  decreased (4.1), fell (3.1), ...
+        ```
+    """
+    _LOG.debug(hprint.to_str("clf.classes_ topn"))
+    hdbg.dassert_eq(
+        clf.coef_.shape[1],
+        len(dictionary),
+        "The classifier must be fitted on one column per token",
+    )
+    rows = []
+    for label, coefs in zip(clf.classes_, clf.coef_):
+        # Sort the token ids by decreasing weight for this class.
+        top_ids = np.argsort(-coefs)[:topn]
+        words = [f"{dictionary[i]} ({coefs[i]:.1f})" for i in top_ids]
+        rows.append({"label": label, "top_words": ", ".join(words)})
+    words_df = pd.DataFrame(rows).set_index("label")
+    _LOG.debug("return=%s", words_df.shape)
+    return words_df
+
+
+# #############################################################################
+# Cell 5.2: Accuracy and macro-F1 of every model
+# #############################################################################
+
+
+def cell5_2_build_results_table(
+    y_true: pd.Series, preds: Dict[str, np.ndarray]
+) -> pd.DataFrame:
+    """
+    Score the predictions of several models on the same sentences.
+
+    The macro-F1 is the mean of the F1 of the 3 classes, so a model that
+    ignores the small negative class scores low even with a high accuracy.
+
+    :param y_true: true labels
+    :param preds: predicted labels of each model, keyed by the model name,
+        in the same order as `y_true`
+    :return: one row per model
+        ```
+        model           accuracy  macro_f1
+        majority_class  0.594     0.248
+        ```
+    """
+    _LOG.debug(hprint.to_str("len(y_true) list(preds)"))
+    rows = []
+    for name, y_pred in preds.items():
+        hdbg.dassert_eq(
+            len(y_pred),
+            len(y_true),
+            "Model '%s' has one label per sentence",
+            name,
+        )
+        accuracy = sklearn.metrics.accuracy_score(y_true, y_pred)
+        # Fix the labels, so a class that is never predicted still counts.
+        macro_f1 = sklearn.metrics.f1_score(
+            y_true, y_pred, labels=LABELS, average="macro", zero_division=0
+        )
+        rows.append(
+            {
+                "model": name,
+                "accuracy": round(accuracy, 3),
+                "macro_f1": round(macro_f1, 3),
+            }
+        )
+    results_df = pd.DataFrame(rows).set_index("model")
+    _LOG.debug("return=%s", results_df.shape)
+    return results_df
+
+
+# #############################################################################
+# Cell 5.3: Confusion matrix of every model
+# #############################################################################
+
+
+def cell5_3_plot_confusion_matrices(
+    y_true: pd.Series,
+    preds: Dict[str, np.ndarray],
+    *,
+    figsize: Optional[Tuple[float, float]] = None,
+) -> None:
+    """
+    Plot one confusion matrix per model, side by side.
+
+    The rows are the true labels and the columns the predicted labels, so the
+    diagonal holds the correct predictions. The title of each panel shows the
+    accuracy and the macro-F1 of the model.
+
+    :param y_true: true labels
+    :param preds: predicted labels of each model, keyed by the model name
+    :param figsize: size of the whole figure
+    """
+    _LOG.debug(hprint.to_str("len(y_true) list(preds)"))
+    if figsize is None:
+        figsize = plt.rcParams["figure.figsize"]
+    scores_df = cell5_2_build_results_table(y_true, preds)
+    _, axes = plt.subplots(1, len(preds), figsize=figsize, sharey=True)
+    for ax, (name, y_pred) in zip(np.atleast_1d(axes), preds.items()):
+        counts = sklearn.metrics.confusion_matrix(y_true, y_pred, labels=LABELS)
+        counts_df = pd.DataFrame(counts, index=LABELS, columns=LABELS)
+        sns.heatmap(
+            counts_df, annot=True, fmt="d", cmap="Blues", cbar=False, ax=ax
+        )
+        accuracy = scores_df.loc[name, "accuracy"]
+        macro_f1 = scores_df.loc[name, "macro_f1"]
+        ax.set_title(f"{name}\naccuracy={accuracy:.3f}, macro-F1={macro_f1:.3f}")
+        ax.set_xlabel("predicted label")
+        ax.set_ylabel("true label")
+    plt.tight_layout()
+    plt.show()
+
+
+# #############################################################################
+# Cell 5.4: Test sentences whose tokens are also in the train set
+# #############################################################################
+
+
+def cell5_4_find_seen_token_lists(
+    train_df: pd.DataFrame, test_df: pd.DataFrame
+) -> pd.Series:
+    """
+    Flag the test sentences whose token list is also a train token list.
+
+    The duplicates are dropped before the split, but `tokenize()` drops the
+    numbers, so 2 different sentences (e.g., 2 daily market reports) can get
+    the same tokens. Such a test sentence is not new to the models.
+
+    :param train_df: train set, with the column `tokens`
+    :param test_df: test set, with the column `tokens`
+    :return: one boolean per test sentence, `True` if its token list is in
+        the train set
+    """
+    _LOG.debug(hprint.to_str("train_df.shape test_df.shape"))
+    train_token_lists = set(train_df["tokens"].apply(tuple))
+    is_seen = test_df["tokens"].apply(
+        lambda tokens: tuple(tokens) in train_token_lists
+    )
+    _LOG.debug("return=%s", int(is_seen.sum()))
+    return is_seen
+
+
+# #############################################################################
+# Cell 6.1: Project the most frequent words to 2D with PCA
+# #############################################################################
+
+
+def cell6_1_project_top_words(
+    kv: gensim.models.KeyedVectors,
+    terms: List[str],
+    *,
+    n_words: int = 200,
+) -> Tuple[pd.DataFrame, np.ndarray]:
+    """
+    Project the vectors of the most frequent words to 2D with PCA.
+
+    The PCA is fitted on the `n_words` most frequent words only. A term of
+    `terms` outside them is projected with the same PCA, so that every term
+    can be labeled on the plot.
+
+    :param kv: word vectors, whose `index_to_key` is sorted by frequency, as
+        in `model.wv` of a `Word2Vec` model
+    :param terms: words to label; each must be in the vocabulary of `kv`
+    :param n_words: number of most frequent words to fit the PCA on
+    :return:
+        - one row per word, with its count, its 2 coordinates, and whether it
+          is among the `n_words` most frequent words
+          ```
+          word  count  pc1    pc2    in_top
+          eur   1580   0.41  -0.12   True
+          ```
+        - the share of the variance explained by each of the 2 components
+    """
+    _LOG.debug(hprint.to_str("terms n_words"))
+    missing = [term for term in terms if term not in kv]
+    hdbg.dassert_eq(len(missing), 0, "Terms not in the vocabulary: %s", missing)
+    top_words = kv.index_to_key[:n_words]
+    extra_words = [term for term in terms if term not in top_words]
+    # Fit the PCA on the top words, then project the extra terms with it.
+    pca = sklearn.decomposition.PCA(n_components=2)
+    top_coords = pca.fit_transform(kv[top_words])
+    words = top_words + extra_words
+    coords = top_coords
+    if extra_words:
+        coords = np.vstack([top_coords, pca.transform(kv[extra_words])])
+    words_df = pd.DataFrame(
+        {
+            "word": words,
+            "count": [kv.get_vecattr(word, "count") for word in words],
+            "pc1": coords[:, 0],
+            "pc2": coords[:, 1],
+            "in_top": [word in top_words for word in words],
+        }
+    )
+    _LOG.debug("return=%s", words_df.shape)
+    return words_df, pca.explained_variance_ratio_
+
+
+# #############################################################################
+# Cell 6.2: Plot the word map with the finance terms labeled
+# #############################################################################
+
+
+def cell6_2_plot_word_map(
+    words_df: pd.DataFrame,
+    terms: List[str],
+    explained_ratio: np.ndarray,
+    *,
+    figsize: Optional[Tuple[float, float]] = None,
+) -> None:
+    """
+    Plot the 2D word map, with the finance terms highlighted and labeled.
+
+    :param words_df: word coordinates, from `cell6_1_project_top_words()`
+    :param terms: words to highlight and label
+    :param explained_ratio: share of the variance explained by each axis,
+        from `cell6_1_project_top_words()`
+    :param figsize: size of the figure
+    """
+    _LOG.debug(hprint.to_str("words_df.shape terms"))
+    if figsize is None:
+        figsize = plt.rcParams["figure.figsize"]
+    _, ax = plt.subplots(figsize=figsize)
+    is_term = words_df["word"].isin(terms)
+    # Draw the frequent words as small gray points.
+    sns.scatterplot(
+        data=words_df[~is_term],
+        x="pc1",
+        y="pc2",
+        color="lightgray",
+        s=25,
+        label=f"{int(words_df['in_top'].sum())} most frequent words",
+        ax=ax,
+    )
+    # Draw the finance terms on top, each with its label.
+    sns.scatterplot(
+        data=words_df[is_term],
+        x="pc1",
+        y="pc2",
+        color="tab:red",
+        s=60,
+        label="finance terms",
+        ax=ax,
+    )
+    for _, row in words_df[is_term].iterrows():
+        # Flag a term that was projected without being part of the PCA fit.
+        text = row["word"] if row["in_top"] else f"{row['word']} (not in top)"
+        ax.annotate(
+            text,
+            (row["pc1"], row["pc2"]),
+            xytext=(4, 4),
+            textcoords="offset points",
+            fontsize=11,
+            fontweight="bold",
+        )
+    ax.set_xlabel(f"PC1 ({explained_ratio[0]:.1%} of the variance)")
+    ax.set_ylabel(f"PC2 ({explained_ratio[1]:.1%} of the variance)")
+    ax.set_title("Word2Vec vectors of the most frequent train words, PCA")
+    plt.tight_layout()
+    plt.show()
+
+
+# #############################################################################
+# Cell 7.1: Tokenize again, keeping the direction and negation words
+# #############################################################################
+
+
+def cell7_1_tokenize_keeping_words(
+    df: pd.DataFrame, keep_words: List[str]
+) -> pd.DataFrame:
+    """
+    Tokenize the sentences again, keeping some of the stop words.
+
+    The new column `tokens_kept` is built like `tokenize()`: the sentences go
+    through the same `simple_preprocess()`, and the Gensim stop words are
+    removed, except the words in `keep_words` (e.g., "up", "down", "not").
+    The column `tokens` of `df` is left as it is.
+
+    :param df: dataframe with the column `sentence`
+    :param keep_words: stop words to keep; each must be a Gensim stop word
+    :return: copy of `df` with the extra column `tokens_kept`
+        ```
+        "Operating profit fell , down from EUR 4.4 mn ."
+        -> ["operating", "profit", "fell", "down", "eur", "mn"]
+        ```
+    """
+    _LOG.debug(hprint.to_str("df.shape keep_words"))
+    hdbg.dassert_is_subset(
+        keep_words,
+        gensim.parsing.preprocessing.STOPWORDS,
+        "Only stop words can be kept",
+    )
+    # Remove every stop word, except the ones to keep.
+    stop_words = gensim.parsing.preprocessing.STOPWORDS - set(keep_words)
+    df_out = df.copy()
+    df_out["tokens_kept"] = df_out["sentence"].apply(
+        lambda sentence: [
+            token
+            for token in gensim.utils.simple_preprocess(sentence)
+            if token not in stop_words
+        ]
+    )
+    _LOG.debug("return=%s", df_out.shape)
+    return df_out
 
 
 # #############################################################################
