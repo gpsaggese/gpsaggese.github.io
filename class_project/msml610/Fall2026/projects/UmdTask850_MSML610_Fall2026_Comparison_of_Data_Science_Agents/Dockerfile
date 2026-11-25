@@ -4,7 +4,7 @@
 # Python 3.12 slim (already has Python and pip).
 # #############################################################################
 
-FROM python:3.12-slim
+FROM python:3.11-slim
 
 # Avoid interactive prompts during apt operations.
 ENV DEBIAN_FRONTEND=noninteractive

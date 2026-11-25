@@ -6,3 +6,5 @@ seaborn
 tqdm
 pyarrow
 datasets
+pandasai
+pandasai-litellm
