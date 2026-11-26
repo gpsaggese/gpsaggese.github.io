@@ -59,14 +59,14 @@ This tutorial includes all the code, notebooks, and Docker containers in
   approach
 - [`fastapi.API.ipynb`](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/tutorials/fastapi/fastapi.API.ipynb):
   Tutorial notebook focusing on core FastAPI building blocks
-  - Path and query parameters, request body validation with `pydantic` models
-  - Dependency injection with `Depends()`
-  - Error handling with `HTTPException`
-  - The automatic `/docs`, `/redoc`, and `/openapi.json`
+    - Path and query parameters, request body validation with `pydantic` models
+    - Dependency injection with `Depends()`
+    - Error handling with `HTTPException`
+    - The automatic `/docs`, `/redoc`, and `/openapi.json`
 - [`fastapi.example.ipynb`](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/tutorials/fastapi/fastapi.example.ipynb):
   End-to-end Book Catalog API example
-  - Runs a real `uvicorn` server on a background thread
-  - Exercises the API with real HTTP requests via `httpx`
-  - Covers create, read, update, delete, filtering, and error responses
+    - Runs a real `uvicorn` server on a background thread
+    - Exercises the API with real HTTP requests via `httpx`
+    - Covers create, read, update, delete, filtering, and error responses
 - [`fastapi_utils.py`](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/tutorials/fastapi/fastapi_utils.py):
   Utility functions and models shared by both notebooks
