@@ -1,7 +1,7 @@
 """
 Import as:
 
-import class_project.project_template.test.test_docker_all as tptdal
+import test_docker_template as tdt
 """
 
 import logging
@@ -20,7 +20,7 @@ _LOG = logging.getLogger(__name__)
 
 class Test_docker(hdoctest.DockerTestCase):
     """
-    Run all Docker tests for `class_project/project_template`.
+    Run all Docker tests for the CLIP project.
     """
 
     _test_file = __file__
@@ -28,19 +28,19 @@ class Test_docker(hdoctest.DockerTestCase):
     @pytest.mark.slow
     def test1(self) -> None:
         """
-        Test that `template.example.ipynb` runs without error inside Docker.
+        Test that `clip.example.ipynb` runs without error inside Docker.
         """
         # Prepare inputs.
-        notebook_name = "template.example.ipynb"
+        notebook_name = "clip.example.ipynb"
         # Run test.
         self.helper(notebook_name)
 
     @pytest.mark.slow
     def test2(self) -> None:
         """
-        Test that `template.API.ipynb` runs without error inside Docker.
+        Test that `clip.API.ipynb` runs without error inside Docker.
         """
         # Prepare inputs.
-        notebook_name = "template.API.ipynb"
+        notebook_name = "clip.API.ipynb"
         # Run test.
         self.helper(notebook_name)
