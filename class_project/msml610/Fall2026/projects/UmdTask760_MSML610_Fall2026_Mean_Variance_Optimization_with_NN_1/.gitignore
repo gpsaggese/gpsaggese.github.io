@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+*.disk-backup-*.ipynb
+.mplconfig/
+.pytest_cache/
+data/
+results/
+drafts/
+*.log
+.DS_Store
