@@ -154,6 +154,30 @@ class Test_ExecutionEnv(hunitest.TestCase):
         actual = " ".join(f"{s:.1f}" for s in shares)
         self.assert_equal(actual, expected)
 
+    def test6(self) -> None:
+        """
+        Check that the risk penalty makes the return minus the Almgren-Chriss
+        objective `expected cost + risk_aversion * variance`.
+        """
+        # Prepare inputs.
+        risk_aversion = 1e-4
+        cfg = {"reward": "expected_cost", "risk_aversion": risk_aversion}
+        env = rlutils.ExecutionEnv(cfg)
+        # Action 3 sells 20% of the remaining inventory.
+        action = 3
+        seed = 1
+        # Run test.
+        _, total_reward, info = self.helper(env, action, seed)
+        objective = (
+            info["expected_cost_bps"] + risk_aversion * info["variance_bps2"]
+        )
+        # Check outputs.
+        actual = (
+            f"return={total_reward:.6f} has_variance={info['variance_bps2'] > 0}"
+        )
+        expected = f"return={-objective:.6f} has_variance=True"
+        self.assert_equal(actual, expected)
+
 
 # #############################################################################
 # Test_run_baseline
@@ -247,6 +271,66 @@ class Test_run_baseline(hunitest.TestCase):
         # Check outputs.
         actual = str(twap.mean() < sell_all.mean())
         self.assert_equal(actual, expected)
+
+
+class Test_almgren_chriss_shares(hunitest.TestCase):
+    """
+    Test `rllib_utils.almgren_chriss_shares()` function.
+    """
+
+    def helper(self, risk_aversion: float, expected: str) -> None:
+        """
+        Check the inventory path of the Almgren-Chriss schedule over 4 steps.
+
+        With these parameters, `risk_aversion * variance / impact` is
+        `25 * risk_aversion`.
+
+        :param risk_aversion: risk aversion of the environment
+        :param expected: expected inventory path
+        """
+        # Prepare inputs.
+        cfg = {
+            "n_steps": 4,
+            "daily_vol": 0.01,
+            "adv": 1_000_000,
+            "eta": 0.1,
+            "gamma": 0.0,
+            "risk_aversion": risk_aversion,
+        }
+        # Run test.
+        _, inventory = rlutils.run_episodes(
+            lambda env, obs: rlutils.almgren_chriss_shares(env),
+            config=cfg,
+            n_episodes=1,
+        )
+        # Check outputs.
+        actual = str(inventory.round(6).tolist())
+        self.assert_equal(actual, expected)
+
+    def test1(self) -> None:
+        """
+        Check that zero risk aversion gives TWAP.
+        """
+        # Prepare inputs.
+        risk_aversion = 0.0
+        # Prepare outputs.
+        expected = "[[1.0, 0.75, 0.5, 0.25, 0.0]]"
+        # Run test.
+        self.helper(risk_aversion, expected)
+
+    def test2(self) -> None:
+        """
+        Check the sinh schedule for `risk_aversion * variance / impact = 1`.
+
+        Then `cosh(kappa) = 1.5` and the inventory left is
+        `sinh(kappa * (4 - k)) / sinh(4 * kappa)` = 1, 8/21, 3/21, 1/21, 0.
+        """
+        # Prepare inputs.
+        risk_aversion = 0.04
+        # Prepare outputs.
+        expected = "[[1.0, 0.380952, 0.142857, 0.047619, 0.0]]"
+        # Run test.
+        self.helper(risk_aversion, expected)
 
 
 class Test_run_episodes(hunitest.TestCase):
@@ -365,4 +449,38 @@ class Test_summarize_episodes(hunitest.TestCase):
         df = rlutils.summarize_episodes(costs)
         # Check outputs.
         actual = df.round(6).to_string()
+        self.assert_equal(actual, expected, dedent=True, fuzzy_match=True)
+
+    def test2(self) -> None:
+        """
+        Check the variance and the risk-adjusted cost.
+        """
+        # Prepare inputs.
+        costs = {
+            "TWAP": pd.DataFrame(
+                {
+                    "shortfall_bps": [1.0, 2.0],
+                    "expected_cost_bps": [0.5, 0.5],
+                    "variance_bps2": [10.0, 10.0],
+                }
+            ),
+            "agent": pd.DataFrame(
+                {
+                    "shortfall_bps": [0.0, 3.0],
+                    "expected_cost_bps": [0.6, 0.8],
+                    "variance_bps2": [2.0, 4.0],
+                }
+            ),
+        }
+        risk_aversion = 0.1
+        # Prepare outputs.
+        expected = r"""
+               variance  risk-adjusted cost
+        TWAP       10.0                 1.5
+        agent       3.0                 1.0
+        """
+        # Run test.
+        df = rlutils.summarize_episodes(costs, risk_aversion=risk_aversion)
+        # Check outputs.
+        actual = df[["variance", "risk-adjusted cost"]].round(6).to_string()
         self.assert_equal(actual, expected, dedent=True, fuzzy_match=True)
