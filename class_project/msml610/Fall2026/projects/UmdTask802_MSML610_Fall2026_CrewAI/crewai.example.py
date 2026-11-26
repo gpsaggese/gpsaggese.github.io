@@ -76,8 +76,10 @@ def build_fred_crew(
 
     research_task = crut.create_task(
         description=(
-            "Use download_and_profile_fred_data with data_dir='{data_dir}' "
-            "and download_date='{download_date}'. Return the complete tool "
+            "Use download_and_profile_fred_data with data_dir='{data_dir}', "
+            "download_date='{download_date}', and "
+            "observation_cutoff='{observation_cutoff}'. Return the complete "
+            "tool "
             "output, including snapshot_dir and the profile for all four "
             "series. Do not omit or modify any values."
         ),
@@ -142,6 +144,7 @@ def run_fred_crew(
     data_dir: str,
     download_date: str,
     *,
+    observation_cutoff: Optional[str] = None,
     llm: Optional[str] = None,
     verbose: bool = False,
 ):
@@ -150,6 +153,7 @@ def run_fred_crew(
 
     :param data_dir: Root directory for dated FRED snapshots.
     :param download_date: ISO date assigned to the snapshot.
+    :param observation_cutoff: Latest observation date retained in the data.
     :param llm: Model identifier used by the agents.
     :param verbose: Whether to display detailed CrewAI logs.
     :return: Crew execution result.
@@ -160,6 +164,7 @@ def run_fred_crew(
         inputs={
             "data_dir": data_dir,
             "download_date": download_date,
+            "observation_cutoff": observation_cutoff,
         },
     )
 
@@ -179,6 +184,13 @@ def _parse_args() -> argparse.Namespace:
         help="ISO date assigned to the downloaded snapshot.",
     )
     parser.add_argument(
+        "--observation-cutoff",
+        default=None,
+        help=(
+            "Optional ISO date. FRED observations after this date are removed."
+        ),
+    )
+    parser.add_argument(
         "--llm",
         default=os.getenv("CREWAI_MODEL"),
         help="CrewAI model identifier, or CREWAI_MODEL from the environment.",
@@ -196,6 +208,7 @@ def main() -> None:
     result = run_fred_crew(
         args.data_dir,
         args.download_date,
+        observation_cutoff=args.observation_cutoff,
         llm=args.llm,
         verbose=args.verbose,
     )

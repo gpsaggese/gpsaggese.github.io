@@ -25,6 +25,12 @@ class FREDResearchInput(BaseModel):
             "Optional ISO download date. If omitted, today's date is used."
         ),
     )
+    observation_cutoff: Optional[str] = Field(
+        default=None,
+        description=(
+            "Optional ISO date. Observations after this date are removed."
+        ),
+    )
 
 
 class FREDResearchTool(BaseTool):
@@ -42,10 +48,12 @@ class FREDResearchTool(BaseTool):
         self,
         data_dir: str = "data/fred",
         download_date: Optional[str] = None,
+        observation_cutoff: Optional[str] = None,
     ) -> str:
         paths = fred_tools.download_all_fred_series(
             data_dir=data_dir,
             download_date=download_date,
+            observation_cutoff=observation_cutoff,
         )
         snapshot_dir = next(iter(paths.values())).parent
         profiles = fred_tools.profile_fred_snapshot(snapshot_dir)
@@ -53,6 +61,7 @@ class FREDResearchTool(BaseTool):
         result = {
             "snapshot_dir": str(snapshot_dir),
             "download_date": snapshot_dir.name,
+            "observation_cutoff": observation_cutoff,
             "series": profiles,
         }
         return json.dumps(result, indent=2)

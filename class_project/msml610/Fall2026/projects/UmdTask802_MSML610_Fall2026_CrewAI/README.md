@@ -59,7 +59,8 @@ The deterministic calculations are implemented with pandas rather than relying o
 | `crewai.API.ipynb` | Tutorial notebook for the reusable CrewAI API |
 | `crewai.example.py` | Three-agent FRED macro briefing application |
 | `crewai.example.ipynb` | End-to-end FRED workflow notebook |
-| `evaluation.py` | Single-LLM baseline and numeric-claim evaluator |
+| `evaluation.py` | Single-LLM baseline and field-aware claim evaluator |
+| `multi_snapshot_evaluation.py` | Cached multi-snapshot robustness experiment and aggregate reporting |
 | `reporting.py` | Markdown summary table and FRED chart generation |
 | `test/test_fred_pipeline.py` | Unit tests using synthetic FRED data |
 | `test/test_docker_template.py` | Docker and notebook integration tests |
@@ -141,7 +142,41 @@ For the November 14, 2026 snapshot:
 | Three-agent CrewAI workflow | 12 | 12 | 12 | 1.00 | 1.00 | 1.00 |
 | Single-LLM baseline | 12 | 12 | 12 | 1.00 | 1.00 | 1.00 |
 
-The field-aware evaluation confirmed that both systems produced every required claim correctly in this run. The CrewAI workflow provides a deterministic and auditable calculation path, but it matched rather than outperformed the single-LLM baseline on this snapshot. A multi-snapshot robustness experiment remains future work.
+The field-aware evaluation confirmed that both systems produced every required claim correctly in this run. The CrewAI workflow provides a deterministic and auditable calculation path, but it matched rather than outperformed the single-LLM baseline on this snapshot.
+
+## Multi-Snapshot Evaluation
+
+The robustness experiment evaluates four historical observation cutoffs representing different economic conditions:
+
+| Cutoff | Economic condition |
+|---|---|
+| `2019-06-30` | Pre-pandemic conditions |
+| `2020-05-31` | Pandemic unemployment shock |
+| `2022-06-30` | High inflation |
+| `2023-07-31` | High interest rates and an inverted yield curve |
+
+Prepare the deterministic snapshots without making LLM calls:
+
+```bash
+./docker_cmd.sh 'cd /git_root/class_project/msml610/Fall2026/projects/UmdTask802_MSML610_Fall2026_CrewAI && python multi_snapshot_evaluation.py'
+```
+
+Run the CrewAI workflow and single-LLM baseline:
+
+```bash
+./docker_cmd.sh 'cd /git_root/class_project/msml610/Fall2026/projects/UmdTask802_MSML610_Fall2026_CrewAI && python multi_snapshot_evaluation.py --run-llm'
+```
+
+Generated model responses are cached by cutoff. Repeating the command reuses completed outputs unless `--force` is supplied.
+
+| Method | Correct | Required | Mean accuracy | Mean completeness | Pooled required-claim score |
+|---|---:|---:|---:|---:|---:|
+| Three-agent CrewAI workflow | 48 | 48 | 1.00 | 1.00 | 1.00 |
+| Single-LLM baseline | 48 | 48 | 1.00 | 1.00 | 1.00 |
+
+Both methods correctly reported all 48 required claims across the four snapshots. The experiment therefore found no numerical-accuracy improvement from using the three-agent workflow over this strong baseline. CrewAI still provides a modular and auditable separation between data collection, deterministic calculation, and report generation.
+
+The historical snapshots use the current FRED series truncated at each observation cutoff. They are not revision-aware ALFRED vintages.
 
 ## Export the Final Report
 
@@ -163,7 +198,7 @@ The final report contains the generated briefing, a summary table, and a four-pa
 Run the deterministic pipeline tests inside Docker:
 
 ```bash
-./docker_cmd.sh 'cd /git_root/class_project/msml610/Fall2026/projects/UmdTask802_MSML610_Fall2026_CrewAI && python -m pytest -q test/test_fred_pipeline.py'
+./docker_cmd.sh 'cd /git_root/class_project/msml610/Fall2026/projects/UmdTask802_MSML610_Fall2026_CrewAI && PYTHONPATH=. python -m pytest -q test/test_fred_pipeline.py'
 ```
 
 Run the Docker and notebook integration tests from the Mac host:
@@ -173,11 +208,13 @@ export CSFY_DOCKER_ENGINE=docker
 python -m pytest -q test/test_docker_template.py
 ```
 
-The pipeline tests do not call FRED or Gemini. Notebook LLM execution is disabled by default.
+The 11 pipeline tests cover deterministic calculations, observation cutoffs, cutoff validation and propagation, field-aware evaluation, rounding, missing and incorrect claims, report export, snapshot caching, and aggregate reporting. They do not call FRED or Gemini. Notebook LLM execution is disabled by default.
 
 ## Limitations
 
-- FRED data revisions may change results for snapshots downloaded on another date.
-- The numeric evaluator checks claims against values recomputed from the saved snapshot.
-- A perfect score on one snapshot does not establish that either method will always produce correct numbers.
-- Gemini model availability and rate limits can change.
+- The historical experiments truncate the current FRED series and are not revision-aware ALFRED vintages.
+- FRED data revisions may change results when snapshots are downloaded again.
+- The evaluator checks claims against values recomputed from each saved snapshot.
+- Four perfect snapshots do not establish that either method will always produce correct numbers.
+- The experiment measures required-claim accuracy and completeness, not writing quality, latency, token usage, or cost.
+- Gemini model availability, demand, and rate limits can change.

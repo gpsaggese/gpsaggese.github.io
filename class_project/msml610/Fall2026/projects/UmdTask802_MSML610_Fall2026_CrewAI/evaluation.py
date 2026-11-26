@@ -80,24 +80,37 @@ Raw profile:
 
 
 def get_expected_claims(snapshot_dir: Path) -> dict[str, Any]:
-    """Build the required field-aware claims from the saved snapshot."""
+    """Build unrounded field-aware claims from the saved snapshot."""
 
     profiles = ft.profile_fred_snapshot(snapshot_dir)
     statistics = ft.calculate_macro_statistics(snapshot_dir)
+
+    cpi = profiles["CPIAUCSL"]
+    unemployment = profiles["UNRATE"]
+    fed_funds = profiles["FEDFUNDS"]
+
+    inflation_yoy = (
+        (cpi["latest_value"] / cpi["prior_year_value"]) - 1
+    ) * 100
+    unemployment_change = (
+        unemployment["latest_value"]
+        - unemployment["prior_year_value"]
+    )
+    fed_funds_change = (
+        fed_funds["latest_value"]
+        - fed_funds["prior_year_value"]
+    )
+
     return {
-        "cpi_latest": profiles["CPIAUCSL"]["latest_value"],
-        "cpi_prior_year": profiles["CPIAUCSL"]["prior_year_value"],
-        "inflation_yoy": statistics["inflation_yoy_pct"],
-        "unemployment_latest": profiles["UNRATE"]["latest_value"],
-        "unemployment_prior_year": profiles["UNRATE"][
-            "prior_year_value"
-        ],
-        "unemployment_change": statistics["unemployment_change_pp"],
-        "fed_funds_latest": profiles["FEDFUNDS"]["latest_value"],
-        "fed_funds_prior_year": profiles["FEDFUNDS"][
-            "prior_year_value"
-        ],
-        "fed_funds_change": statistics["fed_funds_change_pp"],
+        "cpi_latest": cpi["latest_value"],
+        "cpi_prior_year": cpi["prior_year_value"],
+        "inflation_yoy": inflation_yoy,
+        "unemployment_latest": unemployment["latest_value"],
+        "unemployment_prior_year": unemployment["prior_year_value"],
+        "unemployment_change": unemployment_change,
+        "fed_funds_latest": fed_funds["latest_value"],
+        "fed_funds_prior_year": fed_funds["prior_year_value"],
+        "fed_funds_change": fed_funds_change,
         "yield_spread_latest": profiles["T10Y2Y"]["latest_value"],
         "yield_spread_prior_year": profiles["T10Y2Y"][
             "prior_year_value"
