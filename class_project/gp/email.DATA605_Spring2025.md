@@ -398,7 +398,7 @@ There will be no in-person class this week. Instead, we are going to have a sing
 
 We will do a pair programming session, where I'll share my screen, and we will run / analyze / comment on some of the example class projects.
 
-https://umd.zoom.us/j/7447082187?pwd=TjZ6c2haUHNmR1pBL2Q3NWlUcUNNUT09
+https://umd.zoom.us/j/7447082187?pwd=XXXX
 
 Meeting ID: 744 708 2187
 Passcode: ########

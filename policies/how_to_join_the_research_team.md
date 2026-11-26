@@ -12,6 +12,11 @@
   - [Blog](https://gpsaggese.github.io/blog/)
   - [Past projects](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/class_project/project_descriptions/README.md)
 
+## Open Your Onboarding Issue
+
+- Open an [onboarding issue](https://github.com/gpsaggese/gpsaggese.github.io/issues/new?template=research_onboarding.md)
+- Check off each item as you complete it
+
 ## Read the Policies
 
 - Read the [policies](/policies)
@@ -33,10 +38,8 @@
   - [Direct channel link](https://umdresearch.slack.com/archives/C0AHRE551LM)
     (once you have joined)
 - Join our weekly research office hours:
-  - **Team Sync**: 4:30-5:15pm ET every Friday
-  - Join with [Google Meet](https://meet.google.com/dkz-mzcc-gvv)
-
-## Show Your Work
+  - 15 min slot: https://calendar.app.google/eSAgAS1nxficxrrE8
+  - 30 min slot: https://calendar.app.google/wR3k37YL9oiKWqiU9
 
 ## Pick a Project
 
@@ -46,6 +49,8 @@
 - Work on a blog / tutorial to show you can do a good job:
   - [Tutorial links](/tutorials)
   - [Blog examples](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/website/docs/blog/posts)
+- Start with a small task from the table of
+  [good first issues](good_first_issues.md#tasks)
 
 ## Complete the Form to be Added
 
