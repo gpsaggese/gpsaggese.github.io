@@ -19,7 +19,7 @@ Import as:
 
 import river_utils as rivutil
 """
-
+# Importing all packages
 import datetime
 import json
 import logging
@@ -35,14 +35,14 @@ _LOG = logging.getLogger(__name__)
 # Default universe: liquid large caps from different sectors plus the S&P 500
 # ETF, which is also used as a market-wide feature.
 DEFAULT_TICKERS = [
-    "SPY",
-    "AAPL",
-    "MSFT",
-    "JPM",
-    "XOM",
-    "JNJ",
-    "WMT",
-    "NVDA",
+    "SPY", # State Street ETF
+    "AAPL", # Apple
+    "MSFT", # Microsoft
+    "JPM", # JPMorgan Chase & Co
+    "XOM", # Exxon Mobil
+    "JNJ", # Johnson & Johnson
+    "WMT", # Walmart
+    "NVDA", # NVIDIA
 ]
 MARKET_TICKER = "SPY"
 DEFAULT_START = "2010-01-01"
@@ -50,11 +50,7 @@ DEFAULT_END = "2026-10-31"
 DATA_DIR = pathlib.Path(__file__).resolve().parent / "data"
 OHLCV_COLUMNS = ["open", "high", "low", "close", "adj_close", "volume"]
 
-
-# #############################################################################
 # 1. Data acquisition
-# #############################################################################
-
 
 def _cache_path(
     tickers: List[str], start: str, end: str, cache_dir: pathlib.Path
@@ -154,11 +150,7 @@ def _wide_to_long(raw: pd.DataFrame, tickers: List[str]) -> pd.DataFrame:
     df["date"] = pd.to_datetime(df["date"]).dt.tz_localize(None)
     return df.sort_values(["date", "ticker"]).reset_index(drop=True)
 
-
-# #############################################################################
 # 2. Validation and cleaning
-# #############################################################################
-
 
 def validate_ohlcv(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -205,11 +197,7 @@ def clean_ohlcv(df: pd.DataFrame) -> pd.DataFrame:
     _LOG.info("clean_ohlcv: dropped %d of %d rows", n0 - len(out), n0)
     return out.sort_values(["date", "ticker"]).reset_index(drop=True)
 
-
-# #############################################################################
 # 3. Feature engineering
-# #############################################################################
-
 
 def _rsi(close: pd.Series, window: int = 14) -> pd.Series:
     """
@@ -303,11 +291,7 @@ def feature_columns(feats: pd.DataFrame) -> List[str]:
     excluded = {"date", "ticker", "target_ret", "target_up"}
     return [c for c in feats.columns if c not in excluded]
 
-
-# #############################################################################
 # 4. Labels
-# #############################################################################
-
 
 def add_direction_label(
     feats: pd.DataFrame, dead_zone: float = 0.0
@@ -328,11 +312,7 @@ def add_direction_label(
     out["target_up"] = out["target_ret"] > 0
     return out.reset_index(drop=True)
 
-
-# #############################################################################
 # 5. Streaming
-# #############################################################################
-
 
 def iter_days(
     panel: pd.DataFrame, feature_cols: List[str], target_col: str = "target_up"
@@ -360,10 +340,7 @@ def iter_days(
         yield date, rows
 
 
-# #############################################################################
 # 6. Prequential evaluation
-# #############################################################################
-
 
 def run_prequential(
     model: Any,
@@ -455,11 +432,7 @@ def summarize_predictions(preds: pd.DataFrame) -> pd.Series:
     )
     return pd.Series(out)
 
-
-# #############################################################################
 # 7. Statistical tests
-# #############################################################################
-
 
 def binomial_test_vs_baseline(preds: pd.DataFrame) -> Dict[str, float]:
     """
@@ -538,11 +511,7 @@ def mcnemar_test(preds_a: pd.DataFrame, preds_b: pd.DataFrame) -> Dict[str, floa
     p = scipy.stats.binomtest(n01, n01 + n10, 0.5).pvalue if n01 + n10 else 1.0
     return {"a_right_b_wrong": n01, "a_wrong_b_right": n10, "p_value": p}
 
-
-# #############################################################################
 # Synthetic data (for tests and offline demos)
-# #############################################################################
-
 
 def make_synthetic_ohlcv(
     tickers: Optional[List[str]] = None,
@@ -596,11 +565,7 @@ def make_synthetic_ohlcv(
     df["low"] = df[["low", "open", "close"]].min(axis=1)
     return df.sort_values(["date", "ticker"]).reset_index(drop=True)
 
-
-# #############################################################################
 # 8. Baselines and model comparison
-# #############################################################################
-
 
 class PersistenceClassifier:
     """
@@ -705,6 +670,7 @@ def compare_models(
         ci = block_bootstrap_accuracy(p, n_boot=n_boot)
         row["acc_ci_low"], row["acc_ci_high"] = ci["ci_low"], ci["ci_high"]
         row["share_pred_up"] = p["y_pred"].mean()
+        row["down_call_accuracy"] = down_call_accuracy(p)
         row[f"mcnemar_p_vs_{reference}"] = (
             np.nan
             if name == reference
@@ -712,3 +678,268 @@ def compare_models(
         )
         rows[name] = row
     return pd.DataFrame(rows).T
+
+# 9. River model comparison
+
+def down_call_accuracy(preds: pd.DataFrame) -> float:
+    """
+    Fraction of "down" predictions that were correct.
+
+    Always predicting "up" is right on the share of up days (about 53%). A
+    model can beat it only if its "down" calls are right more than half the
+    time; otherwise each "down" call replaces a likely hit with a likely miss.
+
+    :param preds: output of `run_prequential` or `run_walk_forward`
+    :return: accuracy of the "down" calls, or NaN if the model never says down
+    """
+    down = preds[~preds["y_pred"]]
+    return float((~down["y_true"]).mean()) if len(down) else float("nan")
+
+
+def make_river_logreg(
+    lr: float = 0.01, l2: float = 0.0, intercept_lr: float = 0.01
+) -> Any:
+    """
+    Build a standardized online logistic regression.
+
+    :param lr: SGD learning rate for the weights (the River default is 0.01)
+    :param l2: L2 penalty that pulls the weights toward zero
+    :param intercept_lr: learning rate for the intercept, which tracks the
+        recent share of up days (the River default is 0.01)
+    :return: River pipeline
+    """
+    from river import compose, linear_model, optim, preprocessing
+
+    return compose.Pipeline(
+        preprocessing.StandardScaler(),
+        # the intercept has its own learning rate, separate from the weights.
+        linear_model.LogisticRegression(
+            optimizer=optim.SGD(lr), l2=l2, intercept_lr=intercept_lr
+        ),
+    )
+
+
+def make_river_models(seed: int = 0) -> Dict[str, Callable[[], Any]]:
+    """
+    Return factories for the River models compared in the example notebook.
+
+    Factories (not model objects) are returned so that every run starts from
+    an untrained model.
+
+    :param seed: random seed for the models that use randomness
+    :return: model name -> callable returning a fresh model
+    """
+    from river import ensemble, forest, naive_bayes, preprocessing, tree
+
+    return {
+        "river_gaussian_nb": lambda: preprocessing.StandardScaler()
+        | naive_bayes.GaussianNB(),
+        "river_hoeffding_tree": lambda: tree.HoeffdingTreeClassifier(),
+        "river_hoeffding_adaptive_tree": lambda: tree.HoeffdingAdaptiveTreeClassifier(
+            seed=seed
+        ),
+        "river_adaptive_random_forest": lambda: forest.ARFClassifier(
+            n_models=10, seed=seed
+        ),
+        "river_bagged_hoeffding_trees": lambda: ensemble.BaggingClassifier(
+            tree.HoeffdingTreeClassifier(), n_models=10, seed=seed
+        ),
+    }
+
+
+def run_models(
+    factories: Dict[str, Callable[[], Any]],
+    panel: pd.DataFrame,
+    feature_cols: List[str],
+    *,
+    warmup_days: int = 250,
+) -> Tuple[Dict[str, pd.DataFrame], pd.Series]:
+    """
+    Run `run_prequential` for several models on the same stream.
+
+    :param factories: model name -> callable returning a fresh model
+    :param panel: labeled feature panel
+    :param feature_cols: model input columns
+    :param warmup_days: initial trading days that are not scored
+    :return: predictions per model, and wall-clock seconds per model
+    """
+    import time
+
+    preds, seconds = {}, {}
+    for name, factory in factories.items():
+        start = time.perf_counter()
+        preds[name] = run_prequential(
+            factory(), panel, feature_cols, warmup_days=warmup_days
+        )
+        seconds[name] = time.perf_counter() - start
+        _LOG.info("%s: %.1f s", name, seconds[name])
+    return preds, pd.Series(seconds, name="seconds")
+
+
+def split_preds(
+    preds: Dict[str, pd.DataFrame], split_date: str
+) -> Tuple[Dict[str, pd.DataFrame], Dict[str, pd.DataFrame]]:
+    """
+    Split every model's predictions into a selection period and a test period.
+
+    Choosing settings by looking at the same predictions we report would
+    overstate the chosen model. Settings are chosen on the dates before
+    `split_date` and results are reported on the dates from `split_date` on.
+    Models keep learning through the split; only the scoring is divided.
+
+    :param preds: model name -> predictions
+    :param split_date: first date of the test period, `YYYY-MM-DD`
+    :return: (selection-period predictions, test-period predictions)
+    """
+    cut = pd.Timestamp(split_date)
+    early = {k: v[v["date"] < cut] for k, v in preds.items()}
+    late = {k: v[v["date"] >= cut] for k, v in preds.items()}
+    return early, late
+
+# Test_model_comparison
+
+class Test_model_comparison:
+    def test_down_call_accuracy(self) -> None:
+        preds = pd.DataFrame(
+            {
+                "y_true": [True, False, False, True],
+                "y_pred": [True, False, False, False],
+            }
+        )
+        # Three "down" calls, two of them correct.
+        assert rivutil.down_call_accuracy(preds) == pytest.approx(2 / 3)
+
+    def test_down_call_accuracy_never_down(self) -> None:
+        preds = pd.DataFrame({"y_true": [True, False], "y_pred": [True, True]})
+        assert np.isnan(rivutil.down_call_accuracy(preds))
+
+    def test_split_preds_partitions_dates(self) -> None:
+        panel = _panel(n_days=300, seed=10)
+        cols = rivutil.feature_columns(panel)
+        preds, _ = rivutil.run_models(
+            {"logreg": rivutil.make_river_logreg}, panel, cols, warmup_days=50
+        )
+        split = str(preds["logreg"]["date"].iloc[len(preds["logreg"]) // 2].date())
+        early, late = rivutil.split_preds(preds, split)
+        assert early["logreg"]["date"].max() < pd.Timestamp(split)
+        assert late["logreg"]["date"].min() >= pd.Timestamp(split)
+        assert len(early["logreg"]) + len(late["logreg"]) == len(preds["logreg"])
+
+    def test_river_models_run(self) -> None:
+        """
+        Every model in the zoo trains and predicts on a short stream.
+        """
+        panel = _panel(n_days=150, seed=11)
+        cols = rivutil.feature_columns(panel)
+        preds, seconds = rivutil.run_models(
+            rivutil.make_river_models(), panel, cols, warmup_days=50
+        )
+        assert set(preds) == set(seconds.index)
+        for p in preds.values():
+            assert p["p_up"].between(0, 1).all()
+
+# 10. drift and regimes
+
+
+def daily_mean(preds: pd.DataFrame, column: str) -> pd.Series:
+    """
+    Average a per-prediction quantity over the stocks of each trading day.
+
+    :param preds: output of `run_prequential` or `run_walk_forward`
+    :param column: "correct" for the daily accuracy, "up" for the share of
+        stocks that closed higher the next day, or any column of `preds`
+    :return: one value per trading day, indexed by date
+    """
+    # pick the per-prediction values to average.
+    if column == "correct":
+        # 1 when the model called the direction right, 0 otherwise.
+        values = preds["y_true"] == preds["y_pred"]
+    elif column == "up":
+        # 1 when the stock closed higher the next day.
+        values = preds["y_true"]
+    else:
+        values = preds[column]
+    # average over the stocks of each day, so ADWIN sees one value per day.
+    return values.astype(float).groupby(preds["date"]).mean()
+
+
+def detect_drift(
+    series: pd.Series, *, delta: float = 0.002, clock: int = 1
+) -> List[pd.Timestamp]:
+    """
+    Run ADWIN over a daily series and return the dates where it fires.
+
+    ADWIN keeps a window of recent values and drops the older part when the
+    means of the two parts differ by more than chance allows (controlled by
+    `delta`). A detection comes some time after the true change, because
+    ADWIN needs enough new data to be confident.
+
+    :param series: daily values indexed by date, e.g. from `daily_mean`
+    :param delta: confidence parameter; smaller values mean fewer, more
+        certain detections
+    :param clock: check for drift every `clock` values (1 = every day)
+    :return: dates of the detections
+    """
+    from river import drift
+
+    # a fresh detector, so earlier runs never leak into this one.
+    detector = drift.ADWIN(delta=delta, clock=clock)
+    dates = []
+    # feed the days in time order, exactly as they would arrive live.
+    for date, value in series.items():
+        detector.update(float(value))
+        # record the day on which ADWIN became confident of a change.
+        if detector.drift_detected:
+            dates.append(pd.Timestamp(date))
+    return dates
+
+
+def edge_by_period(
+    preds: Dict[str, pd.DataFrame], reference: str, *, period: str = "Y"
+) -> pd.DataFrame:
+    """
+    Accuracy of each model minus the reference model, per calendar period.
+
+    :param preds: model name -> predictions on the same rows
+    :param reference: model to subtract, e.g. "always_up_online"
+    :param period: pandas period, "Y" (year) or "Q" (quarter)
+    :return: models as rows, periods as columns, in accuracy points
+        (0.01 = one percentage point better than the reference)
+    """
+    acc = {}
+    for name, p in preds.items():
+        # 1 for a correct call, 0 for a miss.
+        correct = (p["y_true"] == p["y_pred"]).astype(float)
+        # accuracy within each year (or quarter).
+        acc[name] = correct.groupby(p["date"].dt.to_period(period)).mean()
+    # one row per model, one column per period.
+    acc = pd.DataFrame(acc).T
+    # subtract the reference row: positive means beating the reference.
+    return acc - acc.loc[reference]
+
+
+class FrozenClassifier:
+    """
+    Wrap a River classifier so that it stops learning after `n_updates`.
+
+    Comparing a frozen copy with the same model that keeps learning shows how
+    much continual (online) learning is worth when the market changes.
+    """
+
+    def __init__(self, model: Any, n_updates: int) -> None:
+        # the model being wrapped.
+        self.model = model
+        # how many labels the model may learn before it is frozen.
+        self.n_updates = n_updates
+        # how many labels it has learned so far.
+        self.n_learned = 0
+
+    def learn_one(self, x: Dict[str, float], y: Any) -> None:
+        # learn only until the budget is used up; after that, ignore labels.
+        if self.n_learned < self.n_updates:
+            self.model.learn_one(x, y)
+            self.n_learned += 1
+
+    def predict_proba_one(self, x: Dict[str, float]) -> Dict[Any, float]:
+        # predictions keep working after the model is frozen.
+        return self.model.predict_proba_one(x)
