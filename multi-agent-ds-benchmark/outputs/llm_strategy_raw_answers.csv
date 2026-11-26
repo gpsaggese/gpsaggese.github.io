@@ -1,0 +1,30 @@
+seed,label_noise,untried,raw_answer,named,valid,differs_from_rules
+0,0.0,"['class_weight', 'threshold', 'alt_model']",'class_weight',class_weight,True,False
+0,0.0,"['threshold', 'alt_model']",Threshold,threshold,True,False
+0,0.0,['alt_model'],alt_model,alt_model,True,False
+1,0.0,"['class_weight', 'threshold', 'alt_model']",'class_weight',class_weight,True,False
+1,0.0,"['threshold', 'alt_model']",Threshold,threshold,True,False
+1,0.0,['alt_model'],alt_model,alt_model,True,False
+2,0.0,"['class_weight', 'threshold', 'alt_model']",'class_weight',class_weight,True,False
+2,0.0,"['threshold', 'alt_model']",Threshold,threshold,True,False
+2,0.15,"['class_weight', 'threshold', 'alt_model']",'class_weight',class_weight,True,False
+2,0.15,"['threshold', 'alt_model']",Threshold,threshold,True,False
+3,0.0,"['class_weight', 'threshold', 'alt_model']",'balance_class_weights',class_weight,True,False
+3,0.0,"['threshold', 'alt_model']",Threshold,threshold,True,False
+3,0.0,['alt_model'],alt_model,alt_model,True,False
+4,0.0,"['class_weight', 'threshold', 'alt_model']",'class_weight',class_weight,True,False
+4,0.0,"['threshold', 'alt_model']",Threshold,threshold,True,False
+4,0.0,['alt_model'],alt_model,alt_model,True,False
+5,0.0,"['class_weight', 'threshold', 'alt_model']",'class_weight',class_weight,True,False
+5,0.0,"['threshold', 'alt_model']",Threshold,threshold,True,False
+5,0.0,['alt_model'],alt_model,alt_model,True,False
+6,0.0,"['class_weight', 'threshold', 'alt_model']",'class_weight',class_weight,True,False
+6,0.0,"['threshold', 'alt_model']",Threshold,threshold,True,False
+6,0.0,['alt_model'],alt_model,alt_model,True,False
+7,0.0,"['class_weight', 'threshold', 'alt_model']",class_weight,class_weight,True,False
+7,0.0,"['threshold', 'alt_model']",Threshold,threshold,True,False
+7,0.0,['alt_model'],alt_model,alt_model,True,False
+8,0.0,"['class_weight', 'threshold', 'alt_model']",'class_weight',class_weight,True,False
+8,0.0,"['threshold', 'alt_model']",Threshold,threshold,True,False
+8,0.0,['alt_model'],alt_model,alt_model,True,False
+9,0.0,"['class_weight', 'threshold', 'alt_model']",class_weight,class_weight,True,False
