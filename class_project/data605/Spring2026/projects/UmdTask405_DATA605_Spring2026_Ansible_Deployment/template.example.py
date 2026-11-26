@@ -27,7 +27,7 @@
 # - Reference: (house_price.example.md)
 #
 # Follow the reference to write notebooks in a clear manner:
-# https://github.com/causify-ai/helpers/blob/master/docs/coding/all.jupyter_notebook.how_to_guide.md
+# https://github.com/causify-ai/helpers/blob/master/docs/tools/notebooks/all.jupyter_notebook.how_to_guide.md
 
 # %%
 # %load_ext autoreload
@@ -39,8 +39,8 @@
 
 # %%
 import logging
-import sys
 import os
+import sys
 
 sys.path.insert(0, "/project")
 
@@ -76,7 +76,9 @@ df.head()
 # Display summary statistics for the target and key numeric features.
 print("Target column statistics:")
 print(df[cpptteut.TARGET_COLUMN].describe())
-print(f"\nMissing values per column:\n{df.isnull().sum()[df.isnull().sum() > 0]}")
+print(
+    f"\nMissing values per column:\n{df.isnull().sum()[df.isnull().sum() > 0]}"
+)
 
 # %% [markdown]
 # ## Split data
@@ -132,9 +134,9 @@ _LOG.info("Model saved.")
 model = cpptteut.load_model_artifact()
 house = {
     "OverallQual": 7,
-    "GrLivArea":   1800,
-    "GarageCars":  2,
-    "YearBuilt":   2005,
+    "GrLivArea": 1800,
+    "GarageCars": 2,
+    "YearBuilt": 2005,
     "Neighborhood": "CollgCr",
 }
 price = cpptteut.predict_price(house, model=model)
@@ -163,13 +165,14 @@ import pandas as pd
 
 # Build one instance per neighbourhood using default feature values.
 neighborhoods = ["OldTown", "BrkSide", "CollgCr", "NWAmes", "NoRidge"]
-instances = [{**cpptteut.FEATURE_DEFAULTS, "Neighborhood": n} for n in neighborhoods]
+instances = [
+    {**cpptteut.FEATURE_DEFAULTS, "Neighborhood": n} for n in neighborhoods
+]
 # Predict prices for all neighbourhoods.
 prices = [cpptteut.predict_price(inst, model=model) for inst in instances]
-result_df = (
-    pd.DataFrame({"Neighborhood": neighborhoods, "PredictedPrice": prices})
-    .sort_values("PredictedPrice")
-)
+result_df = pd.DataFrame(
+    {"Neighborhood": neighborhoods, "PredictedPrice": prices}
+).sort_values("PredictedPrice")
 # Plot and save the neighbourhood comparison chart.
 os.makedirs("results", exist_ok=True)
 plt.figure(figsize=(8, 4))

@@ -28,7 +28,7 @@
 # The name of this notebook should in the following format:
 # - if the notebook is exploring `pycaret API`, then it is `pycaret.example.ipynb`
 #
-# Follow the reference to write notebooks in a clear manner: https://github.com/causify-ai/helpers/blob/master/docs/coding/all.jupyter_notebook.how_to_guide.md
+# Follow the reference to write notebooks in a clear manner: https://github.com/causify-ai/helpers/blob/master/docs/tools/notebooks/all.jupyter_notebook.how_to_guide.md
 
 # %%
 # %load_ext autoreload
@@ -37,9 +37,9 @@
 
 # %%
 import logging
+
 # Import libraries in this section.
 # Avoid imports like import *, from ... import ..., from ... import *, etc.
-
 import helpers.hdbg as hdbg
 import helpers.hnotebook as hnotebo
 
@@ -94,7 +94,6 @@ class Template:
         # Code bloks go here.
         # Make sure to include comments to explain what the code is doing.
         # No empty lines between code blocks.
-        pass
 
 
 def template_function(arg1: int) -> None:
@@ -111,7 +110,6 @@ def template_function(arg1: int) -> None:
     # Code bloks go here.
     # Make sure to include comments to explain what the code is doing.
     # No empty lines between code blocks.
-    pass
 
 
 # %% [markdown]

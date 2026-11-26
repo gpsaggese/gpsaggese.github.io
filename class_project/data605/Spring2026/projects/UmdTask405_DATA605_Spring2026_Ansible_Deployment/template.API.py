@@ -26,7 +26,7 @@
 # - Reference: (house_price.API.md)
 #
 # Follow the reference to write notebooks in a clear manner:
-# https://github.com/causify-ai/helpers/blob/master/docs/coding/all.jupyter_notebook.how_to_guide.md
+# https://github.com/causify-ai/helpers/blob/master/docs/tools/notebooks/all.jupyter_notebook.how_to_guide.md
 
 # %%
 # %load_ext autoreload
@@ -38,8 +38,8 @@
 
 # %%
 import logging
-import sys
 import os
+import sys
 
 sys.path.insert(0, "/project")
 
@@ -92,13 +92,13 @@ for f in features["categorical_features"]:
 # Build the request payload with a subset of features.
 # Missing fields will be filled with server-side defaults.
 payload = {
-    "OverallQual":  7,
-    "GrLivArea":    1800,
-    "GarageCars":   2,
-    "YearBuilt":    2005,
+    "OverallQual": 7,
+    "GrLivArea": 1800,
+    "GarageCars": 2,
+    "YearBuilt": 2005,
     "Neighborhood": "CollgCr",
-    "ExterQual":    "Gd",
-    "KitchenQual":  "Gd",
+    "ExterQual": "Gd",
+    "KitchenQual": "Gd",
 }
 # Post the payload and display the predicted sale price.
 result = cpptteut.api_predict(payload)
@@ -114,7 +114,7 @@ print(f"Predicted sale price: ${result['predicted_price']:,.0f}")
 # %%
 # Define a batch of houses varying quality and living area.
 instances = [
-    {"OverallQual": 3, "GrLivArea":  800},
+    {"OverallQual": 3, "GrLivArea": 800},
     {"OverallQual": 5, "GrLivArea": 1200},
     {"OverallQual": 7, "GrLivArea": 1800},
     {"OverallQual": 9, "GrLivArea": 3000},
@@ -124,7 +124,9 @@ batch = cpptteut.api_predict_batch(instances)
 print(f"{'Quality':>10}  {'Area (sqft)':>12}  {'Predicted Price':>16}")
 print("-" * 44)
 for inst, price in zip(instances, batch["predictions"]):
-    print(f"{inst['OverallQual']:>10}  {inst['GrLivArea']:>12,}  ${price:>15,.0f}")
+    print(
+        f"{inst['OverallQual']:>10}  {inst['GrLivArea']:>12,}  ${price:>15,.0f}"
+    )
 
 # %% [markdown]
 # ## Price sensitivity analysis
@@ -137,7 +139,7 @@ import matplotlib.pyplot as plt
 
 # Build instances across the full quality range.
 qual_range = list(range(1, 11))
-instances  = [{"OverallQual": q, "GrLivArea": 1500} for q in qual_range]
+instances = [{"OverallQual": q, "GrLivArea": 1500} for q in qual_range]
 # Fetch batch predictions for all quality levels.
 prices = cpptteut.api_predict_batch(instances)["predictions"]
 # Plot price vs quality.

@@ -28,7 +28,7 @@
 # - Comments should be imperative and have a period at the end.
 # - Your code should be well commented.
 #
-# Guide: https://github.com/causify-ai/helpers/blob/master/docs/coding/all.jupyter_notebook.how_to_guide.md
+# Guide: https://github.com/causify-ai/helpers/blob/master/docs/tools/notebooks/all.jupyter_notebook.how_to_guide.md
 
 # %% [markdown]
 # ## Imports

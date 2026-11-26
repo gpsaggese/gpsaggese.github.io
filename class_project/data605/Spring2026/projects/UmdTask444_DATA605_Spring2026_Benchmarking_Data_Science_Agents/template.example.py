@@ -28,7 +28,7 @@
 # The name of this notebook should in the following format:
 # - if the notebook is exploring `pycaret API`, then it is `pycaret.example.ipynb`
 #
-# Follow the reference to write notebooks in a clear manner: https://github.com/causify-ai/helpers/blob/master/docs/coding/all.jupyter_notebook.how_to_guide.md
+# Follow the reference to write notebooks in a clear manner: https://github.com/causify-ai/helpers/blob/master/docs/tools/notebooks/all.jupyter_notebook.how_to_guide.md
 
 # %%
 # %load_ext autoreload

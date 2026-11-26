@@ -28,7 +28,7 @@
 # - Comments should be imperative and have a period at the end.
 # - Your code should be well commented.
 #
-# Guide: https://github.com/causify-ai/helpers/blob/master/docs/coding/all.jupyter_notebook.how_to_guide.md
+# Guide: https://github.com/causify-ai/helpers/blob/master/docs/tools/notebooks/all.jupyter_notebook.how_to_guide.md
 
 # %% [markdown]
 # ## Imports
@@ -45,7 +45,6 @@ import logging
 # import pandas as pd
 # import seaborn as sns
 # import matplotlib.pyplot as plt
-
 # %%
 # # To install additional packages, use:
 # import helpers.hmodule as hmodule
@@ -55,7 +54,6 @@ import logging
 #     use_sudo=False,
 #     venv_path="/opt/venv",
 # )
-
 # %%
 # Use this for most notebooks.
 import helpers.hdbg as hdbg
@@ -96,7 +94,6 @@ class Template:
         """
         Initialize the Template class.
         """
-        pass
 
     def method1(self, arg1: int) -> None:
         """
@@ -112,7 +109,6 @@ class Template:
         # Code blocks go here.
         # Make sure to include comments to explain what the code is doing.
         # No empty lines between code blocks.
-        pass
 
 
 def template_function(arg1: int) -> None:
@@ -129,7 +125,6 @@ def template_function(arg1: int) -> None:
     # Code blocks go here.
     # Make sure to include comments to explain what the code is doing.
     # No empty lines between code blocks.
-    pass
 
 
 # %% [markdown]

@@ -30,7 +30,7 @@ The API enables data retrieval, visualization, and comparison for financial mode
 
 - [CoinGecko API Documentation](https://www.coingecko.com/en/api)  
 - [Yahoo Finance via yfinance](https://pypi.org/project/yfinance/)  
-- [Causify AI Notebook Guide](https://github.com/causify-ai/helpers/blob/master/docs/coding/all.jupyter_notebook.how_to_guide.md)  
+- [Causify AI Notebook Guide](https://github.com/causify-ai/helpers/blob/master/docs/tools/notebooks/all.jupyter_notebook.how_to_guide.md)  
 
 ---
 
