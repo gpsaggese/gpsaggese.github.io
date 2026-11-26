@@ -23,15 +23,10 @@ in the [class_project/](class_project/) directory. See:
 
 ## Research Team Onboarding
 
-New team members should open an issue "On-boarding <your_name>" to track progress
-through essential documentation:
-- [policies/](policies/): team policies and standards
-- [class_project/tutorials_checklist.md](class_project/tutorials_checklist.md):
-  required tutorials
-- [.claude/skills/tutorial_in_60_mins.rules.md](.claude/skills/tutorial_in_60_mins.rules.md):
-  content format requirements
-- [class_project/how_to_contribute.md](class_project/how_to_contribute.md):
-  contribution guidelines
+- New team members open an
+  [onboarding issue](https://github.com/gpsaggese/gpsaggese.github.io/issues/new?template=research_onboarding.md)
+  and check off each item
+- See [how to join the research team](policies/how_to_join_the_research_team.md)
 
 ## Repository Structure
 | Directory                          | Description                                                               |

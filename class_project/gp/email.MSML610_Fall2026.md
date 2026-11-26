@@ -72,7 +72,7 @@ GP
 
 - **Class 9 (Bayesian Statistics 1)**  
   https://umd.zoom.us/rec/share/xW9SSlxGKjUO7Jt5R4TlMqLW3SyDwXQhilgMPY45Om2GM8InN1oAybYmk6vL9WVk.7l5mvThTYAgq3RY7  
-  Passcode: `mKgG42G=`
+  Passcode: `XXXX`
 
 ---
 
@@ -207,7 +207,7 @@ Hi team,
 
 https://umd.zoom.us/rec/share/z9LY6o_HKKIn1GhmzQbnO6qEfSkzl93gC4Zbz4X54ELH5Oq5GRqvwBx20gXxemTj.R_euTly1CoMCdBPf
 
-Passcode: `$6pwPZx!`
+Passcode: `XXXX`
 
 2) I'm flying back to US, so the next class will be in person at 5 pm (not 2 pm!).
 
@@ -230,7 +230,7 @@ The video is here
 
 - **Class 7 (Statistical Learning 1/3)**  
   https://umd.zoom.us/rec/share/ZG1hAkq0hilModDUvuKjMJoOrYjmTd5FDvOq3SQ94cDRFc1jCFo9N7xh-6tHA50.JN8ZgS1eMXCcTB8c  
-  Passcode: `3S!97kY0`
+  Passcode: `XXXX`
 
 2) We will keep working around those concepts in the next class
 
@@ -267,7 +267,7 @@ Remember to create an issue on GitHub, and start working on it. Follow the instr
 
 - **Class 6 (Knowledge Representation #3)**  
   https://umd.zoom.us/rec/share/MiIypykv2SiPZboAf3jCsS8fPTUp_a45bJJTmwd9sXLsk6kRqqvakG7P1akgvWYu.jFn0NQNsgpudg8D6  
-  Passcode: `W2^+q0i.`
+  Passcode: `XXXX`
 
 3) Tomorrow at 2pm ET, we will meet on Zoom to discuss statistical learning.
 
@@ -559,7 +559,7 @@ Hello MSML610 team,
 
 https://umd.zoom.us/j/7447082187  
 Meeting ID: 744 708 2187  
-Passcode: 305492
+Passcode: XXXX
 
 2) For those who can't make the new time, I will record the lesson, so they won't miss anything.
 
@@ -645,13 +645,13 @@ so you should watch the recorded lessons from last year (the material is exactly
 
 - **Class #3 Knowledge Representation**  
   https://umd.zoom.us/rec/share/y-BInQRRLc2hSL249qMsyIi7tpTPiGSmXV-yzd_7whQF9gjwfJ8zhnbIhW_nmrzr.EzZWYeAOBmAYubuK  
-  Passcode: `.d4&7WQ9`
+  Passcode: `XXXX`
 - **Class #4 Machine Learning Models**  
   https://umd.zoom.us/rec/share/LLMzP-oW0xLKDykAAsrZMrs4HDr3YwWJb4LHm5i7DYF2BlriZCrC4VQQcC2MWkvj.43rP8o1JaBLXiWJW  
-  Passcode: `J@0W?C=z`
+  Passcode: `XXXX`
 - **Class #5 Machine Learning Theory**  
   https://umd.zoom.us/rec/share/zjq5cfGGaN0-3cJpd5Gjf0OgUayaW6OLPaIn85HOIy6ti3OH7wEhJaeowOKg9wsT._YL6PForUD6_Dxmp  
-  Passcode: `@TQc@Y02`
+  Passcode: `XXXX`
 
 2) The latest version of the project assignments is here
 
@@ -743,13 +743,13 @@ https://github.com/gpsaggese/gpsaggese.github.io/tree/master/msml610/lectures_pd
 
 - **Class #3 Knowledge Representation**  
   https://umd.zoom.us/rec/share/y-BInQRRLc2hSL249qMsyIi7tpTPiGSmXV-yzd_7whQF9gjwfJ8zhnbIhW_nmrzr.EzZWYeAOBmAYubuK  
-  Passcode: `.d4&7WQ9`
+  Passcode: `XXXX`
 - **Class #4 Machine Learning Models**  
   https://umd.zoom.us/rec/share/LLMzP-oW0xLKDykAAsrZMrs4HDr3YwWJb4LHm5i7DYF2BlriZCrC4VQQcC2MWkvj.43rP8o1JaBLXiWJW  
-  Passcode: `J@0W?C=z`
+  Passcode: `XXXX`
 - **Class #5 Machine Learning Theory**  
   https://umd.zoom.us/rec/share/zjq5cfGGaN0-3cJpd5Gjf0OgUayaW6OLPaIn85HOIy6ti3OH7wEhJaeowOKg9wsT._YL6PForUD6_Dxmp  
-  Passcode: `@TQc@Y02`
+  Passcode: `XXXX`
 
 We'll resume the normal schedule soon, and I'll work over the weekend on finalizing the projects.
 

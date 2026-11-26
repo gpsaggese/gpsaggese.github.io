@@ -15,8 +15,8 @@
     + [Noesis](#noesis)
     + [Process](#process)
     + [Racket sports](#racket-sports)
-    + [Tymes](#tymes)
-    + [Tyrn](#tyrn)
+    + [Tymes.ai](#tymesai)
+    + [Tyrn.dev](#tyrndev)
 - [Contributors](#contributors)
 
 <!-- tocstop -->
@@ -101,7 +101,7 @@
 ### CAASL (Causal Analysis of Agent Skill and Luck)
 
 - **GitHub project**: [Causal_Analysis_of_Agent_Skill_and_Luck](https://github.com/users/gpsaggese/projects/10/views/2)
-- **Google docs**:
+- **Google docs**: [CAASL: research Gdoc](https://docs.google.com/document/d/1jxGArIb2KFJ0aZXc36U60F4Cnwx6-9KfQWhIkFOrS2I/edit)
 - **Asana board**:
 - **Google drive**: [Causal_Analysis_of_Agent_Skill_And_Luck](https://drive.google.com/drive/folders/1JMLOyQhJsGtMQjL6-dZmyytorgPQ003g)
 - **GitHub code**:
@@ -131,7 +131,9 @@
 - **Google docs**:
 - **Asana board**:
 - **Google drive**:
-- **GitHub code**: [Counterfactual Attribution of Agent Failures](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/research/ideas/draft.Counterfactual_Attribution_of_Agent_Failures.md)
+- **GitHub code**:
+  - [Counterfactual Attribution of Agent Failures](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/research/ideas/draft.Counterfactual_Attribution_of_Agent_Failures.md)
+  - [UmdTask677 class project](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/class_project/msml610/Fall2026/projects/UmdTask677_MSML610_Fall2026_Counterfactual_Attribution_of_Agent_Failures)
 - **Whitepaper**:
 
 ### Financial tradability
@@ -214,27 +216,28 @@
 
 # Contributors
 
-| Name                     | Personal email                  | School email                 | GitHub          | Project                    |
-| ------------------------ | ------------------------------- | ---------------------------- | --------------- | -------------------------- |
-| Giles Greene             | gilesgreene20@gmail.com         | -                            | gilesgreene     | Noesis                     |
-| Dev Trusharkumar Shah    | -                               | dnts5203@umd.edu             | Delvitron1019   | Auto DS                    |
-| Ameer Shaik              | -                               | sohail08@umd.edu             | Sohail-5678,sohail-umd      | Auto DS                    |
-| Simran Kharbanda         | simrank3574@gmail.com           | simrank@umd.edu              | Sim2200         | Noesis                     |
-| Lucas Caicedo            | -                               | lucas.caicedo@gwmail.gwu.edu | caicedoss       | Noesis                     |
-| Javin Ahuja              | javinahuja18805@gmail.com       | jahuja@terpmail.umd.edu      | Jav359003       | Noesis                     |
-| Aahan Rembersu           | aahanrembersu07@gmail.com       | arembers@terpmail.umd.edu    | aahanrembersu07 | Racket sports              |
-| Niveda Jawahar           | -                               | nivedaj@umd.edu              | Niveda-227      | CAASL                      |
-| Krishna Buddi            | kishorebuddi003@gmail.com       | kbuddi@umd.edu               | bkk8403         | CAASL                      |
-| Ibrahim Ahmed            | ibrahim.iftaquar@gmail.com      | ibrahima@umd.edu             | Worldsoldure00  | Blog tutorials             |
-| Mohammed Syed            | syed.mohammed0975@gmail.com     | syed@umd.edu                 | Eyepatch0       | MCTS / AlphaZero           |
-| Shobha Gupta             | s2002290902g@gmail.com          | gupta29@umd.edu              | Under-the-stars | Age and startup success    |
-| Vedanshu Joshi           | vedanshujoshi0@gmail.com        | -                            | Vedanshu7       | -                          |
-| Samarth KaPatel          | samarth.kapatel5@gmail.com      | -                            | samarth9008     | -                          |
-| Grisha Pomazkin          | pomazking@gmail.com             | -                            | PomazkinG       | -                          |
-| Linu Teresa              | -                               | lteresa@umd.edu              | -               | Counterfactual attribution |
-| Sri Ramm Sekar Sasirekha | srirammsekarsasirekha@gmail.com | ssramm69@umd.edu             | SriRammSS       | Counterfactual attribution |
-| Heanh Sok                | heanhsok@gmail.com              | -                            | heanhsok        | Noesis                     |
-| Harshit Gadge            | harshit.gadge.hg@gmail.com      | hgadge@umd.edu               | HarshitGadge    | Auto DS                    |
+| Name                     | Personal email                  | School email                 | GitHub                 | Project                                    |
+| ------------------------ | ------------------------------- | ---------------------------- | ---------------------- | ------------------------------------------ |
+| Giles Greene             | gilesgreene20@gmail.com         | -                            | gilesgreene            | Noesis                                     |
+| Dev Trusharkumar Shah    | -                               | dnts5203@umd.edu             | Delvitron1019          | Auto DS                                    |
+| Ameer Shaik              | -                               | sohail08@umd.edu             | Sohail-5678,sohail-umd | Auto DS, Blog tutorials                    |
+| Simran Kharbanda         | simrank3574@gmail.com           | simrank@umd.edu              | Sim2200                | Noesis                                     |
+| Lucas Caicedo            | -                               | lucas.caicedo@gwmail.gwu.edu | caicedoss              | Noesis                                     |
+| Javin Ahuja              | javinahuja18805@gmail.com       | jahuja@terpmail.umd.edu      | Jav359003              | Noesis                                     |
+| Aahan Rembersu           | aahanrembersu07@gmail.com       | arembers@terpmail.umd.edu    | aahanrembersu07        | Racket sports, Counterfactual attribution  |
+| Niveda Jawahar           | -                               | nivedaj@umd.edu              | Niveda-227             | CAASL                                      |
+| Krishna Buddi            | kishorebuddi003@gmail.com       | kbuddi@umd.edu               | bkk8403                | CAASL                                      |
+| Ibrahim Ahmed            | ibrahim.iftaquar@gmail.com      | ibrahima@umd.edu             | Worldsoldure00         | Blog tutorials                             |
+| Mohammed Syed            | syed.mohammed0975@gmail.com     | syed@umd.edu                 | Eyepatch0              | MCTS / AlphaZero                           |
+| Shobha Gupta             | s2002290902g@gmail.com          | gupta29@umd.edu              | Under-the-stars        | CAASS                                      |
+| Vedanshu Joshi           | vedanshujoshi0@gmail.com        | -                            | Vedanshu7              | Tymes.ai                                   |
+| Samarth KaPatel          | samarth.kapatel5@gmail.com      | -                            | samarth9008            | Tymes.ai                                   |
+| Grisha Pomazkin          | pomazking@gmail.com             | -                            | PomazkinG              | -                                          |
+| Linu Teresa              | -                               | lteresa@umd.edu              | linuteresa             | Counterfactual attribution, Blog tutorials |
+| Sri Ramm Sekar Sasirekha | srirammsekarsasirekha@gmail.com | ssramm69@umd.edu             | SriRammSS              | Counterfactual attribution                 |
+| Heanh Sok                | heanhsok@gmail.com              | -                            | heanhsok               | Noesis, AI Sw Eng Book, Process            |
+| Harshit Gadge            | harshit.gadge.hg@gmail.com      | hgadge@umd.edu               | HarshitGadge           | Process, Blog tutorials                    |
+| Krishna Taduri           | -                               | -                            | tkpratardan            | Tyrn.dev                                   |
 
 - [ ] @gilesgreene
 - [ ] @Delvitron1019
@@ -251,6 +254,8 @@
 - [ ] @Vedanshu7
 - [ ] @samarth9008
 - [ ] @PomazkinG
+- [ ] @linuteresa
 - [ ] @SriRammSS
 - [ ] @heanhsok
 - [ ] @HarshitGadge
+- [ ] @tkpratardan

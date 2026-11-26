@@ -186,7 +186,7 @@ I hope everyone had a refreshing summer break.
 
 I'm Aayush and I'll be the TA for MSML610-PCS2. Apologies for the delay in this announcement.
 
-My office hours are **3:30 PM – 5:30 PM every Tuesday at Room 3452, AV Williams Building**. Feel free to drop by during that time for any course-related questions. Or you could also set up a [Zoom](https://umd.zoom.us/j/94227813405?pwd=mu7yadGl2Vh00hNQwUZfdxSaazYOcS.1) call. If the office hours do not suit you, please send me an email at aver23@umd.edu and we can figure out a different time.
+My office hours are **3:30 PM – 5:30 PM every Tuesday at Room 3452, AV Williams Building**. Feel free to drop by during that time for any course-related questions. Or you could also set up a [Zoom](https://umd.zoom.us/j/94227813405?pwd=XXXX) call. If the office hours do not suit you, please send me an email at aver23@umd.edu and we can figure out a different time.
 
 I look forward to working with you all!
 
@@ -735,7 +735,7 @@ Hey all,
 Today, I'll be available online via Zoom for the TA Hours. Apologies for the late notice!
 
 MSML610 TA Hours (PCS2) — weekly on Tuesdays, 3:30 PM ET, through Dec 16, 2025:
-https://umd.zoom.us/j/94227813405?pwd=mu7yadGl2Vh00hNQwUZfdxSaazYOcS.1
+https://umd.zoom.us/j/94227813405?pwd=XXXX
 
 Meeting ID: 942 2781 3405
 Passcode: ########
@@ -906,7 +906,7 @@ Like I said, everything above is already given in the project instructions and s
 
 Hey all,
 
-Today, I'll be available online via [Zoom](https://umd.zoom.us/j/94227813405?pwd=mu7yadGl2Vh00hNQwUZfdxSaazYOcS.1) for the TA Hours. Apologies for the late notice!
+Today, I'll be available online via [Zoom](https://umd.zoom.us/j/94227813405?pwd=XXXX) for the TA Hours. Apologies for the late notice!
 
 – Aayush
 
@@ -969,7 +969,7 @@ GP
 
 Hey all,
 
-Today, my TA hours will be online via [Zoom](https://umd.zoom.us/j/94227813405?pwd=mu7yadGl2Vh00hNQwUZfdxSaazYOcS.1). Apologies for the late notice!
+Today, my TA hours will be online via [Zoom](https://umd.zoom.us/j/94227813405?pwd=XXXX). Apologies for the late notice!
 
 – Aayush
 
@@ -1085,7 +1085,7 @@ GP
 
 Hello all,
 
-MSML610 office hours are online today via [Zoom](https://umd.zoom.us/j/94227813405?pwd=mu7yadGl2Vh00hNQwUZfdxSaazYOcS.1) from 3:30 PM to 5:30 PM.
+MSML610 office hours are online today via [Zoom](https://umd.zoom.us/j/94227813405?pwd=XXXX) from 3:30 PM to 5:30 PM.
 
 – Aayush
 
