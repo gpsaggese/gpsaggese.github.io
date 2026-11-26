@@ -106,9 +106,9 @@
 - [x] Prequential evaluation with one-day label delay, significance tests
 - [x] Unit tests (leakage, delay, noise/signal sanity checks)
 - [x] Baselines: majority class, persistence, walk-forward batch models
-- [ ] River model comparison: Hoeffding (adaptive) trees, adaptive random
+- [x] River model comparison: Hoeffding (adaptive) trees, adaptive random
       forest, ensembles
-- [ ] Drift detection with ADWIN and adaptation across regimes
+- [x] Drift detection with ADWIN and adaptation across regimes
 - [ ] Feature ablation (returns only vs. technical indicators vs. market
       context)
 - [ ] Economic evaluation: long/flat strategy with transaction costs
@@ -117,3 +117,5 @@
 ## Changelog
 - 2026-11-01: Project scaffold, data pipeline, evaluation framework
 - 2026-11-09: Baselines (online majority class, persistence, monthly walk-forward logistic regression and gradient boosting) and model comparison table
+- 2026-11-21: River model comparison (tuned logistic regression, Hoeffding trees, adaptive random forest, bagging, naive Bayes), down-call accuracy, selection on 2011-2014 and test on 2015-2026
+- 2026-11-24: Drift analysis: ADWIN on market and model accuracy, yearly edge vs always-up, frozen vs online model, intercept learning rate experiment
