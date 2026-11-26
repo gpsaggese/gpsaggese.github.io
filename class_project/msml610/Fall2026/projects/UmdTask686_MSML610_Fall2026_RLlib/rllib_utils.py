@@ -71,6 +71,9 @@ DEFAULT_CONFIG: Dict[str, Any] = {
     # - `expected_cost`: same, minus the P&L of the price shock on the
     #   remaining inventory, which has zero mean whatever the action
     "reward": "shortfall",
+    # Almgren-Chriss risk aversion, in 1/bps: every step also pays this times
+    # the variance (bps^2) of the price shock on the inventory still held.
+    "risk_aversion": 0.0,
 }
 
 _REWARDS = ("shortfall", "expected_cost")
@@ -97,6 +100,11 @@ class ExecutionEnv(gym.Env):
     expected episode return, but the second one has no price noise. Whatever
     the reward, `info` reports both the true `shortfall_bps` and the
     `expected_cost_bps` without the price noise.
+
+    With `risk_aversion > 0`, each step also subtracts `risk_aversion` times
+    the variance of the price shock on the inventory still held, so the
+    episode return is minus the Almgren-Chriss objective `cost + risk_aversion
+    * variance`. `info` reports the episode `variance_bps2`.
 
     Observation: [time left, inventory left, log(S_t / s0) / daily_vol].
     Action: index into `action_fractions` (fraction of the remaining
@@ -125,6 +133,8 @@ class ExecutionEnv(gym.Env):
         self.half_spread = float(cfg["half_spread_bps"]) / 1e4
         self.reward = str(cfg["reward"])
         hdbg.dassert_in(self.reward, _REWARDS)
+        self.risk_aversion = float(cfg["risk_aversion"])
+        hdbg.dassert_lte(0.0, self.risk_aversion)
         self.action_type = str(cfg["action_type"])
         hdbg.dassert_in(self.action_type, _ACTION_TYPES)
         self.action_fractions = np.asarray(cfg["action_fractions"], dtype=float)
@@ -166,6 +176,7 @@ class ExecutionEnv(gym.Env):
         self.price = self.s0
         self.shortfall_bps = 0.0
         self.expected_cost_bps = 0.0
+        self.variance_bps2 = 0.0
         # Build the first observation.
         obs = self._obs()
         _LOG.debug("return=%s", obs)
@@ -248,6 +259,14 @@ class ExecutionEnv(gym.Env):
         self.expected_cost_bps -= expected_reward
         if self.reward == "expected_cost":
             reward = expected_reward
+        # Variance of the shock P&L on the shares still held, in bps^2.
+        variance = (
+            impacted_price * self.inventory * self.step_vol
+            / (self.s0 * self.total_shares)
+            * 1e4
+        ) ** 2
+        self.variance_bps2 += variance
+        reward -= self.risk_aversion * variance
         # Advance the time index before checking whether the episode ended.
         self.t += 1
         # Episodes end by termination only, never by truncation.
@@ -257,6 +276,7 @@ class ExecutionEnv(gym.Env):
             "exec_price": exec_price,
             "shortfall_bps": self.shortfall_bps,
             "expected_cost_bps": self.expected_cost_bps,
+            "variance_bps2": self.variance_bps2,
         }
         _LOG.debug("reward=%s info=%s", reward, info)
         return self._obs(), float(reward), terminated, False, info
@@ -317,6 +337,39 @@ def sell_all_shares(env: ExecutionEnv) -> float:
     return shares
 
 
+def almgren_chriss_shares(env: ExecutionEnv) -> float:
+    """
+    Sell on the Almgren-Chriss optimal schedule for `env.risk_aversion`.
+
+    With `R` steps left and inventory `x`, the schedule keeps `x *
+    sinh(kappa * (R - 1)) / sinh(kappa * R)` after this step, where
+    `2 * (cosh(kappa) - 1) = risk_aversion * variance / impact`. It linearizes
+    the impact and uses `s0` for the price, so it is optimal only
+    approximately. With `risk_aversion = 0` it is TWAP.
+
+    :param env: environment in the current state
+    :return: shares to sell at this step
+    """
+    _LOG.debug("t=%s inventory=%s", env.t, env.inventory)
+    steps_left = env.n_steps - env.t
+    # Quadratic cost of trading per share^2, net of the permanent impact
+    # recovered by the shares sold later, as in Almgren and Chriss (2000).
+    impact = env.eta - 0.5 * env.gamma
+    hdbg.dassert_lt(0.0, impact)
+    # Variance penalty per share^2 held for one step, in the same units.
+    penalty = (
+        env.risk_aversion * 1e4 * env.step_vol**2 * env.adv / env.total_shares
+    )
+    kappa = np.arccosh(1.0 + 0.5 * penalty / impact)
+    if kappa < 1e-8:
+        kept = (steps_left - 1) / steps_left
+    else:
+        kept = np.sinh(kappa * (steps_left - 1)) / np.sinh(kappa * steps_left)
+    shares = env.inventory * (1.0 - kept)
+    _LOG.debug("return=%s", shares)
+    return float(shares)
+
+
 def run_episodes(
     policy: Callable[[ExecutionEnv, np.ndarray], float],
     *,
@@ -335,13 +388,14 @@ def run_episodes(
     :param config: environment parameters overriding `DEFAULT_CONFIG`
     :param n_episodes: number of episodes
     :param seed: seed of the first episode; episode i uses `seed + i`
-    :return: `shortfall_bps` and `expected_cost_bps` of each episode, and the
-        fraction of the inventory left at each step, with shape
+    :return: `shortfall_bps`, `expected_cost_bps`, and `variance_bps2` of each
+        episode, and the fraction of the inventory left at each step, with shape
         `(n_episodes, n_steps + 1)`
     """
     _LOG.debug(hprint.to_str("policy config n_episodes seed"))
     env = ExecutionEnv(config)
-    costs = np.empty((n_episodes, 2))
+    columns = ["shortfall_bps", "expected_cost_bps", "variance_bps2"]
+    costs = np.empty((n_episodes, len(columns)))
     inventory = np.empty((n_episodes, env.n_steps + 1))
     for i in range(n_episodes):
         # Use a different seed per episode so each one gets its own price path.
@@ -351,8 +405,8 @@ def run_episodes(
         while not terminated:
             obs, _, terminated, _, info = env.step_shares(policy(env, obs))
             inventory[i, env.t] = env.inventory / env.total_shares
-        costs[i] = info["shortfall_bps"], info["expected_cost_bps"]
-    df = pd.DataFrame(costs, columns=["shortfall_bps", "expected_cost_bps"])
+        costs[i] = [info[col] for col in columns]
+    df = pd.DataFrame(costs, columns=columns)
     _LOG.debug("return=%s", df.shape)
     return df, inventory
 
@@ -417,18 +471,23 @@ def get_greedy_policy(
 
 
 def summarize_episodes(
-    costs: Dict[str, pd.DataFrame], benchmark: str = "TWAP"
+    costs: Dict[str, pd.DataFrame],
+    benchmark: str = "TWAP",
+    *,
+    risk_aversion: Optional[float] = None,
 ) -> pd.DataFrame:
     """
     Summarize the costs of policies run on the same price paths.
 
     :param costs: policy name to the costs of `run_episodes()`
     :param benchmark: policy that the win rate compares against
+    :param risk_aversion: if set, also report the mean variance (bps^2) and
+        the risk-adjusted cost `expected cost + risk_aversion * variance`
     :return: one row per policy with the mean and std of the shortfall, the
         mean expected cost (all in bps), and the fraction of episodes with a
         lower shortfall than `benchmark`
     """
-    _LOG.debug(hprint.to_str("list(costs) benchmark"))
+    _LOG.debug(hprint.to_str("list(costs) benchmark risk_aversion"))
     hdbg.dassert_in(benchmark, costs)
     benchmark_shortfall = costs[benchmark]["shortfall_bps"].to_numpy()
     rows = {}
@@ -441,6 +500,12 @@ def summarize_episodes(
             # Episodes are paired by seed, so compare them one by one.
             f"win rate vs {benchmark}": (shortfall < benchmark_shortfall).mean(),
         }
+        if risk_aversion is not None:
+            variance = df["variance_bps2"].mean()
+            rows[name]["variance"] = variance
+            rows[name]["risk-adjusted cost"] = (
+                rows[name]["expected cost"] + risk_aversion * variance
+            )
     df = pd.DataFrame(rows).T
     _LOG.debug("return=\n%s", df)
     return df
