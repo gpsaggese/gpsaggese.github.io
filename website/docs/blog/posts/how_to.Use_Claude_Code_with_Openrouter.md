@@ -53,8 +53,8 @@ enabling access to models from multiple providers through a single API.
     | Anthropic | `ANTHROPIC_API_KEY`  | `sk-ant-api03-...` |
     | OpenAI    | `OPENAI_API_KEY`     | `sk-proj-...`      |
 
-  - Note that Anthropic encodes in the key `...-api-03-...` since you need
-    to use metered use
+    - Note that Anthropic encodes in the key `...-api-03-...` since you need
+      to use metered use
 
 - Register your BYOK keys with OpenRouter at:
   [BYOK Settings](https://openrouter.ai/workspaces/default/byok)
@@ -92,22 +92,22 @@ enabling access to models from multiple providers through a single API.
   default
 - To route through OpenRouter, set these environment variables:
 
-  - Send the API requests from Claude Code to OpenRouter using their API and key
-    ```bash
-    > export ANTHROPIC_BASE_URL=https://openrouter.ai/api
-    > export ANTHROPIC_AUTH_TOKEN=$OPENROUTER_API_KEY
-    ```
-  - Select the models to use for the different Claude Code tier (e.g., using
-    OpenAI GPT-5 using OpenRouter)
-    ```bash
-    > export ANTHROPIC_DEFAULT_HAIKU_MODEL=openai/gpt-5
-    > export ANTHROPIC_DEFAULT_OPUS_MODEL=openai/gpt-5
-    > export ANTHROPIC_DEFAULT_SONNET_MODEL=openai/gpt-5
-    ```
-  - Unset the direct Anthropic key to avoid conflicts
-    ```
-    > unset ANTHROPIC_API_KEY
-    ```
+    - Send the API requests from Claude Code to OpenRouter using their API and key
+        ```bash
+        > export ANTHROPIC_BASE_URL=https://openrouter.ai/api
+        > export ANTHROPIC_AUTH_TOKEN=$OPENROUTER_API_KEY
+        ```
+    - Select the models to use for the different Claude Code tier (e.g., using
+      OpenAI GPT-5 using OpenRouter)
+        ```bash
+        > export ANTHROPIC_DEFAULT_HAIKU_MODEL=openai/gpt-5
+        > export ANTHROPIC_DEFAULT_OPUS_MODEL=openai/gpt-5
+        > export ANTHROPIC_DEFAULT_SONNET_MODEL=openai/gpt-5
+        ```
+    - Unset the direct Anthropic key to avoid conflicts
+        ```
+        > unset ANTHROPIC_API_KEY
+        ```
 
 - Verify the environment is configured correctly:
 
@@ -143,12 +143,12 @@ enabling access to models from multiple providers through a single API.
 - For help choosing which model fits your workflow, see
   [How to Compare and Choose LLM Models](how_to.Compare_LLM_models.md):
 
-  - A set up I personally like based on the analysis above
-    ```bash
-    > export ANTHROPIC_DEFAULT_HAIKU_MODEL=deepseek/deepseek-v4-flash
-    > export ANTHROPIC_DEFAULT_SONNET_MODEL=anthropic/haiku-4.5
-    > export ANTHROPIC_DEFAULT_OPUS_MODEL=anthropic/sonnet-4.6
-    ```
+    - A set up I personally like based on the analysis above
+        ```bash
+        > export ANTHROPIC_DEFAULT_HAIKU_MODEL=deepseek/deepseek-v4-flash
+        > export ANTHROPIC_DEFAULT_SONNET_MODEL=anthropic/haiku-4.5
+        > export ANTHROPIC_DEFAULT_OPUS_MODEL=anthropic/sonnet-4.6
+        ```
 
 - Verify the current configuration:
 
@@ -170,28 +170,28 @@ enabling access to models from multiple providers through a single API.
 - Once Claude Code launches note that the model is the one mapped on Haiku 
   (in the case above, it's `deepseek-v4-flash`) and the access is
   `API Usage Billing` (since we are not going through a Claude plan)
-  ```bash
-  > claude ...
-   ▐▛███▜▌   Claude Code v2.1.158
-  ▝▜█████▛▘  deepseek/deepseek-v4-flash · API Usage Billing
-    ▘▘ ▝▝    ~/src/xyz
-  ```
+    ```bash
+    > claude ...
+     ▐▛███▜▌   Claude Code v2.1.158
+    ▝▜█████▛▘  deepseek/deepseek-v4-flash · API Usage Billing
+      ▘▘ ▝▝    ~/src/xyz
+    ```
 
 - Check which model is active with the `/model` command:
 
-  ```
-    ❯ /model
-
-    Select model
-       Switch between Claude models. Your pick becomes the default for new
-       sessions.
-
-           1. Default (recommended)         Use the default model (currently
-              anthropic/haiku-4.5) · $5/$25 per Mtok
-           2. anthropic/haiku-4.5           Custom Opus model
-           3. anthropic/haiku-4.5           Custom Sonnet model
-         ❯ 4. deepseek/deepseek-v4-flash ✔  Custom Haiku model
     ```
+      ❯ /model
+
+      Select model
+         Switch between Claude models. Your pick becomes the default for new
+         sessions.
+
+             1. Default (recommended)         Use the default model (currently
+                anthropic/haiku-4.5) · $5/$25 per Mtok
+             2. anthropic/haiku-4.5           Custom Opus model
+             3. anthropic/haiku-4.5           Custom Sonnet model
+           ❯ 4. deepseek/deepseek-v4-flash ✔  Custom Haiku model
+      ```
 
 ## Monitoring and Troubleshooting
 

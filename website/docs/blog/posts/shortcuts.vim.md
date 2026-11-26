@@ -22,27 +22,31 @@ TL;DR: A cheat sheet of Vim commands and concepts.
 # Brief concepts
 
 **Buffer**
+
 - An in-memory representation of a file's content, once it's loaded into Vim
 - Multiple buffers can be open at once (one per file you've edited/loaded)
-  - Lists open buffers: `:buffers` 
-  - Switches to one buffer: `:b <name/number>` 
+    - Lists open buffers: `:buffers` 
+    - Switches to one buffer: `:b <name/number>` 
 
 **Window (aka viewport)**
+
 - A viewport into a buffer: the visible frame showing (part of) a buffer's content
 - Multiple windows can display the same buffer simultaneously
-  - E.g., two views scrolled to different lines
+    - E.g., two views scrolled to different lines
 - Created by splitting the screen
-  - Navigate with `Ctrl-w` + direction (`h/j/k/l`)
-  - Closed with `:q` (doesn't close the buffer, just the view)
+    - Navigate with `Ctrl-w` + direction (`h/j/k/l`)
+    - Closed with `:q` (doesn't close the buffer, just the view)
 
 **Split**
+
 - The act of dividing the screen into multiple windows
 - Horizontal split: `:split` or `:sp` (stacks windows top/bottom)
 - Vertical split: `:vsplit` or `:vsp` (side by side)
-  - Each split is a window
-  - Each window shows a buffer
+    - Each split is a window
+    - Each window shows a buffer
 
 **How they relate**
+
 - Tabs (`:tabnew`) contain layouts of windows
 - Windows contain/display buffers
 - Buffers hold the actual file content
@@ -52,10 +56,10 @@ TL;DR: A cheat sheet of Vim commands and concepts.
 # Help
 
 - Get help: `:help TOPIC`
-  - `CTRL-d` or `tab` to auto-complete
+    - `CTRL-d` or `tab` to auto-complete
 - Get help on a shortcut: `:help CTRL-W_CTRL-W`
 - Open help about TOPIC in a vertical split: `:vert help TOPIC`
-  - E.g., `:vert help marks`
+    - E.g., `:vert help marks`
 - Get help about registers: `:help registers`
 - Get help about copying and moving: `:help copy-move`
 
@@ -234,7 +238,7 @@ TL;DR: A cheat sheet of Vim commands and concepts.
 
 - Visual select entire file: `ggVG`
 - Format comments and text: `gq{motion}`
-  - E.g., `gq)`
+    - E.g., `gq)`
 
 - Sort entire file: `%! sort | uniq`
 
@@ -459,6 +463,7 @@ TL;DR: A cheat sheet of Vim commands and concepts.
 - find matching word forward: `<CTRL-N>`
 
 <!--
+
 - :help i_Ctrl-N
 - :help i_Ctrl-P
 - :help ins-completion
@@ -548,6 +553,7 @@ TL;DR: A cheat sheet of Vim commands and concepts.
 # Useful Packages
 
 <!--
+
 - Minibufexplorer
 - Commentify
 - Showmarks
@@ -562,7 +568,7 @@ TL;DR: A cheat sheet of Vim commands and concepts.
 
 - MultipleSearch : Highlight multiple searches at the same time, each with a
   different color.
-     - `http://www.vim.org/scripts/script.php?script_id=479`
+    - `http://www.vim.org/scripts/script.php?script_id=479`
 
 - project.tar.gz : Organize/Navigate projects of files (like IDE/buffer explorer)
     - `http://www.vim.org/scripts/script.php?script_id=69`

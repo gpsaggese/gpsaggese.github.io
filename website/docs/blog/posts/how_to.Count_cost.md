@@ -82,32 +82,32 @@ patterns.
 - OpenRouter is a gateway that routes requests to multiple model providers.
 
 - Costs can be computed in two ways:
-  1. **OpenRouter Analytics**
-     - Use the cost that OpenRouter reports in its Analytics dashboard
-       // TODO(ai_gp): Add link
-     - Advantages:
-         - Reflects the actual routed provider and its specific pricing
-         - Accounts for cached token discounts automatically
-         - Includes any provider-specific adjustments
+    1. **OpenRouter Analytics**
+        - Use the cost that OpenRouter reports in its Analytics dashboard
+          // TODO(ai_gp): Add link
+        - Advantages:
+            - Reflects the actual routed provider and its specific pricing
+            - Accounts for cached token discounts automatically
+            - Includes any provider-specific adjustments
 
-  2. **Response Usage Data**
-     - Parse the `usage` field from each API response:
+    2. **Response Usage Data**
+        - Parse the `usage` field from each API response:
    
-         ```json
-         {
-             "usage": {
-                 "prompt_tokens": 1234,
-                 "completion_tokens": 567
-             }
-         }
-         ```
+            ```json
+            {
+                "usage": {
+                    "prompt_tokens": 1234,
+                    "completion_tokens": 567
+                }
+            }
+            ```
    
-     - Then multiply token counts against the OpenRouter model pricing catalog:
+        - Then multiply token counts against the OpenRouter model pricing catalog:
    
-         ```text
-         Cost = (prompt_tokens * model_input_price)
-                + (completion_tokens * model_output_price)
-         ```
+            ```text
+            Cost = (prompt_tokens * model_input_price)
+                   + (completion_tokens * model_output_price)
+            ```
 
 ### Viewing OpenRouter Logs
 
@@ -170,6 +170,7 @@ patterns.
     - Exports data in structured JSON format for programmatic use
 
 // TODO(ai_gp): Improve this list by splitting in better category.
+
 - It supports a wide range of coding assistants, including:
     - Claude Code, Codex CLI, OpenCode
     - Amp, Droid, Codebuff

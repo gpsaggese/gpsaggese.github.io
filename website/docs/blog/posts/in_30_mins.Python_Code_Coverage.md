@@ -39,19 +39,19 @@ helping you improve test quality.
 
 - Assume you have a simple module `my_module.py` and a corresponding
   `test_math.py` containing unit tests:
-  ```python
-  # my_module.py
-  def add(a, b):
-      return a + b
-  ```
+    ```python
+    # my_module.py
+    def add(a, b):
+        return a + b
+    ```
 
-  ```python
-  # test_math.py
-  from my_module import add
+    ```python
+    # test_math.py
+    from my_module import add
 
-  def test_add():
-      assert add(2, 3) == 5
-  ```
+    def test_add():
+        assert add(2, 3) == 5
+    ```
 
 - Run tests with coverage and collects coverage data:
 
@@ -73,9 +73,9 @@ helping you improve test quality.
     ```
 
 - The table shows the coverage data:
-  - `Stmts` is the number of statements
-  - `Miss` shows how many statements were not executed
-  - `Cover` is the percentage of statements covered by tests
+    - `Stmts` is the number of statements
+    - `Miss` shows how many statements were not executed
+    - `Cover` is the percentage of statements covered by tests
 
 ## Interactive Coverage Analysis
 
@@ -187,19 +187,19 @@ helping you improve test quality.
 - The full report shows coverage across the entire project, including both source
   and test files
 // TODO(ai_gp): Convert this into a table
-  - `Stmts` TODO
-  - `Miss` TODO
-  - `BrPart` indicates partially-covered branches
-  - `Branch` shows total branches
-  - `Cover` TODO
+    - `Stmts` TODO
+    - `Miss` TODO
+    - `BrPart` indicates partially-covered branches
+    - `Branch` shows total branches
+    - `Cover` TODO
 
 - These columns help identify conditional logic that was not fully exercised
 
 - In general the quality of the coverage should be evaluated only running the
   entire suite of tests (including `fast`, `slow`, `superslow`)
 - A good approximation is to judge the coverage for the target unit tests
-  - E.g., for `dev_scripts_helpers/documentation`, you can run the tests
-    under `dev_scripts_helpers/documentation/test`
+    - E.g., for `dev_scripts_helpers/documentation`, you can run the tests
+      under `dev_scripts_helpers/documentation/test`
 
 pytest dev_scripts_helpers/documentation/test --cov
 coverage report --include=dev_scripts_helpers/documentation/test/*.py
@@ -269,14 +269,14 @@ coverage report --include=dev_scripts_helpers/documentation/test/*.py
 
 
 - The columns in the interactive view:
-  - **Statements coverage**: percentage of statements executed
-  - **statements**: total statements
-  - **missing**: statements not covered
-  - **excluded**: statements excluded from coverage
-  - **Branches coverage**: percentage of branches taken
-  - **branches**: total branches
-  - **partial**: branches partially covered
-  - **Total coverage**: combined statements and branches coverage
+    - **Statements coverage**: percentage of statements executed
+    - **statements**: total statements
+    - **missing**: statements not covered
+    - **excluded**: statements excluded from coverage
+    - **Branches coverage**: percentage of branches taken
+    - **branches**: total branches
+    - **partial**: branches partially covered
+    - **Total coverage**: combined statements and branches coverage
 
 - You can click on each column to sort by that column
 - You can click on a file to see which lines are covered
@@ -398,47 +398,47 @@ TOTAL                                                                    4853   
 # 
 
 - Find the changed Python files in the branch
-  ```
-  > i git_files --branch --file-types "py"
-  18:26:55 - INFO  hdbg.py init_logger:1088                               > cmd='/Users/saggese/src/venv/client_venv.helpers/bin/invoke git_files --branch --file-types py'
-  # git_files: files='', from_file='', modified=False, branch=True, last_commit=False, all_files=False, file_types='py', skip_file_types='', pbcopy=False, only_print_files=False, on_one_line=False, mode='files'
-  18:26:55 - WARN  hsystem.py remove_dirs:496                             Removed dirs: helpers_root
-  ================================================================================
-  Results
-  ================================================================================
-  class_scripts/common_utils.py
-  class_scripts/for_loop_lessons.py
-  class_scripts/gen_slides.py
-  class_scripts/gen_slides_test_utils.py
-  class_scripts/generate_lecture_commentary.py
-  class_scripts/generate_slide_script.py
-  class_scripts/test/test_for_loop_lessons.py
-  class_scripts/test/test_for_loop_slides.py
-  msml610/test/test_gen_slides.py
-  tutorials/lime/01.API.lime.py
-  tutorials/lime/test/test_docker_all.py
-  tutorials/shap/01.API.shap.py
-  tutorials/shap/test/test_docker_all.py
-  ```
+    ```
+    > i git_files --branch --file-types "py"
+    18:26:55 - INFO  hdbg.py init_logger:1088                               > cmd='/Users/saggese/src/venv/client_venv.helpers/bin/invoke git_files --branch --file-types py'
+    # git_files: files='', from_file='', modified=False, branch=True, last_commit=False, all_files=False, file_types='py', skip_file_types='', pbcopy=False, only_print_files=False, on_one_line=False, mode='files'
+    18:26:55 - WARN  hsystem.py remove_dirs:496                             Removed dirs: helpers_root
+    ================================================================================
+    Results
+    ================================================================================
+    class_scripts/common_utils.py
+    class_scripts/for_loop_lessons.py
+    class_scripts/gen_slides.py
+    class_scripts/gen_slides_test_utils.py
+    class_scripts/generate_lecture_commentary.py
+    class_scripts/generate_slide_script.py
+    class_scripts/test/test_for_loop_lessons.py
+    class_scripts/test/test_for_loop_slides.py
+    msml610/test/test_gen_slides.py
+    tutorials/lime/01.API.lime.py
+    tutorials/lime/test/test_docker_all.py
+    tutorials/shap/01.API.shap.py
+    tutorials/shap/test/test_docker_all.py
+    ```
 
 - Remove the paired one
-  ```
-  class_scripts/common_utils.py
-  class_scripts/for_loop_lessons.py
-  class_scripts/gen_slides.py
-  class_scripts/gen_slides_test_utils.py
-  class_scripts/generate_lecture_commentary.py
-  class_scripts/generate_slide_script.py
-  class_scripts/test/test_for_loop_lessons.py
-  class_scripts/test/test_for_loop_slides.py
-  msml610/test/test_gen_slides.py
-  ```
+    ```
+    class_scripts/common_utils.py
+    class_scripts/for_loop_lessons.py
+    class_scripts/gen_slides.py
+    class_scripts/gen_slides_test_utils.py
+    class_scripts/generate_lecture_commentary.py
+    class_scripts/generate_slide_script.py
+    class_scripts/test/test_for_loop_lessons.py
+    class_scripts/test/test_for_loop_slides.py
+    msml610/test/test_gen_slides.py
+    ```
 - The interesting directories are:
-  ```
-  class_scripts
-  msml610
-  data605
-  ```
+    ```
+    class_scripts
+    msml610
+    data605
+    ```
   > pytest class_scripts --cov=class_scripts
 
 Name                                               Stmts   Miss Branch BrPart  Cover

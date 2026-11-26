@@ -1,15 +1,15 @@
 # Giacinto Paolo (GP) Saggese, PhD
 
-- **Co-Founder & CTO** @ [Causify.AI](https://www.causify.ai)
+- **AI R&D Lead** (ADIA)
 - **3x startup founder**
 - **Adjunct Professor**, Computer Science @ University of Maryland, College Park (USA)
 - **Industry experiences**
     - _Tech_: NVIDIA, Synopsys, Intel
     - _Finance_: June, Teza, Engineers' Gate
 - **Expertise**:
-  - Bayesian machine learning, LLMs, reasoning agents
-  - 20+ years building AI/ML systems, quant strategies, and high-performance software
-
+    - Bayesian machine learning, LLMs, reasoning agents
+    - 20+ years building AI/ML systems, quant strategies, and high-performance
+      software
 - Been writing code almost every day for the last 35 years (see [GitHub
   stats](https://github.com/gpsaggese?tab=activity) for the last few years)
 
@@ -20,13 +20,13 @@
   </div>
   <div style="text-align: center;">
     <h3>GP circa 2022</h3>
-    <img src="images/gp-saggese-2022.png" alt="GP Saggese circa 2022" style="max-width: 300px; width: 100%;">
+    <img src="images/gp-saggese-2022-adia.png" alt="GP Saggese circa 2022" style="max-width: 300px; width: 100%;">
   </div>
 </div>
 
 ## Contact Information
 
-- **Email:** gp@causify.ai | gsaggese@umd.edu | saggese@gmail.com
+- **Email:** gsaggese@umd.edu | saggese@gmail.com
 - **LinkedIn:** [linkedin.com/in/gpsaggese](https://linkedin.com/in/gpsaggese)
 - **GitHub:** [github.com/gpsaggese](https://github.com/gpsaggese)
 - **Location:** Washington DC-Baltimore Area

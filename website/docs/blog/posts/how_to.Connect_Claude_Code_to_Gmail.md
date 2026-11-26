@@ -29,21 +29,21 @@ prompts, no custom backend, just clean OAuth and Smithery.
 - This section walks through the complete setup — from an empty Google Cloud
   account to a working Gmail API integration.
 - By the end you will have:
-  - A Google Cloud project
-  - Gmail API enabled
-  - OAuth consent screen configured
-  - OAuth client credentials created
-  - A working authorization flow
+    - A Google Cloud project
+    - Gmail API enabled
+    - OAuth consent screen configured
+    - OAuth client credentials created
+    - A working authorization flow
 
 ## Why OAuth Is Required
 
 - Google does not allow apps to access Gmail using usernames and passwords.
 - Instead, your app must:
-  - Redirect the user to Google
-  - Ask permission for specific scopes
-  - Receive a temporary authorization code
-  - Exchange it for access and refresh tokens
-  - Use tokens to call the Gmail API
+    - Redirect the user to Google
+    - Ask permission for specific scopes
+    - Receive a temporary authorization code
+    - Exchange it for access and refresh tokens
+    - Use tokens to call the Gmail API
 - This protects users and allows them to revoke access at any time.
 
 ## Step 1 — Create a Google Cloud Project
@@ -126,66 +126,66 @@ prompts, no custom backend, just clean OAuth and Smithery.
 - The redirect URI must exactly match your application callback — even a
   trailing slash causes errors.
 - Example for local development:
-  ```text
-  http://localhost:3333/oauth/callback
-  ```
+    ```text
+    http://localhost:3333/oauth/callback
+    ```
 - Example for production:
-  ```text
-  https://yourdomain.com/oauth/google/callback
-  ```
+    ```text
+    https://yourdomain.com/oauth/google/callback
+    ```
 - Click **Create**.
 
 ## Step 5 — Download Credentials
 
 - You will receive a Client ID and Client Secret. Download the JSON file:
-  ```json
-  {
-    "web": {
-      "client_id": "xxxx.apps.googleusercontent.com",
-      "client_secret": "XXXX",
-      "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-      "token_uri": "https://oauth2.googleapis.com/token",
-      "redirect_uris": ["http://localhost:3333/oauth/callback"]
+    ```json
+    {
+      "web": {
+        "client_id": "xxxx.apps.googleusercontent.com",
+        "client_secret": "XXXX",
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://oauth2.googleapis.com/token",
+        "redirect_uris": ["http://localhost:3333/oauth/callback"]
+      }
     }
-  }
-  ```
+    ```
 - Store this securely — never commit it to Git.
 
 ## Step 6 — Authorization Flow
 
 - Redirect the user to Google:
-  ```text
-  https://accounts.google.com/o/oauth2/auth
-    ?client_id=YOUR_CLIENT_ID
-    &redirect_uri=YOUR_REDIRECT
-    &response_type=code
-    &scope=https://www.googleapis.com/auth/gmail.readonly
-    &access_type=offline
-    &prompt=consent
-  ```
+    ```text
+    https://accounts.google.com/o/oauth2/auth
+      ?client_id=YOUR_CLIENT_ID
+      &redirect_uri=YOUR_REDIRECT
+      &response_type=code
+      &scope=https://www.googleapis.com/auth/gmail.readonly
+      &access_type=offline
+      &prompt=consent
+    ```
 - User approves — Google redirects to:
-  ```text
-  http://localhost:3333/oauth/callback?code=AUTH_CODE
-  ```
+    ```text
+    http://localhost:3333/oauth/callback?code=AUTH_CODE
+    ```
 - Exchange the code for tokens via POST to
   `https://oauth2.googleapis.com/token`:
-  ```text
-  code=AUTH_CODE
-  client_id=CLIENT_ID
-  client_secret=CLIENT_SECRET
-  redirect_uri=REDIRECT_URI
-  grant_type=authorization_code
-  ```
+    ```text
+    code=AUTH_CODE
+    client_id=CLIENT_ID
+    client_secret=CLIENT_SECRET
+    redirect_uri=REDIRECT_URI
+    grant_type=authorization_code
+    ```
 - The response includes an `access_token` and a `refresh_token`. Save the
   refresh token permanently.
 
 ## Step 7 — Call the Gmail API
 
 - Example — list messages:
-  ```text
-  GET https://gmail.googleapis.com/gmail/v1/users/me/messages
-  Authorization: Bearer ACCESS_TOKEN
-  ```
+    ```text
+    GET https://gmail.googleapis.com/gmail/v1/users/me/messages
+    Authorization: Bearer ACCESS_TOKEN
+    ```
 
 ## Common Errors and Fixes
 
@@ -199,8 +199,8 @@ prompts, no custom backend, just clean OAuth and Smithery.
 ## When You Need Google Verification
 
 - You only need verification if:
-  - You exceed 100 users
-  - You use sensitive scopes publicly
+    - You exceed 100 users
+    - You use sensitive scopes publicly
 - Internal tools and personal apps do not require approval.
 
 ## Final Checklist
@@ -221,70 +221,70 @@ prompts, no custom backend, just clean OAuth and Smithery.
 - After completing the OAuth setup, you can connect Claude Code to Gmail using
   the Smithery MCP marketplace.
 - After setup you can ask Claude:
-  - "Summarize unread emails"
-  - "Draft a reply to the last message"
-  - "Send email to Alex about tomorrow's meeting"
-  - "Find invoices from last week"
+    - "Summarize unread emails"
+    - "Draft a reply to the last message"
+    - "Send email to Alex about tomorrow's meeting"
+    - "Find invoices from last week"
 
 ### Step 1 — Install the MCP Marketplace
 
 - Install the Smithery CLI:
-  ```bash
-  > npm install -g @smithery/cli
-  ```
+    ```bash
+    > npm install -g @smithery/cli
+    ```
 - Login (opens browser OAuth):
-  ```bash
-  > smithery login
-  ```
+    ```bash
+    > smithery login
+    ```
 - Install the Gmail integration:
-  ```bash
-  > smithery install gmail
-  ```
+    ```bash
+    > smithery install gmail
+    ```
 - This step automatically:
-  - Installs the Gmail MCP server
-  - Connects your Google account
-  - Registers the tool for Claude
+    - Installs the Gmail MCP server
+    - Connects your Google account
+    - Registers the tool for Claude
 
 ### Step 2 — Prepare Claude Code Config Folders
 
 - Create the Claude Code config directory:
-  ```bash
-  > mkdir ~/.config/claude-code
-  ```
+    ```bash
+    > mkdir ~/.config/claude-code
+    ```
 - Check your config home:
-  ```bash
-  > echo $XDG_CONFIG_HOME
-  ```
+    ```bash
+    > echo $XDG_CONFIG_HOME
+    ```
 
 ### Step 3 — Inspect the Installed MCP Server
 
 - Smithery writes a server definition file. Verify it exists:
-  ```bash
-  > ls ~/.config/claude-code/mcp_servers.json
-  ```
+    ```bash
+    > ls ~/.config/claude-code/mcp_servers.json
+    ```
 - Pretty-print it:
-  ```bash
-  > cat ~/.config/claude-code/mcp_servers.json | jq
-  ```
+    ```bash
+    > cat ~/.config/claude-code/mcp_servers.json | jq
+    ```
 
 ### Step 4 — Link MCP to Claude Desktop
 
 - Find where `npx` lives:
-  ```bash
-  > which npx
-  ```
+    ```bash
+    > which npx
+    ```
 - Edit the MCP config if needed:
-  ```bash
-  > vi ~/.config/claude-code/mcp_servers.json
-  ```
+    ```bash
+    > vi ~/.config/claude-code/mcp_servers.json
+    ```
 - Copy it into Claude's home config:
-  ```bash
-  > cp ~/.config/claude-code/mcp_servers.json ~/.claude/mcp_servers.json
-  ```
+    ```bash
+    > cp ~/.config/claude-code/mcp_servers.json ~/.claude/mcp_servers.json
+    ```
 - You may also want to inspect the main Claude config:
-  ```bash
-  > vi ~/.claude.json
-  ```
+    ```bash
+    > vi ~/.claude.json
+    ```
 
 ### Step 5 — Restart Claude
 
@@ -293,18 +293,18 @@ prompts, no custom backend, just clean OAuth and Smithery.
 ### Step 6 — Test It
 
 - Try:
-  ```claude
-  claude> summarize my latest email
-  ```
+    ```claude
+    claude> summarize my latest email
+    ```
 - If connected correctly, Claude will ask permission once, then call Gmail
   automatically.
 
 ## How It Works
 
 - The full flow is simple:
-  ```text
-  Claude → MCP tool → Gmail API → response → Claude
-  ```
+    ```text
+    Claude → MCP tool → Gmail API → response → Claude
+    ```
 - No passwords in prompts
 - No scraping
 - No custom backend
@@ -312,15 +312,15 @@ prompts, no custom backend, just clean OAuth and Smithery.
 ## Troubleshooting
 
 - Nothing happens when asking about email:
-  - Restart Claude Desktop
-  - Confirm `~/.claude/mcp_servers.json` exists
+    - Restart Claude Desktop
+    - Confirm `~/.claude/mcp_servers.json` exists
 - Permission errors — re-run:
-  ```bash
-  > smithery login
-  > smithery install gmail
-  ```
+    ```bash
+    > smithery login
+    > smithery install gmail
+    ```
 - `jq` not installed:
-  ```bash
-  > brew install jq
-  ```
+    ```bash
+    > brew install jq
+    ```
 - You now have a local AI email agent powered by Claude Code and MCP.
