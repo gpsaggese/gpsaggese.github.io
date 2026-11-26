@@ -304,4 +304,31 @@ cliputil.plot_confusion_matrices(test_preds)
 # %% [markdown]
 # ## Summary
 #
-# TODO: summarize the comparison once the results are in.
+# - **Accuracy is misleading here**: the majority class reaches 0.665
+#   accuracy but only 0.266 macro F1, because it never predicts negative or
+#   neutral.
+# - **Zero-shot CLIP** (macro F1 0.401) beats the majority class without any
+#   training, but it is the weakest CLIP model: CLIP learned from captions
+#   that describe what is in an image, not how it feels.
+# - **Logistic regression on frozen embeddings** gains about 0.1 macro F1
+#   over zero-shot. Text (0.502) is slightly more useful than image (0.489),
+#   and `concat` (0.504) adds little over text alone.
+# - **Fusion heads** improve further:
+#   - H1 Stack (0.517): averaging the two embeddings in CLIP's shared space
+#     works at least as well as concatenating them, with only 2,307
+#     parameters.
+#   - H2 Gated (0.541): the mean gate is about 0.8 for every class, so the
+#     head relies heavily on the image on top of the text, slightly less for
+#     positive posts.
+#   - H3 Cross-attention (0.560, accuracy 0.695): the best model, since
+#     image and text tokens can attend to each other.
+# - **H3 overfits quickly**: its best validation macro F1 is at epoch 1,
+#   and later epochs lower the validation score while the training loss
+#   keeps falling. Early stopping on validation keeps the epoch 1 weights,
+#   but stronger regularization or fewer parameters (1.5M) may help.
+# - **Negative posts remain the hardest class** (130 test posts out of
+#   1,703): even H3 recalls only 44% of them.
+#
+# Next steps: tune the zero-shot prompts, regularize H3 (dropout, smaller
+# hidden size), and inspect the misclassified posts for sarcasm and text
+# inside images.

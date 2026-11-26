@@ -85,6 +85,29 @@ cliputil.init_loggers(_LOG)
 # into vectors.
 
 # %% [markdown]
+# ## When to Use CLIP
+#
+# Good for:
+# - **Zero-shot classification**: describe each class in words, with no
+#   labeled data
+# - **Search**: find images from a text query, or similar images from an image
+# - **Features**: use the embeddings as inputs to a small classifier (a linear
+#   probe or a fusion head)
+#
+# Not for:
+# - Generating captions or text: CLIP only scores how well a text matches an
+#   image
+# - Locating objects: it gives one vector per image, with no bounding boxes
+#
+# Limitations:
+# - Texts longer than 77 tokens are cut
+# - Images are resized and center-cropped to 224x224, so edges and small text
+#   can be lost
+# - Zero-shot results depend on the prompt wording
+# - Abstract concepts such as sentiment are harder than objects and scenes,
+#   because web captions describe what is in an image, not how it feels
+
+# %% [markdown]
 # ## Load the Model
 #
 # - `CLIPModel` holds the two encoders.
