@@ -30,6 +30,27 @@
 - The open research questions are in the Gdoc, under
   [Questions for GP](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.xfydadrg3lvc)
 
+## 2026-11-21: Paper Converted to LaTeX (#963)
+
+- **Issue**: [#963](https://github.com/gpsaggese/gpsaggese.github.io/issues/963),
+  from GP's meeting of 2026-11-19: the paper in LaTeX with the repo template,
+  Aahan as first author, surprising findings in the abstract, and the open
+  questions for GP inside the paper
+- **What was done**:
+  - `papers/Optimal_strategy_for_racket_sports/paper.tex`, on `papers/template`
+    (`amsart`): the text, numbers, equations, tables, figures, and sections of
+    `paper.md`, numbered as in its PDF; built with
+    `make -C papers/Optimal_strategy_for_racket_sports latex`
+  - Authors: Aahan Rembersu and GP; Pranav removed, as GP asked in the meeting
+  - Abstract: four findings, each from a section of the paper
+  - Notes for GP in colored boxes (`\gpnote`, all hidden by `\gpnotesfalse`):
+    Q19 (title), Q20 (corners claim), Q21 and Q22 (VII-B), the correction of
+    Sudo et al. (2024), and the threshold `a*` of #984 for finding (iv)
+  - `references.bib`: DOIs checked on Crossref, arXiv DOIs added, and two fixes
+    from Crossref
+  - `paper.md` is frozen and is removed once GP approves the LaTeX version
+- **Next**: GP's printed review; #984 adds `a*` to VII-B and to finding (iv)
+
 ## 2026-11-15: Notebook 07 and Section VII-B, Speed vs Accuracy (#723)
 
 - **Issue**: [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723),
