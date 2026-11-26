@@ -6,28 +6,6 @@
 - Each file describes a potential research project, study, or tutorial with
   motivation, methodology, and expected outcomes
 
-## Active Projects
-
-- If you want to work closely with me and my research assistants, these are the
-  projects that are in progress and that I am excited about
-
-| Project | Paper | Code | Assignee |
-| :------ | :---- | :--- | :------- |
-| [Noesis](../contributors.md#noesis) | [`link`](../../papers/Noesis/) | [`link`](../Noesis/) | gpsaggese, gilesgreene, Sim2200, caicedoss, Jav359003, heanhsok |
-| [Auto DS](../contributors.md#auto-ds) | [`link`](../../papers/RL_for_Automated_EDA/) | [`link`](../agentic_data_science/) | gpsaggese, Delvitron1019, Sohail-5678 |
-| [Racket sports](../contributors.md#racket-sports) | [`link`](../../papers/Optimal_strategy_for_racket_sports/) | [`link`](../Optimal_strategy_for_racket_sports/) | gpsaggese, aahanrembersu07 |
-| [MCTS / AlphaZero](../contributors.md#mcts--alphazero) | [`link`](../../papers/AlphaZero_MCTS_for_TSP/) | [`link`](../Implement_MonteCarlo_Tree_Search_and_Alpha_Zero/) | gpsaggese, Eyepatch0 |
-| [CAASL](../contributors.md#caasl-causal-analysis-of-agent-skill-and-luck) | [`link`](../../papers/Causal_Analysis_of_Agent_Skill_And_Luck/) | [`link`](../Causal_Analysis_of_Agent_Skill_And_Luck/) | gpsaggese, Niveda-227, bkk8403 |
-| [CAASS](../contributors.md#causal-analysis-of-age-and-startup-success-caass) | [`link`](../../papers/Causal_Analysis_of_Age_and_Startup_Success/) | [`link`](../Causal_Analysis_of_Age_and_Startup_Success/) | gpsaggese, Under-the-stars |
-| [Counterfactual attribution](../contributors.md#counterfactual-attribution) | TBD | [`link`](../../class_project/msml610/Fall2026/projects/UmdTask677_MSML610_Fall2026_Counterfactual_Attribution_of_Agent_Failures/) | gpsaggese, aahanrembersu07, linuteresa, SriRammSS |
-| [Financial tradability](../contributors.md#financial-tradability) | TBD | [`link`](../Causal_Analysis_of_Financial_Tradability/) | gpsaggese |
-
-- Team members, GitHub boards, and docs of every project are in
-  [`research/contributors.md`](../contributors.md)
-
-- Also getting a current project and finish it will lead to faster publication on
-  blogs and papers
-
 ## Description of Files
 
 - Files in `research/ideas/*.md` are prefixed with their status when applicable:
@@ -87,7 +65,7 @@
 | `in_progress.Implement_MonteCarlo_Tree_Search_and_Alpha_Zero.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/in_progress.Implement_MonteCarlo_Tree_Search_and_Alpha_Zero.md) | in progress | Eyepatch0, gpsaggese | 20% | [#507](https://github.com/gpsaggese/gpsaggese.github.io/issues/507) | - |
 | `draft.Intelligence_Market.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Intelligence_Market.md) | draft | - | 20% | - | - |
 | `draft.Create_a_Small_Large_Language_Model_for_Logic.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Create_a_Small_Large_Language_Model_for_Logic.md) | draft | GokuHashira | 20% | [#767](https://github.com/gpsaggese/gpsaggese.github.io/issues/767) | - |
-| `in_progress.RL_for_auto_EDA.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/in_progress.RL_for_auto_EDA.md) | in progress | Delvitron1019, Rayhanpatel, Kytamnh, gpsaggese | 15% | [#506](https://github.com/gpsaggese/gpsaggese.github.io/issues/506) | - |
+| `in_progress.RL_for_auto_EDA.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/in_progress.RL_for_auto_EDA.md) | in progress | Delvitron1019, Rayhanpatel, Kytamnh, gpsaggese | 15% | [#506](https://github.com/gpsaggese/gpsaggese.github.io/issues/506), [#628](https://github.com/gpsaggese/gpsaggese.github.io/issues/628) | - |
 | `draft.Intelligence_Server.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Intelligence_Server.md) | draft | - | 15% | - | - |
 | `draft.Noesis_Reputation_Detection_Bound.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Noesis_Reputation_Detection_Bound.md) | draft | - | 15% | - | - |
 | `draft.Noesis_Task_Unit_Definition.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Noesis_Task_Unit_Definition.md) | draft | - | 15% | - | - |
@@ -125,7 +103,7 @@
 | `draft.VC_Dimension_of_Causal_Networks.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.VC_Dimension_of_Causal_Networks.md) | draft | - | 10% | - | - |
 | `draft.Noesis_Hybrid_Auction_Latency.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Noesis_Hybrid_Auction_Latency.md) | draft | - | 10% | - | - |
 | `draft.Distribution_Shift_in_Time_Series_Forecasting.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Distribution_Shift_in_Time_Series_Forecasting.md) | draft | Aditirk0810-collab, atharvaa45, farcypeer46 | 0% | [#758](https://github.com/gpsaggese/gpsaggese.github.io/issues/758) | - |
-| `draft.Causal_analysis_of_deal_or_no_deal.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Causal_analysis_of_deal_or_no_deal.md) | draft | riyaapuri, stupatel17 | - | [#672](https://github.com/gpsaggese/gpsaggese.github.io/issues/672) | - |
+| `draft.Causal_analysis_of_deal_or_no_deal.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Causal_analysis_of_deal_or_no_deal.md) | draft | - | - | [#672](https://github.com/gpsaggese/gpsaggese.github.io/issues/672) | - |
 | `draft.Complete_blogs.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Complete_blogs.md) | draft | - | - | - | - |
 | `draft.Differentiable_Embeddings_for_Math_and_Code.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Differentiable_Embeddings_for_Math_and_Code.md) | draft | - | - | - | - |
 | `draft.Differentiable_Gumbel_Softmax.md` | [proposal](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/research/ideas/draft.Differentiable_Gumbel_Softmax.md) | draft | - | - | - | - |
@@ -166,4 +144,4 @@
 - If the specs are not complete for a task you are interested in, before starting
   the work, ask GP to improve them so that there is clarity on what's the goal
 
-// Last update timestamp: "Nov 26 09:00"
+// Last update timestamp: "Nov 26 09:06"

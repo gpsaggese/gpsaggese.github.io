@@ -5,17 +5,40 @@ integrated into the main site.
 
 ## Installation
 
-- Install MkDocs and the Material theme with blog support:
+- Create the venv `~/src/venv/client_venv.website` with all the Python packages
+  needed by the scripts in `website/`:
   ```bash
-  > pip install -r requirements.txt
+  > ./website/create_venv.sh
+  ```
+  - The packages come from `website/requirements.txt` and from the
+    `jupyter_book/requirements.txt` of `data605`, `msml610`, and `tutorials`
+  - The script also downloads the Chromium browser used by Playwright
+
+- `website/preview_website.sh` and `website/publish_website.sh` activate the venv
+  on their own. Activate it by hand before running any other command below:
+  ```bash
+  > source ~/src/venv/client_venv.website/bin/activate
   ```
 
-  Or manually:
+- Install the tools that `pip` can't provide:
   ```bash
-  > pip install mkdocs>=1.5.3 mkdocs-material>=9.5.0 pymdown-extensions>=10.7
+  > brew install git node pandoc prettier
   ```
+
+- Run `website/create_venv.sh` again to rebuild the venv from scratch:
+  - After changing one of the `requirements.txt` files
+  - When a script fails with `bad interpreter: No such file or directory`, which
+    happens after Homebrew upgrades Python
+
+- `website/mark_blog_as_ready.py` and `website/update_class_links.sh` also import
+  the `helpers` package, so `PYTHONPATH` must include the repo root and
+  `helpers_root/`
 
 ## Usage
+
+- The `./*.sh` commands below that start or deploy the website
+  (`preview_website.sh`, `publish_website.sh`, `test.sh`) must be run from the
+  repo root as `./website/<script>`, since they `cd website` on their own
 
 ### Local Development Server
 
@@ -47,9 +70,9 @@ The built site will be in the `site/` directory.
 
 - Or use the convenience scripts:
   ```bash
-  > ./test.sh              # Run local server against docs/ as-is (fastest)
-  > ./preview_website.sh   # Rebuild Jupyter Books, then run local server
-  > ./publish_website.sh   # Rebuild Jupyter Books, then deploy to GitHub Pages
+  > ./website/test.sh              # Run local server against docs/ as-is (fastest)
+  > ./website/preview_website.sh   # Rebuild Jupyter Books, then run local server
+  > ./website/publish_website.sh   # Rebuild Jupyter Books, then deploy to GitHub Pages
   ```
 
 ### Website Generation Flow
@@ -93,77 +116,9 @@ edit lesson files ──▶ update_class_links.sh ──▶ docs/class_links/*.h
 
 ## Blog
 
-The website includes an integrated blog under the "Blog" tab. Blog posts are
-located in `docs/blog/posts/`.
-
-### Writing Blog Posts
-
-#### Creating a New Post
-
-1. Create a new Markdown file in `docs/blog/posts/` with a descriptive name (e.g., `My_Post_Title.md`)
-
-2. Add the required front matter at the top:
-   ```markdown
-   ---
-   title: "Your Blog Post Title"
-   authors:
-     - gpsaggese
-   date: YYYY-MM-DD
-   description: Brief description for SEO
-   categories:
-     - Category Name
-   ---
-
-   TL;DR: Your punchy one-liner summary.
-
-   <!-- more -->
-
-   Your blog content starts here...
-   ```
-
-#### Front Matter Fields
-
-- **title**: Use double quotes, capitalize major words
-- **authors**: List format with username(s) from `docs/.authors.yml`
-- **date**: Use YYYY-MM-DD format
-- **description**: Brief description for SEO and social media
-- **categories**: Choose from allowed categories
-
-#### Available Categories
-
-- AI Research
-- Machine Learning
-- Deep Learning
-- Software Engineering
-- Startup
-- Teaching
-- Data Science
-- Python
-
-#### Formatting Guidelines
-
-- Follow the formatting rules in `/Users/saggese/src/umd_classes1/helpers_root/docs/ai_prompts/blog.format.md`
-
-- Key formatting rules:
-  - Always include `<!-- more -->` tag after TL;DR to separate excerpt
-  - Use `##` for main sections, `###` for subsections
-  - Use `-` for bullet lists
-  - Bold important terms with `**text**`
-  - Use inline code for technical terms with `` `code` ``
-  - Include blank lines between sections
-
-#### Features
-
-The blog supports:
-- **Categories and tags** - Organize posts by topic
-- **Reading time estimates** - Automatically calculated
-- **Pagination** - 10 posts per page
-- **Archive by year** - Automatically generated
-- **Author profiles** - Configured in `docs/.authors.yml`
-- **Math equations** - Via MathJax
-- **Code syntax highlighting** - Multiple languages supported
-- **Mermaid diagrams** - For flowcharts and diagrams
-- **Social sharing** - Open Graph and Twitter cards via SEO overrides
+- The website includes an integrated blog under the "Blog" tab
+- See [`README.blog.md`](README.blog.md) for how to write blog posts, front
+  matter fields, categories, formatting rules, and the blog tracker
 
 ## Structure
 
@@ -190,6 +145,7 @@ website/
 │   └── main.html                 # SEO meta tags for social sharing
 ├── mkdocs.yml                    # Site and blog configuration
 ├── requirements.txt              # Python dependencies
+├── create_venv.sh                # Create the venv used by all the scripts
 ├── test.sh                       # Serve docs/ as-is, no regeneration
 ├── preview_website.sh            # Rebuild Jupyter Books, then serve locally
 ├── publish_website.sh            # Rebuild Jupyter Books, then deploy to GH Pages
