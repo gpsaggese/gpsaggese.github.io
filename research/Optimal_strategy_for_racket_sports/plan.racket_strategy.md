@@ -426,3 +426,7 @@
         formalize the research in the paper (GP, 2026-11-12): the 2D model as
         the main method, Section VIII on the RL env of #713, and an index that
         links each result to its Gdoc experiment
+  - [-] [#963](https://github.com/gpsaggese/gpsaggese.github.io/issues/963):
+        convert the paper to LaTeX (GP, meeting of 2026-11-19): `paper.tex` is
+        the source, with the questions for GP as notes in the paper; `paper.md`
+        stays frozen until GP approves the LaTeX version
