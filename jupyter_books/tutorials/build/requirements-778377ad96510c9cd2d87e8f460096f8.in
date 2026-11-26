@@ -1,0 +1,21 @@
+# Jupyter
+jupyter
+notebook==7.5.4
+ipykernel==7.2.0
+ipywidgets==8.1.8
+
+# Core data stack
+numpy==2.4.3
+pandas==3.0.1
+matplotlib==3.10.8
+seaborn==0.13.2
+scipy==1.17.1
+scikit-learn==1.8.0
+plotly==6.6.0
+pyarrow==23.0.1
+tqdm==4.67.3
+
+# TensorFlow ecosystem
+tensorflow==2.20.0
+tensorflow-probability==0.25.0
+tf-keras==2.20.1
