@@ -286,3 +286,51 @@ Design a multi-snapshot robustness experiment containing different inflation, un
 Use the same model, required claims, and evaluation rules for the CrewAI workflow and baseline.
 
 Report a CrewAI advantage only if it is supported by the additional experiments. Otherwise, document the tie as the final experimental result.
+
+## November 21, 2026
+
+### Multi-Snapshot Robustness Experiment
+
+Added an observation cutoff to the FRED download pipeline, CrewAI research tool, and example command-line interface. This allows the same workflow to be evaluated under several historical economic conditions.
+
+Implemented `multi_snapshot_evaluation.py` with four default cutoffs:
+
+1. June 2019 for pre-pandemic conditions.
+2. May 2020 for the pandemic unemployment shock.
+3. June 2022 for high inflation.
+4. July 2023 for high interest rates and an inverted yield curve.
+
+The runner caches downloaded snapshots, CrewAI briefings, baseline responses, and evaluation reports. Preparation mode makes no language-model calls. The `--run-llm` option generates only outputs that are not already cached.
+
+### Evaluation Correction
+
+The first 2019 baseline result was incorrectly marked wrong because it reported unrounded inflation of `1.671`, while the evaluator compared it with a prematurely rounded expected value of `1.67`.
+
+The evaluator was corrected to retain unrounded deterministic ground truth and apply rounding tolerance only during claim comparison. After the correction, both values were correctly treated as equivalent. A synthetic-data regression test now protects this behavior.
+
+### Results
+
+The CrewAI workflow and single-LLM baseline were evaluated on all four snapshots using the same model, 12 required claims, and field-aware evaluation rules.
+
+| Method | Correct | Required | Mean accuracy | Mean completeness | Pooled score |
+|---|---:|---:|---:|---:|---:|
+| Three-agent CrewAI workflow | 48 | 48 | 1.0 | 1.0 | 1.0 |
+| Single-LLM baseline | 48 | 48 | 1.0 | 1.0 | 1.0 |
+
+The methods tied on every snapshot. The experiment does not support a claim that CrewAI improved numerical accuracy over the baseline. Its demonstrated benefits are modularity, deterministic calculations, separation of responsibilities, and an auditable path from source data to final briefing.
+
+The experiment uses current FRED series truncated at historical observation dates. It does not reconstruct revision-aware historical data vintages from ALFRED.
+
+### Testing
+
+Eleven deterministic pipeline tests passed inside Docker. The new tests cover observation cutoff filtering, invalid cutoff handling, CrewAI tool propagation, snapshot cache reuse, aggregate calculation, and unrounded ground truth in addition to the existing calculation, evaluation, rounding, missing-claim, incorrect-value, and report-export behavior.
+
+Python compilation and `git diff --check` completed without errors.
+
+### Next
+
+Update the example notebook to demonstrate the observation cutoff and multi-snapshot experiment.
+
+Run the Docker and notebook integration tests after updating the notebook.
+
+Review the complete diff, commit the intended files, push `UmdTask802_MSML610_Fall2026_CrewAI_3`, and open the next incremental pull request.
