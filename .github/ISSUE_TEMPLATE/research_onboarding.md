@@ -32,6 +32,18 @@ Check off each item as you complete it. Ask questions in the comments.
 - [ ] Create an issue for your first task
 - [ ] Open a small first PR (e.g., a doc fix)
 
+## Pledge
+
+I will dedicate this number of hours per week:
+
+- [ ] I will send a
+      [TODO email](https://github.com/gpsaggese/helpers/blob/master/docs/work_organization/all.todo_email.how_to_guide.md)
+      every day
+- [ ] I will dedicate the hours per week that I wrote above
+- [ ] I will not disappear and leave my task in shambles: if I need to slow down
+      or stop, I will say it as soon as I know, push my code, write the status in
+      the GitHub issue, and hand over the task
+
 ## For GP
 
 - [ ] Give repo access

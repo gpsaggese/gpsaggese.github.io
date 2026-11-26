@@ -125,7 +125,7 @@
     `website/mkdocs.yml`
 - Check the front matter (the YAML block between `---` lines at the top of the
   blog) against "Front Matter Fields" in
-  [`website/README.md`](../website/README.md), plus `draft: true`
+  [`website/README.blog.md`](../website/README.blog.md), plus `draft: true`
 - Add yourself as an author
   - Add an entry in `website/docs/.authors.yml`
   - Add your id to `authors:` in the blog front matter
@@ -276,9 +276,9 @@
 # Related docs
 - [Blog gsheet](https://docs.google.com/spreadsheets/d/1EXprKVLcm6rkqaxM4GYhthGNq3YQwgMzr1ORf7c8C1I)
 - [`website/README.blog.md`](../website/README.blog.md): list of published blogs,
-  blogs ready for review, and drafts ranked by readiness
-- [`website/README.md`](../website/README.md): how the website is built, front matter
-  fields, categories, formatting rules
+  blogs ready for review, drafts ranked by readiness, front matter fields,
+  categories, formatting rules
+- [`website/README.website.md`](../website/README.website.md): how the website is built
 - [`pr_process.how_to_guide.md`](pr_process.how_to_guide.md): how to create a PR
   (branches, commits, testing section)
 - [`My_AI_Policy.md`](../website/docs/blog/posts/My_AI_Policy.md) and

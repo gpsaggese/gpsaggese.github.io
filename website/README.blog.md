@@ -5,6 +5,78 @@
   scratchpad).
   - Criteria: front matter completeness, TL;DR quality, content structure, and polish.
 
+# Writing Blog Posts
+
+The website includes an integrated blog under the "Blog" tab. Blog posts are
+located in `docs/blog/posts/`.
+
+## Creating a New Post
+
+1. Create a new Markdown file in `docs/blog/posts/` with a descriptive name (e.g., `My_Post_Title.md`)
+
+2. Add the required front matter at the top:
+   ```markdown
+   ---
+   title: "Your Blog Post Title"
+   authors:
+     - gpsaggese
+   date: YYYY-MM-DD
+   description: Brief description for SEO
+   categories:
+     - Category Name
+   ---
+
+   TL;DR: Your punchy one-liner summary.
+
+   <!-- more -->
+
+   Your blog content starts here...
+   ```
+
+## Front Matter Fields
+
+- **title**: Use double quotes, capitalize major words
+- **authors**: List format with username(s) from `docs/.authors.yml`
+- **date**: Use YYYY-MM-DD format
+- **description**: Brief description for SEO and social media
+- **categories**: Choose from allowed categories
+
+## Available Categories
+
+- AI Research
+- Machine Learning
+- Deep Learning
+- Software Engineering
+- Startup
+- Teaching
+- Data Science
+- Python
+
+## Formatting Guidelines
+
+- Follow the formatting rules in `/Users/saggese/src/umd_classes1/helpers_root/docs/ai_prompts/blog.format.md`
+
+- Key formatting rules:
+  - Always include `<!-- more -->` tag after TL;DR to separate excerpt
+  - Use `##` for main sections, `###` for subsections
+  - Use `-` for bullet lists
+  - Bold important terms with `**text**`
+  - Use inline code for technical terms with `` `code` ``
+  - Include blank lines between sections
+
+## Features
+
+The blog supports:
+- **Categories and tags** - Organize posts by topic
+- **Reading time estimates** - Automatically calculated
+- **Pagination** - 10 posts per page
+- **Archive by year** - Automatically generated
+- **Author profiles** - Configured in `docs/.authors.yml`
+- **Math equations** - Via MathJax
+- **Code syntax highlighting** - Multiple languages supported
+- **Mermaid diagrams** - For flowcharts and diagrams
+- **Social sharing** - Open Graph and Twitter cards via SEO overrides
+
 # Published Blogs
 
 - To extract dates and paths use:

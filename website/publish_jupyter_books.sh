@@ -33,9 +33,8 @@
 set -euo pipefail
 
 GIT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-# All books share one jupyter-book v2 venv (see e.g.
-# `data605/jupyter_book/create_venv.sh`).
-VENV_DIR="$HOME/src/venv/client_venv.jupyter_book2"
+# All books are built with the website venv (see `website/create_venv.sh`).
+VENV_DIR="$HOME/src/venv/client_venv.website"
 OUT_DIR="$GIT_ROOT/website/docs/jupyter_books"
 
 ALL_BOOKS=("data605" "msml610" "tutorials")
@@ -155,10 +154,10 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-# Ensure the shared jupyter-book venv exists before building anything.
+# Ensure the website venv exists before building anything.
 if [[ ! -d "$VENV_DIR" ]]; then
   echo "ERROR: venv not found at $VENV_DIR" >&2
-  echo "Run e.g. ./data605/jupyter_book/create_venv.sh first." >&2
+  echo "Run ./website/create_venv.sh first." >&2
   exit 1
 fi
 
