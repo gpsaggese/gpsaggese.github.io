@@ -19,11 +19,11 @@
 | M2: Ranking under uncertainty | Oct 30 | Done | #855 |
 | M3: Split-half rank correlation (SWE-bench) | Nov 15 | Done | #855 |
 | M3: 2PL IRT and effective size (SWE-bench) | Nov 15 | Done | #855 |
-| M3: Cross-benchmark rank correlation and effective size (HumanEval+, MBPP+) | Nov 15 | Done | PR of branch `_4` |
+| M3: Cross-benchmark rank correlation and effective size (HumanEval+, MBPP+) | Nov 15 | Done | #1014 |
 | M4: Winner's curse, simulated and held-out (SWE-bench) | Nov 15 | Done | #855 |
-| M4: Measured drop on real runs and prompt variants, shrinkage rule | Nov 15 | Done | PR of branch `_4` |
+| M4: Measured drop on real runs and prompt variants, shrinkage rule | Nov 15 | Done | #1014 |
 | Phase 2: Studies A to D, pre-registered | Nov 3 | In review | #1013 |
-| Write-up and paper draft | Dec 7 | Not started | |
+| Write-up and paper draft | Dec 7 | Draft done, not built yet | #1014 |
 
 ## Built
 
@@ -61,6 +61,14 @@
   - `report_agent_scores()`: the reporting protocol of the project
   - `fetch_evalplus_data.py` also saves a snapshot of the EvalPlus
     leaderboard
+- For the reproducibility rules of the research guide (PR #1014):
+  - A `config` dict at the top of every experiment notebook, with all its
+    parameters
+  - `test/test_notebooks.py`: a smoke test per notebook on a smaller
+    `config`, and superslow tests that freeze the results of Milestones 3
+    and 4
+  - The paper draft, `papers/Skill_vs_Luck_in_Agent_Benchmarks/paper.md`,
+    with its figures copied from the notebooks by `figures/make_figures.py`
 
 ## Findings
 
@@ -179,17 +187,29 @@
     misses by up to 1.5 points
     - Study H, `skill_vs_luck.selection.ipynb` Cells 3.1 and 3.2, D-7
 24. The protocol takes the SWE-bench Verified leader from 79.2% to 75.1% with
-    the paired rule, likely too much since the 173 agents are far from equal;
-    6 of the 9 predictions of Studies F and G held, so 10 of the 15 of
-    `preregistration_3.md`
+    the paired rule; 6 of the 9 predictions of Studies F and G held, so 10 of
+    the 15 of `preregistration_3.md`
     - `skill_vs_luck.selection.ipynb` Cells 4.1, 4.2, and 5.1
+25. The correction of the spec, `sigma x sqrt(2 ln K)`, corrects even more than
+    the binomial rule on the prompt variants: -8.0 (HumanEval+) and -6.4
+    (MBPP+) points at K = 20, against -4.9 and -4.3
+    - Extra look promised in #716, `skill_vs_luck.selection.ipynb` Cell 2.5
+26. On a leaderboard the corrections fail: picked on half of the SWE-bench
+    tasks, the leader drops by 1.88 points on the other half; the rules that
+    assume equal candidates correct 3.8 to 6.3 points too much, empirical
+    Bayes leaves most of the drop (+1.56, lowest RMSE 3.70), and the hybrid
+    estimate comes closest on average (-1.01, RMSE 5.42), so none is within 1
+    point; see D-8
+    - Extra look, 1,000 splits, `skill_vs_luck.selection.ipynb` Cell 4.3
 
 ## Next
 
 1. Upload the scores of the prompt variants to the Drive folder and download
    them in `fetch_coding_scores.py`
-2. Get #1013 and the PR of branch `_4` reviewed
-3. The video, and the demo with GP
+2. Build the PDF of the paper with `make`, which needs `pandoc` and `typst`
+3. Split the research Gdoc into the tabs of the research guide, and move it to
+   the `Research_Class_Projects` folder
+4. Get #1013 and #1014 reviewed, then the video and the demo with GP
 
 ## History
 
@@ -216,7 +236,8 @@
 | 2026-11-26 | Study E (Milestone 3): 4 of 6 predictions held; see D-6 for the ties in the conditional estimate |
 | 2026-11-27 | Generated the 20 prompt variants in about 7.5 hours; 33 MBPP+ answers made by 2 extra streams running at the same time were deleted and made again one at a time, since parallel requests can change greedy answers; scored the 40 files twice |
 | 2026-11-27 | Added the hybrid estimate as an extra look, before any analysis of the prompt variants; see D-7 |
-| 2026-11-27 | Studies F to H (Milestone 4): 6 of 9 predictions held, and rule H recommends the paired correction; `report_agent_scores()` uses it by default |
+| 2026-11-27 | Studies F to H (Milestone 4): 6 of 9 predictions held, and rule H recommends the paired correction; `report_agent_scores()` uses it by default; opened #1014 |
+| 2026-11-27 | Extra looks: the correction of the spec on the prompt variants, and the corrections on held-out halves of SWE-bench (D-8); a `config` in every experiment notebook, smoke tests of the notebooks, and the paper draft |
 
 ## Open Work
 

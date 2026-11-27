@@ -17,6 +17,9 @@ Chandrashekar), tracked in
     of 1 of them
   - The code that EvalPlus generated in 2023 with many models, including 200
     samples per task at 2 temperatures, scored again here
+- The paper draft is
+  [`papers/Skill_vs_Luck_in_Agent_Benchmarks/paper.md`](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/papers/Skill_vs_Luck_in_Agent_Benchmarks/paper.md),
+  built with `make` in its dir
 
 ## Results So Far
 
@@ -122,9 +125,15 @@ Chandrashekar), tracked in
       the median, but it misses by up to 7.7 points on average, since it falls
       far below the score when the winner only just won; their hybrid version,
       an extra look, still misses by up to 1.5 points
+    - The correction of the spec, `sigma x sqrt(2 ln K)`, corrects even more
+      than the binomial rule: -8.0 and -6.4 points at K = 20 (an extra look,
+      promised in #716)
   - The reporting protocol, `report_agent_scores()`, takes the SWE-bench
-    Verified leader from 79.2% to 75.1%; since the 173 agents are far from
-    equal, the paired rule likely corrects too much there
+    Verified leader from 79.2% to 75.1%
+    - On held-out halves of the SWE-bench tasks (an extra look), the leader
+      drops by 1.88 points: the rules that assume equal candidates correct 3.8
+      to 6.3 points too much, and no correction is within 1 point, so for a
+      leaderboard the drop on held-out halves is the better guide
   - 6 of the 9 predictions of Studies F and G held (F2, F3, and G0 to G3), and
     F1, G4, and G5 did not, so 10 of the 15 predictions of Milestones 3 and 4
     held
@@ -198,6 +207,7 @@ Chandrashekar), tracked in
 | `skill_vs_luck_utils.py`                | Intervals, ranks, paired tests, records, benchmark size, simulation, split-half, IRT, transfer, winner's curse and fixes, protocol | Library   |
 | `test/test_fetch_coding_scores.py`      | Unit tests for `fetch_coding_scores.py`                                                                                            | Tests     |
 | `test/test_fetch_evalplus_data.py`      | Unit tests for `fetch_evalplus_data.py`                                                                                            | Tests     |
+| `test/test_notebooks.py`                | Smoke tests of the notebooks, and tests that freeze the results of Milestones 3 and 4                                              | Tests     |
 | `test/test_skill_vs_luck_runs_utils.py` | Unit tests for `skill_vs_luck_runs_utils.py`                                                                                       | Tests     |
 | `test/test_skill_vs_luck_utils.py`      | Unit tests for `skill_vs_luck_utils.py`                                                                                            | Tests     |
 | `version.sh`                            | Print the package versions inside the image                                                                                        | Docker    |
@@ -440,6 +450,13 @@ Chandrashekar), tracked in
   - For the leader, the score corrected for having been picked as the best,
     by default with the paired rule that Study H recommends
 
+- The paired rule assumes that the candidates are about equal, as variants of
+  1 agent are; on a leaderboard of very different agents no correction passed
+  (`skill_vs_luck.selection.ipynb`, Cell 4.3), so report there the drop of the
+  leader on held-out halves of the tasks next to its score, e.g., the `none`
+  row of `summarize_corrections()` on the trials of
+  `simulate_variant_selection(outcomes, outcomes.shape[0])`
+
 - E.g., on the SWE-bench Verified snapshot, inside the container:
   ```python
   import skill_vs_luck_utils as utils
@@ -467,6 +484,18 @@ Chandrashekar), tracked in
 - Pass the test files explicitly
   - `class_project/msml610/conftest.py` stops `pytest` from collecting tests in
     a directory under `msml610`
+
+- Run the tests of the notebooks, after downloading the scores:
+  ```bash
+  > ./docker_cmd_sandbox.sh "python -m pytest test/test_notebooks.py -m slow"
+  ```
+  - Each experiment notebook starts with a `config` dict that holds all its
+    parameters; the smoke tests (`slow`, 2 to 16 seconds each, about 1 minute
+    in all) run every notebook with a smaller `config`
+  - The `superslow` tests (`-m superslow`, about 6 minutes) run the notebooks
+    of Milestones 3 and 4 with their full `config`, and check that the
+    pre-registered results do not change
+  - A test is skipped when the scores it needs are not downloaded
 
 ## Run the Coding-Benchmark Experiment
 
