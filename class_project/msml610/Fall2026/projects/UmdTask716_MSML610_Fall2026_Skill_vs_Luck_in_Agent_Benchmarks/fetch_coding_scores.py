@@ -2,11 +2,14 @@
 """
 Download the scores of the coding runs from Google Drive.
 
-The scored answers of our runs and of the public EvalPlus samples
-(`data/coding_runs/` and `data/coding_runs_pilot/`, 88 `.csv.gz` files) are
-kept on Google Drive instead of the repo. This script downloads them as 1
-archive, checks its SHA-256, and extracts it into the project dir, where the
-notebooks look for them.
+The scored answers of our runs and of the public EvalPlus samples are kept on
+Google Drive instead of the repo, as 2 archives:
+- Phase 1: `data/coding_runs/` and `data/coding_runs_pilot/`, 88 `.csv.gz`
+  files
+- Phase 2: `data/coding_runs_phase2/`, 18 `.csv.gz` files
+
+This script downloads each archive, checks its SHA-256, and extracts it into
+the project dir, where the notebooks look for the scores.
 
 # Usage Example
 
@@ -23,7 +26,7 @@ import hashlib
 import logging
 import os
 import tarfile
-from typing import List
+from typing import Dict, List, Tuple
 
 import requests
 
@@ -34,15 +37,22 @@ import helpers.hretry as hretry
 
 _LOG = logging.getLogger(__name__)
 
-# Google Drive file with the archive of the scores, and its SHA-256. The
-# file is in the Drive folder of the project:
+# For each archive: its Google Drive file, its SHA-256, and the dirs that it
+# holds, relative to the project dir. The files are in the Drive folder of the
+# project:
 # https://drive.google.com/drive/folders/1rgI_x5rfX9HXiP0kZUHfyq2Zg8WWuV4y
-_ARCHIVE_ID = "15A_Oo4QA2G72yssbG7DK0NEiNlEDzvTd"
-_ARCHIVE_SHA256 = (
-    "f5ba29b72fefd85a675c442210ac4a2efe7ba4dad5364f81e8db664f4d31dcd5"
-)
-# Dirs that the archive holds, relative to the project dir.
-SCORE_DIRS = ("data/coding_runs/", "data/coding_runs_pilot/")
+ARCHIVES: Dict[str, Tuple[str, str, Tuple[str, ...]]] = {
+    "coding_runs_scores.tar.gz": (
+        "15A_Oo4QA2G72yssbG7DK0NEiNlEDzvTd",
+        "f5ba29b72fefd85a675c442210ac4a2efe7ba4dad5364f81e8db664f4d31dcd5",
+        ("data/coding_runs/", "data/coding_runs_pilot/"),
+    ),
+    "coding_runs_phase2_scores.tar.gz": (
+        "1Pz5HgG_cqPnM3e5uTPiVZ7dPBb--_U-u",
+        "2ff21a839f8db867e4410fc8ab1599fce3bb93ef2046ddc502dd73314e9771d7",
+        ("data/coding_runs_phase2/",),
+    ),
+}
 
 
 # #############################################################################
@@ -77,15 +87,19 @@ def get_sha256(path: str) -> str:
     return digest
 
 
-def extract_scores(path: str, dst_dir: str) -> List[str]:
+def extract_scores(
+    path: str, dst_dir: str, score_dirs: Tuple[str, ...]
+) -> List[str]:
     """
-    Extract the archive of the scores.
+    Extract an archive of the scores.
 
-    Every member must be a plain file in one of `SCORE_DIRS`, so the archive
+    Every member must be a plain file in one of `score_dirs`, so the archive
     cannot write anywhere else.
 
     :param path: the `.tar.gz` archive
     :param dst_dir: dir to extract into, e.g., the project dir
+    :param score_dirs: dirs that the archive may write, relative to `dst_dir`,
+        e.g., `("data/coding_runs_phase2/",)`
     :return: the extracted files, e.g., `data/coding_runs/...csv.gz`
     """
     with tarfile.open(path, "r:gz") as archive:
@@ -93,7 +107,7 @@ def extract_scores(path: str, dst_dir: str) -> List[str]:
         for member in members:
             hdbg.dassert(member.isfile(), "'%s' is not a file", member.name)
             hdbg.dassert(
-                member.name.startswith(SCORE_DIRS),
+                member.name.startswith(score_dirs),
                 "'%s' is outside the score dirs",
                 member.name,
             )
@@ -109,10 +123,10 @@ def _parse() -> argparse.ArgumentParser:
         formatter_class=hparser.CustomHelpFormatter,
     )
     parser.add_argument(
-        "--archive_file",
+        "--archive_dir",
         action="store",
-        default="data/raw/coding_runs_scores.tar.gz",
-        help="Where to save the downloaded archive",
+        default="data/raw",
+        help="Where to save the downloaded archives",
     )
     parser.add_argument(
         "--dst_dir",
@@ -127,23 +141,30 @@ def _parse() -> argparse.ArgumentParser:
 def _main(parser: argparse.ArgumentParser) -> None:
     args = parser.parse_args()
     hdbg.init_logger(verbosity=args.log_level, use_exec_path=True)
-    # Download the archive, unless a good copy is already there.
-    hio.create_dir(os.path.dirname(args.archive_file), incremental=True)
-    if (
-        not os.path.exists(args.archive_file)
-        or get_sha256(args.archive_file) != _ARCHIVE_SHA256
-    ):
-        url = f"https://drive.google.com/uc?export=download&id={_ARCHIVE_ID}"
-        _download(url, args.archive_file)
-    # Check that it is the archive the notebooks were run on.
-    hdbg.dassert_eq(
-        get_sha256(args.archive_file),
-        _ARCHIVE_SHA256,
-        "'%s' is not the archive of the scores",
-        args.archive_file,
-    )
-    names = extract_scores(args.archive_file, args.dst_dir)
-    _LOG.info("Extracted '%s' files into '%s'", len(names), args.dst_dir)
+    hio.create_dir(args.archive_dir, incremental=True)
+    for file_name, (file_id, sha256, score_dirs) in ARCHIVES.items():
+        archive_file = os.path.join(args.archive_dir, file_name)
+        # Download the archive, unless a good copy is already there.
+        if (
+            not os.path.exists(archive_file)
+            or get_sha256(archive_file) != sha256
+        ):
+            url = f"https://drive.google.com/uc?export=download&id={file_id}"
+            _download(url, archive_file)
+        # Check that it is the archive the notebooks were run on.
+        hdbg.dassert_eq(
+            get_sha256(archive_file),
+            sha256,
+            "'%s' is not the archive of the scores",
+            archive_file,
+        )
+        names = extract_scores(archive_file, args.dst_dir, score_dirs)
+        _LOG.info(
+            "Extracted '%s' files from '%s' into '%s'",
+            len(names),
+            file_name,
+            args.dst_dir,
+        )
 
 
 if __name__ == "__main__":

@@ -36,3 +36,29 @@
   threshold (depends on the threshold), the tasks holding 90% of the
   information (reported in the plot)
 - **Status**: proposed
+
+## Data and process
+
+### D-4. Keep the scores of the coding runs on Google Drive
+
+- **Decision**: the 106 `.csv.gz` score files stay out of git, in 2 archives
+  in the Drive folder of the project; `fetch_coding_scores.py` downloads them,
+  checks their SHA-256, and extracts them
+- **Why**: GP asked on #808 not to keep data files in the repo; the checksum
+  makes sure the notebooks read the same scores they were run on, and the
+  extraction only writes plain files into the dirs of each archive
+- **Alternatives**: committing the files (against the class rules), Git LFS
+  (not set up in the class repo), downloading without a checksum (a changed
+  file would go unnoticed)
+- **Status**: accepted
+
+### D-5. Merge `master` into a branch instead of rebasing it
+
+- **Decision**: when a branch falls behind `master`, merge `master` into it
+- **Why**: a rebase rewrites the pushed commits, including the
+  pre-registration commits whose dates show the predictions came before the
+  results, and needs a force-push; GP squash-merges each PR, so `master` ends
+  up the same either way
+- **Alternatives**: rebase and force-push (loses the dated commits on the
+  branch)
+- **Status**: accepted

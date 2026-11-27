@@ -207,15 +207,17 @@ Chandrashekar), tracked in
 
 ### What It Does
 
-- Downloads the scores of the coding runs (the 88 `.csv.gz` files of
-  `data/coding_runs/` and `data/coding_runs_pilot/`) as 1 archive from the
+- Downloads the scores of the coding runs as 2 archives from the
   [Google Drive folder of the project](https://drive.google.com/drive/folders/1rgI_x5rfX9HXiP0kZUHfyq2Zg8WWuV4y),
   since they are not kept in the repo
-- Checks the SHA-256 of the archive, so the notebooks read the same scores they
-  were run on
-- Keeps the archive in `data/raw/`, and downloads it again only if it is
+  - Phase 1: the 88 `.csv.gz` files of `data/coding_runs/` and
+    `data/coding_runs_pilot/`
+  - Phase 2: the 18 `.csv.gz` files of `data/coding_runs_phase2/`
+- Checks the SHA-256 of each archive, so the notebooks read the same scores
+  they were run on
+- Keeps the archives in `data/raw/`, and downloads one again only if it is
   missing or different
-- Extracts only plain files, and only into the 2 score dirs
+- Extracts only plain files, and only into the dirs of each archive
 
 ### Examples
 
@@ -333,8 +335,8 @@ Chandrashekar), tracked in
 
 ## Run the Notebooks
 
-- Build the image, download the scores that `skill_vs_luck.runs.ipynb` reads
-  (see `fetch_coding_scores.py`), and start Jupyter, from this dir:
+- Build the image, download the scores of the coding runs that the notebooks
+  read (see `fetch_coding_scores.py`), and start Jupyter, from this dir:
   ```bash
   > ./docker_build.sh
   > ./docker_cmd.sh "cd /git_root/class_project/msml610/Fall2026/projects/UmdTask716_MSML610_Fall2026_Skill_vs_Luck_in_Agent_Benchmarks && python fetch_coding_scores.py"
@@ -346,7 +348,7 @@ Chandrashekar), tracked in
   SWE-bench records) third, `skill_vs_luck.runs.ipynb` (the local runs)
   fourth, and `skill_vs_luck.one_run.ipynb` (run luck from 1 run) fifth
 
-- Then run the 3 notebooks of phase 2, which need the scores in
+- Then run the 3 notebooks of phase 2, which read the scores in
   `data/coding_runs_phase2/`: `skill_vs_luck.one_run_test_set.ipynb` (the test
   of Study B), `skill_vs_luck.temperatures.ipynb` (Study C), and
   `skill_vs_luck.more_models.ipynb` (Study D)
