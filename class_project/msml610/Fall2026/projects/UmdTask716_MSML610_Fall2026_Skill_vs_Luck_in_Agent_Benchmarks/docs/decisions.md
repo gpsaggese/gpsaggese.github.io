@@ -78,3 +78,25 @@
 - **Alternatives**: moving the bounds by half a task (biased up), no change
   (a tie for first makes the estimate fall back to the raw score)
 - **Status**: accepted
+
+### D-7. Add the hybrid estimate as an extra look, not as a sixth correction
+
+- **Decision**: keep the 5 corrections and rule H of `preregistration_3.md` as
+  written, and add the hybrid estimate of Andrews, Kitagawa, and McCloskey,
+  with `beta = 0.005`, next to them as an extra look (Cell 3.2 of
+  `skill_vs_luck.selection.ipynb`), where rule H is applied again with it as a
+  fourth candidate
+- **Why**: Study F showed the conditional estimate (C4) with a mean error of
+  -2 to -4 points and a root mean squared error of 11 to 19 points; when the
+  winner only just won, the estimate falls far below the score, at times below
+  0. The hybrid estimate is the fix of the same paper: it also assumes that the
+  winner's mean is in an interval that covers all the means with a 99.5%
+  chance, so it stays within about 3 standard deviations of the score. Adding
+  it to rule H after seeing Study F would let a result pick the rule. It was
+  added on 2026-11-27, before any analysis of the prompt variants was run, and
+  it uses its own random draws, so the 5 corrections give the same numbers as
+  before (checked on 600 random cases)
+- **Alternatives**: replacing C4 (changes a pre-registered correction after a
+  result), clipping C4 to 0 to 1 (hides the misses without fixing them), no
+  extra look (leaves open whether a better version of C4 would pass)
+- **Status**: accepted

@@ -73,6 +73,8 @@ _DATASET_FILES = {
     "humaneval": "HumanEvalPlus-v0.1.10.jsonl",
     "mbpp": "MbppPlus-v0.2.0.jsonl",
 }
+# Names of the benchmarks in plots and tables.
+_BENCHMARK_NAMES = {"humaneval": "HumanEval+", "mbpp": "MBPP+"}
 # Prompt that EvalPlus uses for chat models (`evalplus/codegen.py`).
 INSTRUCTION_PREFIX = (
     "Please provide a self-contained Python script that solves the following "
@@ -3418,7 +3420,7 @@ def check_selection_predictions(
     rows["G0"] = {
         "prediction": "The baseline variant repeats phase 1 on 95% of the tasks",
         "observed": ", ".join(
-            f"{benchmark} {100 * share:.1f}%"
+            f"{_BENCHMARK_NAMES[benchmark]} {100 * share:.1f}%"
             for benchmark, share in agreement.items()
         ),
         "holds": bool((agreement >= 0.95).all()),
@@ -3427,7 +3429,7 @@ def check_selection_predictions(
     rows["G1"] = {
         "prediction": "Cochran's Q rejects equal pass rates on 1 benchmark",
         "observed": ", ".join(
-            f"{benchmark} p {p_value:.3g}"
+            f"{_BENCHMARK_NAMES[benchmark]} p {p_value:.3g}"
             for benchmark, p_value in cochran["p_value"].items()
         ),
         "holds": bool((cochran["p_value"] < 0.05).any()),
@@ -3436,14 +3438,15 @@ def check_selection_predictions(
     rows["G2"] = {
         "prediction": "At K = 20 the mean drop is at least 1 point",
         "observed": ", ".join(
-            f"{benchmark} {drop:.2f}" for benchmark, drop in k_20["drop"].items()
+            f"{_BENCHMARK_NAMES[benchmark]} {drop:.2f}"
+            for benchmark, drop in k_20["drop"].items()
         ),
         "holds": bool((k_20["drop"] >= 1).all()),
     }
     rows["G3"] = {
         "prediction": "At K = 20 the binomial correction over-corrects",
         "observed": ", ".join(
-            f"{benchmark} {error:+.2f}"
+            f"{_BENCHMARK_NAMES[benchmark]} {error:+.2f}"
             for benchmark, error in k_20["error_binomial"].items()
         ),
         "holds": bool((k_20["error_binomial"] < -1).all()),
@@ -3461,7 +3464,8 @@ def check_selection_predictions(
     rows["G5"] = {
         "prediction": "At K = 20, empirical Bayes or conditional has the best RMSE",
         "observed": ", ".join(
-            f"{benchmark} {name}" for benchmark, name in best.items()
+            f"{_BENCHMARK_NAMES[benchmark]} {name}"
+            for benchmark, name in best.items()
         ),
         "holds": bool(best.isin(["empirical_bayes", "conditional"]).all()),
     }
@@ -3500,6 +3504,7 @@ def plot_best_of_k(
             color=color,
             label=f"{group} cells, predicted",
         )
+    ax.set_xticks(sorted(runs_pooled.index.get_level_values("k").unique()))
     ax.set_xlabel("Runs tried, K")
     ax.set_ylabel("Best run minus the runs left out (points)")
     ax.set_title("How much does reporting the best of K runs inflate a score?")
@@ -3527,17 +3532,19 @@ def plot_correction_errors(
     fig, ax = plt.subplots(figsize=figsize)
     rows = variants.xs(benchmark, level="benchmark")
     for column in [c for c in rows.columns if c.startswith("error_")]:
-        ax.plot(
-            rows.index,
-            rows[column],
-            marker="o",
-            label=column.replace("error_", ""),
+        label = column.replace("error_", "").replace(
+            "empirical_bayes", "empirical Bayes"
         )
+        ax.plot(rows.index, rows[column], marker="o", label=label)
     ax.axhspan(-1, 1, color="gray", alpha=0.15, label="within 1 point")
     ax.axhline(0, color="black", linewidth=1)
+    ax.set_xticks(rows.index)
     ax.set_xlabel("Prompt variants tried, K")
     ax.set_ylabel("Corrected score minus held-out score (points)")
-    ax.set_title(f"Which correction recovers the winner's score? ({benchmark})")
+    ax.set_title(
+        "Which correction recovers the winner's score? "
+        f"({_BENCHMARK_NAMES[benchmark]})"
+    )
     ax.legend(loc="lower left", fontsize=8)
     fig.tight_layout()
     plt.show()

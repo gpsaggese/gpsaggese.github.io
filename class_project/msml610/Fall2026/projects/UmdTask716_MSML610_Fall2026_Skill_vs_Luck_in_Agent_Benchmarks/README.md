@@ -12,8 +12,9 @@ Chandrashekar), tracked in
   [`draft.Skill_vs_Luck_in_Agent_Benchmarks.md`](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/research/ideas/draft.Skill_vs_Luck_in_Agent_Benchmarks.md)
 - Everything runs locally in Docker, at no cost, on 3 sources of data:
   - The public per-task results of every SWE-bench Verified submission
-  - Our own runs of 3 open coding models on HumanEval+ and MBPP+, served by
-    Ollama, with 2 scaffolds and 5 runs per task
+  - Our own runs of 6 open coding models on HumanEval+ and MBPP+, served by
+    Ollama, with 2 scaffolds and up to 5 runs per task, and 20 prompt variants
+    of 1 of them
   - The code that EvalPlus generated in 2023 with many models, including 200
     samples per task at 2 temperatures, scored again here
 
@@ -95,13 +96,38 @@ Chandrashekar), tracked in
   `preregistration_3.md`, committed before any of them was run
   - Study E, in `skill_vs_luck.transfer.ipynb`: HumanEval+ and MBPP+ rank 18
     models almost the same way (Spearman 0.98, and 0.99 once task luck is
-    removed, with an interval that reaches 1), but not on the same scale: the
-    7 chat models score 14 to 21 HumanEval+ points more than a 2023 base model
-    with the same MBPP+ score, so 8 of the 18 models are benchmark-specific
+    removed, with an interval that reaches 1), but not on the same scale: 6 of
+    the 7 chat models score 14 to 21 HumanEval+ points more than a typical
+    model with the same MBPP+ score, and 2 base models about 4 to 5 points
+    less, so 8 of the 18 models are benchmark-specific
     - Under a 2PL fit, HumanEval+ is worth about 119 equally informative tasks
       (72% of its 164) and MBPP+ about 214 (57% of its 378)
     - The 89 models of the EvalPlus leaderboard agree too (Spearman 0.94)
     - 4 of the 6 predictions held (E1, E2, E4, and E6), and E3 and E5 did not
+  - Study F, in `skill_vs_luck.selection.ipynb`: on the public samples,
+    reporting the best of K runs inflates a score by just what
+    `sigma_run x E[max of K]` predicts, from 1.2 points for K = 2 to 4.0 for
+    K = 20; on our runs, with only 3 or 5 runs per cell, the inflation is 1.41
+    times the prediction at K = 2
+  - Study G: the 20 prompt variants of DeepSeek Coder 1.3B score 50.0% to 60.4%
+    on HumanEval+ and 41.8% to 54.0% on MBPP+; the best of K variants, picked
+    on half of the tasks, scores up to 5.1 points (HumanEval+) and 2.5 points
+    (MBPP+) less on the other half
+  - Study H: of the 5 corrections of a winner's score, only the paired rule is
+    within 1 point of the held-out score in every setting, and it has the
+    lowest error, so it is the one we recommend
+    - The binomial rule corrects too much (up to -4.9 points) and empirical
+      Bayes too little (up to +2.0)
+    - The conditional estimate of Andrews, Kitagawa, and McCloskey is right on
+      the median, but it misses by up to 7.7 points on average, since it falls
+      far below the score when the winner only just won; their hybrid version,
+      an extra look, still misses by up to 1.5 points
+  - The reporting protocol, `report_agent_scores()`, takes the SWE-bench
+    Verified leader from 79.2% to 75.1%; since the 173 agents are far from
+    equal, the paired rule likely corrects too much there
+  - 6 of the 9 predictions of Studies F and G held (F2, F3, and G0 to G3), and
+    F1, G4, and G5 did not, so 10 of the 15 predictions of Milestones 3 and 4
+    held
 
 ## Status of the Milestones
 
@@ -110,7 +136,7 @@ Chandrashekar), tracked in
 | 1. Outcome matrix             | Done on SWE-bench Verified, HumanEval+, and MBPP+                               |
 | 2. Quantify luck              | Done: task part on SWE-bench, run part on our runs                              |
 | 3. Persistence, transfer, IRT | Done: split-half and IRT on SWE-bench, transfer and IRT on HumanEval+ and MBPP+ |
-| 4. Selection effects          | Simulated and held-out curse done; real runs and prompt variants in progress    |
+| 4. Selection effects          | Done: winner's curse on real runs and prompt variants, and a correction to use  |
 
 ## Structure of the Dir
 
@@ -162,12 +188,14 @@ Chandrashekar), tracked in
 | `skill_vs_luck.records.py`              | Jupytext pair of `skill_vs_luck.records.ipynb`                                                                                     | Notebooks |
 | `skill_vs_luck.runs.ipynb`              | Run-to-run luck of the local agents on HumanEval+ and MBPP+                                                                        | Notebooks |
 | `skill_vs_luck.runs.py`                 | Jupytext pair of `skill_vs_luck.runs.ipynb`                                                                                        | Notebooks |
+| `skill_vs_luck.selection.ipynb`         | Milestone 4: the best of K runs and of K prompt variants, the corrections, and the reporting protocol (Studies F to H)             | Notebooks |
+| `skill_vs_luck.selection.py`            | Jupytext pair of `skill_vs_luck.selection.ipynb`                                                                                   | Notebooks |
 | `skill_vs_luck.temperatures.ipynb`      | Study C: the 3 old models at temperature 0.2 and in a second greedy run                                                            | Notebooks |
 | `skill_vs_luck.temperatures.py`         | Jupytext pair of `skill_vs_luck.temperatures.ipynb`                                                                                | Notebooks |
 | `skill_vs_luck.transfer.ipynb`          | Milestone 3 on HumanEval+ and MBPP+: transfer and effective size (Study E)                                                         | Notebooks |
 | `skill_vs_luck.transfer.py`             | Jupytext pair of `skill_vs_luck.transfer.ipynb`                                                                                    | Notebooks |
 | `skill_vs_luck_runs_utils.py`           | Prompts, Ollama client, scoring, and run-level analysis of the coding runs                                                         | Library   |
-| `skill_vs_luck_utils.py`                | Data loading, intervals, rank intervals, paired tests, records, benchmark size, simulation, split-half, winner's curse, IRT, plots | Library   |
+| `skill_vs_luck_utils.py`                | Intervals, ranks, paired tests, records, benchmark size, simulation, split-half, IRT, transfer, winner's curse and fixes, protocol | Library   |
 | `test/test_fetch_coding_scores.py`      | Unit tests for `fetch_coding_scores.py`                                                                                            | Tests     |
 | `test/test_fetch_evalplus_data.py`      | Unit tests for `fetch_evalplus_data.py`                                                                                            | Tests     |
 | `test/test_skill_vs_luck_runs_utils.py` | Unit tests for `skill_vs_luck_runs_utils.py`                                                                                       | Tests     |
@@ -330,6 +358,27 @@ Chandrashekar), tracked in
   > caffeinate -dimsu ./run_coding_experiment.sh
   ```
 
+## `run_prompt_variants.sh`
+
+- Runs the search over prompt variants of Study G in `preregistration_3.md`:
+  1 greedy one-shot answer of DeepSeek Coder 1.3B to every task of HumanEval+
+  and MBPP+, with each of the 20 prompt variants of `PROMPT_VARIANTS` in
+  `skill_vs_luck_runs_utils.py`
+  - HumanEval+ goes first for all the variants, so a stopped job leaves
+    complete benchmarks
+  - The answers go to `data/raw/coding_runs_variants/`, with the variant in
+    each file name and in its settings
+- `generate` makes the missing answers, so running it again continues where it
+  stopped; `score` scores each answer twice into `data/coding_runs_variants/`
+- Send 1 request at a time: Ollama can batch parallel requests, which can
+  change greedy answers
+- Generating took about 7.5 hours on a MacBook Air M5 (2.5 for HumanEval+, 5
+  for MBPP+), and scoring about 18 minutes:
+  ```bash
+  > caffeinate -dimsu ./run_prompt_variants.sh generate
+  > ./run_prompt_variants.sh score
+  ```
+
 ## Docker Scripts
 
 | Command                 | Description                                                    |
@@ -374,7 +423,31 @@ Chandrashekar), tracked in
   `skill_vs_luck.more_models.ipynb` (Study D)
 
 - Then `skill_vs_luck.transfer.ipynb` (Milestone 3 on HumanEval+ and MBPP+,
-  Study E)
+  Study E), and last `skill_vs_luck.selection.ipynb` (Milestone 4, Studies F to
+  H, about 6 minutes), which also reads the scores of the prompt variants in
+  `data/coding_runs_variants/`, made by `run_prompt_variants.sh`
+
+## Report a Leaderboard with the Protocol
+
+- `report_agent_scores()` in `skill_vs_luck_utils.py` is the reporting
+  protocol of the project; it takes an agents x tasks matrix of 0/1 outcomes
+  and gives, for each agent, best first:
+  - The score with its 95% bootstrap interval
+  - The 95% rank interval and the chance of coming out first
+  - The gap to the next agent, the Holm-adjusted p-value of the paired test
+    against it, and the number of tasks that would resolve that gap at 80%
+    power
+  - For the leader, the score corrected for having been picked as the best,
+    by default with the paired rule that Study H recommends
+
+- E.g., on the SWE-bench Verified snapshot, inside the container:
+  ```python
+  import skill_vs_luck_utils as utils
+
+  outcomes, submissions, tasks = utils.load_swebench_dataset("data")
+  report = utils.report_agent_scores(outcomes, correction="paired")
+  report.head(15)
+  ```
 
 ## Run a Notebook as a Script
 
@@ -388,7 +461,7 @@ Chandrashekar), tracked in
 
 - Run the tests inside the container:
   ```bash
-  > ./docker_cmd_sandbox.sh "python -m pytest test/test_skill_vs_luck_utils.py test/test_skill_vs_luck_runs_utils.py"
+  > ./docker_cmd_sandbox.sh "python -m pytest test/test_skill_vs_luck_utils.py test/test_skill_vs_luck_runs_utils.py test/test_fetch_coding_scores.py test/test_fetch_evalplus_data.py"
   ```
 
 - Pass the test files explicitly
@@ -412,6 +485,8 @@ Chandrashekar), tracked in
   > ./docker_cmd.sh "cd /git_root/class_project/msml610/Fall2026/projects/UmdTask716_MSML610_Fall2026_Skill_vs_Luck_in_Agent_Benchmarks && python fetch_evalplus_data.py"
   > caffeinate -dimsu ./run_coding_experiment.sh
   ```
+
+- Then the 20 prompt variants of Milestone 4 (see `run_prompt_variants.sh`)
 
 ## Rebuild the Data
 

@@ -21,8 +21,8 @@
 | M3: 2PL IRT and effective size (SWE-bench) | Nov 15 | Done | #855 |
 | M3: Cross-benchmark rank correlation and effective size (HumanEval+, MBPP+) | Nov 15 | Done | PR of branch `_4` |
 | M4: Winner's curse, simulated and held-out (SWE-bench) | Nov 15 | Done | #855 |
-| M4: Measured drop on real runs and prompt variants, shrinkage rule | Nov 15 | In progress | PR of branch `_4` |
-| Phase 2: Studies A to D, pre-registered | Nov 3 | In review | PR of branch `_3` |
+| M4: Measured drop on real runs and prompt variants, shrinkage rule | Nov 15 | Done | PR of branch `_4` |
+| Phase 2: Studies A to D, pre-registered | Nov 3 | In review | #1013 |
 | Write-up and paper draft | Dec 7 | Not started | |
 
 ## Built
@@ -49,6 +49,18 @@
   - `skill_vs_luck.temperatures.ipynb`: Study C, temperature 0.2 and a second
     greedy run
   - `skill_vs_luck.more_models.ipynb`: Study D, 3 more local models
+- For Milestones 3 and 4 (the PR of branch `_4`):
+  - `preregistration_3.md`: the plan and the 15 predictions of Studies E to
+    H, committed before any of them was run
+  - `skill_vs_luck.transfer.ipynb`: Study E, transfer between HumanEval+ and
+    MBPP+ and their effective size
+  - `skill_vs_luck.selection.ipynb`: Studies F to H, the winner's curse on
+    real runs and on 20 real prompt variants, the correction to recommend,
+    and the reporting protocol on SWE-bench Verified
+  - `run_prompt_variants.sh` and `PROMPT_VARIANTS`: the 20 prompt variants
+  - `report_agent_scores()`: the reporting protocol of the project
+  - `fetch_evalplus_data.py` also saves a snapshot of the EvalPlus
+    leaderboard
 
 ## Findings
 
@@ -138,21 +150,46 @@
     - Study D, `skill_vs_luck.more_models.ipynb`
 20. HumanEval+ and MBPP+ rank 18 models almost the same way (Spearman 0.98,
     and 0.99 once task luck is removed, interval up to 1.00), but not on the
-    same scale: the 7 chat models score 14 to 21 HumanEval+ points more than
-    a 2023 base model with the same MBPP+ score (8 of 18 benchmark-specific);
-    the effective size is about 119 tasks for HumanEval+ (72%) and 214 for
-    MBPP+ (57%); 4 of the 6 pre-registered predictions held
+    same scale: 6 of the 7 chat models score 14 to 21 HumanEval+ points more
+    than a typical model with the same MBPP+ score, and 2 base models about 4
+    to 5 points less (8 of 18 benchmark-specific); the effective size is
+    about 119 tasks for HumanEval+ (72%) and 214 for MBPP+ (57%); 4 of the 6
+    pre-registered predictions held
     - Study E, `skill_vs_luck.transfer.ipynb`, `preregistration_3.md`
+21. On the public samples, the best of K runs is above the runs left out by
+    just what `sigma_run x E[max of K]` predicts (1.2 points for K = 2 to 4.0
+    for K = 20, ratios 1.00 to 1.04); on our runs, with 3 or 5 runs per cell,
+    it is 1.41 times the prediction at K = 2, since `p_t (1 - p_t)` from few
+    runs is too low (1.20 after correcting for that)
+    - Study F, 47 cells with 500 draws per cell and K,
+      `skill_vs_luck.selection.ipynb` Cells 1.3 and 1.4
+22. The 20 prompt variants of DeepSeek Coder 1.3B score 50.0% to 60.4% on
+    HumanEval+ and 41.8% to 54.0% on MBPP+ (Cochran's Q p 0.002 and about
+    1e-33); a line asking to handle edge cases costs 7 to 12 points. The best
+    of K variants, picked on half of the tasks, scores up to 5.1 points
+    (HumanEval+) and 2.5 (MBPP+) less on the other half
+    - Study G, 1,000 trials per setting, `skill_vs_luck.selection.ipynb`
+      Cells 2.1 to 2.4
+23. Only the paired correction is within 1 point of the held-out score in
+    every setting (worst -0.97), with the lowest error, so rule H recommends
+    it; the binomial rule corrects too much (up to -4.9), empirical Bayes too
+    little (up to +2.0), and the conditional estimate is right on the median
+    but misses by up to 7.7 points on average. The hybrid estimate, an extra
+    look, cuts the error of the conditional one by 1.5 to 3.8 times but still
+    misses by up to 1.5 points
+    - Study H, `skill_vs_luck.selection.ipynb` Cells 3.1 and 3.2, D-7
+24. The protocol takes the SWE-bench Verified leader from 79.2% to 75.1% with
+    the paired rule, likely too much since the 173 agents are far from equal;
+    6 of the 9 predictions of Studies F and G held, so 10 of the 15 of
+    `preregistration_3.md`
+    - `skill_vs_luck.selection.ipynb` Cells 4.1, 4.2, and 5.1
 
 ## Next
 
-1. M4: score the 20 prompt variants, run Studies F to H in
-   `skill_vs_luck.selection.ipynb`, and pick the shrinkage rule
-2. The protocol: `report_agent_scores()` on SWE-bench Verified and on our
-   runs, with a README section
-3. Phase 2: get the PR of branch `_3` reviewed; its scores download with
-   `fetch_coding_scores.py`
-4. Run every notebook in the rebuilt Docker image, then the video
+1. Upload the scores of the prompt variants to the Drive folder and download
+   them in `fetch_coding_scores.py`
+2. Get #1013 and the PR of branch `_4` reviewed
+3. The video, and the demo with GP
 
 ## History
 
@@ -177,9 +214,12 @@
 | 2026-11-26 | Merged `master` into `_3`; `fetch_coding_scores.py` also downloads the phase-2 scores; opened the PR of `_3` |
 | 2026-11-26 | Pre-registered Milestones 3 and 4 in `preregistration_3.md` (`a337ea14`), then started the 20 prompt variants |
 | 2026-11-26 | Study E (Milestone 3): 4 of 6 predictions held; see D-6 for the ties in the conditional estimate |
+| 2026-11-27 | Generated the 20 prompt variants in about 7.5 hours; 33 MBPP+ answers made by 2 extra streams running at the same time were deleted and made again one at a time, since parallel requests can change greedy answers; scored the 40 files twice |
+| 2026-11-27 | Added the hybrid estimate as an extra look, before any analysis of the prompt variants; see D-7 |
+| 2026-11-27 | Studies F to H (Milestone 4): 6 of 9 predictions held, and rule H recommends the paired correction; `report_agent_scores()` uses it by default |
 
 ## Open Work
 
-- Phase 2 (branch `_3`) is in review
+- Phase 2 (#1013) is in review
 - Move the research Gdoc to the `Research_Class_Projects` Drive folder, as GP
   asked on #716

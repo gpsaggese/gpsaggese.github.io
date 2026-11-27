@@ -320,9 +320,11 @@ display(predictions)
 #   - The Spearman correlation is 0.98, and without task luck the correlation
 #     is 0.99, with a 95% interval that reaches 1.00 (E3 did not hold): the
 #     order of the models transfers
-# - The scale does not transfer: the 7 chat models score 14 to 21 HumanEval+
-#   points more than a 2023 base model with the same MBPP+ score (8 of the 18
-#   models are benchmark-specific, E4 held)
+# - The scale does not transfer: 6 of the 7 chat models score 14 to 21
+#   HumanEval+ points more than a typical model with the same MBPP+ score, and
+#   2 base models (StarCoder and CodeT5+ 6B) about 4 to 5 points less, so 8 of
+#   the 18 models are benchmark-specific (E4 held)
+#   - CodeGemma 7B, the 7th chat model, is 8 points above, within task luck
 #   - At the same MBPP+ score, DeepSeek Coder 1.3B beats Code Llama 13B by 22.0
 #     HumanEval+ points, and CodeGemma 7B beats Code Llama 34B by 7.3 (Cell
 #     3.3, an extra look)

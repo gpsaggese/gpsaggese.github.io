@@ -2157,6 +2157,9 @@ WINNER_CORRECTIONS = (
     "empirical_bayes",
     "conditional",
 )
+# Corrections of `correct_winner_score()` added after `preregistration_3.md`,
+# as extra looks.
+EXTRA_CORRECTIONS = ("hybrid",)
 
 
 def compute_cochran_q(outcomes: pd.DataFrame) -> Tuple[float, float]:
@@ -2239,29 +2242,24 @@ def _get_jittered_scores(
     return jittered
 
 
-def _get_conditional_estimate(
+def _get_winning_range(
     scores: np.ndarray, covariance: np.ndarray, winner: int
-) -> float:
+) -> Tuple[float, float]:
     """
-    Estimate the mean of the winner given that it won.
+    Get the range of the winner's score over which it stays the winner.
 
     The scores are taken as jointly normal, with no ties. Given the parts of
     the other scores that do not move with the winner's, winning only bounds
-    the winner's score, so the winner's score has a truncated normal
-    distribution; the estimate is the mean that puts the observed score at
-    its median (Andrews, Kitagawa, and McCloskey, "Inference on Winners").
+    the winner's score from below and from above.
 
     :param scores: scores of the variants, e.g., from `_get_jittered_scores()`
-    :param covariance: covariance of the scores
+    :param covariance: covariance of the scores, with a positive variance
+        for the winner
     :param winner: index of the winner
-    :return: median-unbiased estimate of the winner's mean
+    :return: lower and upper bound of the winner's score, possibly infinite
     """
     observed = scores[winner]
-    variance = covariance[winner, winner]
-    if variance <= 0:
-        return float(observed)
-    scale = np.sqrt(variance)
-    slopes = covariance[:, winner] / variance
+    slopes = covariance[:, winner] / covariance[winner, winner]
     rests = scores - slopes * observed
     lower, upper = -np.inf, np.inf
     for other in range(len(scores)):
@@ -2274,6 +2272,31 @@ def _get_conditional_estimate(
             lower = max(lower, rests[other] / factor)
         elif factor < -1e-12:
             upper = min(upper, rests[other] / factor)
+    return lower, upper
+
+
+def _get_conditional_estimate(
+    scores: np.ndarray, covariance: np.ndarray, winner: int
+) -> float:
+    """
+    Estimate the mean of the winner given that it won.
+
+    Given the range of `_get_winning_range()`, the winner's score has a
+    truncated normal distribution; the estimate is the mean that puts the
+    observed score at its median (Andrews, Kitagawa, and McCloskey,
+    "Inference on Winners").
+
+    :param scores: scores of the variants, e.g., from `_get_jittered_scores()`
+    :param covariance: covariance of the scores
+    :param winner: index of the winner
+    :return: median-unbiased estimate of the winner's mean
+    """
+    observed = scores[winner]
+    variance = covariance[winner, winner]
+    if variance <= 0:
+        return float(observed)
+    scale = np.sqrt(variance)
+    lower, upper = _get_winning_range(scores, covariance, winner)
     if not np.isfinite(lower) and not np.isfinite(upper):
         return float(observed)
 
@@ -2288,6 +2311,74 @@ def _get_conditional_estimate(
     if _get_cdf_gap(low_mean) < 0 or _get_cdf_gap(high_mean) > 0:
         return float(observed)
     estimate = scipy.optimize.brentq(_get_cdf_gap, low_mean, high_mean)
+    return float(estimate)
+
+
+def _get_projection_critical_value(
+    covariance: np.ndarray, beta: float, rng: np.random.Generator
+) -> float:
+    """
+    Get the critical value of intervals that cover all the means at once.
+
+    It is the `1 - beta` quantile of the largest `|score - mean| / sd` over
+    the variants, from 10,000 draws of normal scores with `covariance`. With
+    1 variant, it is the `1 - beta / 2` quantile of a standard normal.
+
+    :param covariance: covariance of the scores, with positive variances
+    :param beta: chance that some interval misses its mean
+    :param rng: random generator
+    :return: critical value, in standard deviations
+    """
+    sds = np.sqrt(np.diag(covariance))
+    hdbg.dassert_lt(0, sds.min(), "Every score needs a positive variance")
+    draws = rng.multivariate_normal(
+        np.zeros(len(sds)), covariance, size=10000, method="eigh"
+    )
+    largest = np.abs(draws / sds).max(axis=1)
+    critical = float(np.quantile(largest, 1 - beta))
+    return critical
+
+
+def _get_hybrid_estimate(
+    scores: np.ndarray, covariance: np.ndarray, winner: int, critical: float
+) -> float:
+    """
+    Estimate the mean of the winner given that it won, near its score.
+
+    The estimate of `_get_conditional_estimate()` falls far below the
+    observed score when the winner barely won. The hybrid estimate of
+    Andrews, Kitagawa, and McCloskey also takes the winner's mean to be
+    within `critical` standard deviations of its score, which holds for all
+    the variants at once with chance `1 - beta`. So the estimate stays in
+    that interval, and its chance of being above the mean is within
+    `beta / 2` of one half.
+
+    :param scores: scores of the variants, e.g., from `_get_jittered_scores()`
+    :param covariance: covariance of the scores
+    :param winner: index of the winner
+    :param critical: output of `_get_projection_critical_value()`
+    :return: estimate of the winner's mean
+    """
+    observed = scores[winner]
+    variance = covariance[winner, winner]
+    if variance <= 0:
+        return float(observed)
+    scale = np.sqrt(variance)
+    lower, upper = _get_winning_range(scores, covariance, winner)
+
+    def _get_cdf_gap(mean: float) -> float:
+        # Truncate the winner's score to the winning range and to the
+        # interval around the mean.
+        a = (max(lower, mean - critical * scale) - mean) / scale
+        b = (min(upper, mean + critical * scale) - mean) / scale
+        cdf = scipy.stats.truncnorm.cdf(observed, a, b, loc=mean, scale=scale)
+        return float(cdf) - 0.5
+
+    # Over the interval around the observed score, the CDF of the observed
+    # score falls from 1 to 0, so the estimate is in that interval.
+    estimate = scipy.optimize.brentq(
+        _get_cdf_gap, observed - critical * scale, observed + critical * scale
+    )
     return float(estimate)
 
 
@@ -2308,9 +2399,13 @@ def correct_winner_score(
       with the covariance of the scores estimated from the tasks and the
       ties broken by a jitter of half a task (decision D-6)
 
+    Also `hybrid`, an extra look that is not in `preregistration_3.md`: the
+    conditional estimate kept within the projection interval with
+    `beta = 0.005`, from `_get_hybrid_estimate()`.
+
     :param outcomes: variants x tasks array of 0/1
     :param winner: index of the variant with the best score
-    :param seed: random seed of the jitter
+    :param seed: random seed of the jitter and of the projection interval
     :return: estimate of the winner's mean score by each correction
     """
     values = np.asarray(outcomes, dtype=float)
@@ -2322,6 +2417,17 @@ def correct_winner_score(
     spread = scores.var(ddof=1) if n_variants > 1 else 0.0
     shrink = max(0.0, 1 - noise / spread) if spread > 0 else 0.0
     covariance = np.atleast_2d(np.cov(values)) / n_tasks
+    # The jitter adds the variance of a uniform of width `1 / n` to each score.
+    jittered = _get_jittered_scores(
+        scores, winner, 1 / n_tasks, np.random.default_rng(seed)
+    )
+    jittered_covariance = covariance + np.eye(n_variants) / (12 * n_tasks**2)
+    # The hybrid estimate uses the `beta` of Andrews, Kitagawa, and McCloskey,
+    # with its own draws, so the jitter of the conditional estimate does not
+    # change.
+    critical = _get_projection_critical_value(
+        jittered_covariance, 0.005, np.random.default_rng([seed, 1])
+    )
     estimates = {
         "none": float(observed),
         "binomial": float(
@@ -2333,11 +2439,10 @@ def correct_winner_score(
             scores.mean() + shrink * (observed - scores.mean())
         ),
         "conditional": _get_conditional_estimate(
-            _get_jittered_scores(
-                scores, winner, 1 / n_tasks, np.random.default_rng(seed)
-            ),
-            covariance + np.eye(n_variants) / (12 * n_tasks**2),
-            winner,
+            jittered, jittered_covariance, winner
+        ),
+        "hybrid": _get_hybrid_estimate(
+            jittered, jittered_covariance, winner, critical
         ),
     }
     return estimates
@@ -2468,7 +2573,10 @@ def simulate_best_of_k_runs(
 
 
 def summarize_corrections(
-    trials: pd.DataFrame, truth_column: str
+    trials: pd.DataFrame,
+    truth_column: str,
+    *,
+    corrections: Sequence[str] = WINNER_CORRECTIONS,
 ) -> pd.DataFrame:
     """
     Compare each correction with the score that the selection never saw.
@@ -2476,10 +2584,12 @@ def summarize_corrections(
     :param trials: output of `simulate_variant_selection()` or
         `simulate_best_of_k_runs()`
     :param truth_column: `evaluation_score` or `truth`
+    :param corrections: columns of `trials` to compare, by default the
+        corrections of `preregistration_3.md`
     :return: one row per correction with `mean_error` and `rmse`, in points
     """
     rows = {}
-    for correction in WINNER_CORRECTIONS:
+    for correction in corrections:
         errors = 100 * (trials[correction] - trials[truth_column])
         rows[correction] = {
             "mean_error": errors.mean(),
@@ -3327,6 +3437,7 @@ def choose_shrinkage_rule(
 def report_agent_scores(
     outcomes: pd.DataFrame,
     *,
+    correction: str = "paired",
     n_boot: int = 2000,
     seed: int = 0,
 ) -> pd.DataFrame:
@@ -3341,15 +3452,19 @@ def report_agent_scores(
       the paired McNemar test against it, `p_next_holm`, and the number of
       tasks that would resolve that gap at 80% power, `tasks_to_resolve`
     - for the leader only, `corrected`: its score corrected for having been
-      picked as the best agent, with the conditional estimate given that it
-      won
+      picked as the best agent, with `correction`
 
     :param outcomes: agents x tasks matrix of 0/1
+    :param correction: one of `WINNER_CORRECTIONS`; by default the paired
+        rule, which Study H of `preregistration_3.md` recommends. It assumes
+        that the agents are about equal, so on a leaderboard of very
+        different agents it corrects too much
     :param n_boot: number of bootstrap samples
     :param seed: random seed
     :return: one row per agent, best first, with the columns above
     """
-    _LOG.debug(hprint.to_str("n_boot seed"))
+    _LOG.debug(hprint.to_str("correction n_boot seed"))
+    hdbg.dassert_in(correction, WINNER_CORRECTIONS)
     ranks = compute_rank_intervals(outcomes, n_boot=n_boot, seed=seed)
     cis = compute_score_cis(outcomes, n_boot=n_boot, seed=seed)
     order = list(ranks.index)
@@ -3381,5 +3496,5 @@ def report_agent_scores(
         outcomes.loc[order].to_numpy(dtype=float), 0, seed=seed
     )
     report["corrected"] = np.nan
-    report.loc[order[0], "corrected"] = estimates["conditional"]
+    report.loc[order[0], "corrected"] = estimates[correction]
     return report

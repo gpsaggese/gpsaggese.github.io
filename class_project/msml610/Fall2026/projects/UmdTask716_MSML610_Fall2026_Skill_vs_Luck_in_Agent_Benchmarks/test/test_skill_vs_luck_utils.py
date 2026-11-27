@@ -1584,6 +1584,43 @@ class Test_compute_cochran_q(hunitest.TestCase):
 
 
 # #############################################################################
+# Test_get_projection_critical_value
+# #############################################################################
+
+
+class Test_get_projection_critical_value(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils._get_projection_critical_value()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that 1 variant gives the `1 - beta / 2` quantile of a normal.
+        """
+        # Prepare inputs.
+        covariance = np.array([[0.05**2]])
+        rng = np.random.default_rng(0)
+        # Run test.
+        critical = utils._get_projection_critical_value(covariance, 0.005, rng)
+        # Check outputs: the quantile is 2.807, and 10,000 draws estimate it
+        # within about 0.03.
+        self.assertLess(abs(critical - 2.807), 0.1)
+
+    def test2(self) -> None:
+        """
+        Test 10 independent variants with different variances.
+        """
+        # Prepare inputs.
+        covariance = np.diag(np.linspace(0.02, 0.08, 10) ** 2)
+        rng = np.random.default_rng(0)
+        # Run test.
+        critical = utils._get_projection_critical_value(covariance, 0.005, rng)
+        # Check outputs: for independent scores, the critical value is the
+        # `(1 + (1 - beta)^(1 / K)) / 2` quantile of a normal, 3.480.
+        self.assertLess(abs(critical - 3.480), 0.1)
+
+
+# #############################################################################
 # Test_correct_winner_score
 # #############################################################################
 
@@ -1638,6 +1675,53 @@ class Test_correct_winner_score(hunitest.TestCase):
         self.assertGreater(medians["none"], 0.02)
         for correction in ("paired", "empirical_bayes", "conditional"):
             self.assertLess(abs(medians[correction]), 0.01, correction)
+
+    def test3(self) -> None:
+        """
+        Test that on a tie, the hybrid estimate stays near the score while the
+        conditional one falls far below it.
+        """
+        # Prepare inputs: 2 variants solve 50 of 100 tasks each and disagree
+        # on 40 of them, so the jitter alone picks the winner. The standard
+        # deviation of a score is about 5 points.
+        outcomes = np.array(
+            [
+                [1] * 50 + [0] * 50,
+                [1] * 30 + [0] * 20 + [1] * 20 + [0] * 30,
+            ]
+        )
+        # Run test.
+        estimates = utils.correct_winner_score(outcomes, 0)
+        # Check outputs: the hybrid estimate is within its projection
+        # interval, about 3 standard deviations.
+        self.assertLess(abs(estimates["hybrid"] - 0.5), 0.16)
+        self.assertLess(estimates["conditional"], 0.34)
+
+    def test4(self) -> None:
+        """
+        Test on simulated benchmarks that the hybrid estimate keeps the median
+        of the conditional one and halves its root mean squared error.
+        """
+        # Prepare inputs: the benchmarks of `test2`, with 5 equal variants
+        # whose true score is 0.5.
+        rng = np.random.default_rng(3)
+        errors = {"conditional": [], "hybrid": []}
+        for _ in range(400):
+            chances = rng.uniform(size=200)
+            outcomes = (rng.uniform(size=(5, 200)) < chances).astype(float)
+            scores = outcomes.mean(axis=1)
+            winner = int(rng.choice(np.flatnonzero(scores == scores.max())))
+            estimates = utils.correct_winner_score(outcomes, winner)
+            for correction in errors:
+                errors[correction].append(estimates[correction] - 0.5)
+        # Run test.
+        medians = {c: float(np.median(e)) for c, e in errors.items()}
+        rmses = {
+            c: float(np.sqrt(np.mean(np.square(e)))) for c, e in errors.items()
+        }
+        # Check outputs.
+        self.assertLess(abs(medians["hybrid"]), 0.01)
+        self.assertLess(rmses["hybrid"], rmses["conditional"] / 2)
 
 
 # #############################################################################
@@ -1741,6 +1825,32 @@ class Test_summarize_corrections(hunitest.TestCase):
         actual = summary.round(3).to_string()
         self.assert_equal(actual, expected, dedent=True)
 
+    def test2(self) -> None:
+        """
+        Test that only the corrections asked for are compared.
+        """
+        # Prepare inputs.
+        trials = pd.DataFrame(
+            {
+                "truth": [0.5, 0.5],
+                "conditional": [0.5, 0.5],
+                "hybrid": [0.52, 0.5],
+            }
+        )
+        # Prepare outputs.
+        expected = """
+                     mean_error   rmse
+        conditional         0.0  0.000
+        hybrid              1.0  1.414
+        """
+        # Run test.
+        summary = utils.summarize_corrections(
+            trials, "truth", corrections=("conditional", "hybrid")
+        )
+        # Check outputs.
+        actual = summary.round(3).to_string()
+        self.assert_equal(actual, expected, dedent=True)
+
 
 # #############################################################################
 # Test_choose_shrinkage_rule
@@ -1788,7 +1898,8 @@ class Test_report_agent_scores(hunitest.TestCase):
 
     def test1(self) -> None:
         """
-        Test the order, the columns, and that only the leader is corrected.
+        Test the order, the columns, and that only the leader is corrected,
+        with the paired rule by default.
         """
         # Prepare inputs: 3 agents on 40 tasks, far apart.
         outcomes = pd.DataFrame(
@@ -1803,6 +1914,22 @@ class Test_report_agent_scores(hunitest.TestCase):
             report["corrected"].notna().tolist(), [True, False, False]
         )
         self.assertTrue((report["p_next_holm"].iloc[:2] < 0.05).all())
-        # The leader is 16 tasks ahead, so picking it adds almost no luck:
-        # the correction stays within half a task of its score.
-        self.assertLessEqual(abs(report.loc["a", "corrected"] - 0.9), 0.5 / 40)
+        # The paired noise is (0.24 + 0.16 + 0.24) / 3 / 40 / 2 from the 3
+        # pairs, and E[max of 3 normals] is 0.846, so the leader loses 0.0437.
+        self.assertAlmostEqual(report.loc["a", "corrected"], 0.8563, places=4)
+
+    def test2(self) -> None:
+        """
+        Test that the leader is reported with the correction asked for.
+        """
+        # Prepare inputs.
+        outcomes = pd.DataFrame(
+            [[1] * 36 + [0] * 4, [1] * 20 + [0] * 20, [1] * 4 + [0] * 36],
+            index=["a", "b", "c"],
+        )
+        # Run test.
+        report = utils.report_agent_scores(
+            outcomes, correction="none", n_boot=200, seed=1
+        )
+        # Check outputs: with no correction, the leader keeps its score.
+        self.assertEqual(report.loc["a", "corrected"], 0.9)
