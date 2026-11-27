@@ -68,6 +68,9 @@ def _get_run_rows(runs_file: str) -> Tuple[str, str, pd.DataFrame]:
     )
     rows.insert(0, "model", settings["model"])
     rows.insert(1, "temperature", settings["temperature"])
+    if "variant" in settings:
+        # Only the runs of the prompt variants save their variant.
+        rows.insert(2, "variant", settings["variant"])
     # The benchmark is the name of the dir that holds the file.
     benchmark = os.path.basename(os.path.dirname(runs_file))
     stem = os.path.basename(runs_file)[: -len(".jsonl")]

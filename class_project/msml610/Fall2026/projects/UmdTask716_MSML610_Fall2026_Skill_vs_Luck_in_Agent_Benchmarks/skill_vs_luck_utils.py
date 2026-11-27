@@ -1,15 +1,17 @@
 """
 Helper functions for the Skill vs Luck project.
 
-Used by the 2 notebooks and by `fetch_swebench_verified.py`:
+Used by the notebooks and by `fetch_swebench_verified.py`:
 - Download and parse the SWE-bench Verified per-task results
 - Load the saved data
 - Bootstrap intervals for each score
 - Bootstrap intervals for each rank, and the chance of coming out first
 - Split-half rank correlation and a 2PL item response theory model
 - Paired tests between 2 agents
+- Which records of the leaderboard beat the record they broke for real
 - How many tasks are needed to resolve a gap
 - Simulated benchmarks to check the tools
+- Estimate the run-to-run luck of each agent from 1 run per agent
 
 Import as:
 
@@ -35,6 +37,7 @@ import numpyro.infer.autoguide
 import numpyro.optim
 import pandas as pd
 import requests
+import scipy.optimize
 import scipy.special
 import scipy.stats
 import tqdm
@@ -821,6 +824,223 @@ def compare_to_leader(
 
 
 # #############################################################################
+# Records
+# #############################################################################
+
+
+def find_records(leaderboard: pd.DataFrame) -> pd.DataFrame:
+    """
+    Find the submissions that set a record on the day they came out.
+
+    A submission sets a record when it resolves more tasks than every
+    submission dated before it. Of the submissions with the same date, only
+    the best can set the record, and on a tie the one whose folder name sorts
+    first. The earliest submission starts the chain.
+
+    :param leaderboard: output of `compute_leaderboard()`
+    :return: the records, oldest first, with the `leaderboard` columns and
+        `previous` (folder of the record that each one broke, "" for the
+        first)
+    """
+    # Sort by date and then by folder name, so that `idxmax()` keeps the
+    # first folder of a tie.
+    by_date = leaderboard.sort_index().sort_values("date", kind="stable")
+    folders = []
+    best = -1
+    for _, same_day in by_date.groupby("date", sort=True):
+        folder = same_day["n_resolved"].idxmax()
+        n_resolved = same_day.loc[folder, "n_resolved"]
+        if n_resolved > best:
+            folders.append(folder)
+            best = n_resolved
+    records = leaderboard.loc[folders].copy()
+    records["previous"] = [""] + folders[:-1]
+    return records
+
+
+def audit_records(
+    outcomes: pd.DataFrame,
+    records: pd.DataFrame,
+    *,
+    n_boot: int = 2000,
+    alpha: float = 0.05,
+    seed: int = 0,
+) -> pd.DataFrame:
+    """
+    Compare each record with the record it broke, on the same tasks.
+
+    :param outcomes: agents x tasks matrix of 0/1
+    :param records: output of `find_records()`
+    :param n_boot: number of bootstrap samples
+    :param alpha: significance level, after the Holm adjustment over all the
+        records
+    :param seed: random seed
+    :return: one row per record after the first, indexed by folder (A is the
+        new record), with the `compare_pair()` fields, `date`, `record`,
+        `previous`, `attempts`, `p_holm`, and `distinguishable`
+    """
+    _LOG.debug(hprint.to_str("n_boot alpha seed"))
+    hdbg.dassert_lte(2, len(records), "Need a record that broke another one")
+    weights = _get_bootstrap_weights(outcomes.shape[1], n_boot, seed)
+    rows = []
+    for folder in records.index[1:]:
+        previous = records.loc[folder, "previous"]
+        row = _compare_pair_with_weights(
+            outcomes.loc[folder].to_numpy(),
+            outcomes.loc[previous].to_numpy(),
+            weights,
+            alpha,
+        )
+        row["date"] = records.loc[folder, "date"]
+        row["record"] = records.loc[folder, "label"]
+        row["previous"] = records.loc[previous, "label"]
+        row["attempts"] = records.loc[folder, "attempts"]
+        rows.append(row)
+    audit = pd.DataFrame(rows, index=records.index[1:])
+    audit["p_holm"] = holm_adjust(audit["p_value"])
+    audit["distinguishable"] = audit["p_holm"] < alpha
+    audit = audit[
+        [
+            "date",
+            "record",
+            "previous",
+            "attempts",
+            "gap",
+            "ci_low",
+            "ci_high",
+            "only_a",
+            "only_b",
+            "p_value",
+            "p_holm",
+            "distinguishable",
+        ]
+    ]
+    return audit
+
+
+def summarize_records(
+    outcomes: pd.DataFrame, records: pd.DataFrame, audit: pd.DataFrame
+) -> Dict[str, Any]:
+    """
+    Summarize the record audit with the numbers of the predictions A1 to A3
+    of `preregistration_2.md`.
+
+    :param outcomes: agents x tasks matrix of 0/1
+    :param records: output of `find_records()`
+    :param audit: output of `audit_records()`
+    :return: dict with:
+        - `n_records`: records after the first, each tested against the one
+          it broke
+        - `n_distinguishable`: records distinguishable after Holm
+        - `n_multi_attempt`: records from submissions that allow more than 1
+          attempt per task
+        - `total_gap`: score of the last record minus the first
+        - `p_first_last`: exact McNemar test of the last record against the
+          first
+        - `distinguishable_share`: share of `total_gap` that came in
+          distinguishable steps
+    """
+    first, last = records.index[0], records.index[-1]
+    first_last = compare_pair(outcomes.loc[last], outcomes.loc[first])
+    # The gaps of the records add up to the gap from the first to the last.
+    total_gap = float(audit["gap"].sum())
+    hdbg.dassert_lt(abs(total_gap - first_last["gap"]), 1e-9)
+    real_gap = float(audit.loc[audit["distinguishable"], "gap"].sum())
+    # "1" is 1 attempt and "" is not reported, so the rest allow more.
+    multi_attempt = ~audit["attempts"].isin(["1", ""])
+    summary = {
+        "n_records": len(audit),
+        "n_distinguishable": int(audit["distinguishable"].sum()),
+        "n_multi_attempt": int(multi_attempt.sum()),
+        "total_gap": total_gap,
+        "p_first_last": first_last["p_value"],
+        "distinguishable_share": real_gap / total_gap,
+    }
+    return summary
+
+
+def check_record_predictions(summary: Dict[str, Any]) -> pd.DataFrame:
+    """
+    Check the predictions A1 to A3 of `preregistration_2.md`.
+
+    The rules were written before the record analysis was run:
+    - A1: fewer than half of the records are distinguishable from the record
+      they broke
+    - A2: the last record is distinguishable from the first one
+    - A3: more than half of the progress, in points, came in distinguishable
+      steps
+
+    :param summary: output of `summarize_records()`
+    :return: 1 row per prediction, `A1` to `A3`, with `prediction`,
+        `observed`, and `holds`
+    """
+    rows = {}
+    n_records = summary["n_records"]
+    n_distinguishable = summary["n_distinguishable"]
+    rows["A1"] = {
+        "prediction": "Fewer than half of the records are distinguishable",
+        "observed": (
+            f"{n_distinguishable} of {n_records} records distinguishable"
+        ),
+        "holds": bool(n_distinguishable < n_records / 2),
+    }
+    rows["A2"] = {
+        "prediction": "The last record is distinguishable from the first",
+        "observed": (
+            f"gap of {100 * summary['total_gap']:.1f} points, exact McNemar "
+            f"p {summary['p_first_last']:.3g}"
+        ),
+        "holds": bool(summary["p_first_last"] < 0.05),
+    }
+    share = summary["distinguishable_share"]
+    rows["A3"] = {
+        "prediction": "Most of the progress came in distinguishable steps",
+        "observed": f"{100 * share:.0f}% of the points",
+        "holds": bool(share > 0.5),
+    }
+    table = pd.DataFrame.from_dict(rows, orient="index")
+    return table
+
+
+def find_distinct_levels(
+    outcomes: pd.DataFrame, records: pd.DataFrame, *, alpha: float = 0.05
+) -> pd.DataFrame:
+    """
+    Group the records into levels that the tasks can tell apart.
+
+    Going through the records in date order, a record starts a new level when
+    the exact McNemar test against the record that started the current level
+    gives p below `alpha`. The tests are not adjusted for testing many
+    records, so the count is rough.
+
+    :param outcomes: agents x tasks matrix of 0/1
+    :param records: output of `find_records()`
+    :param alpha: significance level of each test
+    :return: one row per level, oldest first, indexed by the folder of the
+        record that starts it, with `date`, `label`, `score`, `gap` (to the
+        level before, NaN for the first), `p_value`, and `n_records` (records
+        in the level, the first included)
+    """
+    starts = [records.index[0]]
+    gaps = [np.nan]
+    p_values = [np.nan]
+    for folder in records.index[1:]:
+        comparison = compare_pair(outcomes.loc[folder], outcomes.loc[starts[-1]])
+        if comparison["p_value"] < alpha:
+            starts.append(folder)
+            gaps.append(comparison["gap"])
+            p_values.append(comparison["p_value"])
+    levels = records.loc[starts, ["date", "label", "score"]].copy()
+    levels["gap"] = gaps
+    levels["p_value"] = p_values
+    # A level holds the records from its start to the next start.
+    positions = pd.Series(np.arange(len(records)), index=records.index)
+    bounds = list(positions.loc[starts]) + [len(records)]
+    levels["n_records"] = np.diff(bounds)
+    return levels
+
+
+# #############################################################################
 # Benchmark size
 # #############################################################################
 
@@ -1086,6 +1306,258 @@ def compute_held_out_drop(
         }
     )
     return held_out
+
+
+# #############################################################################
+# Transfer across benchmarks
+# #############################################################################
+
+
+def _get_kr20(values: np.ndarray) -> float:
+    """
+    Compute KR-20 on an agents x tasks array of 0/1, `nan` if undefined.
+
+    :param values: agents x tasks array of 0/1
+    :return: reliability, `nan` when every agent solves as many tasks
+    """
+    n_tasks = values.shape[1]
+    pass_rates = values.mean(axis=0)
+    task_variance = (pass_rates * (1 - pass_rates)).sum()
+    total_variance = values.sum(axis=1).var()
+    if total_variance == 0:
+        return float("nan")
+    kr20 = n_tasks / (n_tasks - 1) * (1 - task_variance / total_variance)
+    return float(kr20)
+
+
+def compute_kr20(outcomes: pd.DataFrame) -> float:
+    r"""
+    Compute the KR-20 reliability of a benchmark over a set of agents.
+
+    KR-20 is Cronbach's alpha for 0/1 tasks,
+    $\frac{N}{N - 1} (1 - \sum_i p_i (1 - p_i) / \sigma^2)$, where $p_i$ is the
+    share of the agents that solve task $i$ and $\sigma^2$ is the variance of
+    the number of tasks the agents solve. It is the mean of all the split-half
+    reliabilities: the share of the spread of the scores that comes from the
+    agents and not from the luck of which tasks were drawn.
+
+    :param outcomes: agents x tasks matrix of 0/1
+    :return: reliability, at most 1
+    """
+    hdbg.dassert_lte(2, outcomes.shape[1], "KR-20 needs at least 2 tasks")
+    kr20 = _get_kr20(outcomes.to_numpy(dtype=float))
+    hdbg.dassert(not np.isnan(kr20), "Every agent solves as many tasks")
+    return kr20
+
+
+def compute_split_half_reliability(
+    outcomes: pd.DataFrame,
+    *,
+    n_splits: int = 1000,
+    seed: int = 0,
+) -> float:
+    """
+    Compute the mean split-half reliability of a benchmark.
+
+    Each split scores the agents on 2 random halves of the tasks, and the
+    Pearson correlation `r` of the 2 halves is stepped up to the whole
+    benchmark with the Spearman-Brown formula `2 r / (1 + r)`. The mean over
+    many splits is close to KR-20.
+
+    :param outcomes: agents x tasks matrix of 0/1
+    :param n_splits: number of random splits
+    :param seed: random seed
+    :return: mean reliability over the splits
+    """
+    _LOG.debug(hprint.to_str("n_splits seed"))
+    hdbg.dassert_lt(2, outcomes.shape[0], "Correlations need at least 3 agents")
+    in_first = _get_random_halves(outcomes.shape[1], n_splits, seed)
+    scores_first, scores_second = _get_half_scores(
+        outcomes.to_numpy(dtype=float), in_first
+    )
+    reliabilities = []
+    for first, second in zip(scores_first, scores_second):
+        correlation = np.corrcoef(first, second)[0, 1]
+        reliabilities.append(2 * correlation / (1 + correlation))
+    reliability = float(np.nanmean(reliabilities))
+    return reliability
+
+
+def _get_transfer_stats(
+    values_a: np.ndarray, values_b: np.ndarray
+) -> Tuple[float, float, float, float, float]:
+    """
+    Compute the agreement of 2 benchmarks on the same agents.
+
+    :param values_a: agents x tasks array of 0/1 of the first benchmark
+    :param values_b: same agents on the second benchmark
+    :return: Pearson and Spearman correlations of the scores, the 2 KR-20
+        values, and the Pearson correlation corrected for task luck
+    """
+    scores_a = values_a.mean(axis=1)
+    scores_b = values_b.mean(axis=1)
+    if scores_a.std() == 0 or scores_b.std() == 0:
+        return (float("nan"),) * 5
+    pearson = float(np.corrcoef(scores_a, scores_b)[0, 1])
+    spearman = float(scipy.stats.spearmanr(scores_a, scores_b).statistic)
+    kr20_a = _get_kr20(values_a)
+    kr20_b = _get_kr20(values_b)
+    corrected = pearson / np.sqrt(kr20_a * kr20_b)
+    return pearson, spearman, kr20_a, kr20_b, float(corrected)
+
+
+def compute_transfer(
+    outcomes_a: pd.DataFrame,
+    outcomes_b: pd.DataFrame,
+    *,
+    n_boot: int = 2000,
+    seed: int = 0,
+) -> pd.Series:
+    """
+    Check whether 2 benchmarks rank the same agents the same way.
+
+    The task luck of each benchmark lowers the correlation of the 2 scores.
+    Dividing the Pearson correlation by the square root of the product of the
+    2 KR-20 reliabilities removes that luck, so a corrected correlation of 1
+    means the 2 benchmarks measure the same skill.
+
+    The 95% intervals resample the agents and, separately, the tasks of each
+    benchmark, so they cover both the choice of agents and of tasks.
+
+    :param outcomes_a: agents x tasks matrix of 0/1 on the first benchmark
+    :param outcomes_b: the same agents, in the same order, on the second one
+    :param n_boot: number of bootstrap samples
+    :param seed: random seed
+    :return: `pearson`, `spearman`, `kr20_a`, `kr20_b`, `corrected`, and the
+        95% intervals `spearman_low`, `spearman_high`, `corrected_low`, and
+        `corrected_high`
+    """
+    _LOG.debug(hprint.to_str("n_boot seed"))
+    hdbg.dassert_eq(
+        list(outcomes_a.index),
+        list(outcomes_b.index),
+        "The 2 matrices must have the same agents",
+    )
+    hdbg.dassert_lt(
+        2, outcomes_a.shape[0], "Correlations need at least 3 agents"
+    )
+    values_a = outcomes_a.to_numpy(dtype=float)
+    values_b = outcomes_b.to_numpy(dtype=float)
+    pearson, spearman, kr20_a, kr20_b, corrected = _get_transfer_stats(
+        values_a, values_b
+    )
+    # Resample the agents and the tasks of each benchmark.
+    rng = np.random.default_rng(seed)
+    n_agents, n_tasks_a = values_a.shape
+    n_tasks_b = values_b.shape[1]
+    boot = []
+    for _ in range(n_boot):
+        agents = rng.integers(0, n_agents, n_agents)
+        tasks_a = rng.integers(0, n_tasks_a, n_tasks_a)
+        tasks_b = rng.integers(0, n_tasks_b, n_tasks_b)
+        stats = _get_transfer_stats(
+            values_a[np.ix_(agents, tasks_a)], values_b[np.ix_(agents, tasks_b)]
+        )
+        boot.append((stats[1], stats[4]))
+    boot_array = np.array(boot)
+    transfer = pd.Series(
+        {
+            "pearson": pearson,
+            "spearman": spearman,
+            "kr20_a": kr20_a,
+            "kr20_b": kr20_b,
+            "corrected": corrected,
+            "spearman_low": np.nanpercentile(boot_array[:, 0], 2.5),
+            "spearman_high": np.nanpercentile(boot_array[:, 0], 97.5),
+            "corrected_low": np.nanpercentile(boot_array[:, 1], 2.5),
+            "corrected_high": np.nanpercentile(boot_array[:, 1], 97.5),
+        }
+    )
+    return transfer
+
+
+def _get_logit_scores(values: np.ndarray) -> np.ndarray:
+    """
+    Score each agent on the logit scale, with no score at 0 or 1.
+
+    :param values: agents x tasks array of 0/1
+    :return: `logit((k + 0.5) / (n + 1))` of each agent, where `k` is the
+        number of tasks it solves out of `n`
+    """
+    n_tasks = values.shape[1]
+    scores = (values.sum(axis=1) + 0.5) / (n_tasks + 1)
+    logits = scipy.special.logit(scores)
+    return logits
+
+
+def compute_benchmark_residuals(
+    outcomes_a: pd.DataFrame,
+    outcomes_b: pd.DataFrame,
+    *,
+    n_boot: int = 2000,
+    seed: int = 0,
+) -> pd.DataFrame:
+    """
+    Find the agents that do better on one benchmark than the others do.
+
+    For each agent, `d = logit(score on a) - logit(score on b)` measures how
+    much easier the first benchmark is for it. The residual is `d` minus the
+    median `d` of all the agents, so it is 0 for an agent that gains as much
+    as a typical agent. The 95% interval resamples the tasks of each benchmark,
+    with the agents fixed, so it covers the task luck of the 2 scores.
+
+    :param outcomes_a: agents x tasks matrix of 0/1 on the first benchmark
+    :param outcomes_b: the same agents, in the same order, on the second one
+    :param n_boot: number of bootstrap samples
+    :param seed: random seed
+    :return: one row per agent with `score_a`, `score_b`, `residual` (in
+        logits), `residual_low`, `residual_high`, `gap_points` (the score on
+        the first benchmark minus the one expected from the score on the
+        second, in points), and `specific` (True when the interval excludes 0)
+    """
+    _LOG.debug(hprint.to_str("n_boot seed"))
+    hdbg.dassert_eq(
+        list(outcomes_a.index),
+        list(outcomes_b.index),
+        "The 2 matrices must have the same agents",
+    )
+    values_a = outcomes_a.to_numpy(dtype=float)
+    values_b = outcomes_b.to_numpy(dtype=float)
+    logits_a = _get_logit_scores(values_a)
+    logits_b = _get_logit_scores(values_b)
+    gaps = logits_a - logits_b
+    median_gap = np.median(gaps)
+    residuals = gaps - median_gap
+    # Resample the tasks of each benchmark, with the agents fixed.
+    rng = np.random.default_rng(seed)
+    n_tasks_a = values_a.shape[1]
+    n_tasks_b = values_b.shape[1]
+    boot = np.empty((n_boot, values_a.shape[0]))
+    for sample in range(n_boot):
+        tasks_a = rng.integers(0, n_tasks_a, n_tasks_a)
+        tasks_b = rng.integers(0, n_tasks_b, n_tasks_b)
+        boot_gaps = _get_logit_scores(values_a[:, tasks_a]) - _get_logit_scores(
+            values_b[:, tasks_b]
+        )
+        boot[sample] = boot_gaps - np.median(boot_gaps)
+    low = np.percentile(boot, 2.5, axis=0)
+    high = np.percentile(boot, 97.5, axis=0)
+    # Translate the residual into points on the first benchmark.
+    expected_a = scipy.special.expit(logits_b + median_gap)
+    gap_points = 100 * (scipy.special.expit(logits_a) - expected_a)
+    residuals_df = pd.DataFrame(
+        {
+            "score_a": values_a.mean(axis=1),
+            "score_b": values_b.mean(axis=1),
+            "residual": residuals,
+            "residual_low": low,
+            "residual_high": high,
+            "gap_points": gap_points,
+            "specific": (low > 0) | (high < 0),
+        },
+        index=outcomes_a.index,
+    )
+    return residuals_df
 
 
 # #############################################################################
@@ -1672,6 +2144,634 @@ def simulate_winners_curse(
 
 
 # #############################################################################
+# Correcting the score of a selected variant
+# #############################################################################
+
+
+# Names of the corrections of `correct_winner_score()`, as in
+# `preregistration_3.md`.
+WINNER_CORRECTIONS = (
+    "none",
+    "binomial",
+    "paired",
+    "empirical_bayes",
+    "conditional",
+)
+# Corrections of `correct_winner_score()` added after `preregistration_3.md`,
+# as extra looks.
+EXTRA_CORRECTIONS = ("hybrid", "spec")
+
+
+def compute_cochran_q(outcomes: pd.DataFrame) -> Tuple[float, float]:
+    """
+    Test whether several variants solve the same share of the tasks.
+
+    Cochran's Q compares the variants on the same tasks, so it only uses the
+    tasks where they disagree.
+
+    :param outcomes: variants x tasks matrix of 0/1
+    :return: the Q statistic and its p-value (chi-squared with `K - 1`
+        degrees of freedom)
+    """
+    values = outcomes.to_numpy(dtype=float)
+    n_variants = values.shape[0]
+    hdbg.dassert_lte(2, n_variants, "Cochran's Q needs at least 2 variants")
+    variant_totals = values.sum(axis=1)
+    task_totals = values.sum(axis=0)
+    total = values.sum()
+    denominator = n_variants * total - (task_totals**2).sum()
+    if denominator == 0:
+        # The variants agree on every task.
+        return 0.0, 1.0
+    q = (
+        (n_variants - 1)
+        * (n_variants * (variant_totals**2).sum() - total**2)
+        / denominator
+    )
+    p_value = float(scipy.stats.chi2.sf(q, n_variants - 1))
+    return float(q), p_value
+
+
+def _get_paired_noise(values: np.ndarray) -> float:
+    """
+    Estimate the noise of 1 variant's score relative to the others.
+
+    For 2 variants on the same `n` tasks, the variance of their score
+    difference is `(d - g^2) / n`, with `d` the share of the tasks where they
+    disagree and `g` the gap of their scores. Half of its mean over the pairs
+    is the variance of the part of a score that is not shared by the others.
+
+    :param values: variants x tasks array of 0/1
+    :return: variance of the noise of 1 variant's score
+    """
+    n_variants, n_tasks = values.shape
+    scores = values.mean(axis=1)
+    # Share of the tasks solved by both variants of each pair.
+    both = values @ values.T / n_tasks
+    disagree = scores[:, None] + scores[None, :] - 2 * both
+    gaps = scores[:, None] - scores[None, :]
+    variances = (disagree - gaps**2) / n_tasks
+    pairs = np.triu_indices(n_variants, k=1)
+    noise = float(variances[pairs].mean()) / 2
+    return max(noise, 0.0)
+
+
+def _get_jittered_scores(
+    scores: np.ndarray, winner: int, step: float, rng: np.random.Generator
+) -> np.ndarray:
+    """
+    Add a uniform jitter of up to half a task to each score.
+
+    Scores move by whole tasks, so variants often tie. Picking the best of the
+    jittered scores is the same as breaking the ties at random, and jittered
+    scores have no ties, so the normal theory of the conditional estimate
+    applies. The winner gets the largest jitter among the variants tied with
+    it, so it stays the winner.
+
+    :param scores: scores of the variants
+    :param winner: index of the winner
+    :param step: score of 1 task, `1 / n`
+    :param rng: random generator
+    :return: jittered scores, whose largest is the winner's
+    """
+    jitter = rng.uniform(-step / 2, step / 2, size=len(scores))
+    tied = np.flatnonzero(scores == scores[winner])
+    best = tied[np.argmax(jitter[tied])]
+    jitter[[winner, best]] = jitter[[best, winner]]
+    jittered = scores + jitter
+    return jittered
+
+
+def _get_winning_range(
+    scores: np.ndarray, covariance: np.ndarray, winner: int
+) -> Tuple[float, float]:
+    """
+    Get the range of the winner's score over which it stays the winner.
+
+    The scores are taken as jointly normal, with no ties. Given the parts of
+    the other scores that do not move with the winner's, winning only bounds
+    the winner's score from below and from above.
+
+    :param scores: scores of the variants, e.g., from `_get_jittered_scores()`
+    :param covariance: covariance of the scores, with a positive variance
+        for the winner
+    :param winner: index of the winner
+    :return: lower and upper bound of the winner's score, possibly infinite
+    """
+    observed = scores[winner]
+    slopes = covariance[:, winner] / covariance[winner, winner]
+    rests = scores - slopes * observed
+    lower, upper = -np.inf, np.inf
+    for other in range(len(scores)):
+        if other == winner:
+            continue
+        # Winning means `observed >= score of other`, which bounds `observed`
+        # once the part of the other score that moves with it is taken out.
+        factor = 1 - slopes[other]
+        if factor > 1e-12:
+            lower = max(lower, rests[other] / factor)
+        elif factor < -1e-12:
+            upper = min(upper, rests[other] / factor)
+    return lower, upper
+
+
+def _get_conditional_estimate(
+    scores: np.ndarray, covariance: np.ndarray, winner: int
+) -> float:
+    """
+    Estimate the mean of the winner given that it won.
+
+    Given the range of `_get_winning_range()`, the winner's score has a
+    truncated normal distribution; the estimate is the mean that puts the
+    observed score at its median (Andrews, Kitagawa, and McCloskey,
+    "Inference on Winners").
+
+    :param scores: scores of the variants, e.g., from `_get_jittered_scores()`
+    :param covariance: covariance of the scores
+    :param winner: index of the winner
+    :return: median-unbiased estimate of the winner's mean
+    """
+    observed = scores[winner]
+    variance = covariance[winner, winner]
+    if variance <= 0:
+        return float(observed)
+    scale = np.sqrt(variance)
+    lower, upper = _get_winning_range(scores, covariance, winner)
+    if not np.isfinite(lower) and not np.isfinite(upper):
+        return float(observed)
+
+    def _get_cdf_gap(mean: float) -> float:
+        a = (lower - mean) / scale
+        b = (upper - mean) / scale
+        cdf = scipy.stats.truncnorm.cdf(observed, a, b, loc=mean, scale=scale)
+        return float(cdf) - 0.5
+
+    # The CDF of the observed score falls as the mean grows.
+    low_mean, high_mean = observed - 50 * scale, observed + 50 * scale
+    if _get_cdf_gap(low_mean) < 0 or _get_cdf_gap(high_mean) > 0:
+        return float(observed)
+    estimate = scipy.optimize.brentq(_get_cdf_gap, low_mean, high_mean)
+    return float(estimate)
+
+
+def _get_projection_critical_value(
+    covariance: np.ndarray, beta: float, rng: np.random.Generator
+) -> float:
+    """
+    Get the critical value of intervals that cover all the means at once.
+
+    It is the `1 - beta` quantile of the largest `|score - mean| / sd` over
+    the variants, from 10,000 draws of normal scores with `covariance`. With
+    1 variant, it is the `1 - beta / 2` quantile of a standard normal.
+
+    :param covariance: covariance of the scores, with positive variances
+    :param beta: chance that some interval misses its mean
+    :param rng: random generator
+    :return: critical value, in standard deviations
+    """
+    sds = np.sqrt(np.diag(covariance))
+    hdbg.dassert_lt(0, sds.min(), "Every score needs a positive variance")
+    draws = rng.multivariate_normal(
+        np.zeros(len(sds)), covariance, size=10000, method="eigh"
+    )
+    largest = np.abs(draws / sds).max(axis=1)
+    critical = float(np.quantile(largest, 1 - beta))
+    return critical
+
+
+def _get_hybrid_estimate(
+    scores: np.ndarray, covariance: np.ndarray, winner: int, critical: float
+) -> float:
+    """
+    Estimate the mean of the winner given that it won, near its score.
+
+    The estimate of `_get_conditional_estimate()` falls far below the
+    observed score when the winner barely won. The hybrid estimate of
+    Andrews, Kitagawa, and McCloskey also takes the winner's mean to be
+    within `critical` standard deviations of its score, which holds for all
+    the variants at once with chance `1 - beta`. So the estimate stays in
+    that interval, and its chance of being above the mean is within
+    `beta / 2` of one half.
+
+    :param scores: scores of the variants, e.g., from `_get_jittered_scores()`
+    :param covariance: covariance of the scores
+    :param winner: index of the winner
+    :param critical: output of `_get_projection_critical_value()`
+    :return: estimate of the winner's mean
+    """
+    observed = scores[winner]
+    variance = covariance[winner, winner]
+    if variance <= 0:
+        return float(observed)
+    scale = np.sqrt(variance)
+    lower, upper = _get_winning_range(scores, covariance, winner)
+
+    def _get_cdf_gap(mean: float) -> float:
+        # Truncate the winner's score to the winning range and to the
+        # interval around the mean.
+        a = (max(lower, mean - critical * scale) - mean) / scale
+        b = (min(upper, mean + critical * scale) - mean) / scale
+        cdf = scipy.stats.truncnorm.cdf(observed, a, b, loc=mean, scale=scale)
+        return float(cdf) - 0.5
+
+    # Over the interval around the observed score, the CDF of the observed
+    # score falls from 1 to 0, so the estimate is in that interval.
+    estimate = scipy.optimize.brentq(
+        _get_cdf_gap, observed - critical * scale, observed + critical * scale
+    )
+    return float(estimate)
+
+
+def correct_winner_score(
+    outcomes: np.ndarray, winner: int, *, seed: int = 0
+) -> Dict[str, float]:
+    """
+    Correct the score of the variant picked for having the best score.
+
+    The corrections of `preregistration_3.md`, all from the same tasks:
+    - `none`: the winner's score
+    - `binomial`: minus `sqrt(p (1 - p) / n) x E[max of K]`
+    - `paired`: minus `sqrt(v) x E[max of K]`, with `v` from
+      `_get_paired_noise()`
+    - `empirical_bayes`: the mean score plus `B x (winner - mean)`, with
+      `B = max(0, 1 - v / variance of the K scores)`
+    - `conditional`: the median-unbiased estimate given that the winner won,
+      with the covariance of the scores estimated from the tasks and the
+      ties broken by a jitter of half a task (decision D-6)
+
+    Also 2 extra looks that are not in `preregistration_3.md`:
+    - `hybrid`: the conditional estimate kept within the projection interval
+      with `beta = 0.005`, from `_get_hybrid_estimate()`
+    - `spec`: the correction of the project spec, minus
+      `sqrt(p (1 - p) / n) x sqrt(2 ln K)`
+
+    :param outcomes: variants x tasks array of 0/1
+    :param winner: index of the variant with the best score
+    :param seed: random seed of the jitter and of the projection interval
+    :return: estimate of the winner's mean score by each correction
+    """
+    values = np.asarray(outcomes, dtype=float)
+    n_variants, n_tasks = values.shape
+    scores = values.mean(axis=1)
+    observed = scores[winner]
+    expected_max = _get_expected_max_normal(n_variants)
+    noise = _get_paired_noise(values)
+    spread = scores.var(ddof=1) if n_variants > 1 else 0.0
+    shrink = max(0.0, 1 - noise / spread) if spread > 0 else 0.0
+    covariance = np.atleast_2d(np.cov(values)) / n_tasks
+    # The jitter adds the variance of a uniform of width `1 / n` to each score.
+    jittered = _get_jittered_scores(
+        scores, winner, 1 / n_tasks, np.random.default_rng(seed)
+    )
+    jittered_covariance = covariance + np.eye(n_variants) / (12 * n_tasks**2)
+    # The hybrid estimate uses the `beta` of Andrews, Kitagawa, and McCloskey,
+    # with its own draws, so the jitter of the conditional estimate does not
+    # change.
+    critical = _get_projection_critical_value(
+        jittered_covariance, 0.005, np.random.default_rng([seed, 1])
+    )
+    estimates = {
+        "none": float(observed),
+        "binomial": float(
+            observed
+            - np.sqrt(observed * (1 - observed) / n_tasks) * expected_max
+        ),
+        "paired": float(observed - np.sqrt(noise) * expected_max),
+        "empirical_bayes": float(
+            scores.mean() + shrink * (observed - scores.mean())
+        ),
+        "conditional": _get_conditional_estimate(
+            jittered, jittered_covariance, winner
+        ),
+        "hybrid": _get_hybrid_estimate(
+            jittered, jittered_covariance, winner, critical
+        ),
+        "spec": float(
+            observed
+            - np.sqrt(observed * (1 - observed) / n_tasks)
+            * np.sqrt(2 * np.log(n_variants))
+        ),
+    }
+    return estimates
+
+
+def _pick_winner(scores: np.ndarray, rng: np.random.Generator) -> int:
+    """
+    Pick the variant with the best score, breaking ties at random.
+
+    :param scores: scores of the variants
+    :param rng: random generator
+    :return: index of the winner
+    """
+    best = np.flatnonzero(scores == scores.max())
+    winner = int(rng.choice(best))
+    return winner
+
+
+def simulate_variant_selection(
+    outcomes: pd.DataFrame,
+    n_variants: int,
+    *,
+    n_trials: int = 1000,
+    seed: int = 0,
+) -> pd.DataFrame:
+    """
+    Pick the best of K variants on half of the tasks and score it on the rest.
+
+    Each trial draws `n_variants` variants at random and splits the tasks at
+    random into a selection half and an evaluation half. The winner is the
+    variant with the best score on the selection half (ties broken at random),
+    and each correction of `correct_winner_score()` uses only that half. The
+    evaluation half was not used to pick the winner, so the winner's score
+    there is an unbiased estimate of its mean.
+
+    :param outcomes: variants x tasks matrix of 0/1
+    :param n_variants: number of variants `K` drawn in each trial
+    :param n_trials: number of trials
+    :param seed: random seed
+    :return: one row per trial with `winner`, `selection_score`,
+        `evaluation_score`, `drop`, and the estimate of each correction in
+        `WINNER_CORRECTIONS`
+    """
+    _LOG.debug(hprint.to_str("n_variants n_trials seed"))
+    hdbg.dassert_lte(2, n_variants)
+    hdbg.dassert_lte(n_variants, outcomes.shape[0])
+    values = outcomes.to_numpy(dtype=float)
+    n_tasks = values.shape[1]
+    rng = np.random.default_rng(seed)
+    rows = []
+    for _ in range(n_trials):
+        variants = rng.choice(outcomes.shape[0], n_variants, replace=False)
+        order = rng.permutation(n_tasks)
+        selection = values[np.ix_(variants, order[: n_tasks // 2])]
+        evaluation = values[np.ix_(variants, order[n_tasks // 2 :])]
+        winner = _pick_winner(selection.mean(axis=1), rng)
+        estimates = correct_winner_score(
+            selection, winner, seed=int(rng.integers(2**31))
+        )
+        evaluation_score = evaluation[winner].mean()
+        rows.append(
+            {
+                "winner": outcomes.index[variants[winner]],
+                "selection_score": estimates["none"],
+                "evaluation_score": evaluation_score,
+                "drop": estimates["none"] - evaluation_score,
+                **estimates,
+            }
+        )
+    trials = pd.DataFrame(rows)
+    return trials
+
+
+def simulate_best_of_k_runs(
+    outcomes: pd.DataFrame,
+    n_runs: int,
+    *,
+    n_draws: int = 500,
+    seed: int = 0,
+) -> pd.DataFrame:
+    r"""
+    Pick the best of K runs and compare it with the runs left out.
+
+    A paper that reports its best seed shows the best of K runs. Each draw
+    picks `n_runs` runs at random; the truth is the mean score of the runs
+    left out, which the selection never saw. The predicted inflation is
+    $\sigma_{run} E[\max_K]$, with $\sigma_{run}^2 = \sum_t p_t (1 - p_t) /
+    n^2$ and $p_t$ the pass rate of task $t$ over all the runs.
+
+    :param outcomes: tasks x runs matrix of 0/1 of 1 agent
+    :param n_runs: number of runs `K` drawn, fewer than all the runs
+    :param n_draws: number of draws
+    :param seed: random seed
+    :return: one row per draw with `best_score`, `truth`, `inflation`,
+        `predicted`, and the estimate of each correction in
+        `WINNER_CORRECTIONS`
+    """
+    _LOG.debug(hprint.to_str("n_runs n_draws seed"))
+    values = outcomes.to_numpy(dtype=float).T
+    total_runs, n_tasks = values.shape
+    hdbg.dassert_lte(2, n_runs)
+    hdbg.dassert_lt(n_runs, total_runs, "Some runs must be left out")
+    pass_rates = values.mean(axis=0)
+    run_noise = np.sqrt((pass_rates * (1 - pass_rates)).sum()) / n_tasks
+    predicted = run_noise * _get_expected_max_normal(n_runs)
+    rng = np.random.default_rng(seed)
+    rows = []
+    for _ in range(n_draws):
+        picked = rng.choice(total_runs, n_runs, replace=False)
+        left_out = np.setdiff1d(np.arange(total_runs), picked)
+        selected = values[picked]
+        winner = _pick_winner(selected.mean(axis=1), rng)
+        estimates = correct_winner_score(
+            selected, winner, seed=int(rng.integers(2**31))
+        )
+        truth = values[left_out].mean()
+        rows.append(
+            {
+                "best_score": estimates["none"],
+                "truth": truth,
+                "inflation": estimates["none"] - truth,
+                "predicted": predicted,
+                **estimates,
+            }
+        )
+    draws = pd.DataFrame(rows)
+    return draws
+
+
+def summarize_corrections(
+    trials: pd.DataFrame,
+    truth_column: str,
+    *,
+    corrections: Sequence[str] = WINNER_CORRECTIONS,
+) -> pd.DataFrame:
+    """
+    Compare each correction with the score that the selection never saw.
+
+    :param trials: output of `simulate_variant_selection()` or
+        `simulate_best_of_k_runs()`
+    :param truth_column: `evaluation_score` or `truth`
+    :param corrections: columns of `trials` to compare, by default the
+        corrections of `preregistration_3.md`
+    :return: one row per correction with `mean_error` and `rmse`, in points
+    """
+    rows = {}
+    for correction in corrections:
+        errors = 100 * (trials[correction] - trials[truth_column])
+        rows[correction] = {
+            "mean_error": errors.mean(),
+            "rmse": np.sqrt((errors**2).mean()),
+        }
+    summary = pd.DataFrame.from_dict(rows, orient="index")
+    return summary
+
+
+# #############################################################################
+# Run luck from 1 run
+# #############################################################################
+
+
+# Largest 2PL discrimination. With few agents, a task solved by exactly the
+# strongest agents pushes its discrimination to infinity, and at 20 the task
+# already separates the agents almost perfectly.
+_MAX_DISCRIMINATION = 20.0
+
+
+def _get_irt_logits(
+    params: np.ndarray, n_agents: int, n_tasks: int, two_pl: bool
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """
+    Compute the logits of an item response model from its parameters.
+
+    :param params: abilities of the agents, then difficulties of the tasks,
+        then (2PL only) log discriminations of the tasks
+    :param n_agents: number of agents
+    :param n_tasks: number of tasks
+    :param two_pl: whether the model is 2PL instead of Rasch
+    :return: agents x tasks arrays of the logits and of the ability minus
+        the difficulty, and the discrimination of each task
+    """
+    abilities = params[:n_agents]
+    difficulties = params[n_agents : n_agents + n_tasks]
+    # In the Rasch model every task has a discrimination of 1.
+    if two_pl:
+        discriminations = np.exp(params[n_agents + n_tasks :])
+    else:
+        discriminations = np.ones(n_tasks)
+    gaps = abilities[:, None] - difficulties[None, :]
+    logits = discriminations * gaps
+    return logits, gaps, discriminations
+
+
+def _get_irt_loss(
+    params: np.ndarray, outcomes: np.ndarray, two_pl: bool, penalty: float
+) -> Tuple[float, np.ndarray]:
+    """
+    Compute the loss of an item response model and its gradient.
+
+    :param params: abilities of the agents, then difficulties of the tasks,
+        then (2PL only) log discriminations of the tasks
+    :param outcomes: agents x tasks array of 0/1
+    :param two_pl: whether the model is 2PL instead of Rasch
+    :param penalty: weight of the ridge penalty
+    :return: negative log-likelihood plus the penalty, and its gradient
+    """
+    n_agents, n_tasks = outcomes.shape
+    logits, gaps, discriminations = _get_irt_logits(
+        params, n_agents, n_tasks, two_pl
+    )
+    # A 0/1 outcome y has log-likelihood y * logit - log(1 + e^logit).
+    loss = np.sum(np.logaddexp(0, logits) - outcomes * logits)
+    loss += penalty / 2 * np.sum(params**2)
+    # The loss changes with a logit at the rate P(pass) - y, and a logit
+    # changes with the ability and the difficulty at the rate of the
+    # discrimination.
+    residuals = (scipy.special.expit(logits) - outcomes) * discriminations
+    gradients = [residuals.sum(axis=1), -residuals.sum(axis=0)]
+    if two_pl:
+        # The log discrimination c enters the logit as e^c (ability -
+        # difficulty).
+        gradients.append((residuals * gaps).sum(axis=0))
+    gradient = np.concatenate(gradients) + penalty * params
+    return float(loss), gradient
+
+
+def fit_pass_chances(
+    outcomes: pd.DataFrame, *, irt_model: str = "rasch", penalty: float = 0.01
+) -> pd.DataFrame:
+    r"""
+    Fit an item response model to an agents x tasks matrix with 1 run.
+
+    - Rasch: logit P(pass) $= \theta_a - b_i$, with the ability $\theta_a$ of
+      agent $a$ and the difficulty $b_i$ of task $i$
+    - 2PL: logit P(pass) $= e^{c_i} (\theta_a - b_i)$, where the
+      discrimination $e^{c_i}$ says how sharply task $i$ separates the weak
+      agents from the strong ones
+    The fit maximizes the likelihood minus `penalty` / 2 times the sum of the
+    squared parameters, a ridge penalty that keeps the tasks that every agent
+    solves (or fails) at a finite difficulty. The 2PL discriminations stay
+    between 1 / 20 and 20.
+
+    :param outcomes: agents x tasks matrix of 0/1
+    :param irt_model: `rasch` or `2pl`
+    :param penalty: weight of the ridge penalty
+    :return: agents x tasks matrix of the fitted chances of a pass
+    """
+    hdbg.dassert_in(irt_model, ("rasch", "2pl"))
+    hdbg.dassert_lt(0, penalty, "The penalty keeps the fit finite")
+    values = outcomes.to_numpy(dtype=float)
+    hdbg.dassert(not np.isnan(values).any(), "Some cells have no outcome")
+    n_agents, n_tasks = values.shape
+    two_pl = irt_model == "2pl"
+    bounds = [(None, None)] * (n_agents + n_tasks)
+    if two_pl:
+        max_log = np.log(_MAX_DISCRIMINATION)
+        bounds += [(-max_log, max_log)] * n_tasks
+    # Start from abilities and difficulties of 0 and discriminations of 1.
+    result = scipy.optimize.minimize(
+        _get_irt_loss,
+        np.zeros(len(bounds)),
+        args=(values, two_pl, penalty),
+        jac=True,
+        method="L-BFGS-B",
+        bounds=bounds,
+        options={"maxiter": 10000},
+    )
+    hdbg.dassert(result.success, "The fit did not converge: %s", result.message)
+    logits, _, _ = _get_irt_logits(result.x, n_agents, n_tasks, two_pl)
+    chances = pd.DataFrame(
+        scipy.special.expit(logits),
+        index=outcomes.index,
+        columns=outcomes.columns,
+    )
+    return chances
+
+
+def estimate_run_share(
+    outcomes: pd.DataFrame,
+    *,
+    irt_model: str = "rasch",
+    penalty: float = 0.01,
+    calibration: float = 1.0,
+) -> pd.DataFrame:
+    r"""
+    Estimate the run-to-run luck of each agent from 1 run per agent.
+
+    This is the estimator of Study B in `preregistration_2.md`:
+    - Fit `fit_pass_chances()` to the matrix
+    - Estimate $\sigma^2_{run}$ of each agent as `calibration` times the
+      average over the tasks of $p (1 - p)$, with $p$ the fitted chance of a
+      pass
+    - Divide it by score x (1 - score), the whole variance of 1 outcome of 1
+      run
+    From 1 run the fit cannot tell run luck from an agent being good at a
+    specific task, so it counts that as luck too. The defaults are the
+    settings before any tuning.
+
+    :param outcomes: agents x tasks matrix of 0/1, with 1 run per agent
+    :param irt_model: `rasch` or `2pl`
+    :param penalty: weight of the ridge penalty of the fit
+    :param calibration: factor applied to $\sigma^2_{run}$
+    :return: 1 row per agent with `score`, `sigma2_run`, and `run_share`
+        (NaN for an agent that solves all or none of the tasks)
+    """
+    hdbg.dassert_lt(0, calibration)
+    chances = fit_pass_chances(outcomes, irt_model=irt_model, penalty=penalty)
+    score = outcomes.mean(axis=1)
+    sigma2_run = calibration * (chances * (1 - chances)).mean(axis=1)
+    # An agent that solves all or none of the tasks has no variance to split.
+    total = (score * (1 - score)).replace(0.0, np.nan)
+    estimates = pd.DataFrame(
+        {
+            "score": score,
+            "sigma2_run": sigma2_run,
+            "run_share": sigma2_run / total,
+        }
+    )
+    return estimates
+
+
+# #############################################################################
 # Plots
 # #############################################################################
 
@@ -1775,6 +2875,52 @@ def plot_adjacent_gaps(
     ax.set_ylabel("Gap to the next agent (points)")
     ax.set_title(
         "Score gap between leaderboard neighbors, with 95% paired interval"
+    )
+    ax.legend()
+    fig.tight_layout()
+    plt.show()
+
+
+def plot_records(
+    records: pd.DataFrame,
+    audit: pd.DataFrame,
+    *,
+    figsize: Optional[Tuple[float, float]] = None,
+) -> None:
+    """
+    Plot the record score over time, with each record colored by its test
+    against the record it broke.
+
+    :param records: output of `find_records()`
+    :param audit: output of `audit_records()`
+    :param figsize: figure size, default `plt.rcParams["figure.figsize"]`
+    """
+    if figsize is None:
+        figsize = plt.rcParams["figure.figsize"]
+    fig, ax = plt.subplots(figsize=figsize)
+    dates = pd.to_datetime(records["date"])
+    scores = 100 * records["score"]
+    # A record holds until the next one breaks it.
+    ax.step(dates, scores, where="post", color="tab:gray", linewidth=1)
+    real = audit.index[audit["distinguishable"]]
+    not_real = audit.index[~audit["distinguishable"]]
+    groups = [
+        (records.index[:1], "black", "first record"),
+        (real, "tab:green", "distinguishable after Holm"),
+        (not_real, "tab:gray", "not distinguishable"),
+    ]
+    for folders, color, name in groups:
+        ax.scatter(
+            dates.loc[folders],
+            scores.loc[folders],
+            color=color,
+            zorder=3,
+            label=f"{name} ({len(folders)})",
+        )
+    ax.set_xlabel("Date of the submission")
+    ax.set_ylabel("Tasks resolved (%)")
+    ax.set_title(
+        "Records on SWE-bench Verified, tested against the record they broke"
     )
     ax.legend()
     fig.tight_layout()
@@ -2140,3 +3286,222 @@ def plot_task_information(
     ax.legend(loc="lower right")
     fig.tight_layout()
     plt.show()
+
+
+def plot_benchmark_scores(
+    residuals: pd.DataFrame,
+    *,
+    name_a: str,
+    name_b: str,
+    figsize: Optional[Tuple[float, float]] = None,
+) -> None:
+    """
+    Plot the scores of the same agents on 2 benchmarks.
+
+    The curve is the score on the first benchmark that a typical agent gets
+    for each score on the second one; the benchmark-specific agents are the
+    ones far from it.
+
+    :param residuals: output of `compute_benchmark_residuals()`
+    :param name_a: name of the first benchmark, e.g., `HumanEval+`
+    :param name_b: name of the second benchmark, e.g., `MBPP+`
+    :param figsize: figure size, default `plt.rcParams["figure.figsize"]`
+    """
+    if figsize is None:
+        figsize = plt.rcParams["figure.figsize"]
+    fig, ax = plt.subplots(figsize=figsize)
+    specific = residuals["specific"]
+    for is_specific, color, label in (
+        (False, "tab:blue", "Within task luck"),
+        (True, "tab:red", "Benchmark-specific"),
+    ):
+        group = residuals[specific == is_specific]
+        ax.scatter(
+            100 * group["score_b"],
+            100 * group["score_a"],
+            color=color,
+            label=label,
+            zorder=3,
+        )
+    for agent, row in residuals.iterrows():
+        ax.annotate(
+            str(agent),
+            (100 * row["score_b"], 100 * row["score_a"]),
+            textcoords="offset points",
+            xytext=(4, 4),
+            fontsize=8,
+        )
+    # Score of a typical agent: the median logit gap between the benchmarks.
+    clipped_a = residuals["score_a"].clip(0.005, 0.995)
+    clipped_b = residuals["score_b"].clip(0.005, 0.995)
+    median_gap = np.median(
+        scipy.special.logit(clipped_a) - scipy.special.logit(clipped_b)
+    )
+    grid = np.linspace(0.01, 0.99, 99)
+    ax.plot(
+        100 * grid,
+        100 * scipy.special.expit(scipy.special.logit(grid) + median_gap),
+        color="gray",
+        linestyle="--",
+        label="Typical agent",
+    )
+    ax.set_xlabel(f"{name_b} score (%)")
+    ax.set_ylabel(f"{name_a} score (%)")
+    ax.set_title(f"Do {name_a} and {name_b} rank the agents the same way?")
+    ax.legend(loc="lower right")
+    fig.tight_layout()
+    plt.show()
+
+
+def plot_benchmark_residuals(
+    residuals: pd.DataFrame,
+    *,
+    name_a: str,
+    figsize: Optional[Tuple[float, float]] = None,
+) -> None:
+    """
+    Plot how much better each agent does on the first benchmark than a
+    typical agent, with its 95% interval.
+
+    :param residuals: output of `compute_benchmark_residuals()`
+    :param name_a: name of the first benchmark, e.g., `HumanEval+`
+    :param figsize: figure size, default `plt.rcParams["figure.figsize"]`
+    """
+    if figsize is None:
+        figsize = plt.rcParams["figure.figsize"]
+    fig, ax = plt.subplots(figsize=figsize)
+    ordered = residuals.sort_values("residual")
+    positions = np.arange(len(ordered))
+    colors = np.where(ordered["specific"], "tab:red", "tab:blue")
+    ax.errorbar(
+        ordered["residual"],
+        positions,
+        xerr=[
+            ordered["residual"] - ordered["residual_low"],
+            ordered["residual_high"] - ordered["residual"],
+        ],
+        fmt="none",
+        ecolor="gray",
+        zorder=1,
+    )
+    ax.scatter(ordered["residual"], positions, color=colors, zorder=2)
+    ax.axvline(0, color="black", linewidth=1)
+    ax.set_yticks(positions)
+    ax.set_yticklabels([str(agent) for agent in ordered.index], fontsize=8)
+    ax.set_xlabel(
+        f"Gain on {name_a} beyond a typical agent (logits, 95% interval)"
+    )
+    ax.set_title("Which agents are benchmark-specific?")
+    fig.tight_layout()
+    plt.show()
+
+
+# #############################################################################
+# Reporting protocol
+# #############################################################################
+
+
+def choose_shrinkage_rule(
+    summaries: Dict[str, pd.DataFrame],
+    *,
+    candidates: Sequence[str] = ("paired", "empirical_bayes", "conditional"),
+    max_bias: float = 1.0,
+) -> Tuple[pd.DataFrame, Optional[str]]:
+    """
+    Pick the correction to recommend, with the rule of `preregistration_3.md`.
+
+    A candidate passes when its mean error is within `max_bias` points of 0 in
+    every setting; the recommended one is the passing candidate with the
+    lowest root mean squared error averaged over the settings.
+
+    :param summaries: output of `summarize_corrections()` for each setting,
+        e.g., `{"humaneval K=20": summary}`
+    :param candidates: corrections that can be recommended
+    :param max_bias: largest mean error allowed, in points
+    :return: one row per candidate with `max_abs_mean_error`, `mean_rmse`, and
+        `passes`; and the recommended correction, or `None` if none passes
+    """
+    rows = {}
+    for candidate in candidates:
+        mean_errors = [
+            s.loc[candidate, "mean_error"] for s in summaries.values()
+        ]
+        rmses = [s.loc[candidate, "rmse"] for s in summaries.values()]
+        max_abs = float(np.max(np.abs(mean_errors)))
+        rows[candidate] = {
+            "max_abs_mean_error": max_abs,
+            "mean_rmse": float(np.mean(rmses)),
+            "passes": max_abs <= max_bias,
+        }
+    table = pd.DataFrame.from_dict(rows, orient="index")
+    passing = table[table["passes"]]
+    recommended = None
+    if not passing.empty:
+        recommended = str(passing["mean_rmse"].idxmin())
+    return table, recommended
+
+
+def report_agent_scores(
+    outcomes: pd.DataFrame,
+    *,
+    correction: str = "paired",
+    n_boot: int = 2000,
+    seed: int = 0,
+) -> pd.DataFrame:
+    """
+    Report a leaderboard with the protocol of this project.
+
+    For each agent, best observed score first:
+    - `score` with its 95% bootstrap interval, `ci_low` and `ci_high`
+    - its 95% rank interval, `rank_low` and `rank_high`, and its chance of
+      coming out first, `p_first`
+    - `gap_next`, the gap to the next agent, with the Holm-adjusted p-value of
+      the paired McNemar test against it, `p_next_holm`, and the number of
+      tasks that would resolve that gap at 80% power, `tasks_to_resolve`
+    - for the leader only, `corrected`: its score corrected for having been
+      picked as the best agent, with `correction`
+
+    :param outcomes: agents x tasks matrix of 0/1
+    :param correction: one of `WINNER_CORRECTIONS`; by default the paired
+        rule, which Study H of `preregistration_3.md` recommends. It assumes
+        that the agents are about equal, so on a leaderboard of very
+        different agents it corrects too much
+    :param n_boot: number of bootstrap samples
+    :param seed: random seed
+    :return: one row per agent, best first, with the columns above
+    """
+    _LOG.debug(hprint.to_str("correction n_boot seed"))
+    hdbg.dassert_in(correction, WINNER_CORRECTIONS)
+    ranks = compute_rank_intervals(outcomes, n_boot=n_boot, seed=seed)
+    cis = compute_score_cis(outcomes, n_boot=n_boot, seed=seed)
+    order = list(ranks.index)
+    report = ranks[["score", "rank_low", "rank_high", "p_first"]].copy()
+    report["ci_low"] = cis.loc[order, "ci_low"]
+    report["ci_high"] = cis.loc[order, "ci_high"]
+    # Compare each agent with the next one.
+    gaps, p_values, tasks = [], [], []
+    for agent, next_agent in zip(order[:-1], order[1:]):
+        comparison = compare_pair(
+            outcomes.loc[agent],
+            outcomes.loc[next_agent],
+            n_boot=n_boot,
+            seed=seed,
+        )
+        gaps.append(comparison["gap"])
+        p_values.append(comparison["p_value"])
+        if comparison["gap"] > 0 and comparison["sd_diff"] > 0:
+            tasks.append(
+                compute_min_tasks(comparison["sd_diff"], comparison["gap"])
+            )
+        else:
+            tasks.append(np.inf)
+    report["gap_next"] = gaps + [np.nan]
+    report["p_next_holm"] = list(holm_adjust(p_values)) + [np.nan]
+    report["tasks_to_resolve"] = tasks + [np.nan]
+    # Correct the leader's score for having been picked first.
+    estimates = correct_winner_score(
+        outcomes.loc[order].to_numpy(dtype=float), 0, seed=seed
+    )
+    report["corrected"] = np.nan
+    report.loc[order[0], "corrected"] = estimates[correction]
+    return report

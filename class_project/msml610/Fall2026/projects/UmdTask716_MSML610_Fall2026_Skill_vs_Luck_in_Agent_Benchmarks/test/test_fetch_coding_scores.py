@@ -6,6 +6,7 @@ import test.test_fetch_coding_scores as ttfecosc
 
 import logging
 import os
+import re
 import tarfile
 from typing import List
 
@@ -15,6 +16,9 @@ import helpers.hunit_test as hunitest
 import fetch_coding_scores as fecosc
 
 _LOG = logging.getLogger(__name__)
+
+# The dirs of the phase-1 archive.
+_SCORE_DIRS = ("data/coding_runs/", "data/coding_runs_pilot/")
 
 
 def _make_archive(dir_name: str, names: List[str]) -> str:
@@ -33,6 +37,36 @@ def _make_archive(dir_name: str, names: List[str]) -> str:
             hio.to_file(file_path, name)
             archive.add(file_path, arcname=name)
     return path
+
+
+# #############################################################################
+# Test_archives
+# #############################################################################
+
+
+class Test_archives(hunitest.TestCase):
+    """
+    Test the list of archives in `fetch_coding_scores.ARCHIVES`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that each archive has a full SHA-256 and dirs of its own.
+        """
+        # Prepare inputs.
+        archives = fecosc.ARCHIVES
+        # Run test.
+        all_dirs = [d for _, _, dirs in archives.values() for d in dirs]
+        # Check outputs.
+        for file_name, (file_id, sha256, dirs) in archives.items():
+            self.assertTrue(file_name.endswith(".tar.gz"), file_name)
+            self.assertTrue(file_id, file_name)
+            self.assertRegex(sha256, re.compile(r"^[0-9a-f]{64}$"))
+            for dir_name in dirs:
+                self.assertTrue(dir_name.startswith("data/"), dir_name)
+                self.assertTrue(dir_name.endswith("/"), dir_name)
+        # No 2 archives write into the same dir.
+        self.assertEqual(len(all_dirs), len(set(all_dirs)))
 
 
 # #############################################################################
@@ -86,7 +120,7 @@ class Test_extract_scores(hunitest.TestCase):
         path = _make_archive(scratch_dir, names)
         dst_dir = os.path.join(scratch_dir, "project")
         # Run test.
-        extracted = fecosc.extract_scores(path, dst_dir)
+        extracted = fecosc.extract_scores(path, dst_dir, _SCORE_DIRS)
         # Check outputs.
         self.assertEqual(extracted, names)
         for name in names:
@@ -103,7 +137,7 @@ class Test_extract_scores(hunitest.TestCase):
         dst_dir = os.path.join(scratch_dir, "project")
         # Run test and check outputs.
         with self.assertRaises(AssertionError):
-            fecosc.extract_scores(path, dst_dir)
+            fecosc.extract_scores(path, dst_dir, _SCORE_DIRS)
         self.assertFalse(os.path.exists(dst_dir))
 
     def test3(self) -> None:
@@ -116,5 +150,18 @@ class Test_extract_scores(hunitest.TestCase):
         dst_dir = os.path.join(scratch_dir, "project")
         # Run test and check outputs.
         with self.assertRaises(AssertionError):
-            fecosc.extract_scores(path, dst_dir)
+            fecosc.extract_scores(path, dst_dir, _SCORE_DIRS)
+        self.assertFalse(os.path.exists(dst_dir))
+
+    def test4(self) -> None:
+        """
+        Test that the phase-2 archive cannot write into the phase-1 dirs.
+        """
+        # Prepare inputs.
+        scratch_dir = self.get_scratch_space()
+        path = _make_archive(scratch_dir, ["data/coding_runs/x_t0.csv"])
+        dst_dir = os.path.join(scratch_dir, "project")
+        # Run test and check outputs.
+        with self.assertRaises(AssertionError):
+            fecosc.extract_scores(path, dst_dir, ("data/coding_runs_phase2/",))
         self.assertFalse(os.path.exists(dst_dir))

@@ -52,6 +52,36 @@ try:
 except ImportError:
     display = print  # type: ignore
 
+# %%
+# Settings of the analysis.
+config = {
+    "data_dir": "data",
+    # Bootstrap samples over the tasks, and the level and power of the tests.
+    "n_boot": 2000,
+    "alpha": 0.05,
+    "power": 0.8,
+    "seed": 0,
+    # Score gaps to resolve.
+    "gaps": [0.01, 0.02, 0.03, 0.05],
+    # Ranking recovery: 10 simulated agents spaced by each logit gap.
+    "logit_gaps": [0.02, 0.05, 0.1, 0.25],
+    "n_tasks_list": [100, 500, 2000, 10000],
+    "n_recovery_trials": 200,
+    # Random splits of the tasks in 2 halves.
+    "n_splits": 1000,
+    # The winner's curse of K equal variants.
+    "curse_n_tasks": [100, 500, 2000],
+    "curse_n_variants": [1, 2, 5, 10, 20, 50],
+    "n_curse_trials": 5000,
+    # The 2PL fits: SVI on the whole matrix, checked with NUTS on the top 40
+    # agents and the first 150 tasks.
+    "n_svi_steps": 5000,
+    "n_svi_samples": 1000,
+    "nuts_subset": (40, 150),
+    "n_nuts_samples": 500,
+    "n_selection_trials": 300,
+}
+
 # %% [markdown]
 # # Part 1: The benchmark and the submissions
 
@@ -65,7 +95,7 @@ except ImportError:
 
 # %%
 # Load the outcome matrix and the metadata saved by `fetch_swebench_verified.py`.
-outcomes, submissions, tasks = utils.load_swebench_dataset("data")
+outcomes, submissions, tasks = utils.load_swebench_dataset(config["data_dir"])
 
 print("outcomes.shape=", outcomes.shape)
 print("len(submissions)=", len(submissions))
@@ -141,7 +171,9 @@ display(entropo[["label", "score", "attempts"]])
 
 # %%
 # Compute a 95% interval for every score.
-cis = utils.compute_score_cis(outcomes)
+cis = utils.compute_score_cis(
+    outcomes, n_boot=config["n_boot"], alpha=config["alpha"], seed=config["seed"]
+)
 width = 100 * (cis["ci_high"] - cis["ci_low"])
 
 print("width.median()=", round(width.median(), 1), "points")
@@ -168,10 +200,16 @@ utils.plot_leaderboard_cis(leaderboard, cis, top_k=25, figsize=(14, 9))
 
 # %%
 # Compare every agent with the next one on the leaderboard.
-adjacent = utils.compare_adjacent_ranks(outcomes, leaderboard)
+adjacent = utils.compare_adjacent_ranks(
+    outcomes,
+    leaderboard,
+    n_boot=config["n_boot"],
+    alpha=config["alpha"],
+    seed=config["seed"],
+)
 # Count the pairs that differ before and after the Holm adjustment.
 median_gap = 100 * adjacent["gap"].abs().median()
-num_raw_significant = int((adjacent["p_value"] < 0.05).sum())
+num_raw_significant = int((adjacent["p_value"] < config["alpha"]).sum())
 num_distinguishable = int(adjacent["distinguishable"].sum())
 
 print("len(adjacent)=", len(adjacent))
@@ -183,7 +221,7 @@ print("num_distinguishable=", num_distinguishable)
 
 # %%
 # Plot the gap between each pair of neighbors, with its paired interval.
-utils.plot_adjacent_gaps(adjacent, figsize=(14, 5))
+utils.plot_adjacent_gaps(adjacent, alpha=config["alpha"], figsize=(14, 5))
 
 # %% [markdown]
 # ## Cell 3.2: Who is tied with the leader?
@@ -199,7 +237,13 @@ utils.plot_adjacent_gaps(adjacent, figsize=(14, 5))
 
 # %%
 # Compare every agent with the leader.
-versus_leader = utils.compare_to_leader(outcomes, leaderboard)
+versus_leader = utils.compare_to_leader(
+    outcomes,
+    leaderboard,
+    n_boot=config["n_boot"],
+    alpha=config["alpha"],
+    seed=config["seed"],
+)
 tied = versus_leader[versus_leader["tied_with_leader"]]
 leader = leaderboard["label"].iloc[0]
 
@@ -224,10 +268,14 @@ display(tied[columns].round(4).reset_index(drop=True))
 # %%
 # Compute the tasks needed for a few gap sizes, with the median `sd_diff`.
 sd_diff = adjacent["sd_diff"].median()
-gaps = [0.01, 0.02, 0.03, 0.05]
 min_tasks = pd.Series(
-    [utils.compute_min_tasks(sd_diff, gap) for gap in gaps],
-    index=[f"{100 * gap:.0f} points" for gap in gaps],
+    [
+        utils.compute_min_tasks(
+            sd_diff, gap, alpha=config["alpha"], power=config["power"]
+        )
+        for gap in config["gaps"]
+    ],
+    index=[f"{100 * gap:.0f} points" for gap in config["gaps"]],
     name="tasks needed",
 )
 
@@ -244,7 +292,9 @@ display(min_tasks.round(0))
 
 # %%
 # Compute the smallest resolvable gap for the real benchmark size.
-min_gap = utils.compute_min_detectable_gap(sd_diff, outcomes.shape[1])
+min_gap = utils.compute_min_detectable_gap(
+    sd_diff, outcomes.shape[1], alpha=config["alpha"], power=config["power"]
+)
 
 print("min_gap=", round(100 * min_gap, 1), "points")
 # Outcome: 500 tasks resolve gaps of about 5.4 points or more, while the
@@ -252,7 +302,13 @@ print("min_gap=", round(100 * min_gap, 1), "points")
 
 # %%
 # Plot the tasks needed against the gap size.
-utils.plot_min_tasks_curve(adjacent["sd_diff"], figsize=(12, 5))
+utils.plot_min_tasks_curve(
+    adjacent["sd_diff"],
+    n_benchmark_tasks=outcomes.shape[1],
+    alpha=config["alpha"],
+    power=config["power"],
+    figsize=(12, 5),
+)
 
 # %% [markdown]
 # # Part 5: Ranking under uncertainty
@@ -272,7 +328,9 @@ utils.plot_min_tasks_curve(adjacent["sd_diff"], figsize=(12, 5))
 
 # %%
 # Bootstrap the ranks of all the agents.
-rank_intervals = utils.compute_rank_intervals(outcomes)
+rank_intervals = utils.compute_rank_intervals(
+    outcomes, n_boot=config["n_boot"], alpha=config["alpha"], seed=config["seed"]
+)
 # Add the labels and keep the leaderboard order.
 ranks = leaderboard[["label"]].join(rank_intervals)
 rank_width = ranks["rank_high"] - ranks["rank_low"]
@@ -322,16 +380,19 @@ utils.plot_first_place_chance(
 
 # %%
 # Simulate every combination of gap and benchmark size.
-logit_gaps = [0.02, 0.05, 0.1, 0.25]
-n_tasks_list = [100, 500, 2000, 10000]
 rows = []
-for logit_gap in logit_gaps:
+for logit_gap in config["logit_gaps"]:
     abilities = logit_gap * (np.arange(10) - 4.5)
     # Express the gap as the difference in true score between the top 2.
     true_scores = utils.compute_expected_scores(abilities)
     gap_points = 100 * (true_scores.iloc[-1] - true_scores.iloc[-2])
-    for n_tasks in n_tasks_list:
-        recovery = utils.check_ranking_recovery(abilities, n_tasks)
+    for n_tasks in config["n_tasks_list"]:
+        recovery = utils.check_ranking_recovery(
+            abilities,
+            n_tasks,
+            n_trials=config["n_recovery_trials"],
+            seed=config["seed"],
+        )
         rows.append({"gap_points": gap_points, "n_tasks": n_tasks, **recovery})
 recovery = pd.DataFrame(rows)
 
@@ -368,7 +429,9 @@ groups = {
     "top 20": outcomes.loc[leaderboard.index[:20]],
 }
 split_half = {
-    name: utils.compute_split_half_correlation(group)
+    name: utils.compute_split_half_correlation(
+        group, n_splits=config["n_splits"], seed=config["seed"]
+    )
     for name, group in groups.items()
 }
 summary = pd.DataFrame(
@@ -402,7 +465,9 @@ utils.plot_split_half_correlations(split_half, figsize=(12, 5))
 
 # %%
 # Pick the leader on half of the tasks and score it on the other half.
-held_out = utils.compute_held_out_drop(outcomes)
+held_out = utils.compute_held_out_drop(
+    outcomes, n_splits=config["n_splits"], seed=config["seed"]
+)
 
 display(held_out[["score_selected", "score_held_out", "drop"]].mean().round(4))
 print("(held_out['drop'] > 0).mean()=", (held_out["drop"] > 0).mean())
@@ -437,9 +502,14 @@ print("(held_out['drop'] > 0).mean()=", (held_out["drop"] > 0).mean())
 # %%
 # Simulate every combination of K and benchmark size.
 rows = []
-for n_tasks in [100, 500, 2000]:
-    for n_variants in [1, 2, 5, 10, 20, 50]:
-        curse = utils.simulate_winners_curse(n_variants, n_tasks, n_trials=5000)
+for n_tasks in config["curse_n_tasks"]:
+    for n_variants in config["curse_n_variants"]:
+        curse = utils.simulate_winners_curse(
+            n_variants,
+            n_tasks,
+            n_trials=config["n_curse_trials"],
+            seed=config["seed"],
+        )
         rows.append({"n_tasks": n_tasks, "n_variants": n_variants, **curse})
 curse = pd.DataFrame(rows)
 # Compare each correction with the real inflation.
@@ -518,7 +588,12 @@ print("ratio.median()=", round(ratio.median(), 2))
 
 # %%
 # Fit the 2PL model on the whole matrix.
-irt = utils.fit_irt_2pl(outcomes)
+irt = utils.fit_irt_2pl(
+    outcomes,
+    n_steps=config["n_svi_steps"],
+    n_samples=config["n_svi_samples"],
+    seed=config["seed"],
+)
 
 display(irt["tasks"].describe().round(2))
 # Outcome: the difficulties span about 12 logits, and the discriminations sit
@@ -526,9 +601,20 @@ display(irt["tasks"].describe().round(2))
 
 # %%
 # Check SVI against NUTS (MCMC) on a subset of the matrix, where NUTS is fast.
-subset = outcomes.loc[leaderboard.index[:40], outcomes.columns[:150]]
-irt_svi = utils.fit_irt_2pl(subset)
-irt_nuts = utils.fit_irt_2pl(subset, method="nuts", n_samples=500)
+n_agents, n_tasks = config["nuts_subset"]
+subset = outcomes.loc[leaderboard.index[:n_agents], outcomes.columns[:n_tasks]]
+irt_svi = utils.fit_irt_2pl(
+    subset,
+    n_steps=config["n_svi_steps"],
+    n_samples=config["n_svi_samples"],
+    seed=config["seed"],
+)
+irt_nuts = utils.fit_irt_2pl(
+    subset,
+    method="nuts",
+    n_samples=config["n_nuts_samples"],
+    seed=config["seed"],
+)
 ability_corr = np.corrcoef(
     irt_svi["agents"]["ability"], irt_nuts["agents"]["ability"]
 )[0, 1]
@@ -667,7 +753,9 @@ utils.plot_task_information(information, figsize=(12, 5))
 
 # %%
 # Compare the 2 ways of picking the top 20 on simulated benchmarks.
-selection_effect = utils.compute_selection_effect(irt)
+selection_effect = utils.compute_selection_effect(
+    irt, n_trials=config["n_selection_trials"], seed=config["seed"]
+)
 
 display(selection_effect.round(3))
 # Outcome: picked on the score, as in Cell 6.1, the median Kendall is 0.29, close

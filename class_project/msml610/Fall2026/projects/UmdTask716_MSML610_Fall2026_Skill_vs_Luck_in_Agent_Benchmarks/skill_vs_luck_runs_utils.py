@@ -2,7 +2,9 @@
 Helper functions for the coding-benchmark runs of the Skill vs Luck project.
 
 Used by `run_coding_agents.py`, `score_coding_runs.py`, and the
-`skill_vs_luck.runs` notebook:
+`skill_vs_luck.runs`, `skill_vs_luck.one_run`,
+`skill_vs_luck.one_run_test_set`, `skill_vs_luck.temperatures`, and
+`skill_vs_luck.more_models` notebooks:
 - Load HumanEval+ and MBPP+ with EvalPlus
 - Ask a model served by Ollama for a solution, with the EvalPlus prompt
 - Check a solution on the examples shown in the prompt (repair scaffold)
@@ -10,6 +12,9 @@ Used by `run_coding_agents.py`, `score_coding_runs.py`, and the
 - Read the public EvalPlus samples
 - Split the variance of a score into its task and run parts, compare agents
   over tasks and runs, and check how stable a 1-run leaderboard is
+- Tune and test the estimator of run luck from 1 run (Study B)
+- Check the predictions of the lower temperatures (Study C) and of the 3
+  more models (Study D)
 
 Import as:
 
@@ -68,6 +73,8 @@ _DATASET_FILES = {
     "humaneval": "HumanEvalPlus-v0.1.10.jsonl",
     "mbpp": "MbppPlus-v0.2.0.jsonl",
 }
+# Names of the benchmarks in plots and tables.
+_BENCHMARK_NAMES = {"humaneval": "HumanEval+", "mbpp": "MBPP+"}
 # Prompt that EvalPlus uses for chat models (`evalplus/codegen.py`).
 INSTRUCTION_PREFIX = (
     "Please provide a self-contained Python script that solves the following "
@@ -77,6 +84,40 @@ RESPONSE_PREFIX = (
     "Below is a Python script with a self-contained function that solves the "
     "problem and passes corresponding tests:"
 )
+# Parts of the prompt varied in the search over prompt variants (Milestone 4):
+# a system prompt, the instruction, and 1 extra line of guidance. A variant is
+# 1 choice of each part, named `<system>-<instruction>-<guidance>`, so the
+# grid has 2 x 2 x 5 = 20 variants. All of them keep the start of the answer,
+# so the output format and the code extraction stay the same.
+SYSTEM_PROMPTS = {
+    "none": "",
+    "expert": "You are an expert Python programmer who writes correct code.",
+}
+INSTRUCTIONS = {
+    "evalplus": INSTRUCTION_PREFIX,
+    "short": "Complete the following Python function in a markdown code block:",
+}
+GUIDANCE = {
+    "none": "",
+    "edge": "Handle edge cases, such as empty inputs and single elements.",
+    "examples": (
+        "Make sure the function returns the outputs shown in the examples."
+    ),
+    "clean": "Write clean and readable code with descriptive variable names.",
+    "signature": "Keep the function name and its arguments exactly as given.",
+}
+PROMPT_VARIANTS = {
+    f"{system}-{instruction}-{guidance}": {
+        "system": SYSTEM_PROMPTS[system],
+        "instruction": INSTRUCTIONS[instruction],
+        "guidance": GUIDANCE[guidance],
+    }
+    for system in SYSTEM_PROMPTS
+    for instruction in INSTRUCTIONS
+    for guidance in GUIDANCE
+}
+# The variant of the EvalPlus prompt, used by the runs of phases 1 and 2.
+BASELINE_VARIANT = "none-evalplus-none"
 # Sampling of the EvalPlus Hugging Face backend: `top_p` 0.95, the default
 # `top_k` of 50, no repeat penalty, and at most 768 new tokens. Ollama's own
 # defaults (e.g., repeat penalty 1.1) would change the outputs.
@@ -254,23 +295,32 @@ def get_cell_seed(task_id: str, run: int) -> int:
     return seed
 
 
-def build_messages(prompt: str) -> List[Dict[str, str]]:
+def build_messages(
+    prompt: str, variant: str = BASELINE_VARIANT
+) -> List[Dict[str, str]]:
     """
-    Build the EvalPlus chat prompt for a task.
+    Build the chat prompt for a task.
 
     The last message is the start of the answer, so the model continues
-    directly with the code, as in EvalPlus.
+    directly with the code, as in EvalPlus. The baseline variant is the
+    EvalPlus prompt.
 
     :param prompt: task prompt, i.e., a signature with a docstring
+    :param variant: prompt variant, a key of `PROMPT_VARIANTS`
     :return: messages for the Ollama chat API
     """
-    messages = [
-        {
-            "role": "user",
-            "content": f"{INSTRUCTION_PREFIX}\n```\n{prompt.strip()}\n```\n",
-        },
-        {"role": "assistant", "content": f"{RESPONSE_PREFIX}\n```python\n"},
-    ]
+    hdbg.dassert_in(variant, PROMPT_VARIANTS)
+    parts = PROMPT_VARIANTS[variant]
+    messages = []
+    if parts["system"]:
+        messages.append({"role": "system", "content": parts["system"]})
+    content = f"{parts['instruction']}\n```\n{prompt.strip()}\n```\n"
+    if parts["guidance"]:
+        content += f"{parts['guidance']}\n"
+    messages.append({"role": "user", "content": content})
+    messages.append(
+        {"role": "assistant", "content": f"{RESPONSE_PREFIX}\n```python\n"}
+    )
     return messages
 
 
@@ -367,8 +417,9 @@ def call_ollama(
     :param stop: texts that end the generation
     :param url: Ollama server
     :return: dict with `text`, `tokens_in`, `tokens_out`, `seconds`
-        (generation time on the server), and `done_reason` (`stop`, or
-        `length` if the answer hit the token limit)
+        (generation time on the server), and `done_reason` (`stop`,
+        `length` if the answer hit the token limit, or `repeat_limit` if
+        Ollama stopped an answer stuck repeating a token)
     """
     _LOG.debug(hprint.to_str("model temperature seed"))
     options = dict(GENERATION_OPTIONS, temperature=temperature, seed=seed)
@@ -383,16 +434,29 @@ def call_ollama(
         },
         timeout=600,
     )
-    response.raise_for_status()
-    body = response.json()
-    reply = {
-        # EvalPlus replaces tabs with 4 spaces.
-        "text": body["message"]["content"].replace("\t", "    "),
-        "tokens_in": body.get("prompt_eval_count", 0),
-        "tokens_out": body.get("eval_count", 0),
-        "seconds": body.get("total_duration", 0) / 1e9,
-        "done_reason": body.get("done_reason", ""),
-    }
+    if response.status_code == 500 and "token repeat limit" in response.text:
+        # Ollama stops an answer that repeats the same token too many times,
+        # e.g., "db0000000...", and returns an error. The answer has failed
+        # and a retry repeats it with the same seed, so return no code.
+        _LOG.warning("Ollama stopped a repeating answer: %s", response.text)
+        reply = {
+            "text": "",
+            "tokens_in": 0,
+            "tokens_out": 0,
+            "seconds": 0.0,
+            "done_reason": "repeat_limit",
+        }
+    else:
+        response.raise_for_status()
+        body = response.json()
+        reply = {
+            # EvalPlus replaces tabs with 4 spaces.
+            "text": body["message"]["content"].replace("\t", "    "),
+            "tokens_in": body.get("prompt_eval_count", 0),
+            "tokens_out": body.get("eval_count", 0),
+            "seconds": body.get("total_duration", 0) / 1e9,
+            "done_reason": body.get("done_reason", ""),
+        }
     return reply
 
 
@@ -630,7 +694,12 @@ def sort_task_ids(task_ids: List[str]) -> List[str]:
 
 
 def get_runs_file(
-    dst_dir: str, benchmark: str, model: str, temperature: float
+    dst_dir: str,
+    benchmark: str,
+    model: str,
+    temperature: float,
+    *,
+    variant: Optional[str] = None,
 ) -> str:
     """
     Get the file that stores the answers of 1 model at 1 temperature.
@@ -639,10 +708,14 @@ def get_runs_file(
     :param benchmark: `humaneval` or `mbpp`
     :param model: e.g., `deepseek-coder:1.3b`
     :param temperature: e.g., `0.8`
+    :param variant: prompt variant, added to the file name, or `None` for
+        the runs of phases 1 and 2
     :return: e.g.,
         `data/raw/coding_runs/humaneval/deepseek-coder_1.3b_t0.8.jsonl`
     """
     model_slug = model.replace(":", "_").replace("/", "_")
+    if variant is not None:
+        model_slug = f"{model_slug}_{variant}"
     path = os.path.join(
         dst_dir, benchmark, f"{model_slug}_t{temperature:g}.jsonl"
     )
@@ -672,6 +745,7 @@ def generate_cell(
     temperature: float,
     max_repairs: int,
     stop: List[str],
+    variant: str = BASELINE_VARIANT,
     url: str = DEFAULT_OLLAMA_URL,
 ) -> Dict[str, Any]:
     """
@@ -689,6 +763,7 @@ def generate_cell(
     :param temperature: sampling temperature, `0` for greedy decoding
     :param max_repairs: attempts allowed after the first one
     :param stop: texts that end a generation
+    :param variant: prompt variant, a key of `PROMPT_VARIANTS`
     :param url: Ollama server
     :return: dict with `task_id`, `run`, `seed`, `temperature`,
         `n_visible_tests`, and `attempts` (each with `text`, `code`,
@@ -698,7 +773,7 @@ def generate_cell(
     task_id = problem["task_id"]
     seed = get_cell_seed(task_id, run)
     tests = get_visible_tests(problem, benchmark)
-    messages = build_messages(problem["prompt"])
+    messages = build_messages(problem["prompt"], variant)
     attempts = []
     for _ in range(max_repairs + 1):
         reply = call_ollama(
@@ -1043,16 +1118,18 @@ def get_scaffold_rows(record: Dict[str, Any]) -> List[Dict[str, Any]]:
 # #############################################################################
 
 
-def load_scores(scores_dir: str) -> pd.DataFrame:
+def load_scores(scores_dir: str, *, pattern: str = "*.csv.gz") -> pd.DataFrame:
     """
-    Load all the scores saved by `score_coding_runs.py`.
+    Load the scores saved by `score_coding_runs.py`.
 
     :param scores_dir: e.g., `data/coding_runs`
+    :param pattern: files to load, e.g., `evalplus_*.csv.gz` for the public
+        samples only
     :return: 1 row per scored solution, with `source` (`local` or
         `evalplus`) and `benchmark` taken from the file name
     """
     frames = []
-    for path in sorted(glob.glob(os.path.join(scores_dir, "*.csv.gz"))):
+    for path in sorted(glob.glob(os.path.join(scores_dir, pattern))):
         source, benchmark = os.path.basename(path).split("_")[:2]
         # Keep an empty `failure` as `""` instead of NaN.
         frame = pd.read_csv(path, keep_default_na=False)
@@ -1097,6 +1174,41 @@ def get_outcome_matrix(
     hdbg.dassert(not matrix.isna().any().any(), "Some cells have no score")
     matrix = matrix.loc[sort_task_ids(list(matrix.index))].astype(int)
     return matrix
+
+
+def get_greedy_matrix(
+    scores: pd.DataFrame, benchmark: str, agents: List[Tuple[str, str]]
+) -> pd.DataFrame:
+    """
+    Get the agents x tasks matrix of the greedy one-shot answers.
+
+    Each agent contributes its first greedy run (run 0). Only the tasks with
+    an outcome for every agent are kept.
+
+    :param scores: output of `load_scores()`
+    :param benchmark: `humaneval` or `mbpp`
+    :param agents: `(source, model)` pairs, e.g., `("evalplus", "starcoder")`
+        or `("local", "opencoder:8b")`
+    :return: agents x tasks matrix of `plus_pass` (0/1), with 1 row per model
+        and the tasks sorted
+    """
+    rows = []
+    for source, model in agents:
+        matrix = get_outcome_matrix(
+            scores,
+            source=source,
+            benchmark=benchmark,
+            model=model,
+            scaffold="one_shot",
+            temperature=0,
+        )
+        rows.append(matrix[0].rename(model))
+    outcomes = pd.concat(rows, axis=1).T
+    # Keep the tasks that every agent answered.
+    outcomes = outcomes.dropna(axis=1).astype(int)
+    outcomes = outcomes[sort_task_ids(list(outcomes.columns))]
+    outcomes.columns.name = None
+    return outcomes
 
 
 def compute_variance_components(outcomes: pd.DataFrame) -> pd.Series:
@@ -1196,18 +1308,24 @@ def compare_agents_over_runs(
 
 
 def compute_ranking_stability(
-    matrices: Dict[str, pd.DataFrame], *, n_draws: int = 10000, seed: int = 0
+    matrices: Dict[str, pd.DataFrame],
+    *,
+    n_draws: Optional[int] = 10000,
+    seed: int = 0,
 ) -> Tuple[pd.Series, pd.DataFrame]:
     """
     Check how often a leaderboard from 1 run per agent matches the
     leaderboard from all the runs.
 
     Each draw picks 1 run at random for each agent, as a leaderboard that
-    runs every agent once would.
+    runs every agent once would. With few agents and runs, every combination
+    of 1 run per agent can be taken once instead, which gives the exact
+    shares: random draws could split 2 equal shares by chance.
 
     :param matrices: agent label -> tasks x runs matrix of 0/1, same tasks
-    :param n_draws: number of random leaderboards
-    :param seed: random seed
+    :param n_draws: number of random leaderboards, or `None` to take every
+        combination of runs once
+    :param seed: random seed, unused with `n_draws=None`
     :return:
         - summary with `p_same_order` (share of draws that reverse no pair
           whose means over the runs differ) and `mean_kendall_tau`
@@ -1220,8 +1338,16 @@ def compute_ranking_stability(
         [matrices[label].mean(axis=0).to_numpy() for label in labels]
     )
     mean_scores = run_scores.mean(axis=1)
-    rng = np.random.default_rng(seed)
-    picks = rng.integers(0, run_scores.shape[1], size=(n_draws, len(labels)))
+    if n_draws is None:
+        # Each combination of 1 run per agent is as likely as any other.
+        n_runs = run_scores.shape[1]
+        hdbg.dassert_lte(n_runs ** len(labels), 10**6, "Too many combinations")
+        picks = np.array(
+            list(itertools.product(range(n_runs), repeat=len(labels)))
+        )
+    else:
+        rng = np.random.default_rng(seed)
+        picks = rng.integers(0, run_scores.shape[1], size=(n_draws, len(labels)))
     drawn = run_scores[np.arange(len(labels)), picks]
     # A draw keeps the order if it reverses no pair with different means: a
     # tie in the draw is not a reversal, and pairs with equal means have no
@@ -1231,7 +1357,7 @@ def compute_ranking_stability(
         for i, j in itertools.permutations(range(len(labels)), 2)
         if mean_scores[i] > mean_scores[j]
     ]
-    kept = np.ones(n_draws, dtype=bool)
+    kept = np.ones(len(picks), dtype=bool)
     for i, j in strict_pairs:
         kept &= drawn[:, i] >= drawn[:, j]
     same_order = float(kept.mean())
@@ -1347,15 +1473,32 @@ def compute_flaky_share(scores: pd.DataFrame) -> float:
 # #############################################################################
 
 
+def get_model_label(model: str) -> str:
+    """
+    Get a short name for a model, for tables and plots.
+
+    The name keeps the size of a local model, since 2 local models can share
+    a name (DeepSeek-Coder 1.3B and 6.7B).
+
+    :param model: e.g., `codeqwen:7b-chat-v1.5-q4_K_M` (local) or
+        `code-llama-7b` (public samples)
+    :return: e.g., `codeqwen 7b`
+    """
+    name, _, tag = model.partition(":")
+    if tag:
+        name = f"{name} {tag.split('-')[0]}"
+    return name
+
+
 def get_agent_label(model: str, scaffold: str) -> str:
     """
     Get a short name for an agent, for tables and plots.
 
     :param model: e.g., `codeqwen:7b-chat-v1.5-q4_K_M`
     :param scaffold: `one_shot` or `repair`
-    :return: e.g., `codeqwen / repair`
+    :return: e.g., `codeqwen 7b / repair`
     """
-    label = f"{model.split(':')[0]} / {scaffold}"
+    label = f"{get_model_label(model)} / {scaffold}"
     return label
 
 
@@ -1376,9 +1519,12 @@ def get_agent_matrices(
         & (scores["benchmark"] == benchmark)
         & (scores["temperature"] == temperature)
     )
-    agents = scores.loc[mask, ["model", "scaffold"]].drop_duplicates()
+    rows = scores.loc[mask, ["model", "scaffold"]].drop_duplicates()
+    agents = list(rows.itertuples(index=False))
+    labels = [get_agent_label(model, scaffold) for model, scaffold in agents]
+    hdbg.dassert_no_duplicates(labels, "2 agents have the same label")
     matrices = {
-        get_agent_label(model, scaffold): get_outcome_matrix(
+        label: get_outcome_matrix(
             scores,
             source=source,
             benchmark=benchmark,
@@ -1386,7 +1532,7 @@ def get_agent_matrices(
             scaffold=scaffold,
             temperature=temperature,
         )
-        for model, scaffold in agents.itertuples(index=False)
+        for label, (model, scaffold) in zip(labels, agents)
     }
     return matrices
 
@@ -1427,6 +1573,13 @@ _PUBLISHED_SCORES = [
     ("codeqwen:7b-chat-v1.5-q4_K_M", "mbpp", 79.4, 69.0),
     ("opencoder:8b", "humaneval", 81.7, 77.4),
     ("opencoder:8b", "mbpp", 82.0, 71.4),
+    # The models of phase 2 (`preregistration_2.md`, Study D).
+    ("deepseek-coder:6.7b-instruct-q4_K_M", "humaneval", 74.4, 71.3),
+    ("deepseek-coder:6.7b-instruct-q4_K_M", "mbpp", 74.9, 65.6),
+    ("llama3.1:8b-instruct-q4_K_M", "humaneval", 69.5, 62.8),
+    ("llama3.1:8b-instruct-q4_K_M", "mbpp", 68.3, 55.6),
+    ("codegemma:7b-instruct-q4_K_M", "humaneval", 60.4, 51.8),
+    ("codegemma:7b-instruct-q4_K_M", "mbpp", 70.4, 56.9),
 ]
 
 
@@ -1562,9 +1715,12 @@ def plot_variance_parts(
     for i, (_, row) in enumerate(data.iterrows()):
         total = row["sigma2_task"] + row["sigma2_run"]
         ax.text(total, i, f"  {100 * row['run_share']:.0f}% runs", va="center")
+    # Leave room for the labels and keep the legend away from the bars.
+    totals = data["sigma2_task"] + data["sigma2_run"]
+    ax.set_xlim(0, 1.3 * totals.max())
     ax.set_xlabel("Variance of a 1-run outcome on a task")
     ax.set_title(title)
-    ax.legend(loc="lower right")
+    ax.legend(loc="upper left", bbox_to_anchor=(1.0, 1.0))
     fig.tight_layout()
     plt.show()
 
@@ -1630,6 +1786,9 @@ def plot_flip_rates(
     Plot how often each pair of agents swaps places in a 1-run leaderboard,
     against the gap between them.
 
+    Only the pairs that swap in some leaderboards get a label: the others all
+    sit at 0, where their labels would cover each other.
+
     :param pairs: second output of `compute_ranking_stability()`
     :param title: plot title
     :param figsize: figure size, default `plt.rcParams["figure.figsize"]`
@@ -1638,7 +1797,7 @@ def plot_flip_rates(
         figsize = plt.rcParams["figure.figsize"]
     fig, ax = plt.subplots(figsize=figsize)
     ax.scatter(100 * pairs["gap"], 100 * pairs["p_flip"], color="tab:blue")
-    for _, row in pairs.iterrows():
+    for _, row in pairs[pairs["p_flip"] > 0].iterrows():
         ax.annotate(
             f"{row['upper']} > {row['lower']}",
             (100 * row["gap"], 100 * row["p_flip"]),
@@ -1947,3 +2106,1445 @@ def check_predictions(
     }
     table = pd.DataFrame.from_dict(rows, orient="index")
     return table
+
+
+# #############################################################################
+# Study B: run luck from 1 run
+# #############################################################################
+
+
+# Local models of the 2 phases of runs.
+PHASE_1_MODELS = (
+    "deepseek-coder:1.3b-instruct-q4_K_M",
+    "codeqwen:7b-chat-v1.5-q4_K_M",
+    "opencoder:8b",
+)
+PHASE_2_MODELS = (
+    "deepseek-coder:6.7b-instruct-q4_K_M",
+    "llama3.1:8b-instruct-q4_K_M",
+    "codegemma:7b-instruct-q4_K_M",
+)
+# Local models that also have public EvalPlus samples (on MBPP+). Those
+# samples never go into a matrix with the local model, since they show its
+# strengths on each task.
+_PUBLIC_NAMES = {
+    "deepseek-coder:1.3b-instruct-q4_K_M": "deepseek-coder-1.3b-instruct",
+    "deepseek-coder:6.7b-instruct-q4_K_M": "deepseek-coder-6.7b-instruct",
+}
+
+
+def get_public_greedy_agents(
+    scores: pd.DataFrame, benchmark: str
+) -> pd.DataFrame:
+    """
+    Get the public greedy samples of a benchmark, the extra agents of Study B.
+
+    :param scores: output of `load_scores()`
+    :param benchmark: `humaneval` or `mbpp`
+    :return: 1 row per public model with a greedy sample and 1 column per
+        task, with 0/1
+    """
+    mask = (
+        (scores["source"] == "evalplus")
+        & (scores["benchmark"] == benchmark)
+        & (scores["temperature"] == 0)
+    )
+    models = sorted(scores.loc[mask, "model"].unique())
+    hdbg.dassert_lt(0, len(models), "No public greedy samples")
+    rows = {}
+    for model in models:
+        matrix = get_outcome_matrix(
+            scores,
+            source="evalplus",
+            benchmark=benchmark,
+            model=model,
+            scaffold="one_shot",
+            temperature=0.0,
+        )
+        hdbg.dassert_eq(matrix.shape[1], 1, "Greedy samples have 1 run")
+        rows[model] = matrix[0]
+    agents = pd.DataFrame(rows).T
+    return agents
+
+
+def get_one_run_settings(
+    irt_models: List[str], penalties: List[float], extras: List[bool]
+) -> Dict[str, Dict[str, Any]]:
+    """
+    Build a grid of settings of the 1-run estimator.
+
+    :param irt_models: e.g., `["rasch", "2pl"]`
+    :param penalties: e.g., `[0.01, 0.1]`
+    :param extras: e.g., `[False, True]`, whether the matrices hold the
+        public greedy agents
+    :return: name (e.g., `rasch 0.01 alone`) -> `irt_model`, `penalty`, and
+        `extras`
+    """
+    settings = {}
+    for irt_model, penalty, use_extras in itertools.product(
+        irt_models, penalties, extras
+    ):
+        name = f"{irt_model} {penalty:g} {'extras' if use_extras else 'alone'}"
+        settings[name] = {
+            "irt_model": irt_model,
+            "penalty": penalty,
+            "extras": use_extras,
+        }
+    return settings
+
+
+def _draw_one_run(outcomes: pd.DataFrame, rng: np.random.Generator) -> pd.Series:
+    """
+    Draw 1 run at random for each task.
+
+    :param outcomes: tasks x runs matrix of 0/1
+    :param rng: random generator
+    :return: 0/1 of each task
+    """
+    values = outcomes.to_numpy()
+    picks = rng.integers(0, values.shape[1], size=values.shape[0])
+    one_run = pd.Series(
+        values[np.arange(values.shape[0]), picks], index=outcomes.index
+    )
+    return one_run
+
+
+def evaluate_one_run_estimator(
+    samples: Dict[str, pd.DataFrame],
+    extras: pd.DataFrame,
+    settings: Dict[str, Dict[str, Any]],
+    n_others: int,
+    *,
+    n_draws: int = 50,
+    seed: int = 0,
+) -> pd.DataFrame:
+    """
+    Run the 1-run estimator on the public samples of 1 temperature.
+
+    This is the development set of Study B. Each model in `samples` is a
+    case. In each draw, the matrix of a case holds the model and `n_others`
+    other models of `samples` picked at random, each with 1 sample drawn at
+    random per task as its 1 run, like the test matrices that hold 3 or 6 of
+    our agents. With the `extras` setting, the matrix also holds the public
+    greedy agents of the models that are not in it. All the settings see the
+    same draws, so their errors can be compared.
+
+    :param samples: model -> tasks x samples matrix of 0/1, at 1 temperature
+    :param extras: output of `get_public_greedy_agents()`
+    :param settings: name -> `irt_model`, `penalty`, and `extras` (whether
+        the matrix holds the extra agents)
+    :param n_others: number of other sampled models in each matrix
+    :param n_draws: draws for each case
+    :param seed: random seed
+    :return: 1 row per setting, case, and draw with `setting`, `model`,
+        `draw`, `score` (of the 1 run), `estimate` (the run share before
+        any calibration), and `truth` (the run share from all the samples)
+    """
+    models = sorted(samples)
+    hdbg.dassert_lte(n_others, len(models) - 1)
+    rows = []
+    for case_index, model in enumerate(tqdm.tqdm(models, desc="Cases")):
+        truth = compute_variance_components(samples[model])["run_share"]
+        others = [other for other in models if other != model]
+        for draw in range(n_draws):
+            # The draw depends only on the seed, the case, and the draw index,
+            # so every setting sees the same matrices.
+            rng = np.random.default_rng([seed, case_index, draw])
+            picked = rng.choice(others, size=n_others, replace=False)
+            members = [model] + list(picked)
+            one_runs = pd.DataFrame(
+                {
+                    member: _draw_one_run(samples[member], rng)
+                    for member in members
+                }
+            ).T
+            # The extra agents never include the models of the matrix.
+            others_extras = extras.drop(index=members, errors="ignore")
+            for name, setting in settings.items():
+                if setting["extras"]:
+                    matrix = pd.concat([one_runs, others_extras])
+                else:
+                    matrix = one_runs
+                estimates = svlutils.estimate_run_share(
+                    matrix,
+                    irt_model=setting["irt_model"],
+                    penalty=setting["penalty"],
+                )
+                rows.append(
+                    {
+                        "setting": name,
+                        "model": model,
+                        "draw": draw,
+                        "score": estimates.loc[model, "score"],
+                        "estimate": estimates.loc[model, "run_share"],
+                        "truth": truth,
+                    }
+                )
+    results = pd.DataFrame(rows)
+    return results
+
+
+def fit_calibration(estimates: pd.Series, truths: pd.Series) -> float:
+    """
+    Find the calibration factor with the smallest mean absolute error.
+
+    The factor `c` that minimizes the sum of |truth - c x estimate| is the
+    median of truth / estimate, weighted by the estimate.
+
+    :param estimates: run shares before calibration
+    :param truths: measured run shares
+    :return: the factor
+    """
+    hdbg.dassert_eq(len(estimates), len(truths))
+    hdbg.dassert_lt(0, estimates.min(), "The estimates must be positive")
+    ratios = truths.to_numpy() / estimates.to_numpy()
+    order = np.argsort(ratios)
+    cumulative = np.cumsum(estimates.to_numpy()[order])
+    # The weighted median is the first ratio with half of the weight below it.
+    index = int(np.searchsorted(cumulative, cumulative[-1] / 2))
+    factor = float(ratios[order][index])
+    return factor
+
+
+def summarize_one_run_errors(
+    results: pd.DataFrame, *, tolerance: float = 0.10
+) -> pd.DataFrame:
+    """
+    Compare the settings of the 1-run estimator on the development set.
+
+    :param results: output of `evaluate_one_run_estimator()` for every
+        temperature, with a `temperature` column
+    :param tolerance: largest error that counts as close, e.g., `0.10` for
+        10 points
+    :return: 1 row per setting with:
+        - `above`: share of the draws where the estimate before
+          calibration is above the truth
+        - `error_raw`: mean absolute error before calibration
+        - `factor`: calibration factor fit on all the cases
+        - `error`, `within`: mean absolute error after calibration, and
+          share of the draws within `tolerance` of the truth
+        - `cv_error`, `cv_within`: the same when the factor of each model
+          comes from the other models only, which estimates the error on
+          new models
+    """
+    rows = {}
+    for name, group in results.groupby("setting", sort=False):
+        factor = fit_calibration(group["estimate"], group["truth"])
+        errors = (factor * group["estimate"] - group["truth"]).abs()
+        # Fit the factor without each model, then check it on that model.
+        cv_errors = []
+        for model in group["model"].unique():
+            train = group[group["model"] != model]
+            test = group[group["model"] == model]
+            cv_factor = fit_calibration(train["estimate"], train["truth"])
+            cv_error = (cv_factor * test["estimate"] - test["truth"]).abs()
+            cv_errors.append(cv_error)
+        cv_errors = pd.concat(cv_errors)
+        raw_errors = (group["estimate"] - group["truth"]).abs()
+        rows[name] = {
+            "above": float((group["estimate"] > group["truth"]).mean()),
+            "error_raw": float(raw_errors.mean()),
+            "factor": factor,
+            "error": float(errors.mean()),
+            "within": float((errors <= tolerance).mean()),
+            "cv_error": float(cv_errors.mean()),
+            "cv_within": float((cv_errors <= tolerance).mean()),
+        }
+    summary = pd.DataFrame.from_dict(rows, orient="index")
+    return summary
+
+
+def summarize_one_run_cases(
+    results: pd.DataFrame,
+    setting: str,
+    factor: float,
+    *,
+    tolerance: float = 0.10,
+) -> pd.DataFrame:
+    """
+    Summarize the draws of each development case for 1 setting.
+
+    :param results: output of `evaluate_one_run_estimator()` for every
+        temperature, with a `temperature` column
+    :param setting: name of the setting
+    :param factor: calibration factor applied to the estimates
+    :param tolerance: largest error that counts as close
+    :return: 1 row per temperature and model with `truth`, `estimate` (mean
+        of the calibrated estimates over the draws), `low` and `high` (10th
+        and 90th percentiles), and `within` (share of the draws within
+        `tolerance` of the truth)
+    """
+    group = results[results["setting"] == setting]
+    hdbg.dassert_lt(0, len(group), "No results for setting '%s'", setting)
+    calibrated = factor * group["estimate"]
+    close = (calibrated - group["truth"]).abs() <= tolerance
+    keys = [group["temperature"], group["model"]]
+    by_case = calibrated.groupby(keys)
+    cases = pd.DataFrame(
+        {
+            "truth": group["truth"].groupby(keys).first(),
+            "estimate": by_case.mean(),
+            "low": by_case.quantile(0.1),
+            "high": by_case.quantile(0.9),
+            "within": close.groupby(keys).mean(),
+        }
+    )
+    return cases
+
+
+def plot_one_run_estimates(
+    results: pd.DataFrame,
+    factors: Dict[str, float],
+    *,
+    tolerance: float = 0.10,
+    figsize: Optional[Tuple[float, float]] = None,
+) -> None:
+    """
+    Plot the estimated run share of each development case against the truth.
+
+    There is 1 panel per setting. Each point is 1 model at 1 temperature, at
+    the mean of its draws, with a bar from the 10th to the 90th percentile
+    of the draws. The gray band holds the estimates within `tolerance` of
+    the truth.
+
+    :param results: output of `evaluate_one_run_estimator()` for every
+        temperature, with a `temperature` column
+    :param factors: setting -> calibration factor of its estimates
+    :param tolerance: half width of the band, e.g., `0.10` for 10 points
+    :param figsize: figure size, default `plt.rcParams["figure.figsize"]`
+    """
+    if figsize is None:
+        figsize = plt.rcParams["figure.figsize"]
+    fig, axes = plt.subplots(
+        1, len(factors), figsize=figsize, sharex=True, sharey=True, squeeze=False
+    )
+    limit = np.array([0.0, 1.0])
+    colors = {0.2: "tab:blue", 0.8: "tab:orange"}
+    for ax, (setting, factor) in zip(axes[0], factors.items()):
+        cases = summarize_one_run_cases(
+            results, setting, factor, tolerance=tolerance
+        )
+        # Shade the estimates within the tolerance of the truth.
+        ax.fill_between(
+            limit,
+            limit - tolerance,
+            limit + tolerance,
+            color="tab:gray",
+            alpha=0.2,
+            linewidth=0,
+            label=f"within {100 * tolerance:.0f} points",
+        )
+        ax.plot(limit, limit, color="tab:gray", linestyle=":", linewidth=1)
+        for temperature, group in cases.groupby(level="temperature"):
+            ax.errorbar(
+                group["truth"],
+                group["estimate"],
+                yerr=[
+                    group["estimate"] - group["low"],
+                    group["high"] - group["estimate"],
+                ],
+                fmt="o",
+                markersize=5,
+                linewidth=1,
+                color=colors.get(temperature, "tab:gray"),
+                label=f"temperature {temperature:g}",
+            )
+        ax.set_xlim(0, 0.8)
+        ax.set_ylim(0, 0.8)
+        ax.set_title(f"{setting}, factor {factor:.2f}")
+        ax.set_xlabel("Run share from all 50 samples")
+    axes[0][0].set_ylabel("Run share estimated from 1 sample")
+    axes[0][0].legend(loc="upper left")
+    fig.tight_layout()
+    plt.show()
+
+
+def compute_second_run_tasks(
+    outcomes: pd.DataFrame,
+    *,
+    tolerance: float = 0.10,
+    coverage: float = 0.95,
+    n_draws: int = 1000,
+    seed: int = 0,
+) -> float:
+    r"""
+    Find how many tasks need a second run to measure the run share of an
+    agent.
+
+    The first run covers every task and a second run covers only `n` tasks
+    picked at random. On those tasks, half the squared difference of the 2
+    runs estimates $p (1 - p)$ without bias, and its average divided by
+    score x (1 - score) of the first run is the run share.
+
+    :param outcomes: tasks x runs matrix of 0/1 of 1 agent; the first 2 runs
+        are used, and the run share from all the runs is the truth
+    :param tolerance: largest error allowed, e.g., `0.10` for 10 points
+    :param coverage: share of the random picks that must be within
+        `tolerance`
+    :param n_draws: random picks of the tasks
+    :param seed: random seed
+    :return: the smallest `n` such that `coverage` of the picks are within
+        `tolerance` for `n` and for every larger `n`, or NaN if even all the
+        tasks are not enough
+    """
+    values = outcomes.to_numpy(dtype=float)
+    n_tasks = values.shape[0]
+    hdbg.dassert_lte(2, values.shape[1], "Need at least 2 runs per task")
+    truth = compute_variance_components(outcomes)["run_share"]
+    score = values[:, 0].mean()
+    # Half the squared difference of 2 runs of a task is 0 or 1/2.
+    halves = (values[:, 0] - values[:, 1]) ** 2 / 2
+    # Each pick is the first `n` tasks of a random order, for all `n` at once.
+    rng = np.random.default_rng(seed)
+    orders = np.argsort(rng.random((n_draws, n_tasks)), axis=1)
+    sums = np.cumsum(halves[orders], axis=1)
+    estimates = sums / np.arange(1, n_tasks + 1) / (score * (1 - score))
+    within = (np.abs(estimates - truth) <= tolerance).mean(axis=0)
+    # Keep the `n` where this `n` and every larger one reach the coverage.
+    enough = np.flip(np.logical_and.accumulate(np.flip(within >= coverage)))
+    n_needed = float(np.argmax(enough) + 1) if enough.any() else np.nan
+    return n_needed
+
+
+# Settings of the 1-run estimator before any tuning (`preregistration_2.md`).
+UNTUNED_ONE_RUN_SETTING = {
+    "irt_model": "rasch",
+    "penalty": 0.01,
+    "calibration": 1.0,
+    "extras": False,
+}
+# Settings picked on the development set in the `skill_vs_luck.one_run`
+# notebook: of 21 settings, the one with the smallest error when the factor
+# of each model comes from the other models. Committed before the test set
+# was used.
+TUNED_ONE_RUN_SETTING = {
+    "irt_model": "2pl",
+    "penalty": 0.1,
+    "calibration": 1.344,
+    "extras": False,
+}
+
+
+def get_one_run_cases() -> pd.DataFrame:
+    """
+    List the 30 test cases of Study B in `preregistration_2.md`.
+
+    A case is 1 local agent on 1 benchmark at 1 temperature:
+    - Phase 1: the agents of the old models at 0.8 on both benchmarks
+    - Phase 2: the agents of the new models at 0.8 on both benchmarks, and
+      the agents of the old models at 0.2 on HumanEval+
+
+    :return: 1 row per case with `phase`, `benchmark`, `temperature`,
+        `model`, and `scaffold`
+    """
+    rows = []
+    for phase, models in ((1, PHASE_1_MODELS), (2, PHASE_2_MODELS)):
+        for benchmark in BENCHMARKS:
+            for model in models:
+                for scaffold in ("one_shot", "repair"):
+                    rows.append((phase, benchmark, 0.8, model, scaffold))
+    for model in PHASE_1_MODELS:
+        for scaffold in ("one_shot", "repair"):
+            rows.append((2, "humaneval", 0.2, model, scaffold))
+    cases = pd.DataFrame(
+        rows, columns=["phase", "benchmark", "temperature", "model", "scaffold"]
+    )
+    return cases
+
+
+def build_one_run_matrix(
+    scores: pd.DataFrame,
+    benchmark: str,
+    temperature: float,
+    model: str,
+    scaffold: str,
+    *,
+    extras: bool,
+) -> pd.DataFrame:
+    """
+    Build the 1-run matrix of a test case of Study B.
+
+    The matrix holds the agent of the case and the one-shot agents of the
+    other local models with the same benchmark and temperature, each with its
+    first run. With `extras`, it also holds the public greedy agents of the
+    benchmark, except the ones of the local models in the matrix. The
+    one-shot and repair agents of a model are never in the same matrix, since
+    the repair answer starts from the one-shot answer.
+
+    :param scores: output of `load_scores()` with the local and the public
+        scores
+    :param benchmark: benchmark of the case
+    :param temperature: temperature of the case
+    :param model: model of the case
+    :param scaffold: scaffold of the case
+    :param extras: whether the matrix holds the public greedy agents
+    :return: agents x tasks matrix of 0/1, with the agent of the case first,
+        e.g., `opencoder:8b / repair`
+    """
+    local = scores[scores["source"] == "local"]
+    mask = (
+        (local["benchmark"] == benchmark)
+        & (local["temperature"] == temperature)
+        & (local["scaffold"] == "one_shot")
+    )
+    models = sorted(local.loc[mask, "model"].unique())
+    hdbg.dassert_in(model, models)
+    # The case comes first, then the one-shot agents of the other models.
+    agents = [(model, scaffold)]
+    agents += [(other, "one_shot") for other in models if other != model]
+    one_runs = {}
+    for agent_model, agent_scaffold in agents:
+        outcomes = get_outcome_matrix(
+            scores,
+            source="local",
+            benchmark=benchmark,
+            model=agent_model,
+            scaffold=agent_scaffold,
+            temperature=temperature,
+        )
+        one_runs[f"{agent_model} / {agent_scaffold}"] = outcomes[0]
+    matrix = pd.DataFrame(one_runs).T
+    if extras:
+        # The extra agents never include a local model of the matrix.
+        public = get_public_greedy_agents(scores, benchmark)
+        same = [_PUBLIC_NAMES[name] for name in models if name in _PUBLIC_NAMES]
+        matrix = pd.concat([matrix, public.drop(index=same, errors="ignore")])
+    return matrix
+
+
+def estimate_one_run_cases(
+    scores: pd.DataFrame,
+    cases: pd.DataFrame,
+    settings: Dict[str, Dict[str, Any]],
+) -> pd.DataFrame:
+    """
+    Estimate the run share of each test case of Study B from its first run.
+
+    :param scores: output of `load_scores()` with the local scores of both
+        phases and the public scores
+    :param cases: output of `get_one_run_cases()`
+    :param settings: name -> `irt_model`, `penalty`, `calibration`, and
+        `extras` (see `build_one_run_matrix()`)
+    :return: `cases` with `n_runs`, `truth` (the run share from all the
+        runs), and 1 column per setting with its estimate
+    """
+    rows = []
+    for case in tqdm.tqdm(cases.itertuples(index=False), total=len(cases)):
+        # Find the truth from all the runs of the case.
+        outcomes = get_outcome_matrix(
+            scores,
+            source="local",
+            benchmark=case.benchmark,
+            model=case.model,
+            scaffold=case.scaffold,
+            temperature=case.temperature,
+        )
+        truth = compute_variance_components(outcomes)["run_share"]
+        row = {**case._asdict(), "n_runs": outcomes.shape[1], "truth": truth}
+        # Estimate the run share from the first runs, with each setting.
+        agent = f"{case.model} / {case.scaffold}"
+        for name, setting in settings.items():
+            matrix = build_one_run_matrix(
+                scores,
+                case.benchmark,
+                case.temperature,
+                case.model,
+                case.scaffold,
+                extras=setting["extras"],
+            )
+            estimates = svlutils.estimate_run_share(
+                matrix,
+                irt_model=setting["irt_model"],
+                penalty=setting["penalty"],
+                calibration=setting["calibration"],
+            )
+            row[name] = estimates.loc[agent, "run_share"]
+        rows.append(row)
+    results = pd.DataFrame(rows)
+    return results
+
+
+def summarize_one_run_test(
+    results: pd.DataFrame,
+    *,
+    tuned: str,
+    untuned: str,
+    tolerance: float = 0.10,
+) -> pd.DataFrame:
+    """
+    Summarize the test cases of Study B by phase and temperature.
+
+    :param results: output of `estimate_one_run_cases()`
+    :param tuned: name of the setting picked on the development set
+    :param untuned: name of the setting before any tuning
+    :param tolerance: largest error that counts as close, e.g., `0.10` for
+        10 points
+    :return: 1 row per phase and temperature with:
+        - `cases`: number of cases
+        - `truth`, `untuned`, `tuned`: mean run share, measured and
+          estimated by each setting
+        - `untuned_error`, `tuned_error`: mean absolute error of each
+          setting, to compare with the errors on the development set
+        - `within`: share of the cases whose tuned estimate is within
+          `tolerance` of the truth, the rule of B1
+        - `above`: share of the cases whose estimate before tuning is above
+          the truth, the rule of B2
+    """
+    keys = [results["phase"], results["temperature"]]
+    untuned_errors = (results[untuned] - results["truth"]).abs()
+    tuned_errors = (results[tuned] - results["truth"]).abs()
+    columns = pd.DataFrame(
+        {
+            "truth": results["truth"],
+            "untuned": results[untuned],
+            "tuned": results[tuned],
+            "untuned_error": untuned_errors,
+            "tuned_error": tuned_errors,
+            "within": tuned_errors <= tolerance,
+            "above": results[untuned] > results["truth"],
+        }
+    )
+    summary = columns.groupby(keys).mean()
+    summary.insert(0, "cases", columns.groupby(keys).size())
+    return summary
+
+
+def plot_one_run_test(
+    results: pd.DataFrame,
+    settings: List[str],
+    *,
+    tolerance: float = 0.10,
+    figsize: Optional[Tuple[float, float]] = None,
+) -> None:
+    """
+    Plot the estimated run share of each test case of Study B against the
+    truth.
+
+    There is 1 panel per setting. Each point is 1 case, colored by its
+    temperature as in `plot_one_run_estimates()`; the phase-1 cases, whose
+    run shares were known when the estimator was tuned, are hollow. The gray
+    band holds the estimates within `tolerance` of the truth.
+
+    :param results: output of `estimate_one_run_cases()`
+    :param settings: names of the settings to plot, e.g., `["untuned",
+        "tuned"]`
+    :param tolerance: half width of the band, e.g., `0.10` for 10 points
+    :param figsize: figure size, default `plt.rcParams["figure.figsize"]`
+    """
+    if figsize is None:
+        figsize = plt.rcParams["figure.figsize"]
+    fig, axes = plt.subplots(
+        1,
+        len(settings),
+        figsize=figsize,
+        sharex=True,
+        sharey=True,
+        squeeze=False,
+    )
+    # Leave room above the largest run share, in steps of 0.1.
+    largest = float(results[["truth", *settings]].to_numpy().max())
+    top = min(1.0, np.ceil(10 * largest + 0.5) / 10)
+    limit = np.array([0.0, top])
+    colors = {0.2: "tab:blue", 0.8: "tab:orange"}
+    for ax, setting in zip(axes[0], settings):
+        # Shade the estimates within the tolerance of the truth.
+        ax.fill_between(
+            limit,
+            limit - tolerance,
+            limit + tolerance,
+            color="tab:gray",
+            alpha=0.2,
+            linewidth=0,
+            label=f"within {100 * tolerance:.0f} points",
+        )
+        ax.plot(limit, limit, color="tab:gray", linestyle=":", linewidth=1)
+        groups = results.groupby(["phase", "temperature"])
+        for (phase, temperature), group in groups:
+            color = colors.get(temperature, "tab:gray")
+            ax.scatter(
+                group["truth"],
+                group[setting],
+                s=40,
+                facecolors=color if phase == 2 else "none",
+                edgecolors=color,
+                label=f"phase {phase}, temperature {temperature:g}",
+            )
+        ax.set_xlim(0, top)
+        ax.set_ylim(0, top)
+        ax.set_title(setting)
+        ax.set_xlabel("Run share from all the runs")
+    axes[0][0].set_ylabel("Run share estimated from run 1")
+    axes[0][0].legend(loc="upper left")
+    fig.tight_layout()
+    plt.show()
+
+
+def check_one_run_predictions(
+    results: pd.DataFrame, *, tuned: str, untuned: str
+) -> pd.DataFrame:
+    """
+    Check the predictions B1 and B2 of `preregistration_2.md`.
+
+    Both are decided on the 18 phase-2 cases, since the run shares of the
+    phase-1 cases were known when the estimator was tuned.
+
+    :param results: output of `estimate_one_run_cases()`
+    :param tuned: name of the setting picked on the development set
+    :param untuned: name of the setting before any tuning
+    :return: 1 row per prediction with `prediction`, `observed`, and `holds`
+    """
+    phase_2 = results[results["phase"] == 2]
+    hdbg.dassert_eq(len(phase_2), 18, "Study B has 18 phase-2 cases")
+    within = (phase_2[tuned] - phase_2["truth"]).abs() <= 0.10
+    above = phase_2[untuned] > phase_2["truth"]
+    rows = {
+        "B1": {
+            "prediction": (
+                "The tuned estimate is within 10 points for at least 12 of "
+                "the 18 cases"
+            ),
+            "observed": f"{int(within.sum())} of 18 within 10 points",
+            "holds": bool(within.sum() >= 12),
+        },
+        "B2": {
+            "prediction": (
+                "The estimate before tuning is above the truth in more than "
+                "half of the 18 cases"
+            ),
+            "observed": f"{int(above.sum())} of 18 above the truth",
+            "holds": bool(above.sum() > 9),
+        },
+    }
+    table = pd.DataFrame.from_dict(rows, orient="index")
+    return table
+
+
+def compute_second_run_cases(
+    scores: pd.DataFrame, cases: pd.DataFrame
+) -> pd.DataFrame:
+    """
+    Find how many tasks need a second run in each test case of Study B.
+
+    :param scores: output of `load_scores()` with the local scores of both
+        phases
+    :param cases: output of `get_one_run_cases()`
+    :return: `cases` with `n_tasks` and `second_run_tasks`, the output of
+        `compute_second_run_tasks()` on all the runs of the case (NaN when
+        even a second run of every task is not enough)
+    """
+    rows = []
+    for case in cases.itertuples(index=False):
+        outcomes = get_outcome_matrix(
+            scores,
+            source="local",
+            benchmark=case.benchmark,
+            model=case.model,
+            scaffold=case.scaffold,
+            temperature=case.temperature,
+        )
+        rows.append(
+            {
+                **case._asdict(),
+                "n_tasks": outcomes.shape[0],
+                "second_run_tasks": compute_second_run_tasks(outcomes),
+            }
+        )
+    results = pd.DataFrame(rows)
+    return results
+
+
+# #############################################################################
+# Studies C and D: lower temperatures and more models
+# #############################################################################
+
+
+def combine_scores(old: pd.DataFrame, new: pd.DataFrame) -> pd.DataFrame:
+    """
+    Combine the scores of the 2 phases of runs.
+
+    A file of runs that got more runs in phase 2 was scored again with all its
+    runs, e.g., the greedy runs of the phase-1 models, which got a second
+    greedy run. Those agents keep only their phase-2 scores.
+
+    :param old: output of `load_scores()` for phase 1
+    :param new: output of `load_scores()` for phase 2
+    :return: the scores of both phases, with each answer once
+    """
+    keys = ["source", "benchmark", "model", "temperature"]
+    old_keys = pd.MultiIndex.from_frame(old[keys])
+    rescored = old_keys.isin(pd.MultiIndex.from_frame(new[keys]))
+    # The new scores must cover every run of the old ones.
+    old_runs = old[rescored].groupby(keys)["run"].agg(set)
+    new_runs = new.groupby(keys)["run"].agg(set)
+    for key, runs in old_runs.items():
+        hdbg.dassert_is_subset(runs, new_runs[key], "'%s' lost runs", key)
+    scores = pd.concat([old[~rescored], new], ignore_index=True)
+    return scores
+
+
+def compute_rescored_agreement(
+    old: pd.DataFrame, new: pd.DataFrame
+) -> Dict[str, float]:
+    """
+    Check that the answers scored in both phases got the same results.
+
+    :param old: output of `load_scores()` for phase 1
+    :param new: output of `load_scores()` for phase 2
+    :return: dict with `n_answers` (answers scored in both phases) and
+        `same_share` (share of them with the same `plus_pass`)
+    """
+    keys = ["source", "benchmark", "model", "temperature", "scaffold"]
+    keys += ["task_id", "run"]
+    both = old[keys + ["plus_pass"]].merge(
+        new[keys + ["plus_pass"]], on=keys, suffixes=("_old", "_new")
+    )
+    hdbg.dassert_lt(0, len(both), "No answer was scored in both phases")
+    same = both["plus_pass_old"] == both["plus_pass_new"]
+    agreement = {"n_answers": len(both), "same_share": float(same.mean())}
+    return agreement
+
+
+def compute_greedy_changes(
+    scores: pd.DataFrame, *, models: List[str], benchmark: str
+) -> pd.DataFrame:
+    """
+    Count the tasks whose one-shot result changes between 2 greedy runs.
+
+    Greedy decoding has no randomness, so a change comes from Ollama itself,
+    e.g., from its prompt cache changing the arithmetic.
+
+    :param scores: output of `load_scores()`, with 2 greedy runs of each
+        model
+    :param models: e.g., `PHASE_1_MODELS`
+    :param benchmark: `humaneval` or `mbpp`
+    :return: 1 row per model with `n_tasks`, `n_changed` (tasks whose result
+        differs between the 2 runs), `changed_share`, and the score of each
+        run, `score_run_0` and `score_run_1`
+    """
+    rows = {}
+    for model in models:
+        outcomes = get_outcome_matrix(
+            scores,
+            source="local",
+            benchmark=benchmark,
+            model=model,
+            scaffold="one_shot",
+            temperature=0.0,
+        )
+        hdbg.dassert_eq(list(outcomes.columns), [0, 1], "Need 2 greedy runs")
+        changed = outcomes[0] != outcomes[1]
+        rows[model] = {
+            "n_tasks": len(outcomes),
+            "n_changed": int(changed.sum()),
+            "changed_share": float(changed.mean()),
+            "score_run_0": float(outcomes[0].mean()),
+            "score_run_1": float(outcomes[1].mean()),
+        }
+    table = pd.DataFrame.from_dict(rows, orient="index")
+    return table
+
+
+def get_first_runs_matrices(
+    scores: pd.DataFrame,
+    *,
+    models: List[str],
+    scaffold: str,
+    benchmark: str,
+    temperature: float,
+    n_runs: int,
+) -> Dict[str, pd.DataFrame]:
+    """
+    Get the tasks x runs matrices of some local agents, with only their first
+    runs.
+
+    Leaderboards that are compared must draw from the same number of runs
+    (`preregistration_2.md`): with fewer runs, the drawn run is a bigger part
+    of the mean it is checked against.
+
+    :param scores: output of `load_scores()`
+    :param models: e.g., `PHASE_1_MODELS`
+    :param scaffold: `one_shot` or `repair`
+    :param benchmark: `humaneval` or `mbpp`
+    :param temperature: e.g., `0.8`
+    :param n_runs: number of first runs to keep, e.g., `3`
+    :return: agent label -> tasks x runs matrix of 0/1 with the runs 0 to
+        `n_runs - 1`
+    """
+    runs = list(range(n_runs))
+    matrices = {}
+    for model in models:
+        outcomes = get_outcome_matrix(
+            scores,
+            source="local",
+            benchmark=benchmark,
+            model=model,
+            scaffold=scaffold,
+            temperature=temperature,
+        )
+        hdbg.dassert_is_subset(runs, outcomes.columns, "'%s' lacks runs", model)
+        matrices[get_agent_label(model, scaffold)] = outcomes[runs]
+    hdbg.dassert_eq(len(matrices), len(models), "2 models have the same label")
+    return matrices
+
+
+def compute_stability_table(
+    scores: pd.DataFrame,
+    *,
+    models: List[str],
+    benchmark: str,
+    temperatures: List[float],
+    n_runs: int,
+    n_draws: Optional[int] = None,
+) -> pd.DataFrame:
+    """
+    Check how often 1-run leaderboards of some models keep their order, for
+    each scaffold and temperature.
+
+    :param scores: output of `load_scores()`
+    :param models: e.g., `PHASE_1_MODELS`
+    :param benchmark: `humaneval` or `mbpp`
+    :param temperatures: e.g., `[0.2, 0.8]`
+    :param n_runs: first runs of each agent to draw from (see
+        `get_first_runs_matrices()`)
+    :param n_draws: random leaderboards per scaffold and temperature, or
+        `None` to take every combination of runs once (see
+        `compute_ranking_stability()`)
+    :return: 1 row per scaffold and temperature with the summary of
+        `compute_ranking_stability()`
+    """
+    rows = {}
+    for scaffold in ("one_shot", "repair"):
+        for temperature in temperatures:
+            matrices = get_first_runs_matrices(
+                scores,
+                models=models,
+                scaffold=scaffold,
+                benchmark=benchmark,
+                temperature=temperature,
+                n_runs=n_runs,
+            )
+            summary, _ = compute_ranking_stability(matrices, n_draws=n_draws)
+            rows[(scaffold, temperature)] = summary
+    table = pd.DataFrame(rows).T
+    table.index.names = ["scaffold", "temperature"]
+    return table
+
+
+def check_temperature_predictions(
+    *,
+    variance_low: pd.DataFrame,
+    variance_high: pd.DataFrame,
+    greedy_changes: pd.DataFrame,
+    comparisons: pd.DataFrame,
+    stability: pd.DataFrame,
+    low: float = 0.2,
+    high: float = 0.8,
+) -> pd.DataFrame:
+    """
+    Check the predictions C1 to C5 of `preregistration_2.md` (Study C).
+
+    - C1: the run share at 0.2 is between 5% and 30% for each of the 6 agents
+    - C2: the run share at 0.2 is below the one at 0.8 for each agent
+    - C3: fewer than 2% of the tasks change their one-shot result between the
+      2 greedy runs, for each model
+    - C4: the close pair is not distinguishable at 0.2, with either scaffold
+    - C5: 1-run leaderboards of the 3 models keep the order more often at 0.2
+      than at 0.8, for each scaffold
+
+    :param variance_low: output of `compute_variance_table()` at 0.2
+    :param variance_high: output of `compute_variance_table()` at 0.8, with
+        all the runs of phase 1
+    :param greedy_changes: output of `compute_greedy_changes()`
+    :param comparisons: output of `compare_agent_pairs()` for the close pair
+        at 0.2, 1 row per scaffold
+    :param stability: output of `compute_stability_table()` at both
+        temperatures
+    :param low: the lower temperature
+    :param high: the higher temperature
+    :return: 1 row per prediction, `C1` to `C5`, with `prediction`,
+        `observed`, and `holds`
+    """
+    rows = {}
+    # C1 and C2: the run share of each agent at the 2 temperatures.
+    share_low = variance_low["run_share"]
+    share_high = variance_high["run_share"].reindex(share_low.index)
+    hdbg.dassert_eq(len(share_low), 6, "Study C has 6 agents")
+    hdbg.dassert(not share_high.isna().any(), "An agent misses its run share")
+    inside = share_low.between(0.05, 0.30)
+    rows["C1"] = {
+        "prediction": f"Runs are 5% to 30% of the variance at {low:g}",
+        "observed": (
+            f"{int(inside.sum())} of {len(inside)} inside, from "
+            f"{100 * share_low.min():.0f}% to {100 * share_low.max():.0f}%"
+        ),
+        "holds": bool(inside.all()),
+    }
+    drop = share_high - share_low
+    rows["C2"] = {
+        "prediction": f"The run share is lower at {low:g} than at {high:g}",
+        "observed": (
+            f"{int((drop > 0).sum())} of {len(drop)} lower, by "
+            f"{100 * drop.min():.0f} to {100 * drop.max():.0f} points"
+        ),
+        "holds": bool((drop > 0).all()),
+    }
+    # C3: the tasks that change between the 2 greedy runs.
+    changed = greedy_changes["changed_share"]
+    hdbg.dassert_eq(len(changed), 3, "Study C has 3 models")
+    rows["C3"] = {
+        "prediction": "Fewer than 2% of the tasks change between greedy runs",
+        "observed": (
+            f"{int((changed < 0.02).sum())} of {len(changed)} models below "
+            f"2%, from {100 * changed.min():.1f}% to "
+            f"{100 * changed.max():.1f}%"
+        ),
+        "holds": bool((changed < 0.02).all()),
+    }
+    # C4: the close pair at the lower temperature.
+    hdbg.dassert_eq(len(comparisons), 2, "Study C has 1 test per scaffold")
+    n_distinguishable = int(comparisons["distinguishable"].sum())
+    rows["C4"] = {
+        "prediction": f"The close pair is not distinguishable at {low:g}",
+        "observed": (
+            f"{n_distinguishable} of {len(comparisons)} comparisons "
+            f"distinguishable, smallest Holm p "
+            f"{comparisons['p_holm'].min():.3g}"
+        ),
+        "holds": n_distinguishable == 0,
+    }
+    # C5: the 1-run leaderboards at the 2 temperatures.
+    kept_low = stability.xs(low, level="temperature")["p_same_order"]
+    kept_high = stability.xs(high, level="temperature")["p_same_order"]
+    more = kept_low > kept_high
+    shares = ", ".join(
+        f"{scaffold} {100 * kept_low[scaffold]:.1f}% vs "
+        f"{100 * kept_high[scaffold]:.1f}%"
+        for scaffold in kept_low.index
+    )
+    rows["C5"] = {
+        "prediction": f"1-run leaderboards keep the order more often at {low:g}",
+        "observed": (
+            f"{int(more.sum())} of {len(more)} scaffolds more often ({shares})"
+        ),
+        "holds": bool(more.all()),
+    }
+    table = pd.DataFrame.from_dict(rows, orient="index")
+    return table
+
+
+def check_new_model_predictions(
+    *,
+    validation: pd.DataFrame,
+    comparisons: pd.DataFrame,
+    stability: pd.Series,
+) -> pd.DataFrame:
+    """
+    Check the predictions D1 to D3 of `preregistration_2.md` (Study D).
+
+    - D1: the greedy one-shot plus score of each new model is within 5 points
+      of its published score, on both benchmarks
+    - D2: no pair of the MBPP+ cluster is distinguishable
+    - D3: on MBPP+, fewer than half of the random 1-run leaderboards keep the
+      order of all 6 models
+
+    :param validation: output of `compute_validation_table()` for the new
+        models
+    :param comparisons: output of `compare_agent_pairs()` for the 3 pairs of
+        the cluster, with the first 3 runs at 0.8
+    :param stability: summary of `compute_ranking_stability()` for the
+        one-shot agents of the 6 models on MBPP+, with the first 3 runs at
+        0.8
+    :return: 1 row per prediction, `D1` to `D3`, with `prediction`,
+        `observed`, and `holds`
+    """
+    rows = {}
+    # D1: the greedy scores against the published ones.
+    diff = validation["plus_diff"]
+    hdbg.dassert_eq(len(diff), 6, "Study D has 3 models x 2 benchmarks")
+    within = diff.abs() <= 0.05
+    model, benchmark = diff.abs().idxmax()
+    rows["D1"] = {
+        "prediction": "Greedy scores are within 5 points of the published",
+        "observed": (
+            f"{int(within.sum())} of {len(diff)} within 5 points, largest gap "
+            f"{100 * diff[(model, benchmark)]:+.1f} points "
+            f"({get_model_label(model)}, {benchmark})"
+        ),
+        "holds": bool(within.all()),
+    }
+    # D2: the 3 pairs of the MBPP+ cluster.
+    hdbg.dassert_eq(len(comparisons), 3, "The cluster has 3 pairs")
+    n_distinguishable = int(comparisons["distinguishable"].sum())
+    rows["D2"] = {
+        "prediction": "No pair of the MBPP+ cluster is distinguishable",
+        "observed": (
+            f"{n_distinguishable} of {len(comparisons)} pairs "
+            f"distinguishable, smallest Holm p "
+            f"{comparisons['p_holm'].min():.3g}"
+        ),
+        "holds": n_distinguishable == 0,
+    }
+    # D3: the 1-run leaderboards of the 6 models.
+    kept = float(stability["p_same_order"])
+    rows["D3"] = {
+        "prediction": "Fewer than half of the 1-run leaderboards keep the order",
+        "observed": f"{100 * kept:.1f}% keep the order of the 6 models",
+        "holds": kept < 0.5,
+    }
+    table = pd.DataFrame.from_dict(rows, orient="index")
+    return table
+
+
+# #############################################################################
+# Transfer between HumanEval+ and MBPP+ (Study E)
+# #############################################################################
+
+
+# The 12 public EvalPlus models with greedy samples on both benchmarks.
+TRANSFER_PUBLIC_MODELS = (
+    "codegen-2b",
+    "codegen-6b",
+    "codegen-16b",
+    "codet5p-2b",
+    "codet5p-6b",
+    "codet5p-16b",
+    "code-llama-7b",
+    "code-llama-13b",
+    "code-llama-34b",
+    "starcoder",
+    "mistral-7b",
+    "gpt-4-1106-preview",
+)
+
+
+def check_transfer_predictions(
+    *,
+    transfer: pd.Series,
+    residuals: pd.DataFrame,
+    effective: pd.DataFrame,
+    leaderboard_spearman: float,
+) -> pd.DataFrame:
+    """
+    Check the predictions E1 to E6 of `preregistration_3.md` (Study E).
+
+    - E1: KR-20 is at least 0.95 on both benchmarks
+    - E2: the Spearman correlation of the 18 models is at least 0.80
+    - E3: the corrected correlation is below 0.95, and the upper end of its
+      95% interval is below 1
+    - E4: at least 2 of the 18 models are benchmark-specific
+    - E5: the effective size is between 30% and 70% of the tasks on both
+      benchmarks, and a smaller share of the tasks on MBPP+ than on
+      HumanEval+
+    - E6: the Spearman correlation of the leaderboard models is at least 0.85
+
+    :param transfer: output of `compute_transfer()`, HumanEval+ first
+    :param residuals: output of `compute_benchmark_residuals()`
+    :param effective: 1 row per benchmark (`humaneval`, `mbpp`) with
+        `effective_size` and `n_tasks`
+    :param leaderboard_spearman: Spearman correlation of the HumanEval+ and
+        MBPP+ scores of the leaderboard models
+    :return: 1 row per prediction, `E1` to `E6`, with `prediction`,
+        `observed`, and `holds`
+    """
+    rows = {}
+    kr20_a, kr20_b = transfer["kr20_a"], transfer["kr20_b"]
+    rows["E1"] = {
+        "prediction": "KR-20 is at least 0.95 on both benchmarks",
+        "observed": f"HumanEval+ {kr20_a:.3f}, MBPP+ {kr20_b:.3f}",
+        "holds": bool(min(kr20_a, kr20_b) >= 0.95),
+    }
+    spearman = transfer["spearman"]
+    rows["E2"] = {
+        "prediction": "The Spearman correlation is at least 0.80",
+        "observed": (
+            f"{spearman:.3f} (95% interval {transfer['spearman_low']:.3f} to "
+            f"{transfer['spearman_high']:.3f})"
+        ),
+        "holds": bool(spearman >= 0.80),
+    }
+    corrected, high = transfer["corrected"], transfer["corrected_high"]
+    rows["E3"] = {
+        "prediction": "The corrected correlation is below 0.95, interval below 1",
+        "observed": (
+            f"{corrected:.3f} (95% interval {transfer['corrected_low']:.3f} to "
+            f"{high:.3f})"
+        ),
+        "holds": bool(corrected < 0.95 and high < 1),
+    }
+    n_specific = int(residuals["specific"].sum())
+    rows["E4"] = {
+        "prediction": "At least 2 of the 18 models are benchmark-specific",
+        "observed": f"{n_specific} of {len(residuals)} models",
+        "holds": n_specific >= 2,
+    }
+    shares = effective["effective_size"] / effective["n_tasks"]
+    rows["E5"] = {
+        "prediction": "Effective size is 30% to 70% of the tasks, smaller on MBPP+",
+        "observed": (
+            f"HumanEval+ {100 * shares['humaneval']:.1f}%, MBPP+ "
+            f"{100 * shares['mbpp']:.1f}%"
+        ),
+        "holds": bool(
+            shares.between(0.3, 0.7).all()
+            and shares["mbpp"] < shares["humaneval"]
+        ),
+    }
+    rows["E6"] = {
+        "prediction": "The leaderboard Spearman correlation is at least 0.85",
+        "observed": f"{leaderboard_spearman:.3f}",
+        "holds": bool(leaderboard_spearman >= 0.85),
+    }
+    table = pd.DataFrame.from_dict(rows, orient="index")
+    return table
+
+
+def plot_leaderboard_agreement(
+    leaderboard: pd.DataFrame,
+    *,
+    figsize: Optional[Tuple[float, float]] = None,
+) -> None:
+    """
+    Plot the HumanEval+ and MBPP+ scores of the EvalPlus leaderboard models.
+
+    :param leaderboard: `data/evalplus_leaderboard.csv`, the models with both
+        scores
+    :param figsize: figure size, default `plt.rcParams["figure.figsize"]`
+    """
+    if figsize is None:
+        figsize = plt.rcParams["figure.figsize"]
+    fig, ax = plt.subplots(figsize=figsize)
+    ax.scatter(leaderboard["mbpp_plus"], leaderboard["humaneval_plus"], s=15)
+    spearman = scipy.stats.spearmanr(
+        leaderboard["mbpp_plus"], leaderboard["humaneval_plus"]
+    ).statistic
+    ax.set_xlabel("MBPP+ pass@1 (%)")
+    ax.set_ylabel("HumanEval+ pass@1 (%)")
+    ax.set_title(
+        f"EvalPlus leaderboard, {len(leaderboard)} models (Spearman "
+        f"{spearman:.2f})"
+    )
+    fig.tight_layout()
+    plt.show()
+
+
+# #############################################################################
+# Selection among runs and prompt variants (Studies F and G)
+# #############################################################################
+
+
+def get_variant_matrix(scores: pd.DataFrame, benchmark: str) -> pd.DataFrame:
+    """
+    Get the variants x tasks matrix of the answers of the prompt variants.
+
+    :param scores: output of `load_scores()` on `data/coding_runs_variants`
+    :param benchmark: `humaneval` or `mbpp`
+    :return: variants x tasks matrix of `plus_pass` (0/1) of the greedy
+        one-shot answers, in the order of `PROMPT_VARIANTS`
+    """
+    mask = (
+        (scores["benchmark"] == benchmark)
+        & (scores["scaffold"] == "one_shot")
+        & (scores["run"] == 0)
+    )
+    matrix = scores[mask].pivot(
+        index="variant", columns="task_id", values="plus_pass"
+    )
+    hdbg.dassert(not matrix.isna().any().any(), "Some cells have no score")
+    variants = [
+        variant for variant in PROMPT_VARIANTS if variant in matrix.index
+    ]
+    matrix = matrix.loc[variants, sort_task_ids(list(matrix.columns))]
+    matrix = matrix.astype(int)
+    matrix.index.name = None
+    matrix.columns.name = None
+    return matrix
+
+
+def check_selection_predictions(
+    *,
+    runs_pooled: pd.DataFrame,
+    runs_cells: pd.DataFrame,
+    variants: pd.DataFrame,
+    agreement: pd.Series,
+    cochran: pd.DataFrame,
+) -> pd.DataFrame:
+    """
+    Check the predictions F1 to F3 and G0 to G5 of `preregistration_3.md`.
+
+    :param runs_pooled: Study F pooled over cells, indexed by `group`
+        (`public` or `local`) and `k`, with `inflation`, `predicted`, and
+        `error_<correction>` in points
+    :param runs_cells: Study F by cell, with `group`, `temperature`,
+        `benchmark`, `k`, and `inflation` in points
+    :param variants: Study G, indexed by `benchmark` and `k`, with `drop`,
+        `error_<correction>`, and `rmse_<correction>` in points
+    :param agreement: share of the tasks where the baseline variant gives the
+        outcome of phase 1, by benchmark
+    :param cochran: Cochran's Q test by benchmark, with `p_value`
+    :return: 1 row per prediction with `prediction`, `observed`, and `holds`
+    """
+    rows = {}
+    # F1: the mean inflation against the predicted one.
+    ratios = runs_pooled["inflation"] / runs_pooled["predicted"]
+    within = (ratios - 1).abs() <= 0.2
+    rows["F1"] = {
+        "prediction": "Inflation within 20% of the prediction, every K",
+        "observed": (
+            f"{int(within.sum())} of {len(within)} settings, ratios "
+            f"{ratios.min():.2f} to {ratios.max():.2f}"
+        ),
+        "holds": bool(within.all()),
+    }
+    # F2: the best of 5 runs of the public cells at temperature 0.8.
+    public_08 = runs_cells[
+        (runs_cells["group"] == "public")
+        & (runs_cells["temperature"] == 0.8)
+        & (runs_cells["k"] == 5)
+    ]
+    rows["F2"] = {
+        "prediction": "Best of 5 runs at 0.8 is 1.5 points above, each public cell",
+        "observed": (
+            f"{int((public_08['inflation'] >= 1.5).sum())} of {len(public_08)} "
+            f"cells, smallest {public_08['inflation'].min():.2f} points"
+        ),
+        "holds": bool((public_08["inflation"] >= 1.5).all()),
+    }
+    # F3: the binomial correction of the best of 5 runs.
+    binomial_error = runs_pooled.loc[("public", 5), "error_binomial"]
+    rows["F3"] = {
+        "prediction": "The binomial correction over-corrects the best of 5 runs",
+        "observed": f"mean error {binomial_error:+.2f} points",
+        "holds": bool(binomial_error < -1),
+    }
+    # G0: the baseline variant against phase 1.
+    rows["G0"] = {
+        "prediction": "The baseline variant repeats phase 1 on 95% of the tasks",
+        "observed": ", ".join(
+            f"{_BENCHMARK_NAMES[benchmark]} {100 * share:.1f}%"
+            for benchmark, share in agreement.items()
+        ),
+        "holds": bool((agreement >= 0.95).all()),
+    }
+    # G1: Cochran's Q over the 20 variants.
+    rows["G1"] = {
+        "prediction": "Cochran's Q rejects equal pass rates on 1 benchmark",
+        "observed": ", ".join(
+            f"{_BENCHMARK_NAMES[benchmark]} p {p_value:.3g}"
+            for benchmark, p_value in cochran["p_value"].items()
+        ),
+        "holds": bool((cochran["p_value"] < 0.05).any()),
+    }
+    k_20 = variants.xs(20, level="k")
+    rows["G2"] = {
+        "prediction": "At K = 20 the mean drop is at least 1 point",
+        "observed": ", ".join(
+            f"{_BENCHMARK_NAMES[benchmark]} {drop:.2f}"
+            for benchmark, drop in k_20["drop"].items()
+        ),
+        "holds": bool((k_20["drop"] >= 1).all()),
+    }
+    rows["G3"] = {
+        "prediction": "At K = 20 the binomial correction over-corrects",
+        "observed": ", ".join(
+            f"{_BENCHMARK_NAMES[benchmark]} {error:+.2f}"
+            for benchmark, error in k_20["error_binomial"].items()
+        ),
+        "holds": bool((k_20["error_binomial"] < -1).all()),
+    }
+    conditional = variants["error_conditional"]
+    rows["G4"] = {
+        "prediction": "The conditional mean error is within 1 point, every K",
+        "observed": (
+            f"{conditional.min():+.2f} to {conditional.max():+.2f} points"
+        ),
+        "holds": bool((conditional.abs() <= 1).all()),
+    }
+    rmse_columns = [c for c in variants.columns if c.startswith("rmse_")]
+    best = k_20[rmse_columns].idxmin(axis=1).str.replace("rmse_", "")
+    rows["G5"] = {
+        "prediction": "At K = 20, empirical Bayes or conditional has the best RMSE",
+        "observed": ", ".join(
+            f"{_BENCHMARK_NAMES[benchmark]} {name}"
+            for benchmark, name in best.items()
+        ),
+        "holds": bool(best.isin(["empirical_bayes", "conditional"]).all()),
+    }
+    table = pd.DataFrame.from_dict(rows, orient="index")
+    return table
+
+
+def plot_best_of_k(
+    runs_pooled: pd.DataFrame,
+    *,
+    figsize: Optional[Tuple[float, float]] = None,
+) -> None:
+    """
+    Plot how much the best of K runs inflates a score, against the prediction.
+
+    :param runs_pooled: Study F pooled over cells, indexed by `group` and `k`,
+        with `inflation` and `predicted` in points
+    :param figsize: figure size, default `plt.rcParams["figure.figsize"]`
+    """
+    if figsize is None:
+        figsize = plt.rcParams["figure.figsize"]
+    fig, ax = plt.subplots(figsize=figsize)
+    for group, color in (("public", "tab:blue"), ("local", "tab:orange")):
+        rows = runs_pooled.xs(group, level="group")
+        ax.plot(
+            rows.index,
+            rows["inflation"],
+            marker="o",
+            color=color,
+            label=f"{group} cells, measured",
+        )
+        ax.plot(
+            rows.index,
+            rows["predicted"],
+            linestyle="--",
+            color=color,
+            label=f"{group} cells, predicted",
+        )
+    ax.set_xticks(sorted(runs_pooled.index.get_level_values("k").unique()))
+    ax.set_xlabel("Runs tried, K")
+    ax.set_ylabel("Best run minus the runs left out (points)")
+    ax.set_title("How much does reporting the best of K runs inflate a score?")
+    ax.legend(loc="upper left")
+    fig.tight_layout()
+    plt.show()
+
+
+def plot_correction_errors(
+    variants: pd.DataFrame,
+    benchmark: str,
+    *,
+    figsize: Optional[Tuple[float, float]] = None,
+) -> None:
+    """
+    Plot the mean error of each correction of the winner against K.
+
+    :param variants: Study G, indexed by `benchmark` and `k`, with
+        `error_<correction>` in points
+    :param benchmark: `humaneval` or `mbpp`
+    :param figsize: figure size, default `plt.rcParams["figure.figsize"]`
+    """
+    if figsize is None:
+        figsize = plt.rcParams["figure.figsize"]
+    fig, ax = plt.subplots(figsize=figsize)
+    rows = variants.xs(benchmark, level="benchmark")
+    for column in [c for c in rows.columns if c.startswith("error_")]:
+        label = column.replace("error_", "").replace(
+            "empirical_bayes", "empirical Bayes"
+        )
+        ax.plot(rows.index, rows[column], marker="o", label=label)
+    ax.axhspan(-1, 1, color="gray", alpha=0.15, label="within 1 point")
+    ax.axhline(0, color="black", linewidth=1)
+    ax.set_xticks(rows.index)
+    ax.set_xlabel("Prompt variants tried, K")
+    ax.set_ylabel("Corrected score minus held-out score (points)")
+    ax.set_title(
+        "Which correction recovers the winner's score? "
+        f"({_BENCHMARK_NAMES[benchmark]})"
+    )
+    ax.legend(loc="lower left", fontsize=8)
+    fig.tight_layout()
+    plt.show()
