@@ -14,6 +14,9 @@ The zips are only downloaded here: their code is read and run by
 `score_coding_runs.py` inside Docker. The size and the SHA-256 of every file
 are saved in `--manifest_file`.
 
+It also saves a snapshot of the EvalPlus leaderboard (the pass@1 of each model)
+in `--leaderboard_file`, since the leaderboard keeps changing.
+
 # Usage Example
 
 - Download everything into `data/raw`:
@@ -31,7 +34,7 @@ import hashlib
 import logging
 import os
 import re
-from typing import Dict, List
+from typing import Any, Dict, List
 
 import pandas as pd
 import requests
@@ -63,6 +66,8 @@ _SAMPLED_MODELS = (
     "mistral-7b",
     "codet5p-16b",
 )
+# EvalPlus leaderboard, with the pass@1 of each model.
+_LEADERBOARD_URL = "https://evalplus.github.io/results.json"
 
 
 # #############################################################################
@@ -144,6 +149,35 @@ def _fetch_asset(asset: Dict[str, str], dst_dir: str) -> Dict[str, str]:
     return row
 
 
+def get_leaderboard(results: Dict[str, Dict[str, Any]]) -> pd.DataFrame:
+    """
+    Turn the EvalPlus leaderboard into a table.
+
+    :param results: content of the leaderboard file, 1 entry per model with
+        `pass@1`, `size`, `prompted`, and `open-data`
+    :return: 1 row per model, sorted, with `model`, `size`, `prompted`,
+        `open_data`, and the pass@1 in % on `humaneval`, `humaneval_plus`,
+        `mbpp`, and `mbpp_plus` (empty when the model has no score)
+    """
+    rows = []
+    for model, entry in results.items():
+        pass_at_1 = entry.get("pass@1") or {}
+        rows.append(
+            {
+                "model": model,
+                "size": entry.get("size"),
+                "prompted": entry.get("prompted"),
+                "open_data": entry.get("open-data"),
+                "humaneval": pass_at_1.get("humaneval"),
+                "humaneval_plus": pass_at_1.get("humaneval+"),
+                "mbpp": pass_at_1.get("mbpp"),
+                "mbpp_plus": pass_at_1.get("mbpp+"),
+            }
+        )
+    leaderboard = pd.DataFrame(rows).sort_values("model", ignore_index=True)
+    return leaderboard
+
+
 def _parse() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=__doc__,
@@ -160,6 +194,12 @@ def _parse() -> argparse.ArgumentParser:
         action="store",
         default="data/evalplus_downloads.csv",
         help="Where to save the list of files with their checksums",
+    )
+    parser.add_argument(
+        "--leaderboard_file",
+        action="store",
+        default="data/evalplus_leaderboard.csv",
+        help="Where to save the snapshot of the EvalPlus leaderboard",
     )
     hparser.add_verbosity_arg(parser)
     return parser
@@ -206,6 +246,12 @@ def _main(parser: argparse.ArgumentParser) -> None:
         len(downloads),
         downloads["bytes"].sum() / 1e6,
     )
+    # Save a snapshot of the leaderboard.
+    results_path = os.path.join(args.raw_dir, "evalplus_results.json")
+    _download(_LEADERBOARD_URL, results_path)
+    leaderboard = get_leaderboard(hio.from_json(results_path))
+    leaderboard.to_csv(args.leaderboard_file, index=False)
+    _LOG.info("Saved '%s' leaderboard models", len(leaderboard))
 
 
 if __name__ == "__main__":

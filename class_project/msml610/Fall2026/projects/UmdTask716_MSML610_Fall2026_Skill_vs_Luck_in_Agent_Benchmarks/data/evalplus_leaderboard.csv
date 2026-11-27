@@ -1,0 +1,126 @@
+model,size,prompted,open_data,humaneval,humaneval_plus,mbpp,mbpp_plus
+Artigenz-Coder-DS-6.7B,6.7,True,NONE,75.6,72.6,80.7,69.6
+Claude Sonnet 3.5 (June 2024),,True,NONE,87.2,81.7,89.4,74.3
+Code-13B,13.0,True,Partial,56.1,52.4,,
+Code-290k-6.7B-Instruct,6.7,True,Partial,64.6,59.7,,
+Code-33B,33.0,True,Partial,54.9,49.4,,
+CodeGen-16B,16.0,False,Full,32.9,28.0,54.2,45.5
+CodeGen-2B,2.0,False,Full,24.4,22.6,46.3,36.0
+CodeGen-6B,6.0,False,Full,29.3,25.6,50.8,42.9
+CodeGen2-16B,16.0,False,Full,19.5,16.5,,
+CodeGen2-1B,1.0,False,Full,11.0,9.1,,
+CodeGen2-3B,3.0,False,Full,15.9,12.8,,
+CodeGen2-7B,7.0,False,Full,18.3,17.7,,
+CodeLlama-13B,13.0,False,NONE,42.7,38.4,63.5,52.6
+CodeLlama-34B,34.0,False,NONE,51.8,43.9,69.3,56.3
+CodeLlama-70B,70.0,False,NONE,55.5,50.6,,
+CodeLlama-70B-Instruct,70.0,True,NONE,72.0,65.9,,
+CodeLlama-7B,7.0,False,NONE,37.8,35.4,59.5,46.8
+CodeQwen1.5-7B,7.0,False,NONE,51.8,45.7,73.5,60.8
+CodeQwen1.5-7B-Chat,7.0,True,NONE,83.5,78.7,79.4,69.0
+CodeT5+-16B,16.0,False,Full,31.7,26.8,56.6,47.1
+CodeT5+-2B,2.0,False,Full,25.0,22.0,48.4,38.1
+CodeT5+-6B,6.0,False,Full,29.3,24.4,52.9,41.5
+Codestral-22B-v0.1,22.0,True,NONE,79.9,73.8,72.5,61.9
+Command-R+,104.0,True,NONE,64.0,56.7,74.3,63.5
+DeepSeek-Coder-1.3B-base,1.3,False,NONE,28.7,25.6,56.9,47.9
+DeepSeek-Coder-1.3B-instruct,1.3,True,NONE,65.9,60.4,65.3,54.8
+DeepSeek-Coder-33B-base,33.0,False,NONE,51.2,44.5,,
+DeepSeek-Coder-33B-instruct,33.0,True,NONE,81.1,75.0,80.4,70.1
+DeepSeek-Coder-6.7B-base,6.7,False,NONE,47.6,39.6,72.0,58.7
+DeepSeek-Coder-6.7B-instruct,6.7,True,NONE,74.4,71.3,74.9,65.6
+DeepSeek-Coder-7B-instruct-v1.5,7.0,True,NONE,75.6,71.3,75.2,62.2
+DeepSeek-Coder-V2-Instruct,21.0,True,NONE,85.4,82.3,89.4,75.1
+DeepSeek-V2.5 (Nov 2024),21.0,True,NONE,90.2,83.5,87.6,74.1
+DeepSeek-V3 (Nov 2024),37.0,True,NONE,91.5,86.6,87.6,73.0
+GPT 4o (Aug 2024),,True,NONE,92.7,87.2,87.6,72.2
+GPT 4o Mini (July 2024),,True,NONE,88.4,83.5,85.4,72.2
+GPT-3.5 (May 2023),,True,NONE,73.2,66.5,,
+GPT-3.5-Turbo (Nov 2023),,True,NONE,76.8,70.7,82.5,69.7
+GPT-4 (May 2023),,True,NONE,88.4,79.3,,
+GPT-4-Turbo (April 2024),,True,NONE,90.2,86.6,,
+GPT-4-Turbo (Nov 2023),,True,NONE,85.4,81.7,85.7,73.3
+GPT-J-6B,6.0,False,Full,12.2,11.0,,
+GPT-Neo-2.7B,2.7,False,Full,7.9,6.7,,
+Gemini 1.5 Flash 002,,True,NONE,82.3,75.6,84.7,67.5
+Gemini 1.5 Pro 002,,True,NONE,89.0,79.3,89.7,74.6
+Gemini Pro 1.0,,True,NONE,63.4,55.5,75.4,61.4
+Gemini Pro 1.5,,True,NONE,68.3,61.0,,
+Grok Beta,,True,NONE,88.4,80.5,86.0,65.6
+InCoder-1.3B,1.3,False,Full,12.2,11.0,,
+InCoder-6.7B,6.7,False,Full,15.9,12.2,,
+Llama3-70B-instruct,70.0,True,NONE,77.4,72.0,82.3,69.0
+Llama3-8B-base,8.0,False,NONE,33.5,29.3,61.4,51.6
+Llama3-8B-instruct,8.0,True,NONE,61.6,56.7,64.6,54.8
+Llama3.1-8B-instruct,8.0,True,NONE,69.5,62.8,68.3,55.6
+Magicoder-S-CL-7B,7.0,True,Partial,70.7,67.7,70.6,60.1
+Magicoder-S-DS-6.7B,6.7,True,Partial,76.8,71.3,79.4,69.0
+Mistral Large (Mar 2024),,True,NONE,69.5,62.2,72.8,59.5
+Mistral-7B,7.0,False,NONE,28.7,23.8,51.9,42.1
+Mistral-7B-Instruct-v0.2,7.0,True,NONE,42.1,36.0,44.7,37.0
+Mistral-codealpaca-7B,7.0,False,Partial,48.2,42.1,,
+MistralHermes-CodePro-7B-v1,7.0,True,Partial,47.6,42.1,57.4,46.4
+Mixtral-8x22B-Instruct-v0.1,44.0,True,NONE,76.2,72.0,73.8,64.3
+Mixtral-8x7B-Instruct-v0.1,13.0,True,NONE,45.1,39.6,59.5,49.7
+O1 Mini (Sept 2024),,True,NONE,96.3,89.0,93.1,78.8
+O1 Preview (Sept 2024),,True,NONE,96.3,89.0,95.5,80.2
+OpenChat-3.5-7B-0106,7.0,True,Partial,72.6,67.7,63.8,54.5
+OpenCodeInterpreter-DS-33B,33.0,True,Partial,79.3,73.8,80.2,68.5
+OpenCodeInterpreter-DS-6.7B,6.7,True,Partial,77.4,72.0,76.5,66.4
+OpenCoder-8B-Instruct,8.0,True,NONE,81.7,77.4,82.0,71.4
+OpenHermes-2.5-Code-290k-13B,13.0,True,Partial,54.3,48.8,52.4,45.8
+Phi-3-mini-4k-instruct,3.8,True,NONE,64.6,59.1,65.9,54.2
+Phind-CodeLlama-34B-v2,34.0,False,NONE,71.3,67.1,,
+PolyCoder-2.7B,2.7,False,Full,6.1,6.1,,
+Python-Code-13B,13.0,True,Partial,32.9,30.5,,
+Qwen1.5-72B-Chat,72.0,True,NONE,68.3,59.1,72.5,61.6
+Qwen2.5-Coder-32B-Instruct,32.0,True,NONE,92.1,87.2,90.5,77.0
+SOLAR-10.7B-Instruct-v1.0,10.7,True,Partial,43.3,37.2,43.9,36.2
+SantaCoder-1.1B,1.1,False,Full,14.6,14.0,,
+StableLM-7B,7.0,False,NONE,2.4,2.4,,
+StarCoder-15B,15.0,False,Full,34.1,29.3,55.1,46.1
+StarCoder2-15B,15.0,False,Full,46.3,37.8,,
+StarCoder2-3B,3.0,False,Full,31.7,27.4,,
+StarCoder2-7B,7.0,False,Full,35.4,29.9,,
+StarCoderBase-1B,1.0,False,Full,14.6,12.2,,
+StarCoderBase-3B,3.0,False,Full,17.7,15.9,,
+StarCoderBase-7B,7.0,False,Full,24.4,21.3,,
+Vicuna-13B,13.0,False,Partial,17.1,15.9,,
+Vicuna-7B,7.0,False,Partial,11.6,11.6,,
+WaveCoder-Ultra-6.7B,7.0,True,NONE,75.0,69.5,74.9,63.5
+WhiteRabbitNeo-33B-v1,33.0,True,NONE,72.0,65.9,79.4,66.9
+WizardCoder-15B-V1.0,15.0,True,NONE,56.7,50.6,64.3,54.2
+WizardCoder-33B-V1.1,33.0,True,NONE,79.9,73.2,,
+WizardCoder-Python-34B-V1.0,34.0,True,NONE,73.2,64.6,75.1,63.2
+WizardCoder-Python-7B-V1.0,7.0,True,NONE,50.6,45.1,58.5,49.5
+XwinCoder-34B,34.0,True,NONE,75.6,69.5,77.0,64.8
+Zephyr β-7B,7.0,False,Partial,30.0,23.2,42.1,34.7
+claude-2 (Mar 2024),,True,NONE,69.5,61.6,,
+claude-3-haiku (Mar 2024),,True,NONE,76.8,68.9,80.2,68.8
+claude-3-opus (Mar 2024),,True,NONE,82.9,77.4,89.4,73.3
+claude-3-sonnet (Mar 2024),,True,NONE,70.7,64.0,83.6,69.3
+claude-instant-1 (Mar 2024),,True,NONE,57.3,50.6,,
+code-millenials-34B,34.0,True,NONE,74.4,70.7,76.2,64.6
+codegemma-2b,2.0,False,NONE,26.8,20.7,55.6,46.6
+codegemma-7b,7.0,False,NONE,44.5,41.5,65.1,52.4
+codegemma-7b-it,7.0,True,NONE,60.4,51.8,70.4,56.9
+databricks/dbrx-instruct,36.0,True,NONE,75.0,70.1,67.2,55.8
+dolphin-2.6-mixtral-8x7b,13.0,True,Partial,64.0,57.3,70.6,59.0
+gemma-1.1-2b-it,7.0,True,NONE,22.6,17.7,29.8,23.3
+gemma-1.1-7b-it,7.0,True,NONE,42.7,35.4,57.1,45.0
+gemma-2b,2.0,False,NONE,25.0,20.7,41.8,34.1
+gemma-2b-it,2.0,True,NONE,17.7,15.2,,
+gemma-7b,7.0,False,NONE,35.4,28.7,52.6,43.4
+gemma-7b-it,7.0,True,NONE,28.7,25.0,47.1,36.8
+phi-2-2.7B,2.7,False,NONE,49.4,45.1,64.0,54.2
+speechless-code-mistral-7B-v1.0,7.0,True,Partial,48.2,41.5,57.4,48.7
+speechless-codellama-34B-v2.0,34.0,True,Partial,77.4,72.0,73.8,61.4
+speechless-coder-ds-6.7B,6.7,True,Partial,71.3,65.9,75.9,64.4
+speechless-coding-7B-16k-tora,7.0,True,Partial,54.9,50.6,64.2,50.6
+speechless-starcoder2-15b,15.0,True,Full,67.1,62.8,73.5,62.4
+speechless-starcoder2-7b,7.0,True,Full,56.1,51.8,66.7,56.3
+stable-code-3B,3.0,False,Full,29.3,25.6,54.8,45.8
+starchat2-15b-v0.1,15.0,True,Full,73.8,71.3,74.9,64.6
+starcoder2-15b-instruct-v0.1,15.0,True,Full,67.7,60.4,78.0,65.1
+xDAN-L1-Chat-RL-v1-7B,7.0,True,Partial,40.2,32.9,50.3,41.3
+zyte-1B,1.0,True,Partial,2.4,1.8,9.8,7.5

@@ -62,3 +62,19 @@
 - **Alternatives**: rebase and force-push (loses the dated commits on the
   branch)
 - **Status**: accepted
+
+### D-6. Break ties with a jitter in the conditional estimate
+
+- **Decision**: before the conditional estimate of the winner (correction C4 of
+  `preregistration_3.md`), add a uniform jitter of up to half a task to each
+  score, give the winner the largest jitter among the variants tied with it,
+  and add `1 / (12 n^2)` to the variance of each score
+- **Why**: scores move by whole tasks, so variants often tie, and the normal
+  theory of the estimate needs no ties; picking the best jittered score is the
+  same as breaking the ties at random. In 1,500 simulated benchmarks of equal
+  variants per setting, run before any result of Milestone 4, the median error
+  was +0.33 points with the jitter against +2.64 with the bounds moved by half
+  a task (20 variants, 82 tasks), and +0.19 against +0.78 (2 variants)
+- **Alternatives**: moving the bounds by half a task (biased up), no change
+  (a tie for first makes the estimate fall back to the raw score)
+- **Status**: accepted

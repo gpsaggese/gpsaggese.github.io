@@ -1413,3 +1413,396 @@ class Test_estimate_run_share(hunitest.TestCase):
         ratio = scaled["run_share"] / base["run_share"]
         actual = str(ratio.round(6).tolist())
         self.assert_equal(actual, expected)
+
+
+# #############################################################################
+# Test_compute_kr20
+# #############################################################################
+
+
+class Test_compute_kr20(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils.compute_kr20()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test a 4 x 4 staircase, whose KR-20 is 2 / 3 by hand.
+        """
+        # Prepare inputs: the pass rates of the tasks are 1, 0.75, 0.5, and
+        # 0.25, and the agents solve 4, 3, 2, and 1 tasks.
+        outcomes = pd.DataFrame(
+            [[1, 1, 1, 1], [1, 1, 1, 0], [1, 1, 0, 0], [1, 0, 0, 0]]
+        )
+        # Run test.
+        kr20 = utils.compute_kr20(outcomes)
+        # Check outputs.
+        self.assertAlmostEqual(kr20, 2 / 3)
+
+    def test2(self) -> None:
+        """
+        Test that tasks that all agree give a reliability of 1.
+        """
+        # Prepare inputs.
+        outcomes = pd.DataFrame([[1] * 4, [0] * 4, [1] * 4, [0] * 4])
+        # Run test.
+        kr20 = utils.compute_kr20(outcomes)
+        # Check outputs.
+        self.assertAlmostEqual(kr20, 1.0)
+
+
+# #############################################################################
+# Test_compute_split_half_reliability
+# #############################################################################
+
+
+class Test_compute_split_half_reliability(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils.compute_split_half_reliability()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that tasks that all agree give a reliability of 1 in every split.
+        """
+        # Prepare inputs.
+        outcomes = pd.DataFrame([[1] * 10, [0] * 10, [1] * 10, [0] * 10])
+        # Run test.
+        reliability = utils.compute_split_half_reliability(
+            outcomes, n_splits=20, seed=1
+        )
+        # Check outputs.
+        self.assertAlmostEqual(reliability, 1.0)
+
+
+# #############################################################################
+# Test_compute_transfer
+# #############################################################################
+
+
+class Test_compute_transfer(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils.compute_transfer()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test 2 identical benchmarks: the correlations are 1, and the corrected
+        one is 1 over the reliability.
+        """
+        # Prepare inputs.
+        outcomes = pd.DataFrame(
+            [
+                [1, 1, 1, 1, 1, 0],
+                [1, 1, 1, 1, 0, 0],
+                [1, 1, 0, 1, 0, 0],
+                [1, 0, 1, 0, 0, 0],
+                [0, 1, 0, 0, 0, 0],
+            ]
+        )
+        # Run test.
+        transfer = utils.compute_transfer(outcomes, outcomes, n_boot=50, seed=1)
+        # Check outputs.
+        kr20 = utils.compute_kr20(outcomes)
+        self.assertAlmostEqual(transfer["pearson"], 1.0)
+        self.assertAlmostEqual(transfer["spearman"], 1.0)
+        self.assertAlmostEqual(transfer["corrected"], 1 / kr20)
+        self.assertLessEqual(transfer["spearman_low"], transfer["spearman_high"])
+
+
+# #############################################################################
+# Test_compute_benchmark_residuals
+# #############################################################################
+
+
+class Test_compute_benchmark_residuals(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils.compute_benchmark_residuals()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that only the agent much better on the first benchmark is
+        benchmark-specific.
+        """
+        # Prepare inputs: 5 agents on 2 benchmarks of 200 tasks, where the
+        # last agent solves 90% of the first and 30% of the second.
+        n_tasks = 200
+        rates_a = [0.2, 0.4, 0.6, 0.8, 0.9]
+        rates_b = [0.2, 0.4, 0.6, 0.8, 0.3]
+        outcomes_a = pd.DataFrame(
+            [[int(i < r * n_tasks) for i in range(n_tasks)] for r in rates_a]
+        )
+        outcomes_b = pd.DataFrame(
+            [[int(i < r * n_tasks) for i in range(n_tasks)] for r in rates_b]
+        )
+        # Run test.
+        residuals = utils.compute_benchmark_residuals(
+            outcomes_a, outcomes_b, n_boot=200, seed=1
+        )
+        # Check outputs.
+        self.assertEqual(
+            residuals["specific"].tolist(), [False, False, False, False, True]
+        )
+        self.assertGreater(residuals["gap_points"].iloc[-1], 50)
+        self.assertAlmostEqual(residuals["residual"].iloc[0], 0.0)
+
+
+# #############################################################################
+# Test_compute_cochran_q
+# #############################################################################
+
+
+class Test_compute_cochran_q(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils.compute_cochran_q()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that identical variants give Q = 0 and p = 1.
+        """
+        # Prepare inputs.
+        outcomes = pd.DataFrame([[1, 0, 1, 1], [1, 0, 1, 1], [1, 0, 1, 1]])
+        # Run test.
+        q, p_value = utils.compute_cochran_q(outcomes)
+        # Check outputs.
+        self.assertEqual((q, p_value), (0.0, 1.0))
+
+    def test2(self) -> None:
+        """
+        Test a 3 x 4 example computed by hand: Q = 2 x 14 / 6.
+        """
+        # Prepare inputs: the variants solve 3, 1, and 0 tasks, and the tasks
+        # are solved by 2, 1, 1, and 0 variants.
+        outcomes = pd.DataFrame([[1, 1, 1, 0], [1, 0, 0, 0], [0, 0, 0, 0]])
+        # Run test.
+        q, p_value = utils.compute_cochran_q(outcomes)
+        # Check outputs.
+        self.assertAlmostEqual(q, 28 / 6)
+        self.assertAlmostEqual(p_value, 0.0970, places=4)
+
+
+# #############################################################################
+# Test_correct_winner_score
+# #############################################################################
+
+
+class Test_correct_winner_score(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils.correct_winner_score()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that identical variants need no correction, except the binomial
+        one, which ignores that they are identical.
+
+        The conditional estimate breaks the 3-way tie with a jitter of up to
+        half a task, so it is only within half a task of the score.
+        """
+        # Prepare inputs.
+        outcomes = np.array([[1, 0, 1, 1, 0, 1]] * 3)
+        # Run test.
+        estimates = utils.correct_winner_score(outcomes, 0)
+        # Check outputs.
+        for correction in ("none", "paired", "empirical_bayes"):
+            self.assertAlmostEqual(estimates[correction], 4 / 6)
+        self.assertLessEqual(abs(estimates["conditional"] - 4 / 6), 1 / 12)
+        self.assertLess(estimates["binomial"], 4 / 6)
+
+    def test2(self) -> None:
+        """
+        Test on simulated benchmarks that the winner of 5 equal variants looks
+        better than it is and that 3 corrections remove the inflation.
+        """
+        # Prepare inputs: each benchmark draws 200 tasks with a pass chance
+        # from a uniform distribution, and 5 variants answer each task
+        # independently, so every variant has a true score of 0.5.
+        rng = np.random.default_rng(3)
+        errors = {
+            c: [] for c in ("none", "paired", "empirical_bayes", "conditional")
+        }
+        for _ in range(400):
+            chances = rng.uniform(size=200)
+            outcomes = (rng.uniform(size=(5, 200)) < chances).astype(float)
+            # Break ties at random, as the selection of the studies does.
+            scores = outcomes.mean(axis=1)
+            winner = int(rng.choice(np.flatnonzero(scores == scores.max())))
+            estimates = utils.correct_winner_score(outcomes, winner)
+            for correction in errors:
+                errors[correction].append(estimates[correction] - 0.5)
+        # Run test.
+        medians = {c: float(np.median(e)) for c, e in errors.items()}
+        # Check outputs: the expected inflation is about 3.4 points.
+        self.assertGreater(medians["none"], 0.02)
+        for correction in ("paired", "empirical_bayes", "conditional"):
+            self.assertLess(abs(medians[correction]), 0.01, correction)
+
+
+# #############################################################################
+# Test_simulate_variant_selection
+# #############################################################################
+
+
+class Test_simulate_variant_selection(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils.simulate_variant_selection()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test the columns, and that identical variants need no correction.
+        """
+        # Prepare inputs.
+        outcomes = pd.DataFrame(
+            [[1, 0, 1, 1, 0, 1, 1, 0]] * 3, index=["a", "b", "c"]
+        )
+        # Run test.
+        trials = utils.simulate_variant_selection(
+            outcomes, 2, n_trials=20, seed=1
+        )
+        # Check outputs.
+        self.assertEqual(len(trials), 20)
+        self.assertTrue(trials["winner"].isin(["a", "b", "c"]).all())
+        self.assertTrue(np.allclose(trials["paired"], trials["none"]))
+        self.assertTrue(
+            np.allclose(
+                trials["drop"],
+                trials["selection_score"] - trials["evaluation_score"],
+            )
+        )
+
+
+# #############################################################################
+# Test_simulate_best_of_k_runs
+# #############################################################################
+
+
+class Test_simulate_best_of_k_runs(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils.simulate_best_of_k_runs()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that runs with the same answers have no inflation.
+        """
+        # Prepare inputs: 6 tasks x 5 runs, each task with the same outcome
+        # in every run.
+        outcomes = pd.DataFrame(
+            [[1] * 5, [0] * 5, [1] * 5, [1] * 5, [0] * 5, [1] * 5]
+        )
+        # Run test.
+        draws = utils.simulate_best_of_k_runs(outcomes, 3, n_draws=10, seed=1)
+        # Check outputs.
+        self.assertTrue(np.allclose(draws["inflation"], 0))
+        self.assertTrue(np.allclose(draws["predicted"], 0))
+        self.assertTrue(np.allclose(draws["truth"], 4 / 6))
+
+
+# #############################################################################
+# Test_summarize_corrections
+# #############################################################################
+
+
+class Test_summarize_corrections(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils.summarize_corrections()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test the mean error and the root mean squared error, in points.
+        """
+        # Prepare inputs.
+        trials = pd.DataFrame(
+            {
+                "truth": [0.5, 0.5],
+                "none": [0.53, 0.55],
+                "binomial": [0.48, 0.5],
+                "paired": [0.5, 0.52],
+                "empirical_bayes": [0.51, 0.49],
+                "conditional": [0.5, 0.5],
+            }
+        )
+        # Prepare outputs.
+        expected = """
+                         mean_error   rmse
+        none                    4.0  4.123
+        binomial               -1.0  1.414
+        paired                  1.0  1.414
+        empirical_bayes         0.0  1.000
+        conditional             0.0  0.000
+        """
+        # Run test.
+        summary = utils.summarize_corrections(trials, "truth")
+        # Check outputs.
+        actual = summary.round(3).to_string()
+        self.assert_equal(actual, expected, dedent=True)
+
+
+# #############################################################################
+# Test_choose_shrinkage_rule
+# #############################################################################
+
+
+class Test_choose_shrinkage_rule(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils.choose_shrinkage_rule()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that a biased candidate is dropped and the lowest RMSE wins.
+        """
+        # Prepare inputs: `paired` is biased in the second setting, and
+        # `conditional` has a lower RMSE than `empirical_bayes`.
+        index = ["paired", "empirical_bayes", "conditional"]
+        summaries = {
+            "a": pd.DataFrame(
+                {"mean_error": [0.2, 0.1, -0.3], "rmse": [3.0, 2.5, 2.0]},
+                index=index,
+            ),
+            "b": pd.DataFrame(
+                {"mean_error": [1.5, -0.4, 0.5], "rmse": [3.5, 2.9, 2.8]},
+                index=index,
+            ),
+        }
+        # Run test.
+        table, recommended = utils.choose_shrinkage_rule(summaries)
+        # Check outputs.
+        self.assertEqual(table["passes"].tolist(), [False, True, True])
+        self.assertEqual(recommended, "conditional")
+
+
+# #############################################################################
+# Test_report_agent_scores
+# #############################################################################
+
+
+class Test_report_agent_scores(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_utils.report_agent_scores()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test the order, the columns, and that only the leader is corrected.
+        """
+        # Prepare inputs: 3 agents on 40 tasks, far apart.
+        outcomes = pd.DataFrame(
+            [[1] * 36 + [0] * 4, [1] * 20 + [0] * 20, [1] * 4 + [0] * 36],
+            index=["a", "b", "c"],
+        )
+        # Run test.
+        report = utils.report_agent_scores(outcomes, n_boot=200, seed=1)
+        # Check outputs.
+        self.assertEqual(list(report.index), ["a", "b", "c"])
+        self.assertEqual(
+            report["corrected"].notna().tolist(), [True, False, False]
+        )
+        self.assertTrue((report["p_next_holm"].iloc[:2] < 0.05).all())
+        # The leader is 16 tasks ahead, so picking it adds almost no luck:
+        # the correction stays within half a task of its score.
+        self.assertLessEqual(abs(report.loc["a", "corrected"] - 0.9), 0.5 / 40)

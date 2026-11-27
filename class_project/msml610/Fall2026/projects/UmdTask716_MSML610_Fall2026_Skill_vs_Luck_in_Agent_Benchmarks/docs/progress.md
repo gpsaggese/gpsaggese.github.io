@@ -19,9 +19,9 @@
 | M2: Ranking under uncertainty | Oct 30 | Done | #855 |
 | M3: Split-half rank correlation (SWE-bench) | Nov 15 | Done | #855 |
 | M3: 2PL IRT and effective size (SWE-bench) | Nov 15 | Done | #855 |
-| M3: Cross-benchmark rank correlation | Nov 15 | Not started | |
+| M3: Cross-benchmark rank correlation and effective size (HumanEval+, MBPP+) | Nov 15 | Done | PR of branch `_4` |
 | M4: Winner's curse, simulated and held-out (SWE-bench) | Nov 15 | Done | #855 |
-| M4: Measured drop on real prompt variants | Nov 15 | Not started | |
+| M4: Measured drop on real runs and prompt variants, shrinkage rule | Nov 15 | In progress | PR of branch `_4` |
 | Phase 2: Studies A to D, pre-registered | Nov 3 | In review | PR of branch `_3` |
 | Write-up and paper draft | Dec 7 | Not started | |
 
@@ -136,16 +136,23 @@
     scores are 5 to 12 points apart in our runs, and Llama 3.1 8B scores 7.6
     points above its published greedy MBPP+ score
     - Study D, `skill_vs_luck.more_models.ipynb`
+20. HumanEval+ and MBPP+ rank 18 models almost the same way (Spearman 0.98,
+    and 0.99 once task luck is removed, interval up to 1.00), but not on the
+    same scale: the 7 chat models score 14 to 21 HumanEval+ points more than
+    a 2023 base model with the same MBPP+ score (8 of 18 benchmark-specific);
+    the effective size is about 119 tasks for HumanEval+ (72%) and 214 for
+    MBPP+ (57%); 4 of the 6 pre-registered predictions held
+    - Study E, `skill_vs_luck.transfer.ipynb`, `preregistration_3.md`
 
 ## Next
 
-1. M3: run the split-half and IRT analysis on the HumanEval+ and MBPP+
-   results, and correlate the rankings across benchmarks
-2. M4: compare the simulated held-out drop with the drop measured on real
-   prompt variants
+1. M4: score the 20 prompt variants, run Studies F to H in
+   `skill_vs_luck.selection.ipynb`, and pick the shrinkage rule
+2. The protocol: `report_agent_scores()` on SWE-bench Verified and on our
+   runs, with a README section
 3. Phase 2: get the PR of branch `_3` reviewed; its scores download with
    `fetch_coding_scores.py`
-4. Write-up: related work and a first draft of the paper sections
+4. Run every notebook in the rebuilt Docker image, then the video
 
 ## History
 
@@ -168,6 +175,8 @@
 | 2026-11-16 | Merged `master` into #808 to resolve the `README.md` conflict with #855; moved the 88 score files of #808 and the phase-2 scores to the Google Drive folder, downloaded by `fetch_coding_scores.py` |
 | 2026-11-21 | PR #808 merged; GP asked on #716 to move the research Gdoc to the `Research_Class_Projects` Drive folder |
 | 2026-11-26 | Merged `master` into `_3`; `fetch_coding_scores.py` also downloads the phase-2 scores; opened the PR of `_3` |
+| 2026-11-26 | Pre-registered Milestones 3 and 4 in `preregistration_3.md` (`a337ea14`), then started the 20 prompt variants |
+| 2026-11-26 | Study E (Milestone 3): 4 of 6 predictions held; see D-6 for the ties in the conditional estimate |
 
 ## Open Work
 

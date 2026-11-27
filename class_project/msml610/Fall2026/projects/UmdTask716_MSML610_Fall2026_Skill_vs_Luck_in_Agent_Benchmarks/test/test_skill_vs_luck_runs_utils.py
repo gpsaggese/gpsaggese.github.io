@@ -2696,3 +2696,91 @@ class Test_check_new_model_predictions(hunitest.TestCase):
         self.assertEqual(
             table.loc["D3", "observed"], "60.0% keep the order of the 6 models"
         )
+
+
+# #############################################################################
+# Test_get_greedy_matrix
+# #############################################################################
+
+
+class Test_get_greedy_matrix(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_runs_utils.get_greedy_matrix()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that run 0 of each agent is used and that a task missing for 1
+        agent is dropped.
+        """
+        # Prepare inputs: the public agent has no answer to `HumanEval/2`, and
+        # the local agent has a second greedy run that must be ignored.
+        rows = []
+        for task_id, outcome in (("HumanEval/0", 1), ("HumanEval/1", 0)):
+            rows.append(("evalplus", "starcoder", task_id, 0, outcome))
+        for task_id, outcome in (
+            ("HumanEval/0", 0),
+            ("HumanEval/1", 1),
+            ("HumanEval/2", 1),
+        ):
+            rows.append(("local", "opencoder:8b", task_id, 0, outcome))
+            rows.append(("local", "opencoder:8b", task_id, 1, 1 - outcome))
+        scores = pd.DataFrame(
+            rows, columns=["source", "model", "task_id", "run", "plus_pass"]
+        )
+        scores["benchmark"] = "humaneval"
+        scores["scaffold"] = "one_shot"
+        scores["temperature"] = 0.0
+        agents = [("evalplus", "starcoder"), ("local", "opencoder:8b")]
+        # Prepare outputs.
+        expected = """
+                      HumanEval/0  HumanEval/1
+        starcoder               1            0
+        opencoder:8b            0            1
+        """
+        # Run test.
+        outcomes = rutils.get_greedy_matrix(scores, "humaneval", agents)
+        # Check outputs.
+        actual = outcomes.to_string()
+        self.assert_equal(actual, expected, dedent=True)
+
+
+# #############################################################################
+# Test_get_variant_matrix
+# #############################################################################
+
+
+class Test_get_variant_matrix(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_runs_utils.get_variant_matrix()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that the variants come in the order of the grid.
+        """
+        # Prepare inputs: 2 variants, given in the reverse order of the grid.
+        rows = []
+        for variant, outcomes in (
+            ("expert-short-edge", (1, 0)),
+            ("none-evalplus-none", (0, 1)),
+        ):
+            for task_id, outcome in zip(
+                ("HumanEval/1", "HumanEval/0"), outcomes
+            ):
+                rows.append((variant, task_id, outcome))
+        scores = pd.DataFrame(rows, columns=["variant", "task_id", "plus_pass"])
+        scores["benchmark"] = "humaneval"
+        scores["scaffold"] = "one_shot"
+        scores["run"] = 0
+        # Prepare outputs.
+        expected = """
+                            HumanEval/0  HumanEval/1
+        none-evalplus-none            1            0
+        expert-short-edge             0            1
+        """
+        # Run test.
+        matrix = rutils.get_variant_matrix(scores, "humaneval")
+        # Check outputs.
+        actual = matrix.to_string()
+        self.assert_equal(actual, expected, dedent=True)

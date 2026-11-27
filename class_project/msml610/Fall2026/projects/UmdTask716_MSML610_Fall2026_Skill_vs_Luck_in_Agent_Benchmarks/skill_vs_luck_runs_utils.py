@@ -1174,6 +1174,41 @@ def get_outcome_matrix(
     return matrix
 
 
+def get_greedy_matrix(
+    scores: pd.DataFrame, benchmark: str, agents: List[Tuple[str, str]]
+) -> pd.DataFrame:
+    """
+    Get the agents x tasks matrix of the greedy one-shot answers.
+
+    Each agent contributes its first greedy run (run 0). Only the tasks with
+    an outcome for every agent are kept.
+
+    :param scores: output of `load_scores()`
+    :param benchmark: `humaneval` or `mbpp`
+    :param agents: `(source, model)` pairs, e.g., `("evalplus", "starcoder")`
+        or `("local", "opencoder:8b")`
+    :return: agents x tasks matrix of `plus_pass` (0/1), with 1 row per model
+        and the tasks sorted
+    """
+    rows = []
+    for source, model in agents:
+        matrix = get_outcome_matrix(
+            scores,
+            source=source,
+            benchmark=benchmark,
+            model=model,
+            scaffold="one_shot",
+            temperature=0,
+        )
+        rows.append(matrix[0].rename(model))
+    outcomes = pd.concat(rows, axis=1).T
+    # Keep the tasks that every agent answered.
+    outcomes = outcomes.dropna(axis=1).astype(int)
+    outcomes = outcomes[sort_task_ids(list(outcomes.columns))]
+    outcomes.columns.name = None
+    return outcomes
+
+
 def compute_variance_components(outcomes: pd.DataFrame) -> pd.Series:
     r"""
     Split the variance of a score into its task and run parts.
@@ -3156,3 +3191,353 @@ def check_new_model_predictions(
     }
     table = pd.DataFrame.from_dict(rows, orient="index")
     return table
+
+
+# #############################################################################
+# Transfer between HumanEval+ and MBPP+ (Study E)
+# #############################################################################
+
+
+# The 12 public EvalPlus models with greedy samples on both benchmarks.
+TRANSFER_PUBLIC_MODELS = (
+    "codegen-2b",
+    "codegen-6b",
+    "codegen-16b",
+    "codet5p-2b",
+    "codet5p-6b",
+    "codet5p-16b",
+    "code-llama-7b",
+    "code-llama-13b",
+    "code-llama-34b",
+    "starcoder",
+    "mistral-7b",
+    "gpt-4-1106-preview",
+)
+
+
+def check_transfer_predictions(
+    *,
+    transfer: pd.Series,
+    residuals: pd.DataFrame,
+    effective: pd.DataFrame,
+    leaderboard_spearman: float,
+) -> pd.DataFrame:
+    """
+    Check the predictions E1 to E6 of `preregistration_3.md` (Study E).
+
+    - E1: KR-20 is at least 0.95 on both benchmarks
+    - E2: the Spearman correlation of the 18 models is at least 0.80
+    - E3: the corrected correlation is below 0.95, and the upper end of its
+      95% interval is below 1
+    - E4: at least 2 of the 18 models are benchmark-specific
+    - E5: the effective size is between 30% and 70% of the tasks on both
+      benchmarks, and a smaller share of the tasks on MBPP+ than on
+      HumanEval+
+    - E6: the Spearman correlation of the leaderboard models is at least 0.85
+
+    :param transfer: output of `compute_transfer()`, HumanEval+ first
+    :param residuals: output of `compute_benchmark_residuals()`
+    :param effective: 1 row per benchmark (`humaneval`, `mbpp`) with
+        `effective_size` and `n_tasks`
+    :param leaderboard_spearman: Spearman correlation of the HumanEval+ and
+        MBPP+ scores of the leaderboard models
+    :return: 1 row per prediction, `E1` to `E6`, with `prediction`,
+        `observed`, and `holds`
+    """
+    rows = {}
+    kr20_a, kr20_b = transfer["kr20_a"], transfer["kr20_b"]
+    rows["E1"] = {
+        "prediction": "KR-20 is at least 0.95 on both benchmarks",
+        "observed": f"HumanEval+ {kr20_a:.3f}, MBPP+ {kr20_b:.3f}",
+        "holds": bool(min(kr20_a, kr20_b) >= 0.95),
+    }
+    spearman = transfer["spearman"]
+    rows["E2"] = {
+        "prediction": "The Spearman correlation is at least 0.80",
+        "observed": (
+            f"{spearman:.3f} (95% interval {transfer['spearman_low']:.3f} to "
+            f"{transfer['spearman_high']:.3f})"
+        ),
+        "holds": bool(spearman >= 0.80),
+    }
+    corrected, high = transfer["corrected"], transfer["corrected_high"]
+    rows["E3"] = {
+        "prediction": "The corrected correlation is below 0.95, interval below 1",
+        "observed": (
+            f"{corrected:.3f} (95% interval {transfer['corrected_low']:.3f} to "
+            f"{high:.3f})"
+        ),
+        "holds": bool(corrected < 0.95 and high < 1),
+    }
+    n_specific = int(residuals["specific"].sum())
+    rows["E4"] = {
+        "prediction": "At least 2 of the 18 models are benchmark-specific",
+        "observed": f"{n_specific} of {len(residuals)} models",
+        "holds": n_specific >= 2,
+    }
+    shares = effective["effective_size"] / effective["n_tasks"]
+    rows["E5"] = {
+        "prediction": "Effective size is 30% to 70% of the tasks, smaller on MBPP+",
+        "observed": (
+            f"HumanEval+ {100 * shares['humaneval']:.1f}%, MBPP+ "
+            f"{100 * shares['mbpp']:.1f}%"
+        ),
+        "holds": bool(
+            shares.between(0.3, 0.7).all()
+            and shares["mbpp"] < shares["humaneval"]
+        ),
+    }
+    rows["E6"] = {
+        "prediction": "The leaderboard Spearman correlation is at least 0.85",
+        "observed": f"{leaderboard_spearman:.3f}",
+        "holds": bool(leaderboard_spearman >= 0.85),
+    }
+    table = pd.DataFrame.from_dict(rows, orient="index")
+    return table
+
+
+def plot_leaderboard_agreement(
+    leaderboard: pd.DataFrame,
+    *,
+    figsize: Optional[Tuple[float, float]] = None,
+) -> None:
+    """
+    Plot the HumanEval+ and MBPP+ scores of the EvalPlus leaderboard models.
+
+    :param leaderboard: `data/evalplus_leaderboard.csv`, the models with both
+        scores
+    :param figsize: figure size, default `plt.rcParams["figure.figsize"]`
+    """
+    if figsize is None:
+        figsize = plt.rcParams["figure.figsize"]
+    fig, ax = plt.subplots(figsize=figsize)
+    ax.scatter(leaderboard["mbpp_plus"], leaderboard["humaneval_plus"], s=15)
+    spearman = scipy.stats.spearmanr(
+        leaderboard["mbpp_plus"], leaderboard["humaneval_plus"]
+    ).statistic
+    ax.set_xlabel("MBPP+ pass@1 (%)")
+    ax.set_ylabel("HumanEval+ pass@1 (%)")
+    ax.set_title(
+        f"EvalPlus leaderboard, {len(leaderboard)} models (Spearman "
+        f"{spearman:.2f})"
+    )
+    fig.tight_layout()
+    plt.show()
+
+
+# #############################################################################
+# Selection among runs and prompt variants (Studies F and G)
+# #############################################################################
+
+
+def get_variant_matrix(scores: pd.DataFrame, benchmark: str) -> pd.DataFrame:
+    """
+    Get the variants x tasks matrix of the answers of the prompt variants.
+
+    :param scores: output of `load_scores()` on `data/coding_runs_variants`
+    :param benchmark: `humaneval` or `mbpp`
+    :return: variants x tasks matrix of `plus_pass` (0/1) of the greedy
+        one-shot answers, in the order of `PROMPT_VARIANTS`
+    """
+    mask = (
+        (scores["benchmark"] == benchmark)
+        & (scores["scaffold"] == "one_shot")
+        & (scores["run"] == 0)
+    )
+    matrix = scores[mask].pivot(
+        index="variant", columns="task_id", values="plus_pass"
+    )
+    hdbg.dassert(not matrix.isna().any().any(), "Some cells have no score")
+    variants = [
+        variant for variant in PROMPT_VARIANTS if variant in matrix.index
+    ]
+    matrix = matrix.loc[variants, sort_task_ids(list(matrix.columns))]
+    matrix = matrix.astype(int)
+    matrix.index.name = None
+    matrix.columns.name = None
+    return matrix
+
+
+def check_selection_predictions(
+    *,
+    runs_pooled: pd.DataFrame,
+    runs_cells: pd.DataFrame,
+    variants: pd.DataFrame,
+    agreement: pd.Series,
+    cochran: pd.DataFrame,
+) -> pd.DataFrame:
+    """
+    Check the predictions F1 to F3 and G0 to G5 of `preregistration_3.md`.
+
+    :param runs_pooled: Study F pooled over cells, indexed by `group`
+        (`public` or `local`) and `k`, with `inflation`, `predicted`, and
+        `error_<correction>` in points
+    :param runs_cells: Study F by cell, with `group`, `temperature`,
+        `benchmark`, `k`, and `inflation` in points
+    :param variants: Study G, indexed by `benchmark` and `k`, with `drop`,
+        `error_<correction>`, and `rmse_<correction>` in points
+    :param agreement: share of the tasks where the baseline variant gives the
+        outcome of phase 1, by benchmark
+    :param cochran: Cochran's Q test by benchmark, with `p_value`
+    :return: 1 row per prediction with `prediction`, `observed`, and `holds`
+    """
+    rows = {}
+    # F1: the mean inflation against the predicted one.
+    ratios = runs_pooled["inflation"] / runs_pooled["predicted"]
+    within = (ratios - 1).abs() <= 0.2
+    rows["F1"] = {
+        "prediction": "Inflation within 20% of the prediction, every K",
+        "observed": (
+            f"{int(within.sum())} of {len(within)} settings, ratios "
+            f"{ratios.min():.2f} to {ratios.max():.2f}"
+        ),
+        "holds": bool(within.all()),
+    }
+    # F2: the best of 5 runs of the public cells at temperature 0.8.
+    public_08 = runs_cells[
+        (runs_cells["group"] == "public")
+        & (runs_cells["temperature"] == 0.8)
+        & (runs_cells["k"] == 5)
+    ]
+    rows["F2"] = {
+        "prediction": "Best of 5 runs at 0.8 is 1.5 points above, each public cell",
+        "observed": (
+            f"{int((public_08['inflation'] >= 1.5).sum())} of {len(public_08)} "
+            f"cells, smallest {public_08['inflation'].min():.2f} points"
+        ),
+        "holds": bool((public_08["inflation"] >= 1.5).all()),
+    }
+    # F3: the binomial correction of the best of 5 runs.
+    binomial_error = runs_pooled.loc[("public", 5), "error_binomial"]
+    rows["F3"] = {
+        "prediction": "The binomial correction over-corrects the best of 5 runs",
+        "observed": f"mean error {binomial_error:+.2f} points",
+        "holds": bool(binomial_error < -1),
+    }
+    # G0: the baseline variant against phase 1.
+    rows["G0"] = {
+        "prediction": "The baseline variant repeats phase 1 on 95% of the tasks",
+        "observed": ", ".join(
+            f"{benchmark} {100 * share:.1f}%"
+            for benchmark, share in agreement.items()
+        ),
+        "holds": bool((agreement >= 0.95).all()),
+    }
+    # G1: Cochran's Q over the 20 variants.
+    rows["G1"] = {
+        "prediction": "Cochran's Q rejects equal pass rates on 1 benchmark",
+        "observed": ", ".join(
+            f"{benchmark} p {p_value:.3g}"
+            for benchmark, p_value in cochran["p_value"].items()
+        ),
+        "holds": bool((cochran["p_value"] < 0.05).any()),
+    }
+    k_20 = variants.xs(20, level="k")
+    rows["G2"] = {
+        "prediction": "At K = 20 the mean drop is at least 1 point",
+        "observed": ", ".join(
+            f"{benchmark} {drop:.2f}" for benchmark, drop in k_20["drop"].items()
+        ),
+        "holds": bool((k_20["drop"] >= 1).all()),
+    }
+    rows["G3"] = {
+        "prediction": "At K = 20 the binomial correction over-corrects",
+        "observed": ", ".join(
+            f"{benchmark} {error:+.2f}"
+            for benchmark, error in k_20["error_binomial"].items()
+        ),
+        "holds": bool((k_20["error_binomial"] < -1).all()),
+    }
+    conditional = variants["error_conditional"]
+    rows["G4"] = {
+        "prediction": "The conditional mean error is within 1 point, every K",
+        "observed": (
+            f"{conditional.min():+.2f} to {conditional.max():+.2f} points"
+        ),
+        "holds": bool((conditional.abs() <= 1).all()),
+    }
+    rmse_columns = [c for c in variants.columns if c.startswith("rmse_")]
+    best = k_20[rmse_columns].idxmin(axis=1).str.replace("rmse_", "")
+    rows["G5"] = {
+        "prediction": "At K = 20, empirical Bayes or conditional has the best RMSE",
+        "observed": ", ".join(
+            f"{benchmark} {name}" for benchmark, name in best.items()
+        ),
+        "holds": bool(best.isin(["empirical_bayes", "conditional"]).all()),
+    }
+    table = pd.DataFrame.from_dict(rows, orient="index")
+    return table
+
+
+def plot_best_of_k(
+    runs_pooled: pd.DataFrame,
+    *,
+    figsize: Optional[Tuple[float, float]] = None,
+) -> None:
+    """
+    Plot how much the best of K runs inflates a score, against the prediction.
+
+    :param runs_pooled: Study F pooled over cells, indexed by `group` and `k`,
+        with `inflation` and `predicted` in points
+    :param figsize: figure size, default `plt.rcParams["figure.figsize"]`
+    """
+    if figsize is None:
+        figsize = plt.rcParams["figure.figsize"]
+    fig, ax = plt.subplots(figsize=figsize)
+    for group, color in (("public", "tab:blue"), ("local", "tab:orange")):
+        rows = runs_pooled.xs(group, level="group")
+        ax.plot(
+            rows.index,
+            rows["inflation"],
+            marker="o",
+            color=color,
+            label=f"{group} cells, measured",
+        )
+        ax.plot(
+            rows.index,
+            rows["predicted"],
+            linestyle="--",
+            color=color,
+            label=f"{group} cells, predicted",
+        )
+    ax.set_xlabel("Runs tried, K")
+    ax.set_ylabel("Best run minus the runs left out (points)")
+    ax.set_title("How much does reporting the best of K runs inflate a score?")
+    ax.legend(loc="upper left")
+    fig.tight_layout()
+    plt.show()
+
+
+def plot_correction_errors(
+    variants: pd.DataFrame,
+    benchmark: str,
+    *,
+    figsize: Optional[Tuple[float, float]] = None,
+) -> None:
+    """
+    Plot the mean error of each correction of the winner against K.
+
+    :param variants: Study G, indexed by `benchmark` and `k`, with
+        `error_<correction>` in points
+    :param benchmark: `humaneval` or `mbpp`
+    :param figsize: figure size, default `plt.rcParams["figure.figsize"]`
+    """
+    if figsize is None:
+        figsize = plt.rcParams["figure.figsize"]
+    fig, ax = plt.subplots(figsize=figsize)
+    rows = variants.xs(benchmark, level="benchmark")
+    for column in [c for c in rows.columns if c.startswith("error_")]:
+        ax.plot(
+            rows.index,
+            rows[column],
+            marker="o",
+            label=column.replace("error_", ""),
+        )
+    ax.axhspan(-1, 1, color="gray", alpha=0.15, label="within 1 point")
+    ax.axhline(0, color="black", linewidth=1)
+    ax.set_xlabel("Prompt variants tried, K")
+    ax.set_ylabel("Corrected score minus held-out score (points)")
+    ax.set_title(f"Which correction recovers the winner's score? ({benchmark})")
+    ax.legend(loc="lower left", fontsize=8)
+    fig.tight_layout()
+    plt.show()

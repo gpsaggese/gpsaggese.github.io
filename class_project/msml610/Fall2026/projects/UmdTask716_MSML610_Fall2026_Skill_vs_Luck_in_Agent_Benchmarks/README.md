@@ -91,15 +91,26 @@ Chandrashekar), tracked in
     not hold)
   - 8 of the 13 phase-2 predictions held (A1, A2, B2, C1 to C4, and D3), and
     A3, B1, C5, D1, and D2 did not
+- Milestones 3 and 4 have their plan and 15 predictions in
+  `preregistration_3.md`, committed before any of them was run
+  - Study E, in `skill_vs_luck.transfer.ipynb`: HumanEval+ and MBPP+ rank 18
+    models almost the same way (Spearman 0.98, and 0.99 once task luck is
+    removed, with an interval that reaches 1), but not on the same scale: the
+    7 chat models score 14 to 21 HumanEval+ points more than a 2023 base model
+    with the same MBPP+ score, so 8 of the 18 models are benchmark-specific
+    - Under a 2PL fit, HumanEval+ is worth about 119 equally informative tasks
+      (72% of its 164) and MBPP+ about 214 (57% of its 378)
+    - The 89 models of the EvalPlus leaderboard agree too (Spearman 0.94)
+    - 4 of the 6 predictions held (E1, E2, E4, and E6), and E3 and E5 did not
 
 ## Status of the Milestones
 
-| Milestone                     | Status                                                              |
-| :---------------------------- | :------------------------------------------------------------------ |
-| 1. Outcome matrix             | Done on SWE-bench Verified, HumanEval+, and MBPP+                   |
-| 2. Quantify luck              | Done: task part on SWE-bench, run part on our runs                  |
-| 3. Persistence, transfer, IRT | SWE-bench split-half and IRT done; cross-benchmark correlation next |
-| 4. Selection effects          | Simulated and held-out curse done; real prompt variants next        |
+| Milestone                     | Status                                                                          |
+| :---------------------------- | :------------------------------------------------------------------------------ |
+| 1. Outcome matrix             | Done on SWE-bench Verified, HumanEval+, and MBPP+                               |
+| 2. Quantify luck              | Done: task part on SWE-bench, run part on our runs                              |
+| 3. Persistence, transfer, IRT | Done: split-half and IRT on SWE-bench, transfer and IRT on HumanEval+ and MBPP+ |
+| 4. Selection effects          | Simulated and held-out curse done; real runs and prompt variants in progress    |
 
 ## Structure of the Dir
 
@@ -153,24 +164,28 @@ Chandrashekar), tracked in
 | `skill_vs_luck.runs.py`                 | Jupytext pair of `skill_vs_luck.runs.ipynb`                                                                                        | Notebooks |
 | `skill_vs_luck.temperatures.ipynb`      | Study C: the 3 old models at temperature 0.2 and in a second greedy run                                                            | Notebooks |
 | `skill_vs_luck.temperatures.py`         | Jupytext pair of `skill_vs_luck.temperatures.ipynb`                                                                                | Notebooks |
+| `skill_vs_luck.transfer.ipynb`          | Milestone 3 on HumanEval+ and MBPP+: transfer and effective size (Study E)                                                         | Notebooks |
+| `skill_vs_luck.transfer.py`             | Jupytext pair of `skill_vs_luck.transfer.ipynb`                                                                                    | Notebooks |
 | `skill_vs_luck_runs_utils.py`           | Prompts, Ollama client, scoring, and run-level analysis of the coding runs                                                         | Library   |
 | `skill_vs_luck_utils.py`                | Data loading, intervals, rank intervals, paired tests, records, benchmark size, simulation, split-half, winner's curse, IRT, plots | Library   |
 | `test/test_fetch_coding_scores.py`      | Unit tests for `fetch_coding_scores.py`                                                                                            | Tests     |
+| `test/test_fetch_evalplus_data.py`      | Unit tests for `fetch_evalplus_data.py`                                                                                            | Tests     |
 | `test/test_skill_vs_luck_runs_utils.py` | Unit tests for `skill_vs_luck_runs_utils.py`                                                                                       | Tests     |
 | `test/test_skill_vs_luck_utils.py`      | Unit tests for `skill_vs_luck_utils.py`                                                                                            | Tests     |
 | `version.sh`                            | Print the package versions inside the image                                                                                        | Docker    |
 
 - The files in `data/`:
 
-  | File                                | Description                                                                |
-  | :---------------------------------- | :------------------------------------------------------------------------- |
-  | `evalplus_downloads.csv`            | Every EvalPlus file used, with its URL, size, and SHA-256                  |
-  | `provenance.json`                   | Sources, pinned commit, build time, and excluded submissions               |
-  | `swebench_verified_api_calls.csv`   | Agents x tasks matrix of model calls, for the submissions that report them |
-  | `swebench_verified_costs.csv`       | Agents x tasks matrix of dollar costs, for the same submissions            |
-  | `swebench_verified_outcomes.csv`    | Agents x tasks matrix: 1 if the agent solved the task                      |
-  | `swebench_verified_submissions.csv` | Metadata of every submission folder, with the reason for any exclusion     |
-  | `swebench_verified_tasks.csv`       | The tasks: repo, human estimate of the fix time, issue date                |
+  | File                                | Description                                                                   |
+  | :---------------------------------- | :---------------------------------------------------------------------------- |
+  | `evalplus_downloads.csv`            | Every EvalPlus file used, with its URL, size, and SHA-256                     |
+  | `evalplus_leaderboard.csv`          | Snapshot of the EvalPlus leaderboard, the pass@1 of 125 models, on 2026-11-26 |
+  | `provenance.json`                   | Sources, pinned commit, build time, and excluded submissions                  |
+  | `swebench_verified_api_calls.csv`   | Agents x tasks matrix of model calls, for the submissions that report them    |
+  | `swebench_verified_costs.csv`       | Agents x tasks matrix of dollar costs, for the same submissions               |
+  | `swebench_verified_outcomes.csv`    | Agents x tasks matrix: 1 if the agent solved the task                         |
+  | `swebench_verified_submissions.csv` | Metadata of every submission folder, with the reason for any exclusion        |
+  | `swebench_verified_tasks.csv`       | The tasks: repo, human estimate of the fix time, issue date                   |
 
 # Description of Executables
 
@@ -240,6 +255,8 @@ Chandrashekar), tracked in
     task at temperatures 0.2 and 0.8 for 8 models on HumanEval+
 - Skips the files that are already there, and writes the size and the SHA-256
   of every file into `data/evalplus_downloads.csv`
+- Saves a snapshot of the EvalPlus leaderboard, the pass@1 of each model, into
+  `data/evalplus_leaderboard.csv`, since the leaderboard keeps changing
 - Only downloads the samples: their code runs in `score_coding_runs.py`, in the
   sandbox
 
@@ -355,6 +372,9 @@ Chandrashekar), tracked in
   `data/coding_runs_phase2/`: `skill_vs_luck.one_run_test_set.ipynb` (the test
   of Study B), `skill_vs_luck.temperatures.ipynb` (Study C), and
   `skill_vs_luck.more_models.ipynb` (Study D)
+
+- Then `skill_vs_luck.transfer.ipynb` (Milestone 3 on HumanEval+ and MBPP+,
+  Study E)
 
 ## Run a Notebook as a Script
 
