@@ -30,6 +30,24 @@
 - The open research questions are in the Gdoc, under
   [Questions for GP](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.a8h8vb8v4lq8#heading=h.xfydadrg3lvc)
 
+## 2026-11-21: Threshold of `a` for Speed vs Accuracy (#984)
+
+- **Issue**: [#984](https://github.com/gpsaggese/gpsaggese.github.io/issues/984),
+  the follow-up of #723 that GP asked for in the meeting of 2026-11-19: since the
+  dependence of the accuracy on the speed is unknown, the claim of Section VII-B
+  is conditional on `a`
+- **What was done**:
+  - Notebook 07, Part 5: the sweeps on a fine grid of `a`, the band of the best
+    speed against `a`, the thresholds `a*` and `a**` of each sport and shape, and
+    their robustness to the spread at `v0` and to `v_p`
+  - Its utils: `get_threshold_config()`, `count_threshold_maps()`,
+    `add_seed_mean_se()`, `find_threshold_bands()`, `find_speed_thresholds()`,
+    `compare_tennis_se()`, `plot_threshold_bands()`, and the column
+    `mean_p_winner_se` of `run_speed_sweeps()`, with tests
+- **Next**: the `a*` table and the draft of the conditional claim, in the PR, go
+  to the Gdoc, Experiment 5, and to the LaTeX paper after #963; the standard error
+  of the tennis mean is a question for GP in the Gdoc
+
 ## 2026-11-21: Paper Converted to LaTeX (#963)
 
 - **Issue**: [#963](https://github.com/gpsaggese/gpsaggese.github.io/issues/963),

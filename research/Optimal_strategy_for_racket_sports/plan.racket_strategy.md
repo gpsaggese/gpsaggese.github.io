@@ -386,7 +386,7 @@
   - [x] [#823](https://github.com/gpsaggese/gpsaggese.github.io/issues/823):
         remove repetition in the code and the tests (GP's review of #804),
         [PR #844](https://github.com/gpsaggese/gpsaggese.github.io/pull/844)
-  - [-] [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723):
+  - [x] [#723](https://github.com/gpsaggese/gpsaggese.github.io/issues/723):
         model the spread as a function of the ball speed; the plan, its
         decisions, and its open questions are in the Gdoc,
         [Experiment 5](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.0#heading=h.qrto9so35bnx)
@@ -399,14 +399,32 @@
           `notebooks/racket_sports_07_speed_vs_accuracy_utils.py`, with 4 shapes
           and a factor per direction, for the sweeps only (P1),
           [PR #914](https://github.com/gpsaggese/gpsaggese.github.io/pull/914)
-    - [-] The sweeps: `build_sweep_spec()` and `run_speed_sweeps()`, with the
+    - [x] The sweeps: `build_sweep_spec()` and `run_speed_sweeps()`, with the
           full and the reduced runs, and no results yet,
           [PR #943](https://github.com/gpsaggese/gpsaggese.github.io/pull/943)
-    - [-] The best ball speed as a band of tied speeds, the robustness table,
+    - [x] The best ball speed as a band of tied speeds, the robustness table,
           and the speed scaling check of Proposition 1,
           [PR #944](https://github.com/gpsaggese/gpsaggese.github.io/pull/944)
-    - [-] Notebook 07 and Section VII-B of the paper, with the results in the
-          Gdoc, which finish the issue (branch `_4`)
+    - [x] Notebook 07 and Section VII-B of the paper, with the results in the
+          Gdoc, which finish the issue,
+          [PR #946](https://github.com/gpsaggese/gpsaggese.github.io/pull/946),
+          merged into #944
+  - [-] [#984](https://github.com/gpsaggese/gpsaggese.github.io/issues/984):
+        the threshold claim of speed vs accuracy (GP, meeting of 2026-11-19,
+        Gdoc
+        [Q21](https://docs.google.com/document/d/19KGM-1a9U5E7CrE4ltljYz7IVtMfNuRzrqgGkkuXUSQ/edit?tab=t.71s0u7ftk0yx)):
+        the smallest `a` at which hitting at `2 v0` stops being among the best
+        speeds, `a*`, so that the paper can say "if `a < a*`, hit as hard as you
+        can; above it, hit near `v0`"; notebook 07, Part 5; the paper waits for
+        its LaTeX version (#963)
+    - Decision (2026-11-21): tennis ranks the speeds by the mean `P(winner)`
+      over the half, with its standard error from 5 independent seeds (the
+      standard deviation of the 5 means over `sqrt(5)`, for their average); the
+      mean of the standard errors of the cells, an upper bound, is reported next
+      to it; the choice goes to GP as a question in the Gdoc
+    - Decision (2026-11-21): the seeds run only for the tennis maps of the 4
+      shapes (6,656 maps); the variants of the base (the spread at `v0` and
+      `v_p`) keep the bound of the cells in tennis
   - [ ] [#786](https://github.com/gpsaggese/gpsaggese.github.io/issues/786):
         model the spread as a function of player 2's movement
   - [x] [#714](https://github.com/gpsaggese/gpsaggese.github.io/issues/714):
