@@ -57,6 +57,19 @@ try:
 except ImportError:
     display = print  # type: ignore
 
+# %%
+# Settings of the analysis: the 2 estimators were fixed before this test.
+config = {
+    "phase_1_dir": "data/coding_runs",
+    "phase_2_dir": "data/coding_runs_phase2",
+    "settings": {
+        "untuned": rutils.UNTUNED_ONE_RUN_SETTING,
+        "tuned": rutils.TUNED_ONE_RUN_SETTING,
+    },
+    "tolerance": 0.1,
+    "figsize": (10, 5),
+}
+
 # %% [markdown]
 # # Part 1: The test cases
 
@@ -69,10 +82,8 @@ except ImportError:
 
 # %%
 # Read the local scores of both phases and list the 30 cases.
-PHASE_1_DIR = "data/coding_runs"
-PHASE_2_DIR = "data/coding_runs_phase2"
-old_scores = rutils.load_scores(PHASE_1_DIR, pattern="local_*.csv.gz")
-new_scores = rutils.load_scores(PHASE_2_DIR)
+old_scores = rutils.load_scores(config["phase_1_dir"], pattern="local_*.csv.gz")
+new_scores = rutils.load_scores(config["phase_2_dir"])
 scores = rutils.combine_scores(old_scores, new_scores)
 cases = rutils.get_one_run_cases()
 
@@ -95,11 +106,7 @@ display(cases.groupby(["phase", "benchmark", "temperature"]).size())
 
 # %%
 # Estimate the run share of every case from 1 run, with both settings.
-SETTINGS = {
-    "untuned": rutils.UNTUNED_ONE_RUN_SETTING,
-    "tuned": rutils.TUNED_ONE_RUN_SETTING,
-}
-results = rutils.estimate_one_run_cases(scores, cases, SETTINGS)
+results = rutils.estimate_one_run_cases(scores, cases, config["settings"])
 
 display(results.round(3))
 # Outcome: the estimates are 0.36 to 0.51 before tuning and 0.26 to 0.56 after,
@@ -121,7 +128,7 @@ display(results.round(3))
 # %%
 # Summarize the cases of each phase and temperature.
 summary = rutils.summarize_one_run_test(
-    results, tuned="tuned", untuned="untuned"
+    results, tuned="tuned", untuned="untuned", tolerance=config["tolerance"]
 )
 
 display(summary.round(3))
@@ -141,7 +148,12 @@ display(summary.round(3))
 
 # %%
 # Plot both settings.
-rutils.plot_one_run_test(results, list(SETTINGS), figsize=(10, 5))
+rutils.plot_one_run_test(
+    results,
+    list(config["settings"]),
+    tolerance=config["tolerance"],
+    figsize=config["figsize"],
+)
 # Outcome: after tuning, the cases at 0.2 move close to the band, but most of
 # the phase-2 cases at 0.8 sit above it, all 6 on MBPP+ among them.
 

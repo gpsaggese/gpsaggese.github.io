@@ -53,6 +53,29 @@ try:
 except ImportError:
     display = print  # type: ignore
 
+# %%
+# Settings of the analysis.
+config = {
+    "phase_1_dir": "data/coding_runs",
+    "phase_2_dir": "data/coding_runs_phase2",
+    "benchmarks": ["humaneval", "mbpp"],
+    "temperature": 0.8,
+    "n_runs": 3,
+    "new_models": list(rutils.PHASE_2_MODELS),
+    "all_models": list(rutils.PHASE_1_MODELS) + list(rutils.PHASE_2_MODELS),
+    # The 3 models within 2.1 points of each other in the published MBPP+
+    # scores.
+    "cluster": (
+        "llama3.1:8b-instruct-q4_K_M",
+        "codegemma:7b-instruct-q4_K_M",
+        "deepseek-coder:1.3b-instruct-q4_K_M",
+    ),
+    # Every combination of runs, instead of random draws.
+    "n_draws": None,
+    "alpha": 0.05,
+    "figsize": (10, 5),
+}
+
 # %% [markdown]
 # # Part 1: The new models
 
@@ -64,18 +87,11 @@ except ImportError:
 #   runs
 
 # %%
-# Read the local scores of both phases and the settings of the analysis.
-PHASE_1_DIR = "data/coding_runs"
-PHASE_2_DIR = "data/coding_runs_phase2"
-BENCHMARKS = ["humaneval", "mbpp"]
-TEMPERATURE = 0.8
-N_RUNS = 3
-NEW_MODELS = list(rutils.PHASE_2_MODELS)
-ALL_MODELS = list(rutils.PHASE_1_MODELS) + NEW_MODELS
-old_scores = rutils.load_scores(PHASE_1_DIR, pattern="local_*.csv.gz")
-new_scores = rutils.load_scores(PHASE_2_DIR)
+# Read the local scores of both phases.
+old_scores = rutils.load_scores(config["phase_1_dir"], pattern="local_*.csv.gz")
+new_scores = rutils.load_scores(config["phase_2_dir"])
 scores = rutils.combine_scores(old_scores, new_scores)
-new_models = scores[scores["model"].isin(NEW_MODELS)]
+new_models = scores[scores["model"].isin(config["new_models"])]
 
 print("scores.shape=", scores.shape)
 display(rutils.compute_score_table(new_models).round(3))
@@ -117,9 +133,9 @@ variance = {
         new_models,
         source="local",
         benchmark=benchmark,
-        temperature=TEMPERATURE,
+        temperature=config["temperature"],
     )
-    for benchmark in BENCHMARKS
+    for benchmark in config["benchmarks"]
 }
 
 for benchmark, table in variance.items():
@@ -140,21 +156,20 @@ for benchmark, table in variance.items():
 
 # %%
 # Compare the 3 pairs of the MBPP+ cluster.
-LLAMA = "llama3.1:8b-instruct-q4_K_M"
-CODEGEMMA = "codegemma:7b-instruct-q4_K_M"
-DEEPSEEK_SMALL = "deepseek-coder:1.3b-instruct-q4_K_M"
+llama, codegemma, deepseek_small = config["cluster"]
 pairs = [
-    ((LLAMA, "one_shot"), (CODEGEMMA, "one_shot")),
-    ((LLAMA, "one_shot"), (DEEPSEEK_SMALL, "one_shot")),
-    ((CODEGEMMA, "one_shot"), (DEEPSEEK_SMALL, "one_shot")),
+    ((llama, "one_shot"), (codegemma, "one_shot")),
+    ((llama, "one_shot"), (deepseek_small, "one_shot")),
+    ((codegemma, "one_shot"), (deepseek_small, "one_shot")),
 ]
-first_runs = scores[scores["run"] < N_RUNS]
+first_runs = scores[scores["run"] < config["n_runs"]]
 comparisons = rutils.compare_agent_pairs(
     first_runs,
     pairs,
     source="local",
     benchmarks=["mbpp"],
-    temperature=TEMPERATURE,
+    temperature=config["temperature"],
+    alpha=config["alpha"],
 )
 
 display(comparisons.round(4))
@@ -178,13 +193,15 @@ display(comparisons.round(4))
 # Draw random 1-run leaderboards of the 6 models on MBPP+.
 matrices = rutils.get_first_runs_matrices(
     scores,
-    models=ALL_MODELS,
+    models=config["all_models"],
     scaffold="one_shot",
     benchmark="mbpp",
-    temperature=TEMPERATURE,
-    n_runs=N_RUNS,
+    temperature=config["temperature"],
+    n_runs=config["n_runs"],
 )
-stability, flips = rutils.compute_ranking_stability(matrices, n_draws=None)
+stability, flips = rutils.compute_ranking_stability(
+    matrices, n_draws=config["n_draws"]
+)
 
 print("stability=", stability.round(3).to_dict())
 display(flips.round(3))
@@ -200,7 +217,9 @@ display(flips.round(3))
 # %%
 # Plot how often each pair swaps places, against its gap.
 rutils.plot_flip_rates(
-    flips, title="Pairs swapped by 1 run (mbpp, 6 models)", figsize=(10, 5)
+    flips,
+    title="Pairs swapped by 1 run (mbpp, 6 models)",
+    figsize=config["figsize"],
 )
 # Outcome: only the 2 closest pairs ever swap, and DeepSeek-Coder 6.7B and
 # Llama 3.1 8B swap in 56% of the leaderboards, above the coin-flip line.
@@ -215,14 +234,14 @@ rutils.plot_flip_rates(
 # Draw random 1-run leaderboards of the 6 models on HumanEval+.
 humaneval_matrices = rutils.get_first_runs_matrices(
     scores,
-    models=ALL_MODELS,
+    models=config["all_models"],
     scaffold="one_shot",
     benchmark="humaneval",
-    temperature=TEMPERATURE,
-    n_runs=N_RUNS,
+    temperature=config["temperature"],
+    n_runs=config["n_runs"],
 )
 humaneval_stability, _ = rutils.compute_ranking_stability(
-    humaneval_matrices, n_draws=None
+    humaneval_matrices, n_draws=config["n_draws"]
 )
 
 print("humaneval_stability=", humaneval_stability.round(3).to_dict())

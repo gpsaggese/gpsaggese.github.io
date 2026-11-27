@@ -79,6 +79,9 @@ config = {
     "benchmarks": ["humaneval", "mbpp"],
     "n_splits": 1000,
     "n_boot": 2000,
+    # The 2PL fit by SVI.
+    "n_svi_steps": 5000,
+    "n_svi_samples": 1000,
     "seed": 0,
     "figsize": (10, 5),
 }
@@ -247,7 +250,13 @@ display(pairs[pairs["mbpp_gap"] <= 3].round(1))
 fits = {}
 effective_rows = {}
 for benchmark, matrix in outcomes.items():
-    fit = utils.fit_irt_2pl(matrix, method="svi", seed=config["seed"])
+    fit = utils.fit_irt_2pl(
+        matrix,
+        method="svi",
+        n_steps=config["n_svi_steps"],
+        n_samples=config["n_svi_samples"],
+        seed=config["seed"],
+    )
     information = utils.compute_task_information(
         fit["agents"]["ability"], fit["tasks"]
     )

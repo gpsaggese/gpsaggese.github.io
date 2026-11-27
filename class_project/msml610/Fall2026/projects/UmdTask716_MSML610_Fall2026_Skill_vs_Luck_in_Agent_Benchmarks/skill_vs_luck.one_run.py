@@ -62,6 +62,31 @@ try:
 except ImportError:
     display = print  # type: ignore
 
+# %%
+# Settings of the analysis.
+config = {
+    "scores_dir": "data/coding_runs",
+    "benchmark": "humaneval",
+    "temperatures": (0.2, 0.8),
+    # Sampled models drawn with each case: the test matrices hold 3 models at
+    # 0.2 and 6 at 0.8.
+    "n_others": {0.2: 2, 0.8: 5},
+    "n_draws": 30,
+    "untuned": "rasch 0.01 alone",
+    # The 2 grids of settings: models, penalties, and whether the public greedy
+    # agents are added.
+    "first_grid": (["rasch", "2pl"], [0.001, 0.01, 0.1, 1.0], [False, True]),
+    "finer_grid": [
+        (["rasch"], [0.0001, 0.0003, 0.003], [False]),
+        (["2pl"], [0.03, 0.3], [False]),
+    ],
+    "second_run_draws": 1000,
+    # The full run must pick the estimator that `TUNED_ONE_RUN_SETTING` froze
+    # before the test; a smoke run with fewer draws can pick another one.
+    "check_frozen": True,
+    "figsize": (10, 5),
+}
+
 # %% [markdown]
 # # Part 1: The development set
 
@@ -79,29 +104,31 @@ except ImportError:
 # %%
 # Load the public HumanEval+ scores, and none of our runs.
 public = rutils.load_scores(
-    "data/coding_runs", pattern="evalplus_humaneval_*.csv.gz"
+    config["scores_dir"], pattern=f"evalplus_{config['benchmark']}_*.csv.gz"
 )
 hdbg.dassert_eq(public["source"].unique().tolist(), ["evalplus"])
 # Keep the models sampled at both temperatures.
 temperatures = public.groupby("model")["temperature"].agg(set)
 models = sorted(
-    model for model, temps in temperatures.items() if {0.2, 0.8} <= temps
+    model
+    for model, temps in temperatures.items()
+    if set(config["temperatures"]) <= temps
 )
 samples = {
     temperature: {
         model: rutils.get_outcome_matrix(
             public,
             source="evalplus",
-            benchmark="humaneval",
+            benchmark=config["benchmark"],
             model=model,
             scaffold="one_shot",
             temperature=temperature,
         )
         for model in models
     }
-    for temperature in (0.2, 0.8)
+    for temperature in config["temperatures"]
 }
-extras = rutils.get_public_greedy_agents(public, "humaneval")
+extras = rutils.get_public_greedy_agents(public, config["benchmark"])
 
 print("models=", models)
 print("samples=", samples[0.2][models[0]].shape, "extras=", extras.shape)
@@ -150,20 +177,19 @@ display(truth.round(3))
 
 # %%
 # Run the first grid of settings on both temperatures.
-N_OTHERS = {0.2: 2, 0.8: 5}
-N_DRAWS = 30
-UNTUNED = "rasch 0.01 alone"
-settings = rutils.get_one_run_settings(
-    ["rasch", "2pl"], [0.001, 0.01, 0.1, 1.0], [False, True]
-)
-untuned = {**settings[UNTUNED], "calibration": 1.0}
+settings = rutils.get_one_run_settings(*config["first_grid"])
+untuned = {**settings[config["untuned"]], "calibration": 1.0}
 hdbg.dassert_eq(untuned, rutils.UNTUNED_ONE_RUN_SETTING)
 results = pd.concat(
     [
         rutils.evaluate_one_run_estimator(
-            samples[temperature], extras, settings, n_others, n_draws=N_DRAWS
+            samples[temperature],
+            extras,
+            settings,
+            n_others,
+            n_draws=config["n_draws"],
         ).assign(temperature=temperature)
-        for temperature, n_others in N_OTHERS.items()
+        for temperature, n_others in config["n_others"].items()
     ],
     ignore_index=True,
 )
@@ -181,8 +207,8 @@ print("settings=", len(settings), "rows=", len(results))
 
 # %%
 # Compare the estimate before tuning with the truth, at each temperature.
-cases = rutils.summarize_one_run_cases(results, UNTUNED, 1.0)
-before = results[results["setting"] == UNTUNED]
+cases = rutils.summarize_one_run_cases(results, config["untuned"], 1.0)
+before = results[results["setting"] == config["untuned"]]
 by_temperature = cases.groupby(level="temperature")[
     ["truth", "estimate", "within"]
 ].mean()
@@ -233,16 +259,19 @@ display(summary.join(means).sort_values("cv_error").round(3))
 
 # %%
 # Run the finer grid and summarize all the settings.
-finer = {
-    **rutils.get_one_run_settings(["rasch"], [0.0001, 0.0003, 0.003], [False]),
-    **rutils.get_one_run_settings(["2pl"], [0.03, 0.3], [False]),
-}
+finer = {}
+for grid in config["finer_grid"]:
+    finer.update(rutils.get_one_run_settings(*grid))
 finer_results = pd.concat(
     [
         rutils.evaluate_one_run_estimator(
-            samples[temperature], extras, finer, n_others, n_draws=N_DRAWS
+            samples[temperature],
+            extras,
+            finer,
+            n_others,
+            n_draws=config["n_draws"],
         ).assign(temperature=temperature)
-        for temperature, n_others in N_OTHERS.items()
+        for temperature, n_others in config["n_others"].items()
     ],
     ignore_index=True,
 )
@@ -276,7 +305,8 @@ tuned = {
     **all_settings[best],
     "calibration": round(float(all_summary.loc[best, "factor"]), 3),
 }
-hdbg.dassert_eq(tuned, rutils.TUNED_ONE_RUN_SETTING)
+if config["check_frozen"]:
+    hdbg.dassert_eq(tuned, rutils.TUNED_ONE_RUN_SETTING)
 
 print("best=", best)
 print("tuned=", tuned)
@@ -291,7 +321,7 @@ print("tuned=", tuned)
 
 # %%
 # Compare the 2 settings at each temperature.
-factors = {UNTUNED: 1.0, best: tuned["calibration"]}
+factors = {config["untuned"]: 1.0, best: tuned["calibration"]}
 by_setting = pd.concat(
     {
         setting: rutils.summarize_one_run_cases(all_results, setting, factor)
@@ -315,7 +345,7 @@ display(by_setting.round(3))
 
 # %%
 # Plot both settings.
-rutils.plot_one_run_estimates(all_results, factors, figsize=(10, 5))
+rutils.plot_one_run_estimates(all_results, factors, figsize=config["figsize"])
 # Outcome: after tuning, both temperatures sit in the band, but within a
 # temperature the estimate does not follow the truth: at 0.2 all the models
 # are estimated near 25% while the truth goes from 15% to 30%. The estimator
@@ -339,7 +369,9 @@ rutils.plot_one_run_estimates(all_results, factors, figsize=(10, 5))
 second_runs = pd.DataFrame(
     {
         temperature: {
-            model: rutils.compute_second_run_tasks(matrix)
+            model: rutils.compute_second_run_tasks(
+                matrix, n_draws=config["second_run_draws"]
+            )
             for model, matrix in by_model.items()
         }
         for temperature, by_model in samples.items()

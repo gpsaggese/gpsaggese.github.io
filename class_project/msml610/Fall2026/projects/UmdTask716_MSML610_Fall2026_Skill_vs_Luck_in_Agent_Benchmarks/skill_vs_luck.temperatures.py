@@ -52,6 +52,21 @@ try:
 except ImportError:
     display = print  # type: ignore
 
+# %%
+# Settings of the analysis.
+config = {
+    "phase_1_dir": "data/coding_runs",
+    "phase_2_dir": "data/coding_runs_phase2",
+    "benchmark": "humaneval",
+    "low": 0.2,
+    "high": 0.8,
+    "models": list(rutils.PHASE_1_MODELS),
+    "close_pair": ("codeqwen:7b-chat-v1.5-q4_K_M", "opencoder:8b"),
+    "n_runs": 3,
+    "alpha": 0.05,
+    "figsize": (10, 5),
+}
+
 # %% [markdown]
 # # Part 1: The scores at 3 temperatures
 
@@ -64,17 +79,14 @@ except ImportError:
 #   their phase-2 scores replace the phase-1 ones
 
 # %%
-# Read the local scores of both phases and the settings of the analysis.
-PHASE_1_DIR = "data/coding_runs"
-PHASE_2_DIR = "data/coding_runs_phase2"
-BENCHMARK = "humaneval"
-LOW, HIGH = 0.2, 0.8
-MODELS = list(rutils.PHASE_1_MODELS)
-CLOSE_PAIR = ("codeqwen:7b-chat-v1.5-q4_K_M", "opencoder:8b")
-old_scores = rutils.load_scores(PHASE_1_DIR, pattern="local_*.csv.gz")
-new_scores = rutils.load_scores(PHASE_2_DIR)
+# Read the local scores of both phases.
+old_scores = rutils.load_scores(config["phase_1_dir"], pattern="local_*.csv.gz")
+new_scores = rutils.load_scores(config["phase_2_dir"])
 scores = rutils.combine_scores(old_scores, new_scores)
-study = scores[(scores["benchmark"] == BENCHMARK) & scores["model"].isin(MODELS)]
+study = scores[
+    (scores["benchmark"] == config["benchmark"])
+    & scores["model"].isin(config["models"])
+]
 
 print("study.shape=", study.shape)
 display(rutils.compute_score_table(study).round(3))
@@ -117,9 +129,12 @@ print("agreement=", agreement)
 # Split the variance of every agent at the 2 temperatures.
 variance = {
     temperature: rutils.compute_variance_table(
-        study, source="local", benchmark=BENCHMARK, temperature=temperature
+        study,
+        source="local",
+        benchmark=config["benchmark"],
+        temperature=temperature,
     )
-    for temperature in (LOW, HIGH)
+    for temperature in (config["low"], config["high"])
 }
 
 for temperature, table in variance.items():
@@ -136,9 +151,9 @@ for temperature, table in variance.items():
 # %%
 # Plot the task part and the run part of every agent at 0.2.
 rutils.plot_variance_parts(
-    variance[LOW],
-    title=f"Task and run parts of the variance ({BENCHMARK}, T={LOW:g})",
-    figsize=(10, 5),
+    variance[config["low"]],
+    title=f"Task and run parts of the variance ({config['benchmark']}, T={config['low']:g})",
+    figsize=config["figsize"],
 )
 # Outcome: the run part is a thin slice of every bar at 0.2, and DeepSeek-Coder
 # 1.3B has the largest total because its score is the closest to 50%.
@@ -155,7 +170,7 @@ rutils.plot_variance_parts(
 # %%
 # Count the tasks whose one-shot result changes between the greedy runs.
 greedy_changes = rutils.compute_greedy_changes(
-    study, models=MODELS, benchmark=BENCHMARK
+    study, models=config["models"], benchmark=config["benchmark"]
 )
 
 display(greedy_changes.round(4))
@@ -175,11 +190,16 @@ display(greedy_changes.round(4))
 # %%
 # Compare the close pair at 0.2, for each scaffold.
 pairs = [
-    ((CLOSE_PAIR[0], scaffold), (CLOSE_PAIR[1], scaffold))
+    ((config["close_pair"][0], scaffold), (config["close_pair"][1], scaffold))
     for scaffold in ("one_shot", "repair")
 ]
 comparisons = rutils.compare_agent_pairs(
-    study, pairs, source="local", benchmarks=[BENCHMARK], temperature=LOW
+    study,
+    pairs,
+    source="local",
+    benchmarks=[config["benchmark"]],
+    temperature=config["low"],
+    alpha=config["alpha"],
 )
 
 display(comparisons.round(4))
@@ -205,10 +225,10 @@ display(comparisons.round(4))
 # Draw random 1-run leaderboards of the 3 models from their first 3 runs.
 stability = rutils.compute_stability_table(
     study,
-    models=MODELS,
-    benchmark=BENCHMARK,
-    temperatures=[LOW, HIGH],
-    n_runs=3,
+    models=config["models"],
+    benchmark=config["benchmark"],
+    temperatures=[config["low"], config["high"]],
+    n_runs=config["n_runs"],
 )
 
 display(stability.round(3))
@@ -229,13 +249,13 @@ display(stability.round(3))
 # %%
 # Check each prediction of Study C.
 predictions = rutils.check_temperature_predictions(
-    variance_low=variance[LOW],
-    variance_high=variance[HIGH],
+    variance_low=variance[config["low"]],
+    variance_high=variance[config["high"]],
     greedy_changes=greedy_changes,
     comparisons=comparisons,
     stability=stability,
-    low=LOW,
-    high=HIGH,
+    low=config["low"],
+    high=config["high"],
 )
 
 display(predictions)

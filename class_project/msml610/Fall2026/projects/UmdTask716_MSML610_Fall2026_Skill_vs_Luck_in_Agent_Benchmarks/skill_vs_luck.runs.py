@@ -54,6 +54,29 @@ try:
 except ImportError:
     display = print  # type: ignore
 
+# %%
+# Settings of the analysis.
+config = {
+    "scores_dir": "data/coding_runs",
+    "benchmarks": ["humaneval", "mbpp"],
+    "temperature": 0.8,
+    "models": {
+        "deepseek": "deepseek-coder:1.3b-instruct-q4_K_M",
+        "codeqwen": "codeqwen:7b-chat-v1.5-q4_K_M",
+        "opencoder": "opencoder:8b",
+    },
+    "benchmark_sizes": {"humaneval": 164, "mbpp": 378},
+    # The public samples, at 2 temperatures.
+    "public_benchmark": "humaneval",
+    "public_temperatures": (0.2, 0.8),
+    # Random 1-run leaderboards.
+    "n_draws": 10000,
+    "seed": 0,
+    "alpha": 0.05,
+    "runs_list": (1, 2, 5, 20),
+    "figsize": (10, 5),
+}
+
 # %% [markdown]
 # # Part 1: The agents and their scores
 
@@ -66,11 +89,8 @@ except ImportError:
 # - The scaffolds share the first attempt, so `one_shot` and `repair` are paired
 
 # %%
-# Read the scores and the settings of the analysis.
-SCORES_DIR = "data/coding_runs"
-BENCHMARKS = ["humaneval", "mbpp"]
-TEMPERATURE = 0.8
-scores = utils.load_scores(SCORES_DIR)
+# Read the scores.
+scores = utils.load_scores(config["scores_dir"])
 
 print("scores.shape=", scores.shape)
 display(utils.compute_score_table(scores[scores["source"] == "local"]).round(3))
@@ -106,9 +126,12 @@ display(validation.round(3))
 
 # %%
 # Count the failure modes of the sampled runs, by kind of task.
-for benchmark in BENCHMARKS:
+for benchmark in config["benchmarks"]:
     failures = utils.compute_failure_modes(
-        scores, source="local", benchmark=benchmark, temperature=TEMPERATURE
+        scores,
+        source="local",
+        benchmark=benchmark,
+        temperature=config["temperature"],
     )
     print("benchmark=", benchmark)
     display(failures)
@@ -144,9 +167,12 @@ print("flaky_share=", flaky_share)
 # Split the variance of every agent, on each benchmark.
 variance = {
     benchmark: utils.compute_variance_table(
-        scores, source="local", benchmark=benchmark, temperature=TEMPERATURE
+        scores,
+        source="local",
+        benchmark=benchmark,
+        temperature=config["temperature"],
     )
-    for benchmark in BENCHMARKS
+    for benchmark in config["benchmarks"]
 }
 
 for benchmark, table in variance.items():
@@ -165,7 +191,7 @@ for benchmark, table in variance.items():
     utils.plot_variance_parts(
         table,
         title=f"Task and run parts of the variance ({benchmark})",
-        figsize=(10, 5),
+        figsize=config["figsize"],
     )
 
 # %% [markdown]
@@ -182,28 +208,30 @@ for benchmark, table in variance.items():
 
 # %%
 # Compare the pre-registered pairs.
-MODELS = {
-    "deepseek": "deepseek-coder:1.3b-instruct-q4_K_M",
-    "codeqwen": "codeqwen:7b-chat-v1.5-q4_K_M",
-    "opencoder": "opencoder:8b",
-}
 pairs = []
 for scaffold in ("one_shot", "repair"):
     pairs.append(
-        ((MODELS["codeqwen"], scaffold), (MODELS["opencoder"], scaffold))
+        (
+            (config["models"]["codeqwen"], scaffold),
+            (config["models"]["opencoder"], scaffold),
+        )
     )
     for strong in ("codeqwen", "opencoder"):
         pairs.append(
-            ((MODELS[strong], scaffold), (MODELS["deepseek"], scaffold))
+            (
+                (config["models"][strong], scaffold),
+                (config["models"]["deepseek"], scaffold),
+            )
         )
-for model in MODELS.values():
+for model in config["models"].values():
     pairs.append(((model, "repair"), (model, "one_shot")))
 comparisons = utils.compare_agent_pairs(
     scores,
     pairs,
     source="local",
-    benchmarks=BENCHMARKS,
-    temperature=TEMPERATURE,
+    benchmarks=config["benchmarks"],
+    temperature=config["temperature"],
+    alpha=config["alpha"],
 )
 
 display(comparisons.round(4))
@@ -226,12 +254,17 @@ display(comparisons.round(4))
 # Draw random 1-run leaderboards, on each benchmark.
 matrices = {
     benchmark: utils.get_agent_matrices(
-        scores, source="local", benchmark=benchmark, temperature=TEMPERATURE
+        scores,
+        source="local",
+        benchmark=benchmark,
+        temperature=config["temperature"],
     )
-    for benchmark in BENCHMARKS
+    for benchmark in config["benchmarks"]
 }
 stability = {
-    benchmark: utils.compute_ranking_stability(agent_matrices)
+    benchmark: utils.compute_ranking_stability(
+        agent_matrices, n_draws=config["n_draws"], seed=config["seed"]
+    )
     for benchmark, agent_matrices in matrices.items()
 }
 
@@ -250,7 +283,9 @@ for benchmark, (summary, flips) in stability.items():
 # Plot how often each pair swaps places, against its gap.
 for benchmark, (_, flips) in stability.items():
     utils.plot_flip_rates(
-        flips, title=f"Pairs swapped by 1 run ({benchmark})", figsize=(10, 5)
+        flips,
+        title=f"Pairs swapped by 1 run ({benchmark})",
+        figsize=config["figsize"],
     )
 
 # %% [markdown]
@@ -269,7 +304,9 @@ for benchmark, agent_matrices in matrices.items():
             for label, matrix in agent_matrices.items()
             if label.endswith(scaffold)
         }
-        summary, _ = utils.compute_ranking_stability(models_only)
+        summary, _ = utils.compute_ranking_stability(
+            models_only, n_draws=config["n_draws"], seed=config["seed"]
+        )
         print("benchmark=", benchmark, "scaffold=", scaffold)
         print("summary=", summary.round(3).to_dict())
 # Outcome: with the 3 models alone, 76% to 96% of the 1-run leaderboards keep
@@ -306,14 +343,14 @@ for benchmark, values in parts.items():
 
 # %%
 # Plot the tasks needed against the gap, for a few runs per task.
-BENCHMARK_SIZES = {"humaneval": 164, "mbpp": 378}
 for benchmark, values in parts.items():
     utils.plot_min_tasks_vs_runs(
         values["sigma2_task_diff"],
         values["sigma2_run_diff"],
-        n_tasks=BENCHMARK_SIZES[benchmark],
+        n_tasks=config["benchmark_sizes"][benchmark],
+        runs_list=config["runs_list"],
         title=f"Tasks needed to separate CodeQwen and OpenCoder ({benchmark})",
-        figsize=(10, 5),
+        figsize=config["figsize"],
     )
 
 # %% [markdown]
@@ -328,8 +365,9 @@ for benchmark, values in parts.items():
 
 # %%
 # Compare the run variance of every public model at the 2 temperatures.
+low, high = config["public_temperatures"]
 temperature_table = utils.compute_temperature_table(
-    scores, benchmark="humaneval"
+    scores, benchmark=config["public_benchmark"], low=low, high=high
 )
 
 display(temperature_table.round(4))
@@ -344,8 +382,10 @@ display(temperature_table.round(4))
 # Plot the run variance at 0.8 against the one at 0.2.
 utils.plot_temperature_effect(
     temperature_table,
-    title="Run variance of the public samples (humaneval)",
-    figsize=(10, 5),
+    title=f"Run variance of the public samples ({config['public_benchmark']})",
+    low=low,
+    high=high,
+    figsize=config["figsize"],
 )
 
 # %% [markdown]
@@ -358,9 +398,12 @@ utils.plot_temperature_effect(
 # %%
 # Draw random 1-run leaderboards of the public models, at each temperature.
 public_stability = {}
-for temperature in (0.2, 0.8):
+for temperature in config["public_temperatures"]:
     public_matrices = utils.get_agent_matrices(
-        scores, source="evalplus", benchmark="humaneval", temperature=temperature
+        scores,
+        source="evalplus",
+        benchmark=config["public_benchmark"],
+        temperature=temperature,
     )
     # Keep the models of Cell 6.1, so both temperatures rank the same models.
     public_matrices = {
@@ -369,7 +412,7 @@ for temperature in (0.2, 0.8):
         if label.split(" / ")[0] in temperature_table.index
     }
     public_stability[temperature] = utils.compute_ranking_stability(
-        public_matrices
+        public_matrices, n_draws=config["n_draws"], seed=config["seed"]
     )
 
 for temperature, (summary, _) in public_stability.items():
@@ -396,8 +439,9 @@ predictions = utils.check_predictions(
     comparisons=comparisons,
     flaky_share=flaky_share,
     temperature_table=temperature_table,
-    weak_model=MODELS["deepseek"],
-    pair_models=(MODELS["codeqwen"], MODELS["opencoder"]),
+    weak_model=config["models"]["deepseek"],
+    pair_models=(config["models"]["codeqwen"], config["models"]["opencoder"]),
+    temperature=config["temperature"],
 )
 
 display(predictions)

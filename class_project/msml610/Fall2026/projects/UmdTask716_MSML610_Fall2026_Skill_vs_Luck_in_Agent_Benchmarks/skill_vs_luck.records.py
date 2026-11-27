@@ -54,6 +54,16 @@ try:
 except ImportError:
     display = print  # type: ignore
 
+# %%
+# Settings of the analysis.
+config = {
+    "data_dir": "data",
+    "n_boot": 2000,
+    "alpha": 0.05,
+    "seed": 0,
+    "figsize": (10, 5),
+}
+
 # %% [markdown]
 # # Part 1: The chain of records
 
@@ -69,7 +79,7 @@ except ImportError:
 
 # %%
 # Load the data and find the records.
-outcomes, submissions, tasks = utils.load_swebench_dataset("data")
+outcomes, submissions, tasks = utils.load_swebench_dataset(config["data_dir"])
 leaderboard = utils.compute_leaderboard(outcomes, submissions)
 records = utils.find_records(leaderboard)
 
@@ -92,7 +102,13 @@ display(records[["date", "label", "score", "n_resolved", "attempts"]])
 
 # %%
 # Compare each record with the record it broke.
-audit = utils.audit_records(outcomes, records)
+audit = utils.audit_records(
+    outcomes,
+    records,
+    n_boot=config["n_boot"],
+    alpha=config["alpha"],
+    seed=config["seed"],
+)
 
 print("median_gap=", round(audit["gap"].median(), 4))
 display(audit.drop(columns=["previous"]))
@@ -109,7 +125,7 @@ display(audit.drop(columns=["previous"]))
 
 # %%
 # Plot the records over time.
-utils.plot_records(records, audit, figsize=(10, 5))
+utils.plot_records(records, audit, figsize=config["figsize"])
 # Outcome: after MASAI + GPT 4o in June 2024 no record is distinguishable from
 # the one it broke, though the next 27 records took the top score from 32.6% to
 # 79.2%.
@@ -164,7 +180,7 @@ display(predictions)
 
 # %%
 # Count the records with a raw p-value below 0.05.
-raw = audit["p_value"] < 0.05
+raw = audit["p_value"] < config["alpha"]
 raw_share = audit.loc[raw, "gap"].sum() / audit["gap"].sum()
 
 print("raw_significant=", int(raw.sum()), "raw_share=", round(raw_share, 3))
@@ -182,7 +198,7 @@ print("raw_significant=", int(raw.sum()), "raw_share=", round(raw_share, 3))
 
 # %%
 # Group the records into levels.
-levels = utils.find_distinct_levels(outcomes, records)
+levels = utils.find_distinct_levels(outcomes, records, alpha=config["alpha"])
 
 print("levels=", len(levels))
 display(levels)
