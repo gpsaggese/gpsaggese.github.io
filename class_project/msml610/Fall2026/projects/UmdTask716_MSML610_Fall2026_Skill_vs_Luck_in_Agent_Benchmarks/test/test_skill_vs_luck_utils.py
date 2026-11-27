@@ -1723,6 +1723,24 @@ class Test_correct_winner_score(hunitest.TestCase):
         self.assertLess(abs(medians["hybrid"]), 0.01)
         self.assertLess(rmses["hybrid"], rmses["conditional"] / 2)
 
+    def test5(self) -> None:
+        """
+        Test the correction of the spec by hand.
+        """
+        # Prepare inputs: 4 variants on 10 tasks, the winner solves 7.
+        outcomes = np.array(
+            [
+                [1] * 7 + [0] * 3,
+                [1] * 5 + [0] * 5,
+                [1] * 4 + [0] * 6,
+                [1] * 3 + [0] * 7,
+            ]
+        )
+        # Run test.
+        estimates = utils.correct_winner_score(outcomes, 0)
+        # Check outputs: 0.7 - sqrt(0.7 x 0.3 / 10) x sqrt(2 ln 4).
+        self.assertAlmostEqual(estimates["spec"], 0.4587, places=4)
+
 
 # #############################################################################
 # Test_simulate_variant_selection

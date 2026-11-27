@@ -69,6 +69,10 @@ config = {
     "k_variants": [2, 5, 10, 20],
     "n_draws": 500,
     "n_trials": 1000,
+    # The largest mean error of a correction that rule H accepts, in points.
+    "max_bias": 1.0,
+    # Bootstrap samples of the protocol.
+    "n_boot": 2000,
     "seed": 0,
     "figsize": (10, 5),
 }
@@ -354,6 +358,29 @@ for benchmark in rutils.BENCHMARKS:
     rutils.plot_correction_errors(variants, benchmark, figsize=config["figsize"])
 
 # %% [markdown]
+# ## Cell 2.5: The correction of the spec (extra look)
+#
+# - Not in `preregistration_3.md`, but issue #716 promised to compare the drop
+#   with the correction of the spec, `sigma x sqrt(2 ln K)`, with `sigma` the
+#   binomial standard deviation of the winner's score
+# - `sqrt(2 ln K)` is larger than `E[max of K]`, e.g., 2.45 against 1.87 for
+#   K = 20, so the spec corrects more than the binomial rule
+
+# %%
+# Compare the correction of the spec with the binomial and paired rules.
+rows = []
+for (benchmark, k), trials in variant_trials.items():
+    summary = utils.summarize_corrections(
+        trials, "evaluation_score", corrections=("binomial", "spec", "paired")
+    )
+    row = {"benchmark": benchmark, "k": k, "drop": 100 * trials["drop"].mean()}
+    for correction in summary.index:
+        row[f"error_{correction}"] = summary.loc[correction, "mean_error"]
+    rows.append(row)
+spec_table = pd.DataFrame(rows).set_index(["benchmark", "k"])
+display(spec_table.round(2))
+
+# %% [markdown]
 # # Part 3: Which correction to recommend? (Study H)
 
 # %% [markdown]
@@ -382,7 +409,9 @@ for (benchmark, k), row in variants.iterrows():
         },
         index=CORRECTIONS,
     )
-rule_table, recommended = utils.choose_shrinkage_rule(summaries)
+rule_table, recommended = utils.choose_shrinkage_rule(
+    summaries, max_bias=config["max_bias"]
+)
 display(rule_table.round(3))
 print(f"Recommended correction: {recommended}")
 
@@ -461,6 +490,7 @@ for setting, summary in summaries.items():
 hybrid_table, hybrid_recommended = utils.choose_shrinkage_rule(
     hybrid_summaries,
     candidates=("paired", "empirical_bayes", "conditional", "hybrid"),
+    max_bias=config["max_bias"],
 )
 display(hybrid_table.round(3))
 print(
@@ -491,7 +521,10 @@ outcomes, submissions, tasks = utils.load_swebench_dataset(
 )
 leader_correction = recommended or "conditional"
 report = utils.report_agent_scores(
-    outcomes, correction=leader_correction, seed=config["seed"]
+    outcomes,
+    correction=leader_correction,
+    n_boot=config["n_boot"],
+    seed=config["seed"],
 )
 # Show the scores in points.
 shown = report.head(15).copy()
@@ -512,17 +545,49 @@ print(
 #   the 173 submissions are not, so they correct too much here; empirical Bayes
 #   shrinks toward the mean of all the agents; the conditional estimate only
 #   looks at the agents that could have beaten the leader
-#   - A check from Milestone 3: in `skill_vs_luck.example.ipynb` (Cell 6.2),
-#     the leader of one half of the tasks scores 2.0 points less on the other
-#     half, with 250 tasks per half; with all 500 tasks the noise is smaller,
-#     so the leader's real inflation is likely 2 points or less
-# - The hybrid estimate of Cell 3.2 is also shown
+#   - Cell 4.3 tests the corrections on this leaderboard, with held-out
+#     halves of the tasks
+# - The hybrid estimate of Cell 3.2 and the correction of the spec of Cell 2.5
+#   are also shown
 
 # %%
 # Correct the leader's score with each correction.
 ordered = outcomes.loc[report.index].to_numpy(dtype=float)
 leader_estimates = utils.correct_winner_score(ordered, 0, seed=config["seed"])
 display((100 * pd.Series(leader_estimates)).round(2).to_frame("leader_score"))
+
+# %% [markdown]
+# ## Cell 4.3: Which correction works on a leaderboard? (extra look)
+#
+# - Not in `preregistration_3.md`: Studies F and G only had candidates of
+#   about the same skill, while the 173 agents of SWE-bench Verified are far
+#   apart
+# - The design of Study G on the leaderboard: 1,000 random splits of the 500
+#   tasks in 2 halves; the leader of the first half is corrected from the first
+#   half only, and compared with its score on the second half
+# - Then the rule of Cell 3.1, on this setting alone
+
+# %%
+# Pick the leader on half of the tasks and score it on the other half.
+leaderboard_trials = utils.simulate_variant_selection(
+    outcomes,
+    outcomes.shape[0],
+    n_trials=config["n_trials"],
+    seed=config["seed"],
+)
+leaderboard = utils.summarize_corrections(
+    leaderboard_trials,
+    "evaluation_score",
+    corrections=CORRECTIONS + list(utils.EXTRA_CORRECTIONS),
+)
+display(leaderboard.round(2))
+leaderboard_table, leaderboard_recommended = utils.choose_shrinkage_rule(
+    {"leaderboard": leaderboard},
+    candidates=("paired", "empirical_bayes", "conditional", "hybrid"),
+    max_bias=config["max_bias"],
+)
+display(leaderboard_table.round(3))
+print(f"Recommended for a leaderboard: {leaderboard_recommended}")
 
 # %% [markdown]
 # # Part 5: Which predictions held?
@@ -566,6 +631,8 @@ display(predictions)
 # - How the corrections did:
 #   - Binomial: corrects too much, more as K grows: -4.9 and -4.3 points at
 #     K = 20 (G3 held), and -1.7 for the best of 5 runs (F3 held)
+#   - The correction of the spec, `sigma x sqrt(2 ln K)`, corrects even more:
+#     -8.0 and -6.4 points at K = 20 (Cell 2.5, an extra look)
 #   - Empirical Bayes: corrects too little as K grows, +2.0 on HumanEval+ and
 #     +1.6 on MBPP+ at K = 20, since the spread of the K scores also holds the
 #     real gaps between the variants
@@ -584,10 +651,16 @@ display(predictions)
 #     mean root mean squared error of 6.5, so the paired correction stays the
 #     recommendation (Cell 3.2, an extra look)
 # - On SWE-bench Verified, the paired correction takes the leader from 79.2%
-#   to 75.1%, and the 5 corrections range from 72.7% (conditional) to 79.0%
+#   to 75.1%, and the 6 corrections range from 72.7% (conditional) to 79.0%
 #   (empirical Bayes)
-#   - The 173 agents are far from equal, so the paired rule likely corrects too
-#     much here: the leader of one half of the tasks loses only 2.0 points on
-#     the other half (Cell 4.2)
+#   - The 173 agents are far from equal, and on held-out halves of the tasks
+#     the leader drops by only 1.88 points (Cell 4.3, an extra look)
+#   - There, the rules that assume equal candidates correct 3.8 to 6.3 points
+#     too much, empirical Bayes leaves most of the drop (+1.56) with the lowest
+#     error (RMSE 3.70), and the hybrid estimate comes closest on average
+#     (-1.01, RMSE 5.42), so no correction passes the rule of Cell 3.1 on a
+#     leaderboard
+#   - So for a leaderboard, report the drop of the leader on held-out halves
+#     next to its score, rather than a correction
 # - 6 of the 9 predictions held (F2, F3, and G0 to G3), and F1, G4, and G5 did
 #   not; with Study E, 10 of the 15 predictions of `preregistration_3.md` held

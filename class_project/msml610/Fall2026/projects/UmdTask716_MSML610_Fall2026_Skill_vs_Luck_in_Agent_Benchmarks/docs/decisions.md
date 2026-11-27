@@ -100,3 +100,22 @@
   result), clipping C4 to 0 to 1 (hides the misses without fixing them), no
   extra look (leaves open whether a better version of C4 would pass)
 - **Status**: accepted
+
+### D-8. Keep the paired rule as the default, and use the held-out drop on leaderboards
+
+- **Decision**: `report_agent_scores()` corrects the leader with the paired
+  rule by default, as rule H recommends for picking among K variants; for a
+  leaderboard of very different agents, the README points to the drop of the
+  leader on held-out halves of the tasks instead
+- **Why**: rule H was tested on runs and prompt variants, which are near-equal
+  candidates, and there the paired rule is the only correction within 1 point
+  (worst -0.97). On held-out halves of SWE-bench Verified (an extra look, Cell
+  4.3 of `skill_vs_luck.selection.ipynb`), the leader drops by 1.88 points,
+  the paired rule corrects 3.84 points too much, and no correction is within 1
+  point, so no single correction fits both settings
+- **Alternatives**: the hybrid estimate as the default (closest on average on
+  the leaderboard, -1.01, but it misses there too and has a high error on the
+  variants), empirical Bayes (lowest error on the leaderboard but it leaves
+  most of the drop, and it fails rule H on the variants), picking the
+  correction from these results (a rule chosen after seeing the data)
+- **Status**: accepted

@@ -2159,7 +2159,7 @@ WINNER_CORRECTIONS = (
 )
 # Corrections of `correct_winner_score()` added after `preregistration_3.md`,
 # as extra looks.
-EXTRA_CORRECTIONS = ("hybrid",)
+EXTRA_CORRECTIONS = ("hybrid", "spec")
 
 
 def compute_cochran_q(outcomes: pd.DataFrame) -> Tuple[float, float]:
@@ -2399,9 +2399,11 @@ def correct_winner_score(
       with the covariance of the scores estimated from the tasks and the
       ties broken by a jitter of half a task (decision D-6)
 
-    Also `hybrid`, an extra look that is not in `preregistration_3.md`: the
-    conditional estimate kept within the projection interval with
-    `beta = 0.005`, from `_get_hybrid_estimate()`.
+    Also 2 extra looks that are not in `preregistration_3.md`:
+    - `hybrid`: the conditional estimate kept within the projection interval
+      with `beta = 0.005`, from `_get_hybrid_estimate()`
+    - `spec`: the correction of the project spec, minus
+      `sqrt(p (1 - p) / n) x sqrt(2 ln K)`
 
     :param outcomes: variants x tasks array of 0/1
     :param winner: index of the variant with the best score
@@ -2443,6 +2445,11 @@ def correct_winner_score(
         ),
         "hybrid": _get_hybrid_estimate(
             jittered, jittered_covariance, winner, critical
+        ),
+        "spec": float(
+            observed
+            - np.sqrt(observed * (1 - observed) / n_tasks)
+            * np.sqrt(2 * np.log(n_variants))
         ),
     }
     return estimates
