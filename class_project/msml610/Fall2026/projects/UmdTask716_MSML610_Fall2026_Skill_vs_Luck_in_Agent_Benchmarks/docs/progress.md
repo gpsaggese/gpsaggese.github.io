@@ -13,16 +13,16 @@
 | Milestone | Target date | Status | PR |
 | :-------- | :---------- | :----- | :- |
 | M1: Outcome matrix (SWE-bench Verified) | Oct 28 | Done | #735 |
-| M1: Outcome tensor (HumanEval+, MBPP+, 5 runs) | Oct 29 | In review | #808 |
+| M1: Outcome tensor (HumanEval+, MBPP+, 5 runs) | Oct 29 | Done | #808 |
 | M2: Task luck, intervals, paired tests, minimum N | Oct 28 | Done | #735 |
-| M2: Run-to-run luck | Oct 29 | In review | #808 |
+| M2: Run-to-run luck | Oct 29 | Done | #808 |
 | M2: Ranking under uncertainty | Oct 30 | Done | #855 |
 | M3: Split-half rank correlation (SWE-bench) | Nov 15 | Done | #855 |
 | M3: 2PL IRT and effective size (SWE-bench) | Nov 15 | Done | #855 |
 | M3: Cross-benchmark rank correlation | Nov 15 | Not started | |
 | M4: Winner's curse, simulated and held-out (SWE-bench) | Nov 15 | Done | #855 |
 | M4: Measured drop on real prompt variants | Nov 15 | Not started | |
-| Phase 2: Studies A to D, pre-registered | Nov 3 | Done on branch `_3`, PR after #808 | |
+| Phase 2: Studies A to D, pre-registered | Nov 3 | In review | PR of branch `_3` |
 | Write-up and paper draft | Dec 7 | Not started | |
 
 ## Built
@@ -40,7 +40,7 @@
   Ollama), `score_coding_runs.py` (EvalPlus tests in a sandbox),
   `skill_vs_luck_runs_utils.py`, `skill_vs_luck.runs.ipynb`, and
   `fetch_coding_scores.py` (downloads the scores from Google Drive)
-- On [branch `_3`](https://github.com/prathambharati/gpsaggese.github.io/tree/UmdTask716_MSML610_Fall2026_Skill_vs_Luck_in_Agent_Benchmarks_3/class_project/msml610/Fall2026/projects/UmdTask716_MSML610_Fall2026_Skill_vs_Luck_in_Agent_Benchmarks), for phase 2:
+- For phase 2 (the PR of branch `_3`):
   - `preregistration_2.md`: the plan and the 13 predictions, committed before
     any of it was analyzed
   - `skill_vs_luck.records.ipynb`: Study A, the audit of the SWE-bench records
@@ -114,28 +114,28 @@
       Cell 8.3
 15. Phase 2: 8 of the 13 pre-registered predictions held (A1, A2, B2, C1 to
     C4, and D3), and A3, B1, C5, D1, and D2 did not
-    - `preregistration_2.md` on branch `_3`
+    - `preregistration_2.md`
 16. Only 2 of the 30 SWE-bench Verified records are distinguishable from the
     record they broke, and they carry 33% of the 74.8 points of progress;
     since June 2024, 27 records in a row were each within the noise of the
     record before, and together they still added 46.6 points
-    - Study A, `skill_vs_luck.records.ipynb` on branch `_3`
+    - Study A, `skill_vs_luck.records.ipynb`
 17. On the public EvalPlus samples, a tuned 2PL fit estimates the run share
     from 1 run within 10 points in 86% of the draws, but its single test on
     our runs failed: only 7 of the 18 new cases are within 10 points, mostly
     because it is too high at temperature 0.8
     - Study B, `skill_vs_luck.one_run.ipynb` and
-      `skill_vs_luck.one_run_test_set.ipynb` on branch `_3`
+      `skill_vs_luck.one_run_test_set.ipynb`
 18. At temperature 0.2, runs are 15% to 21% of the variance of 1 run (37% to
     52% at 0.8), and 2 greedy runs give the same result on every task; a 1-run
     score is only a little more precise, though (standard error 3.1 to 3.9
     points against 3.4 to 3.9), and the close pair still cannot be told apart
-    - Study C, `skill_vs_luck.temperatures.ipynb` on branch `_3`
+    - Study C, `skill_vs_luck.temperatures.ipynb`
 19. With 6 models, only 44.4% of the 1-run leaderboards keep the order on
     MBPP+; the 3 models within 2.1 points of each other in the published MBPP+
     scores are 5 to 12 points apart in our runs, and Llama 3.1 8B scores 7.6
     points above its published greedy MBPP+ score
-    - Study D, `skill_vs_luck.more_models.ipynb` on branch `_3`
+    - Study D, `skill_vs_luck.more_models.ipynb`
 
 ## Next
 
@@ -143,8 +143,8 @@
    results, and correlate the rankings across benchmarks
 2. M4: compare the simulated held-out drop with the drop measured on real
    prompt variants
-3. Phase 2: open the PR of branch `_3` after #808 merges; its scores are
-   already in the Google Drive folder
+3. Phase 2: get the PR of branch `_3` reviewed; its scores download with
+   `fetch_coding_scores.py`
 4. Write-up: related work and a first draft of the paper sections
 
 ## History
@@ -157,7 +157,7 @@
 | 2026-10-29 | PR #808 opened: run-to-run luck on HumanEval+ and MBPP+ |
 | 2026-10-30 | GP asked for the research Google Doc per #811; started it |
 | 2026-10-30 | Task 1 committed: bootstrap rank intervals and ranking recovery simulation; ties split, see [decisions.md](decisions.md) D-1 |
-| 2026-10-30 | Phase 2 pre-registered on branch `_3` (`preregistration_2.md`, `f9e4b00c`) |
+| 2026-10-30 | Phase 2 pre-registered (`preregistration_2.md`, `f9e4b00c`) |
 | 2026-10-31 | Committed split-half rank correlation, held-out leader drop, and winner's curse simulation |
 | 2026-10-31 | Phase 2 results of Studies A to D pushed to branch `_3` (`bc8141e1`): 8 of 13 predictions held |
 | 2026-11-01 | Added the 2PL IRT model and the effective size; pinned `jax`, `jaxlib` 0.12.0.1 and `numpyro` 0.22.0; see D-2 and D-3 |
@@ -166,9 +166,11 @@
 | 2026-11-09 | PR #855 merged |
 | 2026-11-14 | GP on #808: it can merge once the score files are on Google Drive |
 | 2026-11-16 | Merged `master` into #808 to resolve the `README.md` conflict with #855; moved the 88 score files of #808 and the phase-2 scores to the Google Drive folder, downloaded by `fetch_coding_scores.py` |
+| 2026-11-21 | PR #808 merged; GP asked on #716 to move the research Gdoc to the `Research_Class_Projects` Drive folder |
+| 2026-11-26 | Merged `master` into `_3`; `fetch_coding_scores.py` also downloads the phase-2 scores; opened the PR of `_3` |
 
 ## Open Work
 
-- #808: run-to-run luck; its score files are on Google Drive, as GP asked
-  there, so it only waits for GP to merge it
-- Phase 2 is on branch `_3`, on top of #808, so its PR comes after #808 merges
+- Phase 2 (branch `_3`) is in review
+- Move the research Gdoc to the `Research_Class_Projects` Drive folder, as GP
+  asked on #716

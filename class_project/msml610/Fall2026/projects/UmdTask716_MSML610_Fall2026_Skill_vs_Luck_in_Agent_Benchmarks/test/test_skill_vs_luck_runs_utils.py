@@ -7,9 +7,11 @@ import test.test_skill_vs_luck_runs_utils as ttsvlrut
 import logging
 import os
 import pprint
+import unittest.mock as umock
 import zipfile
 from typing import Any, Dict, Tuple
 
+import numpy as np
 import pandas as pd
 import pytest
 
@@ -151,6 +153,67 @@ class Test_build_repair_messages(hunitest.TestCase):
         self.assertTrue(new_messages[1]["content"].endswith("    return 0\n```"))
         self.assertIn("assert f(1) == 1", new_messages[2]["content"])
         self.assertTrue(new_messages[3]["content"].endswith("```python\n"))
+
+
+# #############################################################################
+# Test_call_ollama
+# #############################################################################
+
+
+class Test_call_ollama(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_runs_utils.call_ollama()` with a fake Ollama server.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that an answer Ollama stops for repeating a token comes back
+        empty, without retrying.
+        """
+        # Prepare inputs: the error that Ollama returns.
+        response = umock.Mock(
+            status_code=500,
+            text='{"error":"prediction aborted, token repeat limit reached"}',
+        )
+        # Run test.
+        with umock.patch.object(
+            rutils.requests, "post", return_value=response
+        ) as post:
+            reply = rutils.call_ollama(
+                "m", [], temperature=0, seed=1, stop=[], url="http://fake"
+            )
+        # Check outputs.
+        self.assertEqual(post.call_count, 1)
+        self.assertEqual(reply["text"], "")
+        self.assertEqual(reply["done_reason"], "repeat_limit")
+
+    def test2(self) -> None:
+        """
+        Test that a normal answer comes back with its counts.
+        """
+        # Prepare inputs.
+        response = umock.Mock(status_code=200, text="")
+        response.json.return_value = {
+            "message": {"content": "\treturn 1"},
+            "prompt_eval_count": 5,
+            "eval_count": 3,
+            "total_duration": 2e9,
+            "done_reason": "stop",
+        }
+        # Run test.
+        with umock.patch.object(rutils.requests, "post", return_value=response):
+            reply = rutils.call_ollama(
+                "m", [], temperature=0, seed=1, stop=[], url="http://fake"
+            )
+        # Check outputs: tabs become 4 spaces, as in EvalPlus.
+        expected = {
+            "text": "    return 1",
+            "tokens_in": 5,
+            "tokens_out": 3,
+            "seconds": 2.0,
+            "done_reason": "stop",
+        }
+        self.assertEqual(reply, expected)
 
 
 # #############################################################################
@@ -843,6 +906,21 @@ class Test_compute_ranking_stability(hunitest.TestCase):
         # Check outputs.
         self.assertAlmostEqual(pairs.loc[0, "p_flip"], 0.5, delta=0.05)
 
+    def test4(self) -> None:
+        """
+        Test the exact shares, with every combination of runs taken once.
+        """
+        # Prepare inputs: `a` is ahead of `b` in 2 of its 3 runs.
+        matrices = {
+            "a": pd.DataFrame([[1, 1, 0], [1, 1, 0]]),
+            "b": pd.DataFrame([[1, 1, 1], [0, 0, 0]]),
+        }
+        # Run test.
+        summary, pairs = rutils.compute_ranking_stability(matrices, n_draws=None)
+        # Check outputs.
+        self.assertAlmostEqual(summary["p_same_order"], 2 / 3)
+        self.assertAlmostEqual(pairs.loc[0, "p_flip"], 1 / 3)
+
 
 # #############################################################################
 # Test_compute_min_tasks_with_runs
@@ -960,6 +1038,41 @@ def _get_score_row(
 
 
 # #############################################################################
+# Test_get_model_label
+# #############################################################################
+
+
+class Test_get_model_label(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_runs_utils.get_model_label()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that the 2 DeepSeek models get different labels.
+        """
+        # Run test.
+        labels = [
+            rutils.get_model_label(model)
+            for model in (
+                "deepseek-coder:1.3b-instruct-q4_K_M",
+                "deepseek-coder:6.7b-instruct-q4_K_M",
+            )
+        ]
+        # Check outputs.
+        self.assertEqual(labels, ["deepseek-coder 1.3b", "deepseek-coder 6.7b"])
+
+    def test2(self) -> None:
+        """
+        Test the name of a public model, which has no tag.
+        """
+        # Run test.
+        label = rutils.get_model_label("code-llama-7b")
+        # Check outputs.
+        self.assert_equal(label, "code-llama-7b")
+
+
+# #############################################################################
 # Test_get_agent_label
 # #############################################################################
 
@@ -971,12 +1084,51 @@ class Test_get_agent_label(hunitest.TestCase):
 
     def test1(self) -> None:
         """
-        Test that the tag of the model is dropped.
+        Test that the label keeps the name and the size of the model.
         """
         # Run test.
         label = rutils.get_agent_label("codeqwen:7b-chat-v1.5-q4_K_M", "repair")
         # Check outputs.
-        self.assert_equal(label, "codeqwen / repair")
+        self.assert_equal(label, "codeqwen 7b / repair")
+
+
+# #############################################################################
+# Test_get_agent_matrices
+# #############################################################################
+
+
+class Test_get_agent_matrices(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_runs_utils.get_agent_matrices()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test the matrices of 2 agents.
+        """
+        # Run test.
+        matrices = rutils.get_agent_matrices(
+            _get_two_agent_scores(),
+            source="local",
+            benchmark="humaneval",
+            temperature=0.8,
+        )
+        # Check outputs.
+        self.assertEqual(list(matrices), ["a 1 / one_shot", "b 1 / one_shot"])
+        self.assertEqual(matrices["b 1 / one_shot"].sum().tolist(), [1, 1])
+
+    def test2(self) -> None:
+        """
+        Test that 2 models with the same label are refused.
+        """
+        # Prepare inputs: 2 tags that keep the same name and size.
+        scores = _get_two_agent_scores()
+        scores["model"] = scores["model"].map({"a:1": "a:1-x", "b:1": "a:1-y"})
+        # Run test and check outputs.
+        with self.assertRaises(AssertionError):
+            rutils.get_agent_matrices(
+                scores, source="local", benchmark="humaneval", temperature=0.8
+            )
 
 
 # #############################################################################
@@ -1121,7 +1273,7 @@ class Test_compute_variance_table(hunitest.TestCase):
             temperature=0.8,
         )
         # Check outputs.
-        self.assertEqual(list(table.index), ["a / one_shot", "b / one_shot"])
+        self.assertEqual(list(table.index), ["a 1 / one_shot", "b 1 / one_shot"])
         self.assertEqual(list(table["sigma2_run"]), [0.0, 0.0])
 
 
@@ -1150,7 +1302,7 @@ class Test_compare_agent_pairs(hunitest.TestCase):
             temperature=0.8,
         )
         # Check outputs.
-        self.assertEqual(table.loc[0, "agent_a"], "a / one_shot")
+        self.assertEqual(table.loc[0, "agent_a"], "a 1 / one_shot")
         self.assertAlmostEqual(table.loc[0, "gap"], 2 / 3)
         self.assertEqual(table.loc[0, "p_holm"], table.loc[0, "p_value"])
 
@@ -1384,4 +1536,1075 @@ class Test_check_predictions(hunitest.TestCase):
         self.assertEqual(
             table.loc["P4", "observed"],
             "5 of 6 within 5 points, largest gap -6.0 points (w, humaneval)",
+        )
+
+
+# #############################################################################
+# Test_get_public_greedy_agents
+# #############################################################################
+
+
+def _get_one_run_scores() -> pd.DataFrame:
+    """
+    Build the local and public scores of the Study B tests, on 4 tasks.
+
+    - Local models `a:1`, `b:2`, and `deepseek-coder:6.7b-instruct-q4_K_M` at
+      0.8, with both scaffolds and 2 runs
+    - Public greedy agents `g1` and `deepseek-coder-6.7b-instruct`, and a
+      public sampled model `s` at 0.8
+
+    :return: scores in the format of `load_scores()`
+    """
+    deepseek = "deepseek-coder:6.7b-instruct-q4_K_M"
+    # Model -> outcomes of each task in each of the 2 runs.
+    local = {
+        "a:1": [[1, 1], [1, 0], [0, 0], [0, 1]],
+        "b:2": [[1, 1], [0, 0], [1, 0], [0, 0]],
+        deepseek: [[1, 1], [1, 1], [0, 1], [0, 0]],
+    }
+    rows = []
+    for model, tasks in local.items():
+        for task, runs in enumerate(tasks):
+            for run, passed in enumerate(runs):
+                rows.append(
+                    _get_score_row(model, 0.8, "one_shot", task, run, passed)
+                )
+                # The repair agent also solves every task the one-shot
+                # agent misses in run 0.
+                repaired = max(passed, int(run == 0))
+                rows.append(
+                    _get_score_row(model, 0.8, "repair", task, run, repaired)
+                )
+    public = {
+        "g1": [1, 0, 0, 0],
+        "deepseek-coder-6.7b-instruct": [1, 1, 1, 0],
+    }
+    for model, outcomes in public.items():
+        for task, passed in enumerate(outcomes):
+            rows.append(
+                _get_score_row(
+                    model, 0.0, "one_shot", task, 0, passed, source="evalplus"
+                )
+            )
+    rows.append(_get_score_row("s", 0.8, "one_shot", 0, 0, 1, source="evalplus"))
+    scores = pd.DataFrame(rows)
+    return scores
+
+
+class Test_get_public_greedy_agents(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_runs_utils.get_public_greedy_agents()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that only the public greedy samples become extra agents.
+        """
+        # Prepare inputs.
+        scores = _get_one_run_scores()
+        # Prepare outputs.
+        expected = """
+        task_id                       HumanEval/0  HumanEval/1  HumanEval/2  HumanEval/3
+        deepseek-coder-6.7b-instruct            1            1            1            0
+        g1                                      1            0            0            0
+        """
+        # Run test.
+        agents = rutils.get_public_greedy_agents(scores, "humaneval")
+        # Check outputs.
+        self.assert_equal(agents.to_string(), expected, dedent=True)
+
+
+# #############################################################################
+# Test_get_one_run_settings
+# #############################################################################
+
+
+class Test_get_one_run_settings(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_runs_utils.get_one_run_settings()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test the names and the order of a grid of 2 x 2 x 2 settings.
+        """
+        # Prepare outputs.
+        expected = """
+        rasch 0.0001 alone
+        rasch 0.0001 extras
+        rasch 1 alone
+        rasch 1 extras
+        2pl 0.0001 alone
+        2pl 0.0001 extras
+        2pl 1 alone
+        2pl 1 extras
+        """
+        # Run test.
+        settings = rutils.get_one_run_settings(
+            ["rasch", "2pl"], [0.0001, 1.0], [False, True]
+        )
+        # Check outputs.
+        self.assert_equal("\n".join(settings), expected, dedent=True)
+        self.assertEqual(
+            settings["2pl 1 extras"],
+            {"irt_model": "2pl", "penalty": 1.0, "extras": True},
+        )
+
+
+# #############################################################################
+# Test_evaluate_one_run_estimator
+# #############################################################################
+
+
+class Test_evaluate_one_run_estimator(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_runs_utils.evaluate_one_run_estimator()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that every setting sees the same draws and that the truth comes
+        from all the samples.
+        """
+        # Prepare inputs: 3 sampled models on 6 tasks with 4 samples each.
+        rng = np.random.default_rng(1)
+        samples = {
+            model: pd.DataFrame(
+                (rng.random((6, 4)) < 0.5).astype(int),
+                index=[f"HumanEval/{task}" for task in range(6)],
+            )
+            for model in ("m1", "m2", "m3")
+        }
+        extras = pd.DataFrame(
+            [[1, 1, 1, 0, 0, 0], [1, 0, 1, 0, 1, 0]],
+            index=["g1", "m2"],
+            columns=[f"HumanEval/{task}" for task in range(6)],
+        )
+        rasch = {"irt_model": "rasch", "penalty": 0.01, "extras": False}
+        settings = {
+            "a": rasch,
+            "b": dict(rasch),
+            "c": {**rasch, "extras": True},
+        }
+        # Run test.
+        results = rutils.evaluate_one_run_estimator(
+            samples, extras, settings, 1, n_draws=2
+        )
+        # Check outputs.
+        self.assertEqual(len(results), 3 * 3 * 2)
+        by_setting = results.set_index(["setting", "model", "draw"])
+        self.assertTrue(
+            np.allclose(
+                by_setting.loc["a", "estimate"],
+                by_setting.loc["b", "estimate"],
+                equal_nan=True,
+            )
+        )
+        truth = rutils.compute_variance_components(samples["m1"])["run_share"]
+        m1 = results[results["model"] == "m1"]
+        self.assertTrue(np.allclose(m1["truth"], truth))
+
+
+# #############################################################################
+# Test_fit_calibration
+# #############################################################################
+
+
+class Test_fit_calibration(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_runs_utils.fit_calibration()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test estimates that are all twice the truth.
+        """
+        # Prepare inputs.
+        estimates = pd.Series([0.2, 0.4])
+        truths = pd.Series([0.1, 0.2])
+        # Run test.
+        factor = rutils.fit_calibration(estimates, truths)
+        # Check outputs.
+        self.assertAlmostEqual(factor, 0.5)
+
+    def test2(self) -> None:
+        """
+        Test that the factor follows the large estimates, which carry most of
+        the absolute error.
+        """
+        # Prepare inputs: the ratios truth / estimate are 1, 2, and 0.5.
+        estimates = pd.Series([0.1, 0.1, 0.8])
+        truths = pd.Series([0.1, 0.2, 0.4])
+        # Run test.
+        factor = rutils.fit_calibration(estimates, truths)
+        # Check outputs: the errors add up to 0.2 with 0.5 and to 0.5 with 1.
+        self.assertAlmostEqual(factor, 0.5)
+
+
+# #############################################################################
+# Test_summarize_one_run_errors
+# #############################################################################
+
+
+class Test_summarize_one_run_errors(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_runs_utils.summarize_one_run_errors()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test the errors with 1 factor for all the models and with the factor
+        of the other models.
+        """
+        # Prepare inputs: `m1` is estimated at twice its truth and `m2`
+        # exactly, in 2 draws each.
+        results = pd.DataFrame(
+            {
+                "setting": "s",
+                "model": ["m1", "m1", "m2", "m2"],
+                "estimate": [0.4, 0.4, 0.5, 0.5],
+                "truth": [0.2, 0.2, 0.5, 0.5],
+            }
+        )
+        # Prepare outputs: `m2` has the larger weight, so the factor is 1;
+        # without `m1` the factor is 1 and without `m2` it is 0.5.
+        expected = """
+        {'above': 0.5,
+         'cv_error': 0.225,
+         'cv_within': 0.0,
+         'error': 0.1,
+         'error_raw': 0.1,
+         'factor': 1.0,
+         'within': 0.5}
+        """
+        # Run test.
+        summary = rutils.summarize_one_run_errors(results)
+        # Check outputs.
+        values = summary.loc["s"].items()
+        actual = {key: round(value, 6) for key, value in values}
+        self.assert_equal(pprint.pformat(actual), expected, dedent=True)
+
+
+# #############################################################################
+# Test_summarize_one_run_cases
+# #############################################################################
+
+
+class Test_summarize_one_run_cases(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_runs_utils.summarize_one_run_cases()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test the calibrated estimates of 1 model at 2 temperatures.
+        """
+        # Prepare inputs: with the factor 2, the draws are 0.15 and 0.35 at
+        # 0.2, and 0.45 and 0.75 at 0.8.
+        results = pd.DataFrame(
+            {
+                "setting": "s",
+                "temperature": [0.2, 0.2, 0.8, 0.8],
+                "model": "m",
+                "estimate": [0.075, 0.175, 0.225, 0.375],
+                "truth": [0.2, 0.2, 0.5, 0.5],
+            }
+        )
+        # Prepare outputs.
+        expected = """
+        {(0.2, 'm'): {'estimate': 0.25,
+                      'high': 0.33,
+                      'low': 0.17,
+                      'truth': 0.2,
+                      'within': 0.5},
+         (0.8, 'm'): {'estimate': 0.6,
+                      'high': 0.72,
+                      'low': 0.48,
+                      'truth': 0.5,
+                      'within': 0.5}}
+        """
+        # Run test.
+        cases = rutils.summarize_one_run_cases(results, "s", 2.0)
+        # Check outputs.
+        actual = pprint.pformat(cases.round(6).to_dict(orient="index"))
+        self.assert_equal(actual, expected, dedent=True)
+
+
+# #############################################################################
+# Test_compute_second_run_tasks
+# #############################################################################
+
+
+class Test_compute_second_run_tasks(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_runs_utils.compute_second_run_tasks()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test an agent with no run luck, which 1 second run already shows.
+        """
+        # Prepare inputs: 5 tasks always pass and 5 always fail.
+        outcomes = pd.DataFrame([[1, 1, 1]] * 5 + [[0, 0, 0]] * 5)
+        # Run test.
+        n_needed = rutils.compute_second_run_tasks(outcomes)
+        # Check outputs.
+        self.assertEqual(n_needed, 1.0)
+
+    def test2(self) -> None:
+        """
+        Test runs whose first 2 disagree more than the other runs, so even a
+        second run of every task is not enough.
+        """
+        # Prepare inputs: 20 tasks always pass and 20 alternate 0, 1, 0, 1, so
+        # the first 2 runs always differ on them.
+        outcomes = pd.DataFrame([[1, 1, 1, 1]] * 20 + [[0, 1, 0, 1]] * 20)
+        # Run test.
+        n_needed = rutils.compute_second_run_tasks(outcomes)
+        # Check outputs: the 2 runs give a run share of 1.0, the 4 runs 0.88.
+        self.assertTrue(np.isnan(n_needed))
+
+    def test3(self) -> None:
+        """
+        Test an agent with run luck on half of 200 tasks.
+        """
+        # Prepare inputs.
+        rng = np.random.default_rng(0)
+        chances = np.repeat([0.0, 0.5, 1.0], [50, 100, 50])
+        outcomes = pd.DataFrame(
+            (rng.random((200, 5)) < chances[:, None]).astype(int)
+        )
+        # Run test.
+        n_needed = rutils.compute_second_run_tasks(outcomes, n_draws=200)
+        # Check outputs: 2 runs of a task with chance 0.5 differ only half the
+        # time, so about 3 in 4 tasks need a second run.
+        self.assertEqual(n_needed, 151.0)
+
+
+# #############################################################################
+# Test_get_one_run_cases
+# #############################################################################
+
+
+class Test_get_one_run_cases(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_runs_utils.get_one_run_cases()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test the number of cases of each phase, benchmark, and temperature.
+        """
+        # Prepare outputs.
+        expected = """
+        phase  benchmark  temperature
+        1      humaneval  0.8            6
+               mbpp       0.8            6
+        2      humaneval  0.2            6
+                          0.8            6
+               mbpp       0.8            6
+        """
+        # Run test.
+        cases = rutils.get_one_run_cases()
+        # Check outputs.
+        counts = cases.groupby(["phase", "benchmark", "temperature"]).size()
+        self.assert_equal(counts.to_string(), expected, dedent=True)
+
+
+# #############################################################################
+# Test_build_one_run_matrix
+# #############################################################################
+
+
+class Test_build_one_run_matrix(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_runs_utils.build_one_run_matrix()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that a repair agent comes with the one-shot agents of the other
+        models only, and without the public agent of the same model.
+        """
+        # Prepare inputs.
+        scores = _get_one_run_scores()
+        # Prepare outputs.
+        expected = """
+        task_id                                         HumanEval/0  HumanEval/1  HumanEval/2  HumanEval/3
+        a:1 / repair                                              1            1            1            1
+        b:2 / one_shot                                            1            0            1            0
+        deepseek-coder:6.7b-instruct-q4_K_M / one_shot            1            1            0            0
+        g1                                                        1            0            0            0
+        """
+        # Run test.
+        matrix = rutils.build_one_run_matrix(
+            scores, "humaneval", 0.8, "a:1", "repair", extras=True
+        )
+        # Check outputs.
+        self.assert_equal(matrix.to_string(), expected, dedent=True)
+
+    def test2(self) -> None:
+        """
+        Test the matrix without extra agents, with the first run of each
+        agent.
+        """
+        # Prepare inputs.
+        scores = _get_one_run_scores()
+        # Prepare outputs.
+        expected = """
+        task_id                                         HumanEval/0  HumanEval/1  HumanEval/2  HumanEval/3
+        b:2 / one_shot                                            1            0            1            0
+        a:1 / one_shot                                            1            1            0            0
+        deepseek-coder:6.7b-instruct-q4_K_M / one_shot            1            1            0            0
+        """
+        # Run test.
+        matrix = rutils.build_one_run_matrix(
+            scores, "humaneval", 0.8, "b:2", "one_shot", extras=False
+        )
+        # Check outputs.
+        self.assert_equal(matrix.to_string(), expected, dedent=True)
+
+
+# #############################################################################
+# Test_estimate_one_run_cases
+# #############################################################################
+
+
+class Test_estimate_one_run_cases(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_runs_utils.estimate_one_run_cases()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that each case gets its truth from all the runs and 1 estimate
+        per setting.
+        """
+        # Prepare inputs.
+        scores = _get_one_run_scores()
+        cases = pd.DataFrame(
+            [(2, "humaneval", 0.8, "a:1", "one_shot")],
+            columns=["phase", "benchmark", "temperature", "model", "scaffold"],
+        )
+        settings = {
+            "untuned": rutils.UNTUNED_ONE_RUN_SETTING,
+            "tuned": {
+                **rutils.UNTUNED_ONE_RUN_SETTING,
+                "calibration": 0.5,
+                "extras": True,
+            },
+        }
+        # Run test.
+        results = rutils.estimate_one_run_cases(scores, cases, settings)
+        # Check outputs.
+        outcomes = rutils.get_outcome_matrix(
+            scores,
+            source="local",
+            benchmark="humaneval",
+            model="a:1",
+            scaffold="one_shot",
+            temperature=0.8,
+        )
+        truth = rutils.compute_variance_components(outcomes)["run_share"]
+        row = results.iloc[0]
+        self.assertEqual(row["n_runs"], 2)
+        self.assertAlmostEqual(row["truth"], truth)
+        self.assertTrue(0 < row["tuned"] < row["untuned"])
+
+
+# #############################################################################
+# Test_summarize_one_run_test
+# #############################################################################
+
+
+class Test_summarize_one_run_test(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_runs_utils.summarize_one_run_test()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test the means, the errors, and the shares of B1 and B2 in each group
+        of cases.
+        """
+        # Prepare inputs: in the last group, the tuned estimates are off by
+        # 0.20 and 0.05, so 1 of the 2 is within 10 points, and no estimate
+        # before tuning is above the truth.
+        results = pd.DataFrame(
+            {
+                "phase": [1, 2, 2, 2],
+                "temperature": [0.8, 0.2, 0.8, 0.8],
+                "truth": [0.4, 0.2, 0.5, 0.3],
+                "untuned": [0.5, 0.35, 0.45, 0.2],
+                "tuned": [0.45, 0.25, 0.3, 0.35],
+            }
+        )
+        # Prepare outputs.
+        expected = """
+           phase  temperature  cases  truth  untuned  tuned  untuned_error  tuned_error  within  above
+        0      1          0.8      1    0.4    0.500  0.450          0.100        0.050     1.0    1.0
+        1      2          0.2      1    0.2    0.350  0.250          0.150        0.050     1.0    1.0
+        2      2          0.8      2    0.4    0.325  0.325          0.075        0.125     0.5    0.0
+        """
+        # Run test.
+        summary = rutils.summarize_one_run_test(
+            results, tuned="tuned", untuned="untuned"
+        )
+        # Check outputs.
+        actual = summary.reset_index().round(3).to_string()
+        self.assert_equal(actual, expected, dedent=True)
+
+
+# #############################################################################
+# Test_check_one_run_predictions
+# #############################################################################
+
+
+def _get_one_run_results(n_within: int, n_above: int) -> pd.DataFrame:
+    """
+    Build the results of the 30 test cases with a known count for B1 and B2.
+
+    The 12 phase-1 cases are far off with both settings, so they would change
+    the counts if they were used.
+
+    :param n_within: phase-2 cases with the tuned estimate within 10 points
+    :param n_above: phase-2 cases with the estimate before tuning above the
+        truth
+    :return: results in the format of `estimate_one_run_cases()`
+    """
+    results = pd.DataFrame(
+        {"phase": [1] * 12 + [2] * 18, "truth": 0.3, "tuned": 0.9}
+    )
+    results["untuned"] = 0.9
+    phase_2 = results.index[results["phase"] == 2]
+    results.loc[phase_2, "tuned"] = [0.35] * n_within + [0.5] * (18 - n_within)
+    results.loc[phase_2, "untuned"] = [0.4] * n_above + [0.2] * (18 - n_above)
+    return results
+
+
+class Test_check_one_run_predictions(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_runs_utils.check_one_run_predictions()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test results where both predictions hold.
+        """
+        # Prepare inputs.
+        results = _get_one_run_results(12, 10)
+        # Prepare outputs.
+        expected = """
+        B1: True, 12 of 18 within 10 points
+        B2: True, 10 of 18 above the truth
+        """
+        # Run test.
+        table = rutils.check_one_run_predictions(
+            results, tuned="tuned", untuned="untuned"
+        )
+        # Check outputs.
+        actual = "\n".join(
+            f"{name}: {row['holds']}, {row['observed']}"
+            for name, row in table.iterrows()
+        )
+        self.assert_equal(actual, expected, dedent=True)
+
+    def test2(self) -> None:
+        """
+        Test results just short of both predictions: 9 of 18 is not more than
+        half.
+        """
+        # Prepare inputs.
+        results = _get_one_run_results(11, 9)
+        # Prepare outputs.
+        expected = """
+        B1: False, 11 of 18 within 10 points
+        B2: False, 9 of 18 above the truth
+        """
+        # Run test.
+        table = rutils.check_one_run_predictions(
+            results, tuned="tuned", untuned="untuned"
+        )
+        # Check outputs.
+        actual = "\n".join(
+            f"{name}: {row['holds']}, {row['observed']}"
+            for name, row in table.iterrows()
+        )
+        self.assert_equal(actual, expected, dedent=True)
+
+
+# #############################################################################
+# Test_compute_second_run_cases
+# #############################################################################
+
+
+class Test_compute_second_run_cases(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_runs_utils.compute_second_run_cases()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that each case gets the count of its own runs.
+        """
+        # Prepare inputs: `x:1` has no run luck, so 1 second run is enough,
+        # while the first 2 runs of `y:1` always differ on 2 of its 4 tasks,
+        # so even a second run of every task gives 1.0 against 0.8.
+        runs = {
+            "x:1": [[1, 1], [1, 1], [0, 0], [0, 0]],
+            "y:1": [[1, 1, 1, 1], [1, 1, 1, 1], [0, 1, 0, 1], [0, 1, 0, 1]],
+        }
+        rows = [
+            _get_score_row(model, 0.8, "one_shot", task, run, passed)
+            for model, tasks in runs.items()
+            for task, outcomes in enumerate(tasks)
+            for run, passed in enumerate(outcomes)
+        ]
+        scores = pd.DataFrame(rows)
+        cases = pd.DataFrame(
+            [
+                (1, "humaneval", 0.8, "x:1", "one_shot"),
+                (2, "humaneval", 0.8, "y:1", "one_shot"),
+            ],
+            columns=["phase", "benchmark", "temperature", "model", "scaffold"],
+        )
+        # Prepare outputs.
+        expected = """
+           phase  benchmark  temperature model  scaffold  n_tasks  second_run_tasks
+        0      1  humaneval          0.8   x:1  one_shot        4               1.0
+        1      2  humaneval          0.8   y:1  one_shot        4               NaN
+        """
+        # Run test.
+        results = rutils.compute_second_run_cases(scores, cases)
+        # Check outputs.
+        self.assert_equal(results.to_string(), expected, dedent=True)
+
+
+# #############################################################################
+# Test_combine_scores
+# #############################################################################
+
+
+def _get_phase_scores() -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """
+    Build the scores of the 2 phases of runs, on 2 tasks.
+
+    - Phase 1: model `a:1` has 1 greedy run, which passes both tasks, and 2
+      runs at 0.8
+    - Phase 2: the greedy file of `a:1` has a second run and was scored
+      again, and this time run 0 fails task 1; model `b:2` has 1 greedy run
+
+    :return: the scores of phase 1 and of phase 2
+    """
+    old = [_get_score_row("a:1", 0.0, "one_shot", task, 0, 1) for task in (0, 1)]
+    old += [
+        _get_score_row("a:1", 0.8, "one_shot", task, run, task)
+        for task in (0, 1)
+        for run in (0, 1)
+    ]
+    new = [
+        _get_score_row("a:1", 0.0, "one_shot", 0, 0, 1),
+        _get_score_row("a:1", 0.0, "one_shot", 1, 0, 0),
+        _get_score_row("a:1", 0.0, "one_shot", 0, 1, 1),
+        _get_score_row("a:1", 0.0, "one_shot", 1, 1, 1),
+        _get_score_row("b:2", 0.0, "one_shot", 0, 0, 1),
+        _get_score_row("b:2", 0.0, "one_shot", 1, 0, 0),
+    ]
+    return pd.DataFrame(old), pd.DataFrame(new)
+
+
+class Test_combine_scores(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_runs_utils.combine_scores()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that a file scored in both phases keeps only its phase-2 scores.
+        """
+        # Prepare inputs.
+        old, new = _get_phase_scores()
+        # Run test.
+        scores = rutils.combine_scores(old, new)
+        # Check outputs.
+        counts = scores.groupby(["model", "temperature"]).size().to_dict()
+        self.assertEqual(
+            counts, {("a:1", 0.0): 4, ("a:1", 0.8): 4, ("b:2", 0.0): 2}
+        )
+        greedy = rutils.get_outcome_matrix(
+            scores,
+            source="local",
+            benchmark="humaneval",
+            model="a:1",
+            scaffold="one_shot",
+            temperature=0.0,
+        )
+        self.assertEqual(greedy[0].tolist(), [1, 0])
+
+    def test2(self) -> None:
+        """
+        Test that phase-2 scores missing a run of phase 1 are refused.
+        """
+        # Prepare inputs: drop run 0 of the phase-2 greedy file.
+        old, new = _get_phase_scores()
+        new = new[new["run"] == 1]
+        # Run test and check outputs.
+        with self.assertRaises(AssertionError):
+            rutils.combine_scores(old, new)
+
+
+# #############################################################################
+# Test_compute_rescored_agreement
+# #############################################################################
+
+
+class Test_compute_rescored_agreement(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_runs_utils.compute_rescored_agreement()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test 2 answers scored in both phases, 1 with a different result.
+        """
+        # Prepare inputs.
+        old, new = _get_phase_scores()
+        # Run test.
+        agreement = rutils.compute_rescored_agreement(old, new)
+        # Check outputs.
+        self.assertEqual(agreement, {"n_answers": 2, "same_share": 0.5})
+
+
+# #############################################################################
+# Test_compute_greedy_changes
+# #############################################################################
+
+
+class Test_compute_greedy_changes(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_runs_utils.compute_greedy_changes()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test a model whose 2 greedy runs differ on 1 of 2 tasks.
+        """
+        # Prepare inputs.
+        _, new = _get_phase_scores()
+        # Run test.
+        table = rutils.compute_greedy_changes(
+            new, models=["a:1"], benchmark="humaneval"
+        )
+        # Check outputs.
+        actual = pprint.pformat(table.loc["a:1"].to_dict())
+        expected = r"""
+        {'changed_share': 0.5,
+         'n_changed': 1.0,
+         'n_tasks': 2.0,
+         'score_run_0': 0.5,
+         'score_run_1': 1.0}
+        """
+        self.assert_equal(actual, expected, dedent=True)
+
+    def test2(self) -> None:
+        """
+        Test that a model with 1 greedy run is refused.
+        """
+        # Prepare inputs.
+        _, new = _get_phase_scores()
+        # Run test and check outputs.
+        with self.assertRaises(AssertionError):
+            rutils.compute_greedy_changes(
+                new, models=["b:2"], benchmark="humaneval"
+            )
+
+
+# #############################################################################
+# Test_get_first_runs_matrices
+# #############################################################################
+
+
+def _get_stability_scores() -> pd.DataFrame:
+    """
+    Build the scores of 2 models on 2 tasks, with 3 runs at 2 temperatures.
+
+    - At 0.2, `a:1` passes both tasks and `b:2` passes task 0, in every run
+    - At 0.8, `a:1` passes both tasks in runs 0 and 1 and none in run 2,
+      while `b:2` passes task 0 in every run, so a draw of run 2 for `a:1`
+      reverses the order
+    - The repair scaffold has the same results as the one-shot scaffold
+
+    :return: scores in the format of `load_scores()`
+    """
+    rows = []
+    for scaffold in ("one_shot", "repair"):
+        for task in (0, 1):
+            for run in (0, 1, 2):
+                rows.append(_get_score_row("a:1", 0.2, scaffold, task, run, 1))
+                rows.append(
+                    _get_score_row(
+                        "b:2", 0.2, scaffold, task, run, int(task == 0)
+                    )
+                )
+                rows.append(
+                    _get_score_row("a:1", 0.8, scaffold, task, run, int(run < 2))
+                )
+                rows.append(
+                    _get_score_row(
+                        "b:2", 0.8, scaffold, task, run, int(task == 0)
+                    )
+                )
+    scores = pd.DataFrame(rows)
+    return scores
+
+
+class Test_get_first_runs_matrices(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_runs_utils.get_first_runs_matrices()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that only the first 2 of the 3 runs are kept.
+        """
+        # Run test.
+        matrices = rutils.get_first_runs_matrices(
+            _get_stability_scores(),
+            models=["a:1", "b:2"],
+            scaffold="one_shot",
+            benchmark="humaneval",
+            temperature=0.8,
+            n_runs=2,
+        )
+        # Check outputs.
+        self.assertEqual(list(matrices), ["a 1 / one_shot", "b 2 / one_shot"])
+        self.assertEqual(list(matrices["a 1 / one_shot"].columns), [0, 1])
+        self.assertEqual(matrices["a 1 / one_shot"].sum().sum(), 4)
+
+    def test2(self) -> None:
+        """
+        Test that asking for more runs than an agent has is refused.
+        """
+        # Run test and check outputs.
+        with self.assertRaises(AssertionError):
+            rutils.get_first_runs_matrices(
+                _get_stability_scores(),
+                models=["a:1", "b:2"],
+                scaffold="one_shot",
+                benchmark="humaneval",
+                temperature=0.8,
+                n_runs=4,
+            )
+
+
+# #############################################################################
+# Test_compute_stability_table
+# #############################################################################
+
+
+class Test_compute_stability_table(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_runs_utils.compute_stability_table()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test an order that always holds at 0.2 and holds in 2 of the 3
+        combinations of runs at 0.8.
+        """
+        # Run test.
+        table = rutils.compute_stability_table(
+            _get_stability_scores(),
+            models=["a:1", "b:2"],
+            benchmark="humaneval",
+            temperatures=[0.2, 0.8],
+            n_runs=3,
+        )
+        # Check outputs.
+        self.assertEqual(
+            list(table.index),
+            [
+                ("one_shot", 0.2),
+                ("one_shot", 0.8),
+                ("repair", 0.2),
+                ("repair", 0.8),
+            ],
+        )
+        self.assertEqual(table.loc[("one_shot", 0.2), "p_same_order"], 1.0)
+        self.assertAlmostEqual(table.loc[("repair", 0.8), "p_same_order"], 2 / 3)
+
+
+# #############################################################################
+# Test_check_temperature_predictions
+# #############################################################################
+
+
+def _get_temperature_prediction_inputs() -> Dict[str, Any]:
+    """
+    Build the inputs of `check_temperature_predictions()`, with every
+    prediction holding.
+
+    :return: keyword arguments of `check_temperature_predictions()`
+    """
+    models = ["w:1b", "a:7b", "b:8b"]
+    scaffolds = ["one_shot", "repair"]
+    labels = [rutils.get_agent_label(m, s) for m in models for s in scaffolds]
+    # Runs are 20% of the variance at 0.2 and 40% at 0.8, listed in another
+    # order.
+    variance_low = pd.DataFrame({"run_share": 0.2}, index=labels)
+    variance_high = pd.DataFrame({"run_share": 0.4}, index=labels[::-1])
+    greedy_changes = pd.DataFrame(
+        {"changed_share": [0.0, 0.006, 0.012]}, index=models
+    )
+    comparisons = pd.DataFrame(
+        {"p_holm": [0.4, 0.8], "distinguishable": [False, False]}
+    )
+    index = pd.MultiIndex.from_product(
+        [scaffolds, [0.2, 0.8]], names=["scaffold", "temperature"]
+    )
+    stability = pd.DataFrame(
+        {"p_same_order": [0.9, 0.8, 0.95, 0.85]}, index=index
+    )
+    inputs = {
+        "variance_low": variance_low,
+        "variance_high": variance_high,
+        "greedy_changes": greedy_changes,
+        "comparisons": comparisons,
+        "stability": stability,
+    }
+    return inputs
+
+
+class Test_check_temperature_predictions(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_runs_utils.check_temperature_predictions()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test results where every prediction holds.
+        """
+        # Run test.
+        table = rutils.check_temperature_predictions(
+            **_get_temperature_prediction_inputs()
+        )
+        # Check outputs.
+        self.assertEqual(list(table.index), [f"C{i}" for i in range(1, 6)])
+        self.assertEqual(table["holds"].tolist(), [True] * 5)
+        self.assertEqual(
+            table.loc["C2", "observed"], "6 of 6 lower, by 20 to 20 points"
+        )
+        self.assertEqual(
+            table.loc["C5", "observed"],
+            "2 of 2 scaffolds more often (one_shot 90.0% vs 80.0%, repair "
+            "95.0% vs 85.0%)",
+        )
+
+    def test2(self) -> None:
+        """
+        Test results where every prediction fails.
+        """
+        # Prepare inputs: break each prediction once.
+        inputs = _get_temperature_prediction_inputs()
+        # C1 and C2: an agent has more run luck at 0.2 than at 0.8.
+        inputs["variance_low"].iloc[0, 0] = 0.45
+        # C3: 3% of the tasks of a model change between the greedy runs.
+        inputs["greedy_changes"].iloc[2, 0] = 0.03
+        # C4: the close pair is distinguishable with 1 scaffold.
+        inputs["comparisons"].loc[0, ["p_holm", "distinguishable"]] = [
+            0.01,
+            True,
+        ]
+        # C5: with repair, the order holds less often at 0.2.
+        inputs["stability"].loc[("repair", 0.2), "p_same_order"] = 0.8
+        # Run test.
+        table = rutils.check_temperature_predictions(**inputs)
+        # Check outputs.
+        self.assertEqual(table["holds"].tolist(), [False] * 5)
+        self.assertEqual(
+            table.loc["C1", "observed"], "5 of 6 inside, from 20% to 45%"
+        )
+        self.assertEqual(
+            table.loc["C3", "observed"],
+            "2 of 3 models below 2%, from 0.0% to 3.0%",
+        )
+
+
+# #############################################################################
+# Test_check_new_model_predictions
+# #############################################################################
+
+
+def _get_new_model_prediction_inputs() -> Dict[str, Any]:
+    """
+    Build the inputs of `check_new_model_predictions()`, with every
+    prediction holding.
+
+    :return: keyword arguments of `check_new_model_predictions()`
+    """
+    models = ["d:6.7b-x", "l:8b-x", "g:7b-x"]
+    validation = pd.DataFrame(
+        {"plus_diff": [0.01, -0.02, 0.03, 0.0, -0.04, 0.02]},
+        index=pd.MultiIndex.from_product(
+            [models, ["humaneval", "mbpp"]], names=["model", "benchmark"]
+        ),
+    )
+    comparisons = pd.DataFrame(
+        {"p_holm": [0.3, 0.6, 1.0], "distinguishable": [False] * 3}
+    )
+    stability = pd.Series({"p_same_order": 0.3, "mean_kendall_tau": 0.8})
+    inputs = {
+        "validation": validation,
+        "comparisons": comparisons,
+        "stability": stability,
+    }
+    return inputs
+
+
+class Test_check_new_model_predictions(hunitest.TestCase):
+    """
+    Test `skill_vs_luck_runs_utils.check_new_model_predictions()`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test results where every prediction holds.
+        """
+        # Run test.
+        table = rutils.check_new_model_predictions(
+            **_get_new_model_prediction_inputs()
+        )
+        # Check outputs.
+        self.assertEqual(list(table.index), ["D1", "D2", "D3"])
+        self.assertEqual(table["holds"].tolist(), [True] * 3)
+        self.assertEqual(
+            table.loc["D1", "observed"],
+            "6 of 6 within 5 points, largest gap -4.0 points (g 7b, humaneval)",
+        )
+
+    def test2(self) -> None:
+        """
+        Test results where every prediction fails.
+        """
+        # Prepare inputs: break each prediction once.
+        inputs = _get_new_model_prediction_inputs()
+        # D1: a greedy score is 6 points below the published one.
+        inputs["validation"].iloc[5, 0] = -0.06
+        # D2: a pair of the cluster is distinguishable.
+        inputs["comparisons"].loc[2, ["p_holm", "distinguishable"]] = [
+            0.02,
+            True,
+        ]
+        # D3: most 1-run leaderboards keep the order.
+        inputs["stability"]["p_same_order"] = 0.6
+        # Run test.
+        table = rutils.check_new_model_predictions(**inputs)
+        # Check outputs.
+        self.assertEqual(table["holds"].tolist(), [False] * 3)
+        self.assertEqual(
+            table.loc["D2", "observed"],
+            "1 of 3 pairs distinguishable, smallest Holm p 0.02",
+        )
+        self.assertEqual(
+            table.loc["D3", "observed"], "60.0% keep the order of the 6 models"
         )

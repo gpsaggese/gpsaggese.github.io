@@ -109,8 +109,9 @@ def _main(parser: argparse.ArgumentParser) -> None:
     hdbg.init_logger(verbosity=args.log_level, use_exec_path=True)
     hdbg.dassert_lte(1, args.runs)
     if args.temperature == 0:
-        # Greedy decoding gives the same answer for every seed.
-        hdbg.dassert_eq(args.runs, 1, "Use 1 run with greedy decoding")
+        # Greedy decoding ignores the seed, so a second greedy run only checks
+        # whether Ollama gives the same answers again.
+        hdbg.dassert_lte(args.runs, 2, "Use at most 2 greedy runs")
     # Select the tasks.
     problems = rutils.load_problems(args.benchmark)
     task_ids = rutils.sort_task_ids(list(problems))

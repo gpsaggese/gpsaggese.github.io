@@ -290,8 +290,8 @@ for benchmark, agent_matrices in matrices.items():
 # Split the variance of the gap of the close pair, on each benchmark.
 parts = {
     benchmark: utils.compute_pair_variance_components(
-        agent_matrices["codeqwen / one_shot"],
-        agent_matrices["opencoder / one_shot"],
+        agent_matrices["codeqwen 7b / one_shot"],
+        agent_matrices["opencoder 8b / one_shot"],
     )
     for benchmark, agent_matrices in matrices.items()
 }

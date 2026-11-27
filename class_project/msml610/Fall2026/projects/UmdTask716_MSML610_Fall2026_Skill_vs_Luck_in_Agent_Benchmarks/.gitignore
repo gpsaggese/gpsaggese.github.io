@@ -9,4 +9,5 @@ docker_build.version.log
 data/raw/
 # Scores of the coding runs, on Google Drive, see `fetch_coding_scores.py`.
 data/coding_runs/
+data/coding_runs_phase2/
 data/coding_runs_pilot/

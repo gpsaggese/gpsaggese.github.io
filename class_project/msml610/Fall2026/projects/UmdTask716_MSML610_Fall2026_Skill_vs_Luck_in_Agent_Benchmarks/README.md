@@ -61,6 +61,36 @@ Chandrashekar), tracked in
     the run variance by 1.8 to 3.0
   - 4 of the 7 pre-registered predictions held (P1, P2, P4, P6), and P3, P5, and
     P7 did not
+- Phase 2 (how many SWE-bench records were real, run luck from 1 run, lower
+  temperatures, and 3 more models) has its plan and predictions in
+  `preregistration_2.md`, committed before any of it was analyzed
+  - Study A, in `skill_vs_luck.records.ipynb`: only 2 of the 30 SWE-bench
+    Verified records are distinguishable from the record they broke, and they
+    carry 33% of the 74.8 points of progress; since June 2024, 27 records in a
+    row were each within the noise of the record before (A1 and A2 held, A3 did
+    not)
+  - Study B, in `skill_vs_luck.one_run.ipynb`, is tuned on the public samples
+    only: from 1 run, a 2PL fit of agents run at the same temperature puts the
+    run share within 10 points of the truth in 86% of the draws, while adding
+    the public greedy agents made every setting worse
+    - Its test on our runs, in `skill_vs_luck.one_run_test_set.ipynb`, run once
+      after the estimator was committed, failed: the tuned estimate is within
+      10 points for only 7 of the 18 new cases (B1 did not hold), mostly
+      because it is too high at temperature 0.8; before tuning it is above the
+      truth in 16 of the 18 (B2 held)
+  - Study C, in `skill_vs_luck.temperatures.ipynb`: at temperature 0.2 runs are
+    15% to 21% of the variance of 1 run (37% to 52% at 0.8), 2 greedy runs give
+    the same result on every task, and the close pair still cannot be told
+    apart; with one-shot, 1-run leaderboards keep the order as often at 0.2 as
+    at 0.8 (C1 to C4 held, C5 did not)
+  - Study D, in `skill_vs_luck.more_models.ipynb`: with 3 more models, only
+    44.4% of the 1-run leaderboards of the 6 models keep the order on MBPP+ (D3
+    held); Llama 3.1 8B scores 7.6 points above its published greedy MBPP+
+    score (D1 did not hold), and the 3 models within 2.1 points of each other
+    in the published MBPP+ scores are 5 to 12 points apart in our runs (D2 did
+    not hold)
+  - 8 of the 13 phase-2 predictions held (A1, A2, B2, C1 to C4, and D3), and
+    A3, B1, C5, D1, and D2 did not
 
 ## Status of the Milestones
 
@@ -73,47 +103,59 @@ Chandrashekar), tracked in
 
 ## Structure of the Dir
 
-| Dir                       | Description                                                                                 |
-| :------------------------ | :------------------------------------------------------------------------------------------ |
-| `data/`                   | SWE-bench Verified snapshot and the list of the EvalPlus downloads                          |
-| `data/coding_runs/`       | Scores of the coding-benchmark solutions, from `score_coding_runs.py`, kept on Google Drive |
-| `data/coding_runs_pilot/` | Scores of the 20-task pilot, kept on Google Drive                                           |
-| `data/raw/`               | Downloads and raw model answers, rebuilt by the scripts and not committed                   |
-| `docs/`                   | Progress log (`progress.md`) and decisions (`decisions.md`)                                 |
-| `test/`                   | Unit tests                                                                                  |
+| Dir                        | Description                                                                                 |
+| :------------------------- | :------------------------------------------------------------------------------------------ |
+| `data/`                    | SWE-bench Verified snapshot and the list of the EvalPlus downloads                          |
+| `data/coding_runs/`        | Scores of the coding-benchmark solutions, from `score_coding_runs.py`, kept on Google Drive |
+| `data/coding_runs_phase2/` | Scores of the phase-2 runs (Studies B, C, and D), kept on Google Drive                      |
+| `data/coding_runs_pilot/`  | Scores of the 20-task pilot, kept on Google Drive                                           |
+| `data/raw/`                | Downloads and raw model answers, rebuilt by the scripts and not committed                   |
+| `docs/`                    | Progress log (`progress.md`) and decisions (`decisions.md`)                                 |
+| `test/`                    | Unit tests                                                                                  |
 
 ## Description of Files
 
-| File                                    | Description                                                                                                               | Cluster   |
-| :-------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ | :-------- |
-| `bashrc`, `etc_sudoers`                 | Shell and sudo configuration copied into the image                                                                        | Docker    |
-| `docker_*.sh`, `run_jupyter.sh`         | Docker scripts, copied unchanged from `class_project/project_template`                                                    | Docker    |
-| `docker_cmd_sandbox.sh`                 | Like `docker_cmd.sh`, for running model-generated code (see below)                                                        | Docker    |
-| `Dockerfile`                            | Python 3.12 slim image with the packages in the 2 requirements files                                                      | Docker    |
-| `docs/decisions.md`                     | Non-obvious choices, one entry per decision                                                                               | Docs      |
-| `docs/progress.md`                      | Status, built pieces, findings with their evidence, and history                                                           | Docs      |
-| `fetch_coding_scores.py`                | Download the scores of the coding runs from Google Drive into `data/`                                                     | Data      |
-| `fetch_evalplus_data.py`                | Download the EvalPlus datasets and the public EvalPlus samples                                                            | Data      |
-| `fetch_swebench_verified.py`            | Download the public SWE-bench Verified results into `data/`                                                               | Data      |
-| `preregistration.md`                    | Design, analyses, and predictions of the local runs, written before them                                                  | Docs      |
-| `README.md`                             | This file                                                                                                                 | Docs      |
-| `requirements.eval.txt`                 | Pinned packages that the EvalPlus scorer needs                                                                            | Docker    |
-| `requirements.txt`                      | Pinned Python packages installed in the image, including `jax` and `numpyro`                                              | Docker    |
-| `run_coding_agents.py`                  | Generate answers to HumanEval+ or MBPP+ tasks with a model served by Ollama                                               | Runs      |
-| `run_coding_experiment.sh`              | Run every model and score every answer                                                                                    | Runs      |
-| `score_coding_runs.py`                  | Score answers or public samples with the EvalPlus tests                                                                   | Runs      |
-| `skill_vs_luck.API.ipynb`               | Walkthrough of every function in `skill_vs_luck_utils.py`                                                                 | Notebooks |
-| `skill_vs_luck.API.py`                  | Jupytext pair of `skill_vs_luck.API.ipynb`                                                                                | Notebooks |
-| `skill_vs_luck.example.ipynb`           | Milestones 1 to 4 on the SWE-bench Verified leaderboard                                                                   | Notebooks |
-| `skill_vs_luck.example.py`              | Jupytext pair of `skill_vs_luck.example.ipynb`                                                                            | Notebooks |
-| `skill_vs_luck.runs.ipynb`              | Run-to-run luck of the local agents on HumanEval+ and MBPP+                                                               | Notebooks |
-| `skill_vs_luck.runs.py`                 | Jupytext pair of `skill_vs_luck.runs.ipynb`                                                                               | Notebooks |
-| `skill_vs_luck_runs_utils.py`           | Prompts, Ollama client, scoring, and run-level analysis of the coding runs                                                | Library   |
-| `skill_vs_luck_utils.py`                | Data loading, intervals, rank intervals, paired tests, benchmark size, simulation, split-half, winner's curse, IRT, plots | Library   |
-| `test/test_fetch_coding_scores.py`      | Unit tests for `fetch_coding_scores.py`                                                                                   | Tests     |
-| `test/test_skill_vs_luck_runs_utils.py` | Unit tests for `skill_vs_luck_runs_utils.py`                                                                              | Tests     |
-| `test/test_skill_vs_luck_utils.py`      | Unit tests for `skill_vs_luck_utils.py`                                                                                   | Tests     |
-| `version.sh`                            | Print the package versions inside the image                                                                               | Docker    |
+| File                                    | Description                                                                                                                        | Cluster   |
+| :-------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------- | :-------- |
+| `bashrc`, `etc_sudoers`                 | Shell and sudo configuration copied into the image                                                                                 | Docker    |
+| `docker_*.sh`, `run_jupyter.sh`         | Docker scripts, copied unchanged from `class_project/project_template`                                                             | Docker    |
+| `docker_cmd_sandbox.sh`                 | Like `docker_cmd.sh`, for running model-generated code (see below)                                                                 | Docker    |
+| `Dockerfile`                            | Python 3.12 slim image with the packages in the 2 requirements files                                                               | Docker    |
+| `docs/decisions.md`                     | Non-obvious choices, one entry per decision                                                                                        | Docs      |
+| `docs/progress.md`                      | Status, built pieces, findings with their evidence, and history                                                                    | Docs      |
+| `fetch_coding_scores.py`                | Download the scores of the coding runs from Google Drive into `data/`                                                              | Data      |
+| `fetch_evalplus_data.py`                | Download the EvalPlus datasets and the public EvalPlus samples                                                                     | Data      |
+| `fetch_swebench_verified.py`            | Download the public SWE-bench Verified results into `data/`                                                                        | Data      |
+| `preregistration.md`                    | Design, analyses, and predictions of the local runs, written before them                                                           | Docs      |
+| `preregistration_2.md`                  | Design and predictions of the 4 phase-2 studies, written before them                                                               | Docs      |
+| `README.md`                             | This file                                                                                                                          | Docs      |
+| `requirements.eval.txt`                 | Pinned packages that the EvalPlus scorer needs                                                                                     | Docker    |
+| `requirements.txt`                      | Pinned Python packages installed in the image, including `jax` and `numpyro`                                                       | Docker    |
+| `run_coding_agents.py`                  | Generate answers to HumanEval+ or MBPP+ tasks with a model served by Ollama                                                        | Runs      |
+| `run_coding_experiment.sh`              | Run every model and score every answer                                                                                             | Runs      |
+| `score_coding_runs.py`                  | Score answers or public samples with the EvalPlus tests                                                                            | Runs      |
+| `skill_vs_luck.API.ipynb`               | Walkthrough of every function in `skill_vs_luck_utils.py`                                                                          | Notebooks |
+| `skill_vs_luck.API.py`                  | Jupytext pair of `skill_vs_luck.API.ipynb`                                                                                         | Notebooks |
+| `skill_vs_luck.example.ipynb`           | Milestones 1 to 4 on the SWE-bench Verified leaderboard                                                                            | Notebooks |
+| `skill_vs_luck.example.py`              | Jupytext pair of `skill_vs_luck.example.ipynb`                                                                                     | Notebooks |
+| `skill_vs_luck.more_models.ipynb`       | Study D: 3 more local models, greedy and at temperature 0.8                                                                        | Notebooks |
+| `skill_vs_luck.more_models.py`          | Jupytext pair of `skill_vs_luck.more_models.ipynb`                                                                                 | Notebooks |
+| `skill_vs_luck.one_run.ipynb`           | Study B: run luck estimated from 1 run, tuned on the public samples                                                                | Notebooks |
+| `skill_vs_luck.one_run.py`              | Jupytext pair of `skill_vs_luck.one_run.ipynb`                                                                                     | Notebooks |
+| `skill_vs_luck.one_run_test_set.ipynb`  | Study B: the tuned 1-run estimator tested once on our runs                                                                         | Notebooks |
+| `skill_vs_luck.one_run_test_set.py`     | Jupytext pair of `skill_vs_luck.one_run_test_set.ipynb`                                                                            | Notebooks |
+| `skill_vs_luck.records.ipynb`           | Study A: each SWE-bench Verified record tested against the one it broke                                                            | Notebooks |
+| `skill_vs_luck.records.py`              | Jupytext pair of `skill_vs_luck.records.ipynb`                                                                                     | Notebooks |
+| `skill_vs_luck.runs.ipynb`              | Run-to-run luck of the local agents on HumanEval+ and MBPP+                                                                        | Notebooks |
+| `skill_vs_luck.runs.py`                 | Jupytext pair of `skill_vs_luck.runs.ipynb`                                                                                        | Notebooks |
+| `skill_vs_luck.temperatures.ipynb`      | Study C: the 3 old models at temperature 0.2 and in a second greedy run                                                            | Notebooks |
+| `skill_vs_luck.temperatures.py`         | Jupytext pair of `skill_vs_luck.temperatures.ipynb`                                                                                | Notebooks |
+| `skill_vs_luck_runs_utils.py`           | Prompts, Ollama client, scoring, and run-level analysis of the coding runs                                                         | Library   |
+| `skill_vs_luck_utils.py`                | Data loading, intervals, rank intervals, paired tests, records, benchmark size, simulation, split-half, winner's curse, IRT, plots | Library   |
+| `test/test_fetch_coding_scores.py`      | Unit tests for `fetch_coding_scores.py`                                                                                            | Tests     |
+| `test/test_skill_vs_luck_runs_utils.py` | Unit tests for `skill_vs_luck_runs_utils.py`                                                                                       | Tests     |
+| `test/test_skill_vs_luck_utils.py`      | Unit tests for `skill_vs_luck_utils.py`                                                                                            | Tests     |
+| `version.sh`                            | Print the package versions inside the image                                                                                        | Docker    |
 
 - The files in `data/`:
 
@@ -165,15 +207,17 @@ Chandrashekar), tracked in
 
 ### What It Does
 
-- Downloads the scores of the coding runs (the 88 `.csv.gz` files of
-  `data/coding_runs/` and `data/coding_runs_pilot/`) as 1 archive from the
+- Downloads the scores of the coding runs as 2 archives from the
   [Google Drive folder of the project](https://drive.google.com/drive/folders/1rgI_x5rfX9HXiP0kZUHfyq2Zg8WWuV4y),
   since they are not kept in the repo
-- Checks the SHA-256 of the archive, so the notebooks read the same scores they
-  were run on
-- Keeps the archive in `data/raw/`, and downloads it again only if it is
+  - Phase 1: the 88 `.csv.gz` files of `data/coding_runs/` and
+    `data/coding_runs_pilot/`
+  - Phase 2: the 18 `.csv.gz` files of `data/coding_runs_phase2/`
+- Checks the SHA-256 of each archive, so the notebooks read the same scores
+  they were run on
+- Keeps the archives in `data/raw/`, and downloads one again only if it is
   missing or different
-- Extracts only plain files, and only into the 2 score dirs
+- Extracts only plain files, and only into the dirs of each archive
 
 ### Examples
 
@@ -291,8 +335,8 @@ Chandrashekar), tracked in
 
 ## Run the Notebooks
 
-- Build the image, download the scores that `skill_vs_luck.runs.ipynb` reads
-  (see `fetch_coding_scores.py`), and start Jupyter, from this dir:
+- Build the image, download the scores of the coding runs that the notebooks
+  read (see `fetch_coding_scores.py`), and start Jupyter, from this dir:
   ```bash
   > ./docker_build.sh
   > ./docker_cmd.sh "cd /git_root/class_project/msml610/Fall2026/projects/UmdTask716_MSML610_Fall2026_Skill_vs_Luck_in_Agent_Benchmarks && python fetch_coding_scores.py"
@@ -300,8 +344,14 @@ Chandrashekar), tracked in
   ```
 
 - Open `http://localhost:8888`, then run `skill_vs_luck.API.ipynb` first,
-  `skill_vs_luck.example.ipynb` second, and `skill_vs_luck.runs.ipynb` (the
-  local runs) third
+  `skill_vs_luck.example.ipynb` second, `skill_vs_luck.records.ipynb` (the
+  SWE-bench records) third, `skill_vs_luck.runs.ipynb` (the local runs)
+  fourth, and `skill_vs_luck.one_run.ipynb` (run luck from 1 run) fifth
+
+- Then run the 3 notebooks of phase 2, which read the scores in
+  `data/coding_runs_phase2/`: `skill_vs_luck.one_run_test_set.ipynb` (the test
+  of Study B), `skill_vs_luck.temperatures.ipynb` (Study C), and
+  `skill_vs_luck.more_models.ipynb` (Study D)
 
 ## Run a Notebook as a Script
 
