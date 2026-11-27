@@ -2,13 +2,14 @@
 
 ## Status
 
-| Milestone                                | Target date | Status  | PR                                    |
-| :--------------------------------------- | :---------- | :------ | :------------------------------------ |
-| `v0.1`: two harnesses run end to end     | -           | done    | #527, #587, `gpsaggese/tutorials#706` |
-| `v0.2`: first real comparison            | TBD         | planned | -                                     |
-| `v0.3`: insight quality is scored        | TBD         | planned | -                                     |
-| `v0.4`: all in-house agents are entrants | TBD         | planned | -                                     |
-| `v1.0`: results table and tutorial       | TBD         | planned | -                                     |
+| Milestone                                     | Target date | Status      | PR                                    |
+| :-------------------------------------------- | :---------- | :---------- | :------------------------------------ |
+| `v0.1`: two harnesses run end to end          | -           | done        | #527, #587, `gpsaggese/tutorials#706` |
+| `v0.2`: Milestone 1, comparison of DS agents  | 2026-11-16  | in progress | #941, #955                            |
+| `v0.3`: first real comparison on raw datasets | TBD         | planned     | -                                     |
+| `v0.4`: insight quality is scored             | TBD         | planned     | -                                     |
+| `v0.5`: all in-house agents are entrants      | TBD         | planned     | -                                     |
+| `v1.0`: results table and tutorial            | TBD         | planned     | -                                     |
 
 ## Built
 
@@ -44,13 +45,27 @@
    - Command: `python research/agentic_data_science/RL_for_auto_EDA_benchmark.py`
      with `pgmpy 1.1.2` and `causal-learn`, rerun on 2026-11-07
 
+4. Claude Code (Claude Sonnet 5) on the Milestone 1 sample, scored with each
+   benchmark's own rules (95% bootstrap confidence intervals):
+
+   | Benchmark      | Tasks | Accuracy | 95% CI | Cost ($) | Time/task (s) |
+   | :------------- | :---- | :------- | :----- | :------- | :------------ |
+   | DABench        | 50    | 78%      | 66-88% | 10.85    | 39            |
+   | QRData         | 50    | 70%      | 56-82% | 13.13    | 88            |
+   | DABstep (dev)  | 10    | 60%      | 30-90% | 3.99     | 114           |
+   | DA-Code (text) | 50    | 52%      | 38-66% | 11.74    | 58            |
+
+   - An account usage limit made 72 tasks fail instantly in the first run; the
+     numbers come from the rerun of those tasks with `--retry-errors`
+   - Command: `python research/agentic_data_science/bakeoff/run_benchmarks.py
+     --agents claude_code`, run on 2026-11-16
+
 ## Next
 
-1. `PR_B2`: load the real UCI Heart and NYC Taxi data
-2. `PR_B3`: `schema_agent` as an entrant, after GP answers where the Bake-off
-   lives (`plan.md`, Bake-off Harness, Open Question 1)
-3. `PR_B4`: external baseline agent
-4. Agree with the teams of #859 and #865 on who builds what
+1. `PR_M2`: benchmark runner with Claude Code and smolagents (open the PR)
+2. `PR_M3`, `PR_M4`: DA-Agent and OpenDsStar wrappers
+3. `PR_M5`: full runs and analysis
+4. `PR_M6`: Milestone 1 paper
 
 ## History
 
@@ -63,6 +78,8 @@
 | 2026-11-07 | Merged `gpsaggese/tutorials#706`: Bake-off harness skeleton; replaces the split PRs #704 and #705 |
 | 2026-11-07 | Moved the plan to `docs/plan.md` in the planning-guide format (#880); decisions D-1 to D-7        |
 | 2026-11-14 | Moved the Bake-off to `research/agentic_data_science/bakeoff/` (`tutorials` archived, D-3)        |
+| 2026-11-19 | Merged #941: Bake-off moved here; benchmark loaders and scorers (`PR_M1`)                         |
+| 2026-11-20 | Merged #955: Milestone 1 paper draft with Claude Code results (`PR_M6`, draft)                    |
 
 ## Open Work
 

@@ -38,16 +38,26 @@
   - [x] `PR_R1`
   - [x] `PR_R2`
   - [x] `PR_B1`
-- `v0.2`: first real comparison: `schema_agent` and one external agent scored on
+- `v0.2` (Milestone 1): four state-of-the-art data-science agents compared on four
+  tabular benchmarks with known answers, written up as a paper
+  - [x] `PR_M1`
+  - [ ] `PR_M2`
+  - [ ] `PR_M3`
+  - [ ] `PR_M4`
+  - [ ] `PR_M5`
+  - [ ] `PR_M6`
+- Milestone 2: fix what Milestone 1 shows is not done properly; scoped from the
+  failure analysis of `PR_M5`
+- `v0.3`: first real comparison: `schema_agent` and one external agent scored on
   the real UCI Heart and NYC Taxi data
   - [ ] `PR_B2`
   - [ ] `PR_B3`
   - [ ] `PR_B4`
-- `v0.3`: insight quality is scored, not only "did it run"
+- `v0.4`: insight quality is scored, not only "did it run"
   - [ ] `PR_B5`
   - [ ] `PR_B6`
   - [ ] `PR_R3`
-- `v0.4`: every in-house agent is an entrant
+- `v0.5`: every in-house agent is an entrant
   - [ ] `PR_B7`
   - [ ] `PR_B8`
   - [ ] `PR_B9`
@@ -161,7 +171,79 @@
 - Dataset registry with offline samples, `Agent` interface with `DummyAgent`,
   `Scorecard`, `run_bakeoff.py --list/--run`, 12 unit tests
 
-## v0.2: First Real Comparison
+## v0.2: Milestone 1, Comparison of Data-Science Agents
+
+- Goal: understand and try the state of the art; set by GP on 2026-11-10
+- Problem: tabular data analysis, since almost every data-agent benchmark is tabular
+- Benchmarks (50 tasks each, fixed sample in `../bakeoff/benchmark_sample.json`):
+  InfiAgent-DABench, QRData, DA-Code (text-answer tasks), DABstep (10 dev tasks)
+- Agents, all on the same model (`BAKEOFF_MODEL`): A1 smolagents `CodeAgent`,
+  A2 DA-Agent, A3 Claude Code, A4 OpenDsStar
+- Output: a paper with the methodology and the results
+- Dependencies: `PR_M2` needs `PR_M1`; `PR_M3` and `PR_M4` need `PR_M2`; `PR_M5`
+  needs `PR_M2` (and `PR_M3`, `PR_M4` for all four agents); `PR_M6` needs `PR_M5`
+
+### `PR_M1`: [x] Benchmark loaders and scorers
+
+- Owner: Dev; merged in #941
+- Move the Bake-off from the archived `tutorials` repo (D-3)
+- `benchmarks.py`: load each benchmark as tasks (question, data files, gold
+  answer) and score answers with the benchmark's own rules; vendor the official
+  DABstep scorer
+- `download_benchmarks.py`: download the data, write the fixed sample, check that
+  every gold answer scores 1 and an empty answer scores 0
+- Result: all four benchmarks pass the check (160 tasks)
+
+### `PR_M2`: [ ] Benchmark runner with Claude Code and smolagents
+
+- Owner: Dev
+- `task_agents.py`: `TaskAgent` interface; Claude Code (A3) through the Agent SDK,
+  smolagents (A1) through LiteLLM, and an oracle agent to test the pipeline
+- `run_benchmarks.py`: run agents on the sample in fresh working directories, score
+  each answer, log tokens, cost and time, resume after an interruption, summarize
+  accuracy with 95% bootstrap confidence intervals
+- `--retry-errors` reruns failed tasks; a run stops after 5 failures in a row
+- Result: the oracle scores 1 on every benchmark; Claude Code runs on all 160
+  tasks (see `progress.md`, Findings)
+
+### `PR_M3`: [ ] DA-Agent wrapper
+
+- Owner: Dev
+- Wrap DA-Agent (ships with DA-Code, `yiyihum/da-code`, `da_agent/`) as a
+  `TaskAgent` in `task_agents.py`, on the model from `BAKEOFF_MODEL`
+- Unit tests with the LLM call mocked; one live run on 2 tasks
+- Result: `run_benchmarks.py --agents da_agent` runs on all four benchmarks
+
+### `PR_M4`: [ ] OpenDsStar wrapper
+
+- Owner: Dev
+- Wrap OpenDsStar (IBM's open DS-STAR, `pip install OpenDsStar`) as a `TaskAgent`,
+  on the model from `BAKEOFF_MODEL`
+- Unit tests with the LLM call mocked; one live run on 2 tasks
+- Result: `run_benchmarks.py --agents open_ds_star` runs on all four benchmarks
+
+### `PR_M5`: [ ] Full runs and analysis
+
+- Owner: Dev
+- Run every agent on the 160 sampled tasks; re-run crashes once
+- Commit the summary (not the working dirs): accuracy per agent and benchmark
+  with 95% confidence intervals, cost, time, and error counts
+- Failure analysis of about 20 wrong answers, grouped by cause; it scopes
+  Milestone 2
+- Result: `results/` summary table and a findings section in `progress.md`
+
+### `PR_M6`: [ ] Milestone 1 paper
+
+- Owner: Dev
+- Draft with the method and the Claude Code results merged in #955
+  (`papers/Comparison_of_Data_Science_Agents/`); the final version adds the
+  other three agents and the failure analysis
+- Paper in `papers/`: problem, benchmarks and why, agents, setup (same model,
+  same prompt, fixed sample), results, failure analysis, limits (DABstep dev
+  only, DA-Code text tasks only)
+- Result: paper reviewed by GP
+
+## v0.3: First Real Comparison
 
 ### `PR_B2`: [ ] Load the real UCI Heart and NYC Taxi data
 
@@ -203,7 +285,7 @@
   a failure
 - Result: an external reference point next to the in-house agents
 
-## v0.3: Score Insight Quality
+## v0.4: Score Insight Quality
 
 - `PR_B5`: synthetic causal dataset in the Bake-off, generated by the RL-for-EDA
   environment, where an insight is scored against the true graph
@@ -211,7 +293,7 @@
   datasets
 - `PR_R3`: the Claude Code agent from `PR_R1` as an entrant in both harnesses
 
-## v0.4: All In-House Agents
+## v0.5: All In-House Agents
 
 - `PR_B7`: time-series agent from
   `tutorials/agentic_eda/intermediate_v0_timeseries_agent/`
@@ -232,10 +314,10 @@
 
 ## Unscheduled: Benchmark Meta-Dataset
 
-- `PR_M1`: schema and store, with two benchmarks loaded by hand
-- `PR_M2`: the remaining benchmarks, with a source for each row
-- `PR_M3`: cross-benchmark correlation of the models on two or more leaderboards
-- `PR_M4`: reproducibility audit of 10 to 20 tasks from one benchmark
+- `PR_D1`: schema and store, with two benchmarks loaded by hand
+- `PR_D2`: the remaining benchmarks, with a source for each row
+- `PR_D3`: cross-benchmark correlation of the models on two or more leaderboards
+- `PR_D4`: reproducibility audit of 10 to 20 tasks from one benchmark
 
 ## Conventions
 
