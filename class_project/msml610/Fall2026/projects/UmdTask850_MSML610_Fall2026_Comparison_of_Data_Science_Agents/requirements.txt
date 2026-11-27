@@ -1,0 +1,10 @@
+ipywidgets
+matplotlib
+numpy
+pandas
+seaborn
+tqdm
+pyarrow
+datasets
+pandasai
+pandasai-litellm

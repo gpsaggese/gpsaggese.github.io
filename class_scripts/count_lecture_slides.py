@@ -1,7 +1,7 @@
 #!/usr/bin/env -S uv run
 
 # /// script
-# dependencies = ["tabulate"]
+# dependencies = ["tabulate", "tqdm"]
 # ///
 
 """
@@ -35,11 +35,11 @@ import os
 import re
 from typing import Any, Dict, List, Tuple
 
+import helpers.hdbg as hdbg
+import helpers.hparser as hparser
 import tabulate
 
 import class_scripts.common_utils as csccouti
-import helpers.hdbg as hdbg
-import helpers.hparser as hparser
 
 _LOG = logging.getLogger(__name__)
 

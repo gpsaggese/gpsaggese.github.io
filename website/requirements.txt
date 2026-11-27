@@ -8,3 +8,7 @@ pymdown-extensions>=10.7
 
 # RSS feed for the blog
 mkdocs-rss-plugin>=1.12
+
+# blog_to_substack.py (Playwright is only for `--tables png`)
+pyyaml
+playwright

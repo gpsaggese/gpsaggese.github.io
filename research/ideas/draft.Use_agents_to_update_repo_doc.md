@@ -68,6 +68,6 @@
 
 ## References
 
-- `helpers_root/.claude/skills/readme.create/SKILL.md`
-- `helpers_root/.claude/skills/readme.write_architecture/SKILL.md`
+- `helpers_root/.claude/skills/readme_dir.create/SKILL.md`
+- `helpers_root/.claude/skills/readme_file.write_architecture/SKILL.md`
 - `helpers_root/.claude/skills/research_idea.update_readme/SKILL.md`

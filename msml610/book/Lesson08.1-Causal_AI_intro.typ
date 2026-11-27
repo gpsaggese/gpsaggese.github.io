@@ -125,15 +125,15 @@ variable tells you something about the other.
 //         font=\Large\bfseries
 //     }
 // }
-//
+// 
 // % Outermost box: Association.
 // \node[box=4.5cm, fill=blue!15] (association) {};
 // \node[font=\Large\bfseries, anchor=north] at ([yshift=-8pt]association.north) {Association};
-//
+// 
 // % Middle box: Correlation.
 // \node[box=3.0cm, fill=orange!20] (correlation) at ([yshift=-8pt]association.center) {};
 // \node[font=\Large\bfseries, anchor=north] at ([yshift=-6pt]correlation.north) {Correlation};
-//
+// 
 // % Innermost box: Causation.
 // \node[box=1.5cm, fill=red!25] (causation) at ([yshift=-6pt]correlation.center) {};
 // \node[font=\Large\bfseries] at (causation.center) {Causation};
@@ -709,7 +709,7 @@ components, as @fig:causalaiworkflow shows.
 // digraph CausalFlowGrid {
 //   layout=neato;
 //   node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, width=1.4, height=0.6, fixedsize=true];
-//
+// 
 //   BusinessGoals   [label="Business Goals",        pos="0,2!",  fillcolor="#E53935", fontcolor="white"];
 //   UseCases        [label="Use Cases",             pos="2,2!",  fillcolor="#FB8C00", fontcolor="black"];
 //   CausalModels    [label="Causal Models",         pos="4,2!",  fillcolor="#FDD835", fontcolor="black"];
@@ -718,11 +718,11 @@ components, as @fig:causalaiworkflow shows.
 //   Algorithms      [label="Algorithms/\nLibraries", pos="2,0!", fillcolor="#5E35B1", fontcolor="white"];
 //   Interventions   [label="Interventions/\nCounterfactuals", pos="0,0!", fillcolor="#8E24AA", fontcolor="white"];
 //   Results         [label="Key Results/\nTakeaways", pos="0,1!", fillcolor="#D81B60", fontcolor="white"];
-//
+// 
 //   Placeholder     [label="", pos="2,1!", style=invis];
-//
+// 
 //   edge [color="#555555", penwidth=1.4, splines=true];
-//
+// 
 //   BusinessGoals -> UseCases;
 //   UseCases -> CausalModels;
 //   CausalModels -> DataSources;
@@ -813,9 +813,9 @@ The causal DAG reveals the complexity:
 //     splines=true;
 //     nodesep=1.0;
 //     ranksep=0.75;
-//
+// 
 //     node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, penwidth=1.4];
-//
+// 
 //     Price [label="Price", fillcolor="#F4A6A6"];
 //     Behavior [label="Behavior", fillcolor="#FFD1A6"];
 //     ProductAmount [label="Product Amount", fillcolor="#B2E2B2"];
@@ -823,7 +823,7 @@ The causal DAG reveals the complexity:
 //     CompetitiveOffers [label="Competitive Offers", fillcolor="#C6A6F4"];
 //     Supply [label="Product Supply", fillcolor="#A6E7F4"];
 //     StoreDistance [label="Distance to store", fillcolor="#D2B48C"];
-//
+// 
 //     Price -> Behavior;
 //     Behavior -> Revenue;
 //     Price -> ProductAmount;

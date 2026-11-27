@@ -1,0 +1,11 @@
+## 2026-11-11 — Experiment 006: Frozen financial and multimodal news representations (implementation)
+
+**Hypothesis:** Frozen financial-domain representations (FinBERT), multimodal CLIP text features, and lexical TF-IDF provide incremental predictive information about next-observed-quote WTI, Brent and Henry Hub log returns beyond fixed 30-lag price-only Ridge.
+
+**Implemented:** Same target calendar, same 30 price lags, train 65%, validation 15%, test 20%, 5 observation gaps. ABC / FNSPID / combined manifest normalization uses previously audited oil/gas regex flags. Identical 2010–2021 forecast window for cross-source comparisons, no-news dates preserved. Frozen FinBERT 3-class probabilities + CLS (PCA20), frozen CLIP ViT-L/14 text projection (PCA20), optional frozen MiniLM sentence embedding (PCA20), CLIP fixed-event-prompt cosine score ablation, TF-IDF Ridge, and shuffled-news negative controls. Encoder outputs cached by manifest/model/revision. Ridge tuning uses train-only expanding-window CV; training-only TF-IDF and PCA; refit on train+validation; paired test-error moving-block bootstrap. Code and synthetic tests are in `news_fusion/` and `test/test_news_fusion.py`.
+
+**Results:** Code/synthetic tests are completed. **Real FinBERT/CLIP price-forecasting metrics pending execution**—do not enter fabricated RMSE values. The existing 2019–2026 price-only leaderboard is not directly comparable with this 2010–2021 news experiment. Report actual benchmark output after user runs real inference.
+
+**Limitations:** FNSPID midnight UTC values generally represent unverified publication times; all news is treated as date-level and shifted strictly beyond the publication date. FRED quote observation dates are not necessarily quote-publication times. News regex matches are unverified market relevance labels. GDELT 4-snapshot pilot is not suitable for a multi-year forecasting comparison. Only one holdout, limited seed/period assessment, no causal claim.
+
+**Next:** Run TF-IDF/count Ridge baselines for ABC and FNSPID, FinBERT inference and CLIP frozen inference, inspect real leaderboards and test paired bootstraps, add result figures/Google Doc link. Use separate common-period comparison with identical test dates/returns.

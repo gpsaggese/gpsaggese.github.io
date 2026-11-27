@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-11-04T19:21:07.036168+00:00",
+  "evaluation_kind": "retrospective_descriptive_move_detection_not_causal_attribution",
+  "company": "A",
+  "company_name": "Agilent Technologies Inc.",
+  "benchmark": "SPY",
+  "parameters": {
+    "lookback": 20,
+    "sigma_threshold": 3.0,
+    "price_kind": "open_to_open",
+    "return_kind": "stock_minus_benchmark",
+    "volatility_kind": "prior_sample_standard_deviation"
+  },
+  "preceding_hours": 72.0,
+  "observations": {
+    "bars": 1144,
+    "news": 356
+  },
+  "detection_counts": {
+    "observed_intervals": 1143,
+    "warmup_intervals": 20,
+    "tested_intervals": 1123
+  },
+  "detected_large_moves": 26,
+  "eligible_news_candidates": 0,
+  "independent_human_review_completed": false,
+  "attribution_predictions_completed": false,
+  "false_attribution_rate": null,
+  "unexplained_move_fraction": null,
+  "evaluation_status": "awaiting_predictions",
+  "source_sha256": "d37f23470e9f5fa19ee0fed205194f77f855578d82ff8ec5e47ff94dc0c05102",
+  "input_sha256": {
+    "manifest.json": "2c31bcbb431389ae67cc78203c2fa1a8e25885cf65d97749da530a93215f618d",
+    "news.json": "53090b43da941cb4c2eb4a31ba54ee235f173f5925ea9fdc5fc4b03a1a813a89",
+    "news_prefix.csv": "ef52915200c2a0f7f3caad02c7475890c76641b9b9c0557825f2dc5ae1297771",
+    "prices_000.json": "7265b8f680d8e7b65c5775597ac8d614bd8e6f689f602f395d22ab04cf87c3aa",
+    "protocol.json": "ab0c02aa92652ef7d57f1df176be62c9bf9ae8fd6a92150996f6999d097efb07",
+    "calendar.json": "60f58e659904aa563c1eab98b734b22efc40943d3d41500afee203a7b8526f68",
+    "predictions": null,
+    "human_review": null
+  },
+  "receipt_sha256": "963b3368ff898daa0700bb49f10cbd996c6f6892b2f84546c1dc3521474598d9",
+  "limitations": [
+    "This is the recovered 2016-2020 Agilent slice, not the missing three-company 2023 experiment.",
+    "Parameters were fixed for this descriptive run after earlier research; this is not a new preregistered holdout.",
+    "Date-only retrospective news and unverified entity tags cannot establish pre-move causal availability.",
+    "No eligible candidates does not mean that every market move was truly unexplained.",
+    "No human gold labels, LLM attribution, independent causal evaluation, or trading alpha is established."
+  ]
+}

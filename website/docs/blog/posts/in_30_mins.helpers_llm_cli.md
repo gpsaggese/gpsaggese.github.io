@@ -24,11 +24,11 @@ editor.
 - `llm_cli` automates this: pipe text through LLM directly from shell
 
 - `llm_cli` solves several problems:
-  - Apply LLM transformations without leaving terminal
-  - Use system prompts, rules, or skills to guide LLM behavior
-  - Process specific file chunks without touching the rest
-  - Chain transformations in shell pipelines
-  - Auto-lint output with `Prettier`
+    - Apply LLM transformations without leaving terminal
+    - Use system prompts, rules, or skills to guide LLM behavior
+    - Process specific file chunks without touching the rest
+    - Chain transformations in shell pipelines
+    - Auto-lint output with `Prettier`
 
 - Unlike generic LLM wrappers, `llm_cli` integrates with Claude Code skills and
   rules: apply same transformations from command line as from IDE
@@ -36,16 +36,16 @@ editor.
 ## When to Use It
 
 - Use `llm_cli` when you need to:
-  - Refactor multiple files with same rules
-  - Apply a skill (e.g., "fix documentation" or "improve code style") to a file
-  - Extract a file section, transform with LLM, and reassemble original
-  - Integrate LLM transformations into shell scripts or `Makefiles`
-  - Test a prompt or rule before applying via Claude Code
+    - Refactor multiple files with same rules
+    - Apply a skill (e.g., "fix documentation" or "improve code style") to a file
+    - Extract a file section, transform with LLM, and reassemble original
+    - Integrate LLM transformations into shell scripts or `Makefiles`
+    - Test a prompt or rule before applying via Claude Code
 
 - Similar tools are 
-  - `llm` CLI (Simon Willison)
-  - ChatGPT
-  - one-off Python scripts
+    - `llm` CLI (Simon Willison)
+    - ChatGPT
+    - one-off Python scripts
   but none combine LLM + file handling + rule integration as cleanly
 
 ## Prerequisites
@@ -86,12 +86,12 @@ editor.
 ## Core Concepts
 
 - `llm_cli` operates in these stages:
-  1. **Read input**: From file, stdin, or directly as text
-  2. **Extract chunk (optional)**: Use `--select` to process only part of file
-  3. **Choose a prompt**: Inline prompt, file, rule from `.claude/skills/`, or full skill
-  4. **Transform**: Send text through LLM
-  5. **Optionally lint**: Auto-format output (e.g., with `Prettier`)
-  6. **Write output**: To file, stdout, or back to input file
+    1. **Read input**: From file, stdin, or directly as text
+    2. **Extract chunk (optional)**: Use `--select` to process only part of file
+    3. **Choose a prompt**: Inline prompt, file, rule from `.claude/skills/`, or full skill
+    4. **Transform**: Send text through LLM
+    5. **Optionally lint**: Auto-format output (e.g., with `Prettier`)
+    6. **Write output**: To file, stdout, or back to input file
 
 - Each stage optional depending on use case. Simplest usage: input and output
 
@@ -284,23 +284,23 @@ EOF
 ## Advanced: Combining with Other Tools
 
 - Use `llm_cli` alongside other helpers:
-  - Refactor code and run tests:
+    - Refactor code and run tests:
 
-    ```bash
-    > llm_cli.py -i module.py --system_prompt "Refactor for readability" -m && python -m pytest module_test.py
-    ```
+        ```bash
+        > llm_cli.py -i module.py --system_prompt "Refactor for readability" -m && python -m pytest module_test.py
+        ```
 
-  - Fix a specific function in a file:
+    - Fix a specific function in a file:
 
-    ```bash
-    > llm_cli.py -i file.py --select "def my_func" --skill coding.fix_docstring -m
-    ```
+        ```bash
+        > llm_cli.py -i file.py --select "def my_func" --skill coding.fix_docstring -m
+        ```
 
-  - Process multiple files in a loop:
+    - Process multiple files in a loop:
 
-    ```bash
-    > for file in *.md; do llm_cli.py -i "$file" --skill markdown.fix_bullet_points -m; done
-    ```
+        ```bash
+        > for file in *.md; do llm_cli.py -i "$file" --skill markdown.fix_bullet_points -m; done
+        ```
 
 - `llm_cli` bridges terminal and LLM capabilities. Use it whenever you write
   manual prompts to fix or improve text: that's a sign the transformation should

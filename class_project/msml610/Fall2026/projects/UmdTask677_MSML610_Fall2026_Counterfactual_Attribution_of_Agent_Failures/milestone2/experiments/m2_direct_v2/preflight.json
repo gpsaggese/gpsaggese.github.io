@@ -1,0 +1,392 @@
+{
+  "all_48_passed": true,
+  "source_preserved": true,
+  "paid_calls": 0,
+  "network_blocked": true,
+  "cases": [
+    {
+      "decision_id": "krk-m3-1_trial0_step001",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m3-1_trial0_step002",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m3-1_trial0_step003",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m3-1_trial0_step004",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m3-1_trial0_step005",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m3-1_trial0_step006",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m3-1_trial0_step007",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m3-1_trial1_step001",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m3-1_trial1_step002",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m3-1_trial1_step003",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m3-1_trial1_step004",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m3-1_trial1_step005",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m3-1_trial1_step006",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m3-1_trial1_step007",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m4-1_trial0_step001",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m4-1_trial0_step002",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m4-1_trial0_step003",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m4-1_trial0_step004",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m4-1_trial0_step005",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m4-1_trial0_step006",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m4-1_trial0_step007",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m4-1_trial0_step008",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m4-1_trial1_step001",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m6-1_trial0_step001",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m6-1_trial0_step002",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m6-1_trial0_step003",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m6-1_trial0_step004",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m6-1_trial0_step005",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m6-1_trial0_step006",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m6-1_trial0_step007",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m6-1_trial0_step008",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m6-1_trial0_step009",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m6-1_trial0_step010",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m8-1_trial0_step001",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m8-1_trial0_step002",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m8-1_trial0_step003",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m8-1_trial1_step001",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m8-1_trial1_step002",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m8-1_trial1_step003",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m8-1_trial1_step004",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m8-1_trial1_step005",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m8-1_trial1_step006",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m8-1_trial1_step007",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m8-1_trial1_step008",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m8-1_trial1_step009",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m8-1_trial1_step010",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m8-1_trial1_step011",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    },
+    {
+      "decision_id": "krk-m8-1_trial1_step012",
+      "checks": {
+        "env": true,
+        "api_context": true,
+        "counters": true
+      }
+    }
+  ]
+}

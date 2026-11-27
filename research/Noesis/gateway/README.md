@@ -5,7 +5,7 @@
   every call for the checker
 - Also holds `passthrough_proxy.py`, the legacy in-process proxy that only
   `noesis_platform/` imports
-- Design, request flow, and blame rules: `docs/design.gateway.md`
+- Design, request flow, and blame rules: `docs/02.1-design.gateway.md`
 
 ## Structure of the Dir
 
@@ -30,7 +30,7 @@
 
 ## Description of Executables
 
-- Serve the gateway (setup in `docs/onboarding.md`)
+- Serve the gateway (setup in `docs/09-onboarding.md`)
   ```
   > uvicorn research.Noesis.gateway.gateway_app:build_default_app --factory --port 8000
   ```

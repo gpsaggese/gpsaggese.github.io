@@ -1,0 +1,10 @@
+# Isolated offline research environment; not the app/Gradio runtime.
+# macOS x86_64 Python 3.11 run reused existing CPU torch/numpy/psutil through
+# venv --system-site-packages; other exact versions were installed in that venv.
+torch==2.2.2
+transformers==4.41.2
+safetensors==0.4.5
+tokenizers==0.19.1
+huggingface-hub==0.23.5
+numpy==1.26.4
+psutil==7.1.3

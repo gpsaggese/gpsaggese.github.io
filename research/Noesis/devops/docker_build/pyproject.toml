@@ -11,6 +11,7 @@ fastapi = "*"
 httpx = "*"
 numpy = "*"
 pandas = "*"
+matplotlib = "*"
 psycopg2-binary = "*"
 # Noesis MVP gateway: async Postgres pool (`noesis_db.py`).
 psycopg = { version = "*", extras = ["binary", "pool"] }

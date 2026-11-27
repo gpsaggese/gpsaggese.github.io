@@ -1,5 +1,30 @@
 # Teaching
 
+## Summary
+
+- **Position**: Adjunct Professor at the University of Maryland (2023-present)
+- **Students**: more than 1,000 students taught
+- **Ratings**: 4.6 / 5 from more than 1,000 student surveys
+
+## Courses
+
+- **DATA605: Big Data Systems** (since 2023)
+    - [Syllabus](https://docs.google.com/document/d/1LYd7QqGOU2_JR5QOWaAxWCwBB2cy16n57dSaVV6A3tc/edit?tab=t.0#heading=h.d1dedvxmz9pw)
+- **MSML610: Advanced Machine Learning** (since 2025)
+    - [Syllabus](https://docs.google.com/document/d/1YXCrqh6KGg3xm4-Lr4QGdBnjeWEfkqz67FHNHB_rdAk/edit?tab=t.0#heading=h.278ryn4xodsb)
+- **DATA699: Independent Research Process** (since 2026)
+
+## Class Videos
+
+- [Videos from DATA605](https://drive.google.com/drive/folders/1wdetoWxD1475S1wzFOT-ZnKNzb2EwU8b)
+
+## Online Presence
+
+- **Research website**: [gpsaggese.github.io](https://gpsaggese.github.io/)
+- **CV**: [gpsaggese.github.io/02_cv](https://gpsaggese.github.io/02_cv/)
+- **GitHub**: [github.com/gpsaggese](https://github.com/gpsaggese)
+- **LinkedIn**: [linkedin.com/in/gpsaggese](https://www.linkedin.com/in/gpsaggese)
+
 <div style="display: flex; align-items: center; gap: 15px;" markdown="1">
 ![UMD Logo](assets/umd_logo.png){ width="150" }
 

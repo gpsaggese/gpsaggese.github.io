@@ -10,14 +10,16 @@ import dataclasses
 import logging
 from typing import Literal, Tuple
 
+import helpers.hdbg as hdbg
+import helpers.hprint as hprint
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-import helpers.hdbg as hdbg
-import helpers.hprint as hprint
-from research.Optimal_strategy_for_racket_sports import racket_params
-from research.Optimal_strategy_for_racket_sports import racket_trajectory
+from research.Optimal_strategy_for_racket_sports import (
+    racket_params,
+    racket_trajectory,
+)
 
 _LOG = logging.getLogger(__name__)
 
@@ -401,7 +403,7 @@ def make_serve_situation(
     # the box center mirrored across the center line. A serve must go
     # cross-court, so the deuce box is at `x <= 0` and the deuce server at
     # `x > 0` (ad is the mirror image), as in `_get_server_xy()` and
-    # `_check_serve()` of `notebooks/racket_shot_probability_utils.py`.
+    # `check_serve()` of `notebooks/racket_sports_01_shot_probability_utils.py`.
     x_mid = (legal_region.x_min + legal_region.x_max) / 2
     striker_xy = (-x_mid, -sport.court.length_m / 2)
     situation = ShotSituation(

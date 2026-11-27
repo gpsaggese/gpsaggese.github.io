@@ -1,11 +1,12 @@
 ---
 title: "Probabilistic Forecasting with GluonTS: A COVID-19 Data Tutorial"
-draft: true
+draft: false
 authors:
     - utkrisht nath
     - Harsh Yadav
     - gpsaggese
-date: 2026-10-19
+    - Worldsoldure00
+date: 2026-10-31
 description:
     "Learn GluonTS forecasting with synthetic data, prediction intervals, and a
     retrospective COVID-19 case study in Python."
@@ -236,3 +237,8 @@ uncertainty.
 - [DeepAR paper](https://arxiv.org/abs/1704.04110)
 - [GluonTS paper](https://arxiv.org/abs/1906.05264)
 - [Tutorial README and data notes](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/tutorials/GluonTS_COVID19_Prediction/README.md)
+
+## Acknowledgments
+
+[Ibrahim Ahmed Mohammed](https://github.com/Worldsoldure00) contributed
+editorial review, technical improvements, and publication preparation.

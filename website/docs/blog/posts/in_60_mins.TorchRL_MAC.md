@@ -77,19 +77,19 @@ This tutorial includes all the code, notebooks, and Docker containers in
 - A Docker system to build and run the environment using our standardized
   approach
 - Environment and wrapper components:
-  - PettingZoo MPE task wrappers (e.g., `simple_reference`)
-  - TorchRL-compatible wrappers
-  - Explicit message-channel wiring
+    - PettingZoo MPE task wrappers (e.g., `simple_reference`)
+    - TorchRL-compatible wrappers
+    - Explicit message-channel wiring
 - CTDE Training setup:
-  - Decentralized per-agent actors
-  - Centralized critic
-  - Stable policy optimization
+    - Decentralized per-agent actors
+    - Centralized critic
+    - Stable policy optimization
 - Evaluation and diagnostics:
-  - Binary success rate metrics
-  - Goal-distance debugging
-  - Structured communication metrics including `message_entropy` and
-    `message_change_rate`
+    - Binary success rate metrics
+    - Goal-distance debugging
+    - Structured communication metrics including `message_entropy` and
+      `message_change_rate`
 - Causal ablations:
-  - `full_comm`: Standard communication enabled
-  - `disable_comm`: Communication disabled
-  - `random_comm`: Random communication
+    - `full_comm`: Standard communication enabled
+    - `disable_comm`: Communication disabled
+    - `random_comm`: Random communication

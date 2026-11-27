@@ -1,0 +1,13 @@
+scenario_name,expectation,total_trials,detected_trials,detection_rate,false_alarm_rate,insufficient_rate,median_detection_window,p90_detection_window,accepted
+healthy_a_a,NO_ALERT,1000,0,0.0,0.0,0.0,,,True
+full_weak_model_swap,DETECT,1000,1000,1.0,0.0,0.0,2.0,2,True
+small_immaterial_drop,NO_ALERT,1000,27,0.027,0.027,0.0,10,15,True
+threshold_level_drop,MEASURE,1000,873,0.873,0.0,0.0,5,11,
+gradual_degradation,DETECT,1000,1000,1.0,0.0,0.0,5.0,7,True
+partial_substitution_10,MEASURE,1000,44,0.044,0.0,0.0,6.5,13,
+partial_substitution_25,MEASURE,1000,727,0.727,0.0,0.0,5,12,
+partial_substitution_50,DETECT,1000,1000,1.0,0.0,0.0,2.0,4,True
+latency_only,NO_ALERT,1000,0,0.0,0.0,0.0,,,True
+price_only,NO_ALERT,1000,0,0.0,0.0,0.0,,,True
+availability_failure,INSUFFICIENT,1000,0,0.0,0.0,1.0,,,True
+ungradable_evidence,INSUFFICIENT,1000,0,0.0,0.0,1.0,,,True

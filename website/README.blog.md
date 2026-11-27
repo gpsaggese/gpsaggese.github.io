@@ -5,6 +5,78 @@
   scratchpad).
   - Criteria: front matter completeness, TL;DR quality, content structure, and polish.
 
+# Writing Blog Posts
+
+The website includes an integrated blog under the "Blog" tab. Blog posts are
+located in `docs/blog/posts/`.
+
+## Creating a New Post
+
+1. Create a new Markdown file in `docs/blog/posts/` with a descriptive name (e.g., `My_Post_Title.md`)
+
+2. Add the required front matter at the top:
+   ```markdown
+   ---
+   title: "Your Blog Post Title"
+   authors:
+     - gpsaggese
+   date: YYYY-MM-DD
+   description: Brief description for SEO
+   categories:
+     - Category Name
+   ---
+
+   TL;DR: Your punchy one-liner summary.
+
+   <!-- more -->
+
+   Your blog content starts here...
+   ```
+
+## Front Matter Fields
+
+- **title**: Use double quotes, capitalize major words
+- **authors**: List format with username(s) from `docs/.authors.yml`
+- **date**: Use YYYY-MM-DD format
+- **description**: Brief description for SEO and social media
+- **categories**: Choose from allowed categories
+
+## Available Categories
+
+- AI Research
+- Machine Learning
+- Deep Learning
+- Software Engineering
+- Startup
+- Teaching
+- Data Science
+- Python
+
+## Formatting Guidelines
+
+- Follow the formatting rules in `/Users/saggese/src/umd_classes1/helpers_root/docs/ai_prompts/blog.format.md`
+
+- Key formatting rules:
+  - Always include `<!-- more -->` tag after TL;DR to separate excerpt
+  - Use `##` for main sections, `###` for subsections
+  - Use `-` for bullet lists
+  - Bold important terms with `**text**`
+  - Use inline code for technical terms with `` `code` ``
+  - Include blank lines between sections
+
+## Features
+
+The blog supports:
+- **Categories and tags** - Organize posts by topic
+- **Reading time estimates** - Automatically calculated
+- **Pagination** - 10 posts per page
+- **Archive by year** - Automatically generated
+- **Author profiles** - Configured in `docs/.authors.yml`
+- **Math equations** - Via MathJax
+- **Code syntax highlighting** - Multiple languages supported
+- **Mermaid diagrams** - For flowcharts and diagrams
+- **Social sharing** - Open Graph and Twitter cards via SEO overrides
+
 # Published Blogs
 
 - To extract dates and paths use:
@@ -14,10 +86,22 @@
 
 ## Ready for Review
 
-- 2026-10-19: `website/docs/blog/posts/in_60_mins.GluonTS.md`
+- 2026-10-31: `website/docs/blog/posts/in_60_mins.GluonTS.md`
+  - Prepared for publication (`draft: false`); GP approval and deployment are
+    pending.
+  - GP approved Ibrahim Ahmed Mohammed as an author; byline and acknowledgment
+    added. Other coauthor profile details await GP.
 - 2026-10-19: `website/docs/blog/posts/in_5_mins.helpers_render_images.md`
 
 Total: 2 posts ready for review
+
+## To Update
+- [ ] Update in_10_mins.helpers_open_md.md with
+  helpers_root/dev_scripts_helpers/documentation/open_md.README.md
+
+## To Create
+
+- [ ] helpers_root/dev_scripts_helpers/documentation/summarize_md.README.md
 
 ## Published Blogs
 
@@ -221,80 +305,3 @@ python.invoke.txt
 | `website/docs/blog/posts/draft.how_to.Claude_Code_and_tmux.md` | 19 | 5% | Just a raw link |
 
 Total: 55 draft blogs
-
-# Publishing Checklist
-
-- Create
-  ```bash
-  claude> /blog.create_from_notes XYZ
-  ```
-
-- Set the target
-  ```bash
-  FILE="..."
-  echo "Processing $FILE ..."
-  MODEL="--model deepseek/deepseek-v4-flash"
-  MODEL=""
-  ```
-
-- Make sure there are no TODOs
-  ```bash
-  > cc -p "/coding.todoai_gp $FILE"
-  ```
-
-- Detect and remove AI slop, if any
-  ```bash
-  > cc -p "/blog.humanize $FILE"
-  ```
-
-- Add links to rest of the blogs
-  ```bash
-  > cc -p "/blog.add_links $FILE"
-  ```
-
-- To lint the text use
-  ```
-  > website/format_blog.sh <FILE>
-  ```
-
-- Render
-  ```
-  > render_images.py -i website/docs/blog/posts/$FILE
-  > git add ...
-  ```
-
-- Check how it's rendered
-  ```bash
-  > open_md.py --input website/docs/blog/posts/how_to.Render_md_from_terminal.md --mode github
-  ```
-
-- Mark ready for publishing
-  ```bash
-  > website/mark_blog_as_ready.py --file $FILE
-  ```
-
-- Preview the website
-  ```bash
-  > website/preview_website.sh
-  ```
-
-- Fix all the problematic blogs, if any
-  ```
-  > ccp "Run website/preview_website.sh and fix the problems following .claude/skills/blog.rules.md"
-  ```
-
-- Publish the website
-  ```bash
-  > website/publish_website.sh
-  ```
-
-- Update the readme:
-  ```bash
-  > ccp "Execute website/prompt.update_README_blog.md"
-  ```
-
-- Check for dead links
-  ```bash
-  > uvx linkchecker http://127.0.0.1:8000/ 2>&1 | tee linkchecker.log
-  > uvx linkchecker https://gpsaggese.github.io/ 2>&1 | tee linkchecker.log
-  ```

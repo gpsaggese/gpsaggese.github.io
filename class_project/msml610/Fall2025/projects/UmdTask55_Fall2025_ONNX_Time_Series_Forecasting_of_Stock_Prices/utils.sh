@@ -1,1 +1,1 @@
-../../../../docker_common/utils.sh
+../../../../project_template/utils.sh

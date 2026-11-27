@@ -1,0 +1,336 @@
+# MSML610 Fall 2026 CrewAI Project Progress
+
+## Project Links
+
+GitHub Issue: https://github.com/gpsaggese/gpsaggese.github.io/issues/802
+
+Skeleton Pull Request: https://github.com/gpsaggese/gpsaggese.github.io/pull/903
+
+Research Log: https://docs.google.com/document/d/14TTelaXrCq2gIhQEe7YMnIZwCeTt4NVaI66ayCiBQxw/edit?tab=t.0
+
+Supporting Data, Outputs, and Screenshots: https://drive.google.com/drive/folders/1yUhSuIRlE9PthALNjnYsgXe_H99Daxnu
+
+## Project Objective
+
+The project builds a three agent CrewAI workflow that converts four Federal Reserve Economic Data series into a short macroeconomic briefing about inflation, unemployment, interest rates, and the Treasury yield curve.
+
+The Researcher collects and profiles the data. The Analyst performs deterministic calculations using custom tools. The Writer converts the verified results into a readable briefing.
+
+The numeric accuracy of the CrewAI briefing is compared with a single language model baseline that receives the raw data profile without access to the custom calculation tools.
+
+## October 29, 2026
+
+### Project Setup
+
+The team reviewed the project description and repository contribution requirements.
+
+The standard class project template was copied into the required project directory. The initial structure included the Dockerfile, Docker helper scripts, requirements, API notebook, example notebook, tests, and project description.
+
+The initial project structure was prepared separately from the implementation so that it could be reviewed as the first project checkpoint.
+
+### Findings
+
+The project must remain entirely within its assigned project directory.
+
+The Docker environment, notebooks, source files, tests, and documentation must follow the standard class project conventions.
+
+### Decision
+
+Submit the project skeleton separately from the implementation.
+
+### Next
+
+Build the Docker image and install CrewAI and its required dependencies.
+
+## November 4, 2026
+
+### Docker and CrewAI Environment
+
+The Docker image was built using Python 3.12.
+
+CrewAI version 1.14.7 and Google Gemini support were added to the project requirements.
+
+The Docker image name was converted to lowercase because Docker repository names cannot contain uppercase characters.
+
+The Docker command script was updated to pass `GEMINI_API_KEY` and `CREWAI_MODEL` from the host environment into the container. Secret values are not stored in source files, notebooks, output files, or Git history.
+
+### FRED Data Pipeline
+
+The data pipeline was implemented in `fred_tools.py`.
+
+The pipeline downloads and profiles the following FRED series:
+
+1. `CPIAUCSL`, Consumer Price Index
+2. `UNRATE`, Unemployment Rate
+3. `FEDFUNDS`, Federal Funds Rate
+4. `T10Y2Y`, Ten Year Minus Two Year Treasury Spread
+
+Each profile contains the latest date, latest value, previous year date, previous year value, number of missing observations, and CSV path.
+
+The initial snapshot was saved under `data/fred/2026-11-04`.
+
+### Macro Calculation Tool
+
+The deterministic calculation tool computes annual inflation, the change in unemployment, the change in the federal funds rate, the Treasury spread, and the sign of the yield curve.
+
+The initial calculation produced the following results:
+
+1. Annual inflation was 3.72 percent.
+2. The unemployment rate was 4.20 percent.
+3. The annual unemployment change was negative 0.20 percentage points.
+4. The federal funds rate was 3.88 percent.
+5. The annual federal funds rate change was negative 0.21 percentage points.
+6. The Treasury spread was 0.32 percentage points.
+7. The yield curve was positive.
+
+### CrewAI Workflow
+
+Three CrewAI agents were implemented.
+
+The Researcher uses a custom tool to download and profile the FRED data.
+
+The Analyst uses a custom tool to calculate the required macroeconomic statistics.
+
+The Writer converts the verified data and calculations into a short briefing.
+
+The agents run sequentially so that the output from one stage is available to the next stage.
+
+The workflow successfully generated a briefing covering inflation, the labor market, interest rates, the yield curve, and the economic outlook.
+
+### Evaluation
+
+The evaluation system independently recalculates the expected statistics from the saved CSV snapshot using pandas.
+
+Numeric claims are extracted from the generated briefing and checked against the independently calculated values within their displayed rounding precision.
+
+A single language model baseline was also generated from the raw data profile without access to the custom tools.
+
+The CrewAI briefing contained 14 evaluated numeric claims. All 14 claims were correct, producing an accuracy of 1.0.
+
+The single language model baseline contained 11 evaluated numeric claims. All 11 claims were correct, also producing an accuracy of 1.0.
+
+### Findings
+
+The initial experiment resulted in a tie between the CrewAI workflow and the single language model baseline.
+
+The CrewAI workflow did not beat the baseline in this run. However, it produced more evaluated numeric claims while maintaining perfect numeric accuracy.
+
+Additional experiments are required before concluding that the CrewAI workflow is more accurate than the baseline.
+
+### Reporting
+
+The reporting program exports a Markdown report and a four panel chart containing the Consumer Price Index, unemployment rate, federal funds rate, and Treasury yield spread.
+
+The generated datasets, reports, chart, evaluation results, and screenshots are stored in the shared Google Drive project folder linked above.
+
+### Testing
+
+Three pipeline tests were added and passed successfully. They verify the macroeconomic calculations, numeric claim evaluation, and final report export.
+
+Five Docker template tests passed successfully. They verify the API notebook, example notebook, Docker shell, Docker build, and Docker command scripts.
+
+Both `crewai.API.ipynb` and `crewai.example.ipynb` executed successfully inside the Docker environment.
+
+### Decisions
+
+Use dated FRED snapshots so that the same data can be used by the agents and the independent evaluation.
+
+Use deterministic pandas calculations instead of relying entirely on language model arithmetic.
+
+Pass API credentials through environment variables.
+
+Keep downloaded data, generated outputs, binary files, and screenshots outside Git and store them in the shared Google Drive folder.
+
+Report the evaluation tie honestly and conduct additional experiments later.
+
+### Next
+
+Prepare the research documentation and submit the initial project skeleton for review.
+
+## November 11, 2026
+
+### Skeleton Pull Request
+
+Pull Request 903 was submitted as the first project checkpoint.
+
+The pull request contained the standard project template, Docker infrastructure, boilerplate notebooks, and CrewAI project description.
+
+Professor Saggese approved and merged the pull request into the upstream `master` branch.
+
+### Findings
+
+Separating the skeleton from the implementation created a clear review checkpoint.
+
+The implementation can now be submitted through an incremental branch and pull request.
+
+### Decision
+
+Create the next implementation branch from the updated upstream `master` branch using the required incremental branch naming convention.
+
+### Next
+
+Create `UmdTask802_MSML610_Fall2026_CrewAI_1`, restore the local implementation, exclude generated data and outputs, and prepare the implementation pull request.
+
+## November 12, 2026
+
+### Research Documentation
+
+A shared Google Drive project folder was created for the research materials.
+
+The dated FRED snapshot, generated reports, evaluation results, chart, and supporting screenshots were uploaded to Google Drive.
+
+A Google Doc research log was created with the project objective, system description, experiment results, visual evidence, findings, and next steps.
+
+The Google Doc and project folder are linked at the beginning of this file.
+
+### Implementation Branch
+
+The local `master` branch was updated from `origin/master` after the skeleton pull request was merged.
+
+The incremental branch `UmdTask802_MSML610_Fall2026_CrewAI_1` was created.
+
+The local implementation was restored onto the incremental branch.
+
+The project `.gitignore` was updated so that `data/`, `outputs/`, temporary files, logs, generated HTML files, secrets, and local environment files are not committed.
+
+The original Git stash remains available as a temporary safety backup until the implementation has been committed and pushed successfully.
+
+### Current Status
+
+The Docker environment works successfully.
+
+The FRED download and profiling pipeline is implemented.
+
+The Researcher, Analyst, and Writer agents are implemented.
+
+The sequential CrewAI workflow generates the macroeconomic briefing.
+
+The numeric evaluation and single language model baseline are implemented.
+
+The report and chart export are implemented.
+
+The pipeline, notebook, and Docker tests pass.
+
+The research evidence and generated artifacts are stored in Google Drive.
+
+The implementation is being prepared for its first review.
+
+### Remaining Work
+
+Review the implementation files for correctness, formatting, secrets, and repository compliance.
+
+Check the API notebook against the complete Milestone 2 requirements, including custom tools and task execution patterns.
+
+Check that the example notebook runs the full workflow and exports the required briefing and chart.
+
+Run additional evaluation experiments because the initial CrewAI and baseline comparison resulted in a tie.
+
+Consider implementing the optional Skeptic agent.
+
+Stage and inspect only the intended source files.
+
+Commit and push the implementation branch.
+
+Open the second project pull request and request review.
+
+## November 15, 2026
+
+### Work Completed
+
+Updated the local repository from the merged implementation pull request and created the incremental branch `UmdTask802_MSML610_Fall2026_CrewAI_2`.
+
+Replaced the ambiguous numeric-claim comparison with a field-aware evaluation based on 12 required claims. The evaluator now associates every submitted value with its economic meaning instead of comparing it against one combined list of valid numbers.
+
+Added separate measurements for submitted-claim accuracy, required-claim completeness, and the fraction of all required claims that are correct.
+
+Updated the CrewAI Writer task and the single-LLM baseline prompt so both systems produce the same labeled Claim and Value table.
+
+Updated the example notebook to display the new evaluation metrics.
+
+Added deterministic tests for a complete correct table, an incorrect value, a missing field, and correct numerical rounding.
+
+### Result
+
+The three-agent CrewAI workflow submitted all 12 required claims correctly.
+
+The single-LLM baseline also submitted all 12 required claims correctly.
+
+Both systems received an accuracy of 1.0, completeness of 1.0, and required-claim score of 1.0 for the November 14, 2026 snapshot.
+
+The experiment therefore resulted in a tie. The CrewAI workflow matched the baseline but did not outperform it on this snapshot.
+
+### Testing
+
+Six deterministic FRED pipeline tests passed inside Docker.
+
+The updated example notebook executed successfully inside Docker.
+
+Five Docker and notebook integration tests passed from the Mac host.
+
+Python compilation and `git diff --check` completed without errors.
+
+### Findings
+
+The original evaluation could accept a correct number in the wrong context and did not penalize omitted claims.
+
+The field-aware checklist provides a more defensible comparison because missing, incorrect, and misplaced values affect the score.
+
+The generic numeric evaluator identified the baseline’s statement about a 13-month interval as unsupported. Manual inspection showed that the interval was correct, so it was not treated as evidence that the CrewAI workflow beat the baseline.
+
+A single easy snapshot is not sufficient to demonstrate a consistent advantage for the multi-agent workflow.
+
+### Next
+
+Design a multi-snapshot robustness experiment containing different inflation, unemployment, interest-rate, and yield-curve conditions.
+
+Use the same model, required claims, and evaluation rules for the CrewAI workflow and baseline.
+
+Report a CrewAI advantage only if it is supported by the additional experiments. Otherwise, document the tie as the final experimental result.
+
+## November 21, 2026
+
+### Multi-Snapshot Robustness Experiment
+
+Added an observation cutoff to the FRED download pipeline, CrewAI research tool, and example command-line interface. This allows the same workflow to be evaluated under several historical economic conditions.
+
+Implemented `multi_snapshot_evaluation.py` with four default cutoffs:
+
+1. June 2019 for pre-pandemic conditions.
+2. May 2020 for the pandemic unemployment shock.
+3. June 2022 for high inflation.
+4. July 2023 for high interest rates and an inverted yield curve.
+
+The runner caches downloaded snapshots, CrewAI briefings, baseline responses, and evaluation reports. Preparation mode makes no language-model calls. The `--run-llm` option generates only outputs that are not already cached.
+
+### Evaluation Correction
+
+The first 2019 baseline result was incorrectly marked wrong because it reported unrounded inflation of `1.671`, while the evaluator compared it with a prematurely rounded expected value of `1.67`.
+
+The evaluator was corrected to retain unrounded deterministic ground truth and apply rounding tolerance only during claim comparison. After the correction, both values were correctly treated as equivalent. A synthetic-data regression test now protects this behavior.
+
+### Results
+
+The CrewAI workflow and single-LLM baseline were evaluated on all four snapshots using the same model, 12 required claims, and field-aware evaluation rules.
+
+| Method | Correct | Required | Mean accuracy | Mean completeness | Pooled score |
+|---|---:|---:|---:|---:|---:|
+| Three-agent CrewAI workflow | 48 | 48 | 1.0 | 1.0 | 1.0 |
+| Single-LLM baseline | 48 | 48 | 1.0 | 1.0 | 1.0 |
+
+The methods tied on every snapshot. The experiment does not support a claim that CrewAI improved numerical accuracy over the baseline. Its demonstrated benefits are modularity, deterministic calculations, separation of responsibilities, and an auditable path from source data to final briefing.
+
+The experiment uses current FRED series truncated at historical observation dates. It does not reconstruct revision-aware historical data vintages from ALFRED.
+
+### Testing
+
+Eleven deterministic pipeline tests passed inside Docker. The new tests cover observation cutoff filtering, invalid cutoff handling, CrewAI tool propagation, snapshot cache reuse, aggregate calculation, and unrounded ground truth in addition to the existing calculation, evaluation, rounding, missing-claim, incorrect-value, and report-export behavior.
+
+Python compilation and `git diff --check` completed without errors.
+
+### Next
+
+Update the example notebook to demonstrate the observation cutoff and multi-snapshot experiment.
+
+Run the Docker and notebook integration tests after updating the notebook.
+
+Review the complete diff, commit the intended files, push `UmdTask802_MSML610_Fall2026_CrewAI_3`, and open the next incremental pull request.

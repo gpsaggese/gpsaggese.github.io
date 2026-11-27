@@ -1,0 +1,190 @@
+[
+  {
+    "interpretation": "Rank agreement and effect differences describe stability; interval overlap or nonsignificance is not proof of equivalence.",
+    "mean_absolute_gain_difference": 0.038095238095238106,
+    "spearman_rank_agreement": 0.9860132971832692,
+    "steps": [
+      {
+        "difference": 0.2,
+        "difference_ci90_conservative": [
+          -0.12536060959807674,
+          0.5364540581958784
+        ],
+        "primary_gain": 0.03333333333333333,
+        "repeat_gain": 0.23333333333333334,
+        "step": 1
+      },
+      {
+        "difference": 0.06666666666666668,
+        "difference_ci90_conservative": [
+          -0.1977166237122739,
+          0.33966401916442945
+        ],
+        "primary_gain": 0.03333333333333333,
+        "repeat_gain": 0.1,
+        "step": 2
+      },
+      {
+        "difference": 0.0,
+        "difference_ci90_conservative": [
+          -0.227034182780956,
+          0.227034182780956
+        ],
+        "primary_gain": 0.0,
+        "repeat_gain": 0.0,
+        "step": 3
+      },
+      {
+        "difference": 0.0,
+        "difference_ci90_conservative": [
+          -0.227034182780956,
+          0.227034182780956
+        ],
+        "primary_gain": 0.0,
+        "repeat_gain": 0.0,
+        "step": 4
+      },
+      {
+        "difference": 0.0,
+        "difference_ci90_conservative": [
+          -0.227034182780956,
+          0.227034182780956
+        ],
+        "primary_gain": 0.0,
+        "repeat_gain": 0.0,
+        "step": 5
+      },
+      {
+        "difference": 0.0,
+        "difference_ci90_conservative": [
+          -0.227034182780956,
+          0.227034182780956
+        ],
+        "primary_gain": 0.0,
+        "repeat_gain": 0.0,
+        "step": 6
+      },
+      {
+        "difference": 0.0,
+        "difference_ci90_conservative": [
+          -0.227034182780956,
+          0.227034182780956
+        ],
+        "primary_gain": 0.0,
+        "repeat_gain": 0.0,
+        "step": 7
+      }
+    ],
+    "task_id": "krk-m3-1",
+    "trial": 0
+  },
+  {
+    "interpretation": "Rank agreement and effect differences describe stability; interval overlap or nonsignificance is not proof of equivalence.",
+    "mean_absolute_gain_difference": 0.06666666666666668,
+    "spearman_rank_agreement": 0.7981885710176262,
+    "steps": [
+      {
+        "difference": 0.2,
+        "difference_ci90_conservative": [
+          -0.14572790913690833,
+          0.5474301436261577
+        ],
+        "primary_gain": -0.2,
+        "repeat_gain": 0.0,
+        "step": 1
+      },
+      {
+        "difference": 0.1,
+        "difference_ci90_conservative": [
+          -0.3352342624086286,
+          0.523128678770773
+        ],
+        "primary_gain": -0.13333333333333333,
+        "repeat_gain": -0.03333333333333333,
+        "step": 2
+      },
+      {
+        "difference": -0.2,
+        "difference_ci90_conservative": [
+          -0.5987864329067127,
+          0.223821283650532
+        ],
+        "primary_gain": 0.26666666666666666,
+        "repeat_gain": 0.06666666666666667,
+        "step": 3
+      },
+      {
+        "difference": -0.13333333333333333,
+        "difference_ci90_conservative": [
+          -0.4501612289495752,
+          0.19888541768801757
+        ],
+        "primary_gain": 0.26666666666666666,
+        "repeat_gain": 0.13333333333333333,
+        "step": 4
+      },
+      {
+        "difference": -0.03333333333333333,
+        "difference_ci90_conservative": [
+          -0.28022460536006677,
+          0.19696669740224118
+        ],
+        "primary_gain": 0.03333333333333333,
+        "repeat_gain": 0.0,
+        "step": 5
+      },
+      {
+        "difference": 0.0,
+        "difference_ci90_conservative": [
+          -0.227034182780956,
+          0.227034182780956
+        ],
+        "primary_gain": 0.0,
+        "repeat_gain": 0.0,
+        "step": 6
+      },
+      {
+        "difference": 0.0,
+        "difference_ci90_conservative": [
+          -0.227034182780956,
+          0.227034182780956
+        ],
+        "primary_gain": 0.0,
+        "repeat_gain": 0.0,
+        "step": 7
+      },
+      {
+        "difference": 0.0,
+        "difference_ci90_conservative": [
+          -0.227034182780956,
+          0.227034182780956
+        ],
+        "primary_gain": 0.0,
+        "repeat_gain": 0.0,
+        "step": 8
+      },
+      {
+        "difference": 0.0,
+        "difference_ci90_conservative": [
+          -0.227034182780956,
+          0.227034182780956
+        ],
+        "primary_gain": 0.0,
+        "repeat_gain": 0.0,
+        "step": 9
+      },
+      {
+        "difference": 0.0,
+        "difference_ci90_conservative": [
+          -0.227034182780956,
+          0.227034182780956
+        ],
+        "primary_gain": 0.0,
+        "repeat_gain": 0.0,
+        "step": 10
+      }
+    ],
+    "task_id": "krk-m6-1",
+    "trial": 0
+  }
+]

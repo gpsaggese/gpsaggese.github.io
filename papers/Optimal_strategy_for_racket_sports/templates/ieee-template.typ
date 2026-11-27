@@ -57,4 +57,13 @@ $endif$
   figure-supplement: [Fig.],
 )
 
+// Keep a unit and a section label on one line: no break at the slash of
+// "m/s", at the hyphen of a label such as "VII-A", or inside "Section
+// VII-A" (no hyphenation of "Section" either). The space before "m/s" and
+// after "Section" is a non-breaking space in the Markdown source.
+#show heading: set text(hyphenate: false)
+#show "m/s": box
+#show regex("(Sections?|Appendix)\u{a0}([IVX]+(-[A-H])?|[AB])"): box
+#show regex("\\b[IVX]+-[A-H]\\b"): box
+
 $body$

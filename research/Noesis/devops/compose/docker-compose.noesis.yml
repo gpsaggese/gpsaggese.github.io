@@ -25,7 +25,7 @@ services:
         condition: service_healthy
 
   # `PR_P2b`: local dev Postgres. Do NOT run this as a sidecar in the ECS
-  # prod path (see `spec.PR_P2b.md`'s "Implementation" /
+  # prod path (see `06-spec.PR_P2b.md`'s "Implementation" /
   # "Risks and Limitations to Call Out"); use AWS RDS there instead, with
   # the same five `POSTGRES_*` values set as ECS task definition `secrets`.
   noesis_postgres:
@@ -45,6 +45,6 @@ services:
 
 volumes:
   # Plain Docker volume: survives `docker compose down` (no `-v`) but is
-  # node-local, not replicated (`spec.PR_P2b.md`'s "Risks and Limitations to
+  # node-local, not replicated (`06-spec.PR_P2b.md`'s "Risks and Limitations to
   # Call Out").
   noesis_postgres_data: {}

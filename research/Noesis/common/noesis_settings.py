@@ -5,7 +5,7 @@ Values come from `research/Noesis/.env` overlaid with the process environment
 (the environment wins). Invalid values fail at startup, not on the first
 request.
 
-For the overall design see `research/Noesis/docs/design.gateway.md`.
+For the overall design see `research/Noesis/docs/02.1-design.gateway.md`.
 
 Import as:
 
@@ -47,7 +47,8 @@ class Settings:
     Gateway configuration.
 
     E.g., with no overrides the gateway serves Llama 3.3 70B, caps completions
-    at 256 tokens, and times a request out at 2x the contract latency limit.
+    at 256 tokens and prompts at 1,000, and times a request out at 2x the
+    contract latency limit.
     """
 
     # Needed only when the gateway uses the real OpenRouter provider; "" if
@@ -57,8 +58,11 @@ class Settings:
     model_id: str
     # Task definition (PRD D1): completions are clamped to this many tokens.
     max_tokens_cap: int
+    # Task definition (D19): prompts estimated above this many tokens are
+    # rejected.
+    max_prompt_tokens: int
     # Monthly spend cap on real provider cost (PRD G8); not enforced yet, see
-    # `docs/decisions.md`.
+    # `docs/03-decisions.md`.
     spend_cap_usd: float
     # Per-request timeout = `timeout_multiplier` * contract `l_max` (PRD G6).
     timeout_multiplier: float
@@ -133,11 +137,17 @@ def load_settings(
     hdbg.dassert(
         max_tokens_cap.is_integer(), "NOESIS_MAX_TOKENS_CAP must be an integer"
     )
+    max_prompt_tokens = _get_positive(env, "NOESIS_MAX_PROMPT_TOKENS", "1000")
+    hdbg.dassert(
+        max_prompt_tokens.is_integer(),
+        "NOESIS_MAX_PROMPT_TOKENS must be an integer",
+    )
     settings = Settings(
         openrouter_api_key=env.get("OPENROUTER_API_KEY", ""),
         database_url=env.get("NOESIS_DATABASE_URL", DEFAULT_DATABASE_URL),
         model_id=env.get("NOESIS_MODEL_ID", DEFAULT_MODEL_ID),
         max_tokens_cap=int(max_tokens_cap),
+        max_prompt_tokens=int(max_prompt_tokens),
         spend_cap_usd=_get_positive(env, "NOESIS_SPEND_CAP_USD", "50"),
         timeout_multiplier=_get_positive(
             env, "NOESIS_TIMEOUT_MULTIPLIER", "2.0"

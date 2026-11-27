@@ -1,0 +1,191 @@
+{
+  "primary_only_review_not_final": true,
+  "decisions": 48,
+  "resolved_harmful": [
+    {
+      "decision_id": "krk-m4-1_trial0_step003",
+      "keep_wins": 5,
+      "redecide_wins": 25,
+      "repair_gain": 0.6666666666666666,
+      "ci95": [
+        0.42769231415574793,
+        0.7986160790405454
+      ],
+      "fisher_p": 3.5641554737909744e-07,
+      "holm_p": 1.7107946274196676e-05
+    },
+    {
+      "decision_id": "krk-m4-1_trial0_step005",
+      "keep_wins": 0,
+      "redecide_wins": 11,
+      "repair_gain": 0.36666666666666664,
+      "ci95": [
+        0.18020136212699173,
+        0.5448675356639506
+      ],
+      "fisher_p": 0.0003188052525640556,
+      "holm_p": 0.014983846870510612
+    },
+    {
+      "decision_id": "krk-m4-1_trial1_step001",
+      "keep_wins": 0,
+      "redecide_wins": 11,
+      "repair_gain": 0.36666666666666664,
+      "ci95": [
+        0.18020136212699173,
+        0.5448675356639506
+      ],
+      "fisher_p": 0.0003188052525640556,
+      "holm_p": 0.014983846870510612
+    }
+  ],
+  "resolved_helpful": [],
+  "largest_positive_point_gains": [
+    {
+      "decision_id": "krk-m4-1_trial0_step003",
+      "keep_wins": 5,
+      "redecide_wins": 25,
+      "repair_gain": 0.6666666666666666,
+      "ci95": [
+        0.42769231415574793,
+        0.7986160790405454
+      ],
+      "fisher_p": 3.5641554737909744e-07,
+      "holm_p": 1.7107946274196676e-05
+    },
+    {
+      "decision_id": "krk-m4-1_trial0_step005",
+      "keep_wins": 0,
+      "redecide_wins": 11,
+      "repair_gain": 0.36666666666666664,
+      "ci95": [
+        0.18020136212699173,
+        0.5448675356639506
+      ],
+      "fisher_p": 0.0003188052525640556,
+      "holm_p": 0.014983846870510612
+    },
+    {
+      "decision_id": "krk-m4-1_trial1_step001",
+      "keep_wins": 0,
+      "redecide_wins": 11,
+      "repair_gain": 0.36666666666666664,
+      "ci95": [
+        0.18020136212699173,
+        0.5448675356639506
+      ],
+      "fisher_p": 0.0003188052525640556,
+      "holm_p": 0.014983846870510612
+    },
+    {
+      "decision_id": "krk-m6-1_trial0_step003",
+      "keep_wins": 4,
+      "redecide_wins": 12,
+      "repair_gain": 0.26666666666666666,
+      "ci95": [
+        0.04200591915421836,
+        0.4608215870094211
+      ],
+      "fisher_p": 0.03909713767454876,
+      "holm_p": 1
+    },
+    {
+      "decision_id": "krk-m6-1_trial0_step004",
+      "keep_wins": 0,
+      "redecide_wins": 8,
+      "repair_gain": 0.26666666666666666,
+      "ci95": [
+        0.09793142175615191,
+        0.4444830204431169
+      ],
+      "fisher_p": 0.004575062390691967,
+      "holm_p": 0.20587780758113852
+    },
+    {
+      "decision_id": "krk-m3-1_trial1_step001",
+      "keep_wins": 1,
+      "redecide_wins": 5,
+      "repair_gain": 0.13333333333333333,
+      "ci95": [
+        -0.029436429747216886,
+        0.3045247334191227
+      ],
+      "fisher_p": 0.19450977211904955,
+      "holm_p": 1
+    }
+  ],
+  "largest_negative_point_gains": [
+    {
+      "decision_id": "krk-m4-1_trial0_step001",
+      "keep_wins": 21,
+      "redecide_wins": 11,
+      "repair_gain": -0.3333333333333333,
+      "ci95": [
+        -0.5324980106910644,
+        -0.0809227155817438
+      ],
+      "fisher_p": 0.019096056845063342,
+      "holm_p": 0.8402265011827871
+    },
+    {
+      "decision_id": "krk-m4-1_trial0_step002",
+      "keep_wins": 26,
+      "redecide_wins": 17,
+      "repair_gain": -0.3,
+      "ci95": [
+        -0.49224195879243904,
+        -0.0715562292029702
+      ],
+      "fisher_p": 0.020372791753150876,
+      "holm_p": 0.8760300453854877
+    },
+    {
+      "decision_id": "krk-m6-1_trial0_step001",
+      "keep_wins": 7,
+      "redecide_wins": 1,
+      "repair_gain": -0.2,
+      "ci95": [
+        -0.37807784906110403,
+        -0.023624385428145295
+      ],
+      "fisher_p": 0.05231484385878206,
+      "holm_p": 1
+    },
+    {
+      "decision_id": "krk-m4-1_trial0_step004",
+      "keep_wins": 12,
+      "redecide_wins": 7,
+      "repair_gain": -0.16666666666666666,
+      "ci95": [
+        -0.37780107817172254,
+        0.06722474006830348
+      ],
+      "fisher_p": 0.2668356607208132,
+      "holm_p": 1
+    },
+    {
+      "decision_id": "krk-m6-1_trial0_step002",
+      "keep_wins": 10,
+      "redecide_wins": 6,
+      "repair_gain": -0.13333333333333333,
+      "ci95": [
+        -0.3407189976652599,
+        0.08991427613327943
+      ],
+      "fisher_p": 0.38165411884707,
+      "holm_p": 1
+    },
+    {
+      "decision_id": "krk-m3-1_trial0_step003",
+      "keep_wins": 0,
+      "redecide_wins": 0,
+      "repair_gain": 0.0,
+      "ci95": [
+        -0.113517091390478,
+        0.113517091390478
+      ],
+      "fisher_p": 1,
+      "holm_p": 1
+    }
+  ]
+}

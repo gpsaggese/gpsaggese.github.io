@@ -12,6 +12,11 @@
   - [Blog](https://gpsaggese.github.io/blog/)
   - [Past projects](https://github.com/gpsaggese/gpsaggese.github.io/blob/master/class_project/project_descriptions/README.md)
 
+## Open Your Onboarding Issue
+
+- Open an [onboarding issue](https://github.com/gpsaggese/gpsaggese.github.io/issues/new?template=research_onboarding.md)
+- Check off each item as you complete it
+
 ## Read the Policies
 
 - Read the [policies](/policies)
@@ -26,6 +31,22 @@
   before you start working
 - Read the "Team leaders" section only if you lead a project
 
+## Take the Pledge
+
+- Sign the pledge in the "Pledge" section of your onboarding issue: write the
+  number of hours and check each box
+- By signing it, you commit to:
+  - Send a
+    [TODO email](/helpers_root/docs/work_organization/all.todo_email.how_to_guide.md)
+    every day
+  - Dedicate the hours per week that you promised
+  - Not disappear and leave your task in shambles
+- If you need to slow down or stop, that is OK, but:
+  - Tell us as soon as you know
+  - Push your code, even if it is not complete
+  - Write in the GitHub issue what is done, what is missing, and what is broken
+  - Hand over the task to the person who takes it
+
 ## Join the Team
 
 - Join the Research team Slack channel:
@@ -33,10 +54,8 @@
   - [Direct channel link](https://umdresearch.slack.com/archives/C0AHRE551LM)
     (once you have joined)
 - Join our weekly research office hours:
-  - **Team Sync**: 4:30-5:15pm ET every Friday
-  - Join with [Google Meet](https://meet.google.com/dkz-mzcc-gvv)
-
-## Show Your Work
+  - 15 min slot: https://calendar.app.google/eSAgAS1nxficxrrE8
+  - 30 min slot: https://calendar.app.google/wR3k37YL9oiKWqiU9
 
 ## Pick a Project
 
@@ -46,6 +65,13 @@
 - Work on a blog / tutorial to show you can do a good job:
   - [Tutorial links](/tutorials)
   - [Blog examples](https://github.com/gpsaggese/gpsaggese.github.io/tree/master/website/docs/blog/posts)
+- Start with a small task from the table of
+  [good first issues](good_first_issues.md#tasks)
+
+## Register for Research Credits (Optional)
+
+- To do research for credit, follow the
+  [DATA699 Independent Research Process](https://docs.google.com/document/d/1j9pQ334gR0movJkXFbv9i4_UuYtbjgbtiA7tbspJf1U)
 
 ## Complete the Form to be Added
 

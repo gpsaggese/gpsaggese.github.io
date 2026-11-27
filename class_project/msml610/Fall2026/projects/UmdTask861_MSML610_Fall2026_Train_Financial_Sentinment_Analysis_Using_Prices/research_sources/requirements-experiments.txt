@@ -1,0 +1,8 @@
+# Offline historical baseline and independent calendar dependencies, verified with Python 3.11.
+numpy==1.26.4
+scipy==1.16.2
+scikit-learn==1.7.2
+pandas==2.3.3
+exchange_calendars==4.13.2
+requests==2.34.2
+python-dotenv==1.1.0

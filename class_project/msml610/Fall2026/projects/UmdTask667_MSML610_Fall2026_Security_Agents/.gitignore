@@ -1,0 +1,30 @@
+# Secrets.
+.env
+
+# Python.
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Raw agent output and third-party agent checkouts.
+results/raw/
+third_party/
+
+# Test scratch space.
+test/scratch/
+**/test/scratch/
+
+# Model weights.
+*.gguf
+
+# OS.
+.DS_Store
+
+# Logs.
+*.log
+tmp.*
+
+# Draft progress update.
+interim_progress.md
