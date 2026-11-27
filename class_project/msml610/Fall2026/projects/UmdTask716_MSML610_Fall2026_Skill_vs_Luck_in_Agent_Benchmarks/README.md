@@ -103,15 +103,16 @@ Chandrashekar), tracked in
 
 ## Structure of the Dir
 
-| Dir                        | Description                                                                                 |
-| :------------------------- | :------------------------------------------------------------------------------------------ |
-| `data/`                    | SWE-bench Verified snapshot and the list of the EvalPlus downloads                          |
-| `data/coding_runs/`        | Scores of the coding-benchmark solutions, from `score_coding_runs.py`, kept on Google Drive |
-| `data/coding_runs_phase2/` | Scores of the phase-2 runs (Studies B, C, and D), kept on Google Drive                      |
-| `data/coding_runs_pilot/`  | Scores of the 20-task pilot, kept on Google Drive                                           |
-| `data/raw/`                | Downloads and raw model answers, rebuilt by the scripts and not committed                   |
-| `docs/`                    | Progress log (`progress.md`) and decisions (`decisions.md`)                                 |
-| `test/`                    | Unit tests                                                                                  |
+| Dir                          | Description                                                                                 |
+| :--------------------------- | :------------------------------------------------------------------------------------------ |
+| `data/`                      | SWE-bench Verified snapshot and the list of the EvalPlus downloads                          |
+| `data/coding_runs/`          | Scores of the coding-benchmark solutions, from `score_coding_runs.py`, kept on Google Drive |
+| `data/coding_runs_phase2/`   | Scores of the phase-2 runs (Studies B, C, and D), kept on Google Drive                      |
+| `data/coding_runs_pilot/`    | Scores of the 20-task pilot, kept on Google Drive                                           |
+| `data/coding_runs_variants/` | Scores of the 20 prompt variants of Milestone 4, not committed                              |
+| `data/raw/`                  | Downloads and raw model answers, rebuilt by the scripts and not committed                   |
+| `docs/`                      | Progress log (`progress.md`) and decisions (`decisions.md`)                                 |
+| `test/`                      | Unit tests                                                                                  |
 
 ## Description of Files
 
@@ -128,11 +129,13 @@ Chandrashekar), tracked in
 | `fetch_swebench_verified.py`            | Download the public SWE-bench Verified results into `data/`                                                                        | Data      |
 | `preregistration.md`                    | Design, analyses, and predictions of the local runs, written before them                                                           | Docs      |
 | `preregistration_2.md`                  | Design and predictions of the 4 phase-2 studies, written before them                                                               | Docs      |
+| `preregistration_3.md`                  | Design and predictions of Milestones 3 and 4, written before them                                                                  | Docs      |
 | `README.md`                             | This file                                                                                                                          | Docs      |
 | `requirements.eval.txt`                 | Pinned packages that the EvalPlus scorer needs                                                                                     | Docker    |
 | `requirements.txt`                      | Pinned Python packages installed in the image, including `jax` and `numpyro`                                                       | Docker    |
 | `run_coding_agents.py`                  | Generate answers to HumanEval+ or MBPP+ tasks with a model served by Ollama                                                        | Runs      |
 | `run_coding_experiment.sh`              | Run every model and score every answer                                                                                             | Runs      |
+| `run_prompt_variants.sh`                | Generate and score the 20 prompt variants of Milestone 4                                                                           | Runs      |
 | `score_coding_runs.py`                  | Score answers or public samples with the EvalPlus tests                                                                            | Runs      |
 | `skill_vs_luck.API.ipynb`               | Walkthrough of every function in `skill_vs_luck_utils.py`                                                                          | Notebooks |
 | `skill_vs_luck.API.py`                  | Jupytext pair of `skill_vs_luck.API.ipynb`                                                                                         | Notebooks |

@@ -28,6 +28,11 @@ Run it in Docker, with access to Ollama on the host:
 > run_coding_agents.py --benchmark mbpp --model codeqwen:7b --temperature 0 \
     --runs 1
 
+- Generate 1 greedy one-shot run with a prompt variant (Milestone 4):
+> run_coding_agents.py --benchmark humaneval --model deepseek-coder:1.3b \
+    --temperature 0 --runs 1 --max_repairs 0 --variant expert-short-edge \
+    --dst_dir data/raw/coding_runs_variants
+
 Import as:
 
 import run_coding_agents as rucoag
@@ -95,6 +100,14 @@ def _parse() -> argparse.ArgumentParser:
         help="Use only the first tasks, 0 for all of them",
     )
     parser.add_argument(
+        "--variant",
+        action="store",
+        choices=sorted(rutils.PROMPT_VARIANTS),
+        default=None,
+        help="Prompt variant, added to the file name; the EvalPlus prompt "
+        "of phases 1 and 2 if not given",
+    )
+    parser.add_argument(
         "--dst_dir",
         action="store",
         default="data/raw/coding_runs",
@@ -129,9 +142,20 @@ def _main(parser: argparse.ArgumentParser) -> None:
         "instruction_prefix": rutils.INSTRUCTION_PREFIX,
         "response_prefix": rutils.RESPONSE_PREFIX,
     }
+    variant = rutils.BASELINE_VARIANT
+    if args.variant is not None:
+        # Only the runs of a variant save it, so the settings of the runs of
+        # phases 1 and 2 still match on a restart.
+        variant = args.variant
+        settings["variant"] = variant
+        settings["variant_parts"] = rutils.PROMPT_VARIANTS[variant]
     # Save the settings, or check them against the saved ones on a restart.
     path = rutils.get_runs_file(
-        args.dst_dir, args.benchmark, args.model, args.temperature
+        args.dst_dir,
+        args.benchmark,
+        args.model,
+        args.temperature,
+        variant=args.variant,
     )
     hio.create_dir(os.path.dirname(path), incremental=True)
     settings_path = path.replace(".jsonl", ".settings.json")
@@ -166,6 +190,7 @@ def _main(parser: argparse.ArgumentParser) -> None:
                 temperature=args.temperature,
                 max_repairs=args.max_repairs,
                 stop=stop,
+                variant=variant,
             )
             file.write(json.dumps(record) + "\n")
             file.flush()

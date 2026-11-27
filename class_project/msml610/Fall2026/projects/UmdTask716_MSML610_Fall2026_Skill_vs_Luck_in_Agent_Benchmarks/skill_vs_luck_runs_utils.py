@@ -82,6 +82,40 @@ RESPONSE_PREFIX = (
     "Below is a Python script with a self-contained function that solves the "
     "problem and passes corresponding tests:"
 )
+# Parts of the prompt varied in the search over prompt variants (Milestone 4):
+# a system prompt, the instruction, and 1 extra line of guidance. A variant is
+# 1 choice of each part, named `<system>-<instruction>-<guidance>`, so the
+# grid has 2 x 2 x 5 = 20 variants. All of them keep the start of the answer,
+# so the output format and the code extraction stay the same.
+SYSTEM_PROMPTS = {
+    "none": "",
+    "expert": "You are an expert Python programmer who writes correct code.",
+}
+INSTRUCTIONS = {
+    "evalplus": INSTRUCTION_PREFIX,
+    "short": "Complete the following Python function in a markdown code block:",
+}
+GUIDANCE = {
+    "none": "",
+    "edge": "Handle edge cases, such as empty inputs and single elements.",
+    "examples": (
+        "Make sure the function returns the outputs shown in the examples."
+    ),
+    "clean": "Write clean and readable code with descriptive variable names.",
+    "signature": "Keep the function name and its arguments exactly as given.",
+}
+PROMPT_VARIANTS = {
+    f"{system}-{instruction}-{guidance}": {
+        "system": SYSTEM_PROMPTS[system],
+        "instruction": INSTRUCTIONS[instruction],
+        "guidance": GUIDANCE[guidance],
+    }
+    for system in SYSTEM_PROMPTS
+    for instruction in INSTRUCTIONS
+    for guidance in GUIDANCE
+}
+# The variant of the EvalPlus prompt, used by the runs of phases 1 and 2.
+BASELINE_VARIANT = "none-evalplus-none"
 # Sampling of the EvalPlus Hugging Face backend: `top_p` 0.95, the default
 # `top_k` of 50, no repeat penalty, and at most 768 new tokens. Ollama's own
 # defaults (e.g., repeat penalty 1.1) would change the outputs.
@@ -259,23 +293,32 @@ def get_cell_seed(task_id: str, run: int) -> int:
     return seed
 
 
-def build_messages(prompt: str) -> List[Dict[str, str]]:
+def build_messages(
+    prompt: str, variant: str = BASELINE_VARIANT
+) -> List[Dict[str, str]]:
     """
-    Build the EvalPlus chat prompt for a task.
+    Build the chat prompt for a task.
 
     The last message is the start of the answer, so the model continues
-    directly with the code, as in EvalPlus.
+    directly with the code, as in EvalPlus. The baseline variant is the
+    EvalPlus prompt.
 
     :param prompt: task prompt, i.e., a signature with a docstring
+    :param variant: prompt variant, a key of `PROMPT_VARIANTS`
     :return: messages for the Ollama chat API
     """
-    messages = [
-        {
-            "role": "user",
-            "content": f"{INSTRUCTION_PREFIX}\n```\n{prompt.strip()}\n```\n",
-        },
-        {"role": "assistant", "content": f"{RESPONSE_PREFIX}\n```python\n"},
-    ]
+    hdbg.dassert_in(variant, PROMPT_VARIANTS)
+    parts = PROMPT_VARIANTS[variant]
+    messages = []
+    if parts["system"]:
+        messages.append({"role": "system", "content": parts["system"]})
+    content = f"{parts['instruction']}\n```\n{prompt.strip()}\n```\n"
+    if parts["guidance"]:
+        content += f"{parts['guidance']}\n"
+    messages.append({"role": "user", "content": content})
+    messages.append(
+        {"role": "assistant", "content": f"{RESPONSE_PREFIX}\n```python\n"}
+    )
     return messages
 
 
@@ -649,7 +692,12 @@ def sort_task_ids(task_ids: List[str]) -> List[str]:
 
 
 def get_runs_file(
-    dst_dir: str, benchmark: str, model: str, temperature: float
+    dst_dir: str,
+    benchmark: str,
+    model: str,
+    temperature: float,
+    *,
+    variant: Optional[str] = None,
 ) -> str:
     """
     Get the file that stores the answers of 1 model at 1 temperature.
@@ -658,10 +706,14 @@ def get_runs_file(
     :param benchmark: `humaneval` or `mbpp`
     :param model: e.g., `deepseek-coder:1.3b`
     :param temperature: e.g., `0.8`
+    :param variant: prompt variant, added to the file name, or `None` for
+        the runs of phases 1 and 2
     :return: e.g.,
         `data/raw/coding_runs/humaneval/deepseek-coder_1.3b_t0.8.jsonl`
     """
     model_slug = model.replace(":", "_").replace("/", "_")
+    if variant is not None:
+        model_slug = f"{model_slug}_{variant}"
     path = os.path.join(
         dst_dir, benchmark, f"{model_slug}_t{temperature:g}.jsonl"
     )
@@ -691,6 +743,7 @@ def generate_cell(
     temperature: float,
     max_repairs: int,
     stop: List[str],
+    variant: str = BASELINE_VARIANT,
     url: str = DEFAULT_OLLAMA_URL,
 ) -> Dict[str, Any]:
     """
@@ -708,6 +761,7 @@ def generate_cell(
     :param temperature: sampling temperature, `0` for greedy decoding
     :param max_repairs: attempts allowed after the first one
     :param stop: texts that end a generation
+    :param variant: prompt variant, a key of `PROMPT_VARIANTS`
     :param url: Ollama server
     :return: dict with `task_id`, `run`, `seed`, `temperature`,
         `n_visible_tests`, and `attempts` (each with `text`, `code`,
@@ -717,7 +771,7 @@ def generate_cell(
     task_id = problem["task_id"]
     seed = get_cell_seed(task_id, run)
     tests = get_visible_tests(problem, benchmark)
-    messages = build_messages(problem["prompt"])
+    messages = build_messages(problem["prompt"], variant)
     attempts = []
     for _ in range(max_repairs + 1):
         reply = call_ollama(

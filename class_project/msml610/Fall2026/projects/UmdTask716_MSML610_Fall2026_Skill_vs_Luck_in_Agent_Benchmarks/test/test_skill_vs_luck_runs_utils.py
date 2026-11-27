@@ -125,6 +125,74 @@ class Test_build_messages(hunitest.TestCase):
         actual = pprint.pformat(messages)
         self.assert_equal(actual, expected, dedent=True)
 
+    def test2(self) -> None:
+        """
+        Test that the baseline variant is the EvalPlus prompt of `test1`.
+        """
+        # Prepare inputs.
+        prompt = "\ndef f(x):\n    pass\n"
+        # Run test.
+        messages = rutils.build_messages(prompt, rutils.BASELINE_VARIANT)
+        # Check outputs.
+        self.assertEqual(messages, rutils.build_messages(prompt))
+
+    def test3(self) -> None:
+        """
+        Test a variant with a system prompt, the short instruction, and 1 line
+        of guidance.
+        """
+        # Prepare inputs.
+        prompt = "def f(x):\n    pass"
+        # Prepare outputs.
+        expected = """
+        [{'content': 'You are an expert Python programmer who writes correct code.',
+          'role': 'system'},
+         {'content': 'Complete the following Python function in a markdown code '
+                     'block:\\n'
+                     '```\\n'
+                     'def f(x):\\n'
+                     '    pass\\n'
+                     '```\\n'
+                     'Handle edge cases, such as empty inputs and single elements.\\n',
+          'role': 'user'},
+         {'content': 'Below is a Python script with a self-contained function that '
+                     'solves the problem and passes corresponding tests:\\n'
+                     '```python\\n',
+          'role': 'assistant'}]
+        """
+        # Run test.
+        messages = rutils.build_messages(prompt, "expert-short-edge")
+        # Check outputs.
+        actual = pprint.pformat(messages)
+        self.assert_equal(actual, expected, dedent=True)
+
+
+# #############################################################################
+# Test_prompt_variants
+# #############################################################################
+
+
+class Test_prompt_variants(hunitest.TestCase):
+    """
+    Test the grid of prompt variants in `PROMPT_VARIANTS`.
+    """
+
+    def test1(self) -> None:
+        """
+        Test that the grid has 20 different prompts and includes the baseline.
+        """
+        # Prepare inputs.
+        prompt = "def f(x):\n    pass"
+        # Run test.
+        texts = {
+            str(rutils.build_messages(prompt, variant))
+            for variant in rutils.PROMPT_VARIANTS
+        }
+        # Check outputs.
+        self.assertEqual(len(rutils.PROMPT_VARIANTS), 20)
+        self.assertEqual(len(texts), 20)
+        self.assertIn(rutils.BASELINE_VARIANT, rutils.PROMPT_VARIANTS)
+
 
 # #############################################################################
 # Test_build_repair_messages
@@ -379,6 +447,26 @@ class Test_get_runs_file(hunitest.TestCase):
         # Run test.
         path = rutils.get_runs_file(
             "data/raw/coding_runs", "mbpp", "deepseek-coder:1.3b", 0.8
+        )
+        # Check outputs.
+        self.assert_equal(path, expected)
+
+    def test2(self) -> None:
+        """
+        Test that a prompt variant goes into the file name.
+        """
+        # Prepare outputs.
+        expected = (
+            "data/raw/coding_runs_variants/humaneval/"
+            "deepseek-coder_1.3b_expert-short-edge_t0.jsonl"
+        )
+        # Run test.
+        path = rutils.get_runs_file(
+            "data/raw/coding_runs_variants",
+            "humaneval",
+            "deepseek-coder:1.3b",
+            0,
+            variant="expert-short-edge",
         )
         # Check outputs.
         self.assert_equal(path, expected)
