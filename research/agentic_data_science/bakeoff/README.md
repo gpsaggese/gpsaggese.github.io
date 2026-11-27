@@ -34,6 +34,8 @@ pytest research/agentic_data_science/bakeoff/test
 | `dabstep_scorer.py` | Official DABstep scorer (vendored) |
 | `download_benchmarks.py` | Download, sample and check the benchmarks |
 | `benchmark_sample.json` | Fixed task sample used by every run |
+| `task_agents.py` | Agents that answer benchmark tasks |
+| `run_benchmarks.py` | Run agents on the benchmarks and summarize |
 | `data/` | local cache for real datasets (not committed) |
 | `results/` | run outputs (not committed) |
 
@@ -80,7 +82,8 @@ python research/agentic_data_science/bakeoff/download_benchmarks.py --check
 
 Google Drive often refuses scripted downloads of DA-Code's `source.zip`. If it
 does, download it in a browser from
-<https://drive.google.com/uc?id=1ZGi0iNv797OneK_b2l2thJCulP6NUf7v>, then run:
+<https://drive.google.com/file/d/1eM_FVT1tlY4XXp6b7TrKzgTWOvskrjTs/view> (3.4 GB),
+then run:
 
 ```bash
 python research/agentic_data_science/bakeoff/download_benchmarks.py --download \
@@ -97,6 +100,31 @@ Limits to keep in mind when reading results:
   submission
 - InfiAgent-DABench: question 734 is skipped because its label repeats an answer
   name with different values
+
+## Running agents on the benchmarks
+
+`run_benchmarks.py` runs agents on the sampled tasks and scores their answers
+(`task_agents.py`). Every agent gets the same prompt and the same model, set by
+`BAKEOFF_MODEL`, so differences come from the agent.
+
+| Agent         | What it is                              | Needs                                    |
+| :------------ | :-------------------------------------- | :--------------------------------------- |
+| `claude_code` | Claude Code, headless (Agent SDK)       | Claude Code login or `ANTHROPIC_API_KEY` |
+| `smolagents`  | Hugging Face smolagents `CodeAgent`     | `BAKEOFF_MODEL` (LiteLLM id) and its key |
+| `oracle`      | Returns the gold answer (pipeline test) | nothing                                  |
+
+```bash
+pip install claude-agent-sdk smolagents litellm
+python research/agentic_data_science/bakeoff/run_benchmarks.py --agents oracle --limit 3
+python research/agentic_data_science/bakeoff/run_benchmarks.py --agents claude_code --limit 2
+python research/agentic_data_science/bakeoff/run_benchmarks.py --summary
+```
+
+Each run appends one line to `results/benchmark_runs.jsonl` (answer, score,
+tokens, cost, time, error); runs already there are skipped, so an interrupted
+run resumes. `--summary` prints accuracy per agent and benchmark with a 95%
+bootstrap confidence interval. Agents work in `results/work/`, on copies of the
+data files.
 
 ## Adding an agent
 

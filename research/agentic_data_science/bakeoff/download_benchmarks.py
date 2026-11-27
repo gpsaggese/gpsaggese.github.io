@@ -66,8 +66,9 @@ def _git_sparse_clone(url: str, dst: str, paths: List[str]) -> None:
 # Only these parts of the DABstep repo are needed.
 _DABSTEP_PATTERNS = ["data/tasks/*", "data/context/*"]
 
-# `source.zip` of DA-Code, from the `gdown` command in its README.
-_DACODE_SOURCE_GDRIVE_ID = "1ZGi0iNv797OneK_b2l2thJCulP6NUf7v"
+# `source.zip` of DA-Code (3.4 GB), from the browser link in its README; the id
+# in its `gdown` example (1ZGi0iNv797OneK_b2l2thJCulP6NUf7v) returns 403.
+_DACODE_SOURCE_GDRIVE_ID = "1eM_FVT1tlY4XXp6b7TrKzgTWOvskrjTs"
 
 
 def _download_dacode_source(source_dir: str, zip_path: Optional[str]) -> bool:
