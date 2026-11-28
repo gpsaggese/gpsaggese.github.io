@@ -1,81 +1,67 @@
-"""
-template_utils.py
 
-This file contains utility functions that support the tutorial notebooks.
-
-- Notebooks should call these functions instead of writing raw logic inline.
-- This helps keep the notebooks clean, modular, and easier to debug.
-- Students should implement functions here for data preprocessing,
-  model setup, evaluation, or any reusable logic.
-
-Import as:
-
-import class_project.project_template.template_utils as utils
-"""
+"""Reusable utilities for financial news sentiment analysis."""
 
 import logging
+import re
 
-from typing import Any, Optional, Tuple
-
-import ipywidgets
-import matplotlib.pyplot as plt
-import numpy as np
-import scipy.stats
-from IPython.display import clear_output, display
-
-import helpers.hnotebook as hnotebo
-import helpers.htutorial as htutori
-
+import pandas as pd
+from sklearn.metrics import accuracy_score, f1_score
 
 _LOG = logging.getLogger(__name__)
 
 
 def init_loggers(notebook_log: logging.Logger) -> None:
+    """Initialize the project utility logger."""
     global _LOG
-    hnotebo.init_loggers(notebook_log, utils_log=_LOG)
+    _LOG = notebook_log.getChild("financial_sentiment_utils")
 
 
-# #############################################################################
-# Cell 1: Interactive Distribution Explorer with Plot Type Selection
-# #############################################################################
+def normalize_headline(text: str) -> str:
+    """Normalize whitespace and lowercase a financial headline."""
+    if not isinstance(text, str):
+        raise TypeError("Headline must be a string.")
+    return " ".join(text.lower().split())
 
 
-# def cell1_interactive_distribution_explorer(
-#     *,
-#     figsize: Optional[Tuple[float, float]] = None,
-# ) -> None:
-#     """
-#     Create interactive widget to explore Beta and Normal distributions.
-# 
-#     Demonstrates:
-#     - Slider widgets for continuous parameters via build_widget_control()
-#     - Dropdown for selecting distribution type
-#     - Real-time plot updates using observe() callbacks
-#     - Multiple synchronized plots (1x3 layout)
-# 
-#     :param figsize: Optional figure size (width, height). Defaults to
-#         plt.rcParams["figure.figsize"]
-#     """
+def clean_headline(text: str) -> str:
+    """Remove extra whitespace while preserving financial symbols."""
+    if not isinstance(text, str):
+        raise TypeError("Headline must be a string.")
+    text = re.sub(r"\s+", " ", text)
+    return text.strip()
 
 
-# #############################################################################
-# Cell 2: Interactive Sampling Visualization
-# #############################################################################
+def evaluate_predictions(y_true, y_pred) -> dict:
+    """Calculate accuracy and macro F1 for sentiment predictions."""
+    if len(y_true) != len(y_pred):
+        raise ValueError("Actual and predicted labels must have equal lengths.")
+    if len(y_true) == 0:
+        raise ValueError("Prediction arrays cannot be empty.")
+
+    return {
+        "accuracy": accuracy_score(y_true, y_pred),
+        "macro_f1": f1_score(
+            y_true,
+            y_pred,
+            average="macro",
+            zero_division=0,
+        ),
+    }
 
 
-# def cell2_interactive_sample_generator(
-#     *,
-#     figsize: Optional[Tuple[float, float]] = None,
-# ) -> None:
-#     """
-#     Create interactive widget to generate and visualize random samples.
-# 
-#     Demonstrates:
-#     - Multiple linked slider widgets via build_widget_control()
-#     - Logarithmic scale slider for sample count via build_log_widget_control()
-#     - Histogram visualization with theoretical overlay
-#     - Sample statistics display
-# 
-#     :param figsize: Optional figure size (width, height). Defaults to
-#         plt.rcParams["figure.figsize"]
-#     """
+def build_model_comparison(model_results: dict) -> pd.DataFrame:
+    """Build a model comparison table sorted by macro F1."""
+    rows = []
+
+    for model_name, metrics in model_results.items():
+        rows.append({
+            "Model": model_name,
+            "Accuracy": metrics["accuracy"],
+            "Macro F1": metrics["macro_f1"],
+        })
+
+    return (
+        pd.DataFrame(rows, columns=["Model", "Accuracy", "Macro F1"])
+        .sort_values("Macro F1", ascending=False)
+        .reset_index(drop=True)
+    )
