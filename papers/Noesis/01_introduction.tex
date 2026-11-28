@@ -139,11 +139,12 @@ protocol's design.
     (Section~\ref{sec:noesis_server}).
 \end{itemize}
 
-% TODO(ai_gp): Merge this with the next part and call it the Noesis architecture
+% ==============================================================================
+\subsection{The Noesis architecture}
+\label{sec:modularity}
 
 Figure~\ref{fig:architecture} lays out the resulting architecture, with the
-five pluggable components of Section~\ref{sec:modularity} and
-Table~\ref{tab:components} shaded in teal:
+five pluggable components of Table~\ref{tab:components} shaded in teal:
 
 \begin{itemize}
   \item The demand and supply sides submit bids and asks to
@@ -327,6 +328,7 @@ Table~\ref{tab:components} shaded in teal:
 \end{figure}
 % render_images:end
 
+% TODO(gp): Move it up?
 The two components close a loop that is missing from today's LLM API
 market: a contract is metered and not merely sold, and the metering
 result changes the terms under which the same seller can sell in the
@@ -335,10 +337,6 @@ purposes orthogonal to fulfillment: difficulty-aware routing, which sends a
 request to the cheapest provider expected to satisfy it, and answer fusion,
 which combines several providers' answers when higher reliability is worth
 the extra cost.
-
-% ==============================================================================
-\subsection{A modular, pluggable architecture}
-\label{sec:modularity}
 
 The description above treats \NoesisMarket{} and \NoesisServer{} as if each
 were a single, fixed implementation. In fact, each is a thin coordination
@@ -360,8 +358,7 @@ can satisfy without requiring changes anywhere else in the pipeline:
     (Section~\ref{sec:fulfillment_monitoring}) is itself pluggable. A
     verifier model, a benchmark probe, agreement with a stronger reference
     model (Definition~\ref{def:agreement_label}), or a hosted third-party
-    evaluation service such as artificialanalysis.ai
-    (Section~\ref{sec:protocol_overview}) are interchangeable
+    evaluation service such as artificialanalysis.ai are interchangeable
     implementations of the same interface: a mapping from a prompt/response
     pair to a tier in $\calC$.
 
@@ -378,8 +375,8 @@ can satisfy without requiring changes anywhere else in the pipeline:
     and mixture-of-agents \cite{wang2024moa} are two published
     instantiations of the same interface (Section~\ref{sec:related_fusion}).
 
-  \item \textbf{Pricing dissemination}: a component absent from the
-    description so far. \NoesisMarket{} clears a price $p^*(q, t)$ per class
+  \item \textbf{Pricing dissemination}: \NoesisMarket{} clears a price
+    $p^*(q, t)$ per class
     and round (Problem~\ref{prob:clearing}), and that price is a useful
     signal beyond the bidders and sellers of the round that produced it. A
     pricing-dissemination interface, e.g., a real-time push feed or an
