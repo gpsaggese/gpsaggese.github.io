@@ -5,7 +5,7 @@
 - Each tab of the Google Sheet is one CSV file
   `startup_resources/gp_resources.<ID>.<tab_name>.csv`
   - `<ID>` is the position of the tab in the Google Sheet, starting from 0
-  - E.g., `startup_resources/gp_resources.5.FriendlyAngels.csv`
+  - E.g., `startup_resources/gp_resources.6.FriendlyAngels.csv`
 - The tab names have no spaces, so that `from_gsheet.py` and `to_gsheet.py` do
   a roundtrip
 - The tabs are:
@@ -15,11 +15,12 @@
   | 0  | `Credits`             | `startup_resources/gp_resources.0.Credits.csv`             |
   | 1  | `Grants`              | `startup_resources/gp_resources.1.Grants.csv`              |
   | 2  | `Support`             | `startup_resources/gp_resources.2.Support.csv`             |
-  | 3  | `Accelerators`        | `startup_resources/gp_resources.3.Accelerators.csv`        |
-  | 4  | `FriendlySalezBizDev` | `startup_resources/gp_resources.4.FriendlySalezBizDev.csv` |
-  | 5  | `FriendlyAngels`      | `startup_resources/gp_resources.5.FriendlyAngels.csv`      |
-  | 6  | `FriendlyVCs`         | `startup_resources/gp_resources.6.FriendlyVCs.csv`         |
-  | 7  | `VC`                  | `startup_resources/gp_resources.7.VC.csv`                  |
+  | 3  | `SupportPeople`       | `startup_resources/gp_resources.3.SupportPeople.csv`       |
+  | 4  | `Accelerators`        | `startup_resources/gp_resources.4.Accelerators.csv`        |
+  | 5  | `FriendlySalezBizDev` | `startup_resources/gp_resources.5.FriendlySalezBizDev.csv` |
+  | 6  | `FriendlyAngels`      | `startup_resources/gp_resources.6.FriendlyAngels.csv`      |
+  | 7  | `FriendlyVCs`         | `startup_resources/gp_resources.7.FriendlyVCs.csv`         |
+  | 8  | `VC`                  | `startup_resources/gp_resources.8.VC.csv`                  |
 - The `Focus` column of the `Grants` tab tells the AI grants, the crypto grants,
   and the other grants apart: `AI`, `Crypto`, or `General`
 - `startup_resources/ai_grants.md` is the notes on the grant programs, not a tab
@@ -79,10 +80,10 @@
   - Only the accelerator and `Grants` files have the `AcceptanceRate` column
     - In the `Grants` file it is filled for the NSF TIP programs only
     - Older rows keep the `Selectivity` in `Notes`
-  - `gp_resources.4.FriendlySalezBizDev.csv` is a contact list and has none of
+  - `gp_resources.5.FriendlySalezBizDev.csv` is a contact list and has none of
     these columns
-  - `gp_resources.2.Support.csv` has advice and help, but no money, so it has
-    none of the money columns
+  - `gp_resources.2.Support.csv` and `gp_resources.3.SupportPeople.csv` have
+    advice and help, but no money, so they have none of the money columns
 
 ## Tabs
 
@@ -123,14 +124,19 @@
     - For a row whose amount is a value of the help, not cash, write the
       amount in `Notes`
     - It has no money columns, no `Difficulty`, and no `Deadline`
-  - `3.Accelerators` (Programs): cohort accelerators that give cash and mentoring
+  - `3.SupportPeople` (People): people at the support programs, GP's
+    introduction contacts, e.g., I-Corps hub staff and university
+    entrepreneurship offices
+    - Columns: `Name`, `Email`, `Role`, `Organization`
+    - It has no money columns, no `Difficulty`, and no `Deadline`
+  - `4.Accelerators` (Programs): cohort accelerators that give cash and mentoring
     for equity, e.g., Alchemist, PearX, YCombinator
-  - `4.FriendlySalezBizDev` (Contacts): people for sales and business
+  - `5.FriendlySalezBizDev` (Contacts): people for sales and business
     development, with no money columns
-  - `5.FriendlyAngels` (People): angel investors and family offices in the
+  - `6.FriendlyAngels` (People): angel investors and family offices in the
     network, who invest their own money
-  - `6.FriendlyVCs` (People): partners and staff of VC firms in the network
-  - `7.VC` (Programs): programs and funds that invest for equity and take
+  - `7.FriendlyVCs` (People): partners and staff of VC firms in the network
+  - `8.VC` (Programs): programs and funds that invest for equity and take
     applications
     - E.g., Y Combinator, AI Grant, USM Momentum Fund
     - It also holds state, regional, and university seed funds that take equity
@@ -342,7 +348,7 @@
   - `GeoFocus` is a column in the angel, accelerator, VC, grant, and credit
     files
     - It was `Geographical focus` in the accelerator file and `Geo` in the VC file
-  - `gp_resources.4.FriendlySalezBizDev.csv` is a contact list and has no
+  - `gp_resources.5.FriendlySalezBizDev.csv` is a contact list and has no
     `GeoFocus` column
   - Many rows are `N/A`: the angel, VC, and grant files do not state the
     location for those rows
@@ -386,7 +392,7 @@
     - An empty cell means that nobody has reviewed the row yet
 - Current state of the CSV files:
   - `Stage` is a column only in the accelerator file and in
-    `gp_resources.6.FriendlyVCs.csv`
+    `gp_resources.7.FriendlyVCs.csv`
     - The other files had no `Stage` data, so the column was removed from them
   - It is filled for 5 of 8 rows of the accelerator file and for 9 rows of the
     VC file
