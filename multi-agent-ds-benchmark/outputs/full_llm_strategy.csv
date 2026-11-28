@@ -1,0 +1,13 @@
+seed,label_noise,mode,mcc,balanced_acc,retries,strategy_picks,strategies
+0,0.0,rules,0.16018243500683305,0.59,3,3,default > class_weight > threshold > alt_model
+0,0.0,llm,0.16018243500683305,0.59,3,3,default > class_weight > threshold > alt_model
+0,0.15,rules,0.2383172923768684,0.535,1,0,default > default
+0,0.15,llm,0.2383172923768684,0.535,1,0,default > default
+1,0.0,rules,0.09237604307034011,0.55,3,3,default > class_weight > threshold > alt_model
+1,0.0,llm,0.09237604307034011,0.55,3,3,default > class_weight > threshold > alt_model
+1,0.15,rules,0.1417762410016672,0.5125,1,0,default > default
+1,0.15,llm,0.1417762410016672,0.5125,1,0,default > default
+2,0.0,rules,0.13425609243204678,0.566875,2,2,default > class_weight > threshold
+2,0.0,llm,0.13425609243204678,0.566875,2,2,default > class_weight > threshold
+2,0.15,rules,0.09237933664308709,0.555625,3,2,default > default > class_weight > threshold
+2,0.15,llm,0.09237933664308709,0.555625,3,2,default > default > class_weight > threshold

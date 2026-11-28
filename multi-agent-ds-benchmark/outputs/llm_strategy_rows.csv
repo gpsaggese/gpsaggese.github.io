@@ -1,0 +1,21 @@
+seed,label_noise,mcc,balanced_acc,strategy_prompts,valid_answers,different_from_rules,strategies
+0,0.0,0.16018243500683305,0.59,3,3,0,default > class_weight > threshold > alt_model
+0,0.15,0.2383172923768684,0.535,0,0,0,default > default
+1,0.0,0.09237604307034011,0.55,3,3,0,default > class_weight > threshold > alt_model
+1,0.15,0.1417762410016672,0.5125,0,0,0,default > default
+2,0.0,0.13425609243204678,0.566875,2,2,0,default > class_weight > threshold
+2,0.15,0.09237933664308709,0.555625,2,2,0,default > default > class_weight > threshold
+3,0.0,0.07398954355004851,0.54125,3,3,0,default > class_weight > threshold > alt_model
+3,0.15,0.2295319231582691,0.5325,0,0,0,default > default
+4,0.0,0.082212642416044,0.54875,3,3,0,default > class_weight > threshold > alt_model
+4,0.15,0.21092506540325892,0.5275,0,0,0,default > default
+5,0.0,0.09188034188034189,0.55375,3,3,0,default > class_weight > threshold > alt_model
+5,0.15,0.21092506540325892,0.5275,0,0,0,default > default
+6,0.0,0.12307711340411814,0.569375,3,3,0,default > class_weight > threshold > alt_model
+6,0.15,0.2383172923768684,0.535,0,0,0,default > default
+7,0.0,0.08880868740859361,0.55125,3,3,0,default > class_weight > threshold > alt_model
+7,0.15,0.22041550751119351,0.53,0,0,0,default > default
+8,0.0,0.15718799812061165,0.588125,3,3,0,default > class_weight > threshold > alt_model
+8,0.15,0.2383172923768684,0.535,0,0,0,default > default
+9,0.0,0.23887474895697478,0.555625,1,1,0,default > class_weight
+9,0.15,0.2550306852253353,0.54,0,0,0,default > default
