@@ -139,35 +139,21 @@ protocol's design.
     (Section~\ref{sec:noesis_server}).
 \end{itemize}
 
+The two components close a loop that is missing from today's LLM API
+market: a contract is metered and not merely sold, and the metering
+result changes the terms under which the same seller can sell in the
+future. \NoesisServer{} additionally reuses the logged traffic for two
+purposes orthogonal to fulfillment: difficulty-aware routing, which sends a
+request to the cheapest provider expected to satisfy it, and answer fusion,
+which combines several providers' answers when higher reliability is worth
+the extra cost.
+
 % ==============================================================================
 \subsection{The Noesis architecture}
 \label{sec:modularity}
 
 Figure~\ref{fig:architecture} lays out the resulting architecture, with the
 five pluggable components of Table~\ref{tab:components} shaded in teal:
-
-\begin{itemize}
-  \item The demand and supply sides submit bids and asks to
-    \NoesisMarket{}'s matching engine.
-  \item The matching engine clears compatible bids and asks into contracts,
-    dispatched to \NoesisServer{}'s API gateway.
-  \item The gateway proxies matched requests to the underlying providers
-    through per-provider APIs.
-  \item The gateway's metering logic checks the responses against the
-    contract terms, using external intelligence-measure providers, e.g.,
-    artificialanalysis.ai\footnote{\url{https://artificialanalysis.ai}}, as
-    a capability reference.
-  \item Metering reports fulfillment back to \NoesisMarket{}'s
-    reputation-and-feedback component, which gates the matching engine and
-    feeds its pricing-dissemination component.
-  \item The gateway can also fan a request out to several providers through
-    the answer-fusion component (Section~\ref{sec:fusion}) when reliability
-    outweighs cost.
-\end{itemize}
-
-% TODO(ai_gp): Move Supply and Demand under Matching engine
-% TODO(ai_gp): Move the legend as having all blocks aligned on a horizontal line
-%  in a row
 
 % rendered_images:begin
 % ```graphviz
@@ -199,7 +185,10 @@ five pluggable components of Table~\ref{tab:components} shaded in teal:
 %         fontcolor="#7B8794"];
 % 
 %   // ---------------------------------------------------------------
-%   rankdir=LR;
+%   // Bottom-to-top, so that the participants sit under the matching engine.
+%   // As a consequence, cluster titles use labelloc="b" to be drawn at the top,
+%   // and edges pointing leftward or downward are written reversed with dir=back.
+%   rankdir=BT;
 %   newrank=true;
 % 
 %   // actor : rose   |   process : blue   |   fulfillment monitoring : sage green   |   external : violet
@@ -216,15 +205,16 @@ five pluggable components of Table~\ref{tab:components} shaded in teal:
 %     penwidth  = 1.0;
 %     margin    = 16;
 % 
-%     Supply [label=<<b>Supply</b><br/><font point-size="10" color="#946A2E">Model &amp; compute providers</font>>,
-%             fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
 %     Demand [label=<<b>Demand</b><br/><font point-size="10" color="#A34F6C">Applications / agents</font>>,
 %             fillcolor="#F6E1E8", color="#D98CA8", fontcolor="#6B2A44"];
+%     Supply [label=<<b>Supply</b><br/><font point-size="10" color="#946A2E">Model &amp; compute providers</font>>,
+%             fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
 %   }
 % 
 %   subgraph cluster_noesis_market {
 %     label     = "NoesisMarket";
-%     labelloc  = "t";
+%     labeljust = "l";
+%     labelloc  = "b";
 %     fontname  = "Helvetica-Bold";
 %     fontsize  = 12.5;
 %     fontcolor = "#3A4A5C";
@@ -246,7 +236,7 @@ five pluggable components of Table~\ref{tab:components} shaded in teal:
 % 
 %   subgraph cluster_noesis_server {
 %     label     = "NoesisServer";
-%     labelloc  = "t";
+%     labelloc  = "b";
 %     fontname  = "Helvetica-Bold";
 %     fontsize  = 12.5;
 %     fontcolor = "#3A4A5C";
@@ -256,65 +246,64 @@ five pluggable components of Table~\ref{tab:components} shaded in teal:
 %     penwidth  = 1.0;
 %     margin    = 16;
 % 
+%     CapabilityMeasure [label=<<b>Capability measurement</b><br/><font point-size="10" color="#41719C">Pluggable</font>>,
+%                         fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
 %     Gateway           [label=<<b>API gateway</b>>,
 %                         fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
 %     Metering          [label=<<b>Metering logic</b><br/><font point-size="10" color="#4F7A5A">Fulfillment monitoring</font>>,
 %                         fillcolor="#DFEDE0", color="#8FB79A", fontcolor="#2E5A3D"];
-%     CapabilityMeasure [label=<<b>Capability measurement</b><br/><font point-size="10" color="#41719C">Pluggable</font>>,
-%                         fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
 %     Fusion            [label=<<b>Answer fusion</b><br/><font point-size="10" color="#41719C">Pluggable</font>>,
 %                         fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
-%     Gateway -> Metering [label="Logged traffic"];
-%     Gateway -> Fusion [label="Multi-provider fan-out", style=dashed];
-%     CapabilityMeasure -> Metering [label="Delivered capability", style=dashed];
+%     Metering -> Gateway [label="Logged traffic", dir=back];
+%     Gateway -> Fusion [label="Multi-provider\nfan-out", style=dashed];
+%     CapabilityMeasure -> Metering [label="Delivered\ncapability", style=dashed];
 %   }
 % 
 %   ProviderAPIs        [label=<<b>Provider APIs</b><br/><font point-size="10" color="#6B52A8">Per-provider endpoints</font>>,
 %                         fillcolor="#E9E1F7", color="#A88FD9", fontcolor="#45296B"];
-%   IntelligenceMeasure [label=<<font point-size="10">Intelligence-measure providers<br/>e.g. artificialanalysis.ai</font>>,
+%   IntelligenceMeasure [label=<<font point-size="10">Intelligence-measure providers</font>>,
 %                         shape=note, fillcolor="#E9E1F7", color="#A88FD9", fontcolor="#45296B"];
 % 
-%   Supply -> ReputationLoop [style=invis];
-%   Demand -> CapabilityMeasure [style=invis];
 %   Demand -> MatchingEngine [label="Bids"];
 %   Supply -> MatchingEngine [label="Asks"];
-%   MatchingEngine -> Gateway [label="Contracts", penwidth=1.6, color="#8592A3", constraint=false];
+%   MatchingEngine -> Gateway [label="Contracts", penwidth=1.6, color="#8592A3"];
 %   Gateway -> ProviderAPIs [label="Requests /\nresponses", dir=both];
-%   Fusion -> ProviderAPIs [label="Fan-out", style=dashed, constraint=false];
-%   IntelligenceMeasure -> CapabilityMeasure [label="Capability reference", style=dashed, constraint=false];
-%   Metering -> ReputationLoop [
-%     label="Reputation & pricing feedback",
+%   Fusion -> ProviderAPIs [label="Fan-out", style=dashed];
+%   CapabilityMeasure -> IntelligenceMeasure [label="Capability reference", style=dashed, dir=back];
+%   ReputationLoop -> Metering [
+%     label="Reputation &\npricing feedback",
 %     style=dashed, penwidth=1.6,
 %     color="#C0455B", fontcolor="#C0455B",
-%     constraint=false
+%     dir=back
 %   ];
 % 
-%   // Column alignment between NoesisMarket and NoesisServer
-%   { rank=same; ReputationLoop; CapabilityMeasure; IntelligenceMeasure; }
-%   CapabilityMeasure -> IntelligenceMeasure [style=invis];
-%   { rank=same; MatchingEngine; Gateway; }
-%   { rank=same; PricingFeed; Metering; Fusion; }
+%   // Rows, from bottom to top
+%   { rank=same; Demand; Supply; }
+%   { rank=same; ReputationLoop; MatchingEngine; PricingFeed; }
+%   { rank=same; CapabilityMeasure; Metering; Gateway; Fusion; }
+%   { rank=same; IntelligenceMeasure; ProviderAPIs; }
 % 
-%   // Legend
-%   subgraph cluster_legend {
-%     label     = "Legend";
-%     labelloc  = "t";
-%     fontname  = "Helvetica-Bold";
-%     fontsize  = 12.5;
-%     fontcolor = "#3A4A5C";
-%     style     = "rounded,filled";
-%     fillcolor = "#FBFBFD";
-%     color     = "#C7D0DA";
-%     penwidth  = 1.0;
-%     margin    = 14;
-% 
-%     node [shape=box, style="rounded,filled", fontsize=10, height=0.32, margin="0.14,0.08"];
-%     LegendDemand   [label="Demand / Supply", fillcolor="#F6E1E8", color="#D98CA8", fontcolor="#6B2A44"];
-%     LegendNoesis   [label="Noesis component (pluggable)", fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
-%     LegendMonitor  [label="Fulfillment monitoring", fillcolor="#DFEDE0", color="#8FB79A", fontcolor="#2E5A3D"];
-%     LegendExternal [label="External reference", fillcolor="#E9E1F7", color="#A88FD9", fontcolor="#45296B"];
-%     { rank=same; LegendDemand; LegendNoesis; LegendMonitor; LegendExternal; }
-%   }
+%   // Legend: a graph label on top, so that all the entries stay in a single row.
+%   labelloc="t";
+%   labeljust="c";
+%   // The outer invisible table adds a spacer row below the legend. The gray,
+%   // square, dark-bordered box sets the legend apart from the diagram.
+%   label=<
+%     <table border="0" cellborder="0" cellspacing="0" cellpadding="0">
+%       <tr><td>
+%         <table border="2" color="#52606D" bgcolor="#E4E7EB" cellborder="0" cellspacing="8" cellpadding="5">
+%           <tr>
+%             <td><font face="Helvetica-Bold" point-size="12.5" color="#3A4A5C">Legend</font></td>
+%             <td border="2" style="rounded" bgcolor="#F6E1E8" color="#D98CA8"><font face="Helvetica" point-size="10" color="#6B2A44">Demand</font></td>
+%             <td border="2" style="rounded" bgcolor="#FBEBD4" color="#D9A85F"><font face="Helvetica" point-size="10" color="#6B4517">Supply</font></td>
+%             <td border="2" style="rounded" bgcolor="#D3E3F3" color="#7CA6CE"><font face="Helvetica" point-size="10" color="#1F4E79">Noesis component (pluggable)</font></td>
+%             <td border="2" style="rounded" bgcolor="#DFEDE0" color="#8FB79A"><font face="Helvetica" point-size="10" color="#2E5A3D">Fulfillment monitoring</font></td>
+%             <td border="2" style="rounded" bgcolor="#E9E1F7" color="#A88FD9"><font face="Helvetica" point-size="10" color="#45296B">External reference</font></td>
+%           </tr>
+%         </table>
+%       </td></tr>
+%       <tr><td height="36"></td></tr>
+%     </table>>;
 % }
 % ```
 % label=fig:architecture
@@ -328,21 +317,27 @@ five pluggable components of Table~\ref{tab:components} shaded in teal:
 \end{figure}
 % render_images:end
 
-% TODO(gp): Move it up?
-The two components close a loop that is missing from today's LLM API
-market: a contract is metered and not merely sold, and the metering
-result changes the terms under which the same seller can sell in the
-future. \NoesisServer{} additionally reuses the logged traffic for two
-purposes orthogonal to fulfillment: difficulty-aware routing, which sends a
-request to the cheapest provider expected to satisfy it, and answer fusion,
-which combines several providers' answers when higher reliability is worth
-the extra cost.
+% TODO(ai_gp): Merge this chunk of text with the other one so that
+% each component is described only once
+\begin{itemize}
+  \item The demand and supply sides submit bids and asks to
+    \NoesisMarket{}'s matching engine.
+  \item The matching engine clears compatible bids and asks into contracts,
+    dispatched to \NoesisServer{}'s API gateway.
+  \item The gateway proxies matched requests to the underlying providers
+    through per-provider APIs.
+  \item The gateway's metering logic checks the responses against the
+    contract terms, using external intelligence-measure providers, e.g.,
+    artificialanalysis.ai\footnote{\url{https://artificialanalysis.ai}}, as
+    a capability reference.
+  \item Metering reports fulfillment back to \NoesisMarket{}'s
+    reputation-and-feedback component, which gates the matching engine and
+    feeds its pricing-dissemination component.
+  \item The gateway can also fan a request out to several providers through
+    the answer-fusion component (Section~\ref{sec:fusion}) when reliability
+    outweighs cost.
+\end{itemize}
 
-The description above treats \NoesisMarket{} and \NoesisServer{} as if each
-were a single, fixed implementation. In fact, each is a thin coordination
-layer around a small set of narrower components, each responsible for one
-function and exposed behind an interface that a different implementation
-can satisfy without requiring changes anywhere else in the pipeline:
 
 \begin{itemize}
   \item \textbf{Matching engine}: \NoesisMarket's only structural
