@@ -3,7 +3,7 @@
 \label{sec:contracts_and_notation}
 
 This section fixes the notation used throughout the rest of the paper: the
-capability tier set, the task unit, the contract, and the bid/ask tuples
+service classes, the task unit, the contract, and the bid/ask tuples
 submitted to \NoesisMarket.
 
 \begin{definition}[Capability tiers]
@@ -14,15 +14,60 @@ $$
 $$
 be a finite, totally ordered set of \emph{capability tiers}, with
 $c_1 \prec c_2 \prec \cdots \prec c_K$, where $\prec$ denotes ``strictly
-less capable than''. A tier is a discrete, provider-agnostic label (e.g.,
-\emph{cheap}, \emph{medium}, \emph{frontier-class}) that a buyer can
-require and a seller can offer, rather than a continuous benchmark score.
+less capable than''. A tier is a discrete, provider-agnostic level of
+``virtual intelligence'' (e.g., \emph{low}, \emph{medium}, \emph{high}) that
+a buyer can require and a seller can offer, rather than a continuous
+benchmark score.
 \end{definition}
 
 Tiers are deliberately coarse. A continuous capability score would be more
 informative but is harder for a seller to credibly commit to ex ante and
 harder for a buyer to reason about ex post; Section~\ref{sec:open_questions}
-returns to this trade-off.
+returns to this trade-off. Latency and throughput are normalized in the same
+way.
+
+\begin{definition}[Latency and throughput bands]
+\label{def:bands}
+Let $\calL$ and $\calH$ be finite, totally ordered sets of \emph{latency
+bands} and \emph{throughput bands}, where a higher band is a stronger
+guarantee, e.g.,
+$$
+  \calL = \{ \text{batch} \prec \text{slow} \prec \text{fast} \},
+  \qquad
+  \calH = \{ \text{low} \prec \text{medium} \prec \text{high} \}.
+$$
+Each latency band $\ell \in \calL$ sets a limit $L_{\max}(\ell)$ on the time
+to answer one request, and each throughput band $\eta \in \calH$ sets a floor
+$H_{\min}(\eta)$ on the output tokens per second of one request. A higher
+band has a limit $L_{\max}$ that is no larger, or a floor $H_{\min}$ that is
+no smaller.
+\end{definition}
+
+A band is a fixed per-request threshold, not a percentile: the share of
+requests that must meet it is set by the contract's reliability term. The
+number of bands and the values of $L_{\max}$ and $H_{\min}$ belong to a
+concrete implementation of the protocol; for example,
+$L_{\max}(\text{batch})$ may be 24 hours, for slow asynchronous jobs.
+
+\begin{definition}[Service class]
+\label{def:service_class}
+A \emph{service class} is a triple
+$$
+  q = (c, \ell, \eta) \in \calC \times \calL \times \calH.
+$$
+Classes are partially ordered: $q' \succeq q$ if $q'$ is at least as high as
+$q$ in every dimension. An implementation offers a set of classes
+$$
+  \calQ \subseteq \calC \times \calL \times \calH,
+$$
+and does not need to offer every combination.
+\end{definition}
+
+Because every threshold is monotone in its band, a request that meets class
+$q'$ also meets every class $q \preceq q'$. This lets a higher class fill
+demand for a lower class (Section~\ref{sec:compatibility}). The protocol
+depends only on the order on $\calQ$, so a new dimension changes $\calQ$ but
+not the contract, the auction, or the fulfillment test.
 
 \begin{definition}[Task unit]
 \label{def:task}
@@ -55,36 +100,36 @@ definitions above.
 \label{def:contract}
 An \emph{intelligence contract} is a tuple
 $$
-  \kappa = ( \ntasksattr, \clevelattr, \lmaxattr, \rminattr, \priceattr )
+  \kappa = ( \ntasksattr, \sclassattr, \rminattr, \priceattr )
 $$
 where
 \begin{itemize}
   \item $\ntasksattr \in \bbN$ is the number of tasks covered by the
     contract,
-  \item $\clevelattr \in \calC$ is the required capability tier,
-  \item $\lmaxattr \in \bbR_+$ is the maximum latency per task,
+  \item $\sclassattr \in \calQ$ is the required service class,
   \item $\rminattr \in [0, 1]$ is the minimum reliability, i.e., the
-    minimum fraction of tasks that must meet both $\clevelattr$ and
-    $\lmaxattr$,
+    minimum fraction of requests, over the life of the contract, that must
+    meet $\sclassattr$ in every dimension,
   \item $\priceattr \in \bbR_+$ is the price of the contract.
 \end{itemize}
 \end{definition}
 
 The quantities are ordered to read naturally: 
 
-\emph{``deliver $\ntasksattr$ tasks at capability $\clevelattr$ or better,
-within $\lmaxattr$ latency, with at least $\rminattr$ reliability, for a total
-price of $\priceattr$.''}
+\emph{``deliver $\ntasksattr$ tasks at service class $\sclassattr$ or
+better, with at least $\rminattr$ reliability, for a total price of
+$\priceattr$.''}
 
 \begin{example}[Intelligence contract]
 \label{ex:contract}
 The contract
 $$
-  \kappa_1 = (100,\ \texttt{frontier},\ 2\text{s},\ 0.999,\ P)
+  \kappa_1 =
+  (100,\ (\texttt{high}, \texttt{fast}, \texttt{medium}),\ 0.999,\ P)
 $$
-reads: ``deliver 100 tasks at frontier-class capability or better,
-within 2 seconds of latency, with at least 99.9\% reliability, for a total
-price of $P$.''
+reads: ``deliver 100 tasks at high capability, fast latency, and medium
+throughput, or better, with at least 99.9\% reliability, for a total price of
+$P$.''
 \end{example}
 
 % ==============================================================================
@@ -105,13 +150,13 @@ fixed value.
 \label{def:bid}
 A \emph{bid} is a tuple
 $$
-  \beta = (n_\beta, c_\beta, \ell_\beta, r_\beta, p_\beta)
+  \beta = (n_\beta, q_\beta, r_\beta, p_\beta)
 $$
 submitted by a buyer, where
 \begin{itemize}
   \item $n_\beta$ is the requested number of tasks,
-  \item $c_\beta \in \calC$ is the minimum required capability tier,
-  \item $\ell_\beta$ is the maximum acceptable latency,
+  \item $q_\beta = (c_\beta, \ell_\beta, \eta_\beta) \in \calQ$ is the
+    minimum required service class,
   \item $r_\beta$ is the minimum acceptable reliability,
   \item $p_\beta$ is the maximum price per task the buyer is willing to
     pay.
@@ -122,23 +167,22 @@ submitted by a buyer, where
 \label{def:ask}
 An \emph{ask} is a tuple
 $$
-  \alpha = (n_\alpha, c_\alpha, \ell_\alpha, r_\alpha, p_\alpha)
+  \alpha = (n_\alpha, q_\alpha, r_\alpha, p_\alpha)
 $$
 submitted by a seller, where
 \begin{itemize}
   \item $n_\alpha$ is the offered number of tasks,
-  \item $c_\alpha \in \calC$ is the offered capability tier,
-  \item $\ell_\alpha$ is the seller's typical (self-reported or previously
-    measured) latency,
-  \item $r_\alpha$ is the seller's typical reliability,
+  \item $q_\alpha = (c_\alpha, \ell_\alpha, \eta_\alpha) \in \calQ$ is
+    the offered service class,
+  \item $r_\alpha$ is the seller's typical reliability at class $q_\alpha$,
   \item $p_\alpha$ is the minimum price per task the seller is willing to
     accept.
 \end{itemize}
 \end{definition}
 
-Unlike a bid, an ask's capability, latency, and reliability attributes are
-descriptive of what the seller can deliver rather than a constraint on
-what the seller will accept; only $p_\alpha$ is a limit in the auction
+Unlike a bid, an ask's service class and reliability are descriptive of
+what the seller can deliver rather than a constraint on what the seller will
+accept; only $p_\alpha$ is a limit in the auction
 sense. Section~\ref{sec:compatibility} defines when a bid and an ask are
 compatible, i.e., when the ask's descriptive attributes satisfy the bid's
 required attributes.
@@ -184,7 +228,7 @@ dispatched to \NoesisServer{} for execution.
 %        fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
 %   Matching [label=<<b>NoesisMarket</b><br/><font point-size="9" color="#41719C">Matches bid against asks</font>>,
 %             fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
-%   Contract [label=<<b>Intelligence contract</b><br/><font point-size="9" color="#2E7C74">(n, c, L_max, R_min, P)</font>>,
+%   Contract [label=<<b>Intelligence contract</b><br/><font point-size="9" color="#2E7C74">(n, q, R_min, P)</font>>,
 %             fillcolor="#D4EEEB", color="#7FC2B9", fontcolor="#1F5A54"];
 %   Server [label=<<b>NoesisServer</b><br/><font point-size="9" color="#41719C">Executes contract</font>>,
 %           fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];

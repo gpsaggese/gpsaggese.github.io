@@ -53,6 +53,10 @@ described commit. Each lists a possible direction.
     that an observer sees is a small sample, and state recovery from it is
     unlikely, but a construction that derives each choice directly from the
     keyed hash would remove the question.
+  \item \textbf{No service classes.} The white paper's latency and throughput
+    bands are not implemented, throughput is not checked, and batch contracts
+    are not probed. The single reliability and its product estimate
+    \eqref{eq:wp_product} are replaced by two separate thresholds.
   \item \textbf{Binary quality and no tier mapping.} The white paper's capability
     tiers are not implemented. Quality is a single accuracy threshold
     $\qminattr$ on exact-match canaries, and there is no mapping from accuracy to a

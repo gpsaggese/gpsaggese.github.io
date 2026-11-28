@@ -58,7 +58,7 @@
 | `tier_5` | 5     | QS rank 1 to 20, leading industry research labs, NBER             |
 | `tier_4` | 4     | QS rank 21 to 100, established industry research groups           |
 
-- The rule is in `.claude/skills/paper.rules.md`, section "Affiliation"
+- The rule is in `.claude/skills/paper_rating.rules.md`, section "Affiliation"
 - A central bank needs no entry: the kind `central_bank` that the LLM reads in the
   paper already scores 5 (`_KIND_SCORES` in `report_papers.py`)
 - A lab and NBER need entries: their kinds (`company`, `research_institute`) score

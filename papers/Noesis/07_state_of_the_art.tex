@@ -14,7 +14,7 @@ piece, a similar problem \Noesis{} targets:
 \end{itemize}
 
 The goal is to locate the specific combination of properties,
-auction-based price discovery for a capability/latency/reliability bundle,
+auction-based price discovery for a service-class/reliability bundle,
 metered fulfillment, and reputation feedback into pricing, that no surveyed
 system currently occupies. The industry moves quickly, so the picture below
 reflects the state of the market at the time of writing (August 2026) and
@@ -97,7 +97,7 @@ None of these gateways combines the three properties that motivate
     passed through unilaterally, so there is no price discovery in the
     sense of Section~\ref{sec:comparison_table}.
   \item \textbf{Metered fulfillment}: none meters whether a request's
-    capability, latency, or reliability matched a stated contract beyond a
+    service class or reliability matched a stated contract beyond a
     standard infrastructure uptime SLA.
   \item \textbf{Reputation feedback}: none turns a delivered shortfall into
     a reputation signal that changes a provider's standing in future
@@ -147,7 +147,7 @@ These routers make the same difficulty-aware bet as \NoesisServer, that most
 requests do not need the most capable model, but the routing decision is a
 private policy internal to each vendor rather than the outcome of a market
 that prices the tiers being routed between, and none of them exposes a
-reputation signal that a request's actual capability, latency, or
+reputation signal that a request's delivered service class or
 reliability fell short of what was routed for.
 
 % ==============================================================================
@@ -205,8 +205,8 @@ cluster.
 Akash and Vast.ai in particular demonstrate that an open bid/ask market for
 compute-time is viable at production scale, which is direct evidence for
 the auction half of \NoesisMarket's design. The traded unit, however, is a
-GPU-hour or a workload's raw resource footprint, not the (capability,
-latency, reliability) bundle of Section~\ref{sec:intelligence_as_commodity}:
+GPU-hour or a workload's raw resource footprint, not the (service class,
+reliability) bundle of Section~\ref{sec:intelligence_as_commodity}:
 none of these markets prices, or even observes, how good the resulting
 model answer is, so the bundled-quality and difficulty-routing rows of
 Table~\ref{tab:comparison} remain unaddressed.
@@ -265,10 +265,10 @@ Section~\ref{sec:reputation} formalizes for \NoesisMarket. It differs from
 \Noesis{} in two respects: the reward is an emission schedule internal to
 the network's consensus rather than a price cleared against an explicit
 buyer bid, and the score is a continuous internal ranking rather than a
-pass/fail check against a specific bought (volume, tier, latency,
+pass/fail check against a specific bought (volume, service class,
 reliability) contract. Gensyn's and Ritual's proofs verify that a
 computation was executed correctly, not that its output met a stated
-capability or latency bound, so they address a different, complementary
+service class, so they address a different, complementary
 notion of trust.
 
 % ==============================================================================
@@ -365,7 +365,7 @@ reputation signal that follows the seller into a future transaction.
 Table~\ref{tab:sota_comparison} extends the comparison of
 Table~\ref{tab:comparison} to the six clusters surveyed above, each
 represented by its most characteristic mechanism. ``Bundled quality''
-denotes a purchasable (capability, latency, reliability) contract rather
+denotes a purchasable (service class, reliability) contract rather
 than a raw compute quantity or a single posted price; ``metered
 fulfillment'' denotes verification of delivered quality against that
 contract, rather than a generic infrastructure SLA.
@@ -461,5 +461,5 @@ standing changes provider incentives; OpenRouter's Fusion feature shows
 that answer fusion is a sellable product feature. \Noesis's contribution is
 not any one of these mechanisms in isolation, each already has a
 real-world precedent, but their combination into a single loop, applied to
-a verifiable (capability, latency, reliability) bundle rather than to raw
+a verifiable (service class, reliability) bundle rather than to raw
 compute, which to our knowledge no surveyed system currently offers.

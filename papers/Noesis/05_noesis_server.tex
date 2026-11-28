@@ -18,14 +18,15 @@ response back to the caller. Two properties distinguish it from a plain
 pass-through router. First, every request is tagged with the contract
 $\kappa$ it is served under, if any, so that fulfillment can be attributed
 (Section~\ref{sec:fulfillment_monitoring}). Second, every prompt/response
-pair is logged with its provider, model, measured latency, measured cost,
+pair is logged with its provider, model, measured latency and throughput,
+measured cost,
 and, when available, a user feedback signal, regardless of whether the
 request was placed under a contract. The storage schema is intentionally
 minimal:
 
 $$
   (\text{prompt}, \text{response}, \text{provider}, \text{model},
-   \text{latency}, \text{cost}, \text{contract})
+   \text{latency}, \text{throughput}, \text{cost}, \text{contract})
 $$
 
 This logging is passive by default: it does not change routing behavior and
@@ -38,7 +39,7 @@ Figure~\ref{fig:request_path} traces this path end to end: the caller's
 request is proxied through a router that selects one of several
 candidate providers, the response is streamed back, and on the way back,
 the request is logged as the tuple (prompt, response, provider, model, latency,
-cost, contract) described above.
+throughput, cost, contract) described above.
 
 % rendered_images:begin
 % ```graphviz
@@ -85,7 +86,7 @@ cost, contract) described above.
 %   ProviderB [label="Provider B", fillcolor="#E9E1F7", color="#A88FD9", fontcolor="#45296B"];
 %   ProviderC [label="Provider C", fillcolor="#E9E1F7", color="#A88FD9", fontcolor="#45296B"];
 % 
-%   Log [label=<<font point-size="8.5">Log:<br/>(prompt, response, provider, model,<br/>latency, cost, contract-or-bottom)</font>>,
+%   Log [label=<<font point-size="8.5">Log:<br/>(prompt, response, provider, model,<br/>latency, throughput, cost, contract-or-bottom)</font>>,
 %        shape=note, fillcolor="#DFEDE0", color="#8FB79A", fontcolor="#2E5A3D"];
 % 
 %   Caller -> Gateway [label="request", penwidth=1.6, color="#8592A3"];
@@ -118,28 +119,37 @@ cost, contract) described above.
 \subsection{Contract fulfillment monitoring}
 \label{sec:fulfillment_monitoring}
 
-For a request $x$ served under contract $\kappa$, let $\hat c(x) \in
-\calC$ denote the capability tier actually delivered and $\hat\ell(x)$ the
-actually measured latency, both estimated from the response (e.g., via a
-verifier model, a benchmark probe, or agreement with a stronger reference
-model). This estimator is the pluggable capability-measurement component
-of Section~\ref{sec:modularity}: the fulfillment test below only requires
-$\hat c(x)$, not a commitment to one specific way of computing it. Request
-$x$ is a \emph{success} under $\kappa$ if
+For a request $x$ served under contract $\kappa$, let
+$(c, \ell, \eta) = \sclassattr(\kappa)$ be the contracted service class. Let
+$\hat c(x) \in \calC$ denote the capability tier actually delivered,
+estimated from the response (e.g., via a verifier model, a benchmark probe,
+or agreement with a stronger reference model), and let $\hat L(x)$ and
+$\hat H(x)$ denote the measured latency and output tokens per second. The
+capability estimator is the pluggable capability-measurement component of
+Section~\ref{sec:modularity}: the fulfillment test below only requires
+$\hat c(x)$, not a commitment to one specific way of computing it. All three
+dimensions are checked per request, and request $x$ is a \emph{success} under
+$\kappa$ only if it meets all of them:
 
 \begin{equation}
   \label{eq:success_indicator}
   s(x) = \mathbb{1}\!\left[
-    \hat c(x) \succeq \clevelattr(\kappa)
+    \hat c(x) \succeq c
     \;\wedge\;
-    \hat\ell(x) \leq \lmaxattr(\kappa)
+    \hat L(x) \leq L_{\max}(\ell)
+    \;\wedge\;
+    \hat H(x) \geq H_{\min}(\eta)
   \right].
 \end{equation}
 
+A request that is not a success is one \emph{violation}, however many
+dimensions it misses.
+
 \begin{definition}[Measured reliability]
 \label{def:measured_reliability}
-Let $W$ denote the set of requests served under contract $\kappa$ during
-its fulfillment window. The measured reliability is
+Let $W$ denote the set of requests served under contract $\kappa$ over the
+life of the contract. The measured reliability, one minus the fraction of
+requests that are violations, is
 \begin{equation}
   \label{eq:measured_reliability}
   \hat r(\kappa, W) = \frac{1}{|W|} \sum_{x \in W} s(x).
@@ -154,43 +164,73 @@ likely. We instead treat fulfillment monitoring as a one-sided hypothesis
 test: the null hypothesis $H_0$ is that the seller is compliant, i.e., its
 true success rate is at least $\rminattr(\kappa)$, and $\kappa$ is flagged
 as violated only if $H_0$ is rejected at a chosen confidence level
-$1 - \delta$. A simple normal-approximation lower confidence bound gives
+$1 - \delta$. A simple normal-approximation upper confidence bound gives
 
 \begin{equation}
-  \label{eq:reliability_lower_bound}
-  \hat r_{\text{lower}}(\kappa, W)
+  \label{eq:reliability_upper_bound}
+  \hat r_{\text{upper}}(\kappa, W)
   = \hat r(\kappa, W)
-  - z_{1 - \delta}
+  + z_{1 - \delta}
     \sqrt{
       \frac{\hat r(\kappa, W) \, (1 - \hat r(\kappa, W))}{|W|}
     },
 \end{equation}
 where $z_{1 - \delta}$ is the corresponding standard normal quantile, and
 $\kappa$ is flagged as violated when
-$\hat r_{\text{lower}}(\kappa, W) < \rminattr(\kappa)$. For small $|W|$, an
+$\hat r_{\text{upper}}(\kappa, W) < \rminattr(\kappa)$. For small $|W|$, an
 exact interval (e.g., Clopper--Pearson) is preferable to the normal
 approximation used here for exposition. Flagged violations are reported
 to \NoesisMarket{} and feed the reputation update of
 Equation~\eqref{eq:reputation_update}.
 
+\paragraph{Capability measured on a sample.}
+Latency and throughput are observed on every request, but capability may be
+observable only on a sample, e.g., known-answer probes that the platform sends
+under the contract. Pooling the probes with all other requests would dilute a
+capability shortfall, since most requests then carry no capability evidence.
+Instead, since the probability of a success is the probability of being served
+within the limits times the probability of being capable given that,
+reliability is estimated as a product of two factors,
+\begin{equation}
+  \label{eq:product_reliability}
+  \hat r(\kappa, W) = \hat r_{\text{serve}} \cdot \hat r_{\text{cap}},
+  \qquad
+  \hat r_{\text{upper}}(\kappa, W) = U_{\text{serve}} \cdot U_{\text{cap}}.
+\end{equation}
+Here $\hat r_{\text{serve}}$ is the fraction of all requests in $W$, probes
+included, answered within $L_{\max}(\ell)$ and at $H_{\min}(\eta)$ or more;
+$\hat r_{\text{cap}}$ is the fraction of the \emph{answered} probes that reach
+capability $c$; and $U_{\text{serve}}$ and $U_{\text{cap}}$ are the upper
+confidence bounds of the two factors at level $1 - \delta$ (e.g., exact
+Clopper--Pearson bounds). A timeout or an error therefore counts once, in
+$\hat r_{\text{serve}}$, and not also as a wrong answer. The violation test,
+the reputation update of Equation~\eqref{eq:reputation_update}, and slashing
+(Definition~\ref{def:staked_ask}) use this $\hat r_{\text{upper}}$ unchanged.
+Since the product falls below the true success probability only if one of the
+two bounds falls below its factor, a compliant seller is flagged with
+probability at most about $2\delta$. The estimate assumes that answered probes
+are as likely to reach capability $c$ as buyer requests served within the
+limits, which fails if a seller can recognize probes.
+
 \begin{example}[Fulfillment reporting]
 \label{ex:fulfillment_reporting}
-A contract promising 99.9\% reliability at \texttt{frontier} capability is
+A contract promising 99.9\% reliability at class
+(\texttt{high}, \texttt{fast}, \texttt{medium}) is
 served by three providers over a window of 5,000 requests. \NoesisServer{}
 computes $\hat r(\kappa, W) = 0.994$ and, applying
-Equation~\eqref{eq:reliability_lower_bound}, finds
-$\hat r_{\text{lower}}(\kappa, W) < 0.999$: the shortfall is unlikely to be
-sampling noise, so the contract is flagged as violated and reported back
+Equation~\eqref{eq:reliability_upper_bound} with $\delta = 0.05$, finds
+$\hat r_{\text{upper}}(\kappa, W) \approx 0.996 < 0.999$: the shortfall is
+unlikely to be sampling noise, so the contract is flagged as violated and reported back
 to \NoesisMarket.
 \end{example}
 
-Figure~\ref{fig:reliability_test} places the point estimate, its lower
+Figure~\ref{fig:reliability_test} places the point estimate, its upper
 confidence bound, and the threshold on a single number line for both
-outcomes of the test: when the confidence interval
-$[\hat r_{\text{lower}}, \hat r(\kappa, W)]$ stays entirely above
-$\rminattr(\kappa)$, the shortfall, if any, is attributed to sampling
-noise, and when the interval dips below $\rminattr(\kappa)$, $\kappa$ is
-flagged as violated and reported to \NoesisMarket.
+outcomes of the test: when the interval
+$[\hat r(\kappa, W), \hat r_{\text{upper}}]$ reaches $\rminattr(\kappa)$, the
+shortfall, if any, is attributed to sampling noise, and when the whole
+interval lies below $\rminattr(\kappa)$, $\kappa$ is flagged as violated and
+reported to \NoesisMarket.
 
 % rendered_images:begin
 % ```tikz
@@ -205,19 +245,19 @@ flagged as violated and reported to \NoesisMarket.
 % \fill[okzone, opacity=0.45] (6,-1) rectangle (12,3.4);
 % \draw[dashed, thick, dividercolor] (6,-1) -- (6,3.4);
 % \node[above] at (6,3.4) {\footnotesize $R_{\min}(\kappa)$};
-% \draw[very thick, okline] (7.2,2.4) -- (10.4,2.4);
-% \draw[very thick, okline] (7.2,2.25) -- (7.2,2.55);
-% \draw[very thick, okline] (10.4,2.25) -- (10.4,2.55);
-% \filldraw[markcolor] (9.8,2.4) circle (2pt);
-% \node[below] at (7.2,2.1) {\footnotesize $\hat r_{\text{lower}}$};
-% \node[above] at (9.8,2.7) {\footnotesize $\hat r(\kappa,W)$};
+% \draw[very thick, okline] (4.6,2.4) -- (8.4,2.4);
+% \draw[very thick, okline] (4.6,2.25) -- (4.6,2.55);
+% \draw[very thick, okline] (8.4,2.25) -- (8.4,2.55);
+% \filldraw[markcolor] (4.6,2.4) circle (2pt);
+% \node[below] at (8.4,2.1) {\footnotesize $\hat r_{\text{upper}}$};
+% \node[above] at (4.6,2.7) {\footnotesize $\hat r(\kappa,W)$};
 % \node[align=right, okline] at (-1.9,2.4) {\footnotesize compliant:\\[-1pt]\footnotesize attributed to noise};
-% \draw[very thick, flagline] (3.6,0) -- (7.6,0);
-% \draw[very thick, flagline] (3.6,-0.15) -- (3.6,0.15);
-% \draw[very thick, flagline] (7.6,-0.15) -- (7.6,0.15);
-% \filldraw[markcolor] (7.0,0) circle (2pt);
-% \node[below] at (3.6,-0.3) {\footnotesize $\hat r_{\text{lower}}$};
-% \node[above] at (7.0,0.3) {\footnotesize $\hat r(\kappa,W)$};
+% \draw[very thick, flagline] (1.6,0) -- (4.8,0);
+% \draw[very thick, flagline] (1.6,-0.15) -- (1.6,0.15);
+% \draw[very thick, flagline] (4.8,-0.15) -- (4.8,0.15);
+% \filldraw[markcolor] (1.6,0) circle (2pt);
+% \node[below] at (4.8,-0.3) {\footnotesize $\hat r_{\text{upper}}$};
+% \node[above] at (1.6,0.3) {\footnotesize $\hat r(\kappa,W)$};
 % \node[align=right, flagline] at (-1.9,0) {\footnotesize flagged:\\[-1pt]\footnotesize violation reported};
 % ```
 % label=fig:reliability_test

@@ -92,7 +92,11 @@ no measurements. Therefore this paper reports no accuracy of any model on the
 bank, no survivor count, and no measured detection rate. The window-closing
 worker that freezes evidence and writes the verdict row, and the reputation
 update that consumes verdicts, are also listed as remaining integration work in
-the design notes.
+the design notes. In terms of the white paper's reputation update, a
+\texttt{PASSED} verdict corresponds to the indicator 1 and a
+\texttt{FAILED} verdict to 0. The design notes do not send
+\texttt{INSUFFICIENT} to reputation, an outcome that the white paper does
+not define.
 
 A minimal evaluation that would close this gap has four parts.
 \begin{enumerate}

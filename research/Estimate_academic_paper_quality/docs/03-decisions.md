@@ -242,7 +242,7 @@
   and
   [`R17`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r17-rerun-skips-extraction);
   JSON reads back with no parser of our own; the suffix collides with no output of
-  the tool or of `paper.rate`
+  the tool or of `paper_rating.rate`
 - **Alternatives**: markdown (easier to read, hard to read back); a separate cache
 - **Status**: proposed
 
@@ -255,7 +255,7 @@
   lists the entries of scores 5 and 4, with `as_of` and `source`, filled by hand from
   the QS site; the LLM only reads the names and the kind of each institution from the
   paper
-- **Why**: [`.claude/skills/paper.rules.md`](/.claude/skills/paper.rules.md) forbids
+- **Why**: [`.claude/skills/paper_rating.rules.md`](/.claude/skills/paper_rating.rules.md) forbids
   facts from memory; a list is deterministic and easy to audit; the user picked this
   option
 - **Alternatives**: the LLM scores the affiliation with the table (the rank comes

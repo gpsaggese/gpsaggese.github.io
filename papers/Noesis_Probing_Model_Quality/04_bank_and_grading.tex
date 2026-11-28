@@ -6,7 +6,7 @@
 \subsection{The candidate bank}
 \label{sec:bank_content}
 
-A \emph{canary} is a tuple $c = (\mathit{id}, v, f, p, a, \nu, \sigma)$ of a
+A \emph{canary} is a tuple $\zeta = (\mathit{id}, v, f, p, a, \nu, \sigma)$ of a
 stable identifier, a bank version $v$, a task family $f$, a prompt $p$, a
 canonical answer $a$, the name of a normalizer $\nu$, and the seed $\sigma$ of
 the generator that produced it. A \emph{bank} $\bank_v$ is a set of canaries of
@@ -94,10 +94,10 @@ future banks.
   \label{tab:normalizers}
 \end{table}
 
-For a canary $c$ with normalizer $\nu$ and a response $y$, the grade is
+For a canary $\zeta$ with normalizer $\nu$ and a response $y$, the grade is
 \begin{equation}
   \label{eq:grade}
-  \grade(c, y) =
+  \grade(\zeta, y) =
   \begin{cases}
     \bot & \text{if } \nu \text{ is unknown, or } \nu(a) \text{ is undefined or
       empty},\\

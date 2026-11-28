@@ -487,7 +487,7 @@ def _parse_rule_table(section: str, header: str) -> List[Tuple[int, int]]:
     :param header: name of the second column, e.g., `Pages`
     :return: pairs from the best score to the worst
     """
-    path = hgit.find_file_in_git_tree("paper.rules.md")
+    path = hgit.find_file_in_git_tree("paper_rating.rules.md")
     text = hio.from_file(path)
     body = text.split(f"### {section}")[1].split("###")[0]
     pairs = []
@@ -508,7 +508,8 @@ def _parse_rule_table(section: str, header: str) -> List[Tuple[int, int]]:
 
 class Test_score_tables_match_rules(hunitest.TestCase):
     """
-    Test that the score tables of `report_papers` equal the ones of `paper.rules.md`.
+    Test that the score tables of `report_papers` equal the ones of
+    `paper_rating.rules.md`.
     """
 
     def test1(self) -> None:

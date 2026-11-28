@@ -17,6 +17,7 @@ delegating a sub-task. These participants differ along several dimensions:
 
 \begin{itemize}
   \item How much they value low latency.
+  \item How much throughput they need.
   \item How much model intelligence (capability tier) their tasks require.
   \item How much they value a low error rate.
   \item How price-sensitive they are.
@@ -29,7 +30,7 @@ capacity. Sellers differ along several dimensions:
 
 \begin{itemize}
   \item The capability tier of the models they can serve.
-  \item Their typical latency and reliability under load.
+  \item Their typical latency, throughput, and reliability under load.
   \item Their marginal cost of serving a request, which itself depends on
     hardware utilization and contractual commitments elsewhere.
 \end{itemize}
@@ -41,13 +42,12 @@ contract that a rigid, single posted price cannot express.
 
 Figure~\ref{fig:two_sided_market} lays out both sides and the dimensions
 along which their participants differ: demand-side participants differ
-along latency sensitivity, model-intelligence requirements, error
-tolerance, price sensitivity, and traffic predictability, while
-supply-side participants differ along capability tier, latency/reliability
-under load, and marginal cost, and \NoesisMarket{} is the meeting point
-where bids and asks expressing these differences are matched into
-contracts. Each side's dimensions are drawn as short axes radiating from
-its box, echoing the three-axis bundle of Figure~\ref{fig:bundle_axes}.
+along latency and throughput needs, model-intelligence requirements, error
+tolerance, price sensitivity, and traffic predictability, while supply-side
+participants differ along capability tier, speed and reliability under load,
+and marginal cost, and \NoesisMarket{} is the meeting point where bids and
+asks expressing these differences are matched into contracts. Each side's
+dimensions are drawn as short axes radiating from its box.
 
 % rendered_images:begin
 % ```tikz
@@ -76,7 +76,7 @@ its box, echoing the three-axis bundle of Figure~\ref{fig:bundle_axes}.
 %   node[midway, above, font=\small] {Asks};
 % 
 % % Demand-side dimensions, fanned as short axes to the left of the box.
-% \foreach \ang/\lab in {90/{traffic\\predictability}, 135/{latency\\sensitivity},
+% \foreach \ang/\lab in {90/{traffic\\predictability}, 135/{latency and\\throughput},
 %                        180/{capability\\required}, 225/{error\\tolerance},
 %                        270/{price\\sensitivity}} {
 %   \draw[->, >=stealth, thin, axiscolor] (demand.\ang) -- ++(\ang:1.5cm);
@@ -85,7 +85,7 @@ its box, echoing the three-axis bundle of Figure~\ref{fig:bundle_axes}.
 % }
 % 
 % % Supply-side dimensions, fanned as short axes to the right of the box.
-% \foreach \ang/\lab in {45/{capability\\tier}, 0/{latency /\\reliability},
+% \foreach \ang/\lab in {45/{capability\\tier}, 0/{speed and\\reliability},
 %                        -45/{marginal\\cost}} {
 %   \draw[->, >=stealth, thin, axiscolor] (supply.\ang) -- ++(\ang:1.5cm);
 %   \path (supply.\ang) -- ++(\ang:2.05cm)
@@ -121,7 +121,7 @@ functions beyond simply connecting a buyer to a seller:
     fulfilled, a role played in \Noesis{} by \NoesisServer{} rather than
     by a separate compliance function.
   \item \textbf{Data generation}: generate reusable market data: clearing
-    prices per tier and round, and, as a byproduct of fulfillment
+    prices per class and round, and, as a byproduct of fulfillment
     monitoring, a record of measured provider performance over time.
   \item \textbf{Dissemination}: disseminate that clearing-price data in
     real time to participants and downstream systems, through the
@@ -151,23 +151,33 @@ makes sense once one has fixed which token plays the role of quantity and which
 plays the role of price. \Noesis{} faces a similar prior question: before a bid
 or an ask can be written down, the protocol must fix what a unit of
 ``intelligence'' is (Definition~\ref{def:task}) and what accompanies that
-unit as a quality specification. We adopt the position that quality should be
-expressed along three largely orthogonal axes:
+unit as a quality specification. We adopt the position that quality should
+be expressed as two terms: a \emph{service class}, which says what each
+request should get, and a \emph{reliability}, which says how often it gets
+it. A service class has three largely orthogonal dimensions, each normalized
+into a few discrete bands:
 
 \begin{itemize}
-  \item \textbf{Capability}: how good the answer is expected to be,
-    expressed as a discrete tier rather than a continuous score, since
-    tiers are what providers can credibly commit to and what buyers can
-    reason about.
-  \item \textbf{Latency}: an upper bound on the time to produce an answer.
-  \item \textbf{Reliability}: the fraction of requests that meet both the
-    capability and latency terms.
+  \item \textbf{Capability}: how good the answer is expected to be, a
+    ``virtual intelligence'' level (e.g., low, medium, high). Bands are
+    discrete rather than continuous scores, since bands are what providers
+    can credibly commit to and what buyers can reason about.
+  \item \textbf{Latency}: how long one request may take (e.g., fast, slow,
+    or batch, for slow asynchronous jobs completed within 24 hours).
+  \item \textbf{Throughput}: how fast one request produces output (e.g.,
+    low, medium, high).
 \end{itemize}
 
-Figure~\ref{fig:bundle_axes} makes this contrast visually concrete: \Noesis{}'s
-traded unit is a bundle along three largely orthogonal axes, (capability,
-latency, and reliability) contrasted with a conventional single-scalar good
-quoted purely on price per token.
+Reliability is then the fraction of requests, over the life of a contract,
+that meet the contracted class in every dimension. It merges the three
+per-request checks into a single measure. The protocol fixes only this
+structure; the thresholds behind each band are set by a concrete
+implementation.
+
+Figure~\ref{fig:bundle_axes} makes this contrast visually concrete:
+\Noesis{}'s traded unit is a bundle of a service class and a reliability,
+contrasted with a conventional single-scalar good quoted purely on price per
+token.
 
 % rendered_images:begin
 % ```tikz
@@ -177,32 +187,33 @@ quoted purely on price per token.
 % \definecolor{axiscolor}{RGB}{163,177,192}
 % \definecolor{dividercolor}{RGB}{199,208,218}
 % \fontfamily{phv}\selectfont
-% \node[draw=goodline, rounded corners, fill=goodfill, minimum width=2.8cm, minimum height=1cm, font=\small, align=center, text=goodtext] (bundle) at (0,0) {traded unit\\(capability, latency,\\reliability)};
-% \draw[->, >=stealth, thick, axiscolor] (bundle.north) -- ++(0,1.1) node[above, font=\footnotesize, align=center] {Capability};
-% \draw[->, >=stealth, thick, axiscolor] (bundle.east) -- ++(1.2,0.6) node[right, font=\footnotesize, align=center] {Latency bound};
-% \draw[->, >=stealth, thick, axiscolor] (bundle.east) -- ++(1.2,-0.6) node[right, font=\footnotesize, align=center] {Reliability};
-% \node[above, font=\footnotesize\bfseries] at (0,2.0) {three-axis quality bundle};
-% \draw[dashed, dividercolor] (4.3,-2.2) -- (4.3,2.4);
-% \node[draw=goodline, rounded corners, fill=goodfill, minimum width=2.8cm, minimum height=1cm, font=\small, align=center, text=goodtext] (scalar) at (7.4,0) {traded unit\\(price per token)};
+% \node[draw=goodline, rounded corners, fill=goodfill, minimum width=2.8cm, minimum height=1cm, font=\small, align=center, text=goodtext] (bundle) at (0,0) {traded unit\\(service class,\\reliability)};
+% \draw[->, >=stealth, thick, axiscolor] (bundle.north) -- ++(0,1.1) node[above, font=\footnotesize, align=center] {Reliability};
+% \draw[->, >=stealth, thick, axiscolor] (bundle.east) -- ++(1.2,0.7) node[right, font=\footnotesize, align=center] {Capability};
+% \draw[->, >=stealth, thick, axiscolor] (bundle.east) -- ++(1.2,0) node[right, font=\footnotesize, align=center] {Latency};
+% \draw[->, >=stealth, thick, axiscolor] (bundle.east) -- ++(1.2,-0.7) node[right, font=\footnotesize, align=center] {Throughput};
+% \node[above, font=\footnotesize\bfseries] at (0,2.35) {service class + reliability};
+% \draw[dashed, dividercolor] (5.3,-2.2) -- (5.3,2.4);
+% \node[draw=goodline, rounded corners, fill=goodfill, minimum width=2.8cm, minimum height=1cm, font=\small, align=center, text=goodtext] (scalar) at (7.9,0) {traded unit\\(price per token)};
 % \draw[->, >=stealth, thick, axiscolor] (scalar.east) -- ++(1.2,0) node[right, font=\footnotesize, align=center] {Price};
-% \node[above, font=\footnotesize\bfseries] at (7.4,2.0) {single-scalar good};
+% \node[above, font=\footnotesize\bfseries] at (7.9,2.35) {single-scalar good};
 % ```
 % label=fig:bundle_axes
-% caption=A three-axis quality bundle versus a single-scalar good.
+% caption=A service class and reliability bundle versus a single-scalar good.
 % rendered_images:end
 % render_images:begin
 \begin{figure}[H]
   \includegraphics[width=\linewidth]{02_market_design.tex.figs/02_market_design.2.png}
-  \caption{A three-axis quality bundle versus a single-scalar good.}
+  \caption{A service class and reliability bundle versus a single-scalar good.}
   \label{fig:bundle_axes}
 \end{figure}
 % render_images:end
 
 Section~\ref{sec:contracts_and_notation} turns this into a formal contract. The
 consequence of this design choice is that the market cannot clear on price
-alone: two asks at the same price but different tiers are not
-substitutes, and matching must first establish compatibility along these
-three axes before price discovery can proceed
+alone: two asks at the same price but different classes are not
+equivalent, and matching must first establish compatibility on service class
+and reliability before price discovery can proceed
 (Section~\ref{sec:compatibility}).
 
 % ==============================================================================
@@ -218,7 +229,7 @@ close to delivery, and separate capacity markets pay generators for being
 available rather than for energy delivered, penalizing non-delivery when it
 matters most \cite{stoft2002, cramton2017}.
 
-\Noesis{}'s tiered call auction (Section~\ref{sec:noesis_market}) borrows the
+\Noesis{}'s per-class call auction (Section~\ref{sec:noesis_market}) borrows the
 day-ahead/real-time separation as a candidate design (discussed further as an
 open question in Section~\ref{sec:open_questions}), and its reputation and
 pricing feedback loop (Section~\ref{sec:reputation}) borrows directly from

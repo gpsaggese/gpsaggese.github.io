@@ -3,7 +3,7 @@
 \label{sec:background}
 
 This section fixes the notation inherited from the white paper
-\cite{noesis_whitepaper}, states how the prototype changes it, and formulates
+\cite{noesis_whitepaper}, states how the prototype differs, and formulates
 the probing problem.
 
 % ==============================================================================
@@ -12,55 +12,80 @@ the probing problem.
 
 The white paper defines an \emph{intelligence contract} as the tuple
 $$
-  \kappa = (\ntasksattr,\ \clevelattr,\ \lmaxattr,\ \rminattr,\ \priceattr),
+  \kappa = (\ntasksattr,\ \sclassattr,\ \rminattr,\ \priceattr),
 $$
-where $\clevelattr$ is a required capability tier in a totally ordered set
-$\calC$, $\lmaxattr$ is the maximum latency per task, and $\rminattr \in [0,1]$
-is the minimum fraction of tasks that must meet both $\clevelattr$ and
-$\lmaxattr$. For a request $x$ served under $\kappa$, the monitoring layer
-estimates the delivered tier $\hat c(x)$ and the measured latency
-$\hat\ell(x)$, and defines the success indicator
+where $\sclassattr$ is a required \emph{service class}
+$q = (c, \ell, \eta)$: a capability tier $c$ in a totally ordered set $\calC$,
+a latency band $\ell$, and a throughput band $\eta$. Each latency band sets a
+per-request limit $L_{\max}(\ell)$, and each throughput band a floor
+$H_{\min}(\eta)$ on output tokens per second. $\rminattr \in [0,1]$ is the
+minimum fraction of requests that must meet the class in every dimension. For
+a request $x$ served under $\kappa$, the monitoring layer estimates the
+delivered tier $\hat c(x)$, measures the latency $\hat L(x)$ and the
+throughput $\hat H(x)$, and defines the success indicator
 \begin{equation}
   \label{eq:wp_success}
-  s(x) = \mathbb{1}\!\left[\hat c(x) \succeq \clevelattr(\kappa)
-    \;\wedge\; \hat\ell(x) \leq \lmaxattr(\kappa)\right].
+  s(x) = \mathbb{1}\!\left[\hat c(x) \succeq c
+    \;\wedge\; \hat L(x) \leq L_{\max}(\ell)
+    \;\wedge\; \hat H(x) \geq H_{\min}(\eta)\right].
 \end{equation}
 The measured reliability over the request set $W$ served during the
 fulfillment window is the sample mean $\hat r(\kappa, W) = |W|^{-1}\sum_{x\in W}
 s(x)$. To separate under-delivery from sampling noise, the white paper treats
 monitoring as a one-sided hypothesis test with the null hypothesis that the
-seller is compliant, and flags $\kappa$ when a lower confidence bound
-$\hat r_{\text{lower}}(\kappa, W)$ falls below $\rminattr(\kappa)$. The estimator
-of $\hat c(x)$ is a pluggable component, and the white paper names a verifier
+seller is compliant, and flags $\kappa$ when an upper confidence bound
+$\hat r_{\text{upper}}(\kappa, W)$ falls below $\rminattr(\kappa)$. When
+capability is observed only on a sample, such as probes, the white paper
+estimates reliability as a product,
+\begin{equation}
+  \label{eq:wp_product}
+  \hat r = \hat r_{\text{serve}} \cdot \hat r_{\text{cap}},
+  \qquad
+  \hat r_{\text{upper}} = U_{\text{serve}} \cdot U_{\text{cap}},
+\end{equation}
+where $\hat r_{\text{serve}}$ is the fraction of all requests, probes included,
+answered within the latency and throughput limits, $\hat r_{\text{cap}}$ is
+the fraction of answered probes that reach tier $c$, and $U_{\text{serve}}$ and
+$U_{\text{cap}}$ are the upper confidence bounds of the two. The estimator of
+$\hat c(x)$ is a pluggable component, and the white paper names a verifier
 model, a benchmark probe, and agreement with a stronger reference model as
 candidates.
 
 % ==============================================================================
-\subsection{Refinements in the prototype}
+\subsection{Differences between the prototype and the white paper}
 \label{sec:background_refinements}
 
-The prototype keeps the architecture of the white paper and changes three
-details that matter for the canary subsystem.
+The prototype keeps the architecture of the white paper, and both flag a
+violation only when a one-sided confidence \emph{upper} bound falls below the
+promise (Section~\ref{sec:verdict_rule}). The current service-class contract of
+the white paper is newer than the code, which differs in three details that
+matter for the canary subsystem.
 
 \begin{enumerate}
   \item \textbf{Capability is measured by known-answer probes.} The estimator
     $\hat c(x)$ is replaced by a binary grade on a canary question. The
     prototype does not map the grade to a tier in $\calC$.
-  \item \textbf{The joint indicator is factored.} The indicator
+  \item \textbf{There is no service class.} A contract carries one latency
+    limit $\lmaxattr$, a promised latency reliability $\rminattr$, and a
+    promised canary accuracy $\qminattr \in [0,1]$. It has no latency or
+    throughput band, and throughput is not checked.
+  \item \textbf{Two metrics are tested separately.} The indicator
     \eqref{eq:wp_success} is split into a latency metric over buyer requests
-    and a quality metric over canary requests. Let $B(\kappa,W)$ denote the
-    buyer requests and $C(\kappa,W)$ the canary requests of a window. The
-    latency success of $x \in B$ is $s_\ell(x) = \mathbb{1}[\hat\ell(x) \leq
-    \lmaxattr]$ for a request that the seller answered, and $s_\ell(x) = 0$ for
-    a seller timeout or upstream error. The quality success of $x \in C$ is
-    $s_q(x) = \grade(c_x, y_x)$, where $c_x$ is the canary and $y_x$ the
-    response, and $s_q(x) = 0$ for a seller timeout or upstream error. The contract carries a promised canary accuracy
-    $\qminattr \in [0,1]$ in addition to $\rminattr$, which applies to latency.
-  \item \textbf{The violation rule uses an upper bound.} A metric is a
-    violation only when the one-sided confidence \emph{upper} bound on its true
-    rate is below the promise. Section~\ref{sec:verdict_rule} analyzes this
-    choice against the lower-bound rule.
+    and a quality metric over canary requests, each with its own threshold. Let
+    $B(\kappa,W)$ denote the buyer requests and $C(\kappa,W)$ the canary
+    requests of a window. The latency success of $x \in B$ is
+    $s_{\text{lat}}(x) = \mathbb{1}[\hat L(x) \leq \lmaxattr]$ for a request
+    that the seller answered, and $s_{\text{lat}}(x) = 0$ for a seller timeout
+    or upstream error. The quality success of $x \in C$ is
+    $s_{\text{qual}}(x) = \grade(\zeta_x, y_x)$, where $\zeta_x$ is the canary
+    and $y_x$ the response, and $s_{\text{qual}}(x) = 0$ for a seller timeout
+    or upstream error.
 \end{enumerate}
+
+The product rule \eqref{eq:wp_product} is \emph{not} implemented. It is not a
+change of formula only: the prototype counts a seller timeout on a canary as a
+quality failure, whereas \eqref{eq:wp_product} counts it only in
+$\hat r_{\text{serve}}$.
 
 Table~\ref{tab:wp_mapping} summarizes the correspondence.
 
@@ -74,12 +99,15 @@ Table~\ref{tab:wp_mapping} summarizes the correspondence.
     Capability estimate & pluggable $\hat c(x)$ (verifier, probe, reference
       agreement) & binary exact-match grade on a canary, behind a
       \texttt{CapabilityMeasurer} interface \\
-    Success indicator & one joint indicator $s(x)$ & latency indicator on
-      buyer requests, quality indicator on canaries \\
-    Promise & $\clevelattr$ and $\rminattr$ & $\rminattr$ for latency,
+    Service class & capability, latency, and throughput bands
+      $(c, \ell, \eta)$ & none; one latency limit $\lmaxattr$ per contract \\
+    Reliability & one value: mean of $s(x)$, or the product
+      \eqref{eq:wp_product} & latency rate on buyer requests, accuracy on
+      canaries \\
+    Promise & $\sclassattr$ and $\rminattr$ & $\rminattr$ for latency,
       $\qminattr$ for canary accuracy \\
-    Violation test & lower bound below $\rminattr$ & upper bound below the
-      promise \\
+    Violation test & upper bound below $\rminattr$ & upper bound of each metric
+      below its promise \\
     Evidence minimum & not specified & 20 buyer requests and 8 canaries \\
     Attribution & request tagged with $\kappa$ & provider pinned per contract,
       mismatches excluded \\
@@ -99,7 +127,7 @@ Table~\ref{tab:wp_mapping} summarizes the correspondence.
 Given an active contract $\kappa$ with seller $s$, a collection window of
 length $W$ seconds that opens at time $t_0$, a target number of probes $N$, a
 secret key $k$, and a bank of candidate canaries $\bank$, produce a sequence of
-probes $(c_i, t_i)_{i=1}^{N}$ with $c_i \in \bank$ and $t_i \in [t_0, t_0+W]$
+probes $(\zeta_i, t_i)_{i=1}^{N}$ with $\zeta_i \in \bank$ and $t_i \in [t_0, t_0+W]$
 such that the properties below hold.
 \end{problem}
 
@@ -142,6 +170,8 @@ and indicates whether the canary subsystem is intended to address them.
     Serves a quantized or otherwise slightly degraded variant & small accuracy
       change & Weakly: power is low when the shortfall from the promise is small
       \\
+    Produces output slowly & output tokens per second fall & No: the
+      prototype does not check throughput \\
     Adds latency & buyer-request latency rises & No: canary latency is
       excluded and latency is judged on buyer traffic \\
     Recognizes probes and serves them with a stronger model & canaries

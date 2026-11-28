@@ -18,6 +18,11 @@ which component they primarily affect.
     comparability, and how sensitive is the auction outcome to this
     choice?
 
+  \item \textbf{Class design}: how many bands per dimension, and which
+    classes $\calQ$ (Definition~\ref{def:service_class}) should an
+    implementation offer, given that more classes express demand more
+    precisely but split liquidity across more buckets?
+
   \item \textbf{Auction frequency and mechanism}: is a uniform-price call
     auction on a fixed $T$-minute cadence
     (Section~\ref{sec:rounds}) the right mechanism at this scale, or would
@@ -30,7 +35,7 @@ which component they primarily affect.
     we have not evaluated.
 
   \item \textbf{Compatibility versus scoring}: Definition~\ref{def:compatibility}
-    treats latency and reliability as hard eligibility constraints. Would
+    treats service class and reliability as hard eligibility constraints. Would
     a scored compatibility measure, admitting partial matches at a
     discount, recover otherwise-unmatched volume without requiring an
     explicit exchange rate between quality and price?
@@ -86,10 +91,10 @@ which component they primarily affect.
     tail?
 
   \item \textbf{Attribution reliability}: the hypothesis test of
-    Equation~\eqref{eq:reliability_lower_bound} distinguishes sampling
+    Equation~\eqref{eq:reliability_upper_bound} distinguishes sampling
     noise from a true reliability shortfall, but it still relies on
-    $\hat c(x)$ and $\hat\ell(x)$ being accurate per-request estimates of
-    delivered capability and latency; how reliable can those per-request
+    $\hat c(x)$, $\hat L(x)$, and $\hat H(x)$ being accurate per-request values
+    of delivered capability, latency, and throughput; how reliable can those per-request
     estimates be made, and how does verifier error propagate into false
     or missed violations reported to \NoesisMarket?
 \end{enumerate}
@@ -123,7 +128,7 @@ future specification work rather than resolved here.
 \begin{enumerate}
   \item \textbf{Bid and price discovery for a new market}: with no trading
     history, neither a buyer nor a seller has a reference price to anchor
-    a bid or an ask to; whether the first rounds of a new tier bucket need
+    a bid or an ask to; whether the first rounds of a new class bucket need
     a different mechanism, e.g., a wider price band or a subsidized
     bootstrap period, than the steady-state design above is unresolved.
 
@@ -136,7 +141,7 @@ future specification work rather than resolved here.
 
   \item \textbf{Commitment without capability}: nothing in
     Definition~\ref{def:blind_bid} stops a seller from committing an ask
-    it cannot actually fulfill within $\lmaxattr$, since the stake
+    it cannot actually fulfill at the class $\sclassattr$, since the stake
     $\sigma_\alpha$ is only forfeited after the fact; whether a smaller,
     non-refundable commitment fee at bid time is needed to discourage
     speculative asks is open.
@@ -164,7 +169,7 @@ future specification work rather than resolved here.
   \item \textbf{Verifiable optimality}: whether a succinct proof of
     clearing-problem optimality, not merely feasibility
     (Section~\ref{sec:decentralized_matching_engine}), is practical to
-    generate and verify at the scale of a real tier bucket, or whether the
+    generate and verify at the scale of a real class bucket, or whether the
     design must settle for verified feasibility and accept a centralized
     operator's word on optimality.
 \end{enumerate}

@@ -141,19 +141,18 @@ failing verdict is at most approximately $2\delta$ by a union bound.
 % render_images:end
 
 % ==============================================================================
-\subsection{Comparison with the lower-bound rule of the white paper}
+\subsection{Why an upper bound}
 \label{sec:lower_vs_upper}
 
-The white paper flags a contract when the \emph{lower} confidence bound on
-the success rate is below $\rminattr$. The prototype's design notes record the
-change to an upper bound as decision D1 and describe it as proposed to the
-white paper's author, so it is an open design choice rather than an agreed
-revision. The two rules differ in what they treat as evidence of a violation.
-The lower bound lies below the point estimate by construction, so a seller whose
-true rate equals or exceeds the promise has a high probability of a lower bound
-below the promise on a small window. The upper bound lies above the point
-estimate, so a flag requires that the data are inconsistent with
-compliance at the chosen confidence.
+The white paper flags a contract when the \emph{upper} confidence bound on the
+success rate is below $\rminattr$, the rule that the prototype implements and
+records as decision D1 in its design notes. A rule on the \emph{lower} bound
+differs in what it treats as evidence of a violation. The lower bound lies below
+the point estimate by construction, so a seller whose true rate equals or
+exceeds the promise has a high probability of a lower bound below the promise
+on a small window. The upper bound lies above the point estimate, so a flag
+requires that the data are inconsistent with compliance at the chosen
+confidence.
 
 Table~\ref{tab:rules} compares the probability of a flag under both rules by
 exact binomial enumeration. Both columns use the one-sided 95\% Wilson interval,
@@ -198,14 +197,20 @@ slightly liberal for these sizes, and the nominal 5\% level is approximate.
 \subsection{Separating latency and quality}
 \label{sec:separating}
 
-A merged success indicator, as in \eqref{eq:wp_success}, dilutes quality
-failures when canaries are a small fraction of the requests. Consider a window
-of 50 buyer requests that all succeed and 10 canaries on which a substituted
-model has accuracy $0.5$. The merged success rate is about $0.917$, against a
-promise of $0.90$, and the merged test with 60 requests flags this contract with
-probability $0.026$. Testing the ten canaries separately against
-$\qminattr = 0.85$ flags it with probability $0.828$. This is the argument for
-factoring the indicator in Section~\ref{sec:background_refinements}.
+A success rate pooled over all requests, with capability observed only on
+canaries, dilutes quality failures when canaries are a small fraction of the
+requests. Consider a window of 50 buyer requests that all succeed and 10
+canaries on which a substituted model has accuracy $0.5$. The pooled success
+rate is about $0.917$, against a promise of $0.90$, and the pooled test with 60
+requests flags this contract with probability $0.026$. Testing the ten canaries
+separately against $\qminattr = 0.85$ flags it with probability $0.828$. This
+is the argument for factoring the indicator in
+Section~\ref{sec:background_refinements}.
+
+The white paper avoids the same dilution while keeping one reliability and one
+threshold, through the product \eqref{eq:wp_product}. The prototype instead
+tests two thresholds. The analysis in this section covers the prototype's rule
+and does not evaluate the product rule.
 
 % ==============================================================================
 \subsection{Detection power}

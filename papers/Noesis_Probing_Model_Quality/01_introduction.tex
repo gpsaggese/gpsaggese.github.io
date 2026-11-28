@@ -58,8 +58,8 @@ models while charging the advertised price \cite{cai2025substitution}.
 The \Noesis{} white paper \cite{noesis_whitepaper} proposes to trade machine
 intelligence as a commodity through two components. \NoesisMarket{} clears
 bids and asks into intelligence contracts. \NoesisServer{} executes those
-contracts against real providers and meters whether the delivered capability,
-latency, and reliability matched the contract. The metering step needs a
+contracts against real providers and meters whether the delivered service class
+and reliability matched the contract. The metering step needs a
 per-request estimate $\hat c(x)$ of the capability tier delivered. The white
 paper deliberately leaves the estimator pluggable and names ``a verifier model,
 a benchmark probe, or agreement with a stronger reference model'' as candidate
@@ -84,7 +84,8 @@ research code base, and this paper describes the state of that code at commit
     probes instantiate the capability-measurement component of the white
     paper and how their outcomes enter the contract verdict, including the
     separation of the white paper's joint success indicator into a latency
-    metric and a quality metric (Section~\ref{sec:background}).
+    metric and a quality metric, which differs from the single reliability of
+    the white paper (Section~\ref{sec:background}).
 
   \item \textbf{Calibrated canaries.} The paper specifies the canary bank, the
     deterministic grader, and a calibration protocol that measures, before use,
@@ -101,8 +102,8 @@ research code base, and this paper describes the state of that code at commit
 
   \item \textbf{Verdict statistics.} The paper defines the evidence rules and
     the one-sided upper-bound test, quantifies detection power and false-alarm
-    probability by exact enumeration, and compares the rule with the lower-bound
-    rule of the white paper (Section~\ref{sec:verdict}).
+    probability by exact enumeration, and compares the rule with a lower-bound
+    rule (Section~\ref{sec:verdict}).
 
   \item \textbf{Status and limits.} The paper reports which parts of the
     system are validated by tests, states that the paid live calibration is
@@ -120,7 +121,8 @@ and writes a verdict row, which the code base lists as remaining integration
 work. Quantities in tables and in the text come from the source code, from the
 design documents in \texttt{research/Noesis/docs}, or from the exact
 computations in \texttt{figures/make\_figures.py}; none comes from a live
-provider run.
+provider run. The white paper's contract model changed after the code was
+written; Section~\ref{sec:background_refinements} lists the differences.
 
 \subsection{Organization}
 

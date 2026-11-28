@@ -216,7 +216,8 @@ The request that the seller receives is built by \texttt{build\_probe\_call}.
 It contains the contract's model identifier, a single user message with the
 canary prompt, an output limit of at most 64 tokens (capped by the gateway
 setting), temperature $0$, and a timeout of $2 \times L_{\max}$, where
-$L_{\max}$ is the contract latency. It carries no field that identifies a
+$L_{\max}$ is the contract latency limit of the prototype (the white paper
+derives this limit from the contracted latency band). It carries no field that identifies a
 probe. The canary identifier, the grade, and the grader version exist only in
 the platform's own \texttt{requests} row, which is written after the response
 returns. Table~\ref{tab:visibility} lists what each party can observe.

@@ -11,7 +11,7 @@
   - Reference format:
     [`.claude/skills/references.rules.md`](/.claude/skills/references.rules.md)
   - Paper rating rules, applied for Paper quality:
-    [`.claude/skills/paper.rules.md`](/.claude/skills/paper.rules.md),
+    [`.claude/skills/paper_rating.rules.md`](/.claude/skills/paper_rating.rules.md),
     `# Paper Rating`
   - Download and conversion tool:
     [`helpers_root/dev_scripts_helpers/download/download_academic_paper_to_md.py`](/helpers_root/dev_scripts_helpers/download/download_academic_paper_to_md.py)
@@ -150,7 +150,7 @@
 ### `R16` (Paper Quality Rating)
 
 - The Paper quality rating follows
-  [`.claude/skills/paper.rules.md`](/.claude/skills/paper.rules.md),
+  [`.claude/skills/paper_rating.rules.md`](/.claude/skills/paper_rating.rules.md),
   `# Paper Rating`:
   - Three signals: page length, best affiliation of the authors, and citation count
   - Each signal scores from 1 to 5, and the rating is the mean of the known signals,
@@ -208,7 +208,7 @@
 - Does not combine the features into a total score and does not rank the papers: the
   user sorts the report
 - Does not replace
-  [`.claude/skills/paper.rate/SKILL.md`](/.claude/skills/paper.rate/SKILL.md), which
+  [`.claude/skills/paper_rating.rate/SKILL.md`](/.claude/skills/paper_rating.rate/SKILL.md), which
   rates one paper: the pipeline applies the same rules to a list (see
   [`R16`](#r16-paper-quality-rating))
 
@@ -228,7 +228,7 @@
   as the idea states
 - Bibliographic facts and citation counts come from a lookup source, never from the
   memory of an LLM, per
-  [`.claude/skills/paper.rules.md`](/.claude/skills/paper.rules.md)
+  [`.claude/skills/paper_rating.rules.md`](/.claude/skills/paper_rating.rules.md)
 - An input list has about 100 papers: a first run processes all of them, and a rerun
   does not pay again for the papers already processed (see
   [`R11`](#r11-rerun-skips-converted-papers) and

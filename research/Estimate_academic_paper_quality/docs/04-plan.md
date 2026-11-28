@@ -750,7 +750,7 @@
 
 ### `PR_Q1`: [ ] Score the Signals and Rate the Paper
 
-- Status: written: the score tables are checked against `paper.rules.md` in
+- Status: written: the score tables are checked against `paper_rating.rules.md` in
   `test_report_papers.py` (`test_epq_rater.py` before `PR_P6`)
 - Superseded by `PR_P6`: the code is in `report_papers.py`, and `rate_paper()` is
   `_compute_rating()`
@@ -758,7 +758,7 @@
   `_compute_rating()`, and `_parse_tiers()`, per
   [`02.6-design.rater.md`](/research/Estimate_academic_paper_quality/docs/02.6-design.rater.md)
 - A test checks the score tables against
-  [`.claude/skills/paper.rules.md`](/.claude/skills/paper.rules.md)
+  [`.claude/skills/paper_rating.rules.md`](/.claude/skills/paper_rating.rules.md)
 - Requirements:
   [`R16`](/research/Estimate_academic_paper_quality/docs/01-prd.md#r16-paper-quality-rating)
 - Decisions:

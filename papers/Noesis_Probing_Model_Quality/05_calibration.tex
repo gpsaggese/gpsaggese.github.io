@@ -22,22 +22,22 @@ Llama 3.1 8B Instruct model on a third provider as the weak target. Every
 canary is sent $R$ times to every target at temperature $0$. Each reply
 receives a grade by \eqref{eq:grade}.
 
-For a canary $c$, let $O_H(c)$ be the $R\,|T_H|$ observations on healthy
+For a canary $\zeta$, let $O_H(\zeta)$ be the $R\,|T_H|$ observations on healthy
 targets and $O_W(c)$ the $R$ observations on the weak target. The canary is
 \emph{usable} if all of these observations exist, every provider status is
 \texttt{ok}, and no grade is $\bot$. For a usable canary define the healthy and
 weak accuracies
 \begin{equation}
   \label{eq:calibration_accuracy}
-  \acc_H(c) = \frac{1}{|O_H(c)|}\sum_{o \in O_H(c)} \mathbb{1}[o\ \text{correct}],
+  \acc_H(\zeta) = \frac{1}{|O_H(\zeta)|}\sum_{o \in O_H(\zeta)} \mathbb{1}[o\ \text{correct}],
   \qquad
-  \acc_W(c) = \frac{1}{|O_W(c)|}\sum_{o \in O_W(c)} \mathbb{1}[o\ \text{correct}].
+  \acc_W(\zeta) = \frac{1}{|O_W(\zeta)|}\sum_{o \in O_W(\zeta)} \mathbb{1}[o\ \text{correct}].
 \end{equation}
-The decision for canary $c$ is
+The decision for canary $\zeta$ is
 \begin{equation}
   \label{eq:calibration_decision}
-  \text{accept}(c) \iff \text{usable}(c) \;\wedge\; \acc_H(c) \geq \tau_h
-    \;\wedge\; \acc_W(c) \leq \tau_w,
+  \text{accept}(\zeta) \iff \text{usable}(\zeta) \;\wedge\; \acc_H(\zeta) \geq \tau_h
+    \;\wedge\; \acc_W(\zeta) \leq \tau_w,
 \end{equation}
 with defaults $R = 3$, $\tau_h = 1$, and $\tau_w = 0.6$. A provider failure, a
 grader failure, or a missing attempt makes the canary unusable. Such a
@@ -60,7 +60,7 @@ procedure. Table~\ref{tab:calibration_params} lists the parameters.
 %   node [shape=box, style="rounded,filled", fillcolor="#FFFFFF", color="#9AA9B8", penwidth=1.8, fontname="Helvetica", fontcolor="#243B53", fontsize=11, margin="0.14,0.08", height=0.42];
 %   edge [color="#A3B1C0", penwidth=1.3, arrowhead=vee, arrowsize=0.75, fontname="Helvetica", fontsize=9.5, fontcolor="#7B8794"];
 %   rankdir=TB;
-%   Cand  [label=<<b>Candidate canary c</b><br/><font point-size="9" color="#6B4517">from the bank</font>>, fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
+%   Cand  [label=<<b>Candidate canary ζ</b><br/><font point-size="9" color="#6B4517">from the bank</font>>, fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
 %   Run   [label=<<b>Run R attempts on every target</b><br/><font point-size="9" color="#41719C">healthy targets and one weak target, grade each reply</font>>, fillcolor="#D3E3F3", color="#7CA6CE", fontcolor="#1F4E79"];
 %   D1 [label="All attempts present,\nprovider ok, gradable?"];
 %   D2 [label=<Healthy accuracy<br/>≥ τ<SUB>h</SUB>?>];
@@ -114,24 +114,24 @@ procedure. Table~\ref{tab:calibration_params} lists the parameters.
     \Ensure one decision per canary, and a summary
     \State validate: one bank version, unique canary identifiers, unique
       targets, $|T_H| \geq 1$, exactly one weak target
-    \ForAll{$(c, t, r) \in \bank \times (T_H \cup \{t_w\}) \times \{1,\dots,R\}$}
+    \ForAll{$(\zeta, t, r) \in \bank \times (T_H \cup \{t_w\}) \times \{1,\dots,R\}$}
       \Comment{at most $K$ calls in flight}
-      \State $\mathit{res} \gets$ call target $t$ with the prompt of $c$ at
+      \State $\mathit{res} \gets$ call target $t$ with the prompt of $\zeta$ at
         temperature $0$
       \If{$\mathit{res}$ has status \texttt{ok}}
-        \State $g \gets \grade(c, \mathit{res}.\mathit{text})$
+        \State $g \gets \grade(\zeta, \mathit{res}.\mathit{text})$
       \Else
         \State $g \gets \bot$
       \EndIf
-      \State store the observation $(c, t, r, \mathit{res}.\mathit{status}, g,
+      \State store the observation $(\zeta, t, r, \mathit{res}.\mathit{status}, g,
         \mathit{latency}, \mathit{cost}, \mathit{text})$
     \EndFor
-    \ForAll{$c \in \bank$ in identifier order}
-      \If{$c$ is not usable}
+    \ForAll{$\zeta \in \bank$ in identifier order}
+      \If{$\zeta$ is not usable}
         \State reason $\gets$ \texttt{INCOMPLETE\_OBSERVATIONS}
-      \ElsIf{$\acc_H(c) < \tau_h$}
+      \ElsIf{$\acc_H(\zeta) < \tau_h$}
         \State reason $\gets$ \texttt{HEALTHY\_ACCURACY\_TOO\_LOW}
-      \ElsIf{$\acc_W(c) > \tau_w$}
+      \ElsIf{$\acc_W(\zeta) > \tau_w$}
         \State reason $\gets$ \texttt{WEAK\_ACCURACY\_TOO\_HIGH}
       \Else
         \State reason $\gets$ \texttt{CALIBRATED}
@@ -169,6 +169,14 @@ targets above, this is $300 \times 3 \times 3 = 2{,}700$ calls. The
 \texttt{calibrate} command prints this number and stops unless
 \texttt{--execute} is passed.
 
+\paragraph{Relation to the white paper's capability tiers.} One run
+calibrates one boundary: the healthy targets against one weaker model. The
+white paper's service classes would need one calibrated bank for each boundary
+between adjacent capability tiers, with healthy targets at tier $c$ and the
+weak target one tier below; the lowest tier has no weaker reference. A contract
+would be probed with the bank of the buyer's contracted tier, also when a
+seller of a higher class fills it. None of this is implemented.
+
 % ==============================================================================
 \subsection{Analysis of the acceptance rule}
 \label{sec:calibration_analysis}
@@ -189,9 +197,9 @@ with probability $P_H(p)\,P_W(w)$, where
 \end{proposition}
 
 \begin{proof}
-The condition $\acc_H(c) \geq 1$ requires all $3|T_H|$ healthy attempts to be
+The condition $\acc_H(\zeta) \geq 1$ requires all $3|T_H|$ healthy attempts to be
 correct, which has probability $p^{3|T_H|}$. The weak accuracy takes values in
-$\{0, 1/3, 2/3, 1\}$, and $\acc_W(c) \leq 0.6$ holds if and only if at most one of
+$\{0, 1/3, 2/3, 1\}$, and $\acc_W(\zeta) \leq 0.6$ holds if and only if at most one of
 the three attempts is correct, because $2/3 > 0.6$. The probability of zero or
 one successes in three Bernoulli trials is $(1-w)^3 + 3w(1-w)^2$.
 \end{proof}

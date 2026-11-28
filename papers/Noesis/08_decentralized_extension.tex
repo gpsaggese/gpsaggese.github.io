@@ -43,7 +43,7 @@ kinds of trust in a single operator.
 
 \begin{itemize}
   \item \textbf{Visibility}: the operator sees every bid and ask,
-    including a buyer's required capability tier and volume, which can
+    including a buyer's required service class and volume, which can
     reveal competitively sensitive information, for instance that a
     buyer is about to run a large batch job, before the round even
     clears.
@@ -121,7 +121,7 @@ verifiable on-chain rather than taken on the operator's word.
 %     penwidth  = 1.0;
 %     margin    = 12;
 % 
-%     BidsC    [label=<<b>Full bid/ask contents</b><br/><font point-size="8.5" color="#946A2E">Tier, volume, price</font>>,
+%     BidsC    [label=<<b>Full bid/ask contents</b><br/><font point-size="8.5" color="#946A2E">Class, volume, price</font>>,
 %               fillcolor="#FBEBD4", color="#D9A85F", fontcolor="#6B4517"];
 %     Operator [label=<<b>Single operator</b>>,
 %               fillcolor="#F6E1E8", color="#D98CA8", fontcolor="#6B2A44"];
@@ -173,13 +173,13 @@ verifiable on-chain rather than taken on the operator's word.
 
 The contract, bid, and ask notation of Section~\ref{sec:contracts_and_notation}
 carries over unchanged: a decentralized round still clears
-$(\ntasksattr, \clevelattr, \lmaxattr, \rminattr, \priceattr)$ tuples
+$(\ntasksattr, \sclassattr, \rminattr, \priceattr)$ tuples
 (Definition~\ref{def:contract}). What changes is how a bid or an ask is
 submitted and revealed.
 
 \begin{definition}[Blind bid]
 \label{def:blind_bid}
-A \emph{blind bid} for a bid $\beta = (n_\beta, c_\beta, \ell_\beta,
+A \emph{blind bid} for a bid $\beta = (n_\beta, q_\beta,
 r_\beta, p_\beta)$ (Definition~\ref{def:bid}) is a commitment
 $$
   h_\beta = H(\beta \,\|\, \nu_\beta)
@@ -298,13 +298,13 @@ $\tau$, posted to an escrow contract at the time $\alpha$ is revealed. If
 $\alpha$ is matched into a contract $\kappa$, the stake is locked until
 the fulfillment window $W$ closes (Section~\ref{sec:fulfillment_monitoring}).
 It is released in full if $\kappa$ is not flagged as violated, i.e.,
-$\hat r_{\text{lower}}(\kappa, W) \geq \rminattr(\kappa)$
-(Equation~\eqref{eq:reliability_lower_bound}), and slashed, in full or in
+$\hat r_{\text{upper}}(\kappa, W) \geq \rminattr(\kappa)$
+(Equation~\eqref{eq:reliability_upper_bound}), and slashed, in full or in
 part, otherwise.
 \end{definition}
 
 Definition~\ref{def:staked_ask} still needs the report of
-$\hat r_{\text{lower}}(\kappa, W)$ itself, computed off-chain by
+$\hat r_{\text{upper}}(\kappa, W)$ itself, computed off-chain by
 \NoesisServer{} from delivered responses; slashing does not remove the
 need for fulfillment monitoring, it changes what happens once a violation
 is detected, from a reputation downgrade to an immediate, automatic,
@@ -312,14 +312,14 @@ on-chain forfeiture. This is a stronger deterrent against the capability
 misrepresentation risk of Section~\ref{sec:mechanism_design_risks}
 precisely because it does not require the seller's continued
 participation in future rounds to take effect. How $\hat
-r_{\text{lower}}(\kappa, W)$ is reported on-chain in a form a smart
+r_{\text{upper}}(\kappa, W)$ is reported on-chain in a form a smart
 contract can act on, rather than treating \NoesisServer{} itself as a
 trusted oracle, is left open in Section~\ref{sec:decentralized_open_questions}.
 
 Figure~\ref{fig:staked_ask_lifecycle} shows this lifecycle as a state
 diagram: the stake is posted when $\alpha$ is revealed, locked once
 matched into a contract $\kappa$, and released in full or slashed once
-$\hat r_{\text{lower}}(\kappa, W)$ is reported against $\rminattr(\kappa)$
+$\hat r_{\text{upper}}(\kappa, W)$ is reported against $\rminattr(\kappa)$
 at the close of the fulfillment window.
 
 % rendered_images:begin
@@ -366,9 +366,9 @@ at the close of the fulfillment window.
 %             fillcolor="#F8DCDC", color="#D97A7A", fontcolor="#6B1F1F"];
 % 
 %   Posted -> Locked [label="Matched", penwidth=1.6, color="#8592A3"];
-%   Locked -> Released [label="Window W closes,\nr_lower >= R_min"];
+%   Locked -> Released [label="Window W closes,\nr_upper >= R_min"];
 %   Locked -> Slashed [
-%     label="Window W closes,\nr_lower < R_min",
+%     label="Window W closes,\nr_upper < R_min",
 %     color="#C0455B", fontcolor="#C0455B"
 %   ];
 % }
@@ -396,9 +396,9 @@ Section~\ref{sec:decentralized_open_questions} returns to this.
 \label{sec:decentralized_matching_engine}
 
 Problem~\ref{prob:clearing} is a linear program over the revealed bids and
-asks in a tier bucket. Solving it naively on-chain, recomputing the
+asks in a class bucket. Solving it naively on-chain, recomputing the
 clearing price and every matched quantity $x_{\beta\alpha}$ inside a smart
-contract, scales the gas cost of a round with $|B_c| \cdot |A_c|$, which
+contract, scales the gas cost of a round with $|B_q| \cdot |A_q|$, which
 is unattractive for a bucket with more than a handful of participants.
 Three placements are possible.
 
@@ -409,19 +409,19 @@ Three placements are possible.
 
   \item \textbf{Fully off-chain}: a designated operator solves
     Problem~\ref{prob:clearing} off-chain and posts only the result,
-    $p^*(c, t)$ and the matched contracts. Cheap, but reintroduces the
+    $p^*(q, t)$ and the matched contracts. Cheap, but reintroduces the
     single trusted operator that Section~\ref{sec:decentralized_motivation}
     set out to remove: nothing on-chain prevents the operator from posting
     an incorrect or self-favoring solution.
 
   \item \textbf{Verifiably off-chain}: an off-chain solver computes
-    $p^*(c, t)$ and $\{x_{\beta\alpha}\}$ as before, but additionally
+    $p^*(q, t)$ and $\{x_{\beta\alpha}\}$ as before, but additionally
     produces a succinct proof $\phi$ that the solution satisfies the
     feasibility constraints of Problem~\ref{prob:clearing}
     (Equations~\eqref{eq:buyer_quantity}--\eqref{eq:price_limit}) and
     leaves no compatible pair unmatched at a price both sides would
     accept. A smart contract verifies $\phi$ in time independent of
-    $|B_c| + |A_c|$ and only then finalizes the round.
+    $|B_q| + |A_q|$ and only then finalizes the round.
 \end{itemize}
 
 The third option, running the matchmaking engine partially off-chain with
@@ -449,7 +449,7 @@ gas cost of solving Problem~\ref{prob:clearing} on-chain.
 % \node[anchor=west, align=left, font=\footnotesize] at (0,-0.9) {trust-minimized,\\expensive};
 % \node[anchor=east, align=right, font=\footnotesize] at (11,-0.9) {cheap,\\trusted};
 % \filldraw[ptcolor] (1.2,0) circle (3pt);
-% \node[align=center, font=\footnotesize] at (1.2,1.1) {fully on-chain\\(gas cost scales\\with $|B_c|\cdot|A_c|$)};
+% \node[align=center, font=\footnotesize] at (1.2,1.1) {fully on-chain\\(gas cost scales\\with $|B_q|\cdot|A_q|$)};
 % \filldraw[ptcolor] (5.5,0) circle (3pt);
 % \node[align=center, font=\footnotesize] at (5.5,1.4) {verifiably off-chain\\(succinct proof of\\feasibility; least developed)};
 % \filldraw[ptcolor] (9.8,0) circle (3pt);
@@ -489,7 +489,7 @@ several providers to hedge against any one of them being unavailable or
 slashed, and is a settlement-layer property rather than an answer-quality
 one. Redundancy also gives the market a tool against the concentration
 risk noted in Section~\ref{sec:mechanism_design_risks}'s discussion of
-thin, collusion-prone tier buckets: instead of always matching a buyer's
+thin, collusion-prone class buckets: instead of always matching a buyer's
 full volume against the single lowest-priced compatible ask, a
 decentralized \NoesisMarket{} can split it across the $k_{\text{red}}$
 lowest-priced compatible asks, so that the same top seller does not
