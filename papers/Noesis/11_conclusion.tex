@@ -4,12 +4,18 @@
 
 We have described \Noesis, a protocol that treats machine intelligence as
 a fungible, but not homogeneous, commodity, and that organizes its
-exchange around two cooperating components: \NoesisMarket, a periodic
-call auction that clears bids and asks, each stating a service class and a
-reliability, into a single contract, and \NoesisServer, the gateway that
-executes those contracts, meters whether they were fulfilled, and reuses
-the resulting traffic for difficulty-aware routing, answer fusion, and
-distillation. Each of these two components is, in turn, a thin
+exchange around two cooperating components:
+
+\begin{itemize}
+  \item \textbf{\NoesisMarket}: a periodic call auction that clears bids and
+    asks, each stating a service class and a reliability, into a single
+    contract.
+  \item \textbf{\NoesisServer}: the gateway that executes those contracts,
+    meters whether they were fulfilled, and reuses the resulting traffic for
+    difficulty-aware routing, answer fusion, and distillation.
+\end{itemize}
+
+Each of these two components is, in turn, a thin
 coordination layer around independently pluggable sub-components, matching
 engine, capability measurement, reputation and feedback, answer fusion, and
 pricing dissemination (Section~\ref{sec:modularity}), rather than a fixed
@@ -19,11 +25,16 @@ clearing price under a completeness assumption on the compatibility
 graph, and proposed a hypothesis-testing approach to distinguishing
 genuine contract violations from sampling noise.
 
-The design suggests that the two problems, price discovery for a bundled
-quality good and verified fulfillment of that good, are naturally
-complementary: a market without fulfillment monitoring has no way to
-enforce what was sold, and a fulfillment layer without a market has no
-price signal to feed back into. Section~\ref{sec:decentralized_extension}
+The design suggests that two problems are naturally complementary:
+
+\begin{itemize}
+  \item \textbf{Price discovery} for a bundled quality good: a market without
+    fulfillment monitoring has no way to enforce what was sold.
+  \item \textbf{Verified fulfillment} of that good: a fulfillment layer
+    without a market has no price signal to feed back into.
+\end{itemize}
+
+Section~\ref{sec:decentralized_extension}
 sketches one further direction: a blockchain-based, blind-bid variant of
 \NoesisMarket{} that trades the operational simplicity of a centralized
 clearinghouse for censorship resistance and bidder anonymity, at the cost

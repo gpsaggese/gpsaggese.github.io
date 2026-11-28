@@ -16,12 +16,14 @@ document-summarization pipeline, a coding assistant, or a multi-agent system
 delegating a sub-task. These participants differ along several dimensions:
 
 \begin{itemize}
-  \item How much they value low latency.
-  \item How much throughput they need.
-  \item How much model intelligence (capability tier) their tasks require.
-  \item How much they value a low error rate.
-  \item How price-sensitive they are.
-  \item How much of their traffic is predictable in advance versus bursty.
+  \item \textbf{Latency sensitivity}: how much they value low latency.
+  \item \textbf{Throughput need}: how much throughput they need.
+  \item \textbf{Capability required}: how much model intelligence (capability
+    tier) their tasks require.
+  \item \textbf{Error tolerance}: how much they value a low error rate.
+  \item \textbf{Price sensitivity}: how price-sensitive they are.
+  \item \textbf{Traffic predictability}: how much of their traffic is
+    predictable in advance versus bursty.
 \end{itemize}
 
 The \textbf{supply side} is made of model and compute providers: foundation-model
@@ -29,10 +31,13 @@ API vendors, open-weight model hosts, and resellers of spare inference
 capacity. Sellers differ along several dimensions:
 
 \begin{itemize}
-  \item The capability tier of the models they can serve.
-  \item Their typical latency, throughput, and reliability under load.
-  \item Their marginal cost of serving a request, which itself depends on
-    hardware utilization and contractual commitments elsewhere.
+  \item \textbf{Capability tier}: the capability tier of the models they can
+    serve.
+  \item \textbf{Speed and reliability}: their typical latency, throughput, and
+    reliability under load.
+  \item \textbf{Marginal cost}: their marginal cost of serving a request,
+    which itself depends on hardware utilization and contractual commitments
+    elsewhere.
 \end{itemize}
 
 As in any market, the opportunity to trade arises from these differences:
@@ -41,13 +46,19 @@ with idle capacity outside of peak hours can both be made better off by a
 contract that a rigid, single posted price cannot express.
 
 Figure~\ref{fig:two_sided_market} lays out both sides and the dimensions
-along which their participants differ: demand-side participants differ
-along latency and throughput needs, model-intelligence requirements, error
-tolerance, price sensitivity, and traffic predictability, while supply-side
-participants differ along capability tier, speed and reliability under load,
-and marginal cost, and \NoesisMarket{} is the meeting point where bids and
-asks expressing these differences are matched into contracts. Each side's
-dimensions are drawn as short axes radiating from its box.
+along which their participants differ:
+
+\begin{itemize}
+  \item \textbf{Demand side}: participants differ along latency and
+    throughput needs, model-intelligence requirements, error tolerance, price
+    sensitivity, and traffic predictability.
+  \item \textbf{Supply side}: participants differ along capability tier, speed
+    and reliability under load, and marginal cost.
+  \item \textbf{\NoesisMarket}: the meeting point where bids and asks
+    expressing these differences are matched into contracts.
+\end{itemize}
+
+Each side's dimensions are drawn as short axes radiating from its box.
 
 % rendered_images:begin
 % ```tikz
@@ -152,9 +163,14 @@ plays the role of price. \Noesis{} faces a similar prior question: before a bid
 or an ask can be written down, the protocol must fix what a unit of
 ``intelligence'' is (Definition~\ref{def:task}) and what accompanies that
 unit as a quality specification. We adopt the position that quality should
-be expressed as two terms: a \emph{service class}, which says what each
-request should get, and a \emph{reliability}, which says how often it gets
-it. A service class has three largely orthogonal dimensions, each normalized
+be expressed as two terms:
+
+\begin{itemize}
+  \item \textbf{Service class}: says what each request should get.
+  \item \textbf{Reliability}: says how often it gets it.
+\end{itemize}
+
+A service class has three largely orthogonal dimensions, each normalized
 into a few discrete bands:
 
 \begin{itemize}
@@ -223,11 +239,17 @@ and reliability before price discovery can proceed
 Electricity markets are the closest existing analogy. Electricity cannot be
 usefully stored at scale, demand and supply must be balanced continuously, and
 quality (voltage, frequency) is metered rather than taken on faith. Electricity
-markets address this with a layered design: day-ahead markets clear the bulk of
-expected demand a day in advance, real-time markets clear residual imbalances
-close to delivery, and separate capacity markets pay generators for being
-available rather than for energy delivered, penalizing non-delivery when it
-matters most \cite{stoft2002, cramton2017}.
+markets address this with a layered design \cite{stoft2002, cramton2017}:
+
+\begin{itemize}
+  \item \textbf{Day-ahead markets}: clear the bulk of expected demand a day in
+    advance.
+  \item \textbf{Real-time markets}: clear residual imbalances close to
+    delivery.
+  \item \textbf{Capacity markets}: separate markets that pay generators for
+    being available rather than for energy delivered, penalizing non-delivery
+    when it matters most.
+\end{itemize}
 
 \Noesis{}'s per-class call auction (Section~\ref{sec:noesis_market}) borrows the
 day-ahead/real-time separation as a candidate design (discussed further as an

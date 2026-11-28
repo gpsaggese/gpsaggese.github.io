@@ -2,15 +2,22 @@
 \section{State of the art: industry landscape}
 \label{sec:state_of_the_art}
 
-Section~\ref{sec:related_work} positions \Noesis{} against academic work on
-routing, fusion, distillation, and auction theory. This section instead
-surveys currently operating startups and projects that address, piece by
-piece, a similar problem \Noesis{} targets:
+Section~\ref{sec:related_work} positions \Noesis{} against academic work on:
 
 \begin{itemize}
-  \item Buying and selling machine intelligence.
-  \item Trading raw compute.
-  \item Verifying that a delivered service met its promise.
+  \item \textbf{Routing}
+  \item \textbf{Fusion}
+  \item \textbf{Distillation}
+  \item \textbf{Auction theory}
+\end{itemize}
+
+This section instead surveys currently operating startups and projects that
+address, piece by piece, a similar problem \Noesis{} targets:
+
+\begin{itemize}
+  \item \textbf{Buying and selling machine intelligence}
+  \item \textbf{Trading raw compute}
+  \item \textbf{Verifying that a delivered service met its promise}
 \end{itemize}
 
 The goal is to locate the specific combination of properties,
@@ -157,9 +164,9 @@ reliability fell short of what was routed for.
 A third cluster trades raw compute, rather than model access, through
 genuine bidding mechanisms. \emph{Akash Network} runs a reverse auction in
 which a tenant posts a workload specification and a budget and providers
-bid to fill it. \emph{Vast.ai} runs a continuous bid/ask market for
+bid to fill it. \emph{\href{https://vast.ai}{Vast.ai}} runs a continuous bid/ask market for
 GPU-hours in which an underbid spot instance can be reclaimed by a higher
-bidder. \emph{RunPod}, \emph{io.net}, \emph{Golem Network},
+bidder. \emph{RunPod}, \emph{\href{https://io.net}{io.net}}, \emph{Golem Network},
 \emph{CoreWeave}, and \emph{Prime Intellect} offer spot, reserved, or
 brokered tiers over pooled GPU capacity, with pricing that ranges from
 genuinely biddable to posted with a spot discount.
@@ -176,13 +183,13 @@ cluster.
       \makecell[l]{Akash Network \\ {\scriptsize\url{https://akash.network}}}
         & \ngood & Reverse auction & Tenant posts workload + budget, providers bid \\
       \hline
-      \makecell[l]{Vast.ai \\ {\scriptsize\url{https://vast.ai}}}
+      \makecell[l]{\href{https://vast.ai}{Vast.ai} \\ {\scriptsize\url{https://vast.ai}}}
         & \ngood & Continuous bid/ask & Underbid spot instances reclaimable \\
       \hline
       \makecell[l]{RunPod \\ {\scriptsize\url{https://runpod.io}}}
         & \npartial & Spot\slash{}reserved\slash{}brokered$^\dagger$ & \\
       \hline
-      \makecell[l]{io.net \\ {\scriptsize\url{https://io.net}}}
+      \makecell[l]{\href{https://io.net}{io.net} \\ {\scriptsize\url{https://io.net}}}
         & \npartial & Spot\slash{}reserved\slash{}brokered$^\dagger$ & \\
       \hline
       \makecell[l]{Golem Network \\ {\scriptsize\url{https://golem.network}}}
@@ -202,7 +209,7 @@ cluster.
   \end{table}
 \end{samepage}
 
-Akash and Vast.ai in particular demonstrate that an open bid/ask market for
+Akash and \href{https://vast.ai}{Vast.ai} in particular demonstrate that an open bid/ask market for
 compute-time is viable at production scale, which is direct evidence for
 the auction half of \NoesisMarket's design. The traded unit, however, is a
 GPU-hour or a workload's raw resource footprint, not the (service class,
@@ -229,7 +236,7 @@ pay-per-query access. \emph{Gensyn} verifies distributed training work
 through a probabilistic proof-of-learning protocol rather than scoring
 inference output. \emph{Ritual} runs a network of inference oracles that
 attach a cryptographic proof of correct execution to each computation.
-\emph{Nosana} and the \emph{Fetch.ai} / \emph{ASI Alliance} pool idle
+\emph{Nosana} and the \emph{\href{https://fetch.ai}{Fetch.ai}} / \emph{ASI Alliance} pool idle
 compute and agent-to-agent transactions for AI workloads more broadly.
 Table~\ref{tab:sota_decentralized_companies} lists the systems in this
 cluster.
@@ -249,7 +256,7 @@ cluster.
       \hline
       Nosana                  & \url{https://nosana.com} & Pools idle compute and agent-to-agent transactions for AI workloads \\
       \hline
-      Fetch.ai / ASI Alliance  & \url{https://fetch.ai} & Pools idle compute and agent-to-agent transactions for AI workloads \\
+      \href{https://fetch.ai}{Fetch.ai} / ASI Alliance  & \url{https://fetch.ai} & Pools idle compute and agent-to-agent transactions for AI workloads \\
       \hline
     \end{tabular}
     \caption{Token-incentivized inference networks surveyed in
@@ -262,11 +269,17 @@ Bittensor's validator scoring is the only mechanism surveyed here that
 continuously measures output quality and lets that measurement change a
 provider's economic standing, which is precisely the loop
 Section~\ref{sec:reputation} formalizes for \NoesisMarket. It differs from
-\Noesis{} in two respects: the reward is an emission schedule internal to
-the network's consensus rather than a price cleared against an explicit
-buyer bid, and the score is a continuous internal ranking rather than a
-pass/fail check against a specific bought (volume, service class,
-reliability) contract. Gensyn's and Ritual's proofs verify that a
+\Noesis{} in two respects:
+
+\begin{itemize}
+  \item \textbf{Reward}: an emission schedule internal to the network's
+    consensus rather than a price cleared against an explicit buyer bid.
+  \item \textbf{Score}: a continuous internal ranking rather than a pass/fail
+    check against a specific bought (volume, service class, reliability)
+    contract.
+\end{itemize}
+
+Gensyn's and Ritual's proofs verify that a
 computation was executed correctly, not that its output met a stated
 service class, so they address a different, complementary
 notion of trust.
@@ -322,7 +335,7 @@ Section~\ref{sec:noesis_server} adds on top of the market.
 \label{sec:sota_sellers}
 
 A final cluster, serverless inference providers such as \emph{Together AI},
-\emph{Fireworks AI}, \emph{Groq}, \emph{Baseten}, and \emph{Fal.ai}
+\emph{Fireworks AI}, \emph{Groq}, \emph{Baseten}, and \emph{\href{https://fal.ai}{Fal.ai}}
 (Table~\ref{tab:sota_sellers_companies}),
 sell inference at posted per-token or per-second rates at a given
 capability tier. These are not competitors to \Noesis{} so much as its
@@ -348,7 +361,7 @@ reputation signal that follows the seller into a future transaction.
       \hline
       Baseten      & \url{https://baseten.co} \\
       \hline
-      Fal.ai       & \url{https://fal.ai} \\
+      \href{https://fal.ai}{Fal.ai}       & \url{https://fal.ai} \\
       \hline
     \end{tabular}
     \caption{Serverless inference providers surveyed in
@@ -371,12 +384,18 @@ fulfillment'' denotes verification of delivered quality against that
 contract, rather than a generic infrastructure SLA.
 
 Figure~\ref{fig:sota_landscape} plots the six clusters on these two
-axes: gateways, learned routers, and serverless providers set prices
-unilaterally; compute marketplaces and exchanges bid on raw compute but
-neither price nor observe answer quality; token-incentivized networks
-verify quality without a market clearing price against a buyer's bid; no
-surveyed cluster combines both properties for machine intelligence, and
-\Noesis{} occupies that combination.
+axes:
+
+\begin{itemize}
+  \item \textbf{Gateways, learned routers, and serverless providers}: set
+    prices unilaterally.
+  \item \textbf{Compute marketplaces and exchanges}: bid on raw compute but
+    neither price nor observe answer quality.
+  \item \textbf{Token-incentivized networks}: verify quality without a market
+    clearing price against a buyer's bid.
+  \item \textbf{\Noesis{}}: occupies the combination of both properties for
+    machine intelligence, which no surveyed cluster does.
+\end{itemize}
 
 % rendered_images:begin
 % ```tikz
@@ -453,7 +472,7 @@ surveyed cluster combines both properties for machine intelligence, and
 No cluster combines auction-based price discovery with a bundled,
 verifiable quality contract and a reputation loop that feeds back into
 pricing. What is striking is that each individual ingredient is already
-validated in production by at least one system: Akash and Vast.ai show
+validated in production by at least one system: Akash and \href{https://vast.ai}{Vast.ai} show
 that an open auction for compute is viable; Compute Exchange and Andromeda
 show that standardizing the traded contract attracts liquidity; Bittensor
 shows that continuously scoring delivered quality and tying it to economic

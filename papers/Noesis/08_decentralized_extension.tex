@@ -65,12 +65,16 @@ underlying chain, a trade-off Section~\ref{sec:decentralized_comparison}
 makes explicit.
 
 Figure~\ref{fig:trust_boundaries} contrasts the two trust boundaries
-before the mechanisms below are introduced: in the centralized design, a
-single operator sees every bid and ask in full and alone decides
-eligibility and matching, while in the decentralized design, only
-on-chain addresses are visible until the reveal window closes
-(Section~\ref{sec:blind_bidding}), and matching and eligibility are
-verifiable on-chain rather than taken on the operator's word.
+before the mechanisms below are introduced:
+
+\begin{itemize}
+  \item \textbf{Centralized design}: a single operator sees every bid and ask
+    in full and alone decides eligibility and matching.
+  \item \textbf{Decentralized design}: only on-chain addresses are visible
+    until the reveal window closes (Section~\ref{sec:blind_bidding}), and
+    matching and eligibility are verifiable on-chain rather than taken on the
+    operator's word.
+\end{itemize}
 
 % rendered_images:begin
 % ```graphviz
@@ -217,11 +221,16 @@ off-chain, so anonymity here covers the auction, not the inference traffic
 that a cleared contract subsequently generates.
 
 Figure~\ref{fig:commit_reveal_sequence} traces one round through these
-three phases: during the commit window, bidders post the commitment
-$h_\beta = H(\beta \,\|\, \nu_\beta)$ (Definition~\ref{def:blind_bid});
-during the reveal window, they disclose $(\beta, \nu_\beta)$; and only
-revealed bids and asks matching a posted commitment are kept for the
-clearing problem (Problem~\ref{prob:clearing}) run at the round's close.
+three phases:
+
+\begin{itemize}
+  \item \textbf{Commit window}: bidders post the commitment
+    $h_\beta = H(\beta \,\|\, \nu_\beta)$ (Definition~\ref{def:blind_bid}).
+  \item \textbf{Reveal window}: bidders disclose $(\beta, \nu_\beta)$.
+  \item \textbf{Clearing}: only revealed bids and asks matching a posted
+    commitment are kept for the clearing problem
+    (Problem~\ref{prob:clearing}) run at the round's close.
+\end{itemize}
 
 % rendered_images:begin
 % ```graphviz

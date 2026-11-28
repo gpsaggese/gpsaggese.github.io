@@ -15,14 +15,19 @@ contract was honored and the quality of its fulfillment.
 multi-provider routers (e.g., OpenRouter): it exposes a single API,
 proxies each request to one or more underlying providers, and streams the
 response back to the caller. Two properties distinguish it from a plain
-pass-through router. First, every request is tagged with the contract
-$\kappa$ it is served under, if any, so that fulfillment can be attributed
-(Section~\ref{sec:fulfillment_monitoring}). Second, every prompt/response
-pair is logged with its provider, model, measured latency and throughput,
-measured cost,
-and, when available, a user feedback signal, regardless of whether the
-request was placed under a contract. The storage schema is intentionally
-minimal:
+pass-through router:
+
+\begin{itemize}
+  \item \textbf{Contract tagging}: every request is tagged with the contract
+    $\kappa$ it is served under, if any, so that fulfillment can be attributed
+    (Section~\ref{sec:fulfillment_monitoring}).
+  \item \textbf{Universal logging}: every prompt/response pair is logged with
+    its provider, model, measured latency and throughput, measured cost, and,
+    when available, a user feedback signal, regardless of whether the request
+    was placed under a contract.
+\end{itemize}
+
+The storage schema is intentionally minimal:
 
 $$
   (\text{prompt}, \text{response}, \text{provider}, \text{model},
@@ -555,13 +560,17 @@ distilled model, more useful for every buyer on \NoesisMarket, an
 opted-in customer can be offered a preferential rate in exchange, in the
 same spirit as data-sharing discounts in other metered-service markets.
 
-Figure~\ref{fig:training_pipeline} shows the two consumers that share
-this one logged dataset: logged traffic feeds agreement labels
-(Definition~\ref{def:agreement_label}), which train the difficulty
-estimator of Section~\ref{sec:routing}, while the same traffic also forms
-the corpus $\calD$ used to distill a smaller model $f_\theta$
-(Section~\ref{sec:distillation}), as two parallel, independent consumers
-of one dataset.
+Figure~\ref{fig:training_pipeline} shows the two parallel, independent
+consumers that share this one logged dataset:
+
+\begin{itemize}
+  \item \textbf{Difficulty estimator}: logged traffic feeds agreement labels
+    (Definition~\ref{def:agreement_label}), which train the difficulty
+    estimator of Section~\ref{sec:routing}.
+  \item \textbf{Distillation}: the same traffic also forms the corpus $\calD$
+    used to distill a smaller model $f_\theta$
+    (Section~\ref{sec:distillation}).
+\end{itemize}
 
 % rendered_images:begin
 % ```graphviz

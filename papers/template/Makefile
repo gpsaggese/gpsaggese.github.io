@@ -26,8 +26,8 @@
 #
 # Options for the LaTeX build (see `run_latex.py --help`):
 #   > make latex NUM_PASSES=3                    # 3 = with bibliography
-#   > make latex RUN_LATEX_ACTIONS=              # also open the PDF (the
-#                                                # `run_latex.py` default)
+#   > make latex RUN_LATEX_ACTIONS="--skip_action open_pdf"  # do not open the
+#                                                            # PDF
 #   > make latex RUN_LATEX_ACTIONS="--action copy_to_gdrive"
 #
 # `make` rebuilds a PDF only when a source changed, e.g., `paper.md`,
@@ -62,10 +62,11 @@ TEX_DEPS = $(wildcard *.tex ../template/style.tex)
 # `bibtex`, needs a `\bibliography{...}` command in a `.tex` file, which is
 # detected here).
 NUM_PASSES = $(if $(shell grep -ls '^[^%]*\\bibliography{' *.tex),3,2)
-# Run only the compilation: skip opening the PDF, which `run_latex.py` does by
-# default. Copying to Google Drive is not a default action. Note that
-# `--action` adds to the default actions rather than replacing them.
-RUN_LATEX_ACTIONS = --skip_action open_pdf
+# Extra action options for `run_latex.py`. By default it runs its default
+# actions, which include opening the PDF. Copying to Google Drive is not a
+# default action. Note that `--action` adds to the default actions rather than
+# replacing them.
+RUN_LATEX_ACTIONS =
 
 .PHONY: all md latex figures clean
 
